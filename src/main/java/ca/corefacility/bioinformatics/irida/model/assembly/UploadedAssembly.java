@@ -8,18 +8,17 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 
 /**
- * A {@link GenomeAssembly} implementation that was uploaded by a user or service
+ * A {@link GenomeAssembly} implementation that was uploaded by a user or
+ * service
  */
 @Entity
 @Table(name = "uploaded_assembly")
 @EntityListeners(AuditingEntityListener.class)
 @Audited
-public class UploadedAssembly extends GenomeAssembly implements VersionedFileFields<Long> {
-
+public class UploadedAssembly extends GenomeAssembly {
 
 	@NotNull
 	@Column(name = "file_path", unique = true)
@@ -32,7 +31,7 @@ public class UploadedAssembly extends GenomeAssembly implements VersionedFileFie
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
 
-	//default constructor for hibernate
+	// default constructor for hibernate
 	protected UploadedAssembly() {
 		super();
 	}

@@ -3,6 +3,9 @@ Changes
 
 22.01 to 22.05
 --------------
+* [REST]: Corrected behaviour of date fields in REST API to return epoch instead of textual string. (22.01.1)
+* [Developer]: Add `--no-yarn` to skip the yarn build in `run.sh`
+* [Developer]: Updated frontend dependencies: `babel`, `eslint`, `postcss`, and `webpack`
 
 21.09 to 22.01
 --------------

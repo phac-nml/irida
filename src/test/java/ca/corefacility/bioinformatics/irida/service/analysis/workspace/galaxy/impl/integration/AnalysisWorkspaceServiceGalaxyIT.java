@@ -24,19 +24,12 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
@@ -56,7 +49,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
+import ca.corefacility.bioinformatics.irida.annotation.GalaxyIntegrationTest;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
@@ -97,11 +90,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
  *
  *
  */
-@Tag("IntegrationTest") @Tag("Galaxy")
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
-		initializers = ConfigDataApplicationContextInitializer.class)
-@ActiveProfiles("test")
+@GalaxyIntegrationTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
@@ -144,8 +133,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	private static final int LIBRARY_TIMEOUT = 5 * 60;
 
 	/**
-	 * Polling time in seconds to poll a Galaxy library to check if
-	 * datasets have been properly uploaded.
+	 * Polling time in seconds to poll a Galaxy library to check if datasets
+	 * have been properly uploaded.
 	 */
 	private static final int LIBRARY_POLLING_TIME = 5;
 
@@ -165,10 +154,13 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	private Set<SequencingObject> singleFileSet;
 
 	private static final UUID validWorkflowIdSingle = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
-	private static final UUID validWorkflowIdSingleSingleSample = UUID.fromString("a9692a52-5bc6-4da2-a89d-d880bb35bfe4");
+	private static final UUID validWorkflowIdSingleSingleSample = UUID
+			.fromString("a9692a52-5bc6-4da2-a89d-d880bb35bfe4");
 	private static final UUID validWorkflowIdPaired = UUID.fromString("ec93b50d-c9dd-4000-98fc-4a70d46ddd36");
-	private static final UUID validWorkflowIdPairedSingleSample = UUID.fromString("fc93b50d-c9dd-4000-98fc-4a70d46ddd36");
-	private static final UUID validWorkflowIdPairedWithParameters = UUID.fromString("23434bf8-e551-4efd-9957-e61c6f649f8b");
+	private static final UUID validWorkflowIdPairedSingleSample = UUID
+			.fromString("fc93b50d-c9dd-4000-98fc-4a70d46ddd36");
+	private static final UUID validWorkflowIdPairedWithParameters = UUID
+			.fromString("23434bf8-e551-4efd-9957-e61c6f649f8b");
 	private static final UUID validWorkflowIdSinglePaired = UUID.fromString("d92e9918-1e3d-4dea-b2b9-089f1256ac1b");
 	private static final UUID phylogenomicsWorkflowId = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
 
@@ -202,8 +194,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
-		Path referenceFilePathReal = Paths.get(DatabaseSetupGalaxyITService.class.getResource("testReference.fasta")
-				.toURI());
+		Path referenceFilePathReal = Paths
+				.get(DatabaseSetupGalaxyITService.class.getResource("testReference.fasta").toURI());
 
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "workspaceServiceGalaxyTest");
 
@@ -232,7 +224,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		HistoriesClient historiesClient = galaxyInstanceAdmin.getHistoriesClient();
 		ToolsClient toolsClient = galaxyInstanceAdmin.getToolsClient();
 		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
-		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
+		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient,
+				LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
 
 		galaxyHistoriesService = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);
 
@@ -257,11 +250,10 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	public void testPrepareAnalysisWorkspaceSuccess() throws IridaWorkflowNotFoundException, ExecutionManagerException {
-		AnalysisSubmission submission = AnalysisSubmission.builder(validWorkflowIdSingle)
-				.name("Name")
-				.inputFiles(singleFileSet)
-				.build();
-		assertNotNull(analysisWorkspaceService.prepareAnalysisWorkspace(submission), "preparing an analysis workspace should not return null");
+		AnalysisSubmission submission = AnalysisSubmission.builder(validWorkflowIdSingle).name("Name")
+				.inputFiles(singleFileSet).build();
+		assertNotNull(analysisWorkspaceService.prepareAnalysisWorkspace(submission),
+				"preparing an analysis workspace should not return null");
 	}
 
 	/**
@@ -272,10 +264,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	public void testPrepareAnalysisWorkspaceFail() throws IridaWorkflowNotFoundException, ExecutionManagerException {
-		AnalysisSubmission submission = AnalysisSubmission.builder(validWorkflowIdSingle)
-				.name("Name")
-				.inputFiles(singleFileSet)
-				.build();
+		AnalysisSubmission submission = AnalysisSubmission.builder(validWorkflowIdSingle).name("Name")
+				.inputFiles(singleFileSet).build();
 		submission.setRemoteAnalysisId("1");
 		assertThrows(IllegalArgumentException.class, () -> {
 			analysisWorkspaceService.prepareAnalysisWorkspace(submission);
@@ -293,8 +283,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesSingleSuccess() throws InterruptedException, ExecutionManagerException,
-			IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesSingleSuccess()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesSingleSuccess");
@@ -314,20 +304,25 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
-		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(), "the response history id should match the input history id");
+		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(),
+				"the response history id should match the input history id");
 		assertNotNull(preparedWorkflow.getWorkflowInputs(), "the returned workflow inputs should not be null");
 		assertNotNull(preparedWorkflow.getRemoteDataId(), "the returned library id should not be null");
 
 		// verify correct library is created
 		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(preparedWorkflow.getRemoteDataId());
-		Map<String, List<LibraryContent>> libraryContentsMap = libraryContents.stream().collect(Collectors.groupingBy(LibraryContent::getName));
+		Map<String, List<LibraryContent>> libraryContentsMap = libraryContents.stream()
+				.collect(Collectors.groupingBy(LibraryContent::getName));
 
 		assertFalse(libraryContentsMap.isEmpty(), "the returned library should exist in Galaxy");
 		String sequenceFileALibraryName = "/" + sequenceFilePathA.getFileName().toString();
-		assertEquals(2, libraryContentsMap.size(), "the returned library does not contain the correct number of elements");
+		assertEquals(2, libraryContentsMap.size(),
+				"the returned library does not contain the correct number of elements");
 		assertTrue(libraryContentsMap.containsKey("/"), "the returned library does not contain a root folder");
-		assertTrue(libraryContentsMap.containsKey(sequenceFileALibraryName), "the returned library does not contain the correct sequence file");
-		assertEquals(1, libraryContentsMap.get(sequenceFileALibraryName).size(), "the returned library does not contain the correct sequence file");
+		assertTrue(libraryContentsMap.containsKey(sequenceFileALibraryName),
+				"the returned library does not contain the correct sequence file");
+		assertEquals(1, libraryContentsMap.get(sequenceFileALibraryName).size(),
+				"the returned library does not contain the correct sequence file");
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -347,7 +342,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	}
 
 	private Map<String, HistoryContents> historyContentsAsMap(List<HistoryContents> historyContents) {
-		return historyContents.stream().collect(Collectors.toMap(HistoryContents::getName, historyContent->historyContent));
+		return historyContents.stream()
+				.collect(Collectors.toMap(HistoryContents::getName, historyContent -> historyContent));
 	}
 
 	/**
@@ -361,8 +357,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesSingleFail() throws InterruptedException, ExecutionManagerException,
-			IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesSingleFail()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesSingleFail");
@@ -375,8 +371,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		String workflowString = new String(Files.readAllBytes(workflowPath), StandardCharsets.UTF_8);
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
-		List<SingleEndSequenceFile> sequenceFiles = analysisExecutionGalaxyITService.setupSequencingObjectInDatabase(
-				1L, sequenceFilePathA, sequenceFilePath2A);
+		List<SingleEndSequenceFile> sequenceFiles = analysisExecutionGalaxyITService.setupSequencingObjectInDatabase(1L,
+				sequenceFilePathA, sequenceFilePath2A);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				Sets.newHashSet(sequenceFiles), referenceFilePath, validWorkflowIdSingle);
@@ -399,8 +395,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesPairSuccess() throws InterruptedException, ExecutionManagerException,
-			IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesPairSuccess()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesPairSuccess");
@@ -420,24 +416,31 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
-		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(), "the response history id should match the input history id");
+		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(),
+				"the response history id should match the input history id");
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
 		assertNotNull(workflowInputsGalaxy, "the returned workflow inputs should not be null");
 		assertNotNull(preparedWorkflow.getRemoteDataId(), "the returned library id should not be null");
 
 		// verify correct library is created
 		List<LibraryContent> libraryContents = librariesClient.getLibraryContents(preparedWorkflow.getRemoteDataId());
-		Map<String, List<LibraryContent>> libraryContentsMap = libraryContents.stream().collect(Collectors.groupingBy(LibraryContent::getName));
+		Map<String, List<LibraryContent>> libraryContentsMap = libraryContents.stream()
+				.collect(Collectors.groupingBy(LibraryContent::getName));
 
 		assertFalse(libraryContentsMap.isEmpty(), "the returned library should exist in Galaxy");
 		String sequenceFile1ALibraryName = "/" + sequenceFilePathA.getFileName().toString();
 		String sequenceFile2ALibraryName = "/" + sequenceFilePath2A.getFileName().toString();
-		assertEquals(3, libraryContentsMap.size(), "the returned library does not contain the correct number of elements");
+		assertEquals(3, libraryContentsMap.size(),
+				"the returned library does not contain the correct number of elements");
 		assertTrue(libraryContentsMap.containsKey("/"), "the returned library does not contain a root folder");
-		assertTrue(libraryContentsMap.containsKey(sequenceFile1ALibraryName), "the returned library does not contain the correct sequence file");
-		assertEquals(1, libraryContentsMap.get(sequenceFile1ALibraryName).size(), "the returned library does not contain the correct sequence file");
-		assertTrue(libraryContentsMap.containsKey(sequenceFile2ALibraryName), "the returned library does not contain the correct sequence file");
-		assertEquals(1, libraryContentsMap.get(sequenceFile2ALibraryName).size(), "the returned library does not contain the correct sequence file");
+		assertTrue(libraryContentsMap.containsKey(sequenceFile1ALibraryName),
+				"the returned library does not contain the correct sequence file");
+		assertEquals(1, libraryContentsMap.get(sequenceFile1ALibraryName).size(),
+				"the returned library does not contain the correct sequence file");
+		assertTrue(libraryContentsMap.containsKey(sequenceFile2ALibraryName),
+				"the returned library does not contain the correct sequence file");
+		assertEquals(1, libraryContentsMap.get(sequenceFile2ALibraryName).size(),
+				"the returned library does not contain the correct sequence file");
 
 		// verify correct files have been uploaded
 		List<HistoryContents> historyContents = historiesClient.showHistoryContents(createdHistory.getId());
@@ -469,8 +472,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesParametersSuccess() throws InterruptedException, ExecutionManagerException,
-			IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesParametersSuccess()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesParametersSuccess");
@@ -492,7 +495,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
-		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(), "the response history id should match the input history id");
+		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(),
+				"the response history id should match the input history id");
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
 		assertNotNull(workflowInputsGalaxy, "the returned workflow inputs should not be null");
 		assertNotNull(preparedWorkflow.getRemoteDataId(), "the returned library id should not be null");
@@ -504,13 +508,14 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		WorkflowInvocationInputs workflowInvocationInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
 		assertNotNull(workflowInvocationInputs, "created workflowInvocationInputs is null");
 
-		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters().get(
-				"core_pipeline_outputs_paired_with_parameters");
+		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters()
+				.get("core_pipeline_outputs_paired_with_parameters");
 		assertNotNull(toolParameters, "toolParameters is null");
 
 		String coverageMinValue = (String) toolParameters.get("coverageMin");
 		assertEquals("20", coverageMinValue, "coverageMinValue should have been changed");
-		assertEquals(ImmutableMap.of("coverageMid", "20"), toolParameters.get("conditional"), "coverageMidValue should have been changed");
+		assertEquals(ImmutableMap.of("coverageMid", "20"), toolParameters.get("conditional"),
+				"coverageMidValue should have been changed");
 		String coverageMaxValue = (String) toolParameters.get("coverageMin");
 		assertEquals("20", coverageMaxValue, "coverageMaxValue should have been changed");
 	}
@@ -526,8 +531,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesParametersSuccessWithNoParameters() throws InterruptedException,
-			ExecutionManagerException, IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesParametersSuccessWithNoParameters()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesParametersSuccessWithNoParameters");
@@ -541,12 +546,14 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Workflow galaxyWorkflow = workflowsClient.importWorkflow(workflowString, false);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
-				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, validWorkflowIdPairedWithParameters, false);
+				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, validWorkflowIdPairedWithParameters,
+				false);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
-		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(), "the response history id should match the input history id");
+		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(),
+				"the response history id should match the input history id");
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
 		assertNotNull(workflowInputsGalaxy, "the returned workflow inputs should not be null");
 		assertNotNull(preparedWorkflow.getRemoteDataId(), "the returned library id should not be null");
@@ -558,13 +565,14 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		WorkflowInvocationInputs workflowInvocationInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
 		assertNotNull(workflowInvocationInputs, "created workflowInvocationInputs is null");
 
-		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters().get(
-				"core_pipeline_outputs_paired_with_parameters");
+		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters()
+				.get("core_pipeline_outputs_paired_with_parameters");
 		assertNotNull(toolParameters, "toolParameters is null");
 
 		String coverageMinValue = (String) toolParameters.get("coverageMin");
 		assertEquals(coverageMinValue, "10", "coverageMinValue should have been changed to default");
-		assertEquals(ImmutableMap.of("coverageMid", "10"), toolParameters.get("conditional"), "coverageMidValue should have been changed to default");
+		assertEquals(ImmutableMap.of("coverageMid", "10"), toolParameters.get("conditional"),
+				"coverageMidValue should have been changed to default");
 		String coverageMaxValue = (String) toolParameters.get("coverageMin");
 		assertEquals("10", coverageMaxValue, "coverageMaxValue should have been changed to default");
 	}
@@ -580,8 +588,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesParametersSuccessIgnoreDefaultParameters() throws InterruptedException,
-			ExecutionManagerException, IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesParametersSuccessIgnoreDefaultParameters()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesParametersSuccessIgnoreDefaultParameters");
@@ -597,12 +605,14 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		Map<String, String> parameters = ImmutableMap.of("coverage", IridaWorkflowParameter.IGNORE_DEFAULT_VALUE);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
-				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, parameters, validWorkflowIdPairedWithParameters);
+				pairSequenceFiles1A, pairSequenceFiles2A, referenceFilePath, parameters,
+				validWorkflowIdPairedWithParameters);
 		analysisSubmission.setRemoteAnalysisId(createdHistory.getId());
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
-		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(), "the response history id should match the input history id");
+		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(),
+				"the response history id should match the input history id");
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
 		assertNotNull(workflowInputsGalaxy, "the returned workflow inputs should not be null");
 		assertNotNull(preparedWorkflow.getRemoteDataId(), "the returned library id should not be null");
@@ -614,8 +624,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		WorkflowInvocationInputs workflowInvocationInputs = preparedWorkflow.getWorkflowInputs().getInputsObject();
 		assertNotNull(workflowInvocationInputs, "created workflowInvocationInputs is null");
 
-		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters().get(
-				"core_pipeline_outputs_paired_with_parameters");
+		Map<String, Object> toolParameters = workflowInvocationInputs.getParameters()
+				.get("core_pipeline_outputs_paired_with_parameters");
 		assertNull(toolParameters, "toolParameters is not null");
 	}
 
@@ -630,8 +640,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesParametersFailInvalidParameter() throws InterruptedException,
-			ExecutionManagerException, IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesParametersFailInvalidParameter()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesParametersFailInvalidParameter");
@@ -668,8 +678,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesPairFail() throws InterruptedException, ExecutionManagerException,
-			IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesPairFail()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesPairFail");
@@ -704,8 +714,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesSinglePairSuccess() throws InterruptedException, ExecutionManagerException,
-			IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesSinglePairSuccess()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesPairSuccess");
@@ -725,7 +735,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		analysisSubmission.setRemoteWorkflowId(galaxyWorkflow.getId());
 
 		PreparedWorkflowGalaxy preparedWorkflow = analysisWorkspaceService.prepareAnalysisFiles(analysisSubmission);
-		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(), "the response history id should match the input history id");
+		assertEquals(createdHistory.getId(), preparedWorkflow.getRemoteAnalysisId(),
+				"the response history id should match the input history id");
 		WorkflowInputsGalaxy workflowInputsGalaxy = preparedWorkflow.getWorkflowInputs();
 		assertNotNull(workflowInputsGalaxy, "the returned workflow inputs should not be null");
 
@@ -763,8 +774,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesSinglePairFail() throws InterruptedException, ExecutionManagerException,
-			IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesSinglePairFail()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesSinglePairFail");
@@ -798,8 +809,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testPrepareAnalysisFilesFail() throws InterruptedException, ExecutionManagerException,
-			IOException, IridaWorkflowException {
+	public void testPrepareAnalysisFilesFail()
+			throws InterruptedException, ExecutionManagerException, IOException, IridaWorkflowException {
 
 		History history = new History();
 		history.setName("testPrepareAnalysisFilesFail");
@@ -836,9 +847,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetAnalysisResultsTestAnalysisSingleSuccess() throws InterruptedException,
-			ExecutionManagerException, IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException,
-			TimeoutException {
+	public void testGetAnalysisResultsTestAnalysisSingleSuccess()
+			throws InterruptedException, ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
+			IridaWorkflowAnalysisTypeException, TimeoutException {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisSingleSuccess");
@@ -892,7 +903,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	/**
 	 * Tests out successfully getting results for an analysis (TestAnalysis)
-	 * consisting only of single end sequence reads (for workflow accepting single sample).
+	 * consisting only of single end sequence reads (for workflow accepting
+	 * single sample).
 	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
@@ -903,9 +915,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetAnalysisResultsTestAnalysisSingleSingleSampleSuccess() throws InterruptedException,
-			ExecutionManagerException, IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException,
-			TimeoutException {
+	public void testGetAnalysisResultsTestAnalysisSingleSingleSampleSuccess()
+			throws InterruptedException, ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
+			IridaWorkflowAnalysisTypeException, TimeoutException {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisSingleSuccess");
@@ -970,9 +982,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetAnalysisResultsTestAnalysisPairedSuccess() throws InterruptedException,
-			ExecutionManagerException, IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException,
-			TimeoutException {
+	public void testGetAnalysisResultsTestAnalysisPairedSuccess()
+			throws InterruptedException, ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
+			IridaWorkflowAnalysisTypeException, TimeoutException {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisPairedSuccess");
@@ -1045,9 +1057,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetAnalysisResultsTestAnalysisPairedSingleSampleSuccess() throws InterruptedException,
-			ExecutionManagerException, IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException,
-			TimeoutException {
+	public void testGetAnalysisResultsTestAnalysisPairedSingleSampleSuccess()
+			throws InterruptedException, ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
+			IridaWorkflowAnalysisTypeException, TimeoutException {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisPairedSingleSampleSuccess");
@@ -1109,7 +1121,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 	/**
 	 * Tests out successfully getting results for an analysis (TestAnalysis)
-	 * when sequencing objects are present, but the sample was deleted while pipeline was running.
+	 * when sequencing objects are present, but the sample was deleted while
+	 * pipeline was running.
 	 *
 	 * @throws InterruptedException
 	 * @throws ExecutionManagerException
@@ -1120,9 +1133,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetAnalysisResultsTestAnalysisDeleteSampleRunningSuccess() throws InterruptedException,
-			ExecutionManagerException, IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException,
-			TimeoutException {
+	public void testGetAnalysisResultsTestAnalysisDeleteSampleRunningSuccess()
+			throws InterruptedException, ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
+			IridaWorkflowAnalysisTypeException, TimeoutException {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisDeleteSampleRunningSuccess");
@@ -1187,9 +1200,9 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testGetAnalysisResultsTestAnalysisSinglePairedSuccess() throws InterruptedException,
-			ExecutionManagerException, IridaWorkflowNotFoundException, IOException, IridaWorkflowAnalysisTypeException,
-			TimeoutException {
+	public void testGetAnalysisResultsTestAnalysisSinglePairedSuccess()
+			throws InterruptedException, ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
+			IridaWorkflowAnalysisTypeException, TimeoutException {
 
 		History history = new History();
 		history.setName("testGetAnalysisResultsTestAnalysisSinglePairedSuccess");
@@ -1217,8 +1230,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 		paths2.add(sequenceFilePath2A);
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
-				.setupSinglePairSubmissionInDatabaseSameSample(1L, paths1, paths2, sequenceFilePath3,
-						referenceFilePath, validWorkflowIdSinglePaired);
+				.setupSinglePairSubmissionInDatabaseSameSample(1L, paths1, paths2, sequenceFilePath3, referenceFilePath,
+						validWorkflowIdSinglePaired);
 
 		Set<SingleEndSequenceFile> singleFiles = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
@@ -1296,7 +1309,8 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 
 		Analysis analysis = analysisWorkspaceService.getAnalysisResults(analysisSubmission);
 		assertNotNull(analysis, "the analysis results were not properly created");
-		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, analysis.getAnalysisType(), "the Analysis results class is invalid");
+		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, analysis.getAnalysisType(),
+				"the Analysis results class is invalid");
 		assertEquals(3, analysis.getAnalysisOutputFiles().size(),
 				"the analysis results has an invalid number of output files");
 		assertEquals(Paths.get(TABLE_NAME), analysis.getAnalysisOutputFile(TABLE_KEY).getFile().getFileName(),

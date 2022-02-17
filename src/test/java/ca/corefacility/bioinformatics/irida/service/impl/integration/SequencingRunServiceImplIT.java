@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
+import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
@@ -12,24 +13,17 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Lists;
 
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,17 +34,9 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Test for SequencingRunServiceImplIT. NOTE: This class uses a separate table
- * reset file at /ca/corefacility/bioinformatics/irida/service/impl/
- * SequencingRunServiceTableReset.xml
- * 
- *
+ * Test for SequencingRunServiceImplIT.
  */
-@Tag("IntegrationTest") @Tag("Service")
-@SpringBootTest
-@ActiveProfiles("it")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExecutionListener.class })
+@ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/SequencingRunServiceImplIT.xml")
 @DatabaseTearDown({ "/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml" })
 public class SequencingRunServiceImplIT {
@@ -139,7 +125,7 @@ public class SequencingRunServiceImplIT {
 					if (waits > maxWait) {
 						throw new RuntimeException("Waited too long for fastqc to run");
 					}
-					
+
 					logger.info("Fastqc still isn't finished, sleeping a bit.");
 					Thread.sleep(1000);
 				}
@@ -156,14 +142,13 @@ public class SequencingRunServiceImplIT {
 		SequencingRun returned = miseqRunService.create(mr);
 		assertNotNull(returned.getId(), "Created run was not assigned an ID.");
 	}
-	
+
 	@Test
 	@WithMockUser(username = "tech", password = "password1", roles = "TECHNICIAN")
 	public void testReadMiseqRunAsTech() {
 		SequencingRun mr = miseqRunService.read(1L);
 		assertNotNull(mr.getId(), "Created run was not assigned an ID.");
 	}
-
 
 	@Test
 	@WithMockUser(username = "sequencer", password = "password1", roles = "SEQUENCER")
@@ -190,7 +175,7 @@ public class SequencingRunServiceImplIT {
 			miseqRunService.update(mr);
 		});
 	}
-	
+
 	@Test
 	@WithMockUser(username = "tech", password = "password1", roles = "TECHNICIAN")
 	public void testUpdateMiseqRunAsTechFail() {
@@ -201,7 +186,7 @@ public class SequencingRunServiceImplIT {
 			miseqRunService.update(mr);
 		});
 	}
-	
+
 	@Test
 	@WithMockUser(username = "tech", password = "password1", roles = "TECHNICIAN")
 	public void testDeleteMiseqRunAsTechFail() {
@@ -227,7 +212,7 @@ public class SequencingRunServiceImplIT {
 		String newDescription = "a different description";
 		SequencingRun mr = miseqRunService.read(1L);
 		mr.setDescription(newDescription);
-		
+
 		SequencingRun update = miseqRunService.update(mr);
 		assertEquals(update.getDescription(), newDescription);
 	}
@@ -258,7 +243,7 @@ public class SequencingRunServiceImplIT {
 		List<SequencingRun> runs = Lists.newArrayList(findAll);
 		assertEquals(5, runs.size(), "user should be able to see all 5 runs");
 	}
-	
+
 	@Test
 	@WithMockUser(username = "tech", password = "password1", roles = "TECHNICIAN")
 	public void testFindAllTech() {
