@@ -116,20 +116,28 @@ Checking to see that Tomcat starts will ensure that you're able to start hacking
 IRIDA uses Maven for build and dependency management. You can check to see that Tomcat starts like so:
 
     mvn clean spring-boot:run
-    
+
 #### Database first-time setup
 
-When first starting up Tomcat, you'll need to have the database created and populated, which can be done by running the following script:
+When first starting up Tomcat, you'll need to have the database created and populated, which can be done by running the
+following script:
 
     ./run.sh --create-db
-    
-This will create the database schema and import some testing data. This can also be used to drop then recreate the database and reimport the starting dataset when a clean database is needed.
+
+This will create the database schema and import some testing data. This can also be used to drop then recreate the
+database and reimport the starting dataset when a clean database is needed.
 
 For all subsequent runs, simply run the script with no options:
 
     ./run.sh
-    
-This will update the database if the schema has been changed, but without dropping all of the tables beforehand, which will cause Tomcat to start up much faster.
+
+This will update the database if the schema has been changed, but without dropping all of the tables beforehand, which
+will cause Tomcat to start up much faster.
+
+Other arguments can be be passed to the script:
+
+* `--no-yarn`: Skip running the `yarn build` script along with the build, useful during development.
+* `--prod`: Run spring using the production profile.
 
 #### Integration Testing
 

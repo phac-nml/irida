@@ -47,9 +47,12 @@ public class UIActivitiesService {
 	/**
 	 * Get a page of activites for a project
 	 *
-	 * @param projectId Identifier for the current project
-	 * @param page      Current page of activities being asked for
-	 * @param locale    Current users locale
+	 * @param projectId
+	 *            Identifier for the current project
+	 * @param page
+	 *            Current page of activities being asked for
+	 * @param locale
+	 *            Current users locale
 	 * @return The page of activities plus the total amount of activities
 	 */
 	public PagedListResponse geActivitiesForProject(Long projectId, int page, Locale locale) {
@@ -57,9 +60,7 @@ public class UIActivitiesService {
 		final int DEFAULT_PAGE_SIZE = 10;
 		Page<ProjectEvent> events = projectEventService.getEventsForProject(project,
 				PageRequest.of(page, DEFAULT_PAGE_SIZE, Sort.Direction.DESC, "createdDate"));
-		List<ListItem> activities = events.getContent()
-				.stream()
-				.map(event -> createActivity(event, locale))
+		List<ListItem> activities = events.getContent().stream().map(event -> createActivity(event, locale))
 				.collect(Collectors.toList());
 		return new PagedListResponse(events.getTotalElements(), activities);
 	}
@@ -67,20 +68,21 @@ public class UIActivitiesService {
 	/**
 	 * Format an event into a UI activity based on the type of event
 	 *
-	 * @param event  the event that occured
-	 * @param locale current users locale
+	 * @param event
+	 *            the event that occured
+	 * @param locale
+	 *            current users locale
 	 * @return the UI formatted activity
 	 */
 	private Activity createActivity(ProjectEvent event, Locale locale) {
 		if (event instanceof UserRoleSetProjectEvent) {
 			UserRoleSetProjectEvent type = (UserRoleSetProjectEvent) event;
 			User user = type.getUser();
-			Project project = type.getProject();
 			String sentence = messageSource.getMessage("server.ProjectActivity.user_role_updated", new Object[] {},
 					locale);
 			ActivityItem userItem = new ActivityItem("/users/" + user.getId(), user.getLabel());
-			ActivityItem roleItem = new ActivityItem(null, messageSource.getMessage("projectRole." + type.getRole()
-					.toString(), new Object[] {}, locale));
+			ActivityItem roleItem = new ActivityItem(null,
+					messageSource.getMessage("projectRole." + type.getRole().toString(), new Object[] {}, locale));
 			return new Activity(type.getId(), ActivityType.PROJECT_USER_ROLE.label, sentence, event.getCreatedDate(),
 					ImmutableList.of(userItem, roleItem));
 		} else if (event instanceof UserRemovedProjectEvent) {
@@ -88,7 +90,8 @@ public class UIActivitiesService {
 			User user = type.getUser();
 			ActivityItem userItem = new ActivityItem("/users/" + user.getId(), user.getLabel());
 			String sentence = messageSource.getMessage("server.ProjectActivity.user_removed", new Object[] {}, locale);
-			return new Activity(event.getId(), ActivityType.PROJECT_USER_REMOVED.label, sentence, event.getCreatedDate(), ImmutableList.of(userItem));
+			return new Activity(event.getId(), ActivityType.PROJECT_USER_REMOVED.label, sentence,
+					event.getCreatedDate(), ImmutableList.of(userItem));
 
 		} else if (event instanceof SampleAddedProjectEvent) {
 			SampleAddedProjectEvent type = (SampleAddedProjectEvent) event;
@@ -103,24 +106,29 @@ public class UIActivitiesService {
 			DataAddedToSampleProjectEvent type = (DataAddedToSampleProjectEvent) event;
 			Sample sample = type.getSample();
 			Project project = type.getProject();
-			ActivityItem sampleItem = new ActivityItem("/projects/" + project.getId() + "/samples/" + sample.getId() + "/sequenceFiles",
+			ActivityItem sampleItem = new ActivityItem(
+					"/projects/" + project.getId() + "/samples/" + sample.getId() + "/sequenceFiles",
 					sample.getLabel());
-			String sentence = messageSource.getMessage("server.ProjectActivity.sample_data_added", new Object[] {}, locale);
-			return new Activity(event.getId(), ActivityType.PROJECT_SAMPLE_DATA_ADDED.label, sentence, event.getCreatedDate(), ImmutableList.of(sampleItem));
+			String sentence = messageSource.getMessage("server.ProjectActivity.sample_data_added", new Object[] {},
+					locale);
+			return new Activity(event.getId(), ActivityType.PROJECT_SAMPLE_DATA_ADDED.label, sentence,
+					event.getCreatedDate(), ImmutableList.of(sampleItem));
 		} else if (event instanceof UserGroupRoleSetProjectEvent) {
 			UserGroupRoleSetProjectEvent type = (UserGroupRoleSetProjectEvent) event;
 			UserGroup group = type.getUserGroup();
 			ActivityItem groupItem = new ActivityItem("/groups/" + group.getId(), group.getLabel());
-			String role = messageSource.getMessage("projectRole." + type.getRole()
-					.toString(), new Object[] {}, locale);
-			String sentence = messageSource.getMessage("server.ProjectActivity.user_group_added", new Object[] {}, locale);
-			return new Activity(event.getId(), ActivityType.PROJECT_USER_GROUP_ADDED.label, sentence, event.getCreatedDate(), ImmutableList.of(groupItem));
-		}else if (event instanceof UserGroupRemovedProjectEvent) {
+			String sentence = messageSource.getMessage("server.ProjectActivity.user_group_added", new Object[] {},
+					locale);
+			return new Activity(event.getId(), ActivityType.PROJECT_USER_GROUP_ADDED.label, sentence,
+					event.getCreatedDate(), ImmutableList.of(groupItem));
+		} else if (event instanceof UserGroupRemovedProjectEvent) {
 			UserGroupRemovedProjectEvent type = (UserGroupRemovedProjectEvent) event;
 			UserGroup group = type.getUserGroup();
 			ActivityItem groupItem = new ActivityItem("/groups/" + group.getId(), group.getLabel());
-			String sentence = messageSource.getMessage("server.ProjectActivity.user_group_removed", new Object[] {}, locale);
-			return new Activity(event.getId(), ActivityType.PROJECT_USER_GROUP_REMOVED.label, sentence, event.getCreatedDate(), ImmutableList.of(groupItem));
+			String sentence = messageSource.getMessage("server.ProjectActivity.user_group_removed", new Object[] {},
+					locale);
+			return new Activity(event.getId(), ActivityType.PROJECT_USER_GROUP_REMOVED.label, sentence,
+					event.getCreatedDate(), ImmutableList.of(groupItem));
 		}
 		return null;
 	}

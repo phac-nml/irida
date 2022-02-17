@@ -40,11 +40,10 @@ public class FastaView extends AbstractView {
 	@Override
 	protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		IridaSequenceFile sfr = (IridaSequenceFile) ((ResponseResource) model.get(
-				RESTGenericController.RESOURCE_NAME)).getResource();
+		IridaSequenceFile sfr = (IridaSequenceFile) ((ResponseResource<?>) model
+				.get(RESTGenericController.RESOURCE_NAME)).getResource();
 		Path fileContent = sfr.getFile();
-		String filename = fileContent.getFileName()
-				.toString();
+		String filename = fileContent.getFileName().toString();
 		logger.trace("Sending file to client [" + filename + "]");
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
 		response.setHeader(HttpHeaders.CONTENT_TYPE, DEFAULT_CONTENT_TYPE);

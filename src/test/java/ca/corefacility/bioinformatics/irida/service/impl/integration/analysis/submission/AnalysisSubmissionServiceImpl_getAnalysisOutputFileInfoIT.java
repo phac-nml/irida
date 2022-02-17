@@ -4,23 +4,17 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableSet;
@@ -28,13 +22,10 @@ import com.google.common.collect.ImmutableSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Tests for an analysis service methods for getting analysis output file info for projects and users.
+ * Tests for an analysis service methods for getting analysis output file info
+ * for projects and users.
  */
-@Tag("IntegrationTest") @Tag("Service")
-@SpringBootTest
-@ActiveProfiles("it")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExecutionListener.class })
+@ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/analysis/submission/AnalysisSubmissionServiceIT_getAnalysisOutputFileInfo.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisSubmissionServiceImpl_getAnalysisOutputFileInfoIT {
@@ -48,8 +39,8 @@ public class AnalysisSubmissionServiceImpl_getAnalysisOutputFileInfoIT {
 	@Test
 	@WithMockUser(username = "thisguy", roles = "USER")
 	public void testGetAllAnalysisOutputInfoSharedWithAProject() throws ParseException {
-		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionService.getAllAnalysisOutputInfoSharedWithProject(
-				1L);
+		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionService
+				.getAllAnalysisOutputInfoSharedWithProject(1L);
 		assertEquals(2L, infos.size(),
 				"There should be 2 ProjectSampleAnalysisOutputInfo, but there were " + infos.size());
 		assertEquals(new HashSet<>(infos), expectedSharedOutputsForProject1(), "All outputs must match expected");
@@ -58,8 +49,8 @@ public class AnalysisSubmissionServiceImpl_getAnalysisOutputFileInfoIT {
 	@Test
 	@WithMockUser(username = "otherguy", roles = "USER")
 	public void testGetAllAutomatedAnalysisOutputInfoForAProject() throws ParseException {
-		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionService.getAllAutomatedAnalysisOutputInfoForAProject(
-				1L);
+		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionService
+				.getAllAutomatedAnalysisOutputInfoForAProject(1L);
 		assertEquals(4L, infos.size(),
 				"There should be 4 ProjectSampleAnalysisOutputInfo, but there were " + infos.size());
 		assertEquals(new HashSet<>(infos), expectedAutomatedOutputsForProject1(), "All outputs must match expected");
@@ -67,6 +58,7 @@ public class AnalysisSubmissionServiceImpl_getAnalysisOutputFileInfoIT {
 
 	private Set<ProjectSampleAnalysisOutputInfo> expectedUserOutputs() throws ParseException {
 		final Date date = getDate();
+
 		return ImmutableSet.of(new ProjectSampleAnalysisOutputInfo(2L, "sample2", 4L, "sistr", "sistr2.json", 4L,
 						BuiltInAnalysisTypes.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
 						"not sharing my sistr", 4L, null, null, null, 1L),
@@ -79,8 +71,8 @@ public class AnalysisSubmissionServiceImpl_getAnalysisOutputFileInfoIT {
 	@WithMockUser(username = "otherguy", roles = "USER")
 	public void testGetUserAnalysisOutputInfo() throws ParseException {
 		final User user = userRepository.loadUserByUsername("otherguy");
-		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionService.getAllUserAnalysisOutputInfo(
-				user);
+		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionService
+				.getAllUserAnalysisOutputInfo(user);
 		assertEquals(2L, infos.size(),
 				"There should be 2 ProjectSampleAnalysisOutputInfo, but there were " + infos.size());
 		assertEquals(new HashSet<>(infos), expectedUserOutputs(), "All outputs must match expected");
