@@ -120,8 +120,8 @@ public class ClientsController extends BaseController {
 		int allTokensForClient = clientDetailsService.countTokensForClient(client);
 		int activeTokensForClient = clientDetailsService.countActiveTokensForClient(client);
 
-		model.addAttribute("activeTokens",activeTokensForClient);
-		model.addAttribute("expiredTokens",allTokensForClient - activeTokensForClient);
+		model.addAttribute("activeTokens", activeTokensForClient);
+		model.addAttribute("expiredTokens", allTokensForClient - activeTokensForClient);
 
 		return CLIENT_DETAILS_PAGE;
 	}
@@ -142,7 +142,9 @@ public class ClientsController extends BaseController {
 
 	/**
 	 * Revoke access tokens for a specific client.
-	 * @param id - identifier for a client
+	 * 
+	 * @param id
+	 *            - identifier for a client
 	 */
 	@RequestMapping(value = "/ajax/revoke", method = RequestMethod.DELETE)
 	public void revokeClientTokens(@RequestParam Long id) {
@@ -163,7 +165,6 @@ public class ClientsController extends BaseController {
 	public String getEditPage(@PathVariable Long clientId, Model model) {
 		IridaClientDetails client = clientDetailsService.read(clientId);
 
-
 		model.addAttribute("client", client);
 
 		model.addAttribute("serverBaseUrl", serverBaseUrl);
@@ -183,10 +184,10 @@ public class ClientsController extends BaseController {
 
 		Set<String> autoScopes = client.getAutoApprovableScopes();
 		for (String autoScope : autoScopes) {
-			model.addAttribute("given_scope_auto_" + autoScope,true);
+			model.addAttribute("given_scope_auto_" + autoScope, true);
 		}
 
-		if(client.getAuthorizedGrantTypes().contains("refresh_token")){
+		if (client.getAuthorizedGrantTypes().contains("refresh_token")) {
 			model.addAttribute("refresh", true);
 		}
 
@@ -198,20 +199,34 @@ public class ClientsController extends BaseController {
 	/**
 	 * Submit client details edit
 	 *
-	 * @param clientId                   the long ID of the {@link IridaClientDetails} to edit
-	 * @param accessTokenValiditySeconds The new accessTokenValiditySeconds
-	 * @param authorizedGrantTypes       the new authorizedGrantTypes
-	 * @param scope_read                 whether to allow read scope
-	 * @param scope_write                whether to allow write scope
-	 * @param scope_auto_read            whether to allow automatic authorization for the read scope
-	 * @param scope_auto_write           whether to allow automatic authorization for the write scope
-	 * @param new_secret                 whether to generate a new client secret
-	 * @param refresh                    Whether the client shoudl allow refresh tokens
-	 * @param registeredRedirectUri      The URI of the authorization code client to return tokens to
-	 * @param refreshTokenValidity       How long the refresh token will be valid
-	 * @param model                      Model for the view
-	 * @param locale                     Locale of the logged in user
-	 * @return Redirect to the client details page if successful, the edit page if there are errors
+	 * @param clientId
+	 *            the long ID of the {@link IridaClientDetails} to edit
+	 * @param accessTokenValiditySeconds
+	 *            The new accessTokenValiditySeconds
+	 * @param authorizedGrantTypes
+	 *            the new authorizedGrantTypes
+	 * @param scope_read
+	 *            whether to allow read scope
+	 * @param scope_write
+	 *            whether to allow write scope
+	 * @param scope_auto_read
+	 *            whether to allow automatic authorization for the read scope
+	 * @param scope_auto_write
+	 *            whether to allow automatic authorization for the write scope
+	 * @param new_secret
+	 *            whether to generate a new client secret
+	 * @param refresh
+	 *            Whether the client shoudl allow refresh tokens
+	 * @param registeredRedirectUri
+	 *            The URI of the authorization code client to return tokens to
+	 * @param refreshTokenValidity
+	 *            How long the refresh token will be valid
+	 * @param model
+	 *            Model for the view
+	 * @param locale
+	 *            Locale of the logged in user
+	 * @return Redirect to the client details page if successful, the edit page
+	 *         if there are errors
 	 */
 	@RequestMapping(value = "/{clientId}/edit", method = RequestMethod.POST)
 	public String postEditClient(@PathVariable Long clientId,
@@ -238,13 +253,13 @@ public class ClientsController extends BaseController {
 		Set<String> autoScopes = new HashSet<>();
 		if (scope_write.equals("write")) {
 			scopes.add("write");
-			if(scope_auto_write.equals("write")) {
+			if (scope_auto_write.equals("write")) {
 				autoScopes.add("write");
 			}
 		}
 		if (scope_read.equals("read")) {
 			scopes.add("read");
-			if(scope_auto_read.equals("read")) {
+			if (scope_auto_read.equals("read")) {
 				autoScopes.add("read");
 			}
 		}
@@ -261,8 +276,7 @@ public class ClientsController extends BaseController {
 		if (refresh.equals("refresh")) {
 			readClient.getAuthorizedGrantTypes().add("refresh_token");
 		} else {
-			readClient.getAuthorizedGrantTypes()
-					.remove("refresh_token");
+			readClient.getAuthorizedGrantTypes().remove("refresh_token");
 		}
 
 		if (refreshTokenValidity != 0) {
@@ -271,11 +285,11 @@ public class ClientsController extends BaseController {
 
 		String response;
 		try {
-			if (readClient.getAuthorizedGrantTypes()
-					.contains("authorization_code") && registeredRedirectUri.isEmpty()) {
-				//noinspection unchecked
+			if (readClient.getAuthorizedGrantTypes().contains("authorization_code")
+					&& registeredRedirectUri.isEmpty()) {
+				// noinspection unchecked
 				throw new ConstraintViolationException("Redirect URI required for authorization_code clients",
-						Sets.newHashSet(ConstraintViolationImpl.forParameterValidation("client.redirect.required",
+						Collections.singleton(ConstraintViolationImpl.forParameterValidation("client.redirect.required",
 								Maps.newHashMap(), Maps.newHashMap(),
 								messageSource.getMessage("client.redirect.required", null, locale),
 								IridaClientDetails.class, readClient, null, null,
@@ -327,18 +341,26 @@ public class ClientsController extends BaseController {
 	/**
 	 * Create a new client
 	 *
-	 * @param client           The client to add
-	 * @param scope_read       if the client should be allowed to read from the server (value
-	 *                         should be "read").
-	 * @param scope_write      if the client should be allowed to write to the server (value
-	 *                         should be "write").
-	 * @param scope_auto_read  whether to allow automatic authorization for the read scope
-	 * @param scope_auto_write whether to allow automatic authorization for the write scope
-	 * @param refresh          whether the client should allow refresh tokens
-	 * @param model            Model for the view
-	 * @param locale           Locale of the current user session
+	 * @param client
+	 *            The client to add
+	 * @param scope_read
+	 *            if the client should be allowed to read from the server (value
+	 *            should be "read").
+	 * @param scope_write
+	 *            if the client should be allowed to write to the server (value
+	 *            should be "write").
+	 * @param scope_auto_read
+	 *            whether to allow automatic authorization for the read scope
+	 * @param scope_auto_write
+	 *            whether to allow automatic authorization for the write scope
+	 * @param refresh
+	 *            whether the client should allow refresh tokens
+	 * @param model
+	 *            Model for the view
+	 * @param locale
+	 *            Locale of the current user session
 	 * @return Redirect to the newly created client page, or back to the
-	 * creation page in case of an error.
+	 *         creation page in case of an error.
 	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public String postCreateClient(@ModelAttribute IridaClientDetails client,
@@ -353,21 +375,20 @@ public class ClientsController extends BaseController {
 		Set<String> scopes = new HashSet<>();
 		if (scope_write.equals("write")) {
 			scopes.add("write");
-			if(scope_auto_write.equals("write")) {
+			if (scope_auto_write.equals("write")) {
 				autoScopes.add("write");
 			}
 		}
 
 		if (scope_read.equals("read")) {
 			scopes.add("read");
-			if(scope_auto_read.equals("read")) {
+			if (scope_auto_read.equals("read")) {
 				autoScopes.add("read");
 			}
 		}
 
 		if (refresh.equals("refresh")) {
-			client.getAuthorizedGrantTypes()
-					.add("refresh_token");
+			client.getAuthorizedGrantTypes().add("refresh_token");
 		}
 
 		client.setScope(scopes);
@@ -376,12 +397,10 @@ public class ClientsController extends BaseController {
 		String responsePage;
 		try {
 			// Ensure if we have an auth_code grant we have a redirect
-			if (client.getAuthorizedGrantTypes()
-					.contains("authorization_code") && client.getRedirectUri()
-					.isEmpty()) {
-				//noinspection unchecked
+			if (client.getAuthorizedGrantTypes().contains("authorization_code") && client.getRedirectUri().isEmpty()) {
+				// noinspection unchecked
 				throw new ConstraintViolationException("Redirect URI required for authorization_code clients",
-						Sets.newHashSet(ConstraintViolationImpl.forParameterValidation("client.redirect.required",
+						Collections.singleton(ConstraintViolationImpl.forParameterValidation("client.redirect.required",
 								Maps.newHashMap(), Maps.newHashMap(),
 								messageSource.getMessage("client.redirect.required", null, locale),
 								IridaClientDetails.class, client, null, null,
@@ -393,17 +412,12 @@ public class ClientsController extends BaseController {
 			}
 		} catch (RuntimeException ex) {
 			String grant = null;
-			if (client.getAuthorizedGrantTypes() != null && !client.getAuthorizedGrantTypes()
-					.isEmpty()) {
-				grant = client.getAuthorizedGrantTypes()
-						.iterator()
-						.next();
+			if (client.getAuthorizedGrantTypes() != null && !client.getAuthorizedGrantTypes().isEmpty()) {
+				grant = client.getAuthorizedGrantTypes().iterator().next();
 			}
 			handleCreateUpdateException(ex, model, locale, scope_write, scope_read, scope_auto_read, scope_auto_write,
 					client.getClientId(), client.getAccessTokenValiditySeconds(), grant,
-					client.getRegisteredRedirectUri()
-							.iterator()
-							.next());
+					client.getRegisteredRedirectUri().iterator().next());
 			responsePage = getAddClientPage(model);
 		}
 

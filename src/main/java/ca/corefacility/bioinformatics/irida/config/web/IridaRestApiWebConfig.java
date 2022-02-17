@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +22,7 @@ import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import ca.corefacility.bioinformatics.irida.web.controller.api.json.PathJson;
+import ca.corefacility.bioinformatics.irida.web.controller.api.json.TimestampJson;
 import ca.corefacility.bioinformatics.irida.web.spring.view.*;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -79,14 +80,18 @@ public class IridaRestApiWebConfig implements WebMvcConfigurer {
 		// add support for serializing Path data
 		SimpleModule module = new SimpleModule();
 		module.addSerializer(Path.class, new PathJson.PathSerializer());
-		jsonView.getObjectMapper()
-				.registerModule(module);
+		jsonView.getObjectMapper().registerModule(module);
 
-		// java.util.date fields (i.e. createdDate, modifiedDate, etc) are stored in the database with
-		// seconds precision, but are generated at higher precision. To combat this, previously the entity
-		// was re-read from the database. Now we are just formatting the date with 0s for milliseconds
+		// java.util.date fields (i.e. createdDate, modifiedDate, etc) are
+		// stored in the database with
+		// seconds precision, but are generated at higher precision. To combat
+		// this, previously the entity
+		// was re-read from the database. Now we are just formatting the date
+		// with 0s for milliseconds
 		// portion.
-		jsonView.getObjectMapper().setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.'000Z'"));
+		SimpleModule timestampModule = new SimpleModule();
+		timestampModule.addSerializer(Date.class, new TimestampJson.TimestampSerializer());
+		jsonView.getObjectMapper().registerModule(timestampModule);
 
 		views.add(jsonView);
 
@@ -103,8 +108,6 @@ public class IridaRestApiWebConfig implements WebMvcConfigurer {
 		Map<String, MediaType> mediaTypes = ImmutableMap.of("json", MediaType.APPLICATION_JSON, "fasta",
 				MediaType.valueOf("application/fasta"), "fastq", MediaType.valueOf("application/fastq"), "gbk",
 				MediaType.valueOf("application/genbank"));
-		configurer.ignoreAcceptHeader(false)
-				.defaultContentType(MediaType.APPLICATION_JSON)
-				.mediaTypes(mediaTypes);
+		configurer.ignoreAcceptHeader(false).defaultContentType(MediaType.APPLICATION_JSON).mediaTypes(mediaTypes);
 	}
 }

@@ -46,7 +46,6 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdatedAnalysisProgress;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
-import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelData;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ResponseDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
@@ -67,8 +66,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 /**
- * Controller for individual Analysis ajax requests (details page,
- * analysis outputs, project analysis outputs)
+ * Controller for individual Analysis ajax requests (details page, analysis
+ * outputs, project analysis outputs)
  */
 @RestController
 @Scope("session")
@@ -82,7 +81,6 @@ public class AnalysisAjaxController {
 	private IridaWorkflowsService workflowsService;
 	private MessageSource messageSource;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
-	private AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager;
 	private MetadataTemplateService metadataTemplateService;
 	private SequencingObjectService sequencingObjectService;
 	private SampleService sampleService;
@@ -99,14 +97,13 @@ public class AnalysisAjaxController {
 			IridaWorkflowsService iridaWorkflowsService, UserService userService, SampleService sampleService,
 			ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
 			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
-			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor,
-			AnalysisOutputFileDownloadManager analysisOutputFileDownloadManager, MessageSource messageSource,
-			ExecutionManagerConfig configFile, AnalysisAudit analysisAudit, AnalysisTypesService analysisTypesService, EmailController emailController) {
+			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, MessageSource messageSource,
+			ExecutionManagerConfig configFile, AnalysisAudit analysisAudit, AnalysisTypesService analysisTypesService,
+			EmailController emailController) {
 
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.userService = userService;
-		this.analysisOutputFileDownloadManager = analysisOutputFileDownloadManager;
 		this.messageSource = messageSource;
 		this.sampleService = sampleService;
 		this.projectService = projectService;
@@ -120,12 +117,11 @@ public class AnalysisAjaxController {
 		this.emailController = emailController;
 	}
 
-
 	/**
 	 * Update an analysis email pipeline completion result
 	 *
-	 * @param parameters parameters which include the submission id and
-	 *                   the new email pipeline result value
+	 * @param parameters parameters which include the submission id and the new email
+	 *                   pipeline result value
 	 * @param locale     User's locale
 	 * @param response   HTTP response object
 	 * @return dto with message
@@ -140,15 +136,12 @@ public class AnalysisAjaxController {
 		if ((submission.getAnalysisState() != AnalysisState.COMPLETED) && (submission.getAnalysisState()
 				!= AnalysisState.ERROR)) {
 
-			if(parameters.getEmailPipelineResultCompleted() && parameters.getEmailPipelineResultError()) {
-				message = messageSource.getMessage("AnalysisDetails.receiveCompletionEmail", new Object[] {},
-						locale);
-			} else if(!parameters.getEmailPipelineResultCompleted() && !parameters.getEmailPipelineResultError()) {
-				message = messageSource.getMessage("AnalysisDetails.willNotReceiveEmail", new Object[] {},
-						locale);
+			if (parameters.getEmailPipelineResultCompleted() && parameters.getEmailPipelineResultError()) {
+				message = messageSource.getMessage("AnalysisDetails.receiveCompletionEmail", new Object[] {}, locale);
+			} else if (!parameters.getEmailPipelineResultCompleted() && !parameters.getEmailPipelineResultError()) {
+				message = messageSource.getMessage("AnalysisDetails.willNotReceiveEmail", new Object[] {}, locale);
 			} else if (!parameters.getEmailPipelineResultCompleted() && parameters.getEmailPipelineResultError()) {
-				message = messageSource.getMessage("AnalysisDetails.receiveErrorEmail", new Object[] {},
-						locale);
+				message = messageSource.getMessage("AnalysisDetails.receiveErrorEmail", new Object[] {}, locale);
 			}
 
 			submission.setEmailPipelineResultCompleted(parameters.getEmailPipelineResultCompleted());
@@ -220,8 +213,9 @@ public class AnalysisAjaxController {
 
 		// details is a DTO (Data Transfer Object)
 		return new AnalysisDetails(analysisDescription, workflowName, version, priority, duration,
-				submission.getCreatedDate(), priorities, emailPipelineResultCompleted, emailPipelineResultError, canShareToSamples,
-				updateAnalysisPermission.isAllowed(authentication, submission), submission.getUpdateSamples());
+				submission.getCreatedDate(), priorities, emailPipelineResultCompleted, emailPipelineResultError,
+				canShareToSamples, updateAnalysisPermission.isAllowed(authentication, submission),
+				submission.getUpdateSamples());
 	}
 
 	/**
@@ -265,7 +259,7 @@ public class AnalysisAjaxController {
 			logger.debug("No reference file required for workflow.");
 		}
 
-		//List of AnalysisSamples which store the sample info
+		// List of AnalysisSamples which store the sample info
 		List<AnalysisSamples> pairedEnd = new ArrayList<>();
 		List<AnalysisSingleEndSamples> singleEnd = new ArrayList<>();
 
@@ -308,7 +302,8 @@ public class AnalysisAjaxController {
 	/**
 	 * Update an analysis name and/or priority
 	 *
-	 * @param parameters parameters which include the submission id and the new name and/or priority
+	 * @param parameters parameters which include the submission id and the new name
+	 *                   and/or priority
 	 * @param locale     User's locale
 	 * @param response   HTTP response object
 	 * @return dto with message
@@ -340,7 +335,8 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * For an {@link AnalysisSubmission}, get info about each {@link AnalysisOutputFile}
+	 * For an {@link AnalysisSubmission}, get info about each
+	 * {@link AnalysisOutputFile}
 	 *
 	 * @param id {@link AnalysisSubmission} id
 	 * @return map of info about each {@link AnalysisOutputFile}
@@ -376,7 +372,8 @@ public class AnalysisAjaxController {
 	 */
 	private AnalysisOutputFileInfo getAnalysisOutputFileInfo(AnalysisSubmission submission, Analysis analysis,
 			String outputName) {
-		// set of file extensions for indicating whether the first line of the file should be read
+		// set of file extensions for indicating whether the first line of the
+		// file should be read
 		final ImmutableSet<String> FILE_EXT_READ_FIRST_LINE = ImmutableSet.of("tsv", "txt", "tabular", "csv", "tab",
 				TREE_EXT);
 		final AnalysisOutputFile aof = analysis.getAnalysisOutputFile(outputName);
@@ -400,9 +397,12 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Add the {@code firstLine} and {@code filePointer} file byte position after reading the first line of an {@link AnalysisOutputFile} to a {@link AnalysisOutputFileInfo} object.
+	 * Add the {@code firstLine} and {@code filePointer} file byte position
+	 * after reading the first line of an {@link AnalysisOutputFile} to a
+	 * {@link AnalysisOutputFileInfo} object.
 	 *
-	 * @param info Object to add {@code firstLine} and {@code filePointer} info to
+	 * @param info Object to add {@code firstLine} and {@code filePointer} info
+	 *             to
 	 * @param aof  {@link AnalysisOutputFile} to read from
 	 */
 	private void addFirstLine(AnalysisOutputFileInfo info, AnalysisOutputFile aof) {
@@ -438,7 +438,8 @@ public class AnalysisAjaxController {
 	 * @param seek     Optional file byte position to seek to and begin reading
 	 * @param chunk    Optional number of bytes to read from file
 	 * @param response HTTP response object
-	 * @return JSON with file text or lines as well as information about the file.
+	 * @return JSON with file text or lines as well as information about the
+	 * file.
 	 */
 	@RequestMapping(value = "/{id}/outputs/{fileId}", method = RequestMethod.GET)
 	@ResponseBody
@@ -514,8 +515,8 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Get a dto with list of {@link JobError} for an {@link AnalysisSubmission} under key `galaxyJobErrors`
-	 * and the `galaxyUrl` for the galaxy instance
+	 * Get a dto with list of {@link JobError} for an {@link AnalysisSubmission}
+	 * under key `galaxyJobErrors` and the `galaxyUrl` for the galaxy instance
 	 *
 	 * @param submissionId {@link AnalysisSubmission} id
 	 * @return dto with galaxyJobErrors and galaxyUrl
@@ -543,7 +544,8 @@ public class AnalysisAjaxController {
 		} catch (ExecutionManagerException e) {
 			logger.error("Error " + e);
 		}
-		// Return a dto with galaxyJobErrors, galaxyUrl, and galaxyHistoryId set to null
+		// Return a dto with galaxyJobErrors, galaxyUrl, and galaxyHistoryId set
+		// to null
 		return new AnalysisJobError();
 	}
 
@@ -612,7 +614,8 @@ public class AnalysisAjaxController {
 	 * {@link Project}
 	 *
 	 * @param submissionId the {@link AnalysisSubmission} id to share/unshare
-	 * @param projectShare {@link AnalysisProjectShare} describes of the project and the share status.
+	 * @param projectShare {@link AnalysisProjectShare} describes of the project and the
+	 *                     share status.
 	 * @param locale       Locale of the logged in user
 	 * @return Success message if successful
 	 */
@@ -702,18 +705,22 @@ public class AnalysisAjaxController {
 		}
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
 				.getAnalysisType();
-		if (analysisTypesService.getViewerForAnalysisType(analysisType).get().equals("sistr")) {
+		if (analysisTypesService.getViewerForAnalysisType(analysisType)
+				.get()
+				.equals("sistr")) {
 			Analysis analysis = submission.getAnalysis();
 
 			Path path = null;
-			if(analysis.getAnalysisOutputFile(sistrFileKey) != null) {
-				path = analysis.getAnalysisOutputFile(sistrFileKey).getFile();
+			if (analysis.getAnalysisOutputFile(sistrFileKey) != null) {
+				path = analysis.getAnalysisOutputFile(sistrFileKey)
+						.getFile();
 
 				try {
 					String json = new Scanner(new BufferedReader(new FileReader(path.toFile()))).useDelimiter("\\Z")
 							.next();
 
-					// verify file is proper json file and map to a SistrResult list
+					// verify file is proper json file and map to a SistrResult
+					// list
 					ObjectMapper mapper = new ObjectMapper();
 					List<SistrResult> sistrResults = mapper.readValue(json, new TypeReference<List<SistrResult>>() {
 					});
@@ -721,7 +728,8 @@ public class AnalysisAjaxController {
 					if (sistrResults.size() > 0) {
 						// should only ever be one sample for these results
 						if (samples != null && samples.size() == 1) {
-							Sample sample = samples.iterator().next();
+							Sample sample = samples.iterator()
+									.next();
 							return new AnalysisSistrResults(sample.getSampleName(), false, sistrResults.get(0));
 						} else {
 							logger.error("Invalid number of associated samples for submission " + submission);
@@ -737,9 +745,9 @@ public class AnalysisAjaxController {
 					logger.error("Error reading file [" + path + "]", e);
 				}
 			} else {
-				logger.error("Null response from analysis.getAnalysisOutputFile(sistrFileKey). " +
-						"No output file was found for the default sistrFileKey \""+sistrFileKey + "\". "+
-						"Check irida_workflow.xml for \"sistr-predictions\" attribute (<output name=\"sistr-predictions\">).");
+				logger.error("Null response from analysis.getAnalysisOutputFile(sistrFileKey). "
+						+ "No output file was found for the default sistrFileKey \"" + sistrFileKey + "\". "
+						+ "Check irida_workflow.xml for \"sistr-predictions\" attribute (<output name=\"sistr-predictions\">).");
 			}
 
 		}
@@ -805,11 +813,13 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Get an image file associated with a specific {@link AnalysisSubmission} by file name.
+	 * Get an image file associated with a specific {@link AnalysisSubmission}
+	 * by file name.
 	 *
 	 * @param submissionId {@link Long} id for an {@link AnalysisSubmission}
 	 * @param filename     {@link String} filename for an {@link AnalysisOutputFile}
-	 * @return {@link String} containing the image file contents as a base64 encoded string.
+	 * @return {@link String} containing the image file contents as a base64
+	 * encoded string.
 	 */
 	@RequestMapping("{submissionId}/image")
 	@ResponseBody
@@ -844,7 +854,7 @@ public class AnalysisAjaxController {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
 
-		//grab the metadata once and put it in a map
+		// grab the metadata once and put it in a map
 		Map<Sample, Set<MetadataEntry>> sampleMetadata = new HashMap<>();
 		samples.stream()
 				.forEach(s -> {
@@ -870,7 +880,8 @@ public class AnalysisAjaxController {
 			Set<MetadataEntry> metadataEntries = sampleMetadata.get(sample);
 			Map<String, MetadataEntry> stringMetadata = new HashMap<>();
 			metadataEntries.forEach(e -> {
-				stringMetadata.put(e.getField().getLabel(), e);
+				stringMetadata.put(e.getField()
+						.getLabel(), e);
 			});
 
 			Map<String, MetadataEntry> valuesMap = new HashMap<>();
@@ -878,8 +889,10 @@ public class AnalysisAjaxController {
 
 				MetadataEntry value = stringMetadata.get(term);
 				if (value == null) {
-					// Not all samples will have the same metadata associated with it.  If a sample
-					// is missing one of the terms, just give it an empty string.
+					// Not all samples will have the same metadata associated
+					// with it. If a sample
+					// is missing one of the terms, just give it an empty
+					// string.
 					value = new MetadataEntry("", "text");
 				}
 
@@ -888,14 +901,12 @@ public class AnalysisAjaxController {
 			metadata.put(sample.getLabel(), valuesMap);
 		}
 
-		return ImmutableMap.of(
-				"terms", terms,
-				"metadata", metadata
-		);
+		return ImmutableMap.of("terms", terms, "metadata", metadata);
 	}
 
 	/**
-	 * Get a list of all {@link MetadataTemplate}s for the {@link AnalysisSubmission}
+	 * Get a list of all {@link MetadataTemplate}s for the
+	 * {@link AnalysisSubmission}
 	 *
 	 * @param submissionId id of the {@link AnalysisSubmission}
 	 * @return a map of {@link MetadataTemplate}s
@@ -914,8 +925,7 @@ public class AnalysisAjaxController {
 				projectIds.add(project.getId());
 
 				// Get the templates for the project
-				List<MetadataTemplate> templateList = metadataTemplateService.getMetadataTemplatesForProject(
-						project);
+				List<MetadataTemplate> templateList = metadataTemplateService.getMetadataTemplatesForProject(project);
 				for (MetadataTemplate metadataTemplate : templateList) {
 					Map<String, Object> templateMap = ImmutableMap.of("label", metadataTemplate.getLabel(), "id",
 							metadataTemplate.getId());
@@ -930,7 +940,8 @@ public class AnalysisAjaxController {
 	/**
 	 * Generates a list of metadata fields for a five template.
 	 *
-	 * @param templateId {@link Long} id for the {@link MetadataTemplate} that the fields are required.
+	 * @param templateId {@link Long} id for the {@link MetadataTemplate} that the
+	 *                   fields are required.
 	 * @return {@link Map}
 	 */
 	@RequestMapping("/{submissionId}/metadata-template-fields")
@@ -959,7 +970,8 @@ public class AnalysisAjaxController {
 	public AnalysisTreeResponse getNewickTree(@PathVariable Long submissionId, Locale locale) throws IOException {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 
-		//loop through the files looking for with a newick file.  Get the first one
+		// loop through the files looking for with a newick file. Get the first
+		// one
 		Optional<AnalysisOutputFile> treeOptional = getTreeFileForSubmission(submission);
 		String tree = null;
 		String message = null;
@@ -999,8 +1011,8 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Parse excel file and return an ExcelData dto which
-	 * contains the row data as well as the headers.
+	 * Parse excel file and return an ExcelData dto which contains the row data
+	 * as well as the headers.
 	 *
 	 * @param submissionId The analysis submission id
 	 * @param filename     The name of the excel file to parse
@@ -1048,7 +1060,8 @@ public class AnalysisAjaxController {
 		AnalysisProvenanceResponse analysisProvenance = null;
 		ArrayList<AnalysisToolExecutionParameters> executionParameters;
 
-		// get all output files produced by analysis and get the one which matches the file for which to display provenance
+		// get all output files produced by analysis and get the one which
+		// matches the file for which to display provenance
 		Set<AnalysisOutputFile> files = analysis.getAnalysisOutputFiles();
 
 		for (AnalysisOutputFile file : files) {
@@ -1075,7 +1088,7 @@ public class AnalysisAjaxController {
 	 * Get the updated state and duration of an analysis
 	 *
 	 * @param submissionId The analysis submission id
-	 * @param locale The user's locale
+	 * @param locale       The user's locale
 	 * @return dto which contains the updated analysis state and duration
 	 */
 	@RequestMapping(value = "/{submissionId}/updated-progress")
@@ -1090,7 +1103,8 @@ public class AnalysisAjaxController {
 
 		// Get the run time of the analysis runtime using the analysis
 		Long duration;
-		if(submission.getAnalysisState() != AnalysisState.COMPLETED && submission.getAnalysisState() != AnalysisState.ERROR) {
+		if (submission.getAnalysisState() != AnalysisState.COMPLETED
+				&& submission.getAnalysisState() != AnalysisState.ERROR) {
 			Date currentDate = new Date();
 			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), currentDate);
 		} else {
@@ -1099,15 +1113,18 @@ public class AnalysisAjaxController {
 
 		boolean treeDefault = getTreeViewDefault(submission, locale);
 
-
-		return ResponseEntity.ok(new UpdatedAnalysisProgress(submission.getAnalysisState(), prevStateBeforeError, duration, treeDefault));
+		return ResponseEntity.ok(
+				new UpdatedAnalysisProgress(submission.getAnalysisState(), prevStateBeforeError, duration,
+						treeDefault));
 
 	}
 
 	/**
-	 * Private method which gets whether the tree view should be the default view or not
+	 * Private method which gets whether the tree view should be the default
+	 * view or not
+	 *
 	 * @param submission The analysis submission
-	 * @param locale The user's locale
+	 * @param locale     The user's locale
 	 * @return if tree view should be displayed by default or not
 	 */
 	private boolean getTreeViewDefault(AnalysisSubmission submission, Locale locale) {
@@ -1115,23 +1132,24 @@ public class AnalysisAjaxController {
 		String viewer = getAnalysisViewer(submission);
 		boolean treeDefault = false;
 
-		if(viewer.equals("tree") && submission.getAnalysisState() == AnalysisState.COMPLETED) {
+		if (viewer.equals("tree") && submission.getAnalysisState() == AnalysisState.COMPLETED) {
 			try {
 				AnalysisTreeResponse analysisTreeResponse = getNewickTree(submission.getId(), locale);
 
-				if(analysisTreeResponse.getNewick() != null) {
+				if (analysisTreeResponse.getNewick() != null) {
 					treeDefault = true;
 				}
 			} catch (IOException e) {
 				logger.error("Unable to get newick string for submission ", e);
 			}
 		}
-		
+
 		return treeDefault;
 	}
 
 	/**
 	 * Private method which gets the analysis viewer type
+	 *
 	 * @param submission The analysis submission
 	 * @return the viewer (tree, sistr, biohansel, etc)
 	 */
@@ -1162,7 +1180,8 @@ public class AnalysisAjaxController {
 	 * @return dto which contains the analysis details
 	 */
 	@RequestMapping(value = "/{submissionId}/analysis-details")
-	public ResponseEntity<AnalysisInfo> getAnalysisInfo(@PathVariable Long submissionId, Principal principal, Locale locale) {
+	public ResponseEntity<AnalysisInfo> getAnalysisInfo(@PathVariable Long submissionId, Principal principal,
+			Locale locale) {
 		logger.trace("reading analysis submission " + submissionId);
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 
@@ -1183,7 +1202,8 @@ public class AnalysisAjaxController {
 
 		// Get the run time of the analysis runtime using the analysis
 		Long duration;
-		if(submission.getAnalysisState() != AnalysisState.COMPLETED && submission.getAnalysisState() != AnalysisState.ERROR) {
+		if (submission.getAnalysisState() != AnalysisState.COMPLETED
+				&& submission.getAnalysisState() != AnalysisState.ERROR) {
 			Date currentDate = new Date();
 			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), currentDate);
 		} else {
@@ -1192,15 +1212,20 @@ public class AnalysisAjaxController {
 
 		boolean treeDefault = getTreeViewDefault(submission, locale);
 
-		return ResponseEntity.ok(new AnalysisInfo(submission, submission.getName(), submission.getAnalysisState(), analysisType.getType(), viewer, currentUser.getSystemRole()
-				.equals(Role.ROLE_ADMIN), emailController.isMailConfigured(), prevState, duration, submission.getAnalysisState() == AnalysisState.COMPLETED,
+		return ResponseEntity.ok(new AnalysisInfo(submission, submission.getName(), submission.getAnalysisState(),
+				analysisType.getType(), viewer, currentUser.getSystemRole()
+				.equals(Role.ROLE_ADMIN), emailController.isMailConfigured(), prevState, duration,
+				submission.getAnalysisState() == AnalysisState.COMPLETED,
 				submission.getAnalysisState() == AnalysisState.ERROR, treeDefault));
 	}
 
 	/*
-	 * Recursive function to get the previous execution tools and their parameters
+	 * Recursive function to get the previous execution tools and their
+	 * parameters
 	 *
-	 * @param tool The tool to get the previous execution tools and their parameters for
+	 * @param tool The tool to get the previous execution tools and their
+	 * parameters for
+	 *
 	 * @return an arraylist of previous execution tools for the tool
 	 */
 	private ArrayList<AnalysisToolExecution> getPreviousExecutionTools(ToolExecution tool) {
@@ -1220,6 +1245,7 @@ public class AnalysisAjaxController {
 	 * Gets the previous steps (tools) for the tool
 	 *
 	 * @param tool The tool to get the previous steps for
+	 *
 	 * @return set of previous execution tools for the tool
 	 */
 	private Set<ToolExecution> getPrevTools(ToolExecution tool) {
@@ -1227,30 +1253,34 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Find a file with a `.newick` extension in the analysis output files if it exists.
+	 * Find a file with a `.newick` extension in the analysis output files if it
+	 * exists.
 	 *
 	 * @param submission the {@link AnalysisSubmission} to check
-	 * @return an optional of an {@link AnalysisOutputFile} if the file was found
+	 * @return an optional of an {@link AnalysisOutputFile} if the file was
+	 * found
 	 */
 	private Optional<AnalysisOutputFile> getTreeFileForSubmission(AnalysisSubmission submission) {
-		//some submissions may not name their tree with a ".newick" extension.  We need to check for a `tree` file first
+		// some submissions may not name their tree with a ".newick" extension.
+		// We need to check for a `tree` file first
 		final String treeFileKey = "tree";
 
-		//get the analysis output files
+		// get the analysis output files
 		Analysis analysis = submission.getAnalysis();
 		Set<AnalysisOutputFile> analysisOutputFiles = analysis.getAnalysisOutputFiles();
 
 		Optional<AnalysisOutputFile> treeOptional = Optional.empty();
 
-		//first check for a file with a key of "tree"
+		// first check for a file with a key of "tree"
 		if (analysis.getAnalysisOutputFileNames()
 				.contains(treeFileKey)) {
 			treeOptional = Optional.of(analysis.getAnalysisOutputFile(treeFileKey));
 		}
 
-		//if no "tree", check for files with ".newick" extension
+		// if no "tree", check for files with ".newick" extension
 		if (treeOptional.isEmpty()) {
-			//loop through the files looking for with a newick file.  Get the first one
+			// loop through the files looking for with a newick file. Get the
+			// first one
 			treeOptional = analysisOutputFiles.stream()
 					.filter(f -> FileUtilities.getFileExt(f.getFile())
 							.equals(TREE_EXT))
@@ -1265,6 +1295,7 @@ public class AnalysisAjaxController {
 	 * Gets the execution parameters for the tool
 	 *
 	 * @param tool The tool to get the execution parameters for
+	 *
 	 * @return an arraylist of execution parameters for the tool
 	 */
 	private ArrayList<AnalysisToolExecutionParameters> getExecutionParameters(ToolExecution tool) {
@@ -1303,7 +1334,7 @@ public class AnalysisAjaxController {
 	/**
 	 * UI Model to return Sequence files with its accompanying sample.
 	 */
-	private class SampleSequencingObject implements Comparable<SampleSequencingObject> {
+	class SampleSequencingObject implements Comparable<SampleSequencingObject> {
 		private Sample sample;
 		private SequencingObject sequencingObject;
 

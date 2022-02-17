@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.ria.security.LoginSuccessHandler;
 @EnableWebSecurity
 @Import({ IridaOauthSecurityConfig.class })
 public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
-	private static final Logger logger = LoggerFactory.getLogger(IridaWebSecurityConfig.class);
 
 	/**
 	 * UI security config for IRIDA

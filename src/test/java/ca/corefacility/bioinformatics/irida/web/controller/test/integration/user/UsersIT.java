@@ -13,16 +13,11 @@ import java.util.Map;
 import io.restassured.http.ContentType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
+import ca.corefacility.bioinformatics.irida.annotation.RestIntegrationTest;
 import ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -33,10 +28,7 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
  * Integration tests for users.
  * 
  */
-@Tag("IntegrationTest") @Tag("Rest")
-@ActiveProfiles("it")
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@Import(IridaIntegrationTestUriConfig.class)
+@RestIntegrationTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/user/UserIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
@@ -63,37 +55,29 @@ public class UsersIT {
 		// doesn't matter what the user is, we should fail here when trying to
 		// create a user because the current user doesn't have permission to
 		// create users.
-		asUser().given().body(createUser())
-				.contentType(ContentType.JSON)
-				.expect().response().statusCode(HttpStatus.SC_FORBIDDEN)
-				.when().post("/api/users");
+		asUser().given().body(createUser()).contentType(ContentType.JSON).expect().response()
+				.statusCode(HttpStatus.SC_FORBIDDEN).when().post("/api/users");
 	}
 
 	@Test
 	public void testCreateUserAsAdminSucceed() {
 		Map<String, String> user = createUser();
 
-		asAdmin().given().body(user)
-				.contentType(ContentType.JSON)
-				.expect().response().statusCode(HttpStatus.SC_CREATED)
+		asAdmin().given().body(user).contentType(ContentType.JSON).expect().response().statusCode(HttpStatus.SC_CREATED)
 				.when().post("/api/users");
 	}
 
 	@Test
 	public void testCreateUserAsManagerSucceed() {
 		Map<String, String> user = createUser();
-		asManager().given().body(user)
-				.contentType(ContentType.JSON)
-				.expect().response().statusCode(HttpStatus.SC_CREATED)
-				.when().post("/api/users");
+		asManager().given().body(user).contentType(ContentType.JSON).expect().response()
+				.statusCode(HttpStatus.SC_CREATED).when().post("/api/users");
 	}
 
 	@Test
 	public void testUpdateOtherAccountFail() {
-		asUser().given().body(createUser())
-				.contentType(ContentType.JSON)
-				.expect().response().statusCode(HttpStatus.SC_FORBIDDEN)
-				.when().patch("/api/users/2");
+		asUser().given().body(createUser()).contentType(ContentType.JSON).expect().response()
+				.statusCode(HttpStatus.SC_FORBIDDEN).when().patch("/api/users/2");
 	}
 
 	private Map<String, String> createUser() {

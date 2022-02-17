@@ -4,10 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -62,7 +58,6 @@ public class SampleServiceImplTest {
 	private SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 	private UserRepository userRepository;
 	private MetadataEntryRepository metadataEntryRepository;
-	private Validator validator;
 
 	/**
 	 * Variation in a floating point number to be considered equal.
@@ -80,11 +75,9 @@ public class SampleServiceImplTest {
 		sampleGenomeAssemblyJoinRepository = mock(SampleGenomeAssemblyJoinRepository.class);
 		metadataEntryRepository = mock(MetadataEntryRepository.class);
 
-		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		validator = factory.getValidator();
 		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, analysisRepository, ssoRepository,
 				qcEntryRepository, sequencingObjectRepository, sampleGenomeAssemblyJoinRepository, userRepository,
-				metadataEntryRepository, null, validator);
+				metadataEntryRepository, null);
 	}
 
 	@Test
@@ -141,7 +134,7 @@ public class SampleServiceImplTest {
 		SampleSequencingObjectJoin[] s_so_joins = new SampleSequencingObjectJoin[SIZE];
 		SampleSequencingObjectJoin[] s_so_original = new SampleSequencingObjectJoin[SIZE];
 		ProjectSampleJoin[] p_s_joins = new ProjectSampleJoin[SIZE];
-		
+
 		List<Sample> mergeSamples = new ArrayList<>();
 
 		for (long i = 0; i < SIZE; i++) {
@@ -258,8 +251,8 @@ public class SampleServiceImplTest {
 
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id")
-				.totalBases(1000L).build();
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id").totalBases(1000L)
+				.build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
 		when(ssoRepository.getSequencesForSample(s1)).thenReturn(Arrays.asList(join));
@@ -306,8 +299,8 @@ public class SampleServiceImplTest {
 	 * @throws AnalysisAlreadySetException
 	 */
 	@Test
-	public void testGetTotalBasesForSampleSuccessOne() throws SequenceFileAnalysisException,
-			AnalysisAlreadySetException {
+	public void testGetTotalBasesForSampleSuccessOne()
+			throws SequenceFileAnalysisException, AnalysisAlreadySetException {
 		Sample s1 = new Sample();
 		s1.setId(1L);
 
@@ -316,8 +309,8 @@ public class SampleServiceImplTest {
 
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id")
-				.totalBases(1000L).build();
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id").totalBases(1000L)
+				.build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
 		when(ssoRepository.getSequencesForSample(s1)).thenReturn(Arrays.asList(join));
@@ -335,8 +328,8 @@ public class SampleServiceImplTest {
 	 * @throws AnalysisAlreadySetException
 	 */
 	@Test
-	public void testGetTotalBasesForSampleSuccessTwo() throws SequenceFileAnalysisException,
-			AnalysisAlreadySetException {
+	public void testGetTotalBasesForSampleSuccessTwo()
+			throws SequenceFileAnalysisException, AnalysisAlreadySetException {
 		Sample s1 = new Sample();
 		s1.setId(1L);
 
@@ -348,12 +341,12 @@ public class SampleServiceImplTest {
 		SampleSequencingObjectJoin join1 = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 		SampleSequencingObjectJoin join2 = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf2));
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id")
-				.totalBases(1000L).build();
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id").totalBases(1000L)
+				.build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
-		AnalysisFastQC analysisFastQC2 = AnalysisFastQC.builder().executionManagerAnalysisId("id2")
-				.totalBases(1000L).build();
+		AnalysisFastQC analysisFastQC2 = AnalysisFastQC.builder().executionManagerAnalysisId("id2").totalBases(1000L)
+				.build();
 		sf2.setFastQCAnalysis(analysisFastQC2);
 
 		when(ssoRepository.getSequencesForSample(s1)).thenReturn(Arrays.asList(join1, join2));
@@ -438,12 +431,11 @@ public class SampleServiceImplTest {
 
 		verify(metadataEntryRepository).saveAll(saveCaptor.capture());
 
-		//ensure modified date got bumped up
+		// ensure modified date got bumped up
 		ArgumentCaptor<Sample> sampleCaptor = ArgumentCaptor.forClass(Sample.class);
 		verify(sampleRepository).save(sampleCaptor.capture());
 
-		Date savedModifiedDate = sampleCaptor.getValue()
-				.getModifiedDate();
+		Date savedModifiedDate = sampleCaptor.getValue().getModifiedDate();
 
 		assertNotEquals(originalModifiedDate, savedModifiedDate);
 
@@ -451,10 +443,7 @@ public class SampleServiceImplTest {
 
 		assertEquals(2, savedValues.size(), "should be 2 entries");
 
-		Optional<MetadataEntry> optValue = savedValues.stream()
-				.filter(e -> e.getField()
-						.equals(field1))
-				.findAny();
+		Optional<MetadataEntry> optValue = savedValues.stream().filter(e -> e.getField().equals(field1)).findAny();
 
 		assertTrue(optValue.isPresent(), "should find a value with the given field");
 
@@ -472,8 +461,7 @@ public class SampleServiceImplTest {
 
 		MetadataTemplateField field1 = new MetadataTemplateField("field1", "text");
 		AnalysisSubmission submission = AnalysisSubmission.builder(UUID.randomUUID())
-				.inputFiles(Sets.newHashSet(new SequenceFilePair()))
-				.build();
+				.inputFiles(Sets.newHashSet(new SequenceFilePair())).build();
 		submission.setId(2L);
 
 		PipelineProvidedMetadataEntry entry1 = new PipelineProvidedMetadataEntry("entry2", "text", submission);
@@ -500,10 +488,7 @@ public class SampleServiceImplTest {
 
 		assertEquals(2, savedValues.size(), "should be 2 entries");
 
-		Optional<MetadataEntry> optValue = savedValues.stream()
-				.filter(e -> e.getField()
-						.equals(field1))
-				.findAny();
+		Optional<MetadataEntry> optValue = savedValues.stream().filter(e -> e.getField().equals(field1)).findAny();
 
 		assertTrue(optValue.isPresent(), "should find a value with the given field");
 
@@ -512,8 +497,7 @@ public class SampleServiceImplTest {
 		assertEquals(entry.getValue(), metadataEntry.getValue(), "value should have been updated");
 
 		Optional<MetadataEntry> pipelineOpt = savedValues.stream()
-				.filter(e -> e instanceof PipelineProvidedMetadataEntry)
-				.findAny();
+				.filter(e -> e instanceof PipelineProvidedMetadataEntry).findAny();
 
 		assertTrue(pipelineOpt.isEmpty(), "should be no pipeline entries left");
 	}
@@ -548,12 +532,11 @@ public class SampleServiceImplTest {
 
 		verify(metadataEntryRepository).saveAll(saveCaptor.capture());
 
-		//ensure modified date got bumped up
+		// ensure modified date got bumped up
 		ArgumentCaptor<Sample> sampleCaptor = ArgumentCaptor.forClass(Sample.class);
 		verify(sampleRepository).save(sampleCaptor.capture());
 
-		Date savedModifiedDate = sampleCaptor.getValue()
-				.getModifiedDate();
+		Date savedModifiedDate = sampleCaptor.getValue().getModifiedDate();
 
 		assertNotEquals(originalModifiedDate, savedModifiedDate);
 
@@ -561,8 +544,7 @@ public class SampleServiceImplTest {
 
 		assertEquals(1, savedValues.size());
 
-		MetadataEntry savedEntry = savedValues.iterator()
-				.next();
+		MetadataEntry savedEntry = savedValues.iterator().next();
 
 		assertEquals(entry.getValue(), savedEntry.getValue());
 		assertEquals(entry.getField(), savedEntry.getField());
