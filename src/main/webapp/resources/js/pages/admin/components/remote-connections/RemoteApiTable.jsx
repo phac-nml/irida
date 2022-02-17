@@ -31,6 +31,11 @@ export function RemoteApiTable() {
       },
     },
     {
+      title: i18n("RemoteApi.serviceurl"),
+      key: "serviceURI",
+      dataIndex: "serviceURI",
+    },
+    {
       title: i18n("RemoteApi.clientid"),
       key: "clientId",
       dataIndex: "clientId",
