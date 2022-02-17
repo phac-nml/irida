@@ -3,9 +3,8 @@ import {
   PagedTable,
   PagedTableContext,
 } from "../../../../components/ant.design/PagedTable";
-import {
-  formatInternationalizedDateTime
-} from "../../../../utilities/date-utilities";
+import { Button, Popconfirm, Space, Typography } from "antd";
+import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import { isAdmin } from "../../../../utilities/role-utilities";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { RemoteApiStatus } from "./RemoteApiStatus";
@@ -18,22 +17,33 @@ import { RemoteApiStatus } from "./RemoteApiStatus";
 export function RemoteApiTable() {
   const { updateTable } = useContext(PagedTableContext);
 
+  const removeConnection = () => {
+    deleteRemoteApi({ id: params.remoteId }).then(updateTable);
+  };
+
   const columnDefs = [
     {
-      title: i18n("remoteapi.name"),
+      title: i18n("RemoteApi.name"),
       key: "name",
       dataIndex: "name",
-      render(text, record) {
-        return isAdmin() ? (
-          <a
-            href={setBaseUrl(`/admin/remote_api/${record.id}`)}
-            className="t-api-name"
-          >
-            {text}
-          </a>
-        ) : (
-          <span className="t-api-name">{text}</span>
-        );
+      render(text) {
+        return <span className="t-api-name">{text}</span>;
+      },
+    },
+    {
+      title: i18n("RemoteApi.clientid"),
+      key: "clientId",
+      dataIndex: "clientId",
+      render(text) {
+        return <Typography.Text copyable>{text}</Typography.Text>;
+      },
+    },
+    {
+      title: i18n("RemoteApi.secret"),
+      key: "clientSecret",
+      dataIndex: "clientSecret",
+      render(text) {
+        return <Typography.Text copyable>{text}</Typography.Text>;
       },
     },
     {
@@ -45,11 +55,26 @@ export function RemoteApiTable() {
       },
     },
     {
-      title: i18n("remoteapi.status"),
+      title: "",
       align: "right",
-      width: 330,
+      fixed: "right",
+      width: 400,
       render(text, item) {
-        return <RemoteApiStatus api={item} updateTable={updateTable} />;
+        return (
+          <Space>
+            <RemoteApiStatus api={item} updateTable={updateTable} />
+            {isAdmin() && (
+              <Popconfirm
+                title={i18n("RemoteConnectionDetails.tab.delete.confirm")}
+                placement="topRight"
+                onConfirm={removeConnection}
+                okButtonProps={{ className: "t-delete-confirm" }}
+              >
+                <Button type="text">{i18n("RemoteApi.delete")}</Button>
+              </Popconfirm>
+            )}
+          </Space>
+        );
       },
     },
   ];

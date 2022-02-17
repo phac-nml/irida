@@ -79,8 +79,8 @@ export function RemoteApiStatus({ api, onConnect = () => {} }) {
         <Button
           className="t-remote-status-connect"
           onClick={updateConnectionStatus}
-          icon={<IconLogin />}
           loading={connecting}
+          type="text"
         >
           {i18n("RemoteApi.disconnected")}
         </Button>

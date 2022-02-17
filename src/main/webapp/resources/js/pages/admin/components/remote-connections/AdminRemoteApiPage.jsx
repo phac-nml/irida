@@ -20,10 +20,10 @@ export default function AdminRemoteApiPage() {
   return (
     <PagedTableProvider url={setBaseUrl("ajax/remote_api/list")}>
       <PageWrapper
-        title={i18n("AdminPanel.remoteApi")}
+        title={i18n("AdminRemoteApiPage.title")}
         headerExtras={
           <CreateRemoteApiModal>
-            <AddNewButton text={i18n("AdminPanel.addRemoteApi")} />
+            <AddNewButton text={i18n("AdminRemoteApiPage.addRemoteApi")} />
           </CreateRemoteApiModal>
         }
       >

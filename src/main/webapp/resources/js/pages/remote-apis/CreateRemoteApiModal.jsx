@@ -55,7 +55,7 @@ export function CreateRemoteApiModal({ children }) {
       })}
       <Modal
         className="t-create-api"
-        title={i18n("remoteapi.add")}
+        title={i18n("CreateRemoteApiModal.title")}
         visible={visible}
         onCancel={() => setVisible(false)}
         onOk={submitForm}
@@ -76,21 +76,21 @@ export function CreateRemoteApiModal({ children }) {
         >
           <Form.Item
             name="name"
-            label={i18n("remoteapi.name")}
+            label={i18n("RemoteApi.name")}
             rules={[
-              { required: true, message: i18n("remoteapi.name.required") },
+              { required: true, message: i18n("RemoteApi.name.required") },
             ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="clientId"
-            label={i18n("remoteapi.clientid")}
+            label={i18n("RemoteApi.clientid")}
             rules={[
-              { required: true, message: i18n("remoteapi.clientid.required") },
+              { required: true, message: i18n("RemoteApi.clientid.required") },
               {
                 pattern: /^\S+$/g,
-                message: i18n("remoteapi.clientid.no-spaces"),
+                message: i18n("RemoteApi.clientid.no-spaces"),
               },
             ]}
           >
@@ -98,15 +98,15 @@ export function CreateRemoteApiModal({ children }) {
           </Form.Item>
           <Form.Item
             name="clientSecret"
-            label={i18n("remoteapi.details.secret")}
+            label={i18n("RemoteApi.secret")}
             rules={[
               {
                 required: true,
-                message: i18n("remoteapi.details.secret.required"),
+                message: i18n("RemoteApi.secret.required"),
               },
               {
                 pattern: /^\S+$/g,
-                message: i18n("remoteapi.details.secret.no-spaces"),
+                message: i18n("RemoteApi.secret.no-spaces"),
               },
             ]}
           >
@@ -114,15 +114,15 @@ export function CreateRemoteApiModal({ children }) {
           </Form.Item>
           <Form.Item
             name="serviceURI"
-            label={i18n("remoteapi.serviceurl")}
+            label={i18n("RemoteApi.serviceurl")}
             rules={[
               {
                 required: true,
-                message: i18n("remoteapi.serviceurl.required"),
+                message: i18n("RemoteApi.serviceurl.required"),
               },
               {
                 type: "url",
-                message: i18n("remoteapi.serviceurl.url"),
+                message: i18n("RemoteApi.serviceurl.url"),
               },
             ]}
           >
