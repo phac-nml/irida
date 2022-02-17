@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,8 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -40,7 +40,7 @@ public class OltuAuthorizationControllerTest {
 
 	private final String serverBase = "http://localserver";
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		apiService = mock(RemoteAPIService.class);
 		tokenService = mock(RemoteAPITokenService.class);

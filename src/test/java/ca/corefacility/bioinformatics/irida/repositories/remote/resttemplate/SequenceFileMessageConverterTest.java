@@ -5,21 +5,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.mock.http.MockHttpInputMessage;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SequenceFileMessageConverterTest {
 	private SequenceFileMessageConverter converter;
 	private String fileName = "testFile";
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		converter = new SequenceFileMessageConverter(fileName);
 	}
@@ -52,9 +52,11 @@ public class SequenceFileMessageConverterTest {
 		assertFalse(converter.canWrite(clazz, mediaType));
 	}
 
-	@Test(expected = HttpMessageNotWritableException.class)
+	@Test
 	public void testWrite() throws HttpMessageNotWritableException, IOException {
-		converter.write(null, null, null);
+		assertThrows(HttpMessageNotWritableException.class, () -> {
+			converter.write(null, null, null);
+		});
 	}
 
 	@Test
@@ -73,14 +75,16 @@ public class SequenceFileMessageConverterTest {
 		Files.delete(read);
 	}
 
-	@Test(expected = IOException.class)
+	@Test
 	public void testReadPartialFile() throws HttpMessageNotReadableException, IOException {
 		String message = "Some fastq file";
 		byte[] messageBytes = message.getBytes();
 		HttpInputMessage inputMessage = new MockHttpInputMessage(messageBytes);
 		inputMessage.getHeaders()
 				.add("Content-Length", Long.toString(messageBytes.length + 1));
-		converter.read(Path.class, inputMessage);
+		assertThrows(IOException.class, () -> {
+			converter.read(Path.class, inputMessage);
+		});
 	}
 
 	@Test

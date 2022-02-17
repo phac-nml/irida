@@ -4,8 +4,8 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -14,8 +14,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Integration test to ensure the Announcement Control page works
@@ -24,25 +24,21 @@ import static org.junit.Assert.assertTrue;
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 
-	//Page objects
+	// Page objects
 	private AnnouncementControlPage controlPage;
-	private AnnouncementReadPage readPage;
-	private AnnouncementDashboardPage dashboardPage;
 
 	@Override
-	@Before
+	@BeforeEach
 	public void setUpTest() {
 		LoginPage.loginAsAdmin(driver());
 		controlPage = new AnnouncementControlPage(driver());
-		readPage = new AnnouncementReadPage(driver());
-		dashboardPage = new AnnouncementDashboardPage(driver());
 	}
 
 	@Test
 	public void testConfirmTablePopulatedByAnnouncements() {
 		controlPage.goTo();
-		assertEquals("Announcement table should be populated by 6 announcements", 6,
-				controlPage.announcementTableSize());
+		assertEquals(6, controlPage.announcementTableSize(),
+				"Announcement table should be populated by 6 announcements");
 	}
 
 	@Test
@@ -52,17 +48,17 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 
 		List<Date> announcementDates = controlPage.getCreatedDates();
 
-		assertTrue("List of announcements is not sorted correctly", checkDatesSortedDescending(announcementDates));
+		assertTrue(checkDatesSortedDescending(announcementDates), "List of announcements is not sorted correctly");
 
 		controlPage.clickDateCreatedHeader();
 
 		announcementDates = controlPage.getCreatedDates();
 
-		assertTrue("List of announcements is not sorted correctly", checkDatesSortedAscending(announcementDates));
+		assertTrue(checkDatesSortedAscending(announcementDates), "List of announcements is not sorted correctly");
 	}
 
-    @Test
-    public void testSubmitNewAnnouncement() {
+	@Test
+	public void testSubmitNewAnnouncement() {
 		final String title = "Announcement Title";
 		final String message = "This is a the announcement message content.";
 		final Boolean priority = true;
@@ -76,15 +72,14 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 		// New messages should appear first in the table
 		String newTitle = controlPage.getAnnouncementTitle(0);
 
-		assertTrue("Unexpected announcement content.", newTitle.equals(title));
-		assertEquals("Unexpected number of announcements visible", numAnnouncementsBefore + 1,
-				controlPage.getCreatedDates()
-						.size());
+		assertTrue(newTitle.equals(title), "Unexpected announcement content.");
+		assertEquals(numAnnouncementsBefore + 1, controlPage.getCreatedDates().size(),
+				"Unexpected number of announcements visible");
 	}
 
-    @Test
-    public void testCheckDetailsPage() {
-        controlPage.goTo();
+	@Test
+	public void testCheckDetailsPage() {
+		controlPage.goTo();
 
 		String title0 = controlPage.getAnnouncementTitle(0);
 		String title1 = controlPage.getAnnouncementTitle(1);
@@ -108,11 +103,11 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	private void compareMessages(String announcement, String preview) {
-		assertTrue("Announcement preview does not match the message.", announcement.contains(preview));
+		assertTrue(announcement.contains(preview), "Announcement preview does not match the message.");
 	}
 
-    @Test
-    public void testUpdateAnnouncement() {
+	@Test
+	public void testUpdateAnnouncement() {
 		final String newTitle = "Updated Title!!!";
 		final String newMessage = "Updated Message Content!!!";
 		final boolean newPriority = true;
@@ -123,60 +118,61 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 		editAnnouncementComponent.enterAnnouncement(newTitle, newMessage, newPriority);
 
 		String announcementTitle = controlPage.getAnnouncementTitle(4);
-		assertTrue("Unexpected message content", newTitle.contains(announcementTitle));
+		assertEquals(newTitle, announcementTitle, "Unexpected message content");
 	}
 
-    @Test
-    public void testDeleteAnnouncement() {
-        controlPage.goTo();
+	@Test
+	public void testDeleteAnnouncement() {
+		controlPage.goTo();
 		List<Date> dates = controlPage.getCreatedDates();
 		controlPage.deleteAnnouncement(2);
-		assertEquals("Unexpected number of announcements", dates.size() - 1, controlPage.getCreatedDates().size());
+		assertEquals(dates.size() - 1, controlPage.getCreatedDates().size(), "Unexpected number of announcements");
 	}
 
-    @Test
-    public void testAnnouncementUserTablePopulated() {
-        controlPage.goTo();
+	@Test
+	public void testAnnouncementUserTablePopulated() {
+		controlPage.goTo();
 		ViewAnnouncementComponent viewAnnouncementComponent = ViewAnnouncementComponent.goTo(driver());
 		controlPage.gotoViewMessage(0);
-		assertEquals("Unexpected number of user information rows in table", 6, viewAnnouncementComponent.getTableDataSize());
-    }
+		assertEquals(6, viewAnnouncementComponent.getTableDataSize(),
+				"Unexpected number of user information rows in table");
+	}
 
-    /**
+	/**
 	 * Checks if a List of {@link Date} is sorted in ascending order.
 	 *
 	 * @param dates
-	 * 		List of {@link Date}
+	 *            List of {@link Date}
 	 *
-     * @return if the list is sorted ascending
-     */
+	 * @return if the list is sorted ascending
+	 */
 	private boolean checkDatesSortedAscending(List<Date> dates) {
 		boolean isSorted = true;
 		for (int i = 1; i < dates.size(); i++) {
 			if (dates.get(i).compareTo(dates.get(i - 1)) < 0) {
 				isSorted = false;
-                break;
-            }
-        }
-        return isSorted;
-    }
+				break;
+			}
+		}
+		return isSorted;
+	}
 
-    /**
+	/**
 	 * Checks if a list of {@link Date} is sorted in descending order.
 	 *
 	 * @param dates
-	 * 		List of {@link Date}
+	 *            List of {@link Date}
 	 *
-     * @return if the list is sorted ascending
-     */
+	 * @return if the list is sorted ascending
+	 */
 	private boolean checkDatesSortedDescending(List<Date> dates) {
 		boolean isSorted = true;
 		for (int i = 1; i < dates.size(); i++) {
 			if (dates.get(i).compareTo(dates.get(i - 1)) > 0) {
 				isSorted = false;
-                break;
-            }
-        }
-        return isSorted;
-    }
+				break;
+			}
+		}
+		return isSorted;
+	}
 }

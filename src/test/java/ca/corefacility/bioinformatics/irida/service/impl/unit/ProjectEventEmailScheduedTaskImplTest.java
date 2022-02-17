@@ -1,19 +1,19 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -47,16 +47,15 @@ public class ProjectEventEmailScheduedTaskImplTest {
 	@Mock
 	EmailController emailController;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		task = new ProjectEventEmailScheduledTaskImpl(userService, eventService, projectService, emailController);
 
 		when(emailController.isMailConfigured()).thenReturn(true);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testEmailUserTasks() {
 		Date priorDateFromCronString = ProjectEventEmailScheduledTaskImpl
@@ -86,10 +85,10 @@ public class ProjectEventEmailScheduedTaskImplTest {
 
 		Date testedDate = dateCaptor.getValue();
 
-		assertTrue("date should be before current time", now.after(testedDate));
+		assertTrue(now.after(testedDate), "date should be before current time");
 
-		assertTrue("date should be equal to or before scheduled time",
-				priorDateFromCronString.before(testedDate) || priorDateFromCronString.equals(testedDate));
+		assertTrue(priorDateFromCronString.before(testedDate) || priorDateFromCronString.equals(testedDate),
+				"date should be equal to or before scheduled time");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -124,10 +123,10 @@ public class ProjectEventEmailScheduedTaskImplTest {
 		
 		List<ProjectEvent> sentEvents = eventCaptor.getValue();
 
-		assertEquals("should send 1 event", 1, sentEvents.size());
+		assertEquals(1, sentEvents.size(), "should send 1 event");
 		
 		ProjectEvent sentEvent = sentEvents.iterator().next();
-		assertEquals("should have sent from subscribed project", p, sentEvent.getProject());
+		assertEquals(p, sentEvent.getProject(), "should have sent from subscribed project");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -157,7 +156,7 @@ public class ProjectEventEmailScheduedTaskImplTest {
 
 		verify(userService).getUsersWithEmailSubscriptions();
 
-		verifyZeroInteractions(eventService);
+		verifyNoInteractions(eventService);
 
 		verify(emailController, times(0)).sendSubscriptionUpdateEmail(any(User.class), any(List.class));
 	}

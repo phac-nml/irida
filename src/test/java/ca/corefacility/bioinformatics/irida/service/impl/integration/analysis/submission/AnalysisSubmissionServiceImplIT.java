@@ -3,8 +3,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration.analysis.s
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
@@ -14,14 +13,10 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
+import ca.corefacility.bioinformatics.irida.annotation.GalaxyIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
@@ -45,16 +40,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for an analysis service.
  * 
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class })
-@ActiveProfiles("test")
+@GalaxyIntegrationTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/analysis/submission/AnalysisSubmissionServiceIT.xml")
@@ -93,10 +86,12 @@ public class AnalysisSubmissionServiceImplIT {
 	/**
 	 * Tests failing to get a state for an analysis submission.
 	 */
-	@Test(expected = EntityNotFoundException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetStateForAnalysisSubmissionFail() {
-		analysisSubmissionService.getStateForAnalysisSubmission(20L);
+		assertThrows(EntityNotFoundException.class, () -> {
+			analysisSubmissionService.getStateForAnalysisSubmission(20L);
+		});
 	}
 
 	@Test
@@ -127,16 +122,18 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testReadGrantedRegularUser() {
 		AnalysisSubmission submission = analysisSubmissionService.read(1L);
-		assertNotNull("submission was not properly returned", submission);
+		assertNotNull(submission, "submission was not properly returned");
 	}
 
 	/**
 	 * Tests being denied to read a submission as a regular user
 	 */
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testReadDeniedRegularUser() {
-		analysisSubmissionService.read(1L);
+		assertThrows(AccessDeniedException.class, () -> {
+			analysisSubmissionService.read(1L);
+		});
 	}
 
 	/**
@@ -146,7 +143,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "otheraaron", roles = "ADMIN")
 	public void testReadSuccessAdmin() {
 		AnalysisSubmission submission = analysisSubmissionService.read(1L);
-		assertNotNull("submission was not properly returned", submission);
+		assertNotNull(submission, "submission was not properly returned");
 	}
 
 	/**
@@ -157,17 +154,19 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testReadMultipleGrantedRegularUser() {
 		Iterable<AnalysisSubmission> submissions = analysisSubmissionService.readMultiple(Sets.newHashSet(1L, 2L));
 		Iterator<AnalysisSubmission> submissionIter = submissions.iterator();
-		assertNotNull("Should have one submission", submissionIter.next());
-		assertNotNull("Should have two submissions", submissionIter.next());
+		assertNotNull(submissionIter.next(), "Should have one submission");
+		assertNotNull(submissionIter.next(), "Should have two submissions");
 	}
 
 	/**
 	 * Tests reading multiple submissions as a regular user and being denied.
 	 */
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testReadMultipleDeniedRegularUser() {
-		analysisSubmissionService.readMultiple(Sets.newHashSet(1L, 2L));
+		assertThrows(AccessDeniedException.class, () -> {
+			analysisSubmissionService.readMultiple(Sets.newHashSet(1L, 2L));
+		});
 	}
 
 	/**
@@ -180,8 +179,8 @@ public class AnalysisSubmissionServiceImplIT {
 
 		Set<Long> submissionIds = Sets.newHashSet();
 		submissions.forEach(submission -> submissionIds.add(submission.getId()));
-		assertEquals("Invalid analysis submissions found",
-				ImmutableSet.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L), submissionIds);
+		assertEquals(ImmutableSet.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L), submissionIds,
+				"Invalid analysis submissions found");
 	}
 
 	/**
@@ -194,7 +193,7 @@ public class AnalysisSubmissionServiceImplIT {
 
 		Set<Long> submissionIds = Sets.newHashSet();
 		submissions.forEach(submission -> submissionIds.add(submission.getId()));
-		assertEquals("Invalid analysis submissions found", ImmutableSet.of(3L, 9L, 11L, 12L), submissionIds);
+		assertEquals(ImmutableSet.of(3L, 9L, 11L, 12L), submissionIds, "Invalid analysis submissions found");
 	}
 
 	/**
@@ -204,7 +203,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testExistsRegularUser() {
-		assertTrue("Submission should exist", analysisSubmissionService.exists(1L));
+		assertTrue(analysisSubmissionService.exists(1L), "Submission should exist");
 	}
 
 	/**
@@ -214,7 +213,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testExistsRegularNonOwnerUser() {
-		assertTrue("Submission should exist", analysisSubmissionService.exists(1L));
+		assertTrue(analysisSubmissionService.exists(1L), "Submission should exist");
 	}
 
 	/**
@@ -224,17 +223,19 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testFindRevisionsRegularUser() {
-		assertNotNull("should return revisions exist", analysisSubmissionService.findRevisions(1L));
+		assertNotNull(analysisSubmissionService.findRevisions(1L), "should return revisions exist");
 	}
 
 	/**
 	 * Tests being denied to find revisions for a {@link AnalysisSubmission} as
 	 * a regular user.
 	 */
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testFindRevisionsDeniedUser() {
-		analysisSubmissionService.findRevisions(1L);
+		assertThrows(AccessDeniedException.class, () -> {
+			analysisSubmissionService.findRevisions(1L);
+		});
 	}
 
 	/**
@@ -244,18 +245,20 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testFindRevisionsPageRegularUser() {
-		assertNotNull("should return revisions exist",
-				analysisSubmissionService.findRevisions(1L, PageRequest.of(1, 1)));
+		assertNotNull(analysisSubmissionService.findRevisions(1L, PageRequest.of(1, 1)),
+				"should return revisions exist");
 	}
 
 	/**
 	 * Tests being denied to find revisions for a {@link AnalysisSubmission} as
 	 * a regular user.
 	 */
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testFindRevisionsPageDeniedUser() {
-		analysisSubmissionService.findRevisions(1L, PageRequest.of(1, 1));
+		assertThrows(AccessDeniedException.class, () -> {
+			analysisSubmissionService.findRevisions(1L, PageRequest.of(1, 1));
+		});
 	}
 
 	/**
@@ -264,26 +267,30 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testGetStateForAnalysisSubmissionRegularUser() {
-		assertNotNull("state should return successfully", analysisSubmissionService.getStateForAnalysisSubmission(1L));
+		assertNotNull(analysisSubmissionService.getStateForAnalysisSubmission(1L), "state should return successfully");
 	}
 
 	/**
 	 * Tests being denied to get the state for a {@link AnalysisSubmission} as a
 	 * regular user.
 	 */
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testGetStateForAnalysisSubmissionDeniedUser() {
-		analysisSubmissionService.getStateForAnalysisSubmission(1L);
+		assertThrows(AccessDeniedException.class, () -> {
+			analysisSubmissionService.getStateForAnalysisSubmission(1L);
+		});
 	}
 
 	/**
 	 * Tests listing submissions as the regular user and being denied.
 	 */
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testListDeniedRegularUser() {
-		analysisSubmissionService.list(1, 1, Direction.ASC);
+		assertThrows(AccessDeniedException.class, () -> {
+			analysisSubmissionService.list(1, 1, Direction.ASC);
+		});
 	}
 
 	/**
@@ -292,17 +299,19 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testListAdminUser() {
-		assertNotNull("Should list submissions", analysisSubmissionService.list(1, 1, Direction.ASC));
+		assertNotNull(analysisSubmissionService.list(1, 1, Direction.ASC), "Should list submissions");
 	}
 
 	/**
 	 * Tests listing submissions as the regular user with sort properties and
 	 * being denied.
 	 */
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testListSortPropertiesDeniedRegularUser() {
-		analysisSubmissionService.list(1, 1, Direction.ASC, "");
+		assertThrows(AccessDeniedException.class, () -> {
+			analysisSubmissionService.list(1, 1, Direction.ASC, "");
+		});
 	}
 
 	/**
@@ -311,16 +320,18 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testListSortPropertiesAdminUser() {
-		assertNotNull("Should list submissions", analysisSubmissionService.list(1, 1, Direction.ASC, "submitter"));
+		assertNotNull(analysisSubmissionService.list(1, 1, Direction.ASC, "submitter"), "Should list submissions");
 	}
 
 	/**
 	 * Tests counting analysis submissions as regular user and being denied.
 	 */
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testCountRegularUser() {
-		analysisSubmissionService.count();
+		assertThrows(AccessDeniedException.class, () -> {
+			analysisSubmissionService.count();
+		});
 	}
 
 	/**
@@ -329,16 +340,18 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCountAdminUser() {
-		assertNotNull("Should count submissions", analysisSubmissionService.count());
+		assertNotNull(analysisSubmissionService.count(), "Should count submissions");
 	}
 
 	/**
 	 * Tests deleting as a regular user and being denied.
 	 */
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testDeleteSubmissionOwnedByOtherAsUser() {
-		analysisSubmissionService.delete(1L);
+		assertThrows(AccessDeniedException.class, () -> {
+			analysisSubmissionService.delete(1L);
+		});
 	}
 
 	/**
@@ -347,9 +360,9 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testDeleteAdminUser() {
-		assertTrue("submission should exists", analysisSubmissionService.exists(1L));
+		assertTrue(analysisSubmissionService.exists(1L), "submission should exists");
 		analysisSubmissionService.delete(1L);
-		assertFalse("submission should have been deleted", analysisSubmissionService.exists(1L));
+		assertFalse(analysisSubmissionService.exists(1L), "submission should have been deleted");
 	}
 
 	/**
@@ -358,9 +371,9 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testDeleteSubmissionOwnedBySelf() {
-		assertTrue("submission should exists", analysisSubmissionService.exists(1L));
+		assertTrue(analysisSubmissionService.exists(1L), "submission should exists");
 		analysisSubmissionService.delete(1L);
-		assertFalse("submission should have been deleted", analysisSubmissionService.exists(1L));
+		assertFalse(analysisSubmissionService.exists(1L), "submission should have been deleted");
 	}
 
 	/**
@@ -372,7 +385,7 @@ public class AnalysisSubmissionServiceImplIT {
 		AnalysisSubmission submission = analysisSubmissionService.read(1L);
 		submission.setAnalysisState(AnalysisState.COMPLETED);
 		AnalysisSubmission updated = analysisSubmissionService.update(submission);
-		assertEquals("analysis should be completed", AnalysisState.COMPLETED, updated.getAnalysisState());
+		assertEquals(AnalysisState.COMPLETED, updated.getAnalysisState(), "analysis should be completed");
 	}
 
 	/**
@@ -383,18 +396,20 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testUpdateAdminUser() {
 		AnalysisSubmission submission = analysisSubmissionService.read(1L);
 		submission.setAnalysisState(AnalysisState.COMPLETED);
-		assertNotNull("submission should be updated", analysisSubmissionService.update(submission));
+		assertNotNull(analysisSubmissionService.update(submission), "submission should be updated");
 	}
 
 	/**
-	 * Tests updating the analysis with a new priority.  Should fail.
+	 * Tests updating the analysis with a new priority. Should fail.
 	 */
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testUpdatePriorityFail() {
 		AnalysisSubmission submission = analysisSubmissionService.read(1L);
 		submission.setPriority(AnalysisSubmission.Priority.HIGH);
-		analysisSubmissionService.update(submission);
+		assertThrows(IllegalArgumentException.class, () -> {
+			analysisSubmissionService.update(submission);
+		});
 	}
 
 	/**
@@ -408,7 +423,7 @@ public class AnalysisSubmissionServiceImplIT {
 		analysisSubmissionService.updatePriority(submission, AnalysisSubmission.Priority.HIGH);
 		submission = analysisSubmissionService.read(1L);
 
-		assertEquals("Should have high priority", submission.getPriority(), AnalysisSubmission.Priority.HIGH);
+		assertEquals(submission.getPriority(), AnalysisSubmission.Priority.HIGH, "Should have high priority");
 	}
 
 	/**
@@ -417,13 +432,14 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testCreateRegularUser() {
-		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findById(1L).orElse(null);
+		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findById(1L)
+				.orElse(null);
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(workflowId).name("test")
 				.inputFiles(Sets.newHashSet(sequencingObject)).build();
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(submission);
-		assertNotNull("Submission should have been created", createdSubmission);
-		assertEquals("submitter should be set properly", Long.valueOf(1L), createdSubmission.getSubmitter().getId());
+		assertNotNull(createdSubmission, "Submission should have been created");
+		assertEquals(Long.valueOf(1L), createdSubmission.getSubmitter().getId(), "submitter should be set properly");
 	}
 
 	/**
@@ -432,13 +448,14 @@ public class AnalysisSubmissionServiceImplIT {
 	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testCreateRegularUser2() {
-		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findById(1L).orElse(null);
+		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findById(1L)
+				.orElse(null);
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(workflowId).name("test")
 				.inputFiles(Sets.newHashSet(sequencingObject)).build();
 		AnalysisSubmission createdSubmission = analysisSubmissionService.create(submission);
-		assertNotNull("Submission should have been created", createdSubmission);
-		assertEquals("submitter should be set properly", Long.valueOf(2L), createdSubmission.getSubmitter().getId());
+		assertNotNull(createdSubmission, "Submission should have been created");
+		assertEquals(Long.valueOf(2L), createdSubmission.getSubmitter().getId(), "submitter should be set properly");
 	}
 
 	/**
@@ -449,18 +466,20 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetAnalysisSubmissionsForUserAsRegularUser() {
 		User user = userRepository.findById(1L).orElse(null);
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForUser(user);
-		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 9, submissions.size());
+		assertNotNull(submissions, "should get submissions for the user");
+		assertEquals(9, submissions.size(), "submissions should have correct number");
 	}
 
 	/**
 	 * Tests being denied getting submissions for a different user.
 	 */
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testGetAnalysisSubmissionsForUserAsRegularUserDenied() {
 		User user = userRepository.findById(1L).orElse(null);
-		analysisSubmissionService.getAnalysisSubmissionsForUser(user);
+		assertThrows(AccessDeniedException.class, () -> {
+			analysisSubmissionService.getAnalysisSubmissionsForUser(user);
+		});
 	}
 
 	/**
@@ -471,8 +490,8 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetAnalysisSubmissionsForUserAsAdminUser() {
 		User user = userRepository.findById(1L).orElse(null);
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForUser(user);
-		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 9, submissions.size());
+		assertNotNull(submissions, "should get submissions for the user");
+		assertEquals(9, submissions.size(), "submissions should have correct number");
 	}
 
 	/**
@@ -483,8 +502,8 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testGetAnalysisSubmissionsForCurrentUserAsRegularUser() {
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
-		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 9, submissions.size());
+		assertNotNull(submissions, "should get submissions for the user");
+		assertEquals(9, submissions.size(), "submissions should have correct number");
 	}
 
 	/**
@@ -495,8 +514,8 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testGetAnalysisSubmissionsForCurrentUserAsRegularUser2() {
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
-		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 3, submissions.size());
+		assertNotNull(submissions, "should get submissions for the user");
+		assertEquals(3, submissions.size(), "submissions should have correct number");
 	}
 
 	/**
@@ -507,48 +526,52 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "otheraaron", roles = "ADMIN")
 	public void testGetAnalysisSubmissionsForCurrentUserAsAdminUser() {
 		Set<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
-		assertNotNull("should get submissions for the user", submissions);
-		assertEquals("submissions should have correct number", 3, submissions.size());
+		assertNotNull(submissions, "should get submissions for the user");
+		assertEquals(3, submissions.size(), "submissions should have correct number");
 	}
 
 	/**
 	 * Tests failing to get a set of submissions for the current user when there
 	 * is no current user.
 	 */
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "")
 	public void testGetAnalysisSubmissionsForCurrentUserAsRegularUserFail() {
-		analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
+		assertThrows(AccessDeniedException.class, () -> {
+			analysisSubmissionService.getAnalysisSubmissionsForCurrentUser();
+		});
 	}
 
-	@Test(expected = InvalidDataAccessApiUsageException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateSubmissionWithUnsavedNamedParameters() {
-		final SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findById(1L).orElse(null);
+		final SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findById(1L)
+				.orElse(null);
 		final IridaWorkflowNamedParameters params = new IridaWorkflowNamedParameters("named parameters.", workflowId,
 				ImmutableMap.of("named", "parameter"));
 		final AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
-				.inputFiles(Sets.newHashSet(sequencingObject))
-				.withNamedParameters(params)
-				.build();
+				.inputFiles(Sets.newHashSet(sequencingObject)).withNamedParameters(params).build();
 
-		analysisSubmissionService.create(submission);
+		assertThrows(InvalidDataAccessApiUsageException.class, () -> {
+			analysisSubmissionService.create(submission);
+		});
 
 	}
 
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testCreateSubmissionWithNamedParameters() {
-		final SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findById(1L).orElse(null);
+		final SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) sequencingObjectRepository.findById(1L)
+				.orElse(null);
 		final IridaWorkflowNamedParameters params = parametersRepository.findById(1L).orElse(null);
 		final AnalysisSubmission submission = AnalysisSubmission.builder(workflowId)
 				.inputFiles(Sets.newHashSet(sequencingObject)).withNamedParameters(params).build();
 		analysisSubmissionService.create(submission);
 
-		assertNotNull("Should have saved and created an id for the submission", submission.getId());
-		assertNotNull("Submission should have a map of parameters", submission.getInputParameters());
-		assertEquals("Submission parameters should be the same as the named parameters", params.getInputParameters(),
-				submission.getInputParameters());
+		assertNotNull(submission.getId(), "Should have saved and created an id for the submission");
+		assertNotNull(submission.getInputParameters(), "Submission should have a map of parameters");
+		assertEquals(params.getInputParameters(), submission.getInputParameters(),
+				"Submission parameters should be the same as the named parameters");
 	}
 
 	/**
@@ -562,7 +585,7 @@ public class AnalysisSubmissionServiceImplIT {
 	public void testGetPercentageCompleteGrantedRegularUser()
 			throws EntityNotFoundException, ExecutionManagerException {
 		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(10L);
-		assertEquals("submission was not properly returned", 0.0f, percentageComplete, DELTA);
+		assertEquals(0.0f, percentageComplete, DELTA, "submission was not properly returned");
 	}
 
 	/**
@@ -572,10 +595,12 @@ public class AnalysisSubmissionServiceImplIT {
 	 * @throws EntityNotFoundException
 	 * @throws ExecutionManagerException
 	 */
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testGetPercentageCompleteDeniedRegularUser() throws EntityNotFoundException, ExecutionManagerException {
-		analysisSubmissionService.getPercentCompleteForAnalysisSubmission(10L);
+		assertThrows(AccessDeniedException.class, () -> {
+			analysisSubmissionService.getPercentCompleteForAnalysisSubmission(10L);
+		});
 	}
 
 	/**
@@ -588,7 +613,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetPercentageCompleteGrantedAdminUser() throws EntityNotFoundException, ExecutionManagerException {
 		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(10L);
-		assertEquals("submission was not properly returned", 0.0f, percentageComplete, DELTA);
+		assertEquals(0.0f, percentageComplete, DELTA, "submission was not properly returned");
 	}
 
 	/**
@@ -602,7 +627,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testGetPercentageCompleteAlternativeState() throws EntityNotFoundException, ExecutionManagerException {
 		float percentageComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(3L);
-		assertEquals("submission was not properly returned", 15.0f, percentageComplete, DELTA);
+		assertEquals(15.0f, percentageComplete, DELTA, "submission was not properly returned");
 	}
 
 	/**
@@ -612,10 +637,12 @@ public class AnalysisSubmissionServiceImplIT {
 	 * @throws EntityNotFoundException
 	 * @throws ExecutionManagerException
 	 */
-	@Test(expected = NoPercentageCompleteException.class)
+	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testGetPercentageCompleteFailError() throws EntityNotFoundException, ExecutionManagerException {
-		analysisSubmissionService.getPercentCompleteForAnalysisSubmission(7L);
+		assertThrows(NoPercentageCompleteException.class, () -> {
+			analysisSubmissionService.getPercentCompleteForAnalysisSubmission(7L);
+		});
 	}
 
 	/**
@@ -626,7 +653,7 @@ public class AnalysisSubmissionServiceImplIT {
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testReadSharedAnalysis() {
 		AnalysisSubmission read = analysisSubmissionService.read(3L);
-		assertEquals("id should be 3", Long.valueOf(3), read.getId());
+		assertEquals(Long.valueOf(3), read.getId(), "id should be 3");
 	}
 
 	@Test
@@ -640,31 +667,35 @@ public class AnalysisSubmissionServiceImplIT {
 		assertNotNull(shareAnalysisSubmissionWithProject.getId());
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void shareAnalysisSubmissionWithProjectFail() {
 		AnalysisSubmission read = analysisSubmissionService.read(3L);
 		Project project2 = projectService.read(2L);
-		analysisSubmissionService.shareAnalysisSubmissionWithProject(read, project2);
+		assertThrows(AccessDeniedException.class, () -> {
+			analysisSubmissionService.shareAnalysisSubmissionWithProject(read, project2);
+		});
 	}
-	
+
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testGetAnalysisSubmissionsSharedToProject() {
 		Project project = projectService.read(1L);
-		Collection<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsSharedToProject(project);
-		
+		Collection<AnalysisSubmission> submissions = analysisSubmissionService
+				.getAnalysisSubmissionsSharedToProject(project);
+
 		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
-		assertEquals("Incorrect analysis submissions for project", Sets.newHashSet(3L, 12L), submissionIds);
+		assertEquals(Sets.newHashSet(3L, 12L), submissionIds, "Incorrect analysis submissions for project");
 	}
-	
+
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testGetAnalysisSubmissionsSharedToProjectNoSubmissions() {
 		Project project = projectService.read(2L);
-		Collection<AnalysisSubmission> submissions = analysisSubmissionService.getAnalysisSubmissionsSharedToProject(project);
-		
-		assertEquals("Unexpected analysis submission in project", 0, submissions.size());
+		Collection<AnalysisSubmission> submissions = analysisSubmissionService
+				.getAnalysisSubmissionsSharedToProject(project);
+
+		assertEquals(0, submissions.size(), "Unexpected analysis submission in project");
 	}
 
 	@Test
@@ -676,13 +707,15 @@ public class AnalysisSubmissionServiceImplIT {
 		analysisSubmissionService.removeAnalysisProjectShare(read, project2);
 	}
 
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	@WithMockUser(username = "otheraaron", roles = "USER")
 	public void testRemoveAnalysisSubmissionFromProjectFail() {
 		AnalysisSubmission read = analysisSubmissionService.read(3L);
 		Project project2 = projectService.read(1L);
 
-		analysisSubmissionService.removeAnalysisProjectShare(read, project2);
+		assertThrows(AccessDeniedException.class, () -> {
+			analysisSubmissionService.removeAnalysisProjectShare(read, project2);
+		});
 	}
 
 	@Test
@@ -693,8 +726,8 @@ public class AnalysisSubmissionServiceImplIT {
 						Sets.newHashSet(UUID.fromString("e47c1a8b-4ccd-4e56-971b-24c384933f44")));
 
 		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
-		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 10L, 12L),
-				submissionIds);
+		assertEquals(ImmutableSet.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 10L, 12L), submissionIds,
+				"Got incorrect analysis submissions");
 	}
 
 	@Test
@@ -705,7 +738,7 @@ public class AnalysisSubmissionServiceImplIT {
 						Sets.newHashSet(UUID.fromString("e47c1a8b-4ccd-4e56-971b-24c384933f44")));
 
 		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
-		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(3L, 9L, 12L), submissionIds);
+		assertEquals(ImmutableSet.of(3L, 9L, 12L), submissionIds, "Got incorrect analysis submissions");
 	}
 
 	@Test
@@ -717,8 +750,8 @@ public class AnalysisSubmissionServiceImplIT {
 								UUID.fromString("d18dfcfe-f10c-48c0-b297-4f90cb9c44bc")));
 
 		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
-		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 10L, 12L),
-				submissionIds);
+		assertEquals(ImmutableSet.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 10L, 12L), submissionIds,
+				"Got incorrect analysis submissions");
 	}
 
 	@Test
@@ -730,9 +763,9 @@ public class AnalysisSubmissionServiceImplIT {
 								UUID.fromString("d18dfcfe-f10c-48c0-b297-4f90cb9c44bc")));
 
 		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
-		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(3L, 9L, 11L, 12L), submissionIds);
+		assertEquals(ImmutableSet.of(3L, 9L, 11L, 12L), submissionIds, "Got incorrect analysis submissions");
 	}
-	
+
 	@Test
 	@WithMockUser(username = "aaron", roles = "USER")
 	public void testGetAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIdsUser1NoSubmissions() {
@@ -741,7 +774,6 @@ public class AnalysisSubmissionServiceImplIT {
 						Sets.newHashSet(UUID.fromString("d18dfcfe-f10c-48c0-b297-4f90cb9c44bc")));
 
 		Set<Long> submissionIds = submissions.stream().map(AnalysisSubmission::getId).collect(Collectors.toSet());
-		assertEquals("Got incorrect analysis submissions", ImmutableSet.of(),
-				submissionIds);
+		assertEquals(ImmutableSet.of(), submissionIds, "Got incorrect analysis submissions");
 	}
 }

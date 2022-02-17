@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.security.permissions.analysis;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Collection;
@@ -10,8 +10,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Ana
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.analysis.ReadAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.files.ReadSequencingObjectPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadProjectPermission;
 
@@ -78,9 +77,9 @@ public class ReadAnalysisSubmissionPermissionTest {
 	/**
 	 * Setup for tests
 	 */
-	@Before
+	@BeforeEach
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		readAnalysisSubmissionPermission = new ReadAnalysisSubmissionPermission(analysisSubmissionRepository,
 				userRepository, sequencingObjectRepository, seqObjectPermission, pasRepository, readProjectPermission);
@@ -106,7 +105,8 @@ public class ReadAnalysisSubmissionPermissionTest {
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(analysisSubmissionRepository.findById(1L)).thenReturn(Optional.of(analysisSubmission));
 
-		assertTrue("permission was not granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
+		assertTrue(readAnalysisSubmissionPermission.isAllowed(auth, 1L),
+				"permission was not granted.");
 
 		verify(userRepository).loadUserByUsername(username);
 		verify(analysisSubmissionRepository).findById(1L);
@@ -130,10 +130,11 @@ public class ReadAnalysisSubmissionPermissionTest {
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(analysisSubmissionRepository.findById(1L)).thenReturn(Optional.of(analysisSubmission));
 
-		assertTrue("permission was not granted.", readAnalysisSubmissionPermission.isAllowed(auth, analysisSubmission));
+		assertTrue(readAnalysisSubmissionPermission.isAllowed(auth, analysisSubmission),
+				"permission was not granted.");
 
 		verify(userRepository).loadUserByUsername(username);
-		verifyZeroInteractions(analysisSubmissionRepository);
+		verifyNoInteractions(analysisSubmissionRepository);
 	}
 
 	/**
@@ -154,7 +155,8 @@ public class ReadAnalysisSubmissionPermissionTest {
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
 		when(analysisSubmissionRepository.findById(1L)).thenReturn(Optional.of(analysisSubmission));
 
-		assertFalse("permission was not granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
+		assertFalse(readAnalysisSubmissionPermission.isAllowed(auth, 1L),
+				"permission was not granted.");
 
 		verify(userRepository).loadUserByUsername(username);
 		verify(analysisSubmissionRepository).findById(1L);
@@ -172,10 +174,11 @@ public class ReadAnalysisSubmissionPermissionTest {
 
 		when(analysisSubmissionRepository.findById(1L)).thenReturn(Optional.of(AnalysisSubmission.builder(workflowId).name("test")
 				.inputFiles(inputSingleFiles).referenceFile(referenceFile).build()));
-		assertTrue("permission was not granted to admin.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
+		assertTrue(readAnalysisSubmissionPermission.isAllowed(auth, 1L),
+				"permission was not granted to admin.");
 
 		// we should fast pass through to permission granted for administrators.
-		verifyZeroInteractions(userRepository);
+		verifyNoInteractions(userRepository);
 	}
 
 	@Test
@@ -208,7 +211,8 @@ public class ReadAnalysisSubmissionPermissionTest {
 		when(sequencingObjectRepository.findSequencingObjectsForAnalysisSubmission(analysisSubmission))
 				.thenReturn(ImmutableSet.of(pair));
 
-		assertTrue("permission should be granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
+		assertTrue(readAnalysisSubmissionPermission.isAllowed(auth, 1L),
+				"permission should be granted.");
 
 		verify(userRepository).loadUserByUsername(username);
 		verify(analysisSubmissionRepository).findById(1L);
@@ -245,7 +249,8 @@ public class ReadAnalysisSubmissionPermissionTest {
 		when(sequencingObjectRepository.findSequencingObjectsForAnalysisSubmission(analysisSubmission))
 				.thenReturn(ImmutableSet.of(pair));
 
-		assertTrue("permission should be granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
+		assertTrue(readAnalysisSubmissionPermission.isAllowed(auth, 1L),
+				"permission should be granted.");
 
 		verify(userRepository).loadUserByUsername(username);
 		verify(analysisSubmissionRepository).findById(1L);
@@ -273,7 +278,8 @@ public class ReadAnalysisSubmissionPermissionTest {
 
 		when(readProjectPermission.customPermissionAllowed(auth, p)).thenReturn(true);
 
-		assertTrue("permission should be granted.", readAnalysisSubmissionPermission.isAllowed(auth, 1L));
+		assertTrue(readAnalysisSubmissionPermission.isAllowed(auth, 1L),
+				"permission should be granted.");
 
 		verify(userRepository).loadUserByUsername(username);
 		verify(analysisSubmissionRepository).findById(1L);

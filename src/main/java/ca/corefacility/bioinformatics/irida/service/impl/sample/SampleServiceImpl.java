@@ -48,7 +48,6 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoi
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
-import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
@@ -91,8 +90,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 	private SequencingObjectRepository sequencingObjectRepository;
 
-	private GenomeAssemblyRepository assemblyRepository;
-
 	/**
 	 * Reference to {@link AnalysisRepository}.
 	 */
@@ -107,24 +104,33 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * Constructor.
 	 *
-	 * @param sampleRepository                   the sample repository.
-	 * @param psjRepository                      the project sample join repository.
-	 * @param analysisRepository                 the analysis repository.
-	 * @param ssoRepository                      The {@link SampleSequencingObjectJoin} repository
-	 * @param sequencingObjectRepository         the {@link SequencingObject} repository
-	 * @param qcEntryRepository                  a repository for storing and reading {@link QCEntry}
-	 * @param sampleGenomeAssemblyJoinRepository A {@link SampleGenomeAssemblyJoinRepository}
-	 * @param userRepository                     A {@link UserRepository}
-	 * @param metadataEntryRepository            A {@link MetadataEntryRepository}
-	 * @param assemblyRepository                 a repository for retreving {@link GenomeAssembly}
-	 * @param validator                          validator.
+	 * @param sampleRepository
+	 *            the sample repository.
+	 * @param psjRepository
+	 *            the project sample join repository.
+	 * @param analysisRepository
+	 *            the analysis repository.
+	 * @param ssoRepository
+	 *            The {@link SampleSequencingObjectJoin} repository
+	 * @param sequencingObjectRepository
+	 *            the {@link SequencingObject} repository
+	 * @param qcEntryRepository
+	 *            a repository for storing and reading {@link QCEntry}
+	 * @param sampleGenomeAssemblyJoinRepository
+	 *            A {@link SampleGenomeAssemblyJoinRepository}
+	 * @param userRepository
+	 *            A {@link UserRepository}
+	 * @param metadataEntryRepository
+	 *            A {@link MetadataEntryRepository}
+	 * @param validator
+	 *            validator.
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
 			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository,
 			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, UserRepository userRepository,
-			MetadataEntryRepository metadataEntryRepository, GenomeAssemblyRepository assemblyRepository, Validator validator) {
+			MetadataEntryRepository metadataEntryRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
@@ -133,7 +139,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.qcEntryRepository = qcEntryRepository;
 		this.sequencingObjectRepository = sequencingObjectRepository;
 		this.userRepository = userRepository;
-		this.assemblyRepository = assemblyRepository;
 		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
 		this.metadataEntryRepository = metadataEntryRepository;
 	}
@@ -224,7 +229,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		metadataEntryRepository.deleteAll(currentMetadata);
 
-		for(MetadataEntry e : metadataToSet){
+		for (MetadataEntry e : metadataToSet) {
 			e.setSample(s);
 		}
 
@@ -232,7 +237,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		s = read(s.getId());
 		s.setModifiedDate(new Date());
-		//re-saving sample to update modified date
+		// re-saving sample to update modified date
 		s = sampleRepository.save(s);
 
 		return s;
@@ -252,19 +257,18 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			newMetadataEntry.setSample(s);
 
 			Optional<MetadataEntry> metadataEntryForField = currentMetadata.stream()
-					.filter(e -> e.getField()
-							.equals(field))
-					.findFirst();
+					.filter(e -> e.getField().equals(field)).findFirst();
 
 			if (metadataEntryForField.isPresent()) {
 				MetadataEntry originalMetadataEntry = metadataEntryForField.get();
 
-				// if the metadata entries are of the same type, I can directly merge
-				if (originalMetadataEntry.getClass()
-						.equals(newMetadataEntry.getClass())) {
+				// if the metadata entries are of the same type, I can directly
+				// merge
+				if (originalMetadataEntry.getClass().equals(newMetadataEntry.getClass())) {
 					originalMetadataEntry.merge(newMetadataEntry);
 				} else {
-					// if they are different types, I need to replace the metadata entry instead of merging
+					// if they are different types, I need to replace the
+					// metadata entry instead of merging
 					currentMetadata.remove(originalMetadataEntry);
 					metadataEntryRepository.delete(originalMetadataEntry);
 
@@ -279,7 +283,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		s = read(s.getId());
 		s.setModifiedDate(new Date());
-		//re-saving sample to update modified date
+		// re-saving sample to update modified date
 		s = sampleRepository.save(s);
 
 		return s;
@@ -330,8 +334,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		if (s != null) {
 			return s;
 		} else {
-			throw new EntityNotFoundException("No sample with external id [" + sampleId + "] in project ["
-					+ project.getId() + "]");
+			throw new EntityNotFoundException(
+					"No sample with external id [" + sampleId + "] in project [" + project.getId() + "]");
 		}
 	}
 
@@ -404,7 +408,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				addSequencingObjectToSample(mergeInto, sequencingObject);
 			}
 
-			Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = sampleGenomeAssemblyJoinRepository.findBySample(s);
+			Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = sampleGenomeAssemblyJoinRepository
+					.findBySample(s);
 			for (SampleGenomeAssemblyJoin join : genomeAssemblyJoins) {
 				GenomeAssembly genomeAssembly = join.getObject();
 
@@ -437,7 +442,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * @throws IllegalArgumentException
 	 *             if join does not exist
 	 */
-	private void confirmProjectSampleJoin(Project project, Sample sample) throws IllegalArgumentException{
+	private void confirmProjectSampleJoin(Project project, Sample sample) throws IllegalArgumentException {
 		Set<Project> projects = new HashSet<>();
 		List<Join<Project, Sample>> sampleProjects = psjRepository.getProjectForSample(sample);
 		for (Join<Project, Sample> p : sampleProjects) {
@@ -488,8 +493,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				final AnalysisFastQC sequenceFileFastQC = analysisRepository
 						.findFastqcAnalysisForSequenceFile(sequenceFile);
 				if (sequenceFileFastQC == null || sequenceFileFastQC.getTotalBases() == null) {
-					throw new SequenceFileAnalysisException("Missing FastQC analysis for SequenceFile ["
-							+ sequenceFile.getId() + "]");
+					throw new SequenceFileAnalysisException(
+							"Missing FastQC analysis for SequenceFile [" + sequenceFile.getId() + "]");
 				}
 				totalBases += sequenceFileFastQC.getTotalBases();
 			}
@@ -553,11 +558,11 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projects, 'canReadProject')")
-	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames, String sampleName, String searchTerm,
-			String organism, Date minDate, Date maxDate, int currentPage, int pageSize, Sort sort) {
-		return psjRepository
-				.findAll(ProjectSampleSpecification.getSamples(projects, sampleNames, sampleName, searchTerm, organism, minDate, maxDate),
-						PageRequest.of(currentPage, pageSize, sort));
+	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames,
+			String sampleName, String searchTerm, String organism, Date minDate, Date maxDate, int currentPage,
+			int pageSize, Sort sort) {
+		return psjRepository.findAll(ProjectSampleSpecification.getSamples(projects, sampleNames, sampleName,
+				searchTerm, organism, minDate, maxDate), PageRequest.of(currentPage, pageSize, sort));
 	}
 
 	/**
@@ -572,9 +577,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		Set<Sample> samples = null;
 		try {
 			samples = objectsForAnalysisSubmission.stream()
-					.map(s -> ssoRepository.getSampleForSequencingObject(s)
-							.getSubject())
-					.collect(Collectors.toSet());
+					.map(s -> ssoRepository.getSampleForSequencingObject(s).getSubject()).collect(Collectors.toSet());
 		} catch (NullPointerException e) {
 			logger.warn("No samples were found for submission " + submission.getId());
 		}
@@ -649,8 +652,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 	/**
 	 * Specification for searching {@link Sample}s
-	 * @param user the {@link User} to get samples for.  If this property is null, will serch for all users.
-	 * @param queryString the query string to search for
+	 * 
+	 * @param user
+	 *            the {@link User} to get samples for. If this property is null,
+	 *            will serch for all users.
+	 * @param queryString
+	 *            the query string to search for
 	 * @return a {@link Specification} for {@link ProjectSampleJoin}
 	 */
 	private static Specification<ProjectSampleJoin> sampleForUserSpecification(final User user,

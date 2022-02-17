@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.components;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;

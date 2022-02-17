@@ -1,10 +1,11 @@
 package ca.corefacility.bioinformatics.irida.model.sample.metadata.unit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.UUID;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Sets;
 
@@ -22,7 +23,7 @@ public class MetadataEntryTest {
 
 		e1.merge(e2);
 
-		assertEquals("Metadata entries did not merge", "e2", e1.getValue());
+		assertEquals("e2", e1.getValue(), "Metadata entries did not merge");
 	}
 
 	@Test
@@ -39,8 +40,8 @@ public class MetadataEntryTest {
 
 		e1.merge(e2);
 
-		assertEquals("Metadata entries did not merge", "e2", e1.getValue());
-		assertEquals("Metadata entries did not merge", Long.valueOf(2), e1.getSubmission().getId());
+		assertEquals("e2", e1.getValue(), "Metadata entries did not merge");
+		assertEquals(Long.valueOf(2), e1.getSubmission().getId(), "Metadata entries did not merge");
 	}
 	
 	@Test
@@ -57,12 +58,12 @@ public class MetadataEntryTest {
 
 		e1.merge(e2);
 
-		assertEquals("Metadata entries did not merge", "e2", e1.getValue());
-		assertEquals("Metadata entries did not merge", "text2", e1.getType());
-		assertEquals("Metadata entries did not merge", Long.valueOf(2), e1.getSubmission().getId());
+		assertEquals("e2", e1.getValue(), "Metadata entries did not merge");
+		assertEquals("text2", e1.getType(), "Metadata entries did not merge");
+		assertEquals(Long.valueOf(2), e1.getSubmission().getId(), "Metadata entries did not merge");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testMergeDifferentEntryPipeline() {
 		AnalysisSubmission s2 = AnalysisSubmission.builder(UUID.randomUUID())
 				.inputFiles(Sets.newHashSet(new SequenceFilePair())).build();
@@ -71,10 +72,10 @@ public class MetadataEntryTest {
 		MetadataEntry e1 = new MetadataEntry("e1", "text");
 		PipelineProvidedMetadataEntry e2 = new PipelineProvidedMetadataEntry("e2", "text", s2);
 
-		e1.merge(e2);
+		assertThrows(IllegalArgumentException.class, () -> { e1.merge(e2); });
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testMergeDifferentPipelineEntry() {
 		AnalysisSubmission s1 = AnalysisSubmission.builder(UUID.randomUUID())
 				.inputFiles(Sets.newHashSet(new SequenceFilePair())).build();
@@ -83,6 +84,6 @@ public class MetadataEntryTest {
 		PipelineProvidedMetadataEntry e1 = new PipelineProvidedMetadataEntry("e1", "text", s1);
 		MetadataEntry e2 = new MetadataEntry("e2", "text");
 
-		e1.merge(e2);
+		assertThrows(IllegalArgumentException.class, () -> { e1.merge(e2); });
 	}
 }

@@ -2,8 +2,8 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
 import java.io.IOException;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -15,7 +15,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * <p>
@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver {
 	protected LaunchPipelinePage page;
 
-	@Before
+	@BeforeEach
 	public void setUpTest() throws IOException {
 		page = LaunchPipelinePage.init(driver());
 		addSamplesToCart();
@@ -45,38 +45,38 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 	public void testPageSetup() {
 		CartPage cartPage = new CartPage(driver());
 		cartPage.selectPhylogenomicsPipeline();
-		assertEquals("Launch Page should display  the pipeline name", "SNVPhyl Phylogenomics Pipeline", page.getPipelineName());
-		assertTrue("Launch form should be displayed", page.isLaunchFormDisplayed());
-		assertTrue("Launch details should be displayed", page.isLaunchDetailsDisplayed());
-		assertTrue("Launch parameters should be displayed", page.isLaunchParametersDisplayed());
-		assertFalse("Share with samples should not be displayed", page.isShareWithSamplesDisplayed());
-		assertTrue("Share with projects should be displayed", page.isShareWithProjectsDisplayed());
-		assertTrue("Should be able to select a reference file", page.isReferenceFilesDisplayed());
-		assertTrue("Should be able to select sample files", page.isLaunchFilesDisplayed());
-		assertTrue("Should have an alert showing that reference files were not found", page.isReferenceFilesRequiredDisplayed());
-		assertFalse("Reference file error should only be shown after trying to submit", page.isReferenceFilesRequiredErrorDisplayed());
+		assertEquals("SNVPhyl Phylogenomics Pipeline", page.getPipelineName(), "Launch Page should display  the pipeline name");
+		assertTrue(page.isLaunchFormDisplayed(), "Launch form should be displayed");
+		assertTrue(page.isLaunchDetailsDisplayed(), "Launch details should be displayed");
+		assertTrue(page.isLaunchParametersDisplayed(), "Launch parameters should be displayed");
+		assertFalse(page.isShareWithSamplesDisplayed(), "Share with samples should not be displayed");
+		assertTrue(page.isShareWithProjectsDisplayed(), "Share with projects should be displayed");
+		assertTrue(page.isReferenceFilesDisplayed(), "Should be able to select a reference file");
+		assertTrue(page.isLaunchFilesDisplayed(), "Should be able to select sample files");
+		assertTrue(page.isReferenceFilesRequiredDisplayed(), "Should have an alert showing that reference files were not found");
+		assertFalse(page.isReferenceFilesRequiredErrorDisplayed(), "Reference file error should only be shown after trying to submit");
 
 		// Test the name input
 		page.clearName();
-		assertTrue("There should be an error displayed that a name is required", page.isNameErrorDisplayed());
+		assertTrue(page.isNameErrorDisplayed(), "There should be an error displayed that a name is required");
 		page.updateName("TEST_NAME");
-		assertFalse("Name required warning should be cleared", page.isNameErrorDisplayed());
+		assertFalse(page.isNameErrorDisplayed(), "Name required warning should be cleared");
 
 		// Test email checkbox
-		assertEquals("No Email", page.getEmailValue());
+		assertEquals(page.getEmailValue(), "No Email");
 
 		// Make sure the saved pipeline parameter inputs are set up correctly
-		assertEquals("No saved parameters should be initially displayed", 0, page.getNumberOfSavedPipelineParameters());
+		assertEquals(0, page.getNumberOfSavedPipelineParameters(), "No saved parameters should be initially displayed");
 		page.showSavedParameters();
-		assertEquals("Phylogenomics Pipeline should have 8 inputs", 8, page.getNumberOfSavedPipelineParameters());
-		assertFalse("Should not be displaying modified parameter alert", page.isModifiedAlertVisible());
+		assertEquals(8, page.getNumberOfSavedPipelineParameters(), "Phylogenomics Pipeline should have 8 inputs");
+		assertFalse(page.isModifiedAlertVisible(), "Should not be displaying modified parameter alert");
 
 		String MINIMUM_COVERAGE_PARAMETER = "minimum-percent-coverage";
 		String originalMinimumPercentCoverageValue = page.getSavedParameterValue(MINIMUM_COVERAGE_PARAMETER);
 		page.updateSavedParameterValue(MINIMUM_COVERAGE_PARAMETER,"123456");
-		assertTrue("Modified parameters alert should be displayed.", page.isModifiedAlertVisible());
+		assertTrue(page.isModifiedAlertVisible(), "Modified parameters alert should be displayed.");
 		page.updateSavedParameterValue(MINIMUM_COVERAGE_PARAMETER, originalMinimumPercentCoverageValue);
-		assertFalse("Modified alert should go way once the value is the same as the original", page.isModifiedAlertVisible());
+		assertFalse(page.isModifiedAlertVisible(), "Modified alert should go way once the value is the same as the original");
 
 		// Test saving modified parameters
 		String newCoverage = "123";
@@ -84,17 +84,17 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 		page.updateSavedParameterValue(MINIMUM_COVERAGE_PARAMETER, newCoverage);
 		String REPEAT_MINIMUM_LENGTH_PARAMETER = "repeat-minimum-length";
 		page.updateSavedParameterValue(REPEAT_MINIMUM_LENGTH_PARAMETER, newRepeat);
-		assertTrue("Modified parameters alert should be displayed.", page.isModifiedAlertVisible());
+		assertTrue(page.isModifiedAlertVisible(), "Modified parameters alert should be displayed.");
 		final String newModifiedTemplateName = "FOOBAR";
 		page.saveModifiedTemplateAs(newModifiedTemplateName);
-		assertEquals("Then newly template should be selected", newModifiedTemplateName, page.getSelectedParametersTemplateName());
+		assertEquals(newModifiedTemplateName, page.getSelectedParametersTemplateName(), "Then newly template should be selected");
 
 		// Test submitting
 		page.submit();
-		assertTrue("Should display warning that a reference file is required", page.isReferenceFilesRequiredErrorDisplayed());
+		assertTrue(page.isReferenceFilesRequiredErrorDisplayed(), "Should display warning that a reference file is required");
 
 		page.uploadReferenceFile();
-		assertFalse("Now a reference file should exist", page.isReferenceFilesRequiredDisplayed());
+		assertFalse(page.isReferenceFilesRequiredDisplayed(), "Now a reference file should exist");
 		page.submit();
 		WebDriverWait wait = new WebDriverWait(driver(), 5);
 		wait.until(ExpectedConditions.urlMatches("/analysis/"));

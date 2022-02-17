@@ -4,8 +4,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -18,8 +18,8 @@ import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 import com.google.common.collect.ImmutableSet;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class ClientsControllerTest {
@@ -28,7 +28,7 @@ public class ClientsControllerTest {
 	private MessageSource messageSource;
 	private Locale locale;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		clientDetailsService = mock(IridaClientDetailsService.class);
 		messageSource = mock(MessageSource.class);

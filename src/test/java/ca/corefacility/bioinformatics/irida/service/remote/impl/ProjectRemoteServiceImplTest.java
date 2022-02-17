@@ -3,8 +3,8 @@ package ca.corefacility.bioinformatics.irida.service.remote.impl;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.repositories.RemoteAPIRepository;
@@ -16,7 +16,7 @@ public class ProjectRemoteServiceImplTest {
 	ProjectRemoteRepository repository;
 	RemoteAPIRepository apiRepo;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		repository = mock(ProjectRemoteRepository.class);
 		apiRepo = mock(RemoteAPIRepository.class);
