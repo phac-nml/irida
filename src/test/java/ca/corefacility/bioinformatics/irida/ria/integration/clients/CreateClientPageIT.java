@@ -1,12 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.clients;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.CreateClientPage;
-
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,21 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
-import java.net.MalformedURLException;
-import java.security.Principal;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.ui.ExtendedModelMap;
-import org.springframework.web.servlet.HandlerMapping;
-
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -25,10 +9,20 @@ import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.ui.ExtendedModelMap;
+import org.springframework.web.servlet.HandlerMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class RemoteAPIControllerTest {
@@ -68,16 +62,14 @@ public class RemoteAPIControllerTest {
 		assertEquals(RemoteAPIController.CLIENTS_PAGE, list);
 	}
 
-	@Test(expected = IridaOAuthException.class)
+	@Test
 	public void testConnectToAPI() {
 		Long apiId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 		RemoteAPI client = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
 		when(remoteAPIService.read(apiId)).thenReturn(client);
 		when(projectRemoteService.getServiceStatus(client)).thenThrow(new IridaOAuthException("invalid token", client));
-		assertThrows(IridaOAuthException.class, () -> {
-			remoteAPIController.connectToAPI(apiId, model);
-		});
+		assertThrows(IridaOAuthException.class, () -> remoteAPIController.connectToAPI(apiId, model));
 	}
 
 	@Test
@@ -92,7 +84,7 @@ public class RemoteAPIControllerTest {
 	}
 
 	@Test
-	public void testHandleOAuthException() throws MalformedURLException, OAuthSystemException {
+	public void testHandleOAuthException() throws OAuthSystemException {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		String redirect = "http://request";
 		when(request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE)).thenReturn(redirect);
