@@ -120,9 +120,6 @@ public class AnalysisExecutionServiceGalaxy implements AnalysisExecutionService 
 		analysisSubmission.setAnalysisState(AnalysisState.POST_PROCESSING);
 		analysisSubmission = analysisSubmissionService.update(analysisSubmission);
 
-		//re-reading submission to ensure paths get correctly translated
-		analysisSubmission = analysisSubmissionService.read(analysisSubmission.getId());
-
 		return analysisExecutionServiceGalaxyAsync.postProcessResults(analysisSubmission);
 	}
 

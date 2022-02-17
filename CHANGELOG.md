@@ -4,6 +4,7 @@ Changes
 22.01 to 22.05
 --------------
 * [REST]: Corrected behaviour of date fields in REST API to return epoch instead of textual string. (22.01.1)
+* [Developer/UI]: Fixed issue with saving results back to a sample from the UI. (22.01.2)
 
 21.09 to 22.01
 --------------

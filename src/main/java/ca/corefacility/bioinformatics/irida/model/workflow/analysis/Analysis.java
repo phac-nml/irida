@@ -66,7 +66,7 @@ public class Analysis extends IridaRepresentationModel implements IridaThing {
 			"analysis_id", "property_key" }, name = "UK_ANALYSIS_PROPERTY_KEY"))
 	private final Map<String, String> additionalProperties;
 
-	@ElementCollection(fetch = FetchType.EAGER)
+	@ElementCollection(fetch = FetchType.LAZY)
 	@MapKeyColumn(name = "analysis_output_file_key", nullable = false)
 	@Column(name = "analysis_output_file_value", nullable = false)
 	@CollectionTable(name = "analysis_output_file_map", joinColumns = @JoinColumn(name = "analysis_id"), uniqueConstraints = @UniqueConstraint(columnNames = {

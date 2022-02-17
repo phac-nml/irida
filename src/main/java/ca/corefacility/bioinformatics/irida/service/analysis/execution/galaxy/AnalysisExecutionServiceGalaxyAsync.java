@@ -224,6 +224,8 @@ public class AnalysisExecutionServiceGalaxyAsync {
 
 		if (analysisSubmission.getUpdateSamples()) {
 			try {
+				//re-reading submission to ensure paths get correctly translated
+				analysisSubmission = analysisSubmissionService.read(analysisSubmission.getId());
 				analysisSubmissionSampleProcessor.updateSamples(analysisSubmission);
 			} catch (Exception e) {
 				logger.error("Error updating corresponding samples with analysis results for AnalysisSubmission = ["
