@@ -734,7 +734,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
                     user, project);
             if (projectSubscription == null) {
                 projectSubscriptionRepository.save(new ProjectSubscription(user, project, false));
-            } //else update role???
+            }
         }
         return ugpjRepository.save(new UserGroupProjectJoin(project, userGroup, role));
     }
