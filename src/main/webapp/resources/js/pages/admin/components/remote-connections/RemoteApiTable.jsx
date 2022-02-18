@@ -51,7 +51,7 @@ export function RemoteApiTable() {
             <RemoteApiStatus api={item} updateTable={updateTable} />
             {admin && (
               <Popconfirm
-                title={i18n("RemoteConnectionDetails.tab.delete.confirm")}
+                title={i18n("RemoteApi.delete-confirm")}
                 placement="topRight"
                 onConfirm={removeConnection}
                 okButtonProps={{ className: "t-delete-confirm" }}

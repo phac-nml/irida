@@ -294,7 +294,8 @@ To test the Remote Connection, click the "Connect" button.  You should be direct
 
 Removing a Remote Connection
 ----------------------------
-From the Remote Connections list page, click on the name of the connection you wish to delete.  This will bring you to the API details page. Select "Delete Connection" from the side menu and click the "Delete Connection" button.  A confirmation dialogue will appear and click "Ok".
+From the Remote Connections list, click the "Remove" button at the end of the row for the remote connection you want to
+remove. A confirmatory pop up message will appear. Click "Ok" and the connection will be removed.
 
 ![Remove API](images/remove-api.png)
 
