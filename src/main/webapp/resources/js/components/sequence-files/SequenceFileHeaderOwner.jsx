@@ -1,6 +1,6 @@
 import React from "react";
 import { CalendarDate } from "../CalendarDate";
-import { Button, Checkbox, Popconfirm, Tooltip } from "antd";
+import { Button, Checkbox, Popconfirm, Space, Tag, Tooltip } from "antd";
 import { IconRemove } from "../icons/Icons";
 import { useDispatch, useSelector } from "react-redux";
 import { SPACE_XS } from "../../styles/spacing";
@@ -9,7 +9,17 @@ import {
   removeFromConcatenateSelected,
 } from "../samples/sampleFilesSlice";
 import { primaryColour } from "../../utilities/theme-utilities";
+import styled from "styled-components";
 
+const HoverItem = styled.div`
+  button.ant-btn-link {
+    opacity: 0;
+    transition: opacity 0.35s ease-in-out;
+  }
+  &:hover button.ant-btn-link {
+    opacity: 1;
+  }
+`;
 /**
  * React component to display sequencing object/ genome assembly header
  * for sample owner or user allowed to modify sample
@@ -19,6 +29,7 @@ import { primaryColour } from "../../utilities/theme-utilities";
  * @param type The type of file object (sequencingobject or genomeassembly)
  * @function remove files from sample function
  * @param displayConcatenationCheckbox Whether to display checkbox or not
+ * @function set default sequencing object for sample
  * @returns {JSX.Element}
  * @constructor
  */
@@ -28,10 +39,12 @@ export function SequenceFileHeaderOwner({
   type,
   removeSampleFiles = () => {},
   displayConcatenationCheckbox = false,
+  updateDefaultSequencingObject = null,
 }) {
   const { concatenateSelected } = useSelector(
     (state) => state.sampleFilesReducer
   );
+  const { sample } = useSelector((state) => state.sampleReducer);
   const dispatch = useDispatch();
 
   const removePopConfirmTitle =
@@ -48,7 +61,7 @@ export function SequenceFileHeaderOwner({
   };
 
   return (
-    <div
+    <HoverItem
       style={{
         display: "flex",
         justifyContent: "space-between",
@@ -75,28 +88,44 @@ export function SequenceFileHeaderOwner({
         ) : null}
         <CalendarDate date={file.createdDate} />
       </div>
-      <Popconfirm
-        placement="left"
-        title={removePopConfirmTitle}
-        okText={i18n("SampleFiles.okText")}
-        cancelText={i18n("SampleFiles.cancelText")}
-        onConfirm={() =>
-          removeSampleFiles({
-            fileObjectId,
-            type,
-          })
-        }
-        okButtonProps={{ className: "t-remove-file-confirm-btn" }}
-        cancelButtonProps={{
-          className: "t-remove-file-confirm-cancel-btn",
-        }}
-      >
-        <Button
-          shape="circle"
-          icon={<IconRemove />}
-          className="t-remove-file-btn"
-        />
-      </Popconfirm>
-    </div>
+      <Space direction="horizontal" size="small">
+        {sample.defaultSequencingObject?.identifier === fileObjectId ? (
+          <Tag color="#108ee9">Default</Tag>
+        ) : updateDefaultSequencingObject !== null ? (
+          <Button
+            size="small"
+            key={`set-default-${fileObjectId}`}
+            onClick={() => updateDefaultSequencingObject(file)}
+            type="link"
+            className="t-t-set-default-button"
+          >
+            Set as Default
+          </Button>
+        ) : null}
+
+        <Popconfirm
+          placement="left"
+          title={removePopConfirmTitle}
+          okText={i18n("SampleFiles.okText")}
+          cancelText={i18n("SampleFiles.cancelText")}
+          onConfirm={() =>
+            removeSampleFiles({
+              fileObjectId,
+              type,
+            })
+          }
+          okButtonProps={{ className: "t-remove-file-confirm-btn" }}
+          cancelButtonProps={{
+            className: "t-remove-file-confirm-cancel-btn",
+          }}
+        >
+          <Button
+            shape="circle"
+            icon={<IconRemove />}
+            className="t-remove-file-btn"
+          />
+        </Popconfirm>
+      </Space>
+    </HoverItem>
   );
 }

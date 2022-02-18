@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
  * @function get file processing state function
  * @param qcEntryTranslationKeys
  * @param displayConcatenationCheckbox Whether to display checkbox or not
+ * @function set default sequencing object for sample
  * @returns {JSX.Element}
  * @constructor
  */
@@ -28,6 +29,7 @@ export function SingleEndFileRenderer({
   getProcessingState = () => {},
   qcEntryTranslations,
   displayConcatenationCheckbox = false,
+  updateDefaultSequencingObject = null,
 }) {
   const { sample } = useSelector((state) => state.sampleReducer);
 
@@ -63,6 +65,7 @@ export function SingleEndFileRenderer({
             fileObjectId={file.fileInfo.identifier}
             type={file.fileType}
             displayConcatenationCheckbox={displayConcatenationCheckbox}
+            updateDefaultSequencingObject={updateDefaultSequencingObject}
           />
         </List.Item>,
         <List.Item

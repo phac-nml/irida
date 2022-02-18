@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -191,6 +192,27 @@ public class UISampleService {
 			return message;
 		} catch (ConstraintViolationException e) {
 			throw new ConstraintViolationException(e.getConstraintViolations());
+		}
+	}
+
+	/**
+	 * Update the default sequencing object for the sample
+	 *
+	 * @param sampleId The sample identifier
+	 * @param sequencingObjectId The sequencing object identifier
+	 * @param locale  {@link Locale} for the currently logged in user
+	 * @return message indicating if update was successful or not
+	 */
+	public String updateDefaultSequencingObjectForSample(Long sampleId, Long sequencingObjectId, Locale locale) {
+		try {
+			Sample sample = sampleService.read(sampleId);
+			SequencingObject sequencingObject = sequencingObjectService.readSequencingObjectForSample(sample,
+					sequencingObjectId);
+			sample.setDefaultSequencingObject(sequencingObject);
+			sampleService.update(sample);
+			return "Successfully set default sequencing object with id " + sequencingObjectId + " for sample " + sample.getSampleName();
+		} catch (EntityNotFoundException e) {
+			return e.getMessage();
 		}
 	}
 
