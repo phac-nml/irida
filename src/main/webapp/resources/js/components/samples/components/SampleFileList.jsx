@@ -213,7 +213,6 @@ export function SampleFileList() {
             getProcessingState={getProcessingStateTag}
             qcEntryTranslations={qcEntryTranslations}
             displayConcatenationCheckbox={files.singles?.length >= 2}
-            updateDefaultSequencingObject={updateDefaultSequencingObject}
           />
         </SequenceFileTypeRenderer>
       )}
