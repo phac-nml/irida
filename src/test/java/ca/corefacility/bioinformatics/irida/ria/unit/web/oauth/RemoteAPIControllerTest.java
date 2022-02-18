@@ -2,8 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
@@ -18,7 +16,6 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,13 +49,7 @@ public class RemoteAPIControllerTest {
 
 	@Test
 	public void testList() {
-		ExtendedModelMap model = new ExtendedModelMap();
-		Principal principal = () -> USER_NAME;
-		User user = new User();
-		user.setSystemRole(Role.ROLE_ADMIN);
-
-		when(userService.getUserByUsername(USER_NAME)).thenReturn(user);
-		String list = remoteAPIController.list(model, principal);
+		String list = remoteAPIController.list();
 		assertEquals(RemoteAPIController.CLIENTS_PAGE, list);
 	}
 

@@ -1,10 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
-import java.security.Principal;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMessage;
+import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import com.google.common.collect.ImmutableMap;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,17 +20,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.HandlerMapping;
 
-import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMessage;
-import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
-import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.ImmutableMap;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * Controller handling basic operations for listing, viewing, adding, and
@@ -67,27 +61,11 @@ public class RemoteAPIController extends BaseController {
     /**
      * Get the remote apis listing page
      *
-     * @param model     {@link Model}
-     * @param principal {@link Principal} currently logged in user
      * @return The view name of the remote apis listing page
      */
     @RequestMapping
-    public String list(Model model, Principal principal) {
-        User user = userService.getUserByUsername(principal.getName());
-        model.addAttribute("isAdmin", user.getSystemRole()
-                .equals(Role.ROLE_ADMIN));
+    public String list() {
         return CLIENTS_PAGE;
-    }
-
-    /**
-     * Get the HTML modal for connecting to a remote API
-     *
-     * @param apiId Identifier for the remote API to connect to.
-     * @return {@link String} Path to the modal template.
-     */
-    @RequestMapping("/modal/{apiId}")
-    public String getApiConnectModal(@PathVariable Long apiId) {
-        return "remote_apis/fragments.html :: #connect-modal";
     }
 
     /**

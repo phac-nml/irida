@@ -6,6 +6,7 @@ import { AddNewButton } from "../../components/Buttons/AddNewButton";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { PagedTableProvider } from "../../components/ant.design/PagedTable";
 import { CreateRemoteApiModal } from "./CreateRemoteApiModal";
+import { isAdmin } from "../../utilities/role-utilities";
 
 /**
  * React component to render Remote APIs page.
@@ -18,7 +19,7 @@ export function RemoteApiPage({}) {
       <PageWrapper
         title={i18n("RemoteApi.title")}
         headerExtras={
-          window.PAGE.admin ? (
+          isAdmin() ? (
             <CreateRemoteApiModal>
               <AddNewButton text={i18n("remoteapi.add")} />
             </CreateRemoteApiModal>
