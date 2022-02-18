@@ -198,9 +198,9 @@ public class UISampleService {
 	/**
 	 * Update the default sequencing object for the sample
 	 *
-	 * @param sampleId The sample identifier
+	 * @param sampleId           The sample identifier
 	 * @param sequencingObjectId The sequencing object identifier
-	 * @param locale  {@link Locale} for the currently logged in user
+	 * @param locale             {@link Locale} for the currently logged in user
 	 * @return message indicating if update was successful or not
 	 */
 	public String updateDefaultSequencingObjectForSample(Long sampleId, Long sequencingObjectId, Locale locale) {
@@ -210,7 +210,8 @@ public class UISampleService {
 					sequencingObjectId);
 			sample.setDefaultSequencingObject(sequencingObject);
 			sampleService.update(sample);
-			return "Successfully set default sequencing object with id " + sequencingObjectId + " for sample " + sample.getSampleName();
+			return "Successfully set default sequencing object with id " + sequencingObjectId + " for sample "
+					+ sample.getSampleName();
 		} catch (EntityNotFoundException e) {
 			return e.getMessage();
 		}

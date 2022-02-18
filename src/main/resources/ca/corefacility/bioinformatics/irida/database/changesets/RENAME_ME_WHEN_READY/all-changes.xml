@@ -6,4 +6,6 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <include file="metadata-restrictions.xml"
              relativeToChangelogFile="true"/>
+    <include file="add-default-sequencing-object-to-sample.xml"
+             relativeToChangelogFile="true"/>
 </databaseChangeLog>
