@@ -5,23 +5,16 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.subscription.ProjectSubscription;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.RoleUtilities;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.ProjectSubscriptionService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -54,7 +47,6 @@ import java.util.stream.Collectors;
 public class UIUsersService {
     private final UserService userService;
     private final ProjectService projectService;
-    private final ProjectSubscriptionService projectSubscriptionService;
     private final EmailController emailController;
     private final List<Locale> locales;
     private final MessageSource messageSource;
@@ -65,12 +57,11 @@ public class UIUsersService {
 
     @Autowired
     public UIUsersService(UserService userService, ProjectService projectService,
-                          ProjectSubscriptionService projectSubscriptionService, EmailController emailController,
+                          EmailController emailController,
                           IridaApiServicesConfig.IridaLocaleList locales, MessageSource messageSource,
                           PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.projectService = projectService;
-        this.projectSubscriptionService = projectSubscriptionService;
         this.emailController = emailController;
         this.locales = locales.getLocales();
         this.messageSource = messageSource;
@@ -305,35 +296,6 @@ public class UIUsersService {
         }
 
         return errors;
-    }
-
-    /**
-     * Get all the project subscriptions associated with a user
-     *
-     * @param userId       - the id for the user to show project subscriptions for
-     * @param tableRequest - details about the current page of the table requested
-     * @return user project subscriptions for a specific user
-     */
-    public TableResponse<UserProjectDetailsModel> getUserProjects(Long userId, TableRequest tableRequest) {
-        //		Page<ProjectSubscription> page = projectSubscriptionService.list(tableRequest.getCurrent(),
-        //				tableRequest.getPageSize(), tableRequest.getSort());
-
-        User user = userService.read(userId);
-
-        Page<ProjectSubscription> page = projectSubscriptionService.getProjectSubscriptionsForUser(user,
-                tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort());
-
-        List<UserProjectDetailsModel> projectSubscriptions = page.getContent()
-                .stream()
-                .map(projectSubscription -> {
-                    User subscriptionUser = projectSubscription.getUser();
-                    Project subscriptionProject = projectSubscription.getProject();
-                    ProjectUserJoin projectUserJoin = projectService.getProjectUserJoin(subscriptionUser, subscriptionProject);
-                    Collection<UserGroupProjectJoin> userGroupProjectJoins = projectService.getUserGroupProjectJoins(subscriptionUser, subscriptionProject);
-                    return new UserProjectDetailsModel(projectSubscription, ProjectRole.getMaxRoleForProjectsAndGroups(projectUserJoin, userGroupProjectJoins));
-                })
-                .collect(Collectors.toList());
-        return new TableResponse<>(projectSubscriptions, page.getTotalElements());
     }
 
     /**
