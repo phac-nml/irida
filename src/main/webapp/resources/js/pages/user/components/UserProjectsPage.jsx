@@ -20,12 +20,12 @@ export default function UserProjectsPage() {
   const [updateProjectSubscription] = useUpdateProjectSubscriptionMutation();
   const columns = [
     {
-      title: "ID",
+      title: i18n("UserProjectsPage.table.projectId"),
       dataIndex: "projectId",
       key: "projectId",
     },
     {
-      title: "Name",
+      title: i18n("UserProjectsPage.table.projectName"),
       dataIndex: "projectName",
       key: "projectName",
       render: (text, record) => (
@@ -33,7 +33,7 @@ export default function UserProjectsPage() {
       ),
     },
     {
-      title: "Role",
+      title: i18n("UserProjectsPage.table.roleName"),
       dataIndex: "roleName",
       key: "roleName",
       render: (text) => {
@@ -43,13 +43,13 @@ export default function UserProjectsPage() {
       },
     },
     {
-      title: "Date Added",
+      title: i18n("UserProjectsPage.table.createdDate"),
       dataIndex: "createdDate",
       key: "createdDate",
       render: (text) => formatDate({ date: text }),
     },
     {
-      title: "Subscribed",
+      title: i18n("UserProjectsPage.table.emailSubscribed"),
       dataIndex: "emailSubscribed",
       key: "emailSubscribed",
       render: (text, record) => <Switch defaultChecked={text} onChange={(checked) => updateSubscription(checked, record)} />,
@@ -57,30 +57,22 @@ export default function UserProjectsPage() {
   ];
 
   function updateSubscription(checked, record) {
-    console.log(
-      "projectId = " +
-        record.projectId +
-        ", userId = " +
-        userId +
-        ", subscribe = " +
-        checked
-    );
     updateProjectSubscription({ id: record.id, subscribe: checked })
       .then((payload) => {
         notification.success({
-          message: "SUCCESS",
+          message: i18n("UserProjectsPage.notification.success"),
         });
       })
       .catch((error) => {
         notification.error({
-          message: "FAILED",
+          message: i18n("UserProjectsPage.notification.error"),
         });
       });
   };
 
   return (
     <Space direction="vertical">
-      <Typography.Title level={4}>Projects</Typography.Title>
+      <Typography.Title level={4}>{i18n("UserProjectsPage.title")}</Typography.Title>
       <PagedTableProvider url={setBaseUrl(`/ajax/subscriptions/${userId}/user/list`)} column="project.id" order="ascend">
         <PagedTable columns={columns} search={false} />
       </PagedTableProvider>
