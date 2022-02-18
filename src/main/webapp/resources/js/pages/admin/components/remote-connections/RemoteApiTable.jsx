@@ -21,6 +21,8 @@ export function RemoteApiTable() {
     deleteRemoteApi({ id: params.remoteId }).then(updateTable);
   };
 
+  const admin = isAdmin();
+
   const columnDefs = [
     {
       title: i18n("RemoteApi.name"),
@@ -28,27 +30,6 @@ export function RemoteApiTable() {
       dataIndex: "name",
       render(text) {
         return <span className="t-api-name">{text}</span>;
-      },
-    },
-    {
-      title: i18n("RemoteApi.serviceurl"),
-      key: "serviceURI",
-      dataIndex: "serviceURI",
-    },
-    {
-      title: i18n("RemoteApi.clientid"),
-      key: "clientId",
-      dataIndex: "clientId",
-      render(text) {
-        return <Typography.Text copyable>{text}</Typography.Text>;
-      },
-    },
-    {
-      title: i18n("RemoteApi.secret"),
-      key: "clientSecret",
-      dataIndex: "clientSecret",
-      render(text) {
-        return <Typography.Text copyable>{text}</Typography.Text>;
       },
     },
     {
@@ -68,7 +49,7 @@ export function RemoteApiTable() {
         return (
           <Space>
             <RemoteApiStatus api={item} updateTable={updateTable} />
-            {isAdmin() && (
+            {admin && (
               <Popconfirm
                 title={i18n("RemoteConnectionDetails.tab.delete.confirm")}
                 placement="topRight"
@@ -83,6 +64,34 @@ export function RemoteApiTable() {
       },
     },
   ];
+
+  if (admin) {
+    columnDefs.splice(
+      2,
+      0,
+      {
+        title: i18n("RemoteApi.serviceurl"),
+        key: "serviceURI",
+        dataIndex: "serviceURI",
+      },
+      {
+        title: i18n("RemoteApi.clientid"),
+        key: "clientId",
+        dataIndex: "clientId",
+        render(text) {
+          return <Typography.Text copyable>{text}</Typography.Text>;
+        },
+      },
+      {
+        title: i18n("RemoteApi.secret"),
+        key: "clientSecret",
+        dataIndex: "clientSecret",
+        render(text) {
+          return <Typography.Text copyable>{text}</Typography.Text>;
+        },
+      }
+    );
+  }
 
   return <PagedTable className="t-remoteapi-table" columns={columnDefs} />;
 }

@@ -1,12 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.remoteapi;
 
-import org.junit.jupiter.api.Test;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIsPage;
-
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +17,7 @@ public class RemoteAPIsPageIT extends AbstractIridaUIITChromeDriver {
 		RemoteAPIsPage apisPage = RemoteAPIsPage.goTo(driver());
 		int clientsTableSize = apisPage.remoteApisTableSize();
 		assertEquals(2, clientsTableSize);
-		assertTrue(apisPage.canSeeRemoteDetails(), "Should be able to see client details");
+		assertTrue(apisPage.canSeeConnectButton(), "Should be able to see client details");
 		assertTrue(apisPage.checkRemoteApiExistsInTable("a client"));
 		assertTrue(apisPage.checkRemoteApiExistsInTable("another client"));
 	}
@@ -30,7 +28,7 @@ public class RemoteAPIsPageIT extends AbstractIridaUIITChromeDriver {
 		RemoteAPIsPage apisPage = RemoteAPIsPage.goTo(driver());
 		int clientsTableSize = apisPage.remoteApisTableSize();
 		assertEquals(2, clientsTableSize);
-		assertFalse(apisPage.canSeeRemoteDetails(), "Should not be able to link to client details");
+		assertFalse(apisPage.canSeeConnectButton(), "Should not be able to link to client details");
 		assertTrue(apisPage.checkRemoteApiExistsInTable("a client"));
 		assertTrue(apisPage.checkRemoteApiExistsInTable("another client"));
 	}

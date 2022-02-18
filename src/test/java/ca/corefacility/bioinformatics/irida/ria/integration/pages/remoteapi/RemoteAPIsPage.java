@@ -1,10 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -12,9 +9,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
-
-import com.google.common.base.Strings;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class RemoteAPIsPage extends AbstractPage {
 	private static final String RELATIVE_URL = "admin/remote_api";
@@ -77,9 +73,8 @@ public class RemoteAPIsPage extends AbstractPage {
 		return false;
 	}
 
-	public boolean canSeeRemoteDetails() {
-		return !Strings.isNullOrEmpty(table.findElement(By.className("t-api-name"))
-				.getAttribute("href"));
+	public boolean canSeeConnectButton() {
+		return table.findElements(By.className("t-remote-status-connect")).size() > 0;
 	}
 
 	public void openAddRemoteModal() {
@@ -89,13 +84,9 @@ public class RemoteAPIsPage extends AbstractPage {
 	}
 
 	public void enterApiDetails(String name, String clientId, String clientSecret, String serviceURI) {
-		nameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		nameInput.sendKeys(name);
-		clientIdInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		clientIdInput.sendKeys(clientId);
-		clientSecretInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		clientSecretInput.sendKeys(clientSecret);
-		serviceURIInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		serviceURIInput.sendKeys(serviceURI);
 	}
 
