@@ -10,10 +10,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class RemoteAPIsPage extends AbstractPage {
-	private static final String RELATIVE_URL = "admin/remote_api";
+	private static final String RELATIVE_URL = "remote_api";
 
 	@FindBy(css = ".t-remoteapi-table table")
 	private WebElement table;
@@ -48,7 +49,7 @@ public class RemoteAPIsPage extends AbstractPage {
 	}
 
 	public static RemoteAPIsPage goTo(WebDriver driver) {
-		get(driver, RELATIVE_URL);
+		get(driver, "admin/" + RELATIVE_URL);
 		return PageFactory.initElements(driver, RemoteAPIsPage.class);
 	}
 
@@ -112,5 +113,39 @@ public class RemoteAPIsPage extends AbstractPage {
 		openAddRemoteModal();
 		enterApiDetails(name, clientId, clientSecret, serviceURI);
 		submitCreateForm();
+	}
+
+	public void connectToRemoteAPI(String clientName) {
+		List<WebElement> rows = table.findElements(By.className("ant-table-row"));
+		for (WebElement row : rows) {
+			WebElement nameCell = row.findElement(By.className("t-api-name"));
+			if (nameCell != null && nameCell.getText().equals(clientName)) {
+				row.findElement(By.className("t-remote-status-connect")).click();
+				waitForTime(400);
+				clickAuthorize();
+			}
+		}
+
+	}
+
+	private void clickAuthorize() {
+		String parentWindowHandler = driver.getWindowHandle(); // Store your parent window
+		String subWindowHandler = null;
+
+		Set<String> handles = driver.getWindowHandles(); // get all window handles
+		for (String handle : handles) {
+			subWindowHandler = handle;
+		}
+		driver.switchTo().window(subWindowHandler); // switch to popup window
+
+		// Now you are in the popup window, perform necessary actions here
+
+		WebElement authorizeButton = driver.findElement(By.id("authorize-btn"));
+		authorizeButton.click();
+
+
+		driver.switchTo().window(parentWindowHandler);  // switch back to parent window
+
+		waitForTime(8000);
 	}
 }

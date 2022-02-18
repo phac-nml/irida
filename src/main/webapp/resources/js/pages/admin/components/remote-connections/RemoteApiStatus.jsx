@@ -36,7 +36,7 @@ export function RemoteApiStatus({ api, onConnect = () => {} }) {
       setLoading(false);
       setExpiration(data);
       data && onConnect();
-    });
+    }).finally(() => setLoading(false));
   }
 
   function updateRemoteApi(event) {

@@ -6,7 +6,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.Remo
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/oauth/RemoteApisIT.xml")
 public class RemoteAPIsPageIT extends AbstractIridaUIITChromeDriver {
@@ -25,10 +26,9 @@ public class RemoteAPIsPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testRemoteAPIPageAsUser() {
 		LoginPage.loginAsUser(driver());
-		RemoteAPIsPage apisPage = RemoteAPIsPage.goTo(driver());
+		RemoteAPIsPage apisPage = RemoteAPIsPage.goToUserPage(driver());
 		int clientsTableSize = apisPage.remoteApisTableSize();
 		assertEquals(2, clientsTableSize);
-		assertFalse(apisPage.canSeeConnectButton(), "Should not be able to link to client details");
 		assertTrue(apisPage.checkRemoteApiExistsInTable("a client"));
 		assertTrue(apisPage.checkRemoteApiExistsInTable("another client"));
 	}
