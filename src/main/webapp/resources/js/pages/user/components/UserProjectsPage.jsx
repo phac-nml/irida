@@ -3,8 +3,7 @@ import { useParams } from "react-router-dom";
 import { notification, Space, Switch, Table, Typography } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { formatDate } from "../../../utilities/date-utilities";
-import { useGetUserProjectDetailsQuery } from "../../../apis/users/users";
-import { useUpdateEmailSubscriptionMutation } from "../../../apis/projects/project-events";
+import { useUpdateProjectSubscriptionMutation } from "../../../apis/projects/project-subscriptions";
 import { PagedTableProvider } from "../../../components/ant.design/PagedTable";
 import {
   PagedTable,
@@ -18,7 +17,7 @@ import {
  */
 export default function UserProjectsPage() {
   const { userId } = useParams();
-  const [updateEmailSubscription] = useUpdateEmailSubscriptionMutation();
+  const [updateProjectSubscription] = useUpdateProjectSubscriptionMutation();
   const columns = [
     {
       title: "ID",
@@ -53,11 +52,11 @@ export default function UserProjectsPage() {
       title: "Subscribed",
       dataIndex: "emailSubscribed",
       key: "emailSubscribed",
-      render: (text, record) => <Switch defaultChecked={text} onChange={(checked) => updateProjectSubscription(checked, record)} />,
+      render: (text, record) => <Switch defaultChecked={text} onChange={(checked) => updateSubscription(checked, record)} />,
     },
   ];
 
-  function updateProjectSubscription(checked, record) {
+  function updateSubscription(checked, record) {
     console.log(
       "projectId = " +
         record.projectId +
@@ -66,7 +65,7 @@ export default function UserProjectsPage() {
         ", subscribe = " +
         checked
     );
-    updateEmailSubscription({ projectId: record.projectId, userId, subscribe: checked })
+    updateProjectSubscription({ id: record.id, subscribe: checked })
       .then((payload) => {
         notification.success({
           message: "SUCCESS",
