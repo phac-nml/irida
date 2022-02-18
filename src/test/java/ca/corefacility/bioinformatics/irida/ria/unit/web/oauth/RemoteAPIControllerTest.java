@@ -6,17 +6,13 @@ import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationContr
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -26,24 +22,15 @@ public class RemoteAPIControllerTest {
 	private RemoteAPIController remoteAPIController;
 	private RemoteAPIService remoteAPIService;
 	private ProjectRemoteService projectRemoteService;
-	private UserService userService;
 	private OltuAuthorizationController authController;
-	private MessageSource messageSource;
-
-	private static final String USER_NAME = "testme";
-
-	private Locale locale;
 
 	@BeforeEach
 	public void setUp() {
 		remoteAPIService = mock(RemoteAPIService.class);
-		messageSource = mock(MessageSource.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
 		authController = mock(OltuAuthorizationController.class);
-		userService = mock(UserService.class);
-		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService, userService,
-				authController, messageSource);
-		locale = LocaleContextHolder.getLocale();
+		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService,
+				authController);
 
 	}
 

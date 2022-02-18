@@ -6,13 +6,11 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMe
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.google.common.collect.ImmutableMap;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,15 +31,11 @@ public class RemoteAPIController extends BaseController {
     private static final Logger logger = LoggerFactory.getLogger(RemoteAPIController.class);
 
     public static final String CLIENTS_PAGE = "remote_apis/list";
-    public static final String DETAILS_PAGE = "remote_apis/remote_api_details";
-    public static final String ADD_API_PAGE = "remote_apis/create";
     public static final String PARENT_FRAME_RELOAD_PAGE = "remote_apis/parent_reload";
 
     private final RemoteAPIService remoteAPIService;
     private final ProjectRemoteService projectRemoteService;
-    private final UserService userService;
     private final OltuAuthorizationController authController;
-    private final MessageSource messageSource;
 
     // Map storing the message names for the
     // getErrorsFromDataIntegrityViolationException method
@@ -50,12 +44,10 @@ public class RemoteAPIController extends BaseController {
                     "remoteapi.create.serviceURIConflict"));
 
     @Autowired
-    public RemoteAPIController(RemoteAPIService remoteAPIService, ProjectRemoteService projectRemoteService, UserService userService, OltuAuthorizationController authController, MessageSource messageSource) {
+    public RemoteAPIController(RemoteAPIService remoteAPIService, ProjectRemoteService projectRemoteService, OltuAuthorizationController authController) {
         this.remoteAPIService = remoteAPIService;
         this.projectRemoteService = projectRemoteService;
-        this.userService = userService;
         this.authController = authController;
-        this.messageSource = messageSource;
     }
 
     /**
