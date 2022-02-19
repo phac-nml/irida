@@ -4,6 +4,6 @@
                    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
-    <include file="add-storage-type-to-sequencing-objects.xml"
+    <include file="add-storage-type-to-file-tables.xml"
              relativeToChangelogFile="true"/>
 </databaseChangeLog>

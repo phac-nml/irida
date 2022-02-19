@@ -48,6 +48,9 @@ public abstract class GenomeAssembly extends IridaRepresentationModel
 	@Column(name = "created_date", updatable = false)
 	private Date createdDate;
 
+	@Column(name = "storage_type")
+	private String storageType;
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "genomeAssembly")
 	private List<SampleGenomeAssemblyJoin> sampleGenomeAssemblies;
 
@@ -60,6 +63,7 @@ public abstract class GenomeAssembly extends IridaRepresentationModel
 	public GenomeAssembly(Date createdDate) {
 		this.createdDate = createdDate;
 		this.sampleGenomeAssemblies = Lists.newArrayList();
+		this.storageType = IridaFiles.getStorageType();
 	}
 
 	@Override
@@ -155,6 +159,10 @@ public abstract class GenomeAssembly extends IridaRepresentationModel
 	}
 
 	public String getStorageType(){
-		return IridaFiles.getStorageType();
+		return storageType;
+	}
+
+	public void setStorageType(String storageType) {
+		this.storageType = storageType;
 	}
 }
