@@ -75,6 +75,8 @@ public class SequenceFile extends IridaRepresentationModel
 	private Long fileRevisionNumber; // the filesystem file revision number
 
 
+	@Column(name = "storage_type")
+	private String storageType;
 
 	// Key/value map of additional properties you could set on a sequence file.
 	// This may contain optional sequencer specific properties.
@@ -119,6 +121,7 @@ public class SequenceFile extends IridaRepresentationModel
 	public SequenceFile(Path sampleFile) {
 		this();
 		this.file = sampleFile;
+		this.storageType = IridaFiles.getStorageType();
 	}
 
 	@Override
@@ -320,7 +323,10 @@ public class SequenceFile extends IridaRepresentationModel
 	}
 
 	public String getStorageType(){
-		return IridaFiles.getStorageType();
+		return storageType;
 	}
 
+	public void setStorageType(String storageType) {
+		this.storageType = storageType;
+	}
 }
