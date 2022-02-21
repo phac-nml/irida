@@ -1,10 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.user;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -20,22 +16,23 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A user object.
  */
 @Entity
-@Table(name = "user", uniqueConstraints = {
-		@UniqueConstraint(name = User.USER_EMAIL_CONSTRAINT_NAME, columnNames = "email"),
-		@UniqueConstraint(name = User.USER_USERNAME_CONSTRAINT_NAME, columnNames = "username") })
+@Table(name = "user",
+		uniqueConstraints = {
+				@UniqueConstraint(name = User.USER_EMAIL_CONSTRAINT_NAME, columnNames = "email"),
+				@UniqueConstraint(name = User.USER_USERNAME_CONSTRAINT_NAME, columnNames = "username") })
 @Audited
 @EntityListeners(AuditingEntityListener.class)
 public class User extends IridaRepresentationModel implements MutableIridaThing, Comparable<User>, UserDetails {
@@ -63,7 +60,8 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	// longer than 1024 (who's going to remember a password that long anyway?)
 	// to prevent DOS attacks on our password hashing.
 	@Size(min = 8, max = 1024, message = "{user.password.size}")
-	@Pattern.List({ @Pattern(regexp = "^.*[A-Z].*$", message = "{user.password.uppercase}"),
+	@Pattern.List({
+			@Pattern(regexp = "^.*[A-Z].*$", message = "{user.password.uppercase}"),
 			@Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}"),
 			@Pattern(regexp = "^.*[a-z].*$", message = "{user.password.lowercase}"),
 			@Pattern(regexp = "^.*[!@#$%^&*()+?/<>=.\\\\{}].*$", message = "{user.password.special}") })

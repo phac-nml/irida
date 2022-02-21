@@ -1,5 +1,16 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -13,19 +24,10 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.results.updater.AnalysisSampleUpdater;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.*;
 
 /**
  * {@link AnalysisSampleUpdater} for bio_hansel results to be written to metadata of {@link Sample}s.
@@ -69,11 +71,9 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 			throw new PostProcessingException(
 					"Expected one sample; got '" + samples.size() + "' for analysis [id=" + analysis.getId() + "]");
 		}
-		final Sample sample = samples.iterator()
-				.next();
+		final Sample sample = samples.iterator().next();
 
-		AnalysisOutputFile aof = analysis.getAnalysis()
-				.getAnalysisOutputFile(BIO_HANSEL_RESULTS_FILE);
+		AnalysisOutputFile aof = analysis.getAnalysis().getAnalysisOutputFile(BIO_HANSEL_RESULTS_FILE);
 
 		Path filePath = aof.getFile();
 
@@ -94,14 +94,13 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 				BIO_HANSEL_RESULTS_FIELDS.forEach((key, field) -> {
 					final String formattedField = getNamespacedField(baseNamespace, field);
 					if ((result.containsKey(key)) && (result.get(key) != null)) {
-						String value = result.get(key)
-								.toString();
+						String value = result.get(key).toString();
 						PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",
 								analysis);
 						stringEntries.put(formattedField, metadataEntry);
 					} else {
-						logger.warn("bio_hansel output file '" + filePath.toFile()
-								.getAbsolutePath() + "' does not contain expected key '" + key
+						logger.warn("bio_hansel output file '" + filePath.toFile().getAbsolutePath()
+								+ "' does not contain expected key '" + key
 								+ "'. Please check the format of this file!");
 					}
 				});
