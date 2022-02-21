@@ -16,7 +16,7 @@ public interface Timestamped<Identifier> {
 	 *
 	 * @return A {@link Date} object of the created date
 	 */
-	@Schema(implementation = Long.class)
+	@Schema(implementation = Long.class, description = "Epoch time in milliseconds when the resource was modified")
 	public Date getCreatedDate();
 
 	/**

@@ -23,7 +23,7 @@ public interface MutableIridaThing extends IridaThing {
 	 *
 	 * @return {@link Date} object of the modified date
 	 */
-	@Schema(implementation = Long.class)
+	@Schema(implementation = Long.class, description = "Epoch time in milliseconds when the resource was modified")
 	public Date getModifiedDate();
 
 	/**

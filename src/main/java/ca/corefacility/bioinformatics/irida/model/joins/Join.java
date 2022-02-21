@@ -35,7 +35,7 @@ public interface Join<SubjectType extends IridaThing, ObjectType extends IridaTh
 	 *
 	 * @return A {@link Date} object of the timestamp
 	 */
-	@Schema(implementation = Long.class)
+	@Schema(implementation = Long.class, description = "Epoch time in milliseconds when the resource was modified")
 	public Date getTimestamp();
 
 	/**
