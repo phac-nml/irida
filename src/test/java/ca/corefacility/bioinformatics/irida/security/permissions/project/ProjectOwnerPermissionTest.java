@@ -56,8 +56,8 @@ public class ProjectOwnerPermissionTest {
 
 		when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
 		when(userRepository.loadUserByUsername(user.getUsername())).thenReturn(user);
-		when(pujRepository.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER))
-				.thenReturn(Lists.newArrayList(new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER)));
+		when(pujRepository.getProjectJoinForUser(project, user))
+				.thenReturn(new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER));
 	}
 
 	@Test
