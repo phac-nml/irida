@@ -15,6 +15,7 @@ import { SequenceFileHeaderOwner } from "./SequenceFileHeaderOwner";
  * @function remove files from sample function
  * @param displayConcatenationCheckbox Whether to display checkbox or not
  * @function set default sequencing object for sample
+ * @param autoDefaultFirstPair the first pair in the list of pairs (if displaying paired end files)
  * @returns {JSX.Element}
  * @constructor
  */
@@ -25,8 +26,9 @@ export function SequenceFileHeader({
   removeSampleFiles = () => {},
   displayConcatenationCheckbox = false,
   updateDefaultSequencingObject = null,
+  autoDefaultFirstPair = null,
 }) {
-  const { modifiable, sample } = useSelector((state) => state.sampleReducer);
+  const { modifiable } = useSelector((state) => state.sampleReducer);
   return (
     <div
       style={{
@@ -43,6 +45,7 @@ export function SequenceFileHeader({
           type={type}
           displayConcatenationCheckbox={displayConcatenationCheckbox}
           updateDefaultSequencingObject={updateDefaultSequencingObject}
+          autoDefaultFirstPair={autoDefaultFirstPair}
         />
       ) : (
         <CalendarDate date={file.createdDate} />

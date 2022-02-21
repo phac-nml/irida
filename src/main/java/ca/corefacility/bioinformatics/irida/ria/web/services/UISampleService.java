@@ -210,8 +210,8 @@ public class UISampleService {
 					sequencingObjectId);
 			sample.setDefaultSequencingObject(sequencingObject);
 			sampleService.update(sample);
-			return "Successfully set default sequencing object with id " + sequencingObjectId + " for sample "
-					+ sample.getSampleName();
+			return messageSource.getMessage("server.SequenceFileHeaderOwner.successfully.set.default.seq.object",
+					new Object[] {  }, locale);
 		} catch (EntityNotFoundException e) {
 			return e.getMessage();
 		}
@@ -508,6 +508,10 @@ public class UISampleService {
 		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
 
 		try {
+			if(sample.getDefaultSequencingObject().getId() == sequencingObjectId) {
+				sample.setDefaultSequencingObject(null);
+				sampleService.update(sample);
+			}
 			sampleService.removeSequencingObjectFromSample(sample, sequencingObject);
 			return messageSource.getMessage("server.SampleFiles.removeSequencingObjectSuccess", new Object[] {},
 					locale);

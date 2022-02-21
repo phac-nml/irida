@@ -85,6 +85,9 @@ export function SampleFileList() {
       .then(({ data }) => {
         notification.success({ message: data.message });
         dispatch(removeFileObjectFromSample({ fileObjectId, type }));
+        if (sample.defaultSequencingObject.identifier === fileObjectId) {
+          dispatch(setDefaultSequencingObject(null));
+        }
       })
       .catch((error) => {
         notification.error({ message: error });
@@ -229,6 +232,9 @@ export function SampleFileList() {
               qcEntryTranslations={qcEntryTranslations}
               displayConcatenationCheckbox={files.paired?.length >= 2}
               updateDefaultSequencingObject={updateDefaultSequencingObject}
+              autoDefaultFirstPair={
+                sample.defaultSequencingObject === null ? files.paired[0] : null
+              }
             />
           ))}
         </SequenceFileTypeRenderer>

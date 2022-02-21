@@ -30,6 +30,7 @@ const HoverItem = styled.div`
  * @function remove files from sample function
  * @param displayConcatenationCheckbox Whether to display checkbox or not
  * @function set default sequencing object for sample
+ * @param autoDefaultFirstPair the first pair in the list of pairs (if displaying paired end files)
  * @returns {JSX.Element}
  * @constructor
  */
@@ -40,6 +41,7 @@ export function SequenceFileHeaderOwner({
   removeSampleFiles = () => {},
   displayConcatenationCheckbox = false,
   updateDefaultSequencingObject = null,
+  autoDefaultFirstPair,
 }) {
   const { concatenateSelected } = useSelector(
     (state) => state.sampleFilesReducer
@@ -89,8 +91,10 @@ export function SequenceFileHeaderOwner({
         <CalendarDate date={file.createdDate} />
       </div>
       <Space direction="horizontal" size="small">
-        {sample.defaultSequencingObject?.identifier === fileObjectId ? (
-          <Tag color="#108ee9">Default</Tag>
+        {sample.defaultSequencingObject?.identifier === fileObjectId ||
+        (autoDefaultFirstPair !== null &&
+          autoDefaultFirstPair.fileInfo.identifier === fileObjectId) ? (
+          <Tag color="#108ee9">{i18n("SequenceFileHeaderOwner.default")}</Tag>
         ) : updateDefaultSequencingObject !== null ? (
           <Button
             size="small"
@@ -99,7 +103,7 @@ export function SequenceFileHeaderOwner({
             type="link"
             className="t-t-set-default-button"
           >
-            Set as Default
+            {i18n("SequenceFileHeaderOwner.setAsDefault")}
           </Button>
         ) : null}
 

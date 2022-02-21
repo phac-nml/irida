@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
  * @param qcEntryTranslationKeys Translation keys for qc entries
  * @param displayConcatenationCheckbox Whether to display checkbox or not
  * @function set default sequencing object for sample
+ * @param autoDefaultFirstPair the first pair in the list of pairs
  * @returns {JSX.Element}
  * @constructor
  */
@@ -27,6 +28,7 @@ export function PairedFileRenderer({
   qcEntryTranslations,
   displayConcatenationCheckbox = false,
   updateDefaultSequencingObject = null,
+  autoDefaultFirstPair,
 }) {
   const { sample } = useSelector((state) => state.sampleReducer);
 
@@ -67,6 +69,7 @@ export function PairedFileRenderer({
           removeSampleFiles={removeSampleFiles}
           displayConcatenationCheckbox={displayConcatenationCheckbox}
           updateDefaultSequencingObject={updateDefaultSequencingObject}
+          autoDefaultFirstPair={autoDefaultFirstPair}
         />
       }
       layout={`vertical`}
