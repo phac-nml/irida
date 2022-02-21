@@ -205,6 +205,7 @@ export function SampleFileList() {
       size="large"
       direction="vertical"
       style={{ maxHeight: "500px", overflowY: "auto", width: `100%` }}
+      className="t-filelist-scroll"
     >
       {files.singles && (
         <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>

@@ -70,6 +70,13 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-remove-file-confirm-btn")
 	private List<WebElement> confirmBtns;
 
+	@FindBy(className = "t-set-default-seq-obj-button")
+	private List<WebElement> setDefaultSeqObjBtns;
+
+	@FindBy(className = "t-default-seq-obj-tag")
+	private List<WebElement> defaultSeqObjTags;
+
+
 	public SampleDetailsViewer(WebDriver driver) {
 		super(driver);
 	}
@@ -152,10 +159,13 @@ public class SampleDetailsViewer extends AbstractPage {
 		return concatenateBtn.size() == 1;
 	}
 
-	public void selectFilesToConcatenate() {
+	public void selectFilesToConcatenate(int maxCheckboxesToSelect) {
 		List<WebElement> checkboxes = modal.findElements(By.className("t-concatenation-checkbox"));
-		for(WebElement element : checkboxes) {
-			element.click();
+		if(checkboxes.size() > 0 && maxCheckboxesToSelect < checkboxes.size()) {
+			checkboxes = checkboxes.subList(0,maxCheckboxesToSelect);
+			for(WebElement element : checkboxes) {
+				element.click();
+			}
 		}
 	}
 
@@ -245,6 +255,20 @@ public class SampleDetailsViewer extends AbstractPage {
 		removeFileBtns.get(index).click();
 		waitForTime(500);
 		confirmBtns.get(0).click();
+		WebDriverWait wait = new WebDriverWait(driver, 20);
+		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.className("ant-notification"))));
+	}
+
+	public boolean setSetDefaultSeqObjButtonsVisible() {
+		return setDefaultSeqObjBtns.size() > 0;
+	}
+
+	public int defaultSeqObjTagCount() {
+		return defaultSeqObjTags.size();
+	}
+
+	public void updateDefaultSequencingObjectForSample() {
+		setDefaultSeqObjBtns.get(0).click();
 		WebDriverWait wait = new WebDriverWait(driver, 20);
 		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.className("ant-notification"))));
 	}

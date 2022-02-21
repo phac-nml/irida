@@ -94,14 +94,16 @@ export function SequenceFileHeaderOwner({
         {sample.defaultSequencingObject?.identifier === fileObjectId ||
         (autoDefaultFirstPair !== null &&
           autoDefaultFirstPair.fileInfo.identifier === fileObjectId) ? (
-          <Tag color="#108ee9">{i18n("SequenceFileHeaderOwner.default")}</Tag>
+          <Tag color="#108ee9" className="t-default-seq-obj-tag">
+            {i18n("SequenceFileHeaderOwner.default")}
+          </Tag>
         ) : updateDefaultSequencingObject !== null ? (
           <Button
             size="small"
             key={`set-default-${fileObjectId}`}
             onClick={() => updateDefaultSequencingObject(file)}
             type="link"
-            className="t-t-set-default-button"
+            className="t-set-default-seq-obj-button"
           >
             {i18n("SequenceFileHeaderOwner.setAsDefault")}
           </Button>

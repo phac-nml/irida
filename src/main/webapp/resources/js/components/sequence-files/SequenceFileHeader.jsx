@@ -35,6 +35,7 @@ export function SequenceFileHeader({
         display: "flex",
         justifyContent: "space-between",
         width: `100%`,
+        className: "t-sequence-file-header",
       }}
     >
       {modifiable ? (
