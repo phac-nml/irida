@@ -38,7 +38,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * A biological sample. Each sample may correspond to many files.
- * <p>
  * A {@link Sample} comprises of many attributes. The attributes assigned to a
  * {@link Sample} correspond to the NCBI Pathogen BioSample attributes. See
  * <a href=
