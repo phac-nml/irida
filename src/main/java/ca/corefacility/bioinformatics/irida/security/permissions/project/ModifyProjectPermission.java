@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.security.permissions.project;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.Join;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
@@ -53,12 +52,13 @@ public abstract class ModifyProjectPermission extends BasePermission<Project,Lon
 	public boolean customPermissionAllowed(Authentication authentication, Project p) {
 		logger.trace("Testing permission for [" + authentication + "] can modify project [" + p + "]");
 
-		// check if the user is a project owner for this project
-		User u = userRepository.loadUserByUsername(authentication.getName());
-		List<Join<Project, User>> projectUsers = pujRepository.getUsersForProjectByRole(p, ProjectRole.PROJECT_OWNER);
+		final User u = userRepository.loadUserByUsername(authentication.getName());
 
-		for (Join<Project, User> projectUser : projectUsers) {
-			if (projectUser.getObject().equals(u)) {
+		// if not an administrator, then we need to figure out if the
+		// authenticated user is an owner for this project.
+		final ProjectUserJoin puj = pujRepository.getProjectJoinForUser(p, u);
+		if (puj != null) {
+			if(puj.getProjectRole().equals(ProjectRole.PROJECT_OWNER)) {
 				logger.trace("Permission GRANTED for [" + authentication + "] on project [" + p + "]");
 				// this user is an owner for the project.
 				return true;
