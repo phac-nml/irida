@@ -4,6 +4,7 @@ Changes
 22.01 to 22.05
 --------------
 * [REST]: Corrected behaviour of date fields in REST API to return epoch instead of textual string. (22.01.1)
+* [Documentation]: Changed dates to long (except for Sample.collectionDate) in Swagger REST API documentation as they return as epoch. (22.01.2)
 
 21.09 to 22.01
 --------------
