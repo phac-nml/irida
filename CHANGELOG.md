@@ -4,6 +4,7 @@ Changes
 22.01 to 22.05
 --------------
 * [REST]: Corrected behaviour of date fields in REST API to return epoch instead of textual string. (22.01.1)
+* [Documentation]: Fixed issue that prevented a user from saving analysis results back to a sample and concatenating sequence files. Fixed date format in Swagger REST API documentation. (22.01.2)
 
 21.09 to 22.01
 --------------
