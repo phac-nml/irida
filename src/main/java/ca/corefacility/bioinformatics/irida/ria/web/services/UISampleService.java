@@ -508,7 +508,8 @@ public class UISampleService {
 		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
 
 		try {
-			if(sample.getDefaultSequencingObject().getId() == sequencingObjectId) {
+			if (sample.getDefaultSequencingObject() != null && sample.getDefaultSequencingObject()
+					.getId() == sequencingObjectId) {
 				sample.setDefaultSequencingObject(null);
 				sampleService.update(sample);
 			}

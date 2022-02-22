@@ -85,7 +85,10 @@ export function SampleFileList() {
       .then(({ data }) => {
         notification.success({ message: data.message });
         dispatch(removeFileObjectFromSample({ fileObjectId, type }));
-        if (sample.defaultSequencingObject.identifier === fileObjectId) {
+        if (
+          sample.defaultSequencingObject !== null &&
+          sample.defaultSequencingObject.identifier === fileObjectId
+        ) {
           dispatch(setDefaultSequencingObject(null));
         }
       })
