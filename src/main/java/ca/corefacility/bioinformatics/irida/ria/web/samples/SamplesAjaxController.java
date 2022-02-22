@@ -161,7 +161,6 @@ public class SamplesAjaxController {
 	 * Get analyses for sample
 	 *
 	 * @param sampleId Identifier for a sample
-	 * @param locale   The user's locale
 	 * @return {@link ResponseEntity} containing a list of analyses for the sample
 	 */
 	@GetMapping("/{sampleId}/analyses")
