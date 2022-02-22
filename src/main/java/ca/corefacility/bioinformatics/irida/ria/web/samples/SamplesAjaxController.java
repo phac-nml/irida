@@ -158,6 +158,23 @@ public class SamplesAjaxController {
 	}
 
 	/**
+	 * Get analyses for sample
+	 *
+	 * @param sampleId Identifier for a sample
+	 * @param locale   The user's locale
+	 * @return {@link ResponseEntity} containing a list of analyses for the sample
+	 */
+	@GetMapping("/{sampleId}/analyses")
+	public ResponseEntity<List<SampleAnalyses>> getSampleAnalyses(@PathVariable Long sampleId) {
+		try {
+			return ResponseEntity.ok(uiSampleService.getSampleAnalyses(sampleId));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(null);
+		}
+	}
+
+	/**
 	 * Add a metadata field and entry to {@link Sample}
 	 *
 	 * @param id                       {@link Long} identifier for the sample

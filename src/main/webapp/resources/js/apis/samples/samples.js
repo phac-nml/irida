@@ -151,6 +151,20 @@ export async function fetchSampleFiles({ sampleId, projectId }) {
 }
 
 /**
+ * Get analyses ran for sample
+ * @param {number} sampleId - identifier for a sample
+ * @returns {Promise<any>}
+ */
+export async function fetchSampleAnalyses({ sampleId }) {
+  try {
+    const response = await axios.get(`${URL}/${sampleId}/analyses`);
+    return response.data;
+  } catch (e) {
+    return Promise.reject(e.response.data);
+  }
+}
+
+/**
  * Get updated sequencing objects details for a sample
  * @param {number} sampleId - identifier for a sample
  * @param {number} projectId - identifier for a project (if the sample is in the cart), not required.

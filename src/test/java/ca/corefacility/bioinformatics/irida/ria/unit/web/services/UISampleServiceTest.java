@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
@@ -58,6 +59,7 @@ public class UISampleServiceTest {
 
 	private SequencingObject sequencingObject;
 	private GenomeAssembly genomeAssembly;
+	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
 	private final User USER_1 = new User("test", "test@nowhere.com", "PW1@3456", "Test", "Tester", "1234567890");
 	private final Sample SAMPLE_1 = new Sample("SAMPLE_01");
@@ -105,9 +107,11 @@ public class UISampleServiceTest {
 		MetadataTemplateService metadataTemplateService = mock(MetadataTemplateService.class);
 		MetadataEntryRepository metadataEntryRepository = mock(MetadataEntryRepository.class);
 		MetadataRestrictionRepository metadataRestrictionRepository = mock(MetadataRestrictionRepository.class);
+		analysisSubmissionRepository = mock(AnalysisSubmissionRepository.class);
+
 		service = new UISampleService(sampleService, projectService, updateSamplePermission, sequencingObjectService,
 				genomeAssemblyService, messageSource, cartService, metadataTemplateService, metadataEntryRepository,
-				metadataRestrictionRepository);
+				metadataRestrictionRepository, analysisSubmissionRepository);
 
 		// DATA
 		SAMPLE_1.setId(SAMPLE_ID);

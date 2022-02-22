@@ -19,6 +19,8 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplePairer;
@@ -68,13 +70,14 @@ public class UISampleService {
 	private final MetadataTemplateService metadataTemplateService;
 	private final MetadataEntryRepository metadataEntryRepository;
 	private final MetadataRestrictionRepository metadataRestrictionRepository;
+	private final AnalysisSubmissionRepository analysisSubmissionRepository;
 
 	@Autowired
 	public UISampleService(SampleService sampleService, ProjectService projectService,
 			UpdateSamplePermission updateSamplePermission, SequencingObjectService sequencingObjectService,
 			GenomeAssemblyService genomeAssemblyService, MessageSource messageSource, UICartService cartService,
 			MetadataTemplateService metadataTemplateService, MetadataEntryRepository metadataEntryRepository,
-			MetadataRestrictionRepository metadataRestrictionRepository) {
+			MetadataRestrictionRepository metadataRestrictionRepository, AnalysisSubmissionRepository analysisSubmissionRepository) {
 
 		this.sampleService = sampleService;
 		this.projectService = projectService;
@@ -86,6 +89,7 @@ public class UISampleService {
 		this.metadataTemplateService = metadataTemplateService;
 		this.metadataEntryRepository = metadataEntryRepository;
 		this.metadataRestrictionRepository = metadataRestrictionRepository;
+		this.analysisSubmissionRepository = analysisSubmissionRepository;
 	}
 
 	/**
@@ -215,6 +219,37 @@ public class UISampleService {
 		} catch (EntityNotFoundException e) {
 			return e.getMessage();
 		}
+	}
+
+	/**
+	 * Get analyses for sample
+	 *
+	 * @param sampleId Identifier for a sample
+	 * @return {@link SampleAnalyses} containing a list of analyses for the sample
+	 */
+	public List<SampleAnalyses> getSampleAnalyses(Long sampleId) {
+		Sample sample = sampleService.read(sampleId);
+		List<SampleAnalyses> sampleAnalysesList = new ArrayList<>();
+
+		Collection<SampleSequencingObjectJoin> sampleSequencingObjectJoins = sequencingObjectService.getSequencingObjectsForSample(
+				sample);
+		List<SequencingObject> sequencingObjectList = sampleSequencingObjectJoins.stream()
+				.map(s -> s.getObject())
+				.collect(Collectors.toList());
+
+		for (SequencingObject sequencingObject : sequencingObjectList) {
+			List<AnalysisSubmission> analysisSubmissionsList = analysisSubmissionRepository.findAnalysisSubmissionsForSequecingObject(
+					sequencingObject)
+					.stream()
+					.collect(Collectors.toList());
+			for (AnalysisSubmission analysisSubmission : analysisSubmissionsList) {
+				sampleAnalysesList.add(new SampleAnalyses(analysisSubmission.getId(), analysisSubmission.getName(),
+						analysisSubmission.getAnalysis()
+								.getAnalysisType()
+								.getType(), analysisSubmission.getCreatedDate()));
+			}
+		}
+		return sampleAnalysesList;
 	}
 
 	/**
