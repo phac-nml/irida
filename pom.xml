@@ -1,15 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.6.3</version>
-		<relativePath />
+		<relativePath/>
 	</parent>
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>22.01.2</version>
+	<version>22.01.3</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
@@ -587,7 +588,8 @@
 							<!--suppress UnresolvedMavenProperty -->
 							<argLine>${failsafeArgLine}</argLine>
 							<systemPropertyVariables>
-								<junit.platform.execution.listeners.deactivate>${exclude.test.listeners}</junit.platform.execution.listeners.deactivate>
+								<junit.platform.execution.listeners.deactivate>${exclude.test.listeners}
+								</junit.platform.execution.listeners.deactivate>
 								<spring.profiles.active>test</spring.profiles.active>
 								<irida.db.profile>it</irida.db.profile>
 							</systemPropertyVariables>
@@ -939,7 +941,8 @@
 		<liquibase.config.url>jdbc:mysql://localhost:3306/irida_test</liquibase.config.url>
 		<liquibase.config.username>test</liquibase.config.username>
 		<liquibase.config.password>test</liquibase.config.password>
-		<liquibase.config.changeLogFile>ca/corefacility/bioinformatics/irida/database/all-changes.xml</liquibase.config.changeLogFile>
+		<liquibase.config.changeLogFile>ca/corefacility/bioinformatics/irida/database/all-changes.xml
+		</liquibase.config.changeLogFile>
 
 		<!-- URL to a pre-populated SQLite database for Galaxy -->
 		<!-- Set to 'local' to use the local version stored in irida-api, or set 
