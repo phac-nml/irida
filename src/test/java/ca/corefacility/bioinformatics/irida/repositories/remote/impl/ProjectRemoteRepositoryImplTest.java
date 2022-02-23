@@ -21,7 +21,7 @@ public class ProjectRemoteRepositoryImplTest {
 	private static final String PROJECT_HASH_REL = RESTProjectsController.PROJECT_HASH_REL;
 
 	@BeforeEach
-	public void setUp() throws URISyntaxException {
+	public void setUp() {
 		tokenService = mock(RemoteAPITokenService.class);
 		projectRemoteRepository = new ProjectRemoteRepositoryImpl(tokenService);
 	}
