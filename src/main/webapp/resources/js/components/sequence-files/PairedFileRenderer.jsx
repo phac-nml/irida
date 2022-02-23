@@ -10,12 +10,12 @@ import { useSelector } from "react-redux";
  * React component to display paired end file details
  *
  * @param {array} pair
- * @function download sequence file function
- * @function remove files from sample function
- * @function get file processing state function
+ * @param {function} download sequence file function
+ * @param {function} remove files from sample function
+ * @param {function} get file processing state function
  * @param qcEntryTranslationKeys Translation keys for qc entries
  * @param displayConcatenationCheckbox Whether to display checkbox or not
- * @function set default sequencing object for sample
+ * @param {function} set default sequencing object for sample
  * @param autoDefaultFirstPair the first pair in the list of pairs
  * @returns {JSX.Element}
  * @constructor
