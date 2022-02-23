@@ -44,7 +44,7 @@ export function RemoteApiTable() {
       title: "",
       align: "right",
       fixed: "right",
-      width: 400,
+      width: 430,
       render(text, item) {
         return (
           <Space>
