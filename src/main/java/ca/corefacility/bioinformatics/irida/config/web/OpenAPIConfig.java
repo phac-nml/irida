@@ -1,13 +1,14 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import org.springframework.context.annotation.*;
 
 /**
  * Configuration for IRIDA REST API documentation.
