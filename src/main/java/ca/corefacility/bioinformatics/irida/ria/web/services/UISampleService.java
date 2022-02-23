@@ -19,6 +19,9 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
@@ -51,6 +54,8 @@ import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -71,13 +76,17 @@ public class UISampleService {
 	private final MetadataEntryRepository metadataEntryRepository;
 	private final MetadataRestrictionRepository metadataRestrictionRepository;
 	private final AnalysisSubmissionRepository analysisSubmissionRepository;
+	private final UserService userService;
+	private final IridaWorkflowsService iridaWorkflowsService;
 
 	@Autowired
 	public UISampleService(SampleService sampleService, ProjectService projectService,
 			UpdateSamplePermission updateSamplePermission, SequencingObjectService sequencingObjectService,
 			GenomeAssemblyService genomeAssemblyService, MessageSource messageSource, UICartService cartService,
 			MetadataTemplateService metadataTemplateService, MetadataEntryRepository metadataEntryRepository,
-			MetadataRestrictionRepository metadataRestrictionRepository, AnalysisSubmissionRepository analysisSubmissionRepository) {
+			MetadataRestrictionRepository metadataRestrictionRepository,
+			AnalysisSubmissionRepository analysisSubmissionRepository, UserService userService,
+			IridaWorkflowsService iridaWorkflowsService) {
 
 		this.sampleService = sampleService;
 		this.projectService = projectService;
@@ -90,6 +99,8 @@ public class UISampleService {
 		this.metadataEntryRepository = metadataEntryRepository;
 		this.metadataRestrictionRepository = metadataRestrictionRepository;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
+		this.userService = userService;
+		this.iridaWorkflowsService = iridaWorkflowsService;
 	}
 
 	/**
@@ -225,9 +236,10 @@ public class UISampleService {
 	 * Get analyses for sample
 	 *
 	 * @param sampleId Identifier for a sample
+	 * @param locale   User's locale
 	 * @return {@link SampleAnalyses} containing a list of analyses for the sample
 	 */
-	public List<SampleAnalyses> getSampleAnalyses(Long sampleId) {
+	public List<SampleAnalyses> getSampleAnalyses(Long sampleId, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
 		List<SampleAnalyses> sampleAnalysesList = new ArrayList<>();
 
@@ -237,17 +249,34 @@ public class UISampleService {
 				.map(s -> s.getObject())
 				.collect(Collectors.toList());
 
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
+		User user = userService.getUserByUsername(authentication.getName());
+
 		for (SequencingObject sequencingObject : sequencingObjectList) {
-			List<AnalysisSubmission> analysisSubmissionsList = analysisSubmissionRepository.findAnalysisSubmissionsForSequecingObject(
-					sequencingObject)
-					.stream()
-					.collect(Collectors.toList());
-			for (AnalysisSubmission analysisSubmission : analysisSubmissionsList) {
-				sampleAnalysesList.add(new SampleAnalyses(analysisSubmission.getId(), analysisSubmission.getName(),
-						analysisSubmission.getAnalysis()
-								.getAnalysisType()
-								.getType(), analysisSubmission.getCreatedDate()));
+
+			Set<AnalysisSubmission> analysisSubmissionSet;
+
+			if(!user.getSystemRole()
+					.equals(Role.ROLE_ADMIN)) {
+				analysisSubmissionSet = analysisSubmissionRepository.findAnalysisSubmissionsForSequencingObjectBySubmitter(
+						sequencingObject, user);
+			} else {
+				analysisSubmissionSet = analysisSubmissionRepository.findAnalysisSubmissionsForSequencingObject(
+						sequencingObject);
 			}
+
+			for (AnalysisSubmission analysisSubmission : analysisSubmissionSet) {
+				IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflowOrUnknown(analysisSubmission);
+				String analysisType = iridaWorkflow.getWorkflowDescription()
+						.getAnalysisType()
+						.getType();
+				analysisType = messageSource.getMessage("workflow." + analysisType + ".title", null, analysisType, locale);
+
+				sampleAnalysesList.add(new SampleAnalyses(analysisSubmission.getId(), analysisSubmission.getName(),
+						analysisType, analysisSubmission.getCreatedDate(), analysisSubmission.getAnalysisState().name()));
+			}
+
 		}
 		return sampleAnalysesList;
 	}

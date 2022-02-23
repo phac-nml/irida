@@ -6,8 +6,19 @@ import { setSampleAnalyses } from "../sampleAnalysesSlice";
 
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import {
+  IconCheckCircle,
+  IconClock,
+  IconCloseCircle,
+  IconLoading,
+} from "../../icons/Icons";
+import { blue6, green6, grey6, red6 } from "../../../styles/colors";
 
 const { Search } = Input;
+
+const commonIconStyle = {
+  fontSize: "16px",
+};
 
 /**
  * React component to display sample analyses
@@ -48,6 +59,7 @@ export function SampleAnalyses() {
             className="t-analysis-name"
             href={setBaseUrl(`analysis/${data.id}`)}
             title={name}
+            target="_blank"
           >
             {name}
           </a>
@@ -67,6 +79,24 @@ export function SampleAnalyses() {
       render: (date) => (
         <span className="t-analysis-created-date">
           {date ? formatInternationalizedDateTime(date) : ""}
+        </span>
+      ),
+    },
+    {
+      title: i18n("SampleAnalyses.analysisState"),
+      dataIndex: "state",
+      key: "analysisType",
+      render: (state) => (
+        <span className="t-analysis-state">
+          {state === "COMPLETED" ? (
+            <IconCheckCircle style={{ ...commonIconStyle, color: green6 }} />
+          ) : state === "ERROR" ? (
+            <IconCloseCircle style={{ ...commonIconStyle, color: red6 }} />
+          ) : state === "QUEUED" ? (
+            <IconClock style={{ ...commonIconStyle, color: grey6 }} />
+          ) : (
+            <IconLoading style={{ ...commonIconStyle, color: blue6 }} />
+          )}
         </span>
       ),
     },

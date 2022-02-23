@@ -43,6 +43,8 @@ import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -60,6 +62,8 @@ public class UISampleServiceTest {
 	private SequencingObject sequencingObject;
 	private GenomeAssembly genomeAssembly;
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	private UserService userService;
+	private IridaWorkflowsService iridaWorkflowsService;
 
 	private final User USER_1 = new User("test", "test@nowhere.com", "PW1@3456", "Test", "Tester", "1234567890");
 	private final Sample SAMPLE_1 = new Sample("SAMPLE_01");
@@ -108,10 +112,12 @@ public class UISampleServiceTest {
 		MetadataEntryRepository metadataEntryRepository = mock(MetadataEntryRepository.class);
 		MetadataRestrictionRepository metadataRestrictionRepository = mock(MetadataRestrictionRepository.class);
 		analysisSubmissionRepository = mock(AnalysisSubmissionRepository.class);
+		userService = mock(UserService.class);
+		iridaWorkflowsService = mock(IridaWorkflowsService.class);
 
 		service = new UISampleService(sampleService, projectService, updateSamplePermission, sequencingObjectService,
 				genomeAssemblyService, messageSource, cartService, metadataTemplateService, metadataEntryRepository,
-				metadataRestrictionRepository, analysisSubmissionRepository);
+				metadataRestrictionRepository, analysisSubmissionRepository, userService, iridaWorkflowsService);
 
 		// DATA
 		SAMPLE_1.setId(SAMPLE_ID);

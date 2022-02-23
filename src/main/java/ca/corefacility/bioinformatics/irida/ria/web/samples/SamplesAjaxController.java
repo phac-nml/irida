@@ -161,12 +161,13 @@ public class SamplesAjaxController {
 	 * Get analyses for sample
 	 *
 	 * @param sampleId Identifier for a sample
+	 * @param locale   User's locale
 	 * @return {@link ResponseEntity} containing a list of analyses for the sample
 	 */
 	@GetMapping("/{sampleId}/analyses")
-	public ResponseEntity<List<SampleAnalyses>> getSampleAnalyses(@PathVariable Long sampleId) {
+	public ResponseEntity<List<SampleAnalyses>> getSampleAnalyses(@PathVariable Long sampleId, Locale locale) {
 		try {
-			return ResponseEntity.ok(uiSampleService.getSampleAnalyses(sampleId));
+			return ResponseEntity.ok(uiSampleService.getSampleAnalyses(sampleId, locale));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(null);

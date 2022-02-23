@@ -137,7 +137,7 @@ public class SequencingRunServiceImpl extends CRUDServiceImpl<Long, SequencingRu
 
 			//Get the analysis submissions this file is included in
 			Set<AnalysisSubmission> submissions = submissionRepository
-					.findAnalysisSubmissionsForSequecingObject(sequencingObject);
+					.findAnalysisSubmissionsForSequencingObject(sequencingObject);
 
 			// If there are no submissions, we can delete the pair and file
 			if (submissions.isEmpty()) {

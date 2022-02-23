@@ -13,12 +13,14 @@ public class SampleAnalyses {
 	private String name;
 	private String analysisType;
 	private Date createdDate;
+	private String state;
 
-	public SampleAnalyses(Long id, String name, String analysisType, Date createdDate) {
+	public SampleAnalyses(Long id, String name, String analysisType, Date createdDate, String state) {
 		this.id = id;
 		this.name = name;
 		this.analysisType = analysisType;
 		this.createdDate = createdDate;
+		this.state = state;
 	}
 
 	public Long getId() {
@@ -52,4 +54,8 @@ public class SampleAnalyses {
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
 	}
+
+	public String getState() { return state; }
+
+	public void setState(String state) { this.state = state; }
 }
