@@ -29,7 +29,7 @@ public class ProjectRemoteRepositoryImplTest {
 
 	@Test
 	public void testReadProjectHashWithoutProjectHashRel() {
-		Project remoteProject = new Project("test project");
+		Project remoteProject = mock(Project.class);
 
 		when(remoteProject.getLink(PROJECT_HASH_REL)).thenReturn(Optional.empty());
 
