@@ -6,6 +6,8 @@ Changes
 * [REST]: Corrected behaviour of date fields in REST API to return epoch instead of textual string. (22.01.1)
 * [Developer]: Add `--no-yarn` to skip the yarn build in `run.sh`
 * [Developer]: Updated frontend dependencies: `babel`, `eslint`, `postcss`, and `webpack`
+* [Documentation]: Fixed issue that prevented a user from saving analysis results back to a sample and concatenating sequence files. Fixed date format in Swagger REST API documentation. (22.01.2)
+* [Database]: Updated group and user project queries to improve performance for all pages/calls that depend on project permissions.
 
 21.09 to 22.01
 --------------
@@ -227,7 +229,7 @@ Changes
 * [UI]: Updated project and global analyses listing pages to use Ant Design tables.
 * [UI]: Updated sequencing runs table to use Ant Design tables.
 * [UI/Developer]: Minor package updates for `babel`, `eslint` and `ant.design`.
-* [API]: Fixed concatenating `.fastq.gz` files from the user interface. 
+* [API]: Fixed concatenating `.fastq.gz` files from the user interface.
 * [UI]: Fixed bug where `Let the Pipeline Run` button failed to empty the cart and redirect the user to the projects page.
 * [UI/Developer]: Removed `marked` and `angular-marked` as bower dependencies.
 * [UI]: Fixed issue where grant types, and refresh token validity would not populate correctly on client edit form.
@@ -414,7 +416,7 @@ Changes
 * [Developer]: Updated `yarn` to the current version.
 * [UI/Workflow]: Pipeline analysis output files are rendered in the same order as they appear in the pipeline `irida_workflow.xml` in the `<outputs>` XML element.
 * [Developer]: Can now specify which `chromedriver` to use in UI testing with `-Dwebdriver.chrome.driver=/PATH/TO/chromedriver`.
-* [UI]: Fixes slow Sample cart. Quicker saving of large selections of samples to cart (`POST /cart/add/samples`) and loading of existing cart Samples (`GET /cart`).  
+* [UI]: Fixes slow Sample cart. Quicker saving of large selections of samples to cart (`POST /cart/add/samples`) and loading of existing cart Samples (`GET /cart`).
 
 0.20.0 to 0.21.0
 ----------------
@@ -425,7 +427,7 @@ Changes
 * [Developer]: Removed old gulp dependencies from the `package.json` file.
 * [Developer]: Update to stable releases of `node` and `yarn`.
 * [Administration]: Disabled automated SISTR results from saving to sample metadata.  Also disabled retrospective results from being added during the database update.  Installations that have already performed the 0.20.0 update will have their retrospective automated SISTR results automatically added to sample metadata.  Installations that jump directly to 0.20.1 and above will not have this data added to sample metadata. (0.20.1)
-* [UI/Workflow]: Preview analysis output files in a tabular or plain-text view in the analysis details page under the Preview tab. 
+* [UI/Workflow]: Preview analysis output files in a tabular or plain-text view in the analysis details page under the Preview tab.
 
 0.19.0 to 0.20.0
 ----------------
@@ -452,10 +454,10 @@ Changes
 * [UI]: Fixed issue where time stamps where not displayed on activities pages.
 * [UI]: Fixed issue where breadcrumbs were not displaying on the Project > Line List and Project > Analyses pages.
 * [UI]: Cleaned up sub-navigation elements on samples and files.
-* [UI]: Updated Remote API pages (datatables, and removed Noty modals).  
+* [UI]: Updated Remote API pages (datatables, and removed Noty modals).
 * [UI]: Fixed issue where breadcrumbs not displaying on the Samples > File > QC Analsis pages.
 * [UI]: Removed search box from sequencing run page.
-* [UI/Workflow]: Galaxy job error info retrieved from Galaxy if a workflow submission fails. Job error info is shown in Analyses table and on the Analysis page if it exists. 
+* [UI/Workflow]: Galaxy job error info retrieved from Galaxy if a workflow submission fails. Job error info is shown in Analyses table and on the Analysis page if it exists.
 * [UI]: Fixed issue with Upload Sequence Files button when SequenceFiles page resized.
 * [UI]: SISTR able to write metadata back to samples.
 
