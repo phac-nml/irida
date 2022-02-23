@@ -28,7 +28,6 @@ public class ProjectSubscriptionsAjaxController {
 	 *
 	 * @param id        the identifier of the {@link ProjectSubscription} to update
 	 * @param subscribe whether to subscribe or unsubscribe the user to/from the project
-	 * @return Map message if the {@link ProjectSubscription} was updated successfully
 	 */
 	@RequestMapping(value = "/{id}/update", method = RequestMethod.POST)
 	public void updateProjectSubscription(@PathVariable Long id, @RequestParam boolean subscribe) {
