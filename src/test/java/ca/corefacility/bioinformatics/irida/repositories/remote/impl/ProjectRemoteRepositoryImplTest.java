@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.impl;
 
-import org.apache.el.stream.Optional;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
