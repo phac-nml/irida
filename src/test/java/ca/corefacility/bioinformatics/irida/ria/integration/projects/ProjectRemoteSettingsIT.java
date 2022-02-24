@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import org.junit.jupiter.api.Test;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.admin.AdminClientsPage;
@@ -9,8 +7,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSyncPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
-
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class ProjectRemoteSettingsIT extends AbstractIridaUIITChromeDriver {
-	AdminClientsPage clientsPage;
 	ProjectSyncPage page;
 
 	String clientId = "myClient";
@@ -35,9 +32,8 @@ public class ProjectRemoteSettingsIT extends AbstractIridaUIITChromeDriver {
 
 		//create the oauth client
 		String redirectLocation = RemoteApiUtilities.getRedirectLocation();
-		clientsPage = AdminClientsPage.goTo(driver());
-		clientsPage.createClientWithDetails(clientId, "authorization_code", redirectLocation, AdminClientsPage.READ_YES,
-				AdminClientsPage.WRITE_NO);
+		AdminClientsPage clientsPage = AdminClientsPage.goTo(driver());
+		clientsPage.createClientWithDetails(clientId, "authorization_code", redirectLocation, AdminClientsPage.READ_AUTO, AdminClientsPage.WRITE_NO);
 		clientSecret = clientsPage.getClientSecret(clientId);
 
 		RemoteApiUtilities.addRemoteApi(driver(), clientId, clientSecret);
