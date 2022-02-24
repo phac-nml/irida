@@ -1,11 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.clients;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class CreateClientPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(CreateClientPage.class);

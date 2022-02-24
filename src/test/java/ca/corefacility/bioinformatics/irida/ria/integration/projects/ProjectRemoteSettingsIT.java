@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class ProjectRemoteSettingsIT extends AbstractIridaUIITChromeDriver {
-	CreateClientPage createClientPage;
 	ProjectSyncPage page;
 
 	String clientId = "myClient";
@@ -32,6 +31,7 @@ public class ProjectRemoteSettingsIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testRemoteProjectSettings() {
+		CreateClientPage createClientPage;
 		LoginPage.loginAsAdmin(driver());
 
 		//create the oauth client

@@ -7,11 +7,6 @@
   <head>
     <title th:text="#{RemoteApi.title}">_Clients_</title>
     <webpacker:css entry="remote-apis"/>
-    <script th:inline="javascript">
-      window.PAGE = {
-        admin: /*[[${isAdmin}]]*/ false
-      };
-    </script>
   </head>
   <body>
     <main
