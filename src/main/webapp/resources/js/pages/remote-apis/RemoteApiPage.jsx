@@ -21,7 +21,7 @@ export function RemoteApiPage({}) {
         headerExtras={
           isAdmin() ? (
             <CreateRemoteApiModal>
-              <AddNewButton text={i18n("remoteapi.add")} />
+              <AddNewButton text={i18n("RemoteApi.add")} />
             </CreateRemoteApiModal>
           ) : null
         }
