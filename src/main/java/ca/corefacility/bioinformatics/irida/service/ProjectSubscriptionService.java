@@ -21,5 +21,5 @@ public interface ProjectSubscriptionService extends CRUDService<Long, ProjectSub
 	 * @return {@link Page} of {@link ProjectSubscription}s.
 	 */
 	public Page<ProjectSubscription> getProjectSubscriptionsForUser(User user, int page, int size, Sort sort);
-    
+
 }
