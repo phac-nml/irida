@@ -279,15 +279,16 @@ Enter a suitable name for the remote installation.  This name will be visible to
 
 ![Create API](images/create-api-details.png)
 
-After adding the Remote Connection you should be directed to the details page for that API.
+After adding the Remote Connection the Remote Connections table will be updated.
 
-To test the Remote Connection, click the "Connect" button.  You should be directed to a login page for the remote connection.  To connect to the remote instance of IRIDA you must have been given a username and password for the remote installation.  See [Remote instances of IRIDA](../user/dashboard/#remote-instances-of-irida) for more details.
-
-![API Details](images/api-details.png)
+To test the Remote Connection, click the "Connect" button. You should be directed to a login page for the remote
+connection. To connect to the remote instance of IRIDA you must have been given a username and password for the remote
+installation. See [Remote instances of IRIDA](../user/dashboard/#remote-instances-of-irida) for more details.
 
 Removing a Remote Connection
 ----------------------------
-From the Remote Connections list page, click on the name of the connection you wish to delete.  This will bring you to the API details page.  Click the "Remove" button on that page and confirm.
+From the Remote Connections list, click the "Remove" button at the end of the row for the remote connection you want to
+remove. A confirmatory pop up message will appear. Click "Ok" and the connection will be removed.
 
 ![Remove API](images/remove-api.png)
 

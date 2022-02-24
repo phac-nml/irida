@@ -34,16 +34,15 @@ import ca.corefacility.bioinformatics.irida.web.controller.api.json.DateJson;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * A biological sample. Each sample may correspond to many files.
- * 
  * A {@link Sample} comprises of many attributes. The attributes assigned to a
  * {@link Sample} correspond to the NCBI Pathogen BioSample attributes. See
  * <a href=
  * "https://submit.ncbi.nlm.nih.gov/biosample/template/?package=Pathogen.cl.1.0&action=definition"
  * >BioSample Attributes: Package Pathogen</a> for more information.
- * 
  */
 @Entity
 @NamedEntityGraph(name = "sampleOnly")
@@ -113,6 +112,7 @@ public class Sample extends IridaRepresentationModel
 	@JsonSerialize(using = DateJson.DateSerializer.class)
 	@JsonDeserialize(using = DateJson.DateDeserializer.class)
 	@NotNull(message = "{sample.collection.date.notnull}", groups = NCBISubmission.class)
+	@Schema(type = "string", format = "date")
 	private Date collectionDate;
 
 	/**
@@ -158,7 +158,7 @@ public class Sample extends IridaRepresentationModel
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
 
-	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private Set<MetadataEntry> metadataEntries;
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private List<SampleGenomeAssemblyJoin> genomeAssemblies;
@@ -169,9 +169,8 @@ public class Sample extends IridaRepresentationModel
 
 	/**
 	 * Create a new {@link Sample} with the given name
-	 * 
-	 * @param sampleName
-	 *            The name of the sample
+	 *
+	 * @param sampleName The name of the sample
 	 */
 	public Sample(String sampleName) {
 		this();
@@ -182,15 +181,14 @@ public class Sample extends IridaRepresentationModel
 	public boolean equals(Object other) {
 		if (other instanceof Sample) {
 			Sample sample = (Sample) other;
-			return Objects.equals(id, sample.id) && Objects.equals(createdDate, sample.createdDate)
-					&& Objects.equals(modifiedDate, sample.modifiedDate)
-					&& Objects.equals(sampleName, sample.sampleName) && Objects.equals(description, sample.description)
-					&& Objects.equals(organism, sample.organism) && Objects.equals(isolate, sample.isolate)
-					&& Objects.equals(strain, sample.strain) && Objects.equals(collectedBy, sample.collectedBy)
-					&& Objects.equals(collectionDate, sample.collectionDate)
-					&& Objects.equals(geographicLocationName, sample.geographicLocationName)
-					&& Objects.equals(isolationSource, sample.isolationSource)
-					&& Objects.equals(latitude, sample.latitude) && Objects.equals(longitude, sample.longitude);
+			return Objects.equals(id, sample.id) && Objects.equals(createdDate, sample.createdDate) && Objects.equals(
+					modifiedDate, sample.modifiedDate) && Objects.equals(sampleName, sample.sampleName)
+					&& Objects.equals(description, sample.description) && Objects.equals(organism, sample.organism)
+					&& Objects.equals(isolate, sample.isolate) && Objects.equals(strain, sample.strain)
+					&& Objects.equals(collectedBy, sample.collectedBy) && Objects.equals(collectionDate,
+					sample.collectionDate) && Objects.equals(geographicLocationName, sample.geographicLocationName)
+					&& Objects.equals(isolationSource, sample.isolationSource) && Objects.equals(latitude,
+					sample.latitude) && Objects.equals(longitude, sample.longitude);
 		}
 
 		return false;
@@ -274,7 +272,7 @@ public class Sample extends IridaRepresentationModel
 	public void setStrain(String strain) {
 		this.strain = strain;
 	}
-	
+
 	public Date getCollectionDate() {
 		return collectionDate;
 	}
