@@ -6,8 +6,8 @@ import {
 import { Button, Popconfirm, Space, Typography } from "antd";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import { isAdmin } from "../../../../utilities/role-utilities";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { RemoteApiStatus } from "./RemoteApiStatus";
+import { deleteRemoteApi } from "../../../../apis/remote-api/remote-api";
 
 /**
  * Render a table to display remote API's
@@ -17,8 +17,8 @@ import { RemoteApiStatus } from "./RemoteApiStatus";
 export function RemoteApiTable() {
   const { updateTable } = useContext(PagedTableContext);
 
-  const removeConnection = () => {
-    deleteRemoteApi({ id: params.remoteId }).then(updateTable);
+  const removeConnection = (id) => {
+    deleteRemoteApi({ id }).then(updateTable);
   };
 
   const admin = isAdmin();
@@ -53,7 +53,7 @@ export function RemoteApiTable() {
               <Popconfirm
                 title={i18n("RemoteApi.delete-confirm")}
                 placement="topRight"
-                onConfirm={removeConnection}
+                onConfirm={() => removeConnection(item.id)}
                 okButtonProps={{ className: "t-delete-confirm" }}
               >
                 <Button type="text">{i18n("RemoteApi.delete")}</Button>
