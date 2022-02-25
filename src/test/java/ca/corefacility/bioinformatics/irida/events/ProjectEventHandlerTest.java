@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.events;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 
@@ -31,6 +33,7 @@ import static org.mockito.Mockito.*;
 public class ProjectEventHandlerTest {
 	private ProjectEventHandler handler;
 	private ProjectEventRepository eventRepository;
+	private ProjectRepository projectRepository;
 	private ProjectSampleJoinRepository psjRepository;
 	private SampleRepository sampleRepository;
 
@@ -38,20 +41,23 @@ public class ProjectEventHandlerTest {
 	public void setup() {
 		eventRepository = mock(ProjectEventRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
+		projectRepository = mock(ProjectRepository.class);
 		sampleRepository = mock(SampleRepository.class);
-		handler = new ProjectEventHandler(eventRepository, psjRepository, sampleRepository);
+		handler = new ProjectEventHandler(eventRepository, psjRepository, projectRepository, sampleRepository);
 	}
 
 	@Test
 	public void testDelegateSampleAdded() {
 		Class<? extends ProjectEvent> clazz = SampleAddedProjectEvent.class;
 		Project project = new Project();
+		project.setId(1L);
 		Sample sample = new Sample();
 		ProjectSampleJoin returnValue = new ProjectSampleJoin(project, sample, true);
 		Object[] args = { project, sample };
 		MethodEvent methodEvent = new MethodEvent(clazz, returnValue, args);
 
 		when(eventRepository.save(any(ProjectEvent.class))).thenReturn(new SampleAddedProjectEvent(returnValue));
+		when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
 
 		handler.delegate(methodEvent);
 
@@ -67,12 +73,14 @@ public class ProjectEventHandlerTest {
 	public void testDelegateUserRole() {
 		Class<? extends ProjectEvent> clazz = UserRoleSetProjectEvent.class;
 		Project project = new Project();
+		project.setId(1L);
 		User user = new User();
 		ProjectUserJoin returnValue = new ProjectUserJoin(project, user, ProjectRole.PROJECT_USER);
 		Object[] args = { project, user, ProjectRole.PROJECT_USER };
 		MethodEvent methodEvent = new MethodEvent(clazz, returnValue, args);
 
 		when(eventRepository.save(any(ProjectEvent.class))).thenReturn(new UserRoleSetProjectEvent(returnValue));
+		when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
 
 		handler.delegate(methodEvent);
 
@@ -88,11 +96,13 @@ public class ProjectEventHandlerTest {
 	public void testDelegateUserRemoved() {
 		Class<? extends ProjectEvent> clazz = UserRemovedProjectEvent.class;
 		Project project = new Project();
+		project.setId(1L);
 		User user = new User();
 		Object[] args = { project, user };
 		MethodEvent methodEvent = new MethodEvent(clazz, null, args);
 
 		when(eventRepository.save(any(ProjectEvent.class))).thenReturn(new UserRemovedProjectEvent(project, user));
+		when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
 
 		handler.delegate(methodEvent);
 
@@ -108,10 +118,13 @@ public class ProjectEventHandlerTest {
 	public void testHandleSequenceFileAddedEventSingle() {
 		Class<? extends ProjectEvent> clazz = DataAddedToSampleProjectEvent.class;
 		Project project = new Project();
+		project.setId(1L);
 		Sample sample = new Sample();
 		SequenceFile file = new SequenceFile();
 		SingleEndSequenceFile seqObj = new SingleEndSequenceFile(file);
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(sample, seqObj);
+
+		when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
 
 		when(psjRepository.getProjectForSample(sample))
 				.thenReturn(Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
@@ -137,6 +150,7 @@ public class ProjectEventHandlerTest {
 	public void testHandleSequenceFileAddedEventMultipleReturn() {
 		Class<? extends ProjectEvent> clazz = DataAddedToSampleProjectEvent.class;
 		Project project = new Project();
+		project.setId(1L);
 		Sample sample = new Sample();
 		SequenceFile file = new SequenceFile();
 		SingleEndSequenceFile seqObj1 = new SingleEndSequenceFile(file);
@@ -144,6 +158,7 @@ public class ProjectEventHandlerTest {
 		SampleSequencingObjectJoin join1 = new SampleSequencingObjectJoin(sample, seqObj1);
 		SampleSequencingObjectJoin join2 = new SampleSequencingObjectJoin(sample, seqObj2);
 
+		when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
 		when(psjRepository.getProjectForSample(sample))
 				.thenReturn(Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
 
@@ -168,12 +183,16 @@ public class ProjectEventHandlerTest {
 	public void testHandleSequenceFileAddedEventMultipleProjects() {
 		Class<? extends ProjectEvent> clazz = DataAddedToSampleProjectEvent.class;
 		Project project = new Project("p1");
+		project.setId(1L);
 		Project project2 = new Project("p2");
+		project2.setId(2L);
 		Sample sample = new Sample();
 		SequenceFile file = new SequenceFile();
 		SingleEndSequenceFile seqObj = new SingleEndSequenceFile(file);
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(sample, seqObj);
 
+		when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+		when(projectRepository.findById(2L)).thenReturn(Optional.of(project2));
 		when(psjRepository.getProjectForSample(sample)).thenReturn(Lists.newArrayList(
 				new ProjectSampleJoin(project, sample, true), new ProjectSampleJoin(project2, sample, true)));
 
@@ -204,6 +223,7 @@ public class ProjectEventHandlerTest {
 	public void testOtherEvent() {
 		Class<? extends ProjectEvent> clazz = ProjectEvent.class;
 		Project project = new Project();
+		project.setId(1L);
 		User user = new User();
 		Object[] args = { project, user };
 		MethodEvent methodEvent = new MethodEvent(clazz, null, args);

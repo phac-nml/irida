@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 
@@ -34,12 +35,15 @@ public class ProjectEventHandler {
 
 	private final ProjectEventRepository eventRepository;
 	private final ProjectSampleJoinRepository psjRepository;
+	private final ProjectRepository projectRepository;
 	private final SampleRepository sampleRepository;
 
 	public ProjectEventHandler(final ProjectEventRepository eventRepository,
-			final ProjectSampleJoinRepository psjRepository, final SampleRepository sampleRepository) {
+			final ProjectSampleJoinRepository psjRepository, final ProjectRepository projectRepository,
+			final SampleRepository sampleRepository) {
 		this.eventRepository = eventRepository;
 		this.psjRepository = psjRepository;
+		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
 	}
 
@@ -104,6 +108,7 @@ public class ProjectEventHandler {
 		// values (i.e. modifiedDate ). Calling save here would cause Hibernate to fully select the object
 		// before executing the update which is very slow and increases in time as the number of samples
 		// in the project increase.
+		project = projectRepository.findById(project.getId()).get();
 		project.setModifiedDate(eventDate);
 	}
 

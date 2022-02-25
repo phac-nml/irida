@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.events.ProjectEventAspect;
 import ca.corefacility.bioinformatics.irida.events.ProjectEventHandler;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
+import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
@@ -32,8 +33,10 @@ public class IridaApiAspectsConfig {
 
 	@Bean
 	public ProjectEventAspect projectEventAspect(final ProjectEventRepository eventRepository,
-			final ProjectSampleJoinRepository psjRepository, final SampleRepository sampleRepository) {
-		return new ProjectEventAspect(new ProjectEventHandler(eventRepository, psjRepository, sampleRepository));
+			final ProjectSampleJoinRepository psjRepository, final ProjectRepository projectRepository,
+			final SampleRepository sampleRepository) {
+		return new ProjectEventAspect(
+				new ProjectEventHandler(eventRepository, psjRepository, projectRepository, sampleRepository));
 	}
 
 	@Bean
