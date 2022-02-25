@@ -1,24 +1,13 @@
 package ca.corefacility.bioinformatics.irida.events;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.SampleRemovedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.*;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -34,12 +23,9 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSa
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 
 /**
- * Handles the creation of {@link ProjectEvent}s from methods annotated with
- * {@link LaunchesProjectEvent}
- * 
- * 
- * @see LaunchesProjectEvent
+ * Handles the creation of {@link ProjectEvent}s from methods annotated with {@link LaunchesProjectEvent}
  *
+ * @see LaunchesProjectEvent
  */
 public class ProjectEventHandler {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectEventHandler.class);
@@ -59,12 +45,9 @@ public class ProjectEventHandler {
 	}
 
 	/**
-	 * Handle translation of a {@link MethodEvent} into the correct
-	 * {@link ProjectEvent} subclass
-	 * 
-	 * @param methodEvent
-	 *            Information from a method return annotated with
-	 *            {@link LaunchesProjectEvent}
+	 * Handle translation of a {@link MethodEvent} into the correct {@link ProjectEvent} subclass
+	 *
+	 * @param methodEvent Information from a method return annotated with {@link LaunchesProjectEvent}
 	 */
 	public void delegate(MethodEvent methodEvent) {
 		Class<? extends ProjectEvent> eventClass = methodEvent.getEventClass();
@@ -80,7 +63,7 @@ public class ProjectEventHandler {
 			events.add(handleUserRoleSetProjectEvent(methodEvent));
 		} else if (eventClass.equals(DataAddedToSampleProjectEvent.class)) {
 			final Collection<DataAddedToSampleProjectEvent> dataAddedEvents = handleSequenceFileAddedEvent(methodEvent);
-			
+
 			/*
 			 * We want the sample to show modification when these events are
 			 * added, so update mod date
@@ -104,14 +87,14 @@ public class ProjectEventHandler {
 		for (ProjectEvent e : events) {
 			Project project = e.getProject();
 			project.setModifiedDate(eventDate);
-			projectRepository.save(project);
+			projectRepository.updateProjectModifiedDate(project);
 		}
 	}
-	
+
 	/**
-	 * Create one or more {@link SampleAddedProjectEvent}. Can be run on methods
-	 * which return a {@link ProjectSampleJoin} or collection of joins.
-	 * 
+	 * Create one or more {@link SampleAddedProjectEvent}. Can be run on methods which return a
+	 * {@link ProjectSampleJoin} or collection of joins.
+	 *
 	 * @param event
 	 */
 	private Collection<SampleAddedProjectEvent> handleSampleAddedProjectEvent(MethodEvent event) {
@@ -146,11 +129,9 @@ public class ProjectEventHandler {
 	}
 
 	/**
-	 * Create a {@link UserRemovedProjectEvent}. The method arguments must
-	 * contain a {@link Project} and {@link User}
-	 * 
-	 * @param event
-	 *            The {@link MethodEvent} that this event is being launched from
+	 * Create a {@link UserRemovedProjectEvent}. The method arguments must contain a {@link Project} and {@link User}
+	 *
+	 * @param event The {@link MethodEvent} that this event is being launched from
 	 */
 	private ProjectEvent handleUserRemovedEvent(MethodEvent event) {
 		Object[] args = event.getArgs();
@@ -171,11 +152,9 @@ public class ProjectEventHandler {
 	}
 
 	/**
-	 * Create a {@link UserRemovedProjectEvent}. The method arguments must
-	 * contain a {@link Project} and {@link User}
-	 * 
-	 * @param event
-	 *            The {@link MethodEvent} that this event is being launched from
+	 * Create a {@link UserRemovedProjectEvent}. The method arguments must contain a {@link Project} and {@link User}
+	 *
+	 * @param event The {@link MethodEvent} that this event is being launched from
 	 */
 	private ProjectEvent handleUserGroupRemovedEvent(MethodEvent event) {
 		final Optional<Object> user = Arrays.stream(event.getArgs()).filter(e -> e instanceof UserGroup).findAny();
@@ -188,11 +167,9 @@ public class ProjectEventHandler {
 	}
 
 	/**
-	 * Create a {@link UserRoleSetProjectEvent}. The method must have returned a
-	 * {@link ProjectUserJoin}
-	 * 
-	 * @param event
-	 *            The {@link MethodEvent} that this event is being launched from
+	 * Create a {@link UserRoleSetProjectEvent}. The method must have returned a {@link ProjectUserJoin}
+	 *
+	 * @param event The {@link MethodEvent} that this event is being launched from
 	 */
 	private ProjectEvent handleUserRoleSetProjectEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
@@ -206,11 +183,9 @@ public class ProjectEventHandler {
 	}
 
 	/**
-	 * Create a {@link UserGroupRoleSetProjectEvent}. The method must have
-	 * returned a {@link UserGroupProjectJoin}
-	 * 
-	 * @param event
-	 *            The {@link MethodEvent} that this event is being launched from
+	 * Create a {@link UserGroupRoleSetProjectEvent}. The method must have returned a {@link UserGroupProjectJoin}
+	 *
+	 * @param event The {@link MethodEvent} that this event is being launched from
 	 */
 	private ProjectEvent handleUserGroupRoleSetProjectEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
@@ -224,9 +199,9 @@ public class ProjectEventHandler {
 	}
 
 	/**
-	 * Create one or more {@link DataAddedToSampleProjectEvent}. Can be run on
-	 * methods which return a {@link SampleSequencingObjectJoin}.
-	 * 
+	 * Create one or more {@link DataAddedToSampleProjectEvent}. Can be run on methods which return a
+	 * {@link SampleSequencingObjectJoin}.
+	 *
 	 * @param event
 	 */
 	private Collection<DataAddedToSampleProjectEvent> handleSequenceFileAddedEvent(MethodEvent event) {
@@ -255,12 +230,9 @@ public class ProjectEventHandler {
 	}
 
 	/**
-	 * Create {@link DataAddedToSampleProjectEvent} for all {@link Project}s a
-	 * {@link Sample} belongs to
-	 * 
-	 * @param join
-	 *            a {@link SampleSequencingObjectJoin} to turn into a
-	 *            {@link DataAddedToSampleProjectEvent}
+	 * Create {@link DataAddedToSampleProjectEvent} for all {@link Project}s a {@link Sample} belongs to
+	 *
+	 * @param join a {@link SampleSequencingObjectJoin} to turn into a {@link DataAddedToSampleProjectEvent}
 	 */
 	private Collection<DataAddedToSampleProjectEvent> handleIndividualSequenceFileAddedEvent(
 			SampleSequencingObjectJoin join) {
@@ -276,11 +248,9 @@ public class ProjectEventHandler {
 	}
 
 	/**
-	 * Create {@link SampleRemovedProjectEvent}s for any {@link Sample}s removed
-	 * from a {@link Project}
-	 * 
-	 * @param event
-	 *            the {@link MethodEvent} containing params from the method call
+	 * Create {@link SampleRemovedProjectEvent}s for any {@link Sample}s removed from a {@link Project}
+	 *
+	 * @param event the {@link MethodEvent} containing params from the method call
 	 * @return a collectino of {@link SampleRemovedProjectEvent}s
 	 */
 	private Collection<SampleRemovedProjectEvent> handleSampleRemovedEvent(MethodEvent event) {
