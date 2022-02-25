@@ -6,6 +6,7 @@ Changes
 * [REST]: Corrected behaviour of date fields in REST API to return epoch instead of textual string. (22.01.1)
 * [Documentation]: Fixed issue that prevented a user from saving analysis results back to a sample and concatenating sequence files. Fixed date format in Swagger REST API documentation. (22.01.2)
 * [REST]: Fixed bug that was preventing syncing remote projects from versions 20.09 and older. (22.01.3)
+* [UI]: Fixed bug preventing updating of project details.
 
 21.09 to 22.01
 --------------
