@@ -1,13 +1,5 @@
 package ca.corefacility.bioinformatics.irida.events;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
-
 import java.util.List;
 import java.util.Set;
 
@@ -16,11 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserRemovedProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.event.UserRoleSetProjectEvent;
+import ca.corefacility.bioinformatics.irida.model.event.*;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -30,27 +18,28 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
-import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 public class ProjectEventHandlerTest {
 	private ProjectEventHandler handler;
 	private ProjectEventRepository eventRepository;
 	private ProjectSampleJoinRepository psjRepository;
-	private ProjectRepository projectRepository;
 	private SampleRepository sampleRepository;
 
 	@BeforeEach
 	public void setup() {
 		eventRepository = mock(ProjectEventRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
-		projectRepository = mock(ProjectRepository.class);
 		sampleRepository = mock(SampleRepository.class);
-		handler = new ProjectEventHandler(eventRepository, psjRepository, projectRepository, sampleRepository);
+		handler = new ProjectEventHandler(eventRepository, psjRepository, sampleRepository);
 	}
 
 	@Test
@@ -71,7 +60,7 @@ public class ProjectEventHandlerTest {
 		ProjectEvent event = captor.getValue();
 		assertTrue(event instanceof SampleAddedProjectEvent);
 
-		verify(projectRepository).save(any(Project.class));
+		//verify(projectRepository).save(any(Project.class));
 	}
 
 	@Test
@@ -92,7 +81,7 @@ public class ProjectEventHandlerTest {
 		ProjectEvent event = captor.getValue();
 		assertTrue(event instanceof UserRoleSetProjectEvent);
 
-		verify(projectRepository).save(any(Project.class));
+		//verify(projectRepository).save(any(Project.class));
 	}
 
 	@Test
@@ -112,7 +101,7 @@ public class ProjectEventHandlerTest {
 		ProjectEvent event = captor.getValue();
 		assertTrue(event instanceof UserRemovedProjectEvent);
 
-		verify(projectRepository).save(any(Project.class));
+		//verify(projectRepository).save(any(Project.class));
 	}
 
 	@Test
@@ -124,11 +113,11 @@ public class ProjectEventHandlerTest {
 		SingleEndSequenceFile seqObj = new SingleEndSequenceFile(file);
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(sample, seqObj);
 
-		when(psjRepository.getProjectForSample(sample)).thenReturn(
-				Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
+		when(psjRepository.getProjectForSample(sample))
+				.thenReturn(Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
 
-		when(eventRepository.save(any(ProjectEvent.class))).thenReturn(
-				new DataAddedToSampleProjectEvent(project, sample));
+		when(eventRepository.save(any(ProjectEvent.class)))
+				.thenReturn(new DataAddedToSampleProjectEvent(project, sample));
 
 		Object[] args = {};
 		MethodEvent methodEvent = new MethodEvent(clazz, join, args);
@@ -140,7 +129,7 @@ public class ProjectEventHandlerTest {
 		ProjectEvent event = captor.getValue();
 		assertTrue(event instanceof DataAddedToSampleProjectEvent);
 
-		verify(projectRepository).save(any(Project.class));
+		//verify(projectRepository).save(any(Project.class));
 		verify(sampleRepository).save(any(Sample.class));
 	}
 
@@ -155,11 +144,11 @@ public class ProjectEventHandlerTest {
 		SampleSequencingObjectJoin join1 = new SampleSequencingObjectJoin(sample, seqObj1);
 		SampleSequencingObjectJoin join2 = new SampleSequencingObjectJoin(sample, seqObj2);
 
-		when(psjRepository.getProjectForSample(sample)).thenReturn(
-				Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
+		when(psjRepository.getProjectForSample(sample))
+				.thenReturn(Lists.newArrayList(new ProjectSampleJoin(project, sample, true)));
 
-		when(eventRepository.save(any(ProjectEvent.class))).thenReturn(
-				new DataAddedToSampleProjectEvent(project, sample));
+		when(eventRepository.save(any(ProjectEvent.class)))
+				.thenReturn(new DataAddedToSampleProjectEvent(project, sample));
 
 		Object[] args = {};
 		MethodEvent methodEvent = new MethodEvent(clazz, Lists.newArrayList(join1, join2), args);
@@ -171,7 +160,7 @@ public class ProjectEventHandlerTest {
 		ProjectEvent event = captor.getValue();
 		assertTrue(event instanceof DataAddedToSampleProjectEvent);
 
-		verify(projectRepository).save(any(Project.class));
+		//verify(projectRepository).save(any(Project.class));
 		verify(sampleRepository).save(any(Sample.class));
 	}
 
@@ -185,11 +174,11 @@ public class ProjectEventHandlerTest {
 		SingleEndSequenceFile seqObj = new SingleEndSequenceFile(file);
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(sample, seqObj);
 
-		when(psjRepository.getProjectForSample(sample)).thenReturn(
-				Lists.newArrayList(new ProjectSampleJoin(project, sample, true), new ProjectSampleJoin(project2, sample, true)));
+		when(psjRepository.getProjectForSample(sample)).thenReturn(Lists.newArrayList(
+				new ProjectSampleJoin(project, sample, true), new ProjectSampleJoin(project2, sample, true)));
 
-		when(eventRepository.save(any(ProjectEvent.class))).thenReturn(
-				new DataAddedToSampleProjectEvent(project, sample));
+		when(eventRepository.save(any(ProjectEvent.class)))
+				.thenReturn(new DataAddedToSampleProjectEvent(project, sample));
 
 		Object[] args = {};
 		MethodEvent methodEvent = new MethodEvent(clazz, join, args);
@@ -208,7 +197,7 @@ public class ProjectEventHandlerTest {
 			projects.remove(eventProject);
 		}
 
-		verify(projectRepository, times(2)).save(project);
+		//verify(projectRepository, times(2)).save(project);
 	}
 
 	@Test

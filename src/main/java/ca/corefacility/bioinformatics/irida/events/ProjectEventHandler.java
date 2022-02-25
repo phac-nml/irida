@@ -1,9 +1,12 @@
 package ca.corefacility.bioinformatics.irida.events;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
@@ -18,7 +21,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
-import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 
@@ -32,15 +34,12 @@ public class ProjectEventHandler {
 
 	private final ProjectEventRepository eventRepository;
 	private final ProjectSampleJoinRepository psjRepository;
-	private final ProjectRepository projectRepository;
 	private final SampleRepository sampleRepository;
 
 	public ProjectEventHandler(final ProjectEventRepository eventRepository,
-			final ProjectSampleJoinRepository psjRepository, final ProjectRepository projectRepository,
-			final SampleRepository sampleRepository) {
+			final ProjectSampleJoinRepository psjRepository, final SampleRepository sampleRepository) {
 		this.eventRepository = eventRepository;
 		this.psjRepository = psjRepository;
-		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
 	}
 
@@ -84,11 +83,28 @@ public class ProjectEventHandler {
 			logger.warn("No handler found for event class " + eventClass.getName());
 		}
 
-		for (ProjectEvent e : events) {
-			Project project = e.getProject();
-			project.setModifiedDate(eventDate);
-			projectRepository.updateProjectModifiedDate(project);
+		// reduce projects to a distinct set, as we may have multiple events relating to the same project
+		// i.e. sharing a set of samples to a project
+		List<Project> projects = events.stream().map(ProjectEvent::getProject).distinct().collect(Collectors.toList());
+		for (Project p : projects) {
+			updateProjectModifiedDate(p, eventDate);
 		}
+	}
+
+	/**
+	 * Update the {@link Project}s modifiedDate to be the eventDate.
+	 *
+	 * @param project   The {@link Project} to update the modifiedDate
+	 * @param eventDate The new modifiedDate
+	 */
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	private void updateProjectModifiedDate(Project project, Date eventDate) {
+		// no need to call save as this is within a transaction, Hibernate will recognize that only this
+		// attribute has been updated and as such at the end of the method it will persist the updated
+		// values (i.e. modifiedDate ). Calling save here would cause Hibernate to fully select the object
+		// before executing the update which is very slow and increases in time as the number of samples
+		// in the project increase.
+		project.setModifiedDate(eventDate);
 	}
 
 	/**
