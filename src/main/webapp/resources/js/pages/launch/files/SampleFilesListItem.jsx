@@ -19,6 +19,7 @@ import { BORDERED_LIGHT } from "../../../styles/borders";
 export function SampleFilesListItem({
   sample,
   style,
+  projectId,
   removeSample,
   updateSelectedFiles,
 }) {
@@ -46,6 +47,7 @@ export function SampleFilesListItem({
           <SampleDetailViewer
             sampleId={sample.id}
             removeSample={() => removeSample(sample)}
+            projectId={projectId}
           >
             <Button size="small" style={{ marginLeft: SPACE_XS }}>
               {sample.label}

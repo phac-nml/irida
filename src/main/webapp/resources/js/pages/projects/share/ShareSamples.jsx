@@ -10,7 +10,7 @@ import { updatedLocked, updateMoveSamples } from "./shareSlice";
  * @returns {JSX.Element}
  * @constructor
  */
-export function ShareSamples({ samples = [], redirect }) {
+export function ShareSamples({ samples = [], projectId, redirect }) {
   const dispatch = useDispatch();
   const { originalSamples, locked, remove } = useSelector(
     (state) => state.shareReducer
@@ -25,7 +25,7 @@ export function ShareSamples({ samples = [], redirect }) {
     <>
       {SHOW_SAMPLES && (
         <Space direction="vertical" style={{ width: `100%` }}>
-          <SharedSamplesList list={samples} />
+          <SharedSamplesList list={samples} projectId={projectId} />
           <Checkbox
             className="t-move-checkbox"
             checked={remove}

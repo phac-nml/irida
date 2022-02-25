@@ -23,7 +23,7 @@ import { blue6 } from "../../../styles/colors";
  * @constructor
  */
 export function CreateProjectSamples({ form }) {
-  const { data: samples = {}, isLoading } = useGetCartSamplesQuery();
+  const { data: cartProjectSamples = {}, isLoading } = useGetCartSamplesQuery();
   const [organismFilter, setOrganismFilter] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
   const [lock, setLock] = React.useState(false);
@@ -34,27 +34,27 @@ export function CreateProjectSamples({ form }) {
     For all unlocked samples we need to get the unique values of the organism names.
     Then format them into a manner that can be consumed by the dropdown.
      */
-    samples.unlocked?.forEach((sample) => {
-      if (!exists[sample.organism]) {
-        exists[sample.organism] = {
-          text: sample.organism,
-          value: sample.organism,
+    cartProjectSamples.unlocked?.forEach((cartProjectSample) => {
+      if (!exists[cartProjectSample.sample.organism]) {
+        exists[cartProjectSample.sample.organism] = {
+          text: cartProjectSample.sample.organism,
+          value: cartProjectSample.sample.organism,
         };
       }
     });
     setOrganismFilter(Object.values(exists));
-  }, [samples]);
+  }, [cartProjectSamples]);
 
   return (
     <>
-      {samples.locked?.length > 0 && (
+      {cartProjectSamples.locked?.length > 0 && (
         <Alert
           type="warning"
           showIcon
           message={i18n("CreateProjectSamples.locked")}
         />
       )}
-      {samples.unlocked?.length ? (
+      {cartProjectSamples.unlocked?.length ? (
         <Space style={{ display: "block" }}>
           <Table
             className="t-samples"
@@ -65,31 +65,42 @@ export function CreateProjectSamples({ form }) {
               onChange: (selectedRowKeys, selectedRows) => {
                 setSelected(selectedRowKeys);
                 form.setFieldsValue({
-                  samples: selectedRows.map((s) => Number(s.identifier)),
+                  samples: selectedRows.map((cartProjectSample) =>
+                    Number(cartProjectSample.sample.identifier)
+                  ),
                 });
               },
             }}
             scroll={{ y: 600 }}
             pagination={false}
-            dataSource={samples.unlocked}
-            rowKey={(sample) => `sample-${sample.identifier}`}
+            dataSource={cartProjectSamples.unlocked}
+            rowKey={(cartProjectSample) =>
+              `sample-${cartProjectSample.sample.identifier}`
+            }
             columns={[
               {
                 title: i18n("CreateProjectSamples.sampleName"),
                 dataIndex: "label",
-                render: (text, sample) => (
-                  <SampleDetailViewer sampleId={sample.identifier}>
-                    <Button size="small">{sample.label}</Button>
+                render: (text, cartProjectSample) => (
+                  <SampleDetailViewer
+                    sampleId={cartProjectSample.sample.identifier}
+                    projectId={cartProjectSample.projectId}
+                  >
+                    <Button size="small">
+                      {cartProjectSample.sample.label}
+                    </Button>
                   </SampleDetailViewer>
                 ),
                 onFilter: (value, record) =>
-                  record.label.toLowerCase().indexOf(value.toLowerCase()) >= 0,
+                  record.sample.label
+                    .toLowerCase()
+                    .indexOf(value.toLowerCase()) >= 0,
               },
               {
                 title: i18n("CreateProjectSamples.organism"),
                 dataIndex: "organism",
                 filters: organismFilter,
-                onFilter: (value, record) => record.organism === value,
+                onFilter: (value, record) => record.sample.organism === value,
               },
             ]}
           />

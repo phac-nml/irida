@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectMod
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSamplesByUserPermissions;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartUpdateResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartProjectSample;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.notification.ErrorNotification;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.notification.Notification;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.notification.SuccessNotification;
@@ -271,19 +272,19 @@ public class UICartService {
 				.getAuthentication();
 
 		Map<Project, List<Sample>> cart = getFullCart();
-		List<Sample> unlocked = new ArrayList<>();
-		List<Sample> locked = new ArrayList<>();
 
-		for (List<Sample> samples : cart.values()) {
-			for (Sample sample : samples) {
+		List<CartProjectSample> unlocked = new ArrayList<>();
+		List<CartProjectSample> locked = new ArrayList<>();
+
+		for (Map.Entry<Project, List<Sample>> s : cart.entrySet()) {
+			for (Sample sample : s.getValue()) {
 				if (updateSamplePermission.isAllowed(authentication, sample)) {
-					unlocked.add(sample);
+					unlocked.add(new CartProjectSample(sample, s.getKey().getId()));
 				} else {
-					locked.add(sample);
+					locked.add(new CartProjectSample(sample, s.getKey().getId()));
 				}
 			}
 		}
-
 		return new CartSamplesByUserPermissions(locked, unlocked);
 	}
 }

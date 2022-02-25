@@ -55,7 +55,10 @@ export function SampleFiles() {
   Function to get sample files from the server and dispatch to the store
    */
   const getSampleFiles = () => {
-    fetchSampleFiles({ sampleId: sample.identifier, projectId })
+    fetchSampleFiles({
+      sampleId: sample.identifier,
+      projectId,
+    })
       .then((data) => {
         dispatch(setSampleFiles(data));
       })
@@ -64,7 +67,7 @@ export function SampleFiles() {
 
   /*
    Get the sample files and set them in the redux store on component load
-   and to refetch if the sample identifier or project identifier change
+   and to refetch if the sample identifier or project change
    */
   React.useEffect(getSampleFiles, [sample.identifier, projectId]);
 

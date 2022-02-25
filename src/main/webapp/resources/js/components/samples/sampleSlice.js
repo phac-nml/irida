@@ -14,9 +14,12 @@ export const setSample = createAction(
 /**
  * Action to set the target project for the sample
  */
-export const setProject = createAction(`sample/setProjectId`, (projectId) => ({
-  payload: { projectId },
-}));
+export const setProjectDetails = createAction(
+  `sample/setProjectDetails`,
+  ({ projectId, projectName }) => ({
+    payload: { projectId, projectName },
+  })
+);
 
 /**
  * Get all metadata for the specified sample.
@@ -99,6 +102,7 @@ const initialState = (() => {
     sample: {},
     modifiable: false,
     projectId: null,
+    projectName: null,
     editModalVisible: false,
     field: null,
     fieldId: null,
@@ -128,8 +132,9 @@ const sampleSlice = createSlice({
       state.sample.defaultSequencingObject = action.payload.sequencingObject;
     });
 
-    builder.addCase(setProject, (state, action) => {
+    builder.addCase(setProjectDetails, (state, action) => {
       state.projectId = action.payload.projectId;
+      state.projectName = action.payload.projectName;
     });
 
     builder.addCase(setEditSampleMetadata, (state, action) => {

@@ -7,9 +7,7 @@ import {
   IconRemove,
   IconUnlocked,
 } from "../../../components/icons/Icons";
-import {
-  SampleDetailViewer
-} from "../../../components/samples/SampleDetailViewer";
+import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import { green6 } from "../../../styles/colors";
 import { removeSample } from "./shareSlice";
 
@@ -19,7 +17,7 @@ import { removeSample } from "./shareSlice";
  * @returns {JSX.Element}
  * @constructor
  */
-export function SharedSamplesList({ list = [] }) {
+export function SharedSamplesList({ list = [], projectId }) {
   const dispatch = useDispatch();
 
   const Row = ({ index, style }) => {
@@ -61,12 +59,16 @@ export function SharedSamplesList({ list = [] }) {
               </Tooltip>
             ) : (
               <Tooltip title={i18n("ShareSamples.avatar.locked")}>
-                <Avatar className="t-locked-sample" size="small" icon={<IconLocked />} />
+                <Avatar
+                  className="t-locked-sample"
+                  size="small"
+                  icon={<IconLocked />}
+                />
               </Tooltip>
             )
           }
           title={
-            <SampleDetailViewer sampleId={sample.id}>
+            <SampleDetailViewer sampleId={sample.id} projectId={projectId}>
               <Button>{sample.name}</Button>
             </SampleDetailViewer>
           }

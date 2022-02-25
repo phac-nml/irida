@@ -37,7 +37,10 @@ export function SampleMetadata() {
 
   React.useEffect(() => {
     dispatch(
-      fetchSampleMetadata({ sampleId: sample.identifier, projectId: projectId })
+      fetchSampleMetadata({
+        sampleId: sample.identifier,
+        projectId,
+      })
     );
   }, []);
 

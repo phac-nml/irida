@@ -99,8 +99,8 @@ public class SamplesAjaxController {
 	 * @return {@link SampleDetails} for the {@link Sample}
 	 */
 	@GetMapping(value = "/{id}/details", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<SampleDetails> getSampleDetails(@PathVariable Long id) {
-		return ResponseEntity.ok(uiSampleService.getSampleDetails(id));
+	public ResponseEntity<SampleDetails> getSampleDetails(@PathVariable Long id, @RequestParam Long projectId) {
+		return ResponseEntity.ok(uiSampleService.getSampleDetails(id, projectId));
 	}
 
 	/**
@@ -111,7 +111,7 @@ public class SamplesAjaxController {
 	 * @return {@link SampleMetadata} for the {@link Sample}
 	 */
 	@GetMapping(value = "/{id}/metadata")
-	public ResponseEntity<SampleMetadata> getSampleMetadata(@PathVariable Long id, @RequestParam Long projectId) {
+	public ResponseEntity<SampleMetadata> getSampleMetadata(@PathVariable Long id, Long projectId) {
 		return ResponseEntity.ok(uiSampleService.getSampleMetadata(id, projectId));
 	}
 

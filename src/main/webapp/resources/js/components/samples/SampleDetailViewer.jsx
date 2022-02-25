@@ -1,4 +1,4 @@
-import { Button, Modal, Skeleton, Typography } from "antd";
+import { Button, Modal, Skeleton, Tag, Typography } from "antd";
 import React from "react";
 import { SampleDetails } from "./components/SampleDetails";
 import { Provider } from "react-redux";
@@ -18,9 +18,16 @@ const { Text } = Typography;
  */
 function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
   const [visible, setVisible] = React.useState(false);
-  const { data: details = {}, isLoading } = useGetSampleDetailsQuery(sampleId, {
-    skip: !visible,
-  });
+
+  const { data: details = {}, isLoading } = useGetSampleDetailsQuery(
+    {
+      sampleId,
+      projectId,
+    },
+    {
+      skip: !visible,
+    }
+  );
 
   /*
   Empty useEffect hook to update visible const required by redux
@@ -29,7 +36,7 @@ function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
   React.useEffect(() => {}, [visible]);
 
   const removeSampleFromCart = () => {
-    removeSample({ projectId: details.projectId, sampleId });
+    removeSample({ projectId: sampleId });
   };
 
   return (
@@ -56,7 +63,10 @@ function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
               >
                 <Text strong>
                   <span className="t-sample-details-name">
-                    {details.sample.sampleName}
+                    {details.sample.sampleName}{" "}
+                    {projectId ? (
+                      <Tag color="#87d068">{details.projectName} </Tag>
+                    ) : null}
                   </span>
                 </Text>
                 {removeSample && (
@@ -81,7 +91,7 @@ function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
             {isLoading ? (
               <Skeleton active title />
             ) : (
-              <SampleDetails details={details} projectId={projectId} />
+              <SampleDetails details={details} />
             )}
           </div>
         </Modal>

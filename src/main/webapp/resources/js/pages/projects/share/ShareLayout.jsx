@@ -89,7 +89,11 @@ export function ShareLayout({ redirect }) {
       ) : (
         <Space direction="vertical" style={{ width: `100%` }}>
           <ShareProject currentProject={currentProject} />
-          <ShareSamples samples={samples} redirect={redirect} />
+          <ShareSamples
+            samples={samples}
+            projectId={currentProject}
+            redirect={redirect}
+          />
           {SHOW_BUTTON && (
             <div style={{ display: "flex", flexDirection: "row-reverse" }}>
               <Button

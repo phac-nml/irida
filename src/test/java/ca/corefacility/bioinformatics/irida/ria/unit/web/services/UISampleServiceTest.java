@@ -153,7 +153,7 @@ public class UISampleServiceTest {
 
 	@Test
 	public void testGetSampleDetails() {
-		SampleDetails details = service.getSampleDetails(1L);
+		SampleDetails details = service.getSampleDetails(1L, null);
 		final Sample sample = details.getSample();
 		assertEquals(SAMPLE_ORGANISM, sample.getOrganism(), "Should return the proper samples organism");
 		assertEquals(SAMPLE_DESCRIPTION, sample.getDescription(), "Should return the proper samples description");
