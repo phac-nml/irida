@@ -17,7 +17,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.Generic
 /**
  * Specialized repository for {@link Project}.
  */
-public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
+public interface ProjectRepository extends IridaJpaRepository<Project, Long>, ProjectRepositoryCustom {
 
 	/**
 	 * Sub-expressions for filtering and paging projects on different property names.

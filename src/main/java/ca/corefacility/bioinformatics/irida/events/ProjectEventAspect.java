@@ -51,13 +51,19 @@ public class ProjectEventAspect implements Ordered {
 	}
 
 	/**
-	 * This event aspect can happen within a transaction as we are only updating the modifiedDate within a project,
-	 * which should be near instaneous.
+	 * This event **must** happen outside of a transaction so that multiple events happening at the same time do not
+	 * result in a deadlock exception. Example: when multiple sequencers are uploading sample data simultaneously, they
+	 * are all creating samples on the server. When the samples are being created the project event for updating the
+	 * project modified time is fired many times simultaneously, so multiple clients are trying to update the project at
+	 * the same time. If that update is within a transaction, at least one of those simultaneous updates fails, so the
+	 * client gets a report that creating the sample failed. Since we don't care which thread wins the update (they
+	 * should be setting the same updated time down to at least the second), just make sure that this aspect is being
+	 * applied *outside* of the transaction.
 	 *
 	 * @return the order of this aspect
 	 */
 	@Override
 	public int getOrder() {
-		return IridaApiRepositoriesConfig.TRANSACTION_MANAGEMENT_ORDER;
+		return IridaApiRepositoriesConfig.TRANSACTION_MANAGEMENT_ORDER - 1;
 	}
 }

@@ -5,8 +5,6 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectEvent;
@@ -91,25 +89,8 @@ public class ProjectEventHandler {
 		// i.e. sharing a set of samples to a project
 		List<Project> projects = events.stream().map(ProjectEvent::getProject).distinct().collect(Collectors.toList());
 		for (Project p : projects) {
-			updateProjectModifiedDate(p, eventDate);
+			projectRepository.updateProjectModifiedDate(p, eventDate);
 		}
-	}
-
-	/**
-	 * Update the {@link Project}s modifiedDate to be the eventDate.
-	 *
-	 * @param project   The {@link Project} to update the modifiedDate
-	 * @param eventDate The new modifiedDate
-	 */
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	private void updateProjectModifiedDate(Project project, Date eventDate) {
-		// no need to call save as this is within a transaction, Hibernate will recognize that only this
-		// attribute has been updated and as such at the end of the method it will persist the updated
-		// values (i.e. modifiedDate ). Calling save here would cause Hibernate to fully select the object
-		// before executing the update which is very slow and increases in time as the number of samples
-		// in the project increase.
-		project = projectRepository.findById(project.getId()).get();
-		project.setModifiedDate(eventDate);
 	}
 
 	/**
