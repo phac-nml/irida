@@ -70,9 +70,7 @@ public class ProjectEventHandler {
 			 * added, so update mod date
 			 */
 			for (final DataAddedToSampleProjectEvent e : dataAddedEvents) {
-				final Sample s = e.getSample();
-				s.setModifiedDate(eventDate);
-				sampleRepository.save(s);
+				sampleRepository.updateSampleModifiedDate(e.getSample(), eventDate);
 			}
 			events.addAll(dataAddedEvents);
 		} else if (eventClass.equals(UserGroupRoleSetProjectEvent.class)) {

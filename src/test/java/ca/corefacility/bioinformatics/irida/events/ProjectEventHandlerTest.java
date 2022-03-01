@@ -172,7 +172,7 @@ public class ProjectEventHandlerTest {
 		assertTrue(event instanceof DataAddedToSampleProjectEvent);
 
 		verify(projectRepository).updateProjectModifiedDate(eq(project), any(Date.class));
-		verify(sampleRepository).save(any(Sample.class));
+		verify(sampleRepository).updateSampleModifiedDate(eq(sample), any(Date.class));
 	}
 
 	@Test
@@ -205,7 +205,7 @@ public class ProjectEventHandlerTest {
 		assertTrue(event instanceof DataAddedToSampleProjectEvent);
 
 		verify(projectRepository).updateProjectModifiedDate(eq(project), any(Date.class));
-		verify(sampleRepository).save(any(Sample.class));
+		verify(sampleRepository).updateSampleModifiedDate(eq(sample), any(Date.class));
 	}
 
 	@Test
