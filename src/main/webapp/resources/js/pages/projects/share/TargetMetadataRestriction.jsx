@@ -6,9 +6,7 @@ import {
   IconWarningOutlined,
 } from "../../../components/icons/Icons";
 import { blue6, red6 } from "../../../styles/colors";
-import {
-  getColourForRestriction
-} from "../../../utilities/restriction-utilities";
+import { getColourForRestriction } from "../../../utilities/restriction-utilities";
 import { updateMetadataRestriction } from "./shareSlice";
 
 /**
@@ -34,7 +32,7 @@ export function TargetMetadataRestriction({ field = {}, restrictions = [] }) {
 
   React.useEffect(() => {
     /*
-    Differnence is the calculated difference between the restrictions levels.
+    Difference is the calculated difference between the restrictions levels.
     If the difference is < 0 show a warning icon.
     */
     if (field.difference > 0) {
@@ -47,7 +45,9 @@ export function TargetMetadataRestriction({ field = {}, restrictions = [] }) {
   }, [field.difference]);
 
   function getRestrictionLabel(value) {
-    const restriction = restrictions?.find((r) => r.value === value);
+    const restriction = restrictions?.find(
+      (restriction) => restriction.value === value
+    );
     return restriction?.label;
   }
 
