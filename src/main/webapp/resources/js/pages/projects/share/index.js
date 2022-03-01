@@ -9,12 +9,10 @@ import {
   Space,
   Steps,
 } from "antd";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { render } from "react-dom";
 import { Provider, useSelector } from "react-redux";
-import {
-  useGetPotentialProjectsToShareToQuery
-} from "../../../apis/projects/projects";
+import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
 import {
   useGetSampleIdsForProjectQuery,
   useShareSamplesWithProjectMutation,
@@ -34,16 +32,16 @@ import store from "./store";
  * @constructor
  */
 function ShareApp() {
-  const [step, setStep] = useState(0);
-  const [prevDisabled, setPrevDisabled] = useState(true);
-  const [nextDisabled, setNextDisabled] = useState(true);
-  const [error, setError] = useState(undefined);
-  const [finished, setFinished] = useState(false);
+  const [step, setStep] = React.useState(0);
+  const [prevDisabled, setPrevDisabled] = React.useState(true);
+  const [nextDisabled, setNextDisabled] = React.useState(true);
+  const [error, setError] = React.useState(undefined);
+  const [finished, setFinished] = React.useState(false);
 
   /*
   Create redirect href to project samples page.
   */
-  const [redirect] = useState(
+  const [redirect] = React.useState(
     () => window.location.href.match(/(.*)\/share/)[1]
   );
 
@@ -87,7 +85,7 @@ function ShareApp() {
     { title: i18n("ShareLayout.restrictions"), component: <ShareMetadata /> },
   ];
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (step === 0) {
       setPrevDisabled(true);
       setNextDisabled(
