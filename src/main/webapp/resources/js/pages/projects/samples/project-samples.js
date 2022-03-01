@@ -1,3 +1,5 @@
+import React from "react";
+import ReactDOM from "react-dom";
 import axios from "axios";
 import "bootstrap-daterangepicker";
 import "bootstrap-daterangepicker/daterangepicker.css";
@@ -28,6 +30,10 @@ import {
   SampleProjectDropdownButton,
 } from "./SampleButtons";
 import "./ShareSamplesLink";
+
+import { Button, List, Popover } from "antd";
+import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
+import { IconExclamationCircle } from "../../../components/icons/Icons";
 
 /*
 This is required to use select2 inside a modal.
@@ -337,32 +343,33 @@ const config = Object.assign({}, tableConfig, {
     },
     {
       targets: [COLUMNS.SAMPLE_NAME],
-      render(data, type, full) {
-        const link = createItemLink({
-          url: setBaseUrl(`/projects/${full.projectId}/samples/${full.id}`),
-          label: full.sampleName,
-          classes: ["t-sample-label"],
-        });
+      createdCell: (td, cellData, data) => {
+        const content = (
+          <List
+            size="small"
+            dataSource={data.qcEntries}
+            renderItem={(qcEntry) => (
+              <List.Item className="error">{qcEntry}</List.Item>
+            )}
+          />
+        );
 
         /*
-        Display a notification if there are any issues with QC.
+        Renders the SampleDetailViewer react component on click of sample name
          */
-        if (full.qcEntries.length) {
-          const icon = document
-            .querySelector(".js-qc-warning-wrapper")
-            .cloneNode(true);
-          /*
-          Generate the content for the popover
-           */
-          const content = `<ul class="popover-list">
-              ${full.qcEntries
-                .map((qc) => `<li class="error">${qc}</li>`)
-                .join("")}
-          </ul>`;
-          icon.setAttribute("data-content", content);
-          return `<div class="icon-wrapper">${icon.outerHTML}${link}</div>`;
-        }
-        return link;
+        ReactDOM.render(
+          <SampleDetailViewer sampleId={data.id} projectId={data.projectId}>
+            <span>
+              <Button type="link">{data.sampleName}</Button>
+              {data.qcEntries.length ? (
+                <Popover content={content} placement="right">
+                  <IconExclamationCircle />
+                </Popover>
+              ) : null}
+            </span>
+          </SampleDetailViewer>,
+          td
+        );
       },
     },
     {

@@ -18,7 +18,6 @@ const { Text } = Typography;
  */
 function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
   const [visible, setVisible] = React.useState(false);
-
   const { data: details = {}, isLoading } = useGetSampleDetailsQuery(
     {
       sampleId,
