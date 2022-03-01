@@ -11,6 +11,7 @@ Changes
 * [REST]: Fixed bug that was preventing syncing remote projects from versions 20.09 and older. (22.01.3)
 * [UI]: Updated Create Remote Api to use Ant Design.
 * [UI]: Fixed bug preventing updating of project details. (22.01.4)
+* [Developer]: Updated to Ant Design v4.18.9
 
 21.09 to 22.01
 --------------
