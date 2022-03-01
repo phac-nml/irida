@@ -1,11 +1,13 @@
 package ca.corefacility.bioinformatics.irida.events;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.AdditionalAnswers;
 import org.mockito.ArgumentCaptor;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
@@ -28,6 +30,7 @@ import com.google.common.collect.Sets;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class ProjectEventHandlerTest {
@@ -66,7 +69,7 @@ public class ProjectEventHandlerTest {
 		ProjectEvent event = captor.getValue();
 		assertTrue(event instanceof SampleAddedProjectEvent);
 
-		//verify(projectRepository).save(any(Project.class));
+		verify(projectRepository).updateProjectModifiedDate(eq(project), any(Date.class));
 	}
 
 	@Test
@@ -89,7 +92,7 @@ public class ProjectEventHandlerTest {
 		ProjectEvent event = captor.getValue();
 		assertTrue(event instanceof UserRoleSetProjectEvent);
 
-		//verify(projectRepository).save(any(Project.class));
+		verify(projectRepository).updateProjectModifiedDate(eq(project), any(Date.class));
 	}
 
 	@Test
@@ -111,7 +114,33 @@ public class ProjectEventHandlerTest {
 		ProjectEvent event = captor.getValue();
 		assertTrue(event instanceof UserRemovedProjectEvent);
 
-		//verify(projectRepository).save(any(Project.class));
+		verify(projectRepository).updateProjectModifiedDate(eq(project), any(Date.class));
+	}
+
+	@Test
+	public void testHandleSampleAddedProjectEventMultiple() {
+		Class<? extends ProjectEvent> clazz = SampleAddedProjectEvent.class;
+		Project project = new Project();
+		project.setId(1L);
+		Sample sample = new Sample();
+		Sample sample2 = new Sample();
+		List<ProjectSampleJoin> returnValue = Lists.newArrayList(new ProjectSampleJoin(project, sample, true),
+				new ProjectSampleJoin(project, sample2, true));
+		Object[] args = { project, sample };
+		MethodEvent methodEvent = new MethodEvent(clazz, returnValue, args);
+
+		when(eventRepository.save(any(ProjectEvent.class))).then(AdditionalAnswers.returnsFirstArg());
+		when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+
+		handler.delegate(methodEvent);
+
+		ArgumentCaptor<ProjectEvent> captor = ArgumentCaptor.forClass(ProjectEvent.class);
+		verify(eventRepository, times(2)).save(captor.capture());
+		ProjectEvent event = captor.getValue();
+		assertTrue(event instanceof SampleAddedProjectEvent);
+
+		verify(projectRepository, times(1)).updateProjectModifiedDate(eq(project), any(Date.class));
+
 	}
 
 	@Test
@@ -142,7 +171,7 @@ public class ProjectEventHandlerTest {
 		ProjectEvent event = captor.getValue();
 		assertTrue(event instanceof DataAddedToSampleProjectEvent);
 
-		//verify(projectRepository).save(any(Project.class));
+		verify(projectRepository).updateProjectModifiedDate(eq(project), any(Date.class));
 		verify(sampleRepository).save(any(Sample.class));
 	}
 
@@ -175,7 +204,7 @@ public class ProjectEventHandlerTest {
 		ProjectEvent event = captor.getValue();
 		assertTrue(event instanceof DataAddedToSampleProjectEvent);
 
-		//verify(projectRepository).save(any(Project.class));
+		verify(projectRepository).updateProjectModifiedDate(eq(project), any(Date.class));
 		verify(sampleRepository).save(any(Sample.class));
 	}
 
@@ -196,8 +225,7 @@ public class ProjectEventHandlerTest {
 		when(psjRepository.getProjectForSample(sample)).thenReturn(Lists.newArrayList(
 				new ProjectSampleJoin(project, sample, true), new ProjectSampleJoin(project2, sample, true)));
 
-		when(eventRepository.save(any(ProjectEvent.class)))
-				.thenReturn(new DataAddedToSampleProjectEvent(project, sample));
+		when(eventRepository.save(any(ProjectEvent.class))).then(AdditionalAnswers.returnsFirstArg());
 
 		Object[] args = {};
 		MethodEvent methodEvent = new MethodEvent(clazz, join, args);
@@ -216,7 +244,7 @@ public class ProjectEventHandlerTest {
 			projects.remove(eventProject);
 		}
 
-		//verify(projectRepository, times(2)).save(project);
+		verify(projectRepository, times(2)).updateProjectModifiedDate(any(Project.class), any(Date.class));
 	}
 
 	@Test
