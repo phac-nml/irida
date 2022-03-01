@@ -110,9 +110,9 @@ export function ClientsTable() {
         };
         return (
           <div>
-            {scopes.map((g) => (
-              <Tag color={colors[g] || ""} key={g}>
-                {g}
+            {scopes.map((scope) => (
+              <Tag color={colors[scope] || ""} key={scope}>
+                {scope}
               </Tag>
             ))}
           </div>

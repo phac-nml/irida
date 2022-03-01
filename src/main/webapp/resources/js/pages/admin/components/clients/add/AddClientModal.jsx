@@ -75,7 +75,7 @@ export function AddClientModal({ children, onComplete, existing = null }) {
       const values = await form.validateFields();
       await onComplete(values);
       updateTable();
-      setVisible(false);
+      closeModal();
     } catch (errors) {
       // Re-enforce the error to the user
       errors.errorFields.forEach((error) =>
@@ -105,7 +105,11 @@ export function AddClientModal({ children, onComplete, existing = null }) {
       <Modal
         className="t-client-modal"
         visible={visible}
-        title={i18n("AddClientModal.title")}
+        title={
+          existing
+            ? i18n("AddClientModal.title-edit")
+            : i18n("AddClientModal.title")
+        }
         onOk={onOk}
         onCancel={closeModal}
         width={800}
