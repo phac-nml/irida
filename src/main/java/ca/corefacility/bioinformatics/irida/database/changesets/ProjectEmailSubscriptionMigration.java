@@ -32,22 +32,21 @@ public class ProjectEmailSubscriptionMigration implements CustomSqlChange {
 	@Override
 	public SqlStatement[] generateStatements(Database database) throws CustomChangeException {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-		// Get all the current user project level access
+		// Get all the current project & group level access
 		List<ProjectEmailSubscriptionMigration.ProjectSubscriptionResult> projectSubscriptionResults = jdbcTemplate.query(
-				"SELECT * FROM project_user", (rs, rowNum) -> {
+				"SELECT project_id, user_id, email_subscription FROM project_user UNION SELECT p.project_id, m.user_id, 0 from user_group_member m LEFT JOIN user_group_project p ON m.group_id = p.user_group_id;",
+				(rs, rowNum) -> {
 					return new ProjectSubscriptionResult(rs.getLong("project_id"), rs.getLong("user_id"),
 							rs.getBoolean("email_subscription"));
 				});
 
-		// Create a new ProjectSubscription entry for each user project level access
+		// Create a new ProjectSubscription entry for each project & group level access
 		for (ProjectEmailSubscriptionMigration.ProjectSubscriptionResult projectSubscriptionResult : projectSubscriptionResults) {
 			jdbcTemplate.update(
 					"INSERT INTO project_subscription (project_id, user_id, email_subscription, created_date) VALUES (?,?,?,?)",
 					projectSubscriptionResult.projectId, projectSubscriptionResult.userId,
 					projectSubscriptionResult.emailSubscription, new Date());
 		}
-
-		// Get all the current group project level access
 
 		return new SqlStatement[0];
 	}
