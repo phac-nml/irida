@@ -4,6 +4,7 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
     <changeSet id="user-account-project-subscription" author="katherine">
         <createTable tableName="project_subscription">
             <column name="id" type="bigint(20)" autoIncrement="true">
@@ -24,9 +25,10 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
         <addUniqueConstraint columnNames="project_id, user_id"
                              constraintName="UK_PROJECT_SUBSCRIPTION_PROJECT_USER" tableName="project_subscription"/>
-        <!-- REMINDER: Don't forget to copy over and remove the email_subscription column from the project_user table. -->
+
         <createTable tableName="project_subscription_AUD">
             <column name="id" type="bigint(20)" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -50,5 +52,12 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <!-- Create project subscription entries for every project that a user has access to -->
+        <customChange
+                class="ca.corefacility.bioinformatics.irida.database.changesets.ProjectEmailSubscriptionMigration"/>
+
+        <!-- REMINDER: Don't forget to copy over and remove the email_subscription column from the project_user table. -->
+
     </changeSet>
 </databaseChangeLog>
