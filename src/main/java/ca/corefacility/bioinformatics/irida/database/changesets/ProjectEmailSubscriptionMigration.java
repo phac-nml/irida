@@ -13,24 +13,23 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
 import ca.corefacility.bioinformatics.irida.model.subscription.ProjectSubscription;
 
-import liquibase.change.custom.CustomSqlChange;
+import liquibase.change.custom.CustomTaskChange;
 import liquibase.database.Database;
 import liquibase.exception.CustomChangeException;
 import liquibase.exception.SetupException;
 import liquibase.exception.ValidationErrors;
 import liquibase.resource.ResourceAccessor;
-import liquibase.statement.SqlStatement;
 
 /**
  * Liquibase update to create {@link ProjectSubscription} entries for every project that a user has access to.
  */
-public class ProjectEmailSubscriptionMigration implements CustomSqlChange {
+public class ProjectEmailSubscriptionMigration implements CustomTaskChange {
 
 	private static final Logger logger = LoggerFactory.getLogger(ProjectEmailSubscriptionMigration.class);
 	private DataSource dataSource;
 
 	@Override
-	public SqlStatement[] generateStatements(Database database) throws CustomChangeException {
+	public void execute(Database database) throws CustomChangeException {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		// Get all the current project & group level access
 		List<ProjectEmailSubscriptionMigration.ProjectSubscriptionResult> projectSubscriptionResults = jdbcTemplate.query(
@@ -47,8 +46,6 @@ public class ProjectEmailSubscriptionMigration implements CustomSqlChange {
 					projectSubscriptionResult.projectId, projectSubscriptionResult.userId,
 					projectSubscriptionResult.emailSubscription, new Date());
 		}
-
-		return new SqlStatement[0];
 	}
 
 	@Override

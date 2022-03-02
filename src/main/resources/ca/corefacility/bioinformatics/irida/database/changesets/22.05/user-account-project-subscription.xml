@@ -53,11 +53,10 @@
             </column>
         </createTable>
 
-        <!-- Create project subscription entries for every project that a user has access to -->
         <customChange
                 class="ca.corefacility.bioinformatics.irida.database.changesets.ProjectEmailSubscriptionMigration"/>
 
-        <!-- REMINDER: Don't forget to copy over and remove the email_subscription column from the project_user table. -->
+        <dropColumn tableName="project_user" columnName="email_subscription"/>
 
     </changeSet>
 </databaseChangeLog>
