@@ -8,6 +8,9 @@ Changes
 * [Developer]: Updated frontend dependencies: `babel`, `eslint`, `postcss`, and `webpack`
 * [Documentation]: Fixed issue that prevented a user from saving analysis results back to a sample and concatenating sequence files. Fixed date format in Swagger REST API documentation. (22.01.2)
 * [Database]: Updated group and user project queries to improve performance for all pages/calls that depend on project permissions.
+* [REST]: Fixed bug that was preventing syncing remote projects from versions 20.09 and older. (22.01.3)
+* [UI]: Updated Create Remote Api to use Ant Design.
+* [UI]: Fixed bug preventing updating of project details. (22.01.4)
 
 21.09 to 22.01
 --------------

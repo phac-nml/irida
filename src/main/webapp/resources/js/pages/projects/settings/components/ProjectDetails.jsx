@@ -48,7 +48,11 @@ export default function ProjectDetails() {
      */
     if (project[field] === value) return;
 
-    updateProjectDetails({ projectId, field, value: value || "" })
+    updateProjectDetails({
+      projectId: params.projectId,
+      field,
+      value: value || "",
+    })
       .then((response) =>
         notification.success({ message: response.data.message })
       )
