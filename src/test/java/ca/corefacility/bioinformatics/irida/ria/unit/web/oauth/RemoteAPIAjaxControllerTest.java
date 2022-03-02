@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -38,7 +39,8 @@ public class RemoteAPIAjaxControllerTest {
 	public void init() {
 		remoteAPIService = mock(RemoteAPIService.class);
 		uiRemoteAPIService = mock(UIRemoteAPIService.class);
-		controller = new RemoteAPIAjaxController(remoteAPIService, uiRemoteAPIService);
+		MessageSource messageSource = mock(MessageSource.class);
+		controller = new RemoteAPIAjaxController(remoteAPIService, uiRemoteAPIService, messageSource);
 
 		Page<RemoteAPI> remoteAPIPage = new Page<>() {
 			@Override

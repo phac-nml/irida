@@ -128,8 +128,7 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	}
 
 	/**
-	 * Construct an instance of {@link User} with all properties (except
-	 * identifier) set.
+	 * Construct an instance of {@link User} with all properties (except identifier) set.
 	 *
 	 * @param username    the username for this {@link User}.
 	 * @param email       the e-mail for this {@link User}.
