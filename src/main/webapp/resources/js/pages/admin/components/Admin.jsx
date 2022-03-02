@@ -49,9 +49,6 @@ const AnnouncementAdminPage = lazy(() =>
 const AdminNcbiExportsPage = lazy(() =>
   import("./ncbi-exports/AdminNcbiExportsPage")
 );
-const AdminRemoteApiDetailsPage = lazy(() =>
-  import("./remote-connections/RemoteConnectionDetails")
-);
 
 export default function Admin() {
   const DEFAULT_URL = setBaseUrl("/admin");
@@ -93,10 +90,6 @@ export default function Admin() {
                 <Route
                   path={ADMIN.REMOTEAPI}
                   element={<AdminRemoteApiPage />}
-                />
-                <Route
-                  path={`${ADMIN.REMOTEAPI}/:remoteId`}
-                  element={<AdminRemoteApiDetailsPage />}
                 />
                 <Route
                   path={ADMIN.SEQUENCINGRUNS}

@@ -8,28 +8,27 @@
  */
 
 import React from "react";
-import { PageWrapper } from "../../../../components/page/PageWrapper";
-import { RemoteApiTable } from "./RemoteApiTable";
-import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { PagedTableProvider } from "../../../../components/ant.design/PagedTable";
+import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
+import { PageWrapper } from "../../../../components/page/PageWrapper";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { CreateRemoteApiModal } from "../../../remote-apis/CreateRemoteApiModal";
+import { RemoteApiTable } from "./RemoteApiTable";
 
 export default function AdminRemoteApiPage() {
   // The following renders the Remote Api component view
   return (
-    <PageWrapper
-      title={i18n("AdminPanel.remoteApi")}
-      headerExtras={
-        <AddNewButton
-          className={"t-add-remote-api-btn"}
-          text={i18n("AdminPanel.addRemoteApi")}
-          href={setBaseUrl("remote_api/create")}
-        />
-      }
-    >
-      <PagedTableProvider url={setBaseUrl("ajax/remote_api/list")}>
+    <PagedTableProvider url={setBaseUrl("ajax/remote_api/list")}>
+      <PageWrapper
+        title={i18n("AdminRemoteApiPage.title")}
+        headerExtras={
+          <CreateRemoteApiModal>
+            <AddNewButton text={i18n("AdminRemoteApiPage.addRemoteApi")} />
+          </CreateRemoteApiModal>
+        }
+      >
         <RemoteApiTable />
-      </PagedTableProvider>
-    </PageWrapper>
+      </PageWrapper>
+    </PagedTableProvider>
   );
 }
