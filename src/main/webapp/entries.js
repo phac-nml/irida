@@ -9,11 +9,11 @@ module.exports = {
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
   "client-base": "./resources/js/client.js",
-  activities: "./resources/js/pages/activities/activities.js",
   announcements: "./resources/js/pages/announcement",
   analysis: "./resources/js/pages/analysis",
   app: "./resources/js/app.js",
-  dashboard: "./resources/js/pages/dashboard.js",
+  "recent-activity":
+    "./resources/js/pages/recent-activity/RecentActivities.jsx",
   launch: "./resources/js/pages/launch",
   project: "./resources/js/components/project/ProjectNav.jsx",
   "project-activity": "./resources/js/pages/projects/ProjectActivity.jsx",

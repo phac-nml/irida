@@ -22,3 +22,17 @@ export function getProjectActivities({ projectId, page = 0 }) {
     return Promise.reject(i18n("ProjectActivity.error"));
   }
 }
+
+/**
+ * Get a page of activities for a user
+ *
+ * @param {number} page - page of activities requested
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export function getUserActivities({ page = 0 }) {
+  try {
+    return axios.get(`${BASE_URL}/user?page=${page}`).then(({ data }) => data);
+  } catch (e) {
+    return Promise.reject(i18n("ProjectActivity.error"));
+  }
+}

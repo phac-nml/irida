@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.dto.list.PagedListResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIActivitiesService;
 import ca.corefacility.bioinformatics.irida.service.ProjectEventService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 
@@ -44,7 +45,8 @@ public class UIActivitiesServiceTest {
 		ProjectService projectService = Mockito.mock(ProjectService.class);
 		ProjectEventService eventService = Mockito.mock(ProjectEventService.class);
 		MessageSource messageSource = Mockito.mock(MessageSource.class);
-		this.service = new UIActivitiesService(projectService, eventService, messageSource);
+		UserService userService = Mockito.mock(UserService.class);
+		this.service = new UIActivitiesService(projectService, eventService, messageSource, userService);
 
 		// Create mock data
 		project.setId(1l);
@@ -58,7 +60,7 @@ public class UIActivitiesServiceTest {
 
 	@Test
 	public void testGetActivitiesForProject() {
-		PagedListResponse response = service.geActivitiesForProject(1l, 0, Locale.ENGLISH);
+		PagedListResponse response = service.getActivitiesForProject(1l, 0, Locale.ENGLISH);
 		assertEquals(4, response.getTotal(), "Should have 4 events");
 		assertEquals("project_sample_added", ((Activity)response.getContent().get(0)).getType(), "First should be a project_sample_added event");
 		assertEquals("project_user_role_updated", ((Activity)response.getContent().get(1)).getType(), "Second should be a project_user_role_updated event");

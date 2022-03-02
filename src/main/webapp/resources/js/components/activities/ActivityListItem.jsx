@@ -41,6 +41,7 @@ export function ActivityListItem({ activity }) {
         // If it is numeric, it is one of the placeholder values.
         // get the item and decide how to add it.
         const item = activity.items[parseInt(fragments[i])];
+
         if (item.href) {
           // If there is a href create a link to the item
           content.push(
@@ -89,6 +90,13 @@ export function ActivityListItem({ activity }) {
         data-activity={"project_sample_data_added"}
         style={{ backgroundColor: blue6 }}
         icon={<IconFile />}
+      />
+    ),
+    project_sample_removed: (
+      <Avatar
+        data-activity={"project_sample_removed"}
+        style={{ backgroundColor: red6 }}
+        icon={<IconExperiment />}
       />
     ),
     project_user_removed: (
