@@ -23,8 +23,8 @@ function ShareSamplesLink() {
     if (selected.size === 0) return;
 
     const samples = [];
-    selected.forEach(({ id, sampleName: name, owner }) => {
-      samples.push({ id, name, owner });
+    selected.forEach(({ id, sampleName: name, owner, projectName }) => {
+      samples.push({ id, name, owner, projectName });
     });
 
     // Get the project id from the url

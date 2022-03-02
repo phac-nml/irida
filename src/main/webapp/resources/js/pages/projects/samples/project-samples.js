@@ -394,6 +394,7 @@ const config = Object.assign({}, tableConfig, {
      */
     row.dataset.info = JSON.stringify({
       projectId: data.projectId,
+      projectName: data.projectName,
       id: data.id,
       sampleName: data.sampleName,
       owner: data.owner,
