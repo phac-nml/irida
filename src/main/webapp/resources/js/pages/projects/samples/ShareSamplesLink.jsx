@@ -3,7 +3,10 @@ import React from "react";
 import { render } from "react-dom";
 import { IconShare } from "../../../components/icons/Icons";
 import { grey9 } from "../../../styles/colors";
-import { setBaseUrl } from "../../../utilities/url-utilities";
+import {
+  setBaseUrl,
+  getProjectIdFromUrl,
+} from "../../../utilities/url-utilities";
 
 /**
  * React component to render a link on the project samples page > sample tools
@@ -16,6 +19,7 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 function ShareSamplesLink() {
   function handleClick() {
     const selected = window.$dt.select.selected()[0];
+
     if (selected.size === 0) return;
 
     const samples = [];
@@ -23,8 +27,10 @@ function ShareSamplesLink() {
       samples.push({ id, name, owner });
     });
 
+    // Get the project id from the url
+    const projectId = getProjectIdFromUrl();
+
     // Store them to window storage for later use.
-    const projectId = selected.values().next().value.projectId;
     window.sessionStorage.setItem(
       "share",
       JSON.stringify({
