@@ -61,7 +61,7 @@
             m.group_id = p.user_group_id;
         </sql>
 
-        <!--        <dropColumn tableName="project_user" columnName="email_subscription"/>-->
+        <dropColumn tableName="project_user" columnName="email_subscription"/>
 
     </changeSet>
 </databaseChangeLog>
