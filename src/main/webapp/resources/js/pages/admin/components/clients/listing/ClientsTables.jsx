@@ -21,6 +21,10 @@ import { AddClientModal } from "../add/AddClientModal";
 export function ClientsTable() {
   const { updateTable } = useContext(PagedTableContext);
 
+  /**
+   * Remove client.
+   * @param {number} id - Remove a client from IRIDA and update the table.
+   */
   const removeAndUpdateTable = async (id) => {
     await deleteClient(id);
     updateTable();
