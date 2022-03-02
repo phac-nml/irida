@@ -21,11 +21,15 @@ import { AddClientModal } from "../add/AddClientModal";
 export function ClientsTable() {
   const { updateTable } = useContext(PagedTableContext);
 
-  const removeAndUpdate = async (id) => {
+  const removeAndUpdateTable = async (id) => {
     await deleteClient(id);
     updateTable();
   };
 
+  /**
+   * Generate a new client secret for the client.
+   * @param {number} id - The id of the client to regenerate the secret for.
+   */
   async function regenerateSecret(id) {
     await regenerateClientSecret(id);
     updateTable();
@@ -151,7 +155,7 @@ export function ClientsTable() {
             <Popconfirm
               title={i18n("ClientsTable.column.remove-confirm")}
               placement="topRight"
-              onConfirm={() => removeAndUpdate(record.details.identifier)}
+              onConfirm={() => removeAndUpdateTable(record.details.identifier)}
             >
               <Button type="link" size="small">
                 {i18n("ClientsTable.column.remove")}
