@@ -53,10 +53,15 @@
             </column>
         </createTable>
 
-        <customChange
-                class="ca.corefacility.bioinformatics.irida.database.changesets.ProjectEmailSubscriptionMigration"/>
+        <sql>
+            INSERT INTO project_subscription (project_id, user_id, email_subscription, created_date)
+            SELECT project_id, user_id, email_subscription, now() FROM project_user
+            UNION
+            SELECT p.project_id, m.user_id, 0, now() from user_group_member m LEFT JOIN user_group_project p ON
+            m.group_id = p.user_group_id;
+        </sql>
 
-        <dropColumn tableName="project_user" columnName="email_subscription"/>
+        <!--        <dropColumn tableName="project_user" columnName="email_subscription"/>-->
 
     </changeSet>
 </databaseChangeLog>
