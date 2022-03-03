@@ -46,7 +46,7 @@ function ShareApp() {
   );
 
   const {
-    originalSamples = [],
+    samples = [],
     currentProject,
     locked,
     targetProject,
@@ -54,8 +54,7 @@ function ShareApp() {
     metadataRestrictions,
   } = useSelector((state) => state.shareReducer);
 
-  const [shareSamplesWithProject] =
-    useShareSamplesWithProjectMutation();
+  const [shareSamplesWithProject] = useShareSamplesWithProjectMutation();
 
   const { data: existingIds = [] } = useGetSampleIdsForProjectQuery(
     targetProject?.identifier,
@@ -69,9 +68,7 @@ function ShareApp() {
       skip: !currentProject,
     });
 
-  const filtered = originalSamples.filter(
-    (sample) => !existingIds.includes(sample.id)
-  );
+  const filtered = samples.filter((sample) => !existingIds.includes(sample.id));
 
   const steps = [
     {
@@ -105,8 +102,7 @@ function ShareApp() {
   1. No Samples - this would be if the user came to this page from anything
   other than the share samples link.
    */
-  const NO_SAMPLES =
-    typeof originalSamples === "undefined" || originalSamples.length === 0;
+  const NO_SAMPLES = typeof samples === "undefined" || samples.length === 0;
 
   if (NO_SAMPLES) {
     return <ShareNoSamples redirect={redirect} />;

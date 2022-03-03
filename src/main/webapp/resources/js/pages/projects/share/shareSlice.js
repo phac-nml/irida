@@ -83,10 +83,23 @@ const initialState = (() => {
     return {};
   }
 
-  const { samples, projectId: currentProject } = JSON.parse(stringData);
+  const { samples: allSamples, projectId: currentProject } =
+    JSON.parse(stringData);
+  const samples = [];
+  const associated = [];
+  allSamples.forEach((sample) => {
+    console.log(sample.projectId, currentProject);
+    if (Number(sample.projectId) === Number(currentProject)) {
+      samples.push(sample);
+    } else {
+      associated.push(sample);
+    }
+  });
+
   return {
     originalSamples: samples,
     samples,
+    associated,
     currentProject,
     locked: false,
     remove: false,

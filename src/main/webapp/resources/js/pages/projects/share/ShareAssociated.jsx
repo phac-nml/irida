@@ -1,0 +1,43 @@
+import React from "react";
+import { Alert, Collapse, List, Button } from "antd";
+import { useSelector } from "react-redux";
+import { grey1 } from "../../../styles/colors";
+
+/**
+ * React showing which sample belong to an associated project and cannot be moved or shared
+ * @returns {JSX.Element}
+ */
+export default function ShareAssociated() {
+  const { associated } = useSelector((state) => state.shareReducer);
+
+  return (
+    <Alert
+      type="error"
+      message={
+        <Collapse ghost>
+          <Collapse.Panel
+            header={
+              associated.length === 1
+                ? i18N("ShareAssociated.header-singular")
+                : i18N("ShareAssociated.header-plural", associated.lenth)
+            }
+          >
+            <List
+              style={{ backgroundColor: grey1 }}
+              bordered
+              size="small"
+              dataSource={associated}
+              renderItem={(sample) => (
+                <List.Item
+                  extra={<Button type="link">{sample.projectName}</Button>}
+                >
+                  {sample.name}
+                </List.Item>
+              )}
+            />
+          </Collapse.Panel>
+        </Collapse>
+      }
+    />
+  );
+}
