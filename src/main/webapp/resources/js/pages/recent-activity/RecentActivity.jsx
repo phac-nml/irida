@@ -20,15 +20,11 @@ function RecentActivity() {
   return (
     <PageWrapper
       title={
-        allProjectsVisible ? (
-          <Typography.Title level={2}>
-            {i18n("RecentActivity.title.allProjectsRecentActivity")}
-          </Typography.Title>
-        ) : (
-          <Typography.Title level={2}>
-            {i18n("RecentActivity.title.yourProjectsRecentActivity")}
-          </Typography.Title>
-        )
+        <Typography.Title level={2}>
+          allProjectsVisible ? (
+          {i18n("RecentActivity.title.allProjectsRecentActivity")}) :
+          {i18n("RecentActivity.title.yourProjectsRecentActivity")}
+        </Typography.Title>
       }
     >
       <Space direction={"vertical"} style={{ width: `100%` }}>
