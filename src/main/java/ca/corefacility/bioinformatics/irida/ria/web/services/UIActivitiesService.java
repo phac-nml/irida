@@ -16,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.model.enums.UserGroupRemovedProjectE
 import ca.corefacility.bioinformatics.irida.model.event.*;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.ria.web.activities.ActivityType;
@@ -97,6 +96,7 @@ public class UIActivitiesService {
 	/**
 	 * Get a specific page of recent activities for all projects for admin
 	 *
+	 * @param page      Current page of activities being asked for
 	 * @param locale    Current users locale
 	 * @return List of activities and the total number of activities
 	 */

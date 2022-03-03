@@ -50,20 +50,22 @@ public class ActivitiesAjaxController {
 	 * @return List of activities and the total number of activities
 	 */
 	@GetMapping("/user")
-	public ResponseEntity<AjaxResponse> getRecentActivities(
-			@RequestParam(defaultValue = "0") int page, Locale locale, Principal principal) {
+	public ResponseEntity<AjaxResponse> getRecentActivities(@RequestParam(defaultValue = "0") int page, Locale locale,
+			Principal principal) {
 		return ResponseEntity.ok(service.getRecentActivitiesForUser(page, locale, principal));
 	}
 
 	/**
 	 * Get a specific page of recent activities for all projects
 	 *
-	 * @param locale    Current users locale
+	 * @param page   Page requested
+	 * @param locale Current users locale
 	 * @return List of activities and the total number of activities
 	 */
 	@GetMapping("/all")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<AjaxResponse> getAllRecentActivities(@RequestParam(defaultValue = "0") int page, Locale locale) {
+	public ResponseEntity<AjaxResponse> getAllRecentActivities(@RequestParam(defaultValue = "0") int page,
+			Locale locale) {
 		return ResponseEntity.ok(service.getAllRecentActivities(page, locale));
 	}
 }
