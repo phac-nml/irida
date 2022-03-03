@@ -82,15 +82,27 @@ public class UIActivitiesService {
 		String userName = principal.getName();
 		User user = userService.getUserByUsername(userName);
 
-		Page<ProjectEvent> events;
-
-		if (user.getSystemRole()
-				.equals(Role.ROLE_ADMIN)) {
-			events = projectEventService.list(0, DEFAULT_PAGE_SIZE, Sort.Direction.DESC, "createdDate");
-		} else {
-			events = projectEventService.getEventsForUser(user,
+		Page<ProjectEvent> events = projectEventService.getEventsForUser(user,
 					PageRequest.of(page, DEFAULT_PAGE_SIZE, Sort.Direction.DESC, "createdDate"));
-		}
+
+
+		List<ListItem> activities = events.getContent()
+				.stream()
+				.map(event -> createRecentActivity(event, locale))
+				.collect(Collectors.toList());
+		return new PagedListResponse(events.getTotalElements(), activities);
+	}
+
+
+	/**
+	 * Get a specific page of recent activities for all projects for admin
+	 *
+	 * @param locale    Current users locale
+	 * @return List of activities and the total number of activities
+	 */
+	public PagedListResponse getAllRecentActivities(int page, Locale locale) {
+		final int DEFAULT_PAGE_SIZE = 10;
+		Page<ProjectEvent> events = projectEventService.list(page, DEFAULT_PAGE_SIZE, Sort.Direction.DESC, "createdDate");
 
 		List<ListItem> activities = events.getContent()
 				.stream()

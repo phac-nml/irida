@@ -12,8 +12,7 @@ module.exports = {
   announcements: "./resources/js/pages/announcement",
   analysis: "./resources/js/pages/analysis",
   app: "./resources/js/app.js",
-  "recent-activity":
-    "./resources/js/pages/recent-activity/RecentActivities.jsx",
+  "recent-activity": "./resources/js/pages/recent-activity/RecentActivity.jsx",
   launch: "./resources/js/pages/launch",
   project: "./resources/js/components/project/ProjectNav.jsx",
   "project-activity": "./resources/js/pages/projects/ProjectActivity.jsx",
