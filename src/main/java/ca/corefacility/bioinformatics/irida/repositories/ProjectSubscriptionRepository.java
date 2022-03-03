@@ -45,7 +45,7 @@ public interface ProjectSubscriptionRepository extends IridaJpaRepository<Projec
 	public List<User> getUsersWithSubscriptions();
 
 	/**
-	 * Get a List of all {@link Projects}s that a given {@link User} is subscribed to.
+	 * Get a List of all {@link Project}s that a given {@link User} is subscribed to.
 	 *
 	 * @param user the user to show project subscriptions for
 	 * @return A List of {@link Project}s
