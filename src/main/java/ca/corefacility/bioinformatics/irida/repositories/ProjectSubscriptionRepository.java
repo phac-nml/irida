@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.repositories;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -33,4 +35,20 @@ public interface ProjectSubscriptionRepository extends IridaJpaRepository<Projec
 	 */
 	@Query("from ProjectSubscription ps where ps.user = ?1 and ps.project = ?2")
 	public ProjectSubscription findProjectSubscriptionByUserAndProject(User user, Project project);
+
+	/**
+	 * Get a list of all {@link User}s who are subscribed to any {@link Project}
+	 *
+	 * @return A List of {@link User}
+	 */
+	@Query("Select distinct ps.user from ProjectSubscription ps where ps.emailSubscription = true")
+	public List<User> getUsersWithSubscriptions();
+
+	/**
+	 * Get a list of all {@link Projects}s for a given {@link User} is subscribed to
+	 *
+	 * @return A List of {@link Projects}
+	 */
+	@Query("from ProjectSubscription ps where ps.user = ?1 and ps.emailSubscription = true")
+	public List<Project> getProjectsForUserWithSubscriptions(User user);
 }

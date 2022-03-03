@@ -62,6 +62,7 @@
         </sql>
 
         <dropColumn tableName="project_user" columnName="email_subscription"/>
+        <dropColumn tableName="project_user_AUD" columnName="email_subscription"/>
 
     </changeSet>
 </databaseChangeLog>

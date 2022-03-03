@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.List;
+
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.subscription.ProjectSubscription;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectSubscriptionRepository;
@@ -65,7 +68,24 @@ public class ProjectSubscriptionServiceImpl extends CRUDServiceImpl<Long, Projec
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public ProjectSubscription update(ProjectSubscription projectSubscription) {
-
 		return super.update(projectSubscription);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<User> getUsersWithEmailSubscriptions() {
+		return projectSubscriptionRepository.getUsersWithSubscriptions();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public List<Project> getProjectsForUserWithEmailSubscriptions(User user) {
+		return projectSubscriptionRepository.getProjectsForUserWithSubscriptions(user);
 	}
 }
