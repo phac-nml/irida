@@ -17,25 +17,26 @@ public interface ProjectSubscriptionService extends CRUDService<Long, ProjectSub
 	/**
 	 * Get a page of project subscriptions associated with a user.
 	 *
-	 * @param user the user to show project subscriptions for.
-	 * @param page the current page of results.
-	 * @param size the number of results on the page.
-	 * @param sort the sort properties.
-	 * @return {@link Page} of {@link ProjectSubscription}s.
+	 * @param user the user to show project subscriptions for
+	 * @param page the current page of results
+	 * @param size the number of results on the page
+	 * @param sort the sort properties
+	 * @return {@link Page} of {@link ProjectSubscription}s
 	 */
 	public Page<ProjectSubscription> getProjectSubscriptionsForUser(User user, int page, int size, Sort sort);
 
 	/**
-	 * Get a List of all {@link User}s that are subscribed to any {@link Project}s
+	 * Get a List of all {@link User}s that are subscribed to any {@link Project}s.
 	 *
-	 * @return A List of {@link User}
+	 * @return A List of {@link User}s
 	 */
 	public List<User> getUsersWithEmailSubscriptions();
 
 	/**
-	 * Get a List of all {@link Projects}s that a given {@link User} is subscribed to
+	 * Get a List of all {@link Projects}s that a given {@link User} is subscribed to.
 	 *
-	 * @return A List of {@link Projects}
+	 * @param user the user to show project subscriptions for
+	 * @return A List of {@link Project}s
 	 */
 	public List<Project> getProjectsForUserWithEmailSubscriptions(User user);
 

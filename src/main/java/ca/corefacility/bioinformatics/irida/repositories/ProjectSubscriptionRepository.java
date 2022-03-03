@@ -37,7 +37,7 @@ public interface ProjectSubscriptionRepository extends IridaJpaRepository<Projec
 	public ProjectSubscription findProjectSubscriptionByUserAndProject(User user, Project project);
 
 	/**
-	 * Get a list of all {@link User}s who are subscribed to any {@link Project}
+	 * Get a list of all {@link User}s who are subscribed to any {@link Project}.
 	 *
 	 * @return A List of {@link User}
 	 */
@@ -45,9 +45,10 @@ public interface ProjectSubscriptionRepository extends IridaJpaRepository<Projec
 	public List<User> getUsersWithSubscriptions();
 
 	/**
-	 * Get a list of all {@link Projects}s for a given {@link User} is subscribed to
+	 * Get a List of all {@link Projects}s that a given {@link User} is subscribed to.
 	 *
-	 * @return A List of {@link Projects}
+	 * @param user the user to show project subscriptions for
+	 * @return A List of {@link Project}s
 	 */
 	@Query("from ProjectSubscription ps where ps.user = ?1 and ps.emailSubscription = true")
 	public List<Project> getProjectsForUserWithSubscriptions(User user);
