@@ -54,7 +54,7 @@ function ShareApp() {
     metadataRestrictions,
   } = useSelector((state) => state.shareReducer);
 
-  const [shareSamplesWithProject, { isLoading, isError, error: shareError }] =
+  const [shareSamplesWithProject] =
     useShareSamplesWithProjectMutation();
 
   const { data: existingIds = [] } = useGetSampleIdsForProjectQuery(
@@ -80,7 +80,7 @@ function ShareApp() {
     },
     {
       title: i18n("ShareLayout.samples"),
-      component: <ShareSamples samples={filtered} redirect={redirect} />,
+      component: <ShareSamples samples={filtered} />,
     },
     { title: i18n("ShareLayout.restrictions"), component: <ShareMetadata /> },
   ];
