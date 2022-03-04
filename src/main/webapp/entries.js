@@ -30,6 +30,8 @@ module.exports = {
   "project-samples-linker":
     "./resources/js/pages/projects/samples/modals/samples-linker.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
+  "project-linelist-beta":
+    "./resources/js/pages/projects/linelist-beta/index.js",
   "project-metadata-edit":
     "./resources/js/pages/projects/project-metadata-edit.js",
   "project-create": "./resources/js/pages/projects/create",

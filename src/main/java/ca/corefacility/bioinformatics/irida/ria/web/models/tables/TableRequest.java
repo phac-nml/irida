@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models.tables;
 
+import com.google.common.base.Strings;
 import org.springframework.data.domain.Sort;
 
 /**
@@ -79,7 +80,8 @@ public class TableRequest {
 	 * @return {@link Sort}
 	 */
 	public Sort getSort() {
-		Sort.Direction direction = this.sortDirection.equals("ascend") ? Sort.Direction.ASC : Sort.Direction.DESC;
+		String sentSort = Strings.isNullOrEmpty(this.sortDirection) ? "ascend" : this.sortDirection;
+		Sort.Direction direction = sentSort.equals("ascend") ? Sort.Direction.ASC : Sort.Direction.DESC;
 		return Sort.by(new Sort.Order(direction, this.sortColumn));
 	}
 }
