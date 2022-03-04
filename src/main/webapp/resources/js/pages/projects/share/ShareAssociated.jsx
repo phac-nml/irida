@@ -18,8 +18,8 @@ export default function ShareAssociated() {
           <Collapse.Panel
             header={
               associated.length === 1
-                ? i18N("ShareAssociated.header-singular")
-                : i18N("ShareAssociated.header-plural", associated.lenth)
+                ? i18n("ShareAssociated.header-singular")
+                : i18n("ShareAssociated.header-plural", associated.lenth)
             }
           >
             <List
