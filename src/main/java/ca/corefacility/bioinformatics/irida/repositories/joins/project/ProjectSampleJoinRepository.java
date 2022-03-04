@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -60,15 +62,31 @@ public interface ProjectSampleJoinRepository
 
 	/**
 	 * Get a {@link Page} of {@link Sample} ids in a given {@link Project} that are sorted by
-	 * {@link MetadataTemplateField}.
+	 * {@link MetadataTemplateField} ascending.
 	 *
 	 * @param project {@link Project} to get the sample ids for.
 	 * @param field   {@link MetadataTemplateField} to sort by
 	 * @param page    {@link Pageable} page
 	 * @return a {@link Page} of sampleIds
 	 */
-	@Query("SELECT j.sample.id From ProjectSampleJoin j LEFT OUTER JOIN MetadataEntry m ON m.sample.id = j.sample.id AND m.field = ?2 WHERE j.project = ?1 ORDER BY CASE m.value WHEN '' THEN 'ZZ' ELSE COALESCE(m.value, 'ZZZ') END ASC")
-	Page<Long> getSampleIdsInProjectSortedByMetadataField(Project project, MetadataTemplateField field, Pageable page);
+	@EntityGraph(value = "sampleOnly", type = EntityGraphType.FETCH)
+	@Query("SELECT j.sample From ProjectSampleJoin j LEFT OUTER JOIN MetadataEntry m ON m.sample.id = j.sample.id AND m.field = ?2 WHERE j.project = ?1 ORDER BY CASE m.value WHEN '' THEN 'ZZ' ELSE COALESCE(m.value, 'ZZZ') END ASC")
+	Page<Sample> getPagedSamplesInProjectSortedByMetadataFieldAsc(Project project, MetadataTemplateField field,
+			Pageable page);
+
+	/**
+	 * Get a {@link Page} of {@link Sample} ids in a given {@link Project} that are sorted by
+	 * {@link MetadataTemplateField} descending.
+	 *
+	 * @param project {@link Project} to get the sample ids for.
+	 * @param field   {@link MetadataTemplateField} to sort by
+	 * @param page    {@link Pageable} page
+	 * @return a {@link Page} of sampleIds
+	 */
+	@EntityGraph(value = "sampleOnly", type = EntityGraphType.FETCH)
+	@Query("SELECT j.sample From ProjectSampleJoin j LEFT OUTER JOIN MetadataEntry m ON m.sample.id = j.sample.id AND m.field = ?2 WHERE j.project = ?1 ORDER BY CASE m.value WHEN '' THEN 'ZZ' ELSE COALESCE(m.value, 'ZZZ') END DESC")
+	Page<Sample> getPagedSamplesInProjectSortedByMetadataFieldDesc(Project project, MetadataTemplateField field,
+			Pageable page);
 
 	/**
 	 * Get a list of the organism fields stored for all {@link Sample}s in a {@link Project}

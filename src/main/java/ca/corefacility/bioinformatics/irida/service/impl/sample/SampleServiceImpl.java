@@ -391,17 +391,29 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
 	public Page<Sample> getSamplesWithMetadataForProject(Project project, List<MetadataTemplateField> fields,
 			PageRequest pageRequest) {
+		Page<Sample> samples;
+
 		Order order = pageRequest.getSort() != null ? pageRequest.getSort().iterator().next() : null;
-		// Remove sort columns, need to see how this works first
-		if (order != null) {
+
+		if (order != null && order.getProperty().startsWith("metadata.") && !fields.isEmpty()) {
 			pageRequest = PageRequest.of(pageRequest.getPageNumber(), pageRequest.getPageSize());
+			String fieldKey = order.getProperty().replace("metadata.", "");
+			MetadataTemplateField sortField = fields.stream()
+					.filter(field -> field.getFieldKey().equals(fieldKey))
+					.collect(Collectors.toList())
+					.get(0);
+			if (order.getDirection().equals(Sort.Direction.ASC)) {
+				samples = psjRepository.getPagedSamplesInProjectSortedByMetadataFieldAsc(project, sortField,
+						pageRequest);
+			} else {
+				samples = psjRepository.getPagedSamplesInProjectSortedByMetadataFieldDesc(project, sortField,
+						pageRequest);
+			}
+		} else {
+			samples = sampleRepository.getPagedSamplesForProject(project, pageRequest);
 		}
 
-		Page<Long> sampleIds = psjRepository.getSampleIdsInProjectSortedByMetadataField(project, fields.get(0),
-				pageRequest);
-		List<Sample> samples = psjRepository.getSamplesInProject(project, sampleIds.getContent());
-
-		return new PageImpl<Sample>(samples, pageRequest, sampleIds.getTotalElements());
+		return samples;
 	}
 
 	/**
