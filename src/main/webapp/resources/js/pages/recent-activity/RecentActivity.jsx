@@ -15,15 +15,15 @@ const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
  */
 function RecentActivity() {
   const [allProjectsVisible, setAllProjectsVisible] = React.useState(false);
-  const [userProjectsVisibile, setUserProjectsVisible] = React.useState(true);
+  const [userProjectsVisible, setUserProjectsVisible] = React.useState(true);
 
   return (
     <PageWrapper
       title={
         <Typography.Title level={2}>
-          allProjectsVisible ? (
-          {i18n("RecentActivity.title.allProjectsRecentActivity")}) :
-          {i18n("RecentActivity.title.yourProjectsRecentActivity")}
+          {allProjectsVisible
+            ? i18n("RecentActivity.title.allProjectsRecentActivity")
+            : i18n("RecentActivity.title.yourProjectsRecentActivity")}
         </Typography.Title>
       }
     >
@@ -38,7 +38,7 @@ function RecentActivity() {
             >
               {i18n("RecentActivity.button.allProjects")}
             </Button>
-          ) : !userProjectsVisibile ? (
+          ) : !userProjectsVisible ? (
             <Button
               onClick={() => {
                 setUserProjectsVisible(true);

@@ -44,9 +44,6 @@ public class UIActivitiesServiceTest {
 	private final Sample sample2 = new Sample("SAMPLE_2");
 	private final Project project2 = new Project("PROJECT_2");
 
-	private final Sample sample3 = new Sample("SAMPLE_3");
-	private final Project project3 = new Project("PROJECT_3");
-
 	private ProjectEventService eventService;
 	private UserService userService;
 
@@ -68,16 +65,10 @@ public class UIActivitiesServiceTest {
 		project2.setId(2l);
 		sample2.setId(2l);
 
-		project3.setId(3l);
-		sample3.setId(3l);
-
 		Mockito.when(projectService.read(1l))
 				.thenReturn(project);
 		Mockito.when(projectService.read(2l))
 				.thenReturn(project2);
-		Mockito.when(projectService.read(3l))
-				.thenReturn(project2);
-
 	}
 
 	@Test
