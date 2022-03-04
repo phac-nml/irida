@@ -28,6 +28,10 @@ public class LineListTableModel extends TableModel {
 		return String.valueOf(owner);
 	}
 
+	public String getSampleName() {
+		return getName();
+	}
+
 	public String getProject() {
 		return project.getLabel();
 	}

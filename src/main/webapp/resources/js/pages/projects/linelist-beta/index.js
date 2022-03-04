@@ -10,9 +10,9 @@ const projectId = getProjectIdFromUrl();
 
 export const FIELDS_TRANSLATOR = {
   "icons": "owner",
-  "irida-static-sample-name": "name",
+  "irida-static-sample-name": "sampleName",
   "irida-static-sample-id": "id",
-  "irida-static-modifed": "modifiedDate",
+  "irida-static-modified": "modifiedDate",
   "irida-static-created": "createdDate",
   "irida-static-project-name": "project.name",
   "irida-static-project-id": "project.id",

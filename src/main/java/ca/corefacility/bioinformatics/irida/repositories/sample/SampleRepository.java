@@ -40,7 +40,7 @@ public interface SampleRepository extends IridaJpaRepository<Sample, Long> {
 	 * @return the {@link Page} of associated {@link Sample}s
 	 */
 	@EntityGraph(value = "sampleOnly", type = EntityGraphType.FETCH)
-	@Query("select j.sample from ProjectSampleJoin j where j.project = ?1")
+	@Query("select s from Sample s JOIN ProjectSampleJoin j on j.sample = s where j.project = ?1")
 	public Page<Sample> getPagedSamplesForProject(Project project, Pageable pageable);
 
 	/**
