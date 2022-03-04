@@ -33,7 +33,7 @@ export function getUserActivities({ page = 0 }) {
   try {
     return axios.get(`${BASE_URL}/user?page=${page}`).then(({ data }) => data);
   } catch (e) {
-    return Promise.reject(i18n("Dashboard.recent.activity.loadError"));
+    return Promise.reject(i18n("RecentActivity.loadError"));
   }
 }
 
@@ -47,6 +47,6 @@ export function getAllRecentActivities({ page = 0 }) {
   try {
     return axios.get(`${BASE_URL}/all?page=${page}`).then(({ data }) => data);
   } catch (e) {
-    return Promise.reject(i18n("Dashboard.recent.activity.loadError"));
+    return Promise.reject(i18n("RecentActivity.loadError"));
   }
 }
