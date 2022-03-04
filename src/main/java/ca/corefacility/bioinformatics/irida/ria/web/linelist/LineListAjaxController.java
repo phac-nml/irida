@@ -38,7 +38,7 @@ public class LineListAjaxController {
 	 */
 	@GetMapping(value = "/entries")
 	public ResponseEntity<TableResponse<LineListTableModel>> getProjectSamplesMetadataEntries(
-			@RequestParam long projectId, TableRequest request) {
-		return ResponseEntity.ok(uiLineListService.getProjectSamplesMetadataEntries(projectId, request));
+			@RequestParam Long projectId, TableRequest request) {
+		return ResponseEntity.ok(uiLineListService.getLineListEntries(projectId, request));
 	}
 }

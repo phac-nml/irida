@@ -44,13 +44,13 @@ public class UILineListService {
 	 * @param request   {@link TableRequest}
 	 * @return a {@link TableResponse}
 	 */
-	public TableResponse<LineListTableModel> getProjectSamplesMetadataEntries(long projectId, TableRequest request) {
+	public TableResponse<LineListTableModel> getLineListEntries(Long projectId, TableRequest request) {
 		Project project = projectService.read(projectId);
-
-		List<Long> lockedSamplesInProject = sampleService.getLockedSamplesInProject(project);
 
 		List<MetadataTemplateField> metadataTemplateFields = metadataTemplateService
 				.getPermittedFieldsForCurrentUser(project, true);
+
+		List<Long> lockedSamplesInProject = sampleService.getLockedSamplesInProject(project);
 
 		Page<Sample> projectSamples = sampleService.getSamplesWithMetadataForProject(project, metadataTemplateFields,
 				PageRequest.of(request.getCurrent(), request.getPageSize(), request.getSort()));
