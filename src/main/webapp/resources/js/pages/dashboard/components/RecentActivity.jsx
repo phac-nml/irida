@@ -11,7 +11,7 @@ export function RecentActivity() {
 
   return (
     <Space direction={"vertical"} style={{ width: `100%` }}>
-      <Typography.Title level={2}>
+      <Typography.Title level={2} className="t-recent-activity-title">
         {allProjectsVisible
           ? i18n("RecentActivity.title.allProjectsRecentActivity")
           : i18n("RecentActivity.title.yourProjectsRecentActivity")}
@@ -23,6 +23,7 @@ export function RecentActivity() {
               setAllProjectsVisible(true);
               setUserProjectsVisible(false);
             }}
+            className="t-all-projects-button"
           >
             {i18n("RecentActivity.button.allProjects")}
           </Button>
@@ -32,6 +33,7 @@ export function RecentActivity() {
               setUserProjectsVisible(true);
               setAllProjectsVisible(false);
             }}
+            className="t-your-projects-button"
           >
             {i18n("RecentActivity.button.yourProjects")}
           </Button>

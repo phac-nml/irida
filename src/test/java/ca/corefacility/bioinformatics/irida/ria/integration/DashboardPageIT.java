@@ -10,8 +10,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Integration test to ensure the Dashboard page works
@@ -23,12 +22,12 @@ public class DashboardPageIT extends AbstractIridaUIITChromeDriver {
 	@Override
 	@BeforeEach
 	public void setUpTest() {
-		LoginPage.loginAsUser(driver());
-		new DashboardPage(driver());
 	}
 
 	@Test
 	public void testReadingHighPriorityAnnouncements() {
+		LoginPage.loginAsUser(driver());
+		new DashboardPage(driver());
 		Announcements announcements = Announcements.goTo(driver());
 		assertTrue(announcements.isModalVisible(), "The priority announcements modal should be visible");
 		assertEquals(2, announcements.getTotalUnreadAnnouncements(), "The total unread priority announcements count does not match");
@@ -40,5 +39,24 @@ public class DashboardPageIT extends AbstractIridaUIITChromeDriver {
 
 		announcements.getSubmenuAnnouncement();
 		assertEquals("No cake", announcements.getSubmenuAnnouncementTitle(2), "The announcements title in the submenu does not match");
+
+	}
+
+	@Test void testRecentActivityAdmin() {
+		DashboardPage dashboardPage = DashboardPage.initPage(driver());
+		LoginPage.loginAsAdmin(driver());
+		assertTrue(dashboardPage.userProjectsRecentActivityTitleDisplayed(), "Admin User recent activity tile should be displayed");
+		assertTrue(dashboardPage.allProjectsButtonDisplayed(), "Logged in as admin and viewing their own projects so the All Projects button should be visible");
+
+	}
+
+	@Test void testRecentActivityUser() {
+		DashboardPage dashboardPage = DashboardPage.initPage(driver());
+		LoginPage.loginAsUser(driver());
+		assertTrue(dashboardPage.userProjectsRecentActivityTitleDisplayed(), "User recent activity tile should be displayed");
+
+		assertFalse(dashboardPage.allProjectsButtonDisplayed(), "Logged in as a user so should not be able to view All Projects Button");
+		assertFalse(dashboardPage.yourProjectsButtonDisplayed(), "Logged in as a user so should not be able to view Your Projects Button");
+
 	}
 }

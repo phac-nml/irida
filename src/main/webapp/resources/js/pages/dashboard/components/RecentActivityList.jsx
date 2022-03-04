@@ -40,13 +40,13 @@ export function RecentActivityList({
       </div>
       <Space>
         <Button
-          className={"t-load-more"}
+          className={"t-load-more-button"}
           onClick={() => setPage(page + 1)}
           disabled={total === activities.length}
         >
           {i18n("RecentActivityList.button.loadMore")}
         </Button>
-        <Typography.Text>
+        <Typography.Text className="t-loaded-total">
           {i18n("RecentActivityList.loaded", activities.length, total)}
         </Typography.Text>
       </Space>
