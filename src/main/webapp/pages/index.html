@@ -6,18 +6,18 @@
 >
 <head>
     <title th:text="#{dashboard.title}"></title>
-    <webpacker:css entry="recent-activity" />
+    <webpacker:css entry="dashboard" />
 </head>
 <body>
 <div id="root" style="height: 100%;" layout:fragment="page">
     <!--
-             This is a DOM element for React to render the analysis details into.
-             See  src/main/webapp/resources/js/pages/analysis/components/Analysis.jsx
+             This is a DOM element for React to render the dashboard into.
+             See  src/main/webapp/resources/js/pages/dashboard/Dashboard.jsx
           -->
 </div>
 
 <th:block layout:fragment="scripts">
-    <webpacker:js  entry="recent-activity" />
+    <webpacker:js  entry="dashboard" />
 </th:block>
 </body>
 </html>

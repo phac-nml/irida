@@ -9,11 +9,11 @@ import { RecentActivityUserProjects } from "./components/RecentActivityUserProje
 const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 
 /**
- * Component to display user activity
+ * Component to display dashboard
  * @returns {JSX.Element}
  * @constructor
  */
-function RecentActivity() {
+function Dashboard() {
   const [allProjectsVisible, setAllProjectsVisible] = React.useState(false);
   const [userProjectsVisible, setUserProjectsVisible] = React.useState(true);
 
@@ -22,8 +22,10 @@ function RecentActivity() {
       title={
         <Typography.Title level={2}>
           {allProjectsVisible
-            ? i18n("RecentActivity.title.allProjectsRecentActivity")
-            : i18n("RecentActivity.title.yourProjectsRecentActivity")}
+            ? i18n("Dashboard.recent.activity.title.allProjectsRecentActivity")
+            : i18n(
+                "Dashboard.recent.activity.title.yourProjectsRecentActivity"
+              )}
         </Typography.Title>
       }
     >
@@ -36,7 +38,7 @@ function RecentActivity() {
                 setUserProjectsVisible(false);
               }}
             >
-              {i18n("RecentActivity.button.allProjects")}
+              {i18n("Dashboard.recent.activity.button.allProjects")}
             </Button>
           ) : !userProjectsVisible ? (
             <Button
@@ -45,7 +47,7 @@ function RecentActivity() {
                 setAllProjectsVisible(false);
               }}
             >
-              {i18n("RecentActivity.button.yourProjects")}
+              {i18n("Dashboard.recent.activity.button.yourProjects")}
             </Button>
           ) : null)}
 
@@ -59,4 +61,4 @@ function RecentActivity() {
   );
 }
 
-render(<RecentActivity />, document.querySelector("#root"));
+render(<Dashboard />, document.querySelector("#root"));

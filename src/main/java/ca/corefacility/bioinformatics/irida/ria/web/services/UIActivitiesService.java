@@ -197,7 +197,7 @@ public class UIActivitiesService {
 			UserRoleSetProjectEvent type = (UserRoleSetProjectEvent) event;
 			User user = type.getUser();
 			Project project = type.getProject();
-			String sentence = messageSource.getMessage("server.RecentActivity.user_role_updated", new Object[] {},
+			String sentence = messageSource.getMessage("server.Dashboard.recent.activity.user_role_updated", new Object[] {},
 					locale);
 			ActivityItem userItem = new ActivityItem("/users/" + user.getId(), user.getLabel());
 			ActivityItem roleItem = new ActivityItem(null, messageSource.getMessage("projectRole." + type.getRole()
@@ -211,7 +211,7 @@ public class UIActivitiesService {
 			Project project = type.getProject();
 			ActivityItem userItem = new ActivityItem("/users/" + user.getId(), user.getLabel());
 			ActivityItem projectItem = new ActivityItem("/projects/" + project.getId(), project.getLabel());
-			String sentence = messageSource.getMessage("server.RecentActivity.user_removed", new Object[] {}, locale);
+			String sentence = messageSource.getMessage("server.Dashboard.recent.activity.user_removed", new Object[] {}, locale);
 			return new Activity(event.getId(), ActivityType.PROJECT_USER_REMOVED.label, sentence,
 					event.getCreatedDate(), ImmutableList.of(userItem, projectItem));
 		} else if (event instanceof SampleAddedProjectEvent) {
@@ -221,7 +221,7 @@ public class UIActivitiesService {
 			ActivityItem sampleItem = new ActivityItem("/projects/" + project.getId() + "/samples/" + sample.getId(),
 					sample.getLabel());
 			ActivityItem projectItem = new ActivityItem("/projects/" + project.getId(), project.getLabel());
-			String sentence = messageSource.getMessage("server.RecentActivity.sample_added", new Object[] {}, locale);
+			String sentence = messageSource.getMessage("server.Dashboard.recent.activity.sample_added", new Object[] {}, locale);
 			return new Activity(type.getId(), ActivityType.PROJECT_SAMPLE_ADDED.label, sentence, event.getCreatedDate(),
 					ImmutableList.of(sampleItem, projectItem));
 		} else if (event instanceof SampleRemovedProjectEvent) {
@@ -230,7 +230,7 @@ public class UIActivitiesService {
 			Project project = type.getProject();
 			ActivityItem sampleItem = new ActivityItem(null, sampleName);
 			ActivityItem projectItem = new ActivityItem("/projects/" + project.getId(), project.getLabel());
-			String sentence = messageSource.getMessage("server.RecentActivity.sample_removed", new Object[] {}, locale);
+			String sentence = messageSource.getMessage("server.Dashboard.recent.activity.sample_removed", new Object[] {}, locale);
 			return new Activity(type.getId(), ActivityType.PROJECT_SAMPLE_REMOVED.label, sentence, event.getCreatedDate(),
 					ImmutableList.of(sampleItem, projectItem));
 		}else if (event instanceof DataAddedToSampleProjectEvent) {
@@ -240,7 +240,7 @@ public class UIActivitiesService {
 			ActivityItem sampleItem = new ActivityItem(
 					"/projects/" + project.getId() + "/samples/" + sample.getId() + "/sequenceFiles",
 					sample.getLabel());
-			String sentence = messageSource.getMessage("server.RecentActivity.sample_data_added", new Object[] {},
+			String sentence = messageSource.getMessage("server.Dashboard.recent.activity.sample_data_added", new Object[] {},
 					locale);
 			return new Activity(event.getId(), ActivityType.PROJECT_SAMPLE_DATA_ADDED.label, sentence,
 					event.getCreatedDate(), ImmutableList.of(sampleItem));
@@ -250,7 +250,7 @@ public class UIActivitiesService {
 			Project project = type.getProject();
 			ActivityItem groupItem = new ActivityItem("/groups/" + group.getId(), group.getLabel());
 			ActivityItem projectItem = new ActivityItem("/projects/" + project.getId(), project.getLabel());
-			String sentence = messageSource.getMessage("server.RecentActivity.user_group_added", new Object[] {},
+			String sentence = messageSource.getMessage("server.Dashboard.recent.activity.user_group_added", new Object[] {},
 					locale);
 			return new Activity(event.getId(), ActivityType.PROJECT_USER_GROUP_ADDED.label, sentence,
 					event.getCreatedDate(), ImmutableList.of(groupItem, projectItem));
@@ -260,7 +260,7 @@ public class UIActivitiesService {
 			Project project = type.getProject();
 			ActivityItem groupItem = new ActivityItem("/groups/" + group.getId(), group.getLabel());
 			ActivityItem projectItem = new ActivityItem("/projects/" + project.getId(), project.getLabel());
-			String sentence = messageSource.getMessage("server.RecentActivity.user_group_removed", new Object[] {},
+			String sentence = messageSource.getMessage("server.Dashboard.recent.activity.user_group_removed", new Object[] {},
 					locale);
 			return new Activity(event.getId(), ActivityType.PROJECT_USER_GROUP_REMOVED.label, sentence,
 					event.getCreatedDate(), ImmutableList.of(groupItem, projectItem));
