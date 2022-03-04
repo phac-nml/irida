@@ -46,9 +46,7 @@ public class UILineListServiceTest {
 		Project project = new Project("project");
 		project.setId(1L);
 		List<MetadataTemplateField> metadataTemplateFields = new ArrayList<MetadataTemplateField>();
-		TableRequest tableRequest = new TableRequest();
-		tableRequest.setCurrent(0);
-		tableRequest.setPageSize(10);
+		TableRequest tableRequest = new TableRequest(0, 10, "createdDate", "ascend", null);
 		PageRequest pageRequest = PageRequest.of(0, 10);
 
 		when(projectService.read(1L)).thenReturn(project);
