@@ -14,13 +14,20 @@ import org.openqa.selenium.support.PageFactory;
 public class DashboardPage extends AbstractPage {
 
 	@FindBy(className = "t-recent-activity-title")
-	private List<WebElement> recentActivityTitle;
+	private WebElement recentActivityTitle;
 
 	@FindBy(className = "t-all-projects-button")
 	private List<WebElement> allProjectsBtn;
 
 	@FindBy(className = "t-your-projects-button")
 	private List<WebElement> yourProjectsBtn;
+
+	@FindBy(className = "t-loaded-total")
+	private WebElement totalLoadedActivities;
+
+	@FindBy(className = "t-load-more-button")
+	private WebElement loadMoreBtn;
+
 
 	public DashboardPage(WebDriver driver) {
 		super(driver);
@@ -36,14 +43,14 @@ public class DashboardPage extends AbstractPage {
 	}
 
 	public boolean adminAllProjectsRecentActivityTitleDisplayed() {
-		if(recentActivityTitle.stream().findFirst().get().getText().equals("All Projects Recent Activity")) {
+		if(recentActivityTitle.getText().equals("All Projects Recent Activity")) {
 			return true;
 		}
 		return false;
 	}
 
 	public boolean userProjectsRecentActivityTitleDisplayed() {
-		if(recentActivityTitle.stream().findFirst().get().getText().equals("Your Projects Recent Activity")) {
+		if(recentActivityTitle.getText().equals("Your Projects Recent Activity")) {
 			return true;
 		}
 		return false;
@@ -60,6 +67,20 @@ public class DashboardPage extends AbstractPage {
 	public void clickAllProjectsButton() {
 		allProjectsBtn.get(0).click();
 		waitForTime(500);
+	}
+
+	public void clickYourProjectsButton() {
+		yourProjectsBtn.get(0).click();
+		waitForTime(500);
+	}
+
+	public String getTotalLoadedActivitiesText() {
+		waitForTime(500);
+		return totalLoadedActivities.getText();
+	}
+
+	public boolean isLoadMoreButtonDisabled() {
+		return !loadMoreBtn.isEnabled();
 	}
 
 }

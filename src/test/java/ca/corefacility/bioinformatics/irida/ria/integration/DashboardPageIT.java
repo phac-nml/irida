@@ -39,24 +39,53 @@ public class DashboardPageIT extends AbstractIridaUIITChromeDriver {
 
 		announcements.getSubmenuAnnouncement();
 		assertEquals("No cake", announcements.getSubmenuAnnouncementTitle(2), "The announcements title in the submenu does not match");
-
 	}
 
 	@Test void testRecentActivityAdmin() {
 		DashboardPage dashboardPage = DashboardPage.initPage(driver());
 		LoginPage.loginAsAdmin(driver());
-		assertTrue(dashboardPage.userProjectsRecentActivityTitleDisplayed(), "Admin User recent activity tile should be displayed");
+
+		Announcements announcements = Announcements.goTo(driver());
+		assertTrue(announcements.isModalVisible(), "The priority announcements modal should be visible");
+		assertEquals(2, announcements.getTotalUnreadAnnouncements(), "The total unread priority announcements count does not match");
+		assertEquals(0, announcements.getTotalReadAnnouncements(), "The total read priority announcements count does not match");
+		announcements.getNextAnnouncement();
+		assertEquals(1, announcements.getTotalReadAnnouncements(), "The total read priority announcements count does not match");
+		announcements.clickCloseButton();
+
+		assertTrue(dashboardPage.userProjectsRecentActivityTitleDisplayed(), "Admin user projects recent activity tile should be displayed");
 		assertTrue(dashboardPage.allProjectsButtonDisplayed(), "Logged in as admin and viewing their own projects so the All Projects button should be visible");
 
+		assertEquals("Loaded 4 / 4", dashboardPage.getTotalLoadedActivitiesText(), "Four of four activities should be loaded for users projects");
+		assertTrue(dashboardPage.isLoadMoreButtonDisabled(), "Load more button should be disabled as all activities are loaded for admin user's projects");
+
+		dashboardPage.clickAllProjectsButton();
+		assertTrue(dashboardPage.adminAllProjectsRecentActivityTitleDisplayed(), "Admin all projects recent activity tile should be displayed");
+		assertEquals("Loaded 5 / 5", dashboardPage.getTotalLoadedActivitiesText(), "Five of five activities should be loaded for all projects");
+		assertTrue(dashboardPage.isLoadMoreButtonDisabled(), "Load more button should be disabled as all activities are loaded for all projects");
+
+		dashboardPage.clickYourProjectsButton();
+		assertTrue(dashboardPage.userProjectsRecentActivityTitleDisplayed(), "Admin user projects recent activity tile should be displayed");
+		assertEquals("Loaded 4 / 4", dashboardPage.getTotalLoadedActivitiesText(), "Four of four activities should be loaded for users projects");
+		assertTrue(dashboardPage.isLoadMoreButtonDisabled(), "Load more button should be disabled as all activities are loaded for admin user's projects");
 	}
 
 	@Test void testRecentActivityUser() {
 		DashboardPage dashboardPage = DashboardPage.initPage(driver());
 		LoginPage.loginAsUser(driver());
-		assertTrue(dashboardPage.userProjectsRecentActivityTitleDisplayed(), "User recent activity tile should be displayed");
 
+		Announcements announcements = Announcements.goTo(driver());
+		assertTrue(announcements.isModalVisible(), "The priority announcements modal should be visible");
+		assertEquals(2, announcements.getTotalUnreadAnnouncements(), "The total unread priority announcements count does not match");
+		assertEquals(0, announcements.getTotalReadAnnouncements(), "The total read priority announcements count does not match");
+		announcements.getNextAnnouncement();
+		assertEquals(1, announcements.getTotalReadAnnouncements(), "The total read priority announcements count does not match");
+		announcements.clickCloseButton();
+
+		assertTrue(dashboardPage.userProjectsRecentActivityTitleDisplayed(), "User recent activity tile should be displayed");
 		assertFalse(dashboardPage.allProjectsButtonDisplayed(), "Logged in as a user so should not be able to view All Projects Button");
 		assertFalse(dashboardPage.yourProjectsButtonDisplayed(), "Logged in as a user so should not be able to view Your Projects Button");
-
+		assertEquals("Loaded 4 / 4", dashboardPage.getTotalLoadedActivitiesText(), "Four of four activities should be loaded for users projects");
+		assertTrue(dashboardPage.isLoadMoreButtonDisabled(), "Load more button should be disabled as all activities are loaded for users projects");
 	}
 }
