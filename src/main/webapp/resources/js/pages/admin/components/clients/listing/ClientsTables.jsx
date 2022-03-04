@@ -98,9 +98,9 @@ export function ClientsTable() {
         };
         return (
           <div>
-            {grants.map((g) => (
-              <Tag color={colors[g] || ""} key={g}>
-                {g}
+            {grants.map((grant) => (
+              <Tag color={colors[grant] || ""} key={grant}>
+                {grant}
               </Tag>
             ))}
           </div>
