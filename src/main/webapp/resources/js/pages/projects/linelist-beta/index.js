@@ -8,23 +8,35 @@ import {
 import { fetchTemplates } from "../../../apis/metadata/templates";
 const projectId = getProjectIdFromUrl();
 
+export const FIELDS_TRANSLATOR = {
+  "icons": "owner",
+  "irida-static-sample-name": "name",
+  "irida-static-sample-id": "id",
+  "irida-static-modifed": "modifiedDate",
+  "irida-static-created": "createdDate",
+  "irida-static-project-name": "project.name",
+  "irida-static-project-id": "project.id",
+};
+
+function transformTemplateField(field) {
+  if (field.field in FIELDS_TRANSLATOR) {
+    return FIELDS_TRANSLATOR[field.field];
+  }
+  else {
+    return ["metadata", field.field];
+  }
+}
+
 function transformTemplateResponse(data) {
   const templates = {};
   // All templates should have name
   data.forEach((item) => {
-    const newTemplate = [
-      {
-        dataIndex: "name",
-        title: "Name",
-        fixed: "left",
-        sorter: true,
-      },
-    ];
+    const newTemplate = [];
 
     // Lets add the metadata fields
     item.fields.forEach((field) => {
       newTemplate.push({
-        dataIndex: ["metadata", field.field],
+        dataIndex: transformTemplateField(field),
         title: field.headerName,
         sorter: true,
       });
