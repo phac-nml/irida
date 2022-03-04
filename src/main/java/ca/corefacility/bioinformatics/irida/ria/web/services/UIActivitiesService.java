@@ -92,17 +92,17 @@ public class UIActivitiesService {
 		return new PagedListResponse(events.getTotalElements(), activities);
 	}
 
-
 	/**
 	 * Get a specific page of recent activities for all projects for admin
 	 *
-	 * @param page      Current page of activities being asked for
-	 * @param locale    Current users locale
+	 * @param page   Current page of activities being asked for
+	 * @param locale Current users locale
 	 * @return List of activities and the total number of activities
 	 */
 	public PagedListResponse getAllRecentActivities(int page, Locale locale) {
 		final int DEFAULT_PAGE_SIZE = 10;
-		Page<ProjectEvent> events = projectEventService.list(page, DEFAULT_PAGE_SIZE, Sort.Direction.DESC, "createdDate");
+		Page<ProjectEvent> events = projectEventService.getAllProjectsEvents(
+				PageRequest.of(page, DEFAULT_PAGE_SIZE, Sort.Direction.DESC, "createdDate"));
 
 		List<ListItem> activities = events.getContent()
 				.stream()
