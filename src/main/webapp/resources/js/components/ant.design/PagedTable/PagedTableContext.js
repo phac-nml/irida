@@ -2,6 +2,7 @@ import React, { useEffect, useReducer } from "react";
 import { fetchPageTableUpdate } from "../../../apis/paged-table/paged-table";
 import debounce from "lodash/debounce";
 import pickBy from "lodash/pickBy";
+import { array } from "prop-types";
 
 let PagedTableContext;
 const { Provider, Consumer } = (PagedTableContext = React.createContext());
@@ -13,14 +14,14 @@ const initialState = {
   current: 1,
   pageSize: 10,
   total: undefined,
-  filters: {}
+  filters: {},
 };
 
 const types = {
   LOADING: 0,
   LOADED: 1,
   SEARCH: 2,
-  CHANGE: 3
+  CHANGE: 3,
 };
 
 function reducer(state, action) {
@@ -32,12 +33,12 @@ function reducer(state, action) {
         ...state,
         loading: false,
         dataSource: action.payload.dataSource,
-        total: action.payload.total
+        total: action.payload.total,
       };
     case types.SEARCH:
       return {
         ...state,
-        search: action.payload.term
+        search: action.payload.term,
       };
     case types.CHANGE:
       return {
@@ -46,7 +47,7 @@ function reducer(state, action) {
         current: action.payload.current,
         order: action.payload.order,
         column: action.payload.column,
-        filters: action.payload.filters || {}
+        filters: action.payload.filters || {},
       };
     default:
       return { ...state };
@@ -66,12 +67,12 @@ function PagedTableProvider({
   children,
   url,
   column = "createdDate",
-  order = "descend"
+  order = "descend",
 }) {
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
     column,
-    order
+    order,
   });
 
   /*
@@ -82,7 +83,7 @@ function PagedTableProvider({
     state.current,
     state.order,
     state.column,
-    state.filters
+    state.filters,
   ]);
 
   /**
@@ -93,17 +94,22 @@ function PagedTableProvider({
     fetchPageTableUpdate(url, {
       current: state.current - 1,
       pageSize: state.pageSize,
-      sortColumn: state.column || "createdDate",
+      sortColumn:
+        typeof state.column === "undefined"
+          ? "createdDate"
+          : Array.isArray(state.column)
+          ? state.column.join(".")
+          : state.column,
       sortDirection: state.order || "descend",
       search: state.search,
-      filters: state.filters
+      filters: state.filters,
     }).then(({ dataSource, total }) => {
       dispatch({
         type: types.LOADED,
         payload: {
           dataSource,
-          total
-        }
+          total,
+        },
       });
     });
   }
@@ -113,7 +119,7 @@ function PagedTableProvider({
    * @param term - search term
    */
   const onSearch = debounce(
-    term => dispatch({ type: types.SEARCH, payload: { term } }),
+    (term) => dispatch({ type: types.SEARCH, payload: { term } }),
     300
   );
 
@@ -134,8 +140,8 @@ function PagedTableProvider({
         current,
         order,
         column: field,
-        filters: pickBy(filters)
-      }
+        filters: pickBy(filters),
+      },
     });
   };
 
@@ -151,9 +157,9 @@ function PagedTableProvider({
           pagination: {
             total: state.total,
             pageSize: state.pageSize,
-            hideOnSinglePage: true
-          }
-        }
+            hideOnSinglePage: true,
+          },
+        },
       }}
     >
       {children}
@@ -164,5 +170,5 @@ function PagedTableProvider({
 export {
   PagedTableProvider,
   Consumer as PagedTableConsumer,
-  PagedTableContext
+  PagedTableContext,
 };
