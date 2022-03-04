@@ -213,7 +213,8 @@ public class UISampleService {
 			return messageSource.getMessage("server.SequenceFileHeaderOwner.successfully.set.default.seq.object",
 					new Object[] {  }, locale);
 		} catch (EntityNotFoundException e) {
-			return e.getMessage();
+			return messageSource.getMessage("server.SequenceFileHeaderOwner.unable.to.update.sample",
+					new Object[] {  }, locale);
 		}
 	}
 
