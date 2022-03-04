@@ -28,7 +28,7 @@ import com.google.common.collect.ImmutableMap;
 @Controller
 @RequestMapping("/projects/{projectId}/linelist")
 public class ProjectLineListController {
-	
+
 	private final ProjectService projectService;
 	private final MetadataTemplateService metadataTemplateService;
 	private final ProjectControllerUtils projectControllerUtils;
@@ -46,15 +46,10 @@ public class ProjectLineListController {
 	/**
 	 * Get the page to display the project samples linelist.
 	 *
-	 * @param projectId
-	 * 		{@link Long} identifier for the current {@link Project}
-	 * @param templateId
-	 * 		{@link Long} id for the current template
-	 * @param model
-	 * 		{@link Model}
-	 * @param principal
-	 * 		{@link Principal} currently logged in user.
-	 *
+	 * @param projectId  {@link Long} identifier for the current {@link Project}
+	 * @param templateId {@link Long} id for the current template
+	 * @param model      {@link Model}
+	 * @param principal  {@link Principal} currently logged in user.
 	 * @return {@link String} path to the current page.
 	 */
 	@RequestMapping("")
@@ -75,17 +70,38 @@ public class ProjectLineListController {
 	}
 
 	/**
+	 * Get the beta page to display the project samples linelist.
+	 *
+	 * @param projectId  {@link Long} identifier for the current {@link Project}
+	 * @param templateId {@link Long} id for the current template
+	 * @param model      {@link Model}
+	 * @param principal  {@link Principal} currently logged in user.
+	 * @return {@link String} path to the current page.
+	 */
+	@RequestMapping("/beta")
+	public String getLineListBetaPage(@PathVariable Long projectId, @RequestParam(required = false) Long templateId,
+			Model model, Principal principal) {
+		// Set up the template information
+		Project project = projectService.read(projectId);
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		model.addAttribute("activeNav", "linelist");
+
+		// templateId usually comes into play when a user just uploaded a metadata
+		// spreadsheet and is being redirected to this page.
+		if (templateId != null) {
+			model.addAttribute("currentTemplate", templateId);
+		}
+
+		return "projects/project_linelist_beta";
+	}
+
+	/**
 	 * Get the page to create new linelist templates
 	 *
-	 * @param projectId
-	 * 		{@link Long} identifier for the current {@link Project}
-	 * @param model
-	 * 		{@link Model}
-	 * @param locale
-	 * 		{@link Locale}
-	 * @param principal
-	 * 		{@link Principal}
-	 *
+	 * @param projectId {@link Long} identifier for the current {@link Project}
+	 * @param model     {@link Model}
+	 * @param locale    {@link Locale}
+	 * @param principal {@link Principal}
 	 * @return {@link String} path to the page.
 	 */
 	@RequestMapping("/linelist-templates")
@@ -101,17 +117,15 @@ public class ProjectLineListController {
 	/**
 	 * Get the metadata fields for a specific template
 	 *
-	 * @param templateId
-	 * 		{@link Long} identifier for a template
-	 *
+	 * @param templateId {@link Long} identifier for a template
 	 * @return {@link List} list of {@link MetadataTemplateField} for a template.
 	 */
 	@RequestMapping("/upload/metadatafields")
 	@ResponseBody
 	public List<MetadataTemplateField> getMetadaFieldsForTemplate(@RequestParam Long templateId) {
 		MetadataTemplate template = metadataTemplateService.read(templateId);
-		List<MetadataTemplateField> permittedFieldsForTemplate = metadataTemplateService.getPermittedFieldsForTemplate(
-				template);
+		List<MetadataTemplateField> permittedFieldsForTemplate = metadataTemplateService
+				.getPermittedFieldsForTemplate(template);
 
 		return permittedFieldsForTemplate;
 	}
@@ -125,8 +139,7 @@ public class ProjectLineListController {
 	 * @return The result of saving.
 	 */
 	@RequestMapping(value = "/linelist-templates/save-template/{templateName}",
-					consumes = MediaType.APPLICATION_JSON_VALUE,
-					method = RequestMethod.POST)
+			consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> saveLinelistTemplate(@PathVariable Long projectId, @PathVariable String templateName,
 			@RequestBody List<Map<String, String>> fields) {
@@ -152,8 +165,7 @@ public class ProjectLineListController {
 			metadataFields.add(metadataField);
 		}
 		MetadataTemplate metadataTemplate = new MetadataTemplate(templateName, metadataFields);
-		metadataTemplate = metadataTemplateService
-				.createMetadataTemplateInProject(metadataTemplate, project);
+		metadataTemplate = metadataTemplateService.createMetadataTemplateInProject(metadataTemplate, project);
 
 		return ImmutableMap.of("templateId", metadataTemplate.getId());
 	}
@@ -161,11 +173,8 @@ public class ProjectLineListController {
 	/**
 	 * Get a {@link List} of {@link MetadataTemplate}s for a specific {@link Project}
 	 *
-	 * @param projectId
-	 * 		{@link Long} identifier for a {@link Project}
-	 * @param locale
-	 * 		users current {@link Locale}
-	 *
+	 * @param projectId {@link Long} identifier for a {@link Project}
+	 * @param locale    users current {@link Locale}
 	 * @return {@link List} of {@link MetadataTemplate}
 	 */
 	@RequestMapping(value = "/templates", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -183,14 +192,15 @@ public class ProjectLineListController {
 	 * @param projectId  identifier for the current {@link Project}
 	 * @param fields     {@link List} of {@link String} names of {@link MetadataTemplateField}
 	 * @param name       {@link String} name for the new template.
-	 * @param templateId ID of the template to update.  Will create new template if null
+	 * @param templateId ID of the template to update. Will create new template if null
 	 * @param locale     Locale of teh logged in user
 	 * @return the saved {@link MetadataTemplate} and a response message
 	 */
 	@RequestMapping(value = "/templates", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> saveMetadataTemplate(@PathVariable long projectId, @RequestParam String name,
-			@RequestParam(value = "fields[]") List<String> fields, @RequestParam(required = false) Long templateId, Locale locale) {
+			@RequestParam(value = "fields[]") List<String> fields, @RequestParam(required = false) Long templateId,
+			Locale locale) {
 		Project project = projectService.read(projectId);
 
 		List<MetadataTemplateField> metadataFields = new ArrayList<>();
@@ -213,16 +223,14 @@ public class ProjectLineListController {
 			template.setFields(metadataFields);
 			template.setName(name);
 			metadataTemplateService.updateMetadataTemplateInProject(template);
-			message = messageSource.getMessage("linelist.create-template.update-success", new Object[]{name}, locale);
-		} else  {
+			message = messageSource.getMessage("linelist.create-template.update-success", new Object[] { name },
+					locale);
+		} else {
 			template = new MetadataTemplate(name, metadataFields);
 			template = metadataTemplateService.createMetadataTemplateInProject(template, project);
-			message = messageSource.getMessage("linelist.create-template.success", new Object[]{name}, locale);
+			message = messageSource.getMessage("linelist.create-template.success", new Object[] { name }, locale);
 		}
-		return ImmutableMap.of(
-				"template", template,
-				"message", message
-		);
+		return ImmutableMap.of("template", template, "message", message);
 	}
 
 	/**
@@ -235,7 +243,8 @@ public class ProjectLineListController {
 	 */
 	@RequestMapping(value = "/templates/{templateId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public Map<String, String> deleteMetadataTemplate(@PathVariable Long projectId, @PathVariable Long templateId, Locale locale) {
+	public Map<String, String> deleteMetadataTemplate(@PathVariable Long projectId, @PathVariable Long templateId,
+			Locale locale) {
 		Project project = projectService.read(projectId);
 		MetadataTemplate template = metadataTemplateService.read(templateId);
 		metadataTemplateService.deleteMetadataTemplateFromProject(project, templateId);

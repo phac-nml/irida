@@ -14,49 +14,52 @@ const { Content } = Layout;
  * @constructor
  */
 export function ProjectNav({ ...props }) {
-  const [current] = React.useState(() => {
-    const keyRegex = /\/projects\/\d+\/(?<path>[\w_-]+)/;
-    const found = location.pathname.match(keyRegex);
-    if (found) {
-      return found.groups.path;
-    }
-    return "samples";
-  });
-  const projectId = getProjectIdFromUrl();
-  const BASE_URL = setBaseUrl(`/projects/${projectId}`);
+	const [current] = React.useState(() => {
+		const keyRegex = /\/projects\/\d+\/(?<path>[\w_-]+)/;
+		const found = location.pathname.match(keyRegex);
+		if (found) {
+			return found.groups.path;
+		}
+		return "samples";
+	});
+	const projectId = getProjectIdFromUrl();
+	const BASE_URL = setBaseUrl(`/projects/${projectId}`);
 
-  return (
-    <PageHeader
-      title={<span className="t-project-name">{window.project.label}</span>}
-      avatar={{ icon: <IconFolder /> }}
-      tags={[<RemoteProjectStatus key="remote" />].filter((f) => f !== null)}
-    >
-      <Content>
-        <Menu mode="horizontal" selectedKeys={[current]}>
-          <Item key="samples">
-            <a href={`${BASE_URL}/samples`}>{i18n("project.nav.samples")}</a>
-          </Item>
-          <Item key="linelist">
-            <a href={`${BASE_URL}/linelist`}>{i18n("project.nav.linelist")}</a>
-          </Item>
-          <Item key="analyses">
-            <a href={`${BASE_URL}/analyses/project-analyses`}>
-              {i18n("project.nav.analysis")}
-            </a>
-          </Item>
-          <Item key="export">
-            <a href={`${BASE_URL}/export`}>{i18n("project.nav.exports")}</a>
-          </Item>
-          <Item key="activity">
-            <a href={`${BASE_URL}/activity`}>{i18n("project.nav.activity")}</a>
-          </Item>
-          <Item key="settings">
-            <a href={`${BASE_URL}/settings`}>{i18n("project.nav.settings")}</a>
-          </Item>
-        </Menu>
-      </Content>
-    </PageHeader>
-  );
+	return (
+		<PageHeader
+			title={<span className="t-project-name">{window.project.label}</span>}
+			avatar={{ icon: <IconFolder /> }}
+			tags={[<RemoteProjectStatus key="remote" />].filter((f) => f !== null)}
+		>
+			<Content>
+				<Menu mode="horizontal" selectedKeys={[current]}>
+					<Item key="samples">
+						<a href={`${BASE_URL}/samples`}>{i18n("project.nav.samples")}</a>
+					</Item>
+					<Item key="linelist">
+						<a href={`${BASE_URL}/linelist`}>{i18n("project.nav.linelist")}</a>
+					</Item>
+					<Item key="linelistbeta">
+						<a href={`${BASE_URL}/linelist/beta`}>{i18n("project.nav.linelistbeta")}</a>
+					</Item>
+					<Item key="analyses">
+						<a href={`${BASE_URL}/analyses/project-analyses`}>
+							{i18n("project.nav.analysis")}
+						</a>
+					</Item>
+					<Item key="export">
+						<a href={`${BASE_URL}/export`}>{i18n("project.nav.exports")}</a>
+					</Item>
+					<Item key="activity">
+						<a href={`${BASE_URL}/activity`}>{i18n("project.nav.activity")}</a>
+					</Item>
+					<Item key="settings">
+						<a href={`${BASE_URL}/settings`}>{i18n("project.nav.settings")}</a>
+					</Item>
+				</Menu>
+			</Content>
+		</PageHeader>
+	);
 }
 
 render(<ProjectNav />, document.querySelector("#project-root"));
