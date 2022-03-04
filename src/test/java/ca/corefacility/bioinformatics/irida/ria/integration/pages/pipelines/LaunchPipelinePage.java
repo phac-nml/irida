@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -134,9 +135,11 @@ public class LaunchPipelinePage extends AbstractPage {
 	}
 
 	public void updateName(String name) {
+		WebDriverWait wait = new WebDriverWait(driver, 2);
 		clearName();
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.className("t-name-required")));
 		nameInput.sendKeys(name);
-		waitForTime(400);
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("t-name-required")));
 	}
 
 	/**
