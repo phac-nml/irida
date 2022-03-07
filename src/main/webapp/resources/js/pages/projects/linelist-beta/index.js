@@ -1,5 +1,6 @@
 import React from "react";
 import { render } from "react-dom";
+import { Space } from "antd";
 import { getProjectIdFromUrl } from "../../../utilities/url-utilities";
 import {
   PagedTable,
@@ -21,15 +22,16 @@ export const FIELDS_TRANSLATOR = {
   icons: {
     dataIndex: "owner",
     sorter: false,
+    fixed: "left",
     render(text) {
-      return !!text ? (
+      return text === "true" ? (
         <IconUnlocked style={{ color: blue6 }} />
       ) : (
         <IconLocked style={{ color: red6 }} />
       );
     },
   },
-  "irida-static-sample-name": { dataIndex: "sampleName" },
+  "irida-static-sample-name": { dataIndex: "sampleName", fixed: "left" },
   "irida-static-sample-id": { dataIndex: "id" },
   "irida-static-modified": { dataIndex: "modifiedDate", ...dateColumn },
   "irida-static-created": { dataIndex: "createdDate", ...dateColumn },
@@ -91,16 +93,18 @@ function LineListBeta() {
   }, []);
 
   return (
-    <PagedTable
-      search={false}
-      loading={loading}
-      rowSelection={{
-        selectedRowKeys,
-        preserveSelectedRowKeys: true,
-        onChange: onSelectChange,
-      }}
-      columns={templates[current]}
-    />
+    <Space direction="vertical" style={{ width: `100%` }}>
+      <PagedTable
+        search={false}
+        loading={loading}
+        rowSelection={{
+          selectedRowKeys,
+          preserveSelectedRowKeys: true,
+          onChange: onSelectChange,
+        }}
+        columns={templates[current]}
+      />
+    </Space>
   );
 }
 
