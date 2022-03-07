@@ -9,7 +9,7 @@ import { fetchTemplates } from "../../../apis/metadata/templates";
 const projectId = getProjectIdFromUrl();
 
 export const FIELDS_TRANSLATOR = {
-  "icons": "owner",
+  icons: "owner",
   "irida-static-sample-name": "sampleName",
   "irida-static-sample-id": "id",
   "irida-static-modified": "modifiedDate",
@@ -21,8 +21,7 @@ export const FIELDS_TRANSLATOR = {
 function transformTemplateField(field) {
   if (field.field in FIELDS_TRANSLATOR) {
     return FIELDS_TRANSLATOR[field.field];
-  }
-  else {
+  } else {
     return ["metadata", field.field];
   }
 }
@@ -51,6 +50,12 @@ function LineListBeta() {
   const [loading, setLoading] = React.useState(true);
   const [templates, setTemplates] = React.useState({});
   const [current, setCurrent] = React.useState(undefined);
+  const [selectedRowKeys, setSelectedRowKeys] = React.useState([]);
+
+  function onSelectChange(selectedRowKeys) {
+    console.log("selectedRowKeys changed: ", selectedRowKeys);
+    setSelectedRowKeys(selectedRowKeys);
+  }
 
   React.useEffect(() => {
     fetchTemplates(projectId).then(({ data }) => {
@@ -64,7 +69,16 @@ function LineListBeta() {
   }, []);
 
   return (
-    <PagedTable search={false} loading={loading} columns={templates[current]} />
+    <PagedTable
+      search={false}
+      loading={loading}
+      rowSelection={{
+        selectedRowKeys,
+        preserveSelectedRowKeys: true,
+        onChange: onSelectChange,
+      }}
+      columns={templates[current]}
+    />
   );
 }
 
