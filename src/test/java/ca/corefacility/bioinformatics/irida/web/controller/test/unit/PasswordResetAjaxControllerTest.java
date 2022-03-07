@@ -29,17 +29,6 @@ public class PasswordResetAjaxControllerTest {
 	private UIPasswordResetService uiPasswordResetService;
 	private PasswordResetAjaxController controller;
 
-	private User createPrincipalUser() {
-		User user = new User(2L, "Elsa", "elsa@nowhere.ca", "Password1!", "Elsa", "Arendelle", "5678");
-		user.setSystemRole(Role.ROLE_ADMIN);
-		return user;
-	}
-
-	private User createUser() {
-		User user = new User(1L, "Anna", "anna@nowhere.ca", "Password2!", "Anna", "Arendelle", "1234");
-		return user;
-	}
-
 	@BeforeEach
 	void setUp() {
 		userService = mock(UserService.class);
@@ -53,15 +42,15 @@ public class PasswordResetAjaxControllerTest {
 
 	@Test
 	void adminNewPasswordResetTest() {
-		Principal principal = () -> "Elsa";
+		User user1 = new User(1L, "Elsa", "elsa@arendelle.ca", "Password1!", "Elsa", "Oldenburg", "1234");
+		user1.setSystemRole(Role.ROLE_ADMIN);
+		User user2 = new User(2L, "Anna", "anna@arendelle.ca", "Password2!", "Anna", "Oldenburg", "5678");
+		Principal principal = () -> user1.getFirstName();
 		Locale locale = new Locale("en");
-		User user1 = createPrincipalUser();
-		User user2 = createUser();
 
 		when(userService.read(anyLong())).thenReturn(user2);
 		when(userService.getUserByUsername(anyString())).thenReturn(user1);
-		when(messageSource.getMessage("server.password.reset.success.message", new Object[] { user2.getFirstName() },
-				locale)).thenReturn("SUCCESS");
+		when(messageSource.getMessage(anyString(), any(), any(Locale.class))).thenReturn("Anything can work here");
 
 		ResponseEntity<AjaxResponse> response = controller.adminNewPasswordReset(user2.getId(), principal, locale);
 		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
