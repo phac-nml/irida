@@ -6,23 +6,45 @@ import {
   PagedTableProvider,
 } from "../../../components/ant.design/PagedTable";
 import { fetchTemplates } from "../../../apis/metadata/templates";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import { IconLocked, IconUnlocked } from "../../../components/icons/Icons";
+import { blue6, red6 } from "../../../styles/colors";
 const projectId = getProjectIdFromUrl();
 
+const dateColumn = {
+  render(text) {
+    return formatInternationalizedDateTime(text);
+  },
+};
+
 export const FIELDS_TRANSLATOR = {
-  icons: "owner",
-  "irida-static-sample-name": "sampleName",
-  "irida-static-sample-id": "id",
-  "irida-static-modified": "modifiedDate",
-  "irida-static-created": "createdDate",
-  "irida-static-project-name": "project.name",
-  "irida-static-project-id": "project.id",
+  icons: {
+    dataIndex: "owner",
+    sorter: false,
+    render(text) {
+      return !!text ? (
+        <IconUnlocked style={{ color: blue6 }} />
+      ) : (
+        <IconLocked style={{ color: red6 }} />
+      );
+    },
+  },
+  "irida-static-sample-name": { dataIndex: "sampleName" },
+  "irida-static-sample-id": { dataIndex: "id" },
+  "irida-static-modified": { dataIndex: "modifiedDate", ...dateColumn },
+  "irida-static-created": { dataIndex: "createdDate", ...dateColumn },
+  "irida-static-project-name": { dataIndex: "project.name" },
+  "irida-static-project-id": { dataIndex: "project.id" },
 };
 
 function transformTemplateField(field) {
   if (field.field in FIELDS_TRANSLATOR) {
     return FIELDS_TRANSLATOR[field.field];
   } else {
-    return ["metadata", field.field];
+    return {
+      dataIndex: ["metadata", field.field],
+      ...(field.type === "date" && dateColumn),
+    };
   }
 }
 
@@ -35,9 +57,9 @@ function transformTemplateResponse(data) {
     // Lets add the metadata fields
     item.fields.forEach((field) => {
       newTemplate.push({
-        dataIndex: transformTemplateField(field),
         title: field.headerName,
         sorter: true,
+        ...transformTemplateField(field),
       });
     });
 
