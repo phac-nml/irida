@@ -1,7 +1,8 @@
 import React from "react";
+import { Space } from "antd";
 import { render } from "react-dom";
 import { PageWrapper } from "../../components/page/PageWrapper";
-
+import { UserProjectStatistics } from "./components/UserProjectStatistics";
 import { RecentActivity } from "./components/RecentActivity";
 
 /**
@@ -12,7 +13,10 @@ import { RecentActivity } from "./components/RecentActivity";
 function Dashboard() {
   return (
     <PageWrapper>
-      <RecentActivity />
+      <Space direction="vertical" size="large" style={{ width: "100%" }}>
+        <UserProjectStatistics />
+        <RecentActivity />
+      </Space>
     </PageWrapper>
   );
 }

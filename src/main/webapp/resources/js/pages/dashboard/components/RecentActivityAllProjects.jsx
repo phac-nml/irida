@@ -33,7 +33,6 @@ export function RecentActivityAllProjects() {
   React.useEffect(() => {
     getAllRecentActivities({ page })
       .then((data) => {
-        console.log(page);
         const list = addKeysToList(data.content, "activity", "date");
         setActivities([...activities, ...list]);
         setTotal(data.total);

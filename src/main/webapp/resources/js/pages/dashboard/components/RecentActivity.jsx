@@ -5,13 +5,18 @@ import { RecentActivityUserProjects } from "./RecentActivityUserProjects";
 
 const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 
+/**
+ * Component to display recent activity
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function RecentActivity() {
   const [allProjectsVisible, setAllProjectsVisible] = React.useState(false);
   const [userProjectsVisible, setUserProjectsVisible] = React.useState(true);
 
   return (
     <Space direction={"vertical"} style={{ width: `100%` }}>
-      <Typography.Title level={2} className="t-recent-activity-title">
+      <Typography.Title level={4} className="t-recent-activity-title">
         {allProjectsVisible
           ? i18n("RecentActivity.title.allProjectsRecentActivity")
           : i18n("RecentActivity.title.yourProjectsRecentActivity")}
