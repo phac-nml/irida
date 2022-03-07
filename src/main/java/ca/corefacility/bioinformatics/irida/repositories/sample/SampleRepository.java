@@ -36,7 +36,8 @@ public interface SampleRepository extends IridaJpaRepository<Sample, Long> {
 	/**
 	 * Get a page of {@link Sample}s associated with a {@link Project}
 	 *
-	 * @param project The {@link Project}
+	 * @param project  The {@link Project}
+	 * @param pageable The {@link Pageable} pagingation request
 	 * @return the {@link Page} of associated {@link Sample}s
 	 */
 	@EntityGraph(value = "sampleOnly", type = EntityGraphType.FETCH)
