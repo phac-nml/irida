@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.users.dto;
 
+/**
+ * UI Response to to encapsulate user statistics.
+ */
 public class UserStatisticsResponse {
 	int numberOfProjects;
 	int numberOfSamples;
