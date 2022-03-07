@@ -57,6 +57,7 @@ export function AddClientModal({ children, onComplete, existing = null }) {
       : "authorization_code";
 
     existing = {
+      id: existing.identifier,
       clientId: existing.clientId,
       tokenValidity: existing.accessTokenValiditySeconds,
       grantType,
@@ -118,6 +119,9 @@ export function AddClientModal({ children, onComplete, existing = null }) {
         }}
       >
         <Form form={form} layout="vertical" initialValues={initialValues}>
+          <Item hidden={true} name="id">
+            <Input />
+          </Item>
           <Item
             label={
               <>
@@ -126,27 +130,34 @@ export function AddClientModal({ children, onComplete, existing = null }) {
               </>
             }
             name="clientId"
-            rules={[
-              {
-                required: true,
-                message: i18n("AddClientForm.clientId.required"),
-              },
-              {
-                pattern: /^\S*$/,
-                message: i18n("AddClientForm.clientId.spaces"),
-              },
-              { min: 5, message: i18n("AddClientForm.clientId.minimum") },
-              () => ({
-                validator(rule, value) {
-                  if (value.length > 4) {
-                    return validateClientId(value)
-                      .then(() => Promise.resolve())
-                      .catch((error) => Promise.reject(error.response.data));
-                  }
-                  return Promise.resolve();
-                },
-              }),
-            ]}
+            rules={
+              existing
+                ? []
+                : [
+                    {
+                      required: true,
+                      message: i18n("AddClientForm.clientId.required"),
+                    },
+                    {
+                      pattern: /^\S*$/,
+                      message: i18n("AddClientForm.clientId.spaces"),
+                    },
+                    { min: 5, message: i18n("AddClientForm.clientId.minimum") },
+                    () => ({
+                      async validator(rule, value) {
+                        if (value.length > 4) {
+                          try {
+                            await validateClientId(value);
+                            return await Promise.resolve();
+                          } catch (error) {
+                            return await Promise.reject(error.response.data);
+                          }
+                        }
+                        return Promise.resolve();
+                      },
+                    }),
+                  ]
+            }
           >
             <Input ref={clientIdRef} disabled={existing !== null} />
           </Item>

@@ -37,10 +37,24 @@ export async function createClient(details) {
  */
 export async function deleteClient(id) {
   return axios.delete(BASE_URL, {
-    params: {id},
+    params: { id },
   });
 }
 
+/**
+ * Generate a new client secret
+ * @param {number} id - client id
+ * @returns
+ */
 export async function regenerateClientSecret(id) {
-  return axios.put(`${BASE_URL}/secret?id=${id}`)
+  return axios.put(`${BASE_URL}/secret?id=${id}`);
+}
+
+/**
+ * Update the details of a client
+ * @param {object} details - {clientId, tokenValidity, grantType, refreshToken, read, write, redirectURI}
+ * @returns
+ */
+export async function updateClientDetails(details) {
+  return axios.put(BASE_URL, details).then(({ data }) => data);
 }

@@ -5,6 +5,7 @@ import {
   deleteClient,
   regenerateClientSecret,
   revokeClientTokens,
+  updateClientDetails,
 } from "../../../../../apis/clients/clients";
 import {
   PagedTable,
@@ -151,7 +152,10 @@ export function ClientsTable() {
                 {i18n("client.details.token.revoke")}
               </Button>
             </Popconfirm>
-            <AddClientModal existing={record.details}>
+            <AddClientModal
+              existing={record.details}
+              onComplete={updateClientDetails}
+            >
               <Button type="link" size="small">
                 {i18n("ClientsTable.edit")}
               </Button>

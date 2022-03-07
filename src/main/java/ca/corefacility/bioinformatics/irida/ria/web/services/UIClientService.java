@@ -138,12 +138,15 @@ public class UIClientService {
 
         // See if allowed refresh tokens
         if (request.getRefreshToken() > 0) {
-            client.getAuthorizedGrantTypes()
-                    .add("refresh_token");
+            client.getAuthorizedGrantTypes().add("refresh_token");
             client.setRefreshTokenValiditySeconds(request.getRefreshToken());
         }
 
-        client = clientDetailsService.create(client);
+        if (client.getId() != null) {
+            clientDetailsService.update(client);
+        } else {
+            client = clientDetailsService.create(client);
+        }
         return client.getId();
     }
 
