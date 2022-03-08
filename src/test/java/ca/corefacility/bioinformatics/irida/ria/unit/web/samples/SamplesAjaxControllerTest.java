@@ -3,8 +3,10 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.samples;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleSequencingObjectFileModel;
 
 import org.apache.commons.io.IOUtils;
@@ -112,6 +114,13 @@ public class SamplesAjaxControllerTest {
 	@Test
 	public void testConcatenateFiles() {
 		ResponseEntity<List<SampleSequencingObjectFileModel>> responseEntity = controller.concatenateSequenceFiles(SAMPLE.getId(), sequencingObjectIds, "newFile", false );
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
+	}
+
+	@Test
+	public void testUpdateDefaultSequencingObjectForSample() {
+		ResponseEntity<AjaxResponse> responseEntity = controller.updateDefaultSequencingObjectForSample(SAMPLE.getId(), sequencingObjectIds.stream().findFirst().get(),
+				Locale.ENGLISH);
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
 	}
 }

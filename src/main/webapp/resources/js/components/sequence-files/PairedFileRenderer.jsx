@@ -10,11 +10,13 @@ import { useSelector } from "react-redux";
  * React component to display paired end file details
  *
  * @param {array} pair
- * @function download sequence file function
- * @function remove files from sample function
- * @function get file processing state function
+ * @param {function} download sequence file function
+ * @param {function} remove files from sample function
+ * @param {function} get file processing state function
  * @param qcEntryTranslationKeys Translation keys for qc entries
  * @param displayConcatenationCheckbox Whether to display checkbox or not
+ * @param {function} set default sequencing object for sample
+ * @param autoDefaultFirstPair the first pair in the list of pairs
  * @returns {JSX.Element}
  * @constructor
  */
@@ -25,6 +27,8 @@ export function PairedFileRenderer({
   getProcessingState = () => {},
   qcEntryTranslations,
   displayConcatenationCheckbox = false,
+  updateDefaultSequencingObject = null,
+  autoDefaultFirstPair,
 }) {
   const { sample } = useSelector((state) => state.sampleReducer);
 
@@ -64,6 +68,8 @@ export function PairedFileRenderer({
           type={pair.fileType}
           removeSampleFiles={removeSampleFiles}
           displayConcatenationCheckbox={displayConcatenationCheckbox}
+          updateDefaultSequencingObject={updateDefaultSequencingObject}
+          autoDefaultFirstPair={autoDefaultFirstPair}
         />
       }
       layout={`vertical`}

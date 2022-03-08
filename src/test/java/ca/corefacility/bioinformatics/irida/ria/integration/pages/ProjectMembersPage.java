@@ -88,6 +88,7 @@ public class ProjectMembersPage extends AbstractPage {
 		WebElement button = wait.until(ExpectedConditions.elementToBeClickable(removeMemberButtons.get(row)));
 		button.click();
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-remove-popover")));
+		wait.until(ExpectedConditions.elementToBeClickable(By.className("t-remove-confirm")));
 		driver.findElement(By.className("t-remove-confirm")).click();
 	}
 

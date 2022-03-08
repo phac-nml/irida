@@ -8,6 +8,7 @@ import {
   downloadSequencingObjectFile,
   fetchUpdatedSequencingObjects,
   useRemoveSampleFilesMutation,
+  useUpdateDefaultSampleSequencingObjectMutation,
 } from "../../../apis/samples/samples";
 
 import {
@@ -23,6 +24,7 @@ import {
   IconRemove,
 } from "../../icons/Icons";
 import { useInterval } from "../../../hooks";
+import { setDefaultSequencingObject } from "../sampleSlice";
 
 /**
  * React component to display, remove, download files
@@ -33,6 +35,9 @@ import { useInterval } from "../../../hooks";
 export function SampleFileList() {
   const dispatch = useDispatch();
   const [removeSampleFilesFromSample] = useRemoveSampleFilesMutation();
+  const [
+    updateSampleDefaultSequencingObject,
+  ] = useUpdateDefaultSampleSequencingObjectMutation();
   const { sample, projectId } = useSelector((state) => state.sampleReducer);
   const { files } = useSelector((state) => state.sampleFilesReducer);
 
@@ -80,6 +85,27 @@ export function SampleFileList() {
       .then(({ data }) => {
         notification.success({ message: data.message });
         dispatch(removeFileObjectFromSample({ fileObjectId, type }));
+
+        if (sample.defaultsequencingObject?.identifier === fileObjectId) {
+          dispatch(setDefaultSequencingObject(null));
+        }
+      })
+      .catch((error) => {
+        notification.error({ message: error });
+      });
+  };
+
+  /*
+  Set default sequencingobject for sample to be used for analyses
+   */
+  const updateDefaultSequencingObject = (sequencingObject) => {
+    updateSampleDefaultSequencingObject({
+      sampleId: sample.identifier,
+      sequencingObjectId: sequencingObject.identifier,
+    })
+      .then(({ data }) => {
+        dispatch(setDefaultSequencingObject(sequencingObject));
+        notification.success({ message: data.message });
       })
       .catch((error) => {
         notification.error({ message: error });
@@ -180,6 +206,7 @@ export function SampleFileList() {
       size="large"
       direction="vertical"
       style={{ maxHeight: "500px", overflowY: "auto", width: `100%` }}
+      className="t-filelist-scroll"
     >
       {files.singles && (
         <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>
@@ -206,6 +233,10 @@ export function SampleFileList() {
               getProcessingState={getProcessingStateTag}
               qcEntryTranslations={qcEntryTranslations}
               displayConcatenationCheckbox={files.paired?.length >= 2}
+              updateDefaultSequencingObject={updateDefaultSequencingObject}
+              autoDefaultFirstPair={
+                sample.defaultSequencingObject === null ? files.paired[0] : null
+              }
             />
           ))}
         </SequenceFileTypeRenderer>

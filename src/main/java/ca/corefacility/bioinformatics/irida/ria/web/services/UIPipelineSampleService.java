@@ -39,7 +39,7 @@ public class UIPipelineSampleService {
 		List<LaunchSample> samples = new ArrayList<>();
 		cart.forEach((project, projectSamples) -> {
 			for (Sample sample : projectSamples) {
-				LaunchSample launchSample = new LaunchSample(sample, project);
+				LaunchSample launchSample = new LaunchSample(sample, project, sample.getDefaultSequencingObject());
 				List<SampleSequencingObjectFileModel> files = new ArrayList<>();
 				if (paired) {
 					files.addAll(sampleService.getPairedSequenceFilesForSample(sample, project, null));

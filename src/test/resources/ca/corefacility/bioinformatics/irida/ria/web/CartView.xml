@@ -170,13 +170,39 @@
                    file_path="src/test/resources/files/test_file_1.fastq" />
     <sequence_file id="3" created_date="2013-07-18 14:20:19.0"
                    file_path="src/test/resources/files/test_file_2.fastq" />
+    <sequence_file id="4" created_date="2013-07-18 14:20:19.0"
+                   modified_date="2013-07-18 14:20:19.0"
+                   file_path="src/test/resources/files/sequence-files/01-1111_S1_L001_R1_001.fastq"
+                    />
+    <sequence_file id="5" created_date="2014-07-30 08:24:34"
+                   modified_date="2014-08-06 10:01:03"
+                   file_path="src/test/resources/files/sequence-files/02-2222_S1_L001_R2_001.fastq" />
+    <sequence_file id="6" created_date="2013-07-18 14:20:19.0"
+                   modified_date="2013-07-18 14:20:19.0"
+                   file_path="src/test/resources/files/sequence-files/04-4444_S1_L001_R1_001.fastq"
+                    />
+    <sequence_file id="7" created_date="2014-07-30 08:24:34"
+                   modified_date="2014-08-06 10:01:03"
+                   file_path="src/test/resources/files/sequence-files/04-4444_S1_L001_R2_001.fastq" />
 
     <sequencing_object id="1" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
     <sequencing_object id="2" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
     <sequencing_object id="3" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+    <sequencing_object id="4" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+    <sequencing_object id="5" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+
     <sequence_file_single_end id="1" file_id="1" />
     <sequence_file_single_end id="2" file_id="2" />
     <sequence_file_single_end id="3" file_id="3" />
+
+    <sequence_file_pair id="4" />
+    <sequence_file_pair_files pair_id="4" files_id="4" />
+    <sequence_file_pair_files pair_id="4" files_id="5" />
+
+    <sequence_file_pair id="5" />
+    <sequence_file_pair_files pair_id="5" files_id="6" />
+    <sequence_file_pair_files pair_id="5" files_id="7" />
+
 
     <sample_sequencingobject id="1" created_date="2013-07-18 14:20:19.0"
                              sample_id="19" sequencingobject_id="1" />
@@ -184,5 +210,9 @@
                              sample_id="19" sequencingobject_id="2" />
     <sample_sequencingobject id="3" created_date="2013-07-18 14:20:19.0"
                              sample_id="19" sequencingobject_id="3" />
+    <sample_sequencingobject id="4" created_date="2013-07-18 14:20:19.0"
+                             sample_id="19" sequencingobject_id="4" />
+    <sample_sequencingobject id="5" created_date="2013-07-18 14:20:19.0"
+                             sample_id="19" sequencingobject_id="5" />
 
 </dataset>

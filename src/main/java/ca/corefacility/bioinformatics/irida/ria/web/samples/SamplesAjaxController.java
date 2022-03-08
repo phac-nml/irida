@@ -9,6 +9,7 @@ import javax.validation.ConstraintViolationException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,6 +135,25 @@ public class SamplesAjaxController {
 			}
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new AjaxErrorResponse(constraintViolations));
+		}
+	}
+
+	/**
+	 * Update the default sequencing object for the sample
+	 *
+	 * @param id      {@link Long} identifier for the sample
+	 * @param sequencingObjectId The sequencing object identifier
+	 * @param locale  {@link Locale} for the currently logged in user
+	 * @return {@link ResponseEntity} explaining to the user the results of the update.
+	 */
+	@PutMapping(value = "/{id}/default-sequencing-object")
+	public ResponseEntity<AjaxResponse> updateDefaultSequencingObjectForSample(@PathVariable Long id,
+			@RequestParam Long sequencingObjectId, Locale locale) {
+		try {
+			return ResponseEntity.ok(new AjaxSuccessResponse(uiSampleService.updateDefaultSequencingObjectForSample(id, sequencingObjectId, locale)));
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 

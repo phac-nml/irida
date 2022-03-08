@@ -82,6 +82,16 @@ export const addSampleMetadataField = createAction(
 );
 
 /**
+ * Action to set the default sequencing object for a sample
+ */
+export const setDefaultSequencingObject = createAction(
+  `sample/setDefaultSequencingObject`,
+  (sequencingObject) => ({
+    payload: { sequencingObject },
+  })
+);
+
+/**
  * Set up the initial state.
  */
 const initialState = (() => {
@@ -112,6 +122,10 @@ const sampleSlice = createSlice({
     builder.addCase(setSample, (state, action) => {
       state.sample = action.payload.sample;
       state.modifiable = action.payload.modifiable;
+    });
+
+    builder.addCase(setDefaultSequencingObject, (state, action) => {
+      state.sample.defaultSequencingObject = action.payload.sequencingObject;
     });
 
     builder.addCase(setProject, (state, action) => {

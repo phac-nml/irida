@@ -318,4 +318,18 @@ public class UISampleServiceTest {
 				.getFileInfo()
 				.getLabel(), "The concatenated file name should be the same as the SampleSequencingObject -> SequencingObject -> File name");
 	}
+
+	@Test
+	public void testUpdateDefaultSequencingObjectForSample() {
+		when(sampleService.read(SAMPLE_ID)).thenReturn(SAMPLE_1);
+		when(sequencingObjectService.readSequencingObjectForSample(SAMPLE_1, sequencingObject.getId())).thenReturn(
+				sequencingObject);
+		service.updateDefaultSequencingObjectForSample(SAMPLE_ID, sequencingObject.getId(),
+				Locale.ENGLISH);
+		verify(sampleService, times(1)).read(SAMPLE_ID);
+		verify(sequencingObjectService, times(1)).readSequencingObjectForSample(SAMPLE_1, sequencingObject.getId());
+		verify(sampleService, times(1)).update(SAMPLE_1);
+		assertEquals(sequencingObject, SAMPLE_1.getDefaultSequencingObject(),
+				"Sequencing object should be set as default for sample");
+	}
 }

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -191,6 +192,29 @@ public class UISampleService {
 			return message;
 		} catch (ConstraintViolationException e) {
 			throw new ConstraintViolationException(e.getConstraintViolations());
+		}
+	}
+
+	/**
+	 * Update the default sequencing object for the sample
+	 *
+	 * @param sampleId           The sample identifier
+	 * @param sequencingObjectId The sequencing object identifier
+	 * @param locale             {@link Locale} for the currently logged in user
+	 * @return message indicating if update was successful or not
+	 */
+	public String updateDefaultSequencingObjectForSample(Long sampleId, Long sequencingObjectId, Locale locale) {
+		try {
+			Sample sample = sampleService.read(sampleId);
+			SequencingObject sequencingObject = sequencingObjectService.readSequencingObjectForSample(sample,
+					sequencingObjectId);
+			sample.setDefaultSequencingObject(sequencingObject);
+			sampleService.update(sample);
+			return messageSource.getMessage("server.SequenceFileHeaderOwner.successfully.set.default.seq.object",
+					new Object[] {  }, locale);
+		} catch (EntityNotFoundException e) {
+			return messageSource.getMessage("server.SequenceFileHeaderOwner.unable.to.update.sample",
+					new Object[] {  }, locale);
 		}
 	}
 
@@ -485,6 +509,11 @@ public class UISampleService {
 		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
 
 		try {
+			if (sample.getDefaultSequencingObject() != null && sample.getDefaultSequencingObject()
+					.getId() == sequencingObjectId) {
+				sample.setDefaultSequencingObject(null);
+				sampleService.update(sample);
+			}
 			sampleService.removeSequencingObjectFromSample(sample, sequencingObject);
 			return messageSource.getMessage("server.SampleFiles.removeSequencingObjectSuccess", new Object[] {},
 					locale);

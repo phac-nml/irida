@@ -97,6 +97,12 @@ export const sampleApi = createApi({
         method: "POST",
       }),
     }),
+    updateDefaultSampleSequencingObject: build.mutation({
+      query: ({ sampleId, sequencingObjectId }) => ({
+        url: `/${sampleId}/default-sequencing-object?sequencingObjectId=${sequencingObjectId}`,
+        method: "PUT",
+      }),
+    }),
   }),
 });
 
@@ -108,6 +114,7 @@ export const {
   useUpdateSampleMetadataMutation,
   useRemoveSampleFilesMutation,
   useConcatenateSequencingObjectsMutation,
+  useUpdateDefaultSampleSequencingObjectMutation,
 } = sampleApi;
 
 /**
