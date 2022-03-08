@@ -75,5 +75,4 @@ public interface UserGroupProjectJoinRepository extends IridaJpaRepository<UserG
 	 * @return the relationship between the group and project.
 	 */
 	public UserGroupProjectJoin findByProjectAndUserGroup(final Project p, final UserGroup userGroup);
-
 }
