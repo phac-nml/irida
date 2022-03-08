@@ -80,6 +80,7 @@ export function AddClientModal({ children, onComplete, existing = null }) {
       const values = await form.validateFields();
       await onComplete(values);
       updateTable();
+      !existing && form.resetFields();
       setVisible(false);
     } catch (errors) {
       // Re-enforce the error to the user
