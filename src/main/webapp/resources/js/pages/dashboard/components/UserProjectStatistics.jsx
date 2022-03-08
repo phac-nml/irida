@@ -6,8 +6,11 @@ import {
   IconShare,
 } from "../../../components/icons/Icons";
 import { fetchUserStatistics } from "../../../apis/dashboard/dashboard";
+import { blue6 } from "../../../styles/colors";
 
 const userId = window.TL._USER.identifier;
+
+const StatCol = ({ children }) => <Col span={8}>{children}</Col>;
 
 /**
  * Component to display user statistics
@@ -30,39 +33,40 @@ export function UserProjectStatistics() {
   }, []);
 
   return (
-    <div>
-      <Row gutter={16}>
-        <Col span={4}>
-          <Card>
-            <Statistic
-              title="Number of Projects"
-              value={statistics.numberOfProjects}
-              prefix={<IconDatabaseOutlined />}
-              loading={loading}
-            />
-          </Card>
-        </Col>
-        <Col span={4}>
-          <Card>
-            <Statistic
-              title="Number of Samples"
-              value={statistics.numberOfSamples}
-              prefix={<IconExperiment />}
-              loading={loading}
-            />
-          </Card>
-        </Col>
-        <Col span={4}>
-          <Card>
-            <Statistic
-              title="Number of Analyses"
-              value={statistics.numberOfAnalyses}
-              prefix={<IconShare />}
-              loading={loading}
-            />
-          </Card>
-        </Col>
-      </Row>
-    </div>
+    <Row gutter={16} justify="space-between">
+      <StatCol>
+        <Card>
+          <Statistic
+            title="Number of Projects"
+            valueStyle={{ color: blue6 }}
+            value={statistics.numberOfProjects}
+            prefix={<IconDatabaseOutlined />}
+            loading={loading}
+          />
+        </Card>
+      </StatCol>
+      <StatCol>
+        <Card>
+          <Statistic
+            title="Number of Samples"
+            valueStyle={{ color: blue6 }}
+            value={statistics.numberOfSamples}
+            prefix={<IconExperiment />}
+            loading={loading}
+          />
+        </Card>
+      </StatCol>
+      <StatCol>
+        <Card>
+          <Statistic
+            title="Number of Analyses"
+            valueStyle={{ color: blue6 }}
+            value={statistics.numberOfAnalyses}
+            prefix={<IconShare />}
+            loading={loading}
+          />
+        </Card>
+      </StatCol>
+    </Row>
   );
 }

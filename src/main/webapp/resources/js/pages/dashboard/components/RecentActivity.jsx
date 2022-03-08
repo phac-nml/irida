@@ -1,5 +1,7 @@
 import { Button, Space, Typography } from "antd";
 import React from "react";
+import { grey1 } from "../../../styles/colors";
+import { SPACE_MD } from "../../../styles/spacing";
 import { RecentActivityAllProjects } from "./RecentActivityAllProjects";
 import { RecentActivityUserProjects } from "./RecentActivityUserProjects";
 
@@ -15,7 +17,10 @@ export function RecentActivity() {
   const [userProjectsVisible, setUserProjectsVisible] = React.useState(true);
 
   return (
-    <Space direction={"vertical"} style={{ width: `100%` }}>
+    <Space
+      direction={"vertical"}
+      style={{ width: `100%`, backgroundColor: grey1, padding: SPACE_MD }}
+    >
       <Typography.Title level={4} className="t-recent-activity-title">
         {allProjectsVisible
           ? i18n("RecentActivity.title.allProjectsRecentActivity")
