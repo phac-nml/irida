@@ -40,13 +40,17 @@ export function AddClientModal({ children, onComplete, existing = null }) {
   const radioStyle = { display: "block", lineHeight: `35px` };
 
   if (existing !== null) {
-    let [read, write] = existing.scope;
-    if (existing.autoApprovableScopes.includes("read")) {
-      read = "auto";
-    }
-    if (existing.autoApprovableScopes.includes("write")) {
-      write = "auto";
-    }
+    let read = existing.scope.includes("read")
+      ? "read"
+      : existing.autoApprovableScopes.includes("read")
+      ? "auto"
+      : "no";
+
+    let write = existing.scope.includes("write")
+      ? "write"
+      : existing.autoApprovableScopes.includes("write")
+      ? "auto"
+      : "no";
 
     const refreshToken = existing.authorizedGrantTypes.includes("refresh_token")
       ? existing.refreshTokenValiditySeconds
