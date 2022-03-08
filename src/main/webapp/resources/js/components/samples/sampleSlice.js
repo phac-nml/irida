@@ -95,6 +95,16 @@ export const setDefaultSequencingObject = createAction(
 );
 
 /**
+ * Action to update sample details
+ */
+export const updateDetails = createAction(
+  `sample/updateDetails`,
+  ({ field, value }) => ({
+    payload: { field, value },
+  })
+);
+
+/**
  * Set up the initial state.
  */
 const initialState = (() => {
@@ -185,6 +195,17 @@ const sampleSlice = createSlice({
         (metadataFieldEntry) =>
           metadataFieldEntry.entryId !== action.payload.entryId
       );
+    });
+
+    builder.addCase(removeSampleMetadataField, (state, action) => {
+      state.metadata = state.metadata.filter(
+        (metadataFieldEntry) =>
+          metadataFieldEntry.entryId !== action.payload.entryId
+      );
+    });
+
+    builder.addCase(updateDetails, (state, action) => {
+      state.sample[action.payload.field] = action.payload.value;
     });
   },
 });

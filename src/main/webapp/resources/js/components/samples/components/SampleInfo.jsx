@@ -6,11 +6,12 @@ const { Paragraph } = Typography;
 import moment from "moment";
 import { OntologySelect } from "../../ontology";
 import { TAXONOMY } from "../../../apis/ontology/taxonomy";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context";
 import { EditMetadata } from "./EditMetadata";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
+import { updateDetails } from "../sampleSlice";
 
 const DEFAULT_HEIGHT = 600;
 
@@ -24,7 +25,7 @@ export function SampleInfo() {
   const { sample, modifiable: isModifiable } = useSelector(
     (state) => state.sampleReducer
   );
-
+  const dispatch = useDispatch();
   const [updateSampleDetails] = useUpdateSampleDetailsMutation();
   const dateFormat = i18n("SampleInfo.date.format");
 
@@ -48,6 +49,7 @@ export function SampleInfo() {
         if (response.error) {
           notification.error({ message: response.error.data.error });
         } else {
+          dispatch(updateDetails({ field, value: value || "" }));
           notification.success({ message: response.data.message });
         }
       })
@@ -240,7 +242,7 @@ export function SampleInfo() {
     const item = detailsData[index];
 
     return (
-      <List.Item style={style}>
+      <List.Item style={{ ...style, padding: 15 }}>
         <List.Item.Meta title={item.title} description={item.value} />
       </List.Item>
     );
