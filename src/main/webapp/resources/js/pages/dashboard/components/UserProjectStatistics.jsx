@@ -37,7 +37,7 @@ export function UserProjectStatistics() {
       <StatCol>
         <Card>
           <Statistic
-            title="Number of Projects"
+            title={i18n("UserProjectStatistics.numProjectsTitle")}
             valueStyle={{ color: blue6 }}
             value={statistics.numberOfProjects}
             prefix={<IconDatabaseOutlined />}
@@ -48,7 +48,7 @@ export function UserProjectStatistics() {
       <StatCol>
         <Card>
           <Statistic
-            title="Number of Samples"
+            title={i18n("UserProjectStatistics.numSamplesTitle")}
             valueStyle={{ color: blue6 }}
             value={statistics.numberOfSamples}
             prefix={<IconExperiment />}
@@ -59,7 +59,7 @@ export function UserProjectStatistics() {
       <StatCol>
         <Card>
           <Statistic
-            title="Number of Analyses"
+            title={i18n("UserProjectStatistics.numAnalysesTitle")}
             valueStyle={{ color: blue6 }}
             value={statistics.numberOfAnalyses}
             prefix={<IconShare />}
