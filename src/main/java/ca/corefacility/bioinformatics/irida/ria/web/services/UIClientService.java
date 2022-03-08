@@ -89,6 +89,7 @@ public class UIClientService {
      * Create a new client
      *
      * @param request Details about the new client
+     * @param locale  Current users {@link Locale}
      * @return A message to the user about the result of the create/update
      * @throws EntityExistsException        thrown if the client id already is used.
      * @throws ConstraintViolationException thrown if the client id violates any of its constraints
