@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.users.dto;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 
@@ -147,5 +148,26 @@ public class UserDetailsResponse extends AjaxResponse {
 	 */
 	public boolean hasErrors() {
 		return errors != null && !errors.isEmpty();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		UserDetailsResponse that = (UserDetailsResponse) o;
+		return mailConfigured == that.mailConfigured && mailFailure == that.mailFailure && isAdmin == that.isAdmin
+				&& canEditUserInfo == that.canEditUserInfo && canEditUserStatus == that.canEditUserStatus
+				&& canChangePassword == that.canChangePassword && canCreatePasswordReset == that.canCreatePasswordReset
+				&& Objects.equals(userDetails, that.userDetails) && Objects.equals(currentRole, that.currentRole)
+				&& Objects.equals(locales, that.locales) && Objects.equals(allowedRoles, that.allowedRoles)
+				&& Objects.equals(errors, that.errors);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(userDetails, currentRole, mailConfigured, mailFailure, isAdmin, canEditUserInfo,
+				canEditUserStatus, canChangePassword, canCreatePasswordReset, locales, allowedRoles, errors);
 	}
 }

@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.users.dto;
 
 import java.util.Date;
+import java.util.Objects;
 
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
@@ -26,8 +27,7 @@ public class UserDetailsModel extends TableModel {
 		this.email = user.getEmail();
 		this.phoneNumber = user.getPhoneNumber();
 		this.username = user.getUsername();
-		this.role = user.getSystemRole()
-				.getName();
+		this.role = user.getSystemRole().getName();
 		this.lastLogin = user.getLastLogin();
 		this.enabled = user.isEnabled();
 		this.locale = user.getLocale();
@@ -67,5 +67,23 @@ public class UserDetailsModel extends TableModel {
 
 	public String getLocale() {
 		return locale;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		UserDetailsModel that = (UserDetailsModel) o;
+		return enabled == that.enabled && Objects.equals(firstName, that.firstName) && Objects.equals(lastName,
+				that.lastName) && Objects.equals(email, that.email) && Objects.equals(phoneNumber, that.phoneNumber)
+				&& Objects.equals(username, that.username) && Objects.equals(role, that.role) && Objects.equals(
+				lastLogin, that.lastLogin) && Objects.equals(locale, that.locale);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(firstName, lastName, email, phoneNumber, username, role, lastLogin, enabled, locale);
 	}
 }
