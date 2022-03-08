@@ -1,4 +1,13 @@
-import { Form, Input, message, Modal, Radio, Space, Typography } from "antd";
+import {
+  Form,
+  Input,
+  message,
+  Modal,
+  notification,
+  Radio,
+  Space,
+  Typography,
+} from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { validateClientId } from "../../../../../apis/clients/clients";
 import { PagedTableContext } from "../../../../../components/ant.design/PagedTable";
@@ -78,7 +87,8 @@ export function AddClientModal({ children, onComplete, existing = null }) {
   const onOk = async () => {
     try {
       const values = await form.validateFields();
-      await onComplete(values);
+      const { message } = await onComplete(values);
+      notification.success({ message });
       updateTable();
       !existing && form.resetFields();
       setVisible(false);

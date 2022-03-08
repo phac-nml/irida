@@ -2,12 +2,14 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -31,14 +33,16 @@ import com.google.common.collect.Sets;
 @Component
 public class UIClientService {
     private final IridaClientDetailsService clientDetailsService;
+    private final MessageSource messageSource;
 
     private final String AUTO_APPROVE = "auto";
     private final String SCOPE_READ = "read";
     private final String SCOPE_WRITE = "write";
     private final String GRANT_TYPE_AUTH_CODE = "authorization_code";
 
-    public UIClientService(IridaClientDetailsService clientDetailsService) {
+    public UIClientService(IridaClientDetailsService clientDetailsService, MessageSource messageSource) {
         this.clientDetailsService = clientDetailsService;
+        this.messageSource = messageSource;
     }
 
     /**
@@ -85,11 +89,11 @@ public class UIClientService {
      * Create a new client
      *
      * @param request Details about the new client
-     * @return The identifier for the newly created client
+     * @return A message to the user about the result of the create/update
      * @throws EntityExistsException        thrown if the client id already is used.
      * @throws ConstraintViolationException thrown if the client id violates any of its constraints
      */
-    public Long createOrUpdateClient(CreateUpdateClientDetails request)
+    public String createOrUpdateClient(CreateUpdateClientDetails request, Locale locale)
             throws EntityExistsException, ConstraintViolationException {
 
         IridaClientDetails client;
@@ -144,10 +148,13 @@ public class UIClientService {
 
         if (client.getId() != null) {
             clientDetailsService.update(client);
+            return messageSource.getMessage("server.UpdateClientForm.success", new Object[] { client.getClientId() },
+                    locale);
         } else {
             client = clientDetailsService.create(client);
+            return messageSource.getMessage("server.AddClientForm.success", new Object[] { client.getClientId() },
+                    locale);
         }
-        return client.getId();
     }
 
     /**
