@@ -53,20 +53,24 @@ public class DashboardPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(1, announcements.getTotalReadAnnouncements(), "The total read priority announcements count does not match");
 		announcements.clickCloseButton();
 
+		assertEquals(4, dashboardPage.getStatsForType(0), "Number of Projects stats should display 4");
+		assertEquals(4, dashboardPage.getStatsForType(1), "Number of Samples stats should display 4");
+		assertEquals(0, dashboardPage.getStatsForType(2), "Number of Analyses stats should display 0");
+
 		assertTrue(dashboardPage.userProjectsRecentActivityTitleDisplayed(), "Admin user projects recent activity tile should be displayed");
 		assertTrue(dashboardPage.allProjectsButtonDisplayed(), "Logged in as admin and viewing their own projects so the All Projects button should be visible");
 
-		assertEquals("Loaded 4 / 4", dashboardPage.getTotalLoadedActivitiesText(), "Four of four activities should be loaded for users projects");
+		assertEquals("Loaded 5 / 5", dashboardPage.getTotalLoadedActivitiesText(), "Five of five activities should be loaded for users projects");
 		assertTrue(dashboardPage.isLoadMoreButtonDisabled(), "Load more button should be disabled as all activities are loaded for admin user's projects");
 
 		dashboardPage.clickAllProjectsButton();
 		assertTrue(dashboardPage.adminAllProjectsRecentActivityTitleDisplayed(), "Admin all projects recent activity tile should be displayed");
-		assertEquals("Loaded 5 / 5", dashboardPage.getTotalLoadedActivitiesText(), "Five of five activities should be loaded for all projects");
+		assertEquals("Loaded 6 / 6", dashboardPage.getTotalLoadedActivitiesText(), "Six of six activities should be loaded for all projects");
 		assertTrue(dashboardPage.isLoadMoreButtonDisabled(), "Load more button should be disabled as all activities are loaded for all projects");
 
 		dashboardPage.clickYourProjectsButton();
 		assertTrue(dashboardPage.userProjectsRecentActivityTitleDisplayed(), "Admin user projects recent activity tile should be displayed");
-		assertEquals("Loaded 4 / 4", dashboardPage.getTotalLoadedActivitiesText(), "Four of four activities should be loaded for users projects");
+		assertEquals("Loaded 5 / 5", dashboardPage.getTotalLoadedActivitiesText(), "Five of five activities should be loaded for users projects");
 		assertTrue(dashboardPage.isLoadMoreButtonDisabled(), "Load more button should be disabled as all activities are loaded for admin user's projects");
 	}
 
@@ -81,6 +85,10 @@ public class DashboardPageIT extends AbstractIridaUIITChromeDriver {
 		announcements.getNextAnnouncement();
 		assertEquals(1, announcements.getTotalReadAnnouncements(), "The total read priority announcements count does not match");
 		announcements.clickCloseButton();
+
+		assertEquals(3, dashboardPage.getStatsForType(0), "Number of Projects stats should display 3");
+		assertEquals(3, dashboardPage.getStatsForType(1), "Number of Samples stats should display 3");
+		assertEquals(0, dashboardPage.getStatsForType(2), "Number of Analyses stats should display 0");
 
 		assertTrue(dashboardPage.userProjectsRecentActivityTitleDisplayed(), "User recent activity tile should be displayed");
 		assertFalse(dashboardPage.allProjectsButtonDisplayed(), "Logged in as a user so should not be able to view All Projects Button");

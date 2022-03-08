@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
 import java.util.List;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -81,6 +82,12 @@ public class DashboardPage extends AbstractPage {
 
 	public boolean isLoadMoreButtonDisabled() {
 		return !loadMoreBtn.isEnabled();
+	}
+
+	public int getStatsForType(int type) {
+		// 0: Projects, 1: Samples, 2: Analyses
+		List<WebElement> ele = driver.findElements(By.className("ant-statistic-content-value-int"));
+		return Integer.parseInt(ele.get(type).getText());
 	}
 
 }

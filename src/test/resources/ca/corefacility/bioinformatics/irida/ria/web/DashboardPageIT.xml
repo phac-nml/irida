@@ -58,6 +58,8 @@
              projectDescription="adminproject"  />
     <project id="5" createdDate="2013-07-18 14:20:19.0" name="userproject"
              projectDescription="userproject"  />
+    <project id="6" createdDate="2013-07-18 14:20:19.0" name="userproject2"
+             projectDescription="userproject2"  />
 
     <sample id="1" createdDate="2013-01-18 14:20:19.0" description="description1"
             sampleName="sample1" />
@@ -67,6 +69,8 @@
             sampleName="sample3" />
     <sample id="4" createdDate="2013-02-18 14:20:19.0" description="description4"
             sampleName="sample4" />
+    <sample id="5" createdDate="2013-02-18 14:20:19.0" description="description4"
+            sampleName="sample5" />
 
     <project_sample id="1" createdDate="2013-07-18 14:20:19.0"
                     project_id="1" sample_id="1" owner="true" />
@@ -78,6 +82,9 @@
                     project_id="4" sample_id="3" owner="true" />
     <project_sample id="4" createdDate="2013-07-18 14:20:19.0"
                     project_id="5" sample_id="4" owner="true" />
+
+    <project_sample id="5" createdDate="2013-07-18 14:20:19.0"
+                    project_id="6" sample_id="5" owner="true" />
 
 
     <project_user id="1" project_id="1" user_id="1"
@@ -106,6 +113,10 @@
                   projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
                   email_subscription="false" />
 
+    <project_user id="8" project_id="6" user_id="3"
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  email_subscription="false" />
+
     <project_event id="1" created_date="2013-07-18 14:20:19.0"
                    project_id="3" role="PROJECT_USER" user_id="1" DTYPE="UserRoleSetProjectEvent" />
 
@@ -120,4 +131,7 @@
 
     <project_event id="5" created_date="2013-07-18 14:20:19.0"
                    project_id="5" role="PROJECT_OWNER" user_id="1" sample_id="4" DTYPE="SampleAddedProjectEvent" />
+
+    <project_event id="6" created_date="2013-07-18 14:20:19.0"
+                   project_id="6" role="PROJECT_OWNER" user_id="3" sample_id="3" DTYPE="SampleAddedProjectEvent" />
 </dataset>
