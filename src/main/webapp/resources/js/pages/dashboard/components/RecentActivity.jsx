@@ -1,4 +1,4 @@
-import { Button, Col, Row, Space, Typography } from "antd";
+import { Button, Col, Row, Typography } from "antd";
 import React from "react";
 
 import { RecentActivityAllProjects } from "./RecentActivityAllProjects";
@@ -15,6 +15,7 @@ import { SPACE_XS } from "../../../styles/spacing";
 export function RecentActivity() {
   const [allProjectsVisible, setAllProjectsVisible] = React.useState(false);
   const [userProjectsVisible, setUserProjectsVisible] = React.useState(true);
+  const admin = isAdmin();
 
   return (
     <Row style={{ backgroundColor: grey1, padding: 10 }}>
@@ -26,7 +27,7 @@ export function RecentActivity() {
         </Typography.Title>
       </Col>
       <Col span={24} style={{ marginBottom: SPACE_XS }}>
-        {isAdmin &&
+        {admin &&
           (!allProjectsVisible ? (
             <Button
               onClick={() => {
@@ -50,7 +51,7 @@ export function RecentActivity() {
           ) : null)}
       </Col>
       <Col span={24}>
-        {allProjectsVisible && isAdmin ? (
+        {allProjectsVisible && admin ? (
           <RecentActivityAllProjects />
         ) : (
           <RecentActivityUserProjects />
