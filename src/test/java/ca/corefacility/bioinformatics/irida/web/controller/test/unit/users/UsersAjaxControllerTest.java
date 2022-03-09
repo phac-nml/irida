@@ -54,22 +54,18 @@ public class UsersAjaxControllerTest {
 				new IridaApiServicesConfig.IridaLocaleList(Lists.newArrayList(Locale.ENGLISH)), messageSource,
 				passwordEncoder);
 		controller = new UsersAjaxController(uiUsersService);
+
+		when(userService.read(anyLong())).thenReturn(USER2);
+		when(userService.getUserByUsername(anyString())).thenReturn(USER1);
+		when(userService.updateFields(anyLong(), anyMap())).thenReturn(USER2);
 	}
 
 	@Test
 	void userEditRequestTest() {
 		Principal principal = () -> USER1.getFirstName();
-		UserEditRequest userEditRequest = new UserEditRequest();
-		userEditRequest.setFirstName(USER2.getFirstName());
-		userEditRequest.setLastName(USER2.getLastName());
-		userEditRequest.setEmail(USER2.getEmail());
-		userEditRequest.setPhoneNumber(USER2.getPhoneNumber());
-		userEditRequest.setSystemRole(USER2.getSystemRole().getName());
-		userEditRequest.setUserLocale(USER2.getLocale());
-		userEditRequest.setEnabled("false");
-
-		when(userService.getUserByUsername(anyString())).thenReturn(USER1);
-		when(userService.updateFields(anyLong(), anyMap())).thenReturn(USER2);
+		UserEditRequest userEditRequest = new UserEditRequest(USER2.getFirstName(), USER2.getLastName(),
+				USER2.getEmail(), USER2.getPhoneNumber(), USER2.getSystemRole().getName(), USER2.getLocale(),
+				"checked");
 
 		ResponseEntity<Map<String, String>> response = controller.updateUser(USER2.getId(), userEditRequest, principal,
 				request);
@@ -87,19 +83,13 @@ public class UsersAjaxControllerTest {
 
 		ResponseEntity<Map<String, String>> response = controller.changeUserPassword(USER1.getId(), USER1.getPassword(),
 				"Password3!", principal, request);
-
 		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
 	}
 
 	@Test
 	void getUserDetailsTest() {
 		Principal principal = () -> USER1.getFirstName();
-		
-		when(userService.read(anyLong())).thenReturn(USER2);
-		when(userService.getUserByUsername(anyString())).thenReturn(USER1);
-
 		ResponseEntity<UserDetailsResponse> response = controller.getUserDetails(USER2.getId(), false, principal);
-
 		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
 	}
 }
