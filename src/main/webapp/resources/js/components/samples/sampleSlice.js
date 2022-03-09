@@ -197,13 +197,6 @@ const sampleSlice = createSlice({
       );
     });
 
-    builder.addCase(removeSampleMetadataField, (state, action) => {
-      state.metadata = state.metadata.filter(
-        (metadataFieldEntry) =>
-          metadataFieldEntry.entryId !== action.payload.entryId
-      );
-    });
-
     builder.addCase(updateDetails, (state, action) => {
       state.sample[action.payload.field] = action.payload.value;
     });
