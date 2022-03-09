@@ -1,26 +1,31 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
-import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.CreateClientRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
-import com.google.common.collect.Sets;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.validation.ConstraintViolationException;
+
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.oauth2.provider.NoSuchClientException;
 import org.springframework.stereotype.Component;
 
-import javax.validation.ConstraintViolationException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
+import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.CreateUpdateClientDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
+import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
+
+import com.google.common.collect.Sets;
 
 /**
  * UI Service to handle IRIDA Clients
@@ -28,9 +33,16 @@ import java.util.stream.Collectors;
 @Component
 public class UIClientService {
     private final IridaClientDetailsService clientDetailsService;
+    private final MessageSource messageSource;
 
-    public UIClientService(IridaClientDetailsService clientDetailsService) {
+    private final String AUTO_APPROVE = "auto";
+    private final String SCOPE_READ = "read";
+    private final String SCOPE_WRITE = "write";
+    private final String GRANT_TYPE_AUTH_CODE = "authorization_code";
+
+    public UIClientService(IridaClientDetailsService clientDetailsService, MessageSource messageSource) {
         this.clientDetailsService = clientDetailsService;
+        this.messageSource = messageSource;
     }
 
     /**
@@ -77,19 +89,25 @@ public class UIClientService {
      * Create a new client
      *
      * @param request Details about the new client
-     * @return The identifier for the newly created client
+     * @param locale  Current users {@link Locale}
+     * @return A message to the user about the result of the create/update
      * @throws EntityExistsException        thrown if the client id already is used.
      * @throws ConstraintViolationException thrown if the client id violates any of its constraints
      */
-    public Long createClient(CreateClientRequest request) throws EntityExistsException, ConstraintViolationException {
-        final String AUTO_APPROVE = "auto";
-        final String SCOPE_READ = "read";
-        final String SCOPE_WRITE = "write";
-        final String GRANT_TYPE_AUTH_CODE = "authorization_code";
+    public String createOrUpdateClient(CreateUpdateClientDetails request, Locale locale)
+            throws EntityExistsException, ConstraintViolationException {
 
-        IridaClientDetails client = new IridaClientDetails();
-        client.setClientSecret(RandomStringUtils.randomAlphanumeric(42));
-        client.setClientId(request.getClientId());
+        IridaClientDetails client;
+        if (request.getId() != null) {
+            // Existing client
+            client = clientDetailsService.read(request.getId());
+        } else {
+            // New client, so need to set up a few things that cannot be mutated in an existing one
+            client = new IridaClientDetails();
+            client.setClientSecret(generateClientSecret());
+            client.setClientId(request.getClientId());
+        }
+
         client.setAccessTokenValiditySeconds(request.getTokenValidity());
 
         // Let's set up the scopes for this client
@@ -125,12 +143,43 @@ public class UIClientService {
 
         // See if allowed refresh tokens
         if (request.getRefreshToken() > 0) {
-            client.getAuthorizedGrantTypes()
-                    .add("refresh_token");
+            client.getAuthorizedGrantTypes().add("refresh_token");
             client.setRefreshTokenValiditySeconds(request.getRefreshToken());
         }
 
-        client = clientDetailsService.create(client);
-        return client.getId();
+        if (client.getId() != null) {
+            clientDetailsService.update(client);
+            return messageSource.getMessage("server.UpdateClientForm.success", new Object[] { client.getClientId() },
+                    locale);
+        } else {
+            client = clientDetailsService.create(client);
+            return messageSource.getMessage("server.AddClientForm.success", new Object[] { client.getClientId() },
+                    locale);
+        }
+    }
+
+    /**
+     * Delete a client
+     *
+     * @param id Identifier for the client to delete
+     */
+    public void deleteClient(Long id) {
+        clientDetailsService.delete(id);
+    }
+
+    /**
+     * Generate a new client secret
+     *
+     * @param id identifier for a client
+     */
+    public void regenerateClientSecret(Long id) {
+        IridaClientDetails details = clientDetailsService.read(id);
+        String secret = generateClientSecret();
+        details.setClientSecret(secret);
+        clientDetailsService.update(details);
+    }
+
+    private String generateClientSecret() {
+        return RandomStringUtils.randomAlphanumeric(42);
     }
 }

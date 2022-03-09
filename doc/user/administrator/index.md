@@ -203,9 +203,7 @@ If a client is going to be adding or modifying data in IRIDA, you should also en
 Updating an Existing System Client
 ----------------------------------
 
-{% include_relative includes/select-a-specific-client.md %}
-
-To modify the client details, you can click on the "Edit" button, in the top, right-hand corner of the "Client Details" panel:
+To modify the client details, you can click on the "Edit" button at the end of the row.
 
 ![Client details edit button.](images/client-details-edit-button.png)
 
@@ -217,9 +215,11 @@ After you have made the modifications that you want to the existing client, clic
 
 ### Generating a New Client Secret
 
-You may want to generate a new client secret for a client if, for example, the client secret has been accidentally leaked by the client and someone is abusing your API.
+You may want to generate a new client secret for a client if, for example, the client secret has been accidentally
+leaked by the client and someone is abusing your API.
 
-Client secrets are generated randomly by IRIDA. You can have IRIDA issue a new client secret by navigating to the ["Edit Client Details"](#updating-an-existing-system-client) page (as above), and checking "Generate a new client secret":
+Client secrets are generated randomly by IRIDA. To generate a new secret, click on the refresh button next to the
+client's secret in the table:
 
 ![Generate new client secret checkbox.](images/edit-client-details-generate-new-secret.png)
 
@@ -228,19 +228,10 @@ To generate the new secret, click on the "Update Client" button. The new client 
 Removing a System Client
 ------------------------
 
-{% include_relative includes/select-a-specific-client.md %}
-
-To remove a client, click on the "Remove" button at the top, right-hand corner of the "Client Details" panel:
+To remove a client, click on the "Remove" button at the end of the row, you will need to select "Ok" on a confirmation
+pop up to ensure this is what you intented to do:
 
 ![Client details panel delete button.](images/client-details-delete-button.png)
-
-You will be asked to confirm the deletion:
-
-![Delete client confirmation dialog.](images/delete-client-confirm.png)
-
-Click "OK" to confirm, or "Cancel" to decline the deletion.
-
-After deleting a client, you will be returned to the list of clients.
 
 Managing Remote IRIDA Connections
 =================================
