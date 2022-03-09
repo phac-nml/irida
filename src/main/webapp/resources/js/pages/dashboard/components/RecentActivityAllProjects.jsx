@@ -42,14 +42,12 @@ export function RecentActivityAllProjects() {
   }, [page]);
 
   return (
-    <>
-      <RecentActivityList
-        activities={activities}
-        total={total}
-        page={page}
-        setPage={setPage}
-        loading={loading}
-      />
-    </>
+    <RecentActivityList
+      activities={activities}
+      total={total}
+      page={page}
+      setPage={setPage}
+      loading={loading}
+    />
   );
 }

@@ -1,4 +1,4 @@
-import { Button, List, Space, Typography } from "antd";
+import { Button, Col, List, Row, Typography } from "antd";
 import React from "react";
 import { ActivityListItem } from "../../../components/activities/ActivityListItem";
 import { BORDERED_LIGHT } from "../../../styles/borders";
@@ -21,35 +21,39 @@ export function RecentActivityList({
   loading,
 }) {
   return (
-    <Space direction={"vertical"} style={{ width: `100%` }}>
-      <div
-        style={{
-          maxHeight: 600,
-          overflow: "auto",
-          border: BORDERED_LIGHT,
-          borderLeft: "none",
-          borderRight: "none",
-        }}
-      >
-        <List
-          bordered
-          dataSource={activities}
-          loading={loading}
-          renderItem={(activity) => <ActivityListItem activity={activity} />}
-        />
-      </div>
-      <Space>
-        <Button
-          className={"t-load-more-button"}
-          onClick={() => setPage(page + 1)}
-          disabled={total === activities.length}
+    <Row gutter={[16, 16]}>
+      <Col span={24}>
+        <div
+          style={{
+            maxHeight: 600,
+            overflow: "auto",
+            border: BORDERED_LIGHT,
+            borderLeft: "none",
+            borderRight: "none",
+          }}
         >
-          {i18n("RecentActivityList.button.loadMore")}
-        </Button>
-        <Typography.Text className="t-loaded-total">
-          {i18n("RecentActivityList.loaded", activities.length, total)}
-        </Typography.Text>
-      </Space>
-    </Space>
+          <List
+            bordered
+            dataSource={activities}
+            loading={loading}
+            renderItem={(activity) => <ActivityListItem activity={activity} />}
+          />
+        </div>
+      </Col>
+      <Col span={24}>
+        <div>
+          <Button
+            className={"t-load-more-button"}
+            onClick={() => setPage(page + 1)}
+            disabled={total === activities.length}
+          >
+            {i18n("RecentActivityList.button.loadMore")}
+          </Button>
+          <Typography.Text className="t-loaded-total">
+            {i18n("RecentActivityList.loaded", activities.length, total)}
+          </Typography.Text>
+        </div>
+      </Col>
+    </Row>
   );
 }

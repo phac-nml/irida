@@ -834,7 +834,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+	@PreAuthorize("hasRole('ROLE_USER')")
 	public int getNumberAnalysesByUser(User user) {
 		return analysisSubmissionRepository.countAnalysesRanByUser(user);
 	}

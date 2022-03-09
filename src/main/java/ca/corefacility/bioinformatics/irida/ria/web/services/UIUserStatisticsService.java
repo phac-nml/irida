@@ -25,7 +25,8 @@ public class UIUserStatisticsService {
 	private SampleService sampleService;
 	private AnalysisSubmissionService analysisSubmissionService;
 
-	public UIUserStatisticsService(UserService userService, ProjectService projectService, SampleService sampleService, AnalysisSubmissionService analysisSubmissionService) {
+	public UIUserStatisticsService(UserService userService, ProjectService projectService, SampleService sampleService,
+			AnalysisSubmissionService analysisSubmissionService) {
 		this.userService = userService;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
@@ -49,7 +50,7 @@ public class UIUserStatisticsService {
 		// Get Number of Samples for user through projects
 		int numberOfSamples = 0;
 
-		for(Project project : projectList) {
+		for (Project project : projectList) {
 			numberOfSamples += sampleService.getNumberOfSamplesForProject(project);
 		}
 

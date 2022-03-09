@@ -18,23 +18,12 @@ public class UserStatisticsResponse {
 		return numberOfProjects;
 	}
 
-	public void setNumberOfProjects(int numberOfProjects) {
-		this.numberOfProjects = numberOfProjects;
-	}
-
 	public int getNumberOfSamples() {
 		return numberOfSamples;
-	}
-
-	public void setNumberOfSamples(int numberOfSamples) {
-		this.numberOfSamples = numberOfSamples;
 	}
 
 	public int getNumberOfAnalyses() {
 		return numberOfAnalyses;
 	}
 
-	public void setNumberOfAnalyses(int numberOfAnalyses) {
-		this.numberOfAnalyses = numberOfAnalyses;
-	}
 }
