@@ -12,6 +12,21 @@ public class UserEditRequest {
 	private String userLocale;
 	private String enabled;
 
+	public UserEditRequest() {
+
+	}
+
+	public UserEditRequest(String firstName, String lastName, String email, String phoneNumber, String systemRole,
+			String userLocale, String enabled) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.phoneNumber = phoneNumber;
+		this.systemRole = systemRole;
+		this.userLocale = userLocale;
+		this.enabled = enabled;
+	}
+
 	public String getFirstName() {
 		return firstName;
 	}
