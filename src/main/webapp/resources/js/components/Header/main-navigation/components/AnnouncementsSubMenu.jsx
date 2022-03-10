@@ -2,14 +2,13 @@
  * @file AnnouncementsSubMenu is the announcements drop down in the main navigation bar.
  */
 
-import { Badge, Dropdown, Menu, Space, Typography } from "antd";
+import { Badge, Button, Menu, Space, Typography } from "antd";
 import React from "react";
 import { PriorityFlag } from "../../../../pages/announcement/components/PriorityFlag";
 import { BORDERED_LIGHT } from "../../../../styles/borders";
 import { fromNow } from "../../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { LinkButton } from "../../../Buttons/LinkButton";
-import { IconBell } from "../../../icons/Icons";
+import { IconBell, IconShoppingCart } from "../../../icons/Icons";
 import { TYPES, useAnnouncements } from "./announcements-context";
 import { theme } from "../../../../utilities/theme-utilities";
 import { grey6 } from "../../../../styles/colors";
@@ -48,8 +47,24 @@ export function AnnouncementsSubMenu() {
     });
   }
 
-  const aMenu = (
-    <Menu className="t-announcements-submenu" theme={theme}>
+  return (
+    <Menu.SubMenu
+      theme="light"
+      key="announcements"
+      title={
+        <Badge
+          className="t-announcements-badge"
+          count={announcements && announcements.filter((a) => !a.read).length}
+        >
+          <Button
+            type="link"
+            href="#"
+            className="t-announcements-button"
+            icon={<IconBell />}
+          />
+        </Badge>
+      }
+    >
       {announcements.length == 0 ? (
         <Menu.Item
           key="announcement_none"
@@ -64,49 +79,37 @@ export function AnnouncementsSubMenu() {
             key={"announcement_" + index}
             style={{ width: 400, borderBottom: BORDERED_LIGHT }}
           >
-            <LinkButton
-              title={item.title}
-              text={
-                <Space size="large">
-                  <PriorityFlag hasPriority={item.priority} />
-                  <span>
-                    <TextStyle strong ellipsis style={{ width: 310 }}>
-                      {item.title}
-                    </TextStyle>
-                    <br />
-                    <TextStyle type="secondary" style={{ fontSize: `.8em` }}>
-                      {fromNow({ date: item.createdDate })}
-                    </TextStyle>
-                  </span>
-                </Space>
-              }
+            <Button
+              type="link"
               onClick={() => {
                 showAnnouncementModal(index);
               }}
-            />
+            >
+              <Space size="small">
+                <PriorityFlag hasPriority={item.priority} />
+                <span>
+                  <TextStyle strong ellipsis style={{ width: 310 }}>
+                    {item.title}
+                  </TextStyle>
+                  <br />
+                  <TextStyle type="secondary" style={{ fontSize: `.8em` }}>
+                    {fromNow({ date: item.createdDate })}
+                  </TextStyle>
+                </span>
+              </Space>
+            </Button>
           </Menu.Item>
         ))
       )}
       <Menu.Item key="view_all">
-        <LinkButton
+        <a
+          type="link"
           className="t-announcements-view-all"
-          text={i18n("AnnouncementsSubMenu.view-all")}
           href={setBaseUrl(`/announcements/user/list`)}
-        />
-      </Menu.Item>
-    </Menu>
-  );
-
-  return (
-    <Dropdown overlay={aMenu}>
-      <span className="announcements-dropdown">
-        <Badge
-          className="t-announcements-badge"
-          count={announcements && announcements.filter((a) => !a.read).length}
         >
-          <IconBell style={{ color: iconColor }} />
-        </Badge>
-      </span>
-    </Dropdown>
+          {i18n("AnnouncementsSubMenu.view-all")}
+        </a>
+      </Menu.Item>
+    </Menu.SubMenu>
   );
 }
