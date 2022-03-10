@@ -40,7 +40,6 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.ProjectSubscriptionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.*;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
@@ -49,6 +48,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.ProjectSubscriptionService;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl;
 
 import com.google.common.collect.ImmutableList;
@@ -75,7 +75,7 @@ public class ProjectServiceImplTest {
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	private ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private SequencingObjectRepository sequencingObjectRepository;
-	private ProjectSubscriptionRepository projectSubscriptionRepository;
+	private ProjectSubscriptionService projectSubscriptionService;
 
 	private Validator validator;
 
@@ -92,10 +92,10 @@ public class ProjectServiceImplTest {
 		prfjRepository = mock(ProjectReferenceFileJoinRepository.class);
 		ugpjRepository = mock(UserGroupProjectJoinRepository.class);
 		sequencingObjectRepository = mock(SequencingObjectRepository.class);
-		projectSubscriptionRepository = mock(ProjectSubscriptionRepository.class);
+		projectSubscriptionService = mock(ProjectSubscriptionService.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
 				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository, ugpjRepository,
-				ssoRepository, pasRepository, sequencingObjectRepository, projectSubscriptionRepository, validator);
+				ssoRepository, pasRepository, sequencingObjectRepository, projectSubscriptionService, validator);
 	}
 
 	@Test
@@ -108,8 +108,7 @@ public class ProjectServiceImplTest {
 		u.setUsername(username);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken(u, null);
-		SecurityContextHolder.getContext()
-				.setAuthentication(auth);
+		SecurityContextHolder.getContext().setAuthentication(auth);
 
 		when(projectRepository.save(p)).thenReturn(p);
 		when(userRepository.loadUserByUsername(username)).thenReturn(u);
@@ -118,8 +117,7 @@ public class ProjectServiceImplTest {
 
 		verify(projectRepository).save(p);
 		verify(userRepository).loadUserByUsername(username);
-		SecurityContextHolder.getContext()
-				.setAuthentication(null);
+		SecurityContextHolder.getContext().setAuthentication(null);
 	}
 
 	@Test
@@ -482,11 +480,7 @@ public class ProjectServiceImplTest {
 		final List<Join<Project, User>> projects = projectService.getProjectsForUser(u);
 
 		assertEquals(2, projects.size(), "User should be in 2 projects.");
-		assertTrue(projects.stream()
-				.anyMatch(p -> p.getSubject()
-						.equals(p1)), "Should have found user project join.");
-		assertTrue(projects.stream()
-				.anyMatch(p -> p.getSubject()
-						.equals(p2)), "Should have found group project join.");
+		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(p1)), "Should have found user project join.");
+		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(p2)), "Should have found group project join.");
 	}
 }

@@ -28,21 +28,17 @@ import org.springframework.stereotype.Service;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UserGroupWithoutOwnerException;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.subscription.ProjectSubscription;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin.UserGroupRole;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
-import ca.corefacility.bioinformatics.irida.repositories.ProjectSubscriptionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.service.ProjectSubscriptionService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 
@@ -51,13 +47,11 @@ import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
  */
 @Service
 public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> implements UserGroupService {
-
 	private final UserGroupJoinRepository userGroupJoinRepository;
 	private final UserRepository userRepository;
 	private final UserGroupProjectJoinRepository userGroupProjectJoinRepository;
 	private final UserGroupRepository userGroupRepository;
-	private final ProjectUserJoinRepository pujRepository;
-	private final ProjectSubscriptionRepository projectSubscriptionRepository;
+	private final ProjectSubscriptionService projectSubscriptionService;
 
 	/**
 	 * Create a new {@link UserGroupServiceImpl}.
@@ -66,23 +60,20 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	 * @param userGroupJoinRepository        the {@link UserGroupJoinRepository}
 	 * @param userRepository                 the {@link UserRepository}
 	 * @param userGroupProjectJoinRepository The {@link UserGroupProjectJoinRepository}
-	 * @param pujRepository                  The {@link ProjectUserJoinRepository}
-	 * @param projectSubscriptionRepository  The {@link ProjectSubscriptionRepository}
+	 * @param projectSubscriptionService     The {@link ProjectSubscriptionService}
 	 * @param validator                      the {@link Validator}
 	 */
 	@Autowired
 	public UserGroupServiceImpl(final UserGroupRepository userGroupRepository,
 			final UserGroupJoinRepository userGroupJoinRepository, final UserRepository userRepository,
 			final UserGroupProjectJoinRepository userGroupProjectJoinRepository,
-			final ProjectUserJoinRepository pujRepository,
-			final ProjectSubscriptionRepository projectSubscriptionRepository, final Validator validator) {
+			final ProjectSubscriptionService projectSubscriptionService, final Validator validator) {
 		super(userGroupRepository, validator, UserGroup.class);
 		this.userGroupRepository = userGroupRepository;
 		this.userGroupJoinRepository = userGroupJoinRepository;
 		this.userRepository = userRepository;
 		this.userGroupProjectJoinRepository = userGroupProjectJoinRepository;
-		this.pujRepository = pujRepository;
-		this.projectSubscriptionRepository = projectSubscriptionRepository;
+		this.projectSubscriptionService = projectSubscriptionService;
 	}
 
 	/**
@@ -93,8 +84,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	@Transactional
 	public UserGroup create(UserGroup object) throws EntityExistsException, ConstraintViolationException {
 		final UserGroup ug = super.create(object);
-		final Authentication auth = SecurityContextHolder.getContext()
-				.getAuthentication();
+		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		final User currentUser = userRepository.loadUserByUsername(auth.getName());
 		addUserToGroup(currentUser, ug, UserGroupRole.GROUP_OWNER);
 		return ug;
@@ -234,18 +224,11 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#userGroup, 'canUpdateUserGroup')")
 	public UserGroupJoin addUserToGroup(final User user, final UserGroup userGroup, final UserGroupRole role) {
-
-		//TODO: I dunno if I like this...
 		Collection<UserGroupProjectJoin> userGroupProjectJoins = userGroupProjectJoinRepository.findProjectsByUserGroup(
 				userGroup);
 		for (UserGroupProjectJoin userGroupProjectJoin : userGroupProjectJoins) {
 			Project project = userGroupProjectJoin.getSubject();
-			ProjectRole projectRole = userGroupProjectJoin.getProjectRole();
-			ProjectSubscription projectSubscription = projectSubscriptionRepository.findProjectSubscriptionByUserAndProject(
-					user, project);
-			if (projectSubscription == null) {
-				projectSubscriptionRepository.save(new ProjectSubscription(user, project, false));
-			}
+			projectSubscriptionService.addProjectSubscriptionForProjectAndUser(project, user);
 		}
 
 		final UserGroupJoin join = new UserGroupJoin(user, userGroup, role);
@@ -259,8 +242,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#userGroup, 'canUpdateUserGroup')")
 	public UserGroupJoin changeUserGroupRole(final User user, final UserGroup userGroup, final UserGroupRole role)
 			throws UserGroupWithoutOwnerException {
-		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup))
-				.orElse(null);
+		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup)).orElse(null);
 
 		if (!allowRoleChange(userGroup, join.getRole())) {
 			throw new UserGroupWithoutOwnerException(
@@ -277,43 +259,29 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#userGroup, 'canUpdateUserGroup')")
 	public void removeUserFromGroup(final User user, final UserGroup userGroup) throws UserGroupWithoutOwnerException {
-		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup))
-				.orElse(null);
+		final UserGroupJoin join = userGroupJoinRepository.findOne(findUserGroupJoin(user, userGroup)).orElse(null);
 
 		if (!allowRoleChange(userGroup, join.getRole())) {
 			throw new UserGroupWithoutOwnerException(
 					"Cannot remove this user from the group because it would leave the group without an owner.");
 		}
 
-		//TODO: I dunno if I like this...
 		Collection<UserGroupProjectJoin> userGroupProjectJoins = userGroupProjectJoinRepository.findProjectsByUserGroup(
 				userGroup);
 		for (UserGroupProjectJoin userGroupProjectJoin : userGroupProjectJoins) {
 			Project project = userGroupProjectJoin.getSubject();
-			ProjectRole projectRole = userGroupProjectJoin.getProjectRole();
-			ProjectUserJoin projectUserjoin = pujRepository.getProjectJoinForUser(project, user);
-			if (projectUserjoin == null) {
-				Collection<UserGroupProjectJoin> userGroupProjects = userGroupProjectJoinRepository.findByProjectAndUser(
-						project, user);
-				if (userGroupProjects.size() == 1) {
-					ProjectSubscription projectSubscription = projectSubscriptionRepository.findProjectSubscriptionByUserAndProject(
-							user, project);
-					projectSubscriptionRepository.delete(projectSubscription);
-				}
-			}
+			projectSubscriptionService.removeProjectSubscriptionForProjectAndUser(project, user, true);
 		}
 
 		userGroupJoinRepository.delete(join);
 	}
 
 	/**
-	 * Check to see if changing the role will change the number of group owners
-	 * to 0.
+	 * Check to see if changing the role will change the number of group owners to 0.
 	 *
 	 * @param userGroup the group to check
 	 * @param role      the role you're going to be changing from
-	 * @return false if the role change results in no group owners, true
-	 * otherwise
+	 * @return false if the role change results in no group owners, true otherwise
 	 */
 	public boolean allowRoleChange(final UserGroup userGroup, final UserGroupRole role) {
 		if (!role.equals(UserGroupRole.GROUP_OWNER)) {
@@ -324,8 +292,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 		}
 
 		long count = getUsersForGroup(userGroup).stream()
-				.filter(g -> g.getRole()
-						.equals(UserGroupRole.GROUP_OWNER))
+				.filter(g -> g.getRole().equals(UserGroupRole.GROUP_OWNER))
 				.count();
 
 		// There must always be an owner on the project
@@ -382,8 +349,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	}
 
 	/**
-	 * A convenience specification to get a {@link UserGroupJoin} from a
-	 * {@link User} and {@link UserGroup}.
+	 * A convenience specification to get a {@link UserGroupJoin} from a {@link User} and {@link UserGroup}.
 	 *
 	 * @param user      the user
 	 * @param userGroup the group
@@ -399,8 +365,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	}
 
 	/**
-	 * A convenience specification to filter {@link UserGroupJoin} in a
-	 * {@link UserGroup} by the username.
+	 * A convenience specification to filter {@link UserGroupJoin} in a {@link UserGroup} by the username.
 	 *
 	 * @param username  the username to filter on
 	 * @param userGroup the group to filter
@@ -412,15 +377,14 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 			@Override
 			public Predicate toPredicate(final Root<UserGroupJoin> root, final CriteriaQuery<?> query,
 					final CriteriaBuilder cb) {
-				return cb.and(cb.like(root.get("user")
-						.get("username"), "%" + username + "%"), cb.equal(root.get("group"), userGroup));
+				return cb.and(cb.like(root.get("user").get("username"), "%" + username + "%"),
+						cb.equal(root.get("group"), userGroup));
 			}
 		};
 	}
 
 	/**
-	 * A convenience specification to filter {@link UserGroupProjectJoin} by
-	 * group name and project.
+	 * A convenience specification to filter {@link UserGroupProjectJoin} by group name and project.
 	 *
 	 * @param searchName the name to search on
 	 * @param p          the project to get joins for
@@ -432,8 +396,8 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 			@Override
 			public Predicate toPredicate(final Root<UserGroupProjectJoin> root, final CriteriaQuery<?> query,
 					final CriteriaBuilder cb) {
-				return cb.and(cb.like(root.get("userGroup")
-						.get("name"), "%" + searchName + "%"), cb.equal(root.get("project"), p));
+				return cb.and(cb.like(root.get("userGroup").get("name"), "%" + searchName + "%"),
+						cb.equal(root.get("project"), p));
 			}
 		};
 	}

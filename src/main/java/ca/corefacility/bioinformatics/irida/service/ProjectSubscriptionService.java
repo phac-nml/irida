@@ -40,4 +40,23 @@ public interface ProjectSubscriptionService extends CRUDService<Long, ProjectSub
 	 */
 	public List<Project> getProjectsForUserWithEmailSubscriptions(User user);
 
+	/**
+	 * Create a new project subscription associated with a {@link Project} and {@link User}.
+	 *
+	 * @param project the project
+	 * @param user    the user
+	 * @return The newly created project subscription
+	 */
+	public ProjectSubscription addProjectSubscriptionForProjectAndUser(Project project, User user);
+
+	/**
+	 * Remove the project subscription associated with a {@link Project} and {@link User}.
+	 *
+	 * @param checkProjectAccess whether or not to check if project level access exists before checking group level
+	 *                           access
+	 * @param project            the project
+	 * @param user               the user
+	 */
+	public void removeProjectSubscriptionForProjectAndUser(Project project, User user, boolean checkProjectAccess);
+
 }
