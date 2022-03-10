@@ -47,7 +47,8 @@ public enum ProjectRole {
 	}
 
 	/**
-	 * Compares and returns the highest level {@link ProjectRole} from a {@link ProjectUserJoin} and a collection of {@link UserGroupProjectJoin}s.
+	 * Compares and returns the highest level {@link ProjectRole} from a {@link ProjectUserJoin} and a collection of
+	 * {@link UserGroupProjectJoin}s.
 	 *
 	 * @param projectUserJoin       a user's {@link ProjectUserJoin}
 	 * @param userGroupProjectJoins a collection of {@link UserGroupProjectJoin}
@@ -62,8 +63,7 @@ public enum ProjectRole {
 		}
 
 		for (UserGroupProjectJoin userGroupProjectJoin : userGroupProjectJoins) {
-			if (projectRole.getLevel() < userGroupProjectJoin.getProjectRole()
-					.getLevel()) {
+			if (projectRole == null || projectRole.getLevel() < userGroupProjectJoin.getProjectRole().getLevel()) {
 				projectRole = userGroupProjectJoin.getProjectRole();
 				break;
 			}
