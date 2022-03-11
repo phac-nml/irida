@@ -12,6 +12,7 @@ Changes
 * [UI]: Updated Create Remote Api to use Ant Design.
 * [UI]: Fixed bug preventing updating of project details. (22.01.4)
 * [UI]: Removed old bootstrap client details/edit page and updated with a modal on the clients listing page.
+* [UI]: Updated Dashboard Recent Activity to use Ant Design.
 
 21.09 to 22.01
 --------------

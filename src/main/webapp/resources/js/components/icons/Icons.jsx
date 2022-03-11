@@ -12,6 +12,7 @@ import {
   CloudServerOutlined,
   CloudUploadOutlined,
   CodeOutlined,
+  DatabaseOutlined,
   DeleteOutlined,
   DownloadOutlined,
   DownOutlined,
@@ -247,3 +248,7 @@ export const IconCheckCircle = ({ ...props }) => (
 export const IconCheck = ({ ...props }) => <CheckOutlined {...props} />;
 
 export const IconFileUpload = ({ ...props }) => <UploadOutlined {...props} />;
+
+export const IconDatabaseOutlined = ({ ...props }) => (
+  <DatabaseOutlined {...props} />
+);
