@@ -65,7 +65,9 @@ public enum ProjectRole {
 		for (UserGroupProjectJoin userGroupProjectJoin : userGroupProjectJoins) {
 			if (projectRole == null || projectRole.getLevel() < userGroupProjectJoin.getProjectRole().getLevel()) {
 				projectRole = userGroupProjectJoin.getProjectRole();
-				break;
+				if (projectRole.equals(PROJECT_OWNER)) {
+					break;
+				}
 			}
 		}
 
