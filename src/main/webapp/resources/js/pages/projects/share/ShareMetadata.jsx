@@ -1,4 +1,4 @@
-import { Table, Tag } from "antd";
+import { Alert, Table, Tag } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -43,7 +43,7 @@ export function ShareMetadata() {
   const { data: targetExistingFields } = useGetMetadataFieldsForProjectQuery(
     targetProject.identifier,
     {
-      skip: !targetProject,
+      skip: !targetProject || metadataRestrictions.length === 0,
     }
   );
 
@@ -142,11 +142,18 @@ export function ShareMetadata() {
     },
   ];
 
-  return (
+  return metadataRestrictions.length ? (
     <Table
       className="t-meta-table"
       columns={columns}
       dataSource={metadataRestrictions}
+    />
+  ) : (
+    <Alert
+      message={i18n("ShareMetadata.none.message")}
+      description={i18n("ShareMetadata.none.description")}
+      type="info"
+      showIcon
     />
   );
 }

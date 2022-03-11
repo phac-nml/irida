@@ -88,7 +88,6 @@ const initialState = (() => {
   const samples = [];
   const associated = [];
   allSamples.forEach((sample) => {
-    console.log(sample.projectId, currentProject);
     if (Number(sample.projectId) === Number(currentProject)) {
       samples.push(sample);
     } else {
