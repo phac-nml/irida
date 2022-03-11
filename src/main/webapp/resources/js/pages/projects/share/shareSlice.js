@@ -36,7 +36,7 @@ export const updateMoveSamples = createAction(
 );
 
 /**
- * Sets up the original restrictions to be the ame as what are on the source project.
+ * Sets up the original restrictions to be the same as what are on the source project.
  * This will change once a target project is selected
  */
 export const setMetadataRestrictions = createAction(

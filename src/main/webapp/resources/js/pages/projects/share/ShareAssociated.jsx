@@ -2,6 +2,7 @@ import React from "react";
 import { Alert, Collapse, List, Button } from "antd";
 import { useSelector } from "react-redux";
 import { grey1 } from "../../../styles/colors";
+import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 
 /**
  * React showing which sample belong to an associated project and cannot be moved or shared
@@ -19,7 +20,7 @@ export default function ShareAssociated() {
             header={
               associated.length === 1
                 ? i18n("ShareAssociated.header-singular")
-                : i18n("ShareAssociated.header-plural", associated.lenth)
+                : i18n("ShareAssociated.header-plural", associated.length)
             }
           >
             <List
@@ -31,7 +32,9 @@ export default function ShareAssociated() {
                 <List.Item
                   extra={<Button type="link">{sample.projectName}</Button>}
                 >
-                  {sample.name}
+                  <SampleDetailViewer sampleId={sample.id}>
+                    <Button size="small">{sample.name}</Button>
+                  </SampleDetailViewer>
                 </List.Item>
               )}
             />

@@ -27,9 +27,9 @@ export function ShareSamples({ samples = [] }) {
       <Typography.Title level={5}>
         {i18n("ShareSamplesList.title")}
       </Typography.Title>
+      {SHOW_ASSOCIATED && <ShareAssociated />}
       {SHOW_SAMPLES && (
         <>
-          <ShareAssociated />
           <SharedSamplesList list={samples} currentProject={currentProject} />
           <Checkbox
             className="t-move-checkbox"
