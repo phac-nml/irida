@@ -14,6 +14,9 @@ public class SampleMinimal {
 	private Long id;
 
 	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdDate;
+
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
 	private String sampleName;
@@ -22,6 +25,10 @@ public class SampleMinimal {
 
 	public Long getId() {
 		return id;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
 	}
 
 	public Date getModifiedDate() {
