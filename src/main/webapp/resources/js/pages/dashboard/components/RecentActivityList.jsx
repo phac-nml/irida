@@ -1,4 +1,4 @@
-import { Button, Col, List, Row, Typography } from "antd";
+import { Button, Col, List, Row, Space, Typography } from "antd";
 import React from "react";
 import { ActivityListItem } from "../../../components/activities/ActivityListItem";
 import { BORDERED_LIGHT } from "../../../styles/borders";
@@ -41,7 +41,7 @@ export function RecentActivityList({
         </div>
       </Col>
       <Col span={24}>
-        <div>
+        <Space>
           <Button
             className={"t-load-more-button"}
             onClick={() => setPage(page + 1)}
@@ -52,7 +52,7 @@ export function RecentActivityList({
           <Typography.Text className="t-loaded-total">
             {i18n("RecentActivityList.loaded", activities.length, total)}
           </Typography.Text>
-        </div>
+        </Space>
       </Col>
     </Row>
   );
