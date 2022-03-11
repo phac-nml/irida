@@ -35,7 +35,7 @@ export function CartLink() {
   }, []);
 
   return (
-    <Menu.Item key="cart-link">
+    <div>
       <Badge count={count}>
         <Button
           type="link"
@@ -44,6 +44,6 @@ export function CartLink() {
           icon={<IconShoppingCart data-count={count} />}
         />
       </Badge>
-    </Menu.Item>
+    </div>
   );
 }

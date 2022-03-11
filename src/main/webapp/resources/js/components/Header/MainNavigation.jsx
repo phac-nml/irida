@@ -22,7 +22,6 @@ const StyledHeader = styled(Header)`
   z-index: 1;
   width: 100%;
   display: flex;
-  justify-content: space-between;
 
   .ant-menu-item-active {
     background-color: transparent !important;
@@ -46,20 +45,23 @@ const StyledHeader = styled(Header)`
 export function MainNavigation() {
   return (
     <StyledHeader>
+      <a href={setBaseUrl("/")}>
+        <img
+          style={{ height: 28, width: 129 }}
+          src={setBaseUrl(`/resources/img/irida_logo_${theme}.svg`)}
+          alt={i18n("global.title")}
+        />
+      </a>
       <Menu
         theme="dark"
         mode="horizontal"
-        style={{ display: "inline-block", minWidth: 400 }}
+        style={{
+          display: "inline-block",
+          minWidth: 400,
+          border: `1px solid red`,
+        }}
+        overflowedIndicator={<span>MENU</span>}
       >
-        <Menu.Item key="home">
-          <a href={setBaseUrl("/")}>
-            <img
-              style={{ height: 28, width: 129 }}
-              src={setBaseUrl(`/resources/img/irida_logo_${theme}.svg`)}
-              alt={i18n("global.title")}
-            />
-          </a>
-        </Menu.Item>
         <Menu.SubMenu
           key="projects"
           title={
@@ -130,26 +132,28 @@ export function MainNavigation() {
           </Menu.Item>
         )}
       </Menu>
+      <div style={{ content: "", flexGrow: 1 }} />
+      <GlobalSearch />
+      {isAdmin && (
+        <Button
+          type="primary"
+          className="t-admin-panel-btn"
+          href={setBaseUrl("/admin")}
+        >
+          {i18n("MainNavigation.admin").toUpperCase()}
+        </Button>
+      )}
+      <CartLink />
+      <AnnouncementsSubMenu />
       <Menu
         theme="dark"
         mode="horizontal"
         defaultSelectedKeys={[""]}
-        style={{ display: "inline-block", minWidth: 300 }}
+        style={{
+          display: "inline-block",
+          border: `1px solid red`,
+        }}
       >
-        <GlobalSearch />
-        {isAdmin && (
-          <Menu.Item key="admin-panel">
-            <Button
-              type="primary"
-              className="t-admin-panel-btn"
-              href={setBaseUrl("/admin")}
-            >
-              {i18n("MainNavigation.admin").toUpperCase()}
-            </Button>
-          </Menu.Item>
-        )}
-        <CartLink />
-        <AnnouncementsSubMenu />
         <Menu.SubMenu
           key="account-dropdown-link"
           icon={<IconUser />}

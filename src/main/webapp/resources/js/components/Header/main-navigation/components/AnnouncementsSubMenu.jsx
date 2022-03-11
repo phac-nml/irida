@@ -48,68 +48,69 @@ export function AnnouncementsSubMenu() {
   }
 
   return (
-    <Menu.SubMenu
-      theme="light"
-      key="announcements"
-      title={
-        <Badge
-          className="t-announcements-badge"
-          count={announcements && announcements.filter((a) => !a.read).length}
-        >
-          <Button
-            type="link"
-            href="#"
-            className="t-announcements-button"
-            icon={<IconBell />}
-          />
-        </Badge>
-      }
-    >
-      {announcements.length == 0 ? (
-        <Menu.Item
-          key="announcement_none"
-          style={{ width: 400, borderBottom: BORDERED_LIGHT }}
-          disabled={true}
-        >
-          {i18n("AnnouncementsSubMenu.emptyList")}
-        </Menu.Item>
-      ) : (
-        announcements.map((item, index) => (
-          <Menu.Item
-            key={"announcement_" + index}
-            style={{ width: 400, borderBottom: BORDERED_LIGHT }}
+    <Menu theme="dark" mode="horizontal">
+      <Menu.SubMenu
+        key="announcements"
+        title={
+          <Badge
+            className="t-announcements-badge"
+            count={announcements && announcements.filter((a) => !a.read).length}
           >
             <Button
               type="link"
-              onClick={() => {
-                showAnnouncementModal(index);
-              }}
-            >
-              <Space size="small">
-                <PriorityFlag hasPriority={item.priority} />
-                <span>
-                  <TextStyle strong ellipsis style={{ width: 310 }}>
-                    {item.title}
-                  </TextStyle>
-                  <br />
-                  <TextStyle type="secondary" style={{ fontSize: `.8em` }}>
-                    {fromNow({ date: item.createdDate })}
-                  </TextStyle>
-                </span>
-              </Space>
-            </Button>
+              href="#"
+              className="t-announcements-button"
+              icon={<IconBell />}
+            />
+          </Badge>
+        }
+      >
+        {announcements.length == 0 ? (
+          <Menu.Item
+            key="announcement_none"
+            style={{ width: 400, borderBottom: BORDERED_LIGHT }}
+            disabled={true}
+          >
+            {i18n("AnnouncementsSubMenu.emptyList")}
           </Menu.Item>
-        ))
-      )}
-      <Menu.Item key="view_all">
-        <a
-          type="link"
-          className="t-announcements-view-all"
-          href={setBaseUrl(`/announcements/user/list`)}
-        >
-          {i18n("AnnouncementsSubMenu.view-all")}
-        </a>
-      </Menu.Item>
-    </Menu.SubMenu>
+        ) : (
+          announcements.map((item, index) => (
+            <Menu.Item
+              key={"announcement_" + index}
+              style={{ width: 400, borderBottom: BORDERED_LIGHT }}
+            >
+              <Button
+                type="link"
+                onClick={() => {
+                  showAnnouncementModal(index);
+                }}
+              >
+                <Space size="small">
+                  <PriorityFlag hasPriority={item.priority} />
+                  <span>
+                    <TextStyle strong ellipsis style={{ width: 310 }}>
+                      {item.title}
+                    </TextStyle>
+                    <br />
+                    <TextStyle type="secondary" style={{ fontSize: `.8em` }}>
+                      {fromNow({ date: item.createdDate })}
+                    </TextStyle>
+                  </span>
+                </Space>
+              </Button>
+            </Menu.Item>
+          ))
+        )}
+        <Menu.Item key="view_all">
+          <a
+            type="link"
+            className="t-announcements-view-all"
+            href={setBaseUrl(`/announcements/user/list`)}
+          >
+            {i18n("AnnouncementsSubMenu.view-all")}
+          </a>
+        </Menu.Item>
+      </Menu.SubMenu>
+    </Menu>
   );
 }

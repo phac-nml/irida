@@ -6,12 +6,6 @@ import { primaryColour, theme } from "../../../../utilities/theme-utilities";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconSearch } from "../../../icons/Icons";
 
-const SearchMenuItem = styled(Menu.Item)`
-  &.ant-menu-item-active {
-    background-color: transparent !important;
-  }
-`;
-
 const SearchForm = styled.form`
   background-color: transparent;
   color: ${theme === "dark" ? "#fff" : "#000"};
@@ -36,15 +30,13 @@ const SearchForm = styled.form`
  */
 export function GlobalSearch() {
   return (
-    <SearchMenuItem key="global-search">
-      <SearchForm method="get" action={setBaseUrl("/search")}>
-        <Input
-          name="query"
-          className="t-global-search"
-          prefix={<IconSearch />}
-          placeholder={i18n("nav.main.search")}
-        />
-      </SearchForm>
-    </SearchMenuItem>
+    <SearchForm method="get" action={setBaseUrl("/search")}>
+      <Input
+        name="query"
+        className="t-global-search"
+        prefix={<IconSearch />}
+        placeholder={i18n("nav.main.search")}
+      />
+    </SearchForm>
   );
 }
