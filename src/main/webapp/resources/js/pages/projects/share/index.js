@@ -134,6 +134,8 @@ function ShareApp() {
         })),
       });
       setFinished(true);
+      // Remove the share from session storage
+      window.sessionStorage.removeItem("share");
     } catch (e) {
       setError(e);
     }
