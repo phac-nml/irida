@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareMetadataRestriction;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
@@ -20,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSa
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.collect.ImmutableList;
@@ -45,10 +47,11 @@ public class UISampleServiceTest {
 		UpdateSamplePermission updateSamplePermission = mock(UpdateSamplePermission.class);
 		SequencingObjectService sequencingObjectService = mock(SequencingObjectService.class);
 		GenomeAssemblyService genomeAssemblyService = mock(GenomeAssemblyService.class);
+		MetadataTemplateService metadataTemplateService = mock(MetadataTemplateService.class);
 		MessageSource messageSource = mock(MessageSource.class);
 		UICartService cartService = mock(UICartService.class);
 		service = new UISampleService(sampleService, projectService, updateSamplePermission, sequencingObjectService,
-				genomeAssemblyService, messageSource, cartService);
+				genomeAssemblyService, metadataTemplateService, messageSource, cartService);
 
 		// DATA
 		SAMPLE_1.setId(SAMPLE_ID);
@@ -88,6 +91,7 @@ public class UISampleServiceTest {
 		request.setCurrentId(CURRENT_PROJECT_ID);
 		request.setTargetId(TARGET_PROJECT_ID);
 		request.setSampleIds(ImmutableList.of(SAMPLE_ID));
+		request.setRestrictions(ImmutableList.of(new ShareMetadataRestriction(1L, "LEVEL_1")));
 		request.setRemove(false);
 		request.setLocked(false);
 		service.shareSamplesWithProject(request, Locale.CANADA);
