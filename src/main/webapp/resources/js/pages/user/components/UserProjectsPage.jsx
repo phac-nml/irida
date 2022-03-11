@@ -3,8 +3,12 @@ import { useParams } from "react-router-dom";
 import { notification, Space, Switch, Table, Typography } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { formatDate } from "../../../utilities/date-utilities";
-import { useGetUserProjectDetailsQuery } from "../../../apis/users/users";
-import { useUpdateEmailSubscriptionMutation } from "../../../apis/projects/project-events";
+import { useUpdateProjectSubscriptionMutation } from "../../../apis/projects/project-subscriptions";
+import { PagedTableProvider } from "../../../components/ant.design/PagedTable";
+import {
+  PagedTable,
+  PagedTableContext,
+} from "../../../components/ant.design/PagedTable";
 
 /**
  * React component to display the user projects page.
@@ -13,16 +17,15 @@ import { useUpdateEmailSubscriptionMutation } from "../../../apis/projects/proje
  */
 export default function UserProjectsPage() {
   const { userId } = useParams();
-  const { data, isSuccess } = useGetUserProjectDetailsQuery(userId);
-  const [updateEmailSubscription] = useUpdateEmailSubscriptionMutation();
+  const [updateProjectSubscription] = useUpdateProjectSubscriptionMutation();
   const columns = [
     {
-      title: "ID",
+      title: i18n("UserProjectsPage.table.projectId"),
       dataIndex: "projectId",
       key: "projectId",
     },
     {
-      title: "Name",
+      title: i18n("UserProjectsPage.table.projectName"),
       dataIndex: "projectName",
       key: "projectName",
       render: (text, record) => (
@@ -30,7 +33,7 @@ export default function UserProjectsPage() {
       ),
     },
     {
-      title: "Role",
+      title: i18n("UserProjectsPage.table.roleName"),
       dataIndex: "roleName",
       key: "roleName",
       render: (text) => {
@@ -40,55 +43,39 @@ export default function UserProjectsPage() {
       },
     },
     {
-      title: "Date Added",
+      title: i18n("UserProjectsPage.table.createdDate"),
       dataIndex: "createdDate",
       key: "createdDate",
       render: (text) => formatDate({ date: text }),
     },
     {
-      title: "Subscribed",
+      title: i18n("UserProjectsPage.table.emailSubscribed"),
       dataIndex: "emailSubscribed",
       key: "emailSubscribed",
-      render: (text, record) => <Switch defaultChecked={text} onChange={(checked) => updateProjectSubscription(checked, record)} />,
+      render: (text, record) => <Switch defaultChecked={text} onChange={(checked) => updateSubscription(checked, record)} />,
     },
   ];
 
-  console.log(data);
-
-  function updateProjectSubscription(checked, record) {
-    console.log(
-      "projectId = " +
-        record.projectId +
-        ", userId = " +
-        userId +
-        ", subscribe = " +
-        checked
-    );
-    updateEmailSubscription({ projectId: record.projectId, userId, subscribe: checked })
+  function updateSubscription(checked, record) {
+    updateProjectSubscription({ id: record.id, subscribe: checked })
       .then((payload) => {
         notification.success({
-          message: "SUCCESS",
+          message: i18n("UserProjectsPage.notification.success"),
         });
       })
       .catch((error) => {
         notification.error({
-          message: "FAILED",
+          message: i18n("UserProjectsPage.notification.error"),
         });
       });
   };
 
-  if (isSuccess) {
-    return (
-      <Space direction="vertical">
-        <Typography.Title level={4}>Projects</Typography.Title>
-        <Table
-          dataSource={data.projects}
-          columns={columns}
-          rowKey={(row) => row.rowKey}
-        />
-      </Space>
-    );
-  } else {
-    return null;
-  }
+  return (
+    <Space direction="vertical">
+      <Typography.Title level={4}>{i18n("UserProjectsPage.title")}</Typography.Title>
+      <PagedTableProvider url={setBaseUrl(`/ajax/subscriptions/${userId}/user/list`)} column="project.id" order="ascend">
+        <PagedTable columns={columns} search={false} />
+      </PagedTableProvider>
+    </Space>
+  );
 }

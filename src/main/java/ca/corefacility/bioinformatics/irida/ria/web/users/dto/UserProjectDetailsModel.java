@@ -3,53 +3,33 @@ package ca.corefacility.bioinformatics.irida.ria.web.users.dto;
 import java.util.Date;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
+import ca.corefacility.bioinformatics.irida.model.subscription.ProjectSubscription;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 
 /**
  * Used to represent user {@link Project}s on the UI user account projects page.
  */
-public class UserProjectDetailsModel implements Comparable<UserProjectDetailsModel> {
+public class UserProjectDetailsModel extends TableModel {
 	private Long projectId;
 	private String projectName;
 	private String roleName;
-	private String groupName;
 	private Date createdDate;
 	private boolean isManager;
 	private boolean isEmailSubscribed;
 
-	public UserProjectDetailsModel(ProjectUserJoin join) {
-		Project project = join.getSubject();
-		this.projectId = project.getId();
-		this.projectName = project.getName();
+	public UserProjectDetailsModel(ProjectSubscription projectSubscription, ProjectRole projectRole) {
+		super(projectSubscription.getId(), projectSubscription.getProject()
+				.getName(), projectSubscription.getCreatedDate(), null);
 
-		if (join != null) {
-			this.isManager = join.getProjectRole()
-					.equals(ProjectRole.PROJECT_OWNER);
-			this.isEmailSubscribed = join.isEmailSubscription();
-			this.roleName = join.getProjectRole()
-					.toString();
-			this.groupName = null;
-			this.createdDate = join.getCreatedDate();
-		}
-	}
-
-	public UserProjectDetailsModel(UserGroupProjectJoin join) {
-		Project project = join.getSubject();
-		this.projectId = project.getId();
-		this.projectName = project.getName();
-
-		if (join != null) {
-			this.isManager = join.getProjectRole()
-					.equals(ProjectRole.PROJECT_OWNER);
-			this.isEmailSubscribed = false;
-			this.roleName = join.getProjectRole()
-					.toString();
-			this.groupName = join.getObject()
-					.getName();
-			this.createdDate = join.getCreatedDate();
-		}
+		this.projectId = projectSubscription.getProject()
+				.getId();
+		this.projectName = projectSubscription.getProject()
+				.getName();
+		this.isManager = projectRole.equals(ProjectRole.PROJECT_OWNER);
+		this.isEmailSubscribed = projectSubscription.isEmailSubscription();
+		this.roleName = projectRole.toString();
+		this.createdDate = projectSubscription.getCreatedDate();
 	}
 
 	public Long getProjectId() {
@@ -76,14 +56,6 @@ public class UserProjectDetailsModel implements Comparable<UserProjectDetailsMod
 		this.roleName = roleName;
 	}
 
-	public String getGroupName() {
-		return groupName;
-	}
-
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
-	}
-
 	public Date getCreatedDate() {
 		return createdDate;
 	}
@@ -108,20 +80,4 @@ public class UserProjectDetailsModel implements Comparable<UserProjectDetailsMod
 		isEmailSubscribed = emailSubscribed;
 	}
 
-	@Override
-	public int compareTo(UserProjectDetailsModel other) {
-		int result = 0;
-
-		if (this.roleName.equals(other.roleName)) {
-			result = this.createdDate.compareTo(other.createdDate);
-		} else {
-			if (this.roleName.equals(ProjectRole.PROJECT_OWNER.toString())) {
-				result = 1;
-			} else if (this.roleName.equals(ProjectRole.PROJECT_USER.toString())) {
-				result = -1;
-			}
-		}
-
-		return result;
-	}
 }

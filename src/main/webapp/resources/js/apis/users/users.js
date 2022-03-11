@@ -24,28 +24,6 @@ export const usersApi = createApi({
       providesTags: ["Users"],
     }),
     /*
-    Get user projects.
-    */
-    getUserProjectDetails: build.query({
-      query: (userId) => ({
-        url: `/${userId}/projects/list`,
-      }),
-      /**
-      Transforming the response to include a unique row key for rendering the ant design table.
-      */
-      transformResponse(response) {
-        const transformed = {
-          ...response,
-          projects: response.projects.map((project, index) => ({
-            ...project,
-            rowKey: `user-projects-row-${index}`,
-          })),
-        };
-        return transformed;
-      },
-      providesTags: ["Projects"],
-    }),
-    /*
     Edit user details.
     */
     editUserDetails: build.mutation({

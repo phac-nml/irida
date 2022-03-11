@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -57,6 +58,7 @@ public class UIUsersService {
 	private final List<Role> adminAllowedRoles = Lists.newArrayList(Role.ROLE_ADMIN, Role.ROLE_MANAGER, Role.ROLE_USER,
 			Role.ROLE_TECHNICIAN, Role.ROLE_SEQUENCER);
 
+	@Autowired
 	public UIUsersService(UserService userService, ProjectService projectService, EmailController emailController,
 			IridaApiServicesConfig.IridaLocaleList locales, MessageSource messageSource,
 			PasswordEncoder passwordEncoder) {
@@ -296,18 +298,6 @@ public class UIUsersService {
 		}
 
 		return errors;
-	}
-
-	/**
-	 * Get the projects associated with a user
-	 *
-	 * @param userId - the id for the user to show project details for
-	 * @return user project details for a specific user
-	 */
-	public UserProjectDetailsResponse getUserProjects(Long userId) {
-		User user = userService.read(userId);
-		List<UserProjectDetailsModel> projectsForUser = projectService.getUserProjectDetailsForUser(user);
-		return new UserProjectDetailsResponse(projectsForUser);
 	}
 
 	/**
