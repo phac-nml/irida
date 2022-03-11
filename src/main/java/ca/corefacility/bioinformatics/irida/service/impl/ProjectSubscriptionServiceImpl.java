@@ -122,21 +122,16 @@ public class ProjectSubscriptionServiceImpl extends CRUDServiceImpl<Long, Projec
 	@Override
 	@PreAuthorize(
 			"hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings') or hasPermission(#userGroup, 'canUpdateUserGroup')")
-	public void removeProjectSubscriptionForProjectAndUser(Project project, User user, boolean checkProjectAccess) {
-		ProjectUserJoin projectUserjoin = null;
+	public void removeProjectSubscriptionForProjectAndUser(Project project, User user) {
+		ProjectUserJoin projectUserjoin = pujRepository.getProjectJoinForUser(project, user);
+		Collection<UserGroupProjectJoin> userGroupProjects = ugpjRepository.findByProjectAndUser(project, user);
 
-		if (checkProjectAccess) {
-			projectUserjoin = pujRepository.getProjectJoinForUser(project, user);
-		}
-
-		if (projectUserjoin == null) {
-			Collection<UserGroupProjectJoin> userGroupProjects = ugpjRepository.findByProjectAndUser(project, user);
-			if (userGroupProjects.isEmpty() || userGroupProjects.size() == 1) {
-				ProjectSubscription projectSubscription = projectSubscriptionRepository.findProjectSubscriptionByUserAndProject(
-						user, project);
-				if (projectSubscription != null) {
-					projectSubscriptionRepository.delete(projectSubscription);
-				}
+		if ((projectUserjoin != null && userGroupProjects.isEmpty()) || (projectUserjoin == null
+				&& userGroupProjects.size() == 1)) {
+			ProjectSubscription projectSubscription = projectSubscriptionRepository.findProjectSubscriptionByUserAndProject(
+					user, project);
+			if (projectSubscription != null) {
+				projectSubscriptionRepository.delete(projectSubscription);
 			}
 		}
 	}

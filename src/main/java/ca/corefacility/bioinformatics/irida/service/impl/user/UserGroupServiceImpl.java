@@ -270,7 +270,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 				userGroup);
 		for (UserGroupProjectJoin userGroupProjectJoin : userGroupProjectJoins) {
 			Project project = userGroupProjectJoin.getSubject();
-			projectSubscriptionService.removeProjectSubscriptionForProjectAndUser(project, user, true);
+			projectSubscriptionService.removeProjectSubscriptionForProjectAndUser(project, user);
 		}
 
 		userGroupJoinRepository.delete(join);

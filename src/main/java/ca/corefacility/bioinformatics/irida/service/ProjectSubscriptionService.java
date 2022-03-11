@@ -52,11 +52,9 @@ public interface ProjectSubscriptionService extends CRUDService<Long, ProjectSub
 	/**
 	 * Remove the project subscription associated with a {@link Project} and {@link User}.
 	 *
-	 * @param checkProjectAccess whether or not to check if project level access exists before checking group level
-	 *                           access
-	 * @param project            the project
-	 * @param user               the user
+	 * @param project the project
+	 * @param user    the user
 	 */
-	public void removeProjectSubscriptionForProjectAndUser(Project project, User user, boolean checkProjectAccess);
+	public void removeProjectSubscriptionForProjectAndUser(Project project, User user);
 
 }

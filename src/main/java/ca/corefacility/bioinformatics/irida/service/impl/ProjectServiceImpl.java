@@ -261,7 +261,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		if (!allowRoleChange(projectJoinForUser.getSubject(), projectJoinForUser.getProjectRole())) {
 			throw new ProjectWithoutOwnerException("Removing this user would leave the project without an owner");
 		}
-		projectSubscriptionService.removeProjectSubscriptionForProjectAndUser(project, user, false);
+		projectSubscriptionService.removeProjectSubscriptionForProjectAndUser(project, user);
 		pujRepository.delete(projectJoinForUser);
 	}
 
@@ -276,7 +276,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		Collection<UserGroupJoin> userGroupJoins = userGroupJoinRepository.findUsersInGroup(userGroup);
 		for (UserGroupJoin userGroupJoin : userGroupJoins) {
 			User user = userGroupJoin.getSubject();
-			projectSubscriptionService.removeProjectSubscriptionForProjectAndUser(project, user, true);
+			projectSubscriptionService.removeProjectSubscriptionForProjectAndUser(project, user);
 		}
 		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
 		if (!allowRoleChange(project, j.getProjectRole())) {
