@@ -59,6 +59,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequ
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -93,6 +94,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	private final SequencingObjectRepository sequencingObjectRepository;
 	private final ProjectRepository projectRepository;
 	private final ProjectSubscriptionService projectSubscriptionService;
+	private final UserGroupJoinRepository userGroupJoinRepository;
 
 	@Autowired
 	public ProjectServiceImpl(ProjectRepository projectRepository, SampleRepository sampleRepository,
@@ -102,7 +104,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			final UserGroupProjectJoinRepository ugpjRepository, SampleSequencingObjectJoinRepository ssoRepository,
 			ProjectAnalysisSubmissionJoinRepository pasRepository,
 			SequencingObjectRepository sequencingObjectRepository,
-			ProjectSubscriptionService projectSubscriptionService, Validator validator) {
+			ProjectSubscriptionService projectSubscriptionService, UserGroupJoinRepository userGroupJoinRepository,
+			Validator validator) {
 		super(projectRepository, validator, Project.class);
 		this.projectRepository = projectRepository;
 		this.sampleRepository = sampleRepository;
@@ -117,6 +120,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		this.pasRepository = pasRepository;
 		this.sequencingObjectRepository = sequencingObjectRepository;
 		this.projectSubscriptionService = projectSubscriptionService;
+		this.userGroupJoinRepository = userGroupJoinRepository;
 	}
 
 	/**
@@ -269,7 +273,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@LaunchesProjectEvent(UserGroupRemovedProjectEvent.class)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
 	public void removeUserGroupFromProject(Project project, UserGroup userGroup) throws ProjectWithoutOwnerException {
-		Set<UserGroupJoin> userGroupJoins = userGroup.getUsers();
+		Collection<UserGroupJoin> userGroupJoins = userGroupJoinRepository.findUsersInGroup(userGroup);
 		for (UserGroupJoin userGroupJoin : userGroupJoins) {
 			User user = userGroupJoin.getSubject();
 			projectSubscriptionService.removeProjectSubscriptionForProjectAndUser(project, user, true);
@@ -701,7 +705,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
 	public Join<Project, UserGroup> addUserGroupToProject(final Project project, final UserGroup userGroup,
 			final ProjectRole role) {
-		Set<UserGroupJoin> userGroupJoins = userGroup.getUsers();
+		Collection<UserGroupJoin> userGroupJoins = userGroupJoinRepository.findUsersInGroup(userGroup);
 		for (UserGroupJoin userGroupJoin : userGroupJoins) {
 			User user = userGroupJoin.getSubject();
 			projectSubscriptionService.addProjectSubscriptionForProjectAndUser(project, user);

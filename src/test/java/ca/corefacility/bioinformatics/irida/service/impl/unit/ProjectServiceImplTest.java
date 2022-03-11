@@ -46,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequ
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ProjectSubscriptionService;
@@ -76,6 +77,7 @@ public class ProjectServiceImplTest {
 	private ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private SequencingObjectRepository sequencingObjectRepository;
 	private ProjectSubscriptionService projectSubscriptionService;
+	private UserGroupJoinRepository userGroupJoinRepository;
 
 	private Validator validator;
 
@@ -93,9 +95,11 @@ public class ProjectServiceImplTest {
 		ugpjRepository = mock(UserGroupProjectJoinRepository.class);
 		sequencingObjectRepository = mock(SequencingObjectRepository.class);
 		projectSubscriptionService = mock(ProjectSubscriptionService.class);
+		userGroupJoinRepository = mock(UserGroupJoinRepository.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
 				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository, ugpjRepository,
-				ssoRepository, pasRepository, sequencingObjectRepository, projectSubscriptionService, validator);
+				ssoRepository, pasRepository, sequencingObjectRepository, projectSubscriptionService,
+				userGroupJoinRepository, validator);
 	}
 
 	@Test

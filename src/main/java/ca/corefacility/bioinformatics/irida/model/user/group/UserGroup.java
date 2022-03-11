@@ -19,12 +19,9 @@ import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
- * A collection of {@link User} accounts is a {@link UserGroup}. The
- * {@link UserGroup} can be assigned permissions, similar to a {@link User}
- * account, but applies the permissions to all members of the {@link UserGroup}.
+ * A collection of {@link User} accounts is a {@link UserGroup}. The {@link UserGroup} can be assigned permissions,
+ * similar to a {@link User} account, but applies the permissions to all members of the {@link UserGroup}.
  */
 @Entity
 @Table(name = "user_group")
@@ -52,7 +49,7 @@ public class UserGroup implements MutableIridaThing {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifiedDate;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, mappedBy = "group")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "group")
 	private Set<UserGroupJoin> users;
 
 	@NotAudited
@@ -151,11 +148,6 @@ public class UserGroup implements MutableIridaThing {
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
-	}
-
-	@JsonIgnore
-	public Set<UserGroupJoin> getUsers() {
-		return users;
 	}
 
 	public String getDescription() {
