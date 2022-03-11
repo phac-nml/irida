@@ -3,6 +3,7 @@ import { Alert, Collapse, List, Button } from "antd";
 import { useSelector } from "react-redux";
 import { grey1 } from "../../../styles/colors";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 /**
  * React showing which sample belong to an associated project and cannot be moved or shared
@@ -30,7 +31,14 @@ export default function ShareAssociated() {
               dataSource={associated}
               renderItem={(sample) => (
                 <List.Item
-                  extra={<Button type="link">{sample.projectName}</Button>}
+                  extra={
+                    <Button
+                      type="link"
+                      href={setBaseUrl(`projects/${sample.projectId}`)}
+                    >
+                      {sample.projectName}
+                    </Button>
+                  }
                 >
                   <SampleDetailViewer sampleId={sample.id}>
                     <Button size="small">{sample.name}</Button>
