@@ -7,8 +7,7 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.ClientDetailsPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.CreateClientPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.admin.AdminClientsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSyncPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
@@ -67,7 +66,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 	public void testRemoteProjectManagerPageSetup() {
 		LoginPage.loginAsAdmin(driver());
 
-		CreateClientPage createClientPage;
+		AdminClientsPage clientsPage = AdminClientsPage.goTo(driver());
 		ProjectSyncPage page;
 
 		String clientId = "myClient";
@@ -75,11 +74,9 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 
 		//create the oauth client
 		String redirectLocation = RemoteApiUtilities.getRedirectLocation();
-		createClientPage = new CreateClientPage(driver());
-		createClientPage.goTo();
-		createClientPage.createClientWithDetails(clientId, "authorization_code", redirectLocation, true, false);
-		ClientDetailsPage detailsPage = new ClientDetailsPage(driver());
-		clientSecret = detailsPage.getClientSecret();
+		clientsPage.createClientWithDetails(clientId, "authorization_code", redirectLocation, AdminClientsPage.READ_YES,
+				AdminClientsPage.WRITE_NO);
+		clientSecret = clientsPage.getClientSecret(clientId);
 
 		RemoteApiUtilities.addRemoteApi(driver(), clientId, clientSecret);
 		page = ProjectSyncPage.goTo(driver());

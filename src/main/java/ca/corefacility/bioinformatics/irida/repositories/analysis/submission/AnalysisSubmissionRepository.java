@@ -163,6 +163,14 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 			+ "from AnalysisSubmission s where s.createdDate >= ?1 group by function('date_format', s.createdDate, ?2)")
 	public List<GenericStatModel> countAnalysesRanGrouped(Date createdDate, String groupByFormat);
 
+	/**
+	 * Get the count of {@link AnalysisSubmission}s ran by user
+	 *
+	 * @param user The user to get the count of analyses for
+	 * @return count of analyses ran by user
+	 */
+	@Query("select count(s.id) from AnalysisSubmission s where s.submitter = ?1")
+	public int countAnalysesRanByUser(User user);
 }
 
 
