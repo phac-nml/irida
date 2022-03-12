@@ -34,10 +34,14 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
 	static final String USER_IN_GROUP = "(p in (select ugpj.project from UserGroupJoin ugj, UserGroupProjectJoin ugpj where ugj.group = ugpj.userGroup and ugj.user = :forUser))";
 	static final String PROJECT_PERMISSIONS = "(" + USER_ON_PROJECT + " or " + USER_IN_GROUP + ")";
 
+	static final String MANAGER_ON_PROJECT = "(p in (select puj.project from ProjectUserJoin puj where puj.user = :forUser and puj.projectRole = ca.corefacility.bioinformatics.irida.model.enums.ProjectRole.PROJECT_OWNER))";
+	static final String MANAGER_IN_GROUP = "(p in (select ugpj.project from UserGroupJoin ugj, UserGroupProjectJoin ugpj where ugj.group = ugpj.userGroup and ugj.user = :forUser and ugpj.projectRole = ca.corefacility.bioinformatics.irida.model.enums.ProjectRole.PROJECT_OWNER))";
+	static final String PROJECT_MANAGER_PERMISSION = "(" + MANAGER_ON_PROJECT + " or " + MANAGER_IN_GROUP + ")";
+
 	/**
 	 * Load up a page of {@link Project}s, excluding the specified
 	 * {@link Project}.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the project to search for
 	 * @param exclude
@@ -54,7 +58,7 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
 	/**
 	 * Load a page of {@link Project}s for a specific {@link User}, excluding a
 	 * {@link Project}.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the project to search for
 	 * @param exclude
@@ -65,8 +69,9 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long> {
 	 *            the page request
 	 * @return a page of {@link Project}.
 	 */
-	@Query("from Project p where " + PROJECT_NAME_LIKE + " and " + EXCLUDE_PROJECT + " and " + PROJECT_PERMISSIONS)
-	public Page<Project> findProjectsByNameExcludingProjectForUser(final @Param("projectName") String name,
+	@Query("from Project p where " + PROJECT_NAME_LIKE + " and " + EXCLUDE_PROJECT + " and "
+			+ PROJECT_MANAGER_PERMISSION)
+	public Page<Project> findManageableProjectsByName(final @Param("projectName") String name,
 			final @Param("exclude") Project exclude, final @Param("forUser") User user, final Pageable page);
 
 	/**

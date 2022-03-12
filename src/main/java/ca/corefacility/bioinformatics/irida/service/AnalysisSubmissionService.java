@@ -361,6 +361,15 @@ public interface AnalysisSubmissionService extends CRUDService<Long, AnalysisSub
 	public List<GenericStatModel> getAnalysesRanGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod);
 
 	/**
+	 * Get count of {@link AnalysisSubmission} for the user
+	 * grouped by the format provided.
+	 *
+	 * @param user The user identifier
+	 * @return Count of analyses ran by user
+	 */
+	public int getNumberAnalysesByUser(User user);
+
+	/**
 	 * Class to store the number of running and queued analyses
 	 */
 	class AnalysisServiceStatus {

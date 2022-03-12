@@ -27,9 +27,9 @@ const HoverItem = styled.div`
  * @param file The file to display the header for
  * @param fileObjectId The sequencingobject or genomeassembly identifier
  * @param type The type of file object (sequencingobject or genomeassembly)
- * @function remove files from sample function
+ * @param {function} remove files from sample function
  * @param displayConcatenationCheckbox Whether to display checkbox or not
- * @function set default sequencing object for sample
+ * @param {function} set default sequencing object for sample
  * @param autoDefaultFirstPair the first pair in the list of pairs (if displaying paired end files)
  * @returns {JSX.Element}
  * @constructor

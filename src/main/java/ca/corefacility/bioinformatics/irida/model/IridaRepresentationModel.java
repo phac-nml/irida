@@ -19,13 +19,11 @@ import com.google.common.collect.ImmutableList;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 
 /**
- * Adds a collection of {@link Link}s to extending objects. Similar to
- * {@link RepresentationModel}
- * 
- * @see RepresentationModel
+ * Adds a collection of {@link Link}s to extending objects. Similar to {@link RepresentationModel}
  *
+ * @see RepresentationModel
  */
-@JsonIgnoreProperties(ignoreUnknown = true, value = {"hibernateLazyInitializer"})
+@JsonIgnoreProperties(ignoreUnknown = true, value = { "hibernateLazyInitializer" })
 public class IridaRepresentationModel {
 	private final List<Link> links;
 
@@ -35,9 +33,8 @@ public class IridaRepresentationModel {
 
 	/**
 	 * Adds the given link to the resource.
-	 * 
-	 * @param link
-	 *            The link to add to the resource
+	 *
+	 * @param link The link to add to the resource
 	 */
 	public void add(Link link) {
 		Assert.notNull(link, "Link must not be null!");
@@ -46,9 +43,8 @@ public class IridaRepresentationModel {
 
 	/**
 	 * Adds all given {@link Link}s to the resource.
-	 * 
-	 * @param links
-	 *            The list of links to add to the resource
+	 *
+	 * @param links The list of links to add to the resource
 	 */
 	public void add(Iterable<Link> links) {
 		Assert.notNull(links, "Given links must not be null!");
@@ -59,7 +55,7 @@ public class IridaRepresentationModel {
 
 	/**
 	 * Returns whether the resource contains {@link Link}s at all.
-	 * 
+	 *
 	 * @return true/false whether the resource contains the link
 	 */
 	public boolean hasLinks() {
@@ -68,18 +64,17 @@ public class IridaRepresentationModel {
 
 	/**
 	 * Returns whether the resource contains a {@link Link} with the given rel.
-	 * 
-	 * @param rel
-	 *            The rel name to test
+	 *
+	 * @param rel The rel name to test
 	 * @return true/false if it has a link with the given rel
 	 */
 	public boolean hasLink(String rel) {
-		return getLink(rel) != null;
+		return getLink(rel).isPresent();
 	}
 
 	/**
 	 * Returns all {@link Link}s contained in this resource.
-	 * 
+	 *
 	 * @return The list of links for this resource
 	 */
 	@XmlElement(name = "link", namespace = Link.ATOM_NAMESPACE)
@@ -97,9 +92,8 @@ public class IridaRepresentationModel {
 
 	/**
 	 * Returns the link with the given rel.
-	 * 
-	 * @param rel
-	 *            the String rel to get a link for
+	 *
+	 * @param rel the String rel to get a link for
 	 * @return the link with the given rel or {@literal null} if none found.
 	 */
 	public Optional<Link> getLink(String rel) {
@@ -149,9 +143,8 @@ public class IridaRepresentationModel {
 	}
 
 	/**
-	 * Convenience method for getting the self rel href for an object read from
-	 * a remote site
-	 * 
+	 * Convenience method for getting the self rel href for an object read from a remote site
+	 *
 	 * @return String href if available, null otherwise
 	 */
 	@JsonIgnore
@@ -161,11 +154,9 @@ public class IridaRepresentationModel {
 	}
 
 	/**
-	 * Set the {@link RemoteStatus} for this object if it was read from a remote
-	 * source
-	 * 
-	 * @param status
-	 *            the {@link RemoteStatus} object
+	 * Set the {@link RemoteStatus} for this object if it was read from a remote source
+	 *
+	 * @param status the {@link RemoteStatus} object
 	 */
 	// TODO: Make these abstract
 	public void setRemoteStatus(RemoteStatus status) {
@@ -173,9 +164,8 @@ public class IridaRepresentationModel {
 	}
 
 	/**
-	 * Get the {@link RemoteStatus} for this object if it was read from a remote
-	 * source
-	 * 
+	 * Get the {@link RemoteStatus} for this object if it was read from a remote source
+	 *
 	 * @return a {@link RemoteStatus}
 	 */
 	@JsonIgnore

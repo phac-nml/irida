@@ -23,6 +23,7 @@ The main IRIDA dashboard has several different areas:
 * The [cart](#cart), for data selections,
 * The [user settings](#user-settings) menu,
 * The [logout](#logout) button,
+* The [user project statistics section](#user-project-statistics) section,
 * The [recent activities](#recent-activities) section, and
 * The [updates](#updates-announcements) section.
 
@@ -33,7 +34,14 @@ Main Menu
 
 The main menu area is at the top, left-hand side of the IRIDA dashboard:
 
-![The main menu in the dashboard.](images/main-menu.png)
+**Manager:**
+
+![The manager main menu in the dashboard.](images/main-menu-user.png)
+
+**User:**
+
+![The user main menu in the dashboard.](images/main-menu-manager.png)
+
 
 ### Projects
 
@@ -88,11 +96,22 @@ Settings
 
 The <i class="fa fa-cog"></i> menu allows you to manage a number of settings for IRIDA.
 
-![Settings panel](images/settings-panel.png)
+**Manager**
 
-### Groups
+![Settings panel manager](images/settings-panel-manager.png)
 
-From the main menu, you can click on the "Groups" link to view the groups available on the system.  You may create a new user group by clicking on "Create Group".
+**User**
+
+![Settings panel user](images/settings-panel-user.png)
+
+### Users (Manager)
+
+From the main menu, you can click on the "Users" link and select "Users" from the dropdown to view the users available on the system.  You may add a new user by clicking on "Add User" button.
+
+
+### Groups (Manager)
+
+From the main menu, you can click on the "Users" link and select "User Groups" from the dropdown to view the groups available on the system.  You may create a new user group by clicking on "Create New User Group" button.
 
 For more information about managing user groups, please see the [managing user groups](../user-groups) section.
 
@@ -135,6 +154,18 @@ For more information about the user settings page, see the [user settings page](
 Once you've finished working with IRIDA, we strongly recommend that you log out, especially if you are using a shared computer.
 
 You can log out of IRIDA by clicking on the user settings menu in the top, right-hand corner of the page, and *Logout*.
+
+User Project Statistics
+------------------
+
+The user project statistics appear at the top of the page.
+
+![User project statistics section.](images/user-project-statistics.png)
+
+The statistics section lists:
+* The number of total projects the user is on (includes direct and indirect through a user group)
+* The number of total samples in the projects
+* The number of total analyses ran by the user
 
 Recent Activities
 -----------------
