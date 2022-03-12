@@ -506,6 +506,26 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public List<Project> getProjectsForUserUnique(User user) {
+		final List<Project> projectListUser = pujRepository.getProjectsForUser(user).stream().map(u -> u.getSubject()).collect(Collectors.toList());
+
+		final List<Project> projectListUserGroup = ugpjRepository.findProjectsByUser(user)
+				.stream()
+				.filter(j -> !projectListUser.contains(j.getSubject()))
+				.map(j -> j.getSubject())
+				.collect(Collectors.toList());
+
+		return new ImmutableList.Builder<Project>().addAll(projectListUser)
+				.addAll(projectListUserGroup)
+				.build();
+	}
+
+	/**
 	 * {@inheritDoc }
 	 */
 	@Override
@@ -645,7 +665,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 				.equals(Role.ROLE_ADMIN)) {
 			return projectRepository.findAllProjectsByNameExcludingProject(searchName, p, pr);
 		} else {
-			return projectRepository.findProjectsByNameExcludingProjectForUser(searchName, p, loggedIn, pr);
+			return projectRepository.findManageableProjectsByName(searchName, p, loggedIn, pr);
 		}
 	}
 

@@ -38,16 +38,29 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleGenomeAssemblyFileModel;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleSequencingObjectFileModel;
+
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleFiles;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareMetadataRestriction;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
+
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
@@ -63,9 +76,9 @@ public class UISampleService {
 	private final UpdateSamplePermission updateSamplePermission;
 	private final SequencingObjectService sequencingObjectService;
 	private final GenomeAssemblyService genomeAssemblyService;
+	private final MetadataTemplateService metadataTemplateService;
 	private final MessageSource messageSource;
 	private final UICartService cartService;
-	private final MetadataTemplateService metadataTemplateService;
 	private final MetadataEntryRepository metadataEntryRepository;
 	private final MetadataRestrictionRepository metadataRestrictionRepository;
 
@@ -81,9 +94,9 @@ public class UISampleService {
 		this.updateSamplePermission = updateSamplePermission;
 		this.sequencingObjectService = sequencingObjectService;
 		this.genomeAssemblyService = genomeAssemblyService;
+		this.metadataTemplateService = metadataTemplateService;
 		this.messageSource = messageSource;
 		this.cartService = cartService;
-		this.metadataTemplateService = metadataTemplateService;
 		this.metadataEntryRepository = metadataEntryRepository;
 		this.metadataRestrictionRepository = metadataRestrictionRepository;
 	}
@@ -741,6 +754,18 @@ public class UISampleService {
 				throw new Exception(messageSource.getMessage("server.ShareSamples.copy-error",
 						new Object[] { targetProject.getLabel() }, locale));
 			}
+		}
+
+		// Check metadata restrictions on samples in target project
+		List<ShareMetadataRestriction> restrictions = request.getRestrictions();
+		List<MetadataTemplateField> fields = metadataTemplateService.getPermittedFieldsForCurrentUser(targetProject,
+				false);
+		for (ShareMetadataRestriction restriction : restrictions) {
+			fields.stream()
+					.filter(f -> Objects.equals(restriction.getIdentifier(), f.getId()))
+					.findFirst()
+					.ifPresent(field -> metadataTemplateService.setMetadataRestriction(targetProject, field,
+							ProjectMetadataRole.fromString(restriction.getRestriction())));
 		}
 	}
 

@@ -12,6 +12,7 @@ import {
   CloudServerOutlined,
   CloudUploadOutlined,
   CodeOutlined,
+  DatabaseOutlined,
   DeleteOutlined,
   DownloadOutlined,
   DownOutlined,
@@ -214,6 +215,10 @@ export const IconCalendarTwoTone = ({ ...props }) => (
 
 export const IconShare = ({ ...props }) => <ShareAltOutlined {...props} />;
 
+export const IconWarningOutlined = ({ ...props }) => (
+  <WarningOutlined {...props} />
+);
+
 /*
 File Type Icons
  */
@@ -248,6 +253,6 @@ export const IconCheck = ({ ...props }) => <CheckOutlined {...props} />;
 
 export const IconFileUpload = ({ ...props }) => <UploadOutlined {...props} />;
 
-export const IconWarningOutlined = ({ ...props }) => (
-  <WarningOutlined {...props} />
+export const IconDatabaseOutlined = ({ ...props }) => (
+  <DatabaseOutlined {...props} />
 );

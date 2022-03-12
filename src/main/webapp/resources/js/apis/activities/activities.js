@@ -22,3 +22,31 @@ export function getProjectActivities({ projectId, page = 0 }) {
     return Promise.reject(i18n("ProjectActivity.error"));
   }
 }
+
+/**
+ * Get a page of recent activities for all of user's projects
+ *
+ * @param {number} page - page of activities requested
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export function getUserActivities({ page = 0 }) {
+  try {
+    return axios.get(`${BASE_URL}/user?page=${page}`).then(({ data }) => data);
+  } catch (e) {
+    return Promise.reject(i18n("RecentActivity.loadError"));
+  }
+}
+
+/**
+ * Get a page of recent activities for all projects
+ *
+ * @param {number} page - page of activities requested
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export function getAllRecentActivities({ page = 0 }) {
+  try {
+    return axios.get(`${BASE_URL}/all?page=${page}`).then(({ data }) => data);
+  } catch (e) {
+    return Promise.reject(i18n("RecentActivity.loadError"));
+  }
+}
