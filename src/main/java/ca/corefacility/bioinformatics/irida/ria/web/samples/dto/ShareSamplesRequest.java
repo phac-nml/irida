@@ -32,6 +32,8 @@ public class ShareSamplesRequest {
 	 */
 	private Boolean remove;
 
+	private List<ShareMetadataRestriction> restrictions;
+
 	public Long getCurrentId() {
 		return currentId;
 	}
@@ -70,5 +72,13 @@ public class ShareSamplesRequest {
 
 	public void setRemove(Boolean remove) {
 		this.remove = remove;
+	}
+
+	public List<ShareMetadataRestriction> getRestrictions() {
+		return restrictions;
+	}
+
+	public void setRestrictions(List<ShareMetadataRestriction> restrictions) {
+		this.restrictions = restrictions;
 	}
 }

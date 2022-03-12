@@ -36,6 +36,11 @@ import { SampleDetailViewer } from "../../../components/samples/SampleDetailView
 import { IconExclamationCircle } from "../../../components/icons/Icons";
 
 /*
+When the page loads clear any previously stored samples from the session storage
+*/
+window.onload = () => window.sessionStorage.removeItem("share");
+
+/*
 This is required to use select2 inside a modal.
 This is required to use select2 inside a modal.
  */
@@ -401,6 +406,7 @@ const config = Object.assign({}, tableConfig, {
      */
     row.dataset.info = JSON.stringify({
       projectId: data.projectId,
+      projectName: data.projectName,
       id: data.id,
       sampleName: data.sampleName,
       owner: data.owner,

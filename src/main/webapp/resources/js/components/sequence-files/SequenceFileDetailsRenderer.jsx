@@ -8,8 +8,8 @@ import { IconDownloadFile } from "../icons/Icons";
  *
  * @param file The file to display details for
  * @param fileObjectId The sequencingobject identifier
- * @function download sequence file function
- * @function get file processing state function
+ * @param {function} download sequence file function
+ * @param {function} get file processing state function
  * @returns {JSX.Element}
  * @constructor
  */
