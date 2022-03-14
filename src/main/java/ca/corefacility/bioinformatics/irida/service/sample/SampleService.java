@@ -87,6 +87,16 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project);
 
 	/**
+	 * Get the metadata collections for a set of samples in a project. This will return a Map of {@link Sample} ID with
+	 * a Set of the {@link MetadataEntry}s
+	 *
+	 * @param project   the {@link Project} to get metadata for
+	 * @param sampleIds the {@link Sample} ids to get metadata for
+	 * @return a map of metadata
+	 */
+	public Map<Long, Set<MetadataEntry>> getMetadataForProjectSamples(Project project, List<Long> sampleIds);
+
+	/**
 	 * Find a {@link Sample} assocaited with a {@link SequencingObject}
 	 *
 	 * @param seqObject the {@link SequencingObject} to get the {@link Sample} for
@@ -233,7 +243,8 @@ public interface SampleService extends CRUDService<Long, Sample> {
 			int pageSize, Sort sort);
 
 	/**
-	 * Get a {@link Page} of {@link ProjectSampleJoinMinimal} for samples from 1 or more projects based on filtering criteria.
+	 * Get a {@link Page} of {@link ProjectSampleJoinMinimal} for samples from 1 or more projects based on filtering
+	 * criteria.
 	 *
 	 * @param projects    {@link List} of {@link Project} the {@link Sample}s must be found within.
 	 * @param sampleNames {@link List} of {@link String} of Sample names to search

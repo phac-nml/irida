@@ -223,6 +223,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	public Map<Long, Set<MetadataEntry>> getMetadataForProjectSamples(Project project, List<Long> sampleIds) {
+		return metadataEntryRepository.getMetadataForProjectSamples(project, sampleIds);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasPermission(#s, 'canUpdateSample')")
 	@Transactional
 	public Sample updateSampleMetadata(Sample s, Set<MetadataEntry> metadataToSet) {

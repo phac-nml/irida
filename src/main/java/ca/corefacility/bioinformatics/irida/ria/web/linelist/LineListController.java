@@ -8,6 +8,8 @@ import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -17,11 +19,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoinMinimal;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.*;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColumn;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField;
@@ -63,8 +63,8 @@ public class LineListController {
 	}
 
 	/**
-	 * Get a {@link List} of {@link Map} containing information from {@link MetadataEntry} for all
-	 * {@link  Sample}s in a {@link Project}
+	 * Get a {@link List} of {@link Map} containing information from {@link MetadataEntry} for all {@link Sample}s in a
+	 * {@link Project}
 	 *
 	 * @param projectId {@link Long} identifier for a {@link Project}
 	 * @return {@link List} of {@link UISampleMetadata}s of all {@link Sample} metadata in a {@link Project}
@@ -73,22 +73,41 @@ public class LineListController {
 	@ResponseBody
 	public List<UISampleMetadata> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
 		Project project = projectService.read(projectId);
+		Integer MAX_PAGE_SIZE = 5000;
+		List<UISampleMetadata> projectSamplesMetadata = new ArrayList<>();
 
 		List<Long> lockedSamplesInProject = sampleService.getLockedSamplesInProject(project);
 
-		final Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProject(project);
+		Sort sort = Sort.by(Sort.Direction.ASC, "sample.id");
 
-		List<Sample> projectSamples = sampleService.getSamplesForProjectShallow(project);
-		return projectSamples.stream()
-				.map(sample -> {
-					Set<MetadataEntry> metadata = metadataForProject.get(sample.getId());
+		//fetch MAX_PAGE_SIZE samples at a time for the project
+		Page<ProjectSampleJoinMinimal> page = sampleService.getFilteredProjectSamples(Arrays.asList(project),
+				Collections.emptyList(), "", "", "", null, null, 0, MAX_PAGE_SIZE, sort);
+		while (!page.isEmpty()) {
+			List<SampleMinimal> samples = page.stream()
+					.map(ProjectSampleJoinMinimal::getObject)
+					.collect(Collectors.toList());
+			List<Long> sampleIds = samples.stream().map(SampleMinimal::getId).collect(Collectors.toList());
+			Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProjectSamples(project,
+					sampleIds);
 
-					//check if the project owns the sample
-					boolean ownership = !lockedSamplesInProject.contains(sample.getId());
+			//for each sample
+			for (SampleMinimal s : samples) {
+				//get the metadata for that sample
+				Set<MetadataEntry> metadata = metadataForProject.get(s.getId());
 
-					return new UISampleMetadata(project, sample, ownership, metadata);
-				})
-				.collect(Collectors.toList());
+				//check if the project owns the sample
+				boolean ownership = !lockedSamplesInProject.contains(s.getId());
+
+				projectSamplesMetadata.add(new UISampleMetadata(project, s, ownership, metadata));
+			}
+
+			// Get the next page
+			page = sampleService.getFilteredProjectSamples(Arrays.asList(project), Collections.emptyList(), "", "", "",
+					null, null, page.getNumber() + 1, MAX_PAGE_SIZE, sort);
+		}
+
+		return projectSamplesMetadata;
 	}
 
 	/**
@@ -118,10 +137,11 @@ public class LineListController {
 			MetadataEntry entry = new MetadataEntry(value, "text", templateField);
 
 			//update the sample
-			sampleService.mergeSampleMetadata(sample,Sets.newHashSet(entry));
+			sampleService.mergeSampleMetadata(sample, Sets.newHashSet(entry));
 			response.setStatus(HttpServletResponse.SC_OK);
 			return "SUCCESS";
-		} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException | InvalidPropertyException e) {
+		} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException
+				| InvalidPropertyException e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return "ERROR";
 		}
@@ -145,8 +165,8 @@ public class LineListController {
 		Need all MetadataTemplate fields (either already on the project, or in templates associated with the project).
 		 */
 		List<AgGridColumn> allFields = this.getProjectMetadataTemplateFields(projectId, locale);
-		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
-				project);
+		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService
+				.getMetadataTemplatesForProject(project);
 
 		// Add a "Template" for all fields
 		templates.add(new UIMetadataTemplate(-1L,
@@ -163,11 +183,11 @@ public class LineListController {
 	}
 
 	/**
-	 * If there are any {@link UIMetadataFieldDefault} in a template that they are sent to the UI in a form that
-	 * the interface knows how to handle (e.g. a "Created Date" that is saved to a template will have an ID, but
-	 * the table will be looking for the field "irida-created" instead of "irida-##").
+	 * If there are any {@link UIMetadataFieldDefault} in a template that they are sent to the UI in a form that the
+	 * interface knows how to handle (e.g. a "Created Date" that is saved to a template will have an ID, but the table
+	 * will be looking for the field "irida-created" instead of "irida-##").
 	 *
-	 * @param field        {@link MetadataTemplateField}
+	 * @param field {@link MetadataTemplateField}
 	 * @return {@link AgGridColumn} of either {@link UIMetadataField} or {@link UIMetadataFieldDefault}
 	 */
 	private AgGridColumn mapFieldToColumn(MetadataTemplateField field, boolean canEdit) {
@@ -181,10 +201,11 @@ public class LineListController {
 	/**
 	 * Format a {@link MetadataTemplate} to be consumed by a UI instance of AgGrid.
 	 *
-	 * @param template  {@link MetadataTemplate}
-	 * @param allFieldsAgGridColumns {@link List} of {@link AgGridColumn} - this is the "All Fields" template for the {@link Project}
-	 * @return {@link List} of {@link AgGridColumn} that has all the fields in the project, but ones for this template are first
-	 * and are the only ones that are not hidden in the UI
+	 * @param template               {@link MetadataTemplate}
+	 * @param allFieldsAgGridColumns {@link List} of {@link AgGridColumn} - this is the "All Fields" template for the
+	 *                               {@link Project}
+	 * @return {@link List} of {@link AgGridColumn} that has all the fields in the project, but ones for this template
+	 *         are first and are the only ones that are not hidden in the UI
 	 */
 	private List<AgGridColumn> formatTemplateForUI(MetadataTemplate template, List<AgGridColumn> allFieldsAgGridColumns,
 			boolean canEdit) {
@@ -232,8 +253,7 @@ public class LineListController {
 		 */
 		allFieldsAgGridColumns.forEach(field -> {
 			// Don't hide the sample name as it is required for the table header
-			if(!field.getField().equals(sampleNameCol.getField()))
-			{
+			if (!field.getField().equals(sampleNameCol.getField())) {
 				field.setHide(true);
 			}
 			templateAgGridColumns.add(field);
@@ -246,7 +266,7 @@ public class LineListController {
 	 *
 	 * @param template  {@link UIMetadataTemplate}
 	 * @param projectId {@link Long} project identifier
-	 * @param locale {@link Locale}
+	 * @param locale    {@link Locale}
 	 * @param response  {@link HttpServletResponse}
 	 * @return saved or updated {@link UIMetadataTemplate}
 	 */
@@ -259,14 +279,13 @@ public class LineListController {
 		List<MetadataTemplateField> fields = new ArrayList<>();
 		for (AgGridColumn field : template.getFields()) {
 			// Don't save the sample label
-			if (!field.getField()
-					.equals(UISampleMetadata.SAMPLE_NAME)) {
-				MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataFieldByKey(
-						field.getField());
+			if (!field.getField().equals(UISampleMetadata.SAMPLE_NAME)) {
+				MetadataTemplateField metadataTemplateField = metadataTemplateService
+						.readMetadataFieldByKey(field.getField());
 				if (metadataTemplateField == null) {
 					String type = Strings.isNullOrEmpty(field.getType()) ? "text" : field.getType();
-					metadataTemplateField = metadataTemplateService.saveMetadataField(
-							new MetadataTemplateField(field.getHeaderName(), type));
+					metadataTemplateField = metadataTemplateService
+							.saveMetadataField(new MetadataTemplateField(field.getHeaderName(), type));
 				}
 				fields.add(metadataTemplateField);
 			}
@@ -287,9 +306,8 @@ public class LineListController {
 			metadataTemplate = metadataTemplateService.updateMetadataTemplateInProject(metadataTemplate);
 			response.setStatus(HttpServletResponse.SC_OK);
 		}
-		return new UIMetadataTemplate(metadataTemplate.getId(), metadataTemplate.getName(),
-				formatTemplateForUI(metadataTemplate, getProjectMetadataTemplateFields(projectId, locale),
-						canUserEdit(project)));
+		return new UIMetadataTemplate(metadataTemplate.getId(), metadataTemplate.getName(), formatTemplateForUI(
+				metadataTemplate, getProjectMetadataTemplateFields(projectId, locale), canUserEdit(project)));
 	}
 
 	/**
@@ -301,13 +319,13 @@ public class LineListController {
 	 */
 	public List<AgGridColumn> getProjectMetadataTemplateFields(@RequestParam long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
-		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService.getMetadataFieldsForProject(
-				project);
+		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService
+				.getMetadataFieldsForProject(project);
 		Set<MetadataTemplateField> fieldSet = new HashSet<>(metadataFieldsForProject);
 
 		// Need to get all the fields from the templates too!
-		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(
-				project);
+		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService
+				.getMetadataTemplatesForProject(project);
 
 		/*
 		IGNORED TEMPLATE FIELDS:
@@ -333,8 +351,7 @@ public class LineListController {
 
 		List<AgGridColumn> fields = fieldSet.stream()
 				.map(f -> new UIMetadataField(f, false, true))
-				.sorted((f1, f2) -> f1.getHeaderName()
-						.compareToIgnoreCase(f2.getHeaderName()))
+				.sorted((f1, f2) -> f1.getHeaderName().compareToIgnoreCase(f2.getHeaderName()))
 				.collect(Collectors.toList());
 
 		fields.add(0, new UIMetadataFieldDefault(messages.getMessage("linelist.field.created", new Object[] {}, locale),
@@ -375,8 +392,7 @@ public class LineListController {
 	 * @return {@link Boolean} true if user can edit on the current project
 	 */
 	private boolean canUserEdit(Project project) {
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		return projectOwnerPermission.isAllowed(authentication, project);
 	}
 }
