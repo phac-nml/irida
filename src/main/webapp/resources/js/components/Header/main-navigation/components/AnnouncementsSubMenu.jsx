@@ -30,7 +30,11 @@ export function AnnouncementsSubMenu() {
   }
 
   const Announcements = () => (
-    <List size="small" itemLayout="horizontal">
+    <List
+      className="t-announcements-submenu"
+      size="small"
+      itemLayout="horizontal"
+    >
       {announcements.map((announcement, index) => (
         <List.Item key={`announcement_${announcement.identifier}`}>
           <List.Item.Meta

@@ -148,6 +148,47 @@ export function MainNavigation() {
               </Menu.Item>
             </Menu.SubMenu>
           </Menu.SubMenu>
+
+          <Menu.SubMenu key="analysis" title={i18n("nav.main.analysis")}>
+            <Menu.Item key="analyses:user">
+              <a href={setBaseUrl(`/analysis`)}>
+                {i18n("nav.main.analysis-admin-user")}
+              </a>
+            </Menu.Item>
+            {isAdmin && (
+              <Menu.Item key="analyses:all">
+                <a href={setBaseUrl("/analysis/all")}>
+                  {i18n("nav.main.analysis-admin-all")}
+                </a>
+              </Menu.Item>
+            )}
+            <Menu.Divider />
+            <Menu.Item key="analyses:output">
+              <a href={setBaseUrl("/analysis/user/analysis-outputs")}>
+                {i18n("Analysis.outputFiles")}
+              </a>
+            </Menu.Item>
+          </Menu.SubMenu>
+
+          {!isAdmin && isManager && (
+            <Menu.SubMenu key="users" title={i18n("nav.main.users")}>
+              <Menu.Item key="user:users">
+                <a href={setBaseUrl("/users")}>{i18n("nav.main.users-list")}</a>
+              </Menu.Item>
+              <Menu.Item key="user:groups">
+                <a href={setBaseUrl("/groups")}>
+                  {i18n("nav.main.groups-list")}
+                </a>
+              </Menu.Item>
+            </Menu.SubMenu>
+          )}
+          {!isAdmin && (
+            <Menu.Item key="remote_api">
+              <Button type="link" href={setBaseUrl("/remote_api")}>
+                {i18n("nav.main.remoteapis")}
+              </Button>
+            </Menu.Item>
+          )}
         </Menu>
       )}
 
