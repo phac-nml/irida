@@ -8,10 +8,9 @@ import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.AsyncResult;
 
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsTestConfig;
@@ -56,9 +55,8 @@ import com.sun.jersey.api.client.ClientResponse;
  *
  *
  */
-@Configuration
+@TestConfiguration
 @Import({ IridaWorkflowsTestConfig.class })
-@Profile("test")
 public class IridaApiNoGalaxyTestConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiNoGalaxyTestConfig.class);
 
@@ -211,8 +209,6 @@ public class IridaApiNoGalaxyTestConfig {
 			throw new UnsupportedOperationException();
 		}
 
-		//Suppressing deprecation here because we're just implementing the method here
-		@SuppressWarnings("deprecation")
 		@Override
 		public ClientResponse fileUploadRequest(String arg0, String arg1, String arg2, File arg3) {
 			throw new UnsupportedOperationException();

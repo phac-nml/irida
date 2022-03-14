@@ -20,8 +20,11 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -178,6 +181,36 @@ public class SamplesAjaxController {
 	public ResponseEntity<AjaxResponse> getFilesForSample(@PathVariable Long id,
 			@RequestParam(required = false) Long projectId) {
 		return ResponseEntity.ok(uiSampleService.getSampleFiles(id, projectId));
+	}
+
+	/**
+	 * Get a list of all {@link Sample} identifiers within a specific project
+	 *
+	 * @param projectId Identifier for a Project
+	 * @return {@link List} of {@link Sample} identifiers
+	 */
+	@GetMapping("/identifiers")
+	public List<Long> getSampleIdsForProject(@RequestParam Long projectId) {
+		return uiSampleService.getSampleIdsForProject(projectId);
+	}
+
+	/**
+	 * Share / Move samples between projects
+	 *
+	 * @param request {@link ShareSamplesRequest} details about the samples to share
+	 * @param locale  current users {@link Locale}
+	 * @return Outcome of the share/move
+	 */
+	@PostMapping("/share")
+	public ResponseEntity<AjaxResponse> shareSamplesWithProject(@RequestBody ShareSamplesRequest request,
+			Locale locale) {
+		try {
+			uiSampleService.shareSamplesWithProject(request, locale);
+			return ResponseEntity.ok(new AjaxSuccessResponse(""));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN)
+					.body(new AjaxErrorResponse(e.getLocalizedMessage()));
+		}
 	}
 
 	/**

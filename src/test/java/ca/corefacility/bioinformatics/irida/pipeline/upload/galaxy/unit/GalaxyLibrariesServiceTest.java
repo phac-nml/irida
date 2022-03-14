@@ -1,12 +1,13 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.unit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -33,9 +34,9 @@ public class GalaxyLibrariesServiceTest {
 	/**
 	 * Setup for tests.
 	 */
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		setupLibrariesTest();
 	}
 	
@@ -52,25 +53,31 @@ public class GalaxyLibrariesServiceTest {
 	/**
 	 * Tests failing when passing a zero polling time.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void testZeroPollingTime() {
-		new GalaxyLibrariesService(librariesClient, 0, 1, 1);
+		assertThrows(IllegalArgumentException.class, () -> {
+			new GalaxyLibrariesService(librariesClient, 0, 1, 1);
+		});
 	}
 	
 	/**
 	 * Tests failing when passing a zero upload timeout.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void testZeroUploadTimeout() {
-		new GalaxyLibrariesService(librariesClient, 1, 0, 1);
+		assertThrows(IllegalArgumentException.class, () -> {
+			new GalaxyLibrariesService(librariesClient, 1, 0, 1);
+		});
 	}
 	
 	/**
 	 * Tests failing when passing a upload timeout equal to the polling time.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void testEqualPollingTimeUploadTimeout() {
-		new GalaxyLibrariesService(librariesClient, 1, 1, 1);
+		assertThrows(IllegalArgumentException.class, () -> {
+			new GalaxyLibrariesService(librariesClient, 1, 1, 1);
+		});
 	}
 	
 	/**
@@ -84,9 +91,11 @@ public class GalaxyLibrariesServiceTest {
 	/**
 	 * Tests using unsuccessful thread value.
 	 */
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void testFailThreadValue() {
-		new GalaxyLibrariesService(librariesClient, 1, 2, 0);
+		assertThrows(IllegalArgumentException.class, () -> {
+			new GalaxyLibrariesService(librariesClient, 1, 2, 0);
+		});
 	}
 	
 	/**
@@ -111,10 +120,12 @@ public class GalaxyLibrariesServiceTest {
 	 * 
 	 * @throws CreateLibraryException
 	 */
-	@Test(expected = CreateLibraryException.class)
+	@Test
 	public void testBuildEmptyLibraryFail() throws CreateLibraryException {
 		when(librariesClient.createLibrary(any(Library.class))).thenReturn(null);
 
-		new GalaxyLibrariesService(librariesClient, 1, 2, 1).buildEmptyLibrary(new GalaxyProjectName("test"));
+		assertThrows(CreateLibraryException.class, () -> {
+			new GalaxyLibrariesService(librariesClient, 1, 2, 1).buildEmptyLibrary(new GalaxyProjectName("test"));
+		});
 	}
 }

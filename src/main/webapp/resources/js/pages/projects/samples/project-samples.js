@@ -1,35 +1,46 @@
-import $ from "jquery";
-
+import axios from "axios";
+import "bootstrap-daterangepicker";
+import "bootstrap-daterangepicker/daterangepicker.css";
 import chroma from "chroma-js";
+import $ from "jquery";
+import moment from "moment";
+import "../../../../css/pages/project-samples.css";
+import { putSampleInCart } from "../../../apis/cart/cart";
 import {
   createItemLink,
   generateColumnOrderInfo,
   tableConfig,
 } from "../../../utilities/datatables-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import { download, downloadPost } from "../../../utilities/file-utilities";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 import "./../../../vendor/datatables/datatables";
 import "./../../../vendor/datatables/datatables-buttons";
 import "./../../../vendor/datatables/datatables-rowSelection";
+import "./add-sample/AddSampleButton";
+import { FILTERS, SAMPLE_EVENTS } from "./constants";
+
+import "./linker/Linker";
 import {
   SampleCartButton,
   SampleDropdownButton,
   SampleExportButton,
   SampleProjectDropdownButton,
 } from "./SampleButtons";
-import { FILTERS, SAMPLE_EVENTS } from "./constants";
-import { download } from "../../../utilities/file-utilities";
-import "../../../../css/pages/project-samples.css";
-import { putSampleInCart } from "../../../apis/cart/cart";
-import { setBaseUrl } from "../../../utilities/url-utilities";
-
-import "./linker/Linker";
-import "./add-sample/AddSampleButton";
+import "./ShareSamplesLink";
 
 /*
 This is required to use select2 inside a modal.
 This is required to use select2 inside a modal.
  */
 $.fn.modal.Constructor.prototype.enforceFocus = function () {};
+
+/*
+Keep a reference to all the modals that have been loaded onto the page
+ */
+window.IRIDA = window.IRIDA = {
+  modals: {},
+};
 
 /*
 Defaults for table popovers
@@ -97,9 +108,47 @@ const EXPORT_HANDLERS = {
   file() {
     // this is set by the object calling (i.e. download btn)
     const url = this.data("url");
-    const params = $dt.ajax.params();
-    params.type = this.data("file");
-    download(`${url}?${$.param(params)}`);
+
+    /*
+    Get the default datatable params
+     */
+    const {
+      sampleNames,
+      associated,
+      search,
+      name,
+      organism,
+      startDate,
+      endDate,
+    } = $dt.ajax.params();
+
+    /*
+    These are default params must be included.
+     */
+    const data = {
+      sampleNames: sampleNames || [],
+      search: search.value,
+      name: name || "",
+      type: this.data("file"),
+    };
+
+    /*
+    Only add the following if they are needed,
+     */
+    if (associated) {
+      data.associated = associated;
+    }
+
+    if (organism) {
+      data.organism = organism;
+    }
+
+    if (startDate && endDate) {
+      data.startDate = startDate;
+      data.endDate = endDate;
+    }
+
+    downloadPost(`${url}`, data);
   },
   ncbi() {
     const ids = getSelectedIds();
@@ -290,7 +339,7 @@ const config = Object.assign({}, tableConfig, {
       targets: [COLUMNS.SAMPLE_NAME],
       render(data, type, full) {
         const link = createItemLink({
-          url: setBaseUrl(`projects/${full.projectId}/samples/${full.id}`),
+          url: setBaseUrl(`/projects/${full.projectId}/samples/${full.id}`),
           label: full.sampleName,
           classes: ["t-sample-label"],
         });
@@ -347,6 +396,7 @@ const config = Object.assign({}, tableConfig, {
       projectId: data.projectId,
       id: data.id,
       sampleName: data.sampleName,
+      owner: data.owner,
     });
     /*
     If there are QC errors, highlight the row
@@ -444,6 +494,7 @@ $("#js-modal-wrapper").on("show.bs.modal", function (event) {
   Determine which modal to open
    */
   const btn = event.relatedTarget;
+  const scriptId = btn.data("script-id");
   const url = btn.data("url");
   const params = btn.data("params") || {};
   const script_src = btn.data("script");
@@ -454,7 +505,9 @@ $("#js-modal-wrapper").on("show.bs.modal", function (event) {
 
   let script;
   modal.load(`${url}`, { sampleIds, ...params }, function () {
-    if (typeof script_src !== "undefined") {
+    if (typeof window.IRIDA.modals[scriptId] === "function") {
+      window.IRIDA.modals[scriptId]();
+    } else if (typeof script_src !== "undefined") {
       script = document.createElement("script");
       script.type = "text/javascript";
       script.src = script_src;
@@ -469,11 +522,6 @@ $("#js-modal-wrapper").on("show.bs.modal", function (event) {
     modal.modal("hide");
     $dt.select.selectNone();
     $dt.ajax.reload();
-    // Remove the script
-    if (typeof script !== "undefined") {
-      document.getElementsByTagName("head")[0].removeChild(script);
-      script = undefined;
-    }
   });
 
   /*
@@ -515,50 +563,110 @@ filterByFileInput.addEventListener("change", handleFileSelect, false);
 Set up specific filters modal
  */
 $("#js-filter-modal-wrapper").on("show.bs.modal", function () {
-  const $wrapper = $(this);
-  const template = $wrapper.data("template");
-  const scriptUrl = $wrapper.data("script");
-  const params = {};
+  const modal = $(this);
 
-  if (ASSOCIATED_PROJECTS.size > 0) {
-    // Add a list of ids for currently visible associated projects
-    params.associated = Array.from(ASSOCIATED_PROJECTS.keys());
+  /*
+  Initial all the filter form inputs
+   */
+  const $name = modal.find("#js-name");
+  $name.val(TABLE_FILTERS.get(FILTERS.FILTER_BY_NAME));
+
+  const $organism = modal.find("#js-organism");
+  $organism.val(TABLE_FILTERS.get(FILTERS.FILTER_BY_ORGANISM));
+
+  // Get a list of organisms based on associated projects.
+  const data = {
+    associated: ASSOCIATED_PROJECTS.size
+      ? Array.from(ASSOCIATED_PROJECTS.keys())
+      : [],
+  };
+  axios
+    .get(
+      setBaseUrl(setBaseUrl(`/projects/${window.project.id}/filter/organisms`))
+    )
+    .then(({ data }) => {
+      $organism.empty();
+      $organism.append(`<option value="">---</option>`);
+      data.stringList.forEach((organism) =>
+        $organism.append(`<option value="${organism}">${organism}</option>`)
+      );
+    });
+
+  function formatDateRangeInput(start, end) {
+    $dateRangeFilter.val(
+      `${start.format(
+        i18n("project.sample.filter.date.format")
+      )} - ${end.format(i18n("project.sample.filter.date.format"))}`
+    );
   }
 
-  if (TABLE_FILTERS.has(FILTERS.FILTER_BY_NAME)) {
-    params.name = TABLE_FILTERS.get(FILTERS.FILTER_BY_NAME);
-  }
-
-  if (TABLE_FILTERS.has(FILTERS.FILTER_BY_ORGANISM)) {
-    params.organism = TABLE_FILTERS.get(FILTERS.FILTER_BY_ORGANISM);
-  }
-
-  if (
-    TABLE_FILTERS.has(FILTERS.FILTER_BY_EARLY_DATE) &&
-    TABLE_FILTERS.has(FILTERS.FILTER_BY_LATEST_DATE)
-  ) {
-    params.startDate = TABLE_FILTERS.get(FILTERS.FILTER_BY_EARLY_DATE);
-    params.endDate = TABLE_FILTERS.get(FILTERS.FILTER_BY_LATEST_DATE);
-  }
-
-  let script;
-  $wrapper.load(`${template}?${$.param(params)}`, function () {
-    script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = scriptUrl;
-    document.getElementsByTagName("head")[0].appendChild(script);
-  });
+  /*
+  Set up the date range filter.
+  This is based of off jquery date range picker (http://www.daterangepicker.com/)
+   */
+  const $dateRangeFilter = $("#js-daterange")
+    .daterangepicker({
+      autoUpdateInput: false,
+      locale: {
+        cancelLabel: "Clear",
+      },
+      showDropdowns: true,
+      ranges: {
+        [i18n("project.sample.filter.date.month")]: [
+          moment().subtract(1, "month"),
+          moment(),
+        ],
+        [i18n("project.sample.filter.date.months3")]: [
+          moment().subtract(3, "month"),
+          moment(),
+        ],
+        [i18n("project.sample.filter.date.months6")]: [
+          moment().subtract(6, "month"),
+          moment(),
+        ],
+        [i18n("project.sample.filter.date.year")]: [
+          moment().subtract(1, "year"),
+          moment(),
+        ],
+      },
+    })
+    .on("apply.daterangepicker", function (ev, picker) {
+      /*
+      Call the the apply button is clicked.
+      Formats the dates into human readable form.  This is required since we disabled
+      the update of the input field (autoUpdateInput: false) to allow for an empty field to begin with.
+       */
+      formatDateRangeInput(picker.startDate, picker.endDate);
+    })
+    .on("cancel.daterangepicker", function () {
+      $(this).val("");
+    });
 
   /*
   Handle applying the filters
    */
-  $wrapper.on(SAMPLE_EVENTS.SAMPLE_FILTER_CLOSED, function (e, filters) {
-    /*
-    Add the filters to the table parameters
-     */
-    for (const filter in filters) {
-      if (filters.hasOwnProperty(filter)) {
-        TABLE_FILTERS.set(filter, filters[filter]);
+  modal.on("hide.bs.modal", function (e, filters) {
+    if ($name.val()) {
+      TABLE_FILTERS.set(FILTERS.FILTER_BY_NAME, $name.val());
+    } else {
+      TABLE_FILTERS.delete(FILTERS.FILTER_BY_NAME);
+    }
+
+    if ($organism.val()) {
+      TABLE_FILTERS.set(FILTERS.FILTER_BY_ORGANISM, $organism.val());
+    } else {
+      TABLE_FILTERS.delete(FILTERS.FILTER_BY_ORGANISM);
+    }
+
+    // Check to see if the date range filter needs to be applied.
+    if ($dateRangeFilter.val()) {
+      const dateranges = $dateRangeFilter.data("daterangepicker");
+      const startDate = dateranges.startDate.toDate().getTime();
+      const endDate = dateranges.endDate.toDate().getTime();
+
+      if (!isNaN(startDate) && !isNaN(endDate)) {
+        TABLE_FILTERS.set(FILTERS.FILTER_BY_EARLY_DATE, startDate);
+        TABLE_FILTERS.set(FILTERS.FILTER_BY_LATEST_DATE, endDate);
       }
     }
 
@@ -600,7 +708,6 @@ clearFilterBtn.addEventListener("click", clearFilters, false);
 
 /**
  * Display any filters that are applied to the table and give the user a quick way to remove them.
- * @param  {Map} filters currently applied to the table.
  */
 function displayFilters(filters) {
   // This should be set by datatable.

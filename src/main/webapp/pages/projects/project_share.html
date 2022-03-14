@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{projects/_base}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <webpacker:css entry="project-share" />
+    <title>Title</title>
+  </head>
+  <body>
+    <div id="root" layout:fragment="main">
+      <!--  Root react component: src/main/webapp/resources/js/pages/projects/share/index.js -->
+    </div>
+    <th:block layout:fragment="scripts">
+      <webpacker:js entry="project-share" />
+    </th:block>
+  </body>
+</html>

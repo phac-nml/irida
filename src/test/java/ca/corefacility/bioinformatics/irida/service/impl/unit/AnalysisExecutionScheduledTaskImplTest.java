@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
@@ -14,8 +14,8 @@ import java.util.concurrent.Future;
 
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -99,9 +99,9 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	/**
 	 * Sets up variables for tests.
 	 */
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,
@@ -231,7 +231,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	/**
 	 * Tests successfully switching analysis state to
-	 * {@link AnalysisState.FINISHED_RUNNING} on success in Galaxy.
+	 * {@link AnalysisState#FINISHED_RUNNING} on success in Galaxy.
 	 * Also ,tests not sending an email on pipeline completion.
 	 *
 	 * @throws ExecutionManagerException
@@ -260,7 +260,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	/**
 	 * Tests successfully switching analysis state to
-	 * {@link AnalysisState.FINISHED_RUNNING} on success in Galaxy.
+	 * {@link AnalysisState#FINISHED_RUNNING} on success in Galaxy.
 	 * Also, tests sending an email to user on pipeline completion.
 	 *
 	 * @throws ExecutionManagerException
@@ -317,7 +317,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	/**
 	 * Tests successfully staying on RUNNING state when
 	 * GalaxyWorkflowState = OK and outputFilesExist = false
-	 * {@link AnalysisState.RUNNING} on success in Galaxy.
+	 * {@link AnalysisState#RUNNING} on success in Galaxy.
 	 *
 	 * @throws ExecutionManagerException
 	 * @throws IridaWorkflowNotFoundException
@@ -367,7 +367,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
+	 * Tests successfully switching an analysis to {@link AnalysisState#ERROR}
 	 * if there was an error Galaxy state. Also, tests not sending a pipeline
 	 * result email.
 	 *
@@ -424,7 +424,31 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
+	 * Tests verifying no email interaction when a workflow is still running
+	 *
+	 * @throws ExecutionManagerException
+	 */
+	@Test
+	public void testMonitorRunningAnalysesWithEmail() throws ExecutionManagerException {
+		analysisSubmission.setAnalysisState(AnalysisState.RUNNING);
+		analysisSubmission.setEmailPipelineResultCompleted(true);
+		analysisSubmission.setEmailPipelineResultError(true);
+		Map<GalaxyWorkflowState, Set<String>> stateIds = Util.buildStateIdsWithStateFilled(GalaxyWorkflowState.RUNNING,
+				Sets.newHashSet("1"));
+		GalaxyWorkflowStatus galaxyWorkflowStatus = new GalaxyWorkflowStatus(GalaxyWorkflowState.RUNNING, stateIds);
+
+		when(analysisSubmissionRepository.findByAnalysisState(AnalysisState.RUNNING)).thenReturn(
+				Arrays.asList(analysisSubmission));
+		when(analysisExecutionService.getWorkflowStatus(analysisSubmission)).thenReturn(galaxyWorkflowStatus);
+
+		analysisExecutionScheduledTask.monitorRunningAnalyses();
+
+		assertEquals(AnalysisState.RUNNING, analysisSubmission.getAnalysisState());
+		verifyNoInteractions(emailController);
+	}
+
+	/**
+	 * Tests successfully switching an analysis to {@link AnalysisState#ERROR}
 	 * if there was an error building the workflow status. Also, tests not
 	 * sending of pipeline status email.
 	 *
@@ -448,7 +472,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
+	 * Tests successfully switching an analysis to {@link AnalysisState#ERROR}
 	 * if there was an error building the workflow status. Also, tests
 	 * sending of pipeline status email.
 	 *
@@ -474,7 +498,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	}
 
 	/**
-	 * Tests successfully switching an analysis to {@link AnalysisState.ERROR}
+	 * Tests successfully switching an analysis to {@link AnalysisState#ERROR}
 	 * if there was an Galaxy job with an error, but still running.
 	 *
 	 * @throws ExecutionManagerException
@@ -557,7 +581,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 1, futureSubmissionsSet.size());
+		assertEquals(1, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmission);
 	}
 
@@ -576,7 +600,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 1, futureSubmissionsSet.size());
+		assertEquals(1, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmission);
 	}
 
@@ -596,7 +620,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 0, futureSubmissionsSet.size());
+		assertEquals(0, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmission);
 	}
 
@@ -616,7 +640,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 0, futureSubmissionsSet.size());
+		assertEquals(0, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmission);
 	}
 
@@ -636,7 +660,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 0, futureSubmissionsSet.size());
+		assertEquals(0, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmission);
 	}
 
@@ -656,7 +680,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 0, futureSubmissionsSet.size());
+		assertEquals(0, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmission);
 	}
 
@@ -683,7 +707,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 1, futureSubmissionsSet.size());
+		assertEquals(1, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmissionMock);
 	}
 
@@ -709,7 +733,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 1, futureSubmissionsSet.size());
+		assertEquals(1, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmissionMock);
 	}
 
@@ -736,7 +760,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 0, futureSubmissionsSet.size());
+		assertEquals(0, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmissionMock);
 	}
 
@@ -770,7 +794,7 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 		Set<Future<AnalysisSubmission>> futureSubmissionsSet = analysisExecutionScheduledTask.cleanupAnalysisSubmissions();
 
-		assertEquals("Incorrect size for futureSubmissionsSet", 1, futureSubmissionsSet.size());
+		assertEquals(1, futureSubmissionsSet.size(), "Incorrect size for futureSubmissionsSet");
 		verify(analysisExecutionService).cleanupSubmission(analysisSubmissionMock);
 		verify(analysisExecutionService, never()).cleanupSubmission(analysisSubmissionMock2);
 	}

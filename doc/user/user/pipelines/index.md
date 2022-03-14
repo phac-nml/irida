@@ -187,6 +187,13 @@ If an analysis output file is fairly large like this log file, it will be loaded
 <figcaption>Notice that the `8.0 kB / 212.0 kB (3.8%)` indicates that only 3.8% of the file has been loaded into this view. Scrolling to the end will trigger loading of the next chunk of this file into the view!</figcaption>
 
 
+#### Default html preview of analysis output
+
+Analysis output files with file extensions like `.html`, or `.html.zip` can be previewed in the browser as html:
+
+![view-results-html-quast](images/view-results-html-quast-html.png)
+<figcaption>Notice that the file is named `quast.html.zip` which if you downloaded it you will see that it contains multiple html files. We are loading `quast.html.html`, which is the first html file found in the zip that has the same prefix as the original output file zip.</figcaption>
+
 
 ### Viewing the sequencing data submitted for analysis
 
@@ -278,17 +285,14 @@ You will see a table of your single sample analysis output files:
 
 ![](images/batch-download-user-outputs.png)
 
-You can apply filters to any columns by clicking the column menu icon, for example, applying a filter to the `File` column:
+You can filter the outputs using the search box, and the outputs are filtered as you type. The following fields are searched:
+- Sample Name
+- File
+- Analysis Type
+- Pipeline
+- Submitter
 
-![](images/batch-download-column-filter-open.png)
-
-Filtering for files with `contigs` in the filename:
-
-![](images/batch-download-filtering-on-contains-contigs.png)
-
-You will then see a filter icon displayed beside the column name ![](images/batch-download-column-filter-icon.png)
-
-You can select the files you wish to download using the checkboxes or by holding the `Ctrl` or `Shift` keys as you click on the rows for the files you wish to download. 
+You can select the files you wish to download using the checkboxes.
 
 ![](images/batch-download-multiselect-refine.png)
 
@@ -300,7 +304,6 @@ Click **Download** to download. Depending on the number of files you have select
 
 Single files will be downloaded as is, while multiple files will downloaded bundled together in ZIP file. 
 
-![](images/download-confirmation-ff.png) 
 
 ## Errors when executing pipelines
 

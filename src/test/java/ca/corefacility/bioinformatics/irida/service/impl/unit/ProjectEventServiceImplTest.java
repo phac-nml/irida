@@ -5,8 +5,8 @@ import static org.mockito.Mockito.verify;
 
 import javax.validation.Validator;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -20,7 +20,7 @@ public class ProjectEventServiceImplTest {
 	Validator validator;
 	ProjectEventRepository repository;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		repository = mock(ProjectEventRepository.class);
 		service = new ProjectEventServiceImpl(repository, validator);

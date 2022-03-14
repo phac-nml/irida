@@ -26,7 +26,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 
@@ -42,7 +42,7 @@ import com.google.common.collect.ImmutableSet;
 @Entity
 @Table(name = "analysis")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Analysis extends IridaResourceSupport implements IridaThing {
+public class Analysis extends IridaRepresentationModel implements IridaThing {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -196,6 +196,7 @@ public class Analysis extends IridaResourceSupport implements IridaThing {
 		return ImmutableSet.copyOf(analysisOutputFilesMap.values());
 	}
 
+	@JsonIgnore
 	public Map<String, AnalysisOutputFile> getAnalysisOutputFilesMap() {
 		return ImmutableMap.copyOf(this.analysisOutputFilesMap);
 	}

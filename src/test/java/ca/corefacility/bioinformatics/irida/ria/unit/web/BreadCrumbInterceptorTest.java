@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -19,8 +19,8 @@ import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyLong;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +32,7 @@ public class BreadCrumbInterceptorTest {
 	private ProjectService projectService;
 	private SampleService sampleService;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		this.projectService = mock(ProjectService.class);
 		this.sampleService = mock(SampleService.class);
@@ -57,11 +57,11 @@ public class BreadCrumbInterceptorTest {
 		breadCrumbInterceptor.postHandle(request, response, new Object(), modelAndView);
 
 		ModelMap modelMap = modelAndView.getModelMap();
-		assertTrue("Model should have crumbs key", modelMap.containsKey("breadcrumbs"));
+		assertTrue(modelMap.containsKey("breadcrumbs"), "Model should have crumbs key");
 
 		@SuppressWarnings(value = "unchecked") List<Map<String, String>> crumbs = (List<Map<String, String>>) modelMap.get(
 				"breadcrumbs");
-		assertEquals("Should be 3 links in the crumbs", 3, crumbs.size());
+		assertEquals(3, crumbs.size(), "Should be 3 links in the crumbs");
 	}
 
 	@Test
@@ -76,11 +76,11 @@ public class BreadCrumbInterceptorTest {
 		breadCrumbInterceptor.postHandle(request, response, new Object(), modelAndView);
 
 		ModelMap modelMap = modelAndView.getModelMap();
-		assertTrue("Model should have crumbs key", modelMap.containsKey("breadcrumbs"));
+		assertTrue(modelMap.containsKey("breadcrumbs"), "Model should have crumbs key");
 
 		@SuppressWarnings(value = "unchecked") List<Map<String, String>> crumbs = (List<Map<String, String>>) modelMap.get(
 				"breadcrumbs");
-		assertEquals("Should be 1 breadcrumb since there is no id after project", 1, crumbs.size());
+		assertEquals(1, crumbs.size(), "Should be 1 breadcrumb since there is no id after project");
 	}
 
 	@Test
@@ -96,6 +96,6 @@ public class BreadCrumbInterceptorTest {
 		breadCrumbInterceptor.postHandle(request, response, new Object(), modelAndView);
 
 		ModelMap modelMap = modelAndView.getModelMap();
-		assertFalse("Model should not have crumbs key", modelMap.containsKey("crumbs"));
+		assertFalse(modelMap.containsKey("crumbs"), "Model should not have crumbs key");
 	}
 }

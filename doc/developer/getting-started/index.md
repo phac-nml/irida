@@ -134,7 +134,7 @@ quit
 mysql -u test -p irida_test
 ```
 
-From here you should be able to run the IRIDA service layer, REST API, and web UI using Jetty.
+From here you should be able to run the IRIDA service layer, REST API, and web UI using Tomcat.
 
 Running and building IRIDA
 --------------------------
@@ -146,7 +146,7 @@ An IRIDA development server can be run with the `run.sh` script available in the
 Running the `run.sh` without arguments script is equivalent to running:
 
 ```bash
-mvn clean jetty:run -Dspring.profiles.active=dev
+mvn clean spring-boot:run -Dspring.profiles.active=dev
 ```
 
 Any arguments added after `run.sh` will be proxied to the `mvn ...` command.

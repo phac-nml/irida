@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Button } from "antd";
 import { checkConnectionStatus } from "../../../../apis/remote-api/remote-api";
-import { IconLoading, IconLogin } from "../../../../components/icons/Icons";
+import { IconLoading } from "../../../../components/icons/Icons";
 import { SPACE_XS } from "../../../../styles/spacing";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import { authenticateRemoteClient } from "../../../../apis/oauth/oauth";
@@ -32,11 +32,13 @@ export function RemoteApiStatus({ api, onConnect = () => {} }) {
 
   function checkApiStatus() {
     setLoading(true);
-    checkConnectionStatus({ id: api.id }).then((data) => {
-      setLoading(false);
-      setExpiration(data);
-      data && onConnect();
-    });
+    checkConnectionStatus({ id: api.id })
+      .then((data) => {
+        setLoading(false);
+        setExpiration(data);
+        data && onConnect();
+      })
+      .finally(() => setLoading(false));
   }
 
   function updateRemoteApi(event) {
@@ -79,8 +81,9 @@ export function RemoteApiStatus({ api, onConnect = () => {} }) {
         <Button
           className="t-remote-status-connect"
           onClick={updateConnectionStatus}
-          icon={<IconLogin />}
           loading={connecting}
+          size="small"
+          type="link"
         >
           {i18n("RemoteApi.disconnected")}
         </Button>

@@ -312,7 +312,6 @@ public class IridaApiServicesConfig {
 		return taskExecutor;
 	}
 
-
 	@Bean
 	public Validator validator() {
 		ResourceBundleMessageSource validatorMessageSource = new ResourceBundleMessageSource();

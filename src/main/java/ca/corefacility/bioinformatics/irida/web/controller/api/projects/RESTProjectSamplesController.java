@@ -1,13 +1,11 @@
 package ca.corefacility.bioinformatics.irida.web.controller.api.projects;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
-
-import io.swagger.v3.oas.annotations.Operation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,15 +31,17 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.LabelledRelationshipResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResourceCollection;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleAssemblyController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleMetadataController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
 import com.google.common.net.HttpHeaders;
+import io.swagger.v3.oas.annotations.Operation;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Controller for managing relationships between {@link Project} and
@@ -384,12 +384,28 @@ public class RESTProjectSamplesController {
 			MediaType.APPLICATION_JSON_VALUE })
 	public ResponseResource<Sample> updateSample(@PathVariable Long sampleId,
 			@RequestBody Map<String, Object> updatedFields) {
-		// issue an update request
-		final Sample s = sampleService.updateFields(sampleId, updatedFields);
-		addLinksForSample(Optional.empty(), s);
 
-		ResponseResource<Sample> responseObject = new ResponseResource<>(s);
-		return responseObject;
+		//collectionDate is a Date object, but will come in here as a String
+		String collectionDateProperty = "collectionDate";
+		String dateFormat = "yyyy-MM-dd";
+		if (updatedFields.containsKey(collectionDateProperty)) {
+			String dateTime = (String) updatedFields.get(collectionDateProperty);
+
+			SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+			try {
+				Date parsed = format.parse(dateTime);
+
+				updatedFields.put(collectionDateProperty, parsed);
+			} catch (ParseException e) {
+				logger.error("Failed to parse collectionDate into date object", e);
+
+				throw new IllegalArgumentException("'collectionDate' must be in the format " + dateFormat);
+			}
+		}
+		// issue an update request
+		sampleService.updateFields(sampleId, updatedFields);
+
+		return getSample(sampleId);
 	}
 
 }

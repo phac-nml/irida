@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -41,6 +42,9 @@ public class CreateProjectComponent extends AbstractPage {
 	@FindBy(css = ".t-samples th .ant-checkbox")
 	private WebElement selectAllSamples;
 
+	@FindBy(css = ".ant-form-item-explain div")
+	WebElement nameError;
+
 	public CreateProjectComponent(WebDriver driver) {
 		super(driver);
 	}
@@ -56,6 +60,7 @@ public class CreateProjectComponent extends AbstractPage {
 	}
 
 	public void enterProjectName(String name) {
+		nameInput.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 		nameInput.sendKeys(name);
 	}
 
@@ -83,5 +88,11 @@ public class CreateProjectComponent extends AbstractPage {
 
 	public void selectAllSamples() {
 		selectAllSamples.click();
+	}
+
+	public String getNameWarning() {
+		WebDriverWait wait = new WebDriverWait(driver, 1);
+		wait.until(ExpectedConditions.visibilityOf(nameError));
+		return nameError.getText();
 	}
 }

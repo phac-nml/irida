@@ -266,7 +266,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	public void removeUserGroupFromProject(Project project, UserGroup userGroup) throws ProjectWithoutOwnerException {
 		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
 		if (!allowRoleChange(project, j.getProjectRole())) {
-			throw new ProjectWithoutOwnerException("Removing this user group would leave the project without an owner.");
+			throw new ProjectWithoutOwnerException(
+					"Removing this user group would leave the project without an owner.");
 		}
 		ugpjRepository.delete(j);
 	}
@@ -353,11 +354,11 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			}
 		}
 
-		// Check to ensure a sample with this sequencer id doesn't exist in this
+		// Check to ensure a sample with this sample name doesn't exist in this
 		// project already
 		if (sampleRepository.getSampleBySampleName(project, sample.getSampleName()) != null) {
 			throw new ExistingSampleNameException(
-					"Sample with sequencer id '" + sample.getSampleName() + "' already exists in project "
+					"Sample with the name '" + sample.getSampleName() + "' already exists in project "
 							+ project.getId(), sample);
 		}
 
@@ -502,6 +503,26 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public List<Project> getProjectsForUserUnique(User user) {
+		final List<Project> projectListUser = pujRepository.getProjectsForUser(user).stream().map(u -> u.getSubject()).collect(Collectors.toList());
+
+		final List<Project> projectListUserGroup = ugpjRepository.findProjectsByUser(user)
+				.stream()
+				.filter(j -> !projectListUser.contains(j.getSubject()))
+				.map(j -> j.getSubject())
+				.collect(Collectors.toList());
+
+		return new ImmutableList.Builder<Project>().addAll(projectListUser)
+				.addAll(projectListUserGroup)
+				.build();
+	}
+
+	/**
 	 * {@inheritDoc }
 	 */
 	@Override
@@ -524,10 +545,12 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		}
 
 		try {
-			RelatedProjectJoin relation = relatedProjectRepository.save(new RelatedProjectJoin(subject, relatedProject));
+			RelatedProjectJoin relation = relatedProjectRepository.save(
+					new RelatedProjectJoin(subject, relatedProject));
 			return relation;
 		} catch (DataIntegrityViolationException e) {
-			throw new EntityExistsException("Project " + subject.getLabel() + " is already related to " + relatedProject.getLabel(), e);
+			throw new EntityExistsException(
+					"Project " + subject.getLabel() + " is already related to " + relatedProject.getLabel(), e);
 		}
 
 	}
@@ -623,8 +646,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#p, 'canManageLocalProjectSettings')")
-	public Page<Project> getUnassociatedProjects(final Project p, final String searchName, final Integer page, final Integer count,
-			final Direction sortDirection, final String... sortedBy) {
+	public Page<Project> getUnassociatedProjects(final Project p, final String searchName, final Integer page,
+			final Integer count, final Direction sortDirection, final String... sortedBy) {
 
 		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext()
 				.getAuthentication()
@@ -644,7 +667,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public Page<Project> findProjectsForUser(final String search, final Integer page, final Integer count, final Sort sort) {
+	public Page<Project> findProjectsForUser(final String search, final Integer page, final Integer count,
+			final Sort sort) {
 		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext()
 				.getAuthentication()
 				.getPrincipal();
@@ -669,7 +693,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@LaunchesProjectEvent(UserGroupRoleSetProjectEvent.class)
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
-	public Join<Project, UserGroup> addUserGroupToProject(final Project project, final UserGroup userGroup, final ProjectRole role) {
+	public Join<Project, UserGroup> addUserGroupToProject(final Project project, final UserGroup userGroup,
+			final ProjectRole role) {
 		return ugpjRepository.save(new UserGroupProjectJoin(project, userGroup, role));
 	}
 
@@ -707,7 +732,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 			// get the projects for the samples
 			for (SampleSequencingObjectJoin s : samples) {
-				if(s != null) {
+				if (s != null) {
 					psjRepository.getProjectForSample(s.getSubject())
 							.forEach(p -> {
 								// p may be null if sample was removed from all projects
@@ -743,7 +768,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		Project created = create(project);
 
 		sampleIds.forEach(sid -> {
-			Sample s = sampleRepository.findById(sid).orElse(null);
+			Sample s = sampleRepository.findById(sid)
+					.orElse(null);
 			addSampleToProject(project, s, owner);
 		});
 
@@ -837,7 +863,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			 *            the builder
 			 * @return a {@link Predicate} that covers all fields with OR.
 			 */
-			private Predicate allFieldsPredicate(final Root<Project> root, final CriteriaQuery<?> query, final CriteriaBuilder cb) {
+			private Predicate allFieldsPredicate(final Root<Project> root, final CriteriaQuery<?> query,
+					final CriteriaBuilder cb) {
 				final List<Predicate> allFieldsPredicates = new ArrayList<>();
 				allFieldsPredicates.add(cb.like(root.get("name"), "%" + allFields + "%"));
 				allFieldsPredicates.add(cb.like(root.get("organism"), "%" + allFields + "%"));
@@ -862,10 +889,10 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			private Predicate specificFiltersPredicate(final Root<Project> root, final CriteriaQuery<?> query,
 					final CriteriaBuilder cb) {
 				final List<Predicate> filterPredicates = new ArrayList<>();
-				if (!StringUtils.isEmpty(projectNameFilter)) {
+				if (StringUtils.hasLength(projectNameFilter)) {
 					filterPredicates.add(cb.like(root.get("name"), "%" + projectNameFilter + "%"));
 				}
-				if (!StringUtils.isEmpty(organismNameFilter)) {
+				if (StringUtils.hasLength(organismNameFilter)) {
 					filterPredicates.add(cb.like(root.get("organism"), "%" + organismNameFilter + "%"));
 				}
 
@@ -890,7 +917,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 				final Subquery<Long> userMemberSelect = query.subquery(Long.class);
 				final Root<ProjectUserJoin> userMemberJoin = userMemberSelect.from(ProjectUserJoin.class);
 				userMemberSelect.select(userMemberJoin.get("project")
-						.get("id"))
+								.get("id"))
 						.where(cb.equal(userMemberJoin.get("user"), user));
 				return cb.in(root.get("id"))
 						.value(userMemberSelect);
@@ -916,7 +943,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 				final Subquery<Long> groupMemberSelect = query.subquery(Long.class);
 				final Root<UserGroupProjectJoin> groupMemberJoin = groupMemberSelect.from(UserGroupProjectJoin.class);
 				groupMemberSelect.select(groupMemberJoin.get("project")
-						.get("id"))
+								.get("id"))
 						.where(cb.equal(groupMemberJoin.join("userGroup")
 								.join("users")
 								.get("user"), user));
@@ -952,7 +979,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		Long projectsCount = projectRepository.countProjectsCreatedInTimePeriod(createdDate);
 		return projectsCount;
 	}
-
 
 	/**
 	 * {@inheritDoc}

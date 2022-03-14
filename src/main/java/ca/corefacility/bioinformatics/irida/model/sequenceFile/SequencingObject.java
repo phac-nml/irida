@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
@@ -10,6 +10,8 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
@@ -31,7 +33,7 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 @Audited
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class SequencingObject extends IridaResourceSupport implements MutableIridaThing, RemoteSynchronizable {
+public abstract class SequencingObject extends IridaRepresentationModel implements MutableIridaThing, RemoteSynchronizable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,6 +49,7 @@ public abstract class SequencingObject extends IridaResourceSupport implements M
 	@JoinColumn(name = "sequencing_run_id")
 	private SequencingRun sequencingRun;
 
+	@JsonIgnoreProperties({"hibernateLazyInitializer"})
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sequencingObject")
 	private SampleSequencingObjectJoin sample;
 

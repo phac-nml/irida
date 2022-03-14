@@ -1,11 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.List;
 import java.util.Locale;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
 
@@ -31,7 +32,7 @@ public class UICartServiceTest {
 	private final Sample SAMPLE_3 = new Sample("SAMPLE_3");
 	private final Project PROJECT_1 = new Project("PROJECT_1");
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		cart = new Cart();
 		ProjectService projectService = Mockito.mock(ProjectService.class);
@@ -55,42 +56,42 @@ public class UICartServiceTest {
 	@Test
 	public void addSamplesToCartTest() {
 		CartUpdateResponse response = service.addSamplesToCart(createAddRequest(PROJECT_ID, ImmutableList.of(1L, 2L)), Locale.ENGLISH);
-		Assert.assertEquals(2, response.getCount());
-		Assert.assertEquals(2, cart.size());
+		assertEquals(2, response.getCount());
+		assertEquals(2, cart.size());
 
 		// Try adding the same sample again with a new one
 		response = service.addSamplesToCart(createAddRequest(PROJECT_ID, ImmutableList.of(2L, 3L)), Locale.ENGLISH);
-		Assert.assertEquals(3, response.getCount());
-		Assert.assertEquals(3, cart.size());
+		assertEquals(3, response.getCount());
+		assertEquals(3, cart.size());
 	}
 
 	@Test
 	public void getNumberOfSamplesInCart() {
 		service.addSamplesToCart(createAddRequest(PROJECT_ID, ImmutableList.of(1L, 2L)), Locale.ENGLISH);
-		Assert.assertEquals(2, service.getNumberOfSamplesInCart());
+		assertEquals(2, service.getNumberOfSamplesInCart());
 	}
 
 	@Test
 	public void emptyCartTest() {
 		service.addSamplesToCart(createAddRequest(PROJECT_ID, ImmutableList.of(1L, 2L)), Locale.ENGLISH);
-		Assert.assertEquals(2, service.getNumberOfSamplesInCart());
+		assertEquals(2, service.getNumberOfSamplesInCart());
 		service.emptyCart();
-		Assert.assertEquals(0, service.getNumberOfSamplesInCart());
+		assertEquals(0, service.getNumberOfSamplesInCart());
 
 		/*
 		NOTE: This is an extra test because of a previous failure when emptying the cart then trying
 		to re-add a sample failed.
 		 */
 		service.addSamplesToCart(createAddRequest(PROJECT_ID, ImmutableList.of(1L, 2L)), Locale.ENGLISH);
-		Assert.assertEquals(2, service.getNumberOfSamplesInCart());
+		assertEquals(2, service.getNumberOfSamplesInCart());
 	}
 
 	@Test
 	public void removeSampleTest() {
 		service.addSamplesToCart(createAddRequest(PROJECT_ID, ImmutableList.of(1L, 2L)), Locale.ENGLISH);
-		Assert.assertEquals(2, service.getNumberOfSamplesInCart());
+		assertEquals(2, service.getNumberOfSamplesInCart());
 		service.removeSample(1L, Locale.ENGLISH);
-		Assert.assertEquals(1, service.getNumberOfSamplesInCart());
+		assertEquals(1, service.getNumberOfSamplesInCart());
 
 	}
 

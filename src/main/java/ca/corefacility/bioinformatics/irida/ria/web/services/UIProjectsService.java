@@ -11,6 +11,7 @@ import javax.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -230,5 +231,18 @@ public class UIProjectsService {
 	 */
 	public void deleteProject(Long projectId) throws EntityNotFoundException {
 		projectService.delete(projectId);
+	}
+
+	/**
+	 * Get a list of projects that the user can share sample to.
+	 *
+	 * @param currentId Current project identifier
+	 * @return {@link List} of {@link Project}s
+	 */
+	public List<Project> getPotentialProjectsToShareTo(long currentId) {
+		Project project = projectService.read(currentId);
+		Page<Project> projects = projectService.getUnassociatedProjects(project, "", 0, Integer.MAX_VALUE,
+				Sort.Direction.ASC, "name");
+		return projects.getContent();
 	}
 }

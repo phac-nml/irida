@@ -1,12 +1,18 @@
 package ca.corefacility.bioinformatics.irida.repositories.sample;
 
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.util.List;
+import javax.persistence.TypedQuery;
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 
 /**
  * Custom repository methods for getting {@link MetadataTemplateField}s
@@ -14,24 +20,47 @@ import java.util.List;
 public class MetadataFieldRepositoryImpl implements MetadataFieldRepositoryCustom {
 
 	private final EntityManager entityManager;
+	private DataSource dataSource;
 
 	@Autowired
-	public MetadataFieldRepositoryImpl(EntityManager entityManager) {
+	public MetadataFieldRepositoryImpl(EntityManager entityManager, DataSource dataSource) {
 		this.entityManager = entityManager;
+		this.dataSource = dataSource;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<MetadataTemplateField> getMetadataFieldsForProject(Project p) {
+		NamedParameterJdbcTemplate tmpl = new NamedParameterJdbcTemplate(dataSource);
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
 
-		String queryString = "SELECT DISTINCT f.* FROM project_sample p INNER JOIN metadata_entry s ON p.sample_id=s.sample_id INNER JOIN metadata_field f ON s.field_id=f.id WHERE p.project_id=:project";
-		Query nativeQuery = entityManager.createNativeQuery(queryString, MetadataTemplateField.class);
+		/*
+		 * The below code for loading the metadata fields could be simplified
+		 * into a single query, but the previous 3-join query was taking 10s of
+		 * seconds to load for large projects. The 2 query process below for
+		 * loading the fields is providing significantly better performance than
+		 * loading fields in a single 3-join query.
+		 */
 
-		nativeQuery.setParameter("project", p.getId());
+		// First load all the field IDs related to this project
+		String fieldIdQueryString = "SELECT DISTINCT e.field_id FROM metadata_entry e INNER JOIN project_sample p ON e.sample_id=p.sample_id WHERE p.project_id=:project";
+		parameters.addValue("project", p.getId());
+		List<Long> fieldIds = tmpl.queryForList(fieldIdQueryString, parameters, Long.class);
 
-		return nativeQuery.getResultList();
+		List<MetadataTemplateField> resultList;
+		if (!fieldIds.isEmpty()) {
+			// next load all the full fields with those ids
+			String queryString = "SELECT f from MetadataTemplateField f WHERE f.id IN :fields";
+			TypedQuery<MetadataTemplateField> nativeQuery = entityManager.createQuery(queryString,
+					MetadataTemplateField.class);
+			nativeQuery.setParameter("fields", fieldIds);
+			resultList = nativeQuery.getResultList();
+		} else {
+			resultList = new ArrayList<>();
+		}
+
+		return resultList;
 	}
 }

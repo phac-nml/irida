@@ -168,7 +168,10 @@ export default function AnalysisDetails() {
 
   // The following renders the Analysis Details component view
   return (
-    <TabPaneContent title={i18n("AnalysisDetails.details")}>
+    <TabPaneContent
+      title={i18n("AnalysisDetails.details")}
+      className="t-settings-tab-header"
+    >
       <BasicList dataSource={analysisDetails} />
 
       {analysisContext.mailConfigured &&

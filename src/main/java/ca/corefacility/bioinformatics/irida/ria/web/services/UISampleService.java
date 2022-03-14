@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleFiles;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -37,16 +39,19 @@ public class UISampleService {
 	private final UpdateSamplePermission updateSamplePermission;
 	private final SequencingObjectService sequencingObjectService;
 	private final GenomeAssemblyService genomeAssemblyService;
+	private final MessageSource messageSource;
 	private final UICartService cartService;
 
 	@Autowired
-	public UISampleService(SampleService sampleService, ProjectService projectService, UpdateSamplePermission updateSamplePermission,
-			SequencingObjectService sequencingObjectService, GenomeAssemblyService genomeAssemblyService, UICartService cartService) {
+	public UISampleService(SampleService sampleService, ProjectService projectService,
+			UpdateSamplePermission updateSamplePermission, SequencingObjectService sequencingObjectService,
+			GenomeAssemblyService genomeAssemblyService, MessageSource messageSource, UICartService cartService) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.updateSamplePermission = updateSamplePermission;
 		this.sequencingObjectService = sequencingObjectService;
 		this.genomeAssemblyService = genomeAssemblyService;
+		this.messageSource = messageSource;
 		this.cartService = cartService;
 	}
 
@@ -180,5 +185,48 @@ public class UISampleService {
 		}
 
 		obj.setQcEntries(availableEntries);
+	}
+
+	/**
+	 * Get a list of all {@link Sample} identifiers within a specific project
+	 *
+	 * @param projectId Identifier for a {@link Project}
+	 * @return {@link List} of {@link Sample} identifiers
+	 */
+	public List<Long> getSampleIdsForProject(Long projectId) {
+		Project project = projectService.read(projectId);
+		List<Sample> samples = sampleService.getSamplesForProjectShallow(project);
+		return samples.stream()
+				.map(Sample::getId)
+				.collect(Collectors.toUnmodifiableList());
+	}
+
+	/**
+	 * Share / Move samples with another project
+	 *
+	 * @param request Request containing the details of the move
+	 * @param locale  current users {@link Locale}
+	 * @throws Exception if project or samples cannot be found
+	 */
+	public void shareSamplesWithProject(ShareSamplesRequest request, Locale locale) throws Exception {
+		Project currentProject = projectService.read(request.getCurrentId());
+		Project targetProject = projectService.read(request.getTargetId());
+
+		List<Sample> samples = (List<Sample>) sampleService.readMultiple(request.getSampleIds());
+		if (request.getRemove()) {
+			try {
+				projectService.moveSamples(currentProject, targetProject, samples);
+			} catch (Exception e) {
+				throw new Exception(messageSource.getMessage("server.ShareSamples.move-error",
+						new Object[] { targetProject.getLabel() }, locale));
+			}
+		} else {
+			try {
+				projectService.shareSamples(currentProject, targetProject, samples, !request.getLocked());
+			} catch (Exception e) {
+				throw new Exception(messageSource.getMessage("server.ShareSamples.copy-error",
+						new Object[] { targetProject.getLabel() }, locale));
+			}
+		}
 	}
 }

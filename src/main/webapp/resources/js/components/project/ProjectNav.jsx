@@ -1,7 +1,7 @@
 import { Layout, Menu, PageHeader } from "antd";
-import React, { useState } from "react";
+import React from "react";
 import { render } from "react-dom";
-import { setBaseUrl } from "../../utilities/url-utilities";
+import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
 import { IconFolder } from "../icons/Icons";
 import { RemoteProjectStatus } from "./RemoteProjectStatus";
 
@@ -13,12 +13,17 @@ const { Content } = Layout;
  * @returns {*}
  * @constructor
  */
-export function ProjectNav() {
-  /*
-  Get the current page from the global project object
-   */
-  const [current, setCurrent] = useState(() => window.project.page);
-  const BASE_URL = setBaseUrl(`projects/${window.project.id}/`);
+export function ProjectNav({ ...props }) {
+  const [current] = React.useState(() => {
+    const keyRegex = /\/projects\/\d+\/(?<path>[\w_-]+)/;
+    const found = location.pathname.match(keyRegex);
+    if (found) {
+      return found.groups.path;
+    }
+    return "samples";
+  });
+  const projectId = getProjectIdFromUrl();
+  const BASE_URL = setBaseUrl(`/projects/${projectId}`);
 
   return (
     <PageHeader
@@ -29,24 +34,24 @@ export function ProjectNav() {
       <Content>
         <Menu mode="horizontal" selectedKeys={[current]}>
           <Item key="samples">
-            <a href={`${BASE_URL}samples`}>{i18n("project.nav.samples")}</a>
+            <a href={`${BASE_URL}/samples`}>{i18n("project.nav.samples")}</a>
           </Item>
           <Item key="linelist">
-            <a href={`${BASE_URL}linelist`}>{i18n("project.nav.linelist")}</a>
+            <a href={`${BASE_URL}/linelist`}>{i18n("project.nav.linelist")}</a>
           </Item>
           <Item key="analyses">
-            <a href={`${BASE_URL}analyses`}>{i18n("project.nav.analysis")}</a>
+            <a href={`${BASE_URL}/analyses/project-analyses`}>
+              {i18n("project.nav.analysis")}
+            </a>
           </Item>
           <Item key="export">
-            <a href={`${BASE_URL}export`}>{i18n("project.nav.exports")}</a>
+            <a href={`${BASE_URL}/export`}>{i18n("project.nav.exports")}</a>
           </Item>
-          <Item key="events">
-            <a href={`${BASE_URL}activity`}>{i18n("project.nav.activity")}</a>
+          <Item key="activity">
+            <a href={`${BASE_URL}/activity`}>{i18n("project.nav.activity")}</a>
           </Item>
           <Item key="settings">
-            <a href={`${BASE_URL}settings/details`}>
-              {i18n("project.nav.settings")}
-            </a>
+            <a href={`${BASE_URL}/settings`}>{i18n("project.nav.settings")}</a>
           </Item>
         </Menu>
       </Content>

@@ -4,8 +4,24 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+21.09 to 22.01
+--------------
+* This upgrade converted the project from bare Spring to Spring Boot, which deprecated a number of properties relating to database connection and setup. These deprecated properties are mentioned in [/etc/irida/irida.conf](https://phac-nml.github.io/irida-documentation/administrator/web/#core-configuration).
+* Due to an update in Spring you will need to revoke tokens for all OAuth clients, you can perform this through the UI or with the following sql:
+```sql
+USE IRIDA_DB_NAME;
+truncate oauth_access_token;
+truncate oauth_refresh_token;
+```
+
+21.09.1 to 21.09.2
+------------------
+* This updates log4j from `1.2.17` to `2.17.0`. Most users will not need to take any action, but log4j 2 uses a different (XML) syntax for configuration. If you have any custom log4j configurations these will need to be updated to match the [log4j 2 syntax](https://logging.apache.org/log4j/2.x/manual/configuration.html).
+   * *Note: 1.X is **not** vulnerable to [log4shell](https://cve.report/CVE-2021-44228) but it is no longer supported and there are other issues with 1.X which is why we are upgrading as a hotfix. See also <https://www.slf4j.org/log4shell.html>.*
+
 21.05 to 21.09
 --------------
+* It is recommended to stop the servlet container before deploying the new `war` file.
 
 21.05.1 to 21.05.2
 ------------------

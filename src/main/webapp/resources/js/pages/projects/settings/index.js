@@ -1,8 +1,14 @@
-import { Redirect, Router } from "@reach/router";
-import { Col, Layout, Row, Skeleton } from "antd";
-import React, { Suspense } from "react";
+import { Col, Layout, Row, Spin } from "antd";
+import React, { Suspense, useState } from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
+import {
+  BrowserRouter,
+  Outlet,
+  Route,
+  Routes,
+  useParams,
+} from "react-router-dom";
 import { useGetProjectDetailsQuery } from "../../../apis/projects/project";
 import { getProjectRoles } from "../../../apis/projects/projects";
 import { RolesProvider } from "../../../contexts/roles-context";
@@ -27,14 +33,12 @@ const MetadataLayout = React.lazy(() =>
 const MetadataFields = React.lazy(() =>
   import("./components/metadata/MetadataFields")
 );
-const MetadataTemplateManager = React.lazy(() =>
-  import("./components/metadata/MetadataTemplateManager")
-);
-const MetadataTemplateMember = React.lazy(() =>
-  import("./components/metadata/MetadataTemplateMember")
-);
 const MetadataTemplates = React.lazy(() =>
   import("./components/metadata/MetadataTemplates")
+);
+
+const MetadataTemplate = React.lazy(() =>
+  import("./components/metadata/MetadataTemplate")
 );
 
 const AssociatedProjects = React.lazy(() =>
@@ -70,9 +74,27 @@ const { Content, Sider } = Layout;
  * @constructor
  */
 const SettingsLayout = () => (
-  <Router>
-    <ProjectSettings path={setBaseUrl("/projects/:projectId/settings/*")} />
-  </Router>
+  <Routes>
+    <Route
+      path={setBaseUrl("/projects/:projectId/settings")}
+      element={<ProjectSettings />}
+    >
+      <Route index element={<ProjectDetails />} />
+      <Route path="processing" element={<ProjectProcessing />} />
+      <Route path="members" element={<ProjectMembers />} />
+      <Route path="groups" element={<ProjectGroups />} />
+      <Route path="metadata" element={<MetadataLayout />}>
+        <Route path="fields" element={<MetadataFields />} />
+        <Route path="templates" element={<MetadataTemplates />} />
+        <Route path="templates/:id" element={<MetadataTemplate />} />
+      </Route>
+      <Route path="associated" element={<AssociatedProjects />} />
+      <Route path="references" element={<ReferenceFiles />} />
+      <Route path="remote" element={<ProjectSynchronizationSettings />} />
+      <Route path="delete" element={<DeleteProject />} />
+      <Route path="*" element={<ProjectDetails />} />
+    </Route>
+  </Routes>
 );
 
 /**
@@ -81,13 +103,22 @@ const SettingsLayout = () => (
  * @returns {JSX.Element}
  * @constructor
  */
-const ProjectSettings = (props) => {
-  const { data: project = {} } = useGetProjectDetailsQuery(props.projectId);
+const ProjectSettings = () => {
+  const { projectId } = useParams();
+
+  const { data: project = {} } = useGetProjectDetailsQuery(projectId, {
+    skip: !projectId,
+  });
+
+  const [basePath] = useState(() =>
+    setBaseUrl(`/projects/${projectId}/settings/`)
+  );
+
   return (
     <Layout>
       <Sider width={200} style={{ backgroundColor: grey1 }}>
         <SettingsNav
-          path={props["*"]}
+          basePath={basePath}
           canManage={project.canManage}
           showRemote={project.canManage && project.remote}
         />
@@ -97,27 +128,8 @@ const ProjectSettings = (props) => {
           <Row>
             <Col lg={24} xxl={12}>
               <RolesProvider getRolesFn={getProjectRoles}>
-                <Suspense fallback={<Skeleton />}>
-                  <Router>
-                    <ProjectDetails path="/details" />
-                    <ProjectProcessing path="/processing" />
-                    <ProjectMembers path="/members" />
-                    <ProjectGroups path="/groups" />
-                    <MetadataLayout path="/metadata">
-                      <MetadataFields path="/fields" />
-                      <MetadataTemplates path="/templates" />
-                      {project.canManage ? (
-                        <MetadataTemplateManager path="/templates/:id" />
-                      ) : (
-                        <MetadataTemplateMember path="/templates/:id" />
-                      )}
-                    </MetadataLayout>
-                    <AssociatedProjects path="/associated" />
-                    <ReferenceFiles path="/references" />
-                    <ProjectSynchronizationSettings path="/remote" />
-                    {project.canManage && <DeleteProject path="/delete" />}
-                    <Redirect from="/" to="/details" />
-                  </Router>
+                <Suspense fallback={<Spin />}>
+                  <Outlet />
                 </Suspense>
               </RolesProvider>
             </Col>
@@ -129,8 +141,10 @@ const ProjectSettings = (props) => {
 };
 
 render(
-  <Provider store={store}>
-    <SettingsLayout />
-  </Provider>,
+  <BrowserRouter>
+    <Provider store={store}>
+      <SettingsLayout />
+    </Provider>
+  </BrowserRouter>,
   document.querySelector("#root")
 );

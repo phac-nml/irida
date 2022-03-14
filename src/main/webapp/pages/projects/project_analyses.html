@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    data-layout-decorate="~{projects/_base}"
+>
+<head>
+    <title th:text="${project.label} + ' - ' + #{project.nav.analysis}"></title>
+    <webpacker:css entry="project-analyses"/>
+</head>
+<body>
+<div layout:fragment="main" id="root">
+    <!-- /src/main/webapp/resources/js/pages/projects/project-analyses/index.js -->
+</div>
+<th:block layout:fragment="scripts">
+    <webpacker:js entry="project-analyses"/>
+</th:block>
+</body>
+</html>

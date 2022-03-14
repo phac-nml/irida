@@ -5,11 +5,10 @@ import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Profile;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
@@ -23,8 +22,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
  * integration testing.
  *
  */
-@Configuration
-@Profile("test")
+@TestConfiguration
 @Conditional(NonWindowsPlatformCondition.class)
 public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 
@@ -63,7 +61,7 @@ public class NonWindowsLocalGalaxyConfig implements LocalGalaxyConfig {
 		logger.debug("Setting URL for test Galaxy: " + galaxyURL);
 		logger.debug("Setting invalid URL for test Galaxy: " + galaxyInvalidURL);
 		logger.debug("Setting invalid URL2 for test Galaxy: " + galaxyInvalidURL2);
-		
+
 		localGalaxy.setGalaxyURL(galaxyURL);
 		localGalaxy.setInvalidGalaxyURL(galaxyInvalidURL);
 		localGalaxy.setTestGalaxyURL(galaxyInvalidURL2);

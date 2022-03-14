@@ -438,7 +438,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 						+ "the ConstraintViolationException, the original cause is included.", e);
 		String constraintName = e.getConstraintName();
 
-		if (StringUtils.isEmpty(constraintName)) {
+		if (!StringUtils.hasLength(constraintName)) {
 			return UNABLE_TO_PARSE;
 		}
 		Matcher matcher = USER_CONSTRAINT_PATTERN.matcher(constraintName);

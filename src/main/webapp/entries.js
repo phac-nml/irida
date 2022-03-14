@@ -9,17 +9,16 @@ module.exports = {
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
   "client-base": "./resources/js/client.js",
-  activities: "./resources/js/pages/activities/activities.js",
   announcements: "./resources/js/pages/announcement",
   analysis: "./resources/js/pages/analysis",
   app: "./resources/js/app.js",
-  dashboard: "./resources/js/pages/dashboard.js",
+  dashboard: "./resources/js/pages/dashboard/Dashboard.jsx",
   launch: "./resources/js/pages/launch",
   project: "./resources/js/components/project/ProjectNav.jsx",
   "project-activity": "./resources/js/pages/projects/ProjectActivity.jsx",
   projects: "./resources/js/pages/projects/list/index.js",
   "samples-metadata-import":
-    "./resources/js/pages/projects/samples-metadata-import/index.js",
+    "./resources/js/pages/projects/samples-metadata-import",
   "project-samples": "./resources/js/pages/projects/samples/project-samples.js",
   "project-samples-merge":
     "./resources/js/pages/projects/samples/modals/samples-merge.js",
@@ -27,8 +26,6 @@ module.exports = {
     "./resources/js/pages/projects/samples/modals/samples-copy.js",
   "project-samples-remove":
     "./resources/js/pages/projects/samples/modals/samples-remove.js",
-  "project-samples-filter":
-    "./resources/js/pages/projects/samples/modals/samples-filter.js",
   "project-samples-linker":
     "./resources/js/pages/projects/samples/modals/samples-linker.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
@@ -36,20 +33,20 @@ module.exports = {
     "./resources/js/pages/projects/project-metadata-edit.js",
   "project-create": "./resources/js/pages/projects/create",
   "project-settings": "./resources/js/pages/projects/settings",
+  "project-share": "./resources/js/pages/projects/share",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
   "visualizations-phylogenetics":
     "./resources/js/pages/visualizations/phylogenetics/index.js",
   sample: "./resources/js/pages/SamplePage.jsx",
   "sample-files": "./resources/js/pages/samples/sample-files.js",
-  "project-analyses":
-    "./resources/js/pages/projects/project-analyses/ProjectAnalysesPage.jsx",
-  "analysis-outputs-table":
-    "./resources/js/pages/analyses/analysis-outputs-table.js",
+  "project-analyses": "./resources/js/pages/projects/project-analyses/",
   analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
   "users-list": "./resources/js/pages/UsersPage.jsx",
   "users-password": "./resources/js/pages/users/users-password.js",
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
+  "sample-files-concatenate":
+    "./resources/js/pages/samples/sample-files-concatenate.js",
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/SequencingRunsPage.jsx",
   "sequencing-run-details": "./resources/js/pages/sequencing-runs/details",
@@ -60,4 +57,5 @@ module.exports = {
   "user-details": "./resources/js/pages/user-details.js",
   admin: "./resources/js/pages/admin/index.js",
   "sequence-files": "./resources/js/pages/sequence-files/",
+  "analyses-outputs": "./resources/js/pages/analyses/analyses-outputs/",
 };

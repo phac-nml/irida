@@ -11,10 +11,8 @@ import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
 import { ContentLoading } from "../../../../components/loader/ContentLoading";
 import { AnalysisTabularPreview } from "../AnalysisTabularPreview";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
-import {
-  downloadFilesAsZip,
-  downloadOutputFile,
-} from "../../../../apis/analysis/analysis";
+import { downloadFilesAsZip } from "../../../../apis/analysis/analysis";
+import { downloadIndividualOutputFile } from "../../../../apis/analyses/analyses";
 import { IconFile } from "../../../../components/icons/Icons";
 
 const AnalysisTextPreview = React.lazy(() => import("../AnalysisTextPreview"));
@@ -57,12 +55,7 @@ export default function OutputFilePreview() {
     return (
       <Menu
         className="t-download-individual-files-menu"
-        onClick={(e) =>
-          downloadOutputFile({
-            submissionId: analysisIdentifier,
-            fileId: e.key,
-          })
-        }
+        onClick={(e) => downloadIndividualOutputFile(analysisIdentifier, e.key)}
       >
         {fileNames}
       </Menu>

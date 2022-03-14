@@ -831,4 +831,12 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		return analysisSubmissionRepository.countAnalysesRanGrouped(createdDate, statisticTimePeriod.getGroupByFormat());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public int getNumberAnalysesByUser(User user) {
+		return analysisSubmissionRepository.countAnalysesRanByUser(user);
+	}
+
 }

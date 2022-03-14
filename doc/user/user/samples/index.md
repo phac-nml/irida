@@ -256,26 +256,6 @@ Alternatively, there is a dropdown next to the select all checkbox that allows y
 
 {% include tutorials/common/samples/copy-samples.md %}
 
-### Moving samples between projects
-
-An alternative to [sharing samples between projects](#sharing-samples-between-projects) is to **move** a sample between projects. Unlike sharing, when a sample is moved, the original sample is removed.
-
-Like sharing samples, you must be a project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** on **both** the project that you are moving the sample *from*, and the project that you are moving the sample *to*.  In addition, the source project you are sharing *from* must **not** be a remote project.
-
-Start by [selecting the samples](#selecting-samples) that you want to move to the other project. When you've selected the samples that you want to move, click on the "Samples" button just above the samples list and select "Move Samples":
-
-![Move samples button.](images/move-samples-button.png)
-
-In the dialog that appears you will be presented with a list of the samples that are going to be moved, and an option to choose the project that the samples should be moved to:
-
-![Move samples dialog.](images/move-samples-dialog.png)
-
-When you click on the drop-down box to select a project, you can either visually find the project that you want, or you can filter the projects by their name by typing into the text field.
-
-If you have selected samples that are non-modifiable in your current project, you will be shown a warning that the samples you are moving will also be non-modifiable in the new project.
-
-Once you've selected the project that you want to move the samples to, click on the "Move Samples" button.
-
 ### Merging samples within a project
 
 If a sample was created when sequencing data was uploaded with an incorrect name, you may want to merge two samples together. When you merge two samples, you will move all of the **sequencing files** and **assembled genomes** from one sample to another, then **delete the original sample**. **None** of the sample metadata will be copied between the merged samples, instead you will select one sample as the target for the sample merge. Only users with the project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role can merge samples in a project and samples cannot be merged within **remote** projects.
