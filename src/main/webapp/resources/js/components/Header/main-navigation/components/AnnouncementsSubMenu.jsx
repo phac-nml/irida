@@ -1,32 +1,14 @@
 /**
  * @file AnnouncementsSubMenu is the announcements drop down in the main navigation bar.
  */
-
-import { Badge, Button, Menu, Space, Typography } from "antd";
 import React from "react";
-import { PriorityFlag } from "../../../../pages/announcement/components/PriorityFlag";
-import { BORDERED_LIGHT } from "../../../../styles/borders";
+import { Avatar, Badge, Button, List, Popover } from "antd";
+import { blue6, grey6 } from "../../../../styles/colors";
+import { SPACE_MD } from "../../../../styles/spacing";
 import { fromNow } from "../../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { IconBell, IconShoppingCart } from "../../../icons/Icons";
+import { IconBell, IconFlag } from "../../../icons/Icons";
 import { TYPES, useAnnouncements } from "./announcements-context";
-import { theme } from "../../../../utilities/theme-utilities";
-import { grey6 } from "../../../../styles/colors";
-import styled from "styled-components";
-
-const { Text } = Typography;
-
-const textColor = theme === "dark" ? `${grey6}` : "#222";
-const hoverColor = theme === "dark" ? "#fff" : "#222";
-const iconColor = theme === "dark" ? "#fff" : "#222";
-
-const TextStyle = styled(Text)`
-  color: ${textColor} !important;
-
-  :hover {
-    color: ${hoverColor} !important;
-  }
-`;
 
 /**
  * React component to display the bell icon and new announcement count badge
@@ -47,70 +29,69 @@ export function AnnouncementsSubMenu() {
     });
   }
 
-  return (
-    <Menu theme="dark" mode="horizontal">
-      <Menu.SubMenu
-        key="announcements"
-        title={
-          <Badge
-            className="t-announcements-badge"
-            count={announcements && announcements.filter((a) => !a.read).length}
-          >
-            <Button
-              type="link"
-              href="#"
-              className="t-announcements-button"
-              icon={<IconBell />}
-            />
-          </Badge>
-        }
-      >
-        {announcements.length == 0 ? (
-          <Menu.Item
-            key="announcement_none"
-            style={{ width: 400, borderBottom: BORDERED_LIGHT }}
-            disabled={true}
-          >
-            {i18n("AnnouncementsSubMenu.emptyList")}
-          </Menu.Item>
-        ) : (
-          announcements.map((item, index) => (
-            <Menu.Item
-              key={"announcement_" + index}
-              style={{ width: 400, borderBottom: BORDERED_LIGHT }}
-            >
-              <Button
-                type="link"
-                onClick={() => {
-                  showAnnouncementModal(index);
+  const Announcements = () => (
+    <List size="small" itemLayout="horizontal">
+      {announcements.map((announcement, index) => (
+        <List.Item key={`announcement_${announcement.identifier}`}>
+          <List.Item.Meta
+            avatar={
+              <Avatar
+                size={25}
+                icon={<IconFlag />}
+                style={{
+                  backgroundColor: announcement.priority ? blue6 : grey6,
                 }}
+              />
+            }
+            title={
+              <a
+                style={{ padding: 0 }}
+                onClick={() => showAnnouncementModal(index)}
               >
-                <Space size="small">
-                  <PriorityFlag hasPriority={item.priority} />
-                  <span>
-                    <TextStyle strong ellipsis style={{ width: 310 }}>
-                      {item.title}
-                    </TextStyle>
-                    <br />
-                    <TextStyle type="secondary" style={{ fontSize: `.8em` }}>
-                      {fromNow({ date: item.createdDate })}
-                    </TextStyle>
-                  </span>
-                </Space>
-              </Button>
-            </Menu.Item>
-          ))
-        )}
-        <Menu.Item key="view_all">
-          <a
+                {announcement.title}
+              </a>
+            }
+            description={fromNow({ date: announcement.createdDate })}
+          />
+        </List.Item>
+      ))}
+      {announcements.length === 0 && (
+        <List.Item>{i18n("AnnouncementsSubMenu.emptyList")}</List.Item>
+      )}
+      <List.Item>
+        <a
+          className="t-announcements-view-all"
+          href={setBaseUrl(`/announcements/user/list`)}
+        >
+          {i18n("AnnouncementsSubMenu.view-all")}
+        </a>
+      </List.Item>
+    </List>
+  );
+
+  return (
+    <Popover
+      placement="bottomRight"
+      content={
+        <div style={{ width: 300 }}>
+          <Announcements />
+        </div>
+      }
+      trigger="click"
+    >
+      <div style={{ padding: `0  ${SPACE_MD}` }}>
+        <Badge
+          className="t-announcements-badge"
+          count={announcements && announcements.filter((a) => !a.read).length}
+        >
+          <Button
             type="link"
-            className="t-announcements-view-all"
-            href={setBaseUrl(`/announcements/user/list`)}
-          >
-            {i18n("AnnouncementsSubMenu.view-all")}
-          </a>
-        </Menu.Item>
-      </Menu.SubMenu>
-    </Menu>
+            href="#"
+            className="t-announcements-button"
+            icon={<IconBell />}
+          />
+        </Badge>
+      </div>
+    </Popover>
   );
 }

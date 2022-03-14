@@ -1,6 +1,7 @@
 import { Badge, Button, Menu } from "antd";
 import React from "react";
 import { getCartCount } from "../../../../apis/cart/cart";
+import { SPACE_MD } from "../../../../styles/spacing";
 import { CART } from "../../../../utilities/events-utilities";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconShoppingCart } from "../../../icons/Icons";
@@ -35,7 +36,7 @@ export function CartLink() {
   }, []);
 
   return (
-    <div>
+    <div style={{ padding: `0 ${SPACE_MD}` }}>
       <Badge count={count}>
         <Button
           type="link"
