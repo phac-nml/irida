@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Layout, Menu } from "antd";
 import styled from "styled-components";
-import { grey1, grey6 } from "../../styles/colors";
+import { grey1, grey10, grey6, grey8 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
 import { theme } from "../../utilities/theme-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
@@ -10,15 +10,13 @@ import { AnnouncementsSubMenu } from "./main-navigation/components/Announcements
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
 import "./main-navigation/style.css";
-
 const { Header } = Layout;
 
 const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 const isManager = isAdmin || window.TL._USER.systemRole === "ROLE_MANAGER";
 
-const textColor = theme === "dark" ? "#fff" : "#222";
-
 const StyledHeader = styled(Header)`
+  background-color: ${theme === "dark" ? grey10 : grey1};
   position: fixed;
   z-index: 1;
   width: 100%;
@@ -30,16 +28,7 @@ const StyledHeader = styled(Header)`
 
   .anticon {
     font-size: 20px;
-    color: ${grey6};
-  }
-
-  .ant-menu-submenu a {
-    color: ${grey6};
-  }
-
-  .ant-menu-item:hover .anticon,
-  .ant-menu-submenu:hover .anticon {
-    color: ${grey1};
+    color: ${theme === "dark" ? grey1 : grey10};
   }
 `;
 
@@ -54,7 +43,7 @@ export function MainNavigation() {
         />
       </a>
       <Menu
-        theme="dark"
+        theme={theme}
         mode="horizontal"
         style={{
           display: "inline-block",
@@ -62,22 +51,13 @@ export function MainNavigation() {
         }}
         overflowedIndicator={<span>MENU</span>}
       >
-        <Menu.SubMenu
-          key="projects"
-          title={
-            <a href={setBaseUrl("/projects")}>{i18n("nav.main.projects")}</a>
-          }
-        >
+        <Menu.SubMenu key="projects" title={i18n("nav.main.projects")}>
           <Menu.Item key="project:list">
-            <a href={setBaseUrl("/projects")}>
-              {i18n("nav.main.project-list")}
-            </a>
+            {i18n("nav.main.project-list")}
           </Menu.Item>
           {isAdmin && (
             <Menu.Item key="project:all">
-              <a href={setBaseUrl("/projects/all")}>
-                {i18n("nav.main.project-list-all")}
-              </a>
+              {i18n("nav.main.project-list-all")}
             </Menu.Item>
           )}
           <Menu.Divider />
@@ -88,12 +68,7 @@ export function MainNavigation() {
           </Menu.Item>
         </Menu.SubMenu>
 
-        <Menu.SubMenu
-          key="analysis"
-          title={
-            <a href={setBaseUrl(`/analysis`)}>{i18n("nav.main.analysis")}</a>
-          }
-        >
+        <Menu.SubMenu key="analysis" title={i18n("nav.main.analysis")}>
           <Menu.Item key="analyses:user">
             <a href={setBaseUrl(`/analysis`)}>
               {i18n("nav.main.analysis-admin-user")}
@@ -147,7 +122,7 @@ export function MainNavigation() {
       )}
       <CartLink />
       <AnnouncementsSubMenu />
-      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[""]}>
+      <Menu theme={theme} mode="horizontal" defaultSelectedKeys={[""]}>
         <Menu.SubMenu
           key="account-dropdown-link"
           icon={<IconUser />}
