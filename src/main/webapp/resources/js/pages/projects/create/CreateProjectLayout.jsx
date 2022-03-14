@@ -4,6 +4,7 @@ import { createProject } from "../../../apis/projects/create";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { CreateProjectDetails } from "./CreateProjectDetails";
 import { CreateProjectSamples } from "./CreateProjectSamples";
+import { CreateProjectMetadataRestrictions } from "./CreateProjectMetadataRestrictions";
 
 /**
  * React component to handle the layout of the Create New Project and
@@ -27,6 +28,10 @@ export function CreateProjectLayout({ children }) {
     {
       title: i18n("CreateProjectLayout.samples"),
       content: <CreateProjectSamples form={form} />,
+    },
+    {
+      title: "Metadata Restrictions",
+      content: <CreateProjectMetadataRestrictions form={form} />,
     },
   ];
 

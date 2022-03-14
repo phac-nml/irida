@@ -174,7 +174,7 @@ public class UIActivitiesServiceTest {
 
 		UserGroup userGroup2 = new UserGroup("MY GROUP 2");
 		UserGroupProjectJoin userGroupProjectJoin2 = new UserGroupProjectJoin(project2, userGroup2,
-				ProjectRole.PROJECT_USER);
+				ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_4);
 		UserGroupRoleSetProjectEvent userGroupRoleSetProjectEvent2 = new UserGroupRoleSetProjectEvent(
 				userGroupProjectJoin2);
 
