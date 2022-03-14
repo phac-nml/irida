@@ -1,7 +1,7 @@
 import React from "react";
-import { Button, Layout, Menu } from "antd";
+import { Button, Grid, Layout, Menu } from "antd";
 import styled from "styled-components";
-import { grey1, grey10, grey6, grey8 } from "../../styles/colors";
+import { grey1, grey10 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
 import { theme } from "../../utilities/theme-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
@@ -33,6 +33,19 @@ const StyledHeader = styled(Header)`
 `;
 
 export function MainNavigation() {
+  const [isLargeScreen, setIsLargeScreen] = React.useState(
+    window.innerWidth > 1050
+  );
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      console.log(window.innerWidth);
+      setIsLargeScreen(window.innerWidth > 1050);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <StyledHeader>
       <a href={setBaseUrl("/")}>
@@ -42,71 +55,103 @@ export function MainNavigation() {
           alt={i18n("global.title")}
         />
       </a>
-      <Menu
-        theme={theme}
-        mode="horizontal"
-        style={{
-          display: "inline-block",
-          minWidth: 400,
-        }}
-        overflowedIndicator={<span>MENU</span>}
-      >
-        <Menu.SubMenu key="projects" title={i18n("nav.main.projects")}>
-          <Menu.Item key="project:list">
-            {i18n("nav.main.project-list")}
-          </Menu.Item>
-          {isAdmin && (
-            <Menu.Item key="project:all">
-              {i18n("nav.main.project-list-all")}
+      {isLargeScreen ? (
+        <Menu
+          theme={theme}
+          mode="horizontal"
+          style={{
+            display: "inline-block",
+            minWidth: 400,
+          }}
+        >
+          <Menu.SubMenu key="projects" title={i18n("nav.main.projects")}>
+            <Menu.Item key="project:list">
+              {i18n("nav.main.project-list")}
             </Menu.Item>
-          )}
-          <Menu.Divider />
-          <Menu.Item key="project:sync">
-            <a href={setBaseUrl("/projects/synchronize")}>
-              {i18n("nav.main.project-sync")}
-            </a>
-          </Menu.Item>
-        </Menu.SubMenu>
-
-        <Menu.SubMenu key="analysis" title={i18n("nav.main.analysis")}>
-          <Menu.Item key="analyses:user">
-            <a href={setBaseUrl(`/analysis`)}>
-              {i18n("nav.main.analysis-admin-user")}
-            </a>
-          </Menu.Item>
-          {isAdmin && (
-            <Menu.Item key="analyses:all">
-              <a href={setBaseUrl("/analysis/all")}>
-                {i18n("nav.main.analysis-admin-all")}
+            {isAdmin && (
+              <Menu.Item key="project:all">
+                {i18n("nav.main.project-list-all")}
+              </Menu.Item>
+            )}
+            <Menu.Divider />
+            <Menu.Item key="project:sync">
+              <a href={setBaseUrl("/projects/synchronize")}>
+                {i18n("nav.main.project-sync")}
               </a>
             </Menu.Item>
-          )}
-          <Menu.Divider />
-          <Menu.Item key="analyses:output">
-            <a href={setBaseUrl("/analysis/user/analysis-outputs")}>
-              {i18n("Analysis.outputFiles")}
-            </a>
-          </Menu.Item>
-        </Menu.SubMenu>
+          </Menu.SubMenu>
 
-        {!isAdmin && isManager && (
-          <Menu.SubMenu key="users" title={i18n("nav.main.users")}>
-            <Menu.Item key="user:users">
-              <a href={setBaseUrl("/users")}>{i18n("nav.main.users-list")}</a>
+          <Menu.SubMenu key="analysis" title={i18n("nav.main.analysis")}>
+            <Menu.Item key="analyses:user">
+              <a href={setBaseUrl(`/analysis`)}>
+                {i18n("nav.main.analysis-admin-user")}
+              </a>
             </Menu.Item>
-            <Menu.Item key="user:groups">
-              <a href={setBaseUrl("/groups")}>{i18n("nav.main.groups-list")}</a>
+            {isAdmin && (
+              <Menu.Item key="analyses:all">
+                <a href={setBaseUrl("/analysis/all")}>
+                  {i18n("nav.main.analysis-admin-all")}
+                </a>
+              </Menu.Item>
+            )}
+            <Menu.Divider />
+            <Menu.Item key="analyses:output">
+              <a href={setBaseUrl("/analysis/user/analysis-outputs")}>
+                {i18n("Analysis.outputFiles")}
+              </a>
             </Menu.Item>
           </Menu.SubMenu>
-        )}
-        {!isAdmin && (
-          <Menu.Item key="remote_api">
-            <Button type="link" href={setBaseUrl("/remote_api")}>
-              {i18n("nav.main.remoteapis")}
-            </Button>
-          </Menu.Item>
-        )}
-      </Menu>
+
+          {!isAdmin && isManager && (
+            <Menu.SubMenu key="users" title={i18n("nav.main.users")}>
+              <Menu.Item key="user:users">
+                <a href={setBaseUrl("/users")}>{i18n("nav.main.users-list")}</a>
+              </Menu.Item>
+              <Menu.Item key="user:groups">
+                <a href={setBaseUrl("/groups")}>
+                  {i18n("nav.main.groups-list")}
+                </a>
+              </Menu.Item>
+            </Menu.SubMenu>
+          )}
+          {!isAdmin && (
+            <Menu.Item key="remote_api">
+              <Button type="link" href={setBaseUrl("/remote_api")}>
+                {i18n("nav.main.remoteapis")}
+              </Button>
+            </Menu.Item>
+          )}
+        </Menu>
+      ) : (
+        <Menu
+          theme={theme}
+          mode="horizontal"
+          style={{
+            display: "inline-block",
+            width: 100,
+          }}
+        >
+          <Menu.SubMenu key="small" title={i18n("nav.main.small")}>
+            <Menu.SubMenu key="projects" title={i18n("nav.main.projects")}>
+              <Menu.Item key="project:list">
+                {i18n("nav.main.project-list")}
+              </Menu.Item>
+              {isAdmin && (
+                <Menu.Item key="project:all">
+                  {i18n("nav.main.project-list-all")}
+                </Menu.Item>
+              )}
+              <Menu.Divider />
+              <Menu.Item key="project:sync">
+                <a href={setBaseUrl("/projects/synchronize")}>
+                  {i18n("nav.main.project-sync")}
+                </a>
+              </Menu.Item>
+            </Menu.SubMenu>
+          </Menu.SubMenu>
+        </Menu>
+      )}
+
       <div style={{ content: "", flexGrow: 1 }} />
       <GlobalSearch />
       {isAdmin && (
