@@ -7,6 +7,9 @@ Changes
 * [Documentation]: Fixed issue that prevented a user from saving analysis results back to a sample and concatenating sequence files. Fixed date format in Swagger REST API documentation. (22.01.2)
 * [REST]: Fixed bug that was preventing syncing remote projects from versions 20.09 and older. (22.01.3)
 * [UI]: Fixed bug preventing updating of project details. (22.01.4)
+* [All]: Fixed scalability bug in updating Project modifiedDate during handling of ProjectEvent that was increasing in operation time as number of Samples increased within a project. (22.01.5)
+* [UI]: Fixed load times on Project Samples page. (22.01.5)
+* [UI]: Fixed text overflow issue in Command-line Linker modal. (22.01.5)
 
 21.09 to 22.01
 --------------

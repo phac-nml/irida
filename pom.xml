@@ -10,7 +10,7 @@
 	<groupId>ca.corefacility.bioinformatics</groupId>
 	<artifactId>irida</artifactId>
 	<packaging>war</packaging>
-	<version>22.01.4</version>
+	<version>22.01.5</version>
 	<name>irida</name>
 	<url>http://www.irida.ca</url>
 
