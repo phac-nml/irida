@@ -39,6 +39,7 @@ function Linker() {
       // Post data to the server to get the linker command.
       setScriptString(data);
       setVisible(true);
+      document.removeEventListener("sample-ids-return", handleSampleIds);
     });
   }
 
@@ -52,9 +53,8 @@ function Linker() {
   These Listeners and Dispatchers are a way to get around the separation between react
   components and the legacy JS code already on the page.
   */
-  document.addEventListener("sample-ids-return", handleSampleIds, false);
-
   function getIds() {
+    document.addEventListener("sample-ids-return", handleSampleIds, false);
     document.dispatchEvent(new Event("sample-ids"));
   }
 

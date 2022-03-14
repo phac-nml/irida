@@ -10,6 +10,7 @@ Changes
 * [All]: Fixed scalability bug in updating Project modifiedDate during handling of ProjectEvent that was increasing in operation time as number of Samples increased within a project. (22.01.5)
 * [UI]: Fixed load times on Project Samples page. (22.01.5)
 * [UI]: Fixed text overflow issue in Command-line Linker modal. (22.01.5)
+* [UI]: Fixed bug with Command-line Linker modal making multiple requests to the server to get the command string. (22.01.5)
 
 21.09 to 22.01
 --------------
