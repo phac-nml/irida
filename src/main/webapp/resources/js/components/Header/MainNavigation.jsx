@@ -2,6 +2,7 @@ import React from "react";
 import { Button, Layout, Menu } from "antd";
 import styled from "styled-components";
 import { grey1, grey6 } from "../../styles/colors";
+import { SPACE_MD } from "../../styles/spacing";
 import { theme } from "../../utilities/theme-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconUser } from "../icons/Icons";
@@ -58,7 +59,6 @@ export function MainNavigation() {
         style={{
           display: "inline-block",
           minWidth: 400,
-          border: `1px solid red`,
         }}
         overflowedIndicator={<span>MENU</span>}
       >
@@ -135,25 +135,19 @@ export function MainNavigation() {
       <div style={{ content: "", flexGrow: 1 }} />
       <GlobalSearch />
       {isAdmin && (
-        <Button
-          type="primary"
-          className="t-admin-panel-btn"
-          href={setBaseUrl("/admin")}
-        >
-          {i18n("MainNavigation.admin").toUpperCase()}
-        </Button>
+        <div style={{ padding: `0 ${SPACE_MD}` }}>
+          <Button
+            type="primary"
+            className="t-admin-panel-btn"
+            href={setBaseUrl("/admin")}
+          >
+            {i18n("MainNavigation.admin").toUpperCase()}
+          </Button>
+        </div>
       )}
       <CartLink />
       <AnnouncementsSubMenu />
-      <Menu
-        theme="dark"
-        mode="horizontal"
-        defaultSelectedKeys={[""]}
-        style={{
-          display: "inline-block",
-          border: `1px solid red`,
-        }}
-      >
+      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[""]}>
         <Menu.SubMenu
           key="account-dropdown-link"
           icon={<IconUser />}
