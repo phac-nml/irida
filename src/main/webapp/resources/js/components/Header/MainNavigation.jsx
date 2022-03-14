@@ -39,7 +39,6 @@ export function MainNavigation() {
 
   React.useEffect(() => {
     const handleResize = () => {
-      console.log(window.innerWidth);
       setIsLargeScreen(window.innerWidth > 1050);
     };
     window.addEventListener("resize", handleResize);
