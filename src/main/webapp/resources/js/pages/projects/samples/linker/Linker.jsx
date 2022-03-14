@@ -12,13 +12,9 @@ import { IconCode } from "../../../../components/icons/Icons";
 const { Paragraph, Text } = Typography;
 
 const CommandText = styled(Paragraph)`
+  margin: 0px !important;
   font-family: monospace;
   font-size: 14px;
-  margin-top: ${SPACE_SM};
-  padding: 2px;
-  background-color: ${grey2};
-  border: ${BORDERED_LIGHT};
-  border-radius: ${BORDER_RADIUS};
 `;
 
 /**
@@ -98,13 +94,22 @@ function Linker() {
             />
           </Form.Item>
         </Form>
-        <CommandText
-          className="t-cmd-text"
-          ellipsis={{ rows: 1 }}
-          copyable={command}
-        >
-          {command}
-        </CommandText>
+        <div
+          style={{
+            marginTop: `${SPACE_SM}`,
+            padding: "2px",
+            backgroundColor: `${grey2}`,
+            border: `${BORDERED_LIGHT}`,
+            borderRadius: `${BORDER_RADIUS}`
+          }}>
+          <CommandText
+            className="t-cmd-text"
+            ellipsis={{ rows: 1 }}
+            copyable={command}
+          >
+            {command}
+          </CommandText>
+        </div>
       </Modal>
     </>
   );
