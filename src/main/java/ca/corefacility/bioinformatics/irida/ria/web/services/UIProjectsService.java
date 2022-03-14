@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
@@ -18,8 +15,10 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.Coverage;
@@ -31,6 +30,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.CreateProjectRe
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.NewProjectMetadataRestriction;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareMetadataRestriction;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ManageLocalProjectSettingsPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -87,6 +88,18 @@ public class UIProjectsService {
 			createdProject = projectService.createProjectWithSamples(project, request.getSamples(), !request.isLock());
 		} else {
 			createdProject = projectService.create(project);
+		}
+
+		// Update metadata restrictions in target project
+		List<NewProjectMetadataRestriction> restrictions = request.getMetadataRestrictions();
+		List<MetadataTemplateField> fields = metadataTemplateService.getPermittedFieldsForCurrentUser(createdProject,
+				false);
+		for (NewProjectMetadataRestriction restriction : restrictions) {
+			fields.stream()
+					.filter(f -> Objects.equals(restriction.getIdentifier(), f.getId()))
+					.findFirst()
+					.ifPresent(field -> metadataTemplateService.setMetadataRestriction(createdProject, field,
+							ProjectMetadataRole.fromString(restriction.getRestriction())));
 		}
 		return createdProject.getId();
 	}

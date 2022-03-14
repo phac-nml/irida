@@ -7,7 +7,7 @@ import {
 } from "../../../components/icons/Icons";
 import { blue6, red6 } from "../../../styles/colors";
 import { getColourForRestriction } from "../../../utilities/restriction-utilities";
-import { updateMetadataRestriction } from "./shareSlice";
+import { updateNewProjectMetadataRestriction } from "../create/metadataRestrictionSlice";
 
 /**
  * React component to allow the user to select the level of restiction for a
@@ -52,7 +52,7 @@ export function TargetMetadataRestriction({ field = {}, restrictions = [] }) {
   }
 
   const onChange = (field, value) =>
-    dispatch(updateMetadataRestriction({ field, value }));
+    dispatch(updateNewProjectMetadataRestriction({ field, value }));
 
   if (field.target) {
     if (field.difference >= 0) {
