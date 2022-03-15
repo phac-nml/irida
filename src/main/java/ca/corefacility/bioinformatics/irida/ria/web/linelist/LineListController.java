@@ -81,28 +81,22 @@ public class LineListController {
 		//fetch MAX_PAGE_SIZE samples at a time for the project
 		Page<ProjectSampleJoinMinimal> page = sampleService.getFilteredProjectSamples(Arrays.asList(project),
 				Collections.emptyList(), "", "", "", null, null, current, pageSize, sort);
-		while (!page.isEmpty()) {
-			List<SampleMinimal> samples = page.stream()
-					.map(ProjectSampleJoinMinimal::getObject)
-					.collect(Collectors.toList());
-			List<Long> sampleIds = samples.stream().map(SampleMinimal::getId).collect(Collectors.toList());
-			Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProjectSamples(project,
-					sampleIds);
+		List<SampleMinimal> samples = page.stream()
+				.map(ProjectSampleJoinMinimal::getObject)
+				.collect(Collectors.toList());
+		List<Long> sampleIds = samples.stream().map(SampleMinimal::getId).collect(Collectors.toList());
+		Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProjectSamples(project,
+				sampleIds);
 
-			//for each sample
-			for (SampleMinimal s : samples) {
-				//get the metadata for that sample
-				Set<MetadataEntry> metadata = metadataForProject.get(s.getId());
+		//for each sample
+		for (SampleMinimal s : samples) {
+			//get the metadata for that sample
+			Set<MetadataEntry> metadata = metadataForProject.get(s.getId());
 
-				//check if the project owns the sample
-				boolean ownership = !lockedSamplesInProject.contains(s.getId());
+			//check if the project owns the sample
+			boolean ownership = !lockedSamplesInProject.contains(s.getId());
 
-				projectSamplesMetadata.add(new UISampleMetadata(project, s, ownership, metadata));
-			}
-
-			// Get the next page --> Don't think this was doing anything
-			page = sampleService.getFilteredProjectSamples(Arrays.asList(project), Collections.emptyList(), "", "", "",
-					null, null, page.getNumber() + 1, MAX_PAGE_SIZE, sort);
+			projectSamplesMetadata.add(new UISampleMetadata(project, s, ownership, metadata));
 		}
 
 		return new EntriesResponse(page.getTotalElements(), projectSamplesMetadata);
