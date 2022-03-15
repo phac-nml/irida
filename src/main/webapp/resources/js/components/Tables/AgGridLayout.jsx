@@ -31,23 +31,29 @@ const LayoutStyles = styled(Layout)`
     font-size: 18px;
   }
 
-  // Overwrite the default material colours.
-  .ag-icon-checkbox-checked,
-  .ag-wrapper.ag-input-wrapper .ag-icon-checkbox-checked,
-  .ag-wrapper.ag-input-wrapper .ag-icon-checkbox-indeterminate {
-    color: ${blue6};
+  .ag-checkbox-input-wrapper {
+    font-size: 14px !important;
   }
 
-  .ag-icon-checkbox-unchecked,
-  .ag-wrapper.ag-input-wrapper .ag-icon-checkbox-unchecked {
-    color: ${grey7};
+  .ag-checkbox-input-wrapper:active,
+  .ag-checkbox-input-wrapper:focus,
+  .ag-checkbox-input-wrapper:focus-within {
+    box-shadow: none !important;
+  }
+
+  // Overwrite the default material colours.
+  .ag-checkbox-input-wrapper.ag-checked:after,
+  .ag-checkbox-input-wrapper.ag-indeterminate:after {
+    color: ${blue6} !important;
+  }
+
+  .ag-checkbox-input-wrapper:after {
+    color: ${grey7} !important;
   }
 
   // Style the default editor within ag-grid
-  .ag-cell-edit-input {
-    color: ${grey9};
-    font-size: 12px !important;
-    padding: 0 10px;
+  .ag-cell-inline-editing {
+    border-color: ${grey9} !important;
   }
 `;
 

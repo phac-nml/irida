@@ -3028,23 +3028,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ag-grid-community@npm:^22.1.1":
-  version: 22.1.1
-  resolution: "ag-grid-community@npm:22.1.1"
-  checksum: 3024cc69f699e474a296d0da258fc53a451f41cd60eedd5156f802011e4f3f3c74b29b00b3ed6fbffeeab07f9c8cf359e31a5d6768d568cfde18e2bab24b33ef
+"ag-grid-community@npm:^27.1.0":
+  version: 27.1.0
+  resolution: "ag-grid-community@npm:27.1.0"
+  checksum: b385fe4e6f0d6e781ad7acbf58cc165acf1d536c07a604bd4f642e8f9e4595c937bd9296e3375c0eb0e4fdebb99362c4892eb07c87a8a95926e8dc1ae6b1f851
   languageName: node
   linkType: hard
 
-"ag-grid-react@npm:^22.1.1":
-  version: 22.1.1
-  resolution: "ag-grid-react@npm:22.1.1"
+"ag-grid-react@npm:^27.1.0":
+  version: 27.1.0
+  resolution: "ag-grid-react@npm:27.1.0"
   dependencies:
-    prop-types: ^15.6.2
+    prop-types: ^15.8.1
   peerDependencies:
-    ag-grid-community: ~22.1.1
-    react: ^16.3.0
-    react-dom: ^16.3.0
-  checksum: e62d4e9e64646203e689d7c8385dbf7321743d55f7c6caf2b934b4ccb9906177a5cee8e7a6330bf1160ace902b6da42f7108975169b58610004480d088ab6e82
+    ag-grid-community: ~27.1.0
+    react: ^16.3.0 || ^17.0.0
+    react-dom: ^16.3.0 || ^17.0.0
+  checksum: 36631975f2b94c3ac063423e195b14ebeb901cb2b0f1559c987c25e32d627db04a10d5420f90b173fa3e36cf915430b7201364c087f8265f812d072301f77b74
   languageName: node
   linkType: hard
 
@@ -6949,8 +6949,8 @@ fsevents@^2.1.2:
     "@react-dnd/invariant": ^2.0.0
     "@reduxjs/toolkit": 1.6.0
     "@yarnpkg/pnpify": ^2.4.0
-    ag-grid-community: ^22.1.1
-    ag-grid-react: ^22.1.1
+    ag-grid-community: ^27.1.0
+    ag-grid-react: ^27.1.0
     angular: 1.8.0
     angular-aside: ^1.3.2
     angular-ui-bootstrap: ^2.5.6
@@ -10601,6 +10601,17 @@ fsevents@^2.1.2:
     object-assign: ^4.1.1
     react-is: ^16.8.1
   checksum: 5eef82fdda64252c7e75aa5c8cc28a24bbdece0f540adb60ce67c205cf978a5bd56b83e4f269f91c6e4dcfd80b36f2a2dec24d362e278913db2086ca9c6f9430
+  languageName: node
+  linkType: hard
+
+"prop-types@npm:^15.8.1":
+  version: 15.8.1
+  resolution: "prop-types@npm:15.8.1"
+  dependencies:
+    loose-envify: ^1.4.0
+    object-assign: ^4.1.1
+    react-is: ^16.13.1
+  checksum: c056d3f1c057cb7ff8344c645450e14f088a915d078dcda795041765047fa080d38e5d626560ccaac94a4e16e3aa15f3557c1a9a8d1174530955e992c675e459
   languageName: node
   linkType: hard
 
