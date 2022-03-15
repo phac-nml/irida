@@ -13,13 +13,15 @@ import { FIELDS } from "../constants";
  */
 export function* entriesLoadingSaga() {
   let current = 0,
-    pageSize = 200,
+    pageSize = 5000,
     entries = [];
   try {
     const { payload } = yield take(appTypes.INIT_APP);
     yield put(actions.load());
     const { data } = yield call(fetchMetadataEntries, {
       projectId: payload.id,
+      pageSize,
+      current,
     });
 
     entries = data.content;
@@ -29,6 +31,7 @@ export function* entriesLoadingSaga() {
       const { data } = yield call(fetchMetadataEntries, {
         projectId: payload.id,
         current: i,
+        pageSize,
       });
       entries = [...entries, ...data.content];
       yield put(actions.loading(entries.length, data.total));

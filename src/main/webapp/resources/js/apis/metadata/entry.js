@@ -12,11 +12,7 @@ const URL = setBaseUrl(`linelist/entries`);
  * @param {number} projectId
  * @returns {Promise}
  */
-export function fetchMetadataEntries({
-  projectId,
-  current = 0,
-  pageSize = 200,
-}) {
+export function fetchMetadataEntries({ projectId, current, pageSize }) {
   return axios({
     method: "get",
     url: `${URL}?projectId=${projectId}&current=${current}&pageSize=${pageSize}`,

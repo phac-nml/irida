@@ -14,7 +14,7 @@ export const initialState = {
   entries: null, // List of metadata entries
   selected: [],
   globalFilter: "",
-  loading: { count: 0, total: 2000 },
+  loading: { count: 0, total: 0 },
 };
 
 /*

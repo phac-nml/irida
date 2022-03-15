@@ -13,6 +13,15 @@ const { project } = window.PAGE;
  * 3. Loading error.
  */
 export function LineList({ error, loading, ...props }) {
+  const [percent, setPercent] = React.useState(0);
+  console.log("KDSFLJ");
+  React.useEffect(() => {
+    console.log(loading);
+    if (loading.total !== 0) {
+      setPercent(Math.ceil((loading.count / loading.total) * 100));
+    }
+  }, [loading]);
+
   if (!!loading) {
     return (
       <div
@@ -25,13 +34,10 @@ export function LineList({ error, loading, ...props }) {
           flexDirection: "column",
         }}
       >
+        <Progress percent={percent} type="circle" />
         <Typography.Title level={3}>
-          {i18n("linelist.loading", loading.total)}
+          {loading.total === 0 ? "" : i18n("linelist.loading", loading.total)}
         </Typography.Title>
-        <Progress
-          percent={Math.ceil((loading.count / loading.total) * 100)}
-          type="circle"
-        />
       </div>
     );
   } else if (error) {
