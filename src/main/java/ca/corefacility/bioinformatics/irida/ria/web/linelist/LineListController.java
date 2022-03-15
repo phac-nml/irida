@@ -24,10 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.*;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColumn;
-import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataField;
-import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataFieldDefault;
-import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UIMetadataTemplate;
-import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UISampleMetadata;
+import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.*;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -71,18 +68,19 @@ public class LineListController {
 	 */
 	@RequestMapping(value = "/entries", method = RequestMethod.GET)
 	@ResponseBody
-	public List<UISampleMetadata> getProjectSamplesMetadataEntries(@RequestParam long projectId) {
+	public EntriesResponse getProjectSamplesMetadataEntries(@RequestParam long projectId, @RequestParam int current,
+			@RequestParam int pageSize) {
 		Project project = projectService.read(projectId);
 		Integer MAX_PAGE_SIZE = 5000;
 		List<UISampleMetadata> projectSamplesMetadata = new ArrayList<>();
 
 		List<Long> lockedSamplesInProject = sampleService.getLockedSamplesInProject(project);
 
-		Sort sort = Sort.by(Sort.Direction.ASC, "sample.id");
+		Sort sort = Sort.by(Sort.Direction.ASC, "sample.modifiedDate");
 
 		//fetch MAX_PAGE_SIZE samples at a time for the project
 		Page<ProjectSampleJoinMinimal> page = sampleService.getFilteredProjectSamples(Arrays.asList(project),
-				Collections.emptyList(), "", "", "", null, null, 0, MAX_PAGE_SIZE, sort);
+				Collections.emptyList(), "", "", "", null, null, current, pageSize, sort);
 		while (!page.isEmpty()) {
 			List<SampleMinimal> samples = page.stream()
 					.map(ProjectSampleJoinMinimal::getObject)
@@ -102,12 +100,12 @@ public class LineListController {
 				projectSamplesMetadata.add(new UISampleMetadata(project, s, ownership, metadata));
 			}
 
-			// Get the next page
+			// Get the next page --> Don't think this was doing anything
 			page = sampleService.getFilteredProjectSamples(Arrays.asList(project), Collections.emptyList(), "", "", "",
 					null, null, page.getNumber() + 1, MAX_PAGE_SIZE, sort);
 		}
 
-		return projectSamplesMetadata;
+		return new EntriesResponse(page.getTotalElements(), projectSamplesMetadata);
 	}
 
 	/**

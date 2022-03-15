@@ -16,7 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleMinimal;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.LineListController;
-import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.UISampleMetadata;
+import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.EntriesResponse;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -103,10 +103,9 @@ public class LineListControllerTest {
 		when(sampleService.getFilteredProjectSamples(eq(Arrays.asList(project)), eq(Collections.emptyList()), eq(""),
 				eq(""), eq(""), isNull(), isNull(), eq(1), any(Integer.class), any(Sort.class))).thenReturn(pageTwo);
 		when(sampleService.getMetadataForProjectSamples(eq(project), anyList())).thenReturn(metadata);
-		List<UISampleMetadata> projectSamplesMetadataEntries = lineListController
-				.getProjectSamplesMetadataEntries(projectId);
+		EntriesResponse response = lineListController.getProjectSamplesMetadataEntries(projectId, 0, 5000);
 
-		assertEquals(2, projectSamplesMetadataEntries.size());
+		assertEquals(2, response.getTotal());
 
 		verify(sampleService, times(1)).getMetadataForProjectSamples(project, Lists.newArrayList(1L, 2L));
 	}

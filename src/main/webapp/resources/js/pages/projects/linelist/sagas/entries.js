@@ -1,7 +1,7 @@
 import { call, put, take } from "redux-saga/effects";
 import {
   fetchMetadataEntries,
-  saveMetadataEntryField
+  saveMetadataEntryField,
 } from "../../../../apis/metadata/entry";
 import { types as appTypes } from "../../../../redux/reducers/app";
 import { actions, types } from "../reducers/entries";
@@ -12,11 +12,28 @@ import { FIELDS } from "../constants";
  * @returns {IterableIterator<*>}
  */
 export function* entriesLoadingSaga() {
+  let current = 0,
+    pageSize = 200,
+    entries = [];
   try {
     const { payload } = yield take(appTypes.INIT_APP);
     yield put(actions.load());
-    const { data: entries } = yield call(fetchMetadataEntries, payload.id);
-    yield put(actions.success(entries));
+    const { data } = yield call(fetchMetadataEntries, {
+      projectId: payload.id,
+    });
+
+    entries = data.content;
+    const pages = Math.ceil(data.total / pageSize);
+
+    for (let i = 0; i < pages; i++) {
+      const { data } = yield call(fetchMetadataEntries, {
+        projectId: payload.id,
+        current: i,
+      });
+      entries = [...entries, ...data.content];
+      yield put(actions.loading(entries.length, data.total));
+    }
+    yield put(actions.success({ entries }));
   } catch (error) {
     yield put(actions.error(error));
   }
