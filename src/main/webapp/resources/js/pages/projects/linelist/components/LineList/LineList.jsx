@@ -14,9 +14,8 @@ const { project } = window.PAGE;
  */
 export function LineList({ error, loading, ...props }) {
   const [percent, setPercent] = React.useState(0);
-  console.log("KDSFLJ");
+
   React.useEffect(() => {
-    console.log(loading);
     if (loading.total !== 0) {
       setPercent(Math.ceil((loading.count / loading.total) * 100));
     }
