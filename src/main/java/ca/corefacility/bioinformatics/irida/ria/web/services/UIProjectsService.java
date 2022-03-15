@@ -31,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsR
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.NewProjectMetadataRestriction;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareMetadataRestriction;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ManageLocalProjectSettingsPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
