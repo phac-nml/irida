@@ -358,7 +358,6 @@ export class TableComponent extends React.Component {
   };
 
   render() {
-    console.log(this.props);
     return (
       <AgGridReact
         id="linelist-grid"
@@ -401,17 +400,14 @@ TableComponent.propTypes = {
   selection: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => {
-  console.log({ tableState: state });
-  return {
-    loading: state.entries.loading,
-    fields: state.fields.fields,
-    templates: state.templates.templates,
-    current: state.templates.current,
-    entries: state.entries.entries.entries,
-    globalFilter: state.entries.globalFilter,
-  };
-};
+const mapStateToProps = (state) => ({
+  loading: state.entries.loading,
+  fields: state.fields.fields,
+  templates: state.templates.templates,
+  current: state.templates.current,
+  entries: state.entries.entries.entries,
+  globalFilter: state.entries.globalFilter,
+});
 
 const mapDispatchToProps = (dispatch) => ({
   tableModified: (fields) => dispatch(templateActions.tableModified(fields)),

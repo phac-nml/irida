@@ -12,9 +12,7 @@ const { project } = window.PAGE;
  * 2. Table
  * 3. Loading error.
  */
-export function LineList(props) {
-  console.log(props);
-  const { loading } = props;
+export function LineList({ error, loading, ...props }) {
   if (!!loading) {
     return (
       <div
@@ -31,12 +29,12 @@ export function LineList(props) {
           {i18n("linelist.loading", loading.total)}
         </Typography.Title>
         <Progress
-          percent={Math.round(loading.count / loading.total) * 100}
+          percent={Math.ceil((loading.count / loading.total) * 100)}
           type="circle"
         />
       </div>
     );
-  } else if (props.error) {
+  } else if (error) {
     return (
       <ErrorAlert message={i18n("linelist.error.message", project.name)} />
     );

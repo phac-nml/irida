@@ -21,7 +21,6 @@ export const initialState = {
 REDUCERS
  */
 export const reducer = (state = initialState, action = {}) => {
-  console.log("reducer", action.payload);
   switch (action.type) {
     case types.LOAD:
       return { ...state, fetching: true, error: false };
