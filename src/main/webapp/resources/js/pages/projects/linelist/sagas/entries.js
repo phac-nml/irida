@@ -27,7 +27,7 @@ export function* entriesLoadingSaga() {
     entries = data.content;
     const pages = Math.ceil(data.total / pageSize);
 
-    for (let i = 0; i < pages; i++) {
+    for (let i = 1; i < pages; i++) {
       const { data } = yield call(fetchMetadataEntries, {
         projectId: payload.id,
         current: i,
