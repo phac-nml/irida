@@ -47,6 +47,8 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 		createComponent.enterProjectDescription(description);
 		createComponent.goToNextStep();
 		assertTrue(createComponent.isNoSamplesMessageDisplayed(), "Should be a message explaining no samples");
+		createComponent.goToNextStep();
+		assertTrue(createComponent.isNoSamplesSelectedMessageDisplayed(), "Should be a message explaining no samples were selected so there is no metadata available");
 		createComponent.submitProject();
 		assertTrue(driver().getTitle().contains(name));
 
@@ -73,7 +75,8 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 		createComponent.enterProjectName(name);
 		createComponent.goToNextStep();
 		createComponent.selectAllSamples();
-
+		createComponent.goToNextStep();
+		assertTrue(createComponent.isNoSampleMetadataMessageDisplayed(), "Should be a message explaining that there is no sample metadata available");
 		createComponent.submitProject();
 		assertTrue(driver().getTitle().contains(name));
 		assertEquals("Showing 1 to 1 of 1 entries", samplesPage.getTableInfo(), "Should be 1 sample on the page");

@@ -39,6 +39,12 @@ public class CreateProjectComponent extends AbstractPage {
 	@FindBy(className = "t-no-samples")
 	private WebElement noSamplesMessage;
 
+	@FindBy(className = "t-no-samples-selected")
+	private WebElement noSamplesSelectedMessage;
+
+	@FindBy(className = "t-no-sample-metadata")
+	private WebElement noSampleMetadataMessage;
+
 	@FindBy(css = ".t-samples th .ant-checkbox")
 	private WebElement selectAllSamples;
 
@@ -84,6 +90,14 @@ public class CreateProjectComponent extends AbstractPage {
 
 	public boolean isNoSamplesMessageDisplayed() {
 		return noSamplesMessage.isDisplayed();
+	}
+
+	public boolean isNoSamplesSelectedMessageDisplayed() {
+		return noSamplesSelectedMessage.isDisplayed();
+	}
+
+	public boolean isNoSampleMetadataMessageDisplayed() {
+		return noSampleMetadataMessage.isDisplayed();
 	}
 
 	public void selectAllSamples() {

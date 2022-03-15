@@ -115,6 +115,7 @@ export function CreateProjectMetadataRestrictions({ form }) {
         )}
         type="info"
         showIcon
+        className="t-no-sample-metadata"
       />
     )
   ) : (
@@ -127,6 +128,7 @@ export function CreateProjectMetadataRestrictions({ form }) {
       )}
       type="info"
       showIcon
+      className="t-no-samples-selected"
     />
   );
 }
