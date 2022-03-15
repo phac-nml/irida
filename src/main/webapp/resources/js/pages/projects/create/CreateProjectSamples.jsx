@@ -15,7 +15,7 @@ import { IconExperiment } from "../../../components/icons/Icons";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import { blue6 } from "../../../styles/colors";
 import { setSamples } from "./newProjectSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 /**
  * Component to render samples that are in the cart (if any).
@@ -38,7 +38,6 @@ export function CreateProjectSamples({ form }) {
     Then format them into a manner that can be consumed by the dropdown.
      */
     projectSamples.unlocked?.forEach((projectSample) => {
-      console.log(projectSample.sample.organism);
       if (!exists[projectSample.sample.organism]) {
         exists[projectSample.sample.organism] = {
           text: projectSample.sample.organism,

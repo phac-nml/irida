@@ -28,16 +28,28 @@ export function CreateProjectMetadataRestrictions({ form }) {
     (state) => state.newProjectReducer
   );
 
+  /*
+   On load if samples are selected in the previous step then
+   we get the metadata template fields for all the projects
+   that the selected samples are from.
+   */
+
   React.useEffect(() => {
     if (samples?.length) {
-      getAllMetadataFieldsForProjects({ projectIds: [1, 2] }).then((data) => {
+      let projectIds = samples.map((s) => s.projectId);
+      getAllMetadataFieldsForProjects({ projectIds }).then((data) => {
         setSourceFields(data);
-        dispatch(setNewProjectMetadataRestrictions(data));
+        dispatch(
+          setNewProjectMetadataRestrictions(
+            data.sort((a, b) => a.label.localeCompare(b.label))
+          )
+        );
       });
     } else {
       dispatch(setNewProjectMetadataRestrictions([]));
     }
 
+    // Get the available field restrictions
     getMetadataRestrictions().then((data) => {
       setRestrictions(data);
     });
@@ -45,13 +57,13 @@ export function CreateProjectMetadataRestrictions({ form }) {
 
   const columns = [
     {
-      title: "Field",
+      title: i18n("CreateProjectMetadataRestrictions.field"),
       key: "label",
       dataIndex: "label",
       render: (label, field) => <span className="t-field-label">{label}</span>,
     },
     {
-      title: "Current Restriction",
+      title: i18n("CreateProjectMetadataRestrictions.currentRestriction"),
       key: "current",
       dataIndex: "current",
       render(text, item, index) {
@@ -69,7 +81,7 @@ export function CreateProjectMetadataRestrictions({ form }) {
       },
     },
     {
-      title: "Target Restriction",
+      title: i18n("CreateProjectMetadataRestrictions.targetRestriction"),
       key: "target",
       dataIndex: "restriction",
       render(currentRestriction, item) {
@@ -95,16 +107,24 @@ export function CreateProjectMetadataRestrictions({ form }) {
       />
     ) : (
       <Alert
-        message="No metadata restrictions to share"
-        description="The samples to be shared don't contain any metadata and therefore no restrictions will be shared."
+        message={i18n(
+          "CreateProjectMetadataRestrictions.noSampleMetadata.title"
+        )}
+        description={i18n(
+          "CreateProjectMetadataRestrictions.noSampleMetadata.description"
+        )}
         type="info"
         showIcon
       />
     )
   ) : (
     <Alert
-      message="No metadata restrictions to apply to new project"
-      description="No samples were selected therefore no restrictions will be applied to the new project"
+      message={i18n(
+        "CreateProjectMetadataRestrictions.noSamplesSelected.title"
+      )}
+      description={i18n(
+        "CreateProjectMetadataRestrictions.noSamplesSelected.description"
+      )}
       type="info"
       showIcon
     />

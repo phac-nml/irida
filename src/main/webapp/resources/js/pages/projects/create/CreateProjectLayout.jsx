@@ -35,7 +35,7 @@ export function CreateProjectLayout({ children }) {
       content: <CreateProjectSamples form={form} />,
     },
     {
-      title: "Metadata Restrictions",
+      title: i18n("CreateProjectLayout.metadataRestrictions"),
       content: <CreateProjectMetadataRestrictions form={form} />,
     },
   ];
@@ -63,6 +63,9 @@ export function CreateProjectLayout({ children }) {
           restriction,
           identifier: id,
         }));
+        /*
+         We add the metadataRestrictions to the values map as it was not a form item
+         */
         values["metadataRestrictions"] = restrictions;
         createProject(values).then(
           ({ id }) => (window.location.href = setBaseUrl(`projects/${id}`))

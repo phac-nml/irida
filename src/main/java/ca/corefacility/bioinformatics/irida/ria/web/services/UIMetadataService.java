@@ -1,9 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -148,11 +148,19 @@ public class UIMetadataService {
 		for (Long projectId : projectIds) {
 			Project project = projectService.read(projectId);
 			List<MetadataTemplateField> fields = templateService.getPermittedFieldsForCurrentUser(project, false);
-			List<ProjectMetadataField> projectMetadataFieldList2 = addRestrictionsToMetadataFields(project, fields);
+
 			projectMetadataFieldList = Stream.concat(projectMetadataFieldList.stream(),
-					projectMetadataFieldList2.stream())
+					addRestrictionsToMetadataFields(project, fields).stream())
 					.collect(Collectors.toList());
 		}
+
+		// Sort in descending order by restriction and use distinct to get unique metadata template fields
+		projectMetadataFieldList.sort(Comparator.comparing(ProjectMetadataField::getRestriction)
+				.reversed());
+		projectMetadataFieldList = projectMetadataFieldList.stream()
+				.filter(distinctByKey(ProjectMetadataField::getLabel))
+				.collect(Collectors.toList());
+
 		return projectMetadataFieldList;
 	}
 
@@ -253,5 +261,17 @@ public class UIMetadataService {
 				restriction.getLevel()
 						.toString();
 		return new ProjectMetadataField(field, level);
+	}
+
+	/**
+	 * Predicate that maintains state about what it's seen previously, and that returns whether the given element was seen for the first time:
+	 *
+	 * @param keyExtractor
+	 * @param <T>
+	 * @return whether the given element was seen for the first time
+	 */
+	private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+		Set<Object> seen = ConcurrentHashMap.newKeySet();
+		return t -> seen.add(keyExtractor.apply(t));
 	}
 }

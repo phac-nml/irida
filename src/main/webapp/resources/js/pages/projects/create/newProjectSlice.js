@@ -3,6 +3,7 @@ import { compareRestrictionLevels } from "../../../utilities/restriction-utiliti
 
 /**
  * Sets the selected samples from the list of samples in the cart
+ * to be added to the new project
  */
 export const setSamples = createAction(
   `newProject/setSamples`,
@@ -14,7 +15,7 @@ export const setSamples = createAction(
 );
 
 /**
- * Sets up the original restrictions to be the same as what are on the source project.
+ * Sets up the original restrictions to the sample -> project -> metadata restrictions
  */
 export const setNewProjectMetadataRestrictions = createAction(
   `newProject/setNewProjectMetadataRestrictions`,
@@ -45,11 +46,6 @@ export const updateNewProjectMetadataRestriction = createAction(
  * Set up the initial state.
  */
 const initialState = {
-  name: null,
-  organism: null,
-  description: null,
-  remoteUrl: null,
-  lock: false,
   samples: [],
   metadataRestrictions: [],
 };
