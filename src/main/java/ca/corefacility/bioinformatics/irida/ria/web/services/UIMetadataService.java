@@ -1,9 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,6 +135,25 @@ public class UIMetadataService {
 		Project project = projectService.read(projectId);
 		List<MetadataTemplateField> fields = templateService.getPermittedFieldsForCurrentUser(project, false);
 		return addRestrictionsToMetadataFields(project, fields);
+	}
+
+	/**
+	 * Get all {@link MetadataTemplateField}s belonging to a list of {@link Project}s
+	 *
+	 * @param projectIds Identifiers for a {@link Project}s
+	 * @return List of {@link ProjectMetadataField}
+	 */
+	public List<ProjectMetadataField> getMetadataFieldsForProjects(List<Long> projectIds) {
+		List<ProjectMetadataField> projectMetadataFieldList = new ArrayList<>();
+		for (Long projectId : projectIds) {
+			Project project = projectService.read(projectId);
+			List<MetadataTemplateField> fields = templateService.getPermittedFieldsForCurrentUser(project, false);
+			List<ProjectMetadataField> projectMetadataFieldList2 = addRestrictionsToMetadataFields(project, fields);
+			projectMetadataFieldList = Stream.concat(projectMetadataFieldList.stream(),
+					projectMetadataFieldList2.stream())
+					.collect(Collectors.toList());
+		}
+		return projectMetadataFieldList;
 	}
 
 	/**

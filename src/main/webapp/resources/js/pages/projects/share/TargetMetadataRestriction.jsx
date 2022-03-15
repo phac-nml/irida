@@ -7,7 +7,8 @@ import {
 } from "../../../components/icons/Icons";
 import { blue6, red6 } from "../../../styles/colors";
 import { getColourForRestriction } from "../../../utilities/restriction-utilities";
-import { updateNewProjectMetadataRestriction } from "../create/metadataRestrictionSlice";
+import { updateNewProjectMetadataRestriction } from "../create/newProjectSlice";
+import { updateMetadataRestriction } from "./shareSlice";
 
 /**
  * React component to allow the user to select the level of restiction for a
@@ -17,10 +18,15 @@ import { updateNewProjectMetadataRestriction } from "../create/metadataRestricti
  *  project, if it is not in the target project it get the current restriction.
  * @param {array} restrictions - list of available restrictions
  * @param {function} onChange - change handler
+ * @param {boolean} newProject - if a new project is being created or not
  * @returns {JSX.Element}
  * @constructor
  */
-export function TargetMetadataRestriction({ field = {}, restrictions = [] }) {
+export function TargetMetadataRestriction({
+  field = {},
+  restrictions = [],
+  newProject,
+}) {
   const dispatch = useDispatch();
 
   const [feedback, setFeedback] = React.useState({
@@ -51,8 +57,13 @@ export function TargetMetadataRestriction({ field = {}, restrictions = [] }) {
     return restriction?.label;
   }
 
-  const onChange = (field, value) =>
-    dispatch(updateNewProjectMetadataRestriction({ field, value }));
+  const onChange = (field, value) => {
+    if (newProject) {
+      dispatch(updateNewProjectMetadataRestriction({ field, value }));
+    } else {
+      dispatch(updateMetadataRestriction({ field, value }));
+    }
+  };
 
   if (field.target) {
     if (field.difference >= 0) {

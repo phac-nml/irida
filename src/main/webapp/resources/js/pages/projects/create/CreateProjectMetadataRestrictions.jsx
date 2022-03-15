@@ -5,8 +5,8 @@ import { getColourForRestriction } from "../../../utilities/restriction-utilitie
 import { TargetMetadataRestriction } from "../share/TargetMetadataRestriction";
 
 import { useDispatch, useSelector } from "react-redux";
-import { useGetMetadataFieldsForProjectQuery } from "../../../apis/metadata/field";
-import { setNewProjectMetadataRestrictions } from "./metadataRestrictionSlice";
+import { getAllMetadataFieldsForProjects } from "../../../apis/metadata/field";
+import { setNewProjectMetadataRestrictions } from "./newProjectSlice";
 import { getMetadataRestrictions } from "../../../apis/metadata/field";
 
 /**
@@ -18,26 +18,30 @@ import { getMetadataRestrictions } from "../../../apis/metadata/field";
  */
 export function CreateProjectMetadataRestrictions({ form }) {
   const dispatch = useDispatch();
+
   /**
    * Available restrictions for metadata fields
    */
   const [restrictions, setRestrictions] = React.useState([]);
-
-  const { metadataRestrictions } = useSelector(
-    (state) => state.metadataRestrictionReducer
+  const [sourceFields, setSourceFields] = React.useState({});
+  const { samples, metadataRestrictions } = useSelector(
+    (state) => state.newProjectReducer
   );
 
-  const { data: sourceFields = {} } = useGetMetadataFieldsForProjectQuery(1);
-
   React.useEffect(() => {
+    if (samples?.length) {
+      getAllMetadataFieldsForProjects({ projectIds: [1, 2] }).then((data) => {
+        setSourceFields(data);
+        dispatch(setNewProjectMetadataRestrictions(data));
+      });
+    } else {
+      dispatch(setNewProjectMetadataRestrictions([]));
+    }
+
     getMetadataRestrictions().then((data) => {
       setRestrictions(data);
-      if (sourceFields?.length) {
-        console.log(sourceFields);
-        dispatch(setNewProjectMetadataRestrictions(sourceFields));
-      }
     });
-  }, [dispatch, sourceFields]);
+  }, [samples]);
 
   const columns = [
     {
@@ -70,24 +74,37 @@ export function CreateProjectMetadataRestrictions({ form }) {
       dataIndex: "restriction",
       render(currentRestriction, item) {
         return (
-          <TargetMetadataRestriction field={item} restrictions={restrictions} />
+          <TargetMetadataRestriction
+            field={item}
+            restrictions={restrictions}
+            newProject={true}
+          />
         );
       },
     },
   ];
 
-  return metadataRestrictions.length ? (
-    <Table
-      className="t-meta-table"
-      columns={columns}
-      dataSource={metadataRestrictions}
-      scroll={{ y: 300 }}
-      pagination={false}
-    />
+  return samples.length ? (
+    metadataRestrictions.length ? (
+      <Table
+        className="t-meta-table"
+        columns={columns}
+        dataSource={metadataRestrictions}
+        scroll={{ y: 300 }}
+        pagination={false}
+      />
+    ) : (
+      <Alert
+        message="No metadata restrictions to share"
+        description="The samples to be shared don't contain any metadata and therefore no restrictions will be shared."
+        type="info"
+        showIcon
+      />
+    )
   ) : (
     <Alert
-      message="No metadata restrictions to share"
-      description="The samples to be shared don't contain any metadata and therefore no restrictions will be shared."
+      message="No metadata restrictions to apply to new project"
+      description="No samples were selected therefore no restrictions will be applied to the new project"
       type="info"
       showIcon
     />

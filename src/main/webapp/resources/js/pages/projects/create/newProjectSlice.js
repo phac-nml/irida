@@ -2,11 +2,22 @@ import { createAction, createSlice } from "@reduxjs/toolkit";
 import { compareRestrictionLevels } from "../../../utilities/restriction-utilities";
 
 /**
+ * Sets the selected samples from the list of samples in the cart
+ */
+export const setSamples = createAction(
+  `newProject/setSamples`,
+  ({ samples }) => ({
+    payload: {
+      samples,
+    },
+  })
+);
+
+/**
  * Sets up the original restrictions to be the same as what are on the source project.
- * This will change once a target project is selected
  */
 export const setNewProjectMetadataRestrictions = createAction(
-  `metadataRestriction/setNewProjectMetadataRestrictions`,
+  `newProject/setNewProjectMetadataRestrictions`,
   (metadataRestrictions) => ({
     payload: {
       metadataRestrictions: metadataRestrictions.map((r) => ({
@@ -21,7 +32,7 @@ export const setNewProjectMetadataRestrictions = createAction(
  * Update one of the metadata restrictions with a specific value
  */
 export const updateNewProjectMetadataRestriction = createAction(
-  `metadataRestriction/updateNewProjectMetadataRestriction`,
+  `newProject/updateNewProjectMetadataRestriction`,
   ({ field, value }) => ({
     payload: {
       field,
@@ -34,13 +45,23 @@ export const updateNewProjectMetadataRestriction = createAction(
  * Set up the initial state.
  */
 const initialState = {
+  name: null,
+  organism: null,
+  description: null,
+  remoteUrl: null,
+  lock: false,
+  samples: [],
   metadataRestrictions: [],
 };
 
-const metadataRestrictionSlice = createSlice({
-  name: "metadataRestriction",
+const newProjectSlice = createSlice({
+  name: "newProject",
   initialState,
   extraReducers: (builder) => {
+    builder.addCase(setSamples, (state, action) => {
+      state.samples = action.payload.samples;
+    });
+
     builder.addCase(setNewProjectMetadataRestrictions, (state, action) => {
       state.metadataRestrictions = action.payload.metadataRestrictions;
     });
@@ -64,4 +85,4 @@ const metadataRestrictionSlice = createSlice({
   },
 });
 
-export default metadataRestrictionSlice.reducer;
+export default newProjectSlice.reducer;

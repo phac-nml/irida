@@ -1,11 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { cartApi } from "../../../apis/cart/cart";
-import metadataRestrictionReducer from "./metadataRestrictionSlice";
+import newProjectReducer from "./newProjectSlice";
 import { fieldsApi } from "../../../apis/metadata/field";
 
 export default configureStore({
   reducer: {
-    metadataRestrictionReducer,
+    newProjectReducer,
     [cartApi.reducerPath]: cartApi.reducer,
     [fieldsApi.reducerPath]: fieldsApi.reducer,
   },

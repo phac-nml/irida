@@ -22,7 +22,7 @@ export function CreateProjectLayout({ children }) {
   const [loading, setLoading] = React.useState(false);
 
   const { metadataRestrictions } = useSelector(
-    (state) => state.metadataRestrictionReducer
+    (state) => state.newProjectReducer
   );
 
   const steps = [
