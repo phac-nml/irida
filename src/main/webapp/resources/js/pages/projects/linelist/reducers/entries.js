@@ -8,13 +8,15 @@ export const types = {
   FILTER: "METADATA/ENTRIES/FILTER",
 };
 
+const { totalSamples } = window.PAGE;
+
 export const initialState = {
   fetching: false, // Is the API call currently being made
   error: false, // Was there an error making the api call}
   entries: null, // List of metadata entries
   selected: [],
   globalFilter: "",
-  loading: { count: 0, total: 0 },
+  loading: { count: 0, total: totalSamples },
 };
 
 /*
