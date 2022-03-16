@@ -13,14 +13,14 @@ import { FIELDS } from "../constants";
  */
 export function* entriesLoadingSaga() {
   let current = 0,
-    pageSize = 5000,
+    pageSize = 100,
     entries = [];
   try {
     const { payload } = yield take(appTypes.INIT_APP);
     yield put(actions.load());
-    const pages = Math.floor(window.PAGE.totalSamples / pageSize);
+    const pages = Math.ceil(window.PAGE.totalSamples / pageSize);
 
-    for (let i = 0; i <= pages; i++) {
+    for (let i = 0; i < pages; i++) {
       const { data } = yield call(fetchMetadataEntries, {
         projectId: payload.id,
         current: i,

@@ -6,7 +6,15 @@ import { connect } from "react-redux";
 class LoadingOverlay extends Component {
   render() {
     return (
-      <div className="ag-overlay-loading-center irida-ag-overlay">
+      <div
+        style={{
+          backgroundColor: "#f5f5f5",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+        }}
+      >
         <Space
           style={{
             width: `100%`,
