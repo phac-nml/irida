@@ -72,7 +72,10 @@ export function CreateProjectMetadataRestrictions({ form }) {
         );
         if (field) {
           return (
-            <Tag color={getColourForRestriction(field.value)}>
+            <Tag
+              color={getColourForRestriction(field.value)}
+              className={`t-current-restriction-${item.label}`}
+            >
               {field.label}
             </Tag>
           );
@@ -90,6 +93,7 @@ export function CreateProjectMetadataRestrictions({ form }) {
             field={item}
             restrictions={restrictions}
             newProject={true}
+            className={item.label}
           />
         );
       },

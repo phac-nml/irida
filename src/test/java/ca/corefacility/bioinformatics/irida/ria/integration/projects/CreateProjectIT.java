@@ -76,9 +76,14 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 		createComponent.goToNextStep();
 		createComponent.selectAllSamples();
 		createComponent.goToNextStep();
-		assertTrue(createComponent.isNoSampleMetadataMessageDisplayed(), "Should be a message explaining that there is no sample metadata available");
+		assertTrue(createComponent.correctMetadataFieldDataDisplayed(), "The correct metadata field labels, current restrictions, and target restrictions should be displayed");
 		createComponent.submitProject();
 		assertTrue(driver().getTitle().contains(name));
 		assertEquals("Showing 1 to 1 of 1 entries", samplesPage.getTableInfo(), "Should be 1 sample on the page");
+
+		// Go to the settings -> metadata page to make sure metadata fields and restrictions were set correctly.
+		driver().get(driver().getCurrentUrl() + "/settings/metadata/fields");
+
+		assertTrue(createComponent.correctMetadataFieldDataDisplayedForNewProject(), "The metadata fields should be copied over to the new project");
 	}
 }
