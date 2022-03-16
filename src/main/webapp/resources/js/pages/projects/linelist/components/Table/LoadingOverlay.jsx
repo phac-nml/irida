@@ -11,6 +11,7 @@ class LoadingOverlay extends Component {
           style={{
             width: `100%`,
             height: 300,
+            padding: 20,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
