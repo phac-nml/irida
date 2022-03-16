@@ -13,7 +13,6 @@ method is what triggers the updates.
 const mapStateToProps = (state) => ({
   initializing: state.fields.initializing,
   error: state.fields.error,
-  loading: state.entries.loading,
   entries: state.entries.entries,
   templates: state.templates.templates,
   current: state.templates.current,

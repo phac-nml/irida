@@ -18,16 +18,9 @@ export function* entriesLoadingSaga() {
   try {
     const { payload } = yield take(appTypes.INIT_APP);
     yield put(actions.load());
-    const { data } = yield call(fetchMetadataEntries, {
-      projectId: payload.id,
-      pageSize,
-      current,
-    });
+    const pages = Math.floor(window.PAGE.totalSamples / pageSize);
 
-    entries = data.content;
-    const pages = Math.ceil(data.total / pageSize);
-
-    for (let i = 1; i < pages; i++) {
+    for (let i = 0; i <= pages; i++) {
       const { data } = yield call(fetchMetadataEntries, {
         projectId: payload.id,
         current: i,

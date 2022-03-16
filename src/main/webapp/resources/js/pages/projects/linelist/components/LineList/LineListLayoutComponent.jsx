@@ -96,7 +96,6 @@ export class LineListLayoutComponent extends React.Component {
   };
 
   render() {
-    const { entries } = this.props.entries;
     return (
       <div ref={this.linelistRef}>
         <Toolbar
@@ -133,17 +132,21 @@ export class LineListLayoutComponent extends React.Component {
             />
           </Sider>
         </AgGridLayout>
-        <InfoBar
-          selectedCount={this.props.selectedCount}
-          filterCount={
-            this.state.filterCount
-              ? this.state.filterCount
-              : entries
-              ? entries.length
-              : 0
-          }
-          totalSamples={entries ? entries.length : 0}
-        />
+        {this.props.entries && (
+          <InfoBar
+            selectedCount={this.props.selectedCount}
+            filterCount={
+              this.state.filterCount
+                ? this.state.filterCount
+                : this.props.entries.entries
+                ? this.props.entries.entries.length
+                : 0
+            }
+            totalSamples={
+              this.props.entries.entries ? this.props.entries.entries.length : 0
+            }
+          />
+        )}
       </div>
     );
   }

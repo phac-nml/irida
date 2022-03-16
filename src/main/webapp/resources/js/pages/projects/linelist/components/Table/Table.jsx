@@ -8,7 +8,7 @@ import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
-import { LoadingOverlay } from "./LoadingOverlay";
+import LoadingOverlay from "./LoadingOverlay";
 import {
   DateCellRenderer,
   IconCellRenderer,
@@ -405,7 +405,7 @@ const mapStateToProps = (state) => ({
   fields: state.fields.fields,
   templates: state.templates.templates,
   current: state.templates.current,
-  entries: state.entries.entries.entries,
+  entries: state.entries.entries?.entries,
   globalFilter: state.entries.globalFilter,
 });
 
