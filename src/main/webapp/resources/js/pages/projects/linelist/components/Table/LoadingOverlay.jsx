@@ -2,13 +2,17 @@ import React from "react";
 import { Progress, Space, Typography } from "antd";
 import { Component } from "react";
 import { connect } from "react-redux";
+import { grey5 } from "../../../../../styles/colors";
 
 class LoadingOverlay extends Component {
   render() {
     return (
       <div
         style={{
-          backgroundColor: "#f5f5f5",
+          backgroundColor: "#FFFFFF",
+          boxShadow: `rgba(0, 0, 0, 0.16) 0px 1px 4px;`,
+          borderRadius: "2px",
+          border: `1px solid ${grey5}`,
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
