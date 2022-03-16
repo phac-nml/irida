@@ -102,8 +102,8 @@ public class UIMetadataServiceTest {
 		List<Long> longList = Arrays.asList(PROJECT_ID, PROJECT2_ID);
 		service.getMetadataFieldsForProjects(longList);
 		verify(projectService, times(1)).read(PROJECT_ID);
-		verify(projectService, times(1)).read(PROJECT2_ID);
 		verify(templateService, times(1)).getPermittedFieldsForCurrentUser(project, false);
+		verify(projectService, times(1)).read(PROJECT2_ID);
 		verify(templateService, times(1)).getPermittedFieldsForCurrentUser(project2, false);
 	}
 }
