@@ -13,7 +13,7 @@ import { FIELDS } from "../constants";
  */
 export function* entriesLoadingSaga() {
   let current = 0,
-    pageSize = 100,
+    pageSize = 5000,
     entries = [];
   try {
     const { payload } = yield take(appTypes.INIT_APP);
