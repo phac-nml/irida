@@ -60,10 +60,12 @@ public class LineListController {
 	}
 
 	/**
-	 * Get a {@link List} of {@link Map} containing information from {@link MetadataEntry} for all {@link Sample}s in a
-	 * {@link Project}
+	 * Get a {@link List} of {@link Map} containing information from {@link MetadataEntry} for a {@link Page} of
+	 * {@link Sample}s in a {@link Project}
 	 *
 	 * @param projectId {@link Long} identifier for a {@link Project}
+	 * @param current   the number of the {@link Page}
+	 * @param pageSize  the size of the {@link Page}
 	 * @return {@link List} of {@link UISampleMetadata}s of all {@link Sample} metadata in a {@link Project}
 	 */
 	@RequestMapping(value = "/entries", method = RequestMethod.GET)
@@ -71,14 +73,14 @@ public class LineListController {
 	public EntriesResponse getProjectSamplesMetadataEntries(@RequestParam long projectId, @RequestParam int current,
 			@RequestParam int pageSize) {
 		Project project = projectService.read(projectId);
-		Integer MAX_PAGE_SIZE = 5000;
 		List<UISampleMetadata> projectSamplesMetadata = new ArrayList<>();
 
 		List<Long> lockedSamplesInProject = sampleService.getLockedSamplesInProject(project);
 
+		//default sort for the samples in the project
 		Sort sort = Sort.by(Sort.Direction.ASC, "sample.modifiedDate");
 
-		//fetch MAX_PAGE_SIZE samples at a time for the project
+		//fetch a page of samples at a time for the project
 		Page<ProjectSampleJoinMinimal> page = sampleService.getFilteredProjectSamples(Arrays.asList(project),
 				Collections.emptyList(), "", "", "", null, null, current, pageSize, sort);
 		List<SampleMinimal> samples = page.stream()
