@@ -65,6 +65,7 @@ export function getTinyChartConfiguration(data) {
       visible: false,
     },
     autoFit: true,
+    height: 100,
     columnWidthRatio: 1,
     xField: "key",
     yField: "value",
