@@ -17,6 +17,7 @@
     "last 2 Opera versions"
   ],
   "dependencies": {
+    "@ag-grid-community/csv-export": "^27.1.0",
     "@ant-design/charts": "^1.1.1",
     "@ant-design/icons": "^4.7.0",
     "@antv/color-util": "^2.0.6",
@@ -83,7 +84,7 @@
     "sortablejs": "^1.5.1",
     "styled-components": "^5.2.1",
     "tslib": "^2.1.0",
-    "xlsx": "^0.17.0"
+    "xlsx": "^0.17.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.13",

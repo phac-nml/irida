@@ -8,6 +8,7 @@ import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
+import { CsvExportModule } from "@ag-grid-community/csv-export";
 import LoadingOverlay from "./LoadingOverlay";
 import {
   DateCellRenderer,
@@ -43,7 +44,8 @@ export class TableComponent extends React.Component {
   /*
   External custom components used by ag-grid.
    */
-  frameworkComponents = {
+  components = {
+    CsvExportModule,
     LoadingOverlay,
     SampleNameRenderer,
     IconCellRenderer,
@@ -203,9 +205,8 @@ export class TableComponent extends React.Component {
   generateFileName = (ext) => {
     // YYYY-MM-dd-project-X-<metadata template name>.csv
     const fullDate = new Date();
-    const date = `${fullDate.getFullYear()}-${
-      fullDate.getMonth() + 1
-    }-${fullDate.getDate()}`;
+    const date = `${fullDate.getFullYear()}-${fullDate.getMonth() + 1
+      }-${fullDate.getDate()}`;
     const project = window.PAGE.project.label.replace(this.nameRegex, "_");
     const template = this.props.templates[this.props.current].name.replace(
       this.nameRegex,
@@ -223,34 +224,25 @@ export class TableComponent extends React.Component {
     ).then((module) => {
       const createXLSX = module.default;
 
-      const availableNames = {};
-      this.props.fields.forEach(
-        (f) => (availableNames[f.field] = f.headerName)
-      );
-
       /*
        * Get the visible columns.  Need to ignore the icon columns since
        * it does not contain any data that we want.
        */
-      const colOrder = this.columnApi
-        .getColumnState()
-        .filter((c) => !c.hide && c.colId !== "icons");
-
-      const data = [];
-      this.api.forEachNodeAfterFilter((node) => {
-        // We only need the value of the cell.
-        const item = colOrder.map((col) => node.data[col.colId] || "");
-        data.push(item);
-      });
-
-      /*
-       * Headers need to be the first item in the array.
-       */
-      const cols = colOrder.map((c) => availableNames[c.colId]);
-      data.unshift(cols);
+      console.time("filteredColIds");
+      const filteredColIds = this.columnApi.getColumnState().filter((c) => !c.hide && c.colId !== "icons").map((c) => c.colId);
+      console.timeEnd("filteredColIds");
 
       const filename = this.generateFileName(ext);
-      createXLSX({ filename, data });
+      if (ext === 'csv') {
+        console.time("writeCsv");
+        this.api.exportDataAsCsv({ columnKeys: filteredColIds, fileName: filename });
+        console.timeEnd("writeCsv");
+      } else {
+        console.time("rawData");
+        const data = this.api.getDataAsCsv({ columnKeys: filteredColIds });
+        console.timeEnd("rawData");
+        createXLSX({ filename, data })
+      }
     });
   };
 
@@ -310,16 +302,16 @@ export class TableComponent extends React.Component {
        */
       const text = Boolean(data[field])
         ? i18n(
-            "linelist.editing.undo.full",
-            `${data[FIELDS.sampleName]}`,
-            `${headerName}`,
-            `${data[field]}`
-          )
+          "linelist.editing.undo.full",
+          `${data[FIELDS.sampleName]}`,
+          `${headerName}`,
+          `${data[field]}`
+        )
         : i18n(
-            "linelist.editing.undo.empty",
-            `${headerName}`,
-            `${data[FIELDS.sampleName]}`
-          );
+          "linelist.editing.undo.empty",
+          `${headerName}`,
+          `${data[FIELDS.sampleName]}`
+        );
       showUndoNotification(
         {
           text,
@@ -369,7 +361,7 @@ export class TableComponent extends React.Component {
         }}
         columnDefs={this.props.fields}
         rowData={this.props.entries}
-        frameworkComponents={this.frameworkComponents}
+        components={this.components}
         loadingOverlayComponent="LoadingOverlay"
         onGridReady={this.onGridReady}
         onDragStopped={this.onColumnDropped}
