@@ -69,6 +69,7 @@ export function getTinyChartConfiguration(data) {
     xField: "key",
     yField: "value",
     yAxis: {
+      grid: null,
       visible: false,
     },
   };
