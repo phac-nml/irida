@@ -4,6 +4,9 @@ import { Component } from "react";
 import { connect } from "react-redux";
 import { grey5 } from "../../../../../styles/colors";
 
+/**
+ * React component for AG GRID to display a loading overlay
+ */
 class LoadingOverlay extends Component {
   render() {
     return (
