@@ -10,7 +10,7 @@ class LoadingOverlay extends Component {
       <div
         style={{
           backgroundColor: "#FFFFFF",
-          boxShadow: `rgba(0, 0, 0, 0.16) 0px 1px 4px;`,
+          boxShadow: `rgba(0, 0, 0, 0.16) 0px 1px 4px`,
           borderRadius: "2px",
           border: `1px solid ${grey5}`,
           display: "flex",
