@@ -36,15 +36,13 @@ export function CartLink() {
   }, []);
 
   return (
-    <div style={{ padding: `0 ${SPACE_MD}` }}>
+    <a
+      style={{ padding: `0 ${SPACE_MD}` }}
+      href={setBaseUrl(`/cart/${inGalaxy ? "galaxy" : "pipelines"}`)}
+    >
       <Badge count={count}>
-        <Button
-          type="link"
-          className="t-cart-count"
-          href={setBaseUrl(`/cart/${inGalaxy ? "galaxy" : "pipelines"}`)}
-          icon={<IconShoppingCart data-count={count} />}
-        />
+        <IconShoppingCart data-count={count} />}
       </Badge>
-    </div>
+    </a>
   );
 }
