@@ -65,11 +65,15 @@ export function MainNavigation() {
         >
           <Menu.SubMenu key="projects" title={i18n("nav.main.projects")}>
             <Menu.Item key="project:list">
-              {i18n("nav.main.project-list")}
+              <a href={setBaseUrl(`/projects`)}>
+                {i18n("nav.main.project-list")}
+              </a>
             </Menu.Item>
             {isAdmin && (
               <Menu.Item key="project:all">
-                {i18n("nav.main.project-list-all")}
+                <a href={setBaseUrl(`/projects/all`)}>
+                  {i18n("nav.main.project-list-all")}
+                </a>
               </Menu.Item>
             )}
             <Menu.Divider />
