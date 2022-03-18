@@ -46,8 +46,8 @@ export default function ShareLarge({
       <Col span={24}>
         <Alert
           type="info"
-          message="Sharing samples between projects"
-          description="Due to the large number of samples this will take a little while"
+          message={i18n("ShareLarge.message", samples.length)}
+          description={i18n("ShareLarge.description")}
         />
       </Col>
       <Col span={24}>
