@@ -40,7 +40,7 @@ export function CartLink() {
       style={{ padding: `0 ${SPACE_MD}` }}
       href={setBaseUrl(`/cart/${inGalaxy ? "galaxy" : "pipelines"}`)}
     >
-      <Badge count={count}>
+      <Badge className="t-cart-count" count={count}>
         <IconShoppingCart data-count={count} />}
       </Badge>
     </a>
