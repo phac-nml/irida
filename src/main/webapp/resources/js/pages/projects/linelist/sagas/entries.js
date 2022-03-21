@@ -32,11 +32,11 @@ export function* entriesLoadingSaga() {
 }
 
 /**
- * Get the entry set for a specified page size and number
+ * Get the entry set for a specified page size and
  * @param {number} projectId project identifier
  * @param {number} current page number
  * @param {number} pageSize size of the page to fetch
- * @returns entry seet for the current page
+ * @returns entry set for the current page
  */
 function* fetchEntrySet(projectId, current, pageSize) {
   const content = yield call(fetchMetadataEntries, {
