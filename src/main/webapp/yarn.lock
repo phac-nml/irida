@@ -3925,9 +3925,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"antd@npm:4.19.2":
-  version: 4.19.2
-  resolution: "antd@npm:4.19.2"
+"antd@npm:4.19.3":
+  version: 4.19.3
+  resolution: "antd@npm:4.19.3"
   dependencies:
     "@ant-design/colors": ^6.0.0
     "@ant-design/icons": ^4.7.0
@@ -3975,7 +3975,7 @@ __metadata:
   peerDependencies:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: 4e46bab40b3d61f365f07f6773d8888b2effdd7f2620030ae3fb9daaae2f3538eb35f0f59a923873e115360fde3bbf6d4bbc83cfb41ac43e4236cd4a680a800e
+  checksum: 214da2c2b4c4b85834fc2775f63d7f6fe64fe83806838e9adcd10e480770f6b462c97354a9b80a9a697d60b52fc5dbb27c3aa2696286d95c0a10f1dacfa09918
   languageName: node
   linkType: hard
 
@@ -8168,7 +8168,7 @@ fsevents@^2.1.2:
     angular-aside: ^1.3.2
     angular-ui-bootstrap: ^2.5.6
     angular-ui-router: 1.0.0-alpha.4
-    antd: 4.19.2
+    antd: 4.19.3
     autoprefixer: ^10.4.2
     axios: ^0.21.2
     babel-loader: ^8.2.3

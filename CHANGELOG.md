@@ -14,7 +14,7 @@ Changes
 * [UI]: Removed old bootstrap client details/edit page and updated with a modal on the clients listing page.
 * [UI]: Updated Dashboard Recent Activity to use Ant Design.
 * [UI]: Adding date labels to the charts on main statistics page.
-* [Developer]: Updated to Ant Design v4.19.1.
+* [Developer]: Updated to Ant Design v4.19.3.
 
 21.09 to 22.01
 --------------
