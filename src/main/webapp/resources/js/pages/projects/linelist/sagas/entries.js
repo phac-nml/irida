@@ -1,4 +1,4 @@
-import { call, put, take } from "redux-saga/effects";
+import { all, call, put, take } from "redux-saga/effects";
 import {
   fetchMetadataEntries,
   saveMetadataEntryField,
@@ -12,27 +12,40 @@ import { FIELDS } from "../constants";
  * @returns {IterableIterator<*>}
  */
 export function* entriesLoadingSaga() {
-  let current = 0,
-    pageSize = 5000,
-    entries = [];
+  let pageSize = 1000,
+    promises = [],
+    count;
   try {
     const { payload } = yield take(appTypes.INIT_APP);
     yield put(actions.load());
     const pages = Math.ceil(window.PAGE.totalSamples / pageSize);
 
     for (let i = 0; i < pages; i++) {
-      const { data } = yield call(fetchMetadataEntries, {
-        projectId: payload.id,
-        current: i,
-        pageSize,
-      });
-      entries = [...entries, ...data.content];
-      yield put(actions.loading(entries.length, data.total));
+      promises.push(yield call(fetchEntrySet, payload.id, i, pageSize));
     }
-    yield put(actions.success({ entries }));
+    const entries = yield all(promises);
+
+    yield put(actions.success({ entries: entries.flat() }));
   } catch (error) {
     yield put(actions.error(error));
   }
+}
+
+/**
+ * Get the entry set for a specified page size and number
+ * @param {number} projectId project identifier
+ * @param {number} current page number
+ * @param {number} pageSize size of the page to fetch
+ * @returns entry seet for the current page
+ */
+function* fetchEntrySet(projectId, current, pageSize) {
+  const content = yield call(fetchMetadataEntries, {
+    projectId,
+    current,
+    pageSize,
+  });
+  yield put(actions.loading(content.length, window.PAGE.totalSamples));
+  return content;
 }
 
 /**

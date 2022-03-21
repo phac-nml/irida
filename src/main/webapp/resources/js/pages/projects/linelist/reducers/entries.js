@@ -27,7 +27,13 @@ export const reducer = (state = initialState, action = {}) => {
     case types.LOAD:
       return { ...state, fetching: true, error: false };
     case types.LOADING:
-      return { ...state, loading: action.payload };
+      return {
+        ...state,
+        loading: {
+          count: state.loading.count + action.payload.count,
+          total: action.payload.total,
+        },
+      };
     case types.LOAD_SUCCESS:
       return {
         ...state,
