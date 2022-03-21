@@ -24,6 +24,9 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 public interface ProjectSampleJoinRepository
 		extends PagingAndSortingRepository<ProjectSampleJoin, Long>, JpaSpecificationExecutor<ProjectSampleJoin> {
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@EntityGraph(value = "projectSampleMinimal", type = EntityGraphType.FETCH)
 	public Page<ProjectSampleJoin> findAll(@Nullable Specification<ProjectSampleJoin> spec, Pageable pageable);
 
