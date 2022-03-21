@@ -207,9 +207,8 @@ export class TableComponent extends React.Component {
   generateFileName = (ext) => {
     // YYYY-MM-dd-project-X-<metadata template name>.csv
     const fullDate = new Date();
-    const date = `${fullDate.getFullYear()}-${
-      fullDate.getMonth() + 1
-    }-${fullDate.getDate()}`;
+    const date = `${fullDate.getFullYear()}-${fullDate.getMonth() + 1
+      }-${fullDate.getDate()}`;
     const project = window.PAGE.project.label.replace(this.nameRegex, "_");
     const template = this.props.templates[this.props.current].name.replace(
       this.nameRegex,
@@ -233,33 +232,40 @@ export class TableComponent extends React.Component {
         closeIcon: <div></div>,
         description:
           "This may take a few moments, please do not close the window or browse away as it will cancel the download",
-        duration: 0,
+        duration: null,
       });
 
       /*
-       * Get the visible columns.  Need to ignore the icon columns since
-       * it does not contain any data that we want.
+       * Wait 1 second before generating file, this allows the preparing
+       * notification to display for at least 1 second before the file has
+       * completed generation.
        */
-      const filteredColIds = this.columnApi
-        .getColumnState()
-        .filter((c) => !c.hide && c.colId !== "icons")
-        .map((c) => c.colId);
+      setTimeout(() => {
+        /*
+        * Get the visible columns.  Need to ignore the icon columns since
+        * it does not contain any data that we want.
+        */
+        const filteredColIds = this.columnApi
+          .getColumnState()
+          .filter((c) => !c.hide && c.colId !== "icons")
+          .map((c) => c.colId);
 
-      const filename = this.generateFileName(ext);
-      if (ext === "csv") {
-        this.api.exportDataAsCsv({
-          columnKeys: filteredColIds,
-          fileName: filename,
+        const filename = this.generateFileName(ext);
+        if (ext === "csv") {
+          this.api.exportDataAsCsv({
+            columnKeys: filteredColIds,
+            fileName: filename,
+          });
+        } else {
+          const data = this.api.getDataAsCsv({ columnKeys: filteredColIds });
+          createXLSX({ filename, data });
+        }
+        notification.open({
+          key: "export-notification",
+          icon: <IconCheck style={{ color: green6 }} />,
+          message: "File created",
         });
-      } else {
-        const data = this.api.getDataAsCsv({ columnKeys: filteredColIds });
-        createXLSX({ filename, data });
-      }
-      notification.open({
-        key: "export-notification",
-        icon: <IconCheck style={{ color: green6 }} />,
-        message: "File created",
-      });
+      }, 1000);
     });
   };
 
@@ -319,16 +325,16 @@ export class TableComponent extends React.Component {
        */
       const text = Boolean(data[field])
         ? i18n(
-            "linelist.editing.undo.full",
-            `${data[FIELDS.sampleName]}`,
-            `${headerName}`,
-            `${data[field]}`
-          )
+          "linelist.editing.undo.full",
+          `${data[FIELDS.sampleName]}`,
+          `${headerName}`,
+          `${data[field]}`
+        )
         : i18n(
-            "linelist.editing.undo.empty",
-            `${headerName}`,
-            `${data[FIELDS.sampleName]}`
-          );
+          "linelist.editing.undo.empty",
+          `${headerName}`,
+          `${data[FIELDS.sampleName]}`
+        );
       showUndoNotification(
         {
           text,
