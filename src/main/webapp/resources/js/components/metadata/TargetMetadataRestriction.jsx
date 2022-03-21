@@ -25,7 +25,7 @@ import { updateMetadataRestriction } from "./shareSlice";
 export function TargetMetadataRestriction({
   field = {},
   restrictions = [],
-  newProject,
+  newProject = false,
 }) {
   const dispatch = useDispatch();
 

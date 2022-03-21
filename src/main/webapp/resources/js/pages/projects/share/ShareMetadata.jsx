@@ -10,7 +10,7 @@ import {
   getColourForRestriction,
 } from "../../../utilities/restriction-utilities";
 import { setMetadataRestrictions } from "./shareSlice";
-import { TargetMetadataRestriction } from "./TargetMetadataRestriction";
+import { TargetMetadataRestriction } from "../../../components/metadata/TargetMetadataRestriction";
 
 /**
  * React component to display metadata restrictions.
@@ -32,8 +32,9 @@ export function ShareMetadata() {
    * Get the fields for the current project.  The restrictions from these fields
    * will act as a base for the restriction level when the fields are shared.
    */
-  const { data: sourceFields } =
-    useGetMetadataFieldsForProjectQuery(currentProject);
+  const { data: sourceFields } = useGetMetadataFieldsForProjectQuery(
+    currentProject
+  );
 
   /**
    * Target project metadata fields. Needed to determine, which fields will be

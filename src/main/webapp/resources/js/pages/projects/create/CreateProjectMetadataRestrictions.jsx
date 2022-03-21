@@ -2,7 +2,7 @@ import { Alert, Table, Tag } from "antd";
 import React from "react";
 
 import { getColourForRestriction } from "../../../utilities/restriction-utilities";
-import { TargetMetadataRestriction } from "../share/TargetMetadataRestriction";
+import { TargetMetadataRestriction } from "../../../components/metadata/TargetMetadataRestriction";
 
 import { useDispatch, useSelector } from "react-redux";
 import { getAllMetadataFieldsForProjects } from "../../../apis/metadata/field";
@@ -60,7 +60,7 @@ export function CreateProjectMetadataRestrictions({ form }) {
       title: i18n("CreateProjectMetadataRestrictions.field"),
       key: "label",
       dataIndex: "label",
-      render: (label, field) => <span className="t-field-label">{label}</span>,
+      render: (label) => <span className="t-field-label">{label}</span>,
     },
     {
       title: i18n("CreateProjectMetadataRestrictions.currentRestriction"),
