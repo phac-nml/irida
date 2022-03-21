@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-
+import { notification, Space, Spin } from "antd";
 import isEqual from "lodash/isEqual";
 import isArray from "lodash/isArray";
 import PropTypes from "prop-types";
@@ -18,6 +18,8 @@ import {
 import { FIELDS } from "../../constants";
 import { actions as templateActions } from "../../reducers/templates";
 import { actions as entryActions } from "../../reducers/entries";
+import { IconCheck } from "../../../../../components/icons/Icons";
+import { green6 } from "../../../../../styles/colors";
 
 /**
  * React component to render the ag-grid to the page.
@@ -205,8 +207,9 @@ export class TableComponent extends React.Component {
   generateFileName = (ext) => {
     // YYYY-MM-dd-project-X-<metadata template name>.csv
     const fullDate = new Date();
-    const date = `${fullDate.getFullYear()}-${fullDate.getMonth() + 1
-      }-${fullDate.getDate()}`;
+    const date = `${fullDate.getFullYear()}-${
+      fullDate.getMonth() + 1
+    }-${fullDate.getDate()}`;
     const project = window.PAGE.project.label.replace(this.nameRegex, "_");
     const template = this.props.templates[this.props.current].name.replace(
       this.nameRegex,
@@ -223,26 +226,40 @@ export class TableComponent extends React.Component {
       /* webpackChunkName: "exportUtilities" */ "../../../../../utilities/export-utilities"
     ).then((module) => {
       const createXLSX = module.default;
+      notification.open({
+        key: "export-notification",
+        message: "Preparing file for download",
+        icon: <Spin />,
+        closeIcon: <div></div>,
+        description:
+          "This may take a few moments, please do not close the window or browse away as it will cancel the download",
+        duration: 0,
+      });
 
       /*
        * Get the visible columns.  Need to ignore the icon columns since
        * it does not contain any data that we want.
        */
-      console.time("filteredColIds");
-      const filteredColIds = this.columnApi.getColumnState().filter((c) => !c.hide && c.colId !== "icons").map((c) => c.colId);
-      console.timeEnd("filteredColIds");
+      const filteredColIds = this.columnApi
+        .getColumnState()
+        .filter((c) => !c.hide && c.colId !== "icons")
+        .map((c) => c.colId);
 
       const filename = this.generateFileName(ext);
-      if (ext === 'csv') {
-        console.time("writeCsv");
-        this.api.exportDataAsCsv({ columnKeys: filteredColIds, fileName: filename });
-        console.timeEnd("writeCsv");
+      if (ext === "csv") {
+        this.api.exportDataAsCsv({
+          columnKeys: filteredColIds,
+          fileName: filename,
+        });
       } else {
-        console.time("rawData");
         const data = this.api.getDataAsCsv({ columnKeys: filteredColIds });
-        console.timeEnd("rawData");
-        createXLSX({ filename, data })
+        createXLSX({ filename, data });
       }
+      notification.open({
+        key: "export-notification",
+        icon: <IconCheck style={{ color: green6 }} />,
+        message: "File created",
+      });
     });
   };
 
@@ -302,16 +319,16 @@ export class TableComponent extends React.Component {
        */
       const text = Boolean(data[field])
         ? i18n(
-          "linelist.editing.undo.full",
-          `${data[FIELDS.sampleName]}`,
-          `${headerName}`,
-          `${data[field]}`
-        )
+            "linelist.editing.undo.full",
+            `${data[FIELDS.sampleName]}`,
+            `${headerName}`,
+            `${data[field]}`
+          )
         : i18n(
-          "linelist.editing.undo.empty",
-          `${headerName}`,
-          `${data[FIELDS.sampleName]}`
-        );
+            "linelist.editing.undo.empty",
+            `${headerName}`,
+            `${data[FIELDS.sampleName]}`
+          );
       showUndoNotification(
         {
           text,
