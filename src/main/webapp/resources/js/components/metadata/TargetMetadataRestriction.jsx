@@ -1,14 +1,11 @@
 import { Form, Popover, Select, Space, Tag, Tooltip, Typography } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
-import {
-  IconInfoCircle,
-  IconWarningOutlined,
-} from "../../../components/icons/Icons";
-import { blue6, red6 } from "../../../styles/colors";
-import { getColourForRestriction } from "../../../utilities/restriction-utilities";
-import { updateNewProjectMetadataRestriction } from "../create/newProjectSlice";
-import { updateMetadataRestriction } from "./shareSlice";
+import { IconInfoCircle, IconWarningOutlined } from "../icons/Icons";
+import { blue6, red6 } from "../../styles/colors";
+import { getColourForRestriction } from "../../utilities/restriction-utilities";
+import { updateNewProjectMetadataRestriction } from "../../pages/projects/create/newProjectSlice";
+import { updateMetadataRestriction } from "../../pages/projects/share/shareSlice";
 
 /**
  * React component to allow the user to select the level of restiction for a
