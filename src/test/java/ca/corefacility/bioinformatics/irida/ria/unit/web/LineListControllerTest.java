@@ -9,11 +9,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoinMinimal;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.project.ProjectMinimal;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleMinimal;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.LineListController;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.EntriesResponse;
@@ -68,40 +67,36 @@ public class LineListControllerTest {
 	public void testGetAllProjectMetadataEntries() {
 		long projectId = 1L;
 		Project project = new Project("p1");
-		ProjectMinimal p1 = mock(ProjectMinimal.class);
-		when(p1.getId()).thenReturn(1L);
-		when(p1.getName()).thenReturn("p1");
-		SampleMinimal s1 = mock(SampleMinimal.class);
-		when(s1.getId()).thenReturn(1L);
-		when(s1.getSampleName()).thenReturn("s1");
-		when(s1.getCreatedDate()).thenReturn(new Date());
-		when(s1.getModifiedDate()).thenReturn(new Date());
-		SampleMinimal s2 = mock(SampleMinimal.class);
-		when(s2.getId()).thenReturn(2L);
-		when(s2.getSampleName()).thenReturn("s2");
-		when(s2.getCreatedDate()).thenReturn(new Date());
-		when(s2.getModifiedDate()).thenReturn(new Date());
+		project.setId(1L);
+		Sample s1 = new Sample("s1");
+		s1.setId(1L);
+		s1.setModifiedDate(new Date());
+		Sample s2 = new Sample("s2");
+		s2.setId(2L);
+		s2.setModifiedDate(new Date());
 		MetadataTemplateField field = new MetadataTemplateField("field", "text");
 
-		ProjectSampleJoinMinimal psjm1 = mock(ProjectSampleJoinMinimal.class);
-		when(psjm1.getSubject()).thenReturn(p1);
-		when(psjm1.getObject()).thenReturn(s1);
-		ProjectSampleJoinMinimal psjm2 = mock(ProjectSampleJoinMinimal.class);
-		when(psjm2.getSubject()).thenReturn(p1);
-		when(psjm2.getObject()).thenReturn(s2);
+		ProjectSampleJoin psj1 = mock(ProjectSampleJoin.class);
+		when(psj1.getSubject()).thenReturn(project);
+		when(psj1.getObject()).thenReturn(s1);
+		ProjectSampleJoin psj2 = mock(ProjectSampleJoin.class);
+		when(psj2.getSubject()).thenReturn(project);
+		when(psj2.getObject()).thenReturn(s2);
 
 		Map<Long, Set<MetadataEntry>> metadata = new HashMap<>();
 		metadata.put(s1.getId(), Sets.newHashSet(new MetadataEntry("value", "text", field)));
 		metadata.put(s2.getId(), Sets.newHashSet(new MetadataEntry("value2", "text", field)));
 
-		Page<ProjectSampleJoinMinimal> pageOne = new PageImpl<>(Lists.newArrayList(psjm1, psjm2));
-		Page<ProjectSampleJoinMinimal> pageTwo = new PageImpl<>(Lists.newArrayList());
+		Page<ProjectSampleJoin> pageOne = new PageImpl<>(Lists.newArrayList(psj1, psj2));
+		Page<ProjectSampleJoin> pageTwo = new PageImpl<>(Lists.newArrayList());
 
 		when(projectService.read(projectId)).thenReturn(project);
-		when(sampleService.getFilteredProjectSamples(eq(Arrays.asList(project)), eq(Collections.emptyList()), eq(""),
-				eq(""), eq(""), isNull(), isNull(), eq(0), any(Integer.class), any(Sort.class))).thenReturn(pageOne);
-		when(sampleService.getFilteredProjectSamples(eq(Arrays.asList(project)), eq(Collections.emptyList()), eq(""),
-				eq(""), eq(""), isNull(), isNull(), eq(1), any(Integer.class), any(Sort.class))).thenReturn(pageTwo);
+		when(sampleService.getFilteredSamplesForProjects(eq(Arrays.asList(project)), eq(Collections.emptyList()),
+				eq(""), eq(""), eq(""), isNull(), isNull(), eq(0), any(Integer.class), any(Sort.class)))
+						.thenReturn(pageOne);
+		when(sampleService.getFilteredSamplesForProjects(eq(Arrays.asList(project)), eq(Collections.emptyList()),
+				eq(""), eq(""), eq(""), isNull(), isNull(), eq(1), any(Integer.class), any(Sort.class)))
+						.thenReturn(pageTwo);
 		when(sampleService.getMetadataForProjectSamples(eq(project), anyList())).thenReturn(metadata);
 		EntriesResponse response = lineListController.getProjectSamplesMetadataEntries(projectId, 0, 5000);
 

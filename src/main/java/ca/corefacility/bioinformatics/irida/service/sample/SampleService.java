@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisExcep
 import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoinMinimal;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
@@ -239,26 +238,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return a {@link Page} of {@link ProjectSampleJoin} that are filtered and sorted.
 	 */
 	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames,
-			String sampleName, String searchTerm, String organism, Date minDate, Date maxDate, int currentPage,
-			int pageSize, Sort sort);
-
-	/**
-	 * Get a {@link Page} of {@link ProjectSampleJoinMinimal} for samples from 1 or more projects based on filtering
-	 * criteria.
-	 *
-	 * @param projects    {@link List} of {@link Project} the {@link Sample}s must be found within.
-	 * @param sampleNames {@link List} of {@link String} of Sample names to search
-	 * @param sampleName  {@link String} exact name of a specific {@link Sample}
-	 * @param searchTerm  {@link String} search term to search for.
-	 * @param organism    {@link String} organism ter to search for.
-	 * @param minDate     {@link Date} minimum date the sample was modified.
-	 * @param maxDate     {@link Date} maximum date the sample was modified.
-	 * @param currentPage {@link Integer} the current page the table is on.
-	 * @param pageSize    {@link Integer} the number of {@link ProjectSampleJoin} in the {@link Page}.
-	 * @param sort        {@link Sort} chained sort definitions to sort page by.
-	 * @return a {@link Page} of {@link ProjectSampleJoinMinimal} that are filtered and sorted.
-	 */
-	public Page<ProjectSampleJoinMinimal> getFilteredProjectSamples(List<Project> projects, List<String> sampleNames,
 			String sampleName, String searchTerm, String organism, Date minDate, Date maxDate, int currentPage,
 			int pageSize, Sort sort);
 

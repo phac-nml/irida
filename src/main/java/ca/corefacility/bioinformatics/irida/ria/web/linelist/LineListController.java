@@ -19,9 +19,12 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoinMinimal;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.*;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColumn;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.*;
@@ -81,17 +84,15 @@ public class LineListController {
 		Sort sort = Sort.by(Sort.Direction.ASC, "sample.modifiedDate");
 
 		//fetch a page of samples at a time for the project
-		Page<ProjectSampleJoinMinimal> page = sampleService.getFilteredProjectSamples(Arrays.asList(project),
+		Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(Arrays.asList(project),
 				Collections.emptyList(), "", "", "", null, null, current, pageSize, sort);
-		List<SampleMinimal> samples = page.stream()
-				.map(ProjectSampleJoinMinimal::getObject)
-				.collect(Collectors.toList());
-		List<Long> sampleIds = samples.stream().map(SampleMinimal::getId).collect(Collectors.toList());
+		List<Sample> samples = page.stream().map(ProjectSampleJoin::getObject).collect(Collectors.toList());
+		List<Long> sampleIds = samples.stream().map(Sample::getId).collect(Collectors.toList());
 		Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProjectSamples(project,
 				sampleIds);
 
 		//for each sample
-		for (SampleMinimal s : samples) {
+		for (Sample s : samples) {
 			//get the metadata for that sample
 			Set<MetadataEntry> metadata = metadataForProject.get(s.getId());
 
