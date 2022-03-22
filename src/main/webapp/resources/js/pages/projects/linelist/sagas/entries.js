@@ -7,15 +7,26 @@ import { actions, types } from "../reducers/entries";
 import { FIELDS } from "../constants";
 
 /**
+ * Calculate the best page size for fetching entries
+ * @returns size of page of entries to request
+ */
+function calculatePageSize() {
+  const MIN = 1000;
+  const MAX = 5000;
+  const estimated = window.PAGE.totalSamples / 100;
+  return estimated < MIN ? MIN : estimated > MAX ? MAX : estimated;
+}
+
+/**
  * Fetch all the metadata entries required to initialize the table.
  * @returns {IterableIterator<*>}
  */
 export function* entriesLoadingSaga() {
-  let pageSize = 1000,
+  let pageSize = calculatePageSize(),
     promises = [],
     count;
   try {
-    const { payload } = yield take('METADATA_TEMPLATES_LOADED');
+    const { payload } = yield take("METADATA_TEMPLATES_LOADED");
     yield put(actions.load());
     const pages = Math.ceil(window.PAGE.totalSamples / pageSize);
 
