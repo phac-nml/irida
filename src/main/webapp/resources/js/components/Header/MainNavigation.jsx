@@ -16,7 +16,6 @@ const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 const isManager = isAdmin || window.TL._USER.systemRole === "ROLE_MANAGER";
 
 const StyledHeader = styled(Header)`
-  background-color: ${theme === "dark" ? grey10 : grey1};
   position: fixed;
   z-index: 1;
   width: 100%;
