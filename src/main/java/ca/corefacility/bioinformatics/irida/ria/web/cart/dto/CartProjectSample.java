@@ -2,6 +2,10 @@ package ca.corefacility.bioinformatics.irida.ria.web.cart.dto;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
+/**
+ * Data transfer object for getting the samples that are in the cart and their relevant project identifier
+ */
+
 public class CartProjectSample {
 	private Sample sample;
 	private Long projectId;

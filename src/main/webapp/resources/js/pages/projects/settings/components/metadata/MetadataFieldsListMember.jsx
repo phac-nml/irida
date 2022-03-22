@@ -27,6 +27,7 @@ export default function MetadataFieldsListMember() {
       title: i18n("MetadataField.type"),
       dataIndex: "type",
       key: "text",
+      className: "t-m-field-type",
     },
   ];
 

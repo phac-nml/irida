@@ -6,7 +6,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 
 /**
  * Data transfer object for getting the samples that are in the cart.  Since a user
- * can only create a project with samples they can modify, they are seperated out into
+ * can only create a project with samples they can modify, they are separated out into
  * locked and unlocked.
  */
 public class CartSamplesByUserPermissions extends AjaxResponse {

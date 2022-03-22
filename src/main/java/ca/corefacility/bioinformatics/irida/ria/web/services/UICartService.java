@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CartSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.cart.CartProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.AddToCartRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartProjectSample;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartSamplesByUserPermissions;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartUpdateResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.cart.dto.CartProjectSample;

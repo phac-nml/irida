@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
 
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.NewProjectMetadataRestriction;
+
 /**
  * Data transfer object for creating a new project.
  */
@@ -12,6 +14,7 @@ public class CreateProjectRequest {
 	private String remoteURL;
 	private List<Long> samples;
 	private Boolean lock;
+	private List<NewProjectMetadataRestriction> metadataRestrictions;
 
 	public CreateProjectRequest() {
 	}
@@ -62,5 +65,13 @@ public class CreateProjectRequest {
 
 	public void setLock(boolean lock) {
 		this.lock = lock;
+	}
+
+	public List<NewProjectMetadataRestriction> getMetadataRestrictions() {
+		return metadataRestrictions;
+	}
+
+	public void setMetadataRestrictions(List<NewProjectMetadataRestriction> metadataRestrictions) {
+		this.metadataRestrictions = metadataRestrictions;
 	}
 }

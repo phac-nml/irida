@@ -106,6 +106,18 @@ public class MetadataAjaxController {
 	}
 
 	/**
+	 * Get all the metadata fields for a list of projects
+	 *
+	 * @param projectIds Identifier for a projects
+	 * @return list of {@link MetadataTemplateField}s
+	 */
+	@GetMapping("/fields/projects")
+	public List<ProjectMetadataField> getMetadataFieldsForProjects(
+			@RequestParam(name = "projectIds") List<Long> projectIds) {
+		return service.getMetadataFieldsForProjects(projectIds);
+	}
+
+	/**
 	 * Set a default metadata template for a project
 	 *
 	 * @param templateId Identifier for the metadata template to set as default.

@@ -14,6 +14,8 @@ import { useGetCartSamplesQuery } from "../../../apis/cart/cart";
 import { IconExperiment } from "../../../components/icons/Icons";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import { blue6 } from "../../../styles/colors";
+import { setSamples } from "./newProjectSlice";
+import { useDispatch } from "react-redux";
 
 /**
  * Component to render samples that are in the cart (if any).
@@ -23,10 +25,11 @@ import { blue6 } from "../../../styles/colors";
  * @constructor
  */
 export function CreateProjectSamples({ form }) {
-  const { data: cartProjectSamples = {}, isLoading } = useGetCartSamplesQuery();
+  const { data: projectSamples = {}, isLoading } = useGetCartSamplesQuery();
   const [organismFilter, setOrganismFilter] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
   const [lock, setLock] = React.useState(false);
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
     const exists = {};
@@ -34,27 +37,28 @@ export function CreateProjectSamples({ form }) {
     For all unlocked samples we need to get the unique values of the organism names.
     Then format them into a manner that can be consumed by the dropdown.
      */
-    cartProjectSamples.unlocked?.forEach((cartProjectSample) => {
-      if (!exists[cartProjectSample.sample.organism]) {
-        exists[cartProjectSample.sample.organism] = {
-          text: cartProjectSample.sample.organism,
-          value: cartProjectSample.sample.organism,
+    projectSamples.unlocked?.forEach((projectSample) => {
+      if (!exists[projectSample.sample.organism]) {
+        exists[projectSample.sample.organism] = {
+          text: projectSample.sample.organism,
+          value: projectSample.sample.organism,
         };
       }
     });
     setOrganismFilter(Object.values(exists));
-  }, [cartProjectSamples]);
+  }, [projectSamples]);
 
   return (
     <>
-      {cartProjectSamples.locked?.length > 0 && (
+      {projectSamples.locked?.length > 0 && (
         <Alert
           type="warning"
           showIcon
           message={i18n("CreateProjectSamples.locked")}
         />
       )}
-      {cartProjectSamples.unlocked?.length ? (
+
+      {projectSamples.unlocked?.length ? (
         <Space style={{ display: "block" }}>
           <Table
             className="t-samples"
@@ -65,30 +69,28 @@ export function CreateProjectSamples({ form }) {
               onChange: (selectedRowKeys, selectedRows) => {
                 setSelected(selectedRowKeys);
                 form.setFieldsValue({
-                  samples: selectedRows.map((cartProjectSample) =>
-                    Number(cartProjectSample.sample.identifier)
+                  samples: selectedRows.map((projSample) =>
+                    Number(projSample.sample.identifier)
                   ),
                 });
+                dispatch(setSamples({ samples: selectedRows }));
               },
             }}
             scroll={{ y: 600 }}
             pagination={false}
-            dataSource={cartProjectSamples.unlocked}
-            rowKey={(cartProjectSample) =>
-              `sample-${cartProjectSample.sample.identifier}`
+            dataSource={projectSamples.unlocked}
+            rowKey={(projectSample) =>
+              `sample-${projectSample.sample.identifier}`
             }
             columns={[
               {
                 title: i18n("CreateProjectSamples.sampleName"),
                 dataIndex: "label",
-                render: (text, cartProjectSample) => (
+                render: (text, projectSample) => (
                   <SampleDetailViewer
-                    sampleId={cartProjectSample.sample.identifier}
-                    projectId={cartProjectSample.projectId}
+                    sampleId={projectSample.sample.identifier}
                   >
-                    <Button size="small">
-                      {cartProjectSample.sample.label}
-                    </Button>
+                    <Button size="small">{projectSample.sample.label}</Button>
                   </SampleDetailViewer>
                 ),
                 onFilter: (value, record) =>
@@ -98,7 +100,7 @@ export function CreateProjectSamples({ form }) {
               },
               {
                 title: i18n("CreateProjectSamples.organism"),
-                dataIndex: "organism",
+                dataIndex: ["sample", "organism"],
                 filters: organismFilter,
                 onFilter: (value, record) => record.sample.organism === value,
               },

@@ -4,6 +4,8 @@ import { createProject } from "../../../apis/projects/create";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { CreateProjectDetails } from "./CreateProjectDetails";
 import { CreateProjectSamples } from "./CreateProjectSamples";
+import { CreateProjectMetadataRestrictions } from "./CreateProjectMetadataRestrictions";
+import { useSelector } from "react-redux";
 
 /**
  * React component to handle the layout of the Create New Project and
@@ -19,6 +21,10 @@ export function CreateProjectLayout({ children }) {
   const [current, setCurrent] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
 
+  const { metadataRestrictions } = useSelector(
+    (state) => state.newProjectReducer
+  );
+
   const steps = [
     {
       title: i18n("CreateProjectLayout.details"),
@@ -27,6 +33,10 @@ export function CreateProjectLayout({ children }) {
     {
       title: i18n("CreateProjectLayout.samples"),
       content: <CreateProjectSamples form={form} />,
+    },
+    {
+      title: i18n("CreateProjectLayout.metadataRestrictions"),
+      content: <CreateProjectMetadataRestrictions form={form} />,
     },
   ];
 
@@ -48,11 +58,19 @@ export function CreateProjectLayout({ children }) {
     setLoading(true);
     form
       .validateFields()
-      .then((values) =>
+      .then((values) => {
+        let restrictions = metadataRestrictions.map(({ restriction, id }) => ({
+          restriction,
+          identifier: id,
+        }));
+        /*
+         We add the metadataRestrictions to the values map as it was not a form item
+         */
+        values["metadataRestrictions"] = restrictions;
         createProject(values).then(
           ({ id }) => (window.location.href = setBaseUrl(`projects/${id}`))
-        )
-      )
+        );
+      })
       .catch(() => {
         notification.error({
           message: i18n("CreateProjectLayout.error"),
@@ -144,6 +162,7 @@ export function CreateProjectLayout({ children }) {
                 remoteURL: "",
                 lock: false,
                 samples: [],
+                metadataRestrictions: [],
               }}
             >
               {steps.map((step, index) => (
