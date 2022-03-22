@@ -58,6 +58,7 @@ export default function MetadataFieldsListManager() {
       title: i18n("MetadataField.type"),
       dataIndex: "type",
       key: "type",
+      className: "t-m-field-type",
     },
     {
       title: (

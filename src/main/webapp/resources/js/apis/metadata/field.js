@@ -61,3 +61,18 @@ export async function getMetadataRestrictions() {
     return Promise.reject(e.response.data.message);
   }
 }
+
+/**
+ * Get a list of metadata fields for the list of projects
+ * @returns {Promise<any>}
+ */
+export async function getAllMetadataFieldsForProjects({ projectIds }) {
+  try {
+    const { data } = await axios.get(
+      `${BASE_URL}/projects?projectIds=${projectIds}`
+    );
+    return addKeysToList(data, "field", "id");
+  } catch (e) {
+    return Promise.reject(e.response.data.message);
+  }
+}

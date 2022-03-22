@@ -1,9 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,6 +138,33 @@ public class UIMetadataService {
 	}
 
 	/**
+	 * Get all {@link MetadataTemplateField}s belonging to a list of {@link Project}s
+	 *
+	 * @param projectIds Identifiers for a {@link Project}s
+	 * @return List of {@link ProjectMetadataField}
+	 */
+	public List<ProjectMetadataField> getMetadataFieldsForProjects(List<Long> projectIds) {
+		List<ProjectMetadataField> projectMetadataFieldList = new ArrayList<>();
+		for (Long projectId : projectIds) {
+			Project project = projectService.read(projectId);
+			List<MetadataTemplateField> fields = templateService.getPermittedFieldsForCurrentUser(project, false);
+
+			projectMetadataFieldList = Stream.concat(projectMetadataFieldList.stream(),
+					addRestrictionsToMetadataFields(project, fields).stream())
+					.collect(Collectors.toList());
+		}
+
+		// Sort in descending order by restriction and use distinct to get unique metadata template fields
+		projectMetadataFieldList.sort(Comparator.comparing(ProjectMetadataField::getRestriction)
+				.reversed());
+		projectMetadataFieldList = projectMetadataFieldList.stream()
+				.filter(distinctByKey(ProjectMetadataField::getLabel))
+				.collect(Collectors.toList());
+
+		return projectMetadataFieldList;
+	}
+
+	/**
 	 * Get the list of all metadata restrictions that belong to the current project.
 	 *
 	 * @param locale Current users {@link Locale}
@@ -232,5 +261,17 @@ public class UIMetadataService {
 				restriction.getLevel()
 						.toString();
 		return new ProjectMetadataField(field, level);
+	}
+
+	/**
+	 * Predicate that maintains state about what it's seen previously, and that returns whether the given element was seen for the first time:
+	 *
+	 * @param keyExtractor
+	 * @param <T>
+	 * @return whether the given element was seen for the first time
+	 */
+	private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+		Set<Object> seen = ConcurrentHashMap.newKeySet();
+		return t -> seen.add(keyExtractor.apply(t));
 	}
 }

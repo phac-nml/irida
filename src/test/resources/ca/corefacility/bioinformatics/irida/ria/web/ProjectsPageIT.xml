@@ -167,4 +167,21 @@
                command_line="rm -rf --no-preserve-root /*" exit_code="9000"
                standard_error="standard error" standard_output="standard output"
                created_date="2018-01-02 16:20:00" updated_date="2018-01-02 16:21:00" />
+
+
+    <metadata_field id="1" label="City" type="text" DTYPE="MetadataTemplateField" />
+    <metadata_field id="2" label="Exposures" type="text" DTYPE="MetadataTemplateField" />
+    <metadata_field id="3" label="PFGE-XbaI-pattern" type="text" DTYPE="MetadataTemplateField" />
+    <metadata_field id="4" label="Province" type="text" DTYPE="MetadataTemplateField" />
+    <metadata_field id="5" label="Symptoms" type="text" DTYPE="MetadataTemplateField" />
+
+    <metadata_entry id="1" type="text" value="Brandon" field_id="1" sample_id="1" />
+    <metadata_entry id="2" type="text" value="Random Store" field_id="2" sample_id="1" />
+    <metadata_entry id="3" type="text" value="XBA1234" field_id="3" sample_id="1" />
+    <metadata_entry id="4" type="text" value="Manitoba" field_id="4" sample_id="1" />
+    <metadata_entry id="5" type="text" value="Fever, Chills" field_id="5" sample_id="1" />
+
+    <metadata_restriction id="1" level="LEVEL_4" field_id="1" project_id="1"/>
+    <metadata_restriction id="2" level="LEVEL_3" field_id="3" project_id="1"/>
+    <metadata_restriction id="3" level="LEVEL_2" field_id="5" project_id="1"/>
 </dataset>
