@@ -4,15 +4,19 @@ Changes
 22.01 to 22.03
 --------------
 * [REST]: Corrected behaviour of date fields in REST API to return epoch instead of textual string. (22.01.1)
-* [Documentation]: Fixed issue that prevented a user from saving analysis results back to a sample and concatenating sequence files. Fixed date format in Swagger REST API documentation. (22.01.2)
+* [Documentation]: Fixed issue that prevented a user from saving analysis results back to a sample and concatenating
+  sequence files. Fixed date format in Swagger REST API documentation. (22.01.2)
 * [REST]: Fixed bug that was preventing syncing remote projects from versions 20.09 and older. (22.01.3)
 * [UI]: Fixed bug preventing updating of project details. (22.01.4)
-* [All]: Fixed scalability bug in updating Project modifiedDate during handling of ProjectEvent that was increasing in operation time as number of Samples increased within a project.
+* [All]: Fixed scalability bug in updating Project modifiedDate during handling of ProjectEvent that was increasing in
+  operation time as number of Samples increased within a project.
 * [UI]: Fixed load times on Project Samples page.
 * [UI]: Fixed text overflow issue in Command-line Linker modal.
 * [UI]: Fixed bug with Command-line Linker modal making multiple requests to the server to get the command string.
 * [UI]: Fixed issue with CSV/XLSX export on linelist page from not completing on massive projects >100,000 samples.
 * [UI]: Adding in batch loading to linelist page (provides feedback to user, important on large projects >5000 samples)
+* [UI]: Added a progress indicator when loading samples into the linelist table.
+* [UI]: Added a warning notification when selecting all samples on the project samples page.
 
 21.09 to 22.01
 --------------
