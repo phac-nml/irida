@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,9 +25,11 @@ import static org.mockito.Mockito.*;
 
 public class UIMetadataServiceTest {
 	private final Long PROJECT_ID = 1L;
+	private final Long PROJECT2_ID = 2L;
 	private final String TEMPLATE_NAME = "TEST TEMPLATE 01";
 	private final Long NEW_TEMPLATE_ID = 2L;
 	private final Project project = new Project();
+	private final Project project2 = new Project();
 	private final MetadataTemplate template = new MetadataTemplate();
 	private ProjectService projectService;
 	private MetadataTemplateService templateService;
@@ -42,6 +45,9 @@ public class UIMetadataServiceTest {
 
 		project.setId(PROJECT_ID);
 		when(projectService.read(PROJECT_ID)).thenReturn(project);
+
+		project2.setId(PROJECT2_ID);
+		when(projectService.read(PROJECT2_ID)).thenReturn(project2);
 
 		template.setName(TEMPLATE_NAME);
 		final MetadataTemplateField templateField = new MetadataTemplateField("FIELD 1", "text");
@@ -89,5 +95,14 @@ public class UIMetadataServiceTest {
 		service.updateMetadataProjectField(PROJECT_ID, 1L, ProjectMetadataRole.LEVEL_4, Locale.ENGLISH);
 		verify(projectService, times(1)).read(PROJECT_ID);
 		verify(templateService, times(1)).readMetadataField(anyLong());
+	}
+
+	@Test
+	public void testGetMetadataFieldsForProjects() {
+		List<Long> longList = Arrays.asList(PROJECT_ID, PROJECT2_ID);
+		service.getMetadataFieldsForProjects(longList);
+		verify(projectService, times(2)).read(anyLong());
+		verify(templateService, times(2)).getPermittedFieldsForCurrentUser(any(Project.class), eq(false));
+
 	}
 }
