@@ -44,6 +44,8 @@ function getColumnDefinition(col) {
   if (field === FIELDS.icons) {
     Object.assign(col, {
       filter: undefined,
+      suppressMenu: true,
+      floatingFilterComponentParams: { suppressFilterButton: true },
       width: 105,
       cellRenderer: "IconCellRenderer",
     });

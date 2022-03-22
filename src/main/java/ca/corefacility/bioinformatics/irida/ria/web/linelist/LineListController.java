@@ -168,9 +168,8 @@ public class LineListController {
 				messages.getMessage("linelist.templates.Select.none", new Object[] {}, locale), allFields));
 
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
-			List<AgGridColumn> allFieldsCopy = new ArrayList<>(allFields);
 			MetadataTemplate template = join.getObject();
-			List<AgGridColumn> fields = formatTemplateForUI(template, allFieldsCopy, canEdit);
+			List<AgGridColumn> fields = formatTemplateForUI(template, allFields, canEdit);
 			templates.add(new UIMetadataTemplate(template.getId(), template.getName(), fields));
 		}
 
@@ -202,16 +201,12 @@ public class LineListController {
 	 * @return {@link List} of {@link AgGridColumn} that has all the fields in the project, but ones for this template
 	 *         are first and are the only ones that are not hidden in the UI
 	 */
-	private List<AgGridColumn> formatTemplateForUI(MetadataTemplate template, List<AgGridColumn> allFieldsAgGridColumns,
-			boolean canEdit) {
+	private List<AgGridColumn> formatTemplateForUI(MetadataTemplate template,
+			final List<AgGridColumn> allFieldsAgGridColumns, boolean canEdit) {
 
 		AgGridColumn iconCol = allFieldsAgGridColumns.get(0);
 		AgGridColumn sampleNameCol = allFieldsAgGridColumns.get(1);
 
-		/*
-		Need to remove the sample since allFields begins with the sample.
-		 */
-		allFieldsAgGridColumns.remove(0);
 		/*
 		Get a list of all the column field keys to facilitate faster look ups.
 		 */
@@ -223,36 +218,36 @@ public class LineListController {
 		Create the new UI AgGridColumn template.
 		 */
 		List<AgGridColumn> templateAgGridColumns = new ArrayList<>();
+		List<String> templateFieldsLabels = new ArrayList<>();
+
+		// Add the "icon" and "sampleName" to the template columns
+		templateAgGridColumns.add(iconCol);
+		templateAgGridColumns.add(sampleNameCol);
 
 		/*
 		For each field in the template:
-		1. find out where it is the the default template.
-		2. Remove that column from the default template (allFieldsAgGridColumns) (any remaining at the end will be marked as hidden).
-		3. Remove the label from the allFieldsLabels to maintain proper indexing.
-		4. Create an AgGridColumn for the field and add it to the template.
+		1. Create an AgGridColumn for the field and add it to the template.
+		2. Add the fieldKey to the templateFieldsLabels list for use later in hiding non template fields.
 		 */
 		for (MetadataTemplateField field : template.getFields()) {
-			int index = allFieldsLabels.indexOf(field.getFieldKey());
-			allFieldsAgGridColumns.remove(index);
-			allFieldsLabels.remove(index);
 			// Need to add parameter for if they have permissions to edit.
 			templateAgGridColumns.add(mapFieldToColumn(field, canEdit));
+			templateFieldsLabels.add(field.getFieldKey());
 		}
 
-		// Add the "icon" to the template columns
-		templateAgGridColumns.add(0, iconCol);
-
 		/*
-		Since it the previous for loop we removed all of the current template fields from allFieldsAgGridColumns,
-		we can assume the rest should be hidden and then just appended to the end of the template.
-		 */
-		allFieldsAgGridColumns.forEach(field -> {
-			// Don't hide the sample name as it is required for the table header
-			if (!field.getField().equals(sampleNameCol.getField())) {
-				field.setHide(true);
+		Hide all fields that are not present in the template.
+		*/
+		allFieldsLabels.forEach(fieldKey -> {
+			// Hide the field which is not present in our template
+			if (!templateFieldsLabels.contains(fieldKey)) {
+				AgGridColumn field = allFieldsAgGridColumns.get(allFieldsLabels.indexOf(fieldKey));
+				AgGridColumn fieldCopy = new AgGridColumn(field.getHeaderName(), fieldKey, field.getType(), true,
+						field.isEditable());
+				templateAgGridColumns.add(fieldCopy);
 			}
-			templateAgGridColumns.add(field);
 		});
+
 		return templateAgGridColumns;
 	}
 
@@ -312,12 +307,13 @@ public class LineListController {
 	/**
 	 * Get a list of all {@link MetadataTemplateField}s on a {@link Project}
 	 *
-	 * @param projectId {@link Long} identifier for a {@link Project}
-	 * @param locale    {@link Locale}
+	 * @param projectId     {@link Long} identifier for a {@link Project}
+	 * @param templateJoins {@link List} of {@link ProjectMetadataTemplateJoin}s
+	 * @param locale        {@link Locale}
 	 * @return {@link List} of {@link UIMetadataField}
 	 */
 	public List<AgGridColumn> getProjectMetadataTemplateFields(long projectId,
-			List<ProjectMetadataTemplateJoin> templateJoins, Locale locale) {
+			final List<ProjectMetadataTemplateJoin> templateJoins, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService
 				.getMetadataFieldsForProject(project);
