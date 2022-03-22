@@ -496,11 +496,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void enterSampleName(String sampleName) {
-		waitForTime(300);
 		sampleNameInput.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
-		waitForTime(300);
 		sampleNameInput.sendKeys(sampleName);
-		waitForTime(300);
+		waitForTime(1000);
 	}
 
 	public boolean isSampleNameErrorDisplayed() {
