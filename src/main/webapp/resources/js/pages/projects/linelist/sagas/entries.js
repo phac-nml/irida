@@ -3,7 +3,6 @@ import {
   fetchMetadataEntries,
   saveMetadataEntryField,
 } from "../../../../apis/metadata/entry";
-import { types as appTypes } from "../../../../redux/reducers/app";
 import { actions, types } from "../reducers/entries";
 import { FIELDS } from "../constants";
 
@@ -16,12 +15,12 @@ export function* entriesLoadingSaga() {
     promises = [],
     count;
   try {
-    const { payload } = yield take(appTypes.INIT_APP);
+    const { payload } = yield take('METADATA_TEMPLATES_LOADED');
     yield put(actions.load());
     const pages = Math.ceil(window.PAGE.totalSamples / pageSize);
 
     for (let i = 0; i < pages; i++) {
-      promises.push(yield call(fetchEntrySet, payload.id, i, pageSize));
+      promises.push(call(fetchEntrySet, payload.id, i, pageSize));
     }
     const entries = yield all(promises);
 
