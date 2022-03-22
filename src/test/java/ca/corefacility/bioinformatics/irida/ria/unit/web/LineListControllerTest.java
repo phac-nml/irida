@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -57,8 +58,9 @@ public class LineListControllerTest {
 	public void testGetProjectMetadataTemplateFields() {
 		long projectId = 1L;
 		Project project = new Project("p1");
+		List<ProjectMetadataTemplateJoin> templateJoins = new ArrayList<>();
 		when(projectService.read(anyLong())).thenReturn(project);
-		lineListController.getProjectMetadataTemplateFields(projectId, Locale.ENGLISH);
+		lineListController.getProjectMetadataTemplateFields(projectId, templateJoins, Locale.ENGLISH);
 		verify(projectService, times(1)).read(projectId);
 		verify(metadataTemplateService, times(1)).getMetadataFieldsForProject(any(Project.class));
 	}

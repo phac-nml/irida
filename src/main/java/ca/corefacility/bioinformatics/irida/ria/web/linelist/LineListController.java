@@ -159,17 +159,17 @@ public class LineListController {
 		/*
 		Need all MetadataTemplate fields (either already on the project, or in templates associated with the project).
 		 */
-		List<AgGridColumn> allFields = this.getProjectMetadataTemplateFields(projectId, locale);
 		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService
 				.getMetadataTemplatesForProject(project);
+		List<AgGridColumn> allFields = this.getProjectMetadataTemplateFields(projectId, templateJoins, locale);
 
 		// Add a "Template" for all fields
 		templates.add(new UIMetadataTemplate(-1L,
 				messages.getMessage("linelist.templates.Select.none", new Object[] {}, locale), allFields));
 
 		for (ProjectMetadataTemplateJoin join : templateJoins) {
+			List<AgGridColumn> allFieldsCopy = new ArrayList<>(allFields);
 			MetadataTemplate template = join.getObject();
-			List<AgGridColumn> allFieldsCopy = this.getProjectMetadataTemplateFields(projectId, locale);
 			List<AgGridColumn> fields = formatTemplateForUI(template, allFieldsCopy, canEdit);
 			templates.add(new UIMetadataTemplate(template.getId(), template.getName(), fields));
 		}
@@ -270,6 +270,9 @@ public class LineListController {
 			@RequestParam Long projectId, Locale locale, HttpServletResponse response) {
 		Project project = projectService.read(projectId);
 
+		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService
+				.getMetadataTemplatesForProject(project);
+
 		// Get or create the template fields.
 		List<MetadataTemplateField> fields = new ArrayList<>();
 		for (AgGridColumn field : template.getFields()) {
@@ -301,8 +304,9 @@ public class LineListController {
 			metadataTemplate = metadataTemplateService.updateMetadataTemplateInProject(metadataTemplate);
 			response.setStatus(HttpServletResponse.SC_OK);
 		}
-		return new UIMetadataTemplate(metadataTemplate.getId(), metadataTemplate.getName(), formatTemplateForUI(
-				metadataTemplate, getProjectMetadataTemplateFields(projectId, locale), canUserEdit(project)));
+		return new UIMetadataTemplate(metadataTemplate.getId(), metadataTemplate.getName(),
+				formatTemplateForUI(metadataTemplate,
+						getProjectMetadataTemplateFields(projectId, templateJoins, locale), canUserEdit(project)));
 	}
 
 	/**
@@ -312,15 +316,12 @@ public class LineListController {
 	 * @param locale    {@link Locale}
 	 * @return {@link List} of {@link UIMetadataField}
 	 */
-	public List<AgGridColumn> getProjectMetadataTemplateFields(@RequestParam long projectId, Locale locale) {
+	public List<AgGridColumn> getProjectMetadataTemplateFields(long projectId,
+			List<ProjectMetadataTemplateJoin> templateJoins, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService
 				.getMetadataFieldsForProject(project);
 		Set<MetadataTemplateField> fieldSet = new HashSet<>(metadataFieldsForProject);
-
-		// Need to get all the fields from the templates too!
-		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService
-				.getMetadataTemplatesForProject(project);
 
 		/*
 		IGNORED TEMPLATE FIELDS:
