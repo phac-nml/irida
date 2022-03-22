@@ -27,7 +27,9 @@ export function PageHeader() {
   return (
     <>
       <AnnouncementProvider>
-        <MainNavigation />
+        <div style={{ height: 64 }}>
+          <MainNavigation />
+        </div>
         <AnnouncementsModal />
       </AnnouncementProvider>
       <Breadcrumbs crumbs={window.breadcrumbs} />
