@@ -134,23 +134,25 @@ export function MainNavigation() {
             width: 100,
           }}
         >
-          <Menu.SubMenu key="small" title={i18n("nav.main.small")}>
-            <Menu.SubMenu key="projects" title={i18n("nav.main.projects")}>
-              <Menu.Item key="project:list">
+          <Menu.SubMenu key="projects" title={i18n("nav.main.projects")}>
+            <Menu.Item key="project:list">
+              <a href={setBaseUrl(`/projects`)}>
                 {i18n("nav.main.project-list")}
-              </Menu.Item>
-              {isAdmin && (
-                <Menu.Item key="project:all">
+              </a>
+            </Menu.Item>
+            {isAdmin && (
+              <Menu.Item key="project:all">
+                <a href={setBaseUrl(`/projects/all`)}>
                   {i18n("nav.main.project-list-all")}
-                </Menu.Item>
-              )}
-              <Menu.Divider />
-              <Menu.Item key="project:sync">
-                <a href={setBaseUrl("/projects/synchronize")}>
-                  {i18n("nav.main.project-sync")}
                 </a>
               </Menu.Item>
-            </Menu.SubMenu>
+            )}
+            <Menu.Divider />
+            <Menu.Item key="project:sync">
+              <a href={setBaseUrl("/projects/synchronize")}>
+                {i18n("nav.main.project-sync")}
+              </a>
+            </Menu.Item>
           </Menu.SubMenu>
 
           <Menu.SubMenu key="analysis" title={i18n("nav.main.analysis")}>
