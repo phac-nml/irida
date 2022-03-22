@@ -511,7 +511,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void enterSampleName(String sampleName) {
-		sampleNameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+		sampleNameInput.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 		sampleNameInput.sendKeys(sampleName);
 		waitForTime(300);
 	}
