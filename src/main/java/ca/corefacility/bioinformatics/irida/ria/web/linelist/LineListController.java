@@ -81,7 +81,7 @@ public class LineListController {
 		List<Long> lockedSamplesInProject = sampleService.getLockedSamplesInProject(project);
 
 		//default sort for the samples in the project
-		Sort sort = Sort.by(Sort.Direction.ASC, "sample.modifiedDate");
+		Sort sort = Sort.by(Sort.Direction.DESC, "sample.modifiedDate");
 
 		//fetch a page of samples at a time for the project
 		Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(Arrays.asList(project),
@@ -351,7 +351,7 @@ public class LineListController {
 		UIMetadataFieldDefault modifiedField = new UIMetadataFieldDefault(
 				messages.getMessage("linelist.field.modified", new Object[] {}, locale), UISampleMetadata.MODIFIED_DATE,
 				"date");
-		modifiedField.setSort("asc");
+		modifiedField.setSort("desc");
 		fields.add(0, modifiedField);
 
 		UIMetadataFieldDefault sampleField = new UIMetadataFieldDefault(
