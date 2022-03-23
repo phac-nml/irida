@@ -99,7 +99,7 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Get the samples for a given project <<<<<<< HEAD
+	 * Get the samples for a given project
 	 *
 	 * @param model     A model for the sample list view
 	 * @param principal The user reading the project
