@@ -51,7 +51,8 @@ export function getChartConfiguration(chartType, data) {
     legend: {
       visible: Boolean(data),
       position: "bottom",
-      offsetY: 10
+      offsetY: 10,
+      maxWidth: window.innerWidth - 600,
     },
   };
 
