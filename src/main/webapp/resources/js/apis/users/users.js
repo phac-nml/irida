@@ -77,7 +77,6 @@ export const usersApi = createApi({
 
 export const {
   useGetUserDetailsQuery,
-  useGetUserProjectDetailsQuery,
   useEditUserDetailsMutation,
   useChangeUserPasswordMutation,
   useSetUsersDisabledStatusMutation
