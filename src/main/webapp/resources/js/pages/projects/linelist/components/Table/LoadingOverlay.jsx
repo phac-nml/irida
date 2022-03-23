@@ -21,6 +21,8 @@ const Overlay = styled.div`
  */
 class LoadingOverlay extends Component {
   render() {
+    const percentage =
+      Math.floor(this.props.loading.count / window.PAGE.totalSamples) * 100;
     return (
       <Overlay>
         <Space
@@ -34,12 +36,7 @@ class LoadingOverlay extends Component {
             flexDirection: "column",
           }}
         >
-          <Progress
-            percent={Math.floor(
-              (this.props.loading.count / window.PAGE.totalSamples) * 100
-            )}
-            type="circle"
-          />
+          <Progress percent={percentage} type="circle" />
           <Typography.Title level={3}>
             {i18n("linelist.loading", window.PAGE.totalSamples)}
           </Typography.Title>
