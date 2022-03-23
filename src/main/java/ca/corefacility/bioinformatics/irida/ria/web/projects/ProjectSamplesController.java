@@ -33,7 +33,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoinMinimal;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
@@ -432,17 +431,17 @@ public class ProjectSamplesController {
 		List<Project> projects = new ArrayList<>(
 				(Collection<? extends Project>) projectService.readMultiple(associatedProjectIds));
 
-		Page<ProjectSampleJoinMinimal> page = sampleService.getFilteredProjectSamples(projects, sampleNames,
+		Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames,
 				filter.getName(), params.getSearchValue(), filter.getOrganism(), filter.getStartDate(),
 				filter.getEndDate(), 0, MAX_PAGE_SIZE, params.getSort());
 		while (!page.isEmpty()) {
 			// Converting everything to a string for consumption by the UI.
-			for (ProjectSampleJoinMinimal join : page) {
+			for (ProjectSampleJoin join : page) {
 				cartSamples.add(new ProjectCartSample(join.getObject(), join.getSubject().getId(), join.isOwner()));
 			}
 
 			// Get the next page
-			page = sampleService.getFilteredProjectSamples(projects, sampleNames, filter.getName(),
+			page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, filter.getName(),
 					params.getSearchValue(), filter.getOrganism(), filter.getStartDate(), filter.getEndDate(),
 					page.getNumber() + 1, MAX_PAGE_SIZE, params.getSort());
 		}

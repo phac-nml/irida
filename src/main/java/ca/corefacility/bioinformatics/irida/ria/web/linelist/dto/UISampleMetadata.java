@@ -6,7 +6,6 @@ import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleMinimal;
 import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 
@@ -23,7 +22,7 @@ public class UISampleMetadata extends HashMap<String, String> {
 	public static final String MODIFIED_DATE = PREFIX + "modified";
 	public static final String OWNER = "owner";
 
-	public UISampleMetadata(Project project, SampleMinimal sample, boolean ownership, Set<MetadataEntry> metadata) {
+	public UISampleMetadata(Project project, Sample sample, boolean ownership, Set<MetadataEntry> metadata) {
 
 		this.put(SAMPLE_ID, String.valueOf(sample.getId()));
 		this.put(SAMPLE_NAME, sample.getSampleName());

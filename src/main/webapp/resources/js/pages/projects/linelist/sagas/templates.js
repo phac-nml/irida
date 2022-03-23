@@ -17,6 +17,7 @@ export function* templatesLoadingSaga() {
     yield put(actions.load());
     const { data: templates } = yield call(fetchTemplates, payload.id);
     yield put(actions.success(templates));
+    yield put({ type: 'METADATA_TEMPLATES_LOADED', payload: payload });
   } catch (error) {
     yield put(actions.error(error));
   }

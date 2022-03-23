@@ -14,10 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoinMinimal;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleMinimal;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -100,18 +99,16 @@ public class RESTSampleMetadataController {
 		Sort sort = Sort.by(Sort.Direction.ASC, "sample.id");
 
 		//fetch MAX_PAGE_SIZE samples at a time for the project
-		Page<ProjectSampleJoinMinimal> page = sampleService.getFilteredProjectSamples(Arrays.asList(project),
+		Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(Arrays.asList(project),
 				Collections.emptyList(), "", "", "", null, null, 0, MAX_PAGE_SIZE, sort);
 		while (!page.isEmpty()) {
-			List<SampleMinimal> samples = page.stream()
-					.map(ProjectSampleJoinMinimal::getObject)
-					.collect(Collectors.toList());
-			List<Long> sampleIds = samples.stream().map(SampleMinimal::getId).collect(Collectors.toList());
+			List<Sample> samples = page.stream().map(ProjectSampleJoin::getObject).collect(Collectors.toList());
+			List<Long> sampleIds = samples.stream().map(Sample::getId).collect(Collectors.toList());
 			Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProjectSamples(project,
 					sampleIds);
 
 			//for each sample
-			for (SampleMinimal s : samples) {
+			for (Sample s : samples) {
 				//get the metadata for that sample
 				Set<MetadataEntry> metadataForSample = metadataForProject.get(s.getId());
 
@@ -121,8 +118,8 @@ public class RESTSampleMetadataController {
 			}
 
 			// Get the next page
-			page = sampleService.getFilteredProjectSamples(Arrays.asList(project), Collections.emptyList(), "", "", "",
-					null, null, page.getNumber() + 1, MAX_PAGE_SIZE, sort);
+			page = sampleService.getFilteredSamplesForProjects(Arrays.asList(project), Collections.emptyList(), "", "",
+					"", null, null, page.getNumber() + 1, MAX_PAGE_SIZE, sort);
 		}
 
 		//add a link back to this collection
@@ -183,20 +180,6 @@ public class RESTSampleMetadataController {
 	 * @return a constructed {@link SampleMetadataResponse}
 	 */
 	private SampleMetadataResponse buildSampleMetadataResponse(final Sample s, Set<MetadataEntry> metadataEntries) {
-		SampleMetadataResponse response = new SampleMetadataResponse(metadataEntries);
-		response.add(linkTo(methodOn(RESTSampleMetadataController.class).getSampleMetadata(s.getId())).withSelfRel());
-		response.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(s.getId())).withRel(SAMPLE_REL));
-		return response;
-	}
-
-	/**
-	 * Build a {@link SampleMetadataResponse} object
-	 *
-	 * @param s the {@link Sample} to build the object from
-	 * @return a constructed {@link SampleMetadataResponse}
-	 */
-	private SampleMetadataResponse buildSampleMetadataResponse(final SampleMinimal s,
-			Set<MetadataEntry> metadataEntries) {
 		SampleMetadataResponse response = new SampleMetadataResponse(metadataEntries);
 		response.add(linkTo(methodOn(RESTSampleMetadataController.class).getSampleMetadata(s.getId())).withSelfRel());
 		response.add(linkTo(methodOn(RESTProjectSamplesController.class).getSample(s.getId())).withRel(SAMPLE_REL));

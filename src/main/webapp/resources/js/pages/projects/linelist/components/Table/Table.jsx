@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-
+import { notification, Space, Spin } from "antd";
 import isEqual from "lodash/isEqual";
 import isArray from "lodash/isArray";
 import PropTypes from "prop-types";
@@ -18,6 +18,8 @@ import {
 import { FIELDS } from "../../constants";
 import { actions as templateActions } from "../../reducers/templates";
 import { actions as entryActions } from "../../reducers/entries";
+import { IconCheck } from "../../../../../components/icons/Icons";
+import { green6 } from "../../../../../styles/colors";
 
 /**
  * React component to render the ag-grid to the page.
@@ -223,26 +225,46 @@ export class TableComponent extends React.Component {
       /* webpackChunkName: "exportUtilities" */ "../../../../../utilities/export-utilities"
     ).then((module) => {
       const createXLSX = module.default;
+      notification.open({
+        key: "export-notification",
+        message: i18n("linelist.table.export.message"),
+        icon: <Spin />,
+        closeIcon: <div></div>,
+        description: i18n("linelist.table.export.description")
+        duration: null,
+      });
 
       /*
-       * Get the visible columns.  Need to ignore the icon columns since
-       * it does not contain any data that we want.
+       * Wait 1 second before generating file, this allows the preparing
+       * notification to display for at least 1 second before the file has
+       * completed generation.
        */
-      console.time("filteredColIds");
-      const filteredColIds = this.columnApi.getColumnState().filter((c) => !c.hide && c.colId !== "icons").map((c) => c.colId);
-      console.timeEnd("filteredColIds");
+      setTimeout(() => {
+        /*
+        * Get the visible columns.  Need to ignore the icon columns since
+        * it does not contain any data that we want.
+        */
+        const filteredColIds = this.columnApi
+          .getColumnState()
+          .filter((c) => !c.hide && c.colId !== "icons")
+          .map((c) => c.colId);
 
-      const filename = this.generateFileName(ext);
-      if (ext === 'csv') {
-        console.time("writeCsv");
-        this.api.exportDataAsCsv({ columnKeys: filteredColIds, fileName: filename });
-        console.timeEnd("writeCsv");
-      } else {
-        console.time("rawData");
-        const data = this.api.getDataAsCsv({ columnKeys: filteredColIds });
-        console.timeEnd("rawData");
-        createXLSX({ filename, data })
-      }
+        const filename = this.generateFileName(ext);
+        if (ext === "csv") {
+          this.api.exportDataAsCsv({
+            columnKeys: filteredColIds,
+            fileName: filename,
+          });
+        } else {
+          const data = this.api.getDataAsCsv({ columnKeys: filteredColIds });
+          createXLSX({ filename, data });
+        }
+        notification.open({
+          key: "export-notification",
+          icon: <IconCheck style={{ color: green6 }} />,
+          message: "File created",
+        });
+      }, 1000);
     });
   };
 

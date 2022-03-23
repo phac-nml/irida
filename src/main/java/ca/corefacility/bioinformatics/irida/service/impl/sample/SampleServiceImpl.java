@@ -31,7 +31,6 @@ import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoinMinimal;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -50,7 +49,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFast
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssemblyRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinMinimalRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
@@ -85,8 +83,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	private ProjectSampleJoinRepository psjRepository;
 
-	private ProjectSampleJoinMinimalRepository psjmRepository;
-
 	private SampleSequencingObjectJoinRepository ssoRepository;
 
 	private QCEntryRepository qcEntryRepository;
@@ -111,7 +107,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *
 	 * @param sampleRepository                   the sample repository.
 	 * @param psjRepository                      the project sample join repository.
-	 * @param psjmRepository                     the lightweight project sample join repository.
 	 * @param analysisRepository                 the analysis repository.
 	 * @param ssoRepository                      The {@link SampleSequencingObjectJoin} repository
 	 * @param sequencingObjectRepository         the {@link SequencingObject} repository
@@ -124,16 +119,14 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
-			ProjectSampleJoinMinimalRepository psjmRepository, final AnalysisRepository analysisRepository,
-			SampleSequencingObjectJoinRepository ssoRepository, QCEntryRepository qcEntryRepository,
-			SequencingObjectRepository sequencingObjectRepository,
+			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
+			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository,
 			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, UserRepository userRepository,
 			MetadataEntryRepository metadataEntryRepository, GenomeAssemblyRepository assemblyRepository,
 			Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
-		this.psjmRepository = psjmRepository;
 		this.analysisRepository = analysisRepository;
 		this.ssoRepository = ssoRepository;
 		this.qcEntryRepository = qcEntryRepository;
@@ -564,16 +557,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			String sampleName, String searchTerm, String organism, Date minDate, Date maxDate, int currentPage,
 			int pageSize, Sort sort) {
 		return psjRepository.findAll(ProjectSampleSpecification.getSamples(projects, sampleNames, sampleName,
-				searchTerm, organism, minDate, maxDate), PageRequest.of(currentPage, pageSize, sort));
-	}
-
-	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projects, 'canReadProject')")
-	public Page<ProjectSampleJoinMinimal> getFilteredProjectSamples(List<Project> projects, List<String> sampleNames,
-			String sampleName, String searchTerm, String organism, Date minDate, Date maxDate, int currentPage,
-			int pageSize, Sort sort) {
-		List<Long> projectIds = projects.stream().map(Project::getId).collect(Collectors.toList());
-		return psjmRepository.findAll(ProjectSampleSpecification.getSamplesMinimal(projectIds, sampleNames, sampleName,
 				searchTerm, organism, minDate, maxDate), PageRequest.of(currentPage, pageSize, sort));
 	}
 

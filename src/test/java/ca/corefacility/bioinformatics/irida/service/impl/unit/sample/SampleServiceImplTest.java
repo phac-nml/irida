@@ -29,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinMinimalRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
@@ -55,7 +54,6 @@ public class SampleServiceImplTest {
 	private SampleService sampleService;
 	private SampleRepository sampleRepository;
 	private ProjectSampleJoinRepository psjRepository;
-	private ProjectSampleJoinMinimalRepository psjmRepository;
 	private AnalysisRepository analysisRepository;
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	private QCEntryRepository qcEntryRepository;
@@ -74,7 +72,6 @@ public class SampleServiceImplTest {
 	public void setUp() {
 		sampleRepository = mock(SampleRepository.class);
 		psjRepository = mock(ProjectSampleJoinRepository.class);
-		psjmRepository = mock(ProjectSampleJoinMinimalRepository.class);
 		analysisRepository = mock(AnalysisRepository.class);
 		ssoRepository = mock(SampleSequencingObjectJoinRepository.class);
 		qcEntryRepository = mock(QCEntryRepository.class);
@@ -84,9 +81,9 @@ public class SampleServiceImplTest {
 
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
-		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, psjmRepository, analysisRepository,
-				ssoRepository, qcEntryRepository, sequencingObjectRepository, sampleGenomeAssemblyJoinRepository,
-				userRepository, metadataEntryRepository, null, validator);
+		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, analysisRepository, ssoRepository,
+				qcEntryRepository, sequencingObjectRepository, sampleGenomeAssemblyJoinRepository, userRepository,
+				metadataEntryRepository, null, validator);
 	}
 
 	@Test
