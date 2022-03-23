@@ -4,8 +4,9 @@ import { IconSearch } from "../icons/Icons";
 
 function getTextSearchProps(dataIndex) {
   let searchInput;
+
   return {
-    onFilterDropdownVisibleChange: visible => {
+    onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInput.select());
       }
@@ -14,17 +15,17 @@ function getTextSearchProps(dataIndex) {
       setSelectedKeys,
       selectedKeys,
       confirm,
-      clearFilters
+      clearFilters,
     }) => (
       <div style={{ padding: 8 }}>
         <Input
-          ref={node => {
+          ref={(node) => {
             searchInput = node;
           }}
           className="t-name-filter"
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={e =>
+          onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
           onPressEnter={() => confirm()}
@@ -42,14 +43,17 @@ function getTextSearchProps(dataIndex) {
         </Button>
         <Button
           className="t-name-filter-clear"
-          onClick={() => clearFilters()}
+          onClick={() => {
+            clearFilters();
+            confirm();
+          }}
           size="small"
           style={{ width: 90 }}
         >
           Reset
         </Button>
       </div>
-    )
+    ),
   };
 }
 
