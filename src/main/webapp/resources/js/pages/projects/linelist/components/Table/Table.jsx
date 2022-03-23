@@ -227,11 +227,10 @@ export class TableComponent extends React.Component {
       const createXLSX = module.default;
       notification.open({
         key: "export-notification",
-        message: "Preparing file for download",
+        message: i18n("linelist.table.export.message"),
         icon: <Spin />,
         closeIcon: <div></div>,
-        description:
-          "This may take a few moments, please do not close the window or browse away as it will cancel the download",
+        description: i18n("linelist.table.export.description")
         duration: null,
       });
 
