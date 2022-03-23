@@ -1,14 +1,11 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { notification, Row, Switch, Table, Typography } from "antd";
+import { notification, Row, Switch, Typography } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { formatDate } from "../../../utilities/date-utilities";
 import { useUpdateProjectSubscriptionMutation } from "../../../apis/projects/project-subscriptions";
 import { PagedTableProvider } from "../../../components/ant.design/PagedTable";
-import {
-  PagedTable,
-  PagedTableContext,
-} from "../../../components/ant.design/PagedTable";
+import { PagedTable } from "../../../components/ant.design/PagedTable";
 
 /**
  * React component to display the user projects page.
@@ -52,31 +49,42 @@ export default function UserProjectsPage() {
       title: i18n("UserProjectsPage.table.emailSubscribed"),
       dataIndex: "emailSubscribed",
       key: "emailSubscribed",
-      render: (text, record) => <Switch defaultChecked={text} onChange={(checked) => updateSubscription(checked, record)} />,
+      render: (text, record) => (
+        <Switch
+          defaultChecked={text}
+          onChange={(checked) => updateSubscription(checked, record)}
+        />
+      ),
     },
   ];
 
   function updateSubscription(checked, record) {
     updateProjectSubscription({ id: record.id, subscribe: checked })
-      .then((payload) => {
+      .then(() => {
         notification.success({
           message: i18n("UserProjectsPage.notification.success"),
         });
       })
-      .catch((error) => {
+      .catch(() => {
         notification.error({
           message: i18n("UserProjectsPage.notification.error"),
         });
       });
-  };
+  }
 
   return (
     <>
       <Row>
-        <Typography.Title level={4}>{i18n("UserProjectsPage.title")}</Typography.Title>
+        <Typography.Title level={4}>
+          {i18n("UserProjectsPage.title")}
+        </Typography.Title>
       </Row>
       <Row>
-        <PagedTableProvider url={setBaseUrl(`/ajax/subscriptions/${userId}/user/list`)} column="project.id" order="ascend">
+        <PagedTableProvider
+          url={setBaseUrl(`/ajax/subscriptions/${userId}/user/list`)}
+          column="project.id"
+          order="ascend"
+        >
           <PagedTable columns={columns} search={false} />
         </PagedTableProvider>
       </Row>
