@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSubscripti
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserProjectDetailsModel;
 
 /**
- * Controller for handling all AJAX requests for the {@link ProjectSubscription} UIs
+ * Controller for handling AJAX requests for {@link ProjectSubscription}
  */
 @RestController
 @RequestMapping("/ajax/subscriptions")
