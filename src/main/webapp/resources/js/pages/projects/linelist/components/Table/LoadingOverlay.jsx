@@ -22,7 +22,7 @@ const Overlay = styled.div`
 class LoadingOverlay extends Component {
   render() {
     const percentage =
-      Math.floor(this.props.loading.count / window.PAGE.totalSamples) * 100;
+      Math.floor((this.props.loading.count / window.PAGE.totalSamples) * 100);
     return (
       <Overlay>
         <Space

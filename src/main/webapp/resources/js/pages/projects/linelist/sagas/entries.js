@@ -13,7 +13,7 @@ import { FIELDS } from "../constants";
 function calculatePageSize() {
   const MIN = 1000;
   const MAX = 5000;
-  const estimated = window.PAGE.totalSamples / 100;
+  const estimated = Math.ceil(window.PAGE.totalSamples / 100);
   return estimated < MIN ? MIN : estimated > MAX ? MAX : estimated;
 }
 
