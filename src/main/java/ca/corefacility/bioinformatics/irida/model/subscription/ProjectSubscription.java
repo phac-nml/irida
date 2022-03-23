@@ -17,8 +17,8 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  * Class for storing email subscriptions to {@link Project}s for {@link User}s .
  */
 @Entity
-@Table(name = "project_subscription", uniqueConstraints = @UniqueConstraint(columnNames = { "user_id",
-		"project_id" }, name = "UK_PROJECT_SUBSCRIPTION_PROJECT_USER"))
+@Table(name = "project_subscription", uniqueConstraints = @UniqueConstraint(columnNames = {
+		"user_id", "project_id" }, name = "UK_PROJECT_SUBSCRIPTION_PROJECT_USER"))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
 public class ProjectSubscription implements IridaThing {
@@ -32,7 +32,8 @@ public class ProjectSubscription implements IridaThing {
 	private User user;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinColumn(name = "project_id", nullable = false, foreignKey = @ForeignKey(name = "FK_PROJECT_SUBSCRIPTION_PROJECT"))
+	@JoinColumn(name = "project_id", nullable = false,
+			foreignKey = @ForeignKey(name = "FK_PROJECT_SUBSCRIPTION_PROJECT"))
 	@NotNull
 	private Project project;
 
@@ -46,15 +47,25 @@ public class ProjectSubscription implements IridaThing {
 	@Column(name = "created_date", updatable = false)
 	private Date createdDate;
 
+	/**
+	 * Construct an instance of {@link ProjectSubscription} with no properties set.
+	 */
 	public ProjectSubscription() {
+		this.createdDate = new Date();
 	}
 
+	/**
+	 * Construct an instance of {@link ProjectSubscription} with all properties set.
+	 *
+	 * @param user              the {@link User}
+	 * @param project           the {@link Project}
+	 * @param emailSubscription whether the subscription is activate or not
+	 */
 	public ProjectSubscription(User user, Project project, boolean emailSubscription) {
 		super();
 		this.user = user;
 		this.project = project;
 		this.emailSubscription = emailSubscription;
-		this.createdDate = new Date();
 	}
 
 	@Override
