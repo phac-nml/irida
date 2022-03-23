@@ -5,6 +5,13 @@ import { SPACE_MD } from "../../../../styles/spacing";
 import { CART } from "../../../../utilities/events-utilities";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconShoppingCart } from "../../../icons/Icons";
+import styled from "styled-components";
+
+const BadgeStyle = styled(Badge)`
+  margin-left: -5px !important;
+  margin-top: -5px !important;
+  position: fixed !important;
+`;
 
 /**
  * React component to display the cart icon and current counts in the
@@ -37,14 +44,16 @@ export function CartLink() {
 
   return (
     <div style={{ padding: `0  ${SPACE_MD}` }}>
-      <Badge className="t-cart-count" count={count}>
-        <Button
-          type="link"
-          href={setBaseUrl(`/cart/${inGalaxy ? "galaxy" : "pipelines"}`)}
-        >
-          <IconShoppingCart data-count={count} />
-        </Button>
-      </Badge>
+      <Button
+        type="link"
+        className="t-cart-count"
+        href={setBaseUrl(`/cart/${inGalaxy ? "galaxy" : "pipelines"}`)}
+        icon={
+          <Badge count={count} offset={[10, -5]}>
+            <IconShoppingCart data-count={count} />
+          </Badge>
+        }
+      />
     </div>
   );
 }
