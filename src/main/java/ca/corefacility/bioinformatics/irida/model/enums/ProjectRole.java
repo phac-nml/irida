@@ -33,8 +33,6 @@ public enum ProjectRole {
 	 */
 	public static ProjectRole fromString(String code) {
 		switch (code.toUpperCase()) {
-		case "PROJECT_USER":
-			return PROJECT_USER;
 		case "PROJECT_OWNER":
 			return PROJECT_OWNER;
 		default:
