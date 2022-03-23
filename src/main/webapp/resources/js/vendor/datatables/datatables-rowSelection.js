@@ -2,16 +2,16 @@
  * This file is strongly based off the DataTables original select plugin,
  * but works with server side paging and OS checkbox.
  */
-(function(factory) {
+(function (factory) {
   // Default DataTables plugin setup.
   if (typeof define === "function" && define.amd) {
     // AMD
-    define(["jquery", "datatables.net"], function($) {
+    define(["jquery", "datatables.net"], function ($) {
       return factory($, window, document);
     });
   } else if (typeof exports === "object") {
     // CommonJS
-    module.exports = function(root, $) {
+    module.exports = function (root, $) {
       if (!root) {
         root = window;
       }
@@ -26,19 +26,19 @@
     // Browser
     factory(jQuery, window, document);
   }
-})(function($, window, document, undefined) {
+})(function ($, window, document, undefined) {
   const DataTable = $.fn.dataTable;
 
   // Version information for debugger
   DataTable.select = {
-    version: "0.0.1"
+    version: "0.0.1",
   };
 
   /**
    * Internationalization Helper
    */
   function i18n(label, def) {
-    return function(dt) {
+    return function (dt) {
       return dt.i18n(label, def);
     };
   }
@@ -47,7 +47,7 @@
    * Initialize the plugin.
    * @param {object} dt - the current DataTable
    */
-  DataTable.select.init = function(dt) {
+  DataTable.select.init = function (dt) {
     const ctx = dt.settings()[0];
     // Get the configuration for the selection from initialization object.
     const opts = ctx.oInit.select;
@@ -89,7 +89,7 @@
     const ctx = dt.settings()[0];
     const selector = ctx._select.selector;
 
-    $body.on("click", selector, function(e) {
+    $body.on("click", selector, function (e) {
       const $row = $(this).closest("tr");
       eventTrigger(dt, "selection-event.dt", [$row, e]);
     });
@@ -102,6 +102,9 @@
    * @param dt {object} Current DataTable
    */
   function selectAllRows(dt) {
+    const dialogue = document.querySelector("#select-all-dialogue");
+    dialogue.showModal();
+
     const ctx = dt.settings()[0];
     /*
     Need to get the filters so we only select the available samples.
@@ -113,7 +116,7 @@
       ctx._select.allUrl,
       data,
       ctx._select.allPostDataFn()
-    ).then(response => {
+    ).then((response) => {
       if (typeof ctx._select.formatSelectAllResponseFn === "function") {
         // Let the user handle formatting response.
         return ctx._select.formatSelectAllResponseFn(response);
@@ -121,11 +124,12 @@
       throw new Error("Expected supplied function [formatSelectAllResponseFn]");
     });
 
-    postPromise.then(data => {
+    postPromise.then((data) => {
       if (data instanceof Map) {
         ctx._select.selected = data;
         dt.draw();
         eventTrigger(dt, "selection-count.dt", data.size);
+        setTimeout(() => dialogue.close(), 500);
         return;
       }
       throw new Error(
@@ -158,8 +162,8 @@
   /**
    * Register the select initialization function with Datatables
    */
-  apiRegister("select.init()", function() {
-    return this.iterator("table", function(ctx) {
+  apiRegister("select.init()", function () {
+    return this.iterator("table", function (ctx) {
       init(ctx);
       eventTrigger(new DataTable.Api(ctx), "selection-count.dt", 0);
     });
@@ -168,8 +172,8 @@
   /**
    * Register the table selector with DataTables
    */
-  apiRegister("select.selector()", function(selector) {
-    return this.iterator("table", function(ctx) {
+  apiRegister("select.selector()", function (selector) {
+    return this.iterator("table", function (ctx) {
       ctx._select.selector = selector;
       enableRowCheckboxSelection(new DataTable.Api(ctx));
     });
@@ -178,8 +182,8 @@
   /**
    * Register the select table function with DataTables
    */
-  apiRegister("select.selectAll()", function() {
-    return this.iterator("table", function(ctx) {
+  apiRegister("select.selectAll()", function () {
+    return this.iterator("table", function (ctx) {
       selectAllRows(new DataTable.Api(ctx));
     });
   });
@@ -187,8 +191,8 @@
   /**
    * Register the select none function with DataTables
    */
-  apiRegister("select.selectNone()", function() {
-    return this.iterator("table", function(ctx) {
+  apiRegister("select.selectNone()", function () {
+    return this.iterator("table", function (ctx) {
       selectNone(new DataTable.Api(ctx));
     });
   });
@@ -196,8 +200,8 @@
   /**
    * Register the selected rows map with DataTables
    */
-  apiRegister("select.selected()", function(selected) {
-    return this.iterator("table", function(ctx) {
+  apiRegister("select.selected()", function (selected) {
+    return this.iterator("table", function (ctx) {
       if (typeof selected === "undefined") {
         return ctx._select.selected;
       } else if (selected instanceof Map) {
@@ -209,8 +213,8 @@
   /**
    * Register the ability to get and set the currentId with DataTables
    */
-  apiRegister("select.currentId()", function(id) {
-    return this.iterator("table", function(ctx) {
+  apiRegister("select.currentId()", function (id) {
+    return this.iterator("table", function (ctx) {
       if (typeof id === "undefined") {
         return ctx._select.currentId;
       }
@@ -235,13 +239,13 @@
         if (selected.has(id)) {
           $row.find("input[type=checkbox]").prop("checked", true);
         }
-      }
+      },
     });
 
     /**
      * Handles event when row is selected/unselected.
      */
-    api.on("selection-event.dt", function(event, row, clickEvent) {
+    api.on("selection-event.dt", function (event, row, clickEvent) {
       const id = row.attr("id");
       const info = row.data("info");
       const selected = ctx._select.selected;
@@ -291,7 +295,7 @@
      * Handles event when the number of rows selected have been updated.
      * This updates the rows selected counts.
      */
-    api.on("selection-count.dt", function(e, size) {
+    api.on("selection-count.dt", function (e, size) {
       let text = "";
       if (0 === size) {
         text = api.i18n("select.none", "No rows selected");
@@ -315,23 +319,23 @@
       className: "btn-sm dt-select-all",
       key: {
         altKey: true,
-        key: "s"
+        key: "s",
       },
       action(e, dt) {
         dt.select.selectAll();
-      }
+      },
     },
     selectNone: {
       text: i18n("buttons.selectNone", "Select None"),
       className: "btn-sm dt-select-none",
       key: {
         altKey: true,
-        key: "d"
+        key: "d",
       },
       action(e, dt) {
         dt.select.selectNone();
-      }
-    }
+      },
+    },
   });
 
   /** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -340,7 +344,7 @@
 
   // Attach a listener to the document which listens for DataTables initialization
   // events so we can automatically initialize
-  $(document).on("preInit.dt.dtSelect", function(e, ctx) {
+  $(document).on("preInit.dt.dtSelect", function (e, ctx) {
     if (e.namespace !== "dt") {
       return;
     }

@@ -4,10 +4,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
- * This class is USED ONLY for when a user selects all sample to be added to
- * the cart from the project samples page.  Since the samples might not be
- * currently loaded into the table, a minimum representation needs to be returned
- * so that they can properly be added to the updated cart.
+ * This class is USED ONLY for when a user selects all sample to be added to the cart from the project samples page.
+ * Since the samples might not be currently loaded into the table, a minimum representation needs to be returned so that
+ * they can properly be added to the updated cart.
  */
 public class ProjectCartSample {
 	private long id;

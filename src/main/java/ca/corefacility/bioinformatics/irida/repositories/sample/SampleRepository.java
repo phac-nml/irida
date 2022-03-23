@@ -21,7 +21,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.Generic
 /**
  * A repository for storing Sample objects
  */
-public interface SampleRepository extends IridaJpaRepository<Sample, Long> {
+public interface SampleRepository extends IridaJpaRepository<Sample, Long>, SampleRepositoryCustom {
 
 	/**
 	 * Get the {@link Sample}s associated with a {@link Project}

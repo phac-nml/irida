@@ -5,6 +5,22 @@ __metadata:
   version: 5
   cacheKey: 8
 
+"@ag-grid-community/core@npm:~27.1.0":
+  version: 27.1.0
+  resolution: "@ag-grid-community/core@npm:27.1.0"
+  checksum: 4ec2d6dff101b5d1c8038aa3f7a05d0372e65f236044748d62c302fd9f4176c6db956eee24fd13d0f8b970719ec3ee924a19efa40f047aa2ae19b271cbfc22dc
+  languageName: node
+  linkType: hard
+
+"@ag-grid-community/csv-export@npm:^27.1.0":
+  version: 27.1.0
+  resolution: "@ag-grid-community/csv-export@npm:27.1.0"
+  dependencies:
+    "@ag-grid-community/core": ~27.1.0
+  checksum: cf179bb9d088f329fef10e2aea2775db63bd453e837fc02c8a7095160335228b1a80587b9f0f539a913c3a89746c3b9f0212b1daf130ab5a285846d9ebc1047b
+  languageName: node
+  linkType: hard
+
 "@ampproject/remapping@npm:^2.0.0":
   version: 2.1.0
   resolution: "@ampproject/remapping@npm:2.1.0"
@@ -3739,23 +3755,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ag-grid-community@npm:^22.1.1":
-  version: 22.1.1
-  resolution: "ag-grid-community@npm:22.1.1"
-  checksum: 3024cc69f699e474a296d0da258fc53a451f41cd60eedd5156f802011e4f3f3c74b29b00b3ed6fbffeeab07f9c8cf359e31a5d6768d568cfde18e2bab24b33ef
+"ag-grid-community@npm:^27.1.0":
+  version: 27.1.0
+  resolution: "ag-grid-community@npm:27.1.0"
+  checksum: b385fe4e6f0d6e781ad7acbf58cc165acf1d536c07a604bd4f642e8f9e4595c937bd9296e3375c0eb0e4fdebb99362c4892eb07c87a8a95926e8dc1ae6b1f851
   languageName: node
   linkType: hard
 
-"ag-grid-react@npm:^22.1.1":
-  version: 22.1.1
-  resolution: "ag-grid-react@npm:22.1.1"
+"ag-grid-react@npm:^27.1.0":
+  version: 27.1.0
+  resolution: "ag-grid-react@npm:27.1.0"
   dependencies:
-    prop-types: ^15.6.2
+    prop-types: ^15.8.1
   peerDependencies:
-    ag-grid-community: ~22.1.1
-    react: ^16.3.0
-    react-dom: ^16.3.0
-  checksum: e62d4e9e64646203e689d7c8385dbf7321743d55f7c6caf2b934b4ccb9906177a5cee8e7a6330bf1160ace902b6da42f7108975169b58610004480d088ab6e82
+    ag-grid-community: ~27.1.0
+    react: ^16.3.0 || ^17.0.0
+    react-dom: ^16.3.0 || ^17.0.0
+  checksum: 36631975f2b94c3ac063423e195b14ebeb901cb2b0f1559c987c25e32d627db04a10d5420f90b173fa3e36cf915430b7201364c087f8265f812d072301f77b74
   languageName: node
   linkType: hard
 
@@ -5151,15 +5167,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"codepage@npm:~1.14.0":
-  version: 1.14.0
-  resolution: "codepage@npm:1.14.0"
-  dependencies:
-    commander: ~2.14.1
-    exit-on-epipe: ~1.0.1
-  bin:
-    codepage: ./bin/codepage.njs
-  checksum: ea06cbb7b646029d4e252b143b09048f1dee466d80be9e68cc4da05981f982a02f1199db0ea27d5e05a026bfa77b91e3ae8e0d3ed9665bd77ba54911bf2b82b7
+"codepage@npm:~1.15.0":
+  version: 1.15.0
+  resolution: "codepage@npm:1.15.0"
+  checksum: 86bdfd8f8fd4d78ace6ddab02a1621cbb4a833686fe886984b4155d99cd0287581d69495774b816ab2f571c4dc851c1595e1dbb8d69bd6dbb5a631ebf317fab0
   languageName: node
   linkType: hard
 
@@ -5299,20 +5310,6 @@ __metadata:
   version: 7.2.0
   resolution: "commander@npm:7.2.0"
   checksum: 53501cbeee61d5157546c0bef0fedb6cdfc763a882136284bed9a07225f09a14b82d2a84e7637edfd1a679fb35ed9502fd58ef1d091e6287f60d790147f68ddc
-  languageName: node
-  linkType: hard
-
-"commander@npm:~2.14.1":
-  version: 2.14.1
-  resolution: "commander@npm:2.14.1"
-  checksum: 26bd49febeac8efabb7488fb5a4a2480b04bc4c4eef3c50da93eead72959f7a5232d003deda5b9761937205721274e80108f6d1d2b45ae7a8387cfb92031084e
-  languageName: node
-  linkType: hard
-
-"commander@npm:~2.17.1":
-  version: 2.17.1
-  resolution: "commander@npm:2.17.1"
-  checksum: 22e7ed5b422079a13a496e5eb8f73f36c15b5809d46f738e168e20f9ad485c12951bdc2cb366a36eb5f4927dae4f17b355b8adb96a5b9093f5fa4c439e8b9419
   languageName: node
   linkType: hard
 
@@ -7075,13 +7072,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fflate@npm:^0.3.8":
-  version: 0.3.11
-  resolution: "fflate@npm:0.3.11"
-  checksum: 1eca8d3e86fda9f82c8acd16a970dd20bfeb4bd31c7808351ef413bc2673911d2aedc2fed6e8a4b68f5f2598b07f0579fdf6f085f5a8105b49cde8a8f3528def
-  languageName: node
-  linkType: hard
-
 "file-entry-cache@npm:^6.0.1":
   version: 6.0.1
   resolution: "file-entry-cache@npm:6.0.1"
@@ -8139,6 +8129,7 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "irida-ui@workspace:."
   dependencies:
+    "@ag-grid-community/csv-export": ^27.1.0
     "@ant-design/charts": ^1.1.1
     "@ant-design/icons": ^4.7.0
     "@antv/color-util": ^2.0.6
@@ -8162,8 +8153,8 @@ fsevents@^2.1.2:
     "@react-dnd/invariant": ^2.0.0
     "@reduxjs/toolkit": 1.6.0
     "@yarnpkg/pnpify": ^2.4.0
-    ag-grid-community: ^22.1.1
-    ag-grid-react: ^22.1.1
+    ag-grid-community: ^27.1.0
+    ag-grid-react: ^27.1.0
     angular: 1.8.0
     angular-aside: ^1.3.2
     angular-ui-bootstrap: ^2.5.6
@@ -8247,7 +8238,7 @@ fsevents@^2.1.2:
     webpack: ^5.68.0
     webpack-assets-manifest: ^5.1.0
     webpack-cli: ^4.9.2
-    xlsx: ^0.17.0
+    xlsx: ^0.17.5
   languageName: unknown
   linkType: soft
 
@@ -12492,6 +12483,17 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
+"prop-types@npm:^15.8.1":
+  version: 15.8.1
+  resolution: "prop-types@npm:15.8.1"
+  dependencies:
+    loose-envify: ^1.4.0
+    object-assign: ^4.1.1
+    react-is: ^16.13.1
+  checksum: c056d3f1c057cb7ff8344c645450e14f088a915d078dcda795041765047fa080d38e5d626560ccaac94a4e16e3aa15f3557c1a9a8d1174530955e992c675e459
+  languageName: node
+  linkType: hard
+
 "properties-reader@npm:^2.1.1":
   version: 2.2.0
   resolution: "properties-reader@npm:2.2.0"
@@ -16307,23 +16309,20 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"xlsx@npm:^0.17.0":
-  version: 0.17.0
-  resolution: "xlsx@npm:0.17.0"
+"xlsx@npm:^0.17.5":
+  version: 0.17.5
+  resolution: "xlsx@npm:0.17.5"
   dependencies:
     adler-32: ~1.2.0
     cfb: ^1.1.4
-    codepage: ~1.14.0
-    commander: ~2.17.1
+    codepage: ~1.15.0
     crc-32: ~1.2.0
-    exit-on-epipe: ~1.0.1
-    fflate: ^0.3.8
     ssf: ~0.11.2
     wmf: ~1.0.1
     word: ~0.3.0
   bin:
     xlsx: bin/xlsx.njs
-  checksum: 64e44eba53b64b989667b11655b88ef59a695aa07cce2415f9edff64ef6a48d936ed33208d98db3654e31769d79c42fd50e96d983d55e0850cb54a591b28960e
+  checksum: f2dc48671994ba13aa98c4aaa14d7cb13f75f248964f555809ec3d4069e80e99a0bcb6657273e3872af3765118aa30630d566b991a14b6193f1ad79022542e46
   languageName: node
   linkType: hard
 

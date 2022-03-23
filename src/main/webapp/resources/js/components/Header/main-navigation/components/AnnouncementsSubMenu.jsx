@@ -84,17 +84,22 @@ export function AnnouncementsSubMenu() {
       trigger="click"
     >
       <div style={{ padding: `0  ${SPACE_MD}` }}>
-        <Badge
-          className="t-announcements-badge"
-          count={announcements && announcements.filter((a) => !a.read).length}
-        >
-          <Button
-            type="link"
-            href="#"
-            className="t-announcements-button"
-            icon={<IconBell />}
-          />
-        </Badge>
+        <Button
+          type="link"
+          href="#"
+          className="t-announcements-button"
+          icon={
+            <Badge
+              className="t-announcements-badge"
+              count={
+                announcements && announcements.filter((a) => !a.read).length
+              }
+              offset={[10, -5]}
+            >
+              <IconBell />
+            </Badge>
+          }
+        />
       </div>
     </Popover>
   );
