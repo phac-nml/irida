@@ -18,7 +18,7 @@ const CommandText = styled(Paragraph)`
 `;
 
 const CommandWrapper = styled.div`
-  margin-top: ${SPACE_MD};
+  margin-top: ${SPACE_SM};
   padding: 2px;
   background-color: ${grey2};
   border: ${BORDERED_LIGHT};
