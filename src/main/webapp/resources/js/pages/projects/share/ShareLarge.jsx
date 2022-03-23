@@ -3,6 +3,12 @@ import { Row, Col, Alert, Progress } from "antd";
 import { shareSamplesWithProject } from "../../../apis/projects/samples";
 
 const MAX_SHARE_SIZE = 300;
+
+/**
+ * React component to render the progress of sharing large number of samples
+ * @param {object} param
+ * @returns React.Element
+ */
 export default function ShareLarge({
   samples,
   current,
