@@ -16,17 +16,8 @@ export function Notifications() {
   });
 
   function showMessage({ detail }) {
-    const { text, type } = detail;
-    switch (type) {
-      case "info":
-        message.warning(text);
-        break;
-      case "error":
-        message.error(text);
-        break;
-      default:
-        message.success(text);
-    }
+    const { text, type, duration } = detail;
+    notification.open({ type, message: text, duration });
   }
 
   function showUndoNotification({ detail }) {
@@ -51,7 +42,7 @@ export function Notifications() {
         >
           UNDO
         </Button>
-      )
+      ),
     });
   }
 

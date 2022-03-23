@@ -68,7 +68,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Service class for managing {@link Sample}.
- *
  */
 @Service
 public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {
@@ -80,8 +79,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	private SampleRepository sampleRepository;
 	/**
-	 * Reference to {@link ProjectSampleJoinRepository} for managing
-	 * {@link ProjectSampleJoin}.
+	 * Reference to {@link ProjectSampleJoinRepository} for managing {@link ProjectSampleJoin}.
 	 */
 	private ProjectSampleJoinRepository psjRepository;
 
@@ -124,7 +122,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
 			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository,
 			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, UserRepository userRepository,
-			MetadataEntryRepository metadataEntryRepository, GenomeAssemblyRepository assemblyRepository, Validator validator) {
+			MetadataEntryRepository metadataEntryRepository, GenomeAssemblyRepository assemblyRepository,
+			Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
 		this.psjRepository = psjRepository;
@@ -217,6 +216,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	public Map<Long, Set<MetadataEntry>> getMetadataForProjectSamples(Project project, List<Long> sampleIds) {
+		return metadataEntryRepository.getMetadataForProjectSamples(project, sampleIds);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasPermission(#s, 'canUpdateSample')")
 	@Transactional
 	public Sample updateSampleMetadata(Sample s, Set<MetadataEntry> metadataToSet) {
@@ -224,7 +232,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		metadataEntryRepository.deleteAll(currentMetadata);
 
-		for(MetadataEntry e : metadataToSet){
+		for (MetadataEntry e : metadataToSet) {
 			e.setSample(s);
 		}
 
@@ -252,16 +260,14 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			newMetadataEntry.setSample(s);
 
 			Optional<MetadataEntry> metadataEntryForField = currentMetadata.stream()
-					.filter(e -> e.getField()
-							.equals(field))
+					.filter(e -> e.getField().equals(field))
 					.findFirst();
 
 			if (metadataEntryForField.isPresent()) {
 				MetadataEntry originalMetadataEntry = metadataEntryForField.get();
 
 				// if the metadata entries are of the same type, I can directly merge
-				if (originalMetadataEntry.getClass()
-						.equals(newMetadataEntry.getClass())) {
+				if (originalMetadataEntry.getClass().equals(newMetadataEntry.getClass())) {
 					originalMetadataEntry.merge(newMetadataEntry);
 				} else {
 					// if they are different types, I need to replace the metadata entry instead of merging
@@ -330,8 +336,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		if (s != null) {
 			return s;
 		} else {
-			throw new EntityNotFoundException("No sample with external id [" + sampleId + "] in project ["
-					+ project.getId() + "]");
+			throw new EntityNotFoundException(
+					"No sample with external id [" + sampleId + "] in project [" + project.getId() + "]");
 		}
 	}
 
@@ -404,7 +410,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				addSequencingObjectToSample(mergeInto, sequencingObject);
 			}
 
-			Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = sampleGenomeAssemblyJoinRepository.findBySample(s);
+			Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = sampleGenomeAssemblyJoinRepository
+					.findBySample(s);
 			for (SampleGenomeAssemblyJoin join : genomeAssemblyJoins) {
 				GenomeAssembly genomeAssembly = join.getObject();
 
@@ -427,17 +434,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
-	 * Confirm that a {@link ProjectSampleJoin} exists between the given
-	 * {@link Project} and {@link Sample}.
+	 * Confirm that a {@link ProjectSampleJoin} exists between the given {@link Project} and {@link Sample}.
 	 *
-	 * @param project
-	 *            the {@link Project} to check
-	 * @param sample
-	 *            the {@link Sample} to check
-	 * @throws IllegalArgumentException
-	 *             if join does not exist
+	 * @param project the {@link Project} to check
+	 * @param sample  the {@link Sample} to check
+	 * @throws IllegalArgumentException if join does not exist
 	 */
-	private void confirmProjectSampleJoin(Project project, Sample sample) throws IllegalArgumentException{
+	private void confirmProjectSampleJoin(Project project, Sample sample) throws IllegalArgumentException {
 		Set<Project> projects = new HashSet<>();
 		List<Join<Project, Sample>> sampleProjects = psjRepository.getProjectForSample(sample);
 		for (Join<Project, Sample> p : sampleProjects) {
@@ -488,8 +491,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				final AnalysisFastQC sequenceFileFastQC = analysisRepository
 						.findFastqcAnalysisForSequenceFile(sequenceFile);
 				if (sequenceFileFastQC == null || sequenceFileFastQC.getTotalBases() == null) {
-					throw new SequenceFileAnalysisException("Missing FastQC analysis for SequenceFile ["
-							+ sequenceFile.getId() + "]");
+					throw new SequenceFileAnalysisException(
+							"Missing FastQC analysis for SequenceFile [" + sequenceFile.getId() + "]");
 				}
 				totalBases += sequenceFileFastQC.getTotalBases();
 			}
@@ -527,13 +530,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
-	 * Add a {@link SequencingObject} to a {@link Sample} after testing if it
-	 * exists in a {@link Sample} already
+	 * Add a {@link SequencingObject} to a {@link Sample} after testing if it exists in a {@link Sample} already
 	 *
-	 * @param sample
-	 *            {@link Sample} to add to
-	 * @param seqObject
-	 *            {@link SequencingObject} to add
+	 * @param sample    {@link Sample} to add to
+	 * @param seqObject {@link SequencingObject} to add
 	 * @return a {@link SampleSequencingObjectJoin}
 	 */
 	@Transactional
@@ -553,11 +553,11 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projects, 'canReadProject')")
-	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames, String sampleName, String searchTerm,
-			String organism, Date minDate, Date maxDate, int currentPage, int pageSize, Sort sort) {
-		return psjRepository
-				.findAll(ProjectSampleSpecification.getSamples(projects, sampleNames, sampleName, searchTerm, organism, minDate, maxDate),
-						PageRequest.of(currentPage, pageSize, sort));
+	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames,
+			String sampleName, String searchTerm, String organism, Date minDate, Date maxDate, int currentPage,
+			int pageSize, Sort sort) {
+		return psjRepository.findAll(ProjectSampleSpecification.getSamples(projects, sampleNames, sampleName,
+				searchTerm, organism, minDate, maxDate), PageRequest.of(currentPage, pageSize, sort));
 	}
 
 	/**
@@ -572,8 +572,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		Set<Sample> samples = null;
 		try {
 			samples = objectsForAnalysisSubmission.stream()
-					.map(s -> ssoRepository.getSampleForSequencingObject(s)
-							.getSubject())
+					.map(s -> ssoRepository.getSampleForSequencingObject(s).getSubject())
 					.collect(Collectors.toSet());
 		} catch (NullPointerException e) {
 			logger.warn("No samples were found for submission " + submission.getId());
@@ -607,7 +606,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	public Page<ProjectSampleJoin> searchSamplesForUser(String query, final Integer page, final Integer count,
 			final Sort sort) {
-		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext()
+				.getAuthentication()
 				.getPrincipal();
 		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
 
@@ -629,11 +629,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
-	 * Verify that the given sort properties array is not null or empty. If it
-	 * is, give a default sort property.
+	 * Verify that the given sort properties array is not null or empty. If it is, give a default sort property.
 	 *
-	 * @param sortProperties
-	 *            The given sort properites
+	 * @param sortProperties The given sort properites
 	 * @return The corrected sort properties
 	 */
 	private String[] verifySortProperties(String[] sortProperties) {
@@ -649,7 +647,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 	/**
 	 * Specification for searching {@link Sample}s
-	 * @param user the {@link User} to get samples for.  If this property is null, will serch for all users.
+	 *
+	 * @param user        the {@link User} to get samples for. If this property is null, will serch for all users.
 	 * @param queryString the query string to search for
 	 * @return a {@link Specification} for {@link ProjectSampleJoin}
 	 */
@@ -674,12 +673,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			/**
 			 * Search with the given query for sample properties
 			 *
-			 * @param root
-			 *            root for ProjectSampleJoin
-			 * @param query
-			 *            criteria query
-			 * @param cb
-			 *            criteria query builder
+			 * @param root  root for ProjectSampleJoin
+			 * @param query criteria query
+			 * @param cb    criteria query builder
 			 * @return a predicate
 			 */
 			private Predicate sampleProperties(final Root<ProjectSampleJoin> root, final CriteriaQuery<?> query,
@@ -690,17 +686,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			}
 
 			/**
-			 * This {@link Predicate} filters out {@link Project}s for the
-			 * specific user where they are assigned individually as a member.
+			 * This {@link Predicate} filters out {@link Project}s for the specific user where they are assigned
+			 * individually as a member.
 			 *
-			 * @param root
-			 *            the root of the query
-			 * @param query
-			 *            the query
-			 * @param cb
-			 *            the builder
-			 * @return a {@link Predicate} that filters {@link Project}s where
-			 *         users are individually assigned.
+			 * @param root  the root of the query
+			 * @param query the query
+			 * @param cb    the builder
+			 * @return a {@link Predicate} that filters {@link Project}s where users are individually assigned.
 			 */
 			private Predicate individualProjectMembership(final Root<ProjectSampleJoin> root,
 					final CriteriaQuery<?> query, final CriteriaBuilder cb) {
@@ -712,19 +704,14 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			}
 
 			/**
-			 * This {@link Predicate} filters out {@link Project}s for the
-			 * specific user where they are assigned transitively through a
-			 * {@link UserGroup}.
+			 * This {@link Predicate} filters out {@link Project}s for the specific user where they are assigned
+			 * transitively through a {@link UserGroup}.
 			 *
-			 * @param root
-			 *            the root of the query
-			 * @param query
-			 *            the query
-			 * @param cb
-			 *            the builder
-			 * @return a {@link Predicate} that filters {@link Project}s where
-			 *         users are assigned transitively through {@link UserGroup}
-			 *         .
+			 * @param root  the root of the query
+			 * @param query the query
+			 * @param cb    the builder
+			 * @return a {@link Predicate} that filters {@link Project}s where users are assigned transitively through
+			 *         {@link UserGroup} .
 			 */
 			private Predicate groupProjectMembership(final Root<ProjectSampleJoin> root, final CriteriaQuery<?> query,
 					final CriteriaBuilder cb) {

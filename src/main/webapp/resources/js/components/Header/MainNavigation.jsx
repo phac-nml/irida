@@ -198,9 +198,9 @@ export function MainNavigation() {
                   </Button>
                 </Menu.Item>
               )}
-              <MenuItemStyle key="cart-link">
+              <Menu.Item key="cart-link">
                 <CartLink />
-              </MenuItemStyle>
+              </Menu.Item>
               <Menu.Item key="announcements-dropdown-link">
                 <AnnouncementsSubMenu />
               </Menu.Item>
