@@ -17,6 +17,14 @@ const CommandText = styled(Paragraph)`
   font-size: 14px;
 `;
 
+const CommandWrapper = styled.div`
+  margin-top: ${SPACE_MD};
+  padding: 2px;
+  background-color: ${grey2};
+  border: ${BORDERED_LIGHT};
+  border-radius: ${BORDER_RADIUS};
+`;
+
 /**
  * React component to display the ngs-linker command to a user based
  * on the currently selected samples.
@@ -94,14 +102,7 @@ function Linker() {
             />
           </Form.Item>
         </Form>
-        <div
-          style={{
-            marginTop: `${SPACE_SM}`,
-            padding: "2px",
-            backgroundColor: `${grey2}`,
-            border: `${BORDERED_LIGHT}`,
-            borderRadius: `${BORDER_RADIUS}`
-          }}>
+        <CommandWrapper>
           <CommandText
             className="t-cmd-text"
             ellipsis={{ rows: 1 }}
@@ -109,7 +110,7 @@ function Linker() {
           >
             {command}
           </CommandText>
-        </div>
+        </CommandWrapper>
       </Modal>
     </>
   );
