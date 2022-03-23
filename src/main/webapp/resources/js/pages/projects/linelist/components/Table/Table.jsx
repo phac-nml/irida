@@ -207,8 +207,9 @@ export class TableComponent extends React.Component {
   generateFileName = (ext) => {
     // YYYY-MM-dd-project-X-<metadata template name>.csv
     const fullDate = new Date();
-    const date = `${fullDate.getFullYear()}-${fullDate.getMonth() + 1
-      }-${fullDate.getDate()}`;
+    const date = `${fullDate.getFullYear()}-${
+      fullDate.getMonth() + 1
+    }-${fullDate.getDate()}`;
     const project = window.PAGE.project.label.replace(this.nameRegex, "_");
     const template = this.props.templates[this.props.current].name.replace(
       this.nameRegex,
@@ -230,7 +231,7 @@ export class TableComponent extends React.Component {
         message: i18n("linelist.table.export.message"),
         icon: <Spin />,
         closeIcon: <div></div>,
-        description: i18n("linelist.table.export.description")
+        description: i18n("linelist.table.export.description"),
         duration: null,
       });
 
@@ -241,9 +242,9 @@ export class TableComponent extends React.Component {
        */
       setTimeout(() => {
         /*
-        * Get the visible columns.  Need to ignore the icon columns since
-        * it does not contain any data that we want.
-        */
+         * Get the visible columns.  Need to ignore the icon columns since
+         * it does not contain any data that we want.
+         */
         const filteredColIds = this.columnApi
           .getColumnState()
           .filter((c) => !c.hide && c.colId !== "icons")
@@ -324,16 +325,16 @@ export class TableComponent extends React.Component {
        */
       const text = Boolean(data[field])
         ? i18n(
-          "linelist.editing.undo.full",
-          `${data[FIELDS.sampleName]}`,
-          `${headerName}`,
-          `${data[field]}`
-        )
+            "linelist.editing.undo.full",
+            `${data[FIELDS.sampleName]}`,
+            `${headerName}`,
+            `${data[field]}`
+          )
         : i18n(
-          "linelist.editing.undo.empty",
-          `${headerName}`,
-          `${data[FIELDS.sampleName]}`
-        );
+            "linelist.editing.undo.empty",
+            `${headerName}`,
+            `${data[FIELDS.sampleName]}`
+          );
       showUndoNotification(
         {
           text,
