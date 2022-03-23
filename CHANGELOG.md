@@ -13,7 +13,8 @@ Changes
 * [UI]: Fixed bug preventing updating of project details. (22.01.4)
 * [UI]: Removed old bootstrap client details/edit page and updated with a modal on the clients listing page.
 * [UI]: Updated Dashboard Recent Activity to use Ant Design.
-* [UI]: Sorted columns and added date labels to the charts on main statistics page.
+* [Developer]: Updated to Ant Design v4.19.3.
+* [UI]: Sorted columns for advanced charts and added labels to tiny charts on admin statistics page.
 
 21.09 to 22.01
 --------------

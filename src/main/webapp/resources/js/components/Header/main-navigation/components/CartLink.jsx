@@ -1,12 +1,10 @@
-import { Badge, Button } from "antd";
+import { Badge, Button, Menu } from "antd";
 import React from "react";
 import { getCartCount } from "../../../../apis/cart/cart";
+import { SPACE_MD } from "../../../../styles/spacing";
 import { CART } from "../../../../utilities/events-utilities";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconShoppingCart } from "../../../icons/Icons";
-import { theme } from "../../../../utilities/theme-utilities";
-
-const textColor = theme === "dark" ? "#fff" : "#222";
 
 /**
  * React component to display the cart icon and current counts in the
@@ -38,14 +36,15 @@ export function CartLink() {
   }, []);
 
   return (
-    <Badge count={count}>
-      <Button
-        type="link"
-        className="t-cart-count"
-        href={setBaseUrl(`/cart/${inGalaxy ? "galaxy" : "pipelines"}`)}
-        icon={<IconShoppingCart data-count={count} />}
-        style={{ color: textColor }}
-      />
-    </Badge>
+    <div style={{ padding: `0  ${SPACE_MD}` }}>
+      <Badge className="t-cart-count" count={count}>
+        <Button
+          type="link"
+          href={setBaseUrl(`/cart/${inGalaxy ? "galaxy" : "pipelines"}`)}
+        >
+          <IconShoppingCart data-count={count} />
+        </Button>
+      </Badge>
+    </div>
   );
 }
