@@ -1,5 +1,5 @@
 import React from "react";
-import { Input, Space, Table } from "antd";
+import { Input, Space, Table, Typography } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSampleAnalyses } from "../../../apis/samples/samples";
 import { setSampleAnalyses } from "../sampleAnalysesSlice";
@@ -15,7 +15,7 @@ import {
 import { blue6, green6, grey6, red6 } from "../../../styles/colors";
 
 const { Search } = Input;
-
+const { Paragraph } = Typography;
 const commonIconStyle = {
   fontSize: "16px",
 };
@@ -55,14 +55,16 @@ export function SampleAnalyses() {
       key: "name",
       render(name, data) {
         return (
-          <a
-            className="t-analysis-name"
-            href={setBaseUrl(`analysis/${data.id}`)}
-            title={name}
-            target="_blank"
-          >
-            {name}
-          </a>
+          <Paragraph ellipsis={{ rows: 1 }}>
+            <a
+              className="t-analysis-name"
+              href={setBaseUrl(`analysis/${data.id}`)}
+              title={name}
+              target="_blank"
+            >
+              {name}
+            </a>
+          </Paragraph>
         );
       },
     },
