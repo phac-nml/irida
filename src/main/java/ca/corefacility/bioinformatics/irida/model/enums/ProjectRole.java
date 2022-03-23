@@ -13,11 +13,11 @@ public enum ProjectRole {
 	PROJECT_OWNER("PROJECT_OWNER", 2);
 
 	private String code;
-	private int level;
+	private int userRoleLevel;
 
-	private ProjectRole(String code, int level) {
+	private ProjectRole(String code, int userRoleLevel) {
 		this.code = code;
-		this.level = level;
+		this.userRoleLevel = userRoleLevel;
 	}
 
 	@Override
@@ -42,8 +42,8 @@ public enum ProjectRole {
 		}
 	}
 
-	public int getLevel() {
-		return level;
+	public int getUserRoleLevel() {
+		return userRoleLevel;
 	}
 
 	/**
@@ -63,7 +63,8 @@ public enum ProjectRole {
 		}
 
 		for (UserGroupProjectJoin userGroupProjectJoin : userGroupProjectJoins) {
-			if (projectRole == null || projectRole.getLevel() < userGroupProjectJoin.getProjectRole().getLevel()) {
+			if (projectRole == null || projectRole.getUserRoleLevel() < userGroupProjectJoin.getProjectRole()
+					.getUserRoleLevel()) {
 				projectRole = userGroupProjectJoin.getProjectRole();
 				if (projectRole.equals(PROJECT_OWNER)) {
 					break;
