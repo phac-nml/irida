@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { notification, Space, Switch, Table, Typography } from "antd";
+import { notification, Row, Switch, Table, Typography } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { formatDate } from "../../../utilities/date-utilities";
 import { useUpdateProjectSubscriptionMutation } from "../../../apis/projects/project-subscriptions";
@@ -71,11 +71,15 @@ export default function UserProjectsPage() {
   };
 
   return (
-    <Space direction="vertical">
-      <Typography.Title level={4}>{i18n("UserProjectsPage.title")}</Typography.Title>
-      <PagedTableProvider url={setBaseUrl(`/ajax/subscriptions/${userId}/user/list`)} column="project.id" order="ascend">
-        <PagedTable columns={columns} search={false} />
-      </PagedTableProvider>
-    </Space>
+    <>
+      <Row>
+        <Typography.Title level={4}>{i18n("UserProjectsPage.title")}</Typography.Title>
+      </Row>
+      <Row>
+        <PagedTableProvider url={setBaseUrl(`/ajax/subscriptions/${userId}/user/list`)} column="project.id" order="ascend">
+          <PagedTable columns={columns} search={false} />
+        </PagedTableProvider>
+      </Row>
+    </>
   );
 }
