@@ -19,13 +19,11 @@ public class UserProjectDetailsModel extends TableModel {
 	private boolean isEmailSubscribed;
 
 	public UserProjectDetailsModel(ProjectSubscription projectSubscription, ProjectRole projectRole) {
-		super(projectSubscription.getId(), projectSubscription.getProject()
-				.getName(), projectSubscription.getCreatedDate(), null);
+		super(projectSubscription.getId(), projectSubscription.getProject().getName(),
+				projectSubscription.getCreatedDate(), null);
 
-		this.projectId = projectSubscription.getProject()
-				.getId();
-		this.projectName = projectSubscription.getProject()
-				.getName();
+		this.projectId = projectSubscription.getProject().getId();
+		this.projectName = projectSubscription.getProject().getName();
 		this.isManager = projectRole.equals(ProjectRole.PROJECT_OWNER);
 		this.isEmailSubscribed = projectSubscription.isEmailSubscription();
 		this.roleName = projectRole.toString();
@@ -36,48 +34,24 @@ public class UserProjectDetailsModel extends TableModel {
 		return projectId;
 	}
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
-	}
-
 	public String getProjectName() {
 		return projectName;
-	}
-
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
 	}
 
 	public String getRoleName() {
 		return roleName;
 	}
 
-	public void setRoleName(String roleName) {
-		this.roleName = roleName;
-	}
-
 	public Date getCreatedDate() {
 		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
 	}
 
 	public boolean isManager() {
 		return isManager;
 	}
 
-	public void setManager(boolean manager) {
-		isManager = manager;
-	}
-
 	public boolean isEmailSubscribed() {
 		return isEmailSubscribed;
-	}
-
-	public void setEmailSubscribed(boolean emailSubscribed) {
-		isEmailSubscribed = emailSubscribed;
 	}
 
 }
