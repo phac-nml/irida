@@ -119,7 +119,8 @@ public class UISampleService {
 	/**
 	 * Get full details for a {@link Sample}
 	 *
-	 * @param id Identifier for a {@link Sample}
+	 * @param id        Identifier for a {@link Sample}
+	 * @param projectId Idenfitifer for a {@link Project}
 	 * @return {@link SampleDetails}
 	 */
 	public SampleDetails getSampleDetails(Long id, Long projectId) {
@@ -128,7 +129,7 @@ public class UISampleService {
 				.getAuthentication();
 		boolean isModifiable = updateSamplePermission.isAllowed(authentication, sample);
 		Project project = null;
-		if(cartService.isSampleInCart(id) != null) {
+		if (cartService.isSampleInCart(id) != null) {
 			project = projectService.read(cartService.isSampleInCart(id));
 		} else {
 			project = projectService.read(projectId);
