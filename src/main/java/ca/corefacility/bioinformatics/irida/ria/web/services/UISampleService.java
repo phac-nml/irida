@@ -263,9 +263,9 @@ public class UISampleService {
 				.map(s -> s.getObject())
 				.collect(Collectors.toList());
 
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
-		User user = userService.getUserByUsername(authentication.getName());
+		User user = userService.getUserByUsername(SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getName());
 
 		for (SequencingObject sequencingObject : sequencingObjectList) {
 

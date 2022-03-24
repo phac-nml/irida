@@ -392,8 +392,17 @@ public class UISampleServiceTest {
 		USER_2.setId(2L);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken(USER_1, null);
+
+		when(SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getPrincipal()).thenReturn(USER_1);
+
 		SecurityContextHolder.getContext()
 				.setAuthentication(auth);
+
+		when(SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getName()).thenReturn(USER_1.getUsername());
 
 		when(userService.getUserByUsername(USER_1.getUsername())).thenReturn(USER_1);
 
@@ -413,6 +422,9 @@ public class UISampleServiceTest {
 		SecurityContextHolder.getContext()
 				.setAuthentication(auth);
 
+		when(SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getName()).thenReturn(USER_2.getUsername());
 		when(userService.getUserByUsername(USER_2.getUsername())).thenReturn(USER_2);
 
 		when(sequencingObjectService.getSequencingObjectsForSample(SAMPLE_1)).thenReturn(
