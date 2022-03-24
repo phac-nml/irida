@@ -5,7 +5,7 @@
   "scripts": {
     "build": "webpack --mode production",
     "start": "webpack --mode development --watch",
-    "clean": "rm -r node* resources/dist/",
+    "clean": "rm -r node* dist/ pages/templates/i18n/",
     "test": "jest resources/js/**/*.test.js",
     "test:watch": "jest --watch resources/js/**/*.test.js"
   },
