@@ -55,6 +55,7 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long>, Pr
 	 * @param exclude the project to exclude from results
 	 * @param user    the user account to load projects for
 	 * @param page    the page request
+	 * @return a page of {@link Project}
 	 */
 	@Query("from Project p where " + PROJECT_NAME_LIKE + " and " + EXCLUDE_PROJECT + " and "
 			+ PROJECT_MANAGER_PERMISSION)
