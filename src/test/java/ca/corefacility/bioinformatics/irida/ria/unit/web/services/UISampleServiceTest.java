@@ -2,10 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
@@ -13,37 +10,40 @@ import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
+import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleGenomeAssemblyFileModel;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleSequencingObjectFileModel;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareMetadataRestriction;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -68,11 +68,12 @@ public class UISampleServiceTest {
 	private IridaWorkflowsService iridaWorkflowsService;
 
 	private final User USER_1 = new User("test", "test@nowhere.com", "PW1@3456", "Test", "Tester", "1234567890");
+	private final User USER_2 = new User("test2", "test2@nowhere.com", "PW2@3456", "Test2", "Tester2", "1234567892");
 	private final Sample SAMPLE_1 = new Sample("SAMPLE_01");
 
 	private final Long SAMPLE_ID = 313L;
 	private final String SAMPLE_ORGANISM = "Salmonella";
-	private final String SAMPLE_DESCRIPTION ="This is a project about interesting stuff";
+	private final String SAMPLE_DESCRIPTION = "This is a project about interesting stuff";
 
 	private final Sample ANOTHER_SAMPLE = TestDataFactory.constructSample();
 	private final String FILE_01 = "test_file_A.fastq";
@@ -95,7 +96,6 @@ public class UISampleServiceTest {
 
 	SampleSequencingObjectJoin sampleSequencingObjectJoin;
 	SampleGenomeAssemblyJoin sampleGenomeAssemblyJoin;
-
 
 	@BeforeEach
 	public void setUp() {
@@ -123,7 +123,6 @@ public class UISampleServiceTest {
 				genomeAssemblyService, messageSource, cartService, metadataTemplateService, metadataEntryRepository,
 				metadataRestrictionRepository, analysisSubmissionRepository, userService, iridaWorkflowsService);
 
-
 		// DATA
 		SAMPLE_1.setId(SAMPLE_ID);
 		SAMPLE_1.setDescription(SAMPLE_DESCRIPTION);
@@ -136,19 +135,18 @@ public class UISampleServiceTest {
 		when(sampleService.read(1L)).thenReturn(SAMPLE_1);
 		when(updateSamplePermission.isAllowed(authentication, SAMPLE_1)).thenReturn(true);
 
-
 		MOCK_FILE_01 = createMultiPartFile(FILE_01, "src/test/resources/files/test_file_A.fastq");
 		MOCK_FILE_02 = createMultiPartFile(FILE_02, "src/test/resources/files/test_file_B.fastq");
 		MOCK_PAIR_FILE_01 = createMultiPartFile(PAIR_01, "src/test/resources/files/pairs/pair_test_R1_001.fastq");
-		MOCK_PAIR_FILE_02 = createMultiPartFile(PAIR_02,  "src/test/resources/files/pairs/pair_test_R2_001.fastq");
-		MOCK_FAST5_FILE_01 = createMultiPartFile(FAST5_01,  "src/test/resources/files/testfast5file.fast5");
+		MOCK_PAIR_FILE_02 = createMultiPartFile(PAIR_02, "src/test/resources/files/pairs/pair_test_R2_001.fastq");
+		MOCK_FAST5_FILE_01 = createMultiPartFile(FAST5_01, "src/test/resources/files/testfast5file.fast5");
 		MOCK_ASSEMBLY_FILE_01 = createMultiPartFile(ASSEMBLY_01, "src/test/resources/files/test_file.fasta");
 	}
 
 	private MockMultipartFile createMultiPartFile(String name, String path) {
 		try {
 			FileInputStream fis = new FileInputStream(path);
-			String contents =  IOUtils.toString(fis, "UTF-8");
+			String contents = IOUtils.toString(fis, "UTF-8");
 			return new MockMultipartFile(name, name, "text/plain", contents.getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -302,8 +300,8 @@ public class UISampleServiceTest {
 		List<SampleSequencingObjectJoin> sequencingObjectJoins = TestDataFactory.generateSingleFileSequencingObjectsForSample(
 				SAMPLE_1, Lists.newArrayList(FILE_01, FILE_02));
 
-		SampleSequencingObjectJoin expectedConcatenatedFile = TestDataFactory.generateSingleFileSequencingObjectsForSample(SAMPLE_1,
-				Lists.newArrayList("test_file_AB.fastq"))
+		SampleSequencingObjectJoin expectedConcatenatedFile = TestDataFactory.generateSingleFileSequencingObjectsForSample(
+				SAMPLE_1, Lists.newArrayList("test_file_AB.fastq"))
 				.get(0);
 
 		List<SequencingObject> sequencingObjectList = sequencingObjectJoins.stream()
@@ -315,8 +313,8 @@ public class UISampleServiceTest {
 
 		when(sampleService.read(SAMPLE_ID)).thenReturn(SAMPLE_1);
 		when(sequencingObjectService.readMultiple(sequencingObjectsIdList)).thenReturn(sequencingObjectList);
-		when(sequencingObjectService.concatenateSequences(eq(Lists.newArrayList(sequencingObjectList)), eq("test_file_AB"),
-				eq(SAMPLE_1), eq(false))).thenReturn(
+		when(sequencingObjectService.concatenateSequences(eq(Lists.newArrayList(sequencingObjectList)),
+				eq("test_file_AB"), eq(SAMPLE_1), eq(false))).thenReturn(
 				new SampleSequencingObjectJoin(SAMPLE_1, expectedConcatenatedFile.getObject()));
 		when(sampleSequencingObjectJoin.getObject()).thenReturn(expectedConcatenatedFile.getObject());
 
@@ -326,13 +324,14 @@ public class UISampleServiceTest {
 		assertEquals(1, sampleSequencingObjectFileModels.size(), "Should have concatenated 2 single end files into 1");
 
 		assertEquals(expectedConcatenatedFile.getObject()
-				.getFiles()
-				.stream()
-				.findFirst()
-				.get()
-				.getLabel(), sampleSequencingObjectFileModels.get(0)
-				.getFileInfo()
-				.getLabel(), "The concatenated file name should be the same as the SampleSequencingObject -> SequencingObject -> File name");
+						.getFiles()
+						.stream()
+						.findFirst()
+						.get()
+						.getLabel(), sampleSequencingObjectFileModels.get(0)
+						.getFileInfo()
+						.getLabel(),
+				"The concatenated file name should be the same as the SampleSequencingObject -> SequencingObject -> File name");
 	}
 
 	@Test
@@ -340,12 +339,92 @@ public class UISampleServiceTest {
 		when(sampleService.read(SAMPLE_ID)).thenReturn(SAMPLE_1);
 		when(sequencingObjectService.readSequencingObjectForSample(SAMPLE_1, sequencingObject.getId())).thenReturn(
 				sequencingObject);
-		service.updateDefaultSequencingObjectForSample(SAMPLE_ID, sequencingObject.getId(),
-				Locale.ENGLISH);
+		service.updateDefaultSequencingObjectForSample(SAMPLE_ID, sequencingObject.getId(), Locale.ENGLISH);
 		verify(sampleService, times(1)).read(SAMPLE_ID);
 		verify(sequencingObjectService, times(1)).readSequencingObjectForSample(SAMPLE_1, sequencingObject.getId());
 		verify(sampleService, times(1)).update(SAMPLE_1);
 		assertEquals(sequencingObject, SAMPLE_1.getDefaultSequencingObject(),
 				"Sequencing object should be set as default for sample");
+	}
+
+	@Test
+	public void testGetSampleAnalyses() {
+
+		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
+		submission.setId(1L);
+		submission.setSubmitter(USER_1);
+
+		AnalysisSubmission submission2 = TestDataFactory.constructAnalysisSubmission();
+		submission2.setId(2L);
+		submission2.setSubmitter(USER_2);
+
+		AnalysisSubmission submission3 = TestDataFactory.constructAnalysisSubmission();
+		submission3.setId(3L);
+		submission3.setSubmitter(USER_2);
+
+		Set<AnalysisSubmission> allAnalysisSubmissionSet = new HashSet<>();
+		allAnalysisSubmissionSet.add(submission);
+		allAnalysisSubmissionSet.add(submission2);
+		allAnalysisSubmissionSet.add(submission3);
+
+		Set<AnalysisSubmission> user1AnalysisSubmissionSet = new HashSet<>();
+		user1AnalysisSubmissionSet.add(submission);
+
+		SequencingObject sequencingObject1 = mock(SequencingObject.class);
+
+		SampleSequencingObjectJoin s = new SampleSequencingObjectJoin(SAMPLE_1, sequencingObject1);
+
+		Collection<SampleSequencingObjectJoin> sampleSequencingObjectJoinCollection = new ArrayList<>();
+		sampleSequencingObjectJoinCollection.add(s);
+
+		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", true);
+		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
+				"V1", BuiltInAnalysisTypes.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),
+				Lists.newArrayList());
+		IridaWorkflow iridaWorkflow = new IridaWorkflow(description, null);
+
+		when(sampleService.read(SAMPLE_ID)).thenReturn(SAMPLE_1);
+
+		USER_1.setSystemRole(Role.ROLE_USER);
+		USER_2.setSystemRole(Role.ROLE_ADMIN);
+
+		USER_1.setId(1L);
+		USER_2.setId(2L);
+
+		Authentication auth = new UsernamePasswordAuthenticationToken(USER_1, null);
+		SecurityContextHolder.getContext()
+				.setAuthentication(auth);
+
+		when(userService.getUserByUsername(USER_1.getUsername())).thenReturn(USER_1);
+
+		when(sequencingObjectService.getSequencingObjectsForSample(SAMPLE_1)).thenReturn(
+				sampleSequencingObjectJoinCollection);
+
+		when(analysisSubmissionRepository.findAnalysisSubmissionsForSequencingObjectBySubmitter(
+				any(SequencingObject.class), eq(USER_1))).thenReturn(user1AnalysisSubmissionSet);
+
+		when(iridaWorkflowsService.getIridaWorkflowOrUnknown(any(AnalysisSubmission.class))).thenReturn(iridaWorkflow);
+
+		// Get sample analyses listing for user with Role.USER
+		List<SampleAnalyses> sampleAnalysesList = service.getSampleAnalyses(SAMPLE_ID, Locale.ENGLISH);
+		assertEquals(1, sampleAnalysesList.size(), "A user with Role.USER should only see their own analyses ran with sample");
+
+		auth = new UsernamePasswordAuthenticationToken(USER_2, null);
+		SecurityContextHolder.getContext()
+				.setAuthentication(auth);
+
+		when(userService.getUserByUsername(USER_2.getUsername())).thenReturn(USER_2);
+
+		when(sequencingObjectService.getSequencingObjectsForSample(SAMPLE_1)).thenReturn(
+				sampleSequencingObjectJoinCollection);
+
+		when(analysisSubmissionRepository.findAnalysisSubmissionsForSequencingObject(
+				any(SequencingObject.class))).thenReturn(allAnalysisSubmissionSet);
+
+		when(iridaWorkflowsService.getIridaWorkflowOrUnknown(any(AnalysisSubmission.class))).thenReturn(iridaWorkflow);
+
+		// Get sample analyses listing for user with Role.ADMIN
+		sampleAnalysesList = service.getSampleAnalyses(SAMPLE_ID, Locale.ENGLISH);
+		assertEquals(3, sampleAnalysesList.size(), "A user with Role.ADMIN should see all analyses ran with sample");
 	}
 }

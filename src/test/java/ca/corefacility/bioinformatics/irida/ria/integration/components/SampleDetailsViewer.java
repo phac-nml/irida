@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.components;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -33,6 +34,9 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	@FindBy(id="rc-tabs-0-tab-files")
 	private WebElement filesTabLink;
+
+	@FindBy(id="rc-tabs-0-tab-analyses")
+	private WebElement sampleAnalysesTabLink;
 
 	@FindBy(className = "t-upload-sample-files")
 	private List<WebElement> dragUploadList;
@@ -75,6 +79,15 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	@FindBy(className = "t-default-seq-obj-tag")
 	private List<WebElement> defaultSeqObjTags;
+
+	@FindBy(className= "t-sample-analyses")
+	private WebElement sampleAnalysesTable;
+
+	@FindBy(className= "t-sample-analyses-search-input")
+	private WebElement sampleAnalysesSearchInput;
+
+	@FindBy(className = "ant-table-row")
+	private List<WebElement> sampleAnalysesList;
 
 
 	public SampleDetailsViewer(WebDriver driver) {
@@ -122,6 +135,11 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	public void clickFilesTabLink() {
 		filesTabLink.click();
+		waitForTime(300);
+	}
+
+	public void clickSampleAnalysesTabLink() {
+		sampleAnalysesTabLink.click();
 		waitForTime(300);
 	}
 
@@ -271,6 +289,31 @@ public class SampleDetailsViewer extends AbstractPage {
 		setDefaultSeqObjBtns.get(0).click();
 		WebDriverWait wait = new WebDriverWait(driver, 20);
 		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.className("ant-notification"))));
+	}
+
+	public boolean searchSampleAnalysesInputVisible() {
+		return sampleAnalysesSearchInput.isDisplayed();
+	}
+
+	public boolean sampleAnalysesTableVisible() {
+		return sampleAnalysesTable.isDisplayed();
+	}
+
+	public int numberOfSampleAnalysesVisible() {
+		return sampleAnalysesList.size();
+	}
+
+	public int filterSampleAnalyses(String searchString) {
+		WebElement searchInput = sampleAnalysesSearchInput.findElement(By.className("ant-input"));
+		searchInput.sendKeys(searchString);
+		waitForTime(500);
+		return sampleAnalysesList.size();
+	}
+
+	public void clearSampleAnalysesFilter() {
+		WebElement searchInput = sampleAnalysesSearchInput.findElement(By.className("ant-input"));
+		searchInput.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
+		waitForTime(500);
 	}
 
 }

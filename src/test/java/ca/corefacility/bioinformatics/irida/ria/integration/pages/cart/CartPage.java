@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.cart;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -78,9 +79,15 @@ public class CartPage extends AbstractPage {
 	public void removeProjectFromCart() {
 		WebElement sample = cartSamples.get(0);
 		WebDriverWait wait = new WebDriverWait(driver, 20);
+		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.className("ant-notification"))));
+		wait = new WebDriverWait(driver, 20);
 		wait.until(ExpectedConditions.elementToBeClickable(By.className("t-remove-project")));
-		sample.findElement(By.className("t-remove-project"))
-				.click();
+
+		// Used to bypass tooltip which is intercepting the click during tests.
+		WebElement removeProjectButton = sample.findElement(By.className("t-remove-project"));
+		JavascriptExecutor js = (JavascriptExecutor)driver;  //initialize JavascriptExecutor
+		js.executeScript("arguments[0].click();", removeProjectButton);   //click the button
+
 		waitForTime(500);
 	}
 
