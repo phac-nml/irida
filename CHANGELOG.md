@@ -11,6 +11,7 @@ Changes
 * [UI]: Updated Dashboard Recent Activity to use Ant Design.
 * [UI]: Adding date labels to the charts on main statistics page.
 * [Developer]: Updated to Ant Design v4.19.3.
+* [Developer]: Removed unused DataTables code.
 
 22.01 to 22.03
 --------------
