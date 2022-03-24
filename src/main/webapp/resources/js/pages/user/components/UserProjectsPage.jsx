@@ -62,7 +62,15 @@ export default function UserProjectsPage() {
     updateProjectSubscription({ id: record.id, subscribe: checked })
       .then(() => {
         notification.success({
-          message: checked ? i18n("UserProjectsPage.subscribe.notification.success", record.name) : i18n("UserProjectsPage.unsubscribe.notification.success", record.name) ,
+          message: checked
+            ? i18n(
+                "UserProjectsPage.subscribe.notification.success",
+                record.name
+              )
+            : i18n(
+                "UserProjectsPage.unsubscribe.notification.success",
+                record.name
+              ),
         });
       })
       .catch(() => {
