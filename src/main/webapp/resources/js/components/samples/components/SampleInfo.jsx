@@ -1,5 +1,13 @@
 import React from "react";
-import { DatePicker, Empty, List, notification, Typography } from "antd";
+import {
+  Col,
+  DatePicker,
+  Empty,
+  List,
+  notification,
+  Row,
+  Typography,
+} from "antd";
 import { useUpdateSampleDetailsMutation } from "../../../apis/samples/samples";
 import { formatDate } from "../../../utilities/date-utilities";
 const { Paragraph } = Typography;
@@ -249,33 +257,35 @@ export function SampleInfo() {
   };
 
   return (
-    <div
-      style={{
-        height: DEFAULT_HEIGHT,
-        width: "100%",
-      }}
-    >
-      {detailsData.length ? (
-        <>
-          <AutoSizer>
-            {({ height = DEFAULT_HEIGHT, width = "100%" }) => (
-              <VList
-                itemCount={detailsData.length}
-                itemSize={70}
-                height={height}
-                width={width}
-              >
-                {renderDetailsListItem}
-              </VList>
-            )}
-          </AutoSizer>
-          <MetadataRolesProvider>
-            <EditMetadata />
-          </MetadataRolesProvider>
-        </>
-      ) : (
-        <Empty description={i18n("SampleInfo.noDetailsAvailable")} />
-      )}
-    </div>
+    <Row gutter={16}>
+      <Col
+        span={24}
+        style={{
+          height: DEFAULT_HEIGHT,
+        }}
+      >
+        {detailsData.length ? (
+          <>
+            <AutoSizer>
+              {({ height = DEFAULT_HEIGHT, width = "100%" }) => (
+                <VList
+                  itemCount={detailsData.length}
+                  itemSize={70}
+                  height={height}
+                  width={width}
+                >
+                  {renderDetailsListItem}
+                </VList>
+              )}
+            </AutoSizer>
+            <MetadataRolesProvider>
+              <EditMetadata />
+            </MetadataRolesProvider>
+          </>
+        ) : (
+          <Empty description={i18n("SampleInfo.noDetailsAvailable")} />
+        )}
+      </Col>
+    </Row>
   );
 }
