@@ -17,6 +17,10 @@ const SearchForm = styled.form`
     font-size: 14px;
   }
 
+  .anticon-close-circle svg {
+    color: ${grey6};
+  }
+
   input {
     border-bottom: 2px solid ${primaryColour};
   }
@@ -32,6 +36,8 @@ export function GlobalSearch() {
     <SearchForm method="get" action={setBaseUrl("/search")}>
       <Input
         name="query"
+        allowClear
+        autoComplete="off"
         className="t-global-search"
         prefix={<IconSearch />}
         placeholder={i18n("nav.main.search")}
