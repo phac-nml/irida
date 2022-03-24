@@ -35,7 +35,7 @@ function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
   React.useEffect(() => {}, [visible]);
 
   const removeSampleFromCart = () => {
-    removeSample({ projectId: sampleId });
+    removeSample({ sampleId });
   };
 
   return (
