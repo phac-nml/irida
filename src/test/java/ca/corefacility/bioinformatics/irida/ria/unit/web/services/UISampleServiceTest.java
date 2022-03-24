@@ -348,4 +348,9 @@ public class UISampleServiceTest {
 		assertEquals(sequencingObject, SAMPLE_1.getDefaultSequencingObject(),
 				"Sequencing object should be set as default for sample");
 	}
+
+	@Test
+	public void testGetSampleAnalyses() {
+
+	}
 }

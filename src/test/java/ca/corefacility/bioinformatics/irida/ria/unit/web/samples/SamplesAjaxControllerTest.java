@@ -123,4 +123,9 @@ public class SamplesAjaxControllerTest {
 				Locale.ENGLISH);
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
 	}
+
+	@Test
+	public void testGetSampleAnalyses(){
+
+	}
 }

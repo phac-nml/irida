@@ -132,7 +132,7 @@ export function SampleAnalyses() {
         placeholder={i18n("SampleAnalyses.inputSearchText")}
         onChange={(e) => searchSubmissions(e.target.value)}
         allowClear={true}
-        className="t-sample-search-input"
+        className="t-sample-analyses-search-input"
       />
       <Table
         bordered
