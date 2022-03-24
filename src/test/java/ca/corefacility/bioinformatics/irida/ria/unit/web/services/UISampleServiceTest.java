@@ -156,7 +156,11 @@ public class UISampleServiceTest {
 
 	@Test
 	public void testGetSampleDetails() {
-		SampleDetails details = service.getSampleDetails(1L, null);
+		Project project = new Project("newProject");
+		project.setId(1L);
+		when(projectService.read(anyLong())).thenReturn(project);
+
+		SampleDetails details = service.getSampleDetails(1L, project.getId());
 		final Sample sample = details.getSample();
 		assertEquals(SAMPLE_ORGANISM, sample.getOrganism(), "Should return the proper samples organism");
 		assertEquals(SAMPLE_DESCRIPTION, sample.getDescription(), "Should return the proper samples description");
@@ -392,19 +396,14 @@ public class UISampleServiceTest {
 		USER_2.setId(2L);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken(USER_1, null);
-
-		when(SecurityContextHolder.getContext()
-				.getAuthentication()
-				.getPrincipal()).thenReturn(USER_1);
-
 		SecurityContextHolder.getContext()
 				.setAuthentication(auth);
 
 		when(SecurityContextHolder.getContext()
 				.getAuthentication()
 				.getName()).thenReturn(USER_1.getUsername());
-
 		when(userService.getUserByUsername(USER_1.getUsername())).thenReturn(USER_1);
+
 
 		when(sequencingObjectService.getSequencingObjectsForSample(SAMPLE_1)).thenReturn(
 				sampleSequencingObjectJoinCollection);
