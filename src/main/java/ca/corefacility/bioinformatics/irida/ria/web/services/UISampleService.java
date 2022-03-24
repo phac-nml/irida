@@ -287,8 +287,7 @@ public class UISampleService {
 						.getType();
 				analysisType = messageSource.getMessage("workflow." + analysisType + ".title", null, analysisType, locale);
 
-				sampleAnalysesList.add(new SampleAnalyses(analysisSubmission.getId(), analysisSubmission.getName(),
-						analysisType, analysisSubmission.getCreatedDate(), analysisSubmission.getAnalysisState().name()));
+				sampleAnalysesList.add(new SampleAnalyses(analysisSubmission, analysisType));
 			}
 
 		}

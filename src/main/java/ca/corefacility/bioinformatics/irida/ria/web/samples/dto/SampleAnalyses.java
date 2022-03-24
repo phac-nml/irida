@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 import java.util.Date;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
  * Used to return analyses ran with {@link Sample} sequencing objects back to the user interface.
@@ -15,47 +16,29 @@ public class SampleAnalyses {
 	private Date createdDate;
 	private String state;
 
-	public SampleAnalyses(Long id, String name, String analysisType, Date createdDate, String state) {
-		this.id = id;
-		this.name = name;
+	public SampleAnalyses(AnalysisSubmission submission,String analysisType) {
+		this.id = submission.getId();
+		this.name = submission.getName();
 		this.analysisType = analysisType;
-		this.createdDate = createdDate;
-		this.state = state;
+		this.createdDate = submission.getCreatedDate();
+		this.state = submission.getAnalysisState().name();
 	}
 
 	public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public String getAnalysisType() {
 		return analysisType;
 	}
 
-	public void setAnalysisType(String analysisType) {
-		this.analysisType = analysisType;
-	}
-
 	public Date getCreatedDate() {
 		return createdDate;
 	}
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
 	public String getState() { return state; }
-
-	public void setState(String state) { this.state = state; }
 }
