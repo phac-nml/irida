@@ -19,7 +19,6 @@ const SearchForm = styled.form`
 
   input {
     border-bottom: 2px solid ${primaryColour};
-    border-radius: 10px;
   }
 `;
 
