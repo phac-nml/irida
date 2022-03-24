@@ -1,5 +1,5 @@
 import React from "react";
-import { Input, Space, Table, Typography } from "antd";
+import { Col, Input, Row, Table, Typography } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSampleAnalyses } from "../../../apis/samples/samples";
 import { setSampleAnalyses } from "../sampleAnalysesSlice";
@@ -127,23 +127,27 @@ export function SampleAnalyses() {
   };
 
   return (
-    <Space direction="vertical" size="large" style={{ width: `100%` }}>
-      <Search
-        placeholder={i18n("SampleAnalyses.inputSearchText")}
-        onChange={(e) => searchSubmissions(e.target.value)}
-        allowClear={true}
-        className="t-sample-analyses-search-input"
-      />
-      <Table
-        bordered
-        columns={columns}
-        loading={loading}
-        dataSource={
-          filteredSubmissions !== null ? filteredSubmissions : analyses
-        }
-        rowKey={(item) => `analysis-submission-${item.id}`}
-        className="t-sample-analyses"
-      />
-    </Space>
+    <Row gutter={[16, 16]}>
+      <Col span={24}>
+        <Search
+          placeholder={i18n("SampleAnalyses.inputSearchText")}
+          onChange={(e) => searchSubmissions(e.target.value)}
+          allowClear={true}
+          className="t-sample-analyses-search-input"
+        />
+      </Col>
+      <Col span={24}>
+        <Table
+          bordered
+          columns={columns}
+          loading={loading}
+          dataSource={
+            filteredSubmissions !== null ? filteredSubmissions : analyses
+          }
+          rowKey={(item) => `analysis-submission-${item.id}`}
+          className="t-sample-analyses"
+        />
+      </Col>
+    </Row>
   );
 }
