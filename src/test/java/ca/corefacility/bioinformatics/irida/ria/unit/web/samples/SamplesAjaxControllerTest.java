@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleAnalyses;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleSequencingObjectFileModel;
 
 import org.apache.commons.io.IOUtils;
@@ -126,6 +127,7 @@ public class SamplesAjaxControllerTest {
 
 	@Test
 	public void testGetSampleAnalyses(){
-
+		ResponseEntity<List<SampleAnalyses>> responseEntity = controller.getSampleAnalyses(SAMPLE.getId(), Locale.ENGLISH);
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
 	}
 }
