@@ -12,13 +12,10 @@ const SearchForm = styled.form`
   width: 300px;
   margin-right: 15px;
 
-  .ant-input-prefix svg {
-    color: ${grey6};
-    font-size: 14px;
-  }
-
+  .ant-input-prefix svg,
   .anticon-close-circle svg {
     color: ${grey6};
+    font-size: 14px;
   }
 
   input {
