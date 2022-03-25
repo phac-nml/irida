@@ -60,23 +60,11 @@ export default function UserProjectsPage() {
 
   function updateSubscription(checked, record) {
     updateProjectSubscription({ id: record.id, subscribe: checked })
-      .then(() => {
-        notification.success({
-          message: checked
-            ? i18n(
-                "UserProjectsPage.subscribe.notification.success",
-                record.name
-              )
-            : i18n(
-                "UserProjectsPage.unsubscribe.notification.success",
-                record.name
-              ),
-        });
+      .then((response) => {
+        notification.success({ message: response.data.message });
       })
-      .catch(() => {
-        notification.error({
-          message: i18n("UserProjectsPage.notification.error"),
-        });
+      .catch((error) => {
+        notification.error({ message: error.response.data.errror });
       });
   }
 

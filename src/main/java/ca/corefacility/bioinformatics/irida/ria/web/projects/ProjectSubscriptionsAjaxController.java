@@ -1,10 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.subscription.ProjectSubscription;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSubscriptionService;
@@ -30,8 +36,13 @@ public class ProjectSubscriptionsAjaxController {
 	 * @param subscribe whether to subscribe or unsubscribe the user to/from the project
 	 */
 	@RequestMapping(value = "/{id}/update", method = RequestMethod.POST)
-	public void updateProjectSubscription(@PathVariable Long id, @RequestParam boolean subscribe) {
-		service.updateProjectSubscription(id, subscribe);
+	public ResponseEntity<AjaxResponse> updateProjectSubscription(@PathVariable Long id,
+			@RequestParam boolean subscribe, Locale locale) {
+		try {
+			return ResponseEntity.ok(new AjaxSuccessResponse(service.updateProjectSubscription(id, subscribe, locale)));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage()));
+		}
 	}
 
 	/**
