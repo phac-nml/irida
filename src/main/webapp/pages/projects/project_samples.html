@@ -6,6 +6,7 @@
 >
   <head>
     <title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
+    <webpacker:css entry="samples" />
     <webpacker:css entry="project-samples" />
     <webpacker:css entry="project-samples-copy" />
     <script th:inline="javascript">
@@ -54,6 +55,7 @@
   </head>
   <body>
     <main id="project-samples-main" layout:fragment="main">
+      <div id="root"></div>
       <dialog id="select-all-dialogue" 
               style="border: none; border-radius: 4px; box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; padding: 2rem;">
         <div style="display: flex;">
@@ -568,6 +570,7 @@
         </script>
       </div>
       <webpacker:js entry="project-samples" />
+      <webpacker:js entry="samples" />
     </th:block>
   </body>
 </html>
