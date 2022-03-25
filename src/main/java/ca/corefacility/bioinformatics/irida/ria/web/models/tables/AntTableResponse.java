@@ -2,11 +2,11 @@ package ca.corefacility.bioinformatics.irida.ria.web.models.tables;
 
 import java.util.List;
 
-public class AntTableResponse {
-	private List<?> content;
+public class AntTableResponse<T extends AntTableItem> {
+	private List<T> content;
 	private Long total;
 
-	public AntTableResponse(List<?> content, Long total) {
+	public AntTableResponse(List<T> content, Long total) {
 		this.content = content;
 		this.total = total;
 	}
@@ -15,7 +15,7 @@ public class AntTableResponse {
 		return content;
 	}
 
-	public void setContent(List<?> content) {
+	public void setContent(List<T> content) {
 		this.content = content;
 	}
 

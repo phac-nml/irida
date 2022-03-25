@@ -17,6 +17,7 @@ public class AntTableRequest {
 	}
 
 	public int getCurrent() {
-		return current;
+		// Returning -1 since ant sends at index 1;
+		return current - 1;
 	}
 }
