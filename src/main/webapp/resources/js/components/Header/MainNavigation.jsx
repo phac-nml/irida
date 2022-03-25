@@ -1,7 +1,7 @@
+import { Button, Layout, Menu } from "antd";
 import React from "react";
-import { Button, Grid, Layout, Menu } from "antd";
 import styled from "styled-components";
-import { grey1, grey10, grey6 } from "../../styles/colors";
+import { grey1, grey6, grey10 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
 import { theme } from "../../utilities/theme-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
