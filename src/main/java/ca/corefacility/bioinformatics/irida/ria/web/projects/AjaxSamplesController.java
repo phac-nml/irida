@@ -2,16 +2,41 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.collect.ImmutableList;
 
 @RestController
 @RequestMapping("/ajax/project-samples")
 public class AjaxSamplesController {
+	private ProjectService projectService;
+	private SampleService sampleService;
+
+	@Autowired
+	public AjaxSamplesController(ProjectService projectService, SampleService sampleService) {
+		this.projectService = projectService;
+		this.sampleService = sampleService;
+	}
 
 	@PostMapping("")
-	public void getProjectSamples(@RequestParam List<Long> projectIds, @RequestBody AntTableRequest request) {
-		String foobar = "bax";
+	public ResponseEntity<AntTableResponse> getProjectSamples(@RequestParam List<Long> projectIds,
+			@RequestBody AntTableRequest request) {
+		List<Project> projects = (List<Project>) projectService.readMultiple(projectIds);
+		Page<ProjectSampleJoin> joins = sampleService.getFilteredSamplesForProjects(projects, ImmutableList.of(), null,
+				null, null, null, null, request.getCurrent(), request.getPageSize(),
+				Sort.by(Sort.Direction.DESC, "sample.modifiedDate"));
+
+		return ResponseEntity.ok(new AntTableResponse(joins.getContent(), joins.getTotalElements()));
 	}
 }
