@@ -48,6 +48,8 @@ public class UIProjectSubscriptionService {
 	 *
 	 * @param id        - the identifier of the {@link ProjectSubscription}
 	 * @param subscribe - whether to subscribe or unsubscribe the user to/from the project
+	 * @param locale    - {@link Locale} of the current user.
+	 * @return a message to user about the result of the update
 	 * @throws Exception if there is an error updating the project subscription
 	 */
 	@Transactional

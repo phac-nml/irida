@@ -34,6 +34,8 @@ public class ProjectSubscriptionsAjaxController {
 	 *
 	 * @param id        the identifier of the {@link ProjectSubscription} to update
 	 * @param subscribe whether to subscribe or unsubscribe the user to/from the project
+	 * @param locale    {@link Locale} of the current user
+	 * @return text to display to the user about the result of updating a project subscription
 	 */
 	@RequestMapping(value = "/{id}/update", method = RequestMethod.POST)
 	public ResponseEntity<AjaxResponse> updateProjectSubscription(@PathVariable Long id,
