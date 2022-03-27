@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -56,15 +57,16 @@ public class AnalysisSubmissionServiceImpl_getAnalysisOutputFileInfoIT {
 		assertEquals(new HashSet<>(infos), expectedAutomatedOutputsForProject1(), "All outputs must match expected");
 	}
 
-	private Set<ProjectSampleAnalysisOutputInfo> expectedUserOutputs() throws ParseException {
+	private List<ProjectSampleAnalysisOutputInfo> expectedUserOutputs() throws ParseException {
 		final Date date = getDate();
-
-		return ImmutableSet.of(new ProjectSampleAnalysisOutputInfo(2L, "sample2", 4L, "sistr", "sistr2.json", 4L,
-						BuiltInAnalysisTypes.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
-						"not sharing my sistr", 4L, null, null, null, 1L),
-				new ProjectSampleAnalysisOutputInfo(4L, "sample3", 8L, "sistr", "sistr8.json", 8L,
-						BuiltInAnalysisTypes.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
-						"not sharing my sistr 8", 8L, null, null, null, null));
+		List<ProjectSampleAnalysisOutputInfo> projectSampleAnalysisOutputInfosList = new ArrayList<>();
+		projectSampleAnalysisOutputInfosList.add(new ProjectSampleAnalysisOutputInfo(2L, "sample2", 4L, "sistr", "sistr2.json", 4L,
+				BuiltInAnalysisTypes.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
+				"not sharing my sistr", 4L, null, null, null, 1L));
+		projectSampleAnalysisOutputInfosList.add(new ProjectSampleAnalysisOutputInfo(4L, "sample3", 8L, "sistr", "sistr8.json", 8L,
+				BuiltInAnalysisTypes.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
+				"not sharing my sistr 8", 8L, null, null, null, null));
+		return projectSampleAnalysisOutputInfosList;
 	}
 
 	@Test
@@ -75,7 +77,7 @@ public class AnalysisSubmissionServiceImpl_getAnalysisOutputFileInfoIT {
 				.getAllUserAnalysisOutputInfo(user);
 		assertEquals(2L, infos.size(),
 				"There should be 2 ProjectSampleAnalysisOutputInfo, but there were " + infos.size());
-		assertEquals(new HashSet<>(infos), expectedUserOutputs(), "All outputs must match expected");
+		assertEquals(expectedUserOutputs(), infos, "All outputs must match expected");
 	}
 
 	private Set<ProjectSampleAnalysisOutputInfo> expectedSharedOutputsForProject1() throws ParseException {

@@ -176,7 +176,7 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 		// @formatter:on
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("userId", userId);
-		logger.trace("Getting all automated analysis output file info for user id=" + userId);
+		logger.trace("Getting all analysis output file info for user id=" + userId);
 		NamedParameterJdbcTemplate tmpl = new NamedParameterJdbcTemplate(dataSource);
 		List<ProjectSampleAnalysisOutputInfo> analysisOutputs = tmpl.query(query, parameters, psaoiRowMapper);
 
