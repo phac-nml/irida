@@ -24,7 +24,10 @@ public class AntTableRequest {
 	}
 
 	public Sort getSort() {
-		return Sort.by(order.stream().map(AntSort::getOrder).collect(Collectors.toList()));
+		if (order != null && order.size() > 0) {
+			return Sort.by(order.stream().map(AntSort::getOrder).collect(Collectors.toList()));
+		}
+		return Sort.unsorted();
 	}
 
 	public int getPageSize() {

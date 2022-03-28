@@ -13,7 +13,8 @@ export function formatSort(sorter) {
 
   if (Array.isArray(sorter)) {
     return sorter.map(fromSorter);
-  } else if (typeof sorter === "object") {
-    return [fromSorter(sorter)];
+  } else if (typeof sorter.order === "undefined") {
+    return undefined;
   }
+  return [fromSorter(sorter)];
 }
