@@ -100,6 +100,7 @@ function SamplesTable() {
       title: "Modified",
       dataIndex: ["sample", "modifiedDate"],
       key: "modified",
+      defaultSortOrder: "descend",
       sorter: { multiple: 1 },
       render: (modifiedDate, row, index) => {
         return formatInternationalizedDateTime(modifiedDate);
