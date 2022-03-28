@@ -1,8 +1,9 @@
 import React from "react";
 import { render } from "react-dom";
 import { getProjectIdFromUrl } from "../../../utilities/url-utilities";
-import { Table } from "antd";
+import { Table, Tag } from "antd";
 import axios from "axios";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 
 function SamplesTable() {
   const [samples, setSamples] = React.useState([]);
@@ -26,6 +27,8 @@ function SamplesTable() {
         setPagination({ ...pagination, total: data.total });
       });
   }, []);
+
+  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
 
   const rowSelection = {
     selectedRowKeys,
@@ -71,16 +74,23 @@ function SamplesTable() {
       title: "Project",
       dataIndex: ["project", "name"],
       key: "project",
+      render: (name, row, index) => <Tag color={`#${randomColor}`}>{name}</Tag>,
     },
     {
       title: "Created",
       dataIndex: ["sample", "createdDate"],
       key: "created",
+      render: (createdDate, row, index) => {
+        return formatInternationalizedDateTime(createdDate);
+      },
     },
     {
       title: "Modified",
       dataIndex: ["sample", "modifiedDate"],
       key: "modified",
+      render: (modifiedDate, row, index) => {
+        return formatInternationalizedDateTime(modifiedDate);
+      },
     },
   ];
 
