@@ -8,8 +8,14 @@ import { Table, Tag } from "antd";
 import axios from "axios";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { formatSort } from "../../../utilities/table-utilities";
+import { getNewTagColor } from "../../../utilities/ant-utilities";
 
 function SamplesTable() {
+  const [projectColors, setProjectColors] = React.useState(() => {
+    const colorString = localStorage.getItem("projectColors");
+    return colorString ? JSON.parse(colorString) : {};
+  });
+
   const [samples, setSamples] = React.useState([]);
   const [pagination, setPagination] = React.useState({
     current: 1,
@@ -38,11 +44,19 @@ function SamplesTable() {
             value: item.id,
           }))
         );
+
+        // Update all project colors
+        const colors = { ...projectColors };
+        associatedResponse.data.forEach((project) => {
+          if (!colors[project.id]) {
+            colors[project.id] = getNewTagColor();
+          }
+        });
+        setProjectColors(colors);
+        localStorage.setItem("projectColors", JSON.stringify(colors));
       })
     );
   }, []);
-
-  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
 
   const rowSelection = {
     selectedRowKeys,
@@ -62,7 +76,7 @@ function SamplesTable() {
       associated = filters.project;
     }
 
-    // TODO: handle sort
+    // Handle Sort
     const order = formatSort(sorter);
     // Add associated projectIds here.
     axios
@@ -96,7 +110,9 @@ function SamplesTable() {
       dataIndex: ["project", "name"],
       sorter: { multiple: true },
       key: "project",
-      render: (name, row, index) => <Tag color={`#${randomColor}`}>{name}</Tag>,
+      render: (name, row, index) => {
+        return <Tag color={projectColors[row.project.id]}>{name}</Tag>;
+      },
       filters: associated,
     },
     {
