@@ -2,14 +2,15 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
-import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.*;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.BasicStatsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
+import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.StatisticsResponse;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -45,32 +46,19 @@ public class UIAdminStatisticsService {
 		Long usersLoggedIn = getAdminUserLoggedInStatistics(timePeriod);
 
 		// These stats below are used in the UI by tiny charts which require just the values from the objects
-		List<Long> analysesCounts = getAdminAnalysesStatistics(timePeriod).getStatistics()
-				.stream()
-				.map(GenericStatModel::getValue)
-				.collect(Collectors.toList());
+		List<GenericStatModel> analysesCounts = getAdminAnalysesStatistics(timePeriod).getStatistics();
 
-		List<Long> projectCounts = getAdminProjectStatistics(timePeriod).getStatistics()
-				.stream()
-				.map(GenericStatModel::getValue)
-				.collect(Collectors.toList());
+		List<GenericStatModel> projectCounts = getAdminProjectStatistics(timePeriod).getStatistics();
 
-		List<Long> sampleCounts = getAdminSampleStatistics(timePeriod).getStatistics()
-				.stream()
-				.map(GenericStatModel::getValue)
-				.collect(Collectors.toList());
+		List<GenericStatModel> sampleCounts = getAdminSampleStatistics(timePeriod).getStatistics();
 
-		List<Long> userCounts = getAdminUserStatistics(timePeriod).getStatistics()
-				.stream()
-				.map(GenericStatModel::getValue)
-				.collect(Collectors.toList());
+		List<GenericStatModel> userCounts = getAdminUserStatistics(timePeriod).getStatistics();
 
 		return new BasicStatsResponse(usersLoggedIn, analysesCounts, projectCounts, sampleCounts, userCounts);
 	}
 
 	/**
-	 * Returns a dto with a list of {@link GenericStatModel}s which contains
-	 * the analyses ran counts and labels
+	 * Returns a dto with a list of {@link GenericStatModel}s which contains the analyses ran counts and labels
 	 *
 	 * @param timePeriod - The time period for which to get the stats for
 	 * @return a {@link StatisticsResponse} containing the counts and labels for the time period.
@@ -79,12 +67,12 @@ public class UIAdminStatisticsService {
 		Date minimumCreatedDate = getMinimumCreatedDate(timePeriod);
 		StatisticTimePeriod statisticTimePeriod = getStatisticTimePeriod(timePeriod);
 
-		return new StatisticsResponse(analysisSubmissionService.getAnalysesRanGrouped(minimumCreatedDate, statisticTimePeriod));
+		return new StatisticsResponse(
+				analysisSubmissionService.getAnalysesRanGrouped(minimumCreatedDate, statisticTimePeriod));
 	}
 
 	/**
-	 * Returns a dto with a list of {@link GenericStatModel}s which contains
-	 * the projects created counts and labels
+	 * Returns a dto with a list of {@link GenericStatModel}s which contains the projects created counts and labels
 	 *
 	 * @param timePeriod - The time period for which to get the stats for
 	 * @return a {@link StatisticsResponse} containing the counts and labels for the time period.
@@ -93,12 +81,12 @@ public class UIAdminStatisticsService {
 		Date minimumCreatedDate = getMinimumCreatedDate(timePeriod);
 		StatisticTimePeriod statisticTimePeriod = getStatisticTimePeriod(timePeriod);
 
-		return new StatisticsResponse(projectService.getProjectsCreatedGrouped(minimumCreatedDate, statisticTimePeriod));
+		return new StatisticsResponse(
+				projectService.getProjectsCreatedGrouped(minimumCreatedDate, statisticTimePeriod));
 	}
 
 	/**
-	 * Returns a dto with a list of {@link GenericStatModel}s which contains
-	 * the samples created counts and labels
+	 * Returns a dto with a list of {@link GenericStatModel}s which contains the samples created counts and labels
 	 *
 	 * @param timePeriod - The time period for which to get the stats for
 	 * @return a {@link StatisticsResponse} containing the counts and labels for the time period.
@@ -111,8 +99,7 @@ public class UIAdminStatisticsService {
 	}
 
 	/**
-	 * Returns a dto with a list of {@link GenericStatModel}s which contains
-	 * the users created counts and labels
+	 * Returns a dto with a list of {@link GenericStatModel}s which contains the users created counts and labels
 	 *
 	 * @param timePeriod - The time period for which to get the stats for
 	 * @return a {@link StatisticsResponse} containing the counts and labels for the time period.
@@ -136,16 +123,16 @@ public class UIAdminStatisticsService {
 	}
 
 	/**
-	 * Get the StatisticTimePeriod enum for the time period which contains
-	 * the group by format for the statistics. Will return DAILY as default.
+	 * Get the StatisticTimePeriod enum for the time period which contains the group by format for the statistics. Will
+	 * return DAILY as default.
 	 *
 	 * @param timePeriod The time period of the statistics
 	 * @return {@link StatisticTimePeriod} enum
 	 */
 	private StatisticTimePeriod getStatisticTimePeriod(Integer timePeriod) {
-		for(StatisticTimePeriod stp : StatisticTimePeriod.values()) {
+		for (StatisticTimePeriod stp : StatisticTimePeriod.values()) {
 			boolean found = IntStream.of(stp.getValues()).anyMatch((x -> x == timePeriod));
-			if(found) {
+			if (found) {
 				return stp;
 			}
 		}
@@ -160,12 +147,10 @@ public class UIAdminStatisticsService {
 	 */
 	private Date getMinimumCreatedDate(Integer timePeriod) {
 		Date currDate = new Date();
-		if(timePeriod == 1) {
-			return new DateTime(currDate).minusHours(24)
-					.toDate();
+		if (timePeriod == 1) {
+			return new DateTime(currDate).minusHours(24).toDate();
 		} else {
-			return new DateTime(currDate).minusDays(timePeriod)
-					.toDate();
+			return new DateTime(currDate).minusDays(timePeriod).toDate();
 		}
 	}
 

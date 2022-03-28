@@ -1,4 +1,4 @@
-import { Button, Space } from "antd";
+import { Button, Modal, Space } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
@@ -11,6 +11,7 @@ import { ShareError } from "./ShareError";
 import { ShareProject } from "./ShareProject";
 import { ShareSamples } from "./ShareSamples";
 import { ShareSuccess } from "./ShareSuccess";
+import ShareLarge from "./ShareLarge";
 
 /**
  * React component to layout the components for sharing/moving samples between
@@ -21,19 +22,13 @@ import { ShareSuccess } from "./ShareSuccess";
  */
 export function ShareLayout({ redirect }) {
   const [result, setResult] = React.useState();
+  const [shareLarge, setShareLarge] = React.useState(false);
 
-  const {
-    originalSamples,
-    currentProject,
-    locked,
-    projectId,
-    remove,
-  } = useSelector((state) => state.shareReducer);
+  const { originalSamples, currentProject, locked, projectId, remove } =
+    useSelector((state) => state.shareReducer);
 
-  const [
-    shareSamplesWithProject,
-    { isLoading, isError, error },
-  ] = useShareSamplesWithProjectMutation();
+  const [shareSamplesWithProject, { isLoading, isError, error }] =
+    useShareSamplesWithProjectMutation();
 
   /*
   This fetches a list of the projects that the user has access to.
@@ -61,19 +56,29 @@ export function ShareLayout({ redirect }) {
    * Server call to actually share samples with another project.
    */
   const shareSamples = () => {
-    shareSamplesWithProject({
-      sampleIds: samples.map((s) => s.id),
-      locked,
-      currentId: currentProject,
-      targetId: projectId,
-      remove,
-    }).then(({ data }) => {
-      setResult(data.message);
-    });
+    // Just do a bulk share if only 500.
+    if (samples.length < 500) {
+      shareSamplesWithProject({
+        sampleIds: samples.map((sample) => sample.id),
+        locked,
+        currentId: currentProject,
+        targetId: projectId,
+        remove,
+      }).then(({ data }) => {
+        setResult(data.message);
+      });
+    } else {
+      setShareLarge(true);
+    }
   };
 
   const SHOW_BUTTON = samples.length > 0;
   const DISABLED = samples.length === 0 || typeof projectId === "undefined";
+
+  const onShareLargeComplete = () => {
+    setShareLarge(false);
+    setResult("done");
+  };
 
   return (
     <>
@@ -86,6 +91,15 @@ export function ShareLayout({ redirect }) {
         />
       ) : typeof projectId !== "undefined" && isError ? (
         <ShareError error={error} redirect={redirect} />
+      ) : shareLarge ? (
+        <ShareLarge
+          samples={samples}
+          current={currentProject}
+          target={projectId}
+          locked={locked}
+          remove={remove}
+          onComplete={onShareLargeComplete}
+        />
       ) : (
         <Space direction="vertical" style={{ width: `100%` }}>
           <ShareProject currentProject={currentProject} />

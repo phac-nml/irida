@@ -5,7 +5,6 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -16,43 +15,34 @@ import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.service.EmailController;
-import ca.corefacility.bioinformatics.irida.service.ProjectEventEmailScheduledTask;
-import ca.corefacility.bioinformatics.irida.service.ProjectEventService;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.service.*;
 
 /**
- * Implementation of {@link ProjectEventEmailScheduledTask} which sends emails
- * to users when they have new events
+ * Implementation of {@link ProjectEventEmailScheduledTask} which sends emails to users when they have new events
  */
 @Component
 public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailScheduledTask {
 
 	private static final Logger logger = LoggerFactory.getLogger(ProjectEventEmailScheduledTaskImpl.class);
 
-	UserService userService;
-
 	ProjectEventService eventService;
-
-	EmailController emailController;
-
 	ProjectService projectService;
+	EmailController emailController;
+	ProjectSubscriptionService projectSubscriptionService;
 
 	@Value("${irida.scheduled.subscription.cron}")
 	private String scheduledCronString = "0 0 0 * * *";
 
 	@Autowired
-	public ProjectEventEmailScheduledTaskImpl(UserService userService, ProjectEventService eventService,
-			ProjectService projectService, EmailController emailController) {
+	public ProjectEventEmailScheduledTaskImpl(ProjectEventService eventService, ProjectService projectService,
+			EmailController emailController, ProjectSubscriptionService projectSubscriptionService) {
 		super();
-		this.userService = userService;
 		this.eventService = eventService;
 		this.projectService = projectService;
 		this.emailController = emailController;
+		this.projectSubscriptionService = projectSubscriptionService;
 	}
 
 	/**
@@ -62,7 +52,7 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 	public void emailUserTasks() {
 		if (emailController.isMailConfigured()) {
 			logger.trace("Checking for users with subscriptions");
-			List<User> usersWithEmailSubscriptions = userService.getUsersWithEmailSubscriptions();
+			List<User> usersWithEmailSubscriptions = projectSubscriptionService.getUsersWithEmailSubscriptions();
 
 			Date lastTime = getPriorDateFromCronString(scheduledCronString);
 
@@ -73,14 +63,13 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 				List<ProjectEvent> eventsToEmailToUser = eventService.getEventsForUserAfterDate(user, lastTime);
 
 				// Get the set of projects the user is subscribed to
-				Set<Project> projectsWithSubscription = projectService.getProjectsForUser(user).stream().filter(j -> {
-					ProjectUserJoin puj = (ProjectUserJoin) j;
-					return puj.isEmailSubscription();
-				}).map(j -> j.getSubject()).collect(Collectors.toSet());
+				List<Project> projectsWithSubscription = projectSubscriptionService.getProjectsForUserWithEmailSubscriptions(
+						user);
 
 				// filter the events to ensure the user is subscribed
 				eventsToEmailToUser = eventsToEmailToUser.stream()
-						.filter(e -> projectsWithSubscription.contains(e.getProject())).collect(Collectors.toList());
+						.filter(e -> projectsWithSubscription.contains(e.getProject()))
+						.collect(Collectors.toList());
 
 				if (!eventsToEmailToUser.isEmpty()) {
 					logger.trace("Sending subscription email to " + user.getUsername() + " with "

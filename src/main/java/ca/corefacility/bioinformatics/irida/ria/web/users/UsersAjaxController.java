@@ -107,7 +107,6 @@ public class UsersAjaxController {
 					.body(response.getErrors());
 		else
 			return ResponseEntity.ok(null);
-
 	}
 
 	/**
@@ -124,5 +123,4 @@ public class UsersAjaxController {
 			Principal principal) {
 		return ResponseEntity.ok(UIUsersService.getUser(userId, mailFailure, principal));
 	}
-
 }

@@ -10,7 +10,7 @@ updated (in this case so far it is the loading state), the this connect
 method is what triggers the updates.
  */
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   initializing: state.fields.initializing,
   error: state.fields.error,
   entries: state.entries.entries,
@@ -19,15 +19,15 @@ const mapStateToProps = state => ({
   modified: state.templates.modified,
   saving: state.templates.saving,
   saved: state.templates.saved,
-  selectedCount: state.entries.selected.length
+  selectedCount: state.entries.selected.length,
 });
 
-const mapDispatchToProps = dispatch => ({
-  templateModified: fields => dispatch(actions.templateModified(fields)),
-  useTemplate: index => dispatch(actions.use(index)),
+const mapDispatchToProps = (dispatch) => ({
+  templateModified: (fields) => dispatch(actions.templateModified(fields)),
+  useTemplate: (index) => dispatch(actions.use(index)),
   saveTemplate: (name, fields, id) =>
     dispatch(actions.saveTemplate(name, fields, id)),
-  selectionChange: count => dispatch(entryActions.selection(count))
+  selectionChange: (count) => dispatch(entryActions.selection(count)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LineList);

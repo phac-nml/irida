@@ -18,7 +18,7 @@ export class LineListLayoutComponent extends React.Component {
 
   state = {
     collapsed: true,
-    height: 800
+    height: 800,
   };
 
   /**
@@ -66,7 +66,7 @@ export class LineListLayoutComponent extends React.Component {
    */
   toggleTableControlPanel = () => {
     this.setState({
-      collapsed: !this.state.collapsed
+      collapsed: !this.state.collapsed,
     });
   };
 
@@ -84,7 +84,7 @@ export class LineListLayoutComponent extends React.Component {
    * Update the state of the filter
    * @param count
    */
-  updateFilterCount = count => {
+  updateFilterCount = (count) => {
     this.setState({ filterCount: count });
   };
 
@@ -108,7 +108,7 @@ export class LineListLayoutComponent extends React.Component {
         <AgGridLayout height={this.state.height}>
           <Content>
             <Table
-              ref={tableReference => (this.tableRef = tableReference)}
+              ref={(tableReference) => (this.tableRef = tableReference)}
               onFilter={this.updateFilterCount}
             />
           </Content>
@@ -132,17 +132,21 @@ export class LineListLayoutComponent extends React.Component {
             />
           </Sider>
         </AgGridLayout>
-        <InfoBar
-          selectedCount={this.props.selectedCount}
-          filterCount={
-            this.state.filterCount
-              ? this.state.filterCount
-              : this.props.entries
-              ? this.props.entries.length
-              : 0
-          }
-          totalSamples={this.props.entries ? this.props.entries.length : 0}
-        />
+        {this.props.entries && (
+          <InfoBar
+            selectedCount={this.props.selectedCount}
+            filterCount={
+              this.state.filterCount
+                ? this.state.filterCount
+                : this.props.entries.entries
+                ? this.props.entries.entries.length
+                : 0
+            }
+            totalSamples={
+              this.props.entries.entries ? this.props.entries.entries.length : 0
+            }
+          />
+        )}
       </div>
     );
   }

@@ -56,7 +56,9 @@ export function RemoteApiTable() {
                 onConfirm={() => removeConnection(item.id)}
                 okButtonProps={{ className: "t-delete-confirm" }}
               >
-                <Button type="text">{i18n("RemoteApi.delete")}</Button>
+                <Button size="small" type="link">
+                  {i18n("RemoteApi.delete")}
+                </Button>
               </Popconfirm>
             )}
           </Space>

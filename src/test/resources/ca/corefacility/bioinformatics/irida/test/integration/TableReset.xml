@@ -102,6 +102,8 @@
 	<project_metadata_template/>
 	<sequence_concatenation/>
 	<sequence_concatenation_sequencing_object/>
+	
+	<project_subscription />
 
 	<!-- All auditing table references *only* refer to the Revisions table,
 		so they can all be listed in an arbitrary order *after* the Revisions table. -->
@@ -159,4 +161,5 @@
 	<ncbi_export_biosample_sequence_file_single_end_AUD/>
 	<ncbi_export_biosample_sequence_file_pair_AUD/>
 	<job_error_AUD />
+	<project_subscription_AUD />
 </dataset>
