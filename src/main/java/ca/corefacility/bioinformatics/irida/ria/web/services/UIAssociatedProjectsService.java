@@ -40,6 +40,14 @@ public class UIAssociatedProjectsService {
 		this.messageSource = messageSource;
 	}
 
+	public List<AssociatedProject> getAssociatedProjectsForProject(Long projectId) {
+		Project project = projectService.read(projectId);
+		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(project);
+		return relatedProjectJoins.stream()
+				.map(j -> new AssociatedProject(j.getObject(), true))
+				.collect(Collectors.toList());
+	}
+
 	/**
 	 * Get a list of all projects associated with the current project.  If the user is a manager or administrator, the
 	 * list will also contain all projects they have access to.
