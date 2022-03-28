@@ -12,7 +12,7 @@ export const usersApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: setBaseUrl(BASE_URL),
   }),
-  tagTypes: ["Users"],
+  tagTypes: ["Users", "Projects"],
   endpoints: (build) => ({
     /*
     Get user details.
@@ -27,9 +27,26 @@ export const usersApi = createApi({
     Edit user details.
     */
     editUserDetails: build.mutation({
-      query: ({ userId, firstName, lastName, email, phoneNumber, role, locale, enabled }) => ({
+      query: ({
+        userId,
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        role,
+        locale,
+        enabled,
+      }) => ({
         url: `/${userId}/edit`,
-        body: { firstName, lastName, email, phoneNumber, systemRole: role, locale, enabled },
+        body: {
+          firstName,
+          lastName,
+          email,
+          phoneNumber,
+          systemRole: role,
+          locale,
+          enabled,
+        },
         method: "POST",
       }),
       invalidatesTags: ["Users"],
@@ -64,4 +81,3 @@ export const {
   useChangeUserPasswordMutation,
   useSetUsersDisabledStatusMutation
 } = usersApi;
-

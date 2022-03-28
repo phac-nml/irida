@@ -1,14 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
-
 import java.util.Date;
 import java.util.List;
 
@@ -17,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
@@ -29,14 +18,19 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectEventService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.ProjectSubscriptionService;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectEventEmailScheduledTaskImpl;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.Lists;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 public class ProjectEventEmailScheduedTaskImplTest {
 	ProjectEventEmailScheduledTaskImpl task;
-
-	@Mock
-	UserService userService;
 
 	@Mock
 	ProjectEventService eventService;
@@ -47,35 +41,39 @@ public class ProjectEventEmailScheduedTaskImplTest {
 	@Mock
 	EmailController emailController;
 
+	@Mock
+	ProjectSubscriptionService projectSubscriptionService;
+
 	@BeforeEach
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
 
-		task = new ProjectEventEmailScheduledTaskImpl(userService, eventService, projectService, emailController);
+		task = new ProjectEventEmailScheduledTaskImpl(eventService, projectService, emailController,
+				projectSubscriptionService);
 
 		when(emailController.isMailConfigured()).thenReturn(true);
 	}
 
 	@Test
 	public void testEmailUserTasks() {
-		Date priorDateFromCronString = ProjectEventEmailScheduledTaskImpl
-				.getPriorDateFromCronString(task.getScheduledCronString());
+		Date priorDateFromCronString = ProjectEventEmailScheduledTaskImpl.getPriorDateFromCronString(
+				task.getScheduledCronString());
 
 		User tom = new User("tom", null, null, null, null, null);
 		Project p = new Project("testproject");
 		List<User> users = Lists.newArrayList(tom);
+		List<Project> projects = Lists.newArrayList(p);
 		ProjectUserJoin join = new ProjectUserJoin(p, tom, ProjectRole.PROJECT_OWNER);
-		join.setEmailSubscription(true);
 		List<ProjectEvent> events = Lists.newArrayList(new UserRoleSetProjectEvent(join));
 
-		when(userService.getUsersWithEmailSubscriptions()).thenReturn(users);
+		when(projectSubscriptionService.getUsersWithEmailSubscriptions()).thenReturn(users);
 		when(eventService.getEventsForUserAfterDate(eq(tom), any(Date.class))).thenReturn(events);
-		when(projectService.getProjectsForUser(tom)).thenReturn(Lists.newArrayList(join));
+		when(projectSubscriptionService.getProjectsForUserWithEmailSubscriptions(tom)).thenReturn(projects);
 
 		Date now = new Date();
 		task.emailUserTasks();
 
-		verify(userService).getUsersWithEmailSubscriptions();
+		verify(projectSubscriptionService).getUsersWithEmailSubscriptions();
 
 		ArgumentCaptor<Date> dateCaptor = ArgumentCaptor.forClass(Date.class);
 
@@ -93,38 +91,36 @@ public class ProjectEventEmailScheduedTaskImplTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testEmailUserPartialSubscriptoinTasks() {
+	public void testEmailUserPartialSubscriptionTasks() {
 		User tom = new User("tom", null, null, null, null, null);
 		Project p = new Project("testproject");
 		Project p2 = new Project("testproject2");
 		List<User> users = Lists.newArrayList(tom);
+		List<Project> projects = Lists.newArrayList(p);
 		ProjectUserJoin join = new ProjectUserJoin(p, tom, ProjectRole.PROJECT_OWNER);
-		join.setEmailSubscription(true);
-
 		ProjectUserJoin notSubscribed = new ProjectUserJoin(p2, tom, ProjectRole.PROJECT_OWNER);
-
 		List<ProjectEvent> events = Lists.newArrayList(new UserRoleSetProjectEvent(join),
 				new UserRoleSetProjectEvent(notSubscribed));
 
-		when(userService.getUsersWithEmailSubscriptions()).thenReturn(users);
+		when(projectSubscriptionService.getUsersWithEmailSubscriptions()).thenReturn(users);
 		when(eventService.getEventsForUserAfterDate(eq(tom), any(Date.class))).thenReturn(events);
-		when(projectService.getProjectsForUser(tom)).thenReturn(Lists.newArrayList(join, notSubscribed));
+		when(projectSubscriptionService.getProjectsForUserWithEmailSubscriptions(tom)).thenReturn(projects);
 
 		task.emailUserTasks();
 
-		verify(userService).getUsersWithEmailSubscriptions();
+		verify(projectSubscriptionService).getUsersWithEmailSubscriptions();
 
 		verify(eventService).getEventsForUserAfterDate(eq(tom), any(Date.class));
 
 		@SuppressWarnings("rawtypes")
 		ArgumentCaptor<List> eventCaptor = ArgumentCaptor.forClass(List.class);
-		
+
 		verify(emailController).sendSubscriptionUpdateEmail(eq(tom), eventCaptor.capture());
-		
+
 		List<ProjectEvent> sentEvents = eventCaptor.getValue();
 
 		assertEquals(1, sentEvents.size(), "should send 1 event");
-		
+
 		ProjectEvent sentEvent = sentEvents.iterator().next();
 		assertEquals(p, sentEvent.getProject(), "should have sent from subscribed project");
 	}
@@ -135,12 +131,12 @@ public class ProjectEventEmailScheduedTaskImplTest {
 		User tom = new User("tom", null, null, null, null, null);
 		List<User> users = Lists.newArrayList(tom);
 
-		when(userService.getUsersWithEmailSubscriptions()).thenReturn(users);
+		when(projectSubscriptionService.getUsersWithEmailSubscriptions()).thenReturn(users);
 		when(eventService.getEventsForUserAfterDate(eq(tom), any(Date.class))).thenReturn(Lists.newArrayList());
 
 		task.emailUserTasks();
 
-		verify(userService).getUsersWithEmailSubscriptions();
+		verify(projectSubscriptionService).getUsersWithEmailSubscriptions();
 
 		verify(eventService).getEventsForUserAfterDate(eq(tom), any(Date.class));
 
@@ -150,11 +146,11 @@ public class ProjectEventEmailScheduedTaskImplTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testNoUsers() {
-		when(userService.getUsersWithEmailSubscriptions()).thenReturn(Lists.newArrayList());
+		when(projectSubscriptionService.getUsersWithEmailSubscriptions()).thenReturn(Lists.newArrayList());
 
 		task.emailUserTasks();
 
-		verify(userService).getUsersWithEmailSubscriptions();
+		verify(projectSubscriptionService).getUsersWithEmailSubscriptions();
 
 		verifyNoInteractions(eventService);
 

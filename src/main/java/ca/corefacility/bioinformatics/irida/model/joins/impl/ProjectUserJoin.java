@@ -3,22 +3,7 @@ package ca.corefacility.bioinformatics.irida.model.joins.impl;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -32,10 +17,9 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
  * A join table and class for users and projects.
- * 
  */
 @Entity
-@Table(name = "project_user", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" }) )
+@Table(name = "project_user", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" }))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
 public class ProjectUserJoin implements Join<Project, User> {
@@ -62,14 +46,9 @@ public class ProjectUserJoin implements Join<Project, User> {
 	@Column(updatable = false)
 	private Date createdDate;
 
-	@Column(name = "email_subscription")
-	@NotNull
-	private boolean emailSubscription;
-
 	public ProjectUserJoin() {
 		createdDate = new Date();
 		projectRole = ProjectRole.PROJECT_USER;
-		emailSubscription = false;
 	}
 
 	public ProjectUserJoin(Project subject, User object, ProjectRole projectRole) {
@@ -87,8 +66,8 @@ public class ProjectUserJoin implements Join<Project, User> {
 	public boolean equals(Object o) {
 		if (o instanceof ProjectUserJoin) {
 			ProjectUserJoin other = (ProjectUserJoin) o;
-			return Objects.equals(project, other.project) && Objects.equals(user, other.user)
-					&& Objects.equals(projectRole, other.projectRole);
+			return Objects.equals(project, other.project) && Objects.equals(user, other.user) && Objects.equals(
+					projectRole, other.projectRole);
 		}
 		return false;
 	}
@@ -120,7 +99,7 @@ public class ProjectUserJoin implements Join<Project, User> {
 
 	/**
 	 * Get the user's role on the project
-	 * 
+	 *
 	 * @return A representation of the user's project role
 	 */
 	public ProjectRole getProjectRole() {
@@ -129,20 +108,11 @@ public class ProjectUserJoin implements Join<Project, User> {
 
 	/**
 	 * Set the user's role on the project
-	 * 
-	 * @param userRole
-	 *            The representation of the user's role on the project
+	 *
+	 * @param userRole The representation of the user's role on the project
 	 */
 	public void setProjectRole(ProjectRole userRole) {
 		this.projectRole = userRole;
-	}
-
-	public void setEmailSubscription(boolean emailSubscription) {
-		this.emailSubscription = emailSubscription;
-	}
-
-	public boolean isEmailSubscription() {
-		return emailSubscription;
 	}
 
 }
