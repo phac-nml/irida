@@ -11,7 +11,7 @@ Changes
 * [UI]: Updated Dashboard Recent Activity to use Ant Design.
 * [Developer]: Updated to Ant Design v4.19.3.
 * [Developer]: Removed unused DataTables code.
-* [UI]: Sorted columns & formatted dates for advanced charts and added labels to tiny charts on admin statistics page.
+* [UI]: Sorted columns for advanced charts and added labels to tiny charts on admin statistics page.
 
 22.01 to 22.03
 --------------
