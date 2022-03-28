@@ -1,12 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,11 +34,9 @@ public class AjaxSamplesController {
 	public ResponseEntity<AntTableResponse> getProjectSamples(@RequestParam List<Long> projectIds,
 			@RequestBody AntTableRequest request) {
 		List<Project> projects = (List<Project>) projectService.readMultiple(projectIds);
-		List<Sort.Order> order = new ArrayList<>();
-		order.add(new Sort.Order(Sort.Direction.DESC, "sample.modifiedDate"));
 
 		Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, ImmutableList.of(), null,
-				null, null, null, null, request.getCurrent(), request.getPageSize(), Sort.by(order));
+				null, null, null, null, request.getCurrent(), request.getPageSize(), request.getSort());
 		List<ProjectSampleTableItem> content = page.getContent()
 				.stream()
 				.map(ProjectSampleTableItem::new)
