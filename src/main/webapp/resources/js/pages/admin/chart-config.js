@@ -15,7 +15,7 @@ export function getChartConfiguration(chartType, data) {
     [chartTypes.BAR]: {
       xField: "value",
       yField: "key",
-      seriesField: 'key',
+      seriesField: "key",
     },
     [chartTypes.PIE]: {
       appendPadding: 10,
@@ -27,9 +27,9 @@ export function getChartConfiguration(chartType, data) {
       },
     },
     [chartTypes.COLUMN]: {
-      seriesField: 'key'
+      seriesField: "key",
     },
-    [chartTypes.LINE]: { },
+    [chartTypes.LINE]: {},
   };
 
   // The configuration required to display a chart
@@ -65,9 +65,14 @@ export function getTinyChartConfiguration(data) {
       visible: false,
     },
     autoFit: true,
-    height: 80,
+    height: 100,
     columnWidthRatio: 1,
-    tooltip: false,
+    xField: "key",
+    yField: "value",
+    yAxis: {
+      grid: null,
+      visible: false,
+    },
   };
 
   return config;

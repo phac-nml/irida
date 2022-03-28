@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,11 +24,13 @@ import static org.mockito.Mockito.*;
 public class UIClientServiceTest {
 	private IridaClientDetailsService clientDetailsService;
 	private UIClientService service;
+	private MessageSource messageSource;
 
 	@BeforeEach
 	public void setUp() {
 		clientDetailsService = mock(IridaClientDetailsService.class);
-		service = new UIClientService(clientDetailsService);
+		messageSource = mock(MessageSource.class);
+		service = new UIClientService(clientDetailsService, messageSource);
 	}
 
 	@Test

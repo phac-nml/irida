@@ -1,13 +1,18 @@
+import { Button, Popconfirm, Space, Tag, Tooltip, Typography } from "antd";
+import { ReloadOutlined } from "@ant-design/icons";
 import React, { useContext } from "react";
+import {
+  deleteClient,
+  regenerateClientSecret,
+  revokeClientTokens,
+  updateClientDetails,
+} from "../../../../../apis/clients/clients";
 import {
   PagedTable,
   PagedTableContext,
 } from "../../../../../components/ant.design/PagedTable";
-import { Button, Popconfirm, Tag } from "antd";
-import { setBaseUrl } from "../../../../../utilities/url-utilities";
 import { dateColumnFormat } from "../../../../../components/ant.design/table-renderers";
-import { revokeClientTokens } from "../../../../../apis/clients/clients";
-import { IconStop } from "../../../../../components/icons/Icons";
+import { AddClientModal } from "../add/AddClientModal";
 
 /**
  * Table for displaying a list of clients.
@@ -17,29 +22,75 @@ import { IconStop } from "../../../../../components/icons/Icons";
 export function ClientsTable() {
   const { updateTable } = useContext(PagedTableContext);
 
+  /**
+   * Remove client.
+   * @param {number} id - Remove a client from IRIDA and update the table.
+   */
+  const removeAndUpdateTable = async (id) => {
+    await deleteClient(id);
+    updateTable();
+  };
+
+  /**
+   * Generate a new client secret for the client.
+   * @param {number} id - The id of the client to regenerate the secret for.
+   */
+  async function regenerateSecret(id) {
+    await regenerateClientSecret(id);
+    updateTable();
+  }
+
   const columns = [
     {
       title: i18n("ClientsTable.column.id"),
       width: 80,
-      dataIndex: "id",
+      dataIndex: ["details", "identifier"],
       sorter: true,
     },
     {
       title: i18n("ClientsTable.column.clientId"),
-      dataIndex: "name",
+      dataIndex: ["details", "clientId"],
       ellipsis: true,
       sorter: true,
-      render(text, item) {
+      render(name) {
         return (
-          <a className="t-client-name" href={setBaseUrl(`/clients/${item.id}`)}>
-            {text}
-          </a>
+          <Typography.Text className="t-client-id" copyable>
+            {name}
+          </Typography.Text>
         );
       },
     },
     {
+      title: i18n("ClientsTable.column.secret"),
+      dataIndex: ["details", "clientSecret"],
+      render(secret, client) {
+        return secret ? (
+          <Space size="small">
+            <Typography.Text className="t-client-secret" copyable>
+              {secret}
+            </Typography.Text>
+            <Tooltip placement="right" title={"Regenerate Secret"}>
+              <Button
+                shape="round"
+                onClick={() => regenerateSecret(client.details.identifier)}
+                size="small"
+                icon={<ReloadOutlined />}
+              />
+            </Tooltip>
+          </Space>
+        ) : (
+          ""
+        );
+      },
+    },
+    {
+      ...dateColumnFormat(),
+      title: i18n("ClientsTable.column.created"),
+      dataIndex: ["details", "createdDate"],
+    },
+    {
       title: i18n("ClientsTable.column.grants"),
-      dataIndex: "grants",
+      dataIndex: ["details", "authorizedGrantTypes"],
       render(grants) {
         const colors = {
           password: "purple",
@@ -48,24 +99,41 @@ export function ClientsTable() {
         };
         return (
           <div>
-            {grants.map((g) => (
-              <Tag color={colors[g] || ""} key={g}>
-                {g}
+            {grants.map((grant) => (
+              <Tag color={colors[grant] || ""} key={grant}>
+                {grant}
               </Tag>
             ))}
           </div>
         );
       },
+      width: 250,
     },
     {
-      ...dateColumnFormat(),
-      title: i18n("ClientsTable.column.created"),
-      dataIndex: "createdDate",
+      title: i18n("ClientsTable.column.scope"),
+      dataIndex: ["details", "scope"],
+      render(scopes) {
+        const colors = {
+          read: "cyan",
+          write: "geekblue",
+        };
+        return (
+          <div>
+            {scopes.map((scope) => (
+              <Tag color={colors[scope] || ""} key={scope}>
+                {scope}
+              </Tag>
+            ))}
+          </div>
+        );
+      },
+      width: 150,
     },
     {
       title: i18n("ClientsTable.column.activeTokens"),
       dataIndex: "tokens",
       align: "right",
+      width: 50,
     },
     {
       key: "action",
@@ -73,19 +141,35 @@ export function ClientsTable() {
       fixed: "right",
       width: 200,
       render(text, record) {
-        const disabled = !record.tokens;
         return (
-          <Popconfirm
-            disabled={disabled}
-            title={i18n("client.revoke.confirm", record.name)}
-            placement={"topRight"}
-            onConfirm={() => revokeTokens(record.id)}
-          >
-            <Button disabled={disabled}>
-              <IconStop />
-              {i18n("client.details.token.revoke")}
-            </Button>
-          </Popconfirm>
+          <Space>
+            <Popconfirm
+              title={i18n("client.revoke.confirm", record.details.clientId)}
+              placement={"topRight"}
+              onConfirm={() => revokeTokens(record.details.identifier)}
+            >
+              <Button type="link" size="small">
+                {i18n("client.details.token.revoke")}
+              </Button>
+            </Popconfirm>
+            <AddClientModal
+              existing={record.details}
+              onComplete={updateClientDetails}
+            >
+              <Button type="link" size="small">
+                {i18n("ClientsTable.edit")}
+              </Button>
+            </AddClientModal>
+            <Popconfirm
+              title={i18n("ClientsTable.column.remove-confirm")}
+              placement="topRight"
+              onConfirm={() => removeAndUpdateTable(record.details.identifier)}
+            >
+              <Button type="link" size="small">
+                {i18n("ClientsTable.column.remove")}
+              </Button>
+            </Popconfirm>
+          </Space>
         );
       },
     },

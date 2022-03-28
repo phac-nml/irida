@@ -64,7 +64,7 @@ An "entry" is used by webpack to indicate the root JavaScript file for a page in
 Example:
 ```javascript
 module.exports = {
-  dashboard: "./resources/js/pages/dashboard.js",
+  dashboard: "./resources/js/pages/dashboard/Dashboard.jsx",
 }
 ```
 

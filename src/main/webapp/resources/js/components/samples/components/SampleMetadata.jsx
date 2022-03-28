@@ -27,6 +27,7 @@ export function SampleMetadata({ metadata }) {
           />
         </List.Item>
       )}
+      ce
     />
   ) : (
     <Empty description={i18n("SampleDetails.no-metadata")} />
