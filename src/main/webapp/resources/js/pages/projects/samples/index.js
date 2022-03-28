@@ -4,6 +4,7 @@ import { getProjectIdFromUrl } from "../../../utilities/url-utilities";
 import { Table, Tag } from "antd";
 import axios from "axios";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import { formatSort } from "../../../utilities/table-utilities";
 
 function SamplesTable() {
   const [samples, setSamples] = React.useState([]);
@@ -21,7 +22,10 @@ function SamplesTable() {
     // Add associated projectIds here.
 
     axios
-      .post(`/ajax/project-samples?${params.toString()}`, pagination)
+      .post(`/ajax/project-samples?${params.toString()}`, {
+        ...pagination,
+        order: [{ property: "sample.modifiedDate", direction: "desc" }],
+      })
       .then(({ data }) => {
         setSamples(data.content);
         setPagination({ ...pagination, total: data.total });
@@ -44,14 +48,19 @@ function SamplesTable() {
   const handleTableChange = (pagination, filters, sorter) => {
     setPagination({ ...pagination });
     // TODO: handle filter
+
     // TODO: handle sort
+    const order = formatSort(sorter);
 
     const params = new URLSearchParams();
     params.append("projectIds", projectId);
     params.append("projectIds", 5);
     // Add associated projectIds here.
     axios
-      .post(`/ajax/project-samples?${params.toString()}`, pagination)
+      .post(`/ajax/project-samples?${params.toString()}`, {
+        ...pagination,
+        order,
+      })
       .then(({ data }) => {
         setSamples(data.content);
         setPagination({ ...pagination, total: data.total });
@@ -63,12 +72,14 @@ function SamplesTable() {
       title: "Name",
       dataIndex: ["sample", "sampleName"],
       key: "name",
+      sorter: { multiple: 3 },
       render: (name, row, index) => <a>{name}</a>,
     },
     {
       title: "Organism",
       dataIndex: ["sample", "organism"],
       key: "organism",
+      sorter: { multiple: true },
     },
     {
       title: "Project",
@@ -80,6 +91,7 @@ function SamplesTable() {
       title: "Created",
       dataIndex: ["sample", "createdDate"],
       key: "created",
+      sorter: { multiple: 2 },
       render: (createdDate, row, index) => {
         return formatInternationalizedDateTime(createdDate);
       },
@@ -88,6 +100,8 @@ function SamplesTable() {
       title: "Modified",
       dataIndex: ["sample", "modifiedDate"],
       key: "modified",
+      defaultSortOrder: "descend",
+      sorter: { multiple: 1 },
       render: (modifiedDate, row, index) => {
         return formatInternationalizedDateTime(modifiedDate);
       },
