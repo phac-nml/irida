@@ -69,20 +69,14 @@ export function SamplesTable() {
       setSelectedRowKeys(selectedRowKeys);
     },
     onSelectAll: (selected, selectedRows, changeRows) => {
-      console.log(selectedRowKeys);
-      setLoading(true);
-      // Get all the sample identifier
       if (selected) {
-        getAllSampleIds(
-          projectId,
-          associated.map((project) => project.value)
-        ).then(({ data }) => {
-          console.log(data);
-        });
+        setSelectedRowKeys([
+          ...selectedRowKeys,
+          changeRows.map((row) => row.key),
+        ]);
       } else {
         setSelectedRowKeys([]);
       }
-      setLoading(false);
     },
   };
 
