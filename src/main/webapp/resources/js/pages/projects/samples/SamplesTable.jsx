@@ -1,16 +1,23 @@
 import React from "react";
-import { getProjectIdFromUrl } from "../../../utilities/url-utilities";
-import { Table, Tag } from "antd";
+import {
+  getProjectIdFromUrl,
+  setBaseUrl,
+} from "../../../utilities/url-utilities";
+import { Table, Tag, Tooltip } from "antd";
 import axios from "axios";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { formatSort } from "../../../utilities/table-utilities";
 import { getNewTagColor } from "../../../utilities/ant-utilities";
 import {
+  getAllSampleIds,
   getAssociatedProjectForProject,
   getPagedProjectSamples,
 } from "../../../apis/projects/project-samples";
+import { FolderAddOutlined } from "@ant-design/icons";
+import { blue6 } from "../../../styles/colors";
 
 export function SamplesTable() {
+  const [loading, setLoading] = React.useState(true);
   const [samples, setSamples] = React.useState([]);
 
   const [pagination, setPagination] = React.useState({
@@ -53,22 +60,37 @@ export function SamplesTable() {
         });
         setColors(newColors);
         localStorage.setItem("projectColors", JSON.stringify(newColors));
+        setLoading(false);
       })
     );
   }, []);
 
   const rowSelection = {
     selectedRowKeys,
+    preserveSelectedRowKeys: true,
     onChange: (selectedRowKeys) => {
       setSelectedRowKeys(selectedRowKeys);
     },
     onSelectAll: (selected, selectedRows, changeRows) => {
-      console.log({ selected, selectedRows, changeRows });
-      // TODO: Call to server to get all samples for selected projects.
+      console.log(selectedRowKeys);
+      setLoading(true);
+      // Get all the sample identifier
+      if (selected) {
+        getAllSampleIds(
+          projectId,
+          associated.map((project) => project.value)
+        ).then(({ data }) => {
+          console.log(data);
+        });
+      } else {
+        setSelectedRowKeys([]);
+      }
+      setLoading(false);
     },
   };
 
   const handleTableChange = async (pagination, filters, sorter) => {
+    setLoading(true);
     // TODO: handle filter
     let associated;
     if (filters.project?.length) {
@@ -86,6 +108,7 @@ export function SamplesTable() {
     });
     setSamples(data.content);
     setPagination({ ...pagination, total: data.total });
+    setLoading(false);
   };
 
   const columns = [
@@ -111,6 +134,11 @@ export function SamplesTable() {
         return <Tag color={colors[row.project.id]}>{name}</Tag>;
       },
       filters: associated,
+      filterIcon: () => (
+        <Tooltip title={"Associated Projects"}>
+          <FolderAddOutlined style={{ color: blue6 }} />
+        </Tooltip>
+      ),
     },
     {
       title: "Created",
@@ -135,11 +163,19 @@ export function SamplesTable() {
 
   return (
     <Table
+      loading={loading}
       columns={columns}
       dataSource={samples}
       rowSelection={rowSelection}
       pagination={pagination}
       onChange={handleTableChange}
+      summary={() => (
+        <Table.Summary.Row>
+          <Table.Summary.Cell colSpan={5}>
+            Selected: {selectedRowKeys.length} of {pagination.total}
+          </Table.Summary.Cell>
+        </Table.Summary.Row>
+      )}
     />
   );
 }
