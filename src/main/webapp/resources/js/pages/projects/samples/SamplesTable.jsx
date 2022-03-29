@@ -1,6 +1,6 @@
 import React from "react";
 import { FolderAddOutlined } from "@ant-design/icons";
-import { Table, Tag, Tooltip } from "antd";
+import { Button, Col, Row, Space, Table, Tag, Tooltip } from "antd";
 import axios from "axios";
 import { getAssociatedProjectForProject } from "../../../apis/projects/associated-projects";
 import {
@@ -21,6 +21,7 @@ export function SamplesTable() {
     current: 1,
     pageSize: 10,
   });
+  const [filter, setFilter] = React.useState();
   const [associated, setAssociated] = React.useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = React.useState([]);
   const [colors, setColors] = React.useState(() => {
@@ -80,13 +81,14 @@ export function SamplesTable() {
     },
   };
 
+  const selectAll = async () => {
+    console.log(filter);
+  };
+
   const handleTableChange = async (pagination, filters, sorter) => {
     setLoading(true);
-    // TODO: handle filter
-    let associated;
-    if (filters.project?.length) {
-      associated = filters.project;
-    }
+    // Save the filters for using when selecting all
+    setFilter(filters);
 
     // Handle Sort
     const order = formatSort(sorter);
@@ -95,7 +97,7 @@ export function SamplesTable() {
     const { data } = await getPagedProjectSamples(projectId, {
       ...pagination,
       order,
-      associated,
+      filters,
     });
     setSamples(data.content);
     setPagination({ ...pagination, total: data.total });
@@ -120,7 +122,7 @@ export function SamplesTable() {
       title: "Project",
       dataIndex: ["project", "name"],
       sorter: { multiple: true },
-      key: "project",
+      key: "associated",
       render: (name, row, index) => {
         return <Tag color={colors[row.project.id]}>{name}</Tag>;
       },
@@ -155,20 +157,29 @@ export function SamplesTable() {
   ];
 
   return (
-    <Table
-      loading={loading}
-      columns={columns}
-      dataSource={samples}
-      rowSelection={rowSelection}
-      pagination={pagination}
-      onChange={handleTableChange}
-      summary={() => (
-        <Table.Summary.Row>
-          <Table.Summary.Cell colSpan={5}>
-            Selected: {selectedRowKeys.length} of {pagination.total}
-          </Table.Summary.Cell>
-        </Table.Summary.Row>
-      )}
-    />
+    <Row gutter={[16, 16]}>
+      <Col span={24}>
+        <Space>
+          <Button onClick={selectAll}>Select All</Button>
+        </Space>
+      </Col>
+      <Col span={24}>
+        <Table
+          loading={loading}
+          columns={columns}
+          dataSource={samples}
+          rowSelection={rowSelection}
+          pagination={pagination}
+          onChange={handleTableChange}
+          summary={() => (
+            <Table.Summary.Row>
+              <Table.Summary.Cell colSpan={5}>
+                Selected: {selectedRowKeys.length} of {pagination.total}
+              </Table.Summary.Cell>
+            </Table.Summary.Row>
+          )}
+        />
+      </Col>
+    </Row>
   );
 }
