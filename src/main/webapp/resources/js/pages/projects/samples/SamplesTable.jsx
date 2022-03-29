@@ -1,20 +1,17 @@
 import React from "react";
-import {
-  getProjectIdFromUrl,
-  setBaseUrl,
-} from "../../../utilities/url-utilities";
+import { FolderAddOutlined } from "@ant-design/icons";
 import { Table, Tag, Tooltip } from "antd";
 import axios from "axios";
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import { formatSort } from "../../../utilities/table-utilities";
-import { getNewTagColor } from "../../../utilities/ant-utilities";
+import { getAssociatedProjectForProject } from "../../../apis/projects/associated-projects";
 import {
   getAllSampleIds,
-  getAssociatedProjectForProject,
   getPagedProjectSamples,
 } from "../../../apis/projects/project-samples";
-import { FolderAddOutlined } from "@ant-design/icons";
 import { blue6 } from "../../../styles/colors";
+import { getNewTagColor } from "../../../utilities/ant-utilities";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import { formatSort } from "../../../utilities/table-utilities";
+import { getProjectIdFromUrl } from "../../../utilities/url-utilities";
 
 export function SamplesTable() {
   const [loading, setLoading] = React.useState(true);

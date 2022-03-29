@@ -14,16 +14,6 @@ export function getPagedProjectSamples(projectId, body) {
   return axios.post(`${BASE_URL}${projectId}`, body);
 }
 
-/**
- * Get a list of all the associated projects for the current project
- *
- * @param {number} projectId Project identifier for the current project
- * @returns Axios promise
- */
-export function getAssociatedProjectForProject(projectId) {
-  return axios.get(`${BASE_URL}${projectId}/associated`);
-}
-
 export function getAllSampleIds(projectId, associated = []) {
   return axios.post(`${BASE_URL}${projectId}/sampleIds`, { associated });
 }
