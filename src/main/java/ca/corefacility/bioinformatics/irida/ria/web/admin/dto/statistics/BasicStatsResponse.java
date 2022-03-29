@@ -7,21 +7,19 @@ import java.util.List;
  */
 public class BasicStatsResponse {
 	private Long usersLoggedIn;
-	private List<Long> analysesStats;
-	private List<Long> projectStats;
-	private List<Long> sampleStats;
-	private List<Long> userStats;
+	private List<GenericStatModel> analysesStats;
+	private List<GenericStatModel> projectStats;
+	private List<GenericStatModel> sampleStats;
+	private List<GenericStatModel> userStats;
 
-	public BasicStatsResponse(
-			Long usersLoggedIn, List<Long> analysesStats, List<Long> projectStats, List<Long> sampleStats,
-			List<Long> userStats) {
+	public BasicStatsResponse(Long usersLoggedIn, List<GenericStatModel> analysesStats,
+			List<GenericStatModel> projectStats, List<GenericStatModel> sampleStats, List<GenericStatModel> userStats) {
 		this.usersLoggedIn = usersLoggedIn;
 		this.analysesStats = analysesStats;
 		this.projectStats = projectStats;
 		this.sampleStats = sampleStats;
 		this.userStats = userStats;
 	}
-
 
 	public Long getUsersLoggedIn() {
 		return usersLoggedIn;
@@ -31,35 +29,35 @@ public class BasicStatsResponse {
 		this.usersLoggedIn = usersLoggedIn;
 	}
 
-	public List<Long> getAnalysesStats() {
+	public List<GenericStatModel> getAnalysesStats() {
 		return analysesStats;
 	}
 
-	public void setAnalysesStats(List<Long> analysesStats) {
+	public void setAnalysesStats(List<GenericStatModel> analysesStats) {
 		this.analysesStats = analysesStats;
 	}
 
-	public List<Long> getProjectStats() {
+	public List<GenericStatModel> getProjectStats() {
 		return projectStats;
 	}
 
-	public void setProjectStats(List<Long> projectStats) {
+	public void setProjectStats(List<GenericStatModel> projectStats) {
 		this.projectStats = projectStats;
 	}
 
-	public List<Long> getSampleStats() {
+	public List<GenericStatModel> getSampleStats() {
 		return sampleStats;
 	}
 
-	public void setSampleStats(List<Long> sampleStats) {
+	public void setSampleStats(List<GenericStatModel> sampleStats) {
 		this.sampleStats = sampleStats;
 	}
 
-	public List<Long> getUserStats() {
+	public List<GenericStatModel> getUserStats() {
 		return userStats;
 	}
 
-	public void setUserStats(List<Long> userStats) {
+	public void setUserStats(List<GenericStatModel> userStats) {
 		this.userStats = userStats;
 	}
 }

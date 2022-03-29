@@ -19,10 +19,10 @@ ui.templates=/etc/irida/templates/
 
 IRIDA uses a React component as its login form and can be added to any template by adding:
 
- * CSS (`/dist/css/login.bundle.css`) and JS (`/dist/js/login.bundle.js`) files.
+ * CSS (`login.css`) and JS (`login.js`) files.
  * A `head` > `script` tag with a global `PAGE` variable containing: `BASE_URL: /*[[@{"/"}]]*/ "/"` as an attribute.
  * The div with id `login-root` should be placed on the dom element that you want React to render the login form.
- 
+
 #### Adding custom resources
 
 Images, CSS and JS files can be added into `/etc/irida/static` and then loaded onto the custom login page.  Ensure that the Thymeleaf attributes are added, for example:
@@ -39,7 +39,7 @@ Examples:
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" th:href="@{/dist/css/login.bundle.css}" />
+    <webpacker:css entry="login" />
     <script th:inline="javascript">
       window.TL = {
         _BASE_URL: /*[[@{/}]]*/ "/",
@@ -49,7 +49,7 @@ Examples:
   </head>
   <body>
     <div id="login-root"></div>
-    <script th:src="@{/dist/js/login.bundle.js}"></script>
+    <webpacker:js entry="login" />
   </body>
 </html>
 ```

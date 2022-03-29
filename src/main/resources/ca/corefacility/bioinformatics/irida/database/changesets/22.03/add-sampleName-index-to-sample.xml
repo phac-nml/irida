@@ -4,5 +4,9 @@
                    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
-    <include file="add-default-sequencing-object-to-sample.xml" relativeToChangelogFile="true" />
+	<changeSet id="add-sampleName-index-to-sample" author="eric">
+		<createIndex tableName="sample" indexName="IDX_SAMPLE_SAMPLENAME">
+			<column name="sampleName"/>
+		</createIndex>
+	</changeSet>
 </databaseChangeLog>

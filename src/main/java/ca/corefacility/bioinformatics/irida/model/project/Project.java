@@ -1,4 +1,5 @@
 package ca.corefacility.bioinformatics.irida.model.project;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -16,7 +17,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
-
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
@@ -36,7 +36,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * A project object.
- * 
  */
 @Entity
 @Table(name = "project")
@@ -72,19 +71,19 @@ public class Project extends IridaRepresentationModel
 	private String remoteURL;
 
 	private String organism;
-	
+
 	@Min(1)
 	@Column(name = "genome_size", nullable = true)
 	private Long genomeSize;
-	
+
 	@Min(1)
 	@Column(name = "minimum_coverage", nullable = true)
 	private Integer minimumCoverage;
-	
+
 	@Min(1)
 	@Column(name = "maximum_coverage", nullable = true)
 	private Integer maximumCoverage;
-	
+
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
@@ -93,7 +92,7 @@ public class Project extends IridaRepresentationModel
 	@JsonIgnore
 	@Column(name = "remote_project_hash")
 	private Integer remoteProjectHash;
-	
+
 	@Column(name = "sync_frequency")
 	@Enumerated(EnumType.STRING)
 	private ProjectSyncFrequency syncFrequency;
@@ -138,7 +137,7 @@ public class Project extends IridaRepresentationModel
 
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "project")
 	private List<NcbiExportSubmission> ncbiSubmissions;
-	//End of cascade deletion properties
+	// End of cascade deletion properties
 
 	public Project() {
 		createdDate = new Date();
@@ -147,9 +146,8 @@ public class Project extends IridaRepresentationModel
 
 	/**
 	 * Create a new {@link Project} with the given name
-	 * 
-	 * @param name
-	 *            The name of the project
+	 *
+	 * @param name The name of the project
 	 */
 	public Project(String name) {
 		this();
@@ -160,7 +158,7 @@ public class Project extends IridaRepresentationModel
 	public Long getId() {
 		return id;
 	}
-	
+
 	@Override
 	public void setId(final Long id) {
 		this.id = id;
@@ -170,8 +168,8 @@ public class Project extends IridaRepresentationModel
 	public boolean equals(Object other) {
 		if (other instanceof Project) {
 			Project p = (Project) other;
-			return Objects.equals(createdDate, p.createdDate) && Objects.equals(modifiedDate, modifiedDate) && Objects
-					.equals(name, p.name);
+			return Objects.equals(createdDate, p.createdDate) && Objects.equals(modifiedDate, modifiedDate)
+					&& Objects.equals(name, p.name);
 		}
 
 		return false;
@@ -243,7 +241,7 @@ public class Project extends IridaRepresentationModel
 	public RemoteStatus getRemoteStatus() {
 		return remoteStatus;
 	}
-	
+
 	@Override
 	public void setRemoteStatus(RemoteStatus remoteStatus) {
 		this.remoteStatus = remoteStatus;
@@ -264,27 +262,27 @@ public class Project extends IridaRepresentationModel
 	public void setSyncFrequency(ProjectSyncFrequency syncFrequency) {
 		this.syncFrequency = syncFrequency;
 	}
-	
+
 	public Long getGenomeSize() {
 		return genomeSize;
 	}
-	
+
 	public void setGenomeSize(Long genomeSize) {
 		this.genomeSize = genomeSize;
 	}
-	
+
 	public Integer getMinimumCoverage() {
 		return minimumCoverage;
 	}
-	
+
 	public void setMinimumCoverage(Integer minimumCoverage) {
 		this.minimumCoverage = minimumCoverage;
 	}
-	
+
 	public Integer getMaximumCoverage() {
 		return maximumCoverage;
 	}
-	
+
 	public void setMaximumCoverage(Integer maximumCoverage) {
 		this.maximumCoverage = maximumCoverage;
 	}

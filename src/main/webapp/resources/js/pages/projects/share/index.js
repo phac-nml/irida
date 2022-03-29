@@ -23,6 +23,7 @@ import { ShareNoSamples } from "./ShareNoSamples";
 import { ShareProject } from "./ShareProject";
 import { ShareSamples } from "./ShareSamples";
 import { ShareSuccess } from "./ShareSuccess";
+import ShareLarge from "./ShareLarge";
 import store from "./store";
 
 /**
@@ -35,6 +36,7 @@ function ShareApp() {
   const [step, setStep] = React.useState(0);
   const [prevDisabled, setPrevDisabled] = React.useState(true);
   const [nextDisabled, setNextDisabled] = React.useState(true);
+  const [shareLarge, setShareLarge] = React.useState(false);
   const [error, setError] = React.useState(undefined);
   const [finished, setFinished] = React.useState(false);
 
@@ -121,24 +123,34 @@ function ShareApp() {
    * Server call to actually share samples with another project.
    */
   const submit = async () => {
-    try {
-      await shareSamplesWithProject({
-        sampleIds: filtered.map((s) => s.id),
-        locked,
-        currentId: currentProject,
-        targetId: targetProject.identifier,
-        remove,
-        restrictions: metadataRestrictions.map(({ restriction, id }) => ({
-          restriction,
-          identifier: id,
-        })),
-      });
-      setFinished(true);
-      // Remove the share from session storage
-      window.sessionStorage.removeItem("share");
-    } catch (e) {
-      setError(e);
+    // Just do a bulk share if only 500.
+    if (samples.length < 500) {
+      try {
+        shareSamplesWithProject({
+          sampleIds: filtered.map((s) => s.id),
+          locked,
+          currentId: currentProject,
+          targetId: targetProject.identifier,
+          remove,
+          restrictions: metadataRestrictions.map(({ restriction, id }) => ({
+            restriction,
+            identifier: id,
+          })),
+        });
+        setFinished(true);
+        // Remove the share from session storage
+        window.sessionStorage.removeItem("share");
+      } catch (e) {
+        setError(e);
+      }
+    } else {
+      setShareLarge(true);
     }
+  };
+
+  const onShareLargeComplete = () => {
+    setShareLarge(false);
+    setFinished(true);
   };
 
   return (
@@ -176,6 +188,16 @@ function ShareApp() {
                         samples={filtered}
                         removed={remove}
                         project={targetProject}
+                      />
+                    ) : shareLarge ? (
+                      <ShareLarge
+                        samples={samples}
+                        current={currentProject}
+                        target={targetProject.identifier}
+                        locked={locked}
+                        remove={remove}
+                        restrictions={metadataRestrictions}
+                        onComplete={onShareLargeComplete}
                       />
                     ) : (
                       <Space direction="vertical" style={{ width: `100%` }}>

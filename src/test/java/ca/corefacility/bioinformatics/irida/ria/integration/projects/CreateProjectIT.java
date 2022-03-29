@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +11,9 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * <p>
@@ -38,9 +40,11 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 		createComponent.enterProjectName("SMA");
 		assertEquals("The project name must be at least 5 characters long", createComponent.getNameWarning(), "Should have a name length error");
 		createComponent.enterProjectName("");
-		assertEquals("A name is required for every project", createComponent.getNameWarning(), "Should display a required error");
-		createComponent.enterProjectName("TE\0*");
-		assertEquals("A project name can only have letters, numbers, spaces, _ and -.", createComponent.getNameWarning(), "Should display a invalid character warning");
+		assertEquals("A name is required for every project", createComponent.getNameWarning(),
+				"Should display a required error");
+		createComponent.enterProjectName("TE&#*");
+		assertEquals("A project name can only have letters, numbers, spaces, _ and -.",
+				createComponent.getNameWarning(), "Should display a invalid character warning");
 
 		// Test correct
 		createComponent.enterProjectName(name);
