@@ -40,11 +40,11 @@ export function SampleAnalyses() {
   On page load get the sample analyses
    */
   React.useEffect(() => {
-    fetchSampleAnalyses({ sampleId: sample.identifier })
-      .then((analysesList) => {
+    fetchSampleAnalyses({ sampleId: sample.identifier }).then(
+      (analysesList) => {
         dispatch(setSampleAnalyses({ analyses: analysesList }));
-      })
-      .catch((error) => {});
+      }
+    );
   }, []);
 
   // Columns for the table
