@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSample;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleTableItem;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSamplesTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
@@ -38,8 +39,8 @@ public class AjaxSamplesController {
 	}
 
 	@PostMapping("/ids")
-	public ResponseEntity<List<Long>> getProjectSamplesIds(@PathVariable Long projectId,
+	public ResponseEntity<List<ProjectCartSample>> getProjectSamplesIds(@PathVariable Long projectId,
 			@RequestBody ProjectSamplesTableRequest request) {
-		return ResponseEntity.ok(uiSampleService.getFilteredProjectSamplesIds(projectId, request));
+		return ResponseEntity.ok(uiSampleService.getFilteredProjectSamples(projectId, request));
 	}
 }
