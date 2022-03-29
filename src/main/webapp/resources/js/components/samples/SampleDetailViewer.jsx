@@ -1,4 +1,4 @@
-import { Button, Modal, Skeleton, Tag, Typography } from "antd";
+import { Button, Modal, Skeleton, Space, Tag, Typography } from "antd";
 import React from "react";
 import { SampleDetails } from "./components/SampleDetails";
 import { Provider } from "react-redux";
@@ -60,14 +60,16 @@ function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
                   alignItems: "center",
                 }}
               >
-                <Text strong>
-                  <span className="t-sample-details-name">
-                    {details.sample.sampleName}{" "}
-                    {projectId ? (
-                      <Tag color="#87d068">{details.projectName} </Tag>
-                    ) : null}
-                  </span>
-                </Text>
+                <Space direction="horiztontal" size="small">
+                  <Text className="t-sample-details-name" strong>
+                    {details.sample.sampleName}
+                  </Text>
+                  {projectId ? (
+                    <Text className="t-sample-details-project-name" strong>
+                      <Tag color="#87d068">{details.projectName}</Tag>
+                    </Text>
+                  ) : null}
+                </Space>
                 {removeSample && (
                   <Button
                     size="small"

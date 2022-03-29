@@ -23,6 +23,9 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-sample-details-name")
 	private WebElement sampleName;
 
+	@FindBy(className = "t-sample-details-project-name")
+	private WebElement projectName;
+
 	@FindBy(className = "t-sample-created-date")
 	private WebElement createdDate;
 
@@ -101,6 +104,10 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	public String getSampleName() {
 		return sampleName.getText();
+	}
+
+	public String getProjectName() {
+		return projectName.getText();
 	}
 
 	public String getCreatedDateForSample() {
