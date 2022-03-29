@@ -23,3 +23,7 @@ export function getPagedProjectSamples(projectId, body) {
 export function getAssociatedProjectForProject(projectId) {
   return axios.get(`${BASE_URL}${projectId}/associated`);
 }
+
+export function getAllSampleIds(projectId, associated = []) {
+  return axios.post(`${BASE_URL}${projectId}/sampleIds`, { associated });
+}
