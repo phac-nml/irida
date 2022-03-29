@@ -145,6 +145,7 @@ export function SamplesTable() {
       dataIndex: ["sample", "createdDate"],
       key: "created",
       sorter: { multiple: 2 },
+      width: 230,
       render: (createdDate, row, index) => {
         return formatInternationalizedDateTime(createdDate);
       },
@@ -155,6 +156,7 @@ export function SamplesTable() {
       key: "modified",
       defaultSortOrder: "descend",
       sorter: { multiple: 1 },
+      width: 230,
       render: (modifiedDate, row, index) => {
         return formatInternationalizedDateTime(modifiedDate);
       },
