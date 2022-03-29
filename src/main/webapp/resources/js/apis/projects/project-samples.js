@@ -14,6 +14,6 @@ export function getPagedProjectSamples(projectId, body) {
   return axios.post(`${BASE_URL}${projectId}`, body);
 }
 
-export function getAllSampleIds(projectId, associated = []) {
-  return axios.post(`${BASE_URL}${projectId}/ids`, { associated });
+export function getAllSampleIds(projectId, filter) {
+  return axios.post(`${BASE_URL}${projectId}/ids`, { filter });
 }

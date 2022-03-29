@@ -1,13 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models.tables;
 
 abstract public class AntTableItem {
-	private String key;
+	private final Long key;
 
-	public AntTableItem(String key) {
+	public AntTableItem(Long key) {
 		this.key = key;
 	}
 
-	public String getKey() {
+	public Long getKey() {
 		return key;
 	}
 }
