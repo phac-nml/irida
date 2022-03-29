@@ -5,11 +5,13 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
@@ -20,6 +22,9 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleTableItem;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSamplesTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleFiles;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
@@ -28,6 +33,8 @@ import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * UI Service for samples
@@ -226,5 +233,25 @@ public class UISampleService {
 						new Object[] { targetProject.getLabel() }, locale));
 			}
 		}
+	}
+
+	public AntTableResponse<ProjectSampleTableItem> getPagedProjectSamples(Long projectId,
+			ProjectSamplesTableRequest request) {
+		List<Long> projectIds = new ArrayList<>();
+		projectIds.add(projectId);
+		if (request.getAssociated() != null) {
+			projectIds.addAll(request.getAssociated());
+		}
+		List<Project> projects = (List<Project>) projectService.readMultiple(projectIds);
+
+		Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, ImmutableList.of(), null,
+				null, null, null, null, request.getCurrent(), request.getPageSize(), request.getSort());
+
+		List<ProjectSampleTableItem> content = page.getContent()
+				.stream()
+				.map(ProjectSampleTableItem::new)
+				.collect(Collectors.toList());
+
+		return new AntTableResponse<>(content, page.getTotalElements());
 	}
 }
