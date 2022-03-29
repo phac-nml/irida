@@ -440,7 +440,7 @@ public class ProjectSamplesController {
 		while (!page.isEmpty()) {
 			// Converting everything to a string for consumption by the UI.
 			for (ProjectSampleJoin join : page) {
-				cartSamples.add(new ProjectCartSample(join.getObject(), join.getSubject().getId(), join.isOwner()));
+				cartSamples.add(new ProjectCartSample(join));
 			}
 
 			// Get the next page

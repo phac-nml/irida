@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSample;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleTableItem;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSamplesTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.ProjectSamplesFilter;
@@ -249,10 +250,10 @@ public class UISampleService {
 		return new AntTableResponse<>(content, page.getTotalElements());
 	}
 
-	public List<Long> getFilteredProjectSamplesIds(Long projectId, ProjectSamplesTableRequest request) {
+	public List<ProjectCartSample> getFilteredProjectSamples(Long projectId, ProjectSamplesTableRequest request) {
 		ProjectSamplesFilter filter = request.getFilters();
 		final Integer MAX_PAGE_SIZE = 5000;
-		List<Long> filteredProjectSampleIds = new ArrayList<>();
+		List<ProjectCartSample> filteredProjectSamples = new ArrayList<>();
 
 		List<Long> projectIds = new ArrayList<>();
 		projectIds.add(projectId);
@@ -266,7 +267,7 @@ public class UISampleService {
 		while (!page.isEmpty()) {
 			// Get the ProjectSampleJoin id
 			for (ProjectSampleJoin join : page) {
-				filteredProjectSampleIds.add(join.getId());
+				filteredProjectSamples.add(new ProjectCartSample(join));
 			}
 
 			// Get the next page
@@ -274,6 +275,6 @@ public class UISampleService {
 					null, page.getNumber() + 1, MAX_PAGE_SIZE, request.getSort());
 		}
 
-		return filteredProjectSampleIds;
+		return filteredProjectSamples;
 	}
 }
