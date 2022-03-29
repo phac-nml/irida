@@ -247,54 +247,6 @@ public class UISampleService {
 	}
 
 	/**
-	 * Get analyses for sample
-	 *
-	 * @param sampleId Identifier for a sample
-	 * @param locale   User's locale
-	 * @return {@link SampleAnalyses} containing a list of analyses for the sample
-	 */
-	public List<SampleAnalyses> getSampleAnalyses(Long sampleId, Locale locale) {
-		Sample sample = sampleService.read(sampleId);
-		List<SampleAnalyses> sampleAnalysesList = new ArrayList<>();
-
-		Collection<SampleSequencingObjectJoin> sampleSequencingObjectJoins = sequencingObjectService.getSequencingObjectsForSample(
-				sample);
-		List<SequencingObject> sequencingObjectList = sampleSequencingObjectJoins.stream()
-				.map(s -> s.getObject())
-				.collect(Collectors.toList());
-
-		User user = userService.getUserByUsername(SecurityContextHolder.getContext()
-				.getAuthentication()
-				.getName());
-
-		for (SequencingObject sequencingObject : sequencingObjectList) {
-
-			Set<AnalysisSubmission> analysisSubmissionSet;
-
-			if(!user.getSystemRole()
-					.equals(Role.ROLE_ADMIN)) {
-				analysisSubmissionSet = analysisSubmissionRepository.findAnalysisSubmissionsForSequencingObjectBySubmitter(
-						sequencingObject, user);
-			} else {
-				analysisSubmissionSet = analysisSubmissionRepository.findAnalysisSubmissionsForSequencingObject(
-						sequencingObject);
-			}
-
-			for (AnalysisSubmission analysisSubmission : analysisSubmissionSet) {
-				IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflowOrUnknown(analysisSubmission);
-				String analysisType = iridaWorkflow.getWorkflowDescription()
-						.getAnalysisType()
-						.getType();
-				analysisType = messageSource.getMessage("workflow." + analysisType + ".title", null, analysisType, locale);
-
-				sampleAnalysesList.add(new SampleAnalyses(analysisSubmission, analysisType));
-			}
-
-		}
-		return sampleAnalysesList;
-	}
-
-	/**
 	 * Add metadata for the sample
 	 *
 	 * @param sampleId                 {@link Long} identifier for the sample

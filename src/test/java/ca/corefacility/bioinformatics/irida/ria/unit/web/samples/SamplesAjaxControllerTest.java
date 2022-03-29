@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesAjaxController;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnalysesService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 
 
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.*;
 public class SamplesAjaxControllerTest {
 	private SamplesAjaxController controller;
 	private UISampleService uiSampleService;
+	private UIAnalysesService uiAnalysesService;
 
 	/*
 	TEST DATA
@@ -54,8 +56,9 @@ public class SamplesAjaxControllerTest {
 	@BeforeEach
 	public void setUp() {
 		uiSampleService = mock(UISampleService.class);
+		uiAnalysesService = mock(UIAnalysesService.class);
 
-		controller = new SamplesAjaxController(uiSampleService);
+		controller = new SamplesAjaxController(uiSampleService, uiAnalysesService);
 
 		// Set up mocks
 		//when(sampleService.read(SAMPLE.getId())).thenReturn(SAMPLE);

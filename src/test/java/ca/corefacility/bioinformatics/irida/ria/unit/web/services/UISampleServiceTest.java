@@ -10,11 +10,6 @@ import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
-import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
-import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
@@ -28,10 +23,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -68,7 +61,6 @@ public class UISampleServiceTest {
 	private IridaWorkflowsService iridaWorkflowsService;
 
 	private final User USER_1 = new User("test", "test@nowhere.com", "PW1@3456", "Test", "Tester", "1234567890");
-	private final User USER_2 = new User("test2", "test2@nowhere.com", "PW2@3456", "Test2", "Tester2", "1234567892");
 	private final Sample SAMPLE_1 = new Sample("SAMPLE_01");
 
 	private final Long SAMPLE_ID = 313L;
@@ -345,98 +337,5 @@ public class UISampleServiceTest {
 		verify(sampleService, times(1)).update(SAMPLE_1);
 		assertEquals(sequencingObject, SAMPLE_1.getDefaultSequencingObject(),
 				"Sequencing object should be set as default for sample");
-	}
-
-	@Test
-	public void testGetSampleAnalyses() {
-
-		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
-		submission.setId(1L);
-		submission.setSubmitter(USER_1);
-
-		AnalysisSubmission submission2 = TestDataFactory.constructAnalysisSubmission();
-		submission2.setId(2L);
-		submission2.setSubmitter(USER_2);
-
-		AnalysisSubmission submission3 = TestDataFactory.constructAnalysisSubmission();
-		submission3.setId(3L);
-		submission3.setSubmitter(USER_2);
-
-		Set<AnalysisSubmission> allAnalysisSubmissionSet = new HashSet<>();
-		allAnalysisSubmissionSet.add(submission);
-		allAnalysisSubmissionSet.add(submission2);
-		allAnalysisSubmissionSet.add(submission3);
-
-		Set<AnalysisSubmission> user1AnalysisSubmissionSet = new HashSet<>();
-		user1AnalysisSubmissionSet.add(submission);
-
-		SequencingObject sequencingObject1 = mock(SequencingObject.class);
-
-		SampleSequencingObjectJoin s = new SampleSequencingObjectJoin(SAMPLE_1, sequencingObject1);
-
-		Collection<SampleSequencingObjectJoin> sampleSequencingObjectJoinCollection = new ArrayList<>();
-		sampleSequencingObjectJoinCollection.add(s);
-
-		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", true);
-		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
-				"V1", BuiltInAnalysisTypes.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),
-				Lists.newArrayList());
-		IridaWorkflow iridaWorkflow = new IridaWorkflow(description, null);
-
-		when(sampleService.read(SAMPLE_ID)).thenReturn(SAMPLE_1);
-
-		USER_1.setSystemRole(Role.ROLE_USER);
-		USER_2.setSystemRole(Role.ROLE_ADMIN);
-
-		USER_1.setId(1L);
-		USER_2.setId(2L);
-
-		Authentication auth = new UsernamePasswordAuthenticationToken(USER_1, null);
-
-		when(SecurityContextHolder.getContext()
-				.getAuthentication()
-				.getPrincipal()).thenReturn(USER_1);
-
-		SecurityContextHolder.getContext()
-				.setAuthentication(auth);
-
-		when(SecurityContextHolder.getContext()
-				.getAuthentication()
-				.getName()).thenReturn(USER_1.getUsername());
-
-		when(userService.getUserByUsername(USER_1.getUsername())).thenReturn(USER_1);
-
-		when(sequencingObjectService.getSequencingObjectsForSample(SAMPLE_1)).thenReturn(
-				sampleSequencingObjectJoinCollection);
-
-		when(analysisSubmissionRepository.findAnalysisSubmissionsForSequencingObjectBySubmitter(
-				any(SequencingObject.class), eq(USER_1))).thenReturn(user1AnalysisSubmissionSet);
-
-		when(iridaWorkflowsService.getIridaWorkflowOrUnknown(any(AnalysisSubmission.class))).thenReturn(iridaWorkflow);
-
-		// Get sample analyses listing for user with Role.USER
-		List<SampleAnalyses> sampleAnalysesList = service.getSampleAnalyses(SAMPLE_ID, Locale.ENGLISH);
-		assertEquals(1, sampleAnalysesList.size(), "A user with Role.USER should only see their own analyses ran with sample");
-
-		auth = new UsernamePasswordAuthenticationToken(USER_2, null);
-		SecurityContextHolder.getContext()
-				.setAuthentication(auth);
-
-		when(SecurityContextHolder.getContext()
-				.getAuthentication()
-				.getName()).thenReturn(USER_2.getUsername());
-		when(userService.getUserByUsername(USER_2.getUsername())).thenReturn(USER_2);
-
-		when(sequencingObjectService.getSequencingObjectsForSample(SAMPLE_1)).thenReturn(
-				sampleSequencingObjectJoinCollection);
-
-		when(analysisSubmissionRepository.findAnalysisSubmissionsForSequencingObject(
-				any(SequencingObject.class))).thenReturn(allAnalysisSubmissionSet);
-
-		when(iridaWorkflowsService.getIridaWorkflowOrUnknown(any(AnalysisSubmission.class))).thenReturn(iridaWorkflow);
-
-		// Get sample analyses listing for user with Role.ADMIN
-		sampleAnalysesList = service.getSampleAnalyses(SAMPLE_ID, Locale.ENGLISH);
-		assertEquals(3, sampleAnalysesList.size(), "A user with Role.ADMIN should see all analyses ran with sample");
 	}
 }

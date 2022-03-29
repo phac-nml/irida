@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnalysesService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 
 
@@ -35,10 +36,12 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 @RequestMapping("/ajax/samples")
 public class SamplesAjaxController {
 	private final UISampleService uiSampleService;
+	private final UIAnalysesService uiAnalysesService;
 
 	@Autowired
-	public SamplesAjaxController(UISampleService uiSampleService) {
+	public SamplesAjaxController(UISampleService uiSampleService, UIAnalysesService uiAnalysesService) {
 		this.uiSampleService = uiSampleService;
+		this.uiAnalysesService = uiAnalysesService;
 	}
 
 	/**
@@ -167,7 +170,7 @@ public class SamplesAjaxController {
 	@GetMapping("/{sampleId}/analyses")
 	public ResponseEntity<List<SampleAnalyses>> getSampleAnalyses(@PathVariable Long sampleId, Locale locale) {
 		try {
-			return ResponseEntity.ok(uiSampleService.getSampleAnalyses(sampleId, locale));
+			return ResponseEntity.ok(uiAnalysesService.getSampleAnalyses(sampleId, locale));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(null);
