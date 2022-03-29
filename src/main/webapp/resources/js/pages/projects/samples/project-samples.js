@@ -365,7 +365,9 @@ const config = Object.assign({}, tableConfig, {
         ReactDOM.render(
           <SampleDetailViewer sampleId={data.id} projectId={data.projectId}>
             <span>
-              <Button type="link">{data.sampleName}</Button>
+              <Button type="link" className="t-project-sample-name">
+                {data.sampleName}
+              </Button>
               {data.qcEntries.length ? (
                 <Popover content={content} placement="right">
                   <IconExclamationCircle />
