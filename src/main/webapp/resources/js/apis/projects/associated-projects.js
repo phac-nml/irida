@@ -2,7 +2,10 @@
  * @file API the ProjectSettingsAssociatedProjectsController
  */
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
+
+const BASE_URL = setBaseUrl(`/ajax/projects/associated`);
 
 /**
  * API for CRUD operations for Associated projects
@@ -11,7 +14,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 export const associatedProjectsApi = createApi({
   reducerPath: `associatedProjectsApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: setBaseUrl(`/ajax/projects/associated`),
+    baseUrl: BASE_URL,
   }),
   tagTypes: ["AssociatedProject"],
   endpoints: (build) => ({
@@ -49,3 +52,13 @@ export const {
   useAddAssociatedProjectMutation,
   useRemoveAssociatedProjectMutation,
 } = associatedProjectsApi;
+
+/**
+ * Get a list of all the associated projects for the current project
+ *
+ * @param {number} projectId Project identifier for the current project
+ * @returns Axios promise
+ */
+export function getAssociatedProjectForProject(projectId) {
+  return axios.get(`${BASE_URL}?projectId=${projectId}`);
+}

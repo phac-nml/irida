@@ -38,6 +38,11 @@ public class ProjectAssociatedProjectsAjaxController {
 		return ResponseEntity.ok(service.getAssociatedProjects(projectId));
 	}
 
+	@GetMapping("/list")
+	public ResponseEntity<List<AssociatedProject>> getAssociatedProjectsForProject(@RequestParam long projectId) {
+		return ResponseEntity.ok(service.getAssociatedProjectsForProject(projectId));
+	}
+
 	/**
 	 * Create a new associated project linkage
 	 *
