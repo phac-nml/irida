@@ -6,12 +6,13 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.Project
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.SampleObject;
 
 public class ProjectSampleTableItem extends AntTableItem {
-	private String key;
-	private SampleObject sample;
-	private ProjectObject project;
+	private final Boolean owner;
+	private final SampleObject sample;
+	private final ProjectObject project;
 
 	public ProjectSampleTableItem(ProjectSampleJoin join) {
 		super(join.getId());
+		this.owner = join.isOwner();
 		this.sample = new SampleObject(join.getObject());
 		this.project = new ProjectObject(join.getSubject());
 	}
@@ -24,4 +25,7 @@ public class ProjectSampleTableItem extends AntTableItem {
 		return project;
 	}
 
+	public Boolean getOwner() {
+		return owner;
+	}
 }
