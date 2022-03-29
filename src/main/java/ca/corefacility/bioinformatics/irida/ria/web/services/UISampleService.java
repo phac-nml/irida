@@ -375,8 +375,9 @@ public class UISampleService {
 			/*
 			 We want to only set the role from the update request if it
 			 is different than the current metadata role for the field
+			 or if a previous metadata role was not set for the field
 			 */
-			if (projectMetadataRole != null && !projectMetadataRole.equals(roleFromUpdateRequest)) {
+			if ((projectMetadataRole != null && !projectMetadataRole.equals(roleFromUpdateRequest)) || projectMetadataRole == null) {
 				projectMetadataRole = roleFromUpdateRequest;
 			}
 		}
