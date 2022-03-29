@@ -329,7 +329,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	public void testAddNewSamples() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-r			page.openCreateNewSampleModal();
+		page.openCreateNewSampleModal();
 		page.enterSampleName("BAD");
 		assertTrue(page.isSampleNameErrorDisplayed(), "Should show a warning message");
 		page.enterSampleName("BAD NAME");
