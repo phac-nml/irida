@@ -21,7 +21,7 @@ export function SamplesTable() {
     current: 1,
     pageSize: 10,
   });
-  const [filter, setFilter] = React.useState();
+  const [filters, setFilters] = React.useState();
   const [associated, setAssociated] = React.useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = React.useState([]);
   const [colors, setColors] = React.useState(() => {
@@ -82,13 +82,16 @@ export function SamplesTable() {
   };
 
   const selectAll = async () => {
-    console.log(filter);
+    setLoading(true);
+    const { data } = await getAllSampleIds(projectId, filters);
+    setSelectedRowKeys(data.map((item) => item.id));
+    setLoading(false);
   };
 
   const handleTableChange = async (pagination, filters, sorter) => {
     setLoading(true);
     // Save the filters for using when selecting all
-    setFilter(filters);
+    setFilters(filters);
 
     // Handle Sort
     const order = formatSort(sorter);

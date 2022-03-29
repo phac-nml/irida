@@ -11,7 +11,7 @@ public class ProjectSampleTableItem extends AntTableItem {
 	private ProjectObject project;
 
 	public ProjectSampleTableItem(ProjectSampleJoin join) {
-		super("join-" + join.getId());
+		super(join.getId());
 		this.sample = new SampleObject(join.getObject());
 		this.project = new ProjectObject(join.getSubject());
 	}
