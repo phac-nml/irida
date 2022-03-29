@@ -84,7 +84,7 @@ export function SamplesTable() {
   const selectAll = async () => {
     setLoading(true);
     const { data } = await getAllSampleIds(projectId, filters);
-    setSelectedRowKeys(data.map((item) => item.id));
+    setSelectedRowKeys(data.map((item) => item.key));
     setLoading(false);
   };
 

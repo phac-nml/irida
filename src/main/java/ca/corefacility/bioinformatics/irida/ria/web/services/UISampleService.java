@@ -252,7 +252,7 @@ public class UISampleService {
 
 	public List<ProjectCartSample> getFilteredProjectSamples(Long projectId, ProjectSamplesTableRequest request) {
 		ProjectSamplesFilter filter = request.getFilters();
-		final Integer MAX_PAGE_SIZE = 5000;
+		final int MAX_PAGE_SIZE = 5000;
 		List<ProjectCartSample> filteredProjectSamples = new ArrayList<>();
 
 		List<Long> projectIds = new ArrayList<>();
