@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,8 +27,8 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnalysesService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
-
 
 /**
  * Controller for asynchronous requests for a {@link Sample}
@@ -35,10 +37,12 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 @RequestMapping("/ajax/samples")
 public class SamplesAjaxController {
 	private final UISampleService uiSampleService;
+	private final UIAnalysesService uiAnalysesService;
 
 	@Autowired
-	public SamplesAjaxController(UISampleService uiSampleService) {
+	public SamplesAjaxController(UISampleService uiSampleService, UIAnalysesService uiAnalysesService) {
 		this.uiSampleService = uiSampleService;
+		this.uiAnalysesService = uiAnalysesService;
 	}
 
 	/**
@@ -49,7 +53,8 @@ public class SamplesAjaxController {
 	 * @return {@link ResponseEntity} containing the message for the user on the status of the action
 	 */
 	@RequestMapping(value = { "/{sampleId}/sequenceFiles/upload" }, method = RequestMethod.POST)
-	public ResponseEntity<List<SampleSequencingObjectFileModel>> uploadSequenceFiles(@PathVariable Long sampleId, MultipartHttpServletRequest request) {
+	public ResponseEntity<List<SampleSequencingObjectFileModel>> uploadSequenceFiles(@PathVariable Long sampleId,
+			MultipartHttpServletRequest request) {
 		try {
 			return ResponseEntity.ok(uiSampleService.uploadSequenceFiles(sampleId, request));
 		} catch (IOException e) {
@@ -66,7 +71,8 @@ public class SamplesAjaxController {
 	 * @return {@link ResponseEntity} containing the message for the user on the status of the action
 	 */
 	@RequestMapping(value = "/{sampleId}/fast5/upload", method = RequestMethod.POST)
-	public ResponseEntity<List<SampleSequencingObjectFileModel>> uploadFast5Files(@PathVariable Long sampleId, MultipartHttpServletRequest request) {
+	public ResponseEntity<List<SampleSequencingObjectFileModel>> uploadFast5Files(@PathVariable Long sampleId,
+			MultipartHttpServletRequest request) {
 		try {
 			return ResponseEntity.ok(uiSampleService.uploadFast5Files(sampleId, request));
 		} catch (IOException e) {
@@ -83,7 +89,8 @@ public class SamplesAjaxController {
 	 * @return {@link ResponseEntity} containing the message for the user on the status of the action
 	 */
 	@RequestMapping(value = { "/{sampleId}/assemblies/upload" }, method = RequestMethod.POST)
-	public ResponseEntity<List<SampleGenomeAssemblyFileModel>> uploadAssemblies(@PathVariable Long sampleId, MultipartHttpServletRequest request) {
+	public ResponseEntity<List<SampleGenomeAssemblyFileModel>> uploadAssemblies(@PathVariable Long sampleId,
+			MultipartHttpServletRequest request) {
 		try {
 			return ResponseEntity.ok(uiSampleService.uploadAssemblies(sampleId, request));
 		} catch (IOException e) {
@@ -142,16 +149,17 @@ public class SamplesAjaxController {
 	/**
 	 * Update the default sequencing object for the sample
 	 *
-	 * @param id      {@link Long} identifier for the sample
+	 * @param id                 {@link Long} identifier for the sample
 	 * @param sequencingObjectId The sequencing object identifier
-	 * @param locale  {@link Locale} for the currently logged in user
+	 * @param locale             {@link Locale} for the currently logged in user
 	 * @return {@link ResponseEntity} explaining to the user the results of the update.
 	 */
 	@PutMapping(value = "/{id}/default-sequencing-object")
 	public ResponseEntity<AjaxResponse> updateDefaultSequencingObjectForSample(@PathVariable Long id,
 			@RequestParam Long sequencingObjectId, Locale locale) {
 		try {
-			return ResponseEntity.ok(new AjaxSuccessResponse(uiSampleService.updateDefaultSequencingObjectForSample(id, sequencingObjectId, locale)));
+			return ResponseEntity.ok(new AjaxSuccessResponse(
+					uiSampleService.updateDefaultSequencingObjectForSample(id, sequencingObjectId, locale)));
 		} catch (EntityNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new AjaxErrorResponse(e.getMessage()));
@@ -161,14 +169,16 @@ public class SamplesAjaxController {
 	/**
 	 * Get analyses for sample
 	 *
-	 * @param sampleId Identifier for a sample
-	 * @param locale   User's locale
+	 * @param sampleId  Identifier for a sample
+	 * @param principal The currently logged on user
+	 * @param locale    User's locale
 	 * @return {@link ResponseEntity} containing a list of analyses for the sample
 	 */
 	@GetMapping("/{sampleId}/analyses")
-	public ResponseEntity<List<SampleAnalyses>> getSampleAnalyses(@PathVariable Long sampleId, Locale locale) {
+	public ResponseEntity<List<SampleAnalyses>> getSampleAnalyses(@PathVariable Long sampleId, Principal principal,
+			Locale locale) {
 		try {
-			return ResponseEntity.ok(uiSampleService.getSampleAnalyses(sampleId, locale));
+			return ResponseEntity.ok(uiAnalysesService.getSampleAnalyses(sampleId, principal, locale));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(null);
@@ -227,7 +237,8 @@ public class SamplesAjaxController {
 
 	/**
 	 * Get sequencing files associated with a sample
-	 * @param id Identifier for a sample
+	 *
+	 * @param id        Identifier for a sample
 	 * @param projectId Identifier for a project
 	 * @return All sequencing files associated with a sample.
 	 */

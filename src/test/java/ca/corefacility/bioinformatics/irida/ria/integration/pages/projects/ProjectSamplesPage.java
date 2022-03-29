@@ -13,8 +13,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.Select2Utility;
 
-import com.google.common.base.Strings;
-
 /**
  * <p>
  * Page Object to represent the project samples page.
@@ -164,9 +162,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-linker-modal")
 	private WebElement linkerModal;
 
-	@FindBy(className = "t-cmd-text")
-	private WebElement linkerCmd;
-
 	@FindBy(id = "linkerCloseBtn")
 	private WebElement linkerCloseBtn;
 
@@ -182,11 +177,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-create-sample")
 	private WebElement createSampleButton;
 
-	@FindBy(className = "t-sample-name")
+	@FindBy(id = "name")
 	private WebElement sampleNameInput;
 
 	@FindBy(className = "t-project-sample-name")
 	private List<WebElement> sampleNameTDs;
+
+	@FindBy(className = "t-linker-cmd")
+	private WebElement linkerCmd;
 
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
@@ -455,11 +453,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public String getLinkerText() {
-		String cmd = linkerCmd.getAttribute("aria-label");
-		if (Strings.isNullOrEmpty(cmd)) {
-			cmd = linkerCmd.getText();
-		}
-		return cmd;
+		return linkerCmd.getAttribute("value");
 	}
 
 	public void openLinkerModal() {
@@ -510,7 +504,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void enterSampleName(String sampleName) {
 		sampleNameInput.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 		sampleNameInput.sendKeys(sampleName);
-		waitForTime(300);
+		waitForTime(1000);
 	}
 
 	public boolean isSampleNameErrorDisplayed() {

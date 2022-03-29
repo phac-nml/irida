@@ -30,6 +30,7 @@ export function SingleEndFileRenderer({
   qcEntryTranslations,
   displayConcatenationCheckbox = false,
   updateDefaultSequencingObject = null,
+  autoDefaultPair = null,
 }) {
   const { sample } = useSelector((state) => state.sampleReducer);
 
@@ -66,6 +67,7 @@ export function SingleEndFileRenderer({
             type={file.fileType}
             displayConcatenationCheckbox={displayConcatenationCheckbox}
             updateDefaultSequencingObject={updateDefaultSequencingObject}
+            autoDefaultFirstPair={autoDefaultPair}
           />
         </List.Item>,
         <List.Item

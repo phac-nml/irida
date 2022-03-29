@@ -19,10 +19,6 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
@@ -255,54 +251,6 @@ public class UISampleService {
 	}
 
 	/**
-	 * Get analyses for sample
-	 *
-	 * @param sampleId Identifier for a sample
-	 * @param locale   User's locale
-	 * @return {@link SampleAnalyses} containing a list of analyses for the sample
-	 */
-	public List<SampleAnalyses> getSampleAnalyses(Long sampleId, Locale locale) {
-		Sample sample = sampleService.read(sampleId);
-		List<SampleAnalyses> sampleAnalysesList = new ArrayList<>();
-
-		Collection<SampleSequencingObjectJoin> sampleSequencingObjectJoins = sequencingObjectService.getSequencingObjectsForSample(
-				sample);
-		List<SequencingObject> sequencingObjectList = sampleSequencingObjectJoins.stream()
-				.map(s -> s.getObject())
-				.collect(Collectors.toList());
-
-		User user = userService.getUserByUsername(SecurityContextHolder.getContext()
-				.getAuthentication()
-				.getName());
-
-		for (SequencingObject sequencingObject : sequencingObjectList) {
-
-			Set<AnalysisSubmission> analysisSubmissionSet;
-
-			if(!user.getSystemRole()
-					.equals(Role.ROLE_ADMIN)) {
-				analysisSubmissionSet = analysisSubmissionRepository.findAnalysisSubmissionsForSequencingObjectBySubmitter(
-						sequencingObject, user);
-			} else {
-				analysisSubmissionSet = analysisSubmissionRepository.findAnalysisSubmissionsForSequencingObject(
-						sequencingObject);
-			}
-
-			for (AnalysisSubmission analysisSubmission : analysisSubmissionSet) {
-				IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflowOrUnknown(analysisSubmission);
-				String analysisType = iridaWorkflow.getWorkflowDescription()
-						.getAnalysisType()
-						.getType();
-				analysisType = messageSource.getMessage("workflow." + analysisType + ".title", null, analysisType, locale);
-
-				sampleAnalysesList.add(new SampleAnalyses(analysisSubmission, analysisType));
-			}
-
-		}
-		return sampleAnalysesList;
-	}
-
-	/**
 	 * Add metadata for the sample
 	 *
 	 * @param sampleId                 {@link Long} identifier for the sample
@@ -453,8 +401,10 @@ public class UISampleService {
 			/*
 			 We want to only set the role from the update request if it
 			 is different than the current metadata role for the field
+			 or if a previous metadata role was not set for the field
 			 */
-			if (!projectMetadataRole.equals(roleFromUpdateRequest)) {
+
+			if ((projectMetadataRole != null && !projectMetadataRole.equals(roleFromUpdateRequest)) || projectMetadataRole == null) {
 				projectMetadataRole = roleFromUpdateRequest;
 			}
 		}

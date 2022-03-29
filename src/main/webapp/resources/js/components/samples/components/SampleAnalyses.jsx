@@ -3,22 +3,12 @@ import { Col, Input, Row, Table, Typography } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSampleAnalyses } from "../../../apis/samples/samples";
 import { setSampleAnalyses } from "../sampleAnalysesSlice";
-
+import { SampleAnalysesState } from "./SampleAnalysesState";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import {
-  IconCheckCircle,
-  IconClock,
-  IconCloseCircle,
-  IconLoading,
-} from "../../icons/Icons";
-import { blue6, green6, grey6, red6 } from "../../../styles/colors";
 
 const { Search } = Input;
 const { Paragraph } = Typography;
-const commonIconStyle = {
-  fontSize: "16px",
-};
 
 /**
  * React component to display sample analyses
@@ -40,11 +30,11 @@ export function SampleAnalyses() {
   On page load get the sample analyses
    */
   React.useEffect(() => {
-    fetchSampleAnalyses({ sampleId: sample.identifier })
-      .then((analysesList) => {
+    fetchSampleAnalyses({ sampleId: sample.identifier }).then(
+      (analysesList) => {
         dispatch(setSampleAnalyses({ analyses: analysesList }));
-      })
-      .catch((error) => {});
+      }
+    );
   }, []);
 
   // Columns for the table
@@ -53,18 +43,18 @@ export function SampleAnalyses() {
       title: i18n("SampleAnalyses.analysisSubmissionName"),
       dataIndex: "name",
       key: "name",
+      ellipsis: true,
+      width: 250,
       render(name, data) {
         return (
-          <Paragraph ellipsis={{ rows: 1 }}>
-            <a
-              className="t-analysis-name"
-              href={setBaseUrl(`analysis/${data.id}`)}
-              title={name}
-              target="_blank"
-            >
-              {name}
-            </a>
-          </Paragraph>
+          <a
+            className="t-analysis-name"
+            href={setBaseUrl(`analysis/${data.id}`)}
+            title={name}
+            target="_blank"
+          >
+            {name}
+          </a>
         );
       },
     },
@@ -72,12 +62,13 @@ export function SampleAnalyses() {
       title: i18n("SampleAnalyses.analysisType"),
       dataIndex: "analysisType",
       key: "analysisType",
+      width: 150,
     },
     {
       title: i18n("SampleAnalyses.createdDate"),
       dataIndex: "createdDate",
       key: "createdDate",
-      width: 230,
+      width: 200,
       render: (date) => (
         <span className="t-analysis-created-date">
           {date ? formatInternationalizedDateTime(date) : ""}
@@ -88,19 +79,8 @@ export function SampleAnalyses() {
       title: i18n("SampleAnalyses.analysisState"),
       dataIndex: "state",
       key: "analysisType",
-      render: (state) => (
-        <span className="t-analysis-state">
-          {state === "COMPLETED" ? (
-            <IconCheckCircle style={{ ...commonIconStyle, color: green6 }} />
-          ) : state === "ERROR" ? (
-            <IconCloseCircle style={{ ...commonIconStyle, color: red6 }} />
-          ) : state === "QUEUED" ? (
-            <IconClock style={{ ...commonIconStyle, color: grey6 }} />
-          ) : (
-            <IconLoading style={{ ...commonIconStyle, color: blue6 }} />
-          )}
-        </span>
-      ),
+      width: 100,
+      render: (state) => <SampleAnalysesState state={state} />,
     },
   ];
 

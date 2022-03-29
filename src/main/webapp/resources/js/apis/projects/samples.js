@@ -62,3 +62,18 @@ export async function createNewSample({ name, organism }) {
 
   return response;
 }
+export async function shareSamplesWithProject({
+  currentId,
+  sampleIds,
+  targetId,
+  locked,
+  remove,
+}) {
+  return await fetch(setBaseUrl(`ajax/samples/share`), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ currentId, sampleIds, targetId, locked, remove }),
+  });
+}
