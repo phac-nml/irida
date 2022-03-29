@@ -1,17 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
 
-import java.util.List;
-
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.ProjectSamplesFilter;
 
 public class ProjectSamplesTableRequest extends AntTableRequest {
-	private List<Long> associated;
+	private ProjectSamplesFilter filters;
 
-	public List<Long> getAssociated() {
-		return associated;
+	public ProjectSamplesFilter getFilters() {
+		return filters != null ? filters : new ProjectSamplesFilter();
 	}
 
-	public void setAssociated(List<Long> associated) {
-		this.associated = associated;
+	public void setFilters(ProjectSamplesFilter filters) {
+		this.filters = filters;
 	}
 }

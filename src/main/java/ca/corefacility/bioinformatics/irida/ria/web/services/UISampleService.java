@@ -25,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleTableItem;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSamplesTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.ProjectSamplesFilter;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleFiles;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
@@ -231,8 +232,9 @@ public class UISampleService {
 			ProjectSamplesTableRequest request) {
 		List<Long> projectIds = new ArrayList<>();
 		projectIds.add(projectId);
-		if (request.getAssociated() != null) {
-			projectIds.addAll(request.getAssociated());
+		ProjectSamplesFilter filter = request.getFilters();
+		if (filter.getAssociated() != null) {
+			projectIds.addAll(filter.getAssociated());
 		}
 		List<Project> projects = (List<Project>) projectService.readMultiple(projectIds);
 
@@ -248,13 +250,14 @@ public class UISampleService {
 	}
 
 	public List<Long> getFilteredProjectSamplesIds(Long projectId, ProjectSamplesTableRequest request) {
+		ProjectSamplesFilter filter = request.getFilters();
 		final Integer MAX_PAGE_SIZE = 5000;
 		List<Long> filteredProjectSampleIds = new ArrayList<>();
 
 		List<Long> projectIds = new ArrayList<>();
 		projectIds.add(projectId);
-		if (request.getAssociated() != null) {
-			projectIds.addAll(request.getAssociated());
+		if (filter.getAssociated() != null) {
+			projectIds.addAll(filter.getAssociated());
 		}
 		List<Project> projects = (List<Project>) projectService.readMultiple(projectIds);
 
