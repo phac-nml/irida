@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.samples;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -52,11 +53,13 @@ public class SamplesAjaxControllerTest {
 	MockMultipartFile MOCK_PAIR_FILE_01;
 	MockMultipartFile MOCK_PAIR_FILE_02;
 	private final Set<Long> sequencingObjectIds = Set.<Long>of(1L, 2L, 3L);
+	Principal principal;
 
 	@BeforeEach
 	public void setUp() {
 		uiSampleService = mock(UISampleService.class);
 		uiAnalysesService = mock(UIAnalysesService.class);
+		principal = mock(Principal.class);
 
 		controller = new SamplesAjaxController(uiSampleService, uiAnalysesService);
 
@@ -130,7 +133,7 @@ public class SamplesAjaxControllerTest {
 
 	@Test
 	public void testGetSampleAnalyses(){
-		ResponseEntity<List<SampleAnalyses>> responseEntity = controller.getSampleAnalyses(SAMPLE.getId(), Locale.ENGLISH);
+		ResponseEntity<List<SampleAnalyses>> responseEntity = controller.getSampleAnalyses(SAMPLE.getId(), principal, Locale.ENGLISH);
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
 	}
 }

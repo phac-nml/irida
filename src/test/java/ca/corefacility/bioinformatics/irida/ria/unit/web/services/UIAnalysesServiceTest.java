@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
+import java.security.Principal;
 import java.util.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -49,6 +50,7 @@ public class UIAnalysesServiceTest {
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	private UserService userService;
 	private IridaWorkflowsService iridaWorkflowsService;
+	private Principal principal;
 
 	private final User USER_1 = new User("test", "test@nowhere.com", "PW1@3456", "Test", "Tester", "1234567890");
 	private final User USER_2 = new User("test2", "test2@nowhere.com", "PW2@3456", "Test2", "Tester2", "1234567892");
@@ -77,6 +79,7 @@ public class UIAnalysesServiceTest {
 		analysisSubmissionRepository = mock(AnalysisSubmissionRepository.class);
 		userService = mock(UserService.class);
 		iridaWorkflowsService = mock(IridaWorkflowsService.class);
+		principal = mock(Principal.class);
 
 		service = new UIAnalysesService(sampleService, sequencingObjectService, userService, analysisSubmissionRepository, iridaWorkflowsService, messageSource);
 
@@ -138,11 +141,7 @@ public class UIAnalysesServiceTest {
 		USER_1.setId(1L);
 		USER_2.setId(2L);
 
-		Authentication auth = new UsernamePasswordAuthenticationToken(USER_1, null);
-		SecurityContextHolder.getContext()
-				.setAuthentication(auth);
-
-		when(userService.getUserByUsername(USER_1.getUsername())).thenReturn(USER_1);
+		when(userService.getUserByUsername(principal.getName())).thenReturn(USER_1);
 
 
 		when(sequencingObjectService.getSequencingObjectsForSample(SAMPLE_1)).thenReturn(
@@ -154,14 +153,11 @@ public class UIAnalysesServiceTest {
 		when(iridaWorkflowsService.getIridaWorkflowOrUnknown(any(AnalysisSubmission.class))).thenReturn(iridaWorkflow);
 
 		// Get sample analyses listing for user with Role.USER
-		List<SampleAnalyses> sampleAnalysesList = service.getSampleAnalyses(SAMPLE_ID, Locale.ENGLISH);
+		List<SampleAnalyses> sampleAnalysesList = service.getSampleAnalyses(SAMPLE_ID, principal, Locale.ENGLISH);
 		assertEquals(1, sampleAnalysesList.size(), "A user with Role.USER should only see their own analyses ran with sample");
 
-		auth = new UsernamePasswordAuthenticationToken(USER_2, null);
-		SecurityContextHolder.getContext()
-				.setAuthentication(auth);
 
-		when(userService.getUserByUsername(USER_2.getUsername())).thenReturn(USER_2);
+		when(userService.getUserByUsername(principal.getName())).thenReturn(USER_2);
 
 		when(sequencingObjectService.getSequencingObjectsForSample(SAMPLE_1)).thenReturn(
 				sampleSequencingObjectJoinCollection);
@@ -172,7 +168,7 @@ public class UIAnalysesServiceTest {
 		when(iridaWorkflowsService.getIridaWorkflowOrUnknown(any(AnalysisSubmission.class))).thenReturn(iridaWorkflow);
 
 		// Get sample analyses listing for user with Role.ADMIN
-		sampleAnalysesList = service.getSampleAnalyses(SAMPLE_ID, Locale.ENGLISH);
+		sampleAnalysesList = service.getSampleAnalyses(SAMPLE_ID, principal, Locale.ENGLISH);
 		assertEquals(3, sampleAnalysesList.size(), "A user with Role.ADMIN should see all analyses ran with sample");
 	}
 }

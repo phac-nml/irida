@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,11 +51,12 @@ public class UIAnalysesService {
 	/**
 	 * Get analyses for sample
 	 *
-	 * @param sampleId Identifier for a sample
-	 * @param locale   User's locale
+	 * @param sampleId  Identifier for a sample
+	 * @param principal The currently logged on user
+	 * @param locale    User's locale
 	 * @return {@link SampleAnalyses} containing a list of analyses for the sample
 	 */
-	public List<SampleAnalyses> getSampleAnalyses(Long sampleId, Locale locale) {
+	public List<SampleAnalyses> getSampleAnalyses(Long sampleId, Principal principal, Locale locale) {
 		Sample sample = sampleService.read(sampleId);
 		List<SampleAnalyses> sampleAnalysesList = new ArrayList<>();
 
@@ -64,15 +66,13 @@ public class UIAnalysesService {
 				.map(s -> s.getObject())
 				.collect(Collectors.toList());
 
-		User user = userService.getUserByUsername(SecurityContextHolder.getContext()
-				.getAuthentication()
-				.getName());
+		User user = userService.getUserByUsername(principal.getName());
 
 		for (SequencingObject sequencingObject : sequencingObjectList) {
 
 			Set<AnalysisSubmission> analysisSubmissionSet;
 
-			if(!user.getSystemRole()
+			if (!user.getSystemRole()
 					.equals(Role.ROLE_ADMIN)) {
 				analysisSubmissionSet = analysisSubmissionRepository.findAnalysisSubmissionsForSequencingObjectBySubmitter(
 						sequencingObject, user);
@@ -86,7 +86,8 @@ public class UIAnalysesService {
 				String analysisType = iridaWorkflow.getWorkflowDescription()
 						.getAnalysisType()
 						.getType();
-				analysisType = messageSource.getMessage("workflow." + analysisType + ".title", null, analysisType, locale);
+				analysisType = messageSource.getMessage("workflow." + analysisType + ".title", null, analysisType,
+						locale);
 
 				sampleAnalysesList.add(new SampleAnalyses(analysisSubmission, analysisType));
 			}
