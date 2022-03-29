@@ -22,6 +22,10 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
+/**
+ * UI Service for analyses
+ */
+
 @Component
 public class UIAnalysesService {
 	private final SampleService sampleService;

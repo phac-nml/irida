@@ -43,18 +43,18 @@ export function SampleAnalyses() {
       title: i18n("SampleAnalyses.analysisSubmissionName"),
       dataIndex: "name",
       key: "name",
+      ellipsis: true,
+      width: 250,
       render(name, data) {
         return (
-          <Paragraph ellipsis={{ rows: 1 }}>
-            <a
-              className="t-analysis-name"
-              href={setBaseUrl(`analysis/${data.id}`)}
-              title={name}
-              target="_blank"
-            >
-              {name}
-            </a>
-          </Paragraph>
+          <a
+            className="t-analysis-name"
+            href={setBaseUrl(`analysis/${data.id}`)}
+            title={name}
+            target="_blank"
+          >
+            {name}
+          </a>
         );
       },
     },
@@ -62,12 +62,13 @@ export function SampleAnalyses() {
       title: i18n("SampleAnalyses.analysisType"),
       dataIndex: "analysisType",
       key: "analysisType",
+      width: 150,
     },
     {
       title: i18n("SampleAnalyses.createdDate"),
       dataIndex: "createdDate",
       key: "createdDate",
-      width: 230,
+      width: 200,
       render: (date) => (
         <span className="t-analysis-created-date">
           {date ? formatInternationalizedDateTime(date) : ""}
@@ -78,6 +79,7 @@ export function SampleAnalyses() {
       title: i18n("SampleAnalyses.analysisState"),
       dataIndex: "state",
       key: "analysisType",
+      width: 100,
       render: (state) => <SampleAnalysesState state={state} />,
     },
   ];
