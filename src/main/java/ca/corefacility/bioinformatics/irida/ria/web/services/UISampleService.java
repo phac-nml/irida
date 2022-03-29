@@ -70,8 +70,7 @@ public class UISampleService {
 	 */
 	public SampleDetails getSampleDetails(Long id) {
 		Sample sample = sampleService.read(id);
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		boolean isModifiable = updateSamplePermission.isAllowed(authentication, sample);
 		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
 		return new SampleDetails(sample, isModifiable, metadataForSample, cartService.isSampleInCart(id));
@@ -108,8 +107,8 @@ public class UISampleService {
 	 * @return list of paired end sequence files
 	 */
 	public List<SequencingObject> getPairedSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, SequenceFilePair.class);
+		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
 		// add project to qc entries and filter any unavailable entries
 		List<SequencingObject> filePairs = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : filePairJoins) {
@@ -129,8 +128,8 @@ public class UISampleService {
 	 * @return list of single end sequence files
 	 */
 	public List<SequencingObject> getSingleEndSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, SingleEndSequenceFile.class);
+		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
 
 		List<SequencingObject> singles = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : singleFileJoins) {
@@ -149,11 +148,9 @@ public class UISampleService {
 	 * @return list of fast5 sequence files
 	 */
 	public List<SequencingObject> getFast5FilesForSample(Sample sample) {
-		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, Fast5Object.class);
-		return fast5FileJoins.stream()
-				.map(SampleSequencingObjectJoin::getObject)
-				.collect(Collectors.toList());
+		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, Fast5Object.class);
+		return fast5FileJoins.stream().map(SampleSequencingObjectJoin::getObject).collect(Collectors.toList());
 	}
 
 	/**
@@ -165,16 +162,12 @@ public class UISampleService {
 	public List<GenomeAssembly> getGenomeAssembliesForSample(Sample sample) {
 		Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = genomeAssemblyService.getAssembliesForSample(sample);
 
-		return genomeAssemblyJoins.stream()
-				.map(SampleGenomeAssemblyJoin::getObject)
-				.collect(Collectors.toList());
+		return genomeAssemblyJoins.stream().map(SampleGenomeAssemblyJoin::getObject).collect(Collectors.toList());
 	}
 
 	/**
-	 * Adds the {@link Project} to any {@link QCEntry} within a
-	 * {@link SequencingObject}. If the {@link QCEntry} reports as
-	 * {@link QCEntry.QCEntryStatus#UNAVAILABLE} after being enhanced it is removed from
-	 * the list
+	 * Adds the {@link Project} to any {@link QCEntry} within a {@link SequencingObject}. If the {@link QCEntry} reports
+	 * as {@link QCEntry.QCEntryStatus#UNAVAILABLE} after being enhanced it is removed from the list
 	 *
 	 * @param obj     the {@link SequencingObject} to enhance
 	 * @param project the {@link Project} to add
@@ -184,8 +177,7 @@ public class UISampleService {
 		if (obj.getQcEntries() != null) {
 			for (QCEntry q : obj.getQcEntries()) {
 				q.addProjectSettings(project);
-				if (!q.getStatus()
-						.equals(QCEntry.QCEntryStatus.UNAVAILABLE)) {
+				if (!q.getStatus().equals(QCEntry.QCEntryStatus.UNAVAILABLE)) {
 					availableEntries.add(q);
 				}
 			}
@@ -253,5 +245,32 @@ public class UISampleService {
 				.collect(Collectors.toList());
 
 		return new AntTableResponse<>(content, page.getTotalElements());
+	}
+
+	public List<Long> getFilteredProjectSamplesIds(Long projectId, ProjectSamplesTableRequest request) {
+		final Integer MAX_PAGE_SIZE = 5000;
+		List<Long> filteredProjectSampleIds = new ArrayList<>();
+
+		List<Long> projectIds = new ArrayList<>();
+		projectIds.add(projectId);
+		if (request.getAssociated() != null) {
+			projectIds.addAll(request.getAssociated());
+		}
+		List<Project> projects = (List<Project>) projectService.readMultiple(projectIds);
+
+		Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, ImmutableList.of(), null,
+				null, null, null, null, 0, MAX_PAGE_SIZE, request.getSort());
+		while (!page.isEmpty()) {
+			// Get the ProjectSampleJoin id
+			for (ProjectSampleJoin join : page) {
+				filteredProjectSampleIds.add(join.getId());
+			}
+
+			// Get the next page
+			page = sampleService.getFilteredSamplesForProjects(projects, ImmutableList.of(), null, null, null, null,
+					null, page.getNumber() + 1, MAX_PAGE_SIZE, request.getSort());
+		}
+
+		return filteredProjectSampleIds;
 	}
 }

@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,11 +37,9 @@ public class AjaxSamplesController {
 		return ResponseEntity.ok(uiSampleService.getPagedProjectSamples(projectId, request));
 	}
 
-	//	@PostMapping("/sampleIds")
-	//	public List<Long> getProjectSamplesIds(@PathVariable Long projectId, @RequestBody SampleIdsRequest request) {
-	//		List<Long> ids = request.getAssociated();
-	//		ids.add(projectId);
-	//		// I HAVE NO IDEA WHAT TO DO NOW!!!
-	//		return uiSampleService.getSampleIdsForProject(ids);
-	//	}
+	@PostMapping("/ids")
+	public ResponseEntity<List<Long>> getProjectSamplesIds(@PathVariable Long projectId,
+			@RequestBody ProjectSamplesTableRequest request) {
+		return ResponseEntity.ok(uiSampleService.getFilteredProjectSamplesIds(projectId, request));
+	}
 }
