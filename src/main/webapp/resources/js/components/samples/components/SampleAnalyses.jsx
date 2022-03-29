@@ -3,22 +3,12 @@ import { Col, Input, Row, Table, Typography } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSampleAnalyses } from "../../../apis/samples/samples";
 import { setSampleAnalyses } from "../sampleAnalysesSlice";
-
+import { SampleAnalysesState } from "./SampleAnalysesState";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import {
-  IconCheckCircle,
-  IconClock,
-  IconCloseCircle,
-  IconLoading,
-} from "../../icons/Icons";
-import { blue6, green6, grey6, red6 } from "../../../styles/colors";
 
 const { Search } = Input;
 const { Paragraph } = Typography;
-const commonIconStyle = {
-  fontSize: "16px",
-};
 
 /**
  * React component to display sample analyses
@@ -88,19 +78,7 @@ export function SampleAnalyses() {
       title: i18n("SampleAnalyses.analysisState"),
       dataIndex: "state",
       key: "analysisType",
-      render: (state) => (
-        <span className="t-analysis-state">
-          {state === "COMPLETED" ? (
-            <IconCheckCircle style={{ ...commonIconStyle, color: green6 }} />
-          ) : state === "ERROR" ? (
-            <IconCloseCircle style={{ ...commonIconStyle, color: red6 }} />
-          ) : state === "QUEUED" ? (
-            <IconClock style={{ ...commonIconStyle, color: grey6 }} />
-          ) : (
-            <IconLoading style={{ ...commonIconStyle, color: blue6 }} />
-          )}
-        </span>
-      ),
+      render: (state) => <SampleAnalysesState state={state} />,
     },
   ];
 
