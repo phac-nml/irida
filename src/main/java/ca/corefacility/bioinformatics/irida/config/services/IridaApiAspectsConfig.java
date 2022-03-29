@@ -14,10 +14,10 @@ import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.analysis.annotations.RunAsUserAspect;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceAspect;
 import ca.corefacility.bioinformatics.irida.validators.ValidMethodParametersAspect;
-import ca.corefacility.bioinformatics.irida.service.EmailController;
 
 /**
  * Configures the aspects in IRIDA
@@ -35,7 +35,8 @@ public class IridaApiAspectsConfig {
 	public ProjectEventAspect projectEventAspect(final ProjectEventRepository eventRepository,
 			final ProjectSampleJoinRepository psjRepository, final ProjectRepository projectRepository,
 			final SampleRepository sampleRepository) {
-		return new ProjectEventAspect(new ProjectEventHandler(eventRepository, psjRepository, projectRepository, sampleRepository));
+		return new ProjectEventAspect(
+				new ProjectEventHandler(eventRepository, psjRepository, projectRepository, sampleRepository));
 	}
 
 	@Bean
@@ -45,9 +46,8 @@ public class IridaApiAspectsConfig {
 	}
 
 	/**
-	 * Aspect for setting the user in the security context to be the user in the
-	 * {@link AnalysisSubmission}
-	 * 
+	 * Aspect for setting the user in the security context to be the user in the {@link AnalysisSubmission}
+	 *
 	 * @return new {@link RunAsUserAspect} bean
 	 */
 	@Bean

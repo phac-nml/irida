@@ -69,7 +69,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Service class for managing {@link Sample}.
- *
  */
 @Service
 public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements SampleService {
@@ -81,8 +80,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	private SampleRepository sampleRepository;
 	/**
-	 * Reference to {@link ProjectSampleJoinRepository} for managing
-	 * {@link ProjectSampleJoin}.
+	 * Reference to {@link ProjectSampleJoinRepository} for managing {@link ProjectSampleJoin}.
 	 */
 	private ProjectSampleJoinRepository psjRepository;
 
@@ -106,26 +104,16 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * Constructor.
 	 *
-	 * @param sampleRepository
-	 *            the sample repository.
-	 * @param psjRepository
-	 *            the project sample join repository.
-	 * @param analysisRepository
-	 *            the analysis repository.
-	 * @param ssoRepository
-	 *            The {@link SampleSequencingObjectJoin} repository
-	 * @param sequencingObjectRepository
-	 *            the {@link SequencingObject} repository
-	 * @param qcEntryRepository
-	 *            a repository for storing and reading {@link QCEntry}
-	 * @param sampleGenomeAssemblyJoinRepository
-	 *            A {@link SampleGenomeAssemblyJoinRepository}
-	 * @param userRepository
-	 *            A {@link UserRepository}
-	 * @param metadataEntryRepository
-	 *            A {@link MetadataEntryRepository}
-	 * @param validator
-	 *            validator.
+	 * @param sampleRepository                   the sample repository.
+	 * @param psjRepository                      the project sample join repository.
+	 * @param analysisRepository                 the analysis repository.
+	 * @param ssoRepository                      The {@link SampleSequencingObjectJoin} repository
+	 * @param sequencingObjectRepository         the {@link SequencingObject} repository
+	 * @param qcEntryRepository                  a repository for storing and reading {@link QCEntry}
+	 * @param sampleGenomeAssemblyJoinRepository A {@link SampleGenomeAssemblyJoinRepository}
+	 * @param userRepository                     A {@link UserRepository}
+	 * @param metadataEntryRepository            A {@link MetadataEntryRepository}
+	 * @param validator                          validator.
 	 */
 	@Autowired
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
@@ -231,6 +219,19 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	@PreAuthorize("hasPermission(#project, 'canReadProject')")
+	@PostAuthorize("hasPermission(returnObject,'readProjectMetadataResponse')")
+	public ProjectMetadataResponse getMetadataForProjectSamples(Project project, List<Long> sampleIds, List<MetadataTemplateField> fields) {
+		checkArgument(!fields.isEmpty(), "fields must not be empty");
+		Map<Long, Set<MetadataEntry>> metadataForProjectSamples = metadataEntryRepository.getMetadataForProjectSamples(project, sampleIds, fields);
+
+		return new ProjectMetadataResponse(project, metadataForProjectSamples);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasPermission(#s, 'canUpdateSample')")
 	@Transactional
 	public Sample updateSampleMetadata(Sample s, Set<MetadataEntry> metadataToSet) {
@@ -266,13 +267,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			newMetadataEntry.setSample(s);
 
 			Optional<MetadataEntry> metadataEntryForField = currentMetadata.stream()
-					.filter(e -> e.getField().equals(field)).findFirst();
+					.filter(e -> e.getField().equals(field))
+					.findFirst();
 
 			if (metadataEntryForField.isPresent()) {
 				MetadataEntry originalMetadataEntry = metadataEntryForField.get();
 
-				// if the metadata entries are of the same type, I can directly
-				// merge
+				// if the metadata entries are of the same type, I can directly merge
 				if (originalMetadataEntry.getClass().equals(newMetadataEntry.getClass())) {
 					originalMetadataEntry.merge(newMetadataEntry);
 				} else {
@@ -441,15 +442,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
-	 * Confirm that a {@link ProjectSampleJoin} exists between the given
-	 * {@link Project} and {@link Sample}.
+	 * Confirm that a {@link ProjectSampleJoin} exists between the given {@link Project} and {@link Sample}. <<<<<<<
+	 * HEAD
 	 *
-	 * @param project
-	 *            the {@link Project} to check
-	 * @param sample
-	 *            the {@link Sample} to check
-	 * @throws IllegalArgumentException
-	 *             if join does not exist
+	 * @param project the {@link Project} to check
+	 * @param sample  the {@link Sample} to check
+	 * @throws IllegalArgumentException if join does not exist =======
+	 * @param project the {@link Project} to check
+	 * @param sample  the {@link Sample} to check
+	 * @throws IllegalArgumentException if join does not exist >>>>>>> master
 	 */
 	private void confirmProjectSampleJoin(Project project, Sample sample) throws IllegalArgumentException {
 		Set<Project> projects = new HashSet<>();
@@ -541,13 +542,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
-	 * Add a {@link SequencingObject} to a {@link Sample} after testing if it
-	 * exists in a {@link Sample} already
+	 * Add a {@link SequencingObject} to a {@link Sample} after testing if it exists in a {@link Sample} already
 	 *
-	 * @param sample
-	 *            {@link Sample} to add to
-	 * @param seqObject
-	 *            {@link SequencingObject} to add
+	 * @param sample    {@link Sample} to add to
+	 * @param seqObject {@link SequencingObject} to add
 	 * @return a {@link SampleSequencingObjectJoin}
 	 */
 	@Transactional
@@ -586,7 +584,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		Set<Sample> samples = null;
 		try {
 			samples = objectsForAnalysisSubmission.stream()
-					.map(s -> ssoRepository.getSampleForSequencingObject(s).getSubject()).collect(Collectors.toSet());
+					.map(s -> ssoRepository.getSampleForSequencingObject(s).getSubject())
+					.collect(Collectors.toSet());
 		} catch (NullPointerException e) {
 			logger.warn("No samples were found for submission " + submission.getId());
 		}
@@ -619,7 +618,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	public Page<ProjectSampleJoin> searchSamplesForUser(String query, final Integer page, final Integer count,
 			final Sort sort) {
-		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext()
+				.getAuthentication()
 				.getPrincipal();
 		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
 
@@ -641,11 +641,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
-	 * Verify that the given sort properties array is not null or empty. If it
-	 * is, give a default sort property.
+	 * Verify that the given sort properties array is not null or empty. If it is, give a default sort property.
 	 *
-	 * @param sortProperties
-	 *            The given sort properites
+	 * @param sortProperties The given sort properites
 	 * @return The corrected sort properties
 	 */
 	private String[] verifySortProperties(String[] sortProperties) {
@@ -660,13 +658,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
-	 * Specification for searching {@link Sample}s
-	 * 
-	 * @param user
-	 *            the {@link User} to get samples for. If this property is null,
-	 *            will serch for all users.
-	 * @param queryString
-	 *            the query string to search for
+	 * Specification for searching {@link Sample}s <<<<<<< HEAD
+	 *
+	 * @param user        the {@link User} to get samples for. If this property is null, will serch for all users.
+	 * @param queryString the query string to search for =======
+	 * @param user        the {@link User} to get samples for. If this property is null, will serch for all users.
+	 * @param queryString the query string to search for >>>>>>> master
 	 * @return a {@link Specification} for {@link ProjectSampleJoin}
 	 */
 	private static Specification<ProjectSampleJoin> sampleForUserSpecification(final User user,
@@ -690,12 +687,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			/**
 			 * Search with the given query for sample properties
 			 *
-			 * @param root
-			 *            root for ProjectSampleJoin
-			 * @param query
-			 *            criteria query
-			 * @param cb
-			 *            criteria query builder
+			 * @param root  root for ProjectSampleJoin
+			 * @param query criteria query
+			 * @param cb    criteria query builder
 			 * @return a predicate
 			 */
 			private Predicate sampleProperties(final Root<ProjectSampleJoin> root, final CriteriaQuery<?> query,
@@ -706,17 +700,13 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			}
 
 			/**
-			 * This {@link Predicate} filters out {@link Project}s for the
-			 * specific user where they are assigned individually as a member.
+			 * This {@link Predicate} filters out {@link Project}s for the specific user where they are assigned
+			 * individually as a member.
 			 *
-			 * @param root
-			 *            the root of the query
-			 * @param query
-			 *            the query
-			 * @param cb
-			 *            the builder
-			 * @return a {@link Predicate} that filters {@link Project}s where
-			 *         users are individually assigned.
+			 * @param root  the root of the query
+			 * @param query the query
+			 * @param cb    the builder
+			 * @return a {@link Predicate} that filters {@link Project}s where users are individually assigned.
 			 */
 			private Predicate individualProjectMembership(final Root<ProjectSampleJoin> root,
 					final CriteriaQuery<?> query, final CriteriaBuilder cb) {
@@ -728,19 +718,14 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			}
 
 			/**
-			 * This {@link Predicate} filters out {@link Project}s for the
-			 * specific user where they are assigned transitively through a
-			 * {@link UserGroup}.
+			 * This {@link Predicate} filters out {@link Project}s for the specific user where they are assigned
+			 * transitively through a {@link UserGroup}.
 			 *
-			 * @param root
-			 *            the root of the query
-			 * @param query
-			 *            the query
-			 * @param cb
-			 *            the builder
-			 * @return a {@link Predicate} that filters {@link Project}s where
-			 *         users are assigned transitively through {@link UserGroup}
-			 *         .
+			 * @param root  the root of the query
+			 * @param query the query
+			 * @param cb    the builder
+			 * @return a {@link Predicate} that filters {@link Project}s where users are assigned transitively through
+			 *         {@link UserGroup} .
 			 */
 			private Predicate groupProjectMembership(final Root<ProjectSampleJoin> root, final CriteriaQuery<?> query,
 					final CriteriaBuilder cb) {

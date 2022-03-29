@@ -1,6 +1,6 @@
 import {
   MESSAGE_EVENT,
-  NOTIFICATION_EVENT
+  NOTIFICATION_EVENT,
 } from "../components/notifications/Notifications";
 
 /**
@@ -11,8 +11,9 @@ export function showNotification(params) {
   const event = new CustomEvent(MESSAGE_EVENT, {
     detail: {
       text: params.text.trim(),
-      type: params.type
-    }
+      type: params.type,
+      duration: params.duration || 3,
+    },
   });
   window.dispatchEvent(event);
 }
@@ -35,12 +36,12 @@ export function showErrorNotification(params) {
  */
 export function showUndoNotification(params, callback) {
   const event = new CustomEvent(NOTIFICATION_EVENT, {
-    detail: { callback, text: params.text }
+    detail: { callback, text: params.text },
   });
   window.dispatchEvent(event);
 }
 
 // TODO: Remove this after all notification usages are through a webpack bundle.
-window.notifications = (function() {
+window.notifications = (function () {
   return { show: showNotification, showError: showErrorNotification };
 })();

@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.RemoteAPIAjaxController;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
@@ -13,6 +15,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +39,7 @@ public class RemoteAPIAjaxControllerTest {
 	private final RemoteAPI REMOTE_API_01 = new RemoteAPI("Toronto", "http://toronto.nowhere", "", "toronto", "123456");
 	private final RemoteAPI REMOTE_API_02 = new RemoteAPI("Washington", "http://washington.nowhere", "", "washington",
 			"654321");
+	private static final String USER_NAME = "testme";
 
 	@BeforeEach
 	public void init() {
@@ -124,8 +130,8 @@ public class RemoteAPIAjaxControllerTest {
 			}
 		};
 
-		when(remoteAPIService.search(any(), anyInt(), anyInt(), any(Sort.Direction.class),
-				any(String.class))).thenReturn(remoteAPIPage);
+		when(remoteAPIService.search(any(), anyInt(), anyInt(), any(Sort.Direction.class), any(String.class)))
+				.thenReturn(remoteAPIPage);
 		when(remoteAPIService.read(1L)).thenReturn(REMOTE_API_01);
 		when(remoteAPIService.read(2L)).thenReturn(REMOTE_API_02);
 	}
@@ -137,6 +143,13 @@ public class RemoteAPIAjaxControllerTest {
 		request.setSortDirection("ascend");
 		request.setCurrent(0);
 		request.setPageSize(10);
+
+		Long userId = 1L;
+		User puser = new User(userId, USER_NAME, null, null, null, null, null);
+		puser.setSystemRole(Role.ROLE_USER);
+
+		Authentication auth = new UsernamePasswordAuthenticationToken(puser, null);
+		SecurityContextHolder.getContext().setAuthentication(auth);
 
 		TableResponse<RemoteAPITableModel> response = controller.getAjaxAPIList(request);
 		verify(remoteAPIService, times(1)).search(any(), anyInt(), anyInt(), any(Sort.Direction.class),

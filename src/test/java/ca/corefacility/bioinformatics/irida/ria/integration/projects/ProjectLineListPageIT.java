@@ -108,7 +108,7 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		// Test inline editing
 		page.selectTemplate("All Fields");
 		String cellContents = page.getCellContents(0, COLUMN_ID);
-		assertEquals(cellContents, "");
+		assertEquals("", cellContents);
 
 		String newValue = "FOOBAR";
 		page.editCellContents(0, COLUMN_ID, newValue);
