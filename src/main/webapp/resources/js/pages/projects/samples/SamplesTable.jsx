@@ -13,15 +13,23 @@ import { formatInternationalizedDateTime } from "../../../utilities/date-utiliti
 import { formatSort } from "../../../utilities/table-utilities";
 import { getProjectIdFromUrl } from "../../../utilities/url-utilities";
 
+const formatCartItem = (item) => ({
+  key: item.key,
+  id: item.sample.id,
+  projectId: item.project.id,
+  sampleName: item.sample.name,
+  owner: item.owner,
+});
+
 export function SamplesTable() {
   const [loading, setLoading] = React.useState(true);
   const [samples, setSamples] = React.useState([]);
-
+  const [selectedItems, setSelectedItems] = React.useState([]);
   const [pagination, setPagination] = React.useState({
     current: 1,
     pageSize: 10,
   });
-  const [filters, setFilters] = React.useState();
+  const [filters, setFilters] = React.useState({});
   const [associated, setAssociated] = React.useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = React.useState([]);
   const [colors, setColors] = React.useState(() => {
@@ -66,18 +74,21 @@ export function SamplesTable() {
   const rowSelection = {
     selectedRowKeys,
     preserveSelectedRowKeys: true,
-    onChange: (selectedRowKeys) => {
+    onChange: (selectedRowKeys, selectedRows) => {
       setSelectedRowKeys(selectedRowKeys);
+      setSelectedItems(selectedRows.map(formatCartItem));
     },
     onSelectAll: (selected, selectedRows, changeRows) => {
-      if (selected) {
-        setSelectedRowKeys([
-          ...selectedRowKeys,
-          changeRows.map((row) => row.key),
-        ]);
-      } else {
-        setSelectedRowKeys([]);
-      }
+      console.log({ selected, selectedRows, changeRows });
+      // if (selected) {
+      //   setSelectedRowKeys([
+      //     ...selectedRowKeys,
+      //     changeRows.map((row) => row.key),
+      //   ]);
+      //   console.log(selectedRows);
+      // } else {
+      //   setSelectedRowKeys([]);
+      // }
     },
   };
 
@@ -85,13 +96,23 @@ export function SamplesTable() {
     setLoading(true);
     const { data } = await getAllSampleIds(projectId, filters);
     setSelectedRowKeys(data.map((item) => item.key));
+    setSelectedItems(data);
     setLoading(false);
   };
 
-  const handleTableChange = async (pagination, filters, sorter) => {
+  const handleTableChange = async (pagination, newFilters, sorter) => {
     setLoading(true);
     // Save the filters for using when selecting all
-    setFilters(filters);
+    if (
+      Object.entries(filters).toString() !==
+      Object.entries(newFilters).toString()
+    ) {
+      setFilters(newFilters);
+
+      // Clear selections since filters changed
+      setSelectedRowKeys([]);
+      setSelectedItems([]);
+    }
 
     // Handle Sort
     const order = formatSort(sorter);
@@ -100,7 +121,7 @@ export function SamplesTable() {
     const { data } = await getPagedProjectSamples(projectId, {
       ...pagination,
       order,
-      filters,
+      filters: newFilters,
     });
     setSamples(data.content);
     setPagination({ ...pagination, total: data.total });
