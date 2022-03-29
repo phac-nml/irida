@@ -60,5 +60,5 @@ export const {
  * @returns Axios promise
  */
 export function getAssociatedProjectForProject(projectId) {
-  return axios.get(`${BASE_URL}?projectId=${projectId}`);
+  return axios.get(`${BASE_URL}/list?projectId=${projectId}`);
 }
