@@ -79,7 +79,7 @@ public class UIProjectMembersServiceTest {
 		doThrow(ProjectWithoutOwnerException.class).when(projectService)
 				.removeUserFromProject(PROJECT, USER_3);
 		doThrow(ProjectWithoutOwnerException.class).when(projectService)
-				.updateUserProjectRole(PROJECT, USER_3, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
+				.updateUserProjectRole(PROJECT, USER_3, ProjectRole.PROJECT_OWNER, null);
 	}
 
 	@Test
@@ -107,14 +107,20 @@ public class UIProjectMembersServiceTest {
 	}
 
 	@Test
-	public void testUpdateUserRoleOnProject() throws ProjectWithoutOwnerException {
-		service.updateUserRoleOnProject(PROJECT_ID, USER_2.getId(), ProjectRole.PROJECT_OWNER.toString(), ProjectMetadataRole.LEVEL_4.toString(), LOCALE);
-		verify(projectService, times(1)).updateUserProjectRole(PROJECT, USER_2, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
+	public void testUpdateUserProjectRoleOnProject() throws ProjectWithoutOwnerException {
+		service.updateUserRoleOnProject(PROJECT_ID, USER_2.getId(), ProjectRole.PROJECT_OWNER.toString(), "", LOCALE);
+		verify(projectService, times(1)).updateUserProjectRole(PROJECT, USER_2, ProjectRole.PROJECT_OWNER, null);
 	}
 
 	@Test
-	public void testUpdateUserRoleOnProjectNoManager() throws UIProjectWithoutOwnerException {
-		assertThrows(ProjectWithoutOwnerException.class, () -> {		
+	public void testUpdateUserMetadataRoleOnProject() throws ProjectWithoutOwnerException {
+		service.updateUserRoleOnProject(PROJECT_ID, USER_2.getId(), "", ProjectMetadataRole.LEVEL_4.toString(), LOCALE);
+		verify(projectService, times(1)).updateUserProjectRole(PROJECT, USER_2, null, ProjectMetadataRole.LEVEL_4);
+	}
+
+	@Test
+	public void testUpdateUserRoleOnProjectNoManager() throws ProjectWithoutOwnerException {
+		assertThrows(ProjectWithoutOwnerException.class, () -> {
 			service.updateUserRoleOnProject(PROJECT_ID, USER_3.getId(), ProjectRole.PROJECT_OWNER.toString(),
 					ProjectMetadataRole.LEVEL_4.toString(), LOCALE);
 		});

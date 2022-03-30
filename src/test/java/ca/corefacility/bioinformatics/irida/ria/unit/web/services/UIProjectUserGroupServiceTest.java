@@ -106,10 +106,18 @@ public class UIProjectUserGroupServiceTest {
 
 	@Test
 	public void testUpdateUserGroupProjectRole() throws ProjectWithoutOwnerException {
-		service.updateUserGroupRoleOnProject(1L, 1L, ProjectRole.PROJECT_USER.toString(), ProjectMetadataRole.LEVEL_1.toString(), LOCALE);
+		service.updateUserGroupRoleOnProject(1L, 1L, ProjectRole.PROJECT_USER.toString(), "", LOCALE);
 		verify(projectService, times(1)).read(1L);
 		verify(userGroupService, times(1)).read(1L);
-		verify(projectService, times(1)).updateUserGroupProjectRole(PROJECT, USER_GROUP_1, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1);
+		verify(projectService, times(1)).updateUserGroupProjectRole(PROJECT, USER_GROUP_1, ProjectRole.PROJECT_USER, null);
+	}
+
+	@Test
+	public void testUpdateUserGroupMetadataRole() throws ProjectWithoutOwnerException {
+		service.updateUserGroupRoleOnProject(1L, 1L, "", ProjectMetadataRole.LEVEL_1.toString(), LOCALE);
+		verify(projectService, times(1)).read(1L);
+		verify(userGroupService, times(1)).read(1L);
+		verify(projectService, times(1)).updateUserGroupProjectRole(PROJECT, USER_GROUP_1, null, ProjectMetadataRole.LEVEL_1);
 	}
 
 	private Page<UserGroupProjectJoin> getPagedUserGroupsForProject() {
