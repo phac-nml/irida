@@ -56,10 +56,10 @@ public class ProjectUserJoin implements Join<Project, User> {
 	private boolean emailSubscription;
 
 	public ProjectUserJoin() {
-		createdDate = new Date();
-		projectRole = ProjectRole.PROJECT_USER;
+		this.createdDate = new Date();
+		this.projectRole = ProjectRole.PROJECT_USER;
 		this.metadataRole = ProjectMetadataRole.LEVEL_1;
-		emailSubscription = false;
+		this.emailSubscription = false;
 	}
 
 	public ProjectUserJoin(Project subject, User object, ProjectRole projectRole) {

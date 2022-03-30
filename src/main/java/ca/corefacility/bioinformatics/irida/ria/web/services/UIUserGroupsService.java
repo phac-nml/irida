@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -162,6 +164,7 @@ public class UIUserGroupsService {
 	 * @param locale  current users {@link Locale}
 	 * @return message to the user about the status of this request
 	 */
+	@Transactional
 	public String addMemberToUserGroup(Long groupId, Long userId, String role, Locale locale) {
 		UserGroup group = userGroupService.read(groupId);
 		User user = userService.read(userId);

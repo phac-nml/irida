@@ -407,15 +407,6 @@ public class ProjectServiceImplIT {
 	}
 
 	@Test
-	@WithMockUser(username = "admin", roles = "ADMIN")
-	public void testUserHasProjectRole() {
-		User user = userService.read(3L);
-		Project project = projectService.read(2L);
-		boolean userHasProjectRole = projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER);
-		assertTrue(userHasProjectRole, "User should have given project role");
-	}
-
-	@Test
 	@WithMockUser(username = "user1", password = "password1", roles = "USER")
 	public void testSearchProjectsForUser() {
 		// test searches

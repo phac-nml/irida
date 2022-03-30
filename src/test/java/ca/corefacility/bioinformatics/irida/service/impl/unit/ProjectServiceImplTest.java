@@ -243,16 +243,6 @@ public class ProjectServiceImplTest {
 	}
 
 	@Test
-	public void testUserHasProjectRole() {
-		Project p = project();
-		User u = new User();
-
-		when(pujRepository.getProjectJoinForUser(p,u)).thenReturn(new ProjectUserJoin(p, u, ProjectRole.PROJECT_OWNER));
-
-		assertTrue(projectService.userHasProjectRole(u, p, ProjectRole.PROJECT_OWNER), "User has ownership of project.");
-	}
-
-	@Test
 	public void testAddRelatedProject() {
 		Project p1 = new Project("project 1");
 		Project p2 = new Project("project 2");
