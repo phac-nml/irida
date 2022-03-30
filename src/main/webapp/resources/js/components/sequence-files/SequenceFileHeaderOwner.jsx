@@ -41,7 +41,7 @@ export function SequenceFileHeaderOwner({
   removeSampleFiles = () => {},
   displayConcatenationCheckbox = false,
   updateDefaultSequencingObject = null,
-  autoDefaultFirstPair,
+  autoDefaultFirstPair = null,
 }) {
   const { concatenateSelected } = useSelector(
     (state) => state.sampleFilesReducer
@@ -91,22 +91,24 @@ export function SequenceFileHeaderOwner({
         <CalendarDate date={file.createdDate} />
       </div>
       <Space direction="horizontal" size="small">
-        {sample.defaultSequencingObject?.identifier === fileObjectId ||
-        (autoDefaultFirstPair !== null &&
-          autoDefaultFirstPair.fileInfo.identifier === fileObjectId) ? (
-          <Tag color="#108ee9" className="t-default-seq-obj-tag">
-            {i18n("SequenceFileHeaderOwner.default")}
-          </Tag>
-        ) : updateDefaultSequencingObject !== null ? (
-          <Button
-            size="small"
-            key={`set-default-${fileObjectId}`}
-            onClick={() => updateDefaultSequencingObject(file)}
-            type="link"
-            className="t-set-default-seq-obj-button"
-          >
-            {i18n("SequenceFileHeaderOwner.setAsDefault")}
-          </Button>
+        {file.forwardSequenceFile && file.reverseSequenceFile ? (
+          sample.defaultSequencingObject?.identifier === fileObjectId ||
+          (autoDefaultFirstPair !== null &&
+            autoDefaultFirstPair.fileInfo.identifier === fileObjectId) ? (
+            <Tag color="#108ee9" className="t-default-seq-obj-tag">
+              {i18n("SequenceFileHeaderOwner.default")}
+            </Tag>
+          ) : updateDefaultSequencingObject !== null ? (
+            <Button
+              size="small"
+              key={`set-default-${fileObjectId}`}
+              onClick={() => updateDefaultSequencingObject(file)}
+              type="link"
+              className="t-set-default-seq-obj-button"
+            >
+              {i18n("SequenceFileHeaderOwner.setAsDefault")}
+            </Button>
+          ) : null
         ) : null}
 
         <Popconfirm

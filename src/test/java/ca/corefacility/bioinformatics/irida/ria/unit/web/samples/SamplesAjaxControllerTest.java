@@ -2,11 +2,13 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.samples;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleAnalyses;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleSequencingObjectFileModel;
 
 import org.apache.commons.io.IOUtils;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesAjaxController;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnalysesService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 
 
@@ -32,6 +35,7 @@ import static org.mockito.Mockito.*;
 public class SamplesAjaxControllerTest {
 	private SamplesAjaxController controller;
 	private UISampleService uiSampleService;
+	private UIAnalysesService uiAnalysesService;
 
 	/*
 	TEST DATA
@@ -49,12 +53,15 @@ public class SamplesAjaxControllerTest {
 	MockMultipartFile MOCK_PAIR_FILE_01;
 	MockMultipartFile MOCK_PAIR_FILE_02;
 	private final Set<Long> sequencingObjectIds = Set.<Long>of(1L, 2L, 3L);
+	Principal principal;
 
 	@BeforeEach
 	public void setUp() {
 		uiSampleService = mock(UISampleService.class);
+		uiAnalysesService = mock(UIAnalysesService.class);
+		principal = mock(Principal.class);
 
-		controller = new SamplesAjaxController(uiSampleService);
+		controller = new SamplesAjaxController(uiSampleService, uiAnalysesService);
 
 		// Set up mocks
 		//when(sampleService.read(SAMPLE.getId())).thenReturn(SAMPLE);
@@ -121,6 +128,12 @@ public class SamplesAjaxControllerTest {
 	public void testUpdateDefaultSequencingObjectForSample() {
 		ResponseEntity<AjaxResponse> responseEntity = controller.updateDefaultSequencingObjectForSample(SAMPLE.getId(), sequencingObjectIds.stream().findFirst().get(),
 				Locale.ENGLISH);
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
+	}
+
+	@Test
+	public void testGetSampleAnalyses(){
+		ResponseEntity<List<SampleAnalyses>> responseEntity = controller.getSampleAnalyses(SAMPLE.getId(), principal, Locale.ENGLISH);
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
 	}
 }

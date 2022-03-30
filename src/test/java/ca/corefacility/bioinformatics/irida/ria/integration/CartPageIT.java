@@ -7,10 +7,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -104,6 +101,16 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		// No files should be selected (no checkboxes available to select) and the concatenate button should not be visible
 		sampleDetailsViewer.selectFilesToConcatenate(3);
 		assertFalse(sampleDetailsViewer.concatenationButtonVisible());
+
+		sampleDetailsViewer.clickSampleAnalysesTabLink();
+		assertTrue(sampleDetailsViewer.searchSampleAnalysesInputVisible());
+		assertTrue(sampleDetailsViewer.sampleAnalysesTableVisible());
+		assertEquals(1, sampleDetailsViewer.numberOfSampleAnalysesVisible(), "User should only see listing of 1 analysis ran with this sample");
+		assertEquals(0, sampleDetailsViewer.filterSampleAnalyses("bio"), "Filtering analyses by 'bio' should yield 0 results");
+		sampleDetailsViewer.clearSampleAnalysesFilter();
+		assertEquals(1, sampleDetailsViewer.numberOfSampleAnalysesVisible(), "AUser should only see listing of 1 analysis ran with this sample");
+
+
 		sampleDetailsViewer.closeDetails();
 
 		// Test removing a sample from the project
@@ -147,6 +154,14 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(sampleDetailsViewer.addNewMetadataButtonVisible());
 		assertEquals(4, sampleDetailsViewer.getNumberOfMetadataEntries(), "Should have the proper number of metadata entries");
 		assertEquals("AB-1003", sampleDetailsViewer.getValueForMetadataField("symptom"), "Should be able to display the proper metadata");
+
+		sampleDetailsViewer.clickSampleAnalysesTabLink();
+		assertTrue(sampleDetailsViewer.searchSampleAnalysesInputVisible());
+		assertTrue(sampleDetailsViewer.sampleAnalysesTableVisible());
+		assertEquals(5, sampleDetailsViewer.numberOfSampleAnalysesVisible(), "Admin should have a listing of all 5 analyses ran with this sample");
+		assertEquals(1, sampleDetailsViewer.filterSampleAnalyses("bio"), "Filtering analyses by 'bio' should yield 0 results");
+		sampleDetailsViewer.clearSampleAnalysesFilter();
+		assertEquals(5, sampleDetailsViewer.numberOfSampleAnalysesVisible(), "Admin should see listing of 5 analyses ran with this sample after clearing search input");
 
 		sampleDetailsViewer.clickFilesTabLink();
 

@@ -2,10 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
@@ -16,9 +13,9 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleGenomeAssemblyFileModel;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleSequencingObjectFileModel;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,16 +30,12 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareMetadataRestriction;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.collect.ImmutableList;
@@ -66,7 +59,7 @@ public class UISampleServiceTest {
 
 	private final Long SAMPLE_ID = 313L;
 	private final String SAMPLE_ORGANISM = "Salmonella";
-	private final String SAMPLE_DESCRIPTION ="This is a project about interesting stuff";
+	private final String SAMPLE_DESCRIPTION = "This is a project about interesting stuff";
 
 	private final Sample ANOTHER_SAMPLE = TestDataFactory.constructSample();
 	private final String FILE_01 = "test_file_A.fastq";
@@ -90,7 +83,6 @@ public class UISampleServiceTest {
 	SampleSequencingObjectJoin sampleSequencingObjectJoin;
 	SampleGenomeAssemblyJoin sampleGenomeAssemblyJoin;
 
-
 	@BeforeEach
 	public void setUp() {
 		sampleService = mock(SampleService.class);
@@ -109,10 +101,10 @@ public class UISampleServiceTest {
 		MetadataTemplateService metadataTemplateService = mock(MetadataTemplateService.class);
 		MetadataEntryRepository metadataEntryRepository = mock(MetadataEntryRepository.class);
 		MetadataRestrictionRepository metadataRestrictionRepository = mock(MetadataRestrictionRepository.class);
+
 		service = new UISampleService(sampleService, projectService, updateSamplePermission, sequencingObjectService,
 				genomeAssemblyService, messageSource, cartService, metadataTemplateService, metadataEntryRepository,
 				metadataRestrictionRepository);
-
 
 		// DATA
 		SAMPLE_1.setId(SAMPLE_ID);
@@ -126,19 +118,18 @@ public class UISampleServiceTest {
 		when(sampleService.read(1L)).thenReturn(SAMPLE_1);
 		when(updateSamplePermission.isAllowed(authentication, SAMPLE_1)).thenReturn(true);
 
-
 		MOCK_FILE_01 = createMultiPartFile(FILE_01, "src/test/resources/files/test_file_A.fastq");
 		MOCK_FILE_02 = createMultiPartFile(FILE_02, "src/test/resources/files/test_file_B.fastq");
 		MOCK_PAIR_FILE_01 = createMultiPartFile(PAIR_01, "src/test/resources/files/pairs/pair_test_R1_001.fastq");
-		MOCK_PAIR_FILE_02 = createMultiPartFile(PAIR_02,  "src/test/resources/files/pairs/pair_test_R2_001.fastq");
-		MOCK_FAST5_FILE_01 = createMultiPartFile(FAST5_01,  "src/test/resources/files/testfast5file.fast5");
+		MOCK_PAIR_FILE_02 = createMultiPartFile(PAIR_02, "src/test/resources/files/pairs/pair_test_R2_001.fastq");
+		MOCK_FAST5_FILE_01 = createMultiPartFile(FAST5_01, "src/test/resources/files/testfast5file.fast5");
 		MOCK_ASSEMBLY_FILE_01 = createMultiPartFile(ASSEMBLY_01, "src/test/resources/files/test_file.fasta");
 	}
 
 	private MockMultipartFile createMultiPartFile(String name, String path) {
 		try {
 			FileInputStream fis = new FileInputStream(path);
-			String contents =  IOUtils.toString(fis, "UTF-8");
+			String contents = IOUtils.toString(fis, "UTF-8");
 			return new MockMultipartFile(name, name, "text/plain", contents.getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -292,8 +283,8 @@ public class UISampleServiceTest {
 		List<SampleSequencingObjectJoin> sequencingObjectJoins = TestDataFactory.generateSingleFileSequencingObjectsForSample(
 				SAMPLE_1, Lists.newArrayList(FILE_01, FILE_02));
 
-		SampleSequencingObjectJoin expectedConcatenatedFile = TestDataFactory.generateSingleFileSequencingObjectsForSample(SAMPLE_1,
-				Lists.newArrayList("test_file_AB.fastq"))
+		SampleSequencingObjectJoin expectedConcatenatedFile = TestDataFactory.generateSingleFileSequencingObjectsForSample(
+				SAMPLE_1, Lists.newArrayList("test_file_AB.fastq"))
 				.get(0);
 
 		List<SequencingObject> sequencingObjectList = sequencingObjectJoins.stream()
@@ -305,8 +296,8 @@ public class UISampleServiceTest {
 
 		when(sampleService.read(SAMPLE_ID)).thenReturn(SAMPLE_1);
 		when(sequencingObjectService.readMultiple(sequencingObjectsIdList)).thenReturn(sequencingObjectList);
-		when(sequencingObjectService.concatenateSequences(eq(Lists.newArrayList(sequencingObjectList)), eq("test_file_AB"),
-				eq(SAMPLE_1), eq(false))).thenReturn(
+		when(sequencingObjectService.concatenateSequences(eq(Lists.newArrayList(sequencingObjectList)),
+				eq("test_file_AB"), eq(SAMPLE_1), eq(false))).thenReturn(
 				new SampleSequencingObjectJoin(SAMPLE_1, expectedConcatenatedFile.getObject()));
 		when(sampleSequencingObjectJoin.getObject()).thenReturn(expectedConcatenatedFile.getObject());
 
@@ -316,13 +307,14 @@ public class UISampleServiceTest {
 		assertEquals(1, sampleSequencingObjectFileModels.size(), "Should have concatenated 2 single end files into 1");
 
 		assertEquals(expectedConcatenatedFile.getObject()
-				.getFiles()
-				.stream()
-				.findFirst()
-				.get()
-				.getLabel(), sampleSequencingObjectFileModels.get(0)
-				.getFileInfo()
-				.getLabel(), "The concatenated file name should be the same as the SampleSequencingObject -> SequencingObject -> File name");
+						.getFiles()
+						.stream()
+						.findFirst()
+						.get()
+						.getLabel(), sampleSequencingObjectFileModels.get(0)
+						.getFileInfo()
+						.getLabel(),
+				"The concatenated file name should be the same as the SampleSequencingObject -> SequencingObject -> File name");
 	}
 
 	@Test
@@ -330,8 +322,7 @@ public class UISampleServiceTest {
 		when(sampleService.read(SAMPLE_ID)).thenReturn(SAMPLE_1);
 		when(sequencingObjectService.readSequencingObjectForSample(SAMPLE_1, sequencingObject.getId())).thenReturn(
 				sequencingObject);
-		service.updateDefaultSequencingObjectForSample(SAMPLE_ID, sequencingObject.getId(),
-				Locale.ENGLISH);
+		service.updateDefaultSequencingObjectForSample(SAMPLE_ID, sequencingObject.getId(), Locale.ENGLISH);
 		verify(sampleService, times(1)).read(SAMPLE_ID);
 		verify(sequencingObjectService, times(1)).readSequencingObjectForSample(SAMPLE_1, sequencingObject.getId());
 		verify(sampleService, times(1)).update(SAMPLE_1);
