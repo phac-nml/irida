@@ -10,13 +10,14 @@
  */
 
 import { Layout } from "antd";
-import { Router } from "@reach/router";
-import { ADMIN } from "../routes";
 import React, { lazy, Suspense } from "react";
+import { Route, Routes } from "react-router-dom";
 import { ContentLoading } from "../../../components/loader";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+import { ADMIN } from "../routes";
+import { AdminContent } from "./AdminContent";
 import AdminHeader from "./AdminHeader";
 import AdminSideMenu from "./AdminSideMenu";
-import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const { Content } = Layout;
 
@@ -26,7 +27,12 @@ const AdvancedStatistics = lazy(() =>
 const BasicStats = lazy(() => import("./statistics/BasicStats"));
 
 const AdminUsersPage = lazy(() => import("./AdminUsersPage"));
-const AdminUserGroupsPage = lazy(() => import("./AdminUserGroupsPage"));
+const UserGroupsPage = lazy(() =>
+  import("../../UserGroupsPage/components/UserGroupsPage")
+);
+const UserGroupsDetailsPage = lazy(() =>
+  import("../../UserGroupsPage/components/UserGroupDetailsPage")
+);
 const ClientListingPage = lazy(() =>
   import("./clients/listing/ClientListingPage")
 );
@@ -39,9 +45,6 @@ const AnnouncementAdminPage = lazy(() =>
 );
 const AdminNcbiExportsPage = lazy(() =>
   import("./ncbi-exports/AdminNcbiExportsPage")
-);
-const AdminRemoteApiDetailsPage = lazy(() =>
-  import("./remote-connections/RemoteConnectionDetails")
 );
 
 export default function Admin() {
@@ -58,30 +61,46 @@ export default function Admin() {
         <AdminHeader />
         <Content>
           <Suspense fallback={<ContentLoading />}>
-            <Router>
-              <BasicStats path={`${DEFAULT_URL}/${ADMIN.STATISTICS}`} default />
-              <AdvancedStatistics
-                path={`${DEFAULT_URL}/${ADMIN.STATISTICS}/:statType`}
-              />
-              <AdminUsersPage path={`${DEFAULT_URL}/${ADMIN.USERS}`} />
-              <AdminUserGroupsPage
-                path={`${DEFAULT_URL}/${ADMIN.USERGROUPS}/*`}
-              />
-              <ClientListingPage path={`${DEFAULT_URL}/${ADMIN.CLIENTS}`} />
-              <AdminRemoteApiPage path={`${DEFAULT_URL}/${ADMIN.REMOTEAPI}`} />
-              <AdminRemoteApiDetailsPage
-                path={`${DEFAULT_URL}/${ADMIN.REMOTEAPI}/:remoteId`}
-              />
-              <AdminSequencingRunsPage
-                path={`${DEFAULT_URL}/${ADMIN.SEQUENCINGRUNS}`}
-              />
-              <AdminNcbiExportsPage
-                path={`${DEFAULT_URL}/${ADMIN.NCBIEXPORTS}`}
-              />
-              <AnnouncementAdminPage
-                path={`${DEFAULT_URL}/${ADMIN.ANNOUNCEMENTS}`}
-              />
-            </Router>
+            <Routes>
+              <Route path={DEFAULT_URL} element={<AdminContent />}>
+                <Route index element={<BasicStats />} />
+                <Route
+                  path={`${ADMIN.STATISTICS}/:statType`}
+                  element={<AdvancedStatistics />}
+                />
+                <Route path={ADMIN.USERS} element={<AdminUsersPage />} />
+
+                <Route
+                  path={`${ADMIN.USERGROUPS}/list`}
+                  element={
+                    <UserGroupsPage
+                      baseUrl={`${DEFAULT_URL}/${ADMIN.USERGROUPS}`}
+                    />
+                  }
+                />
+                <Route
+                  path={`${ADMIN.USERGROUPS}/:id`}
+                  element={<UserGroupsDetailsPage />}
+                />
+                <Route path={ADMIN.CLIENTS} element={<ClientListingPage />} />
+                <Route
+                  path={ADMIN.REMOTEAPI}
+                  element={<AdminRemoteApiPage />}
+                />
+                <Route
+                  path={ADMIN.SEQUENCINGRUNS}
+                  element={<AdminSequencingRunsPage />}
+                />
+                <Route
+                  path={ADMIN.NCBIEXPORTS}
+                  element={<AdminNcbiExportsPage />}
+                />
+                <Route
+                  path={ADMIN.ANNOUNCEMENTS}
+                  element={<AnnouncementAdminPage />}
+                />
+              </Route>
+            </Routes>
           </Suspense>
         </Content>
       </Layout>

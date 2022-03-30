@@ -2,8 +2,8 @@ package ca.corefacility.bioinformatics.irida.security.permissions.project;
 
 import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
@@ -11,8 +11,8 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 
 import com.google.common.collect.Lists;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
@@ -28,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroup
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthenticationToken;
-import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 
 public class ProjectOwnerPermissionTest {
 
@@ -42,27 +41,23 @@ public class ProjectOwnerPermissionTest {
 	ProjectUserJoinRepository pujRepository;
 	@Mock
 	UserGroupProjectJoinRepository ugpjRepository;
-	@Mock
-	UserGroupJoinRepository ugRepository;
 
 	Project project = new Project();
 	Long projectId = 1L;
 	User user = new User();
 
-	@SuppressWarnings("unchecked")
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		user.setSystemRole(Role.ROLE_USER);
 		user.setUsername("tom");
 
-		permission = new ProjectOwnerPermission(projectRepository, userRepository, pujRepository, ugpjRepository,
-				ugRepository);
+		permission = new ProjectOwnerPermission(projectRepository, userRepository, pujRepository, ugpjRepository);
 
 		when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
 		when(userRepository.loadUserByUsername(user.getUsername())).thenReturn(user);
-		when(pujRepository.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER))
-				.thenReturn(Lists.newArrayList(new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER)));
+		when(pujRepository.getProjectJoinForUser(project, user))
+				.thenReturn(new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER));
 	}
 
 	@Test
@@ -72,7 +67,7 @@ public class ProjectOwnerPermissionTest {
 
 		verify(userRepository).loadUserByUsername(user.getUsername());
 
-		assertTrue("user should be able to read project", customPermissionAllowed);
+		assertTrue(customPermissionAllowed, "user should be able to read project");
 	}
 
 	@Test
@@ -88,7 +83,7 @@ public class ProjectOwnerPermissionTest {
 
 		verify(userRepository).loadUserByUsername(user2.getUsername());
 
-		assertFalse("user should not be able to read project", customPermissionAllowed);
+		assertFalse(customPermissionAllowed, "user should not be able to read project");
 	}
 
 	@Test
@@ -98,7 +93,7 @@ public class ProjectOwnerPermissionTest {
 		Authentication authentication = new ProjectSynchronizationAuthenticationToken(user);
 		boolean customPermissionAllowed = permission.customPermissionAllowed(authentication, project);
 
-		assertTrue("user should be able to read project", customPermissionAllowed);
+		assertTrue(customPermissionAllowed, "user should be able to read project");
 	}
 
 	@Test
@@ -108,6 +103,6 @@ public class ProjectOwnerPermissionTest {
 		Authentication authentication = new PreAuthenticatedAuthenticationToken(user, user.getSystemRole());
 		boolean customPermissionAllowed = permission.customPermissionAllowed(authentication, project);
 
-		assertFalse("user should not be able to read project", customPermissionAllowed);
+		assertFalse(customPermissionAllowed, "user should not be able to read project");
 	}
 }

@@ -1,45 +1,41 @@
 package ca.corefacility.bioinformatics.irida.model.user;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.hibernate.validator.constraints.Email;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
+import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
+import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
-import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
-import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
-
 /**
  * A user object.
- *
  */
 @Entity
-@Table(name = "user", uniqueConstraints = {
-		@UniqueConstraint(name = User.USER_EMAIL_CONSTRAINT_NAME, columnNames = "email"),
-		@UniqueConstraint(name = User.USER_USERNAME_CONSTRAINT_NAME, columnNames = "username") })
+@Table(name = "user",
+		uniqueConstraints = {
+				@UniqueConstraint(name = User.USER_EMAIL_CONSTRAINT_NAME, columnNames = "email"),
+				@UniqueConstraint(name = User.USER_USERNAME_CONSTRAINT_NAME, columnNames = "username") })
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-public class User extends IridaResourceSupport implements MutableIridaThing, Comparable<User>, UserDetails {
+public class User extends IridaRepresentationModel implements MutableIridaThing, Comparable<User>, UserDetails {
 
 	private static final long serialVersionUID = -7516211470008791995L;
 
@@ -64,7 +60,8 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 	// longer than 1024 (who's going to remember a password that long anyway?)
 	// to prevent DOS attacks on our password hashing.
 	@Size(min = 8, max = 1024, message = "{user.password.size}")
-	@Pattern.List({ @Pattern(regexp = "^.*[A-Z].*$", message = "{user.password.uppercase}"),
+	@Pattern.List({
+			@Pattern(regexp = "^.*[A-Z].*$", message = "{user.password.uppercase}"),
 			@Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}"),
 			@Pattern(regexp = "^.*[a-z].*$", message = "{user.password.lowercase}"),
 			@Pattern(regexp = "^.*[!@#$%^&*()+?/<>=.\\\\{}].*$", message = "{user.password.special}") })
@@ -129,21 +126,14 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 	}
 
 	/**
-	 * Construct an instance of {@link User} with all properties (except
-	 * identifier) set.
+	 * Construct an instance of {@link User} with all properties (except identifier) set.
 	 *
-	 * @param username
-	 *            the username for this {@link User}.
-	 * @param email
-	 *            the e-mail for this {@link User}.
-	 * @param password
-	 *            the password for this {@link User}.
-	 * @param firstName
-	 *            the first name of this {@link User}.
-	 * @param lastName
-	 *            the last name of this {@link User}.
-	 * @param phoneNumber
-	 *            the phone number of this {@link User}.
+	 * @param username    the username for this {@link User}.
+	 * @param email       the e-mail for this {@link User}.
+	 * @param password    the password for this {@link User}.
+	 * @param firstName   the first name of this {@link User}.
+	 * @param lastName    the last name of this {@link User}.
+	 * @param phoneNumber the phone number of this {@link User}.
 	 */
 	public User(String username, String email, String password, String firstName, String lastName, String phoneNumber) {
 		this();
@@ -158,20 +148,13 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 	/**
 	 * Construct an instance of {@link User} with all properties set.
 	 *
-	 * @param id
-	 *            the identifier for this {@link User}.
-	 * @param username
-	 *            the username for this {@link User}.
-	 * @param email
-	 *            the e-mail for this {@link User}.
-	 * @param password
-	 *            the password for this {@link User}.
-	 * @param firstName
-	 *            the first name of this {@link User}.
-	 * @param lastName
-	 *            the last name of this {@link User}.
-	 * @param phoneNumber
-	 *            the phone number of this {@link User}.
+	 * @param id          the identifier for this {@link User}.
+	 * @param username    the username for this {@link User}.
+	 * @param email       the e-mail for this {@link User}.
+	 * @param password    the password for this {@link User}.
+	 * @param firstName   the first name of this {@link User}.
+	 * @param lastName    the last name of this {@link User}.
+	 * @param phoneNumber the phone number of this {@link User}.
 	 */
 	public User(Long id, String username, String email, String password, String firstName, String lastName,
 			String phoneNumber) {
@@ -227,8 +210,13 @@ public class User extends IridaResourceSupport implements MutableIridaThing, Com
 	 */
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(User.class).add("username", username).add("email", email)
-				.add("firstName", firstName).add("lastName", lastName).add("phoneNumber", phoneNumber).toString();
+		return com.google.common.base.MoreObjects.toStringHelper(User.class)
+				.add("username", username)
+				.add("email", email)
+				.add("firstName", firstName)
+				.add("lastName", lastName)
+				.add("phoneNumber", phoneNumber)
+				.toString();
 	}
 
 	@Override

@@ -60,9 +60,9 @@ public class CreateProjectComponent extends AbstractPage {
 	}
 
 	public void enterProjectName(String name) {
-		nameInput.sendKeys(Keys.CONTROL + "a");
-		nameInput.sendKeys(Keys.DELETE);
+		nameInput.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 		nameInput.sendKeys(name);
+		waitForTime(350);
 	}
 
 	public void enterProjectDescription(String description) {
@@ -92,8 +92,6 @@ public class CreateProjectComponent extends AbstractPage {
 	}
 
 	public String getNameWarning() {
-		WebDriverWait wait = new WebDriverWait(driver, 1);
-		wait.until(ExpectedConditions.visibilityOf(nameError));
 		return nameError.getText();
 	}
 }

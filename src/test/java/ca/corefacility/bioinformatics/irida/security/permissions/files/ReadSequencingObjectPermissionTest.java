@@ -1,12 +1,12 @@
 package ca.corefacility.bioinformatics.irida.security.permissions.files;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -14,8 +14,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,7 +32,6 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequ
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.files.ReadSequencingObjectPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadProjectPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.ReadSamplePermission;
 
@@ -49,7 +48,7 @@ public class ReadSequencingObjectPermissionTest {
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	private SampleRepository sampleRepository;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		userRepository = mock(UserRepository.class);
 		ssoRepository = mock(SampleSequencingObjectJoinRepository.class);
@@ -80,7 +79,7 @@ public class ReadSequencingObjectPermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertTrue("permission was not granted.", permission.isAllowed(auth, 1L));
+		assertTrue(permission.isAllowed(auth, 1L), "permission was not granted.");
 
 		verify(sequencingObjectRepository).findById(1L);
 		verify(psjRepository).getProjectForSample(s);
@@ -105,7 +104,7 @@ public class ReadSequencingObjectPermissionTest {
 
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1");
 
-		assertFalse("permission was granted.", permission.isAllowed(auth, 1L));
+		assertFalse(permission.isAllowed(auth, 1L), "permission was granted.");
 
 		verify(sequencingObjectRepository).findById(1L);
 		verify(psjRepository).getProjectForSample(s);
@@ -121,12 +120,12 @@ public class ReadSequencingObjectPermissionTest {
 		Authentication auth = new UsernamePasswordAuthenticationToken("fbristow", "password1", roles);
 		when(sequencingObjectRepository.findById(1L)).thenReturn(Optional.of(new SingleEndSequenceFile(null)));
 
-		assertTrue("permission was not granted to admin.", permission.isAllowed(auth, 1L));
+		assertTrue(permission.isAllowed(auth, 1L), "permission was not granted to admin.");
 
 		// we should fast pass through to permission granted for administrators.
-		verifyZeroInteractions(userRepository);
-		verifyZeroInteractions(psjRepository);
-		verifyZeroInteractions(userRepository);
-		verifyZeroInteractions(ssoRepository);
+		verifyNoInteractions(userRepository);
+		verifyNoInteractions(psjRepository);
+		verifyNoInteractions(userRepository);
+		verifyNoInteractions(ssoRepository);
 	}
 }

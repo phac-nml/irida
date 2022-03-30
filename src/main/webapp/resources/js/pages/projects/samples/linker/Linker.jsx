@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
-import { Button, Checkbox, Form, Modal, Typography } from "antd";
+import { Button, Checkbox, Form, Input, Modal, Typography } from "antd";
 
 import { grey2, grey9 } from "../../../../styles/colors";
 import { getNGSLinkerCode } from "../../../../apis/linker/linker";
@@ -12,8 +12,12 @@ import { IconCode } from "../../../../components/icons/Icons";
 const { Paragraph, Text } = Typography;
 
 const CommandText = styled(Paragraph)`
+  margin: 0px !important;
   font-family: monospace;
   font-size: 14px;
+`;
+
+const CommandWrapper = styled.div`
   margin-top: ${SPACE_SM};
   padding: 2px;
   background-color: ${grey2};
@@ -43,6 +47,7 @@ function Linker() {
       // Post data to the server to get the linker command.
       setScriptString(data);
       setVisible(true);
+      document.removeEventListener("sample-ids-return", handleSampleIds);
     });
   }
 
@@ -56,9 +61,8 @@ function Linker() {
   These Listeners and Dispatchers are a way to get around the separation between react
   components and the legacy JS code already on the page.
   */
-  document.addEventListener("sample-ids-return", handleSampleIds, false);
-
   function getIds() {
+    document.addEventListener("sample-ids-return", handleSampleIds, false);
     document.dispatchEvent(new Event("sample-ids"));
   }
 
@@ -97,14 +101,19 @@ function Linker() {
               onChange={setTypes}
             />
           </Form.Item>
+          <Form.Item hidden>
+            <Input value={command} className="t-linker-cmd" />
+          </Form.Item>
         </Form>
-        <CommandText
-          className="t-cmd-text"
-          ellipsis={{ rows: 1 }}
-          copyable={command}
-        >
-          {command}
-        </CommandText>
+        <CommandWrapper>
+          <CommandText
+            className="t-cmd-text"
+            ellipsis={{ rows: 1 }}
+            copyable={command}
+          >
+            {command}
+          </CommandText>
+        </CommandWrapper>
       </Modal>
     </>
   );

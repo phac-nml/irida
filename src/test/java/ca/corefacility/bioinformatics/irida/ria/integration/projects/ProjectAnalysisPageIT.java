@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -9,7 +9,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
@@ -21,18 +21,18 @@ public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 		projectAnalysesPage = ProjectAnalysesPage.initializeProjectAnalysesPage(driver(), 1);
 
 		checkTranslations(projectAnalysesPage, ImmutableList.of("project-analyses"), null);
-		assertEquals("Should have 4 analyses displayed", 4, projectAnalysesPage.getNumberOfAnalysesDisplayed());
+		assertEquals(4, projectAnalysesPage.getNumberOfAnalysesDisplayed(), "Should have 4 analyses displayed");
 
 		// Test the name filter
 		projectAnalysesPage.searchForAnalysisByName("My Pretend Submission");
-		assertEquals("Should have 1 Analysis displayed after filtering", 1, projectAnalysesPage.getNumberOfAnalysesDisplayed());
+		assertEquals(1, projectAnalysesPage.getNumberOfAnalysesDisplayed(), "Should have 1 Analysis displayed after filtering");
 		projectAnalysesPage.clearNameFilter();
-		assertEquals("Should have 4 analyses displayed", 4, projectAnalysesPage.getNumberOfAnalysesDisplayed());
+		assertEquals(4, projectAnalysesPage.getNumberOfAnalysesDisplayed(), "Should have 4 analyses displayed");
 
 		// Test deleting an analysis
 		projectAnalysesPage.deleteAnalysis(1);
-		assertEquals("Should only be 3 analysis remaining after deletion", 3,
-				projectAnalysesPage.getNumberOfAnalysesDisplayed());
+		assertEquals(3, projectAnalysesPage.getNumberOfAnalysesDisplayed(),
+				"Should only be 3 analysis remaining after deletion");
 	}
 
 	@Test
@@ -41,13 +41,13 @@ public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 		projectAnalysesPage = ProjectAnalysesPage.initializeProjectAnalysesSharedSingleSampleAnalysisOutputsPage(driver(), 1);
 
 		checkTranslations(projectAnalysesPage, ImmutableList.of("project-analyses"), null);
-		assertEquals("Should have 2 shared single sample analysis outputs displayed", 2, projectAnalysesPage.getNumberSingleSampleAnalysisOutputsDisplayed());
+		assertEquals(2, projectAnalysesPage.getNumberSingleSampleAnalysisOutputsDisplayed(), "Should have 2 shared single sample analysis outputs displayed");
 
 		projectAnalysesPage.searchOutputs("sistr");
-		assertEquals("Should have 1 shared single sample analysis outputs displayed after filtering", 1, projectAnalysesPage.getNumberSingleSampleAnalysisOutputsDisplayed());
+		assertEquals(1, projectAnalysesPage.getNumberSingleSampleAnalysisOutputsDisplayed(), "Should have 1 shared single sample analysis outputs displayed after filtering");
 
 		projectAnalysesPage.clearSearchOutputs();
-		assertEquals("Should have 2 shared single sample analysis outputs displayed after removing filtering", 2, projectAnalysesPage.getNumberSingleSampleAnalysisOutputsDisplayed());
+		assertEquals(2, projectAnalysesPage.getNumberSingleSampleAnalysisOutputsDisplayed(), "Should have 2 shared single sample analysis outputs displayed after removing filtering");
 
 	}
 
@@ -57,12 +57,12 @@ public class ProjectAnalysisPageIT extends AbstractIridaUIITChromeDriver {
 		projectAnalysesPage = ProjectAnalysesPage.initializeProjectAnalysesAutomatedSingleSampleAnalysisOutputsPage(driver(), 1);
 
 		checkTranslations(projectAnalysesPage, ImmutableList.of("project-analyses"), null);
-		assertEquals("Should have 1 automated single sample analysis outputs displayed", 1, projectAnalysesPage.getNumberSingleSampleAnalysisOutputsDisplayed());
+		assertEquals(1, projectAnalysesPage.getNumberSingleSampleAnalysisOutputsDisplayed(), "Should have 1 automated single sample analysis outputs displayed");
 
 		projectAnalysesPage.searchOutputs("sistr");
-		assertEquals("Should have 0 automated single sample analysis outputs displayed after filtering", 0, projectAnalysesPage.getNumberSingleSampleAnalysisOutputsDisplayed());
+		assertEquals(0, projectAnalysesPage.getNumberSingleSampleAnalysisOutputsDisplayed(), "Should have 0 automated single sample analysis outputs displayed after filtering");
 
 		projectAnalysesPage.clearSearchOutputs();
-		assertEquals("Should have 1 automated single sample analysis outputs displayed after removing filtering", 1, projectAnalysesPage.getNumberSingleSampleAnalysisOutputsDisplayed());
+		assertEquals(1, projectAnalysesPage.getNumberSingleSampleAnalysisOutputsDisplayed(), "Should have 1 automated single sample analysis outputs displayed after removing filtering");
 	}
 }

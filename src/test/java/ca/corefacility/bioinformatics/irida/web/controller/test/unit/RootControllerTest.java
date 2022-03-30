@@ -1,14 +1,14 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.hateoas.Link;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestAttributes;
@@ -25,7 +25,7 @@ public class RootControllerTest {
 
 	private RESTRootController controller = new RESTRootController();
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		// fake out the servlet response so that the URI builder will work.
 		RequestAttributes ra = new ServletRequestAttributes(new MockHttpServletRequest());
@@ -40,14 +40,14 @@ public class RootControllerTest {
 		RootResource r = responseResource.getResource();
 		assertNotNull(r);
 		for (Link l : r.getLinks()) {
-			if (!l.getRel()
-					.equals("self") && !l.getRel()
+			if (!l.getRel().value()
+					.equals("self") && !l.getRel().value()
 					.equals("version")) {
-				assertTrue(controllers.containsKey(l.getRel()));
+				assertTrue(controllers.containsKey(l.getRel().value()));
 			}
 		}
 
-		assertNotNull(r.getLink("self"));
-		assertNotNull(r.getLink("version"));
+		assertTrue(r.getLink("self").isPresent());
+		assertTrue(r.getLink("version").isPresent());
 	}
 }

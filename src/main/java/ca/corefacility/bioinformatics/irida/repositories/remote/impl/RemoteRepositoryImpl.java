@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
@@ -26,9 +26,9 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
  *
  * @param <Type>
  *            The type of object to be stored in this repository (extends
- *            {@link IridaResourceSupport})
+ *            {@link IridaRepresentationModel})
  */
-public abstract class RemoteRepositoryImpl<Type extends IridaResourceSupport> implements RemoteRepository<Type> {
+public abstract class RemoteRepositoryImpl<Type extends IridaRepresentationModel> implements RemoteRepository<Type> {
 
 	// service storing api tokens for communication with the remote services
 	private RemoteAPITokenService tokenService;
@@ -108,7 +108,7 @@ public abstract class RemoteRepositoryImpl<Type extends IridaResourceSupport> im
 	 * @param <T>    The type of entity you're setting status of
 	 * @return the enhanced entity
 	 */
-	protected <T extends IridaResourceSupport> T setRemoteStatus(T entity, RemoteAPI api) {
+	protected <T extends IridaRepresentationModel> T setRemoteStatus(T entity, RemoteAPI api) {
 		String selfHref = entity.getSelfHref();
 
 		// Get the logged in user and set them in the remote status object

@@ -4,15 +4,16 @@ import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import com.google.common.collect.Lists;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SingleEndSequenceFileConcatenatorTest {
 	private static final String SEQUENCE = "ACGTACGTN";
@@ -21,7 +22,7 @@ public class SingleEndSequenceFileConcatenatorTest {
 
 	SingleEndSequenceFileConcatenator concat;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		concat = new SingleEndSequenceFileConcatenator();
 	}
@@ -44,13 +45,13 @@ public class SingleEndSequenceFileConcatenatorTest {
 
 		SequenceFile newSeqFile = concatenateFiles.getSequenceFile();
 
-		assertTrue("file exists", Files.exists(newSeqFile.getFile()));
+		assertTrue(Files.exists(newSeqFile.getFile()), "file exists");
 
 		long newFileSize = newSeqFile.getFile()
 				.toFile()
 				.length();
 
-		assertEquals("new file should be 2x size of originals", originalLength * 2, newFileSize);
+		assertEquals(originalLength * 2, newFileSize, "new file should be 2x size of originals");
 	}
 
 	@Test
@@ -71,16 +72,16 @@ public class SingleEndSequenceFileConcatenatorTest {
 
 		SequenceFile newSeqFile = concatenateFiles.getSequenceFile();
 
-		assertTrue("file exists", Files.exists(newSeqFile.getFile()));
+		assertTrue(Files.exists(newSeqFile.getFile()), "file exists");
 
 		long newFileSize = newSeqFile.getFile()
 				.toFile()
 				.length();
 
-		assertEquals("new file should be 2x size of originals", originalLength * 2, newFileSize);
+		assertEquals(originalLength * 2, newFileSize, "new file should be 2x size of originals");
 	}
 
-	@Test(expected = ConcatenateException.class)
+	@Test
 	public void testConcatenateDifferentFileTypes() throws IOException, ConcatenateException {
 		String newFileName = "newFile";
 
@@ -90,10 +91,12 @@ public class SingleEndSequenceFileConcatenatorTest {
 		SingleEndSequenceFile f1 = new SingleEndSequenceFile(original1);
 		SingleEndSequenceFile f2 = new SingleEndSequenceFile(original2);
 
-		SingleEndSequenceFile concatenateFiles = concat.concatenateFiles(Lists.newArrayList(f1, f2), newFileName);
+		assertThrows(ConcatenateException.class, () -> {
+			concat.concatenateFiles(Lists.newArrayList(f1, f2), newFileName);
+		});
 	}
 
-	@Test(expected = ConcatenateException.class)
+	@Test
 	public void testConcatenateBadExtension() throws IOException, ConcatenateException {
 		String newFileName = "newFile";
 
@@ -103,7 +106,9 @@ public class SingleEndSequenceFileConcatenatorTest {
 		SingleEndSequenceFile f1 = new SingleEndSequenceFile(original1);
 		SingleEndSequenceFile f2 = new SingleEndSequenceFile(original2);
 
-		SingleEndSequenceFile concatenateFiles = concat.concatenateFiles(Lists.newArrayList(f1, f2), newFileName);
+		assertThrows(ConcatenateException.class, () -> {
+			concat.concatenateFiles(Lists.newArrayList(f1, f2), newFileName);
+		});
 	}
 
 	private SequenceFile createSequenceFile(String name, String extension) throws IOException {

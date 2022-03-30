@@ -172,9 +172,9 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Page<UserGroup> search(Specification<UserGroup> specification, int page, int size, Direction order,
 			String... sortProperties) {
-		return super.search(specification, page, size, order, sortProperties);
+		return super.search(specification, PageRequest.of(page, size, order, sortProperties));
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -284,9 +284,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 			return true;
 		}
 
-		long count = getUsersForGroup(userGroup).stream()
-				.filter(g -> g.getRole()
-						.equals(UserGroupRole.GROUP_OWNER))
+		long count = getUsersForGroup(userGroup).stream().filter(g -> g.getRole().equals(UserGroupRole.GROUP_OWNER))
 				.count();
 
 		// There must always be an owner on the project
@@ -401,23 +399,6 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 					final CriteriaBuilder cb) {
 				return cb.and(cb.like(root.get("userGroup").get("name"), "%" + searchName + "%"),
 						cb.equal(root.get("project"), p));
-			}
-		};
-	}
-
-	/**
-	 * A convenience specification to filter {@link UserGroupJoin} by role.
-	 * 
-	 * @param role
-	 *            the role type to filter on
-	 * @return a specification for the filter.
-	 */
-	private static final Specification<UserGroupJoin> filterUserGroupJoinByRole(final UserGroupRole role) {
-		return new Specification<UserGroupJoin>() {
-			@Override
-			public Predicate toPredicate(final Root<UserGroupJoin> root, final CriteriaQuery<?> query,
-					final CriteriaBuilder cb) {
-				return cb.equal(root.get("role"), role);
 			}
 		};
 	}

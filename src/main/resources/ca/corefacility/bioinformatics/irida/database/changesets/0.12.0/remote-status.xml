@@ -88,7 +88,7 @@
 			</column>
 		</addColumn>
 
-		<addColumn tableName="sequence_file_AUD ">
+		<addColumn tableName="sequence_file_AUD">
 			<column name="remote_status" type="bigint(20)" />
 		</addColumn>
 

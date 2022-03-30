@@ -6,11 +6,12 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.processing.concatenate.impl.SequenceFilePairConcatenator;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.impl.SingleEndSequenceFileConcatenator;
 import com.google.common.collect.Sets;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for {@link SequencingObjectConcatenatorFactory}
@@ -30,9 +31,11 @@ public class SequencingObjectConcatenatorFactoryTest {
 		assertTrue(concatenator instanceof SequenceFilePairConcatenator);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testGetConcatenatorError() {
-		SequencingObjectConcatenatorFactory.getConcatenator(SequencingObject.class);
+		assertThrows(IllegalArgumentException.class, () -> {
+			SequencingObjectConcatenatorFactory.getConcatenator(SequencingObject.class);
+		});
 	}
 
 	@Test
@@ -49,9 +52,11 @@ public class SequencingObjectConcatenatorFactoryTest {
 		assertTrue(concatenator instanceof SequenceFilePairConcatenator);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testGetConcatenatorMixedError() {
 		Set<SequencingObject> fileSet = Sets.newHashSet(new SequenceFilePair(), new SingleEndSequenceFile(null));
-		SequencingObjectConcatenatorFactory.getConcatenator(fileSet);
+		assertThrows(IllegalArgumentException.class, () -> {
+			SequencingObjectConcatenatorFactory.getConcatenator(fileSet);
+		});
 	}
 }

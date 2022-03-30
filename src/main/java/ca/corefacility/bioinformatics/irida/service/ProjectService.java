@@ -208,6 +208,16 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	public List<Join<Project, User>> getProjectsForUser(User user);
 
 	/**
+	 * Get all {@link Project}s associated with a particular {@link User}.
+	 *
+	 * @param user
+	 * 		the user to get the unique projects for.
+	 *
+	 * @return the projects associated with the user.
+	 */
+	public List<Project> getProjectsForUserUnique(User user);
+
+	/**
 	 * Check if a {@link User} has a given {@link ProjectRole} on a {@link Project}
 	 *
 	 * @param user

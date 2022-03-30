@@ -1,8 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.CreateProjectComponent;
@@ -13,6 +12,9 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * <p>
  * Integration test to ensure that the ProjectsNew Page.
@@ -21,7 +23,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 
-	@Before
+	@BeforeEach
 	public void login() {
 		LoginPage.loginAsManager(driver());
 	}
@@ -36,26 +38,28 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 
 		// Test invalid entries
 		createComponent.enterProjectName("SMA");
-		Assert.assertEquals("Should have a name length error", "The project name must be at least 5 characters long", createComponent.getNameWarning());
+		assertEquals("The project name must be at least 5 characters long", createComponent.getNameWarning(), "Should have a name length error");
 		createComponent.enterProjectName("");
-		Assert.assertEquals("Should display a required error", "A name is required for every project", createComponent.getNameWarning());
-		createComponent.enterProjectName("TE\0*");
-		Assert.assertEquals("Should display a invalid character warning", "A project name can only have letters, numbers, spaces, _ and -.", createComponent.getNameWarning());
+		assertEquals("A name is required for every project", createComponent.getNameWarning(),
+				"Should display a required error");
+		createComponent.enterProjectName("TE&#*");
+		assertEquals("A project name can only have letters, numbers, spaces, _ and -.",
+				createComponent.getNameWarning(), "Should display a invalid character warning");
 
 		// Test correct
 		createComponent.enterProjectName(name);
 		createComponent.enterProjectDescription(description);
 		createComponent.goToNextStep();
-		Assert.assertTrue("Should be a message explaining no samples", createComponent.isNoSamplesMessageDisplayed());
+		assertTrue(createComponent.isNoSamplesMessageDisplayed(), "Should be a message explaining no samples");
 		createComponent.submitProject();
-		Assert.assertTrue(driver().getTitle().contains(name));
+		assertTrue(driver().getTitle().contains(name));
 
 		// Go to the settings page to make sure things were set properly.
-		driver().get(driver().getCurrentUrl() + "/settings/details");
+		driver().get(driver().getCurrentUrl() + "/settings");
 
 		ProjectDetailsPage detailsPage = ProjectDetailsPage.initElements(driver());
-		Assert.assertEquals(name, detailsPage.getProjectName());
-		Assert.assertEquals(description, detailsPage.getProjectDescription());
+		assertEquals(name, detailsPage.getProjectName());
+		assertEquals(description, detailsPage.getProjectDescription());
 	}
 
 	@Test
@@ -75,7 +79,7 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 		createComponent.selectAllSamples();
 
 		createComponent.submitProject();
-		Assert.assertTrue(driver().getTitle().contains(name));
-		Assert.assertEquals("Should be 1 sample on the page", "Showing 1 to 1 of 1 entries", samplesPage.getTableInfo());
+		assertTrue(driver().getTitle().contains(name));
+		assertEquals("Showing 1 to 1 of 1 entries", samplesPage.getTableInfo(), "Should be 1 sample on the page");
 	}
 }

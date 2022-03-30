@@ -16,17 +16,9 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
  * </ol>
  */
 @Configuration
-@PropertySource(value = { "classpath:/version.properties",
-		"classpath:/ca/corefacility/bioinformatics/irida/config/jdbc.${irida.db.profile:dev}.properties",
-		"classpath:/ca/corefacility/bioinformatics/irida/config/filesystem.properties",
-		"classpath:/ca/corefacility/bioinformatics/irida/config/caching.properties",
-		"classpath:/ca/corefacility/bioinformatics/irida/config/ontology.properties",
-		"classpath:/ca/corefacility/bioinformatics/irida/config/workflows.properties",
-		"classpath:/ca/corefacility/bioinformatics/irida/config/galaxy.properties",
-		"classpath:/ca/corefacility/bioinformatics/irida/config/openapi.properties",
-		"classpath:/ca/corefacility/bioinformatics/irida/config/authentication.properties",
-		"classpath:configuration.properties", "file:/etc/irida/irida.conf",
-		"file:/etc/irida/web.conf" }, ignoreResourceNotFound = true)
+@PropertySource(value = {
+		"classpath:/ca/corefacility/bioinformatics/irida/config/jdbc.${irida.db.profile:dev}.properties"
+	}, ignoreResourceNotFound = true)
 public class IridaApiPropertyPlaceholderConfig {
 
 	@Bean

@@ -6,7 +6,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
-import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 
 /**
  * Class to be used when returning additional properties about a model object
@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaResourceSupport;
  * @param <Type>
  *            The type of class being embedded.
  */
-public class ResourceAdditionalProperties<Type extends IridaResourceSupport> {
+public class ResourceAdditionalProperties<Type extends IridaRepresentationModel> {
 
 	@JsonUnwrapped
 	private Type resource;

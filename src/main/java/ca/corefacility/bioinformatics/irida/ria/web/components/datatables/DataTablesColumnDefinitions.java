@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Responsible for extracting and representing DataTables Columns
+ * 
  * <pre>
  *  columns[n][data]            - Column's data source (https://datatables.net/reference/option/columns.data)
  *  columns[n][name]            - Column's name (https://datatables.net/reference/option/columns.name)
@@ -17,7 +18,8 @@ import javax.servlet.http.HttpServletRequest;
  *                                regular expression (true) or not (false).
  * </pre>
  *
- * @see <a href="https://datatables.net/manual/server-side">Server-side processing</a>
+ * @see <a href="https://datatables.net/manual/server-side">Server-side
+ *      processing</a>
  */
 public class DataTablesColumnDefinitions {
 	private String name;
@@ -26,7 +28,8 @@ public class DataTablesColumnDefinitions {
 	private boolean searchable;
 	private String searchValue;
 
-	private DataTablesColumnDefinitions(String name, String data, boolean searchable, boolean orderable, String searchValue) {
+	private DataTablesColumnDefinitions(String name, String data, boolean searchable, boolean orderable,
+			String searchValue) {
 		this.name = name;
 		this.data = data;
 		this.searchable = searchable;
@@ -35,14 +38,17 @@ public class DataTablesColumnDefinitions {
 	}
 
 	/**
-	 * Static initializer.  Parses {@link HttpServletRequest} to get the DataTables parameters for the Column.
+	 * Static initializer. Parses {@link HttpServletRequest} to get the
+	 * DataTables parameters for the Column.
 	 *
 	 * @param index
-	 * 		{@link Integer} index for the current column.
+	 *            {@link Integer} index for the current column.
 	 * @param request
-	 * 		{@link HttpServletRequest} current server request, containing a {@link DataTablesRequest}
+	 *            {@link HttpServletRequest} current server request, containing
+	 *            a {@link DataTablesRequest}
 	 *
-	 * @return {@link DataTablesColumnDefinitions} definition for the column at the index.
+	 * @return {@link DataTablesColumnDefinitions} definition for the column at
+	 *         the index.
 	 */
 	static DataTablesColumnDefinitions createColumnDefinition(Integer index, HttpServletRequest request) {
 		String prefix = "columns[" + index + "]";
@@ -61,28 +67,42 @@ public class DataTablesColumnDefinitions {
 	 * Column Name
 	 *
 	 * @return {@link String}
-	 * @see <a href="https://datatables.net/reference/option/columns.name">columns.name</a>
+	 * @see <a href=
+	 *      "https://datatables.net/reference/option/columns.name">columns.name</a>
 	 */
 	public String getColumnName() {
 		return name;
 	}
 
 	/**
+	 * Column Data
+	 * 
+	 * @return {@link String}
+	 * @see <a href=
+	 *      "https://datatables.net/reference/option/columns.data">columns.data</a>
+	 */
+	public String getData() {
+		return data;
+	}
+
+	/**
 	 * Column Orderable: end user's ability to order this column.
 	 *
 	 * @return {@link Boolean} true if the column is orderable.
-	 * @see <a href="https://datatables.net/reference/option/columns.orderable">columns.orderable</a>
+	 * @see <a href=
+	 *      "https://datatables.net/reference/option/columns.orderable">columns.orderable</a>
 	 */
 	public boolean isOrderable() {
 		return orderable;
 	}
 
 	/**
-	 * Column searchable
-	 * Defined if DataTables should include this column in the filterable data in the table.
+	 * Column searchable Defined if DataTables should include this column in the
+	 * filterable data in the table.
 	 *
 	 * @return {@link Boolean} true if the column is searchable
-	 * @see <a href="https://datatables.net/reference/option/columns.searchable">solumns.searchable</a>
+	 * @see <a href=
+	 *      "https://datatables.net/reference/option/columns.searchable">solumns.searchable</a>
 	 */
 	public boolean isSearchable() {
 		return searchable;

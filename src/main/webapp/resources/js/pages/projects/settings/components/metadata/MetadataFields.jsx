@@ -1,7 +1,12 @@
 import { Button, Empty, Space, Table } from "antd";
 import React from "react";
-import { useGetMetadataFieldsForProjectQuery } from "../../../../../apis/metadata/field";
-import { useGetProjectDetailsQuery } from "../../../../../apis/projects/project";
+import { useParams } from "react-router-dom";
+import {
+  useGetMetadataFieldsForProjectQuery
+} from "../../../../../apis/metadata/field";
+import {
+  useGetProjectDetailsQuery
+} from "../../../../../apis/projects/project";
 import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
 
 /**
@@ -9,11 +14,12 @@ import { MetadataTemplateCreate } from "./MetadataTemplateCreate";
  *
  * @returns {JSX.Element|string}
  */
-export default function MetadataFields({ projectId }) {
+export default function MetadataFields() {
+  const { projectId } = useParams();
+
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
-  const { data: fields, isLoading } = useGetMetadataFieldsForProjectQuery(
-    projectId
-  );
+  const { data: fields, isLoading } =
+    useGetMetadataFieldsForProjectQuery(projectId);
 
   const [selected, setSelected] = React.useState([]);
   const [selectedFields, setSelectedFields] = React.useState([]);
@@ -44,7 +50,7 @@ export default function MetadataFields({ projectId }) {
   ];
 
   return (
-    <Space direction="vertical" style={{ display: "block" }}>
+    <Space direction="vertical" style={{ width: `100%` }}>
       {project.canManage && (
         <Space>
           <MetadataTemplateCreate fields={selectedFields} projectId={projectId}>

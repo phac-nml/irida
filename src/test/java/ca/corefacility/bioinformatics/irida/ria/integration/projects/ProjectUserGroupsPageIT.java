@@ -1,20 +1,19 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.ClientDetailsPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.clients.CreateClientPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.admin.AdminClientsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSyncPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectUserGroupsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class ProjectUserGroupsPageIT extends AbstractIridaUIITChromeDriver {
@@ -23,28 +22,28 @@ public class ProjectUserGroupsPageIT extends AbstractIridaUIITChromeDriver {
 	public void testPageAsCollaborator() {
 		LoginPage.loginAsUser(driver());
 		ProjectUserGroupsPage page = ProjectUserGroupsPage.goToPage(driver(), 1L);
-		assertFalse("Collaborators should not be able to add a new group to the project",
-				page.isAddUserGroupButtonVisible());
+		assertFalse(page.isAddUserGroupButtonVisible(),
+				"Collaborators should not be able to add a new group to the project");
 	}
 
 	@Test
 	public void testPageAsAManager() {
 		LoginPage.loginAsManager(driver());
 		ProjectUserGroupsPage page = ProjectUserGroupsPage.goToPage(driver(), 1L);
-		assertTrue("Managers can see the add user groups button.", page.isAddUserGroupButtonVisible());
-		assertEquals("Should be no user groups", 0, page.getNumberOfUserGroups());
+		assertTrue(page.isAddUserGroupButtonVisible(), "Managers can see the add user groups button.");
+		assertEquals(0, page.getNumberOfUserGroups(), "Should be no user groups");
 		page.addUserGroup("group 1");
-		assertEquals("Should be one user groups", 1, page.getNumberOfUserGroups());
+		assertEquals(1, page.getNumberOfUserGroups(), "Should be one user groups");
 
 		page.removeUserGroups(0);
-		assertEquals("Should be no user groups", 0, page.getNumberOfUserGroups());
+		assertEquals(0, page.getNumberOfUserGroups(), "Should be no user groups");
 	}
 
 	@Test
 	public void testRemoteProjectPageAsAManager() {
 		LoginPage.loginAsAdmin(driver());
 
-		CreateClientPage createClientPage;
+		AdminClientsPage clientsPage;
 		ProjectSyncPage page;
 
 		String clientId = "myClient";
@@ -52,11 +51,10 @@ public class ProjectUserGroupsPageIT extends AbstractIridaUIITChromeDriver {
 
 		//create the oauth client
 		String redirectLocation = RemoteApiUtilities.getRedirectLocation();
-		createClientPage = new CreateClientPage(driver());
-		createClientPage.goTo();
-		createClientPage.createClientWithDetails(clientId, "authorization_code", redirectLocation, true, false);
-		ClientDetailsPage detailsPage = new ClientDetailsPage(driver());
-		clientSecret = detailsPage.getClientSecret();
+		clientsPage = AdminClientsPage.goTo(driver());
+		clientsPage.createClientWithDetails(clientId, "authorization_code", redirectLocation, AdminClientsPage.READ_YES,
+				AdminClientsPage.WRITE_NO);
+		clientSecret = clientsPage.getClientSecret(clientId);
 
 		RemoteApiUtilities.addRemoteApi(driver(), clientId, clientSecret);
 		page = ProjectSyncPage.goTo(driver());
@@ -66,26 +64,26 @@ public class ProjectUserGroupsPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectProjectInListing(name);
 
 		String url = page.getProjectUrl();
-		assertFalse("URL should not be empty", url.isEmpty());
+		assertFalse(url.isEmpty(), "URL should not be empty");
 		page.submitProject();
 
 		String pathTokens[] = driver().getCurrentUrl().split("/");
 		Long projectId = Long.valueOf(pathTokens[pathTokens.length-1]);
 
 		ProjectMembersPage remoteProjectMembersPage = ProjectMembersPage.goToRemoteProject(driver(), projectId);
-		assertEquals("Should be 1 members in the project", 1, remoteProjectMembersPage.getNumberOfMembers());
+		assertEquals(1, remoteProjectMembersPage.getNumberOfMembers(), "Should be 1 members in the project");
 		remoteProjectMembersPage.addUserToProject("Mr. Manager");
 		remoteProjectMembersPage.updateUserRole(0, ProjectRole.PROJECT_OWNER.toString());
-		assertEquals("Should be 2 members in the project", 2, remoteProjectMembersPage.getNumberOfMembers());
+		assertEquals(2, remoteProjectMembersPage.getNumberOfMembers(), "Should be 2 members in the project");
 
 		LoginPage.loginAsManager(driver());
 		ProjectUserGroupsPage projectUserGroupsPage = ProjectUserGroupsPage.goToPage(driver(), projectId);
-		assertTrue("Managers can see the add user groups button.", projectUserGroupsPage.isAddUserGroupButtonVisible());
-		assertEquals("Should be no user groups", 0, projectUserGroupsPage.getNumberOfUserGroups());
+		assertTrue(projectUserGroupsPage.isAddUserGroupButtonVisible(), "Managers can see the add user groups button.");
+		assertEquals(0, projectUserGroupsPage.getNumberOfUserGroups(), "Should be no user groups");
 		projectUserGroupsPage.addUserGroup("group 1");
-		assertEquals("Should be one user groups", 1, projectUserGroupsPage.getNumberOfUserGroups());
+		assertEquals(1, projectUserGroupsPage.getNumberOfUserGroups(), "Should be one user groups");
 
 		projectUserGroupsPage.removeUserGroups(0);
-		assertEquals("Should be no user groups", 0, projectUserGroupsPage.getNumberOfUserGroups());
+		assertEquals(0, projectUserGroupsPage.getNumberOfUserGroups(), "Should be no user groups");
 	}
 }

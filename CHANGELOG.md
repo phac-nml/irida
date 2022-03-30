@@ -1,13 +1,51 @@
 Changes
 =======
 
+22.03 to 22.05
+--------------
+* [Developer]: Add `--no-yarn` to skip the yarn build in `run.sh`
+* [Developer]: Updated frontend dependencies: `babel`, `eslint`, `postcss`, and `webpack`
+* [Database]: Updated group and user project queries to improve performance for all pages/calls that depend on project permissions.
+* [UI]: Updated Create Remote Api to use Ant Design.
+* [UI]: Removed old bootstrap client details/edit page and updated with a modal on the clients listing page.
+* [UI]: Updated Dashboard Recent Activity to use Ant Design.
+* [Developer]: Updated to Ant Design v4.19.3.
+* [Developer]: Removed unused DataTables code.
+* [UI]: Sorted columns for advanced charts and added labels to tiny charts on admin statistics page.
+
+22.01 to 22.03
+--------------
+* [REST]: Corrected behaviour of date fields in REST API to return epoch instead of textual string. (22.01.1)
+* [Documentation]: Fixed issue that prevented a user from saving analysis results back to a sample and concatenating sequence files. Fixed date format in Swagger REST API documentation. (22.01.2)
+* [REST]: Fixed bug that was preventing syncing remote projects from versions 20.09 and older. (22.01.3)
+* [UI]: Fixed bug preventing updating of project details. (22.01.4)
+* [All]: Fixed scalability bug in updating Project modifiedDate during handling of ProjectEvent that was increasing in
+  operation time as number of Samples increased within a project.
+* [UI]: Fixed load times on Project Samples page.
+* [UI]: Fixed text overflow issue in Command-line Linker modal.
+* [UI]: Fixed bug with Command-line Linker modal making multiple requests to the server to get the command string.
+* [UI]: Fixed issue with CSV/XLSX export on linelist page from not completing on massive projects >100,000 samples.
+* [UI]: Adding in batch loading to linelist page (provides feedback to user, important on large projects >5000 samples)
+* [UI]: Added a progress indicator when loading samples into the linelist table.
+* [UI]: Added a warning notification when selecting all samples on the project samples page.
+
 21.09 to 22.01
 --------------
 * [REST]: Fixed bug where analysis output file bytes were being included in responses when only JSON should have been sent. (21.09.1)
+* [All]: Updated some dependency packages to latest versions to remove any `Critical|High` issues as reported by Grype <https://github.com/anchore/grype>. (21.09.2)
 * [REST]: Fixed bug prevending REST API clients from updating the `collectedDate` on samples.
 * [Developer]: Updated `antd` to version 4.16.13
 * [Developer/UI]: Refreshed the metadata uploader.
 * [Developer/UI]: Updated to the latest release of `react-router-dom` v6.0.2.
+* [UI]: Refactored share/move samples between projects to use a separate page.
+* [UI]: Added capability to share/move samples between projects from the line list page.
+* [UI]: Fixed issue with dynamic pipeline parameters with only one value not rendering.
+* [Developer]: Updated to use Yarn v3 and updated browserlist to v4.19.17.
+* [Developer]: Added parsing of CHROMEWEBDRIVER in ./run-tests.sh to detect and use chromedriver provided by github actions ubuntu20.04 image.
+* [UI/Workflow]: Added in support for displaying html files found inside of zipped html output files.
+* [Developer]: Converted the project from bare Spring to Spring Boot 2.6.3, which involved upgrading a number of
+  dependencies.
+* [Developer]: Update to `react-router` v6 from `@reach-router`.
 
 21.05 to 21.09
 --------------
@@ -211,7 +249,7 @@ Changes
 * [UI]: Updated project and global analyses listing pages to use Ant Design tables.
 * [UI]: Updated sequencing runs table to use Ant Design tables.
 * [UI/Developer]: Minor package updates for `babel`, `eslint` and `ant.design`.
-* [API]: Fixed concatenating `.fastq.gz` files from the user interface. 
+* [API]: Fixed concatenating `.fastq.gz` files from the user interface.
 * [UI]: Fixed bug where `Let the Pipeline Run` button failed to empty the cart and redirect the user to the projects page.
 * [UI/Developer]: Removed `marked` and `angular-marked` as bower dependencies.
 * [UI]: Fixed issue where grant types, and refresh token validity would not populate correctly on client edit form.
@@ -398,7 +436,7 @@ Changes
 * [Developer]: Updated `yarn` to the current version.
 * [UI/Workflow]: Pipeline analysis output files are rendered in the same order as they appear in the pipeline `irida_workflow.xml` in the `<outputs>` XML element.
 * [Developer]: Can now specify which `chromedriver` to use in UI testing with `-Dwebdriver.chrome.driver=/PATH/TO/chromedriver`.
-* [UI]: Fixes slow Sample cart. Quicker saving of large selections of samples to cart (`POST /cart/add/samples`) and loading of existing cart Samples (`GET /cart`).  
+* [UI]: Fixes slow Sample cart. Quicker saving of large selections of samples to cart (`POST /cart/add/samples`) and loading of existing cart Samples (`GET /cart`).
 
 0.20.0 to 0.21.0
 ----------------
@@ -409,7 +447,7 @@ Changes
 * [Developer]: Removed old gulp dependencies from the `package.json` file.
 * [Developer]: Update to stable releases of `node` and `yarn`.
 * [Administration]: Disabled automated SISTR results from saving to sample metadata.  Also disabled retrospective results from being added during the database update.  Installations that have already performed the 0.20.0 update will have their retrospective automated SISTR results automatically added to sample metadata.  Installations that jump directly to 0.20.1 and above will not have this data added to sample metadata. (0.20.1)
-* [UI/Workflow]: Preview analysis output files in a tabular or plain-text view in the analysis details page under the Preview tab. 
+* [UI/Workflow]: Preview analysis output files in a tabular or plain-text view in the analysis details page under the Preview tab.
 
 0.19.0 to 0.20.0
 ----------------
@@ -436,10 +474,10 @@ Changes
 * [UI]: Fixed issue where time stamps where not displayed on activities pages.
 * [UI]: Fixed issue where breadcrumbs were not displaying on the Project > Line List and Project > Analyses pages.
 * [UI]: Cleaned up sub-navigation elements on samples and files.
-* [UI]: Updated Remote API pages (datatables, and removed Noty modals).  
+* [UI]: Updated Remote API pages (datatables, and removed Noty modals).
 * [UI]: Fixed issue where breadcrumbs not displaying on the Samples > File > QC Analsis pages.
 * [UI]: Removed search box from sequencing run page.
-* [UI/Workflow]: Galaxy job error info retrieved from Galaxy if a workflow submission fails. Job error info is shown in Analyses table and on the Analysis page if it exists. 
+* [UI/Workflow]: Galaxy job error info retrieved from Galaxy if a workflow submission fails. Job error info is shown in Analyses table and on the Analysis page if it exists.
 * [UI]: Fixed issue with Upload Sequence Files button when SequenceFiles page resized.
 * [UI]: SISTR able to write metadata back to samples.
 

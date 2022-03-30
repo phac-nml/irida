@@ -1,10 +1,17 @@
+import { Badge, Button, Menu } from "antd";
 import React from "react";
-import { IconShoppingCart } from "../../../icons/Icons";
-import { Badge } from "antd";
+import { getCartCount } from "../../../../apis/cart/cart";
+import { SPACE_MD } from "../../../../styles/spacing";
 import { CART } from "../../../../utilities/events-utilities";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { getCartCount } from "../../../../apis/cart/cart";
-import { theme } from "../../../../utilities/theme-utilities";
+import { IconShoppingCart } from "../../../icons/Icons";
+import styled from "styled-components";
+
+const BadgeStyle = styled(Badge)`
+  margin-left: -5px !important;
+  margin-top: -5px !important;
+  position: fixed !important;
+`;
 
 /**
  * React component to display the cart icon and current counts in the
@@ -36,17 +43,17 @@ export function CartLink() {
   }, []);
 
   return (
-    <a
-      className="t-cart-count"
-      data-count={count}
-      href={setBaseUrl(`/cart/${inGalaxy ? "galaxy" : "pipelines"}`)}
-    >
-      <Badge count={count}>
-        <IconShoppingCart
-          style={theme === "dark" ? { color: "rgba(255, 255, 255, 0.65)" } : {}}
-          data-count={count}
-        />
-      </Badge>
-    </a>
+    <div style={{ padding: `0  ${SPACE_MD}` }}>
+      <Button
+        type="link"
+        className="t-cart-count"
+        href={setBaseUrl(`/cart/${inGalaxy ? "galaxy" : "pipelines"}`)}
+        icon={
+          <Badge count={count} offset={[10, -5]}>
+            <IconShoppingCart data-count={count} />
+          </Badge>
+        }
+      />
+    </div>
   );
 }

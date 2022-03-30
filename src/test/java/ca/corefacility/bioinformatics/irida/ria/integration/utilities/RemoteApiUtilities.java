@@ -2,29 +2,32 @@ package ca.corefacility.bioinformatics.irida.ria.integration.utilities;
 
 import org.openqa.selenium.WebDriver;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.CreateRemoteAPIPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIDetailsPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi.RemoteAPIsPage;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RemoteApiUtilities {
-	protected static final String BASE_URL =
-			System.getProperty("server.base.url", "http://localhost:" + System.getProperty("jetty.port", "8080")) + "/";
+	protected static String BASE_URL;
+
+	public static void setBaseUrl(String baseUrl) {
+		BASE_URL = baseUrl;
+	}
 
 	public static void addRemoteApi(WebDriver driver, String clientId, String clientSecret) {
-		CreateRemoteAPIPage page = new CreateRemoteAPIPage(driver);
+		RemoteAPIsPage page = RemoteAPIsPage.goTo(driver);
 
 		String baseUrl = page.getBaseUrl();
 		String url = baseUrl + "api";
 
-		page.createRemoteAPIWithDetails("new name", url, clientId, clientSecret);
+		page.createRemoteApi("new name", clientId, clientSecret, url);
 
 		RemoteAPIDetailsPage remoteAPIDetailsPage = RemoteAPIDetailsPage.gotoDetailsPage(driver);
 
 		remoteAPIDetailsPage.clickConnect();
 		remoteAPIDetailsPage.clickAuthorize();
 
-		assertTrue("api status should be connected", remoteAPIDetailsPage.isRemoteAPIConnected());
+		assertTrue(remoteAPIDetailsPage.isRemoteAPIConnected(), "api status should be connected");
 	}
 
 	/**

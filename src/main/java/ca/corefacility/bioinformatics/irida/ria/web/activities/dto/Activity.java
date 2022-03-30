@@ -23,6 +23,14 @@ public class Activity extends ListItem {
 		this.items = items;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public String getType() {
+		return type;
+	}
+
 	public String getDescription() {
 		return description;
 	}
@@ -33,9 +41,5 @@ public class Activity extends ListItem {
 
 	public List<ActivityItem> getItems() {
 		return items;
-	}
-
-	public String getType() {
-		return type;
 	}
 }

@@ -10,13 +10,15 @@ public class UpdatedAnalysisProgress {
 	private AnalysisState analysisState;
 	private AnalysisState previousState;
 	private Long duration;
+	private Boolean treeDefault;
 
 	public UpdatedAnalysisProgress(AnalysisState analysisState,
-			AnalysisState previousState, Long duration) {
+			AnalysisState previousState, Long duration, Boolean treeDefault) {
 
 		this.analysisState = analysisState;
 		this.previousState = previousState;
 		this.duration = duration;
+		this.treeDefault = treeDefault;
 	}
 
 
@@ -42,5 +44,13 @@ public class UpdatedAnalysisProgress {
 
 	public void setDuration(Long duration) {
 		this.duration = duration;
+	}
+
+	public Boolean getTreeDefault() {
+		return treeDefault;
+	}
+
+	public void setTreeDefault(Boolean treeDefault) {
+		this.treeDefault = treeDefault;
 	}
 }

@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.samples;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplePairer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,7 +34,7 @@ public class SamplePairerTest {
     public void testGetSingleFiles() throws IOException{
         List<MultipartFile> allFiles = createMultipartFileList(MULTIPARTFILE_PATHS);
         SamplePairer samplePairer = new SamplePairer(allFiles);
-        assertEquals("Single files not correctly organized/separated from paired files", 2, samplePairer.getSingleFiles(allFiles).size());
+        assertEquals(2, samplePairer.getSingleFiles(allFiles).size(), "Single files not correctly organized/separated from paired files");
     }
 
     /**
@@ -47,10 +47,10 @@ public class SamplePairerTest {
 
         Set<String> keys = samplePairer.getPairedFiles(allFiles).keySet();
 
-        assertEquals("Paired files not correctly organized into pairs by prefix", 3, keys.size());
+        assertEquals(3, keys.size(), "Paired files not correctly organized into pairs by prefix");
 
         for (String s: keys) {
-            assertEquals("Pairs don't contain the right number of sequence files", 2, samplePairer.getPairedFiles(allFiles).get(s).size());
+            assertEquals(2, samplePairer.getPairedFiles(allFiles).get(s).size(), "Pairs don't contain the right number of sequence files");
         }
     }
 
@@ -82,10 +82,10 @@ public class SamplePairerTest {
 
         Set<String> keys = samplePairer.getPairedFiles(allFiles).keySet();
 
-        assertEquals("Paired files not correctly organized into pairs by prefix", 1, keys.size());
+        assertEquals(1, keys.size(), "Paired files not correctly organized into pairs by prefix");
 
         for (String s: keys) {
-            assertEquals("Pairs don't contain the right number of sequence files", 2, samplePairer.getPairedFiles(allFiles).get(s).size());
+            assertEquals(2, samplePairer.getPairedFiles(allFiles).get(s).size(), "Pairs don't contain the right number of sequence files");
         }
     }
 }

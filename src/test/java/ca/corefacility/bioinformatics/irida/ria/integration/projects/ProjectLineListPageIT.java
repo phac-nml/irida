@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Dimension;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -9,7 +9,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * <p>
@@ -29,11 +29,13 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 				.window()
 				.setSize(new Dimension(1800, 1200)); // Make sure we can see everything.
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
-		assertFalse("Should not display import metadata button to collaborators", page.isImportMetadataBtnVisible());
+		assertFalse(page.isImportMetadataBtnVisible(), "Should not display import metadata button to collaborators");
 
 		String newValue = "FOOBAR";
 		page.editCellContents(0, COLUMN_ID, newValue);
-		assertNotEquals("Cell should not have been updated", newValue, page.getCellContents(0, COLUMN_ID));
+		assertNotEquals(newValue, page.getCellContents(0, COLUMN_ID), "Cell should not have been updated");
+
+		assertFalse(page.isShareButtonVisible(), "Collaborators should not be able to share samples");
 	}
 
 	@Test
@@ -44,64 +46,64 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 				.setSize(new Dimension(1800, 1200)); // Make sure we can see everything.
 
 		ProjectLineListPage page = ProjectLineListPage.goToPage(driver(), 1);
-		assertTrue("Should display import metadata button", page.isImportMetadataBtnVisible());
+		assertTrue(page.isImportMetadataBtnVisible(), "Should display import metadata button");
 
 		// Ensure translations are loaded onto the page.
-		assertTrue("Applications translations should be loaded", page.ensureTranslationsLoaded("app"));
-		assertTrue("Translations should be properly loaded on the linelist page.",
-				page.ensureTranslationsLoaded("project-linelist"));
+		assertTrue(page.ensureTranslationsLoaded("app"), "Applications translations should be loaded");
+		assertTrue(page.ensureTranslationsLoaded("project-linelist"),
+				"Translations should be properly loaded on the linelist page.");
 
 
 		// Test the tour to make sure everything is functional.
 		page.openTour();
-		assertEquals("Should be on the first step of the tour", 1, page.getTourStep());
+		assertEquals(1, page.getTourStep(), "Should be on the first step of the tour");
 		page.goToNextTourStage();
-		assertEquals("Should be on the second step of the tour", 2, page.getTourStep());
+		assertEquals(2, page.getTourStep(), "Should be on the second step of the tour");
 		page.closeTour();
 		// If we reached this far the tour is good to go
 
 		// OPen the column panel
 		page.openColumnsPanel();
-		assertEquals("Should be on the correct page.", "Line List", page.getActivePage());
-		assertEquals("Should be 21 samples", 21, page.getNumberOfRowsInLineList());
-		assertEquals("Should be 6 fields to toggle", 6, page.getNumberOfMetadataFields());
+		assertEquals("Line List", page.getActivePage(), "Should be on the correct page.");
+		assertEquals(21, page.getNumberOfRowsInLineList(), "Should be 21 samples");
+		assertEquals(6, page.getNumberOfMetadataFields(), "Should be 6 fields to toggle");
 
 		// Toggle one of the fields and make sure the table updates;
 		page.toggleMetadataField(1);
-		assertEquals("Should now only display 6 fields", 6, page.getNumberOfTableColumnsVisible());
+		assertEquals(6, page.getNumberOfTableColumnsVisible(), "Should now only display 6 fields");
 		page.toggleMetadataField(2);
-		assertEquals("Should now only display 5 fields", 5, page.getNumberOfTableColumnsVisible());
+		assertEquals(5, page.getNumberOfTableColumnsVisible(), "Should now only display 5 fields");
 
 		// Test selecting templates
 		page.selectTemplate(TEMPLATE_1);
-		assertEquals("Should be 4 fields visible including the sample name", 4, page.getNumberOfTableColumnsVisible());
+		assertEquals(4, page.getNumberOfTableColumnsVisible(), "Should be 4 fields visible including the sample name");
 
 		// Test saving a template
 		page.toggleMetadataField(1);
 
-		assertEquals("Should have 3 columns visible", 3, page.getNumberOfTableColumnsVisible());
+		assertEquals(3, page.getNumberOfTableColumnsVisible(), "Should have 3 columns visible");
 		page.saveMetadataTemplate(TEMPLATE_NAME);
 
 		// Switch to a different template
 		page.selectTemplate(TEMPLATE_1);
-		assertEquals("Should have 4 columns visible", 4, page.getNumberOfTableColumnsVisible());
+		assertEquals(4, page.getNumberOfTableColumnsVisible(), "Should have 4 columns visible");
 
 		// Switch back to new template
 		page.selectTemplate(TEMPLATE_NAME);
-		assertEquals("Should have 3 columns visible", 3, page.getNumberOfTableColumnsVisible());
+		assertEquals(3, page.getNumberOfTableColumnsVisible(), "Should have 3 columns visible");
 
 		// Test creating a second template
 		page.toggleMetadataField(5);
-		assertEquals("Should have 4 columns visible", 4, page.getNumberOfTableColumnsVisible());
+		assertEquals(4, page.getNumberOfTableColumnsVisible(), "Should have 4 columns visible");
 		page.saveMetadataTemplate("ANOTHER TESTING TEMPLATE");
 
 		// Switch back to new template
 		page.selectTemplate(TEMPLATE_NAME);
-		assertEquals("Should have 3 columns visible", 3, page.getNumberOfTableColumnsVisible());
+		assertEquals(3, page.getNumberOfTableColumnsVisible(), "Should have 3 columns visible");
 
 		// Switch back to new template
 		page.selectTemplate("ANOTHER TESTING TEMPLATE");
-		assertEquals("Should have 4 columns visible", 4, page.getNumberOfTableColumnsVisible());
+		assertEquals(4, page.getNumberOfTableColumnsVisible(), "Should have 4 columns visible");
 
 		// Test inline editing
 		page.selectTemplate("All Fields");
@@ -110,24 +112,34 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 
 		String newValue = "FOOBAR";
 		page.editCellContents(0, COLUMN_ID, newValue);
-		assertEquals("Cell should contain the new edited value", newValue, page.getCellContents(0, COLUMN_ID));
+		assertEquals(newValue, page.getCellContents(0, COLUMN_ID), "Cell should contain the new edited value");
 
 		driver().navigate()
 				.refresh();
 		page.openColumnsPanel();
 		page.selectTemplate(TEMPLATE_NAME);
-		assertEquals("Should keep value on a page refresh", newValue, page.getCellContents(0, COLUMN_ID));
+		assertEquals(newValue, page.getCellContents(0, COLUMN_ID), "Should keep value on a page refresh");
 
 		// Let's test to make sure that the undo works.
 		String testValue = "THIS SHOULD BE GONE!";
 		page.editCellContents(0, COLUMN_ID, testValue);
 		page.cancelCellEdit();
-		assertEquals("Should keep value after undoing edit", newValue, page.getCellContents(0, COLUMN_ID));
+		assertEquals(newValue, page.getCellContents(0, COLUMN_ID), "Should keep value after undoing edit");
 
 		// Test table filtering
 		page.filterTable(newValue);
-		assertEquals("Should be only one row with the new value", 1, page.getNumberOfRowsInLineList());
+		assertEquals(1, page.getNumberOfRowsInLineList(), "Should be only one row with the new value");
 		page.clearTableFilter();
-		assertEquals("Should be 21 samples", 21, page.getNumberOfRowsInLineList());
+		assertEquals(21, page.getNumberOfRowsInLineList(), "Should be 21 samples");
+
+		// Test sharing
+		assertFalse(page.isShareButtonEnabled(), "Share button should not be enabled with no samples selected");
+		page.selectRow(0);
+		page.selectRow(1);
+		page.selectRow(2);
+		assertTrue(page.isShareButtonEnabled(), "Share button should now be enabled");
+		page.shareSelectedSamples();
+		assertTrue(driver().getCurrentUrl().contains("share"), "Should be on the share samples page");
+
 	}
 }

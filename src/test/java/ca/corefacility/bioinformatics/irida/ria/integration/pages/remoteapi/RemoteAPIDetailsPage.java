@@ -9,13 +9,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.Ajax;
 
 public class RemoteAPIDetailsPage extends AbstractPage {
 	public static String REMOTEAPI_LIST = "remote_api";
@@ -73,7 +71,6 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		deleteButton.click();
 		wait.until(ExpectedConditions.visibilityOf(deleteConfirmButton));
 		deleteConfirmButton.click();
-		String foobar;
 	}
 
 	public void confirmDelete() {
@@ -92,6 +89,8 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 	}
 
 	public void clickConnect() {
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.elementToBeClickable(remoteStatusConnect));
 		remoteStatusConnect.click();
 
 	}
@@ -115,11 +114,6 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		driver.switchTo().window(parentWindowHandler);  // switch back to parent window
 
 		waitForTime(8000);
-	}
-
-	private void waitForAjax() {
-		Wait<WebDriver> wait = new WebDriverWait(driver, 60);
-		wait.until(Ajax.waitForAjax(60000));
 	}
 
 	public enum ApiStatus {

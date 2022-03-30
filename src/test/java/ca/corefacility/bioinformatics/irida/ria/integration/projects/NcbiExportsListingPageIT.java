@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -8,7 +8,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.NcbiE
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/NcbiExportsListingPageIT.xml")
 public class NcbiExportsListingPageIT extends AbstractIridaUIITChromeDriver {
@@ -16,6 +16,6 @@ public class NcbiExportsListingPageIT extends AbstractIridaUIITChromeDriver {
 	public void pageSetup() {
 		LoginPage.loginAsAdmin(driver());
 		NcbiExportsListingPage page = NcbiExportsListingPage.goTo(driver());
-		assertEquals("Should be 1 entry in the table", 1, page.getNumberOfBioSampleIdsDisplayed());
+		assertEquals(1, page.getNumberOfBioSampleIdsDisplayed(), "Should be 1 entry in the table");
 	}
 }

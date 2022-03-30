@@ -188,11 +188,10 @@ public class UICartService {
 	/**
 	 * Get a list of sample in the cart belonging to a list of projects
 	 *
-	 * @param projectIds List of identifiers for project to get the samples for.
 	 * @return {@link List} of {@link CartProjectModel}s containing project and sample information for items in the cart.
 	 */
-	public List<CartProjectModel> getSamplesForProjects(List<Long> projectIds) {
-		List<Project> projects = (List<Project>) projectService.readMultiple(projectIds);
+	public List<CartProjectModel> getSamplesForProjects() {
+		List<Project> projects = (List<Project>) projectService.readMultiple(getProjectIdsInCart());
 		List<CartProjectModel> models = new ArrayList<>();
 
 		for (Project project : projects) {
@@ -204,12 +203,12 @@ public class UICartService {
 					.map(Map.Entry::getKey)
 					.collect(Collectors.toList());
 
-			List<CartSampleModel> samples = new ArrayList<>();
-			for (Sample sample : sampleService.readMultiple(sampleIds)) {
-				CartSampleModel cartSampleModel = new CartSampleModel(sample);
-				samples.add(cartSampleModel);
-			}
+			List<CartSampleModel> samples = sampleIds.stream()
+					.map(id -> sampleService.getSampleForProject(project, id))
+					.map(join -> new CartSampleModel(join.getObject(), join.isOwner()))
+					.collect(Collectors.toList());
 			cartProjectModel.setSamples(samples);
+
 			models.add(cartProjectModel);
 		}
 		return models;

@@ -18,13 +18,14 @@ on:
 
 jobs:
   maven-build: # Maven integration tests
-    runs-on: ubuntu-20.04 #See pre-installed software at https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
+    runs-on: ubuntu-20.04 #See pre-installed software at https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-Readme.md
     env:
       MYSQL_PORT: 3800
       MYSQL_USER: test
       MYSQL_PASSWORD: test
       MYSQL_DATABASE: irida_integration_test
       MYSQL_HOST: 127.0.0.1
+      NODE_OPTIONS: "--max-old-space-size=4096"
 
     strategy:
       fail-fast: false  #Setting so that if one of the test suites fail, the other will continue

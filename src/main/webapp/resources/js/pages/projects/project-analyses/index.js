@@ -1,15 +1,20 @@
-import { Redirect, Router } from "@reach/router";
 import { Col, Layout, Row, Skeleton } from "antd";
 import React, { Suspense } from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
+import {
+  BrowserRouter,
+  Outlet,
+  Route,
+  Routes,
+  useParams,
+} from "react-router-dom";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_SM } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import AnalysesNav from "./components/AnalysesNav";
 
 import store from "./store";
-import AnalysesNav from "./components/AnalysesNav";
-import SettingsNav from "../settings/components/SettingsNav";
 
 const ProjectAnalysesPage = React.lazy(() =>
   import("./components/ProjectAnalysesPage")
@@ -38,24 +43,14 @@ const { Content, Sider } = Layout;
  */
 
 /**
- * This component is solely responsible for setting the url path for
- * the entire analyses panel.
- * @returns {JSX.Element}
- * @constructor
- */
-const AnalysesLayout = () => (
-  <Router>
-    <ProjectAnalyses path={setBaseUrl("/projects/:projectId/analyses/*")} />
-  </Router>
-);
-
-/**
  * React component to handle the overall layout of the project analyses page.
  * @param props
  * @returns {JSX.Element}
  * @constructor
  */
-const ProjectAnalyses = (props) => {
+function ProjectAnalyses() {
+  const props = useParams();
+
   return (
     <Layout>
       <Layout>
@@ -67,12 +62,7 @@ const ProjectAnalyses = (props) => {
           <Row>
             <Col lg={24} xxl={24}>
               <Suspense fallback={<Skeleton />}>
-                <Router>
-                  <ProjectAnalysesPage path="project-analyses" />
-                  <SharedSingleSampleAnalysisOutputs path="shared-outputs" />
-                  <AutomatedSingleSampleAnalysisOutputs path="automated-outputs" />
-                  <Redirect from="/" to="project-analyses" />
-                </Router>
+                <Outlet />
               </Suspense>
             </Col>
           </Row>
@@ -80,11 +70,30 @@ const ProjectAnalyses = (props) => {
       </Layout>
     </Layout>
   );
-};
+}
 
 render(
-  <Provider store={store}>
-    <AnalysesLayout />
-  </Provider>,
+  <BrowserRouter>
+    <Provider store={store}>
+      <Routes>
+        <Route
+          path={setBaseUrl("/projects/:projectId/analyses/*")}
+          element={<ProjectAnalyses />}
+        >
+          <Route index element={<ProjectAnalysesPage />} />
+          <Route path="project-analyses" element={<ProjectAnalysesPage />} />
+          <Route
+            path="shared-outputs"
+            element={<SharedSingleSampleAnalysisOutputs />}
+          />
+          <Route
+            path="automated-outputs"
+            element={<AutomatedSingleSampleAnalysisOutputs />}
+          />
+          <Route path="*" element={<ProjectAnalysesPage />} />
+        </Route>
+      </Routes>
+    </Provider>
+  </BrowserRouter>,
   document.querySelector("#root")
 );

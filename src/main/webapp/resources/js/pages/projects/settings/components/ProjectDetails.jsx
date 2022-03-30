@@ -1,5 +1,6 @@
 import { notification, Typography } from "antd";
 import React from "react";
+import { useParams } from "react-router-dom";
 import { TAXONOMY } from "../../../../apis/ontology/taxonomy";
 import {
   useGetProjectDetailsQuery,
@@ -17,12 +18,13 @@ const { Paragraph, Title } = Typography;
  * @returns {*}
  * @constructor
  */
-export default function ProjectDetails({ projectId }) {
+export default function ProjectDetails() {
+  const params = useParams();
   const {
     data: project = {},
     isLoading,
     error: loadingError,
-  } = useGetProjectDetailsQuery(projectId);
+  } = useGetProjectDetailsQuery(params.projectId);
   const [updateProjectDetails] = useUpdateProjectDetailsMutation();
 
   React.useEffect(() => {
@@ -46,7 +48,11 @@ export default function ProjectDetails({ projectId }) {
      */
     if (project[field] === value) return;
 
-    updateProjectDetails({ projectId, field, value: value || "" })
+    updateProjectDetails({
+      projectId: params.projectId,
+      field,
+      value: value || "",
+    })
       .then((response) =>
         notification.success({ message: response.data.message })
       )
