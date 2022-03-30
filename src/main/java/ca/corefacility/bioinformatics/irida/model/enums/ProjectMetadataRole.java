@@ -67,12 +67,12 @@ public enum ProjectMetadataRole {
 			metadataRole = userJoin.getMetadataRole();
 		}
 
-		if(metadataRole.getLevel() != ProjectMetadataRole.LEVEL_4.getLevel()) {
+		if(metadataRole != ProjectMetadataRole.LEVEL_4) {
 			for (UserGroupProjectJoin group : groupJoins) {
 				if (metadataRole.getLevel() < group.getMetadataRole()
 						.getLevel()) {
 					metadataRole = group.getMetadataRole();
-					if(metadataRole.getLevel() == ProjectMetadataRole.LEVEL_4.getLevel()) {
+					if(metadataRole == ProjectMetadataRole.LEVEL_4) {
 						break;
 					}
 				}
