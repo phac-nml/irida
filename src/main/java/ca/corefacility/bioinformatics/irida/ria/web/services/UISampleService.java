@@ -19,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
-import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplePairer;
@@ -63,8 +62,6 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -84,18 +81,13 @@ public class UISampleService {
 	private final UICartService cartService;
 	private final MetadataEntryRepository metadataEntryRepository;
 	private final MetadataRestrictionRepository metadataRestrictionRepository;
-	private final AnalysisSubmissionRepository analysisSubmissionRepository;
-	private final UserService userService;
-	private final IridaWorkflowsService iridaWorkflowsService;
 
 	@Autowired
 	public UISampleService(SampleService sampleService, ProjectService projectService,
 			UpdateSamplePermission updateSamplePermission, SequencingObjectService sequencingObjectService,
 			GenomeAssemblyService genomeAssemblyService, MessageSource messageSource, UICartService cartService,
 			MetadataTemplateService metadataTemplateService, MetadataEntryRepository metadataEntryRepository,
-			MetadataRestrictionRepository metadataRestrictionRepository,
-			AnalysisSubmissionRepository analysisSubmissionRepository, UserService userService,
-			IridaWorkflowsService iridaWorkflowsService) {
+			MetadataRestrictionRepository metadataRestrictionRepository) {
 
 		this.sampleService = sampleService;
 		this.projectService = projectService;
@@ -107,9 +99,6 @@ public class UISampleService {
 		this.cartService = cartService;
 		this.metadataEntryRepository = metadataEntryRepository;
 		this.metadataRestrictionRepository = metadataRestrictionRepository;
-		this.analysisSubmissionRepository = analysisSubmissionRepository;
-		this.userService = userService;
-		this.iridaWorkflowsService = iridaWorkflowsService;
 	}
 
 	/**

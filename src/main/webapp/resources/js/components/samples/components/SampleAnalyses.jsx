@@ -118,7 +118,6 @@ export function SampleAnalyses() {
       </Col>
       <Col span={24}>
         <Table
-          bordered
           columns={columns}
           loading={loading}
           dataSource={
