@@ -31,3 +31,11 @@ src/main/webapp/node
 /src/main/webapp/.pnp.*
 
 doc/swagger-ui/open-api.json
+/src/main/webapp/.yarn/sdks/eslint/lib/api.js
+/src/main/webapp/.yarn/sdks/eslint/bin/eslint.js
+/src/main/webapp/.yarn/sdks/prettier/index.js
+/src/main/webapp/.yarn/sdks/integrations.yml
+/.theia/launch.json
+/src/main/webapp/.yarn/sdks/eslint/package.json
+/src/main/webapp/.yarn/sdks/prettier/package.json
+/yarn.lock
