@@ -24,7 +24,7 @@ export class SampleNameRenderer extends React.Component {
   render() {
     return (
       <SampleDetailViewer sampleId={this.sampleId} projectId={this.projectId}>
-        <Button type="link" className="t-sample-name">
+        <Button type="link" className="t-sample-name" style={{ padding: 0 }}>
           {this.name}
         </Button>
       </SampleDetailViewer>

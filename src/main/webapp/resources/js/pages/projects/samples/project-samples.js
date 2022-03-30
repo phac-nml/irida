@@ -365,7 +365,11 @@ const config = Object.assign({}, tableConfig, {
         ReactDOM.render(
           <SampleDetailViewer sampleId={data.id} projectId={data.projectId}>
             <span>
-              <Button type="link" className="t-project-sample-name">
+              <Button
+                type="link"
+                className="t-project-sample-name"
+                style={{ padding: 0 }}
+              >
                 {data.sampleName}
               </Button>
               {data.qcEntries.length ? (
