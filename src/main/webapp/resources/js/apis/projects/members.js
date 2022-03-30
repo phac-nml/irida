@@ -39,16 +39,16 @@ export async function removeUserFromProject({ projectId, id }) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function updateUserRoleOnProject({
-                                                projectId,
-                                                id,
-                                                projectRole,
-                                                metadataRole
-                                              }) {
+  projectId,
+  id,
+  projectRole = "",
+  metadataRole = "",
+}) {
   const params = new URLSearchParams({
     projectRole,
     id,
     projectId,
-    metadataRole
+    metadataRole,
   });
   try {
     return await axios
@@ -83,11 +83,11 @@ export async function getAvailableUsersForProject({ projectId, query }) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function addMemberToProject({
-                                           projectId,
-                                           id,
-                                           projectRole,
-                                           metadataRole
-                                         }) {
+  projectId,
+  id,
+  projectRole,
+  metadataRole,
+}) {
   return await axios
     .post(`${BASE_URL}/add?projectId=${projectId}`, {
       id,

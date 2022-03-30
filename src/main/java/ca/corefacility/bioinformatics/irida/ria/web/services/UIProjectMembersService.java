@@ -89,26 +89,41 @@ public class UIProjectMembersService {
 	/**
 	 * Update a users role on a project
 	 *
-	 * @param projectId - identifier for the current project
-	 * @param userId    - identifier for the user to remove from the project
-	 * @param role      - to update the user to
+	 * @param projectId    - identifier for the current project
+	 * @param userId       - identifier for the user to remove from the project
+	 * @param role         - {@link ProjectRole}  to update the user to
 	 * @param metadataRole - {@link ProjectMetadataRole} to update the user to
-	 * @param locale    - of the currently logged in user
+	 * @param locale       - of the currently logged in user
 	 * @return message to display to the user about the outcome of the change in role.
 	 * @throws UIProjectWithoutOwnerException if removing the user will leave the project without a manager
 	 */
-	public String updateUserRoleOnProject(Long projectId, Long userId, String role, String metadataRole, Locale locale) throws UIProjectWithoutOwnerException {
+	public String updateUserRoleOnProject(Long projectId, Long userId, String role, String metadataRole, Locale locale)
+			throws UIProjectWithoutOwnerException {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
-		ProjectRole projectRole = ProjectRole.fromString(role);
-		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(metadataRole);
-		String roleString = messageSource.getMessage("projectRole." + role, new Object[] {}, locale);
+		ProjectRole projectRole = null;
+		ProjectMetadataRole projectMetadataRole = null;
+		String roleString;
+		String updateSuccessMessage;
+
+		if (!role.isEmpty()) {
+			projectRole = ProjectRole.fromString(role);
+			roleString = messageSource.getMessage("projectRole." + role, new Object[] {}, locale);
+			updateSuccessMessage = messageSource.getMessage("server.update.projectRole.success",
+					new Object[] { user.getLabel(), roleString }, locale);
+		} else {
+			projectMetadataRole = ProjectMetadataRole.fromString(metadataRole);
+			roleString = messageSource.getMessage("metadataRole." + metadataRole, new Object[] {}, locale);
+			updateSuccessMessage = messageSource.getMessage("server.update.metadataRole.success",
+					new Object[] { user.getLabel(), roleString }, locale);
+		}
 
 		try {
 			projectService.updateUserProjectRole(project, user, projectRole, projectMetadataRole);
-			return messageSource.getMessage("server.ProjectRoleSelect.success", new Object[] { user.getLabel(), roleString }, locale);
+			return updateSuccessMessage;
 		} catch (ProjectWithoutOwnerException e) {
-			throw new UIProjectWithoutOwnerException(messageSource.getMessage("server.ProjectRoleSelect.error", new Object[] { user.getLabel(), roleString }, locale));
+			throw new UIProjectWithoutOwnerException(messageSource.getMessage("server.ProjectRoleSelect.error",
+					new Object[] { user.getLabel(), roleString }, locale));
 		}
 	}
 

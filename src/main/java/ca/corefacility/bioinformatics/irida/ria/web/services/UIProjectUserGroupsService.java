@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NewMemberRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectUserGroupsTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -116,25 +117,35 @@ public class UIProjectUserGroupsService {
 	 * @param metadataRole metadata role to update for the group
 	 * @param locale       Current users {@link Locale}
 	 * @return message to user about the result of the update
-	 * @throws ProjectWithoutOwnerException thrown when updating the role will result in the project to have no owner
+	 * @throws UIProjectWithoutOwnerException thrown when updating the role will result in the project to have no owner
 	 */
-	public String updateUserGroupRoleOnProject(Long projectId, Long groupId, String role, String metadataRole, Locale locale)
-			throws ProjectWithoutOwnerException {
+	public String updateUserGroupRoleOnProject(Long projectId, Long groupId, String role, String metadataRole,
+			Locale locale) throws UIProjectWithoutOwnerException {
 		Project project = projectService.read(projectId);
 		UserGroup group = userGroupService.read(groupId);
-		ProjectRole projectRole = ProjectRole.fromString(role);
-		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(metadataRole);
+		ProjectRole projectRole = null;
+		ProjectMetadataRole projectMetadataRole = null;
+		String roleString;
+		String updateSuccessMessage;
 
-		String roleString = messageSource.getMessage("projectRole." + role, new Object[] {}, locale);
+		if (!role.isEmpty()) {
+			projectRole = ProjectRole.fromString(role);
+			roleString = messageSource.getMessage("projectRole." + role, new Object[] {}, locale);
+			updateSuccessMessage = messageSource.getMessage("server.update.projectRole.success",
+					new Object[] { group.getLabel(), roleString }, locale);
+		} else {
+			projectMetadataRole = ProjectMetadataRole.fromString(metadataRole);
+			roleString = messageSource.getMessage("metadataRole." + metadataRole, new Object[] {}, locale);
+			updateSuccessMessage = messageSource.getMessage("server.update.metadataRole.success",
+					new Object[] { group.getLabel(), roleString }, locale);
+		}
 
 		try {
 			projectService.updateUserGroupProjectRole(project, group, projectRole, projectMetadataRole);
-			return messageSource.getMessage("server.usergroups.update.success",
-					new Object[] { group.getLabel(), roleString }, locale);
+			return updateSuccessMessage;
 		} catch (ProjectWithoutOwnerException e) {
-			throw new ProjectWithoutOwnerException(
-					messageSource.getMessage("server.usergroups.update-role.error", new Object[] { group.getLabel() },
-							locale));
+			throw new UIProjectWithoutOwnerException(messageSource.getMessage("server.ProjectRoleSelect.error",
+					new Object[] { group.getLabel(), roleString }, locale));
 		}
 	}
 }

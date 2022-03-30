@@ -10,9 +10,7 @@ import { useGetProjectDetailsQuery } from "../../apis/projects/project";
 import { useMetadataRoles } from "../../contexts/metadata-roles-context";
 import { useProjectRoles } from "../../contexts/project-roles-context";
 import { getCurrentUserDetails } from "../../pages/projects/redux/userSlice";
-import {
-  formatInternationalizedDateTime
-} from "../../utilities/date-utilities";
+import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { AddMemberButton, RemoveTableItemButton } from "../Buttons";
@@ -29,7 +27,10 @@ export function ProjectMembersTable({ projectId }) {
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const { identifier: userId } = useSelector((state) => state.user);
   const { roles: projectRoles, getRoleFromKey } = useProjectRoles();
-  const { roles: metadataRoles, getRoleFromKey: getMetadataRoleFromKey } = useMetadataRoles();
+  const {
+    roles: metadataRoles,
+    getRoleFromKey: getMetadataRoleFromKey,
+  } = useMetadataRoles();
 
   React.useEffect(() => {
     dispatch(getCurrentUserDetails());
@@ -45,11 +46,11 @@ export function ProjectMembersTable({ projectId }) {
     updateTable();
   }
 
-  const updateProjectRole = ({ id, medataRole }) => (projectRole) =>
-    updateUserRoleOnProject({ projectId, id, medataRole, projectRole });
+  const updateProjectRole = ({ id }) => (projectRole) =>
+    updateUserRoleOnProject({ projectId, id, projectRole });
 
-  const updateMetadataRole = ({ id, projectRole }) => (metadataRole) =>
-    updateUserRoleOnProject({ projectId, id, projectRole, metadataRole });
+  const updateMetadataRole = ({ id }) => (metadataRole) =>
+    updateUserRoleOnProject({ projectId, id, metadataRole });
 
   const columns = [
     {

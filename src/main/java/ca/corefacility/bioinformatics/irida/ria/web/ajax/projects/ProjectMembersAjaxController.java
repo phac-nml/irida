@@ -73,7 +73,8 @@ public class ProjectMembersAjaxController {
 	 */
 	@RequestMapping(value = "/role", method = RequestMethod.PUT)
 	public ResponseEntity<String> updateUserRoleOnProject(@RequestParam Long projectId, @RequestParam Long id,
-			String projectRole, String metadataRole, Locale locale) {
+			@RequestParam(required = false) String projectRole, @RequestParam(required = false) String metadataRole,
+			Locale locale) {
 		try {
 			return ResponseEntity.ok(
 					projectMembersService.updateUserRoleOnProject(projectId, id, projectRole, metadataRole, locale));

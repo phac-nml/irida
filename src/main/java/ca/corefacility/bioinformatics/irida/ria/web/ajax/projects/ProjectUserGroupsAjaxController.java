@@ -8,10 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NewMemberRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectUserGroupsTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectUserGroupsService;
@@ -88,18 +88,20 @@ public class ProjectUserGroupsAjaxController {
 	 *
 	 * @param projectId    Identifier for a project
 	 * @param id           Identifier for an user group
-	 * @param role         Role to update the user group to
+	 * @param projectRole  Project role to update the user group to
 	 * @param metadataRole metadata role to update for the user group
 	 * @param locale       Current users locale
 	 * @return message to user about the result of the update
 	 */
 	@RequestMapping(value = "/role", method = RequestMethod.PUT)
 	public ResponseEntity<String> updateUserGroupRoleOnProject(@RequestParam Long projectId, @RequestParam Long id,
-			@RequestParam String role, @RequestParam String metadataRole, Locale locale) {
+			@RequestParam(required = false) String projectRole, @RequestParam(required = false) String metadataRole,
+			Locale locale) {
 		try {
-			return ResponseEntity.ok(service.updateUserGroupRoleOnProject(projectId, id, role, metadataRole, locale));
-		} catch (ProjectWithoutOwnerException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+			return ResponseEntity.ok(
+					service.updateUserGroupRoleOnProject(projectId, id, projectRole, metadataRole, locale));
+		} catch (UIProjectWithoutOwnerException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(e.getMessage());
 		}
 	}

@@ -78,8 +78,8 @@ export async function addUserGroupToProject({
 export async function updateUserGroupProjectRole({
   projectId,
   id,
-  projectRole,
-  metadataRole,
+  projectRole = "",
+  metadataRole = "",
 }) {
   const params = new URLSearchParams({
     projectId,

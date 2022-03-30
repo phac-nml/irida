@@ -7,9 +7,7 @@ import {
 } from "../../apis/projects/user-groups";
 import { useMetadataRoles } from "../../contexts/metadata-roles-context";
 import { useProjectRoles } from "../../contexts/project-roles-context";
-import {
-  formatInternationalizedDateTime
-} from "../../utilities/date-utilities";
+import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { RemoveTableItemButton } from "../Buttons";
@@ -58,7 +56,7 @@ export function ProjectUserGroupsTable({ projectId }) {
           <RoleSelect
             updateRoleFn={updateProjectRole("projectRole", {
               id: group.id,
-              metadataRole: group.metadataRole,
+              projectRole: group.role,
               projectId,
             })}
             roles={projectRoles}
@@ -75,7 +73,7 @@ export function ProjectUserGroupsTable({ projectId }) {
           <RoleSelect
             updateRoleFn={updateProjectRole("metadataRole", {
               id: group.id,
-              projectRole: group.role,
+              metadataRole: group.metadataRole,
               projectId,
             })}
             roles={metadataRoles}

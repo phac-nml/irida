@@ -288,12 +288,16 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 					"Join between this project and user does not exist. User: " + user + " Project: " + project);
 		}
 
-		if (!allowRoleChange(projectJoinForUser.getSubject(), projectJoinForUser.getProjectRole())) {
-			throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
+		if(projectRole != null) {
+			if (!allowRoleChange(projectJoinForUser.getSubject(), projectJoinForUser.getProjectRole())) {
+				throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
+			}
+
+			projectJoinForUser.setProjectRole(projectRole);
+		} else {
+			projectJoinForUser.setMetadataRole(metadataRole);
 		}
 
-		projectJoinForUser.setProjectRole(projectRole);
-		projectJoinForUser.setMetadataRole(metadataRole);
 		return pujRepository.save(projectJoinForUser);
 	}
 
@@ -311,11 +315,15 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			throw new EntityNotFoundException(
 					"Join between this project and group does not exist. Group: " + userGroup + " Project: " + project);
 		}
-		if (!allowRoleChange(project, j.getProjectRole())) {
-			throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
+
+		if(projectRole != null) {
+			if (!allowRoleChange(project, j.getProjectRole())) {
+				throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
+			}
+			j.setProjectRole(projectRole);
+		} else {
+			j.setMetadataRole(metadataRole);
 		}
-		j.setProjectRole(projectRole);
-		j.setMetadataRole(metadataRole);
 		return ugpjRepository.save(j);
 	}
 
