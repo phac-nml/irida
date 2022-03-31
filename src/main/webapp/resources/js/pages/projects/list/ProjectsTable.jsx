@@ -214,6 +214,8 @@ export function ProjectsTable() {
           pagination={{
             total: total,
             pageSize: state.pageSize,
+            showSizeChanger: true,
+            hideOnSinglePage: true,
           }}
           scroll={{ x: "max-content" }}
           columns={columns}
