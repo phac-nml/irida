@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFac
 import com.google.common.collect.ImmutableList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class UIProjectUserGroupServiceTest {
@@ -63,10 +64,14 @@ public class UIProjectUserGroupServiceTest {
 		when(messageSource.getMessage(anyString(), any(), any())).thenReturn("");
 		when(projectService.read(1L)).thenReturn(PROJECT);
 		when(userGroupService.read(1L)).thenReturn(USER_GROUP_1);
+		when(userGroupService.read(3L)).thenReturn(USER_GROUP_3);
 		when(userGroupService.getUserGroupsForProject("", PROJECT, TABLE_REQUEST.getCurrent(),
 				TABLE_REQUEST.getPageSize(), TABLE_REQUEST.getSort())).thenReturn(getPagedUserGroupsForProject());
 		when(userGroupService.read(USER_GROUP_1.getId())).thenReturn(USER_GROUP_1);
 		when(userGroupService.getUserGroupsNotOnProject(PROJECT, "")).thenReturn(USER_GROUPS);
+
+		doThrow(ProjectWithoutOwnerException.class).when(projectService)
+				.updateUserGroupProjectRole(PROJECT, USER_GROUP_3, ProjectRole.PROJECT_USER, null);
 	}
 
 	@Test
@@ -110,6 +115,13 @@ public class UIProjectUserGroupServiceTest {
 		verify(projectService, times(1)).read(1L);
 		verify(userGroupService, times(1)).read(1L);
 		verify(projectService, times(1)).updateUserGroupProjectRole(PROJECT, USER_GROUP_1, ProjectRole.PROJECT_USER, null);
+	}
+
+	@Test
+	public void testUpdateUserProjectRoleOnProjectNoManager() {
+		assertThrows(ProjectWithoutOwnerException.class, () -> {
+			service.updateUserGroupRoleOnProject(1L, 3L, ProjectRole.PROJECT_USER.toString(), "", LOCALE);
+		});
 	}
 
 	@Test
