@@ -6,7 +6,7 @@ import { useDebounce } from "../../hooks";
 const { Option } = AutoComplete;
 
 /**
- * Component to render a select input to search for a term in an ontology.
+ * Component to render a AutoComplete input to search for a term in an ontology.
  *
  * @param {string} term - initial value
  * @param {function} onTermSelected - callback for when a term is selected
