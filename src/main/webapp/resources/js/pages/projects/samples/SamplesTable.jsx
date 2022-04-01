@@ -1,6 +1,6 @@
 import React from "react";
 import { FolderAddOutlined } from "@ant-design/icons";
-import { Button, Col, Row, Space, Table, Tag, Tooltip } from "antd";
+import { Button, Checkbox, Col, Row, Space, Table, Tag, Tooltip } from "antd";
 import axios from "axios";
 import { getAssociatedProjectForProject } from "../../../apis/projects/associated-projects";
 import {
@@ -17,14 +17,14 @@ const formatCartItem = (item) => ({
   key: item.key,
   id: item.sample.id,
   projectId: item.project.id,
-  sampleName: item.sample.name,
+  sampleName: item.sample.sampleName,
   owner: item.owner,
 });
 
 export function SamplesTable() {
   const [loading, setLoading] = React.useState(true);
   const [samples, setSamples] = React.useState([]);
-  const [selectedItems, setSelectedItems] = React.useState([]);
+  const [selectedItems, setSelectedItems] = React.useState({});
   const [pagination, setPagination] = React.useState({
     current: 1,
     pageSize: 10,
@@ -71,33 +71,23 @@ export function SamplesTable() {
     );
   }, []);
 
-  const rowSelection = {
-    selectedRowKeys,
-    preserveSelectedRowKeys: true,
-    onChange: (selectedRowKeys, selectedRows) => {
-      setSelectedRowKeys(selectedRowKeys);
-      setSelectedItems(selectedRows.map(formatCartItem));
-    },
-    onSelectAll: (selected, selectedRows, changeRows) => {
-      console.log({ selected, selectedRows, changeRows });
-      // if (selected) {
-      //   setSelectedRowKeys([
-      //     ...selectedRowKeys,
-      //     changeRows.map((row) => row.key),
-      //   ]);
-      //   console.log(selectedRows);
-      // } else {
-      //   setSelectedRowKeys([]);
-      // }
-    },
+  const selectRow = (event, item) => {
+    const selected = event.target.checked;
+    if (selected) {
+      setSelectedItems({ ...selectedItems, [item.key]: formatCartItem(item) });
+    } else {
+      const updatedSelected = { ...selectedItems };
+      delete updatedSelected[item.key];
+      setSelectedItems(updatedSelected);
+    }
   };
 
   const selectAll = async () => {
-    setLoading(true);
     const { data } = await getAllSampleIds(projectId, filters);
-    setSelectedRowKeys(data.map((item) => item.key));
-    setSelectedItems(data);
-    setLoading(false);
+    const newSelected = {};
+    data.forEach((item) => (newSelected[item.key] = item));
+    console.log(newSelected);
+    setSelectedItems(newSelected);
   };
 
   const handleTableChange = async (pagination, newFilters, sorter) => {
@@ -129,6 +119,20 @@ export function SamplesTable() {
   };
 
   const columns = [
+    {
+      title: "",
+      dataIndex: "key",
+      width: 40,
+      render: (text, item) => {
+        console.log(selectedItems[item.key]);
+        return (
+          <Checkbox
+            onChange={(e) => selectRow(e, item)}
+            checked={selectedItems[item.key]}
+          />
+        );
+      },
+    },
     {
       title: "Name",
       dataIndex: ["sample", "sampleName"],
@@ -192,7 +196,6 @@ export function SamplesTable() {
           loading={loading}
           columns={columns}
           dataSource={samples}
-          rowSelection={rowSelection}
           pagination={pagination}
           onChange={handleTableChange}
           summary={() => (
