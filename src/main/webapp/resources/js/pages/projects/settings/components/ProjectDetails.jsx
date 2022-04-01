@@ -108,7 +108,9 @@ export default function ProjectDetails() {
               />
             </EditableParagraph>
           ) : (
-            <span className="t-project-organism">{project.organism}</span>
+            <span className="t-project-organism">
+              <span>{project.organism}</span>
+            </span>
           ),
         },
         {
