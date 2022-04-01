@@ -28,6 +28,6 @@ public class LoginControllerTest {
 	@Test
 	public void testShowLoginPage() {
 		Model model = new ExtendedModelMap();
-		assertEquals("login", controller.showLogin(model, false, null));
+		assertEquals("login", controller.showLogin(model, false, false, null));
 	}
 }

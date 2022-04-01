@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -35,6 +36,9 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Order(Ordered.HIGHEST_PRECEDENCE + 1)
 	protected static class UISecurityConfig extends WebSecurityConfigurerAdapter {
 
+		@Value("${irida.administrative.authentication.mode}")
+		private String authenticationMode;
+
 		@Autowired
 		private UserRepository userRepository;
 
@@ -64,7 +68,20 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			authFailureHandler.setDefaultFailureUrl("/login?error=true");
+			String failureUrl;
+			switch(authenticationMode)
+			{
+				case "ldap":
+				case "adldap":
+					failureUrl = "/login?ldap_error=true";
+					break;
+				default:
+				case "local":
+					failureUrl = "/login?error=true";
+					break;
+			}
+			authFailureHandler.setDefaultFailureUrl(failureUrl);
+
 			// @formatter:off
 			http.requestMatcher(request -> {
 				// Don't handle requests under the /api path except for paths that start with /api/oauth

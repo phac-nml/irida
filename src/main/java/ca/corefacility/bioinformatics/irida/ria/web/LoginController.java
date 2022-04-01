@@ -47,6 +47,7 @@ public class LoginController extends BaseController {
 	@RequestMapping(value = "/login")
 	public String showLogin(Model model,
 			@RequestParam(value = "error", required = false, defaultValue = "false") Boolean hasError,
+			@RequestParam(value = "ldap_error", required = false, defaultValue = "false") Boolean hasLdapError,
 			Principal principal) {
 
 		if (principal != null) {
@@ -58,6 +59,7 @@ public class LoginController extends BaseController {
 
 		model.addAttribute("emailConfigured", emailController.isMailConfigured());
 		model.addAttribute("error", hasError);
+		model.addAttribute("ldap_error", hasLdapError);
 		return LOGIN_PAGE;
 	}
 }
