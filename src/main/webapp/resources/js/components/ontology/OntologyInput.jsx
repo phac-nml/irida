@@ -15,7 +15,7 @@ const { Option } = AutoComplete;
  * @returns {*}
  * @constructor
  */
-export function OntologySelect({
+export function OntologyInput({
   term,
   onTermSelected,
   ontology,

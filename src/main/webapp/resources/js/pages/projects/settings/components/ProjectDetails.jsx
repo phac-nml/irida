@@ -8,7 +8,7 @@ import {
 } from "../../../../apis/projects/project";
 import { EditableParagraph } from "../../../../components/ant.design";
 import { BasicList } from "../../../../components/lists";
-import { OntologySelect } from "../../../../components/ontology";
+import { OntologyInput } from "../../../../components/ontology";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 
 const { Paragraph, Title } = Typography;
@@ -101,7 +101,7 @@ export default function ProjectDetails() {
               value={project.organism}
               valueClassName="t-project-organism"
             >
-              <OntologySelect
+              <OntologyInput
                 term={project.organism}
                 ontology={TAXONOMY}
                 onTermSelected={(term) => updateField("organism", term)}
