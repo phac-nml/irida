@@ -1,9 +1,9 @@
-import { Select } from "antd";
+import { AutoComplete } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { searchOntology } from "../../apis/ontology/taxonomy";
 import { useDebounce } from "../../hooks";
 
-const { Option } = Select;
+const { Option } = AutoComplete;
 
 /**
  * Component to render a select input to search for a term in an ontology.
@@ -74,19 +74,28 @@ export function OntologySelect({
     }
   }, [autofocus]);
 
+  /**
+   * Allow the user to arbitrarily set the value if not an option.
+   *
+   * @param {SyntheticEvent} e React input synthetic event for input
+   */
+  const onBlur = (e) => onTermSelected(e.target.value);
+
   return (
-    <Select
+    <AutoComplete
       allowClear={true}
+      backfill={true}
       ref={selectRef}
       showSearch
       defaultValue={term || ""}
       notFoundContent={null}
       onSearch={setQuery}
       onSelect={onTermSelected}
+      onBlur={onBlur}
       onClear={onTermSelected}
       style={{ width: "100%" }}
     >
       {options}
-    </Select>
+    </AutoComplete>
   );
 }
