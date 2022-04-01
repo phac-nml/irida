@@ -1,3 +1,4 @@
+
 Changes
 =======
 
@@ -12,6 +13,7 @@ Changes
 * [Developer]: Updated to Ant Design v4.19.3.
 * [Developer]: Removed unused DataTables code.
 * [UI]: Sorted columns for advanced charts and added labels to tiny charts on admin statistics page.
+* [UI]: Fixed: Allow organism name not included in the current taxonomy.
 
 22.01 to 22.03
 --------------
