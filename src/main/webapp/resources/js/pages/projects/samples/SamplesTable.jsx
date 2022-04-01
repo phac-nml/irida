@@ -92,6 +92,9 @@ export function SamplesTable() {
 
   const selectNone = () => setSelectedItems([]);
 
+  const updateSelectAll = (e) =>
+    e.target.checked ? selectAll() : selectNone();
+
   const handleTableChange = async (pagination, newFilters, sorter) => {
     setLoading(true);
     // Save the filters for using when selecting all
@@ -121,7 +124,17 @@ export function SamplesTable() {
 
   const columns = [
     {
-      title: "",
+      title: () => {
+        const length = Object.keys(selectedItems).length;
+        const indeterminate = length < pagination.total && length > 0;
+        return (
+          <Checkbox
+            onChange={updateSelectAll}
+            checked={length > 0}
+            indeterminate={indeterminate}
+          />
+        );
+      },
       dataIndex: "key",
       width: 40,
       render: (text, item) => {
@@ -186,12 +199,6 @@ export function SamplesTable() {
 
   return (
     <Row gutter={[16, 16]}>
-      <Col span={24}>
-        <Space>
-          <Button onClick={selectAll}>Select All</Button>
-          <Button onClick={selectNone}>Select None</Button>
-        </Space>
-      </Col>
       <Col span={24}>
         <Table
           loading={loading}
