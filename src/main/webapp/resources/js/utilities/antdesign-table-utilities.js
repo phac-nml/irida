@@ -3,6 +3,11 @@
  */
 
 /**
+ * Default page size for ant design tables
+ */
+export const defaultPageSize = 10;
+
+/**
  * Set the table page size selector options
  */
 export function getPageSizeOptions(totalEntries) {

@@ -18,7 +18,10 @@ import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
 import { primaryColour } from "../../../utilities/theme-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { CreateNewProject } from "../create";
-import { getPageSizeOptions } from "../../../utilities/antdesign-table-utilities";
+import {
+  defaultPageSize,
+  getPageSizeOptions,
+} from "../../../utilities/antdesign-table-utilities";
 
 const initialState = {
   loading: true, // true when table fetching data
@@ -220,7 +223,7 @@ export function ProjectsTable() {
             total: total,
             pageSize: state.pageSize,
             showSizeChanger: true,
-            hideOnSinglePage: total <= 10,
+            hideOnSinglePage: total <= defaultPageSize,
             pageSizeOptions: pageSizeOptions,
           }}
           scroll={{ x: "max-content" }}
