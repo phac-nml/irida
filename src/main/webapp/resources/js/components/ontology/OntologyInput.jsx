@@ -68,7 +68,7 @@ export function OntologyInput({
   useEffect(() => {
     if (autofocus) {
       /*
-    Focus on the select input when the component is mounted.
+    Focus on the input when the component is mounted.
      */
       selectRef.current.focus();
     }
