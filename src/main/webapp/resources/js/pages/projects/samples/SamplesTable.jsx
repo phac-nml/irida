@@ -82,10 +82,12 @@ export function SamplesTable() {
   };
 
   const selectAll = async () => {
+    setLoading(true);
     const { data } = await getAllSampleIds(projectId, filters);
     const newSelected = {};
     data.forEach((item) => (newSelected[item.key] = item));
     setSelectedItems(newSelected);
+    setLoading(false);
   };
 
   const selectNone = () => setSelectedItems([]);
