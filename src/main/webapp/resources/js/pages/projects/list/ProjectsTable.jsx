@@ -69,6 +69,10 @@ export function ProjectsTable() {
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState(undefined);
 
+  const pageSizeOptions = React.useMemo(() => {
+    getPageSizeOptions(total);
+  }, [total]);
+
   useEffect(() => {
     setLoading(true);
     const params = {
@@ -216,8 +220,8 @@ export function ProjectsTable() {
             total: total,
             pageSize: state.pageSize,
             showSizeChanger: true,
-            hideOnSinglePage: total <= state.pageSize,
-            pageSizeOptions: getPageSizeOptions(total),
+            hideOnSinglePage: total <= 10,
+            pageSizeOptions: pageSizeOptions,
           }}
           scroll={{ x: "max-content" }}
           columns={columns}
