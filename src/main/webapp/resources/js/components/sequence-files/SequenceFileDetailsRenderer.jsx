@@ -1,7 +1,9 @@
 import React from "react";
 import { Avatar, Button, List, Space } from "antd";
-import { SPACE_XS } from "../../styles/spacing";
 import { IconDownloadFile } from "../icons/Icons";
+import { FastQC } from "../samples/components/fastqc/FastQC";
+import { setFastQCModalData } from "../samples/components/fastqc/fastQCSlice";
+import { useDispatch } from "react-redux";
 
 /**
  * React component to display paired end file details
@@ -19,6 +21,8 @@ export function SequenceFileDetailsRenderer({
   downloadSequenceFile = () => {},
   getProcessingState = () => {},
 }) {
+  const dispatch = useDispatch();
+
   return (
     <List.Item
       key={`file-${file.id}`}
@@ -29,9 +33,28 @@ export function SequenceFileDetailsRenderer({
         avatar={<Avatar size={`small`} icon={file.icon} />}
         title={
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <a href={file.fastqcLink} target="_blank" className="t-file-label">
-              {file.label}
-            </a>
+            <div>
+              <Button
+                type="link"
+                style={{ padding: 0 }}
+                className="t-file-label"
+                onClick={() =>
+                  dispatch(
+                    setFastQCModalData({
+                      fileLabel: file.label,
+                      fileId: file.id,
+                      sequencingObjectId: fileObjectId,
+                      fastQCModalVisible: true,
+                      processingState: file.processingState,
+                    })
+                  )
+                }
+              >
+                {file.label}
+              </Button>
+              <FastQC />
+            </div>
+
             <Space direction="horizontal" size="small">
               {getProcessingState(file.processingState)}
               <span className="t-file-size">{file.filesize}</span>

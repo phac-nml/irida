@@ -4,17 +4,33 @@
  */
 
 import React from "react";
-import { Divider, Layout, Typography } from "antd";
-import { SPACE_MD } from "../../../styles/spacing";
-import { grey1 } from "../../../styles/colors";
-import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
-import { BasicList } from "../../../components/lists";
-import { formatDate } from "../../../utilities/date-utilities";
-import { ContentLoading } from "../../../components/loader";
-import { useFastQCState } from "../fastqc-context";
+import { Col, Divider, Row, Typography } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { BasicList } from "../../../lists";
+import { formatDate } from "../../../../utilities/date-utilities";
+import { ContentLoading } from "../../../loader";
+import { getFastQCDetails } from "../../../../apis/files/sequence-files";
+import { setFastQCDetails } from "./fastQCSlice";
 
 export default function FastQCDetails() {
-  const { loading, file, fastQC } = useFastQCState();
+  const { loading, sequencingObjectId, fileId, file, fastQC } = useSelector(
+    (state) => state.fastQCReducer
+  );
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    getFastQCDetails(sequencingObjectId, fileId).then(
+      ({ analysisFastQC, sequenceFile, sequencingObject }) => {
+        dispatch(
+          setFastQCDetails({
+            fastQC: analysisFastQC,
+            file: sequenceFile,
+            processingState: sequencingObject.processingState,
+          })
+        );
+      }
+    );
+  }, [sequencingObjectId, fileId]);
 
   // List details for file
   const fileDetails = [
@@ -81,26 +97,33 @@ export default function FastQCDetails() {
   ];
 
   return (
-    <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
-      <TabPaneContent>
-        {loading ? (
-          <div>
-            <ContentLoading message={i18n("FastQC.fetchingDetails")} />
-          </div>
-        ) : (
-          <div>
-            <Typography.Title level={4} className="t-file-details-title">
+    <>
+      {loading ? (
+        <div>
+          <ContentLoading message={i18n("FastQC.fetchingDetails")} />
+        </div>
+      ) : (
+        <Row gutter={16}>
+          <Col span={24}>
+            <Typography.Title level={5} className="t-file-details-title">
               {i18n("FastQC.fileDetails")}
             </Typography.Title>
+          </Col>
+          <Col span={24}>
             <BasicList dataSource={fileDetails} />
-            <Divider />
-            <Typography.Title level={4} className="t-sequence-details-title">
+          </Col>
+
+          <Divider />
+          <Col span={24}>
+            <Typography.Title level={5} className="t-sequence-details-title">
               {i18n("FastQC.sequenceDetails")}
             </Typography.Title>
+          </Col>
+          <Col span={24}>
             <BasicList dataSource={sequenceDetails} />
-          </div>
-        )}
-      </TabPaneContent>
-    </Layout>
+          </Col>
+        </Row>
+      )}
+    </>
   );
 }

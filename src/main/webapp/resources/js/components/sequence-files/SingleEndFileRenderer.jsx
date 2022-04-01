@@ -1,9 +1,11 @@
 import React from "react";
 import { Avatar, Button, List, Space, Tag } from "antd";
 import { SequenceFileHeader } from "./SequenceFileHeader";
-import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconDownloadFile, IconFile } from "../icons/Icons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+
+import { FastQC } from "../samples/components/fastqc/FastQC";
+import { setFastQCModalData } from "../samples/components/fastqc/fastQCSlice";
 
 /**
  * React component to display single end file details
@@ -33,7 +35,7 @@ export function SingleEndFileRenderer({
   autoDefaultPair = null,
 }) {
   const { sample } = useSelector((state) => state.sampleReducer);
-
+  const dispatch = useDispatch();
   /*
   Function to download the sequence file or genome assembly
   depending on the file type
@@ -80,21 +82,29 @@ export function SingleEndFileRenderer({
             title={
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 {fastqcResults ? (
-                  <a
-                    href={
-                      file.fileInfo.sequenceFile
-                        ? setBaseUrl(
-                            `samples/${sample.identifier}/sequenceFiles/${file.fileInfo.identifier}/file/${file.fileInfo.sequenceFile.identifier}`
-                          )
-                        : setBaseUrl(
-                            `samples/${sample.identifier}/sequenceFiles/${file.fileInfo.identifier}/file/${file.fileInfo.file.identifier}`
-                          )
-                    }
-                    target="_blank"
-                    className="t-file-label"
-                  >
-                    {file.fileInfo.label}
-                  </a>
+                  <div>
+                    <Button
+                      type="link"
+                      style={{ padding: 0 }}
+                      className="t-file-label"
+                      onClick={() =>
+                        dispatch(
+                          setFastQCModalData({
+                            fileLabel: file.fileInfo.label,
+                            fileId: file.fileInfo.sequenceFile
+                              ? file.fileInfo.sequenceFile.identifier
+                              : file.fileInfo.file.identifier,
+                            sequencingObjectId: file.fileInfo.identifier,
+                            fastQCModalVisible: true,
+                            processingState: file.fileInfo.processingState,
+                          })
+                        )
+                      }
+                    >
+                      {file.fileInfo.label}
+                    </Button>
+                    <FastQC />
+                  </div>
                 ) : (
                   <span className="t-file-label">{file.fileInfo.label}</span>
                 )}

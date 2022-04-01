@@ -4,22 +4,31 @@
  */
 
 import React from "react";
-import { Layout, Table, Typography } from "antd";
-import { SPACE_MD } from "../../../styles/spacing";
-import { grey1 } from "../../../styles/colors";
-import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
-import { Monospace } from "../../../components/typography";
-import { useFastQCDispatch, useFastQCState } from "../fastqc-context";
+import { Col, Row, Table, Typography } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { Monospace } from "../../../typography";
+import { getOverRepresentedSequences } from "../../../../apis/files/sequence-files";
+import { setAnalysisFastQC } from "./fastQCSlice";
 
 export default function OverRepresentedSequences() {
-  const { loading, analysisFastQC } = useFastQCState();
-  const { getOverrepresentedDetails } = useFastQCDispatch();
+  const dispatch = useDispatch();
+  const { loading, sequencingObjectId, fileId, fastQC } = useSelector(
+    (state) => state.fastQCReducer
+  );
 
   React.useEffect(() => {
-    if (!analysisFastQC) {
-      getOverrepresentedDetails();
+    if (Object.keys(fastQC).length === 0) {
+      getOverRepresentedSequences(sequencingObjectId, fileId).then(
+        (analysisFastQC) => {
+          dispatch(
+            setAnalysisFastQC({
+              fastQC: analysisFastQC,
+            })
+          );
+        }
+      );
     }
-  }, [getOverrepresentedDetails]);
+  }, [sequencingObjectId, fileId]);
 
   // Columns for the table
   const columns = [
@@ -53,21 +62,25 @@ export default function OverRepresentedSequences() {
     },
   ];
 
-  return analysisFastQC ? (
-    <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
-      <TabPaneContent title={i18n("FastQC.overrepresentedSequences")}>
+  return fastQC ? (
+    <Row gutter={16}>
+      <Col
+        span={24}
+        style={{
+          height: "600px",
+        }}
+      >
         <Typography.Paragraph className="text-info">
-          {analysisFastQC.description}
+          {fastQC.description}
         </Typography.Paragraph>
         <Table
-          bordered
           rowKey={(item) => item.identifier}
           loading={loading}
           columns={columns}
-          dataSource={analysisFastQC.overrepresentedSequences}
+          dataSource={fastQC.overrepresentedSequences}
           className="t-overrepresented-sequences-table"
         />
-      </TabPaneContent>
-    </Layout>
+      </Col>
+    </Row>
   ) : null;
 }
