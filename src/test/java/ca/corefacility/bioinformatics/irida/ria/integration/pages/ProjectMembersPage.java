@@ -37,6 +37,12 @@ public class ProjectMembersPage extends AbstractPage {
 	@FindBy(className = "t-role-select")
 	private List<WebElement> roleSelects;
 
+	@FindBy(className = "ant-notification")
+	private WebElement antNotification;
+
+	@FindBy(className = "ant-notification-notice-close")
+	private WebElement antNotificationClose;
+
 	public ProjectMembersPage(WebDriver driver) {
 		super(driver);
 	}
@@ -74,6 +80,7 @@ public class ProjectMembersPage extends AbstractPage {
 		WebElement button = wait.until(ExpectedConditions.elementToBeClickable(removeMemberButtons.get(row)));
 		button.click();
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-remove-popover")));
+		wait.until(ExpectedConditions.elementToBeClickable(By.className("t-remove-confirm")));
 		driver.findElement(By.className("t-remove-confirm")).click();
 	}
 
@@ -84,12 +91,12 @@ public class ProjectMembersPage extends AbstractPage {
 		driver.findElement(By.className("t-remove-confirm")).click();
 	}
 
-	public boolean isUpdateMemberErrorNotificationDisplayed() {
-		return removeErrorNotification.isDisplayed();
-	}
-
-	public boolean isUpdateMemberSuccessNotificationDisplayed() {
-		return removeSuccessNotification.isDisplayed();
+	public boolean isNotificationDisplayed() {
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		wait.until(ExpectedConditions.visibilityOf(antNotification));
+		antNotificationClose.click();
+		wait.until(ExpectedConditions.invisibilityOf(antNotification));
+		return true;
 	}
 
 	public void addUserToProject(String name) {

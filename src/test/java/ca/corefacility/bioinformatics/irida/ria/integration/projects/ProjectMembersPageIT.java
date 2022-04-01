@@ -33,21 +33,22 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Test remove user from project
 		page.removeUser(1);
-		assertTrue(page.isUpdateMemberSuccessNotificationDisplayed());
+		assertTrue(page.isNotificationDisplayed());
 		assertEquals(1, page.getNumberOfMembers(), "Should be 1 member in the project");
 
 		// Should not be able to remove the manager
 		page.removeManager(0);
-		assertTrue(page.isUpdateMemberErrorNotificationDisplayed());
+		assertTrue(page.isNotificationDisplayed());
 		assertEquals(1, page.getNumberOfMembers(), "Should be 1 member in the project");
 
 		// Test Add user to project
 		page.addUserToProject("test");
+		page.isNotificationDisplayed();
 		assertEquals(2, page.getNumberOfMembers(), "Should be 2 members in the project");
 
 		// Tye updating the users role
 		page.updateUserRole(0, ProjectRole.PROJECT_OWNER.toString());
-		assertTrue(page.isUpdateMemberSuccessNotificationDisplayed());
+		assertTrue(page.isNotificationDisplayed());
 	}
 
 	@Test
