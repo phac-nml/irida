@@ -83,6 +83,7 @@ export function OntologyInput({
 
   return (
     <AutoComplete
+      className="t-organism-input"
       allowClear={true}
       backfill={true}
       ref={selectRef}
