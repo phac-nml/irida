@@ -88,6 +88,8 @@ export function SamplesTable() {
     setSelectedItems(newSelected);
   };
 
+  const selectNone = () => setSelectedItems([]);
+
   const handleTableChange = async (pagination, newFilters, sorter) => {
     setLoading(true);
     // Save the filters for using when selecting all
@@ -185,6 +187,7 @@ export function SamplesTable() {
       <Col span={24}>
         <Space>
           <Button onClick={selectAll}>Select All</Button>
+          <Button onClick={selectNone}>Select None</Button>
         </Space>
       </Col>
       <Col span={24}>
