@@ -29,9 +29,8 @@ export function SamplesTable() {
     current: 1,
     pageSize: 10,
   });
-  const [filters, setFilters] = React.useState({});
+  const [filters, setFilters] = React.useState({ associated: null });
   const [associated, setAssociated] = React.useState([]);
-  const [selectedRowKeys, setSelectedRowKeys] = React.useState([]);
   const [colors, setColors] = React.useState(() => {
     const colorString = localStorage.getItem("projectColors");
     return colorString ? JSON.parse(colorString) : {};
@@ -86,7 +85,6 @@ export function SamplesTable() {
     const { data } = await getAllSampleIds(projectId, filters);
     const newSelected = {};
     data.forEach((item) => (newSelected[item.key] = item));
-    console.log(newSelected);
     setSelectedItems(newSelected);
   };
 
@@ -100,7 +98,6 @@ export function SamplesTable() {
       setFilters(newFilters);
 
       // Clear selections since filters changed
-      setSelectedRowKeys([]);
       setSelectedItems([]);
     }
 
@@ -124,7 +121,6 @@ export function SamplesTable() {
       dataIndex: "key",
       width: 40,
       render: (text, item) => {
-        console.log(selectedItems[item.key]);
         return (
           <Checkbox
             onChange={(e) => selectRow(e, item)}
@@ -201,7 +197,8 @@ export function SamplesTable() {
           summary={() => (
             <Table.Summary.Row>
               <Table.Summary.Cell colSpan={5}>
-                Selected: {selectedRowKeys.length} of {pagination.total}
+                {`Selected: ${Object.keys(selectedItems).length} of
+                ${pagination.total}`}
               </Table.Summary.Cell>
             </Table.Summary.Row>
           )}
