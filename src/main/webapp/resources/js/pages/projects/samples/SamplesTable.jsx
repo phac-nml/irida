@@ -1,6 +1,16 @@
 import React from "react";
-import { FolderAddOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Col, Row, Space, Table, Tag, Tooltip } from "antd";
+import { FolderAddOutlined, DownOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Checkbox,
+  Dropdown,
+  Col,
+  Row,
+  Space,
+  Table,
+  Tag,
+  Tooltip,
+} from "antd";
 import axios from "axios";
 import { getAssociatedProjectForProject } from "../../../apis/projects/associated-projects";
 import {
@@ -12,6 +22,7 @@ import { getNewTagColor } from "../../../utilities/ant-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { formatSort } from "../../../utilities/table-utilities";
 import { getProjectIdFromUrl } from "../../../utilities/url-utilities";
+import { Menu } from "antd";
 
 const formatCartItem = (item) => ({
   key: item.key,
@@ -199,6 +210,21 @@ export function SamplesTable() {
 
   return (
     <Row gutter={[16, 16]}>
+      <Col span={24}>
+        <Space wrap>
+          <Dropdown
+            overlay={
+              <Menu>
+                <Menu.Item>Move Samples</Menu.Item>{" "}
+              </Menu>
+            }
+          >
+            <Button>
+              Button <DownOutlined />
+            </Button>
+          </Dropdown>
+        </Space>
+      </Col>
       <Col span={24}>
         <Table
           loading={loading}
