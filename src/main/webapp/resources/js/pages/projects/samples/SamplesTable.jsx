@@ -1,35 +1,40 @@
 import React from "react";
-import { FolderAddOutlined, DownOutlined } from "@ant-design/icons";
+import {
+  DownOutlined,
+  FolderAddOutlined,
+  MergeCellsOutlined
+} from "@ant-design/icons";
 import {
   Button,
   Checkbox,
-  Dropdown,
   Col,
+  Dropdown,
+  Menu,
   Row,
   Space,
   Table,
   Tag,
-  Tooltip,
+  Tooltip
 } from "antd";
 import axios from "axios";
 import { getAssociatedProjectForProject } from "../../../apis/projects/associated-projects";
 import {
   getAllSampleIds,
-  getPagedProjectSamples,
+  getPagedProjectSamples
 } from "../../../apis/projects/project-samples";
 import { blue6 } from "../../../styles/colors";
 import { getNewTagColor } from "../../../utilities/ant-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { formatSort } from "../../../utilities/table-utilities";
 import { getProjectIdFromUrl } from "../../../utilities/url-utilities";
-import { Menu } from "antd";
+import MergeSamples from "./components/MergeSamples";
 
-const formatCartItem = (item) => ({
+const formatCartItem = item => ({
   key: item.key,
   id: item.sample.id,
   projectId: item.project.id,
   sampleName: item.sample.sampleName,
-  owner: item.owner,
+  owner: item.owner
 });
 
 export function SamplesTable() {
@@ -151,24 +156,24 @@ export function SamplesTable() {
       render: (text, item) => {
         return (
           <Checkbox
-            onChange={(e) => selectRow(e, item)}
+            onChange={e => selectRow(e, item)}
             checked={selectedItems[item.key]}
           />
         );
-      },
+      }
     },
     {
       title: "Name",
       dataIndex: ["sample", "sampleName"],
       key: "name",
       sorter: { multiple: 3 },
-      render: (name, row, index) => <a>{name}</a>,
+      render: (name, row, index) => <a>{name}</a>
     },
     {
       title: "Organism",
       dataIndex: ["sample", "organism"],
       key: "organism",
-      sorter: { multiple: true },
+      sorter: { multiple: true }
     },
     {
       title: "Project",
@@ -183,7 +188,7 @@ export function SamplesTable() {
         <Tooltip title={"Associated Projects"}>
           <FolderAddOutlined style={{ color: blue6 }} />
         </Tooltip>
-      ),
+      )
     },
     {
       title: "Created",
@@ -191,9 +196,9 @@ export function SamplesTable() {
       key: "created",
       sorter: { multiple: 2 },
       width: 230,
-      render: (createdDate, row, index) => {
+      render: createdDate => {
         return formatInternationalizedDateTime(createdDate);
-      },
+      }
     },
     {
       title: "Modified",
@@ -202,10 +207,10 @@ export function SamplesTable() {
       defaultSortOrder: "descend",
       sorter: { multiple: 1 },
       width: 230,
-      render: (modifiedDate, row, index) => {
+      render: modifiedDate => {
         return formatInternationalizedDateTime(modifiedDate);
-      },
-    },
+      }
+    }
   ];
 
   return (
@@ -215,12 +220,16 @@ export function SamplesTable() {
           <Dropdown
             overlay={
               <Menu>
-                <Menu.Item>Move Samples</Menu.Item>{" "}
+                <MergeSamples samples={selectedItems}>
+                  <Menu.Item icon={<MergeCellsOutlined />}>
+                    Merges Samples
+                  </Menu.Item>
+                </MergeSamples>
               </Menu>
             }
           >
             <Button>
-              Button <DownOutlined />
+              Sample Tools <DownOutlined />
             </Button>
           </Dropdown>
         </Space>
