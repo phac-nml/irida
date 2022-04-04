@@ -176,11 +176,11 @@ public class UIProjectsService {
 	 * @param request   {@link UpdateProjectAttributeRequest} details about which field to update
 	 * @param locale    {@link Locale} for the currently logged in user
 	 * @return {@link String} explaining to the user the results of the update.
-	 * @throws Exception thrown if the update cannot be performed
+	 * @throws UpdateException thrown if the update cannot be performed
 	 */
 	@Transactional
 	public String updateProjectDetails(Long projectId, UpdateProjectAttributeRequest request, Locale locale)
-			throws Exception {
+			throws UpdateException {
 		Project project = projectService.read(projectId);
 		switch (request.getField()) {
 		case "label":
@@ -193,14 +193,14 @@ public class UIProjectsService {
 			project.setOrganism(request.getValue());
 			break;
 		default:
-			throw new Exception(messageSource.getMessage("server.ProjectDetails.error",
+			throw new UpdateException(messageSource.getMessage("server.ProjectDetails.error",
 					new Object[] { request.getField() }, locale));
 		}
 
 		try {
 			projectService.update(project);
 		} catch (ConstraintViolationException e) {
-			throw new Exception(
+			throw new UpdateException(
 					messageSource.getMessage("server.ProjectDetails.error-constraint", new Object[] {}, locale));
 		}
 

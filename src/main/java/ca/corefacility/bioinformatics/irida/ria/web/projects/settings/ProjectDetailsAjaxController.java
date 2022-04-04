@@ -73,7 +73,7 @@ public class ProjectDetailsAjaxController {
 			@RequestBody UpdateProjectAttributeRequest request, Locale locale) {
 		try {
 			return ResponseEntity.ok(new AjaxSuccessResponse(service.updateProjectDetails(projectId, request, locale)));
-		} catch (Exception e) {
+		} catch (UpdateException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
