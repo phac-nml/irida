@@ -15,6 +15,7 @@ import { SPACE_XS } from "../../../styles/spacing";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { stringSorter } from "../../../utilities/table-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 
 /**
  * Custom sorter for the name column since this is NOT paged server side.
@@ -37,6 +38,13 @@ export default function UserGroupMembersTable({
   groupId,
   updateTable,
 }) {
+  const [total] = React.useState(members?.length);
+  const [paginationOptions, setPaginationOptions] = React.useState(null);
+
+  React.useMemo(() => {
+    setPaginationOptions(getPaginationOptions(total));
+  }, [total]);
+
   const columns = [
     {
       dataIndex: "name",
@@ -141,7 +149,12 @@ export default function UserGroupMembersTable({
         </div>
       </div>
       <Table
-        pagination={{ hideOnSinglePage: true }}
+        pagination={{
+          total: total,
+          showSizeChanger: paginationOptions?.showSizeChanger,
+          hideOnSinglePage: paginationOptions?.hideOnSinglePage,
+          pageSizeOptions: paginationOptions?.pageSizeOptions,
+        }}
         columns={columns}
         dataSource={members}
       />
