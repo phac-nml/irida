@@ -1,6 +1,10 @@
 Changes
 =======
 
+22.03 to 22.05
+--------------
+* [ALL]: Upgraded to Spring Boot 2.6.6 which fixes CVE-2022-22965. (22.03.1)
+
 22.01 to 22.03
 --------------
 * [REST]: Corrected behaviour of date fields in REST API to return epoch instead of textual string. (22.01.1)
