@@ -2,7 +2,7 @@ import React from "react";
 import {
   DownOutlined,
   FolderAddOutlined,
-  MergeCellsOutlined
+  MergeCellsOutlined,
 } from "@ant-design/icons";
 import {
   Button,
@@ -14,27 +14,28 @@ import {
   Space,
   Table,
   Tag,
-  Tooltip
+  Tooltip,
 } from "antd";
 import axios from "axios";
 import { getAssociatedProjectForProject } from "../../../apis/projects/associated-projects";
 import {
   getAllSampleIds,
-  getPagedProjectSamples
+  getPagedProjectSamples,
 } from "../../../apis/projects/project-samples";
-import { blue6 } from "../../../styles/colors";
+import { blue6, red6 } from "../../../styles/colors";
 import { getNewTagColor } from "../../../utilities/ant-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { formatSort } from "../../../utilities/table-utilities";
 import { getProjectIdFromUrl } from "../../../utilities/url-utilities";
 import MergeSamples from "./components/MergeSamples";
+import SampleIcons from "./components/SampleIcons";
 
-const formatCartItem = item => ({
+const formatCartItem = (item) => ({
   key: item.key,
   id: item.sample.id,
   projectId: item.project.id,
   sampleName: item.sample.sampleName,
-  owner: item.owner
+  owner: item.owner,
 });
 
 export function SamplesTable() {
@@ -155,25 +156,28 @@ export function SamplesTable() {
       width: 40,
       render: (text, item) => {
         return (
-          <Checkbox
-            onChange={e => selectRow(e, item)}
-            checked={selectedItems[item.key]}
-          />
+          <Space>
+            <Checkbox
+              onChange={(e) => selectRow(e, item)}
+              checked={selectedItems[item.key]}
+            />
+            <SampleIcons sample={item} />
+          </Space>
         );
-      }
+      },
     },
     {
       title: "Name",
       dataIndex: ["sample", "sampleName"],
       key: "name",
       sorter: { multiple: 3 },
-      render: (name, row, index) => <a>{name}</a>
+      render: (name, row, index) => <a>{name}</a>,
     },
     {
       title: "Organism",
       dataIndex: ["sample", "organism"],
       key: "organism",
-      sorter: { multiple: true }
+      sorter: { multiple: true },
     },
     {
       title: "Project",
@@ -188,7 +192,7 @@ export function SamplesTable() {
         <Tooltip title={"Associated Projects"}>
           <FolderAddOutlined style={{ color: blue6 }} />
         </Tooltip>
-      )
+      ),
     },
     {
       title: "Created",
@@ -196,9 +200,9 @@ export function SamplesTable() {
       key: "created",
       sorter: { multiple: 2 },
       width: 230,
-      render: createdDate => {
+      render: (createdDate) => {
         return formatInternationalizedDateTime(createdDate);
-      }
+      },
     },
     {
       title: "Modified",
@@ -207,10 +211,10 @@ export function SamplesTable() {
       defaultSortOrder: "descend",
       sorter: { multiple: 1 },
       width: 230,
-      render: modifiedDate => {
+      render: (modifiedDate) => {
         return formatInternationalizedDateTime(modifiedDate);
-      }
-    }
+      },
+    },
   ];
 
   return (

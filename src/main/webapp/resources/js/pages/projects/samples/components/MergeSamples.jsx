@@ -2,14 +2,15 @@ import React, { lazy, Suspense } from "react";
 
 const MergeModal = lazy(() => import("./MergeModal"));
 
+const VALID_MIN_COUNT = 2; // Bare minimum amount of samples to merge
+
 export default function MergeSamples({ children, samples }) {
   const [visible, setVisible] = React.useState(false);
-  const samplesLength = Object.keys(samples).length;
+
   return (
     <>
       {React.cloneElement(children, {
         onClick: () => setVisible(true),
-        disabled: samplesLength !== 2
       })}
       {visible && (
         <Suspense fallback={<span />}>
