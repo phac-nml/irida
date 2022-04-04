@@ -74,7 +74,7 @@ public class ProjectDetailsAjaxController {
 		try {
 			return ResponseEntity.ok(new AjaxSuccessResponse(service.updateProjectDetails(projectId, request, locale)));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage());
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
