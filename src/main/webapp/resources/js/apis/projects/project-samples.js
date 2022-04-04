@@ -17,3 +17,7 @@ export function getPagedProjectSamples(projectId, body) {
 export function getAllSampleIds(projectId, filters) {
   return axios.post(`${BASE_URL}${projectId}/ids`, { filters });
 }
+
+export function mergeSamples(projectId, request) {
+  return axios.put(`${BASE_URL}${projectId}/merge`, request);
+}
