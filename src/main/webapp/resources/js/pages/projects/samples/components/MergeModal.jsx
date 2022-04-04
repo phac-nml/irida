@@ -11,6 +11,8 @@ import {
   Space,
   Typography,
 } from "antd";
+import { sampleNameRegex } from "../../../../utilities/validation-utilities";
+import { validateSampleName } from "../../../../apis/projects/samples";
 
 export default function MergeModal({ samples, visible, onOk }) {
   const copy = Object.entries(samples).map(([, sample]) => sample);
@@ -31,6 +33,15 @@ export default function MergeModal({ samples, visible, onOk }) {
   }, [renameSample]);
 
   // TODO: validate new name
+  const validateName = async (name) => {
+    const data = await validateSampleName(name);
+    console.log(data);
+    if (data.status === "success") {
+      return Promise.resolve();
+    } else {
+      return Promise.reject(new Error(data.help));
+    }
+  };
 
   return (
     <Modal
@@ -45,7 +56,7 @@ export default function MergeModal({ samples, visible, onOk }) {
           <Alert
             type="warning"
             showIcon
-            message={"All samples will be merged into a single sample."}
+            message={"Both samples will be merged into a single sample."}
             description={
               "Currently only the metadata from the sample selected will retain its metadata."
             }
@@ -77,18 +88,23 @@ export default function MergeModal({ samples, visible, onOk }) {
                 </Space>
               </Radio.Group>
             </Form.Item>
-            <Form.Item
-              help={
-                "(Only letters, numbers and - ! @ # $ % ~ ', No spaces or tabs)"
-              }
-            >
+            <Form.Item noStyle>
               <Checkbox
                 checked={renameSample}
                 onChange={(e) => setRenameSample(e.target.checked)}
               >
                 Rename Sample
               </Checkbox>
-              <Form.Item name="newName" noStyle>
+              <Form.Item
+                name="newName"
+                rules={[
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      return validateName(value);
+                    },
+                  }),
+                ]}
+              >
                 <Input disabled={!renameSample} />
               </Form.Item>
             </Form.Item>
