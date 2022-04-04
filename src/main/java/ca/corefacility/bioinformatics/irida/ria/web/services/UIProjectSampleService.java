@@ -1,5 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.Locale;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -11,14 +19,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorRespo
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import com.google.common.base.Strings;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 
-import java.util.Locale;
+import com.google.common.base.Strings;
 
 /**
  * UI Service to handle samples within a project.
@@ -97,8 +99,7 @@ public class UIProjectSampleService {
 				sample.setOrganism(request.getOrganism());
 			}
 			Join<Project, Sample> join = projectService.addSampleToProject(project, sample, true);
-			return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(join.getObject()
-					.getId()));
+			return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(join.getObject().getId()));
 		} catch (EntityNotFoundException e) {
 			return ResponseEntity.ok(new AjaxErrorResponse(
 					messageSource.getMessage("server.AddSample.error.exists", new Object[] {}, locale)));

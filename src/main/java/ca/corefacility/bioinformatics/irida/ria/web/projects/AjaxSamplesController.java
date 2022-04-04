@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableRespon
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSample;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleTableItem;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSamplesTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.MergeRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 
 /**
@@ -42,5 +43,10 @@ public class AjaxSamplesController {
 	public ResponseEntity<List<ProjectCartSample>> getProjectSamplesIds(@PathVariable Long projectId,
 			@RequestBody ProjectSamplesTableRequest request) {
 		return ResponseEntity.ok(uiSampleService.getFilteredProjectSamples(projectId, request));
+	}
+
+	@PutMapping("/merge")
+	public void mergeSamples(@PathVariable Long projectId, @RequestBody MergeRequest request) {
+		uiSampleService.mergeSamples(projectId, request);
 	}
 }

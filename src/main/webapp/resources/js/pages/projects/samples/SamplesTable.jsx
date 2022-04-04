@@ -47,6 +47,7 @@ export function SamplesTable() {
     pageSize: 10,
   });
   const [filters, setFilters] = React.useState({ associated: null });
+  const [order, setOrder] = React.useState();
   const [associated, setAssociated] = React.useState([]);
   const [colors, setColors] = React.useState(() => {
     const colorString = localStorage.getItem("projectColors");
@@ -127,6 +128,7 @@ export function SamplesTable() {
 
     // Handle Sort
     const order = formatSort(sorter);
+    setOrder(order);
     // Add associated projectIds here.
 
     const { data } = await getPagedProjectSamples(projectId, {
@@ -136,6 +138,20 @@ export function SamplesTable() {
     });
     setSamples(data.content);
     setPagination({ ...pagination, total: data.total });
+    setLoading(false);
+  };
+
+  const reloadTable = async () => {
+    setLoading(true);
+    const { data } = await getPagedProjectSamples(projectId, {
+      ...pagination,
+      order,
+      filters,
+    });
+    setSamples(data.content);
+
+    // Clear selections since filters changed
+    setSelectedItems([]);
     setLoading(false);
   };
 
@@ -224,7 +240,7 @@ export function SamplesTable() {
           <Dropdown
             overlay={
               <Menu>
-                <MergeSamples samples={selectedItems}>
+                <MergeSamples samples={selectedItems} updateTable={reloadTable}>
                   <Menu.Item icon={<MergeCellsOutlined />}>
                     Merges Samples
                   </Menu.Item>

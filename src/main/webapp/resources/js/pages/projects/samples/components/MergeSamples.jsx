@@ -4,8 +4,13 @@ const MergeModal = lazy(() => import("./MergeModal"));
 
 const VALID_MIN_COUNT = 2; // Bare minimum amount of samples to merge
 
-export default function MergeSamples({ children, samples }) {
+export default function MergeSamples({ children, samples, updateTable }) {
   const [visible, setVisible] = React.useState(false);
+
+  const onComplete = () => {
+    setVisible(false);
+    updateTable();
+  };
 
   return (
     <>
@@ -16,7 +21,8 @@ export default function MergeSamples({ children, samples }) {
         <Suspense fallback={<span />}>
           <MergeModal
             visible={visible}
-            onOk={() => setVisible(false)}
+            onComplete={onComplete}
+            onCancel={() => setVisible(false)}
             samples={samples}
           />
         </Suspense>

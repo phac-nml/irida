@@ -12,10 +12,10 @@ import {
   Typography,
 } from "antd";
 import React from "react";
-import reactVirtualizedAutoSizer from "react-virtualized-auto-sizer";
+import { mergeSamples } from "../../../../apis/projects/project-samples";
 import { validateSampleName } from "../../../../apis/projects/samples";
 
-export default function MergeModal({ samples, visible, onOk }) {
+export default function MergeModal({ samples, visible, onComplete, onCancel }) {
   const [renameSample, setRenameSample] = React.useState(false);
   const [form] = Form.useForm();
 
@@ -37,7 +37,6 @@ export default function MergeModal({ samples, visible, onOk }) {
   const initialValues = {
     primary: valid[0]?.id,
     newName: "",
-    ids: valid.map((sample) => sample.id),
   };
 
   React.useEffect(() => {
@@ -62,14 +61,21 @@ export default function MergeModal({ samples, visible, onOk }) {
     }
   };
 
+  const onSubmit = async () => {
+    const values = await form.validateFields();
+    const ids = valid
+      .map((sample) => sample.id)
+      .filter((id) => id !== values.primary);
+    const response = await mergeSamples(valid[0].projectId, { ...values, ids });
+    onComplete();
+  };
+
   return (
     <Modal
       title="Merge Samples"
       visible={visible}
-      onOk={() => {
-        form.validateFields().then((values) => console.log(values));
-      }}
-      onCancel={onOk}
+      onOk={onSubmit}
+      onCancel={onCancel}
       width={600}
     >
       <Row gutter={[16, 16]}>
@@ -86,9 +92,6 @@ export default function MergeModal({ samples, visible, onOk }) {
             </Col>
             <Col span={24}>
               <Form form={form} layout="vertical" initialValues={initialValues}>
-                <Form.Item hidden name="ids">
-                  <Input />
-                </Form.Item>
                 <Form.Item
                   name="primary"
                   label={"Select sample to retain metadata from"}
