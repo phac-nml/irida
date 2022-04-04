@@ -151,6 +151,7 @@ export default function UserGroupMembersTable({
       <Table
         pagination={{
           total: total,
+          defaultPageSize: paginationOptions?.pageSize,
           showSizeChanger: paginationOptions?.showSizeChanger,
           hideOnSinglePage: paginationOptions?.hideOnSinglePage,
           pageSizeOptions: paginationOptions?.pageSizeOptions,

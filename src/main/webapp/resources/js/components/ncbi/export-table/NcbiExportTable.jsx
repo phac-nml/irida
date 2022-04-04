@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Table } from "antd";
 import { getProjectNCBIExports } from "../../../apis/ncbi/ncbi";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import NcbiUploadStates from "../upload-states";
+import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 
 /**
  * Render a list of all Project NCBI Exports.
@@ -11,11 +12,20 @@ import NcbiUploadStates from "../upload-states";
  * @constructor
  */
 export function NcbiExportTable() {
-  const [exports, setExports] = useState(null);
+  const [exports, setExports] = React.useState(null);
+  const [total, setTotal] = React.useState(0);
+  const [paginationOptions, setPaginationOptions] = React.useState(null);
 
-  useEffect(() => {
-    getProjectNCBIExports().then(setExports);
+  React.useEffect(() => {
+    getProjectNCBIExports().then((data) => {
+      setExports(data);
+      setTotal(data.length);
+    });
   }, []);
+
+  React.useMemo(() => {
+    setPaginationOptions(getPaginationOptions(total));
+  }, [total]);
 
   const columns = [
     {
@@ -60,6 +70,17 @@ export function NcbiExportTable() {
   ];
 
   return (
-    <Table columns={columns} dataSource={exports} rowKey={(item) => item.id} />
+    <Table
+      columns={columns}
+      dataSource={exports}
+      rowKey={(item) => item.id}
+      pagination={{
+        total: total,
+        defaultPageSize: paginationOptions?.pageSize,
+        showSizeChanger: paginationOptions?.showSizeChanger,
+        hideOnSinglePage: paginationOptions?.hideOnSinglePage,
+        pageSizeOptions: paginationOptions?.pageSizeOptions,
+      }}
+    />
   );
 }

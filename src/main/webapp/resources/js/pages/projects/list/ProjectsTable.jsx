@@ -219,7 +219,7 @@ export function ProjectsTable() {
           loading={loading}
           pagination={{
             total: total,
-            pageSize: state.pageSize,
+            defaultPageSize: paginationOptions?.pageSize,
             showSizeChanger: paginationOptions?.showSizeChanger,
             hideOnSinglePage: paginationOptions?.hideOnSinglePage,
             pageSizeOptions: paginationOptions?.pageSizeOptions,

@@ -212,6 +212,7 @@ export default function ReferenceFiles() {
             className="t-files-table"
             pagination={{
               total: total,
+              defaultPageSize: paginationOptions?.pageSize,
               showSizeChanger: paginationOptions?.showSizeChanger,
               hideOnSinglePage: paginationOptions?.hideOnSinglePage,
               pageSizeOptions: paginationOptions?.pageSizeOptions,

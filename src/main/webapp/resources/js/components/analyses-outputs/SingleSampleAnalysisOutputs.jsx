@@ -233,6 +233,7 @@ export default function SingleSampleAnalysisOutputs({
         rowSelection={rowSelection}
         pagination={{
           total: outputs.length,
+          defaultPageSize: paginationOptions?.pageSize,
           showSizeChanger: paginationOptions?.showSizeChanger,
           hideOnSinglePage: paginationOptions?.hideOnSinglePage,
           pageSizeOptions: paginationOptions?.pageSizeOptions,

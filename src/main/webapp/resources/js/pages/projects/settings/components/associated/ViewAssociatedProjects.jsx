@@ -15,9 +15,7 @@ import { IconFolder } from "../../../../../components/icons/Icons";
 import { createListFilterByUniqueAttribute } from "../../../../../components/Tables/filter-utilities";
 import { TextFilter } from "../../../../../components/Tables/fitlers";
 import { setBaseUrl } from "../../../../../utilities/url-utilities";
-import {
-  getPaginationOptions,
-} from "../../../../../utilities/antdesign-table-utilities";
+import { getPaginationOptions } from "../../../../../utilities/antdesign-table-utilities";
 
 const { Text } = Typography;
 
@@ -140,6 +138,7 @@ export default function ViewAssociatedProjects({ projectId }) {
       dataSource={associatedProjects}
       pagination={{
         total: total,
+        defaultPageSize: paginationOptions?.pageSize,
         showSizeChanger: paginationOptions?.showSizeChanger,
         hideOnSinglePage: paginationOptions?.hideOnSinglePage,
         pageSizeOptions: paginationOptions?.pageSizeOptions,

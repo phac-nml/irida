@@ -59,6 +59,7 @@ function reducer(state, action) {
         hideOnSinglePage: action.payload.hideOnSinglePage,
         showSizeChanger: action.payload.showSizeChanger,
         pageSizeOptions: action.payload.pageSizeOptions,
+        pageSize: action.payload.pageSize,
       };
     case types.default:
       return { ...state };
@@ -159,6 +160,7 @@ function PagedTableProvider({
         hideOnSinglePage: paginationOptions?.hideOnSinglePage,
         showSizeChanger: paginationOptions?.showSizeChanger,
         pageSizeOptions: paginationOptions.pageSizeOptions,
+        pageSize: paginationOptions.pageSize,
       },
     });
   }, [state.total]);
@@ -174,7 +176,7 @@ function PagedTableProvider({
           onChange: handleTableChange,
           pagination: {
             total: state.total,
-            pageSize: state.pageSize,
+            defaultPageSize: state.pageSize,
             hideOnSinglePage: state.hideOnSinglePage,
             showSizeChanger: state.showSizeChanger,
             pageSizeOptions: state.pageSizeOptions,

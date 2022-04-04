@@ -55,6 +55,7 @@ export function UserGroupProjectsTable({ groupId }) {
       dataSource={projects}
       pagination={{
         total: total,
+        defaultPageSize: paginationOptions?.pageSize,
         showSizeChanger: paginationOptions?.showSizeChanger,
         hideOnSinglePage: paginationOptions?.hideOnSinglePage,
         pageSizeOptions: paginationOptions?.pageSizeOptions,
