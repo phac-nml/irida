@@ -14,8 +14,23 @@ import {
 
 export default function MergeModal({ samples, visible, onOk }) {
   const copy = Object.entries(samples).map(([, sample]) => sample);
-  const [value, setValue] = React.useState(copy[0].id);
   const [renameSample, setRenameSample] = React.useState(false);
+  const [form] = Form.useForm();
+
+  const initialValues = {
+    primary: copy[0].id,
+    newName: "",
+  };
+
+  React.useEffect(() => {
+    if (!renameSample) {
+      form.setFieldsValue({
+        newName: "",
+      });
+    }
+  }, [renameSample]);
+
+  // TODO: validate new name
 
   return (
     <Modal
@@ -42,7 +57,7 @@ export default function MergeModal({ samples, visible, onOk }) {
           </Typography.Text>
         </Col>
         <Col span={24}>
-          <Form layout="vertical">
+          <Form form={form} layout="vertical" initialValues={{ initialValues }}>
             <Form.Item
               label={"Select primary sample"}
               tooltip={
@@ -50,12 +65,8 @@ export default function MergeModal({ samples, visible, onOk }) {
               }
               required
             >
-              <Radio.Group value={value}>
-                <Space
-                  direction="vertical"
-                  onChange={(e) => setValue(e.target.value)}
-                  value={value}
-                >
+              <Radio.Group>
+                <Space direction="vertical" name="primary">
                   {copy.map((sample) => {
                     return (
                       <Radio value={sample.id} key={`sample-${sample.id}`}>
@@ -77,7 +88,7 @@ export default function MergeModal({ samples, visible, onOk }) {
               >
                 Rename Sample
               </Checkbox>
-              <Form.Item noStyle>
+              <Form.Item name="newName" noStyle>
                 <Input disabled={!renameSample} />
               </Form.Item>
             </Form.Item>
