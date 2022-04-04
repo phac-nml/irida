@@ -28,6 +28,9 @@ public class ProjectMembersPage extends AbstractPage {
 	@FindBy(className = "t-remove-btn")
 	private List<WebElement> removeMemberButtons;
 
+	@FindBy(className = "t-remove-popover")
+	private WebElement removePopover;
+
 	@FindBy(className = "t-remove-success")
 	private WebElement removeSuccessNotification;
 
@@ -55,7 +58,7 @@ public class ProjectMembersPage extends AbstractPage {
 	}
 
 	public static ProjectMembersPage goToRemoteProject(WebDriver driver, Long projectId) {
-		get(driver, "projects/"+ projectId +"/settings/members");
+		get(driver, "projects/" + projectId + "/settings/members");
 		table = AntTable.getTable(driver);
 		addMemberButton = AddMemberButton.getAddMemberButton(driver);
 		return PageFactory.initElements(driver, ProjectMembersPage.class);
@@ -71,24 +74,19 @@ public class ProjectMembersPage extends AbstractPage {
 
 	public void removeUser(int row) {
 		removeMember(row);
-		WebDriverWait wait = new WebDriverWait(driver, 2);
-		wait.until(ExpectedConditions.visibilityOf(removeSuccessNotification));
 	}
 
 	public void removeManager(int row) {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
-		WebElement button = wait.until(ExpectedConditions.elementToBeClickable(removeMemberButtons.get(row)));
-		button.click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-remove-popover")));
-		wait.until(ExpectedConditions.elementToBeClickable(By.className("t-remove-confirm")));
-		driver.findElement(By.className("t-remove-confirm")).click();
+		removeMember(row);
 	}
 
 	private void removeMember(int row) {
 		removeMemberButtons.get(row).click();
 		WebDriverWait wait = new WebDriverWait(driver, 4);
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-remove-popover")));
+		wait.until(ExpectedConditions.visibilityOf(removePopover));
+		wait.until(ExpectedConditions.elementToBeClickable(By.className("t-remove-confirm")));
 		driver.findElement(By.className("t-remove-confirm")).click();
+		wait.until(ExpectedConditions.visibilityOf(antNotification));
 	}
 
 	public boolean isNotificationDisplayed() {
