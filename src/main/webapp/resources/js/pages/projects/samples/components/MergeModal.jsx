@@ -92,14 +92,16 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
   // TODO: Handle rendering many locked samples?k
   return (
     <Modal
-      title="Merge Samples"
+      title={i18n("MergeModal.title")}
       visible={visible}
       onOk={onSubmit}
+      okText={i18n("MergeModal.okText")}
       okButtonProps={{
         loading,
         disabled: valid.length < 2,
       }}
       onCancel={onCancel}
+      cancelText={i18n("MergeModal.cancelText")}
       width={600}
     >
       {initialized ? (
@@ -110,9 +112,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
                 <Alert
                   type="warning"
                   showIcon
-                  message={
-                    "Only the metadata from the selected sample will be retained"
-                  }
+                  message={i18n("MergeModal.metadata-warning")}
                 />
               </Col>
               {error !== undefined ? (
@@ -134,7 +134,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
                 >
                   <Form.Item
                     name="primary"
-                    label={"Select sample to retain metadata from"}
+                    label={i18n("MergeModal.input-primary")}
                     required
                   >
                     <Radio.Group>
@@ -180,7 +180,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
               <Alert
                 type="error"
                 showIcon
-                message="Must have at least 2 non-locked samples to merge"
+                message={i18n("MergeModal.error-valid")}
               />
             </Col>
           )}
@@ -188,7 +188,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
             <Col span={24}>
               <List
                 size="small"
-                header={"Locked samples cannot be merged"}
+                header={i18n("MergeModal.locked-samples")}
                 bordered
                 dataSource={invalid}
                 renderItem={(item) => (
@@ -202,7 +202,8 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
         </Row>
       ) : (
         <Space>
-          <Spin /> <Typography.Text>Checking samples ...</Typography.Text>
+          <Spin />
+          <Typography.Text>{i18n("MergeModal.loading")}</Typography.Text>
         </Space>
       )}
     </Modal>
