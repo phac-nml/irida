@@ -28,6 +28,9 @@ const CustomListItem = styled(List.Item)`
   }
 `;
 
+const PROJECT_SAMPLE_ADDED = "project_sample_added";
+const PROJECT_SAMPLE_DATA_ADDED = "project_sample_data_added";
+
 /**
  * Component for rendering an activity (event) within an Ant Design List.
  * @param {Object} activity - the activity to render
@@ -57,8 +60,8 @@ export function ActivityListItem({ activity }) {
 
         if (
           parseInt(fragments[i]) === 0 &&
-          (activity.type === "project_sample_data_added" ||
-            activity.type === "project_sample_added")
+          (activity.type === PROJECT_SAMPLE_DATA_ADDED ||
+            activity.type === PROJECT_SAMPLE_ADDED)
         ) {
           const projectId = activity.items[0].href.match(/\d+/g)?.[0];
           const sampleId = activity.items[0].href.match(/\d+/g)?.[1];
