@@ -22,7 +22,7 @@ import {
   getAllSampleIds,
   getPagedProjectSamples,
 } from "../../../apis/projects/project-samples";
-import { blue6, red6 } from "../../../styles/colors";
+import { blue6 } from "../../../styles/colors";
 import { getNewTagColor } from "../../../utilities/ant-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { formatSort } from "../../../utilities/table-utilities";
@@ -241,7 +241,10 @@ export function SamplesTable() {
             overlay={
               <Menu>
                 <MergeSamples samples={selectedItems} updateTable={reloadTable}>
-                  <Menu.Item icon={<MergeCellsOutlined />}>
+                  <Menu.Item
+                    icon={<MergeCellsOutlined />}
+                    disabled={filters.associated}
+                  >
                     Merges Samples
                   </Menu.Item>
                 </MergeSamples>
