@@ -10,14 +10,14 @@ import {
   Row,
   Space,
   Spin,
-  Typography
+  Typography,
 } from "antd";
 import React from "react";
 import { mergeSamples } from "../../../../apis/projects/project-samples";
-import { validateSampleName } from "../../../../apis/projects/samples";
+import { serverValidateSampleName } from "../../../../utilities/validation-utilities";
 
 export default function MergeModal({ samples, visible, onComplete, onCancel }) {
-  const [initailized, setInitialized] = React.useState(false);
+  const [initialized, setInitialized] = React.useState(false);
   const [renameSample, setRenameSample] = React.useState(false);
   const [error, setError] = React.useState(undefined);
   const [loading, setLoading] = React.useState(false);
@@ -31,7 +31,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
     const values = Object.values(samples),
       valid = [],
       invalid = [];
-    values?.forEach(sample => {
+    values?.forEach((sample) => {
       if (sample.owner) {
         valid.push(sample);
       } else {
@@ -49,48 +49,43 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
 
   const initialValues = {
     primary: valid[0]?.id,
-    newName: ""
+    newName: "",
   };
 
   React.useEffect(() => {
     if (!renameSample) {
       form.setFieldsValue({
-        newName: ""
+        newName: "",
       });
     }
   }, [form, renameSample]);
 
   // Server validate new name
-  const validateName = async name => {
+  const validateName = async (name) => {
     if (renameSample) {
-      const data = await validateSampleName(name);
-      if (data.status === "success") {
-        return Promise.resolve();
-      } else {
-        return Promise.reject(new Error(data.help));
-      }
+      return serverValidateSampleName(name);
     } else {
       return Promise.resolve();
     }
   };
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
     setLoading(true);
-    const values = await form.validateFields();
-    const ids = valid
-      .map(sample => sample.id)
-      .filter(id => id !== values.primary);
-    try {
-      await mergeSamples(valid[0].projectId, {
-        ...values,
-        ids
-      });
-      onComplete();
-    } catch (e) {
-      setError(e.response.data.error);
-    } finally {
-      setLoading(false);
-    }
+    form
+      .validateFields()
+      .then((values) => {
+        const ids = valid
+          .map((sample) => sample.id)
+          .filter((id) => id !== values.primary);
+
+        mergeSamples(valid[0].projectId, {
+          ...values,
+          ids,
+        })
+          .then(onComplete)
+          .catch((e) => setError(e.response.data.error));
+      })
+      .finally(() => setLoading(false));
   };
 
   // TODO: Handle rendering many samples?
@@ -101,12 +96,12 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
       visible={visible}
       onOk={onSubmit}
       okButtonProps={{
-        loading
+        loading,
       }}
       onCancel={onCancel}
       width={600}
     >
-      {initailized ? (
+      {initialized ? (
         <Row gutter={[16, 16]}>
           {valid.length >= 2 ? (
             <>
@@ -143,7 +138,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
                   >
                     <Radio.Group>
                       <Space direction="vertical">
-                        {valid.map(sample => {
+                        {valid.map((sample) => {
                           return (
                             <Radio
                               value={sample.id}
@@ -159,7 +154,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
                   <Form.Item noStyle>
                     <Checkbox
                       checked={renameSample}
-                      onChange={e => setRenameSample(e.target.checked)}
+                      onChange={(e) => setRenameSample(e.target.checked)}
                     >
                       Rename Sample
                     </Checkbox>
@@ -169,8 +164,8 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
                         ({ getFieldValue }) => ({
                           validator(_, value) {
                             return validateName(value);
-                          }
-                        })
+                          },
+                        }),
                       ]}
                     >
                       <Input disabled={!renameSample} />
@@ -195,7 +190,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
                 header={"Locked samples cannot be merged"}
                 bordered
                 dataSource={invalid}
-                renderItem={item => (
+                renderItem={(item) => (
                   <List.Item>
                     <Typography.Text>{item.sampleName}</Typography.Text>
                   </List.Item>
