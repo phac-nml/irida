@@ -9,6 +9,7 @@ import {
   Radio,
   Row,
   Space,
+  Spin,
   Typography
 } from "antd";
 import React from "react";
@@ -16,6 +17,7 @@ import { mergeSamples } from "../../../../apis/projects/project-samples";
 import { validateSampleName } from "../../../../apis/projects/samples";
 
 export default function MergeModal({ samples, visible, onComplete, onCancel }) {
+  const [initailized, setInitialized] = React.useState(false);
   const [renameSample, setRenameSample] = React.useState(false);
   const [error, setError] = React.useState(undefined);
   const [loading, setLoading] = React.useState(false);
@@ -38,6 +40,12 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
     });
     return [valid, invalid];
   }, [samples]);
+
+  React.useEffect(() => {
+    if (invalid !== undefined && valid !== undefined) {
+      setInitialized(true);
+    }
+  }, [invalid, valid]);
 
   const initialValues = {
     primary: valid[0]?.id,
@@ -85,6 +93,8 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
     }
   };
 
+  // TODO: Handle rendering many samples?
+  // TODO: Handle rendering many locked samples?k
   return (
     <Modal
       title="Merge Samples"
@@ -96,96 +106,109 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
       onCancel={onCancel}
       width={600}
     >
-      <Row gutter={[16, 16]}>
-        {valid.length >= 2 ? (
-          <>
-            <Col span={24}>
-              <Alert
-                type="warning"
-                showIcon
-                message={
-                  "Only the metadata from the selected sample will be retained"
-                }
-              />
-            </Col>
-            {error !== undefined ? (
+      {initailized ? (
+        <Row gutter={[16, 16]}>
+          {valid.length >= 2 ? (
+            <>
               <Col span={24}>
                 <Alert
+                  type="warning"
                   showIcon
-                  type="error"
-                  message={error}
-                  closable
-                  onClose={() => setError(undefined)}
+                  message={
+                    "Only the metadata from the selected sample will be retained"
+                  }
                 />
               </Col>
-            ) : null}
-            <Col span={24}>
-              <Form form={form} layout="vertical" initialValues={initialValues}>
-                <Form.Item
-                  name="primary"
-                  label={"Select sample to retain metadata from"}
-                  required
+              {error !== undefined ? (
+                <Col span={24}>
+                  <Alert
+                    showIcon
+                    type="error"
+                    message={error}
+                    closable
+                    onClose={() => setError(undefined)}
+                  />
+                </Col>
+              ) : null}
+              <Col span={24}>
+                <Form
+                  form={form}
+                  layout="vertical"
+                  initialValues={initialValues}
                 >
-                  <Radio.Group>
-                    <Space direction="vertical">
-                      {valid.map(sample => {
-                        return (
-                          <Radio value={sample.id} key={`sample-${sample.id}`}>
-                            {sample.sampleName}
-                          </Radio>
-                        );
-                      })}
-                    </Space>
-                  </Radio.Group>
-                </Form.Item>
-                <Form.Item noStyle>
-                  <Checkbox
-                    checked={renameSample}
-                    onChange={e => setRenameSample(e.target.checked)}
-                  >
-                    Rename Sample
-                  </Checkbox>
                   <Form.Item
-                    name="newName"
-                    rules={[
-                      ({ getFieldValue }) => ({
-                        validator(_, value) {
-                          return validateName(value);
-                        }
-                      })
-                    ]}
+                    name="primary"
+                    label={"Select sample to retain metadata from"}
+                    required
                   >
-                    <Input disabled={!renameSample} />
+                    <Radio.Group>
+                      <Space direction="vertical">
+                        {valid.map(sample => {
+                          return (
+                            <Radio
+                              value={sample.id}
+                              key={`sample-${sample.id}`}
+                            >
+                              {sample.sampleName}
+                            </Radio>
+                          );
+                        })}
+                      </Space>
+                    </Radio.Group>
                   </Form.Item>
-                </Form.Item>
-              </Form>
+                  <Form.Item noStyle>
+                    <Checkbox
+                      checked={renameSample}
+                      onChange={e => setRenameSample(e.target.checked)}
+                    >
+                      Rename Sample
+                    </Checkbox>
+                    <Form.Item
+                      name="newName"
+                      rules={[
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            return validateName(value);
+                          }
+                        })
+                      ]}
+                    >
+                      <Input disabled={!renameSample} />
+                    </Form.Item>
+                  </Form.Item>
+                </Form>
+              </Col>
+            </>
+          ) : (
+            <Col span={24}>
+              <Alert
+                type="error"
+                showIcon
+                message="Must have at least 2 non-locked samples to merge"
+              />
             </Col>
-          </>
-        ) : (
-          <Col span={24}>
-            <Alert
-              type="error"
-              showIcon
-              message="Must have at least 2 non-locked samples to merge"
-            />
-          </Col>
-        )}
-        {invalid.length ? (
-          <Col span={24}>
-            <List
-              size="small"
-              header={"Locked samples cannot be merged"}
-              bordered
-              dataSource={invalid}
-              renderItem={item => (
-                <List.Item>
-                  <Typography.Text>{item.sampleName}</Typography.Text>
-                </List.Item>
-              )}
-            />
-          </Col>
-        ) : null}
-      </Row>
+          )}
+          {invalid.length ? (
+            <Col span={24}>
+              <List
+                size="small"
+                header={"Locked samples cannot be merged"}
+                bordered
+                dataSource={invalid}
+                renderItem={item => (
+                  <List.Item>
+                    <Typography.Text>{item.sampleName}</Typography.Text>
+                  </List.Item>
+                )}
+              />
+            </Col>
+          ) : null}
+        </Row>
+      ) : (
+        <Space>
+          <Spin /> <Typography.Text>Checking samples ...</Typography.Text>
+        </Space>
+      )}
     </Modal>
   );
 }
