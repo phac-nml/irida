@@ -149,6 +149,7 @@ export function SamplesTable() {
       filters,
     });
     setSamples(data.content);
+    setPagination({ ...pagination, total: data.total });
 
     // Clear selections since filters changed
     setSelectedItems([]);
