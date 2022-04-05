@@ -10,14 +10,14 @@ const BASE_URL = setBaseUrl(`ajax/project-samples/`);
  * @param {object} body paging, ordering and sorting information
  * @returns Axios promise
  */
-export function getPagedProjectSamples(projectId, body) {
-  return axios.post(`${BASE_URL}${projectId}`, body);
+export async function getPagedProjectSamples(projectId, body) {
+  return await axios.post(`${BASE_URL}${projectId}`, body);
 }
 
-export function getAllSampleIds(projectId, filters) {
-  return axios.post(`${BASE_URL}${projectId}/ids`, { filters });
+export async function getAllSampleIds(projectId, filters) {
+  return await axios.post(`${BASE_URL}${projectId}/ids`, { filters });
 }
 
-export function mergeSamples(projectId, request) {
-  return axios.put(`${BASE_URL}${projectId}/merge`, request);
+export async function mergeSamples(projectId, request) {
+  return await axios.put(`${BASE_URL}${projectId}/merge`, request);
 }
