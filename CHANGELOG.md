@@ -1,17 +1,22 @@
+
 Changes
 =======
 
 22.03 to 22.05
 --------------
+* [ALL]: Upgraded to Spring Boot 2.6.6 which fixes CVE-2022-22965. (22.03.1)
+* [Developer/UI]: Fixed Project details to be transactional to resolve scalability issue on large projects >5000 samples. (22.03.1)
+* [Developer/UI]: Fixed updates in UI service classes to use @Transactional annotation to fix scalability issue on large projects >5000 samples. (22.03.1)
 * [Developer]: Add `--no-yarn` to skip the yarn build in `run.sh`
 * [Developer]: Updated frontend dependencies: `babel`, `eslint`, `postcss`, and `webpack`
 * [Database]: Updated group and user project queries to improve performance for all pages/calls that depend on project permissions.
 * [UI]: Updated Create Remote Api to use Ant Design.
 * [UI]: Removed old bootstrap client details/edit page and updated with a modal on the clients listing page.
 * [UI]: Updated Dashboard Recent Activity to use Ant Design.
-* [UI]: Adding date labels to the charts on main statistics page.
 * [Developer]: Updated to Ant Design v4.19.3.
 * [Developer]: Removed unused DataTables code.
+* [UI]: Sorted columns for advanced charts and added labels to tiny charts on admin statistics page.
+* [UI]: Fixed: Allow organism name not included in the current taxonomy.
 
 22.01 to 22.03
 --------------
