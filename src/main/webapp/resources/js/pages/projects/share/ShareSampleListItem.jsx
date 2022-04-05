@@ -54,7 +54,7 @@ export default function ShareSamplesListItem({ sample, style }) {
           )
         }
         title={
-          <SampleDetailViewer sampleId={sample.id}>
+          <SampleDetailViewer sampleId={sample.id} projectId={sample.projectId}>
             <Button>{sample.name}</Button>
           </SampleDetailViewer>
         }

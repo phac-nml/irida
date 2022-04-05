@@ -57,6 +57,7 @@ export function CreateProjectSamples({ form }) {
           message={i18n("CreateProjectSamples.locked")}
         />
       )}
+
       {projectSamples.unlocked?.length ? (
         <Space style={{ display: "block" }}>
           <Table
@@ -88,6 +89,7 @@ export function CreateProjectSamples({ form }) {
                 render: (text, projectSample) => (
                   <SampleDetailViewer
                     sampleId={projectSample.sample.identifier}
+                    projectId={projectSample.projectId}
                   >
                     <Button size="small">{projectSample.sample.label}</Button>
                   </SampleDetailViewer>

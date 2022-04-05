@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Empty, notification, Space } from "antd";
+import { Button, Col, Empty, notification, Row } from "antd";
 import { IconLoading } from "../../icons/Icons";
 import { WarningAlert } from "../../alerts";
 import { SampleFileConcatenate } from "./SampleFileContenate";
@@ -55,7 +55,10 @@ export function SampleFiles() {
   Function to get sample files from the server and dispatch to the store
    */
   const getSampleFiles = () => {
-    fetchSampleFiles({ sampleId: sample.identifier, projectId })
+    fetchSampleFiles({
+      sampleId: sample.identifier,
+      projectId,
+    })
       .then((data) => {
         dispatch(setSampleFiles(data));
       })
@@ -64,7 +67,7 @@ export function SampleFiles() {
 
   /*
    Get the sample files and set them in the redux store on component load
-   and to refetch if the sample identifier or project identifier change
+   and to refetch if the sample identifier or project change
    */
   React.useEffect(getSampleFiles, [sample.identifier, projectId]);
 
@@ -262,9 +265,9 @@ export function SampleFiles() {
   return loading ? (
     <IconLoading />
   ) : (
-    <Space size="large" direction="vertical" style={{ width: `100%` }}>
+    <Row gutter={[16, 16]}>
       {modifiable ? (
-        <>
+        <Col span={24}>
           <div>
             <DragUpload
               className="t-upload-sample-files"
@@ -283,47 +286,45 @@ export function SampleFiles() {
               </Button>
             </SampleFileConcatenate>
           </div>
-        </>
+        </Col>
       ) : null}
       {sequenceFiles.length || assemblyFiles.length || fast5Files.length ? (
-        <div>
-          <div>
-            <WarningAlert
-              message={i18n("SampleFiles.doNotCloseWindowWarning")}
-              style={{ marginBottom: SPACE_MD }}
+        <Col span={24}>
+          <WarningAlert
+            message={i18n("SampleFiles.doNotCloseWindowWarning")}
+            style={{ marginBottom: SPACE_MD }}
+          />
+          {sequenceFiles.length ? (
+            <FileUploadProgress
+              files={sequenceFiles}
+              uploadProgress={seqFileProgress}
+              type="Sequence"
             />
-            <div>
-              {sequenceFiles.length ? (
-                <FileUploadProgress
-                  files={sequenceFiles}
-                  uploadProgress={seqFileProgress}
-                  type="Sequence"
-                />
-              ) : null}
-              {assemblyFiles.length ? (
-                <FileUploadProgress
-                  files={assemblyFiles}
-                  uploadProgress={assemblyProgress}
-                  type="Assembly"
-                />
-              ) : null}
-              {fast5Files.length ? (
-                <FileUploadProgress
-                  files={fast5Files}
-                  uploadProgress={fast5Progress}
-                  type="Fast5"
-                />
-              ) : null}
-            </div>
-          </div>
-        </div>
+          ) : null}
+          {assemblyFiles.length ? (
+            <FileUploadProgress
+              files={assemblyFiles}
+              uploadProgress={assemblyProgress}
+              type="Assembly"
+            />
+          ) : null}
+          {fast5Files.length ? (
+            <FileUploadProgress
+              files={fast5Files}
+              uploadProgress={fast5Progress}
+              type="Fast5"
+            />
+          ) : null}
+        </Col>
       ) : null}
 
-      {Object.keys(files).length !== 0 ? (
-        <SampleFileList />
-      ) : (
-        <Empty description={i18n("SampleFiles.no-files")} />
-      )}
-    </Space>
+      <Col span={24}>
+        {Object.keys(files).length !== 0 ? (
+          <SampleFileList />
+        ) : (
+          <Empty description={i18n("SampleFiles.no-files")} />
+        )}
+      </Col>
+    </Row>
   );
 }

@@ -170,13 +170,13 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 			+ "  INNER JOIN analysis_submission_sequencing_object o ON asub.id = o.analysis_submission_id\n"
 			+ "  INNER JOIN sample_sequencingobject sso ON sso.sequencingobject_id = o.sequencing_object_id\n"
 			+ "  INNER JOIN sample s ON sso.sample_id = s.id\n"
-			+ "  LEFT JOIN project_sample psample ON s.id = psample.sample_id\n"
+			+ "  INNER JOIN project_sample psample ON s.id = psample.sample_id\n"
 			+ "WHERE\n"
 			+ "  asub.submitter = :userId\n";
 		// @formatter:on
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("userId", userId);
-		logger.trace("Getting all automated analysis output file info for user id=" + userId);
+		logger.trace("Getting all analysis output file info for user id=" + userId);
 		NamedParameterJdbcTemplate tmpl = new NamedParameterJdbcTemplate(dataSource);
 		List<ProjectSampleAnalysisOutputInfo> analysisOutputs = tmpl.query(query, parameters, psaoiRowMapper);
 

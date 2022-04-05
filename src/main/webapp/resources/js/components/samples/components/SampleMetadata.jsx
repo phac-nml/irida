@@ -1,5 +1,14 @@
 import React from "react";
-import { Button, Empty, List, notification, Popconfirm, Space } from "antd";
+import {
+  Button,
+  Col,
+  Empty,
+  List,
+  notification,
+  Popconfirm,
+  Row,
+  Space,
+} from "antd";
 import { AddNewMetadata } from "./AddNewMetadata";
 import { useRemoveSampleMetadataMutation } from "../../../apis/samples/samples";
 import { ContentLoading } from "../../loader";
@@ -37,7 +46,10 @@ export function SampleMetadata() {
 
   React.useEffect(() => {
     dispatch(
-      fetchSampleMetadata({ sampleId: sample.identifier, projectId: projectId })
+      fetchSampleMetadata({
+        sampleId: sample.identifier,
+        projectId,
+      })
     );
   }, []);
 
@@ -116,23 +128,25 @@ export function SampleMetadata() {
   };
 
   return (
-    <>
+    <Row gutter={[16, 16]}>
       {isModifiable && (
-        <MetadataRolesProvider>
-          <AddNewMetadata>
-            <Button
-              icon={<IconPlusCircle />}
-              className="t-add-new-metadata-btn"
-            >
-              {i18n("SampleMetadata.addNewMetadata")}
-            </Button>
-          </AddNewMetadata>
-        </MetadataRolesProvider>
+        <Col>
+          <MetadataRolesProvider>
+            <AddNewMetadata>
+              <Button
+                icon={<IconPlusCircle />}
+                className="t-add-new-metadata-btn"
+              >
+                {i18n("SampleMetadata.addNewMetadata")}
+              </Button>
+            </AddNewMetadata>
+          </MetadataRolesProvider>
+        </Col>
       )}
-      <div
+      <Col
+        span={24}
         style={{
           height: DEFAULT_HEIGHT,
-          width: "100%",
         }}
       >
         {!loading ? (
@@ -160,7 +174,7 @@ export function SampleMetadata() {
         ) : (
           <ContentLoading />
         )}
-      </div>
-    </>
+      </Col>
+    </Row>
   );
 }

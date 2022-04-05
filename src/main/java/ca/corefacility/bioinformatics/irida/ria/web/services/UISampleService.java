@@ -104,16 +104,22 @@ public class UISampleService {
 	/**
 	 * Get full details for a {@link Sample}
 	 *
-	 * @param id Identifier for a {@link Sample}
+	 * @param id        Identifier for a {@link Sample}
+	 * @param projectId Idenfitifer for a {@link Project}
 	 * @return {@link SampleDetails}
 	 */
-	public SampleDetails getSampleDetails(Long id) {
+	public SampleDetails getSampleDetails(Long id, Long projectId) {
 		Sample sample = sampleService.read(id);
 		Authentication authentication = SecurityContextHolder.getContext()
 				.getAuthentication();
 		boolean isModifiable = updateSamplePermission.isAllowed(authentication, sample);
-
-		return new SampleDetails(sample, isModifiable, cartService.isSampleInCart(id));
+		Project project = null;
+		if (cartService.isSampleInCart(id) != null) {
+			project = projectService.read(cartService.isSampleInCart(id));
+		} else {
+			project = projectService.read(projectId);
+		}
+		return new SampleDetails(sample, isModifiable, project);
 	}
 
 	/**
@@ -245,14 +251,17 @@ public class UISampleService {
 		ProjectMetadataRole metadataRole = ProjectMetadataRole.fromString(
 				addSampleMetadataRequest.getMetadataRestriction());
 		Project project = projectService.read(addSampleMetadataRequest.getProjectId());
-		MetadataTemplateField templateField = new MetadataTemplateField(addSampleMetadataRequest.getMetadataField(),
-				"text");
 
 		MetadataTemplateField existingTemplateField = metadataTemplateService.readMetadataFieldByLabel(
 				addSampleMetadataRequest.getMetadataField());
 
-		if (existingTemplateField == null) {
-			metadataTemplateService.saveMetadataField(templateField);
+		MetadataTemplateField templateField;
+
+		if (existingTemplateField != null) {
+			templateField = existingTemplateField;
+		} else {
+			templateField = metadataTemplateService.saveMetadataField(
+					new MetadataTemplateField(addSampleMetadataRequest.getMetadataField(), "text"));
 		}
 
 		MetadataRestriction metadataRestriction = null;
@@ -269,10 +278,11 @@ public class UISampleService {
 			metadataEntrySet.add(entry);
 			sampleService.mergeSampleMetadata(sample, metadataEntrySet);
 
+			MetadataTemplateField finalTemplateField = templateField;
 			Optional<MetadataEntry> savedEntry = sampleService.getMetadataForSample(sample)
 					.stream()
 					.filter(s -> s.getField()
-							.equals(templateField))
+							.equals(finalTemplateField))
 					.findFirst();
 
 			if (savedEntry.isPresent()) {
@@ -370,13 +380,17 @@ public class UISampleService {
 			metadataTemplateService.updateMetadataField(metadataTemplateField);
 		} else {
 			ProjectMetadataRole roleFromUpdateRequest = projectMetadataRole;
-			projectMetadataRole = getMetadataFieldRestriction(project.getId(), metadataTemplateField.getId());
+			ProjectMetadataRole currRestriction = getMetadataFieldRestriction(project.getId(), metadataTemplateField.getId());
+			projectMetadataRole = currRestriction != null ?
+					currRestriction :
+					ProjectMetadataRole.fromString("LEVEL_1");
 
 			/*
 			 We want to only set the role from the update request if it
 			 is different than the current metadata role for the field
 			 or if a previous metadata role was not set for the field
 			 */
+
 			if ((projectMetadataRole != null && !projectMetadataRole.equals(roleFromUpdateRequest)) || projectMetadataRole == null) {
 				projectMetadataRole = roleFromUpdateRequest;
 			}

@@ -139,7 +139,11 @@ public class UISampleServiceTest {
 
 	@Test
 	public void testGetSampleDetails() {
-		SampleDetails details = service.getSampleDetails(1L);
+		Project project = new Project("newProject");
+		project.setId(1L);
+		when(projectService.read(anyLong())).thenReturn(project);
+
+		SampleDetails details = service.getSampleDetails(1L, project.getId());
 		final Sample sample = details.getSample();
 		assertEquals(SAMPLE_ORGANISM, sample.getOrganism(), "Should return the proper samples organism");
 		assertEquals(SAMPLE_DESCRIPTION, sample.getDescription(), "Should return the proper samples description");
@@ -329,4 +333,5 @@ public class UISampleServiceTest {
 		assertEquals(sequencingObject, SAMPLE_1.getDefaultSequencingObject(),
 				"Sequencing object should be set as default for sample");
 	}
+
 }

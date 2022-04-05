@@ -1,16 +1,25 @@
 import React from "react";
-import { DatePicker, Empty, List, notification, Typography } from "antd";
+import {
+  Col,
+  DatePicker,
+  Empty,
+  List,
+  notification,
+  Row,
+  Typography,
+} from "antd";
 import { useUpdateSampleDetailsMutation } from "../../../apis/samples/samples";
 import { formatDate } from "../../../utilities/date-utilities";
 const { Paragraph } = Typography;
 import moment from "moment";
 import { OntologySelect } from "../../ontology";
 import { TAXONOMY } from "../../../apis/ontology/taxonomy";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context";
 import { EditMetadata } from "./EditMetadata";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
+import { updateDetails } from "../sampleSlice";
 
 const DEFAULT_HEIGHT = 600;
 
@@ -24,7 +33,7 @@ export function SampleInfo() {
   const { sample, modifiable: isModifiable } = useSelector(
     (state) => state.sampleReducer
   );
-
+  const dispatch = useDispatch();
   const [updateSampleDetails] = useUpdateSampleDetailsMutation();
   const dateFormat = i18n("SampleInfo.date.format");
 
@@ -48,6 +57,7 @@ export function SampleInfo() {
         if (response.error) {
           notification.error({ message: response.error.data.error });
         } else {
+          dispatch(updateDetails({ field, value: value || "" }));
           notification.success({ message: response.data.message });
         }
       })
@@ -240,40 +250,42 @@ export function SampleInfo() {
     const item = detailsData[index];
 
     return (
-      <List.Item style={style}>
+      <List.Item style={{ ...style, padding: 15 }}>
         <List.Item.Meta title={item.title} description={item.value} />
       </List.Item>
     );
   };
 
   return (
-    <div
-      style={{
-        height: DEFAULT_HEIGHT,
-        width: "100%",
-      }}
-    >
-      {detailsData.length ? (
-        <>
-          <AutoSizer>
-            {({ height = DEFAULT_HEIGHT, width = "100%" }) => (
-              <VList
-                itemCount={detailsData.length}
-                itemSize={70}
-                height={height}
-                width={width}
-              >
-                {renderDetailsListItem}
-              </VList>
-            )}
-          </AutoSizer>
-          <MetadataRolesProvider>
-            <EditMetadata />
-          </MetadataRolesProvider>
-        </>
-      ) : (
-        <Empty description={i18n("SampleInfo.noDetailsAvailable")} />
-      )}
-    </div>
+    <Row gutter={16}>
+      <Col
+        span={24}
+        style={{
+          height: DEFAULT_HEIGHT,
+        }}
+      >
+        {detailsData.length ? (
+          <>
+            <AutoSizer>
+              {({ height = DEFAULT_HEIGHT, width = "100%" }) => (
+                <VList
+                  itemCount={detailsData.length}
+                  itemSize={70}
+                  height={height}
+                  width={width}
+                >
+                  {renderDetailsListItem}
+                </VList>
+              )}
+            </AutoSizer>
+            <MetadataRolesProvider>
+              <EditMetadata />
+            </MetadataRolesProvider>
+          </>
+        ) : (
+          <Empty description={i18n("SampleInfo.noDetailsAvailable")} />
+        )}
+      </Col>
+    </Row>
   );
 }

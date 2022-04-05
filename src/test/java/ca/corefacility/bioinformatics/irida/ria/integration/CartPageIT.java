@@ -74,10 +74,12 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		Test the sample details within the cart
 		 */
 		final String sampleName = "sample554sg5";
+		final String projectName = "project";
 		page.viewSampleDetailsFor(sampleName);
 		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
 
 		assertEquals(sampleName, sampleDetailsViewer.getSampleName(), "Should be viewing the proper sample");
+		assertEquals(projectName, sampleDetailsViewer.getProjectName(), "Should have proper project name displayed for sample");
 		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Should display the correct created date");
 
 		sampleDetailsViewer.clickMetadataTabLink();
@@ -144,10 +146,12 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		Test the sample details within the cart
 		 */
 		final String sampleName = "sample554sg5";
+		final String projectName = "project";
 		page.viewSampleDetailsFor(sampleName);
 		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
 
 		assertEquals(sampleName, sampleDetailsViewer.getSampleName(), "Should be viewing the proper sample");
+		assertEquals(projectName, sampleDetailsViewer.getProjectName(), "Should have proper project name displayed for sample");
 		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Shoauld display the correct created date");
 
 		sampleDetailsViewer.clickMetadataTabLink();

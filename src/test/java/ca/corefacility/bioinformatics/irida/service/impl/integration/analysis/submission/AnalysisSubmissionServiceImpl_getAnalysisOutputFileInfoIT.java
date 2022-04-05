@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -63,8 +64,8 @@ public class AnalysisSubmissionServiceImpl_getAnalysisOutputFileInfoIT {
 						BuiltInAnalysisTypes.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
 						"not sharing my sistr", 4L, null, null, null, 1L),
 				new ProjectSampleAnalysisOutputInfo(4L, "sample3", 8L, "sistr", "sistr8.json", 8L,
-						BuiltInAnalysisTypes.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"), date,
-						"not sharing my sistr 8", 8L, null, null, null, null));
+						BuiltInAnalysisTypes.SISTR_TYPING, UUID.fromString("f73cbfd2-5478-4c19-95f9-690f3712f84d"),
+						date, "not sharing my sistr 8", 8L, null, null, null, 1L));
 	}
 
 	@Test

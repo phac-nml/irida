@@ -5,7 +5,7 @@ import { SampleFiles } from "./SampleFiles";
 import { SampleInfo } from "./SampleInfo";
 import { SampleAnalyses } from "./SampleAnalyses";
 import { useDispatch } from "react-redux";
-import { setProject, setSample } from "../sampleSlice";
+import { setProjectDetails, setSample } from "../sampleSlice";
 
 const { Paragraph } = Typography;
 
@@ -14,18 +14,22 @@ const { Paragraph } = Typography;
  * and files.
  *
  * @param details - The sample details
- * @param projectId - identifier for a project if provided
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleDetails({ details, projectId }) {
+export function SampleDetails({ details }) {
   const dispatch = useDispatch();
 
   React.useEffect(() => {
     dispatch(
       setSample({ sample: details.sample, modifiable: details.modifiable })
     );
-    dispatch(setProject(details.projectId ? details.projectId : projectId));
+    dispatch(
+      setProjectDetails({
+        projectId: details.projectId,
+        projectName: details.projectName,
+      })
+    );
   }, [dispatch]);
 
   return (

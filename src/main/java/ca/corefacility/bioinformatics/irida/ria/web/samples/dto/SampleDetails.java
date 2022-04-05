@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
@@ -8,12 +9,14 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 public class SampleDetails {
     private Sample sample;
     private boolean modifiable;
-    private final Long projectId; // If set, means sample is in the cart
+    private Long projectId;
+    private String projectName;
 
-    public SampleDetails(Sample sample, boolean modifiable, Long cartProjectId) {
+    public SampleDetails(Sample sample, boolean modifiable, Project project) {
         this.sample = sample;
         this.modifiable = modifiable;
-        this.projectId = cartProjectId;
+        this.projectId = project.getId();
+        this.projectName = project.getName();
     }
 
     public Sample getSample() {
@@ -24,8 +27,7 @@ public class SampleDetails {
         return modifiable;
     }
 
-    public Long getProjectId() {
-        return projectId;
-    }
+    public Long getProjectId() { return projectId; }
 
+    public String getProjectName() { return projectName; }
 }

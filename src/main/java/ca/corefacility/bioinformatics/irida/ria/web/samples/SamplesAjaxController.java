@@ -102,12 +102,13 @@ public class SamplesAjaxController {
 	/**
 	 * Get {@link Sample} details for a specific sample.
 	 *
-	 * @param id {@link Long} identifier for a sample.
+	 * @param id        {@link Long} identifier for a sample.
+	 * @param projectId {@link Long} identifier for project
 	 * @return {@link SampleDetails} for the {@link Sample}
 	 */
 	@GetMapping(value = "/{id}/details", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<SampleDetails> getSampleDetails(@PathVariable Long id) {
-		return ResponseEntity.ok(uiSampleService.getSampleDetails(id));
+	public ResponseEntity<SampleDetails> getSampleDetails(@PathVariable Long id, @RequestParam Long projectId) {
+		return ResponseEntity.ok(uiSampleService.getSampleDetails(id, projectId));
 	}
 
 	/**

@@ -20,8 +20,8 @@ export const sampleApi = createApi({
     Get the default information about a sample
      */
     getSampleDetails: build.query({
-      query: (sampleId) => ({
-        url: `/${sampleId}/details`,
+      query: ({ sampleId, projectId }) => ({
+        url: `/${sampleId}/details?projectId=${projectId}`,
       }),
       providesTags: ["SampleDetails"],
     }),

@@ -1,4 +1,4 @@
-import { Button, Modal, Skeleton, Typography } from "antd";
+import { Button, Modal, Skeleton, Space, Tag, Typography } from "antd";
 import React from "react";
 import { SampleDetails } from "./components/SampleDetails";
 import { Provider } from "react-redux";
@@ -18,9 +18,15 @@ const { Text } = Typography;
  */
 function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
   const [visible, setVisible] = React.useState(false);
-  const { data: details = {}, isLoading } = useGetSampleDetailsQuery(sampleId, {
-    skip: !visible,
-  });
+  const { data: details = {}, isLoading } = useGetSampleDetailsQuery(
+    {
+      sampleId,
+      projectId,
+    },
+    {
+      skip: !visible,
+    }
+  );
 
   /*
   Empty useEffect hook to update visible const required by redux
@@ -29,7 +35,7 @@ function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
   React.useEffect(() => {}, [visible]);
 
   const removeSampleFromCart = () => {
-    removeSample({ projectId: details.projectId, sampleId });
+    removeSample({ sampleId });
   };
 
   return (
@@ -54,11 +60,16 @@ function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
                   alignItems: "center",
                 }}
               >
-                <Text strong>
-                  <span className="t-sample-details-name">
+                <Space direction="horiztontal" size="small">
+                  <Text className="t-sample-details-name" strong>
                     {details.sample.sampleName}
-                  </span>
-                </Text>
+                  </Text>
+                  {projectId ? (
+                    <Text className="t-sample-details-project-name" strong>
+                      <Tag color="#87d068">{details.projectName}</Tag>
+                    </Text>
+                  ) : null}
+                </Space>
                 {removeSample && (
                   <Button
                     size="small"
@@ -81,7 +92,7 @@ function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
             {isLoading ? (
               <Skeleton active title />
             ) : (
-              <SampleDetails details={details} projectId={projectId} />
+              <SampleDetails details={details} />
             )}
           </div>
         </Modal>

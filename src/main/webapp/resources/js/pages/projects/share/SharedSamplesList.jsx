@@ -1,5 +1,4 @@
 import { List } from "antd";
-import { sample } from "lodash";
 import React from "react";
 import { FixedSizeList as VList } from "react-window";
 import ShareSamplesListItem from "./ShareSampleListItem";
@@ -10,7 +9,7 @@ import ShareSamplesListItem from "./ShareSampleListItem";
  * @returns {JSX.Element}
  * @constructor
  */
-export function SharedSamplesList({ list = [], currentProject }) {
+export function SharedSamplesList({ list = [] }) {
   const Row = ({ index, style }) => {
     const sample = list[index];
 

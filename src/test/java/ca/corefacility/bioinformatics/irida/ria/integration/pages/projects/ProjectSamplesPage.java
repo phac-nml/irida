@@ -180,6 +180,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "name")
 	private WebElement sampleNameInput;
 
+	@FindBy(className = "t-project-sample-name")
+	private List<WebElement> sampleNameTDs;
+
 	@FindBy(className = "t-linker-cmd")
 	private WebElement linkerCmd;
 
@@ -400,9 +403,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public List<String> getSampleNamesOnPage() {
-		List<WebElement> sampleTDs = driver.findElements(By.cssSelector("tbody td:nth-child(2) a"));
 		List<String> names = new ArrayList<>();
-		names.addAll(sampleTDs.stream().map(WebElement::getText).collect(Collectors.toList()));
+		names.addAll(sampleNameTDs.stream().map(WebElement::getText).collect(Collectors.toList()));
 		return names;
 	}
 

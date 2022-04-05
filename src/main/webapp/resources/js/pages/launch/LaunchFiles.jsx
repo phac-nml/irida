@@ -146,6 +146,7 @@ export function LaunchFiles() {
       <SampleFilesListItem
         style={style}
         sample={sample}
+        projectId={sample.project.id}
         removeSample={removeSampleFromCart}
         updateSelectedFiles={updateSelectedFiles}
       />
