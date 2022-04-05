@@ -97,6 +97,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
       onOk={onSubmit}
       okButtonProps={{
         loading,
+        disabled: valid.length < 2,
       }}
       onCancel={onCancel}
       width={600}
