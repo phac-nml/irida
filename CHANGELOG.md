@@ -4,6 +4,9 @@ Changes
 
 22.03 to 22.05
 --------------
+* [ALL]: Upgraded to Spring Boot 2.6.6 which fixes CVE-2022-22965. (22.03.1)
+* [Developer/UI]: Fixed Project details to be transactional to resolve scalability issue on large projects >5000 samples. (22.03.1)
+* [Developer/UI]: Fixed updates in UI service classes to use @Transactional annotation to fix scalability issue on large projects >5000 samples. (22.03.1)
 * [Developer]: Add `--no-yarn` to skip the yarn build in `run.sh`
 * [Developer]: Updated frontend dependencies: `babel`, `eslint`, `postcss`, and `webpack`
 * [Database]: Updated group and user project queries to improve performance for all pages/calls that depend on project permissions.
