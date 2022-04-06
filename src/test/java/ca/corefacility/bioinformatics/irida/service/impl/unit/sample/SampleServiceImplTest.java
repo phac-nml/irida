@@ -44,7 +44,6 @@ import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link SampleServiceImpl}.
- * 
  */
 public class SampleServiceImplTest {
 
@@ -218,9 +217,8 @@ public class SampleServiceImplTest {
 	}
 
 	/**
-	 * Tests out successfully getting the coverage from a sample with no
-	 * sequence files.
-	 * 
+	 * Tests out successfully getting the coverage from a sample with no sequence files.
+	 *
 	 * @throws SequenceFileAnalysisException
 	 */
 	@Test
@@ -235,9 +233,8 @@ public class SampleServiceImplTest {
 	}
 
 	/**
-	 * Tests out successfully getting the coverage from a sample with a sequence
-	 * file.
-	 * 
+	 * Tests out successfully getting the coverage from a sample with a sequence file.
+	 *
 	 * @throws SequenceFileAnalysisException
 	 * @throws AnalysisAlreadySetException
 	 */
@@ -251,7 +248,9 @@ public class SampleServiceImplTest {
 
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id").totalBases(1000L)
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder()
+				.executionManagerAnalysisId("id")
+				.totalBases(1000L)
 				.build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
@@ -264,7 +263,7 @@ public class SampleServiceImplTest {
 
 	/**
 	 * Tests out passing an invalid reference length.
-	 * 
+	 *
 	 * @throws SequenceFileAnalysisException
 	 */
 	@Test
@@ -275,9 +274,8 @@ public class SampleServiceImplTest {
 	}
 
 	/**
-	 * Tests out successfully getting the total bases from a sample with no
-	 * sequence files.
-	 * 
+	 * Tests out successfully getting the total bases from a sample with no sequence files.
+	 *
 	 * @throws SequenceFileAnalysisException
 	 */
 	@Test
@@ -292,9 +290,8 @@ public class SampleServiceImplTest {
 	}
 
 	/**
-	 * Tests out successfully getting the total bases from a sample with one
-	 * sequence file.
-	 * 
+	 * Tests out successfully getting the total bases from a sample with one sequence file.
+	 *
 	 * @throws SequenceFileAnalysisException
 	 * @throws AnalysisAlreadySetException
 	 */
@@ -309,7 +306,9 @@ public class SampleServiceImplTest {
 
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id").totalBases(1000L)
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder()
+				.executionManagerAnalysisId("id")
+				.totalBases(1000L)
 				.build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
@@ -321,9 +320,8 @@ public class SampleServiceImplTest {
 	}
 
 	/**
-	 * Tests out successfully getting the total bases from a sample with two
-	 * sequence files.
-	 * 
+	 * Tests out successfully getting the total bases from a sample with two sequence files.
+	 *
 	 * @throws SequenceFileAnalysisException
 	 * @throws AnalysisAlreadySetException
 	 */
@@ -341,11 +339,15 @@ public class SampleServiceImplTest {
 		SampleSequencingObjectJoin join1 = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf1));
 		SampleSequencingObjectJoin join2 = new SampleSequencingObjectJoin(s1, new SingleEndSequenceFile(sf2));
 
-		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder().executionManagerAnalysisId("id").totalBases(1000L)
+		AnalysisFastQC analysisFastQC1 = AnalysisFastQC.builder()
+				.executionManagerAnalysisId("id")
+				.totalBases(1000L)
 				.build();
 		sf1.setFastQCAnalysis(analysisFastQC1);
 
-		AnalysisFastQC analysisFastQC2 = AnalysisFastQC.builder().executionManagerAnalysisId("id2").totalBases(1000L)
+		AnalysisFastQC analysisFastQC2 = AnalysisFastQC.builder()
+				.executionManagerAnalysisId("id2")
+				.totalBases(1000L)
 				.build();
 		sf2.setFastQCAnalysis(analysisFastQC2);
 
@@ -358,9 +360,8 @@ public class SampleServiceImplTest {
 	}
 
 	/**
-	 * Tests out failing to get the total bases from a sample with one sequence
-	 * file due to missing FastQC
-	 * 
+	 * Tests out failing to get the total bases from a sample with one sequence file due to missing FastQC
+	 *
 	 * @throws SequenceFileAnalysisException
 	 */
 	@Test
@@ -381,9 +382,8 @@ public class SampleServiceImplTest {
 	}
 
 	/**
-	 * Tests out failing to get the total bases from a sample with one sequence
-	 * file due to too many FastQC
-	 * 
+	 * Tests out failing to get the total bases from a sample with one sequence file due to too many FastQC
+	 *
 	 * @throws SequenceFileAnalysisException
 	 */
 	@Test
@@ -461,7 +461,8 @@ public class SampleServiceImplTest {
 
 		MetadataTemplateField field1 = new MetadataTemplateField("field1", "text");
 		AnalysisSubmission submission = AnalysisSubmission.builder(UUID.randomUUID())
-				.inputFiles(Sets.newHashSet(new SequenceFilePair())).build();
+				.inputFiles(Sets.newHashSet(new SequenceFilePair()))
+				.build();
 		submission.setId(2L);
 
 		PipelineProvidedMetadataEntry entry1 = new PipelineProvidedMetadataEntry("entry2", "text", submission);
@@ -497,7 +498,8 @@ public class SampleServiceImplTest {
 		assertEquals(entry.getValue(), metadataEntry.getValue(), "value should have been updated");
 
 		Optional<MetadataEntry> pipelineOpt = savedValues.stream()
-				.filter(e -> e instanceof PipelineProvidedMetadataEntry).findAny();
+				.filter(e -> e instanceof PipelineProvidedMetadataEntry)
+				.findAny();
 
 		assertTrue(pipelineOpt.isEmpty(), "should be no pipeline entries left");
 	}

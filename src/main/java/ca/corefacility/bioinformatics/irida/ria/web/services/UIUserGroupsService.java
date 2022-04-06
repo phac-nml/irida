@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -113,6 +115,7 @@ public class UIUserGroupsService {
 	 * @param groupId identifier for an {@link UserGroup} to update
 	 * @param update  details about which field and value to update
 	 */
+	@Transactional
 	public void updateUserGroupDetails(Long groupId, FieldUpdate update) {
 		UserGroup group = userGroupService.read(groupId);
 		switch (update.getField()) {

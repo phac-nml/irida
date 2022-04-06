@@ -1,5 +1,14 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -18,15 +27,7 @@ import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.*;
 
 /**
  * {@link AnalysisSampleUpdater} for bio_hansel results to be written to metadata of {@link Sample}s.
@@ -70,18 +71,17 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 			throw new PostProcessingException(
 					"Expected one sample; got '" + samples.size() + "' for analysis [id=" + analysis.getId() + "]");
 		}
-		final Sample sample = samples.iterator()
-				.next();
+		final Sample sample = samples.iterator().next();
 
-		AnalysisOutputFile aof = analysis.getAnalysis()
-				.getAnalysisOutputFile(BIO_HANSEL_RESULTS_FILE);
+		AnalysisOutputFile aof = analysis.getAnalysis().getAnalysisOutputFile(BIO_HANSEL_RESULTS_FILE);
 
 		Path filePath = aof.getFile();
 
 		Map<String, MetadataEntry> stringEntries = new HashMap<>();
 
 		try(InputStream inputStream = IridaFiles.getFileInputStream(filePath)) {
-			@SuppressWarnings("resource") String jsonText = new Scanner(inputStream).useDelimiter("\\Z")
+			@SuppressWarnings("resource")
+			String jsonText = new Scanner(inputStream).useDelimiter("\\Z")
 					.next();
 			ObjectMapper mapper = new ObjectMapper();
 			List<Map<String, Object>> maps = mapper.readValue(jsonText, new TypeReference<List<Map<String, Object>>>() {
@@ -95,14 +95,13 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 				BIO_HANSEL_RESULTS_FIELDS.forEach((key, field) -> {
 					final String formattedField = getNamespacedField(baseNamespace, field);
 					if ((result.containsKey(key)) && (result.get(key) != null)) {
-						String value = result.get(key)
-								.toString();
+						String value = result.get(key).toString();
 						PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",
 								analysis);
 						stringEntries.put(formattedField, metadataEntry);
 					} else {
-						logger.warn("bio_hansel output file '" + filePath.toFile()
-								.getAbsolutePath() + "' does not contain expected key '" + key
+						logger.warn("bio_hansel output file '" + filePath.toFile().getAbsolutePath()
+								+ "' does not contain expected key '" + key
 								+ "'. Please check the format of this file!");
 					}
 				});
@@ -136,7 +135,7 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	 * For example, `bio_hansel/heidelberg/v0.5.0`, so that metadata fields from different analyses of bio_hansel will
 	 * not clash, e.g. `bio_hansel/heidelberg/v0.5.0/Subtype` vs `bio_hansel/enteritidis/v0.7.0/Subtype`.
 	 *
-	 * @param scheme bio_hansel scheme name.
+	 * @param scheme  bio_hansel scheme name.
 	 * @param version bio_hansel scheme version.
 	 * @return Base bio_hansel metadata field namespace prefix.
 	 */
@@ -148,7 +147,7 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 	 * Given a base bio_hansel metadata field namespace, get the namespaced metadata field name.
 	 *
 	 * @param baseNamespace The base bio_hansel metadata field namespace, e.g. `bio_hansel/enteritidis/v0.7.0`
-	 * @param field Metadata field, e.g. `Subtype`.
+	 * @param field         Metadata field, e.g. `Subtype`.
 	 * @return Namespaced metadata field, e.g. `bio_hansel/enteritidis/v0.7.0/Subtype`.
 	 */
 	private String getNamespacedField(String baseNamespace, String field) {

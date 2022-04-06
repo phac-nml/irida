@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +11,9 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * <p>
@@ -38,9 +40,11 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 		createComponent.enterProjectName("SMA");
 		assertEquals("The project name must be at least 5 characters long", createComponent.getNameWarning(), "Should have a name length error");
 		createComponent.enterProjectName("");
-		assertEquals("A name is required for every project", createComponent.getNameWarning(), "Should display a required error");
-		createComponent.enterProjectName("TE\0*");
-		assertEquals("A project name can only have letters, numbers, spaces, _ and -.", createComponent.getNameWarning(), "Should display a invalid character warning");
+		assertEquals("A name is required for every project", createComponent.getNameWarning(),
+				"Should display a required error");
+		createComponent.enterProjectName("TE&#*");
+		assertEquals("A project name can only have letters, numbers, spaces, _ and -.",
+				createComponent.getNameWarning(), "Should display a invalid character warning");
 
 		// Test correct
 		createComponent.enterProjectName(name);
@@ -56,6 +60,25 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 		ProjectDetailsPage detailsPage = ProjectDetailsPage.initElements(driver());
 		assertEquals(name, detailsPage.getProjectName());
 		assertEquals(description, detailsPage.getProjectDescription());
+	}
+
+	@Test
+	public void testCreateWithUniqueOrganismName() {
+		String name = "TESTING PROJECT NAME";
+		String organism = "My very unique organism";
+		ProjectsPage.goToProjectsPage(driver(), false);
+		CreateProjectComponent createComponent = CreateProjectComponent.initializeComponent(driver());
+		createComponent.displayForm();
+
+		createComponent.enterProjectName(name);
+		createComponent.enterOrganism(organism);
+		createComponent.goToNextStep();
+		createComponent.submitProject();
+
+		// Go to the settings page to make sure things were set properly.
+		driver().get(driver().getCurrentUrl() + "/settings");
+		ProjectDetailsPage detailsPage = ProjectDetailsPage.initElements(driver());
+		assertEquals(organism, detailsPage.getProjectOrganism(), "Should have a custom organism name");
 	}
 
 	@Test
