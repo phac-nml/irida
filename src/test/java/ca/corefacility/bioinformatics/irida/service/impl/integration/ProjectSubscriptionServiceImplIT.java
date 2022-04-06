@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectSubscriptionServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-public class ProjectSubscriptionServiceImplTest {
+public class ProjectSubscriptionServiceImplIT {
 	@Autowired
 	private ProjectSubscriptionService projectSubscriptionService;
 	@Autowired

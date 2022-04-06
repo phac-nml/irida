@@ -61,11 +61,6 @@
             m.group_id = p.user_group_id;
         </sql>
 
-        <sql>
-            ALTER TABLE project_user ALTER email_subscription DROP DEFAULT;
-            ALTER TABLE project_user_AUD ALTER email_subscription DROP DEFAULT;
-        </sql>
-
         <dropColumn tableName="project_user" columnName="email_subscription"/>
         <dropColumn tableName="project_user_AUD" columnName="email_subscription"/>
 
