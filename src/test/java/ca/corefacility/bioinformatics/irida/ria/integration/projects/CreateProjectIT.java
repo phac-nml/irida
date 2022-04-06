@@ -75,6 +75,7 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 		createComponent.enterProjectName(name);
 		createComponent.enterOrganism(organism);
 		createComponent.goToNextStep();
+		createComponent.goToNextStep();
 		createComponent.submitProject();
 
 		// Go to the settings page to make sure things were set properly.
