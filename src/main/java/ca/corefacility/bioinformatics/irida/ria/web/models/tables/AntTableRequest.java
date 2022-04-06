@@ -11,17 +11,8 @@ import org.springframework.data.domain.Sort;
  * Implements multi-column sort.
  */
 public class AntTableRequest {
-	private int pageSize;
-	private int current;
+	private AntPagination pagination;
 	private List<AntSort> order;
-
-	public void setPageSize(int pageSize) {
-		this.pageSize = pageSize;
-	}
-
-	public void setCurrent(int current) {
-		this.current = current;
-	}
 
 	public Sort getSort() {
 		if (order != null && order.size() > 0) {
@@ -31,15 +22,18 @@ public class AntTableRequest {
 	}
 
 	public int getPageSize() {
-		return pageSize;
+		return pagination.getPageSize();
 	}
 
 	public int getCurrent() {
-		// Returning -1 since ant sends at index 1;
-		return current - 1;
+		return pagination.getCurrent();
 	}
 
 	public void setOrder(List<AntSort> order) {
 		this.order = order;
+	}
+
+	public void setPagination(AntPagination pagination) {
+		this.pagination = pagination;
 	}
 }

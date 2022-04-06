@@ -1,9 +1,9 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   DownOutlined,
   FolderAddOutlined,
-  MergeCellsOutlined
+  MergeCellsOutlined,
 } from "@ant-design/icons";
 import {
   Button,
@@ -15,47 +15,33 @@ import {
   Space,
   Table,
   Tag,
-  Tooltip
+  Tooltip,
 } from "antd";
 import { useListAssociatedProjectsQuery } from "../../../apis/projects/associated-projects";
-import {
-  getAllSampleIds,
-  getPagedProjectSamples
-} from "../../../apis/projects/project-samples";
+import { getAllSampleIds } from "../../../apis/projects/project-samples";
 import { blue6 } from "../../../styles/colors";
-import { getNewTagColor } from "../../../utilities/ant-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { formatSort } from "../../../utilities/table-utilities";
-import { getProjectIdFromUrl } from "../../../utilities/url-utilities";
 import MergeSamples from "./components/MergeSamples";
 import SampleIcons from "./components/SampleIcons";
 import { useListSamplesQuery } from "./services/samples";
 import { updateTable } from "./sample.store";
 
-const formatCartItem = item => ({
+const formatCartItem = (item) => ({
   key: item.key,
   id: item.sample.id,
   projectId: item.project.id,
   sampleName: item.sample.sampleName,
-  owner: item.owner
+  owner: item.owner,
 });
 
 export function SamplesTable() {
   const dispatch = useDispatch();
-  const { projectId, options } = useSelector(state => state.samples);
-  const {
-    data: { content: samples, total } = {},
-    isFetching
-  } = useListSamplesQuery(
-    {
-      ...options.pagination, // maybe we should not have to spread this?
-      order: options.order,
-      filters: options.filters
-    },
-    {
-      refetchOnMountOrArgChange: true
-    }
-  );
+  const { projectId, options } = useSelector((state) => state.samples);
+  const { data: { content: samples, total } = {}, isFetching } =
+    useListSamplesQuery(options, {
+      refetchOnMountOrArgChange: true,
+    });
 
   const { data: associated } = useListAssociatedProjectsQuery(projectId);
 
@@ -80,20 +66,21 @@ export function SamplesTable() {
   const selectAll = async () => {
     const { data } = await getAllSampleIds(projectId, filters);
     const newSelected = {};
-    data.forEach(item => (newSelected[item.key] = item));
+    data.forEach((item) => (newSelected[item.key] = item));
     setSelectedItems(newSelected);
   };
 
   const selectNone = () => setSelectedItems([]);
 
-  const updateSelectAll = e => (e.target.checked ? selectAll() : selectNone());
+  const updateSelectAll = (e) =>
+    e.target.checked ? selectAll() : selectNone();
 
   const handleTableChange = async (pagination, filters, sorter) => {
     dispatch(
       updateTable({
         filters,
         pagination,
-        order: formatSort(sorter)
+        order: formatSort(sorter),
       })
     );
     // setLoading(true);
@@ -157,26 +144,26 @@ export function SamplesTable() {
         return (
           <Space>
             <Checkbox
-              onChange={e => selectRow(e, item)}
+              onChange={(e) => selectRow(e, item)}
               checked={selectedItems[item.key]}
             />
             <SampleIcons sample={item} />
           </Space>
         );
-      }
+      },
     },
     {
       title: "Name",
       dataIndex: ["sample", "sampleName"],
       key: "name",
       sorter: { multiple: 3 },
-      render: name => <a>{name}</a>
+      render: (name) => <a>{name}</a>,
     },
     {
       title: "Organism",
       dataIndex: ["sample", "organism"],
       key: "organism",
-      sorter: { multiple: true }
+      sorter: { multiple: true },
     },
     {
       title: "Project",
@@ -191,7 +178,7 @@ export function SamplesTable() {
         <Tooltip title={"Associated Projects"}>
           <FolderAddOutlined style={{ color: blue6 }} />
         </Tooltip>
-      )
+      ),
     },
     {
       title: "Created",
@@ -199,9 +186,9 @@ export function SamplesTable() {
       key: "created",
       sorter: { multiple: 2 },
       width: 230,
-      render: createdDate => {
+      render: (createdDate) => {
         return formatInternationalizedDateTime(createdDate);
-      }
+      },
     },
     {
       title: "Modified",
@@ -210,10 +197,10 @@ export function SamplesTable() {
       defaultSortOrder: "descend",
       sorter: { multiple: 1 },
       width: 230,
-      render: modifiedDate => {
+      render: (modifiedDate) => {
         return formatInternationalizedDateTime(modifiedDate);
-      }
-    }
+      },
+    },
   ];
 
   return (
