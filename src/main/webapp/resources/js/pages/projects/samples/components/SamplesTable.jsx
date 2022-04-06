@@ -17,21 +17,20 @@ import {
   Tag,
   Tooltip,
 } from "antd";
-import { useListAssociatedProjectsQuery } from "../../../apis/projects/associated-projects";
-import { blue6 } from "../../../styles/colors";
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import { formatSort } from "../../../utilities/table-utilities";
-import MergeSamples from "./components/MergeSamples";
-import SampleIcons from "./components/SampleIcons";
-import { useListSamplesQuery } from "./services/samples";
+import { useListAssociatedProjectsQuery } from "../../../../apis/projects/associated-projects";
+import { blue6 } from "../../../../styles/colors";
+import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
+import { formatSort } from "../../../../utilities/table-utilities";
+import MergeSamples from "./MergeSamples";
+import SampleIcons from "./SampleIcons";
+import { useListSamplesQuery } from "../services/samples";
 import {
   addSelectedSample,
   clearSelectedSamples,
   removeSelectedSample,
   selectAllSamples,
   updateTable,
-} from "./services/samplesSlice";
-import { INITIAL_TABLE_STATE } from "./constants";
+} from "../services/samplesSlice";
 
 export function SamplesTable() {
   const dispatch = useDispatch();
@@ -78,13 +77,12 @@ export function SamplesTable() {
   /**
    * Handle changes made to the table options.  This will trigger an automatic
    * reload of the table content.
-   * NOTE: This is called by the Ant Design table itself, not manually
    * @param pagination
    * @param filters
    * @param sorter
    * @returns {*}
    */
-  const _onTableChange = (pagination, filters, sorter) =>
+  const onTableChange = (pagination, filters, sorter) =>
     dispatch(
       updateTable({
         filters,
@@ -92,20 +90,6 @@ export function SamplesTable() {
         order: formatSort(sorter),
       })
     );
-
-  /**
-   * Reload the table after a change to the samples, but maintain key options
-   * such as the pageSize that the user would have set themselves. This will
-   * trigger an automatic reload of the table content.
-   * @returns {Promise<void>}
-   */
-  const reloadTable = () => {
-    const tableOptions = { ...INITIAL_TABLE_STATE };
-
-    // Update with options that we want to keep
-    tableOptions.pagination.pageSize = options.pagination.pageSize;
-    dispatch(updateTable(tableOptions));
-  };
 
   const columns = [
     {
@@ -192,7 +176,7 @@ export function SamplesTable() {
           <Dropdown
             overlay={
               <Menu>
-                <MergeSamples samples={selectedItems} updateTable={reloadTable}>
+                <MergeSamples>
                   <Menu.Item
                     icon={<MergeCellsOutlined />}
                     disabled={options.filters.associated}
@@ -215,7 +199,7 @@ export function SamplesTable() {
           columns={columns}
           dataSource={samples}
           pagination={{ ...options.pagination, total }}
-          onChange={_onTableChange}
+          onChange={onTableChange}
           summary={() => (
             <Table.Summary.Row>
               <Table.Summary.Cell colSpan={5}>

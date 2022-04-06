@@ -6,6 +6,7 @@ import {
   Input,
   List,
   Modal,
+  notification,
   Radio,
   Row,
   Space,
@@ -13,14 +14,17 @@ import {
   Typography,
 } from "antd";
 import React from "react";
-import { mergeSamples } from "../../../../apis/projects/project-samples";
+import { useSelector } from "react-redux";
 import { serverValidateSampleName } from "../../../../utilities/validation-utilities";
+import { useMergeMutation } from "../services/samples";
 
 export default function MergeModal({ samples, visible, onComplete, onCancel }) {
+  const { projectId } = useSelector((state) => state.samples);
+  const [merge, { isLoading }] = useMergeMutation();
+
   const [initialized, setInitialized] = React.useState(false);
   const [renameSample, setRenameSample] = React.useState(false);
   const [error, setError] = React.useState(undefined);
-  const [loading, setLoading] = React.useState(false);
   const [form] = Form.useForm();
 
   /**
@@ -69,23 +73,31 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
     }
   };
 
-  const onSubmit = () => {
-    setLoading(true);
-    form
-      .validateFields()
-      .then((values) => {
-        const ids = valid
-          .map((sample) => sample.id)
-          .filter((id) => id !== values.primary);
+  const onSubmit = async () => {
+    let values;
 
-        mergeSamples(valid[0].projectId, {
-          ...values,
-          ids,
-        })
-          .then(onComplete)
-          .catch((e) => setError(e.response.data.error));
-      })
-      .finally(() => setLoading(false));
+    try {
+      values = await form.validateFields();
+    } catch {
+      return;
+    }
+    const ids = valid
+      .map((sample) => sample.id)
+      .filter((id) => id !== values.primary);
+
+    const { message } = await merge({
+      projectId,
+      request: {
+        ...values,
+        ids,
+      },
+    }).unwrap();
+
+    notification.success({
+      message: i18n("MergeModal.success"),
+      description: message,
+    });
+    onComplete();
   };
 
   // TODO: Handle rendering many samples?
@@ -97,7 +109,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
       onOk={onSubmit}
       okText={i18n("MergeModal.okText")}
       okButtonProps={{
-        loading,
+        loading: isLoading,
         disabled: valid.length < 2,
       }}
       onCancel={onCancel}

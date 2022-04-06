@@ -24,6 +24,8 @@ const selectAllSamples = createAsyncThunk(
   }
 );
 
+const getInitialTableOptions = () => JSON.parse(INITIAL_TABLE_STATE);
+
 const formatSelectedSample = (sample) => ({
   key: sample.key,
   id: sample.sample.id,
@@ -34,14 +36,18 @@ const formatSelectedSample = (sample) => ({
 
 const initialState = {
   projectId: getProjectIdFromUrl(),
-  options: { ...INITIAL_TABLE_STATE },
+  options: getInitialTableOptions(),
   selected: {},
 };
 
 export default createReducer(initialState, (builder) => {
   builder
-    .addCase(updateTable, (state, action) => {
-      state.options = { ...state.options, ...action.payload };
+    .addCase(updateTable, (state) => {
+      const updateOptions = getInitialTableOptions();
+      // Keep page size since the user could have updated that
+      updateOptions.pagination.pageSize = state.options.pagination.pageSize;
+      state.options = updateOptions;
+      state.selected = {};
     })
     .addCase(addSelectedSample, (state, action) => {
       state.selected[action.payload.key] = formatSelectedSample(action.payload);

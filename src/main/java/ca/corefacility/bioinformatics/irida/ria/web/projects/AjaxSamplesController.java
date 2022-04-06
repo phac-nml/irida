@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,11 +51,11 @@ public class AjaxSamplesController {
 		return ResponseEntity.ok(uiSampleService.getFilteredProjectSamples(projectId, request));
 	}
 
-	@PutMapping("/merge")
-	public ResponseEntity<AjaxResponse> mergeSamples(@PathVariable Long projectId, @RequestBody MergeRequest request) {
+	@PostMapping("/merge")
+	public ResponseEntity<AjaxResponse> mergeSamples(@PathVariable Long projectId, @RequestBody MergeRequest request, Locale locale) {
 		try {
-			uiSampleService.mergeSamples(projectId, request);
-			return ResponseEntity.ok(new AjaxSuccessResponse(""));
+			String response = uiSampleService.mergeSamples(projectId, request, locale);
+			return ResponseEntity.ok(new AjaxSuccessResponse(response));
 		} catch (SampleMergeException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
 		}
