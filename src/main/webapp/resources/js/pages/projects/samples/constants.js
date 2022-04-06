@@ -2,7 +2,7 @@ export const SAMPLE_EVENTS = {
   // Used between the sample tools modal window and the samples table
   // to all the table to be notified that it needs to update.
   SAMPLE_TOOLS_CLOSED: "sample-tools:closed",
-  SAMPLE_FILTER_CLOSED: "sample-filter:closed"
+  SAMPLE_FILTER_CLOSED: "sample-filter:closed",
 };
 
 /**
@@ -13,5 +13,15 @@ export const FILTERS = {
   FILTER_BY_NAME: "name",
   FILTER_BY_ORGANISM: "organism",
   FILTER_BY_EARLY_DATE: "startDate",
-  FILTER_BY_LATEST_DATE: "endDate"
+  FILTER_BY_LATEST_DATE: "endDate",
+};
+
+// == NEW ==
+export const INITIAL_TABLE_STATE = {
+  filters: { associated: null },
+  pagination: {
+    current: 1,
+    pageSize: 10,
+  },
+  order: [{ property: "sample.modifiedDate", direction: "desc" }],
 };

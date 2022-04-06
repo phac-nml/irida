@@ -26,6 +26,7 @@ import MergeSamples from "./components/MergeSamples";
 import SampleIcons from "./components/SampleIcons";
 import { useListSamplesQuery } from "./services/samples";
 import { updateTable } from "./sample.store";
+import { INITIAL_TABLE_STATE } from "./constants";
 
 const formatCartItem = (item) => ({
   key: item.key,
@@ -75,7 +76,16 @@ export function SamplesTable() {
   const updateSelectAll = (e) =>
     e.target.checked ? selectAll() : selectNone();
 
-  const handleTableChange = async (pagination, filters, sorter) => {
+  /**
+   * Handle changes made to the table options.  This will trigger an automatic
+   * reload of the table content.
+   * NOTE: This is called by the Ant Design table itself, not manually
+   * @param pagination
+   * @param filters
+   * @param sorter
+   * @returns {*}
+   */
+  const _onTableChange = (pagination, filters, sorter) =>
     dispatch(
       updateTable({
         filters,
@@ -83,46 +93,19 @@ export function SamplesTable() {
         order: formatSort(sorter),
       })
     );
-    // setLoading(true);
-    // // Save the filters for using when selecting all
-    // if (
-    //   Object.entries(filters).toString() !==
-    //   Object.entries(newFilters).toString()
-    // ) {
-    //   setFilters(newFilters);
-    //
-    //   // Clear selections since filters changed
-    //   setSelectedItems([]);
-    // }
-    //
-    // // Handle Sort
-    // const order = formatSort(sorter);
-    // setOrder(order);
-    // // Add associated projectIds here.
-    //
-    // const { data } = await getPagedProjectSamples(projectId, {
-    //   ...pagination,
-    //   order,
-    //   filters: newFilters
-    // });
-    // setSamples(data.content);
-    // setPagination({ ...pagination, total: data.total });
-    // setLoading(false);
-  };
 
-  const reloadTable = async () => {
-    // setLoading(true);
-    // const { data } = await getPagedProjectSamples(projectId, {
-    //   ...pagination,
-    //   order,
-    //   filters
-    // });
-    // setSamples(data.content);
-    // setPagination({ ...pagination, total: data.total });
-    //
-    // // Clear selections since filters changed
-    // setSelectedItems([]);
-    // setLoading(false);
+  /**
+   * Reload the table after a change to the samples, but maintain key options
+   * such as the pageSize that the user would have set themselves. This will
+   * trigger an automatic reload of the table content.
+   * @returns {Promise<void>}
+   */
+  const reloadTable = () => {
+    const tableOptions = { ...INITIAL_TABLE_STATE };
+
+    // Update with options that we want to keep
+    tableOptions.pagination.pageSize = options.pagination.pageSize;
+    dispatch(updateTable(tableOptions));
   };
 
   const columns = [
@@ -233,7 +216,7 @@ export function SamplesTable() {
           columns={columns}
           dataSource={samples}
           pagination={{ ...options.pagination, total }}
-          onChange={handleTableChange}
+          onChange={_onTableChange}
           summary={() => (
             <Table.Summary.Row>
               <Table.Summary.Cell colSpan={5}>
