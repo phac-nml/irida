@@ -18,7 +18,6 @@ import {
   Tooltip,
 } from "antd";
 import { useListAssociatedProjectsQuery } from "../../../apis/projects/associated-projects";
-import { getAllSampleIds } from "../../../apis/projects/project-samples";
 import { blue6 } from "../../../styles/colors";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { formatSort } from "../../../utilities/table-utilities";
@@ -27,7 +26,9 @@ import SampleIcons from "./components/SampleIcons";
 import { useListSamplesQuery } from "./services/samples";
 import {
   addSelectedSample,
+  clearSelectedSamples,
   removeSelectedSample,
+  selectAllSamples,
   updateTable,
 } from "./services/samplesSlice";
 import { INITIAL_TABLE_STATE } from "./constants";
@@ -44,8 +45,6 @@ export function SamplesTable() {
     });
 
   const { data: associated } = useListAssociatedProjectsQuery(projectId);
-
-  const [selectedItems, setSelectedItems] = React.useState({});
 
   const [colors, setColors] = React.useState(() => {
     const colorString = localStorage.getItem("projectColors");
@@ -66,17 +65,15 @@ export function SamplesTable() {
     }
   };
 
-  const selectAll = async () => {
-    const { data } = await getAllSampleIds(projectId, filters);
-    const newSelected = {};
-    data.forEach((item) => (newSelected[item.key] = item));
-    setSelectedItems(newSelected);
-  };
-
-  const selectNone = () => setSelectedItems([]);
-
+  /**
+   * Called by select all/none table header
+   * @param e - React synthetic event
+   * @returns {*}
+   */
   const updateSelectAll = (e) =>
-    e.target.checked ? selectAll() : selectNone();
+    e.target.checked
+      ? dispatch(selectAllSamples(projectId, options))
+      : dispatch(clearSelectedSamples());
 
   /**
    * Handle changes made to the table options.  This will trigger an automatic
@@ -113,7 +110,7 @@ export function SamplesTable() {
   const columns = [
     {
       title: () => {
-        const length = Object.keys(selectedItems).length;
+        const length = Object.keys(selected).length;
         const indeterminate = length < total && length > 0;
         return (
           <Checkbox
