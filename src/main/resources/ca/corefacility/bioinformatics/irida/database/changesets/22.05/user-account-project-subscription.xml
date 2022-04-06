@@ -61,6 +61,7 @@
             m.group_id = p.user_group_id;
         </sql>
 
+        <dropDefaultValue columnDataType="tinyint(1)" columnName="email_subscription" tableName="project_user"/>
         <dropColumn tableName="project_user" columnName="email_subscription"/>
         <dropColumn tableName="project_user_AUD" columnName="email_subscription"/>
 
