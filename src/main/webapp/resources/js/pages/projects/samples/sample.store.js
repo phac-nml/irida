@@ -1,24 +1,25 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import {
-  getProjectIdFromUrl,
-  setBaseUrl,
-} from "../../../utilities/url-utilities";
+import { createAction, createReducer } from "@reduxjs/toolkit";
+import { getProjectIdFromUrl } from "../../../utilities/url-utilities";
 
-const PROJECT_ID = getProjectIdFromUrl();
+const updateTable = createAction("samples/table/update");
 
-export const samplesApi = createApi({
-  reducerPath: "samplesApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: setBaseUrl(`ajax/project-samples/${PROJECT_ID}`),
-  }),
-  endpoints: (builder) => ({
-    listSamples: builder.query({
-      query: (body) => ({
-        method: "POST",
-        body,
-      }),
-    }),
-  }),
+const initialState = {
+  projectId: getProjectIdFromUrl(),
+  options: {
+    filters: { associated: null },
+    pagination: {
+      current: 1,
+      pageSize: 10
+    },
+    order: [{ property: "sample.modifiedDate", direction: "desc" }]
+  }
+};
+
+export default createReducer(initialState, builder => {
+  builder.addCase(updateTable, (state, action) => {
+    console.log(action.payload);
+    state.options = { ...state.options, ...action.payload };
+  });
 });
 
-export const { useListSamplesQuery } = samplesApi;
+export { updateTable };

@@ -14,51 +14,51 @@ const BASE_URL = setBaseUrl(`/ajax/projects/associated`);
 export const associatedProjectsApi = createApi({
   reducerPath: `associatedProjectsApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: BASE_URL,
+    baseUrl: BASE_URL
   }),
   tagTypes: ["AssociatedProject"],
-  endpoints: (build) => ({
+  endpoints: build => ({
     getAssociatedProjects: build.query({
-      query: (projectId) => ({ url: "", params: { projectId } }),
-      providesTags: (result) =>
+      query: projectId => ({ url: "", params: { projectId } }),
+      providesTags: result =>
         result
           ? result.map(({ id }) => ({
               type: "AssociatedProject",
-              id,
+              id
             }))
-          : [],
+          : []
     }),
     addAssociatedProject: build.mutation({
       query: ({ projectId, associatedProjectId }) => ({
         url: "",
         params: { projectId, associatedProjectId },
-        method: "POST",
+        method: "POST"
       }),
-      invalidatesTags: ["AssociatedProject"],
+      invalidatesTags: ["AssociatedProject"]
     }),
     removeAssociatedProject: build.mutation({
       query: ({ projectId, associatedProjectId }) => ({
         url: "",
         params: { projectId, associatedProjectId },
-        method: "DELETE",
+        method: "DELETE"
       }),
-      invalidatesTags: ["AssociatedProject"],
+      invalidatesTags: ["AssociatedProject"]
     }),
-  }),
+    listAssociatedProjects: build.query({
+      query: projectId => ({ url: "/list", params: { projectId } }),
+      transformResponse: response => {
+        return response.map(item => ({
+          text: item.label,
+          value: item.id
+        }));
+      }
+    })
+  })
 });
 
 export const {
   useGetAssociatedProjectsQuery,
   useAddAssociatedProjectMutation,
   useRemoveAssociatedProjectMutation,
+  useListAssociatedProjectsQuery
 } = associatedProjectsApi;
-
-/**
- * Get a list of all the associated projects for the current project
- *
- * @param {number} projectId Project identifier for the current project
- * @returns Axios promise
- */
-export function getAssociatedProjectForProject(projectId) {
-  return axios.get(`${BASE_URL}/list?projectId=${projectId}`);
-}

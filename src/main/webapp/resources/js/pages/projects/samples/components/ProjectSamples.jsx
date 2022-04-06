@@ -1,6 +1,8 @@
 import React from "react";
 import { SamplesTable } from "../SamplesTable";
 import { Col, Row } from "antd";
+import { useListSamplesQuery } from "../services/samples";
+import { getProjectIdFromUrl } from "../../../../utilities/url-utilities";
 
 /**
  * React component to handle the layout and higher order functions of the project

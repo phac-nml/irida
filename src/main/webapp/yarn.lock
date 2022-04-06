@@ -2951,23 +2951,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reduxjs/toolkit@npm:1.6.0":
-  version: 1.6.0
-  resolution: "@reduxjs/toolkit@npm:1.6.0"
+"@reduxjs/toolkit@npm:1.8.1":
+  version: 1.8.1
+  resolution: "@reduxjs/toolkit@npm:1.8.1"
   dependencies:
-    immer: ^9.0.1
-    redux: ^4.1.0
-    redux-thunk: ^2.3.0
-    reselect: ^4.0.0
+    immer: ^9.0.7
+    redux: ^4.1.2
+    redux-thunk: ^2.4.1
+    reselect: ^4.1.5
   peerDependencies:
-    react: ^16.14.0 || ^17.0.0
-    react-redux: ^7.2.1
+    react: ^16.9.0 || ^17.0.0 || ^18
+    react-redux: ^7.2.1 || ^8.0.0-beta
   peerDependenciesMeta:
     react:
       optional: true
     react-redux:
       optional: true
-  checksum: 042cbba9af85dd7efc1fd16c4e23791564f955a77cb84bd60c66d0d00224552dc0092b48aa7a30bb811160f94917f708ada7a58b2b7a1c3e36f03fefe29ffd8f
+  checksum: be5cdea975a8a631fe2d88cafc7077554c7bc3621a4a7031556cc17e5dec26359018f2614c325895e7ab50865f5c511025d1e589ca01de7e2bd88d95e0a1a963
   languageName: node
   linkType: hard
 
@@ -7952,10 +7952,10 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"immer@npm:^9.0.1":
-  version: 9.0.2
-  resolution: "immer@npm:9.0.2"
-  checksum: ce74a183085451ec31b8726ef1345baf7a315df7ffe7683b231bd491fdd2bb73bf093085a36a5270a27200fbdd052e8572adb38058f0264ee0ec04b3b5d4ba02
+"immer@npm:^9.0.7":
+  version: 9.0.12
+  resolution: "immer@npm:9.0.12"
+  checksum: bcbec6d76dac65e49068eb67ece4d407116e62b8cde3126aa89c801e408f5047763ba0aeb62f1938c1aa704bb6612f1d8302bb2a86fa1fc60fcc12d8b25dc895
   languageName: node
   linkType: hard
 
@@ -8151,7 +8151,7 @@ fsevents@^2.1.2:
     "@fortawesome/fontawesome-svg-core": ^1.2.29
     "@fortawesome/free-solid-svg-icons": ^5.13.1
     "@react-dnd/invariant": ^2.0.0
-    "@reduxjs/toolkit": 1.6.0
+    "@reduxjs/toolkit": 1.8.1
     "@yarnpkg/pnpify": ^2.4.0
     ag-grid-community: ^27.1.0
     ag-grid-react: ^27.1.0
@@ -13692,10 +13692,12 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"redux-thunk@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "redux-thunk@npm:2.3.0"
-  checksum: d13f442ffc91249b534bf14884c33feff582894be2562169637dc9d4d70aec6423bfe6d66f88c46ac027ac1c0cd07d6c2dd4a61cf7695b8e43491de679df9bcf
+"redux-thunk@npm:^2.4.1":
+  version: 2.4.1
+  resolution: "redux-thunk@npm:2.4.1"
+  peerDependencies:
+    redux: ^4
+  checksum: af5abb425fb9dccda02e5f387d6f3003997f62d906542a3d35fc9420088f550dc1a018bdc246c7d23ee852b4d4ab8b5c64c5be426e45a328d791c4586a3c6b6e
   languageName: node
   linkType: hard
 
@@ -13719,12 +13721,12 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"redux@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "redux@npm:4.1.0"
+"redux@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "redux@npm:4.1.2"
   dependencies:
     "@babel/runtime": ^7.9.2
-  checksum: 322d5f4b49cbbdb3f64f04e9279cabbdea9a698024b530dc98563eb598b6bd55ff8a715208e3ee09db9802a2f426c991c78906b1c6491ebb52e7310e55ee5cdf
+  checksum: 6a839cee5bd580c5298d968e9e2302150e961318253819bcd97f9d945a5a409559eacddf6026f4118bb68b681c593d90e8a2c5bbf278f014aff9bf0d2d8fa084
   languageName: node
   linkType: hard
 
@@ -13991,10 +13993,10 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"reselect@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "reselect@npm:4.0.0"
-  checksum: ac7dfc9ef2cdb42b6fc87a856f3ce904c2e4363a2bc1e6fb7eea5f78902a6f506e4388e6509752984877c6dbfe501100c076671d334799eb5a1bfe9936cb2c12
+"reselect@npm:^4.1.5":
+  version: 4.1.5
+  resolution: "reselect@npm:4.1.5"
+  checksum: 54c13c1e795b2ea70cba8384138aebe78adda00cbea303cc94b64da0a70d74c896cc9a03115ae38b8bff990e7a60dcd6452ab68cbec01b0b38c1afda70714cf0
   languageName: node
   linkType: hard
 
