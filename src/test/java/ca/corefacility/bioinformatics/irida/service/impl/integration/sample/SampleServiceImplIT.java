@@ -72,6 +72,8 @@ public class SampleServiceImplIT {
 	 */
 	private static final double deltaFloatEquality = 0.000001;
 
+	private List<Long> sampleIds = List.of(1L, 2L);
+
 	@Test
 	@WithMockUser(username = "fbristow", roles = "ADMIN")
 	public void testCreateSample() {
@@ -474,7 +476,8 @@ public class SampleServiceImplIT {
 		List<MetadataTemplateField> permittedFieldsForCurrentUser = metadataTemplateService.getPermittedFieldsForCurrentUser(
 				project, true);
 
-		ProjectMetadataResponse metadataForProject = sampleService.getMetadataForProject(project,
+
+		ProjectMetadataResponse metadataForProject = sampleService.getMetadataForProjectSamples(project, sampleIds,
 				permittedFieldsForCurrentUser);
 
 		Map<Long, Set<MetadataEntry>> metadata = metadataForProject.getMetadata();
@@ -502,7 +505,7 @@ public class SampleServiceImplIT {
 		List<MetadataTemplateField> metadataTemplateFields = Lists.newArrayList(field1, field2);
 
 		assertThrows(AccessDeniedException.class, () -> {
-			sampleService.getMetadataForProject(project, metadataTemplateFields);
+			sampleService.getMetadataForProjectSamples(project, sampleIds, metadataTemplateFields);
 		});
 	}
 
@@ -516,8 +519,7 @@ public class SampleServiceImplIT {
 
 		List<MetadataTemplateField> metadataTemplateFields = Lists.newArrayList(field1, field2);
 
-		ProjectMetadataResponse metadataForProject = sampleService.getMetadataForProject(project,
-				metadataTemplateFields);
+		ProjectMetadataResponse metadataForProject = sampleService.getMetadataForProjectSamples(project, sampleIds, metadataTemplateFields);
 
 		Map<Long, Set<MetadataEntry>> metadata = metadataForProject.getMetadata();
 

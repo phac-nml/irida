@@ -3,7 +3,7 @@ import { render } from "react-dom";
 import { Button, Form, Input, Modal } from "antd";
 import { IconPlusCircle } from "../../../../components/icons/Icons";
 import { grey6, grey9 } from "../../../../styles/colors";
-import { OntologySelect } from "../../../../components/ontology";
+import { OntologyInput } from "../../../../components/ontology";
 import { TAXONOMY } from "../../../../apis/ontology/taxonomy";
 import {
   createNewSample,
@@ -94,7 +94,7 @@ function AddSampleForm({ onSubmit, visible = false }) {
         />
       </Form.Item>
       <Form.Item label={i18n("AddSample.organism")} name="organism">
-        <OntologySelect
+        <OntologyInput
           term={organism}
           ontology={TAXONOMY}
           onTermSelected={(value) => setOrganism(value)}

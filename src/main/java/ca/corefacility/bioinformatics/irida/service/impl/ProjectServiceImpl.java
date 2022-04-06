@@ -526,22 +526,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	}
 
 	/**
-	 * {@inheritDoc }
-	 */
-	@Override
-	@PreAuthorize("hasPermission(#project, 'canReadProject')")
-	public boolean userHasProjectRole(User user, Project project, ProjectRole projectRole) {
-		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
-
-		if (projectJoinForUser == null) {
-			return false;
-		}
-
-		return projectJoinForUser.getProjectRole()
-				.equals(projectRole);
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override

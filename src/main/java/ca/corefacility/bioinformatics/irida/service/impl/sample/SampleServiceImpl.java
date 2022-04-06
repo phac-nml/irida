@@ -207,21 +207,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	@PostAuthorize("hasPermission(returnObject,'readProjectMetadataResponse')")
-	public ProjectMetadataResponse getMetadataForProject(Project project, List<MetadataTemplateField> fields) {
-		checkArgument(!fields.isEmpty(), "fields must not be empty");
-		Map<Long, Set<MetadataEntry>> metadataForProject = metadataEntryRepository.getMetadataForProject(project,
-				fields);
-
-		return new ProjectMetadataResponse(project, metadataForProject);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasPermission(#project, 'canReadProject')")
-	@PostAuthorize("hasPermission(returnObject,'readProjectMetadataResponse')")
 	public ProjectMetadataResponse getMetadataForProjectSamples(Project project, List<Long> sampleIds, List<MetadataTemplateField> fields) {
 		checkArgument(!fields.isEmpty(), "fields must not be empty");
 		Map<Long, Set<MetadataEntry>> metadataForProjectSamples = metadataEntryRepository.getMetadataForProjectSamples(project, sampleIds, fields);
