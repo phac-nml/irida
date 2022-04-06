@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-
+import { notification, Space, Spin } from "antd";
 import isEqual from "lodash/isEqual";
 import isArray from "lodash/isArray";
 import PropTypes from "prop-types";
@@ -8,15 +8,18 @@ import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
-import { LoadingOverlay } from "./LoadingOverlay";
+import { CsvExportModule } from "@ag-grid-community/csv-export";
+import LoadingOverlay from "./LoadingOverlay";
 import {
   DateCellRenderer,
   IconCellRenderer,
-  SampleNameRenderer
+  SampleNameRenderer,
 } from "./renderers";
 import { FIELDS } from "../../constants";
 import { actions as templateActions } from "../../reducers/templates";
 import { actions as entryActions } from "../../reducers/entries";
+import { IconCheck } from "../../../../../components/icons/Icons";
+import { green6 } from "../../../../../styles/colors";
 
 /**
  * React component to render the ag-grid to the page.
@@ -24,7 +27,7 @@ import { actions as entryActions } from "../../reducers/entries";
 export class TableComponent extends React.Component {
   state = {
     entries: null,
-    filterCount: 0
+    filterCount: 0,
   };
 
   /*
@@ -43,11 +46,12 @@ export class TableComponent extends React.Component {
   /*
   External custom components used by ag-grid.
    */
-  frameworkComponents = {
+  components = {
+    CsvExportModule,
     LoadingOverlay,
     SampleNameRenderer,
     IconCellRenderer,
-    DateCellRenderer
+    DateCellRenderer,
   };
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -122,7 +126,7 @@ export class TableComponent extends React.Component {
    * toggle column visibility.
    * @param {Array} templateFields
    */
-  applyTemplate = templateFields => {
+  applyTemplate = (templateFields) => {
     /*
     Get the current state of the table.  This hold critical information so we
     only want to modify the order and visible of the columns.
@@ -139,8 +143,8 @@ export class TableComponent extends React.Component {
    the template.
     */
     const final = templateFields
-      .map(field => {
-        const index = columnState.findIndex(c => c.colId === field.field);
+      .map((field) => {
+        const index = columnState.findIndex((c) => c.colId === field.field);
         if (index > -1) {
           const col = columnState.splice(index, 1)[0];
 
@@ -151,7 +155,7 @@ export class TableComponent extends React.Component {
           return col;
         }
       })
-      .filter(c => typeof c !== "undefined");
+      .filter((c) => typeof c !== "undefined");
 
     /*
     Combine back the sample name plus the new ordered state for the table.
@@ -162,7 +166,7 @@ export class TableComponent extends React.Component {
   /*
   Allow access to the grids API
    */
-  onGridReady = params => {
+  onGridReady = (params) => {
     this.api = params.api;
     this.columnApi = params.columnApi;
     /*
@@ -183,9 +187,9 @@ export class TableComponent extends React.Component {
     /*
     Remove the hidden ones and just get the field identifiers
      */
-    let list = colOrder.map(c => {
+    let list = colOrder.map((c) => {
       // Get the header name
-      const field = this.props.fields.find(f => f.field === c.colId);
+      const field = this.props.fields.find((f) => f.field === c.colId);
       field.hide = c.hide;
       return { ...field };
     });
@@ -200,11 +204,12 @@ export class TableComponent extends React.Component {
    * @param {string} ext extension for the file.
    * @returns {string}
    */
-  generateFileName = ext => {
+  generateFileName = (ext) => {
     // YYYY-MM-dd-project-X-<metadata template name>.csv
     const fullDate = new Date();
-    const date = `${fullDate.getFullYear()}-${fullDate.getMonth() +
-      1}-${fullDate.getDate()}`;
+    const date = `${fullDate.getFullYear()}-${
+      fullDate.getMonth() + 1
+    }-${fullDate.getDate()}`;
     const project = window.PAGE.project.label.replace(this.nameRegex, "_");
     const template = this.props.templates[this.props.current].name.replace(
       this.nameRegex,
@@ -213,46 +218,59 @@ export class TableComponent extends React.Component {
     return `${date}-${project}-${template}.${ext}`;
   };
 
-  createFile = ext => {
+  createFile = (ext) => {
     /*
      * Lazy load xlsx utilities since exporting is not a function used on every page.
      */
     import(
       /* webpackChunkName: "exportUtilities" */ "../../../../../utilities/export-utilities"
-    ).then(module => {
+    ).then((module) => {
       const createXLSX = module.default;
-
-      const availableNames = {};
-      this.props.fields.forEach(f => (availableNames[f.field] = f.headerName));
-
-      /*
-       * Get the visible columns.  Need to ignore the icon columns since
-       * it does not contain any data that we want.
-       */
-      const colOrder = this.columnApi
-        .getColumnState()
-        .filter(c => !c.hide && c.colId !== "icons");
-
-      const data = [];
-      this.api.forEachNodeAfterFilter(node => {
-        // We only need the value of the cell.
-        const item = colOrder.map(col => node.data[col.colId] || "");
-        data.push(item);
+      notification.open({
+        key: "export-notification",
+        message: i18n("linelist.table.export.message"),
+        icon: <Spin />,
+        closeIcon: <div></div>,
+        description: i18n("linelist.table.export.description"),
+        duration: null,
       });
 
       /*
-       * Headers need to be the first item in the array.
+       * Wait 1 second before generating file, this allows the preparing
+       * notification to display for at least 1 second before the file has
+       * completed generation.
        */
-      const cols = colOrder.map(c => availableNames[c.colId]);
-      data.unshift(cols);
+      setTimeout(() => {
+        /*
+         * Get the visible columns.  Need to ignore the icon columns since
+         * it does not contain any data that we want.
+         */
+        const filteredColIds = this.columnApi
+          .getColumnState()
+          .filter((c) => !c.hide && c.colId !== "icons")
+          .map((c) => c.colId);
 
-      const filename = this.generateFileName(ext);
-      createXLSX({ filename, data });
+        const filename = this.generateFileName(ext);
+        if (ext === "csv") {
+          this.api.exportDataAsCsv({
+            columnKeys: filteredColIds,
+            fileName: filename,
+          });
+        } else {
+          const data = this.api.getDataAsCsv({ columnKeys: filteredColIds });
+          createXLSX({ filename, data });
+        }
+        notification.open({
+          key: "export-notification",
+          icon: <IconCheck style={{ color: green6 }} />,
+          message: "File created",
+        });
+      }, 1000);
     });
   };
 
   addSamplesToCart = () => {
-    const nodes = this.api.getSelectedNodes().map(n => n.data);
+    const nodes = this.api.getSelectedNodes().map((n) => n.data);
     this.props.addSelectedToCart(nodes);
   };
 
@@ -271,14 +289,14 @@ export class TableComponent extends React.Component {
   };
 
   onSelectionChange = () => {
-    this.props.selection(this.api.getSelectedNodes().map(n => n.data));
+    this.props.selection(this.api.getSelectedNodes().map((n) => n.data));
   };
 
   /**
    * When a cell is edited, store the value in case it needs to be reversed
    * @param {object} event - the cell edit event
    */
-  onCellEditingStarted = event => {
+  onCellEditingStarted = (event) => {
     this.cellEditedValue = event.value || "";
   };
 
@@ -286,7 +304,7 @@ export class TableComponent extends React.Component {
    * After the cell has been edited give the user a chance to undo the edit.
    * @param {object} event - cell edit event
    */
-  onCellEditingStopped = event => {
+  onCellEditingStopped = (event) => {
     // Get the table header for the cell that was edited
 
     const { field, headerName } = event.column.colDef;
@@ -319,7 +337,7 @@ export class TableComponent extends React.Component {
           );
       showUndoNotification(
         {
-          text
+          text,
         },
         () => {
           /**
@@ -362,11 +380,11 @@ export class TableComponent extends React.Component {
         onFilterChanged={this.setFilterCount}
         localeText={{
           loading: i18n("linelist.agGrid.loading"),
-          sampleName: i18n("linelist.agGrid.sampleName")
+          sampleName: i18n("linelist.agGrid.sampleName"),
         }}
         columnDefs={this.props.fields}
         rowData={this.props.entries}
-        frameworkComponents={this.frameworkComponents}
+        components={this.components}
         loadingOverlayComponent="LoadingOverlay"
         onGridReady={this.onGridReady}
         onDragStopped={this.onColumnDropped}
@@ -376,7 +394,7 @@ export class TableComponent extends React.Component {
         defaultColDef={{
           headerCheckboxSelectionFilteredOnly: true,
           sortable: true,
-          filter: true
+          filter: true,
         }}
         enableCellChangeFlash={true}
         onCellEditingStarted={this.onCellEditingStarted}
@@ -394,24 +412,25 @@ TableComponent.propTypes = {
   current: PropTypes.number.isRequired,
   onFilter: PropTypes.func.isRequired,
   globalFilter: PropTypes.string.isRequired,
-  selection: PropTypes.func.isRequired
+  selection: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
+  loading: state.entries.loading,
   fields: state.fields.fields,
   templates: state.templates.templates,
   current: state.templates.current,
-  entries: state.entries.entries,
-  globalFilter: state.entries.globalFilter
+  entries: state.entries.entries?.entries,
+  globalFilter: state.entries.globalFilter,
 });
 
-const mapDispatchToProps = dispatch => ({
-  tableModified: fields => dispatch(templateActions.tableModified(fields)),
+const mapDispatchToProps = (dispatch) => ({
+  tableModified: (fields) => dispatch(templateActions.tableModified(fields)),
   entryEdited: (entry, field, label) =>
     dispatch(entryActions.edited(entry, field, label)),
-  selection: selected => dispatch(entryActions.selection(selected))
+  selection: (selected) => dispatch(entryActions.selection(selected)),
 });
 
 export const Table = connect(mapStateToProps, mapDispatchToProps, null, {
-  forwardRef: true
+  forwardRef: true,
 })(TableComponent);

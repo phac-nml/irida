@@ -24,6 +24,9 @@ public class CreateProjectComponent extends AbstractPage {
 	@FindBy(className = "t-desc-input")
 	private WebElement descInput;
 
+	@FindBy(css = ".t-organism-input input")
+	private WebElement organismInput;
+
 	@FindBy(className = "t-wiki-input")
 	private WebElement wikiInput;
 
@@ -62,10 +65,15 @@ public class CreateProjectComponent extends AbstractPage {
 	public void enterProjectName(String name) {
 		nameInput.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 		nameInput.sendKeys(name);
+		waitForTime(350);
 	}
 
 	public void enterProjectDescription(String description) {
 		descInput.sendKeys(description);
+	}
+
+	public void enterOrganism(String organism) {
+		organismInput.sendKeys(organism);
 	}
 
 	public void goToNextStep() {
@@ -91,8 +99,6 @@ public class CreateProjectComponent extends AbstractPage {
 	}
 
 	public String getNameWarning() {
-		WebDriverWait wait = new WebDriverWait(driver, 1);
-		wait.until(ExpectedConditions.visibilityOf(nameError));
 		return nameError.getText();
 	}
 }

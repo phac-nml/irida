@@ -1,10 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -13,7 +10,10 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This page holds all the form controls that are available on any pipeline
@@ -135,9 +135,11 @@ public class LaunchPipelinePage extends AbstractPage {
 	}
 
 	public void updateName(String name) {
+		WebDriverWait wait = new WebDriverWait(driver, 2);
 		clearName();
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.className("t-name-required")));
 		nameInput.sendKeys(name);
-		waitForTime(300);
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("t-name-required")));
 	}
 
 	/**

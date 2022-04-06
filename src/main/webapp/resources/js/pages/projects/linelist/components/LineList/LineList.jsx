@@ -1,6 +1,5 @@
 import React from "react";
 
-import PropTypes from "prop-types";
 import { Loader } from "../Loader";
 import { LineListLayoutComponent } from "./LineListLayoutComponent";
 import { ErrorAlert } from "../../../../../components/alerts/ErrorAlert";
@@ -25,8 +24,3 @@ export function LineList(props) {
 
   return <LineListLayoutComponent {...props} />;
 }
-
-LineList.propTypes = {
-  initializing: PropTypes.bool.isRequired,
-  error: PropTypes.bool
-};

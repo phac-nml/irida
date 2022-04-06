@@ -14,25 +14,21 @@ import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.Generic
 
 /**
  * Specialized repository for {@link User}.
- * 
  */
 public interface UserRepository extends IridaJpaRepository<User, Long>, UserDetailsService, UserRepositoryCustom {
 
 	/**
 	 * Get a user from the database with the supplied username.
-	 * 
-	 * @param username
-	 *            the user's username.
+	 *
+	 * @param username the user's username.
 	 * @return the user corresponding to the username.
-	 * @throws UsernameNotFoundException
-	 *             If no user can be found with the supplied username.
+	 * @throws UsernameNotFoundException If no user can be found with the supplied username.
 	 */
 	public User loadUserByUsername(String username) throws UsernameNotFoundException;
 
 	/**
-	 * Get the list of {@link User}s that are not associated with the current
-	 * project. This is a convenience method for the front end to see what users
-	 * can be added to the project.
+	 * Get the list of {@link User}s that are not associated with the current project. This is a convenience method for
+	 * the front end to see what users can be added to the project.
 	 *
 	 * @param project The project we want to list the available users for
 	 * @param term    A search term for a user's first or last name
@@ -60,15 +56,14 @@ public interface UserRepository extends IridaJpaRepository<User, Long>, UserDeta
 	public Long countUsersCreatedInTimePeriod(Date createdDate);
 
 	/**
-	 * Get a list of {@link GenericStatModel}s for users created in the n time period
-	 * grouped by the format provided.
+	 * Get a list of {@link GenericStatModel}s for users created in the n time period grouped by the format provided.
 	 *
-	 * @param createdDate The minimum created date for users
+	 * @param createdDate   The minimum created date for users
 	 * @param groupByFormat the format for which to group the results by
 	 * @return A list of {@link GenericStatModel}s
 	 */
 	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', u.createdDate, ?2), count(u.id))"
-			+ "from User u where u.createdDate >= ?1 group by function('date_format', u.createdDate, ?2)")
+			+ "from User u where u.createdDate >= ?1 group by function('date_format', u.createdDate, ?2) order by u.createdDate asc")
 	public List<GenericStatModel> countUsersCreatedGrouped(Date createdDate, String groupByFormat);
 
 }

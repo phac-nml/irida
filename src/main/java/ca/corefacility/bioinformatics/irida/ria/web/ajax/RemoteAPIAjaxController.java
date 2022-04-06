@@ -1,46 +1,69 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax;
 
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.RemoteAPISpecification;
+import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMessage;
+import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxFormErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.remote.CreateRemoteProjectRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.remote.RemoteAPIModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.remote.RemoteProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITableAdminModel;
 import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
+import com.google.common.collect.ImmutableMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.ConstraintViolationException;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Controller for asynchronous requests for remote api functionality.
  */
 @RestController
 @RequestMapping("/ajax/remote_api")
-public class RemoteAPIAjaxController {
+public class RemoteAPIAjaxController extends BaseController {
     private final RemoteAPIService remoteAPIService;
     private final UIRemoteAPIService service;
+    private final MessageSource messageSource;
+
+    // Map storing the message names for the
+    // getErrorsFromDataIntegrityViolationException method
+    private final Map<String, ExceptionPropertyAndMessage> errorMessages = ImmutableMap.of(
+            RemoteAPI.SERVICE_URI_CONSTRAINT_NAME,
+            new ExceptionPropertyAndMessage("serviceURI", "remoteapi.create.serviceURIConflict"));
 
 
     @Autowired
-    public RemoteAPIAjaxController(RemoteAPIService remoteAPIService, UIRemoteAPIService service) {
+    public RemoteAPIAjaxController(RemoteAPIService remoteAPIService, UIRemoteAPIService service,
+            MessageSource messageSource) {
         this.remoteAPIService = remoteAPIService;
         this.service = service;
+        this.messageSource = messageSource;
     }
 
     /**
@@ -55,9 +78,14 @@ public class RemoteAPIAjaxController {
                 RemoteAPISpecification.searchRemoteAPI(tableRequest.getSearch()), tableRequest.getCurrent(),
                 tableRequest.getPageSize(), tableRequest.getSortDirection(), tableRequest.getSortColumn());
 
+        Authentication authentication = SecurityContextHolder.getContext()
+                .getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        boolean isAdmin = user.getSystemRole().equals(Role.ROLE_ADMIN);
+
         List<RemoteAPITableModel> apiData = search.getContent()
                 .stream()
-                .map(RemoteAPITableModel::new)
+                .map(api -> isAdmin ? new RemoteAPITableAdminModel(api) : new RemoteAPITableModel(api))
                 .collect(Collectors.toList());
         return new TableResponse<>(apiData, search.getTotalElements());
     }
@@ -79,18 +107,6 @@ public class RemoteAPIAjaxController {
         }catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-    }
-
-    /**
-     * Get details about a Remote API Connection
-     *
-     * @param remoteId Identifier for a Remote API
-     * @return {@link ResponseEntity} with the details of the Remote API
-     */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/{remoteId}")
-    public ResponseEntity<RemoteAPIModel> getRemoteAPIDetails(@PathVariable long remoteId) {
-        return ResponseEntity.ok(service.getRemoteApiDetails(remoteId));
     }
 
     /**
@@ -142,5 +158,28 @@ public class RemoteAPIAjaxController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new AjaxErrorResponse(e.getMessage()));
         }
+    }
+
+    /**
+     * Create a new client
+     *
+     * @param client The client to add
+     * @param locale Locale of the current user session
+     * @return result of creating the remote api
+     */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping(value = "/create")
+    public ResponseEntity<AjaxResponse> postCreateRemoteAPI(RemoteAPI client, Locale locale) {
+        Map<String, String> errors;
+        try {
+            RemoteAPI remoteAPI = remoteAPIService.create(client);
+            return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(remoteAPI.getId()));
+        } catch (ConstraintViolationException e) {
+            errors = getErrorsFromViolationException(e);
+        } catch (DataIntegrityViolationException e) {
+            errors = getErrorsFromDataIntegrityViolationException(e, errorMessages, messageSource, locale);
+        }
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(new AjaxFormErrorResponse(errors));
     }
 }
