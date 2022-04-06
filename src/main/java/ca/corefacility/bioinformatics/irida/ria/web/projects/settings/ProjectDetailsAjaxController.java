@@ -2,8 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects.settings;
 
 import java.util.Locale;
 
-import javax.validation.ConstraintViolationException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -24,8 +22,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Update
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIMetadataService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
-
-import com.google.common.base.Strings;
 
 /**
  * Handle asynchronous requests for the UI project details page.
@@ -51,7 +47,7 @@ public class ProjectDetailsAjaxController {
 	 * Get general details about the project.
 	 *
 	 * @param projectId {@link Long} identifier for the project
-	 * @param locale Locale of the current user
+	 * @param locale    Locale of the current user
 	 * @return {@link ResponseEntity} containing the project details
 	 */
 	@RequestMapping("")
@@ -59,8 +55,7 @@ public class ProjectDetailsAjaxController {
 		try {
 			return ResponseEntity.ok(service.getProjectInfo(projectId, locale));
 		} catch (AjaxItemNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new AjaxErrorResponse(e.getMessage()));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
@@ -77,36 +72,9 @@ public class ProjectDetailsAjaxController {
 	public ResponseEntity<AjaxResponse> updateProjectDetails(@RequestParam Long projectId,
 			@RequestBody UpdateProjectAttributeRequest request, Locale locale) {
 		try {
-			Project project = projectService.read(projectId);
-			switch (request.getField()) {
-			case "label":
-				project.setName(request.getValue());
-				break;
-			case "description":
-				project.setProjectDescription(request.getValue());
-				break;
-			case "organism":
-				project.setOrganism(request.getValue());
-				break;
-			default:
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-						.body(new AjaxErrorResponse(messageSource.getMessage("server.ProjectDetails.error",
-								new Object[] { request.getField() }, locale)));
-			}
-			projectService.update(project);
-			String message;
-			if (Strings.isNullOrEmpty(request.getValue())) {
-				message = messageSource.getMessage("server.ProjectDetails.success-empty",
-						new Object[] { request.getField() }, locale);
-
-			} else {
-				message = messageSource.getMessage("server.ProjectDetails.success",
-						new Object[] { request.getField(), request.getValue() }, locale);
-			}
-			return ResponseEntity.ok(new AjaxSuccessResponse(message));
-		} catch (ConstraintViolationException e) {
-			return ResponseEntity.badRequest()
-					.body(new AjaxErrorResponse(messageSource.getMessage("server.ProjectDetails.error-constraint", new Object[] {}, locale)));
+			return ResponseEntity.ok(new AjaxSuccessResponse(service.updateProjectDetails(projectId, request, locale)));
+		} catch (UpdateException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
@@ -125,8 +93,7 @@ public class ProjectDetailsAjaxController {
 			return ResponseEntity.ok(
 					new AjaxSuccessResponse(metadataService.setDefaultMetadataTemplate(templateId, projectId, locale)));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new AjaxErrorResponse(e.getMessage()));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
@@ -142,11 +109,10 @@ public class ProjectDetailsAjaxController {
 	public ResponseEntity<AjaxResponse> updateProcessingPriority(@RequestParam long projectId,
 			@RequestParam AnalysisSubmission.Priority priority, Locale locale) {
 		try {
-			return ResponseEntity.ok(
-					new AjaxSuccessResponse(service.updateProcessingPriority(projectId, priority, locale)));
+			return ResponseEntity
+					.ok(new AjaxSuccessResponse(service.updateProcessingPriority(projectId, priority, locale)));
 		} catch (UpdateException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new AjaxErrorResponse(e.getMessage()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
@@ -162,11 +128,10 @@ public class ProjectDetailsAjaxController {
 	public ResponseEntity<AjaxResponse> updateProcessingCoverage(@RequestParam long projectId,
 			@RequestBody Coverage coverage, Locale locale) {
 		try {
-			return ResponseEntity.ok(
-					new AjaxSuccessResponse(service.updateProcessingCoverage(coverage, projectId, locale)));
+			return ResponseEntity
+					.ok(new AjaxSuccessResponse(service.updateProcessingCoverage(coverage, projectId, locale)));
 		} catch (UpdateException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new AjaxErrorResponse(e.getMessage()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 

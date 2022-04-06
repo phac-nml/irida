@@ -1,8 +1,8 @@
-import { Button, Layout, Menu } from "antd";
 import React from "react";
+import { Button, Layout, Menu } from "antd";
 import styled from "styled-components";
-import { grey1, grey6, grey10 } from "../../styles/colors";
-import { SPACE_MD } from "../../styles/spacing";
+import { grey1, grey10, grey2 } from "../../styles/colors";
+import { SPACE_LG, SPACE_MD } from "../../styles/spacing";
 import { theme } from "../../utilities/theme-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconUser } from "../icons/Icons";
@@ -16,7 +16,9 @@ const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 const isManager = isAdmin || window.TL._USER.systemRole === "ROLE_MANAGER";
 
 const StyledAnchor = styled.a`
-  color: ${grey6};
+  color: ${grey2};
+  font-size: 1.5rem;
+  font-weight: 600;
 
   &:hover {
     color: ${grey1};
@@ -56,7 +58,7 @@ export function MainNavigation() {
     <StyledHeader>
       <a href={setBaseUrl("/")}>
         <img
-          style={{ height: 28, width: 129 }}
+          style={{ height: 28, width: 129, marginRight: SPACE_LG }}
           src={setBaseUrl(`/resources/img/irida_logo_${theme}.svg`)}
           alt={i18n("global.title")}
         />
@@ -263,11 +265,7 @@ export function MainNavigation() {
       <CartLink />
       <AnnouncementsSubMenu />
       <Menu theme={theme} mode="horizontal" defaultSelectedKeys={[""]}>
-        <Menu.SubMenu
-          key="account-dropdown-link"
-          icon={<IconUser />}
-          title={window.TL._USER.username}
-        >
+        <Menu.SubMenu key="account-dropdown-link" icon={<IconUser />}>
           <Menu.Item key="account">
             <a href={setBaseUrl(`/users/current`)}>
               {i18n("nav.main.account")}
