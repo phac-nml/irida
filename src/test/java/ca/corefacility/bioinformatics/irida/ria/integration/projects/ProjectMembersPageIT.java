@@ -34,25 +34,26 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Test remove user from project
 		page.removeUser(1);
-		assertTrue(page.isUpdateMemberSuccessNotificationDisplayed());
+		assertTrue(page.isNotificationDisplayed());
 		assertEquals(1, page.getNumberOfMembers(), "Should be 1 member in the project");
 
 		// Should not be able to remove the manager
 		page.removeManager(0);
-		assertTrue(page.isUpdateMemberErrorNotificationDisplayed());
+		assertTrue(page.isNotificationDisplayed());
 		assertEquals(1, page.getNumberOfMembers(), "Should be 1 member in the project");
 
 		// Test Add user to project
 		page.addUserToProject("test");
+		page.isNotificationDisplayed();
 		assertEquals(2, page.getNumberOfMembers(), "Should be 2 members in the project");
 
-		// Tye updating the users role
+		// Try updating the users role
 		page.updateUserRole(0, ProjectRole.PROJECT_OWNER.toString());
-		assertTrue(page.isUpdateMemberSuccessNotificationDisplayed());
+		assertTrue(page.isNotificationDisplayed());
 
 		// Try updating the users metadata role
 		page.updateMetadataRole(0, ProjectMetadataRole.LEVEL_2.toString());
-		assertTrue(page.isUpdateMemberSuccessNotificationDisplayed());
+		assertTrue(page.isNotificationDisplayed());
 	}
 
 	@Test
@@ -90,11 +91,12 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		page.submitProject();
 
 		String pathTokens[] = driver().getCurrentUrl().split("/");
-		Long projectId = Long.valueOf(pathTokens[pathTokens.length-1]);
+		Long projectId = Long.valueOf(pathTokens[pathTokens.length - 1]);
 
 		ProjectMembersPage remoteProjectMembersPage = ProjectMembersPage.goToRemoteProject(driver(), projectId);
 		assertEquals(1, remoteProjectMembersPage.getNumberOfMembers(), "Should be 1 members in the project");
 		remoteProjectMembersPage.addUserToProject("Mr. Manager");
+		assertTrue(remoteProjectMembersPage.isNotificationDisplayed());
 		remoteProjectMembersPage.updateUserRole(0, ProjectRole.PROJECT_OWNER.toString());
 		assertEquals(2, remoteProjectMembersPage.getNumberOfMembers(), "Should be 2 members in the project");
 
@@ -108,8 +110,10 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(managerRemoteProjectMembersPage.isAddMemberBtnVisible(), "Add member button should be visible");
 
 		managerRemoteProjectMembersPage.addUserToProject("testUser");
+		assertTrue(remoteProjectMembersPage.isNotificationDisplayed());
 		assertEquals(3, remoteProjectMembersPage.getNumberOfMembers(), "Should be 3 members in the project");
 		managerRemoteProjectMembersPage.removeUser(0);
+		assertTrue(remoteProjectMembersPage.isNotificationDisplayed());
 		assertEquals(2, remoteProjectMembersPage.getNumberOfMembers(), "Should be 2 members in the project");
 	}
 

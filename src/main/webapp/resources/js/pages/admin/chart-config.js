@@ -29,7 +29,14 @@ export function getChartConfiguration(chartType, data) {
     [chartTypes.COLUMN]: {
       seriesField: "key",
     },
-    [chartTypes.LINE]: {},
+    [chartTypes.LINE]: {
+      label: {
+        visible: Boolean(data),
+        position: "middle",
+        adjustColor: true,
+        style: { fill: "#0D0E68", fontSize: 12, fontWeight: 600, opacity: 0.3 },
+      },
+    },
   };
 
   // The configuration required to display a chart
@@ -41,15 +48,11 @@ export function getChartConfiguration(chartType, data) {
     width: "100%",
     height: chartHeight,
     meta: { key: { alias: "" }, value: { alias: "" } },
-    label: {
-      visible: Boolean(data),
-      position: "middle",
-      adjustColor: true,
-      style: { fill: "#0D0E68", fontSize: 12, fontWeight: 600, opacity: 0.3 },
-    },
     legend: {
       visible: Boolean(data),
       position: "bottom",
+      offsetY: 10,
+      maxWidth: window.innerWidth - 600,
     },
   };
 

@@ -115,6 +115,7 @@ public class UIUserGroupsService {
 	 * @param groupId identifier for an {@link UserGroup} to update
 	 * @param update  details about which field and value to update
 	 */
+	@Transactional
 	public void updateUserGroupDetails(Long groupId, FieldUpdate update) {
 		UserGroup group = userGroupService.read(groupId);
 		switch (update.getField()) {

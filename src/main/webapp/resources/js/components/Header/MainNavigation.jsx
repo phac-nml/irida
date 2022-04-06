@@ -1,8 +1,8 @@
 import React from "react";
-import { Button, Grid, Layout, Menu } from "antd";
+import { Button, Layout, Menu } from "antd";
 import styled from "styled-components";
-import { grey1, grey10 } from "../../styles/colors";
-import { SPACE_MD } from "../../styles/spacing";
+import { grey1, grey10, grey2 } from "../../styles/colors";
+import { SPACE_LG, SPACE_MD } from "../../styles/spacing";
 import { theme } from "../../utilities/theme-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconUser } from "../icons/Icons";
@@ -14,6 +14,16 @@ const { Header } = Layout;
 
 const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 const isManager = isAdmin || window.TL._USER.systemRole === "ROLE_MANAGER";
+
+const StyledAnchor = styled.a`
+  color: ${grey2};
+  font-size: 1.5rem;
+  font-weight: 600;
+
+  &:hover {
+    color: ${grey1};
+  }
+`;
 
 const StyledHeader = styled(Header)`
   position: fixed;
@@ -48,7 +58,7 @@ export function MainNavigation() {
     <StyledHeader>
       <a href={setBaseUrl("/")}>
         <img
-          style={{ height: 28, width: 129 }}
+          style={{ height: 28, width: 129, marginRight: SPACE_LG }}
           src={setBaseUrl(`/resources/img/irida_logo_${theme}.svg`)}
           alt={i18n("global.title")}
         />
@@ -62,7 +72,14 @@ export function MainNavigation() {
             minWidth: 400,
           }}
         >
-          <Menu.SubMenu key="projects" title={i18n("nav.main.projects")}>
+          <Menu.SubMenu
+            key="projects"
+            title={
+              <StyledAnchor href={setBaseUrl(`/projects`)}>
+                {i18n("nav.main.projects")}
+              </StyledAnchor>
+            }
+          >
             <Menu.Item key="project:list">
               <a href={setBaseUrl(`/projects`)}>
                 {i18n("nav.main.project-list")}
@@ -83,7 +100,14 @@ export function MainNavigation() {
             </Menu.Item>
           </Menu.SubMenu>
 
-          <Menu.SubMenu key="analysis" title={i18n("nav.main.analysis")}>
+          <Menu.SubMenu
+            key="analysis"
+            title={
+              <StyledAnchor href={setBaseUrl(`/analysis`)}>
+                {i18n("nav.main.analysis")}
+              </StyledAnchor>
+            }
+          >
             <Menu.Item key="analyses:user">
               <a href={setBaseUrl(`/analysis`)}>
                 {i18n("nav.main.analysis-admin-user")}
@@ -105,7 +129,14 @@ export function MainNavigation() {
           </Menu.SubMenu>
 
           {!isAdmin && isManager && (
-            <Menu.SubMenu key="users" title={i18n("nav.main.users")}>
+            <Menu.SubMenu
+              key="users"
+              title={
+                <StyledAnchor href={setBaseUrl("/users")}>
+                  {i18n("nav.main.users")}
+                </StyledAnchor>
+              }
+            >
               <Menu.Item key="user:users">
                 <a href={setBaseUrl("/users")}>{i18n("nav.main.users-list")}</a>
               </Menu.Item>
@@ -133,7 +164,14 @@ export function MainNavigation() {
             width: 100,
           }}
         >
-          <Menu.SubMenu key="projects" title={i18n("nav.main.projects")}>
+          <Menu.SubMenu
+            key="projects"
+            title={
+              <StyledAnchor href={setBaseUrl(`/projects`)}>
+                {i18n("nav.main.projects")}
+              </StyledAnchor>
+            }
+          >
             <Menu.Item key="project:list">
               <a href={setBaseUrl(`/projects`)}>
                 {i18n("nav.main.project-list")}
@@ -154,7 +192,14 @@ export function MainNavigation() {
             </Menu.Item>
           </Menu.SubMenu>
 
-          <Menu.SubMenu key="analysis" title={i18n("nav.main.analysis")}>
+          <Menu.SubMenu
+            key="analysis"
+            title={
+              <StyledAnchor href={setBaseUrl(`/analysis`)}>
+                {i18n("nav.main.analysis")}
+              </StyledAnchor>
+            }
+          >
             <Menu.Item key="analyses:user">
               <a href={setBaseUrl(`/analysis`)}>
                 {i18n("nav.main.analysis-admin-user")}
@@ -176,7 +221,14 @@ export function MainNavigation() {
           </Menu.SubMenu>
 
           {!isAdmin && isManager && (
-            <Menu.SubMenu key="users" title={i18n("nav.main.users")}>
+            <Menu.SubMenu
+              key="users"
+              title={
+                <StyledAnchor href={setBaseUrl("/users")}>
+                  {i18n("nav.main.users")}
+                </StyledAnchor>
+              }
+            >
               <Menu.Item key="user:users">
                 <a href={setBaseUrl("/users")}>{i18n("nav.main.users-list")}</a>
               </Menu.Item>
@@ -213,11 +265,7 @@ export function MainNavigation() {
       <CartLink />
       <AnnouncementsSubMenu />
       <Menu theme={theme} mode="horizontal" defaultSelectedKeys={[""]}>
-        <Menu.SubMenu
-          key="account-dropdown-link"
-          icon={<IconUser />}
-          title={window.TL._USER.username}
-        >
+        <Menu.SubMenu key="account-dropdown-link" icon={<IconUser />}>
           <Menu.Item key="account">
             <a href={setBaseUrl(`/users/current`)}>
               {i18n("nav.main.account")}

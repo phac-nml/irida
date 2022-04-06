@@ -29,6 +29,9 @@ public class CreateProjectComponent extends AbstractPage {
 	@FindBy(className = "t-desc-input")
 	private WebElement descInput;
 
+	@FindBy(css = ".t-organism-input input")
+	private WebElement organismInput;
+
 	@FindBy(className = "t-wiki-input")
 	private WebElement wikiInput;
 
@@ -94,6 +97,10 @@ public class CreateProjectComponent extends AbstractPage {
 
 	public void enterProjectDescription(String description) {
 		descInput.sendKeys(description);
+	}
+
+	public void enterOrganism(String organism) {
+		organismInput.sendKeys(organism);
 	}
 
 	public void goToNextStep() {

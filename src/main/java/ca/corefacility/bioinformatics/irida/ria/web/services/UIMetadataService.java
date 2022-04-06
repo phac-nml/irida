@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -70,7 +71,7 @@ public class UIMetadataService {
 	/**
 	 * Create a new {@link MetadataTemplate} within a {@link Project}
 	 *
-	 * @param template   Details about the {@link MetadataTemplate} to create
+	 * @param template  Details about the {@link MetadataTemplate} to create
 	 * @param projectId Identifier for the {@link Project} to add them template to
 	 * @return {@link MetadataTemplate}
 	 */
@@ -123,8 +124,8 @@ public class UIMetadataService {
 			templateService.deleteMetadataTemplateFromProject(project, templateId);
 			return messageSource.getMessage("server.MetadataTemplateManager.remove-success", new Object[] {}, locale);
 		} catch (Exception e) {
-			throw new Exception(messageSource.getMessage("server.MetadataTemplateManager.remove-error",
-					new Object[] {}, locale));
+			throw new Exception(
+					messageSource.getMessage("server.MetadataTemplateManager.remove-error", new Object[] {}, locale));
 		}
 	}
 
@@ -201,7 +202,7 @@ public class UIMetadataService {
 	 * Set the default {@link MetadataTemplate} for a {@link Project}
 	 *
 	 * @param templateId Identifier for a {@link MetadataTemplate}
-	 * @param projectId Identifier for a {@link Project}
+	 * @param projectId  Identifier for a {@link Project}
 	 * @param locale     Current users {@link Locale}
 	 * @return text to display to user about the result of updating the default metadata template
 	 * @throws Exception if there is an error updating the default metadata template for a project

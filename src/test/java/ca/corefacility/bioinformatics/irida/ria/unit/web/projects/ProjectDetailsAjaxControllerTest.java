@@ -18,12 +18,13 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.TestDataFactory;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 public class ProjectDetailsAjaxControllerTest {
-	private  ProjectService projectService;
+	private ProjectService projectService;
 	private ProjectDetailsAjaxController controller;
 	private UIMetadataService metadataService;
 	private UIProjectsService service;
@@ -57,8 +58,10 @@ public class ProjectDetailsAjaxControllerTest {
 	@Test
 	public void testUpdateProjectDetails() {
 		UpdateProjectAttributeRequest request = new UpdateProjectAttributeRequest("organism", "Salmonella");
-		ResponseEntity<AjaxResponse> response = controller.updateProjectDetails(TestDataFactory.TEST_PROJECT_ID, request, Locale.ENGLISH);
+		ResponseEntity<AjaxResponse> response = controller.updateProjectDetails(TestDataFactory.TEST_PROJECT_ID,
+				request, Locale.ENGLISH);
 		assertEquals(response.getStatusCode(), HttpStatus.OK);
-		verify(projectService, times(1)).update(any(Project.class));
+		assertDoesNotThrow(() -> verify(service, times(1)).updateProjectDetails(TestDataFactory.TEST_PROJECT_ID,
+				request, Locale.ENGLISH));
 	}
 }
