@@ -25,7 +25,7 @@ public class AntTableRequest {
 		return pagination.getPageSize();
 	}
 
-	public int getCurrent() {
+	public int getPage() {
 		return pagination.getCurrent();
 	}
 
