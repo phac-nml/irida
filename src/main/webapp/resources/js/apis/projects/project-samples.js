@@ -14,10 +14,12 @@ export async function getPagedProjectSamples(projectId, body) {
   return await axios.post(`${BASE_URL}${projectId}`, body);
 }
 
+/**
+ * Get get minimal information for all samples in a project.
+ * @param {number} projectId - identifier for a project
+ * @param {object} filters - current table filters
+ * @returns {Promise<*>}
+ */
 export async function getAllSampleIds(projectId, filters) {
   return await axios.post(`${BASE_URL}${projectId}/ids`, { filters });
-}
-
-export async function mergeSamples(projectId, request) {
-  return await axios.put(`${BASE_URL}${projectId}/merge`, request);
 }
