@@ -18,7 +18,7 @@
                 <constraints foreignKeyName="FK_PROJECT_SUBSCRIPTION_USER"
                              referencedColumnNames="id" referencedTableName="user" nullable="false"/>
             </column>
-            <column name="email_subscription" type="tinyint(1)">
+            <column name="email_subscription" type="bit(1)">
                 <constraints nullable="false"/>
             </column>
             <column name="created_date" type="datetime">
@@ -45,7 +45,7 @@
             <column name="user_id" type="bigint(20)">
                 <constraints nullable="false"/>
             </column>
-            <column name="email_subscription" type="tinyint(1)">
+            <column name="email_subscription" type="bit(1)">
                 <constraints nullable="false"/>
             </column>
             <column name="created_date" type="datetime">
@@ -61,7 +61,6 @@
             m.group_id = p.user_group_id;
         </sql>
 
-        <dropDefaultValue columnDataType="tinyint(1)" columnName="email_subscription" tableName="project_user"/>
         <dropColumn tableName="project_user" columnName="email_subscription"/>
         <dropColumn tableName="project_user_AUD" columnName="email_subscription"/>
 
