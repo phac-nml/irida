@@ -1,5 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.validation.ConstraintViolationException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -28,18 +40,9 @@ import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-
-import javax.validation.ConstraintViolationException;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * UI Service for samples
@@ -243,7 +246,7 @@ public class UISampleService {
 		List<Project> projects = (List<Project>) projectService.readMultiple(projectIds);
 
 		Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, ImmutableList.of(), null,
-				null, null, null, null, request.getCurrent(), request.getPageSize(), request.getSort());
+				null, null, null, null, request.getPage(), request.getPageSize(), request.getSort());
 
 		List<ProjectSampleTableItem> content = page.getContent()
 				.stream()

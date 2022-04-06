@@ -25,20 +25,19 @@ import { formatSort } from "../../../utilities/table-utilities";
 import MergeSamples from "./components/MergeSamples";
 import SampleIcons from "./components/SampleIcons";
 import { useListSamplesQuery } from "./services/samples";
-import { updateTable } from "./sample.store";
+import {
+  addSelectedSample,
+  removeSelectedSample,
+  updateTable,
+} from "./services/samplesSlice";
 import { INITIAL_TABLE_STATE } from "./constants";
-
-const formatCartItem = (item) => ({
-  key: item.key,
-  id: item.sample.id,
-  projectId: item.project.id,
-  sampleName: item.sample.sampleName,
-  owner: item.owner,
-});
 
 export function SamplesTable() {
   const dispatch = useDispatch();
-  const { projectId, options } = useSelector((state) => state.samples);
+  const { projectId, options, selected } = useSelector(
+    (state) => state.samples
+  );
+
   const { data: { content: samples, total } = {}, isFetching } =
     useListSamplesQuery(options, {
       refetchOnMountOrArgChange: true,
@@ -53,14 +52,17 @@ export function SamplesTable() {
     return colorString ? JSON.parse(colorString) : {};
   });
 
-  const selectRow = (event, item) => {
+  /**
+   * Handle row selection change event
+   * @param event
+   * @param sample
+   */
+  const onRowSelectionChange = (event, sample) => {
     const selected = event.target.checked;
     if (selected) {
-      setSelectedItems({ ...selectedItems, [item.key]: formatCartItem(item) });
+      dispatch(addSelectedSample(sample));
     } else {
-      const updatedSelected = { ...selectedItems };
-      delete updatedSelected[item.key];
-      setSelectedItems(updatedSelected);
+      dispatch(removeSelectedSample(sample.key));
     }
   };
 
@@ -127,8 +129,8 @@ export function SamplesTable() {
         return (
           <Space>
             <Checkbox
-              onChange={(e) => selectRow(e, item)}
-              checked={selectedItems[item.key]}
+              onChange={(e) => onRowSelectionChange(e, item)}
+              checked={selected[item.key]}
             />
             <SampleIcons sample={item} />
           </Space>
@@ -220,7 +222,7 @@ export function SamplesTable() {
           summary={() => (
             <Table.Summary.Row>
               <Table.Summary.Cell colSpan={5}>
-                {`Selected: ${Object.keys(selectedItems).length} of
+                {`Selected: ${Object.keys(selected).length} of
                 ${total}`}
               </Table.Summary.Cell>
             </Table.Summary.Row>

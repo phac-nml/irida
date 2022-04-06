@@ -6,20 +6,20 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import { Provider } from "react-redux";
 import { samplesApi } from "./services/samples";
 import { associatedProjectsApi } from "./../../../apis/projects/associated-projects";
-import samplesReducer from "./sample.store";
+import samplesReducer from "./services/samplesSlice";
 
 export const store = configureStore({
   reducer: {
     samples: samplesReducer,
     [samplesApi.reducerPath]: samplesApi.reducer,
-    [associatedProjectsApi.reducerPath]: associatedProjectsApi.reducer
+    [associatedProjectsApi.reducerPath]: associatedProjectsApi.reducer,
   },
-  middleware: getDefaultMiddleware =>
+  middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       samplesApi.middleware,
       associatedProjectsApi.middleware
     ),
-  devTools: process.env.NODE_ENV !== "production"
+  devTools: process.env.NODE_ENV !== "production",
 });
 setupListeners(store.dispatch);
 
