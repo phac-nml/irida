@@ -46,8 +46,14 @@ export function ProjectMembersTable({ projectId }) {
     updateTable();
   }
 
-  const updateProjectRole = ({ id }) => (projectRole) =>
-    updateUserRoleOnProject({ projectId, id, projectRole });
+  const updateProjectRole = ({ id }) => (projectRole) => {
+    return updateUserRoleOnProject({ projectId, id, projectRole }).then(
+      (message) => {
+        updateTable();
+        return message;
+      }
+    );
+  };
 
   const updateMetadataRole = ({ id }) => (metadataRole) =>
     updateUserRoleOnProject({ projectId, id, metadataRole });
@@ -70,6 +76,7 @@ export function ProjectMembersTable({ projectId }) {
             roles={projectRoles}
             updateRoleFn={updateProjectRole(item)}
             currentRole={item.projectRole}
+            disabledProjectOwner={item.projectRole === "PROJECT_OWNER"}
           />
         ) : (
           getRoleFromKey(item.projectRole)
@@ -84,7 +91,12 @@ export function ProjectMembersTable({ projectId }) {
             className="t-metadata-role-select"
             roles={metadataRoles}
             updateRoleFn={updateMetadataRole(item)}
-            currentRole={item.metadataRole}
+            currentRole={
+              item.projectRole === "PROJECT_OWNER"
+                ? "LEVEL_4"
+                : item.metadataRole
+            }
+            disabledProjectOwner={item.projectRole === "PROJECT_OWNER"}
           />
         ) : (
           getMetadataRoleFromKey(item.metadataRole)
@@ -110,6 +122,9 @@ export function ProjectMembersTable({ projectId }) {
             onRemoveSuccess={() => userRemoved(user)}
             tooltipText={i18n("RemoveMemberButton.tooltip")}
             confirmText={i18n("RemoveMemberButton.confirm")}
+            disabledLoggedInUser={
+              parseInt(window.TL._USER.identifier) === user.id
+            }
           />
         );
       },

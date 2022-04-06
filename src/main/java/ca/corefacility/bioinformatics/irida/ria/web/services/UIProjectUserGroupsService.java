@@ -103,7 +103,12 @@ public class UIProjectUserGroupsService {
 		Project project = projectService.read(projectId);
 		UserGroup group = userGroupService.read(request.getId());
 		ProjectRole role = ProjectRole.fromString(request.getProjectRole());
-		ProjectMetadataRole metadataRole = ProjectMetadataRole.fromString(request.getMetadataRole());
+		ProjectMetadataRole metadataRole;
+		if(role.equals(ProjectRole.PROJECT_OWNER)) {
+			metadataRole = ProjectMetadataRole.LEVEL_4;
+		} else {
+			metadataRole = ProjectMetadataRole.fromString(request.getMetadataRole());
+		}
 		projectService.addUserGroupToProject(project, group, role, metadataRole);
 		return messageSource.getMessage("server.usergroups.add", new Object[] { group.getLabel() }, locale);
 	}

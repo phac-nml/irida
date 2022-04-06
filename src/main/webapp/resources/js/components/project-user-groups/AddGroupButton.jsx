@@ -178,7 +178,12 @@ export function AddGroupButton({
           <Form.Item label={i18n("AddGroupButton.group.role")} name="role">
             <Radio.Group
               style={{ display: "flex" }}
-              onChange={(e) => setRole(e.target.value)}
+              onChange={(e) => {
+                setRole(e.target.value);
+                if (e.target.value === "PROJECT_OWNER") {
+                  setMetadataRole("LEVEL_4");
+                }
+              }}
             >
               {roles.map((role) => (
                 <Radio.Button key={role.value} value={role.value}>
@@ -194,6 +199,7 @@ export function AddGroupButton({
             <Radio.Group
               style={{ display: "flex" }}
               onChange={(e) => setMetadataRole(e.target.value)}
+              disabled={role === "PROJECT_OWNER"}
             >
               {metadataRoles.map((role) => (
                 <Radio.Button key={role.value} value={role.value}>

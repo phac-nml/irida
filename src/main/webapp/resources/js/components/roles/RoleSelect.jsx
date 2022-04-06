@@ -11,7 +11,13 @@ import React, { useState } from "react";
  * @returns {*}
  * @constructor
  */
-export function RoleSelect({ updateRoleFn, roles, currentRole, className }) {
+export function RoleSelect({
+  updateRoleFn,
+  roles,
+  currentRole,
+  className,
+  disabledProjectOwner,
+}) {
   const [role, setRole] = React.useState(currentRole);
   const [loading, setLoading] = useState(false);
 
@@ -43,7 +49,7 @@ export function RoleSelect({ updateRoleFn, roles, currentRole, className }) {
       style={{ width: "100%" }}
       onChange={onChange}
       loading={loading}
-      disabled={loading}
+      disabled={loading || disabledProjectOwner}
     >
       {roles?.map((role) => (
         <Select.Option
