@@ -133,9 +133,7 @@ public class UISampleService {
 		Sample sample = sampleService.read(id);
 		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
 
-		List<SampleMetadataFieldEntry> metadata;
-
-		metadata = metadataForSample.stream()
+		List<SampleMetadataFieldEntry> metadata = metadataForSample.stream()
 				.map(s -> new SampleMetadataFieldEntry(s.getField()
 						.getId(), s.getField()
 						.getLabel(), s.getValue(), s.getId(), getMetadataFieldRestriction(projectId, s.getField()

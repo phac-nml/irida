@@ -119,7 +119,7 @@ public class SamplesAjaxController {
 	 * @return {@link SampleMetadata} for the {@link Sample}
 	 */
 	@GetMapping(value = "/{id}/metadata")
-	public ResponseEntity<SampleMetadata> getSampleMetadata(@PathVariable Long id, Long projectId) {
+	public ResponseEntity<SampleMetadata> getSampleMetadata(@PathVariable Long id, @RequestParam Long projectId) {
 		return ResponseEntity.ok(uiSampleService.getSampleMetadata(id, projectId));
 	}
 

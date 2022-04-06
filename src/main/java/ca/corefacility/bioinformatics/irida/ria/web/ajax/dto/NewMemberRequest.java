@@ -14,6 +14,9 @@ public class NewMemberRequest {
 	 */
 	private String projectRole;
 
+	/*
+	Project metadata role to assign to new user user
+	 */
 	private String metadataRole;
 
 	public NewMemberRequest() {

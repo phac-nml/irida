@@ -65,6 +65,25 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	public void testCreateWithUniqueOrganismName() {
+		String name = "TESTING PROJECT NAME";
+		String organism = "My very unique organism";
+		ProjectsPage.goToProjectsPage(driver(), false);
+		CreateProjectComponent createComponent = CreateProjectComponent.initializeComponent(driver());
+		createComponent.displayForm();
+
+		createComponent.enterProjectName(name);
+		createComponent.enterOrganism(organism);
+		createComponent.goToNextStep();
+		createComponent.submitProject();
+
+		// Go to the settings page to make sure things were set properly.
+		driver().get(driver().getCurrentUrl() + "/settings");
+		ProjectDetailsPage detailsPage = ProjectDetailsPage.initElements(driver());
+		assertEquals(organism, detailsPage.getProjectOrganism(), "Should have a custom organism name");
+	}
+
+	@Test
 	public void testCreateProjectWithSamples() {
 		String name = "TESTING PROJECT NAME";
 
