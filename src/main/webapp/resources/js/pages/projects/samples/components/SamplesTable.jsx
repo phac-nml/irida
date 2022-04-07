@@ -134,19 +134,19 @@ export function SamplesTable() {
       title: i18n("SamplesTable.Column.sampleName"),
       dataIndex: ["sample", "sampleName"],
       key: "name",
-      sorter: { multiple: 3 },
+      sorter: { multiple: 1 },
       render: (name) => <a>{name}</a>,
     },
     {
       title: i18n("SamplesTable.Column.organism"),
       dataIndex: ["sample", "organism"],
       key: "organism",
-      sorter: { multiple: true },
+      sorter: { multiple: 1 },
     },
     {
       title: i18n("SamplesTable.Column.project"),
       dataIndex: ["project", "name"],
-      sorter: { multiple: true },
+      sorter: { multiple: 1 },
       key: "associated",
       render: (name, row) => {
         return <Tag color={colors[row.project.id]}>{name}</Tag>;
@@ -161,14 +161,14 @@ export function SamplesTable() {
     {
       title: i18n("SamplesTable.Column.collectedBy"),
       dataIndex: ["sample", "collectedBy"],
-      key: "organism",
-      sorter: { multiple: true },
+      key: "collectedBy",
+      sorter: { multiple: 1 },
     },
     {
       title: i18n("SamplesTable.Column.created"),
       dataIndex: ["sample", "createdDate"],
       key: "created",
-      sorter: { multiple: 2 },
+      sorter: { multiple: 1 },
       width: 230,
       render: (createdDate) => {
         return formatInternationalizedDateTime(createdDate);
