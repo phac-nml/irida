@@ -256,7 +256,7 @@ public class UISampleService {
 		return new AntTableResponse<>(content, page.getTotalElements());
 	}
 
-	public List<ProjectCartSample> getFilteredProjectSamples(Long projectId, ProjectSamplesTableRequest request) {
+	public List<ProjectCartSample> getMinimalSampleDetailsForFilteredProject(Long projectId, ProjectSamplesTableRequest request) {
 		ProjectSamplesFilter filter = request.getFilters();
 		final int MAX_PAGE_SIZE = 5000;
 		List<ProjectCartSample> filteredProjectSamples = new ArrayList<>();

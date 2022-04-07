@@ -45,14 +45,31 @@ public class AjaxSamplesController {
 		return ResponseEntity.ok(uiSampleService.getPagedProjectSamples(projectId, request));
 	}
 
+	/**
+	 * Get a list of all samples in the current project and associated project that have been filtered, return a minimal
+	 * representation of them.
+	 *
+	 * @param projectId Identifier for the current project
+	 * @param request   Details about the state of the filters
+	 * @return list of minimal samples
+	 */
 	@PostMapping("/ids")
-	public ResponseEntity<List<ProjectCartSample>> getProjectSamplesIds(@PathVariable Long projectId,
-			@RequestBody ProjectSamplesTableRequest request) {
-		return ResponseEntity.ok(uiSampleService.getFilteredProjectSamples(projectId, request));
+	public ResponseEntity<List<ProjectCartSample>> getMinimalSampleDetailsForFilteredProject(
+			@PathVariable Long projectId, @RequestBody ProjectSamplesTableRequest request) {
+		return ResponseEntity.ok(uiSampleService.getMinimalSampleDetailsForFilteredProject(projectId, request));
 	}
 
+	/**
+	 * Merge 1 or more samples into another sample.
+	 *
+	 * @param projectId Identifier for the current project
+	 * @param request   All information about the samples to merge
+	 * @param locale    current users locale information
+	 * @return result of the merge
+	 */
 	@PostMapping("/merge")
-	public ResponseEntity<AjaxResponse> mergeSamples(@PathVariable Long projectId, @RequestBody MergeRequest request, Locale locale) {
+	public ResponseEntity<AjaxResponse> mergeSamples(@PathVariable Long projectId, @RequestBody MergeRequest request,
+			Locale locale) {
 		try {
 			String response = uiSampleService.mergeSamples(projectId, request, locale);
 			return ResponseEntity.ok(new AjaxSuccessResponse(response));
