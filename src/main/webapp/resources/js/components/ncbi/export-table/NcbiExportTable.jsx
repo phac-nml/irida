@@ -14,7 +14,6 @@ import { getPaginationOptions } from "../../../utilities/antdesign-table-utiliti
 export function NcbiExportTable() {
   const [exports, setExports] = React.useState(null);
   const [total, setTotal] = React.useState(0);
-  const [paginationOptions, setPaginationOptions] = React.useState(null);
 
   React.useEffect(() => {
     getProjectNCBIExports().then((data) => {
@@ -23,9 +22,9 @@ export function NcbiExportTable() {
     });
   }, []);
 
-  React.useMemo(() => {
-    setPaginationOptions(getPaginationOptions(total));
-  }, [total]);
+  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
+    total,
+  ]);
 
   const columns = [
     {
@@ -74,13 +73,7 @@ export function NcbiExportTable() {
       columns={columns}
       dataSource={exports}
       rowKey={(item) => item.id}
-      pagination={{
-        total: total,
-        defaultPageSize: paginationOptions?.pageSize,
-        showSizeChanger: paginationOptions?.showSizeChanger,
-        hideOnSinglePage: paginationOptions?.hideOnSinglePage,
-        pageSizeOptions: paginationOptions?.pageSizeOptions,
-      }}
+      pagination={paginationOptions}
     />
   );
 }

@@ -24,7 +24,6 @@ export default function ViewAssociatedProjects({ projectId }) {
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const [switches, setSwitches] = React.useState({});
   const [total, setTotal] = React.useState(0);
-  const [paginationOptions, setPaginationOptions] = React.useState(null);
 
   const {
     data: associatedProjects,
@@ -52,9 +51,9 @@ export default function ViewAssociatedProjects({ projectId }) {
     }
   }, [associatedProjects]);
 
-  React.useMemo(() => {
-    setPaginationOptions(getPaginationOptions(total));
-  }, [total]);
+  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
+    total,
+  ]);
 
   React.useEffect(() => {
     const error = removeError?.data.error || addError?.data.error;
@@ -136,13 +135,7 @@ export default function ViewAssociatedProjects({ projectId }) {
       loading={isLoading}
       columns={columns}
       dataSource={associatedProjects}
-      pagination={{
-        total: total,
-        defaultPageSize: paginationOptions?.pageSize,
-        showSizeChanger: paginationOptions?.showSizeChanger,
-        hideOnSinglePage: paginationOptions?.hideOnSinglePage,
-        pageSizeOptions: paginationOptions?.pageSizeOptions,
-      }}
+      pagination={paginationOptions}
     />
   ) : (
     <Alert

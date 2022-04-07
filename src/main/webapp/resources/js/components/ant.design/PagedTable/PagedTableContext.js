@@ -15,6 +15,7 @@ const initialState = {
   pageSize: 10,
   total: undefined,
   filters: {},
+  defaultPageSize: 10,
   hideOnSinglePage: false,
   showSizeChanger: true,
   pageSizeOptions: [],
@@ -59,7 +60,7 @@ function reducer(state, action) {
         hideOnSinglePage: action.payload.hideOnSinglePage,
         showSizeChanger: action.payload.showSizeChanger,
         pageSizeOptions: action.payload.pageSizeOptions,
-        pageSize: action.payload.pageSize,
+        defaultPageSize: action.payload.defaultPageSize,
       };
     case types.default:
       return { ...state };
@@ -159,8 +160,8 @@ function PagedTableProvider({
       payload: {
         hideOnSinglePage: paginationOptions?.hideOnSinglePage,
         showSizeChanger: paginationOptions?.showSizeChanger,
-        pageSizeOptions: paginationOptions.pageSizeOptions,
-        pageSize: paginationOptions.pageSize,
+        pageSizeOptions: paginationOptions?.pageSizeOptions,
+        defaultPageSize: paginationOptions?.defaultPageSize,
       },
     });
   }, [state.total]);
@@ -176,7 +177,7 @@ function PagedTableProvider({
           onChange: handleTableChange,
           pagination: {
             total: state.total,
-            defaultPageSize: state.pageSize,
+            defaultPageSize: state.defaultPageSize,
             hideOnSinglePage: state.hideOnSinglePage,
             showSizeChanger: state.showSizeChanger,
             pageSizeOptions: state.pageSizeOptions,

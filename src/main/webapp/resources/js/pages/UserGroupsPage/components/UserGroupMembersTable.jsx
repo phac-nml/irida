@@ -39,11 +39,10 @@ export default function UserGroupMembersTable({
   updateTable,
 }) {
   const [total] = React.useState(members?.length);
-  const [paginationOptions, setPaginationOptions] = React.useState(null);
 
-  React.useMemo(() => {
-    setPaginationOptions(getPaginationOptions(total));
-  }, [total]);
+  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
+    total,
+  ]);
 
   const columns = [
     {
@@ -149,13 +148,7 @@ export default function UserGroupMembersTable({
         </div>
       </div>
       <Table
-        pagination={{
-          total: total,
-          defaultPageSize: paginationOptions?.pageSize,
-          showSizeChanger: paginationOptions?.showSizeChanger,
-          hideOnSinglePage: paginationOptions?.hideOnSinglePage,
-          pageSizeOptions: paginationOptions?.pageSizeOptions,
-        }}
+        pagination={paginationOptions}
         columns={columns}
         dataSource={members}
       />

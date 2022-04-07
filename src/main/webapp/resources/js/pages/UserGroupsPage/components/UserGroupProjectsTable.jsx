@@ -14,11 +14,10 @@ import { getPaginationOptions } from "../../../utilities/antdesign-table-utiliti
 export function UserGroupProjectsTable({ groupId }) {
   const [projects, setProjects] = React.useState();
   const [total, setTotal] = React.useState(0);
-  const [paginationOptions, setPaginationOptions] = React.useState(null);
 
-  React.useMemo(() => {
-    setPaginationOptions(getPaginationOptions(total));
-  }, [total]);
+  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
+    total,
+  ]);
 
   const columns = [
     {
@@ -53,13 +52,7 @@ export function UserGroupProjectsTable({ groupId }) {
     <Table
       columns={columns}
       dataSource={projects}
-      pagination={{
-        total: total,
-        defaultPageSize: paginationOptions?.pageSize,
-        showSizeChanger: paginationOptions?.showSizeChanger,
-        hideOnSinglePage: paginationOptions?.hideOnSinglePage,
-        pageSizeOptions: paginationOptions?.pageSizeOptions,
-      }}
+      pagination={paginationOptions}
     />
   );
 }

@@ -26,11 +26,10 @@ export function AnalysisTabularPreview({ output }) {
   const [loading, setLoading] = React.useState(false);
 
   const [total, setTotal] = React.useState(0);
-  const [paginationOptions, setPaginationOptions] = React.useState(null);
 
-  React.useMemo(() => {
-    setPaginationOptions(getPaginationOptions(total));
-  }, [total.length]);
+  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
+    total,
+  ]);
 
   /*
    * Get tabular file output data from the start of a file to the end

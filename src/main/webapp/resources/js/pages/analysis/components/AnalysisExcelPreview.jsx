@@ -29,11 +29,10 @@ export default function AnalysisExcelPreview({ output }) {
   const [parseError, setParseError] = React.useState(null);
 
   const [total, setTotal] = React.useState(0);
-  const [paginationOptions, setPaginationOptions] = React.useState(null);
 
-  React.useMemo(() => {
-    setPaginationOptions(getPaginationOptions(total));
-  }, [total.length]);
+  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
+    total,
+  ]);
 
   React.useEffect(() => {
     parseExcel(

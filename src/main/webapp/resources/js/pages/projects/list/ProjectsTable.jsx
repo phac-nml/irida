@@ -68,11 +68,10 @@ export function ProjectsTable() {
   const [total, setTotal] = React.useState(undefined);
   const [loading, setLoading] = React.useState(false);
   const [projects, setProjects] = React.useState(undefined);
-  const [paginationOptions, setPaginationOptions] = React.useState(null);
 
-  React.useMemo(() => {
-    setPaginationOptions(getPaginationOptions(total));
-  }, [total]);
+  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
+    total,
+  ]);
 
   React.useEffect(() => {
     setLoading(true);
@@ -217,13 +216,7 @@ export function ProjectsTable() {
         <Table
           rowKey={(record) => record.id}
           loading={loading}
-          pagination={{
-            total: total,
-            defaultPageSize: paginationOptions?.pageSize,
-            showSizeChanger: paginationOptions?.showSizeChanger,
-            hideOnSinglePage: paginationOptions?.hideOnSinglePage,
-            pageSizeOptions: paginationOptions?.pageSizeOptions,
-          }}
+          pagination={paginationOptions}
           scroll={{ x: "max-content" }}
           columns={columns}
           dataSource={projects}
