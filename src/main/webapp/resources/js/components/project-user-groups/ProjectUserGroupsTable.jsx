@@ -77,9 +77,7 @@ export function ProjectUserGroupsTable({ projectId }) {
               projectId,
             })}
             roles={metadataRoles}
-            currentRole={
-              group.role === "PROJECT_OWNER" ? "LEVEL_4" : group.metadataRole
-            }
+            currentRole={group.metadataRole}
             disabledProjectOwner={group.role === "PROJECT_OWNER"}
           />
         );

@@ -294,6 +294,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			}
 
 			projectJoinForUser.setProjectRole(projectRole);
+			if(metadataRole != null) {
+				projectJoinForUser.setMetadataRole(metadataRole);
+			}
 		} else {
 			projectJoinForUser.setMetadataRole(metadataRole);
 		}
@@ -321,6 +324,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 				throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
 			}
 			j.setProjectRole(projectRole);
+			if(metadataRole != null) {
+				j.setMetadataRole(metadataRole);
+			}
 		} else {
 			j.setMetadataRole(metadataRole);
 		}

@@ -26,6 +26,7 @@ export function ProjectMembersTable({ projectId }) {
   const { updateTable } = useContext(PagedTableContext);
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const { identifier: userId } = useSelector((state) => state.user);
+
   const { roles: projectRoles, getRoleFromKey } = useProjectRoles();
   const {
     roles: metadataRoles,
@@ -76,7 +77,7 @@ export function ProjectMembersTable({ projectId }) {
             roles={projectRoles}
             updateRoleFn={updateProjectRole(item)}
             currentRole={item.projectRole}
-            disabledProjectOwner={item.projectRole === "PROJECT_OWNER"}
+            disabledProjectOwner={item.id === userId}
           />
         ) : (
           getRoleFromKey(item.projectRole)
@@ -91,12 +92,10 @@ export function ProjectMembersTable({ projectId }) {
             className="t-metadata-role-select"
             roles={metadataRoles}
             updateRoleFn={updateMetadataRole(item)}
-            currentRole={
-              item.projectRole === "PROJECT_OWNER"
-                ? "LEVEL_4"
-                : item.metadataRole
+            currentRole={item.metadataRole}
+            disabledProjectOwner={
+              item.id === userId || item.projectRole === "PROJECT_OWNER"
             }
-            disabledProjectOwner={item.projectRole === "PROJECT_OWNER"}
           />
         ) : (
           getMetadataRoleFromKey(item.metadataRole)
@@ -122,9 +121,7 @@ export function ProjectMembersTable({ projectId }) {
             onRemoveSuccess={() => userRemoved(user)}
             tooltipText={i18n("RemoveMemberButton.tooltip")}
             confirmText={i18n("RemoveMemberButton.confirm")}
-            disabledLoggedInUser={
-              parseInt(window.TL._USER.identifier) === user.id
-            }
+            disabledLoggedInUser={userId === user.id}
           />
         );
       },

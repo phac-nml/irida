@@ -102,12 +102,24 @@ public class UIProjectMembersService {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
 		ProjectRole projectRole = null;
-		ProjectMetadataRole projectMetadataRole = null;
+		ProjectMetadataRole projectMetadataRole;
 		String roleString;
 		String updateSuccessMessage;
 
 		if (!role.isEmpty()) {
 			projectRole = ProjectRole.fromString(role);
+
+			/*
+			 If a user's project role is set to collaborator we drop the metadata restriction to the lowest
+			 level and have the project owner set it accordingly. If a role of owner is set then that user is
+			 given full metadata permissions
+			 */
+			if(projectRole.equals(ProjectRole.PROJECT_USER)) {
+				projectMetadataRole = ProjectMetadataRole.fromString("LEVEL_1");
+			} else {
+				projectMetadataRole = ProjectMetadataRole.fromString("LEVEL_4");
+			}
+
 			roleString = messageSource.getMessage("projectRole." + role, new Object[] {}, locale);
 			updateSuccessMessage = messageSource.getMessage("server.update.projectRole.success",
 					new Object[] { user.getLabel(), roleString }, locale);
