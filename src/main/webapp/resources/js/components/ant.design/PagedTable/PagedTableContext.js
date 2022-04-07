@@ -16,9 +16,6 @@ const initialState = {
   pagination: {
     current: 1,
     pageSize: 10,
-    hideOnSinglePage: false, // Table default
-    showSizeChanger: true, // default to true > 50
-    pageSizeOptions: [],
   },
 };
 
@@ -27,7 +24,6 @@ const types = {
   LOADED: 1,
   SEARCH: 2,
   CHANGE: 3,
-  PAGINATIONOPTS: 4,
 };
 
 function reducer(state, action) {
@@ -53,11 +49,6 @@ function reducer(state, action) {
         order: action.payload.order,
         column: action.payload.column,
         filters: action.payload.filters || {},
-      };
-    case types.PAGINATIONOPTS:
-      return {
-        ...state,
-        pagination: { ...state.pagination, ...action.payload },
       };
     case types.default:
       return { ...state };
@@ -147,13 +138,7 @@ function PagedTableProvider({
     });
   };
 
-  React.useMemo(() => {
-    const paginationOptions = getPaginationOptions(state.total);
-    dispatch({
-      type: types.PAGINATIONOPTS,
-      payload: paginationOptions,
-    });
-  }, [state.total]);
+  const paginationOptions = React.useMemo(() => getPaginationOptions(state.total), [state.total]);
 
   return (
     <Provider
@@ -164,7 +149,7 @@ function PagedTableProvider({
           dataSource: state.dataSource,
           loading: state.loading,
           onChange: handleTableChange,
-          pagination: { ...state.pagination, total: state.total },
+          pagination: { ...state.pagination, ...paginationOptions },
         },
       }}
     >
