@@ -44,7 +44,7 @@ export const usersApi = createApi({
           email,
           phoneNumber,
           systemRole: role,
-          locale,
+          userLocale: locale,
           enabled,
         },
         method: "POST",
