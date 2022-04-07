@@ -43,6 +43,7 @@ export function RemoveTableItemButton({
       onConfirm={removeItem}
       placement="topLeft"
       title={confirmText}
+      disabled={disabledLoggedInUser}
     >
       <Tooltip title={tooltipText} placement="left">
         <Button

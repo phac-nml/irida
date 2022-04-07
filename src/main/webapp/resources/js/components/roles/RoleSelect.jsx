@@ -18,8 +18,12 @@ export function RoleSelect({
   className,
   disabledProjectOwner,
 }) {
-  const [role, setRole] = React.useState(currentRole);
+  const [role, setRole] = React.useState("");
   const [loading, setLoading] = useState(false);
+
+  React.useEffect(() => {
+    setRole(currentRole);
+  }, [currentRole]);
 
   /**
    * When the project role for the user is updated, update the new value on
