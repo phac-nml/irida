@@ -1,27 +1,11 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  DownOutlined,
-  FolderAddOutlined,
-  MergeCellsOutlined,
-} from "@ant-design/icons";
-import {
-  Button,
-  Checkbox,
-  Col,
-  Dropdown,
-  Menu,
-  Row,
-  Space,
-  Table,
-  Tag,
-  Tooltip,
-} from "antd";
+import { FolderAddOutlined } from "@ant-design/icons";
+import { Checkbox, Space, Table, Tag, Tooltip } from "antd";
 import { useListAssociatedProjectsQuery } from "../../../../apis/projects/associated-projects";
 import { blue6 } from "../../../../styles/colors";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import { formatSort } from "../../../../utilities/table-utilities";
-import MergeSamples from "./MergeSamples";
 import SampleIcons from "./SampleIcons";
 import { useListSamplesQuery } from "../services/samples";
 import {
@@ -29,28 +13,57 @@ import {
   clearSelectedSamples,
   removeSelectedSample,
   selectAllSamples,
-  updateTable,
+  updateTable
 } from "../services/samplesSlice";
-import { IconShare } from "../../../../components/icons/Icons";
-import ShareSamples from "./ShareSamples";
+import { getNewTagColor } from "../../../../utilities/ant-utilities";
 
+/**
+ * React element to render a table display samples belong to a project,
+ * and the project's associated projects.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function SamplesTable() {
   const dispatch = useDispatch();
-  const { projectId, options, selected } = useSelector(
-    (state) => state.samples
-  );
+  const { projectId, options, selected } = useSelector(state => state.samples);
 
-  const { data: { content: samples, total } = {}, isFetching } =
-    useListSamplesQuery(options, {
-      refetchOnMountOrArgChange: true,
-    });
+  /**
+   * Fetch the current state of the table.  Will refetch whenever one of the
+   * table options (filter, sort, or pagination) changes.
+   */
+  const {
+    data: { content: samples, total } = {},
+    isFetching
+  } = useListSamplesQuery(options, {
+    refetchOnMountOrArgChange: true
+  });
 
+  /**
+   * Fetch projects that have been associated with this project.
+   * Request formats them into a format that can be consumed by the
+   * project column filter.
+   */
   const { data: associated } = useListAssociatedProjectsQuery(projectId);
 
-  const [colors, setColors] = React.useState(() => {
-    const colorString = localStorage.getItem("projectColors");
-    return colorString ? JSON.parse(colorString) : {};
-  });
+  // const [colors, setColors] = React.useState(() => {
+  //   const colorString = localStorage.getItem("projectColors");
+  //   return colorString ? JSON.parse(colorString) : {};
+  // });
+
+  const colors = React.useMemo(() => {
+    let newColors = {};
+    if (associated) {
+      const colorString = localStorage.getItem("projectColors");
+      newColors = colorString ? JSON.parse(colorString) : {};
+      associated.forEach(({ value }) => {
+        if (!newColors.hasOwnProperty(value)) {
+          newColors[value] = getNewTagColor();
+        }
+      });
+      localStorage.setItem("projectColors", JSON.stringify(newColors));
+    }
+    return newColors;
+  }, [associated]);
 
   /**
    * Handle row selection change event
@@ -71,7 +84,7 @@ export function SamplesTable() {
    * @param e - React synthetic event
    * @returns {*}
    */
-  const updateSelectAll = (e) =>
+  const updateSelectAll = e =>
     e.target.checked
       ? dispatch(selectAllSamples(projectId, options))
       : dispatch(clearSelectedSamples());
@@ -89,7 +102,7 @@ export function SamplesTable() {
       updateTable({
         filters,
         pagination,
-        order: formatSort(sorter),
+        order: formatSort(sorter)
       })
     );
 
@@ -112,26 +125,26 @@ export function SamplesTable() {
         return (
           <Space>
             <Checkbox
-              onChange={(e) => onRowSelectionChange(e, item)}
+              onChange={e => onRowSelectionChange(e, item)}
               checked={selected[item.key]}
             />
             <SampleIcons sample={item} />
           </Space>
         );
-      },
+      }
     },
     {
       title: "Name",
       dataIndex: ["sample", "sampleName"],
       key: "name",
       sorter: { multiple: 3 },
-      render: (name) => <a>{name}</a>,
+      render: name => <a>{name}</a>
     },
     {
       title: "Organism",
       dataIndex: ["sample", "organism"],
       key: "organism",
-      sorter: { multiple: true },
+      sorter: { multiple: true }
     },
     {
       title: "Project",
@@ -146,7 +159,7 @@ export function SamplesTable() {
         <Tooltip title={"Associated Projects"}>
           <FolderAddOutlined style={{ color: blue6 }} />
         </Tooltip>
-      ),
+      )
     },
     {
       title: "Created",
@@ -154,9 +167,9 @@ export function SamplesTable() {
       key: "created",
       sorter: { multiple: 2 },
       width: 230,
-      render: (createdDate) => {
+      render: createdDate => {
         return formatInternationalizedDateTime(createdDate);
-      },
+      }
     },
     {
       title: "Modified",
@@ -165,59 +178,27 @@ export function SamplesTable() {
       defaultSortOrder: "descend",
       sorter: { multiple: 1 },
       width: 230,
-      render: (modifiedDate) => {
+      render: modifiedDate => {
         return formatInternationalizedDateTime(modifiedDate);
-      },
-    },
+      }
+    }
   ];
 
   return (
-    <Row gutter={[16, 16]}>
-      <Col span={24}>
-        <Space wrap>
-          <Dropdown
-            overlay={
-              <Menu>
-                <MergeSamples>
-                  <Menu.Item
-                    key="merge"
-                    icon={<MergeCellsOutlined />}
-                    disabled={options.filters.associated}
-                  >
-                    {i18n("SamplesMenu.merge")}
-                  </Menu.Item>
-                </MergeSamples>
-                <ShareSamples>
-                  <Menu.Item key="share" icon={<IconShare />}>
-                    {i18n("SamplesMenu.share")}
-                  </Menu.Item>
-                </ShareSamples>
-              </Menu>
-            }
-          >
-            <Button>
-              Sample Tools <DownOutlined />
-            </Button>
-          </Dropdown>
-        </Space>
-      </Col>
-      <Col span={24}>
-        <Table
-          loading={isFetching}
-          columns={columns}
-          dataSource={samples}
-          pagination={{ ...options.pagination, total }}
-          onChange={onTableChange}
-          summary={() => (
-            <Table.Summary.Row>
-              <Table.Summary.Cell colSpan={5}>
-                {`Selected: ${Object.keys(selected).length} of
+    <Table
+      loading={isFetching}
+      columns={columns}
+      dataSource={samples}
+      pagination={{ ...options.pagination, total }}
+      onChange={onTableChange}
+      summary={() => (
+        <Table.Summary.Row>
+          <Table.Summary.Cell colSpan={5}>
+            {`Selected: ${Object.keys(selected).length} of
                 ${total}`}
-              </Table.Summary.Cell>
-            </Table.Summary.Row>
-          )}
-        />
-      </Col>
-    </Row>
+          </Table.Summary.Cell>
+        </Table.Summary.Row>
+      )}
+    />
   );
 }
