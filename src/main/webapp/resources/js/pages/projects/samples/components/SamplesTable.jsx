@@ -45,10 +45,18 @@ export function SamplesTable() {
    */
   const { data: associated } = useListAssociatedProjectsQuery(projectId);
 
+  /**
+   * For large projects selected counts can get very large so only calculate when needed.
+   * @type {number}
+   */
   const selectedCount = React.useMemo(() => Object.keys(selected).length, [
     selected
   ]);
 
+  /**
+   * Create colors for associated projects. This is stored in local storage for consistency
+   * @type {{}}
+   */
   const colors = React.useMemo(() => {
     let newColors = {};
     if (associated) {
@@ -108,8 +116,7 @@ export function SamplesTable() {
   const columns = [
     {
       title: () => {
-        const length = Object.keys(selected).length;
-        const indeterminate = length < total && length > 0;
+        const indeterminate = selectedCount < total && selectedCount > 0;
         return (
           <Checkbox
             onChange={updateSelectAll}
