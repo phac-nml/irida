@@ -159,6 +159,12 @@ export function SamplesTable() {
       ),
     },
     {
+      title: i18n("SamplesTable.Column.collectedBy"),
+      dataIndex: ["sample", "collectedBy"],
+      key: "organism",
+      sorter: { multiple: true },
+    },
+    {
       title: i18n("SamplesTable.Column.created"),
       dataIndex: ["sample", "createdDate"],
       key: "created",

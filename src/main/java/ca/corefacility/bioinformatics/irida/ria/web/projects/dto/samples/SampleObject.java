@@ -10,6 +10,7 @@ public class SampleObject {
 	private String organism;
 	private Date createdDate;
 	private Date modifiedDate;
+	private String collectedBy;
 
 	public SampleObject(Sample sample) {
 		this.id = sample.getId();
@@ -17,6 +18,7 @@ public class SampleObject {
 		this.organism = sample.getOrganism();
 		this.createdDate = sample.getCreatedDate();
 		this.modifiedDate = sample.getModifiedDate();
+		this.collectedBy = sample.getCollectedBy();
 	}
 
 	public Long getId() {
@@ -37,5 +39,9 @@ public class SampleObject {
 
 	public Date getModifiedDate() {
 		return modifiedDate;
+	}
+
+	public String getCollectedBy() {
+		return collectedBy;
 	}
 }
