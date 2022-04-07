@@ -4,7 +4,7 @@ import { Button, Dropdown, Menu, Space } from "antd";
 import {
   DownOutlined,
   MergeCellsOutlined,
-  ShareAltOutlined
+  ShareAltOutlined,
 } from "@ant-design/icons";
 import { updateTable } from "../services/samplesSlice";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
@@ -22,8 +22,8 @@ export default function SamplesMenu() {
   const {
     projectId,
     selected,
-    options: { filter }
-  } = useSelector(state => state.samples);
+    options: { filter },
+  } = useSelector((state) => state.samples);
 
   const [mergeVisible, setMergeVisible] = React.useState(false);
 
@@ -54,7 +54,7 @@ export default function SamplesMenu() {
       JSON.stringify({
         samples,
         projectId,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     );
 
@@ -88,7 +88,7 @@ export default function SamplesMenu() {
       <Space>
         <Dropdown overlay={toolsMenu}>
           <Button>
-            Sample Tools <DownOutlined />
+            {i18n("SamplesMenu.label")} <DownOutlined />
           </Button>
         </Dropdown>
       </Space>
