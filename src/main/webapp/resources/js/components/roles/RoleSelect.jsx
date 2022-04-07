@@ -16,7 +16,7 @@ export function RoleSelect({
   roles,
   currentRole,
   className,
-  disabledProjectOwner,
+  disabledProjectOwner = false,
 }) {
   const [role, setRole] = React.useState("");
   const [loading, setLoading] = useState(false);
