@@ -62,6 +62,7 @@ export default createReducer(initialState, (builder) => {
     })
     .addCase(clearSelectedSamples, (state) => {
       state.selected = {};
+      state.selectedCount = 0;
     })
     .addCase(selectAllSamples.pending, (state) => {
       state.loadingLong = true;
