@@ -18,12 +18,13 @@ const selectAllSamples = createAsyncThunk(
     return await getMinimalSampleDetailsForFilteredProject(
       projectId,
       tableState
-    ).then(({ data }) =>
-      data.reduce(
+    ).then(({ data }) => {
+      const selected = data.reduce(
         (accumulator, value) => ({ ...accumulator, [value.key]: value }),
         {}
-      )
-    );
+      );
+      return { selected, selectedCount: data.length };
+    });
   }
 );
 
@@ -41,6 +42,7 @@ const initialState = {
   projectId: getProjectIdFromUrl(),
   options: getInitialTableOptions(),
   selected: {},
+  selectedCount: 0,
   loadingLong: false,
 };
 
@@ -52,9 +54,11 @@ export default createReducer(initialState, (builder) => {
     })
     .addCase(addSelectedSample, (state, action) => {
       state.selected[action.payload.key] = formatSelectedSample(action.payload);
+      state.selectedCount++;
     })
     .addCase(removeSelectedSample, (state, action) => {
       delete state.selected[action.payload];
+      state.selectedCount--;
     })
     .addCase(clearSelectedSamples, (state) => {
       state.selected = {};
@@ -63,7 +67,8 @@ export default createReducer(initialState, (builder) => {
       state.loadingLong = true;
     })
     .addCase(selectAllSamples.fulfilled, (state, action) => {
-      state.selected = action.payload;
+      state.selected = action.payload.selected;
+      state.selectedCount = action.payload.selectedCount;
       state.loadingLong = false;
     });
 });

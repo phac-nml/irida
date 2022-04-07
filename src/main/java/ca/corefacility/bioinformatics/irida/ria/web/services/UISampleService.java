@@ -322,7 +322,7 @@ public class UISampleService {
 						messageSource.getMessage("server.MergeModal.merged-error", new Object[] {}, locale));
 			}
 		}
-
+k
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(request.getIds());
 		sampleService.mergeSamples(project, primarySample, samples);
 		if (request.getIds().size() == 1) {

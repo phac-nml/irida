@@ -25,9 +25,8 @@ import { getNewTagColor } from "../../../../utilities/ant-utilities";
  */
 export function SamplesTable() {
   const dispatch = useDispatch();
-  const { projectId, options, selected, loadingLong } = useSelector(
-    (state) => state.samples
-  );
+  const { projectId, options, selected, selectedCount, loadingLong } =
+    useSelector((state) => state.samples);
 
   /**
    * Fetch the current state of the table.  Will refetch whenever one of the
@@ -44,15 +43,6 @@ export function SamplesTable() {
    * project column filter.
    */
   const { data: associated } = useListAssociatedProjectsQuery(projectId);
-
-  /**
-   * For large projects selected counts can get very large so only calculate when needed.
-   * @type {number}
-   */
-  const selectedCount = React.useMemo(
-    () => Object.keys(selected).length,
-    [selected]
-  );
 
   /**
    * Create colors for associated projects. This is stored in local storage for consistency
