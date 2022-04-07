@@ -235,6 +235,13 @@ public class UISampleService {
 		}
 	}
 
+	/**
+	 * Get a page of samples based on the current state of the table options (filters, sort, and pagination)
+	 *
+	 * @param projectId Identifier for the current project.
+	 * @param request   Information about the state of the table (filters, sort, and pagination).
+	 * @return a page of samples
+	 */
 	public AntTableResponse<ProjectSampleTableItem> getPagedProjectSamples(Long projectId,
 			ProjectSamplesTableRequest request) {
 		List<Long> projectIds = new ArrayList<>();
@@ -256,7 +263,16 @@ public class UISampleService {
 		return new AntTableResponse<>(content, page.getTotalElements());
 	}
 
-	public List<ProjectCartSample> getMinimalSampleDetailsForFilteredProject(Long projectId, ProjectSamplesTableRequest request) {
+	/**
+	 * Get a list of all samples in the current project and associated project that have been filtered, return a minimal
+	 * * representation of them.
+	 *
+	 * @param projectId Identifier for the current project.
+	 * @param request   Details about the filters and associated projects
+	 * @return list containing a minimal representation of the samples based on the filters
+	 */
+	public List<ProjectCartSample> getMinimalSampleDetailsForFilteredProject(Long projectId,
+			ProjectSamplesTableRequest request) {
 		ProjectSamplesFilter filter = request.getFilters();
 		final int MAX_PAGE_SIZE = 5000;
 		List<ProjectCartSample> filteredProjectSamples = new ArrayList<>();
@@ -284,6 +300,15 @@ public class UISampleService {
 		return filteredProjectSamples;
 	}
 
+	/**
+	 * Merge 1 or more samples into another sample
+	 *
+	 * @param projectId identifier for the current project
+	 * @param request   details about the samples to merge
+	 * @param locale    current users locale information
+	 * @return result of the merge
+	 * @throws SampleMergeException thrown if there is an error during the merge
+	 */
 	public String mergeSamples(long projectId, MergeRequest request, Locale locale) throws SampleMergeException {
 		Project project = projectService.read(projectId);
 		Sample primarySample = sampleService.read(request.getPrimary());
