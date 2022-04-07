@@ -45,10 +45,9 @@ export function SamplesTable() {
    */
   const { data: associated } = useListAssociatedProjectsQuery(projectId);
 
-  // const [colors, setColors] = React.useState(() => {
-  //   const colorString = localStorage.getItem("projectColors");
-  //   return colorString ? JSON.parse(colorString) : {};
-  // });
+  const selectedCount = React.useMemo(() => Object.keys(selected).length, [
+    selected
+  ]);
 
   const colors = React.useMemo(() => {
     let newColors = {};
@@ -134,20 +133,20 @@ export function SamplesTable() {
       }
     },
     {
-      title: "Name",
+      title: i18n("SamplesTable.Column.sampleName"),
       dataIndex: ["sample", "sampleName"],
       key: "name",
       sorter: { multiple: 3 },
       render: name => <a>{name}</a>
     },
     {
-      title: "Organism",
+      title: i18n("SamplesTable.Column.organism"),
       dataIndex: ["sample", "organism"],
       key: "organism",
       sorter: { multiple: true }
     },
     {
-      title: "Project",
+      title: i18n("SamplesTable.Column.project"),
       dataIndex: ["project", "name"],
       sorter: { multiple: true },
       key: "associated",
@@ -156,13 +155,13 @@ export function SamplesTable() {
       },
       filters: associated,
       filterIcon: () => (
-        <Tooltip title={"Associated Projects"}>
+        <Tooltip title={i18n("SamplesTable.Filter.associated")}>
           <FolderAddOutlined style={{ color: blue6 }} />
         </Tooltip>
       )
     },
     {
-      title: "Created",
+      title: i18n("SamplesTable.Column.created"),
       dataIndex: ["sample", "createdDate"],
       key: "created",
       sorter: { multiple: 2 },
@@ -172,7 +171,7 @@ export function SamplesTable() {
       }
     },
     {
-      title: "Modified",
+      title: i18n("SamplesTable.Column.modified"),
       dataIndex: ["sample", "modifiedDate"],
       key: "modified",
       defaultSortOrder: "descend",
@@ -194,8 +193,7 @@ export function SamplesTable() {
       summary={() => (
         <Table.Summary.Row>
           <Table.Summary.Cell colSpan={5}>
-            {`Selected: ${Object.keys(selected).length} of
-                ${total}`}
+            {i18n("SamplesTable.Summary", selectedCount, total)}
           </Table.Summary.Cell>
         </Table.Summary.Row>
       )}
