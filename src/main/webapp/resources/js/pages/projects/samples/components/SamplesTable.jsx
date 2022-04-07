@@ -121,7 +121,7 @@ export function SamplesTable() {
         return (
           <Checkbox
             onChange={updateSelectAll}
-            checked={length > 0}
+            checked={selectedCount > 0}
             indeterminate={indeterminate}
           />
         );
