@@ -11,6 +11,7 @@ import {
   prepareAnalysisOutputsDownload,
 } from "../../apis/analyses/analyses";
 import debounce from "lodash/debounce";
+import { getPaginationOptions } from "../../utilities/antdesign-table-utilities";
 
 const { Search } = Input;
 
@@ -36,9 +37,10 @@ export default function SingleSampleAnalysisOutputs({
   const [selectedRowKeys, setSelectedRowKeys] = React.useState([]);
   const [filteredOutputs, setFilteredOutputs] = React.useState(null);
 
-  // Ant Design Table options
-  const PAGE_SIZE_OPTIONS = [5, 10, 25, 50, 100];
-  const DEFAULT_PAGE_SIZE = 10;
+  const paginationOptions = React.useMemo(
+    () => getPaginationOptions(outputs.length),
+    [outputs.length]
+  );
 
   // Regex for getting file name from path
   const FILENAME_REGEX = /.*\/(.+\.\w+)/;
@@ -151,10 +153,7 @@ export default function SingleSampleAnalysisOutputs({
       const {
         analysisSubmissionId,
         analysisOutputFileId,
-        sampleName,
-        sampleId,
-        filePath,
-        filename
+        filename,
       } = currentlySelectedFiles[0];
 
       //Download the selected output file
@@ -231,11 +230,7 @@ export default function SingleSampleAnalysisOutputs({
         dataSource={filteredOutputs || (!isLoading && outputs)}
         tableLayout="auto"
         rowSelection={rowSelection}
-        pagination={{
-          pageSizeOptions: PAGE_SIZE_OPTIONS,
-          defaultPageSize: DEFAULT_PAGE_SIZE,
-          showSizeChanger: true,
-        }}
+        pagination={paginationOptions}
       />
     </Space>
   );
