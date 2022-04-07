@@ -57,10 +57,7 @@ function reducer(state, action) {
     case types.PAGINATIONOPTS:
       return {
         ...state,
-        hideOnSinglePage: action.payload.hideOnSinglePage,
-        showSizeChanger: action.payload.showSizeChanger,
-        pageSizeOptions: action.payload.pageSizeOptions,
-        defaultPageSize: action.payload.defaultPageSize,
+        pagination: { ...state.pagination, ...action.payload },
       };
     case types.default:
       return { ...state };
