@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Dropdown, Menu, Space } from "antd";
 import {
+  CloseSquareOutlined,
   DownOutlined,
   MergeCellsOutlined,
   ShareAltOutlined,
@@ -10,6 +11,7 @@ import { updateTable } from "../services/samplesSlice";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 
 const MergeModal = lazy(() => import("./MergeModal"));
+const RemoveModal = lazy(() => import("./RemoveModal"));
 
 /**
  * React element to render a row of actions that can be performed on
@@ -26,6 +28,7 @@ export default function SamplesMenu() {
   } = useSelector((state) => state.samples);
 
   const [mergeVisible, setMergeVisible] = React.useState(false);
+  const [removedVisible, setRemovedVisible] = React.useState(false);
 
   /**
    * When a merge is completed, hide the modal and ask
@@ -79,6 +82,13 @@ export default function SamplesMenu() {
         >
           {i18n("SamplesMenu.share")}
         </Menu.Item>
+        <Menu.Item
+          key="remove-menu"
+          icon={<CloseSquareOutlined />}
+          onClick={() => setRemovedVisible(true)}
+        >
+          {i18n("SamplesMenu.remove")}
+        </Menu.Item>
       </Menu>
     );
   }, [selected]);
@@ -98,6 +108,16 @@ export default function SamplesMenu() {
             visible={mergeVisible}
             onComplete={onComplete}
             onCancel={() => setMergeVisible(false)}
+            samples={selected}
+          />
+        </Suspense>
+      )}
+      {removedVisible && (
+        <Suspense fallback={<span />}>
+          <RemoveModal
+            visible={removedVisible}
+            onComplete={onComplete}
+            onCancel={() => setRemovedVisible(false)}
             samples={selected}
           />
         </Suspense>
