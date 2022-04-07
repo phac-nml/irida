@@ -32,28 +32,21 @@ public class EditUserPageIT extends AbstractIridaUIITChromeDriver {
 		assertFalse(editPage.hasErrors());
 		editPage.clickSubmit();
 		assertTrue(editPage.updateSuccess());
-		String updatedName = editPage.getUpdatedUserFirstLastName();
-		assertTrue(updatedName.contains(newName));
 	}
 
 	@Test
-	public void testUpdatePassword() {
+	public void testUpdateInvalidEmail() {
 		editPage.goTo();
-		String newPassword = "paSsW0Rd1!";
-		editPage.enterPassword(newPassword, newPassword);
-		assertFalse(editPage.hasErrors());
-		assertTrue(editPage.isSubmitEnabled());
-		editPage.clickSubmit();
-		assertTrue(editPage.updateSuccess());
-	}
-
-	@Test
-	public void testUpdatePasswordFail() {
-		editPage.goTo();
-		String newPassword = "paSsW0Rd1!";
-		editPage.enterPassword(newPassword, "notthesame");
+		String newEmail = "new@email.com?";
+		editPage.enterEmail(newEmail);
 		assertTrue(editPage.hasErrors());
-		assertFalse(editPage.isSubmitEnabled());
 	}
 
+	@Test
+	public void testUpdateEmailAlreadyExists() {
+		editPage.goTo();
+		String newEmail = "differentUser@nowhere.com";
+		editPage.enterEmail(newEmail);
+		assertTrue(editPage.hasErrors());
+	}
 }

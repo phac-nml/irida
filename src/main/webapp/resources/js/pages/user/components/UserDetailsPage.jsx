@@ -41,6 +41,7 @@ export default function UserDetailsPage() {
         dispatch(updateUserDetails({ ...user, ...values }));
         notification.success({
           message: i18n("UserDetailsPage.notification.success"),
+          className: 't-user-page-notification-success',
         });
       })
       .catch((error) => {
@@ -156,7 +157,7 @@ export default function UserDetailsPage() {
           </Checkbox>
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit" disabled={!canEditUserInfo}>
+          <Button className="t-submit-btn" type="primary" htmlType="submit" disabled={!canEditUserInfo}>
             {i18n("UserDetailsPage.form.button.submit")}
           </Button>
         </Form.Item>

@@ -8,8 +8,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 /**
  * Edit user page for selenium testing
- * 
- *
  */
 public class EditUserPage extends AbstractPage {
 
@@ -28,36 +26,26 @@ public class EditUserPage extends AbstractPage {
 		firstNameBox.sendKeys(newName);
 	}
 
-	public String getUpdatedUserFirstLastName() {
-		return driver.findElement(By.id("user-name")).getText();
-	}
-	
-	public void enterPassword(String password, String confirm){
-		WebElement passwordBox = driver.findElement(By.id("password"));
-		WebElement confirmPasswordBox = driver.findElement(By.id("confirmPassword"));
-		passwordBox.sendKeys(password);
-		confirmPasswordBox.sendKeys(confirm);
+	public void enterEmail(String newEmail) {
+		WebElement emailBox = driver.findElement(By.id("email"));
+		emailBox.sendKeys(newEmail);
 	}
 
 	public void clickSubmit() {
 		driver.findElement(By.className("t-submit-btn")).click();
 	}
 
-	public boolean updateSuccess(){
+	public boolean updateSuccess() {
 		try {
-			waitForElementVisible(By.className("t-user-page-success"));
+			waitForElementVisible(By.className("t-user-page-notification-success"));
 			return true;
 		} catch (Exception e) {
 			return false;
 		}
 	}
 
-	public boolean isSubmitEnabled(){
-		return driver.findElement(By.className("t-submit-btn")).isEnabled();
-	}
-
 	public boolean hasErrors() {
-		return !driver.findElements(By.className("t-form-error")).isEmpty();
+		return !driver.findElements(By.className("ant-form-item-has-error")).isEmpty();
 	}
 
 }
