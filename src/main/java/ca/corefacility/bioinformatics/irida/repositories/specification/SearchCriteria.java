@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.repositories.specification;
 
+/**
+ * Define a search criteria for a given key and value. To be used with Specification classes.
+ */
 public class SearchCriteria {
 	private String key;
 	private Object value;

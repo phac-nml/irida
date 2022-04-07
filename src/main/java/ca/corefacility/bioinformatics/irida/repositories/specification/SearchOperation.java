@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.repositories.specification;
 
+/**
+ * Search operations available to use in SearchCriteria's
+ */
 public enum SearchOperation {
 	GREATER_THAN,
 	LESS_THAN,
