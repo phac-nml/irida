@@ -20,6 +20,9 @@ export async function getPagedProjectSamples(projectId, body) {
  * @param {object} filters - current table filters
  * @returns {Promise<*>}
  */
-export async function getAllSampleIds(projectId, filters) {
+export async function getMinimalSampleDetailsForFilteredProject(
+  projectId,
+  filters
+) {
   return await axios.post(`${BASE_URL}${projectId}/ids`, { filters });
 }

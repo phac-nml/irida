@@ -31,6 +31,8 @@ import {
   selectAllSamples,
   updateTable,
 } from "../services/samplesSlice";
+import { IconShare } from "../../../../components/icons/Icons";
+import ShareSamples from "./ShareSamples";
 
 export function SamplesTable() {
   const dispatch = useDispatch();
@@ -178,12 +180,18 @@ export function SamplesTable() {
               <Menu>
                 <MergeSamples>
                   <Menu.Item
+                    key="merge"
                     icon={<MergeCellsOutlined />}
                     disabled={options.filters.associated}
                   >
-                    Merges Samples
+                    {i18n("SamplesMenu.merge")}
                   </Menu.Item>
                 </MergeSamples>
+                <ShareSamples>
+                  <Menu.Item key="share" icon={<IconShare />}>
+                    {i18n("SamplesMenu.share")}
+                  </Menu.Item>
+                </ShareSamples>
               </Menu>
             }
           >

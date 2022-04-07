@@ -5,7 +5,7 @@ import {
 } from "@reduxjs/toolkit";
 import { getProjectIdFromUrl } from "../../../../utilities/url-utilities";
 import { INITIAL_TABLE_STATE } from "../constants";
-import { getAllSampleIds } from "../../../../apis/projects/project-samples";
+import { getMinimalSampleDetailsForFilteredProject } from "../../../../apis/projects/project-samples";
 
 const updateTable = createAction("samples/table/update");
 const addSelectedSample = createAction("samples/table/selected/add");
@@ -15,7 +15,10 @@ const clearSelectedSamples = createAction("samples/table/selected/clear");
 const selectAllSamples = createAsyncThunk(
   "/samples/table/selected/all",
   async (projectId, tableState) => {
-    return await getAllSampleIds(projectId, tableState).then(({ data }) =>
+    return await getMinimalSampleDetailsForFilteredProject(
+      projectId,
+      tableState
+    ).then(({ data }) =>
       data.reduce(
         (accumulator, value) => ({ ...accumulator, [value.key]: value }),
         {}
