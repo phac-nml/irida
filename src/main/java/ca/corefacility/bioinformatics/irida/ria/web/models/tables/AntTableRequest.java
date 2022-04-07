@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 public class AntTableRequest {
 	private AntPagination pagination;
 	private List<AntSort> order;
+	private List<AntSearch> search;
 
 	public Sort getSort() {
 		if (order != null && order.size() > 0) {
@@ -35,5 +36,13 @@ public class AntTableRequest {
 
 	public void setPagination(AntPagination pagination) {
 		this.pagination = pagination;
+	}
+
+	public List<AntSearch> getSearch() {
+		return search;
+	}
+
+	public void setSearch(List<AntSearch> search) {
+		this.search = search;
 	}
 }
