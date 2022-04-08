@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 
+/**
+ * Representation of a {@link Project} used in the Project Samples table.
+ */
 public class ProjectObject {
 	private Long id;
 	private String name;

@@ -27,7 +27,7 @@ public class ProjectAssociatedProjectsAjaxController {
 	}
 
 	/**
-	 * Get a list of all projects associated with the current project.  If the user is a manager or administrator, the
+	 * Get a list of all projects associated with the current project. If the user is a manager or administrator, the
 	 * list will also contain all projects they have access to.
 	 *
 	 * @param projectId project identifier for the currently active project
@@ -38,6 +38,12 @@ public class ProjectAssociatedProjectsAjaxController {
 		return ResponseEntity.ok(service.getAssociatedProjects(projectId));
 	}
 
+	/**
+	 * Get a list of all projects associated with the current project.
+	 *
+	 * @param projectId project identifier for the currently active project
+	 * @return list of projects
+	 */
 	@GetMapping("/list")
 	public ResponseEntity<List<AssociatedProject>> getAssociatedProjectsForProject(@RequestParam long projectId) {
 		return ResponseEntity.ok(service.getAssociatedProjectsForProject(projectId));
@@ -58,8 +64,7 @@ public class ProjectAssociatedProjectsAjaxController {
 			service.addAssociatedProject(projectId, associatedProjectId, locale);
 			return ResponseEntity.ok(new AjaxSuccessResponse(""));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.SC_NOT_FOUND)
-					.body(new AjaxErrorResponse(e.getMessage()));
+			return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
@@ -78,8 +83,7 @@ public class ProjectAssociatedProjectsAjaxController {
 			service.removeAssociatedProject(projectId, associatedProjectId, locale);
 			return ResponseEntity.ok(new AjaxSuccessResponse(""));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.SC_NOT_FOUND)
-					.body(new AjaxErrorResponse(e.getMessage()));
+			return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 }

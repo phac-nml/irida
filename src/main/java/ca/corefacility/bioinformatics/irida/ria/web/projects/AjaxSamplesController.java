@@ -79,9 +79,16 @@ public class AjaxSamplesController {
 		}
 	}
 
+	/**
+	 * Remove 1 or more samples from a project.
+	 *
+	 * @param projectId Identifier for the project
+	 * @param request   All information about the samples to remove
+	 * @return result of the removal
+	 */
 	@DeleteMapping("/remove")
-	public ResponseEntity<AjaxResponse>removeSamplesFromProject (@PathVariable long projectId, @RequestBody
-			RemoveSamplesRequest request) {
+	public ResponseEntity<AjaxResponse> removeSamplesFromProject(@PathVariable long projectId,
+			@RequestBody RemoveSamplesRequest request) {
 		String result = uiSampleService.removeSamplesFromProject(projectId, request.getSampleIds());
 		return ResponseEntity.ok(new AjaxSuccessResponse(result));
 	}

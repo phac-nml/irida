@@ -2,6 +2,11 @@ package ca.corefacility.bioinformatics.irida.ria.web.models.tables;
 
 import java.util.List;
 
+/**
+ * Base class to be used to represent a single page in a AntD table.
+ *
+ * @param <T> The type of {@link AntTableItem} included in the response.
+ */
 public class AntTableResponse<T extends AntTableItem> {
 	private List<T> content;
 	private Long total;

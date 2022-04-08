@@ -15,6 +15,11 @@ public class AntTableRequest {
 	private List<AntSort> order;
 	private List<AntSearch> search;
 
+	/**
+	 * Build the {@link Sort} object to use in the page request.
+	 * 
+	 * @return an {@link Sort} object (default: unsorted)
+	 */
 	public Sort getSort() {
 		if (order != null && order.size() > 0) {
 			return Sort.by(order.stream().map(AntSort::getOrder).collect(Collectors.toList()));

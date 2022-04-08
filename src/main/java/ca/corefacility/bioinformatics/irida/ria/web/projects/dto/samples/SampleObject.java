@@ -4,6 +4,9 @@ import java.util.Date;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
+/**
+ * Representation of a {@link Sample} used in the Project Samples table.
+ */
 public class SampleObject {
 	private Long id;
 	private String sampleName;
