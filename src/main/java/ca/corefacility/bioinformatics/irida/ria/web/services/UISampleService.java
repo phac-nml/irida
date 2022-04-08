@@ -46,7 +46,6 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 
 /**
  * UI Service for samples
