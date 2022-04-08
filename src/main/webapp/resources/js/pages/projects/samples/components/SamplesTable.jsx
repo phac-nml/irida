@@ -165,6 +165,7 @@ export function SamplesTable() {
       dataIndex: "key",
       width: 40,
       render: (text, item) => {
+        debugger;
         return (
           <Space>
             <Checkbox

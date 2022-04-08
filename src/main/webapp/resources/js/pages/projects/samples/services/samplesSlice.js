@@ -1,7 +1,7 @@
 import {
   createAction,
   createAsyncThunk,
-  createReducer
+  createReducer,
 } from "@reduxjs/toolkit";
 import { getProjectIdFromUrl } from "../../../../utilities/url-utilities";
 import { INITIAL_TABLE_STATE } from "../constants";
@@ -15,7 +15,7 @@ const clearSelectedSamples = createAction("samples/table/selected/clear");
 
 const selectAllSamples = createAsyncThunk(
   "/samples/table/selected/all",
-  async ({ projectId, options }) => {
+  async ({ projectId, options }, tableState) => {
     return await getMinimalSampleDetailsForFilteredProject(
       projectId,
       options
@@ -31,12 +31,12 @@ const selectAllSamples = createAsyncThunk(
 
 const getInitialTableOptions = () => JSON.parse(INITIAL_TABLE_STATE);
 
-const formatSelectedSample = sample => ({
-  key: sample.key,
-  id: sample.sample.id,
-  projectId: sample.project.id,
-  sampleName: sample.sample.sampleName,
-  owner: sample.owner
+const formatSelectedSample = (projectSample) => ({
+  key: projectSample.key,
+  id: projectSample.sample.id,
+  projectId: projectSample.project.id,
+  sampleName: projectSample.sample.sampleName,
+  owner: projectSample.owner,
 });
 
 const initialState = {
@@ -44,16 +44,22 @@ const initialState = {
   options: getInitialTableOptions(),
   selected: {},
   selectedCount: 0,
-  loadingLong: false
+  loadingLong: false,
 };
 
-export default createReducer(initialState, builder => {
+export default createReducer(initialState, (builder) => {
   builder
     .addCase(updateTable, (state, action) => {
+      // reset selected state when changing filters or search
+      if (JSON.stringify(action.payload.search) !== JSON.stringify(state.options.search) ||
+          JSON.stringify(action.payload.filters) !== JSON.stringify(state.options.filters)
+      ) {
+        state.selected = {};
+        state.selectedCount = 0;
+      }
       state.options = action.payload;
-      state.selected = {};
     })
-    .addCase(reloadTable, state => {
+    .addCase(reloadTable, (state) => {
       const newOptions = getInitialTableOptions();
       newOptions.pagination.pageSize = state.options.pagination.pageSize;
       newOptions.reload = Math.floor(Math.random() * 90000) + 10000; // Unique 5 digit number to trigger reload
@@ -67,11 +73,11 @@ export default createReducer(initialState, builder => {
       delete state.selected[action.payload];
       state.selectedCount--;
     })
-    .addCase(clearSelectedSamples, state => {
+    .addCase(clearSelectedSamples, (state) => {
       state.selected = {};
       state.selectedCount = 0;
     })
-    .addCase(selectAllSamples.pending, state => {
+    .addCase(selectAllSamples.pending, (state) => {
       state.loadingLong = true;
     })
     .addCase(selectAllSamples.fulfilled, (state, action) => {
@@ -87,5 +93,5 @@ export {
   addSelectedSample,
   removeSelectedSample,
   clearSelectedSamples,
-  selectAllSamples
+  selectAllSamples,
 };
