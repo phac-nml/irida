@@ -1,14 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { render } from "react-dom";
 import { Button, Form, Input, Modal } from "antd";
 import { IconPlusCircle } from "../../../../components/icons/Icons";
 import { grey6, grey9 } from "../../../../styles/colors";
-import { OntologyInput } from "../../../../components/ontology";
-import { TAXONOMY } from "../../../../apis/ontology/taxonomy";
 import {
   createNewSample,
   validateSampleName,
 } from "../../../../apis/projects/samples";
+import { OntologyInput } from "../../../../components/ontology";
+import { TAXONOMY } from "../../../../apis/ontology/taxonomy";
 
 /**
  * React Ant Design form to create a new sample within a project.
@@ -19,17 +19,19 @@ import {
  */
 function AddSampleForm({ onSubmit, visible = false }) {
   const [form] = Form.useForm();
-  const [name, setName] = useState("");
-  const [isValid, setIsValid] = useState(false);
-  const [organism, setOrganism] = useState("");
-  const nameRef = useRef();
+  const [name, setName] = React.useState("");
+  const [isValid, setIsValid] = React.useState(false);
+  const [organism, setOrganism] = React.useState("");
+  const nameRef = React.useRef();
+
+  React.useEffect(() => {}, [visible]);
 
   /**
    * Watch for changes in the modal visibilty. When it changes update the form to reflect.
    * If it opens, focus on the name input
    * If it closes, clear fields
    */
-  useEffect(() => {
+  React.useEffect(() => {
     if (visible) {
       nameRef.current.focus();
     } else {
@@ -116,7 +118,12 @@ function AddSampleForm({ onSubmit, visible = false }) {
  * @constructor
  */
 function AddSampleButton() {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = React.useState(false);
+  const [modalFormVisible, setModalFormVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    setModalFormVisible(visible);
+  }, [visible]);
 
   /**
    * Open the modal to create a new sample.
@@ -156,7 +163,10 @@ function AddSampleButton() {
         title={i18n("AddSample.title")}
         footer={null}
       >
-        <AddSampleForm onSubmit={closeNewSampleModal} visible={visible} />
+        <AddSampleForm
+          onSubmit={closeNewSampleModal}
+          visible={modalFormVisible}
+        />
       </Modal>
     </>
   );
