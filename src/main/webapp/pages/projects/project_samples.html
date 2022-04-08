@@ -11,6 +11,7 @@
     <script th:inline="javascript">
       window.PAGE = {
         isRemoteProject: /*[[${project.isRemote()}]]*/ false,
+        isMasterProject: /*[[${project.isMasterProject()}]]*/ false,
         urls: {
           projects: {
             available:
@@ -131,7 +132,7 @@
                   <li role="separator" class="divider"></li>
 
                   <!-- IMPORT METADATA LINK-->
-                  <li role="menuitem">
+                  <li role="menuitem" th:if="${!project.isMasterProject()}">
                     <a
                       href="#"
                       class="js-sample-project-tool-btn t-import-metadata-btn"
@@ -149,10 +150,17 @@
                       />
                     </a>
                   </li>
+                  <li role="menuitem" hidden th:if="${project.isMasterProject()}">
+                    <span class="js-sample-project-tool-btn t-import-metadata-btn"></span>
+                    <span class="fa fa-upload fa-fw spaced-right__sm"></span>
+                  </li>
                   <li role="separator" class="divider"></li>
 
                   <!-- NEW SAMPLE LINK -->
-                  <li role="menuitem">
+                  <li role="menuitem" th:if="${!project.isMasterProject()}">
+                    <span class="js-add-sample"></span>
+                  </li>
+                  <li role="menuitem" hidden th:if="${project.isMasterProject()}">
                     <span class="js-add-sample"></span>
                   </li>
                 </ul>
@@ -216,7 +224,7 @@
                 </ul>
               </div>
             </div>
-            <div class="btn-group btn-group-sm">
+            <div class="btn-group btn-group-sm" th:if="${canReadProjectSettings}">
               <div class="dropdown">
                 <button
                   class="btn btn-default btn-sm t-export-samples-btn"
@@ -270,7 +278,7 @@
                       <th:block th:text="#{project.samples.export.galaxy}" />
                     </a>
                   </li>
-                  <li role="menuitem">
+                  <li role="menuitem" th:if="${!project.isMasterProject()}">
                     <a
                       href="#"
                       class="js-sample-export-btn t-ncbi-export-btn"
@@ -348,15 +356,34 @@
               data-name="sample.sampleName"
               th:text="#{project.samples.table.name}"
             ></th>
-            <th
-              data-data="organism"
-              data-name="sample.organism"
-              th:text="#{project.samples.table.organism}"
-            ></th>
+			<th
+			  th:if="${!project.isMasterProject()}"
+              data-data="description"
+			  data-name="sample.description"
+			  th:text="#{project.samples.table.description}"
+			></th>
+			<th
+			  th:if="${!project.isMasterProject()}"
+              data-data="collectedBy"
+			  data-name="sample.collectedBy"
+			  th:text="#{project.samples.table.collectedBy}"
+			></th>
+			<th
+			  th:if="${!project.isMasterProject()}"
+              data-data="strain"
+			  data-name="sample.strain"
+			  th:text="#{project.samples.table.strain}"
+			></th>
             <th
               data-data="projectName"
               data-name="project.name"
               th:text="#{project.samples.table.project}"
+            ></th>
+            <th
+              class="dt-date"
+              data-data="collectionDate"
+              data-name="sample.collectionDate"
+              th:text="#{project.samples.table.collection}"
             ></th>
             <th
               class="dt-date"
@@ -404,22 +431,38 @@
                   id="js-name"
                 />
               </div>
-              <div class="form-group">
-                <label
-                  for="js-organism"
-                  th:text="#{project.sample.filter-organism}"
-                  >Sample Organism</label
+              <div class="form-group" th:if="${!project.isMasterProject}">
+                <label for="js-description" th:text="#{project.sample.filter-description}"
+                  >Sample Description</label
                 >
-                <select
-                  name="organism"
-                  id="js-organism"
-                  class="form-control"
-                ></select>
+                <input
+                  type="text"
+                  id="js-description"
+                  class="form-control t-description-filter"
+                />
+              </div>
+              <div class="form-group" th:if="${!project.isMasterProject}">
+                <label for="js-collectedby" th:text="#{project.sample.filter-collectedby}"
+                  >Sample CollectedBy</label
+                >
+                <input
+                  type="text"
+                  id="js-collectedby"
+                  class="form-control t-collectedby-filter"
+                />
+              </div>
+              <div class="form-group" th:if="${!project.isMasterProject}">
+                <label for="js-strain" th:text="#{project.sample.filter-strain}"
+                  >Sample Strain</label
+                >
+                <input
+                  type="text"
+                  id="js-strain"
+                  class="form-control t-strain-filter"
+                />
               </div>
               <div class="form-group">
-                <label
-                  for="daterange"
-                  th:text="#{project.sample.filter-date.label}"
+                <label for="daterange" th:text="#{project.sample.filter-date.label}"
                   >Date One</label
                 >
                 <input

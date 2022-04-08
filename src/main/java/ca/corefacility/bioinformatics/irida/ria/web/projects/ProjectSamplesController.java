@@ -360,7 +360,7 @@ public class ProjectSamplesController {
 		projects.add(projectService.read(projectId));
 
 		final Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames,
-				filter.getName(), params.getSearchValue(), filter.getOrganism(), filter.getStartDate(),
+				filter.getName(), params.getSearchValue(), filter.getDescription(), filter.getCollectedBy(), filter.getOrganism(), filter.getStrain(), filter.getStartDate(),
 				filter.getEndDate(), params.getCurrentPage(), params.getLength(), params.getSort());
 
 		// Create DataTables representation of the page.
@@ -432,7 +432,7 @@ public class ProjectSamplesController {
 				(Collection<? extends Project>) projectService.readMultiple(associatedProjectIds));
 
 		Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, sampleNames,
-				filter.getName(), params.getSearchValue(), filter.getOrganism(), filter.getStartDate(),
+				filter.getName(), params.getSearchValue(), filter.getDescription(), filter.getCollectedBy(), filter.getOrganism(), filter.getStrain(), filter.getStartDate(),
 				filter.getEndDate(), 0, MAX_PAGE_SIZE, params.getSort());
 		while (!page.isEmpty()) {
 			// Converting everything to a string for consumption by the UI.
@@ -442,7 +442,7 @@ public class ProjectSamplesController {
 
 			// Get the next page
 			page = sampleService.getFilteredSamplesForProjects(projects, sampleNames, filter.getName(),
-					params.getSearchValue(), filter.getOrganism(), filter.getStartDate(), filter.getEndDate(),
+					params.getSearchValue(), filter.getDescription(), filter.getCollectedBy(), filter.getOrganism(), filter.getStrain(), filter.getStartDate(), filter.getEndDate(),
 					page.getNumber() + 1, MAX_PAGE_SIZE, params.getSort());
 		}
 
@@ -796,7 +796,7 @@ public class ProjectSamplesController {
 
 		final Page<ProjectSampleJoin> page;
 		page = sampleService.getFilteredSamplesForProjects(projects, exportModel.getSampleNames(),
-				exportModel.getName(), exportModel.getSearch(), exportModel.getOrganism(), exportModel.getStartDate(),
+				exportModel.getName(), exportModel.getSearch(), exportModel.getDescription(), exportModel.getCollectedBy(), exportModel.getOrganism(), exportModel.getStrain(), exportModel.getStartDate(),
 				exportModel.getEndDate(), 0, Integer.MAX_VALUE,
 				Sort.by(new Sort.Order(Direction.ASC, "sample.sampleName")));
 

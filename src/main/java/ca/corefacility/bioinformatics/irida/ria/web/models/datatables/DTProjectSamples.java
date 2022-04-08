@@ -22,8 +22,13 @@ public class DTProjectSamples implements DataTablesResponseModel, DataTablesExpo
 	private Long id;
 	private Long projectId;
 	private String sampleName;
+	private String description;
+	private String collectedBy;
 	private String organism;
+	private String strain;
 	private String projectName;
+	private Date collectionDate;
+	private Date arrivalDate;
 	private Date createdDate;
 	private Date modifiedDate;
 	private List<String> qcEntries;
@@ -36,9 +41,14 @@ public class DTProjectSamples implements DataTablesResponseModel, DataTablesExpo
 
 		this.id = sample.getId();
 		this.sampleName = sample.getSampleName();
+		this.description = sample.getDescription();
+		this.collectedBy = sample.getCollectedBy();
 		this.organism = sample.getOrganism();
+		this.strain = sample.getStrain();
 		this.projectName = project.getName();
 		this.projectId = project.getId();
+		this.collectionDate = sample.getCollectionDate();
+		this.arrivalDate = sample.getArrivalDate();
 		this.createdDate = sample.getCreatedDate();
 		this.modifiedDate = sample.getModifiedDate();
 		this.qcEntries = qcEntries;
@@ -54,8 +64,20 @@ public class DTProjectSamples implements DataTablesResponseModel, DataTablesExpo
 		return sampleName;
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
+	public String getCollectedBy() {
+		return collectedBy;
+	}
+
 	public String getOrganism() {
 		return organism;
+	}
+
+	public String getStrain() {
+		return strain;
 	}
 
 	public Long getProjectId() {
@@ -64,6 +86,14 @@ public class DTProjectSamples implements DataTablesResponseModel, DataTablesExpo
 
 	public String getProjectName() {
 		return projectName;
+	}
+
+	public Date getCollectionDate() {
+		return collectionDate;
+	}
+
+	public Date getArrivalDate() {
+		return arrivalDate;
 	}
 
 	public Date getCreatedDate() {
@@ -94,9 +124,14 @@ public class DTProjectSamples implements DataTablesResponseModel, DataTablesExpo
 		List<String> data = new ArrayList<>();
 		data.add(String.valueOf(this.getId()));
 		data.add(this.getSampleName());
+		data.add(this.getDescription());
+		data.add(this.getCollectedBy());
 		data.add(this.getOrganism());
+		data.add(this.getStrain());
 		data.add(String.valueOf(this.getProjectId()));
 		data.add(this.getProjectName());
+		data.add(this.getCollectionDate() != null ? dateFormatter.format(this.getCollectionDate()) : "");
+		data.add(this.getArrivalDate() != null ? dateFormatter.format(this.getArrivalDate()) : "");
 		data.add(this.getCreatedDate() != null ? dateFormatter.format(this.getCreatedDate()) : "");
 		data.add(this.getModifiedDate() != null ? dateFormatter.format(this.getModifiedDate()) : "");
 		data.add(this.getCoverage() != null ? String.valueOf(this.getCoverage()) : "");
@@ -111,9 +146,14 @@ public class DTProjectSamples implements DataTablesResponseModel, DataTablesExpo
 		List<String> headers = new ArrayList<>();
 		headers.add(messageSource.getMessage("iridaThing.id", new Object[] {}, locale));
 		headers.add(messageSource.getMessage("project.samples.table.name", new Object[] {}, locale));
+		headers.add(messageSource.getMessage("project.samples.table.description", new Object[] {}, locale));
+		headers.add(messageSource.getMessage("project.samples.table.collectedBy", new Object[] {}, locale));
 		headers.add(messageSource.getMessage("project.samples.table.organism", new Object[] {}, locale));
+		headers.add(messageSource.getMessage("project.samples.table.strain", new Object[] {}, locale));
 		headers.add(messageSource.getMessage("project.samples.table.project-id", new Object[] {}, locale));
 		headers.add(messageSource.getMessage("project.samples.table.project", new Object[] {}, locale));
+		headers.add(messageSource.getMessage("project.samples.table.collection", new Object[] {}, locale));
+		headers.add(messageSource.getMessage("project.samples.table.arrival", new Object[] {}, locale));
 		headers.add(messageSource.getMessage("project.samples.table.created", new Object[] {}, locale));
 		headers.add(messageSource.getMessage("project.samples.table.modified", new Object[] {}, locale));
 		headers.add(messageSource.getMessage("project.samples.table.coverage", new Object[] {}, locale));

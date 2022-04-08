@@ -109,7 +109,7 @@ export const IconLoading = ({ ...props }) => <LoadingOutlined {...props} />;
 export const IconDropDown = ({ ...props }) => <DownOutlined {...props} />;
 
 export const IconShoppingCart = ({ ...props }) => (
-  <ShoppingCartOutlined {...props} />
+  <ExperimentOutlined {...props} />
 );
 
 export const IconInfoCircle = ({ ...props }) => (

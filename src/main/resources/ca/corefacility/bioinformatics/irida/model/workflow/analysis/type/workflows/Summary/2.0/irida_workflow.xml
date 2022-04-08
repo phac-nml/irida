@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+	<id>c600d836-b2ed-475d-be3e-83fdea22b44e</id>
+	<name>Summary</name>
+	<version>2.0</version>
+	<analysisType>SUMMARY</analysisType>
+	<inputs>
+		<sequenceReadsPaired>input_collection</sequenceReadsPaired>
+		<requiresSingleSample>false</requiresSingleSample>
+	</inputs>
+	<parameters>
+		<parameter name="phants_species" defaultValue="Escherichia coli">
+			<toolParameter
+				toolId="phants"
+				parameterName="species" />
+		</parameter>
+	</parameters>
+	<outputs>
+        <output name="iridaaries" fileName="iridaaries.html"/>
+        <output name="iridaaries-trend" fileName="iridaaries-trend.csv"/>
+	</outputs>
+	<toolRepositories>
+		<repository>
+		  <name>collapse_collections</name>
+		  <owner>nml</owner>
+		  <url>https://irida.corefacility.ca/galaxy-shed</url>
+		  <revision>7e5a39b5dad3</revision>
+		</repository>
+	</toolRepositories>
+</iridaWorkflow>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+	<id>59150055-fac7-48e7-b82f-a2108fef4d02</id>
+	<name>RECOVERYTyping</name>
+	<version>3.3</version>
+	<analysisType>RECOVERY_TYPING</analysisType>
+	<inputs>
+		<sequenceReadsPaired>input_collection</sequenceReadsPaired>
+		<requiresSingleSample>true</requiresSingleSample>
+	</inputs>
+	<parameters>
+		<parameter name="recovg_name" defaultValue="NC_045512">
+			<toolParameter
+				toolId="recovg"
+				parameterName="strain" />
+		</parameter>
+		<parameter name="recovg_library" defaultValue="iont">
+			<toolParameter
+				toolId="recovg"
+				parameterName="library" />
+		</parameter>
+		<parameter name="recovj_name" defaultValue="NC_045512">
+			<toolParameter
+				toolId="recovj"
+				parameterName="strain" />
+		</parameter>
+		<parameter name="recovj_region" defaultValue="-">
+			<toolParameter
+				toolId="recovj"
+				parameterName="region" />
+		</parameter>
+		<parameter name="recovj_year" defaultValue="-">
+			<toolParameter
+				toolId="recovj"
+				parameterName="year" />
+		</parameter>
+		<parameter name="recovl_name" defaultValue="NC_045512">
+			<toolParameter
+				toolId="recovl"
+				parameterName="strain" />
+		</parameter>
+	</parameters>
+	<outputs>
+		<output name="recovery_qc" fileName="recovery_qc.zip" />
+        <output name="recovery_consensus" fileName="recovery_consensus.fasta"/>
+        <output name="recovery_annotated" fileName="recovery_annotated.fasta"/>
+        <output name="recovery_variants_majority_report" fileName="recovery_variants_majority_report.tab"/>
+        <output name="recovery_variants_minority_report" fileName="recovery_variants_minority_report.tab"/>
+        <output name="recovery_variants_stats" fileName="recovery_variants_stats.zip"/>
+        <output name="recovery_lineage" fileName="recovery_lineage.csv"/>
+        <output name="recovery_type" fileName="recovery_type.json"/>
+	</outputs>
+	<toolRepositories>
+		<repository>
+		  <name>collapse_collections</name>
+		  <owner>nml</owner>
+		  <url>https://irida.corefacility.ca/galaxy-shed</url>
+		  <revision>7e5a39b5dad3</revision>
+		</repository>
+	</toolRepositories>
+</iridaWorkflow>

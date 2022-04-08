@@ -37,21 +37,18 @@
                             <legend th:text="#{samples.details.section.organism-title}"></legend>
                             <div class="form-group" th:class="${#maps.containsKey(errors, 'organism')} ? has-error">
                                 <label for="organism" th:text="#{samples.details.organism}">Organism</label>
-                                <input type="text" class="form-control input-full" id="organism" name="organism"
-                                       th:value="${organism} != null ? ${organism} : ${sample.getOrganism()}"/>
+                                <select class="form-control input-full" id="organism" name="organism"
+                                       th:value="${organism} != null ? ${organism} : ${sample.getOrganism()}" />
+                                    <option value="Shiga toxin-producing Escherichia coli" th:selected="${sample.getOrganism()=='Shiga toxin-producing Escherichia coli'}">Shiga toxin-producing Escherichia coli</option>
+                                    <option value="Listeria monocytogenes" th:selected="${sample.getOrganism()=='Listeria monocytogenes'}">Listeria monocytogenes</option>
+                                    <option value="Coronavirus" th:selected="${sample.getOrganism()=='Coronavirus'}">Coronavirus</option>
+                                </select>
                                 <span id="organism-error" th:if="${#maps.containsKey(errors, 'organism')}"
                                       class="help-block" th:text="${errors.organism}"></span>
 
                             </div>
-                            <div class="form-group" th:class="${#maps.containsKey(errors, 'isolate')} ? has-error">
-                                <label for="isolate" th:text="#{samples.details.isolate}">Organism</label>
-                                <input type="text" class="form-control input-full" id="isolate" name="isolate"
-                                       th:value="${isolate} != null ? ${isolate} : ${sample.getIsolate()}"/>
-                                <span id="isolate-error" th:if="${#maps.containsKey(errors, 'isolate')}"
-                                      class="help-block" th:text="${errors.isolate}"></span>
-                            </div>
                             <div class="form-group" th:class="${#maps.containsKey(errors, 'strain')} ? has-error">
-                                <label for="strain" th:text="#{samples.details.strain}">Organism</label>
+                                <label for="strain" th:text="#{samples.details.strain}">Strain</label>
                                 <input type="text" class="form-control input-full" id="strain" name="strain"
                                        th:value="${strain} != null ? ${strain} : ${sample.getStrain()}"/>
                                 <span id="strain-error" th:if="${#maps.containsKey(errors, 'strain')}"
@@ -69,41 +66,155 @@
                             </div>
                             <div class="form-group"
                                  th:class="${#maps.containsKey(errors, 'collectionDate')} ? has-error">
-                                <label for="collectionDate" th:text="#{samples.collection-date.title}">Date
-                                    Collected</label>
-                                <input type="date" class="form-control input-full" id="collectionDate"
-                                       name="collectionDate"
+                                <label for="collectionDate" th:text="#{samples.collection-date.title}">Date Collected</label>
+													 
+                                <input type="date" class="form-control input-full" id="collectionDate" name="collectionDate"
+															
                                        th:value="${collectionDate} != null ? ${collectionDate} : ${sample.getCollectionDate()}"/>
                                 <span id="collectionDate-error" th:if="${#maps.containsKey(errors, 'collectionDate')}"
                                       class="help-block" th:text="${errors.collectionDate}"></span>
                             </div>
                             <div class="form-group"
+                                 th:class="${#maps.containsKey(errors, 'arrivalDate')} ? has-error">
+                                <label for="arrivalDate" th:text="#{samples.arrival-date.title}">Date Arrival</label>
+                                <input type="date" class="form-control input-full" id="arrivalDate" name="arrivalDate"
+                                       th:value="${arrivalDate} != null ? ${arrivalDate} : ${sample.getArrivalDate()}"/>
+                                <span id="arrivalDate-error" th:if="${#maps.containsKey(errors, 'arrivalDate')}"
+                                      class="help-block" th:text="${errors.arrivalDate}"></span>
+                            </div>
+                            <div class="form-group"
                                  th:class="${#maps.containsKey(errors, 'isolationSource')} ? has-error">
                                 <label for="isolationSource" th:text="#{samples.isolation-source.title}">Source</label>
-                                <input type="text" class="form-control input-full" id="isolationSource"
-                                       name="isolationSource"
-                                       th:value="${isolationSource} != null ? ${isolationSource} : ${sample.getIsolationSource()}"/>
+                                <select class="form-control input-full" id="isolationSource" name="isolationSource"
+															 
+                                       th:value="${isolationSource} != null ? ${isolationSource} : ${sample.getIsolationSource()}" />
+                                    <option value="unknown" th:selected="${sample.getIsolationSource()=='unknown'}"></option>
+                                    <option value="Feci" th:selected="${sample.getIsolationSource()=='Feci'}" th:if="${sample.getOrganism()=='Shiga toxin-producing Escherichia coli'}">Feci</option>
+                                    <option value="Sangue" th:selected="${sample.getIsolationSource()=='Sangue'}" th:if="${sample.getOrganism()=='Shiga toxin-producing Escherichia coli'}">Sangue</option>
+                                    <option value="Animale" th:selected="${sample.getIsolationSource()=='Animale'}" th:if="${sample.getOrganism()=='Shiga toxin-producing Escherichia coli'}">Animale</option>
+                                    <option value="Alimento" th:selected="${sample.getIsolationSource()=='Alimento'}" th:if="${sample.getOrganism()=='Shiga toxin-producing Escherichia coli'}">Alimento</option>
+                                    <option value="Ambiente" th:selected="${sample.getIsolationSource()=='Ambiente'}" th:if="${sample.getOrganism()=='Shiga toxin-producing Escherichia coli'}">Ambiente</option>
+                                    <option value="Sangue" th:selected="${sample.getIsolationSource()=='Sangue'}" th:if="${sample.getOrganism()=='Listeria monocytogenes'}">Sangue</option>
+                                    <option value="LCR" th:selected="${sample.getIsolationSource()=='LCR'}" th:if="${sample.getOrganism()=='Listeria monocytogenes'}">LCR</option>
+                                    <option value="BAL" th:selected="${sample.getIsolationSource()=='BAL'}" th:if="${sample.getOrganism()=='Coronavirus'}">BAL</option>
+                                    <option value="Tampone nasofaringeo" th:selected="${sample.getIsolationSource()=='Tampone nasofaringeo'}" th:if="${sample.getOrganism()=='Coronavirus'}">Tampone nasofaringeo</option>
+                                    <option value="Tampone oculare" th:selected="${sample.getIsolationSource()=='Tampone oculare'}" th:if="${sample.getOrganism()=='Coronavirus'}">Tampone oculare</option>
+                                    <option value="Tampone orofaringeo" th:selected="${sample.getIsolationSource()=='Tampone orofaringeo'}" th:if="${sample.getOrganism()=='Coronavirus'}">Tampone orofaringeo</option>
+                                    <option value="Sputum" th:selected="${sample.getIsolationSource()=='Sputum'}" th:if="${sample.getOrganism()=='Coronavirus'}">Sputum</option>
+                                    <option value="Aspirato tracheale" th:selected="${sample.getIsolationSource()=='Aspirato tracheale'}" th:if="${sample.getOrganism()=='Coronavirus'}">Aspirato tracheale</option>
+                                </select>
                                 <span id="isolationSource-error" th:if="${#maps.containsKey(errors, 'isolationSource')}"
                                       class="help-block" th:text="${errors.isolationSource}"></span>
                             </div>
                             <div class="form-group"
+                                 th:class="${#maps.containsKey(errors, 'patientAge')} ? has-error">
+                                <label for="patientAge" th:text="#{samples.patient-age.title}">Patient Age</label>
+                                <select class="form-control input-full" id="patientAge" name="patientAge"
+                                       th:value="${patientAge} != null ? ${patientAge} : ${sample.getPatientAge()}" />
+                                    <option value="unknown" th:selected="${sample.getPatientAge()=='unknown'}"></option>
+                                    <option value="0-9" th:selected="${sample.getPatientAge()=='0-9'}">0-9</option>
+                                    <option value="10-19" th:selected="${sample.getPatientAge()=='10-19'}">10-19</option>
+                                    <option value="20-29" th:selected="${sample.getPatientAge()=='20-29'}">20-29</option>
+                                    <option value="30-39" th:selected="${sample.getPatientAge()=='30-39'}">30-39</option>
+                                    <option value="40-49" th:selected="${sample.getPatientAge()=='40-49'}">40-49</option>
+                                    <option value="50-59" th:selected="${sample.getPatientAge()=='50-59'}">50-59</option>
+                                    <option value="60-69" th:selected="${sample.getPatientAge()=='60-69'}">60-69</option>
+                                    <option value="70-79" th:selected="${sample.getPatientAge()=='70-79'}">70-79</option>
+                                    <option value="80-89" th:selected="${sample.getPatientAge()=='80-89'}">80-89</option>
+                                    <option value=">90" th:selected="${sample.getPatientAge()=='>90'}">>90</option>
+                                </select>
+                                <span id="patientAge-error" th:if="${#maps.containsKey(errors, 'patientAge')}"
+                                      class="help-block" th:text="${errors.patientAge}"></span>
+                            </div>
+                            <div class="form-group" th:class="${#maps.containsKey(errors, 'patientVaccinationNumber')} ? has-error" th:if="${sample.getOrganism()=='Coronavirus'}">
+                                <label for="patientVaccinationNumber" th:text="#{samples.patient-vaccination-number.title}">Vaccination Number</label>
+                                <input type="text" class="form-control input-full" id="patientVaccinationNumber" name="patientVaccinationNumber"
+                                       th:value="${patientVaccinationNumber} != null ? ${patientVaccinationNumber} : ${sample.getPatientVaccinationNumber()}"/>
+                                <span id="patientVaccinationNumber-error" th:if="${#maps.containsKey(errors, 'patientVaccinationNumber')}"
+                                      class="help-block" th:text="${errors.patientVaccinationNumber}"></span>
+                            </div>
+                            <div class="form-group" th:class="${#maps.containsKey(errors, 'patientVaccinationDate')} ? has-error" th:if="${sample.getOrganism()=='Coronavirus'}">
+                                <label for="patientVaccinationDate" th:text="#{samples.patient-vaccination-date.title}">Vaccination Date</label>
+                                <input type="date" class="form-control input-full" id="patientVaccinationDate" name="patientVaccinationDate"
+                                       th:value="${patientVaccinationDate} != null ? ${patientVaccinationDate} : ${sample.getPatientVaccinationDate()}"/>
+                                <span id="patientVaccinationDate-error" th:if="${#maps.containsKey(errors, 'patientVaccinationDate')}"
+                                      class="help-block" th:text="${errors.patientVaccinationDate}"></span>
+                            </div>
+                            <div class="form-group" th:class="${#maps.containsKey(errors, 'patientVaccinationDate')} ? has-error" th:unless="${sample.getOrganism()=='Coronavirus'}">
+                                <input type="date" class="form-control input-full" id="patientVaccinationDate" name="patientVaccinationDate" th:value="null" hidden="true" />
+                            </div>
+                            <div class="form-group" th:class="${#maps.containsKey(errors, 'isolate')} ? has-error" th:if="${sample.getOrganism()=='Shiga toxin-producing Escherichia coli'}">
+                                <label for="isolate" th:text="#{samples.details.isolate}">Isolate</label>
+                                <select class="form-control input-full" id="isolate" name="isolate" th:value="${isolate} != null ? ${isolate} : ${sample.getIsolate()}" />
+                                    <option value="" th:selected="${sample.getIsolate()==''}"></option>
+                                    <option value="SEU" th:selected="${sample.getIsolate()=='SEU'}" th:if="${sample.getOrganism()=='Shiga toxin-producing Escherichia coli'}">SEU</option>
+                                    <option value="Diarrea" th:selected="${sample.getIsolate()=='Diarrea'}" th:if="${sample.getOrganism()=='Shiga toxin-producing Escherichia coli'}">Diarrea</option>
+                                    <option value="Diarrea emorragica" th:selected="${sample.getIsolate()=='Diarrea emorragica'}" th:if="${sample.getOrganism()=='Shiga toxin-producing Escherichia coli'}">Diarrea emorragica</option>
+                                    <option value="Familiare" th:selected="${sample.getIsolate()=='Familiare'}" th:if="${sample.getOrganism()=='Shiga toxin-producing Escherichia coli'}">Familiare</option>
+                                </select>
+                                <span id="isolate-error" th:if="${#maps.containsKey(errors, 'isolate')}"
+                                      class="help-block" th:text="${errors.isolate}"></span>
+                            </div>
+                            <div class="form-group"
                                  th:class="${#maps.containsKey(errors, 'geographicLocationName')} ? has-error">
-                                <label for="geographicLocationName" th:text="#{location.geographic.title}">Geographic
-                                    Location</label>
-                                <input type="text" class="form-control input-full" id="geographicLocationName"
-                                       name="geographicLocationName"
-                                       th:value="${geographicLocationName} != null ? ${geographicLocationName} : ${sample.getGeographicLocationName()}"/>
+                                <label for="geographicLocationName" th:text="#{location.geographic.title}">Geographic Location</label>
+													
+                                <select class="form-control input-full" id="geographicLocationName" name="geographicLocationName"
+																	
+                                       th:value="${geographicLocationName} != null ? ${geographicLocationName} : ${sample.getGeographicLocationName()}" />
+                                    <option value="" th:selected="${sample.getGeographicLocationName()==''}"></option>
+                                    <option value="Abruzzo" th:selected="${sample.getGeographicLocationName()=='Abruzzo'}">Abruzzo</option>
+                                    <option value="Basilicata" th:selected="${sample.getGeographicLocationName()=='Basilicata'}">Basilicata</option>
+                                    <option value="Calabria" th:selected="${sample.getGeographicLocationName()=='Calabria'}">Calabria</option>
+                                    <option value="Campania" th:selected="${sample.getGeographicLocationName()=='Campania'}">Campania</option>
+                                    <option value="Emilia-Romagna" th:selected="${sample.getGeographicLocationName()=='Emilia-Romagna'}">Emilia-Romagna</option>
+                                    <option value="Friuli-Venezia Giulia" th:selected="${sample.getGeographicLocationName()=='Friuli-Venezia Giulia'}">Friuli-Venezia Giulia</option>
+                                    <option value="Lazio" th:selected="${sample.getGeographicLocationName()=='Lazio'}">Lazio</option>
+                                    <option value="Liguria" th:selected="${sample.getGeographicLocationName()=='Liguria'}">Liguria</option>
+                                    <option value="Lombardia" th:selected="${sample.getGeographicLocationName()=='Lombardia'}">Lombardia</option>
+                                    <option value="Marche" th:selected="${sample.getGeographicLocationName()=='Marche'}">Marche</option>
+                                    <option value="Molise" th:selected="${sample.getGeographicLocationName()=='Molise'}">Molise</option>
+                                    <option value="P.A. Bolzano" th:selected="${sample.getGeographicLocationName()=='P.A. Bolzano'}">P.A. Bolzano</option>
+                                    <option value="P.A. Trento" th:selected="${sample.getGeographicLocationName()=='P.A. Trento'}">P.A. Trento</option>
+                                    <option value="Piemonte" th:selected="${sample.getGeographicLocationName()=='Piemonte'}">Piemonte</option>
+                                    <option value="Puglia" th:selected="${sample.getGeographicLocationName()=='Puglia'}">Puglia</option>
+                                    <option value="Sardegna" th:selected="${sample.getGeographicLocationName()=='Sardegna'}">Sardegna</option>
+                                    <option value="Sicilia" th:selected="${sample.getGeographicLocationName()=='Sicilia'}">Sicilia</option>
+                                    <option value="Toscana" th:selected="${sample.getGeographicLocationName()=='Toscana'}">Toscana</option>
+                                    <option value="Trentino-Alto Adige" th:selected="${sample.getGeographicLocationName()=='Trentino-Alto Adige'}">Trentino-Alto Adige</option>
+                                    <option value="Umbria" th:selected="${sample.getGeographicLocationName()=='Umbria'}">Umbria</option>
+                                    <option value="Valle d'Aosta" th:selected="${sample.getGeographicLocationName()=='Valle d''Aosta'}">Valle d'Aosta</option>
+                                    <option value="Veneto" th:selected="${sample.getGeographicLocationName()=='Veneto'}">Veneto</option>
+                                </select>
                                 <span id="geographicLocationName-error"
                                       th:if="${#maps.containsKey(errors, 'geographicLocationName')}" class="help-block"
                                       th:text="${errors.geographicLocationName}"></span>
                             </div>
-                            <div class="row">
+                            <div class="form-group"
+                                 th:class="${#maps.containsKey(errors, 'geographicLocationName2')} ? has-error">
+                                <label for="geographicLocationName2" th:text="#{location.geographic2.title}">Geographic Location</label>
+                                <input type="text" class="form-control input-full" id="geographicLocationName2" name="geographicLocationName2"
+                                       th:value="${geographicLocationName2} != null ? ${geographicLocationName2} : ${sample.getGeographicLocationName2()}"/>
+                                <span id="geographicLocationName2-error"
+                                      th:if="${#maps.containsKey(errors, 'geographicLocationName2')}" class="help-block"
+                                      th:text="${errors.geographicLocationName2}"></span>
+                            </div>
+                            <div class="form-group"
+                                 th:class="${#maps.containsKey(errors, 'geographicLocationName3')} ? has-error">
+                                <label for="geographicLocationName3" th:text="#{location.geographic3.title}">Geographic Location</label>
+                                <input type="text" class="form-control input-full" id="geographicLocationName3" name="geographicLocationName3"
+                                       th:value="${geographicLocationName3} != null ? ${geographicLocationName3} : ${sample.getGeographicLocationName3()}"/>
+                                <span id="geographicLocationName3-error"
+                                      th:if="${#maps.containsKey(errors, 'geographicLocationName3')}" class="help-block"
+                                      th:text="${errors.geographicLocationName3}"></span>
+                            </div>
+                             <div class="row" th:if="${sample.getOrganism()=='test'}">
                                 <div class="col-md-6">
                                     <div class="form-group"
                                          th:class="${#maps.containsKey(errors, 'latitude')} ? has-error">
                                         <label for="latitude" th:text="#{location.latitude}">Latitude</label>
-                                        <input type="text" class="form-control input-full" id="latitude"
-                                               name="latitude"
+                                        <input type="text" class="form-control input-full" id="latitude" name="latitude"
+															  
                                                th:value="${latitude} != null ? ${latitude} : ${sample.getLatitude()}"/>
                                         <span id="latitude-error" th:if="${#maps.containsKey(errors, 'latitude')}"
                                               class="help-block" th:text="${errors.latitude}"></span>
@@ -113,8 +224,8 @@
                                     <div class="form-group"
                                          th:class="${#maps.containsKey(errors, 'longitude')} ? has-error">
                                         <label for="longitude" th:text="#{location.longitude}">Longitude</label>
-                                        <input type="text" class="form-control input-full" id="longitude"
-                                               name="longitude"
+                                        <input type="text" class="form-control input-full" id="longitude" name="longitude"
+															   
                                                th:value="${longitude} != null ? ${longitude} : ${sample.getLongitude()}"/>
                                         <span id="longitude-error" th:if="${#maps.containsKey(errors, 'longitude')}"
                                               class="help-block" th:text="${errors.longitude}"></span>
@@ -141,8 +252,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6">
+                            <div class="row" th:if="${sample.getOrganism()=='test'}">
+                                <div class="col-md-6" th:if="">
                                     <button type="button" class="btn btn-default" id="add-metadata">
                                         <i class="fa fa-plus" aria-hidden="true"></i> <span th:text="#{sample.metadata.new}">_Add new term_</span>
                                     </button>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+	<id>b20cc94e-7426-4e78-a9ed-b8c8aea918ca</id>
+	<name>Virulotyper</name>
+	<version>1.0</version>
+	<analysisType>VIRULOTYPER</analysisType>
+	<inputs>
+		<sequenceReadsPaired>input_collection</sequenceReadsPaired>
+		<requiresSingleSample>false</requiresSingleSample>
+	</inputs>
+	<parameters>
+		<parameter name="phanttpre_token" defaultValue="token">
+			<toolParameter
+				toolId="phantt-pre"
+				parameterName="token" />
+		</parameter>
+		<parameter name="phantt_token" defaultValue="token">
+			<toolParameter
+				toolId="phantt"
+				parameterName="token" />
+		</parameter>
+		<parameter name="phantt_species" defaultValue="Escherichia coli">
+			<toolParameter
+				toolId="phantt"
+				parameterName="species" />
+		</parameter>
+	</parameters>
+	<outputs>
+        <output name="multivirulotypes" fileName="virulotypes.tab"/>
+	</outputs>
+	<toolRepositories>
+		<repository>
+		  <name>collapse_collections</name>
+		  <owner>nml</owner>
+		  <url>https://irida.corefacility.ca/galaxy-shed</url>
+		  <revision>7e5a39b5dad3</revision>
+		</repository>
+	</toolRepositories>
+</iridaWorkflow>

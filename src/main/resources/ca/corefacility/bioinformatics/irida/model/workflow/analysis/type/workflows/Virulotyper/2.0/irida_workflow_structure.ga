@@ -1,0 +1,198 @@
+{
+    "a_galaxy_workflow": "true",
+    "annotation": "",
+    "format-version": "0.1",
+    "name": "Virulotyper 2.0",
+    "steps": {
+        "0": {
+            "annotation": "",
+            "content_id": null,
+            "errors": null,
+            "id": 0,
+            "input_connections": {},
+            "inputs": [
+                {
+                    "description": "",
+                    "name": "input_collection"
+                }
+            ],
+            "label": "input_collection",
+            "name": "Input dataset collection",
+            "outputs": [],
+            "position": {
+                "bottom": 187.1999969482422,
+                "height": 61.19999694824219,
+                "left": 80,
+                "right": 280,
+                "top": 126,
+                "width": 200,
+                "x": 80,
+                "y": 126
+            },
+            "tool_id": null,
+            "tool_state": "{\"optional\": false, \"collection_type\": \"list:paired\"}",
+            "tool_version": null,
+            "type": "data_collection_input",
+            "uuid": "65fbb806-70a7-42d8-b52d-99aa2d7fd082",
+            "workflow_outputs": []
+        },
+        "1": {
+            "annotation": "",
+            "content_id": "phantt-pre",
+            "errors": null,
+            "id": 1,
+            "input_connections": {
+                "input_pc": {
+                    "id": 0,
+                    "output_name": "output"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "PHANtT-pre",
+            "outputs": [
+                {
+                    "name": "phantt_samples",
+                    "type": "tabular"
+                }
+            ],
+            "position": {
+                "bottom": 212.8000030517578,
+                "height": 112.80000305175781,
+                "left": 358.3999938964844,
+                "right": 558.3999938964844,
+                "top": 100,
+                "width": 200,
+                "x": 358.3999938964844,
+                "y": 100
+            },
+            "post_job_actions": {
+                "HideDatasetActionphantt_samples": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "phantt_samples"
+                }
+            },
+            "tool_id": "phantt-pre",
+            "tool_state": "{\"input_pc\": {\"__class__\": \"ConnectedValue\"}, \"token\": \"\", \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "2.3",
+            "type": "tool",
+            "uuid": "82974857-862c-4374-8bc8-6cc478ed3c93",
+            "workflow_outputs": []
+        },
+        "2": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/collapse_collections/collapse_dataset/5.1.0",
+            "errors": null,
+            "id": 2,
+            "input_connections": {
+                "input_list": {
+                    "id": 1,
+                    "output_name": "phantt_samples"
+                }
+            },
+            "inputs": [],
+            "label": "Filenames",
+            "name": "Collapse Collection",
+            "outputs": [
+                {
+                    "name": "output",
+                    "type": "input"
+                }
+            ],
+            "position": {
+                "bottom": 212.8000030517578,
+                "height": 112.80000305175781,
+                "left": 636.7999877929688,
+                "right": 836.7999877929688,
+                "top": 100,
+                "width": 200,
+                "x": 636.7999877929688,
+                "y": 100
+            },
+            "post_job_actions": {
+                "HideDatasetActionoutput": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "output"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/collapse_collections/collapse_dataset/5.1.0",
+            "tool_shed_repository": {
+                "changeset_revision": "90981f86000f",
+                "name": "collapse_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"filename\": {\"add_name\": \"false\", \"__current_case__\": 1}, \"input_list\": {\"__class__\": \"ConnectedValue\"}, \"one_header\": \"false\", \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "5.1.0",
+            "type": "tool",
+            "uuid": "19977ae6-13ef-42cd-b276-8da0ec41944e",
+            "workflow_outputs": []
+        },
+        "3": {
+            "annotation": "",
+            "content_id": "phantt",
+            "errors": null,
+            "id": 3,
+            "input_connections": {
+                "phantt_samples": {
+                    "id": 2,
+                    "output_name": "output"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "PHANtT",
+            "outputs": [
+                {
+                    "name": "multivirulotypes",
+                    "type": "tabular"
+                }
+            ],
+            "position": {
+                "bottom": 249.1999969482422,
+                "height": 133.1999969482422,
+                "left": 915.2000122070312,
+                "right": 1115.2000122070312,
+                "top": 116,
+                "width": 200,
+                "x": 915.2000122070312,
+                "y": 116
+            },
+            "post_job_actions": {
+                "ChangeDatatypeActionmultivirulotypes": {
+                    "action_arguments": {
+                        "newtype": "tabular"
+                    },
+                    "action_type": "ChangeDatatypeAction",
+                    "output_name": "multivirulotypes"
+                },
+                "RenameDatasetActionmultivirulotypes": {
+                    "action_arguments": {
+                        "newname": "virulotypes.tab"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "multivirulotypes"
+                }
+            },
+            "tool_id": "phantt",
+            "tool_state": "{\"phantt_samples\": {\"__class__\": \"ConnectedValue\"}, \"species\": \"\", \"token\": \"\", \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "2.3",
+            "type": "tool",
+            "uuid": "bbcaec0a-f984-440c-a4e9-b8da44e11de6",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "multivirulotypes",
+                    "uuid": "a1eb6d26-e9a9-434a-a730-bc0ef09dd654"
+                }
+            ]
+        }
+    },
+    "tags": [
+        "IRIDA21"
+    ],
+    "uuid": "ae3e5149-c68c-4ed3-80b8-806ba3874f33",
+    "version": 1
+}

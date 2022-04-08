@@ -85,7 +85,7 @@ public class LineListController {
 
 		//fetch a page of samples at a time for the project
 		Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(Arrays.asList(project),
-				Collections.emptyList(), "", "", "", null, null, current, pageSize, sort);
+				Collections.emptyList(), "", "", "", "", "", "", null, null, current, pageSize, sort);
 		List<Sample> samples = page.stream().map(ProjectSampleJoin::getObject).collect(Collectors.toList());
 		List<Long> sampleIds = samples.stream().map(Sample::getId).collect(Collectors.toList());
 		Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProjectSamples(project,

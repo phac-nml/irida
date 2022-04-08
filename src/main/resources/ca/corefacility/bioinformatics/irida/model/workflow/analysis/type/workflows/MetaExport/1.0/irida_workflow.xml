@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+	<id>8432d122-6980-11ec-90d6-0242ac120003</id>
+	<name>MetaExport</name>
+	<version>1.0</version>
+	<analysisType>META_EXPORT</analysisType>
+	<inputs>
+		<sequenceReadsPaired>input_collection</sequenceReadsPaired>
+		<requiresSingleSample>false</requiresSingleSample>
+	</inputs>
+	<parameters>
+		<parameter name="phante_species" defaultValue="Escherichia coli">
+			<toolParameter toolId="phante" parameterName="species" />
+		</parameter>
+		<parameter name="phante_user" defaultValue="user">
+			<toolParameter toolId="phante" parameterName="user" />
+		</parameter>
+	</parameters>
+	<outputs>
+        <output name="phante_csv" fileName="iridaaries-export.csv"/>
+	</outputs>
+	<toolRepositories>
+		<repository>
+		  <name>collapse_collections</name>
+		  <owner>nml</owner>
+		  <url>https://irida.corefacility.ca/galaxy-shed</url>
+		  <revision>7e5a39b5dad3</revision>
+		</repository>
+	</toolRepositories>
+</iridaWorkflow>

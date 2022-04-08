@@ -10,7 +10,10 @@ import com.google.common.base.Strings;
 public class UISampleFilter {
 
 	private String name;
+	private String description;
+	private String collectedBy;
 	private String organism;
+	private String strain;
 	private String startDate;
 	private String endDate;
 
@@ -22,12 +25,36 @@ public class UISampleFilter {
 		this.name = name;
 	}
 
+	public String getDescription() {
+		return Strings.isNullOrEmpty(description) ? "" : description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getCollectedBy() {
+		return Strings.isNullOrEmpty(collectedBy) ? "" : collectedBy;
+	}
+
+	public void setCollectedBy(String collectedBy) {
+		this.collectedBy = collectedBy;
+	}
+
 	public String getOrganism() {
 		return Strings.isNullOrEmpty(organism) ? "" : organism;
 	}
 
 	public void setOrganism(String organism) {
 		this.organism = organism;
+	}
+
+	public String getStrain() {
+		return Strings.isNullOrEmpty(strain) ? "" : strain;
+	}
+
+	public void setStrain(String strain) {
+		this.strain = strain;
 	}
 
 	/**

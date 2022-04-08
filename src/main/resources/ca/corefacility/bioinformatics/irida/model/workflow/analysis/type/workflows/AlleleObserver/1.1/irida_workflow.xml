@@ -1,0 +1,47 @@
+<?xml version="1.1" encoding="UTF-8"?>
+
+<iridaWorkflow>
+	<id>d6c0bd8d-7d2b-456d-926a-b9b60f0baed5</id>
+	<name>AlleleObserver</name>
+	<version>1.1</version>
+	<analysisType>ALLELE_OBSERVER</analysisType>
+	<inputs>
+		<sequenceReadsPaired>input_collection</sequenceReadsPaired>
+		<requiresSingleSample>false</requiresSingleSample>
+	</inputs>
+	<parameters>
+		<parameter name="phantvpre_token" defaultValue="token">
+			<toolParameter
+				toolId="phantv-pre"
+				parameterName="token" />
+		</parameter>
+		<parameter name="phantv_token" defaultValue="token">
+			<toolParameter
+				toolId="phantv"
+				parameterName="token" />
+		</parameter>
+		<parameter name="phantv_species" defaultValue="Escherichia coli">
+			<toolParameter
+				toolId="phantv"
+				parameterName="species" />
+		</parameter>
+		<parameter name="phantv_useNames" defaultValue="false">
+			<toolParameter
+				toolId="phantv"
+				parameterName="useNames" />
+		</parameter>
+	</parameters>
+	<outputs>
+        <output name="allele_am" fileName="allele_am.tsv"/>
+        <output name="allele_dm" fileName="allele_dm.tsv"/>
+        <output name="tree" fileName="allele_tree.newick"/>
+	</outputs>
+	<toolRepositories>
+		<repository>
+		  <name>collapse_collections</name>
+		  <owner>nml</owner>
+		  <url>https://irida.corefacility.ca/galaxy-shed</url>
+		  <revision>7e5a39b5dad3</revision>
+		</repository>
+	</toolRepositories>
+</iridaWorkflow>

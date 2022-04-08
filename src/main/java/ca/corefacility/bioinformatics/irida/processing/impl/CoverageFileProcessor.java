@@ -59,10 +59,12 @@ public class CoverageFileProcessor implements FileProcessor {
 					.mapToLong(f -> {
 						AnalysisFastQC fastqc = analysisRepository.findFastqcAnalysisForSequenceFile(f);
 
-						if (fastqc != null) {
-							return fastqc.getTotalBases();
+						if (fastqc == null) {
+							return 0;
 						}
-						throw new EntityNotFoundException("No fastqc results for file");
+						else {
+						   return fastqc.getTotalBases();
+						}
 					})
 					.sum();
 

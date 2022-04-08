@@ -8,12 +8,17 @@
                 <label for="js-name" th:text="#{project.sample.filter-name}">Sample NAME</label>
                 <input type="text" class="form-control t-name-filter" id="js-name" th:value="${filter.getName()}"/>
             </div>
-            <div class="form-group">
-                <label for="js-organism" th:text="#{project.sample.filter-organism}">Sample Organism</label>
-                <select name="organism" id="js-organism" th:value="${filter.getOrganism()}"
-                        class="form-control">
-                    <option th:each="organism : ${organisms}" th:value="${organism}" th:selected="${#strings.equals(filter.getOrganism(), organism)}" th:text="${organism}"></option>
-                </select>
+            <div class="form-group" th:if="${!project.isMasterProject}">
+                <label for="js-description" th:text="#{project.sample.filter-description}">Sample Description</label>
+                <input type="text" class="form-control t-description-filter" id="js-description" th:value="${filter.getDescription()}"/>
+            </div>
+            <div class="form-group" th:if="${!project.isMasterProject}">
+                <label for="js-collectedby" th:text="#{project.sample.filter-collectedby}">Sample CollectedBy</label>
+                <input type="text" class="form-control t-collectedby-filter" id="js-collectedby" th:value="${filter.getCollectedBy()}"/>
+            </div>
+            <div class="form-group" th:if="${!project.isMasterProject}">
+                <label for="js-strain" th:text="#{project.sample.filter-strain}">Sample Strain</label>
+                <input type="text" class="form-control t-strain-filter" id="js-strain" th:value="${filter.getStrain()}"/>
             </div>
             <div class="form-group">
                 <label for="daterange" th:text="#{project.sample.filter-date.label}">Date One</label>

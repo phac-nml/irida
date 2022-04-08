@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesController;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.ReadSamplePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.ReadSampleCollectionPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -61,6 +62,7 @@ public class SamplesControllerTest {
 	private SequencingObjectService sequencingObjectService;
 	private UpdateSamplePermission updateSamplePermission;
 	private ReadSamplePermission readSamplePermission;
+	private ReadSampleCollectionPermission readSampleCollectionPermission;
 	private MetadataTemplateService metadataTemplateService;
 	private GenomeAssemblyService genomeAssemblyService;
 	private MessageSource messageSource;
@@ -76,7 +78,7 @@ public class SamplesControllerTest {
 		updateSamplePermission = mock(UpdateSamplePermission.class);
 		readSamplePermission = mock(ReadSamplePermission.class);
 		controller = new SamplesController(sampleService, projectService, sequencingObjectService,
-				updateSamplePermission, metadataTemplateService, genomeAssemblyService, messageSource);
+				updateSamplePermission, readSampleCollectionPermission, metadataTemplateService, genomeAssemblyService, messageSource);
 	}
 
 	// ************************************************************************************************
@@ -122,7 +124,7 @@ public class SamplesControllerTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE,
 				"/projects/5/samples/" + sample.getId() + "/edit");
-		String result = controller.updateSample(model, sample.getId(), null, null, update, request);
+		String result = controller.updateSample(model, sample.getId(), null, null, null, null, update, request);
 		assertTrue(result.contains(sample.getId() + "/details"), "Returns the correct redirect");
 		assertTrue(result.startsWith("redirect:"), "Should be a redirect response.");
 		assertFalse(result.contains(contextPath), "Redirect should **not** contain the context path.");

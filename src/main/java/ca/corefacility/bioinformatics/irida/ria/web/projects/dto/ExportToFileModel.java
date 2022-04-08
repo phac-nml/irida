@@ -17,12 +17,15 @@ public class ExportToFileModel {
 	private String type;
 	private String name;
 	private String organism;
+	private String description;
+	private String collectedBy;
+	private String strain;
 
 	public ExportToFileModel() {
 	}
 
 	public ExportToFileModel(List<String> sampleNames, List<Long> associated, String search, Date startDate,
-			Date endDate, String type, String name, String organism) {
+			Date endDate, String type, String name, String organism, String description, String collectedBy, String strain) {
 		this.sampleNames = sampleNames;
 		this.associated = associated;
 		this.search = search;
@@ -31,6 +34,9 @@ public class ExportToFileModel {
 		this.type = type;
 		this.name = name;
 		this.organism = organism;
+		this.description = description;
+		this.collectedBy = collectedBy;
+		this.strain = strain;
 	}
 
 	public List<String> getSampleNames() {
@@ -95,5 +101,27 @@ public class ExportToFileModel {
 
 	public void setOrganism(String organism) {
 		this.organism = organism;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public String getCollectedBy() {
+		return collectedBy;
+	}
+
+	public void setCollectedBy(String collectedBy) {
+		this.collectedBy = collectedBy;
+	}
+	public String getStrain() {
+		return strain;
+	}
+
+	public void setStrain(String strain) {
+		this.strain = strain;
 	}
 }

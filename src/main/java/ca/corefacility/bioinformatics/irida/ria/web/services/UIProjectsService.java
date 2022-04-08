@@ -54,7 +54,7 @@ public class UIProjectsService {
 	/*
 	 * All roles that are available on a project.
 	 */
-	private final List<String> PROJECT_ROLES = ImmutableList.of("PROJECT_USER", "PROJECT_OWNER");
+	private final List<String> PROJECT_ROLES = ImmutableList.of("PROJECT_VIEWER", "PROJECT_USER", "PROJECT_OWNER");
 
 	@Autowired
 	public UIProjectsService(ProjectService projectService, SampleService sampleService, MessageSource messageSource,

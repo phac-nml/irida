@@ -74,7 +74,11 @@ public class SequenceFilePair extends SequencingObject {
 
 		int index = StringUtils.indexOfDifference(filenames[0], filenames[1]);
 
-		if (Stream.of(forwardMatches).anyMatch(x -> String.valueOf(filenames[0].charAt(index)).equals(x))) {
+		if (String.valueOf(filenames[1]).equals("dummy.fastq")) {
+			return pair[0];
+		} else if (String.valueOf(filenames[0]).equals("dummy.fastq")) {
+			return (SequenceFile) pair[1];
+		} else if (Stream.of(forwardMatches).anyMatch(x -> String.valueOf(filenames[0].charAt(index)).equals(x))) {
 			return pair[0];
 		} else if (Stream.of(forwardMatches).anyMatch(x -> String.valueOf(filenames[1].charAt(index)).equals(x))) {
 			return pair[1];
@@ -95,7 +99,11 @@ public class SequenceFilePair extends SequencingObject {
 
 		int index = StringUtils.indexOfDifference(filenames[0], filenames[1]);
 
-		if (Stream.of(reverseMatches).anyMatch(x -> String.valueOf(filenames[0].charAt(index)).equals(x))) {
+		if (String.valueOf(filenames[1]).equals("dummy.fastq")) {
+			return (SequenceFile) pair[1];
+		} else if (String.valueOf(filenames[0]).equals("dummy.fastq")) {
+			return (SequenceFile) pair[0];
+		} else if (Stream.of(reverseMatches).anyMatch(x -> String.valueOf(filenames[0].charAt(index)).equals(x))) {
 			return (SequenceFile) pair[0];
 		} else if (Stream.of(reverseMatches).anyMatch(x -> String.valueOf(filenames[1].charAt(index)).equals(x))) {
 			return (SequenceFile) pair[1];

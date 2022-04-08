@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+	<id>8d8ccd16-c68a-4cf9-9f41-82b661f9f92a</id>
+	<name>SNPObserver</name>
+	<version>0.1</version>
+	<analysisType>SNP_OBSERVER</analysisType>
+	<inputs>
+		<sequenceReadsPaired>input_collection</sequenceReadsPaired>
+		<requiresSingleSample>false</requiresSingleSample>
+	</inputs>
+	<parameters>
+		<parameter name="phantwpre_token" defaultValue="token">
+			<toolParameter
+				toolId="phantw-pre"
+				parameterName="token" />
+		</parameter>
+		<parameter name="phantw_token" defaultValue="token">
+			<toolParameter
+				toolId="phantw"
+				parameterName="token" />
+		</parameter>
+	</parameters>
+	<outputs>
+        <output name="snp_cl" fileName="snp_cl.tab"/>
+        <output name="tree" fileName="snp_tree.newick"/>
+	</outputs>
+	<toolRepositories>
+		<repository>
+		  <name>collapse_collections</name>
+		  <owner>nml</owner>
+		  <url>https://irida.corefacility.ca/galaxy-shed</url>
+		  <revision>7e5a39b5dad3</revision>
+		</repository>
+	</toolRepositories>
+</iridaWorkflow>

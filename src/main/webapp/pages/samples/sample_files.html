@@ -62,7 +62,7 @@
 									data:ng-click="${'fileCtrl.deleteFile(' + pair.id + ', &#39;'' + pair.getLabel() +'&#39;')'}">
 									<span class="fa fa-fw fa-trash"></span>
 								</button>
-								<a class="btn btn-default btn-sm"
+								<a class="btn btn-default btn-sm" th:if="${canManageSample}"
 									th:attr="download=${file.getLabel()}"
 									th:href="@{/sequenceFiles/download/{objectId}/file/{fileId}(objectId=${pair.id}, fileId=${file.getId()})}">
 									<span class="fa fa-fw fa-download"></span>
@@ -70,13 +70,13 @@
 							</div>
 						</td>
 					</tr>
-					<tr class="paired_end paired_end__reverse sequence-file-row"
+					<tr class="paired_end paired_end__reverse sequence-file-row" th:unless="${pair.getReverseSequenceFile().getLabel()=='dummy.fastq'}"
 						th:with="file=${pair.getReverseSequenceFile()}">
 						<td
 							th:replace="templates/_sequenceFile :: sequenceFileTableLayout (object=${pair},file=${file},icon='reverse',relative='true')"></td>
 						<td>
 							<div class="btn-group btn-group-sm pull-right" role="group">
-								<a class="btn btn-default btn-sm"
+								<a th:if="${canManageSample}" class="btn btn-default btn-sm"
 									th:attr="download=${file.getLabel()}"
 									th:href="@{/sequenceFiles/download/{objectId}/file/{fileId}(objectId=${pair.id}, fileId=${file.getId()})}">
 									<span class="fa fa-fw fa-download"></span>
@@ -109,6 +109,32 @@
 						<td colspan="3"><span th:text="#{samples.files.sistr.status}">_Status_</span>
 							<span
 							th:text="#{'analysis.state.' + ${pair.getSistrTyping().getAnalysisState()}}"></span>
+						</td>
+					</tr>
+					<tr class="paired_end paired_end__phantastic_typing"
+						th:if="${pair.getPhantasticTyping()}">
+						<td class="td_icon"><i data:uib-tooltip="#{sf.tooltip.phantastic}"
+							class="fa fa-align-right" /></td>
+						<td><a href="#"
+							th:href="@{/analysis/{id}(id=${pair.getPhantasticTyping().getId()})}"
+							class="btn btn-default btn-sm file-name"
+							th:text="#{samples.files.phantastic}">_PHANTASTIC_</a></td>
+						<td colspan="3"><span th:text="#{samples.files.phantastic.status}">_Status_</span>
+							<span
+							th:text="#{'analysis.state.' + ${pair.getPhantasticTyping().getAnalysisState()}}"></span>
+						</td>
+					</tr>
+					<tr class="paired_end paired_end__recovery_typing"
+						th:if="${pair.getRecoveryTyping()}">
+						<td class="td_icon"><i data:uib-tooltip="#{sf.tooltip.recovery}"
+							class="fa fa-align-right" /></td>
+						<td><a href="#"
+							th:href="@{/analysis/{id}(id=${pair.getRecoveryTyping().getId()})}"
+							class="btn btn-default btn-sm file-name"
+							th:text="#{samples.files.recovery}">_RECOVERY_</a></td>
+						<td colspan="3"><span th:text="#{samples.files.recovery.status}">_Status_</span>
+							<span
+							th:text="#{'analysis.state.' + ${pair.getRecoveryTyping().getAnalysisState()}}"></span>
 						</td>
 					</tr>
 					<th:block th:if="${not #lists.isEmpty(pair.getQcEntries())}">
@@ -148,7 +174,7 @@
 									<span class="fa fa-fw fa-trash"></span>
 								</button>
 
-								<a class="btn btn-default btn-sm"
+								<a class="btn btn-default btn-sm" th:if="${canManageSample}"
 									th:attr="download=${file.getLabel()}"
 									th:href="@{/sequenceFiles/download/{objectId}/file/{fileId}(objectId=${file.getId()}, fileId=${file.getSequenceFile().getId()})}">
 									<span class="fa fa-fw fa-download"></span>
@@ -222,7 +248,7 @@
 								<span class="fa fa-fw fa-trash"></span>
 							</button>
 
-							<a class="btn btn-default btn-sm"
+							<a class="btn btn-default btn-sm" th:if="${canManageSample}"
 							   th:attr="download=${file.getLabel()}"
 							   th:href="@{/sequenceFiles/download/{objectId}/file/{fileId}(objectId=${file.getId()}, fileId=${file.getFile().getId()})}">
 								<span class="fa fa-fw fa-download"></span>
@@ -288,7 +314,7 @@
 								<span class="fa fa-fw fa-trash"></span>
 							</button>
 
-							<a class="btn btn-default btn-sm"
+							<a class="btn btn-default btn-sm" th:if="${canManageSample}"
 									th:attr="download=${assembly.label}"
 									th:href="@{/samples/download/{sampleId}/assembly/{assemblyId}(sampleId=${sample.id}, assemblyId=${assembly.id})}">
 								<span class="fa fa-fw fa-download"></span>

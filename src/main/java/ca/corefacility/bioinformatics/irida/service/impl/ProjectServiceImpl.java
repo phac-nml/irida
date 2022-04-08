@@ -74,7 +74,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 	// settings that can be updated locally for a remote project
 	public List<String> VALID_LOCAL_SETTINGS = Lists.newArrayList("assembleUploads", "syncFrequency", "remoteStatus",
-			"genomeSize", "minimumCoverage", "maximumCoverage", "sistrTypingUploads", "analysisPriority");
+			"genomeSize", "minimumCoverage", "maximumCoverage", "sistrTypingUploads", "phantasticTypingUploads", "recoveryTypingUploads", "analysisPriority");
 
 	private static final Logger logger = LoggerFactory.getLogger(ProjectServiceImpl.class);
 
@@ -330,7 +330,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 			// if there's more than one owner, no worries
 			return true;
 		} else {
-			// if there's only 1 owner, they're leaving a projcet without an
+			// if there's only 1 owner, they're leaving a project without an
 			// owner!
 			return false;
 		}
@@ -345,21 +345,29 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or (hasPermission(#project, 'isProjectOwner'))")
 	public ProjectSampleJoin addSampleToProject(Project project, Sample sample, boolean owner) {
 		logger.trace("Adding sample to project.");
+		boolean isAlreadyInMasterProject = false;
 
 		//if the sample exists, ensure it isn't already on the project
 		if (sample.getId() != null) {
 			if (psjRepository.readSampleForProject(project, sample) != null) {
-				throw new EntityExistsException(
-						"Sample [" + sample.getId() + "] has already been added to project [" + project.getId() + "]");
+			//check if the project is a master project
+				if (project.isMasterProject()) { isAlreadyInMasterProject = true; }
+				else {
+					throw new EntityExistsException(
+							"Sample [" + sample.getId() + "] has already been added to project [" + project.getId() + "]");
+				}
 			}
 		}
 
 		// Check to ensure a sample with this sample name doesn't exist in this
 		// project already
 		if (sampleRepository.getSampleBySampleName(project, sample.getSampleName()) != null) {
-			throw new ExistingSampleNameException(
-					"Sample with the name '" + sample.getSampleName() + "' already exists in project "
-							+ project.getId(), sample);
+			// ISS: check if the project is a master project
+			if (!project.isMasterProject())  {
+				throw new ExistingSampleNameException(
+				"Sample with the name '" + sample.getSampleName() + "' already exists in project "
+						+ project.getId(), sample);
+			}
 		}
 
 		// the sample hasn't been persisted before, persist it before calling
@@ -367,8 +375,17 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		if (sample.getId() == null) {
 			logger.trace("Going to validate and persist sample prior to creating relationship.");
 			// validate the sample, then persist it:
+			// ISS: First add metadata if possible
+			if(sample.getOrganism() == null) {
+				sample.setOrganism(project.getOrganism());
+			}	
+			String Regione = getRegione(project.getName());
+			if (!Regione.equals("-")) { sample.setGeographicLocationName(Regione); }
+
 			Set<ConstraintViolation<Sample>> constraintViolations = validator.validate(sample);
 			if (constraintViolations.isEmpty()) {
+				UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+				if (!userDetails.getUsername().equals("issseq")) { sample.setSequencedBy(userDetails.getUsername()); }
 				sample = sampleRepository.save(sample);
 			} else {
 				throw new ConstraintViolationException(constraintViolations);
@@ -377,12 +394,14 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 
 		ProjectSampleJoin join = new ProjectSampleJoin(project, sample, owner);
 
-		try {
-			return psjRepository.save(join);
-		} catch (DataIntegrityViolationException e) {
-			throw new EntityExistsException(
-					"Sample [" + sample.getId() + "] has already been added to project [" + project.getId() + "]");
-		}
+		if (!isAlreadyInMasterProject) {
+			try {
+				return psjRepository.save(join);
+			} catch (DataIntegrityViolationException e) {
+				throw new EntityExistsException(
+						"Sample [" + sample.getId() + "] has already been added to project [" + project.getId() + "]");
+			}
+		} else { return join; }
 	}
 
 	/**
@@ -968,4 +987,30 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		return projectRepository.countProjectsCreatedGrouped(createdDate, statisticTimePeriod.getGroupByFormat());
 	}
 
+	private String getRegione(String ProjectName) {
+		String Regione = String.valueOf("-");
+		if (ProjectName.contains("Abruzzo")) { Regione = "Abruzzo"; }
+		if (ProjectName.contains("Basilicata")) { Regione = "Basilicata"; }
+		if (ProjectName.contains("Calabria")) { Regione = "Calabria"; }
+		if (ProjectName.contains("Campania")) { Regione = "Campania"; }
+		if (ProjectName.contains("Emilia-Romagna")) { Regione = "Emilia-Romagna"; }
+		if (ProjectName.contains("Friuli-Venezia Giulia")) { Regione = "Friuli-Venezia Giulia"; }
+		if (ProjectName.contains("Lazio")) { Regione = "Lazio"; }
+		if (ProjectName.contains("Liguria")) { Regione = "Liguria"; }
+		if (ProjectName.contains("Lombardia")) { Regione = "Lombardia"; }
+		if (ProjectName.contains("Marche")) { Regione = "Marche"; }
+		if (ProjectName.contains("Molise")) { Regione = "Molise"; }
+		if (ProjectName.contains("P.A. Bolzano")) { Regione = "P.A. Bolzano"; }
+		if (ProjectName.contains("P.A. Trento")) { Regione = "P.A. Trento"; }
+		if (ProjectName.contains("Piemonte")) { Regione = "Piemonte"; }
+		if (ProjectName.contains("Puglia")) { Regione = "Puglia"; }
+		if (ProjectName.contains("Sardegna")) { Regione = "Sardegna"; }
+		if (ProjectName.contains("Sicilia")) { Regione = "Sicilia"; }
+		if (ProjectName.contains("Toscana")) { Regione = "Toscana"; }
+		if (ProjectName.contains("Trentino-Alto Adige")) { Regione = "Trentino-Alto Adige"; }
+		if (ProjectName.contains("Umbria")) { Regione = "Umbria"; }
+		if (ProjectName.contains("Valle d'Aosta")) { Regione = "Valle d'Aosta"; }
+		if (ProjectName.contains("Veneto")) { Regione = "Veneto"; }
+		return Regione;
+	}
 }

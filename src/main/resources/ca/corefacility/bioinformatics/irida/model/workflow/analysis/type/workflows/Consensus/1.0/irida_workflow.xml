@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+	<id>803f183e-7ba9-48eb-a5fd-346dc95dbc84</id>
+	<name>Consensus</name>
+	<version>1.0</version>
+	<analysisType>CONSENSUS</analysisType>
+	<inputs>
+		<sequenceReadsPaired>input_collection</sequenceReadsPaired>
+		<requiresSingleSample>false</requiresSingleSample>
+	</inputs>
+	<parameters>
+		<parameter name="recovconsensus_user" defaultValue="user">
+			<toolParameter toolId="recovconsensus" parameterName="user" />
+		</parameter>
+	</parameters>
+	<outputs>
+        <output name="recovConsensus_fasta" fileName="icogen_consensus.fasta"/>
+	</outputs>
+	<toolRepositories>
+		<repository>
+		  <name>collapse_collections</name>
+		  <owner>nml</owner>
+		  <url>https://irida.corefacility.ca/galaxy-shed</url>
+		  <revision>7e5a39b5dad3</revision>
+		</repository>
+	</toolRepositories>
+</iridaWorkflow>

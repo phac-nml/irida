@@ -14,13 +14,13 @@
 <main layout:fragment="main">
     <div class="row">
         <div class="col-md-12">
-        	<div class="panel panel-info">
-        		<div class="panel-heading">
-        			<b class="panel-title" th:text="#{samples.details.description}">Description</b>
-        		</div>
-        		<div class="panel-body">
-	            	<p class="lead" th:text="${sample.getDescription()} ?: #{sample.description.empty}"></p>
-            	</div>
+            <div class="panel panel-info" th:if="${canReadSampleCollection}">
+                <div class="panel-heading">
+                    <b class="panel-title" th:text="#{samples.details.description}">Description</b>
+                </div>
+                <div class="panel-body">
+                    <p class="lead" th:text="${sample.getDescription()} ?: #{sample.description.empty}"></p>
+                </div>
             </div>
         </div>
     </div>
@@ -37,14 +37,15 @@
                             th:text="${sample.getOrganism()} ?: #{organism.unknown}"></dd>
                     </dl>
                     <dl>
-                        <dt th:text="#{samples.details.isolate}"></dt>
-                        <dd id="dd-isolate"
-                            th:text="${sample.getIsolate()} ?: #{isolate.unknown}"></dd>
-                    </dl>
-                    <dl>
                         <dt th:text="#{samples.details.strain}"></dt>
                         <dd id="dd-strain"
                             th:text="${sample.getStrain()} ?: #{strain.unknown}"></dd>
+                    </dl>
+                    <dl th:if="${(#strings.startsWith(sample.label,'ED') or #strings.startsWith(sample.label,'EF')) and #strings.length(sample.label)==6}">
+                        <dt th:text="#{samples.details.collection}"></dt>
+                        <dd id="dd-collection">
+                            <a href="test.html" th:href="#{samples.details.collectionlink(${sample.label})}" th:text="${sample.label}"></a>
+                        </dd>
                     </dl>
                 </div>
             </div>
@@ -53,23 +54,55 @@
                     <b class="panel-title" th:text="#{samples.collection.title}">__TITLE__</b>
                 </div>
                 <div class="panel-body">
-                    <dl>
+                    <dl th:if="${canReadSampleCollection}">
                         <dt th:text="#{samples.collected-by}"></dt>
                         <dd id="dd-collectedby" th:text="${sample.getCollectedBy()} ?: #{collected.by.unknown}"></dd>
                     </dl>
-                    <dl th:with="df=#{locale.date.short}">
+                    <dl th:with="df=#{locale.date.short}" th:if="${canReadSampleCollection}">
                         <dt th:text="#{samples.collection-date.title}"></dt>
-                        <dd th:text="${sample.collectionDate} ? ${#dates.format(sample.getCollectionDate(), df)} : #{samples.collection-date.unknown}"></dd>
+                        <dd th:text="${sample.collectionDate} ? ${#dates.format(sample.getCollectionDate(), 'dd-MM-yyyy')} : #{samples.collection-date.unknown}"></dd>
+                    </dl>
+                    <dl th:with="df=#{locale.date.short}" th:if="${canReadSampleCollection}">
+                        <dt th:text="#{samples.arrival-date.title}"></dt>
+                        <dd th:text="${sample.arrivalDate} ? ${#dates.format(sample.getArrivalDate(), 'dd-MM-yyyy')} : #{samples.arrival-date.unknown}"></dd>
                     </dl>
                     <dl>
-                        <dt th:text="#{samples.isolation-source.title}"></dt>
+                        <dt th:text="#{samples.isolation-source.title}" ></dt>
                         <dd id="dd-isolation-source" th:text="${sample.getIsolationSource()} ?: #{isolation.source.unknown}"></dd>
                     </dl>
+                    <dl>
+                        <dt th:text="#{samples.patient-age.title}" ></dt>
+                        <dd id="dd-patient-age" th:text="${sample.getPatientAge()} ?: #{patient.age.unknown}"></dd>
+                    </dl>
+                    <dl th:if="${sample.getOrganism()=='Coronavirus'}">
+                        <dt th:text="#{samples.patient-vaccination-number.title}" ></dt>
+                        <dd id="dd-patient-vaccination-number" th:text="${sample.getPatientVaccinationNumber()} ?: #{samples.patient-vaccination-number.unknown}"></dd>
+                    </dl>
+                    <dl th:with="df=#{locale.date.short}" th:if="${sample.getOrganism()=='Coronavirus'}">
+                        <dt th:text="#{samples.patient-vaccination-date.title}" ></dt>
+                        <dd th:text="${sample.patientVaccinationDate} ? ${#dates.format(sample.getPatientVaccinationDate(), 'dd-MM-yyyy')} : #{samples.patient-vaccination-date.unknown}"></dd>
+                    </dl>
+                    <dl th:if="${sample.getOrganism()=='Shiga toxin-producing Escherichia coli'}">
+                        <dt th:text="#{samples.details.isolate}"></dt>
+                        <dd id="dd-isolate" th:text="${sample.getIsolate()} ?: #{isolate.unknown}"></dd>
+                    </dl>
+<!--                     <dl th:if="${canReadSampleCollection}">
+                        <dt th:text="#{samples.details.isolate}"></dt>
+                        <dd id="dd-isolate" th:text="${sample.getIsolate()} ?: #{isolate.unknown}"></dd>
+                    </dl> -->
                     <dl>
                         <dt th:text="#{location.geographic.title}"></dt>
                         <dd id="dd-geo-name" th:text="${sample.getGeographicLocationName()} ?: #{geographic.location.name.unknown}"></dd>
                     </dl>
-                    <div class="row">
+                    <dl th:if="${canReadSampleCollection}">
+                        <dt th:text="#{location.geographic2.title}"></dt>
+                        <dd id="dd-geo-name2" th:text="${sample.getGeographicLocationName2()} ?: #{geographic.location.name.unknown}"></dd>
+                    </dl>
+                    <dl th:if="${canReadSampleCollection}">
+                        <dt th:text="#{location.geographic3.title}"></dt>
+                        <dd id="dd-geo-name3" th:text="${sample.getGeographicLocationName3()} ?: #{geographic.location.name.unknown}"></dd>
+                    </dl>
+<!--                     <div class="row">
                         <div class="col-md-6">
                             <dl>
                                 <dt th:text="#{location.latitude}"></dt>
@@ -84,7 +117,7 @@
                                     th:text="${sample.getLongitude()} ?: #{location.unknown}"></dd>
                             </dl>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="panel panel-info" th:unless="${#sets.isEmpty(metadata)}">

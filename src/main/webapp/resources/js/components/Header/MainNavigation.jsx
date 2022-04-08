@@ -106,11 +106,20 @@ const HelpMenu = (
   <Menu theme={theme}>
     <Menu.Item key="userguide">
       <a
-        href="https://irida.corefacility.ca/documentation/user/user"
+           href="https://aries.iss.it/static/images/IRIDA21-ARIES.pdf"
+           target="_blank"
+           rel="noreferrer"
+         >
+           {i18n("nav.main.userguide")}
+         </a>
+       </Menu.Item>
+    <Menu.Item key="icogenguide">
+      <a
+        href="https://aries.iss.it/static/images/IRIDA21-ICoGen.pdf"
         target="_blank"
         rel="noreferrer"
       >
-        {i18n("nav.main.userguide")}
+        {i18n("nav.main.icogenguide")}
       </a>
     </Menu.Item>
     {isAdmin && (
@@ -122,7 +131,7 @@ const HelpMenu = (
     )}
     <Menu.Divider />
     <Menu.Item key="website">
-      <a href="http://www.irida.ca" target="_blank" rel="noopener noreferrer">
+      <a href="http://www.iss.it" target="_blank" rel="noopener noreferrer">
         {i18n("generic.irida.website")}
       </a>
     </Menu.Item>

@@ -1,0 +1,221 @@
+{
+    "a_galaxy_workflow": "true",
+    "annotation": "SNP Observer",
+    "format-version": "0.1",
+    "name": "SNPObserver 2.0",
+    "steps": {
+        "0": {
+            "annotation": "",
+            "content_id": null,
+            "errors": null,
+            "id": 0,
+            "input_connections": {},
+            "inputs": [
+                {
+                    "description": "",
+                    "name": "input_collection"
+                }
+            ],
+            "label": "input_collection",
+            "name": "Input dataset collection",
+            "outputs": [],
+            "position": {
+                "bottom": 187.1999969482422,
+                "height": 61.19999694824219,
+                "left": 80,
+                "right": 280,
+                "top": 126,
+                "width": 200,
+                "x": 80,
+                "y": 126
+            },
+            "tool_id": null,
+            "tool_state": "{\"optional\": false, \"collection_type\": \"list:paired\"}",
+            "tool_version": null,
+            "type": "data_collection_input",
+            "uuid": "8bbb7bb4-cecb-44fe-a1f3-f0edad1aeb17",
+            "workflow_outputs": []
+        },
+        "1": {
+            "annotation": "",
+            "content_id": "phantw-pre",
+            "errors": null,
+            "id": 1,
+            "input_connections": {
+                "input_pc": {
+                    "id": 0,
+                    "output_name": "output"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "PHANtW-pre",
+            "outputs": [
+                {
+                    "name": "phantw_filename",
+                    "type": "tabular"
+                }
+            ],
+            "position": {
+                "bottom": 203.39999389648438,
+                "height": 92.39999389648438,
+                "left": 358.3999938964844,
+                "right": 558.3999938964844,
+                "top": 111,
+                "width": 200,
+                "x": 358.3999938964844,
+                "y": 111
+            },
+            "post_job_actions": {
+                "HideDatasetActionphantw_filename": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "phantw_filename"
+                }
+            },
+            "tool_id": "phantw-pre",
+            "tool_state": "{\"input_pc\": {\"__class__\": \"ConnectedValue\"}, \"token\": \"\", \"useNames\": \"false\", \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "2.3",
+            "type": "tool",
+            "uuid": "98fff007-c8ca-43ba-b7bb-9e569e63af6d",
+            "workflow_outputs": []
+        },
+        "2": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/collapse_collections/collapse_dataset/5.1.0",
+            "errors": null,
+            "id": 2,
+            "input_connections": {
+                "input_list": {
+                    "id": 1,
+                    "output_name": "phantw_filename"
+                }
+            },
+            "inputs": [],
+            "label": "Filenames",
+            "name": "Collapse Collection",
+            "outputs": [
+                {
+                    "name": "output",
+                    "type": "input"
+                }
+            ],
+            "position": {
+                "bottom": 212.8000030517578,
+                "height": 112.80000305175781,
+                "left": 636.7999877929688,
+                "right": 836.7999877929688,
+                "top": 100,
+                "width": 200,
+                "x": 636.7999877929688,
+                "y": 100
+            },
+            "post_job_actions": {
+                "HideDatasetActionoutput": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "output"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/collapse_collections/collapse_dataset/5.1.0",
+            "tool_shed_repository": {
+                "changeset_revision": "90981f86000f",
+                "name": "collapse_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"filename\": {\"add_name\": \"false\", \"__current_case__\": 1}, \"input_list\": {\"__class__\": \"ConnectedValue\"}, \"one_header\": \"false\", \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "5.1.0",
+            "type": "tool",
+            "uuid": "d3d858b1-c4aa-4489-945a-bc1e47058a3e",
+            "workflow_outputs": []
+        },
+        "3": {
+            "annotation": "",
+            "content_id": "phantw",
+            "errors": null,
+            "id": 3,
+            "input_connections": {
+                "phantw_filenames": {
+                    "id": 2,
+                    "output_name": "output"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "PHANtW",
+            "outputs": [
+                {
+                    "name": "phantw_tree",
+                    "type": "nwk"
+                },
+                {
+                    "name": "phantw_cl",
+                    "type": "csv"
+                }
+            ],
+            "position": {
+                "bottom": 283.6000061035156,
+                "height": 163.60000610351562,
+                "left": 915.2000122070312,
+                "right": 1115.2000122070312,
+                "top": 120,
+                "width": 200,
+                "x": 915.2000122070312,
+                "y": 120
+            },
+            "post_job_actions": {
+                "ChangeDatatypeActionphantw_cl": {
+                    "action_arguments": {
+                        "newtype": "tabular"
+                    },
+                    "action_type": "ChangeDatatypeAction",
+                    "output_name": "phantw_cl"
+                },
+                "ChangeDatatypeActionphantw_tree": {
+                    "action_arguments": {
+                        "newtype": "nwk"
+                    },
+                    "action_type": "ChangeDatatypeAction",
+                    "output_name": "phantw_tree"
+                },
+                "RenameDatasetActionphantw_cl": {
+                    "action_arguments": {
+                        "newname": "snp_cl.tab"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "phantw_cl"
+                },
+                "RenameDatasetActionphantw_tree": {
+                    "action_arguments": {
+                        "newname": "snp_tree.newick"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "phantw_tree"
+                }
+            },
+            "tool_id": "phantw",
+            "tool_state": "{\"phantw_filenames\": {\"__class__\": \"ConnectedValue\"}, \"token\": \"\", \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "2.3",
+            "type": "tool",
+            "uuid": "07c5ed7d-61ee-4415-a34e-4904e926b947",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "phantw_cl",
+                    "uuid": "1d29632a-115a-4b3a-9d83-058696f4e29a"
+                },
+                {
+                    "label": null,
+                    "output_name": "phantw_tree",
+                    "uuid": "61af5aae-b956-4703-8222-5cd212749163"
+                }
+            ]
+        }
+    },
+    "tags": [
+        "IRIDA21"
+    ],
+    "uuid": "ad612814-e155-4c79-9858-8c25064bc181",
+    "version": 1
+}

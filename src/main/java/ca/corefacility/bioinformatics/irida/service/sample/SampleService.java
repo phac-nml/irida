@@ -120,6 +120,16 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public List<Sample> getSamplesForProjectShallow(Project project);
 
+	//ISS---
+	public List<Long> getSampleIdsByCodeInProject(Project project, List<String> sampleCodes);
+	public String getClusterIdByCodes(Project project, List<String> sampleCodes);
+	public Long getMasterProjectIdByCode(String sampleCode);
+	public void setClusterIdByCode(Project project, List<String> sampleCodes, String clusterId);
+	public String getNextClusterId(Project project);
+	public List<String> getRecipientsByCodes(Project project, List<String> sampleCodes, Boolean isAlert);
+	public List<Sample> getSamplesForClusterShallow(Project project, String sampleCode, String clusterId);
+	//---ISS
+
 	/**
 	 * Get a list of {@link Sample} in a {@link Project} given some Sample ids.
 	 *
@@ -230,6 +240,10 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @param sampleName  {@link String} exact name of a specific {@link Sample}
 	 * @param searchTerm  {@link String} search term to search for.
 	 * @param organism    {@link String} organism ter to search for.
+	 * @param description {@link String} description term to search for.
+	 * @param collectedBy {@link String} collectedBy term to search for.
+	 * @param organism    {@link String} organism term to search for.
+	 * @param strain      {@link String} strain term to search for.
 	 * @param minDate     {@link Date} minimum date the sample was modified.
 	 * @param maxDate     {@link Date} maximum date the sample was modified.
 	 * @param currentPage {@link Integer} the current page the table is on.
@@ -238,8 +252,8 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return a {@link Page} of {@link ProjectSampleJoin} that are filtered and sorted.
 	 */
 	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames,
-			String sampleName, String searchTerm, String organism, Date minDate, Date maxDate, int currentPage,
-			int pageSize, Sort sort);
+			String sampleName, String searchTerm, String description, String collectedBy, String organism, String strain,
+			Date minDate, Date maxDate, int currentPage,int pageSize, Sort sort);
 
 	/**
 	 * Get a list of all {@link Sample}s associated with a given {@link AnalysisSubmission}

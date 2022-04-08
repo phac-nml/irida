@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+// ISS
+import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadProjectSettingsPermission;
+
 /**
  * Common functions for project related controllers
  * 
@@ -33,6 +36,7 @@ public class ProjectControllerUtils {
 	private final UserService userService;
 	
 	private final ProjectOwnerPermission projectOwnerPermission;
+	private final ReadProjectSettingsPermission readProjectSettingsPermission;
 	private final ManageLocalProjectSettingsPermission projectMembersPermission;
 	private final MetadataTemplateService metadataTemplateService;
 
@@ -40,10 +44,12 @@ public class ProjectControllerUtils {
 	public ProjectControllerUtils(final UserService userService,
 			MetadataTemplateService metadataTemplateService,
 			final ProjectOwnerPermission projectOwnerPermission,
+			final ReadProjectSettingsPermission readProjectSettingsPermission,
 			final ManageLocalProjectSettingsPermission projectMembersPermission) {
 		this.userService = userService;
 		this.metadataTemplateService = metadataTemplateService;
 		this.projectOwnerPermission = projectOwnerPermission;
+		this.readProjectSettingsPermission = readProjectSettingsPermission;
 		this.projectMembersPermission = projectMembersPermission;
 	}
 
@@ -71,6 +77,9 @@ public class ProjectControllerUtils {
 		boolean isOwner = projectOwnerPermission.isAllowed(authentication, project);
 		model.addAttribute("isOwner", isOwner);
 		
+		boolean canReadProjectSettings = readProjectSettingsPermission.isAllowed(authentication, project);
+		model.addAttribute("canReadProjectSettings", canReadProjectSettings);
+
 		boolean isOwnerAllowRemote = projectMembersPermission.isAllowed(authentication, project);
 		model.addAttribute("isOwnerAllowRemote", isOwnerAllowRemote);
 

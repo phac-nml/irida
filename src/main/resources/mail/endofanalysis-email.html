@@ -1,0 +1,17 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-3.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{email.analysis.subject}">_End of the analysis_</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width"/>
+<style type="text/css">
+</style>
+</head>
+<body>
+	<h2 th:text="#{email.analysis.header(${header})}">_End of the analysis_</h2>
+	<p th:text="#{email.analysis.ended(${analysisName})}">_The analysis whatsitsname has ended execution._</p>
+    <p th:text="${clusters}">-</p>
+    <p><a href="#" th:href="${serverURL}" th:text="${serverURL}">_http://localhost:8080_</a></p>
+    <i><p th:text="${disclaimer}"></p></i>
+</body>
+</html>

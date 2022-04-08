@@ -1,0 +1,198 @@
+{
+    "a_galaxy_workflow": "true",
+    "annotation": "Export",
+    "format-version": "0.1",
+    "name": "Export 1.0",
+    "steps": {
+        "0": {
+            "annotation": "",
+            "content_id": null,
+            "errors": null,
+            "id": 0,
+            "input_connections": {},
+            "inputs": [
+                {
+                    "description": "",
+                    "name": "input_collection"
+                }
+            ],
+            "label": "input_collection",
+            "name": "Input dataset collection",
+            "outputs": [],
+            "position": {
+                "bottom": 380.1999969482422,
+                "height": 61.19999694824219,
+                "left": 258,
+                "right": 458,
+                "top": 319,
+                "width": 200,
+                "x": 258,
+                "y": 319
+            },
+            "tool_id": null,
+            "tool_state": "{\"optional\": false, \"collection_type\": \"list:paired\"}",
+            "tool_version": null,
+            "type": "data_collection_input",
+            "uuid": "7bac2112-e9e4-4b3f-b4f5-3735d5ecda85",
+            "workflow_outputs": []
+        },
+        "1": {
+            "annotation": "",
+            "content_id": "phant-pre",
+            "errors": null,
+            "id": 1,
+            "input_connections": {
+                "input_pc": {
+                    "id": 0,
+                    "output_name": "output"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "PHANt-pre",
+            "outputs": [
+                {
+                    "name": "phants_filename",
+                    "type": "tabular"
+                }
+            ],
+            "position": {
+                "bottom": 396.3999938964844,
+                "height": 92.39999389648438,
+                "left": 536.4000244140625,
+                "right": 736.4000244140625,
+                "top": 304,
+                "width": 200,
+                "x": 536.4000244140625,
+                "y": 304
+            },
+            "post_job_actions": {
+                "HideDatasetActionphants_filename": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "phants_filename"
+                }
+            },
+            "tool_id": "phant-pre",
+            "tool_state": "{\"input_pc\": {\"__class__\": \"ConnectedValue\"}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "2.3",
+            "type": "tool",
+            "uuid": "e449e0c0-bb14-4e62-9264-d631a59285ba",
+            "workflow_outputs": []
+        },
+        "2": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/collapse_collections/collapse_dataset/5.1.0",
+            "errors": null,
+            "id": 2,
+            "input_connections": {
+                "input_list": {
+                    "id": 1,
+                    "output_name": "phants_filename"
+                }
+            },
+            "inputs": [],
+            "label": "Filenames",
+            "name": "Collapse Collection",
+            "outputs": [
+                {
+                    "name": "output",
+                    "type": "input"
+                }
+            ],
+            "position": {
+                "bottom": 405.8000030517578,
+                "height": 112.80000305175781,
+                "left": 814.7999877929688,
+                "right": 1014.7999877929688,
+                "top": 293,
+                "width": 200,
+                "x": 814.7999877929688,
+                "y": 293
+            },
+            "post_job_actions": {
+                "HideDatasetActionoutput": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "output"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/collapse_collections/collapse_dataset/5.1.0",
+            "tool_shed_repository": {
+                "changeset_revision": "90981f86000f",
+                "name": "collapse_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"filename\": {\"add_name\": \"false\", \"__current_case__\": 1}, \"input_list\": {\"__class__\": \"ConnectedValue\"}, \"one_header\": \"false\", \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "5.1.0",
+            "type": "tool",
+            "uuid": "84f9faa7-5bc8-4026-92b8-a4db00bd2af5",
+            "workflow_outputs": []
+        },
+        "3": {
+            "annotation": "",
+            "content_id": "phante",
+            "errors": null,
+            "id": 3,
+            "input_connections": {
+                "phante_filenames": {
+                    "id": 2,
+                    "output_name": "output"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "PHANtE",
+            "outputs": [
+                {
+                    "name": "phante_csv",
+                    "type": "csv"
+                }
+            ],
+            "position": {
+                "bottom": 399.3000030517578,
+                "height": 112.80000305175781,
+                "left": 1120,
+                "right": 1320,
+                "top": 286.5,
+                "width": 200,
+                "x": 1120,
+                "y": 286.5
+            },
+            "post_job_actions": {
+                "ChangeDatatypeActionphante_csv": {
+                    "action_arguments": {
+                        "newtype": "csv"
+                    },
+                    "action_type": "ChangeDatatypeAction",
+                    "output_name": "phante_csv"
+                },
+                "RenameDatasetActionphante_csv": {
+                    "action_arguments": {
+                        "newname": "iridaaries-export.csv"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "phante_csv"
+                }
+            },
+            "tool_id": "phante",
+            "tool_state": "{\"phante_filenames\": {\"__class__\": \"ConnectedValue\"}, \"species\": \"\", \"user\": \"\", \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "2.3",
+            "type": "tool",
+            "uuid": "566a40ed-a342-4ff6-a7f6-da940340f78b",
+            "workflow_outputs": [
+                {
+                    "label": "PHANtE on input dataset(s): csv",
+                    "output_name": "phante_csv",
+                    "uuid": "123b853d-b1f0-455f-8968-28ca9d689bca"
+                }
+            ]
+        }
+    },
+    "tags": [
+        "IRIDA21"
+    ],
+    "uuid": "04b9c4e2-7218-4af4-bfd6-cc8e8ed95176",
+    "version": 2
+}

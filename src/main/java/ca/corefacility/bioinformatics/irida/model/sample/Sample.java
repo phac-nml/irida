@@ -116,13 +116,34 @@ public class Sample extends IridaRepresentationModel
 	private Date collectionDate;
 
 	/**
+	 * ISS Date of arrival of the sample
+	 */
+	@Temporal(TemporalType.DATE)
+	@JsonSerialize(using = DateJson.DateSerializer.class)
+	@JsonDeserialize(using = DateJson.DateDeserializer.class)
+	@Schema(type = "string", format = "date")
+	private Date arrivalDate;
+
+	/**
+	 * ISS Name of the person who sequenced the sample.
+	 */
+	@Size(min = 3, message = "{sample.sequenced.by.too.short}")
+	private String sequencedBy;
+
+	/**
 	 * Geographical origin of the sample (country derived from
 	 * http://www.insdc.org/documents/country-qualifier-vocabulary).
+	 * ISS Regions exist with spaces, hyphens and apostrophes
 	 */
 	@NotNull(message = "{sample.geographic.location.name.notnull}", groups = NCBISubmission.class)
-	@Pattern(regexp = "\\w+(:\\w+(:\\w+)?)?", message = "{sample.geographic.location.name.pattern}")
+	@Pattern(regexp = "[a-zA-Z.' \\-]+(:\\w+(:\\w+)?)?", message = "{sample.geographic.location.name.pattern}")
 	@Size(min = 3, message = "{sample.geographic.location.name.too.short}")
 	private String geographicLocationName;
+
+	@Size(min = 3, message = "{sample.geographic2.location.name.too.short}")
+	private String geographicLocationName2;
+	@Size(min = 3, message = "{sample.geographic3.location.name.too.short}")
+	private String geographicLocationName3;
 
 	/**
 	 * Describes the physical, environmental and/or local geographical source of
@@ -131,6 +152,26 @@ public class Sample extends IridaRepresentationModel
 	@Lob
 	@NotNull(message = "{sample.isolation.source.notnull}", groups = NCBISubmission.class)
 	private String isolationSource;
+
+	/**
+	 * Age range of the patient.
+	 */
+	private String patientAge;
+
+	/**
+	 * Number of Vaccinations of the patient.
+	 */
+	@Pattern(regexp = "^[0-9]$|^-$", message = "{sample.patient.vaccination.number.pattern}")
+	@Size(max = 1, message = "{sample.patient.vaccination.number.too.long}")
+	private String patientVaccinationNumber;
+
+	/**
+	 * Last Vaccination Date of the patient.
+	 */
+	@Temporal(TemporalType.DATE)
+	@JsonSerialize(as=java.sql.Date.class, using = DateJson.DateSerializer.class)
+	@JsonDeserialize(as=java.sql.Date.class, using = DateJson.DateDeserializer.class)
+	private Date patientVaccinationDate;
 
 	/**
 	 * lat_lon is marked as a *mandatory* attribute in NCBI BioSample, but in
@@ -181,14 +222,22 @@ public class Sample extends IridaRepresentationModel
 	public boolean equals(Object other) {
 		if (other instanceof Sample) {
 			Sample sample = (Sample) other;
-			return Objects.equals(id, sample.id) && Objects.equals(createdDate, sample.createdDate) && Objects.equals(
-					modifiedDate, sample.modifiedDate) && Objects.equals(sampleName, sample.sampleName)
-					&& Objects.equals(description, sample.description) && Objects.equals(organism, sample.organism)
-					&& Objects.equals(isolate, sample.isolate) && Objects.equals(strain, sample.strain)
-					&& Objects.equals(collectedBy, sample.collectedBy) && Objects.equals(collectionDate,
-					sample.collectionDate) && Objects.equals(geographicLocationName, sample.geographicLocationName)
-					&& Objects.equals(isolationSource, sample.isolationSource) && Objects.equals(latitude,
-					sample.latitude) && Objects.equals(longitude, sample.longitude);
+			return Objects.equals(id, sample.id) && Objects.equals(createdDate, sample.createdDate)
+					&& Objects.equals(modifiedDate, sample.modifiedDate)
+					&& Objects.equals(sampleName, sample.sampleName) && Objects.equals(description, sample.description)
+					&& Objects.equals(organism, sample.organism) && Objects.equals(isolate, sample.isolate)
+					&& Objects.equals(strain, sample.strain) && Objects.equals(collectedBy, sample.collectedBy)
+					&& Objects.equals(collectionDate, sample.collectionDate) 
+					&& Objects.equals(arrivalDate, sample.arrivalDate) 
+					&& Objects.equals(sequencedBy, sample.sequencedBy)
+					&& Objects.equals(geographicLocationName, sample.geographicLocationName)
+					&& Objects.equals(geographicLocationName2, sample.geographicLocationName2)
+					&& Objects.equals(geographicLocationName3, sample.geographicLocationName3)
+					&& Objects.equals(isolationSource, sample.isolationSource)
+					&& Objects.equals(patientAge, sample.patientAge)
+					&& Objects.equals(patientVaccinationNumber, sample.patientVaccinationNumber)
+					&& Objects.equals(patientVaccinationDate, sample.patientVaccinationDate)
+					&& Objects.equals(latitude, sample.latitude) && Objects.equals(longitude, sample.longitude);
 		}
 
 		return false;
@@ -197,7 +246,8 @@ public class Sample extends IridaRepresentationModel
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, createdDate, modifiedDate, sampleName, description, organism, isolate, strain,
-				collectedBy, collectionDate, geographicLocationName, isolationSource, latitude, longitude);
+				collectedBy, collectionDate, arrivalDate, geographicLocationName, isolationSource, patientAge, 
+				patientVaccinationNumber, patientVaccinationDate, latitude, longitude);
 	}
 
 	@Override
@@ -210,7 +260,11 @@ public class Sample extends IridaRepresentationModel
 		// @formatter:off
 		return "Sample{" + "id=" + id +
 				", sampleName='" + sampleName + '\'' +
+				", description='" + description + '\'' +
+				", collectedBy='" + collectedBy + '\'' +
 				", organism='" + organism + '\'' +
+				", collectionDate=" + collectionDate +
+				", arrivalDate=" + arrivalDate +
 				", modifiedDate=" + modifiedDate +
 				", createdDate=" + createdDate +
 				'}';
@@ -289,6 +343,22 @@ public class Sample extends IridaRepresentationModel
 		this.collectedBy = collectedBy;
 	}
 
+	public Date getArrivalDate() {
+		return arrivalDate;
+	}
+
+	public void setArrivalDate(Date arrivalDate) {
+		this.arrivalDate = arrivalDate;
+	}
+
+	public String getSequencedBy() {
+		return sequencedBy;
+	}
+
+	public void setSequencedBy(String sequencedBy) {
+		this.sequencedBy = sequencedBy;
+	}
+
 	public String getLatitude() {
 		return latitude;
 	}
@@ -329,12 +399,52 @@ public class Sample extends IridaRepresentationModel
 		this.geographicLocationName = geographicLocationName;
 	}
 
+	public String getGeographicLocationName2() {
+		return geographicLocationName2;
+	}
+
+	public void setGeographicLocationName2(String geographicLocationName2) {
+		this.geographicLocationName2 = geographicLocationName2;
+	}
+
+	public String getGeographicLocationName3() {
+		return geographicLocationName3;
+	}
+
+	public void setGeographicLocationName3(String geographicLocationName3) {
+		this.geographicLocationName3 = geographicLocationName3;
+	}
+
 	public String getIsolationSource() {
 		return isolationSource;
 	}
 
 	public void setIsolationSource(String isolationSource) {
 		this.isolationSource = isolationSource;
+	}
+
+	public String getPatientAge() {
+		return patientAge;
+	}
+
+	public void setPatientAge(String patientAge) {
+		this.patientAge = patientAge;
+	}
+
+	public String getPatientVaccinationNumber() {
+		return patientVaccinationNumber;
+	}
+
+	public void setPatientVaccinationNumber(String patientVaccinationNumber) {
+		this.patientVaccinationNumber = patientVaccinationNumber;
+	}
+
+	public Date getPatientVaccinationDate() {
+		return patientVaccinationDate;
+	}
+
+	public void setPatientVaccinationDate(Date patientVaccinationDate) {
+		this.patientVaccinationDate = patientVaccinationDate;
 	}
 
 	@Override

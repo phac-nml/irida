@@ -78,7 +78,25 @@ const sampleConfig = Object.assign({}, tableConfig, {
       }
     },
     {
+      targets: SAMPLE_COLUMNS.DESCRIPTION,
+      render(data) {
+        return wrapCellContents({ text: data });
+      }
+    },
+    {
+      targets: SAMPLE_COLUMNS.COLLECTED_BY,
+      render(data) {
+        return wrapCellContents({ text: data });
+      }
+    },
+    {
       targets: SAMPLE_COLUMNS.ORGANISM,
+      render(data) {
+        return wrapCellContents({ text: data });
+      }
+    },
+    {
+      targets: SAMPLE_COLUMNS.STRAIN,
       render(data) {
         return wrapCellContents({ text: data });
       }

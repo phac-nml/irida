@@ -6,4 +6,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <include file="project-default-metadata-template.xml"
              relativeToChangelogFile="true"/>
+    <include file="remove-sample-metadata-entry.xml" relativeToChangelogFile="true"/>
+    <include file="iss.xml" relativeToChangelogFile="true"/>
+    <include file="iss2.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

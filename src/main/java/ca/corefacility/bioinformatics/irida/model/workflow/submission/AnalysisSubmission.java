@@ -388,7 +388,8 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		public Builder inputParameter(final String name, final String value) {
 			checkNotNull(name, "key is null");
 			checkNotNull(value, "value is null");
-			checkArgument(!inputParameters.containsKey(name), "key=" + name + " already exists as a parameter");
+			// ISS parameters can be changed by the AutomatedAnalysisFileProcessor
+			// checkArgument(!inputParameters.containsKey(name), "key=" + name + " already exists as a parameter");
 
 			if (namedParameters != null) {
 				throw new UnsupportedOperationException("You cannot change named parameters once set.");

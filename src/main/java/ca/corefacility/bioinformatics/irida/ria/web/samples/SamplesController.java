@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.ReadSampleCollectionPermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -70,6 +71,7 @@ public class SamplesController extends BaseController {
 	// Model attributes
 	private static final String MODEL_ATTR_SAMPLE = "sample";
 	public static final String MODEL_ATTR_CAN_MANAGE_SAMPLE = "canManageSample";
+	public static final String MODEL_ATTR_CAN_READ_SAMPLE_COLLECTION = "canReadSampleCollection";
 
 	// Page Names
 	private static final String SAMPLES_DIR = "samples/";
@@ -86,12 +88,19 @@ public class SamplesController extends BaseController {
 	public static final String STRAIN = "strain";
 	public static final String COLLECTED_BY = "collectedBy";
 	public static final String COLLECTION_DATE = "collectionDate";
+	public static final String ARRIVAL_DATE = "arrivalDate";
 	public static final String ISOLATION_SOURCE = "isolationSource";
+	public static final String PATIENT_AGE = "patientAge";
+	public static final String PATIENT_VACCINATION_NUMBER = "patientVaccinationNumber";
+	public static final String PATIENT_VACCINATION_DATE = "patientVaccinationDate";
 	public static final String GEOGRAPHIC_LOCATION_NAME = "geographicLocationName";
+	public static final String GEOGRAPHIC_LOCATION_NAME2 = "geographicLocationName2";
+	public static final String GEOGRAPHIC_LOCATION_NAME3 = "geographicLocationName3";
 	public static final String LATITUDE = "latitude";
 	public static final String LONGITUDE = "longitude";
 	private static final ImmutableList<String> FIELDS = ImmutableList.of(SAMPLE_NAME, DESCRIPTION, ORGANISM, ISOLATE,
-			STRAIN, COLLECTED_BY, ISOLATION_SOURCE, GEOGRAPHIC_LOCATION_NAME, LATITUDE, LONGITUDE);
+			STRAIN, COLLECTED_BY, COLLECTION_DATE, ARRIVAL_DATE, ISOLATION_SOURCE, PATIENT_AGE, PATIENT_VACCINATION_NUMBER, PATIENT_VACCINATION_DATE, 
+			GEOGRAPHIC_LOCATION_NAME, GEOGRAPHIC_LOCATION_NAME2, GEOGRAPHIC_LOCATION_NAME3, LATITUDE, LONGITUDE);
 
 	// Services
 	private final SampleService sampleService;
@@ -103,18 +112,21 @@ public class SamplesController extends BaseController {
 	private final GenomeAssemblyService genomeAssemblyService;
 
 	private final UpdateSamplePermission updateSamplePermission;
+	private final ReadSampleCollectionPermission readSampleCollectionPermission;
 
 	private final MessageSource messageSource;
 
 	@Autowired
 	public SamplesController(SampleService sampleService, ProjectService projectService,
 			SequencingObjectService sequencingObjectService, UpdateSamplePermission updateSamplePermission,
+            ReadSampleCollectionPermission readSampleCollectionPermission,
 			MetadataTemplateService metadataTemplateService, GenomeAssemblyService genomeAssemblyService,
 			MessageSource messageSource) {
 		this.sampleService = sampleService;
 		this.projectService = projectService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.updateSamplePermission = updateSamplePermission;
+        this.readSampleCollectionPermission = readSampleCollectionPermission;
 		this.metadataTemplateService = metadataTemplateService;
 		this.genomeAssemblyService = genomeAssemblyService;
 		this.messageSource = messageSource;
@@ -141,7 +153,9 @@ public class SamplesController extends BaseController {
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
 		model.addAttribute("metadata", metadataForSample);
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_DETAILS);
-		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
+		//model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
+		model.addAttribute(MODEL_ATTR_CAN_READ_SAMPLE_COLLECTION, isProjectManagerCollaboratorForSample(sample));
 		return SAMPLE_PAGE;
 	}
 
@@ -178,6 +192,10 @@ public class SamplesController extends BaseController {
 	 *            The id for the sample
 	 * @param collectionDate
 	 *            Date the sample was collected (Optional)
+	 * @param arrivalDate
+	 *            Date the sample arrived (Optional)
+	 * @param patientVaccinationDate
+	 *            Date the patient was vaccinated (Optional)
 	 * @param metadataString
 	 *            A JSON string representation of the {@link MetadataEntry} to
 	 *            set on the sample
@@ -191,6 +209,8 @@ public class SamplesController extends BaseController {
 			"/projects/{projectId}/samples/{sampleId}/edit" }, method = RequestMethod.POST)
 	public String updateSample(final Model model, @PathVariable Long sampleId,
 			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date collectionDate,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date arrivalDate,
+			@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date patientVaccinationDate,
 			@RequestParam(name = "metadata") String metadataString, @RequestParam Map<String, String> params,
 			HttpServletRequest request) {
 		logger.debug("Updating sample [" + sampleId + "]");
@@ -217,6 +237,17 @@ public class SamplesController extends BaseController {
 			model.addAttribute(COLLECTION_DATE, collectionDate);
 		}
 
+		// Special case because it is a date field.
+		updatedValues.put(ARRIVAL_DATE, arrivalDate);
+		if (arrivalDate != null) {
+			model.addAttribute(ARRIVAL_DATE, arrivalDate);
+		}
+
+		// Special case because it is a date field.
+		updatedValues.put(PATIENT_VACCINATION_DATE, patientVaccinationDate);
+		if (patientVaccinationDate != null) {
+			model.addAttribute(PATIENT_VACCINATION_DATE, patientVaccinationDate);
+		}
 
 		/*
 		 * If there's sample metadata to add, add it here.
@@ -321,7 +352,8 @@ public class SamplesController extends BaseController {
 		model.addAttribute("assemblies", genomeAssemblies);
 
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
-		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
+		//model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return SAMPLE_FILES_PAGE;
 	}
@@ -536,7 +568,8 @@ public class SamplesController extends BaseController {
 		model.addAttribute("single_end", singleFileJoins);
 
 		model.addAttribute(MODEL_ATTR_SAMPLE, sample);
-		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
+		//model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isSampleModifiable(sample));
+		model.addAttribute(MODEL_ATTR_CAN_MANAGE_SAMPLE, isProjectManagerForSample(sample));
 		model.addAttribute(MODEL_ATTR_ACTIVE_NAV, ACTIVE_NAV_FILES);
 		return FILES_CONCATENATE_PAGE;
 	}
@@ -592,9 +625,28 @@ public class SamplesController extends BaseController {
 	 *            The sample to test
 	 * @return true/false if they have management permissions for the sample
 	 */
-	private boolean isSampleModifiable(Sample sample) {
+	// private boolean isSampleModifiable(Sample sample) {
+		// Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		// return updateSamplePermission.isAllowed(authentication, sample);
+	// }
+	private boolean isProjectManagerForSample(Sample sample) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		return updateSamplePermission.isAllowed(authentication, sample);
+	}
+
+	/**
+	 * Test if the {@link User} is a {@link ProjectRole#PROJECT_OWNER/PROJECT_USER} for the
+	 * given {@link Sample}
+	 *
+	 * @param sample
+	 *            The sample to test
+	 * @return true/false if they have view all permissions for the sample
+	 */
+	private boolean isProjectManagerCollaboratorForSample(Sample sample) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		return readSampleCollectionPermission.isAllowed(authentication, sample);
 	}
 }

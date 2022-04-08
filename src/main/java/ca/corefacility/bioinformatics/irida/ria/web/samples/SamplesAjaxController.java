@@ -223,7 +223,13 @@ public class SamplesAjaxController {
 	 */
 	private void createSequenceFilePairsInSample(List<MultipartFile> pair, Sample sample) throws IOException {
 		SequenceFile firstFile = createSequenceFile(pair.get(0));
+		if (pair.get(0).getOriginalFilename().equals("dummy.fastq")) {
+			firstFile.addOptionalProperty("nofastqc","true");
+		}
 		SequenceFile secondFile = createSequenceFile(pair.get(1));
+		if (pair.get(1).getOriginalFilename().equals("dummy.fastq")) {
+			secondFile.addOptionalProperty("nofastqc","true");
+		}
 		sequencingObjectService.createSequencingObjectInSample(new SequenceFilePair(firstFile, secondFile), sample);
 	}
 
@@ -235,9 +241,20 @@ public class SamplesAjaxController {
 	 * @throws IOException Exception thrown if there is an error handling the file.
 	 */
 	private void createSequenceFileInSample(MultipartFile file, Sample sample) throws IOException {
+/* 		SequenceFile sequenceFile = createSequenceFile(file);
+		sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample); */
 		SequenceFile sequenceFile = createSequenceFile(file);
-		sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample);
-	}
+		if (file.getOriginalFilename().endsWith(".fasta") || file.getOriginalFilename().endsWith(".fna")) {
+			sequenceFile.addOptionalProperty("nofastqc","true");
+		}
+		Path temp2 = Files.createTempDirectory(null);
+		Path target2 = temp2.resolve("dummy.fastq");
+        Files.createFile(target2);
+        Files.write(target2, "dummy".getBytes());
+		SequenceFile dummyFile = new SequenceFile(target2);
+        dummyFile.addOptionalProperty("nofastqc","true");
+		sequencingObjectService.createSequencingObjectInSample(new SequenceFilePair(sequenceFile, dummyFile), sample);
+		}
 
 	/**
 	 * Create a {@link Fast5Object} and add it to a {@link Sample}

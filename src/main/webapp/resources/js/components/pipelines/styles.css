@@ -27,3 +27,39 @@
 .BIO_HANSEL {
   background-color: rgba(250, 159, 181, 1) !important;
 }
+
+.PHANTASTIC_TYPING {
+  background-color: rgba(96, 127, 226, 1) !important;
+  color: #222 !important;
+}
+.RECOVERY_TYPING {
+  background-color: rgba(96, 127, 226, 1) !important;
+  color: #222 !important;
+}
+.ALLELE_OBSERVER {
+  background-color: rgba(30, 170, 241, 1) !important;
+  color: #222 !important;
+}
+.SNP_OBSERVER {
+  background-color: rgba(152, 180, 70, 1) !important;
+  color: #222 !important;
+}
+.VIRULOTYPER {
+  background-color: rgba(239, 101, 72, 1) !important;
+  color: #222 !important;
+}
+.SUMMARY {
+  background-color: rgba(102, 255, 255, 1) !important;
+  color: #222 !important;
+}
+.META_EXPORT {
+  background-color: rgba(253, 192, 47, 1) !important;
+  color: #222 !important;
+}
+.GISAID {
+  background-color: rgba(154, 159, 226, 1) !important;
+  color: #222 !important;
+}
+.CONSENSUS {
+  background-color: rgba(250, 159, 181, 1) !important;
+}

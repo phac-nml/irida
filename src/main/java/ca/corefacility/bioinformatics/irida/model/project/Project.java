@@ -170,6 +170,14 @@ public class Project extends IridaRepresentationModel
 		this.id = id;
 	}
 
+	public boolean isMasterProject(){
+		return (id == 1L || id == 3L || id == 4L);
+	}
+
+	public boolean isInternalProject(){
+		return (name.contains("non umani") || name.contains("Test") || name.contains("Urgent Inquiries"));
+	}
+
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof Project) {

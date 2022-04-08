@@ -96,6 +96,9 @@ public class UIProjectSampleService {
 			if (!Strings.isNullOrEmpty(request.getOrganism())) {
 				sample.setOrganism(request.getOrganism());
 			}
+			else { // ISS force project organism
+				sample.setOrganism(project.getOrganism());
+			}
 			Join<Project, Sample> join = projectService.addSampleToProject(project, sample, true);
 			return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(join.getObject()
 					.getId()));

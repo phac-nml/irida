@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+	<id>1a029ee9-dee8-44fc-a56c-9ebca08df0f8</id>
+	<name>GISAID</name>
+	<version>1.0</version>
+	<analysisType>GISAID</analysisType>
+	<inputs>
+		<sequenceReadsPaired>input_collection</sequenceReadsPaired>
+		<requiresSingleSample>false</requiresSingleSample>
+	</inputs>
+	<parameters>
+		<parameter name="recovgisaid_user" defaultValue="user">
+			<toolParameter
+				toolId="recovgisaid"
+				parameterName="user" />
+		</parameter>
+	</parameters>
+	<outputs>
+        <output name="recovgisaid_csv" fileName="gisaid_csv.csv"/>
+        <output name="recovgisaid_fasta" fileName="gisaid_fasta.fasta"/>
+        <output name="recovgisaid_result" fileName="gisaid_result.txt"/>
+	</outputs>
+	<toolRepositories>
+		<repository>
+		  <name>collapse_collections</name>
+		  <owner>nml</owner>
+		  <url>https://irida.corefacility.ca/galaxy-shed</url>
+		  <revision>7e5a39b5dad3</revision>
+		</repository>
+	</toolRepositories>
+</iridaWorkflow>

@@ -29,8 +29,15 @@ public class ProjectSampleModel extends AbstractExportModel {
 			"strain",
 			"collectedBy",
 			"collectionDate",
+			"arrivalDate",
+			"sequencedBy",
 			"geographicLocationName",
+			"geographicLocationName2",
+			"geographicLocationName3",
 			"isolationSource",
+			"patientAge",
+			"patientVaccinationNumber",
+			"patientVaccinationDate",
 			"latitude",
 			"longitude",
 			"owner"
@@ -90,13 +97,41 @@ public class ProjectSampleModel extends AbstractExportModel {
 	public String getCollectionDate() {
 		return checkNullDate(sample.getCollectionDate());
 	}
+	
+	public String getArrivalDate() {
+		return checkNullDate(sample.getArrivalDate());
+	}
+
+	public String getSequencedBy() {
+		return checkNullStrings(sample.getSequencedBy());
+	}
 
 	public String getGeographicLocationName() {
 		return checkNullStrings(sample.getGeographicLocationName());
 	}
 
+	public String getGeographicLocationName2() {
+		return checkNullStrings(sample.getGeographicLocationName2());
+	}
+
+	public String getGeographicLocationName3() {
+		return checkNullStrings(sample.getGeographicLocationName3());
+	}
+
 	public String getIsolationSource() {
 		return checkNullStrings(sample.getIsolationSource());
+	}
+
+	public String getPatientAge() {
+		return checkNullStrings(sample.getPatientAge());
+	}
+
+	public String getPatientVaccinationNumber() {
+		return checkNullStrings(sample.getPatientVaccinationNumber());
+	}
+
+	public String getPatientVaccinationDate() {
+		return checkNullDate(sample.getPatientVaccinationDate());
 	}
 
 	public String getLatitude() {

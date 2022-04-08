@@ -6,6 +6,7 @@ package ca.corefacility.bioinformatics.irida.model.enums;
  */
 public enum ProjectRole {
 
+    PROJECT_VIEWER("PROJECT_VIEWER"),
     PROJECT_USER("PROJECT_USER"),
     PROJECT_OWNER("PROJECT_OWNER");
 	
@@ -27,6 +28,8 @@ public enum ProjectRole {
      */
     public static ProjectRole fromString(String code) {
         switch (code.toUpperCase()) {
+            case "PROJECT_VIEWER":
+                return PROJECT_VIEWER;
             case "PROJECT_USER":
                 return PROJECT_USER;
             case "PROJECT_OWNER":
@@ -36,4 +39,3 @@ public enum ProjectRole {
         }
     }
 }
-

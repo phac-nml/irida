@@ -35,6 +35,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+// ISS
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+
 /**
  * File processor used to launch an automated analysis for uploaded data.  This will take the {@link
  * AnalysisSubmissionTemplate}s for a {@link Project} and convert them to {@link AnalysisSubmission}s and submit them.
@@ -54,12 +57,14 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 	private final SequencingObjectRepository objectRepository;
 	private final MessageSource messageSource;
 
+	private final ProjectService projectService;
+
 	@Autowired
 	public AutomatedAnalysisFileProcessor(SampleSequencingObjectJoinRepository ssoRepository,
 			ProjectSampleJoinRepository psjRepository, AnalysisSubmissionRepository submissionRepository,
 			AnalysisSubmissionTemplateRepository analysisTemplateRepository,
 			ProjectAnalysisSubmissionJoinRepository pasRepository, IridaWorkflowsService workflowsService,
-			SequencingObjectRepository objectRepository, MessageSource messageSource) {
+			SequencingObjectRepository objectRepository, MessageSource messageSource, ProjectService projectService) {
 		this.ssoRepository = ssoRepository;
 		this.psjRepository = psjRepository;
 		this.submissionRepository = submissionRepository;
@@ -68,6 +73,8 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 		this.workflowsService = workflowsService;
 		this.objectRepository = objectRepository;
 		this.messageSource = messageSource;
+
+		this.projectService = projectService;
 	}
 
 	/**
@@ -123,13 +130,100 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 							builder.priority(AnalysisSubmission.Priority.LOW);
 						}
 
+						// ISS set pipeline specific parameters
+						Long masterProjectId = 3L;
+						Boolean writeToMaster = false;
+						if (project.getName() != null) {
+							if (project.getName().contains("STEC") || project.getName().contains("Listeria")) {
+								builder.updateSamples(true);
+								String species = "Escherichia coli";
+								String genomeSize = "5.0";
+								String trueConfigFile = "escherichia_coli.config";
+								// H_ + idSample se progetto locale, altrimenti letto da metadati Sample_code
+								String sample_code = "H_" + sampleForSequencingObject.getSubject().getId().toString();
+								// V_ + idSample se progetti non umani
+								if (project.getName().contains("non umani")) {
+									sample_code = "V_" + sampleForSequencingObject.getSubject().getId().toString();
+								}
+								// Projects that don't share with the master project
+								if (!project.getName().contains("non umani") && !project.getName().contains("Test") && !project.getName().contains("Urgent Inquiries")) {
+									writeToMaster = true;
+								} 
+
+								species = sampleForSequencingObject.getSubject().getOrganism();
+								String region = "-";
+								if (sampleForSequencingObject.getSubject().getGeographicLocationName() != null) {
+									region = sampleForSequencingObject.getSubject().getGeographicLocationName();
+								}
+								String year = "-";
+								if (sampleForSequencingObject.getSubject().getCollectionDate() != null) {
+									year = Integer.toString(sampleForSequencingObject.getSubject().getCollectionDate().getYear()+1900);
+								}
+								if (species.equals("Shiga toxin-producing Escherichia coli")){
+									species = "Escherichia coli";
+								}
+								if (species.equals("Listeria monocytogenes")){
+									masterProjectId = 4L;
+									genomeSize = "3.3";
+									trueConfigFile = "listeria_monocytogenes.config";
+								}
+
+								builder.inputParameter("phanta_species", species);
+								builder.inputParameter("phanta_genomeSize", genomeSize);
+								builder.inputParameter("phanta_sample_code", sample_code);
+								builder.inputParameter("phanta_trueConfigFile", trueConfigFile);
+								builder.inputParameter("phantt-ec_sample_code", sample_code);
+								builder.inputParameter("phantt-ec_species", species);
+								builder.inputParameter("phantt-ec_region", region);
+								builder.inputParameter("phantt-ec_year", year);
+								builder.inputParameter("phantt-lm_sample_code", sample_code);
+								builder.inputParameter("phantt-lm_species", species);
+								builder.inputParameter("phantt-lm_region", region);
+								builder.inputParameter("phantt-lm_year", year);
+								builder.inputParameter("phantc-ec_sample_code", sample_code);
+								builder.inputParameter("phantc-ec_species", species);
+								builder.inputParameter("phantc-lm_sample_code", sample_code);
+								builder.inputParameter("phantc-lm_species", species);
+							}
+
+							if (project.getName().contains("SARS-CoV-2")) {
+								builder.updateSamples(true);
+								// Projects that don't share with the master project
+								if (!project.getName().contains("Test")) {
+									writeToMaster = true;
+								} 
+								String library = "iont";
+								String sample_code = "" + sampleName;
+								masterProjectId = 1L;
+								String region = "-";
+								if(sampleForSequencingObject.getSubject().getGeographicLocationName() != null) {
+									region = sampleForSequencingObject.getSubject().getGeographicLocationName();
+								}
+								String year = "-";
+								if(sampleForSequencingObject.getSubject().getCollectionDate() != null) {
+									year = LAUNCHED_DATE_FORMAT.format(sampleForSequencingObject.getSubject().getCollectionDate());
+								}
+								builder.inputParameter("recovg_name", sample_code);
+								builder.inputParameter("recovj_name", sample_code);
+								builder.inputParameter("recovj_region", region);
+								builder.inputParameter("recovj_year", year);
+							}
+						}
+
 						//build the submission and save it
 						AnalysisSubmission submission = builder.inputFiles(Sets.newHashSet(sequencingObject))
 								.build();
 						submission = submissionRepository.save(submission);
 
-						//share submission back to the project
-						pasRepository.save(new ProjectAnalysisSubmissionJoin(project, submission));
+						//share submission back to the project if not Masterproject
+						if (!project.isMasterProject()) {
+							pasRepository.save(new ProjectAnalysisSubmissionJoin(project, submission));
+						}
+						// Share samples with the master project if requested
+						if (writeToMaster) {
+							Project masterProject = projectService.read(masterProjectId);
+							projectService.addSampleToProject(masterProject, sampleForSequencingObject.getSubject(), false);
+						}
 
 						//check if we have to do any legacy updates
 						legacyFileProcessorCompatibility(submission, sequencingObject);
@@ -265,16 +359,22 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 	 * @param sequencingObject the {@link SequencingObject} to apply results to.
 	 */
 	private void legacyFileProcessorCompatibility(AnalysisSubmission submission, SequencingObject sequencingObject) {
-		if (submission.getUpdateSamples()) {
+		// ISS do it always for PHANTASTIC and RECOVERY
+		//if (submission.getUpdateSamples()) {
 			try {
 				IridaWorkflow assemblyWorkflow = workflowsService.getDefaultWorkflowByType(
 						BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
 				IridaWorkflow sistrWorkflow = workflowsService.getDefaultWorkflowByType(
 						BuiltInAnalysisTypes.SISTR_TYPING);
+				IridaWorkflow phantasticWorkflow = workflowsService.getDefaultWorkflowByType(
+						BuiltInAnalysisTypes.PHANTASTIC_TYPING);
+				IridaWorkflow recoveryWorkflow = workflowsService.getDefaultWorkflowByType(
+						BuiltInAnalysisTypes.RECOVERY_TYPING);
 
 				UUID assemblyWorkflowWorkflowIdentifier = assemblyWorkflow.getWorkflowIdentifier();
 				UUID sistrWorkflowWorkflowIdentifier = sistrWorkflow.getWorkflowIdentifier();
-
+				UUID phantasticWorkflowWorkflowIdentifier = phantasticWorkflow.getWorkflowIdentifier();
+				UUID recoveryWorkflowWorkflowIdentifier = recoveryWorkflow.getWorkflowIdentifier();
 				if (submission.getWorkflowId()
 						.equals(assemblyWorkflowWorkflowIdentifier)) {
 					// Associate the assembly submission with the seqobject
@@ -287,12 +387,24 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 					sequencingObject.setSistrTyping(submission);
 
 					objectRepository.save(sequencingObject);
+				} else if (submission.getWorkflowId()
+						.equals(phantasticWorkflowWorkflowIdentifier)) {
+					// Associate the phantastic submission with the seqobject
+					sequencingObject.setPhantasticTyping(submission);
+
+					objectRepository.save(sequencingObject);
+				} else if (submission.getWorkflowId()
+						.equals(recoveryWorkflowWorkflowIdentifier)) {
+					// Associate the recovery submission with the seqobject
+					sequencingObject.setRecoveryTyping(submission);
+
+					objectRepository.save(sequencingObject);
 				}
 
 			} catch (IridaWorkflowNotFoundException e) {
 				logger.error("Could not associate automated workflow with analysis " + submission.getIdentifier(), e);
 			}
-		}
+		//}
 	}
 
 	@Override

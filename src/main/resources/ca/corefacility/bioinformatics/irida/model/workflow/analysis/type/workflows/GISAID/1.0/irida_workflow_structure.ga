@@ -1,0 +1,244 @@
+{
+    "a_galaxy_workflow": "true",
+    "annotation": "Uploader to GISAID for I-Co-Gen data",
+    "format-version": "0.1",
+    "name": "GISAID",
+    "steps": {
+        "0": {
+            "annotation": "",
+            "content_id": null,
+            "errors": null,
+            "id": 0,
+            "input_connections": {},
+            "inputs": [
+                {
+                    "description": "",
+                    "name": "input_collection"
+                }
+            ],
+            "label": "input_collection",
+            "name": "Input dataset collection",
+            "outputs": [],
+            "position": {
+                "bottom": 187.1999969482422,
+                "height": 61.19999694824219,
+                "left": 130,
+                "right": 330,
+                "top": 126,
+                "width": 200,
+                "x": 130,
+                "y": 126
+            },
+            "tool_id": null,
+            "tool_state": "{\"optional\": false, \"collection_type\": \"list:paired\"}",
+            "tool_version": null,
+            "type": "data_collection_input",
+            "uuid": "5725ba04-ef40-41d5-bcb1-28f16279b3d6",
+            "workflow_outputs": []
+        },
+        "1": {
+            "annotation": "",
+            "content_id": "recovgisaid-pre",
+            "errors": null,
+            "id": 1,
+            "input_connections": {
+                "input_pc": {
+                    "id": 0,
+                    "output_name": "output"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "RECoVGISAID-pre",
+            "outputs": [
+                {
+                    "name": "recovgisaid_filenames",
+                    "type": "tabular"
+                }
+            ],
+            "position": {
+                "bottom": 203.39999389648438,
+                "height": 92.39999389648438,
+                "left": 408.3999938964844,
+                "right": 608.3999938964844,
+                "top": 111,
+                "width": 200,
+                "x": 408.3999938964844,
+                "y": 111
+            },
+            "post_job_actions": {
+                "HideDatasetActionrecovgisaid_filenames": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "recovgisaid_filenames"
+                }
+            },
+            "tool_id": "recovgisaid-pre",
+            "tool_state": "{\"input_pc\": {\"__class__\": \"ConnectedValue\"}, \"token\": \"\", \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.0",
+            "type": "tool",
+            "uuid": "c10b7171-5aef-410e-afd0-877fecbb24ea",
+            "workflow_outputs": []
+        },
+        "2": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/collapse_collections/collapse_dataset/5.1.0",
+            "errors": null,
+            "id": 2,
+            "input_connections": {
+                "input_list": {
+                    "id": 1,
+                    "output_name": "recovgisaid_filenames"
+                }
+            },
+            "inputs": [],
+            "label": "Filenames",
+            "name": "Collapse Collection",
+            "outputs": [
+                {
+                    "name": "output",
+                    "type": "input"
+                }
+            ],
+            "position": {
+                "bottom": 212.8000030517578,
+                "height": 112.80000305175781,
+                "left": 686.7999877929688,
+                "right": 886.7999877929688,
+                "top": 100,
+                "width": 200,
+                "x": 686.7999877929688,
+                "y": 100
+            },
+            "post_job_actions": {
+                "HideDatasetActionoutput": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "output"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/collapse_collections/collapse_dataset/5.1.0",
+            "tool_shed_repository": {
+                "changeset_revision": "90981f86000f",
+                "name": "collapse_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"filename\": {\"add_name\": \"false\", \"__current_case__\": 1}, \"input_list\": {\"__class__\": \"ConnectedValue\"}, \"one_header\": \"false\", \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "5.1.0",
+            "type": "tool",
+            "uuid": "39edc8cc-10da-4d6e-8f37-3b5f5e278b5e",
+            "workflow_outputs": []
+        },
+        "3": {
+            "annotation": "",
+            "content_id": "recovgisaid",
+            "errors": null,
+            "id": 3,
+            "input_connections": {
+                "recovgisaid_filenames": {
+                    "id": 2,
+                    "output_name": "output"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "RECoVGISAID",
+            "outputs": [
+                {
+                    "name": "recovgisaid_csv",
+                    "type": "csv"
+                },
+                {
+                    "name": "recovgisaid_fasta",
+                    "type": "fasta"
+                },
+                {
+                    "name": "recovgisaid_result",
+                    "type": "txt"
+                }
+            ],
+            "position": {
+                "bottom": 334.3999938964844,
+                "height": 214.39999389648438,
+                "left": 965.2000122070312,
+                "right": 1165.2000122070312,
+                "top": 120,
+                "width": 200,
+                "x": 965.2000122070312,
+                "y": 120
+            },
+            "post_job_actions": {
+                "ChangeDatatypeActionrecovgisaid_csv": {
+                    "action_arguments": {
+                        "newtype": "csv"
+                    },
+                    "action_type": "ChangeDatatypeAction",
+                    "output_name": "recovgisaid_csv"
+                },
+                "ChangeDatatypeActionrecovgisaid_fasta": {
+                    "action_arguments": {
+                        "newtype": "fasta"
+                    },
+                    "action_type": "ChangeDatatypeAction",
+                    "output_name": "recovgisaid_fasta"
+                },
+                "ChangeDatatypeActionrecovgisaid_result": {
+                    "action_arguments": {
+                        "newtype": "txt"
+                    },
+                    "action_type": "ChangeDatatypeAction",
+                    "output_name": "recovgisaid_result"
+                },
+                "RenameDatasetActionrecovgisaid_csv": {
+                    "action_arguments": {
+                        "newname": "gisaid_csv.csv"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "recovgisaid_csv"
+                },
+                "RenameDatasetActionrecovgisaid_fasta": {
+                    "action_arguments": {
+                        "newname": "gisaid_fasta.fasta"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "recovgisaid_fasta"
+                },
+                "RenameDatasetActionrecovgisaid_result": {
+                    "action_arguments": {
+                        "newname": "gisaid_result.txt"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "recovgisaid_result"
+                }
+            },
+            "tool_id": "recovgisaid",
+            "tool_state": "{\"recovgisaid_filenames\": {\"__class__\": \"ConnectedValue\"}, \"user\": \"\", \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "1.0",
+            "type": "tool",
+            "uuid": "eb2ee64c-8d99-4466-b884-75f44e3f59c0",
+            "workflow_outputs": [
+                {
+                    "label": "csv for the GISAID upload",
+                    "output_name": "recovgisaid_csv",
+                    "uuid": "c9d5b57d-7761-491a-8e96-5b47e01744f4"
+                },
+                {
+                    "label": "multifasta for the GISAID upload",
+                    "output_name": "recovgisaid_fasta",
+                    "uuid": "61fa8051-6fa2-4071-a81b-6b597fceeef6"
+                },
+                {
+                    "label": "result from the GISAID upload",
+                    "output_name": "recovgisaid_result",
+                    "uuid": "a065d5f5-d175-4900-a4fc-fbbf98e6aacd"
+                }
+            ]
+        }
+    },
+    "tags": [
+        "IRIDA21"
+    ],
+    "uuid": "33ab59d1-fc57-492d-8db3-403b3b0533d8",
+    "version": 1
+}

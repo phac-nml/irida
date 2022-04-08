@@ -48,6 +48,9 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParametersService;
 
 import com.github.jmchilton.blend4j.galaxy.beans.TabularToolDataTable;
+/** ISS **/
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * UI Service for all things related to workflow pipelines.
@@ -409,7 +412,7 @@ public class UIPipelineService {
 				.filter(p -> !p.isRequired())
 				.map(p -> new Input(p.getName(),
 						messageSource.getMessage("pipeline.parameters." + pipelineName + "." + p.getName(),
-								new Object[] {}, locale), p.getDefaultValue()))
+								new Object[] {}, locale), getSamplePipelineParameters(p)))
 				.collect(Collectors.toList());
 		savedParameters.add(new SavedPipelineParameters(0L,
 				messageSource.getMessage("workflow.parameters.named.default", new Object[] {}, locale),
@@ -439,6 +442,33 @@ public class UIPipelineService {
 				.collect(Collectors.toList()));
 
 		return savedParameters;
+	}
+
+	/**
+	 * ISS - Intercept DefaultValues for parameters
+	 *
+	 * @param parm   - IridaWorkflowParameter
+	 * @return string of IridaWorkflowParameterValue
+	 */
+	private String getSamplePipelineParameters(IridaWorkflowParameter parm) {
+		String pMyValue = parm.getDefaultValue();
+        String sampleOrganism = "";
+        String useremail = "";
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		useremail = userDetails.getUsername();
+		List<Project> projects = (List<Project>) projectService.readMultiple(cartService.getProjectIdsInCart());
+		for (Project project : projects) {
+			sampleOrganism = project.getOrganism();
+		}
+		if (sampleOrganism != null && sampleOrganism.equals("Shiga toxin-producing Escherichia coli")) { sampleOrganism = "Escherichia coli"; }
+		if (parm.getName().endsWith("_species")) {
+			pMyValue = sampleOrganism;
+		}
+		if (parm.getName().endsWith("_user")) {
+			pMyValue = useremail;
+		}
+
+		return pMyValue;
 	}
 
 	/**

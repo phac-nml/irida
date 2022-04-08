@@ -102,6 +102,15 @@ public class AnalysisTypesServiceImpl implements AnalysisTypesService {
 	public void registerDefaultTypes() {
 		registerRunnableType(BuiltInAnalysisTypes.PHYLOGENOMICS, "tree");
 		registerRunnableType(BuiltInAnalysisTypes.SISTR_TYPING, "sistr");
+		registerRunnableType(BuiltInAnalysisTypes.PHANTASTIC_TYPING, "tree");
+		registerRunnableType(BuiltInAnalysisTypes.RECOVERY_TYPING);
+		registerRunnableType(BuiltInAnalysisTypes.ALLELE_OBSERVER, "tree");
+		registerRunnableType(BuiltInAnalysisTypes.SNP_OBSERVER, "tree");
+		registerRunnableType(BuiltInAnalysisTypes.VIRULOTYPER);
+		registerRunnableType(BuiltInAnalysisTypes.SUMMARY);
+		registerRunnableType(BuiltInAnalysisTypes.META_EXPORT);
+		registerRunnableType(BuiltInAnalysisTypes.GISAID);
+		registerRunnableType(BuiltInAnalysisTypes.CONSENSUS);
 		registerRunnableType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
 		registerRunnableType(BuiltInAnalysisTypes.BIO_HANSEL, "biohansel");
 		registerRunnableType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION);

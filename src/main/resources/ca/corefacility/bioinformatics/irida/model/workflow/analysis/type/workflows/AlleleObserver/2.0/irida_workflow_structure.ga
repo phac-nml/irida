@@ -1,0 +1,244 @@
+{
+    "a_galaxy_workflow": "true",
+    "annotation": "",
+    "format-version": "0.1",
+    "name": "AlleleObserver 2.0",
+    "steps": {
+        "0": {
+            "annotation": "",
+            "content_id": null,
+            "errors": null,
+            "id": 0,
+            "input_connections": {},
+            "inputs": [
+                {
+                    "description": "",
+                    "name": "input_collection"
+                }
+            ],
+            "label": "input_collection",
+            "name": "Input dataset collection",
+            "outputs": [],
+            "position": {
+                "bottom": 187.1999969482422,
+                "height": 61.19999694824219,
+                "left": 80,
+                "right": 280,
+                "top": 126,
+                "width": 200,
+                "x": 80,
+                "y": 126
+            },
+            "tool_id": null,
+            "tool_state": "{\"optional\": false, \"collection_type\": \"list:paired\"}",
+            "tool_version": null,
+            "type": "data_collection_input",
+            "uuid": "86f940cc-df69-4732-ac2b-3e6702b167ed",
+            "workflow_outputs": []
+        },
+        "1": {
+            "annotation": "",
+            "content_id": "phant-pre",
+            "errors": null,
+            "id": 1,
+            "input_connections": {
+                "input_pc": {
+                    "id": 0,
+                    "output_name": "output"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "PHANt-pre",
+            "outputs": [
+                {
+                    "name": "phants_filename",
+                    "type": "tabular"
+                }
+            ],
+            "position": {
+                "bottom": 203.39999389648438,
+                "height": 92.39999389648438,
+                "left": 358.3999938964844,
+                "right": 558.3999938964844,
+                "top": 111,
+                "width": 200,
+                "x": 358.3999938964844,
+                "y": 111
+            },
+            "post_job_actions": {
+                "HideDatasetActionphants_filename": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "phants_filename"
+                }
+            },
+            "tool_id": "phant-pre",
+            "tool_state": "{\"input_pc\": {\"__class__\": \"ConnectedValue\"}, \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "2.3",
+            "type": "tool",
+            "uuid": "5a36791b-8b19-4296-956a-d5977579ba6b",
+            "workflow_outputs": []
+        },
+        "2": {
+            "annotation": "",
+            "content_id": "toolshed.g2.bx.psu.edu/repos/nml/collapse_collections/collapse_dataset/5.1.0",
+            "errors": null,
+            "id": 2,
+            "input_connections": {
+                "input_list": {
+                    "id": 1,
+                    "output_name": "phants_filename"
+                }
+            },
+            "inputs": [],
+            "label": "Filenames",
+            "name": "Collapse Collection",
+            "outputs": [
+                {
+                    "name": "output",
+                    "type": "input"
+                }
+            ],
+            "position": {
+                "bottom": 212.8000030517578,
+                "height": 112.80000305175781,
+                "left": 636.7999877929688,
+                "right": 836.7999877929688,
+                "top": 100,
+                "width": 200,
+                "x": 636.7999877929688,
+                "y": 100
+            },
+            "post_job_actions": {
+                "HideDatasetActionoutput": {
+                    "action_arguments": {},
+                    "action_type": "HideDatasetAction",
+                    "output_name": "output"
+                }
+            },
+            "tool_id": "toolshed.g2.bx.psu.edu/repos/nml/collapse_collections/collapse_dataset/5.1.0",
+            "tool_shed_repository": {
+                "changeset_revision": "90981f86000f",
+                "name": "collapse_collections",
+                "owner": "nml",
+                "tool_shed": "toolshed.g2.bx.psu.edu"
+            },
+            "tool_state": "{\"filename\": {\"add_name\": \"false\", \"__current_case__\": 1}, \"input_list\": {\"__class__\": \"ConnectedValue\"}, \"one_header\": \"false\", \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "5.1.0",
+            "type": "tool",
+            "uuid": "b66397d6-6bdc-4c4a-9b56-a4a49d08398e",
+            "workflow_outputs": []
+        },
+        "3": {
+            "annotation": "",
+            "content_id": "phantv",
+            "errors": null,
+            "id": 3,
+            "input_connections": {
+                "phantv_filenames": {
+                    "id": 2,
+                    "output_name": "output"
+                }
+            },
+            "inputs": [],
+            "label": null,
+            "name": "PHANtV",
+            "outputs": [
+                {
+                    "name": "phantv_am",
+                    "type": "tabular"
+                },
+                {
+                    "name": "phantv_dm",
+                    "type": "tabular"
+                },
+                {
+                    "name": "phantv_tree",
+                    "type": "nwk"
+                }
+            ],
+            "position": {
+                "bottom": 366.1999969482422,
+                "height": 255.1999969482422,
+                "left": 915.2000122070312,
+                "right": 1115.2000122070312,
+                "top": 111,
+                "width": 200,
+                "x": 915.2000122070312,
+                "y": 111
+            },
+            "post_job_actions": {
+                "ChangeDatatypeActionphantv_am": {
+                    "action_arguments": {
+                        "newtype": "tsv"
+                    },
+                    "action_type": "ChangeDatatypeAction",
+                    "output_name": "phantv_am"
+                },
+                "ChangeDatatypeActionphantv_dm": {
+                    "action_arguments": {
+                        "newtype": "tsv"
+                    },
+                    "action_type": "ChangeDatatypeAction",
+                    "output_name": "phantv_dm"
+                },
+                "ChangeDatatypeActionphantv_tree": {
+                    "action_arguments": {
+                        "newtype": "nwk"
+                    },
+                    "action_type": "ChangeDatatypeAction",
+                    "output_name": "phantv_tree"
+                },
+                "RenameDatasetActionphantv_am": {
+                    "action_arguments": {
+                        "newname": "allele_am.tsv"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "phantv_am"
+                },
+                "RenameDatasetActionphantv_dm": {
+                    "action_arguments": {
+                        "newname": "allele_dm.tsv"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "phantv_dm"
+                },
+                "RenameDatasetActionphantv_tree": {
+                    "action_arguments": {
+                        "newname": "allele_tree.newick"
+                    },
+                    "action_type": "RenameDatasetAction",
+                    "output_name": "phantv_tree"
+                }
+            },
+            "tool_id": "phantv",
+            "tool_state": "{\"phantv_filenames\": {\"__class__\": \"ConnectedValue\"}, \"species\": \"\", \"token\": \"\", \"useNames\": \"false\", \"__page__\": null, \"__rerun_remap_job_id__\": null}",
+            "tool_version": "2.3",
+            "type": "tool",
+            "uuid": "f651402f-06a1-48c5-89df-6eaf3e010244",
+            "workflow_outputs": [
+                {
+                    "label": null,
+                    "output_name": "phantv_dm",
+                    "uuid": "b6508879-a959-4070-8a30-48025ac7fd46"
+                },
+                {
+                    "label": null,
+                    "output_name": "phantv_am",
+                    "uuid": "42384722-30fc-4f5a-a363-18b50fce6a0e"
+                },
+                {
+                    "label": null,
+                    "output_name": "phantv_tree",
+                    "uuid": "2c5a0d08-14e5-459e-ba31-85f6d7f4102d"
+                }
+            ]
+        }
+    },
+    "tags": [
+        "IRIDA21"
+    ],
+    "uuid": "8f263fbe-6fb3-40f2-adb3-3cbca16f0a4f",
+    "version": 1
+}

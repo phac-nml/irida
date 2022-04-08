@@ -26,6 +26,11 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
 
+//ISS
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 /**
  * UI service to handle parsing metadata files so they can be saved to the session.
  */
@@ -133,6 +138,7 @@ public class UIMetadataFileImportService {
 					if (!Strings.isNullOrEmpty(header)) {
 						// Need to ignore empty headers.
 						if (cell.getCellType().equals(CellType.NUMERIC)) {
+<<<<<<< Updated upstream
 								/*
 								This is a special handler for number cells.  It was requested that numbers
 								keep their formatting from their excel files.  E.g. 2.222222 with formatting
@@ -141,6 +147,26 @@ public class UIMetadataFileImportService {
 							DataFormatter formatter = new DataFormatter();
 							String value = formatter.formatCellValue(cell);
 							rowMap.put(header, value);
+=======
+							/*
+							 * This is a special handler for number cells. It
+							 * was requested that numbers keep their formatting
+							 * from their excel files. E.g. 2.222222 with
+							 * formatting for 2 decimal places will be saved as
+							 * 2.22.
+							 */
+							if (header.equals("DataSintomi") || header.equals("DataUltimaVaccinazione")) {
+								cell.setCellType(Cell.CELL_TYPE_STRING);
+								long excelDateLong = Long.parseLong(cell.getStringCellValue());
+								LocalDate dateOfExcel = LocalDate.of(1900, 1, 1);
+								LocalDate javadate = dateOfExcel.plusDays(excelDateLong - 2);
+								rowMap.put(header, javadate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+							} else {
+								DataFormatter formatter = new DataFormatter();
+								String value = formatter.formatCellValue(cell);
+								rowMap.put(header, value);
+							}
+>>>>>>> Stashed changes
 						} else {
 							cell.setCellType(CellType.STRING);
 							rowMap.put(header, cell.getStringCellValue());
@@ -231,6 +257,31 @@ public class UIMetadataFileImportService {
 
 				if (sampleService.getSampleBySampleName(project, value) != null) {
 					columnName = key;
+					// ISS map names to columnNames
+					switch (key) {
+						case "CodiceInterno":  columnName = "strain";
+								break;
+						case "Provincia":  columnName = "geographicLocationName2";
+								break;
+						case "Comune":  columnName = "geographicLocationName3";
+								break;
+						case "Ospedale":  columnName = "collectedBy";
+								break;
+						case "DataSintomi":  columnName = "collectionDate";
+								break;
+						case "DataArrivo":  columnName = "arrivalDate";
+								break;
+						case "OrigineIsolato":  columnName = "isolationSource";
+								break;
+						case "CondizioneClinica":  columnName = "isolate";
+								break;
+						case "FasciaEta":  columnName = "patientAge";
+								break;
+						case "NumeroVaccinazione":  columnName = "patientVaccinationNumber";
+								break;
+						case "DataUltimaVaccinazione":  columnName = "patientVaccinationDate";
+								break;
+					}
 				}
 			} catch (EntityNotFoundException entityNotFoundException) {
 				logger.trace("Sample " + value + " in project " + project.getId() + " is not found.",

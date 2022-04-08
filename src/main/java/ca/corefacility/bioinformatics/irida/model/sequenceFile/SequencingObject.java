@@ -64,6 +64,16 @@ public abstract class SequencingObject extends IridaRepresentationModel implemen
 	private AnalysisSubmission sistrTyping;
 
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "phantastic_typing", unique = true, nullable = true)
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+	private AnalysisSubmission phantasticTyping;
+
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "recovery_typing", unique = true, nullable = true)
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+	private AnalysisSubmission recoveryTyping;
+
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
 
@@ -168,6 +178,24 @@ public abstract class SequencingObject extends IridaRepresentationModel implemen
 
 	public void setSistrTyping(AnalysisSubmission sistrTyping) {
 		this.sistrTyping = sistrTyping;
+	}
+
+	@JsonIgnore
+	public AnalysisSubmission getPhantasticTyping() {
+		return phantasticTyping;
+	}
+
+	public void setPhantasticTyping(AnalysisSubmission phantasticTyping) {
+		this.phantasticTyping = phantasticTyping;
+	}
+
+	@JsonIgnore
+	public AnalysisSubmission getRecoveryTyping() {
+		return recoveryTyping;
+	}
+
+	public void setRecoveryTyping(AnalysisSubmission recoveryTyping) {
+		this.recoveryTyping = recoveryTyping;
 	}
 
 	@Override

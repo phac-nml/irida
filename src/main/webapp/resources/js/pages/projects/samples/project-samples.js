@@ -117,7 +117,10 @@ const EXPORT_HANDLERS = {
       associated,
       search,
       name,
+	  description,
+	  collectedby,
       organism,
+	  strain,
       startDate,
       endDate,
     } = $dt.ajax.params();
@@ -139,8 +142,20 @@ const EXPORT_HANDLERS = {
       data.associated = associated;
     }
 
+    if (description) {
+      data.description = description;
+    }
+
+    if (collectedby) {
+      data.collectedby = collectedby;
+    }
+
     if (organism) {
       data.organism = organism;
+    }
+
+    if (strain) {
+      data.strain = strain;
     }
 
     if (startDate && endDate) {
@@ -378,7 +393,7 @@ const config = Object.assign({}, tableConfig, {
       },
     },
     {
-      targets: [COLUMNS.CREATED_DATE, COLUMNS.MODIFIED_DATE],
+      targets: [COLUMNS.COLLECTION_DATE, COLUMNS.CREATED_DATE, COLUMNS.MODIFIED_DATE],
       render(data) {
         return `<time>${formatInternationalizedDateTime(data)}</time>`;
       },
@@ -571,8 +586,17 @@ $("#js-filter-modal-wrapper").on("show.bs.modal", function () {
   const $name = modal.find("#js-name");
   $name.val(TABLE_FILTERS.get(FILTERS.FILTER_BY_NAME));
 
+  const $description = modal.find("#js-description");
+  $description.val(TABLE_FILTERS.get(FILTERS.FILTER_BY_DESCRIPTION));
+
+  const $collectedby = modal.find("#js-collectedby");
+  $collectedby.val(TABLE_FILTERS.get(FILTERS.FILTER_BY_COLLECTEDBY));
+
   const $organism = modal.find("#js-organism");
   $organism.val(TABLE_FILTERS.get(FILTERS.FILTER_BY_ORGANISM));
+
+  const $strain = modal.find("#js-strain");
+  $strain.val(TABLE_FILTERS.get(FILTERS.FILTER_BY_STRAIN));
 
   // Get a list of organisms based on associated projects.
   const data = {
@@ -652,10 +676,28 @@ $("#js-filter-modal-wrapper").on("show.bs.modal", function () {
       TABLE_FILTERS.delete(FILTERS.FILTER_BY_NAME);
     }
 
+    if ($description.val()) {
+      TABLE_FILTERS.set(FILTERS.FILTER_BY_DESCRIPTION, $description.val());
+    } else {
+      TABLE_FILTERS.delete(FILTERS.FILTER_BY_DESCRIPTION);
+    }
+
+    if ($collectedby.val()) {
+      TABLE_FILTERS.set(FILTERS.FILTER_BY_COLLECTEDBY, $collectedby.val());
+    } else {
+      TABLE_FILTERS.delete(FILTERS.FILTER_BY_COLLECTEDBY);
+    }
+
     if ($organism.val()) {
       TABLE_FILTERS.set(FILTERS.FILTER_BY_ORGANISM, $organism.val());
     } else {
       TABLE_FILTERS.delete(FILTERS.FILTER_BY_ORGANISM);
+    }
+
+    if ($strain.val()) {
+      TABLE_FILTERS.set(FILTERS.FILTER_BY_STRAIN, $strain.val());
+    } else {
+      TABLE_FILTERS.delete(FILTERS.FILTER_BY_STRAIN);
     }
 
     // Check to see if the date range filter needs to be applied.
@@ -732,12 +774,45 @@ function displayFilters(filters) {
     );
   }
 
+  if (filters.has(FILTERS.FILTER_BY_DESCRIPTION)) {
+    createChip(
+      i18n("project.sample.filter-description"),
+      filters.get(FILTERS.FILTER_BY_DESCRIPTION),
+      () => {
+        filters.delete(FILTERS.FILTER_BY_DESCRIPTION);
+        $dt.ajax.reload();
+      }
+    );
+  }
+
+  if (filters.has(FILTERS.FILTER_BY_COLLECTEDBY)) {
+    createChip(
+      i18n("project.sample.filter-collectedby"),
+      filters.get(FILTERS.FILTER_BY_COLLECTEDBY),
+      () => {
+        filters.delete(FILTERS.FILTER_BY_COLLECTEDBY);
+        $dt.ajax.reload();
+      }
+    );
+  }
+
   if (filters.has(FILTERS.FILTER_BY_ORGANISM)) {
     createChip(
       i18n("project.sample.filter-organism"),
       filters.get(FILTERS.FILTER_BY_ORGANISM),
       () => {
         filters.delete(FILTERS.FILTER_BY_ORGANISM);
+        $dt.ajax.reload();
+      }
+    );
+  }
+
+  if (filters.has(FILTERS.FILTER_BY_STRAIN)) {
+    createChip(
+      i18n("project.sample.filter-strain"),
+      filters.get(FILTERS.FILTER_BY_STRAIN),
+      () => {
+        filters.delete(FILTERS.FILTER_BY_STRAIN);
         $dt.ajax.reload();
       }
     );

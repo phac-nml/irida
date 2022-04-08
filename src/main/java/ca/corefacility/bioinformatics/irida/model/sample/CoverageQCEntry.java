@@ -84,7 +84,8 @@ public class CoverageQCEntry extends QCEntry {
 		Integer maximumCoverage = project.getMaximumCoverage();
 
 		// if minimum is set, check if coverage is over it
-		if (minimumCoverage != null && coverage < minimumCoverage) {
+		// ISS exclude minimum if coverage is 0 or 1 (consensus)
+		if (minimumCoverage != null && coverage > 1 && coverage < minimumCoverage) {
 			status = QCEntryStatus.NEGATIVE;
 		}
 

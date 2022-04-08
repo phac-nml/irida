@@ -81,6 +81,15 @@ public interface EmailController {
 	public void sendPipelineStatusEmail(AnalysisSubmission submission) throws MailSendException;
 
 	/**
+	 * Send a notification email to the given {@link User} for the given analysis {@link String}
+	 *
+	 * @param user   The user to email
+	 * @param analysisName the name of the analysis
+	 * @throws MailSendException if the email failed to send
+	 */
+	public void sendEndOfAnalysisEmail(String recipientEmailAddresses, String analysisName, String sampleCode, String sampleSpecies, String clusterId, String clusters, String jsonstring) throws MailSendException;
+
+	/**
 	 * Email user responsible for a synchronized project when the sync job's credentials expire
 	 *
 	 * @param project The project that sync failed for

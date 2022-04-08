@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iridaWorkflow>
+	<id>6880cbe5-cc58-4248-97df-9034b7f7cb68</id>
+	<name>PHANTASTICTyping</name>
+	<version>1.0</version>
+	<analysisType>PHANTASTIC_TYPING</analysisType>
+	<inputs>
+		<sequenceReadsPaired>input_collection</sequenceReadsPaired>
+		<requiresSingleSample>true</requiresSingleSample>
+	</inputs>
+	<parameters>
+		<parameter name="phanta_token" defaultValue="tW9jiEusOSGvsE91qso1">
+			<toolParameter
+				toolId="phanta"
+				parameterName="token" />
+		</parameter>
+		<parameter name="phanta_species" defaultValue="Escherichia coli">
+			<toolParameter
+				toolId="phanta"
+				parameterName="species" />
+		</parameter>
+		<parameter name="phanta_genomeSize" defaultValue="5.0">
+			<toolParameter
+				toolId="phanta"
+				parameterName="genomeSize" />
+		</parameter>
+		<parameter name="phanta_sample_code" defaultValue="sample_code">
+			<toolParameter
+				toolId="phanta"
+				parameterName="input_id" />
+		</parameter>
+		<parameter name="phanta_trueConfigFile" defaultValue="escherichia_coli.config">
+			<toolParameter
+				toolId="phanta"
+				parameterName="TrueCoverage.trueConfigFile" />
+		</parameter>
+		<parameter name="phantt-ec_token" defaultValue="tW9jiEusOSGvsE91qso1">
+			<toolParameter
+				toolId="phantt-ec"
+				parameterName="token" />
+		</parameter>
+		<parameter name="phantt-ec_sample_code" defaultValue="sample_code">
+			<toolParameter
+				toolId="phantt-ec"
+				parameterName="input_id" />
+		</parameter>
+		<parameter name="phantt-ec_species" defaultValue="Escherichia coli">
+			<toolParameter
+				toolId="phantt-ec"
+				parameterName="species" />
+		</parameter>
+		<parameter name="phantt-ec_region" defaultValue="">
+			<toolParameter
+				toolId="phantt-ec"
+				parameterName="region" />
+		</parameter>
+		<parameter name="phantt-ec_year" defaultValue="">
+			<toolParameter
+				toolId="phantt-ec"
+				parameterName="year" />
+		</parameter>
+		<parameter name="phantt-lm_token" defaultValue="token">
+			<toolParameter
+				toolId="phantt-lm"
+				parameterName="token" />
+		</parameter>
+		<parameter name="phantt-lm_sample_code" defaultValue="sample_code">
+			<toolParameter
+				toolId="phantt-lm"
+				parameterName="input_id" />
+		</parameter>
+		<parameter name="phantt-lm_species" defaultValue="Escherichia coli">
+			<toolParameter
+				toolId="phantt-lm"
+				parameterName="species" />
+		</parameter>
+		<parameter name="phantt-lm_region" defaultValue="">
+			<toolParameter
+				toolId="phantt-lm"
+				parameterName="region" />
+		</parameter>
+		<parameter name="phantt-lm_year" defaultValue="">
+			<toolParameter
+				toolId="phantt-lm"
+				parameterName="year" />
+		</parameter>
+		<parameter name="phantc-ec_token" defaultValue="token">
+			<toolParameter
+				toolId="phantc-ec"
+				parameterName="token" />
+		</parameter>
+		<parameter name="phantc-ec_sample_code" defaultValue="sample_code">
+			<toolParameter
+				toolId="phantc-ec"
+				parameterName="input_id" />
+		</parameter>
+		<parameter name="phantc-ec_species" defaultValue="Escherichia coli">
+			<toolParameter
+				toolId="phantc-ec"
+				parameterName="species" />
+		</parameter>
+		<parameter name="phantc-lm_token" defaultValue="token">
+			<toolParameter
+				toolId="phantc-lm"
+				parameterName="token" />
+		</parameter>
+		<parameter name="phantc-lm_sample_code" defaultValue="sample_code">
+			<toolParameter
+				toolId="phantc-lm"
+				parameterName="input_id" />
+		</parameter>
+		<parameter name="phantc-lm_species" defaultValue="Escherichia coli">
+			<toolParameter
+				toolId="phantc-lm"
+				parameterName="species" />
+		</parameter>
+		<parameter name="phantj_token" defaultValue="token">
+			<toolParameter
+				toolId="phantj"
+				parameterName="token" />
+		</parameter>
+	</parameters>
+	<outputs>
+		<output name="phantastic_contigs" fileName="phantastic_contigs.fasta" />
+        <output name="phantastic_aq" fileName="phantastic_aq.tsv"/>
+        <output name="phantastic_type" fileName="phantastic_type.json"/>
+        <output name="phantastic_dm" fileName="phantastic_dm.tsv"/>
+        <output name="tree" fileName="phantastic_tree.newick"/>
+        <output name="allelecalls" fileName="phantastic_ac.tab" />
+        <output name="virulotypes" fileName="phantastic_vir.tab" />
+        <output name="amrgenes" fileName="phantastic_amr.tab" />
+	</outputs>
+	<toolRepositories>
+		<repository>
+		  <name>collapse_collections</name>
+		  <owner>nml</owner>
+		  <url>https://irida.corefacility.ca/galaxy-shed</url>
+		  <revision>7e5a39b5dad3</revision>
+		</repository>
+	</toolRepositories>
+</iridaWorkflow>

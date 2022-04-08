@@ -36,6 +36,15 @@ public class IridaAnalysisTypesServiceConfig {
 		// defines AnalysisTypes built into IRIDA
 		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.PHYLOGENOMICS, "tree");
 		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.SISTR_TYPING, "sistr");
+		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.PHANTASTIC_TYPING, "tree");
+		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.RECOVERY_TYPING);
+		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.ALLELE_OBSERVER, "tree");
+		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.SNP_OBSERVER, "tree");
+		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.VIRULOTYPER);
+		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.SUMMARY);
+		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.META_EXPORT);
+		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.GISAID);
+		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.CONSENSUS);
 		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION);
 		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.ASSEMBLY_ANNOTATION_COLLECTION);
 		analysisTypesService.registerRunnableType(BuiltInAnalysisTypes.BIO_HANSEL, "biohansel");
