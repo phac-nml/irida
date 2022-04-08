@@ -30,6 +30,7 @@ import com.google.common.collect.ImmutableList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class UIUserGroupsServiceTest {
@@ -40,7 +41,7 @@ public class UIUserGroupsServiceTest {
 	private final UserGroup GROUP_1 = new UserGroup("group 1");
 	private final UserGroup GROUP_2 = new UserGroup("group 2");
 	private final UserGroup GROUP_3 = new UserGroup("group 3");
-	private final TableRequest TABLE_REQUEST = new TableRequest(0, 10, "createdDate", "asc", "");
+	private final TableRequest TABLE_REQUEST = new TableRequest(1, 10, "createdDate", "asc", "");
 	private final List<UserGroup> GROUPS = ImmutableList.of(GROUP_1, GROUP_2, GROUP_3);
 	private UIUserGroupsService service;
 	private UserGroupService userGroupService;

@@ -61,6 +61,7 @@ export default function OverRepresentedSequences() {
         </Typography.Paragraph>
         <Table
           bordered
+          pagination={false}
           rowKey={(item) => item.identifier}
           loading={loading}
           columns={columns}

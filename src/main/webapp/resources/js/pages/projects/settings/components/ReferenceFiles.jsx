@@ -17,6 +17,7 @@ import { DragUpload } from "../../../../components/files/DragUpload";
 import { ContentLoading } from "../../../../components/loader";
 
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
+import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
 
 const { Title } = Typography;
 
@@ -32,6 +33,11 @@ export default function ReferenceFiles() {
   );
   const [projectReferenceFiles, setProjectReferenceFiles] = React.useState([]);
   const [, setProgress] = React.useState(0);
+  const [total, setTotal] = React.useState(0);
+
+  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
+    total,
+  ]);
 
   React.useEffect(updateReferenceFileTable, [projectId]);
 
@@ -118,6 +124,7 @@ export default function ReferenceFiles() {
     getProjectReferenceFiles(projectId)
       .then((files) => {
         setProjectReferenceFiles(files);
+        setTotal(files.length);
       })
       .catch((message) => {
         notification.error({ message });
@@ -200,6 +207,7 @@ export default function ReferenceFiles() {
             dataSource={projectReferenceFiles}
             rowKey={(file) => file.id}
             className="t-files-table"
+            pagination={paginationOptions}
           />
         ) : (
           <InfoAlert
