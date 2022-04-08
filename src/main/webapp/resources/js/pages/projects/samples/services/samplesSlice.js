@@ -15,10 +15,10 @@ const clearSelectedSamples = createAction("samples/table/selected/clear");
 
 const selectAllSamples = createAsyncThunk(
   "/samples/table/selected/all",
-  async (projectId, tableState) => {
+  async ({ projectId, options }) => {
     return await getMinimalSampleDetailsForFilteredProject(
       projectId,
-      tableState
+      options
     ).then(({ data }) => {
       const selected = data.reduce(
         (accumulator, value) => ({ ...accumulator, [value.key]: value }),

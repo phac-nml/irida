@@ -89,10 +89,11 @@ export function SamplesTable() {
    * @param e - React synthetic event
    * @returns {*}
    */
-  const updateSelectAll = e =>
+  const updateSelectAll = e => {
     e.target.checked
-      ? dispatch(selectAllSamples(projectId, options))
+      ? dispatch(selectAllSamples({projectId, options}))
       : dispatch(clearSelectedSamples());
+  };
 
   /**
    * Handle changes made to the table options.  This will trigger an automatic
@@ -105,7 +106,7 @@ export function SamplesTable() {
   const onTableChange = (pagination, filters, sorter) =>
     dispatch(
       updateTable({
-        ...{"associated": filters["associated"]},
+        filters: {"associated": filters["associated"]},
         pagination,
         order: formatSort(sorter),
         search: formatSearch(filters),

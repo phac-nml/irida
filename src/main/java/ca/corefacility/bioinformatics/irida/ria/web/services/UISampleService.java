@@ -294,8 +294,14 @@ public class UISampleService {
 		}
 		List<Project> projects = (List<Project>) projectService.readMultiple(projectIds);
 
-		Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, ImmutableList.of(), null,
-				null, null, null, null, 0, MAX_PAGE_SIZE, request.getSort());
+		ProjectSampleJoinSpecification filterSpec = new ProjectSampleJoinSpecification();
+		for (AntSearch search : request.getSearch()) {
+			filterSpec.add(new SearchCriteria(search.getProperty(), search.getValue(),
+					SearchOperation.fromString(search.getOperation())));
+		}
+
+		Page<ProjectSampleJoin> page = sampleService.getFilteredProjectSamples(projects, filterSpec, 0, MAX_PAGE_SIZE,
+				request.getSort());
 		while (!page.isEmpty()) {
 			// Get the ProjectSampleJoin id
 			for (ProjectSampleJoin join : page) {
@@ -303,8 +309,8 @@ public class UISampleService {
 			}
 
 			// Get the next page
-			page = sampleService.getFilteredSamplesForProjects(projects, ImmutableList.of(), null, null, null, null,
-					null, page.getNumber() + 1, MAX_PAGE_SIZE, request.getSort());
+			page = sampleService.getFilteredProjectSamples(projects, filterSpec, page.getNumber() + 1, MAX_PAGE_SIZE,
+					request.getSort());
 		}
 
 		return filteredProjectSamples;

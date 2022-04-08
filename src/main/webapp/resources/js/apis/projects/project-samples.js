@@ -22,7 +22,7 @@ export async function getPagedProjectSamples(projectId, body) {
  */
 export async function getMinimalSampleDetailsForFilteredProject(
   projectId,
-  filters
+  options
 ) {
-  return await axios.post(`${BASE_URL}${projectId}/ids`, { filters });
+  return await axios.post(`${BASE_URL}${projectId}/ids`, { filters: options.filters, search: options.search });
 }
