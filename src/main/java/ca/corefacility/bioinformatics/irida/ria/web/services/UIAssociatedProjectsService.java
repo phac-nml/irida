@@ -40,6 +40,12 @@ public class UIAssociatedProjectsService {
 		this.messageSource = messageSource;
 	}
 
+	/**
+	 * Get a list of all projects associated with the current project.
+	 *
+	 * @param projectId project identifier for the currently active project
+	 * @return list of projects
+	 */
 	public List<AssociatedProject> getAssociatedProjectsForProject(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(project);
@@ -49,7 +55,7 @@ public class UIAssociatedProjectsService {
 	}
 
 	/**
-	 * Get a list of all projects associated with the current project.  If the user is a manager or administrator, the
+	 * Get a list of all projects associated with the current project. If the user is a manager or administrator, the
 	 * list will also contain all projects they have access to.
 	 *
 	 * @param projectId project identifier for the currently active project
@@ -57,11 +63,10 @@ public class UIAssociatedProjectsService {
 	 */
 	public List<AssociatedProject> getAssociatedProjects(Long projectId) {
 		Project project = projectService.read(projectId);
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User user = (User) authentication.getPrincipal();
-		boolean hasPermission = user.getSystemRole()
-				.equals(Role.ROLE_ADMIN) || projectOwnerPermission.isAllowed(authentication, project);
+		boolean hasPermission = user.getSystemRole().equals(Role.ROLE_ADMIN)
+				|| projectOwnerPermission.isAllowed(authentication, project);
 		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(project);
 
 		List<AssociatedProject> associatedProjects = relatedProjectJoins.stream()
@@ -76,15 +81,13 @@ public class UIAssociatedProjectsService {
 		if (hasPermission) {
 			Page<Project> page = projectService.getUnassociatedProjects(project, "", 0, Integer.MAX_VALUE,
 					Sort.Direction.ASC, "name");
-			page.getContent()
-					.forEach(p -> {
-						if (!associatedIds.contains(p.getId())) {
-							unassociatedProjects.add(new AssociatedProject(p, false));
-						}
-					});
+			page.getContent().forEach(p -> {
+				if (!associatedIds.contains(p.getId())) {
+					unassociatedProjects.add(new AssociatedProject(p, false));
+				}
+			});
 		}
-		return Stream.concat(associatedProjects.stream(), unassociatedProjects.stream())
-				.collect(Collectors.toList());
+		return Stream.concat(associatedProjects.stream(), unassociatedProjects.stream()).collect(Collectors.toList());
 	}
 
 	/**

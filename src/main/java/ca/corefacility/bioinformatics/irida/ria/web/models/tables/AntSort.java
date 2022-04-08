@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.models.tables;
 
 import org.springframework.data.domain.Sort;
 
+/**
+ * Class to represent a single column sort in a AntD Table Request.
+ */
 public class AntSort {
 	private String property;
 	private String direction;

@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models.tables;
 
+/**
+ * Class to represent a single column search in a AntD Table Request.
+ */
 public class AntSearch {
 	private String property;
 	private String value;

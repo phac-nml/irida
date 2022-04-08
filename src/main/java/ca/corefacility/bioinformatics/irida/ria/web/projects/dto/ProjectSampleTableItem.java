@@ -5,6 +5,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableItem;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.ProjectObject;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.SampleObject;
 
+/**
+ * Representation of a row used in the Project Samples table.
+ */
 public class ProjectSampleTableItem extends AntTableItem {
 	private final Boolean owner;
 	private final SampleObject sample;

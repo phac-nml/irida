@@ -13,7 +13,7 @@ import {
   clearSelectedSamples,
   removeSelectedSample,
   selectAllSamples,
-  updateTable,
+  updateTable
 } from "../services/samplesSlice";
 import { getNewTagColor } from "../../../../utilities/ant-utilities";
 
@@ -25,17 +25,24 @@ import { getNewTagColor } from "../../../../utilities/ant-utilities";
  */
 export function SamplesTable() {
   const dispatch = useDispatch();
-  const { projectId, options, selected, selectedCount, loadingLong } =
-    useSelector((state) => state.samples);
+  const {
+    projectId,
+    options,
+    selected,
+    selectedCount,
+    loadingLong
+  } = useSelector(state => state.samples);
 
   /**
    * Fetch the current state of the table.  Will refetch whenever one of the
    * table options (filter, sort, or pagination) changes.
    */
-  const { data: { content: samples, total } = {}, isFetching } =
-    useListSamplesQuery(options, {
-      refetchOnMountOrArgChange: true,
-    });
+  const {
+    data: { content: samples, total } = {},
+    isFetching
+  } = useListSamplesQuery(options, {
+    refetchOnMountOrArgChange: true
+  });
 
   /**
    * Fetch projects that have been associated with this project.
@@ -82,7 +89,7 @@ export function SamplesTable() {
    * @param e - React synthetic event
    * @returns {*}
    */
-  const updateSelectAll = (e) =>
+  const updateSelectAll = e =>
     e.target.checked
       ? dispatch(selectAllSamples(projectId, options))
       : dispatch(clearSelectedSamples());
@@ -100,7 +107,7 @@ export function SamplesTable() {
       updateTable({
         filters,
         pagination,
-        order: formatSort(sorter),
+        order: formatSort(sorter)
       })
     );
 
@@ -122,26 +129,26 @@ export function SamplesTable() {
         return (
           <Space>
             <Checkbox
-              onChange={(e) => onRowSelectionChange(e, item)}
+              onChange={e => onRowSelectionChange(e, item)}
               checked={selected[item.key]}
             />
             <SampleIcons sample={item} />
           </Space>
         );
-      },
+      }
     },
     {
       title: i18n("SamplesTable.Column.sampleName"),
       dataIndex: ["sample", "sampleName"],
       key: "name",
       sorter: { multiple: 1 },
-      render: (name) => <a>{name}</a>,
+      render: name => <a>{name}</a>
     },
     {
       title: i18n("SamplesTable.Column.organism"),
       dataIndex: ["sample", "organism"],
       key: "organism",
-      sorter: { multiple: 1 },
+      sorter: { multiple: 1 }
     },
     {
       title: i18n("SamplesTable.Column.project"),
@@ -156,13 +163,13 @@ export function SamplesTable() {
         <Tooltip title={i18n("SamplesTable.Filter.associated")}>
           <FolderAddOutlined style={{ color: blue6 }} />
         </Tooltip>
-      ),
+      )
     },
     {
       title: i18n("SamplesTable.Column.collectedBy"),
       dataIndex: ["sample", "collectedBy"],
       key: "collectedBy",
-      sorter: { multiple: 1 },
+      sorter: { multiple: 1 }
     },
     {
       title: i18n("SamplesTable.Column.created"),
@@ -170,9 +177,9 @@ export function SamplesTable() {
       key: "created",
       sorter: { multiple: 1 },
       width: 230,
-      render: (createdDate) => {
+      render: createdDate => {
         return formatInternationalizedDateTime(createdDate);
-      },
+      }
     },
     {
       title: i18n("SamplesTable.Column.modified"),
@@ -181,10 +188,10 @@ export function SamplesTable() {
       defaultSortOrder: "descend",
       sorter: { multiple: 1 },
       width: 230,
-      render: (modifiedDate) => {
+      render: modifiedDate => {
         return formatInternationalizedDateTime(modifiedDate);
-      },
-    },
+      }
+    }
   ];
 
   return (
