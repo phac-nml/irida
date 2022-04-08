@@ -25,6 +25,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
+import ca.corefacility.bioinformatics.irida.repositories.specification.SearchCriteria;
+import ca.corefacility.bioinformatics.irida.repositories.specification.SearchOperation;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntSearch;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSample;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleTableItem;
@@ -115,8 +119,8 @@ public class UISampleService {
 	 * @return list of paired end sequence files
 	 */
 	public List<SequencingObject> getPairedSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, SequenceFilePair.class);
+		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
 		// add project to qc entries and filter any unavailable entries
 		List<SequencingObject> filePairs = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : filePairJoins) {
@@ -136,8 +140,8 @@ public class UISampleService {
 	 * @return list of single end sequence files
 	 */
 	public List<SequencingObject> getSingleEndSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, SingleEndSequenceFile.class);
+		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
 
 		List<SequencingObject> singles = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : singleFileJoins) {
@@ -156,8 +160,8 @@ public class UISampleService {
 	 * @return list of fast5 sequence files
 	 */
 	public List<SequencingObject> getFast5FilesForSample(Sample sample) {
-		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, Fast5Object.class);
+		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, Fast5Object.class);
 		return fast5FileJoins.stream().map(SampleSequencingObjectJoin::getObject).collect(Collectors.toList());
 	}
 
@@ -252,8 +256,14 @@ public class UISampleService {
 		}
 		List<Project> projects = (List<Project>) projectService.readMultiple(projectIds);
 
-		Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(projects, ImmutableList.of(), null,
-				null, null, null, null, request.getPage(), request.getPageSize(), request.getSort());
+		ProjectSampleJoinSpecification filterSpec = new ProjectSampleJoinSpecification();
+		for (AntSearch search : request.getSearch()) {
+			filterSpec.add(new SearchCriteria(search.getProperty(), search.getValue(),
+					SearchOperation.fromString(search.getOperation())));
+		}
+
+		Page<ProjectSampleJoin> page = sampleService.getFilteredProjectSamples(projects, filterSpec, request.getPage(),
+				request.getPageSize(), request.getSort());
 
 		List<ProjectSampleTableItem> content = page.getContent()
 				.stream()
@@ -326,8 +336,8 @@ public class UISampleService {
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(request.getIds());
 		sampleService.mergeSamples(project, primarySample, samples);
 		if (request.getIds().size() == 1) {
-			return messageSource.getMessage("server.MergeModal.merged-single", new Object[] {
-					samples.get(0).getSampleName(), primarySample.getSampleName() }, locale);
+			return messageSource.getMessage("server.MergeModal.merged-single",
+					new Object[] { samples.get(0).getSampleName(), primarySample.getSampleName() }, locale);
 		} else {
 			return messageSource.getMessage("server.MergeModal.merged-plural",
 					new Object[] { samples.size(), primarySample.getSampleName() }, locale);

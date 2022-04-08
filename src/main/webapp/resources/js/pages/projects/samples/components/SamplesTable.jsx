@@ -1,11 +1,11 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FolderAddOutlined } from "@ant-design/icons";
-import { Checkbox, Space, Table, Tag, Tooltip } from "antd";
+import { FolderAddOutlined, SearchOutlined } from "@ant-design/icons";
+import { Checkbox, Button, Input, Space, Table, Tag, Tooltip } from "antd";
 import { useListAssociatedProjectsQuery } from "../../../../apis/projects/associated-projects";
 import { blue6 } from "../../../../styles/colors";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
-import { formatSort } from "../../../../utilities/table-utilities";
+import { formatSearch, formatSort } from "../../../../utilities/table-utilities";
 import SampleIcons from "./SampleIcons";
 import { useListSamplesQuery } from "../services/samples";
 import {
@@ -105,11 +105,49 @@ export function SamplesTable() {
   const onTableChange = (pagination, filters, sorter) =>
     dispatch(
       updateTable({
-        filters,
+        ...{"associated": filters["associated"]},
         pagination,
-        order: formatSort(sorter)
+        order: formatSort(sorter),
+        search: formatSearch(filters),
       })
     );
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+  };
+
+  const handleClearSearch = (clearFilters, dataIndex) => {
+    clearFilters();
+  }
+
+  const getColumnSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{ marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button onClick={() => handleClearSearch(clearFilters, dataIndex)} size="small" style={{ width: 90 }}>
+            Clear
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+  })
 
   const columns = [
     {
@@ -140,15 +178,15 @@ export function SamplesTable() {
     {
       title: i18n("SamplesTable.Column.sampleName"),
       dataIndex: ["sample", "sampleName"],
-      key: "name",
       sorter: { multiple: 1 },
-      render: name => <a>{name}</a>
+      render: name => <a>{name}</a>,
+      ...getColumnSearchProps(["sample", "sampleName"]),
     },
     {
       title: i18n("SamplesTable.Column.organism"),
       dataIndex: ["sample", "organism"],
-      key: "organism",
-      sorter: { multiple: 1 }
+      sorter: { multiple: 1 },
+      ...getColumnSearchProps(["sample", "organism"]),
     },
     {
       title: i18n("SamplesTable.Column.project"),

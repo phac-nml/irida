@@ -24,4 +24,5 @@ export const INITIAL_TABLE_STATE = JSON.stringify({
     pageSize: 10,
   },
   order: [{ property: "sample.modifiedDate", direction: "desc" }],
+  search: [],
 });
