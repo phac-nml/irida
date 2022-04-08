@@ -20,6 +20,7 @@ export default function UserProjectsPage() {
       title: i18n("UserProjectsPage.table.projectId"),
       dataIndex: "projectId",
       key: "projectId",
+      className: "t-projectId",
     },
     {
       title: i18n("UserProjectsPage.table.projectName"),
@@ -53,6 +54,7 @@ export default function UserProjectsPage() {
         <Switch
           defaultChecked={text}
           onChange={(checked) => updateSubscription(checked, record)}
+          className="t-emailSubscribed"
         />
       ),
     },

@@ -40,7 +40,7 @@ export function UserResetPasswordLink({ userId, firstName, lastName }) {
         onConfirm={handleResetPassword}
         icon={<IconQuestionCircle style={{ color: red6 }} />}
       >
-        <LinkButton text={i18n("UserResetPasswordLink.button.text")} />
+        <LinkButton className="t-password-reset-link" text={i18n("UserResetPasswordLink.button.text")} />
       </Popconfirm>
     </>
   );

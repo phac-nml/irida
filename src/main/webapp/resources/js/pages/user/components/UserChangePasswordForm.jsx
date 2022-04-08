@@ -118,7 +118,7 @@ export function UserChangePasswordForm({ userId }) {
           <Input.Password />
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <Button className="t-submit-btn" type="primary" htmlType="submit">
             {i18n("UserChangePasswordForm.form.button.submit")}
           </Button>
         </Form.Item>
