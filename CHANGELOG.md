@@ -17,6 +17,7 @@ Changes
 * [Developer]: Removed unused DataTables code.
 * [UI]: Sorted columns for advanced charts and added labels to tiny charts on admin statistics page.
 * [UI]: Fixed: Allow organism name not included in the current taxonomy.
+* [UI]: Fixed: Add new sample modal fields now reset after sample was created or if the modal was closed.
 
 22.01 to 22.03
 --------------
