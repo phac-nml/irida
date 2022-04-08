@@ -333,4 +333,10 @@ public class UISampleService {
 					new Object[] { samples.size(), primarySample.getSampleName() }, locale);
 		}
 	}
+
+	public String removeSamplesFromProject(Long projectId, List<Long> sampleIds) {
+		Project project = projectService.read(projectId);
+		projectService.removeSamplesFromProject(project, sampleService.readMultiple(sampleIds));
+		return "FOOBAR";
+	}
 }

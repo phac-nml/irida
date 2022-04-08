@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSamp
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleTableItem;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSamplesTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.MergeRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.RemoveSamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.error.SampleMergeException;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 
@@ -76,5 +77,12 @@ public class AjaxSamplesController {
 		} catch (SampleMergeException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
 		}
+	}
+
+	@DeleteMapping("/remove")
+	public ResponseEntity<AjaxResponse>removeSamplesFromProject (@PathVariable long projectId, @RequestBody
+			RemoveSamplesRequest request) {
+		String result = uiSampleService.removeSamplesFromProject(projectId, request.getSampleIds());
+		return ResponseEntity.ok(new AjaxSuccessResponse(result));
 	}
 }

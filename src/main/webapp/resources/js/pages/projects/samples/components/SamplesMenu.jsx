@@ -1,14 +1,15 @@
 import React, { lazy, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Dropdown, Menu, Space } from "antd";
+import { Button, Dropdown, Menu, message, Space } from "antd";
 import {
   CloseSquareOutlined,
   DownOutlined,
   MergeCellsOutlined,
-  ShareAltOutlined,
+  ShareAltOutlined
 } from "@ant-design/icons";
-import { updateTable } from "../services/samplesSlice";
+import { reloadTable, updateTable } from "../services/samplesSlice";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { validateSamplesForRemove } from "../services/sample.utilities";
 
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));
@@ -21,22 +22,25 @@ const RemoveModal = lazy(() => import("./RemoveModal"));
  */
 export default function SamplesMenu() {
   const dispatch = useDispatch();
-  const {
-    projectId,
-    selected,
-    options: { filter },
-  } = useSelector((state) => state.samples);
+
+  const { projectId, selected } = useSelector(state => state.samples);
 
   const [mergeVisible, setMergeVisible] = React.useState(false);
   const [removedVisible, setRemovedVisible] = React.useState(false);
+  const [sorted, setSorted] = React.useState({});
 
   /**
    * When a merge is completed, hide the modal and ask
    * the table to reset
    */
-  const onComplete = () => {
+  const onMergeComplete = () => {
     setMergeVisible(false);
-    dispatch(updateTable());
+    dispatch(reloadTable());
+  };
+
+  const onRemoveComplete = () => {
+    setRemovedVisible(false);
+    dispatch(reloadTable());
   };
 
   /**
@@ -57,12 +61,23 @@ export default function SamplesMenu() {
       JSON.stringify({
         samples,
         projectId,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       })
     );
 
     // Redirect user to share page
     window.location.href = setBaseUrl(`/projects/${projectId}/share`);
+  };
+
+  const sortSampledFor = name => {
+    if (name === "remove") {
+      const validated = validateSamplesForRemove(selected, projectId);
+      if (validated.valid.length > 0) {
+        setSorted(validated);
+        setRemovedVisible(true);
+      } else
+        message.error("No selected samples can be removed from this project");
+    }
   };
 
   const toolsMenu = React.useMemo(() => {
@@ -85,7 +100,7 @@ export default function SamplesMenu() {
         <Menu.Item
           key="remove-menu"
           icon={<CloseSquareOutlined />}
-          onClick={() => setRemovedVisible(true)}
+          onClick={() => sortSampledFor("remove")}
         >
           {i18n("SamplesMenu.remove")}
         </Menu.Item>
@@ -106,7 +121,7 @@ export default function SamplesMenu() {
         <Suspense fallback={<span />}>
           <MergeModal
             visible={mergeVisible}
-            onComplete={onComplete}
+            onComplete={onMergeComplete}
             onCancel={() => setMergeVisible(false)}
             samples={selected}
           />
@@ -116,9 +131,9 @@ export default function SamplesMenu() {
         <Suspense fallback={<span />}>
           <RemoveModal
             visible={removedVisible}
-            onComplete={onComplete}
+            onComplete={onRemoveComplete}
             onCancel={() => setRemovedVisible(false)}
-            samples={selected}
+            samples={sorted}
           />
         </Suspense>
       )}

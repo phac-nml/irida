@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
   getProjectIdFromUrl,
-  setBaseUrl,
+  setBaseUrl
 } from "../../../../utilities/url-utilities";
 
 const PROJECT_ID = getProjectIdFromUrl();
@@ -9,20 +9,31 @@ const PROJECT_ID = getProjectIdFromUrl();
 export const samplesApi = createApi({
   reducerPath: "samplesApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: setBaseUrl(`/ajax/project-samples/${PROJECT_ID}`),
+    baseUrl: setBaseUrl(`/ajax/project-samples/${PROJECT_ID}`)
   }),
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     listSamples: builder.query({
-      query: (body) => ({ method: "POST", body }),
+      query: body => ({ method: "POST", body })
     }),
     merge: builder.mutation({
       query: ({ projectId, request }) => ({
         url: "/merge",
         method: "POST",
-        body: request,
-      }),
+        body: request
+      })
     }),
-  }),
+    remove: builder.mutation({
+      query: sampleIds => ({
+        url: "/remove",
+        method: "DELETE",
+        body: { sampleIds }
+      })
+    })
+  })
 });
 
-export const { useListSamplesQuery, useMergeMutation } = samplesApi;
+export const {
+  useListSamplesQuery,
+  useMergeMutation,
+  useRemoveMutation
+} = samplesApi;

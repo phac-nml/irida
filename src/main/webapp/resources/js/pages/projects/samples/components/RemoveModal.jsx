@@ -1,52 +1,71 @@
 import React from "react";
-import { List, Modal } from "antd";
-import { VariableSizeList as VList } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
+import { Col, List, Modal, Row, Typography } from "antd";
+import { useRemoveMutation } from "../services/samples";
 
 export default function RemoveModal({
   samples,
   visible,
   onComplete,
-  onCancel,
+  onCancel
 }) {
-  const removeListRef = React.useRef();
+  const [removeSamples, { isLoading }] = useRemoveMutation();
 
-  const selected = Object.values(samples);
-
-  const renderSample = ({ index, style, ...rest }, ...props) => {
-    console.log({ props, rest });
-    const sample = selected[index];
-    return (
-      <List.Item key={sample.key} {...style}>
-        <List.Item.Meta title={sample.sampleName} />
-      </List.Item>
-    );
+  const onOk = async () => {
+    try {
+      const response = await removeSamples(
+        samples.valid.map(sample => sample.id)
+      );
+      onComplete();
+    } catch (e) {
+      console.log(e);
+    }
   };
+
   return (
     <Modal
       title={"REMOVE SAMPLES FROM PROJECT"}
       visible={visible}
       onCancel={onCancel}
+      onOk={onOk}
+      okButtonProps={{
+        loading: isLoading
+      }}
       width={600}
     >
-      <div style={{ height: 400, width: `100%` }}>
-        <AutoSizer>
-          {({ height = 400, width = 400 }) => (
-            <List>
-              <VList
-                height={height}
-                width={width}
-                ref={removeListRef}
-                itemKey={(index) => samples[index].key}
-                itemCount={samples.length}
-                itemSize={() => 47}
-              >
-                {renderSample}
-              </VList>
-            </List>
-          )}
-        </AutoSizer>
-      </div>
+      <Row gutter={[16, 16]}>
+        <Col span={24}>
+          <List
+            size="small"
+            bordered
+            header={<Typography.Text>Sample to be removed</Typography.Text>}
+            dataSource={samples.valid}
+            renderItem={sample => (
+              <List.Item>
+                <List.Item.Meta title={sample.sampleName} />
+              </List.Item>
+            )}
+          />
+        </Col>
+        {samples.locked.length > 0 && (
+          <Col span={24}>
+            <List
+              size="small"
+              bordered
+              header={
+                <Typography.Text>
+                  You do not have permission to modify these samples
+                </Typography.Text>
+              }
+              dataSource={samples.locked}
+              renderItem={sample => (
+                <List.Item>
+                  <List.Item.Meta title={sample.sampleName} />
+                </List.Item>
+              )}
+            />
+          </Col>
+        )}
+      </Row>
     </Modal>
   );
 }
