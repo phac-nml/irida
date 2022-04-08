@@ -5,11 +5,14 @@ import {
   CloseSquareOutlined,
   DownOutlined,
   MergeCellsOutlined,
-  ShareAltOutlined
+  ShareAltOutlined,
 } from "@ant-design/icons";
-import { reloadTable, updateTable } from "../services/samplesSlice";
+import { reloadTable } from "../services/samplesSlice";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { validateSamplesForRemove } from "../services/sample.utilities";
+import {
+  validateSamplesForMerge,
+  validateSamplesForRemove,
+} from "../services/sample.utilities";
 
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));
@@ -23,7 +26,7 @@ const RemoveModal = lazy(() => import("./RemoveModal"));
 export default function SamplesMenu() {
   const dispatch = useDispatch();
 
-  const { projectId, selected } = useSelector(state => state.samples);
+  const { projectId, selected } = useSelector((state) => state.samples);
 
   const [mergeVisible, setMergeVisible] = React.useState(false);
   const [removedVisible, setRemovedVisible] = React.useState(false);
@@ -61,7 +64,7 @@ export default function SamplesMenu() {
       JSON.stringify({
         samples,
         projectId,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     );
 
@@ -69,8 +72,21 @@ export default function SamplesMenu() {
     window.location.href = setBaseUrl(`/projects/${projectId}/share`);
   };
 
-  const sortSampledFor = name => {
-    if (name === "remove") {
+  /**
+   * Validate samples for specific modals and open the appropriate modal
+   * if the right samples are available.
+   * @param {string} name - which modal to open
+   */
+  const validateAndOpenModalFor = (name) => {
+    if (name === "merge") {
+      const validated = validateSamplesForMerge(selected);
+      if (validated.valid.length >= 2) {
+        setSorted(validated);
+        setMergeVisible(true);
+      } else {
+        message.error("You need at least 2 unlocked samples to merge");
+      }
+    } else if (name === "remove") {
       const validated = validateSamplesForRemove(selected, projectId);
       if (validated.valid.length > 0) {
         setSorted(validated);
@@ -86,7 +102,7 @@ export default function SamplesMenu() {
         <Menu.Item
           key="merge-menu"
           icon={<MergeCellsOutlined />}
-          onClick={() => setMergeVisible(true)}
+          onClick={() => validateAndOpenModalFor("merge")}
         >
           {i18n("SamplesMenu.merge")}
         </Menu.Item>
@@ -100,7 +116,7 @@ export default function SamplesMenu() {
         <Menu.Item
           key="remove-menu"
           icon={<CloseSquareOutlined />}
-          onClick={() => sortSampledFor("remove")}
+          onClick={() => validateAndOpenModalFor("remove")}
         >
           {i18n("SamplesMenu.remove")}
         </Menu.Item>
@@ -123,7 +139,7 @@ export default function SamplesMenu() {
             visible={mergeVisible}
             onComplete={onMergeComplete}
             onCancel={() => setMergeVisible(false)}
-            samples={selected}
+            samples={sorted}
           />
         </Suspense>
       )}

@@ -1,6 +1,8 @@
 import React from "react";
-import { Col, List, Modal, Row, Typography } from "antd";
+import { Col, List, Modal, Row, Space, Typography } from "antd";
 import { useRemoveMutation } from "../services/samples";
+import { LockOutlined } from "@ant-design/icons";
+import LockedSamplesTable from "./LockedSamplesTable";
 
 export default function RemoveModal({
   samples,
@@ -37,7 +39,7 @@ export default function RemoveModal({
           <List
             size="small"
             bordered
-            header={<Typography.Text>Sample to be removed</Typography.Text>}
+            header={<Typography.Text>Samples to be removed</Typography.Text>}
             dataSource={samples.valid}
             renderItem={(sample) => (
               <List.Item>
@@ -48,21 +50,7 @@ export default function RemoveModal({
         </Col>
         {samples.locked.length > 0 && (
           <Col span={24}>
-            <List
-              size="small"
-              bordered
-              header={
-                <Typography.Text>
-                  You do not have permission to modify these samples
-                </Typography.Text>
-              }
-              dataSource={samples.locked}
-              renderItem={(sample) => (
-                <List.Item>
-                  <List.Item.Meta title={sample.sampleName} />
-                </List.Item>
-              )}
-            />
+            <LockedSamplesTable locked={samples.locked} />
           </Col>
         )}
         {samples.associated.length > 0 && (
@@ -71,10 +59,13 @@ export default function RemoveModal({
               size="small"
               bordered
               header={
-                <Typography.Text>
-                  These samples are from an associated project and cannot be
-                  removed from there
-                </Typography.Text>
+                <Space>
+                  <LockOutlined />
+                  <Typography.Text>
+                    These samples are from an associated project and cannot be
+                    removed from there
+                  </Typography.Text>
+                </Space>
               }
               dataSource={samples.associated}
               renderItem={(sample) => (

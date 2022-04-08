@@ -1,18 +1,19 @@
 /**
- * Determine valid and invalid samples
+ * Determine valid and invalid samples for merging samples.
+ *
  */
-export function validateSamples(samples) {
+export function validateSamplesForMerge(samples) {
   const values = Object.values(samples),
     valid = [],
-    invalid = [];
-  values?.forEach(sample => {
+    locked = [];
+  values?.forEach((sample) => {
     if (sample.owner) {
       valid.push(sample);
     } else {
-      invalid.push(sample);
+      locked.push(sample);
     }
   });
-  return [valid, invalid];
+  return { valid, locked };
 }
 
 export function validateSamplesForRemove(samples, projectId) {
@@ -20,7 +21,7 @@ export function validateSamplesForRemove(samples, projectId) {
     valid = [],
     locked = [],
     associated = [];
-  values?.forEach(sample => {
+  values?.forEach((sample) => {
     if (Number(sample.projectId) !== Number(projectId)) {
       associated.push(sample);
     } else if (sample.owner) {
