@@ -6,14 +6,14 @@ export default function RemoveModal({
   samples,
   visible,
   onComplete,
-  onCancel
+  onCancel,
 }) {
   const [removeSamples, { isLoading }] = useRemoveMutation();
 
   const onOk = async () => {
     try {
       const response = await removeSamples(
-        samples.valid.map(sample => sample.id)
+        samples.valid.map((sample) => sample.id)
       );
       onComplete();
     } catch (e) {
@@ -28,7 +28,7 @@ export default function RemoveModal({
       onCancel={onCancel}
       onOk={onOk}
       okButtonProps={{
-        loading: isLoading
+        loading: isLoading,
       }}
       width={600}
     >
@@ -39,7 +39,7 @@ export default function RemoveModal({
             bordered
             header={<Typography.Text>Sample to be removed</Typography.Text>}
             dataSource={samples.valid}
-            renderItem={sample => (
+            renderItem={(sample) => (
               <List.Item>
                 <List.Item.Meta title={sample.sampleName} />
               </List.Item>
@@ -57,7 +57,27 @@ export default function RemoveModal({
                 </Typography.Text>
               }
               dataSource={samples.locked}
-              renderItem={sample => (
+              renderItem={(sample) => (
+                <List.Item>
+                  <List.Item.Meta title={sample.sampleName} />
+                </List.Item>
+              )}
+            />
+          </Col>
+        )}
+        {samples.associated.length > 0 && (
+          <Col span={24}>
+            <List
+              size="small"
+              bordered
+              header={
+                <Typography.Text>
+                  These samples are from an associated project and cannot be
+                  removed from there
+                </Typography.Text>
+              }
+              dataSource={samples.associated}
+              renderItem={(sample) => (
                 <List.Item>
                   <List.Item.Meta title={sample.sampleName} />
                 </List.Item>
