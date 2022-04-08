@@ -100,10 +100,16 @@ function AddSampleForm({ onSubmit, visible = false }) {
           term={organism}
           ontology={TAXONOMY}
           onTermSelected={(value) => setOrganism(value)}
+          className="t-organism"
         />
       </Form.Item>
       <Form.Item>
-        <Button type={"primary"} htmlType={"submit"} disabled={!isValid}>
+        <Button
+          type={"primary"}
+          htmlType={"submit"}
+          disabled={!isValid}
+          className="t-add-new-sample-create-btn"
+        >
           {i18n("AddSample.submit")}
         </Button>
       </Form.Item>

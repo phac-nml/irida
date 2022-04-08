@@ -183,6 +183,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-linker-cmd")
 	private WebElement linkerCmd;
 
+	@FindBy(className = "t-add-new-sample-create-btn")
+	private WebElement createSampleSubmitButton;
+
+	@FindBy(className = "ant-modal-close")
+	private WebElement createNewSampleModalCloseButton;
+
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
 	}
@@ -503,6 +509,20 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public boolean isSampleNameErrorDisplayed() {
 		return driver.findElements(By.cssSelector(".t-sample-name-wrapper .ant-form-item-explain")).size() > 0;
+	}
+
+	public boolean isSampleNameClear() {
+		return sampleNameInput.getText().equals("");
+	}
+
+	public void clickCreateSampleSubmitButton() {
+		createSampleSubmitButton.click();
+		waitForTime(1000);
+	}
+
+	public void closeCreateNewSampleModal() {
+		createNewSampleModalCloseButton.click();
+		waitForTime(500);
 	}
 
 	/**

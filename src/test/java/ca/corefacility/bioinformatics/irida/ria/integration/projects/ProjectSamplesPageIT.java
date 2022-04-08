@@ -339,4 +339,25 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.enterSampleName("GOOD_NAME");
 		assertFalse(page.isSampleNameErrorDisplayed(), "Sample name error should not be displayed");
 	}
+
+	@Test
+	public void testAddNewSampleModalResetting() {
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+
+		page.openCreateNewSampleModal();
+		page.enterSampleName("GOOD_NAME");
+		page.closeCreateNewSampleModal();
+
+		page.openCreateNewSampleModal();
+		assertTrue(page.isSampleNameClear(), "Sample name input should be empty");
+		page.closeCreateNewSampleModal();
+
+		page.openCreateNewSampleModal();
+		page.enterSampleName("GOOD_NAME_FIRST");
+		page.clickCreateSampleSubmitButton();
+
+		page.openCreateNewSampleModal();
+		assertTrue(page.isSampleNameClear(), "Sample name input should be empty");
+	}
 }
