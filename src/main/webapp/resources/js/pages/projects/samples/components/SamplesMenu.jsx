@@ -129,6 +129,7 @@ export default function SamplesMenu() {
         >
           {i18n("SamplesMenu.remove")}
         </Menu.Item>
+        <Menu.Divider />
         <Menu.Item
           key="create-menu"
           icon={<PlusSquareOutlined />}
