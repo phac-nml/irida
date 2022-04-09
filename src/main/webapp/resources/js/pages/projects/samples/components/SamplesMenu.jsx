@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button, Dropdown, Menu, message, Space } from "antd";
 import {
   CloseSquareOutlined,
+  CloudUploadOutlined,
   DownOutlined,
   MergeCellsOutlined,
   PlusSquareOutlined,
@@ -128,6 +129,15 @@ export default function SamplesMenu() {
           onClick={() => validateAndOpenModalFor("remove")}
         >
           {i18n("SamplesMenu.remove")}
+        </Menu.Item>
+        <Menu.Item key="import-menu" icon={<CloudUploadOutlined />}>
+          <a
+            href={setBaseUrl(
+              `projects/${projectId}/sample-metadata/upload/file`
+            )}
+          >
+            {i18n("SamplesMenu.import")}
+          </a>
         </Menu.Item>
         <Menu.Divider />
         <Menu.Item
