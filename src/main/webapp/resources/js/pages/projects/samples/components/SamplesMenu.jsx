@@ -8,8 +8,9 @@ import {
   MergeCellsOutlined,
   PlusSquareOutlined,
   ShareAltOutlined,
+  ShoppingCartOutlined,
 } from "@ant-design/icons";
-import { reloadTable } from "../services/samplesSlice";
+import { addToCart, reloadTable } from "../services/samplesSlice";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import {
   validateSamplesForMerge,
@@ -54,6 +55,10 @@ export default function SamplesMenu() {
   const onCreate = () => {
     setCreateSampleVisible(false);
     dispatch(reloadTable());
+  };
+
+  const onAddToCart = () => {
+    dispatch(addToCart({ projectId, selected }));
   };
 
   /**
@@ -159,6 +164,9 @@ export default function SamplesMenu() {
             {i18n("SamplesMenu.label")} <DownOutlined />
           </Button>
         </Dropdown>
+        <Button icon={<ShoppingCartOutlined />} onClick={onAddToCart}>
+          {i18n("SampleMenu.cart")}
+        </Button>
       </Space>
       {mergeVisible && (
         <Suspense fallback={<span />}>

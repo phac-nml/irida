@@ -1,11 +1,12 @@
 import {
   createAction,
   createAsyncThunk,
-  createReducer
+  createReducer,
 } from "@reduxjs/toolkit";
 import { getProjectIdFromUrl } from "../../../../utilities/url-utilities";
 import { INITIAL_TABLE_STATE } from "../constants";
 import { getMinimalSampleDetailsForFilteredProject } from "../../../../apis/projects/project-samples";
+import { putSampleInCart } from "../../../../apis/cart/cart";
 
 const updateTable = createAction("samples/table/update");
 const reloadTable = createAction("samples/table/reload");
@@ -29,14 +30,26 @@ const selectAllSamples = createAsyncThunk(
   }
 );
 
+const addToCart = createAsyncThunk(
+  "/samples/table/selected/cart",
+  async ({ projectId, selected }) => {
+    return await putSampleInCart(projectId, Object.values(selected)).then(
+      (response) => {
+        // TODO: Update global
+        console.log(response);
+      }
+    );
+  }
+);
+
 const getInitialTableOptions = () => JSON.parse(INITIAL_TABLE_STATE);
 
-const formatSelectedSample = sample => ({
+const formatSelectedSample = (sample) => ({
   key: sample.key,
   id: sample.sample.id,
   projectId: sample.project.id,
   sampleName: sample.sample.sampleName,
-  owner: sample.owner
+  owner: sample.owner,
 });
 
 const initialState = {
@@ -44,16 +57,17 @@ const initialState = {
   options: getInitialTableOptions(),
   selected: {},
   selectedCount: 0,
-  loadingLong: false
+  loadingLong: false,
 };
 
-export default createReducer(initialState, builder => {
+export default createReducer(initialState, (builder) => {
   builder
     .addCase(updateTable, (state, action) => {
       state.options = action.payload;
       state.selected = {};
+      state.selectedCount = 0;
     })
-    .addCase(reloadTable, state => {
+    .addCase(reloadTable, (state) => {
       const newOptions = getInitialTableOptions();
       newOptions.pagination.pageSize = state.options.pagination.pageSize;
       newOptions.reload = Math.floor(Math.random() * 90000) + 10000; // Unique 5 digit number to trigger reload
@@ -67,17 +81,21 @@ export default createReducer(initialState, builder => {
       delete state.selected[action.payload];
       state.selectedCount--;
     })
-    .addCase(clearSelectedSamples, state => {
+    .addCase(clearSelectedSamples, (state) => {
       state.selected = {};
       state.selectedCount = 0;
     })
-    .addCase(selectAllSamples.pending, state => {
+    .addCase(selectAllSamples.pending, (state) => {
       state.loadingLong = true;
     })
     .addCase(selectAllSamples.fulfilled, (state, action) => {
       state.selected = action.payload.selected;
       state.selectedCount = action.payload.selectedCount;
       state.loadingLong = false;
+    })
+    .addCase(addToCart.fulfilled, (state) => {
+      state.selected = {};
+      state.selectedCount = 0;
     });
 });
 
@@ -87,5 +105,6 @@ export {
   addSelectedSample,
   removeSelectedSample,
   clearSelectedSamples,
-  selectAllSamples
+  selectAllSamples,
+  addToCart,
 };
