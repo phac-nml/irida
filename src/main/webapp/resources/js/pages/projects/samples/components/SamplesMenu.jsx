@@ -5,6 +5,7 @@ import {
   CloseSquareOutlined,
   DownOutlined,
   MergeCellsOutlined,
+  PlusSquareOutlined,
   ShareAltOutlined,
 } from "@ant-design/icons";
 import { reloadTable } from "../services/samplesSlice";
@@ -13,9 +14,11 @@ import {
   validateSamplesForMerge,
   validateSamplesForRemove,
 } from "../services/sample.utilities";
+import CreateNewSample from "./CreateNewSample";
 
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));
+const CreateModal = lazy(() => import("./CreateNewSample"));
 
 /**
  * React element to render a row of actions that can be performed on
@@ -30,6 +33,7 @@ export default function SamplesMenu() {
 
   const [mergeVisible, setMergeVisible] = React.useState(false);
   const [removedVisible, setRemovedVisible] = React.useState(false);
+  const [createSampleVisible, setCreateSampleVisible] = React.useState(false);
   const [sorted, setSorted] = React.useState({});
 
   /**
@@ -120,6 +124,13 @@ export default function SamplesMenu() {
         >
           {i18n("SamplesMenu.remove")}
         </Menu.Item>
+        <Menu.Item
+          key="create-menu"
+          icon={<PlusSquareOutlined />}
+          onClick={() => setCreateSampleVisible(true)}
+        >
+          {i18n("SamplesMenu.createSample")}
+        </Menu.Item>
       </Menu>
     );
   }, [selected]);
@@ -150,6 +161,14 @@ export default function SamplesMenu() {
             onComplete={onRemoveComplete}
             onCancel={() => setRemovedVisible(false)}
             samples={sorted}
+          />
+        </Suspense>
+      )}
+      {createSampleVisible && (
+        <Suspense fallback={<span />}>
+          <CreateNewSample
+            visible={createSampleVisible}
+            onCancel={() => setCreateSampleVisible(false)}
           />
         </Suspense>
       )}
