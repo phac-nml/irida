@@ -14,7 +14,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { serverValidateSampleName } from "../../../../utilities/validation-utilities";
 import { useMergeMutation } from "../services/samples";
-import LockedSamplesTable from "./LockedSamplesTable";
+import LockedSamplesList from "./LockedSamplesList";
 
 export default function MergeModal({ samples, visible, onComplete, onCancel }) {
   const { projectId } = useSelector((state) => state.samples);
@@ -162,7 +162,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
         )}
         {samples.locked.length ? (
           <Col span={24}>
-            <LockedSamplesTable locked={samples.locked} />
+            <LockedSamplesList locked={samples.locked} />
           </Col>
         ) : null}
       </Row>

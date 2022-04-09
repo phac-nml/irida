@@ -1,8 +1,8 @@
 import React from "react";
-import { Col, Divider, List, Modal, Row, Space, Typography } from "antd";
+import { Col, Divider, List, Modal, Row, Typography } from "antd";
 import { useRemoveMutation } from "../services/samples";
-import { LockOutlined } from "@ant-design/icons";
-import LockedSamplesTable from "./LockedSamplesTable";
+import LockedSamplesList from "./LockedSamplesList";
+import AssociatedSamplesList from "./AssociatedSamplesList";
 
 /**
  * React Element to display a modal with sample to be removed from the current
@@ -20,14 +20,14 @@ export default function RemoveModal({
   samples,
   visible,
   onComplete,
-  onCancel
+  onCancel,
 }) {
   const [removeSamples, { isLoading }] = useRemoveMutation();
 
   const onOk = async () => {
     try {
       const response = await removeSamples(
-        samples.valid.map(sample => sample.id)
+        samples.valid.map((sample) => sample.id)
       );
       onComplete();
     } catch (e) {
@@ -43,7 +43,7 @@ export default function RemoveModal({
       onOk={onOk}
       okText={i18n("RemoveModal.okText")}
       okButtonProps={{
-        loading: isLoading
+        loading: isLoading,
       }}
       width={600}
     >
@@ -52,11 +52,9 @@ export default function RemoveModal({
           <List
             size="small"
             bordered
-            header={
-              <Typography.Text>{i18n("RemoveModal.valid")}</Typography.Text>
-            }
+            header={<Typography.Text>Samples to be removed</Typography.Text>}
             dataSource={samples.valid}
-            renderItem={sample => (
+            renderItem={(sample) => (
               <List.Item>
                 <List.Item.Meta title={sample.sampleName} />
               </List.Item>
@@ -72,29 +70,12 @@ export default function RemoveModal({
         )}
         {samples.locked.length > 0 && (
           <Col span={24}>
-            <LockedSamplesTable locked={samples.locked} />
+            <LockedSamplesList locked={samples.locked} />
           </Col>
         )}
         {samples.associated.length > 0 && (
           <Col span={24}>
-            <List
-              size="small"
-              bordered
-              header={
-                <Space>
-                  <LockOutlined />
-                  <Typography.Text>
-                    {i18n("RemoveModal.associated")}
-                  </Typography.Text>
-                </Space>
-              }
-              dataSource={samples.associated}
-              renderItem={sample => (
-                <List.Item>
-                  <List.Item.Meta title={sample.sampleName} />
-                </List.Item>
-              )}
-            />
+            <AssociatedSamplesList associated={samples.associated} />
           </Col>
         )}
       </Row>

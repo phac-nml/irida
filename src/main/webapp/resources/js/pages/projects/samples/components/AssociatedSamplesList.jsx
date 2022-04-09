@@ -1,21 +1,22 @@
 import React from "react";
-import { LockOutlined } from "@ant-design/icons";
+import { WarningOutlined } from "@ant-design/icons";
 import { List, Space, Typography } from "antd";
 
-export default function LockedSamplesTable({ locked }) {
+export default function AssociatedSamplesList({ associated }) {
   return (
     <List
       size="small"
       bordered
       header={
         <Space>
-          <LockOutlined />
+          <WarningOutlined />
           <Typography.Text>
-            You do not have permission to modify these samples
+            These samples are from an associated project and cannot be removed
+            from there
           </Typography.Text>
         </Space>
       }
-      dataSource={locked}
+      dataSource={associated}
       renderItem={(sample) => (
         <List.Item>
           <List.Item.Meta title={sample.sampleName} />
