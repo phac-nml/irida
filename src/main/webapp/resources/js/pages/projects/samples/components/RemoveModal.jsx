@@ -1,21 +1,33 @@
 import React from "react";
-import { Col, List, Modal, Row, Space, Typography } from "antd";
+import { Col, Divider, List, Modal, Row, Space, Typography } from "antd";
 import { useRemoveMutation } from "../services/samples";
 import { LockOutlined } from "@ant-design/icons";
 import LockedSamplesTable from "./LockedSamplesTable";
 
+/**
+ * React Element to display a modal with sample to be removed from the current
+ * project.
+ *  - Will display samples that are locked - cannot be removed.
+ *  - Will display associated samples that cannot be removed from this project.
+ * @param samples
+ * @param visible
+ * @param onComplete
+ * @param onCancel
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function RemoveModal({
   samples,
   visible,
   onComplete,
-  onCancel,
+  onCancel
 }) {
   const [removeSamples, { isLoading }] = useRemoveMutation();
 
   const onOk = async () => {
     try {
       const response = await removeSamples(
-        samples.valid.map((sample) => sample.id)
+        samples.valid.map(sample => sample.id)
       );
       onComplete();
     } catch (e) {
@@ -25,12 +37,13 @@ export default function RemoveModal({
 
   return (
     <Modal
-      title={"REMOVE SAMPLES FROM PROJECT"}
+      title={i18n("RemoveModal.title")}
       visible={visible}
       onCancel={onCancel}
       onOk={onOk}
+      okText={i18n("RemoveModal.okText")}
       okButtonProps={{
-        loading: isLoading,
+        loading: isLoading
       }}
       width={600}
     >
@@ -39,15 +52,24 @@ export default function RemoveModal({
           <List
             size="small"
             bordered
-            header={<Typography.Text>Samples to be removed</Typography.Text>}
+            header={
+              <Typography.Text>{i18n("RemoveModal.valid")}</Typography.Text>
+            }
             dataSource={samples.valid}
-            renderItem={(sample) => (
+            renderItem={sample => (
               <List.Item>
                 <List.Item.Meta title={sample.sampleName} />
               </List.Item>
             )}
           />
         </Col>
+        {(samples.locked.length > 0 || samples.associated.length > 0) && (
+          <Col span={24}>
+            <Divider orientation="left" plain>
+              {i18n("RemoveModal.divider")}
+            </Divider>
+          </Col>
+        )}
         {samples.locked.length > 0 && (
           <Col span={24}>
             <LockedSamplesTable locked={samples.locked} />
@@ -62,13 +84,12 @@ export default function RemoveModal({
                 <Space>
                   <LockOutlined />
                   <Typography.Text>
-                    These samples are from an associated project and cannot be
-                    removed from there
+                    {i18n("RemoveModal.associated")}
                   </Typography.Text>
                 </Space>
               }
               dataSource={samples.associated}
-              renderItem={(sample) => (
+              renderItem={sample => (
                 <List.Item>
                   <List.Item.Meta title={sample.sampleName} />
                 </List.Item>
