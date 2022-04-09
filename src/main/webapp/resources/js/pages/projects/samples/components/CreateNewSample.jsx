@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Input, Modal } from "antd";
-import { validateSampleName, } from "../../../../apis/projects/samples";
+import { validateSampleName } from "../../../../apis/projects/samples";
 
 /**
  * React component to create a new sample within a project.
