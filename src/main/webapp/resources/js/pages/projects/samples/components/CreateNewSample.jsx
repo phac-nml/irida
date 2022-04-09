@@ -1,6 +1,10 @@
 import React from "react";
-import { Form, Input, Modal } from "antd";
-import { validateSampleName } from "../../../../apis/projects/samples";
+import { AutoComplete, Form, Input, Modal } from "antd";
+import {
+  createNewSample,
+  validateSampleName,
+} from "../../../../apis/projects/samples";
+import searchOntology from "../../../../apis/ontology/taxonomy/query";
 
 /**
  * React component to create a new sample within a project.
@@ -10,14 +14,31 @@ import { validateSampleName } from "../../../../apis/projects/samples";
 export default function CreateNewSample({ visible, onCreate, onCancel }) {
   const [form] = Form.useForm();
   const nameRef = React.useRef();
+  const [organisms, setOrganisms] = React.useState([]);
 
   React.useEffect(() => {
     if (visible) {
       nameRef.current.focus();
-    } else {
-      form.resetFields();
     }
-  }, [form, visible]);
+  }, [visible]);
+
+  /**
+   * Reducer: Create the dropdown contents from the taxonomy.
+   *
+   * @param {array} accumulator
+   * @param {object} current
+   * @returns {*}
+   */
+  function optionsReducer(accumulator, current) {
+    accumulator.push({ value: current.value });
+    /*
+      Recursively check to see if there are any children to add
+       */
+    if (current.children) {
+      accumulator.push(...current.children.reduce(optionsReducer, []));
+    }
+    return accumulator;
+  }
 
   const handleCancel = () => {
     form.resetFields();
@@ -41,9 +62,27 @@ export default function CreateNewSample({ visible, onCreate, onCancel }) {
     });
   };
 
+  const searchOrganism = async (term) => {
+    const data = await searchOntology({
+      query: term,
+      ontology: "taxonomy",
+    });
+    setOrganisms(data.reduce(optionsReducer, []));
+  };
+
+  const createSample = () => {
+    form.validateFields().then((values) => {
+      createNewSample(values).then(() => {
+        form.resetFields();
+        onCreate();
+      });
+    });
+  };
+
   return (
     <Modal
       visible={visible}
+      onOk={createSample}
       onCancel={handleCancel}
       title={i18n("AddSample.title")}
     >
@@ -63,7 +102,16 @@ export default function CreateNewSample({ visible, onCreate, onCancel }) {
             }),
           ]}
         >
-          <Input ref={nameRef} className={"t-sample-name"} value={name} />
+          <Input ref={nameRef} className={"t-sample-name"} />
+        </Form.Item>
+        <Form.Item name="organism" label={"ORGANISM"}>
+          <AutoComplete
+            className="t-organism-input"
+            allowClear={true}
+            backfill={true}
+            onSearch={searchOrganism}
+            options={organisms}
+          />
         </Form.Item>
       </Form>
     </Modal>

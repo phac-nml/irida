@@ -50,6 +50,11 @@ export default function SamplesMenu() {
     dispatch(reloadTable());
   };
 
+  const onCreate = () => {
+    setCreateSampleVisible(false);
+    dispatch(reloadTable());
+  };
+
   /**
    * Format samples to share with other projects,
    * store minimal information in localStorage
@@ -169,6 +174,7 @@ export default function SamplesMenu() {
           <CreateNewSample
             visible={createSampleVisible}
             onCancel={() => setCreateSampleVisible(false)}
+            onCreate={onCreate}
           />
         </Suspense>
       )}
