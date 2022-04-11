@@ -10,6 +10,7 @@ import { AnnouncementsSubMenu } from "./main-navigation/components/Announcements
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
 import "./main-navigation/style.css";
+
 const { Header } = Layout;
 
 const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
@@ -27,7 +28,7 @@ const StyledAnchor = styled.a`
 
 const StyledHeader = styled(Header)`
   position: fixed;
-  z-index: 1;
+  z-index: 1000;
   width: 100%;
   display: flex;
 

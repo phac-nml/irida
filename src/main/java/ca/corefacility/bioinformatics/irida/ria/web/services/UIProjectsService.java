@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsR
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.UpdateProjectAttributeRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.ProjectCurrentUserModel;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ManageLocalProjectSettingsPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -193,8 +194,9 @@ public class UIProjectsService {
 			project.setOrganism(request.getValue());
 			break;
 		default:
-			throw new UpdateException(messageSource.getMessage("server.ProjectDetails.error",
-					new Object[] { request.getField() }, locale));
+			throw new UpdateException(
+					messageSource.getMessage("server.ProjectDetails.error", new Object[] { request.getField() },
+							locale));
 		}
 
 		try {
@@ -291,5 +293,19 @@ public class UIProjectsService {
 		Page<Project> projects = projectService.getUnassociatedProjects(project, "", 0, Integer.MAX_VALUE,
 				Sort.Direction.ASC, "name");
 		return projects.getContent();
+	}
+
+	/**
+	 * Get the current users permission on a project.
+	 *
+	 * @param projectId      - identifier for the current project
+	 * @param authentication - user {@link Authentication}
+	 * @return details about the user on the project
+	 */
+	public ProjectCurrentUserModel getProjectCurrentUserDetails(long projectId, Authentication authentication) {
+		Project project = projectService.read(projectId);
+		ProjectCurrentUserModel model = new ProjectCurrentUserModel();
+		model.setCanManage(projectOwnerPermission.isAllowed(authentication, project));
+		return model;
 	}
 }

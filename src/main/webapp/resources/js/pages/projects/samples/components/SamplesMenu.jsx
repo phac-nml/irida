@@ -32,6 +32,9 @@ export default function SamplesMenu() {
   const dispatch = useDispatch();
 
   const { projectId, selected } = useSelector((state) => state.samples);
+  const { project: { canManage = false } = {} } = useSelector(
+    (state) => state.user
+  );
 
   const [mergeVisible, setMergeVisible] = React.useState(false);
   const [removedVisible, setRemovedVisible] = React.useState(false);
@@ -160,11 +163,13 @@ export default function SamplesMenu() {
   return (
     <>
       <Space>
-        <Dropdown overlay={toolsMenu}>
-          <Button>
-            {i18n("SamplesMenu.label")} <DownOutlined />
-          </Button>
-        </Dropdown>
+        {canManage && (
+          <Dropdown overlay={toolsMenu}>
+            <Button>
+              {i18n("SamplesMenu.label")} <DownOutlined />
+            </Button>
+          </Dropdown>
+        )}
         <Button icon={<ShoppingCartOutlined />} onClick={onAddToCart}>
           {i18n("SampleMenu.cart")}
         </Button>

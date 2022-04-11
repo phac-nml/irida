@@ -13,6 +13,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -20,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CurrentUser;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserTableModel;
@@ -34,10 +37,12 @@ import com.google.common.collect.ImmutableMap;
 @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 public class UIUsersService {
 	private final UserService userService;
+	private final UIProjectsService uiProjectsService;
 	private final MessageSource messageSource;
 
-	public UIUsersService(UserService userService, MessageSource messageSource) {
+	public UIUsersService(UserService userService, UIProjectsService uiProjectsService, MessageSource messageSource) {
 		this.userService = userService;
+		this.uiProjectsService = uiProjectsService;
 		this.messageSource = messageSource;
 	}
 
@@ -84,7 +89,24 @@ public class UIUsersService {
 
 		}
 		// Should never hit here!
-		return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
-				.body("");
+		return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("");
+	}
+
+	/**
+	 * Get user details - If projectId is sent, get the user information for the specific project.
+	 *
+	 * @param projectId - identifier for a project (not required).
+	 * @return Current user details.
+	 */
+	public CurrentUser getCurrentUserDetails(Long projectId) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User) authentication.getPrincipal();
+		CurrentUser currentUser = new CurrentUser(user);
+
+		if (projectId != null) {
+			currentUser.setProject(uiProjectsService.getProjectCurrentUserDetails(projectId, authentication));
+		}
+
+		return currentUser;
 	}
 }

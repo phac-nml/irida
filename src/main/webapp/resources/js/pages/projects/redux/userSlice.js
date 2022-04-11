@@ -11,8 +11,8 @@ import { fetchCurrentUserDetails } from "../../../apis/users/user";
  */
 export const getCurrentUserDetails = createAsyncThunk(
   `user/getCurrentUserDetails`,
-  async () => {
-    const details = await fetchCurrentUserDetails();
+  async (projectId) => {
+    const details = await fetchCurrentUserDetails({ projectId });
     return { details };
   }
 );
