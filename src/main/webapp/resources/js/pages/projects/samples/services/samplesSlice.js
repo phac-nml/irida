@@ -6,6 +6,7 @@ import {
 import { getProjectIdFromUrl } from "../../../../utilities/url-utilities";
 import { INITIAL_TABLE_STATE } from "../constants";
 import { getMinimalSampleDetailsForFilteredProject } from "../../../../apis/projects/project-samples";
+import { putSampleInCart } from "../../../../apis/cart/cart";
 
 const updateTable = createAction("samples/table/update");
 const reloadTable = createAction("samples/table/reload");
@@ -26,6 +27,18 @@ const selectAllSamples = createAsyncThunk(
       );
       return { selected, selectedCount: data.length };
     });
+  }
+);
+
+const addToCart = createAsyncThunk(
+  "/samples/table/selected/cart",
+  async ({ projectId, selected }) => {
+    return await putSampleInCart(projectId, Object.values(selected)).then(
+      (response) => {
+        // TODO: Update global
+        console.log(response);
+      }
+    );
   }
 );
 
@@ -84,6 +97,10 @@ export default createReducer(initialState, (builder) => {
       state.selected = action.payload.selected;
       state.selectedCount = action.payload.selectedCount;
       state.loadingLong = false;
+    })
+    .addCase(addToCart.fulfilled, (state) => {
+      state.selected = {};
+      state.selectedCount = 0;
     });
 });
 
@@ -94,4 +111,5 @@ export {
   removeSelectedSample,
   clearSelectedSamples,
   selectAllSamples,
+  addToCart,
 };

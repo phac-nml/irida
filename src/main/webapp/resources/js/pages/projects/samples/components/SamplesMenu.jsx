@@ -3,16 +3,24 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button, Dropdown, Menu, message, Space } from "antd";
 import {
   CloseSquareOutlined,
+  CloudUploadOutlined,
   DownOutlined,
   MergeCellsOutlined,
-  ShareAltOutlined
+  PlusSquareOutlined,
+  ShareAltOutlined,
+  ShoppingCartOutlined,
 } from "@ant-design/icons";
-import { reloadTable, updateTable } from "../services/samplesSlice";
+import { addToCart, reloadTable } from "../services/samplesSlice";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { validateSamplesForRemove } from "../services/sample.utilities";
+import {
+  validateSamplesForMerge,
+  validateSamplesForRemove,
+} from "../services/sample.utilities";
+import CreateNewSample from "./CreateNewSample";
 
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));
+const CreateModal = lazy(() => import("./CreateNewSample"));
 
 /**
  * React element to render a row of actions that can be performed on
@@ -23,10 +31,11 @@ const RemoveModal = lazy(() => import("./RemoveModal"));
 export default function SamplesMenu() {
   const dispatch = useDispatch();
 
-  const { projectId, selected } = useSelector(state => state.samples);
+  const { projectId, selected } = useSelector((state) => state.samples);
 
   const [mergeVisible, setMergeVisible] = React.useState(false);
   const [removedVisible, setRemovedVisible] = React.useState(false);
+  const [createSampleVisible, setCreateSampleVisible] = React.useState(false);
   const [sorted, setSorted] = React.useState({});
 
   /**
@@ -41,6 +50,15 @@ export default function SamplesMenu() {
   const onRemoveComplete = () => {
     setRemovedVisible(false);
     dispatch(reloadTable());
+  };
+
+  const onCreate = () => {
+    setCreateSampleVisible(false);
+    dispatch(reloadTable());
+  };
+
+  const onAddToCart = () => {
+    dispatch(addToCart({ projectId, selected }));
   };
 
   /**
@@ -61,7 +79,7 @@ export default function SamplesMenu() {
       JSON.stringify({
         samples,
         projectId,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     );
 
@@ -69,8 +87,21 @@ export default function SamplesMenu() {
     window.location.href = setBaseUrl(`/projects/${projectId}/share`);
   };
 
-  const sortSampledFor = name => {
-    if (name === "remove") {
+  /**
+   * Validate samples for specific modals and open the appropriate modal
+   * if the right samples are available.
+   * @param {string} name - which modal to open
+   */
+  const validateAndOpenModalFor = (name) => {
+    if (name === "merge") {
+      const validated = validateSamplesForMerge(selected);
+      if (validated.valid.length >= 2) {
+        setSorted(validated);
+        setMergeVisible(true);
+      } else {
+        message.error("You need at least 2 unlocked samples to merge");
+      }
+    } else if (name === "remove") {
       const validated = validateSamplesForRemove(selected, projectId);
       if (validated.valid.length > 0) {
         setSorted(validated);
@@ -86,7 +117,7 @@ export default function SamplesMenu() {
         <Menu.Item
           key="merge-menu"
           icon={<MergeCellsOutlined />}
-          onClick={() => setMergeVisible(true)}
+          onClick={() => validateAndOpenModalFor("merge")}
         >
           {i18n("SamplesMenu.merge")}
         </Menu.Item>
@@ -100,9 +131,27 @@ export default function SamplesMenu() {
         <Menu.Item
           key="remove-menu"
           icon={<CloseSquareOutlined />}
-          onClick={() => sortSampledFor("remove")}
+          onClick={() => validateAndOpenModalFor("remove")}
         >
           {i18n("SamplesMenu.remove")}
+        </Menu.Item>
+        <Menu.Divider />
+        <Menu.Item key="import-menu" icon={<CloudUploadOutlined />}>
+          <a
+            href={setBaseUrl(
+              `projects/${projectId}/sample-metadata/upload/file`
+            )}
+          >
+            {i18n("SamplesMenu.import")}
+          </a>
+        </Menu.Item>
+        <Menu.Divider />
+        <Menu.Item
+          key="create-menu"
+          icon={<PlusSquareOutlined />}
+          onClick={() => setCreateSampleVisible(true)}
+        >
+          {i18n("SamplesMenu.createSample")}
         </Menu.Item>
       </Menu>
     );
@@ -116,6 +165,9 @@ export default function SamplesMenu() {
             {i18n("SamplesMenu.label")} <DownOutlined />
           </Button>
         </Dropdown>
+        <Button icon={<ShoppingCartOutlined />} onClick={onAddToCart}>
+          {i18n("SampleMenu.cart")}
+        </Button>
       </Space>
       {mergeVisible && (
         <Suspense fallback={<span />}>
@@ -123,7 +175,7 @@ export default function SamplesMenu() {
             visible={mergeVisible}
             onComplete={onMergeComplete}
             onCancel={() => setMergeVisible(false)}
-            samples={selected}
+            samples={sorted}
           />
         </Suspense>
       )}
@@ -134,6 +186,15 @@ export default function SamplesMenu() {
             onComplete={onRemoveComplete}
             onCancel={() => setRemovedVisible(false)}
             samples={sorted}
+          />
+        </Suspense>
+      )}
+      {createSampleVisible && (
+        <Suspense fallback={<span />}>
+          <CreateNewSample
+            visible={createSampleVisible}
+            onCancel={() => setCreateSampleVisible(false)}
+            onCreate={onCreate}
           />
         </Suspense>
       )}

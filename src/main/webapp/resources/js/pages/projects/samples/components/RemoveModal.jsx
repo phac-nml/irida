@@ -1,7 +1,21 @@
 import React from "react";
-import { Col, List, Modal, Row, Typography } from "antd";
+import { Col, Divider, List, Modal, Row, Typography } from "antd";
 import { useRemoveMutation } from "../services/samples";
+import LockedSamplesList from "./LockedSamplesList";
+import AssociatedSamplesList from "./AssociatedSamplesList";
 
+/**
+ * React Element to display a modal with sample to be removed from the current
+ * project.
+ *  - Will display samples that are locked - cannot be removed.
+ *  - Will display associated samples that cannot be removed from this project.
+ * @param samples
+ * @param visible
+ * @param onComplete
+ * @param onCancel
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function RemoveModal({
   samples,
   visible,
@@ -23,10 +37,11 @@ export default function RemoveModal({
 
   return (
     <Modal
-      title={"REMOVE SAMPLES FROM PROJECT"}
+      title={i18n("RemoveModal.title")}
       visible={visible}
       onCancel={onCancel}
       onOk={onOk}
+      okText={i18n("RemoveModal.okText")}
       okButtonProps={{
         loading: isLoading,
       }}
@@ -37,7 +52,7 @@ export default function RemoveModal({
           <List
             size="small"
             bordered
-            header={<Typography.Text>Sample to be removed</Typography.Text>}
+            header={<Typography.Text>Samples to be removed</Typography.Text>}
             dataSource={samples.valid}
             renderItem={(sample) => (
               <List.Item>
@@ -46,43 +61,21 @@ export default function RemoveModal({
             )}
           />
         </Col>
+        {(samples.locked.length > 0 || samples.associated.length > 0) && (
+          <Col span={24}>
+            <Divider orientation="left" plain>
+              {i18n("RemoveModal.divider")}
+            </Divider>
+          </Col>
+        )}
         {samples.locked.length > 0 && (
           <Col span={24}>
-            <List
-              size="small"
-              bordered
-              header={
-                <Typography.Text>
-                  You do not have permission to modify these samples
-                </Typography.Text>
-              }
-              dataSource={samples.locked}
-              renderItem={(sample) => (
-                <List.Item>
-                  <List.Item.Meta title={sample.sampleName} />
-                </List.Item>
-              )}
-            />
+            <LockedSamplesList locked={samples.locked} />
           </Col>
         )}
         {samples.associated.length > 0 && (
           <Col span={24}>
-            <List
-              size="small"
-              bordered
-              header={
-                <Typography.Text>
-                  These samples are from an associated project and cannot be
-                  removed from there
-                </Typography.Text>
-              }
-              dataSource={samples.associated}
-              renderItem={(sample) => (
-                <List.Item>
-                  <List.Item.Meta title={sample.sampleName} />
-                </List.Item>
-              )}
-            />
+            <AssociatedSamplesList associated={samples.associated} />
           </Col>
         )}
       </Row>

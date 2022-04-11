@@ -4,55 +4,28 @@ import {
   Col,
   Form,
   Input,
-  List,
   Modal,
   notification,
   Radio,
   Row,
   Space,
-  Spin,
-  Typography,
 } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { serverValidateSampleName } from "../../../../utilities/validation-utilities";
 import { useMergeMutation } from "../services/samples";
+import LockedSamplesList from "./LockedSamplesList";
 
 export default function MergeModal({ samples, visible, onComplete, onCancel }) {
   const { projectId } = useSelector((state) => state.samples);
   const [merge, { isLoading }] = useMergeMutation();
 
-  const [initialized, setInitialized] = React.useState(false);
   const [renameSample, setRenameSample] = React.useState(false);
   const [error, setError] = React.useState(undefined);
   const [form] = Form.useForm();
 
-  /**
-   * Determine valid and invalid samples
-   * Invalid sample: sample that cannot be modified
-   */
-  const [valid, invalid] = React.useMemo(() => {
-    const values = Object.values(samples),
-      valid = [],
-      invalid = [];
-    values?.forEach((sample) => {
-      if (sample.owner) {
-        valid.push(sample);
-      } else {
-        invalid.push(sample);
-      }
-    });
-    return [valid, invalid];
-  }, [samples]);
-
-  React.useEffect(() => {
-    if (invalid !== undefined && valid !== undefined) {
-      setInitialized(true);
-    }
-  }, [invalid, valid]);
-
   const initialValues = {
-    primary: valid[0]?.id,
+    primary: samples.valid[0]?.id,
     newName: "",
   };
 
@@ -110,114 +83,89 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
       okText={i18n("MergeModal.okText")}
       okButtonProps={{
         loading: isLoading,
-        disabled: valid.length < 2,
       }}
       onCancel={onCancel}
       cancelText={i18n("MergeModal.cancelText")}
       width={600}
     >
-      {initialized ? (
-        <Row gutter={[16, 16]}>
-          {valid.length >= 2 ? (
-            <>
-              <Col span={24}>
-                <Alert
-                  type="warning"
-                  showIcon
-                  message={i18n("MergeModal.metadata-warning")}
-                />
-              </Col>
-              {error !== undefined ? (
-                <Col span={24}>
-                  <Alert
-                    showIcon
-                    type="error"
-                    message={error}
-                    closable
-                    onClose={() => setError(undefined)}
-                  />
-                </Col>
-              ) : null}
-              <Col span={24}>
-                <Form
-                  form={form}
-                  layout="vertical"
-                  initialValues={initialValues}
-                >
-                  <Form.Item
-                    name="primary"
-                    label={i18n("MergeModal.input-primary")}
-                    required
-                  >
-                    <Radio.Group>
-                      <Space direction="vertical">
-                        {valid.map((sample) => {
-                          return (
-                            <Radio
-                              value={sample.id}
-                              key={`sample-${sample.id}`}
-                            >
-                              {sample.sampleName}
-                            </Radio>
-                          );
-                        })}
-                      </Space>
-                    </Radio.Group>
-                  </Form.Item>
-                  <Form.Item noStyle>
-                    <Checkbox
-                      checked={renameSample}
-                      onChange={(e) => setRenameSample(e.target.checked)}
-                    >
-                      Rename Sample
-                    </Checkbox>
-                    <Form.Item
-                      name="newName"
-                      rules={[
-                        ({ getFieldValue }) => ({
-                          validator(_, value) {
-                            return validateName(value);
-                          },
-                        }),
-                      ]}
-                    >
-                      <Input disabled={!renameSample} />
-                    </Form.Item>
-                  </Form.Item>
-                </Form>
-              </Col>
-            </>
-          ) : (
+      <Row gutter={[16, 16]}>
+        {samples.valid.length >= 2 ? (
+          <>
             <Col span={24}>
               <Alert
-                type="error"
+                type="warning"
                 showIcon
-                message={i18n("MergeModal.error-valid")}
+                message={i18n("MergeModal.metadata-warning")}
               />
             </Col>
-          )}
-          {invalid.length ? (
+            {error !== undefined ? (
+              <Col span={24}>
+                <Alert
+                  showIcon
+                  type="error"
+                  message={error}
+                  closable
+                  onClose={() => setError(undefined)}
+                />
+              </Col>
+            ) : null}
             <Col span={24}>
-              <List
-                size="small"
-                header={i18n("MergeModal.locked-samples")}
-                bordered
-                dataSource={invalid}
-                renderItem={(item) => (
-                  <List.Item>
-                    <Typography.Text>{item.sampleName}</Typography.Text>
-                  </List.Item>
-                )}
-              />
+              <Form form={form} layout="vertical" initialValues={initialValues}>
+                <Form.Item
+                  name="primary"
+                  label={i18n("MergeModal.input-primary")}
+                  required
+                >
+                  <Radio.Group>
+                    <Space direction="vertical">
+                      {samples.valid.map((sample) => {
+                        return (
+                          <Radio value={sample.id} key={`sample-${sample.id}`}>
+                            {sample.sampleName}
+                          </Radio>
+                        );
+                      })}
+                    </Space>
+                  </Radio.Group>
+                </Form.Item>
+                <Form.Item noStyle>
+                  <Checkbox
+                    checked={renameSample}
+                    onChange={(e) => setRenameSample(e.target.checked)}
+                  >
+                    Rename Sample
+                  </Checkbox>
+                  <Form.Item
+                    name="newName"
+                    rules={[
+                      ({}) => ({
+                        validator(_, value) {
+                          return validateName(value);
+                        },
+                      }),
+                    ]}
+                  >
+                    <Input disabled={!renameSample} />
+                  </Form.Item>
+                </Form.Item>
+              </Form>
             </Col>
-          ) : null}
-        </Row>
-      ) : (
-        <Space>
-          <Spin />
-          <Typography.Text>{i18n("MergeModal.loading")}</Typography.Text>
-        </Space>
-      )}
+          </>
+        ) : (
+          <Col span={24}>
+            <Alert
+              type="error"
+              showIcon
+              message={i18n("MergeModal.error-valid")}
+            />
+          </Col>
+        )}
+        {samples.locked.length ? (
+          <Col span={24}>
+            <LockedSamplesList locked={samples.locked} />
+          </Col>
+        ) : null}
+      </Row>
     </Modal>
   );
 }
