@@ -135,6 +135,7 @@ export default function SamplesMenu() {
         >
           {i18n("SamplesMenu.remove")}
         </Menu.Item>
+        <Menu.Divider />
         <Menu.Item key="import-menu" icon={<CloudUploadOutlined />}>
           <a
             href={setBaseUrl(
