@@ -7,9 +7,11 @@ import { Provider } from "react-redux";
 import { samplesApi } from "./services/samples";
 import { associatedProjectsApi } from "./../../../apis/projects/associated-projects";
 import samplesReducer from "./services/samplesSlice";
+import userReducer, { getCurrentUserDetails } from "../redux/userSlice";
 
 export const store = configureStore({
   reducer: {
+    user: userReducer,
     samples: samplesReducer,
     [samplesApi.reducerPath]: samplesApi.reducer,
     [associatedProjectsApi.reducerPath]: associatedProjectsApi.reducer,
@@ -22,6 +24,8 @@ export const store = configureStore({
   devTools: process.env.NODE_ENV !== "production",
 });
 setupListeners(store.dispatch);
+
+store.dispatch(getCurrentUserDetails());
 
 render(
   <Provider store={store}>

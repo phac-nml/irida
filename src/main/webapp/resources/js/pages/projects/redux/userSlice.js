@@ -13,6 +13,7 @@ export const getCurrentUserDetails = createAsyncThunk(
   `user/getCurrentUserDetails`,
   async () => {
     const details = await fetchCurrentUserDetails();
+    console.log({ details });
     return { details };
   }
 );

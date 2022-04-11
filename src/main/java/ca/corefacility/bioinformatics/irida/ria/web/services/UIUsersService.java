@@ -13,6 +13,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -20,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CurrentUser;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserTableModel;
@@ -86,5 +89,12 @@ public class UIUsersService {
 		// Should never hit here!
 		return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
 				.body("");
+	}
+
+	public CurrentUser getCurrentUserDetails() {
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
+		User user = (User) authentication.getPrincipal();
+		return new CurrentUser(user);
 	}
 }

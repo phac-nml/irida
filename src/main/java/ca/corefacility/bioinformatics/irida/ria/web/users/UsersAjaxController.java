@@ -5,12 +5,10 @@ import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CurrentUser;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUsersService;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
@@ -24,11 +22,11 @@ import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserTableModel;
 @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 public class UsersAjaxController {
 
-	private final UIUsersService UIUsersService;
+	private final UIUsersService usersService;
 
 	@Autowired
-	public UsersAjaxController(UIUsersService UIUsersService) {
-		this.UIUsersService = UIUsersService;
+	public UsersAjaxController(UIUsersService uiUsersService) {
+		this.usersService = uiUsersService;
 	}
 
 	/**
@@ -37,9 +35,9 @@ public class UsersAjaxController {
 	 * @param request - the information about the current page of users to return
 	 * @return {@link TableResponse}
 	 */
-	@RequestMapping("/list")
+	@GetMapping("/list")
 	public TableResponse<UserTableModel> getUsersPagedList(@RequestBody AdminUsersTableRequest request) {
-		return UIUsersService.getUsersPagedList(request);
+		return usersService.getUsersPagedList(request);
 	}
 
 	/**
@@ -50,9 +48,19 @@ public class UsersAjaxController {
 	 * @param locale    - the {@link Locale} of the current user.
 	 * @return {@link ResponseEntity} internationalized response to the update
 	 */
-	@RequestMapping("/edit")
+	@GetMapping("/edit")
 	public ResponseEntity<String> updateUserStatus(@RequestParam Long id, @RequestParam boolean isEnabled,
 			Locale locale) {
-		return UIUsersService.updateUserStatus(id, isEnabled, locale);
+		return usersService.updateUserStatus(id, isEnabled, locale);
+	}
+
+	/**
+	 * Get information about the current user
+	 *
+	 * @return {@link CurrentUser}
+	 */
+	@GetMapping("/current")
+	public ResponseEntity<CurrentUser> getCurrentUserDetails() {
+		return ResponseEntity.ok(usersService.getCurrentUserDetails());
 	}
 }
