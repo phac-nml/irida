@@ -37,10 +37,12 @@ import com.google.common.collect.ImmutableMap;
 @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 public class UIUsersService {
 	private final UserService userService;
+	private final UIProjectsService uiProjectsService;
 	private final MessageSource messageSource;
 
-	public UIUsersService(UserService userService, MessageSource messageSource) {
+	public UIUsersService(UserService userService, UIProjectsService uiProjectsService, MessageSource messageSource) {
 		this.userService = userService;
+		this.uiProjectsService = uiProjectsService;
 		this.messageSource = messageSource;
 	}
 
@@ -87,14 +89,24 @@ public class UIUsersService {
 
 		}
 		// Should never hit here!
-		return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
-				.body("");
+		return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("");
 	}
 
-	public CurrentUser getCurrentUserDetails() {
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
+	/**
+	 * Get user details - If projectId is sent, get the user information for the specific project.
+	 *
+	 * @param projectId - identifier for a project (not required).
+	 * @return Current user details.
+	 */
+	public CurrentUser getCurrentUserDetails(Long projectId) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User user = (User) authentication.getPrincipal();
-		return new CurrentUser(user);
+		CurrentUser currentUser = new CurrentUser(user);
+
+		if (projectId != null) {
+			currentUser.setProject(uiProjectsService.getProjectCurrentUserDetails(projectId, authentication));
+		}
+
+		return currentUser;
 	}
 }

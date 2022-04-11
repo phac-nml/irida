@@ -60,7 +60,7 @@ public class UsersAjaxController {
 	 * @return {@link CurrentUser}
 	 */
 	@GetMapping("/current")
-	public ResponseEntity<CurrentUser> getCurrentUserDetails() {
-		return ResponseEntity.ok(usersService.getCurrentUserDetails());
+	public ResponseEntity<CurrentUser> getCurrentUserDetails(@RequestParam(required = false) long projectId) {
+		return ResponseEntity.ok(usersService.getCurrentUserDetails(projectId));
 	}
 }
