@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FolderAddOutlined, SearchOutlined } from "@ant-design/icons";
-import { Checkbox, Button, Input, Space, Table, Tag, Tooltip } from "antd";
+import { Button, Checkbox, DatePicker, Input, Space, Table, Tag, Tooltip } from "antd";
 import { useListAssociatedProjectsQuery } from "../../../../apis/projects/associated-projects";
 import { blue6 } from "../../../../styles/colors";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
@@ -16,6 +16,8 @@ import {
   updateTable
 } from "../services/samplesSlice";
 import { getNewTagColor } from "../../../../utilities/ant-utilities";
+
+const { RangePicker } = DatePicker;
 
 /**
  * React element to render a table display samples belong to a project,
@@ -117,8 +119,9 @@ export function SamplesTable() {
     confirm();
   };
 
-  const handleClearSearch = (clearFilters, dataIndex) => {
+  const handleClearSearch = (clearFilters, confirm, dataIndex) => {
     clearFilters();
+    confirm({closeDropdown: false});
   }
 
   const getColumnSearchProps = dataIndex => ({
@@ -132,6 +135,9 @@ export function SamplesTable() {
           style={{ marginBottom: 8, display: 'block' }}
         />
         <Space>
+          <Button disabled={selectedKeys.length === 0} onClick={() => handleClearSearch(clearFilters, confirm, dataIndex)} size="small" style={{ width: 89 }}>
+            Clear
+          </Button>
           <Button
             type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
@@ -141,14 +147,38 @@ export function SamplesTable() {
           >
             Search
           </Button>
-          <Button onClick={() => handleClearSearch(clearFilters, dataIndex)} size="small" style={{ width: 90 }}>
-            Clear
-          </Button>
         </Space>
       </div>
     ),
     filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
   })
+
+  const getDateColumnSearchProps = dataIndex => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={{ padding: 8}}>
+        <div style={{ marginBottom: 8, display: 'block'}}>
+          <RangePicker
+            onChange={(dates, dateStrings) => setSelectedKeys([dates[0].startOf('day'), dates[1].endOf('day')]) }
+          />
+        </div>
+        <Space>
+          <Button disabled={selectedKeys.length === 0} onClick={() => handleClearSearch(clearFilters, confirm, dataIndex)} size="small" style={{ width: 89 }}>
+            Clear
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+  });
 
   const columns = [
     {
@@ -165,7 +195,6 @@ export function SamplesTable() {
       dataIndex: "key",
       width: 40,
       render: (text, item) => {
-        debugger;
         return (
           <Space>
             <Checkbox
@@ -208,29 +237,28 @@ export function SamplesTable() {
     {
       title: i18n("SamplesTable.Column.collectedBy"),
       dataIndex: ["sample", "collectedBy"],
-      key: "collectedBy",
       sorter: { multiple: 1 }
     },
     {
       title: i18n("SamplesTable.Column.created"),
       dataIndex: ["sample", "createdDate"],
-      key: "created",
       sorter: { multiple: 1 },
       width: 230,
       render: createdDate => {
         return formatInternationalizedDateTime(createdDate);
-      }
+      },
+      ...getDateColumnSearchProps(["sample", "createdDate"])
     },
     {
       title: i18n("SamplesTable.Column.modified"),
       dataIndex: ["sample", "modifiedDate"],
-      key: "modified",
       defaultSortOrder: "descend",
       sorter: { multiple: 1 },
       width: 230,
       render: modifiedDate => {
         return formatInternationalizedDateTime(modifiedDate);
-      }
+      },
+      ...getDateColumnSearchProps(["sample", "createdDate"])
     }
   ];
 

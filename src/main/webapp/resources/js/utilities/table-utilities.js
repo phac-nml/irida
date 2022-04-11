@@ -1,3 +1,5 @@
+import moment from "moment";
+
 /**
  * Format Sort Order from the Ant Design sorter object
  * @param {array | object} sorter Ant Design sorter object
@@ -31,11 +33,24 @@ export function formatSearch(filters) {
   for (const filter in filters) {
     const value = filters[filter];
     if(value !== null && filter !== "associated") {
-      formattedSearch.push({
-        property: filter,
-        value: value.length > 1 ? value : value[0],
-        operation: value.length > 1 ? "IN" : defaultOperation,
-      });
+      if (value.length === 2 && moment.isMoment(value[0]) && moment.isMoment(value[1])) {
+        formattedSearch.push({
+          property: filter,
+          value: value[0].unix(),
+          operation: "GREATER_THAN_EQUAL"
+        });
+        formattedSearch.push({
+          property: filter,
+          value: value[1].unix(),
+          operation: "LESS_THAN_EQUAL"
+        });
+      } else {
+        formattedSearch.push({
+          property: filter,
+          value: value.length > 1 ? value : value[0],
+          operation: value.length > 1 ? "IN" : defaultOperation,
+        });
+      }
     }
   }
 

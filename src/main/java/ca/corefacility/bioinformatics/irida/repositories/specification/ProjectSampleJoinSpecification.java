@@ -41,25 +41,25 @@ public class ProjectSampleJoinSpecification implements Specification<ProjectSamp
 
 			if (criteria.getOperation().equals(SearchOperation.GREATER_THAN)) {
 				if (path.getJavaType() == Date.class) {
-					predicates.add(builder.greaterThan(path.as(Date.class), (Date) criteria.getValue()));
+					predicates.add(builder.greaterThan(path.as(Date.class), valueToDate(criteria.getValue())));
 				} else {
 					predicates.add(builder.greaterThan(path.as(String.class), criteria.getValue().toString()));
 				}
 			} else if (criteria.getOperation().equals(SearchOperation.LESS_THAN)) {
 				if (path.getJavaType() == Date.class) {
-					predicates.add(builder.lessThan(path.as(Date.class), (Date) criteria.getValue()));
+					predicates.add(builder.lessThan(path.as(Date.class), valueToDate(criteria.getValue())));
 				} else {
 					predicates.add(builder.lessThan(path.as(String.class), criteria.getValue().toString()));
 				}
 			} else if (criteria.getOperation().equals(SearchOperation.GREATER_THAN_EQUAL)) {
 				if (path.getJavaType() == Date.class) {
-					predicates.add(builder.greaterThanOrEqualTo(path.as(Date.class), (Date) criteria.getValue()));
+					predicates.add(builder.greaterThanOrEqualTo(path.as(Date.class), valueToDate(criteria.getValue())));
 				} else {
 					predicates.add(builder.greaterThanOrEqualTo(path.as(String.class), criteria.getValue().toString()));
 				}
 			} else if (criteria.getOperation().equals(SearchOperation.LESS_THAN_EQUAL)) {
 				if (path.getJavaType() == Date.class) {
-					predicates.add(builder.lessThanOrEqualTo(path.as(Date.class), (Date) criteria.getValue()));
+					predicates.add(builder.lessThanOrEqualTo(path.as(Date.class), valueToDate(criteria.getValue())));
 				} else {
 					predicates.add(builder.lessThanOrEqualTo(path.as(String.class), criteria.getValue().toString()));
 				}
@@ -98,5 +98,15 @@ public class ProjectSampleJoinSpecification implements Specification<ProjectSamp
 			path = root.get(attributeName);
 		}
 		return path;
+	}
+
+	private Date valueToDate(Object value) {
+		if (value instanceof Date) {
+			return (Date) value;
+		} else if (value instanceof Integer) {
+			return new Date((Integer) value * 1000L);
+		} else {
+			return new Date(Long.parseLong(value.toString()) * 1000L);
+		}
 	}
 }
