@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button, Dropdown, Menu, message, Space } from "antd";
 import {
   CloseSquareOutlined,
+  CloudDownloadOutlined,
   CloudUploadOutlined,
   DownOutlined,
   MergeCellsOutlined,
@@ -10,7 +11,11 @@ import {
   ShareAltOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
-import { addToCart, reloadTable } from "../services/samplesSlice";
+import {
+  addToCart,
+  downloadSamples,
+  reloadTable,
+} from "../services/samplesSlice";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import {
   validateSamplesForMerge,
@@ -62,6 +67,10 @@ export default function SamplesMenu() {
 
   const onAddToCart = () => {
     dispatch(addToCart({ projectId, selected }));
+  };
+
+  const onDownload = () => {
+    dispatch(downloadSamples({ projectId, selected }));
   };
 
   /**
@@ -160,6 +169,18 @@ export default function SamplesMenu() {
     );
   }, [selected]);
 
+  const exportMenu = React.useMemo(() => (
+    <Menu>
+      <Menu.Item
+        key="download-menu"
+        icon={<CloudDownloadOutlined />}
+        onClick={onDownload}
+      >
+        {i18n("SampleMenu.download")}
+      </Menu.Item>
+    </Menu>
+  ));
+
   return (
     <>
       <Space>
@@ -170,6 +191,11 @@ export default function SamplesMenu() {
             </Button>
           </Dropdown>
         )}
+        <Dropdown overlay={exportMenu}>
+          <Button>
+            {i18n("SampleMenu.export")} <DownOutlined />
+          </Button>
+        </Dropdown>
         <Button icon={<ShoppingCartOutlined />} onClick={onAddToCart}>
           {i18n("SampleMenu.cart")}
         </Button>

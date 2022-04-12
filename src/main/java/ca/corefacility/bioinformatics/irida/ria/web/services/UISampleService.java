@@ -1,8 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
@@ -21,10 +30,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchCriteria;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchOperation;
@@ -360,5 +366,92 @@ public class UISampleService {
 		Project project = projectService.read(projectId);
 		projectService.removeSamplesFromProject(project, sampleService.readMultiple(sampleIds));
 		return "FOOBAR";
+	}
+
+	/**
+	 * Get the sequence files for a list of samples
+	 *
+	 * @param projectId Identifier for the project
+	 * @param sampleIds List of identifiers for samples
+	 * @param response  {@link HttpServletResponse}
+	 * @return Zip File containing sequence files for listed samples
+	 */
+	public StreamingResponseBody downloadSamples(long projectId, List<Long> sampleIds, HttpServletResponse response) {
+		int BUFFER_SIZE = 1024;
+		Project project = projectService.read(projectId);
+		List<Sample> samples = (List<Sample>) sampleService.readMultiple(sampleIds);
+
+		StreamingResponseBody body = out -> {
+			final ZipOutputStream zipOutputStream = new ZipOutputStream(response.getOutputStream());
+			ZipEntry zipEntry = null;
+			InputStream inputStream = null;
+
+			// storing used file names to ensure we don't have a conflict
+			Set<String> usedFileNames = new HashSet<>();
+
+			try {
+				for (Sample sample : samples) {
+					Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService.getSequencingObjectsForSample(
+							sample);
+
+					for (SampleSequencingObjectJoin join : sequencingObjectsForSample) {
+						for (SequenceFile file : join.getObject().getFiles()) {
+							Path path = file.getFile();
+
+							String fileName =
+									project.getName() + "/" + sample.getSampleName() + "/" + path.getFileName()
+											.toString();
+							if (usedFileNames.contains(fileName)) {
+								fileName = handleDuplicate(fileName, usedFileNames);
+							}
+							zipEntry = new ZipEntry(fileName);
+							// set the file creation time on the zip entry to be
+							// whatever the creation time is on the filesystem
+							final BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
+							zipEntry.setCreationTime(attr.creationTime());
+							zipEntry.setLastModifiedTime(attr.creationTime());
+
+							zipOutputStream.putNextEntry(zipEntry);
+							usedFileNames.add(fileName);
+							Files.copy(path, zipOutputStream);
+							zipOutputStream.closeEntry();
+						}
+					}
+				}
+				zipOutputStream.finish();
+			} catch (IOException e) {
+				// Do something here
+			} finally {
+				response.getOutputStream().close();
+			}
+
+		};
+
+		response.setContentType("application/zip");
+		response.setHeader("Content-Disposition", "attachment; filename=example.zip");
+		response.addHeader("Pragma", "no-cache");
+		response.addHeader("Expires", "0");
+		return body;
+	}
+
+	/**
+	 * Rename a filename {@code original} and ensure it doesn't exist in {@code usedNames}. Uses the windows style of
+	 * renaming file.ext to file (1).ext
+	 *
+	 * @param original  original file name
+	 * @param usedNames names that original must not conflict with
+	 * @return modified name
+	 */
+	private String handleDuplicate(String original, Set<String> usedNames) {
+		int lastDot = original.lastIndexOf('.');
+
+		int index = 0;
+		String result;
+		do {
+			index++;
+			result = original.substring(0, lastDot) + " (" + index + ")" + original.substring(lastDot);
+		} while (usedNames.contains(result));
+
+		return result;
 	}
 }

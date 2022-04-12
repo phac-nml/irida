@@ -33,12 +33,31 @@ const selectAllSamples = createAsyncThunk(
 const addToCart = createAsyncThunk(
   "/samples/table/selected/cart",
   async ({ projectId, selected }) => {
-    return await putSampleInCart(projectId, Object.values(selected)).then(
-      (response) => {
-        // TODO: Update global
-        console.log(response);
-      }
-    );
+    return await putSampleInCart(projectId, Object.values(selected));
+  }
+);
+
+const downloadSamples = createAsyncThunk(
+  "/samples/table/export/download",
+  async ({ selected, projectId }) => {
+    const sampleIds = Object.values(selected).map((s) => s.id);
+    await fetch(`/ajax/project-samples/${projectId}/download`, {
+      method: "POST",
+      body: JSON.stringify({ sampleIds }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
   }
 );
 
@@ -101,6 +120,10 @@ export default createReducer(initialState, (builder) => {
     .addCase(addToCart.fulfilled, (state) => {
       state.selected = {};
       state.selectedCount = 0;
+    })
+    .addCase(downloadSamples.fulfilled, () => {
+      state.selected = {};
+      state.selectedCount = 0;
     });
 });
 
@@ -112,4 +135,5 @@ export {
   clearSelectedSamples,
   selectAllSamples,
   addToCart,
+  downloadSamples,
 };
