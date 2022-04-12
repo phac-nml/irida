@@ -176,7 +176,7 @@ export default function SamplesMenu() {
         icon={<CloudDownloadOutlined />}
         onClick={onDownload}
       >
-        Download
+        {i18n("SampleMenu.download")}
       </Menu.Item>
     </Menu>
   ));
@@ -193,7 +193,7 @@ export default function SamplesMenu() {
         )}
         <Dropdown overlay={exportMenu}>
           <Button>
-            Export <DownOutlined />
+            {i18n("SampleMenu.export")} <DownOutlined />
           </Button>
         </Dropdown>
         <Button icon={<ShoppingCartOutlined />} onClick={onAddToCart}>
