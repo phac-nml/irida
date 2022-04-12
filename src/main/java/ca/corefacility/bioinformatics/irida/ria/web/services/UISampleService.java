@@ -353,6 +353,14 @@ public class UISampleService {
 		return "FOOBAR";
 	}
 
+	/**
+	 * Get the sequence files for a list of samples
+	 *
+	 * @param projectId Identifier for the project
+	 * @param sampleIds List of identifiers for samples
+	 * @param response  {@link HttpServletResponse}
+	 * @return Zip File containing sequence files for listed samples
+	 */
 	public StreamingResponseBody downloadSamples(long projectId, List<Long> sampleIds, HttpServletResponse response) {
 		int BUFFER_SIZE = 1024;
 		Project project = projectService.read(projectId);
@@ -409,58 +417,6 @@ public class UISampleService {
 		response.addHeader("Pragma", "no-cache");
 		response.addHeader("Expires", "0");
 		return body;
-
-		//		// Add the appropriate headers
-		//		response.setContentType("application/zip");
-		//		response.setHeader("Content-Disposition", "attachment; filename=\"" + project.getName() + ".zip\"");
-		//		response.setHeader("Transfer-Encoding", "chunked");
-		//
-		//		// storing used file names to ensure we don't have a conflict
-		//		Set<String> usedFileNames = new HashSet<>();
-		//
-		//		try (ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
-		//			for (Sample sample : samples) {
-		//				Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService
-		//						.getSequencingObjectsForSample(sample);
-		//
-		//				for (SampleSequencingObjectJoin join : sequencingObjectsForSample) {
-		//					for (SequenceFile file : join.getObject().getFiles()) {
-		//						Path path = file.getFile();
-		//
-		//						String fileName = project.getName() + "/" + sample.getSampleName() + "/"
-		//								+ path.getFileName().toString();
-		//						if (usedFileNames.contains(fileName)) {
-		//							fileName = handleDuplicate(fileName, usedFileNames);
-		//						}
-		//						final ZipEntry entry = new ZipEntry(fileName);
-		//						// set the file creation time on the zip entry to be
-		//						// whatever the creation time is on the filesystem
-		//						final BasicFileAttributes attr = Files.readAttributes(path, BasicFileAttributes.class);
-		//						entry.setCreationTime(attr.creationTime());
-		//						entry.setLastModifiedTime(attr.creationTime());
-		//
-		//						outputStream.putNextEntry(entry);
-		//
-		//						usedFileNames.add(fileName);
-		//
-		//						Files.copy(path, outputStream);
-		//
-		//						outputStream.closeEntry();
-		//					}
-		//				}
-		//			}
-		//			outputStream.finish();
-		//			response.setContentType("application/octet-stream");
-		//		} catch (Exception e) {
-		//			// this generally means that the user has cancelled the download
-		//			// from their web browser; we can safely ignore this
-		//
-		//		} finally {
-		//			// close the response outputStream so that we're not leaking
-		//			// streams.
-		//			response.getOutputStream().close();
-		//		}
-
 	}
 
 	/**
