@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FolderAddOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Checkbox, DatePicker, Input, Space, Table, Tag, Tooltip } from "antd";
+import { Button, Checkbox, DatePicker, Input, Select, Space, Table, Tag, Tooltip } from "antd";
 import { useListAssociatedProjectsQuery } from "../../../../apis/projects/associated-projects";
 import { blue6 } from "../../../../styles/colors";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
@@ -127,11 +127,11 @@ export function SamplesTable() {
   const getColumnSearchProps = dataIndex => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }}>
-        <Input
+        <Select
+          mode="tags"
           placeholder={`Search ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          value={selectedKeys}
+          onChange={e => {setSelectedKeys(e); confirm({closeDropdown: false});} }
           style={{ marginBottom: 8, display: 'block' }}
         />
         <Space>
@@ -158,7 +158,7 @@ export function SamplesTable() {
       <div style={{ padding: 8}}>
         <div style={{ marginBottom: 8, display: 'block'}}>
           <RangePicker
-            onChange={(dates, dateStrings) => setSelectedKeys([dates[0].startOf('day'), dates[1].endOf('day')]) }
+            onChange={(dates, dateStrings) => setSelectedKeys([[dates[0].startOf('day'), dates[1].endOf('day')]]) }
           />
         </div>
         <Space>

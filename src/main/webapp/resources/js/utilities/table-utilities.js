@@ -31,25 +31,28 @@ export function formatSearch(filters) {
   const formattedSearch = [];
 
   for (const filter in filters) {
-    const value = filters[filter];
-    if(value !== null && filter !== "associated") {
-      if (value.length === 2 && moment.isMoment(value[0]) && moment.isMoment(value[1])) {
-        formattedSearch.push({
-          property: filter,
-          value: value[0].unix(),
-          operation: "GREATER_THAN_EQUAL"
-        });
-        formattedSearch.push({
-          property: filter,
-          value: value[1].unix(),
-          operation: "LESS_THAN_EQUAL"
-        });
-      } else {
-        formattedSearch.push({
-          property: filter,
-          value: value.length > 1 ? value : value[0],
-          operation: value.length > 1 ? "IN" : defaultOperation,
-        });
+    //TODO: remove this if statement when associated projects is changed in project samples.
+    if (filter !== "associated") {
+      for (var index in filters[filter]) {
+        const value = filters[filter][index];
+        if (Array.isArray(value) && value.length === 2 && moment.isMoment(value[0]) && moment.isMoment(value[1])) {
+          formattedSearch.push({
+            property: filter,
+            value: value[0].unix(),
+            operation: "GREATER_THAN_EQUAL"
+          });
+          formattedSearch.push({
+            property: filter,
+            value: value[1].unix(),
+            operation: "LESS_THAN_EQUAL"
+          });
+        } else {
+          formattedSearch.push({
+            property: filter,
+            value: value,
+            operation: Array.isArray(value) ? "IN" : defaultOperation,
+          });
+        }
       }
     }
   }
