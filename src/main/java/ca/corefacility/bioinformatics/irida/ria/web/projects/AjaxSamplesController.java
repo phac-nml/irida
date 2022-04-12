@@ -1,17 +1,22 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.DownloadRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSample;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleTableItem;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSamplesTableRequest;
@@ -91,5 +96,11 @@ public class AjaxSamplesController {
 			@RequestBody RemoveSamplesRequest request) {
 		String result = uiSampleService.removeSamplesFromProject(projectId, request.getSampleIds());
 		return ResponseEntity.ok(new AjaxSuccessResponse(result));
+	}
+
+	@PostMapping(value = "/download")
+	public ResponseEntity<StreamingResponseBody> downloadSamples(@PathVariable long projectId, @RequestBody DownloadRequest request, HttpServletResponse response)
+			throws IOException {
+		return ResponseEntity.ok(uiSampleService.downloadSamples(projectId, request.getSampleIds(), response));
 	}
 }
