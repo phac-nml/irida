@@ -2,16 +2,6 @@ import React, { lazy, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Dropdown, Menu, message, Space } from "antd";
 import {
-  CloseSquareOutlined,
-  CloudDownloadOutlined,
-  CloudUploadOutlined,
-  DownOutlined,
-  MergeCellsOutlined,
-  PlusSquareOutlined,
-  ShareAltOutlined,
-  ShoppingCartOutlined,
-} from "@ant-design/icons";
-import {
   addToCart,
   downloadSamples,
   reloadTable,
@@ -22,7 +12,19 @@ import {
   validateSamplesForMerge,
   validateSamplesForRemove,
 } from "../services/sample.utilities";
-import { IconCloudUpload, IconCode } from "../../../../components/icons/Icons";
+import {
+  IconCloseSquare,
+  IconCloudDownload,
+  IconCloudUpload,
+  IconCode,
+  IconDropDown,
+  IconFile,
+  IconFileExcel,
+  IconPlusSquare,
+  IconShare,
+  IconShoppingCart,
+  MergeSamplesIcon,
+} from "../../../../components/icons/Icons";
 
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));
@@ -152,7 +154,7 @@ export default function SamplesMenu() {
         <Menu.Item
           disabled={selectedCount < 2}
           key="merge-menu"
-          icon={<MergeCellsOutlined />}
+          icon={<MergeSamplesIcon />}
           onClick={() => validateAndOpenModalFor("merge")}
         >
           {i18n("SamplesMenu.merge")}
@@ -160,7 +162,7 @@ export default function SamplesMenu() {
         <Menu.Item
           disabled={selectedCount === 0}
           key="share-menu"
-          icon={<ShareAltOutlined />}
+          icon={<IconShare />}
           onClick={shareSamples}
         >
           {i18n("SamplesMenu.share")}
@@ -168,13 +170,13 @@ export default function SamplesMenu() {
         <Menu.Item
           disabled={selectedCount === 0}
           key="remove-menu"
-          icon={<CloseSquareOutlined />}
+          icon={<IconCloseSquare />}
           onClick={() => validateAndOpenModalFor("remove")}
         >
           {i18n("SamplesMenu.remove")}
         </Menu.Item>
         <Menu.Divider />
-        <Menu.Item key="import-menu" icon={<CloudUploadOutlined />}>
+        <Menu.Item key="import-menu" icon={<IconCloudUpload />}>
           <a
             href={setBaseUrl(
               `projects/${projectId}/sample-metadata/upload/file`
@@ -186,7 +188,7 @@ export default function SamplesMenu() {
         <Menu.Divider />
         <Menu.Item
           key="create-menu"
-          icon={<PlusSquareOutlined />}
+          icon={<IconPlusSquare />}
           onClick={() => setCreateSampleVisible(true)}
         >
           {i18n("SamplesMenu.createSample")}
@@ -201,7 +203,7 @@ export default function SamplesMenu() {
         <Menu.Item
           disabled={selectedCount === 0}
           key="download-menu"
-          icon={<CloudDownloadOutlined />}
+          icon={<IconCloudDownload />}
           onClick={onDownload}
         >
           {i18n("SampleMenu.download")}
@@ -221,6 +223,13 @@ export default function SamplesMenu() {
         >
           {i18n("SampleMenu.ncbi")}
         </Menu.Item>
+        <Menu.Divider />
+        <Menu.Item key="menu-excel" icon={<IconFileExcel />}>
+          {i18n("SampleMenu.excel")}
+        </Menu.Item>
+        <Menu.Item key="menu-csv" icon={<IconFile />}>
+          {i18n("SampleMenu.csv")}
+        </Menu.Item>
       </Menu>
     ),
     [selectedCount]
@@ -232,16 +241,16 @@ export default function SamplesMenu() {
         {canManage && (
           <Dropdown overlay={toolsMenu}>
             <Button>
-              {i18n("SamplesMenu.label")} <DownOutlined />
+              {i18n("SamplesMenu.label")} <IconDropDown />
             </Button>
           </Dropdown>
         )}
         <Dropdown overlay={exportMenu}>
           <Button>
-            {i18n("SampleMenu.export")} <DownOutlined />
+            {i18n("SampleMenu.export")} <IconDropDown />
           </Button>
         </Dropdown>
-        <Button icon={<ShoppingCartOutlined />} onClick={onAddToCart}>
+        <Button icon={<IconShoppingCart />} onClick={onAddToCart}>
           {i18n("SampleMenu.cart")}
         </Button>
       </Space>

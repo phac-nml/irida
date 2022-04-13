@@ -9,6 +9,8 @@ import {
   ClockCircleOutlined,
   CloseCircleOutlined,
   CloseOutlined,
+  CloseSquareOutlined,
+  CloudDownloadOutlined,
   CloudServerOutlined,
   CloudUploadOutlined,
   CodeOutlined,
@@ -34,8 +36,10 @@ import {
   LoginOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  MergeCellsOutlined,
   OrderedListOutlined,
   PlusCircleTwoTone,
+  PlusSquareOutlined,
   QuestionCircleOutlined,
   QuestionOutlined,
   RocketOutlined,
@@ -85,6 +89,10 @@ export const IconCloseCircle = ({ ...props }) => (
   <CloseCircleOutlined {...props} />
 );
 
+export const IconCloseSquare = ({ ...props }) => (
+  <CloseSquareOutlined {...props} />
+);
+
 export const IconTableFilter = ({ filtered, ...props }) => (
   <FilterOutlined style={{ color: filtered ? blue6 : undefined }} {...props} />
 );
@@ -99,6 +107,10 @@ export const IconSyncSpin = ({ ...props }) => <SyncOutlined spin {...props} />;
 
 export const IconCloudServer = ({ ...props }) => (
   <CloudServerOutlined {...props} />
+);
+
+export const IconCloudDownload = ({ ...props }) => (
+  <CloudDownloadOutlined {...props} />
 );
 
 export const IconCloudUpload = ({ ...props }) => (
@@ -139,6 +151,10 @@ export const IconTable = ({ ...props }) => <TableOutlined {...props} />;
 
 export const IconPlusCircle = ({ ...props }) => (
   <PlusCircleTwoTone {...props} />
+);
+
+export const IconPlusSquare = ({ ...props }) => (
+  <PlusSquareOutlined {...props} />
 );
 
 export const IconTrash = ({ ...props }) => <DeleteOutlined {...props} />;
@@ -251,4 +267,8 @@ export const IconFileUpload = ({ ...props }) => <UploadOutlined {...props} />;
 
 export const IconDatabaseOutlined = ({ ...props }) => (
   <DatabaseOutlined {...props} />
+);
+
+export const MergeSamplesIcon = ({ ...props }) => (
+  <MergeCellsOutlined {...props} />
 );

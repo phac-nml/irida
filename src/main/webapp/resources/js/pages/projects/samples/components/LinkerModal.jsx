@@ -56,6 +56,7 @@ export default function LinkerModal({
     <Modal
       visible={visible}
       title={i18n("Linker.title")}
+      onCancel={onFinish}
       footer={
         <div style={{ display: "flex", flexDirection: "row-reverse" }}>
           <Button type="primary" onClick={onFinish}>
