@@ -4,7 +4,7 @@
  * ability to add or remove them as associated projects.
  */
 import { Alert, Avatar, notification, Switch, Table, Typography } from "antd";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   useAddAssociatedProjectMutation,
   useGetAssociatedProjectsQuery,
@@ -15,13 +15,15 @@ import { IconFolder } from "../../../../../components/icons/Icons";
 import { createListFilterByUniqueAttribute } from "../../../../../components/Tables/filter-utilities";
 import { TextFilter } from "../../../../../components/Tables/fitlers";
 import { setBaseUrl } from "../../../../../utilities/url-utilities";
+import { getPaginationOptions } from "../../../../../utilities/antdesign-table-utilities";
 
 const { Text } = Typography;
 
 export default function ViewAssociatedProjects({ projectId }) {
-  const [organismFilters, setOrganismFilters] = useState([]);
+  const [organismFilters, setOrganismFilters] = React.useState([]);
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const [switches, setSwitches] = React.useState({});
+  const [total, setTotal] = React.useState(0);
 
   const {
     data: associatedProjects,
@@ -37,8 +39,9 @@ export default function ViewAssociatedProjects({ projectId }) {
     { error: removeError },
   ] = useRemoveAssociatedProjectMutation();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (associatedProjects?.length) {
+      setTotal(associatedProjects.length);
       setOrganismFilters(
         createListFilterByUniqueAttribute({
           list: associatedProjects,
@@ -47,6 +50,10 @@ export default function ViewAssociatedProjects({ projectId }) {
       );
     }
   }, [associatedProjects]);
+
+  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
+    total,
+  ]);
 
   React.useEffect(() => {
     const error = removeError?.data.error || addError?.data.error;
@@ -128,6 +135,7 @@ export default function ViewAssociatedProjects({ projectId }) {
       loading={isLoading}
       columns={columns}
       dataSource={associatedProjects}
+      pagination={paginationOptions}
     />
   ) : (
     <Alert
