@@ -12,6 +12,7 @@ import javax.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -69,6 +70,9 @@ public class UsersController {
 			Role.ROLE_TECHNICIAN, Role.ROLE_SEQUENCER);
 
 	private final MessageSource messageSource;
+
+	@Value("${irida.administrative.authentication.mode}")
+	private String authenticationMode;
 
 	@Autowired
 	public UsersController(UserService userService, ProjectService projectService,
@@ -298,6 +302,8 @@ public class UsersController {
 
 		model.addAttribute("locales", locales);
 
+		model.addAttribute("authenticationMode", authenticationMode);
+
 		Map<String, String> roleNames = new HashMap<>();
 		for (Role role : adminAllowedRoles) {
 			if (!role.equals(user.getSystemRole())) {
@@ -333,6 +339,8 @@ public class UsersController {
 		Locale locale = LocaleContextHolder.getLocale();
 
 		model.addAttribute("locales", locales);
+
+		model.addAttribute("authenticationMode", authenticationMode);
 
 		Map<String, String> roleNames = new HashMap<>();
 		for (Role role : adminAllowedRoles) {

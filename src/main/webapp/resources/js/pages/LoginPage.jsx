@@ -128,23 +128,23 @@ function LoginPage() {
           />
         ) : null}
         {urlParams.has("ldap_error") ? (
-                  <Alert
-                    type="error"
-                    className="t-login-error"
-                    style={{ marginBottom: SPACE_MD }}
-                    message={
-                      <span className="t-login-error">
-                        {i18n("LoginPage.error.message")}
-                      </span>
-                    }
-                    description={
-                      <>
-                        {i18n("LoginPage.error.ldap_description")}
-                      </>
-                    }
-                    showIcon
-                  />
-                ) : null}
+          <Alert
+            type="error"
+            className="t-login-error"
+            style={{ marginBottom: SPACE_MD }}
+            message={
+              <span className="t-login-error">
+                {i18n("LoginPage.error.message")}
+              </span>
+            }
+            description={
+              <>
+                {i18n("LoginPage.error.ldap_description")}
+              </>
+            }
+            showIcon
+          />
+        ) : null}
         <LoginForm />
       </Col>
     </Row>

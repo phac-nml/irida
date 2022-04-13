@@ -130,7 +130,9 @@
                                th:if="${!emailConfigured}">_Activate User Help_</p>
                             <p class="help-block" th:text="#{user.create.setpassword.help}">_Activate User Help_</p>
                         </div>
-                        <div th:replace="templates/password :: passwordInputs (hidden=${given_requireActivation}, required=${given_requireActivation})"></div>
+                        <div th:if="${authenticationMode == 'local'}" >
+                            <div th:replace="templates/password :: passwordInputs (hidden=${given_requireActivation}, required=${given_requireActivation})"></div>
+                        </div>
                     </div>
                     <div class="panel-footer text-right">
                         <a type="reset" class="btn btn-default" href="#" th:href="@{/users}">Cancel</a>
