@@ -283,7 +283,7 @@ public class UISampleService {
 							new Object[] { entry.getMessage() }, locale));
 				}
 			});
-			return new ProjectSampleTableItem(join, coverage, quality);
+			return new ProjectSampleTableItem(join, quality);
 		}).collect(Collectors.toList());
 
 		return new AntTableResponse<>(content, page.getTotalElements());

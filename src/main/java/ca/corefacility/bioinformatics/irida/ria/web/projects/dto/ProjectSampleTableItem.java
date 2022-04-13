@@ -14,7 +14,6 @@ public class ProjectSampleTableItem extends AntTableItem {
 	private final Boolean owner;
 	private final SampleObject sample;
 	private final ProjectObject project;
-	private final Double coverage;
 	private final List<String> quality;
 
 	public ProjectSampleTableItem(ProjectSampleJoin join, Double coverage, List<String> quality) {
@@ -22,7 +21,6 @@ public class ProjectSampleTableItem extends AntTableItem {
 		this.owner = join.isOwner();
 		this.sample = new SampleObject(join.getObject());
 		this.project = new ProjectObject(join.getSubject());
-		this.coverage = coverage;
 		this.quality = quality;
 	}
 
@@ -36,10 +34,6 @@ public class ProjectSampleTableItem extends AntTableItem {
 
 	public Boolean getOwner() {
 		return owner;
-	}
-
-	public Double getCoverage() {
-		return coverage;
 	}
 
 	public List<String> getQuality() {

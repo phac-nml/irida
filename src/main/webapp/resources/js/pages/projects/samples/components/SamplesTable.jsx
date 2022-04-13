@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FolderAddOutlined } from "@ant-design/icons";
-import { Checkbox, Progress, Space, Table, Tag, Tooltip } from "antd";
+import { Checkbox, Space, Table, Tag, Tooltip } from "antd";
 import { useListAssociatedProjectsQuery } from "../../../../apis/projects/associated-projects";
 import { blue6 } from "../../../../styles/colors";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
@@ -143,21 +143,6 @@ export function SamplesTable() {
       width: 60,
       dataIndex: "quality",
       render: (qualities) => <SampleQuality qualities={qualities} />,
-    },
-    {
-      title: "COVERAGE",
-      width: 150,
-      dataIndex: "coverage",
-      render: (coverage) => {
-        return (
-          coverage !== null &&
-          coverage > 0 && (
-            <div style={{ width: 110 }}>
-              <Progress percent={Math.ceil(coverage)} size="small" />
-            </div>
-          )
-        );
-      },
     },
     {
       title: i18n("SamplesTable.Column.organism"),
