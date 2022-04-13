@@ -51,7 +51,7 @@ export function SamplesTable() {
    * Request formats them into a format that can be consumed by the
    * project column filter.
    */
-  const { data: associated } = useListAssociatedProjectsQuery(projectId);
+  const { data: associatedIds } = useListAssociatedProjectsQuery(projectId);
 
   /**
    * Create colors for associated projects. This is stored in local storage for consistency
@@ -59,10 +59,10 @@ export function SamplesTable() {
    */
   const colors = React.useMemo(() => {
     let newColors = {};
-    if (associated) {
+    if (associatedIds) {
       const colorString = localStorage.getItem("projectColors");
       newColors = colorString ? JSON.parse(colorString) : {};
-      associated.forEach(({ value }) => {
+      associatedIds.forEach(({ value }) => {
         if (!newColors.hasOwnProperty(value)) {
           newColors[value] = getNewTagColor();
         }
@@ -70,7 +70,7 @@ export function SamplesTable() {
       localStorage.setItem("projectColors", JSON.stringify(newColors));
     }
     return newColors;
-  }, [associated]);
+  }, [associatedIds]);
 
   /**
    * Handle row selection change event
@@ -105,15 +105,17 @@ export function SamplesTable() {
    * @param sorter
    * @returns {*}
    */
-  const onTableChange = (pagination, filters, sorter) =>
+  const onTableChange = (pagination, filters, sorter) => {
+    let {associated, ...search} = filters;
     dispatch(
       updateTable({
-        filters: {"associated": filters["associated"]},
+        filters: {"associated": associated},
         pagination,
         order: formatSort(sorter),
-        search: formatSearch(filters),
+        search: formatSearch(search),
       })
     );
+  }
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -227,7 +229,7 @@ export function SamplesTable() {
       render: (name, row) => {
         return <Tag color={colors[row.project.id]}>{name}</Tag>;
       },
-      filters: associated,
+      filters: associatedIds,
       filterIcon: () => (
         <Tooltip title={i18n("SamplesTable.Filter.associated")}>
           <FolderAddOutlined style={{ color: blue6 }} />
