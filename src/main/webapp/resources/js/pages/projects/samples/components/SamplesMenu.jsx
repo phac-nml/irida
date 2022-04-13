@@ -95,10 +95,9 @@ export default function SamplesMenu() {
   const shareSamples = () => {
     if (selected.size === 0) return;
 
-    const samples = [];
-    Object.values(selected).forEach(({ id, sampleName: name, owner }) => {
-      samples.push({ id, name, owner });
-    });
+    const samples = Object.values(selected).map(
+      ({ id, sampleName: name, owner }) => ({ id, name, owner })
+    );
 
     // Store them to window storage for later use.
     window.sessionStorage.setItem(
@@ -126,21 +125,18 @@ export default function SamplesMenu() {
         setSorted(validated);
         setMergeVisible(true);
       } else {
-        message.error("You need at least 2 unlocked samples to merge");
+        message.error(i18n("SamplesMenu.merge.error"));
       }
     } else if (name === "remove") {
       const validated = validateSamplesForRemove(selected, projectId);
       if (validated.valid.length > 0) {
         setSorted(validated);
         setRemovedVisible(true);
-      } else
-        message.error("No selected samples can be removed from this project");
+      } else message.error(i18n("SamplesMenu.remove.error"));
     } else if (name === "linker") {
       const validated = validateSamplesForLinker(selected, projectId);
       if (validated.associated.length > 0) {
-        message.error(
-          "You have samples form associated projects selected, they cannot be used in this linker command"
-        );
+        message.error(i18n("SampleMenu.linker.error"));
       } else {
         setSorted(validated.valid);
         setLinkerVisible(true);
