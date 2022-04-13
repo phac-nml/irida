@@ -22,7 +22,7 @@ import {
   validateSamplesForMerge,
   validateSamplesForRemove,
 } from "../services/sample.utilities";
-import { IconCode } from "../../../../components/icons/Icons";
+import { IconCloudUpload, IconCode } from "../../../../components/icons/Icons";
 
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));
@@ -38,7 +38,9 @@ const LinkerModal = lazy(() => import("./LinkerModal"));
 export default function SamplesMenu() {
   const dispatch = useDispatch();
 
-  const { projectId, selected } = useSelector((state) => state.samples);
+  const { projectId, selected, selectedCount } = useSelector(
+    (state) => state.samples
+  );
   const { project: { canManage = false } = {} } = useSelector(
     (state) => state.user
   );
@@ -76,8 +78,12 @@ export default function SamplesMenu() {
     dispatch(downloadSamples({ projectId, selected }));
   };
 
-  const onLink = () => {
-    alert("Idiot you need to implement this!");
+  const onNCBI = () => {
+    window.location.href = setBaseUrl(
+      `/projects/${projectId}/export/ncbi?ids=${Object.values(selected)
+        .map((s) => s.id)
+        .join(",")}`
+    );
   };
 
   /**
@@ -144,6 +150,7 @@ export default function SamplesMenu() {
     return (
       <Menu>
         <Menu.Item
+          disabled={selectedCount < 2}
           key="merge-menu"
           icon={<MergeCellsOutlined />}
           onClick={() => validateAndOpenModalFor("merge")}
@@ -151,6 +158,7 @@ export default function SamplesMenu() {
           {i18n("SamplesMenu.merge")}
         </Menu.Item>
         <Menu.Item
+          disabled={selectedCount === 0}
           key="share-menu"
           icon={<ShareAltOutlined />}
           onClick={shareSamples}
@@ -158,6 +166,7 @@ export default function SamplesMenu() {
           {i18n("SamplesMenu.share")}
         </Menu.Item>
         <Menu.Item
+          disabled={selectedCount === 0}
           key="remove-menu"
           icon={<CloseSquareOutlined />}
           onClick={() => validateAndOpenModalFor("remove")}
@@ -184,26 +193,38 @@ export default function SamplesMenu() {
         </Menu.Item>
       </Menu>
     );
-  }, [selected]);
+  }, [selectedCount]);
 
-  const exportMenu = React.useMemo(() => (
-    <Menu>
-      <Menu.Item
-        key="download-menu"
-        icon={<CloudDownloadOutlined />}
-        onClick={onDownload}
-      >
-        {i18n("SampleMenu.download")}
-      </Menu.Item>
-      <Menu.Item
-        key="linker-menu"
-        icon={<IconCode />}
-        onClick={() => validateAndOpenModalFor("linker")}
-      >
-        {i18n("SampleMenu.linker")}
-      </Menu.Item>
-    </Menu>
-  ));
+  const exportMenu = React.useMemo(
+    () => (
+      <Menu>
+        <Menu.Item
+          disabled={selectedCount === 0}
+          key="download-menu"
+          icon={<CloudDownloadOutlined />}
+          onClick={onDownload}
+        >
+          {i18n("SampleMenu.download")}
+        </Menu.Item>
+        <Menu.Item
+          key="linker-menu"
+          icon={<IconCode />}
+          onClick={() => validateAndOpenModalFor("linker")}
+        >
+          {i18n("SampleMenu.linker")}
+        </Menu.Item>
+        <Menu.Item
+          disabled={selectedCount === 0}
+          key="ncbi-menu"
+          icon={<IconCloudUpload />}
+          onClick={onNCBI}
+        >
+          {i18n("SampleMenu.ncbi")}
+        </Menu.Item>
+      </Menu>
+    ),
+    [selectedCount]
+  );
 
   return (
     <>
