@@ -1,24 +1,9 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  CheckCircleTwoTone,
-  CloseCircleTwoTone,
-  ExclamationOutlined,
-  FolderAddOutlined,
-} from "@ant-design/icons";
-import {
-  Avatar,
-  Checkbox,
-  List,
-  Popover,
-  Progress,
-  Space,
-  Table,
-  Tag,
-  Tooltip,
-} from "antd";
+import { FolderAddOutlined } from "@ant-design/icons";
+import { Checkbox, Progress, Space, Table, Tag, Tooltip } from "antd";
 import { useListAssociatedProjectsQuery } from "../../../../apis/projects/associated-projects";
-import { blue6, green6, red6 } from "../../../../styles/colors";
+import { blue6 } from "../../../../styles/colors";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import { formatSort } from "../../../../utilities/table-utilities";
 import SampleIcons from "./SampleIcons";
@@ -31,6 +16,7 @@ import {
   updateTable,
 } from "../services/samplesSlice";
 import { getNewTagColor } from "../../../../utilities/ant-utilities";
+import SampleQuality from "../../../../components/sample-quality";
 
 /**
  * React element to render a table display samples belong to a project,
@@ -156,40 +142,7 @@ export function SamplesTable() {
       title: "QC",
       width: 60,
       dataIndex: "quality",
-      render: (qualities) => {
-        if (qualities.length) {
-          return (
-            <Popover
-              placement="right"
-              content={
-                <List
-                  style={{ width: 350 }}
-                  size="small"
-                  dataSource={qualities}
-                  renderItem={(quality) => (
-                    <List.Item>
-                      <List.Item.Meta
-                        title={quality}
-                        avatar={
-                          <Avatar
-                            size={18}
-                            style={{ backgroundColor: red6 }}
-                            icon={<ExclamationOutlined />}
-                          />
-                        }
-                      />
-                    </List.Item>
-                  )}
-                />
-              }
-            >
-              <CloseCircleTwoTone twoToneColor={red6} />
-            </Popover>
-          );
-        } else {
-          return <CheckCircleTwoTone twoToneColor={green6} />;
-        }
-      },
+      render: (qualities) => <SampleQuality qualities={qualities} />,
     },
     {
       title: "COVERAGE",
