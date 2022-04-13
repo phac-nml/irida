@@ -50,6 +50,7 @@ module.exports = {
   "sequencing-runs":
     "./resources/js/pages/sequencing-runs/components/SequencingRunsPage.jsx",
   "sequencing-run-details": "./resources/js/pages/sequencing-runs",
+  "sequencing-runs2": "./resources/js/pages/sequencing-runs2",
   groups: "./resources/js/pages/UserGroupsPage",
   "project-ncbi-exports": "./resources/js/pages/projects/ncbi-export",
   search: "./resources/js/pages/search/search.js",
