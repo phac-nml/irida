@@ -139,7 +139,7 @@ export function SamplesTable() {
       render: (name) => <a>{name}</a>,
     },
     {
-      title: "QC",
+      title: i18n("SamplesTable.Column.quality"),
       width: 60,
       dataIndex: "quality",
       render: (qualities) => <SampleQuality qualities={qualities} />,
