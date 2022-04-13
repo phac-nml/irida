@@ -16,7 +16,7 @@ public class ProjectSampleTableItem extends AntTableItem {
 	private final ProjectObject project;
 	private final List<String> quality;
 
-	public ProjectSampleTableItem(ProjectSampleJoin join, Double coverage, List<String> quality) {
+	public ProjectSampleTableItem(ProjectSampleJoin join, List<String> quality) {
 		super(join.getId());
 		this.owner = join.isOwner();
 		this.sample = new SampleObject(join.getObject());
