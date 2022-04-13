@@ -10,7 +10,7 @@
 import React from "react";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { PagedTableProvider } from "../../../components/ant.design/PagedTable";
-import { SequencingRunsList } from "../../sequencing-runs/SequencingRunsList";
+import { SequencingRunsList } from "../../sequencing-runs/components/SequencingRunsList";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
 export default function AdminSequencingRunsPage({}) {

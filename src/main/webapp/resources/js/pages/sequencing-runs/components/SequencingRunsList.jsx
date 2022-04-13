@@ -1,8 +1,8 @@
 import React from "react";
-import { dateColumnFormat } from "../../components/ant.design/table-renderers";
+import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
 import { Button } from "antd";
-import { PagedTable } from "../../components/ant.design/PagedTable";
-import { setBaseUrl } from "../../utilities/url-utilities";
+import { PagedTable } from "../../../components/ant.design/PagedTable";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 export function SequencingRunsList() {
   const columns = [

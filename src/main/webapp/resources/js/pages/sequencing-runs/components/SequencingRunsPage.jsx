@@ -1,9 +1,9 @@
 import React from "react";
 import { render } from "react-dom";
-import { PageWrapper } from "../../components/page/PageWrapper";
-import { PagedTableProvider } from "../../components/ant.design/PagedTable";
+import { PageWrapper } from "../../../components/page/PageWrapper";
+import { PagedTableProvider } from "../../../components/ant.design/PagedTable";
 import { SequencingRunsList } from "./SequencingRunsList";
-import { setBaseUrl } from "../../utilities/url-utilities";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const URL = setBaseUrl(`ajax/sequencingRuns`);
 
@@ -12,7 +12,7 @@ const URL = setBaseUrl(`ajax/sequencingRuns`);
  * @returns {*}
  * @constructor
  */
-export function SequencingRuns({}) {
+export function SequencingRunsPage({}) {
   return (
     <PageWrapper title={i18n("sequencingruns.title")}>
       <PagedTableProvider url={`${URL}/list`}>
@@ -22,4 +22,4 @@ export function SequencingRuns({}) {
   );
 }
 
-render(<SequencingRuns />, document.querySelector("#root"));
+render(<SequencingRunsPage />, document.querySelector("#root"));

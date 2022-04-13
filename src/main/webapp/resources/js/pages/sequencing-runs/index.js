@@ -1,8 +1,8 @@
 import React from "react";
 import { render } from "react-dom";
 import { Button, PageHeader, Popconfirm } from "antd";
-import { setBaseUrl } from "../../../utilities/url-utilities";
-import { deleteSequencingRun } from "../../../apis/sequencing-runs/sequencing-runs";
+import { setBaseUrl } from "../../utilities/url-utilities";
+import { deleteSequencingRun } from "../../apis/sequencing-runs/sequencing-runs";
 
 function SequencingRunDetails() {
   const runId = window.location.href.match(/sequencingRuns\/(\d+)/)[1];
