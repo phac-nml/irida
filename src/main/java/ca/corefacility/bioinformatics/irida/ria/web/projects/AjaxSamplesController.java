@@ -47,8 +47,8 @@ public class AjaxSamplesController {
 	 */
 	@PostMapping("")
 	public ResponseEntity<AntTableResponse<ProjectSampleTableItem>> getPagedProjectSamples(@PathVariable Long projectId,
-			@RequestBody ProjectSamplesTableRequest request) {
-		return ResponseEntity.ok(uiSampleService.getPagedProjectSamples(projectId, request));
+			@RequestBody ProjectSamplesTableRequest request, Locale locale) {
+		return ResponseEntity.ok(uiSampleService.getPagedProjectSamples(projectId, request, locale));
 	}
 
 	/**
