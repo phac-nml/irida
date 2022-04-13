@@ -22,7 +22,7 @@ export function validateSamplesForRemove(samples, projectId) {
     locked = [],
     associated = [];
   values?.forEach((sample) => {
-    if (Number(sample.projectId) !== Number(projectId)) {
+    if (!isSampleFromCurrentProject(sample.projectId, projectId)) {
       associated.push(sample);
     } else if (sample.owner) {
       valid.push(sample);
@@ -32,3 +32,20 @@ export function validateSamplesForRemove(samples, projectId) {
   });
   return { valid, locked, associated };
 }
+
+export function validateSamplesForLinker(samples, projectId) {
+  const values = Object.values(samples),
+    valid = [],
+    associated = [];
+  values.forEach((sample) => {
+    if (isSampleFromCurrentProject(sample.projectId, projectId)) {
+      valid.push(sample.id);
+    } else {
+      associated.push(sample);
+    }
+  });
+  return { valid, associated };
+}
+
+const isSampleFromCurrentProject = (sampleProjectId, projectId) =>
+  Number(sampleProjectId) === Number(projectId);

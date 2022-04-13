@@ -18,14 +18,16 @@ import {
 } from "../services/samplesSlice";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import {
+  validateSamplesForLinker,
   validateSamplesForMerge,
   validateSamplesForRemove,
 } from "../services/sample.utilities";
-import CreateNewSample from "./CreateNewSample";
+import { IconCode } from "../../../../components/icons/Icons";
 
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));
 const CreateModal = lazy(() => import("./CreateNewSample"));
+const LinkerModal = lazy(() => import("./LinkerModal"));
 
 /**
  * React element to render a row of actions that can be performed on
@@ -44,6 +46,7 @@ export default function SamplesMenu() {
   const [mergeVisible, setMergeVisible] = React.useState(false);
   const [removedVisible, setRemovedVisible] = React.useState(false);
   const [createSampleVisible, setCreateSampleVisible] = React.useState(false);
+  const [linkerVisible, setLinkerVisible] = React.useState(false);
   const [sorted, setSorted] = React.useState({});
 
   /**
@@ -71,6 +74,10 @@ export default function SamplesMenu() {
 
   const onDownload = () => {
     dispatch(downloadSamples({ projectId, selected }));
+  };
+
+  const onLink = () => {
+    alert("Idiot you need to implement this!");
   };
 
   /**
@@ -120,6 +127,16 @@ export default function SamplesMenu() {
         setRemovedVisible(true);
       } else
         message.error("No selected samples can be removed from this project");
+    } else if (name === "linker") {
+      const validated = validateSamplesForLinker(selected, projectId);
+      if (validated.associated.length > 0) {
+        message.error(
+          "You have samples form associated projects selected, they cannot be used in this linker command"
+        );
+      } else {
+        setSorted(validated.valid);
+        setLinkerVisible(true);
+      }
     }
   };
 
@@ -178,6 +195,13 @@ export default function SamplesMenu() {
       >
         {i18n("SampleMenu.download")}
       </Menu.Item>
+      <Menu.Item
+        key="linker-menu"
+        icon={<IconCode />}
+        onClick={() => validateAndOpenModalFor("linker")}
+      >
+        {i18n("SampleMenu.linker")}
+      </Menu.Item>
     </Menu>
   ));
 
@@ -222,10 +246,20 @@ export default function SamplesMenu() {
       )}
       {createSampleVisible && (
         <Suspense fallback={<span />}>
-          <CreateNewSample
+          <CreateModal
             visible={createSampleVisible}
             onCancel={() => setCreateSampleVisible(false)}
             onCreate={onCreate}
+          />
+        </Suspense>
+      )}
+      {linkerVisible && (
+        <Suspense fallback={<span />}>
+          <LinkerModal
+            visible={linkerVisible}
+            sampleIds={sorted}
+            projectId={projectId}
+            onFinish={() => setLinkerVisible(false)}
           />
         </Suspense>
       )}
