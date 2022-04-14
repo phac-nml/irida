@@ -4,7 +4,7 @@ import {
   createReducer,
 } from "@reduxjs/toolkit";
 import { getProjectIdFromUrl } from "../../../../utilities/url-utilities";
-import { INITIAL_TABLE_STATE } from "../constants";
+import { INITIAL_TABLE_STATE } from "./constants";
 import { getMinimalSampleDetailsForFilteredProject } from "../../../../apis/projects/project-samples";
 import { putSampleInCart } from "../../../../apis/cart/cart";
 
