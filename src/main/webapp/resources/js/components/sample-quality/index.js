@@ -15,7 +15,7 @@ export default function SampleQuality({ qualities }) {
   if (qualities.length === 0) {
     return (
       <Tag color="success" icon={<IconCheck />}>
-        PASS
+        {i18n("SampleQuality.pass").toUpperCase()}
       </Tag>
     );
   }
@@ -46,7 +46,7 @@ export default function SampleQuality({ qualities }) {
       }
     >
       <Tag color="error" icon={<IconWarning />}>
-        FAIL
+        {i18n("SampleQuality.fail").toUpperCase()}
       </Tag>
     </Popover>
   );
