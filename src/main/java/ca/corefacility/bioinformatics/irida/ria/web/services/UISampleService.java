@@ -475,7 +475,7 @@ public class UISampleService {
 		return result;
 	}
 
-	public StreamingResponseBody downloadSamplesSpreadsheet(long projectId, String type,
+	public void downloadSamplesSpreadsheet(long projectId, String type,
 			ProjectSamplesTableRequest request, HttpServletResponse response, Locale locale) {
 		List<Long> projectIds = request.getFilters().getAssociated();
 		projectIds.add(projectId);
