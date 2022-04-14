@@ -1,6 +1,5 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { SearchOutlined } from "@ant-design/icons";
 import { Button, Checkbox, DatePicker, Select, Space, Table, Tag } from "antd";
 import { useListAssociatedProjectsQuery } from "../../../../apis/projects/associated-projects";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
@@ -21,6 +20,7 @@ import { getNewTagColor } from "../../../../utilities/ant-utilities";
 import SampleQuality from "../../../../components/sample-quality";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
+import { IconSearch } from "../../../../components/icons/Icons";
 
 const { RangePicker } = DatePicker;
 
@@ -153,7 +153,7 @@ export function SamplesTable() {
           <Button
             type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
+            icon={<IconSearch />}
             size="small"
             style={{ width: 90 }}
           >
@@ -163,7 +163,7 @@ export function SamplesTable() {
       </div>
     ),
     filterIcon: (filtered) => (
-      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+      <IconSearch style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
   });
 
@@ -196,7 +196,7 @@ export function SamplesTable() {
           <Button
             type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
+            icon={<IconSearch />}
             size="small"
             style={{ width: 90 }}
           >
@@ -206,7 +206,7 @@ export function SamplesTable() {
       </div>
     ),
     filterIcon: (filtered) => (
-      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+      <IconSearch style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
   });
 

@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -13,6 +13,11 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -40,7 +45,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSamp
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleTableItem;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSamplesTableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.MergeRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.ProjectObject;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.ProjectSamplesFilter;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.SampleObject;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.error.SampleMergeException;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleFiles;
@@ -52,6 +59,8 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import liquibase.util.csv.CSVWriter;
 
 /**
  * UI Service for samples
@@ -65,6 +74,15 @@ public class UISampleService {
 	private final GenomeAssemblyService genomeAssemblyService;
 	private final MessageSource messageSource;
 	private final UICartService cartService;
+
+	/*
+	 List of names of columns in the Project > Samples table
+	 These correspond to their internationalized strings in the messages file
+	 */
+	private final List<String> TABLE_HEADERS = ImmutableList.of("server.SamplesTable.sampleName",
+			"server.SamplesTable.sampleId", "server.SamplesTable.quality", "server.SamplesTable.organism",
+			"server.SamplesTable.project", "server.SamplesTable.projectId", "server.SamplesTable.collectedBy",
+			"server.SamplesTable.created", "server.SamplesTable.modified");
 
 	@Autowired
 	public UISampleService(SampleService sampleService, ProjectService projectService,
@@ -124,8 +142,8 @@ public class UISampleService {
 	 * @return list of paired end sequence files
 	 */
 	public List<SequencingObject> getPairedSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService
-				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
+		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, SequenceFilePair.class);
 		// add project to qc entries and filter any unavailable entries
 		List<SequencingObject> filePairs = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : filePairJoins) {
@@ -145,8 +163,8 @@ public class UISampleService {
 	 * @return list of single end sequence files
 	 */
 	public List<SequencingObject> getSingleEndSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService
-				.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
+		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, SingleEndSequenceFile.class);
 
 		List<SequencingObject> singles = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : singleFileJoins) {
@@ -165,8 +183,8 @@ public class UISampleService {
 	 * @return list of fast5 sequence files
 	 */
 	public List<SequencingObject> getFast5FilesForSample(Sample sample) {
-		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService
-				.getSequencesForSampleOfType(sample, Fast5Object.class);
+		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, Fast5Object.class);
 		return fast5FileJoins.stream().map(SampleSequencingObjectJoin::getObject).collect(Collectors.toList());
 	}
 
@@ -271,23 +289,7 @@ public class UISampleService {
 		Page<ProjectSampleJoin> page = sampleService.getFilteredProjectSamples(projects, filterSpec, request.getPage(),
 				request.getPageSize(), request.getSort());
 
-		List<ProjectSampleTableItem> content = page.getContent().stream().map(join -> {
-			Sample sample = join.getObject();
-
-			List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(sample);
-			List<String> quality = new ArrayList<>();
-
-			qcEntriesForSample.forEach(entry -> {
-				entry.addProjectSettings(project);
-				if (entry.getStatus() == QCEntry.QCEntryStatus.NEGATIVE) {
-					quality.add(messageSource.getMessage("sample.files.qc." + entry.getType(),
-							new Object[] { entry.getMessage() }, locale));
-				}
-			});
-			return new ProjectSampleTableItem(join, quality);
-		}).collect(Collectors.toList());
-
-		return new AntTableResponse<>(content, page.getTotalElements());
+		return new AntTableResponse<>(formatSamplesForTable(page, locale), page.getTotalElements());
 	}
 
 	/**
@@ -389,14 +391,12 @@ public class UISampleService {
 	 * @return Zip File containing sequence files for listed samples
 	 */
 	public StreamingResponseBody downloadSamples(long projectId, List<Long> sampleIds, HttpServletResponse response) {
-		int BUFFER_SIZE = 1024;
 		Project project = projectService.read(projectId);
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(sampleIds);
 
 		StreamingResponseBody body = out -> {
 			final ZipOutputStream zipOutputStream = new ZipOutputStream(response.getOutputStream());
-			ZipEntry zipEntry = null;
-			InputStream inputStream = null;
+			ZipEntry zipEntry;
 
 			// storing used file names to ensure we don't have a conflict
 			Set<String> usedFileNames = new HashSet<>();
@@ -467,17 +467,164 @@ public class UISampleService {
 		return result;
 	}
 
-	public void downloadSamplesSpreadsheet(long projectId, String type,
-			ProjectSamplesTableRequest request, HttpServletResponse response, Locale locale) {
-		List<Long> projectIds = request.getFilters().getAssociated();
+	public void downloadSamplesSpreadsheet(long projectId, String type, ProjectSamplesTableRequest request,
+			HttpServletResponse response, Locale locale) throws IOException {
+		ProjectSamplesFilter filter = request.getFilters();
+		List<Long> projectIds = new ArrayList<>();
 		projectIds.add(projectId);
-		List<Project> projects = (List<Project>) projectService.readMultiple(projectIds);
+		if (filter.getAssociated() != null) {
+			projectIds.addAll(filter.getAssociated());
+		}
 
 		ProjectSampleJoinSpecification filterSpec = new ProjectSampleJoinSpecification();
 		for (AntSearch search : request.getSearch()) {
 			filterSpec.add(new SearchCriteria(search.getProperty(), search.getValue(),
 					SearchOperation.fromString(search.getOperation())));
 		}
-		// TODO: Need Eric's sepcification code here.
+
+		// Get all possible samples with this filter
+		// NOTE: THIS IS AN EXPENSIVE OPERATION!!!
+		List<Project> projects = (List<Project>) projectService.readMultiple(projectIds);
+		Page<ProjectSampleJoin> page = sampleService.getFilteredProjectSamples(projects, filterSpec, request.getPage(),
+				Integer.MAX_VALUE, request.getSort());
+		List<ProjectSampleTableItem> items = formatSamplesForTable(page, locale);
+		List<String> headers = TABLE_HEADERS.stream()
+				.map(header -> messageSource.getMessage(header, new Object[] {}, locale))
+				.collect(Collectors.toList());
+
+		if (type.equals("excel")) {
+			writeToExcel(response, "FOOBAR", items, headers);
+		} else {
+			writeToCSV(response, "FOBV", items, headers);
+		}
+	}
+
+	/**
+	 * Format a Page of ProjectSampleJoin's into a format to be consumed by the Ant Design Table.
+	 *
+	 * @param page Page of {@link ProjectSampleJoin}
+	 * @return List of {@link ProjectSampleTableItem}
+	 */
+	private List<ProjectSampleTableItem> formatSamplesForTable(Page<ProjectSampleJoin> page, Locale locale) {
+		return page.getContent().stream().map(join -> {
+			Sample sample = join.getObject();
+			Project project = join.getSubject();
+
+			List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(sample);
+			List<String> quality = new ArrayList<>();
+
+			qcEntriesForSample.forEach(entry -> {
+				entry.addProjectSettings(project);
+				if (entry.getStatus() == QCEntry.QCEntryStatus.NEGATIVE) {
+					quality.add(messageSource.getMessage("sample.files.qc." + entry.getType(),
+							new Object[] { entry.getMessage() }, locale));
+				}
+			});
+			return new ProjectSampleTableItem(join, quality);
+		}).collect(Collectors.toList());
+	}
+
+	/**
+	 * Write samples table to an Excel file
+	 *
+	 * @param response {@link HttpServletResponse}
+	 * @param filename {@link String} name of the file to download.
+	 * @param items    Data to download in the table
+	 * @param headers  for the table
+	 * @throws IOException thrown if file cannot be written
+	 */
+	private static void writeToExcel(HttpServletResponse response, String filename, List<ProjectSampleTableItem> items,
+			List<String> headers) throws IOException {
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet sheet = workbook.createSheet();
+
+		// Create the header row
+		Row row = sheet.createRow(0);
+		for (int i = 0; i < headers.size(); i++) {
+			Cell cell = row.createCell(i);
+			cell.setCellValue(headers.get(i));
+		}
+
+		// Add the data to the workbook
+		int rowNum = 1;
+		for (ProjectSampleTableItem item : items) {
+			int cellNum = 0;
+			SampleObject sample = item.getSample();
+			ProjectObject project = item.getProject();
+			row = sheet.createRow(rowNum++);
+
+			Cell sampleNameCell = row.createCell(cellNum++);
+			sampleNameCell.setCellValue(sample.getSampleName());
+
+			Cell sampleIdCell = row.createCell(cellNum++);
+			sampleIdCell.setCellValue(sample.getId());
+
+			Cell sampleOrganismCell = row.createCell(cellNum++);
+			sampleOrganismCell.setCellValue(sample.getOrganism());
+
+			Cell sampleQualityCell = row.createCell(cellNum++);
+			sampleQualityCell.setCellValue(StringUtils.join(item.getQuality(), "; "));
+
+			Cell projectNameCell = row.createCell(cellNum++);
+			projectNameCell.setCellValue(project.getName());
+
+			Cell projectIdCell = row.createCell(cellNum++);
+			projectIdCell.setCellValue(project.getId());
+
+			Cell createdByCell = row.createCell(cellNum++);
+			createdByCell.setCellValue(sample.getCollectedBy());
+
+			Cell createdCell = row.createCell(cellNum++);
+			createdCell.setCellValue(sample.getCreatedDate());
+
+			Cell modifiedCell = row.createCell(cellNum);
+			modifiedCell.setCellValue(sample.getModifiedDate());
+		}
+
+		response.setContentType("application/vnd.ms-excel");
+		response.setHeader("Content-disposition", "attachment; filename=" + filename + ".xlsx");
+		workbook.write(response.getOutputStream());
+
+		workbook.close();
+	}
+
+	/**
+	 * Write samples table to a CSV file.
+	 *
+	 * @param response {@link HttpServletResponse}
+	 * @param filename {@link String} name of the file to download.
+	 * @param models   Data to download in the table
+	 * @param headers  for the table
+	 * @throws IOException thrown if file cannot be written
+	 */
+	private static void writeToCSV(HttpServletResponse response, String filename, List<ProjectSampleTableItem> items,
+			List<String> headers) throws IOException {
+		List<String[]> results = new ArrayList<>();
+		results.add(headers.toArray(String[]::new));
+
+		for (ProjectSampleTableItem item : items) {
+			//			results.add(model.getExportableTableRow().toArray(new String[0]));
+			SampleObject sample = item.getSample();
+			ProjectObject project = item.getProject();
+			String[] row = {
+					sample.getSampleName(),
+					sample.getId().toString(),
+					StringUtils.join(item.getQuality(), "; "),
+					project.getName(),
+					project.getId().toString(),
+					sample.getCollectedBy(),
+					sample.getCreatedDate().toString(),
+					sample.getModifiedDate().toString()
+			};
+			results.add(row);
+		}
+
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + ".csv\"");
+		response.setContentType("text/csv");
+		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(response.getOutputStream());
+		CSVWriter csvWriter = new CSVWriter(outputStreamWriter, ',');
+		csvWriter.writeAll(results);
+		csvWriter.flush();
+		csvWriter.close();
 	}
 }

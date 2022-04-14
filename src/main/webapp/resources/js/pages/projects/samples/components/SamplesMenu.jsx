@@ -4,6 +4,7 @@ import { Button, Dropdown, Menu, message, Space } from "antd";
 import {
   addToCart,
   downloadSamples,
+  exportSamplesToFile,
   reloadTable,
 } from "../services/samplesSlice";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
@@ -86,6 +87,10 @@ export default function SamplesMenu() {
         .map((s) => s.id)
         .join(",")}`
     );
+  };
+
+  const onExport = (type) => {
+    dispatch(exportSamplesToFile(type));
   };
 
   /**
@@ -220,10 +225,18 @@ export default function SamplesMenu() {
           {i18n("SampleMenu.ncbi")}
         </Menu.Item>
         <Menu.Divider />
-        <Menu.Item key="menu-excel" icon={<IconFileExcel />}>
+        <Menu.Item
+          key="menu-excel"
+          icon={<IconFileExcel />}
+          onClick={() => onExport("excel")}
+        >
           {i18n("SampleMenu.excel")}
         </Menu.Item>
-        <Menu.Item key="menu-csv" icon={<IconFile />}>
+        <Menu.Item
+          key="menu-csv"
+          icon={<IconFile />}
+          onClick={() => onExport("csv")}
+        >
           {i18n("SampleMenu.csv")}
         </Menu.Item>
       </Menu>

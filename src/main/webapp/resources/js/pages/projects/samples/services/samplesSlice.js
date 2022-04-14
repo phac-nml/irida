@@ -61,6 +61,34 @@ const downloadSamples = createAsyncThunk(
   }
 );
 
+const exportSamplesToFile = createAsyncThunk(
+  "/samples/table/export",
+  async (type, { getState }) => {
+    const { samples } = getState();
+
+    await fetch(
+      `/ajax/project-samples/${samples.projectId}/export?type=${type}`,
+      {
+        method: "POST",
+        body: JSON.stringify(samples.options),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
+  }
+);
+
 const getInitialTableOptions = () => JSON.parse(INITIAL_TABLE_STATE);
 
 const formatSelectedSample = (projectSample) => ({
@@ -83,8 +111,11 @@ export default createReducer(initialState, (builder) => {
   builder
     .addCase(updateTable, (state, action) => {
       // reset selected state when changing filters or search
-      if (JSON.stringify(action.payload.search) !== JSON.stringify(state.options.search) ||
-          JSON.stringify(action.payload.filters) !== JSON.stringify(state.options.filters)
+      if (
+        JSON.stringify(action.payload.search) !==
+          JSON.stringify(state.options.search) ||
+        JSON.stringify(action.payload.filters) !==
+          JSON.stringify(state.options.filters)
       ) {
         state.selected = {};
         state.selectedCount = 0;
@@ -121,9 +152,15 @@ export default createReducer(initialState, (builder) => {
       state.selected = {};
       state.selectedCount = 0;
     })
-    .addCase(downloadSamples.fulfilled, () => {
+    .addCase(downloadSamples.fulfilled, (state) => {
       state.selected = {};
       state.selectedCount = 0;
+    })
+    .addCase(exportSamplesToFile.pending, (state) => {
+      state.loadingLong = true;
+    })
+    .addCase(exportSamplesToFile.fulfilled, (state) => {
+      state.loadingLong = false;
     });
 });
 
@@ -136,4 +173,5 @@ export {
   selectAllSamples,
   addToCart,
   downloadSamples,
+  exportSamplesToFile,
 };

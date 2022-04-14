@@ -114,9 +114,9 @@ public class AjaxSamplesController {
 	}
 
 	@PostMapping("/export")
-	public ResponseEntity<StreamingResponseBody> downloadSamplesSpreadsheet(@PathVariable long projectId, @RequestParam String type,
-			@RequestBody ProjectSamplesTableRequest request, HttpServletResponse response, Locale locale) {
-		return ResponseEntity.ok(
-				uiSampleService.downloadSamplesSpreadsheet(projectId, type, request, response, locale));
+	public void downloadSamplesSpreadsheet(@PathVariable long projectId, @RequestParam String type,
+			@RequestBody ProjectSamplesTableRequest request, HttpServletResponse response, Locale locale)
+			throws IOException {
+		uiSampleService.downloadSamplesSpreadsheet(projectId, type, request, response, locale);
 	}
 }
