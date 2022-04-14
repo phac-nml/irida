@@ -20,15 +20,6 @@ module.exports = {
   "samples-metadata-import":
     "./resources/js/pages/projects/samples-metadata-import",
   samples: "./resources/js/pages/projects/samples",
-  "project-samples": "./resources/js/pages/projects/samples/project-samples.js",
-  "project-samples-merge":
-    "./resources/js/pages/projects/samples/modals/samples-merge.js",
-  "project-samples-copy":
-    "./resources/js/pages/projects/samples/modals/samples-copy.js",
-  "project-samples-remove":
-    "./resources/js/pages/projects/samples/modals/samples-remove.js",
-  "project-samples-linker":
-    "./resources/js/pages/projects/samples/modals/samples-linker.js",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
   "project-metadata-edit":
     "./resources/js/pages/projects/project-metadata-edit.js",
