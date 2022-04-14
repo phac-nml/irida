@@ -107,9 +107,16 @@ public class AjaxSamplesController {
 	 * @return Zipped file of sequence files
 	 * @throws IOException thrown if error reading files.
 	 */
-	@PostMapping(value = "/download")
+	@PostMapping("/download")
 	public ResponseEntity<StreamingResponseBody> downloadSamples(@PathVariable long projectId,
 			@RequestBody DownloadRequest request, HttpServletResponse response) throws IOException {
 		return ResponseEntity.ok(uiSampleService.downloadSamples(projectId, request.getSampleIds(), response));
+	}
+
+	@PostMapping("/export")
+	public ResponseEntity<StreamingResponseBody> downloadSamplesSpreadsheet(@PathVariable long projectId, @RequestParam String type,
+			@RequestBody ProjectSamplesTableRequest request, HttpServletResponse response, Locale locale) {
+		return ResponseEntity.ok(
+				uiSampleService.downloadSamplesSpreadsheet(projectId, type, request, response, locale));
 	}
 }
