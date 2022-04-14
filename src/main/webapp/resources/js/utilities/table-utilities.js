@@ -1,3 +1,5 @@
+import moment from "moment";
+
 /**
  * Format Sort Order from the Ant Design sorter object
  * @param {array | object} sorter Ant Design sorter object
@@ -17,6 +19,44 @@ export function formatSort(sorter) {
     return undefined;
   }
   return [fromSorter(sorter)];
+}
+
+/**
+ * Format Search from the Ant Design filters object
+ * @param {array | object} filters Ant Design filters object
+ * @returns array of Search objects
+ */
+export function formatSearch(filters) {
+  const defaultOperation = "MATCH";
+  const formattedSearch = [];
+
+  for (const filter in filters) {
+    for (var index in filters[filter]) {
+      const value = filters[filter][index];
+      // if we have two values and they are both moment objects then add searchs for date range.
+      if (Array.isArray(value) && value.length === 2 && moment.isMoment(value[0]) && moment.isMoment(value[1])) {
+        formattedSearch.push({
+          property: filter,
+          value: value[0].unix(),
+          operation: "GREATER_THAN_EQUAL"
+        });
+        formattedSearch.push({
+          property: filter,
+          value: value[1].unix(),
+          operation: "LESS_THAN_EQUAL"
+        });
+      } else {
+        // if more than one value is provided use "IN" operation, otherwise use "MATCH" operation
+        formattedSearch.push({
+          property: filter,
+          value: value,
+          operation: Array.isArray(value) ? "IN" : defaultOperation,
+        });
+      }
+    }
+  }
+
+  return formattedSearch;
 }
 
 export const stringSorter = (property) => (a, b) =>

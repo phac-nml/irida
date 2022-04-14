@@ -1,11 +1,23 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FolderAddOutlined } from "@ant-design/icons";
-import { Checkbox, Space, Table, Tag, Tooltip } from "antd";
+import { FolderAddOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Checkbox,
+  DatePicker,
+  Select,
+  Space,
+  Table,
+  Tag,
+  Tooltip,
+} from "antd";
 import { useListAssociatedProjectsQuery } from "../../../../apis/projects/associated-projects";
 import { blue6 } from "../../../../styles/colors";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
-import { formatSort } from "../../../../utilities/table-utilities";
+import {
+  formatSearch,
+  formatSort,
+} from "../../../../utilities/table-utilities";
 import SampleIcons from "./SampleIcons";
 import { useListSamplesQuery } from "../services/samples";
 import {
@@ -17,6 +29,8 @@ import {
 } from "../services/samplesSlice";
 import { getNewTagColor } from "../../../../utilities/ant-utilities";
 import SampleQuality from "../../../../components/sample-quality";
+
+const { RangePicker } = DatePicker;
 
 /**
  * React element to render a table display samples belong to a project,
@@ -43,7 +57,7 @@ export function SamplesTable() {
    * Request formats them into a format that can be consumed by the
    * project column filter.
    */
-  const { data: associated } = useListAssociatedProjectsQuery(projectId);
+  const { data: associatedIds } = useListAssociatedProjectsQuery(projectId);
 
   /**
    * Create colors for associated projects. This is stored in local storage for consistency
@@ -51,10 +65,10 @@ export function SamplesTable() {
    */
   const colors = React.useMemo(() => {
     let newColors = {};
-    if (associated) {
+    if (associatedIds) {
       const colorString = localStorage.getItem("projectColors");
       newColors = colorString ? JSON.parse(colorString) : {};
-      associated.forEach(({ value }) => {
+      associatedIds.forEach(({ value }) => {
         if (!newColors.hasOwnProperty(value)) {
           newColors[value] = getNewTagColor();
         }
@@ -62,7 +76,7 @@ export function SamplesTable() {
       localStorage.setItem("projectColors", JSON.stringify(newColors));
     }
     return newColors;
-  }, [associated]);
+  }, [associatedIds]);
 
   /**
    * Handle row selection change event
@@ -85,7 +99,7 @@ export function SamplesTable() {
    */
   const updateSelectAll = (e) =>
     e.target.checked
-      ? dispatch(selectAllSamples(projectId, options))
+      ? dispatch(selectAllSamples({ projectId, options }))
       : dispatch(clearSelectedSamples());
 
   /**
@@ -96,14 +110,113 @@ export function SamplesTable() {
    * @param sorter
    * @returns {*}
    */
-  const onTableChange = (pagination, filters, sorter) =>
+  const onTableChange = (pagination, filters, sorter) => {
+    let { associated, ...search } = filters;
     dispatch(
       updateTable({
-        filters,
+        filters: { associated: associated },
         pagination,
         order: formatSort(sorter),
+        search: formatSearch(search),
       })
     );
+  };
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+  };
+
+  const handleClearSearch = (clearFilters, confirm, dataIndex) => {
+    clearFilters();
+    confirm({ closeDropdown: false });
+  };
+
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
+      <div style={{ padding: 8 }}>
+        <Select
+          mode="tags"
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys}
+          onChange={(e) => {
+            setSelectedKeys(e);
+            confirm({ closeDropdown: false });
+          }}
+          style={{ marginBottom: 8, display: "block" }}
+        />
+        <Space>
+          <Button
+            disabled={selectedKeys.length === 0}
+            onClick={() => handleClearSearch(clearFilters, confirm, dataIndex)}
+            size="small"
+            style={{ width: 89 }}
+          >
+            Clear
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+    ),
+  });
+
+  const getDateColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
+      <div style={{ padding: 8 }}>
+        <div style={{ marginBottom: 8, display: "block" }}>
+          <RangePicker
+            onChange={(dates, dateStrings) =>
+              setSelectedKeys([
+                [dates[0].startOf("day"), dates[1].endOf("day")],
+              ])
+            }
+          />
+        </div>
+        <Space>
+          <Button
+            disabled={selectedKeys.length === 0}
+            onClick={() => handleClearSearch(clearFilters, confirm, dataIndex)}
+            size="small"
+            style={{ width: 89 }}
+          >
+            Clear
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+    ),
+  });
 
   const columns = [
     {
@@ -134,9 +247,9 @@ export function SamplesTable() {
     {
       title: i18n("SamplesTable.Column.sampleName"),
       dataIndex: ["sample", "sampleName"],
-      key: "name",
       sorter: { multiple: 1 },
       render: (name) => <a>{name}</a>,
+      ...getColumnSearchProps(["sample", "sampleName"]),
     },
     {
       title: i18n("SamplesTable.Column.quality"),
@@ -147,8 +260,8 @@ export function SamplesTable() {
     {
       title: i18n("SamplesTable.Column.organism"),
       dataIndex: ["sample", "organism"],
-      key: "organism",
       sorter: { multiple: 1 },
+      ...getColumnSearchProps(["sample", "organism"]),
     },
     {
       title: i18n("SamplesTable.Column.project"),
@@ -158,7 +271,7 @@ export function SamplesTable() {
       render: (name, row) => {
         return <Tag color={colors[row.project.id]}>{name}</Tag>;
       },
-      filters: associated,
+      filters: associatedIds,
       filterIcon: () => (
         <Tooltip title={i18n("SamplesTable.Filter.associated")}>
           <FolderAddOutlined style={{ color: blue6 }} />
@@ -168,29 +281,29 @@ export function SamplesTable() {
     {
       title: i18n("SamplesTable.Column.collectedBy"),
       dataIndex: ["sample", "collectedBy"],
-      key: "collectedBy",
       sorter: { multiple: 1 },
+      ...getDateColumnSearchProps(["sample", "collectedBy"]),
     },
     {
       title: i18n("SamplesTable.Column.created"),
       dataIndex: ["sample", "createdDate"],
-      key: "created",
       sorter: { multiple: 1 },
       width: 230,
       render: (createdDate) => {
         return formatInternationalizedDateTime(createdDate);
       },
+      ...getDateColumnSearchProps(["sample", "createdDate"]),
     },
     {
       title: i18n("SamplesTable.Column.modified"),
       dataIndex: ["sample", "modifiedDate"],
-      key: "modified",
       defaultSortOrder: "descend",
       sorter: { multiple: 1 },
       width: 230,
       render: (modifiedDate) => {
         return formatInternationalizedDateTime(modifiedDate);
       },
+      ...getDateColumnSearchProps(["sample", "modifieddDate"]),
     },
   ];
 

@@ -16,10 +16,10 @@ const clearSelectedSamples = createAction("samples/table/selected/clear");
 
 const selectAllSamples = createAsyncThunk(
   "/samples/table/selected/all",
-  async (projectId, tableState) => {
+  async ({ projectId, options }, tableState) => {
     return await getMinimalSampleDetailsForFilteredProject(
       projectId,
-      tableState
+      options
     ).then(({ data }) => {
       const selected = data.reduce(
         (accumulator, value) => ({ ...accumulator, [value.key]: value }),
@@ -63,12 +63,12 @@ const downloadSamples = createAsyncThunk(
 
 const getInitialTableOptions = () => JSON.parse(INITIAL_TABLE_STATE);
 
-const formatSelectedSample = (sample) => ({
-  key: sample.key,
-  id: sample.sample.id,
-  projectId: sample.project.id,
-  sampleName: sample.sample.sampleName,
-  owner: sample.owner,
+const formatSelectedSample = (projectSample) => ({
+  key: projectSample.key,
+  id: projectSample.sample.id,
+  projectId: projectSample.project.id,
+  sampleName: projectSample.sample.sampleName,
+  owner: projectSample.owner,
 });
 
 const initialState = {
@@ -82,9 +82,14 @@ const initialState = {
 export default createReducer(initialState, (builder) => {
   builder
     .addCase(updateTable, (state, action) => {
+      // reset selected state when changing filters or search
+      if (JSON.stringify(action.payload.search) !== JSON.stringify(state.options.search) ||
+          JSON.stringify(action.payload.filters) !== JSON.stringify(state.options.filters)
+      ) {
+        state.selected = {};
+        state.selectedCount = 0;
+      }
       state.options = action.payload;
-      state.selected = {};
-      state.selectedCount = 0;
     })
     .addCase(reloadTable, (state) => {
       const newOptions = getInitialTableOptions();
