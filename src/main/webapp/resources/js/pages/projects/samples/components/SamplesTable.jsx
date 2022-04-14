@@ -1,18 +1,8 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FolderAddOutlined, SearchOutlined } from "@ant-design/icons";
-import {
-  Button,
-  Checkbox,
-  DatePicker,
-  Select,
-  Space,
-  Table,
-  Tag,
-  Tooltip,
-} from "antd";
+import { SearchOutlined } from "@ant-design/icons";
+import { Button, Checkbox, DatePicker, Select, Space, Table, Tag } from "antd";
 import { useListAssociatedProjectsQuery } from "../../../../apis/projects/associated-projects";
-import { blue6 } from "../../../../styles/colors";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import {
   formatSearch,
@@ -29,6 +19,8 @@ import {
 } from "../services/samplesSlice";
 import { getNewTagColor } from "../../../../utilities/ant-utilities";
 import SampleQuality from "../../../../components/sample-quality";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
 
 const { RangePicker } = DatePicker;
 
@@ -114,7 +106,7 @@ export function SamplesTable() {
     let { associated, ...search } = filters;
     dispatch(
       updateTable({
-        filters: { associated: associated },
+        filters: { associated },
         pagination,
         order: formatSort(sorter),
         search: formatSearch(search),
@@ -248,12 +240,16 @@ export function SamplesTable() {
       title: i18n("SamplesTable.Column.sampleName"),
       dataIndex: ["sample", "sampleName"],
       sorter: { multiple: 1 },
-      render: (name) => <a>{name}</a>,
+      render: (name, row) => (
+        <SampleDetailViewer sampleId={row.sample.id}>
+          <a>{name}</a>
+        </SampleDetailViewer>
+      ),
       ...getColumnSearchProps(["sample", "sampleName"]),
     },
     {
       title: i18n("SamplesTable.Column.quality"),
-      width: 60,
+      width: 100,
       dataIndex: "quality",
       render: (qualities) => <SampleQuality qualities={qualities} />,
     },
@@ -269,20 +265,19 @@ export function SamplesTable() {
       sorter: { multiple: 1 },
       key: "associated",
       render: (name, row) => {
-        return <Tag color={colors[row.project.id]}>{name}</Tag>;
+        return (
+          <Tag color={colors[row.project.id]}>
+            <a href={setBaseUrl(`/projects/${row.project.id}`)}>{name}</a>
+          </Tag>
+        );
       },
       filters: associatedIds,
-      filterIcon: () => (
-        <Tooltip title={i18n("SamplesTable.Filter.associated")}>
-          <FolderAddOutlined style={{ color: blue6 }} />
-        </Tooltip>
-      ),
     },
     {
       title: i18n("SamplesTable.Column.collectedBy"),
       dataIndex: ["sample", "collectedBy"],
       sorter: { multiple: 1 },
-      ...getDateColumnSearchProps(["sample", "collectedBy"]),
+      ...getColumnSearchProps(["sample", "collectedBy"]),
     },
     {
       title: i18n("SamplesTable.Column.created"),
