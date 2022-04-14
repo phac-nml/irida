@@ -1,11 +1,8 @@
 import React from "react";
-import { Avatar, List, Popover } from "antd";
-import {
-  CheckCircleTwoTone,
-  CloseCircleTwoTone,
-  ExclamationOutlined,
-} from "@ant-design/icons";
-import { green6, red6 } from "../../styles/colors";
+import { Avatar, List, Popover, Tag } from "antd";
+import { ExclamationOutlined } from "@ant-design/icons";
+import { red6 } from "../../styles/colors";
+import { IconCheck, IconWarning } from "../icons/Icons";
 
 /**
  * React component to render the quality data for a sample.
@@ -16,7 +13,11 @@ import { green6, red6 } from "../../styles/colors";
  */
 export default function SampleQuality({ qualities }) {
   if (qualities.length === 0) {
-    return <CheckCircleTwoTone twoToneColor={green6} />;
+    return (
+      <Tag color="success" icon={<IconCheck />}>
+        PASS
+      </Tag>
+    );
   }
 
   return (
@@ -44,7 +45,9 @@ export default function SampleQuality({ qualities }) {
         />
       }
     >
-      <CloseCircleTwoTone twoToneColor={red6} />
+      <Tag color="error" icon={<IconWarning />}>
+        FAIL
+      </Tag>
     </Popover>
   );
 }
