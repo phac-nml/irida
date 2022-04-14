@@ -1,11 +1,23 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FolderAddOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Checkbox, DatePicker, Input, Select, Space, Table, Tag, Tooltip } from "antd";
+import {
+  Button,
+  Checkbox,
+  DatePicker,
+  Select,
+  Space,
+  Table,
+  Tag,
+  Tooltip,
+} from "antd";
 import { useListAssociatedProjectsQuery } from "../../../../apis/projects/associated-projects";
 import { blue6 } from "../../../../styles/colors";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
-import { formatSearch, formatSort } from "../../../../utilities/table-utilities";
+import {
+  formatSearch,
+  formatSort,
+} from "../../../../utilities/table-utilities";
 import SampleIcons from "./SampleIcons";
 import { useListSamplesQuery } from "../services/samples";
 import {
@@ -87,9 +99,8 @@ export function SamplesTable() {
    */
   const updateSelectAll = (e) =>
     e.target.checked
-      ? dispatch(selectAllSamples({projectId, options}))
+      ? dispatch(selectAllSamples({ projectId, options }))
       : dispatch(clearSelectedSamples());
-  };
 
   /**
    * Handle changes made to the table options.  This will trigger an automatic
@@ -100,16 +111,16 @@ export function SamplesTable() {
    * @returns {*}
    */
   const onTableChange = (pagination, filters, sorter) => {
-    let {associated, ...search} = filters;
+    let { associated, ...search } = filters;
     dispatch(
       updateTable({
-        filters: {"associated": associated},
+        filters: { associated: associated },
         pagination,
         order: formatSort(sorter),
         search: formatSearch(search),
       })
     );
-  }
+  };
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -117,21 +128,34 @@ export function SamplesTable() {
 
   const handleClearSearch = (clearFilters, confirm, dataIndex) => {
     clearFilters();
-    confirm({closeDropdown: false});
-  }
+    confirm({ closeDropdown: false });
+  };
 
-  const getColumnSearchProps = dataIndex => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
       <div style={{ padding: 8 }}>
         <Select
           mode="tags"
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys}
-          onChange={e => {setSelectedKeys(e); confirm({closeDropdown: false});} }
-          style={{ marginBottom: 8, display: 'block' }}
+          onChange={(e) => {
+            setSelectedKeys(e);
+            confirm({ closeDropdown: false });
+          }}
+          style={{ marginBottom: 8, display: "block" }}
         />
         <Space>
-          <Button disabled={selectedKeys.length === 0} onClick={() => handleClearSearch(clearFilters, confirm, dataIndex)} size="small" style={{ width: 89 }}>
+          <Button
+            disabled={selectedKeys.length === 0}
+            onClick={() => handleClearSearch(clearFilters, confirm, dataIndex)}
+            size="small"
+            style={{ width: 89 }}
+          >
             Clear
           </Button>
           <Button
@@ -146,19 +170,35 @@ export function SamplesTable() {
         </Space>
       </div>
     ),
-    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-  })
+    filterIcon: (filtered) => (
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+    ),
+  });
 
-  const getDateColumnSearchProps = dataIndex => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8}}>
-        <div style={{ marginBottom: 8, display: 'block'}}>
+  const getDateColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
+      <div style={{ padding: 8 }}>
+        <div style={{ marginBottom: 8, display: "block" }}>
           <RangePicker
-            onChange={(dates, dateStrings) => setSelectedKeys([[dates[0].startOf('day'), dates[1].endOf('day')]]) }
+            onChange={(dates, dateStrings) =>
+              setSelectedKeys([
+                [dates[0].startOf("day"), dates[1].endOf("day")],
+              ])
+            }
           />
         </div>
         <Space>
-          <Button disabled={selectedKeys.length === 0} onClick={() => handleClearSearch(clearFilters, confirm, dataIndex)} size="small" style={{ width: 89 }}>
+          <Button
+            disabled={selectedKeys.length === 0}
+            onClick={() => handleClearSearch(clearFilters, confirm, dataIndex)}
+            size="small"
+            style={{ width: 89 }}
+          >
             Clear
           </Button>
           <Button
@@ -173,7 +213,9 @@ export function SamplesTable() {
         </Space>
       </div>
     ),
-    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+    filterIcon: (filtered) => (
+      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+    ),
   });
 
   const columns = [
@@ -206,7 +248,7 @@ export function SamplesTable() {
       title: i18n("SamplesTable.Column.sampleName"),
       dataIndex: ["sample", "sampleName"],
       sorter: { multiple: 1 },
-      render: name => <a>{name}</a>,
+      render: (name) => <a>{name}</a>,
       ...getColumnSearchProps(["sample", "sampleName"]),
     },
     {
