@@ -1,8 +1,10 @@
 import React from "react";
 import { render } from "react-dom";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Provider } from "react-redux";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { ContentLoading } from "../../components/loader";
+import store from "./store";
 
 const SequencingRunLayout = React.lazy(() =>
   import("./components/SequencingRunLayout")
@@ -31,16 +33,19 @@ __webpack_public_path__ = setBaseUrl(`/dist/`);
  * @constructor
  */
 render(
-  <BrowserRouter basename={setBaseUrl("/sequencing-runs2")}>
-    <React.Suspense fallback={<ContentLoading />}>
-      <Routes>
-        <Route path="/" element={<SequencingRunListPage />} />
-        <Route path="/:runId" element={<SequencingRunLayout />}>
-          <Route path="details" element={<SequencingRunDetailsPage />} />
-          <Route path="files" element={<SequencingRunFilesPage />} />
-        </Route>
-      </Routes>
-    </React.Suspense>
-  </BrowserRouter>,
+  <Provider store={store}>
+    <BrowserRouter basename={setBaseUrl("/sequencing-runs2")}>
+      <React.Suspense fallback={<ContentLoading />}>
+        <Routes>
+          <Route path="/" element={<SequencingRunListPage />} />
+          <Route path="/:runId" element={<SequencingRunLayout />}>
+            <Route index element={<SequencingRunDetailsPage />} />
+            <Route path="details" element={<SequencingRunDetailsPage />} />
+            <Route path="files" element={<SequencingRunFilesPage />} />
+          </Route>
+        </Routes>
+      </React.Suspense>
+    </BrowserRouter>
+  </Provider>,
   document.getElementById("root")
 );
