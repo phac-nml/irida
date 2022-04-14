@@ -12,30 +12,36 @@ export const sequencingRunsApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: setBaseUrl(BASE_URL),
   }),
-  tagTypes: ["SequencingRun"],
   endpoints: (build) => ({
     /*
-    Get sequencing run details.
+    Get a sequencing run.
     */
     getSequencingRunDetails: build.query({
-      query: (id) => ({
-        url: `${id}`,
+      query: (runId) => ({
+        url: `${runId}`,
       }),
-      providesTags: ["SequencingRun"],
     }),
     /*
     Get sequencing run files.
     */
     getSequencingRunFiles: build.query({
-      query: (id) => ({
-        url: `${id}/sequenceFiles`,
+      query: (runId) => ({
+        url: `${runId}/sequenceFiles`,
       }),
-      providesTags: ["SequencingRun"],
+    }),
+    /*
+    Delete a sequencing run.
+    */
+    deleteSequencingRun: build.mutation({
+      query: (runId) => ({
+        url: `${runId}`,
+        method: "DELETE",
+      }),
     }),
   }),
 });
 
-export const { useGetSequencingRunDetailsQuery, useGetSequencingRunFilesQuery } = sequencingRunsApi;
+export const { useGetSequencingRunDetailsQuery, useGetSequencingRunFilesQuery, useDeleteSequencingRunMutation } = sequencingRunsApi;
 
 export function deleteSequencingRun({ id }) {
   axios
