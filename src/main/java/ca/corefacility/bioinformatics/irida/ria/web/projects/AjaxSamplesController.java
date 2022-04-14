@@ -47,8 +47,8 @@ public class AjaxSamplesController {
 	 */
 	@PostMapping("")
 	public ResponseEntity<AntTableResponse<ProjectSampleTableItem>> getPagedProjectSamples(@PathVariable Long projectId,
-			@RequestBody ProjectSamplesTableRequest request) {
-		return ResponseEntity.ok(uiSampleService.getPagedProjectSamples(projectId, request));
+			@RequestBody ProjectSamplesTableRequest request, Locale locale) {
+		return ResponseEntity.ok(uiSampleService.getPagedProjectSamples(projectId, request, locale));
 	}
 
 	/**
@@ -98,9 +98,18 @@ public class AjaxSamplesController {
 		return ResponseEntity.ok(new AjaxSuccessResponse(result));
 	}
 
+	/**
+	 * Download a zipped file containing sequencing reads for a list of samples.
+	 *
+	 * @param projectId Identifier for a project
+	 * @param request   Details about the download request including a list of sample identifiers
+	 * @param response  {@link HttpServletResponse}
+	 * @return Zipped file of sequence files
+	 * @throws IOException thrown if error reading files.
+	 */
 	@PostMapping(value = "/download")
-	public ResponseEntity<StreamingResponseBody> downloadSamples(@PathVariable long projectId, @RequestBody DownloadRequest request, HttpServletResponse response)
-			throws IOException {
+	public ResponseEntity<StreamingResponseBody> downloadSamples(@PathVariable long projectId,
+			@RequestBody DownloadRequest request, HttpServletResponse response) throws IOException {
 		return ResponseEntity.ok(uiSampleService.downloadSamples(projectId, request.getSampleIds(), response));
 	}
 }

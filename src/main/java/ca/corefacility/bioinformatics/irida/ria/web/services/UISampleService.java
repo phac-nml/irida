@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
@@ -252,7 +253,8 @@ public class UISampleService {
 	 * @return a page of samples
 	 */
 	public AntTableResponse<ProjectSampleTableItem> getPagedProjectSamples(Long projectId,
-			ProjectSamplesTableRequest request) {
+			ProjectSamplesTableRequest request, Locale locale) {
+		Project project = projectService.read(projectId);
 		List<Long> projectIds = new ArrayList<>();
 		projectIds.add(projectId);
 		ProjectSamplesFilter filter = request.getFilters();
@@ -270,10 +272,28 @@ public class UISampleService {
 		Page<ProjectSampleJoin> page = sampleService.getFilteredProjectSamples(projects, filterSpec, request.getPage(),
 				request.getPageSize(), request.getSort());
 
-		List<ProjectSampleTableItem> content = page.getContent()
-				.stream()
-				.map(ProjectSampleTableItem::new)
-				.collect(Collectors.toList());
+		List<ProjectSampleTableItem> content = page.getContent().stream().map(join -> {
+			Sample sample = join.getObject();
+			Double coverage = null;
+			if (project.getGenomeSize() != null) {
+				try {
+					coverage = sampleService.estimateCoverageForSample(sample, project.getGenomeSize());
+				} catch (SequenceFileAnalysisException e) {
+					// NOTHING TO DO HERE
+				}
+			}
+			List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(sample);
+			List<String> quality = new ArrayList<>();
+
+			qcEntriesForSample.stream().forEach(entry -> {
+				entry.addProjectSettings(project);
+				if (entry.getStatus() == QCEntry.QCEntryStatus.NEGATIVE) {
+					quality.add(messageSource.getMessage("sample.files.qc." + entry.getType(),
+							new Object[] { entry.getMessage() }, locale));
+				}
+			});
+			return new ProjectSampleTableItem(join, quality);
+		}).collect(Collectors.toList());
 
 		return new AntTableResponse<>(content, page.getTotalElements());
 	}

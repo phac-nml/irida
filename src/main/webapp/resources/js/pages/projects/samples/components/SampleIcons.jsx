@@ -8,9 +8,7 @@ export default function SampleIcons({ sample }) {
     <Space size="small">
       {!Boolean(sample.owner) && (
         <Popover
-          content={
-            "You do not have ownership of this sample and cannot modified it."
-          }
+          content={i18n("SampleIcon.locked")}
           placement="right"
           trigger="hover"
         >

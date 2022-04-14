@@ -2,30 +2,34 @@ import React, { lazy, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Dropdown, Menu, message, Space } from "antd";
 import {
-  CloseSquareOutlined,
-  CloudDownloadOutlined,
-  CloudUploadOutlined,
-  DownOutlined,
-  MergeCellsOutlined,
-  PlusSquareOutlined,
-  ShareAltOutlined,
-  ShoppingCartOutlined,
-} from "@ant-design/icons";
-import {
   addToCart,
   downloadSamples,
   reloadTable,
 } from "../services/samplesSlice";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import {
+  validateSamplesForLinker,
   validateSamplesForMerge,
   validateSamplesForRemove,
 } from "../services/sample.utilities";
-import CreateNewSample from "./CreateNewSample";
+import {
+  IconCloseSquare,
+  IconCloudDownload,
+  IconCloudUpload,
+  IconCode,
+  IconDropDown,
+  IconFile,
+  IconFileExcel,
+  IconPlusSquare,
+  IconShare,
+  IconShoppingCart,
+  IcoonMergeSamples,
+} from "../../../../components/icons/Icons";
 
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));
 const CreateModal = lazy(() => import("./CreateNewSample"));
+const LinkerModal = lazy(() => import("./LinkerModal"));
 
 /**
  * React element to render a row of actions that can be performed on
@@ -36,7 +40,9 @@ const CreateModal = lazy(() => import("./CreateNewSample"));
 export default function SamplesMenu() {
   const dispatch = useDispatch();
 
-  const { projectId, selected } = useSelector((state) => state.samples);
+  const { projectId, selected, selectedCount } = useSelector(
+    (state) => state.samples
+  );
   const { project: { canManage = false } = {} } = useSelector(
     (state) => state.user
   );
@@ -44,6 +50,7 @@ export default function SamplesMenu() {
   const [mergeVisible, setMergeVisible] = React.useState(false);
   const [removedVisible, setRemovedVisible] = React.useState(false);
   const [createSampleVisible, setCreateSampleVisible] = React.useState(false);
+  const [linkerVisible, setLinkerVisible] = React.useState(false);
   const [sorted, setSorted] = React.useState({});
 
   /**
@@ -73,6 +80,14 @@ export default function SamplesMenu() {
     dispatch(downloadSamples({ projectId, selected }));
   };
 
+  const onNCBI = () => {
+    window.location.href = setBaseUrl(
+      `/projects/${projectId}/export/ncbi?ids=${Object.values(selected)
+        .map((s) => s.id)
+        .join(",")}`
+    );
+  };
+
   /**
    * Format samples to share with other projects,
    * store minimal information in localStorage
@@ -80,10 +95,9 @@ export default function SamplesMenu() {
   const shareSamples = () => {
     if (selected.size === 0) return;
 
-    const samples = [];
-    Object.values(selected).forEach(({ id, sampleName: name, owner }) => {
-      samples.push({ id, name, owner });
-    });
+    const samples = Object.values(selected).map(
+      ({ id, sampleName: name, owner }) => ({ id, name, owner })
+    );
 
     // Store them to window storage for later use.
     window.sessionStorage.setItem(
@@ -111,15 +125,22 @@ export default function SamplesMenu() {
         setSorted(validated);
         setMergeVisible(true);
       } else {
-        message.error("You need at least 2 unlocked samples to merge");
+        message.error(i18n("SamplesMenu.merge.error"));
       }
     } else if (name === "remove") {
       const validated = validateSamplesForRemove(selected, projectId);
       if (validated.valid.length > 0) {
         setSorted(validated);
         setRemovedVisible(true);
-      } else
-        message.error("No selected samples can be removed from this project");
+      } else message.error(i18n("SamplesMenu.remove.error"));
+    } else if (name === "linker") {
+      const validated = validateSamplesForLinker(selected, projectId);
+      if (validated.associated.length > 0) {
+        message.error(i18n("SampleMenu.linker.error"));
+      } else {
+        setSorted(validated.valid);
+        setLinkerVisible(true);
+      }
     }
   };
 
@@ -127,28 +148,31 @@ export default function SamplesMenu() {
     return (
       <Menu>
         <Menu.Item
+          disabled={selectedCount < 2}
           key="merge-menu"
-          icon={<MergeCellsOutlined />}
+          icon={<IcoonMergeSamples />}
           onClick={() => validateAndOpenModalFor("merge")}
         >
           {i18n("SamplesMenu.merge")}
         </Menu.Item>
         <Menu.Item
+          disabled={selectedCount === 0}
           key="share-menu"
-          icon={<ShareAltOutlined />}
+          icon={<IconShare />}
           onClick={shareSamples}
         >
           {i18n("SamplesMenu.share")}
         </Menu.Item>
         <Menu.Item
+          disabled={selectedCount === 0}
           key="remove-menu"
-          icon={<CloseSquareOutlined />}
+          icon={<IconCloseSquare />}
           onClick={() => validateAndOpenModalFor("remove")}
         >
           {i18n("SamplesMenu.remove")}
         </Menu.Item>
         <Menu.Divider />
-        <Menu.Item key="import-menu" icon={<CloudUploadOutlined />}>
+        <Menu.Item key="import-menu" icon={<IconCloudUpload />}>
           <a
             href={setBaseUrl(
               `projects/${projectId}/sample-metadata/upload/file`
@@ -160,26 +184,52 @@ export default function SamplesMenu() {
         <Menu.Divider />
         <Menu.Item
           key="create-menu"
-          icon={<PlusSquareOutlined />}
+          icon={<IconPlusSquare />}
           onClick={() => setCreateSampleVisible(true)}
         >
           {i18n("SamplesMenu.createSample")}
         </Menu.Item>
       </Menu>
     );
-  }, [selected]);
+  }, [selectedCount]);
 
-  const exportMenu = React.useMemo(() => (
-    <Menu>
-      <Menu.Item
-        key="download-menu"
-        icon={<CloudDownloadOutlined />}
-        onClick={onDownload}
-      >
-        {i18n("SampleMenu.download")}
-      </Menu.Item>
-    </Menu>
-  ));
+  const exportMenu = React.useMemo(
+    () => (
+      <Menu>
+        <Menu.Item
+          disabled={selectedCount === 0}
+          key="download-menu"
+          icon={<IconCloudDownload />}
+          onClick={onDownload}
+        >
+          {i18n("SampleMenu.download")}
+        </Menu.Item>
+        <Menu.Item
+          key="linker-menu"
+          icon={<IconCode />}
+          onClick={() => validateAndOpenModalFor("linker")}
+        >
+          {i18n("SampleMenu.linker")}
+        </Menu.Item>
+        <Menu.Item
+          disabled={selectedCount === 0}
+          key="ncbi-menu"
+          icon={<IconCloudUpload />}
+          onClick={onNCBI}
+        >
+          {i18n("SampleMenu.ncbi")}
+        </Menu.Item>
+        <Menu.Divider />
+        <Menu.Item key="menu-excel" icon={<IconFileExcel />}>
+          {i18n("SampleMenu.excel")}
+        </Menu.Item>
+        <Menu.Item key="menu-csv" icon={<IconFile />}>
+          {i18n("SampleMenu.csv")}
+        </Menu.Item>
+      </Menu>
+    ),
+    [selectedCount]
+  );
 
   return (
     <>
@@ -187,16 +237,16 @@ export default function SamplesMenu() {
         {canManage && (
           <Dropdown overlay={toolsMenu}>
             <Button>
-              {i18n("SamplesMenu.label")} <DownOutlined />
+              {i18n("SamplesMenu.label")} <IconDropDown />
             </Button>
           </Dropdown>
         )}
         <Dropdown overlay={exportMenu}>
           <Button>
-            {i18n("SampleMenu.export")} <DownOutlined />
+            {i18n("SampleMenu.export")} <IconDropDown />
           </Button>
         </Dropdown>
-        <Button icon={<ShoppingCartOutlined />} onClick={onAddToCart}>
+        <Button icon={<IconShoppingCart />} onClick={onAddToCart}>
           {i18n("SampleMenu.cart")}
         </Button>
       </Space>
@@ -222,10 +272,20 @@ export default function SamplesMenu() {
       )}
       {createSampleVisible && (
         <Suspense fallback={<span />}>
-          <CreateNewSample
+          <CreateModal
             visible={createSampleVisible}
             onCancel={() => setCreateSampleVisible(false)}
             onCreate={onCreate}
+          />
+        </Suspense>
+      )}
+      {linkerVisible && (
+        <Suspense fallback={<span />}>
+          <LinkerModal
+            visible={linkerVisible}
+            sampleIds={sorted}
+            projectId={projectId}
+            onFinish={() => setLinkerVisible(false)}
           />
         </Suspense>
       )}
