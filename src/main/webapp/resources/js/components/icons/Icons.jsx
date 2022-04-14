@@ -269,6 +269,6 @@ export const IconDatabaseOutlined = ({ ...props }) => (
   <DatabaseOutlined {...props} />
 );
 
-export const MergeSamplesIcon = ({ ...props }) => (
+export const IcoonMergeSamples = ({ ...props }) => (
   <MergeCellsOutlined {...props} />
 );

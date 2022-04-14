@@ -23,7 +23,7 @@ import {
   IconPlusSquare,
   IconShare,
   IconShoppingCart,
-  MergeSamplesIcon,
+  IcoonMergeSamples,
 } from "../../../../components/icons/Icons";
 
 const MergeModal = lazy(() => import("./MergeModal"));
@@ -150,7 +150,7 @@ export default function SamplesMenu() {
         <Menu.Item
           disabled={selectedCount < 2}
           key="merge-menu"
-          icon={<MergeSamplesIcon />}
+          icon={<IcoonMergeSamples />}
           onClick={() => validateAndOpenModalFor("merge")}
         >
           {i18n("SamplesMenu.merge")}
