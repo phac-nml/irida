@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
@@ -274,18 +273,11 @@ public class UISampleService {
 
 		List<ProjectSampleTableItem> content = page.getContent().stream().map(join -> {
 			Sample sample = join.getObject();
-			Double coverage = null;
-			if (project.getGenomeSize() != null) {
-				try {
-					coverage = sampleService.estimateCoverageForSample(sample, project.getGenomeSize());
-				} catch (SequenceFileAnalysisException e) {
-					// NOTHING TO DO HERE
-				}
-			}
+
 			List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(sample);
 			List<String> quality = new ArrayList<>();
 
-			qcEntriesForSample.stream().forEach(entry -> {
+			qcEntriesForSample.forEach(entry -> {
 				entry.addProjectSettings(project);
 				if (entry.getStatus() == QCEntry.QCEntryStatus.NEGATIVE) {
 					quality.add(messageSource.getMessage("sample.files.qc." + entry.getType(),
@@ -481,6 +473,11 @@ public class UISampleService {
 		projectIds.add(projectId);
 		List<Project> projects = (List<Project>) projectService.readMultiple(projectIds);
 
+		ProjectSampleJoinSpecification filterSpec = new ProjectSampleJoinSpecification();
+		for (AntSearch search : request.getSearch()) {
+			filterSpec.add(new SearchCriteria(search.getProperty(), search.getValue(),
+					SearchOperation.fromString(search.getOperation())));
+		}
 		// TODO: Need Eric's sepcification code here.
 	}
 }
