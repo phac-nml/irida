@@ -5,7 +5,7 @@ import { useListAssociatedProjectsQuery } from "../../../../apis/projects/associ
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import {
   formatSearch,
-  formatSort,
+  formatSort
 } from "../../../../utilities/table-utilities";
 import SampleIcons from "./SampleIcons";
 import { useListSamplesQuery } from "../services/samples";
@@ -14,8 +14,8 @@ import {
   clearSelectedSamples,
   removeSelectedSample,
   selectAllSamples,
-  updateTable,
-} from "../services/samplesSlice";
+  updateTable
+} from "../../redux/samplesSlice";
 import { getNewTagColor } from "../../../../utilities/ant-utilities";
 import SampleQuality from "../../../../components/sample-quality";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
@@ -32,17 +32,24 @@ const { RangePicker } = DatePicker;
  */
 export function SamplesTable() {
   const dispatch = useDispatch();
-  const { projectId, options, selected, selectedCount, loadingLong } =
-    useSelector((state) => state.samples);
+  const {
+    projectId,
+    options,
+    selected,
+    selectedCount,
+    loadingLong
+  } = useSelector(state => state.samples);
 
   /**
    * Fetch the current state of the table.  Will refetch whenever one of the
    * table options (filter, sort, or pagination) changes.
    */
-  const { data: { content: samples, total } = {}, isFetching } =
-    useListSamplesQuery(options, {
-      refetchOnMountOrArgChange: true,
-    });
+  const {
+    data: { content: samples, total } = {},
+    isFetching
+  } = useListSamplesQuery(options, {
+    refetchOnMountOrArgChange: true
+  });
 
   /**
    * Fetch projects that have been associated with this project.
@@ -89,7 +96,7 @@ export function SamplesTable() {
    * @param e - React synthetic event
    * @returns {*}
    */
-  const updateSelectAll = (e) =>
+  const updateSelectAll = e =>
     e.target.checked
       ? dispatch(selectAllSamples({ projectId, options }))
       : dispatch(clearSelectedSamples());
@@ -109,7 +116,7 @@ export function SamplesTable() {
         filters: { associated },
         pagination,
         order: formatSort(sorter),
-        search: formatSearch(search),
+        search: formatSearch(search)
       })
     );
   };
@@ -123,19 +130,19 @@ export function SamplesTable() {
     confirm({ closeDropdown: false });
   };
 
-  const getColumnSearchProps = (dataIndex) => ({
+  const getColumnSearchProps = dataIndex => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
       confirm,
-      clearFilters,
+      clearFilters
     }) => (
       <div style={{ padding: 8 }}>
         <Select
           mode="tags"
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys}
-          onChange={(e) => {
+          onChange={e => {
             setSelectedKeys(e);
             confirm({ closeDropdown: false });
           }}
@@ -162,24 +169,24 @@ export function SamplesTable() {
         </Space>
       </div>
     ),
-    filterIcon: (filtered) => (
+    filterIcon: filtered => (
       <IconSearch style={{ color: filtered ? "#1890ff" : undefined }} />
-    ),
+    )
   });
 
-  const getDateColumnSearchProps = (dataIndex) => ({
+  const getDateColumnSearchProps = dataIndex => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
       confirm,
-      clearFilters,
+      clearFilters
     }) => (
       <div style={{ padding: 8 }}>
         <div style={{ marginBottom: 8, display: "block" }}>
           <RangePicker
             onChange={(dates, dateStrings) =>
               setSelectedKeys([
-                [dates[0].startOf("day"), dates[1].endOf("day")],
+                [dates[0].startOf("day"), dates[1].endOf("day")]
               ])
             }
           />
@@ -205,9 +212,9 @@ export function SamplesTable() {
         </Space>
       </div>
     ),
-    filterIcon: (filtered) => (
+    filterIcon: filtered => (
       <IconSearch style={{ color: filtered ? "#1890ff" : undefined }} />
-    ),
+    )
   });
 
   const columns = [
@@ -228,13 +235,13 @@ export function SamplesTable() {
         return (
           <Space>
             <Checkbox
-              onChange={(e) => onRowSelectionChange(e, item)}
+              onChange={e => onRowSelectionChange(e, item)}
               checked={selected[item.key]}
             />
             <SampleIcons sample={item} />
           </Space>
         );
-      },
+      }
     },
     {
       title: i18n("SamplesTable.Column.sampleName"),
@@ -245,19 +252,19 @@ export function SamplesTable() {
           <a>{name}</a>
         </SampleDetailViewer>
       ),
-      ...getColumnSearchProps(["sample", "sampleName"]),
+      ...getColumnSearchProps(["sample", "sampleName"])
     },
     {
       title: i18n("SamplesTable.Column.quality"),
       width: 100,
       dataIndex: "quality",
-      render: (qualities) => <SampleQuality qualities={qualities} />,
+      render: qualities => <SampleQuality qualities={qualities} />
     },
     {
       title: i18n("SamplesTable.Column.organism"),
       dataIndex: ["sample", "organism"],
       sorter: { multiple: 1 },
-      ...getColumnSearchProps(["sample", "organism"]),
+      ...getColumnSearchProps(["sample", "organism"])
     },
     {
       title: i18n("SamplesTable.Column.project"),
@@ -271,23 +278,23 @@ export function SamplesTable() {
           </Tag>
         );
       },
-      filters: associatedIds,
+      filters: associatedIds
     },
     {
       title: i18n("SamplesTable.Column.collectedBy"),
       dataIndex: ["sample", "collectedBy"],
       sorter: { multiple: 1 },
-      ...getColumnSearchProps(["sample", "collectedBy"]),
+      ...getColumnSearchProps(["sample", "collectedBy"])
     },
     {
       title: i18n("SamplesTable.Column.created"),
       dataIndex: ["sample", "createdDate"],
       sorter: { multiple: 1 },
       width: 230,
-      render: (createdDate) => {
+      render: createdDate => {
         return formatInternationalizedDateTime(createdDate);
       },
-      ...getDateColumnSearchProps(["sample", "createdDate"]),
+      ...getDateColumnSearchProps(["sample", "createdDate"])
     },
     {
       title: i18n("SamplesTable.Column.modified"),
@@ -295,11 +302,11 @@ export function SamplesTable() {
       defaultSortOrder: "descend",
       sorter: { multiple: 1 },
       width: 230,
-      render: (modifiedDate) => {
+      render: modifiedDate => {
         return formatInternationalizedDateTime(modifiedDate);
       },
-      ...getDateColumnSearchProps(["sample", "modifieddDate"]),
-    },
+      ...getDateColumnSearchProps(["sample", "modifieddDate"])
+    }
   ];
 
   return (

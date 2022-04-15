@@ -1,12 +1,12 @@
 import {
   createAction,
   createAsyncThunk,
-  createReducer,
+  createReducer
 } from "@reduxjs/toolkit";
-import { getProjectIdFromUrl } from "../../../../utilities/url-utilities";
-import { INITIAL_TABLE_STATE } from "./constants";
-import { getMinimalSampleDetailsForFilteredProject } from "../../../../apis/projects/project-samples";
-import { putSampleInCart } from "../../../../apis/cart/cart";
+import { getProjectIdFromUrl } from "../../../utilities/url-utilities";
+import { INITIAL_TABLE_STATE } from "../samples/services/constants";
+import { getMinimalSampleDetailsForFilteredProject } from "../../../apis/projects/project-samples";
+import { putSampleInCart } from "../../../apis/cart/cart";
 
 const updateTable = createAction("samples/table/update");
 const reloadTable = createAction("samples/table/reload");
@@ -40,16 +40,16 @@ const addToCart = createAsyncThunk(
 const downloadSamples = createAsyncThunk(
   "/samples/table/export/download",
   async ({ selected, projectId }) => {
-    const sampleIds = Object.values(selected).map((s) => s.id);
+    const sampleIds = Object.values(selected).map(s => s.id);
     await fetch(`/ajax/project-samples/${projectId}/download`, {
       method: "POST",
       body: JSON.stringify({ sampleIds }),
       headers: {
-        "Content-Type": "application/json",
-      },
+        "Content-Type": "application/json"
+      }
     })
-      .then((response) => response.blob())
-      .then((blob) => {
+      .then(response => response.blob())
+      .then(blob => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.style.display = "none";
@@ -72,12 +72,12 @@ const exportSamplesToFile = createAsyncThunk(
         method: "POST",
         body: JSON.stringify(samples.options),
         headers: {
-          "Content-Type": "application/json",
-        },
+          "Content-Type": "application/json"
+        }
       }
     )
-      .then((response) => response.blob())
-      .then((blob) => {
+      .then(response => response.blob())
+      .then(blob => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.style.display = "none";
@@ -91,12 +91,12 @@ const exportSamplesToFile = createAsyncThunk(
 
 const getInitialTableOptions = () => JSON.parse(INITIAL_TABLE_STATE);
 
-const formatSelectedSample = (projectSample) => ({
+const formatSelectedSample = projectSample => ({
   key: projectSample.key,
   id: projectSample.sample.id,
   projectId: projectSample.project.id,
   sampleName: projectSample.sample.sampleName,
-  owner: projectSample.owner,
+  owner: projectSample.owner
 });
 
 const initialState = {
@@ -104,10 +104,10 @@ const initialState = {
   options: getInitialTableOptions(),
   selected: {},
   selectedCount: 0,
-  loadingLong: false,
+  loadingLong: false
 };
 
-export default createReducer(initialState, (builder) => {
+export default createReducer(initialState, builder => {
   builder
     .addCase(updateTable, (state, action) => {
       // reset selected state when changing filters or search
@@ -122,7 +122,7 @@ export default createReducer(initialState, (builder) => {
       }
       state.options = action.payload;
     })
-    .addCase(reloadTable, (state) => {
+    .addCase(reloadTable, state => {
       const newOptions = getInitialTableOptions();
       newOptions.pagination.pageSize = state.options.pagination.pageSize;
       newOptions.reload = Math.floor(Math.random() * 90000) + 10000; // Unique 5 digit number to trigger reload
@@ -136,11 +136,11 @@ export default createReducer(initialState, (builder) => {
       delete state.selected[action.payload];
       state.selectedCount--;
     })
-    .addCase(clearSelectedSamples, (state) => {
+    .addCase(clearSelectedSamples, state => {
       state.selected = {};
       state.selectedCount = 0;
     })
-    .addCase(selectAllSamples.pending, (state) => {
+    .addCase(selectAllSamples.pending, state => {
       state.loadingLong = true;
     })
     .addCase(selectAllSamples.fulfilled, (state, action) => {
@@ -148,18 +148,18 @@ export default createReducer(initialState, (builder) => {
       state.selectedCount = action.payload.selectedCount;
       state.loadingLong = false;
     })
-    .addCase(addToCart.fulfilled, (state) => {
+    .addCase(addToCart.fulfilled, state => {
       state.selected = {};
       state.selectedCount = 0;
     })
-    .addCase(downloadSamples.fulfilled, (state) => {
+    .addCase(downloadSamples.fulfilled, state => {
       state.selected = {};
       state.selectedCount = 0;
     })
-    .addCase(exportSamplesToFile.pending, (state) => {
+    .addCase(exportSamplesToFile.pending, state => {
       state.loadingLong = true;
     })
-    .addCase(exportSamplesToFile.fulfilled, (state) => {
+    .addCase(exportSamplesToFile.fulfilled, state => {
       state.loadingLong = false;
     });
 });
@@ -173,5 +173,5 @@ export {
   selectAllSamples,
   addToCart,
   downloadSamples,
-  exportSamplesToFile,
+  exportSamplesToFile
 };

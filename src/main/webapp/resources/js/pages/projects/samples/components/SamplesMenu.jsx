@@ -5,13 +5,13 @@ import {
   addToCart,
   downloadSamples,
   exportSamplesToFile,
-  reloadTable,
-} from "../services/samplesSlice";
+  reloadTable
+} from "../../redux/samplesSlice";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import {
   validateSamplesForLinker,
   validateSamplesForMerge,
-  validateSamplesForRemove,
+  validateSamplesForRemove
 } from "../services/sample.utilities";
 import {
   IconCloseSquare,
@@ -24,7 +24,7 @@ import {
   IconPlusSquare,
   IconShare,
   IconShoppingCart,
-  IcoonMergeSamples,
+  IcoonMergeSamples
 } from "../../../../components/icons/Icons";
 
 const MergeModal = lazy(() => import("./MergeModal"));
@@ -42,10 +42,10 @@ export default function SamplesMenu() {
   const dispatch = useDispatch();
 
   const { projectId, selected, selectedCount } = useSelector(
-    (state) => state.samples
+    state => state.samples
   );
   const { project: { canManage = false } = {} } = useSelector(
-    (state) => state.user
+    state => state.user
   );
 
   const [mergeVisible, setMergeVisible] = React.useState(false);
@@ -84,12 +84,12 @@ export default function SamplesMenu() {
   const onNCBI = () => {
     window.location.href = setBaseUrl(
       `/projects/${projectId}/export/ncbi?ids=${Object.values(selected)
-        .map((s) => s.id)
+        .map(s => s.id)
         .join(",")}`
     );
   };
 
-  const onExport = (type) => {
+  const onExport = type => {
     dispatch(exportSamplesToFile(type));
   };
 
@@ -100,9 +100,9 @@ export default function SamplesMenu() {
   const shareSamples = () => {
     if (selected.size === 0) return;
 
-    const samples = Object.values(selected).map(
-      ({ id, sampleName: name, owner }) => ({ id, name, owner })
-    );
+    const samples = Object.values(
+      selected
+    ).map(({ id, sampleName: name, owner }) => ({ id, name, owner }));
 
     // Store them to window storage for later use.
     window.sessionStorage.setItem(
@@ -110,7 +110,7 @@ export default function SamplesMenu() {
       JSON.stringify({
         samples,
         projectId,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       })
     );
 
@@ -123,7 +123,7 @@ export default function SamplesMenu() {
    * if the right samples are available.
    * @param {string} name - which modal to open
    */
-  const validateAndOpenModalFor = (name) => {
+  const validateAndOpenModalFor = name => {
     if (name === "merge") {
       const validated = validateSamplesForMerge(selected);
       if (validated.valid.length >= 2) {
