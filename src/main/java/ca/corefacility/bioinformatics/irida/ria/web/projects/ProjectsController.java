@@ -52,11 +52,6 @@ import com.google.common.collect.ImmutableMap;
 @Controller
 @Scope("session")
 public class ProjectsController {
-	// Sub Navigation Strings
-	public static final String ACTIVE_NAV = "activeNav";
-	private static final String ACTIVE_NAV_ACTIVITY = "activity";
-	private static final String ACTIVE_NAV_ANALYSES = "analyses";
-
 	// Page Names
 	public static final String PROJECTS_DIR = "projects/";
 	public static final String LIST_PROJECTS_PAGE = PROJECTS_DIR + "projects";
@@ -163,7 +158,6 @@ public class ProjectsController {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ACTIVITY);
 		return "projects/project_activity";
 	}
 
@@ -186,13 +180,12 @@ public class ProjectsController {
 	 *            Spring model for template variables
 	 * @param principal
 	 *            Currently logged in user
-	 * @return Path to the template for shareing samples
+	 * @return Path to the template for sharing samples
 	 */
 	@RequestMapping("/projects/{projectId}/share")
 	public String getProjectsSharePage(@PathVariable Long projectId, final Model model, final Principal principal) {
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ACTIVITY);
 		return "projects/project_share";
 	}
 
@@ -211,7 +204,6 @@ public class ProjectsController {
 	public String getProjectAnalysisList(@PathVariable Long projectId, Principal principal, Model model) {
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute(ACTIVE_NAV, ACTIVE_NAV_ANALYSES);
 		return "projects/project_analyses";
 	}
 
@@ -230,7 +222,6 @@ public class ProjectsController {
 	public String getProjectSettingsPage(@PathVariable Long projectId, Principal principal, Model model) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
-		model.addAttribute(ProjectsController.ACTIVE_NAV, "settings");
 		model.addAttribute("page", "details");
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return "projects/project_settings";
