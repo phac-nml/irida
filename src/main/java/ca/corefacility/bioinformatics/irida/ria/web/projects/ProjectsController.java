@@ -128,6 +128,26 @@ public class ProjectsController {
 	}
 
 	/**
+	 * Get the samples for a given project
+	 *
+	 * @param model     A model for the sample list view
+	 * @param principal The user reading the project
+	 * @param projectId The ID of the project
+	 * @return Name of the project samples list view
+	 */
+	@RequestMapping(value = {
+			"/projects/{projectId}",
+			"/projects/{projectId}/samples", })
+	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+
+		// Set up the template information
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		return "projects/project_samples";
+	}
+
+	/**
 	 * Request for a specific project details page.
 	 *
 	 * @param projectId
