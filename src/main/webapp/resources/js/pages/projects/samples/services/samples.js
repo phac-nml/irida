@@ -9,7 +9,7 @@ const PROJECT_ID = getProjectIdFromUrl();
 export const samplesApi = createApi({
   reducerPath: "samplesApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: setBaseUrl(`/ajax/project-samples/${PROJECT_ID}`)
+    baseUrl: setBaseUrl(`/ajax/projects/${PROJECT_ID}/samples`)
   }),
   endpoints: builder => ({
     listSamples: builder.query({

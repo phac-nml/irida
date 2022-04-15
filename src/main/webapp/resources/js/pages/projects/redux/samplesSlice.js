@@ -41,7 +41,7 @@ const downloadSamples = createAsyncThunk(
   "/samples/table/export/download",
   async ({ selected, projectId }) => {
     const sampleIds = Object.values(selected).map(s => s.id);
-    await fetch(`/ajax/project-samples/${projectId}/download`, {
+    await fetch(`/ajax/projects/${projectId}/samples/download`, {
       method: "POST",
       body: JSON.stringify({ sampleIds }),
       headers: {
@@ -67,7 +67,7 @@ const exportSamplesToFile = createAsyncThunk(
     const { samples } = getState();
 
     await fetch(
-      `/ajax/project-samples/${samples.projectId}/export?type=${type}`,
+      `/ajax/projects/${samples.projectId}/samples/export?type=${type}`,
       {
         method: "POST",
         body: JSON.stringify(samples.options),
