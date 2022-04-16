@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
@@ -25,6 +26,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSamplesT
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.MergeRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.RemoveSamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.error.SampleMergeException;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 
@@ -150,5 +152,35 @@ public class ProjectSamplesAjaxController {
 			@RequestBody ProjectSamplesTableRequest request, HttpServletResponse response, Locale locale)
 			throws IOException {
 		uiSampleService.downloadSamplesSpreadsheet(projectId, type, request, response, locale);
+	}
+
+	/**
+	 * Get a list of all {@link Sample} identifiers within a specific project
+	 *
+	 * @param projectId Identifier for a Project
+	 * @return {@link List} of {@link Sample} identifiers
+	 */
+	@GetMapping("/identifiers")
+	public List<Long> getSampleIdsForProject(@RequestParam Long id) {
+		return uiSampleService.getSampleIdsForProject(id);
+	}
+
+	/**
+	 * Share / Move samples between projects
+	 *
+	 * @param request {@link ShareSamplesRequest} details about the samples to share
+	 * @param locale  current users {@link Locale}
+	 * @return Outcome of the share/move
+	 */
+	@PostMapping("/share")
+	public ResponseEntity<AjaxResponse> shareSamplesWithProject(@RequestBody ShareSamplesRequest request,
+			Locale locale) {
+		try {
+			uiSampleService.shareSamplesWithProject(request, locale);
+			return ResponseEntity.ok(new AjaxSuccessResponse(""));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN)
+					.body(new AjaxErrorResponse(e.getLocalizedMessage()));
+		}
 	}
 }

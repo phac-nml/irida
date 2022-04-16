@@ -1,6 +1,6 @@
 import React from "react";
 import { Col, Divider, List, Modal, Row, Typography } from "antd";
-import { useRemoveMutation } from "../services/samples";
+import { useRemoveMutation } from "../../../../apis/projects/samples";
 import LockedSamplesList from "./LockedSamplesList";
 import AssociatedSamplesList from "./AssociatedSamplesList";
 
@@ -20,14 +20,14 @@ export default function RemoveModal({
   samples,
   visible,
   onComplete,
-  onCancel,
+  onCancel
 }) {
   const [removeSamples, { isLoading }] = useRemoveMutation();
 
   const onOk = async () => {
     try {
       const response = await removeSamples(
-        samples.valid.map((sample) => sample.id)
+        samples.valid.map(sample => sample.id)
       );
       onComplete();
     } catch (e) {
@@ -43,7 +43,7 @@ export default function RemoveModal({
       onOk={onOk}
       okText={i18n("RemoveModal.okText")}
       okButtonProps={{
-        loading: isLoading,
+        loading: isLoading
       }}
       width={600}
     >
@@ -54,7 +54,7 @@ export default function RemoveModal({
             bordered
             header={<Typography.Text>Samples to be removed</Typography.Text>}
             dataSource={samples.valid}
-            renderItem={(sample) => (
+            renderItem={sample => (
               <List.Item>
                 <List.Item.Meta title={sample.sampleName} />
               </List.Item>

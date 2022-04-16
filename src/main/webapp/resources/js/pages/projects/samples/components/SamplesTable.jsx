@@ -8,7 +8,7 @@ import {
   formatSort
 } from "../../../../utilities/table-utilities";
 import SampleIcons from "./SampleIcons";
-import { useListSamplesQuery } from "../services/samples";
+import { useListSamplesQuery } from "../../../../apis/projects/samples";
 import {
   addSelectedSample,
   clearSelectedSamples,
