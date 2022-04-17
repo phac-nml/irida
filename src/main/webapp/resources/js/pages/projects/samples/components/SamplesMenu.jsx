@@ -74,7 +74,7 @@ export default function SamplesMenu() {
   };
 
   const onAddToCart = () => {
-    dispatch(addToCart({ projectId, selected }));
+    dispatch(addToCart());
   };
 
   const onDownload = () => {

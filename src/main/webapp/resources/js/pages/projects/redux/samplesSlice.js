@@ -33,8 +33,12 @@ const selectAllSamples = createAsyncThunk(
 
 const addToCart = createAsyncThunk(
   "/samples/table/selected/cart",
-  async ({ projectId, selected }) => {
-    return await putSampleInCart(projectId, Object.values(selected));
+  async (_, { getState }) => {
+    const { samples } = getState();
+    return await putSampleInCart(
+      samples.projectId,
+      Object.values(samples.selected)
+    );
   }
 );
 
