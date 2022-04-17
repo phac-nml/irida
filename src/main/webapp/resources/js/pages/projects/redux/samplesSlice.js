@@ -7,6 +7,7 @@ import { getProjectIdFromUrl } from "../../../utilities/url-utilities";
 import { INITIAL_TABLE_STATE } from "../samples/services/constants";
 import { getMinimalSampleDetailsForFilteredProject } from "../../../apis/projects/project-samples";
 import { putSampleInCart } from "../../../apis/cart/cart";
+import { downloadPost } from "../../../utilities/file-utilities";
 
 const updateTable = createAction("samples/table/update");
 const reloadTable = createAction("samples/table/reload");
@@ -39,25 +40,13 @@ const addToCart = createAsyncThunk(
 
 const downloadSamples = createAsyncThunk(
   "/samples/table/export/download",
-  async ({ selected, projectId }) => {
-    const sampleIds = Object.values(selected).map(s => s.id);
-    await fetch(`/ajax/projects/${projectId}/samples/download`, {
-      method: "POST",
-      body: JSON.stringify({ sampleIds }),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-      .then(response => response.blob())
-      .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.style.display = "none";
-        a.href = url;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-      });
+  async (_, { getState }) => {
+    const { samples } = getState();
+    const sampleIds = Object.values(samples.selected).map(s => s.id);
+    return await downloadPost(
+      `/ajax/projects/${samples.projectId}/samples/download`,
+      { sampleIds }
+    );
   }
 );
 
@@ -65,27 +54,10 @@ const exportSamplesToFile = createAsyncThunk(
   "/samples/table/export",
   async (type, { getState }) => {
     const { samples } = getState();
-
-    await fetch(
+    return await downloadPost(
       `/ajax/projects/${samples.projectId}/samples/export?type=${type}`,
-      {
-        method: "POST",
-        body: JSON.stringify(samples.options),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
-    )
-      .then(response => response.blob())
-      .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.style.display = "none";
-        a.href = url;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-      });
+      samples.options
+    );
   }
 );
 

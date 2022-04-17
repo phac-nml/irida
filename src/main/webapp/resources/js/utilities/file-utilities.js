@@ -15,29 +15,26 @@ export function download(url) {
  * Download a file using a post request.
  * This is good for when large amounts of data are required ot create the download
  * @param {string} url - Url to send the info to.
- * @param {object} contents - Any details that need to be including in the request.
+ * @param {object} body - Any details that need to be including in the request.
  */
-export function downloadPost(url, contents) {
-  const form =
-    document.querySelector("#submit-download") ||
-    document.createElement("form");
-
-  form.setAttribute("id", "submit-download");
-  form.setAttribute("method", "POST");
-  form.setAttribute("action", url);
-  form.setAttribute("target", "_self");
-  form.setAttribute("style", "display: none");
-
-  for (const [name, value] of Object.entries(contents)) {
-    const field = document.createElement("input");
-    field.setAttribute("name", name);
-    field.setAttribute("value", value);
-    form.appendChild(field);
-  }
-
-  document.body.appendChild(form);
-  form.submit();
-  document.body.removeChild(form);
+export async function downloadPost(url, body) {
+  await fetch(url, {
+    method: "POST",
+    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+    .then(response => response.blob())
+    .then(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.style.display = "none";
+      a.href = url;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
 }
 
 /**
