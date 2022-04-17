@@ -13,16 +13,3 @@ const BASE_URL = setBaseUrl(`ajax/project-samples/`);
 export async function getPagedProjectSamples(projectId, body) {
   return await axios.post(`${BASE_URL}${projectId}`, body);
 }
-
-/**
- * Get get minimal information for all samples in a project.
- * @param {number} projectId - identifier for a project
- * @param {object} filters - current table filters
- * @returns {Promise<*>}
- */
-export async function getMinimalSampleDetailsForFilteredProject(
-  projectId,
-  options
-) {
-  return await axios.post(`${BASE_URL}${projectId}/ids`, { filters: options.filters, search: options.search });
-}

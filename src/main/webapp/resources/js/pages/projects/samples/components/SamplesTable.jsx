@@ -98,7 +98,7 @@ export function SamplesTable() {
    */
   const updateSelectAll = e =>
     e.target.checked
-      ? dispatch(selectAllSamples({ projectId, options }))
+      ? dispatch(selectAllSamples())
       : dispatch(clearSelectedSamples());
 
   /**

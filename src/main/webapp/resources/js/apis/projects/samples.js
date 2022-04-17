@@ -99,3 +99,18 @@ export async function shareSamplesWithProject({
     body: JSON.stringify({ currentId, sampleIds, targetId, locked, remove })
   });
 }
+
+/**
+ * Get get minimal information for all samples in a project.
+ * @param {object} options - current table filters
+ * @returns {Promise<*>}
+ */
+export async function getMinimalSampleDetailsForFilteredProject(options) {
+  return await fetch(`${URL}/ids`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(options)
+  }).then(response => response.json());
+}
