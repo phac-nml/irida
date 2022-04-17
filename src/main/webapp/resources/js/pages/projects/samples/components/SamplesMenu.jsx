@@ -78,7 +78,7 @@ export default function SamplesMenu() {
   };
 
   const onDownload = () => {
-    dispatch(downloadSamples({ projectId, selected }));
+    dispatch(downloadSamples());
   };
 
   const onNCBI = () => {
