@@ -610,6 +610,7 @@ public class UISampleService {
 					sample.getSampleName(),
 					sample.getId().toString(),
 					StringUtils.join(item.getQuality(), "; "),
+					sample.getOrganism(),
 					project.getName(),
 					project.getId().toString(),
 					sample.getCollectedBy(),
