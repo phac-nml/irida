@@ -40,7 +40,8 @@ public class ProjectSamplesAjaxController {
 	private final UISampleService uiSampleService;
 
 	@Autowired
-	public ProjectSamplesAjaxController(UIProjectSampleService uiProjectSampleService, UISampleService uiSampleService) {
+	public ProjectSamplesAjaxController(UIProjectSampleService uiProjectSampleService,
+			UISampleService uiSampleService) {
 		this.uiProjectSampleService = uiProjectSampleService;
 		this.uiSampleService = uiSampleService;
 	}
@@ -147,6 +148,16 @@ public class ProjectSamplesAjaxController {
 		return ResponseEntity.ok(uiSampleService.downloadSamples(projectId, request.getSampleIds(), response));
 	}
 
+	/**
+	 * Export the current state of the Project Samples table as either a CSV or Excel file.
+	 *
+	 * @param projectId Identifier for the current project
+	 * @param type      Type of file to export (CSV or Excel)
+	 * @param request   Current state of the samples table
+	 * @param response  {@link HttpServletResponse}
+	 * @param locale    current users {@link Locale}
+	 * @throws IOException Thrown if issue export the file
+	 */
 	@PostMapping("/export")
 	public void downloadSamplesSpreadsheet(@PathVariable long projectId, @RequestParam String type,
 			@RequestBody ProjectSamplesTableRequest request, HttpServletResponse response, Locale locale)
@@ -157,7 +168,7 @@ public class ProjectSamplesAjaxController {
 	/**
 	 * Get a list of all {@link Sample} identifiers within a specific project
 	 *
-	 * @param projectId Identifier for a Project
+	 * @param id Identifier for a Project
 	 * @return {@link List} of {@link Sample} identifiers
 	 */
 	@GetMapping("/identifiers")
@@ -179,8 +190,7 @@ public class ProjectSamplesAjaxController {
 			uiSampleService.shareSamplesWithProject(request, locale);
 			return ResponseEntity.ok(new AjaxSuccessResponse(""));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN)
-					.body(new AjaxErrorResponse(e.getLocalizedMessage()));
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new AjaxErrorResponse(e.getLocalizedMessage()));
 		}
 	}
 }
