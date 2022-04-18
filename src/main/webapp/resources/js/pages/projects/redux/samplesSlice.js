@@ -65,6 +65,12 @@ const exportSamplesToFile = createAsyncThunk(
   }
 );
 
+/**
+ * Since the initial table props may need to be reset at some point, we store
+ * them in a string so they cannot be mutated.  When the table needs to be reset
+ * to it's default state, just re-parse by calling this.
+ * @returns {object} - default table state
+ */
 const getInitialTableOptions = () => JSON.parse(INITIAL_TABLE_STATE);
 
 const formatSelectedSample = projectSample => ({
