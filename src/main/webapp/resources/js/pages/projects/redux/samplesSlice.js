@@ -15,6 +15,12 @@ const addSelectedSample = createAction("samples/table/selected/add");
 const removeSelectedSample = createAction("samples/table/selected/remove");
 const clearSelectedSamples = createAction("samples/table/selected/clear");
 
+/**
+ * Called when selecting all samples from the Samples Table.
+ *
+ * This will trigger a "long load" since there might be a little of samples in
+ * the table that data needs to be gathered for from the server.
+ */
 const selectAllSamples = createAsyncThunk(
   "/samples/table/selected/all",
   async (_, { getState }) => {
@@ -31,6 +37,9 @@ const selectAllSamples = createAsyncThunk(
   }
 );
 
+/**
+ * Called when adding samples to the cart
+ */
 const addToCart = createAsyncThunk(
   "/samples/table/selected/cart",
   async (_, { getState }) => {
@@ -42,6 +51,9 @@ const addToCart = createAsyncThunk(
   }
 );
 
+/**
+ * Called when downloading samples (sequence files) from the server.
+ */
 const downloadSamples = createAsyncThunk(
   "/samples/table/export/download",
   async (_, { getState }) => {
@@ -54,6 +66,10 @@ const downloadSamples = createAsyncThunk(
   }
 );
 
+/**
+ * Called when exporting the current state of the samples table to either
+ * a CSV of Excel file.
+ */
 const exportSamplesToFile = createAsyncThunk(
   "/samples/table/export",
   async (type, { getState }) => {
@@ -73,6 +89,13 @@ const exportSamplesToFile = createAsyncThunk(
  */
 const getInitialTableOptions = () => JSON.parse(INITIAL_TABLE_STATE);
 
+/**
+ * Called to format a sample when a sample is selected.
+ * Needs to be converted to this format so that it can be used by the share
+ * samples page and the cart.
+ * @param projectSample - Sample details object returned as part of the table data
+ * @returns {{sampleName: (Document.mergeForm.sampleName|Document.sampleName|string), owner: *, id: string, projectId: *, key: *}}
+ */
 const formatSelectedSample = projectSample => ({
   key: projectSample.key,
   id: projectSample.sample.id,
