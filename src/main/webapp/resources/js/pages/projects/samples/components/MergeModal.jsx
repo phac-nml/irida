@@ -16,6 +16,15 @@ import { serverValidateSampleName } from "../../../../utilities/validation-utili
 import { useMergeMutation } from "../../../../apis/projects/samples";
 import LockedSamplesList from "./LockedSamplesList";
 
+/**
+ * React element to display a modal to merge multiple samples into a single one.
+ * @param {array} samples - list of samples to merge together
+ * @param {boolean} visible - whether the modal is currently visible on the page
+ * @param {function} onComplete - function to call when the merge is complete
+ * @param {function} onCancel - function to call when the merge is cancelled.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function MergeModal({ samples, visible, onComplete, onCancel }) {
   const { projectId } = useSelector(state => state.samples);
   const [merge, { isLoading }] = useMergeMutation();
