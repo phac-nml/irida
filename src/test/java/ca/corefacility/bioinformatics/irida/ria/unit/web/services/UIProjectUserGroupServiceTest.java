@@ -71,7 +71,7 @@ public class UIProjectUserGroupServiceTest {
 		when(userGroupService.getUserGroupsNotOnProject(PROJECT, "")).thenReturn(USER_GROUPS);
 
 		doThrow(ProjectWithoutOwnerException.class).when(projectService)
-				.updateUserGroupProjectRole(PROJECT, USER_GROUP_3, ProjectRole.PROJECT_USER, null);
+				.updateUserGroupProjectRole(PROJECT, USER_GROUP_3, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1);
 	}
 
 	@Test
@@ -115,6 +115,13 @@ public class UIProjectUserGroupServiceTest {
 		verify(projectService, times(1)).read(1L);
 		verify(userGroupService, times(1)).read(1L);
 		verify(projectService, times(1)).updateUserGroupProjectRole(PROJECT, USER_GROUP_1, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1);
+	}
+
+	@Test
+	public void testUpdateUserProjectRoleOnProjectNoManager() {
+		assertThrows(ProjectWithoutOwnerException.class, () -> {
+			service.updateUserGroupRoleOnProject(1L, 3L, ProjectRole.PROJECT_USER.toString(), ProjectMetadataRole.LEVEL_1.toString(), LOCALE);
+		});
 	}
 
 	@Test

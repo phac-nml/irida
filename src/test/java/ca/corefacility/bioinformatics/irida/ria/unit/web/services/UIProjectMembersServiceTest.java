@@ -79,7 +79,7 @@ public class UIProjectMembersServiceTest {
 		doThrow(ProjectWithoutOwnerException.class).when(projectService)
 				.removeUserFromProject(PROJECT, USER_3);
 		doThrow(ProjectWithoutOwnerException.class).when(projectService)
-				.updateUserProjectRole(PROJECT, USER_3, ProjectRole.PROJECT_USER, null);
+				.updateUserProjectRole(PROJECT, USER_3, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1);
 	}
 
 	@Test
@@ -118,6 +118,14 @@ public class UIProjectMembersServiceTest {
 	public void testUpdateUserMetadataRoleOnProject() throws ProjectWithoutOwnerException {
 		service.updateUserRoleOnProject(PROJECT_ID, USER_2.getId(), "", ProjectMetadataRole.LEVEL_4.toString(), LOCALE);
 		verify(projectService, times(1)).updateUserProjectRole(PROJECT, USER_2, null, ProjectMetadataRole.LEVEL_4);
+	}
+
+	@Test
+	public void testUpdateUserRoleOnProjectNoManager() {
+		assertThrows(ProjectWithoutOwnerException.class, () -> {
+			service.updateUserRoleOnProject(PROJECT_ID, USER_3.getId(), ProjectRole.PROJECT_USER.toString(),
+					ProjectMetadataRole.LEVEL_1.toString(), LOCALE);
+		});
 	}
 
 	@Test
