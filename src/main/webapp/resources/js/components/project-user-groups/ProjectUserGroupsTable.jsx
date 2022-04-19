@@ -23,8 +23,10 @@ import { AddGroupButton } from "./AddGroupButton";
 export function ProjectUserGroupsTable({ projectId }) {
   const { updateTable } = useContext(PagedTableContext);
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
-  const { roles: projectRoles } = useProjectRoles(projectId);
-  const { roles: metadataRoles } = useMetadataRoles();
+  const { roles: projectRoles, getRoleFromKey } = useProjectRoles(projectId);
+  const { roles: metadataRoles, getRoleFromKey: getMetadataRoleFromKey } = useMetadataRoles();
+
+
 
   const updateProjectRole = (updatedRole, details) => (role) => {
     return updateUserGroupProjectRole({
@@ -53,15 +55,18 @@ export function ProjectUserGroupsTable({ projectId }) {
       title: i18n("ProjectUserGroupsTable.projectRole"),
       render(text, group) {
         return (
-          <RoleSelect
-            updateRoleFn={updateProjectRole("projectRole", {
-              id: group.id,
-              projectRole: group.role,
-              projectId,
-            })}
-            roles={projectRoles}
-            currentRole={group.role}
-          />
+          project.canManageRemote ?
+            <RoleSelect
+              updateRoleFn={updateProjectRole("projectRole", {
+                id: group.id,
+                projectRole: group.role,
+                projectId,
+              })}
+              roles={projectRoles}
+              currentRole={group.role}
+            />
+              :
+            getRoleFromKey(group.role)
         );
       },
     },
@@ -70,16 +75,19 @@ export function ProjectUserGroupsTable({ projectId }) {
       title: i18n("ProjectUserGroupsTable.metadataData"),
       render(text, group) {
         return (
-          <RoleSelect
-            updateRoleFn={updateProjectRole("metadataRole", {
-              id: group.id,
-              metadataRole: group.metadataRole,
-              projectId,
-            })}
-            roles={metadataRoles}
-            currentRole={group.metadataRole}
-            disabledProjectOwner={group.role === "PROJECT_OWNER"}
-          />
+          project.canManageRemote ?
+            <RoleSelect
+              updateRoleFn={updateProjectRole("metadataRole", {
+                id: group.id,
+                metadataRole: group.metadataRole,
+                projectId,
+              })}
+              roles={metadataRoles}
+              currentRole={group.metadataRole}
+              disabledProjectOwner={group.role === "PROJECT_OWNER"}
+            />
+              :
+            getMetadataRoleFromKey(group.metadataRole)
         );
       },
     },
