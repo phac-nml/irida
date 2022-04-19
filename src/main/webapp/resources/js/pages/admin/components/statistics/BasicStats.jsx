@@ -4,7 +4,7 @@
  * charts
  */
 
-import { Column } from "@ant-design/charts";
+import { Column } from "@ant-design/plots";
 import { Card, Col, Row, Statistic } from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
