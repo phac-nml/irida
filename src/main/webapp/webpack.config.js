@@ -27,6 +27,9 @@ const antColours = formatAntStyles();
 module.exports = (env, argv) => {
   const isProduction = argv.mode === "production";
 
+  // set babel env based on webpack mode
+  process.env.BABEL_ENV = argv.mode;
+
   const config = smp.wrap({
     /*
     This option controls if and how source maps are generated.
