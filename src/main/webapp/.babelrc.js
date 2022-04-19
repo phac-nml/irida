@@ -1,6 +1,3 @@
-console.log(process.env.BABEL_ENV);
-console.log(process.env.BABEL_ENV === "development");
-
 module.exports = {
   presets: [
     "@babel/preset-env",
@@ -8,18 +5,18 @@ module.exports = {
       "@babel/preset-react",
       {
         development: process.env.BABEL_ENV === "development",
-      }
-    ]
+      },
+    ],
   ],
-  "plugins": [
+  plugins: [
     [
       "import",
       {
-        "libraryName": "antd",
-        "libraryDirectory": "lib",
-        "style": true
-      }
+        libraryName: "antd",
+        libraryDirectory: "lib",
+        style: true,
+      },
     ],
-    "@babel/plugin-proposal-export-default-from"
-  ]
+    "@babel/plugin-proposal-export-default-from",
+  ],
 };
