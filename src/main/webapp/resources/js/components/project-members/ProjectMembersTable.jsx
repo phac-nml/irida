@@ -126,6 +126,10 @@ export function ProjectMembersTable({ projectId }) {
         );
       },
     });
+  } else {
+    // Remove the metadata role column if the user cannot manage the project
+    const index = columns.findIndex(key => key.title === i18n("ProjectMembersTable.metadataRole"));
+    columns.splice(index,1);
   }
 
   /**
