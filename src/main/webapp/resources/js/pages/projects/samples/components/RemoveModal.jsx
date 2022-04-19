@@ -9,10 +9,10 @@ import AssociatedSamplesList from "./AssociatedSamplesList";
  * project.
  *  - Will display samples that are locked - cannot be removed.
  *  - Will display associated samples that cannot be removed from this project.
- * @param samples
- * @param visible
- * @param onComplete
- * @param onCancel
+ * @param {array} samples - list of samples to remove from the current project
+ * @param {boolean} visible - whether the modal is currently visible on the page
+ * @param {function} onComplete - action to perform after the remove is complete
+ * @param {function} onCancel - action to perform if the remove is cancelled.
  * @returns {JSX.Element}
  * @constructor
  */
