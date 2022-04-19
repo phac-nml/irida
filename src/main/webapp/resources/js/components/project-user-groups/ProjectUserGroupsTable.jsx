@@ -108,6 +108,10 @@ export function ProjectUserGroupsTable({ projectId }) {
         );
       },
     });
+  } else {
+    // Remove the metadata role column if the usergroup cannot manage the project
+    const index = columns.findIndex(key => key.title === i18n("ProjectUserGroupsTable.metadataData"));
+    columns.splice(index,1);
   }
 
   return (
