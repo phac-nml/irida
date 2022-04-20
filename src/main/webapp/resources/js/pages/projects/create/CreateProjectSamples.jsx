@@ -12,7 +12,9 @@ import {
 import React from "react";
 import { useGetCartSamplesQuery } from "../../../apis/cart/cart";
 import { IconExperiment } from "../../../components/icons/Icons";
-import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
+import {
+  SampleDetailViewer
+} from "../../../components/samples/SampleDetailViewer";
 import { blue6 } from "../../../styles/colors";
 
 /**
@@ -46,7 +48,7 @@ export function CreateProjectSamples({ form }) {
   }, [samples]);
 
   return (
-    <>
+    <Space direction="vertical">
       {samples.locked?.length > 0 && (
         <Alert
           type="warning"
@@ -55,7 +57,7 @@ export function CreateProjectSamples({ form }) {
         />
       )}
       {samples.unlocked?.length ? (
-        <Space style={{ display: "block" }}>
+        <>
           <Table
             className="t-samples"
             loading={isLoading}
@@ -105,7 +107,7 @@ export function CreateProjectSamples({ form }) {
               {i18n("CreateProjectSamples.lock")}
             </Checkbox>
           </Form.Item>
-        </Space>
+        </>
       ) : (
         <Empty
           image={<IconExperiment />}
@@ -125,6 +127,6 @@ export function CreateProjectSamples({ form }) {
           }
         />
       )}
-    </>
+    </Space>
   );
 }
