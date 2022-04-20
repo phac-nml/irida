@@ -6,8 +6,8 @@
 import React, { forwardRef, useImperativeHandle } from "react";
 import ReactMde from "react-mde";
 import "react-mde/lib/styles/css/react-mde-all.css";
+import ReactMarkdown from "react-markdown";
 import styled from "styled-components";
-import { markdownConverter } from "./MarkdownViewer";
 import { blue6, grey1, grey4, grey6 } from "../../styles/colors";
 import {
   IconBold,
@@ -86,8 +86,8 @@ export const MarkdownEditor = forwardRef(({ markdown }, ref) => {
       onChange={setValue}
       selectedTab={selectedTab}
       onTabChange={setSelectedTab}
-      generateMarkdownPreview={markdown =>
-        Promise.resolve(markdownConverter.makeHtml(markdown))
+      generateMarkdownPreview={(markdown) =>
+        Promise.resolve(<ReactMarkdown>{markdown}</ReactMarkdown>)
       }
     />
   );
