@@ -209,7 +209,6 @@ public class AbstractPage {
 			String href = crumb.getAttribute("href");
 			String text = crumb.getText();
 			assertTrue(href.contains(expected.get(i).get("href")), "Should have the expected url in the breadcrumb");
-			assertTrue(href.contains(expected.get(i).get("href")), "Should have the expected url in the breadcrumb");
 			assertEquals(expected.get(i).get("text"), text, "Should have the expected text in the breadcrumb");
 		}
 	}
