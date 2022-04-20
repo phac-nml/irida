@@ -141,10 +141,10 @@ public class UIProjectUserGroupsService {
 			 level and have the project owner set it accordingly. If a role of owner is set then that usergroup is
 			 given full metadata permissions
 			 */
-			if(projectRole.equals(ProjectRole.PROJECT_USER)) {
-				projectMetadataRole = ProjectMetadataRole.fromString("LEVEL_1");
-			} else {
+			if(projectRole.equals(ProjectRole.PROJECT_OWNER)) {
 				projectMetadataRole = ProjectMetadataRole.fromString("LEVEL_4");
+			} else {
+				projectMetadataRole = ProjectMetadataRole.fromString("LEVEL_1");
 			}
 
 			roleString = messageSource.getMessage("projectRole." + role, new Object[] {}, locale);
