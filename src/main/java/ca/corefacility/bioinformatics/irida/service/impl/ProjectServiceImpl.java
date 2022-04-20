@@ -288,19 +288,26 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 					"Join between this project and user does not exist. User: " + user + " Project: " + project);
 		}
 
-		if(projectRole != null) {
-			if (!allowRoleChange(projectJoinForUser.getSubject(), projectJoinForUser.getProjectRole())) {
-				throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
-			}
-
-			projectJoinForUser.setProjectRole(projectRole);
-			if(metadataRole != null) {
-				projectJoinForUser.setMetadataRole(metadataRole);
-			}
-		} else {
-			projectJoinForUser.setMetadataRole(metadataRole);
+		if (!allowRoleChange(projectJoinForUser.getSubject(), projectJoinForUser.getProjectRole())) {
+			throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
 		}
 
+		projectJoinForUser.setProjectRole(projectRole);
+		projectJoinForUser.setMetadataRole(metadataRole);
+
+		return pujRepository.save(projectJoinForUser);
+	}
+
+	@Override
+	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project,'canManageLocalProjectSettings')")
+	public Join<Project, User> updateUserProjectMetadataRole(Project project, User user, ProjectMetadataRole metadataRole) {
+		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
+		if (projectJoinForUser == null) {
+			throw new EntityNotFoundException(
+					"Join between this project and user does not exist. User: " + user + " Project: " + project);
+		}
+		projectJoinForUser.setMetadataRole(metadataRole);
 		return pujRepository.save(projectJoinForUser);
 	}
 
@@ -313,24 +320,35 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
 	public Join<Project, UserGroup> updateUserGroupProjectRole(Project project, UserGroup userGroup,
 			ProjectRole projectRole, ProjectMetadataRole metadataRole) throws ProjectWithoutOwnerException {
-		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
-		if (j == null) {
+		final UserGroupProjectJoin projectJoinForUserGroup = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
+		if (projectJoinForUserGroup == null) {
 			throw new EntityNotFoundException(
 					"Join between this project and group does not exist. Group: " + userGroup + " Project: " + project);
 		}
 
-		if(projectRole != null) {
-			if (!allowRoleChange(project, j.getProjectRole())) {
-				throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
-			}
-			j.setProjectRole(projectRole);
-			if(metadataRole != null) {
-				j.setMetadataRole(metadataRole);
-			}
-		} else {
-			j.setMetadataRole(metadataRole);
+		if (!allowRoleChange(project, projectJoinForUserGroup.getProjectRole())) {
+			throw new ProjectWithoutOwnerException("This role change would leave the project without an owner");
 		}
-		return ugpjRepository.save(j);
+
+		projectJoinForUserGroup.setProjectRole(projectRole);
+		projectJoinForUserGroup.setMetadataRole(metadataRole);
+
+		return ugpjRepository.save(projectJoinForUserGroup);
+	}
+
+	@Override
+	@Transactional
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
+	public Join<Project, UserGroup> updateUserGroupProjectMetadataRole(Project project, UserGroup userGroup,
+																	   ProjectMetadataRole metadataRole) {
+		final UserGroupProjectJoin projectJoinForUserGroup = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
+		if (projectJoinForUserGroup == null) {
+			throw new EntityNotFoundException(
+					"Join between this project and group does not exist. Group: " + userGroup + " Project: " + project);
+		}
+
+		projectJoinForUserGroup.setMetadataRole(metadataRole);
+		return ugpjRepository.save(projectJoinForUserGroup);
 	}
 
 	private boolean allowRoleChange(final Project project, final ProjectRole projectRoleToChange) {

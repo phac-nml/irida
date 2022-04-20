@@ -111,7 +111,7 @@ public class UIProjectUserGroupServiceTest {
 
 	@Test
 	public void testUpdateUserGroupProjectRole() throws ProjectWithoutOwnerException {
-		service.updateUserGroupRoleOnProject(1L, 1L, ProjectRole.PROJECT_USER.toString(), "", LOCALE);
+		service.updateUserGroupRoleOnProject(1L, 1L, ProjectRole.PROJECT_USER.toString(),  LOCALE);
 		verify(projectService, times(1)).read(1L);
 		verify(userGroupService, times(1)).read(1L);
 		verify(projectService, times(1)).updateUserGroupProjectRole(PROJECT, USER_GROUP_1, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1);
@@ -120,16 +120,16 @@ public class UIProjectUserGroupServiceTest {
 	@Test
 	public void testUpdateUserProjectRoleOnProjectNoManager() {
 		assertThrows(ProjectWithoutOwnerException.class, () -> {
-			service.updateUserGroupRoleOnProject(1L, 3L, ProjectRole.PROJECT_USER.toString(), ProjectMetadataRole.LEVEL_1.toString(), LOCALE);
+			service.updateUserGroupRoleOnProject(1L, 3L, ProjectRole.PROJECT_USER.toString(), LOCALE);
 		});
 	}
 
 	@Test
-	public void testUpdateUserGroupMetadataRole() throws ProjectWithoutOwnerException {
-		service.updateUserGroupRoleOnProject(1L, 1L, "", ProjectMetadataRole.LEVEL_1.toString(), LOCALE);
+	public void testUpdateUserGroupMetadataRole() throws Exception {
+		service.updateUserGroupMetadataRoleOnProject(1L, 1L,  ProjectMetadataRole.LEVEL_1.toString(), LOCALE);
 		verify(projectService, times(1)).read(1L);
 		verify(userGroupService, times(1)).read(1L);
-		verify(projectService, times(1)).updateUserGroupProjectRole(PROJECT, USER_GROUP_1, null, ProjectMetadataRole.LEVEL_1);
+		verify(projectService, times(1)).updateUserGroupProjectMetadataRole(PROJECT, USER_GROUP_1, ProjectMetadataRole.LEVEL_1);
 	}
 
 	private Page<UserGroupProjectJoin> getPagedUserGroupsForProject() {

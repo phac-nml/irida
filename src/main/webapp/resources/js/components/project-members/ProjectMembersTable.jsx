@@ -4,6 +4,7 @@ import {
   addMemberToProject,
   getAvailableUsersForProject,
   removeUserFromProject,
+  updateUserMetadataRoleOnProject,
   updateUserRoleOnProject,
 } from "../../apis/projects/members";
 import { useGetProjectDetailsQuery } from "../../apis/projects/project";
@@ -56,8 +57,13 @@ export function ProjectMembersTable({ projectId }) {
     );
   };
 
-  const updateMetadataRole = ({ id }) => (metadataRole) =>
-    updateUserRoleOnProject({ projectId, id, metadataRole });
+  const updateMetadataRole = ({ id }) => (metadataRole) => {
+    return updateUserMetadataRoleOnProject({projectId, id, metadataRole}).then((message) => {
+      updateTable();
+      return message;
+    });
+
+  }
 
   const columns = [
     {

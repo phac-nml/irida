@@ -99,6 +99,16 @@ public interface ProjectService extends CRUDService<Long, Project> {
 			ProjectMetadataRole metadataRole) throws ProjectWithoutOwnerException;
 
 	/**
+	 * Update a {@link User}'s {@link ProjectMetadataRole} on a {@link Project}
+	 *
+	 * @param project      The project to update
+	 * @param user         The user to update
+	 * @param metadataRole {@link ProjectMetadataRole} to set for the user
+	 * @return The newly updated role object
+	 */
+	public Join<Project, User> updateUserProjectMetadataRole(Project project, User user, ProjectMetadataRole metadataRole);
+
+	/**
 	 * Update a {@link UserGroup}'s {@link ProjectRole} on a {@link Project}
 	 *
 	 * @param project      The project to update
@@ -111,6 +121,17 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	 */
 	public Join<Project, UserGroup> updateUserGroupProjectRole(Project project, UserGroup userGroup,
 			ProjectRole projectRole, ProjectMetadataRole metadataRole) throws ProjectWithoutOwnerException;
+
+	/**
+	 * Update a {@link UserGroup}'s {@link ProjectMetadataRole} on a {@link Project}
+	 *
+	 * @param project      The project to update
+	 * @param userGroup    The user group to update
+	 * @param metadataRole the {@link ProjectMetadataRole} to set for the group
+	 * @return The newly updated role object
+	 */
+	public Join<Project, UserGroup> updateUserGroupProjectMetadataRole(Project project, UserGroup userGroup,
+		   ProjectMetadataRole metadataRole);
 
 	/**
 	 * Add the specified {@link Sample} to the {@link Project}.

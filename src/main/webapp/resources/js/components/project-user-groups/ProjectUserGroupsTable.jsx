@@ -3,6 +3,7 @@ import React, { useContext } from "react";
 import { useGetProjectDetailsQuery } from "../../apis/projects/project";
 import {
   removeUserGroupFromProject,
+  updateUserGroupProjectMetadataRole,
   updateUserGroupProjectRole,
 } from "../../apis/projects/user-groups";
 import { useMetadataRoles } from "../../contexts/metadata-roles-context";
@@ -26,10 +27,18 @@ export function ProjectUserGroupsTable({ projectId }) {
   const { roles: projectRoles, getRoleFromKey } = useProjectRoles(projectId);
   const { roles: metadataRoles, getRoleFromKey: getMetadataRoleFromKey } = useMetadataRoles();
 
-
-
   const updateProjectRole = (updatedRole, details) => (role) => {
     return updateUserGroupProjectRole({
+      ...details,
+      [updatedRole]: role,
+    }).then((message) => {
+      updateTable();
+      return message;
+    });
+  };
+
+  const updateProjectMetadataRole = (updatedRole, details) => (role) => {
+    return updateUserGroupProjectMetadataRole({
       ...details,
       [updatedRole]: role,
     }).then((message) => {
@@ -77,7 +86,7 @@ export function ProjectUserGroupsTable({ projectId }) {
         return (
           project.canManageRemote ?
             <RoleSelect
-              updateRoleFn={updateProjectRole("metadataRole", {
+              updateRoleFn={updateProjectMetadataRole("metadataRole", {
                 id: group.id,
                 metadataRole: group.metadataRole,
                 projectId,

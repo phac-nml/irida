@@ -119,50 +119,65 @@ public class UIProjectUserGroupsService {
 	 * @param projectId    Identifier for a {@link Project}
 	 * @param groupId      Identifier for an {@link UserGroup}
 	 * @param role         Role to update the user group to
-	 * @param metadataRole metadata role to update for the group
 	 * @param locale       Current users {@link Locale}
 	 * @return message to user about the result of the update
 	 * @throws UIProjectWithoutOwnerException thrown when updating the role will result in the project to have no owner
 	 */
-	public String updateUserGroupRoleOnProject(Long projectId, Long groupId, String role, String metadataRole,
+	public String updateUserGroupRoleOnProject(Long projectId, Long groupId, String role,
 			Locale locale) throws UIProjectWithoutOwnerException {
 		Project project = projectService.read(projectId);
 		UserGroup group = userGroupService.read(groupId);
-		ProjectRole projectRole = null;
 		ProjectMetadataRole projectMetadataRole;
-		String roleString;
-		String updateSuccessMessage;
+		String roleString = messageSource.getMessage("projectRole." + role, new Object[] {}, locale);
 
-		if (!role.isEmpty()) {
-			projectRole = ProjectRole.fromString(role);
+		ProjectRole projectRole = ProjectRole.fromString(role);
 
-			/*
-			 If a usergroup's project role is set to collaborator we drop the metadata restriction to the lowest
-			 level and have the project owner set it accordingly. If a role of owner is set then that usergroup is
-			 given full metadata permissions
-			 */
-			if(projectRole.equals(ProjectRole.PROJECT_OWNER)) {
-				projectMetadataRole = ProjectMetadataRole.fromString("LEVEL_4");
-			} else {
-				projectMetadataRole = ProjectMetadataRole.fromString("LEVEL_1");
-			}
-
-			roleString = messageSource.getMessage("projectRole." + role, new Object[] {}, locale);
-			updateSuccessMessage = messageSource.getMessage("server.update.projectRole.success",
-					new Object[] { group.getLabel(), roleString }, locale);
+		/*
+		 If a usergroup's project role is set to collaborator we drop the metadata restriction to the lowest
+		 level and have the project owner set it accordingly. If a role of owner is set then that usergroup is
+		 given full metadata permissions
+		 */
+		if(projectRole.equals(ProjectRole.PROJECT_OWNER)) {
+			projectMetadataRole = ProjectMetadataRole.fromString("LEVEL_4");
 		} else {
-			projectMetadataRole = ProjectMetadataRole.fromString(metadataRole);
-			roleString = messageSource.getMessage("metadataRole." + metadataRole, new Object[] {}, locale);
-			updateSuccessMessage = messageSource.getMessage("server.update.metadataRole.success",
-					new Object[] { group.getLabel(), roleString }, locale);
+			projectMetadataRole = ProjectMetadataRole.fromString("LEVEL_1");
 		}
 
 		try {
 			projectService.updateUserGroupProjectRole(project, group, projectRole, projectMetadataRole);
-			return updateSuccessMessage;
+			return messageSource.getMessage("server.update.projectRole.success",
+					new Object[] { group.getLabel(), roleString }, locale);
 		} catch (ProjectWithoutOwnerException e) {
 			throw new UIProjectWithoutOwnerException(messageSource.getMessage("server.ProjectRoleSelect.error",
 					new Object[] { group.getLabel(), roleString }, locale));
+		}
+	}
+
+
+	/**
+	 * Update the {@link ProjectMetadataRole} of a {@link UserGroup} on the current {@link Project}
+	 *
+	 * @param projectId    Identifier for a {@link Project}
+	 * @param groupId      Identifier for an {@link UserGroup}
+	 * @param metadataRole metadata role to update for the group
+	 * @param locale       Current users {@link Locale}
+	 * @return message to user about the result of the update
+	 */
+	public String updateUserGroupMetadataRoleOnProject(Long projectId, Long groupId, String metadataRole,
+											   Locale locale) throws Exception {
+		Project project = projectService.read(projectId);
+		UserGroup group = userGroupService.read(groupId);
+		ProjectMetadataRole projectMetadataRole;
+		String roleString = messageSource.getMessage("metadataRole." + metadataRole, new Object[] {}, locale);
+
+		projectMetadataRole = ProjectMetadataRole.fromString(metadataRole);
+
+		try {
+			projectService.updateUserGroupProjectMetadataRole(project, group, projectMetadataRole);
+			return messageSource.getMessage("server.update.metadataRole.success",
+					new Object[] { group.getLabel(), roleString }, locale);
+		} catch (Exception e) {
+			throw new Exception("t");
 		}
 	}
 }
