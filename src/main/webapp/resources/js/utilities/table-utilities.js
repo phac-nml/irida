@@ -69,7 +69,6 @@ export const formatFilterBySampleNames = (samples) => {
     property: "sample.sampleName",
     value: samples.map((sample) => sample.sampleName),
     operation: "IN",
-    _type: "file",
   };
 };
 
