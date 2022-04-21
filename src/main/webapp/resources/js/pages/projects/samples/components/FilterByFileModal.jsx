@@ -57,11 +57,15 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
     }
   }, [contents, options.filters.associated, projectId]);
 
+  const onOk = () => {
+    onComplete(valid);
+  };
+
   return (
     <Modal
       visible={visible}
       onCancel={onCancel}
-      onOk={onComplete}
+      onOk={onOk}
       okButtonProps={{ disabled: valid.length === 0 }}
       okText={"FILTER"}
       width={600}
@@ -107,7 +111,6 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
                       height={Math.min(400, ROW_HEIGHT * invalid.length)}
                       itemHeight={ROW_HEIGHT}
                       itemKey={(item) => {
-                        console.log({ item });
                         return item;
                       }}
                     >

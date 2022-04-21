@@ -5,6 +5,7 @@ import {
   addToCart,
   downloadSamples,
   exportSamplesToFile,
+  filterByFile,
   reloadTable,
 } from "../../redux/samplesSlice";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
@@ -151,7 +152,8 @@ export default function SamplesMenu() {
     }
   };
 
-  const onFilterByFile = () => {
+  const onFilterByFile = (samples) => {
+    dispatch(filterByFile(samples));
     setFilterByFileVisible(false);
   };
 

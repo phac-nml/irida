@@ -54,7 +54,7 @@ export function formatSearch(filters) {
         // if more than one value is provided use "IN" operation, otherwise use "MATCH" operation
         formattedSearch.push({
           property: filter,
-          value: value,
+          value,
           operation: Array.isArray(value) ? "IN" : defaultOperation,
         });
       }
@@ -63,6 +63,15 @@ export function formatSearch(filters) {
 
   return formattedSearch;
 }
+
+export const formatFilterBySampleNames = (samples) => {
+  return {
+    property: "sample.sampleName",
+    value: samples.map((sample) => sample.sampleName),
+    operation: "IN",
+    _type: "file",
+  };
+};
 
 export const stringSorter = (property) => (a, b) =>
   a[property].localeCompare(b[property], window.TL.LANGUAGE_TAG, {

@@ -1,19 +1,21 @@
 import {
   createAction,
   createAsyncThunk,
-  createReducer
+  createReducer,
 } from "@reduxjs/toolkit";
 import { getProjectIdFromUrl } from "../../../utilities/url-utilities";
 import { INITIAL_TABLE_STATE } from "../samples/services/constants";
 import { getMinimalSampleDetailsForFilteredProject } from "../../../apis/projects/samples";
 import { putSampleInCart } from "../../../apis/cart/cart";
 import { downloadPost } from "../../../utilities/file-utilities";
+import { formatFilterBySampleNames } from "../../../utilities/table-utilities";
 
 const updateTable = createAction("samples/table/update");
 const reloadTable = createAction("samples/table/reload");
 const addSelectedSample = createAction("samples/table/selected/add");
 const removeSelectedSample = createAction("samples/table/selected/remove");
 const clearSelectedSamples = createAction("samples/table/selected/clear");
+const clearFilterByFile = createAction("samples/table/clearFilterByFile");
 
 /**
  * Called when selecting all samples from the Samples Table.
@@ -72,14 +74,18 @@ const downloadSamples = createAsyncThunk(
  */
 const exportSamplesToFile = createAsyncThunk(
   "/samples/table/export",
-  async (type, { getState }) => {
-    const { samples } = getState();
+  async (type, {getState}) => {
+    const {samples} = getState();
     return await downloadPost(
       `/ajax/projects/${samples.projectId}/samples/export?type=${type}`,
       samples.options
     );
   }
 );
+
+const filterByFile = createAction(`samples/table/filterByFile`, (names) => {
+  return {payload: formatFilterBySampleNames(names)}
+});
 
 /**
  * Since the initial table props may need to be reset at some point, we store
@@ -112,7 +118,7 @@ const initialState = {
   loadingLong: false
 };
 
-export default createReducer(initialState, builder => {
+export default createReducer(initialState, (builder) => {
   builder
     .addCase(updateTable, (state, action) => {
       // reset selected state when changing filters or search
@@ -127,7 +133,7 @@ export default createReducer(initialState, builder => {
       }
       state.options = action.payload;
     })
-    .addCase(reloadTable, state => {
+    .addCase(reloadTable, (state) => {
       const newOptions = getInitialTableOptions();
       newOptions.pagination.pageSize = state.options.pagination.pageSize;
       newOptions.reload = Math.floor(Math.random() * 90000) + 10000; // Unique 5 digit number to trigger reload
@@ -141,11 +147,11 @@ export default createReducer(initialState, builder => {
       delete state.selected[action.payload];
       state.selectedCount--;
     })
-    .addCase(clearSelectedSamples, state => {
+    .addCase(clearSelectedSamples, (state) => {
       state.selected = {};
       state.selectedCount = 0;
     })
-    .addCase(selectAllSamples.pending, state => {
+    .addCase(selectAllSamples.pending, (state) => {
       state.loadingLong = true;
     })
     .addCase(selectAllSamples.fulfilled, (state, action) => {
@@ -153,19 +159,27 @@ export default createReducer(initialState, builder => {
       state.selectedCount = action.payload.selectedCount;
       state.loadingLong = false;
     })
-    .addCase(addToCart.fulfilled, state => {
+    .addCase(addToCart.fulfilled, (state) => {
       state.selected = {};
       state.selectedCount = 0;
     })
-    .addCase(downloadSamples.fulfilled, state => {
+    .addCase(downloadSamples.fulfilled, (state) => {
       state.selected = {};
       state.selectedCount = 0;
     })
-    .addCase(exportSamplesToFile.pending, state => {
+    .addCase(exportSamplesToFile.pending, (state) => {
       state.loadingLong = true;
     })
-    .addCase(exportSamplesToFile.fulfilled, state => {
+    .addCase(exportSamplesToFile.fulfilled, (state) => {
       state.loadingLong = false;
+    })
+    .addCase(filterByFile, (state, action) => {
+      state.options.search.push(action.payload);
+      state.filterByFile = action.payload;
+    })
+    .addCase(clearFilterByFile, (state) => {
+      state.filterByFile = null;
+      state.options.reload = Math.floor(Math.random() * 90000) + 10000;
     });
 });
 
@@ -175,8 +189,10 @@ export {
   addSelectedSample,
   removeSelectedSample,
   clearSelectedSamples,
+  filterByFile,
+  clearFilterByFile,
   selectAllSamples,
   addToCart,
   downloadSamples,
-  exportSamplesToFile
+  exportSamplesToFile,
 };
