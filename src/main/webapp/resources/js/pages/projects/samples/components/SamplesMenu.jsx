@@ -28,7 +28,7 @@ import {
   IconShoppingCart,
   IcoonMergeSamples,
 } from "../../../../components/icons/Icons";
-import { CloseCircleOutlined } from "@ant-design/icons";
+import { CloseCircleOutlined, FileTextOutlined } from "@ant-design/icons";
 
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));
@@ -287,7 +287,10 @@ export default function SamplesMenu() {
             File Filter: {fileFiltered.filename}
           </Button>
         ) : (
-          <Button onClick={() => setFilterByFileVisible(true)}>
+          <Button
+            onClick={() => setFilterByFileVisible(true)}
+            icon={<FileTextOutlined />}
+          >
             Filter by File
           </Button>
         )}
