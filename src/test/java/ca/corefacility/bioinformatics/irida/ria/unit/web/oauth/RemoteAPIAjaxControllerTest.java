@@ -1,14 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.RemoteAPIAjaxController;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteAPIService;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Function;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
@@ -19,9 +14,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Function;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.RemoteAPIAjaxController;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteAPIService;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -141,7 +142,7 @@ public class RemoteAPIAjaxControllerTest {
 		TableRequest request = new TableRequest();
 		request.setSortColumn("label");
 		request.setSortDirection("ascend");
-		request.setCurrent(0);
+		request.setCurrent(1);
 		request.setPageSize(10);
 
 		Long userId = 1L;
