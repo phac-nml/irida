@@ -38,8 +38,7 @@ public class ProjectMembersAjaxController {
      * @return sorted and filtered list of project members
      */
     @RequestMapping("")
-    public ResponseEntity<TableResponse<ProjectMemberTableModel>> getProjectMembers(@RequestParam Long projectId,
-                                                                                    @RequestBody TableRequest tableRequest) {
+    public ResponseEntity<TableResponse<ProjectMemberTableModel>> getProjectMembers(@RequestParam Long projectId, @RequestBody TableRequest tableRequest) {
         return ResponseEntity.ok(projectMembersService.getProjectMembers(projectId, tableRequest));
     }
 
@@ -52,13 +51,11 @@ public class ProjectMembersAjaxController {
      * @return message to display to the user about the outcome of the removal.
      */
     @RequestMapping(value = "", method = RequestMethod.DELETE)
-    public ResponseEntity<String> removeUserFromProject(@RequestParam Long projectId, @RequestParam Long id,
-                                                        Locale locale) {
+    public ResponseEntity<String> removeUserFromProject(@RequestParam Long projectId, @RequestParam Long id, Locale locale) {
         try {
             return ResponseEntity.ok(projectMembersService.removeUserFromProject(projectId, id, locale));
         } catch (UIProjectWithoutOwnerException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -72,15 +69,11 @@ public class ProjectMembersAjaxController {
      * @return message to display to the user about the outcome of the change in role.
      */
     @RequestMapping(value = "/role", method = RequestMethod.PUT)
-    public ResponseEntity<String> updateUserRoleOnProject(@RequestParam Long projectId, @RequestParam Long id,
-                                                          String projectRole,
-                                                          Locale locale) {
+    public ResponseEntity<String> updateUserRoleOnProject(@RequestParam Long projectId, @RequestParam Long id, String projectRole, Locale locale) {
         try {
-            return ResponseEntity.ok(
-                    projectMembersService.updateUserRoleOnProject(projectId, id, projectRole, locale));
+            return ResponseEntity.ok(projectMembersService.updateUserRoleOnProject(projectId, id, projectRole, locale));
         } catch (UIProjectWithoutOwnerException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         } catch (UIConstraintViolationException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getErrorMessage());
         }
@@ -96,15 +89,11 @@ public class ProjectMembersAjaxController {
      * @return message to display to the user about the outcome of the change in role.
      */
     @RequestMapping(value = "/metadata-role", method = RequestMethod.PUT)
-    public ResponseEntity<String> updateUserMetadataRoleOnProject(@RequestParam Long projectId, @RequestParam Long id,
-                                                                  @RequestParam(required = false) String metadataRole,
-                                                                  Locale locale) {
+    public ResponseEntity<String> updateUserMetadataRoleOnProject(@RequestParam Long projectId, @RequestParam Long id, @RequestParam(required = false) String metadataRole, Locale locale) {
         try {
-            return ResponseEntity.ok(
-                    projectMembersService.updateUserMetadataRoleOnProject(projectId, id, metadataRole, locale));
+            return ResponseEntity.ok(projectMembersService.updateUserMetadataRoleOnProject(projectId, id, metadataRole, locale));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -116,8 +105,7 @@ public class ProjectMembersAjaxController {
      * @return List of filtered users.
      */
     @RequestMapping("/available")
-    public ResponseEntity<List<User>> getAvailableMembersForProject(@RequestParam Long projectId,
-                                                                    @RequestParam String query) {
+    public ResponseEntity<List<User>> getAvailableMembersForProject(@RequestParam Long projectId, @RequestParam String query) {
         return ResponseEntity.ok(projectMembersService.getAvailableUsersForProject(projectId, query));
     }
 
@@ -130,8 +118,7 @@ public class ProjectMembersAjaxController {
      * @return message to display to the user about the outcome of adding the user to the project
      */
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResponseEntity<String> addMemberToProject(@RequestParam Long projectId,
-                                                     @RequestBody NewMemberRequest request, Locale locale) {
+    public ResponseEntity<String> addMemberToProject(@RequestParam Long projectId, @RequestBody NewMemberRequest request, Locale locale) {
         return ResponseEntity.ok(projectMembersService.addMemberToProject(projectId, request, locale));
     }
 }
