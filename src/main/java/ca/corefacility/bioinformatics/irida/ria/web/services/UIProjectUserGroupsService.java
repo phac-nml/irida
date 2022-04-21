@@ -183,8 +183,8 @@ public class UIProjectUserGroupsService {
 	 * @param locale       Current users {@link Locale}
 	 * @return message to user about the result of the update
 	 */
-	public String updateUserGroupMetadataRoleOnProject(Long projectId, Long groupId, String metadataRole, Locale locale)
-			throws Exception {
+	public String updateUserGroupMetadataRoleOnProject(Long projectId, Long groupId, String metadataRole,
+			Locale locale) {
 		Project project = projectService.read(projectId);
 		UserGroup group = userGroupService.read(groupId);
 		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(metadataRole);
