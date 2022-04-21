@@ -1,6 +1,8 @@
 import React from "react";
-import { Form, Input, List, Modal, Tag } from "antd";
+import { Col, Form, Input, List, Modal, Row, Space, Tag } from "antd";
 import { useSelector } from "react-redux";
+import { CheckCircleTwoTone, WarningTwoTone } from "@ant-design/icons";
+import { green6, red6 } from "../../../../styles/colors";
 
 export default function FilterByFileModal({ visible, onComplete, onCancel }) {
   const { options, projectId } = useSelector((state) => state.samples);
@@ -52,34 +54,60 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
   }, [contents]);
 
   return (
-    <Modal visible={visible} onCancel={onCancel} onOk={onComplete}>
-      <Form layout="vertical">
-        <Form.Item label={"Select file containing sample names"}>
-          <Input type="file" onChange={onFileAdded} />
-        </Form.Item>
-      </Form>
-      {valid.length > 0 && (
-        <List
-          bordered
-          size="small"
-          dataSource={valid}
-          renderItem={(sample) => (
-            <List.Item>
-              {name}
-              <Tag>{sample.projectName}</Tag>
-            </List.Item>
-          )}
-        />
-      )}
-      {invalid.length > 0 && (
-        <List
-          title={"SAMPLES NOT FOUND IN PROJECTS"}
-          bordered
-          size="small"
-          dataSource={invalid}
-          renderItem={(name) => <List.Item>{name}</List.Item>}
-        />
-      )}
+    <Modal
+      visible={visible}
+      onCancel={onCancel}
+      onOk={onComplete}
+      okButtonProps={{ disabled: valid.length === 0 }}
+      okText={"FILTER"}
+      width={600}
+    >
+      <Row gutter={[16, 16]}>
+        <Col span={24}>
+          <Form layout="vertical">
+            <Form.Item label={"Select file containing sample names"}>
+              <Input type="file" onChange={onFileAdded} />
+            </Form.Item>
+          </Form>
+        </Col>
+        {valid.length > 0 && (
+          <Col span={24}>
+            <List
+              header={
+                <Space>
+                  <CheckCircleTwoTone twoToneColor={green6} />
+                  These samples have been found
+                </Space>
+              }
+              bordered
+              size="small"
+              dataSource={valid}
+              renderItem={(sample) => (
+                <List.Item>
+                  {sample.sampleName}
+                  <Tag>{sample.projectName}</Tag>
+                </List.Item>
+              )}
+            />
+          </Col>
+        )}
+        {invalid.length > 0 && (
+          <Col span={24}>
+            <List
+              header={
+                <Space>
+                  <WarningTwoTone twoToneColor={red6} />
+                  These samples do not match sample in selected projects
+                </Space>
+              }
+              bordered
+              size="small"
+              dataSource={invalid}
+              renderItem={(name) => <List.Item>{name}</List.Item>}
+            />
+          </Col>
+        )}
+      </Row>
     </Modal>
   );
 }
