@@ -126,6 +126,16 @@ public class UIProjectMembersService {
 
 	}
 
+	/**
+	 * Update a users metadata role on a project
+	 *
+	 * @param projectId    - identifier for the current project
+	 * @param userId       - identifier for the user to remove from the project
+	 * @param metadataRole - {@link ProjectMetadataRole}  to update the user to
+	 * @param locale       - of the currently logged in user
+	 * @return message to display to the user about the outcome of the change in role.
+	 * @throws Exception if updating a users metadata role on a project results in a error
+	 */
 	public String updateUserMetadataRoleOnProject(Long projectId, Long userId, String metadataRole, Locale locale) throws Exception {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);

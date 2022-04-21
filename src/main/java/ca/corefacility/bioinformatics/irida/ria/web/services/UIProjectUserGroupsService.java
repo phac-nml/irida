@@ -162,6 +162,7 @@ public class UIProjectUserGroupsService {
 	 * @param metadataRole metadata role to update for the group
 	 * @param locale       Current users {@link Locale}
 	 * @return message to user about the result of the update
+	 * @throws Exception if there was an error updating the metadata role for the user group
 	 */
 	public String updateUserGroupMetadataRoleOnProject(Long projectId, Long groupId, String metadataRole,
 											   Locale locale) throws Exception {
