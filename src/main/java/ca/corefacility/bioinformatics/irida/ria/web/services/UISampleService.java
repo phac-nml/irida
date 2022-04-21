@@ -558,11 +558,11 @@ public class UISampleService {
 			Cell sampleIdCell = row.createCell(cellNum++);
 			sampleIdCell.setCellValue(sample.getId());
 
-			Cell sampleOrganismCell = row.createCell(cellNum++);
-			sampleOrganismCell.setCellValue(sample.getOrganism());
-
 			Cell sampleQualityCell = row.createCell(cellNum++);
 			sampleQualityCell.setCellValue(StringUtils.join(item.getQuality(), "; "));
+
+			Cell sampleOrganismCell = row.createCell(cellNum++);
+			sampleOrganismCell.setCellValue(sample.getOrganism());
 
 			Cell projectNameCell = row.createCell(cellNum++);
 			projectNameCell.setCellValue(project.getName());
