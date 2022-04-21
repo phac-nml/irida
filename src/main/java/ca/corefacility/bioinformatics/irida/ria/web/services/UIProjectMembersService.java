@@ -2,8 +2,10 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -23,6 +25,10 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectMemberTableModel;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import org.springframework.transaction.TransactionSystemException;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 /**
  * Service class for the UI for handling project members actions.
@@ -95,8 +101,9 @@ public class UIProjectMembersService {
 	 * @param locale       - of the currently logged in user
 	 * @return message to display to the user about the outcome of the change in role.
 	 * @throws UIProjectWithoutOwnerException if removing the user will leave the project without a manager
+	 * @throws UIConstraintViolationException thrown when updating the project role to owner and the metadata role is not set to the highest level
 	 */
-	public String updateUserRoleOnProject(Long projectId, Long userId, String role, Locale locale) throws UIProjectWithoutOwnerException {
+	public String updateUserRoleOnProject(Long projectId, Long userId, String role, Locale locale) throws UIProjectWithoutOwnerException, UIConstraintViolationException {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
 		ProjectMetadataRole projectMetadataRole;
@@ -122,6 +129,19 @@ public class UIProjectMembersService {
 		} catch (ProjectWithoutOwnerException e) {
 			throw new UIProjectWithoutOwnerException(messageSource.getMessage("server.ProjectRoleSelect.error",
 					new Object[] { user.getLabel(), roleString }, locale));
+		} catch(TransactionSystemException e)  {
+			ConstraintViolationException constraintViolationException;
+			String constraintViolationMessage = "";
+			if (e.getRootCause() instanceof ConstraintViolationException) {
+				constraintViolationException = (ConstraintViolationException) e.getRootCause();
+				Set<ConstraintViolation<?>> constraintViolationSet = constraintViolationException.getConstraintViolations();
+				for(ConstraintViolation constraintViolation : constraintViolationSet) {
+					// The constraintViolation.getMessage() returns the i18n key in this case
+					constraintViolationMessage += messageSource.getMessage(constraintViolation.getMessage(),
+							new Object[] { }, locale) + "\n";
+				}
+			}
+			throw new UIConstraintViolationException(constraintViolationMessage);
 		}
 
 	}
@@ -134,21 +154,17 @@ public class UIProjectMembersService {
 	 * @param metadataRole - {@link ProjectMetadataRole}  to update the user to
 	 * @param locale       - of the currently logged in user
 	 * @return message to display to the user about the outcome of the change in role.
-	 * @throws Exception if updating a users metadata role on a project results in a error
 	 */
-	public String updateUserMetadataRoleOnProject(Long projectId, Long userId, String metadataRole, Locale locale) throws Exception {
+	public String updateUserMetadataRoleOnProject(Long projectId, Long userId, String metadataRole, Locale locale){
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
 		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(metadataRole);
 		String roleString = roleString = messageSource.getMessage("metadataRole." + metadataRole, new Object[] {}, locale);
 
-		try {
-			projectService.updateUserProjectMetadataRole(project, user, projectMetadataRole);
-			return messageSource.getMessage("server.update.metadataRole.success",
-					new Object[] { user.getLabel(), roleString }, locale);
-		} catch (Exception e) {
-			throw new Exception(e.getMessage());
-		}
+		projectService.updateUserProjectMetadataRole(project, user, projectMetadataRole);
+		return messageSource.getMessage("server.update.metadataRole.success",
+				new Object[] { user.getLabel(), roleString }, locale);
+
 	}
 
 

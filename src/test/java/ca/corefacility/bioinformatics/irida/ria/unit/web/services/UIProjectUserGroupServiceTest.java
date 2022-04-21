@@ -110,7 +110,7 @@ public class UIProjectUserGroupServiceTest {
 	}
 
 	@Test
-	public void testUpdateUserGroupProjectRole() throws ProjectWithoutOwnerException {
+	public void testUpdateUserGroupProjectRole() throws Exception {
 		service.updateUserGroupRoleOnProject(1L, 1L, ProjectRole.PROJECT_USER.toString(),  LOCALE);
 		verify(projectService, times(1)).read(1L);
 		verify(userGroupService, times(1)).read(1L);

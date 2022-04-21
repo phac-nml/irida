@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
@@ -107,7 +108,7 @@ public class UIProjectMembersServiceTest {
 	}
 
 	@Test
-	public void testUpdateUserProjectRoleOnProject() throws ProjectWithoutOwnerException {
+	public void testUpdateUserProjectRoleOnProject() throws ProjectWithoutOwnerException, UIConstraintViolationException {
 		service.updateUserRoleOnProject(PROJECT_ID, USER_2.getId(), ProjectRole.PROJECT_OWNER.toString(), LOCALE);
 		verify(projectService, times(1)).read(PROJECT.getId());
 		verify(userService, times(1)).read(USER_2.getId());
@@ -115,7 +116,7 @@ public class UIProjectMembersServiceTest {
 	}
 
 	@Test
-	public void testUpdateUserMetadataRoleOnProject() throws Exception {
+	public void testUpdateUserMetadataRoleOnProject() {
 		service.updateUserMetadataRoleOnProject(PROJECT_ID, USER_2.getId(), ProjectMetadataRole.LEVEL_4.toString(), LOCALE);
 		verify(projectService, times(1)).read(PROJECT_ID);
 		verify(userService, times(1)).read(USER_2.getId());

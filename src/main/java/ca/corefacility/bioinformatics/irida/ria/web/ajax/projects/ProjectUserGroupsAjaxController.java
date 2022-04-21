@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects;
 import java.util.List;
 import java.util.Locale;
 
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -102,6 +103,9 @@ public class ProjectUserGroupsAjaxController {
 		} catch (UIProjectWithoutOwnerException e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(e.getMessage());
+		} catch (UIConstraintViolationException ex) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(ex.getErrorMessage());
 		}
 	}
 

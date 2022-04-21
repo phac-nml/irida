@@ -303,6 +303,13 @@
       <groupId>nz.net.ultraq.thymeleaf</groupId>
       <artifactId>thymeleaf-layout-dialect</artifactId>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>${commons.beanutils.version}</version>
+    </dependency>
+
 
     <!-- Mail -->
     <dependency>
@@ -908,6 +915,7 @@
     <pf4j.version>2.4.0</pf4j.version>
     <com.monitorjbl.xml.streamer.version>2.1.0</com.monitorjbl.xml.streamer.version>
     <org.springdoc.openapi.webmvc.version>1.5.6</org.springdoc.openapi.webmvc.version>
+    <commons.beanutils.version>1.9.4</commons.beanutils.version>
 
     <!-- plugins -->
     <maven.failsafe.plugin.version>3.0.0-M5</maven.failsafe.plugin.version>

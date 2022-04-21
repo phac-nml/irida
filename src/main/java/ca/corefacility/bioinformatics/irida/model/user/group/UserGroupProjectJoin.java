@@ -21,6 +21,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import ca.corefacility.bioinformatics.irida.constraints.ProjectRoleHasCorrectMetadataRole;
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -41,6 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 		"user_group_id" }) )
 @Audited
 @EntityListeners(AuditingEntityListener.class)
+@ProjectRoleHasCorrectMetadataRole(first = "projectRole", second = "metadataRole", message = "server.project.owner.incorrect.metadata.role")
 public class UserGroupProjectJoin implements Join<Project, UserGroup> {
 
 	@Id

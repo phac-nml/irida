@@ -2,8 +2,10 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,10 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
+import org.springframework.transaction.TransactionSystemException;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 /**
  * UI Service to handle requests for project user groups.
@@ -122,14 +128,14 @@ public class UIProjectUserGroupsService {
 	 * @param locale       Current users {@link Locale}
 	 * @return message to user about the result of the update
 	 * @throws UIProjectWithoutOwnerException thrown when updating the role will result in the project to have no owner
+	 * @throws UIConstraintViolationException thrown when updating the project role to owner and the metadata role is not set to the highest level
 	 */
 	public String updateUserGroupRoleOnProject(Long projectId, Long groupId, String role,
-			Locale locale) throws UIProjectWithoutOwnerException {
+			Locale locale) throws UIProjectWithoutOwnerException, UIConstraintViolationException {
 		Project project = projectService.read(projectId);
 		UserGroup group = userGroupService.read(groupId);
 		ProjectMetadataRole projectMetadataRole;
 		String roleString = messageSource.getMessage("projectRole." + role, new Object[] {}, locale);
-
 		ProjectRole projectRole = ProjectRole.fromString(role);
 
 		/*
@@ -150,6 +156,19 @@ public class UIProjectUserGroupsService {
 		} catch (ProjectWithoutOwnerException e) {
 			throw new UIProjectWithoutOwnerException(messageSource.getMessage("server.ProjectRoleSelect.error",
 					new Object[] { group.getLabel(), roleString }, locale));
+		} catch(TransactionSystemException e)  {
+			ConstraintViolationException constraintViolationException;
+			String constraintViolationMessage = "";
+			if (e.getRootCause() instanceof ConstraintViolationException) {
+				constraintViolationException = (ConstraintViolationException) e.getRootCause();
+				Set<ConstraintViolation<?>> constraintViolationSet = constraintViolationException.getConstraintViolations();
+				for(ConstraintViolation constraintViolation : constraintViolationSet) {
+					// The constraintViolation.getMessage() returns the i18n key in this case
+					constraintViolationMessage += messageSource.getMessage(constraintViolation.getMessage(),
+							new Object[] { }, locale) + "\n";
+				}
+			}
+			throw new UIConstraintViolationException(constraintViolationMessage);
 		}
 	}
 
