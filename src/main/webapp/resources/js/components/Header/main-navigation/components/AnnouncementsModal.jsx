@@ -3,7 +3,7 @@ import { ScrollableModal } from "../../../ant.design/ScrollableModal";
 import { Button, Space, Tag, Typography } from "antd";
 import { PriorityFlag } from "../../../../pages/announcement/components/PriorityFlag";
 import { formatDate } from "../../../../utilities/date-utilities";
-import Markdown from "react-markdown";
+import ReactMarkdown from "react-markdown";
 import { TYPES, useAnnouncements } from "./announcements-context";
 import {
   readAndNextAnnouncement,
@@ -106,7 +106,7 @@ export function AnnouncementsModal() {
       footer={footer}
     >
       <div style={{ marginLeft: "25px" }}>
-        <Markdown source={newAnnouncements[index].message} />
+        <ReactMarkdown>{newAnnouncements[index].message}</ReactMarkdown>
       </div>
     </ScrollableModal>
   ) : null;
