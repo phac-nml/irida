@@ -18,26 +18,21 @@ public class ProjectMetadataRoleValidator implements ConstraintValidator<Project
     private String secondFieldName;
 
     @Override
-    public void initialize(final ProjectRoleHasCorrectMetadataRole constraintAnnotation)
-    {
+    public void initialize(final ProjectRoleHasCorrectMetadataRole constraintAnnotation) {
         firstFieldName = constraintAnnotation.first();
         secondFieldName = constraintAnnotation.second();
     }
 
     @Override
-    public boolean isValid(final Object value, final ConstraintValidatorContext context)
-    {
-        try
-        {
+    public boolean isValid(final Object value, final ConstraintValidatorContext context) {
+        try {
             // Get the projectRole and metadata role as ProjectRole and ProjectMetadataRole from strings
             ProjectRole projectRole = ProjectRole.fromString(BeanUtils.getProperty(value, firstFieldName));
             ProjectMetadataRole metadataRole = ProjectMetadataRole.fromString(BeanUtils.getProperty(value, secondFieldName));
 
             return (projectRole.equals(ProjectRole.PROJECT_OWNER) && metadataRole.equals(ProjectMetadataRole.LEVEL_4)) ||
                     (projectRole.equals(ProjectRole.PROJECT_USER) && metadataRole != null);
-        }
-        catch (final Exception e)
-        {
+        } catch (final Exception e) {
             // ignore
         }
         return true;
