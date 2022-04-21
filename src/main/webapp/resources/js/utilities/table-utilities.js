@@ -31,19 +31,24 @@ export function formatSearch(filters) {
   const formattedSearch = [];
 
   for (const filter in filters) {
-    for (var index in filters[filter]) {
+    for (const index in filters[filter]) {
       const value = filters[filter][index];
-      // if we have two values and they are both moment objects then add searchs for date range.
-      if (Array.isArray(value) && value.length === 2 && moment.isMoment(value[0]) && moment.isMoment(value[1])) {
+      // if we have two values, and they are both moment objects then add searches for date range.
+      if (
+        Array.isArray(value) &&
+        value.length === 2 &&
+        moment.isMoment(value[0]) &&
+        moment.isMoment(value[1])
+      ) {
         formattedSearch.push({
           property: filter,
           value: value[0].unix(),
-          operation: "GREATER_THAN_EQUAL"
+          operation: "GREATER_THAN_EQUAL",
         });
         formattedSearch.push({
           property: filter,
           value: value[1].unix(),
-          operation: "LESS_THAN_EQUAL"
+          operation: "LESS_THAN_EQUAL",
         });
       } else {
         // if more than one value is provided use "IN" operation, otherwise use "MATCH" operation

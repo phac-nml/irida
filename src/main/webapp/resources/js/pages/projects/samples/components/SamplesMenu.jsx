@@ -1,17 +1,17 @@
 import React, { lazy, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Dropdown, Menu, message, Space } from "antd";
+import { Button, Dropdown, Menu, message, Row, Space } from "antd";
 import {
   addToCart,
   downloadSamples,
   exportSamplesToFile,
-  reloadTable
+  reloadTable,
 } from "../../redux/samplesSlice";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import {
   validateSamplesForLinker,
   validateSamplesForMerge,
-  validateSamplesForRemove
+  validateSamplesForRemove,
 } from "../services/sample.utilities";
 import {
   IconCloseSquare,
@@ -24,13 +24,14 @@ import {
   IconPlusSquare,
   IconShare,
   IconShoppingCart,
-  IcoonMergeSamples
+  IcoonMergeSamples,
 } from "../../../../components/icons/Icons";
 
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));
 const CreateModal = lazy(() => import("./CreateNewSample"));
 const LinkerModal = lazy(() => import("./LinkerModal"));
+const FilterByFileModal = lazy(() => import("./FilterByFileModal"));
 
 /**
  * React element to render a row of actions that can be performed on
@@ -42,16 +43,17 @@ export default function SamplesMenu() {
   const dispatch = useDispatch();
 
   const { projectId, selected, selectedCount } = useSelector(
-    state => state.samples
+    (state) => state.samples
   );
   const { project: { canManage = false } = {} } = useSelector(
-    state => state.user
+    (state) => state.user
   );
 
   const [mergeVisible, setMergeVisible] = React.useState(false);
   const [removedVisible, setRemovedVisible] = React.useState(false);
   const [createSampleVisible, setCreateSampleVisible] = React.useState(false);
   const [linkerVisible, setLinkerVisible] = React.useState(false);
+  const [filterByFileVisible, setFilterByFileVisible] = React.useState(false);
   const [sorted, setSorted] = React.useState({});
 
   /**
@@ -84,12 +86,12 @@ export default function SamplesMenu() {
   const onNCBI = () => {
     window.location.href = setBaseUrl(
       `/projects/${projectId}/export/ncbi?ids=${Object.values(selected)
-        .map(s => s.id)
+        .map((s) => s.id)
         .join(",")}`
     );
   };
 
-  const onExport = type => {
+  const onExport = (type) => {
     dispatch(exportSamplesToFile(type));
   };
 
@@ -100,9 +102,9 @@ export default function SamplesMenu() {
   const shareSamples = () => {
     if (selected.size === 0) return;
 
-    const samples = Object.values(
-      selected
-    ).map(({ id, sampleName: name, owner }) => ({ id, name, owner }));
+    const samples = Object.values(selected).map(
+      ({ id, sampleName: name, owner }) => ({ id, name, owner })
+    );
 
     // Store them to window storage for later use.
     window.sessionStorage.setItem(
@@ -110,7 +112,7 @@ export default function SamplesMenu() {
       JSON.stringify({
         samples,
         projectId,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     );
 
@@ -123,7 +125,7 @@ export default function SamplesMenu() {
    * if the right samples are available.
    * @param {string} name - which modal to open
    */
-  const validateAndOpenModalFor = name => {
+  const validateAndOpenModalFor = (name) => {
     if (name === "merge") {
       const validated = validateSamplesForMerge(selected);
       if (validated.valid.length >= 2) {
@@ -147,6 +149,10 @@ export default function SamplesMenu() {
         setLinkerVisible(true);
       }
     }
+  };
+
+  const onFilterByFile = () => {
+    setFilterByFileVisible(false);
   };
 
   const toolsMenu = React.useMemo(() => {
@@ -246,23 +252,28 @@ export default function SamplesMenu() {
 
   return (
     <>
-      <Space>
-        {canManage && (
-          <Dropdown overlay={toolsMenu}>
+      <Row justify="space-between">
+        <Space>
+          {canManage && (
+            <Dropdown overlay={toolsMenu}>
+              <Button>
+                {i18n("SamplesMenu.label")} <IconDropDown />
+              </Button>
+            </Dropdown>
+          )}
+          <Dropdown overlay={exportMenu}>
             <Button>
-              {i18n("SamplesMenu.label")} <IconDropDown />
+              {i18n("SampleMenu.export")} <IconDropDown />
             </Button>
           </Dropdown>
-        )}
-        <Dropdown overlay={exportMenu}>
-          <Button>
-            {i18n("SampleMenu.export")} <IconDropDown />
+          <Button icon={<IconShoppingCart />} onClick={onAddToCart}>
+            {i18n("SampleMenu.cart")}
           </Button>
-        </Dropdown>
-        <Button icon={<IconShoppingCart />} onClick={onAddToCart}>
-          {i18n("SampleMenu.cart")}
+        </Space>
+        <Button onClick={() => setFilterByFileVisible(true)}>
+          Filter by File
         </Button>
-      </Space>
+      </Row>
       {mergeVisible && (
         <Suspense fallback={<span />}>
           <MergeModal
@@ -299,6 +310,15 @@ export default function SamplesMenu() {
             sampleIds={sorted}
             projectId={projectId}
             onFinish={() => setLinkerVisible(false)}
+          />
+        </Suspense>
+      )}
+      {filterByFileVisible && (
+        <Suspense fallback={<span />}>
+          <FilterByFileModal
+            visible={filterByFileVisible}
+            onCancel={() => setFilterByFileVisible(false)}
+            onComplete={onFilterByFile}
           />
         </Suspense>
       )}
