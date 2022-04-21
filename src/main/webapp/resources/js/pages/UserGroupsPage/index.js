@@ -4,9 +4,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { getUserGroupRoles } from "../../apis/users/groups";
 import { ContentLoading } from "../../components/loader";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { UserGroupsProvider} from "../../contexts/UserGroupsContext";
-import {UserGroupRolesProvider} from "../../contexts/usergroup-roles-context";
-
+import { UserGroupsProvider } from "../../contexts/UserGroupsContext";
+import { UserGroupRolesProvider } from "../../contexts/usergroup-roles-context";
 
 /*
 WEBPACK PUBLIC PATH:

@@ -58,12 +58,15 @@ export function ProjectMembersTable({ projectId }) {
   };
 
   const updateMetadataRole = ({ id }) => (metadataRole) => {
-    return updateUserMetadataRoleOnProject({projectId, id, metadataRole}).then((message) => {
+    return updateUserMetadataRoleOnProject({
+      projectId,
+      id,
+      metadataRole,
+    }).then((message) => {
       updateTable();
       return message;
     });
-
-  }
+  };
 
   const columns = [
     {
@@ -134,8 +137,10 @@ export function ProjectMembersTable({ projectId }) {
     });
   } else {
     // Remove the metadata role column if the user cannot manage the project
-    const index = columns.findIndex(key => key.title === i18n("ProjectMembersTable.metadataRole"));
-    columns.splice(index,1);
+    const index = columns.findIndex(
+      (key) => key.title === i18n("ProjectMembersTable.metadataRole")
+    );
+    columns.splice(index, 1);
   }
 
   /**

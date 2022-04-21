@@ -134,14 +134,14 @@ export default function UserGroupMembersTable({
       <div style={{ display: "flex", marginBottom: SPACE_XS }}>
         <div style={{ flex: 1 }}>
           {canManage ? (
-              <AddUserToGroupButton
-                defaultRole="GROUP_MEMBER"
-                label={i18n("UserGroupMembersTable.add")}
-                modalTitle={i18n("UserGroupMembersTable.add.title")}
-                addMemberFn={addMember}
-                addMemberSuccessFn={updateTable}
-                getAvailableMembersFn={getAvailableMembers}
-              />
+            <AddUserToGroupButton
+              defaultRole="GROUP_MEMBER"
+              label={i18n("UserGroupMembersTable.add")}
+              modalTitle={i18n("UserGroupMembersTable.add.title")}
+              addMemberFn={addMember}
+              addMemberSuccessFn={updateTable}
+              getAvailableMembersFn={getAvailableMembers}
+            />
           ) : null}
         </div>
       </div>
