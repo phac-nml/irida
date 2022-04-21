@@ -182,23 +182,16 @@ public class UIProjectUserGroupsService {
 	 * @param metadataRole metadata role to update for the group
 	 * @param locale       Current users {@link Locale}
 	 * @return message to user about the result of the update
-	 * @throws Exception if there was an error updating the metadata role for the user group
 	 */
 	public String updateUserGroupMetadataRoleOnProject(Long projectId, Long groupId, String metadataRole, Locale locale)
 			throws Exception {
 		Project project = projectService.read(projectId);
 		UserGroup group = userGroupService.read(groupId);
-		ProjectMetadataRole projectMetadataRole;
+		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(metadataRole);
 		String roleString = messageSource.getMessage("metadataRole." + metadataRole, new Object[] {}, locale);
 
-		projectMetadataRole = ProjectMetadataRole.fromString(metadataRole);
-
-		try {
-			projectService.updateUserGroupProjectMetadataRole(project, group, projectMetadataRole);
-			return messageSource.getMessage("server.update.metadataRole.success",
-					new Object[] { group.getLabel(), roleString }, locale);
-		} catch (Exception e) {
-			throw new Exception("t");
-		}
+		projectService.updateUserGroupProjectMetadataRole(project, group, projectMetadataRole);
+		return messageSource.getMessage("server.update.metadataRole.success",
+				new Object[] { group.getLabel(), roleString }, locale);
 	}
 }
