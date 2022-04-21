@@ -11,11 +11,13 @@ const ROW_HEIGHT = 43;
 export default function FilterByFileModal({ visible, onComplete, onCancel }) {
   const { options, projectId } = useSelector((state) => state.samples);
   const [contents, setContents] = React.useState("");
+  const [filename, setFilename] = React.useState("");
   const [valid, setValid] = React.useState([]);
   const [invalid, setInvalid] = React.useState([]);
 
   const onFileAdded = (e) => {
     const [file] = e.target.files;
+    setFilename(file.name);
 
     const reader = new FileReader();
     reader.addEventListener("load", (e) => {
@@ -35,6 +37,7 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
       let parsed = contents.split(/[\s,]+/);
       const projectIds = [projectId, ...associated];
 
+      //TODO: move this to API file
       fetch(`/ajax/samples/validate`, {
         headers: {
           Accept: "application/json",
@@ -58,7 +61,7 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
   }, [contents, options.filters.associated, projectId]);
 
   const onOk = () => {
-    onComplete(valid);
+    onComplete({ samples: valid, filename });
   };
 
   return (

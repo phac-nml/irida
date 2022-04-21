@@ -111,7 +111,7 @@ export function SamplesTable() {
   const onTableChange = (pagination, tableFilters, sorter) => {
     let { associated, ...filters } = tableFilters;
     const search = formatSearch(filters);
-    if (filterByFile) search.push(filterByFile);
+    if (filterByFile) search.push(filterByFile.fileFilter);
 
     dispatch(
       updateTable({

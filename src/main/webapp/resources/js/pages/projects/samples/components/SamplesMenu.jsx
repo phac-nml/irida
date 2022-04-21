@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button, Dropdown, Menu, message, Row, Space } from "antd";
 import {
   addToCart,
+  clearFilterByFile,
   downloadSamples,
   exportSamplesToFile,
   filterByFile,
@@ -27,6 +28,7 @@ import {
   IconShoppingCart,
   IcoonMergeSamples,
 } from "../../../../components/icons/Icons";
+import { CloseCircleOutlined } from "@ant-design/icons";
 
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));
@@ -43,9 +45,12 @@ const FilterByFileModal = lazy(() => import("./FilterByFileModal"));
 export default function SamplesMenu() {
   const dispatch = useDispatch();
 
-  const { projectId, selected, selectedCount } = useSelector(
-    (state) => state.samples
-  );
+  const {
+    projectId,
+    selected,
+    selectedCount,
+    filterByFile: fileFiltered,
+  } = useSelector((state) => state.samples);
   const { project: { canManage = false } = {} } = useSelector(
     (state) => state.user
   );
@@ -152,8 +157,8 @@ export default function SamplesMenu() {
     }
   };
 
-  const onFilterByFile = (samples) => {
-    dispatch(filterByFile(samples));
+  const onFilterByFile = ({ samples, filename }) => {
+    dispatch(filterByFile({ filename, samples }));
     setFilterByFileVisible(false);
   };
 
@@ -249,7 +254,7 @@ export default function SamplesMenu() {
         </Menu.Item>
       </Menu>
     ),
-    [selectedCount]
+    [onDownload, onExport, onNCBI, selectedCount, validateAndOpenModalFor]
   );
 
   return (
@@ -272,9 +277,20 @@ export default function SamplesMenu() {
             {i18n("SampleMenu.cart")}
           </Button>
         </Space>
-        <Button onClick={() => setFilterByFileVisible(true)}>
-          Filter by File
-        </Button>
+        {fileFiltered ? (
+          <Button
+            type="dashed"
+            shape="round"
+            icon={<CloseCircleOutlined />}
+            onClick={() => dispatch(clearFilterByFile())}
+          >
+            File Filter: {fileFiltered.filename}
+          </Button>
+        ) : (
+          <Button onClick={() => setFilterByFileVisible(true)}>
+            Filter by File
+          </Button>
+        )}
       </Row>
       {mergeVisible && (
         <Suspense fallback={<span />}>

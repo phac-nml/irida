@@ -83,9 +83,17 @@ const exportSamplesToFile = createAsyncThunk(
   }
 );
 
-const filterByFile = createAction(`samples/table/filterByFile`, (names) => {
-  return {payload: formatFilterBySampleNames(names)}
-});
+const filterByFile = createAction(
+  `samples/table/filterByFile`,
+  ({ samples, filename }) => {
+    return {
+      payload: {
+        filename,
+        fileFilter: formatFilterBySampleNames(samples),
+      },
+    };
+  }
+);
 
 /**
  * Since the initial table props may need to be reset at some point, we store
@@ -174,11 +182,15 @@ export default createReducer(initialState, (builder) => {
       state.loadingLong = false;
     })
     .addCase(filterByFile, (state, action) => {
-      state.options.search.push(action.payload);
+      state.options.search.push(action.payload.fileFilter);
       state.filterByFile = action.payload;
     })
     .addCase(clearFilterByFile, (state) => {
       state.filterByFile = null;
+      // Need to specifically remove the filter by file from the search filters.
+      state.options.search = state.options.search.filter(
+        (filter) => !filter._file
+      );
       state.options.reload = Math.floor(Math.random() * 90000) + 10000;
     });
 });
