@@ -1,11 +1,15 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { notification, Row, Switch, Typography } from "antd";
+import { notification, Switch, Typography } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { formatDate } from "../../../utilities/date-utilities";
-import { useUpdateProjectSubscriptionMutation } from "../../../apis/projects/project-subscriptions";
-import { PagedTableProvider } from "../../../components/ant.design/PagedTable";
-import { PagedTable } from "../../../components/ant.design/PagedTable";
+import {
+  useUpdateProjectSubscriptionMutation
+} from "../../../apis/projects/project-subscriptions";
+import {
+  PagedTable,
+  PagedTableProvider
+} from "../../../components/ant.design/PagedTable";
 
 /**
  * React component to display the user projects page.
@@ -13,7 +17,7 @@ import { PagedTable } from "../../../components/ant.design/PagedTable";
  * @constructor
  */
 export default function UserProjectsPage() {
-  const { userId } = useParams();
+  const {userId} = useParams();
   const [updateProjectSubscription] = useUpdateProjectSubscriptionMutation();
   const columns = [
     {
@@ -44,7 +48,7 @@ export default function UserProjectsPage() {
       title: i18n("UserProjectsPage.table.createdDate"),
       dataIndex: "createdDate",
       key: "createdDate",
-      render: (text) => formatDate({ date: text }),
+      render: (text) => formatDate({date: text}),
     },
     {
       title: i18n("UserProjectsPage.table.emailSubscribed"),
@@ -61,31 +65,27 @@ export default function UserProjectsPage() {
   ];
 
   function updateSubscription(checked, record) {
-    updateProjectSubscription({ id: record.id, subscribe: checked })
+    updateProjectSubscription({id: record.id, subscribe: checked})
       .then((response) => {
-        notification.success({ message: response.data.message });
+        notification.success({message: response.data.message});
       })
       .catch((error) => {
-        notification.error({ message: error.response.data.errror });
+        notification.error({message: error.response.data.errror});
       });
   }
 
   return (
     <>
-      <Row>
-        <Typography.Title level={4}>
-          {i18n("UserProjectsPage.title")}
-        </Typography.Title>
-      </Row>
-      <Row>
-        <PagedTableProvider
-          url={setBaseUrl(`/ajax/subscriptions/${userId}/user/list`)}
-          column="project.id"
-          order="ascend"
-        >
-          <PagedTable columns={columns} search={false} />
-        </PagedTableProvider>
-      </Row>
+      <Typography.Title level={4}>
+        {i18n("UserProjectsPage.title")}
+      </Typography.Title>
+      <PagedTableProvider
+        url={setBaseUrl(`/ajax/subscriptions/${userId}/user/list`)}
+        column="project.id"
+        order="ascend"
+      >
+        <PagedTable columns={columns} search={false}/>
+      </PagedTableProvider>
     </>
   );
 }

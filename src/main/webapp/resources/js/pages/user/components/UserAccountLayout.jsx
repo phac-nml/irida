@@ -16,7 +16,7 @@ import { setUserDetails } from "../services/userReducer";
  */
 export default function UserAccountLayout() {
   const dispatch = useDispatch();
-  const { userId } = useParams();
+  const {userId} = useParams();
   const {
     data: userDetails,
     isLoading,
@@ -47,7 +47,7 @@ export default function UserAccountLayout() {
   return (
     <>
       {isLoading ? (
-        <ContentLoading message={i18n("UserAccountLayout.loading.message")} />
+        <ContentLoading message={i18n("UserAccountLayout.loading.message")}/>
       ) : (
         <PageWrapper
           title={
@@ -59,11 +59,12 @@ export default function UserAccountLayout() {
         >
           <Row>
             <Col span={4}>
-              <UserAccountNav />
+              <UserAccountNav/>
             </Col>
-            <Col offset={1} span={8}>
-              <React.Suspense fallback={<ContentLoading />}>
-                <Outlet />
+            <Col xs={{span: 8, offset: 1}} md={{span: 16, offset: 1}}
+                 xl={{span: 32, offset: 1}}>
+              <React.Suspense fallback={<ContentLoading/>}>
+                <Outlet/>
               </React.Suspense>
             </Col>
           </Row>
