@@ -8,7 +8,7 @@
   <webpacker:css entry="sample-files"/>
 </head>
 
-<body>
+<body ng-app="irida.ncbi.export">
   <main layout:fragment="main">
     <div class="container">
       <div class="row">
@@ -97,7 +97,7 @@
                   <tr class="sample-container" th:attr="data-sample=${sample.id}" th:if="${hasPaired or hasSingles}">
                     <td>
                       <a class="sample-name" href="#" th:href="@{/projects/{id}/samples/{sid}(id=${project.getId()},sid=${sample.id})}" th:text="${sample.name}"></a>
-                      <button type="button" data:uib-tooltip="#{form.btn.remove}" class="btn btn-danger btn-xs remove-button"><i class="fa fa-times fa-fw" aria-hidden="true"></i></button>
+                      <button type="button" data:uib-tooltip="#{form.btn.remove}" data:tooltip-placement="top" data:tooltip-append-to-body="true" class="btn btn-danger btn-xs remove-button"><i class="fa fa-times fa-fw" aria-hidden="true"></i></button>
                     </td>
                     <td>
                       <input class="form-control bioSample" name="bioSample" required="required" />
@@ -467,7 +467,7 @@
         }
       }
     </script>
+    <webpacker:js entry="project-ncbi-export"/>
   </th:block>
 </body>
-
 </html>

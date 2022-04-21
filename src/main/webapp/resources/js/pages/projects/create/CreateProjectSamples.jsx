@@ -49,7 +49,7 @@ export function CreateProjectSamples({ form }) {
   }, [projectSamples]);
 
   return (
-    <>
+    <Space direction="vertical">
       {projectSamples.locked?.length > 0 && (
         <Alert
           type="warning"
@@ -59,7 +59,7 @@ export function CreateProjectSamples({ form }) {
       )}
 
       {projectSamples.unlocked?.length ? (
-        <Space style={{ display: "block" }}>
+        <>
           <Table
             className="t-samples"
             loading={isLoading}
@@ -119,7 +119,7 @@ export function CreateProjectSamples({ form }) {
               {i18n("CreateProjectSamples.lock")}
             </Checkbox>
           </Form.Item>
-        </Space>
+        </>
       ) : (
         <Empty
           image={<IconExperiment />}
@@ -139,6 +139,6 @@ export function CreateProjectSamples({ form }) {
           }
         />
       )}
-    </>
+    </Space>
   );
 }

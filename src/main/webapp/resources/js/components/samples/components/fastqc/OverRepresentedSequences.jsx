@@ -74,6 +74,8 @@ export default function OverRepresentedSequences() {
           {fastQC.description}
         </Typography.Paragraph>
         <Table
+          bordered
+          pagination={false}
           rowKey={(item) => item.identifier}
           loading={loading}
           columns={columns}
