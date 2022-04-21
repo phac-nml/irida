@@ -284,14 +284,14 @@ export default function SamplesMenu() {
             icon={<CloseCircleOutlined />}
             onClick={() => dispatch(clearFilterByFile())}
           >
-            File Filter: {fileFiltered.filename}
+            {i18n("SampleMenu.fileFilter.clear", fileFiltered.filename)}
           </Button>
         ) : (
           <Button
             onClick={() => setFilterByFileVisible(true)}
             icon={<FileTextOutlined />}
           >
-            Filter by File
+            {i18n("SampleMenu.fileFilter")}
           </Button>
         )}
       </Row>
