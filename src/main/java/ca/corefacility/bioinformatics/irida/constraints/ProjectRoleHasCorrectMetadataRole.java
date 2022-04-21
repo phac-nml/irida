@@ -18,7 +18,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * An array of fields (projectRole, metadataRole) must be supplied
  *
  * Example, compare a single user/usergroup projectRole to it's metadataRole:
- * @ProjectRoleHasCorrectMetadataRole(first = "projectRole", second = "metadataRole", message = "server.project.owner.incorrect.metadata.role"))
+ * {@literal @}ProjectRoleHasCorrectMetadataRole(first = "projectRole", second = "metadataRole", message = "server.project.owner.incorrect.metadata.role"))
  *
  */
 @Target({TYPE, ANNOTATION_TYPE})
