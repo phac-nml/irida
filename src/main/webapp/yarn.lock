@@ -7746,6 +7746,7 @@ __metadata:
     properties-reader: ^2.2.0
     qs: ^6.10.3
     rc-util: ^5.20.1
+    rc-virtual-list: ^3.4.6
     react: 17.0.2
     react-dnd: ^15.1.2
     react-dnd-html5-backend: ^15.1.3
@@ -12737,6 +12738,20 @@ __metadata:
     react: "*"
     react-dom: "*"
   checksum: ed0954c6a0263de9fda48c213a38f20852851ce9292c413ce982f45b50ea837841aafa7ab81d06ad7fc8b11289ca56552c69ff01c7967d941ab2cafee41ffaff
+  languageName: node
+  linkType: hard
+
+"rc-virtual-list@npm:^3.4.6":
+  version: 3.4.6
+  resolution: "rc-virtual-list@npm:3.4.6"
+  dependencies:
+    classnames: ^2.2.6
+    rc-resize-observer: ^1.0.0
+    rc-util: ^5.15.0
+  peerDependencies:
+    react: "*"
+    react-dom: "*"
+  checksum: dcccc9c223013e741749d098ccf4f4fa7c935d114123d48f1259da3118ad956fea239761ec07bdc221b138b67fccba3b9ac7e4a8ea8050372fe68a75ac6e6a7e
   languageName: node
   linkType: hard
 

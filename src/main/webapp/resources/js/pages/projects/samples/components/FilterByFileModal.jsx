@@ -1,8 +1,12 @@
 import React from "react";
-import { Col, Form, Input, List, Modal, Row, Space, Tag } from "antd";
+import { Col, Form, Input, List, Modal, Row, Typography } from "antd";
 import { useSelector } from "react-redux";
 import { CheckCircleTwoTone, WarningTwoTone } from "@ant-design/icons";
 import { green6, red6 } from "../../../../styles/colors";
+import VirtualList from "rc-virtual-list";
+import { SPACE_SM } from "../../../../styles/spacing";
+
+const ROW_HEIGHT = 43;
 
 export default function FilterByFileModal({ visible, onComplete, onCancel }) {
   const { options, projectId } = useSelector((state) => state.samples);
@@ -51,7 +55,7 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
       setValid([]);
       setInvalid([]);
     }
-  }, [contents]);
+  }, [contents, options.filters.associated, projectId]);
 
   return (
     <Modal
@@ -62,52 +66,64 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
       okText={"FILTER"}
       width={600}
     >
-      <Row gutter={[16, 16]}>
-        <Col span={24}>
-          <Form layout="vertical">
-            <Form.Item label={"Select file containing sample names"}>
-              <Input type="file" onChange={onFileAdded} />
-            </Form.Item>
-          </Form>
-        </Col>
-        {valid.length > 0 && (
-          <Col span={24}>
-            <List
-              header={
-                <Space>
-                  <CheckCircleTwoTone twoToneColor={green6} />
-                  These samples have been found
-                </Space>
-              }
-              bordered
-              size="small"
-              dataSource={valid}
-              renderItem={(sample) => (
-                <List.Item>
-                  {sample.sampleName}
-                  <Tag>{sample.projectName}</Tag>
-                </List.Item>
-              )}
-            />
-          </Col>
-        )}
-        {invalid.length > 0 && (
-          <Col span={24}>
-            <List
-              header={
-                <Space>
-                  <WarningTwoTone twoToneColor={red6} />
-                  These samples do not match sample in selected projects
-                </Space>
-              }
-              bordered
-              size="small"
-              dataSource={invalid}
-              renderItem={(name) => <List.Item>{name}</List.Item>}
-            />
-          </Col>
-        )}
-      </Row>
+      <>
+        <Form layout="vertical">
+          <Form.Item label={"Select file containing sample names"}>
+            <Input type="file" onChange={onFileAdded} />
+          </Form.Item>
+        </Form>
+        <Row gutter={[16, 16]}>
+          {valid.length > 0 && (
+            <Col span={24}>
+              <Typography.Text>
+                <Row align="middle">
+                  <CheckCircleTwoTone
+                    twoToneColor={green6}
+                    style={{ fontSize: `2rem`, marginRight: SPACE_SM }}
+                  />
+                  {valid.length > 1
+                    ? i18n("FilterByFile.valid.single")
+                    : i18n("FilterByFile.valid.plural", valid.length)}
+                </Row>
+              </Typography.Text>
+            </Col>
+          )}
+          {invalid.length > 0 && (
+            <Col span={24}>
+              <Row gutter={[8, 8]}>
+                <Col span={24}>
+                  <Row align="middle">
+                    <WarningTwoTone
+                      style={{ fontSize: `2rem`, marginRight: SPACE_SM }}
+                      twoToneColor={red6}
+                    />
+                    {i18n("FilterByFile.invalid")}
+                  </Row>
+                </Col>
+                <Col span={24}>
+                  <List bordered size="small">
+                    <VirtualList
+                      data={invalid}
+                      height={Math.min(400, ROW_HEIGHT * invalid.length)}
+                      itemHeight={ROW_HEIGHT}
+                      itemKey={(item) => {
+                        console.log({ item });
+                        return item;
+                      }}
+                    >
+                      {(item) => (
+                        <List.Item key={item}>
+                          <List.Item.Meta title={<span>{item}</span>} />
+                        </List.Item>
+                      )}
+                    </VirtualList>
+                  </List>
+                </Col>
+              </Row>
+            </Col>
+          )}
+        </Row>
+      </>
     </Modal>
   );
 }
