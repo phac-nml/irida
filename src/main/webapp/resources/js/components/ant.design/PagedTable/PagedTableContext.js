@@ -2,6 +2,7 @@ import React, { useEffect, useReducer } from "react";
 import { fetchPageTableUpdate } from "../../../apis/paged-table/paged-table";
 import debounce from "lodash/debounce";
 import pickBy from "lodash/pickBy";
+import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 
 let PagedTableContext;
 const { Provider, Consumer } = (PagedTableContext = React.createContext());
@@ -10,10 +11,12 @@ const initialState = {
   dataSource: undefined,
   loading: true,
   search: "",
-  current: 1,
-  pageSize: 10,
-  total: undefined,
   filters: {},
+  total: undefined,
+  pagination: {
+    current: 1,
+    pageSize: 10,
+  },
 };
 
 const types = {
@@ -42,13 +45,12 @@ function reducer(state, action) {
     case types.CHANGE:
       return {
         ...state,
-        pageSize: action.payload.pageSize,
-        current: action.payload.current,
+        pagination: action.payload.pagination,
         order: action.payload.order,
         column: action.payload.column,
         filters: action.payload.filters || {},
       };
-    default:
+    case types.default:
       return { ...state };
   }
 }
@@ -79,7 +81,7 @@ function PagedTableProvider({
    */
   useEffect(updateTable, [
     state.search,
-    state.current,
+    state.pagination,
     state.order,
     state.column,
     state.filters,
@@ -91,8 +93,7 @@ function PagedTableProvider({
   function updateTable() {
     dispatch({ type: types.LOADING });
     fetchPageTableUpdate(url, {
-      current: state.current - 1,
-      pageSize: state.pageSize,
+      ...state.pagination,
       sortColumn: state.column || "createdDate",
       sortDirection: state.order || "descend",
       search: state.search,
@@ -125,19 +126,22 @@ function PagedTableProvider({
    * @param {object} sorter
    */
   const handleTableChange = (pagination, filters, sorter) => {
-    const { pageSize, current } = pagination;
     const { order, field } = sorter;
     dispatch({
       type: types.CHANGE,
       payload: {
-        pageSize,
-        current,
+        pagination,
         order,
         column: field,
         filters: pickBy(filters),
       },
     });
   };
+
+  const paginationOptions = React.useMemo(
+    () => getPaginationOptions(state.total),
+    [state.total]
+  );
 
   return (
     <Provider
@@ -148,11 +152,7 @@ function PagedTableProvider({
           dataSource: state.dataSource,
           loading: state.loading,
           onChange: handleTableChange,
-          pagination: {
-            total: state.total,
-            pageSize: state.pageSize,
-            hideOnSinglePage: true,
-          },
+          pagination: { ...state.pagination, ...paginationOptions },
         },
       }}
     >

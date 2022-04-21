@@ -6,7 +6,8 @@ From the projects listing page click the "Create New Project" button:
 
 ![create-new-project]({{ site.baseurl }}/images/tutorials/common/projects/create-new-project-btn.png)
 
-When you create a new project, you'll need to provide a project name, and can optionally provide a project organism, a free-form project description, and a link to another web site that has more information about the project:
+When you create a new project, you'll need to provide a project name, and can optionally provide a project organism, a
+free-form project description, and a link to another website that has more information about the project:
 
 ![Create new project form.]({{ site.baseurl }}/images/tutorials/common/projects/create-new-project-form.png)
 
@@ -41,5 +42,3 @@ If there are no samples currently in the cart or if there are and they weren't s
 Once you've finished entering the details, selecting any samples from the cart, and setting the metadata restrictions (if available) for your new project, click on the "Create Project" button. You will be redirected to the projects list.
 
 IRIDA will automatically generate a numeric project identifier for your project. The project identifier is used by external tools for uploading sequencing data to IRIDA. The project identifier can be found in the ["Project Details" panel]({{ site.baseurl }}/user/user/project/index.html#viewing-project-details), or in the [projects list]({{ site.baseurl }}/user/user/project/index.html#viewing-existing-projects).
-
-![Create project cart warning]({{ site.baseurl }}/images/tutorials/common/projects/create-project-cart-warning.png)
