@@ -16,7 +16,10 @@ import javax.validation.ConstraintViolationException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.DateFormatConverter;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,8 +144,8 @@ public class UISampleService {
 	 * @return list of paired end sequence files
 	 */
 	public List<SequencingObject> getPairedSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, SequenceFilePair.class);
+		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
 		// add project to qc entries and filter any unavailable entries
 		List<SequencingObject> filePairs = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : filePairJoins) {
@@ -162,8 +165,8 @@ public class UISampleService {
 	 * @return list of single end sequence files
 	 */
 	public List<SequencingObject> getSingleEndSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, SingleEndSequenceFile.class);
+		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
 
 		List<SequencingObject> singles = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : singleFileJoins) {
@@ -182,8 +185,8 @@ public class UISampleService {
 	 * @return list of fast5 sequence files
 	 */
 	public List<SequencingObject> getFast5FilesForSample(Sample sample) {
-		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, Fast5Object.class);
+		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, Fast5Object.class);
 		return fast5FileJoins.stream().map(SampleSequencingObjectJoin::getObject).collect(Collectors.toList());
 	}
 
@@ -402,16 +405,15 @@ public class UISampleService {
 
 			try {
 				for (Sample sample : samples) {
-					Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService.getSequencingObjectsForSample(
-							sample);
+					Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService
+							.getSequencingObjectsForSample(sample);
 
 					for (SampleSequencingObjectJoin join : sequencingObjectsForSample) {
 						for (SequenceFile file : join.getObject().getFiles()) {
 							Path path = file.getFile();
 
-							String fileName =
-									project.getName() + "/" + sample.getSampleName() + "/" + path.getFileName()
-											.toString();
+							String fileName = project.getName() + "/" + sample.getSampleName() + "/"
+									+ path.getFileName().toString();
 							if (usedFileNames.contains(fileName)) {
 								fileName = handleDuplicate(fileName, usedFileNames);
 							}
@@ -492,9 +494,9 @@ public class UISampleService {
 				.collect(Collectors.toList());
 
 		if (type.equals("excel")) {
-			writeToExcel(response, "FOOBAR", items, headers);
+			writeToExcel(response, "FOOBAR", items, headers, locale);
 		} else {
-			writeToCSV(response, "FOBV", items, headers);
+			writeToCSV(response, "FOBV", items, headers, locale);
 		}
 	}
 
@@ -532,10 +534,17 @@ public class UISampleService {
 	 * @param headers  for the table
 	 * @throws IOException thrown if file cannot be written
 	 */
-	private static void writeToExcel(HttpServletResponse response, String filename, List<ProjectSampleTableItem> items,
-			List<String> headers) throws IOException {
+	private void writeToExcel(HttpServletResponse response, String filename, List<ProjectSampleTableItem> items,
+			List<String> headers, Locale locale) throws IOException {
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		XSSFSheet sheet = workbook.createSheet();
+
+		CreationHelper creationHelper = workbook.getCreationHelper();
+		CellStyle dateCellStyle = workbook.createCellStyle();
+		String excelDatetimeFormatPattern = DateFormatConverter.convert(locale,
+				messageSource.getMessage("generic.datetimeformat", new Object[] {}, locale));
+		short dateTimeFormat = creationHelper.createDataFormat().getFormat(excelDatetimeFormatPattern);
+		dateCellStyle.setDataFormat(dateTimeFormat);
 
 		// Create the header row
 		Row row = sheet.createRow(0);
@@ -575,12 +584,14 @@ public class UISampleService {
 
 			Cell createdCell = row.createCell(cellNum++);
 			createdCell.setCellValue(sample.getCreatedDate());
+			createdCell.setCellStyle(dateCellStyle);
 
 			Cell modifiedCell = row.createCell(cellNum);
 			modifiedCell.setCellValue(sample.getModifiedDate());
+			modifiedCell.setCellStyle(dateCellStyle);
 		}
 
-		response.setContentType("application/vnd.ms-excel");
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 		response.setHeader("Content-disposition", "attachment; filename=" + filename + ".xlsx");
 		workbook.write(response.getOutputStream());
 
@@ -596,8 +607,8 @@ public class UISampleService {
 	 * @param headers  for the table
 	 * @throws IOException thrown if file cannot be written
 	 */
-	private static void writeToCSV(HttpServletResponse response, String filename, List<ProjectSampleTableItem> items,
-			List<String> headers) throws IOException {
+	private void writeToCSV(HttpServletResponse response, String filename, List<ProjectSampleTableItem> items,
+			List<String> headers, Locale locale) throws IOException {
 		List<String[]> results = new ArrayList<>();
 		results.add(headers.toArray(String[]::new));
 
@@ -614,8 +625,7 @@ public class UISampleService {
 					project.getId().toString(),
 					sample.getCollectedBy(),
 					sample.getCreatedDate().toString(),
-					sample.getModifiedDate().toString()
-			};
+					sample.getModifiedDate().toString() };
 			results.add(row);
 		}
 
