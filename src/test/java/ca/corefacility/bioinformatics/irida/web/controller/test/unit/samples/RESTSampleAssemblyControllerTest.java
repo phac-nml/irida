@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.unit.samples;
 
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +35,8 @@ public class RESTSampleAssemblyControllerTest {
 	private SampleService sampleService;
 	private GenomeAssemblyService genomeAssemblyService;
 
+	private IridaFileStorageUtility iridaFileStorageUtility;
+
 	GenomeAssemblyFromAnalysis assemblyFromAnalysis;
 	List<SampleGenomeAssemblyJoin> assemblies;
 	Sample s1;
@@ -40,6 +45,8 @@ public class RESTSampleAssemblyControllerTest {
 	public void setUp() {
 		sampleService = mock(SampleService.class);
 		genomeAssemblyService = mock(GenomeAssemblyService.class);
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		controller = new RESTSampleAssemblyController(sampleService, genomeAssemblyService);
 
