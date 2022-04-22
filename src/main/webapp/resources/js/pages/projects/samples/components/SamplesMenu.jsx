@@ -164,12 +164,13 @@ export default function SamplesMenu() {
 
   const toolsMenu = React.useMemo(() => {
     return (
-      <Menu>
+      <Menu className="t-tools-dropdown">
         <Menu.Item
           disabled={selectedCount < 2}
           key="merge-menu"
           icon={<IcoonMergeSamples />}
           onClick={() => validateAndOpenModalFor("merge")}
+          className="t-merge"
         >
           {i18n("SamplesMenu.merge")}
         </Menu.Item>
@@ -186,6 +187,7 @@ export default function SamplesMenu() {
           key="remove-menu"
           icon={<IconCloseSquare />}
           onClick={() => validateAndOpenModalFor("remove")}
+          className="t-remove"
         >
           {i18n("SamplesMenu.remove")}
         </Menu.Item>
@@ -263,7 +265,7 @@ export default function SamplesMenu() {
         <Space>
           {canManage && (
             <Dropdown overlay={toolsMenu}>
-              <Button>
+              <Button className="t-sample-tools">
                 {i18n("SamplesMenu.label")} <IconDropDown />
               </Button>
             </Dropdown>

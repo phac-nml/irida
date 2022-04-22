@@ -25,6 +25,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(tagName = "h1")
 	private WebElement pageHeader;
 
+	@FindBy(className = "t-sample-tools")
+	private WebElement toolsDropdownBtn;
+
+	@FindBy(className = "t-tools-dropdown")
+	private WebElement toolsDropdown;
+
 	@FindBy(className = "t-associated-btn")
 	private WebElement associatedProjectMenuBtn;
 
@@ -43,11 +49,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(css = "tbody tr")
 	private List<WebElement> tableRows;
 
-	@FindBy(className = "t-sample-tools")
-	private WebElement toolsDropdownBtn;
-
-	@FindBy(className = "t-merge-btn")
+	@FindBy(className = "t-merge")
 	private WebElement mergeBtn;
+
+	@FindBy(className = "t-remove")
+	private WebElement removeBtn;
 
 	@FindBy(className = "t-share-btn")
 	private WebElement shareBtn;
@@ -57,9 +63,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	@FindBy(className = "t-move-btn")
 	private WebElement moveBtn;
-
-	@FindBy(className = "t-remove-btn")
-	private WebElement removeBtn;
 
 	@FindBy(className = "t-add-cart-btn")
 	private WebElement addToCartBtn;
@@ -213,7 +216,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void openToolsDropDown() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		toolsDropdownBtn.click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-merge-btn")));
+		wait.until(ExpectedConditions.visibilityOf(toolsDropdown));
 	}
 
 	public void closeToolsDropdown() {
@@ -230,7 +233,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public boolean isSampleToolsAvailable() {
-		return driver.findElements(By.id("sample-tools")).size() > 0;
+		try {
+			return toolsDropdownBtn.isDisplayed();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public boolean isDownloadBtnEnabled() {
@@ -242,9 +249,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	private boolean isAnchorElementEnabled(WebElement element) {
-		// Using xpath because for anchor elements in dropdowns, bootstrap adds
-		// the disabled class it the parent li element.
-		return !element.findElement(By.xpath("./..")).getAttribute("class").contains("disabled");
+		try {
+			return !element.getAttribute("aria-disabled").equals("true");
+		} catch (Exception e) {
+			// If it does not have "aria-disabled" then it is enabled;
+			return true;
+		}
 	}
 
 	public boolean isMergeBtnEnabled() {
