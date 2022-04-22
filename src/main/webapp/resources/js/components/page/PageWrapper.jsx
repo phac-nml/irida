@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { Layout, PageHeader } from "antd";
 import { grey1 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
@@ -12,6 +11,8 @@ const { Content } = Layout;
  * @param {element} headerExtras Extra information (buttons, search fields, to display
  * in the page header.
  * @param {element} children Main content for the page.
+ * @param {function} onBack - function to handle on clicking back button
+ * @param {string} subTitle
  * @returns {*}
  * @constructor
  */
@@ -39,9 +40,3 @@ export function PageWrapper({
     </Layout>
   );
 }
-
-PageWrapper.propTypes = {
-  title: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  headerExtras: PropTypes.element,
-  children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
-};

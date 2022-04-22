@@ -1,10 +1,9 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { Select } from "antd";
 import { TemplateSelectOption } from "./TemplateSelectOption";
 import {
   HelpPopover,
-  PopoverContents
+  PopoverContents,
 } from "../../../../../../../components/popovers/index";
 import { SaveTemplateButton } from "./SaveTemplateButton";
 import { SPACE_XS } from "../../../../../../../styles/spacing";
@@ -65,9 +64,3 @@ export function TemplateSelect(props) {
     </>
   );
 }
-
-TemplateSelect.propTypes = {
-  current: PropTypes.number.isRequired,
-  templates: PropTypes.array.isRequired,
-  useTemplate: PropTypes.func.isRequired
-};

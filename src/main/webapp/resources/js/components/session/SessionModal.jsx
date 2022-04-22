@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import axios from "axios";
 import { Button, Modal } from "antd";
 import { red6 } from "../../styles/colors";
@@ -124,9 +123,3 @@ export default function SessionModal({
     </Modal>
   );
 }
-
-SessionModal.propTypes = {
-  displayTime: PropTypes.number.isRequired,
-  resetTimeout: PropTypes.func.isRequired,
-  visibility: PropTypes.bool.isRequired
-};

@@ -4,7 +4,6 @@
  */
 
 import React from "react";
-import PropTypes from "prop-types";
 import { Col, PageHeader } from "antd";
 
 import { SPACE_MD } from "../../styles/spacing";
@@ -49,18 +48,3 @@ export function TabPaneContent({
     </Column>
   );
 }
-
-TabPaneContent.propTypes = {
-  /*title to display in tab*/
-  title: PropTypes.string,
-  /*option button to display on header line*/
-  actionButton: PropTypes.object,
-  /*number of columns (width for different screen sizes)*/
-  xs: PropTypes.number,
-  xl: PropTypes.number,
-  xxl: PropTypes.number,
-  /*the content to display in the tab*/
-  children: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
-  /*any extra attributes to add to PageHeader*/
-  props: PropTypes.object
-};

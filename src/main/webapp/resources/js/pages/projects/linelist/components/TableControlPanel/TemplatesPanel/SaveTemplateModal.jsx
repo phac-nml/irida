@@ -1,7 +1,6 @@
 import React from "react";
 
 import isEqual from "lodash/isEqual";
-import PropTypes from "prop-types";
 import { Button, Checkbox, Form, Modal, Select } from "antd";
 
 const { Item } = Form;
@@ -40,46 +39,39 @@ function Footer(props) {
  * linelist as a new MetadataTemplate.
  */
 export class SaveTemplateModal extends React.Component {
-  static propTypes = {
-    template: PropTypes.object,
-    onClose: PropTypes.func.isRequired,
-    current: PropTypes.number.isRequired,
-    templates: PropTypes.array.isRequired
-  };
-
   validations = [
     {
       type: "required",
-      fn: name => name.length === 0,
+      fn: (name) => name.length === 0,
       state: {
         existingTemplate: false,
         status: "error",
         message: i18n("linelist.templates.saveModal.required"),
         valid: false,
-        overwriteTemplate: false
-      }
+        overwriteTemplate: false,
+      },
     },
     {
       type: "length",
-      fn: name => name.length < 5,
+      fn: (name) => name.length < 5,
       state: {
         status: "error",
         message: i18n("linelist.templates.saveModal.length"),
         valid: false,
         existingTemplate: false,
-        overwriteTemplate: false
-      }
+        overwriteTemplate: false,
+      },
     },
     {
       type: "nameExists",
-      fn: name => this._options.findIndex(o => o === name) > -1,
+      fn: (name) => this._options.findIndex((o) => o === name) > -1,
       state: {
         status: "error",
         message: i18n("linelist.templates.saveModal.nameExists"),
         valid: false,
         existingTemplate: true,
-        overwriteTemplate: false
-      }
+        overwriteTemplate: false,
+      },
     },
     {
       type: "valid",
@@ -88,18 +80,18 @@ export class SaveTemplateModal extends React.Component {
         status: "success",
         message: "",
         valid: true,
-        existingTemplate: false
-      }
-    }
+        existingTemplate: false,
+      },
+    },
   ];
 
   constructor(props) {
     super(props);
-    this._options = this.props.templates.map(t => t.name).sort(sortNames);
+    this._options = this.props.templates.map((t) => t.name).sort(sortNames);
 
     this.state = {
       options: this._options,
-      disabledLabel: this._options[0] // Name of the "all fields" option. Cannot save by that name.
+      disabledLabel: this._options[0], // Name of the "all fields" option. Cannot save by that name.
     };
   }
 
@@ -122,7 +114,7 @@ export class SaveTemplateModal extends React.Component {
         value,
         existingTemplate,
         overwriteTemplate: !existingTemplate,
-        valid: !existingTemplate
+        valid: !existingTemplate,
       });
     }
   }
@@ -131,7 +123,7 @@ export class SaveTemplateModal extends React.Component {
    * What to do when searching the templates.
    * @param {string} value - Value user searched in the select
    */
-  onSearch = value => {
+  onSearch = (value) => {
     let options = Array.from(this._options);
     if (value) {
       // Determine if the name is in the current list of templates
@@ -167,14 +159,14 @@ export class SaveTemplateModal extends React.Component {
    * Save the current template using the entered name.
    */
   saveTemplate = () => {
-    const fields = this.props.template.modified.filter(t => !t.hide);
+    const fields = this.props.template.modified.filter((t) => !t.hide);
     const name = this.state.value;
     const overwrite = this.state.overwriteTemplate;
     let id = undefined;
 
     if (overwrite) {
       // Get the template to overwrite because we need its id.
-      const t = this.props.templates.find(t => t.name === name);
+      const t = this.props.templates.find((t) => t.name === name);
       id = t.id;
     }
 
@@ -186,10 +178,10 @@ export class SaveTemplateModal extends React.Component {
    * Event handler for when a user selects to overwrite and existing template.
    * @param {object} e - Checkbox event
    */
-  onExistingChange = e => {
+  onExistingChange = (e) => {
     this.setState({
       valid: true,
-      overwriteTemplate: true
+      overwriteTemplate: true,
     });
   };
 
@@ -225,7 +217,7 @@ export class SaveTemplateModal extends React.Component {
               onSearch={this.onSearch}
               onChange={this.onSearch}
             >
-              {options.map(template => (
+              {options.map((template) => (
                 <Option
                   disabled={template === this.state.disabledLabel}
                   key={template}
