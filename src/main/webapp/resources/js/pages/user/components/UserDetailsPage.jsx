@@ -158,26 +158,26 @@ export default function UserDetailsPage() {
       </Form>
       <Space direction="vertical">
         <Typography.Text type="secondary">
-          {userDetails.user.createdDate
+          {userDetails.user?.createdDate
             ? i18n(
               "UserDetailsPage.createdDate",
-              formatDate({date: userDetails.user.createdDate})
+              formatDate({date: userDetails.user?.createdDate})
             )
             : ""}
         </Typography.Text>
         <Typography.Text type="secondary">
-          {userDetails.user.modifiedDate
+          {userDetails.user?.modifiedDate
             ? i18n(
               "UserDetailsPage.modifiedDate",
-              formatDate({date: userDetails.user.modifiedDate})
+              formatDate({date: userDetails.user?.modifiedDate})
             )
             : ""}
         </Typography.Text>
         <Typography.Text type="secondary">
-          {userDetails.user.lastLogin
+          {userDetails.user?.lastLogin
             ? i18n(
               "UserDetailsPage.lastLogin",
-              formatDate({date: userDetails.user.lastLogin})
+              formatDate({date: userDetails.user?.lastLogin})
             )
             : ""}
         </Typography.Text>

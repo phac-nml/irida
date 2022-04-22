@@ -10,6 +10,7 @@ import {
   PagedTable,
   PagedTableProvider
 } from "../../../components/ant.design/PagedTable";
+import { LinkButton } from "../../../components/Buttons/LinkButton";
 
 /**
  * React component to display the user projects page.
@@ -31,7 +32,11 @@ export default function UserProjectsPage() {
       dataIndex: "projectName",
       key: "projectName",
       render: (text, record) => (
-        <a href={setBaseUrl(`projects/${record.projectId}`)}>{text}</a>
+        <LinkButton
+          text={<Typography.Text style={{width: 100}}
+                                 ellipsis={{tooltip: true}}>{text}</Typography.Text>}
+          href={setBaseUrl(`projects/${record.projectId}`)}
+        />
       ),
     },
     {
@@ -70,7 +75,7 @@ export default function UserProjectsPage() {
         notification.success({message: response.data.message});
       })
       .catch((error) => {
-        notification.error({message: error.response.data.errror});
+        notification.error({message: error.response.data.error});
       });
   }
 
