@@ -13,7 +13,7 @@ import { useGetUserDetailsQuery } from "../../../apis/users/users";
  */
 export default function UserSecurityPage() {
   const {userId} = useParams();
-  const {data: userDetails} = useGetUserDetailsQuery(userId);
+  const {data: userDetails = {}} = useGetUserDetailsQuery(userId);
 
   return (
     <>

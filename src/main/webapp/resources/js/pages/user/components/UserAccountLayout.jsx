@@ -1,11 +1,12 @@
 import React from "react";
 import { Outlet, useParams } from "react-router-dom";
-import { Col, Row } from "antd";
-import { PageWrapper } from "../../../components/page/PageWrapper";
+import { Col, Layout, PageHeader, Row } from "antd";
 import UserAccountNav from "./UserAccountNav";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { useGetUserDetailsQuery } from "../../../apis/users/users";
 import { ContentLoading } from "../../../components/loader";
+import { SPACE_MD } from "../../../styles/spacing";
+import { grey1 } from "../../../styles/colors";
 
 /**
  * React component that layouts the user account page.
@@ -13,6 +14,7 @@ import { ContentLoading } from "../../../components/loader";
  * @constructor
  */
 export default function UserAccountLayout() {
+  const {Content, Sider} = Layout;
   const {userId} = useParams();
   const {data: userDetails = {}} = useGetUserDetailsQuery(userId);
 
@@ -20,27 +22,35 @@ export default function UserAccountLayout() {
     (window.location.href = setBaseUrl(`admin/users`));
 
   return (
-    <>
-      <PageWrapper
-        title={
-          userDetails.admin
-            ? i18n("UserAccountLayout.page.title", userDetails.user?.username)
-            : userDetails.user?.username
-        }
-        onBack={userDetails.admin ? goToAdminUserListPage : undefined}
-      >
-        <Row>
-          <Col span={4}>
-            <UserAccountNav/>
-          </Col>
-          <Col xs={{span: 8, offset: 1}} md={{span: 16, offset: 1}}
-               xl={{span: 32, offset: 1}}>
-            <React.Suspense fallback={<ContentLoading/>}>
-              <Outlet/>
-            </React.Suspense>
-          </Col>
-        </Row>
-      </PageWrapper>
-    </>
+    <Layout style={{height: "100%", minHeight: "100%"}}>
+      <Row>
+        <Col xl={{span: 12, offset: 6}}
+             m={{span: 20, offset: 2}}
+             xs={{span: 24}}>
+          <PageHeader
+            title={
+              userDetails.admin
+                ? i18n("UserAccountLayout.page.title", userDetails.user?.username)
+                : userDetails.user?.username
+            }
+            onBack={userDetails.admin ? goToAdminUserListPage : undefined}
+          />
+          <Layout>
+            <Sider width={200} style={{backgroundColor: grey1}}>
+              <UserAccountNav/>
+            </Sider>
+            <Content
+              style={{
+                backgroundColor: grey1,
+                padding: SPACE_MD
+              }}>
+              <React.Suspense fallback={<ContentLoading/>}>
+                <Outlet/>
+              </React.Suspense>
+            </Content>
+          </Layout>
+        </Col>
+      </Row>
+    </Layout>
   );
 }

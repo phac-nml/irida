@@ -23,7 +23,7 @@ import {
  */
 export default function UserDetailsPage() {
   const {userId} = useParams();
-  const {data: userDetails} = useGetUserDetailsQuery(userId);
+  const {data: userDetails = {}} = useGetUserDetailsQuery(userId);
   const [editUser] = useEditUserDetailsMutation();
   const [form] = Form.useForm();
 
@@ -116,7 +116,7 @@ export default function UserDetailsPage() {
           name="locale"
         >
           <Select>
-            {userDetails.locales.map((locale, index) => (
+            {userDetails.locales?.map((locale, index) => (
               <Select.Option
                 key={`user-account-details-locale-${index}`}
                 value={locale.language}
@@ -132,7 +132,7 @@ export default function UserDetailsPage() {
           hidden={!userDetails.admin}
         >
           <Select>
-            {userDetails.allowedRoles.map((role, index) => (
+            {userDetails.allowedRoles?.map((role, index) => (
               <Select.Option
                 key={`user-account-details-role-${index}`}
                 value={role.code}
