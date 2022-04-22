@@ -146,7 +146,7 @@ public class UIProjectUserGroupsService {
 		 given full metadata permissions
 		 */
 		if (projectRole.equals(ProjectRole.PROJECT_OWNER)) {
-			projectMetadataRole = ProjectMetadataRole.fromString("LEVEL_3");
+			projectMetadataRole = ProjectMetadataRole.fromString("LEVEL_4");
 		} else {
 			projectMetadataRole = ProjectMetadataRole.fromString("LEVEL_1");
 		}
