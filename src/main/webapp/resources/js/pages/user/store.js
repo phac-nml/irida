@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { usersApi } from "../../apis/users/users";
+import { userApi } from "../../apis/users/users";
 import { passwordResetApi } from "../../apis/passwordReset";
 import {
   projectSubscriptionsApi
@@ -13,12 +13,12 @@ export default configureStore({
   reducer: {
     [passwordResetApi.reducerPath]: passwordResetApi.reducer,
     [projectSubscriptionsApi.reducerPath]: projectSubscriptionsApi.reducer,
-    [usersApi.reducerPath]: usersApi.reducer,
+    [userApi.reducerPath]: userApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       passwordResetApi.middleware,
       projectSubscriptionsApi.middleware,
-      usersApi.middleware,
+      userApi.middleware,
     ),
 });
