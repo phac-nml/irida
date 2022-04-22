@@ -1,6 +1,4 @@
 import React from "react";
-
-import PropTypes from "prop-types";
 import { Button, Dropdown, Menu } from "antd";
 import { SPACE_XS } from "../../../../../styles/spacing";
 import { IconDropDown } from "../../../../../components/icons/Icons";
@@ -29,7 +27,3 @@ export function ExportDropDown(props) {
     </Dropdown>
   );
 }
-
-ExportDropDown.propTypes = {
-  csv: PropTypes.func.isRequired
-};

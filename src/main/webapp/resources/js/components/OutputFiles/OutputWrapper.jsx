@@ -3,7 +3,6 @@
  */
 
 import React from "react";
-import PropTypes from "prop-types";
 import { SPACE_XS } from "../../styles/spacing";
 import styled from "styled-components";
 import { BORDERED_LIGHT } from "../../styles/borders";
@@ -42,18 +41,3 @@ export function OutputWrapper({
     </Wrapper>
   );
 }
-
-OutputWrapper.propTypes = {
-  /*Optional height*/
-  height: PropTypes.number,
-  /*Optional overflowRequired*/
-  overflowRequired: PropTypes.bool,
-  /*the content to display in the div*/
-  children: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.array,
-    PropTypes.string
-  ]),
-  /*any extra attributes to add to OutputWrapper*/
-  props: PropTypes.object
-};

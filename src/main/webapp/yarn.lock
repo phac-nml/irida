@@ -7742,7 +7742,6 @@ __metadata:
     postcss-preset-env: ^7.4.3
     prettier: ^2.6.2
     process: ^0.11.10
-    prop-types: ^15.8.1
     properties-reader: ^2.2.0
     qs: ^6.10.3
     rc-util: ^5.20.1

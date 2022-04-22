@@ -1,7 +1,5 @@
 import React from "react";
 
-import PropTypes from "prop-types";
-
 /**
  * Formats and displays the filtered counts for the table.
  */
@@ -16,8 +14,3 @@ export function FilteredCounts(props) {
     </span>
   );
 }
-
-FilteredCounts.propTypes = {
-  filterCount: PropTypes.number,
-  totalSamples: PropTypes.number
-};

@@ -3,7 +3,6 @@
  */
 
 import React from "react";
-import PropTypes from "prop-types";
 import { Alert } from "antd";
 
 /**
@@ -11,7 +10,7 @@ import { Alert } from "antd";
  *
  * @param {string} message - Text to display in alert
  * @param {string} description - Optional description
- *
+ * @param {object} props - remainder of props passed
  * @returns {Element} - Returns an antd info 'Alert' component
  */
 export function InfoAlert({ message, description, ...props }) {
@@ -25,10 +24,3 @@ export function InfoAlert({ message, description, ...props }) {
     />
   );
 }
-
-InfoAlert.propTypes = {
-  /*Text to display in alert*/
-  message: PropTypes.string.isRequired,
-  /*Optional description*/
-  description: PropTypes.string
-};

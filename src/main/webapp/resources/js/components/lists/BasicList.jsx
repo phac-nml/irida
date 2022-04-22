@@ -4,16 +4,15 @@
  */
 
 import React from "react";
-import PropTypes from "prop-types";
 import { List, Typography } from "antd";
 
 const { Text } = Typography;
 
 /**
  * Stateless UI component for displaying a basic list with a title and
- * desciption for each item
+ * description for each item
  *
- * @param {array} dataSource - data for the List component to display
+ * @param {{dataSource: Array}} dataSource - data for the List component to display
  * @param {string} itemLayout - layout of the list
  *
  * @returns {Element} - Returns an antd 'List' component with passed data
@@ -39,22 +38,3 @@ export function BasicList({
     />
   );
 }
-
-BasicList.propTypes = {
-  /*layout of the list*/
-  itemLayout: PropTypes.string,
-  /*data for the List component to display*/
-  dataSource: PropTypes.arrayOf(
-    PropTypes.shape({
-      title: PropTypes.oneOfType([
-        PropTypes.string.isRequired,
-        PropTypes.object
-      ]),
-      desc: PropTypes.oneOfType([
-        PropTypes.string,
-        PropTypes.number,
-        PropTypes.object
-      ])
-    })
-  ).isRequired
-};

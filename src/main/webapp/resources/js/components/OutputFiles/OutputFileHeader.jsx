@@ -4,7 +4,6 @@
  */
 
 import React from "react";
-import PropTypes from "prop-types";
 import { Button, Space, Typography } from "antd";
 import { convertFileSize } from "../../utilities/file-utilities";
 import { downloadIndividualOutputFile } from "../../apis/analyses/analyses";
@@ -61,8 +60,3 @@ export function OutputFileHeader({ output, extras = [] }) {
     </OutputFileHeaderWrapper>
   );
 }
-
-OutputFileHeader.propTypes = {
-  /*Output file object*/
-  output: PropTypes.object.isRequired,
-};

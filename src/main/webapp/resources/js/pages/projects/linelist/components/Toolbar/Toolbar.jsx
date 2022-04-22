@@ -1,6 +1,5 @@
 import { Button, Form, Input, Popover, Space } from "antd";
 
-import PropTypes from "prop-types";
 import React, { Component, Suspense } from "react";
 import { connect } from "react-redux";
 import {
@@ -135,14 +134,6 @@ export class ToolbarComponent extends Component {
     );
   }
 }
-
-ToolbarComponent.propTypes = {
-  selectedCount: PropTypes.number.isRequired,
-  exportCSV: PropTypes.func.isRequired,
-  exportXLSX: PropTypes.func.isRequired,
-  scrollTableToTop: PropTypes.func.isRequired,
-  updateFilter: PropTypes.func.isRequired,
-};
 
 const mapStateToProps = (state) => ({});
 

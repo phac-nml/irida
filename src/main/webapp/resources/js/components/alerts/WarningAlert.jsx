@@ -3,7 +3,6 @@
  */
 
 import React from "react";
-import PropTypes from "prop-types";
 import { Alert } from "antd";
 
 /**
@@ -26,10 +25,3 @@ export function WarningAlert({ message, description, ...props }) {
     />
   );
 }
-
-WarningAlert.propTypes = {
-  /*Text to display in alert*/
-  message: PropTypes.string.isRequired,
-  /*Optional description*/
-  description: PropTypes.string
-};
