@@ -107,7 +107,8 @@ public class UIUsersService {
 				String key = isEnabled ? "server.AdminUsersService.enabled" : "server.AdminUsersService.disabled";
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(messageSource.getMessage(key, new Object[] { user.getUsername() }, locale));
-			} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException | InvalidPropertyException e) {
+			} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException |
+					 InvalidPropertyException e) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 						.body(messageSource.getMessage("server.AdminUsersService.error",
 								new Object[] { user.getUsername() }, locale));
@@ -115,8 +116,7 @@ public class UIUsersService {
 
 		}
 		// Should never hit here!
-		return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
-				.body("");
+		return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("");
 	}
 
 	/**
@@ -151,8 +151,7 @@ public class UIUsersService {
 			roleNames.add(new UserDetailsRole(aRole.getName(), roleName));
 		}
 
-		String currentRoleName = messageSource.getMessage("systemrole." + user.getSystemRole()
-				.getName(), null, locale);
+		String currentRoleName = messageSource.getMessage("systemrole." + user.getSystemRole().getName(), null, locale);
 
 		return new UserDetailsResponse(userDetails, currentRoleName, mailConfigured, mailFailure, isAdmin,
 				canEditUserInfo, canEditUserStatus, canChangePassword, canCreatePasswordReset, localeNames, roleNames);
@@ -189,8 +188,8 @@ public class UIUsersService {
 			updatedValues.put("phoneNumber", userEditRequest.getPhoneNumber());
 		}
 
-		if (!Strings.isNullOrEmpty(userEditRequest.getUserLocale())) {
-			updatedValues.put("locale", userEditRequest.getUserLocale());
+		if (!Strings.isNullOrEmpty(userEditRequest.getLocale())) {
+			updatedValues.put("locale", userEditRequest.getLocale());
 		}
 
 		if (RoleUtilities.isAdmin(principalUser)) {
@@ -198,8 +197,8 @@ public class UIUsersService {
 				updatedValues.put("enabled", userEditRequest.getEnabled());
 			}
 
-			if (!Strings.isNullOrEmpty(userEditRequest.getSystemRole())) {
-				Role newRole = Role.valueOf(userEditRequest.getSystemRole());
+			if (!Strings.isNullOrEmpty(userEditRequest.getRole())) {
+				Role newRole = Role.valueOf(userEditRequest.getRole());
 
 				updatedValues.put("systemRole", newRole);
 			}
@@ -210,8 +209,7 @@ public class UIUsersService {
 				User user = userService.updateFields(userId, updatedValues);
 
 				// If the user is updating their account make sure you update it in the session variable
-				if (user != null && principal.getName()
-						.equals(user.getUsername())) {
+				if (user != null && principal.getName().equals(user.getUsername())) {
 					HttpSession session = request.getSession();
 					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
 				}
@@ -253,8 +251,7 @@ public class UIUsersService {
 				User user = userService.updateFields(userId, updatedValues);
 
 				// If the user is updating their account make sure you update it in the session variable
-				if (user != null && principal.getName()
-						.equals(user.getUsername())) {
+				if (user != null && principal.getName().equals(user.getUsername())) {
 					HttpSession session = request.getSession();
 					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
 				}
@@ -280,14 +277,12 @@ public class UIUsersService {
 			Set<ConstraintViolation<?>> constraintViolations = cvx.getConstraintViolations();
 
 			for (ConstraintViolation<?> violation : constraintViolations) {
-				String errorKey = violation.getPropertyPath()
-						.toString();
+				String errorKey = violation.getPropertyPath().toString();
 				errors.put(errorKey, violation.getMessage());
 			}
 		} else if (ex instanceof DataIntegrityViolationException) {
 			DataIntegrityViolationException divx = (DataIntegrityViolationException) ex;
-			if (divx.getMessage()
-					.contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
+			if (divx.getMessage().contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
 				errors.put("email", messageSource.getMessage("server.user.edit.emailConflict", null, locale));
 			}
 		} else if (ex instanceof EntityExistsException) {
@@ -308,8 +303,7 @@ public class UIUsersService {
 	 * @return boolean if the principal can edit the user information
 	 */
 	private boolean canEditUserInfo(User principalUser, User user) {
-		boolean principalAdmin = principalUser.getAuthorities()
-				.contains(Role.ROLE_ADMIN);
+		boolean principalAdmin = principalUser.getAuthorities().contains(Role.ROLE_ADMIN);
 		boolean usersEqual = user.equals(principalUser);
 
 		return principalAdmin || usersEqual;
@@ -323,8 +317,7 @@ public class UIUsersService {
 	 * @return boolean if the principal can edit the user status
 	 */
 	private boolean canEditUserStatus(User principalUser, User user) {
-		boolean principalAdmin = principalUser.getAuthorities()
-				.contains(Role.ROLE_ADMIN);
+		boolean principalAdmin = principalUser.getAuthorities().contains(Role.ROLE_ADMIN);
 		boolean usersEqual = user.equals(principalUser);
 
 		return !(principalAdmin && usersEqual);

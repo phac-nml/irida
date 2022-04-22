@@ -11,7 +11,7 @@ export const userApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: setBaseUrl(BASE_URL),
   }),
-  tagTypes: ["Users", "Projects"],
+  tagTypes: ["User"],
   endpoints: (build) => ({
     /*
     Get user details.
@@ -20,7 +20,7 @@ export const userApi = createApi({
       query: (userId) => ({
         url: `/${userId}`,
       }),
-      providesTags: ["Users"],
+      providesTags: ["User"],
     }),
     /*
     Edit user details.
@@ -42,13 +42,13 @@ export const userApi = createApi({
           lastName,
           email,
           phoneNumber,
-          systemRole: role,
-          userLocale: locale,
+          role,
+          locale,
           enabled,
         },
         method: "POST",
       }),
-      invalidatesTags: ["Users"],
+      invalidatesTags: ["User"],
     }),
     /*
     Change user password.
@@ -59,7 +59,7 @@ export const userApi = createApi({
         params: {oldPassword, newPassword},
         method: "POST",
       }),
-      invalidatesTags: ["Users"],
+      invalidatesTags: ["User"],
     }),
     /*
     Update the disabled status of a user by user id.
@@ -70,6 +70,7 @@ export const userApi = createApi({
         params: {isEnabled, id},
         method: "PUT",
       }),
+      invalidatesTags: ["User"],
     }),
   }),
 });
