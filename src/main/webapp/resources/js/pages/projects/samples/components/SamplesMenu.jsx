@@ -279,7 +279,6 @@ export default function SamplesMenu() {
         </Space>
         {fileFiltered ? (
           <Button
-            type="dashed"
             shape="round"
             icon={<CloseCircleOutlined />}
             onClick={() => dispatch(clearFilterByFile())}

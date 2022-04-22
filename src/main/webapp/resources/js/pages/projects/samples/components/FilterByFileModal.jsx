@@ -98,7 +98,7 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
                     twoToneColor={green6}
                     style={{ fontSize: `2rem`, marginRight: SPACE_SM }}
                   />
-                  {valid.length > 1
+                  {valid.length === 1
                     ? i18n("FilterByFile.valid.single")
                     : i18n("FilterByFile.valid.plural", valid.length)}
                 </Row>
