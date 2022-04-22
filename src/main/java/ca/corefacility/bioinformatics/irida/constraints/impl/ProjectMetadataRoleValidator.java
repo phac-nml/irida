@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.constraints.impl;
 
-import ca.corefacility.bioinformatics.irida.constraints.ProjectRoleHasCorrectMetadataRole;
+import ca.corefacility.bioinformatics.irida.constraints.MetadataRoleValidate;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 
@@ -14,23 +14,17 @@ import javax.validation.ConstraintValidatorContext;
  * to the highest level. Otherwise if a user/usergroup is a collaborator on a project then their metadata role can be
  * any of the levels (must not be null).
  */
-public class ProjectMetadataRoleValidator implements ConstraintValidator<ProjectRoleHasCorrectMetadataRole, Object> {
-	private String firstFieldName;
-	private String secondFieldName;
-
-	@Override
-	public void initialize(final ProjectRoleHasCorrectMetadataRole constraintAnnotation) {
-		firstFieldName = constraintAnnotation.first();
-		secondFieldName = constraintAnnotation.second();
-	}
+public class ProjectMetadataRoleValidator implements ConstraintValidator<MetadataRoleValidate, Object> {
+	private String projectRoleFieldName = "projectRole";
+	private String metadataRoleFieldName = "metadataRole";
 
 	@Override
 	public boolean isValid(final Object value, final ConstraintValidatorContext context) {
 		try {
 			// Get the projectRole and metadata role as ProjectRole and ProjectMetadataRole from strings
-			ProjectRole projectRole = ProjectRole.fromString(BeanUtils.getProperty(value, firstFieldName));
+			ProjectRole projectRole = ProjectRole.fromString(BeanUtils.getProperty(value, projectRoleFieldName));
 			ProjectMetadataRole metadataRole = ProjectMetadataRole.fromString(
-					BeanUtils.getProperty(value, secondFieldName));
+					BeanUtils.getProperty(value, metadataRoleFieldName));
 
 			return (projectRole.equals(ProjectRole.PROJECT_OWNER) && metadataRole.equals(ProjectMetadataRole.LEVEL_4))
 					|| (projectRole.equals(ProjectRole.PROJECT_USER) && metadataRole != null);

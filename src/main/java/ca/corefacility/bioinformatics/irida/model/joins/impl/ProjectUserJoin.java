@@ -6,7 +6,7 @@ import java.util.Objects;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-import ca.corefacility.bioinformatics.irida.constraints.ProjectRoleHasCorrectMetadataRole;
+import ca.corefacility.bioinformatics.irida.constraints.MetadataRoleValidate;
 
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
@@ -25,8 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 @Table(name = "project_user", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" }))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-@ProjectRoleHasCorrectMetadataRole(first = "projectRole", second = "metadataRole",
-		message = "server.project.owner.incorrect.metadata.role")
+@MetadataRoleValidate(message = "server.project.owner.incorrect.metadata.role")
 public class ProjectUserJoin implements Join<Project, User> {
 
 	@Id

@@ -18,35 +18,24 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * metadataRole must be set to the highest level An array of fields (projectRole, metadataRole) must be supplied
  * <p>
  * Example, compare a single user/usergroup projectRole to it's metadataRole:
- * {@literal @}ProjectRoleHasCorrectMetadataRole(first = "projectRole", second = "metadataRole", message =
- * "server.project.owner.incorrect.metadata.role"))
+ * {@literal @}MetadataRoleValidate(message = "server.project.owner.incorrect.metadata.role"))
  */
 @Target({ TYPE, ANNOTATION_TYPE })
 @Retention(RUNTIME)
 @Constraint(validatedBy = ProjectMetadataRoleValidator.class)
 @Documented
-public @interface ProjectRoleHasCorrectMetadataRole {
-	String message() default "{constraints.projectrolehascorrectmetadatarole}";
+public @interface MetadataRoleValidate {
+	String message() default "{server.project.owner.incorrect.metadata.role}";
 
 	Class<?>[] groups() default {};
 
 	Class<? extends Payload>[] payload() default {};
 
 	/**
-	 * @return The projectRole field
-	 */
-	String first();
-
-	/**
-	 * @return The metadataRole field
-	 */
-	String second();
-
-	/**
 	 *
-	 * Defines several <code>@ProjectRoleHasCorrectMetadataRole</code> annotations on the same element
+	 * Defines several <code>@MetadataRoleValidate</code> annotations on the same element
 	 *
-	 * @see ProjectRoleHasCorrectMetadataRole
+	 * @see MetadataRoleValidate
 	 *
 	 * If a list of validations is required then uncomment the code below
 	 *
@@ -55,7 +44,7 @@ public @interface ProjectRoleHasCorrectMetadataRole {
 	 * @Documented
 	 * @interface List
 	 * {
-	 *   ProjectRoleHasCorrectMetadataRole[] value();
+	 *   MetadataRoleValidate[] value();
 	 * }
 	 *
 	 */
