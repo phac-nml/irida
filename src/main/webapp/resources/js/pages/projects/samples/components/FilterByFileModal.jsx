@@ -8,6 +8,16 @@ import { SPACE_SM } from "../../../../styles/spacing";
 
 const ROW_HEIGHT = 43;
 
+/**
+ * React component to render a modal to allow the user to select a file containing coma or new
+ * line seperated sample name to be used to filter the samples table by.
+ *
+ * @param {boolean} visible - whether the modal is currently visible
+ * @param {function} onComplete - function to call when the sample names are available
+ * @param {function} onCancel - function to call when cancel the modal
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function FilterByFileModal({ visible, onComplete, onCancel }) {
   const { options, projectId } = useSelector((state) => state.samples);
   const [contents, setContents] = React.useState("");
