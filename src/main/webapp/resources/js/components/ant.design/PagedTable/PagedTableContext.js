@@ -138,7 +138,10 @@ function PagedTableProvider({
     });
   };
 
-  const paginationOptions = React.useMemo(() => getPaginationOptions(state.total), [state.total]);
+  const paginationOptions = React.useMemo(
+    () => getPaginationOptions(state.total),
+    [state.total]
+  );
 
   return (
     <Provider

@@ -13,6 +13,7 @@ export function RemoveTableItemButton({
   onRemoveSuccess = () => Function.prototype,
   tooltipText = "",
   confirmText = "",
+  disabledLoggedInUser = false,
 }) {
   const [loading, setLoading] = useState(false);
 
@@ -42,6 +43,7 @@ export function RemoveTableItemButton({
       onConfirm={removeItem}
       placement="topLeft"
       title={confirmText}
+      disabled={disabledLoggedInUser}
     >
       <Tooltip title={tooltipText} placement="left">
         <Button
@@ -49,6 +51,7 @@ export function RemoveTableItemButton({
           icon={<IconRemove />}
           shape="circle"
           loading={loading}
+          disabled={disabledLoggedInUser}
         />
       </Tooltip>
     </Popconfirm>

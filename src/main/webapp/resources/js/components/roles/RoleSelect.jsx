@@ -11,9 +11,19 @@ import React, { useState } from "react";
  * @returns {*}
  * @constructor
  */
-export function RoleSelect({ updateRoleFn, roles, currentRole, className }) {
-  const [role, setRole] = React.useState(currentRole);
+export function RoleSelect({
+  updateRoleFn,
+  roles,
+  currentRole,
+  className,
+  disabledProjectOwner = false,
+}) {
+  const [role, setRole] = React.useState("");
   const [loading, setLoading] = useState(false);
+
+  React.useEffect(() => {
+    setRole(currentRole);
+  }, [currentRole]);
 
   /**
    * When the project role for the user is updated, update the new value on
@@ -43,7 +53,7 @@ export function RoleSelect({ updateRoleFn, roles, currentRole, className }) {
       style={{ width: "100%" }}
       onChange={onChange}
       loading={loading}
-      disabled={loading}
+      disabled={loading || disabledProjectOwner}
     >
       {roles?.map((role) => (
         <Select.Option

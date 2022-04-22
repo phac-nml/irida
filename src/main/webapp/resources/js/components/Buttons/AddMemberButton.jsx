@@ -139,7 +139,7 @@ export function AddMemberButton({
         <Form
           layout="vertical"
           form={form}
-          initialValues={{ role: projectRole }}
+          initialValues={{ projectRole, metadataRole }}
         >
           <Form.Item
             label={i18n("AddMemberButton.modal.user-label")}
@@ -165,7 +165,12 @@ export function AddMemberButton({
           >
             <Radio.Group
               style={{ display: "flex" }}
-              onChange={(e) => setProjectRole(e.target.value)}
+              onChange={(e) => {
+                setProjectRole(e.target.value);
+                if (e.target.value === "PROJECT_OWNER") {
+                  setMetadataRole("LEVEL_4");
+                }
+              }}
             >
               {projectRoles.map((role) => (
                 <Radio.Button key={role.value} value={role.value}>
@@ -181,6 +186,7 @@ export function AddMemberButton({
             <Radio.Group
               style={{ display: "flex" }}
               onChange={(e) => setMetadataRole(e.target.value)}
+              disabled={projectRole === "PROJECT_OWNER"}
             >
               {metadataRoles.map((role) => (
                 <Radio.Button key={role.value} value={role.value}>
