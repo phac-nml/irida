@@ -5,7 +5,7 @@ import UserAccountNav from "./UserAccountNav";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { useGetUserDetailsQuery } from "../../../apis/users/users";
 import { ContentLoading } from "../../../components/loader";
-import { SPACE_MD } from "../../../styles/spacing";
+import { SPACE_LG } from "../../../styles/spacing";
 import { grey1 } from "../../../styles/colors";
 
 /**
@@ -42,7 +42,7 @@ export default function UserAccountLayout() {
             <Content
               style={{
                 backgroundColor: grey1,
-                padding: SPACE_MD
+                padding: SPACE_LG
               }}>
               <React.Suspense fallback={<ContentLoading/>}>
                 <Outlet/>
