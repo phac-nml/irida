@@ -58,7 +58,6 @@
     "phylocanvas-plugin-metadata": "^2.2.0",
     "postcss-nested": "^5.0.6",
     "process": "^0.11.10",
-    "prop-types": "^15.8.1",
     "qs": "^6.10.3",
     "rc-util": "^5.20.1",
     "react": "17.0.2",

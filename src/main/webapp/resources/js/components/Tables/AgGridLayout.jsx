@@ -4,7 +4,6 @@
  * all React instances of ag-grid.
  */
 import React from "react";
-import PropTypes from "prop-types";
 import styled from "styled-components";
 import { blue6, grey2, grey5, grey7, grey8, grey9 } from "../../styles/colors";
 import { Layout } from "antd";
@@ -13,7 +12,7 @@ import { ANT_DESIGN_FONT_FAMILY } from "../../styles/fonts";
 const LayoutStyles = styled(Layout)`
   // Wrapper for the entire ag-grid and any associated components
   box-sizing: border-box;
-  height: ${props => props.height}px;
+  height: ${(props) => props.height}px;
   width: 100%;
   border: 1px solid ${grey5};
 
@@ -64,11 +63,3 @@ export function AgGridLayout({ children, ...props }) {
     </LayoutStyles>
   );
 }
-
-AgGridLayout.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.element,
-    PropTypes.arrayOf(PropTypes.element)
-  ]),
-  height: PropTypes.number
-};

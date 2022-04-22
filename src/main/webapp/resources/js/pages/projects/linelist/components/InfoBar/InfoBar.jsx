@@ -5,7 +5,6 @@
  */
 
 import React from "react";
-import PropTypes from "prop-types";
 import { FilteredCounts } from "./FilteredCounts";
 import { SelectedCount } from "./SelectedCount";
 import styled from "styled-components";
@@ -40,9 +39,3 @@ export function InfoBar(props) {
     </Wrapper>
   );
 }
-
-InfoBar.propTypes = {
-  selectedCount: PropTypes.number,
-  filterCount: PropTypes.number.isRequired,
-  totalSamples: PropTypes.number.isRequired
-};

@@ -1,7 +1,5 @@
 import React from "react";
 
-import PropTypes from "prop-types";
-
 /**
  * Formats and displays selected sample counts
  */
@@ -16,7 +14,3 @@ export function SelectedCount(props) {
     </span>
   );
 }
-
-SelectedCount.propTypes = {
-  count: PropTypes.number
-};

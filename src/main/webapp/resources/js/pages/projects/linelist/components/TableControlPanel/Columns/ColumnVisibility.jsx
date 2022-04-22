@@ -5,7 +5,6 @@
  */
 
 import React from "react";
-import PropTypes from "prop-types";
 import { List, Switch } from "antd";
 import { FIELDS } from "../../../constants";
 import styled from "styled-components";
@@ -26,26 +25,6 @@ const ColumnItemText = styled.span`
 `;
 
 export default class ColumnVisibility extends React.Component {
-  static propTypes = {
-    /**
-     * A list of Metadata templates related to the project.
-     */
-    templates: PropTypes.array.isRequired,
-    /**
-     * The index in the templates that is currently displayed.
-     */
-    current: PropTypes.number.isRequired,
-    /**
-     * A callback function for when there is a modification to the current template.
-     * This allows the table to be updated.
-     */
-    templateModified: PropTypes.func.isRequired,
-    /**
-     * The current height of the table.  This is only used to update the height of the
-     * panel when the user modifies the size of the browser window.
-     */
-    height: PropTypes.number.isRequired
-  };
 
   /**
    * Handle togging of a check box.
