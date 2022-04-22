@@ -8,6 +8,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -28,6 +29,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -76,6 +78,7 @@ public class UISampleService {
 	private final GenomeAssemblyService genomeAssemblyService;
 	private final MessageSource messageSource;
 	private final UICartService cartService;
+	private final Integer MAX_PAGE_SIZE = 5000;
 
 	/*
 	 List of names of columns in the Project > Samples table
@@ -273,7 +276,6 @@ public class UISampleService {
 	 */
 	public AntTableResponse<ProjectSampleTableItem> getPagedProjectSamples(Long projectId,
 			ProjectSamplesTableRequest request, Locale locale) {
-		Project project = projectService.read(projectId);
 		List<Long> projectIds = new ArrayList<>();
 		projectIds.add(projectId);
 		ProjectSamplesFilter filter = request.getFilters();
@@ -302,10 +304,10 @@ public class UISampleService {
 	 * @param request   Details about the filters and associated projects
 	 * @return list containing a minimal representation of the samples based on the filters
 	 */
+	@Transactional(readOnly = true)
 	public List<ProjectCartSample> getMinimalSampleDetailsForFilteredProject(Long projectId,
 			ProjectSamplesTableRequest request) {
 		ProjectSamplesFilter filter = request.getFilters();
-		final int MAX_PAGE_SIZE = 5000;
 		List<ProjectCartSample> filteredProjectSamples = new ArrayList<>();
 
 		List<Long> projectIds = new ArrayList<>();
@@ -321,17 +323,11 @@ public class UISampleService {
 					SearchOperation.fromString(search.getOperation())));
 		}
 
-		Page<ProjectSampleJoin> page = sampleService.getFilteredProjectSamples(projects, filterSpec, 0, MAX_PAGE_SIZE,
-				request.getSort());
-		while (!page.isEmpty()) {
-			// Get the ProjectSampleJoin id
-			for (ProjectSampleJoin join : page) {
-				filteredProjectSamples.add(new ProjectCartSample(join));
-			}
-
-			// Get the next page
-			page = sampleService.getFilteredProjectSamples(projects, filterSpec, page.getNumber() + 1, MAX_PAGE_SIZE,
-					request.getSort());
+		try (Stream<ProjectSampleJoin> projectSamples = sampleService.streamFilteredProjectSamples(projects, filterSpec,
+				request.getSort())) {
+			projectSamples.forEach(projectSample -> {
+				filteredProjectSamples.add(new ProjectCartSample(projectSample));
+			});
 		}
 
 		return filteredProjectSamples;
@@ -468,6 +464,17 @@ public class UISampleService {
 		return result;
 	}
 
+	/**
+	 * Download the currently filtered project samples table as either an xlsx or csv file.
+	 * 
+	 * @param projectId Identifier for the project
+	 * @param type      The type of file to generate (either excel or csv)
+	 * @param request   The project samples table request
+	 * @param response  The response
+	 * @param locale    The current locale
+	 * @throws IOException
+	 */
+	@Transactional(readOnly = true)
 	public void downloadSamplesSpreadsheet(long projectId, String type, ProjectSamplesTableRequest request,
 			HttpServletResponse response, Locale locale) throws IOException {
 		ProjectSamplesFilter filter = request.getFilters();
@@ -486,9 +493,18 @@ public class UISampleService {
 		// Get all possible samples with this filter
 		// NOTE: THIS IS AN EXPENSIVE OPERATION!!!
 		List<Project> projects = (List<Project>) projectService.readMultiple(projectIds);
-		Page<ProjectSampleJoin> page = sampleService.getFilteredProjectSamples(projects, filterSpec, request.getPage(),
-				Integer.MAX_VALUE, request.getSort());
-		List<ProjectSampleTableItem> items = formatSamplesForTable(page, locale);
+		List<ProjectSampleTableItem> items = new ArrayList<>();
+
+		Page<ProjectSampleJoin> page = sampleService.getFilteredProjectSamples(projects, filterSpec, 0, MAX_PAGE_SIZE,
+				request.getSort());
+		while (!page.isEmpty()) {
+			items.addAll(formatSamplesForTable(page, locale));
+
+			// Get the next page
+			page = sampleService.getFilteredProjectSamples(projects, filterSpec, page.getNumber() + 1, MAX_PAGE_SIZE,
+					request.getSort());
+		}
+
 		List<String> headers = TABLE_HEADERS.stream()
 				.map(header -> messageSource.getMessage(header, new Object[] {}, locale))
 				.collect(Collectors.toList());
