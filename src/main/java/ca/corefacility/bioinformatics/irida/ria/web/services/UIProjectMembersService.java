@@ -143,6 +143,8 @@ public class UIProjectMembersService {
 	 * @param metadataRole - {@link ProjectMetadataRole}  to update the user to
 	 * @param locale       - of the currently logged in user
 	 * @return message to display to the user about the outcome of the change in role.
+	 * @throws UIConstraintViolationException thrown when updating the project role to owner and the metadata role is
+	 *
 	 */
 	public String updateUserMetadataRoleOnProject(Long projectId, Long userId, String metadataRole, Locale locale)
 			throws UIConstraintViolationException {
