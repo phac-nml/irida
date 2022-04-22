@@ -14,12 +14,14 @@ import { grey1 } from "../../../styles/colors";
  * @constructor
  */
 export default function UserAccountLayout() {
+  const ADMIN_USERS_URL = "admin/users";
+
   const {Content, Sider} = Layout;
   const {userId} = useParams();
   const {data: userDetails = {}} = useGetUserDetailsQuery(userId);
-  const showBack = () => userDetails.admin && document.referrer.includes("admin/users", 0);
+  const showBack = () => userDetails.admin && document.referrer.includes(ADMIN_USERS_URL, 0);
   const goToAdminUserListPage = () =>
-    (window.location.href = setBaseUrl(`admin/users`));
+    (window.location.href = setBaseUrl(ADMIN_USERS_URL));
 
   return (
     <Layout style={{height: "100%", minHeight: "100%"}}>
