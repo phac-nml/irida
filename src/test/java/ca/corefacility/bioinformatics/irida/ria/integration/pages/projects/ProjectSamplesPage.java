@@ -31,6 +31,23 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-tools-dropdown")
 	private WebElement toolsDropdown;
 
+	@FindBy(className = "t-merge")
+	private WebElement mergeBtn;
+
+	@FindBy(className = "t-share")
+	private WebElement shareBtn;
+
+	@FindBy(className = "t-remove")
+	private WebElement removeBtn;
+
+	@FindBy(className = "t-export")
+	private WebElement exportSamplesDropdownBtn;
+
+	@FindBy(className = "t-export-dropdown")
+	private WebElement exportDropdown;
+
+	//----- OLD BELOW
+
 	@FindBy(className = "t-associated-btn")
 	private WebElement associatedProjectMenuBtn;
 
@@ -48,15 +65,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	@FindBy(css = "tbody tr")
 	private List<WebElement> tableRows;
-
-	@FindBy(className = "t-merge")
-	private WebElement mergeBtn;
-
-	@FindBy(className = "t-remove")
-	private WebElement removeBtn;
-
-	@FindBy(className = "t-share-btn")
-	private WebElement shareBtn;
 
 	@FindBy(id = "giveOwner")
 	private WebElement giveOwnerBtn;
@@ -150,9 +158,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "dt-select-none")
 	private WebElement selectionNone;
 
-	@FindBy(className = "t-export-samples-btn")
-	private WebElement exportSamplesDropdownBtn;
-
 	@FindBy(className = "t-download-btn")
 	private WebElement downloadBtn;
 
@@ -205,14 +210,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		return pageHeader.getText();
 	}
 
-	public String getTableInfo() {
-		return samplesTableInfo.getText();
-	}
-
-	public int getNumberProjectsDisplayed() {
-		return tableRows.size();
-	}
-
 	public void openToolsDropDown() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		toolsDropdownBtn.click();
@@ -220,16 +217,55 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void closeToolsDropdown() {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		Actions act = new Actions(driver);
-		act.moveToElement(toolsDropdownBtn).moveByOffset(10, 10).click().perform();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("t-merge-btn")));
+		closeDropdown(toolsDropdown);
+	}
+
+	public boolean isMergeBtnEnabled() {
+		return isElementEnabled(mergeBtn);
+	}
+
+	public boolean isShareBtnEnabled() {
+		return isElementEnabled(shareBtn);
+	}
+
+	public boolean isRemoveBtnEnabled() {
+		return isElementEnabled(removeBtn);
 	}
 
 	public void openExportDropdown() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		exportSamplesDropdownBtn.click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-download-btn")));
+		wait.until(ExpectedConditions.visibilityOf(exportDropdown));
+	}
+
+	public void closeExportDropdown() {
+		closeDropdown(exportDropdown);
+	}
+
+	private boolean isElementEnabled(WebElement element) {
+		try {
+			return !element.getAttribute("aria-disabled").equals("true");
+		} catch (Exception e) {
+			// If it does not have "aria-disabled" then it is enabled;
+			return true;
+		}
+	}
+
+	private void closeDropdown(WebElement dropdown) {
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		Actions act = new Actions(driver);
+		act.moveByOffset(300, 300).click().perform();
+		wait.until(ExpectedConditions.invisibilityOf(dropdown));
+	}
+
+	// --- OLD BELOW
+
+	public String getTableInfo() {
+		return samplesTableInfo.getText();
+	}
+
+	public int getNumberProjectsDisplayed() {
+		return tableRows.size();
 	}
 
 	public boolean isSampleToolsAvailable() {
@@ -241,32 +277,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public boolean isDownloadBtnEnabled() {
-		return isAnchorElementEnabled(downloadBtn);
+		return isElementEnabled(downloadBtn);
 	}
 
 	public boolean isNcbiBtnEnabled() {
-		return isAnchorElementEnabled(ncbiExportBtn);
-	}
-
-	private boolean isAnchorElementEnabled(WebElement element) {
-		try {
-			return !element.getAttribute("aria-disabled").equals("true");
-		} catch (Exception e) {
-			// If it does not have "aria-disabled" then it is enabled;
-			return true;
-		}
-	}
-
-	public boolean isMergeBtnEnabled() {
-		return isAnchorElementEnabled(mergeBtn);
-	}
-
-	public boolean isShareBtnEnabled() {
-		return isAnchorElementEnabled(shareBtn);
-	}
-
-	public boolean isRemoveBtnEnabled() {
-		return isAnchorElementEnabled(removeBtn);
+		return isElementEnabled(ncbiExportBtn);
 	}
 
 	// PAGINATION

@@ -55,10 +55,14 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		// Test set up with no sample selected
 		assertTrue(page.isSampleToolsAvailable(), "Sample Tools should be visible for a manager");
 		page.openToolsDropDown();
-		assertFalse(page.isMergeBtnEnabled(), "Merge option should not be enabled");
-		assertFalse(page.isRemoveBtnEnabled(), "Remove option should not be enabled");
+		assertFalse(page.isMergeBtnEnabled(), "Merging requires more than 1 sample to be selected");
+		assertFalse(page.isShareBtnEnabled(), "Sharing requires 1 or more samples to be selected");
+		assertFalse(page.isRemoveBtnEnabled(), "Removing  requires 1 or more samples to be selected");
 		page.closeToolsDropdown();
-		//		page.openExportDropdown();
+
+		page.openExportDropdown();
+
+		page.closeExportDropdown();
 		//		assertFalse(page.isDownloadBtnEnabled(), "Download option should not be enabled");
 		//		assertFalse(page.isNcbiBtnEnabled(), "NCBI Export option should not be enabled");
 		//

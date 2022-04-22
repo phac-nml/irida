@@ -179,6 +179,7 @@ export default function SamplesMenu() {
           key="share-menu"
           icon={<IconShare />}
           onClick={shareSamples}
+          className="t-share"
         >
           {i18n("SamplesMenu.share")}
         </Menu.Item>
@@ -215,7 +216,7 @@ export default function SamplesMenu() {
 
   const exportMenu = React.useMemo(
     () => (
-      <Menu>
+      <Menu className="t-export-dropdown">
         <Menu.Item
           disabled={selectedCount === 0}
           key="download-menu"
@@ -271,7 +272,7 @@ export default function SamplesMenu() {
             </Dropdown>
           )}
           <Dropdown overlay={exportMenu}>
-            <Button>
+            <Button className="t-export">
               {i18n("SampleMenu.export")} <IconDropDown />
             </Button>
           </Dropdown>
