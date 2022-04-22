@@ -46,6 +46,34 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-export-dropdown")
 	private WebElement exportDropdown;
 
+	@FindBy(className = "t-download")
+	private WebElement downloadBtn;
+
+	@FindBy(className = "t-linker")
+	private WebElement linkerBtn;
+
+	@FindBy(className = "t-ncbi")
+	private WebElement ncbiExportBtn;
+
+	@FindBy(className = "t-create-sample")
+	private WebElement createSampleButton;
+
+	@FindBy(className = "t-linker-modal")
+	private WebElement linkerModal;
+
+	@FindBy(className = "t-cmd-text")
+	private WebElement linkerCmd;
+
+	@FindBy(className = "t-summary")
+	private WebElement tableSummary;
+
+	// FILTERS
+	@FindBy(css = ".t-td-name .ant-table-filter-trigger")
+	private WebElement sampleNameFilterToggle;
+
+	@FindBy(css = ".t-name-select input")
+	private WebElement nameFilterInput;
+
 	//----- OLD BELOW
 
 	@FindBy(className = "t-associated-btn")
@@ -117,9 +145,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-apply-filter-btn")
 	private WebElement applyFiltersBtn;
 
-	@FindBy(className = "t-name-filter")
-	private WebElement nameFilterInput;
-
 	@FindBy(className = "filter-modal")
 	private WebElement filterModal;
 
@@ -158,18 +183,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "dt-select-none")
 	private WebElement selectionNone;
 
-	@FindBy(className = "t-download-btn")
-	private WebElement downloadBtn;
-
-	@FindBy(className = "t-ncbi-export-btn")
-	private WebElement ncbiExportBtn;
-
-	@FindBy(className = "t-linker-btn")
-	private WebElement linkerBtn;
-
-	@FindBy(className = "t-linker-modal")
-	private WebElement linkerModal;
-
 	@FindBy(id = "linkerCloseBtn")
 	private WebElement linkerCloseBtn;
 
@@ -182,14 +195,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(css = ".paginate_button.next a")
 	private WebElement nextTablePageBtn;
 
-	@FindBy(className = "t-create-sample")
-	private WebElement createSampleButton;
-
 	@FindBy(id = "name")
 	private WebElement sampleNameInput;
-
-	@FindBy(className = "t-linker-cmd")
-	private WebElement linkerCmd;
 
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
@@ -208,6 +215,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public String getTitle() {
 		return pageHeader.getText();
+	}
+
+	public boolean isSampleToolsAvailable() {
+		try {
+			return toolsDropdownBtn.isDisplayed();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public void openToolsDropDown() {
@@ -258,6 +273,30 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.invisibilityOf(dropdown));
 	}
 
+	public boolean isDownloadBtnEnabled() {
+		return isElementEnabled(downloadBtn);
+	}
+
+	public boolean isLinkerBtnEnabled() {
+		return isElementEnabled(linkerBtn);
+	}
+
+	public TableSummary getTableSummary() {
+		return new TableSummary(tableSummary.getText());
+	}
+
+	public void openCreateNewSampleModal() {
+		openToolsDropDown();
+		createSampleButton.click();
+	}
+
+	public void filterBySampleName(String name) {
+		sampleNameFilterToggle.click();
+		nameFilterInput.sendKeys(name);
+		nameFilterInput.sendKeys(Keys.ENTER);
+		sampleNameFilterToggle.click();
+	}
+
 	// --- OLD BELOW
 
 	public String getTableInfo() {
@@ -266,18 +305,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public int getNumberProjectsDisplayed() {
 		return tableRows.size();
-	}
-
-	public boolean isSampleToolsAvailable() {
-		try {
-			return toolsDropdownBtn.isDisplayed();
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	public boolean isDownloadBtnEnabled() {
-		return isElementEnabled(downloadBtn);
 	}
 
 	public boolean isNcbiBtnEnabled() {
@@ -472,7 +499,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public String getLinkerText() {
-		return linkerCmd.getAttribute("value");
+		return linkerCmd.getText();
 	}
 
 	public void openLinkerModal() {
@@ -514,12 +541,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		}
 	}
 
-	public void openCreateNewSampleModal() {
-		WebDriverWait wait = openToolsDropdownAndWait();
-		wait.until(ExpectedConditions.elementToBeClickable(createSampleButton));
-		createSampleButton.click();
-	}
-
 	public void enterSampleName(String sampleName) {
 		sampleNameInput.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 		sampleNameInput.sendKeys(sampleName);
@@ -527,7 +548,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public boolean isSampleNameErrorDisplayed() {
-		return driver.findElements(By.cssSelector(".t-sample-name-wrapper .ant-form-item-explain")).size() > 0;
+		return driver.findElements(By.cssSelector(".t-sample-name-wrapper .ant-form-item-explain-error")).size() > 0;
 	}
 
 	/**

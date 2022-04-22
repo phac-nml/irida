@@ -48,12 +48,13 @@ export default function LinkerModal({
       // Post data to the server to get the linker command.
       setScriptString(data);
     });
-  }, [sampleIds]);
+  }, [projectId, sampleIds]);
 
   React.useEffect(updateCommand, [scriptString]);
 
   return (
     <Modal
+      className="t-linker-modal"
       visible={visible}
       title={i18n("Linker.title")}
       onCancel={onFinish}

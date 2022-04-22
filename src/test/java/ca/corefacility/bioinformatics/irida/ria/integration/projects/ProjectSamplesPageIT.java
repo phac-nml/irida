@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.TableSummary;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.Lists;
@@ -61,10 +62,11 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.closeToolsDropdown();
 
 		page.openExportDropdown();
+		assertFalse(page.isDownloadBtnEnabled(), "Downloading is only available when 1 or more samples are selected");
+		assertTrue(page.isLinkerBtnEnabled(), "Linker button should be enabled whether samples are selected or not");
+		assertFalse(page.isNcbiBtnEnabled(), "NCBI Export is only available when 1 or more samples are selected");
 
 		page.closeExportDropdown();
-		//		assertFalse(page.isDownloadBtnEnabled(), "Download option should not be enabled");
-		//		assertFalse(page.isNcbiBtnEnabled(), "NCBI Export option should not be enabled");
 		//
 		//		// Test with one sample selected
 		//		page.selectSample(0);
@@ -211,37 +213,43 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	public void testFilteringSamplesByProperties() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		assertEquals("Showing 1 to 10 of 23 entries", page.getTableInfo(), "Should have 23 projects displayed");
-		page.filterByName("5");
-		assertEquals("Showing 1 to 10 of 19 entries", page.getTableInfo(), "Should have 19 projects displayed");
-		page.filterByName("52");
-		assertEquals("Showing 1 to 3 of 3 entries", page.getTableInfo(), "Should have 3 projects displayed");
+		TableSummary summary = page.getTableSummary();
+		assertEquals(23, summary.getTotal(), "Without the filter there should be 23 elements in the table");
+		page.filterBySampleName("5");
+		summary = page.getTableSummary();
+		assertEquals(19, summary.getTotal(), "Filtering the '5' should leave 19 samples in the table");
 
-		// Make sure that when the filter is applied, only the correct number of samples are selected.
-		page.selectAllSamples();
-		assertEquals("3 samples selected", page.getSelectedInfoText(), "Should only have 3 samples selected");
-
-		// Test clearing the filters
-		page.clearFilter();
-		assertEquals("Showing 1 to 10 of 23 entries", page.getTableInfo(), "Should have 23 projects displayed");
-
-		// Should ignore case
-		page.filterByName("sample");
-		assertEquals("Showing 1 to 10 of 23 entries", page.getTableInfo(), "Should ignore case when filtering");
-
-		// Test date range filter
-		page.clearFilter();
-		assertEquals("Showing 1 to 10 of 23 entries", page.getTableInfo(), "Should have 23 samples displayed");
-
-		// Should find sample with underscores not hyphens
-		page.filterByName("sample_5_fg_22");
-		assertEquals(2, page.getSampleNamesOnPage().size(), "Should only have returned 2 sample");
-		assertEquals("sample_5_fg_22", page.getSampleNamesOnPage().get(0), "Should have sample with exact name");
-
-		// Should find sample with hyphens not underscores
-		page.filterByName("sample-5-fg-22");
-		assertEquals(1, page.getSampleNamesOnPage().size(), "Should only have returned 1 sample");
-		assertEquals("sample-5-fg-22", page.getSampleNamesOnPage().get(0), "Should have sample with exact name");
+		//		assertEquals("Showing 1 to 10 of 23 entries", page.getTableInfo(), "Should have 23 projects displayed");
+		//		page.filterByName("5");
+		//		assertEquals("Showing 1 to 10 of 19 entries", page.getTableInfo(), "Should have 19 projects displayed");
+		//		page.filterByName("52");
+		//		assertEquals("Showing 1 to 3 of 3 entries", page.getTableInfo(), "Should have 3 projects displayed");
+		//
+		//		// Make sure that when the filter is applied, only the correct number of samples are selected.
+		//		page.selectAllSamples();
+		//		assertEquals("3 samples selected", page.getSelectedInfoText(), "Should only have 3 samples selected");
+		//
+		//		// Test clearing the filters
+		//		page.clearFilter();
+		//		assertEquals("Showing 1 to 10 of 23 entries", page.getTableInfo(), "Should have 23 projects displayed");
+		//
+		//		// Should ignore case
+		//		page.filterByName("sample");
+		//		assertEquals("Showing 1 to 10 of 23 entries", page.getTableInfo(), "Should ignore case when filtering");
+		//
+		//		// Test date range filter
+		//		page.clearFilter();
+		//		assertEquals("Showing 1 to 10 of 23 entries", page.getTableInfo(), "Should have 23 samples displayed");
+		//
+		//		// Should find sample with underscores not hyphens
+		//		page.filterByName("sample_5_fg_22");
+		//		assertEquals(2, page.getSampleNamesOnPage().size(), "Should only have returned 2 sample");
+		//		assertEquals("sample_5_fg_22", page.getSampleNamesOnPage().get(0), "Should have sample with exact name");
+		//
+		//		// Should find sample with hyphens not underscores
+		//		page.filterByName("sample-5-fg-22");
+		//		assertEquals(1, page.getSampleNamesOnPage().size(), "Should only have returned 1 sample");
+		//		assertEquals("sample-5-fg-22", page.getSampleNamesOnPage().get(0), "Should have sample with exact name");
 
 	}
 

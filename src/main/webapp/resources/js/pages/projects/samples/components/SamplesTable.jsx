@@ -132,7 +132,7 @@ export function SamplesTable() {
     confirm({ closeDropdown: false });
   };
 
-  const getColumnSearchProps = (dataIndex) => ({
+  const getColumnSearchProps = (dataIndex, filterName = "") => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -141,6 +141,7 @@ export function SamplesTable() {
     }) => (
       <div style={{ padding: 8 }}>
         <Select
+          className={filterName}
           mode="tags"
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys}
@@ -176,7 +177,7 @@ export function SamplesTable() {
     ),
   });
 
-  const getDateColumnSearchProps = (dataIndex) => ({
+  const getDateColumnSearchProps = () => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -186,7 +187,7 @@ export function SamplesTable() {
       <div style={{ padding: 8 }}>
         <div style={{ marginBottom: 8, display: "block" }}>
           <RangePicker
-            onChange={(dates, dateStrings) =>
+            onChange={(dates) =>
               setSelectedKeys([
                 [dates[0].startOf("day"), dates[1].endOf("day")],
               ])
@@ -247,6 +248,7 @@ export function SamplesTable() {
     },
     {
       title: i18n("SamplesTable.Column.sampleName"),
+      className: "t-td-name",
       dataIndex: ["sample", "sampleName"],
       sorter: { multiple: 1 },
       render: (name, row) => (
@@ -254,7 +256,7 @@ export function SamplesTable() {
           <a>{name}</a>
         </SampleDetailViewer>
       ),
-      ...getColumnSearchProps(["sample", "sampleName"]),
+      ...getColumnSearchProps(["sample", "sampleName"], "t-name-select"),
     },
     {
       title: i18n("SamplesTable.Column.quality"),
@@ -296,7 +298,7 @@ export function SamplesTable() {
       render: (createdDate) => {
         return formatInternationalizedDateTime(createdDate);
       },
-      ...getDateColumnSearchProps(["sample", "createdDate"]),
+      ...getDateColumnSearchProps(),
     },
     {
       title: i18n("SamplesTable.Column.modified"),
@@ -307,7 +309,7 @@ export function SamplesTable() {
       render: (modifiedDate) => {
         return formatInternationalizedDateTime(modifiedDate);
       },
-      ...getDateColumnSearchProps(["sample", "modifieddDate"]),
+      ...getDateColumnSearchProps(),
     },
   ];
 
@@ -320,7 +322,7 @@ export function SamplesTable() {
       onChange={onTableChange}
       summary={() => (
         <Table.Summary.Row>
-          <Table.Summary.Cell colSpan={5}>
+          <Table.Summary.Cell colSpan={5} className="t-summary">
             {i18n("SamplesTable.Summary", selectedCount, total)}
           </Table.Summary.Cell>
         </Table.Summary.Row>

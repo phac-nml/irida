@@ -92,6 +92,7 @@ export default function CreateNewSample({ visible, onCreate, onCancel }) {
         layout="vertical"
       >
         <Form.Item
+          className="t-sample-name-wrapper"
           name="name"
           label={i18n("AddSample.name")}
           rules={[

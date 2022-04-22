@@ -207,6 +207,7 @@ export default function SamplesMenu() {
           key="create-menu"
           icon={<IconPlusSquare />}
           onClick={() => setCreateSampleVisible(true)}
+          className="t-create-sample"
         >
           {i18n("SamplesMenu.createSample")}
         </Menu.Item>
@@ -214,50 +215,50 @@ export default function SamplesMenu() {
     );
   }, [selectedCount]);
 
-  const exportMenu = React.useMemo(
-    () => (
-      <Menu className="t-export-dropdown">
-        <Menu.Item
-          disabled={selectedCount === 0}
-          key="download-menu"
-          icon={<IconCloudDownload />}
-          onClick={onDownload}
-        >
-          {i18n("SampleMenu.download")}
-        </Menu.Item>
-        <Menu.Item
-          key="linker-menu"
-          icon={<IconCode />}
-          onClick={() => validateAndOpenModalFor("linker")}
-        >
-          {i18n("SampleMenu.linker")}
-        </Menu.Item>
-        <Menu.Item
-          disabled={selectedCount === 0}
-          key="ncbi-menu"
-          icon={<IconCloudUpload />}
-          onClick={onNCBI}
-        >
-          {i18n("SampleMenu.ncbi")}
-        </Menu.Item>
-        <Menu.Divider />
-        <Menu.Item
-          key="menu-excel"
-          icon={<IconFileExcel />}
-          onClick={() => onExport("excel")}
-        >
-          {i18n("SampleMenu.excel")}
-        </Menu.Item>
-        <Menu.Item
-          key="menu-csv"
-          icon={<IconFile />}
-          onClick={() => onExport("csv")}
-        >
-          {i18n("SampleMenu.csv")}
-        </Menu.Item>
-      </Menu>
-    ),
-    [onDownload, onExport, onNCBI, selectedCount, validateAndOpenModalFor]
+  const exportMenu = (
+    <Menu className="t-export-dropdown">
+      <Menu.Item
+        className="t-download"
+        disabled={selectedCount === 0}
+        key="download-menu"
+        icon={<IconCloudDownload />}
+        onClick={onDownload}
+      >
+        {i18n("SampleMenu.download")}
+      </Menu.Item>
+      <Menu.Item
+        key="linker-menu"
+        icon={<IconCode />}
+        onClick={() => validateAndOpenModalFor("linker")}
+        className="t-linker"
+      >
+        {i18n("SampleMenu.linker")}
+      </Menu.Item>
+      <Menu.Item
+        disabled={selectedCount === 0}
+        key="ncbi-menu"
+        icon={<IconCloudUpload />}
+        onClick={onNCBI}
+        className="t-ncbi"
+      >
+        {i18n("SampleMenu.ncbi")}
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item
+        key="menu-excel"
+        icon={<IconFileExcel />}
+        onClick={() => onExport("excel")}
+      >
+        {i18n("SampleMenu.excel")}
+      </Menu.Item>
+      <Menu.Item
+        key="menu-csv"
+        icon={<IconFile />}
+        onClick={() => onExport("csv")}
+      >
+        {i18n("SampleMenu.csv")}
+      </Menu.Item>
+    </Menu>
   );
 
   return (
@@ -276,7 +277,11 @@ export default function SamplesMenu() {
               {i18n("SampleMenu.export")} <IconDropDown />
             </Button>
           </Dropdown>
-          <Button icon={<IconShoppingCart />} onClick={onAddToCart}>
+          <Button
+            icon={<IconShoppingCart />}
+            onClick={onAddToCart}
+            disabled={selectedCount === 0}
+          >
             {i18n("SampleMenu.cart")}
           </Button>
         </Space>
