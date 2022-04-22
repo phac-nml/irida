@@ -25,7 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 @Table(name = "project_user", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" }))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-@MetadataRoleValidate(message = "server.project.owner.incorrect.metadata.role")
+@MetadataRoleValidate
 public class ProjectUserJoin implements Join<Project, User> {
 
 	@Id

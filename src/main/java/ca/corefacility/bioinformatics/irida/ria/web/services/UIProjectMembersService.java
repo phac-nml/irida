@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
@@ -24,13 +23,11 @@ import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIProjectWithoutO
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectMemberTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.utilities.ExceptionUtilities;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import org.springframework.transaction.TransactionSystemException;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 
 /**
  * Service class for the UI for handling project members actions.
@@ -133,20 +130,9 @@ public class UIProjectMembersService {
 			throw new UIProjectWithoutOwnerException(messageSource.getMessage("server.ProjectRoleSelect.error",
 					new Object[] { user.getLabel(), roleString }, locale));
 		} catch (TransactionSystemException e) {
-			ConstraintViolationException constraintViolationException;
-			String constraintViolationMessage = "";
-			if (e.getRootCause() instanceof ConstraintViolationException) {
-				constraintViolationException = (ConstraintViolationException) e.getRootCause();
-				Set<ConstraintViolation<?>> constraintViolationSet = constraintViolationException.getConstraintViolations();
-				for (ConstraintViolation constraintViolation : constraintViolationSet) {
-					// The constraintViolation.getMessage() returns the i18n key in this case
-					constraintViolationMessage +=
-							messageSource.getMessage(constraintViolation.getMessage(), new Object[] {}, locale) + "\n";
-				}
-			}
-			throw new UIConstraintViolationException(constraintViolationMessage);
+			ExceptionUtilities.throwConstraintViolationException(e, locale, messageSource);
 		}
-
+		return null;
 	}
 
 	/**
@@ -158,16 +144,21 @@ public class UIProjectMembersService {
 	 * @param locale       - of the currently logged in user
 	 * @return message to display to the user about the outcome of the change in role.
 	 */
-	public String updateUserMetadataRoleOnProject(Long projectId, Long userId, String metadataRole, Locale locale) {
+	public String updateUserMetadataRoleOnProject(Long projectId, Long userId, String metadataRole, Locale locale)
+			throws UIConstraintViolationException {
 		Project project = projectService.read(projectId);
 		User user = userService.read(userId);
 		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(metadataRole);
-		String roleString = roleString = messageSource.getMessage("metadataRole." + metadataRole, new Object[] {},
-				locale);
+		String roleString = messageSource.getMessage("metadataRole." + metadataRole, new Object[] {}, locale);
 
-		projectService.updateUserProjectMetadataRole(project, user, projectMetadataRole);
-		return messageSource.getMessage("server.update.metadataRole.success",
-				new Object[] { user.getLabel(), roleString }, locale);
+		try {
+			projectService.updateUserProjectMetadataRole(project, user, projectMetadataRole);
+			return messageSource.getMessage("server.update.metadataRole.success",
+					new Object[] { user.getLabel(), roleString }, locale);
+		} catch (TransactionSystemException e) {
+			ExceptionUtilities.throwConstraintViolationException(e, locale, messageSource);
+		}
+		return null;
 
 	}
 

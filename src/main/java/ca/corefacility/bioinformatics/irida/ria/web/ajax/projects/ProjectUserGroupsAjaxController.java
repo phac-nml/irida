@@ -102,7 +102,7 @@ public class ProjectUserGroupsAjaxController {
 		} catch (UIProjectWithoutOwnerException e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		} catch (UIConstraintViolationException ex) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getErrorMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getErrorMessage());
 		}
 	}
 
@@ -120,8 +120,8 @@ public class ProjectUserGroupsAjaxController {
 			@RequestParam Long id, String metadataRole, Locale locale) {
 		try {
 			return ResponseEntity.ok(service.updateUserGroupMetadataRoleOnProject(projectId, id, metadataRole, locale));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		} catch (UIConstraintViolationException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getErrorMessage());
 		}
 	}
 }

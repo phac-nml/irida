@@ -25,28 +25,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = ProjectMetadataRoleValidator.class)
 @Documented
 public @interface MetadataRoleValidate {
-	String message() default "{server.project.owner.incorrect.metadata.role}";
+	String message() default "server.project.owner.incorrect.metadata.role";
 
 	Class<?>[] groups() default {};
 
 	Class<? extends Payload>[] payload() default {};
-
-	/**
-	 *
-	 * Defines several <code>@MetadataRoleValidate</code> annotations on the same element
-	 *
-	 * @see MetadataRoleValidate
-	 *
-	 * If a list of validations is required then uncomment the code below
-	 *
-	 * @Target({TYPE, ANNOTATION_TYPE})
-	 * @Retention(RUNTIME)
-	 * @Documented
-	 * @interface List
-	 * {
-	 *   MetadataRoleValidate[] value();
-	 * }
-	 *
-	 */
-
 }

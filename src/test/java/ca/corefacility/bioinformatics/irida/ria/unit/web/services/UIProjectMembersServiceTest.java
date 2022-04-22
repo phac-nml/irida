@@ -116,7 +116,7 @@ public class UIProjectMembersServiceTest {
 	}
 
 	@Test
-	public void testUpdateUserMetadataRoleOnProject() {
+	public void testUpdateUserMetadataRoleOnProject() throws UIConstraintViolationException {
 		service.updateUserMetadataRoleOnProject(PROJECT_ID, USER_2.getId(), ProjectMetadataRole.LEVEL_4.toString(), LOCALE);
 		verify(projectService, times(1)).read(PROJECT_ID);
 		verify(userService, times(1)).read(USER_2.getId());

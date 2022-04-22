@@ -42,7 +42,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 		"project_id", "user_group_id" }))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-@MetadataRoleValidate(message = "server.project.owner.incorrect.metadata.role")
+@MetadataRoleValidate
 public class UserGroupProjectJoin implements Join<Project, UserGroup> {
 
 	@Id
