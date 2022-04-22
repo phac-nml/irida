@@ -17,7 +17,7 @@ export default function UserAccountLayout() {
   const {Content, Sider} = Layout;
   const {userId} = useParams();
   const {data: userDetails = {}} = useGetUserDetailsQuery(userId);
-
+  const showBack = () => userDetails.admin && document.referrer.includes("admin/users", 0);
   const goToAdminUserListPage = () =>
     (window.location.href = setBaseUrl(`admin/users`));
 
@@ -29,11 +29,11 @@ export default function UserAccountLayout() {
              xs={{span: 24}}>
           <PageHeader
             title={
-              userDetails.admin
+              showBack()
                 ? i18n("UserAccountLayout.page.title", userDetails.user?.username)
                 : userDetails.user?.username
             }
-            onBack={userDetails.admin ? goToAdminUserListPage : undefined}
+            onBack={showBack() ? goToAdminUserListPage : undefined}
           />
           <Layout>
             <Sider width={200} style={{backgroundColor: grey1}}>
