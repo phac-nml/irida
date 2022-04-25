@@ -137,16 +137,17 @@ Each sample can contain it's own metadata.  IRIDA uses the terms:
 * **Metadata Field** as the label for a piece of metadata (e.g. Organism).
 * **Metadata Entry** for the value associated with it (e.g. _Salmonella enterica_).
 
-All metadata fields associated with samples in a project can be viewed on the metadata fields page. This is accessed by clicking on the 'Sample Metadata' tab.
+All metadata fields associated with samples in a project can be viewed on the metadata fields page. This is accessed by clicking on the 'Sample Metadata' tab within the **Project Settings**.
 
 ![Image showing sample metadata tan](images/sample-metadata-tab.png)
 
-Once on the Sample Metadata page, you will see a listing of all *Metadata Field* associated with samples in this project:
+Once on the Sample Metadata page, you will see a listing of all *Metadata Fields* associated with samples in this project and their restriction levels:
 
 ![Image showing sample metadata fields](images/sample-metadata-fields.png)
 
 Metadata Fields have:
 * **Type**: Indicates the type of data that the field can be.  Usually this will be just "text".
+* **Restrictions**: Indicates the metadata role required to view that field and any fields with levels below this restriction level.
 
 ### Metadata Templates
 
@@ -154,7 +155,9 @@ Metadata Templates provide a pre-defined collection and order of metadata fields
 
 To create a new metadata template (**project managers only**) select the fields from the metadata fields table and click the "Create Template" button:
 
-![Video displaying how to select fields and create a new template](images/sample-metadata-create-template.gif)
+![Select fields and create a new template](images/sample-metadata-create-template-select-fields.png)
+
+![Create a new template dialog](images/sample-metadata-create-template-modal.png)
 
  * **Name**: Must be unique within the project (required)
  * **Description**: Any information that will help to understand why this template should be used.
