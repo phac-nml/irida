@@ -21,6 +21,8 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import ca.corefacility.bioinformatics.irida.constraints.MetadataRoleValidate;
+
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -32,15 +34,15 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 
 /**
- * A relationship between a {@link UserGroup} and {@link Project}. This
- * relationship mirrors the relationship defined by {@link ProjectUserJoin}, but
- * for {@link UserGroup}.
+ * A relationship between a {@link UserGroup} and {@link Project}. This relationship mirrors the relationship defined by
+ * {@link ProjectUserJoin}, but for {@link UserGroup}.
  */
 @Entity
-@Table(name = "user_group_project", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id",
-		"user_group_id" }) )
+@Table(name = "user_group_project", uniqueConstraints = @UniqueConstraint(columnNames = {
+		"project_id", "user_group_id" }))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
+@MetadataRoleValidate
 public class UserGroupProjectJoin implements Join<Project, UserGroup> {
 
 	@Id
@@ -72,7 +74,7 @@ public class UserGroupProjectJoin implements Join<Project, UserGroup> {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_date", updatable = false)
 	private Date createdDate;
-	
+
 	/**
 	 * for hibernate
 	 */
@@ -88,14 +90,13 @@ public class UserGroupProjectJoin implements Join<Project, UserGroup> {
 	/**
 	 * Create a new {@link UserGroupProjectJoin}.
 	 *
-	 * @param project      the {@link Project} that you're permitting the
-	 *                     {@link UserGroup} to access.
-	 * @param userGroup    the {@link UserGroup} being permitted to access the
-	 *                     {@link Project}.
+	 * @param project      the {@link Project} that you're permitting the {@link UserGroup} to access.
+	 * @param userGroup    the {@link UserGroup} being permitted to access the {@link Project}.
 	 * @param role         The Role the users in the group should have
 	 * @param metadataRole the {@link ProjectMetadataRole} users in the group should have
 	 */
-	public UserGroupProjectJoin(final Project project, final UserGroup userGroup, final ProjectRole role, final ProjectMetadataRole metadataRole) {
+	public UserGroupProjectJoin(final Project project, final UserGroup userGroup, final ProjectRole role,
+			final ProjectMetadataRole metadataRole) {
 		this.id = null;
 		this.createdDate = new Date();
 		this.project = project;
@@ -116,8 +117,8 @@ public class UserGroupProjectJoin implements Join<Project, UserGroup> {
 		} else if (o instanceof UserGroupProjectJoin) {
 			final UserGroupProjectJoin u = (UserGroupProjectJoin) o;
 			return Objects.equals(u.project, this.project) && Objects.equals(u.userGroup, this.userGroup)
-					&& Objects.equals(u.projectRole, this.projectRole)
-					&& Objects.equals(u.createdDate, this.createdDate);
+					&& Objects.equals(u.projectRole, this.projectRole) && Objects.equals(u.createdDate,
+					this.createdDate);
 		}
 
 		return false;

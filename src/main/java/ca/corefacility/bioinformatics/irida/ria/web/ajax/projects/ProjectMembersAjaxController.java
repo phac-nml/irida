@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects;
 import java.util.List;
 import java.util.Locale;
 
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,30 +58,48 @@ public class ProjectMembersAjaxController {
 		try {
 			return ResponseEntity.ok(projectMembersService.removeUserFromProject(projectId, id, locale));
 		} catch (UIProjectWithoutOwnerException e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
 	}
 
 	/**
 	 * Update a users role on a project
 	 *
-	 * @param projectId    Identifier for the current project
-	 * @param id           Identifier for the user to remove from the project
-	 * @param projectRole  Project role to update the user to
-	 * @param metadataRole Metadata role to update the user to
-	 * @param locale       Locale of the currently logged in user
+	 * @param projectId   Identifier for the current project
+	 * @param id          Identifier for the user to remove from the project
+	 * @param projectRole Project role to update the user to
+	 * @param locale      Locale of the currently logged in user
 	 * @return message to display to the user about the outcome of the change in role.
 	 */
 	@RequestMapping(value = "/role", method = RequestMethod.PUT)
 	public ResponseEntity<String> updateUserRoleOnProject(@RequestParam Long projectId, @RequestParam Long id,
-			String projectRole, String metadataRole, Locale locale) {
+			String projectRole, Locale locale) {
+		try {
+			return ResponseEntity.ok(projectMembersService.updateUserRoleOnProject(projectId, id, projectRole, locale));
+		} catch (UIProjectWithoutOwnerException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		} catch (UIConstraintViolationException ex) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getErrorMessage());
+		}
+	}
+
+	/**
+	 * Update a users metadata role on a project
+	 *
+	 * @param projectId    Identifier for the current project
+	 * @param id           Identifier for the user to remove from the project
+	 * @param metadataRole Metadata role to update the user to
+	 * @param locale       Locale of the currently logged in user
+	 * @return message to display to the user about the outcome of the change in role.
+	 */
+	@RequestMapping(value = "/metadata-role", method = RequestMethod.PUT)
+	public ResponseEntity<String> updateUserMetadataRoleOnProject(@RequestParam Long projectId, @RequestParam Long id,
+			@RequestParam(required = false) String metadataRole, Locale locale) {
 		try {
 			return ResponseEntity.ok(
-					projectMembersService.updateUserRoleOnProject(projectId, id, projectRole, metadataRole, locale));
-		} catch (UIProjectWithoutOwnerException e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(e.getMessage());
+					projectMembersService.updateUserMetadataRoleOnProject(projectId, id, metadataRole, locale));
+		} catch (UIConstraintViolationException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getErrorMessage());
 		}
 	}
 
@@ -87,7 +107,7 @@ public class ProjectMembersAjaxController {
 	 * Get a filtered list of available IRIDA instance users for this project
 	 *
 	 * @param projectId - identifier for the current project
-	 * @param query           - search query to filter the users by
+	 * @param query     - search query to filter the users by
 	 * @return List of filtered users.
 	 */
 	@RequestMapping("/available")

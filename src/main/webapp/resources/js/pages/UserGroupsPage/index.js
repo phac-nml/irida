@@ -3,9 +3,9 @@ import { render } from "react-dom";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { getUserGroupRoles } from "../../apis/users/groups";
 import { ContentLoading } from "../../components/loader";
-import { ProjectRolesProvider } from "../../contexts/project-roles-context";
-import { UserGroupsProvider } from "../../contexts/UserGroupsContext";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { UserGroupsProvider } from "../../contexts/UserGroupsContext";
+import { UserGroupRolesProvider } from "../../contexts/usergroup-roles-context";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -45,7 +45,7 @@ export function UserGroups() {
       }
     >
       <UserGroupsProvider>
-        <ProjectRolesProvider getRolesFn={getUserGroupRoles}>
+        <UserGroupRolesProvider getRolesFn={getUserGroupRoles}>
           <Routes style={{ height: "100%" }}>
             <Route
               path={DEFAULT_URL}
@@ -56,7 +56,7 @@ export function UserGroups() {
               element={<UserGroupsDetailsPage baseUrl={DEFAULT_URL} />}
             />
           </Routes>
-        </ProjectRolesProvider>
+        </UserGroupRolesProvider>
       </UserGroupsProvider>
     </Suspense>
   );
