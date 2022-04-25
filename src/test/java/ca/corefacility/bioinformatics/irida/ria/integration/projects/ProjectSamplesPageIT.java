@@ -211,13 +211,45 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testFilteringSamplesByProperties() {
+		String NAME_FILTER_1 = "5";
+		String NAME_FILTER_2 = "sample6";
+		String ORGANISM_FILTER = "Listeria";
+
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		TableSummary summary = page.getTableSummary();
 		assertEquals(23, summary.getTotal(), "Without the filter there should be 23 elements in the table");
-		page.filterBySampleName("5");
+
+		/*
+		TEST NAME FILTERING
+		 */
+
+		// Single name filter
+		page.filterBySampleName(NAME_FILTER_1);
 		summary = page.getTableSummary();
 		assertEquals(19, summary.getTotal(), "Filtering the '5' should leave 19 samples in the table");
+
+		page.filterBySampleName(NAME_FILTER_2);
+		summary = page.getTableSummary();
+		assertEquals(2, summary.getTotal(), "Filtering the '5' and 'sample6' should leave 4 samples in the table");
+
+		// Tst clear
+		page.clearIndividualSampleNameFilter(NAME_FILTER_2);
+		summary = page.getTableSummary();
+		assertEquals(19, summary.getTotal(), "Removing a sample name filter");
+		page.clearIndividualSampleNameFilter(NAME_FILTER_1);
+		summary = page.getTableSummary();
+		assertEquals(23, summary.getTotal(), "Removing all name filters should return to initial number of samples");
+
+		// TEST ORGANISM FILTERING
+		page.filterByOrganism(ORGANISM_FILTER);
+		summary = page.getTableSummary();
+		assertEquals(2, summary.getTotal(), "Filtering by organism");
+
+		// TEST MULTIPLE FILTERS
+		page.filterBySampleName(NAME_FILTER_1);
+		summary = page.getTableSummary();
+		assertEquals(1, summary.getTotal(), "Filtering by organism");
 
 		//		assertEquals("Showing 1 to 10 of 23 entries", page.getTableInfo(), "Should have 23 projects displayed");
 		//		page.filterByName("5");

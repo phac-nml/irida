@@ -266,9 +266,10 @@ export function SamplesTable() {
     },
     {
       title: i18n("SamplesTable.Column.organism"),
+      className: "t-td-organism",
       dataIndex: ["sample", "organism"],
       sorter: { multiple: 1 },
-      ...getColumnSearchProps(["sample", "organism"]),
+      ...getColumnSearchProps(["sample", "organism"], "t-organism-select"),
     },
     {
       title: i18n("SamplesTable.Column.project"),

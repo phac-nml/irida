@@ -74,6 +74,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(css = ".t-name-select input")
 	private WebElement nameFilterInput;
 
+	@FindBy(css = ".t-name-select .ant-select-selector")
+	private WebElement nameFilterSelectedOptions;
+
+	@FindBy(css = ".t-td-organism .ant-table-filter-trigger")
+	private WebElement organismFilterToggle;
+
+	@FindBy(css = ".t-organism-select input")
+	private WebElement organismSelectInput;
+
 	//----- OLD BELOW
 
 	@FindBy(className = "t-associated-btn")
@@ -295,6 +304,20 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		nameFilterInput.sendKeys(name);
 		nameFilterInput.sendKeys(Keys.ENTER);
 		sampleNameFilterToggle.click();
+	}
+
+	public void clearIndividualSampleNameFilter(String name) {
+		sampleNameFilterToggle.click();
+		WebElement filter = nameFilterSelectedOptions.findElement(By.cssSelector("[title=\"" + name + "\"]"));
+		filter.findElement(By.className("ant-select-selection-item-remove")).click();
+		sampleNameFilterToggle.click();
+	}
+
+	public void filterByOrganism(String organism) {
+		organismFilterToggle.click();
+		organismSelectInput.sendKeys(organism);
+		organismSelectInput.sendKeys(Keys.ENTER);
+		organismFilterToggle.click();
 	}
 
 	// --- OLD BELOW
