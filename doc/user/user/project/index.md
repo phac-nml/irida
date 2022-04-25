@@ -222,6 +222,8 @@ To change the role of a project member, click on the project role drop-down menu
 
 ![Edit project member project role.](images/change-user-project-role.png)
 
+The project role is saved as soon as you make a selection -- you **do not** need to click a "Save" button.
+
 #### Changing a project member's metadata role
 
 You may want to change a project member's metadata role if you wish to restrict an individual user from viewing certain metadata on the project. You can only change a project member's metadata role if you have the **Manager** role on the project and the member is also not a **Manager** on the project.
@@ -232,7 +234,7 @@ To change the metadata role of a project member, click on the metadata role drop
 
 ![Edit project member metadata role.](images/change-user-project-metadata-role.png)
 
-The project role is saved as soon as you make a selection -- you **do not** need to click a "Save" button.
+The metadata role is saved as soon as you make a selection -- you **do not** need to click a "Save" button.
 
 #### Changing a project user group's project role
 

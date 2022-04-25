@@ -163,7 +163,7 @@ To create a new metadata template (**project managers only**) select the fields 
  * **Description**: Any information that will help to understand why this template should be used.
  * **Fields**: Fields can be dragged and dropped into any order.
 
-A list of all metadata templates for the project can be viewed by selecting the "Metadata Templates" from the menu on the left hand side:
+A list of all metadata templates for the project can be viewed by selecting the "Templates" from the menu along the top:
 
 ![Image displaying metadata template list](images/metadata-template-list.png)
 
@@ -171,7 +171,7 @@ Each template listing contains:
   * Template name; clicking this will redirect to the template details page. 
   * Template description, the number of fields in the template.
   * Template actions, including (download Excel file of template fields, and remove template (managers only))
-  * `Set as Default` button to set the template as the default for the project (displays if hovering on a template) or a `Default` tag if template is already set as default for the project.
+  * `Set as Default` button to set the template as the default for the project (displays if hovering on a template (managers only)) or a `Default` tag if template is already set as default for the project.
 
 Template Details Page
 ---------------------
