@@ -291,6 +291,32 @@ When you click the remove button, you will be asked to confirm the project membe
 
 To confirm, click the "Ok" button.
 
+### Metadata
+
+Metadata associated with the project can be viewed from the **Metadata** tab. A project **Manager** can view **all** the metadata fields associated with the project, and view/modify the metadata restriction levels for each of these fields.
+
+![Metadata fields manager view](images/metadata-fields-manager.png)
+
+The **Manager** also has the ability to select metadata fields, create templates, and set a default template which members of the project can use to view data on the Linelist page.
+
+![Metadata templates manager view](images/metadata-templates-list-manager.png)
+
+Clicking on the name of the template takes you to a page where you can modify template details. Note that the field restriction levels must be modified from the **Fields** tab and cannot be modified within a template.
+
+![Metadata template fields manager view](images/metadata-template-fields-list-manager.png)
+
+A collaborator can only view a subset of the metadata fields which are at their metadata restriction level and below. For example the user below has a project metadata role of Level 2, so they can only view metadata fields which have a restriction Level 1 or Level 2:
+
+![Metadata fields collaborator view](images/metadata-fields-collaborator.png)
+
+A project collaborator can only view/download the templates that exist and the fields that makes up those templates:
+
+![Metadata templates  collaborator view](images/metadata-templates-list-collaborator.png)
+
+Clicking on the name of the template takes you to a page where you can view template details.
+
+![Metadata template fields collaborator view](images/metadata-template-fields-list-collaborator.png)
+
 ### Associated Projects
 
 Associated projects can be used to help manage related sample data across multiple projects.  Samples from associated projects can be viewed seamlessly with samples from the local project and used together in analysis pipelines.  
