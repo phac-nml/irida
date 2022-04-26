@@ -27,7 +27,7 @@ Once the new project is created return to the project that you would like to cop
 
 Once the samples are copied over to the new project, the last step is to add all users to this project that need access to this data.
 
-![Project details members tab.]({{ site.baseurl }}/images/tutorials/common/projects/project-details-members-tab.png)
+![Project details members tab.]({{ site.baseurl }}/images/tutorials/common/projects/members-overview.png)
 
 {% include tutorials/common/project-add-member.md %}
 

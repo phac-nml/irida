@@ -46,7 +46,7 @@ Adding a Project Member
 
 Once the user account or group is created, go to the project containing the data you want to share with this user, and select the **Members** tab.
 
-![Project details members tab.]({{ site.baseurl }}/images/tutorials/common/projects/project-details-members-tab.png)
+![Project details members tab.]({{ site.baseurl }}/images/tutorials/common/projects/members-overview.png)
 
 ### Adding an Individual Member
 
