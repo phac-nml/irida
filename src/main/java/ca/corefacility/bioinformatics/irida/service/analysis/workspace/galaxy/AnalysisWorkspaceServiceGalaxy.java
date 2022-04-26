@@ -1,7 +1,20 @@
 package ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -23,6 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
+import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -31,24 +45,12 @@ import com.github.jmchilton.blend4j.galaxy.beans.*;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A service for performing tasks for analysis in Galaxy.
- * 
  */
 public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService {
 
@@ -70,12 +72,12 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 
 	private SequencingObjectService sequencingObjectService;
 
+	private GenomeAssemblyService genomeAssemblyService;
+
 	/**
-	 * Builds a new {@link AnalysisWorkspaceServiceGalaxy} with the given
-	 * information.
+	 * Builds a new {@link AnalysisWorkspaceServiceGalaxy} with the given information.
 	 *
-	 * @param galaxyHistoriesService          A GalaxyHistoriesService for interacting with Galaxy
-	 *                                        Histories.
+	 * @param galaxyHistoriesService          A GalaxyHistoriesService for interacting with Galaxy Histories.
 	 * @param galaxyWorkflowService           A GalaxyWorkflowService for interacting with Galaxy workflows.
 	 * @param galaxyLibrariesService          An object for building libraries in Galaxy.
 	 * @param iridaWorkflowsService           A service used for loading workflows from IRIDA.
@@ -83,6 +85,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 * @param analysisProvenanceServiceGalaxy The service for provenance information.
 	 * @param analysisParameterServiceGalaxy  A service for setting up parameters in Galaxy.
 	 * @param sequencingObjectService         A service for reading {@link SequencingObject}s
+	 * @param genomeAssemblyService           A service for read {@link GenomeAssembly}s
 	 */
 	public AnalysisWorkspaceServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService, GalaxyLibrariesService galaxyLibrariesService,
@@ -90,7 +93,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy,
 			AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy,
 			AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy,
-			SequencingObjectService sequencingObjectService) {
+			SequencingObjectService sequencingObjectService, GenomeAssemblyService genomeAssemblyService) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.galaxyLibrariesService = galaxyLibrariesService;
@@ -99,6 +102,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		this.analysisProvenanceServiceGalaxy = analysisProvenanceServiceGalaxy;
 		this.analysisParameterServiceGalaxy = analysisParameterServiceGalaxy;
 		this.sequencingObjectService = sequencingObjectService;
+		this.genomeAssemblyService = genomeAssemblyService;
 	}
 
 	/**
@@ -117,22 +121,14 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	/**
 	 * Builds a new AnalysisOutputFile from the given file in Galaxy.
 	 * 
-	 * @param analysisId
-	 *            The id of the analysis performed in Galaxy.
-	 * @param labelPrefix
-	 *            The prefix to add to the label of this file.
-	 * @param dataset
-	 *            The dataset containing the data for the AnalysisOutputFile.
-	 * @param outputDirectory
-	 *            A directory to download the resulting output files.
+	 * @param analysisId      The id of the analysis performed in Galaxy.
+	 * @param labelPrefix     The prefix to add to the label of this file.
+	 * @param dataset         The dataset containing the data for the AnalysisOutputFile.
+	 * @param outputDirectory A directory to download the resulting output files.
 	 * @return An AnalysisOutputFile storing a local copy of the Galaxy file.
-	 * @throws IOException
-	 *             If there was an issue creating a local file.
-	 * @throws ExecutionManagerDownloadException
-	 *             If there was an issue downloading the data from Galaxy.
-	 * @throws ExecutionManagerException
-	 *             If there was an issue extracting tool execution provenance
-	 *             from Galaxy.
+	 * @throws IOException                       If there was an issue creating a local file.
+	 * @throws ExecutionManagerDownloadException If there was an issue downloading the data from Galaxy.
+	 * @throws ExecutionManagerException         If there was an issue extracting tool execution provenance from Galaxy.
 	 */
 	private AnalysisOutputFile buildOutputFile(String analysisId, String labelPrefix, Dataset dataset,
 			Path outputDirectory) throws IOException, ExecutionManagerDownloadException, ExecutionManagerException {
@@ -168,6 +164,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SingleEndSequenceFile.class);
 		Set<SequenceFilePair> pairedEndFiles = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(analysisSubmission, SequenceFilePair.class);
+		Set<GenomeAssembly> genomeAssemblies = genomeAssemblyService
+				.getGenomeAssembliesForAnalysisSubmission(analysisSubmission);
 
 		if (iridaWorkflow.getWorkflowDescription().requiresReference()) {
 			checkArgument(analysisSubmission.getReferenceFile().isPresent(),
@@ -189,6 +187,12 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 							+ analysisSubmission);
 		}
 
+		if (!iridaWorkflow.getWorkflowDescription().acceptsGenomeAssemblies()) {
+			checkArgument(genomeAssemblies.isEmpty(),
+					"workflow does not accept genome assemblies, but genome assemblies are passed as input to "
+							+ analysisSubmission);
+		}
+
 		String temporaryLibraryName = AnalysisSubmission.class.getSimpleName() + "-" + UUID.randomUUID().toString();
 
 		History workflowHistory = galaxyHistoriesService.findById(analysisSubmission.getRemoteAnalysisId());
@@ -200,6 +204,9 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 
 		Map<Sample, SequenceFilePair> pairedFiles = sequencingObjectService
 				.getUniqueSamplesForSequencingObjects(pairedEndFiles);
+
+		Map<Sample, GenomeAssembly> assemblies = genomeAssemblyService
+				.getUniqueSamplesForGenomeAssemblies(genomeAssemblies);
 
 		// check that there aren't common sample names between single and paired
 		if (samplesInCommon(singleFiles, pairedFiles)) {
@@ -236,6 +243,16 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 					collectionResponsePaired.getId(), WorkflowInvocationInputs.InputSourceType.HDCA));
 		}
 
+		if (!assemblies.isEmpty()) {
+			String genomeAssembliesLabel = workflowInput.getGenomeAssemblies().get();
+			String workflowGenomeAssembliesInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
+					genomeAssembliesLabel);
+			CollectionResponse collectionResponseAssemblies = analysisCollectionServiceGalaxy
+					.uploadGenomeAssemblies(assemblies, workflowHistory, workflowLibrary);
+			inputs.setInput(workflowGenomeAssembliesInputId, new WorkflowInvocationInputs.WorkflowInvocationInput(
+					collectionResponseAssemblies.getId(), WorkflowInvocationInputs.InputSourceType.HDCA));
+		}
+
 		String analysisId = workflowHistory.getId();
 
 		if (iridaWorkflow.getWorkflowDescription().requiresReference()) {
@@ -248,15 +265,11 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	}
 
 	/**
-	 * Determines if the two data structures of samples/sequence files share a
-	 * common sample.
+	 * Determines if the two data structures of samples/sequence files share a common sample.
 	 * 
-	 * @param sampleSequenceFilesSingle
-	 *            A map of single sequence files and samples.
-	 * @param sampleSequenceFilesPaired
-	 *            A map of sequence file pairs and samples.
-	 * @return True if the two data structures share a common sample, false
-	 *         otherwise.
+	 * @param sampleSequenceFilesSingle A map of single sequence files and samples.
+	 * @param sampleSequenceFilesPaired A map of sequence file pairs and samples.
+	 * @return True if the two data structures share a common sample, false otherwise.
 	 */
 	private boolean samplesInCommon(Map<Sample, ?> sampleSequenceFilesSingle,
 			Map<Sample, ?> sampleSequenceFilesPaired) {
@@ -273,24 +286,14 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	/**
 	 * Prepares a reference file for input to the workflow.
 	 * 
-	 * @param referenceFile
-	 *            The {@link ReferenceFile} for the workflow.
-	 * @param workflowHistory
-	 *            The {@link History} for the workflow.
-	 * @param referenceFileLabel
-	 *            The label for the reference file in the workflow.
-	 * @param workflowDetails
-	 *            The {@link WorkflowDetails} for the workflow.
-	 * @param inputs
-	 *            The {@link WorkflowInputs} object used to setup inputs for the
-	 *            workflow.
-	 * @throws UploadException
-	 *             If there's an exception when uploading files to the workflow
-	 *             engine.
-	 * @throws GalaxyDatasetException
-	 *             If there's an exception with Galaxy datasets.
-	 * @throws WorkflowException
-	 *             If there's an exception with workflow methods.
+	 * @param referenceFile      The {@link ReferenceFile} for the workflow.
+	 * @param workflowHistory    The {@link History} for the workflow.
+	 * @param referenceFileLabel The label for the reference file in the workflow.
+	 * @param workflowDetails    The {@link WorkflowDetails} for the workflow.
+	 * @param inputs             The {@link WorkflowInputs} object used to setup inputs for the workflow.
+	 * @throws UploadException        If there's an exception when uploading files to the workflow engine.
+	 * @throws GalaxyDatasetException If there's an exception with Galaxy datasets.
+	 * @throws WorkflowException      If there's an exception with workflow methods.
 	 */
 	private void prepareReferenceFile(ReferenceFile referenceFile, History workflowHistory, String referenceFileLabel,
 			WorkflowDetails workflowDetails, WorkflowInvocationInputs inputs)
@@ -302,20 +305,17 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		String workflowReferenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
 				referenceFileLabel);
 
-		inputs.setInput(workflowReferenceFileInputId,
-				new WorkflowInvocationInputs.WorkflowInvocationInput(referenceDataset.getId(), WorkflowInvocationInputs.InputSourceType.HDA));
+		inputs.setInput(workflowReferenceFileInputId, new WorkflowInvocationInputs.WorkflowInvocationInput(
+				referenceDataset.getId(), WorkflowInvocationInputs.InputSourceType.HDA));
 	}
 
 	/**
-	 * Gets the prefix for a label for an output file based on the input
-	 * {@link Sample} name.
+	 * Gets the prefix for a label for an output file based on the input {@link Sample} name.
 	 * 
-	 * @param analysisSubmission
-	 *            The submission containing input {@link Sample}s.
-	 * @param iridaWorkflow
-	 *            The {@link IridaWorkflow}.
-	 * @return The label prefix (sample name) if this workflow operates only on
-	 *         a single sample, otherwise an empty String.
+	 * @param analysisSubmission The submission containing input {@link Sample}s.
+	 * @param iridaWorkflow      The {@link IridaWorkflow}.
+	 * @return The label prefix (sample name) if this workflow operates only on a single sample, otherwise an empty
+	 *         String.
 	 */
 	private String getLabelPrefix(AnalysisSubmission analysisSubmission, IridaWorkflow iridaWorkflow) {
 		String labelPrefix = null;
@@ -325,9 +325,11 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			try {
 				Set<SequencingObject> sequencingObjectsForAnalysisSubmission = sequencingObjectService
 						.getSequencingObjectsForAnalysisSubmission(analysisSubmission);
+				// TODO: get Samples from GenomeAssemblies
 				Set<Sample> samples = Sets.newHashSet();
 				samples.addAll(sequencingObjectService
-						.getUniqueSamplesForSequencingObjects(sequencingObjectsForAnalysisSubmission).keySet());
+						.getUniqueSamplesForSequencingObjects(sequencingObjectsForAnalysisSubmission)
+						.keySet());
 
 				Set<String> sampleNames = samples.stream().map(Sample::getSampleName).collect(Collectors.toSet());
 
@@ -387,7 +389,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		}
 
 		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
-		
+
 		return new Analysis(analysisId, analysisOutputFiles, analysisType);
 	}
 
@@ -401,13 +403,13 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		IridaWorkflowDescription workflowDescription = flow.getWorkflowDescription();
 		List<IridaWorkflowOutput> workflowDescriptionOutputs = workflowDescription.getOutputs();
 
-		List<HistoryContents> historyContents = galaxyHistoriesService.showHistoryContents(analysisSubmission.getRemoteAnalysisId());
+		List<HistoryContents> historyContents = galaxyHistoriesService
+				.showHistoryContents(analysisSubmission.getRemoteAnalysisId());
 
-		result = workflowDescriptionOutputs.stream().allMatch( workflowOutput->
-				historyContents.stream().map(HistoryContents::getName).anyMatch( historyContentName->
-						historyContentName.equals(workflowOutput.getFileName())
-				)
-		);
+		result = workflowDescriptionOutputs.stream()
+				.allMatch(workflowOutput -> historyContents.stream()
+						.map(HistoryContents::getName)
+						.anyMatch(historyContentName -> historyContentName.equals(workflowOutput.getFileName())));
 
 		return result;
 	}

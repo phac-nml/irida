@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+	<changeSet id="analysis-assembly-input" author="eric">
+
+		<createTable tableName="analysis_submission_genome_assembly">
+			<column name="analysis_submission_id" type="bigint(20)">
+				<constraints referencedTableName="analysis_submission"
+					referencedColumnNames="id" foreignKeyName="FK_ANALYSIS_SUBMISSION_GENOME_ASSEMBLY"
+					nullable="false" />
+			</column>
+
+			<column name="genome_assembly_id" type="bigint(20)">
+				<constraints referencedTableName="genome_assembly"
+					referencedColumnNames="id" foreignKeyName="FK_GENOME_ASSEMBLY_ANALYSIS_SUBMISSION"
+					nullable="false" />
+			</column>
+		</createTable>
+
+		<createTable tableName="analysis_submission_genome_assembly_AUD">
+			<column name="analysis_submission_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+
+			<column name="genome_assembly_id" type="bigint(20)">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+
+			<column name="REV" type="int(11)">
+				<constraints primaryKey="true" referencedColumnNames="id"
+					referencedTableName="Revisions" foreignKeyName="FK_ANALYSIS_GENOME_ASSEMBLY_AUD" />
+			</column>
+			<column name="REVTYPE" type="tinyint(4)" />
+		</createTable>
+	</changeSet>
+</databaseChangeLog>

@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPipelineStartService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -30,6 +31,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class UIPipelineStartServiceTest {
@@ -43,6 +45,7 @@ public class UIPipelineStartServiceTest {
 	private UIPipelineStartService service;
 	private IridaWorkflowsService workflowsService;
 	private SequencingObjectService sequencingObjectService;
+	private GenomeAssemblyService genomeAssemblyService;
 	private AnalysisSubmissionService submissionService;
 	private ProjectService projectService;
 	private WorkflowNamedParametersService namedParametersService;
@@ -52,18 +55,19 @@ public class UIPipelineStartServiceTest {
 	public void startTest() throws IridaWorkflowNotFoundException, ReferenceFileRequiredException {
 		workflowsService = Mockito.mock(IridaWorkflowsService.class);
 		sequencingObjectService = Mockito.mock(SequencingObjectService.class);
+		genomeAssemblyService = Mockito.mock(GenomeAssemblyService.class);
 		submissionService = Mockito.mock(AnalysisSubmissionService.class);
 		projectService = Mockito.mock(ProjectService.class);
 		namedParametersService = Mockito.mock(WorkflowNamedParametersService.class);
 		messageSource = Mockito.mock(MessageSource.class);
 
-		service = new UIPipelineStartService(workflowsService, sequencingObjectService, submissionService,
-				projectService, namedParametersService, messageSource);
+		service = new UIPipelineStartService(workflowsService, sequencingObjectService, genomeAssemblyService,
+				submissionService, projectService, namedParametersService, messageSource);
 
 		IridaWorkflowDescription description = mock(IridaWorkflowDescription.class);
 		when(description.getAnalysisType()).thenReturn(ANALYSIS_TYPE);
 		when(description.getName()).thenReturn(PIPELINE_NAME);
-		when(description.getInputs()).thenReturn(new IridaWorkflowInput("Wolverine", null, null, true));
+		when(description.getInputs()).thenReturn(new IridaWorkflowInput("Wolverine", null, null, null, true));
 
 		IridaWorkflowStructure structure = mock(IridaWorkflowStructure.class);
 
@@ -102,11 +106,13 @@ public class UIPipelineStartServiceTest {
 		};
 
 		Collection<AnalysisSubmission> submissions = ImmutableList.of(AnalysisSubmission.builder(WORKFLOW_ID)
-				.name("Wonder Woman").inputFiles(ImmutableSet.of(sequencingObject)).build());
+				.name("Wonder Woman")
+				.inputFiles(ImmutableSet.of(sequencingObject))
+				.build());
 		when(submissionService.createSingleSampleSubmission(workflow, request.getReference(), ImmutableList.of(),
-				ImmutableList.of(), request.getParameters(), null, request.getName(), request.getDescription(),
-				projects, request.isUpdateSamples(), request.sendEmailOnCompletion(), request.sendEmailOnError()))
-						.thenReturn(submissions);
+				ImmutableList.of(), ImmutableList.of(), request.getParameters(), null, request.getName(),
+				request.getDescription(), projects, request.isUpdateSamples(), request.sendEmailOnCompletion(),
+				request.sendEmailOnError())).thenReturn(submissions);
 
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("FOOBAR");
 		when(submissionService.createSingleSampleSubmissionTemplate(workflow, null, request.getParameters(), null,
@@ -120,8 +126,8 @@ public class UIPipelineStartServiceTest {
 		verify(workflowsService, timeout(1)).getIridaWorkflow(WORKFLOW_ID);
 		verify(projectService, times(1)).readMultiple(request.getProjects());
 		verify(submissionService, times(1)).createSingleSampleSubmission(workflow, request.getReference(),
-				ImmutableList.of(), ImmutableList.of(), request.getParameters(), null, request.getName(),
-				request.getDescription(), ImmutableList.of(project), request.isUpdateSamples(),
+				ImmutableList.of(), ImmutableList.of(), ImmutableList.of(), request.getParameters(), null,
+				request.getName(), request.getDescription(), ImmutableList.of(project), request.isUpdateSamples(),
 				request.sendEmailOnCompletion(), request.sendEmailOnError());
 
 		/*

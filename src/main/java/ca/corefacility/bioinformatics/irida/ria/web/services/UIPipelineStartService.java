@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.pipelines.ReferenceFileRequiredException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -23,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos.LaunchRequest;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -35,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.WorkflowNamedParame
 public class UIPipelineStartService {
 	private final IridaWorkflowsService workflowsService;
 	private final SequencingObjectService sequencingObjectService;
+	private final GenomeAssemblyService genomeAssemblyService;
 	private final AnalysisSubmissionService submissionService;
 	private final ProjectService projectService;
 	private final WorkflowNamedParametersService namedParametersService;
@@ -42,11 +45,12 @@ public class UIPipelineStartService {
 
 	@Autowired
 	public UIPipelineStartService(IridaWorkflowsService workflowsService,
-			SequencingObjectService sequencingObjectService, AnalysisSubmissionService submissionService,
-			ProjectService projectService, WorkflowNamedParametersService namedParametersService,
-			MessageSource messageSource) {
+			SequencingObjectService sequencingObjectService, GenomeAssemblyService genomeAssemblyService,
+			AnalysisSubmissionService submissionService, ProjectService projectService,
+			WorkflowNamedParametersService namedParametersService, MessageSource messageSource) {
 		this.workflowsService = workflowsService;
 		this.sequencingObjectService = sequencingObjectService;
+		this.genomeAssemblyService = genomeAssemblyService;
 		this.submissionService = submissionService;
 		this.projectService = projectService;
 		this.namedParametersService = namedParametersService;
@@ -56,19 +60,13 @@ public class UIPipelineStartService {
 	/**
 	 * Start a new pipeline
 	 *
-	 * @param id
-	 *            - pipeline identifier
-	 * @param request
-	 *            - details about the request to start the pipeline
-	 * @param locale
-	 *            - currently logged in users locale
-	 * @return The id of the new {@link AnalysisSubmission}, if more than one
-	 *         are kicked off, then the first id is returned.
-	 * @throws IridaWorkflowNotFoundException
-	 *             thrown if the workflow cannot be found
-	 * @throws ReferenceFileRequiredException
-	 *             thrown if a reference file is required and not sent (should
-	 *             not happen).
+	 * @param id      - pipeline identifier
+	 * @param request - details about the request to start the pipeline
+	 * @param locale  - currently logged in users locale
+	 * @return The id of the new {@link AnalysisSubmission}, if more than one are kicked off, then the first id is
+	 *         returned.
+	 * @throws IridaWorkflowNotFoundException thrown if the workflow cannot be found
+	 * @throws ReferenceFileRequiredException thrown if a reference file is required and not sent (should not happen).
 	 */
 	public Long start(UUID id, LaunchRequest request, Locale locale)
 			throws IridaWorkflowNotFoundException, ReferenceFileRequiredException {
@@ -112,8 +110,12 @@ public class UIPipelineStartService {
 			 */
 			List<SingleEndSequenceFile> singles = new ArrayList<>();
 			List<SequenceFilePair> pairs = new ArrayList<>();
-			// Check for single ended sequence files
+			List<GenomeAssembly> assemblies = new ArrayList<>();
+
 			Iterable<SequencingObject> sequencingObjects = sequencingObjectService.readMultiple(request.getFileIds());
+			Iterable<GenomeAssembly> genomeAssemblies = genomeAssemblyService.readMultiple(request.getAssemblyIds());
+
+			// Check for single ended sequence files
 			if (description.acceptsSingleSequenceFiles()) {
 				sequencingObjects.forEach(sequencingObject -> {
 					if (sequencingObject instanceof SingleEndSequenceFile) {
@@ -126,21 +128,26 @@ public class UIPipelineStartService {
 						pairs.add((SequenceFilePair) sequencingObject);
 					}
 				});
+			} else if (description.acceptsGenomeAssemblies()) {
+				genomeAssemblies.forEach(genomeAssembly -> {
+					assemblies.add(genomeAssembly);
+				});
 			}
 
 			IridaWorkflowInput inputs = description.getInputs();
 
 			if (inputs.requiresSingleSample()) {
 				submissionService.createSingleSampleSubmission(workflow, request.getReference(), singles, pairs,
-						request.getParameters(), namedParameters, request.getName(), request.getDescription(), projects,
-						request.isUpdateSamples(), request.sendEmailOnCompletion(), request.sendEmailOnError());
+						assemblies, request.getParameters(), namedParameters, request.getName(),
+						request.getDescription(), projects, request.isUpdateSamples(), request.sendEmailOnCompletion(),
+						request.sendEmailOnError());
 				// Returning -1L as a flag to the UI that multiple pipelines
 				// have been launched, thereby there is not
 				// On specific pipeline to go to.
 				return -1L;
 			} else {
 				AnalysisSubmission submission = submissionService.createMultipleSampleSubmission(workflow,
-						request.getReference(), singles, pairs, request.getParameters(), namedParameters,
+						request.getReference(), singles, pairs, assemblies, request.getParameters(), namedParameters,
 						request.getName(), request.getDescription(), projects, request.isUpdateSamples(),
 						request.sendEmailOnCompletion(), request.sendEmailOnError());
 				return submission.getId();

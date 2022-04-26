@@ -1,6 +1,33 @@
 package ca.corefacility.bioinformatics.irida.service.impl.analysis.submission;
 
-import ca.corefacility.bioinformatics.irida.exceptions.*;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.history.Revision;
+import org.springframework.data.history.Revisions;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
+import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
@@ -8,7 +35,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -30,51 +56,29 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisS
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.history.Revision;
-import org.springframework.data.history.Revisions;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Implementation of an AnalysisSubmissionService.
- *
- *
  */
 @Service
-public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, AnalysisSubmission> implements
-		AnalysisSubmissionService {
+public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, AnalysisSubmission>
+		implements AnalysisSubmissionService {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisSubmissionServiceImpl.class);
 
 	/**
-	 * A {@link Map} defining the progress transitions points for each state in
-	 * an {@link AnalysisSubmission}.
+	 * A {@link Map} defining the progress transitions points for each state in an {@link AnalysisSubmission}.
 	 */
 	// @formatter:off
 	public static final Map<AnalysisState,Float> STATE_PERCENTAGE = ImmutableMap.<AnalysisState,Float>builder().
@@ -101,6 +105,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	private final ReferenceFileRepository referenceFileRepository;
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final SequencingObjectService sequencingObjectService;
+	private final GenomeAssemblyService genomeAssemblyService;
 	private final IridaWorkflowsService iridaWorkflowsService;
 	private JobErrorRepository jobErrorRepository;
 
@@ -115,7 +120,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * @param analysisTemplateRepository   repository for {@link AnalysisSubmissionTemplate}s
 	 * @param userRepository               A repository for accessing user information.
 	 * @param referenceFileRepository      the reference file repository
-	 * @param sequencingObjectService      the {@link SequencingObject} service.
+	 * @param sequencingObjectService      the {@link SequencingObjectService}.
+	 * @param genomeAssemblyService        the {@link GenomeAssemblyService}.
 	 * @param galaxyHistoriesService       The {@link GalaxyHistoriesService}.
 	 * @param pasRepository                The {@link ProjectAnalysisSubmissionJoinRepository}
 	 * @param jobErrorRepository           A repository for accessing {@link JobError}
@@ -126,9 +132,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			AnalysisSubmissionTemplateRepository analysisTemplateRepository, UserRepository userRepository,
 			final ReferenceFileRepository referenceFileRepository,
-			final SequencingObjectService sequencingObjectService, final GalaxyHistoriesService galaxyHistoriesService,
-			ProjectAnalysisSubmissionJoinRepository pasRepository, JobErrorRepository jobErrorRepository,
-			IridaWorkflowsService iridaWorkflowsService, Validator validator) {
+			final SequencingObjectService sequencingObjectService, final GenomeAssemblyService genomeAssemblyService,
+			final GalaxyHistoriesService galaxyHistoriesService, ProjectAnalysisSubmissionJoinRepository pasRepository,
+			JobErrorRepository jobErrorRepository, IridaWorkflowsService iridaWorkflowsService, Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
@@ -136,6 +142,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		this.referenceFileRepository = referenceFileRepository;
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.sequencingObjectService = sequencingObjectService;
+		this.genomeAssemblyService = genomeAssemblyService;
 		this.pasRepository = pasRepository;
 		this.jobErrorRepository = jobErrorRepository;
 		this.iridaWorkflowsService = iridaWorkflowsService;
@@ -153,8 +160,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public Page<AnalysisSubmission> listSubmissionsForProject(String search, String name, Set<AnalysisState> states,
 			Set<UUID> workflowIds, Project project, PageRequest pageRequest) {
 
-		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(search, name, states, null, workflowIds, project, null);
+		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification.filterAnalyses(search, name,
+				states, null, workflowIds, project, null);
 		return super.search(specification, pageRequest);
 	}
 
@@ -165,8 +172,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public Page<AnalysisSubmission> listAllSubmissions(String search, String name, Set<AnalysisState> states,
 			Set<UUID> workflowIds, PageRequest pageRequest) {
-		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(search, name, states, null, workflowIds, null, null);
+		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification.filterAnalyses(search, name,
+				states, null, workflowIds, null, null);
 		return super.search(specification, pageRequest);
 	}
 
@@ -177,8 +184,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Page<AnalysisSubmission> listSubmissionsForUser(String search, String name, Set<AnalysisState> states,
 			User user, Set<UUID> workflowIds, PageRequest pageRequest) {
-		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification
-				.filterAnalyses(search, name, states, user, workflowIds, null, false);
+		Specification<AnalysisSubmission> specification = AnalysisSubmissionSpecification.filterAnalyses(search, name,
+				states, user, workflowIds, null, false);
 		return super.search(specification, pageRequest);
 	}
 
@@ -360,8 +367,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public List<ProjectSampleAnalysisOutputInfo> getAllAnalysisOutputInfoSharedWithProject(Long projectId) {
 		final Set<UUID> singleSampleWorkflowIds = iridaWorkflowsService.getSingleSampleWorkflows();
 		logger.trace("N=" + singleSampleWorkflowIds.size() + ", Single sample workflows: " + singleSampleWorkflowIds);
-		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionRepository.getAllAnalysisOutputInfoSharedWithProject(
-				projectId, singleSampleWorkflowIds);
+		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionRepository
+				.getAllAnalysisOutputInfoSharedWithProject(projectId, singleSampleWorkflowIds);
 		logger.trace("Found " + infos.size() + " output files for project id=" + projectId);
 		return infos;
 	}
@@ -374,8 +381,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public List<ProjectSampleAnalysisOutputInfo> getAllAutomatedAnalysisOutputInfoForAProject(Long projectId) {
 		final Set<UUID> singleSampleWorkflowIds = iridaWorkflowsService.getSingleSampleWorkflows();
 		logger.trace("N=" + singleSampleWorkflowIds.size() + ", Single sample workflows: " + singleSampleWorkflowIds);
-		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionRepository.getAllAutomatedAnalysisOutputInfoForAProject(
-				projectId, singleSampleWorkflowIds);
+		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionRepository
+				.getAllAutomatedAnalysisOutputInfoForAProject(projectId, singleSampleWorkflowIds);
 		logger.trace("Found " + infos.size() + " output files for project id=" + projectId);
 		return infos;
 	}
@@ -387,9 +394,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission create(AnalysisSubmission analysisSubmission)
 			throws ConstraintViolationException, EntityExistsException {
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
-				.getAuthentication()
-				.getPrincipal();
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		User user = userRepository.loadUserByUsername(userDetails.getUsername());
 		analysisSubmission.setSubmitter(user);
 
@@ -425,7 +430,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@PostFilter("hasPermission(filterObject, 'canReadAnalysisSubmission')")
-	public List<AnalysisSubmission> getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(Collection<UUID> workflowIds) {
+	public List<AnalysisSubmission> getAnalysisSubmissionsAccessibleByCurrentUserByWorkflowIds(
+			Collection<UUID> workflowIds) {
 		return analysisSubmissionRepository.findByWorkflowIds(workflowIds);
 	}
 
@@ -494,12 +500,12 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		List<AnalysisSubmissionTemplate> analysisTemplatesForProject = getAnalysisTemplatesForProject(project);
 
 		Optional<AnalysisSubmissionTemplate> first = analysisTemplatesForProject.stream()
-				.filter(t -> t.getId()
-						.equals(id))
+				.filter(t -> t.getId().equals(id))
 				.findFirst();
 
-		if(!first.isPresent()){
-			throw new EntityNotFoundException("Could not get analysis template " + id + " for project " + project.getId());
+		if (!first.isPresent()) {
+			throw new EntityNotFoundException(
+					"Could not get analysis template " + id + " for project " + project.getId());
 		}
 
 		return first.get();
@@ -523,8 +529,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
-			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String name,
-			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples,
+			List<GenomeAssembly> assemblies, Map<String, String> params, IridaWorkflowNamedParameters namedParameters,
+			String name, String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples,
 			boolean emailPipelineResultCompleted, boolean emailPipelineResultError) {
 		final Collection<AnalysisSubmission> createdSubmissions = new HashSet<AnalysisSubmission>();
 
@@ -534,7 +540,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		if (description.acceptsSingleSequenceFiles()) {
 			final Map<Sample, SingleEndSequenceFile> samplesMap = sequencingObjectService
 					.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFiles));
-			for (final Map.Entry<Sample,SingleEndSequenceFile> entry : samplesMap.entrySet()) {
+			for (final Map.Entry<Sample, SingleEndSequenceFile> entry : samplesMap.entrySet()) {
 				Sample s = entry.getKey();
 				SingleEndSequenceFile file = entry.getValue();
 				// Build the analysis submission
@@ -578,7 +584,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			final Map<Sample, SequenceFilePair> samplesMap = sequencingObjectService
 					.getUniqueSamplesForSequencingObjects(Sets.newHashSet(sequenceFilePairs));
 
-			for (final Map.Entry<Sample,SequenceFilePair> entry : samplesMap.entrySet()) {
+			for (final Map.Entry<Sample, SequenceFilePair> entry : samplesMap.entrySet()) {
 				Sample s = entry.getKey();
 				SequenceFilePair filePair = entry.getValue();
 				// Build the analysis submission
@@ -615,6 +621,48 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			}
 		}
 
+		// genome assemblies
+		if (description.acceptsGenomeAssemblies()) {
+			final Map<Sample, GenomeAssembly> samplesMap = genomeAssemblyService
+					.getUniqueSamplesForGenomeAssemblies(Sets.newHashSet(assemblies));
+
+			for (final Map.Entry<Sample, GenomeAssembly> entry : samplesMap.entrySet()) {
+				Sample s = entry.getKey();
+				GenomeAssembly assembly = entry.getValue();
+				// Build the analysis submission
+				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
+				builder.name(name + "_" + s.getSampleName());
+				builder.inputAssemblies(ImmutableSet.of(assembly));
+				builder.updateSamples(writeResultsToSamples);
+				builder.priority(AnalysisSubmission.Priority.MEDIUM);
+				// Add if user should be emailed on pipeline completion/error
+				builder.emailPipelineResultCompleted(emailPipelineResultCompleted);
+				builder.emailPipelineResultError(emailPipelineResultError);
+				// Add reference file
+				if (ref != null && description.requiresReference()) {
+					// Note: This cannot be empty if through the UI if the
+					// pipeline required a reference file.
+					ReferenceFile referenceFile = referenceFileRepository.findById(ref).orElse(null);
+					builder.referenceFile(referenceFile);
+				}
+
+				if (description.acceptsParameters()) {
+					if (namedParameters != null) {
+						builder.withNamedParameters(namedParameters);
+					} else {
+						if (!params.isEmpty()) {
+							// Note: This cannot be empty if through the UI if
+							// the pipeline required params.
+							builder.inputParameters(params);
+						}
+					}
+				}
+
+				// Create the submission
+				createdSubmissions.add(create(builder.build()));
+			}
+		}
+
 		// Share with the required projects
 		for (AnalysisSubmission submission : createdSubmissions) {
 			for (Project project : projectsToShare) {
@@ -632,8 +680,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
-			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String name,
-			String newAnalysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples,
+			List<GenomeAssembly> assemblies, Map<String, String> params, IridaWorkflowNamedParameters namedParameters,
+			String name, String newAnalysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples,
 			boolean emailPipelineResultCompleted, boolean emailPipelineResultError) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 		builder.name(name);
@@ -656,9 +704,15 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		// Add any paired end sequencing files.
 		if (description.acceptsPairedSequenceFiles()) {
-			if (!sequenceFilePairs.isEmpty())
-			{
+			if (!sequenceFilePairs.isEmpty()) {
 				builder.inputFiles(Sets.newHashSet(sequenceFilePairs));
+			}
+		}
+
+		// Add any genome assemblies.
+		if (description.acceptsGenomeAssemblies()) {
+			if (!assemblies.isEmpty()) {
+				builder.inputAssemblies(Sets.newHashSet(assemblies));
 			}
 		}
 
@@ -697,8 +751,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#id, 'canReadAnalysisSubmission')")
-	public float getPercentCompleteForAnalysisSubmission(Long id) throws EntityNotFoundException,
-			ExecutionManagerException, NoPercentageCompleteException {
+	public float getPercentCompleteForAnalysisSubmission(Long id)
+			throws EntityNotFoundException, ExecutionManagerException, NoPercentageCompleteException {
 		AnalysisSubmission analysisSubmission = read(id);
 		AnalysisState analysisState = analysisSubmission.getAnalysisState();
 
@@ -709,28 +763,20 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		case SUBMITTING:
 			return STATE_PERCENTAGE.get(analysisState);
 
-			/**
-			 * If the analysis is in a state of {@link AnalysisState.RUNNING}
-			 * then we are able to ask Galaxy for the proportion of jobs that
-			 * are complete. We can scale this value between RUNNING_PERCENT
-			 * (10%) and FINISHED_RUNNING_PERCENT (90%) so that after all jobs
-			 * are complete we are only at 90%. The remaining 10% involves
-			 * transferring files back to Galaxy.
-			 *
-			 * For example, if there are 10 out of 20 jobs finished on Galaxy,
-			 * then the proportion of jobs complete is 10/20 = 0.5. So, the
-			 * percent complete for the overall analysis is: percentComplete =
-			 * 10 + (90 - 10) * 0.5 = 50%.
-			 *
-			 * If there are 20 out of 20 jobs finished in Galaxy, then the
-			 * percent complete is: percentComplete = 10 + (90 - 10) * 1.0 =
-			 * 90%.
-			 */
+		/**
+		 * If the analysis is in a state of {@link AnalysisState.RUNNING} then we are able to ask Galaxy for the
+		 * proportion of jobs that are complete. We can scale this value between RUNNING_PERCENT (10%) and
+		 * FINISHED_RUNNING_PERCENT (90%) so that after all jobs are complete we are only at 90%. The remaining 10%
+		 * involves transferring files back to Galaxy. For example, if there are 10 out of 20 jobs finished on Galaxy,
+		 * then the proportion of jobs complete is 10/20 = 0.5. So, the percent complete for the overall analysis is:
+		 * percentComplete = 10 + (90 - 10) * 0.5 = 50%. If there are 20 out of 20 jobs finished in Galaxy, then the
+		 * percent complete is: percentComplete = 10 + (90 - 10) * 1.0 = 90%.
+		 */
 		case RUNNING:
 			String workflowHistoryId = analysisSubmission.getRemoteAnalysisId();
 			GalaxyWorkflowStatus workflowStatus = galaxyHistoriesService.getStatusForHistory(workflowHistoryId);
-			return RUNNING_PERCENT + (FINISHED_RUNNING_PERCENT - RUNNING_PERCENT)
-					* workflowStatus.getProportionComplete();
+			return RUNNING_PERCENT
+					+ (FINISHED_RUNNING_PERCENT - RUNNING_PERCENT) * workflowStatus.getProportionComplete();
 
 		case FINISHED_RUNNING:
 		case COMPLETING:
@@ -799,7 +845,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	public Collection<AnalysisSubmission> getAnalysisSubmissionsSharedToProject(Project project) {
-		return pasRepository.getSubmissionsForProject(project).stream().map(ProjectAnalysisSubmissionJoin::getObject)
+		return pasRepository.getSubmissionsForProject(project)
+				.stream()
+				.map(ProjectAnalysisSubmissionJoin::getObject)
 				.collect(Collectors.toSet());
 	}
 
@@ -828,7 +876,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<GenericStatModel> getAnalysesRanGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod) {
-		return analysisSubmissionRepository.countAnalysesRanGrouped(createdDate, statisticTimePeriod.getGroupByFormat());
+		return analysisSubmissionRepository.countAnalysesRanGrouped(createdDate,
+				statisticTimePeriod.getGroupByFormat());
 	}
 
 	/**

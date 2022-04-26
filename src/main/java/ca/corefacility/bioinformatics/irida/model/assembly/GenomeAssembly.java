@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.model.irida.IridaSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
@@ -51,6 +52,9 @@ public abstract class GenomeAssembly extends IridaRepresentationModel
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "genomeAssembly")
 	private List<SampleGenomeAssemblyJoin> sampleGenomeAssemblies;
 
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, mappedBy = "inputAssemblies")
+	private List<AnalysisSubmission> analysisSubmissions;
+
 	protected GenomeAssembly() {
 		this.id = null;
 		this.createdDate = null;
@@ -64,8 +68,7 @@ public abstract class GenomeAssembly extends IridaRepresentationModel
 
 	@Override
 	public String getLabel() {
-		return getFile().getFileName()
-				.toString();
+		return getFile().getFileName().toString();
 	}
 
 	@Override
@@ -128,8 +131,7 @@ public abstract class GenomeAssembly extends IridaRepresentationModel
 
 	@Override
 	public String getFileName() {
-		return getFile().getFileName()
-				.toString();
+		return getFile().getFileName().toString();
 	}
 
 	@Override

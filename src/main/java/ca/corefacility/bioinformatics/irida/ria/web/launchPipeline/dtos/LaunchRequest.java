@@ -13,7 +13,7 @@ public class LaunchRequest {
 	private String name;
 
 	/**
-	 * General text to provide more context for the pipeline.  No restrictions.
+	 * General text to provide more context for the pipeline. No restrictions.
 	 */
 	private String description;
 
@@ -21,6 +21,11 @@ public class LaunchRequest {
 	 * List of file identifiers to run on the pipeline
 	 */
 	private List<Long> fileIds;
+
+	/**
+	 * List of genome assembly identifiers to run on the pipeline
+	 */
+	private List<Long> assemblyIds;
 
 	/**
 	 * When to send an email on pipeline error or completion
@@ -33,21 +38,18 @@ public class LaunchRequest {
 	private List<Long> projects;
 
 	/**
-	 * Update the samples run on the pipeline with the pipeline results
-	 * Ignore if not required.
+	 * Update the samples run on the pipeline with the pipeline results Ignore if not required.
 	 */
 	private boolean updateSamples;
 
 	/**
-	 * Identifier for a reference file to use on the pipeline.
-	 * Ignore if not required
+	 * Identifier for a reference file to use on the pipeline. Ignore if not required
 	 */
 	private Long reference;
 
 	/**
-	 * List of parameters for the pipeline.
-	 * Should be: key: name, value: value
-	 * The value needs to be an object because it can be boolean, string, number, etc...
+	 * List of parameters for the pipeline. Should be: key: name, value: value The value needs to be an object because
+	 * it can be boolean, string, number, etc...
 	 */
 	private Map<String, String> parameters;
 
@@ -86,6 +88,14 @@ public class LaunchRequest {
 
 	public void setFileIds(List<Long> fileIds) {
 		this.fileIds = fileIds;
+	}
+
+	public List<Long> getAssemblyIds() {
+		return assemblyIds;
+	}
+
+	public void setAssemblyIds(List<Long> assemblyIds) {
+		this.assemblyIds = assemblyIds;
 	}
 
 	public List<Long> getProjects() {
@@ -134,6 +144,7 @@ public class LaunchRequest {
 
 	/**
 	 * Check to see if an email should be sent on pipeline errors.
+	 * 
 	 * @return true if either email on error or completion selected
 	 */
 	public boolean sendEmailOnError() {
@@ -142,6 +153,7 @@ public class LaunchRequest {
 
 	/**
 	 * Check to see if an email should be sent on pipeline completion
+	 * 
 	 * @return true if an email should be sent on pipeline completion
 	 */
 	public boolean sendEmailOnCompletion() {

@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.Job
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionServiceImpl;
@@ -52,10 +53,13 @@ public class AnalysisSubmissionServiceImplTest {
 	private ReferenceFileRepository referenceFileRepository;
 	@Mock
 	private SequencingObjectService sequencingObjectService;
-	
+
+	@Mock
+	private GenomeAssemblyService genomeAssemblyService;
+
 	@Mock
 	private ProjectAnalysisSubmissionJoinRepository pasRepository;
-	
+
 	@Mock
 	private Validator validator;
 	@Mock
@@ -86,7 +90,8 @@ public class AnalysisSubmissionServiceImplTest {
 
 		analysisSubmissionServiceImpl = new AnalysisSubmissionServiceImpl(analysisSubmissionRepository,
 				analysisTemplateRepository, userRepository, referenceFileRepository, sequencingObjectService,
-				galaxyHistoriesService, pasRepository, jobErrorRepository, iridaWorkflowsService, validator);
+				genomeAssemblyService, galaxyHistoriesService, pasRepository, jobErrorRepository, iridaWorkflowsService,
+				validator);
 		analysisSubmissionServiceImpl.setAnalysisExecutionService(analysisExecutionService);
 
 		when(analysisSubmissionRepository.findById(ID)).thenReturn(Optional.of(analysisSubmission));
@@ -153,15 +158,14 @@ public class AnalysisSubmissionServiceImplTest {
 	}
 
 	/**
-	 * Tests getting the percent complete in the running state when the workflow
-	 * has just started in Galaxy.
+	 * Tests getting the percent complete in the running state when the workflow has just started in Galaxy.
 	 * 
 	 * @throws EntityNotFoundException
 	 * @throws ExecutionManagerException
 	 */
 	@Test
-	public void testGetPercentageCompleteStateRunningJustStarted() throws EntityNotFoundException,
-			ExecutionManagerException {
+	public void testGetPercentageCompleteStateRunningJustStarted()
+			throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
 		when(galaxyHistoriesService.getStatusForHistory(HISTORY_ID)).thenReturn(galaxyWorkflowStatus);
 		when(galaxyWorkflowStatus.getProportionComplete()).thenReturn(0.0f);
@@ -172,15 +176,14 @@ public class AnalysisSubmissionServiceImplTest {
 	}
 
 	/**
-	 * Tests getting the percent complete in the running state when the workflow
-	 * is halfway complete in Galaxy.
+	 * Tests getting the percent complete in the running state when the workflow is halfway complete in Galaxy.
 	 * 
 	 * @throws EntityNotFoundException
 	 * @throws ExecutionManagerException
 	 */
 	@Test
-	public void testGetPercentageCompleteStateRunningHalfway() throws EntityNotFoundException,
-			ExecutionManagerException {
+	public void testGetPercentageCompleteStateRunningHalfway()
+			throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
 		when(galaxyHistoriesService.getStatusForHistory(HISTORY_ID)).thenReturn(galaxyWorkflowStatus);
 		when(galaxyWorkflowStatus.getProportionComplete()).thenReturn(0.5f);
@@ -194,21 +197,19 @@ public class AnalysisSubmissionServiceImplTest {
 	}
 
 	/**
-	 * Tests getting the percent complete in the running state when the workflow
-	 * is 100% complete in Galaxy.
+	 * Tests getting the percent complete in the running state when the workflow is 100% complete in Galaxy.
 	 * 
 	 * @throws EntityNotFoundException
 	 * @throws ExecutionManagerException
 	 */
 	@Test
-	public void testGetPercentageCompleteStateRunningFullyComplete() throws EntityNotFoundException,
-			ExecutionManagerException {
+	public void testGetPercentageCompleteStateRunningFullyComplete()
+			throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.RUNNING);
 		when(galaxyHistoriesService.getStatusForHistory(HISTORY_ID)).thenReturn(galaxyWorkflowStatus);
 		when(galaxyWorkflowStatus.getProportionComplete()).thenReturn(1.0f);
 
-		assertEquals(90.0f,
-				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
+		assertEquals(90.0f, analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
 				"invalid percent complete");
 	}
 
@@ -219,12 +220,11 @@ public class AnalysisSubmissionServiceImplTest {
 	 * @throws ExecutionManagerException
 	 */
 	@Test
-	public void testGetPercentageCompleteStateFinishedRunning() throws EntityNotFoundException,
-			ExecutionManagerException {
+	public void testGetPercentageCompleteStateFinishedRunning()
+			throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.FINISHED_RUNNING);
 
-		assertEquals(90.0f,
-				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
+		assertEquals(90.0f, analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
 				"invalid percent complete");
 	}
 
@@ -238,8 +238,7 @@ public class AnalysisSubmissionServiceImplTest {
 	public void testGetPercentageCompleteStateCompleting() throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.COMPLETING);
 
-		assertEquals(92.0f,
-				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
+		assertEquals(92.0f, analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
 				"invalid percent complete");
 	}
 
@@ -253,8 +252,7 @@ public class AnalysisSubmissionServiceImplTest {
 	public void testGetPercentageCompleteStateCompleted() throws EntityNotFoundException, ExecutionManagerException {
 		when(analysisSubmission.getAnalysisState()).thenReturn(AnalysisState.COMPLETED);
 
-		assertEquals(100.0f,
-				analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
+		assertEquals(100.0f, analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID), DELTA,
 				"invalid percent complete");
 	}
 
@@ -271,10 +269,9 @@ public class AnalysisSubmissionServiceImplTest {
 			analysisSubmissionServiceImpl.getPercentCompleteForAnalysisSubmission(ID);
 		});
 	}
-	
+
 	/**
-	 * Tests that deleting a submission actually also tries to clean up the
-	 * submission in galaxy.
+	 * Tests that deleting a submission actually also tries to clean up the submission in galaxy.
 	 * 
 	 * @throws ExecutionManagerException
 	 */
@@ -288,8 +285,7 @@ public class AnalysisSubmissionServiceImplTest {
 	}
 
 	/**
-	 * Tests that deleting a submission deletes the submission even if an
-	 * execution manager exception is thrown.
+	 * Tests that deleting a submission deletes the submission even if an execution manager exception is thrown.
 	 * 
 	 * @throws ExecutionManagerException
 	 */

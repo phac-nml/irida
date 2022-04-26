@@ -12,10 +12,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-import com.github.jmchilton.blend4j.galaxy.JobsClient;
-import com.github.jmchilton.blend4j.galaxy.ToolsClient;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.config.services.IridaPluginConfig;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.results.impl.AnalysisSubmissionSampleProcessorImpl;
@@ -28,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.plugins.IridaPluginException;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionServiceAspect;
@@ -42,21 +39,23 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
+import com.github.jmchilton.blend4j.galaxy.JobsClient;
+import com.github.jmchilton.blend4j.galaxy.ToolsClient;
+import com.google.common.collect.Lists;
+
 /**
  * Configuration for an AnalysisExecutionService class.
- * 
- *
  */
 @Configuration
 @EnableAsync(order = AnalysisExecutionServiceConfig.ASYNC_ORDER)
 @Profile({ "dev", "prod", "it", "analysis", "ncbi", "processing", "sync", "web" })
 public class AnalysisExecutionServiceConfig {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionServiceConfig.class);
 
 	/**
-	 * The order for asynchronous tasks. In particular, defines the order for
-	 * methods in {@link AnalysisExecutionServiceGalaxyAsync}.
+	 * The order for asynchronous tasks. In particular, defines the order for methods in
+	 * {@link AnalysisExecutionServiceGalaxyAsync}.
 	 */
 	public static final int ASYNC_ORDER = AnalysisExecutionServiceAspect.ANALYSIS_EXECUTION_ASPECT_ORDER - 1;
 
@@ -68,28 +67,31 @@ public class AnalysisExecutionServiceConfig {
 
 	@Autowired
 	private IridaWorkflowsService iridaWorkflowsService;
-	
+
 	@Autowired
 	private AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy;
-	
+
 	@Autowired
 	private GalaxyHistoriesService galaxyHistoriesService;
-	
+
 	@Autowired
 	private GalaxyLibrariesService galaxyLibrariesService;
-	
+
 	@Autowired
 	private GalaxyWorkflowService galaxyWorkflowService;
-	
+
 	@Autowired
 	private SequencingObjectService sequencingObjectService;
-	
+
+	@Autowired
+	private GenomeAssemblyService genomeAssemblyService;
+
 	@Autowired
 	private ToolsClient toolsClient;
-	
+
 	@Autowired
 	private JobsClient jobsClient;
-	
+
 	@Autowired
 	private IridaPluginConfig.IridaPluginList pipelinePlugins;
 
@@ -131,7 +133,7 @@ public class AnalysisExecutionServiceConfig {
 
 		return new AnalysisSubmissionSampleProcessorImpl(sampleRepository, analysisSampleUpdaters);
 	}
-	
+
 	@Lazy
 	@Bean
 	public AnalysisExecutionService analysisExecutionService() {
@@ -143,23 +145,23 @@ public class AnalysisExecutionServiceConfig {
 	@Bean
 	public AnalysisExecutionServiceGalaxyAsync analysisExecutionServiceGalaxyAsync() {
 		return new AnalysisExecutionServiceGalaxyAsync(analysisSubmissionService, analysisService,
-				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService, analysisSubmissionSampleProcessor());
+				galaxyWorkflowService, analysisWorkspaceService(), iridaWorkflowsService,
+				analysisSubmissionSampleProcessor());
 	}
-	
+
 	@Lazy
 	@Bean
 	public AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionServiceGalaxyCleanupAsync() {
-		return new AnalysisExecutionServiceGalaxyCleanupAsync(analysisSubmissionService,
-				galaxyWorkflowService, galaxyHistoriesService, galaxyLibrariesService);
+		return new AnalysisExecutionServiceGalaxyCleanupAsync(analysisSubmissionService, galaxyWorkflowService,
+				galaxyHistoriesService, galaxyLibrariesService);
 	}
 
 	@Lazy
 	@Bean
 	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
-		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService,
-				galaxyLibrariesService, iridaWorkflowsService, analysisCollectionServiceGalaxy(),
-				analysisProvenanceService(), analysisParameterServiceGalaxy,
-				sequencingObjectService);
+		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService, galaxyLibrariesService,
+				iridaWorkflowsService, analysisCollectionServiceGalaxy(), analysisProvenanceService(),
+				analysisParameterServiceGalaxy, sequencingObjectService, genomeAssemblyService);
 	}
 
 	@Lazy
@@ -167,7 +169,7 @@ public class AnalysisExecutionServiceConfig {
 	public AnalysisProvenanceServiceGalaxy analysisProvenanceService() {
 		return new AnalysisProvenanceServiceGalaxy(galaxyHistoriesService, toolsClient, jobsClient);
 	}
-	
+
 	@Lazy
 	@Bean
 	public AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy() {
