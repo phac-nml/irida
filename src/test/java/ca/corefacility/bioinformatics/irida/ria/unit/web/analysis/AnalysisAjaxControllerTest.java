@@ -13,22 +13,19 @@ import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConf
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
-
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisAjaxController;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -39,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 import com.google.common.collect.Lists;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class AnalysisAjaxControllerTest {
@@ -67,8 +63,7 @@ public class AnalysisAjaxControllerTest {
 	private EmailController emailControllerMock;
 
 	/**
-	 * Analysis Output File key names from
-	 * {@link TestDataFactory#constructAnalysis()}
+	 * Analysis Output File key names from {@link TestDataFactory#constructAnalysis()}
 	 */
 	private final List<String> outputNames = Lists.newArrayList("tree", "matrix", "table", "contigs-with-repeats",
 			"refseq-masher-matches");
@@ -166,7 +161,8 @@ public class AnalysisAjaxControllerTest {
 		final List<AnalysisOutputFileInfo> infos = analysisAjaxController.getOutputFilesInfo(submissionId);
 		assertEquals(5, infos.size(), "Expecting 5 analysis output file info items");
 		final Optional<AnalysisOutputFileInfo> optInfo = infos.stream()
-				.filter(x -> Objects.equals(x.getOutputName(), "refseq-masher-matches")).findFirst();
+				.filter(x -> Objects.equals(x.getOutputName(), "refseq-masher-matches"))
+				.findFirst();
 		assertTrue(optInfo.isPresent(), "Should be a refseq-masher-matches.tsv output file");
 		final AnalysisOutputFileInfo info = optInfo.get();
 		final String firstLine = "sample\ttop_taxonomy_name\tdistance\tpvalue\tmatching\tfull_taxonomy\ttaxonomic_subspecies\ttaxonomic_species\ttaxonomic_genus\ttaxonomic_family\ttaxonomic_order\ttaxonomic_class\ttaxonomic_phylum\ttaxonomic_superkingdom\tsubspecies\tserovar\tplasmid\tbioproject\tbiosample\ttaxid\tassembly_accession\tmatch_id";
@@ -202,7 +198,8 @@ public class AnalysisAjaxControllerTest {
 		final List<AnalysisOutputFileInfo> infos = analysisAjaxController.getOutputFilesInfo(submissionId);
 		assertEquals(5, infos.size(), "Expecting 5 analysis output file info items");
 		final Optional<AnalysisOutputFileInfo> optInfo = infos.stream()
-				.filter(x -> Objects.equals(x.getOutputName(), "refseq-masher-matches")).findFirst();
+				.filter(x -> Objects.equals(x.getOutputName(), "refseq-masher-matches"))
+				.findFirst();
 		assertTrue(optInfo.isPresent(), "Should be a refseq-masher-matches.tsv output file");
 		final AnalysisOutputFileInfo info = optInfo.get();
 		final String firstLine = "sample\ttop_taxonomy_name\tdistance\tpvalue\tmatching\tfull_taxonomy\ttaxonomic_subspecies\ttaxonomic_species\ttaxonomic_genus\ttaxonomic_family\ttaxonomic_order\ttaxonomic_class\ttaxonomic_phylum\ttaxonomic_superkingdom\tsubspecies\tserovar\tplasmid\tbioproject\tbiosample\ttaxid\tassembly_accession\tmatch_id";
@@ -280,7 +277,7 @@ public class AnalysisAjaxControllerTest {
 
 	@Test
 	public void testGetAnalysisDetails() {
-		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", true);
+		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "assemblies", "reference", true);
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
 				"V1", BuiltInAnalysisTypes.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),

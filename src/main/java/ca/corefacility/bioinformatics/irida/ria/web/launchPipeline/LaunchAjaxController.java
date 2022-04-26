@@ -54,14 +54,13 @@ public class LaunchAjaxController {
         try {
             return ResponseEntity.ok(pipelineService.getPipelineDetails(id, locale));
         } catch (IridaWorkflowException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new AjaxErrorResponse("Cannot find this pipeline"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AjaxErrorResponse("Cannot find this pipeline"));
         }
     }
 
     /**
-     * Get a list of the samples that are in the cart and get their associated sequence files that
-     * can be used on the current pipeline
+     * Get a list of the samples that are in the cart and get their associated sequence files that can be used on the
+     * current pipeline
      *
      * @param paired  Whether paired end files can be run on the current pipeline
      * @param singles Whether single end files can be run on the current pipeline
@@ -70,25 +69,26 @@ public class LaunchAjaxController {
     @GetMapping("/samples")
     public ResponseEntity<List<LaunchSample>> getPipelineSamples(
             @RequestParam(required = false, defaultValue = "false") boolean paired,
-            @RequestParam(required = false, defaultValue = "false") boolean singles) {
-        return ResponseEntity.ok(sampleService.getPipelineSamples(paired, singles));
+            @RequestParam(required = false, defaultValue = "false") boolean singles,
+            @RequestParam(required = false, defaultValue = "false") boolean assemblies) {
+        return ResponseEntity.ok(sampleService.getPipelineSamples(paired, singles, assemblies));
     }
 
     /**
      * Launch a new IRIDA Workflow Pipeline
      *
-     * @param id The UUID for a workflow
+     * @param id      The UUID for a workflow
      * @param request required parameters to launch the pipeline
-     * @param locale the Locale of the currently logged in user.
+     * @param locale  the Locale of the currently logged in user.
      * @return A response to let the UI know the pipeline was launched successfully
      */
     @PostMapping("/{id}")
-    public ResponseEntity<AjaxResponse> launchPipeline(@PathVariable UUID id, @RequestBody LaunchRequest request, Locale locale) {
+    public ResponseEntity<AjaxResponse> launchPipeline(@PathVariable UUID id, @RequestBody LaunchRequest request,
+            Locale locale) {
         try {
             return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(startService.start(id, request, locale)));
         } catch (IridaWorkflowNotFoundException | ReferenceFileRequiredException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new AjaxErrorResponse(e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AjaxErrorResponse(e.getMessage()));
 
         }
     }
@@ -108,8 +108,7 @@ public class LaunchAjaxController {
             return ResponseEntity.ok(new CreateNamedParameterSetAjaxResponse(
                     pipelineService.saveNewPipelineParameters(id, parameters, locale)));
         } catch (IridaWorkflowNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new AjaxErrorResponse("Pipeline cannot be found"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AjaxErrorResponse("Pipeline cannot be found"));
         }
     }
 

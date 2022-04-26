@@ -67,7 +67,7 @@ public class AnalysisControllerTest {
 		Long submissionId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 
-		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", true);
+		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "assemblies", "reference", true);
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
 				"V1", BuiltInAnalysisTypes.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),
@@ -77,18 +77,18 @@ public class AnalysisControllerTest {
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
 		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
-		when(analysisTypesService.getViewerForAnalysisType(BuiltInAnalysisTypes.PHYLOGENOMICS)).thenReturn(
-				Optional.of("tree"));
+		when(analysisTypesService.getViewerForAnalysisType(BuiltInAnalysisTypes.PHYLOGENOMICS))
+				.thenReturn(Optional.of("tree"));
 
 		String analysisPage = analysisController.getDetailsPage(submissionId, model);
 		assertEquals(AnalysisController.ANALYSIS_PAGE, analysisPage, "should be analysis page");
 
-		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, model.get("analysisType"), 
+		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, model.get("analysisType"),
 				"Phylogenetic Tree tab should be available");
 
 		assertEquals(submission.getName(), model.get("analysisName"), "submission name should be in model");
 
-		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, model.get("analysisType"), 
+		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, model.get("analysisType"),
 				"analysisType should be PHYLOGENOMICS");
 	}
 
@@ -97,7 +97,7 @@ public class AnalysisControllerTest {
 		Long submissionId = 1L;
 		ExtendedModelMap model = new ExtendedModelMap();
 
-		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "reference", true);
+		final IridaWorkflowInput input = new IridaWorkflowInput("single", "paired", "assemblies", "reference", true);
 		AnalysisSubmission submission = TestDataFactory.constructAnalysisSubmission();
 		IridaWorkflowDescription description = new IridaWorkflowDescription(submission.getWorkflowId(), "My Workflow",
 				"V1", BuiltInAnalysisTypes.PHYLOGENOMICS, input, Lists.newArrayList(), Lists.newArrayList(),
@@ -107,14 +107,13 @@ public class AnalysisControllerTest {
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
 		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(iridaWorkflow);
-		when(analysisTypesService.getViewerForAnalysisType(BuiltInAnalysisTypes.PHYLOGENOMICS)).thenReturn(
-				Optional.of("tree"));
+		when(analysisTypesService.getViewerForAnalysisType(BuiltInAnalysisTypes.PHYLOGENOMICS))
+				.thenReturn(Optional.of("tree"));
 
 		String analysisPage = analysisController.getDetailsPage(submissionId, model);
 		assertEquals(AnalysisController.ANALYSIS_PAGE, analysisPage, "should be analysis page");
 
-		assertFalse(submission.getAnalysisState() == AnalysisState.COMPLETED,
-				"Analysis should not be completed");
+		assertFalse(submission.getAnalysisState() == AnalysisState.COMPLETED, "Analysis should not be completed");
 
 		assertEquals(submission.getName(), model.get("analysisName"), "submission name should be in model");
 	}
@@ -129,8 +128,8 @@ public class AnalysisControllerTest {
 		submission.setAnalysisState(AnalysisState.COMPLETED);
 
 		when(analysisSubmissionServiceMock.read(submissionId)).thenReturn(submission);
-		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission)).thenReturn(
-				createUnknownWorkflow(workflowId));
+		when(iridaWorkflowsServiceMock.getIridaWorkflowOrUnknown(submission))
+				.thenReturn(createUnknownWorkflow(workflowId));
 		when(analysisTypesService.getViewerForAnalysisType(BuiltInAnalysisTypes.UNKNOWN)).thenReturn(Optional.empty());
 
 		String analysisPage = analysisController.getDetailsPage(submissionId, model);

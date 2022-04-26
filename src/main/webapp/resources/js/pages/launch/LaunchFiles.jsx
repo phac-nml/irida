@@ -7,7 +7,11 @@ import { useLaunch } from "./launch-context";
 import { removeSample } from "../../apis/cart/cart";
 import { SectionHeading } from "../../components/ant.design/SectionHeading";
 import { SampleFilesListItem } from "./files/SampleFilesListItem";
-import { setSelectedSampleFiles } from "./launch-dispatch";
+import { SampleAssembliesListItem } from "./assemblies/SampleAssembliesListItem";
+import {
+  setSelectedSampleAssemblies,
+  setSelectedSampleFiles,
+} from "./launch-dispatch";
 import { grey3 } from "../../styles/colors";
 import { BORDERED_LIGHT } from "../../styles/borders";
 
@@ -25,7 +29,11 @@ export function LaunchFiles() {
   const [selected, setSelected] = React.useState();
   const [height, setHeight] = React.useState(DEFAULT_HEIGHT);
   const [
-    { acceptsPairedSequenceFiles: paired, acceptsSingleSequenceFiles: singles },
+    {
+      acceptsPairedSequenceFiles: paired,
+      acceptsSingleSequenceFiles: singles,
+      acceptsGenomeAssemblies: assemblies,
+    },
     dispatch,
   ] = useLaunch();
 
@@ -40,8 +48,10 @@ export function LaunchFiles() {
    * @returns {number}
    */
   const getRowHeight = (index) => {
-    if (samples[index].files.length) {
+    if (!assemblies && samples[index].files.length) {
       return samples[index].files.length * 40 + 50;
+    } else if (assemblies && samples[index].assemblyFiles.length) {
+      return samples[index].assemblyFiles.length * 40 + 50;
     }
     return 100;
   };
@@ -54,13 +64,17 @@ export function LaunchFiles() {
     fetchPipelineSamples({
       paired,
       singles,
+      assemblies,
     })
       .then((data) => {
         const firstSelected = [];
         const firstSamples = [];
         data.forEach((sample) => {
-          if (sample.files.length) {
+          if (!assemblies && sample.files.length) {
             sample.selected = sample.files[0].identifier;
+            firstSelected.push(sample.selected);
+          } else if (assemblies && sample.assemblyFiles.length) {
+            sample.selected = sample.assemblyFiles[0].identifier;
             firstSelected.push(sample.selected);
           }
           firstSamples.push(sample);
@@ -70,7 +84,7 @@ export function LaunchFiles() {
         setSelected(firstSelected);
       })
       .catch((message) => notification.error({ message }));
-  }, [paired, singles]);
+  }, [paired, singles, assemblies]);
 
   /*
   Called when a user selects a different set of files to run on the sample.
@@ -78,8 +92,12 @@ export function LaunchFiles() {
   set when the pipeline is launched.
    */
   React.useEffect(() => {
-    setSelectedSampleFiles(dispatch, selected);
-  }, [dispatch, selected]);
+    if (assemblies) {
+      setSelectedSampleAssemblies(dispatch, selected);
+    } else {
+      setSelectedSampleFiles(dispatch, selected);
+    }
+  }, [dispatch, assemblies, selected]);
 
   /*
   Calculate the div size if the number of samples changes
@@ -88,7 +106,7 @@ export function LaunchFiles() {
     if (samples) {
       let newHeight = 0;
       for (let i = 0; i < samples.length; i++) {
-        newHeight += getRowHeight(i);
+        newHeight += getRowHeight(i, assemblies);
         if (newHeight > DEFAULT_HEIGHT) {
           newHeight = DEFAULT_HEIGHT;
           break;
@@ -96,7 +114,7 @@ export function LaunchFiles() {
       }
       setHeight(newHeight + 2);
     }
-  }, [samples]);
+  }, [samples, assemblies]);
 
   /*
   Called independently for each sample when the selected file set is changed.
@@ -138,14 +156,25 @@ export function LaunchFiles() {
    */
   const generateSample = ({ index, style }) => {
     const sample = samples[index];
-    return (
-      <SampleFilesListItem
-        style={style}
-        sample={sample}
-        removeSample={removeSampleFromCart}
-        updateSelectedFiles={updateSelectedFiles}
-      />
-    );
+    if (!assemblies) {
+      return (
+        <SampleFilesListItem
+          style={style}
+          sample={sample}
+          removeSample={removeSampleFromCart}
+          updateSelectedFiles={updateSelectedFiles}
+        />
+      );
+    } else {
+      return (
+        <SampleAssembliesListItem
+          style={style}
+          sample={sample}
+          removeSample={removeSampleFromCart}
+          updateSelectedFiles={updateSelectedFiles}
+        />
+      );
+    }
   };
 
   return (

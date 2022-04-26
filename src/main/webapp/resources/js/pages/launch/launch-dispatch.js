@@ -56,12 +56,17 @@ export async function launchNewPipeline(dispatch, formValues, state) {
     reference,
     ...parameters
   } = formValues;
-  const { files: fileIds, automatedId: automatedProjectId } = state;
+  const {
+    files: fileIds,
+    assemblies: assemblyIds,
+    automatedId: automatedProjectId,
+  } = state;
 
   const params = {
     name,
     description,
     fileIds,
+    assemblyIds,
     emailPipelineResult,
     projects,
     updateSamples,
@@ -94,6 +99,21 @@ export function setSelectedSampleFiles(dispatch, files) {
     type: TYPES.UPDATE_FILES,
     payload: {
       files,
+    },
+  });
+}
+
+/**
+ * Updated which samples assemblies are selected
+ *
+ * @param {function} dispatch - specify the launch context
+ * @param {array} assemblies - list of sample assemblies to run the pipeline
+ */
+export function setSelectedSampleAssemblies(dispatch, assemblies) {
+  dispatch({
+    type: TYPES.UPDATE_ASSEMBLIES,
+    payload: {
+      assemblies,
     },
   });
 }
