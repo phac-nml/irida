@@ -15,6 +15,10 @@ import {
   useEditUserDetailsMutation,
   useGetUserDetailsQuery
 } from "../../../apis/users/users";
+import {
+  useGetLocalesQuery,
+  useGetSystemRolesQuery
+} from "../../../apis/settings/settings";
 
 /**
  * React component to display the user details page.
@@ -24,6 +28,8 @@ import {
 export default function UserDetailsPage() {
   const {userId} = useParams();
   const {data: userDetails = {}} = useGetUserDetailsQuery(userId);
+  const {data: locales = []} = useGetLocalesQuery();
+  const {data: systemRoles = []} = useGetSystemRolesQuery();
   const [editUser] = useEditUserDetailsMutation();
   const [form] = Form.useForm();
 
@@ -116,7 +122,7 @@ export default function UserDetailsPage() {
           name="locale"
         >
           <Select>
-            {userDetails.locales?.map((locale, index) => (
+            {locales.map((locale, index) => (
               <Select.Option
                 key={`user-account-details-locale-${index}`}
                 value={locale.language}
@@ -132,7 +138,7 @@ export default function UserDetailsPage() {
           hidden={!userDetails.admin}
         >
           <Select>
-            {userDetails.allowedRoles?.map((role, index) => (
+            {systemRoles.map((role, index) => (
               <Select.Option
                 key={`user-account-details-role-${index}`}
                 value={role.code}

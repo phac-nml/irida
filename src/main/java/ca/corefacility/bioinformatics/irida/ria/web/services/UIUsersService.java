@@ -22,7 +22,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
@@ -33,7 +32,10 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpeci
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsModel;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserEditRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.RoleUtilities;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -41,7 +43,6 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 
 /**
  * Handles service call for the administration of the IRIDA users.
@@ -51,21 +52,15 @@ public class UIUsersService {
 	private final UserService userService;
 	private final ProjectService projectService;
 	private final EmailController emailController;
-	private final List<Locale> locales;
 	private final MessageSource messageSource;
 	private final PasswordEncoder passwordEncoder;
 
-	private final List<Role> adminAllowedRoles = Lists.newArrayList(Role.ROLE_ADMIN, Role.ROLE_MANAGER, Role.ROLE_USER,
-			Role.ROLE_TECHNICIAN, Role.ROLE_SEQUENCER);
-
 	@Autowired
 	public UIUsersService(UserService userService, ProjectService projectService, EmailController emailController,
-			IridaApiServicesConfig.IridaLocaleList locales, MessageSource messageSource,
-			PasswordEncoder passwordEncoder) {
+			MessageSource messageSource, PasswordEncoder passwordEncoder) {
 		this.userService = userService;
 		this.projectService = projectService;
 		this.emailController = emailController;
-		this.locales = locales.getLocales();
 		this.messageSource = messageSource;
 		this.passwordEncoder = passwordEncoder;
 	}
@@ -139,22 +134,10 @@ public class UIUsersService {
 		boolean canChangePassword = canChangePassword(principalUser, user);
 		boolean canCreatePasswordReset = PasswordResetController.canCreatePasswordReset(principalUser, user);
 
-		List<UserDetailsLocale> localeNames = new ArrayList<>();
-		for (Locale aLocale : locales) {
-			localeNames.add(new UserDetailsLocale(aLocale.getLanguage(), aLocale.getDisplayName()));
-		}
-
-		List<UserDetailsRole> roleNames = new ArrayList<>();
-		for (Role aRole : adminAllowedRoles) {
-			String roleMessageName = "systemrole." + aRole.getName();
-			String roleName = messageSource.getMessage(roleMessageName, null, locale);
-			roleNames.add(new UserDetailsRole(aRole.getName(), roleName));
-		}
-
-		String currentRoleName = messageSource.getMessage("systemrole." + user.getSystemRole().getName(), null, locale);
+		String currentRoleName = messageSource.getMessage("systemRole." + user.getSystemRole().getName(), null, locale);
 
 		return new UserDetailsResponse(userDetails, currentRoleName, mailConfigured, mailFailure, isAdmin,
-				canEditUserInfo, canEditUserStatus, canChangePassword, canCreatePasswordReset, localeNames, roleNames);
+				canEditUserInfo, canEditUserStatus, canChangePassword, canCreatePasswordReset);
 	}
 
 	/**

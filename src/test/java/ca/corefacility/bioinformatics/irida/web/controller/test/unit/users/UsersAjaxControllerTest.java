@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.users;
 
 import java.security.Principal;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUsersService;
 import ca.corefacility.bioinformatics.irida.ria.web.users.UsersAjaxController;
@@ -23,8 +21,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserEditRequest;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.Lists;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -50,8 +46,7 @@ public class UsersAjaxControllerTest {
 		messageSource = mock(MessageSource.class);
 		passwordEncoder = new BCryptPasswordEncoder();
 		request = mock(HttpServletRequest.class);
-		uiUsersService = new UIUsersService(userService, projectService, emailController,
-				new IridaApiServicesConfig.IridaLocaleList(Lists.newArrayList(Locale.ENGLISH)), messageSource,
+		uiUsersService = new UIUsersService(userService, projectService, emailController, messageSource,
 				passwordEncoder);
 		controller = new UsersAjaxController(uiUsersService);
 

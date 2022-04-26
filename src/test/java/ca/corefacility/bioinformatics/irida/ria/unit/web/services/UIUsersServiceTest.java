@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
 import java.security.Principal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,15 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUsersService;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsModel;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserEditRequest;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-
-import com.google.common.collect.Lists;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -33,17 +31,12 @@ public class UIUsersServiceTest {
 	private UserService userService;
 	private ProjectService projectService;
 	private EmailController emailController;
-	private IridaApiServicesConfig.IridaLocaleList locales;
 	private MessageSource messageSource;
 	private PasswordEncoder passwordEncoder;
 	private UIUsersService service;
 
 	private final User USER1 = new User(1L, "Elsa", "elsa@arendelle.ca", "Password1!", "Elsa", "Oldenburg", "1234");
 	private final User USER2 = new User(2L, "Anna", "anna@arendelle.ca", "Password2!", "Anna", "Oldenburg", "5678");
-	private final List<UserDetailsLocale> LOCALE_NAMES = List.of(new UserDetailsLocale("en", "English"));
-	private final List<UserDetailsRole> ROLE_NAMES = List.of(new UserDetailsRole("ROLE_ADMIN", "Admin"),
-			new UserDetailsRole("ROLE_MANAGER", "Manager"), new UserDetailsRole("ROLE_USER", "User"),
-			new UserDetailsRole("ROLE_TECHNICIAN", "Technician"), new UserDetailsRole("ROLE_SEQUENCER", "Sequencer"));
 
 	@BeforeEach
 	void setUp() {
@@ -53,9 +46,7 @@ public class UIUsersServiceTest {
 		emailController = mock(EmailController.class);
 		messageSource = mock(MessageSource.class);
 		passwordEncoder = new BCryptPasswordEncoder();
-		service = new UIUsersService(userService, projectService, emailController,
-				new IridaApiServicesConfig.IridaLocaleList(Lists.newArrayList(Locale.ENGLISH)), messageSource,
-				passwordEncoder);
+		service = new UIUsersService(userService, projectService, emailController, messageSource, passwordEncoder);
 
 		when(userService.read(anyLong())).thenReturn(USER2);
 		when(userService.getUserByUsername(anyString())).thenReturn(USER1);
@@ -80,7 +71,7 @@ public class UIUsersServiceTest {
 		Principal principal = () -> USER1.getFirstName();
 		UserDetailsModel userDetails = new UserDetailsModel(USER2);
 		UserDetailsResponse expectedResponse = new UserDetailsResponse(userDetails, "User", false, false, false, false,
-				true, false, false, LOCALE_NAMES, ROLE_NAMES);
+				true, false, false);
 		UserDetailsResponse response = service.getUser(USER1.getId(), false, principal);
 		assertEquals(response, expectedResponse, "Received the correct user details response");
 	}

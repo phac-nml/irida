@@ -1,15 +1,15 @@
-package ca.corefacility.bioinformatics.irida.ria.web.users.dto;
+package ca.corefacility.bioinformatics.irida.ria.web.settings.dto;
 
 import java.util.Objects;
 
 /**
- * Stores role info the User Details Page.
+ * Stores role info.
  */
-public class UserDetailsRole {
+public class Role {
 	public String code;
 	public String name;
 
-	public UserDetailsRole(String role, String name) {
+	public Role(String role, String name) {
 		this.code = role;
 		this.name = name;
 	}
@@ -36,7 +36,7 @@ public class UserDetailsRole {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-		UserDetailsRole that = (UserDetailsRole) o;
+		Role that = (Role) o;
 		return Objects.equals(code, that.code) && Objects.equals(name, that.name);
 	}
 

@@ -1,15 +1,15 @@
-package ca.corefacility.bioinformatics.irida.ria.web.users.dto;
+package ca.corefacility.bioinformatics.irida.ria.web.settings.dto;
 
 import java.util.Objects;
 
 /**
- * Stores locale info the User Details Page.
+ * Stores locale info.
  */
-public class UserDetailsLocale {
+public class Locale {
 	private String language;
 	private String name;
 
-	public UserDetailsLocale(String language, String name) {
+	public Locale(String language, String name) {
 		this.language = language;
 		this.name = name;
 	}
@@ -36,7 +36,7 @@ public class UserDetailsLocale {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-		UserDetailsLocale that = (UserDetailsLocale) o;
+		Locale that = (Locale) o;
 		return Objects.equals(language, that.language) && Objects.equals(name, that.name);
 	}
 

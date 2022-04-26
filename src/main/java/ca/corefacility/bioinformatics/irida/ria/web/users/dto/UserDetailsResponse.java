@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.users.dto;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -20,14 +19,11 @@ public class UserDetailsResponse extends AjaxResponse {
 	private boolean canEditUserStatus;
 	private boolean canChangePassword;
 	private boolean canCreatePasswordReset;
-	private List<UserDetailsLocale> locales;
-	private List<UserDetailsRole> allowedRoles;
 	private Map<String, String> errors;
 
 	public UserDetailsResponse(UserDetailsModel userDetails, String currentRole, boolean mailConfigured,
 			boolean mailFailure, boolean isAdmin, boolean canEditUserInfo, boolean canEditUserStatus,
-			boolean canChangePassword, boolean canCreatePasswordReset, List<UserDetailsLocale> locales,
-			List<UserDetailsRole> allowedRoles) {
+			boolean canChangePassword, boolean canCreatePasswordReset) {
 		this.userDetails = userDetails;
 		this.currentRole = currentRole;
 		this.mailConfigured = mailConfigured;
@@ -37,8 +33,6 @@ public class UserDetailsResponse extends AjaxResponse {
 		this.canEditUserStatus = canEditUserStatus;
 		this.canChangePassword = canChangePassword;
 		this.canCreatePasswordReset = canCreatePasswordReset;
-		this.locales = locales;
-		this.allowedRoles = allowedRoles;
 	}
 
 	public UserDetailsResponse(Map<String, String> errors) {
@@ -117,22 +111,6 @@ public class UserDetailsResponse extends AjaxResponse {
 		this.canCreatePasswordReset = canCreatePasswordReset;
 	}
 
-	public List<UserDetailsLocale> getLocales() {
-		return locales;
-	}
-
-	public void setLocales(List<UserDetailsLocale> locales) {
-		this.locales = locales;
-	}
-
-	public List<UserDetailsRole> getAllowedRoles() {
-		return allowedRoles;
-	}
-
-	public void setAllowedRoles(List<UserDetailsRole> allowedRoles) {
-		this.allowedRoles = allowedRoles;
-	}
-
 	public Map<String, String> getErrors() {
 		return errors;
 	}
@@ -161,13 +139,12 @@ public class UserDetailsResponse extends AjaxResponse {
 				&& canEditUserInfo == that.canEditUserInfo && canEditUserStatus == that.canEditUserStatus
 				&& canChangePassword == that.canChangePassword && canCreatePasswordReset == that.canCreatePasswordReset
 				&& Objects.equals(userDetails, that.userDetails) && Objects.equals(currentRole, that.currentRole)
-				&& Objects.equals(locales, that.locales) && Objects.equals(allowedRoles, that.allowedRoles)
 				&& Objects.equals(errors, that.errors);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(userDetails, currentRole, mailConfigured, mailFailure, isAdmin, canEditUserInfo,
-				canEditUserStatus, canChangePassword, canCreatePasswordReset, locales, allowedRoles, errors);
+				canEditUserStatus, canChangePassword, canCreatePasswordReset, errors);
 	}
 }
