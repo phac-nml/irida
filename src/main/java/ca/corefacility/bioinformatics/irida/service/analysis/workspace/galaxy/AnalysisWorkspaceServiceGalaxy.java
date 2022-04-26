@@ -323,13 +323,19 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		if (iridaWorkflow.getWorkflowDescription().getInputs().requiresSingleSample()) {
 
 			try {
+				Set<Sample> samples = Sets.newHashSet();
+
 				Set<SequencingObject> sequencingObjectsForAnalysisSubmission = sequencingObjectService
 						.getSequencingObjectsForAnalysisSubmission(analysisSubmission);
-				// TODO: get Samples from GenomeAssemblies
-				Set<Sample> samples = Sets.newHashSet();
 				samples.addAll(sequencingObjectService
 						.getUniqueSamplesForSequencingObjects(sequencingObjectsForAnalysisSubmission)
 						.keySet());
+
+				Set<GenomeAssembly> genomeAssembliesForAnalysisSubmission = genomeAssemblyService
+						.getGenomeAssembliesForAnalysisSubmission(analysisSubmission);
+				samples.addAll(
+						genomeAssemblyService.getUniqueSamplesForGenomeAssemblies(genomeAssembliesForAnalysisSubmission)
+								.keySet());
 
 				Set<String> sampleNames = samples.stream().map(Sample::getSampleName).collect(Collectors.toSet());
 

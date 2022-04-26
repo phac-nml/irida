@@ -23,8 +23,10 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.*;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -38,7 +40,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.*;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
+import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ToolExecution;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.ProjectAnalysisSubmissionJoin;
@@ -61,14 +66,12 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 /**
- * Controller for individual Analysis ajax requests (details page, analysis
- * outputs, project analysis outputs)
+ * Controller for individual Analysis ajax requests (details page, analysis outputs, project analysis outputs)
  */
 @RestController
 @Scope("session")
@@ -84,6 +87,7 @@ public class AnalysisAjaxController {
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private MetadataTemplateService metadataTemplateService;
 	private SequencingObjectService sequencingObjectService;
+	private GenomeAssemblyService genomeAssemblyService;
 	private SampleService sampleService;
 	private ProjectService projectService;
 	private UserService userService;
@@ -98,6 +102,7 @@ public class AnalysisAjaxController {
 			IridaWorkflowsService iridaWorkflowsService, UserService userService, SampleService sampleService,
 			ProjectService projectService, UpdateAnalysisSubmissionPermission updateAnalysisPermission,
 			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
+			GenomeAssemblyService genomeAssemblyService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, MessageSource messageSource,
 			ExecutionManagerConfig configFile, AnalysisAudit analysisAudit, AnalysisTypesService analysisTypesService,
 			EmailController emailController) {
@@ -110,6 +115,7 @@ public class AnalysisAjaxController {
 		this.projectService = projectService;
 		this.metadataTemplateService = metadataTemplateService;
 		this.sequencingObjectService = sequencingObjectService;
+		this.genomeAssemblyService = genomeAssemblyService;
 		this.analysisSubmissionSampleProcessor = analysisSubmissionSampleProcessor;
 		this.updateAnalysisPermission = updateAnalysisPermission;
 		this.configFile = configFile;
@@ -121,13 +127,9 @@ public class AnalysisAjaxController {
 	/**
 	 * Update an analysis email pipeline completion result
 	 *
-	 * @param parameters
-	 *            parameters which include the submission id and the new email
-	 *            pipeline result value
-	 * @param locale
-	 *            User's locale
-	 * @param response
-	 *            HTTP response object
+	 * @param parameters parameters which include the submission id and the new email pipeline result value
+	 * @param locale     User's locale
+	 * @param response   HTTP response object
 	 * @return dto with message
 	 */
 	@RequestMapping(value = "/update-email-pipeline-result", method = RequestMethod.PATCH)
@@ -165,12 +167,9 @@ public class AnalysisAjaxController {
 	/**
 	 * Get analysis details
 	 *
-	 * @param submissionId
-	 *            analysis submission id to get data for
-	 * @param locale
-	 *            User's locale
-	 * @param response
-	 *            HTTP response object
+	 * @param submissionId analysis submission id to get data for
+	 * @param locale       User's locale
+	 * @param response     HTTP response object
 	 * @return dto of analysis details
 	 */
 	@RequestMapping(value = "/details/{submissionId}", method = RequestMethod.GET)
@@ -223,10 +222,8 @@ public class AnalysisAjaxController {
 	/**
 	 * Get analysis input files and their sizes
 	 *
-	 * @param submissionId
-	 *            analysis submission id to get data for
-	 * @param locale
-	 *            User's locale
+	 * @param submissionId analysis submission id to get data for
+	 * @param locale       User's locale
 	 * @return dto of analysis input files data
 	 */
 	@RequestMapping(value = "/inputs/{submissionId}", method = RequestMethod.GET)
@@ -238,13 +235,24 @@ public class AnalysisAjaxController {
 		Set<SequenceFilePair> inputFilePairs = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(submission, SequenceFilePair.class);
 
-		List<SampleSequencingObject> sampleFiles = inputFilePairs.stream().map(SampleSequencingObject::new).sorted()
+		List<SampleSequencingObject> sampleFiles = inputFilePairs.stream()
+				.map(SampleSequencingObject::new)
+				.sorted()
 				.collect(Collectors.toList());
 
 		// - Single
 		Set<SingleEndSequenceFile> inputFilesSingle = sequencingObjectService
 				.getSequencingObjectsOfTypeForAnalysisSubmission(submission, SingleEndSequenceFile.class);
-		List<SampleSequencingObject> singleFiles = inputFilesSingle.stream().map(SampleSequencingObject::new).sorted()
+		List<SampleSequencingObject> singleFiles = inputFilesSingle.stream()
+				.map(SampleSequencingObject::new)
+				.sorted()
+				.collect(Collectors.toList());
+
+		Set<GenomeAssembly> inputGenomeAssemblies = genomeAssemblyService
+				.getGenomeAssembliesForAnalysisSubmission(submission);
+		List<SampleGenomeAssembly> genomeAssemblies = inputGenomeAssemblies.stream()
+				.map(SampleGenomeAssembly::new)
+				.sorted()
 				.collect(Collectors.toList());
 
 		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
@@ -260,6 +268,7 @@ public class AnalysisAjaxController {
 		// List of AnalysisSamples which store the sample info
 		List<AnalysisSamples> pairedEnd = new ArrayList<>();
 		List<AnalysisSingleEndSamples> singleEnd = new ArrayList<>();
+		List<AnalysisGenomeAssemblySamples> assemblies = new ArrayList<>();
 
 		for (SampleSequencingObject sso : sampleFiles) {
 			SequenceFilePair fp = (SequenceFilePair) sso.getSequencingObject();
@@ -288,19 +297,26 @@ public class AnalysisAjaxController {
 			}
 		}
 
-		return new AnalysisInputFiles(pairedEnd, singleEnd, referenceFile);
+		for (SampleGenomeAssembly sga : genomeAssemblies) {
+			String sampleName = messageSource.getMessage("AnalysisSamples.sampleDeleted", new Object[] {}, locale);
+			Long sampleId = 0L;
+			if (sga.getSample() != null) {
+				sampleName = sga.getSample().getSampleName();
+				sampleId = sga.getSample().getId();
+			}
+			assemblies
+					.add(new AnalysisGenomeAssemblySamples(sampleName, sampleId, sga.getId(), sga.getGenomeAssembly()));
+		}
+
+		return new AnalysisInputFiles(pairedEnd, singleEnd, assemblies, referenceFile);
 	}
 
 	/**
 	 * Update an analysis name and/or priority
 	 *
-	 * @param parameters
-	 *            parameters which include the submission id and the new name
-	 *            and/or priority
-	 * @param locale
-	 *            User's locale
-	 * @param response
-	 *            HTTP response object
+	 * @param parameters parameters which include the submission id and the new name and/or priority
+	 * @param locale     User's locale
+	 * @param response   HTTP response object
 	 * @return dto with message
 	 */
 	@RequestMapping(value = "/update-analysis", method = RequestMethod.PATCH)
@@ -330,11 +346,9 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * For an {@link AnalysisSubmission}, get info about each
-	 * {@link AnalysisOutputFile}
+	 * For an {@link AnalysisSubmission}, get info about each {@link AnalysisOutputFile}
 	 *
-	 * @param id
-	 *            {@link AnalysisSubmission} id
+	 * @param id {@link AnalysisSubmission} id
 	 * @return map of info about each {@link AnalysisOutputFile}
 	 */
 	@RequestMapping(value = "/{id}/outputs", method = RequestMethod.GET)
@@ -350,8 +364,10 @@ public class AnalysisAjaxController {
 			Collections.sort(outputNames);
 		}
 
-		return outputNames.stream().map((outputName) -> getAnalysisOutputFileInfo(submission, analysis, outputName))
-				.filter(Objects::nonNull).filter(x -> x.getFileSizeBytes() > 0L)
+		return outputNames.stream()
+				.map((outputName) -> getAnalysisOutputFileInfo(submission, analysis, outputName))
+				.filter(Objects::nonNull)
+				.filter(x -> x.getFileSizeBytes() > 0L)
 				.filter(x -> !(TREE_EXT.equals(x.getFileExt()) && EMPTY_TREE.equals(x.getFirstLine())))
 				.collect(Collectors.toList());
 	}
@@ -359,12 +375,9 @@ public class AnalysisAjaxController {
 	/**
 	 * Get {@link AnalysisOutputFileInfo}.
 	 *
-	 * @param submission
-	 *            {@link AnalysisSubmission} of {@code analysis}
-	 * @param analysis
-	 *            {@link Analysis} to get {@link AnalysisOutputFile}s from
-	 * @param outputName
-	 *            Workflow output name
+	 * @param submission {@link AnalysisSubmission} of {@code analysis}
+	 * @param analysis   {@link Analysis} to get {@link AnalysisOutputFile}s from
+	 * @param outputName Workflow output name
 	 * @return {@link AnalysisOutputFile} info
 	 */
 	private AnalysisOutputFileInfo getAnalysisOutputFileInfo(AnalysisSubmission submission, Analysis analysis,
@@ -391,15 +404,11 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Add the {@code firstLine} and {@code filePointer} file byte position
-	 * after reading the first line of an {@link AnalysisOutputFile} to a
-	 * {@link AnalysisOutputFileInfo} object.
+	 * Add the {@code firstLine} and {@code filePointer} file byte position after reading the first line of an
+	 * {@link AnalysisOutputFile} to a {@link AnalysisOutputFileInfo} object.
 	 *
-	 * @param info
-	 *            Object to add {@code firstLine} and {@code filePointer} info
-	 *            to
-	 * @param aof
-	 *            {@link AnalysisOutputFile} to read from
+	 * @param info Object to add {@code firstLine} and {@code filePointer} info to
+	 * @param aof  {@link AnalysisOutputFile} to read from
 	 */
 	private void addFirstLine(AnalysisOutputFileInfo info, AnalysisOutputFile aof) {
 		RandomAccessFile reader = null;
@@ -426,24 +435,15 @@ public class AnalysisAjaxController {
 	/**
 	 * Read some lines or text from an {@link AnalysisOutputFile}.
 	 *
-	 * @param id
-	 *            {@link AnalysisSubmission} id
-	 * @param fileId
-	 *            {@link AnalysisOutputFile} id
-	 * @param limit
-	 *            Optional limit to number of lines to read from file
-	 * @param start
-	 *            Optional line to start reading from
-	 * @param end
-	 *            Optional line to stop reading at
-	 * @param seek
-	 *            Optional file byte position to seek to and begin reading
-	 * @param chunk
-	 *            Optional number of bytes to read from file
-	 * @param response
-	 *            HTTP response object
-	 * @return JSON with file text or lines as well as information about the
-	 *         file.
+	 * @param id       {@link AnalysisSubmission} id
+	 * @param fileId   {@link AnalysisOutputFile} id
+	 * @param limit    Optional limit to number of lines to read from file
+	 * @param start    Optional line to start reading from
+	 * @param end      Optional line to stop reading at
+	 * @param seek     Optional file byte position to seek to and begin reading
+	 * @param chunk    Optional number of bytes to read from file
+	 * @param response HTTP response object
+	 * @return JSON with file text or lines as well as information about the file.
 	 */
 	@RequestMapping(value = "/{id}/outputs/{fileId}", method = RequestMethod.GET)
 	@ResponseBody
@@ -454,8 +454,10 @@ public class AnalysisAjaxController {
 			HttpServletResponse response) {
 		AnalysisSubmission submission = analysisSubmissionService.read(id);
 		Analysis analysis = submission.getAnalysis();
-		final Optional<AnalysisOutputFile> analysisOutputFile = analysis.getAnalysisOutputFiles().stream()
-				.filter(x -> Objects.equals(x.getId(), fileId)).findFirst();
+		final Optional<AnalysisOutputFile> analysisOutputFile = analysis.getAnalysisOutputFiles()
+				.stream()
+				.filter(x -> Objects.equals(x.getId(), fileId))
+				.findFirst();
 		if (analysisOutputFile.isPresent()) {
 			final AnalysisOutputFile aof = analysisOutputFile.get();
 			final Path aofFile = aof.getFile();
@@ -514,11 +516,10 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Get a dto with list of {@link JobError} for an {@link AnalysisSubmission}
-	 * under key `galaxyJobErrors` and the `galaxyUrl` for the galaxy instance
+	 * Get a dto with list of {@link JobError} for an {@link AnalysisSubmission} under key `galaxyJobErrors` and the
+	 * `galaxyUrl` for the galaxy instance
 	 *
-	 * @param submissionId
-	 *            {@link AnalysisSubmission} id
+	 * @param submissionId {@link AnalysisSubmission} id
 	 * @return dto with galaxyJobErrors and galaxyUrl
 	 */
 	@RequestMapping(value = "/{submissionId}/job-errors", method = RequestMethod.GET)
@@ -551,8 +552,7 @@ public class AnalysisAjaxController {
 	/**
 	 * Get the status of projects that can be shared with the given analysis
 	 *
-	 * @param submissionId
-	 *            the {@link AnalysisSubmission} id
+	 * @param submissionId the {@link AnalysisSubmission} id
 	 * @return a list of {@link SharedProjectResponse}
 	 */
 	@RequestMapping(value = "/{submissionId}/share", method = RequestMethod.GET)
@@ -571,8 +571,10 @@ public class AnalysisAjaxController {
 				.getSequencingObjectsOfTypeForAnalysisSubmission(submission, SingleEndSequenceFile.class);
 
 		// get projects already shared with submission
-		Set<Project> projectsShared = projectService.getProjectsForAnalysisSubmission(submission).stream()
-				.map(ProjectAnalysisSubmissionJoin::getSubject).collect(Collectors.toSet());
+		Set<Project> projectsShared = projectService.getProjectsForAnalysisSubmission(submission)
+				.stream()
+				.map(ProjectAnalysisSubmissionJoin::getSubject)
+				.collect(Collectors.toSet());
 
 		// get available projects
 		Set<Project> projectsInAnalysisPaired = projectService.getProjectsForSequencingObjects(inputFilePairs);
@@ -580,13 +582,18 @@ public class AnalysisAjaxController {
 
 		// Create response for shared projects
 		List<SharedProjectResponse> projectResponses = projectsShared.stream()
-				.map(p -> new SharedProjectResponse(p, true)).collect(Collectors.toList());
+				.map(p -> new SharedProjectResponse(p, true))
+				.collect(Collectors.toList());
 
-		projectResponses.addAll(projectsInAnalysisPaired.stream().filter(p -> !projectsShared.contains(p))
-				.map(p -> new SharedProjectResponse(p, false)).collect(Collectors.toList()));
+		projectResponses.addAll(projectsInAnalysisPaired.stream()
+				.filter(p -> !projectsShared.contains(p))
+				.map(p -> new SharedProjectResponse(p, false))
+				.collect(Collectors.toList()));
 
-		projectResponses.addAll(projectsInAnalysisSingleEnd.stream().filter(p -> !projectsShared.contains(p))
-				.map(p -> new SharedProjectResponse(p, false)).collect(Collectors.toList()));
+		projectResponses.addAll(projectsInAnalysisSingleEnd.stream()
+				.filter(p -> !projectsShared.contains(p))
+				.map(p -> new SharedProjectResponse(p, false))
+				.collect(Collectors.toList()));
 
 		projectResponses.sort(new Comparator<SharedProjectResponse>() {
 
@@ -600,16 +607,11 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Update the share status of a given {@link AnalysisSubmission} for a given
-	 * {@link Project}
+	 * Update the share status of a given {@link AnalysisSubmission} for a given {@link Project}
 	 *
-	 * @param submissionId
-	 *            the {@link AnalysisSubmission} id to share/unshare
-	 * @param projectShare
-	 *            {@link AnalysisProjectShare} describes of the project and the
-	 *            share status.
-	 * @param locale
-	 *            Locale of the logged in user
+	 * @param submissionId the {@link AnalysisSubmission} id to share/unshare
+	 * @param projectShare {@link AnalysisProjectShare} describes of the project and the share status.
+	 * @param locale       Locale of the logged in user
 	 * @return Success message if successful
 	 */
 	@RequestMapping(value = "/{submissionId}/share", method = RequestMethod.POST)
@@ -637,12 +639,9 @@ public class AnalysisAjaxController {
 	/**
 	 * Save the results of an analysis back to the samples
 	 *
-	 * @param submissionId
-	 *            ID of the {@link AnalysisSubmission}
-	 * @param locale
-	 *            locale of the logged in user
-	 * @param response
-	 *            HTTP response object
+	 * @param submissionId ID of the {@link AnalysisSubmission}
+	 * @param locale       locale of the logged in user
+	 * @param response     HTTP response object
 	 * @return success message
 	 */
 	@RequestMapping(value = "/{submissionId}/save-results", method = RequestMethod.POST)
@@ -677,8 +676,7 @@ public class AnalysisAjaxController {
 	/**
 	 * Get the sistr analysis information to display
 	 *
-	 * @param id
-	 *            ID of the analysis submission
+	 * @param id ID of the analysis submission
 	 * @return dto with SISTR analysis results
 	 */
 	@SuppressWarnings("resource")
@@ -748,10 +746,8 @@ public class AnalysisAjaxController {
 	/**
 	 * Delete an {@link AnalysisSubmission} by id.
 	 *
-	 * @param analysisSubmissionId
-	 *            the submission ID to delete.
-	 * @param locale
-	 *            Locale of the logged in user
+	 * @param analysisSubmissionId the submission ID to delete.
+	 * @param locale               Locale of the logged in user
 	 * @return A message stating the submission was deleted
 	 */
 	@RequestMapping("/delete/{analysisSubmissionId}")
@@ -767,10 +763,8 @@ public class AnalysisAjaxController {
 	/**
 	 * Download all output files from an {@link AnalysisSubmission}
 	 *
-	 * @param analysisSubmissionId
-	 *            Id for a {@link AnalysisSubmission}
-	 * @param response
-	 *            {@link HttpServletResponse}
+	 * @param analysisSubmissionId Id for a {@link AnalysisSubmission}
+	 * @param response             {@link HttpServletResponse}
 	 */
 	@RequestMapping(value = "/download/{analysisSubmissionId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public void getAjaxDownloadAnalysisSubmission(@PathVariable Long analysisSubmissionId,
@@ -785,11 +779,9 @@ public class AnalysisAjaxController {
 	/**
 	 * Get a newick file associated with a specific {@link AnalysisSubmission}.
 	 *
-	 * @param submissionId
-	 *            {@link Long} id for an {@link AnalysisSubmission}
+	 * @param submissionId {@link Long} id for an {@link AnalysisSubmission}
 	 * @return {@link Map} containing the newick file contents.
-	 * @throws IOException
-	 *             {@link IOException} if the newick file is not found
+	 * @throws IOException {@link IOException} if the newick file is not found
 	 */
 	@RequestMapping("/{submissionId}/newick")
 	@ResponseBody
@@ -809,15 +801,11 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Get an image file associated with a specific {@link AnalysisSubmission}
-	 * by file name.
+	 * Get an image file associated with a specific {@link AnalysisSubmission} by file name.
 	 *
-	 * @param submissionId
-	 *            {@link Long} id for an {@link AnalysisSubmission}
-	 * @param filename
-	 *            {@link String} filename for an {@link AnalysisOutputFile}
-	 * @return {@link String} containing the image file contents as a base64
-	 *         encoded string.
+	 * @param submissionId {@link Long} id for an {@link AnalysisSubmission}
+	 * @param filename     {@link String} filename for an {@link AnalysisOutputFile}
+	 * @return {@link String} containing the image file contents as a base64 encoded string.
 	 */
 	@RequestMapping("{submissionId}/image")
 	@ResponseBody
@@ -838,8 +826,7 @@ public class AnalysisAjaxController {
 	/**
 	 * Get the metadata associated with a template for an analysis.
 	 *
-	 * @param submissionId
-	 *            {@link Long} identifier for the {@link AnalysisSubmission}
+	 * @param submissionId {@link Long} identifier for the {@link AnalysisSubmission}
 	 * @return {@link Map}
 	 */
 	@RequestMapping("/{submissionId}/metadata")
@@ -894,11 +881,9 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Get a list of all {@link MetadataTemplate}s for the
-	 * {@link AnalysisSubmission}
+	 * Get a list of all {@link MetadataTemplate}s for the {@link AnalysisSubmission}
 	 *
-	 * @param submissionId
-	 *            id of the {@link AnalysisSubmission}
+	 * @param submissionId id of the {@link AnalysisSubmission}
 	 * @return a map of {@link MetadataTemplate}s
 	 */
 	@RequestMapping("/{submissionId}/metadata-templates")
@@ -932,9 +917,7 @@ public class AnalysisAjaxController {
 	/**
 	 * Generates a list of metadata fields for a five template.
 	 *
-	 * @param templateId
-	 *            {@link Long} id for the {@link MetadataTemplate} that the
-	 *            fields are required.
+	 * @param templateId {@link Long} id for the {@link MetadataTemplate} that the fields are required.
 	 * @return {@link Map}
 	 */
 	@RequestMapping("/{submissionId}/metadata-template-fields")
@@ -950,16 +933,12 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Construct the model parameters for results with a newick output
-	 * {@link Analysis}
+	 * Construct the model parameters for results with a newick output {@link Analysis}
 	 *
-	 * @param submissionId
-	 *            The analysis submission id
-	 * @param locale
-	 *            The users current {@link Locale}
+	 * @param submissionId The analysis submission id
+	 * @param locale       The users current {@link Locale}
 	 * @return dto which contains the newick string and an optional message
-	 * @throws IOException
-	 *             If the tree file couldn't be read
+	 * @throws IOException If the tree file couldn't be read
 	 */
 	@RequestMapping("/{submissionId}/tree")
 	public AnalysisTreeResponse getNewickTree(@PathVariable Long submissionId, Locale locale) throws IOException {
@@ -1006,15 +985,11 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Parse excel file and return an ExcelData dto which contains the row data
-	 * as well as the headers.
+	 * Parse excel file and return an ExcelData dto which contains the row data as well as the headers.
 	 *
-	 * @param submissionId
-	 *            The analysis submission id
-	 * @param filename
-	 *            The name of the excel file to parse
-	 * @param sheetIndex
-	 *            The index of the sheet in the excel workbook to parse
+	 * @param submissionId The analysis submission id
+	 * @param filename     The name of the excel file to parse
+	 * @param sheetIndex   The index of the sheet in the excel workbook to parse
 	 * @return dto which contains the headers and rows of the excel file
 	 */
 	@RequestMapping(value = "/{submissionId}/parseExcel")
@@ -1041,10 +1016,8 @@ public class AnalysisAjaxController {
 	/**
 	 * Get the full analysis provenance
 	 *
-	 * @param submissionId
-	 *            The analysis submission id
-	 * @param filename
-	 *            The name of the file for which to get the provenance
+	 * @param submissionId The analysis submission id
+	 * @param filename     The name of the file for which to get the provenance
 	 * @return dto which contains the file provenance
 	 */
 	@RequestMapping(value = "/{submissionId}/provenance")
@@ -1082,10 +1055,8 @@ public class AnalysisAjaxController {
 	/**
 	 * Get the updated state and duration of an analysis
 	 *
-	 * @param submissionId
-	 *            The analysis submission id
-	 * @param locale
-	 *            The user's locale
+	 * @param submissionId The analysis submission id
+	 * @param locale       The user's locale
 	 * @return dto which contains the updated analysis state and duration
 	 */
 	@RequestMapping(value = "/{submissionId}/updated-progress")
@@ -1116,13 +1087,10 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Private method which gets whether the tree view should be the default
-	 * view or not
+	 * Private method which gets whether the tree view should be the default view or not
 	 * 
-	 * @param submission
-	 *            The analysis submission
-	 * @param locale
-	 *            The user's locale
+	 * @param submission The analysis submission
+	 * @param locale     The user's locale
 	 * @return if tree view should be displayed by default or not
 	 */
 	private boolean getTreeViewDefault(AnalysisSubmission submission, Locale locale) {
@@ -1148,8 +1116,7 @@ public class AnalysisAjaxController {
 	/**
 	 * Private method which gets the analysis viewer type
 	 * 
-	 * @param submission
-	 *            The analysis submission
+	 * @param submission The analysis submission
 	 * @return the viewer (tree, sistr, biohansel, etc)
 	 */
 	private String getAnalysisViewer(AnalysisSubmission submission) {
@@ -1172,12 +1139,9 @@ public class AnalysisAjaxController {
 	/**
 	 * Get the analysis details
 	 *
-	 * @param submissionId
-	 *            The analysis submission id
-	 * @param principal
-	 *            Principal {@link User}
-	 * @param locale
-	 *            The users current {@link Locale}
+	 * @param submissionId The analysis submission id
+	 * @param principal    Principal {@link User}
+	 * @param locale       The users current {@link Locale}
 	 * @return dto which contains the analysis details
 	 */
 	@RequestMapping(value = "/{submissionId}/analysis-details")
@@ -1253,13 +1217,10 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Find a file with a `.newick` extension in the analysis output files if it
-	 * exists.
+	 * Find a file with a `.newick` extension in the analysis output files if it exists.
 	 *
-	 * @param submission
-	 *            the {@link AnalysisSubmission} to check
-	 * @return an optional of an {@link AnalysisOutputFile} if the file was
-	 *         found
+	 * @param submission the {@link AnalysisSubmission} to check
+	 * @return an optional of an {@link AnalysisOutputFile} if the file was found
 	 */
 	private Optional<AnalysisOutputFile> getTreeFileForSubmission(AnalysisSubmission submission) {
 		// some submissions may not name their tree with a ".newick" extension.
@@ -1282,7 +1243,8 @@ public class AnalysisAjaxController {
 			// loop through the files looking for with a newick file. Get the
 			// first one
 			treeOptional = analysisOutputFiles.stream()
-					.filter(f -> FileUtilities.getFileExt(f.getFile()).equals(TREE_EXT)).findFirst();
+					.filter(f -> FileUtilities.getFileExt(f.getFile()).equals(TREE_EXT))
+					.findFirst();
 
 		}
 
@@ -1306,8 +1268,7 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Response object storing a project and whether or not it's shared with a
-	 * given {@link AnalysisSubmission}
+	 * Response object storing a project and whether or not it's shared with a given {@link AnalysisSubmission}
 	 */
 	@SuppressWarnings("unused")
 	private class SharedProjectResponse {
@@ -1364,6 +1325,53 @@ public class AnalysisAjaxController {
 
 		@Override
 		public int compareTo(SampleSequencingObject b) {
+			if (this.sample == null && b.sample == null) {
+				return 0;
+			} else if (this.sample == null) {
+				return -1;
+			} else if (b.sample == null) {
+				return 1;
+			}
+			return this.sample.getLabel().compareTo(b.sample.getLabel());
+		}
+	}
+
+	/**
+	 * UI Model to return Genome Assembly with its accompanying sample.
+	 */
+	class SampleGenomeAssembly implements Comparable<SampleGenomeAssembly> {
+		private Sample sample;
+		private GenomeAssembly genomeAssembly;
+
+		SampleGenomeAssembly(GenomeAssembly genomeAssembly) {
+			this.genomeAssembly = genomeAssembly;
+			try {
+				SampleGenomeAssemblyJoin sampleGenomeAssemblyJoin = sampleService
+						.getSampleForGenomeAssembly(genomeAssembly);
+				if (sampleGenomeAssemblyJoin != null) {
+					this.sample = sampleGenomeAssemblyJoin.getSubject();
+				}
+			} catch (Exception e) {
+				logger.debug("Genome Assembly [" + genomeAssembly.getIdentifier() + "] does not have a parent sample",
+						e);
+				sample = null;
+			}
+		}
+
+		public Long getId() {
+			return genomeAssembly.getId();
+		}
+
+		public Sample getSample() {
+			return sample;
+		}
+
+		public GenomeAssembly getGenomeAssembly() {
+			return genomeAssembly;
+		}
+
+		@Override
+		public int compareTo(SampleGenomeAssembly b) {
 			if (this.sample == null && b.sample == null) {
 				return 0;
 			} else if (this.sample == null) {

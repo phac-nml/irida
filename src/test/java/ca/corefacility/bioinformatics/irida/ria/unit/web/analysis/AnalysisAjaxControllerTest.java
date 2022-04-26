@@ -55,6 +55,7 @@ public class AnalysisAjaxControllerTest {
 	private UpdateAnalysisSubmissionPermission updatePermission;
 	private MetadataTemplateService metadataTemplateService;
 	private SequencingObjectService sequencingObjectService;
+	private GenomeAssemblyService genomeAssemblyService;
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 	private ExecutionManagerConfig configFileMock;
 	private AnalysisAudit analysisAuditMock;
@@ -76,6 +77,7 @@ public class AnalysisAjaxControllerTest {
 		updatePermission = mock(UpdateAnalysisSubmissionPermission.class);
 		sampleService = mock(SampleService.class);
 		sequencingObjectService = mock(SequencingObjectService.class);
+		genomeAssemblyService = mock(GenomeAssemblyService.class);
 		analysisSubmissionSampleProcessor = mock(AnalysisSubmissionSampleProcessor.class);
 		userServiceMock = mock(UserService.class);
 		configFileMock = mock(ExecutionManagerConfig.class);
@@ -87,8 +89,8 @@ public class AnalysisAjaxControllerTest {
 
 		analysisAjaxController = new AnalysisAjaxController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
-				sequencingObjectService, analysisSubmissionSampleProcessor, messageSourceMock, configFileMock,
-				analysisAuditMock, analysisTypesServiceMock, emailControllerMock);
+				sequencingObjectService, genomeAssemblyService, analysisSubmissionSampleProcessor, messageSourceMock,
+				configFileMock, analysisAuditMock, analysisTypesServiceMock, emailControllerMock);
 
 	}
 

@@ -35,9 +35,10 @@ export function AnalysisSampleRenderer() {
   }, []);
 
   const [filteredSamples, setFilteredSamples] = useState(null);
-  const [filteredSingleEndSamples, setSingleEndFilteredSamples] = useState(
-    null
-  );
+  const [filteredSingleEndSamples, setSingleEndFilteredSamples] =
+    useState(null);
+  const [filteredGenomeAssemblySamples, setGenomeAssemblyFilteredSamples] =
+    useState(null);
   const SEQ_FILES_BASE_URL = setBaseUrl("sequenceFiles");
   const SAMPLES_BASE_URL = setBaseUrl("samples");
 
@@ -109,7 +110,7 @@ export function AnalysisSampleRenderer() {
       <List
         bordered
         dataSource={
-          filteredSamples !== null
+          filteredSingleEndSamples !== null
             ? filteredSingleEndSamples
             : analysisSamplesContext.singleEndSamples
         }
@@ -159,6 +160,58 @@ export function AnalysisSampleRenderer() {
     );
   };
 
+  const renderGenomeAssemblySamples = () => {
+    return (
+      <List
+        bordered
+        dataSource={
+          filteredGenomeAssemblySamples !== null
+            ? filteredGenomeAssemblySamples
+            : analysisSamplesContext.genomeAssemblySamples
+        }
+        style={{ maxHeight: sampleDisplayHeight, overflowY: "auto" }}
+        renderItem={(item) => {
+          return (
+            <List.Item>
+              <List.Item.Meta
+                key={item.sampleId}
+                className="t-genome-assembly"
+                avatar={
+                  <Avatar>
+                    <IconExperiment />
+                  </Avatar>
+                }
+                title={
+                  item.sampleId == 0 ? (
+                    item.sampleName
+                  ) : (
+                    <a
+                      href={`${SAMPLES_BASE_URL}/${item.sampleId}/details`}
+                      target="_blank"
+                      className="t-genome-assembly-sample-name"
+                      style={{ color: blue6 }}
+                    >
+                      {item.sampleName}
+                    </a>
+                  )
+                }
+                description={
+                  <div>
+                    <div key={`file-${item.assemblyId}`}>
+                      <a href={`#`} target="_blank">
+                        {item.genomeAssembly.fileName}
+                      </a>
+                    </div>
+                  </div>
+                }
+              />
+            </List.Item>
+          );
+        }}
+      />
+    );
+  };
+
   /*
    * if search value is empty display all the samples otherwise
    * find samples with sample name or files that contain the search string
@@ -171,24 +224,38 @@ export function AnalysisSampleRenderer() {
     ) {
       setFilteredSamples(analysisSamplesContext.samples);
       setSingleEndFilteredSamples(analysisSamplesContext.singleEndSamples);
+      setGenomeAssemblyFilteredSamples(
+        analysisSamplesContext.genomeAssemblySamples
+      );
     } else {
       searchStr = String(searchStr).toLowerCase();
-      const samplesContainingSearchValue = analysisSamplesContext.samples.filter(
-        (sample) =>
-          sample.sampleName.toLowerCase().includes(searchStr) ||
-          sample.forward.fileName.toLowerCase().includes(searchStr) ||
-          sample.reverse.fileName.toLowerCase().includes(searchStr)
-      );
+      const samplesContainingSearchValue =
+        analysisSamplesContext.samples.filter(
+          (sample) =>
+            sample.sampleName.toLowerCase().includes(searchStr) ||
+            sample.forward.fileName.toLowerCase().includes(searchStr) ||
+            sample.reverse.fileName.toLowerCase().includes(searchStr)
+        );
 
-      const singleEndSamplesContainingSearchValue = analysisSamplesContext.singleEndSamples.filter(
-        (sample) =>
-          sample.sampleName.toLowerCase().includes(searchStr) ||
-          sample.forward.fileName.toLowerCase().includes(searchStr) ||
-          sample.reverse.fileName.toLowerCase().includes(searchStr)
-      );
+      const singleEndSamplesContainingSearchValue =
+        analysisSamplesContext.singleEndSamples.filter(
+          (sample) =>
+            sample.sampleName.toLowerCase().includes(searchStr) ||
+            sample.sequenceFile.fileName.toLowerCase().includes(searchStr)
+        );
+
+      const genomeAssemblySamplesContainingSearchValue =
+        analysisSamplesContext.genomeAssemblySamples.filter(
+          (sample) =>
+            sample.sampleName.toLowerCase().includes(searchStr) ||
+            sample.genomeAssembly.fileName.toLowerCase().includes(searchStr)
+        );
 
       setFilteredSamples(samplesContainingSearchValue);
       setSingleEndFilteredSamples(singleEndSamplesContainingSearchValue);
+      setGenomeAssemblyFilteredSamples(
+        genomeAssemblySamplesContainingSearchValue
+      );
     }
   };
 
@@ -201,7 +268,8 @@ export function AnalysisSampleRenderer() {
           />
         </div>
       ) : analysisSamplesContext.samples.length > 0 ||
-        analysisSamplesContext.singleEndSamples.length > 0 ? (
+        analysisSamplesContext.singleEndSamples.length > 0 ||
+        analysisSamplesContext.genomeAssemblySamples.length > 0 ? (
         <div>
           <Search
             placeholder={i18n("AnalysisSamples.searchSamples")}
@@ -215,6 +283,9 @@ export function AnalysisSampleRenderer() {
             : null}
           {analysisSamplesContext.singleEndSamples.length > 0
             ? renderSingleEndSamples()
+            : null}
+          {analysisSamplesContext.genomeAssemblySamples.length > 0
+            ? renderGenomeAssemblySamples()
             : null}
         </div>
       ) : (

@@ -48,6 +48,7 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoi
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
+import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
@@ -95,6 +96,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 	private final SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 
+	private final GenomeAssemblyRepository genomeAssemblyRepository;
+
 	private final UserRepository userRepository;
 
 	private final MetadataEntryRepository metadataEntryRepository;
@@ -109,6 +112,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * @param sequencingObjectRepository         the {@link SequencingObject} repository
 	 * @param qcEntryRepository                  a repository for storing and reading {@link QCEntry}
 	 * @param sampleGenomeAssemblyJoinRepository A {@link SampleGenomeAssemblyJoinRepository}
+	 * @param genomeAssemblyRepository           The {@link GenomeAssembly} repository
 	 * @param userRepository                     A {@link UserRepository}
 	 * @param metadataEntryRepository            A {@link MetadataEntryRepository}
 	 * @param validator                          validator.
@@ -117,7 +121,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public SampleServiceImpl(SampleRepository sampleRepository, ProjectSampleJoinRepository psjRepository,
 			final AnalysisRepository analysisRepository, SampleSequencingObjectJoinRepository ssoRepository,
 			QCEntryRepository qcEntryRepository, SequencingObjectRepository sequencingObjectRepository,
-			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, UserRepository userRepository,
+			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository,
+			GenomeAssemblyRepository genomeAssemblyRepository, UserRepository userRepository,
 			MetadataEntryRepository metadataEntryRepository, Validator validator) {
 		super(sampleRepository, validator, Sample.class);
 		this.sampleRepository = sampleRepository;
@@ -128,6 +133,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		this.sequencingObjectRepository = sequencingObjectRepository;
 		this.userRepository = userRepository;
 		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
+		this.genomeAssemblyRepository = genomeAssemblyRepository;
 		this.metadataEntryRepository = metadataEntryRepository;
 	}
 
@@ -318,6 +324,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@PreAuthorize("hasPermission(#seqObject, 'canReadSequencingObject')")
 	public SampleSequencingObjectJoin getSampleForSequencingObject(SequencingObject seqObject) {
 		return ssoRepository.getSampleForSequencingObject(seqObject);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasPermission(#genomeAssembly, 'canReadGenomeAssembly')")
+	public SampleGenomeAssemblyJoin getSampleForGenomeAssembly(GenomeAssembly genomeAssembly) {
+		return sampleGenomeAssemblyJoinRepository.getSampleForGenomeAssembly(genomeAssembly);
 	}
 
 	/**
@@ -568,7 +583,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Collection<Sample> getSamplesForAnalysisSubmission(AnalysisSubmission submission) {
 		Set<SequencingObject> objectsForAnalysisSubmission = sequencingObjectRepository
 				.findSequencingObjectsForAnalysisSubmission(submission);
+		Set<GenomeAssembly> assembliesForAnalysisSubmission = genomeAssemblyRepository
+				.findGenomeAssembliesForAnalysisSubmission(submission);
 		Set<Sample> samples = null;
+
 		try {
 			samples = objectsForAnalysisSubmission.stream()
 					.map(s -> ssoRepository.getSampleForSequencingObject(s).getSubject())
@@ -576,6 +594,15 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		} catch (NullPointerException e) {
 			logger.warn("No samples were found for submission " + submission.getId());
 		}
+
+		try {
+			samples.addAll(assembliesForAnalysisSubmission.stream()
+					.map(a -> sampleGenomeAssemblyJoinRepository.getSampleForGenomeAssembly(a).getSubject())
+					.collect(Collectors.toSet()));
+		} catch (NullPointerException e) {
+			logger.warn("No samples were found for submission " + submission.getId());
+		}
+
 		return samples;
 	}
 

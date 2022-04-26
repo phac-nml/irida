@@ -8,9 +8,11 @@ import org.springframework.data.domain.Sort.Direction;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
@@ -102,6 +104,14 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return the {@link SampleSequencingObjectJoin} describing the relationship
 	 */
 	public SampleSequencingObjectJoin getSampleForSequencingObject(SequencingObject seqObject);
+
+	/**
+	 * Find a {@link Sample} assocaited with a {@link GenomeAssembly}
+	 *
+	 * @param genomeAssembly the {@link GenomeAssembly} to get the {@link Sample} for
+	 * @return the {@link SampleGenomeAssemblyJoin} describing the relationship
+	 */
+	public SampleGenomeAssemblyJoin getSampleForGenomeAssembly(GenomeAssembly genomeAssembly);
 
 	/**
 	 * Get the list of {@link Sample} that belongs to a specific project.
