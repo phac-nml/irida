@@ -8,6 +8,6 @@ You can use the dialog that appears to select a user group. You can also select 
 
 **Remember**: a project collaborator has *read-only* permissions, and a project *manager* is allowed to modify project details. When adding a user group, **all** members of the user group will have that project role and metadata role on this project. If the **Project Role** is set to **Manager** then the **Metadata Role** will default to the highest level (Level 4).
 
-**Note**: If a user is added *both* as an individual member and as part of a group, the individual user project role takes precedence over the group project role. For example, if Bob is added to Project 5 as a Project Owner as an individual member, and is in a Group that's on Project 5 as a Project Member, Bob would be given Project Owner permissions to Project 5.
+**Note**: If a user is added *both* as an individual member and as part of a group, the higher project role takes precedence. For example, if Bob is added to Project 5 as a Project User as an individual member, and is in a Group that's on Project 5 as a Project Owner, Bob would be given Project Owner permissions to Project 5.
 
 Once you've selected the user group, project role, and metadata role to add to the project, click on the "OK" button.
