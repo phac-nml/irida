@@ -90,25 +90,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testPaging() {
-		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-
-		assertFalse(page.isPreviousBtnEnabled(), "'Previous' button should be disabled");
-		assertTrue(page.isNextBtnEnabled(), "'Next' button should be enabled");
-		assertEquals(3, page.getPaginationCount(), "Should be 3 pages of samples");
-	}
-
-	@Test
-	public void testAssociatedProjects() {
-		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		assertEquals("Showing 1 to 10 of 23 entries", page.getTableInfo(), "Should be displaying 23 samples");
-		page.displayAssociatedProject();
-		assertEquals("Showing 1 to 10 of 24 entries", page.getTableInfo(), "Should be displaying 24 samples");
-	}
-
-	@Test
 	public void testSampleSelection() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -213,7 +194,9 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	public void testFilteringSamplesByProperties() {
 		String NAME_FILTER_1 = "5";
 		String NAME_FILTER_2 = "sample6";
-		String ORGANISM_FILTER = "Listeria";
+		String ORGANISM_FILTER_1 = "Listeria";
+		String ORGANISM_FILTER_2 = "E. coli";
+		String ASSOCIATED_PROJECT_FILTER = "project5";
 
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -221,7 +204,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(23, summary.getTotal(), "Without the filter there should be 23 elements in the table");
 
 		/*
-		TEST NAME FILTERING
+		SAMPLE NAME FILTERING
 		 */
 
 		// Single name filter
@@ -233,7 +216,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		summary = page.getTableSummary();
 		assertEquals(2, summary.getTotal(), "Filtering the '5' and 'sample6' should leave 4 samples in the table");
 
-		// Tst clear
+		// Test clear
 		page.clearIndividualSampleNameFilter(NAME_FILTER_2);
 		summary = page.getTableSummary();
 		assertEquals(19, summary.getTotal(), "Removing a sample name filter");
@@ -241,15 +224,40 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		summary = page.getTableSummary();
 		assertEquals(23, summary.getTotal(), "Removing all name filters should return to initial number of samples");
 
-		// TEST ORGANISM FILTERING
-		page.filterByOrganism(ORGANISM_FILTER);
+		/*
+		ORGANISM FILTER
+		 */
+		page.filterByOrganism(ORGANISM_FILTER_1);
 		summary = page.getTableSummary();
 		assertEquals(2, summary.getTotal(), "Filtering by organism");
+		page.clearIndividualOrganismFilter(ORGANISM_FILTER_1);
 
-		// TEST MULTIPLE FILTERS
-		page.filterBySampleName(NAME_FILTER_1);
+		/*
+		ASSOCIATED PROJECTS
+		 */
+		page.toggleAssociatedProject(ASSOCIATED_PROJECT_FILTER);
 		summary = page.getTableSummary();
-		assertEquals(1, summary.getTotal(), "Filtering by organism");
+		assertEquals(24, summary.getTotal(), "Should have more samples visible with another project selected");
+		page.removeAssociatedProject(ASSOCIATED_PROJECT_FILTER);
+		summary = page.getTableSummary();
+		assertEquals(23, summary.getTotal(), "Should only display samples for the main project");
+
+		/*
+		TEST MULTIPLE FILTERS
+		 */
+		page.filterByOrganism(ORGANISM_FILTER_2);
+		summary = page.getTableSummary();
+		assertEquals(3, summary.getTotal(), "Filtering by organism");
+
+		page.filterBySampleName("sample3");
+		summary = page.getTableSummary();
+		assertEquals(1, summary.getTotal(), "Filtering by only a name");
+
+		page.clearIndividualOrganismFilter(ORGANISM_FILTER_2);
+		summary = page.getTableSummary();
+		assertEquals(3, summary.getTotal(), "Filtering by organism");
+
+		// TEST ASSOCIATED PROJECTS
 
 		//		assertEquals("Showing 1 to 10 of 23 entries", page.getTableInfo(), "Should have 23 projects displayed");
 		//		page.filterByName("5");

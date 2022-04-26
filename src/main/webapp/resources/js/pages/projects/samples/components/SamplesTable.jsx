@@ -273,6 +273,7 @@ export function SamplesTable() {
     },
     {
       title: i18n("SamplesTable.Column.project"),
+      className: "t-td-project",
       dataIndex: ["project", "name"],
       sorter: { multiple: 1 },
       key: "associated",

@@ -83,6 +83,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(css = ".t-organism-select input")
 	private WebElement organismSelectInput;
 
+	@FindBy(css = ".t-organism-select .ant-select-selector")
+	private WebElement organismFilterSelectedOptions;
+
+	@FindBy(css = ".t-td-project .ant-dropdown-trigger")
+	private WebElement projectsFilterToggle;
+
 	//----- OLD BELOW
 
 	@FindBy(className = "t-associated-btn")
@@ -318,6 +324,31 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		organismSelectInput.sendKeys(organism);
 		organismSelectInput.sendKeys(Keys.ENTER);
 		organismFilterToggle.click();
+	}
+
+	public void clearIndividualOrganismFilter(String organism) {
+		organismFilterToggle.click();
+		WebElement filter = organismFilterSelectedOptions.findElement(By.cssSelector("[title=\"" + organism + "\"]"));
+		filter.findElement(By.className("ant-select-selection-item-remove")).click();
+		organismFilterToggle.click();
+	}
+
+	public void toggleAssociatedProject(String projectName) {
+		projectsFilterToggle.click();
+		WebElement selection = driver.findElement(
+				By.xpath("//li[@class='ant-dropdown-menu-item' and span='" + projectName + "']"));
+		selection.click();
+		driver.findElement(By.xpath("//button[@type='button' and span='OK']")).click();
+		waitForTime(200);
+	}
+
+	//li[@class='ant-dropdown-menu-item-selected']/span/span
+	public void removeAssociatedProject(String projectName) {
+		projectsFilterToggle.click();
+		WebElement selection = driver.findElement(By.xpath("//li/span/span[text()='" + projectName + "']"));
+		selection.click();
+		driver.findElement(By.xpath("//button[@type='button' and span='OK']")).click();
+		waitForTime(200);
 	}
 
 	// --- OLD BELOW
