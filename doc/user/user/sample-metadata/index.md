@@ -168,7 +168,7 @@ Visiting the line list page, this user will only see the metadata fields which h
 
 Visiting the metadata fields page, this user will only be able to see the 4 fields above:
 
-![Project sample metadata manager view](images/project-sample-metadata-fields-collaborator.png)
+![Project sample metadata collaborator view](images/project-sample-metadata-fields-collaborator.png)
 
 
 ### Metadata Templates
