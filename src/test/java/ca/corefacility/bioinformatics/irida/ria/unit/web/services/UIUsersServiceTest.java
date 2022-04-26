@@ -51,12 +51,12 @@ public class UIUsersServiceTest {
 		when(userService.read(anyLong())).thenReturn(USER2);
 		when(userService.getUserByUsername(anyString())).thenReturn(USER1);
 		when(userService.updateFields(anyLong(), anyMap())).thenReturn(USER2);
-		when(messageSource.getMessage(eq("systemrole.ROLE_ADMIN"), any(), any(Locale.class))).thenReturn("Admin");
-		when(messageSource.getMessage(eq("systemrole.ROLE_MANAGER"), any(), any(Locale.class))).thenReturn("Manager");
-		when(messageSource.getMessage(eq("systemrole.ROLE_USER"), any(), any(Locale.class))).thenReturn("User");
-		when(messageSource.getMessage(eq("systemrole.ROLE_TECHNICIAN"), any(), any(Locale.class))).thenReturn(
+		when(messageSource.getMessage(eq("systemRole.ROLE_ADMIN"), any(), any(Locale.class))).thenReturn("Admin");
+		when(messageSource.getMessage(eq("systemRole.ROLE_MANAGER"), any(), any(Locale.class))).thenReturn("Manager");
+		when(messageSource.getMessage(eq("systemRole.ROLE_USER"), any(), any(Locale.class))).thenReturn("User");
+		when(messageSource.getMessage(eq("systemRole.ROLE_TECHNICIAN"), any(), any(Locale.class))).thenReturn(
 				"Technician");
-		when(messageSource.getMessage(eq("systemrole.ROLE_SEQUENCER"), any(), any(Locale.class))).thenReturn(
+		when(messageSource.getMessage(eq("systemRole.ROLE_SEQUENCER"), any(), any(Locale.class))).thenReturn(
 				"Sequencer");
 	}
 
