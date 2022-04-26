@@ -18,7 +18,7 @@ export function UploadReferenceFile({ form }) {
     showUploadList: false,
     action: setBaseUrl(`/ajax/reference-files`),
     onChange(info) {
-      const { status } = info.file;
+      const { status, response } = info.file;
       if (status === "done") {
         notification.success({
           message: i18n("UploadReferenceFile.success", info.file.name),
@@ -31,7 +31,7 @@ export function UploadReferenceFile({ form }) {
         form.setFieldsValue({ reference: info.file.response.files[0].id });
       } else if (status === "error") {
         notification.error({
-          message: i18n("UploadReferenceFile.error", info.file.name),
+          message: response.error
         });
       }
     },
