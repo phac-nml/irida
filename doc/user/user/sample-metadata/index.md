@@ -137,17 +137,34 @@ Each sample can contain it's own metadata.  IRIDA uses the terms:
 * **Metadata Field** as the label for a piece of metadata (e.g. Organism).
 * **Metadata Entry** for the value associated with it (e.g. _Salmonella enterica_).
 
-All metadata fields associated with samples in a project can be viewed on the metadata fields page. This is accessed by clicking on the 'Sample Metadata' tab within the **Project Settings**.
+All metadata fields associated with samples in a project can be viewed on the metadata fields page. This is accessed by clicking on the 'Metadata' tab within the **Project Settings**. Once on the Sample Metadata page, you will see a listing of all *Metadata Fields* associated with samples in this project and their restriction levels:
 
 ![Image showing sample metadata tan](images/sample-metadata-tab.png)
-
-Once on the Sample Metadata page, you will see a listing of all *Metadata Fields* associated with samples in this project and their restriction levels:
-
-![Image showing sample metadata fields](images/sample-metadata-fields.png)
 
 Metadata Fields have:
 * **Type**: Indicates the type of data that the field can be.  Usually this will be just "text".
 * **Restrictions**: Indicates the metadata role required to view that field and any fields with levels below this restriction level.
+
+#### Metadata Field Security
+
+Metadata Fields can be restricted at the project level by metadata role. There are 4 restriction levels which can be applied to a field (Level 1, Level 2, Level 3, Level 4 (with Level 4 being the highest restriction level and Level 1 the lowest)). A project **Manager** has a default metadata role of `Level 4` and can view all the project sample metadata. A **Collaborator** can have any of the metadata roles applied to them and will only be able to view fields with their metadata role and lower.
+
+On the metadata fields page, the project **Manager** can set the restriction levels for each of the metadata fields associated with the project:
+
+![Project sample metadata manager view](images/project-sample-metadata-fields.png)
+
+For this example we have the Test User set to **Collaborator** with a metadata role of **Level 2**:
+
+![Image listing the project members](images/project-member-metadata-role.png)
+
+Visiting the line list page, this user will only see the metadata fields which have a restriction level of 2 or below. In this case there are only 4 fields this user can view:
+
+![List list collaborator Level 2 metadata role](images/linelist-restricted-collaborator-view.png)
+
+* **SISTR cgMLST Subspecies (v0.3.0)**: Level 1
+* **SISTR QC Status (v0.3.0)**: Level 1
+* **SISTR serovar (v0.3.0)**: Level 2
+* **SISTR H1 (v0.3.0)**: Level 2
 
 ### Metadata Templates
 
