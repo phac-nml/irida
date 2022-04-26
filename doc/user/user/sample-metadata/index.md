@@ -151,7 +151,7 @@ Metadata Fields can be restricted at the project level by metadata role. There a
 
 On the metadata fields page, the project **Manager** can set the restriction levels for each of the metadata fields associated with the project:
 
-![Project sample metadata manager view](images/project-sample-metadata-fields.png)
+![Project sample metadata manager view](images/project-sample-metadata-fields-manager.png)
 
 For this example we have the Test User set to **Collaborator** with a metadata role of **Level 2**:
 
@@ -165,6 +165,11 @@ Visiting the line list page, this user will only see the metadata fields which h
 * **SISTR QC Status (v0.3.0)**: Level 1
 * **SISTR serovar (v0.3.0)**: Level 2
 * **SISTR H1 (v0.3.0)**: Level 2
+
+Visiting the metadata fields page, this user will only be able to see the 4 fields above:
+
+![Project sample metadata manager view](images/project-sample-metadata-fields-collaborator.png)
+
 
 ### Metadata Templates
 
