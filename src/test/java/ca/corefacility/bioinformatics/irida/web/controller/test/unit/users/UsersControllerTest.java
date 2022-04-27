@@ -17,7 +17,6 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import com.google.common.collect.Lists;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -48,7 +47,7 @@ public class UsersControllerTest {
 
 	@Test
 	void testGetUserDetailsPage() {
-		String page = controller.getUserDetailsPage(anyLong());
+		String page = controller.getUserDetailsPage(USER1.getId());
 		assertTrue(SPECIFIC_USER_PAGE.equals(page), "Unexpected page returned");
 	}
 

@@ -41,6 +41,8 @@ public class UsersControllerTest {
 
 	private static final String USER_NAME = "testme";
 
+	private static final Long USER_ID = 1L;
+
 	Page<User> userPage;
 
 	// Services
@@ -74,13 +76,13 @@ public class UsersControllerTest {
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void testGetUserSpecificPage() {
-		String userSpecificPage = controller.getUserDetailsPage(anyLong());
+		String userSpecificPage = controller.getUserDetailsPage(USER_ID);
 		assertEquals(USERS_DETAILS_PAGE, userSpecificPage);
 	}
 
 	@Test
 	public void testGetOtherUsersSpecificPage() {
-		String userSpecificPage = controller.getUserDetailsPage(anyLong());
+		String userSpecificPage = controller.getUserDetailsPage(USER_ID);
 		assertEquals(USERS_DETAILS_PAGE, userSpecificPage);
 	}
 
