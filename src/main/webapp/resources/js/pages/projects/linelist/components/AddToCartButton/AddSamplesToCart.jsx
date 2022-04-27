@@ -1,7 +1,6 @@
 import React from "react";
 
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
 import { Button } from "antd";
 import { actions as cartActions } from "../../../../../redux/reducers/cart";
 import { IconShoppingCart } from "../../../../../components/icons/Icons";
@@ -30,11 +29,6 @@ export function AddSamplesToCartButtonComponent({
     </Button>
   );
 }
-
-AddSamplesToCartButtonComponent.propTypes = {
-  selected: PropTypes.array.isRequired,
-  addSamplesToCart: PropTypes.func.isRequired
-};
 
 const mapStateToProps = state => ({
   selected: state.entries.selected
