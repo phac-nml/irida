@@ -28,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -50,7 +49,6 @@ public class UsersController {
 	private final List<Locale> locales;
 
 	private final UserService userService;
-	private final ProjectService projectService;
 	private final PasswordResetService passwordResetService;
 	private final EmailController emailController;
 
@@ -60,11 +58,10 @@ public class UsersController {
 	private final MessageSource messageSource;
 
 	@Autowired
-	public UsersController(UserService userService, ProjectService projectService,
-			PasswordResetService passwordResetService, EmailController emailController, MessageSource messageSource,
+	public UsersController(UserService userService, PasswordResetService passwordResetService,
+			EmailController emailController, MessageSource messageSource,
 			IridaApiServicesConfig.IridaLocaleList locales) {
 		this.userService = userService;
-		this.projectService = projectService;
 		this.passwordResetService = passwordResetService;
 		this.emailController = emailController;
 		this.messageSource = messageSource;
@@ -72,8 +69,7 @@ public class UsersController {
 	}
 
 	/**
-	 * Request for the page to display a list of all projects available to the
-	 * currently logged in user.
+	 * Request for the page to display a list of all projects available to the currently logged in user.
 	 *
 	 * @return The name of the page.
 	 */
@@ -89,7 +85,8 @@ public class UsersController {
 	 * @return The name of the user account page
 	 */
 	@RequestMapping({ "/{userId}", "/{userId}/*" })
-	public String getUserDetailsPage() {
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER') or principal.id == #userId")
+	public String getUserDetailsPage(@PathVariable Long userId) {
 		return SPECIFIC_USER_PAGE;
 	}
 
@@ -174,8 +171,7 @@ public class UsersController {
 		}
 
 		// check validity of password
-		if (!user.getPassword()
-				.equals(confirmPassword)) {
+		if (!user.getPassword().equals(confirmPassword)) {
 			errors.put("password", messageSource.getMessage("server.user.edit.password.match", null, locale));
 		}
 
@@ -275,15 +271,13 @@ public class UsersController {
 
 			for (ConstraintViolation<?> violation : constraintViolations) {
 				logger.debug(violation.getMessage());
-				String errorKey = violation.getPropertyPath()
-						.toString();
+				String errorKey = violation.getPropertyPath().toString();
 				errors.put(errorKey, violation.getMessage());
 			}
 		} else if (ex instanceof DataIntegrityViolationException) {
 			DataIntegrityViolationException divx = (DataIntegrityViolationException) ex;
 			logger.debug(divx.getMessage());
-			if (divx.getMessage()
-					.contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
+			if (divx.getMessage().contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
 				errors.put("email", messageSource.getMessage("server.user.edit.emailConflict", null, locale));
 			}
 		} else if (ex instanceof EntityExistsException) {
@@ -305,8 +299,7 @@ public class UsersController {
 	private boolean isAdmin(Principal principal) {
 		logger.trace("Checking if user is admin");
 		User readPrincipal = userService.getUserByUsername(principal.getName());
-		return readPrincipal.getAuthorities()
-				.contains(Role.ROLE_ADMIN);
+		return readPrincipal.getAuthorities().contains(Role.ROLE_ADMIN);
 	}
 
 	/**

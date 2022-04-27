@@ -11,13 +11,13 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.users.UsersController;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.Lists;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -27,7 +27,6 @@ import static org.mockito.Mockito.when;
  */
 public class UsersControllerTest {
 	private UserService userService;
-	private ProjectService projectService;
 	private PasswordResetService passwordResetService;
 	private EmailController emailController;
 	private MessageSource messageSource;
@@ -40,17 +39,16 @@ public class UsersControllerTest {
 	@BeforeEach
 	void setUp() {
 		userService = mock(UserService.class);
-		projectService = mock(ProjectService.class);
 		passwordResetService = mock(PasswordResetService.class);
 		emailController = mock(EmailController.class);
 		messageSource = mock(MessageSource.class);
-		controller = new UsersController(userService, projectService, passwordResetService, emailController,
-				messageSource, new IridaApiServicesConfig.IridaLocaleList(Lists.newArrayList(Locale.ENGLISH)));
+		controller = new UsersController(userService, passwordResetService, emailController, messageSource,
+				new IridaApiServicesConfig.IridaLocaleList(Lists.newArrayList(Locale.ENGLISH)));
 	}
 
 	@Test
 	void testGetUserDetailsPage() {
-		String page = controller.getUserDetailsPage();
+		String page = controller.getUserDetailsPage(anyLong());
 		assertTrue(SPECIFIC_USER_PAGE.equals(page), "Unexpected page returned");
 	}
 
@@ -61,7 +59,7 @@ public class UsersControllerTest {
 		when(userService.getUserByUsername(anyString())).thenReturn(USER1);
 
 		String page = controller.getLoggedInUserPage(principal);
-		
+
 		assertTrue(String.format("redirect:/users/%d", USER1.getId()).equals(page), "Unexpected page returned");
 	}
 }
