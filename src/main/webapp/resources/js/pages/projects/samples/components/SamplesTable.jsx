@@ -104,7 +104,7 @@ export function SamplesTable() {
    * Handle changes made to the table options.  This will trigger an automatic
    * reload of the table content.
    * @param pagination
-   * @param filters
+   * @param tableFilters
    * @param sorter
    * @returns {*}
    */
@@ -321,6 +321,7 @@ export function SamplesTable() {
 
   return (
     <Table
+      className="t-samples-table"
       loading={isFetching || loadingLong}
       columns={columns}
       dataSource={samples}

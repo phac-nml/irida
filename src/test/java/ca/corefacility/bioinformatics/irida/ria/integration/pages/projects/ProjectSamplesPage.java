@@ -101,6 +101,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-modified-filter")
 	private WebElement modifiedDateFilter;
 
+	@FindBy(className = "t-samples-table")
+	private WebElement samplesTable;
+
 	//----- OLD BELOW
 
 	@FindBy(className = "t-associated-btn")
@@ -394,10 +397,29 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		modifiedDateFilterToggle.click();
 	}
 
+	public void selectSampleByName(String sampleName) {
+		WebElement checkbox = samplesTable.findElement(By.xpath("//td/a[text()='" + sampleName + "']/../..//input"));
+		checkbox.click();
+	}
+
+	public void addSelectedSamplesToCart() {
+		addToCartBtn.click();
+		// Make sure the item were added to the cart.
+		waitForElementVisible(By.className("t-cart-count"));
+		// If the cart count is already visible this can go too fast,
+		// wait for the cart to fully update it's total.
+		waitForTime(500);
+	}
+
 	// --- OLD BELOW
 
 	public String getTableInfo() {
 		return samplesTableInfo.getText();
+	}
+
+	public void selectSample(int sampleName) {
+		WebElement checkbox = samplesTable.findElement(By.xpath("//td/a[text()= " + sampleName + "]/../..//input"));
+		checkbox.click();
 	}
 
 	public int getNumberProjectsDisplayed() {
@@ -433,27 +455,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".dataTables_processing")));
 	}
 
-	public void selectSample(int row) {
-		// Need to get the anything but the first column as that is a link to
-		// the sample!
-		WebElement checkbox = tableRows.get(row).findElement(By.className("t-row-select"));
-		checkbox.click();
-	}
-
 	public void selectSampleWithShift(int row) {
 		Actions actions = new Actions(driver);
 		actions.keyDown(Keys.SHIFT).click(tableRows.get(row).findElement(By.className("t-row-select"))).perform();
 		// Sometimes, that shift key never gets lifted!
 		actions.keyUp(Keys.SHIFT).perform();
-	}
-
-	public void addSelectedSamplesToCart() {
-		addToCartBtn.click();
-		// Make sure the item were added to the cart.
-		waitForElementVisible(By.className("t-cart-count"));
-		// If the cart count is already visible this can go too fast,
-		// wait for the cart to fully update it's total.
-		waitForTime(500);
 	}
 
 	public void mergeSamplesWithOriginalName() {

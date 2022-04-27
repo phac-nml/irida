@@ -94,7 +94,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		assertEquals("No samples selected", page.getSelectedInfoText(), "Should be 0 selected samples");
 
-		page.selectSample(0);
+		page.selectSample(1);
 		assertEquals("1 sample selected", page.getSelectedInfoText(), "Should be 1 selected samples");
 
 		page.selectSampleWithShift(4);
@@ -111,13 +111,13 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	public void testAddSamplesToCart() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		page.selectSample(0);
+		page.selectSample(1);
 		page.selectSampleWithShift(4);
 		assertEquals("5 samples selected", page.getSelectedInfoText(), "Should be 5 selected samples");
 
 		page.goToNextPage();
-		page.selectSample(1);
-		page.selectSample(2);
+		//		page.selectSample(1);
+		//		page.selectSample(2);
 		assertEquals("7 samples selected", page.getSelectedInfoText(), "Should be 7 selected samples");
 
 		page.addSelectedSamplesToCart();
@@ -135,8 +135,8 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		// Select some samples
-		page.selectSample(0);
-		page.selectSample(2);
+		//		page.selectSample(0);
+		//		page.selectSample(2);
 		assertEquals("2 samples selected", page.getSelectedInfoText(), "Should be 2 selected samples");
 
 		// Merge these samples with the original name
@@ -150,8 +150,8 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 				"Should have different sample second since it was merged");
 
 		// Merge with a new name
-		page.selectSample(0);
-		page.selectSample(1);
+		//		page.selectSample(0);
+		//		page.selectSample(1);
 		String newSampleName = "NEW_NAME";
 		page.mergeSamplesWithNewName(newSampleName);
 		String name = page.getSampleNamesOnPage().get(0);
@@ -163,8 +163,8 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 7);
-		page.selectSample(0);
-		page.selectSample(1);
+		//		page.selectSample(0);
+		//		page.selectSample(1);
 
 		page.waitUntilShareButtonVisible();
 		assertTrue(page.isShareBtnEnabled(), "Share button should be enabled");
@@ -177,8 +177,8 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		// Select some samples
-		page.selectSample(0);
-		page.selectSample(1);
+		//		page.selectSample(0);
+		//		page.selectSample(1);
 
 		// Remove process
 		page.removeSamples();
@@ -277,36 +277,17 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testFilteringWithDates() {
-		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		page.filterByDateRange("07/06/2015 - 07/09/2015");
-		assertEquals("Showing 1 to 4 of 4 entries", page.getTableInfo(), "Should ignore case when filtering");
-
-		// Make sure that when the filter is applied, only the correct number of samples are selected.
-		page.selectAllSamples();
-		assertEquals("4 samples selected", page.getSelectedInfoText(),
-				"Should only have 4 samples selected after filter");
-
-		// Test clearing the filters
-		page.clearFilter();
-		assertEquals("Showing 1 to 10 of 23 entries", page.getTableInfo(), "Should have 23 samples displayed");
-	}
-
-	@Test
 	public void testCartFunctionality() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		// Select some samples
-		page.selectSample(0);
-		page.selectSample(1);
-
-		// Add them to the cart
+		page.selectSampleByName("sample55422r");
+		page.selectSampleByName("sample-5-fg-22");
 		page.addSelectedSamplesToCart();
 		assertEquals(2, page.getCartCount(), "Should be two items in the cart");
 
-		page.selectSample(5);
+		page.selectSampleByName("sample64565");
 		page.addSelectedSamplesToCart();
 		assertEquals(3, page.getCartCount(), "Should be three items in the cart");
 	}

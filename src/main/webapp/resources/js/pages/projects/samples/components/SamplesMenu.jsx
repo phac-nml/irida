@@ -278,6 +278,7 @@ export default function SamplesMenu() {
             </Button>
           </Dropdown>
           <Button
+            className="t-add-cart-btn"
             icon={<IconShoppingCart />}
             onClick={onAddToCart}
             disabled={selectedCount === 0}
