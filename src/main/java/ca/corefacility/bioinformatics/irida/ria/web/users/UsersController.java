@@ -82,6 +82,7 @@ public class UsersController {
 	/**
 	 * Request for a specific user details page.
 	 *
+	 * @param userId identifier for the user
 	 * @return The name of the user account page
 	 */
 	@RequestMapping({ "/{userId}", "/{userId}/*" })
