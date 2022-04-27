@@ -26,9 +26,9 @@ export default function UserAccountLayout() {
   return (
     <Layout style={{height: "100%", minHeight: "100%"}}>
       <Row>
-        <Col xl={{span: 12, offset: 6}}
-             m={{span: 20, offset: 2}}
-             xs={{span: 24}}>
+        <Col xxl={{span: 12, offset: 6}}
+             xl={{span: 20, offset: 2}}
+             sm={{span: 22, offset: 1}}>
           <PageHeader
             title={
               showBack
