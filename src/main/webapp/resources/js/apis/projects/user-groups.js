@@ -72,23 +72,46 @@ export async function addUserGroupToProject({
  * @param {number} projectId Identifier for the current project
  * @param {number} groupId Identifier for the user group to add
  * @param {string} projectRole for the user group on the project
- * @param {string} metadataRole for the user group metadata access on the project
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function updateUserGroupProjectRole({
   projectId,
   id,
-  projectRole,
-  metadataRole,
+  projectRole = "",
 }) {
   const params = new URLSearchParams({
     projectId,
     id,
     projectRole,
-    metadataRole,
   });
   try {
     const { data } = await axios.put(`${BASE_URL}/role?${params.toString()}`);
+    return Promise.resolve(data);
+  } catch (e) {
+    return Promise.reject(e.response.data);
+  }
+}
+
+/**
+ * Update the metadata role of a user group on the current project
+ *
+ * @param {number} projectId Identifier for the current project
+ * @param {number} groupId Identifier for the user group to add
+ * @param {string} metadataRole for the user group metadata access on the project
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export async function updateUserGroupProjectMetadataRole({
+ projectId,
+ id,
+ metadataRole = "",
+}) {
+  const params = new URLSearchParams({
+    projectId,
+    id,
+    metadataRole,
+  });
+  try {
+    const { data } = await axios.put(`${BASE_URL}/metadata-role?${params.toString()}`);
     return Promise.resolve(data);
   } catch (e) {
     return Promise.reject(e.response.data);

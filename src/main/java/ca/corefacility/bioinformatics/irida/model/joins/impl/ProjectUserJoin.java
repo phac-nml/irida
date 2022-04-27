@@ -6,6 +6,8 @@ import java.util.Objects;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import ca.corefacility.bioinformatics.irida.constraints.MetadataRoleValidate;
+
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -23,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 @Table(name = "project_user", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" }))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
+@MetadataRoleValidate
 public class ProjectUserJoin implements Join<Project, User> {
 
 	@Id
