@@ -1,9 +1,12 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 import ca.corefacility.bioinformatics.irida.security.IgnoreExpiredCredentialsForPasswordChangeChecker;
 import ca.corefacility.bioinformatics.irida.security.PasswordExpiryChecker;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,9 @@ public class IridaAuthenticationSecurityConfig {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Value("${irida.administrative.authentication.mode}")
     private String authenticationMode;
@@ -146,6 +152,25 @@ public class IridaAuthenticationSecurityConfig {
             @Override
             public UserDetails mapUserFromContext(DirContextOperations dirContextOperations, String username, Collection<? extends GrantedAuthority> collection) {
                 // Here we could use dirContextOperations to fetch other user attributes from ldap, not needed for our use case
+                try {
+                    return userRepository.loadUserByUsername(username);
+                }
+                catch(UsernameNotFoundException e) {
+//                    String msg = "Username found in LDAP/ADLDAP server, but not in local database.";
+//                    logger.error(msg);
+//                    throw new UsernameNotFoundException(msg);
+                    logger.info("Creating new IRIDA user for found LDAP user");
+                    String randomPassword = "Password1!";
+                    String fieldLdapEmail = username + "@user.us";
+                    String fieldLdapFirstName = username;
+                    String fieldLdapLastName = username;
+                    String fieldLdapPhoneNumber = "1234";
+                    User u = new User(username, fieldLdapEmail, randomPassword, fieldLdapFirstName, fieldLdapLastName, fieldLdapPhoneNumber);
+                    u.setSystemRole(Role.ROLE_USER);
+                    userService.create(u);
+
+
+                }
                 try {
                     return userRepository.loadUserByUsername(username);
                 }
