@@ -36,7 +36,7 @@ export default function UserDetailsPage() {
   const onFormFinish = (values) => {
     editUser({userId: userId, ...values})
       .unwrap()
-      .then((payload) => {
+      .then(() => {
         notification.success({
           message: i18n("UserDetailsPage.notification.success"),
           className: 't-user-page-notification-success',
