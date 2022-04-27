@@ -92,8 +92,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(css = ".t-td-created .ant-table-filter-trigger")
 	private WebElement createdDateFilterToggle;
 
+	@FindBy(className = "t-created-filter")
+	private WebElement createdDateFilter;
+
 	@FindBy(css = ".t-td-modified .ant-table-filter-trigger")
 	private WebElement modifiedDateFilterToggle;
+
+	@FindBy(className = "t-modified-filter")
+	private WebElement modifiedDateFilter;
 
 	//----- OLD BELOW
 
@@ -358,33 +364,33 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void filterByCreatedDate(String start, String end) {
 		createdDateFilterToggle.click();
-		WebElement startInput = driver.findElement(By.xpath("//input[@placeholder='Start date']"));
+		WebElement startInput = createdDateFilter.findElement(By.xpath("//input[@placeholder='Start date']"));
 		startInput.sendKeys(start);
-		WebElement endInput = driver.findElement(By.xpath("//input[@placeholder='End date']"));
+		WebElement endInput = createdDateFilter.findElement(By.xpath("//input[@placeholder='End date']"));
 		endInput.sendKeys(end);
 		endInput.sendKeys(Keys.ENTER);
-		driver.findElement(By.xpath("//button/span[contains(text(),'Search')]")).click();
+		createdDateFilter.findElement(By.className("t-search-btn")).click();
 	}
 
 	public void clearFilterByCreatedDate() {
 		createdDateFilterToggle.click();
-		driver.findElement(By.xpath("//button/span[contains(text(), 'Clear')]")).click();
+		createdDateFilter.findElement(By.className("t-clear-btn")).click();
 		createdDateFilterToggle.click();
 	}
 
 	public void filterByModifiedDate(String start, String end) {
 		modifiedDateFilterToggle.click();
-		WebElement startInput = driver.findElements(By.xpath("//input[@placeholder='Start date']")).get(1);
+		WebElement startInput = modifiedDateFilter.findElements(By.xpath("//input[@placeholder='Start date']")).get(1);
 		startInput.sendKeys(start);
-		WebElement endInput = driver.findElements(By.xpath("//input[@placeholder='End date']")).get(1);
+		WebElement endInput = modifiedDateFilter.findElements(By.xpath("//input[@placeholder='End date']")).get(1);
 		endInput.sendKeys(end);
 		endInput.sendKeys(Keys.ENTER);
-		driver.findElements(By.xpath("//button/span[contains(text(),'Search')]")).get(1).click();
+		modifiedDateFilter.findElement(By.className("t-search-btn")).click();
 	}
 
 	public void clearFilterByModifiedDate() {
 		modifiedDateFilterToggle.click();
-		driver.findElements(By.xpath("//button/span[contains(text(), 'Clear')]")).get(1).click();
+		modifiedDateFilter.findElement(By.className("t-clear-btn")).click();
 		modifiedDateFilterToggle.click();
 	}
 

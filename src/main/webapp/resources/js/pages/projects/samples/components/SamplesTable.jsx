@@ -177,14 +177,14 @@ export function SamplesTable() {
     ),
   });
 
-  const getDateColumnSearchProps = () => ({
+  const getDateColumnSearchProps = (filterName) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
       confirm,
       clearFilters,
     }) => (
-      <div style={{ padding: 8 }}>
+      <div style={{ padding: 8 }} className={filterName}>
         <div style={{ marginBottom: 8, display: "block" }}>
           <RangePicker
             onChange={(dates) =>
@@ -200,6 +200,7 @@ export function SamplesTable() {
             onClick={() => handleClearSearch(clearFilters, confirm)}
             size="small"
             style={{ width: 89 }}
+            className="t-clear-btn"
           >
             Clear
           </Button>
@@ -209,6 +210,7 @@ export function SamplesTable() {
             icon={<IconSearch />}
             size="small"
             style={{ width: 90 }}
+            className="t-search-btn"
           >
             Search
           </Button>
@@ -301,7 +303,7 @@ export function SamplesTable() {
       render: (createdDate) => {
         return formatInternationalizedDateTime(createdDate);
       },
-      ...getDateColumnSearchProps(),
+      ...getDateColumnSearchProps("t-created-filter"),
     },
     {
       title: i18n("SamplesTable.Column.modified"),
@@ -313,7 +315,7 @@ export function SamplesTable() {
       render: (modifiedDate) => {
         return formatInternationalizedDateTime(modifiedDate);
       },
-      ...getDateColumnSearchProps(),
+      ...getDateColumnSearchProps("t-modified-filter"),
     },
   ];
 
