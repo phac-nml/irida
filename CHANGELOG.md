@@ -17,6 +17,7 @@ Changes
 * [Developer]: Removed unused DataTables code.
 * [UI]: Sorted columns for advanced charts and added labels to tiny charts on admin statistics page.
 * [UI]: Fixed: Allow organism name not included in the current taxonomy.
+* [Developer]: Removed `prop-types` as a front-end development dependency.
 
 22.01 to 22.03
 --------------

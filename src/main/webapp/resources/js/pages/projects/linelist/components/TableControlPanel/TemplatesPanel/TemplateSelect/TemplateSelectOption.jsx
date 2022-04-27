@@ -1,6 +1,5 @@
 import React from "react";
 
-import PropTypes from "prop-types";
 import { Tag } from "antd";
 
 /**
@@ -10,7 +9,7 @@ import { Tag } from "antd";
  */
 export function TemplateSelectOption(props) {
   const { template, index, current, saved } = props;
-  const { name, fields, modified } = template;
+  const { name, fields } = template;
 
   return (
     <>
@@ -32,7 +31,7 @@ export function TemplateSelectOption(props) {
             </Tag>
           ) : null}
           <Tag className="templates-option--field-count">
-            {/* We subtract 2 from the fields length as the Select box and sample name should not be included in this count */}
+            {/* We subtract 2 from the fields' length as the Select box and sample name should not be included in this count */}
             {fields.filter((f) => !f.hide).length - 2}
           </Tag>
         </span>
@@ -40,11 +39,3 @@ export function TemplateSelectOption(props) {
     </>
   );
 }
-
-TemplateSelectOption.propTypes = {
-  template: PropTypes.object.isRequired,
-  saved: PropTypes.bool.isRequired,
-  current: PropTypes.number.isRequired,
-  index: PropTypes.number.isRequired,
-  saveTemplate: PropTypes.func.isRequired,
-};
