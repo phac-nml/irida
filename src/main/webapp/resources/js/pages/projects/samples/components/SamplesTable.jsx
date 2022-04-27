@@ -158,7 +158,7 @@ export function SamplesTable() {
             size="small"
             style={{ width: 89 }}
           >
-            Clear
+            {i18n("Filter.clear")}
           </Button>
           <Button
             type="primary"
@@ -167,7 +167,7 @@ export function SamplesTable() {
             size="small"
             style={{ width: 90 }}
           >
-            Search
+            {i18n("Filter.search")}
           </Button>
         </Space>
       </div>
@@ -202,7 +202,7 @@ export function SamplesTable() {
             style={{ width: 89 }}
             className="t-clear-btn"
           >
-            Clear
+            {i18n("Filter.clear")}
           </Button>
           <Button
             type="primary"
@@ -212,7 +212,7 @@ export function SamplesTable() {
             style={{ width: 90 }}
             className="t-search-btn"
           >
-            Search
+            {i18n("Filter.search")}
           </Button>
         </Space>
       </div>
