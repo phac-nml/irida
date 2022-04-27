@@ -8,13 +8,14 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.ReadSamplePermission;
 
 /**
- * 
+ * Evaluate whether or not a user can read a {@link GenomeAssembly}
  */
 @Component
 public class ReadGenomeAssemblyPermission extends BasePermission<GenomeAssembly, Long> {
@@ -28,9 +29,9 @@ public class ReadGenomeAssemblyPermission extends BasePermission<GenomeAssembly,
     /**
      * Construct an instance of {@link ReadGenomeAssemblyPermission}
      * 
-     * @param genomeAssemblyRepository
-     * @param samplePermission
-     * @param sgaRepository
+     * @param genomeAssemblyRepository Repository for {@link GenomeAssembly}s
+     * @param samplePermission         Permission reading {@link Sample}s
+     * @param sgaRepository            {@link SampleGenomeAssemblyJoinRepository}
      */
     @Autowired
     public ReadGenomeAssemblyPermission(final GenomeAssemblyRepository genomeAssemblyRepository,

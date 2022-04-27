@@ -24,8 +24,10 @@ public interface GenomeAssemblyRepository
 	<S extends GenomeAssembly> S save(S entity);
 
 	/**
-	 * @param submission
-	 * @return
+	 * Get the {@link GenomeAssembly}s associated with a given {@link AnalysisSubmission}
+	 * 
+	 * @param submission the {@link AnalysisSubmission}
+	 * @return the set of associated {@link GenomeAssembly}s
 	 */
 	@Query("select f from GenomeAssembly f where ?1 in elements(f.analysisSubmissions)")
 	Set<GenomeAssembly> findGenomeAssembliesForAnalysisSubmission(AnalysisSubmission submission);
