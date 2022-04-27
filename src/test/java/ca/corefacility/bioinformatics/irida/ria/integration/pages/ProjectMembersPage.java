@@ -96,7 +96,7 @@ public class ProjectMembersPage extends AbstractPage {
 	}
 
 	public boolean isNotificationDisplayed() {
-		WebDriverWait wait = new WebDriverWait(driver, 5);
+		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(antNotification));
 		antNotificationClose.click();
 		wait.until(ExpectedConditions.invisibilityOf(antNotification));
@@ -124,5 +124,17 @@ public class ProjectMembersPage extends AbstractPage {
 		roleSelect.click();
 		driver.findElement(By.className("t-" + role))
 				.click();
+	}
+
+	public boolean userMetadataRoleSelectEnabled(int row) {
+		WebElement roleSelect = metadataRoleSelect.get(row);
+		return !roleSelect.getAttribute("class").contains("disabled");
+	}
+
+	public boolean lastManagerRemoveButtonEnabled(int row) {
+		WebElement removeButtonForLastManager = removeMemberButtons.get(row);
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		wait.until(ExpectedConditions.visibilityOf(removeButtonForLastManager));
+		return removeButtonForLastManager.findElement(By.className("ant-btn")).isEnabled();
 	}
 }

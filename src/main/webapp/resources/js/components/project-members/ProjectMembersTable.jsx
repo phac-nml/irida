@@ -4,15 +4,14 @@ import {
   addMemberToProject,
   getAvailableUsersForProject,
   removeUserFromProject,
+  updateUserMetadataRoleOnProject,
   updateUserRoleOnProject,
 } from "../../apis/projects/members";
 import { useGetProjectDetailsQuery } from "../../apis/projects/project";
 import { useMetadataRoles } from "../../contexts/metadata-roles-context";
 import { useProjectRoles } from "../../contexts/project-roles-context";
 import { getCurrentUserDetails } from "../../pages/projects/redux/userSlice";
-import {
-  formatInternationalizedDateTime
-} from "../../utilities/date-utilities";
+import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { AddMemberButton, RemoveTableItemButton } from "../Buttons";
@@ -28,8 +27,12 @@ export function ProjectMembersTable({ projectId }) {
   const { updateTable } = useContext(PagedTableContext);
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const { identifier: userId } = useSelector((state) => state.user);
+
   const { roles: projectRoles, getRoleFromKey } = useProjectRoles();
-  const { roles: metadataRoles, getRoleFromKey: getMetadataRoleFromKey } = useMetadataRoles();
+  const {
+    roles: metadataRoles,
+    getRoleFromKey: getMetadataRoleFromKey,
+  } = useMetadataRoles();
 
   React.useEffect(() => {
     dispatch(getCurrentUserDetails());
@@ -45,11 +48,25 @@ export function ProjectMembersTable({ projectId }) {
     updateTable();
   }
 
-  const updateProjectRole = ({ id, medataRole }) => (projectRole) =>
-    updateUserRoleOnProject({ projectId, id, medataRole, projectRole });
+  const updateProjectRole = ({ id }) => (projectRole) => {
+    return updateUserRoleOnProject({ projectId, id, projectRole }).then(
+      (message) => {
+        updateTable();
+        return message;
+      }
+    );
+  };
 
-  const updateMetadataRole = ({ id, projectRole }) => (metadataRole) =>
-    updateUserRoleOnProject({ projectId, id, projectRole, metadataRole });
+  const updateMetadataRole = ({ id }) => (metadataRole) => {
+    return updateUserMetadataRoleOnProject({
+      projectId,
+      id,
+      metadataRole,
+    }).then((message) => {
+      updateTable();
+      return message;
+    });
+  };
 
   const columns = [
     {
@@ -69,6 +86,7 @@ export function ProjectMembersTable({ projectId }) {
             roles={projectRoles}
             updateRoleFn={updateProjectRole(item)}
             currentRole={item.projectRole}
+            disabledProjectOwner={item.id === userId}
           />
         ) : (
           getRoleFromKey(item.projectRole)
@@ -84,6 +102,9 @@ export function ProjectMembersTable({ projectId }) {
             roles={metadataRoles}
             updateRoleFn={updateMetadataRole(item)}
             currentRole={item.metadataRole}
+            disabledProjectOwner={
+              item.id === userId || item.projectRole === "PROJECT_OWNER"
+            }
           />
         ) : (
           getMetadataRoleFromKey(item.metadataRole)
@@ -109,10 +130,17 @@ export function ProjectMembersTable({ projectId }) {
             onRemoveSuccess={() => userRemoved(user)}
             tooltipText={i18n("RemoveMemberButton.tooltip")}
             confirmText={i18n("RemoveMemberButton.confirm")}
+            disabledLoggedInUser={userId === user.id}
           />
         );
       },
     });
+  } else {
+    // Remove the metadata role column if the user cannot manage the project
+    const index = columns.findIndex(
+      (key) => key.title === i18n("ProjectMembersTable.metadataRole")
+    );
+    columns.splice(index, 1);
   }
 
   /**
