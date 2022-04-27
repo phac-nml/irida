@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
@@ -31,7 +30,6 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 		IridaApiServicesConfig.class,
 		IridaApiTestFilesystemConfig.class,
 		IridaApiGalaxyTestConfig.class })
-@Import(IridaApiTestFilesystemConfig.class)
 public @interface GalaxyIntegrationTest {
 
 }

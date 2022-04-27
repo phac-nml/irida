@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -35,9 +33,10 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Tests for dealing with Galaxy Libraries.
- *
  */
 @GalaxyIntegrationTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
@@ -46,6 +45,7 @@ public class GalaxyLibrariesServiceIT {
 	@Autowired
 	private LocalGalaxy localGalaxy;
 
+	@Autowired
 	private GalaxyLibrariesService galaxyLibrariesService;
 
 	private Path dataFile;
@@ -53,21 +53,11 @@ public class GalaxyLibrariesServiceIT {
 	private Path dataFileCompressed;
 	private Path dataFileFail;
 
+	@Autowired
 	private GalaxyInstance galaxyInstanceAdmin;
 	private LibrariesClient librariesClient;
 
 	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
-
-	/**
-	 * Timeout in seconds to stop polling a Galaxy library.
-	 */
-	private static final int LIBRARY_TIMEOUT = 5 * 60;
-
-	/**
-	 * Polling time in seconds to poll a Galaxy library to check if datasets
-	 * have been properly uploaded.
-	 */
-	private static final int LIBRARY_POLLING_TIME = 5;
 
 	/**
 	 * Sets up variables for tests
@@ -79,8 +69,6 @@ public class GalaxyLibrariesServiceIT {
 	public void setup() throws URISyntaxException, IOException {
 		galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
 		librariesClient = galaxyInstanceAdmin.getLibrariesClient();
-
-		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
 
 		dataFile = Paths.get(GalaxyLibrariesServiceIT.class.getResource("testData1.fastq").toURI());
 
@@ -94,8 +82,7 @@ public class GalaxyLibrariesServiceIT {
 	/**
 	 * Builds a library with the given name.
 	 * 
-	 * @param name
-	 *            The name of the new library.
+	 * @param name The name of the new library.
 	 * @return A library with the given name.
 	 * @throws CreateLibraryException
 	 */
@@ -115,7 +102,8 @@ public class GalaxyLibrariesServiceIT {
 		Library library = buildEmptyLibrary("testFileToLibrarySuccess");
 		String datasetId = galaxyLibrariesService.fileToLibrary(dataFile, FILE_TYPE, library, DataStorage.LOCAL);
 		assertNotNull(datasetId);
-		LibraryDataset actualDataset = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
+		LibraryDataset actualDataset = localGalaxy.getGalaxyInstanceAdmin()
+				.getLibrariesClient()
 				.showDataset(library.getId(), datasetId);
 		assertNotNull(actualDataset);
 		assertEquals(filename, actualDataset.getName());
@@ -154,19 +142,22 @@ public class GalaxyLibrariesServiceIT {
 		String datasetId2 = datasetsMap.get(dataFile2);
 		String datasetIdCompressed = datasetsMap.get(dataFileCompressed);
 
-		LibraryDataset actualDataset1 = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
+		LibraryDataset actualDataset1 = localGalaxy.getGalaxyInstanceAdmin()
+				.getLibrariesClient()
 				.showDataset(library.getId(), datasetId1);
 		assertNotNull(actualDataset1);
 		assertEquals(actualDataset1.getDataTypeExt(), InputFileType.FASTQ_SANGER.toString(),
 				"Invalid data type extension");
 
-		LibraryDataset actualDataset2 = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
+		LibraryDataset actualDataset2 = localGalaxy.getGalaxyInstanceAdmin()
+				.getLibrariesClient()
 				.showDataset(library.getId(), datasetId2);
 		assertNotNull(actualDataset2);
 		assertEquals(actualDataset2.getDataTypeExt(), InputFileType.FASTQ_SANGER.toString(),
 				"Invalid data type extension");
 
-		LibraryDataset actualDatasetCompressed = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient()
+		LibraryDataset actualDatasetCompressed = localGalaxy.getGalaxyInstanceAdmin()
+				.getLibrariesClient()
 				.showDataset(library.getId(), datasetIdCompressed);
 		assertNotNull(actualDatasetCompressed);
 		assertEquals(actualDatasetCompressed.getDataTypeExt(), InputFileType.FASTQ_SANGER_GZ.toString(),
@@ -174,8 +165,7 @@ public class GalaxyLibrariesServiceIT {
 	}
 
 	/**
-	 * Tests failure to upload a list of files to a Galaxy history through a
-	 * Library.
+	 * Tests failure to upload a list of files to a Galaxy history through a Library.
 	 * 
 	 * @throws UploadException
 	 * @throws GalaxyDatasetException
@@ -206,8 +196,7 @@ public class GalaxyLibrariesServiceIT {
 	}
 
 	/**
-	 * Tests failure to upload to a library due to an error with the dataset
-	 * upload.
+	 * Tests failure to upload to a library due to an error with the dataset upload.
 	 * 
 	 * @throws UploadException
 	 * @throws GalaxyDatasetException
