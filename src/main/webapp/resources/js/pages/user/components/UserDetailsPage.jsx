@@ -137,12 +137,11 @@ export default function UserDetailsPage() {
           name="role"
           hidden={!userDetails.admin}
         >
-          <Select>
+          <Select disabled={!userDetails.canEditUserStatus}>
             {systemRoles.map((role, index) => (
               <Select.Option
                 key={`user-account-details-role-${index}`}
                 value={role.code}
-                disabled={!userDetails.canEditUserStatus}
               >
                 {role.name}
               </Select.Option>
