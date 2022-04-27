@@ -33,27 +33,33 @@ export function SequenceFileDetailsRenderer({
         avatar={<Avatar size={`small`} icon={file.icon} />}
         title={
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <div>
-              <Button
-                type="link"
-                style={{ padding: 0 }}
-                className="t-file-label"
-                onClick={() =>
-                  dispatch(
-                    setFastQCModalData({
-                      fileLabel: file.label,
-                      fileId: file.id,
-                      sequencingObjectId: fileObjectId,
-                      fastQCModalVisible: true,
-                      processingState: file.processingState,
-                    })
-                  )
-                }
-              >
+            {file.processingState === "FINISHED" ?
+              <div>
+                <Button
+                  type="link"
+                  style={{padding: 0}}
+                  className="t-file-label"
+                  onClick={() =>
+                    dispatch(
+                      setFastQCModalData({
+                        fileLabel: file.label,
+                        fileId: file.id,
+                        sequencingObjectId: fileObjectId,
+                        fastQCModalVisible: true,
+                        processingState: file.processingState,
+                      })
+                    )
+                  }
+                >
+                  {file.label}
+                </Button>
+                <FastQC/>
+              </div>
+              :
+              <div>
                 {file.label}
-              </Button>
-              <FastQC />
-            </div>
+              </div>
+            }
 
             <Space direction="horizontal" size="small">
               {getProcessingState(file.processingState)}

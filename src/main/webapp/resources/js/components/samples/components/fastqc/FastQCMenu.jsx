@@ -1,12 +1,9 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { Tabs } from "antd";
-import { ContentLoading } from "../../../loader";
 
-const FastQCCharts = React.lazy(() => import("./FastQCCharts"));
-const FastQCDetails = React.lazy(() => import("./FastQCDetails"));
-const OverRepresentedSequences = React.lazy(() =>
-  import("./OverRepresentedSequences")
-);
+import FastQCCharts from "./FastQCCharts";
+import OverRepresentedSequences from "./OverRepresentedSequences";
+import FastQCDetails from "./FastQCDetails";
 
 /**
  * React component to render tab menu for the FastQC results
@@ -18,22 +15,16 @@ export function FastQCMenu() {
     <>
       <Tabs defaultActiveKey="charts">
         <Tabs.TabPane tab={i18n("FastQC.charts")} key="charts">
-          <Suspense fallback={<ContentLoading />}>
             <FastQCCharts />
-          </Suspense>
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={i18n("FastQC.overrepresentedSequences")}
           key="overrepresented"
         >
-          <Suspense fallback={<ContentLoading />}>
-            <OverRepresentedSequences />
-          </Suspense>
+          <OverRepresentedSequences />
         </Tabs.TabPane>
         <Tabs.TabPane tab={i18n("FastQC.details")} key="details">
-          <Suspense fallback={<ContentLoading />}>
             <FastQCDetails />
-          </Suspense>
         </Tabs.TabPane>
       </Tabs>
     </>

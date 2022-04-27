@@ -18,6 +18,8 @@ const StyledImage = styled(Image)`
   border-radius: 2px;
 `;
 
+const DEFAULT_HEIGHT = 600;
+
 export default function FastQCCharts() {
   const [loading, setLoading] = useState(true);
   const [perBase, setPerBase] = useState("");
@@ -57,7 +59,7 @@ export default function FastQCCharts() {
           <Typography.Paragraph>
             {i18n("FastQC.overrepresentedSequencesDescription", fastQCVersion)}
           </Typography.Paragraph>
-          <Row gutter={[16, 16]} style={{ padding: SPACE_MD }}>
+          <Row gutter={[16, 16]} style={{ padding: SPACE_MD, height: DEFAULT_HEIGHT }}>
             <Col span={12}>
               <StyledImage
                 src={perBase}

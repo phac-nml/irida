@@ -4,13 +4,16 @@
  */
 
 import React from "react";
-import { Col, Divider, Row, Typography } from "antd";
+import { Col, List, Row} from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { BasicList } from "../../../lists";
 import { formatDate } from "../../../../utilities/date-utilities";
 import { ContentLoading } from "../../../loader";
 import { getFastQCDetails } from "../../../../apis/files/sequence-files";
 import { setFastQCDetails } from "./fastQCSlice";
+import AutoSizer from "react-virtualized-auto-sizer";
+import { FixedSizeList as VList } from "react-window";
+
+const DEFAULT_HEIGHT = 600;
 
 export default function FastQCDetails() {
   const { loading, sequencingObjectId, fileId, file, fastQC } = useSelector(
@@ -55,10 +58,6 @@ export default function FastQCDetails() {
         className: "t-fastqc-encoding",
       },
     },
-  ];
-
-  // List details for sequence
-  const sequenceDetails = [
     {
       title: i18n("FastQC.totalSequences"),
       desc: fastQC.totalSequences,
@@ -96,6 +95,20 @@ export default function FastQCDetails() {
     },
   ];
 
+  const renderDetailsListItem = ({ index, style }) => {
+    const item = fileDetails[index];
+
+    return (
+      <List.Item style={{ ...style, padding: 15 }}>
+        <List.Item.Meta
+          title={item.title}
+          description={item.desc}
+          className={item.props.className}
+        />
+      </List.Item>
+    );
+  };
+
   return (
     <>
       {loading ? (
@@ -104,23 +117,24 @@ export default function FastQCDetails() {
         </div>
       ) : (
         <Row gutter={16}>
-          <Col span={24}>
-            <Typography.Title level={5} className="t-file-details-title">
-              {i18n("FastQC.fileDetails")}
-            </Typography.Title>
-          </Col>
-          <Col span={24}>
-            <BasicList dataSource={fileDetails} />
-          </Col>
-
-          <Divider />
-          <Col span={24}>
-            <Typography.Title level={5} className="t-sequence-details-title">
-              {i18n("FastQC.sequenceDetails")}
-            </Typography.Title>
-          </Col>
-          <Col span={24}>
-            <BasicList dataSource={sequenceDetails} />
+          <Col
+            span={24}
+            style={{
+              height: DEFAULT_HEIGHT,
+            }}
+          >
+            <AutoSizer>
+              {({ height = DEFAULT_HEIGHT, width = "100%" }) => (
+                <VList
+                  itemCount={fileDetails.length}
+                  itemSize={70}
+                  height={height}
+                  width={width}
+                >
+                  {renderDetailsListItem}
+                </VList>
+              )}
+            </AutoSizer>
           </Col>
         </Row>
       )}

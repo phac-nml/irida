@@ -4,9 +4,9 @@ import { render } from "react-dom";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import FastQC from "./components/FastQC";
-import FastQCCharts from "./components/FastQCCharts";
-import FastQCDetails from "./components/FastQCDetails";
-import OverRepresentedSequences from "./components/OverRepresentedSequences";
+import FastQCCharts from "../../components/samples/components/fastqc/FastQCCharts";
+import FastQCDetails from "../../components/samples/components/fastqc/FastQCDetails";
+import OverRepresentedSequences from "../../components/samples/components/fastqc/OverRepresentedSequences";
 import { getRootPath } from "./fastqc-utilities";
 
 /*

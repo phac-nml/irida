@@ -12,7 +12,7 @@ import { useUpdateSampleDetailsMutation } from "../../../apis/samples/samples";
 import { formatDate } from "../../../utilities/date-utilities";
 const { Paragraph } = Typography;
 import moment from "moment";
-import { OntologySelect } from "../../ontology";
+import { OntologyInput } from "../../ontology";
 import { TAXONOMY } from "../../../apis/ontology/taxonomy";
 import { useDispatch, useSelector } from "react-redux";
 import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context";
@@ -116,7 +116,7 @@ export function SampleInfo() {
     {
       title: i18n("SampleInfo.organism"),
       value: isModifiable ? (
-        <OntologySelect
+        <OntologyInput
           term={sample.organism}
           ontology={TAXONOMY}
           onTermSelected={(value) => updateField("organism", value)}

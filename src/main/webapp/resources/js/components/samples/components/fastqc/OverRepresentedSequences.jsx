@@ -9,6 +9,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { Monospace } from "../../../typography";
 import { getOverRepresentedSequences } from "../../../../apis/files/sequence-files";
 import { setAnalysisFastQC } from "./fastQCSlice";
+import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
+
+const DEFAULT_HEIGHT = 600;
 
 export default function OverRepresentedSequences() {
   const dispatch = useDispatch();
@@ -66,9 +69,7 @@ export default function OverRepresentedSequences() {
     <Row gutter={16}>
       <Col
         span={24}
-        style={{
-          height: "600px",
-        }}
+        style={{ height: DEFAULT_HEIGHT }}
       >
         <Typography.Paragraph className="text-info">
           {fastQC.description}
