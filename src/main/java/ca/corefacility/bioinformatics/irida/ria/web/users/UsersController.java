@@ -120,7 +120,7 @@ public class UsersController {
 
 		Map<String, String> roleNames = new HashMap<>();
 		for (Role role : adminAllowedRoles) {
-			String roleMessageName = "systemrole." + role.getName();
+			String roleMessageName = "systemRole." + role.getName();
 			String roleName = messageSource.getMessage(roleMessageName, null, locale);
 			roleNames.put(role.getName(), roleName);
 		}
