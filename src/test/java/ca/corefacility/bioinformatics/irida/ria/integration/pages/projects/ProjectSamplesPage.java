@@ -89,6 +89,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(css = ".t-td-project .ant-dropdown-trigger")
 	private WebElement projectsFilterToggle;
 
+	@FindBy(css = ".t-td-created .ant-table-filter-trigger")
+	private WebElement createdDateFilterToggle;
+
+	@FindBy(css = ".t-td-modified .ant-table-filter-trigger")
+	private WebElement modifiedDateFilterToggle;
+
 	//----- OLD BELOW
 
 	@FindBy(className = "t-associated-btn")
@@ -342,13 +348,44 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		waitForTime(200);
 	}
 
-	//li[@class='ant-dropdown-menu-item-selected']/span/span
 	public void removeAssociatedProject(String projectName) {
 		projectsFilterToggle.click();
 		WebElement selection = driver.findElement(By.xpath("//li/span/span[text()='" + projectName + "']"));
 		selection.click();
 		driver.findElement(By.xpath("//button[@type='button' and span='OK']")).click();
 		waitForTime(200);
+	}
+
+	public void filterByCreatedDate(String start, String end) {
+		createdDateFilterToggle.click();
+		WebElement startInput = driver.findElement(By.xpath("//input[@placeholder='Start date']"));
+		startInput.sendKeys(start);
+		WebElement endInput = driver.findElement(By.xpath("//input[@placeholder='End date']"));
+		endInput.sendKeys(end);
+		endInput.sendKeys(Keys.ENTER);
+		driver.findElement(By.xpath("//button/span[contains(text(),'Search')]")).click();
+	}
+
+	public void clearFilterByCreatedDate() {
+		createdDateFilterToggle.click();
+		driver.findElement(By.xpath("//button/span[contains(text(), 'Clear')]")).click();
+		createdDateFilterToggle.click();
+	}
+
+	public void filterByModifiedDate(String start, String end) {
+		modifiedDateFilterToggle.click();
+		WebElement startInput = driver.findElements(By.xpath("//input[@placeholder='Start date']")).get(1);
+		startInput.sendKeys(start);
+		WebElement endInput = driver.findElements(By.xpath("//input[@placeholder='End date']")).get(1);
+		endInput.sendKeys(end);
+		endInput.sendKeys(Keys.ENTER);
+		driver.findElements(By.xpath("//button/span[contains(text(),'Search')]")).get(1).click();
+	}
+
+	public void clearFilterByModifiedDate() {
+		modifiedDateFilterToggle.click();
+		driver.findElements(By.xpath("//button/span[contains(text(), 'Clear')]")).get(1).click();
+		modifiedDateFilterToggle.click();
 	}
 
 	// --- OLD BELOW

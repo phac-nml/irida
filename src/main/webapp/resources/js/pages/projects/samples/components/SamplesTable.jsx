@@ -294,6 +294,7 @@ export function SamplesTable() {
     },
     {
       title: i18n("SamplesTable.Column.created"),
+      className: "t-td-created",
       dataIndex: ["sample", "createdDate"],
       sorter: { multiple: 1 },
       width: 230,
@@ -304,6 +305,7 @@ export function SamplesTable() {
     },
     {
       title: i18n("SamplesTable.Column.modified"),
+      className: "t-td-modified",
       dataIndex: ["sample", "modifiedDate"],
       defaultSortOrder: "descend",
       sorter: { multiple: 1 },

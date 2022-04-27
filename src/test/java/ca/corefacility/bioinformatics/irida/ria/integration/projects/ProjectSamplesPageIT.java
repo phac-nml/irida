@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * <p>
  * Integration test to ensure that the Project Details Page.
  * </p>
- *
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesView.xml")
 public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
@@ -116,7 +115,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSampleWithShift(4);
 		assertEquals("5 samples selected", page.getSelectedInfoText(), "Should be 5 selected samples");
 
-
 		page.goToNextPage();
 		page.selectSample(1);
 		page.selectSample(2);
@@ -198,6 +196,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		String ORGANISM_FILTER_2 = "E. coli";
 		String ASSOCIATED_PROJECT_FILTER = "project5";
 
+
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		TableSummary summary = page.getTableSummary();
@@ -256,41 +255,25 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.clearIndividualOrganismFilter(ORGANISM_FILTER_2);
 		summary = page.getTableSummary();
 		assertEquals(3, summary.getTotal(), "Filtering by organism");
+		page.clearIndividualSampleNameFilter("sample3");
+		summary = page.getTableSummary();
+		assertEquals(23, summary.getTotal(), "Filtering by organism");
 
-		// TEST ASSOCIATED PROJECTS
+		// TEST CREATED DATE
+		page.filterByCreatedDate("2013-07-12", "2013-07-13");
+		summary = page.getTableSummary();
+		assertEquals(2, summary.getTotal(), "Filtering by created date");
+		page.clearFilterByCreatedDate();
+		summary = page.getTableSummary();
+		assertEquals(23, summary.getTotal(), "Clearing created by filter");
 
-		//		assertEquals("Showing 1 to 10 of 23 entries", page.getTableInfo(), "Should have 23 projects displayed");
-		//		page.filterByName("5");
-		//		assertEquals("Showing 1 to 10 of 19 entries", page.getTableInfo(), "Should have 19 projects displayed");
-		//		page.filterByName("52");
-		//		assertEquals("Showing 1 to 3 of 3 entries", page.getTableInfo(), "Should have 3 projects displayed");
-		//
-		//		// Make sure that when the filter is applied, only the correct number of samples are selected.
-		//		page.selectAllSamples();
-		//		assertEquals("3 samples selected", page.getSelectedInfoText(), "Should only have 3 samples selected");
-		//
-		//		// Test clearing the filters
-		//		page.clearFilter();
-		//		assertEquals("Showing 1 to 10 of 23 entries", page.getTableInfo(), "Should have 23 projects displayed");
-		//
-		//		// Should ignore case
-		//		page.filterByName("sample");
-		//		assertEquals("Showing 1 to 10 of 23 entries", page.getTableInfo(), "Should ignore case when filtering");
-		//
-		//		// Test date range filter
-		//		page.clearFilter();
-		//		assertEquals("Showing 1 to 10 of 23 entries", page.getTableInfo(), "Should have 23 samples displayed");
-		//
-		//		// Should find sample with underscores not hyphens
-		//		page.filterByName("sample_5_fg_22");
-		//		assertEquals(2, page.getSampleNamesOnPage().size(), "Should only have returned 2 sample");
-		//		assertEquals("sample_5_fg_22", page.getSampleNamesOnPage().get(0), "Should have sample with exact name");
-		//
-		//		// Should find sample with hyphens not underscores
-		//		page.filterByName("sample-5-fg-22");
-		//		assertEquals(1, page.getSampleNamesOnPage().size(), "Should only have returned 1 sample");
-		//		assertEquals("sample-5-fg-22", page.getSampleNamesOnPage().get(0), "Should have sample with exact name");
-
+		// TEST CREATED DATE
+		page.filterByModifiedDate("2015-07-17", "2015-07-20");
+		summary = page.getTableSummary();
+		assertEquals(4, summary.getTotal(), "Filtering by modified date");
+		page.clearFilterByModifiedDate();
+		summary = page.getTableSummary();
+		assertEquals(23, summary.getTotal(), "Clearing modified by filter");
 	}
 
 	@Test
@@ -302,7 +285,8 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Make sure that when the filter is applied, only the correct number of samples are selected.
 		page.selectAllSamples();
-		assertEquals("4 samples selected", page.getSelectedInfoText(), "Should only have 4 samples selected after filter");
+		assertEquals("4 samples selected", page.getSelectedInfoText(),
+				"Should only have 4 samples selected after filter");
 
 		// Test clearing the filters
 		page.clearFilter();
@@ -347,7 +331,8 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Make sure that when the filter is applied, only the correct number of samples are selected.
 		page.selectAllSamples();
-		assertEquals("4 samples selected", page.getSelectedInfoText(), "Should only have 4 samples selected after filter");
+		assertEquals("4 samples selected", page.getSelectedInfoText(),
+				"Should only have 4 samples selected after filter");
 
 		// Open the linker modal
 		page.openLinkerModal();
