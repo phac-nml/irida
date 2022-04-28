@@ -78,11 +78,12 @@ const exportSamplesToFile = createAsyncThunk(
     const { samples } = getState();
     const options = { ...samples.options };
     if (samples.selectedCount > 0) {
-      let sampleNamesFilter = formatFilterBySampleNames(
+      const sampleNamesFilter = formatFilterBySampleNames(
         Object.values(samples.selected)
       );
       options.search = [...options.search, sampleNamesFilter];
     }
+
     return await downloadPost(
       `/ajax/projects/${samples.projectId}/samples/export?type=${type}`,
       options
