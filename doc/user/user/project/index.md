@@ -326,6 +326,7 @@ Associated projects can be used to help manage related sample data across multip
 To view associated projects click the **Associated Projects** tab in the project settings page.
 
 ![Associated projects tab](images/associated-tab.png)
+
 *This is how the table will look for a Collaborator on the project*
 
 
