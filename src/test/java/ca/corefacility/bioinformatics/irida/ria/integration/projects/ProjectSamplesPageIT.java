@@ -293,33 +293,22 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testLinkerFunctionalityForProject() {
+	public void testLinkerFunctionality() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
-		page.openLinkerModal();
-		assertEquals("ngsArchiveLinker.pl -p 1 -t fastq", page.getLinkerText(),
+		assertEquals("ngsArchiveLinker.pl -p 1 -t fastq", page.getLinkerCommand(),
+				"Should be the correct linker command");
+
+		page.selectSampleByName("sample55422r");
+		page.selectSampleByName("sample-5-fg-22");
+		assertEquals("ngsArchiveLinker.pl -p 1 -s 16 -s 26 -t fastq", page.getLinkerCommand(),
 				"Should display the correct linker for entire project");
-	}
-
-	@Test
-	public void testLinkerFunctionalityForSamples() {
-		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-
-		page.filterByDateRange("07/06/2015 - 07/09/2015");
-		assertEquals("Showing 1 to 4 of 4 entries", page.getTableInfo(), "Should ignore case when filtering");
 
 		// Make sure that when the filter is applied, only the correct number of samples are selected.
 		page.selectAllSamples();
-		assertEquals("4 samples selected", page.getSelectedInfoText(),
-				"Should only have 4 samples selected after filter");
-
-		// Open the linker modal
-		page.openLinkerModal();
-		assertEquals("ngsArchiveLinker.pl -p 1 -s 9 -s 8 -s 7 -s 6 -t fastq", page.getLinkerText(),
-				"Should display the correct linker command");
-
+		assertEquals("ngsArchiveLinker.pl -p 1 -t fastq", page.getLinkerCommand(),
+				"Should be the correct linker command");
 	}
 
 	@Test

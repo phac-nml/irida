@@ -104,6 +104,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-samples-table")
 	private WebElement samplesTable;
 
+	@FindBy(className = "t-select-all")
+	private WebElement selectAllCheckbox;
+
 	//----- OLD BELOW
 
 	@FindBy(className = "t-associated-btn")
@@ -383,9 +386,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void filterByModifiedDate(String start, String end) {
 		modifiedDateFilterToggle.click();
-		WebElement startInput = modifiedDateFilter.findElements(By.xpath("//input[@placeholder='Start date']")).get(1);
-		startInput.sendKeys(start);
-		WebElement endInput = modifiedDateFilter.findElements(By.xpath("//input[@placeholder='End date']")).get(1);
+		modifiedDateFilter.findElement(By.xpath("//input[@placeholder='Start date']")).sendKeys(start);
+		WebElement endInput = modifiedDateFilter.findElement(By.xpath("//input[@placeholder='End date']"));
 		endInput.sendKeys(end);
 		endInput.sendKeys(Keys.ENTER);
 		modifiedDateFilter.findElement(By.className("t-search-btn")).click();
@@ -408,6 +410,22 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		waitForElementVisible(By.className("t-cart-count"));
 		// If the cart count is already visible this can go too fast,
 		// wait for the cart to fully update it's total.
+		waitForTime(500);
+	}
+
+	public String getLinkerCommand() {
+		openExportDropdown();
+		linkerBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOf(linkerModal));
+		String command = linkerCmd.getText();
+		driver.findElement(By.xpath("//button[@type='button' and span='Close']")).click();
+		closeExportDropdown();
+		return command;
+	}
+
+	public void selectAllSamples() {
+		selectAllCheckbox.click();
 		waitForTime(500);
 	}
 
@@ -564,11 +582,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.visibilityOf(associatedDropdown));
 		associatedCbs.get(0).click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("processingIndicator")));
-	}
-
-	public void selectAllSamples() {
-		selectionAll.click();
-		waitForTime(500);
 	}
 
 	public void deselectAllSamples() {

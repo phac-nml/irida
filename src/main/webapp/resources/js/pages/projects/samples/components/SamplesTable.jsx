@@ -233,6 +233,7 @@ export function SamplesTable() {
         const indeterminate = selectedCount < total && selectedCount > 0;
         return (
           <Checkbox
+            className="t-select-all"
             onChange={updateSelectAll}
             checked={selectedCount > 0}
             indeterminate={indeterminate}
