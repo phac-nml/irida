@@ -48,6 +48,9 @@ public class GalaxyLibrariesServiceIT {
 	@Autowired
 	private GalaxyLibrariesService galaxyLibrariesService;
 
+	@Autowired
+	private GalaxyLibrariesService galaxyLibrariesServiceTimeout;
+
 	private Path dataFile;
 	private Path dataFile2;
 	private Path dataFileCompressed;
@@ -187,11 +190,10 @@ public class GalaxyLibrariesServiceIT {
 	 */
 	@Test
 	public void testFilesToLibraryWaitFailTimeout() throws UploadException, GalaxyDatasetException {
-		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, 1, 2, 1);
-
 		Library library = buildEmptyLibrary("testFilesToLibraryWaitFailTimeout");
 		assertThrows(UploadTimeoutException.class, () -> {
-			galaxyLibrariesService.filesToLibraryWait(Sets.newHashSet(dataFile, dataFile2), library, DataStorage.LOCAL);
+			galaxyLibrariesServiceTimeout.filesToLibraryWait(Sets.newHashSet(dataFile, dataFile2), library,
+					DataStorage.LOCAL);
 		});
 	}
 
