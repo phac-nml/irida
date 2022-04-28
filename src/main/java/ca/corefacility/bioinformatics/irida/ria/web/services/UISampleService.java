@@ -8,7 +8,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -323,11 +322,14 @@ public class UISampleService {
 					SearchOperation.fromString(search.getOperation())));
 		}
 
-		try (Stream<ProjectSampleJoin> projectSamples = sampleService.streamFilteredProjectSamples(projects, filterSpec,
-				request.getSort())) {
-			projectSamples.forEach(projectSample -> {
-				filteredProjectSamples.add(new ProjectCartSample(projectSample));
-			});
+		Page<ProjectSampleJoin> page = sampleService.getFilteredProjectSamples(projects, filterSpec, 0, MAX_PAGE_SIZE,
+				request.getSort());
+
+		while (!page.isEmpty()) {
+			page.getContent().forEach(psj -> filteredProjectSamples.add(new ProjectCartSample(psj)));
+			// Get the next page
+			page = sampleService.getFilteredProjectSamples(projects, filterSpec, page.getNumber() + 1, MAX_PAGE_SIZE,
+					request.getSort());
 		}
 
 		return filteredProjectSamples;
