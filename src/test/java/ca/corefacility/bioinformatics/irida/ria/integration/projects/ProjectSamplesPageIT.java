@@ -309,16 +309,9 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectAllSamples();
 		assertEquals("ngsArchiveLinker.pl -p 1 -t fastq", page.getLinkerCommand(),
 				"Should be the correct linker command");
-	}
 
-	@Test
-	public void testLinkerFunctionalityForFiletype() {
-		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-
-		page.openLinkerModal();
-		page.clickLinkerFileType("assembly");
-		assertEquals("ngsArchiveLinker.pl -p 1 -t fastq,assembly", page.getLinkerText(),
+		// Test with assembly
+		assertEquals("ngsArchiveLinker.pl -p 1 -t fastq,assembly", page.getLinkerCommandWithAssembly(),
 				"Should display the correct linker for entire project");
 	}
 
