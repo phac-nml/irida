@@ -44,6 +44,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchCriteria;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchOperation;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIShareSamplesException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntSearch;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSample;
@@ -244,7 +245,7 @@ public class UISampleService {
 	 * @param locale  current users {@link Locale}
 	 * @throws Exception if project or samples cannot be found
 	 */
-	public void shareSamplesWithProject(ShareSamplesRequest request, Locale locale) throws Exception {
+	public void shareSamplesWithProject(ShareSamplesRequest request, Locale locale) throws UIShareSamplesException {
 		Project currentProject = projectService.read(request.getCurrentId());
 		Project targetProject = projectService.read(request.getTargetId());
 
@@ -253,15 +254,15 @@ public class UISampleService {
 			try {
 				projectService.moveSamples(currentProject, targetProject, samples);
 			} catch (Exception e) {
-				throw new Exception(messageSource.getMessage("server.ShareSamples.move-error",
+				throw new UIShareSamplesException(messageSource.getMessage("server.ShareSamples.move-error",
 						new Object[] { targetProject.getLabel() }, locale));
 			}
 		} else {
 			try {
 				projectService.shareSamples(currentProject, targetProject, samples, !request.getLocked());
 			} catch (Exception e) {
-				throw new Exception(messageSource.getMessage("server.ShareSamples.copy-error",
-						new Object[] { targetProject.getLabel() }, locale));
+				throw new UIShareSamplesException(
+						messageSource.getMessage("server.ShareSamples.copy-error", new Object[] { targetProject.getLabel() }, locale));
 			}
 		}
 	}
