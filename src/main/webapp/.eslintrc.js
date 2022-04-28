@@ -4,6 +4,9 @@ module.exports = {
     browser: true,
     es2021: true,
   },
+  globals: {
+    i18n: true,
+  },
   extends: [
     "eslint:recommended",
     "plugin:react/recommended",
@@ -18,5 +21,5 @@ module.exports = {
     sourceType: "module",
   },
   plugins: ["react", "jsx-a11y"],
-  rules: {},
+  rules: { "react/prop-types": 0 },
 };
