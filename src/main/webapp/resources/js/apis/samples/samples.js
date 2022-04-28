@@ -103,6 +103,12 @@ export const sampleApi = createApi({
         method: "PUT",
       }),
     }),
+    updateDefaultSampleGenomeAssembly: build.mutation({
+      query: ({ sampleId, genomeAssemblyId }) => ({
+        url: `/${sampleId}/default-genome-assembly?genomeAssemblyId=${genomeAssemblyId}`,
+        method: "PUT",
+      }),
+    }),
   }),
 });
 
@@ -114,6 +120,7 @@ export const {
   useUpdateSampleMetadataMutation,
   useRemoveSampleFilesMutation,
   useConcatenateSequencingObjectsMutation,
+  useUpdateDefaultSampleGenomeAssemblyMutation,
   useUpdateDefaultSampleSequencingObjectMutation,
 } = sampleApi;
 

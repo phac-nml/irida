@@ -27,6 +27,8 @@ export function SequenceFileHeader({
   displayConcatenationCheckbox = false,
   updateDefaultSequencingObject = null,
   autoDefaultFirstPair = null,
+  updateDefaultGenomeAssembly = null,
+  autoDefaultFirstAssembly = null,
 }) {
   const { modifiable } = useSelector((state) => state.sampleReducer);
   return (
@@ -47,6 +49,8 @@ export function SequenceFileHeader({
           displayConcatenationCheckbox={displayConcatenationCheckbox}
           updateDefaultSequencingObject={updateDefaultSequencingObject}
           autoDefaultFirstPair={autoDefaultFirstPair}
+          updateDefaultGenomeAssembly={updateDefaultGenomeAssembly}
+          autoDefaultFirstAssembly={autoDefaultFirstAssembly}
         />
       ) : (
         <CalendarDate date={file.createdDate} />

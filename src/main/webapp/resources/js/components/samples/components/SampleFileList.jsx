@@ -8,6 +8,7 @@ import {
   downloadSequencingObjectFile,
   fetchUpdatedSequencingObjects,
   useRemoveSampleFilesMutation,
+  useUpdateDefaultSampleGenomeAssemblyMutation,
   useUpdateDefaultSampleSequencingObjectMutation,
 } from "../../../apis/samples/samples";
 
@@ -24,7 +25,7 @@ import {
   IconRemove,
 } from "../../icons/Icons";
 import { useInterval } from "../../../hooks";
-import { setDefaultSequencingObject } from "../sampleSlice";
+import { setDefaultSequencingObject, setDefaultGenomeAssembly } from "../sampleSlice";
 
 /**
  * React component to display, remove, download files
@@ -38,6 +39,9 @@ export function SampleFileList() {
   const [
     updateSampleDefaultSequencingObject,
   ] = useUpdateDefaultSampleSequencingObjectMutation();
+  const [
+    updateSampleDefaultGenomeAssembly,
+  ] = useUpdateDefaultSampleGenomeAssemblyMutation();
   const { sample, projectId } = useSelector((state) => state.sampleReducer);
   const { files } = useSelector((state) => state.sampleFilesReducer);
 
@@ -105,6 +109,23 @@ export function SampleFileList() {
     })
       .then(({ data }) => {
         dispatch(setDefaultSequencingObject(sequencingObject));
+        notification.success({ message: data.message });
+      })
+      .catch((error) => {
+        notification.error({ message: error });
+      });
+  };
+
+  /*
+  Set default genomeassembly for sample to be used for analyses
+   */
+  const updateDefaultGenomeAssembly = (genomeAssembly) => {
+    updateSampleDefaultGenomeAssembly({
+      sampleId: sample.identifier,
+      genomeAssemblyId: genomeAssembly.identifier,
+    })
+      .then(({ data }) => {
+        dispatch(setDefaultGenomeAssembly(genomeAssembly));
         notification.success({ message: data.message });
       })
       .catch((error) => {
@@ -262,6 +283,10 @@ export function SampleFileList() {
             downloadAssemblyFile={downloadAssemblyFile}
             removeSampleFiles={removeSampleFiles}
             qcEntryTranslations={qcEntryTranslations}
+            updateDefaultGenomeAssembly={updateDefaultGenomeAssembly}
+            autoDefaultFirstAssembly={
+              sample.defaultGenomeAssembly === null ? files.assemblies[0] : null
+            }
           />
         </SequenceFileTypeRenderer>
       )}

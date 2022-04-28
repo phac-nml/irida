@@ -238,6 +238,26 @@ public class UISampleService {
 	}
 
 	/**
+	 * Update the default genome assembly for the sample
+	 *
+	 * @param sampleId           The sample identifier
+	 * @param genomeAssemblyId  The genome assembly identifier
+	 * @param locale             {@link Locale} for the currently logged in user
+	 * @return message indicating if update was successful or not
+	 */
+	public String updateDefaultGenomeAssemblyForSample(Long sampleId, Long genomeAssemblyId, Locale locale) {
+		try {
+			Sample sample = sampleService.read(sampleId);
+			GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, genomeAssemblyId);
+			sample.setDefaultGenomeAssembly(genomeAssembly);
+			sampleService.update(sample);
+			return "Successfully set default genome assembly for sample.";
+		} catch (EntityNotFoundException e) {
+			return "There was an error setting the default genome assembly for the sample.";
+		}
+	}
+
+	/**
 	 * Add metadata for the sample
 	 *
 	 * @param sampleId                 {@link Long} identifier for the sample

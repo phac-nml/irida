@@ -33,6 +33,8 @@ export function SingleEndFileRenderer({
   displayConcatenationCheckbox = false,
   updateDefaultSequencingObject = null,
   autoDefaultPair = null,
+  updateDefaultGenomeAssembly = null,
+  autoDefaultFirstAssembly = null
 }) {
   const { sample } = useSelector((state) => state.sampleReducer);
   const dispatch = useDispatch();
@@ -70,6 +72,8 @@ export function SingleEndFileRenderer({
             displayConcatenationCheckbox={displayConcatenationCheckbox}
             updateDefaultSequencingObject={updateDefaultSequencingObject}
             autoDefaultFirstPair={autoDefaultPair}
+            updateDefaultGenomeAssembly={updateDefaultGenomeAssembly}
+            autoDefaultFirstAssembly={autoDefaultFirstAssembly}
           />
         </List.Item>,
         <List.Item

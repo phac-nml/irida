@@ -167,6 +167,26 @@ public class SamplesAjaxController {
 	}
 
 	/**
+	 * Update the default genome assembly for the sample
+	 *
+	 * @param id                 {@link Long} identifier for the sample
+	 * @param genomeAssemblyId The genome assembly identifier
+	 * @param locale             {@link Locale} for the currently logged in user
+	 * @return {@link ResponseEntity} explaining to the user the results of the update.
+	 */
+	@PutMapping(value = "/{id}/default-genome-assembly")
+	public ResponseEntity<AjaxResponse> updateDefaultGenomeAssemblyForSample(@PathVariable Long id,
+			@RequestParam Long genomeAssemblyId, Locale locale) {
+		try {
+			return ResponseEntity.ok(new AjaxSuccessResponse(
+					uiSampleService.updateDefaultGenomeAssemblyForSample(id, genomeAssemblyId, locale)));
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(e.getMessage()));
+		}
+	}
+
+	/**
 	 * Get analyses for sample
 	 *
 	 * @param sampleId  Identifier for a sample

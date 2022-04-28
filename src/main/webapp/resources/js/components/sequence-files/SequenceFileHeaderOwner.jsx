@@ -10,6 +10,7 @@ import {
 } from "../samples/sampleFilesSlice";
 import { primaryColour } from "../../utilities/theme-utilities";
 import styled from "styled-components";
+import { DefaultFileObject } from "./DefaultFileObject";
 
 const HoverItem = styled.div`
   button.ant-btn-link {
@@ -42,7 +43,10 @@ export function SequenceFileHeaderOwner({
   displayConcatenationCheckbox = false,
   updateDefaultSequencingObject = null,
   autoDefaultFirstPair = null,
+  updateDefaultGenomeAssembly = null,
+  autoDefaultFirstAssembly = null,
 }) {
+
   const { concatenateSelected } = useSelector(
     (state) => state.sampleFilesReducer
   );
@@ -91,26 +95,15 @@ export function SequenceFileHeaderOwner({
         <CalendarDate date={file.createdDate} />
       </div>
       <Space direction="horizontal" size="small">
-        {file.forwardSequenceFile && file.reverseSequenceFile ? (
-          sample.defaultSequencingObject?.identifier === fileObjectId ||
-          (autoDefaultFirstPair !== null &&
-            autoDefaultFirstPair.fileInfo.identifier === fileObjectId) ? (
-            <Tag color="#108ee9" className="t-default-seq-obj-tag">
-              {i18n("SequenceFileHeaderOwner.default")}
-            </Tag>
-          ) : updateDefaultSequencingObject !== null ? (
-            <Button
-              size="small"
-              key={`set-default-${fileObjectId}`}
-              onClick={() => updateDefaultSequencingObject(file)}
-              type="link"
-              className="t-set-default-seq-obj-button"
-            >
-              {i18n("SequenceFileHeaderOwner.setAsDefault")}
-            </Button>
-          ) : null
-        ) : null}
-
+        <DefaultFileObject
+          file={file}
+          fileObjectId={fileObjectId}
+          type={type}
+          updateDefaultSequencingObject={updateDefaultSequencingObject}
+          autoDefaultFirstPair={autoDefaultFirstPair}
+          updateDefaultGenomeAssembly={updateDefaultGenomeAssembly}
+          autoDefaultFirstAssembly={autoDefaultFirstAssembly}
+        />
         <Popconfirm
           placement="left"
           title={removePopConfirmTitle}
