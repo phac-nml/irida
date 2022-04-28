@@ -132,7 +132,11 @@ export function SamplesTable() {
     confirm({ closeDropdown: false });
   };
 
-  const getColumnSearchProps = (dataIndex, filterName = "") => ({
+  const getColumnSearchProps = (
+    dataIndex,
+    filterName = "",
+    placeholder = ""
+  ) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -143,7 +147,7 @@ export function SamplesTable() {
         <Select
           className={filterName}
           mode="tags"
-          placeholder={`Search ${dataIndex}`}
+          placeholder={placeholder}
           value={selectedKeys}
           onChange={(e) => {
             setSelectedKeys(e);
@@ -258,7 +262,11 @@ export function SamplesTable() {
           <a>{name}</a>
         </SampleDetailViewer>
       ),
-      ...getColumnSearchProps(["sample", "sampleName"], "t-name-select"),
+      ...getColumnSearchProps(
+        ["sample", "sampleName"],
+        "t-name-select",
+        i18n("Filter.sampleName.placeholder")
+      ),
     },
     {
       title: i18n("SamplesTable.Column.quality"),
