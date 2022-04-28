@@ -29,7 +29,7 @@ const selectAllSamples = createAsyncThunk(
     const { samples } = getState();
     return await getMinimalSampleDetailsForFilteredProject(
       samples.options
-    ).then(data => {
+    ).then((data) => {
       const selected = data.reduce(
         (accumulator, value) => ({ ...accumulator, [value.key]: value }),
         {}
@@ -60,7 +60,7 @@ const downloadSamples = createAsyncThunk(
   "/samples/table/export/download",
   async (_, { getState }) => {
     const { samples } = getState();
-    const sampleIds = Object.values(samples.selected).map(s => s.id);
+    const sampleIds = Object.values(samples.selected).map((s) => s.id);
     return await downloadPost(
       `/ajax/projects/${samples.projectId}/samples/download`,
       { sampleIds }
@@ -69,16 +69,23 @@ const downloadSamples = createAsyncThunk(
 );
 
 /**
- * Called when exporting the current state of the samples table to either
+ * Called when exporting the current state of the samples' table to either
  * a CSV of Excel file.
  */
 const exportSamplesToFile = createAsyncThunk(
   "/samples/table/export",
-  async (type, {getState}) => {
-    const {samples} = getState();
+  async (type, { getState }) => {
+    const { samples } = getState();
+    const options = { ...samples.options };
+    if (samples.selectedCount > 0) {
+      let sampleNamesFilter = formatFilterBySampleNames(
+        Object.values(samples.selected)
+      );
+      options.search = [...options.search, sampleNamesFilter];
+    }
     return await downloadPost(
       `/ajax/projects/${samples.projectId}/samples/export?type=${type}`,
-      samples.options
+      options
     );
   }
 );
@@ -110,12 +117,12 @@ const getInitialTableOptions = () => JSON.parse(INITIAL_TABLE_STATE);
  * @param projectSample - Sample details object returned as part of the table data
  * @returns {{sampleName: (Document.mergeForm.sampleName|Document.sampleName|string), owner: *, id: string, projectId: *, key: *}}
  */
-const formatSelectedSample = projectSample => ({
+const formatSelectedSample = (projectSample) => ({
   key: projectSample.key,
   id: projectSample.sample.id,
   projectId: projectSample.project.id,
   sampleName: projectSample.sample.sampleName,
-  owner: projectSample.owner
+  owner: projectSample.owner,
 });
 
 const initialState = {
@@ -123,7 +130,7 @@ const initialState = {
   options: getInitialTableOptions(),
   selected: {},
   selectedCount: 0,
-  loadingLong: false
+  loadingLong: false,
 };
 
 export default createReducer(initialState, (builder) => {

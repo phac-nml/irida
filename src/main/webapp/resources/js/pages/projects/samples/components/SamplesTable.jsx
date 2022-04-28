@@ -112,6 +112,7 @@ export function SamplesTable() {
     let { associated, ...filters } = tableFilters;
     const search = formatSearch(filters);
     if (filterByFile) search.push(filterByFile.fileFilter);
+    console.log({ filterByFile });
 
     dispatch(
       updateTable({
