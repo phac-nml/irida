@@ -25,7 +25,6 @@ jobs:
       MYSQL_PASSWORD: test
       MYSQL_DATABASE: irida_integration_test
       MYSQL_HOST: 127.0.0.1
-      NODE_OPTIONS: "--max-old-space-size=4096"
 
     strategy:
       fail-fast: false  #Setting so that if one of the test suites fail, the other will continue
@@ -66,8 +65,6 @@ jobs:
       - name: Install libraries # Install our non-maven backed dependencies
         run: pushd lib; ./install-libs.sh; popd
       - name: Run tests with Maven # Run the test suite
-        env:
-          NODE_OPTIONS: "--max-old-space-size=8192"
         run: ./run-tests.sh --db-host ${{ env.MYSQL_HOST }} --db-port ${{ env.MYSQL_PORT }} --database ${{ env.MYSQL_DATABASE}} ${{ matrix.suite }}
 
   docs-build: # Testing the javadoc and jekyll documentation builds
