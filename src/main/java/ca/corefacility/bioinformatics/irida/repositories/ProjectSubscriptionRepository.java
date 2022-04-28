@@ -49,6 +49,6 @@ public interface ProjectSubscriptionRepository extends IridaJpaRepository<Projec
 	 * @param user the user to show project subscriptions for
 	 * @return A List of {@link Project}s
 	 */
-	@Query("from ProjectSubscription ps where ps.user = ?1 and ps.emailSubscription = true")
+	@Query("Select ps.project from ProjectSubscription ps where ps.user = ?1 and ps.emailSubscription = true")
 	public List<Project> getProjectsForUserWithSubscriptions(User user);
 }

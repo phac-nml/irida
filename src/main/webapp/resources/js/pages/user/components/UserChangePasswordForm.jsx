@@ -18,7 +18,7 @@ import { SPACE_SM } from "../../../styles/spacing";
  * @returns {*}
  * @constructor
  */
-export function UserChangePasswordForm({ userId }) {
+export function UserChangePasswordForm({userId}) {
   const [changeUserPassword] = useChangeUserPasswordMutation();
   const [form] = Form.useForm();
   const navigate = useNavigate();
@@ -32,9 +32,9 @@ export function UserChangePasswordForm({ userId }) {
   ];
 
   const onFormFinish = (values) => {
-    changeUserPassword({ userId: userId, ...values })
+    changeUserPassword({userId: userId, ...values})
       .unwrap()
-      .then((payload) => {
+      .then(() => {
         notification.success({
           message: i18n("UserChangePasswordForm.notification.success"),
         });
@@ -56,7 +56,7 @@ export function UserChangePasswordForm({ userId }) {
         {i18n("UserChangePasswordForm.title")}
       </Typography.Title>
       <Alert
-        style={{ marginBottom: SPACE_SM }}
+        style={{marginBottom: SPACE_SM}}
         message={i18n("UserChangePasswordForm.alert.title")}
         description={
           <Typography.Paragraph>
@@ -86,7 +86,7 @@ export function UserChangePasswordForm({ userId }) {
             },
           ]}
         >
-          <Input.Password />
+          <Input.Password/>
         </Form.Item>
         <Form.Item
           label={i18n("UserChangePasswordForm.form.label.newPassword")}
@@ -96,7 +96,7 @@ export function UserChangePasswordForm({ userId }) {
               required: true,
               message: i18n("UserChangePasswordForm.alert.rule1"),
             },
-            { min: 8, message: i18n("UserChangePasswordForm.alert.rule2") },
+            {min: 8, message: i18n("UserChangePasswordForm.alert.rule2")},
             {
               pattern: new RegExp("^.*[A-Z].*$"),
               message: i18n("UserChangePasswordForm.alert.rule3"),
@@ -115,10 +115,10 @@ export function UserChangePasswordForm({ userId }) {
             },
           ]}
         >
-          <Input.Password />
+          <Input.Password/>
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <Button className="t-submit-btn" type="primary" htmlType="submit">
             {i18n("UserChangePasswordForm.form.button.submit")}
           </Button>
         </Form.Item>

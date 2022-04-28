@@ -1,5 +1,4 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
   Button,
@@ -12,8 +11,14 @@ import {
   Typography,
 } from "antd";
 import { formatDate } from "../../../utilities/date-utilities";
-import { useEditUserDetailsMutation } from "../../../apis/users/users";
-import { updateUserDetails } from "../services/userReducer";
+import {
+  useEditUserDetailsMutation,
+  useGetUserDetailsQuery
+} from "../../../apis/users/users";
+import {
+  useGetLocalesQuery,
+  useGetSystemRolesQuery
+} from "../../../apis/settings/settings";
 
 /**
  * React component to display the user details page.
@@ -21,26 +26,20 @@ import { updateUserDetails } from "../services/userReducer";
  * @constructor
  */
 export default function UserDetailsPage() {
-  const { userId } = useParams();
-  const dispatch = useDispatch();
+  const {userId} = useParams();
+  const {data: userDetails = {}} = useGetUserDetailsQuery(userId);
+  const {data: locales = []} = useGetLocalesQuery();
+  const {data: systemRoles = []} = useGetSystemRolesQuery();
   const [editUser] = useEditUserDetailsMutation();
   const [form] = Form.useForm();
-  const {
-    user,
-    admin,
-    locales,
-    allowedRoles,
-    canEditUserInfo,
-    canEditUserStatus,
-  } = useSelector((state) => state.userReducer);
 
   const onFormFinish = (values) => {
-    editUser({ userId: userId, ...values })
+    editUser({userId: userId, ...values})
       .unwrap()
-      .then((payload) => {
-        dispatch(updateUserDetails({ ...user, ...values }));
+      .then(() => {
         notification.success({
           message: i18n("UserDetailsPage.notification.success"),
+          className: 't-user-page-notification-success',
         });
       })
       .catch((error) => {
@@ -63,7 +62,7 @@ export default function UserDetailsPage() {
       <Form
         form={form}
         layout="vertical"
-        initialValues={user}
+        initialValues={userDetails.user}
         onFinish={onFormFinish}
       >
         <Form.Item
@@ -76,7 +75,7 @@ export default function UserDetailsPage() {
             },
           ]}
         >
-          <Input />
+          <Input/>
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.lastName.label")}
@@ -88,7 +87,7 @@ export default function UserDetailsPage() {
             },
           ]}
         >
-          <Input />
+          <Input/>
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.email.label")}
@@ -104,7 +103,7 @@ export default function UserDetailsPage() {
             },
           ]}
         >
-          <Input />
+          <Input/>
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.phoneNumber.label")}
@@ -116,7 +115,7 @@ export default function UserDetailsPage() {
             },
           ]}
         >
-          <Input />
+          <Input/>
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.locale.label")}
@@ -136,54 +135,55 @@ export default function UserDetailsPage() {
         <Form.Item
           label={i18n("UserDetailsPage.form.role.label")}
           name="role"
-          hidden={!admin}
+          hidden={!userDetails.admin}
         >
-          <Select>
-            {allowedRoles.map((role, index) => (
+          <Select disabled={!userDetails.canEditUserStatus}>
+            {systemRoles.map((role, index) => (
               <Select.Option
                 key={`user-account-details-role-${index}`}
                 value={role.code}
-                disabled={!canEditUserStatus}
               >
                 {role.name}
               </Select.Option>
             ))}
           </Select>
         </Form.Item>
-        <Form.Item name="enabled" valuePropName="checked" hidden={!admin}>
-          <Checkbox disabled={!canEditUserStatus}>
+        <Form.Item name="enabled" valuePropName="checked"
+                   hidden={!userDetails.admin}>
+          <Checkbox disabled={!userDetails.canEditUserStatus}>
             {i18n("UserDetailsPage.form.enabled.label")}
           </Checkbox>
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit" disabled={!canEditUserInfo}>
+          <Button className="t-submit-btn" type="primary" htmlType="submit"
+                  disabled={!userDetails.canEditUserInfo}>
             {i18n("UserDetailsPage.form.button.submit")}
           </Button>
         </Form.Item>
       </Form>
       <Space direction="vertical">
         <Typography.Text type="secondary">
-          {user.createdDate
+          {userDetails.user?.createdDate
             ? i18n(
-                "UserDetailsPage.createdDate",
-                formatDate({ date: user.createdDate })
-              )
+              "UserDetailsPage.createdDate",
+              formatDate({date: userDetails.user?.createdDate})
+            )
             : ""}
         </Typography.Text>
         <Typography.Text type="secondary">
-          {user.modifiedDate
+          {userDetails.user?.modifiedDate
             ? i18n(
-                "UserDetailsPage.modifiedDate",
-                formatDate({ date: user.modifiedDate })
-              )
+              "UserDetailsPage.modifiedDate",
+              formatDate({date: userDetails.user?.modifiedDate})
+            )
             : ""}
         </Typography.Text>
         <Typography.Text type="secondary">
-          {user.lastLogin
+          {userDetails.user?.lastLogin
             ? i18n(
-                "UserDetailsPage.lastLogin",
-                formatDate({ date: user.lastLogin })
-              )
+              "UserDetailsPage.lastLogin",
+              formatDate({date: userDetails.user?.lastLogin})
+            )
             : ""}
         </Typography.Text>
       </Space>

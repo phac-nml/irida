@@ -18,7 +18,7 @@
                 <constraints foreignKeyName="FK_PROJECT_SUBSCRIPTION_USER"
                              referencedColumnNames="id" referencedTableName="user" nullable="false"/>
             </column>
-            <column name="email_subscription" type="tinyint(1)">
+            <column name="email_subscription" type="bit(1)">
                 <constraints nullable="false"/>
             </column>
             <column name="created_date" type="datetime">
@@ -45,7 +45,7 @@
             <column name="user_id" type="bigint(20)">
                 <constraints nullable="false"/>
             </column>
-            <column name="email_subscription" type="tinyint(1)">
+            <column name="email_subscription" type="bit(1)">
                 <constraints nullable="false"/>
             </column>
             <column name="created_date" type="datetime">

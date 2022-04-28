@@ -22,7 +22,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
@@ -33,7 +32,10 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpeci
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsModel;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserEditRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.RoleUtilities;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -41,7 +43,6 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 
 /**
  * Handles service call for the administration of the IRIDA users.
@@ -51,21 +52,15 @@ public class UIUsersService {
 	private final UserService userService;
 	private final ProjectService projectService;
 	private final EmailController emailController;
-	private final List<Locale> locales;
 	private final MessageSource messageSource;
 	private final PasswordEncoder passwordEncoder;
 
-	private final List<Role> adminAllowedRoles = Lists.newArrayList(Role.ROLE_ADMIN, Role.ROLE_MANAGER, Role.ROLE_USER,
-			Role.ROLE_TECHNICIAN, Role.ROLE_SEQUENCER);
-
 	@Autowired
 	public UIUsersService(UserService userService, ProjectService projectService, EmailController emailController,
-			IridaApiServicesConfig.IridaLocaleList locales, MessageSource messageSource,
-			PasswordEncoder passwordEncoder) {
+			MessageSource messageSource, PasswordEncoder passwordEncoder) {
 		this.userService = userService;
 		this.projectService = projectService;
 		this.emailController = emailController;
-		this.locales = locales.getLocales();
 		this.messageSource = messageSource;
 		this.passwordEncoder = passwordEncoder;
 	}
@@ -107,7 +102,8 @@ public class UIUsersService {
 				String key = isEnabled ? "server.AdminUsersService.enabled" : "server.AdminUsersService.disabled";
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(messageSource.getMessage(key, new Object[] { user.getUsername() }, locale));
-			} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException | InvalidPropertyException e) {
+			} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException |
+					 InvalidPropertyException e) {
 				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 						.body(messageSource.getMessage("server.AdminUsersService.error",
 								new Object[] { user.getUsername() }, locale));
@@ -115,8 +111,7 @@ public class UIUsersService {
 
 		}
 		// Should never hit here!
-		return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
-				.body("");
+		return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("");
 	}
 
 	/**
@@ -139,23 +134,10 @@ public class UIUsersService {
 		boolean canChangePassword = canChangePassword(principalUser, user);
 		boolean canCreatePasswordReset = PasswordResetController.canCreatePasswordReset(principalUser, user);
 
-		List<UserDetailsLocale> localeNames = new ArrayList<>();
-		for (Locale aLocale : locales) {
-			localeNames.add(new UserDetailsLocale(aLocale.getLanguage(), aLocale.getDisplayName()));
-		}
-
-		List<UserDetailsRole> roleNames = new ArrayList<>();
-		for (Role aRole : adminAllowedRoles) {
-			String roleMessageName = "systemrole." + aRole.getName();
-			String roleName = messageSource.getMessage(roleMessageName, null, locale);
-			roleNames.add(new UserDetailsRole(aRole.getName(), roleName));
-		}
-
-		String currentRoleName = messageSource.getMessage("systemrole." + user.getSystemRole()
-				.getName(), null, locale);
+		String currentRoleName = messageSource.getMessage("systemRole." + user.getSystemRole().getName(), null, locale);
 
 		return new UserDetailsResponse(userDetails, currentRoleName, mailConfigured, mailFailure, isAdmin,
-				canEditUserInfo, canEditUserStatus, canChangePassword, canCreatePasswordReset, localeNames, roleNames);
+				canEditUserInfo, canEditUserStatus, canChangePassword, canCreatePasswordReset);
 	}
 
 	/**
@@ -189,8 +171,8 @@ public class UIUsersService {
 			updatedValues.put("phoneNumber", userEditRequest.getPhoneNumber());
 		}
 
-		if (!Strings.isNullOrEmpty(userEditRequest.getUserLocale())) {
-			updatedValues.put("locale", userEditRequest.getUserLocale());
+		if (!Strings.isNullOrEmpty(userEditRequest.getLocale())) {
+			updatedValues.put("locale", userEditRequest.getLocale());
 		}
 
 		if (RoleUtilities.isAdmin(principalUser)) {
@@ -198,8 +180,8 @@ public class UIUsersService {
 				updatedValues.put("enabled", userEditRequest.getEnabled());
 			}
 
-			if (!Strings.isNullOrEmpty(userEditRequest.getSystemRole())) {
-				Role newRole = Role.valueOf(userEditRequest.getSystemRole());
+			if (!Strings.isNullOrEmpty(userEditRequest.getRole())) {
+				Role newRole = Role.valueOf(userEditRequest.getRole());
 
 				updatedValues.put("systemRole", newRole);
 			}
@@ -210,8 +192,7 @@ public class UIUsersService {
 				User user = userService.updateFields(userId, updatedValues);
 
 				// If the user is updating their account make sure you update it in the session variable
-				if (user != null && principal.getName()
-						.equals(user.getUsername())) {
+				if (user != null && principal.getName().equals(user.getUsername())) {
 					HttpSession session = request.getSession();
 					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
 				}
@@ -253,8 +234,7 @@ public class UIUsersService {
 				User user = userService.updateFields(userId, updatedValues);
 
 				// If the user is updating their account make sure you update it in the session variable
-				if (user != null && principal.getName()
-						.equals(user.getUsername())) {
+				if (user != null && principal.getName().equals(user.getUsername())) {
 					HttpSession session = request.getSession();
 					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
 				}
@@ -280,14 +260,12 @@ public class UIUsersService {
 			Set<ConstraintViolation<?>> constraintViolations = cvx.getConstraintViolations();
 
 			for (ConstraintViolation<?> violation : constraintViolations) {
-				String errorKey = violation.getPropertyPath()
-						.toString();
+				String errorKey = violation.getPropertyPath().toString();
 				errors.put(errorKey, violation.getMessage());
 			}
 		} else if (ex instanceof DataIntegrityViolationException) {
 			DataIntegrityViolationException divx = (DataIntegrityViolationException) ex;
-			if (divx.getMessage()
-					.contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
+			if (divx.getMessage().contains(User.USER_EMAIL_CONSTRAINT_NAME)) {
 				errors.put("email", messageSource.getMessage("server.user.edit.emailConflict", null, locale));
 			}
 		} else if (ex instanceof EntityExistsException) {
@@ -308,8 +286,7 @@ public class UIUsersService {
 	 * @return boolean if the principal can edit the user information
 	 */
 	private boolean canEditUserInfo(User principalUser, User user) {
-		boolean principalAdmin = principalUser.getAuthorities()
-				.contains(Role.ROLE_ADMIN);
+		boolean principalAdmin = principalUser.getAuthorities().contains(Role.ROLE_ADMIN);
 		boolean usersEqual = user.equals(principalUser);
 
 		return principalAdmin || usersEqual;
@@ -323,8 +300,7 @@ public class UIUsersService {
 	 * @return boolean if the principal can edit the user status
 	 */
 	private boolean canEditUserStatus(User principalUser, User user) {
-		boolean principalAdmin = principalUser.getAuthorities()
-				.contains(Role.ROLE_ADMIN);
+		boolean principalAdmin = principalUser.getAuthorities().contains(Role.ROLE_ADMIN);
 		boolean usersEqual = user.equals(principalUser);
 
 		return !(principalAdmin && usersEqual);

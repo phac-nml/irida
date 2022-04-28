@@ -1,81 +1,51 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.user;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.PageUtilities;
 
 /**
  * User details page for selenium testing
- *
  */
 public class UserDetailsPage extends AbstractPage {
-	public static String EDIT_USER_LINK = "editUser";
-	public static String USER_ID = "user-id";
-	private PageUtilities pageUtilities;
+
+	public static String DETAILS_PAGE = "users/1/details";
 
 	public UserDetailsPage(WebDriver driver) {
 		super(driver);
-		this.pageUtilities = new PageUtilities(driver);
 	}
 
-	public void getCurrentUser() {
-		get(driver, "users/current");
+	public void goTo() {
+		get(driver, DETAILS_PAGE);
 	}
 
-	public void getOtherUser(Long id) {
-		get(driver, "users/" + id);
+	public void enterFirstName(String newName) {
+		WebElement firstNameBox = driver.findElement(By.id("firstName"));
+		firstNameBox.sendKeys(newName);
 	}
 
-	public String getUserId() {
-		WebElement findElement = driver.findElement(By.id(USER_ID));
-		return findElement.getText();
+	public void enterEmail(String newEmail) {
+		WebElement emailBox = driver.findElement(By.id("email"));
+		emailBox.sendKeys(newEmail);
 	}
 
-	public boolean canGetEditLink(Long id) {
-		get(driver, "users/" + id);
+	public void clickSubmit() {
+		driver.findElement(By.className("t-submit-btn")).click();
+	}
+
+	public boolean updateSuccess() {
 		try {
-			driver.findElement(By.id(EDIT_USER_LINK));
+			waitForElementVisible(By.className("t-user-page-notification-success"));
 			return true;
-		} catch (NoSuchElementException ex) {
+		} catch (Exception e) {
 			return false;
 		}
 	}
 
-	public List<String> getUserProjectIds() {
-		List<WebElement> findElements = driver.findElements(By.className("user-project-id"));
-		List<String> ids = new ArrayList<>();
-		findElements.forEach(ele -> {
-			ids.add(ele.getText());
-		});
-		return ids;
+	public boolean hasErrors() {
+		return !driver.findElements(By.className("ant-form-item-has-error")).isEmpty();
 	}
 
-	public void sendPasswordReset() {
-		WebElement passwordResetLink = driver.findElement(By.className("password-reset-link"));
-		passwordResetLink.click();
-		WebElement confirmButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.id("resetPasswordButton")));
-		confirmButton.click();
-	}
-
-	public void subscribeToFirstProject() {
-		WebElement firstCheckbox = driver.findElements(By.className("subcription-checkbox"))
-				.iterator()
-				.next();
-
-		firstCheckbox.click();
-	}
-
-	public boolean checkSuccessNotification() {
-		return pageUtilities.checkSuccessNotification();
-	}
 }
