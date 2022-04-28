@@ -274,7 +274,7 @@ export function MainNavigation() {
           <Menu.SubMenu key="help" title={i18n("nav.main.help")}>
             <Menu.Item key="userguide">
               <a
-                href="https://irida.corefacility.ca/documentation/user/user"
+                href="https://phac-nml.github.io/irida-documentation/user/user/"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -283,7 +283,10 @@ export function MainNavigation() {
             </Menu.Item>
             {isAdmin && (
               <Menu.Item key="adminguide">
-                <a href="https://irida.corefacility.ca/documentation/user/administrator">
+                <a href="https://phac-nml.github.io/irida-documentation/user/administrator/"
+                   target="_blank"
+                   rel="noreferrer"
+                >
                   {i18n("nav.main.adminguide")}
                 </a>
               </Menu.Item>
