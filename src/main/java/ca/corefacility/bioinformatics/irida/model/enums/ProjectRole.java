@@ -6,16 +6,16 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 
 /**
- *
+ * Roles for users accessing projects.
  */
 public enum ProjectRole {
 	PROJECT_USER("PROJECT_USER", 1),
 	PROJECT_OWNER("PROJECT_OWNER", 2);
 
-	private String code;
-	private int level;
+	private final String code;
+	private final int level;
 
-	private ProjectRole(String code, int level) {
+	ProjectRole(String code, int level) {
 		this.code = code;
 		this.level = level;
 	}
@@ -58,6 +58,9 @@ public enum ProjectRole {
 
 		if (projectUserJoin != null) {
 			projectRole = projectUserJoin.getProjectRole();
+			if (projectRole.equals(PROJECT_OWNER)) {
+				return projectRole;
+			}
 		}
 
 		for (UserGroupProjectJoin userGroupProjectJoin : userGroupProjectJoins) {
