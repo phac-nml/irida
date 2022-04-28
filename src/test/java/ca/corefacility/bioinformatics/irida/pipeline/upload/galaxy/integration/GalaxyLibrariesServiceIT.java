@@ -9,6 +9,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
@@ -49,6 +50,7 @@ public class GalaxyLibrariesServiceIT {
 	private GalaxyLibrariesService galaxyLibrariesService;
 
 	@Autowired
+	@Qualifier("galaxyLibrariesServiceTimeout")
 	private GalaxyLibrariesService galaxyLibrariesServiceTimeout;
 
 	private Path dataFile;
