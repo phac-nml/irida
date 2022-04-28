@@ -15,8 +15,6 @@ public class RoleUtilities {
 	 * @return if the user is an admin
 	 */
 	public static boolean isAdmin(User user) {
-		//user.getSystemRole().equals(Role.ROLE_ADMIN) ???
-		return user.getAuthorities()
-				.contains(Role.ROLE_ADMIN);
+		return user.getAuthorities().contains(Role.ROLE_ADMIN);
 	}
 }
