@@ -414,14 +414,34 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public String getLinkerCommand() {
+		openLinkerModal();
+		String command = linkerCmd.getText();
+		closeLinkerModal();
+		return command;
+	}
+
+	public String getLinkerCommandWithAssembly() {
+		openLinkerModal();
+		WebElement fileTypeCheckbox = linkerModal.findElement(By.xpath("//input[@value='assembly']"));
+		boolean isChecked = fileTypeCheckbox.isSelected();
+		fileTypeCheckbox.click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.elementSelectionStateToBe(fileTypeCheckbox, !isChecked));
+		String command = linkerCmd.getText();
+		closeLinkerModal();
+		return command;
+
+	}
+
+	private void openLinkerModal() {
 		openExportDropdown();
 		linkerBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(linkerModal));
-		String command = linkerCmd.getText();
+	}
+
+	private void closeLinkerModal() {
 		driver.findElement(By.xpath("//button[@type='button' and span='Close']")).click();
-		closeExportDropdown();
-		return command;
 	}
 
 	public void selectAllSamples() {
@@ -612,25 +632,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.elementToBeClickable(copyModalConfirmBtn));
 		copyModalConfirmBtn.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("t-copy-samples-modal")));
-	}
-
-	public String getLinkerText() {
-		return linkerCmd.getText();
-	}
-
-	public void openLinkerModal() {
-		openExportDropdown();
-		linkerBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(linkerModal));
-	}
-
-	public void clickLinkerFileType(String type) {
-		WebElement fileTypeCheckbox = driver.findElement(By.xpath("//input[@value='" + type + "']"));
-		boolean isChecked = fileTypeCheckbox.isSelected();
-		fileTypeCheckbox.click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
-		wait.until(ExpectedConditions.elementSelectionStateToBe(fileTypeCheckbox, !isChecked));
 	}
 
 	public List<String> getLockedSampleNames() {
