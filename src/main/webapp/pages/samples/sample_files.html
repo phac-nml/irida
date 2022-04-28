@@ -86,9 +86,14 @@
 					</tr>
 					<tr class="paired_end paired_end__assembly"
 						th:if="${pair.getAutomatedAssembly()}">
-						<td class="td_icon"><i
-							data:uib-tooltip="#{sf.tooltip.assembly}"
-							class="fa fa-align-right" /></td>
+						<td class="td_icon">
+							<div
+								class="far fa-align-alt"
+								data:uib-tooltip="#{sf.tooltip.assembly}"
+								data:tooltip-placement="top"
+								data:tooltip-append-to-body="true">
+							</div>
+						</td>
 						<td><a href="#"
 							th:href="@{/analysis/{id}(id=${pair.getAutomatedAssembly().getId()})}"
 							class="btn btn-default btn-sm file-name"
@@ -100,8 +105,14 @@
 					</tr>
 					<tr class="paired_end paired_end__sistr_typing"
 						th:if="${pair.getSistrTyping()}">
-						<td class="td_icon"><i data:uib-tooltip="#{sf.tooltip.sistr}"
-							class="fa fa-align-right" /></td>
+						<td class="td_icon">
+							<div
+								class="fa fa-align-right"
+								data:uib-tooltip="#{sf.tooltip.sistr}"
+								data:tooltip-placement="top"
+								data:tooltip-append-to-body="true">
+							</div>
+						</td>
 						<td><a href="#"
 							th:href="@{/analysis/{id}(id=${pair.getSistrTyping().getId()})}"
 							class="btn btn-default btn-sm file-name"
@@ -114,8 +125,13 @@
 					<th:block th:if="${not #lists.isEmpty(pair.getQcEntries())}">
 						<tr class="paired_end file__qc"
 							th:each="qc : ${pair.getQcEntries()}">
-							<td class="td_icon qc_icon"><i
-								data:uib-tooltip="#{sf.tooltip.qc}" class="far fa-chart-bar"></i>
+							<td class="td_icon qc_icon">
+								<div
+									class="far fa-chart-bar"
+									data:uib-tooltip="#{sf.tooltip.qc}"
+									data:tooltip-placement="top"
+									data:tooltip-append-to-body="true">
+								</div>
 							</td>
 							<td colspan="4">
 								<ul class="list-group qc_list">
@@ -159,8 +175,13 @@
 					</tr>
 					<th:block th:if="${not #lists.isEmpty(file.getQcEntries())}">
 						<tr class="single_end file__qc">
-							<td class="td_icon qc_icon"><i
-								data:uib-tooltip="#{sf.tooltip.qc}" class="far fa-chart-bar"></i>
+							<td class="td_icon qc_icon">
+								<div
+									class="far fa-chart-bar"
+									data:uib-tooltip="#{sf.tooltip.qc}"
+									data:tooltip-placement="top"
+									data:tooltip-append-to-body="true">
+								</div>
 							</td>
 							<td colspan="4">
 								<ul class="list-group qc_list">
@@ -250,8 +271,14 @@
 				th:with="dateFormat=#{locale.date.short}"
 				ng-controller="AssemblyFileController as fileCtrl">
 				<tr class="assembly_row" th:each="assembly : ${assemblies}" th:with="dateFormat=#{locale.date.short}">
-					<td class="td_icon assembly_sample_icon"><i
-						data:uib-tooltip="#{sf.tooltip.assembly}" class="far fa-file-alt"></i></td>
+					<td class="td_icon assembly_sample_icon">
+						<div
+							class="far fa-file-alt"
+							data:uib-tooltip="#{sf.tooltip.assembly}"
+							data:tooltip-placement="top"
+							data:tooltip-append-to-body="true">
+						</div>
+					</td>
 					<td th:switch="${assembly instanceof T(ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssemblyFromAnalysis)}">
 						<a class="btn btn-default btn-sm file-name" href="#"
 							th:case="true"

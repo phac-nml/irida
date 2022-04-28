@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import Tour from "reactour";
 import { steps } from "./steps";
 
@@ -13,8 +12,3 @@ export default function LineListTour(props) {
     />
   );
 }
-
-LineListTour.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  closeTour: PropTypes.func.isRequired
-};

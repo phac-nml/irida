@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, message, notification } from "antd";
+import { Button, notification } from "antd";
 
 export const MESSAGE_EVENT = "EVENT/MESSAGE";
 export const NOTIFICATION_EVENT = "EVENT/NOTIFICATION";
@@ -48,5 +48,3 @@ export function Notifications() {
 
   return <div />;
 }
-
-Notifications.propTypes = {};

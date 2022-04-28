@@ -3,7 +3,7 @@
  * which displays statistics in charts
  */
 
-import { Bar, Column, Line, Pie } from "@ant-design/charts";
+import { Bar, Column, Line, Pie } from "@ant-design/plots";
 import { Card, Form, PageHeader, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";

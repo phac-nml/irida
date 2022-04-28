@@ -190,5 +190,3 @@ export function AnalysesTable({ canManage }) {
     </div>
   );
 }
-
-AnalysesTable.propTypes = {};
