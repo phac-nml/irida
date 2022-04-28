@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIAddAssociatedProjectException;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIRemoveAssociatedProjectException;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.AssociatedProject;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIAssociatedProjectsService;
 
@@ -63,7 +65,7 @@ public class ProjectAssociatedProjectsAjaxController {
 		try {
 			service.addAssociatedProject(projectId, associatedProjectId, locale);
 			return ResponseEntity.ok(new AjaxSuccessResponse(""));
-		} catch (Exception e) {
+		} catch (UIAddAssociatedProjectException e) {
 			return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
@@ -82,7 +84,7 @@ public class ProjectAssociatedProjectsAjaxController {
 		try {
 			service.removeAssociatedProject(projectId, associatedProjectId, locale);
 			return ResponseEntity.ok(new AjaxSuccessResponse(""));
-		} catch (Exception e) {
+		} catch (UIRemoveAssociatedProjectException e) {
 			return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
