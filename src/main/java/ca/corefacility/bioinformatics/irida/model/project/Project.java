@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
+import ca.corefacility.bioinformatics.irida.model.subscription.ProjectSubscription;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmissionTemplate;
@@ -143,7 +144,10 @@ public class Project extends IridaRepresentationModel
 
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "project")
 	private List<NcbiExportSubmission> ncbiSubmissions;
-	// End of cascade deletion properties
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
+	private List<ProjectSubscription> projectSubscriptions;
+	//End of cascade deletion properties
 
 	public Project() {
 		createdDate = new Date();

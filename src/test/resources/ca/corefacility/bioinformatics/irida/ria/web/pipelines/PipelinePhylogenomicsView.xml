@@ -1,109 +1,103 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-		email="manager@nowhere.com" firstName="Mr." lastName="Manager"
-		password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
-		phoneNumber="867-5309" username="mrtest" enabled="true" system_role="ROLE_ADMIN"
-		credentialsNonExpired="true" />
-	<user id="2" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-		email="test@me.com" firstName="test" lastName="User"
-		password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
-		phoneNumber="867-5309" username="testUser" enabled="true" system_role="ROLE_USER"
-		credentialsNonExpired="true" />
-	<user id="3" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-		email="project1Manager@test.com" firstName="project1Manager" lastName="Manager"
-		password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
-		phoneNumber="867-5309" username="project1Manager" enabled="true"
-		system_role="ROLE_USER" credentialsNonExpired="true" />
-	<user id="4" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-		email="admin@test.com" firstName="project1Manager" lastName="Manager"
-		password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
-		phoneNumber="867-5309" username="admin" enabled="true" system_role="ROLE_ADMIN"
-		credentialsNonExpired="true" />
+    <user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+          email="manager@nowhere.com" firstName="Mr." lastName="Manager"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="867-5309" username="mrtest" enabled="true" system_role="ROLE_ADMIN"
+          credentialsNonExpired="true"/>
+    <user id="2" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+          email="test@me.com" firstName="test" lastName="User"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="867-5309" username="testUser" enabled="true" system_role="ROLE_USER"
+          credentialsNonExpired="true"/>
+    <user id="3" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+          email="project1Manager@test.com" firstName="project1Manager" lastName="Manager"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="867-5309" username="project1Manager" enabled="true"
+          system_role="ROLE_USER" credentialsNonExpired="true"/>
+    <user id="4" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+          email="admin@test.com" firstName="project1Manager" lastName="Manager"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="867-5309" username="admin" enabled="true" system_role="ROLE_ADMIN"
+          credentialsNonExpired="true"/>
 
-	<client_role name="ROLE_CLIENT" description="A client" />
-	<client_details id="1" clientId="testClient"
-		clientSecret="testClientSecret" token_validity="100000" createdDate="2013-07-18 14:20:19.0" />
-	<client_details_authorities
-		client_details_id="1" authority_name="ROLE_CLIENT" />
-	<client_details_grant_types
-		client_details_id="1" grant_value="authorization_code" />
-	<client_details_resource_ids
-		client_details_id="1" resource_id="NmlIrida" />
-	<client_details_scope client_details_id="1" scope="read" />
+    <client_role name="ROLE_CLIENT" description="A client"/>
+    <client_details id="1" clientId="testClient"
+                    clientSecret="testClientSecret" token_validity="100000" createdDate="2013-07-18 14:20:19.0"/>
+    <client_details_authorities
+            client_details_id="1" authority_name="ROLE_CLIENT"/>
+    <client_details_grant_types
+            client_details_id="1" grant_value="authorization_code"/>
+    <client_details_resource_ids
+            client_details_id="1" resource_id="NmlIrida"/>
+    <client_details_scope client_details_id="1" scope="read"/>
 
-	<project id="1" createdDate="2013-07-12 14:20:19.0" name="project"
-		modifiedDate="2013-07-18 14:20:19.0" organism="E. coli"
-		projectDescription="This is an interesting project description."
-		remoteURL="http://google.ca"  />
-	<project id="2" createdDate="2013-07-18 14:20:19.0" name="project2"
-		modifiedDate="2013-07-18 14:19:19.0"  />
+    <project id="1" createdDate="2013-07-12 14:20:19.0" name="project"
+             modifiedDate="2013-07-18 14:20:19.0" organism="E. coli"
+             projectDescription="This is an interesting project description."
+             remoteURL="http://google.ca"/>
+    <project id="2" createdDate="2013-07-18 14:20:19.0" name="project2"
+             modifiedDate="2013-07-18 14:19:19.0"/>
 
-	<project_user id="1" project_id="1" user_id="1"
-		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
-	<project_user id="2" project_id="2" user_id="1"
-		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
-	<project_user id="6" project_id="1" user_id="2"
-		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
-	<project_user id="7" project_id="1" user_id="3"
-		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
-	<project_user id="8" project_id="2" user_id="3"
-		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
-	<project_user id="9" project_id="2" user_id="2"
-		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
+    <project_user id="1" project_id="1" user_id="1"
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+    <project_user id="2" project_id="2" user_id="1"
+                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"/>
+    <project_user id="6" project_id="1" user_id="2"
+                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"/>
+    <project_user id="7" project_id="1" user_id="3"
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+    <project_user id="8" project_id="2" user_id="3"
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+    <project_user id="9" project_id="2" user_id="2"
+                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"/>
 
-	<sample id="1" createdDate="2013-07-18 14:00:19.0" modifiedDate="2013-07-18 14:00:19.0"
-		description="description1" sampleName="sample1" organism="E. coli" />
-	<sample id="2" modifiedDate="2013-07-18 14:00:19.0" createdDate="2013-07-18 14:01:19.0"
-		description="description2" sampleName="sample2" organism="E. coli" />
+    <sample id="1" createdDate="2013-07-18 14:00:19.0" modifiedDate="2013-07-18 14:00:19.0"
+            description="description1" sampleName="sample1" organism="E. coli"/>
+    <sample id="2" modifiedDate="2013-07-18 14:00:19.0" createdDate="2013-07-18 14:01:19.0"
+            description="description2" sampleName="sample2" organism="E. coli"/>
 
-	<project_sample id="1" project_id="1" sample_id="1"
-		createdDate="2013-07-10 14:21:19.0" owner="true" />
-	<project_sample id="2" project_id="1" sample_id="2"
-		createdDate="2013-07-12 14:22:19.0" owner="true" />
-	<project_sample id="3" project_id="2" sample_id="1"
-		createdDate="2013-07-10 14:21:19.0" owner="true" />
+    <project_sample id="1" project_id="1" sample_id="1"
+                    createdDate="2013-07-10 14:21:19.0" owner="true"/>
+    <project_sample id="2" project_id="1" sample_id="2"
+                    createdDate="2013-07-12 14:22:19.0" owner="true"/>
+    <project_sample id="3" project_id="2" sample_id="1"
+                    createdDate="2013-07-10 14:21:19.0" owner="true"/>
 
-	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
-		file_path="src/test/resources/files/sequence-files/01-1111_S1_L001_R1_001.fastq" />
-	<sequence_file id="2" created_date="2013-07-18 14:20:19.0"
-		file_path="src/test/resources/files/sequence-files/01-1111_S1_L001_R2_001.fastq" />
-	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
-		file_path="src/test/resources/files/sequence-files/03-3333_S1_L001_R1_001.fastq" />
+    <sequence_file id="1" created_date="2013-07-18 14:20:19.0"
+                   file_path="src/test/resources/files/sequence-files/01-1111_S1_L001_R1_001.fastq"/>
+    <sequence_file id="2" created_date="2013-07-18 14:20:19.0"
+                   file_path="src/test/resources/files/sequence-files/01-1111_S1_L001_R2_001.fastq"/>
+    <sequence_file id="3" created_date="2013-07-18 14:20:19.0"
+                   file_path="src/test/resources/files/sequence-files/03-3333_S1_L001_R1_001.fastq"/>
 
-	<sequencing_object id="1" created_date="2014-07-30 08:24:34" />
-	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0" />
+    <sequencing_object id="1" created_date="2014-07-30 08:24:34"/>
+    <sequencing_object id="2" created_date="2013-07-18 14:20:19.0"/>
 
-	<sequence_file_pair id="1" />
-	<sequence_file_pair_files pair_id="1"
-		files_id="1" />
-	<sequence_file_pair_files pair_id="1"
-		files_id="2" />
+    <sequence_file_pair id="1"/>
+    <sequence_file_pair_files pair_id="1"
+                              files_id="1"/>
+    <sequence_file_pair_files pair_id="1"
+                              files_id="2"/>
 
-	<sequence_file_single_end id="2" file_id="3" />
+    <sequence_file_single_end id="2" file_id="3"/>
 
-	<sample_sequencingobject id="1"
-		created_date="2013-07-18 14:20:19.0" sample_id="1"
-		sequencingobject_id="1" />
-	<sample_sequencingobject id="2"
-		created_date="2013-07-18 14:20:19.0" sample_id="2"
-		sequencingobject_id="2" />
+    <sample_sequencingobject id="1"
+                             created_date="2013-07-18 14:20:19.0" sample_id="1"
+                             sequencingobject_id="1"/>
+    <sample_sequencingobject id="2"
+                             created_date="2013-07-18 14:20:19.0" sample_id="2"
+                             sequencingobject_id="2"/>
 
-	<reference_file id="1" createdDate="2013-06-16 11:15:36.2"
-		filePath="src/test/resources/files/references/testref1.fasta" fileRevisionNumber="1"
-		modifiedDate="2013-06-16 11:15:36.2" />
-	<reference_file id="2" createdDate="2013-07-16 11:15:36.2"
-		filePath="src/test/resources/files/references/testref2.fasta" fileRevisionNumber="1"
-		modifiedDate="2013-07-17 11:15:36.2" />
+    <reference_file id="1" createdDate="2013-06-16 11:15:36.2"
+                    filePath="src/test/resources/files/references/testref1.fasta" fileRevisionNumber="1"
+                    modifiedDate="2013-06-16 11:15:36.2"/>
+    <reference_file id="2" createdDate="2013-07-16 11:15:36.2"
+                    filePath="src/test/resources/files/references/testref2.fasta" fileRevisionNumber="1"
+                    modifiedDate="2013-07-17 11:15:36.2"/>
 
-	<project_referencefile id="1" createdDate="2013-08-16 15:15:36.2"
-		project_id="1" reference_file_id="1" />
-	<project_referencefile id="2" createdDate="2013-08-17 15:15:36.2"
-		project_id="1" reference_file_id="2" />
+    <project_referencefile id="1" createdDate="2013-08-16 15:15:36.2"
+                           project_id="1" reference_file_id="1"/>
+    <project_referencefile id="2" createdDate="2013-08-17 15:15:36.2"
+                           project_id="1" reference_file_id="2"/>
 </dataset>
