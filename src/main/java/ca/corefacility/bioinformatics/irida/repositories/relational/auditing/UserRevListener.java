@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.repositories.relational.auditing;
 
+import ca.corefacility.bioinformatics.irida.config.security.IridaUserDetailsContextMapper;
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.IridaClientDetailsRepository;
@@ -24,6 +25,7 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
     private static ApplicationContext applicationContext;
     private static UserRepository urepo;
     private static IridaClientDetailsRepository clientRepo;
+    private static IridaUserDetailsContextMapper iridaUserDetailsContextMapper;
 
     @Value("${irida.administrative.authentication.mode}")
     private String authenticationMode;
@@ -41,8 +43,7 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
         rev.setClientId(clientId);
 
         if (userId == null && clientId == null){
-            //todo: do something more to auth that the revision is real???
-            if (isLdapMode()) {
+            if (isLdapMode() && iridaUserDetailsContextMapper.isCreatingNewUser()) {
                 //todo: add something to the UserRevEntity object to indicate that the change was made?
                 // add a column to UserRevEntity for type of addition?
                 logger.trace("Revision with no user or client in ldap/adldap authenticationMode");
@@ -66,6 +67,7 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
 	public void initialize(){
         urepo = applicationContext.getBean(UserRepository.class);
         clientRepo = applicationContext.getBean(IridaClientDetailsRepository.class);
+        iridaUserDetailsContextMapper = applicationContext.getBean(IridaUserDetailsContextMapper.class);
     }
     
 	/**

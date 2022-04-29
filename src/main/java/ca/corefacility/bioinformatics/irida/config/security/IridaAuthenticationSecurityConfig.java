@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
-import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 
 /**
  * Configuration for IRIDA's spring security Authentication Provider and Context Mapper when authenticating with LDAP or ADLDAP
@@ -133,13 +132,6 @@ public class IridaAuthenticationSecurityConfig {
     }
 
     /**
-     * Simple mapper for LDAP username to {@link UserRepository} user
-     * @return {@link UserDetailsContextMapper}
-     */
-    @Bean
-    public UserDetailsContextMapper userDetailsContextMapper() { return iridaUserDetailsContextMapper; }
-
-    /**
      * Configures and connects to a LDAP server based on configuration options set in authentication.properties
      * @return {@link LdapAuthenticationProvider}
      */
@@ -150,7 +142,7 @@ public class IridaAuthenticationSecurityConfig {
         ldapAuthenticator.afterPropertiesSet();
 
         LdapAuthenticationProvider authenticationProvider = new LdapAuthenticationProvider(ldapAuthenticator);
-        authenticationProvider.setUserDetailsContextMapper(userDetailsContextMapper());
+        authenticationProvider.setUserDetailsContextMapper(iridaUserDetailsContextMapper);
 
         return authenticationProvider;
     }
@@ -184,7 +176,7 @@ public class IridaAuthenticationSecurityConfig {
     private AuthenticationProvider activeDirectoryLdapAuthenticationProvider() {
         ActiveDirectoryLdapAuthenticationProvider authenticationProvider =
                 new ActiveDirectoryLdapAuthenticationProvider(adLdapDomain, adLdapUrl, adLdapRootDn);
-        authenticationProvider.setUserDetailsContextMapper(userDetailsContextMapper());
+        authenticationProvider.setUserDetailsContextMapper(iridaUserDetailsContextMapper);
         authenticationProvider.setConvertSubErrorCodesToExceptions(true);
         authenticationProvider.setUseAuthenticationRequestCredentials(true);
         // Default search filter can be overridden as an optional config argument

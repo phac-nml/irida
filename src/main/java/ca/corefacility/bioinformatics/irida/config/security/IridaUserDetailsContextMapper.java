@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
@@ -16,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.stereotype.Component;
 
+import javax.validation.ConstraintViolationException;
 import java.util.Collection;
 
 @Component
@@ -31,8 +33,9 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
     @Value("${irida.administrative.authentication.mode}")
     private String authenticationMode;
 
-    //todo: for authenticating that user creation is coming from this Component
-//    private String newUsername;
+    private boolean creatingNewUser = false;
+
+    public boolean isCreatingNewUser() { return creatingNewUser; }
 
     @Override
     public UserDetails mapUserFromContext(DirContextOperations dirContextOperations, String username, Collection<? extends GrantedAuthority> collection) {
@@ -56,8 +59,8 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
                     logger.error(errorMessage);
                     throw new IllegalStateException(errorMessage);
             }
-            u.setSystemRole(Role.ROLE_USER);
-            userService.create(u);
+
+            commitUser(u);
 
             try {
                 // return the newly created user
@@ -71,7 +74,7 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
         }
     }
 
-    public User ldapCreateUser(DirContextOperations dirContextOperations, String username) {
+    private User ldapCreateUser(DirContextOperations dirContextOperations, String username) {
         String randomPassword = "Password1!";
         String fieldLdapEmail = username + "@user.us";
         String fieldLdapFirstName = username;
@@ -80,13 +83,29 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
         return new User(username, fieldLdapEmail, randomPassword, fieldLdapFirstName, fieldLdapLastName, fieldLdapPhoneNumber);
     }
 
-    public User adLdapCreateUser(DirContextOperations dirContextOperations, String username) {
+    private User adLdapCreateUser(DirContextOperations dirContextOperations, String username) {
         String randomPassword = "Password1!";
         String fieldLdapEmail = username + "@user.us";
         String fieldLdapFirstName = username;
         String fieldLdapLastName = username;
         String fieldLdapPhoneNumber = "1234";
         return new User(username, fieldLdapEmail, randomPassword, fieldLdapFirstName, fieldLdapLastName, fieldLdapPhoneNumber);
+    }
+
+    private void commitUser(User u) {
+        u.setSystemRole(Role.ROLE_USER);
+        try {
+            creatingNewUser = true;
+            userService.create(u);
+        } catch (EntityExistsException e) {
+            logger.error("User being created already exists: " + e);
+            throw e;
+        } catch (ConstraintViolationException e) {
+            logger.error("Fields in User are incompatible with local database constraints: " + e);
+            throw e;
+        } finally {
+            creatingNewUser = false;
+        }
     }
 
     @Override
