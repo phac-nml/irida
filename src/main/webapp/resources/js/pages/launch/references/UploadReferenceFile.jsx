@@ -31,7 +31,8 @@ export function UploadReferenceFile({ form }) {
         form.setFieldsValue({ reference: info.file.response.files[0].id });
       } else if (status === "error") {
         notification.error({
-          message: response.error
+          message: i18n("ReferenceFile.uploadFileError", info.file.name),
+          description: response.error
         });
       }
     },
