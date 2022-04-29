@@ -15,11 +15,12 @@ import { grey1 } from "../../../styles/colors";
  */
 export default function UserAccountLayout() {
   const ADMIN_USERS_URL = "admin/users";
+  const CREATE_USER_URL = "/users/create";
 
   const {Content, Sider} = Layout;
   const {userId} = useParams();
   const {data: userDetails = {}} = useGetUserDetailsQuery(userId);
-  const showBack = userDetails.admin && document.referrer.includes(ADMIN_USERS_URL, 0);
+  const showBack = userDetails.admin && (document.referrer.includes(ADMIN_USERS_URL, 0) || document.referrer.includes(CREATE_USER_URL, 0));
   const goToAdminUserListPage = () =>
     (window.location.href = setBaseUrl(ADMIN_USERS_URL));
 
