@@ -19,6 +19,7 @@ Changes
 * [UI]: Fixed: Allow organism name not included in the current taxonomy.
 * [Developer]: Removed `prop-types` as a front-end development dependency.
 * [UI]: Updated `User` and `Admin` help documentation URLs.
+* [Developer/UI]: Refreshed the user account page.
 
 22.01 to 22.03
 --------------
