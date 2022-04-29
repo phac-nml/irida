@@ -56,9 +56,9 @@
     <project id="10" createdDate="2013-07-18 14:22:19.0" name="listeria" organism=""/>
 
     <user_group_project id="1" created_date="2013-07-18 14:20:19.0" project_role="PROJECT_OWNER" project_id="9"
-                        user_group_id="1" metadataRole="LEVEL_4" />
+                        user_group_id="1" metadata_role="LEVEL_4" />
     <user_group_project id="2" created_date="2013-07-18 14:20:19.0" project_role="PROJECT_USER" project_id="8"
-                        user_group_id="1" metadataRole="LEVEL_4" />
+                        user_group_id="1" metadata_role="LEVEL_4" />
 
     <project_user id="1" project_id="2" user_id="3"
                   projectRole="PROJECT_OWNER" metadataRole="LEVEL_4" createdDate="2013-07-18 14:20:19.0"/>

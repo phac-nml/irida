@@ -8,16 +8,12 @@
 
 
 	<project_user id="1" project_id="1" user_id="1"
-	createdDate="2013-07-18 14:20:19.0" projectRole="PROJECT_OWNER"
-	metadataRole="LEVEL_4" />
+                  createdDate="2013-07-18 14:20:19.0" projectRole="PROJECT_OWNER"
+                  metadataRole="LEVEL_4" />
 		
 	<client_details id="1" clientId="testClient" clientSecret="testClientSecret" token_validity="42000" createdDate="2013-07-18 14:20:19.0" />
 
     <project id="1" createdDate="2013-07-18 14:20:19.0" name="project"/>
-
-
-    <project_user id="1" project_id="1" user_id="1"
-                  createdDate="2013-07-18 14:20:19.0" projectRole="PROJECT_OWNER" metadataRole="LEVEL_4"/>
 
     <client_details id="1" clientId="testClient" clientSecret="testClientSecret" token_validity="42000"
                     createdDate="2013-07-18 14:20:19.0"/>
