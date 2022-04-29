@@ -243,7 +243,7 @@ public class UISampleService {
 	 *
 	 * @param request Request containing the details of the move
 	 * @param locale  current users {@link Locale}
-	 * @throws Exception if project or samples cannot be found
+	 * @throws UIShareSamplesException if project or samples cannot be found
 	 */
 	public void shareSamplesWithProject(ShareSamplesRequest request, Locale locale) throws UIShareSamplesException {
 		Project currentProject = projectService.read(request.getCurrentId());
@@ -272,6 +272,7 @@ public class UISampleService {
 	 *
 	 * @param projectId Identifier for the current project.
 	 * @param request   Information about the state of the table (filters, sort, and pagination).
+	 * @param locale    current users {@link Locale}
 	 * @return a page of samples
 	 */
 	public AntTableResponse<ProjectSampleTableItem> getPagedProjectSamples(Long projectId,
@@ -469,13 +470,13 @@ public class UISampleService {
 
 	/**
 	 * Download the currently filtered project samples table as either an xlsx or csv file.
-	 * 
+	 *
 	 * @param projectId Identifier for the project
 	 * @param type      The type of file to generate (either excel or csv)
 	 * @param request   The project samples table request
 	 * @param response  The response
 	 * @param locale    The current locale
-	 * @throws IOException
+	 * @throws IOException If there is an error writing the file
 	 */
 	@Transactional(readOnly = true)
 	public void downloadSamplesSpreadsheet(long projectId, String type, ProjectSamplesTableRequest request,
@@ -657,6 +658,12 @@ public class UISampleService {
 		csvWriter.close();
 	}
 
+	/**
+	 * Check if a list of sample names exist within a project
+	 *
+	 * @param request Request containing the project id and sample names
+	 * @return List of valid and invalid sample names
+	 */
 	public SampleNameCheckResponse checkSampleNames(SampleNameCheckRequest request) {
 		Iterable<Project> projects = projectService.readMultiple(request.getProjectIds());
 		List<ValidSample> valid = new ArrayList<>();

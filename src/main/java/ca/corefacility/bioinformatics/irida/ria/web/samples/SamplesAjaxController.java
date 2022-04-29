@@ -181,6 +181,12 @@ public class SamplesAjaxController {
 		return ResponseEntity.ok(uiSampleService.getSampleFiles(id, projectId));
 	}
 
+	/**
+	 * Check if a list of sample names exist within a project
+	 *
+	 * @param request Request containing the project id and sample names
+	 * @return List of valid and invalid sample names
+	 */
 	@PostMapping("/validate")
 	public SampleNameCheckResponse checkSampleNames(@RequestBody SampleNameCheckRequest request) {
 		return uiSampleService.checkSampleNames(request);

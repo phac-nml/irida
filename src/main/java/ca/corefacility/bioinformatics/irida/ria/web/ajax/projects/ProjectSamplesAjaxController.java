@@ -80,6 +80,7 @@ public class ProjectSamplesAjaxController {
 	 *
 	 * @param projectId Identifier for the current project
 	 * @param request   Information about the current state of the project samples table.
+	 * @param locale    Current users locale
 	 * @return The Page of samples
 	 */
 	@PostMapping("")

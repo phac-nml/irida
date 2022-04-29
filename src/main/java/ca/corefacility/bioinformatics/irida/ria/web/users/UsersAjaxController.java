@@ -57,6 +57,7 @@ public class UsersAjaxController {
 	/**
 	 * Get information about the current user
 	 *
+	 * @param projectId Identifier for a project (not required)
 	 * @return {@link CurrentUser}
 	 */
 	@GetMapping("/current")
