@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -61,7 +62,7 @@ public class UIProjectSubscriptionService {
 
 		try {
 			projectSubscription = projectSubscriptionService.read(id);
-		} catch (Exception e) {
+		} catch (EntityNotFoundException e) {
 			throw new UIEntityNotFoundException(
 					messageSource.getMessage("server.UserProjectsPage.notification.error", new Object[] {}, locale));
 		}
