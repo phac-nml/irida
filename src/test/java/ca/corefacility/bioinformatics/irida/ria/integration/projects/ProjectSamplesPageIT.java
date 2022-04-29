@@ -66,26 +66,26 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertFalse(page.isNcbiBtnEnabled(), "NCBI Export is only available when 1 or more samples are selected");
 
 		page.closeExportDropdown();
-		//
-		//		// Test with one sample selected
-		//		page.selectSample(0);
-		//		page.openToolsDropDown();
-		//		assertFalse(page.isMergeBtnEnabled(), "Merge option should not be enabled");
-		//		assertTrue(page.isRemoveBtnEnabled(), "Remove option should be enabled");
-		//		page.closeToolsDropdown();
-		//		page.openExportDropdown();
-		//		assertTrue(page.isDownloadBtnEnabled(), "Download option should be enabled");
-		//		assertTrue(page.isNcbiBtnEnabled(), "NCBI Export option should be enabled");
-		//
-		//		// Test with two samples selected
-		//		page.selectSample(1);
-		//		page.openToolsDropDown();
-		//		assertTrue(page.isMergeBtnEnabled(), "Merge option should be enabled");
-		//		assertTrue(page.isShareBtnEnabled(), "Share option should be enabled");
-		//		assertTrue(page.isRemoveBtnEnabled(), "Remove option should be enabled");
-		//		page.openExportDropdown();
-		//		assertTrue(page.isDownloadBtnEnabled(), "Download option should be enabled");
-		//		assertTrue(page.isNcbiBtnEnabled(), "NCBI Export option should be enabled");
+
+		// Test with one sample selected
+		page.selectSampleByName("sample55422r");
+		page.openToolsDropDown();
+		assertFalse(page.isMergeBtnEnabled(), "Merge option should not be enabled");
+		assertTrue(page.isRemoveBtnEnabled(), "Remove option should be enabled");
+		page.closeToolsDropdown();
+		page.openExportDropdown();
+		assertTrue(page.isDownloadBtnEnabled(), "Download option should be enabled");
+		assertTrue(page.isNcbiBtnEnabled(), "NCBI Export option should be enabled");
+
+		// Test with two samples selected
+		page.selectSampleByName("sample-5-fg-22");
+		page.openToolsDropDown();
+		assertTrue(page.isMergeBtnEnabled(), "Merge option should be enabled");
+		assertTrue(page.isShareBtnEnabled(), "Share option should be enabled");
+		assertTrue(page.isRemoveBtnEnabled(), "Remove option should be enabled");
+		page.openExportDropdown();
+		assertTrue(page.isDownloadBtnEnabled(), "Download option should be enabled");
+		assertTrue(page.isNcbiBtnEnabled(), "NCBI Export option should be enabled");
 	}
 
 	@Test
