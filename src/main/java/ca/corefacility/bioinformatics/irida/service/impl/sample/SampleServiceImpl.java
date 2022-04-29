@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.service.impl.sample;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.criteria.*;
@@ -565,19 +564,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		filterSpec.add(new SearchCriteria("project", projects, SearchOperation.IN));
 
 		return psjRepository.findAll(filterSpec, PageRequest.of(currentPage, pageSize, sort));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projects, 'canReadProject')")
-	@Transactional(readOnly = true)
-	public Stream<ProjectSampleJoin> streamFilteredProjectSamples(List<Project> projects,
-			ProjectSampleJoinSpecification filterSpec, Sort sort) {
-		filterSpec.add(new SearchCriteria("project", projects, SearchOperation.IN));
-
-		return psjRepository.streamAll(filterSpec, sort);
 	}
 
 	/**

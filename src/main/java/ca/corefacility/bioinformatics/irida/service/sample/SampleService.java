@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.sample;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -236,18 +235,6 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public Page<ProjectSampleJoin> getFilteredProjectSamples(List<Project> projects,
 			ProjectSampleJoinSpecification filterSpec, int currentPage, int pageSize, Sort sort);
-
-	/**
-	 * Get a {@link Stream} of {@link ProjectSampleJoin} for samples from 1 or more projects based on filtering
-	 * criteria.
-	 *
-	 * @param projects   {@link List} of {@link Project} the {@link Sample}s must be found within.
-	 * @param filterSpec {@link ProjectSampleJoinSpecification}
-	 * @param sort       {@link Sort} chained sort definitions to sort page by.
-	 * @return a {@link Stream} of {@link ProjectSampleJoin} that are filtered and sorted.
-	 */
-	public Stream<ProjectSampleJoin> streamFilteredProjectSamples(List<Project> projects,
-			ProjectSampleJoinSpecification filterSpec, Sort sort);
 
 	/**
 	 * Get a {@link Page} of {@link ProjectSampleJoin} for samples from 1 or more projects based on filtering criteria.
