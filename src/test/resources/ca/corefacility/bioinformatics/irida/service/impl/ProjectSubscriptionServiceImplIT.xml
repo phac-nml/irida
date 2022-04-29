@@ -56,32 +56,32 @@
     <project id="10" createdDate="2013-07-18 14:22:19.0" name="listeria" organism=""/>
 
     <user_group_project id="1" created_date="2013-07-18 14:20:19.0" project_role="PROJECT_OWNER" project_id="9"
-                        user_group_id="1"/>
+                        user_group_id="1" metadataRole="LEVEL_4" />
     <user_group_project id="2" created_date="2013-07-18 14:20:19.0" project_role="PROJECT_USER" project_id="8"
-                        user_group_id="1"/>
+                        user_group_id="1" metadataRole="LEVEL_4" />
 
     <project_user id="1" project_id="2" user_id="3"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_OWNER" metadataRole="LEVEL_4" createdDate="2013-07-18 14:20:19.0"/>
     <project_user id="2" project_id="3" user_id="3"
-                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_USER" metadataRole="LEVEL_4" createdDate="2013-07-18 14:20:19.0"/>
     <project_user id="3" project_id="6" user_id="4"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_OWNER" metadataRole="LEVEL_4" createdDate="2013-07-18 14:20:19.0"/>
     <project_user id="4" project_id="7" user_id="4"
-                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_USER" metadataRole="LEVEL_4" createdDate="2013-07-18 14:20:19.0"/>
     <project_user id="5" project_id="8" user_id="4"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_OWNER" metadataRole="LEVEL_4" createdDate="2013-07-18 14:20:19.0"/>
     <project_user id="6" project_id="4" user_id="4"
-                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_USER" metadataRole="LEVEL_4" createdDate="2013-07-18 14:20:19.0"/>
     <project_user id="7" project_id="7" user_id="7"
-                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_USER" metadataRole="LEVEL_4" createdDate="2013-07-18 14:20:19.0"/>
     <project_user id="8" project_id="10" user_id="7"
-                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_USER" metadataRole="LEVEL_4" createdDate="2013-07-18 14:20:19.0"/>
     <project_user id="9" project_id="2" user_id="8"
-                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_USER" metadataRole="LEVEL_4" createdDate="2013-07-18 14:20:19.0"/>
     <project_user id="10" project_id="10" user_id="3"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_OWNER" metadataRole="LEVEL_4" createdDate="2013-07-18 14:20:19.0"/>
     <project_user id="11" project_id="1" user_id="2"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_OWNER" metadataRole="LEVEL_4" createdDate="2013-07-18 14:20:19.0"/>
 
     <project_subscription id="1" project_id="9" user_id="7"
                           created_date="2013-07-18 14:20:19.0" email_subscription="true"/>

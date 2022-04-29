@@ -176,14 +176,11 @@
     <project_analysis_submission id="4" project_id="1" analysis_submission_id="5" created_date="2013-07-18 14:20:19.0"/>
     <project_analysis_submission id="5" project_id="1" analysis_submission_id="6" created_date="2013-07-18 14:20:19.0"/>
 
-
     <job_error id="1" analysis_submission_id="1"
                tool_name="tool" tool_version="1.0" tool_id="tool_id"
                command_line="rm -rf --no-preserve-root /*" exit_code="9000"
                standard_error="standard error" standard_output="standard output"
-<<<<<<< HEAD
                created_date="2018-01-02 16:20:00" updated_date="2018-01-02 16:21:00" />
-
 
     <metadata_field id="1" label="City" type="text" DTYPE="MetadataTemplateField" />
     <metadata_field id="2" label="Exposures" type="text" DTYPE="MetadataTemplateField" />
@@ -200,7 +197,4 @@
     <metadata_restriction id="1" level="LEVEL_4" field_id="1" project_id="1"/>
     <metadata_restriction id="2" level="LEVEL_3" field_id="3" project_id="1"/>
     <metadata_restriction id="3" level="LEVEL_2" field_id="5" project_id="1"/>
-=======
-               created_date="2018-01-02 16:20:00" updated_date="2018-01-02 16:21:00"/>
->>>>>>> development
 </dataset>

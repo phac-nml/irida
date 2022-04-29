@@ -134,21 +134,13 @@
     <metadata_field id="4" label="symptom" type="text" DTYPE="MetadataTemplateField"/>
 
     <metadata_template id="1" created_date="2016-06-10 08:05:53" modified_date="2016-06-10 08:05:53"
-<<<<<<< HEAD
                        name="Testing Template 1" project_id="1" project_default="0"/>
-=======
-                       name="Testing Template 1"/>
->>>>>>> development
 
     <metadata_template_metadata_field metadata_template_id="1" fields_id="1"/>
     <metadata_template_metadata_field metadata_template_id="1" fields_id="2"/>
     <metadata_template_metadata_field metadata_template_id="1" fields_id="4"/>
 
-<<<<<<< HEAD
-=======
-    <project_metadata_template id="1" created_date="2016-06-10 08:05:53" project_id="1" template_id="1"/>
 
->>>>>>> development
     <metadata_entry id="1" value="Fred" type="text" sample_id="1" field_id="1"/>
     <metadata_entry id="2" value="Johnson" type="text" sample_id="1" field_id="2"/>
     <metadata_entry id="3" value="WRHA" type="text" sample_id="1" field_id="3"/>
