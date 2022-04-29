@@ -11,17 +11,18 @@ import { ContentLoading } from "../../../components/loader";
  * @constructor
  */
 export default function SequencingRunLayout() {
-  const { runId } = useParams();
+  const {runId} = useParams();
 
   return (
-    <PageWrapper title="Sequencing Run">
+    <PageWrapper
+      title={i18n("SequencingRunLayout.title", runId)}>
       <Row>
         <Col span={4}>
-          <SequencingRunNav />
+          <SequencingRunNav/>
         </Col>
         <Col offset={1} span={8}>
-          <React.Suspense fallback={<ContentLoading />}>
-            <Outlet />
+          <React.Suspense fallback={<ContentLoading/>}>
+            <Outlet/>
           </React.Suspense>
         </Col>
       </Row>
