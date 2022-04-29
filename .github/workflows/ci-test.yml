@@ -25,7 +25,6 @@ jobs:
       MYSQL_PASSWORD: test
       MYSQL_DATABASE: irida_integration_test
       MYSQL_HOST: 127.0.0.1
-      NODE_OPTIONS: "--max-old-space-size=4096"
 
     strategy:
       fail-fast: false  #Setting so that if one of the test suites fail, the other will continue

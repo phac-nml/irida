@@ -360,6 +360,8 @@ You can upload a new reference file to the project by clicking on the "Upload Re
 
 Reference files **must** be in `fasta` format. Files containing **ambiguous base calls** will be rejected.
 
+![Reference file invalid.](images/reference-file-invalid.png)
+
 Once you've uploaded a reference file, you can optionally download the reference file (useful if someone else uploaded the reference file for the project) by clicking on the <img src="images/download-icon.png" class="inline" alt="Download icon."> download icon in the list of reference files.
 
 ### Remote project settings

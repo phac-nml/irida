@@ -19,6 +19,8 @@ Changes
 * [UI]: Fixed: Allow organism name not included in the current taxonomy.
 * [Developer]: Removed `prop-types` as a front-end development dependency.
 * [UI]: Updated `User` and `Admin` help documentation URLs.
+* [Developer/UI]: Refreshed the user account page.
+* [UI]: Updated message displayed to user when an invalid reference file is uploaded while launching a workflow.
 * [All]: Added functionality for project managers to restrict metadata fields depending on the Collaborator's metadata role on the project.
 
 22.01 to 22.03

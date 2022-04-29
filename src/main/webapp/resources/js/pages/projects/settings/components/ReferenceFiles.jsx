@@ -170,7 +170,8 @@ export default function ReferenceFiles() {
       .catch((error) => {
         onError("Error");
         notification.error({
-          message: i18n("ReferenceFile.uploadFileError", file.name, error),
+          message: i18n("ReferenceFile.uploadFileError", file.name),
+          description: error
         });
         document
           .querySelectorAll(".ant-upload-list-item-error")

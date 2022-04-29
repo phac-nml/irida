@@ -28,21 +28,21 @@
           email="admin@nowhere.com" firstName="Ad" lastName="Min"
           password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
           phoneNumber="867-5309" username="admin" enabled="true" system_role="ROLE_ADMIN"
-          credentialsNonExpired="true" />
+          credentialsNonExpired="true"/>
     <user id="2"
           username="thisguy" system_role="ROLE_USER"
           email="this@guy.ca" firstName="This" lastName="Guy"
           createdDate="2018-07-04 10:00:0.0" modifiedDate="2018-07-04 10:00:0.0"
           password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
           phoneNumber="555-5555"
-          enabled="true" credentialsNonExpired="true" />
+          enabled="true" credentialsNonExpired="true"/>
     <user id="3"
           username="otherguy" system_role="ROLE_USER"
           email="other@guy.ca" firstName="Other" lastName="Guy"
           createdDate="2018-07-04 10:00:0.0" modifiedDate="2018-07-04 10:00:0.0"
           password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
           phoneNumber="555-5555"
-          enabled="true" credentialsNonExpired="true" />
+          enabled="true" credentialsNonExpired="true"/>
 
     <project id="1"
              name="project1"
@@ -53,41 +53,43 @@
                   user_id="2"
                   projectRole="PROJECT_USER"
                   createdDate="2018-07-04 10:00:0.0"
-                  email_subscription="false" metadataRole="LEVEL_1"/>
+                  metadataRole="LEVEL_1"/>
+
     <project_user id="2"
                   project_id="1"
                   user_id="3"
                   projectRole="PROJECT_USER"
                   createdDate="2018-07-04 10:00:0.0"
-                  email_subscription="false" metadataRole="LEVEL_1"/>
+                  metadataRole="LEVEL_1"/>
+
     <sample id="1"
             sampleName="sample1"
-            createdDate="2018-07-04 10:00:0.0" />
+            createdDate="2018-07-04 10:00:0.0"/>
     <sample id="2"
             sampleName="sample2"
-            createdDate="2018-07-04 10:00:0.0" />
+            createdDate="2018-07-04 10:00:0.0"/>
     <sample id="3"
             sampleName="sample3"
-            createdDate="2018-07-04 10:00:0.0" />
+            createdDate="2018-07-04 10:00:0.0"/>
     <!--sample 4 is not associated with a project but has analyses run by otherguy user-->
     <sample id="4"
             sampleName="sample3"
-            createdDate="2018-07-04 10:00:0.0" />
+            createdDate="2018-07-04 10:00:0.0"/>
     <project_sample id="1"
                     project_id="1"
                     sample_id="1"
                     createdDate="2018-07-04 10:00:0.0"
-                    owner="true" />
+                    owner="true"/>
     <project_sample id="2"
                     project_id="1"
                     sample_id="2"
                     createdDate="2018-07-04 10:00:0.0"
-                    owner="true" />
+                    owner="true"/>
     <project_sample id="3"
                     project_id="1"
                     sample_id="3"
                     createdDate="2018-07-04 10:00:0.0"
-                    owner="true" />
+                    owner="true"/>
 
     <!--START: analysis_submission 1-->
     <tool_execution id="1" command_line="a" tool_name="b" tool_version="c"
@@ -118,7 +120,8 @@
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60"
                          submitter="2"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
+                         automated="0"/>
     <project_analysis_submission id="1"
                                  project_id="1"
                                  analysis_submission_id="1"
@@ -131,7 +134,7 @@
                     execution_manager_identifier="test2"
                     created_date="2018-07-04 10:00:0.0"/>
     <tool_execution_parameters tool_id="2"
-                               execution_parameter_key="k" execution_parameter_value="v" />
+                               execution_parameter_key="k" execution_parameter_value="v"/>
     <analysis_output_file id="2"
                           file_path="contigs2.fasta"
                           created_date="2018-07-04 10:00:0.0"
@@ -152,7 +155,8 @@
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60"
                          submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="1" />
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
+                         automated="1"/>
     <!--END: analysis_submission 2-->
 
     <!--START: analysis_submission 3-->
@@ -161,7 +165,7 @@
                     execution_manager_identifier="test3"
                     created_date="2018-07-04 10:00:0.0"/>
     <tool_execution_parameters tool_id="3"
-                               execution_parameter_key="k" execution_parameter_value="v" />
+                               execution_parameter_key="k" execution_parameter_value="v"/>
     <analysis_output_file id="3"
                           file_path="sistr.json"
                           created_date="2018-07-04 10:00:0.0"
@@ -182,7 +186,8 @@
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
                          submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="1" />
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
+                         automated="1"/>
     <!--END: analysis_submission 3-->
 
     <!--START: analysis_submission 4-->
@@ -191,7 +196,7 @@
                     execution_manager_identifier="test4"
                     created_date="2018-07-04 10:00:0.0"/>
     <tool_execution_parameters tool_id="4"
-                               execution_parameter_key="k" execution_parameter_value="v" />
+                               execution_parameter_key="k" execution_parameter_value="v"/>
     <analysis_output_file id="4"
                           file_path="sistr2.json"
                           created_date="2018-07-04 10:00:0.0"
@@ -212,7 +217,8 @@
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
                          submitter="3"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
+                         automated="0"/>
     <!--END: analysis_submission 4-->
 
     <!--START: analysis_submission 5-->
@@ -221,7 +227,7 @@
                     execution_manager_identifier="test4"
                     created_date="2018-07-04 10:00:0.0"/>
     <tool_execution_parameters tool_id="5"
-                               execution_parameter_key="k" execution_parameter_value="v" />
+                               execution_parameter_key="k" execution_parameter_value="v"/>
     <analysis_output_file id="5"
                           file_path="sistr3.json"
                           created_date="2018-07-04 10:00:0.0"
@@ -242,7 +248,8 @@
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
                          submitter="3"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
+                         automated="0"/>
     <project_analysis_submission id="2"
                                  project_id="1"
                                  analysis_submission_id="5"
@@ -256,7 +263,7 @@
                     execution_manager_identifier="test6"
                     created_date="2018-07-04 10:00:0.0"/>
     <tool_execution_parameters tool_id="6"
-                               execution_parameter_key="k" execution_parameter_value="v" />
+                               execution_parameter_key="k" execution_parameter_value="v"/>
     <analysis_output_file id="6"
                           file_path="contigs6.fasta"
                           created_date="2018-07-04 10:00:0.0"
@@ -277,7 +284,8 @@
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60"
                          submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="1" />
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
+                         automated="1"/>
     <!--END: analysis_submission 6-->
 
     <!--START: analysis_submission 7-->
@@ -286,7 +294,7 @@
                     execution_manager_identifier="test7"
                     created_date="2018-07-04 10:00:0.0"/>
     <tool_execution_parameters tool_id="7"
-                               execution_parameter_key="k" execution_parameter_value="v" />
+                               execution_parameter_key="k" execution_parameter_value="v"/>
     <analysis_output_file id="7"
                           file_path="sistr7.json"
                           created_date="2018-07-04 10:00:0.0"
@@ -307,7 +315,8 @@
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
                          submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="1" />
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
+                         automated="1"/>
     <!--END: analysis_submission 7-->
 
 
@@ -317,7 +326,7 @@
                     execution_manager_identifier="test8"
                     created_date="2018-07-04 10:00:0.0"/>
     <tool_execution_parameters tool_id="8"
-                               execution_parameter_key="k" execution_parameter_value="v" />
+                               execution_parameter_key="k" execution_parameter_value="v"/>
     <analysis_output_file id="8"
                           file_path="sistr8.json"
                           created_date="2018-07-04 10:00:0.0"
@@ -338,13 +347,14 @@
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
                          submitter="3"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
+                         automated="0"/>
     <!--END: analysis_submission 8-->
 
     <sequence_file id="1" created_date="2018-07-04 10:00:0.0"
-                   file_path="/sequenceFile1" />
+                   file_path="/sequenceFile1"/>
     <sequence_file id="2" created_date="2018-07-04 10:00:0.0"
-                   file_path="/sequenceFile2" />
+                   file_path="/sequenceFile2"/>
     <sequencing_object id="1" created_date="2018-07-04 10:00:2.0"
                        automated_assembly="6" sistr_typing="7"/>
     <sequence_file_pair id="1"/>

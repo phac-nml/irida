@@ -11,7 +11,7 @@
 
 	<project_user id="1" createdDate="2013-07-18 14:20:19.0"
 		projectRole="PROJECT_OWNER" project_id="1" user_id="1"
-		email_subscription="false" metadataRole="LEVEL_4"/>
+		metadataRole="LEVEL_4"/>
 
 	<sample id="11" createdDate="2013-01-18 14:20:19.0" description="description1"
 		sampleName="sample1" organism="org1" />

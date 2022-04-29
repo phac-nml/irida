@@ -1,16 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,12 +16,13 @@ import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -48,20 +42,26 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.*;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.ProjectSubscriptionService;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 /**
+ *
  */
 public class ProjectServiceImplTest {
 	private ProjectService projectService;
@@ -77,6 +77,8 @@ public class ProjectServiceImplTest {
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	private ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private SequencingObjectRepository sequencingObjectRepository;
+	private ProjectSubscriptionService projectSubscriptionService;
+	private UserGroupJoinRepository userGroupJoinRepository;
 
 	private Validator validator;
 
@@ -93,9 +95,12 @@ public class ProjectServiceImplTest {
 		prfjRepository = mock(ProjectReferenceFileJoinRepository.class);
 		ugpjRepository = mock(UserGroupProjectJoinRepository.class);
 		sequencingObjectRepository = mock(SequencingObjectRepository.class);
+		projectSubscriptionService = mock(ProjectSubscriptionService.class);
+		userGroupJoinRepository = mock(UserGroupJoinRepository.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
 				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository, ugpjRepository,
-				ssoRepository, pasRepository, sequencingObjectRepository, validator);
+				ssoRepository, pasRepository, sequencingObjectRepository, projectSubscriptionService,
+				userGroupJoinRepository, validator);
 	}
 
 	@Test
@@ -196,8 +201,9 @@ public class ProjectServiceImplTest {
 		Sample s = new Sample();
 		s.setSampleName("name");
 		Set<ConstraintViolation<Sample>> violations = new HashSet<>();
-		violations.add(ConstraintViolationImpl.forBeanValidation(null, null, null, null, Sample.class, null, null,
-				null, null, null, null));
+		violations.add(
+				ConstraintViolationImpl.forBeanValidation(null, null, null, null, Sample.class, null, null, null, null,
+						null, null));
 
 		when(validator.validate(s)).thenReturn(violations);
 
@@ -240,6 +246,22 @@ public class ProjectServiceImplTest {
 		assertThrows(EntityExistsException.class, () -> {
 			projectService.addSampleToProject(p, s, true);
 		});
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testUserHasProjectRole() {
+		Project p = project();
+		User u = new User();
+
+		List<ProjectUserJoin> joins = new ArrayList<>();
+		joins.add(new ProjectUserJoin(p, u, ProjectRole.PROJECT_OWNER));
+		Page<ProjectUserJoin> page = new PageImpl<>(joins);
+
+		when(pujRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
+
+		assertTrue(projectService.userHasProjectRole(u, p, ProjectRole.PROJECT_OWNER),
+				"User has ownership of project.");
 	}
 
 	@Test
@@ -349,7 +371,7 @@ public class ProjectServiceImplTest {
 		ProjectMetadataRole metadataRole = ProjectMetadataRole.LEVEL_1;
 		ProjectUserJoin oldJoin = new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER, metadataRole);
 		List<Join<Project, User>> owners = Lists.newArrayList(new ProjectUserJoin(project, user,
-				ProjectRole.PROJECT_OWNER));
+				ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4));
 
 		when(pujRepository.getProjectJoinForUser(project, user)).thenReturn(oldJoin);
 		when(pujRepository.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER)).thenReturn(owners);
@@ -363,7 +385,8 @@ public class ProjectServiceImplTest {
 	@Test
 	public void testGetProjectsForSample() {
 		Sample sample = new Sample("my sample");
-		List<Join<Project, Sample>> projects = Lists.newArrayList(new ProjectSampleJoin(new Project("p1"), sample, true),
+		List<Join<Project, Sample>> projects = Lists.newArrayList(
+				new ProjectSampleJoin(new Project("p1"), sample, true),
 				new ProjectSampleJoin(new Project("p2"), sample, true));
 
 		when(psjRepository.getProjectForSample(sample)).thenReturn(projects);
@@ -420,16 +443,15 @@ public class ProjectServiceImplTest {
 		Project project = new Project();
 
 		List<Sample> samples = ImmutableList.of(new Sample("s1"), new Sample("s2"));
-		
+
 		ProjectSampleJoin psj0 = new ProjectSampleJoin(project, samples.get(0), true);
 		ProjectSampleJoin psj1 = new ProjectSampleJoin(project, samples.get(1), true);
-		
+
 		when(psjRepository.readSampleForProject(project, samples.get(0))).thenReturn(psj0);
 		when(psjRepository.readSampleForProject(project, samples.get(1))).thenReturn(psj1);
 
 		projectService.removeSamplesFromProject(project, samples);
 
-		
 		verify(psjRepository).delete(psj0);
 		verify(psjRepository).delete(psj1);
 	}
@@ -450,7 +472,7 @@ public class ProjectServiceImplTest {
 		verifyNoInteractions(sampleRepository);
 
 	}
-	
+
 	@Test
 	public void testGetProjectsForUser() {
 		final User u = new User();
