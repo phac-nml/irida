@@ -40,9 +40,6 @@ public class IridaAuthenticationSecurityConfig {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private UserService userService;
-
     @Value("${irida.administrative.authentication.mode}")
     private String authenticationMode;
 
@@ -149,6 +146,10 @@ public class IridaAuthenticationSecurityConfig {
     @Bean
     public UserDetailsContextMapper userDetailsContextMapper() {
         return new UserDetailsContextMapper() {
+            //todo: better place for this??? This has to be at this lower level or else tests fail and idk why
+            @Autowired
+            private UserService userService;
+
             @Override
             public UserDetails mapUserFromContext(DirContextOperations dirContextOperations, String username, Collection<? extends GrantedAuthority> collection) {
                 // Here we could use dirContextOperations to fetch other user attributes from ldap, not needed for our use case
@@ -168,8 +169,6 @@ public class IridaAuthenticationSecurityConfig {
                     User u = new User(username, fieldLdapEmail, randomPassword, fieldLdapFirstName, fieldLdapLastName, fieldLdapPhoneNumber);
                     u.setSystemRole(Role.ROLE_USER);
                     userService.create(u);
-
-
                 }
                 try {
                     return userRepository.loadUserByUsername(username);
