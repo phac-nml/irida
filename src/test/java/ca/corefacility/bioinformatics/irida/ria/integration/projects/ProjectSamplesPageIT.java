@@ -153,17 +153,15 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	public void testRemoveSamplesFromProject() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		TableSummary summary = page.getTableSummary();
 
-		// Select some samples
-		//		page.selectSample(0);
-		//		page.selectSample(1);
+		page.selectSampleByName("sample55422r");
+		page.selectSampleByName("sample-5-fg-22");
 
 		// Remove process
 		page.removeSamples();
-		assertEquals(3, page.getPaginationCount(), "Should be only 3 pages of projects now");
-		page.selectPaginationPage(2);
-		assertEquals(10, page.getNumberProjectsDisplayed(), "Should only be displaying 10 samples.");
-		assertEquals("No samples selected", page.getSelectedInfoText(), "Should be 0 selected samples");
+		TableSummary updatedSummary = page.getTableSummary();
+		assertEquals(summary.getTotal() - 2, updatedSummary.getTotal(), "Should be 2 less samples after removal");
 	}
 
 	@Test

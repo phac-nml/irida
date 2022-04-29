@@ -143,9 +143,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-remove-modal")
 	private WebElement removeModal;
 
-	@FindBy(className = "t-submit-remove")
-	private WebElement removeBtnOK;
-
 	@FindBy(id = "confirmMergeBtn")
 	private WebElement mergeBtnOK;
 
@@ -473,6 +470,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		return nameAnchor.getText();
 	}
 
+	public void removeSamples() {
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		openToolsDropDown();
+		removeBtn.click();
+		wait.until(ExpectedConditions.visibilityOf(removeModal));
+		removeModal.findElement(By.xpath("//button[@type='button' and span='Remove Samples']")).click();
+		wait.until(ExpectedConditions.textMatches(By.className("t-summary"), Pattern.compile("^Selected: 0")));
+	}
+
 	// --- OLD BELOW
 
 	public String getTableInfo() {
@@ -527,15 +533,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	private WebDriverWait openToolsDropdownAndWait() {
 		toolsDropdownBtn.click();
 		return new WebDriverWait(driver, 10);
-	}
-
-	public void removeSamples() {
-		WebDriverWait wait = openToolsDropdownAndWait();
-		wait.until(ExpectedConditions.elementToBeClickable(removeBtn));
-		removeBtn.click();
-		wait.until(ExpectedConditions.visibilityOf(removeModal));
-		removeBtnOK.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("remove-modal")));
 	}
 
 	public void mergeSamplesWithNewName(String newName) {
