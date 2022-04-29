@@ -46,12 +46,14 @@ export const DraggableBodyRow = ({
     },
   });
   const [, drag] = useDrag({
-    item: { type, index },
+    type,
+    item: { index },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
   });
   drop(drag(ref));
+
   return (
     <tr
       ref={ref}

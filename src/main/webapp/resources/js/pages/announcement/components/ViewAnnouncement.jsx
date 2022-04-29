@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, notification, Typography } from "antd";
 import { formatDate } from "../../../utilities/date-utilities";
-import Markdown from "react-markdown";
+import ReactMarkdown from "react-markdown";
 import { LinkButton } from "../../../components/Buttons/LinkButton";
 import { PriorityFlag } from "./PriorityFlag";
 import { getAnnouncement } from "../../../apis/announcements/announcements";
@@ -59,7 +59,9 @@ function ViewAnnouncementModal({
       ),
       content: (
         <div style={{ overflowY: "auto", maxHeight: 600, paddingRight: 10 }}>
-          <Markdown source={announcement.message} />
+          <ReactMarkdown>
+            {announcement.message}
+          </ReactMarkdown>
         </div>
       ),
     });

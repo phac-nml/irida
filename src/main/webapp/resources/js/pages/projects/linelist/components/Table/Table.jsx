@@ -1,9 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
-import { notification, Space, Spin } from "antd";
+import { notification, Spin } from "antd";
 import isEqual from "lodash/isEqual";
-import isArray from "lodash/isArray";
-import PropTypes from "prop-types";
 import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
@@ -72,7 +70,7 @@ export class TableComponent extends React.Component {
     }
 
     if (
-      isArray(nextProps.entries) &&
+      Array.isArray(nextProps.entries) &&
       !isEqual(nextProps.entries, this.props.entries)
     ) {
       /*
@@ -403,17 +401,6 @@ export class TableComponent extends React.Component {
     );
   }
 }
-
-TableComponent.propTypes = {
-  tableModified: PropTypes.func.isRequired,
-  fields: PropTypes.array.isRequired,
-  entries: PropTypes.array,
-  templates: PropTypes.array,
-  current: PropTypes.number.isRequired,
-  onFilter: PropTypes.func.isRequired,
-  globalFilter: PropTypes.string.isRequired,
-  selection: PropTypes.func.isRequired,
-};
 
 const mapStateToProps = (state) => ({
   loading: state.entries.loading,
