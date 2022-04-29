@@ -8,7 +8,7 @@ import {
   notification,
   Radio,
   Row,
-  Space
+  Space,
 } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
@@ -26,7 +26,7 @@ import LockedSamplesList from "./LockedSamplesList";
  * @constructor
  */
 export default function MergeModal({ samples, visible, onComplete, onCancel }) {
-  const { projectId } = useSelector(state => state.samples);
+  const { projectId } = useSelector((state) => state.samples);
   const [merge, { isLoading }] = useMergeMutation();
 
   const [renameSample, setRenameSample] = React.useState(false);
@@ -35,19 +35,19 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
 
   const initialValues = {
     primary: samples.valid[0]?.id,
-    newName: ""
+    newName: "",
   };
 
   React.useEffect(() => {
     if (!renameSample) {
       form.setFieldsValue({
-        newName: ""
+        newName: "",
       });
     }
   }, [form, renameSample]);
 
   // Server validate new name
-  const validateName = async name => {
+  const validateName = async (name) => {
     if (renameSample) {
       return serverValidateSampleName(name);
     } else {
@@ -63,21 +63,21 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
     } catch {
       return;
     }
-    const ids = valid
-      .map(sample => sample.id)
-      .filter(id => id !== values.primary);
+    const ids = samples.valid
+      .map((sample) => sample.id)
+      .filter((id) => id !== values.primary);
 
     const { message } = await merge({
       projectId,
       request: {
         ...values,
-        ids
-      }
+        ids,
+      },
     }).unwrap();
 
     notification.success({
       message: i18n("MergeModal.success"),
-      description: message
+      description: message,
     });
     onComplete();
   };
@@ -87,11 +87,12 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
   return (
     <Modal
       title={i18n("MergeModal.title")}
+      className="t-merge-modal"
       visible={visible}
       onOk={onSubmit}
       okText={i18n("MergeModal.okText")}
       okButtonProps={{
-        loading: isLoading
+        loading: isLoading,
       }}
       onCancel={onCancel}
       cancelText={i18n("MergeModal.cancelText")}
@@ -127,7 +128,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
                 >
                   <Radio.Group>
                     <Space direction="vertical">
-                      {samples.valid.map(sample => {
+                      {samples.valid.map((sample) => {
                         return (
                           <Radio value={sample.id} key={`sample-${sample.id}`}>
                             {sample.sampleName}
@@ -139,8 +140,9 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
                 </Form.Item>
                 <Form.Item noStyle>
                   <Checkbox
+                    className="t-custom-checkbox"
                     checked={renameSample}
-                    onChange={e => setRenameSample(e.target.checked)}
+                    onChange={(e) => setRenameSample(e.target.checked)}
                   >
                     Rename Sample
                   </Checkbox>
@@ -150,8 +152,8 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
                       ({}) => ({
                         validator(_, value) {
                           return validateName(value);
-                        }
-                      })
+                        },
+                      }),
                     ]}
                   >
                     <Input disabled={!renameSample} />

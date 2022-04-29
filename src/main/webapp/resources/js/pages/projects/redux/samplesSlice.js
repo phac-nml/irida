@@ -154,6 +154,8 @@ export default createReducer(initialState, (builder) => {
       newOptions.pagination.pageSize = state.options.pagination.pageSize;
       newOptions.reload = Math.floor(Math.random() * 90000) + 10000; // Unique 5 digit number to trigger reload
       state.options = newOptions;
+      state.selected = {};
+      state.selectedCount = 0;
     })
     .addCase(addSelectedSample, (state, action) => {
       state.selected[action.payload.key] = formatSelectedSample(action.payload);

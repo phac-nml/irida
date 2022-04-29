@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -10,7 +8,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.TableSummary;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.Lists;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -113,28 +110,30 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	public void testMergeSamples() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		// Select some samples
-		//		page.selectSample(0);
-		//		page.selectSample(2);
-		assertEquals("2 samples selected", page.getSelectedInfoText(), "Should be 2 selected samples");
+
+		TableSummary originalSummary = page.getTableSummary();
+		String FIRST_SAMPLE_NAME = "sample55422r";
+		String SECOND_SAMPLE_NAME = "sample-5-fg-22";
+		String THIRD_SAMPLE_NAME = "sample64565";
+		String NEW_NAME = "I-AM-NEW-HERE";
+
+		page.selectSampleByName(FIRST_SAMPLE_NAME);
+		page.selectSampleByName(SECOND_SAMPLE_NAME);
 
 		// Merge these samples with the original name
-		List<String> originalNames = Lists.newArrayList(page.getSampleNamesOnPage().get(0),
-				page.getSampleNamesOnPage().get(2));
-		page.mergeSamplesWithOriginalName();
-		List<String> mergeNames = Lists.newArrayList(page.getSampleNamesOnPage().get(0),
-				page.getSampleNamesOnPage().get(2));
-		assertEquals(originalNames.get(0), mergeNames.get(0), "Should still the first samples name");
-		assertFalse(originalNames.get(1).equals(mergeNames.get(1)),
-				"Should have different sample second since it was merged");
+		page.mergeSamplesWithOriginalName(FIRST_SAMPLE_NAME);
+		assertEquals(FIRST_SAMPLE_NAME, page.getMostRecentlyModifiedSampleName(),
+				"Merged sample should have the original name");
+
+		TableSummary finalSummary = page.getTableSummary();
+		assertEquals(originalSummary.getTotal() - 1, finalSummary.getTotal(),
+				"Should have one less sample after merge");
 
 		// Merge with a new name
-		//		page.selectSample(0);
-		//		page.selectSample(1);
-		String newSampleName = "NEW_NAME";
-		page.mergeSamplesWithNewName(newSampleName);
-		String name = page.getSampleNamesOnPage().get(0);
-		assertEquals(newSampleName, name, "Should have the new sample name");
+		page.selectSampleByName(FIRST_SAMPLE_NAME);
+		page.selectSampleByName(THIRD_SAMPLE_NAME);
+		page.mergeSamplesWithOriginalName(NEW_NAME);
+		assertEquals(NEW_NAME, page.getMostRecentlyModifiedSampleName(), "Merged sample should have the new name");
 	}
 
 	@Test

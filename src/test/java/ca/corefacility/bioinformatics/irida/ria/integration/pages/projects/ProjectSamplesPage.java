@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.*;
@@ -107,6 +108,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(css = ".t-select-all input")
 	private WebElement selectAllCheckbox;
 
+	@FindBy(className = "t-merge-modal")
+	private WebElement mergeModal;
+
 	//----- OLD BELOW
 
 	@FindBy(className = "t-associated-btn")
@@ -141,9 +145,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	@FindBy(className = "t-submit-remove")
 	private WebElement removeBtnOK;
-
-	@FindBy(id = "merge-samples-modal")
-	private WebElement mergeModal;
 
 	@FindBy(id = "confirmMergeBtn")
 	private WebElement mergeBtnOK;
@@ -451,6 +452,27 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.elementSelectionStateToBe(selectAllCheckbox, !checked));
 	}
 
+	public void mergeSamplesWithOriginalName(String sampleName) {
+		toolsDropdownBtn.click();
+		mergeBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.visibilityOf(mergeModal));
+		WebElement existing = null;
+		try {
+			mergeModal.findElement(By.xpath("//label[(.//*|.)[contains(text(), '" + sampleName + "')]]")).click();
+		} catch (Exception e) {
+			driver.findElement(By.className("t-custom-checkbox")).click();
+			driver.findElement(By.id("newName")).sendKeys(sampleName);
+		}
+		driver.findElement(By.xpath("//button[@type='button' and span='Merge Samples']")).click();
+		wait.until(ExpectedConditions.textMatches(By.className("t-summary"), Pattern.compile("^Selected: 0")));
+	}
+
+	public String getMostRecentlyModifiedSampleName() {
+		WebElement nameAnchor = driver.findElement(By.xpath("//tbody/tr[1]/td[2]/a"));
+		return nameAnchor.getText();
+	}
+
 	// --- OLD BELOW
 
 	public String getTableInfo() {
@@ -500,16 +522,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		actions.keyDown(Keys.SHIFT).click(tableRows.get(row).findElement(By.className("t-row-select"))).perform();
 		// Sometimes, that shift key never gets lifted!
 		actions.keyUp(Keys.SHIFT).perform();
-	}
-
-	public void mergeSamplesWithOriginalName() {
-		toolsDropdownBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(mergeBtn));
-		mergeBtn.click();
-		wait.until(ExpectedConditions.visibilityOf(mergeModal));
-		mergeBtnOK.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("confirmMergeBtn")));
 	}
 
 	private WebDriverWait openToolsDropdownAndWait() {
