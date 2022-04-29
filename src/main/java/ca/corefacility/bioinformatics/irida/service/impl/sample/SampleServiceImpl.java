@@ -396,8 +396,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		// confirm that all samples are part of the same project:
 		confirmProjectSampleJoin(project, mergeInto);
 
-		logger.debug("Merging samples " + toMerge.stream().map(t -> t.getId()).collect(Collectors.toList())
-				+ " into sample [" + mergeInto.getId() + "]");
+		logger.debug(
+				"Merging samples " + toMerge.stream().map(Sample::getId).collect(Collectors.toList()) + " into sample ["
+						+ mergeInto.getId() + "]");
 
 		for (Sample s : toMerge) {
 			confirmProjectSampleJoin(project, s);
@@ -428,7 +429,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			psjRepository.delete(readSampleForProject);
 			sampleRepository.deleteById(s.getId());
 		}
-		return mergeInto;
+		mergeInto.setModifiedDate(new Date());
+		return sampleRepository.save(mergeInto);
 	}
 
 	/**
