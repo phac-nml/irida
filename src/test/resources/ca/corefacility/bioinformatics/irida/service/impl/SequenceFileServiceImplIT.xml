@@ -1,80 +1,80 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-		email="manager@nowhere.com" firstName="Mr." lastName="Manager"
-		password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
-		phoneNumber="867-5309" username="fbristow" enabled="true" system_role="ROLE_USER"
-		credentialsNonExpired="true" />
-	<user id="2" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-		email="manager1@nowhere.com" firstName="Mr." lastName="Manager"
-		password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
-		phoneNumber="867-5309" username="fbristow1" enabled="true"
-		system_role="ROLE_USER" credentialsNonExpired="true" />
-	<user id="3" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-		email="admin@nowhere.com" firstName="Admin" lastName="Guy"
-		password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
-		phoneNumber="867-5309" username="admin" enabled="true" system_role="ROLE_ADMIN"
-		credentialsNonExpired="true" />
+    <user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+          email="manager@nowhere.com" firstName="Mr." lastName="Manager"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="867-5309" username="fbristow" enabled="true" system_role="ROLE_USER"
+          credentialsNonExpired="true"/>
+    <user id="2" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+          email="manager1@nowhere.com" firstName="Mr." lastName="Manager"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="867-5309" username="fbristow1" enabled="true"
+          system_role="ROLE_USER" credentialsNonExpired="true"/>
+    <user id="3" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+          email="admin@nowhere.com" firstName="Admin" lastName="Guy"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="867-5309" username="admin" enabled="true" system_role="ROLE_ADMIN"
+          credentialsNonExpired="true"/>
 
-	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
-		projectDescription="description"  />
+    <project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
+             projectDescription="description"/>
 
-	<project_user project_id="1" user_id="2" projectRole="PROJECT_OWNER"
-		createdDate="2013-07-18 14:20:19.0" email_subscription="false" />
-	
-	<sample id="1" createdDate="2013-07-18 14:20:19.0" description="description1"
-		 sampleName="sample1" />
-	<sample id="2" createdDate="2013-07-18 14:20:19.0" description="description2"
-         sampleName="sample2" />
-	
-	<project_sample id="1" createdDate="2013-07-18 14:20:19.0"
-		project_id="1" sample_id="1" owner="true" />
-	<project_sample id="2" createdDate="2013-07-18 14:20:19.0"
-        project_id="1" sample_id="2" owner="true" />
-        
-	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
-		file_path="/file1" file_revision_number="1" />
-	<sequence_file id="2" created_date="2013-07-18 14:20:19.0"
-		file_path="/file2" file_revision_number="1" />
-	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
-		file_path="/file3" file_revision_number="1" />
-	<sequence_file id="4" created_date="2013-07-18 14:20:19.0"
-		file_path="/file4" file_revision_number="1" />
+    <project_user project_id="1" user_id="2" projectRole="PROJECT_OWNER"
+                  createdDate="2013-07-18 14:20:19.0"/>
+
+    <sample id="1" createdDate="2013-07-18 14:20:19.0" description="description1"
+            sampleName="sample1"/>
+    <sample id="2" createdDate="2013-07-18 14:20:19.0" description="description2"
+            sampleName="sample2"/>
+
+    <project_sample id="1" createdDate="2013-07-18 14:20:19.0"
+                    project_id="1" sample_id="1" owner="true"/>
+    <project_sample id="2" createdDate="2013-07-18 14:20:19.0"
+                    project_id="1" sample_id="2" owner="true"/>
+
+    <sequence_file id="1" created_date="2013-07-18 14:20:19.0"
+                   file_path="/file1" file_revision_number="1"/>
+    <sequence_file id="2" created_date="2013-07-18 14:20:19.0"
+                   file_path="/file2" file_revision_number="1"/>
+    <sequence_file id="3" created_date="2013-07-18 14:20:19.0"
+                   file_path="/file3" file_revision_number="1"/>
+    <sequence_file id="4" created_date="2013-07-18 14:20:19.0"
+                   file_path="/file4" file_revision_number="1"/>
     <sequence_file id="5" created_date="2013-07-18 14:20:19.0"
-        file_path="/file5" file_revision_number="1" />		
+                   file_path="/file5" file_revision_number="1"/>
 
-	<sequence_file_properties sequence_file_id="1"
-		property_key="samplePlate" property_value="5" />
-	<sequence_file_properties sequence_file_id="1"
-		property_key="sampleWell" property_value="10" />
+    <sequence_file_properties sequence_file_id="1"
+                              property_key="samplePlate" property_value="5"/>
+    <sequence_file_properties sequence_file_id="1"
+                              property_key="sampleWell" property_value="10"/>
 
-	<sequencing_run id="1" createdDate="2013-07-18 14:20:19.0" upload_status="COMPLETE" 
-	   layout_type="PAIRED_END" sequencer_type="miseq"/>
+    <sequencing_run id="1" createdDate="2013-07-18 14:20:19.0" upload_status="COMPLETE"
+                    layout_type="PAIRED_END" sequencer_type="miseq"/>
 
-	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0"
-		sequencing_run_id="1" />
-	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0"/>
-	<sequencing_object id="3" created_date="2013-07-18 14:20:19.0"/>
-	<sequencing_object id="4" created_date="2013-07-18 14:20:19.0"/>
+    <sequencing_object id="1" created_date="2013-07-18 14:20:19.0"
+                       sequencing_run_id="1"/>
+    <sequencing_object id="2" created_date="2013-07-18 14:20:19.0"/>
+    <sequencing_object id="3" created_date="2013-07-18 14:20:19.0"/>
+    <sequencing_object id="4" created_date="2013-07-18 14:20:19.0"/>
 
-	<sequence_file_pair id="1" />
-	<sequence_file_pair_files pair_id="1"
-		files_id="3" />
-	<sequence_file_pair_files pair_id="1"
-		files_id="4" />
-	
-	<sequence_file_single_end id="2"
-		file_id="1" />
-	<sequence_file_single_end id="3"
-		file_id="2" />
-	<sequence_file_single_end id="4"
-		file_id="5" />
-		
-	<sample_sequencingobject id="1" created_date="2013-07-18 14:20:19.0"
-		sample_id="1" sequencingobject_id="2" />
-	<sample_sequencingobject id="2" created_date="2013-07-18 14:20:19.0"
-        sample_id="2" sequencingobject_id="1" />
+    <sequence_file_pair id="1"/>
+    <sequence_file_pair_files pair_id="1"
+                              files_id="3"/>
+    <sequence_file_pair_files pair_id="1"
+                              files_id="4"/>
+
+    <sequence_file_single_end id="2"
+                              file_id="1"/>
+    <sequence_file_single_end id="3"
+                              file_id="2"/>
+    <sequence_file_single_end id="4"
+                              file_id="5"/>
+
+    <sample_sequencingobject id="1" created_date="2013-07-18 14:20:19.0"
+                             sample_id="1" sequencingobject_id="2"/>
+    <sample_sequencingobject id="2" created_date="2013-07-18 14:20:19.0"
+                             sample_id="2" sequencingobject_id="1"/>
     <sample_sequencingobject id="3" created_date="2013-07-18 14:20:19.0"
-        sample_id="2" sequencingobject_id="4" />    
+                             sample_id="2" sequencingobject_id="4"/>
 
 </dataset>
