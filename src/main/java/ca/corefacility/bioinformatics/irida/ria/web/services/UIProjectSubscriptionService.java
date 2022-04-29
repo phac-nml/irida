@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.subscription.ProjectSubscription;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserProjectDetailsModel;
@@ -50,26 +51,31 @@ public class UIProjectSubscriptionService {
 	 * @param subscribe - whether to subscribe or unsubscribe the user to/from the project
 	 * @param locale    - {@link Locale} of the current user.
 	 * @return a message to user about the result of the update
-	 * @throws Exception if there is an error updating the project subscription
+	 * @throws UIEntityNotFoundException if there is an error updating the project subscription
 	 */
 	@Transactional
-	public String updateProjectSubscription(Long id, boolean subscribe, Locale locale) throws Exception {
+	public String updateProjectSubscription(Long id, boolean subscribe, Locale locale)
+			throws UIEntityNotFoundException {
 		String message = null;
+		ProjectSubscription projectSubscription = null;
+
 		try {
-			ProjectSubscription projectSubscription = projectSubscriptionService.read(id);
-			projectSubscription.setEmailSubscription(subscribe);
-			if (subscribe) {
-				message = messageSource.getMessage("server.UserProjectsPage.subscribe.notification.success",
-						new Object[] { projectSubscription.getProject().getName() }, locale);
-			} else {
-				message = messageSource.getMessage("server.UserProjectsPage.unsubscribe.notification.success",
-						new Object[] { projectSubscription.getProject().getName() }, locale);
-			}
-			return message;
+			projectSubscription = projectSubscriptionService.read(id);
 		} catch (Exception e) {
-			throw new Exception(
+			throw new UIEntityNotFoundException(
 					messageSource.getMessage("server.UserProjectsPage.notification.error", new Object[] {}, locale));
 		}
+
+		projectSubscription.setEmailSubscription(subscribe);
+		if (subscribe) {
+			message = messageSource.getMessage("server.UserProjectsPage.subscribe.notification.success",
+					new Object[] { projectSubscription.getProject().getName() }, locale);
+		} else {
+			message = messageSource.getMessage("server.UserProjectsPage.unsubscribe.notification.success",
+					new Object[] { projectSubscription.getProject().getName() }, locale);
+		}
+
+		return message;
 	}
 
 	/**

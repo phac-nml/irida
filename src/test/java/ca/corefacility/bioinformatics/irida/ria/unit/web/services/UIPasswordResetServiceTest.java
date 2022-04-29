@@ -10,6 +10,7 @@ import org.springframework.context.MessageSource;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
@@ -53,7 +54,7 @@ public class UIPasswordResetServiceTest {
 
 		try {
 			response = service.adminNewPasswordReset(user2.getId(), principal, Locale.ENGLISH);
-		} catch (Exception e) {
+		} catch (UIEmailSendException e) {
 			e.printStackTrace();
 		}
 		assertEquals(response, "success");

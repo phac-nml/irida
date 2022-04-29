@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPasswordResetService;
 
 /**
@@ -47,9 +48,8 @@ public class PasswordResetAjaxController {
 		try {
 			return ResponseEntity.ok(
 					new AjaxSuccessResponse(UIPasswordResetService.adminNewPasswordReset(userId, principal, locale)));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT)
-					.body(new AjaxErrorResponse(e.getMessage()));
+		} catch (UIEmailSendException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 

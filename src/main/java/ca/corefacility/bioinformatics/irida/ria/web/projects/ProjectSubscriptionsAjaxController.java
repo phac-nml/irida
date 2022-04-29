@@ -11,6 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.subscription.ProjectSubscripti
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSubscriptionService;
@@ -42,7 +43,7 @@ public class ProjectSubscriptionsAjaxController {
 			@RequestParam boolean subscribe, Locale locale) {
 		try {
 			return ResponseEntity.ok(new AjaxSuccessResponse(service.updateProjectSubscription(id, subscribe, locale)));
-		} catch (Exception e) {
+		} catch (UIEntityNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}

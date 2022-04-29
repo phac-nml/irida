@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -44,28 +45,27 @@ public class UIPasswordResetService {
 	 * @param principal a reference to the logged in user.
 	 * @param locale    a reference to the locale specified by the browser.
 	 * @return text to display to the user about the result of creating a password reset.
-	 * @throws Exception if there is an error emailing the password reset.
+	 * @throws UIEmailSendException if there is an error emailing the password reset.
 	 */
-	public String adminNewPasswordReset(Long userId, Principal principal, Locale locale) throws Exception {
+	public String adminNewPasswordReset(Long userId, Principal principal, Locale locale) throws UIEmailSendException {
 		User user = userService.read(userId);
 		User principalUser = userService.getUserByUsername(principal.getName());
 
-		String response;
 		if (PasswordResetController.canCreatePasswordReset(principalUser, user)) {
 			try {
 				createNewPasswordReset(user);
-				response = messageSource.getMessage("server.password.reset.success.message",
-						new Object[] { user.getFirstName() }, locale);
 			} catch (final MailSendException e) {
 				logger.error("Failed to send password reset e-mail.");
-				throw new Exception(messageSource.getMessage("server.password.reset.error.message", null, locale));
+				throw new UIEmailSendException(
+						messageSource.getMessage("server.password.reset.error.message", null, locale));
 			}
-
 		} else {
-			throw new Exception(messageSource.getMessage("server.password.reset.error.message", null, locale));
+			throw new UIEmailSendException(
+					messageSource.getMessage("server.password.reset.error.message", null, locale));
 		}
 
-		return response;
+		return messageSource.getMessage("server.password.reset.success.message", new Object[] { user.getFirstName() },
+				locale);
 	}
 
 	/**
