@@ -5,19 +5,16 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.IridaClientDetailsRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
-//import org.hibernate.envers.AuditReader;
-//import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.RevisionListener;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-
-//import javax.persistence.EntityManagerFactory;
 
 /**
  *
@@ -28,13 +25,13 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
     private static UserRepository urepo;
     private static IridaClientDetailsRepository clientRepo;
 
+    @Value("${irida.administrative.authentication.mode}")
+    private String authenticationMode;
+
     @Override
     public void newRevision(Object revisionEntity) {
         UserRevEntity rev = (UserRevEntity) revisionEntity;
 
-//        EntityManagerFactory emf = applicationContext.getBean(EntityManagerFactory.class);
-//        AuditReader auditReader = AuditReaderFactory.get(emf.createEntityManager());
-//        Object obj = applicationContext;
         //Add the user ID if a user is authenticated
         Long userId = getUserId();
         rev.setUserId(userId);
@@ -43,18 +40,18 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
         Long clientId = getClientId();
         rev.setClientId(clientId);
 
-        boolean newUserCreated = false;
         if (userId == null && clientId == null){
-            // do something to auth that the revision is real???
-            if (true) {
-                newUserCreated = true;
+            //todo: do something more to auth that the revision is real???
+            if (isLdapMode()) {
+                //todo: add something to the UserRevEntity object to indicate that the change was made?
+                // add a column to UserRevEntity for type of addition?
+                logger.trace("Revision with no user or client in ldap/adldap authenticationMode");
             }
-        }
-
-        // We shouldn't ever be in an illegal state
-        // do an extra step anyways maybe?
-        if (userId == null && clientId == null && newUserCreated == false){
-            throw new IllegalStateException("No authentication so revision could not be created");
+            else {
+                //todo: I don't think it's possible to actually reach this illegal state
+                // keep this here any ways??
+                throw new IllegalStateException("No authentication so revision could not be created");
+            }
         }
     }
 
@@ -107,6 +104,10 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
         else {
             return null;
         }
+    }
+
+    private boolean isLdapMode() {
+        return authenticationMode.equals("ldap") || authenticationMode.equals("adldap");
     }
     
 }

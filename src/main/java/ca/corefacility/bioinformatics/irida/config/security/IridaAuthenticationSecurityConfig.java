@@ -154,31 +154,57 @@ public class IridaAuthenticationSecurityConfig {
             public UserDetails mapUserFromContext(DirContextOperations dirContextOperations, String username, Collection<? extends GrantedAuthority> collection) {
                 // Here we could use dirContextOperations to fetch other user attributes from ldap, not needed for our use case
                 try {
+                    // return the user if it exists
                     return userRepository.loadUserByUsername(username);
                 }
                 catch(UsernameNotFoundException e) {
-//                    String msg = "Username found in LDAP/ADLDAP server, but not in local database.";
-//                    logger.error(msg);
-//                    throw new UsernameNotFoundException(msg);
                     logger.info("Creating new IRIDA user for found LDAP user");
-                    String randomPassword = "Password1!";
-                    String fieldLdapEmail = username + "@user.us";
-                    String fieldLdapFirstName = username;
-                    String fieldLdapLastName = username;
-                    String fieldLdapPhoneNumber = "1234";
-                    User u = new User(username, fieldLdapEmail, randomPassword, fieldLdapFirstName, fieldLdapLastName, fieldLdapPhoneNumber);
+                    User u;
+                    switch(authenticationMode) {
+                        case "ldap":
+                            u = ldapCreateUser(dirContextOperations, username);
+                            break;
+                        case "adldap":
+                            u = adLdapCreateUser(dirContextOperations, username);
+                            break;
+                        default:
+                            String errorMessage = "Configured authentication mode not one of the supported modes for context mapping [ldap, adldap]";
+                            logger.error(errorMessage);
+                            throw new IllegalStateException(errorMessage);
+                    }
                     u.setSystemRole(Role.ROLE_USER);
                     userService.create(u);
-                }
-                try {
-                    return userRepository.loadUserByUsername(username);
-                }
-                catch(UsernameNotFoundException e) {
-                    String msg = "Username found in LDAP/ADLDAP server, but not in local database.";
-                    logger.error(msg);
-                    throw new UsernameNotFoundException(msg);
+
+                    try {
+                        // return the newly created user
+                        return userRepository.loadUserByUsername(username);
+                    }
+                    catch(UsernameNotFoundException usernameNotFoundException) {
+                        String msg = "Username found in LDAP/ADLDAP server, but could not be created in local database.";
+                        logger.error(msg);
+                        throw new UsernameNotFoundException(msg);
+                    }
                 }
             }
+
+            public User ldapCreateUser(DirContextOperations dirContextOperations, String username) {
+                String randomPassword = "Password1!";
+                String fieldLdapEmail = username + "@user.us";
+                String fieldLdapFirstName = username;
+                String fieldLdapLastName = username;
+                String fieldLdapPhoneNumber = "1234";
+                return new User(username, fieldLdapEmail, randomPassword, fieldLdapFirstName, fieldLdapLastName, fieldLdapPhoneNumber);
+            }
+
+            public User adLdapCreateUser(DirContextOperations dirContextOperations, String username) {
+                String randomPassword = "Password1!";
+                String fieldLdapEmail = username + "@user.us";
+                String fieldLdapFirstName = username;
+                String fieldLdapLastName = username;
+                String fieldLdapPhoneNumber = "1234";
+                return new User(username, fieldLdapEmail, randomPassword, fieldLdapFirstName, fieldLdapLastName, fieldLdapPhoneNumber);
+            }
+
             @Override
             public void mapUserToContext(UserDetails userDetails, DirContextAdapter dirContextAdapter) {
                 throw new UnsupportedOperationException();
