@@ -104,7 +104,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-samples-table")
 	private WebElement samplesTable;
 
-	@FindBy(className = "t-select-all")
+	@FindBy(css = ".t-select-all input")
 	private WebElement selectAllCheckbox;
 
 	//----- OLD BELOW
@@ -444,9 +444,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		driver.findElement(By.xpath("//button[@type='button' and span='Close']")).click();
 	}
 
-	public void selectAllSamples() {
+	public void toggleSelectAll() {
+		boolean checked = selectAllCheckbox.isSelected();
 		selectAllCheckbox.click();
-		waitForTime(500);
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.elementSelectionStateToBe(selectAllCheckbox, !checked));
 	}
 
 	// --- OLD BELOW

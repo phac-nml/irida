@@ -92,42 +92,21 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	public void testSampleSelection() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		assertEquals("No samples selected", page.getSelectedInfoText(), "Should be 0 selected samples");
+		TableSummary summary = page.getTableSummary();
+		assertEquals(0, summary.getSelected(), "Should be 0 selected samples");
+		assertEquals(23, summary.getTotal(), "Should be 0 selected samples");
 
-		page.selectSample(1);
-		assertEquals("1 sample selected", page.getSelectedInfoText(), "Should be 1 selected samples");
+		page.selectSampleByName("sample-5-fg-22");
+		summary = page.getTableSummary();
+		assertEquals(1, summary.getSelected(), "Should be 1 selected samples");
 
-		page.selectSampleWithShift(4);
-		assertEquals("5 samples selected", page.getSelectedInfoText(), "Should be 5 selected samples");
+		page.toggleSelectAll();
+		summary = page.getTableSummary();
+		assertEquals(0, summary.getSelected(), "Should have all samples selected");
 
-		page.selectAllSamples();
-		assertEquals("23 samples selected", page.getSelectedInfoText(), "Should have all samples selected");
-
-		page.deselectAllSamples();
-		assertEquals("No samples selected", page.getSelectedInfoText(), "Should be 0 selected samples");
-	}
-
-	@Test
-	public void testAddSamplesToCart() {
-		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		page.selectSample(1);
-		page.selectSampleWithShift(4);
-		assertEquals("5 samples selected", page.getSelectedInfoText(), "Should be 5 selected samples");
-
-		page.goToNextPage();
-		//		page.selectSample(1);
-		//		page.selectSample(2);
-		assertEquals("7 samples selected", page.getSelectedInfoText(), "Should be 7 selected samples");
-
-		page.addSelectedSamplesToCart();
-		assertEquals(7, page.getCartCount(), "Should be 7 samples in the cart");
-		page.selectPaginationPage(1);
-
-		// Need to make sure select all samples works
-		page.selectAllSamples();
-		page.addSelectedSamplesToCart();
-		assertEquals(23, page.getCartCount(), "Should be 23 samples in the cart");
+		page.toggleSelectAll();
+		summary = page.getTableSummary();
+		assertEquals(23, summary.getSelected(), "Should be 0 selected samples");
 	}
 
 	@Test
@@ -306,7 +285,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 				"Should display the correct linker for entire project");
 
 		// Make sure that when the filter is applied, only the correct number of samples are selected.
-		page.selectAllSamples();
+		page.toggleSelectAll();
 		assertEquals("ngsArchiveLinker.pl -p 1 -t fastq", page.getLinkerCommand(),
 				"Should be the correct linker command");
 
