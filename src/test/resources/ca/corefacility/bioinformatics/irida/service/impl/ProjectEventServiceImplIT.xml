@@ -1,49 +1,49 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-		email="manager@nowhere.com" firstName="Mr." lastName="Manager"
-		password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
-		phoneNumber="867-5309" username="fbristow" enabled="true" system_role="ROLE_MANAGER"
-		credentialsNonExpired="true" />
-	<user id="2" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-		email="someoneelse@nowhere.com" firstName="Different" lastName="User"
-		password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
-		phoneNumber="867-5309" username="tom" enabled="true" system_role="ROLE_ADMIN"
-		credentialsNonExpired="true" />
-	<user id="3" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-		email="three@nowhere.com" firstName="Third" lastName="User"
-		password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
-		phoneNumber="867-5309" username="three" enabled="true" system_role="ROLE_MANAGER"
-		credentialsNonExpired="true" />
+    <user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+          email="manager@nowhere.com" firstName="Mr." lastName="Manager"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="867-5309" username="fbristow" enabled="true" system_role="ROLE_MANAGER"
+          credentialsNonExpired="true"/>
+    <user id="2" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+          email="someoneelse@nowhere.com" firstName="Different" lastName="User"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="867-5309" username="tom" enabled="true" system_role="ROLE_ADMIN"
+          credentialsNonExpired="true"/>
+    <user id="3" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+          email="three@nowhere.com" firstName="Third" lastName="User"
+          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+          phoneNumber="867-5309" username="three" enabled="true" system_role="ROLE_MANAGER"
+          credentialsNonExpired="true"/>
 
-	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
-		projectDescription="description"  />
-	<project id="2" createdDate="2013-07-18 14:20:19.0" name="project2"
-		projectDescription="description2"  />
-	<project id="3" createdDate="2013-07-18 14:20:19.0" name="project3"
-		projectDescription="description3"  />
+    <project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
+             projectDescription="description"/>
+    <project id="2" createdDate="2013-07-18 14:20:19.0" name="project2"
+             projectDescription="description2"/>
+    <project id="3" createdDate="2013-07-18 14:20:19.0" name="project3"
+             projectDescription="description3"/>
 
-	<sample id="1" createdDate="2013-01-18 14:20:19.0" description="description1"
-		 sampleName="sample1" />
-	<sample id="2" createdDate="2013-02-18 14:20:19.0" description="description2"
-		 sampleName="sample2" />
+    <sample id="1" createdDate="2013-01-18 14:20:19.0" description="description1"
+            sampleName="sample1"/>
+    <sample id="2" createdDate="2013-02-18 14:20:19.0" description="description2"
+            sampleName="sample2"/>
 
-	<project_sample id="1" createdDate="2013-07-18 14:20:19.0"
-		project_id="1" sample_id="1" owner="true" />
+    <project_sample id="1" createdDate="2013-07-18 14:20:19.0"
+                    project_id="1" sample_id="1" owner="true"/>
 
 	<project_user id="1" project_id="1" user_id="1"
 				  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-				  email_subscription="false" metadataRole="LEVEL_4"/>
+				  metadataRole="LEVEL_4"/>
 	<project_user id="2" project_id="1" user_id="3"
 				  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-				  email_subscription="false" metadataRole="LEVEL_4"/>
+				  metadataRole="LEVEL_4"/>
 
 	<project_user id="3" project_id="3" user_id="1"
 				  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-				  email_subscription="false" metadataRole="LEVEL_4"/>
+				  metadataRole="LEVEL_4"/>
 	<project_user id="4" project_id="3" user_id="3"
 				  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-				  email_subscription="false" metadataRole="LEVEL_4"/>
+				  metadataRole="LEVEL_4"/>
 
 	<project_event id="1" created_date="2013-07-18 14:20:19.0"
 		project_id="3" role="PROJECT_USER" user_id="3" DTYPE="UserRoleSetProjectEvent" />

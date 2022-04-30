@@ -9,8 +9,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 /**
  * Edit user page for selenium testing
- * 
- *
  */
 public class CreateUserPage extends AbstractPage {
 
@@ -61,17 +59,16 @@ public class CreateUserPage extends AbstractPage {
 		driver.findElement(By.className("t-submit-btn")).click();
 	}
 
-	public boolean createSuccess() {
+	public boolean createSuccess(String headerName) {
 		try {
-			return waitForElementVisible(By.className("t-user-page-success"))
-					.getText()
-					.equals("test user");
+			waitForElementInVisible(By.className("ant-spin"));
+			return ensurePageHeadingIsTranslated(headerName);
 		} catch (Exception e) {
 			return false;
 		}
 	}
 
-	public boolean isSubmitEnabled(){
+	public boolean isSubmitEnabled() {
 		return driver.findElement(By.className("t-submit-btn")).isEnabled();
 	}
 
