@@ -54,15 +54,10 @@ public class ProjectUserJoin implements Join<Project, User> {
 	@Column(updatable = false)
 	private Date createdDate;
 
-	@Column(name = "email_subscription")
-	@NotNull
-	private boolean emailSubscription;
-
 	public ProjectUserJoin() {
 		this.createdDate = new Date();
 		this.projectRole = ProjectRole.PROJECT_USER;
 		this.metadataRole = ProjectMetadataRole.LEVEL_1;
-		this.emailSubscription = false;
 	}
 
 	public ProjectUserJoin(Project subject, User object, ProjectRole projectRole) {
@@ -140,14 +135,6 @@ public class ProjectUserJoin implements Join<Project, User> {
 
 	public void setMetadataRole(ProjectMetadataRole metadataRole) {
 		this.metadataRole = metadataRole;
-	}
-
-	public void setEmailSubscription(boolean emailSubscription) {
-		this.emailSubscription = emailSubscription;
-	}
-
-	public boolean isEmailSubscription() {
-		return emailSubscription;
 	}
 
 }

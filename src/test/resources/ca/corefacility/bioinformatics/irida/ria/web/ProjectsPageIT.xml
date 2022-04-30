@@ -4,25 +4,25 @@
           email="manager@nowhere.com" firstName="Mr." lastName="Manager"
           password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
           phoneNumber="867-5309" username="mrtest" enabled="true" system_role="ROLE_MANAGER"
-          credentialsNonExpired="true" />
+          credentialsNonExpired="true"/>
     <user id="2" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
           email="test@me.com" firstName="test" lastName="User"
           password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
           phoneNumber="867-5309" username="testUser" enabled="true" system_role="ROLE_USER"
-          credentialsNonExpired="true" />
+          credentialsNonExpired="true"/>
     <user id="3" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
           email="three@somewhere.com" firstName="third" lastName="guy"
           password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
           phoneNumber="867-5309" username="thethird" enabled="true" system_role="ROLE_USER"
-          credentialsNonExpired="true" />
+          credentialsNonExpired="true"/>
     <user id="4" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
           email="admin@somewhere.com" firstName="third" lastName="guy"
           password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
           phoneNumber="867-5309" username="admin" enabled="true" system_role="ROLE_ADMIN"
-          credentialsNonExpired="true" />
-          
-    <user_group id="1" name="group 1" created_date="2013-07-12 14:20:19.0" />
-    <user_group_member id="1" created_date="2013-07-12 14:20:19.0" role="GROUP_MEMBER" group_id="1" user_id="2" />
+          credentialsNonExpired="true"/>
+
+    <user_group id="1" name="group 1" created_date="2013-07-12 14:20:19.0"/>
+    <user_group_member id="1" created_date="2013-07-12 14:20:19.0" role="GROUP_MEMBER" group_id="1" user_id="2"/>
 
     <project id="1" createdDate="2013-07-12 14:20:19.0" name="project" modifiedDate="2013-07-18 14:20:19.0"
              organism="E. coli" projectDescription="This is an interesting project description." remoteURL="http://google.ca" analysis_priority="HIGH" />
@@ -36,138 +36,151 @@
 
     <project_user id="1" project_id="1" user_id="1"
                   projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false" metadataRole="LEVEL_4"/>
+                  metadataRole="LEVEL_4"/>
     <project_user id="2" project_id="2" user_id="1"
                   projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false" metadataRole="LEVEL_1"/>
+                  metadataRole="LEVEL_1"/>
     <project_user id="3" project_id="3" user_id="1"
                   projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false" metadataRole="LEVEL_4"/>
+                  metadataRole="LEVEL_4"/>
     <project_user id="4" project_id="4" user_id="1"
                   projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false" metadataRole="LEVEL_4"/>
+                  metadataRole="LEVEL_4"/>
     <project_user id="6" project_id="1" user_id="2"
                   projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false" metadataRole="LEVEL_1"/>
+                  metadataRole="LEVEL_1"/>
     <project_user id="7" project_id="2" user_id="2"
                   projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false" metadataRole="LEVEL_4"/>
+                  metadataRole="LEVEL_4"/>
     <project_user id="8" project_id="6" user_id="1"
                   projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false" metadataRole="LEVEL_4"/>
+                  metadataRole="LEVEL_4"/>
     <project_user id="9" project_id="7" user_id="1"
                   projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false" metadataRole="LEVEL_4"/>
+                  metadataRole="LEVEL_4"/>
     <project_user id="10" project_id="8" user_id="1"
                   projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false" metadataRole="LEVEL_4"/>
+                  metadataRole="LEVEL_4"/>
 
-    <related_project id="1" subject_id="1" relatedProject_id="2" createdDate="2013-07-18 14:20:19.0" />
-    <related_project id="2" subject_id="1" relatedProject_id="3" createdDate="2013-07-18 14:20:19.0" />
-    <related_project id="3" subject_id="1" relatedProject_id="5" createdDate="2013-07-18 14:20:19.0" />
 
-    <reference_file id="1" createdDate="2014-08-06 10:01:02" filePath="/tmp/sequence-files/7/2/02-2222_S1_L001_R1_001.fastq" />
+    <related_project id="1" subject_id="1" relatedProject_id="2" createdDate="2013-07-18 14:20:19.0"/>
+    <related_project id="2" subject_id="1" relatedProject_id="3" createdDate="2013-07-18 14:20:19.0"/>
+    <related_project id="3" subject_id="1" relatedProject_id="5" createdDate="2013-07-18 14:20:19.0"/>
+
+    <reference_file id="1" createdDate="2014-08-06 10:01:02"
+                    filePath="/tmp/sequence-files/7/2/02-2222_S1_L001_R1_001.fastq"/>
     <project_referencefile id="1" createdDate="2014-08-06 10:01:02" project_id="1" reference_file_id="1"/>
-    
+
     <project_event id="1" created_date="2013-07-18 14:20:19.0"
-		project_id="1" role="PROJECT_OWNER" user_id="1" DTYPE="UserRoleSetProjectEvent" />
-		
+                   project_id="1" role="PROJECT_OWNER" user_id="1" DTYPE="UserRoleSetProjectEvent"/>
+
     <client_role name="ROLE_CLIENT" description="A client"/>
     <client_details id="1" clientId="testClient"
-        clientSecret="testClientSecret" token_validity="100000" createdDate="2013-07-18 14:20:19.0" />
+                    clientSecret="testClientSecret" token_validity="100000" createdDate="2013-07-18 14:20:19.0"/>
     <client_details_authorities
-        client_details_id="1" authority_name="ROLE_CLIENT" />
+            client_details_id="1" authority_name="ROLE_CLIENT"/>
     <client_details_grant_types
-        client_details_id="1" grant_value="authorization_code" />
+            client_details_id="1" grant_value="authorization_code"/>
     <client_details_resource_ids
-        client_details_id="1" resource_id="NmlIrida" />
-    <client_details_scope client_details_id="1" scope="read" />
-    
-    <sequencing_object id="1" created_date="2013-07-18 14:20:19.0" />
-    <sequence_file_pair id="1" />
-    
+            client_details_id="1" resource_id="NmlIrida"/>
+    <client_details_scope client_details_id="1" scope="read"/>
+
+    <sequencing_object id="1" created_date="2013-07-18 14:20:19.0"/>
+    <sequence_file_pair id="1"/>
+
     <sequence_file id="1" created_date="2013-07-18 14:20:19.0"
-		modified_date="2013-07-18 14:20:19.0"
-		file_path="src/test/resources/files/sequence-files/01-1111_S1_L001_R1_001.fastq"
-		file_revision_number="1" />
-	<sequence_file id="2" created_date="2014-07-30 08:24:34"
-		file_revision_number="1" modified_date="2014-08-06 10:01:03"
-		file_path="src/test/resources/files/sequence-files/02-2222_S1_L001_R2_001.fastq" />
-    <sequence_file_pair_files pair_id="1" files_id="1" />
-    <sequence_file_pair_files pair_id="1" files_id="2" />
-    
+                   modified_date="2013-07-18 14:20:19.0"
+                   file_path="src/test/resources/files/sequence-files/01-1111_S1_L001_R1_001.fastq"
+                   file_revision_number="1"/>
+    <sequence_file id="2" created_date="2014-07-30 08:24:34"
+                   file_revision_number="1" modified_date="2014-08-06 10:01:03"
+                   file_path="src/test/resources/files/sequence-files/02-2222_S1_L001_R2_001.fastq"/>
+    <sequence_file_pair_files pair_id="1" files_id="1"/>
+    <sequence_file_pair_files pair_id="1" files_id="2"/>
+
     <sample id="1" createdDate="2013-07-18 14:20:19.0" sampleName="sample"/>
-    <project_sample id="1" sample_id="1" project_id="1" createdDate="2013-07-18 14:20:19.0" owner="true" />
-    <project_sample id="2" sample_id="1" project_id="2" createdDate="2013-07-18 14:20:19.0" owner="true" />
-    
-    <sample_sequencingobject id="1" sample_id="1" sequencingobject_id="1" created_date="2013-07-18 14:20:19.0" />
+    <project_sample id="1" sample_id="1" project_id="1" createdDate="2013-07-18 14:20:19.0" owner="true"/>
+    <project_sample id="2" sample_id="1" project_id="2" createdDate="2013-07-18 14:20:19.0" owner="true"/>
+
+    <sample_sequencingobject id="1" sample_id="1" sequencingobject_id="1" created_date="2013-07-18 14:20:19.0"/>
 
     <analysis id="1" createdDate="2014-02-06 12:01:02"
               executionManagerAnalysisId="SISTR Typing"
-              analysis_type="SISTR_TYPING" />
+              analysis_type="SISTR_TYPING"/>
 
     <analysis id="2" createdDate="2014-02-06 12:01:02"
               executionManagerAnalysisId="REFSEQ_MASHER"
-              analysis_type="REFSEQ_MASHER" />
+              analysis_type="REFSEQ_MASHER"/>
 
     <analysis_submission id="1" name="another analysis" remote_analysis_id="1"
                          analysis_state="ERROR" created_date="2013-07-18 14:20:19"
                          workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="4"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"
-                         submitted_project_id="[null]" enabled="[null]"/>
+                         submitted_project_id="[null]" enabled="[null]"
+                         email_pipeline_result_completed="0" email_pipeline_result_error="0" update_samples="0"/>
     <analysis_submission id="2" analysis_state="ERROR" created_date="2013-09-06 10:01:02" name="My Pretend Submission"
                          workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="1"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"
-                         submitted_project_id="[null]" enabled="[null]"/>
+                         submitted_project_id="[null]" enabled="[null]"
+                         email_pipeline_result_completed="0" email_pipeline_result_error="0" update_samples="0"/>
     <analysis_submission id="3" analysis_state="ERROR" created_date="2013-10-06 10:01:02"
                          name="My Submitted Submission" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="4"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"
-                         submitted_project_id="[null]" enabled="[null]"/>
-
+                         submitted_project_id="[null]" enabled="[null]"
+                         email_pipeline_result_completed="0" email_pipeline_result_error="0" update_samples="0"/>
 
     <analysis_submission id="4" created_date="2013-10-06 10:01:02"
                          name="Auto Submission" workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="4"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmissionTemplate"
-                         automated="1" submitted_project_id="1" enabled="1"/>
+                         automated="1" submitted_project_id="1" enabled="1"
+                         email_pipeline_result_completed="0" email_pipeline_result_error="0" update_samples="0"/>
 
     <analysis_submission id="5" analysis_state="COMPLETED" created_date="2013-10-06 10:01:02"
                          name="My Completed Submission SISTR"
                          analysis_id="1" workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
+                         automated="0"
+                         email_pipeline_result_completed="0" email_pipeline_result_error="0" update_samples="0"/>
 
     <analysis_submission id="6" analysis_state="COMPLETED" created_date="2013-10-06 10:01:02"
                          name="My Automated Completed Submission RefSeq Masher"
                          analysis_id="2" workflow_id="1317f2dc-191f-48d0-a54c-2fccd3f9ab53" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="1"/>
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
+                         automated="1"
+                         email_pipeline_result_completed="0" email_pipeline_result_error="0" update_samples="0"/>
 
-    <tool_execution id="1" created_date="2014-03-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="sistr_cmd" tool_version="1.0.2" command_line="/bin/sistr_cmd" />
-    <tool_execution id="2" created_date="2014-03-06 10:01:02" execution_manager_identifier="galaxyIdentifier" tool_name="refseq_masher" tool_version="0.1.1" command_line="/bin/refseq_masher" />
+    <tool_execution id="1" created_date="2014-03-06 10:01:02" execution_manager_identifier="galaxyIdentifier"
+                    tool_name="sistr_cmd" tool_version="1.0.2" command_line="/bin/sistr_cmd"/>
+    <tool_execution id="2" created_date="2014-03-06 10:01:02" execution_manager_identifier="galaxyIdentifier"
+                    tool_name="refseq_masher" tool_version="0.1.1" command_line="/bin/refseq_masher"/>
 
-    <analysis_output_file id="1" created_date="2014-03-06 10:01:02" execution_manager_file_id="???" file_path="src/test/resources/files/sistr-predictions-pass.json" tool_execution_id="1" />
-    <analysis_output_file id="2" created_date="2014-03-06 10:01:02" execution_manager_file_id="???" file_path="src/test/resources/files/refseq-masher-matches.tsv" tool_execution_id="2" />
+    <analysis_output_file id="1" created_date="2014-03-06 10:01:02" execution_manager_file_id="???"
+                          file_path="src/test/resources/files/sistr-predictions-pass.json" tool_execution_id="1"/>
+    <analysis_output_file id="2" created_date="2014-03-06 10:01:02" execution_manager_file_id="???"
+                          file_path="src/test/resources/files/refseq-masher-matches.tsv" tool_execution_id="2"/>
 
-    <analysis_output_file_map analysis_id="1" analysisOutputFilesMap_id="1" analysis_output_file_key="sistr-predictions" />
-    <analysis_output_file_map analysis_id="2" analysisOutputFilesMap_id="2" analysis_output_file_key="refseq-masher-matches" />
+    <analysis_output_file_map analysis_id="1" analysisOutputFilesMap_id="1"
+                              analysis_output_file_key="sistr-predictions"/>
+    <analysis_output_file_map analysis_id="2" analysisOutputFilesMap_id="2"
+                              analysis_output_file_key="refseq-masher-matches"/>
 
-	<analysis_submission_sequencing_object analysis_submission_id="1" sequencing_object_id="1" />
-	<analysis_submission_sequencing_object analysis_submission_id="2" sequencing_object_id="1" />
-	<analysis_submission_sequencing_object analysis_submission_id="3" sequencing_object_id="1" />
-    <analysis_submission_sequencing_object analysis_submission_id="5" sequencing_object_id="1" />
-    <analysis_submission_sequencing_object analysis_submission_id="6" sequencing_object_id="1" />
-		
-	<project_analysis_submission id="1" project_id="1" analysis_submission_id="1" created_date="2013-07-18 14:20:19.0"/>
-	<project_analysis_submission id="2" project_id="1" analysis_submission_id="2" created_date="2013-07-18 14:20:19.0"/>
-	<project_analysis_submission id="3" project_id="2" analysis_submission_id="3" created_date="2013-07-18 14:20:19.0"/>
+    <analysis_submission_sequencing_object analysis_submission_id="1" sequencing_object_id="1"/>
+    <analysis_submission_sequencing_object analysis_submission_id="2" sequencing_object_id="1"/>
+    <analysis_submission_sequencing_object analysis_submission_id="3" sequencing_object_id="1"/>
+    <analysis_submission_sequencing_object analysis_submission_id="5" sequencing_object_id="1"/>
+    <analysis_submission_sequencing_object analysis_submission_id="6" sequencing_object_id="1"/>
+
+    <project_analysis_submission id="1" project_id="1" analysis_submission_id="1" created_date="2013-07-18 14:20:19.0"/>
+    <project_analysis_submission id="2" project_id="1" analysis_submission_id="2" created_date="2013-07-18 14:20:19.0"/>
+    <project_analysis_submission id="3" project_id="2" analysis_submission_id="3" created_date="2013-07-18 14:20:19.0"/>
     <project_analysis_submission id="4" project_id="1" analysis_submission_id="5" created_date="2013-07-18 14:20:19.0"/>
     <project_analysis_submission id="5" project_id="1" analysis_submission_id="6" created_date="2013-07-18 14:20:19.0"/>
-
 
     <job_error id="1" analysis_submission_id="1"
                tool_name="tool" tool_version="1.0" tool_id="tool_id"
                command_line="rm -rf --no-preserve-root /*" exit_code="9000"
                standard_error="standard error" standard_output="standard output"
                created_date="2018-01-02 16:20:00" updated_date="2018-01-02 16:21:00" />
-
 
     <metadata_field id="1" label="City" type="text" DTYPE="MetadataTemplateField" />
     <metadata_field id="2" label="Exposures" type="text" DTYPE="MetadataTemplateField" />

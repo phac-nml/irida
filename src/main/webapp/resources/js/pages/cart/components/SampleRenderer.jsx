@@ -1,9 +1,10 @@
 import { Button, Space, Tag, Tooltip } from "antd";
 
-import PropTypes from "prop-types";
 import React from "react";
 import { IconLocked, IconRemove } from "../../../components/icons/Icons";
-import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
+import {
+  SampleDetailViewer
+} from "../../../components/samples/SampleDetailViewer";
 import { grey1, grey4 } from "../../../styles/colors";
 import { SPACE_SM, SPACE_XS } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -13,27 +14,6 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
  * by ag-grid to render the a cell in the table.
  */
 export class SampleRenderer extends React.Component {
-  static propTypes = {
-    api: PropTypes.shape({
-      /** Function to open panel with details of a sample */
-      displaySample: PropTypes.func.isRequired,
-      /** Function to remove a sample from the cart */
-      removeSample: PropTypes.func.isRequired,
-      /** Function to remove an entire project from the cart */
-      removeProject: PropTypes.func.isRequired,
-    }),
-    /** Index in the ag-grid table of the current row */
-    rowIndex: PropTypes.number.isRequired,
-    /** All the information about the current sample */
-    data: PropTypes.shape({
-      label: PropTypes.string.isRequired,
-      project: PropTypes.shape({
-        label: PropTypes.string.isRequired,
-        id: PropTypes.number.isRequired,
-      }).isRequired,
-    }),
-  };
-
   displaySample = () => this.props.displaySample(this.props.data);
 
   removeProject = () => this.props.removeProject(this.props.data.project.id);
