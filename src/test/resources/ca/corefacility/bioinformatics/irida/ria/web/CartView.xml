@@ -24,44 +24,36 @@
 
     <project id="1" createdDate="2013-07-12 14:20:19.0" name="project" modifiedDate="2013-07-18 14:20:19.0"
              organism="E. coli" projectDescription="This is an interesting project description."
-             remoteURL="http://google.ca" />
+             remoteURL="http://google.ca"/>
     <project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" modifiedDate="2013-07-18 14:19:19.0"
-             />
+    />
     <project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" modifiedDate="2013-07-18 14:18:19.0"
-             />
+    />
     <project id="4" createdDate="2013-07-18 14:21:19.0" name="project4" modifiedDate="2013-07-18 14:17:19.0"
-             />
+    />
     <project id="5" createdDate="2013-07-18 14:21:19.0" name="project5" modifiedDate="2013-07-18 14:17:19.0"
-             />
+    />
     <project id="6" createdDate="2013-07-18 14:21:19.0" name="project5" modifiedDate="2013-07-18 14:17:19.0"
-             />
+    />
 
     <related_project id="1" subject_id="1" relatedProject_id="6" createdDate="2013-07-18 14:20:19.0"/>
 
     <project_user id="1" project_id="1" user_id="1"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
     <project_user id="2" project_id="2" user_id="1"
-                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false"/>
+                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"/>
     <project_user id="3" project_id="3" user_id="1"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
     <project_user id="4" project_id="4" user_id="1"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
     <project_user id="6" project_id="1" user_id="2"
-                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false"/>
+                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"/>
     <project_user id="7" project_id="1" user_id="3"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
     <project_user id="8" project_id="2" user_id="3"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
     <project_user id="9" project_id="6" user_id="1"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
 
     <sample id="1" createdDate="2013-07-01 14:00:19.0" modifiedDate="2015-07-01 14:00:19.0" description="description1"
             sampleName="sample1" organism="E. coli"/>
