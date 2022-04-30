@@ -24,8 +24,14 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
-import ca.corefacility.bioinformatics.irida.exceptions.*;
+
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
+
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
+
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -148,8 +154,8 @@ public class ProjectServiceImplIT {
 
 		assertEquals(3, unassociated.getNumberOfElements(),
 				"This user should have three unassociated projects (one group, two user).");
-		assertTrue(unassociated.getContent().contains(unassociatedProject),
-				"The unassociated project should be the other project.");
+		assertTrue(unassociated.getContent()
+				.contains(unassociatedProject), "The unassociated project should be the other project.");
 	}
 
 	@Test
@@ -164,14 +170,18 @@ public class ProjectServiceImplIT {
 		final Project userProject2 = projectService.read(10L);
 
 		assertEquals(4, projects.size(), "Should be on 4 projects.");
-		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(userProject)),
-				"Should have user project reference.");
-		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(groupProject)),
-				"Should have group project reference.");
-		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(groupProject2)),
-				"Should have group project reference.");
-		assertTrue(projects.stream().anyMatch(p -> p.getSubject().equals(userProject2)),
-				"Should have user project reference.");
+		assertTrue(projects.stream()
+				.anyMatch(p -> p.getSubject()
+						.equals(userProject)), "Should have user project reference.");
+		assertTrue(projects.stream()
+				.anyMatch(p -> p.getSubject()
+						.equals(groupProject)), "Should have group project reference.");
+		assertTrue(projects.stream()
+				.anyMatch(p -> p.getSubject()
+						.equals(groupProject2)), "Should have group project reference.");
+		assertTrue(projects.stream()
+				.anyMatch(p -> p.getSubject()
+						.equals(userProject2)), "Should have user project reference.");
 	}
 
 	@Test
@@ -224,7 +234,9 @@ public class ProjectServiceImplIT {
 		assertEquals(u, join.getObject(), "Join has wrong user.");
 
 		List<Join<Project, User>> projects = projectService.getProjectsForUser(u);
-		assertEquals(p, projects.iterator().next().getSubject(), "User is not part of project.");
+		assertEquals(p, projects.iterator()
+				.next()
+				.getSubject(), "User is not part of project.");
 	}
 
 	@Test
@@ -287,7 +299,10 @@ public class ProjectServiceImplIT {
 		Collection<Join<Project, User>> projects = projectService.getProjectsForUser(u);
 
 		assertEquals(4, projects.size(), "User should have 4 projects.");
-		assertEquals(Long.valueOf(2L), projects.iterator().next().getSubject().getId(), "User should be on project 2.");
+		assertEquals(Long.valueOf(2L), projects.iterator()
+				.next()
+				.getSubject()
+				.getId(), "User should be on project 2.");
 	}
 
 	@Test
@@ -434,7 +449,8 @@ public class ProjectServiceImplIT {
 
 		Project excludeProject = projectService.read(2L);
 		final Page<Project> search = projectService.getUnassociatedProjects(excludeProject, "", 0, 10, Direction.DESC);
-		assertFalse(search.getContent().contains(excludeProject));
+		assertFalse(search.getContent()
+				.contains(excludeProject));
 	}
 
 	@Test
@@ -443,8 +459,10 @@ public class ProjectServiceImplIT {
 		// search for a number
 		final Page<Project> searchFor2 = projectService.findAllProjects("2", 0, 10, Sort.by(Direction.ASC, "name"));
 		assertEquals(2, searchFor2.getTotalElements());
-		Project next = searchFor2.iterator().next();
-		assertTrue(next.getName().contains("2"));
+		Project next = searchFor2.iterator()
+				.next();
+		assertTrue(next.getName()
+				.contains("2"));
 
 		// search descending
 		final Page<Project> searchDesc = projectService.findAllProjects("2", 0, 10, Sort.by(Direction.DESC, "name"));
@@ -457,7 +475,8 @@ public class ProjectServiceImplIT {
 
 		Project excludeProject = projectService.read(5L);
 		final Page<Project> search = projectService.getUnassociatedProjects(excludeProject, "", 0, 10, Direction.DESC);
-		assertFalse(search.getContent().contains(excludeProject));
+		assertFalse(search.getContent()
+				.contains(excludeProject));
 	}
 
 	@Test
@@ -537,12 +556,14 @@ public class ProjectServiceImplIT {
 		ReferenceFile f = new ReferenceFile();
 
 		Path referenceFilePath = Paths.get(
-				getClass().getResource("/ca/corefacility/bioinformatics/irida/service/testReference.fasta").toURI());
+				getClass().getResource("/ca/corefacility/bioinformatics/irida/service/testReference.fasta")
+						.toURI());
 
 		Path createTempFile = Files.createTempFile("testReference", ".fasta");
 		Files.delete(createTempFile);
 		referenceFilePath = Files.copy(referenceFilePath, createTempFile);
-		referenceFilePath.toFile().deleteOnExit();
+		referenceFilePath.toFile()
+				.deleteOnExit();
 
 		f.setFile(referenceFilePath);
 
@@ -554,7 +575,8 @@ public class ProjectServiceImplIT {
 		// verify that the reference file was persisted beneath the reference
 		// file directory
 		ReferenceFile rf = pr.getObject();
-		assertTrue(rf.getFile().startsWith(referenceFileBaseDirectory),
+		assertTrue(rf.getFile()
+						.startsWith(referenceFileBaseDirectory),
 				"reference file should be beneath the base directory for reference files.");
 	}
 
@@ -563,13 +585,15 @@ public class ProjectServiceImplIT {
 	public void testAddReferenceFileAmbiguouusBasesToProject() throws IOException, URISyntaxException {
 		ReferenceFile f = new ReferenceFile();
 
-		Path referenceFilePath = Paths.get(getClass()
-				.getResource("/ca/corefacility/bioinformatics/irida/service/testReferenceAmbiguous.fasta").toURI());
+		Path referenceFilePath = Paths.get(
+				getClass().getResource("/ca/corefacility/bioinformatics/irida/service/testReferenceAmbiguous.fasta")
+						.toURI());
 
 		Path createTempFile = Files.createTempFile("testReference", ".fasta");
 		Files.delete(createTempFile);
 		referenceFilePath = Files.copy(referenceFilePath, createTempFile);
-		referenceFilePath.toFile().deleteOnExit();
+		referenceFilePath.toFile()
+				.deleteOnExit();
 
 		f.setFile(referenceFilePath);
 
@@ -616,21 +640,23 @@ public class ProjectServiceImplIT {
 		projectService.update(p);
 
 		// reverse the order so that the latest revision is first in the list.
-		final Revisions<Integer, Project> revisions = projectService.findRevisions(1L).reverse();
-		assertEquals(2, revisions.getContent().size(), "Should have 2 revisions.");
+		final Revisions<Integer, Project> revisions = projectService.findRevisions(1L)
+				.reverse();
+		assertEquals(2, revisions.getContent()
+				.size(), "Should have 2 revisions.");
 
 		final Iterator<Revision<Integer, Project>> iterator = revisions.iterator();
 		final Revision<Integer, Project> mostRecent = iterator.next();
-		assertEquals(modifiedDesc, mostRecent.getEntity().getProjectDescription(),
-				"most recent revision should have project description change.");
-		assertEquals(modifiedName, mostRecent.getEntity().getName(),
-				"most recent revision should also have name changed.");
+		assertEquals(modifiedDesc, mostRecent.getEntity()
+				.getProjectDescription(), "most recent revision should have project description change.");
+		assertEquals(modifiedName, mostRecent.getEntity()
+				.getName(), "most recent revision should also have name changed.");
 
 		final Revision<Integer, Project> secondRecent = iterator.next();
-		assertEquals(modifiedName, secondRecent.getEntity().getName(),
-				"second most recent revision should have modified name.");
-		assertNotEquals(modifiedDesc, secondRecent.getEntity().getProjectDescription(),
-				"second most recent revision should *not* have modified description.");
+		assertEquals(modifiedName, secondRecent.getEntity()
+				.getName(), "second most recent revision should have modified name.");
+		assertNotEquals(modifiedDesc, secondRecent.getEntity()
+				.getProjectDescription(), "second most recent revision should *not* have modified description.");
 	}
 
 	@Test
@@ -647,13 +673,15 @@ public class ProjectServiceImplIT {
 
 		// reverse the order so that the latest revision is first in the list.
 		final Page<Revision<Integer, Project>> revisions = projectService.findRevisions(1L, PageRequest.of(1, 1));
-		assertEquals(1, revisions.getContent().size(), "Should have 2 revisions.");
+		assertEquals(1, revisions.getContent()
+				.size(), "Should have 2 revisions.");
 
-		final Revision<Integer, Project> mostRecent = revisions.iterator().next();
-		assertEquals(modifiedDesc, mostRecent.getEntity().getProjectDescription(),
-				"most recent revision should have project description change.");
-		assertEquals(modifiedName, mostRecent.getEntity().getName(),
-				"most recent revision should also have name changed.");
+		final Revision<Integer, Project> mostRecent = revisions.iterator()
+				.next();
+		assertEquals(modifiedDesc, mostRecent.getEntity()
+				.getProjectDescription(), "most recent revision should have project description change.");
+		assertEquals(modifiedName, mostRecent.getEntity()
+				.getName(), "most recent revision should also have name changed.");
 	}
 
 	@Test
@@ -666,8 +694,9 @@ public class ProjectServiceImplIT {
 
 		Revisions<Integer, Project> revisions = projectService.findRevisions(1L);
 
-		assertEquals(revisions.getLatestRevision().getEntity().getName(), p.getName(),
-				"Deleted entity should match original");
+		assertEquals(revisions.getLatestRevision()
+				.getEntity()
+				.getName(), p.getName(), "Deleted entity should match original");
 	}
 
 	@Test
@@ -688,8 +717,8 @@ public class ProjectServiceImplIT {
 	public void testGetProjectsForSequencingObjectsAsAdmin() {
 		SequencingObject read = sequencingObjectService.read(1L);
 
-		Set<Project> projectsForSequencingObjects = projectService
-				.getProjectsForSequencingObjects(ImmutableList.of(read));
+		Set<Project> projectsForSequencingObjects = projectService.getProjectsForSequencingObjects(
+				ImmutableList.of(read));
 
 		assertEquals(2, projectsForSequencingObjects.size(), "should have found 2 projects");
 	}
@@ -699,11 +728,12 @@ public class ProjectServiceImplIT {
 	public void testGetProjectForSequencingObjectsAsUser() {
 		SequencingObject read = sequencingObjectService.read(1L);
 
-		Set<Project> projectsForSequencingObjects = projectService
-				.getProjectsForSequencingObjects(ImmutableList.of(read));
+		Set<Project> projectsForSequencingObjects = projectService.getProjectsForSequencingObjects(
+				ImmutableList.of(read));
 
 		assertEquals(1, projectsForSequencingObjects.size(), "should have found 1 project");
-		Project project = projectsForSequencingObjects.iterator().next();
+		Project project = projectsForSequencingObjects.iterator()
+				.next();
 
 		assertEquals(Long.valueOf(2), project.getId(), "should have found project 2");
 	}
@@ -726,8 +756,10 @@ public class ProjectServiceImplIT {
 		List<ProjectAnalysisSubmissionJoin> projects = projectService.getProjectsForAnalysisSubmission(analysis);
 
 		assertEquals(1, projects.size(), "should have found 1 project");
-		ProjectAnalysisSubmissionJoin project = projects.iterator().next();
-		assertEquals(Long.valueOf(2), project.getSubject().getId(), "should have found project 2");
+		ProjectAnalysisSubmissionJoin project = projects.iterator()
+				.next();
+		assertEquals(Long.valueOf(2), project.getSubject()
+				.getId(), "should have found project 2");
 	}
 
 	@Test
@@ -818,7 +850,9 @@ public class ProjectServiceImplIT {
 
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(source);
 
-		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
+		Set<Sample> samples = samplesForProject.stream()
+				.map(j -> j.getObject())
+				.collect(Collectors.toSet());
 
 		List<ProjectSampleJoin> copiedSamples = projectService.shareSamples(source, destination, samples, false);
 
@@ -828,14 +862,16 @@ public class ProjectServiceImplIT {
 			assertFalse(j.isOwner(), "Project shouldn't be owner for sample");
 		});
 
-		assertEquals(
-				Sets.newHashSet(1L, 2L), projectSampleJoinRepository.getSamplesForProject(source).stream()
-						.map(j -> j.getObject().getId()).collect(Collectors.toSet()),
-				"Samples should still exist in source project");
-		assertEquals(
-				Sets.newHashSet(1L, 2L), projectSampleJoinRepository.getSamplesForProject(destination).stream()
-						.map(j -> j.getObject().getId()).collect(Collectors.toSet()),
-				"Samples should exist in destination project");
+		assertEquals(Sets.newHashSet(1L, 2L), projectSampleJoinRepository.getSamplesForProject(source)
+				.stream()
+				.map(j -> j.getObject()
+						.getId())
+				.collect(Collectors.toSet()), "Samples should still exist in source project");
+		assertEquals(Sets.newHashSet(1L, 2L), projectSampleJoinRepository.getSamplesForProject(destination)
+				.stream()
+				.map(j -> j.getObject()
+						.getId())
+				.collect(Collectors.toSet()), "Samples should exist in destination project");
 	}
 
 	@Test
@@ -872,7 +908,9 @@ public class ProjectServiceImplIT {
 
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(source);
 
-		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
+		Set<Sample> samples = samplesForProject.stream()
+				.map(j -> j.getObject())
+				.collect(Collectors.toSet());
 
 		List<ProjectSampleJoin> copiedSamples = projectService.shareSamples(source, destination, samples, false);
 
@@ -882,14 +920,16 @@ public class ProjectServiceImplIT {
 			assertFalse(j.isOwner(), "Project shouldn't be owner for sample");
 		});
 
-		assertEquals(
-				Sets.newHashSet(1L, 2L), projectSampleJoinRepository.getSamplesForProject(source).stream()
-						.map(j -> j.getObject().getId()).collect(Collectors.toSet()),
-				"Samples should still exist in source project");
-		assertEquals(
-				Sets.newHashSet(1L, 2L), projectSampleJoinRepository.getSamplesForProject(destination).stream()
-						.map(j -> j.getObject().getId()).collect(Collectors.toSet()),
-				"Samples should exist in destination project");
+		assertEquals(Sets.newHashSet(1L, 2L), projectSampleJoinRepository.getSamplesForProject(source)
+				.stream()
+				.map(j -> j.getObject()
+						.getId())
+				.collect(Collectors.toSet()), "Samples should still exist in source project");
+		assertEquals(Sets.newHashSet(1L, 2L), projectSampleJoinRepository.getSamplesForProject(destination)
+				.stream()
+				.map(j -> j.getObject()
+						.getId())
+				.collect(Collectors.toSet()), "Samples should exist in destination project");
 	}
 
 	@Test
@@ -915,7 +955,8 @@ public class ProjectServiceImplIT {
 
 		List<Join<Project, Sample>> samplesForProject = projectSampleJoinRepository.getSamplesForProject(destination);
 		assertEquals(1, samplesForProject.size(), "Should be 1 sample");
-		ProjectSampleJoin join = (ProjectSampleJoin) samplesForProject.iterator().next();
+		ProjectSampleJoin join = (ProjectSampleJoin) samplesForProject.iterator()
+				.next();
 		assertFalse(join.isOwner(), "Project should not be owner");
 
 	}
@@ -928,7 +969,9 @@ public class ProjectServiceImplIT {
 
 		List<Join<Project, Sample>> samplesForProject = sampleService.getSamplesForProject(source);
 
-		Set<Sample> samples = samplesForProject.stream().map(j -> j.getObject()).collect(Collectors.toSet());
+		Set<Sample> samples = samplesForProject.stream()
+				.map(j -> j.getObject())
+				.collect(Collectors.toSet());
 
 		assertThrows(AccessDeniedException.class, () -> {
 			projectService.shareSamples(source, destination, samples, true);

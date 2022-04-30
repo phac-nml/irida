@@ -1,6 +1,4 @@
 import React from "react";
-
-import PropTypes from "prop-types";
 import { Button, Card } from "antd";
 import styled from "styled-components";
 import { FONT_SIZE_DEFAULT, FONT_WEIGHT_HEAVY } from "../../styles/fonts";
@@ -43,21 +41,6 @@ const Heading = styled.span`
  * the pipeline.
  */
 export default class Pipeline extends React.Component {
-  static propTypes = {
-    /** Pipeline identifier */
-    id: PropTypes.string.isRequired,
-    /** Pipeline name */
-    name: PropTypes.string.isRequired,
-    /**  Pipeline description */
-    description: PropTypes.string.isRequired,
-    /** Styles specific for this pipeline.  Affects the way the pipeline name is displayed */
-    styleName: PropTypes.string.isRequired,
-    /**
-     * Ability to select this pipeline
-     */
-    displaySelect: PropTypes.bool.isRequired,
-  };
-
   constructor(props) {
     super(props);
     this.url = setBaseUrl(`launch?id=${this.props.id}`);

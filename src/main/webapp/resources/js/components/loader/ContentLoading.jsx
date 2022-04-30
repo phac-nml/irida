@@ -5,7 +5,6 @@
 
 import React from "react";
 import { Spin } from "antd";
-import PropTypes from "prop-types";
 import { SPACE_SM } from "../../styles/spacing";
 
 /**
@@ -23,8 +22,3 @@ export function ContentLoading({ message = "Loading", ...props }) {
     </span>
   );
 }
-
-ContentLoading.propTypes = {
-  /*Text to display next to loading symbol*/
-  message: PropTypes.string
-};

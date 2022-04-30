@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Represents the common elements in a page within the application.
- *
  */
 public class AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractPage.class);
@@ -101,15 +100,20 @@ public class AbstractPage {
 		return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 	}
 
+	public Boolean waitForElementInVisible(By locator) {
+		WebDriverWait wait = new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS);
+		return wait.until(ExpectedConditions.invisibilityOfElementLocated(locator));
+	}
+
 	public Collection<WebElement> waitForElementsVisible(By locator) {
-		new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)
-				.until(ExpectedConditions.visibilityOfElementLocated(locator));
+		new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS).until(
+				ExpectedConditions.visibilityOfElementLocated(locator));
 		return driver.findElements(locator);
 	}
 
 	public void waitForElementInvisible(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS))
-				.until(ExpectedConditions.invisibilityOfElementLocated(locator));
+		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(
+				ExpectedConditions.invisibilityOfElementLocated(locator));
 	}
 
 	public static void waitForTime(int length) {
@@ -129,8 +133,9 @@ public class AbstractPage {
 	public boolean isElementOnScreen(String id) {
 		driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
 		boolean exists = driver.findElements(By.id(id)).size() != 0;
-		driver.manage().timeouts().implicitlyWait(AbstractIridaUIITChromeDriver.DRIVER_TIMEOUT_IN_SECONDS,
-				TimeUnit.SECONDS);
+		driver.manage()
+				.timeouts()
+				.implicitlyWait(AbstractIridaUIITChromeDriver.DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
 		return exists;
 	}
 
@@ -147,10 +152,8 @@ public class AbstractPage {
 	/**
 	 * Search globally for a query
 	 *
-	 * @param query
-	 * 		the query to search for
-	 * @param admin
-	 * 		whether to search as an admin
+	 * @param query the query to search for
+	 * @param admin whether to search as an admin
 	 */
 	public void globalSearch(String query, boolean admin) {
 		WebElement searchBox = driver.findElement(By.cssSelector(".t-global-search input"));
@@ -193,13 +196,11 @@ public class AbstractPage {
 	/**
 	 * Test for breadcrumbs on any given page.
 	 *
-	 * @param expected
-	 *            {@link List} containing {@link Map} of expected crumbs - href:
-	 *            expected href - text: expected text displayed
+	 * @param expected {@link List} containing {@link Map} of expected crumbs - href: expected href - text: expected
+	 *                 text displayed
 	 */
 	public void checkBreadCrumbs(List<Map<String, String>> expected) {
-		List<WebElement> crumbs = driver.findElement(By.className("ant-breadcrumb"))
-				.findElements(By.tagName("a"));
+		List<WebElement> crumbs = driver.findElement(By.className("ant-breadcrumb")).findElements(By.tagName("a"));
 		crumbs.remove(0); // Remove the home link.
 
 		assertEquals(expected.size(), crumbs.size(), "Should have the correct number of breadcrumbs");
@@ -207,12 +208,8 @@ public class AbstractPage {
 			WebElement crumb = crumbs.get(i);
 			String href = crumb.getAttribute("href");
 			String text = crumb.getText();
-			assertTrue(href.contains(expected.get(i).get("href")),
-					"Should have the expected url in the breadcrumb");
-			assertTrue(href.contains(expected.get(i).get("href")),
-					"Should have the expected url in the breadcrumb");
-			assertEquals(expected.get(i).get("text"), text,
-					"Should have the expected text in the breadcrumb");
+			assertTrue(href.contains(expected.get(i).get("href")), "Should have the expected url in the breadcrumb");
+			assertEquals(expected.get(i).get("text"), text, "Should have the expected text in the breadcrumb");
 		}
 	}
 
@@ -226,11 +223,9 @@ public class AbstractPage {
 	}
 
 	/**
-	 * Convenience method to make sure that form submission actually happens
-	 * before proceeding to checking later steps.
+	 * Convenience method to make sure that form submission actually happens before proceeding to checking later steps.
 	 *
-	 * @param submitButton
-	 *            the submit button to click.
+	 * @param submitButton the submit button to click.
 	 */
 	public void submitAndWait(final WebElement submitButton) {
 		WebElement oldHtml = driver.findElement(By.tagName("html"));
@@ -242,19 +237,20 @@ public class AbstractPage {
 	 * Wait for jQuery AJAX calls to complete on a page
 	 */
 	public void waitForJQueryAjaxResponse() {
-		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
-				.until((ExpectedCondition<Boolean>) wd ->
-						(Boolean) ((JavascriptExecutor) wd).executeScript("return jQuery.active == 0"));
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(
+				(ExpectedCondition<Boolean>) wd -> (Boolean) ((JavascriptExecutor) wd).executeScript(
+						"return jQuery.active == 0"));
 	}
 
 	/**
-	 * Selenium is having issues sending complete sequences of strings to the UI.
-	 * Sending one at a time might help.  See thread: https://github.com/angular/protractor/issues/698
-	 * @param keys {@link String} value to send to the input
+	 * Selenium is having issues sending complete sequences of strings to the UI. Sending one at a time might help.  See
+	 * thread: https://github.com/angular/protractor/issues/698
+	 *
+	 * @param keys         {@link String} value to send to the input
 	 * @param inputElement {@link WebElement} input the send string to.
 	 */
 	protected void sendInputTextSlowly(String keys, WebElement inputElement) {
-		for(int i = 0; i < keys.length(); i++) {
+		for (int i = 0; i < keys.length(); i++) {
 			String key = String.valueOf(keys.charAt(i));
 			inputElement.sendKeys(key);
 			waitForTime(200);
@@ -263,6 +259,7 @@ public class AbstractPage {
 
 	/**
 	 * Check if the '.t-submit-btn' is enabled
+	 *
 	 * @return if the '.t-submit-btn' is enabled
 	 */
 	public boolean isSubmitEnabled() {
@@ -271,6 +268,7 @@ public class AbstractPage {
 
 	/**
 	 * Check if there are any '.t-form-error' elements
+	 *
 	 * @return if there are any '.t-form-error' elements
 	 */
 	public boolean hasErrors() {
@@ -282,8 +280,6 @@ public class AbstractPage {
 	}
 
 	public boolean ensurePageHeadingIsTranslated(String expected) {
-		return driver.findElement(By.className("t-main-heading"))
-				.getText()
-				.equals(expected);
+		return driver.findElement(By.className("t-main-heading")).getText().equals(expected);
 	}
 }
