@@ -1,10 +1,9 @@
 import React, { useContext } from "react";
 import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
-import { setUsersDisabledStatus } from "../../apis/users/users";
-import { Button, Checkbox } from "antd";
+import { useSetUsersDisabledStatusMutation } from "../../apis/users/users";
+import { Checkbox } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { dateColumnFormat } from "../ant.design/table-renderers";
-import { IconEdit } from "../icons/Icons";
 
 /**
  * React component for displaying paged table of all users in the system
@@ -12,8 +11,9 @@ import { IconEdit } from "../icons/Icons";
  * @constructor
  */
 export function UsersTable() {
-  const { updateTable } = useContext(PagedTableContext);
+  const {updateTable} = useContext(PagedTableContext);
   const IS_ADMIN = window.TL._USER.systemRole === "ROLE_ADMIN";
+  const [setUsersDisabledStatus] = useSetUsersDisabledStatusMutation();
 
   function updateUser(user) {
     setUsersDisabledStatus({
@@ -89,26 +89,26 @@ export function UsersTable() {
       render(text) {
         switch (text) {
           case "ROLE_USER":
-            return i18n("systemrole.ROLE_USER");
+            return i18n("systemRole.ROLE_USER");
           case "ROLE_MANAGER":
-            return i18n("systemrole.ROLE_MANAGER");
+            return i18n("systemRole.ROLE_MANAGER");
           case "ROLE_ADMIN":
-            return i18n("systemrole.ROLE_ADMIN");
+            return i18n("systemRole.ROLE_ADMIN");
           case "ROLE_TECHNICIAN":
-            return i18n("systemrole.ROLE_TECHNICIAN");
+            return i18n("systemRole.ROLE_TECHNICIAN");
           default:
             return text;
         }
       },
     },
     {
-      ...dateColumnFormat({ className: "t-created" }),
+      ...dateColumnFormat({className: "t-created"}),
       key: "createdDate",
       title: i18n("AdminUsersTable.created"),
       dataIndex: "createdDate",
     },
     {
-      ...dateColumnFormat({ className: "t-modified" }),
+      ...dateColumnFormat({className: "t-modified"}),
       key: "lastLogin",
       title: (
         <span className="t-modified-col">
@@ -119,28 +119,10 @@ export function UsersTable() {
     },
   ];
 
-  if (IS_ADMIN) {
-    columns.push({
-      fixed: "right",
-      key: "edit",
-      render(text, item) {
-        return (
-          <Button
-            className="t-edit-user"
-            shape="circle"
-            href={setBaseUrl(`users/${item.id}/edit`)}
-          >
-            <IconEdit />
-          </Button>
-        );
-      },
-    });
-  }
-
   return (
     <PagedTable
       columns={columns}
-      onRow={(record) => (record.enabled ? {} : { className: "disabled" })}
+      onRow={(record) => (record.enabled ? {} : {className: "disabled"})}
     />
   );
 }

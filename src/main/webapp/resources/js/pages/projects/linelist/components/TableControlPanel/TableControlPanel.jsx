@@ -1,6 +1,4 @@
 import React from "react";
-
-import PropTypes from "prop-types";
 import { Button, Tooltip } from "antd";
 import Columns from "./Columns/Columns";
 
@@ -75,15 +73,3 @@ export default function TableControlPanel(props) {
     </ControlPanel>
   );
 }
-
-TableControlPanel.propTypes = {
-  /**
-   * Function to handle opening and closing the panel
-   */
-  togglePanel: PropTypes.func.isRequired,
-  /**
-   * The height of the table.  Requires because the user can change the window height
-   * which will affect the table and control panel components.
-   */
-  height: PropTypes.number.isRequired
-};

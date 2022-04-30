@@ -1,17 +1,19 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.CreateUserPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/users/CreateUserPageIT.xml")
 public class CreateUserPageIT extends AbstractIridaUIITChromeDriver {
 	private CreateUserPage createPage;
@@ -29,7 +31,7 @@ public class CreateUserPageIT extends AbstractIridaUIITChromeDriver {
 		createPage.waitForJQueryAjaxResponse();
 		assertFalse(createPage.hasErrors());
 		createPage.clickSubmit();
-		assertTrue(createPage.createSuccess());
+		assertTrue(createPage.createSuccess("User account: tom"));
 	}
 
 	@Test
@@ -39,7 +41,7 @@ public class CreateUserPageIT extends AbstractIridaUIITChromeDriver {
 		createPage.waitForJQueryAjaxResponse();
 		assertTrue(createPage.hasErrors());
 		createPage.clickSubmit();
-		assertFalse(createPage.createSuccess());
+		assertFalse(createPage.createSuccess("User account: mrtest"));
 	}
 
 	@Test
@@ -49,7 +51,7 @@ public class CreateUserPageIT extends AbstractIridaUIITChromeDriver {
 		createPage.waitForJQueryAjaxResponse();
 		assertTrue(createPage.hasErrors());
 		createPage.clickSubmit();
-		assertFalse(createPage.createSuccess());
+		assertFalse(createPage.createSuccess("User account: tom"));
 	}
 
 	@Test
@@ -60,7 +62,7 @@ public class CreateUserPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(createPage.hasErrors());
 		assertTrue(createPage.isSubmitEnabled());
 		createPage.clickSubmit();
-		assertFalse(createPage.createSuccess());
+		assertFalse(createPage.createSuccess("User account: tom"));
 	}
 
 	@Test
@@ -70,7 +72,7 @@ public class CreateUserPageIT extends AbstractIridaUIITChromeDriver {
 		createPage.waitForJQueryAjaxResponse();
 		assertFalse(createPage.hasErrors());
 		createPage.clickSubmit();
-		assertTrue(createPage.createSuccess());
+		assertTrue(createPage.createSuccess("User account: tom"));
 	}
 
 }

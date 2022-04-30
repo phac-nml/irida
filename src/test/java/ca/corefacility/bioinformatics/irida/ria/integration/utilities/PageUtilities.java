@@ -23,8 +23,8 @@ public class PageUtilities {
 	 * @param locator {@link org.openqa.selenium.By}
 	 */
 	public void waitForElementPresent(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS))
-				.until(ExpectedConditions.presenceOfElementLocated(locator));
+		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(
+				ExpectedConditions.presenceOfElementLocated(locator));
 	}
 
 	/**
@@ -33,8 +33,8 @@ public class PageUtilities {
 	 * @param locator {@link org.openqa.selenium.By}
 	 */
 	public void waitForElementVisible(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS))
-				.until(ExpectedConditions.visibilityOfElementLocated(locator));
+		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(
+				ExpectedConditions.visibilityOfElementLocated(locator));
 	}
 
 	/**
@@ -43,8 +43,8 @@ public class PageUtilities {
 	 * @param locator {@link org.openqa.selenium.By}
 	 */
 	public void waitForElementInvisible(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS))
-				.until(ExpectedConditions.invisibilityOfElementLocated(locator));
+		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(
+				ExpectedConditions.invisibilityOfElementLocated(locator));
 	}
 
 	/**
@@ -53,8 +53,8 @@ public class PageUtilities {
 	 * @param locator {@link org.openqa.selenium.By}
 	 */
 	public void waitForElementToBeAbsent(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS))
-				.until(ExpectedConditions.invisibilityOfElementLocated(locator));
+		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(
+				ExpectedConditions.invisibilityOfElementLocated(locator));
 	}
 
 	public void waitForElementToBeClickable(By locator) {
