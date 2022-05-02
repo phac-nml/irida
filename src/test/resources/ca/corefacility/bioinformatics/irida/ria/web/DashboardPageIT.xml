@@ -9,17 +9,17 @@
           email="someguy@nowhere.com" firstName="Some" lastName="Guy"
           password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
           phoneNumber="867-5309" username="user2" enabled="true" system_role="ROLE_MANAGER"
-          credentialsNonExpired="true" />
+          credentialsNonExpired="true"/>
     <user id="3" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
           email="admin@nowhere.com" firstName="Ad" lastName="Min"
           password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
           phoneNumber="867-5309" username="admin" enabled="true" system_role="ROLE_ADMIN"
-          credentialsNonExpired="true" />
+          credentialsNonExpired="true"/>
     <user id="4" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
           email="sequencer@nowhere.com" firstName="Seq" lastName="Uencer"
           password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
           phoneNumber="867-5309" username="sequencer" enabled="true"
-          system_role="ROLE_SEQUENCER" credentialsNonExpired="true" />
+          system_role="ROLE_SEQUENCER" credentialsNonExpired="true"/>
 
     <announcement id="1" created_date="2016-05-20 11:42:08.0"
                   title="First announcement ever"
@@ -47,91 +47,84 @@
                   created_by_id="3" priority="0"/>
 
 
-
     <project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
-             projectDescription="description"  />
+             projectDescription="description"/>
     <project id="2" createdDate="2013-07-18 14:20:19.0" name="project2"
-             projectDescription="description2"  />
+             projectDescription="description2"/>
     <project id="3" createdDate="2013-07-18 14:20:19.0" name="project3"
-             projectDescription="description3"  />
+             projectDescription="description3"/>
     <project id="4" createdDate="2013-07-18 14:20:19.0" name="adminproject"
-             projectDescription="adminproject"  />
+             projectDescription="adminproject"/>
     <project id="5" createdDate="2013-07-18 14:20:19.0" name="userproject"
-             projectDescription="userproject"  />
+             projectDescription="userproject"/>
     <project id="6" createdDate="2013-07-18 14:20:19.0" name="userproject2"
-             projectDescription="userproject2"  />
+             projectDescription="userproject2"/>
 
     <sample id="1" createdDate="2013-01-18 14:20:19.0" description="description1"
-            sampleName="sample1" />
+            sampleName="sample1"/>
     <sample id="2" createdDate="2013-02-18 14:20:19.0" description="description2"
-            sampleName="sample2" />
+            sampleName="sample2"/>
     <sample id="3" createdDate="2013-02-18 14:20:19.0" description="description3"
-            sampleName="sample3" />
+            sampleName="sample3"/>
     <sample id="4" createdDate="2013-02-18 14:20:19.0" description="description4"
-            sampleName="sample4" />
+            sampleName="sample4"/>
     <sample id="5" createdDate="2013-02-18 14:20:19.0" description="description4"
-            sampleName="sample5" />
+            sampleName="sample5"/>
 
     <project_sample id="1" createdDate="2013-07-18 14:20:19.0"
-                    project_id="1" sample_id="1" owner="true" />
+                    project_id="1" sample_id="1" owner="true"/>
 
     <project_sample id="2" createdDate="2013-07-18 14:20:19.0"
-                    project_id="3" sample_id="2" owner="true" />
+                    project_id="3" sample_id="2" owner="true"/>
 
     <project_sample id="3" createdDate="2013-07-18 14:20:19.0"
-                    project_id="4" sample_id="3" owner="true" />
+                    project_id="4" sample_id="3" owner="true"/>
     <project_sample id="4" createdDate="2013-07-18 14:20:19.0"
-                    project_id="5" sample_id="4" owner="true" />
+                    project_id="5" sample_id="4" owner="true"/>
 
     <project_sample id="5" createdDate="2013-07-18 14:20:19.0"
-                    project_id="6" sample_id="5" owner="true" />
+                    project_id="6" sample_id="5" owner="true"/>
 
 
     <project_user id="1" project_id="1" user_id="1"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false" />
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+    
     <project_user id="2" project_id="1" user_id="3"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false" />
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
 
     <project_user id="3" project_id="3" user_id="1"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false" />
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+
     <project_user id="4" project_id="3" user_id="3"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false" />
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
 
     <project_user id="5" project_id="1" user_id="2"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false" />
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
 
     <project_user id="6" project_id="4" user_id="3"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false" />
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
 
     <project_user id="7" project_id="5" user_id="1"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false" />
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
 
     <project_user id="8" project_id="6" user_id="3"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-                  email_subscription="false" />
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
 
     <project_event id="1" created_date="2013-07-18 14:20:19.0"
-                   project_id="3" role="PROJECT_USER" user_id="1" DTYPE="UserRoleSetProjectEvent" />
+                   project_id="3" role="PROJECT_USER" user_id="1" DTYPE="UserRoleSetProjectEvent"/>
 
     <project_event id="2" created_date="2013-07-18 14:20:19.0"
-                   project_id="3" role="PROJECT_USER" user_id="1" sample_id="2" DTYPE="SampleAddedProjectEvent" />
+                   project_id="3" role="PROJECT_USER" user_id="1" sample_id="2" DTYPE="SampleAddedProjectEvent"/>
 
     <project_event id="3" created_date="2013-07-18 14:20:19.0"
-                   project_id="1" role="PROJECT_USER" user_id="2" DTYPE="UserRoleSetProjectEvent" />
+                   project_id="1" role="PROJECT_USER" user_id="2" DTYPE="UserRoleSetProjectEvent"/>
 
     <project_event id="4" created_date="2013-07-18 14:20:19.0"
-                   project_id="4" role="PROJECT_OWNER" user_id="3" sample_id="3" DTYPE="SampleAddedProjectEvent" />
+                   project_id="4" role="PROJECT_OWNER" user_id="3" sample_id="3" DTYPE="SampleAddedProjectEvent"/>
 
     <project_event id="5" created_date="2013-07-18 14:20:19.0"
-                   project_id="5" role="PROJECT_OWNER" user_id="1" sample_id="4" DTYPE="SampleAddedProjectEvent" />
+                   project_id="5" role="PROJECT_OWNER" user_id="1" sample_id="4" DTYPE="SampleAddedProjectEvent"/>
 
     <project_event id="6" created_date="2013-07-18 14:20:19.0"
-                   project_id="6" role="PROJECT_OWNER" user_id="3" sample_id="3" DTYPE="SampleAddedProjectEvent" />
+                   project_id="6" role="PROJECT_OWNER" user_id="3" sample_id="3" DTYPE="SampleAddedProjectEvent"/>
 </dataset>

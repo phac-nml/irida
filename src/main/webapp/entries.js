@@ -48,6 +48,7 @@ module.exports = {
   search: "./resources/js/pages/search/search.js",
   "run-files": "./resources/js/pages/sequence-files/run-files.js",
   "user-details": "./resources/js/pages/user-details.js",
+  "user": "./resources/js/pages/user",
   admin: "./resources/js/pages/admin/index.js",
   "sequence-files": "./resources/js/pages/sequence-files/",
   "analyses-outputs": "./resources/js/pages/analyses/analyses-outputs/",
