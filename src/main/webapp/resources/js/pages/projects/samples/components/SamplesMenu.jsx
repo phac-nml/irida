@@ -51,9 +51,8 @@ export default function SamplesMenu() {
     selectedCount,
     filterByFile: fileFiltered,
   } = useSelector((state) => state.samples);
-  const { project: { canManage = false } = {} } = useSelector(
-    (state) => state.user
-  );
+  const { project: { canManage = false, canManageRemote = false } = {} } =
+    useSelector((state) => state.user);
 
   const [mergeVisible, setMergeVisible] = React.useState(false);
   const [removedVisible, setRemovedVisible] = React.useState(false);

@@ -178,7 +178,7 @@ export function SamplesTable() {
       </div>
     ),
     filterIcon: (filtered) => (
-      <IconSearch style={{ color: filtered ? "#1890ff" : undefined }} />
+      <IconSearch style={{ color: filtered ? `var(--blue6)` : undefined }} />
     ),
   });
 
@@ -223,7 +223,7 @@ export function SamplesTable() {
       </div>
     ),
     filterIcon: (filtered) => (
-      <IconSearch style={{ color: filtered ? "#1890ff" : undefined }} />
+      <IconSearch style={{ color: filtered ? `var(--blue6)` : undefined }} />
     ),
   });
 

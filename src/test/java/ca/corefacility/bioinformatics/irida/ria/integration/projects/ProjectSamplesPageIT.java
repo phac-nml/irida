@@ -18,6 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesView.xml")
 public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
+	String FIRST_SAMPLE_NAME = "sample55422r";
+	String SECOND_SAMPLE_NAME = "sample-5-fg-22";
+	String THIRD_SAMPLE_NAME = "sample64565";
 
 	@Test
 	public void testGoingToInvalidPage() {
@@ -112,9 +115,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		TableSummary originalSummary = page.getTableSummary();
-		String FIRST_SAMPLE_NAME = "sample55422r";
-		String SECOND_SAMPLE_NAME = "sample-5-fg-22";
-		String THIRD_SAMPLE_NAME = "sample64565";
 		String NEW_NAME = "I-AM-NEW-HERE";
 
 		page.selectSampleByName(FIRST_SAMPLE_NAME);
@@ -141,10 +141,11 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 7);
-		//		page.selectSample(0);
-		//		page.selectSample(1);
 
-		page.waitUntilShareButtonVisible();
+		page.selectSampleByName("sample23p7");
+		page.selectSampleByName("sample24p7");
+
+		page.openToolsDropDown();
 		assertTrue(page.isShareBtnEnabled(), "Share button should be enabled");
 		assertFalse(page.isMergeBtnEnabled(), "Merge button should not be enabled");
 	}
@@ -155,8 +156,8 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		TableSummary summary = page.getTableSummary();
 
-		page.selectSampleByName("sample55422r");
-		page.selectSampleByName("sample-5-fg-22");
+		page.selectSampleByName(FIRST_SAMPLE_NAME);
+		page.selectSampleByName(SECOND_SAMPLE_NAME);
 
 		// Remove process
 		page.removeSamples();
@@ -258,12 +259,12 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		// Select some samples
-		page.selectSampleByName("sample55422r");
-		page.selectSampleByName("sample-5-fg-22");
+		page.selectSampleByName(FIRST_SAMPLE_NAME);
+		page.selectSampleByName(SECOND_SAMPLE_NAME);
 		page.addSelectedSamplesToCart();
 		assertEquals(2, page.getCartCount(), "Should be two items in the cart");
 
-		page.selectSampleByName("sample64565");
+		page.selectSampleByName(THIRD_SAMPLE_NAME);
 		page.addSelectedSamplesToCart();
 		assertEquals(3, page.getCartCount(), "Should be three items in the cart");
 	}
@@ -276,8 +277,8 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("ngsArchiveLinker.pl -p 1 -t fastq", page.getLinkerCommand(),
 				"Should be the correct linker command");
 
-		page.selectSampleByName("sample55422r");
-		page.selectSampleByName("sample-5-fg-22");
+		page.selectSampleByName(FIRST_SAMPLE_NAME);
+		page.selectSampleByName(SECOND_SAMPLE_NAME);
 		assertEquals("ngsArchiveLinker.pl -p 1 -s 16 -s 26 -t fastq", page.getLinkerCommand(),
 				"Should display the correct linker for entire project");
 
