@@ -492,9 +492,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	// --- OLD BELOW
 
-	public String getTableInfo() {
-		return samplesTableInfo.getText();
-	}
 
 	public void selectSample(int sampleName) {
 		WebElement checkbox = samplesTable.findElement(By.xpath("//td/a[text()= " + sampleName + "]/../..//input"));
