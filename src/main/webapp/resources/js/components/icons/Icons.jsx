@@ -36,7 +36,6 @@ import {
   LoginOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  MergeCellsOutlined,
   OrderedListOutlined,
   PlusCircleTwoTone,
   PlusSquareOutlined,
@@ -267,8 +266,4 @@ export const IconFileUpload = ({ ...props }) => <UploadOutlined {...props} />;
 
 export const IconDatabaseOutlined = ({ ...props }) => (
   <DatabaseOutlined {...props} />
-);
-
-export const IcoonMergeSamples = ({ ...props }) => (
-  <MergeCellsOutlined {...props} />
 );

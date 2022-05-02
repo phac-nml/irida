@@ -5,11 +5,6 @@
 @import "components/tables.css";
 @import "components/typography.css";
 
-:root {
-  // TODO: move remainder of JS color variables to this file
-  --blue6: hsl(209, 100%, 55%);
-}
-
 html,
 body {
   height: 100%;

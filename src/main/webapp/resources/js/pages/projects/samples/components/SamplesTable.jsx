@@ -21,6 +21,7 @@ import SampleQuality from "../../../../components/sample-quality";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
 import { IconSearch } from "../../../../components/icons/Icons";
+import { blue6 } from "../../../../styles/colors";
 
 const { RangePicker } = DatePicker;
 
@@ -178,7 +179,7 @@ export function SamplesTable() {
       </div>
     ),
     filterIcon: (filtered) => (
-      <IconSearch style={{ color: filtered ? `var(--blue6)` : undefined }} />
+      <IconSearch style={{ color: filtered ? blue6 : undefined }} />
     ),
   });
 
@@ -223,7 +224,7 @@ export function SamplesTable() {
       </div>
     ),
     filterIcon: (filtered) => (
-      <IconSearch style={{ color: filtered ? `var(--blue6)` : undefined }} />
+      <IconSearch style={{ color: filtered ? blue6 : undefined }} />
     ),
   });
 

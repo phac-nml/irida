@@ -7,26 +7,25 @@ import { Provider } from "react-redux";
 import { samplesApi } from "../../../apis/projects/samples";
 import { associatedProjectsApi } from "../../../apis/projects/associated-projects";
 import samplesReducer from "../redux/samplesSlice";
-import userReducer, { getCurrentUserDetails } from "../redux/userSlice";
-import { getProjectIdFromUrl } from "../../../utilities/url-utilities";
+import userReducer from "../redux/userSlice";
+import { projectApi } from "../../../apis/projects/project";
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
     samples: samplesReducer,
+    [projectApi.reducerPath]: projectApi.reducer,
     [samplesApi.reducerPath]: samplesApi.reducer,
-    [associatedProjectsApi.reducerPath]: associatedProjectsApi.reducer
+    [associatedProjectsApi.reducerPath]: associatedProjectsApi.reducer,
   },
-  middleware: getDefaultMiddleware =>
+  middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       samplesApi.middleware,
       associatedProjectsApi.middleware
     ),
-  devTools: process.env.NODE_ENV !== "production"
+  devTools: process.env.NODE_ENV !== "production",
 });
 setupListeners(store.dispatch);
-
-store.dispatch(getCurrentUserDetails(getProjectIdFromUrl()));
 
 render(
   <Provider store={store}>
