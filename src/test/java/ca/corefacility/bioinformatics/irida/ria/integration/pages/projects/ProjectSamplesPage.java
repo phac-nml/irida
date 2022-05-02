@@ -376,9 +376,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void filterByCreatedDate(String start, String end) {
 		createdDateFilterToggle.click();
-		WebElement startInput = createdDateFilter.findElement(By.xpath("//input[@placeholder='Start date']"));
-		startInput.sendKeys(start);
-		WebElement endInput = createdDateFilter.findElement(By.xpath("//input[@placeholder='End date']"));
+		driver.findElement(By.xpath("//div[@class='t-created-filter']//input[@placeholder='Start date']"))
+				.sendKeys(start);
+		WebElement endInput = driver.findElement(
+				By.xpath("//div[@class='t-created-filter']//input[@placeholder='End date']"));
 		endInput.sendKeys(end);
 		endInput.sendKeys(Keys.ENTER);
 		createdDateFilter.findElement(By.className("t-search-btn")).click();
@@ -392,8 +393,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public void filterByModifiedDate(String start, String end) {
 		modifiedDateFilterToggle.click();
-		modifiedDateFilter.findElement(By.xpath("//input[@placeholder='Start date']")).sendKeys(start);
-		WebElement endInput = modifiedDateFilter.findElement(By.xpath("//input[@placeholder='End date']"));
+		driver.findElement(By.xpath("//div[@class='t-modified-filter']//input[@placeholder='Start date']"))
+				.sendKeys(start);
+		WebElement endInput = driver.findElement(
+				By.xpath("//div[@class='t-modified-filter']//input[@placeholder='End date']"));
 		endInput.sendKeys(end);
 		endInput.sendKeys(Keys.ENTER);
 		modifiedDateFilter.findElement(By.className("t-search-btn")).click();
