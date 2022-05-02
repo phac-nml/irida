@@ -7,6 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import ca.corefacility.bioinformatics.irida.IridaApplication;
 import org.junit.jupiter.api.Tag;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
@@ -30,8 +31,8 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 @Tag("IntegrationTest")
 @Tag("Galaxy")
 @ActiveProfiles("test")
-@SpringBootTest(classes = { DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class,
-		IridaApiServicesConfig.class, IridaApiTestFilesystemConfig.class, IridaApiGalaxyTestConfig.class })
+@SpringBootTest(classes = { IridaApplication.class,
+		IridaApiTestFilesystemConfig.class, IridaApiGalaxyTestConfig.class })
 public @interface GalaxyIntegrationTest {
 
 }
