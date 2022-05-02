@@ -137,7 +137,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testRemoteSampleManagerButtonDisabled() {
+	public void testRemoteProjectSamplesManagerSetup() {
 		LoginPage.loginAsManager(driver());
 
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 7);
@@ -147,7 +147,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.openToolsDropDown();
 		assertTrue(page.isShareBtnEnabled(), "Share button should be enabled");
-		assertFalse(page.isMergeBtnEnabled(), "Merge button should not be enabled");
+		assertFalse(page.isMergeBtnVisible(), "Merge button should not be displayed");
 	}
 
 	@Test

@@ -270,6 +270,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		return isElementEnabled(mergeBtn);
 	}
 
+	public boolean isMergeBtnVisible() {
+		try {
+			return mergeBtn.isDisplayed();
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	public boolean isShareBtnEnabled() {
 		return isElementEnabled(shareBtn);
 	}

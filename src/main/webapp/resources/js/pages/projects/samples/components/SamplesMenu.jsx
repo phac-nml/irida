@@ -166,7 +166,7 @@ export default function SamplesMenu() {
 
   const toolsMenu = (
     <Menu className="t-tools-dropdown">
-      {details.canManageRemote && (
+      {!details.remote && (
         <Menu.Item
           disabled={selectedCount < 2}
           key="merge-menu"
