@@ -38,44 +38,42 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroup
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.service.ProjectSubscriptionService;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserGroupService;
 
 /**
  * Implementation of {@link UserGroupService}.
- *
  */
 @Service
 public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> implements UserGroupService {
-
 	private final UserGroupJoinRepository userGroupJoinRepository;
 	private final UserRepository userRepository;
 	private final UserGroupProjectJoinRepository userGroupProjectJoinRepository;
 	private final UserGroupRepository userGroupRepository;
+	private final ProjectSubscriptionService projectSubscriptionService;
 
 	/**
 	 * Create a new {@link UserGroupServiceImpl}.
-	 * 
-	 * @param userGroupRepository
-	 *            the {@link UserGroupRepository}
-	 * @param userGroupJoinRepository
-	 *            the {@link UserGroupJoinRepository}
-	 * @param userRepository
-	 *            the {@link UserRepository}
-	 * @param userGroupProjectJoinRepository
-	 *            The {@link UserGroupProjectJoinRepository}
-	 * @param validator
-	 *            the {@link Validator}
+	 *
+	 * @param userGroupRepository            the {@link UserGroupRepository}
+	 * @param userGroupJoinRepository        the {@link UserGroupJoinRepository}
+	 * @param userRepository                 the {@link UserRepository}
+	 * @param userGroupProjectJoinRepository The {@link UserGroupProjectJoinRepository}
+	 * @param projectSubscriptionService     The {@link ProjectSubscriptionService}
+	 * @param validator                      the {@link Validator}
 	 */
 	@Autowired
 	public UserGroupServiceImpl(final UserGroupRepository userGroupRepository,
 			final UserGroupJoinRepository userGroupJoinRepository, final UserRepository userRepository,
-			final UserGroupProjectJoinRepository userGroupProjectJoinRepository, final Validator validator) {
+			final UserGroupProjectJoinRepository userGroupProjectJoinRepository,
+			final ProjectSubscriptionService projectSubscriptionService, final Validator validator) {
 		super(userGroupRepository, validator, UserGroup.class);
 		this.userGroupRepository = userGroupRepository;
 		this.userGroupJoinRepository = userGroupJoinRepository;
 		this.userRepository = userRepository;
 		this.userGroupProjectJoinRepository = userGroupProjectJoinRepository;
+		this.projectSubscriptionService = projectSubscriptionService;
 	}
 
 	/**
@@ -226,8 +224,14 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#userGroup, 'canUpdateUserGroup')")
 	public UserGroupJoin addUserToGroup(final User user, final UserGroup userGroup, final UserGroupRole role) {
-		final UserGroupJoin join = new UserGroupJoin(user, userGroup, role);
+		Collection<UserGroupProjectJoin> userGroupProjectJoins = userGroupProjectJoinRepository.findProjectsByUserGroup(
+				userGroup);
+		for (UserGroupProjectJoin userGroupProjectJoin : userGroupProjectJoins) {
+			Project project = userGroupProjectJoin.getSubject();
+			projectSubscriptionService.addProjectSubscriptionForProjectAndUser(project, user);
+		}
 
+		final UserGroupJoin join = new UserGroupJoin(user, userGroup, role);
 		return userGroupJoinRepository.save(join);
 	}
 
@@ -262,19 +266,22 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 					"Cannot remove this user from the group because it would leave the group without an owner.");
 		}
 
+		Collection<UserGroupProjectJoin> userGroupProjectJoins = userGroupProjectJoinRepository.findProjectsByUserGroup(
+				userGroup);
+		for (UserGroupProjectJoin userGroupProjectJoin : userGroupProjectJoins) {
+			Project project = userGroupProjectJoin.getSubject();
+			projectSubscriptionService.removeProjectSubscriptionForProjectAndUser(project, user);
+		}
+
 		userGroupJoinRepository.delete(join);
 	}
 
 	/**
-	 * Check to see if changing the role will change the number of group owners
-	 * to 0.
-	 * 
-	 * @param userGroup
-	 *            the group to check
-	 * @param role
-	 *            the role you're going to be changing from
-	 * @return false if the role change results in no group owners, true
-	 *         otherwise
+	 * Check to see if changing the role will change the number of group owners to 0.
+	 *
+	 * @param userGroup the group to check
+	 * @param role      the role you're going to be changing from
+	 * @return false if the role change results in no group owners, true otherwise
 	 */
 	public boolean allowRoleChange(final UserGroup userGroup, final UserGroupRole role) {
 		if (!role.equals(UserGroupRole.GROUP_OWNER)) {
@@ -284,7 +291,8 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 			return true;
 		}
 
-		long count = getUsersForGroup(userGroup).stream().filter(g -> g.getRole().equals(UserGroupRole.GROUP_OWNER))
+		long count = getUsersForGroup(userGroup).stream()
+				.filter(g -> g.getRole().equals(UserGroupRole.GROUP_OWNER))
 				.count();
 
 		// There must always be an owner on the project
@@ -341,13 +349,10 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	}
 
 	/**
-	 * A convenience specification to get a {@link UserGroupJoin} from a
-	 * {@link User} and {@link UserGroup}.
-	 * 
-	 * @param user
-	 *            the user
-	 * @param userGroup
-	 *            the group
+	 * A convenience specification to get a {@link UserGroupJoin} from a {@link User} and {@link UserGroup}.
+	 *
+	 * @param user      the user
+	 * @param userGroup the group
 	 * @return a specification for the filter
 	 */
 	private static final Specification<UserGroupJoin> findUserGroupJoin(final User user, final UserGroup userGroup) {
@@ -360,13 +365,10 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	}
 
 	/**
-	 * A convenience specification to filter {@link UserGroupJoin} in a
-	 * {@link UserGroup} by the username.
-	 * 
-	 * @param username
-	 *            the username to filter on
-	 * @param userGroup
-	 *            the group to filter
+	 * A convenience specification to filter {@link UserGroupJoin} in a {@link UserGroup} by the username.
+	 *
+	 * @param username  the username to filter on
+	 * @param userGroup the group to filter
 	 * @return a specification for the filter
 	 */
 	private static final Specification<UserGroupJoin> filterUserGroupJoinByUsername(final String username,
@@ -382,13 +384,10 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 	}
 
 	/**
-	 * A convenience specification to filter {@link UserGroupProjectJoin} by
-	 * group name and project.
-	 * 
-	 * @param searchName
-	 *            the name to search on
-	 * @param p
-	 *            the project to get joins for
+	 * A convenience specification to filter {@link UserGroupProjectJoin} by group name and project.
+	 *
+	 * @param searchName the name to search on
+	 * @param p          the project to get joins for
 	 * @return a specification for the filter
 	 */
 	private static final Specification<UserGroupProjectJoin> filterUserGroupProjectJoinByProject(

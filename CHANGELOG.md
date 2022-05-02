@@ -18,6 +18,9 @@ Changes
 * [UI]: Sorted columns for advanced charts and added labels to tiny charts on admin statistics page.
 * [UI]: Fixed: Allow organism name not included in the current taxonomy.
 * [Developer]: Removed `prop-types` as a front-end development dependency.
+* [UI]: Updated `User` and `Admin` help documentation URLs.
+* [Developer/UI]: Refreshed the user account page.
+* [UI]: Updated message displayed to user when an invalid reference file is uploaded while launching a workflow.
 * [Developer]: Updated nodejs to `v16.15.0` in the `pom.xml` file.
 
 22.01 to 22.03
