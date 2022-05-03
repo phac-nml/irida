@@ -52,12 +52,16 @@
                   project_id="1"
                   user_id="2"
                   projectRole="PROJECT_USER"
-                  createdDate="2018-07-04 10:00:0.0"/>
+                  createdDate="2018-07-04 10:00:0.0"
+                  metadataRole="LEVEL_1"/>
+
     <project_user id="2"
                   project_id="1"
                   user_id="3"
                   projectRole="PROJECT_USER"
-                  createdDate="2018-07-04 10:00:0.0"/>
+                  createdDate="2018-07-04 10:00:0.0"
+                  metadataRole="LEVEL_1"/>
+
     <sample id="1"
             sampleName="sample1"
             createdDate="2018-07-04 10:00:0.0"/>

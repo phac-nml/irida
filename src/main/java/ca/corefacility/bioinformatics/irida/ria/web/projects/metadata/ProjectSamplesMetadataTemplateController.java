@@ -18,7 +18,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -48,12 +47,9 @@ public class ProjectSamplesMetadataTemplateController {
 	/**
 	 * Get the page to create a new {@link MetadataTemplate}
 	 *
-	 * @param projectId
-	 *            {@link Long} identifier for a {@link Project}
-	 * @param model
-	 *            {@link Model} spring page model
-	 * @param principal
-	 *            {@link Principal} currently logged in user
+	 * @param projectId {@link Long} identifier for a {@link Project}
+	 * @param model     {@link Model} spring page model
+	 * @param principal {@link Principal} currently logged in user
 	 * @return {@link String} path to the new template page
 	 */
 	@RequestMapping("/new")
@@ -73,14 +69,10 @@ public class ProjectSamplesMetadataTemplateController {
 	/**
 	 * Get a the page for a specific {@link MetadataTemplate}
 	 *
-	 * @param projectId
-	 *            {@link Long} identifier for a {@link Project}
-	 * @param templateId
-	 *            {@link Long} identifier for a {@link MetadataTemplate}
-	 * @param principal
-	 *            {@link Principal} currently logged in user
-	 * @param model
-	 *            {@link Model} spring page model
+	 * @param projectId  {@link Long} identifier for a {@link Project}
+	 * @param templateId {@link Long} identifier for a {@link MetadataTemplate}
+	 * @param principal  {@link Principal} currently logged in user
+	 * @param model      {@link Model} spring page model
 	 * @return {@link String} path to template page
 	 */
 	@RequestMapping("/{templateId}")
@@ -96,14 +88,10 @@ public class ProjectSamplesMetadataTemplateController {
 	/**
 	 * Save or update a {@link MetadataTemplate} within a {@link Project}
 	 *
-	 * @param projectId
-	 *            {@link Long} identifier for a project
-	 * @param id
-	 *            {@link Long} identifier for a template
-	 * @param name
-	 *            {@link String} name for the template
-	 * @param fields
-	 *            {@link List} of fields names
+	 * @param projectId {@link Long} identifier for a project
+	 * @param id        {@link Long} identifier for a template
+	 * @param name      {@link String} name for the template
+	 * @param fields    {@link List} of fields names
 	 * @return {@link String} result
 	 */
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
@@ -114,8 +102,8 @@ public class ProjectSamplesMetadataTemplateController {
 		for (String field : fields) {
 			MetadataTemplateField f = metadataTemplateService.readMetadataFieldByLabel(field);
 			if (f == null) {
-				MetadataTemplateField templateField = metadataTemplateService
-						.saveMetadataField(new MetadataTemplateField(field, "text"));
+				MetadataTemplateField templateField = metadataTemplateService.saveMetadataField(
+						new MetadataTemplateField(field, "text"));
 				templateFields.add(templateField);
 			} else {
 				templateFields.add(f);
@@ -129,9 +117,8 @@ public class ProjectSamplesMetadataTemplateController {
 			metadataTemplate.setFields(templateFields);
 			metadataTemplateService.updateMetadataTemplateInProject(metadataTemplate);
 		} else {
-			ProjectMetadataTemplateJoin projectMetadataTemplateJoin = metadataTemplateService
-					.createMetadataTemplateInProject(new MetadataTemplate(name, templateFields), project);
-			metadataTemplate = projectMetadataTemplateJoin.getObject();
+			metadataTemplate = metadataTemplateService.createMetadataTemplateInProject(
+					new MetadataTemplate(name, templateFields), project);
 		}
 		return "redirect:/projects/" + projectId + "/metadata-templates/" + metadataTemplate.getId();
 	}
@@ -139,12 +126,10 @@ public class ProjectSamplesMetadataTemplateController {
 	/**
 	 * Delete a {@link MetadataTemplate} within a {@link Project}
 	 *
-	 * @param projectId
-	 *            {@link Long} identifier for a {@link Project}
-	 * @param templateId
-	 *            {@link Long} identifier for a {@link MetadataTemplate}
+	 * @param projectId  {@link Long} identifier for a {@link Project}
+	 * @param templateId {@link Long} identifier for a {@link MetadataTemplate}
 	 * @return {@link String} redirects to project - settings - metadata
-	 *         templates
+	 * templates
 	 */
 	@RequestMapping(value = "/delete/{templateId}", method = RequestMethod.POST)
 	public String deleteMetadataTemplate(@PathVariable Long projectId, @PathVariable Long templateId) {
@@ -156,20 +141,20 @@ public class ProjectSamplesMetadataTemplateController {
 	/**
 	 * Download a {@link MetadataTemplate} as an Excel file.
 	 *
-	 * @param templateId
-	 *            {@link Long} identifier for a {@link MetadataTemplate}
-	 * @param response
-	 *            {@link HttpServletResponse}
-	 * @throws IOException
-	 *             thrown if output stream cannot be used.
+	 * @param templateId {@link Long} identifier for a {@link MetadataTemplate}
+	 * @param response   {@link HttpServletResponse}
+	 * @throws IOException thrown if output stream cannot be used.
 	 */
 	@RequestMapping(value = "/{templateId}/excel")
 	public void downloadTemplate(@PathVariable Long templateId, HttpServletResponse response) throws IOException {
 		MetadataTemplate template = metadataTemplateService.read(templateId);
-		List<MetadataTemplateField> fields = template.getFields();
-		List<String> headers = fields.stream().map(MetadataTemplateField::getLabel).collect(Collectors.toList());
-		String label = template.getLabel().replace(" ", "_");
-		// Blank workbook
+		List<MetadataTemplateField> fields = metadataTemplateService.getPermittedFieldsForTemplate(template);
+		List<String> headers = fields.stream()
+				.map(MetadataTemplateField::getLabel)
+				.collect(Collectors.toList());
+		String label = template.getLabel()
+				.replace(" ", "_");
+		//Blank workbook
 		XSSFWorkbook workbook = new XSSFWorkbook();
 
 		// Create a blank sheet
@@ -197,14 +182,15 @@ public class ProjectSamplesMetadataTemplateController {
 	/**
 	 * Search all Metadata keys available for adding to a template.
 	 *
-	 * @param query
-	 *            the query to search for
+	 * @param query the query to search for
 	 * @return a list of keys matching the query
 	 */
 	@RequestMapping("/fields")
 	@ResponseBody
 	public List<String> getMetadataKeysForProject(@RequestParam(value = "q") String query) {
-		return metadataTemplateService.getAllMetadataFieldsByQueryString(query).stream()
-				.map(MetadataTemplateField::getLabel).collect(Collectors.toList());
+		return metadataTemplateService.getAllMetadataFieldsByQueryString(query)
+				.stream()
+				.map(MetadataTemplateField::getLabel)
+				.collect(Collectors.toList());
 	}
 }

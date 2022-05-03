@@ -32,20 +32,24 @@
     <sample id="3" sampleName="sample2"
             createdDate="2013-07-18 14:20:19.0" collectionDate="1999-12-05"/>
 
-    <project_sample id="1" project_id="1" sample_id="1"
-                    createdDate="2013-07-18 14:20:19.0" owner="true"/>
-    <project_sample id="2" project_id="4" sample_id="2"
-                    createdDate="2013-07-18 14:20:19.0" owner="true"/>
-    <project_sample id="3" project_id="5" sample_id="1"
-                    createdDate="2013-07-18 14:20:19.0" owner="true"/>
-    <project_sample id="4" project_id="5" sample_id="3"
-                    createdDate="2013-07-18 14:20:19.0" owner="true"/>
-    <project_user id="1" project_id="1" user_id="3"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
-    <project_user id="2" project_id="4" user_id="3"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
-    <project_user id="3" project_id="5" user_id="3"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+	<project_sample id="1" project_id="1" sample_id="1"
+		createdDate="2013-07-18 14:20:19.0" owner="true" />
+	<project_sample id="2" project_id="4" sample_id="2"
+		createdDate="2013-07-18 14:20:19.0" owner="true" />
+	<project_sample id="3" project_id="5" sample_id="1"
+		createdDate="2013-07-18 14:20:19.0" owner="true" />
+	<project_sample id="4" project_id="5" sample_id="3"
+		createdDate="2013-07-18 14:20:19.0" owner="true" />
+
+	<project_user id="1" project_id="1" user_id="3"
+		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+		metadataRole="LEVEL_4"/>
+	<project_user id="2" project_id="4" user_id="3"
+		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+		metadataRole="LEVEL_4"/>
+	<project_user id="3" project_id="5" user_id="3"
+		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+		metadataRole="LEVEL_4"/>
 
     <client_details id="1" clientId="testClient"
                     clientSecret="testClientSecret" token_validity="43200" createdDate="2013-07-18 14:20:19.0"/>

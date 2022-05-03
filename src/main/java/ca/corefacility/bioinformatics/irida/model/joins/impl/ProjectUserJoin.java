@@ -6,10 +6,13 @@ import java.util.Objects;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import ca.corefacility.bioinformatics.irida.constraints.MetadataRoleValidate;
+
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -22,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 @Table(name = "project_user", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "user_id" }))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
+@MetadataRoleValidate
 public class ProjectUserJoin implements Join<Project, User> {
 
 	@Id
@@ -40,6 +44,10 @@ public class ProjectUserJoin implements Join<Project, User> {
 	@Enumerated(EnumType.STRING)
 	private ProjectRole projectRole;
 
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private ProjectMetadataRole metadataRole;
+
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
@@ -47,8 +55,9 @@ public class ProjectUserJoin implements Join<Project, User> {
 	private Date createdDate;
 
 	public ProjectUserJoin() {
-		createdDate = new Date();
-		projectRole = ProjectRole.PROJECT_USER;
+		this.createdDate = new Date();
+		this.projectRole = ProjectRole.PROJECT_USER;
+		this.metadataRole = ProjectMetadataRole.LEVEL_1;
 	}
 
 	public ProjectUserJoin(Project subject, User object, ProjectRole projectRole) {
@@ -56,6 +65,11 @@ public class ProjectUserJoin implements Join<Project, User> {
 		this.project = subject;
 		this.user = object;
 		this.projectRole = projectRole;
+	}
+
+	public ProjectUserJoin(Project subject, User object, ProjectRole projectRole, ProjectMetadataRole metadataRole) {
+		this(subject, object, projectRole);
+		this.metadataRole = metadataRole;
 	}
 
 	public Long getId() {
@@ -67,14 +81,14 @@ public class ProjectUserJoin implements Join<Project, User> {
 		if (o instanceof ProjectUserJoin) {
 			ProjectUserJoin other = (ProjectUserJoin) o;
 			return Objects.equals(project, other.project) && Objects.equals(user, other.user) && Objects.equals(
-					projectRole, other.projectRole);
+					projectRole, other.projectRole) && Objects.equals(metadataRole, other.metadataRole);
 		}
 		return false;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(project, user, projectRole);
+		return Objects.hash(project, user, projectRole, metadataRole);
 	}
 
 	@Override
@@ -113,6 +127,14 @@ public class ProjectUserJoin implements Join<Project, User> {
 	 */
 	public void setProjectRole(ProjectRole userRole) {
 		this.projectRole = userRole;
+	}
+
+	public ProjectMetadataRole getMetadataRole() {
+		return metadataRole;
+	}
+
+	public void setMetadataRole(ProjectMetadataRole metadataRole) {
+		this.metadataRole = metadataRole;
 	}
 
 }

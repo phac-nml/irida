@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.ReadAnalysisSubmissionPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadProjectPermission;
 
@@ -24,7 +24,7 @@ import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadPro
  *
  */
 @Component
-public class ReadReferenceFilePermission extends BasePermission<ReferenceFile, Long> {
+public class ReadReferenceFilePermission extends RepositoryBackedPermission<ReferenceFile, Long> {
 
 	public static final String PERMISSION_PROVIDED = "canReadReferenceFile";
 

@@ -10,13 +10,15 @@ import {
   useParams,
 } from "react-router-dom";
 import { useGetProjectDetailsQuery } from "../../../apis/projects/project";
-import { getProjectRoles } from "../../../apis/projects/projects";
-import { RolesProvider } from "../../../contexts/roles-context";
+import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context";
+import { ProjectRolesProvider } from "../../../contexts/project-roles-context";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_SM } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import SettingsNav from "./components/SettingsNav";
 import store from "./store";
+import { getProjectRoles } from "../../../apis/projects/projects";
+import { useMetadataRoles } from "../../../contexts/metadata-roles-context";
 
 const ProjectDetails = React.lazy(() => import("./components/ProjectDetails"));
 const ProjectProcessing = React.lazy(() =>
@@ -30,9 +32,11 @@ const ProjectGroups = React.lazy(() =>
 const MetadataLayout = React.lazy(() =>
   import("./components/metadata/MetadataLayout")
 );
+
 const MetadataFields = React.lazy(() =>
   import("./components/metadata/MetadataFields")
 );
+
 const MetadataTemplates = React.lazy(() =>
   import("./components/metadata/MetadataTemplates")
 );
@@ -127,11 +131,13 @@ const ProjectSettings = () => {
         <Content style={{ backgroundColor: grey1, paddingLeft: SPACE_SM }}>
           <Row>
             <Col lg={24} xxl={12}>
-              <RolesProvider getRolesFn={getProjectRoles}>
-                <Suspense fallback={<Spin />}>
-                  <Outlet />
-                </Suspense>
-              </RolesProvider>
+              <ProjectRolesProvider getRolesFn={getProjectRoles}>
+                <MetadataRolesProvider getRolesFn={useMetadataRoles}>
+                  <Suspense fallback={<Spin />}>
+                    <Outlet />
+                  </Suspense>
+                </MetadataRolesProvider>
+              </ProjectRolesProvider>
             </Col>
           </Row>
         </Content>

@@ -19,16 +19,21 @@
     <project id="4" createdDate="2013-07-18 14:21:19.0" name="project4" modifiedDate="2013-07-18 14:17:19.0"/>
     <project id="5" createdDate="2013-07-18 14:21:19.0" name="project5" modifiedDate="2013-07-18 14:17:19.0"/>
 
-    <project_user id="1" project_id="1" user_id="1"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
-    <project_user id="2" project_id="2" user_id="1"
-                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"/>
-    <project_user id="3" project_id="3" user_id="1"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
-    <project_user id="4" project_id="4" user_id="1"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
-    <project_user id="6" project_id="1" user_id="2"
-                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"/>
+	<project_user id="1" project_id="1" user_id="1"
+		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+		metadataRole="LEVEL_4"/>
+	<project_user id="2" project_id="2" user_id="1"
+		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
+		metadataRole="LEVEL_1"/>
+	<project_user id="3" project_id="3" user_id="1"
+		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+		metadataRole="LEVEL_4"/>
+	<project_user id="4" project_id="4" user_id="1"
+		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+		metadataRole="LEVEL_4"/>
+	<project_user id="6" project_id="1" user_id="2"
+		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
+		metadataRole="LEVEL_1"/>
 
     <related_project id="1" subject_id="1" relatedProject_id="2" createdDate="2013-07-18 14:20:19.0"/>
     <related_project id="2" subject_id="1" relatedProject_id="3" createdDate="2013-07-18 14:20:19.0"/>

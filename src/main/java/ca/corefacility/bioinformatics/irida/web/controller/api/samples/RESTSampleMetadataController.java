@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -98,14 +100,19 @@ public class RESTSampleMetadataController {
 		Project project = projectService.read(projectId);
 		Sort sort = Sort.by(Sort.Direction.ASC, "sample.id");
 
+		List<MetadataTemplateField> metadataTemplateFields = metadataTemplateService
+				.getPermittedFieldsForCurrentUser(project, true);
+
 		//fetch MAX_PAGE_SIZE samples at a time for the project
 		Page<ProjectSampleJoin> page = sampleService.getFilteredSamplesForProjects(Arrays.asList(project),
 				Collections.emptyList(), "", "", "", null, null, 0, MAX_PAGE_SIZE, sort);
 		while (!page.isEmpty()) {
 			List<Sample> samples = page.stream().map(ProjectSampleJoin::getObject).collect(Collectors.toList());
 			List<Long> sampleIds = samples.stream().map(Sample::getId).collect(Collectors.toList());
-			Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProjectSamples(project,
-					sampleIds);
+			ProjectMetadataResponse metadataResponse = sampleService.getMetadataForProjectSamples(project, sampleIds,
+					metadataTemplateFields);
+
+			Map<Long, Set<MetadataEntry>> metadataForProject = metadataResponse.getMetadata();
 
 			//for each sample
 			for (Sample s : samples) {

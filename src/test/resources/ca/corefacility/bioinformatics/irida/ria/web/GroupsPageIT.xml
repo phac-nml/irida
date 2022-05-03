@@ -35,8 +35,8 @@
     <project id="7" organism="E. coli O157:H7"  createdDate="2013-07-18 14:21:19.0" name="project EFGH" modifiedDate="2013-07-18 14:17:19.0" />
     <project id="8" organism="E. coli K-12"  createdDate="2013-07-18 14:21:19.0" name="project IJKL" modifiedDate="2013-07-18 14:17:19.0"  />
 
-    <user_group_project id="1" created_date="2013-07-12 14:20:19.0" project_role="PROJECT_OWNER" project_id="1" user_group_id="1" />
-    <user_group_project id="2" created_date="2013-07-12 14:20:19.0" project_role="PROJECT_OWNER" project_id="2" user_group_id="1" />
-    <user_group_project id="3" created_date="2013-07-12 14:20:19.0" project_role="PROJECT_OWNER" project_id="3" user_group_id="1" />
-    <user_group_project id="4" created_date="2013-07-12 14:20:19.0" project_role="PROJECT_OWNER" project_id="4" user_group_id="1" />
+    <user_group_project id="1" created_date="2013-07-12 14:20:19.0" project_role="PROJECT_OWNER" metadata_role="LEVEL_4" project_id="1" user_group_id="1" />
+    <user_group_project id="2" created_date="2013-07-12 14:20:19.0" project_role="PROJECT_OWNER" metadata_role="LEVEL_4" project_id="2" user_group_id="1" />
+    <user_group_project id="3" created_date="2013-07-12 14:20:19.0" project_role="PROJECT_OWNER" metadata_role="LEVEL_4" project_id="3" user_group_id="1" />
+    <user_group_project id="4" created_date="2013-07-12 14:20:19.0" project_role="PROJECT_OWNER" metadata_role="LEVEL_4" project_id="4" user_group_id="1" />
 </dataset>

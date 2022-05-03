@@ -5,24 +5,24 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Set;
 
-import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
-import ca.corefacility.bioinformatics.irida.exceptions.LinkNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.exceptions.LinkNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectSynchronizationException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -35,7 +35,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -145,7 +144,6 @@ public class ProjectSynchronizationServiceTest {
 
 		verify(projectService, times(3)).update(any(Project.class));
 		verify(projectRemoteService).getProjectHash(remoteProject);
-		assertNull((remoteProject).getDefaultMetadataTemplate());
 
 		assertEquals(SyncStatus.SYNCHRONIZED, remoteProject.getRemoteStatus().getSyncStatus());
 	}
@@ -170,8 +168,8 @@ public class ProjectSynchronizationServiceTest {
 
 		verify(projectService, times(2)).update(any(Project.class));
 		verify(projectRemoteService).getProjectHash(remoteProject);
+
 		verifyNoInteractions(sampleRemoteService);
-		assertNull((remoteProject).getDefaultMetadataTemplate());
 
 		assertEquals(SyncStatus.SYNCHRONIZED, remoteProject.getRemoteStatus().getSyncStatus());
 	}
@@ -193,7 +191,6 @@ public class ProjectSynchronizationServiceTest {
 
 		syncService.findMarkedProjectsToSync();
 
-		assertNull((remoteProject).getDefaultMetadataTemplate());
 		assertEquals(SyncStatus.UNAUTHORIZED, remoteProject.getRemoteStatus()
 				.getSyncStatus());
 

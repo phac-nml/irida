@@ -25,9 +25,9 @@
 			  credentialsNonExpired="true" REV="1" REVTYPE="1"/>
 
 	<project name="project" id="1" createdDate="2013-07-18 14:20:19.0"
-			 modifiedDate="2013-07-18 14:20:19.0"/>
-	<project_user project_id="1" user_id="1"
-				  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+		modifiedDate="2013-07-18 14:20:19.0"  />
+	<project_user project_id="1" user_id="1" projectRole="PROJECT_OWNER"
+		createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4"/>
 
 	<announcement id="1" created_date="2016-05-20 11:42:08.0"
 				  title="First announcement ever"

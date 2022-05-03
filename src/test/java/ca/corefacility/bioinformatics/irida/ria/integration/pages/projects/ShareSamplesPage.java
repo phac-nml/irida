@@ -26,6 +26,12 @@ public class ShareSamplesPage {
 	@FindBy(className = "t-share-button")
 	private WebElement shareButton;
 
+	@FindBy(className = "t-share-previous")
+	private WebElement previousButton;
+
+	@FindBy(className = "t-share-next")
+	private WebElement nextButton;
+
 	@FindBy(className = "ant-result-success")
 	private WebElement successResult;
 
@@ -56,6 +62,9 @@ public class ShareSamplesPage {
 	@FindBy(className = "t-success-title")
 	private WebElement successTitle;
 
+	@FindBy(className = "t-field-label")
+	private List<WebElement> metadataFieldLabels;
+
 	public static ShareSamplesPage initPage(WebDriver driver) {
 		return PageFactory.initElements(driver, ShareSamplesPage.class);
 	}
@@ -77,8 +86,20 @@ public class ShareSamplesPage {
 		return lockedSamples.size();
 	}
 
-	public boolean isShareButtonDisabled() {
+	public boolean isShareButtonEnabled() {
 		return shareButton.isEnabled();
+	}
+
+	public boolean isNextButtonEnabled() {
+		return nextButton.isEnabled();
+	}
+
+	public void gotToNextStep() {
+		nextButton.click();
+	}
+
+	public boolean isPreviousButtonEnabled() {
+		return previousButton.isEnabled();
 	}
 
 	public void submitShareRequest() {
@@ -118,10 +139,14 @@ public class ShareSamplesPage {
 	}
 
 	public boolean isSomeSamplesWarningDisplayed() {
-        return someSamplesWarning.isDisplayed();
-    }
+		return someSamplesWarning.isDisplayed();
+	}
 
 	public String getSuccessTitle() {
 		return successTitle.getText();
+	}
+
+	public int getNumberOfSharedMetadataEntries() {
+		return metadataFieldLabels.size();
 	}
 }

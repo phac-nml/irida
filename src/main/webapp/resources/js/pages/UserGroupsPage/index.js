@@ -3,9 +3,9 @@ import { render } from "react-dom";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { getUserGroupRoles } from "../../apis/users/groups";
 import { ContentLoading } from "../../components/loader";
-import { RolesProvider } from "../../contexts/roles-context";
-import { UserGroupsProvider } from "../../contexts/UserGroupsContext";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { UserGroupsProvider } from "../../contexts/UserGroupsContext";
+import { UserGroupRolesProvider } from "../../contexts/usergroup-roles-context";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -19,14 +19,6 @@ const UserGroupsPage = lazy(() => import("./components/UserGroupsPage"));
 const UserGroupsDetailsPage = lazy(() =>
   import("./components/UserGroupDetailsPage")
 );
-
-/*
-WEBPACK PUBLIC PATH:
-Webpack does not know what the servlet context path is.  To fix this, webpack exposed
-the variable `__webpack_public_path__`
-See: https://webpack.js.org/guides/public-path/#on-the-fly
- */
-__webpack_public_path__ = setBaseUrl(`dist/`);
 
 /**
  * React component to display pages related to User Groups.  This is a base page
@@ -53,7 +45,7 @@ export function UserGroups() {
       }
     >
       <UserGroupsProvider>
-        <RolesProvider getRolesFn={getUserGroupRoles}>
+        <UserGroupRolesProvider getRolesFn={getUserGroupRoles}>
           <Routes style={{ height: "100%" }}>
             <Route
               path={DEFAULT_URL}
@@ -64,7 +56,7 @@ export function UserGroups() {
               element={<UserGroupsDetailsPage baseUrl={DEFAULT_URL} />}
             />
           </Routes>
-        </RolesProvider>
+        </UserGroupRolesProvider>
       </UserGroupsProvider>
     </Suspense>
   );
