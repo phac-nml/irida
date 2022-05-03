@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import org.hibernate.envers.RevisionListener;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -43,15 +44,14 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
         rev.setClientId(clientId);
 
         if (userId == null && clientId == null){
-//            if (isLdapMode() && iridaUserDetailsContextMapper.isCreatingNewUser()) {
-            if (isLdapMode()) {
+            if (isLdapMode() && iridaUserDetailsContextMapper.isCreatingNewUser()) {
                 //todo: add something to the UserRevEntity object to indicate that the change was made?
                 // add a column to UserRevEntity for type of addition?
                 logger.trace("Revision with no user or client in ldap/adldap authenticationMode");
             }
             else {
-                //todo: I don't think it's possible to actually reach this illegal state
-                // keep this here any ways??
+                // This is unreachable in production.
+                // If your code is reaching this statement you are improperly creating a user revision.
                 throw new IllegalStateException("No authentication so revision could not be created");
             }
         }
@@ -68,7 +68,9 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
 	public void initialize(){
         urepo = applicationContext.getBean(UserRepository.class);
         clientRepo = applicationContext.getBean(IridaClientDetailsRepository.class);
-//        iridaUserDetailsContextMapper = applicationContext.getBean(IridaUserDetailsContextMapper.class);
+        try { // Only gets the context mapper if we are in ldap mode
+            iridaUserDetailsContextMapper = applicationContext.getBean(IridaUserDetailsContextMapper.class);
+        } catch (NoSuchBeanDefinitionException ignored){}
     }
     
 	/**
