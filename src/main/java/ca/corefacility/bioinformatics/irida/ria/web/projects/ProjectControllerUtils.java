@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -77,7 +76,8 @@ public class ProjectControllerUtils {
 		boolean manageMembers = projectMembersPermission.isAllowed(authentication, project);
 		model.addAttribute("manageMembers", manageMembers);
 
-		Long defaultMetadataTemplateId = project.getDefaultMetadataTemplate() != null ? project.getDefaultMetadataTemplate().getId() : 0;
+		MetadataTemplate defaultTemplateForProject = metadataTemplateService.getDefaultTemplateForProject(project);
+		Long defaultMetadataTemplateId = defaultTemplateForProject != null ? defaultTemplateForProject.getId() : 0;
 		model.addAttribute("defaultMetadataTemplateId", defaultMetadataTemplateId);
 	}
 
@@ -92,11 +92,10 @@ public class ProjectControllerUtils {
 	 * @return {@link List} of {@link MetadataTemplate}
 	 */
     public List<Map<String, String>> getTemplateNames(Locale locale, Project project) {
-		List<ProjectMetadataTemplateJoin> metadataTemplatesForProject = metadataTemplateService
+		List<MetadataTemplate> metadataTemplatesForProject = metadataTemplateService
 				.getMetadataTemplatesForProject(project);
 		List<Map<String, String>> templates = new ArrayList<>();
-		for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : metadataTemplatesForProject) {
-			MetadataTemplate template = projectMetadataTemplateJoin.getObject();
+		for (MetadataTemplate template : metadataTemplatesForProject) {
 			templates.add(ImmutableMap.of("label", template.getLabel(), "id", String.valueOf(template.getId())));
 		}
 		return templates;

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
@@ -78,7 +80,7 @@ public class UIProjectMembersServiceTest {
 		doThrow(ProjectWithoutOwnerException.class).when(projectService)
 				.removeUserFromProject(PROJECT, USER_3);
 		doThrow(ProjectWithoutOwnerException.class).when(projectService)
-				.updateUserProjectRole(PROJECT, USER_3, ProjectRole.PROJECT_OWNER);
+				.updateUserProjectRole(PROJECT, USER_3, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1);
 	}
 
 	@Test
@@ -99,31 +101,43 @@ public class UIProjectMembersServiceTest {
 	}
 
 	@Test
-	public void testRemoveLastManagerFromProject() throws UIProjectWithoutOwnerException {
+	public void testRemoveLastManagerFromProject() {
 		assertThrows(ProjectWithoutOwnerException.class, () -> {
 			service.removeUserFromProject(PROJECT_ID, USER_3.getId(), LOCALE);
 		});
 	}
 
 	@Test
-	public void testUpdateUserRoleOnProject() throws ProjectWithoutOwnerException {
+	public void testUpdateUserProjectRoleOnProject() throws ProjectWithoutOwnerException, UIConstraintViolationException {
 		service.updateUserRoleOnProject(PROJECT_ID, USER_2.getId(), ProjectRole.PROJECT_OWNER.toString(), LOCALE);
-		verify(projectService, times(1)).updateUserProjectRole(PROJECT, USER_2, ProjectRole.PROJECT_OWNER);
+		verify(projectService, times(1)).read(PROJECT.getId());
+		verify(userService, times(1)).read(USER_2.getId());
+		verify(projectService, times(1)).updateUserProjectRole(PROJECT, USER_2, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
 	}
 
 	@Test
-	public void testUpdateUserRoleOnProjectNoManager() throws UIProjectWithoutOwnerException {
+	public void testUpdateUserMetadataRoleOnProject() throws UIConstraintViolationException {
+		service.updateUserMetadataRoleOnProject(PROJECT_ID, USER_2.getId(), ProjectMetadataRole.LEVEL_4.toString(), LOCALE);
+		verify(projectService, times(1)).read(PROJECT_ID);
+		verify(userService, times(1)).read(USER_2.getId());
+		verify(projectService, times(1)).updateUserProjectMetadataRole(PROJECT, USER_2, ProjectMetadataRole.LEVEL_4);
+	}
+
+	@Test
+	public void testUpdateUserRoleOnProjectNoManager() {
 		assertThrows(ProjectWithoutOwnerException.class, () -> {
-			service.updateUserRoleOnProject(PROJECT_ID, USER_3.getId(), ProjectRole.PROJECT_OWNER.toString(), LOCALE);
+			service.updateUserRoleOnProject(PROJECT_ID, USER_3.getId(), ProjectRole.PROJECT_USER.toString(),
+					LOCALE);
 		});
 	}
 
 	@Test
 	public void testAddMemberToProject() {
-		NewMemberRequest request = new NewMemberRequest(USER_3.getId(),
-				ProjectRole.PROJECT_USER.toString());
+		NewMemberRequest request = new NewMemberRequest(USER_3.getId(), ProjectRole.PROJECT_USER.toString(),
+				ProjectMetadataRole.LEVEL_1.toString());
 		service.addMemberToProject(PROJECT_ID, request, LOCALE);
-		verify(projectService, times(1)).addUserToProject(PROJECT, USER_3, ProjectRole.PROJECT_USER);
+		verify(projectService, times(1)).addUserToProject(PROJECT, USER_3, ProjectRole.PROJECT_USER,
+				ProjectMetadataRole.LEVEL_1);
 	}
 
 	private Page<Join<Project, User>> getPagedUsersForProject() {

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -48,7 +49,7 @@ public class ProjectSubscriptionsAjaxControllerTest {
 	private final ProjectUserJoin PROJECT_USER_JOIN = new ProjectUserJoin(PROJECT, USER, ProjectRole.PROJECT_USER);
 	private final UserGroup USER_GROUP = new UserGroup("Group 1");
 	private final UserGroupProjectJoin USER_GROUP_PROJECT_JOIN = new UserGroupProjectJoin(PROJECT, USER_GROUP,
-			ProjectRole.PROJECT_OWNER);
+			ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
 	private final Page<ProjectSubscription> PROJECT_SUBSCRIPTION_PAGE = new Page<>() {
 		@Override
 		public int getTotalPages() {

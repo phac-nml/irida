@@ -12,14 +12,14 @@ const SearchForm = styled.form`
   width: 300px;
   margin-right: 15px;
 
-  .ant-input-prefix svg {
+  .ant-input-prefix svg,
+  .anticon-close-circle svg {
     color: ${grey6};
     font-size: 14px;
   }
 
   input {
     border-bottom: 2px solid ${primaryColour};
-    border-radius: 10px;
   }
 `;
 
@@ -33,6 +33,8 @@ export function GlobalSearch() {
     <SearchForm method="get" action={setBaseUrl("/search")}>
       <Input
         name="query"
+        allowClear
+        autoComplete="off"
         className="t-global-search"
         prefix={<IconSearch />}
         placeholder={i18n("nav.main.search")}

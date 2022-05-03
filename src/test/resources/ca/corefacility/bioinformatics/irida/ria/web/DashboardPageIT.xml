@@ -87,28 +87,34 @@
 
 
     <project_user id="1" project_id="1" user_id="1"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
-    
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  metadataRole="LEVEL_4" />
     <project_user id="2" project_id="1" user_id="3"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  metadataRole="LEVEL_4" />
 
     <project_user id="3" project_id="3" user_id="1"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
-
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  metadataRole="LEVEL_4" />
     <project_user id="4" project_id="3" user_id="3"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  metadataRole="LEVEL_4" />
 
     <project_user id="5" project_id="1" user_id="2"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  metadataRole="LEVEL_4" />
 
     <project_user id="6" project_id="4" user_id="3"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  metadataRole="LEVEL_4" />
 
     <project_user id="7" project_id="5" user_id="1"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  metadataRole="LEVEL_4" />
 
     <project_user id="8" project_id="6" user_id="3"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  metadataRole="LEVEL_4" />
 
     <project_event id="1" created_date="2013-07-18 14:20:19.0"
                    project_id="3" role="PROJECT_USER" user_id="1" DTYPE="UserRoleSetProjectEvent"/>

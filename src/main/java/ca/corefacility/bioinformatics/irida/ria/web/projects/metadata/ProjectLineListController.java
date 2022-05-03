@@ -13,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -105,7 +104,10 @@ public class ProjectLineListController {
 	@ResponseBody
 	public List<MetadataTemplateField> getMetadaFieldsForTemplate(@RequestParam Long templateId) {
 		MetadataTemplate template = metadataTemplateService.read(templateId);
-		return template.getFields();
+		List<MetadataTemplateField> permittedFieldsForTemplate = metadataTemplateService.getPermittedFieldsForTemplate(
+				template);
+
+		return permittedFieldsForTemplate;
 	}
 
 	/**
@@ -143,10 +145,10 @@ public class ProjectLineListController {
 			metadataFields.add(metadataField);
 		}
 		MetadataTemplate metadataTemplate = new MetadataTemplate(templateName, metadataFields);
-		ProjectMetadataTemplateJoin projectMetadataTemplateJoin = metadataTemplateService
+		metadataTemplate = metadataTemplateService
 				.createMetadataTemplateInProject(metadataTemplate, project);
 
-		return ImmutableMap.of("templateId", projectMetadataTemplateJoin.getObject().getId());
+		return ImmutableMap.of("templateId", metadataTemplate.getId());
 	}
 
 	/**
@@ -160,12 +162,8 @@ public class ProjectLineListController {
 	@ResponseBody
 	public List<MetadataTemplate> getMetadataTemplates(@PathVariable long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
-		List<ProjectMetadataTemplateJoin> joins = metadataTemplateService.getMetadataTemplatesForProject(project);
-		List<MetadataTemplate> templates = new ArrayList<>();
+		List<MetadataTemplate> templates = metadataTemplateService.getMetadataTemplatesForProject(project);
 
-		for (ProjectMetadataTemplateJoin join : joins) {
-			templates.add(join.getObject());
-		}
 		return templates;
 	}
 
@@ -210,10 +208,8 @@ public class ProjectLineListController {
 					locale);
 		} else {
 			template = new MetadataTemplate(name, metadataFields);
-			ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(template,
-					project);
-			template = join.getObject();
-			message = messageSource.getMessage("linelist.create-template.success", new Object[] { name }, locale);
+			template = metadataTemplateService.createMetadataTemplateInProject(template, project);
+			message = messageSource.getMessage("linelist.create-template.success", new Object[]{name}, locale);
 		}
 		return ImmutableMap.of("template", template, "message", message);
 	}

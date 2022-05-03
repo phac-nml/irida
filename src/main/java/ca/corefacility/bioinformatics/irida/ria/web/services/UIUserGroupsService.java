@@ -160,15 +160,17 @@ public class UIUserGroupsService {
 	 * Add a new member to the user group
 	 *
 	 * @param groupId identifier for the {@link UserGroup}
-	 * @param request details about the user to add to the user group
+	 * @param userId identifier for the {@link User}
+	 * @param role   role to assign to the user
 	 * @param locale  current users {@link Locale}
 	 * @return message to the user about the status of this request
 	 */
-	public String addMemberToUserGroup(Long groupId, NewMemberRequest request, Locale locale) {
+	@Transactional
+	public String addMemberToUserGroup(Long groupId, Long userId, String role, Locale locale) {
 		UserGroup group = userGroupService.read(groupId);
-		User user = userService.read(request.getId());
-		UserGroupJoin.UserGroupRole role = UserGroupJoin.UserGroupRole.fromString(request.getRole());
-		userGroupService.addUserToGroup(user, group, role);
+		User user = userService.read(userId);
+		UserGroupJoin.UserGroupRole groupRole = UserGroupJoin.UserGroupRole.fromString(role);
+		userGroupService.addUserToGroup(user, group, groupRole);
 		return messageSource.getMessage("server.usergroups.add-member", new Object[] { user.getLabel() }, locale);
 	}
 

@@ -3,15 +3,17 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects;
 import java.util.List;
 import java.util.Locale;
 
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NewMemberRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ProjectUserGroupsTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectUserGroupsService;
@@ -86,20 +88,40 @@ public class ProjectUserGroupsAjaxController {
 	/**
 	 * Update the project role of a user group on the current project
 	 *
-	 * @param projectId Identifier for a project
-	 * @param id        Identifier for an user group
-	 * @param role      Role to update the user group to
-	 * @param locale    Current users locale
+	 * @param projectId   Identifier for a project
+	 * @param id          Identifier for an user group
+	 * @param projectRole Project role to update the user group to
+	 * @param locale      Current users locale
 	 * @return message to user about the result of the update
 	 */
 	@RequestMapping(value = "/role", method = RequestMethod.PUT)
 	public ResponseEntity<String> updateUserGroupRoleOnProject(@RequestParam Long projectId, @RequestParam Long id,
-			@RequestParam String role, Locale locale) {
+			String projectRole, Locale locale) {
 		try {
-			return ResponseEntity.ok(service.updateUserGroupRoleOnProject(projectId, id, role, locale));
-		} catch (ProjectWithoutOwnerException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(e.getMessage());
+			return ResponseEntity.ok(service.updateUserGroupRoleOnProject(projectId, id, projectRole, locale));
+		} catch (UIProjectWithoutOwnerException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		} catch (UIConstraintViolationException ex) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getErrorMessage());
+		}
+	}
+
+	/**
+	 * Update the project metadata role of a user group on the current project
+	 *
+	 * @param projectId    Identifier for a project
+	 * @param id           Identifier for an user group
+	 * @param metadataRole metadata role to update for the user group
+	 * @param locale       Current users locale
+	 * @return message to user about the result of the update
+	 */
+	@RequestMapping(value = "/metadata-role", method = RequestMethod.PUT)
+	public ResponseEntity<String> updateUserGroupMetadataRoleOnProject(@RequestParam Long projectId,
+			@RequestParam Long id, String metadataRole, Locale locale) {
+		try {
+			return ResponseEntity.ok(service.updateUserGroupMetadataRoleOnProject(projectId, id, metadataRole, locale));
+		} catch (UIConstraintViolationException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getErrorMessage());
 		}
 	}
 }

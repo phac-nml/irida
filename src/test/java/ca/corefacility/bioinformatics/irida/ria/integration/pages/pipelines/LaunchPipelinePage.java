@@ -1,6 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -10,10 +14,7 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 /**
  * This page holds all the form controls that are available on any pipeline

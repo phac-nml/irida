@@ -1,8 +1,8 @@
 /**
  * Class responsible for ajax call for project sample metadata fields.
  */
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import axios from "axios";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { addKeysToList } from "../../utilities/http-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
@@ -57,6 +57,21 @@ export async function getMetadataRestrictions() {
   try {
     const { data } = await axios.get(`${BASE_URL}/restrictions`);
     return data;
+  } catch (e) {
+    return Promise.reject(e.response.data.message);
+  }
+}
+
+/**
+ * Get a list of metadata fields for the list of projects
+ * @returns {Promise<any>}
+ */
+export async function getAllMetadataFieldsForProjects({ projectIds }) {
+  try {
+    const { data } = await axios.get(
+      `${BASE_URL}/projects?projectIds=${projectIds}`
+    );
+    return addKeysToList(data, "field", "id");
   } catch (e) {
     return Promise.reject(e.response.data.message);
   }
