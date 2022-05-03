@@ -124,14 +124,15 @@ public class UserGroupsAjaxController {
 	 * Add a new member to the user group
 	 *
 	 * @param groupId Identifier for the user group
-	 * @param request Identifier for the user to add as a member
+	 * @param userId  identifier for the {@link User}
+	 * @param role    role to assign to the user
 	 * @param locale  current users {@link Locale}
 	 * @return message to the user about the result of adding the user
 	 */
 	@RequestMapping(value = "/{groupId}/add", method = RequestMethod.POST)
 	public ResponseEntity<String> addMemberToUserGroup(@PathVariable Long groupId,
-			@RequestBody NewMemberRequest request, Locale locale) {
-		return ResponseEntity.ok(service.addMemberToUserGroup(groupId, request, locale));
+			@RequestParam Long userId, @RequestParam String role, Locale locale) {
+		return ResponseEntity.ok(service.addMemberToUserGroup(groupId, userId, role, locale));
 	}
 
 	/**

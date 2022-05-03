@@ -17,13 +17,13 @@ import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 
 /**
  * Confirms that the authenticated user is allowed to read a project.
  */
 @Component
-public class ReadProjectPermission extends BasePermission<Project, Long> {
+public class ReadProjectPermission extends RepositoryBackedPermission<Project, Long> {
 
 	private static final Logger logger = LoggerFactory.getLogger(ReadProjectPermission.class);
 	public static final String PERMISSION_PROVIDED = "canReadProject";

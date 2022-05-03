@@ -71,7 +71,6 @@ public enum ProjectRole {
 				}
 			}
 		}
-
 		return projectRole;
 	}
 }

@@ -20,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
@@ -103,11 +102,6 @@ public class Project extends IridaRepresentationModel
 	@Enumerated(EnumType.STRING)
 	private AnalysisSubmission.Priority analysisPriority;
 
-	@JsonIgnore
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name = "default_metadata_template")
-	private MetadataTemplate defaultMetadataTemplate;
-
 	/*
 	 * This group of properties are here to ensure cascading deletion by JPA when a project is deleted.  They are not used within the class.
 	 */
@@ -130,7 +124,7 @@ public class Project extends IridaRepresentationModel
 	private List<ProjectReferenceFileJoin> referenceFiles;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "project")
-	private List<ProjectMetadataTemplateJoin> metadataTemplates;
+	private List<MetadataTemplate> metadataTemplates;
 
 	@NotAudited
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "project")
@@ -307,11 +301,4 @@ public class Project extends IridaRepresentationModel
 		this.analysisPriority = analysisPriority;
 	}
 
-	public MetadataTemplate getDefaultMetadataTemplate() {
-		return defaultMetadataTemplate;
-	}
-
-	public void setDefaultMetadataTemplate(MetadataTemplate defaultMetadataTemplate) {
-		this.defaultMetadataTemplate = defaultMetadataTemplate;
-	}
 }

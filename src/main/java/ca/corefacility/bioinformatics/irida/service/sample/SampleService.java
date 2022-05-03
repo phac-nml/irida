@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.service.sample;
 
 import java.util.*;
 
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -16,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -77,23 +79,16 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public List<Long> getLockedSamplesInProject(Project project);
 
 	/**
-	 * Get the metadata collections for an entire project. This will return a Map of {@link Sample} ID with a Set of the
-	 * {@link MetadataEntry}s
-	 *
-	 * @param project the {@link Project} to get metadata for
-	 * @return a map of metadata
-	 */
-	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project);
-
-	/**
 	 * Get the metadata collections for a set of samples in a project. This will return a Map of {@link Sample} ID with
 	 * a Set of the {@link MetadataEntry}s
 	 *
 	 * @param project   the {@link Project} to get metadata for
 	 * @param sampleIds the {@link Sample} ids to get metadata for
+	 * @param fields    the fields to get metadata from in the project. This must not be empty.
 	 * @return a map of metadata
 	 */
-	public Map<Long, Set<MetadataEntry>> getMetadataForProjectSamples(Project project, List<Long> sampleIds);
+	public ProjectMetadataResponse getMetadataForProjectSamples(Project project, List<Long> sampleIds,
+			List<MetadataTemplateField> fields);
 
 	/**
 	 * Find a {@link Sample} assocaited with a {@link SequencingObject}

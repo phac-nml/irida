@@ -24,10 +24,14 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
+
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
+
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
 import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileContentError;
+
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -88,7 +92,7 @@ public class ProjectServiceImplIT {
 		final UserGroup userGroup = userGroupService.read(1L);
 		final Project project = projectService.read(9L);
 		assertThrows(ProjectWithoutOwnerException.class, () -> {
-			projectService.updateUserGroupProjectRole(project, userGroup, ProjectRole.PROJECT_USER);
+			projectService.updateUserGroupProjectRole(project, userGroup, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1);
 		});
 	}
 
@@ -224,7 +228,7 @@ public class ProjectServiceImplIT {
 	public void testAddUserToProject() {
 		Project p = projectService.read(1L);
 		User u = userService.read(1L);
-		Join<Project, User> join = projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
+		Join<Project, User> join = projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
 		assertNotNull(join, "Join was not populated.");
 		assertEquals(p, join.getSubject(), "Join has wrong project.");
 		assertEquals(u, join.getObject(), "Join has wrong user.");
@@ -240,9 +244,9 @@ public class ProjectServiceImplIT {
 	public void testAddUserToProjectTwice() {
 		Project p = projectService.read(1L);
 		User u = userService.read(1L);
-		projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
+		projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
 		assertThrows(EntityExistsException.class, () -> {
-			projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
+			projectService.addUserToProject(p, u, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
 		});
 	}
 
@@ -252,8 +256,8 @@ public class ProjectServiceImplIT {
 		Project p = projectService.read(1L);
 		User u1 = userService.read(1L);
 		User u2 = userService.read(2L);
-		projectService.addUserToProject(p, u1, ProjectRole.PROJECT_OWNER);
-		projectService.addUserToProject(p, u2, ProjectRole.PROJECT_OWNER);
+		projectService.addUserToProject(p, u1, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
+		projectService.addUserToProject(p, u2, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
 
 		Collection<Join<Project, User>> usersOnProject = userService.getUsersForProject(p);
 		assertEquals(2, usersOnProject.size(), "Wrong number of users on project.");
@@ -415,14 +419,6 @@ public class ProjectServiceImplIT {
 		List<Project> projects = (List<Project>) projectService.findAll();
 
 		assertEquals(11, projects.size(), "Wrong number of projects.");
-	}
-
-	@Test
-	@WithMockUser(username = "admin", roles = "ADMIN")
-	public void testUserHasProjectRole() {
-		User user = userService.read(3L);
-		Project project = projectService.read(2L);
-		assertTrue(projectService.userHasProjectRole(user, project, ProjectRole.PROJECT_OWNER));
 	}
 
 	@Test

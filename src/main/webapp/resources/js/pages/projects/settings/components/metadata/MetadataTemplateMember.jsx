@@ -25,8 +25,9 @@ const { Paragraph, Text } = Typography;
 export default function MetadataTemplateMember() {
   const navigate = useNavigate();
   const { id, projectId } = useParams();
-  const { data: templates, isLoading } =
-    useGetTemplatesForProjectQuery(projectId);
+  const { data: templates, isLoading } = useGetTemplatesForProjectQuery(
+    projectId
+  );
   const [template, setTemplate] = React.useState({});
 
   React.useEffect(() => {
@@ -60,7 +61,7 @@ export default function MetadataTemplateMember() {
   }, [id, templates]);
 
   return (
-    <PageHeader title={template.name} onBack={() => navigate("./")}>
+    <PageHeader title={template.name} onBack={() => navigate(-1)}>
       <Skeleton loading={isLoading}>
         <List itemLayout="vertical" size="small">
           <List.Item>
