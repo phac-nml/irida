@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
@@ -21,6 +22,7 @@ import javax.validation.ConstraintViolationException;
 import java.util.Collection;
 
 @Configuration
+@ConditionalOnExpression("'${irida.administrative.authentication.mode}'.equals('ldap') || '${irida.administrative.authentication.mode}'.equals('adldap')")
 public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
     private static final Logger logger = LoggerFactory.getLogger(IridaUserDetailsContextMapper.class);
 

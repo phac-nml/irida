@@ -29,7 +29,7 @@ public class IridaAuthenticationSecurityConfig {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
+    @Autowired(required = false)
     private IridaUserDetailsContextMapper iridaUserDetailsContextMapper;
 
     @Value("${irida.administrative.authentication.mode}")

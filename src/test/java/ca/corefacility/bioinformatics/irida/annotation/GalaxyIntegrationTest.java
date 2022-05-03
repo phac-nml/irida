@@ -31,8 +31,8 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 @Tag("IntegrationTest")
 @Tag("Galaxy")
 @ActiveProfiles("test")
-@SpringBootTest(classes = { IridaApplication.class,
-		IridaApiTestFilesystemConfig.class, IridaApiGalaxyTestConfig.class })
+@SpringBootTest(classes = { DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class,
+		IridaApiServicesConfig.class, IridaApiTestFilesystemConfig.class, IridaApiGalaxyTestConfig.class })
 public @interface GalaxyIntegrationTest {
 
 }
