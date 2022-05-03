@@ -102,12 +102,14 @@ export const sampleApi = createApi({
         url: `/${sampleId}/default-sequencing-object?sequencingObjectId=${sequencingObjectId}`,
         method: "PUT",
       }),
+      invalidatesTags: ["SampleDetails"],
     }),
     updateDefaultSampleGenomeAssembly: build.mutation({
       query: ({ sampleId, genomeAssemblyId }) => ({
         url: `/${sampleId}/default-genome-assembly?genomeAssemblyId=${genomeAssemblyId}`,
         method: "PUT",
       }),
+      invalidatesTags: ["SampleDetails"],
     }),
   }),
 });
