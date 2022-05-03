@@ -4,7 +4,9 @@ import {
   PagedTable,
   PagedTableProvider,
 } from "../../../components/ant.design/PagedTable";
-import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
+import {
+  dateColumnFormat
+} from "../../../components/ant.design/table-renderers";
 import { Button } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
@@ -68,7 +70,7 @@ export default function SequencingRunListPage() {
       <PagedTableProvider url={`${URL}/list`}>
         <PagedTable
           search={false}
-          scroll={{ x: "max-content" }}
+          scroll={{x: "max-content"}}
           rowKey={(record) => record.id}
           columns={columns}
         />

@@ -82,7 +82,6 @@ public class UISequencingRunService {
 	 * Delete a sequencing run.
 	 *
 	 * @param runId - the id of the sequencing run
-	 * @return {@link String}
 	 */
 	public void deleteSequencingRun(Long runId) {
 		runService.delete(runId);

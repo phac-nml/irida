@@ -28,6 +28,9 @@ export const sequencingRunsApi = createApi({
       query: (runId) => ({
         url: `${runId}/sequenceFiles`,
       }),
+      transformResponse: (response) => {
+        return response.map(sequencingObject => sequencingObject.sequenceFile ? sequencingObject.sequenceFile : sequencingObject.files).flat();
+      }
     }),
     /*
     Delete a sequencing run.
@@ -41,9 +44,13 @@ export const sequencingRunsApi = createApi({
   }),
 });
 
-export const { useGetSequencingRunDetailsQuery, useGetSequencingRunFilesQuery, useDeleteSequencingRunMutation } = sequencingRunsApi;
+export const {
+  useGetSequencingRunDetailsQuery,
+  useGetSequencingRunFilesQuery,
+  useDeleteSequencingRunMutation
+} = sequencingRunsApi;
 
-export function deleteSequencingRun({ id }) {
+export function deleteSequencingRun({id}) {
   axios
     .delete(setBaseUrl(`/sequencingRuns/${id}`))
     .then(() => (window.location.href = setBaseUrl(`/admin/sequencing_runs`)));
