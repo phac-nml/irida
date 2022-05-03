@@ -13,11 +13,12 @@ import { getPaginationOptions } from "../../../../utilities/antdesign-table-util
 
 const DEFAULT_HEIGHT = 600;
 
-export default function OverRepresentedSequences() {
+export function OverRepresentedSequences() {
   const dispatch = useDispatch();
   const { loading, sequencingObjectId, fileId, fastQC } = useSelector(
     (state) => state.fastQCReducer
   );
+  const [total, setTotal] = React.useState(0);
 
   React.useEffect(() => {
     if (Object.keys(fastQC).length === 0) {
@@ -28,10 +29,22 @@ export default function OverRepresentedSequences() {
               fastQC: analysisFastQC,
             })
           );
+          setTotal(analysisFastQC.overrepresentedSequences.length);
         }
       );
     }
   }, [sequencingObjectId, fileId]);
+
+  const paginationOptions = React.useMemo(
+    () =>
+      getPaginationOptions(
+        Object.keys(fastQC).length > 0 &&
+          typeof fastQC.overrepresentedSequences !== undefined
+          ? fastQC.overrepresentedSequences.length
+          : 0
+      ),
+    [fastQC]
+  );
 
   // Columns for the table
   const columns = [
@@ -66,17 +79,25 @@ export default function OverRepresentedSequences() {
   ];
 
   return fastQC ? (
-    <Row gutter={16}>
-      <Col
-        span={24}
-        style={{ height: DEFAULT_HEIGHT }}
-      >
+    <Row gutter={16} style={{ padding: 10 }}>
+      <Col span={24}>
         <Typography.Paragraph className="text-info">
           {fastQC.description}
         </Typography.Paragraph>
+      </Col>
+      <Col
+        span={24}
+        style={{
+          maxHeight: DEFAULT_HEIGHT,
+          overflowY: "auto",
+        }}
+      >
         <Table
           bordered
-          pagination={false}
+          pagination={{
+            ...paginationOptions,
+            showTotal: (total) => `Total ${total} items`,
+          }}
           rowKey={(item) => item.identifier}
           loading={loading}
           columns={columns}

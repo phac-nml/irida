@@ -85,7 +85,8 @@ export function SingleEndFileRenderer({
             avatar={<Avatar size={`small`} icon={<IconFile />} />}
             title={
               <div style={{ display: "flex", justifyContent: "space-between" }}>
-                {fastqcResults ? (
+                {fastqcResults &&
+                file.fileInfo.processingState === "FINISHED" ? (
                   <div>
                     <Button
                       type="link"
