@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="metadata-restrictions" author="tom">
+        <createTable tableName="metadata_restriction">
+            <column name="id" autoIncrement="true" type="bigint(20)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="project_id" type="bigint(20)">
+                <constraints nullable="false" referencedTableName="project"
+                             referencedColumnNames="id" foreignKeyName="FK_METADATA_RESTRICTION_PROJECT"/>
+            </column>
+            <column name="field_id" type="bigint(20)">
+                <constraints nullable="false" referencedTableName="metadata_field"
+                             referencedColumnNames="id" foreignKeyName="FK_METADATA_RESTRICTION_FIELD"/>
+            </column>
+            <column name="level" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="metadata_restriction" columnNames="project_id, field_id"
+                             constraintName="UK_METADATA_RESTRICTION_PROJECT_FIELD"/>
+
+        <createTable tableName="metadata_restriction_AUD">
+            <column name="id" type="bigint(20)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REV" type="int(11)">
+                <constraints primaryKey="true" nullable="false"
+                             foreignKeyName="FK_METADATA_RESTRICTION_AUD" referencedColumnNames="id"
+                             referencedTableName="Revisions"/>
+            </column>
+            <column name="REVTYPE" type="tinyint(4)"/>
+            <column name="project_id" type="bigint(20)"/>
+            <column name="field_id" type="bigint(20)"/>
+            <column name="level" type="varchar(255)"/>
+        </createTable>
+
+        <addColumn tableName="project_user">
+            <column name="metadataRole" type="varchar(255)" value="LEVEL_4">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="project_user_AUD">
+            <column name="metadataRole" type="varchar(255)" value="LEVEL_4"/>
+        </addColumn>
+
+        <addColumn tableName="user_group_project">
+            <column name="metadata_role" type="varchar(255)" value="LEVEL_4">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="user_group_project_AUD">
+            <column name="metadata_role" type="varchar(255)" value="LEVEL_4"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

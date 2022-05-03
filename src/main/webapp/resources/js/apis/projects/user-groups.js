@@ -46,13 +46,19 @@ export async function getAvailableGroupsForProject({ projectId, query }) {
  * @param {number} projectId Identifier for the current project
  * @param {number} groupId Identifier for the user group to add
  * @param {string} role for the user group on the project
+ * @param {string} metadataRole for the user group on the project
  * @returns {Promise<AxiosResponse<any>>}
  */
-export async function addUserGroupToProject({ projectId, groupId, role }) {
+export async function addUserGroupToProject({
+  projectId,
+  groupId,
+  role,
+  metadataRole,
+}) {
   try {
     const { data } = await axios.post(
       `${BASE_URL}/add?projectId=${projectId}`,
-      { role, id: groupId }
+      { projectRole: role, id: groupId, metadataRole }
     );
     return Promise.resolve(data);
   } catch (e) {
@@ -65,13 +71,47 @@ export async function addUserGroupToProject({ projectId, groupId, role }) {
  *
  * @param {number} projectId Identifier for the current project
  * @param {number} groupId Identifier for the user group to add
- * @param {string} role for the user group on the project
+ * @param {string} projectRole for the user group on the project
  * @returns {Promise<AxiosResponse<any>>}
  */
-export async function updateUserGroupRoleOnProject({ projectId, id, role }) {
-  const params = new URLSearchParams({ projectId, id, role });
+export async function updateUserGroupProjectRole({
+  projectId,
+  id,
+  projectRole = "",
+}) {
+  const params = new URLSearchParams({
+    projectId,
+    id,
+    projectRole,
+  });
   try {
     const { data } = await axios.put(`${BASE_URL}/role?${params.toString()}`);
+    return Promise.resolve(data);
+  } catch (e) {
+    return Promise.reject(e.response.data);
+  }
+}
+
+/**
+ * Update the metadata role of a user group on the current project
+ *
+ * @param {number} projectId Identifier for the current project
+ * @param {number} groupId Identifier for the user group to add
+ * @param {string} metadataRole for the user group metadata access on the project
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export async function updateUserGroupProjectMetadataRole({
+ projectId,
+ id,
+ metadataRole = "",
+}) {
+  const params = new URLSearchParams({
+    projectId,
+    id,
+    metadataRole,
+  });
+  try {
+    const { data } = await axios.put(`${BASE_URL}/metadata-role?${params.toString()}`);
     return Promise.resolve(data);
   } catch (e) {
     return Promise.reject(e.response.data);

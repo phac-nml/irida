@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="one-project-per-template" author="tom">
+        <addColumn tableName="metadata_template">
+            <!-- Add the new column for which project the template is for -->
+            <column name="project_id" type="bigint(20)">
+                <constraints referencedTableName="project" referencedColumnNames="id"
+                             foreignKeyName="FK_METADATA_TEMPLATE_PROJECT"/>
+            </column>
+            <!-- Add new column for whether the template is the default for the project -->
+            <column name="project_default" type="bit(1)" valueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <!-- Add _AUD columns for above -->
+        <addColumn tableName="metadata_template_AUD">
+            <column name="project_id" type="bigint(20)"/>
+            <column name="project_default" type="bit(1)"/>
+        </addColumn>
+
+        <!-- Convert the old project_metadata_template table into the setting directly on the metadata_template table -->
+        <sql>
+            UPDATE metadata_template m INNER JOIN project_metadata_template t ON m.id=t.template_ID SET
+            m.project_id=t.project_id;
+        </sql>
+
+        <!-- Convert the template setting on `project` to the default setting on `metadata_template` -->
+        <sql>
+            UPDATE metadata_template m INNER JOIN project p ON p.default_metadata_template=m.id SET m.project_default=1;
+        </sql>
+
+        <!-- Ensure the project setting is not null in metadata_template now that the ids are set -->
+        <addNotNullConstraint tableName="metadata_template" columnName="project_id" columnDataType="bigint(20)"/>
+
+        <!-- drop the old join tables -->
+        <dropTable tableName="project_metadata_template"/>
+        <dropTable tableName="project_metadata_template_AUD"/>
+
+        <!-- drop the old `default_metadata_template` column from project now that its moved to `metadata_template` -->
+        <dropForeignKeyConstraint baseTableName="project" constraintName="FK_PROJECT_METADATA_TEMPLATE"/>
+
+        <dropColumn tableName="project" columnName="default_metadata_template"/>
+        <dropColumn tableName="project_AUD" columnName="default_metadata_template"/>
+    </changeSet>
+</databaseChangeLog>

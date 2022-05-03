@@ -72,3 +72,4 @@
   <include file="changesets/22.03/all-changes.xml" relativeToChangelogFile="true" />
   <include file="changesets/22.05/all-changes.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
+

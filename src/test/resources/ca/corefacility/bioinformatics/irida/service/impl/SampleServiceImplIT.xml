@@ -1,224 +1,245 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-    <user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-          email="manager@nowhere.com" firstName="Mr." lastName="Manager"
-          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
-          phoneNumber="867-5309" username="fbristow" enabled="true" system_role="ROLE_MANAGER"
-          credentialsNonExpired="true"/>
-    <user id="2" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-          email="dr@evil.com" firstName="Dr." lastName="Evil"
-          password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
-          phoneNumber="867-5309" username="dr-evil" enabled="true" system_role="ROLE_MANAGER"
-          credentialsNonExpired="true"/>
+	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+		email="manager@nowhere.com" firstName="Mr." lastName="Manager"
+		password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+		phoneNumber="867-5309" username="fbristow" enabled="true" system_role="ROLE_MANAGER"
+		credentialsNonExpired="true" />
+	<user id="2" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+		email="dr@evil.com" firstName="Dr." lastName="Evil"
+		password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+		phoneNumber="867-5309" username="dr-evil" enabled="true" system_role="ROLE_MANAGER"
+		credentialsNonExpired="true" />
+	<user id="3" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
+		  email="test@nowhere.com" firstName="test" lastName="test"
+		  password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+		  phoneNumber="0000" username="test" system_role="ROLE_USER"
+		  credentialsNonExpired="true" enabled="true" />
 
-    <project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
-             projectDescription="description" remoteURL="somewhere"/>
-    <project id="2" createdDate="2013-07-18 14:20:19.0" name="project2"
-             projectDescription="description2" remoteURL="somewhere"/>
-    <project id="3" createdDate="2013-07-18 14:20:19.0" name="project3"
-             projectDescription="description3" remoteURL="somewhere"/>
-    <project_user id="1" createdDate="2013-07-18 14:20:19.0"
-                  projectRole="PROJECT_OWNER" project_id="1" user_id="1"/>
-    <project_user id="2" createdDate="2013-07-18 14:20:19.0"
-                  projectRole="PROJECT_OWNER" project_id="2" user_id="1"/>
+	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
+		projectDescription="description" remoteURL="somewhere"  />
+	<project id="2" createdDate="2013-07-18 14:20:19.0" name="project2"
+		projectDescription="description2" remoteURL="somewhere"  />
+	<project id="3" createdDate="2013-07-18 14:20:19.0" name="project3"
+		projectDescription="description3" remoteURL="somewhere"  />
 
-    <sample id="1" createdDate="2013-01-18 14:20:19.0" description="description1"
-            sampleName="sample1" organism="org1"/>
-    <sample id="2" createdDate="2013-02-18 14:20:19.0" description="description2"
-            sampleName="sample2" organism="org1"/>
-    <sample id="3" createdDate="2013-03-18 14:20:19.0" description="description3"
-            sampleName="sample3" organism="org2"/>
-    <sample id="4" createdDate="2013-04-18 14:20:19.0" description="description4"
-            sampleName="sample4" organism="org3"/>
-    <sample id="5" createdDate="2013-05-18 14:20:19.0" description="description5"
-            sampleName="sample5" organism="org3"/>
-    <sample id="8" createdDate="2013-05-18 14:20:19.0" description="description5"
-            sampleName="sample8" organism="org3"/>
-    <sample id="9" createdDate="2013-05-18 14:20:19.0" description="description5"
-            sampleName="sample9" organism="org3"/>
+	<project id="6" name="project" projectDescription="project"
+			 createdDate="2013-07-18 14:20:19.0"  />
+	<project id="7" name="project2" projectDescription="project"
+			 createdDate="2013-07-18 14:20:19.0"  />
 
-    <project_sample id="1" createdDate="2013-07-18 14:20:19.0"
-                    project_id="1" sample_id="1" owner="true"/>
-    <project_sample id="2" createdDate="2013-07-18 14:20:19.0"
-                    project_id="1" sample_id="2" owner="true"/>
-    <project_sample id="3" createdDate="2013-07-18 14:20:19.0"
-                    project_id="1" sample_id="3" owner="true"/>
-    <project_sample id="4" createdDate="2013-07-18 14:20:19.0"
-                    project_id="2" sample_id="4" owner="true"/>
-    <project_sample id="5" createdDate="2013-07-18 14:20:19.0"
-                    project_id="3" sample_id="5" owner="true"/>
-    <project_sample id="8" createdDate="2013-07-18 14:20:19.0"
-                    project_id="2" sample_id="8" owner="true"/>
-    <project_sample id="9" createdDate="2013-07-18 14:20:19.0"
-                    project_id="2" sample_id="9" owner="true"/>
+	<project_user id="1" createdDate="2013-07-18 14:20:19.0"
+				  projectRole="PROJECT_OWNER" project_id="1" user_id="1"
+				  metadataRole="LEVEL_4"/>
+	<project_user id="2" createdDate="2013-07-18 14:20:19.0"
+				  projectRole="PROJECT_OWNER" project_id="2" user_id="1"
+				  metadataRole="LEVEL_4"/>
+	<project_user id="3" createdDate="2013-07-18 14:20:19.0"
+				  projectRole="PROJECT_USER" project_id="1" user_id="3"
+				  metadataRole="LEVEL_1"/>
 
-    <tool_execution id="1" command_line="a"
-                    created_date="2013-07-18 14:20:19.0" execution_manager_identifier="x"
-                    tool_name="y" tool_version="z"/>
-    <tool_execution_parameters tool_id="1"
-                               execution_parameter_key="key" execution_parameter_value="value"/>
+	<sample id="1" createdDate="2013-01-18 14:20:19.0" description="description1"
+		sampleName="sample1" organism="org1" />
+	<sample id="2" createdDate="2013-02-18 14:20:19.0" description="description2"
+		sampleName="sample2" organism="org1" />
+	<sample id="3" createdDate="2013-03-18 14:20:19.0" description="description3"
+		sampleName="sample3" organism="org2" />
+	<sample id="4" createdDate="2013-04-18 14:20:19.0" description="description4"
+		sampleName="sample4" organism="org3" />
+	<sample id="5" createdDate="2013-05-18 14:20:19.0" description="description5"
+		sampleName="sample5" organism="org3" />
+	<sample id="6" sampleName="sample"
+			createdDate="2013-07-18 14:20:19.0" />
+	<sample id="7" sampleName="sample"
+			createdDate="2013-07-18 14:20:19.0" />
+	<sample id="8" createdDate="2013-05-18 14:20:19.0" description="description5"
+		sampleName="sample8" organism="org3" />
+	<sample id="9" createdDate="2013-05-18 14:20:19.0" description="description5"
+		sampleName="sample9" organism="org3" />
 
-    <tool_execution id="2" command_line="a"
-                    created_date="2013-07-18 14:20:19.0" execution_manager_identifier="x"
-                    tool_name="y" tool_version="z"/>
-    <tool_execution_parameters tool_id="2"
-                               execution_parameter_key="key" execution_parameter_value="value"/>
 
-    <analysis_output_file id="1" created_date="2013-07-18 14:20:19.0"
-                          execution_manager_file_id="1" file_path="testfile.fasta"
-                          tool_execution_id="1"/>
+	<project_sample id="1" createdDate="2013-07-18 14:20:19.0"
+		project_id="1" sample_id="1" owner="true" />
+	<project_sample id="2" createdDate="2013-07-18 14:20:19.0"
+		project_id="1" sample_id="2" owner="true" />
+	<project_sample id="3" createdDate="2013-07-18 14:20:19.0"
+		project_id="1" sample_id="3" owner="true" />
+	<project_sample id="4" createdDate="2013-07-18 14:20:19.0"
+		project_id="2" sample_id="4" owner="true" />
+	<project_sample id="5" createdDate="2013-07-18 14:20:19.0"
+		project_id="3" sample_id="5" owner="true" />
+	<project_sample id="6" createdDate="2013-07-18 14:20:19.0"
+					project_id="6" sample_id="6" owner="true" />
+	<project_sample id="7" createdDate="2013-07-18 14:20:19.0"
+					project_id="7" sample_id="7" owner="true" />
+	<project_sample id="8" createdDate="2013-07-18 14:20:19.0"
+		project_id="2" sample_id="8" owner="true" />
+	<project_sample id="9" createdDate="2013-07-18 14:20:19.0"
+		project_id="2" sample_id="9" owner="true" />
 
-    <analysis_output_file id="2" created_date="2013-07-18 14:20:19.0"
-                          execution_manager_file_id="1" file_path="testfile2.fasta"
-                          tool_execution_id="2"/>
 
-    <analysis id="1" createdDate="2013-07-18 14:20:19.0"
-              description="FastQC" executionManagerAnalysisId="fastqc"
-              analysis_type="FASTQC"/>
-    <analysis_fastqc id="1" encoding="x" fileType="x" filteredSequences="0" gcContent="30"
-                     maxLength="250" minLength="10" totalBases="1000" totalSequences="4" fastqcVersion="1.0.0"/>
+	<tool_execution id="1" command_line="a"
+		created_date="2013-07-18 14:20:19.0" execution_manager_identifier="x"
+		tool_name="y" tool_version="z" />
+	<tool_execution_parameters tool_id="1"
+		execution_parameter_key="key" execution_parameter_value="value" />
+		
+	<tool_execution id="2" command_line="a"
+		created_date="2013-07-18 14:20:19.0" execution_manager_identifier="x"
+		tool_name="y" tool_version="z" />
+	<tool_execution_parameters tool_id="2"
+		execution_parameter_key="key" execution_parameter_value="value" />
 
-    <analysis id="2" createdDate="2013-07-18 14:20:19.0"
-              executionManagerAnalysisId="test1" analysis_type="ASSEMBLY_ANNOTATION"/>
+	<analysis_output_file id="1" created_date="2013-07-18 14:20:19.0"
+		execution_manager_file_id="1" file_path="testfile.fasta"
+		tool_execution_id="1" />
+		
+	<analysis_output_file id="2" created_date="2013-07-18 14:20:19.0"
+		execution_manager_file_id="1" file_path="testfile2.fasta"
+		tool_execution_id="2" />
+		
+	<analysis id="1" createdDate="2013-07-18 14:20:19.0"
+		description="FastQC" executionManagerAnalysisId="fastqc"
+		analysis_type="FASTQC" />
+	<analysis_fastqc id="1" encoding="x" fileType="x" filteredSequences="0" gcContent="30"
+		maxLength="250" minLength="10" totalBases="1000" totalSequences="4" fastqcVersion="1.0.0"/>
 
-    <analysis id="3" createdDate="2013-07-18 14:20:19.0"
-              executionManagerAnalysisId="test2" analysis_type="ASSEMBLY_ANNOTATION"/>
+	<analysis id="2" createdDate="2013-07-18 14:20:19.0"
+		executionManagerAnalysisId="test1" analysis_type="ASSEMBLY_ANNOTATION" />
 
-    <analysis id="4" createdDate="2013-07-18 14:20:19.0"
-              executionManagerAnalysisId="test3" analysis_type="ASSEMBLY_ANNOTATION"/>
+	<analysis id="3" createdDate="2013-07-18 14:20:19.0"
+		executionManagerAnalysisId="test2" analysis_type="ASSEMBLY_ANNOTATION" />
 
-    <analysis id="5" createdDate="2013-07-18 14:20:19.0"
-              executionManagerAnalysisId="test4" analysis_type="ASSEMBLY_ANNOTATION"/>
+	<analysis id="4" createdDate="2013-07-18 14:20:19.0"
+		executionManagerAnalysisId="test3" analysis_type="ASSEMBLY_ANNOTATION" />
 
-    <analysis id="6" createdDate="2013-07-18 14:20:19.0"
-              executionManagerAnalysisId="test6" analysis_type="ASSEMBLY_ANNOTATION"/>
+	<analysis id="5" createdDate="2013-07-18 14:20:19.0"
+		executionManagerAnalysisId="test4" analysis_type="ASSEMBLY_ANNOTATION" />
+		
+	<analysis id="6" createdDate="2013-07-18 14:20:19.0"
+		executionManagerAnalysisId="test6" analysis_type="ASSEMBLY_ANNOTATION" />
 
-    <analysis_output_file_map analysis_id="5"
-                              analysisOutputFilesMap_id="1" analysis_output_file_key="contigs-with-repeats"/>
+	<analysis_output_file_map analysis_id="5"
+		analysisOutputFilesMap_id="1" analysis_output_file_key="contigs-with-repeats" />
+		
+	<analysis_output_file_map analysis_id="6"
+		analysisOutputFilesMap_id="2" analysis_output_file_key="contigs-with-repeats" />
 
-    <analysis_output_file_map analysis_id="6"
-                              analysisOutputFilesMap_id="2" analysis_output_file_key="contigs-with-repeats"/>
+	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile1" fastqc_analysis_id="1" />
+	<sequence_file id="2" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile2" />
+	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile3" />
+	<sequence_file id="4" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile4" />
+	<sequence_file id="5" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile5" />
+	<sequence_file id="6" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile6" />
+	<sequence_file id="7" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile7" />
+	<sequence_file id="8" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile8" />
+	<sequence_file id="9" created_date="2013-07-18 14:20:19.0"
+		file_path="/sequenceFile9" />
 
-    <sequence_file id="1" created_date="2013-07-18 14:20:19.0"
-                   file_path="/sequenceFile1" fastqc_analysis_id="1"/>
-    <sequence_file id="2" created_date="2013-07-18 14:20:19.0"
-                   file_path="/sequenceFile2"/>
-    <sequence_file id="3" created_date="2013-07-18 14:20:19.0"
-                   file_path="/sequenceFile3"/>
-    <sequence_file id="4" created_date="2013-07-18 14:20:19.0"
-                   file_path="/sequenceFile4"/>
-    <sequence_file id="5" created_date="2013-07-18 14:20:19.0"
-                   file_path="/sequenceFile5"/>
-    <sequence_file id="6" created_date="2013-07-18 14:20:19.0"
-                   file_path="/sequenceFile6"/>
-    <sequence_file id="7" created_date="2013-07-18 14:20:19.0"
-                   file_path="/sequenceFile7"/>
-    <sequence_file id="8" created_date="2013-07-18 14:20:19.0"
-                   file_path="/sequenceFile8"/>
-    <sequence_file id="9" created_date="2013-07-18 14:20:19.0"
-                   file_path="/sequenceFile9"/>
+	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0" />
+	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0" />
+	<sequencing_object id="3" created_date="2013-07-18 14:20:19.0" />
+	<sequencing_object id="4" created_date="2013-07-18 14:20:19.0" />
+	<sequencing_object id="5" created_date="2013-07-18 14:20:19.0" />
+	<sequencing_object id="6" created_date="2013-07-18 14:20:19.0" />
 
-    <sequencing_object id="1" created_date="2013-07-18 14:20:19.0"/>
-    <sequencing_object id="2" created_date="2013-07-18 14:20:19.0"/>
-    <sequencing_object id="3" created_date="2013-07-18 14:20:19.0"/>
-    <sequencing_object id="4" created_date="2013-07-18 14:20:19.0"/>
-    <sequencing_object id="5" created_date="2013-07-18 14:20:19.0"/>
-    <sequencing_object id="6" created_date="2013-07-18 14:20:19.0"/>
+	<sequence_file_pair id="1" />
+	<sequence_file_pair id="2" />
+	<sequence_file_pair id="3" />
 
-    <sequence_file_pair id="1"/>
-    <sequence_file_pair id="2"/>
-    <sequence_file_pair id="3"/>
+	<sequence_file_pair_files pair_id="1"
+		files_id="4" />
+	<sequence_file_pair_files pair_id="1"
+		files_id="5" />
 
-    <sequence_file_pair_files pair_id="1"
-                              files_id="4"/>
-    <sequence_file_pair_files pair_id="1"
-                              files_id="5"/>
+	<sequence_file_pair_files pair_id="2"
+		files_id="6" />
+	<sequence_file_pair_files pair_id="2"
+		files_id="7" />
 
-    <sequence_file_pair_files pair_id="2"
-                              files_id="6"/>
-    <sequence_file_pair_files pair_id="2"
-                              files_id="7"/>
+	<sequence_file_pair_files pair_id="3"
+		files_id="8" />
+	<sequence_file_pair_files pair_id="3"
+		files_id="9" />
 
-    <sequence_file_pair_files pair_id="3"
-                              files_id="8"/>
-    <sequence_file_pair_files pair_id="3"
-                              files_id="9"/>
+	<sequence_file_single_end id="4" file_id="1" />
+	<sequence_file_single_end id="5" file_id="2" />
+	<sequence_file_single_end id="6" file_id="3" />
 
-    <sequence_file_single_end id="4" file_id="1"/>
-    <sequence_file_single_end id="5" file_id="2"/>
-    <sequence_file_single_end id="6" file_id="3"/>
+	<sample_sequencingobject id="1"
+		created_date="2013-07-18 14:20:19.0" sample_id="1"
+		sequencingobject_id="4" />
+	<sample_sequencingobject id="2"
+		created_date="2013-07-18 14:20:19.0" sample_id="2"
+		sequencingobject_id="5" />
+	<sample_sequencingobject id="3"
+		created_date="2013-07-18 14:20:19.0" sample_id="3"
+		sequencingobject_id="6" />
+	<sample_sequencingobject id="4"
+		created_date="2013-07-18 14:20:19.0" sample_id="8"
+		sequencingobject_id="1" />
+	<sample_sequencingobject id="6"
+		created_date="2013-07-18 14:20:19.0" sample_id="9"
+		sequencingobject_id="2" />
+	<sample_sequencingobject id="8"
+		created_date="2013-07-18 14:20:19.0" sample_id="9"
+		sequencingobject_id="3" />
 
-    <sample_sequencingobject id="1"
-                             created_date="2013-07-18 14:20:19.0" sample_id="1"
-                             sequencingobject_id="4"/>
-    <sample_sequencingobject id="2"
-                             created_date="2013-07-18 14:20:19.0" sample_id="2"
-                             sequencingobject_id="5"/>
-    <sample_sequencingobject id="3"
-                             created_date="2013-07-18 14:20:19.0" sample_id="3"
-                             sequencingobject_id="6"/>
-    <sample_sequencingobject id="4"
-                             created_date="2013-07-18 14:20:19.0" sample_id="8"
-                             sequencingobject_id="1"/>
-    <sample_sequencingobject id="6"
-                             created_date="2013-07-18 14:20:19.0" sample_id="9"
-                             sequencingobject_id="2"/>
-    <sample_sequencingobject id="8"
-                             created_date="2013-07-18 14:20:19.0" sample_id="9"
-                             sequencingobject_id="3"/>
+	<analysis_submission id="2" name="my analysis"
+		remote_analysis_id="1" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0"
+		workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3" submitter="1" remote_workflow_id="1"
+		remote_input_data_id="1" analysis_cleaned_state="NOT_CLEANED" analysis_id="5" priority="MEDIUM" 
+		update_samples="1" DTYPE="AnalysisSubmission" automated="0" />
 
-    <analysis_submission id="2" name="my analysis"
-                         remote_analysis_id="1" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0"
-                         workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3" submitter="1" remote_workflow_id="1"
-                         remote_input_data_id="1" analysis_cleaned_state="NOT_CLEANED" analysis_id="5" priority="MEDIUM"
-                         update_samples="1" DTYPE="AnalysisSubmission" automated="0"/>
+	<analysis_submission id="1" name="my analysis"
+		remote_analysis_id="1" analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19.0"
+		workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
+		analysis_cleaned_state="NOT_CLEANED" update_samples="0" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
+		
+	<analysis_submission id="3" name="my analysis"
+		remote_analysis_id="1" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0"
+		workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3" submitter="1" remote_workflow_id="1"
+		remote_input_data_id="1" analysis_cleaned_state="NOT_CLEANED" analysis_id="6" priority="MEDIUM" 
+		update_samples="0" DTYPE="AnalysisSubmission" automated="0" />
 
-    <analysis_submission id="1" name="my analysis"
-                         remote_analysis_id="1" analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19.0"
-                         workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
-                         analysis_cleaned_state="NOT_CLEANED" update_samples="0" priority="MEDIUM"
-                         DTYPE="AnalysisSubmission" automated="0"/>
+	<analysis_submission_sequencing_object
+		analysis_submission_id="1" sequencing_object_id="1" />
+	<analysis_submission_sequencing_object
+		analysis_submission_id="1" sequencing_object_id="2" />
+	<analysis_submission_sequencing_object
+		analysis_submission_id="2" sequencing_object_id="1" />
+	<analysis_submission_sequencing_object
+		analysis_submission_id="3" sequencing_object_id="2" />
 
-    <analysis_submission id="3" name="my analysis"
-                         remote_analysis_id="1" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0"
-                         workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3" submitter="1" remote_workflow_id="1"
-                         remote_input_data_id="1" analysis_cleaned_state="NOT_CLEANED" analysis_id="6" priority="MEDIUM"
-                         update_samples="0" DTYPE="AnalysisSubmission" automated="0"/>
+	<genome_assembly id="1" created_date="2013-07-18 14:20:19.0" />
+	<genome_assembly_analysis id="1"
+		analysis_submission_id="2" />
+	<sample_genome_assembly id="1" sample_id="1"
+		genome_assembly_id="1" createdDate="2013-07-18 14:20:19.0" />
+		
+	<genome_assembly id="2" created_date="2013-07-18 14:20:19.0" />
+	<genome_assembly_analysis id="2"
+		analysis_submission_id="3" />
+	<sample_genome_assembly id="2" sample_id="2"
+		genome_assembly_id="2" createdDate="2013-07-18 14:20:19.0" />
 
-    <analysis_submission_sequencing_object
-            analysis_submission_id="1" sequencing_object_id="1"/>
-    <analysis_submission_sequencing_object
-            analysis_submission_id="1" sequencing_object_id="2"/>
-    <analysis_submission_sequencing_object
-            analysis_submission_id="2" sequencing_object_id="1"/>
-    <analysis_submission_sequencing_object
-            analysis_submission_id="3" sequencing_object_id="2"/>
+	<qc_entry id="1" created_date="2013-07-18 14:20:19.0"
+		sequencingObject_id="4" DTYPE="FileProcessorErrorQCEntry" />
 
-    <genome_assembly id="1" created_date="2013-07-18 14:20:19.0"/>
-    <genome_assembly_analysis id="1"
-                              analysis_submission_id="2"/>
-    <sample_genome_assembly id="1" sample_id="1"
-                            genome_assembly_id="1" createdDate="2013-07-18 14:20:19.0"/>
 
-    <genome_assembly id="2" created_date="2013-07-18 14:20:19.0"/>
-    <genome_assembly_analysis id="2"
-                              analysis_submission_id="3"/>
-    <sample_genome_assembly id="2" sample_id="2"
-                            genome_assembly_id="2" createdDate="2013-07-18 14:20:19.0"/>
+	<metadata_field id="1" label="field1" type="text" DTYPE="MetadataTemplateField"/>
+	<metadata_field id="2" label="field2" type="text" DTYPE="MetadataTemplateField"/>
 
-    <qc_entry id="1" created_date="2013-07-18 14:20:19.0"
-              sequencingObject_id="4" DTYPE="FileProcessorErrorQCEntry"/>
+	<metadata_entry id="1" value="entry1" type="text" field_id="1" sample_id="1"/>
+	<metadata_entry id="2" value="entry2" type="text" field_id="2" sample_id="1"/>
 
-    <sample id="6" sampleName="sample"
-            createdDate="2013-07-18 14:20:19.0"/>
-    <sample id="7" sampleName="sample"
-            createdDate="2013-07-18 14:20:19.0"/>
-    <project id="6" name="project" projectDescription="project"
-             createdDate="2013-07-18 14:20:19.0"/>
-    <project id="7" name="project2" projectDescription="project"
-             createdDate="2013-07-18 14:20:19.0"/>
-    <project_sample id="6" createdDate="2013-07-18 14:20:19.0"
-                    project_id="6" sample_id="6" owner="true"/>
-    <project_sample id="7" createdDate="2013-07-18 14:20:19.0"
-                    project_id="7" sample_id="7" owner="true"/>
+	<metadata_restriction id="1" level="LEVEL_4" field_id="2" project_id="1"/>
 </dataset>

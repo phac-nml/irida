@@ -453,40 +453,6 @@ public class ProjectSamplesController {
 	}
 
 	/**
-	 * Search for projects available for a user to copy samples to. If the user is an admin it will show all projects.
-	 *
-	 * @param projectId identifier for the current {@link Project}
-	 * @param term      A search term
-	 * @param pageSize  The size of the page requests
-	 * @param page      The page number (0 based)
-	 * @return a {@code Map<String,Object>} containing: total: total number of elements results: A {@code
-	 * Map<Long,String>} of project IDs and project names.
-	 */
-	@RequestMapping(value = "/projects/{projectId}/ajax/samples/available_projects")
-	@ResponseBody
-	public Map<String, Object> getProjectsAvailableToCopySamples(final @PathVariable Long projectId,
-			@RequestParam String term, @RequestParam(required = false, defaultValue = "10") int pageSize,
-			@RequestParam int page) {
-		final Project projectToExclude = projectService.read(projectId);
-		List<Map<String, String>> projectMap = new ArrayList<>();
-		Map<String, Object> response = new HashMap<>();
-		final Page<Project> projects = projectService.getUnassociatedProjects(projectToExclude, term, page, pageSize,
-				Direction.ASC, PROJECT_NAME_PROPERTY);
-
-		for (Project p : projects) {
-			Map<String, String> map = new HashMap<>();
-			map.put("id", p.getId().toString());
-			map.put("text", p.getName());
-			projectMap.add(map);
-		}
-		response.put("total", projects.getTotalElements());
-
-		response.put("projects", projectMap);
-
-		return response;
-	}
-
-	/**
 	 * Share or move samples from one project to another
 	 *
 	 * @param projectId    The original project id

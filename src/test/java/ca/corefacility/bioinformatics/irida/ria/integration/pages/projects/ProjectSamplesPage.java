@@ -244,15 +244,17 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	private boolean isAnchorElementEnabled(WebElement element) {
 		// Using xpath because for anchor elements in dropdowns, bootstrap adds
 		// the disabled class it the parent li element.
-		return !element.findElement(By.xpath("./..")).getAttribute("class").contains("disabled");
+		return !element.findElement(By.xpath("./.."))
+				.getAttribute("class")
+				.contains("disabled");
 	}
 
 	public boolean isMergeBtnEnabled() {
 		return isAnchorElementEnabled(mergeBtn);
 	}
 
-	public boolean isShareBtnEnabled() {
-		return isAnchorElementEnabled(shareBtn);
+	public boolean isShareButtonAvailable() {
+		return shareBtn.isDisplayed();
 	}
 
 	public boolean isRemoveBtnEnabled() {
@@ -261,7 +263,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	// PAGINATION
 	public boolean isPreviousBtnEnabled() {
-		return !pagination.get(0).getAttribute("class").contains("disabled");
+		return !pagination.get(0)
+				.getAttribute("class")
+				.contains("disabled");
 	}
 
 	public boolean isNextBtnEnabled() {

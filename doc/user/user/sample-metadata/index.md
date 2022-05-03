@@ -137,16 +137,39 @@ Each sample can contain it's own metadata.  IRIDA uses the terms:
 * **Metadata Field** as the label for a piece of metadata (e.g. Organism).
 * **Metadata Entry** for the value associated with it (e.g. _Salmonella enterica_).
 
-All metadata fields associated with samples in a project can be viewed on the metadata fields page. This is accessed by clicking on the 'Sample Metadata' tab.
+All metadata fields associated with samples in a project can be viewed on the metadata fields page. This is accessed by clicking on the 'Metadata' tab within the **Project Settings**. Once on the Sample Metadata page, you will see a listing of all *Metadata Fields* associated with samples in this project and their restriction levels:
 
 ![Image showing sample metadata tan](images/sample-metadata-tab.png)
 
-Once on the Sample Metadata page, you will see a listing of all *Metadata Field* associated with samples in this project:
-
-![Image showing sample metadata fields](images/sample-metadata-fields.png)
-
 Metadata Fields have:
 * **Type**: Indicates the type of data that the field can be.  Usually this will be just "text".
+* **Restrictions**: Indicates the metadata role required to view that field and any fields with levels below this restriction level.
+
+#### Metadata Field Security
+
+Metadata Fields can be restricted at the project level by metadata role. There are 4 restriction levels which can be applied to a field (Level 1, Level 2, Level 3, Level 4 (with Level 4 being the highest restriction level and Level 1 the lowest)). A project **Manager** has a default metadata role of `Level 4` and can view all the project sample metadata. A **Collaborator** can have any of the metadata roles applied to them and will only be able to view fields with their metadata role and lower.
+
+On the metadata fields page, the project **Manager** can set the restriction levels for each of the metadata fields associated with the project:
+
+![Project sample metadata manager view](images/project-sample-metadata-fields-manager.png)
+
+For this example we have the Test User set to **Collaborator** with a metadata role of **Level 2**:
+
+![Image listing the project members](images/project-member-metadata-role.png)
+
+Visiting the line list page, this user will only see the metadata fields which have a restriction level of 2 or below. In this case there are only 4 fields this user can view:
+
+![List list collaborator Level 2 metadata role](images/linelist-restricted-collaborator-view.png)
+
+* **SISTR cgMLST Subspecies (v0.3.0)**: Level 1
+* **SISTR QC Status (v0.3.0)**: Level 1
+* **SISTR serovar (v0.3.0)**: Level 2
+* **SISTR H1 (v0.3.0)**: Level 2
+
+Visiting the metadata fields page, this user will only be able to see the 4 fields above:
+
+![Project sample metadata collaborator view](images/project-sample-metadata-fields-collaborator.png)
+
 
 ### Metadata Templates
 
@@ -154,13 +177,15 @@ Metadata Templates provide a pre-defined collection and order of metadata fields
 
 To create a new metadata template (**project managers only**) select the fields from the metadata fields table and click the "Create Template" button:
 
-![Video displaying how to select fields and create a new template](images/sample-metadata-create-template.gif)
+![Select fields and create a new template](images/sample-metadata-create-template-select-fields.png)
+
+![Create a new template dialog](images/sample-metadata-create-template-modal.png)
 
  * **Name**: Must be unique within the project (required)
  * **Description**: Any information that will help to understand why this template should be used.
  * **Fields**: Fields can be dragged and dropped into any order.
 
-A list of all metadata templates for the project can be viewed by selecting the "Metadata Templates" from the menu on the left hand side:
+A list of all metadata templates for the project can be viewed by selecting the "Templates" from the menu along the top:
 
 ![Image displaying metadata template list](images/metadata-template-list.png)
 
@@ -168,7 +193,7 @@ Each template listing contains:
   * Template name; clicking this will redirect to the template details page. 
   * Template description, the number of fields in the template.
   * Template actions, including (download Excel file of template fields, and remove template (managers only))
-  * `Set as Default` button to set the template as the default for the project (displays if hovering on a template) or a `Default` tag if template is already set as default for the project.
+  * `Set as Default` button to set the template as the default for the project (displays if hovering on a template (managers only)) or a `Default` tag if template is already set as default for the project.
 
 Template Details Page
 ---------------------

@@ -21,6 +21,14 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(5, page.getNumberOfMetadataFields(),
 				"Expected to display all metadata fields in the project");
 
+		// TEST FIELD RESTRICTIONS
+		assertTrue(page.areFieldRestrictionSettingsVisible(),
+				"Fields restrictions settings should be visible to managers");
+		assertEquals("Level 1", page.getFieldRestrictionForRow(0),
+				"Should currently be set to level 1 by default");
+		page.updateFieldRestrictionToLevel(0, 3);
+		assertEquals("Level 4", page.getFieldRestrictionForRow(0), "Field should now be restricted to level 4");
+
 		// TEMPLATES
 		page.gotoMetadataTemplates();
 
@@ -75,13 +83,15 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(numberOfMetadataTemplates, page.getNumberOfMetadataTemplates(),
 				"Should be the same number of template as there was initially");
 
-
 	}
 
 	@Test
 	public void testMemberProjectMetadata() {
 		LoginPage.loginAsUser(driver());
 		ProjectMetadataPage page = ProjectMetadataPage.goTo(driver());
+
+		// TEST FIELD RESTRICTIONS
+		assertFalse(page.areFieldRestrictionSettingsVisible(), "Fields restrictions settings should not be visible to collaborators");
 
 		assertFalse(page.isCreateTemplateButtonVisible(), "Should not have a create template button");
 		assertEquals(5, page.getNumberOfMetadataFields(), "Should be able to see the metadata fields");

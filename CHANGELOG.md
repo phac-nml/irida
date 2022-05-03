@@ -21,6 +21,9 @@ Changes
 * [UI]: Updated `User` and `Admin` help documentation URLs.
 * [Developer/UI]: Refreshed the user account page.
 * [UI]: Updated message displayed to user when an invalid reference file is uploaded while launching a workflow.
+* [Developer]: Updated nodejs to `v16.15.0` in the `pom.xml` file.
+* [Developer]: Updated redux API within the cart page to use Redux Toolkit.
+* [All]: Added functionality for project managers to restrict metadata fields depending on the Collaborator's metadata role on the project.
 
 22.01 to 22.03
 --------------

@@ -12,7 +12,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 
 /**
  * Stores a collection of {@link MetadataTemplateField}s that will often used together
@@ -26,8 +26,8 @@ public class MetadataTemplate implements MutableIridaThing {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-	@JoinTable(joinColumns = @JoinColumn(name = "metadata_template_id"))
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+	@JoinTable(name = "metadata_template_metadata_field", joinColumns = @JoinColumn(name = "metadata_template_id"))
 	private List<MetadataTemplateField> fields;
 
 	@NotNull
@@ -46,8 +46,13 @@ public class MetadataTemplate implements MutableIridaThing {
 	@LastModifiedDate
 	private Date modifiedDate;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "template")
-	private List<ProjectMetadataTemplateJoin> projects;
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@NotNull
+	private Project project;
+
+	@Column(name = "project_default")
+	@NotNull
+	private boolean projectDefault;
 
 	public MetadataTemplate() {
 	}
@@ -55,6 +60,14 @@ public class MetadataTemplate implements MutableIridaThing {
 	public MetadataTemplate(String name, List<MetadataTemplateField> fields) {
 		this.name = name;
 		this.fields = fields;
+		this.projectDefault = false;
+	}
+
+	public MetadataTemplate(String name, List<MetadataTemplateField> fields, Project project) {
+		this.name = name;
+		this.fields = fields;
+		this.project = project;
+		this.projectDefault = false;
 	}
 
 	@Override
@@ -65,10 +78,6 @@ public class MetadataTemplate implements MutableIridaThing {
 	@Override
 	public Long getId() {
 		return id;
-	}
-
-	public List<MetadataTemplateField> getFields() {
-		return fields;
 	}
 
 	public void setFields(List<MetadataTemplateField> fields) {
@@ -109,5 +118,21 @@ public class MetadataTemplate implements MutableIridaThing {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
+
+	public Project getProject() {
+		return project;
+	}
+
+	public boolean isProjectDefault() {
+		return projectDefault;
+	}
+
+	public void setProjectDefault(boolean projectDefault) {
+		this.projectDefault = projectDefault;
 	}
 }

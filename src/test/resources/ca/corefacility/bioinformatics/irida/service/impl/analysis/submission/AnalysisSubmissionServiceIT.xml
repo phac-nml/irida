@@ -107,18 +107,19 @@
     <workflow_named_parameter_values named_parameters_id="1" named_parameter_name="A really cool parameter"
                                      named_parameter_value="A really cool value"/>
 
-    <project_user id="1" project_id="1" user_id="2"
-                  createdDate="2013-07-18 14:20:19.0"
-                  projectRole="PROJECT_OWNER"/>
-    <project_user id="2" project_id="2" user_id="2"
-                  createdDate="2013-07-18 14:20:19.0"
-                  projectRole="PROJECT_OWNER"/>
-    <project_user id="3" project_id="2" user_id="1"
-                  createdDate="2013-07-18 14:20:19.0"
-                  projectRole="PROJECT_OWNER"/>
-    <project_user id="4" project_id="1" user_id="1"
-                  createdDate="2013-07-18 14:20:19.0"
-                  projectRole="PROJECT_OWNER"/>
+
+	<project_user id="1" project_id="1" user_id="2"
+		createdDate="2013-07-18 14:20:19.0"
+		projectRole="PROJECT_OWNER" metadataRole="LEVEL_4"/>
+	<project_user id="2" project_id="2" user_id="2"
+		createdDate="2013-07-18 14:20:19.0"
+		projectRole="PROJECT_OWNER" metadataRole="LEVEL_4"/>
+	<project_user id="3" project_id="2" user_id="1"
+		createdDate="2013-07-18 14:20:19.0"
+		projectRole="PROJECT_OWNER" metadataRole="LEVEL_4"/>
+	<project_user id="4" project_id="1" user_id="1"
+		createdDate="2013-07-18 14:20:19.0"
+		projectRole="PROJECT_OWNER" metadataRole="LEVEL_4"/>
 
     <project_analysis_submission id="1"
                                  project_id="1" analysis_submission_id="3" created_date="2013-07-18 14:20:19.0"/>
