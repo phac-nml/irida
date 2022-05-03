@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -58,6 +59,7 @@ public class RESTSampleMetadataControllerTest {
 		p1.setId(3L);
 
 		MetadataTemplateField f1 = new MetadataTemplateField("f1", "text");
+		List<MetadataTemplateField> fieldList = Lists.newArrayList(f1);
 
 		ProjectSampleJoin psj1 = mock(ProjectSampleJoin.class);
 		when(psj1.getSubject()).thenReturn(p1);
@@ -70,15 +72,18 @@ public class RESTSampleMetadataControllerTest {
 		metadata.put(s1.getId(), Sets.newHashSet(new MetadataEntry("value", "text", f1)));
 		metadata.put(s2.getId(), Sets.newHashSet(new MetadataEntry("value2", "text", f1)));
 
+		ProjectMetadataResponse projectMetadata = new ProjectMetadataResponse(p1, metadata);
+
 		Page<ProjectSampleJoin> pageOne = new PageImpl<>(Lists.newArrayList(psj1, psj2));
 		Page<ProjectSampleJoin> pageTwo = new PageImpl<>(Lists.newArrayList());
 
 		when(projectService.read(p1.getId())).thenReturn(p1);
+		when(metadataTemplateService.getPermittedFieldsForCurrentUser(p1, true)).thenReturn(fieldList);
 		when(sampleService.getFilteredSamplesForProjects(eq(Arrays.asList(p1)), eq(Collections.emptyList()), eq(""),
 				eq(""), eq(""), isNull(), isNull(), eq(0), any(Integer.class), any(Sort.class))).thenReturn(pageOne);
 		when(sampleService.getFilteredSamplesForProjects(eq(Arrays.asList(p1)), eq(Collections.emptyList()), eq(""),
 				eq(""), eq(""), isNull(), isNull(), eq(1), any(Integer.class), any(Sort.class))).thenReturn(pageTwo);
-		when(sampleService.getMetadataForProjectSamples(eq(p1), anyList())).thenReturn(metadata);
+		when(sampleService.getMetadataForProjectSamples(eq(p1), anyList(), eq(fieldList))).thenReturn(projectMetadata);
 
 		ResponseResource<ResourceCollection<SampleMetadataResponse>> responseResource = metadataController
 				.getProjectSampleMetadata(p1.getId());
@@ -92,7 +97,7 @@ public class RESTSampleMetadataControllerTest {
 		}
 
 		verify(projectService).read(p1.getId());
-		verify(sampleService, times(1)).getMetadataForProjectSamples(p1, Lists.newArrayList(1L, 2L));
+		verify(sampleService, times(1)).getMetadataForProjectSamples(p1, Lists.newArrayList(1L, 2L), fieldList);
 	}
 
 	@Test

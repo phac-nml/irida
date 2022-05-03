@@ -131,14 +131,17 @@ function PagedTableProvider({
       type: types.CHANGE,
       payload: {
         pagination,
-        order,
-        column: field,
+        order: order || state.order,
+        column: field || state.column,
         filters: pickBy(filters),
       },
     });
   };
 
-  const paginationOptions = React.useMemo(() => getPaginationOptions(state.total), [state.total]);
+  const paginationOptions = React.useMemo(
+    () => getPaginationOptions(state.total),
+    [state.total]
+  );
 
   return (
     <Provider

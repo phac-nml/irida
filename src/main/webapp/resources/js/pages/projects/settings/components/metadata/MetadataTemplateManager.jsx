@@ -57,6 +57,13 @@ export default function MetadataTemplateManager() {
   const [fields, setFields] = React.useState();
   const [newFields, setNewFields] = React.useState();
 
+  const metadataRestrictionsTranslationsMap = {
+    LEVEL_1: i18n("metadataRole.LEVEL_1"),
+    LEVEL_2: i18n("metadataRole.LEVEL_2"),
+    LEVEL_3: i18n("metadataRole.LEVEL_3"),
+    LEVEL_4: i18n("metadataRole.LEVEL_4"),
+  };
+
   React.useEffect(() => {
     /*
     On mount we need to find the current template in the list of all templates.
@@ -151,7 +158,7 @@ export default function MetadataTemplateManager() {
   const removeField = async (item) => {
     const updated = {
       ...template,
-      fields: fields.filter((field) => field.id !== item.id),
+      fields: fields.filter((field) => field.identifier !== item.identifier),
     };
     await completeUpdate(updated);
   };
@@ -207,7 +214,7 @@ export default function MetadataTemplateManager() {
   return (
     <PageHeader
       title={<span className="t-t-header-name">{template.name}</span>}
-      onBack={() => navigate("./")}
+      onBack={() => navigate(-1)}
       extra={displayHeaderExtras(template)}
     >
       <Skeleton loading={isFetching}>
@@ -267,6 +274,14 @@ export default function MetadataTemplateManager() {
                     title: i18n("MetadataField.type"),
                     dataIndex: "type",
                     key: "text",
+                  },
+                  {
+                    title: i18n("MetadataFieldsListManager.restrictions"),
+                    dataIndex: "restriction",
+                    key: "restriction",
+                    render: (text) => {
+                      return metadataRestrictionsTranslationsMap[text];
+                    },
                   },
                   {
                     align: "right",

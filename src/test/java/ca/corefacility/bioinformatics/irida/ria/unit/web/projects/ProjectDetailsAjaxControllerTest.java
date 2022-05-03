@@ -39,8 +39,8 @@ public class ProjectDetailsAjaxControllerTest {
 
 		Project project = TestDataFactory.constructProject();
 		when(projectService.read(anyLong())).thenReturn(project);
-		when(service.getProjectInfo(TestDataFactory.TEST_PROJECT_ID, Locale.ENGLISH))
-				.thenReturn(new ProjectDetailsResponse(project, true, true));
+		when(service.getProjectInfo(TestDataFactory.TEST_PROJECT_ID, Locale.ENGLISH)).thenReturn(
+				new ProjectDetailsResponse(project, true, true, null));
 	}
 
 	@Test

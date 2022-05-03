@@ -1,67 +1,62 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
 	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-		email="admin@nowhere.com" firstName="Mr." lastName="Manager"
-		password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
-		phoneNumber="867-5309" username="admin" enabled="true" system_role="ROLE_ADMIN"
-		credentialsNonExpired="true" />
-
+		  email="admin@nowhere.com" firstName="Mr." lastName="Manager"
+		  password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
+		  phoneNumber="867-5309" username="admin" enabled="true" system_role="ROLE_ADMIN"
+		  credentialsNonExpired="true"/>
 
 	<project id="1" createdDate="2013-07-12 14:20:19.0" name="project"
-		modifiedDate="2013-07-18 14:20:19.0" organism="E. coli"
-		projectDescription="This is an interesting project description."
-		remoteURL="http://google.ca"  />
-
+			 modifiedDate="2013-07-18 14:20:19.0" organism="E. coli"
+			 projectDescription="This is an interesting project description."
+			 remoteURL="http://google.ca"/>
 
 	<project_user id="1" project_id="1" user_id="1"
-		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
-
+				  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+				  metadataRole="LEVEL_4"/>
 
 	<sample id="1" createdDate="2013-07-01 14:00:19.0" description="description1"
-		sampleName="sample1" organism="E. coli" />
+			sampleName="sample1" organism="E. coli"/>
 	<sample id="2" createdDate="2013-07-02 14:01:19.0" description="description2"
-		sampleName="sample2" organism="E. coli" />
+			sampleName="sample2" organism="E. coli"/>
 	<sample id="3" createdDate="2013-07-03 14:02:19.0" description="description3"
-		sampleName="sample3" organism="E. coli" />
+			sampleName="sample3" organism="E. coli"/>
 	<sample id="4" createdDate="2013-07-03 14:02:19.0" description="description4"
-		sampleName="sample4" organism="E. coli" />
+			sampleName="sample4" organism="E. coli"/>
 
 	<project_sample id="1" project_id="1" sample_id="1"
-		createdDate="2013-07-10 14:21:19.0" owner="true" />
+					createdDate="2013-07-10 14:21:19.0" owner="true"/>
 	<project_sample id="2" project_id="1" sample_id="2"
-		createdDate="2013-07-12 14:22:19.0" owner="true" />
+					createdDate="2013-07-12 14:22:19.0" owner="true"/>
 	<project_sample id="3" project_id="1" sample_id="3"
-		createdDate="2013-07-14 14:23:19.0" owner="true" />
+					createdDate="2013-07-14 14:23:19.0" owner="true"/>
 	<project_sample id="4" project_id="1" sample_id="4"
-		createdDate="2013-07-14 14:23:19.0" owner="true" />
-
+					createdDate="2013-07-14 14:23:19.0" owner="true"/>
 
 	<sequence_file id="1" created_date="2013-07-18 14:20:19.0"
-		file_path="src/test/resources/files/test_file.fastq" />
+				   file_path="src/test/resources/files/test_file.fastq"/>
 	<sequence_file id="2" created_date="2013-07-18 14:20:19.0"
-		file_path="/sequenceFile2" />
+				   file_path="/sequenceFile2"/>
 	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
-		file_path="/sequenceFile3" />
+				   file_path="/sequenceFile3"/>
 
-	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0" />
-	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0" />
-	<sequencing_object id="3" created_date="2013-07-18 14:20:19.0" />
-	<sequence_file_single_end id="1" file_id="1" />
-	<sequence_file_single_end id="2" file_id="2" />
-	<sequence_file_single_end id="3" file_id="3" />
-
+	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0"/>
+	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0"/>
+	<sequencing_object id="3" created_date="2013-07-18 14:20:19.0"/>
+	<sequence_file_single_end id="1" file_id="1"/>
+	<sequence_file_single_end id="2" file_id="2"/>
+	<sequence_file_single_end id="3" file_id="3"/>
 
 	<sample_sequencingobject id="1"
-		created_date="2013-07-18 14:20:19.0" sample_id="1"
-		sequencingobject_id="1" />
+							 created_date="2013-07-18 14:20:19.0" sample_id="1"
+							 sequencingobject_id="1"/>
 	<sample_sequencingobject id="2"
-		created_date="2013-07-18 14:20:19.0" sample_id="2"
-		sequencingobject_id="2" />
+							 created_date="2013-07-18 14:20:19.0" sample_id="2"
+							 sequencingobject_id="2"/>
 	<sample_sequencingobject id="3"
-		created_date="2013-07-18 14:20:19.0" sample_id="3"
-		sequencingobject_id="3" />
+							 created_date="2013-07-18 14:20:19.0" sample_id="3"
+							 sequencingobject_id="3"/>
 
-	<ncbi_export_submission id="1" bio_project_id="BIOSPROJECT_TEST" created_date="2020-05-31 08:36:24" namespace="IRIDA" organization="IRIDA" project_id="1" submitter="1" upload_state="NEW" />
-
+	<ncbi_export_submission id="1" bio_project_id="BIOSPROJECT_TEST" created_date="2020-05-31 08:36:24"
+							namespace="IRIDA" organization="IRIDA" project_id="1" submitter="1" upload_state="NEW"/>
 </dataset>

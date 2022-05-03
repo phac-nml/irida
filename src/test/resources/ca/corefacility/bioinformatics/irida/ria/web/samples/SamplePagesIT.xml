@@ -26,19 +26,19 @@
 
 	<project_user id="1" project_id="1" user_id="1"
 		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
+		metadataRole="LEVEL_4"/>
 	<project_user id="2" project_id="2" user_id="1"
 		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
+		metadataRole="LEVEL_1"/>
 	<project_user id="3" project_id="3" user_id="1"
 		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
+		metadataRole="LEVEL_4"/>
 	<project_user id="4" project_id="4" user_id="1"
 		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
+		metadataRole="LEVEL_4"/>
 	<project_user id="6" project_id="1" user_id="2"
 		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
+		metadataRole="LEVEL_1"/>
 
 	<related_project />
 

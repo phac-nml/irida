@@ -38,6 +38,9 @@ public class ProjectMetadataPage extends AbstractPage {
 	@FindBy(className = "t-t-edit-name")
 	WebElement templateEditName;
 
+	@FindBy(className = "t-field-restriction")
+	List<WebElement> fieldRestrictionSelects;
+
 	public ProjectMetadataPage(WebDriver driver) {
 		super(driver);
 	}
@@ -189,6 +192,24 @@ public class ProjectMetadataPage extends AbstractPage {
 		WebElement setDefaultTemplateBtn = wait
 				.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-t-set-default-button")));
 		return setDefaultTemplateBtn.isDisplayed();
+	}
+
+	public boolean areFieldRestrictionSettingsVisible() {
+		return fieldRestrictionSelects.size() > 0;
+	}
+
+	public String getFieldRestrictionForRow(int row) {
+		return fieldRestrictionSelects.get(row).findElement(By.className("ant-select-selection-item")).getText();
+	}
+
+	public void updateFieldRestrictionToLevel(int row, int optionNumber) {
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		fieldRestrictionSelects.get(row).click();
+		WebElement dropdown = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("ant-select-dropdown")));
+		List<WebElement> options = dropdown.findElements(By.className("ant-select-item-option"));
+		options.get(optionNumber).click();
+		wait.until(ExpectedConditions.invisibilityOf(dropdown));
+
 	}
 
 	private void waitForFields() {

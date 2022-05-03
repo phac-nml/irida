@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
-import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import java.util.List;
+
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator;
 import com.google.common.base.Joiner;
@@ -24,8 +25,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 
-import java.util.List;
-
 /**
  * Configuration for IRIDA's spring security modules
  */
@@ -34,9 +33,6 @@ import java.util.List;
 @ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.security")
 @Import({ IridaAuthenticationSecurityConfig.class })
 public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
-
-	@Autowired
-	private UserRepository userRepository;
 
 	@Autowired
 	@Qualifier("apiAuthenticationProvider")
@@ -58,7 +54,7 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	 * permission to invoke a method by the expression handler.
 	 */
 	@Autowired
-	private List<BasePermission<?,?>> basePermissions;
+	private List<BasePermission<?>> basePermissions;
 
 	@Override
 	protected MethodSecurityExpressionHandler createExpressionHandler() {
