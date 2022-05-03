@@ -4,9 +4,6 @@ import { render } from "react-dom";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import FastQC from "./components/FastQC";
-import FastQCCharts from "../../components/samples/components/fastqc/FastQCCharts";
-import FastQCDetails from "../../components/samples/components/fastqc/FastQCDetails";
-import OverRepresentedSequences from "../../components/samples/components/fastqc/OverRepresentedSequences";
 import { getRootPath } from "./fastqc-utilities";
 
 /*
@@ -25,16 +22,7 @@ function App() {
     [path, route] = getRootPath(location.pathname);
   }, [location.pathname]);
 
-  return (
-    <Routes>
-      <Route path={path} element={<FastQC current={route} />}>
-        <Route index element={<FastQCCharts />} />
-        <Route path="overrepresented" element={<OverRepresentedSequences />} />
-        <Route path="details" element={<FastQCDetails />} />
-        <Route path="*" element={<FastQCCharts />} />
-      </Route>
-    </Routes>
-  );
+  return <Routes></Routes>;
 }
 
 render(
@@ -43,4 +31,3 @@ render(
   </BrowserRouter>,
   document.getElementById("root")
 );
-

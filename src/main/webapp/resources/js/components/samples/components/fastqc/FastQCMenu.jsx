@@ -1,9 +1,9 @@
 import React from "react";
 import { Tabs } from "antd";
 
-import FastQCCharts from "./FastQCCharts";
-import OverRepresentedSequences from "./OverRepresentedSequences";
-import FastQCDetails from "./FastQCDetails";
+import { FastQCCharts } from "./FastQCCharts";
+import { OverRepresentedSequences } from "./OverRepresentedSequences";
+import { FastQCDetails } from "./FastQCDetails";
 
 /**
  * React component to render tab menu for the FastQC results
@@ -15,7 +15,7 @@ export function FastQCMenu() {
     <>
       <Tabs defaultActiveKey="charts">
         <Tabs.TabPane tab={i18n("FastQC.charts")} key="charts">
-            <FastQCCharts />
+          <FastQCCharts />
         </Tabs.TabPane>
         <Tabs.TabPane
           tab={i18n("FastQC.overrepresentedSequences")}
@@ -24,7 +24,7 @@ export function FastQCMenu() {
           <OverRepresentedSequences />
         </Tabs.TabPane>
         <Tabs.TabPane tab={i18n("FastQC.details")} key="details">
-            <FastQCDetails />
+          <FastQCDetails />
         </Tabs.TabPane>
       </Tabs>
     </>

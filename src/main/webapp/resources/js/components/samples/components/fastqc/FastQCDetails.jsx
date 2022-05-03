@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import { Col, List, Row} from "antd";
+import { Col, List, Row } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { formatDate } from "../../../../utilities/date-utilities";
 import { ContentLoading } from "../../../loader";
@@ -15,7 +15,7 @@ import { FixedSizeList as VList } from "react-window";
 
 const DEFAULT_HEIGHT = 600;
 
-export default function FastQCDetails() {
+export function FastQCDetails() {
   const { loading, sequencingObjectId, fileId, file, fastQC } = useSelector(
     (state) => state.fastQCReducer
   );

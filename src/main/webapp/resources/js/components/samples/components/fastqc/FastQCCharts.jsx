@@ -20,7 +20,7 @@ const StyledImage = styled(Image)`
 
 const DEFAULT_HEIGHT = 600;
 
-export default function FastQCCharts() {
+export function FastQCCharts() {
   const [loading, setLoading] = useState(true);
   const [perBase, setPerBase] = useState("");
   const [perSeq, setPerSeq] = useState("");
@@ -51,39 +51,33 @@ export default function FastQCCharts() {
   }, [fileId, sequencingObjectId]);
 
   return (
-    <>
-      {loading ? (
-        <ContentLoading message={i18n("FastQC.fetchingCharts")} />
-      ) : (
-        <div>
-          <Typography.Paragraph>
-            {i18n("FastQC.overrepresentedSequencesDescription", fastQCVersion)}
-          </Typography.Paragraph>
-          <Row gutter={[16, 16]} style={{ padding: SPACE_MD, height: DEFAULT_HEIGHT }}>
-            <Col span={12}>
-              <StyledImage
-                src={perBase}
-                className="t-sequenceFile-qc-chart"
-                alt={i18n("FastQC.chart.perbase")}
-              />
-            </Col>
-            <Col span={12}>
-              <StyledImage
-                src={perSeq}
-                className="t-sequenceFile-qc-chart"
-                alt={i18n("FastQC.chart.persequence")}
-              />
-            </Col>
-            <Col span={12}>
-              <StyledImage
-                src={duplicationLevel}
-                className="t-sequenceFile-qc-chart"
-                alt={i18n("FastQC.chart.duplicationlevel")}
-              />
-            </Col>
-          </Row>
-        </div>
-      )}
-    </>
+    <Row gutter={[16, 16]} style={{ padding: 10 }}>
+      <Col span={24}>
+        <Typography.Paragraph>
+          {i18n("FastQC.overrepresentedSequencesDescription", fastQCVersion)}
+        </Typography.Paragraph>
+      </Col>
+      <Col span={12}>
+        <StyledImage
+          src={perBase}
+          className="t-sequenceFile-qc-chart"
+          alt={i18n("FastQC.chart.perbase")}
+        />
+      </Col>
+      <Col span={12}>
+        <StyledImage
+          src={perSeq}
+          className="t-sequenceFile-qc-chart"
+          alt={i18n("FastQC.chart.persequence")}
+        />
+      </Col>
+      <Col span={12}>
+        <StyledImage
+          src={duplicationLevel}
+          className="t-sequenceFile-qc-chart"
+          alt={i18n("FastQC.chart.duplicationlevel")}
+        />
+      </Col>
+    </Row>
   );
 }

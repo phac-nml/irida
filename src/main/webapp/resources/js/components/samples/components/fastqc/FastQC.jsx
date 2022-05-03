@@ -27,7 +27,7 @@ export function FastQC() {
           mask={false}
           bodyStyle={{
             padding: 0,
-            maxHeight: window.innerHeight - 400,
+            height: 800,
             overflowY: "auto",
           }}
           title={
@@ -37,7 +37,7 @@ export function FastQC() {
                 onClick={() => dispatch(clearFastQCData())}
                 style={{ padding: 0 }}
               >
-                <IconArrowLeft/>
+                <IconArrowLeft />
               </Button>
               <Text level={3} strong>
                 <span>{fileLabel}</span>
@@ -50,8 +50,8 @@ export function FastQC() {
           closable={false}
           maskClosable={false}
         >
-          <div style={{margin: 24}}>
-            <FastQCMenu/>
+          <div style={{ margin: 24 }}>
+            <FastQCMenu />
           </div>
         </Modal>
       ) : null}
