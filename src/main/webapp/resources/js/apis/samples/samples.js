@@ -102,6 +102,7 @@ export const sampleApi = createApi({
         url: `/${sampleId}/default-sequencing-object?sequencingObjectId=${sequencingObjectId}`,
         method: "PUT",
       }),
+      invalidatesTags: ["SampleDetails"],
     }),
   }),
 });
