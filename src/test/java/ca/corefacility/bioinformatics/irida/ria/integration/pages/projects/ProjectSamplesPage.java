@@ -1,24 +1,22 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.Select2Utility;
-
 /**
  * <p>
  * Page Object to represent the project samples page.
  * </p>
- *
  */
 public class ProjectSamplesPage extends ProjectPageBase {
 	private static final String RELATIVE_URL = "projects/";
@@ -320,8 +318,16 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		return isElementEnabled(linkerBtn);
 	}
 
+	public boolean isNcbiBtnEnabled() {
+		return isElementEnabled(ncbiExportBtn);
+	}
+
 	public TableSummary getTableSummary() {
 		return new TableSummary(tableSummary.getText());
+	}
+
+	public int getNumberProjectsDisplayed() {
+		return tableRows.size();
 	}
 
 	public void openCreateNewSampleModal() {
@@ -490,191 +496,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		wait.until(ExpectedConditions.textMatches(By.className("t-summary"), Pattern.compile("^Selected: 0")));
 	}
 
-	// --- OLD BELOW
-
-
-	public void selectSample(int sampleName) {
-		WebElement checkbox = samplesTable.findElement(By.xpath("//td/a[text()= " + sampleName + "]/../..//input"));
-		checkbox.click();
-	}
-
-	public int getNumberProjectsDisplayed() {
-		return tableRows.size();
-	}
-
-	public boolean isNcbiBtnEnabled() {
-		return isElementEnabled(ncbiExportBtn);
-	}
-
-	// PAGINATION
-	public boolean isPreviousBtnEnabled() {
-		return !pagination.get(0).getAttribute("class").contains("disabled");
-	}
-
-	public boolean isNextBtnEnabled() {
-		return !pagination.get(pagination.size() - 1).getAttribute("class").contains("disabled");
-	}
-
-	public int getPaginationCount() {
-		// -2 because we ignore the previous and next buttons
-		return pagination.size() - 2;
-	}
-
-	public String getSelectedInfoText() {
-		return selectedCountInfo.getText();
-	}
-
-	// Actions
-	public void selectPaginationPage(int page) {
-		pagination.get(page).findElement(By.cssSelector("a")).click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".dataTables_processing")));
-	}
-
-	public void selectSampleWithShift(int row) {
-		Actions actions = new Actions(driver);
-		actions.keyDown(Keys.SHIFT).click(tableRows.get(row).findElement(By.className("t-row-select"))).perform();
-		// Sometimes, that shift key never gets lifted!
-		actions.keyUp(Keys.SHIFT).perform();
-	}
-
-	private WebDriverWait openToolsDropdownAndWait() {
-		toolsDropdownBtn.click();
-		return new WebDriverWait(driver, 10);
-	}
-
-	public void mergeSamplesWithNewName(String newName) {
-		WebDriverWait wait = openToolsDropdownAndWait();
-		wait.until(ExpectedConditions.visibilityOf(mergeBtn));
-		mergeBtn.click();
-		wait.until(ExpectedConditions.visibilityOf(mergeModal));
-		newMergeNameInput.sendKeys(newName);
-		mergeBtnOK.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("merge-modal")));
-	}
-
-	public void waitUntilShareButtonVisible() {
-		WebDriverWait wait = openToolsDropdownAndWait();
-		wait.until(ExpectedConditions.visibilityOf(shareBtn));
-	}
-
 	public void shareSamples() {
 		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(shareBtn));
 		shareBtn.click();
 	}
 
-	public void moveSamples(String projectNum) {
-		WebDriverWait wait = openToolsDropdownAndWait();
-		wait.until(ExpectedConditions.visibilityOf(moveBtn));
-		moveBtn.click();
-		// Setting owner to false because we removed the checkbox from the move.
-		shareMoveSamples(projectNum, false);
-	}
-
-	private void openFilterModal() {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		filterByPropertyBtn.click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("modal-content")));
-	}
-
-	public void filterByName(String name) {
-		openFilterModal();
-
-		nameFilterInput.clear();
-		nameFilterInput.sendKeys(name);
-		applyFiltersBtn.click();
-
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("modal-content")));
-	}
-
-	public void filterByDateRange(String range) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		openFilterModal();
-
-		dateRangeInput.clear();
-		dateRangeInput.sendKeys(range);
-
-		applyDateRangeBtn.click();
-		applyFiltersBtn.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("modal-content")));
-	}
-
-	public void clearFilter() {
-		clearFilterBtn.click();
-		// Give some time for the filters to properly clear.
-		waitForTime(500);
-	}
-
-	public List<String> getSampleNamesOnPage() {
-		List<WebElement> sampleTDs = driver.findElements(By.cssSelector("tbody td:nth-child(2) a"));
-		List<String> names = new ArrayList<>();
-		names.addAll(sampleTDs.stream().map(WebElement::getText).collect(Collectors.toList()));
-		return names;
-	}
-
-	public void displayAssociatedProject() {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-
-		associatedProjectMenuBtn.click();
-		wait.until(ExpectedConditions.visibilityOf(associatedDropdown));
-		associatedCbs.get(0).click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("processingIndicator")));
-	}
-
-	public void deselectAllSamples() {
-		selectionNone.click();
-		waitForTime(500);
-	}
-
-	private void enterSelect2Value(String value) {
-		Select2Utility select2Utility = new Select2Utility(driver);
-		select2Utility.openSelect2Input();
-		select2Utility.searchByText(value);
-		select2Utility.selectDefaultMatch();
-	}
-
-	private void shareMoveSamples(String project, boolean owner) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
-		enterSelect2Value(project);
-
-		if (owner) {
-			try {
-				giveOwnerBtn.click();
-			} catch (NoSuchElementException e) {
-				throw new GiveOwnerNotDisplayedException();
-			}
-		}
-
-		wait.until(ExpectedConditions.elementToBeClickable(copyModalConfirmBtn));
-		copyModalConfirmBtn.click();
-		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("t-copy-samples-modal")));
-	}
-
-	public List<String> getLockedSampleNames() {
-		List<WebElement> trs = driver.findElements(By.cssSelector("tbody tr"));
-		List<String> locked = new ArrayList<>();
-		for (WebElement tr : trs) {
-			if (tr.findElements(By.className("fa-lock")).size() > 0) {
-				locked.add(tr.findElement(By.className("t-sample-label")).getText());
-			}
-		}
-		return locked;
-	}
-
-	public void goToNextPage() {
-		nextTablePageBtn.click();
-		waitForTime(500);
-	}
-
-	public void closeModalIfOpen() {
-		List<WebElement> modals = driver.findElements(By.className("modal-open"));
-		if (modals.size() > 0) {
-			Actions actions = new Actions(driver);
-			actions.moveToElement(modals.get(0)).moveByOffset(5, 5).click().perform();
-		}
+	private WebDriverWait openToolsDropdownAndWait() {
+		toolsDropdownBtn.click();
+		return new WebDriverWait(driver, 10);
 	}
 
 	public void enterSampleName(String sampleName) {
@@ -685,14 +515,5 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public boolean isSampleNameErrorDisplayed() {
 		return driver.findElements(By.cssSelector(".t-sample-name-wrapper .ant-form-item-explain-error")).size() > 0;
-	}
-
-	/**
-	 * Exception which is thrown when attempting to give owner to a sample
-	 * during copy/move and button is not displayed. Used for verifying no give
-	 * owner button when copying remote samples.
-	 */
-	@SuppressWarnings("serial")
-	public static class GiveOwnerNotDisplayedException extends RuntimeException {
 	}
 }
