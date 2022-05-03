@@ -21,6 +21,8 @@ Changes
 * [UI]: Updated `User` and `Admin` help documentation URLs.
 * [Developer/UI]: Refreshed the user account page.
 * [UI]: Updated message displayed to user when an invalid reference file is uploaded while launching a workflow.
+* [Developer]: Updated nodejs to `v16.15.0` in the `pom.xml` file.
+* [Developer]: Updated redux API within the cart page to use Redux Toolkit.
 * [All]: Added functionality for project managers to restrict metadata fields depending on the Collaborator's metadata role on the project.
 
 22.01 to 22.03
@@ -41,7 +43,6 @@ Changes
 
 21.09 to 22.01
 --------------
-* [Developer]: Updated redux API within the cart page to use Redux Toolkit.
 * [REST]: Fixed bug where analysis output file bytes were being included in responses when only JSON should have been sent. (21.09.1)
 * [All]: Updated some dependency packages to latest versions to remove any `Critical|High` issues as reported by Grype <https://github.com/anchore/grype>. (21.09.2)
 * [REST]: Fixed bug prevending REST API clients from updating the `collectedDate` on samples.
