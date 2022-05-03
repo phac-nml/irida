@@ -15,13 +15,13 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupJoin.UserG
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 
 /**
  * Confirms that the authenticated user is allowed to modify a user group.
  */
 @Component
-public class UpdateUserGroupPermission extends BasePermission<UserGroup, Long> {
+public class UpdateUserGroupPermission extends RepositoryBackedPermission<UserGroup, Long> {
 
 	private static final String PERMISSION_PROVIDED = "canUpdateUserGroup";
 

@@ -10,7 +10,7 @@ import MetadataTemplateMember from "./MetadataTemplateMember";
  * @returns React.Component
  */
 export default function MetadataTemplate() {
-  const { id, projectId } = useParams();
+  const { projectId } = useParams();
 
   const { data: project = {} } = useGetProjectDetailsQuery(projectId, {
     skip: !projectId,

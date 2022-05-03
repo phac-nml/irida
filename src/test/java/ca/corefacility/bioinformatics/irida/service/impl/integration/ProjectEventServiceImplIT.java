@@ -18,6 +18,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
@@ -56,7 +57,7 @@ public class ProjectEventServiceImplIT {
 		Project project = projectService.read(1L);
 		User user = userService.read(2L);
 
-		projectService.addUserToProject(project, user, ProjectRole.PROJECT_USER);
+		projectService.addUserToProject(project, user, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1);
 
 		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, PageRequest.of(0, 10));
 
@@ -75,7 +76,7 @@ public class ProjectEventServiceImplIT {
 		Project project = projectService.read(1L);
 		User user = userService.read(1L);
 
-		projectService.updateUserProjectRole(project, user, ProjectRole.PROJECT_USER);
+		projectService.updateUserProjectRole(project, user, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1);
 
 		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, PageRequest.of(0, 10));
 

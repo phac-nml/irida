@@ -215,6 +215,9 @@ export const IconCalendarTwoTone = ({ ...props }) => (
 
 export const IconShare = ({ ...props }) => <ShareAltOutlined {...props} />;
 
+export const IconWarningOutlined = ({ ...props }) =>
+  <WarningOutlined {...props} />;
+
 /*
 File Type Icons
  */
