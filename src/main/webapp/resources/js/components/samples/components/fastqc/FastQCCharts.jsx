@@ -8,7 +8,6 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 
 import { getFastQCImages } from "../../../../apis/files/sequence-files";
-import { ContentLoading } from "../../../loader";
 import { grey4 } from "../../../../styles/colors";
 import { SPACE_MD } from "../../../../styles/spacing";
 
@@ -18,10 +17,7 @@ const StyledImage = styled(Image)`
   border-radius: 2px;
 `;
 
-const DEFAULT_HEIGHT = 600;
-
 export function FastQCCharts() {
-  const [loading, setLoading] = useState(true);
   const [perBase, setPerBase] = useState("");
   const [perSeq, setPerSeq] = useState("");
   const [duplicationLevel, setDuplicationLevel] = useState("");
@@ -45,7 +41,6 @@ export function FastQCCharts() {
         setDuplicationLevel(`data:image/png;base64,${duplicationlevelChart}`);
 
         setFastQCVersion(fastQCVersion);
-        setLoading(false);
       }
     );
   }, [fileId, sequencingObjectId]);
