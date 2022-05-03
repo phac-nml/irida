@@ -9,24 +9,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
-import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintViolationException;
 import java.util.Collection;
 
-@Component
+@Configuration
 public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
     private static final Logger logger = LoggerFactory.getLogger(IridaUserDetailsContextMapper.class);
 
     // TODO: Why oh why does his break tests but the code works fine...
-//    @Autowired
-//    private UserService userService;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private UserRepository userRepository;
@@ -97,7 +97,7 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
         u.setSystemRole(Role.ROLE_USER);
         try {
             creatingNewUser = true;
-//            userService.create(u);
+            userService.create(u);
         } catch (EntityExistsException e) {
             logger.error("User being created already exists: " + e);
             throw e;
