@@ -430,7 +430,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			sampleRepository.deleteById(s.getId());
 		}
 		mergeInto.setModifiedDate(new Date());
-		return sampleRepository.save(mergeInto);
+		sampleRepository.save(mergeInto);
+		return mergeInto;
 	}
 
 	/**
