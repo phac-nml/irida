@@ -70,21 +70,14 @@ Updating an Existing User Account
 
 {% include_relative includes/start-from-the-user-list.md %}
 
-To edit a user account, click on the "Edit" button at the top of the "User Details" table:
-
-![User details edit button.](images/user-details-edit-button.png)
-
-All of the fields that were available to modify when creating a user account are available for editing:
-
-![Edit user details.](images/edit-user-details.png)
-When you're finished updating the user account, you can click the "Update User" button at the bottom of the form to save the changes.
+When editing a user account, remember to click the "Update User" button of the bottom of the form to save the changes.
 
 Resetting a Password
 --------------------
 
 {% include_relative includes/start-from-the-user-list.md %}
 
-To reset the password for a user account, click on the "Reset Password" button at the top of the "User Details" table:
+To reset the password for a user account, hit the "Security" tab and click on the "Send Email" button:
 
 ![User details reset password button.](images/user-details-reset-password-button.png)
 
@@ -92,7 +85,7 @@ When you click the button, you will be asked to confirm if you would like to res
 
 ![Reset password confirmation dialog.](images/reset-password-confirm.png)
 
-You should see a success notification at the top of your browser window when you confirm:
+You should see a success notification at the top-right of your browser window when you confirm:
 
 ![Reset password success notification.](images/reset-password-success.png)
 
@@ -115,13 +108,7 @@ You can view the details of an existing user account by clicking on the username
 
 ![User details page.](images/user-details-page.png)
 
-To edit a user account, click on the "Edit" button at the top of the "User Details" table:
-
-![User details edit button.](images/user-details-edit-button.png)
-
-To disable a user account, uncheck the "Enabled" field, and click "Update User":
-
-![Uncheck the "Enabled" field.](images/uncheck-enabled.png)
+To disable a user account, uncheck the "Enabled" field and click the "Update User" button of the bottom of the form to save the change.
 
 **Note**: A user account that is not "Enabled" is **not** deleted from the system, but that user can no longer log in to IRIDA.
 

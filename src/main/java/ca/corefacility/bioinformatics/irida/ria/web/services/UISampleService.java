@@ -8,7 +8,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -45,6 +44,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchCriteria;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchOperation;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIShareSamplesException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntSearch;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSample;
@@ -243,9 +243,9 @@ public class UISampleService {
 	 *
 	 * @param request Request containing the details of the move
 	 * @param locale  current users {@link Locale}
-	 * @throws Exception if project or samples cannot be found
+	 * @throws UIShareSamplesException if project or samples cannot be found
 	 */
-	public void shareSamplesWithProject(ShareSamplesRequest request, Locale locale) throws Exception {
+	public void shareSamplesWithProject(ShareSamplesRequest request, Locale locale) throws UIShareSamplesException {
 		Project currentProject = projectService.read(request.getCurrentId());
 		Project targetProject = projectService.read(request.getTargetId());
 
@@ -254,15 +254,15 @@ public class UISampleService {
 			try {
 				projectService.moveSamples(currentProject, targetProject, samples);
 			} catch (Exception e) {
-				throw new Exception(messageSource.getMessage("server.ShareSamples.move-error",
+				throw new UIShareSamplesException(messageSource.getMessage("server.ShareSamples.move-error",
 						new Object[] { targetProject.getLabel() }, locale));
 			}
 		} else {
 			try {
 				projectService.shareSamples(currentProject, targetProject, samples, !request.getLocked());
 			} catch (Exception e) {
-				throw new Exception(messageSource.getMessage("server.ShareSamples.copy-error",
-						new Object[] { targetProject.getLabel() }, locale));
+				throw new UIShareSamplesException(
+						messageSource.getMessage("server.ShareSamples.copy-error", new Object[] { targetProject.getLabel() }, locale));
 			}
 		}
 	}
@@ -272,6 +272,7 @@ public class UISampleService {
 	 *
 	 * @param projectId Identifier for the current project.
 	 * @param request   Information about the state of the table (filters, sort, and pagination).
+	 * @param locale    current users {@link Locale}
 	 * @return a page of samples
 	 */
 	public AntTableResponse<ProjectSampleTableItem> getPagedProjectSamples(Long projectId,
@@ -323,11 +324,14 @@ public class UISampleService {
 					SearchOperation.fromString(search.getOperation())));
 		}
 
-		try (Stream<ProjectSampleJoin> projectSamples = sampleService.streamFilteredProjectSamples(projects, filterSpec,
-				request.getSort())) {
-			projectSamples.forEach(projectSample -> {
-				filteredProjectSamples.add(new ProjectCartSample(projectSample));
-			});
+		Page<ProjectSampleJoin> page = sampleService.getFilteredProjectSamples(projects, filterSpec, 0, MAX_PAGE_SIZE,
+				request.getSort());
+
+		while (!page.isEmpty()) {
+			page.getContent().forEach(psj -> filteredProjectSamples.add(new ProjectCartSample(psj)));
+			// Get the next page
+			page = sampleService.getFilteredProjectSamples(projects, filterSpec, page.getNumber() + 1, MAX_PAGE_SIZE,
+					request.getSort());
 		}
 
 		return filteredProjectSamples;
@@ -466,13 +470,13 @@ public class UISampleService {
 
 	/**
 	 * Download the currently filtered project samples table as either an xlsx or csv file.
-	 * 
+	 *
 	 * @param projectId Identifier for the project
 	 * @param type      The type of file to generate (either excel or csv)
 	 * @param request   The project samples table request
 	 * @param response  The response
 	 * @param locale    The current locale
-	 * @throws IOException
+	 * @throws IOException If there is an error writing the file
 	 */
 	@Transactional(readOnly = true)
 	public void downloadSamplesSpreadsheet(long projectId, String type, ProjectSamplesTableRequest request,
@@ -654,6 +658,12 @@ public class UISampleService {
 		csvWriter.close();
 	}
 
+	/**
+	 * Check if a list of sample names exist within a project
+	 *
+	 * @param request Request containing the project id and sample names
+	 * @return List of valid and invalid sample names
+	 */
 	public SampleNameCheckResponse checkSampleNames(SampleNameCheckRequest request) {
 		Iterable<Project> projects = projectService.readMultiple(request.getProjectIds());
 		List<ValidSample> valid = new ArrayList<>();

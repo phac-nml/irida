@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidatio
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIShareSamplesException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.DownloadRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSample;
@@ -79,6 +80,7 @@ public class ProjectSamplesAjaxController {
 	 *
 	 * @param projectId Identifier for the current project
 	 * @param request   Information about the current state of the project samples table.
+	 * @param locale    Current users locale
 	 * @return The Page of samples
 	 */
 	@PostMapping("")
@@ -189,7 +191,7 @@ public class ProjectSamplesAjaxController {
 		try {
 			uiSampleService.shareSamplesWithProject(request, locale);
 			return ResponseEntity.ok(new AjaxSuccessResponse(""));
-		} catch (Exception e) {
+		} catch (UIShareSamplesException e) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new AjaxErrorResponse(e.getLocalizedMessage()));
 		}
 	}

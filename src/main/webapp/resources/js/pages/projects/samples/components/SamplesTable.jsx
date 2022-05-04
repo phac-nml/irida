@@ -21,6 +21,7 @@ import SampleQuality from "../../../../components/sample-quality";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
 import { IconSearch } from "../../../../components/icons/Icons";
+import { blue6 } from "../../../../styles/colors";
 
 const { RangePicker } = DatePicker;
 
@@ -104,7 +105,7 @@ export function SamplesTable() {
    * Handle changes made to the table options.  This will trigger an automatic
    * reload of the table content.
    * @param pagination
-   * @param filters
+   * @param tableFilters
    * @param sorter
    * @returns {*}
    */
@@ -112,6 +113,7 @@ export function SamplesTable() {
     let { associated, ...filters } = tableFilters;
     const search = formatSearch(filters);
     if (filterByFile) search.push(filterByFile.fileFilter);
+    console.log({ filterByFile });
 
     dispatch(
       updateTable({
@@ -132,7 +134,11 @@ export function SamplesTable() {
     confirm({ closeDropdown: false });
   };
 
-  const getColumnSearchProps = (dataIndex, filterName = "") => ({
+  const getColumnSearchProps = (
+    dataIndex,
+    filterName = "",
+    placeholder = ""
+  ) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -143,7 +149,7 @@ export function SamplesTable() {
         <Select
           className={filterName}
           mode="tags"
-          placeholder={`Search ${dataIndex}`}
+          placeholder={placeholder}
           value={selectedKeys}
           onChange={(e) => {
             setSelectedKeys(e);
@@ -158,7 +164,7 @@ export function SamplesTable() {
             size="small"
             style={{ width: 89 }}
           >
-            Clear
+            {i18n("Filter.clear")}
           </Button>
           <Button
             type="primary"
@@ -167,24 +173,24 @@ export function SamplesTable() {
             size="small"
             style={{ width: 90 }}
           >
-            Search
+            {i18n("Filter.search")}
           </Button>
         </Space>
       </div>
     ),
     filterIcon: (filtered) => (
-      <IconSearch style={{ color: filtered ? "#1890ff" : undefined }} />
+      <IconSearch style={{ color: filtered ? blue6 : undefined }} />
     ),
   });
 
-  const getDateColumnSearchProps = () => ({
+  const getDateColumnSearchProps = (filterName) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
       confirm,
       clearFilters,
     }) => (
-      <div style={{ padding: 8 }}>
+      <div style={{ padding: 8 }} className={filterName}>
         <div style={{ marginBottom: 8, display: "block" }}>
           <RangePicker
             onChange={(dates) =>
@@ -200,8 +206,9 @@ export function SamplesTable() {
             onClick={() => handleClearSearch(clearFilters, confirm)}
             size="small"
             style={{ width: 89 }}
+            className="t-clear-btn"
           >
-            Clear
+            {i18n("Filter.clear")}
           </Button>
           <Button
             type="primary"
@@ -209,14 +216,15 @@ export function SamplesTable() {
             icon={<IconSearch />}
             size="small"
             style={{ width: 90 }}
+            className="t-search-btn"
           >
-            Search
+            {i18n("Filter.search")}
           </Button>
         </Space>
       </div>
     ),
     filterIcon: (filtered) => (
-      <IconSearch style={{ color: filtered ? "#1890ff" : undefined }} />
+      <IconSearch style={{ color: filtered ? blue6 : undefined }} />
     ),
   });
 
@@ -226,6 +234,7 @@ export function SamplesTable() {
         const indeterminate = selectedCount < total && selectedCount > 0;
         return (
           <Checkbox
+            className="t-select-all"
             onChange={updateSelectAll}
             checked={selectedCount > 0}
             indeterminate={indeterminate}
@@ -256,7 +265,11 @@ export function SamplesTable() {
           <a>{name}</a>
         </SampleDetailViewer>
       ),
-      ...getColumnSearchProps(["sample", "sampleName"], "t-name-select"),
+      ...getColumnSearchProps(
+        ["sample", "sampleName"],
+        "t-name-select",
+        i18n("Filter.sampleName.placeholder")
+      ),
     },
     {
       title: i18n("SamplesTable.Column.quality"),
@@ -273,6 +286,7 @@ export function SamplesTable() {
     },
     {
       title: i18n("SamplesTable.Column.project"),
+      className: "t-td-project",
       dataIndex: ["project", "name"],
       sorter: { multiple: 1 },
       key: "associated",
@@ -293,16 +307,18 @@ export function SamplesTable() {
     },
     {
       title: i18n("SamplesTable.Column.created"),
+      className: "t-td-created",
       dataIndex: ["sample", "createdDate"],
       sorter: { multiple: 1 },
       width: 230,
       render: (createdDate) => {
         return formatInternationalizedDateTime(createdDate);
       },
-      ...getDateColumnSearchProps(),
+      ...getDateColumnSearchProps("t-created-filter"),
     },
     {
       title: i18n("SamplesTable.Column.modified"),
+      className: "t-td-modified",
       dataIndex: ["sample", "modifiedDate"],
       defaultSortOrder: "descend",
       sorter: { multiple: 1 },
@@ -310,12 +326,13 @@ export function SamplesTable() {
       render: (modifiedDate) => {
         return formatInternationalizedDateTime(modifiedDate);
       },
-      ...getDateColumnSearchProps(),
+      ...getDateColumnSearchProps("t-modified-filter"),
     },
   ];
 
   return (
     <Table
+      className="t-samples-table"
       loading={isFetching || loadingLong}
       columns={columns}
       dataSource={samples}

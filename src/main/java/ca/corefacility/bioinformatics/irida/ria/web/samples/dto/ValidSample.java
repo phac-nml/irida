@@ -3,6 +3,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
+/**
+ * DTO for when checking if a sample name is valid.  Returns the minimal details of the sample.
+ */
 public class ValidSample {
 	final Long sampleId;
 	final String sampleName;

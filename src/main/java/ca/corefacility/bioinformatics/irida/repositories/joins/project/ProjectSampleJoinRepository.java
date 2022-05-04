@@ -1,19 +1,14 @@
 package ca.corefacility.bioinformatics.irida.repositories.joins.project;
 
 import java.util.List;
-import java.util.stream.Stream;
-
-import javax.persistence.QueryHint;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.lang.Nullable;
 
@@ -22,8 +17,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-
-import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
 
 /**
  * Repository for managing {@link ProjectUserJoin}.
@@ -36,14 +29,6 @@ public interface ProjectSampleJoinRepository
 	 */
 	@EntityGraph(value = "projectSampleMinimal", type = EntityGraphType.FETCH)
 	public Page<ProjectSampleJoin> findAll(@Nullable Specification<ProjectSampleJoin> spec, Pageable pageable);
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@EntityGraph(value = "projectSampleMinimal", type = EntityGraphType.FETCH)
-	@QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "" + Integer.MIN_VALUE))
-	@Query("from ProjectSampleJoin")
-	public Stream<ProjectSampleJoin> streamAll(@Nullable Specification<ProjectSampleJoin> spec, @Nullable Sort sort);
 
 	/**
 	 * Get a collection of the {@link Project}s related to a {@link Sample}

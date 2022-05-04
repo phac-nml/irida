@@ -26,9 +26,13 @@ import {
   IconPlusSquare,
   IconShare,
   IconShoppingCart,
-  IcoonMergeSamples,
 } from "../../../../components/icons/Icons";
-import { CloseCircleOutlined, FileTextOutlined } from "@ant-design/icons";
+import {
+  CloseCircleOutlined,
+  FileTextOutlined,
+  MergeCellsOutlined,
+} from "@ant-design/icons";
+import { useGetProjectDetailsQuery } from "../../../../apis/projects/project";
 
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));
@@ -51,9 +55,7 @@ export default function SamplesMenu() {
     selectedCount,
     filterByFile: fileFiltered,
   } = useSelector((state) => state.samples);
-  const { project: { canManage = false } = {} } = useSelector(
-    (state) => state.user
-  );
+  const { data: details = {} } = useGetProjectDetailsQuery(projectId);
 
   const [mergeVisible, setMergeVisible] = React.useState(false);
   const [removedVisible, setRemovedVisible] = React.useState(false);
@@ -162,58 +164,56 @@ export default function SamplesMenu() {
     setFilterByFileVisible(false);
   };
 
-  const toolsMenu = React.useMemo(() => {
-    return (
-      <Menu className="t-tools-dropdown">
+  const toolsMenu = (
+    <Menu className="t-tools-dropdown">
+      {!details.remote && (
         <Menu.Item
           disabled={selectedCount < 2}
           key="merge-menu"
-          icon={<IcoonMergeSamples />}
+          icon={<MergeCellsOutlined />}
           onClick={() => validateAndOpenModalFor("merge")}
           className="t-merge"
         >
           {i18n("SamplesMenu.merge")}
         </Menu.Item>
-        <Menu.Item
-          disabled={selectedCount === 0}
-          key="share-menu"
-          icon={<IconShare />}
-          onClick={shareSamples}
-          className="t-share"
+      )}
+      <Menu.Item
+        disabled={selectedCount === 0}
+        key="share-menu"
+        icon={<IconShare />}
+        onClick={shareSamples}
+        className="t-share"
+      >
+        {i18n("SamplesMenu.share")}
+      </Menu.Item>
+      <Menu.Item
+        disabled={selectedCount === 0}
+        key="remove-menu"
+        icon={<IconCloseSquare />}
+        onClick={() => validateAndOpenModalFor("remove")}
+        className="t-remove"
+      >
+        {i18n("SamplesMenu.remove")}
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key="import-menu" icon={<IconCloudUpload />}>
+        <a
+          href={setBaseUrl(`projects/${projectId}/sample-metadata/upload/file`)}
         >
-          {i18n("SamplesMenu.share")}
-        </Menu.Item>
-        <Menu.Item
-          disabled={selectedCount === 0}
-          key="remove-menu"
-          icon={<IconCloseSquare />}
-          onClick={() => validateAndOpenModalFor("remove")}
-          className="t-remove"
-        >
-          {i18n("SamplesMenu.remove")}
-        </Menu.Item>
-        <Menu.Divider />
-        <Menu.Item key="import-menu" icon={<IconCloudUpload />}>
-          <a
-            href={setBaseUrl(
-              `projects/${projectId}/sample-metadata/upload/file`
-            )}
-          >
-            {i18n("SamplesMenu.import")}
-          </a>
-        </Menu.Item>
-        <Menu.Divider />
-        <Menu.Item
-          key="create-menu"
-          icon={<IconPlusSquare />}
-          onClick={() => setCreateSampleVisible(true)}
-          className="t-create-sample"
-        >
-          {i18n("SamplesMenu.createSample")}
-        </Menu.Item>
-      </Menu>
-    );
-  }, [selectedCount]);
+          {i18n("SamplesMenu.import")}
+        </a>
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item
+        key="create-menu"
+        icon={<IconPlusSquare />}
+        onClick={() => setCreateSampleVisible(true)}
+        className="t-create-sample"
+      >
+        {i18n("SamplesMenu.createSample")}
+      </Menu.Item>
+    </Menu>
+  );
 
   const exportMenu = (
     <Menu className="t-export-dropdown">
@@ -265,7 +265,7 @@ export default function SamplesMenu() {
     <>
       <Row justify="space-between">
         <Space>
-          {canManage && (
+          {details.canManage && (
             <Dropdown overlay={toolsMenu}>
               <Button className="t-sample-tools">
                 {i18n("SamplesMenu.label")} <IconDropDown />
@@ -278,6 +278,7 @@ export default function SamplesMenu() {
             </Button>
           </Dropdown>
           <Button
+            className="t-add-cart-btn"
             icon={<IconShoppingCart />}
             onClick={onAddToCart}
             disabled={selectedCount === 0}

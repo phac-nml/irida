@@ -19,6 +19,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIAddAssociatedProjectException;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIRemoveAssociatedProjectException;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.AssociatedProject;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -96,15 +98,16 @@ public class UIAssociatedProjectsService {
 	 * @param projectId           identifier for the current project
 	 * @param associatedProjectId identifier for the project to associate
 	 * @param locale              currently logged in users locale
-	 * @throws Exception if the project or associated project cannot be found
+	 * @throws UIAddAssociatedProjectException if the project or associated project cannot be found
 	 */
-	public void addAssociatedProject(long projectId, long associatedProjectId, Locale locale) throws Exception {
+	public void addAssociatedProject(long projectId, long associatedProjectId, Locale locale)
+			throws UIAddAssociatedProjectException {
 		try {
 			Project project = projectService.read(projectId);
 			Project associatedProject = projectService.read(associatedProjectId);
 			projectService.addRelatedProject(project, associatedProject);
 		} catch (EntityNotFoundException e) {
-			throw new Exception(
+			throw new UIAddAssociatedProjectException(
 					messageSource.getMessage("server.ViewAssociatedProjects.add-error", new Object[] {}, locale));
 		}
 	}
@@ -115,15 +118,16 @@ public class UIAssociatedProjectsService {
 	 * @param projectId           identifier for the current project
 	 * @param associatedProjectId identifier for the project to associate
 	 * @param locale              current users locale
-	 * @throws Exception if there is an issue removing the associated project
+	 * @throws UIRemoveAssociatedProjectException if there is an issue removing the associated project
 	 */
-	public void removeAssociatedProject(long projectId, long associatedProjectId, Locale locale) throws Exception {
+	public void removeAssociatedProject(long projectId, long associatedProjectId, Locale locale)
+			throws UIRemoveAssociatedProjectException {
 		try {
 			Project project = projectService.read(projectId);
 			Project associatedProject = projectService.read(associatedProjectId);
 			projectService.removeRelatedProject(project, associatedProject);
 		} catch (EntityNotFoundException e) {
-			throw new Exception(
+			throw new UIRemoveAssociatedProjectException(
 					messageSource.getMessage("server.ViewAssociatedProjects.remove-error", new Object[] {}, locale));
 		}
 	}

@@ -20,14 +20,14 @@ export default function RemoveModal({
   samples,
   visible,
   onComplete,
-  onCancel
+  onCancel,
 }) {
   const [removeSamples, { isLoading }] = useRemoveMutation();
 
   const onOk = async () => {
     try {
       const response = await removeSamples(
-        samples.valid.map(sample => sample.id)
+        samples.valid.map((sample) => sample.id)
       );
       onComplete();
     } catch (e) {
@@ -38,12 +38,13 @@ export default function RemoveModal({
   return (
     <Modal
       title={i18n("RemoveModal.title")}
+      className="t-remove-modal"
       visible={visible}
       onCancel={onCancel}
       onOk={onOk}
       okText={i18n("RemoveModal.okText")}
       okButtonProps={{
-        loading: isLoading
+        loading: isLoading,
       }}
       width={600}
     >
@@ -54,7 +55,7 @@ export default function RemoveModal({
             bordered
             header={<Typography.Text>Samples to be removed</Typography.Text>}
             dataSource={samples.valid}
-            renderItem={sample => (
+            renderItem={(sample) => (
               <List.Item>
                 <List.Item.Meta title={sample.sampleName} />
               </List.Item>

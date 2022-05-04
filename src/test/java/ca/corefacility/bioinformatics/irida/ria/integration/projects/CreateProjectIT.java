@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.TableSummary;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
@@ -87,7 +88,7 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 
 		// Add some samples
 		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
-		samplesPage.selectSample(0);
+		samplesPage.selectSampleByName("sample");
 		samplesPage.addSelectedSamplesToCart();
 
 		ProjectsPage.goToProjectsPage(driver(), false);
@@ -99,6 +100,7 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 
 		createComponent.submitProject();
 		assertTrue(driver().getTitle().contains(name));
-		assertEquals("Showing 1 to 1 of 1 entries", samplesPage.getTableInfo(), "Should be 1 sample on the page");
+		TableSummary summary = samplesPage.getTableSummary();
+		assertEquals(1, summary.getTotal(), "Should be 1 sample on the page");
 	}
 }

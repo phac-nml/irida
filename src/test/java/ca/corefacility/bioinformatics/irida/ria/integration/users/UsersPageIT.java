@@ -25,7 +25,6 @@ public class UsersPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(3, usersPage.usersTableSize(), "Projects table should be populated by 3 projects");
 
 		assertTrue(usersPage.canUserModifyUserState(), "Admin should be able to modify user state");
-		assertTrue(usersPage.canUserAccessUserEditPage(), "Admin should be able to directly go to edit user page");
 
 		// Test sorting
 		assertTrue(usersPage.isTableSortedByModifiedDate(), "Table should be sorted by the modified date initially");
@@ -45,6 +44,5 @@ public class UsersPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(3, usersPage.usersTableSize(), "Projects table should be populated by 3 projects");
 
 		assertFalse(usersPage.canUserModifyUserState(), "Manager should not be able to modify user state");
-		assertFalse(usersPage.canUserAccessUserEditPage(), "Manager should not be able to access the edit user page");
 	}
 }

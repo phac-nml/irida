@@ -20,9 +20,8 @@ import ca.corefacility.bioinformatics.irida.model.event.UserGroupRoleSetProjectE
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
- * A collection of {@link User} accounts is a {@link UserGroup}. The
- * {@link UserGroup} can be assigned permissions, similar to a {@link User}
- * account, but applies the permissions to all members of the {@link UserGroup}.
+ * A collection of {@link User} accounts is a {@link UserGroup}. The {@link UserGroup} can be assigned permissions,
+ * similar to a {@link User} account, but applies the permissions to all members of the {@link UserGroup}.
  */
 @Entity
 @Table(name = "user_group")
@@ -59,7 +58,7 @@ public class UserGroup implements MutableIridaThing {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "userGroup")
 	private Set<UserGroupProjectJoin> userGroupProjects;
-	
+
 	@Column(name = "description")
 	@Lob
 	private String description;
@@ -71,7 +70,7 @@ public class UserGroup implements MutableIridaThing {
 		this.id = null;
 		this.createdDate = new Date();
 	}
-	
+
 	public UserGroup(final String name) {
 		this();
 		this.name = name;
@@ -154,7 +153,7 @@ public class UserGroup implements MutableIridaThing {
 	public String getDescription() {
 		return this.description;
 	}
-	
+
 	public void setDescription(final String description) {
 		this.description = description;
 	}
