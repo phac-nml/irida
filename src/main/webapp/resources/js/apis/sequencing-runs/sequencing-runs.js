@@ -26,10 +26,11 @@ export const sequencingRunsApi = createApi({
     */
     getSequencingRunFiles: build.query({
       query: (runId) => ({
-        url: `${runId}/sequenceFiles`,
+        url: `${runId}/sequenceFiles2`,
       }),
       transformResponse: (response) => {
-        return response.map(sequencingObject => sequencingObject.sequenceFile ? sequencingObject.sequenceFile : sequencingObject.files).flat();
+        console.log(response);
+        return response;
       }
     }),
     /*

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequenceFileDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunModel;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunsListRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISequencingRunService;
@@ -49,6 +50,17 @@ public class SequencingRunAjaxController {
 	@RequestMapping("/{runId}/sequenceFiles")
 	public ResponseEntity<Set<SequencingObject>> getSequencingRunFiles(@PathVariable long runId) {
 		return ResponseEntity.ok(service.getSequencingRunFiles(runId));
+	}
+
+	/**
+	 * Get the files for a specific sequencing run.
+	 *
+	 * @param runId - the id of the sequencing run
+	 * @return a set of {@link SequenceFileDetails}s
+	 */
+	@RequestMapping("/{runId}/sequenceFiles2")
+	public ResponseEntity<Set<SequenceFileDetails>> getSequencingRunFiles2(@PathVariable long runId) {
+		return ResponseEntity.ok(service.getSequencingRunFiles2(runId));
 	}
 
 	/**

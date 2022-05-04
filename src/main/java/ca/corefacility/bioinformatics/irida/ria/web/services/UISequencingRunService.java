@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequenceFileDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunModel;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunsListRequest;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -54,6 +55,17 @@ public class UISequencingRunService {
 	public Set<SequencingObject> getSequencingRunFiles(Long runId) {
 		SequencingRun run = runService.read(runId);
 		return objectService.getSequencingObjectsForSequencingRun(run);
+	}
+
+	/**
+	 * Get the files for a specific sequencing run.
+	 *
+	 * @param runId - the id of the sequencing run
+	 * @return a set of {@link SequenceFileDetails}s
+	 */
+	public Set<SequenceFileDetails> getSequencingRunFiles2(Long runId) {
+		SequencingRun run = runService.read(runId);
+		return objectService.getSequencingObjectsForSequencingRun2(run);
 	}
 
 	/**

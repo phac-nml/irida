@@ -4,9 +4,12 @@ import {
   useGetSequencingRunDetailsQuery,
   useGetSequencingRunFilesQuery
 } from "../../../apis/sequencing-runs/sequencing-runs";
-import { Card, Col, Row, Table } from "antd";
+import { Button, Card, Col, Row, Table } from "antd";
 import { formatDate } from "../../../utilities/date-utilities";
 import { PageWrapper } from "../../../components/page/PageWrapper";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+import { IconDownloadFile } from "../../../../js/components/icons/Icons";
+import { LinkButton } from "../../../components/Buttons/LinkButton";
 
 /**
  * React component to display the sequencing run details page.
@@ -20,14 +23,34 @@ export default function SequencingRunDetailsPage() {
   const columns = [
     {
       title: 'ID',
-      dataIndex: 'identifier',
-      key: 'identifier',
+      dataIndex: 'id',
+      key: 'id',
     },
     {
       title: 'Filename',
       dataIndex: 'fileName',
       key: 'fileName',
+      render(text, item) {
+        return <LinkButton
+          text={text}
+          href={setBaseUrl(`/sequencingRuns/${runId}/sequenceFiles/${item.sequencingObjectId}/file/${item.id}/summary`)}
+        />
+      },
     },
+    {
+      title: 'Size',
+      dataIndex: 'fileSize',
+      key: 'fileSize',
+    },
+    {
+      dataIndex: 'download',
+      key: 'download',
+      render(text, item) {
+        return <Button type="primary"
+                       onClick={() => window.open(setBaseUrl(`/sequenceFiles/download/${item.sequencingObjectId}/file/${item.id}`), "_blank")}
+                       icon={<IconDownloadFile/>}/>;
+      },
+    }
   ]
 
   console.log("runID = " + runId);
