@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -19,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -32,14 +30,12 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsR
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.UpdateProjectAttributeRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.ProjectCurrentUserModel;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ManageLocalProjectSettingsPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -52,10 +48,7 @@ public class UIProjectsService {
 	private final MessageSource messageSource;
 	private final ProjectOwnerPermission projectOwnerPermission;
 	private final ManageLocalProjectSettingsPermission projectMembersPermission;
-	/*
-	 * All roles that are available on a project.
-	 */
-	private final List<String> PROJECT_ROLES = ImmutableList.of("PROJECT_USER", "PROJECT_OWNER");
+
 
 	@Autowired
 	public UIProjectsService(ProjectService projectService, SampleService sampleService, MessageSource messageSource,
@@ -98,9 +91,12 @@ public class UIProjectsService {
 	 * @return list of roles and their internationalized strings
 	 */
 	public List<Role> getProjectRoles(Locale locale) {
-		return PROJECT_ROLES.stream()
-				.map(role -> new Role(role, messageSource.getMessage("projectRole." + role, new Object[] {}, locale)))
-				.collect(Collectors.toList());
+		List<Role> roles = new ArrayList<>();
+		for (ProjectRole role : ProjectRole.values()) {
+			roles.add(new Role(role.toString(),
+					messageSource.getMessage("projectRole." + role, new Object[] {}, locale)));
+		}
+		return roles;
 	}
 
 	/**
@@ -293,19 +289,5 @@ public class UIProjectsService {
 		Page<Project> projects = projectService.getUnassociatedProjects(project, "", 0, Integer.MAX_VALUE,
 				Sort.Direction.ASC, "name");
 		return projects.getContent();
-	}
-
-	/**
-	 * Get the current users permission on a project.
-	 *
-	 * @param projectId      - identifier for the current project
-	 * @param authentication - user {@link Authentication}
-	 * @return details about the user on the project
-	 */
-	public ProjectCurrentUserModel getProjectCurrentUserDetails(long projectId, Authentication authentication) {
-		Project project = projectService.read(projectId);
-		ProjectCurrentUserModel model = new ProjectCurrentUserModel();
-		model.setCanManage(projectOwnerPermission.isAllowed(authentication, project));
-		return model;
 	}
 }

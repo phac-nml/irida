@@ -1,11 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
+import java.util.List;
+import java.util.Locale;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.CreateProjectRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ManageLocalProjectSettingsPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
@@ -14,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.collect.ImmutableList;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class UIProjectServiceTest {
@@ -54,5 +59,11 @@ public class UIProjectServiceTest {
 		request.setSamples(ImmutableList.of(1L, 2L));
 		service.createProject(request);
 		verify(projectService, times(1)).createProjectWithSamples(any(Project.class), anyList(), anyBoolean());
+	}
+
+	@Test
+	public void testGetProjectRoles() {
+		List<Role> roles = service.getProjectRoles(Locale.ENGLISH);
+		assertEquals(2, roles.size(), "Should have 2 roles");
 	}
 }
