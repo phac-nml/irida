@@ -54,8 +54,6 @@ public class UIProjectSampleService {
 	public ResponseEntity<SampleNameValidationResponse> validateNewSampleName(String name, long projectId, Locale locale) {
 		int SAMPLE_NAME_MIN_LENGTH = 3;
 
-		Project project = projectService.read(projectId);
-
 		// Make sure it has the correct length
 		if (name.length() <= SAMPLE_NAME_MIN_LENGTH) {
 			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY.value())
@@ -72,6 +70,8 @@ public class UIProjectSampleService {
 
 		// Check to see if the sample name already exists.
 		try {
+
+			Project project = projectService.read(projectId);
 			sampleService.getSampleBySampleName(project, name);
 			return ResponseEntity.status(HttpStatus.CONFLICT)
 					.body(new SampleNameValidationResponse("error",
