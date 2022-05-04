@@ -19,7 +19,6 @@ import {
 import { getNewTagColor } from "../../../../utilities/ant-utilities";
 import SampleQuality from "../../../../components/sample-quality";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
 import { IconSearch } from "../../../../components/icons/Icons";
 import { blue6 } from "../../../../styles/colors";
 
@@ -228,6 +227,7 @@ export function SamplesTable() {
     ),
   });
 
+  const sampleUrl = setBaseUrl(`/projects/${projectId}/samples`);
   const columns = [
     {
       title: () => {
@@ -260,11 +260,7 @@ export function SamplesTable() {
       className: "t-td-name",
       dataIndex: ["sample", "sampleName"],
       sorter: { multiple: 1 },
-      render: (name, row) => (
-        <SampleDetailViewer sampleId={row.sample.id}>
-          <a>{name}</a>
-        </SampleDetailViewer>
-      ),
+      render: (name, row) => <a href={`${sampleUrl}/${row.key}`}>{name}</a>,
       ...getColumnSearchProps(
         ["sample", "sampleName"],
         "t-name-select",
