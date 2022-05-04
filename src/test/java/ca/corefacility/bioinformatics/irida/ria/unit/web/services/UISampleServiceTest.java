@@ -50,12 +50,17 @@ public class UISampleServiceTest {
 	private final Long SAMPLE_ID = 313L;
 	private final String SAMPLE_ORGANISM = "Salmonella";
 	private final String SAMPLE_DESCRIPTION = "This is a project about interesting stuff";
+
+	Sample sample2 = new Sample("SAMPLE_02");
+	Sample sample3 = new Sample("SAMPLE_03");
 	private final Long PROJECT_ID_1 = 1L;
 	private final Long PROJECT_ID_2 = 2L;
 	private Project PROJECT_1 = new Project("PROJECT 1");
 	private Project PROJECT_2 = new Project("PROJECT 2");
 	private final ProjectSamplesTableRequest request = new ProjectSamplesTableRequest();
 	private final ProjectSampleJoinSpecification specification = new ProjectSampleJoinSpecification();
+	List<ProjectSampleJoin> joins = ImmutableList.of(new ProjectSampleJoin(PROJECT_1, SAMPLE_1, true),
+			new ProjectSampleJoin(PROJECT_2, sample2, true), new ProjectSampleJoin(PROJECT_2, sample3, true));
 
 	@BeforeEach
 	public void setUp() {
@@ -84,11 +89,6 @@ public class UISampleServiceTest {
 		Authentication authentication = mock(Authentication.class);
 		SecurityContext securityContext = mock(SecurityContext.class);
 		when(securityContext.getAuthentication()).thenReturn(authentication);
-
-		Sample sample2 = new Sample("SAMPLE_02");
-		Sample sample3 = new Sample("SAMPLE_03");
-		List<ProjectSampleJoin> joins = ImmutableList.of(new ProjectSampleJoin(PROJECT_1, SAMPLE_1, true),
-				new ProjectSampleJoin(PROJECT_2, sample2, true), new ProjectSampleJoin(PROJECT_2, sample3, true));
 		Page<ProjectSampleJoin> page = new PageImpl<>(joins);
 
 		when(sampleService.read(1L)).thenReturn(SAMPLE_1);
@@ -132,8 +132,11 @@ public class UISampleServiceTest {
 		AntTableResponse<ProjectSampleTableItem> response = service.getPagedProjectSamples(1L, request, Locale.CANADA);
 		assertEquals(3, response.getTotal(), "Should return 3 items");
 		List<?> items = response.getContent();
-		items.forEach((item) -> {
-			assertTrue(item instanceof ProjectSampleTableItem, "Should return ProjectSampleTableItems");
-		});
+		for (int index = 0; index < items.size(); index++) {
+			assertTrue(items.get(index) instanceof ProjectSampleTableItem, "Should return ProjectSampleTableItems");
+			assertEquals(((ProjectSampleTableItem) items.get(index)).getProject().getName(),
+					joins.get(index).getSubject().getName(), "Should return the proper project name");
+
+		}
 	}
 }
