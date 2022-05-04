@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -56,10 +57,10 @@ public class SequencingRunAjaxController {
 	 * Get the files for a specific sequencing run.
 	 *
 	 * @param runId - the id of the sequencing run
-	 * @return a set of {@link SequenceFileDetails}s
+	 * @return a list of {@link SequenceFileDetails}s
 	 */
 	@RequestMapping("/{runId}/sequenceFiles2")
-	public ResponseEntity<Set<SequenceFileDetails>> getSequencingRunFiles2(@PathVariable long runId) {
+	public ResponseEntity<List<SequenceFileDetails>> getSequencingRunFiles2(@PathVariable long runId) {
 		return ResponseEntity.ok(service.getSequencingRunFiles2(runId));
 	}
 

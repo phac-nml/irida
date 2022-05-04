@@ -188,21 +188,21 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TECHNICIAN')")
-	public Set<SequenceFileDetails> getSequencingObjectsForSequencingRun2(SequencingRun sequencingRun) {
+	public List<SequenceFileDetails> getSequencingObjectsForSequencingRun2(SequencingRun sequencingRun) {
 		Set<SequencingObject> sequencingObjects = repository.findSequencingObjectsForSequencingRun(sequencingRun);
 		//		Set<SequenceFileDetails> response = sequencingObjects.stream()
 		//				.flatMap(so -> so.getFiles().stream())
 		//				.map(SequenceFileDetails::new)
 		//				.collect(Collectors.toSet());
 
-		Set<SequenceFileDetails> response = new HashSet();
+		List<SequenceFileDetails> response = new ArrayList<>();
 		for (SequencingObject object : sequencingObjects) {
 			Set<SequenceFile> files = object.getFiles();
 			for (SequenceFile file : files) {
 				response.add(new SequenceFileDetails(file, object.getId()));
 			}
 		}
-
+		Collections.sort(response);
 		return response;
 	}
 

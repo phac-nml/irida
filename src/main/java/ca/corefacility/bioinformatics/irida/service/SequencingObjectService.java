@@ -80,9 +80,9 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 * Get all the {@link SequencingObject}s associated with a given {@link SequencingRun}
 	 *
 	 * @param sequencingRun the run to get objects for
-	 * @return a set of {@link SequenceFileDetails}
+	 * @return a list of {@link SequenceFileDetails}
 	 */
-	public Set<SequenceFileDetails> getSequencingObjectsForSequencingRun2(SequencingRun sequencingRun);
+	public List<SequenceFileDetails> getSequencingObjectsForSequencingRun2(SequencingRun sequencingRun);
 
 	/**
 	 * Update the {@link RemoteStatus} for a {@link SequencingObject}

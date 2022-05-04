@@ -61,9 +61,9 @@ public class UISequencingRunService {
 	 * Get the files for a specific sequencing run.
 	 *
 	 * @param runId - the id of the sequencing run
-	 * @return a set of {@link SequenceFileDetails}s
+	 * @return a list of {@link SequenceFileDetails}s
 	 */
-	public Set<SequenceFileDetails> getSequencingRunFiles2(Long runId) {
+	public List<SequenceFileDetails> getSequencingRunFiles2(Long runId) {
 		SequencingRun run = runService.read(runId);
 		return objectService.getSequencingObjectsForSequencingRun2(run);
 	}

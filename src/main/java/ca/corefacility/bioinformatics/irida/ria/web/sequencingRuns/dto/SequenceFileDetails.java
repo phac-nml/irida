@@ -6,7 +6,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 /**
  * Data transfer object for retrieving {@link SequenceFile} details from a {@link SequencingRun}.
  */
-public class SequenceFileDetails {
+public class SequenceFileDetails implements Comparable<SequenceFileDetails> {
 	private Long id;
 	private Long sequencingObjectId;
 	private String fileName;
@@ -33,5 +33,10 @@ public class SequenceFileDetails {
 
 	public String getFileSize() {
 		return fileSize;
+	}
+
+	@Override
+	public int compareTo(SequenceFileDetails sequenceFileDetails) {
+		return id.compareTo(sequenceFileDetails.id);
 	}
 }
