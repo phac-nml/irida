@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -11,9 +8,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequenceFileDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunModel;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunsListRequest;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -47,6 +46,17 @@ public class UISequencingRunService {
 	}
 
 	/**
+	 * Get the details for a specific sequencing run.
+	 *
+	 * @param runId - the id of the sequencing run
+	 * @return {@link SequencingRunDetails}
+	 */
+	public SequencingRunDetails getSequencingRunDetails(Long runId) {
+		SequencingRun run = runService.read(runId);
+		return new SequencingRunDetails(run);
+	}
+
+	/**
 	 * Get the files for a specific sequencing run.
 	 *
 	 * @param runId - the id of the sequencing run
@@ -65,7 +75,22 @@ public class UISequencingRunService {
 	 */
 	public List<SequenceFileDetails> getSequencingRunFiles2(Long runId) {
 		SequencingRun run = runService.read(runId);
-		return objectService.getSequencingObjectsForSequencingRun2(run);
+
+		Set<SequencingObject> sequencingObjects = objectService.getSequencingObjectsForSequencingRun(run);
+		//		Set<SequenceFileDetails> response = sequencingObjects.stream()
+		//				.flatMap(so -> so.getFiles().stream())
+		//				.map(SequenceFileDetails::new)
+		//				.collect(Collectors.toSet());\
+
+		List<SequenceFileDetails> response = new ArrayList<>();
+		for (SequencingObject object : sequencingObjects) {
+			Set<SequenceFile> files = object.getFiles();
+			for (SequenceFile file : files) {
+				response.add(new SequenceFileDetails(file, object.getId()));
+			}
+		}
+		Collections.sort(response);
+		return response;
 	}
 
 	/**

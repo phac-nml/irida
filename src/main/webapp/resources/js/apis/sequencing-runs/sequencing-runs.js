@@ -18,7 +18,7 @@ export const sequencingRunsApi = createApi({
     */
     getSequencingRunDetails: build.query({
       query: (runId) => ({
-        url: `${runId}`,
+        url: `${runId}/details`,
       }),
     }),
     /*

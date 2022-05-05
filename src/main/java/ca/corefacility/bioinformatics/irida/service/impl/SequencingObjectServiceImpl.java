@@ -28,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceCo
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SampleSequencingObjectSpecification;
-import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequenceFileDetails;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 
 import com.google.common.collect.ImmutableMap;
@@ -180,30 +179,6 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER', 'ROLE_TECHNICIAN')")
 	public Set<SequencingObject> getSequencingObjectsForSequencingRun(SequencingRun sequencingRun) {
 		return repository.findSequencingObjectsForSequencingRun(sequencingRun);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TECHNICIAN')")
-	public List<SequenceFileDetails> getSequencingObjectsForSequencingRun2(SequencingRun sequencingRun) {
-		Set<SequencingObject> sequencingObjects = repository.findSequencingObjectsForSequencingRun(sequencingRun);
-		//		Set<SequenceFileDetails> response = sequencingObjects.stream()
-		//				.flatMap(so -> so.getFiles().stream())
-		//				.map(SequenceFileDetails::new)
-		//				.collect(Collectors.toSet());
-
-		List<SequenceFileDetails> response = new ArrayList<>();
-		for (SequencingObject object : sequencingObjects) {
-			Set<SequenceFile> files = object.getFiles();
-			for (SequenceFile file : files) {
-				response.add(new SequenceFileDetails(file, object.getId()));
-			}
-		}
-		Collections.sort(response);
-		return response;
 	}
 
 	/**

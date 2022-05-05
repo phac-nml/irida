@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequenceFileDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunModel;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunsListRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISequencingRunService;
@@ -40,6 +41,17 @@ public class SequencingRunAjaxController {
 	@RequestMapping("/{runId}")
 	public ResponseEntity<SequencingRun> getSequencingRun(@PathVariable long runId) {
 		return ResponseEntity.ok(service.getSequencingRun(runId));
+	}
+
+	/**
+	 * Get the details for a specific sequencing run.
+	 *
+	 * @param runId - the id of the sequencing run
+	 * @return a {@link SequencingRunDetails}
+	 */
+	@RequestMapping("/{runId}/details")
+	public ResponseEntity<SequencingRunDetails> getSequencingRunDetails(@PathVariable long runId) {
+		return ResponseEntity.ok(service.getSequencingRunDetails(runId));
 	}
 
 	/**

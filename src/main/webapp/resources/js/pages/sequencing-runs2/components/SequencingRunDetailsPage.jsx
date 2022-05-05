@@ -4,7 +4,7 @@ import {
   useGetSequencingRunDetailsQuery,
   useGetSequencingRunFilesQuery
 } from "../../../apis/sequencing-runs/sequencing-runs";
-import { Button, Col, Descriptions, Row, Table, Typography } from "antd";
+import { Badge, Button, Col, Descriptions, Row, Table, Typography } from "antd";
 import { formatDate } from "../../../utilities/date-utilities";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -17,6 +17,7 @@ import { LinkButton } from "../../../components/Buttons/LinkButton";
  * @constructor
  */
 export default function SequencingRunDetailsPage() {
+  const isTechnician = window.TL._USER.systemRole === "ROLE_TECHNICIAN";
   const {runId} = useParams();
   const {data: run = {}} = useGetSequencingRunDetailsQuery(runId);
   const {
@@ -68,30 +69,42 @@ export default function SequencingRunDetailsPage() {
         </Col>
         <Col span={18}>
           <Descriptions bordered>
-            <Descriptions.Item label="ID">{runId}</Descriptions.Item>
             <Descriptions.Item
               label="Sequencer Type">{run.sequencerType}</Descriptions.Item>
             <Descriptions.Item
-              label="Upload Status">{run.uploadStatus}</Descriptions.Item>
+              label="Upload Status"><Badge status="success"
+                                           text={run.uploadStatus}/></Descriptions.Item>
             <Descriptions.Item
               label="Upload User">
-              <LinkButton
-                text={run.identifier}
-                href={setBaseUrl(`/users/${run.identifier}`)}/>
+              {isTechnician ? run.userName : (<LinkButton
+                  text={run.userName}
+                  href={setBaseUrl(`/users/${run.userId}`)}/>
+              )}
             </Descriptions.Item>
             <Descriptions.Item
-              label="Created Date">{formatDate({date: run.createdDate})}</Descriptions.Item>
+              label="Created">{formatDate({date: run.createdDate})}</Descriptions.Item>
             <Descriptions.Item
               label="Description">{run.description}</Descriptions.Item>
-            <Descriptions.Item
-              label="Workflow">{run.workflow}</Descriptions.Item>
-            <Descriptions.Item label="Assay">{run.assay}</Descriptions.Item>
-            <Descriptions.Item
-              label="Read Lengths">{run.read_lengths}</Descriptions.Item>
           </Descriptions>
         </Col>
+        {run.optionalProperties && (
+          <>
+            <Col span={18}>
+              <Typography.Title level={5}>Additional
+                Properties</Typography.Title>
+            </Col>
+            <Col span={18}>
+              <Descriptions bordered>
+                {Object.entries(run.optionalProperties).map(([key, value]) => (
+                  <Descriptions.Item
+                    label={key}>{value}</Descriptions.Item>
+                ))}
+              </Descriptions>
+            </Col>
+          </>
+        )}
         <Col span={18}>
-          <Typography.Title level={5}>Sequence Files</Typography.Title>
+          <Typography.Title level={5}>Files</Typography.Title>
         </Col>
         <Col span={18}>
           <Table loading={isFilesLoading}

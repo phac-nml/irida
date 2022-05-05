@@ -13,7 +13,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
-import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequenceFileDetails;
 
 /**
  * Service for managing {@link SequencingObject}s and relationships with related objects
@@ -75,14 +74,6 @@ public interface SequencingObjectService extends CRUDService<Long, SequencingObj
 	 * @return a set of {@link SequencingObject}
 	 */
 	public Set<SequencingObject> getSequencingObjectsForSequencingRun(SequencingRun sequencingRun);
-
-	/**
-	 * Get all the {@link SequencingObject}s associated with a given {@link SequencingRun}
-	 *
-	 * @param sequencingRun the run to get objects for
-	 * @return a list of {@link SequenceFileDetails}
-	 */
-	public List<SequenceFileDetails> getSequencingObjectsForSequencingRun2(SequencingRun sequencingRun);
 
 	/**
 	 * Update the {@link RemoteStatus} for a {@link SequencingObject}
