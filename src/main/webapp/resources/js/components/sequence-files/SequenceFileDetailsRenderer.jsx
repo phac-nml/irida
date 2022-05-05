@@ -3,7 +3,7 @@ import { Avatar, Button, List, Space } from "antd";
 import { IconDownloadFile } from "../icons/Icons";
 import { FastQC } from "../samples/components/fastqc/FastQC";
 import { setFastQCModalData } from "../samples/components/fastqc/fastQCSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 /**
  * React component to display paired end file details
@@ -22,6 +22,9 @@ export function SequenceFileDetailsRenderer({
   getProcessingState = () => {},
 }) {
   const dispatch = useDispatch();
+  const { fastQCModalVisible, sequencingObjectId, fileId } = useSelector(
+    (state) => state.fastQCReducer
+  );
 
   return (
     <List.Item
@@ -30,7 +33,7 @@ export function SequenceFileDetailsRenderer({
       className="t-file-details"
     >
       <List.Item.Meta
-        avatar={<Avatar size={`small`} icon={file.icon} />}
+        avatar={<Avatar size={`small`} style={{marginTop: 3}} icon={file.icon} />}
         title={
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             {file.processingState === "FINISHED" ?
@@ -52,7 +55,9 @@ export function SequenceFileDetailsRenderer({
                 >
                   <span className="t-file-label">{file.label}</span>
                 </Button>
-                <FastQC/>
+                {fastQCModalVisible && sequencingObjectId === fileObjectId && fileId === file.id ? (
+                  <FastQC />
+                ) : null}
               </div>
               :
               <div>

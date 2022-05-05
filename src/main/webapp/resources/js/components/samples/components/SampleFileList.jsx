@@ -225,7 +225,7 @@ export function SampleFileList() {
         <SequenceFileTypeRenderer title={i18n("SampleFiles.paired")}>
           {files.paired.map((pair) => (
             <PairedFileRenderer
-              key={`pair-${pair.identifier}`}
+              key={`pair-${pair.fileInfo.identifier}`}
               pair={pair}
               sampleId={sample.identifier}
               downloadSequenceFile={downloadSequenceFile}
