@@ -53,7 +53,7 @@ export default function SequencingRunDetailsPage() {
       dataIndex: 'download',
       key: 'download',
       render(text, item) {
-        return <Button type="primary"
+        return <Button shape="circle"
                        onClick={() => window.open(setBaseUrl(`/sequenceFiles/download/${item.sequencingObjectId}/file/${item.id}`), "_blank")}
                        icon={<IconDownloadFile/>}/>;
       },
