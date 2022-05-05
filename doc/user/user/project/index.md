@@ -49,7 +49,7 @@ There are two ways to find a specific project in the projects table - filtering 
 
 Search is always available in the text field directly above and to the right of the table.  This search across the project's id, name, and organism.
 
-Example searching the projects table for `O157` results in 2 items.
+Example searching the projects' table for `O157` results in 2 items.
 
 ![Projects search by out](images/projects-search-outbreak.png)
 
