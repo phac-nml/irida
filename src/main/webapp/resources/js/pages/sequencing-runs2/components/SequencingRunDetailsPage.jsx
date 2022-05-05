@@ -72,8 +72,8 @@ export default function SequencingRunDetailsPage() {
             <Descriptions.Item
               label="Sequencer Type">{run.sequencerType}</Descriptions.Item>
             <Descriptions.Item
-              label="Upload Status"><Badge status="success"
-                                           text={run.uploadStatus}/></Descriptions.Item>
+              label="Upload Status"><UploadStatusBadge
+              status={run.uploadStatus}/></Descriptions.Item>
             <Descriptions.Item
               label="Upload User">
               {isTechnician ? run.userName : (<LinkButton
@@ -116,4 +116,17 @@ export default function SequencingRunDetailsPage() {
       </Row>
     </PageWrapper>
   );
+}
+
+function UploadStatusBadge({status}) {
+  switch (status) {
+    case "ERROR":
+      return <Badge status="error" text={status}/>;
+    case "UPLOADING":
+      return <Badge status="warning" text={status}/>;
+    case "COMPLETE":
+      return <Badge status="success" text={status}/>;
+    default:
+      return <Badge text={status}/>;
+  }
 }
