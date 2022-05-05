@@ -16,11 +16,12 @@ import {
   selectAllSamples,
   updateTable,
 } from "../../redux/samplesSlice";
-import { getNewTagColor } from "../../../../utilities/ant-utilities";
 import SampleQuality from "../../../../components/sample-quality";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconSearch } from "../../../../components/icons/Icons";
 import { blue6 } from "../../../../styles/colors";
+import { useGetProjectDetailsQuery } from "../../../../apis/projects/project";
+import stc from "string-to-color";
 
 const { RangePicker } = DatePicker;
 
@@ -40,6 +41,9 @@ export function SamplesTable() {
     loadingLong,
     filterByFile,
   } = useSelector((state) => state.samples);
+  const { data: projectDetails } = useGetProjectDetailsQuery(projectId, {
+    skip: !projectId,
+  });
 
   /**
    * Fetch the current state of the table.  Will refetch whenever one of the
@@ -55,7 +59,8 @@ export function SamplesTable() {
    * Request formats them into a format that can be consumed by the
    * project column filter.
    */
-  const { data: associatedIds } = useListAssociatedProjectsQuery(projectId);
+  const { data: associatedProjects } =
+    useListAssociatedProjectsQuery(projectId);
 
   /**
    * Create colors for associated projects. This is stored in local storage for consistency
@@ -63,18 +68,16 @@ export function SamplesTable() {
    */
   const colors = React.useMemo(() => {
     let newColors = {};
-    if (associatedIds) {
-      const colorString = localStorage.getItem("projectColors");
-      newColors = colorString ? JSON.parse(colorString) : {};
-      associatedIds.forEach(({ value }) => {
-        if (!newColors.hasOwnProperty(value)) {
-          newColors[value] = getNewTagColor();
-        }
+    if (projectDetails && associatedProjects) {
+      newColors[projectId] = stc(projectDetails.label);
+      associatedProjects.forEach((project) => {
+        console.log({ project });
+        newColors[project.value] = stc(project.text);
       });
-      localStorage.setItem("projectColors", JSON.stringify(newColors));
     }
+    console.log({ newColors });
     return newColors;
-  }, [associatedIds]);
+  }, [associatedProjects, projectDetails]);
 
   /**
    * Handle row selection change event
@@ -293,7 +296,7 @@ export function SamplesTable() {
           </Tag>
         );
       },
-      filters: associatedIds,
+      filters: associatedProjects,
     },
     {
       title: i18n("SamplesTable.Column.collectedBy"),
