@@ -55,7 +55,7 @@ export function formatSearch(filters) {
         formattedSearch.push({
           property: filter,
           value,
-          operation: Array.isArray(value) ? "IN" : defaultOperation,
+          operation: Array.isArray(value) ? "MATCH_IN" : defaultOperation,
         });
       }
     }

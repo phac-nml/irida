@@ -13,6 +13,7 @@ public enum SearchOperation {
 	MATCH("MATCH"),
 	MATCH_START("MATCH_START"),
 	MATCH_END("MATCH_END"),
+	MATCH_IN("MATCH_IN"),
 	IN("IN"),
 	NOT_IN("NOT_IN");
 
@@ -53,6 +54,8 @@ public enum SearchOperation {
 			return MATCH_START;
 		case "MATCH_END":
 			return MATCH_END;
+		case "MATCH_IN":
+			return MATCH_IN;
 		case "IN":
 			return IN;
 		case "NOT_IN":

@@ -126,12 +126,20 @@ Adding a new sample
 
 {% include tutorials/common/creating-a-sample.md %}
 
-Searching and filtering samples
--------------------------------
+Filtering samples
+------------------------
 
-You can search and filter samples in a project in IRIDA by sample name, organism, and/or date range using the filters at the top of the [samples list](#viewing-samples-in-a-project):
+Each column in the projects' samples table, (except the quality control column) can be filtered by typing in the filter box.  The filter box is located in the right corner of the column header.
 
-![Samples filter area.](images/sample-filter-area.png)
+![Location of the column filters.](images/sample-table-header-filters.png)
+
+### Sample name, organism, and collected by filtering:
+
+Opening the filter on these columns allows access to a search that allows for multiple search terms.  
+
+
+-------
+
 
 ### Search Field
 

@@ -76,6 +76,13 @@ public class ProjectSampleJoinSpecification implements Specification<ProjectSamp
 			} else if (criteria.getOperation().equals(SearchOperation.MATCH_START)) {
 				predicates.add(builder.like(builder.lower(path.as(String.class)),
 						"%" + criteria.getValue().toString().toLowerCase()));
+			} else if (criteria.getOperation().equals(SearchOperation.MATCH_IN)) {
+				List<Predicate> matchInPredicates = new ArrayList<>();
+				for (Object value : (List<Object>) criteria.getValue()) {
+					matchInPredicates.add(builder.like(builder.lower(path.as(String.class)),
+							"%" + value.toString().toLowerCase() + "%"));
+				}
+				predicates.add(builder.or(matchInPredicates.toArray(new Predicate[0])));
 			} else if (criteria.getOperation().equals(SearchOperation.IN)) {
 				predicates.add(builder.in((Path) path).value(criteria.getValue()));
 			} else if (criteria.getOperation().equals(SearchOperation.NOT_IN)) {

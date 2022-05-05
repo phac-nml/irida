@@ -155,16 +155,18 @@ export function SamplesTable() {
           className={filterName}
           mode="tags"
           placeholder={placeholder}
-          value={selectedKeys}
+          value={selectedKeys[0]}
           onChange={(e) => {
-            setSelectedKeys(e);
+            console.log(e);
+            const values = Array.isArray(e) && e.length > 0 ? [e] : e;
+            setSelectedKeys(values);
             confirm({ closeDropdown: false });
           }}
           style={{ marginBottom: 8, display: "block" }}
         />
         <Space>
           <Button
-            disabled={selectedKeys.length === 0}
+            disabled={selectedKeys.length === 0 || selectedKeys[0].length === 0}
             onClick={() => handleClearSearch(clearFilters, confirm)}
             size="small"
             style={{ width: 89 }}
