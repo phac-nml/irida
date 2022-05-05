@@ -85,7 +85,7 @@ export function SingleEndFileRenderer({
             avatar={
               <Avatar
                 size={`small`}
-                style={file.fileType !== "assembly" && {marginTop: 3}}
+                style={file.fileType !== "assembly" && { marginTop: 3 }}
                 icon={<IconFile />}
               />
             }
@@ -115,7 +115,8 @@ export function SingleEndFileRenderer({
                         {file.fileInfo.label}
                       </span>
                     </Button>
-                    {fastQCModalVisible && sequencingObjectId === file.fileInfo.identifier ? (
+                    {fastQCModalVisible &&
+                    sequencingObjectId === file.fileInfo.identifier ? (
                       <FastQC />
                     ) : null}
                   </div>

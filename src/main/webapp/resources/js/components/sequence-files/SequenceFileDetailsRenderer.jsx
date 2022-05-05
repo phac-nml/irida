@@ -33,14 +33,16 @@ export function SequenceFileDetailsRenderer({
       className="t-file-details"
     >
       <List.Item.Meta
-        avatar={<Avatar size={`small`} style={{marginTop: 3}} icon={file.icon} />}
+        avatar={
+          <Avatar size={`small`} style={{ marginTop: 3 }} icon={file.icon} />
+        }
         title={
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            {file.processingState === "FINISHED" ?
+            {file.processingState === "FINISHED" ? (
               <div>
                 <Button
                   type="link"
-                  style={{padding: 0}}
+                  style={{ padding: 0 }}
                   onClick={() =>
                     dispatch(
                       setFastQCModalData({
@@ -55,15 +57,17 @@ export function SequenceFileDetailsRenderer({
                 >
                   <span className="t-file-label">{file.label}</span>
                 </Button>
-                {fastQCModalVisible && sequencingObjectId === fileObjectId && fileId === file.id ? (
+                {fastQCModalVisible &&
+                sequencingObjectId === fileObjectId &&
+                fileId === file.id ? (
                   <FastQC />
                 ) : null}
               </div>
-              :
+            ) : (
               <div>
                 <span className="t-file-label">{file.label}</span>
               </div>
-            }
+            )}
 
             <Space direction="horizontal" size="small">
               {getProcessingState(file.processingState)}

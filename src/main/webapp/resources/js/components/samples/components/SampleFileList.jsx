@@ -35,9 +35,8 @@ import { setDefaultSequencingObject } from "../sampleSlice";
 export function SampleFileList() {
   const dispatch = useDispatch();
   const [removeSampleFilesFromSample] = useRemoveSampleFilesMutation();
-  const [
-    updateSampleDefaultSequencingObject,
-  ] = useUpdateDefaultSampleSequencingObjectMutation();
+  const [updateSampleDefaultSequencingObject] =
+    useUpdateDefaultSampleSequencingObjectMutation();
   const { sample, projectId } = useSelector((state) => state.sampleReducer);
   const { files } = useSelector((state) => state.sampleFilesReducer);
 
