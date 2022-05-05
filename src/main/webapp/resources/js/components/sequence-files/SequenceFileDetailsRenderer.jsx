@@ -38,7 +38,6 @@ export function SequenceFileDetailsRenderer({
                 <Button
                   type="link"
                   style={{padding: 0}}
-                  className="t-file-label"
                   onClick={() =>
                     dispatch(
                       setFastQCModalData({
@@ -51,13 +50,13 @@ export function SequenceFileDetailsRenderer({
                     )
                   }
                 >
-                  {file.label}
+                  <span className="t-file-label">{file.label}</span>
                 </Button>
                 <FastQC/>
               </div>
               :
               <div>
-                {file.label}
+                <span className="t-file-label">{file.label}</span>
               </div>
             }
 

@@ -17,6 +17,9 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-sample-details-modal")
 	private WebElement modal;
 
+	@FindBy(className = "t-fastqc-modal")
+	private WebElement fastqcModal;
+
 	@FindBy(className = "t-concatenate-confirm-modal")
 	private WebElement concatenateModal;
 
@@ -155,6 +158,7 @@ public class SampleDetailsViewer extends AbstractPage {
 	}
 
 	public int numberOfFilesDisplayed() {
+		waitForTime(300);
 		if(files != null) {
 			return files.size();
 		}
@@ -321,6 +325,24 @@ public class SampleDetailsViewer extends AbstractPage {
 		WebElement searchInput = sampleAnalysesSearchInput.findElement(By.className("ant-input"));
 		searchInput.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 		waitForTime(500);
+	}
+
+	public void clickSampleName() {
+		WebElement ele = driver.findElement(By.className("t-file-label"));
+		ele.click();
+		waitForTime(500);
+	}
+
+	public int getChartCount() {
+		List<WebElement> elements = fastqcModal.findElements(By.className("t-sequenceFile-qc-chart"));
+		waitForTime(300);
+		return elements.size();
+	}
+
+	public void closeFastqcModal() {
+		WebElement ele = fastqcModal.findElement(By.className("t-fastqc-modal-close"));
+		ele.click();
+		waitForTime(300);
 	}
 
 }

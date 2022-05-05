@@ -87,7 +87,6 @@ export function SingleEndFileRenderer({
                     <Button
                       type="link"
                       style={{ padding: 0 }}
-                      className="t-file-label"
                       onClick={() =>
                         dispatch(
                           setFastQCModalData({
@@ -102,7 +101,7 @@ export function SingleEndFileRenderer({
                         )
                       }
                     >
-                      {file.fileInfo.label}
+                      <span className="t-file-label">{file.fileInfo.label}</span>
                     </Button>
                     <FastQC />
                   </div>
