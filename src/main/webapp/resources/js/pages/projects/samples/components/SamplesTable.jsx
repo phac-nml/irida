@@ -21,7 +21,7 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconSearch } from "../../../../components/icons/Icons";
 import { blue6 } from "../../../../styles/colors";
 import { useGetProjectDetailsQuery } from "../../../../apis/projects/project";
-import stc from "string-to-color";
+import { generateColourForItem } from "../../../../utilities/colour-utilities";
 
 const { RangePicker } = DatePicker;
 
@@ -69,13 +69,17 @@ export function SamplesTable() {
   const colors = React.useMemo(() => {
     let newColors = {};
     if (projectDetails && associatedProjects) {
-      newColors[projectId] = stc(projectDetails.label);
+      newColors[projectId] = generateColourForItem({
+        id: projectId,
+        name: projectDetails.label,
+      });
       associatedProjects.forEach((project) => {
-        console.log({ project });
-        newColors[project.value] = stc(project.text);
+        newColors[project.value] = generateColourForItem({
+          id: project.value,
+          name: project.text,
+        });
       });
     }
-    console.log({ newColors });
     return newColors;
   }, [associatedProjects, projectDetails]);
 
@@ -115,7 +119,6 @@ export function SamplesTable() {
     let { associated, ...filters } = tableFilters;
     const search = formatSearch(filters);
     if (filterByFile) search.push(filterByFile.fileFilter);
-    console.log({ filterByFile });
 
     dispatch(
       updateTable({

@@ -105,7 +105,7 @@ export default function CreateNewSample({ visible, onCreate, onCancel }) {
         >
           <Input ref={nameRef} className={"t-sample-name"} />
         </Form.Item>
-        <Form.Item name="organism" label={"ORGANISM"}>
+        <Form.Item name="organism" label={i18n("AddSample.organism")}>
           <AutoComplete
             className="t-organism-input"
             allowClear={true}
