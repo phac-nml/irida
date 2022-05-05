@@ -37,7 +37,7 @@ export function OverRepresentedSequences() {
     () =>
       getPaginationOptions(
         Object.keys(fastQC).length > 0 &&
-          typeof fastQC.overrepresentedSequences !== undefined
+          typeof fastQC.overrepresentedSequences !== "undefined"
           ? fastQC.overrepresentedSequences.length
           : 0
       ),

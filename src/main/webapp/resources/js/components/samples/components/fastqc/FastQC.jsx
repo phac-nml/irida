@@ -38,7 +38,7 @@ export function FastQC() {
                 className="t-fastqc-modal-close"
                 icon={<IconArrowLeft />}
               />
-              <Text level={3} strong>
+              <Text level={3} strong className="t-fastqc-modal-file-name">
                 {fileLabel}
               </Text>
             </Space>

@@ -13,11 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.components.FastQCModal;
 import ca.corefacility.bioinformatics.irida.ria.integration.components.SampleDetailsViewer;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.sequenceFiles.SequenceFilePageIT;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.FileUtilities;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -40,6 +40,19 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 			List.of("01-1111_S1_L001_R1_001.fastq", "02-2222_S1_L001_R2_001.fastq", "04-4444_S1_L001_R1_001.fastq", "04-4444_S1_L001_R2_001.fastq"));
 
 	private static final Logger logger = LoggerFactory.getLogger(CartPageIT.class);
+
+	/*
+	 * FILE ATTRIBUTES
+	 */
+	private static final String FILE_NAME = "test_file.fastq";
+	private static final String FILE_ID = "1";
+	private static final String FILE_ENCODING = "Sanger / Illumina 1.9";
+	private static final String FILE_CREATED = "Jul 18, 2013, 2:20 PM";
+	private static final String FILE_TOTAL_SEQUENCE = "4";
+	private static final String FILE_TOTAL_BASES = "937";
+	private static final String FILE_MIN_LENGTH = "184";
+	private static final String FILE_MAX_LENGTH = "251";
+	private static final String FILE_GC_CONTENT = "30";
 
 	@Autowired
 	@Qualifier("sequenceFileBaseDirectory")
@@ -101,7 +114,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertEquals(sampleName, sampleDetailsViewer.getSampleName(), "Should be viewing the proper sample");
 		assertEquals(projectName, sampleDetailsViewer.getProjectName(), "Should have proper project name displayed for sample");
-//		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Should display the correct created date");
+		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Should display the correct created date");
 
 		sampleDetailsViewer.clickMetadataTabLink();
 		assertFalse(sampleDetailsViewer.addNewMetadataButtonVisible());
@@ -120,6 +133,21 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(0, sampleDetailsViewer.removeFileButtonsVisible(), "Shouldn't have any file remove buttons");
 		assertEquals(0, sampleDetailsViewer.concatenationCheckboxesVisible(), "Shouldn't have any concatenation checkboxes");
 		assertEquals(7, sampleDetailsViewer.downloadFileButtonsVisible(), "Should have 7 download file buttons");
+
+		// Launch fastqc modal
+		sampleDetailsViewer.clickSampleName();
+
+		FastQCModal fastQCModal = FastQCModal.getFileFastQCDetails(driver());
+
+		assertEquals(3, fastQCModal.getChartCount(), "Should display three charts");
+
+		fastQCModal.clickFastQCOverrepresentedSequencesLink();
+		overrepresentedSequencesTabInfo(fastQCModal);
+
+		fastQCModal.clickFastQCDetailsLink();
+		detailsTabInfo(fastQCModal);
+
+		fastQCModal.closeFastqcModal();
 
 		// No files should be selected (no checkboxes available to select) and the concatenate button should not be visible
 		sampleDetailsViewer.selectFilesToConcatenate(3);
@@ -173,7 +201,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertEquals(sampleName, sampleDetailsViewer.getSampleName(), "Should be viewing the proper sample");
 		assertEquals(projectName, sampleDetailsViewer.getProjectName(), "Should have proper project name displayed for sample");
-//		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Shoauld display the correct created date");
+		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Shoauld display the correct created date");
 
 		sampleDetailsViewer.clickMetadataTabLink();
 		assertTrue(sampleDetailsViewer.addNewMetadataButtonVisible());
@@ -202,8 +230,18 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Launch fastqc modal
 		sampleDetailsViewer.clickSampleName();
-		assertEquals(3, sampleDetailsViewer.getChartCount(), "Should display three charts");
-		sampleDetailsViewer.closeFastqcModal();
+
+		FastQCModal fastQCModal = FastQCModal.getFileFastQCDetails(driver());
+
+		assertEquals(3, fastQCModal.getChartCount(), "Should display three charts");
+
+		fastQCModal.clickFastQCOverrepresentedSequencesLink();
+		overrepresentedSequencesTabInfo(fastQCModal);
+
+		fastQCModal.clickFastQCDetailsLink();
+		detailsTabInfo(fastQCModal);
+
+		fastQCModal.closeFastqcModal();
 
 		// Checkboxes to select files for concatenation should be visible and selectable
 		sampleDetailsViewer.selectFilesToConcatenate(3);
@@ -271,6 +309,28 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Test removing the entire project
 		page.removeProjectFromCart();
+	}
+
+	private void overrepresentedSequencesTabInfo(FastQCModal fastQCModal) {
+		assertEquals(1, fastQCModal.getNumberOfOverrepresentedSequences(), "Should display 1 overrepresented sequence");
+		assertTrue(fastQCModal.getOverrepresentedSequence().matches("^[aAtTgGcC]+$"), "Should display a sequence");
+		assertTrue(fastQCModal.getOverrepresentedSequencePercentage().contains("%"),
+				"Should display the percentage with a percent sign");
+		assertEquals("1", fastQCModal.getOverrepresentedSequenceCount(), "Should display the count");
+		assertEquals("No Hit", fastQCModal.getOverrepresentedSequenceSource(), "Should display the source");
+	}
+
+	private void detailsTabInfo(FastQCModal fastQCModal) {
+		logger.debug("Testing the Sequence File Overrepresented Sequence Page");
+		assertEquals(FILE_NAME, fastQCModal.getFastQCFileTitle(), "Has the file name as the title");
+		assertEquals(FILE_ID, fastQCModal.getFileId(), "Display the file id");
+		assertEquals(FILE_CREATED, fastQCModal.getFileCreatedDate(), "Displays the file created date");
+		assertEquals(FILE_ENCODING, fastQCModal.getFileEncoding(), "Displays the file encoding");
+		assertEquals(FILE_TOTAL_SEQUENCE, fastQCModal.getTotalSequenceCount(), "Display the total sequence count");
+		assertEquals(FILE_TOTAL_BASES, fastQCModal.getTotalBasesCount(), "Display the total bases count");
+		assertEquals(FILE_MIN_LENGTH, fastQCModal.getMinLength(), "Displays the minLength");
+		assertEquals(FILE_MAX_LENGTH, fastQCModal.getMaxLength(), "Displays the maxLength");
+		assertEquals(FILE_GC_CONTENT, fastQCModal.getGCContent(), "Displays the gc content");
 	}
 
 }
