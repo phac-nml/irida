@@ -129,23 +129,40 @@ Adding a new sample
 Filtering samples
 ------------------------
 
-Each column in the projects' samples table, (except the quality control column) can be filtered by typing in the filter box.  The filter box is located in the right corner of the column header.
+Each column in the projects' samples table, (except the quality control column) can be filtered by typing in the filter
+box. The filter box is located in the right corner of the column header.
 
 ![Location of the column filters.](images/sample-table-header-filters.png)
 
 ### Sample name, organism, and collected by filtering:
 
-Opening the filter on these columns allows access to a search that allows for multiple search terms.  
+Opening the filter on these columns allows access to a search that allows for multiple search terms.
 
+![Example filtering by sample name](images/sample-name-filter.gif)
+
+In this example, the table is being filtered by sample name. Here the user is looking for all samples that contain the
+characters `10-` or the characters `11-`. Typing `10-` and then  <kbd>Enter</kbd> does the initial filtering to get all
+samples containing those characters. Typing `11-` and then <kbd>Enter</kbd> adds this as an additional search and the
+table is filtered to only show samples that either contain the `10-` or `11-`.
+
+### Filtering by created and modified dates
+
+![Example of filtering by modified date](images/sample-modified-date-filter.gif)
+
+Quickly finding samples based on either their created or modified dates can be done using the date range pickers
+available in the column header filter. In this example, a modified date filter is being applied to search for all
+samples that were modified between Aug 15, 2015 and Aug 16, 2015 inclusively (meaning samples modified on those dates
+will be included).
 
 -------
-
 
 ### Search Field
 
 ![Samples search input.](images/search-input.png)
 
-You can perform a general search on sample names using the search field.  This will filter samples that have the search string *anywhere* in the name or organism field.  So, for example, if you're searching for a sample that has the numeral 2 in its name, enter `2` into the search input, and you would find samples with names like:
+You can perform a general search on sample names using the search field. This will filter samples that have the search
+string *anywhere* in the name or organism field. So, for example, if you're searching for a sample that has the numeral
+2 in its name, enter `2` into the search input, and you would find samples with names like:
 
 * Sample_2
 * Sample_293
