@@ -295,9 +295,18 @@ export function SamplesTable() {
       sorter: { multiple: 1 },
       key: "associated",
       render: (name, row) => {
+        const colour = colors[row.project.id];
         return (
-          <Tag color={colors[row.project.id]}>
-            <a href={setBaseUrl(`/projects/${row.project.id}`)}>{name}</a>
+          <Tag
+            color={colour.background}
+            style={{ border: `1px solid ${colour.text}` }}
+          >
+            <a
+              style={{ color: colour.text }}
+              href={setBaseUrl(`/projects/${row.project.id}`)}
+            >
+              {name}
+            </a>
           </Tag>
         );
       },
