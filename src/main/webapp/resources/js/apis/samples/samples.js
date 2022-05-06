@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const URL = setBaseUrl(`ajax/samples`);
 
-const SEQUENCE_FILES_URL = setBaseUrl("/sequenceFiles/");
+const SEQUENCE_FILES_AJAX_URL = setBaseUrl("ajax/sequenceFiles");
 
 /**
  * Redux API to handle queries based on samples
@@ -213,7 +213,7 @@ export function downloadSequencingObjectFile({
   sequenceFileId,
 }) {
   window.open(
-    `${SEQUENCE_FILES_URL}/download/${sequencingObjectId}/file/${sequenceFileId}`,
+    `${SEQUENCE_FILES_AJAX_URL}/download?sequencingObjectId=${sequencingObjectId}&sequenceFileId=${sequenceFileId}`,
     "_blank"
   );
 }

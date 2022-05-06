@@ -1,14 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.web.files;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -72,5 +73,11 @@ public class SequenceFileAjaxController {
 	public ResponseEntity<AnalysisFastQC> getOverRepresentedSequences(@RequestParam Long sequencingObjectId,
 			@RequestParam Long sequenceFileId) {
 		return ResponseEntity.ok(uiSequenceFileService.getOverRepresentedSequences(sequencingObjectId, sequenceFileId));
+	}
+
+	@GetMapping("/download")
+	public void downloadSequenceFile(@RequestParam Long sequencingObjectId, @RequestParam Long sequenceFileId,
+			HttpServletResponse response) throws IOException {
+		uiSequenceFileService.downloadSequenceFile(sequencingObjectId, sequenceFileId, response);
 	}
 }

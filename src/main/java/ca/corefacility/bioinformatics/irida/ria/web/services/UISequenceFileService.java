@@ -1,6 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -102,5 +106,15 @@ public class UISequenceFileService {
 		AnalysisFastQC fastQC = analysisService.getFastQCAnalysisForSequenceFile(sequencingObject, file.getId());
 
 		return fastQC;
+	}
+
+	public void downloadSequenceFile(Long sequencingObjectId, Long sequenceFileId,
+			HttpServletResponse response) throws IOException {
+		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
+		SequenceFile sequenceFile = sequencingObject.getFileWithId(sequenceFileId);
+		Path path = sequenceFile.getFile();
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + sequenceFile.getLabel() + "\"");
+		Files.copy(path, response.getOutputStream());
+		response.flushBuffer();
 	}
 }

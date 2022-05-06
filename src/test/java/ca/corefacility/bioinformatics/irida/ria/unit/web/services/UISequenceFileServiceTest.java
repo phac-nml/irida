@@ -2,11 +2,13 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
@@ -19,8 +21,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UISequenceFileServi
 import ca.corefacility.bioinformatics.irida.service.AnalysisService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class UISequenceFileServiceTest {
@@ -76,5 +77,20 @@ public class UISequenceFileServiceTest {
 		verify(sequencingObjectService, times(1)).read(OBJECT_ID);
 		verify(analysisService, times(1)).getFastQCAnalysisForSequenceFile(seqObject, FILE_ID);
 		assertTrue(analysisFastQC != null, "Has a an AnalysisFastQC object");
+	}
+
+	@Test
+	public void testDownloadSequenceFile() throws IOException {
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		service.downloadSequenceFile(OBJECT_ID, FILE_ID, response);
+		assertTrue(response.containsHeader("Content-Disposition"),
+				"Response should contain a \"Content-Disposition\" header.");
+		assertEquals("attachment; filename=\"test_file.fastq\"", response.getHeader("Content-Disposition"),
+				"Content-Disposition should include the file name");
+
+		Path path = Paths.get(FILE_PATH);
+		byte[] origBytes = Files.readAllBytes(path);
+		byte[] responseBytes = response.getContentAsByteArray();
+		assertArrayEquals(origBytes, responseBytes, "Response contents the correct file content");
 	}
 }
