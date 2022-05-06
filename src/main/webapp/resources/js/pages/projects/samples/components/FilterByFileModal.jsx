@@ -47,7 +47,6 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
       let parsed = contents.split(/[\s,]+/);
       const projectIds = [projectId, ...associated];
 
-      //TODO: move this to API file
       fetch(`/ajax/samples/validate`, {
         headers: {
           Accept: "application/json",
@@ -80,12 +79,12 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
       onCancel={onCancel}
       onOk={onOk}
       okButtonProps={{ disabled: valid.length === 0 }}
-      okText={"FILTER"}
+      okText={i18n("FilterByFile.filter")}
       width={600}
     >
       <>
         <Form layout="vertical">
-          <Form.Item label={"Select file containing sample names"}>
+          <Form.Item label={i18n("FilterByFile.file-label")}>
             <Input type="file" onChange={onFileAdded} />
           </Form.Item>
         </Form>

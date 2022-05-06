@@ -154,97 +154,47 @@ available in the column header filter. In this example, a modified date filter i
 samples that were modified between Aug 15, 2015 and Aug 16, 2015 inclusively (meaning samples modified on those dates
 will be included).
 
--------
+### Projects filtering
 
-### Search Field
+![Example of using associated projects.](images/associated-projects-filter.gif)
 
-![Samples search input.](images/search-input.png)
+Projects filtering works slightly different from the other filters. Samples from the current project are always
+available (excluding filtered ones) in the table, but associated projects (these can be added through
+the [project settings page](../../user/project/#associated-projects)) can have their sample displayed in the table as
+well by selecting the project name within the filter
+dropdown. These samples will be included in all filtering.
 
-You can perform a general search on sample names using the search field. This will filter samples that have the search
-string *anywhere* in the name or organism field. So, for example, if you're searching for a sample that has the numeral
-2 in its name, enter `2` into the search input, and you would find samples with names like:
+### Filter by File
 
-* Sample_2
-* Sample_293
-* 02-2222
+Filtering by file allows you to quickly filter the table by use a text (<pr>.txt</pre>) file containing the sample names
+you are looking for. Each sample name must be on its own line.
 
-### Advanced Filtering
-
-![Samples advanced filters.](images/advanced-filter.png)
-
-Clicking the filter button <span class="fa fa-filter fa-fw"></span> opens a dialog where you can filter by sample name and / or  date modified.
-
-![Samples advanced filter dialogue.](images/advanced-filter-dialogue.png)
-
-Filtering by sample name will match the same as the search field, so the filter name will match *anywhere* in the sample name.
-
-![Samples advanced filter dialogue daterange.](images/advanced-filter-dialogue-daterange.png)
-
-To search sample by a date range, click on the date range field.  A drop down will be displayed with pre-determine ranges:
-
-* Last 30 Days
-* Last 60 Days
-* Last 120 Days
-
-Or you can enter a custom date range by selecting the dates in the calendar.
-
-![Samples advanced filter dialogue apply.](images/advanced-filter-dialogue-apply.png)
-
-To apply the selected filters click the 'Filter' button.
-
-![Samples advanced filter applied state.](images/advanced-filter-applied-state.png)
-
-Once the filter is applied, the samples table will be updated with the filtered samples.  When an advanced filter is applied, a tag is created below the filter button to allow the user to know what filters are currently applied.  To remove a specific filter click on the tag itself.
-
-### Clearing Filters
-
-![Samples clear filters button.](images/advanced-filter-clear.png)
-
-To clear all currently applied filters and search, click on the clear button to the right of the filter area.
-
-Filtering and Selecting by File
--------------------------------
-
-As projects become larger, it becomes unwieldy to select a large subset of samples.  To facilitate this, there is the 'Filter by File' option.
-
-* Create a `.txt` file that contains the name of each sample you want to select on a new line.  You can either:
-    - Use a text editor like Windows Notepad or TextEdit on Mac (note: when creating a new text document in TextEdit, press cmd + shift + t to change to the `.txt` format)
-    - Or create a spreadsheet in Excel with a single column and save the file as a 'Text (Tab Delimited) (*.txt)' file.
-
-Example (`project_5_filter.txt`):
+E.g.
 
 <pre>
-03-3333
-10-6966
-15-7569
+10-8231
+02-2222
+01-1111
+11-11-1
+11-0002
 </pre>
 
-* On the project samples page, click the <span class="fa fa-file-o fa-fw"></span> button from the filter menu.
+![Filter by file preview.](images/filter-by-file.gif)
 
-![Filter by File Button](images/filter_by_file_btn.png)
+![Filter by File button](images/filter-by-file-button.png)
 
-* Select the file you created.  The samples will be filtered by these names.
+To filter the table by file click the "Filter by File" button at the top of the table. This will open a modal window
+which will allow you to select the file containing the list of names to filter by. Once selected, IRIDA will if the
+sample names are within the projects currently visible in the table (you can add other project's samples to the table
+using the projects filter). Once validated, you will see a summary:
 
-If all sample names are found, a green success notification will appear in the upper right corner of the window.  This notification will disappear after 2 seconds.
+![Example of summary of filtering by file.](images/filter-by-file-modal.png)
 
-![Filter by File all found](images/filter_by_file_allfound.png)
+Here you can see that 3 samples where found in the current project and 2 samples were not. The sample names that were
+not found will be shown.
 
-If sample names are not found, the samples will be filtered by the available names and a notification will appear telling you which samples could not be found.  This notification will not go away until it is clicked.
-
-Example.  If my file contained and additional sample name `12-4598_a`  which does not exist the following will be displayed.
-
-![Filter by File missing samples](images/filter_by_file_missing.png)
-
-Viewing associated samples
---------------------------
-
-You can quickly create an aggregated view of all of the samples in this project with all of the samples from both local and associated projects. To view associated samples, click the "Associated Projects" button.  All projects associated with the current project will be displayed here.  Select the projects you would also like to see in the view. Project managers may choose which samples will appear here by [adding or removing associated projects](../../user/project/#associated-projects).
-
-![Sample type selector](images/display-sample-type.png)
-
-Associated samples will be displayed in the project samples table designated with the same colours.
-
-![Sample table with associated and remote samples](images/associated-display.png)
+Clicking the "Filter" button at the bottom of the modal will filter the table with these sample names, while maintaining
+any existing filters that were in place.
 
 Modifying samples
 -----------------
@@ -253,29 +203,21 @@ Only user accounts that have the **Manager** role on a project can modify the sa
 
 ### Selecting samples
 
-All sample modification actions require that samples be selected. You can select individual samples by clicking anywhere on the row (except on the sample name itself):
+All sample modification actions require that samples be selected. You can select individual samples by clicking the
+checkbox at the start of the row    :
 
 ![Selected sample.](images/selected-sample.png)
-
-#### Multiple Sample Selection
-
-You can also select multiple samples at once by selecting a sample, pressing the shift key, and than selecting the last sample that you want selected.
-
-You can always see how many samples are selected at the top left of the samples table.
-
-![Selected sample counts.](images/selected-sample-count.png)
 
 #### Selecting Groupings of Samples
 
 All samples in the project can be selected at once using the checkbox in the table header.
 
-![Select All Checkbox](images/samples-select-cb-empty.png)
+![Select All Checkbox](images/samples-select-all.gif)
 
-![Selected sample counts.](images/samples-select-cb-complete.png)
+This will work during filtering as well. Just apply the necessary filters, and click the select all checkbox. Only the
+filtered samples will be selected.
 
-Alternatively, there is a dropdown next to the select all checkbox that allows you to select/deselect samples in the entire project, or on the current page of the sample table.
-
-![Selected sample counts.](images/samples-select-cb-dropdown.png)
+![Select All Checkbox](images/samples-select-all-filter.gif)
 
 ### Sharing samples between projects
 
@@ -283,28 +225,37 @@ Alternatively, there is a dropdown next to the select all checkbox that allows y
 
 ### Merging samples within a project
 
-If a sample was created when sequencing data was uploaded with an incorrect name, you may want to merge two samples together. When you merge two samples, you will move all of the **sequencing files** and **assembled genomes** from one sample to another, then **delete the original sample**. **None** of the sample metadata will be copied between the merged samples, instead you will select one sample as the target for the sample merge. Only users with the project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role can merge samples in a project and samples cannot be merged within **remote** projects.
+If a sample was created when sequencing data was uploaded with an incorrect name, you may want to merge two samples
+together. When you merge two samples, you will move all the **sequencing files** and **assembled genomes** from one
+sample to another, then **delete the original sample**. **None** of the sample metadata will be copied between the
+merged samples, instead you will select one sample as the target for the sample merge. Only users with the
+project **Manager** role can merge samples in a project and samples cannot be merged within **remote** projects.
 
-Start by [selecting the samples](#selecting-samples) that you want to merge. You **must** select more than one sample to enable the merge samples button. Once you've selected the two or more samples that you would like to merge, click on the "Samples" button just above the samples list and select "Merge Samples":
+Start by [selecting the samples](#selecting-samples) that you want to merge. You **must** select more than one sample to
+enable the merge samples button. Once you've selected the two or more samples that you would like to merge, click on
+the "Samples" button just above the samples list and select "Merge Samples":
 
 ![Merge samples button.](images/merge-samples-button.png)
 
-In the dialog that appears you will be presented with a list of the samples that are going to be merged, and an option to choose the target sample of the merge:
+In the dialog that appears you will be presented with a list of the samples that are going to be merged, and an option
+to choose the target sample of the merge:
 
 ![Merge samples dialog.](images/merge-samples-dialog.png)
 
-Click on the sample name under "**Select a sample to merge into**" to choose which sample will be used as the target for all of the sequencing data.
+A list of the samples selected is displayed. You must select the sample that you want to retain the metadata from. All
+others will be overwritten by this sample.
 
-You may also (optionally) rename the target sample by entering a new sample name under "**Rename sample**". The sample name must be **at least** 3 characters long, and **must not** contain white space characters (tab or space) or any of the following characters: `? ( ) [ ] / \ = + < > : ; " , * ^ | & ' .`. If you do not want to rename the target sample, leave this field blank.
+If you want to rename the sample, click the checkbox "Rename Sample", and enter a new name. The sample name must be at
+least 3 characters long, and must not contain white space characters (tab or space) or any of the following characters:
+<pre> ? ( ) [ ] / \ = + < > : ; " , * ^ | & ' </pre>. If you do not want to rename the target sample, leave this field blank.
 
-Once you've finished choosing the sample to merge into, click on the "Complete Merge" button at the bottom of the dialog.
-
-Note if you select samples that are non-modifiable, a warning will be displayed that you cannot merge the selected samples.
+![Example merging samples](images/merge-samples-example.gif)
 
 Exporting samples
 -----------------
 
-The [pipelines](../pipelines) available in IRIDA may not be enough for the types of analysis that you want to run on your sequencing data. You can export your sample data from IRIDA in a number of different ways:
+The [pipelines](../pipelines) available in IRIDA may not be enough for the types of analysis that you want to run on
+your sequencing data. You can export your sample data from IRIDA in a number of different ways:
 
 1. [Downloading samples](#downloading-samples),
 2. [To the command-line](#command-line-export), or
