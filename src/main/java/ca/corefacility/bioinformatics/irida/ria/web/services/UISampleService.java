@@ -513,10 +513,11 @@ public class UISampleService {
 				.map(header -> messageSource.getMessage(header, new Object[] {}, locale))
 				.collect(Collectors.toList());
 
+		String filename = projects.get(projects.size() - 1).getName().replaceAll(" ", "_").toLowerCase();
 		if (type.equals("excel")) {
-			writeToExcel(response, "FOOBAR", items, headers, locale);
+			writeToExcel(response, filename, items, headers, locale);
 		} else {
-			writeToCSV(response, "FOBV", items, headers, locale);
+			writeToCSV(response, filename, items, headers, locale);
 		}
 	}
 
@@ -623,7 +624,8 @@ public class UISampleService {
 	 *
 	 * @param response {@link HttpServletResponse}
 	 * @param filename {@link String} name of the file to download.
-	 * @param models   Data to download in the table
+	 * @param items    {@link ProjectSampleTableItem} details about each row of the table   Data to download in the
+	 *                 table
 	 * @param headers  for the table
 	 * @throws IOException thrown if file cannot be written
 	 */
@@ -667,7 +669,6 @@ public class UISampleService {
 	public SampleNameCheckResponse checkSampleNames(SampleNameCheckRequest request) {
 		Iterable<Project> projects = projectService.readMultiple(request.getProjectIds());
 		List<ValidSample> valid = new ArrayList<>();
-		List<String> invalid = new ArrayList<>();
 
 		AtomicReference<Iterator<Project>> iterator = new AtomicReference<>();
 		request.getNames().forEach(name -> {
@@ -681,10 +682,12 @@ public class UISampleService {
 					sample = sampleService.getSampleBySampleName(project, name);
 					valid.add(new ValidSample(project, sample));
 				} catch (Exception e) {
-					invalid.add(name);
+					// Nothing to worry about here
 				}
 			}
 		});
+		List<String> invalid = new ArrayList<>(request.getNames());
+		invalid.removeAll(valid.stream().map(ValidSample::getSampleName).collect(Collectors.toList()));
 
 		return new SampleNameCheckResponse(valid, invalid);
 	}
