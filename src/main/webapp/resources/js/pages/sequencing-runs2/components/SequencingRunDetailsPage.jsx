@@ -4,12 +4,13 @@ import {
   useGetSequencingRunDetailsQuery,
   useGetSequencingRunFilesQuery
 } from "../../../apis/sequencing-runs/sequencing-runs";
-import { Badge, Button, Col, Descriptions, Row, Table, Typography } from "antd";
+import { Badge, Button, Col, Row, Table, Typography } from "antd";
 import { formatDate } from "../../../utilities/date-utilities";
-import { PageWrapper } from "../../../components/page/PageWrapper";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { IconDownloadFile } from "../../../../js/components/icons/Icons";
 import { LinkButton } from "../../../components/Buttons/LinkButton";
+import { BasicList } from "../../../components/lists";
+import { NarrowPageWrapper } from "../../../components/page/NarrowPageWrapper";
 
 /**
  * React component to display the sequencing run details page.
@@ -19,18 +20,46 @@ import { LinkButton } from "../../../components/Buttons/LinkButton";
 export default function SequencingRunDetailsPage() {
   const isTechnician = window.TL._USER.systemRole === "ROLE_TECHNICIAN";
   const {runId} = useParams();
-  const {data: run = {}} = useGetSequencingRunDetailsQuery(runId);
+  const {
+    data: run = {},
+    isLoading: isRunLoading
+  } = useGetSequencingRunDetailsQuery(runId);
   const {
     data: files = [],
     isLoading: isFilesLoading
   } = useGetSequencingRunFilesQuery(runId);
+  const detailsList = isRunLoading
+    ? []
+    : [
+      {
+        title: "Sequencer Type",
+        desc: run.sequencerType
+      },
+      {
+        title: "Upload Status",
+        desc: <UploadStatusBadge status={run.uploadStatus}/>
+      },
+      {
+        title: "Upload User",
+        desc: isTechnician ? run.userName : (<LinkButton
+            text={run.userName}
+            href={setBaseUrl(`/users/${run.userId}`)}/>
+        )
+      },
+      {
+        title: "Created",
+        desc: formatDate({date: run.createdDate})
+      },
+      {
+        title: "Description",
+        desc: run.description
+      },
+    ];
+  const optionalPropertiesList = [];
+  run.optionalProperties && Object.entries(run.optionalProperties).map(([key, value]) => (
+    optionalPropertiesList.push({title: key, desc: value})))
+
   const columns = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      align: 'right'
-    },
     {
       title: 'Filename',
       dataIndex: 'fileName',
@@ -62,49 +91,23 @@ export default function SequencingRunDetailsPage() {
   ]
 
   return (
-    <PageWrapper title={i18n("SequenceRunDetailsPage.title", runId)}>
+    <NarrowPageWrapper title={i18n("SequenceRunDetailsPage.title", runId)}>
       <Row justify="center" gutter={[0, 16]}>
         <Col span={18}>
-          <Typography.Title level={5}>Details</Typography.Title>
+          <Typography.Title level={2}>Details</Typography.Title>
         </Col>
         <Col span={18}>
-          <Descriptions bordered>
-            <Descriptions.Item
-              label="Sequencer Type">{run.sequencerType}</Descriptions.Item>
-            <Descriptions.Item
-              label="Upload Status"><UploadStatusBadge
-              status={run.uploadStatus}/></Descriptions.Item>
-            <Descriptions.Item
-              label="Upload User">
-              {isTechnician ? run.userName : (<LinkButton
-                  text={run.userName}
-                  href={setBaseUrl(`/users/${run.userId}`)}/>
-              )}
-            </Descriptions.Item>
-            <Descriptions.Item
-              label="Created">{formatDate({date: run.createdDate})}</Descriptions.Item>
-            <Descriptions.Item
-              label="Description">{run.description}</Descriptions.Item>
-          </Descriptions>
+          <BasicList dataSource={detailsList} grid={{gutter: 16, column: 4}}/>
         </Col>
-        {run.optionalProperties && (
-          <>
-            <Col span={18}>
-              <Typography.Title level={5}>Additional
-                Properties</Typography.Title>
-            </Col>
-            <Col span={18}>
-              <Descriptions bordered>
-                {Object.entries(run.optionalProperties).map(([key, value]) => (
-                  <Descriptions.Item
-                    label={key}>{value}</Descriptions.Item>
-                ))}
-              </Descriptions>
-            </Col>
-          </>
-        )}
         <Col span={18}>
-          <Typography.Title level={5}>Files</Typography.Title>
+          <Typography.Title level={2}>Additional Properties</Typography.Title>
+        </Col>
+        <Col span={18}>
+          <BasicList dataSource={optionalPropertiesList}
+                     grid={{gutter: 16, column: 4}}/>
+        </Col>
+        <Col span={18}>
+          <Typography.Title level={2}>Files</Typography.Title>
         </Col>
         <Col span={18}>
           <Table loading={isFilesLoading}
@@ -114,7 +117,7 @@ export default function SequencingRunDetailsPage() {
                  pagination={false}/>
         </Col>
       </Row>
-    </PageWrapper>
+    </NarrowPageWrapper>
   );
 }
 

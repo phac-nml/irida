@@ -6,7 +6,7 @@
 import React from "react";
 import { List, Typography } from "antd";
 
-const { Text } = Typography;
+const {Text} = Typography;
 
 /**
  * Stateless UI component for displaying a basic list with a title and
@@ -19,13 +19,15 @@ const { Text } = Typography;
  */
 
 export function BasicList({
-  itemLayout = "horizontal",
-  dataSource = { dataSource }
-}) {
+                            itemLayout = "horizontal",
+                            dataSource = {dataSource},
+                            grid = undefined
+                          }) {
   return (
     <List
       itemLayout={itemLayout}
       dataSource={dataSource}
+      grid={grid}
       renderItem={item => (
         <List.Item>
           <List.Item.Meta
