@@ -1,6 +1,7 @@
 import { Alert, Checkbox, Space, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import ShareAssociated from "./ShareAssociated";
 import { SharedSamplesList } from "./SharedSamplesList";
 import { updatedLocked, updateMoveSamples } from "./shareSlice";
 
@@ -10,22 +11,26 @@ import { updatedLocked, updateMoveSamples } from "./shareSlice";
  * @returns {JSX.Element}
  * @constructor
  */
-export function ShareSamples({ samples = [], redirect }) {
+export function ShareSamples({ samples = [] }) {
   const dispatch = useDispatch();
-  const { originalSamples, locked, remove } = useSelector(
-    (state) => state.shareReducer
-  );
+  const { associated, originalSamples, locked, remove, currentProject } =
+    useSelector((state) => state.shareReducer);
 
   const SHOW_SAMPLES = samples.length > 0;
   const SHOW_NO_SAMPLES_WARNING = samples.length === 0;
   const SHOW_SOME_SAMPLES_WARNING =
     SHOW_SAMPLES && samples.length < originalSamples.length;
+  const SHOW_ASSOCIATED = SHOW_SAMPLES && associated.length > 0;
 
   return (
-    <>
+    <Space direction="vertical" style={{ width: `100%` }}>
+      <Typography.Title level={5}>
+        {i18n("ShareSamplesList.title")}
+      </Typography.Title>
+      {SHOW_ASSOCIATED && <ShareAssociated />}
       {SHOW_SAMPLES && (
-        <Space direction="vertical" style={{ width: `100%` }}>
-          <SharedSamplesList list={samples} />
+        <>
+          <SharedSamplesList list={samples} currentProject={currentProject} />
           <Checkbox
             className="t-move-checkbox"
             checked={remove}
@@ -45,7 +50,7 @@ export function ShareSamples({ samples = [], redirect }) {
               {i18n("ShareSamples.checkbox.lock")}
             </Typography.Text>
           </Checkbox>
-        </Space>
+        </>
       )}
       {SHOW_NO_SAMPLES_WARNING && (
         <Alert
@@ -67,6 +72,6 @@ export function ShareSamples({ samples = [], redirect }) {
           )}
         />
       )}
-    </>
+    </Space>
   );
 }

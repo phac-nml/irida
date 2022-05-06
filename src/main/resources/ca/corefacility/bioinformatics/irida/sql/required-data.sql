@@ -263,49 +263,49 @@ INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES (DATE_SUB(NOW
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES (DATE_SUB(NOW(), INTERVAL 9 YEAR), DATE_SUB(NOW(), INTERVAL 9 YEAR), 'Project 186');
 INSERT INTO project (`createdDate`, `modifiedDate`, `name`) VALUES (DATE_SUB(NOW(), INTERVAL 10 YEAR), DATE_SUB(NOW(), INTERVAL 10 YEAR), 'Project 187');
 
-INSERT INTO user_group_project(`created_date`, `project_role`, `project_id`, `user_group_id`) values (now(), 'PROJECT_USER', 50, 8);
+INSERT INTO user_group_project(`created_date`, `project_role`, `metadata_role`, `project_id`, `user_group_id`) values (now(), 'PROJECT_USER', 'LEVEL_1', 50, 8);
 
 -- relationship between projects and users
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 1, 2, 'PROJECT_OWNER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 3, 2, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 3, 1, 'PROJECT_OWNER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 4, 2, 'PROJECT_OWNER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 5, 2, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 5, 3, 'PROJECT_OWNER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 6, 2, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 6, 1, 'PROJECT_OWNER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 7, 2, 'PROJECT_OWNER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 8, 2, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 8, 3, 'PROJECT_OWNER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 9, 2, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 9, 3, 'PROJECT_OWNER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 10, 2, 'PROJECT_OWNER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 11, 2, 'PROJECT_OWNER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 12, 2, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 12, 3, 'PROJECT_OWNER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 13, 2, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 13, 1, 'PROJECT_OWNER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 14, 2, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 14, 3, 'PROJECT_OWNER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 1, 5, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 2, 5, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 3, 5, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 4, 5, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 5, 5, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 6, 5, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 7, 5, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 8, 5, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 9, 5, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 10, 5, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 11, 5, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 12, 5, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 13, 5, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 14, 5, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 1, 1, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 2, 1, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 4, 1, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 5, 1, 'PROJECT_USER');
-INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`) VALUES (now(), 100, 1, 'PROJECT_USER');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 1, 2, 'PROJECT_OWNER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 3, 2, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 3, 1, 'PROJECT_OWNER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 4, 2, 'PROJECT_OWNER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 5, 2, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 5, 3, 'PROJECT_OWNER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 6, 2, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 6, 1, 'PROJECT_OWNER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 7, 2, 'PROJECT_OWNER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 8, 2, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 8, 3, 'PROJECT_OWNER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 9, 2, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 9, 3, 'PROJECT_OWNER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 10, 2, 'PROJECT_OWNER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 11, 2, 'PROJECT_OWNER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 12, 2, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 12, 3, 'PROJECT_OWNER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 13, 2, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 13, 1, 'PROJECT_OWNER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 14, 2, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 14, 3, 'PROJECT_OWNER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 1, 5, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 2, 5, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 3, 5, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 4, 5, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 5, 5, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 6, 5, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 7, 5, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 8, 5, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 9, 5, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 10, 5, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 11, 5, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 12, 5, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 13, 5, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 14, 5, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 1, 1, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 2, 1, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 4, 1, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 5, 1, 'PROJECT_USER', 'LEVEL_4');
+INSERT INTO project_user (`createdDate`, `project_id`, `user_id`, `projectRole`, `metadataRole`) VALUES (now(), 100, 1, 'PROJECT_USER', 'LEVEL_4');
 
 -- project subscriptions
 INSERT INTO project_subscription (`created_date`, `project_id`, `user_id`, `email_subscription`) VALUES (now(), 1, 2, 0);
@@ -351,6 +351,7 @@ INSERT INTO project_subscription (`created_date`, `project_id`, `user_id`, `emai
 INSERT INTO project_subscription (`created_date`, `project_id`, `user_id`, `email_subscription`) VALUES (now(), 50, 1, 0);
 INSERT INTO project_subscription (`created_date`, `project_id`, `user_id`, `email_subscription`) VALUES (now(), 50, 2, 0);
 INSERT INTO project_subscription (`created_date`, `project_id`, `user_id`, `email_subscription`) VALUES (now(), 50, 3, 0);
+>>>>>>> development
 
 -- genome assembly
 INSERT INTO `genome_assembly` (id,created_date) VALUES (1, '2014-07-30 08:24:35');
@@ -1003,8 +1004,8 @@ INSERT INTO `metadata_field` (id, label, type, DTYPE, static_id) VALUES (21, "Mo
 
 
 -- METADATA TEMPLATES
-INSERT INTO `metadata_template` (id, created_date, modified_date, name, description) VALUES (1, '2016-06-10 08:05:53', '2016-07-10 08:05:53', 'Test Date Template 01', "Description of template #1. Think of all the interesting things that could be stored in here");
-INSERT INTO `metadata_template` (id, created_date, modified_date, name, description) VALUES (2, '2016-07-10 04:45:53', '2016-07-10 08:05:53', 'Special Pathogen Template', "Spicy jalapeno bacon ipsum dolor amet pancetta alcatra jerky, beef leberkas cupim chuck tenderloin. Doner tongue brisket rump bresaola. Corned beef pancetta fatback burgdoggen. Boudin pancetta hamburger, pork shankle andouille landjaeger ground round.");
+INSERT INTO `metadata_template` (id, created_date, modified_date, name, description, project_id, project_default) VALUES (1, '2016-06-10 08:05:53', '2016-07-10 08:05:53', 'Test Date Template 01', "Description of template #1. Think of all the interesting things that could be stored in here", 4, 0);
+INSERT INTO `metadata_template` (id, created_date, modified_date, name, description, project_id, project_default) VALUES (2, '2016-07-10 04:45:53', '2016-07-10 08:05:53', 'Special Pathogen Template', "Spicy jalapeno bacon ipsum dolor amet pancetta alcatra jerky, beef leberkas cupim chuck tenderloin. Doner tongue brisket rump bresaola. Corned beef pancetta fatback burgdoggen. Boudin pancetta hamburger, pork shankle andouille landjaeger ground round.", 4, 0);
 
 -- METADATA TEMPLATE METADATA FIELD
 -- METADATA TEMPLATE 1 FIELDS
@@ -1022,9 +1023,5 @@ INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id)
 INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 5);
 INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 8);
 INSERT INTO `metadata_template_metadata_field` (metadata_template_id, fields_id) values (2, 11);
-
--- PROJECT METADATA TEMPLATE
-INSERT INTO `project_metadata_template` (id, created_date, project_id, template_id) VALUES (1, '2016-06-10 08:05:53',4, 1);
-INSERT INTO `project_metadata_template` (id, created_date, project_id, template_id) VALUES (2, '2017-01-11 08:05:53',4, 2);
 
 INSERT INTO `metadata_entry` (id, value, type, sample_id, field_id) VALUES(1, 'Jon', 'text', 51, 14), (2, 'Doe', 'text', 51, 13),(3, 'Winnipeg', 'text', 51, 19),(4, 'Winnipeg Regional Health Authority', 'text', 51, 17),(5, '1987-11-28', 'text', 51, 16),(6, 'Coughing', 'text', 51, 18),(7, '2015-10-15T10:16:42+00:00', 'text', 51, 7),(8, 'Salmonella', 'text', 51, 8),(9, 'XXX', 'text', 51, 6),(10, 'ABC123', 'text', 51, 10),(11, 'DEF456', 'text', 51, 15),(12, '5', 'text', 51, 11),(13, 'Damion', 'text', 52, 14),(14, 'Dooley', 'text', 52, 13),(15, 'Vancouver', 'text', 52, 19),(16, 'BC Fraser Health Authority', 'text', 52, 17),(17, '1966-01-13', 'text', 52, 16),(18, 'Blurred vision', 'text', 52, 18),(19, '2015-02-11T10:16:42+00:00', 'text', 52, 7),(20, 'Salmonella enterica', 'text', 52, 8),(21, 'SENXAI.0001', 'text', 52, 6),(22, 'SENBNI.0017', 'text', 52, 10),(23, 'DEF456', 'text',52, 15),(24, 'DT4b', 'text',52, 11),(25, 'Foo', 'text',53, 14),(26, 'Bar', 'text', 53, 13),(27, 'Comox', 'text', 53, 19),(28, 'BC Vancouver Island Health Authority', 'text', 53, 17),(29, '1986-02-28', 'text', 53, 16),(30, 'Diarrhea', 'text',53, 18),(31, '2015-06-04T10:16:42+00:00', 'text', 53, 7),(32, 'Salmonella enterica', 'text', 53, 8),(33, '', 'text', 53, 6),(34, 'SENXAI.0038', 'text', 53, 10),(35, 'SENBNI.0016', 'text', 53, 15),(36, 'DT13', 'text', 53, 11);

@@ -11,14 +11,14 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.SequencingRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 
 /**
  * Permission checking if a user is the owner of a {@link SequencingRun} or if
  * they are ROLE_SEQUENCER
  */
 @Component
-public class UpdateSequencingRunPermission extends BasePermission<SequencingRun, Long> {
+public class UpdateSequencingRunPermission extends RepositoryBackedPermission<SequencingRun, Long> {
 
 	private static final String PERMISSION_PROVIDED = "canUpdateSequencingRun";
 

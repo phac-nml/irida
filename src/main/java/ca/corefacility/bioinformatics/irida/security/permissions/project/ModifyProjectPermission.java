@@ -16,12 +16,12 @@ import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 
 /**
  * Superclass permission whether a user can modify project settings.  This superclass checks if a user has ownership of a project. This can be extended for specific settings.
  */
-public abstract class ModifyProjectPermission extends BasePermission<Project,Long>{
+public abstract class ModifyProjectPermission extends RepositoryBackedPermission<Project,Long> {
 	private static final Logger logger = LoggerFactory.getLogger(ModifyProjectPermission.class);
 
 	private final UserRepository userRepository;

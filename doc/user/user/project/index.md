@@ -185,21 +185,22 @@ Administrators can change the priority of automated pipelines for a given projec
 
 Project member settings can be found in the **Members** tab in the project settings page.
 
-![Project details members tab.]({{ site.baseurl }}/images/tutorials/common/projects/project-details-members-tab.png)
+![Project details members tab.]({{ site.baseurl }}/images/tutorials/common/projects/members-overview.png)
 
-Project members are users who have permissions to view or edit project metadata. Project members can also view, download, and submit pipelines using sequencing data that's contained in a project. Project members can have two different roles: a project collaborator (*read-only* permissions), and a project manager (*read* and *modify* permissions).  A user must be a **Manager** on a project to add or remove members.
+Project members are users who have permissions to view or edit project metadata. Project members can also view, download, and submit pipelines using sequencing data that's contained in a project. Project members can have two different project roles: a project collaborator (*read-only* permissions), and a project manager (*read* and *modify* permissions). Project members also have a metadata role (Level 1, Level 2, Level 3, Level 4). Level 4 is the highest metadata role for a project. A **Manager** has a metadata role of Level 4 and this cannot be changed. Project collaborators can have one of the metadata roles assigned to them. A user must be a **Manager** on a project to add or remove members, modify project roles, and/or modify metadata roles.
 
-A project **Collaborator** will only be able to *view* the project members:
+A project **Collaborator** will only be able to *view* the project members and their project roles on the project. A collaborator can not view the metadata roles assigned to the project members:
 
-![Project members (as a collaborator).](images/project-members-collaborator.png)
+![Project members (as a collaborator).](images/members-collaborator-view.png)
 
 A project **Manager** will be able to *modify* the project members:
 
-![Project members (as a manager).](images/project-members-manager.png)
+![Project members (as a manager).](images/members-manager-view.png)
 
+### Project user groups
 Similar to project members, user groups can also be added to projects to manage collections of users.
 
-![Project details groups tab.]({{ site.baseurl }}/images/tutorials/common/projects/project-details-groups-tab.png)
+![Project details groups tab.]({{ site.baseurl }}/images/tutorials/common/projects/groups-overview.png)
 
 #### Adding a project member
 
@@ -211,17 +212,54 @@ Similar to project members, user groups can also be added to projects to manage 
 
 {% include tutorials/common/project-add-member-group.md %}
 
-#### Changing a project member role
+#### Changing a project member's project role
 
-You may want to change a project member role if you wish to remove permissions for an individual user account to modify project details, but still want to allow that user account to view the project data. You can only change a project member role if you have the **Manager** role on the project.
+You may want to change a project member's project role if you wish to remove permissions for an individual user account to modify project details, but still want to allow that user account to view the project data. You can only change a project member project role if you have the **Manager** role on the project.
 
 Start by [viewing the project members](#project-members).
 
-To change the role of a project member, click on the role drop-down menu of the user that you would like to change:
+To change the role of a project member, click on the project role drop-down menu of the user that you would like to change:
 
-![Edit project role button.](images/edit-project-role-button.png)
+![Edit project member project role.](images/change-user-project-role.png)
 
 The project role is saved as soon as you make a selection -- you **do not** need to click a "Save" button.
+
+#### Changing a project member's metadata role
+
+You may want to change a project member's metadata role if you wish to restrict an individual user from viewing certain metadata on the project. You can only change a project member's metadata role if you have the **Manager** role on the project and the member is also not a **Manager** on the project.
+
+Start by [viewing the project members](#project-members).
+
+To change the metadata role of a project member, click on the metadata role drop-down menu of the user that you would like to change:
+
+![Edit project member metadata role.](images/change-user-project-metadata-role.png)
+
+The metadata role is saved as soon as you make a selection -- you **do not** need to click a "Save" button.
+
+#### Changing a project user group's project role
+
+You may want to change a project user group's project role if you wish to remove permissions for members of a user group to modify project details, but still want to allow that user group to view the project data. You can only change a project user group's project role if you have the **Manager** role on the project.
+
+Start by [viewing the project user groups](#project-user-groups).
+
+To change the project role of a project user group, click on the project role drop-down menu of the user group that you would like to change:
+
+![Edit project user group project role.](images/change-usergroup-project-role.png)
+
+The project role is saved as soon as you make a selection -- you **do not** need to click a "Save" button.
+
+#### Changing a project user group's metadata role
+
+You may want to change a project user group's metadata role if you wish to restrict the members of the group from viewing certain metadata on the project. You can only change a project user group's metadata role if you have the **Manager** role on the project and the user group is also not a **Manager** on the project.
+
+Start by [viewing the project user groups](#project-usergroups).
+
+To change the metadata role of a project member, click on the metadata role drop-down menu of the user that you would like to change:
+
+![Edit project user group metadata role.](images/change-usergroup-project-metadata-role.png)
+
+The metadata role is saved as soon as you make a selection -- you **do not** need to click a "Save" button.
+
 
 #### Removing a user from a project
 
@@ -231,13 +269,55 @@ Start by [viewing the project members](#project-members).
 
 To remove a project member, click on the remove button on the right-hand side of the table:
 
-![Remove project member button.](images/remove-project-member-button.png)
+![Remove project member button.](images/remove-project-member.png)
 
 When you click the remove button, you will be asked to confirm the project member removal:
 
 ![Remove project member confirmation dialog.](images/remove-project-member-confirm.png)
 
 To confirm, click the "Ok" button.
+
+#### Removing a user group from a project
+
+You may want to completely remove all permissions for a user group to access data in a project. To remove those permissions, you must remove the user group from the project user groups list.
+
+Start by [viewing the project user groups](#project-user-groups).
+
+To remove a project user group, click on the remove button on the right-hand side of the table:
+
+![Remove project user group button.](images/remove-project-usergroup.png)
+
+When you click the remove button, you will be asked to confirm the project member removal:
+
+![Remove project user group confirmation dialog.](images/remove-project-usergroup-confirm.png)
+
+To confirm, click the "Ok" button.
+
+### Metadata
+
+Metadata associated with the project can be viewed from the **Metadata** tab. A project **Manager** can view **all** the metadata fields associated with the project, and view/modify the metadata restriction levels for each of these fields.
+
+![Metadata fields manager view](images/metadata-fields-manager.png)
+
+The **Manager** also has the ability to select metadata fields, create templates, and set a default template which members of the project can use to view data on the Linelist page.
+
+![Metadata templates manager view](images/metadata-templates-list-manager.png)
+
+Clicking on the name of the template takes you to a page where you can modify template details. Note that the field restriction levels must be modified from the **Fields** tab and cannot be modified within a template.
+
+![Metadata template fields manager view](images/metadata-template-fields-list-manager.png)
+
+A collaborator can only view a subset of the metadata fields which are at their metadata restriction level and below. For example the user below has a project metadata role of Level 2, so they can only view metadata fields which have a restriction Level 1 or Level 2:
+
+![Metadata fields collaborator view](images/metadata-fields-collaborator.png)
+
+A project collaborator can only view/download the templates that exist and the fields that makes up those templates:
+
+![Metadata templates  collaborator view](images/metadata-templates-list-collaborator.png)
+
+Clicking on the name of the template takes you to a page where you can view template details.
+
+![Metadata template fields collaborator view](images/metadata-template-fields-list-collaborator.png)
 
 ### Associated Projects
 
@@ -246,6 +326,7 @@ Associated projects can be used to help manage related sample data across multip
 To view associated projects click the **Associated Projects** tab in the project settings page.
 
 ![Associated projects tab](images/associated-tab.png)
+
 *This is how the table will look for a Collaborator on the project*
 
 

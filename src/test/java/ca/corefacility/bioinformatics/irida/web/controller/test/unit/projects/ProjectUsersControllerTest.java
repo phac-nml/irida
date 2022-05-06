@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Map;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -95,12 +96,13 @@ public class ProjectUsersControllerTest {
 		Project p = TestDataFactory.constructProject();
 		User u = TestDataFactory.constructUser();
 		ProjectRole r = ProjectRole.PROJECT_USER;
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.LEVEL_1;
 		ProjectUserJoin j = new ProjectUserJoin(p, u, r);
 		MockHttpServletResponse response = new MockHttpServletResponse();
 
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(userService.getUserByUsername(u.getUsername())).thenReturn(u);
-		when(projectService.addUserToProject(p, u, r)).thenReturn(j);
+		when(projectService.addUserToProject(p, u, r, metadataRole)).thenReturn(j);
 		// prepare the "user" for addition to the project, just a map of userId and a username.
 		Map<String, String> userMap = ImmutableMap.of(RESTProjectUsersController.USER_ID_KEY, u.getUsername());
 
@@ -109,7 +111,7 @@ public class ProjectUsersControllerTest {
 				p.getId(), userMap, response);
 
 		// confirm that the service method was called
-		verify(projectService, times(1)).addUserToProject(p, u, ProjectRole.PROJECT_USER);
+		verify(projectService, times(1)).addUserToProject(p, u, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1);
 		verify(projectService, times(1)).read(p.getId());
 		verify(userService, times(1)).getUserByUsername(u.getUsername());
 		// check that the response is as expected:
@@ -152,23 +154,25 @@ public class ProjectUsersControllerTest {
 		Project p = TestDataFactory.constructProject();
 		User u = TestDataFactory.constructUser();
 		ProjectRole r = ProjectRole.PROJECT_OWNER;
-		ProjectUserJoin j = new ProjectUserJoin(p, u, r);
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.LEVEL_4;
+		ProjectUserJoin j = new ProjectUserJoin(p, u, r, metadataRole);
 		MockHttpServletResponse response = new MockHttpServletResponse();
 
 		when(projectService.read(p.getId())).thenReturn(p);
 		when(userService.getUserByUsername(u.getUsername())).thenReturn(u);
-		when(projectService.addUserToProject(p, u, r)).thenReturn(j);
+		when(projectService.addUserToProject(p, u, r, metadataRole)).thenReturn(j);
 
 		//Note: Adding user as a project owner instead of basic user
 		Map<String, String> userMap = ImmutableMap.of(RESTProjectUsersController.USER_ID_KEY, u.getUsername(),
-				RESTProjectUsersController.USER_ROLE_KEY, r.toString());
+				RESTProjectUsersController.USER_ROLE_KEY, r.toString(), RESTProjectUsersController.METADATA_ROLE_KEY,
+				metadataRole.toString());
 
 		// add the user to the project
 		ResponseResource<LabelledRelationshipResource<Project, User>> responseResource = controller.addUserToProject(
 				p.getId(), userMap, response);
 
 		// confirm that the service method was called
-		verify(projectService, times(1)).addUserToProject(p, u, ProjectRole.PROJECT_OWNER);
+		verify(projectService, times(1)).addUserToProject(p, u, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
 		verify(projectService, times(1)).read(p.getId());
 		verify(userService, times(1)).getUserByUsername(u.getUsername());
 		// check that the response is as expected:

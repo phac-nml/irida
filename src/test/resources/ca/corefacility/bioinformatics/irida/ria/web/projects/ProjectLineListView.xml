@@ -34,21 +34,30 @@
     <related_project id="1" subject_id="1" relatedProject_id="6" createdDate="2013-07-18 14:20:19.0"/>
 
     <project_user id="1" project_id="1" user_id="1"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  metadataRole="LEVEL_4"/>
     <project_user id="2" project_id="2" user_id="1"
-                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
+                  metadataRole="LEVEL_1"/>
     <project_user id="3" project_id="3" user_id="1"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  metadataRole="LEVEL_4"/>
     <project_user id="4" project_id="4" user_id="1"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  metadataRole="LEVEL_4"/>
     <project_user id="6" project_id="1" user_id="2"
-                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
+                  metadataRole="LEVEL_1"/>
     <project_user id="7" project_id="1" user_id="3"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  metadataRole="LEVEL_4"/>
     <project_user id="8" project_id="2" user_id="3"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  metadataRole="LEVEL_4"/>
     <project_user id="9" project_id="6" user_id="1"
-                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"/>
+                  projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
+                  metadataRole="LEVEL_4"/>
+
 
     <sample id="1" createdDate="2013-07-01 14:00:19.0" modifiedDate="2015-07-01 14:00:19.0" description="description1"
             sampleName="sample1" organism="E. coli"/>
@@ -125,13 +134,12 @@
     <metadata_field id="4" label="symptom" type="text" DTYPE="MetadataTemplateField"/>
 
     <metadata_template id="1" created_date="2016-06-10 08:05:53" modified_date="2016-06-10 08:05:53"
-                       name="Testing Template 1"/>
+                       name="Testing Template 1" project_id="1" project_default="0"/>
 
     <metadata_template_metadata_field metadata_template_id="1" fields_id="1"/>
     <metadata_template_metadata_field metadata_template_id="1" fields_id="2"/>
     <metadata_template_metadata_field metadata_template_id="1" fields_id="4"/>
 
-    <project_metadata_template id="1" created_date="2016-06-10 08:05:53" project_id="1" template_id="1"/>
 
     <metadata_entry id="1" value="Fred" type="text" sample_id="1" field_id="1"/>
     <metadata_entry id="2" value="Johnson" type="text" sample_id="1" field_id="2"/>

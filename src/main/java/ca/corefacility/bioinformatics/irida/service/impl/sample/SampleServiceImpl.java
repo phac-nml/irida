@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -187,6 +189,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
+	@PostFilter("hasPermission(filterObject, 'canReadMetadataEntry')")
 	@Override
 	public Set<MetadataEntry> getMetadataForSample(Sample sample) {
 		return metadataEntryRepository.getMetadataForSample(sample);
@@ -206,17 +209,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
-	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project) {
-		return metadataEntryRepository.getMetadataForProject(project);
-	}
+	@PostAuthorize("hasPermission(returnObject,'readProjectMetadataResponse')")
+	public ProjectMetadataResponse getMetadataForProjectSamples(Project project, List<Long> sampleIds, List<MetadataTemplateField> fields) {
+		checkArgument(!fields.isEmpty(), "fields must not be empty");
+		Map<Long, Set<MetadataEntry>> metadataForProjectSamples = metadataEntryRepository.getMetadataForProjectSamples(project, sampleIds, fields);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasPermission(#project, 'canReadProject')")
-	public Map<Long, Set<MetadataEntry>> getMetadataForProjectSamples(Project project, List<Long> sampleIds) {
-		return metadataEntryRepository.getMetadataForProjectSamples(project, sampleIds);
+		return new ProjectMetadataResponse(project, metadataForProjectSamples);
 	}
 
 	/**

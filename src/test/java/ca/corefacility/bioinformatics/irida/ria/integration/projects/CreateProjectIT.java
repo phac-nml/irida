@@ -52,6 +52,8 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 		createComponent.enterProjectDescription(description);
 		createComponent.goToNextStep();
 		assertTrue(createComponent.isNoSamplesMessageDisplayed(), "Should be a message explaining no samples");
+		createComponent.goToNextStep();
+		assertTrue(createComponent.isNoSamplesSelectedMessageDisplayed(), "Should be a message explaining no samples were selected so there is no metadata available");
 		createComponent.submitProject();
 		assertTrue(driver().getTitle().contains(name));
 
@@ -73,6 +75,7 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 
 		createComponent.enterProjectName(name);
 		createComponent.enterOrganism(organism);
+		createComponent.goToNextStep();
 		createComponent.goToNextStep();
 		createComponent.submitProject();
 
@@ -97,10 +100,15 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 		createComponent.enterProjectName(name);
 		createComponent.goToNextStep();
 		createComponent.selectAllSamples();
-
+		createComponent.goToNextStep();
+		assertTrue(createComponent.correctMetadataFieldDataDisplayed(), "The correct metadata field labels, current restrictions, and target restrictions should be displayed");
 		createComponent.submitProject();
 		assertTrue(driver().getTitle().contains(name));
 		TableSummary summary = samplesPage.getTableSummary();
 		assertEquals(1, summary.getTotal(), "Should be 1 sample on the page");
+		// Go to the settings -> metadata page to make sure metadata fields and restrictions were set correctly.
+		driver().get(driver().getCurrentUrl() + "/settings/metadata/fields");
+
+		assertTrue(createComponent.correctMetadataFieldDataDisplayedForNewProject(), "The metadata fields should be copied over to the new project");
 	}
 }

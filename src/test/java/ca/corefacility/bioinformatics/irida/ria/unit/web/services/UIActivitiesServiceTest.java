@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.event.*;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -156,7 +157,7 @@ public class UIActivitiesServiceTest {
 
 		UserGroup userGroup = new UserGroup("MY GROUP");
 		UserGroupProjectJoin userGroupProjectJoin = new UserGroupProjectJoin(project, userGroup,
-				ProjectRole.PROJECT_USER);
+				ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1);
 		UserGroupRoleSetProjectEvent userGroupRoleSetProjectEvent = new UserGroupRoleSetProjectEvent(
 				userGroupProjectJoin);
 
@@ -173,7 +174,7 @@ public class UIActivitiesServiceTest {
 
 		UserGroup userGroup2 = new UserGroup("MY GROUP 2");
 		UserGroupProjectJoin userGroupProjectJoin2 = new UserGroupProjectJoin(project2, userGroup2,
-				ProjectRole.PROJECT_USER);
+				ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_4);
 		UserGroupRoleSetProjectEvent userGroupRoleSetProjectEvent2 = new UserGroupRoleSetProjectEvent(
 				userGroupProjectJoin2);
 

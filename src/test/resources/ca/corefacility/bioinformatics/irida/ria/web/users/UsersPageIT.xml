@@ -16,8 +16,8 @@
           phoneNumber="867-5309" username="admin" enabled="true" system_role="ROLE_ADMIN"
           credentialsNonExpired="true"/>
 
-    <project name="project" id="1" createdDate="2013-07-18 14:20:19.0"
-             modifiedDate="2013-07-18 14:20:19.0"/>
-    <project_user project_id="1" user_id="1" projectRole="PROJECT_OWNER"
-                  createdDate="2013-07-18 14:20:19.0"/>
+	<project name="project" id="1" createdDate="2013-07-18 14:20:19.0"
+		modifiedDate="2013-07-18 14:20:19.0"  />
+	<project_user project_id="1" user_id="1" projectRole="PROJECT_OWNER"
+		createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4"/>
 </dataset>
