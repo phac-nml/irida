@@ -54,6 +54,8 @@ public class UIProjectServiceTest {
 		CreateProjectRequest request = new CreateProjectRequest();
 		request.setName("Test Project");
 		request.setLock(false);
+		request.setMetadataRestrictions(ImmutableList.of());
+		
 		service.createProject(request);
 
 		verify(projectService, times(1)).create(any(Project.class));
