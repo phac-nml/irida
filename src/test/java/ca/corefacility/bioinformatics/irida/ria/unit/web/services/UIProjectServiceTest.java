@@ -14,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectsService;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ManageLocalProjectSettingsPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.collect.ImmutableList;
@@ -36,8 +37,9 @@ public class UIProjectServiceTest {
 		ProjectOwnerPermission projectOwnerPermission = mock(ProjectOwnerPermission.class);
 		ManageLocalProjectSettingsPermission manageLocalProjectSettingsPermission = mock(
 				ManageLocalProjectSettingsPermission.class);
+		MetadataTemplateService metadataTemplateService = mock(MetadataTemplateService.class);
 		service = new UIProjectsService(projectService, sampleService, messageSource, projectOwnerPermission,
-				manageLocalProjectSettingsPermission);
+				manageLocalProjectSettingsPermission, metadataTemplateService);
 
 		// Set up the project
 		PROJECT_01.setId(PROJECT_01_ID);

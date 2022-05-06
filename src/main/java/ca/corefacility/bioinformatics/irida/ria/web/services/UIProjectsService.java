@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -31,8 +32,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.CreateProjectRe
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.NewProjectMetadataRestriction;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.UpdateProjectAttributeRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.NewProjectMetadataRestriction;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ManageLocalProjectSettingsPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;

@@ -81,7 +81,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSampleByName("sample-5-fg-22");
 		page.openToolsDropDown();
 		assertTrue(page.isMergeBtnEnabled(), "Merge option should be enabled");
-		assertTrue(page.isShareButtonAvailable(), "Share option should be enabled");
 		assertTrue(page.isRemoveBtnEnabled(), "Remove option should be enabled");
 		page.openExportDropdown();
 		assertTrue(page.isDownloadBtnEnabled(), "Download option should be enabled");
@@ -146,7 +145,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.selectSampleByName("sample24p7");
 
 		page.openToolsDropDown();
-		assertTrue(page.isShareButtonAvailable(), "Share button should be enabled");
 		assertFalse(page.isMergeBtnVisible(), "Merge button should not be displayed");
 	}
 
