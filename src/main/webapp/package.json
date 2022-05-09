@@ -80,6 +80,7 @@
     "styled-components": "^5.3.5",
     "tslib": "^2.3.1",
     "uniqolor": "^1.0.2",
+    "uuid": "^8.3.2",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

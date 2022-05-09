@@ -1,4 +1,5 @@
 import uniqolor from "uniqolor";
+import { v5 as uuidv5 } from "uuid";
 
 /**
  * Create a unique color for any IRIDA thing (project, sample, etc.)
@@ -7,14 +8,17 @@ import uniqolor from "uniqolor";
  * @returns {{background: *, text: *}}
  */
 export function generateColourForItem({ id, label }) {
-  let background = uniqolor(`${label}-${id}`, {
+  const formatted = uuidv5(`${id}`, "1b671a64-40d5-491e-99b0-da01ff1f3341");
+  const name = `${formatted}-${label}`;
+
+  let background = uniqolor(name, {
     lightness: 95,
     saturation: 95,
   });
-  let colour = uniqolor(`${label}-${id}`, {
+
+  let colour = uniqolor(name, {
     lightness: 40,
     saturation: 95,
   });
-  console.log(colour);
   return { background: background.color, text: colour.color };
 }
