@@ -5,6 +5,17 @@ import { SPACE_LG } from "../../styles/spacing";
 
 const {Content, Sider} = Layout;
 
+/**
+ * Standard page layout for pages that have a narrow width layout (e.g. user account details)
+ *
+ * @param {string} title - page title
+ * @param {element} headerExtras - extra information (buttons, search fields, etc.) to display in the page header
+ * @param {function} onBack - function to handle on clicking back button
+ * @param {string} subTitle - page subtitle
+ * @param {element} children - main content for the page
+ * @returns {*}
+ * @constructor
+ */
 export function NarrowPageWrapper({
                                     title,
                                     headerExtras,

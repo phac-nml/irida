@@ -14,6 +14,7 @@ const {Text} = Typography;
  *
  * @param {{dataSource: Array}} dataSource - data for the List component to display
  * @param {string} itemLayout - layout of the list
+ * @param {object} grid - grid type of list
  *
  * @returns {Element} - Returns an antd 'List' component with passed data
  */
