@@ -106,13 +106,12 @@ public class LineListController {
 		//for each sample
 		for (Sample s : samples) {
 			//get the metadata for that sample
-			Set<MetadataEntry> metadata = metadataForProject.get(s.getId());
+			Set<MetadataEntry> metadata = metadataForProject.getOrDefault(s.getId(), new HashSet<>());
 
 			//check if the project owns the sample
 			boolean ownership = !lockedSamplesInProject.contains(s.getId());
 
-			projectSamplesMetadata.add(new UISampleMetadata(project, s, ownership,
-					metadata != null ? metadata : new HashSet<>()));
+			projectSamplesMetadata.add(new UISampleMetadata(project, s, ownership, metadata));
 		}
 
 		return new EntriesResponse(page.getTotalElements(), projectSamplesMetadata);
