@@ -40,12 +40,10 @@ public class UISequenceFileService {
 	/**
 	 * Gets the details for the sequence file
 	 *
-	 * @param sequencingObjectId
-	 *            ID for the {@link SequencingObject}
-	 * @param sequenceFileId
-	 *            Id for the {@link SequenceFile}
-	 * @return {@link FastQCDetailsResponse} dto which contains the sequencing
-	 *         object, sequence file, and the fastqc result.
+	 * @param sequencingObjectId ID for the {@link SequencingObject}
+	 * @param sequenceFileId     Id for the {@link SequenceFile}
+	 * @return {@link FastQCDetailsResponse} dto which contains the sequencing object, sequence file, and the fastqc
+	 * result.
 	 */
 	public FastQCDetailsResponse getFastQCDetails(Long sequencingObjectId, Long sequenceFileId) {
 		SequencingObject seqObject = sequencingObjectService.read(sequencingObjectId);
@@ -58,14 +56,10 @@ public class UISequenceFileService {
 	/**
 	 * Gets the fastqc charts for the file.
 	 *
-	 * @param sequencingObjectId
-	 *            ID for the {@link SequencingObject}
-	 * @param sequenceFileId
-	 *            Id for the {@link SequenceFile}
-	 * @return {@link FastQCImagesResponse} dto which has the byte arrays for
-	 *         the images as well as the fastqc version
-	 * @throws IOException
-	 *             if entity is not found
+	 * @param sequencingObjectId ID for the {@link SequencingObject}
+	 * @param sequenceFileId     Id for the {@link SequenceFile}
+	 * @return {@link FastQCImagesResponse} dto which has the byte arrays for the images as well as the fastqc version
+	 * @throws IOException if entity is not found
 	 */
 	public FastQCImagesResponse getFastQCCharts(Long sequencingObjectId, Long sequenceFileId) throws IOException {
 		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
@@ -94,10 +88,8 @@ public class UISequenceFileService {
 	/**
 	 * Gets the overrepresented sequences for the file
 	 *
-	 * @param sequencingObjectId
-	 *            ID for the {@link SequencingObject}
-	 * @param sequenceFileId
-	 *            Id for the {@link SequenceFile}
+	 * @param sequencingObjectId ID for the {@link SequencingObject}
+	 * @param sequenceFileId     Id for the {@link SequenceFile}
 	 * @return {@link AnalysisFastQC} model
 	 */
 	public AnalysisFastQC getOverRepresentedSequences(Long sequencingObjectId, Long sequenceFileId) {
@@ -108,8 +100,14 @@ public class UISequenceFileService {
 		return fastQC;
 	}
 
-	public void downloadSequenceFile(Long sequencingObjectId, Long sequenceFileId,
-			HttpServletResponse response) throws IOException {
+	/**
+	 * Download the sequence file
+	 *
+	 * @param sequencingObjectId ID for the {@link SequencingObject}
+	 * @param sequenceFileId     Id for the {@link SequenceFile}
+	 */
+	public void downloadSequenceFile(Long sequencingObjectId, Long sequenceFileId, HttpServletResponse response)
+			throws IOException {
 		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
 		SequenceFile sequenceFile = sequencingObject.getFileWithId(sequenceFileId);
 		Path path = sequenceFile.getFile();

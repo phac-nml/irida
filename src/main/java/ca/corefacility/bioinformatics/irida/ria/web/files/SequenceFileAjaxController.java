@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.files;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,8 +35,8 @@ public class SequenceFileAjaxController {
 	 *
 	 * @param sequencingObjectId ID for the {@link SequencingObject}
 	 * @param sequenceFileId     Id for the {@link SequenceFile}
-	 * @return {@link FastQCDetailsResponse} dto which contains the sequencing object,
-	 * sequence file, and the fastqc result.
+	 * @return {@link FastQCDetailsResponse} dto which contains the sequencing object, sequence file, and the fastqc
+	 * result.
 	 */
 	@GetMapping("/fastqc-details")
 	public ResponseEntity<FastQCDetailsResponse> getFastQCDetails(@RequestParam Long sequencingObjectId,
@@ -51,8 +49,7 @@ public class SequenceFileAjaxController {
 	 *
 	 * @param sequencingObjectId ID for the {@link SequencingObject}
 	 * @param sequenceFileId     Id for the {@link SequenceFile}
-	 * @return {@link FastQCImagesResponse} dto which has the byte arrays for the images
-	 * as well as the fastqc version
+	 * @return {@link FastQCImagesResponse} dto which has the byte arrays for the images as well as the fastqc version
 	 * @throws IOException if entity is not found
 	 */
 	@GetMapping("/fastqc-charts")
@@ -62,8 +59,7 @@ public class SequenceFileAjaxController {
 	}
 
 	/**
-	 * Gets the overrepresented sequences for the file from the
-	 * fastqc results.
+	 * Gets the overrepresented sequences for the file from the fastqc results.
 	 *
 	 * @param sequencingObjectId ID for the {@link SequencingObject}
 	 * @param sequenceFileId     Id for the {@link SequenceFile}
@@ -75,6 +71,12 @@ public class SequenceFileAjaxController {
 		return ResponseEntity.ok(uiSequenceFileService.getOverRepresentedSequences(sequencingObjectId, sequenceFileId));
 	}
 
+	/**
+	 * Download the sequence file
+	 *
+	 * @param sequencingObjectId ID for the {@link SequencingObject}
+	 * @param sequenceFileId     Id for the {@link SequenceFile}
+	 */
 	@GetMapping("/download")
 	public void downloadSequenceFile(@RequestParam Long sequencingObjectId, @RequestParam Long sequenceFileId,
 			HttpServletResponse response) throws IOException {
