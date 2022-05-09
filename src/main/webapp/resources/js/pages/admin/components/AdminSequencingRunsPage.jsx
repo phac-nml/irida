@@ -10,8 +10,9 @@
 import React from "react";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { PagedTableProvider } from "../../../components/ant.design/PagedTable";
-import { SequencingRunsList } from "../../sequencing-runs/components/SequencingRunsList";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import SequencingRunListTable
+  from "../../sequencing-runs/components/SequencingRunListTable";
 
 export default function AdminSequencingRunsPage({}) {
   const URL = setBaseUrl(`ajax/sequencingRuns`);
@@ -20,7 +21,7 @@ export default function AdminSequencingRunsPage({}) {
   return (
     <PageWrapper title={i18n("AdminPanel.sequencingRuns")}>
       <PagedTableProvider url={`${URL}/list`}>
-        <SequencingRunsList/>
+        <SequencingRunListTable/>
       </PagedTableProvider>
     </PageWrapper>
   );

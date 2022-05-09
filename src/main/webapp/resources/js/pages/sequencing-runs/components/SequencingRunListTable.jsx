@@ -30,7 +30,7 @@ export default function SequencingRunListTable() {
           <Button
             type="link"
             className="t-run-link"
-            href={setBaseUrl(`sequencing-runs2/${text}`)}
+            href={setBaseUrl(`sequencingRuns/${text}`)}
           >
             {text}
           </Button>

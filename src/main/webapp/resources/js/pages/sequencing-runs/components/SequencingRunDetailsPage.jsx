@@ -7,7 +7,7 @@ import {
 import { Badge, Button, Col, Row, Table, Typography } from "antd";
 import { formatDate } from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { IconDownloadFile } from "../../../../js/components/icons/Icons";
+import { IconDownloadFile } from "../../../components/icons/Icons";
 import { LinkButton } from "../../../components/Buttons/LinkButton";
 import { BasicList } from "../../../components/lists";
 import { NarrowPageWrapper } from "../../../components/page/NarrowPageWrapper";
@@ -18,8 +18,9 @@ import { NarrowPageWrapper } from "../../../components/page/NarrowPageWrapper";
  * @constructor
  */
 export default function SequencingRunDetailsPage() {
-  const ADMIN_SEQUENCE_RUNS_URL = "admin/sequencingRuns";
-  const isTechnician = window.TL._USER.systemRole === "ROLE_TECHNICIAN";
+  const ADMIN_SEQUENCE_RUNS_URL = "admin/sequencing_runs";
+  const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
+  const showBack = isAdmin && document.referrer.includes(ADMIN_SEQUENCE_RUNS_URL);
   const {runId} = useParams();
   const goToAdminSequenceRunListPage = () =>
     (window.location.href = setBaseUrl(ADMIN_SEQUENCE_RUNS_URL));
@@ -44,10 +45,10 @@ export default function SequencingRunDetailsPage() {
       },
       {
         title: "Upload User",
-        desc: isTechnician ? run.userName : (<LinkButton
+        desc: isAdmin ? (<LinkButton
             text={run.userName}
             href={setBaseUrl(`/users/${run.userId}`)}/>
-        )
+        ) : run.userName
       },
       {
         title: "Created",
@@ -94,7 +95,8 @@ export default function SequencingRunDetailsPage() {
   ]
 
   return (
-    <NarrowPageWrapper title={i18n("SequenceRunDetailsPage.title", runId)}>
+    <NarrowPageWrapper title={i18n("SequenceRunDetailsPage.title", runId)}
+                       onBack={showBack ? goToAdminSequenceRunListPage : undefined}>
       <Row justify="center" gutter={[0, 16]}>
         <Col span={18}>
           <Typography.Title level={2}>Details</Typography.Title>

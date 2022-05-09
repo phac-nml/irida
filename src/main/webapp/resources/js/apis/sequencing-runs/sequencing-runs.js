@@ -1,4 +1,3 @@
-import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -27,7 +26,7 @@ export const sequencingRunsApi = createApi({
     */
     getSequencingRunFiles: build.query({
       query: (runId) => ({
-        url: `${runId}/sequenceFiles2`,
+        url: `${runId}/sequenceFiles`,
       }),
     }),
     /*
@@ -48,9 +47,3 @@ export const {
   useGetSequencingRunFilesQuery,
   useDeleteSequencingRunMutation
 } = sequencingRunsApi;
-
-export function deleteSequencingRun({id}) {
-  axios
-    .delete(setBaseUrl(`/sequencingRuns/${id}`))
-    .then(() => (window.location.href = setBaseUrl(`/admin/sequencing_runs`)));
-}

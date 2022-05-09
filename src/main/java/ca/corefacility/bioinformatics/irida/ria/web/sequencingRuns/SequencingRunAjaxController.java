@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +9,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequenceFileDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunDetails;
@@ -58,20 +56,9 @@ public class SequencingRunAjaxController {
 	 * Get the files for a specific sequencing run.
 	 *
 	 * @param runId - the id of the sequencing run
-	 * @return a set of {@link SequencingObject}s
-	 */
-	@RequestMapping("/{runId}/sequenceFiles")
-	public ResponseEntity<Set<SequencingObject>> getSequencingRunFiles(@PathVariable long runId) {
-		return ResponseEntity.ok(service.getSequencingRunFiles(runId));
-	}
-
-	/**
-	 * Get the files for a specific sequencing run.
-	 *
-	 * @param runId - the id of the sequencing run
 	 * @return a list of {@link SequenceFileDetails}s
 	 */
-	@RequestMapping("/{runId}/sequenceFiles2")
+	@RequestMapping("/{runId}/sequenceFiles")
 	public ResponseEntity<List<SequenceFileDetails>> getSequencingRunFiles2(@PathVariable long runId) {
 		return ResponseEntity.ok(service.getSequencingRunFiles2(runId));
 	}

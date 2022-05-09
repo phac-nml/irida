@@ -1,33 +1,41 @@
 import React from "react";
 import { render } from "react-dom";
-import { Button, PageHeader, Popconfirm } from "antd";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Provider } from "react-redux";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { deleteSequencingRun } from "../../apis/sequencing-runs/sequencing-runs";
+import { ContentLoading } from "../../components/loader";
+import store from "./store";
 
-function SequencingRunDetails() {
-  const runId = window.location.href.match(/sequencingRuns\/(\d+)/)[1];
+const SequencingRunListPage = React.lazy(() =>
+  import("./components/SequencingRunListPage")
+);
+const SequencingRunDetailsPage = React.lazy(() =>
+  import("./components/SequencingRunDetailsPage")
+);
 
-  return (
-    <PageHeader
-      title={i18n("SequenceRunDetails.header", runId)}
-      onBack={() =>
-        (window.location.href = setBaseUrl(`/admin/sequencing_runs`))
-      }
-      extra={[
-        window.TL._USER.systemRole === "ROLE_ADMIN" ? (
-          <Popconfirm
-            key="remove-btn"
-            title={i18n("SequenceRunDetails.delete.confirmation")}
-            onConfirm={() => deleteSequencingRun({ id: runId })}
-          >
-            <Button className="t-remove-btn">
-              {i18n("SequenceRunDetails.delete")}
-            </Button>
-          </Popconfirm>
-        ) : null,
-      ]}
-    />
-  );
-}
+/*
+WEBPACK PUBLIC PATH:
+Webpack does not know what the servlet context path is.  To fix this, webpack exposed
+the variable `__webpack_public_path__`
+See: https://webpack.js.org/guides/public-path/#on-the-fly
+*/
+__webpack_public_path__ = setBaseUrl(`/dist/`);
 
-render(<SequencingRunDetails />, document.querySelector("#root"));
+/**
+ * React component that displays the sequencing runs pages.
+ * @returns {*}
+ * @constructor
+ */
+render(
+  <Provider store={store}>
+    <BrowserRouter basename={setBaseUrl("/sequencingRuns")}>
+      <React.Suspense fallback={<ContentLoading/>}>
+        <Routes>
+          <Route path="/" element={<SequencingRunListPage/>}/>
+          <Route path="/:runId" element={<SequencingRunDetailsPage/>}/>
+        </Routes>
+      </React.Suspense>
+    </BrowserRouter>
+  </Provider>,
+  document.getElementById("root")
+);
