@@ -41,7 +41,7 @@ export function SamplesTable() {
     loadingLong,
     filterByFile,
   } = useSelector((state) => state.samples);
-  const { data: projectDetails } = useGetProjectDetailsQuery(projectId, {
+  const { data: projectDetails = {} } = useGetProjectDetailsQuery(projectId, {
     skip: !projectId,
   });
 
@@ -49,39 +49,21 @@ export function SamplesTable() {
    * Fetch the current state of the table.  Will refetch whenever one of the
    * table options (filter, sort, or pagination) changes.
    */
-  const { data: { content: samples, total } = {}, isFetching } =
-    useListSamplesQuery(options, {
-      refetchOnMountOrArgChange: true,
-    });
+  const {
+    data: { content: samples, total } = {},
+    isFetching,
+    isLoading: detailsLoaded,
+  } = useListSamplesQuery(options, {
+    refetchOnMountOrArgChange: true,
+  });
 
   /**
    * Fetch projects that have been associated with this project.
    * Request formats them into a format that can be consumed by the
    * project column filter.
    */
-  const { data: associatedProjects } =
+  const { data: associatedProjects, isSuccess: associatedLoaded } =
     useListAssociatedProjectsQuery(projectId);
-
-  /**
-   * Create colors for associated projects. This is stored in local storage for consistency
-   * @type {{}}
-   */
-  const colors = React.useMemo(() => {
-    let newColors = {};
-    if (projectDetails && associatedProjects) {
-      newColors[projectId] = generateColourForItem({
-        id: projectId,
-        name: projectDetails.label,
-      });
-      associatedProjects.forEach((project) => {
-        newColors[project.value] = generateColourForItem({
-          id: project.value,
-          name: project.text,
-        });
-      });
-    }
-    return newColors;
-  }, [associatedProjects, projectDetails]);
 
   /**
    * Handle row selection change event
@@ -139,6 +121,8 @@ export function SamplesTable() {
     confirm({ closeDropdown: false });
   };
 
+  const projectColours = {};
+
   const getColumnSearchProps = (
     dataIndex,
     filterName = "",
@@ -157,7 +141,6 @@ export function SamplesTable() {
           placeholder={placeholder}
           value={selectedKeys[0]}
           onChange={(e) => {
-            console.log(e);
             const values = Array.isArray(e) && e.length > 0 ? [e] : e;
             setSelectedKeys(values);
             confirm({ closeDropdown: false });
@@ -295,7 +278,13 @@ export function SamplesTable() {
       sorter: { multiple: 1 },
       key: "associated",
       render: (name, row) => {
-        const colour = colors[row.project.id];
+        if (!(row.project.id in projectColours)) {
+          projectColours[row.project.id] = generateColourForItem({
+            id: row.project.id,
+            label: name,
+          });
+        }
+        const colour = projectColours[row.project.id];
         return (
           <Tag
             color={colour.background}
