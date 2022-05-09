@@ -24,6 +24,7 @@ Changes
 * [Developer]: Updated nodejs to `v16.15.0` in the `pom.xml` file.
 * [Developer]: Updated redux API within the cart page to use Redux Toolkit.
 * [All]: Added functionality for project managers to restrict metadata fields depending on the Collaborator's metadata role on the project.
+* [UI]: Complete update to the project samples page to use Ant Design.
 
 22.01 to 22.03
 --------------
