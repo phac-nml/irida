@@ -105,6 +105,8 @@ public class UISequenceFileService {
 	 *
 	 * @param sequencingObjectId ID for the {@link SequencingObject}
 	 * @param sequenceFileId     Id for the {@link SequenceFile}
+	 * @param response           HTTP response object
+	 * @throws IOException if file is not found
 	 */
 	public void downloadSequenceFile(Long sequencingObjectId, Long sequenceFileId, HttpServletResponse response)
 			throws IOException {

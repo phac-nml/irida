@@ -76,6 +76,8 @@ public class SequenceFileAjaxController {
 	 *
 	 * @param sequencingObjectId ID for the {@link SequencingObject}
 	 * @param sequenceFileId     Id for the {@link SequenceFile}
+	 * @param response           HTTP response object
+	 * @throws IOException if file is not found
 	 */
 	@GetMapping("/download")
 	public void downloadSequenceFile(@RequestParam Long sequencingObjectId, @RequestParam Long sequenceFileId,
