@@ -111,7 +111,12 @@ export default function SamplesMenu() {
     if (selected.size === 0) return;
 
     const samples = Object.values(selected).map(
-      ({ id, sampleName: name, owner }) => ({ id, name, owner })
+      ({ id, sampleName: name, owner, projectId }) => ({
+        id,
+        name,
+        owner,
+        projectId,
+      })
     );
 
     // Store them to window storage for later use.
