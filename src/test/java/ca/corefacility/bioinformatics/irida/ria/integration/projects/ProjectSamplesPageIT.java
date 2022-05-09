@@ -165,12 +165,11 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testFilteringSamplesByProperties() {
-		String NAME_FILTER_1 = "5";
+		String NAME_FILTER_1 = "sample5";
 		String NAME_FILTER_2 = "sample6";
 		String ORGANISM_FILTER_1 = "Listeria";
 		String ORGANISM_FILTER_2 = "E. coli";
 		String ASSOCIATED_PROJECT_FILTER = "project5";
-
 
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
@@ -184,16 +183,18 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		// Single name filter
 		page.filterBySampleName(NAME_FILTER_1);
 		summary = page.getTableSummary();
-		assertEquals(19, summary.getTotal(), "Filtering the '5' should leave 19 samples in the table");
+		assertEquals(13, summary.getTotal(),
+				"Filtering the '" + NAME_FILTER_1 + "' should leave 19 samples in the table");
 
 		page.filterBySampleName(NAME_FILTER_2);
 		summary = page.getTableSummary();
-		assertEquals(2, summary.getTotal(), "Filtering the '5' and 'sample6' should leave 4 samples in the table");
+		assertEquals(15, summary.getTotal(), "Filtering the '" + NAME_FILTER_1 + "' and '" + NAME_FILTER_2
+				+ "' should leave 4 samples in the table");
 
 		// Test clear
 		page.clearIndividualSampleNameFilter(NAME_FILTER_2);
 		summary = page.getTableSummary();
-		assertEquals(19, summary.getTotal(), "Removing a sample name filter");
+		assertEquals(13, summary.getTotal(), "Removing a sample name filter");
 		page.clearIndividualSampleNameFilter(NAME_FILTER_1);
 		summary = page.getTableSummary();
 		assertEquals(23, summary.getTotal(), "Removing all name filters should return to initial number of samples");
