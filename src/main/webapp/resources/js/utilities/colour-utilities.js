@@ -12,13 +12,12 @@ export function generateColourForItem({ id, label }) {
   const name = `${formatted}-${label}`;
 
   let background = uniqolor(name, {
-    lightness: 95,
-    saturation: 95,
+    lightness: 90,
+    saturation: 80,
   });
 
   let colour = uniqolor(name, {
-    lightness: 40,
-    saturation: 95,
+    lightness: 20,
   });
   return { background: background.color, text: colour.color };
 }
