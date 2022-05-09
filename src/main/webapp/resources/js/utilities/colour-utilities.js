@@ -1,5 +1,4 @@
-import stc from "string-to-color";
-import chroma from "chroma-js";
+import uniqolor from "uniqolor";
 
 /**
  * Create a unique color for any IRIDA thing (project, sample, etc.)
@@ -8,8 +7,14 @@ import chroma from "chroma-js";
  * @returns {{background: *, text: *}}
  */
 export function generateColourForItem({ id, label }) {
-  let colour = stc(`${label}-${id}`);
-  const background = chroma(colour).alpha(0.2).hex();
-  const text = chroma(colour).darken(2.6);
-  return { background, text };
+  let background = uniqolor(`${label}-${id}`, {
+    lightness: 95,
+    saturation: 95,
+  });
+  let colour = uniqolor(`${label}-${id}`, {
+    lightness: 40,
+    saturation: 95,
+  });
+  console.log(colour);
+  return { background: background.color, text: colour.color };
 }
