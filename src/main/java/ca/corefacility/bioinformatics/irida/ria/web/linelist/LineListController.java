@@ -111,7 +111,8 @@ public class LineListController {
 			//check if the project owns the sample
 			boolean ownership = !lockedSamplesInProject.contains(s.getId());
 
-			projectSamplesMetadata.add(new UISampleMetadata(project, s, ownership, metadata));
+			projectSamplesMetadata.add(new UISampleMetadata(project, s, ownership,
+					metadata != null ? metadata : new HashSet<>()));
 		}
 
 		return new EntriesResponse(page.getTotalElements(), projectSamplesMetadata);
