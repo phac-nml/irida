@@ -383,7 +383,9 @@ export class TableComponent extends React.Component {
         columnDefs={this.props.fields}
         rowData={this.props.entries}
         components={this.components}
-        loadingOverlayComponent="LoadingOverlay"
+        loadingOverlayComponent={
+          window.PAGE.totalSamples > 0 ? "LoadingOverlay" : null
+        }
         onGridReady={this.onGridReady}
         onDragStopped={this.onColumnDropped}
         rowDeselection={true}
