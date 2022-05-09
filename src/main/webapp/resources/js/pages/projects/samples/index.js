@@ -7,12 +7,10 @@ import { Provider } from "react-redux";
 import { samplesApi } from "../../../apis/projects/samples";
 import { associatedProjectsApi } from "../../../apis/projects/associated-projects";
 import samplesReducer from "../redux/samplesSlice";
-import userReducer from "../redux/userSlice";
 import { projectApi } from "../../../apis/projects/project";
 
 export const store = configureStore({
   reducer: {
-    user: userReducer,
     samples: samplesReducer,
     [projectApi.reducerPath]: projectApi.reducer,
     [samplesApi.reducerPath]: samplesApi.reducer,
