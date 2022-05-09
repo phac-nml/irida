@@ -18,8 +18,11 @@ import { NarrowPageWrapper } from "../../../components/page/NarrowPageWrapper";
  * @constructor
  */
 export default function SequencingRunDetailsPage() {
+  const ADMIN_SEQUENCE_RUNS_URL = "admin/sequencingRuns";
   const isTechnician = window.TL._USER.systemRole === "ROLE_TECHNICIAN";
   const {runId} = useParams();
+  const goToAdminSequenceRunListPage = () =>
+    (window.location.href = setBaseUrl(ADMIN_SEQUENCE_RUNS_URL));
   const {
     data: run = {},
     isLoading: isRunLoading

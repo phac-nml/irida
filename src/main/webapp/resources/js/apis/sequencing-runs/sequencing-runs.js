@@ -20,6 +20,7 @@ export const sequencingRunsApi = createApi({
       query: (runId) => ({
         url: `${runId}/details`,
       }),
+      providesTags: ["Run"],
     }),
     /*
     Get sequencing run files.
@@ -33,10 +34,11 @@ export const sequencingRunsApi = createApi({
     Delete a sequencing run.
     */
     deleteSequencingRun: build.mutation({
-      query: (runId) => ({
+      query: ({runId}) => ({
         url: `${runId}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Run"],
     }),
   }),
 });
