@@ -50,7 +50,7 @@ export default function SequencingRunDetailsPage() {
           desc: isAdmin ? (
             <LinkButton
               text={run.userName}
-              href={setBaseUrl(`/users/${run.userId}`)}
+              href={setBaseUrl(`/users/${run.userID}`)}
             />
           ) : (
             run.userName
