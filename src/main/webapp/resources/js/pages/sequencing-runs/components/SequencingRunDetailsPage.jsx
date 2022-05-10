@@ -98,23 +98,23 @@ export default function SequencingRunDetailsPage() {
     <NarrowPageWrapper title={i18n("SequenceRunDetailsPage.title", runId)}
                        onBack={showBack ? goToAdminSequenceRunListPage : undefined}>
       <Row justify="center" gutter={[0, 16]}>
-        <Col span={18}>
+        <Col span={24}>
           <Typography.Title level={2}>Details</Typography.Title>
         </Col>
-        <Col span={18}>
+        <Col span={24}>
           <BasicList dataSource={detailsList} grid={{gutter: 16, column: 4}}/>
         </Col>
-        <Col span={18}>
+        <Col span={24}>
           <Typography.Title level={2}>Additional Properties</Typography.Title>
         </Col>
-        <Col span={18}>
+        <Col span={24}>
           <BasicList dataSource={optionalPropertiesList}
                      grid={{gutter: 16, column: 4}}/>
         </Col>
-        <Col span={18}>
+        <Col span={24}>
           <Typography.Title level={2}>Files</Typography.Title>
         </Col>
-        <Col span={18}>
+        <Col span={24}>
           <Table loading={isFilesLoading}
                  dataSource={files}
                  columns={columns}
