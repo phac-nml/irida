@@ -10,6 +10,7 @@ import { AnnouncementsSubMenu } from "./main-navigation/components/Announcements
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
 import "./main-navigation/style.css";
+
 const { Header } = Layout;
 
 const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
@@ -36,7 +37,7 @@ const StyledHeader = styled(Header)`
   }
 
   .anticon {
-    font-size: 20px;
+    font-size: 20px !important;
     color: ${theme === "dark" ? grey1 : grey10};
   }
 `;
