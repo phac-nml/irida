@@ -4,13 +4,14 @@ import {
   useGetSequencingRunDetailsQuery,
   useGetSequencingRunFilesQuery
 } from "../../../apis/sequencing-runs/sequencing-runs";
-import { Badge, Button, Col, Row, Table, Typography } from "antd";
+import { Button, Col, Row, Table, Typography } from "antd";
 import { formatDate } from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { IconDownloadFile } from "../../../components/icons/Icons";
 import { LinkButton } from "../../../components/Buttons/LinkButton";
 import { BasicList } from "../../../components/lists";
 import { NarrowPageWrapper } from "../../../components/page/NarrowPageWrapper";
+import { SequencingRunStatusBadge } from "./SequencingRunStatusBadge";
 
 /**
  * React component to display the sequencing run details page.
@@ -41,7 +42,7 @@ export default function SequencingRunDetailsPage() {
       },
       {
         title: "Upload Status",
-        desc: <UploadStatusBadge status={run.uploadStatus}/>
+        desc: <SequencingRunStatusBadge status={run.uploadStatus}/>
       },
       {
         title: "Upload User",
@@ -124,17 +125,4 @@ export default function SequencingRunDetailsPage() {
       </Row>
     </NarrowPageWrapper>
   );
-}
-
-function UploadStatusBadge({status}) {
-  switch (status) {
-    case "ERROR":
-      return <Badge status="error" text={status}/>;
-    case "UPLOADING":
-      return <Badge status="warning" text={status}/>;
-    case "COMPLETE":
-      return <Badge status="success" text={status}/>;
-    default:
-      return <Badge text={status}/>;
-  }
 }
