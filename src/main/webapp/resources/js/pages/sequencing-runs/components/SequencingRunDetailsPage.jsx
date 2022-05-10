@@ -37,26 +37,26 @@ export default function SequencingRunDetailsPage() {
     ? []
     : [
       {
-        title: "Sequencer Type",
+        title: i18n("SequencingRunDetailsPage.list.sequencerType"),
         desc: run.sequencerType
       },
       {
-        title: "Upload Status",
+        title: i18n("SequencingRunDetailsPage.list.uploadStatus"),
         desc: <SequencingRunStatusBadge status={run.uploadStatus}/>
       },
       {
-        title: "Upload User",
+        title: i18n("SequencingRunDetailsPage.list.uploadUser"),
         desc: isAdmin ? (<LinkButton
             text={run.userName}
             href={setBaseUrl(`/users/${run.userId}`)}/>
         ) : run.userName
       },
       {
-        title: "Created",
+        title: i18n("SequencingRunDetailsPage.list.createdDate"),
         desc: formatDate({date: run.createdDate})
       },
       {
-        title: "Description",
+        title: i18n("SequencingRunDetailsPage.list.description"),
         desc: run.description
       },
     ];
@@ -66,7 +66,7 @@ export default function SequencingRunDetailsPage() {
 
   const columns = [
     {
-      title: 'Filename',
+      title: i18n("SequencingRunDetailsPage.table.fileName"),
       dataIndex: 'fileName',
       key: 'fileName',
       render(text, item) {
@@ -77,13 +77,13 @@ export default function SequencingRunDetailsPage() {
       },
     },
     {
-      title: 'Size',
+      title: i18n("SequencingRunDetailsPage.table.size"),
       dataIndex: 'fileSize',
       key: 'fileSize',
       align: 'right'
     },
     {
-      title: 'Download',
+      title: i18n("SequencingRunDetailsPage.table.download"),
       dataIndex: 'download',
       key: 'download',
       render(text, item) {
@@ -96,24 +96,27 @@ export default function SequencingRunDetailsPage() {
   ]
 
   return (
-    <NarrowPageWrapper title={i18n("SequenceRunDetailsPage.title", runId)}
+    <NarrowPageWrapper title={i18n("SequencingRunDetailsPage.title", runId)}
                        onBack={showBack ? goToAdminSequenceRunListPage : undefined}>
       <Row justify="center" gutter={[0, 16]}>
         <Col span={24}>
-          <Typography.Title level={2}>Details</Typography.Title>
+          <Typography.Title
+            level={2}>{i18n("SequencingRunDetailsPage.title.details")}</Typography.Title>
         </Col>
         <Col span={24}>
           <BasicList dataSource={detailsList} grid={{gutter: 16, column: 4}}/>
         </Col>
         <Col span={24}>
-          <Typography.Title level={2}>Additional Properties</Typography.Title>
+          <Typography.Title
+            level={2}>{i18n("SequencingRunDetailsPage.title.optionalProperties")}</Typography.Title>
         </Col>
         <Col span={24}>
           <BasicList dataSource={optionalPropertiesList}
                      grid={{gutter: 16, column: 4}}/>
         </Col>
         <Col span={24}>
-          <Typography.Title level={2}>Files</Typography.Title>
+          <Typography.Title
+            level={2}>{i18n("SequencingRunDetailsPage.title.files")}</Typography.Title>
         </Col>
         <Col span={24}>
           <Table loading={isFilesLoading}
