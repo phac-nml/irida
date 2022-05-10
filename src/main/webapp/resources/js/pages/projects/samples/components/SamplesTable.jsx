@@ -62,8 +62,10 @@ export function SamplesTable() {
    * Request formats them into a format that can be consumed by the
    * project column filter.
    */
-  const { data: associatedProjects, isSuccess: associatedLoaded } =
-    useListAssociatedProjectsQuery(projectId);
+  const {
+    data: associatedProjects,
+    isSuccess: associatedLoaded,
+  } = useListAssociatedProjectsQuery(projectId);
 
   /**
    * Handle row selection change event
@@ -251,7 +253,9 @@ export function SamplesTable() {
       className: "t-td-name",
       dataIndex: ["sample", "sampleName"],
       sorter: { multiple: 1 },
-      render: (name, row) => <a href={`${sampleUrl}/${row.key}`}>{name}</a>,
+      render: (name, row) => (
+        <a href={`${sampleUrl}/${row.sample.id}`}>{name}</a>
+      ),
       ...getColumnSearchProps(
         ["sample", "sampleName"],
         "t-name-select",
