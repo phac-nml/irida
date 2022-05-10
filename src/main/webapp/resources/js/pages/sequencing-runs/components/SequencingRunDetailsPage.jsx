@@ -165,6 +165,7 @@ export default function SequencingRunDetailsPage() {
                 columns={columns}
                 scroll={{ x: "max-content", y: 600 }}
                 pagination={false}
+                rowKey={(record) => record.id}
               />
             </Col>
           </Row>

@@ -1,7 +1,7 @@
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const BASE_URL = setBaseUrl(`ajax/sequencing-runs`);
+const BASE_URL = `ajax/sequencing-runs`;
 
 /**
  * Redux API for sequencing runs.
@@ -11,6 +11,7 @@ export const sequencingRunsApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: setBaseUrl(BASE_URL),
   }),
+  tagTypes: ["Run"],
   endpoints: (build) => ({
     /*
     Get a sequencing run.
@@ -33,7 +34,7 @@ export const sequencingRunsApi = createApi({
     Delete a sequencing run.
     */
     deleteSequencingRun: build.mutation({
-      query: ({runId}) => ({
+      query: ({ runId }) => ({
         url: `${runId}`,
         method: "DELETE",
       }),
@@ -45,5 +46,5 @@ export const sequencingRunsApi = createApi({
 export const {
   useGetSequencingRunDetailsQuery,
   useGetSequencingRunFilesQuery,
-  useDeleteSequencingRunMutation
+  useDeleteSequencingRunMutation,
 } = sequencingRunsApi;
