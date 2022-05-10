@@ -3,7 +3,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
 
     <changeSet id="user-account-project-subscription" author="katherine">
         <createTable tableName="project_subscription">
@@ -18,7 +18,7 @@
                 <constraints foreignKeyName="FK_PROJECT_SUBSCRIPTION_USER"
                              referencedColumnNames="id" referencedTableName="user" nullable="false"/>
             </column>
-            <column name="email_subscription" type="bit(1)">
+            <column name="email_subscription" type="bit(1)" defaultValueBoolean="false" >
                 <constraints nullable="false"/>
             </column>
             <column name="created_date" type="datetime">
@@ -54,11 +54,17 @@
         </createTable>
 
         <sql>
-            INSERT INTO project_subscription (project_id, user_id, email_subscription, created_date)
-            SELECT project_id, user_id, email_subscription, now() FROM project_user
+            INSERT INTO project_subscription (project_id, user_id, created_date)
+            SELECT project_id, user_id, now() FROM project_user
             UNION
-            SELECT p.project_id, m.user_id, 0, now() from user_group_member m LEFT JOIN user_group_project p ON
+            SELECT p.project_id, m.user_id, now() from user_group_member m LEFT JOIN user_group_project p ON
             m.group_id = p.user_group_id;
+        </sql>
+
+        <sql>
+            UPDATE project_subscription ps
+            JOIN project_user pu on pu.project_id = ps.project_id and pu.user_id = ps.user_id
+            SET ps.email_subscription = pu.email_subscription;
         </sql>
 
         <dropColumn tableName="project_user" columnName="email_subscription"/>
