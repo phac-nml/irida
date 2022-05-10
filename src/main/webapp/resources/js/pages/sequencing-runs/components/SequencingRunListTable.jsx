@@ -3,14 +3,10 @@ import {
   PagedTable,
   PagedTableContext,
 } from "../../../components/ant.design/PagedTable";
-import {
-  dateColumnFormat
-} from "../../../components/ant.design/table-renderers";
+import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
 import { Button, Popconfirm } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import {
-  useDeleteSequencingRunMutation
-} from "../../../apis/sequencing-runs/sequencing-runs";
+import { useDeleteSequencingRunMutation } from "../../../apis/sequencing-runs/sequencing-runs";
 
 /**
  * React component to display the sequencing run list table.
@@ -18,7 +14,7 @@ import {
  * @constructor
  */
 export default function SequencingRunListTable() {
-  const {updateTable} = useContext(PagedTableContext);
+  const { updateTable } = useContext(PagedTableContext);
   const [deleteSequencingRun] = useDeleteSequencingRunMutation();
   const columns = [
     {
@@ -78,21 +74,23 @@ export default function SequencingRunListTable() {
           <Popconfirm
             key="remove-btn"
             title={i18n("SequencingRunListPage.button.delete.confirmation")}
-            onConfirm={() => deleteSequencingRun({runId: record.id}).then(updateTable)}
+            onConfirm={() =>
+              deleteSequencingRun({ runId: record.id }).then(updateTable)
+            }
           >
             <Button className="t-remove-btn" type="link" size="small">
               {i18n("SequencingRunListPage.button.delete")}
             </Button>
           </Popconfirm>
         );
-      }
+      },
     });
   }
 
   return (
     <PagedTable
       search={false}
-      scroll={{x: "max-content"}}
+      scroll={{ x: "max-content" }}
       rowKey={(record) => record.id}
       columns={columns}
     />
