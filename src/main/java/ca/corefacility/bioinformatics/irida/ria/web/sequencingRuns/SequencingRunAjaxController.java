@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UISequencingRunServ
  * Controller to handle AJAX requests for sequencing run data
  */
 @RestController
-@RequestMapping("/ajax/sequencingRuns")
+@RequestMapping("/ajax/sequencing-runs")
 public class SequencingRunAjaxController {
 
 	private final UISequencingRunService service;

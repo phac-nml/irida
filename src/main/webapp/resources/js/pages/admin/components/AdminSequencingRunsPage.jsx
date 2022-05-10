@@ -15,7 +15,7 @@ import SequencingRunListTable
   from "../../sequencing-runs/components/SequencingRunListTable";
 
 export default function AdminSequencingRunsPage({}) {
-  const URL = setBaseUrl(`ajax/sequencingRuns`);
+  const URL = setBaseUrl(`ajax/sequencing-runs`);
 
   // The following renders the Sequencing Runs component view
   return (

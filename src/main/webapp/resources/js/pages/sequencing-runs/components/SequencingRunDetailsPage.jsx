@@ -18,7 +18,7 @@ import { NarrowPageWrapper } from "../../../components/page/NarrowPageWrapper";
  * @constructor
  */
 export default function SequencingRunDetailsPage() {
-  const ADMIN_SEQUENCE_RUNS_URL = "admin/sequencing_runs";
+  const ADMIN_SEQUENCE_RUNS_URL = "admin/sequencing-runs";
   const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
   const showBack = isAdmin && document.referrer.includes(ADMIN_SEQUENCE_RUNS_URL);
   const {runId} = useParams();
@@ -71,7 +71,7 @@ export default function SequencingRunDetailsPage() {
       render(text, item) {
         return <LinkButton
           text={text}
-          href={setBaseUrl(`/sequencingRuns/${runId}/sequenceFiles/${item.sequencingObjectId}/file/${item.id}/summary`)}
+          href={setBaseUrl(`/sequencing-runs/${runId}/sequenceFiles/${item.sequencingObjectId}/file/${item.id}/summary`)}
         />
       },
     },

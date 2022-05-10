@@ -1,7 +1,7 @@
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const BASE_URL = setBaseUrl(`ajax/sequencingRuns`);
+const BASE_URL = setBaseUrl(`ajax/sequencing-runs`);
 
 /**
  * Redux API for sequencing runs.

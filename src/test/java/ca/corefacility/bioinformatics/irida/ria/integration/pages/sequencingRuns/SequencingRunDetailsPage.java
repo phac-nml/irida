@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class SequencingRunDetailsPage extends AbstractPage {
-	public static String PAGEURL = "sequencingRuns/";
+	public static String PAGEURL = "sequencing-runs/";
 	private static final Logger logger = LoggerFactory.getLogger(SequencingRunDetailsPage.class);
 
 	public SequencingRunDetailsPage(WebDriver driver) {
@@ -50,7 +50,8 @@ public class SequencingRunDetailsPage extends AbstractPage {
 		driver.findElement(By.className("t-remove-btn")).click();
 		WebDriverWait wait = new WebDriverWait(driver, 2);
 		wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("ant-popover-content")));
-		WebElement confirmButton = waitForElementToBeClickable(driver.findElement(By.cssSelector(".ant-popover-content .ant-btn-primary")));
+		WebElement confirmButton = waitForElementToBeClickable(
+				driver.findElement(By.cssSelector(".ant-popover-content .ant-btn-primary")));
 		confirmButton.click();
 	}
 }

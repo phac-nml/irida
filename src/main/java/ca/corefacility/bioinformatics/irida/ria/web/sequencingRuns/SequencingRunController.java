@@ -10,7 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
  * Controller for displaying and interacting with {@link SequencingRun} objects
  */
 @Controller
-@RequestMapping("/sequencingRuns")
+@RequestMapping("/sequencing-runs")
 @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TECHNICIAN')")
 public class SequencingRunController {
 
@@ -21,7 +21,7 @@ public class SequencingRunController {
 	 */
 	@RequestMapping("/**")
 	public String getPage() {
-		return "sequencingRuns/index";
+		return "sequencing-runs/index";
 	}
 
 }

@@ -28,7 +28,7 @@ __webpack_public_path__ = setBaseUrl(`/dist/`);
  */
 render(
   <Provider store={store}>
-    <BrowserRouter basename={setBaseUrl("/sequencingRuns")}>
+    <BrowserRouter basename={setBaseUrl("/sequencing-runs")}>
       <React.Suspense fallback={<ContentLoading/>}>
         <Routes>
           <Route path="/" element={<SequencingRunListPage/>}/>

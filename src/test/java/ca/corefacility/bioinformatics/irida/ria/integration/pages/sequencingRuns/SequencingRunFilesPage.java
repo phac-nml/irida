@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class SequencingRunFilesPage extends AbstractPage {
-	public static String PAGEURL = "sequencingRuns/";
+	public static String PAGEURL = "sequencing-runs/";
 	private static final Logger logger = LoggerFactory.getLogger(SequencingRunFilesPage.class);
 
 	public SequencingRunFilesPage(WebDriver driver) {

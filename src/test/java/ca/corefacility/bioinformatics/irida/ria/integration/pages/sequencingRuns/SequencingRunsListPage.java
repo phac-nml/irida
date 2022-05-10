@@ -22,22 +22,19 @@ public class SequencingRunsListPage extends AbstractPage {
 	}
 
 	public static SequencingRunsListPage goToPage(WebDriver driver) {
-		get(driver, "sequencingRuns/");
+		get(driver, "sequencing-runs/");
 		return PageFactory.initElements(driver, SequencingRunsListPage.class);
 	}
 
 	public List<Long> getDisplayedIds() {
-		return runLinks.stream()
-				.map((r) -> Long.parseLong(r.getText()))
-				.collect(Collectors.toList());
+		return runLinks.stream().map((r) -> Long.parseLong(r.getText())).collect(Collectors.toList());
 
 	}
 
 	public boolean idDisplayIdInList(String id) {
 		boolean found = false;
 		for (WebElement rowId : runLinks) {
-			if (rowId.getText()
-					.equals(id)) {
+			if (rowId.getText().equals(id)) {
 				found = true;
 				break;
 			}

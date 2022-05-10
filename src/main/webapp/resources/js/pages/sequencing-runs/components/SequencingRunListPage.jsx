@@ -4,7 +4,7 @@ import { PagedTableProvider, } from "../../../components/ant.design/PagedTable";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import SequencingRunListTable from "./SequencingRunListTable";
 
-const URL = setBaseUrl(`ajax/sequencingRuns`);
+const URL = setBaseUrl(`ajax/sequencing-runs`);
 
 /**
  * React component to display the sequencing run list page.
