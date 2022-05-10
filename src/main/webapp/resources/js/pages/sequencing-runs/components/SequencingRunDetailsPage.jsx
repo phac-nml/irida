@@ -4,7 +4,7 @@ import {
   useGetSequencingRunDetailsQuery,
   useGetSequencingRunFilesQuery
 } from "../../../apis/sequencing-runs/sequencing-runs";
-import { Button, Col, Row, Table, Typography } from "antd";
+import { Button, Col, Layout, Row, Table, Typography } from "antd";
 import { formatDate } from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { IconDownloadFile } from "../../../components/icons/Icons";
@@ -12,6 +12,10 @@ import { LinkButton } from "../../../components/Buttons/LinkButton";
 import { BasicList } from "../../../components/lists";
 import { NarrowPageWrapper } from "../../../components/page/NarrowPageWrapper";
 import { SequencingRunStatusBadge } from "./SequencingRunStatusBadge";
+import { grey1 } from "../../../styles/colors";
+import { SPACE_LG } from "../../../styles/spacing";
+
+const {Content} = Layout;
 
 /**
  * React component to display the sequencing run details page.
@@ -98,34 +102,43 @@ export default function SequencingRunDetailsPage() {
   return (
     <NarrowPageWrapper title={i18n("SequencingRunDetailsPage.title", runId)}
                        onBack={showBack ? goToAdminSequenceRunListPage : undefined}>
-      <Row justify="center" gutter={[0, 16]}>
-        <Col span={24}>
-          <Typography.Title
-            level={2}>{i18n("SequencingRunDetailsPage.title.details")}</Typography.Title>
-        </Col>
-        <Col span={24}>
-          <BasicList dataSource={detailsList} grid={{gutter: 16, column: 4}}/>
-        </Col>
-        <Col span={24}>
-          <Typography.Title
-            level={2}>{i18n("SequencingRunDetailsPage.title.optionalProperties")}</Typography.Title>
-        </Col>
-        <Col span={24}>
-          <BasicList dataSource={optionalPropertiesList}
-                     grid={{gutter: 16, column: 4}}/>
-        </Col>
-        <Col span={24}>
-          <Typography.Title
-            level={2}>{i18n("SequencingRunDetailsPage.title.files")}</Typography.Title>
-        </Col>
-        <Col span={24}>
-          <Table loading={isFilesLoading}
-                 dataSource={files}
-                 columns={columns}
-                 scroll={{x: "max-content", y: 600}}
-                 pagination={false}/>
-        </Col>
-      </Row>
+      <Layout>
+        <Content
+          style={{
+            backgroundColor: grey1,
+            padding: SPACE_LG
+          }}>
+          <Row justify="center" gutter={[0, 16]}>
+            <Col span={24}>
+              <Typography.Title
+                level={2}>{i18n("SequencingRunDetailsPage.title.details")}</Typography.Title>
+            </Col>
+            <Col span={24}>
+              <BasicList dataSource={detailsList}
+                         grid={{gutter: 16, column: 4}}/>
+            </Col>
+            <Col span={24}>
+              <Typography.Title
+                level={2}>{i18n("SequencingRunDetailsPage.title.optionalProperties")}</Typography.Title>
+            </Col>
+            <Col span={24}>
+              <BasicList dataSource={optionalPropertiesList}
+                         grid={{gutter: 16, column: 4}}/>
+            </Col>
+            <Col span={24}>
+              <Typography.Title
+                level={2}>{i18n("SequencingRunDetailsPage.title.files")}</Typography.Title>
+            </Col>
+            <Col span={24}>
+              <Table loading={isFilesLoading}
+                     dataSource={files}
+                     columns={columns}
+                     scroll={{x: "max-content", y: 600}}
+                     pagination={false}/>
+            </Col>
+          </Row>
+        </Content>
+      </Layout>
     </NarrowPageWrapper>
   );
 }

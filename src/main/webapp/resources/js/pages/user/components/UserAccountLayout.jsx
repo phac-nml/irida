@@ -5,6 +5,11 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { useGetUserDetailsQuery } from "../../../apis/users/users";
 import { ContentLoading } from "../../../components/loader";
 import { NarrowPageWrapper } from "../../../components/page/NarrowPageWrapper";
+import { grey1 } from "../../../styles/colors";
+import { SPACE_LG } from "../../../styles/spacing";
+import { Layout } from "antd";
+
+const {Content, Sider} = Layout;
 
 /**
  * React component that layouts the user account page.
@@ -26,11 +31,20 @@ export default function UserAccountLayout() {
       showBack
         ? i18n("UserAccountLayout.page.title", userDetails.user?.username)
         : userDetails.user?.username
-    } onBack={showBack ? goToAdminUserListPage : undefined}
-                       sider={<UserAccountNav/>}>
-      <React.Suspense fallback={<ContentLoading/>}>
-        <Outlet/>
-      </React.Suspense>
+    } onBack={showBack ? goToAdminUserListPage : undefined}>
+      <Layout>
+        <Sider width={200}
+               style={{backgroundColor: grey1}}><UserAccountNav/></Sider>
+        <Content
+          style={{
+            backgroundColor: grey1,
+            padding: SPACE_LG
+          }}>
+          <React.Suspense fallback={<ContentLoading/>}>
+            <Outlet/>
+          </React.Suspense>
+        </Content>
+      </Layout>
     </NarrowPageWrapper>
   );
 }
