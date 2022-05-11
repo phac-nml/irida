@@ -57,7 +57,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.Project
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.ProjectSamplesFilter;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.SampleObject;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.error.SampleMergeException;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareMetadataRestriction;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
@@ -365,7 +364,7 @@ public class UISampleService {
 	 * @return result of the merge
 	 * @throws SampleMergeException thrown if there is an error during the merge
 	 */
-	public String mergeSamples(long projectId, MergeRequest request, Locale locale) throws SampleMergeException {
+	public String mergeSamples(Long projectId, MergeRequest request, Locale locale) throws SampleMergeException {
 		Project project = projectService.read(projectId);
 		Sample primarySample = sampleService.read(request.getPrimary());
 
@@ -411,7 +410,7 @@ public class UISampleService {
 	 * @param response  {@link HttpServletResponse}
 	 * @return Zip File containing sequence files for listed samples
 	 */
-	public StreamingResponseBody downloadSamples(long projectId, List<Long> sampleIds, HttpServletResponse response) {
+	public StreamingResponseBody downloadSamples(Long projectId, List<Long> sampleIds, HttpServletResponse response) {
 		Project project = projectService.read(projectId);
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(sampleIds);
 
@@ -498,7 +497,7 @@ public class UISampleService {
 	 * @throws IOException If there is an error writing the file
 	 */
 	@Transactional(readOnly = true)
-	public void downloadSamplesSpreadsheet(long projectId, String type, ProjectSamplesTableRequest request,
+	public void downloadSamplesSpreadsheet(Long projectId, String type, ProjectSamplesTableRequest request,
 			HttpServletResponse response, Locale locale) throws IOException {
 		ProjectSamplesFilter filter = request.getFilters();
 		List<Long> projectIds = new ArrayList<>();
