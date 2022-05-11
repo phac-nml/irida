@@ -20,16 +20,11 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.LocalHostUriTemplateHandler;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
@@ -38,17 +33,14 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.net.HttpHeaders;
 import io.restassured.response.Response;
-import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
+import ca.corefacility.bioinformatics.irida.annotation.RestIntegrationTest;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleSequenceFilesController;
 
 /**
  * Integration tests for working with sequence files and samples.
  * 
  */
-@Tag("IntegrationTest") @Tag("Rest")
-@ActiveProfiles("it")
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@Import(IridaIntegrationTestUriConfig.class)
+@RestIntegrationTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/sample/SampleSequenceFilesIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
@@ -108,8 +100,8 @@ public class SampleSequenceFilesIT {
 		String sampleUri = uriTemplateHandler.getRootUri() + "/api/projects/5/samples/1";
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
 		String sampleBody = response.getBody().asString();
-		String sequenceFilePairUri = from(sampleBody).getString(
-				"resource.links.find{it.rel == 'sample/sequenceFiles/pairs'}.href");
+		String sequenceFilePairUri = from(sampleBody)
+				.getString("resource.links.find{it.rel == 'sample/sequenceFiles/pairs'}.href");
 
 		Path sequenceFile1 = Files.createTempFile("File1_R1_001", ".fastq");
 		Path sequenceFile2 = Files.createTempFile("File1_R2_001", ".fastq");
@@ -143,10 +135,10 @@ public class SampleSequenceFilesIT {
 		String sampleUri = uriTemplateHandler.getRootUri() + "/api/projects/5/samples/1";
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
 		String sampleBody = response.getBody().asString();
-		String sequenceFileUri = from(sampleBody).getString(
-				"resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
-		String unpairedUri = from(sampleBody).getString(
-				"resource.links.find{it.rel == 'sample/sequenceFiles/unpaired'}.href");
+		String sequenceFileUri = from(sampleBody)
+				.getString("resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
+		String unpairedUri = from(sampleBody)
+				.getString("resource.links.find{it.rel == 'sample/sequenceFiles/unpaired'}.href");
 
 		// prepare a file for sending to the server
 		Path sequenceFile = Files.createTempFile(null, null);
@@ -182,8 +174,8 @@ public class SampleSequenceFilesIT {
 		String sampleUri = uriTemplateHandler.getRootUri() + "/api/samples/1";
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(projectSampleUri);
 		String sampleBody = response.getBody().asString();
-		String sequenceFileUri = from(sampleBody).getString(
-				"resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
+		String sequenceFileUri = from(sampleBody)
+				.getString("resource.links.find{it.rel == 'sample/sequenceFiles'}.href");
 		// prepare a file for sending to the server
 		Path sequenceFile = Files.createTempFile(null, null);
 		Files.write(sequenceFile, FASTQ_FILE_CONTENTS);
@@ -192,8 +184,8 @@ public class SampleSequenceFilesIT {
 				.multiPart("file", sequenceFile.toFile()).expect().statusCode(HttpStatus.CREATED.value()).when()
 				.post(sequenceFileUri);
 
-		String seqObjectLocation = from(r.getBody().asString()).getString(
-				"resource.links.find{it.rel == 'sequenceFile/sequencingObject'}.href");
+		String seqObjectLocation = from(r.getBody().asString())
+				.getString("resource.links.find{it.rel == 'sequenceFile/sequencingObject'}.href");
 
 		r = asAdmin().expect().statusCode(HttpStatus.OK.value()).when().delete(seqObjectLocation);
 		String responseBody = r.getBody().asString();
@@ -217,11 +209,11 @@ public class SampleSequenceFilesIT {
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
 		String sampleBody = response.getBody().asString();
 
-		String sequenceFilePairsUri = from(sampleBody).getString(
-				"resource.links.find{it.rel == '" + pairsRel + "'}.href");
+		String sequenceFilePairsUri = from(sampleBody)
+				.getString("resource.links.find{it.rel == '" + pairsRel + "'}.href");
 
-		asUser().expect().statusCode(HttpStatus.OK.value()).and().body("resource.resources[0].files", hasSize(2))
-				.when().get(sequenceFilePairsUri);
+		asUser().expect().statusCode(HttpStatus.OK.value()).and().body("resource.resources[0].files", hasSize(2)).when()
+				.get(sequenceFilePairsUri);
 	}
 
 	@Test
@@ -239,13 +231,13 @@ public class SampleSequenceFilesIT {
 		asUser().expect().statusCode(HttpStatus.OK.value()).and()
 				.body("resource.fileName", equalTo("sequenceFile2_01_L001_R2_001.fastq.gz")).when().get(reverseLink);
 	}
-	
+
 	@Test
 	public void testReadSequenceFilesNoAnalysis() {
 		String sequenceFilePairUri = "/api/samples/1/pairs/4";
 
-		asUser().get(sequenceFilePairUri).then().statusCode(HttpStatus.OK.value()).and()
-				.body("resource.links.rel", not(anyOf(hasItem("analysis/assembly"), hasItem("analysis/sistr"))));
+		asUser().get(sequenceFilePairUri).then().statusCode(HttpStatus.OK.value()).and().body("resource.links.rel",
+				not(anyOf(hasItem("analysis/assembly"), hasItem("analysis/sistr"))));
 	}
 
 	@Test
@@ -263,7 +255,7 @@ public class SampleSequenceFilesIT {
 		asUser().get(sequenceFilePairUri).then().statusCode(HttpStatus.OK.value()).and().body("resource.links.rel",
 				both(hasItem("analysis/sistr")).and(not(hasItem("analysis/assembly"))));
 	}
-	
+
 	@Test
 	public void testReadSequenceFilesSISTRAssemblyAnalysis() {
 		String sequenceFilePairUri = "/api/samples/1/pairs/1";
@@ -279,8 +271,8 @@ public class SampleSequenceFilesIT {
 		String sampleUri = "/api/projects/5/samples/1";
 		Response response = asUser().expect().statusCode(HttpStatus.OK.value()).when().get(sampleUri);
 		String sampleBody = response.getBody().asString();
-		String sequenceFilePairsUri = from(sampleBody).getString(
-				"resource.links.find{it.rel == '" + unpairedRel + "'}.href");
+		String sequenceFilePairsUri = from(sampleBody)
+				.getString("resource.links.find{it.rel == '" + unpairedRel + "'}.href");
 
 		asUser().expect().statusCode(HttpStatus.OK.value()).and().body("resource.resources.files", hasSize(1)).when()
 				.get(sequenceFilePairsUri);

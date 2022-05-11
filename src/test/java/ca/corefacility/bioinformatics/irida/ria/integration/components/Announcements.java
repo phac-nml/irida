@@ -102,26 +102,25 @@ public class Announcements {
 		return wait.until(ExpectedConditions.visibilityOf(submenu));
 	}
 
-	public void hoverOverBadge() {
-		actions.moveToElement(badge)
-				.perform();
+	public void openAnnouncementPopover() {
+		actions.moveToElement(badge).perform();
 		wait.until(ExpectedConditions.visibilityOf(viewAllLink));
 	}
 
 	public int getBadgeCount() {
 		closeModal();
-		return Integer.parseInt(badge.findElement(By.className("ant-scroll-number-only-unit"))
-				.getText());
+		return Integer.parseInt(badge.findElement(By.className("ant-scroll-number-only-unit")).getText());
 	}
 
 	public String getSubmenuAnnouncementTitle(int position) {
-		return submenu.findElements(By.cssSelector("ul li button"))
+		return submenu.findElements(By.className("ant-list-item"))
 				.get(position)
-				.getAttribute("title");
+				.findElement(By.cssSelector(".ant-list-item-meta-title a"))
+				.getText();
 	}
 
 	public void getSubmenuAnnouncement() {
-		hoverOverBadge();
+		badge.click();
 		waitForSubmenu();
 	}
 

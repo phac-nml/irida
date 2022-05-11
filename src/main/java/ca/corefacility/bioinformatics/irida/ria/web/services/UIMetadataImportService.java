@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorage;
 import ca.corefacility.bioinformatics.irida.ria.utilities.SampleMetadataStorageRow;
 import ca.corefacility.bioinformatics.irida.ria.web.errors.SavedMetadataException;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.ProjectControllerUtils;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -32,7 +31,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
 
 /**
- * UI service to handle importing metadata files, so they can be saved to the session.
+ * UI service to handle importing metadata files, so they can be saved to the
+ * session.
  */
 @Component
 public class UIMetadataImportService {
@@ -42,31 +42,36 @@ public class UIMetadataImportService {
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final MetadataTemplateService metadataTemplateService;
-	private final ProjectControllerUtils projectControllerUtils;
 	private final UIMetadataFileImportService metadataFileImportService;
 
 	@Autowired
 	public UIMetadataImportService(MessageSource messageSource, ProjectService projectService,
 			SampleService sampleService, MetadataTemplateService metadataTemplateService,
-			ProjectControllerUtils projectControllerUtils, UIMetadataFileImportService metadataFileImportService) {
+			UIMetadataFileImportService metadataFileImportService) {
 		this.messageSource = messageSource;
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.metadataTemplateService = metadataTemplateService;
-		this.projectControllerUtils = projectControllerUtils;
 		this.metadataFileImportService = metadataFileImportService;
 	}
 
 	/**
-	 * Upload CSV or Excel file containing sample metadata and extract the headers.  The file is stored in the session until
-	 * the column that corresponds to a {@link Sample} identifier has been sent.
+	 * Upload CSV or Excel file containing sample metadata and extract the
+	 * headers. The file is stored in the session until the column that
+	 * corresponds to a {@link Sample} identifier has been sent.
 	 *
-	 * @param session   {@link HttpSession}
-	 * @param projectId {@link Long} identifier for the current {@link Project}
-	 * @param file      {@link MultipartFile} The csv or excel file containing the metadata.
-	 * @return {@link Map} of headers and rows from the csv or excel file for the user to select the header corresponding the
-	 * {@link Sample} identifier.
-	 * @throws Exception if there is an error reading the file
+	 * @param session
+	 *            {@link HttpSession}
+	 * @param projectId
+	 *            {@link Long} identifier for the current {@link Project}
+	 * @param file
+	 *            {@link MultipartFile} The csv or excel file containing the
+	 *            metadata.
+	 * @return {@link Map} of headers and rows from the csv or excel file for
+	 *         the user to select the header corresponding the {@link Sample}
+	 *         identifier.
+	 * @throws Exception
+	 *             if there is an error reading the file
 	 */
 	public SampleMetadataStorage createProjectSampleMetadata(HttpSession session, Long projectId, MultipartFile file)
 			throws Exception {
@@ -86,7 +91,8 @@ public class UIMetadataImportService {
 				storage = metadataFileImportService.parseExcel(projectId, inputStream, extension);
 				break;
 			default:
-				// Should never reach here as the uploader limits to .csv, .xlsx and .xlx files.
+				// Should never reach here as the uploader limits to .csv, .xlsx
+				// and .xlx files.
 				throw new MetadataImportFileTypeNotSupportedError(extension);
 			}
 
@@ -103,11 +109,16 @@ public class UIMetadataImportService {
 	}
 
 	/**
-	 * Add the metadata to specific {@link Sample} based on the selected column to correspond to the {@link Sample} id.
+	 * Add the metadata to specific {@link Sample} based on the selected column
+	 * to correspond to the {@link Sample} id.
 	 *
-	 * @param session          {@link HttpSession}.
-	 * @param projectId        {@link Long} identifier for the current {@link Project}.
-	 * @param sampleNameColumn {@link String} the header to used to represent the {@link Sample} identifier.
+	 * @param session
+	 *            {@link HttpSession}.
+	 * @param projectId
+	 *            {@link Long} identifier for the current {@link Project}.
+	 * @param sampleNameColumn
+	 *            {@link String} the header to used to represent the
+	 *            {@link Sample} identifier.
 	 * @return {@link String} containing a complete message.
 	 */
 	public String setProjectSampleMetadataSampleId(HttpSession session, Long projectId, String sampleNameColumn) {
@@ -140,12 +151,17 @@ public class UIMetadataImportService {
 	/**
 	 * Save uploaded metadata
 	 *
-	 * @param locale      {@link Locale} of the current user.
-	 * @param session     {@link HttpSession}
-	 * @param projectId   {@link Long} identifier for the current project
-	 * @param sampleNames {@link List} of {@link String} sample names
+	 * @param locale
+	 *            {@link Locale} of the current user.
+	 * @param session
+	 *            {@link HttpSession}
+	 * @param projectId
+	 *            {@link Long} identifier for the current project
+	 * @param sampleNames
+	 *            {@link List} of {@link String} sample names
 	 * @return {@link String} that returns a message and potential errors.
-	 * @throws SavedMetadataException if there is an error saving the metadata
+	 * @throws SavedMetadataException
+	 *             if there is an error saving the metadata
 	 */
 	public String saveProjectSampleMetadata(Locale locale, HttpSession session, Long projectId,
 			List<String> sampleNames) throws SavedMetadataException {
@@ -185,16 +201,15 @@ public class UIMetadataImportService {
 					}
 
 					// Need to overwrite duplicate keys
-					for (Map.Entry<String, String> entry : row.getEntry()
-							.entrySet()) {
+					for (Map.Entry<String, String> entry : row.getEntry().entrySet()) {
 						// Make sure we are not saving non-metadata items.
 						if (!DEFAULT_HEADERS.contains(entry.getKey()) && !sampleNameColumn.contains(entry.getKey())) {
-							MetadataTemplateField key = metadataTemplateService.readMetadataFieldByLabel(
-									entry.getKey());
+							MetadataTemplateField key = metadataTemplateService
+									.readMetadataFieldByLabel(entry.getKey());
 
 							if (key == null) {
-								key = metadataTemplateService.saveMetadataField(
-										new MetadataTemplateField(entry.getKey(), "text"));
+								key = metadataTemplateService
+										.saveMetadataField(new MetadataTemplateField(entry.getKey(), "text"));
 							}
 
 							metadataEntrySet.add(new MetadataEntry(entry.getValue(), "text", key));
@@ -217,15 +232,15 @@ public class UIMetadataImportService {
 			throw new SavedMetadataException(stored);
 		}
 
-		message = ((samplesUpdatedCount == 1) ?
-				messageSource.getMessage("server.metadataimport.results.save.success.single-updated",
-						new Object[] { samplesUpdatedCount }, locale) :
-				messageSource.getMessage("server.metadataimport.results.save.success.multiple-updated",
+		message = ((samplesUpdatedCount == 1)
+				? messageSource.getMessage("server.metadataimport.results.save.success.single-updated",
+						new Object[] { samplesUpdatedCount }, locale)
+				: messageSource.getMessage("server.metadataimport.results.save.success.multiple-updated",
 						new Object[] { samplesUpdatedCount }, locale));
-		message += (samplesCreatedCount == 1) ?
-				messageSource.getMessage("server.metadataimport.results.save.success.single-created",
-						new Object[] { samplesCreatedCount }, locale) :
-				messageSource.getMessage("server.metadataimport.results.save.success.multiple-created",
+		message += (samplesCreatedCount == 1)
+				? messageSource.getMessage("server.metadataimport.results.save.success.single-created",
+						new Object[] { samplesCreatedCount }, locale)
+				: messageSource.getMessage("server.metadataimport.results.save.success.multiple-created",
 						new Object[] { samplesCreatedCount }, locale);
 
 		return message;
@@ -234,8 +249,11 @@ public class UIMetadataImportService {
 	/**
 	 * Clear any uploaded sample metadata stored into the session.
 	 *
-	 * @param session   {@link HttpSession}
-	 * @param projectId identifier for the {@link Project} currently uploaded metadata to.
+	 * @param session
+	 *            {@link HttpSession}
+	 * @param projectId
+	 *            identifier for the {@link Project} currently uploaded metadata
+	 *            to.
 	 */
 	public void clearProjectSampleMetadata(HttpSession session, Long projectId) {
 		session.removeAttribute("pm-" + projectId);
@@ -244,8 +262,10 @@ public class UIMetadataImportService {
 	/**
 	 * Get the currently stored metadata.
 	 *
-	 * @param session   {@link HttpSession}
-	 * @param projectId {@link Long} identifier for the current {@link Project}
+	 * @param session
+	 *            {@link HttpSession}
+	 * @param projectId
+	 *            {@link Long} identifier for the current {@link Project}
 	 * @return the currently stored {@link SampleMetadataStorage}
 	 */
 	public SampleMetadataStorage getProjectSampleMetadata(HttpSession session, Long projectId) {

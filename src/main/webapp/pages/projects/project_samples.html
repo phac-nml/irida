@@ -12,10 +12,6 @@
       window.PAGE = {
         isRemoteProject: /*[[${project.isRemote()}]]*/ false,
         urls: {
-          projects: {
-            available:
-              /*[[@{/projects/{id}/ajax/samples/available_projects(id=${project.getId()})}]]*/ "",
-          },
           samples: {
             project:
               /*[[@{/projects/{id}/ajax/samples(id=${project.getId()})}]]*/ "",
@@ -54,6 +50,20 @@
   </head>
   <body>
     <main id="project-samples-main" layout:fragment="main">
+      <dialog id="select-all-dialogue" 
+              style="border: none; border-radius: 4px; box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; padding: 2rem;">
+        <div style="display: flex;">
+          <div class="fa-2x" style="margin-right: 1.3rem; width: 60;">
+            <i class="fas fa-circle-notch fa-spin" style="color: hsl(209,100%,55%)"></i>
+          </div>
+          <div>
+            <h3 style="padding-top: 8px;">
+              <span th:text="#{project.samples.select.selectAll.warning.title}" />
+            </h3>
+            <p th:text="#{project.samples.select.selectAll.warning.message}" />
+          </div>
+        </div>
+      </dialog>
       <div class="row">
         <div class="col-md-12">
           <div class="btn-toolbar dt-btn-toolbar" role="toolbar">
@@ -347,6 +357,7 @@
             <th
               class="dt-date"
               data-data="createdDate"
+              data-name="sample.createdDate"
               th:text="#{project.samples.table.created}"
             ></th>
             <th

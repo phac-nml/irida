@@ -3,20 +3,14 @@ package ca.corefacility.bioinformatics.irida.pipeline.results.impl.integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
@@ -28,11 +22,7 @@ import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGeno
 /**
  * Tests updating samples with assemblies.
  */
-@Tag("IntegrationTest") @Tag("Service")
-@SpringBootTest
-@ActiveProfiles("it")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExecutionListener.class })
+@ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/pipeline/results/impl/AnalysisSubmissionSampleProcessorImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisSubmissionSampleProcessorImplIT {
@@ -50,11 +40,11 @@ public class AnalysisSubmissionSampleProcessorImplIT {
 	@WithMockUser(username = "fbristow", roles = "USER")
 	public void testUpdateSamplesSuccess() throws PostProcessingException {
 		AnalysisSubmission a = analysisSubmissionRepository.findById(1L).orElse(null);
-		assertEquals( 0, sampleGenomeAssemblyJoinRepository.count(),"Should be no join between sample and assembly");
+		assertEquals(0, sampleGenomeAssemblyJoinRepository.count(), "Should be no join between sample and assembly");
 
 		analysisSubmissionSampleProcessorImpl.updateSamples(a);
 
-		assertEquals( 1, sampleGenomeAssemblyJoinRepository.count(),"Should exist a join between sample and assembly");
+		assertEquals(1, sampleGenomeAssemblyJoinRepository.count(), "Should exist a join between sample and assembly");
 	}
 
 	@Test
@@ -81,8 +71,8 @@ public class AnalysisSubmissionSampleProcessorImplIT {
 	 * Verifies that even if "fbristow" (the project owner) is set to run this
 	 * code, the RunAsUserAspect will switch the user to the owner of the
 	 * analysis submission, a non-project owner who should not have the ability
-	 * to write to the samples (and so should throw an AccessDeniedException
-	 * for this test).
+	 * to write to the samples (and so should throw an AccessDeniedException for
+	 * this test).
 	 */
 	@Test
 	@WithMockUser(username = "fbristow", roles = "USER")

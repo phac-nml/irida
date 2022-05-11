@@ -13,8 +13,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.Select2Utility;
 
-import com.google.common.base.Strings;
-
 /**
  * <p>
  * Page Object to represent the project samples page.
@@ -53,7 +51,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	@FindBy(className = "t-share-btn")
 	private WebElement shareBtn;
-	
+
 	@FindBy(id = "giveOwner")
 	private WebElement giveOwnerBtn;
 
@@ -164,9 +162,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-linker-modal")
 	private WebElement linkerModal;
 
-	@FindBy(className = "t-cmd-text")
-	private WebElement linkerCmd;
-
 	@FindBy(id = "linkerCloseBtn")
 	private WebElement linkerCloseBtn;
 
@@ -182,8 +177,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-create-sample")
 	private WebElement createSampleButton;
 
-	@FindBy(className = "t-sample-name")
+	@FindBy(id = "name")
 	private WebElement sampleNameInput;
+
+	@FindBy(className = "t-linker-cmd")
+	private WebElement linkerCmd;
 
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
@@ -221,10 +219,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void closeToolsDropdown() {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		Actions act = new Actions(driver);
-		act.moveToElement(toolsDropdownBtn)
-				.moveByOffset(10, 10)
-				.click()
-				.perform();
+		act.moveToElement(toolsDropdownBtn).moveByOffset(10, 10).click().perform();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("t-merge-btn")));
 	}
 
@@ -249,17 +244,18 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	private boolean isAnchorElementEnabled(WebElement element) {
 		// Using xpath because for anchor elements in dropdowns, bootstrap adds
 		// the disabled class it the parent li element.
-		return !element.findElement(By.xpath("./..")).getAttribute("class").contains("disabled");
+		return !element.findElement(By.xpath("./.."))
+				.getAttribute("class")
+				.contains("disabled");
 	}
 
 	public boolean isMergeBtnEnabled() {
 		return isAnchorElementEnabled(mergeBtn);
 	}
 
-	public boolean isShareBtnEnabled() {
-		return isAnchorElementEnabled(shareBtn);
+	public boolean isShareButtonAvailable() {
+		return shareBtn.isDisplayed();
 	}
-
 
 	public boolean isRemoveBtnEnabled() {
 		return isAnchorElementEnabled(removeBtn);
@@ -267,7 +263,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	// PAGINATION
 	public boolean isPreviousBtnEnabled() {
-		return !pagination.get(0).getAttribute("class").contains("disabled");
+		return !pagination.get(0)
+				.getAttribute("class")
+				.contains("disabled");
 	}
 
 	public boolean isNextBtnEnabled() {
@@ -291,7 +289,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void selectSample(int row) {
-		// Need to get the anything but the first column as that is a link to the sample!
+		// Need to get the anything but the first column as that is a link to
+		// the sample!
 		WebElement checkbox = tableRows.get(row).findElement(By.className("t-row-select"));
 		checkbox.click();
 	}
@@ -306,8 +305,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void addSelectedSamplesToCart() {
 		addToCartBtn.click();
 		// Make sure the item were added to the cart.
-		waitForElementVisible(
-				By.className("t-cart-count"));
+		waitForElementVisible(By.className("t-cart-count"));
 		// If the cart count is already visible this can go too fast,
 		// wait for the cart to fully update it's total.
 		waitForTime(500);
@@ -346,7 +344,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		mergeBtnOK.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("merge-modal")));
 	}
-	
+
 	public void waitUntilShareButtonVisible() {
 		WebDriverWait wait = openToolsDropdownAndWait();
 		wait.until(ExpectedConditions.visibilityOf(shareBtn));
@@ -438,51 +436,45 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(copySamplesModal));
 		enterSelect2Value(project);
-		
-		if(owner) {
+
+		if (owner) {
 			try {
 				giveOwnerBtn.click();
 			} catch (NoSuchElementException e) {
 				throw new GiveOwnerNotDisplayedException();
 			}
 		}
-		
+
 		wait.until(ExpectedConditions.elementToBeClickable(copyModalConfirmBtn));
 		copyModalConfirmBtn.click();
 		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("t-copy-samples-modal")));
 	}
 
 	public String getLinkerText() {
-		String cmd = linkerCmd.getAttribute("aria-label");
-		if (Strings.isNullOrEmpty(cmd)) {
-			cmd = linkerCmd.getText();
-		}
-		return cmd;
+		return linkerCmd.getAttribute("value");
 	}
 
-	public void openLinkerModal(){
+	public void openLinkerModal() {
 		openExportDropdown();
 		linkerBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOf(linkerModal));
 	}
 
-	public void clickLinkerFileType(String type){
+	public void clickLinkerFileType(String type) {
 		WebElement fileTypeCheckbox = driver.findElement(By.xpath("//input[@value='" + type + "']"));
 		boolean isChecked = fileTypeCheckbox.isSelected();
 		fileTypeCheckbox.click();
 		WebDriverWait wait = new WebDriverWait(driver, 2);
 		wait.until(ExpectedConditions.elementSelectionStateToBe(fileTypeCheckbox, !isChecked));
 	}
-	
-	public List<String> getLockedSampleNames(){
+
+	public List<String> getLockedSampleNames() {
 		List<WebElement> trs = driver.findElements(By.cssSelector("tbody tr"));
 		List<String> locked = new ArrayList<>();
 		for (WebElement tr : trs) {
-			if (tr.findElements(By.className("fa-lock"))
-					.size() > 0) {
-				locked.add(tr.findElement(By.className("t-sample-label"))
-						.getText());
+			if (tr.findElements(By.className("fa-lock")).size() > 0) {
+				locked.add(tr.findElement(By.className("t-sample-label")).getText());
 			}
 		}
 		return locked;
@@ -497,10 +489,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		List<WebElement> modals = driver.findElements(By.className("modal-open"));
 		if (modals.size() > 0) {
 			Actions actions = new Actions(driver);
-			actions.moveToElement(modals.get(0))
-					.moveByOffset(5, 5)
-					.click()
-					.perform();
+			actions.moveToElement(modals.get(0)).moveByOffset(5, 5).click().perform();
 		}
 	}
 
@@ -511,9 +500,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void enterSampleName(String sampleName) {
-		sampleNameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+		sampleNameInput.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 		sampleNameInput.sendKeys(sampleName);
-		waitForTime(300);
+		waitForTime(1000);
 	}
 
 	public boolean isSampleNameErrorDisplayed() {

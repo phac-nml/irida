@@ -25,13 +25,11 @@ public class UISampleMetadata extends HashMap<String, String> {
 	public UISampleMetadata(Project project, Sample sample, boolean ownership, Set<MetadataEntry> metadata) {
 
 		this.put(SAMPLE_ID, String.valueOf(sample.getId()));
-		this.put(SAMPLE_NAME, sample.getLabel());
+		this.put(SAMPLE_NAME, sample.getSampleName());
 		this.put(PROJECT_ID, String.valueOf(project.getId()));
-		this.put(PROJECT_NAME, project.getLabel());
-		this.put(CREATED_DATE, sample.getCreatedDate()
-				.toString());
-		this.put(MODIFIED_DATE, sample.getModifiedDate()
-				.toString());
+		this.put(PROJECT_NAME, project.getName());
+		this.put(CREATED_DATE, sample.getCreatedDate().toString());
+		this.put(MODIFIED_DATE, sample.getModifiedDate().toString());
 		this.putAll(getAllMetadataForSample(metadata));
 		this.put(OWNER, String.valueOf(ownership));
 	}
@@ -47,8 +45,7 @@ public class UISampleMetadata extends HashMap<String, String> {
 		for (MetadataEntry entry : metadataEntries) {
 
 			// Label must be converted into the proper format for client side look up purposes in Ag Grid.
-			entries.put(entry.getField()
-					.getFieldKey(), entry.getValue());
+			entries.put(entry.getField().getFieldKey(), entry.getValue());
 		}
 		return entries;
 	}

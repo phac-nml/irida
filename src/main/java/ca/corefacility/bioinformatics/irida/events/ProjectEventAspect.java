@@ -11,9 +11,7 @@ import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositori
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 
 /**
- * Aspect used to create project events for methods annotated with event
- * annotations
- * 
+ * Aspect used to create project events for methods annotated with event annotations
  *
  * @see LaunchesProjectEvent
  */
@@ -33,7 +31,8 @@ public class ProjectEventAspect implements Ordered {
 	 * @param eventAnnotation the LaunchesProjectEvent annotation arguments
 	 * @param returnValue     the return value of the annotated method
 	 */
-	@AfterReturning(value = "execution(public (!void) *(..)) &&  @annotation(eventAnnotation)", returning = "returnValue")
+	@AfterReturning(value = "execution(public (!void) *(..)) &&  @annotation(eventAnnotation)",
+			returning = "returnValue")
 	public void handleProjectEvent(JoinPoint jp, LaunchesProjectEvent eventAnnotation, Object returnValue) {
 		logger.trace("Intercepted method annotated with LaunchesProjectEvent " + jp.toString());
 		eventHandler.delegate(new MethodEvent(eventAnnotation.value(), returnValue, jp.getArgs()));
@@ -52,19 +51,15 @@ public class ProjectEventAspect implements Ordered {
 	}
 
 	/**
-	 * This event **must** happen outside of a transaction so that multiple
-	 * events happening at the same time do not result in a deadlock exception.
-	 * Example: when multiple sequencers are uploading sample data
-	 * simultaneously, they are all creating samples on the server. When the
-	 * samples are being created the project event for updating the project
-	 * modified time is fired many times simultaneously, so multiple clients are
-	 * trying to update the project at the same time. If that update is within a
-	 * transaction, at least one of those simultaneous updates fails, so the
-	 * client gets a report that creating the sample failed. Since we don't care
-	 * which thread wins the update (they should be setting the same updated
-	 * time down to at least the second), just make sure that this aspect is
-	 * being applied *outside* of the transaction.
-	 * 
+	 * This event **must** happen outside of a transaction so that multiple events happening at the same time do not
+	 * result in a deadlock exception. Example: when multiple sequencers are uploading sample data simultaneously, they
+	 * are all creating samples on the server. When the samples are being created the project event for updating the
+	 * project modified time is fired many times simultaneously, so multiple clients are trying to update the project at
+	 * the same time. If that update is within a transaction, at least one of those simultaneous updates fails, so the
+	 * client gets a report that creating the sample failed. Since we don't care which thread wins the update (they
+	 * should be setting the same updated time down to at least the second), just make sure that this aspect is being
+	 * applied *outside* of the transaction.
+	 *
 	 * @return the order of this aspect
 	 */
 	@Override

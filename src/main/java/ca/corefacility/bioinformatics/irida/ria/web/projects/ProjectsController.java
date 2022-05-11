@@ -11,8 +11,6 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -28,8 +26,6 @@ import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +37,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
-import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -75,7 +70,6 @@ public class ProjectsController {
 	private final ProjectControllerUtils projectControllerUtils;
 	private final TaxonomyService taxonomyService;
 	private final MessageSource messageSource;
-	private final UpdateSamplePermission updateSamplePermission;
 
 	/*
 	 * Converters
@@ -83,13 +77,13 @@ public class ProjectsController {
 	FileSizeConverter fileSizeConverter;
 
 	// CONSTANTS
-	private final List<Map<String, String>> EXPORT_TYPES = ImmutableList.of(
-			ImmutableMap.of("format", "xlsx", "name", "Excel"), ImmutableMap.of("format", "csv", "name", "CSV"));
+	private final List<Map<String, String>> EXPORT_TYPES = ImmutableList
+			.of(ImmutableMap.of("format", "xlsx", "name", "Excel"), ImmutableMap.of("format", "csv", "name", "CSV"));
 
 	@Autowired
 	public ProjectsController(ProjectService projectService, SampleService sampleService, UserService userService,
 			ProjectControllerUtils projectControllerUtils, TaxonomyService taxonomyService,
-			UpdateSamplePermission updateSamplePermission, MessageSource messageSource) {
+			MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.userService = userService;
@@ -98,13 +92,14 @@ public class ProjectsController {
 		this.dateFormatter = new DateFormatter();
 		this.messageSource = messageSource;
 		this.fileSizeConverter = new FileSizeConverter();
-		this.updateSamplePermission = updateSamplePermission;
 	}
 
 	/**
-	 * Request for the page to display a list of all projects available to the currently logged in user.
+	 * Request for the page to display a list of all projects available to the
+	 * currently logged in user.
 	 *
-	 * @param model The model to add attributes to for the template.
+	 * @param model
+	 *            The model to add attributes to for the template.
 	 * @return The name of the page.
 	 */
 	@RequestMapping("/projects")
@@ -119,7 +114,8 @@ public class ProjectsController {
 	/**
 	 * Get the admin projects page.
 	 *
-	 * @param model {@link Model}
+	 * @param model
+	 *            {@link Model}
 	 * @return The name of the page
 	 */
 	@RequestMapping("/projects/all")
@@ -134,9 +130,12 @@ public class ProjectsController {
 	/**
 	 * Request for a specific project details page.
 	 *
-	 * @param projectId The id for the project to show details for.
-	 * @param model     Spring model to populate the html page.
-	 * @param principal a reference to the logged in user.
+	 * @param projectId
+	 *            The id for the project to show details for.
+	 * @param model
+	 *            Spring model to populate the html page.
+	 * @param principal
+	 *            a reference to the logged in user.
 	 * @return The name of the project details page.
 	 */
 	@RequestMapping(value = "/projects/{projectId}/activity")
@@ -161,9 +160,12 @@ public class ProjectsController {
 	/**
 	 * Get the page to share samples between projects
 	 *
-	 * @param projectId Identifier for the current project
-	 * @param model     Spring model for template variables
-	 * @param principal Currently logged in user
+	 * @param projectId
+	 *            Identifier for the current project
+	 * @param model
+	 *            Spring model for template variables
+	 * @param principal
+	 *            Currently logged in user
 	 * @return Path to the template for shareing samples
 	 */
 	@RequestMapping("/projects/{projectId}/share")
@@ -177,9 +179,12 @@ public class ProjectsController {
 	/**
 	 * Get the page for analyses shared with a given {@link Project}
 	 *
-	 * @param projectId the ID of the {@link Project}
-	 * @param principal the logged in user
-	 * @param model     model for view variables
+	 * @param projectId
+	 *            the ID of the {@link Project}
+	 * @param principal
+	 *            the logged in user
+	 * @param model
+	 *            model for view variables
 	 * @return name of the analysis view page
 	 */
 	@RequestMapping("/projects/{projectId}/analyses/**")
@@ -193,9 +198,12 @@ public class ProjectsController {
 	/**
 	 * Get the project settings page
 	 *
-	 * @param projectId - identifier for the {@link Project} currently being viewed
-	 * @param principal - Currently logged in used
-	 * @param model     Spring UI model
+	 * @param projectId
+	 *            - identifier for the {@link Project} currently being viewed
+	 * @param principal
+	 *            - Currently logged in used
+	 * @param model
+	 *            Spring UI model
 	 * @return path to the html settings page
 	 */
 	@GetMapping("/projects/{projectId}/settings/**")
@@ -209,12 +217,16 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Search for taxonomy terms. This method will return a map of found taxonomy terms and their child nodes.
+	 * Search for taxonomy terms. This method will return a map of found
+	 * taxonomy terms and their child nodes.
 	 * <p>
-	 * Note: If the search term was not included in the results, it will be added as an option
+	 * Note: If the search term was not included in the results, it will be
+	 * added as an option
 	 *
-	 * @param searchTerm The term to find taxa for
-	 * @return A {@code List<Map<String,Object>>} which will contain a taxonomic tree of matching terms
+	 * @param searchTerm
+	 *            The term to find taxa for
+	 * @return A {@code List<Map<String,Object>>} which will contain a taxonomic
+	 *         tree of matching terms
 	 */
 	@RequestMapping("/projects/ajax/taxonomy/search")
 	@ResponseBody
@@ -242,12 +254,19 @@ public class ProjectsController {
 	/**
 	 * Export Projects table as either an excel file or CSV
 	 *
-	 * @param type      of file to export (csv or excel)
-	 * @param isAdmin   if the currently logged in user is an administrator
-	 * @param response  {@link HttpServletResponse}
-	 * @param principal {@link Principal}
-	 * @param locale    {@link Locale}
-	 * @throws IOException thrown if cannot open the {@link HttpServletResponse} {@link OutputStream}
+	 * @param type
+	 *            of file to export (csv or excel)
+	 * @param isAdmin
+	 *            if the currently logged in user is an administrator
+	 * @param response
+	 *            {@link HttpServletResponse}
+	 * @param principal
+	 *            {@link Principal}
+	 * @param locale
+	 *            {@link Locale}
+	 * @throws IOException
+	 *             thrown if cannot open the {@link HttpServletResponse}
+	 *             {@link OutputStream}
 	 */
 	@RequestMapping("/projects/ajax/export")
 	public void exportProjectsToFile(@RequestParam(value = "dtf") String type,
@@ -267,21 +286,15 @@ public class ProjectsController {
 		// If on the users projects page, give the user their projects.
 		else {
 			User user = userService.getUserByUsername(principal.getName());
-			projects = projectService.getProjectsForUser(user)
-					.stream()
-					.map(Join::getSubject)
+			projects = projectService.getProjectsForUser(user).stream().map(Join::getSubject)
 					.collect(Collectors.toList());
 		}
 
-		List<DTProject> dtProjects = projects.stream()
-				.map(this::createDataTablesProject)
-				.collect(Collectors.toList());
-		List<String> headers = ImmutableList.of("ProjectsTable_th_id", "ProjectsTable_th_name",
-						"ProjectsTable_th_organism", "ProjectsTable_th_samples", "ProjectsTable_th_created_date",
-						"ProjectsTable_th_modified_date")
-				.stream()
-				.map(h -> messageSource.getMessage(h, new Object[] {}, locale))
-				.collect(Collectors.toList());
+		List<DTProject> dtProjects = projects.stream().map(this::createDataTablesProject).collect(Collectors.toList());
+		List<String> headers = ImmutableList
+				.of("ProjectsTable_th_id", "ProjectsTable_th_name", "ProjectsTable_th_organism",
+						"ProjectsTable_th_samples", "ProjectsTable_th_created_date", "ProjectsTable_th_modified_date")
+				.stream().map(h -> messageSource.getMessage(h, new Object[] {}, locale)).collect(Collectors.toList());
 
 		// Create the filename
 		Date date = new Date();
@@ -299,9 +312,12 @@ public class ProjectsController {
 	/**
 	 * Handle the page request to upload {@link Sample} metadata
 	 *
-	 * @param model     {@link Model}
-	 * @param projectId {@link Long} identifier for the current {@link Project}
-	 * @param principal {@link Principal} currently logged in use
+	 * @param model
+	 *            {@link Model}
+	 * @param projectId
+	 *            {@link Long} identifier for the current {@link Project}
+	 * @param principal
+	 *            {@link Principal} currently logged in use
 	 * @return {@link String} the path to the metadata import page
 	 */
 	@GetMapping("/projects/{projectId}/sample-metadata/upload/*")
@@ -314,11 +330,16 @@ public class ProjectsController {
 	/**
 	 * Write the projects as a CSV file
 	 *
-	 * @param headers  {@link List} for {@link String} headers for the information.
-	 * @param projects {@link List} of {@link DTProject} to export
-	 * @param locale   {@link Locale}
-	 * @param response {@link HttpServletResponse}
-	 * @throws IOException Thrown if cannot get the {@link PrintWriter} for the response
+	 * @param headers
+	 *            {@link List} for {@link String} headers for the information.
+	 * @param projects
+	 *            {@link List} of {@link DTProject} to export
+	 * @param locale
+	 *            {@link Locale}
+	 * @param response
+	 *            {@link HttpServletResponse}
+	 * @throws IOException
+	 *             Thrown if cannot get the {@link PrintWriter} for the response
 	 */
 	private void writeProjectsToCsvFile(List<String> headers, List<DTProject> projects, Locale locale,
 			HttpServletResponse response) throws IOException {
@@ -345,11 +366,17 @@ public class ProjectsController {
 	/**
 	 * Write the projects as a Excel file
 	 *
-	 * @param headers  {@link List} for {@link String} headers for the information.
-	 * @param projects {@link List} of {@link DTProject} to export
-	 * @param locale   {@link Locale}
-	 * @param response {@link HttpServletResponse}
-	 * @throws IOException Thrown if cannot get the {@link OutputStream} for the response
+	 * @param headers
+	 *            {@link List} for {@link String} headers for the information.
+	 * @param projects
+	 *            {@link List} of {@link DTProject} to export
+	 * @param locale
+	 *            {@link Locale}
+	 * @param response
+	 *            {@link HttpServletResponse}
+	 * @throws IOException
+	 *             Thrown if cannot get the {@link OutputStream} for the
+	 *             response
 	 */
 	private void writeProjectsToExcelFile(List<String> headers, List<DTProject> projects, Locale locale,
 			HttpServletResponse response) throws IOException {
@@ -369,18 +396,12 @@ public class ProjectsController {
 		for (DTProject p : projects) {
 			Row row = sheet.createRow(rowCount++);
 			int cellCount = 0;
-			row.createCell(cellCount++)
-					.setCellValue(String.valueOf(p.getId()));
-			row.createCell(cellCount++)
-					.setCellValue(p.getName());
-			row.createCell(cellCount++)
-					.setCellValue(p.getOrganism());
-			row.createCell(cellCount++)
-					.setCellValue(String.valueOf(p.getSamples()));
-			row.createCell(cellCount++)
-					.setCellValue(dateFormat.format(p.getCreatedDate()));
-			row.createCell(cellCount)
-					.setCellValue(dateFormat.format(p.getModifiedDate()));
+			row.createCell(cellCount++).setCellValue(String.valueOf(p.getId()));
+			row.createCell(cellCount++).setCellValue(p.getName());
+			row.createCell(cellCount++).setCellValue(p.getOrganism());
+			row.createCell(cellCount++).setCellValue(String.valueOf(p.getSamples()));
+			row.createCell(cellCount++).setCellValue(dateFormat.format(p.getCreatedDate()));
+			row.createCell(cellCount).setCellValue(dateFormat.format(p.getModifiedDate()));
 		}
 
 		// Write the file
@@ -388,29 +409,16 @@ public class ProjectsController {
 			workbook.write(stream);
 			stream.flush();
 		}
+
+		workbook.close();
 	}
 
 	/**
-	 * Changes a {@link ConstraintViolationException} to a usable map of strings for displaing in the UI.
+	 * Handle a {@link ProjectWithoutOwnerException} error. Returns a forbidden
+	 * error
 	 *
-	 * @param e {@link ConstraintViolationException} for the form submitted.
-	 * @return Map of string {fieldName, error}
-	 */
-	private Map<String, String> getErrorsFromViolationException(ConstraintViolationException e) {
-		Map<String, String> errors = new HashMap<>();
-		for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
-			String message = violation.getMessage();
-			String field = violation.getPropertyPath()
-					.toString();
-			errors.put(field, message);
-		}
-		return errors;
-	}
-
-	/**
-	 * Handle a {@link ProjectWithoutOwnerException} error.  Returns a forbidden error
-	 *
-	 * @param ex the exception to handle.
+	 * @param ex
+	 *            the exception to handle.
 	 * @return response entity with FORBIDDEN error
 	 */
 	@ExceptionHandler(ProjectWithoutOwnerException.class)
@@ -420,32 +428,20 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Test whether the logged in user can modify a {@link Sample}
-	 *
-	 * @param sample the {@link Sample} to check
-	 * @return true if they can modify
-	 */
-	private boolean canModifySample(Sample sample) {
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
-
-		return updateSamplePermission.isAllowed(authentication, sample);
-	}
-
-	/**
 	 * }
 	 * <p>
-	 * /** Recursively transform a {@link TreeNode} into a json parsable map object
+	 * /** Recursively transform a {@link TreeNode} into a json parsable map
+	 * object
 	 *
-	 * @param node The node to transform
+	 * @param node
+	 *            The node to transform
 	 * @return A Map<String,Object> which may contain more children
 	 */
 	private Map<String, Object> transformTreeNode(TreeNode<String> node) {
 		Map<String, Object> current = new HashMap<>();
 
 		// add the node properties to the map
-		for (Entry<String, Object> property : node.getProperties()
-				.entrySet()) {
+		for (Entry<String, Object> property : node.getProperties().entrySet()) {
 			current.put(property.getKey(), property.getValue());
 		}
 
@@ -466,9 +462,11 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Extract the details of the a {@link Project} into a {@link DTProject} which is consumable by the UI
+	 * Extract the details of the a {@link Project} into a {@link DTProject}
+	 * which is consumable by the UI
 	 *
-	 * @param project {@link Project}
+	 * @param project
+	 *            {@link Project}
 	 * @return {@link DTProject}
 	 */
 	private DTProject createDataTablesProject(Project project) {

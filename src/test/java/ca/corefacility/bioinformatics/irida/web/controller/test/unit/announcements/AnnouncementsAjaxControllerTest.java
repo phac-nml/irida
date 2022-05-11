@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
-import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
-import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserTableModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
@@ -15,10 +13,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
+import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.AnnouncementAjaxController;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnnouncementsService;
@@ -26,8 +26,7 @@ import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 public class AnnouncementsAjaxControllerTest {
@@ -46,10 +45,14 @@ public class AnnouncementsAjaxControllerTest {
 	private final String ANNOUNCEMENT_TEXT_02 = "This is the **second** announcement";
 	private final Boolean ANNOUNCEMENT_PRIORITY_01 = false;
 	private final Boolean ANNOUNCEMENT_PRIORITY_02 = true;
-	private final Announcement ANNOUNCEMENT_01 = new Announcement(ANNOUNCEMENT_TITLE_01, ANNOUNCEMENT_TEXT_01, ANNOUNCEMENT_PRIORITY_01, ANNOUNCEMENT_USER_01);
-	private final Announcement ANNOUNCEMENT_02 = new Announcement(ANNOUNCEMENT_TITLE_02, ANNOUNCEMENT_TEXT_02, ANNOUNCEMENT_PRIORITY_02, ANNOUNCEMENT_USER_02);
-	private final AnnouncementUserJoin ANNOUNCEMENT_READ_01 = new AnnouncementUserJoin(ANNOUNCEMENT_01, ANNOUNCEMENT_USER_01);
-	private final AnnouncementUserJoin ANNOUNCEMENT_READ_02 = new AnnouncementUserJoin(ANNOUNCEMENT_01, ANNOUNCEMENT_USER_02);
+	private final Announcement ANNOUNCEMENT_01 = new Announcement(ANNOUNCEMENT_TITLE_01, ANNOUNCEMENT_TEXT_01,
+			ANNOUNCEMENT_PRIORITY_01, ANNOUNCEMENT_USER_01);
+	private final Announcement ANNOUNCEMENT_02 = new Announcement(ANNOUNCEMENT_TITLE_02, ANNOUNCEMENT_TEXT_02,
+			ANNOUNCEMENT_PRIORITY_02, ANNOUNCEMENT_USER_02);
+	private final AnnouncementUserJoin ANNOUNCEMENT_READ_01 = new AnnouncementUserJoin(ANNOUNCEMENT_01,
+			ANNOUNCEMENT_USER_01);
+	private final AnnouncementUserJoin ANNOUNCEMENT_READ_02 = new AnnouncementUserJoin(ANNOUNCEMENT_01,
+			ANNOUNCEMENT_USER_02);
 
 	@BeforeEach
 	public void setUp() {
@@ -240,21 +243,18 @@ public class AnnouncementsAjaxControllerTest {
 		TableRequest request = new TableRequest();
 		request.setSortColumn("label");
 		request.setSortDirection("ascend");
-		request.setCurrent(0);
+		request.setCurrent(1);
 		request.setPageSize(10);
 
 		TableResponse<AnnouncementTableModel> response = controller.getAnnouncementsAdmin(request);
 		assertEquals(103L, response.getTotal(), 0, "Should have the correct number of total entries");
-		assertEquals(2, response.getDataSource().size(),
-				"Should have 2 announcements");
+		assertEquals(2, response.getDataSource().size(), "Should have 2 announcements");
 
-		AnnouncementTableModel announcement_1 = response.getDataSource()
-				.get(0);
+		AnnouncementTableModel announcement_1 = response.getDataSource().get(0);
 		assertEquals(ANNOUNCEMENT_TEXT_01, announcement_1.getMessage(), "The announcement have the expected text");
 		assertEquals(ANNOUNCEMENT_USER_01, announcement_1.getUser(), "Should have the correct user data");
 
-		AnnouncementTableModel announcement_2 = response.getDataSource()
-				.get(1);
+		AnnouncementTableModel announcement_2 = response.getDataSource().get(1);
 		assertEquals(ANNOUNCEMENT_TEXT_02, announcement_2.getMessage(),
 				"The second announcement should have the correct text");
 		assertEquals(ANNOUNCEMENT_USER_02, announcement_2.getUser(),
@@ -284,7 +284,7 @@ public class AnnouncementsAjaxControllerTest {
 
 		verify(userService, times(1)).getUserByUsername("FRED");
 		verify(announcementService, times(1)).read(anyLong());
-		verify(announcementService, times(1)).markAnnouncementAsReadByUser(any(),any());
+		verify(announcementService, times(1)).markAnnouncementAsReadByUser(any(), any());
 	}
 
 	@Test
@@ -322,7 +322,7 @@ public class AnnouncementsAjaxControllerTest {
 		TableRequest request = new TableRequest();
 		request.setSortColumn("label");
 		request.setSortDirection("ascend");
-		request.setCurrent(0);
+		request.setCurrent(1);
 		request.setPageSize(10);
 
 		TableResponse<AnnouncementUserTableModel> response = controller.getUserAnnouncementInfoTable(1L, request);
@@ -331,10 +331,13 @@ public class AnnouncementsAjaxControllerTest {
 
 		AnnouncementUserTableModel announcement_user_1 = response.getDataSource().get(0);
 		assertEquals(ANNOUNCEMENT_USER_01, announcement_user_1.getUser(), "Should have the correct user data");
-		assertEquals(ANNOUNCEMENT_READ_01.getCreatedDate(), announcement_user_1.getDateRead(), "The user have the expected read date");
+		assertEquals(ANNOUNCEMENT_READ_01.getCreatedDate(), announcement_user_1.getDateRead(),
+				"The user have the expected read date");
 
 		AnnouncementUserTableModel announcement_user_2 = response.getDataSource().get(1);
-		assertEquals(ANNOUNCEMENT_USER_02, announcement_user_2.getUser(), "The second announcement should have the correct user");
-		assertEquals(ANNOUNCEMENT_READ_02.getCreatedDate(), announcement_user_2.getDateRead(), "The user have the expected read date");
+		assertEquals(ANNOUNCEMENT_USER_02, announcement_user_2.getUser(),
+				"The second announcement should have the correct user");
+		assertEquals(ANNOUNCEMENT_READ_02.getCreatedDate(), announcement_user_2.getDateRead(),
+				"The user have the expected read date");
 	}
 }

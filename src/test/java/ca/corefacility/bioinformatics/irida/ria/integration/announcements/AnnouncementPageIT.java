@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 
-	//Page objects
+	// Page objects
 	private AnnouncementControlPage controlPage;
 
 	@Override
@@ -57,8 +57,8 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(checkDatesSortedAscending(announcementDates), "List of announcements is not sorted correctly");
 	}
 
-    @Test
-    public void testSubmitNewAnnouncement() {
+	@Test
+	public void testSubmitNewAnnouncement() {
 		final String title = "Announcement Title";
 		final String message = "This is a the announcement message content.";
 		final Boolean priority = true;
@@ -77,9 +77,9 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 				"Unexpected number of announcements visible");
 	}
 
-    @Test
-    public void testCheckDetailsPage() {
-        controlPage.goTo();
+	@Test
+	public void testCheckDetailsPage() {
+		controlPage.goTo();
 
 		String title0 = controlPage.getAnnouncementTitle(0);
 		String title1 = controlPage.getAnnouncementTitle(1);
@@ -106,8 +106,8 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(announcement.contains(preview), "Announcement preview does not match the message.");
 	}
 
-    @Test
-    public void testUpdateAnnouncement() {
+	@Test
+	public void testUpdateAnnouncement() {
 		final String newTitle = "Updated Title!!!";
 		final String newMessage = "Updated Message Content!!!";
 		final boolean newPriority = true;
@@ -118,60 +118,61 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 		editAnnouncementComponent.enterAnnouncement(newTitle, newMessage, newPriority);
 
 		String announcementTitle = controlPage.getAnnouncementTitle(4);
-		assertTrue(newTitle.contains(announcementTitle), "Unexpected message content");
+		assertEquals(newTitle, announcementTitle, "Unexpected message content");
 	}
 
-    @Test
-    public void testDeleteAnnouncement() {
-        controlPage.goTo();
+	@Test
+	public void testDeleteAnnouncement() {
+		controlPage.goTo();
 		List<Date> dates = controlPage.getCreatedDates();
 		controlPage.deleteAnnouncement(2);
 		assertEquals(dates.size() - 1, controlPage.getCreatedDates().size(), "Unexpected number of announcements");
 	}
 
-    @Test
-    public void testAnnouncementUserTablePopulated() {
-        controlPage.goTo();
+	@Test
+	public void testAnnouncementUserTablePopulated() {
+		controlPage.goTo();
 		ViewAnnouncementComponent viewAnnouncementComponent = ViewAnnouncementComponent.goTo(driver());
 		controlPage.gotoViewMessage(0);
-		assertEquals(6, viewAnnouncementComponent.getTableDataSize(), "Unexpected number of user information rows in table");
-    }
+		assertEquals(6, viewAnnouncementComponent.getTableDataSize(),
+				"Unexpected number of user information rows in table");
+	}
 
-    /**
+	/**
 	 * Checks if a List of {@link Date} is sorted in ascending order.
 	 *
 	 * @param dates
-	 * 		List of {@link Date}
+	 *            List of {@link Date}
 	 *
-     * @return if the list is sorted ascending
-     */
+	 * @return if the list is sorted ascending
+	 */
 	private boolean checkDatesSortedAscending(List<Date> dates) {
 		boolean isSorted = true;
 		for (int i = 1; i < dates.size(); i++) {
 			if (dates.get(i).compareTo(dates.get(i - 1)) < 0) {
 				isSorted = false;
-                break;
-            }
-        }
-        return isSorted;
-    }
+				break;
+			}
+		}
+		return isSorted;
+	}
 
-    /**
+	/**
 	 * Checks if a list of {@link Date} is sorted in descending order.
 	 *
 	 * @param dates
-	 * 		List of {@link Date}
+	 *            List of {@link Date}
 	 *
-     * @return if the list is sorted ascending
-     */
+	 * @return if the list is sorted ascending
+	 */
 	private boolean checkDatesSortedDescending(List<Date> dates) {
 		boolean isSorted = true;
 		for (int i = 1; i < dates.size(); i++) {
 			if (dates.get(i).compareTo(dates.get(i - 1)) > 0) {
 				isSorted = false;
-                break;
-            }
-        }
-        return isSorted;
-    }
+				break;
+			}
+		}
+		return isSorted;
+	}
 }

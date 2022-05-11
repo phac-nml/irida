@@ -37,20 +37,18 @@ public class UIPipelineStartService {
 	private final SequencingObjectService sequencingObjectService;
 	private final AnalysisSubmissionService submissionService;
 	private final ProjectService projectService;
-	private final UICartService cartService;
 	private final WorkflowNamedParametersService namedParametersService;
 	private final MessageSource messageSource;
 
 	@Autowired
 	public UIPipelineStartService(IridaWorkflowsService workflowsService,
 			SequencingObjectService sequencingObjectService, AnalysisSubmissionService submissionService,
-			ProjectService projectService, UICartService cartService,
-			WorkflowNamedParametersService namedParametersService, MessageSource messageSource) {
+			ProjectService projectService, WorkflowNamedParametersService namedParametersService,
+			MessageSource messageSource) {
 		this.workflowsService = workflowsService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.submissionService = submissionService;
 		this.projectService = projectService;
-		this.cartService = cartService;
 		this.namedParametersService = namedParametersService;
 		this.messageSource = messageSource;
 	}
@@ -58,12 +56,19 @@ public class UIPipelineStartService {
 	/**
 	 * Start a new pipeline
 	 *
-	 * @param id      - pipeline identifier
-	 * @param request - details about the request to start the pipeline
-	 * @param locale  - currently logged in users locale
-	 * @return The id of the new {@link AnalysisSubmission}, if more than one are kicked off, then the first id is returned.
-	 * @throws IridaWorkflowNotFoundException thrown if the workflow cannot be found
-	 * @throws ReferenceFileRequiredException thrown if a reference file is required and not sent (should not happen).
+	 * @param id
+	 *            - pipeline identifier
+	 * @param request
+	 *            - details about the request to start the pipeline
+	 * @param locale
+	 *            - currently logged in users locale
+	 * @return The id of the new {@link AnalysisSubmission}, if more than one
+	 *         are kicked off, then the first id is returned.
+	 * @throws IridaWorkflowNotFoundException
+	 *             thrown if the workflow cannot be found
+	 * @throws ReferenceFileRequiredException
+	 *             thrown if a reference file is required and not sent (should
+	 *             not happen).
 	 */
 	public Long start(UUID id, LaunchRequest request, Locale locale)
 			throws IridaWorkflowNotFoundException, ReferenceFileRequiredException {
@@ -71,7 +76,7 @@ public class UIPipelineStartService {
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
 
 		/*
-		PARAMETERS
+		 * PARAMETERS
 		 */
 		IridaWorkflowNamedParameters namedParameters = null;
 
@@ -95,17 +100,16 @@ public class UIPipelineStartService {
 			return template.getId();
 		} else {
 			/*
-			SHARE RESULTS BACK TO PROJECTS?
-		 	*/
+			 * SHARE RESULTS BACK TO PROJECTS?
+			 */
 			List<Project> projects = new ArrayList<>();
-			if (request.getProjects()
-					.size() > 0) {
+			if (request.getProjects().size() > 0) {
 				projects = (List<Project>) projectService.readMultiple(request.getProjects());
 			}
 
 			/*
-			SEQUENCE FILES
-		 	*/
+			 * SEQUENCE FILES
+			 */
 			List<SingleEndSequenceFile> singles = new ArrayList<>();
 			List<SequenceFilePair> pairs = new ArrayList<>();
 			// Check for single ended sequence files
@@ -130,7 +134,8 @@ public class UIPipelineStartService {
 				submissionService.createSingleSampleSubmission(workflow, request.getReference(), singles, pairs,
 						request.getParameters(), namedParameters, request.getName(), request.getDescription(), projects,
 						request.isUpdateSamples(), request.sendEmailOnCompletion(), request.sendEmailOnError());
-				// Returning -1L as a flag to the UI that multiple pipelines have been launched, thereby there is not
+				// Returning -1L as a flag to the UI that multiple pipelines
+				// have been launched, thereby there is not
 				// On specific pipeline to go to.
 				return -1L;
 			} else {

@@ -20,14 +20,19 @@ const dateColumn = {
       backgroundColor: "#FFF1F0",
     };
   },
-  comparator(d1, d2) {
-    if (typeof d1 === "undefined" || !isDate(d1)) {
-      return 1;
-    } else if (typeof d2 === "undefined" || !isDate(d2)) {
-      return -1;
-    } else {
-      return new Date(d2) - new Date(d1);
-    }
+  filterParams: {
+    comparator(d1, d2) {
+      if (typeof d1 === "undefined" || !isDate(d1)) {
+        return 1;
+      } else if (typeof d2 === "undefined" || !isDate(d2)) {
+        return -1;
+      } else {
+        const date1 = new Date(d1);
+        let date2 = new Date(d2);
+        date2.setHours(0, 0, 0, 0);
+        return date2 - date1;
+      }
+    },
   },
 };
 
@@ -44,6 +49,9 @@ function getColumnDefinition(col) {
   if (field === FIELDS.icons) {
     Object.assign(col, {
       filter: undefined,
+      suppressMenu: true,
+      floatingFilterComponentParams: { suppressFilterButton: true },
+      width: 105,
       cellRenderer: "IconCellRenderer",
     });
   } else if (type === TYPES.date) {

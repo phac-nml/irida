@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Implementation of the custom methods for retrieving {@link MetadataEntry}
@@ -31,7 +33,10 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 	/**
 	 * {@inheritDoc}
 	 */
-	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project) {
+	public Map<Long, Set<MetadataEntry>> getMetadataForProjectSamples(Project project, List<Long> sampleIds,
+			List<MetadataTemplateField> requestedFields) {
+		checkArgument(!requestedFields.isEmpty(), "requestedFields must not be empty");
+
 		NamedParameterJdbcTemplate tmpl = new NamedParameterJdbcTemplate(dataSource);
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("project", project.getId());
@@ -49,13 +54,14 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 
 		List<MetadataTemplateField> fields;
 		if (!fieldIds.isEmpty()) {
-			//next load the full fields
-			String queryString = "SELECT * from metadata_field f WHERE f.id IN :fields";
-			Query nativeQuery = entityManager.createNativeQuery(queryString, MetadataTemplateField.class);
+			// next load the full fields
+			String queryString = "SELECT f from MetadataTemplateField f WHERE f.id IN :fields";
+			TypedQuery<MetadataTemplateField> nativeQuery = entityManager.createQuery(queryString,
+					MetadataTemplateField.class);
 			nativeQuery.setParameter("fields", fieldIds);
 			fields = nativeQuery.getResultList();
 		} else {
-			//if there's no metadata, at least return the empty list
+			// if there's no metadata, at least return the empty list
 			fields = new ArrayList<>();
 		}
 
@@ -63,13 +69,13 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 		Map<Long, MetadataTemplateField> fieldMap = fields.stream()
 				.collect(Collectors.toMap(MetadataTemplateField::getId, field -> field));
 
-		//get all the sample IDs in the project for mapping
-		String sampleIdQueryString = "SELECT DISTINCT p.sample_id FROM project_sample p WHERE p.project_id=:project";
-		List<Long> allSampleIds = tmpl.query(sampleIdQueryString, parameters,
-				(rs, rowNum) -> rs.getLong("p.sample_id"));
-
 		//query for all metadata entries used in the project
-		String entityQueryString = "select e.id, e.type, e.value, e.field_id, e.sample_id from metadata_entry e INNER JOIN project_sample s ON s.sample_id=e.sample_id WHERE s.project_id=:project";
+		String entityQueryString = "select e.id, e.type, e.value, e.field_id, e.sample_id from metadata_entry e INNER JOIN project_sample s ON s.sample_id=e.sample_id WHERE s.project_id=:project AND s.sample_id in (:sampleIds) AND e.field_id IN (:fieldIds)";
+		List<Long> requestedFieldIds = requestedFields.stream()
+				.map(MetadataTemplateField::getId)
+				.collect(Collectors.toList());
+		parameters.addValue("sampleIds", sampleIds);
+		parameters.addValue("fieldIds", requestedFieldIds);
 
 		//map the results into a SampleMetadataEntry
 		List<SampleMetadataEntry> sampleEntryCollection = tmpl.query(entityQueryString, parameters, (rs, rowNum) -> {
@@ -91,21 +97,20 @@ public class MetadataEntryRepositoryImpl implements MetadataEntryRepositoryCusto
 		});
 
 		//build a map of sample ID some empty sets for us to add the metadata
-		Map<Long, Set<MetadataEntry>> sampleMetadata = allSampleIds.stream()
+		Map<Long, Set<MetadataEntry>> sampleMetadata = sampleIds.stream()
 				.collect(Collectors.toMap(s -> s, s -> new HashSet<>()));
 
 		//for each sample id, add the associated metadata
 		for (SampleMetadataEntry entries : sampleEntryCollection) {
-			sampleMetadata.get(entries.getSampleId())
-					.add(entries.getEntry());
+			sampleMetadata.get(entries.getSampleId()).add(entries.getEntry());
 		}
 
 		return sampleMetadata;
-
 	}
 
 	/**
-	 * A convenience class for collecting the results of the above metadata query.  It will be used after to convert into the sample/metadata map.
+	 * A convenience class for collecting the results of the above metadata query. It will be used after to convert into
+	 * the sample/metadata map.
 	 */
 	private class SampleMetadataEntry {
 		Long sampleId;

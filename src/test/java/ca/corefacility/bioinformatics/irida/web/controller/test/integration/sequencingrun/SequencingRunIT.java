@@ -11,16 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
+import ca.corefacility.bioinformatics.irida.annotation.RestIntegrationTest;
 import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -32,10 +27,7 @@ import com.google.common.collect.ImmutableMap;
  * Integration tests for users.
  * 
  */
-@Tag("IntegrationTest") @Tag("Rest")
-@ActiveProfiles("it")
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@Import(IridaIntegrationTestUriConfig.class)
+@RestIntegrationTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/sequencingrun/SequencingRunIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
@@ -89,7 +81,6 @@ public class SequencingRunIT {
 		asSequencer().given().body(run).expect().response().statusCode(HttpStatus.SC_CREATED).when()
 				.post("/api/sequencingrun/miseqrun");
 	}
-
 
 	@Test
 	public void testPostSequencingRunBadTypeFail() {

@@ -8,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,11 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJ
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTExportSubmission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
@@ -62,9 +55,8 @@ public class ProjectExportController {
 
 	@Autowired
 	public ProjectExportController(ProjectService projectService, SampleService sampleService,
-			ProjectControllerUtils projectControllerUtils,
-			SequencingObjectService sequencingObjectService, NcbiExportSubmissionService exportSubmissionService,
-			UserService userService) {
+			ProjectControllerUtils projectControllerUtils, SequencingObjectService sequencingObjectService,
+			NcbiExportSubmissionService exportSubmissionService, UserService userService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.projectControllerUtils = projectControllerUtils;
@@ -74,8 +66,7 @@ public class ProjectExportController {
 	}
 
 	/**
-	 * Get the page for exporting a given {@link Project} and selected
-	 * {@link Sample}s
+	 * Get the page for exporting a given {@link Project} and selected {@link Sample}s
 	 *
 	 * @param projectId The ID of the project to export
 	 * @param sampleIds A List of sample ids to export
@@ -112,15 +103,19 @@ public class ProjectExportController {
 					.getSequencesForSampleOfType(sample, SequenceFilePair.class);
 
 			List<SingleEndSequenceFile> singleEndFilesForSample = singleEndFiles.stream()
-					.map(j -> (SingleEndSequenceFile) j.getObject()).collect(Collectors.toList());
+					.map(j -> (SingleEndSequenceFile) j.getObject())
+					.collect(Collectors.toList());
 			List<SequenceFilePair> sequenceFilePairsForSample = pairedEndFiles.stream()
-					.map(j -> (SequenceFilePair) j.getObject()).collect(Collectors.toList());
+					.map(j -> (SequenceFilePair) j.getObject())
+					.collect(Collectors.toList());
 
 			Optional<SequenceFilePair> newestPair = sequenceFilePairsForSample.stream()
-					.sorted((f1, f2) -> f2.getCreatedDate().compareTo(f1.getCreatedDate())).findFirst();
+					.sorted((f1, f2) -> f2.getCreatedDate().compareTo(f1.getCreatedDate()))
+					.findFirst();
 
 			Optional<SingleEndSequenceFile> newestSingle = singleEndFilesForSample.stream()
-					.sorted((f1, f2) -> f2.getCreatedDate().compareTo(f1.getCreatedDate())).findFirst();
+					.sorted((f1, f2) -> f2.getCreatedDate().compareTo(f1.getCreatedDate()))
+					.findFirst();
 
 			if (newestPair.isPresent() && newestSingle.isPresent()) {
 				SequenceFilePair sequenceFilePair = newestPair.get();
@@ -173,16 +168,12 @@ public class ProjectExportController {
 
 	/**
 	 * Save an NCBI submission to the database
-	 * 
-	 * @param projectId
-	 *            the ID of the {@link Project} for the submission
-	 * @param submission
-	 *            A {@link SubmissionBody} describing the files to upload
-	 * @param principal
-	 *            the user submitting the upload
+	 *
+	 * @param projectId  the ID of the {@link Project} for the submission
+	 * @param submission A {@link SubmissionBody} describing the files to upload
+	 * @param principal  the user submitting the upload
 	 * @return ID of the submission if successful
-	 * @throws InterruptedException
-	 *             if thread was not successfully put to sleep
+	 * @throws InterruptedException if thread was not successfully put to sleep
 	 */
 	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.POST)
 	@ResponseBody
@@ -195,18 +186,22 @@ public class ProjectExportController {
 
 		for (BioSampleBody sample : submission.getSamples()) {
 			Set<SingleEndSequenceFile> singleFiles = new HashSet<>();
-			sequencingObjectService.readMultiple(sample.getSingle()).forEach(
-					f -> singleFiles.add((SingleEndSequenceFile) f));
+			sequencingObjectService.readMultiple(sample.getSingle())
+					.forEach(f -> singleFiles.add((SingleEndSequenceFile) f));
 
 			HashSet<SequenceFilePair> paired = new HashSet<>();
 			sequencingObjectService.readMultiple(sample.getPaired()).forEach(f -> paired.add((SequenceFilePair) f));
 
 			Builder sampleBuilder = new NcbiBioSampleFiles.Builder();
-			sampleBuilder.bioSample(sample.getBioSample()).files(singleFiles).pairs(paired)
+			sampleBuilder.bioSample(sample.getBioSample())
+					.files(singleFiles)
+					.pairs(paired)
 					.instrumentModel(sample.getInstrumentModel())
 					.libraryConstructionProtocol(sample.getLibraryConstructionProtocol())
-					.libraryName(sample.getLibraryName()).librarySelection(sample.getLibrarySelection())
-					.librarySource(sample.getLibrarySource()).libraryStrategy(sample.getLibraryStrategy())
+					.libraryName(sample.getLibraryName())
+					.librarySelection(sample.getLibrarySelection())
+					.librarySource(sample.getLibrarySource())
+					.libraryStrategy(sample.getLibraryStrategy())
 					.namespace(submission.getNamespace());
 			NcbiBioSampleFiles build = sampleBuilder.build();
 			bioSampleFiles.add(build);
@@ -261,55 +256,14 @@ public class ProjectExportController {
 
 	/**
 	 * Get the view to see all ncbi exports
-	 * 
-	 * @param model
-	 *            model for the view
+	 *
+	 * @param model model for the view
 	 * @return name of the exports list view
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping("/export/ncbi")
 	public String getExportsPage(Model model) {
 		return EXPORT_ADMIN_VIEW;
-	}
-
-	/**
-	 * Ajax method for getting the {@link NcbiExportSubmission}s for a given
-	 * {@link Project}
-	 *
-	 * @param projectId {@link Project} id
-	 * @param params    Parameters from the datatables request
-	 * @return DatatablesResponse of Map of submission params
-	 */
-	@RequestMapping("/ajax/projects/{projectId}/export/list")
-	@ResponseBody
-	public DataTablesResponse getExportsForProject(
-			@DataTablesRequest DataTablesParams params, @PathVariable Long projectId) {
-		Project project = projectService.read(projectId);
-		List<NcbiExportSubmission> submissions = exportSubmissionService.getSubmissionsForProject(project);
-
-		List<DataTablesResponseModel> dtExportSubmissions = submissions.stream().map(s -> new DTExportSubmission(s))
-				.collect(Collectors.toList());
-		return new DataTablesResponse(params, submissions.size(), dtExportSubmissions);
-
-	}
-
-	/**
-	 * Ajax method for getting all {@link NcbiExportSubmission}s
-	 *
-	 * @param params The parameters from the datatables request
-	 * @return DatatablesResponse of Map of submission params
-	 */
-	@RequestMapping("/ajax/export/list")
-	@ResponseBody
-	public DataTablesResponse getAllExports(@DataTablesRequest DataTablesParams params) {
-
-		Page<NcbiExportSubmission> submissions = exportSubmissionService.list(params.getCurrentPage(), params.getLength(),
-				Sort.Direction.DESC, "createdDate");
-
-		List<DataTablesResponseModel> dtExportSubmissions = submissions.getContent().stream().map(s -> new DTExportSubmission(s))
-				.collect(Collectors.toList());
-
-		return new DataTablesResponse(params, submissions, dtExportSubmissions);
 	}
 
 	/**

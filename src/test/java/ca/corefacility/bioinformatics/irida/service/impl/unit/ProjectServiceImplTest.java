@@ -1,13 +1,5 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,12 +24,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
@@ -52,20 +42,26 @@ import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 import ca.corefacility.bioinformatics.irida.model.user.group.UserGroupProjectJoin;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.ProjectAnalysisSubmissionJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.RelatedProjectRepository;
-import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.*;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.ProjectSubscriptionService;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectServiceImpl;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 /**
+ *
  */
 public class ProjectServiceImplTest {
 	private ProjectService projectService;
@@ -81,6 +77,8 @@ public class ProjectServiceImplTest {
 	private SampleSequencingObjectJoinRepository ssoRepository;
 	private ProjectAnalysisSubmissionJoinRepository pasRepository;
 	private SequencingObjectRepository sequencingObjectRepository;
+	private ProjectSubscriptionService projectSubscriptionService;
+	private UserGroupJoinRepository userGroupJoinRepository;
 
 	private Validator validator;
 
@@ -97,9 +95,12 @@ public class ProjectServiceImplTest {
 		prfjRepository = mock(ProjectReferenceFileJoinRepository.class);
 		ugpjRepository = mock(UserGroupProjectJoinRepository.class);
 		sequencingObjectRepository = mock(SequencingObjectRepository.class);
+		projectSubscriptionService = mock(ProjectSubscriptionService.class);
+		userGroupJoinRepository = mock(UserGroupJoinRepository.class);
 		projectService = new ProjectServiceImpl(projectRepository, sampleRepository, userRepository, pujRepository,
 				psjRepository, relatedProjectRepository, referenceFileRepository, prfjRepository, ugpjRepository,
-				ssoRepository, pasRepository, sequencingObjectRepository, validator);
+				ssoRepository, pasRepository, sequencingObjectRepository, projectSubscriptionService,
+				userGroupJoinRepository, validator);
 	}
 
 	@Test
@@ -152,11 +153,12 @@ public class ProjectServiceImplTest {
 		u.setId(1111L);
 		Project p = project();
 		ProjectRole r = ProjectRole.PROJECT_USER;
-		ProjectUserJoin join = new ProjectUserJoin(p, u, r);
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.LEVEL_1;
+		ProjectUserJoin join = new ProjectUserJoin(p, u, r, metadataRole);
 
 		when(pujRepository.save(join)).thenReturn(join);
 
-		projectService.addUserToProject(p, u, r);
+		projectService.addUserToProject(p, u, r, metadataRole);
 
 		verify(pujRepository).save(join);
 	}
@@ -167,12 +169,13 @@ public class ProjectServiceImplTest {
 		u.setId(1111L);
 		Project p = project();
 		ProjectRole r = ProjectRole.PROJECT_USER;
-		ProjectUserJoin join = new ProjectUserJoin(p, u, r);
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.LEVEL_1;
+		ProjectUserJoin join = new ProjectUserJoin(p, u, r, metadataRole);
 
 		when(pujRepository.save(join)).thenThrow(new DataIntegrityViolationException("Duplicates."));
 
 		assertThrows(EntityExistsException.class, () -> {
-			projectService.addUserToProject(p, u, r);
+			projectService.addUserToProject(p, u, r, metadataRole);
 		});
 	}
 
@@ -198,8 +201,9 @@ public class ProjectServiceImplTest {
 		Sample s = new Sample();
 		s.setSampleName("name");
 		Set<ConstraintViolation<Sample>> violations = new HashSet<>();
-		violations.add(ConstraintViolationImpl.forBeanValidation(null, null, null, null, Sample.class, null, null,
-				null, null, null, null));
+		violations.add(
+				ConstraintViolationImpl.forBeanValidation(null, null, null, null, Sample.class, null, null, null, null,
+						null, null));
 
 		when(validator.validate(s)).thenReturn(violations);
 
@@ -256,7 +260,8 @@ public class ProjectServiceImplTest {
 
 		when(pujRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
 
-		assertTrue(projectService.userHasProjectRole(u, p, ProjectRole.PROJECT_OWNER), "User has ownership of project.");
+		assertTrue(projectService.userHasProjectRole(u, p, ProjectRole.PROJECT_OWNER),
+				"User has ownership of project.");
 	}
 
 	@Test
@@ -324,15 +329,16 @@ public class ProjectServiceImplTest {
 		User user = new User();
 		User user2 = new User();
 		ProjectRole projectRole = ProjectRole.PROJECT_USER;
-		ProjectUserJoin oldJoin = new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER);
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.LEVEL_1;
+		ProjectUserJoin oldJoin = new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4);
 		List<Join<Project, User>> owners = Lists.newArrayList(new ProjectUserJoin(project, user,
-				ProjectRole.PROJECT_OWNER), new ProjectUserJoin(project, user2, ProjectRole.PROJECT_OWNER));
+				ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4), new ProjectUserJoin(project, user2, ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4));
 
 		when(pujRepository.getProjectJoinForUser(project, user)).thenReturn(oldJoin);
 		when(pujRepository.save(oldJoin)).thenReturn(oldJoin);
 		when(pujRepository.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER)).thenReturn(owners);
 
-		Join<Project, User> updateUserProjectRole = projectService.updateUserProjectRole(project, user, projectRole);
+		Join<Project, User> updateUserProjectRole = projectService.updateUserProjectRole(project, user, projectRole, metadataRole);
 
 		assertNotNull(updateUserProjectRole);
 		ProjectUserJoin newJoin = (ProjectUserJoin) updateUserProjectRole;
@@ -348,11 +354,12 @@ public class ProjectServiceImplTest {
 		Project project = new Project("Project 1");
 		User user = new User();
 		ProjectRole projectRole = ProjectRole.PROJECT_USER;
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.LEVEL_1;
 
 		when(pujRepository.getProjectJoinForUser(project, user)).thenReturn(null);
 
 		assertThrows(EntityNotFoundException.class, () -> {
-			projectService.updateUserProjectRole(project, user, projectRole);
+			projectService.updateUserProjectRole(project, user, projectRole, metadataRole);
 		});
 	}
 
@@ -361,15 +368,16 @@ public class ProjectServiceImplTest {
 		Project project = new Project("Project 1");
 		User user = new User();
 		ProjectRole projectRole = ProjectRole.PROJECT_USER;
-		ProjectUserJoin oldJoin = new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER);
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.LEVEL_1;
+		ProjectUserJoin oldJoin = new ProjectUserJoin(project, user, ProjectRole.PROJECT_OWNER, metadataRole);
 		List<Join<Project, User>> owners = Lists.newArrayList(new ProjectUserJoin(project, user,
-				ProjectRole.PROJECT_OWNER));
+				ProjectRole.PROJECT_OWNER, ProjectMetadataRole.LEVEL_4));
 
 		when(pujRepository.getProjectJoinForUser(project, user)).thenReturn(oldJoin);
 		when(pujRepository.getUsersForProjectByRole(project, ProjectRole.PROJECT_OWNER)).thenReturn(owners);
 
 		assertThrows(ProjectWithoutOwnerException.class, () -> {
-			projectService.updateUserProjectRole(project, user, projectRole);
+			projectService.updateUserProjectRole(project, user, projectRole, metadataRole);
 		});
 
 	}
@@ -377,7 +385,8 @@ public class ProjectServiceImplTest {
 	@Test
 	public void testGetProjectsForSample() {
 		Sample sample = new Sample("my sample");
-		List<Join<Project, Sample>> projects = Lists.newArrayList(new ProjectSampleJoin(new Project("p1"), sample, true),
+		List<Join<Project, Sample>> projects = Lists.newArrayList(
+				new ProjectSampleJoin(new Project("p1"), sample, true),
 				new ProjectSampleJoin(new Project("p2"), sample, true));
 
 		when(psjRepository.getProjectForSample(sample)).thenReturn(projects);
@@ -434,16 +443,15 @@ public class ProjectServiceImplTest {
 		Project project = new Project();
 
 		List<Sample> samples = ImmutableList.of(new Sample("s1"), new Sample("s2"));
-		
+
 		ProjectSampleJoin psj0 = new ProjectSampleJoin(project, samples.get(0), true);
 		ProjectSampleJoin psj1 = new ProjectSampleJoin(project, samples.get(1), true);
-		
+
 		when(psjRepository.readSampleForProject(project, samples.get(0))).thenReturn(psj0);
 		when(psjRepository.readSampleForProject(project, samples.get(1))).thenReturn(psj1);
 
 		projectService.removeSamplesFromProject(project, samples);
 
-		
 		verify(psjRepository).delete(psj0);
 		verify(psjRepository).delete(psj1);
 	}
@@ -464,7 +472,7 @@ public class ProjectServiceImplTest {
 		verifyNoInteractions(sampleRepository);
 
 	}
-	
+
 	@Test
 	public void testGetProjectsForUser() {
 		final User u = new User();
@@ -473,7 +481,8 @@ public class ProjectServiceImplTest {
 		final UserGroup ug = new UserGroup("group");
 
 		final ProjectUserJoin puj = new ProjectUserJoin(p1, u, ProjectRole.PROJECT_OWNER);
-		final UserGroupProjectJoin ugpj = new UserGroupProjectJoin(p2, ug, ProjectRole.PROJECT_OWNER);
+		final UserGroupProjectJoin ugpj = new UserGroupProjectJoin(p2, ug, ProjectRole.PROJECT_OWNER,
+				ProjectMetadataRole.LEVEL_4);
 
 		when(pujRepository.getProjectsForUser(u)).thenReturn(ImmutableList.of(puj));
 		when(ugpjRepository.findProjectsByUser(u)).thenReturn(ImmutableList.of(ugpj));

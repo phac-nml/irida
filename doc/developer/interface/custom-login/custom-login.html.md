@@ -4,10 +4,10 @@
     <title>IRIDA Login</title>
     <!--
     Must include this link to the css for the login form.
-    `th:href` is interpreted by our server sided processor and replaces it with
+    `webpacker:css` is interpreted by our server sided processor and replaces it with
     the full link including any servlet contexts.
      -->
-    <link rel="stylesheet" th:href="@{/dist/css/login.bundle.css}" />
+    <webpacker:css entry="login" />
 
     <!-- Default CSS not required just for this layout -->
     <script th:inline="javascript">
@@ -137,9 +137,9 @@
 
     <!--
     Must include this link to the js for the login form.
-    `th:src` is interpreted by our server sided processor and replaces it with
+    `webpacker:js` is interpreted by our server sided processor and replaces it with
     the full link including any servlet contexts.
      -->
-    <script th:src="@{/dist/js/login.bundle.js}"></script>
+    <webpacker:js entry="login" />
   </body>
 </html>

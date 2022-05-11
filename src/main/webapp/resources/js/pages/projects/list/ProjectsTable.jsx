@@ -1,5 +1,5 @@
 import { Button, Dropdown, Input, Menu, Table } from "antd";
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useReducer } from "react";
 import { getPagedProjectsForUser } from "../../../apis/projects/projects";
 import {
   dateColumnFormat,
@@ -18,6 +18,7 @@ import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
 import { primaryColour } from "../../../utilities/theme-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { CreateNewProject } from "../create";
+import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 
 const initialState = {
   loading: true, // true when table fetching data
@@ -64,11 +65,15 @@ const reducer = (state, action) => {
  */
 export function ProjectsTable() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [total, setTotal] = useState(undefined);
-  const [loading, setLoading] = useState(false);
-  const [projects, setProjects] = useState(undefined);
+  const [total, setTotal] = React.useState(undefined);
+  const [loading, setLoading] = React.useState(false);
+  const [projects, setProjects] = React.useState(undefined);
 
-  useEffect(() => {
+  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
+    total,
+  ]);
+
+  React.useEffect(() => {
     setLoading(true);
     const params = {
       current: state.current - 1, // Offset since table starts on page 1
@@ -211,10 +216,7 @@ export function ProjectsTable() {
         <Table
           rowKey={(record) => record.id}
           loading={loading}
-          pagination={{
-            total: total,
-            pageSize: state.pageSize,
-          }}
+          pagination={paginationOptions}
           scroll={{ x: "max-content" }}
           columns={columns}
           dataSource={projects}

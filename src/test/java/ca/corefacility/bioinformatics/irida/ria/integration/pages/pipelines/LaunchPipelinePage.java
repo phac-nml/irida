@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -16,7 +17,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 /**
- * This page holds all the form controls that are available on any pipeline launch page.
+ * This page holds all the form controls that are available on any pipeline
+ * launch page.
  */
 public class LaunchPipelinePage extends AbstractPage {
 	@FindBy(className = "ant-page-header-heading-title")
@@ -134,17 +136,18 @@ public class LaunchPipelinePage extends AbstractPage {
 	}
 
 	public void updateName(String name) {
-		nameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		clearName();
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.className("t-name-required")));
 		nameInput.sendKeys(name);
-		waitForTime(300);
+		wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("t-name-required")));
 	}
 
 	/**
 	 * Clear the pipeline name input
 	 */
 	public void clearName() {
-		nameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
-		nameInput.sendKeys(Keys.BACK_SPACE);
+		nameInput.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 	}
 
 	public boolean isNameErrorDisplayed() {
@@ -161,21 +164,16 @@ public class LaunchPipelinePage extends AbstractPage {
 
 	public String getSavedParameterValue(String name) {
 		Optional<WebElement> input = savedParametersInput.stream()
-				.filter(elm -> elm.getAttribute("id")
-						.equals("details_" + name))
-				.findFirst();
-		return input.map(webElement -> webElement.getAttribute("value"))
-				.orElse(null);
+				.filter(elm -> elm.getAttribute("id").equals("details_" + name)).findFirst();
+		return input.map(webElement -> webElement.getAttribute("value")).orElse(null);
 	}
 
 	public void updateSavedParameterValue(String name, String value) {
 		Optional<WebElement> input = savedParametersInput.stream()
-				.filter(elm -> elm.getAttribute("id")
-						.equals("details_" + name))
-				.findFirst();
-		if(input.isPresent()) {
+				.filter(elm -> elm.getAttribute("id").equals("details_" + name)).findFirst();
+		if (input.isPresent()) {
 			WebElement elm = input.get();
-			elm.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+			elm.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 			elm.sendKeys(value);
 			elm.sendKeys(Keys.TAB);
 		}

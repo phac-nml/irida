@@ -6,7 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
  * Roles for authorization in the application.
  * 
  */
-public enum Role implements Comparable<Role>, GrantedAuthority {
+public enum Role implements GrantedAuthority {
 
 	/**
 	 * Constant reference for anonymous role.
@@ -31,16 +31,13 @@ public enum Role implements Comparable<Role>, GrantedAuthority {
 	 * Constant reference for the sequencer role.
 	 */
 	ROLE_SEQUENCER("ROLE_SEQUENCER"),
-	
+
 	/**
 	 * Constant reference for technician role.
 	 */
 	ROLE_TECHNICIAN("ROLE_TECHNICIAN");
 
-
-
 	private String name;
-
 
 	private Role() {
 	}
@@ -49,8 +46,6 @@ public enum Role implements Comparable<Role>, GrantedAuthority {
 		this();
 		this.name = name;
 	}
-
-
 
 	public String getName() {
 		return name;

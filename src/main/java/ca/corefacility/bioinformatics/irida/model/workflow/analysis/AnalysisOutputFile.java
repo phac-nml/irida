@@ -201,8 +201,7 @@ public class AnalysisOutputFile extends IridaRepresentationModel implements Irid
 			bytes = Files.readAllBytes(getFile());
 		} catch (IOException e) {
 			logger.error("Unable to read file.", e);
-		} finally {
-			return bytes;
 		}
+		return bytes;
 	}
 }

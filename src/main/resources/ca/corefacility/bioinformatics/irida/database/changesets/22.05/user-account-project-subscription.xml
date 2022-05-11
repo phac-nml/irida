@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="user-account-project-subscription" author="katherine">
+        <createTable tableName="project_subscription">
+            <column name="id" type="bigint(20)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="project_id" type="bigint(20)">
+                <constraints foreignKeyName="FK_PROJECT_SUBSCRIPTION_PROJECT"
+                             referencedColumnNames="id" referencedTableName="project" nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint(20)">
+                <constraints foreignKeyName="FK_PROJECT_SUBSCRIPTION_USER"
+                             referencedColumnNames="id" referencedTableName="user" nullable="false"/>
+            </column>
+            <column name="email_subscription" type="bit(1)" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint columnNames="project_id, user_id"
+                             constraintName="UK_PROJECT_SUBSCRIPTION_PROJECT_USER" tableName="project_subscription"/>
+
+        <createTable tableName="project_subscription_AUD">
+            <column name="id" type="bigint(20)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REV" type="int(11)">
+                <constraints primaryKey="true" nullable="false"
+                             foreignKeyName="FK_PROJECT_SUBSCRIPTION_REVISION" referencedColumnNames="id"
+                             referencedTableName="Revisions"/>
+            </column>
+            <column name="REVTYPE" type="tinyint(4)"/>
+            <column name="project_id" type="bigint(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email_subscription" type="bit(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <sql>
+            INSERT INTO project_subscription (project_id, user_id, email_subscription, created_date)
+            SELECT project_id, user_id, IF(email_subscription=b'1', 1, 0), now() FROM project_user
+            UNION
+            SELECT p.project_id, m.user_id, 0, now() from user_group_member m LEFT JOIN user_group_project p ON
+            m.group_id = p.user_group_id;
+        </sql>
+
+        <dropColumn tableName="project_user" columnName="email_subscription"/>
+        <dropColumn tableName="project_user_AUD" columnName="email_subscription"/>
+
+    </changeSet>
+</databaseChangeLog>

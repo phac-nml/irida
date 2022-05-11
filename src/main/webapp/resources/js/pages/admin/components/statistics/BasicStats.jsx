@@ -4,7 +4,7 @@
  * charts
  */
 
-import { TinyColumn } from "@ant-design/charts";
+import { Column } from "@ant-design/plots";
 import { Card, Col, Row, Statistic } from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -53,7 +53,7 @@ export default function BasicStats() {
               "AdminPanelStatistics.basicStatistics.titleAnalysesRan",
               defaultTimePeriodText
             ),
-            value: analysesStats.reduce(sum, 0),
+            value: analysesStats.map((item) => item.value).reduce(sum, 0),
             url: `${DEFAULT_URL}/${ADMINSTATS.ANALYSES}`,
             chartData: analysesStats,
           },
@@ -63,7 +63,7 @@ export default function BasicStats() {
               "AdminPanelStatistics.basicStatistics.titleProjectsCreated",
               defaultTimePeriodText
             ),
-            value: projectStats.reduce(sum, 0),
+            value: projectStats.map((item) => item.value).reduce(sum, 0),
             url: `${DEFAULT_URL}/${ADMINSTATS.PROJECTS}`,
             chartData: projectStats,
           },
@@ -73,7 +73,7 @@ export default function BasicStats() {
               "AdminPanelStatistics.basicStatistics.titleSamplesCreated",
               defaultTimePeriodText
             ),
-            value: sampleStats.reduce(sum, 0),
+            value: sampleStats.map((item) => item.value).reduce(sum, 0),
             url: `${DEFAULT_URL}/${ADMINSTATS.SAMPLES}`,
             chartData: sampleStats,
           },
@@ -83,7 +83,7 @@ export default function BasicStats() {
               "AdminPanelStatistics.basicStatistics.titleUsersCreated",
               defaultTimePeriodText
             ),
-            value: userStats.reduce(sum, 0),
+            value: userStats.map((item) => item.value).reduce(sum, 0),
             url: `${DEFAULT_URL}/${ADMINSTATS.USERS}`,
             chartData: userStats,
           },
@@ -114,7 +114,7 @@ export default function BasicStats() {
             <Link to={card.url}>
               <LinkCard>
                 <Statistic title={card.title} value={card.value} />
-                <TinyColumn {...getTinyChartConfiguration(card.chartData)} />
+                <Column {...getTinyChartConfiguration(card.chartData)} />
               </LinkCard>
             </Link>
           </Col>

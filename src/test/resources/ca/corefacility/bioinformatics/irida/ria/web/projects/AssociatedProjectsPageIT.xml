@@ -4,49 +4,51 @@
           email="manager@nowhere.com" firstName="Mr." lastName="Manager"
           password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
           phoneNumber="867-5309" username="mrtest" enabled="true" system_role="ROLE_ADMIN"
-          credentialsNonExpired="true" />
-    
+          credentialsNonExpired="true"/>
+
     <client_role name="ROLE_CLIENT" description="A client"/>
     <client_details id="1" clientId="testClient"
-        clientSecret="testClientSecret" token_validity="100000" createdDate="2013-07-18 14:20:19.0" />
+                    clientSecret="testClientSecret" token_validity="100000" createdDate="2013-07-18 14:20:19.0"/>
     <client_details_authorities
-        client_details_id="1" authority_name="ROLE_CLIENT" />
+            client_details_id="1" authority_name="ROLE_CLIENT"/>
     <client_details_grant_types
-        client_details_id="1" grant_value="authorization_code" />
+            client_details_id="1" grant_value="authorization_code"/>
     <client_details_resource_ids
-        client_details_id="1" resource_id="NmlIrida" />
-    <client_details_scope client_details_id="1" scope="read" />
+            client_details_id="1" resource_id="NmlIrida"/>
+    <client_details_scope client_details_id="1" scope="read"/>
 
     <project id="1" createdDate="2013-07-12 14:20:19.0" name="project" modifiedDate="2013-07-18 14:20:19.0"
-             organism="E. coli" projectDescription="This is an interesting project description." remoteURL="http://google.ca" />
-    <project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" modifiedDate="2013-07-18 14:19:19.0"  />
-    <project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" modifiedDate="2013-07-18 14:18:19.0"  />
-    <project id="4" createdDate="2013-07-18 14:21:19.0" name="project4" modifiedDate="2013-07-18 14:17:19.0"  />
-    <project id="5" createdDate="2013-07-18 14:21:19.0" name="project5" modifiedDate="2013-07-18 14:17:19.0"  />
-    <project id="6" createdDate="2013-07-18 14:21:19.0" name="project6" modifiedDate="2013-07-18 14:17:19.0"  />
+             organism="E. coli" projectDescription="This is an interesting project description."
+             remoteURL="http://google.ca"/>
+    <project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" modifiedDate="2013-07-18 14:19:19.0"/>
+    <project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" modifiedDate="2013-07-18 14:18:19.0"/>
+    <project id="4" createdDate="2013-07-18 14:21:19.0" name="project4" modifiedDate="2013-07-18 14:17:19.0"/>
+    <project id="5" createdDate="2013-07-18 14:21:19.0" name="project5" modifiedDate="2013-07-18 14:17:19.0"/>
+    <project id="6" createdDate="2013-07-18 14:21:19.0" name="project6" modifiedDate="2013-07-18 14:17:19.0"/>
 
 	<project_user id="1" project_id="1" user_id="1"
 		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
+		metadataRole="LEVEL_4"/>
 	<project_user id="2" project_id="2" user_id="1"
 		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
+		metadataRole="LEVEL_1"/>
 	<project_user id="3" project_id="3" user_id="1"
 		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
+		metadataRole="LEVEL_4"/>
 	<project_user id="4" project_id="4" user_id="1"
 		projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
+		metadataRole="LEVEL_4"/>
 	<project_user id="6" project_id="5" user_id="1"
 		projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0"
-		email_subscription="false" />
+		metadataRole="LEVEL_1"/>
 
-    <related_project id="1" subject_id="1" relatedProject_id="2" createdDate="2013-07-18 14:20:19.0" />
-    <related_project id="2" subject_id="1" relatedProject_id="3" createdDate="2013-07-18 14:20:19.0" />
-    <related_project id="3" subject_id="1" relatedProject_id="5" createdDate="2013-07-18 14:20:19.0" />
+    <related_project id="1" subject_id="1" relatedProject_id="2" createdDate="2013-07-18 14:20:19.0"/>
+    <related_project id="2" subject_id="1" relatedProject_id="3" createdDate="2013-07-18 14:20:19.0"/>
+    <related_project id="3" subject_id="1" relatedProject_id="5" createdDate="2013-07-18 14:20:19.0"/>
 
-    <project_sample />
+    <project_sample/>
 
-    <reference_file id="1" createdDate="2014-08-06 10:01:02" filePath="/tmp/sequence-files/7/2/02-2222_S1_L001_R1_001.fastq" />
+    <reference_file id="1" createdDate="2014-08-06 10:01:02"
+                    filePath="/tmp/sequence-files/7/2/02-2222_S1_L001_R1_001.fastq"/>
     <project_referencefile id="1" createdDate="2014-08-06 10:01:02" project_id="1" reference_file_id="1"/>
 </dataset>

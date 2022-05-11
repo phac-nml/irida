@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.repositories.remote.impl;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -16,11 +15,12 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAu
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
 /**
- * A repository implementaion for reading {@link Fast5Object} from remote locations using a {@link OAuthTokenRestTemplate}
+ * A repository implementaion for reading {@link Fast5Object} from remote
+ * locations using a {@link OAuthTokenRestTemplate}
  */
 @Repository
 public class Fast5ObjectRemoteRepositoryImpl extends RemoteRepositoryImpl<Fast5Object>
-		implements Fast5ObjectRemoteRepository{
+		implements Fast5ObjectRemoteRepository {
 
 	public static final MediaType DEFAULT_DOWNLOAD_MEDIA_TYPE = new MediaType("application", "fast5");
 	private static final ParameterizedTypeReference<ListResourceWrapper<Fast5Object>> listTypeReference = new ParameterizedTypeReference<ListResourceWrapper<Fast5Object>>() {
@@ -28,12 +28,9 @@ public class Fast5ObjectRemoteRepositoryImpl extends RemoteRepositoryImpl<Fast5O
 	private static final ParameterizedTypeReference<ResourceWrapper<Fast5Object>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<Fast5Object>>() {
 	};
 
-	private RemoteAPITokenService tokenService;
-
 	@Autowired
 	public Fast5ObjectRemoteRepositoryImpl(RemoteAPITokenService tokenService) {
 		super(tokenService, listTypeReference, objectTypeReference);
-		this.tokenService = tokenService;
 	}
 
 	@Override

@@ -3,20 +3,7 @@ package ca.corefacility.bioinformatics.irida.model.joins.impl;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -28,9 +15,14 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 /**
- * 
+ *
  */
 @Entity
+@NamedEntityGraph(name = "projectSampleMinimal",
+		attributeNodes = {
+				@NamedAttributeNode(value = "project"),
+				@NamedAttributeNode(value = "sample", subgraph = "sample-subgraph") },
+		subgraphs = { @NamedSubgraph(name = "sample-subgraph", attributeNodes = {}) })
 @Table(name = "project_sample", uniqueConstraints = @UniqueConstraint(columnNames = { "project_id", "sample_id" }))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
@@ -110,7 +102,7 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 
 	/**
 	 * Whether the {@link Project} has modification rights to the {@link Sample}
-	 * 
+	 *
 	 * @return true if the {@link Project} owns the {@link Sample}
 	 */
 	public boolean isOwner() {

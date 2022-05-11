@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { getProjectsForUserGroup } from "../../../apis/users/groups";
 import { Button, Table } from "antd";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 
 /**
  * Display a table of projects the current user group is used on.
@@ -11,7 +12,13 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
  * @constructor
  */
 export function UserGroupProjectsTable({ groupId }) {
-  const [projects, setProjects] = useState();
+  const [projects, setProjects] = React.useState();
+  const [total, setTotal] = React.useState(0);
+
+  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
+    total,
+  ]);
+
   const columns = [
     {
       dataIndex: "name",
@@ -34,9 +41,18 @@ export function UserGroupProjectsTable({ groupId }) {
     },
   ];
 
-  useEffect(() => {
-    getProjectsForUserGroup(groupId).then((data) => setProjects(data));
+  React.useEffect(() => {
+    getProjectsForUserGroup(groupId).then((data) => {
+      setProjects(data);
+      setTotal(data.length);
+    });
   }, [groupId]);
 
-  return <Table columns={columns} dataSource={projects} />;
+  return (
+    <Table
+      columns={columns}
+      dataSource={projects}
+      pagination={paginationOptions}
+    />
+  );
 }

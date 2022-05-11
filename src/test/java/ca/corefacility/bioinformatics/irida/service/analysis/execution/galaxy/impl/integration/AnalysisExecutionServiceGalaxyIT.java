@@ -25,19 +25,13 @@ import java.util.concurrent.Future;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
@@ -50,7 +44,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
+import ca.corefacility.bioinformatics.irida.annotation.GalaxyIntegrationTest;
 import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
@@ -82,21 +76,18 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisE
  * 
  *
  */
-@Tag("IntegrationTest") @Tag("Galaxy") @Tag("Pipeline")
-@ExtendWith(SpringExtension.class)
-@ActiveProfiles("test")
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { IridaApiGalaxyTestConfig.class },
-		initializers = ConfigDataApplicationContextInitializer.class)
+@Tag("Pipeline")
+@GalaxyIntegrationTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/analysis/AnalysisRepositoryIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisExecutionServiceGalaxyIT {
-	
+
 	private static final float DELTA = 0.000001f;
 
 	private static final String CMD_LINE_PATTERN = "echo -e \"csv,1[^\"]+\" > (/.*?)+; echo \"output_tree\" > (/.*?)+; echo \"positions\" > (/.*?)+";
-	
+
 	// SNVPhyl keys
 	private static final String MATRIX_KEY = "matrix";
 	private static final String TREE_KEY = "tree";
@@ -118,7 +109,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 	@Autowired
 	private AnalysisService analysisService;
-	
+
 	@Autowired
 	private AnalysisExecutionService analysisExecutionService;
 
@@ -131,7 +122,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	private Path sequenceFilePath;
 	private Path sequenceFilePath2;
 	private Path referenceFilePath;
-	
+
 	private List<Path> pairedPaths1;
 	private List<Path> pairedPaths2;
 
@@ -140,7 +131,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	private Path expectedTree;
 	private Path expectedOutputFile1;
 	private Path expectedOutputFile2;
-	
+
 	private Path expectedContigs;
 	private Path expectedAnnotations;
 	private Path expectedAnnotationsLog;
@@ -150,7 +141,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 	private UUID iridaPhylogenomicsWorkflowId = UUID.fromString("1f9ea289-5053-4e4a-bc76-1f0c60b179f8");
 	private UUID iridaPhylogenomicsPairedWorkflowId = UUID.fromString("b8c3916c-846e-4a78-96a9-9630911257cd");
 	private UUID iridaPhylogenomicsPairedParametersWorkflowId = UUID.fromString("23434bf8-e551-4efd-9957-e61c6f649f8b");
-	private UUID iridaPhylogenomicsPairedMultiLeveledParametersWorkflowId = UUID.fromString("12734a7d-a0d7-4ede-9cc3-a76b1f8c14e7");
+	private UUID iridaPhylogenomicsPairedMultiLeveledParametersWorkflowId = UUID
+			.fromString("12734a7d-a0d7-4ede-9cc3-a76b1f8c14e7");
 	private UUID iridaAssemblyAnnotationWorkflowId = UUID.fromString("8c438951-484a-48da-be2b-93b7d29aa2a3");
 	private UUID iridaTestAnalysisWorkflowId = UUID.fromString("c5f29cb2-1b68-4d34-9b93-609266af7551");
 	private UUID iridaWorkflowIdInvalidWorkflowFile = UUID.fromString("d54f1780-e6c9-472a-92dd-63520ec85967");
@@ -169,20 +161,18 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		Path sequenceFilePathReal = Paths
 				.get(DatabaseSetupGalaxyITService.class.getResource("testData1.fastq").toURI());
-		Path referenceFilePathReal = Paths.get(DatabaseSetupGalaxyITService.class.getResource("testReference.fasta")
-				.toURI());
-		
-		expectedOutputFile1 = Paths
-				.get(DatabaseSetupGalaxyITService.class.getResource("output1.txt").toURI());
-		
-		expectedOutputFile2 = Paths
-				.get(DatabaseSetupGalaxyITService.class.getResource("output2.txt").toURI());
+		Path referenceFilePathReal = Paths
+				.get(DatabaseSetupGalaxyITService.class.getResource("testReference.fasta").toURI());
+
+		expectedOutputFile1 = Paths.get(DatabaseSetupGalaxyITService.class.getResource("output1.txt").toURI());
+
+		expectedOutputFile2 = Paths.get(DatabaseSetupGalaxyITService.class.getResource("output2.txt").toURI());
 
 		Path tempDir = Files.createTempDirectory(rootTempDirectory, "analysisExecutionTest");
-		
+
 		sequenceFilePath = tempDir.resolve("testData1_R1_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePath, StandardCopyOption.REPLACE_EXISTING);
-		
+
 		sequenceFilePath2 = tempDir.resolve("testData1_R2_001.fastq");
 		Files.copy(sequenceFilePathReal, sequenceFilePath2, StandardCopyOption.REPLACE_EXISTING);
 
@@ -192,22 +182,19 @@ public class AnalysisExecutionServiceGalaxyIT {
 		expectedSnpMatrix = localGalaxy.getWorkflowCorePipelineTestMatrix();
 		expectedSnpTable = localGalaxy.getWorkflowCorePipelineTestSnpTable();
 		expectedTree = localGalaxy.getWorkflowCorePipelineTestTree();
-		
-		expectedContigs = Paths
-				.get(DatabaseSetupGalaxyITService.class.getResource("contigs.fasta").toURI());
-		expectedAnnotations = Paths
-				.get(DatabaseSetupGalaxyITService.class.getResource("genome.gbk").toURI());
-		expectedAnnotationsLog = Paths
-				.get(DatabaseSetupGalaxyITService.class.getResource("prokka.log").toURI());
-		
+
+		expectedContigs = Paths.get(DatabaseSetupGalaxyITService.class.getResource("contigs.fasta").toURI());
+		expectedAnnotations = Paths.get(DatabaseSetupGalaxyITService.class.getResource("genome.gbk").toURI());
+		expectedAnnotationsLog = Paths.get(DatabaseSetupGalaxyITService.class.getResource("prokka.log").toURI());
+
 		pairedPaths1 = Lists.newArrayList();
 		pairedPaths1.add(sequenceFilePath);
 		pairedPaths2 = Lists.newArrayList();
 		pairedPaths2.add(sequenceFilePath2);
-		
+
 		workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();
 	}
-	
+
 	/**
 	 * Tests out failing to get a workflow status.
 	 * 
@@ -224,7 +211,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 			IridaWorkflowNotFoundException, ExecutionManagerException, IOException, ExecutionException {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId, AnalysisState.NEW, false);
-		
+
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
@@ -243,7 +230,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * @throws ExecutionManagerException
 	 * @throws IOException
 	 * @throws ExecutionException
-	 * @throws IridaWorkflowException 
+	 * @throws IridaWorkflowException
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
@@ -256,8 +243,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
 
-		Future<AnalysisSubmission> analysisExecutedFuture = analysisExecutionService
-				.executeAnalysis(analysisSubmitted);
+		Future<AnalysisSubmission> analysisExecutedFuture = analysisExecutionService.executeAnalysis(analysisSubmitted);
 		AnalysisSubmission analysisExecuted = analysisExecutedFuture.get();
 
 		assertEquals(AnalysisState.RUNNING, analysisExecuted.getAnalysisState());
@@ -287,18 +273,18 @@ public class AnalysisExecutionServiceGalaxyIT {
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
 
 		analysisSubmitted.setRemoteWorkflowId(localGalaxy.getInvalidWorkflowId());
-		
+
 		analysisSubmissionService.update(analysisSubmitted);
 
-		Future<AnalysisSubmission> analysisExecutedFuture = analysisExecutionService
-				.executeAnalysis(analysisSubmitted);
+		Future<AnalysisSubmission> analysisExecutedFuture = analysisExecutionService.executeAnalysis(analysisSubmitted);
 
 		assertThrows(WorkflowException.class, () -> {
 			try {
 				analysisExecutedFuture.get();
 			} catch (ExecutionException e) {
 				// check to make sure the submission is in the error state
-				AnalysisSubmission savedSubmission = analysisSubmissionRepository.findById(analysisSubmitted.getId()).orElse(null);
+				AnalysisSubmission savedSubmission = analysisSubmissionRepository.findById(analysisSubmitted.getId())
+						.orElse(null);
 				assertEquals(AnalysisState.ERROR, savedSubmission.getAnalysisState());
 
 				throw e.getCause();
@@ -320,21 +306,21 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
-		
+
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
 
 		analysisSubmitted.setRemoteAnalysisId("invalid");
 		analysisSubmissionService.update(analysisSubmitted);
 
-		Future<AnalysisSubmission> analysisExecutedFuture = analysisExecutionService
-				.executeAnalysis(analysisSubmitted);
+		Future<AnalysisSubmission> analysisExecutedFuture = analysisExecutionService.executeAnalysis(analysisSubmitted);
 
 		assertThrows(NoGalaxyHistoryException.class, () -> {
 			try {
 				analysisExecutedFuture.get();
 			} catch (ExecutionException e) {
 				// check to make sure the submission is in the error state
-				AnalysisSubmission savedSubmission = analysisSubmissionRepository.findById(analysisSubmitted.getId()).orElse(null);
+				AnalysisSubmission savedSubmission = analysisSubmissionRepository.findById(analysisSubmitted.getId())
+						.orElse(null);
 				logger.debug("Submission on exception=" + savedSubmission.getId());
 				assertEquals(AnalysisState.ERROR, savedSubmission.getAnalysisState());
 
@@ -342,9 +328,10 @@ public class AnalysisExecutionServiceGalaxyIT {
 			}
 		});
 	}
-	
+
 	/**
-	 * Tests out attempting to execute an analysis with an invalid parameter value.
+	 * Tests out attempting to execute an analysis with an invalid parameter
+	 * value.
 	 * 
 	 * @throws Throwable
 	 */
@@ -352,10 +339,10 @@ public class AnalysisExecutionServiceGalaxyIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testExecuteAnalysisFailInvalidParameterValue() throws Throwable {
 		Map<String, String> parameters = ImmutableMap.of("coverage", "not an integer for coverage");
-		
-		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
-				.setupPairSubmissionInDatabase(1L, pairedPaths1, pairedPaths2, referenceFilePath, parameters,
-						iridaPhylogenomicsPairedParametersWorkflowId, AnalysisState.NEW);
+
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
+				pairedPaths1, pairedPaths2, referenceFilePath, parameters, iridaPhylogenomicsPairedParametersWorkflowId,
+				AnalysisState.NEW);
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -369,7 +356,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 				analysisExecutionFuture.get();
 			} catch (ExecutionException e) {
 				// check to make sure the submission is in the error state
-				AnalysisSubmission savedSubmission = analysisSubmissionRepository.findById(analysisSubmitted.getId()).orElse(null);
+				AnalysisSubmission savedSubmission = analysisSubmissionRepository.findById(analysisSubmitted.getId())
+						.orElse(null);
 				logger.debug("Submission on exception=" + savedSubmission.getId());
 				assertEquals(AnalysisState.ERROR, savedSubmission.getAnalysisState());
 
@@ -385,19 +373,21 @@ public class AnalysisExecutionServiceGalaxyIT {
 	 * @throws NoSuchValueException
 	 * @throws ExecutionManagerException
 	 * @throws IOException
-	 * @throws IridaWorkflowException 
-	 * @throws ExecutionException 
-	 * @throws InterruptedException 
+	 * @throws IridaWorkflowException
+	 * @throws ExecutionException
+	 * @throws InterruptedException
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
-	public void testExecuteAnalysisFailState() throws NoSuchValueException, ExecutionManagerException, IOException, IridaWorkflowException, InterruptedException, ExecutionException {
+	public void testExecuteAnalysisFailState() throws NoSuchValueException, ExecutionManagerException, IOException,
+			IridaWorkflowException, InterruptedException, ExecutionException {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId, false);
 
 		analysisExecutionService.prepareSubmission(analysisSubmission).get();
-		
-		AnalysisSubmission analysisSubmitted = analysisSubmissionRepository.findById(analysisSubmission.getId()).orElse(null);
+
+		AnalysisSubmission analysisSubmitted = analysisSubmissionRepository.findById(analysisSubmission.getId())
+				.orElse(null);
 
 		analysisSubmitted.setAnalysisState(AnalysisState.NEW);
 		assertThrows(IllegalArgumentException.class, () -> {
@@ -421,13 +411,14 @@ public class AnalysisExecutionServiceGalaxyIT {
 			IridaWorkflowNotFoundException, IOException, ExecutionManagerException, ExecutionException {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, validIridaWorkflowId, AnalysisState.NEW, false);
-		
+
 		Future<AnalysisSubmission> analysisSubmissionFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmissionFuture.get();
 		assertEquals(AnalysisState.PREPARED, analysisSubmitted.getAnalysisState());
 
-		AnalysisSubmission analysisSaved = analysisSubmissionRepository.findById(analysisSubmission.getId()).orElse(null);
+		AnalysisSubmission analysisSaved = analysisSubmissionRepository.findById(analysisSubmission.getId())
+				.orElse(null);
 		assertEquals(analysisSaved.getId(), analysisSubmitted.getId());
 		assertNotNull(analysisSaved, "analysisSubmitted is null");
 		assertNotNull(analysisSaved.getRemoteWorkflowId(), "remoteWorkflowId is null");
@@ -454,8 +445,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 				analysisSubmissionFuture.get();
 			} catch (ExecutionException e) {
 				logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
-				assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
-						.getAnalysisState());
+				assertEquals(AnalysisState.ERROR,
+						analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisState());
 
 				// pull out real exception
 				throw e.getCause();
@@ -482,8 +473,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 				analysisSubmissionFuture.get();
 			} catch (ExecutionException e) {
 				logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
-				assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
-						.getAnalysisState());
+				assertEquals(AnalysisState.ERROR,
+						analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisState());
 
 				// pull out real exception
 				throw e.getCause();
@@ -505,7 +496,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
-		float percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
+		float percentComplete = analysisSubmissionService
+				.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
 		assertEquals(11.0f, percentComplete, DELTA, "percent complete is incorrect");
 
 		Future<AnalysisSubmission> analysisExecutionFuture = analysisExecutionService
@@ -523,12 +515,12 @@ public class AnalysisExecutionServiceGalaxyIT {
 		analysisExecuted.setAnalysisState(AnalysisState.FINISHED_RUNNING);
 		percentComplete = analysisSubmissionService.getPercentCompleteForAnalysisSubmission(analysisSubmitted.getId());
 		assertEquals(90.0f, percentComplete, DELTA, "percent complete is incorrect");
-		
+
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
-		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
-				.getId());
+		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService
+				.read(analysisSubmission.getId());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState());
 		assertEquals(remoteInputDataId, analysisSubmissionCompletedDatabase.getRemoteInputDataId(),
@@ -564,7 +556,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 				"snpTable should be correct");
 		assertEquals(expectedSnpTable.getFileName(), snpTable.getFile().getFileName());
 
-		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findById(analysisExecuted.getId()).orElse(null);
+		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findById(analysisExecuted.getId())
+				.orElse(null);
 		Analysis analysis = finalSubmission.getAnalysis();
 		assertNotNull(analysis);
 
@@ -575,12 +568,14 @@ public class AnalysisExecutionServiceGalaxyIT {
 				"Analysis from submission and from database should be the same");
 
 		assertEquals(analysisResultsDatabase.getId(), savedAnalysisFromDatabase.getId());
-		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(TREE_KEY).getFile(), savedAnalysisFromDatabase
-				.getAnalysisOutputFile(TREE_KEY).getFile());
-		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(), savedAnalysisFromDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile());
-		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(TABLE_KEY).getFile(), savedAnalysisFromDatabase.getAnalysisOutputFile(TABLE_KEY).getFile());
+		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(TREE_KEY).getFile(),
+				savedAnalysisFromDatabase.getAnalysisOutputFile(TREE_KEY).getFile());
+		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(),
+				savedAnalysisFromDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile());
+		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(TABLE_KEY).getFile(),
+				savedAnalysisFromDatabase.getAnalysisOutputFile(TABLE_KEY).getFile());
 	}
-	
+
 	/**
 	 * Tests out getting analysis results successfully for phylogenomics
 	 * pipeline (paired test version).
@@ -607,8 +602,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
-		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
-				.getId());
+		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService
+				.read(analysisSubmission.getId());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState(),
 				"analysis state is not completed");
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState(),
@@ -618,7 +613,6 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Analysis analysisResultsDatabase = analysisSubmissionCompletedDatabase.getAnalysis();
 		assertEquals(analysisResults.getId(), analysisResultsDatabase.getId(),
 				"analysis results in returned submission and from database should be the same");
-
 
 		assertEquals(BuiltInAnalysisTypes.PHYLOGENOMICS, analysisResults.getAnalysisType());
 
@@ -676,7 +670,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		final ToolExecution snpTableCoreUpload = snpTableCoreInputs.getPreviousSteps().iterator().next();
 		assertTrue(snpTableCoreUpload.isInputTool(), "Second step should be input tool.");
 
-		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findById(analysisExecuted.getId()).orElse(null);
+		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findById(analysisExecuted.getId())
+				.orElse(null);
 		Analysis analysis = finalSubmission.getAnalysis();
 		assertNotNull(analysis, "analysis should not be null in submission");
 
@@ -689,15 +684,17 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		assertEquals(analysisResultsDatabase.getId(), savedAnalysisFromDatabase.getId(),
 				"analysis results from database and from submission should have correct id");
-		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(TREE_KEY).getFile(), savedAnalysisFromDatabase.getAnalysisOutputFile(TREE_KEY)
-						.getFile(),
+		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(TREE_KEY).getFile(),
+				savedAnalysisFromDatabase.getAnalysisOutputFile(TREE_KEY).getFile(),
 				"analysis results from database and from submission should have correct tree output file");
-		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(), savedAnalysisFromDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(),
+		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(),
+				savedAnalysisFromDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(),
 				"analysis results from database and from submission should have correct matrix output file");
-		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(), savedAnalysisFromDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(),
+		assertEquals(analysisResultsDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(),
+				savedAnalysisFromDatabase.getAnalysisOutputFile(MATRIX_KEY).getFile(),
 				"analysis results from database and from submission should have correct table output file");
 	}
-	
+
 	/**
 	 * Tests out getting analysis results successfully for phylogenomics
 	 * pipeline (paired test version with parameters).
@@ -710,15 +707,17 @@ public class AnalysisExecutionServiceGalaxyIT {
 		String validCoverage = "20";
 		String validCoverageFromProvenance = "\"20\""; // coverage from
 														// provenance has quotes
-		String validMidCoverageFromProvenance = "20"; // this value does not have quotes around it in final results.
+		String validMidCoverageFromProvenance = "20"; // this value does not
+														// have quotes around it
+														// in final results.
 		Map<String, String> parameters = ImmutableMap.of("coverage", validCoverage);
 		String validTreeFile = "20 20 20"; // I verify parameters were set
-										// correctly by checking output file
-										// (where parameters were printed).
+											// correctly by checking output file
+											// (where parameters were printed).
 
-		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
-				.setupPairSubmissionInDatabase(1L, pairedPaths1, pairedPaths2, referenceFilePath, parameters,
-						iridaPhylogenomicsPairedParametersWorkflowId);
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
+				pairedPaths1, pairedPaths2, referenceFilePath, parameters,
+				iridaPhylogenomicsPairedParametersWorkflowId);
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -734,8 +733,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		analysisSubmissionCompletedFuture.get();
-		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
-				.getId());
+		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService
+				.read(analysisSubmission.getId());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState(),
 				"analysis state is not completed");
 
@@ -848,8 +847,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		String validCoverageFromProvenance = "\"10\"";
 		String validMidCoverageFromProvenance = "10";
 		String validTreeFile = "10 10 10"; // I verify parameters were set
-										// correctly by checking output file
-										// (where parameters were printed).
+											// correctly by checking output file
+											// (where parameters were printed).
 
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
 				pairedPaths1, pairedPaths2, referenceFilePath, iridaPhylogenomicsPairedParametersWorkflowId, false);
@@ -868,8 +867,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		analysisSubmissionCompletedFuture.get();
-		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
-				.getId());
+		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService
+				.read(analysisSubmission.getId());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState(),
 				"analysis state is not completed");
 
@@ -931,7 +930,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 				"parameter coverageMax set incorrectly");
 		assertEquals("all", phyTreeCoreParameters.get("conditional.conditional_select"),
 				"parameter conditional_select set incorrectly");
-		
+
 		Set<ToolExecution> matrixCorePreviousSteps = matrixCoreInputs.getPreviousSteps();
 		assertEquals(2, matrixCorePreviousSteps.size(), "there should exist 2 previous steps");
 		Set<String> uploadedFileTypesMatrix = Sets.newHashSet();
@@ -958,7 +957,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 				"parameter coverageMax set incorrectly");
 		assertEquals("all", phyTreeCoreParameters.get("conditional.conditional_select"),
 				"parameter conditional_select set incorrectly");
-		
+
 		Set<ToolExecution> tablePreviousSteps = tableCoreInputs.getPreviousSteps();
 		assertEquals(2, tablePreviousSteps.size(), "there should exist 2 previous steps");
 		Set<String> uploadedFileTypesTable = Sets.newHashSet();
@@ -969,7 +968,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals(Sets.newHashSet("\"fastqsanger\"", "\"fasta\""), uploadedFileTypesTable,
 				"uploaded files should have correct types");
 	}
-	
+
 	/**
 	 * Tests out getting analysis results successfully for phylogenomics
 	 * pipeline (paired test version and ignoring default parameters).
@@ -984,12 +983,12 @@ public class AnalysisExecutionServiceGalaxyIT {
 		String validMaxCoverageFromProvenance = "\"20\"";
 		Map<String, String> parameters = ImmutableMap.of("coverage", IridaWorkflowParameter.IGNORE_DEFAULT_VALUE);
 		String validTreeFile = "5 15 20"; // I verify parameters were set
-										// correctly by checking output file
-										// (where parameters were printed).
+											// correctly by checking output file
+											// (where parameters were printed).
 
-		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
-				.setupPairSubmissionInDatabase(1L, pairedPaths1, pairedPaths2, referenceFilePath, parameters,
-						iridaPhylogenomicsPairedParametersWorkflowId);
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
+				pairedPaths1, pairedPaths2, referenceFilePath, parameters,
+				iridaPhylogenomicsPairedParametersWorkflowId);
 
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
@@ -1005,8 +1004,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		analysisSubmissionCompletedFuture.get();
-		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
-				.getId());
+		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService
+				.read(analysisSubmission.getId());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState(),
 				"analysis state is not completed");
 
@@ -1106,7 +1105,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals(Sets.newHashSet("\"fastqsanger\"", "\"fasta\""), uploadedFileTypesTable,
 				"uploaded files should have correct types");
 	}
-	
+
 	/**
 	 * Tests out getting analysis results successfully for phylogenomics
 	 * pipeline (paired test version with multiple levels of parameters).
@@ -1119,17 +1118,19 @@ public class AnalysisExecutionServiceGalaxyIT {
 		String validCoverage = "20";
 		String validCoverageFromProvenance = "\"20\""; // coverage from
 														// provenance has quotes
-		String validMidCoverageFromProvenance = "20"; // this value does not have quotes around it in final results.
+		String validMidCoverageFromProvenance = "20"; // this value does not
+														// have quotes around it
+														// in final results.
 		String validParameterValueFromProvenance = "20";
 		Map<String, String> parameters = ImmutableMap.of("coverage", validCoverage);
 		String validTreeFile = "20 20 20 20"; // I verify parameters were set
-										// correctly by checking output file
-										// (where parameters were printed).
+		// correctly by checking output file
+		// (where parameters were printed).
 
-		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService
-				.setupPairSubmissionInDatabase(1L, pairedPaths1, pairedPaths2, referenceFilePath, parameters,
-						iridaPhylogenomicsPairedMultiLeveledParametersWorkflowId);
-		
+		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupPairSubmissionInDatabase(1L,
+				pairedPaths1, pairedPaths2, referenceFilePath, parameters,
+				iridaPhylogenomicsPairedMultiLeveledParametersWorkflowId);
+
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
@@ -1144,8 +1145,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		analysisSubmissionCompletedFuture.get();
-		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
-				.getId());
+		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService
+				.read(analysisSubmission.getId());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState(),
 				"analysis state is not completed");
 
@@ -1183,9 +1184,10 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals("all2", phyTreeCoreParameters.get("conditional.level2.level2_select"),
 				"parameter conditional_select set incorrectly");
 	}
-	
+
 	/**
-	 * Tests out getting analysis results successfully for assembly and annotation pipeline (test version).
+	 * Tests out getting analysis results successfully for assembly and
+	 * annotation pipeline (test version).
 	 * 
 	 * @throws Exception
 	 */
@@ -1209,8 +1211,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
-		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
-				.getId());
+		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService
+				.read(analysisSubmission.getId());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState(),
 				"analysis state is not completed");
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState(),
@@ -1232,8 +1234,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		assertTrue(com.google.common.io.Files.equal(expectedContigs.toFile(), contigs.getFile().toFile()),
 				"contigs should be equal");
-		assertEquals(expectedContigs.getFileName(), contigs.getFile().getFileName(),
-				"invalid file name for contigs");
+		assertEquals(expectedContigs.getFileName(), contigs.getFile().getFileName(), "invalid file name for contigs");
 
 		assertTrue(com.google.common.io.Files.equal(expectedAnnotations.toFile(), annotations.getFile().toFile()),
 				"annotations should be correct");
@@ -1245,7 +1246,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals(expectedAnnotationsLog.getFileName(), prokkaLog.getFile().getFileName(),
 				"invalid file name for annotations log");
 	}
-	
+
 	/**
 	 * Tests out getting analysis results successfully.
 	 * 
@@ -1256,7 +1257,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testTransferAnalysisResultsSuccessTestAnalysis() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId, false);
-		
+
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
@@ -1271,8 +1272,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		Future<AnalysisSubmission> analysisSubmissionCompletedFuture = analysisExecutionService
 				.transferAnalysisResults(analysisExecuted);
 		AnalysisSubmission analysisSubmissionCompleted = analysisSubmissionCompletedFuture.get();
-		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService.read(analysisSubmission
-				.getId());
+		AnalysisSubmission analysisSubmissionCompletedDatabase = analysisSubmissionService
+				.read(analysisSubmission.getId());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompletedDatabase.getAnalysisState());
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState());
 
@@ -1299,7 +1300,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 				"output files 2 should be equal");
 		assertEquals(expectedOutputFile2.getFileName(), output2.getFile().getFileName());
 
-		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findById(analysisExecuted.getId()).orElse(null);
+		AnalysisSubmission finalSubmission = analysisSubmissionRepository.findById(analysisExecuted.getId())
+				.orElse(null);
 		Analysis analysis = finalSubmission.getAnalysis();
 		assertNotNull(analysis);
 
@@ -1312,10 +1314,11 @@ public class AnalysisExecutionServiceGalaxyIT {
 
 		assertEquals(analysisResults.getId(), savedTest.getId());
 	}
-	
+
 	/**
 	 * Tests failure to get analysis results due to a missing output file.
-	 * @throws Throwable 
+	 * 
+	 * @throws Throwable
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
@@ -1341,8 +1344,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 				analysisSubmissionCompletedFuture.get();
 			} catch (ExecutionException e) {
 				logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
-				assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
-						.getAnalysisState());
+				assertEquals(AnalysisState.ERROR,
+						analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisState());
 
 				// pull out real exception
 				throw e.getCause();
@@ -1381,8 +1384,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 				analysisSubmissionCompletedFuture.get();
 			} catch (ExecutionException e) {
 				logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
-				assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
-						.getAnalysisState());
+				assertEquals(AnalysisState.ERROR,
+						analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisState());
 
 				// pull out real exception
 				throw e.getCause();
@@ -1422,8 +1425,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 				analysisSubmissionCompletedFuture.get();
 			} catch (ExecutionException e) {
 				logger.debug("Submission on exception=" + analysisSubmissionService.read(analysisSubmission.getId()));
-				assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId())
-						.getAnalysisState());
+				assertEquals(AnalysisState.ERROR,
+						analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisState());
 
 				// pull out real exception
 				throw e.getCause();
@@ -1459,8 +1462,8 @@ public class AnalysisExecutionServiceGalaxyIT {
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionCompleted.getAnalysisState());
 		assertEquals(AnalysisCleanedState.NOT_CLEANED, analysisSubmissionCompleted.getAnalysisCleanedState());
 
-		WorkflowDetails workflowDetails = workflowsClient.showWorkflow(analysisSubmissionCompleted
-				.getRemoteWorkflowId());
+		WorkflowDetails workflowDetails = workflowsClient
+				.showWorkflow(analysisSubmissionCompleted.getRemoteWorkflowId());
 		assertFalse(workflowDetails.isDeleted(), "Workflow is already deleted");
 
 		// Once analysis is complete, attempt to clean up
@@ -1484,7 +1487,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testCleanupErrorAnalysisSuccess() throws Exception {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId, false);
-		
+
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
@@ -1575,9 +1578,11 @@ public class AnalysisExecutionServiceGalaxyIT {
 				analysisSubmissionCleanedFuture.get();
 				fail("No exception thrown");
 			} catch (ExecutionException e) {
-				assertEquals(AnalysisState.COMPLETED, analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisState(),
+				assertEquals(AnalysisState.COMPLETED,
+						analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisState(),
 						"The AnalysisState was changed from COMPLETED");
-				assertEquals(AnalysisCleanedState.CLEANING_ERROR, analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisCleanedState(),
+				assertEquals(AnalysisCleanedState.CLEANING_ERROR,
+						analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisCleanedState(),
 						"The AnalysisCleanedState was not changed to error");
 
 				// pull out real exception
@@ -1597,7 +1602,7 @@ public class AnalysisExecutionServiceGalaxyIT {
 	public void testCleanupErrorAnalysisFailGalaxy() throws Throwable {
 		AnalysisSubmission analysisSubmission = analysisExecutionGalaxyITService.setupSubmissionInDatabase(1L,
 				sequenceFilePath, referenceFilePath, iridaTestAnalysisWorkflowId, AnalysisState.NEW, false);
-		
+
 		Future<AnalysisSubmission> analysisSubmittedFuture = analysisExecutionService
 				.prepareSubmission(analysisSubmission);
 		AnalysisSubmission analysisSubmitted = analysisSubmittedFuture.get();
@@ -1614,9 +1619,11 @@ public class AnalysisExecutionServiceGalaxyIT {
 				analysisSubmissionCleanedFuture.get();
 				fail("No exception thrown");
 			} catch (ExecutionException e) {
-				assertEquals(AnalysisState.ERROR, analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisState(),
+				assertEquals(AnalysisState.ERROR,
+						analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisState(),
 						"The AnalysisState was changed from ERROR");
-				assertEquals(AnalysisCleanedState.CLEANING_ERROR, analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisCleanedState(),
+				assertEquals(AnalysisCleanedState.CLEANING_ERROR,
+						analysisSubmissionService.read(analysisSubmission.getId()).getAnalysisCleanedState(),
 						"The AnalysisCleanedState was not changed to error");
 
 				// pull out real exception

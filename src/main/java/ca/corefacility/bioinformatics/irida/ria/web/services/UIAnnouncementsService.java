@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -125,6 +127,7 @@ public class UIAnnouncementsService {
 	 *
 	 * @param announcementRequest - the details of the announcement to update.
 	 */
+	@Transactional
 	public void updateAnnouncement(AnnouncementRequest announcementRequest) {
 		Announcement announcement = announcementService.read(announcementRequest.getId());
 		announcement.setTitle(announcementRequest.getTitle());

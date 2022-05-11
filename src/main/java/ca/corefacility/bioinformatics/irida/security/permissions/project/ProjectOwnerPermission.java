@@ -11,7 +11,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
-import ca.corefacility.bioinformatics.irida.repositories.user.UserGroupJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthenticationToken;
 
@@ -32,13 +31,11 @@ public class ProjectOwnerPermission extends ModifyProjectPermission {
 	 * @param userRepository    the user repository.
 	 * @param pujRepository     the project user join repository.
 	 * @param ugpjRepository    The user group project join repository.
-	 * @param ugRepository      The user group join repository.
 	 */
 	@Autowired
 	public ProjectOwnerPermission(final ProjectRepository projectRepository, final UserRepository userRepository,
-			final ProjectUserJoinRepository pujRepository, final UserGroupProjectJoinRepository ugpjRepository,
-			final UserGroupJoinRepository ugRepository) {
-		super(projectRepository, userRepository, pujRepository, ugpjRepository, ugRepository);
+			final ProjectUserJoinRepository pujRepository, final UserGroupProjectJoinRepository ugpjRepository) {
+		super(projectRepository, userRepository, pujRepository, ugpjRepository);
 	}
 
 	/**

@@ -1,7 +1,7 @@
 import { Form, Input } from "antd";
 import React from "react";
 import { TAXONOMY } from "../../../apis/ontology/taxonomy";
-import { OntologySelect } from "../../../components/ontology";
+import { OntologyInput } from "../../../components/ontology";
 
 /**
  * React component to display the form components for the general details
@@ -63,7 +63,7 @@ export function CreateProjectDetails({ form }) {
         name={"organism"}
         label={i18n("projects.create.form.organism")}
       >
-        <OntologySelect
+        <OntologyInput
           term={organism}
           onTermSelected={setFormOrganism}
           ontology={TAXONOMY}

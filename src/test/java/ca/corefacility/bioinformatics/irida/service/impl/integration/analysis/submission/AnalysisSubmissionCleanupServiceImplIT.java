@@ -7,23 +7,17 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.lang.reflect.Field;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
@@ -32,24 +26,20 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
  * 
  *
  */
-@Tag("IntegrationTest") @Tag("Service")
-@SpringBootTest
-@ActiveProfiles("it")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExecutionListener.class })
+@ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/analysis/submission/AnalysisSubmissionCleanupServiceIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class AnalysisSubmissionCleanupServiceImplIT {
 
 	@Autowired
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
-	
+
 	@Autowired
 	private AnalysisSubmissionCleanupService analysisSubmissionCleanupService;
-	
+
 	@Autowired
 	private AnalysisSubmissionCleanupService analysisSubmissionCleanupServiceLocal;
-	
+
 	/**
 	 * Setup for tests.
 	 * 
@@ -59,8 +49,8 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 	 * @throws IllegalArgumentException
 	 */
 	@BeforeEach
-	public void setup() throws NoSuchFieldException, SecurityException, IllegalArgumentException,
-			IllegalAccessException {
+	public void setup()
+			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		analysisSubmissionCleanupServiceLocal = new AnalysisSubmissionCleanupServiceImpl(analysisSubmissionRepository);
 
 		// Unset the 'ranSwitchInconsistentSubmissionsToError' field so we can
@@ -70,7 +60,7 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 		ranSwitchInconsistentSubmissionsToError.setAccessible(true);
 		ranSwitchInconsistentSubmissionsToError.setBoolean(null, false);
 	}
-	
+
 	/**
 	 * Tests failing to run service due to invalid user.
 	 */
@@ -81,7 +71,7 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 			analysisSubmissionCleanupService.switchInconsistentSubmissionsToError();
 		});
 	}
-	
+
 	/**
 	 * Tests successfully switching submissions to error from autowired service.
 	 */
@@ -99,10 +89,14 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 				"Did not switch COMPLETING to ERROR");
 
 		// make sure no other submissions have changed
-		assertEquals(AnalysisState.NEW, analysisSubmissionRepository.findById(4L).orElse(null).getAnalysisState(), "Analysis submission state has changed");
-		assertEquals(AnalysisState.PREPARED, analysisSubmissionRepository.findById(5L).orElse(null).getAnalysisState(), "Analysis submission state has changed");
-		assertEquals(AnalysisState.RUNNING, analysisSubmissionRepository.findById(6L).orElse(null).getAnalysisState(), "Analysis submission state has changed");
-		assertEquals(AnalysisState.FINISHED_RUNNING, analysisSubmissionRepository.findById(7L).orElse(null).getAnalysisState(),
+		assertEquals(AnalysisState.NEW, analysisSubmissionRepository.findById(4L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
+		assertEquals(AnalysisState.PREPARED, analysisSubmissionRepository.findById(5L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
+		assertEquals(AnalysisState.RUNNING, analysisSubmissionRepository.findById(6L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
+		assertEquals(AnalysisState.FINISHED_RUNNING,
+				analysisSubmissionRepository.findById(7L).orElse(null).getAnalysisState(),
 				"Analysis submission state has changed");
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionRepository.findById(8L).orElse(null).getAnalysisState(),
 				"Analysis submission state has changed");
@@ -115,9 +109,10 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 		} catch (RuntimeException e) {
 		}
 	}
-	
+
 	/**
-	 * Tests successfully switching submissions to error from service we build ourselves.
+	 * Tests successfully switching submissions to error from service we build
+	 * ourselves.
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")
@@ -133,19 +128,24 @@ public class AnalysisSubmissionCleanupServiceImplIT {
 				"Did not switch COMPLETING to ERROR");
 
 		// make sure no other submissions have changed
-		assertEquals(AnalysisState.NEW, analysisSubmissionRepository.findById(4L).orElse(null).getAnalysisState(), "Analysis submission state has changed");
-		assertEquals(AnalysisState.PREPARED, analysisSubmissionRepository.findById(5L).orElse(null).getAnalysisState(), "Analysis submission state has changed");
-		assertEquals(AnalysisState.RUNNING, analysisSubmissionRepository.findById(6L).orElse(null).getAnalysisState(), "Analysis submission state has changed");
-		assertEquals(AnalysisState.FINISHED_RUNNING, analysisSubmissionRepository.findById(7L).orElse(null).getAnalysisState(),
+		assertEquals(AnalysisState.NEW, analysisSubmissionRepository.findById(4L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
+		assertEquals(AnalysisState.PREPARED, analysisSubmissionRepository.findById(5L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
+		assertEquals(AnalysisState.RUNNING, analysisSubmissionRepository.findById(6L).orElse(null).getAnalysisState(),
+				"Analysis submission state has changed");
+		assertEquals(AnalysisState.FINISHED_RUNNING,
+				analysisSubmissionRepository.findById(7L).orElse(null).getAnalysisState(),
 				"Analysis submission state has changed");
 		assertEquals(AnalysisState.COMPLETED, analysisSubmissionRepository.findById(8L).orElse(null).getAnalysisState(),
 				"Analysis submission state has changed");
 		assertEquals(AnalysisState.ERROR, analysisSubmissionRepository.findById(9L).orElse(null).getAnalysisState(),
 				"Analysis submission state has changed");
 	}
-	
+
 	/**
-	 * Tests successfully failing on attempt to switch submissions to error twice.
+	 * Tests successfully failing on attempt to switch submissions to error
+	 * twice.
 	 */
 	@Test
 	@WithMockUser(username = "aaron", roles = "ADMIN")

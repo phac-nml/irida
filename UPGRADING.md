@@ -7,6 +7,15 @@ upgrading IRIDA that cannot be automated.
 21.09 to 22.01
 --------------
 * This upgrade converted the project from bare Spring to Spring Boot, which deprecated a number of properties relating to database connection and setup. These deprecated properties are mentioned in [/etc/irida/irida.conf](https://phac-nml.github.io/irida-documentation/administrator/web/#core-configuration).
+* Due to an update in Spring you will need to revoke tokens for all OAuth clients, you can perform this through the UI or with the following sql:
+```sql
+USE IRIDA_DB_NAME;
+truncate oauth_access_token;
+truncate oauth_refresh_token;
+```
+* This upgrade changed the way css and js assets are compiled and as such custom login pages will need to be updated.
+  * Replace `<link rel="stylesheet" th:href="@{/dist/css/login.bundle.css}" />` with `<webpacker:css entry="login" />`.
+  * Replace `<script th:src="@{/dist/js/login.bundle.js}"></script>` with `<webpacker:js entry="login" />`.
 
 21.09.1 to 21.09.2
 ------------------
@@ -32,9 +41,15 @@ upgrading IRIDA that cannot be automated.
 20.09 to 21.01
 --------------
 * This upgrade makes schema changes to the databases and cannot be parallel deployed.  Servlet container must be stopped before deploying the new `war` file.
-* IRIDA 21.01 includes changes to the analysis plugin system.  Analysis pipelines must be updated to support this new change.    
-* This upgrade includes changes to the sample-metadata database system.  While implementing this change we encountered issues with the metadata auditing system, so we recommend additional backup steps before performing this upgrade.  See <https://phac-nml.github.io/irida-documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for more details.
-* A couple new columns have been added to the announcements table in the database. The new announcement title column cannot be empty and will be given a default value. There is a script available to populate the new title from the header of the existing announcements content, which can be found under the `src/main/resources/scripts/announcements` folder in the IRIDA repo. 
+* IRIDA 21.01 includes changes to the analysis plugin system.  Analysis pipelines must be updated to support this new change.
+* This upgrade includes changes to the sample-metadata database system. While implementing this change we encountered
+  issues with the metadata auditing system, so we recommend additional backup steps before performing this upgrade.
+  See <https://phac-nml.github.io/irida-documentation/administrator/upgrades/#sample-metadata-audit-record-updates> for
+  more details.
+* A couple of new columns have been added to the announcements' table in the database. The new announcement title column
+  cannot be empty and will be given a default value. There is a script available to populate the new title from the
+  header of the existing announcements content, which can be found under the `src/main/resources/scripts/announcements`
+  folder in the IRIDA repo.
 
 20.05 to 20.09
 --------------
@@ -188,16 +203,16 @@ security.password.expiry=90
 1.0.0-alpha10 to 1.0.0
 ----------------------
 * You may now configure the link and text that gets rendered on web pages under the 'Help' menu for accessing an external help forum. You can configure the link and text by adding some keys to `/etc/irida/web.conf`:
-        
+
         help.page.title=Your Help Page Title
         help.page.url=http://www.example.org/help
   These are optional settings. If they are not configured, no link will appear in the 'Help' menu.
 * You may now configure the e-mail address that gets rendered on web pages under the 'Help' menu. You can configure the e-mail address by adding a key to `/etc/irida/web.conf`:
-       
+
         help.contact.email=you@example.org
   This is an optional setting. If it is not configured, no 'Contact Us' e-mail address will appear in the 'Help' menu.
 
-* Deploy the new `war` file.   
+* Deploy the new `war` file.
 
 1.0.0-alpha9 to 1.0.0-alpha10
 -----------------------------

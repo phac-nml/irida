@@ -18,7 +18,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -57,8 +56,10 @@ public class ProjectSamplesMetadataTemplateController {
 	public String getMetadataTemplateListPage(@PathVariable Long projectId, Model model, Principal principal) {
 		Project project = projectService.read(projectId);
 
-		// Add an empty MetadataTemplate. This facilitates code reuse for this page
-		// since it is used for both creation and updating a template, and the html
+		// Add an empty MetadataTemplate. This facilitates code reuse for this
+		// page
+		// since it is used for both creation and updating a template, and the
+		// html
 		// is looking for a template object.
 		model.addAttribute("template", new UIMetadataTemplate());
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
@@ -116,9 +117,8 @@ public class ProjectSamplesMetadataTemplateController {
 			metadataTemplate.setFields(templateFields);
 			metadataTemplateService.updateMetadataTemplateInProject(metadataTemplate);
 		} else {
-			ProjectMetadataTemplateJoin projectMetadataTemplateJoin = metadataTemplateService.createMetadataTemplateInProject(
+			metadataTemplate = metadataTemplateService.createMetadataTemplateInProject(
 					new MetadataTemplate(name, templateFields), project);
-			metadataTemplate = projectMetadataTemplateJoin.getObject();
 		}
 		return "redirect:/projects/" + projectId + "/metadata-templates/" + metadataTemplate.getId();
 	}
@@ -128,7 +128,8 @@ public class ProjectSamplesMetadataTemplateController {
 	 *
 	 * @param projectId  {@link Long} identifier for a {@link Project}
 	 * @param templateId {@link Long} identifier for a {@link MetadataTemplate}
-	 * @return {@link String} redirects to project - settings - metadata templates
+	 * @return {@link String} redirects to project - settings - metadata
+	 * templates
 	 */
 	@RequestMapping(value = "/delete/{templateId}", method = RequestMethod.POST)
 	public String deleteMetadataTemplate(@PathVariable Long projectId, @PathVariable Long templateId) {
@@ -147,7 +148,7 @@ public class ProjectSamplesMetadataTemplateController {
 	@RequestMapping(value = "/{templateId}/excel")
 	public void downloadTemplate(@PathVariable Long templateId, HttpServletResponse response) throws IOException {
 		MetadataTemplate template = metadataTemplateService.read(templateId);
-		List<MetadataTemplateField> fields = template.getFields();
+		List<MetadataTemplateField> fields = metadataTemplateService.getPermittedFieldsForTemplate(template);
 		List<String> headers = fields.stream()
 				.map(MetadataTemplateField::getLabel)
 				.collect(Collectors.toList());
@@ -156,7 +157,7 @@ public class ProjectSamplesMetadataTemplateController {
 		//Blank workbook
 		XSSFWorkbook workbook = new XSSFWorkbook();
 
-		//Create a blank sheet
+		// Create a blank sheet
 		XSSFSheet worksheet = workbook.createSheet(label);
 
 		// Write the headers
@@ -170,10 +171,12 @@ public class ProjectSamplesMetadataTemplateController {
 		ServletOutputStream stream = response.getOutputStream();
 		workbook.write(stream);
 		stream.flush();
+
+		workbook.close();
 	}
 
 	// *************************************************************************
-	// AJAX METHODS                                                            *
+	// AJAX METHODS *
 	// *************************************************************************
 
 	/**

@@ -61,7 +61,7 @@ public class UserGroupsDetailsPage extends AbstractPage {
 		wait.until(ExpectedConditions.elementToBeClickable(editNameBtn));
 		editNameBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(editNameInput));
-		editNameInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+		editNameInput.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 		editNameInput.sendKeys(name);
 		editNameInput.sendKeys(Keys.ENTER);
 		wait.until(ExpectedConditions.textToBePresentInElement(groupName, name));

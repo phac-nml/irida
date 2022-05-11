@@ -2,13 +2,14 @@
  * @File component renders a tabular preview of output files.
  */
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Divider, Table } from "antd";
 import { getDataViaLines } from "../../../apis/analysis/analysis";
 import { parseHeader, parseRows } from "../tabular-preview";
 import { SPACE_XS } from "../../../styles/spacing";
 import styled from "styled-components";
 import { OutputFileHeader } from "../../../components/OutputFiles/OutputFileHeader";
+import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 
 const TabularOutputWrapper = styled.div`
   width: 100%;
@@ -19,10 +20,16 @@ export function AnalysisTabularPreview({ output }) {
   const { firstLine, fileExt } = output;
   const fileExtCSV = fileExt === "csv";
 
-  const [fileRows, setFileRows] = useState([]);
-  const [fileCols, setFileCols] = useState([]);
+  const [fileRows, setFileRows] = React.useState([]);
+  const [fileCols, setFileCols] = React.useState([]);
   const MAX_TABLE_ROWS_PER_PAGE = 5;
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = React.useState(false);
+
+  const [total, setTotal] = React.useState(0);
+
+  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
+    total,
+  ]);
 
   /*
    * Get tabular file output data from the start of a file to the end
@@ -30,7 +37,7 @@ export function AnalysisTabularPreview({ output }) {
    * If only n amount of lines are required the start and end variables
    * can be changed as such
    */
-  useEffect(() => {
+  React.useEffect(() => {
     setLoading(true);
     getDataViaLines({
       start: 0,
@@ -41,6 +48,7 @@ export function AnalysisTabularPreview({ output }) {
       setFileRows(parseRows(data.lines, data.start, fileExtCSV));
       setFileCols(parseHeader(firstLine, fileExtCSV));
       setLoading(false);
+      setTotal(data.lines.length);
     });
   }, []);
 
@@ -55,9 +63,9 @@ export function AnalysisTabularPreview({ output }) {
           dataSource={fileRows}
           scroll={{ x: "max-content" }}
           pagination={{
-            pageSizeOptions: [5, 10, 20, 50, 100],
-            defaultPageSize: MAX_TABLE_ROWS_PER_PAGE,
-            hideOnSinglePage: true,
+            total: total,
+            hideOnSinglePage: paginationOptions?.hideOnSinglePage,
+            pageSize: MAX_TABLE_ROWS_PER_PAGE,
           }}
         />
       </TabularOutputWrapper>

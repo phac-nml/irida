@@ -39,7 +39,6 @@ public class RESTProjectAnalysisController {
 	private static final Logger logger = LoggerFactory.getLogger(RESTProjectAnalysisController.class);
 
 	private static String PROJECT_REL = "project";
-	private static String ANALYSIS_RESOURCES = "resource";
 
 	private ProjectService projectService;
 	private AnalysisSubmissionService analysisSubmissionService;
@@ -60,10 +59,11 @@ public class RESTProjectAnalysisController {
 	 * Get the list of {@link AnalysisSubmission}s associated with this
 	 * {@link Project}.
 	 *
-	 * @param projectId the identifier of the {@link Project} to get the
-	 *                  {@link AnalysisSubmission}s for.
+	 * @param projectId
+	 *            the identifier of the {@link Project} to get the
+	 *            {@link AnalysisSubmission}s for.
 	 * @return the list of {@link AnalysisSubmission}s associated with this
-	 * {@link Project}.
+	 *         {@link Project}.
 	 */
 	@Operation(operationId = "getProjectAnalyses", summary = "Find all the analysis submissions given a project", description = "Get all the analysis submissions given a project.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/analyses", method = RequestMethod.GET)
@@ -71,21 +71,23 @@ public class RESTProjectAnalysisController {
 		logger.debug("Loading analyses for project [" + projectId + "]");
 
 		Project p = projectService.read(projectId);
-		Collection<AnalysisSubmission> analysisSubmissions = analysisSubmissionService.getAnalysisSubmissionsSharedToProject(
-				p);
+		Collection<AnalysisSubmission> analysisSubmissions = analysisSubmissionService
+				.getAnalysisSubmissionsSharedToProject(p);
 
 		ResourceCollection<AnalysisSubmission> analysisResources = new ResourceCollection<>(analysisSubmissions.size());
 
 		for (AnalysisSubmission submission : analysisSubmissions) {
-			submission.add(linkTo(methodOn(RESTAnalysisSubmissionController.class, Long.class).getResource(
-					submission.getId())).withSelfRel());
+			submission.add(
+					linkTo(methodOn(RESTAnalysisSubmissionController.class, Long.class).getResource(submission.getId()))
+							.withSelfRel());
 			analysisResources.add(submission);
 		}
 
 		analysisResources.add(
 				linkTo(methodOn(RESTProjectsController.class, Long.class).getResource(projectId)).withRel(PROJECT_REL));
-		analysisResources.add(linkTo(methodOn(RESTProjectAnalysisController.class, Long.class).getProjectAnalyses(
-				projectId)).withSelfRel());
+		analysisResources
+				.add(linkTo(methodOn(RESTProjectAnalysisController.class, Long.class).getProjectAnalyses(projectId))
+						.withSelfRel());
 		ResponseResource<ResourceCollection<AnalysisSubmission>> responseObject = new ResponseResource<>(
 				analysisResources);
 
@@ -96,12 +98,15 @@ public class RESTProjectAnalysisController {
 	 * Get the list of {@link AnalysisSubmission}s for this {@link Project} by
 	 * type of analysis.
 	 *
-	 * @param projectId The {@link Project} to search.
-	 * @param type      The analysis type to search for.
+	 * @param projectId
+	 *            The {@link Project} to search.
+	 * @param type
+	 *            The analysis type to search for.
 	 * @return A list of {@link AnalysisSubmission}s for the given
-	 * {@link Project} by the given type.
-	 * @throws IridaWorkflowNotFoundException If the {@link AnalysisSubmission} is linked to a workflow not
-	 *                                        found in IRIDA.
+	 *         {@link Project} by the given type.
+	 * @throws IridaWorkflowNotFoundException
+	 *             If the {@link AnalysisSubmission} is linked to a workflow not
+	 *             found in IRIDA.
 	 */
 	@Operation(operationId = "getProjectAnalysesByType", summary = "Find all the analysis submissions given a project by analysis type", description = "Get all the analysis submissions given a project by analysis type.", tags = "projects")
 	@RequestMapping(value = "/api/projects/{projectId}/analyses/{type}", method = RequestMethod.GET)
@@ -116,28 +121,28 @@ public class RESTProjectAnalysisController {
 		AnalysisType analysisType = RESTAnalysisSubmissionController.ANALYSIS_TYPES.get(type);
 
 		Project p = projectService.read(projectId);
-		Collection<AnalysisSubmission> analysisSubmissions = analysisSubmissionService.getAnalysisSubmissionsSharedToProject(
-				p);
+		Collection<AnalysisSubmission> analysisSubmissions = analysisSubmissionService
+				.getAnalysisSubmissionsSharedToProject(p);
 
 		ResourceCollection<AnalysisSubmission> analysisResources = new ResourceCollection<>(analysisSubmissions.size());
 
 		for (AnalysisSubmission submission : analysisSubmissions) {
 			IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(submission.getWorkflowId());
-			AnalysisType submissionAnalysisType = iridaWorkflow.getWorkflowDescription()
-					.getAnalysisType();
+			AnalysisType submissionAnalysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
 
 			if (analysisType.equals(submissionAnalysisType)) {
-				submission.add(linkTo(methodOn(RESTAnalysisSubmissionController.class, Long.class).getResource(
-						submission.getId())).withSelfRel());
+				submission.add(linkTo(
+						methodOn(RESTAnalysisSubmissionController.class, Long.class).getResource(submission.getId()))
+								.withSelfRel());
 				analysisResources.add(submission);
 			}
 		}
 
 		analysisResources.add(
 				linkTo(methodOn(RESTProjectsController.class, Long.class).getResource(projectId)).withRel(PROJECT_REL));
-		analysisResources.add(
-				linkTo(methodOn(RESTProjectAnalysisController.class, Long.class).getProjectAnalysesByType(projectId,
-						type)).withSelfRel());
+		analysisResources.add(linkTo(
+				methodOn(RESTProjectAnalysisController.class, Long.class).getProjectAnalysesByType(projectId, type))
+						.withSelfRel());
 		ResponseResource<ResourceCollection<AnalysisSubmission>> responseObject = new ResponseResource<>(
 				analysisResources);
 

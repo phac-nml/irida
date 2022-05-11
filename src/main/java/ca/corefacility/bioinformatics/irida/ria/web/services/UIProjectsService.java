@@ -1,11 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +16,10 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.Coverage;
@@ -30,11 +31,15 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.CreateProjectRe
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.NewProjectMetadataRestriction;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.UpdateProjectAttributeRequest;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ManageLocalProjectSettingsPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -48,20 +53,22 @@ public class UIProjectsService {
 	private final MessageSource messageSource;
 	private final ProjectOwnerPermission projectOwnerPermission;
 	private final ManageLocalProjectSettingsPermission projectMembersPermission;
+	private final MetadataTemplateService metadataTemplateService;
 	/*
-	All roles that are available on a project.
+	 * All roles that are available on a project.
 	 */
 	private final List<String> PROJECT_ROLES = ImmutableList.of("PROJECT_USER", "PROJECT_OWNER");
 
 	@Autowired
 	public UIProjectsService(ProjectService projectService, SampleService sampleService, MessageSource messageSource,
 			ProjectOwnerPermission projectOwnerPermission,
-			ManageLocalProjectSettingsPermission projectMembersPermission) {
+			ManageLocalProjectSettingsPermission projectMembersPermission, MetadataTemplateService metadataTemplateService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.messageSource = messageSource;
 		this.projectOwnerPermission = projectOwnerPermission;
 		this.projectMembersPermission = projectMembersPermission;
+		this.metadataTemplateService = metadataTemplateService;
 	}
 
 	/**
@@ -69,7 +76,7 @@ public class UIProjectsService {
 	 *
 	 * @param request {@link CreateProjectRequest} containing (at the very least) the name for the project
 	 * @return the identifier for the newly created project
-	 * @throws EntityExistsException if the project already exists.
+	 * @throws EntityExistsException        if the project already exists.
 	 * @throws ConstraintViolationException if there was a constraint violation with the parameters passed.
 	 */
 	public Long createProject(CreateProjectRequest request) throws EntityExistsException, ConstraintViolationException {
@@ -83,6 +90,18 @@ public class UIProjectsService {
 			createdProject = projectService.createProjectWithSamples(project, request.getSamples(), !request.isLock());
 		} else {
 			createdProject = projectService.create(project);
+		}
+
+		// Update metadata restrictions in target project
+		List<NewProjectMetadataRestriction> restrictions = request.getMetadataRestrictions();
+		List<MetadataTemplateField> fields = metadataTemplateService.getPermittedFieldsForCurrentUser(createdProject,
+				false);
+		for (NewProjectMetadataRestriction restriction : restrictions) {
+			fields.stream()
+					.filter(f -> Objects.equals(restriction.getIdentifier(), f.getId()))
+					.findFirst()
+					.ifPresent(field -> metadataTemplateService.setMetadataRestriction(createdProject, field,
+							ProjectMetadataRole.fromString(restriction.getRestriction())));
 		}
 		return createdProject.getId();
 	}
@@ -149,24 +168,70 @@ public class UIProjectsService {
 		try {
 			Project project = projectService.read(projectId);
 
-			User user = (User) SecurityContextHolder.getContext()
-					.getAuthentication()
-					.getPrincipal();
+			User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			boolean isAdmin = user.getSystemRole()
 					.equals(ca.corefacility.bioinformatics.irida.model.user.Role.ROLE_ADMIN);
 
-			Authentication authentication = SecurityContextHolder.getContext()
-					.getAuthentication();
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 			boolean isOwner = projectOwnerPermission.isAllowed(authentication, project);
 
 			boolean isOwnerAllowRemote = projectMembersPermission.isAllowed(authentication, project);
 
-			return new ProjectDetailsResponse(project, isAdmin || isOwner, isAdmin || isOwnerAllowRemote);
+			MetadataTemplate defaultTemplateForProject = metadataTemplateService.getDefaultTemplateForProject(project);
+
+			return new ProjectDetailsResponse(project, isAdmin || isOwner, isAdmin || isOwnerAllowRemote, defaultTemplateForProject);
 		} catch (EntityNotFoundException e) {
 			throw new AjaxItemNotFoundException(
 					messageSource.getMessage("server.ProjectDetails.project-not-found", new Object[] {}, locale));
 		}
+	}
+
+	/**
+	 * Update a field within the project details.
+	 *
+	 * @param projectId {@link Long} identifier for the project
+	 * @param request   {@link UpdateProjectAttributeRequest} details about which field to update
+	 * @param locale    {@link Locale} for the currently logged in user
+	 * @return {@link String} explaining to the user the results of the update.
+	 * @throws UpdateException thrown if the update cannot be performed
+	 */
+	@Transactional
+	public String updateProjectDetails(Long projectId, UpdateProjectAttributeRequest request, Locale locale)
+			throws UpdateException {
+		Project project = projectService.read(projectId);
+		switch (request.getField()) {
+		case "label":
+			project.setName(request.getValue());
+			break;
+		case "description":
+			project.setProjectDescription(request.getValue());
+			break;
+		case "organism":
+			project.setOrganism(request.getValue());
+			break;
+		default:
+			throw new UpdateException(messageSource.getMessage("server.ProjectDetails.error",
+					new Object[] { request.getField() }, locale));
+		}
+
+		try {
+			projectService.update(project);
+		} catch (ConstraintViolationException e) {
+			throw new UpdateException(
+					messageSource.getMessage("server.ProjectDetails.error-constraint", new Object[] {}, locale));
+		}
+
+		String message;
+		if (Strings.isNullOrEmpty(request.getValue())) {
+			message = messageSource.getMessage("server.ProjectDetails.success-empty",
+					new Object[] { request.getField() }, locale);
+
+		} else {
+			message = messageSource.getMessage("server.ProjectDetails.success",
+					new Object[] { request.getField(), request.getValue() }, locale);
+		}
+		return message;
 	}
 
 	/**
@@ -178,6 +243,7 @@ public class UIProjectsService {
 	 * @return Message to user about the status of the priority update
 	 * @throws UpdateException thrown if the update cannot be performed
 	 */
+	@Transactional
 	public String updateProcessingPriority(Long projectId, AnalysisSubmission.Priority priority, Locale locale)
 			throws UpdateException {
 		Project project = projectService.read(projectId);
@@ -198,6 +264,7 @@ public class UIProjectsService {
 	 * @return message to the user about the result of the update
 	 * @throws UpdateException thrown if there was an error updated the coverage.
 	 */
+	@Transactional
 	public String updateProcessingCoverage(Coverage coverage, Long projectId, Locale locale) throws UpdateException {
 		Project project = projectService.read(projectId);
 		Map<String, Object> updates = new HashMap<>();
@@ -208,13 +275,11 @@ public class UIProjectsService {
 		if (project.getMaximumCoverage() == null || coverage.getMaximum() != project.getMaximumCoverage()) {
 			updates.put("maximumCoverage", coverage.getMaximum() == 0 ? null : coverage.getMaximum());
 		}
-		if (project.getGenomeSize() == null || !coverage.getGenomeSize()
-				.equals(project.getGenomeSize())) {
+		if (project.getGenomeSize() == null || !coverage.getGenomeSize().equals(project.getGenomeSize())) {
 			updates.put("genomeSize", coverage.getGenomeSize());
 		}
 
-		if (updates.keySet()
-				.size() == 0) {
+		if (updates.keySet().size() == 0) {
 			throw new UpdateException(
 					messageSource.getMessage("server.ProcessingCoverage.error", new Object[] {}, locale));
 		}

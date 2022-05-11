@@ -1,74 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <!-- include everything in the changesets directory -->
-    <include file="changesets/1.0/initialschema-v1.0.xml" relativeToChangelogFile="true"/>
-    <include file="changesets/1.0/initialdata-v1.0.xml" relativeToChangelogFile="true"/>
+  <!-- include everything in the changesets directory -->
+  <include file="changesets/1.0/initialschema-v1.0.xml" relativeToChangelogFile="true" />
+  <include file="changesets/1.0/initialdata-v1.0.xml" relativeToChangelogFile="true" />
 
-    <include file="changesets/1.1/updates-v1.1.xml" relativeToChangelogFile="true"/>
-    <include file="changesets/1.1/rename-constraints.xml" relativeToChangelogFile="true"/>
+  <include file="changesets/1.1/updates-v1.1.xml" relativeToChangelogFile="true" />
+  <include file="changesets/1.1/rename-constraints.xml" relativeToChangelogFile="true" />
 
-    <include file="changesets/1.2/insert-sequencer-role.xml" relativeToChangelogFile="true"/>
+  <include file="changesets/1.2/insert-sequencer-role.xml" relativeToChangelogFile="true" />
 
-    <include file="changesets/1.3/drop-client-role.xml" relativeToChangelogFile="true"/>
-    
-    <include file="changesets/1.5/password_reset.xml" relativeToChangelogFile="true"/>
-    
-    <include file="changesets/2.0/data-model-cleanup.xml" relativeToChangelogFile="true"/>
-    <include file="changesets/2.0/remote-apis.xml" relativeToChangelogFile="true"/>
-    <include file="changesets/2.0/user-groups.xml" relativeToChangelogFile="true"/>
-    <include file="changesets/2.0/sequencer-agnostic-files.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/oauth-clientid-envers.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/samples.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/client-details.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/add-not-null-constraints.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/organization.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/add-organism-project.xml" relativeToChangelogFile="true" />
-	<include file="changesets/2.0/sequencer-type-runs.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/related-projects.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/add-analysis-types.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/drop-user-revision-fk.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/liquibase-cleanup.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/remoteapi-dates.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/project-reference-file.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/analysis-output-file.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/oauth-token.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/remote-api-name.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/analysis-submission.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/samples-collection-date.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/remote-related-projects.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/snapshots.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/2.0/project-events.xml" relativeToChangelogFile="true"/>
-	
-	<include file="changesets/3.0.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/3.1.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/3.2.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/3.3.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/3.4.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/3.5.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/3.6.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/3.7.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/3.8.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/0.12.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/0.14.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/0.15.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/0.16.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/0.17.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/0.18.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/0.19.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/0.20.0/all-changes.xml" relativeToChangelogFile="true"/>
-    <include file="changesets/0.21.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/0.22.0/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/19.01/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/19.04/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/19.09/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/20.01/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/20.05/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/20.09/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/21.01/all-changes.xml" relativeToChangelogFile="true"/>
-	<include file="changesets/21.05/all-changes.xml" relativeToChangelogFile="true"/>
+  <include file="changesets/1.3/drop-client-role.xml" relativeToChangelogFile="true" />
+
+  <include file="changesets/1.5/password_reset.xml" relativeToChangelogFile="true" />
+
+  <include file="changesets/2.0/data-model-cleanup.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/remote-apis.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/user-groups.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/sequencer-agnostic-files.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/oauth-clientid-envers.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/samples.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/client-details.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/add-not-null-constraints.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/organization.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/add-organism-project.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/sequencer-type-runs.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/related-projects.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/add-analysis-types.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/drop-user-revision-fk.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/liquibase-cleanup.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/remoteapi-dates.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/project-reference-file.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/analysis-output-file.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/oauth-token.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/remote-api-name.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/analysis-submission.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/samples-collection-date.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/remote-related-projects.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/snapshots.xml" relativeToChangelogFile="true" />
+  <include file="changesets/2.0/project-events.xml" relativeToChangelogFile="true" />
+
+  <include file="changesets/3.0.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/3.1.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/3.2.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/3.3.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/3.4.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/3.5.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/3.6.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/3.7.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/3.8.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/0.12.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/0.14.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/0.15.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/0.16.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/0.17.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/0.18.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/0.19.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/0.20.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/0.21.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/0.22.0/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/19.01/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/19.04/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/19.09/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/20.01/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/20.05/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/20.09/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/21.01/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/21.05/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/22.03/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/22.05/all-changes.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
+

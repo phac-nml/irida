@@ -8,7 +8,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Helper methods for finding items within the UI.
- *
  */
 public class PageUtilities {
 	public static final int TIME_OUT_IN_SECONDS = 10;
@@ -24,7 +23,8 @@ public class PageUtilities {
 	 * @param locator {@link org.openqa.selenium.By}
 	 */
 	public void waitForElementPresent(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(locator));
+		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(
+				ExpectedConditions.presenceOfElementLocated(locator));
 	}
 
 	/**
@@ -33,7 +33,8 @@ public class PageUtilities {
 	 * @param locator {@link org.openqa.selenium.By}
 	 */
 	public void waitForElementVisible(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(locator));
+		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(
+				ExpectedConditions.visibilityOfElementLocated(locator));
 	}
 
 	/**
@@ -42,7 +43,8 @@ public class PageUtilities {
 	 * @param locator {@link org.openqa.selenium.By}
 	 */
 	public void waitForElementInvisible(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(ExpectedConditions.invisibilityOfElementLocated(locator));
+		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(
+				ExpectedConditions.invisibilityOfElementLocated(locator));
 	}
 
 	/**
@@ -51,22 +53,22 @@ public class PageUtilities {
 	 * @param locator {@link org.openqa.selenium.By}
 	 */
 	public void waitForElementToBeAbsent(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(ExpectedConditions.invisibilityOfElementLocated(locator));
+		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(
+				ExpectedConditions.invisibilityOfElementLocated(locator));
 	}
 
-	public void waitForElementToBeClickable(By locator){
+	public void waitForElementToBeClickable(By locator) {
 		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(ExpectedConditions.elementToBeClickable(locator));
 	}
 
 	public boolean checkSuccessNotification() {
-		return checkNotyNotification("ant-message-success");
+		return checkNotyNotification("ant-notification-notice-success");
 	}
 
 	private boolean checkNotyNotification(String type) {
 		boolean present = false;
 		try {
-			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By
-					.className(type)));
+			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By.className(type)));
 			present = true;
 		} catch (NoSuchElementException e) {
 			present = false;

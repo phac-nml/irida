@@ -24,7 +24,7 @@ public class TableRequest {
 	}
 
 	public int getCurrent() {
-		return current;
+		return current - 1;
 	}
 
 	public void setCurrent(int current) {

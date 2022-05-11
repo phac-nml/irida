@@ -10,11 +10,12 @@ import { SPACE_XS } from "../../styles/spacing";
  * editable is not enough, example you need a select input.
  *
  * @param {string} value - current value of the input
+ * @param {string} valueClassName = class name for the field
  * @param {element} children - the input to render when editing
  * @returns {*}
  * @constructor
  */
-export function EditableParagraph({ value, children }) {
+export function EditableParagraph({ value, valueClassName, children }) {
   const [editing, setEditing] = useState(false);
 
   useEffect(() => {
@@ -24,7 +25,7 @@ export function EditableParagraph({ value, children }) {
   return editing ? (
     children
   ) : (
-    <div>
+    <div className={valueClassName}>
       <span style={{ marginRight: SPACE_XS }}>{value}</span>
       <Tooltip title={i18n("EditableParagraph.tooltip")}>
         <span>

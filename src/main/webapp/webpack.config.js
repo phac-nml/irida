@@ -8,6 +8,9 @@ const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin
 const entries = require("./entries");
 const formatAntStyles = require("./styles");
 
+const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+const smp = new SpeedMeasurePlugin();
+
 /**
  * @file Webpack Build configuration file.
  * Directs webpack how to compile CSS and JavaScript assets.
@@ -24,7 +27,10 @@ const antColours = formatAntStyles();
 module.exports = (env, argv) => {
   const isProduction = argv.mode === "production";
 
-  return {
+  // set babel env based on webpack mode
+  process.env.BABEL_ENV = argv.mode;
+
+  const config = smp.wrap({
     /*
     This option controls if and how source maps are generated.
     1. Development: "eval-source-map" - Recommended choice for development builds with high quality SourceMaps.
@@ -34,7 +40,7 @@ module.exports = (env, argv) => {
     /*
     Cache the generated webpack modules and chunks to improve build speed.
      */
-    cache: {
+    cache: isProduction ? false : {
       type: "filesystem",
     },
     entry: entries,
@@ -60,11 +66,11 @@ module.exports = (env, argv) => {
       rules: [
         {
           test: /\.(js|jsx)$/i,
-          include: path.resolve(__dirname, "resources/js"),
+          include: path.resolve(__dirname, "resources", "js"),
           loader: "babel-loader",
           options: {
             cacheCompression: false,
-            cacheDirectory: true,
+            cacheDirectory: isProduction ? false : true,
           },
         },
         {
@@ -84,11 +90,20 @@ module.exports = (env, argv) => {
           ],
         },
         {
-          test: /\.css$/,
+          test: /\.css$/i,
+          include: path.resolve(__dirname, "resources"),
           use: [
             MiniCssExtractPlugin.loader,
             { loader: "css-loader", options: { importLoaders: 1 } },
             "postcss-loader",
+          ],
+        },
+        {
+          test: /\.css$/i,
+          exclude: path.resolve(__dirname, "resources"),
+          use: [
+            MiniCssExtractPlugin.loader,
+            "css-loader",
           ],
         },
         {
@@ -128,13 +143,6 @@ module.exports = (env, argv) => {
     },
     plugins: [
       /*
-      Extract CSS into its own bundle.
-       */
-      new MiniCssExtractPlugin({
-        ignoreOrder: true,
-        filename: "css/[name].bundle.css",
-      }),
-      /*
       Custom IRIDA internationalization plugin.  See Docs for more information
        */
       new i18nThymeleafWebpackPlugin({
@@ -146,7 +154,7 @@ module.exports = (env, argv) => {
         i18n: path.resolve(
           path.join(__dirname, path.join("resources", "js", "i18n"))
         ),
-        process: "process/browser",
+        process: "process/browser.js",
       }),
       /*
       Webpack Manifest is used by the Webpacker Thymeleaf plugin to find assets required
@@ -158,5 +166,12 @@ module.exports = (env, argv) => {
         writeToDisk: true,
       }),
     ],
-  };
+  });
+
+  config.plugins.push(new MiniCssExtractPlugin({
+    ignoreOrder: true,
+    filename: "css/[name]-[contenthash].css",
+  }));
+
+  return config;
 };

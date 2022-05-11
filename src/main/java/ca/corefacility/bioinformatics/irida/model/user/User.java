@@ -1,10 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.user;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -20,18 +16,18 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.subscription.ProjectSubscription;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A user object.
- *
  */
 @Entity
 @Table(name = "user", uniqueConstraints = {
@@ -118,6 +114,9 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
 	private List<AnnouncementUserJoin> announcements;
 
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
+	private List<ProjectSubscription> projectSubscriptions;
+
 	/**
 	 * Construct an instance of {@link User} with no properties set.
 	 */
@@ -129,21 +128,14 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	}
 
 	/**
-	 * Construct an instance of {@link User} with all properties (except
-	 * identifier) set.
+	 * Construct an instance of {@link User} with all properties (except identifier) set.
 	 *
-	 * @param username
-	 *            the username for this {@link User}.
-	 * @param email
-	 *            the e-mail for this {@link User}.
-	 * @param password
-	 *            the password for this {@link User}.
-	 * @param firstName
-	 *            the first name of this {@link User}.
-	 * @param lastName
-	 *            the last name of this {@link User}.
-	 * @param phoneNumber
-	 *            the phone number of this {@link User}.
+	 * @param username    the username for this {@link User}.
+	 * @param email       the e-mail for this {@link User}.
+	 * @param password    the password for this {@link User}.
+	 * @param firstName   the first name of this {@link User}.
+	 * @param lastName    the last name of this {@link User}.
+	 * @param phoneNumber the phone number of this {@link User}.
 	 */
 	public User(String username, String email, String password, String firstName, String lastName, String phoneNumber) {
 		this();
@@ -158,20 +150,13 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	/**
 	 * Construct an instance of {@link User} with all properties set.
 	 *
-	 * @param id
-	 *            the identifier for this {@link User}.
-	 * @param username
-	 *            the username for this {@link User}.
-	 * @param email
-	 *            the e-mail for this {@link User}.
-	 * @param password
-	 *            the password for this {@link User}.
-	 * @param firstName
-	 *            the first name of this {@link User}.
-	 * @param lastName
-	 *            the last name of this {@link User}.
-	 * @param phoneNumber
-	 *            the phone number of this {@link User}.
+	 * @param id          the identifier for this {@link User}.
+	 * @param username    the username for this {@link User}.
+	 * @param email       the e-mail for this {@link User}.
+	 * @param password    the password for this {@link User}.
+	 * @param firstName   the first name of this {@link User}.
+	 * @param lastName    the last name of this {@link User}.
+	 * @param phoneNumber the phone number of this {@link User}.
 	 */
 	public User(Long id, String username, String email, String password, String firstName, String lastName,
 			String phoneNumber) {
@@ -195,11 +180,11 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	public boolean equals(Object other) {
 		if (other instanceof User) {
 			User u = (User) other;
-			return Objects.equals(username, u.username) && Objects.equals(email, u.email)
-					&& Objects.equals(password, u.password) && Objects.equals(firstName, u.firstName)
-					&& Objects.equals(lastName, u.lastName) && Objects.equals(phoneNumber, u.phoneNumber)
-					&& Objects.equals(createdDate, u.createdDate) && Objects.equals(modifiedDate, u.modifiedDate)
-					&& Objects.equals(credentialsNonExpired, u.credentialsNonExpired);
+			return Objects.equals(username, u.username) && Objects.equals(email, u.email) && Objects.equals(password,
+					u.password) && Objects.equals(firstName, u.firstName) && Objects.equals(lastName, u.lastName)
+					&& Objects.equals(phoneNumber, u.phoneNumber) && Objects.equals(createdDate, u.createdDate)
+					&& Objects.equals(modifiedDate, u.modifiedDate) && Objects.equals(credentialsNonExpired,
+					u.credentialsNonExpired);
 		}
 
 		return false;
@@ -227,8 +212,13 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	 */
 	@Override
 	public String toString() {
-		return com.google.common.base.MoreObjects.toStringHelper(User.class).add("username", username).add("email", email)
-				.add("firstName", firstName).add("lastName", lastName).add("phoneNumber", phoneNumber).toString();
+		return com.google.common.base.MoreObjects.toStringHelper(User.class)
+				.add("username", username)
+				.add("email", email)
+				.add("firstName", firstName)
+				.add("lastName", lastName)
+				.add("phoneNumber", phoneNumber)
+				.toString();
 	}
 
 	@Override

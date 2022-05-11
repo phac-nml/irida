@@ -1,15 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.projects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -22,8 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -38,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesParams;
@@ -54,6 +41,11 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 public class ProjectSamplesControllerTest {
 	public static final String PROJECT_ORGANISM = "E. coli";
@@ -246,57 +238,6 @@ public class ProjectSamplesControllerTest {
 		verify(sampleService, times(1)).update(captor.capture());
 		assertEquals(newName,captor.getValue().getSampleName(), "Sample name should be set");
 		assertEquals(result.get("result"), "success", "Result is success");
-	}
-
-@Test
-	public void testGetProjectsAvailableToCopySamplesAsAdmin() {
-		String term = "";
-		int page = 0;
-		int pagesize = 10;
-		Direction order = Direction.ASC;
-		String property = "name";
-		final Project p = new Project();
-
-		User puser = new User(USER_NAME, null, null, null, null, null);
-		puser.setSystemRole(Role.ROLE_ADMIN);
-		Page<Project> projects = new PageImpl<>(Lists.newArrayList(TestDataFactory.constructProject(), TestDataFactory.constructProject()));
-		when(projectService.read(1L)).thenReturn(p);
-
-		when(projectService.getUnassociatedProjects(p, term, page, pagesize, order, property)).thenReturn(projects);
-
-		Map<String, Object> projectsAvailableToCopySamples = controller.getProjectsAvailableToCopySamples(1L, 
-				term, pagesize, page);
-
-		assertTrue(projectsAvailableToCopySamples.containsKey("total"));
-		assertEquals(2L, projectsAvailableToCopySamples.get("total"));
-		assertTrue(projectsAvailableToCopySamples.containsKey("projects"));
-
-		verify(projectService).getUnassociatedProjects(p, term, page, pagesize, order, property);
-	}
-
-@Test
-	public void testGetProjectsAvailableToCopySamplesAsUser() {
-		String term = "";
-		int page = 0;
-		int pagesize = 10;
-		Direction order = Direction.ASC;
-		final Project p = new Project();
-
-		User puser = new User(USER_NAME, null, null, null, null, null);
-		puser.setSystemRole(Role.ROLE_USER);
-		Page<Project> projects = new PageImpl<>(Lists.newArrayList(TestDataFactory.constructProject(), TestDataFactory.constructProject()));
-
-		when(projectService.read(1L)).thenReturn(p);
-		when(projectService.getUnassociatedProjects(p, term, page, pagesize, order, ProjectSamplesController.PROJECT_NAME_PROPERTY)).thenReturn(projects);
-
-		Map<String, Object> projectsAvailableToCopySamples = controller
-				.getProjectsAvailableToCopySamples(1L, term, pagesize, page);
-
-		assertTrue(projectsAvailableToCopySamples.containsKey("total"));
-		assertEquals(2L, projectsAvailableToCopySamples.get("total"));
-		assertTrue(projectsAvailableToCopySamples.containsKey("projects"));
-
-		verify(projectService).getUnassociatedProjects(p, term, page, pagesize, order, ProjectSamplesController.PROJECT_NAME_PROPERTY);
 	}
 
 	@SuppressWarnings("unchecked")

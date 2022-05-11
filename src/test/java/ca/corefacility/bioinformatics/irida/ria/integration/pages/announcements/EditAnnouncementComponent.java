@@ -50,14 +50,13 @@ public class EditAnnouncementComponent extends AbstractPage {
 	}
 
 	public void enterAnnouncement(String title, String message, Boolean priority) {
-		input.sendKeys(Keys.chord(Keys.CONTROL,"a", Keys.DELETE));
+		input.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 		input.sendKeys(title);
 
 		textarea.clear();
 		textarea.sendKeys(message);
 
-
-		if(priority && !checkbox.isSelected()) {
+		if (priority && !checkbox.isSelected()) {
 			checkbox.click();
 		} else if (!priority && checkbox.isSelected()) {
 			checkbox.click();

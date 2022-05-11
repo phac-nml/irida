@@ -19,9 +19,9 @@ export function Breadcrumbs({ crumbs = [] }) {
     <Breadcrumb
       style={{
         backgroundColor: grey2,
-        padding: `${SPACE_XS} 15px`,
+        padding: `${SPACE_XS} 45px`,
         justifyContent: "flex-start",
-        borderBottom: BORDERED_LIGHT
+        borderBottom: BORDERED_LIGHT,
       }}
     >
       <Breadcrumb.Item>
@@ -29,7 +29,7 @@ export function Breadcrumbs({ crumbs = [] }) {
           <IconHome style={{ color: grey8 }} />
         </a>
       </Breadcrumb.Item>
-      {crumbs.map(crumb => (
+      {crumbs.map((crumb) => (
         <Breadcrumb.Item key={crumb.label}>
           <a href={crumb.url}>{crumb.label}</a>
         </Breadcrumb.Item>

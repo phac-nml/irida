@@ -47,7 +47,7 @@ public class ForbidJpqlUpdateDeletePostProcessor implements PriorityOrdered, Bea
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		if (beanName.endsWith("Repository") && bean instanceof EnversRevisionRepositoryFactoryBean) {
 			logger.trace("Found a repository class... [" + beanName + "]");
-			final EnversRevisionRepositoryFactoryBean factory = (EnversRevisionRepositoryFactoryBean) bean;
+			final EnversRevisionRepositoryFactoryBean<?, ?, ?, ?> factory = (EnversRevisionRepositoryFactoryBean<?, ?, ?, ?>) bean;
 
 			try {
 				final Iterable<Method> queryMethods = factory.getRepositoryInformation().getQueryMethods();
@@ -59,8 +59,7 @@ public class ForbidJpqlUpdateDeletePostProcessor implements PriorityOrdered, Bea
 						final String queryValue = q.value().toLowerCase();
 
 						if (queryValue.contains("update") || queryValue.contains("delete")) {
-							throw new BeanCreationNotAllowedException(
-									beanName,
+							throw new BeanCreationNotAllowedException(beanName,
 									"Update and Delete are not allowed in JPQL because Envers doesn't audit those queries. Remove the update or delete from the method ["
 											+ queryMethod.getName() + "]");
 						}

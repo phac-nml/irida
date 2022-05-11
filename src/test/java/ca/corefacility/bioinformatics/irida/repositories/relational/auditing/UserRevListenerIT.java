@@ -4,30 +4,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.hibernate.envers.AuditReader;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.history.Revision;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
+import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectRepository;
 import ca.corefacility.bioinformatics.irida.security.annotations.WithMockOAuth2Client;
 
-@Tag("IntegrationTest") @Tag("Service")
-@SpringBootTest
-@ActiveProfiles("it")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExecutionListener.class })
+@ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/repositories/relational/auditing/UserRevListenerIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class UserRevListenerIT {
@@ -45,7 +35,8 @@ public class UserRevListenerIT {
 		read.setName("A new name");
 		projectRepository.save(read);
 
-		Revision<Integer, Project> findLastChangeRevision = projectRepository.findLastChangeRevision(read.getId()).orElse(null);
+		Revision<Integer, Project> findLastChangeRevision = projectRepository.findLastChangeRevision(read.getId())
+				.orElse(null);
 		UserRevEntity findRevision = auditReader.findRevision(UserRevEntity.class,
 				findLastChangeRevision.getRevisionNumber().orElse(null));
 		assertEquals(Long.valueOf(1), findRevision.getClientId(), "client id should be set in revision");
@@ -58,7 +49,8 @@ public class UserRevListenerIT {
 		read.setName("A new name");
 		projectRepository.save(read);
 
-		Revision<Integer, Project> findLastChangeRevision = projectRepository.findLastChangeRevision(read.getId()).orElse(null);
+		Revision<Integer, Project> findLastChangeRevision = projectRepository.findLastChangeRevision(read.getId())
+				.orElse(null);
 		UserRevEntity findRevision = auditReader.findRevision(UserRevEntity.class,
 				findLastChangeRevision.getRevisionNumber().orElse(null));
 		assertNull(findRevision.getClientId());

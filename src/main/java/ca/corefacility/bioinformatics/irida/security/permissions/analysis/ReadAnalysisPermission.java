@@ -12,7 +12,7 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 
 /**
  * Confirms if a {@link User} can read a {@link Analysis}.
@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
  *
  */
 @Component
-public class ReadAnalysisPermission extends BasePermission<Analysis, Long> {
+public class ReadAnalysisPermission extends RepositoryBackedPermission<Analysis, Long> {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(ReadAnalysisPermission.class);

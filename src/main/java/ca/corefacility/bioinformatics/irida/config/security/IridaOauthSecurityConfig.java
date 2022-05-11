@@ -16,6 +16,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.*;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
@@ -65,7 +66,7 @@ public class IridaOauthSecurityConfig {
 	}
 
 	@Bean
-	public WebResponseExceptionTranslator exceptionTranslator() {
+	public WebResponseExceptionTranslator<OAuth2Exception> exceptionTranslator() {
 		return new CustomOAuth2ExceptionTranslator();
 	}
 
@@ -82,7 +83,7 @@ public class IridaOauthSecurityConfig {
 		private ResourceServerTokenServices tokenServices;
 
 		@Autowired
-		private WebResponseExceptionTranslator exceptionTranslator;
+		private WebResponseExceptionTranslator<OAuth2Exception> exceptionTranslator;
 
 		@Override
 		public void configure(final ResourceServerSecurityConfigurer resources) {
@@ -92,18 +93,19 @@ public class IridaOauthSecurityConfig {
 
 		@Override
 		public void configure(final HttpSecurity httpSecurity) throws Exception {
-			httpSecurity.antMatcher("/api/**").authorizeRequests()
-					.regexMatchers(HttpMethod.GET, "/api.*").access("#oauth2.hasScope('read')")
-					.regexMatchers("/api.*").access("#oauth2.hasScope('read') and #oauth2.hasScope('write')");
+			httpSecurity.antMatcher("/api/**").authorizeRequests().regexMatchers(HttpMethod.GET, "/api.*")
+					.access("#oauth2.hasScope('read')").regexMatchers("/api.*")
+					.access("#oauth2.hasScope('read') and #oauth2.hasScope('write')");
 			httpSecurity.antMatcher("/api/**").headers().frameOptions().disable();
-			httpSecurity.antMatcher("/api/**").csrf().requireCsrfProtectionMatcher(new AntPathRequestMatcher("/api/oauth/authorize"))
-					.disable();
+			httpSecurity.antMatcher("/api/**").csrf()
+					.requireCsrfProtectionMatcher(new AntPathRequestMatcher("/api/oauth/authorize")).disable();
 			httpSecurity.antMatcher("/api/**").csrf().disable();
 
 			// SecurityContextPersistenceFilter appears pretty high up (well
 			// before any OAuth related filters), so we'll put our anonymous
 			// user filter into the filter chain after that.
-			httpSecurity.antMatcher("/api/**").addFilterAfter(new UnauthenticatedAnonymousAuthenticationFilter("anonymousTokenAuthProvider"),
+			httpSecurity.antMatcher("/api/**").addFilterAfter(
+					new UnauthenticatedAnonymousAuthenticationFilter("anonymousTokenAuthProvider"),
 					SecurityContextPersistenceFilter.class);
 		}
 	}
@@ -127,7 +129,7 @@ public class IridaOauthSecurityConfig {
 		private AuthenticationManager authenticationManager;
 
 		@Autowired
-		private WebResponseExceptionTranslator exceptionTranslator;
+		private WebResponseExceptionTranslator<OAuth2Exception> exceptionTranslator;
 
 		@Override
 		public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -142,20 +144,19 @@ public class IridaOauthSecurityConfig {
 			endpoints.tokenStore(tokenStore);
 			endpoints.authenticationManager(authenticationManager);
 			endpoints.authorizationCodeServices(authorizationCodeServices());
-			endpoints.pathMapping("/oauth/token", "/api/oauth/token").allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST);
+			endpoints.pathMapping("/oauth/token", "/api/oauth/token").allowedTokenEndpointRequestMethods(HttpMethod.GET,
+					HttpMethod.POST);
 			endpoints.pathMapping("/oauth/check_token", "/api/oauth/check_token");
 			endpoints.pathMapping("/oauth/confirm_access", "/api/oauth/confirm_access");
 			endpoints.pathMapping("/oauth/error", "/api/oauth/error");
 			endpoints.pathMapping("/oauth/authorize", "/api/oauth/authorize");
-			endpoints.tokenServices((DefaultTokenServices)tokenServices);
+			endpoints.tokenServices((DefaultTokenServices) tokenServices);
 			endpoints.exceptionTranslator(exceptionTranslator);
 		}
 
 		@Override
 		public void configure(final AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
-			oauthServer
-					.tokenKeyAccess("permitAll()")
-					.checkTokenAccess("isAuthenticated()")
+			oauthServer.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()")
 					.allowFormAuthenticationForClients();
 			oauthServer.passwordEncoder(new PasswordEncoder() {
 
@@ -178,8 +179,8 @@ public class IridaOauthSecurityConfig {
 	}
 
 	/**
-	 * This adds our own custom filter before the OAuth2 filters are run to put an
-	 * anonymous authentication object into the security context *before*
+	 * This adds our own custom filter before the OAuth2 filters are run to put
+	 * an anonymous authentication object into the security context *before*
 	 * {@link ClientDetailsService#loadClientByClientId(String)} is called.
 	 */
 	@Configuration
@@ -207,16 +208,19 @@ public class IridaOauthSecurityConfig {
 	 * {@link AbstractOAuth2SecurityExceptionHandler} is marked `private`, and
 	 * is not accessible for customizing.
 	 *
-	 * @param configurer          the instance of the configurer that we're customizing
-	 * @param exceptionTranslator the {@link WebResponseExceptionTranslator} that we want to
-	 *                            set.
-	 * @param <T>                 The type of security configurer
+	 * @param configurer
+	 *            the instance of the configurer that we're customizing
+	 * @param exceptionTranslator
+	 *            the {@link WebResponseExceptionTranslator} that we want to
+	 *            set.
+	 * @param <T>
+	 *            The type of security configurer
 	 */
 	private static <T> void forceExceptionTranslator(final T configurer,
-			final WebResponseExceptionTranslator exceptionTranslator) {
+			final WebResponseExceptionTranslator<OAuth2Exception> exceptionTranslator) {
 		try {
-			final Field authenticationEntryPointField = ReflectionUtils
-					.findField(configurer.getClass(), "authenticationEntryPoint");
+			final Field authenticationEntryPointField = ReflectionUtils.findField(configurer.getClass(),
+					"authenticationEntryPoint");
 			ReflectionUtils.makeAccessible(authenticationEntryPointField);
 			final OAuth2AuthenticationEntryPoint authenticationEntryPoint = (OAuth2AuthenticationEntryPoint) authenticationEntryPointField
 					.get(configurer);

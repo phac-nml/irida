@@ -17,7 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Specific implementation of {@link Analysis} for storing properties created by FastQC.
+ * Specific implementation of {@link Analysis} for storing properties created by
+ * FastQC.
  */
 @Entity
 @Table(name = "analysis_fastqc")
@@ -92,8 +93,8 @@ public class AnalysisFastQC extends Analysis {
 	}
 
 	/**
-	 * Builder for creating instances of {@link AnalysisFastQC}. This builder can optionally check if all required
-	 * fields are set.
+	 * Builder for creating instances of {@link AnalysisFastQC}. This builder
+	 * can optionally check if all required fields are set.
 	 */
 	public static class AnalysisFastQCBuilder {
 		private String fastqcVersion;
@@ -123,7 +124,8 @@ public class AnalysisFastQC extends Analysis {
 		/**
 		 * set the additionalProperties
 		 *
-		 * @param additionalProperties the additionalProperties
+		 * @param additionalProperties
+		 *            the additionalProperties
 		 * @return the builder
 		 */
 		public AnalysisFastQCBuilder additionalProperties(final Map<String, String> additionalProperties) {
@@ -134,7 +136,8 @@ public class AnalysisFastQC extends Analysis {
 		/**
 		 * set the executionManagerAnalysisId
 		 *
-		 * @param executionManagerAnalysisId the executionManagerAnalysisId
+		 * @param executionManagerAnalysisId
+		 *            the executionManagerAnalysisId
 		 * @return the builder
 		 */
 		public AnalysisFastQCBuilder executionManagerAnalysisId(final String executionManagerAnalysisId) {
@@ -145,7 +148,8 @@ public class AnalysisFastQC extends Analysis {
 		/**
 		 * Set the fastqc version used in the analysis
 		 *
-		 * @param fastqcVersion the version of fastqc used
+		 * @param fastqcVersion
+		 *            the version of fastqc used
 		 * @return the builder
 		 */
 		public AnalysisFastQCBuilder fastqcVersion(String fastqcVersion) {
@@ -156,7 +160,8 @@ public class AnalysisFastQC extends Analysis {
 		/**
 		 * set the description
 		 *
-		 * @param description the description
+		 * @param description
+		 *            the description
 		 * @return the builder
 		 */
 		public AnalysisFastQCBuilder description(final String description) {
@@ -167,7 +172,8 @@ public class AnalysisFastQC extends Analysis {
 		/**
 		 * set the overrepresentedSequences
 		 *
-		 * @param overrepresentedSequences the overrepresentedSequences
+		 * @param overrepresentedSequences
+		 *            the overrepresentedSequences
 		 * @return the builder
 		 */
 		public AnalysisFastQCBuilder overrepresentedSequences(
@@ -179,7 +185,8 @@ public class AnalysisFastQC extends Analysis {
 		/**
 		 * set the duplicationLevelChart
 		 *
-		 * @param duplicationLevelChart the duplicationLevelChart
+		 * @param duplicationLevelChart
+		 *            the duplicationLevelChart
 		 * @return the builder
 		 */
 		public AnalysisFastQCBuilder duplicationLevelChart(final AnalysisOutputFile duplicationLevelChart) {
@@ -190,7 +197,8 @@ public class AnalysisFastQC extends Analysis {
 		/**
 		 * Set the perSequenceQualityScoreChart
 		 *
-		 * @param perSequenceQualityScoreChart the perSequenceQualityScoreChart
+		 * @param perSequenceQualityScoreChart
+		 *            the perSequenceQualityScoreChart
 		 * @return the builder
 		 */
 		public AnalysisFastQCBuilder perSequenceQualityScoreChart(
@@ -202,7 +210,8 @@ public class AnalysisFastQC extends Analysis {
 		/**
 		 * set the perBaseQualityScoreChart
 		 *
-		 * @param perBaseQualityScoreChart the perBaseQualityScoreChart
+		 * @param perBaseQualityScoreChart
+		 *            the perBaseQualityScoreChart
 		 * @return the builder
 		 */
 		public AnalysisFastQCBuilder perBaseQualityScoreChart(final AnalysisOutputFile perBaseQualityScoreChart) {
@@ -213,7 +222,8 @@ public class AnalysisFastQC extends Analysis {
 		/**
 		 * Set the gcContent
 		 *
-		 * @param gcContent the gcContent
+		 * @param gcContent
+		 *            the gcContent
 		 * @return the builder
 		 */
 		public AnalysisFastQCBuilder gcContent(final Short gcContent) {
@@ -224,7 +234,8 @@ public class AnalysisFastQC extends Analysis {
 		/**
 		 * Set the maxLength
 		 *
-		 * @param maxLength the maxLength
+		 * @param maxLength
+		 *            the maxLength
 		 * @return the builder
 		 */
 		public AnalysisFastQCBuilder maxLength(final Integer maxLength) {
@@ -235,7 +246,8 @@ public class AnalysisFastQC extends Analysis {
 		/**
 		 * Set the minLength
 		 *
-		 * @param minLength the minLength
+		 * @param minLength
+		 *            the minLength
 		 * @return the builder
 		 */
 		public AnalysisFastQCBuilder minLength(final Integer minLength) {
@@ -246,7 +258,8 @@ public class AnalysisFastQC extends Analysis {
 		/**
 		 * Set the totalBases
 		 *
-		 * @param totalBases the totalBases
+		 * @param totalBases
+		 *            the totalBases
 		 * @return the builder
 		 */
 		public AnalysisFastQCBuilder totalBases(final Long totalBases) {
@@ -257,7 +270,8 @@ public class AnalysisFastQC extends Analysis {
 		/**
 		 * Set the filteredSequences
 		 *
-		 * @param filteredSequences the filteredSequences
+		 * @param filteredSequences
+		 *            the filteredSequences
 		 * @return the builder
 		 */
 		public AnalysisFastQCBuilder filteredSequences(final Integer filteredSequences) {
@@ -268,7 +282,8 @@ public class AnalysisFastQC extends Analysis {
 		/**
 		 * Set the total sequences
 		 *
-		 * @param totalSequences the totalsequences
+		 * @param totalSequences
+		 *            the totalsequences
 		 * @return the builder
 		 */
 		public AnalysisFastQCBuilder totalSequences(final Integer totalSequences) {
@@ -279,7 +294,8 @@ public class AnalysisFastQC extends Analysis {
 		/**
 		 * Set the filetype
 		 *
-		 * @param fileType the filetype
+		 * @param fileType
+		 *            the filetype
 		 * @return the builder
 		 */
 		public AnalysisFastQCBuilder fileType(final String fileType) {
@@ -290,7 +306,8 @@ public class AnalysisFastQC extends Analysis {
 		/**
 		 * Set the encoding
 		 *
-		 * @param encoding the encoding
+		 * @param encoding
+		 *            the encoding
 		 * @return the builder
 		 */
 		public AnalysisFastQCBuilder encoding(final String encoding) {
@@ -314,10 +331,12 @@ public class AnalysisFastQC extends Analysis {
 	}
 
 	/**
-	 * Box and whisker plot showing per-base quality scores as a PNG-formatted image in a byte array.
+	 * Box and whisker plot showing per-base quality scores as a PNG-formatted
+	 * image in a byte array.
 	 *
 	 * @return a PNG-formatted byte array for per-base quality score.
-	 * @throws IOException if the file does not exist
+	 * @throws IOException
+	 *             if the file does not exist
 	 */
 	@JsonIgnore
 	public byte[] getPerBaseQualityScoreChart() throws IOException {
@@ -325,10 +344,12 @@ public class AnalysisFastQC extends Analysis {
 	}
 
 	/**
-	 * Line chartshowing per-sequence quality scores as a PNG-formatted image in a byte array.
+	 * Line chartshowing per-sequence quality scores as a PNG-formatted image in
+	 * a byte array.
 	 *
 	 * @return a PNG-formatted byte array for per-sequence quality score.
-	 * @throws IOException if the file does not exist
+	 * @throws IOException
+	 *             if the file does not exist
 	 */
 	@JsonIgnore
 	public byte[] getPerSequenceQualityScoreChart() throws IOException {
@@ -336,10 +357,12 @@ public class AnalysisFastQC extends Analysis {
 	}
 
 	/**
-	 * Line chartshowing duplication-level as a PNG-formatted image in a byte array.
+	 * Line chartshowing duplication-level as a PNG-formatted image in a byte
+	 * array.
 	 *
 	 * @return a PNG-formatted byte array for duplication levels.
-	 * @throws IOException if the file does not exist
+	 * @throws IOException
+	 *             if the file does not exist
 	 */
 	@JsonIgnore
 	public byte[] getDuplicationLevelChart() throws IOException {
@@ -389,7 +412,8 @@ public class AnalysisFastQC extends Analysis {
 	/**
 	 * Read the bytes for a fastqc image
 	 *
-	 * @param key the file key to read
+	 * @param key
+	 *            the file key to read
 	 * @return the bytes for the file
 	 */
 	private byte[] getBytesForFile(String key) {
@@ -397,10 +421,9 @@ public class AnalysisFastQC extends Analysis {
 		byte[] bytes = new byte[0];
 		try {
 			bytes = Files.readAllBytes(chart.getFile());
-		} catch (IOException e){
+		} catch (IOException e) {
 			logger.error("Unable to read fastqc file.", e);
-		} finally {
-			return bytes;
 		}
+		return bytes;
 	}
 }

@@ -12,7 +12,8 @@ import {
   addUserGroupToProject,
   getAvailableGroupsForProject,
 } from "../../apis/projects/user-groups";
-import { useRoles } from "../../contexts/roles-context";
+import { useMetadataRoles } from "../../contexts/metadata-roles-context";
+import { useProjectRoles } from "../../contexts/project-roles-context";
 import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
 import { SPACE_XS } from "../../styles/spacing";
 
@@ -33,6 +34,8 @@ export function AddGroupButton({
   onGroupAdded = () => Function.prototype,
   projectId,
 }) {
+  const { roles: metadataRoles } = useMetadataRoles();
+  const [metadataRole, setMetadataRole] = useState("LEVEL_1");
   /*
   Required a reference to the user select input so that focus can be set
   to it when the window opens.
@@ -42,7 +45,7 @@ export function AddGroupButton({
   /*
   Get a list of project roles
    */
-  const { roles } = useRoles();
+  const { roles } = useProjectRoles();
 
   /*
   Whether the modal to add a user is visible
@@ -115,7 +118,12 @@ export function AddGroupButton({
   Add the user group
    */
   const addUserGroup = () => {
-    addUserGroupToProject({ projectId, groupId, role }).then((message) => {
+    addUserGroupToProject({
+      projectId,
+      groupId,
+      role,
+      metadataRole,
+    }).then((message) => {
       onGroupAdded();
       notification.success({ message });
       form.resetFields();
@@ -144,7 +152,11 @@ export function AddGroupButton({
         onOk={addUserGroup}
         okText={i18n("AddGroupButton.group.okText")}
       >
-        <Form form={form} layout="vertical" initialValues={{ role }}>
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={{ role, metadataRole }}
+        >
           <Form.Item
             label={i18n("AddGroupButton.group.label")}
             help={i18n("AddGroupButton.group.label-help")}
@@ -166,9 +178,30 @@ export function AddGroupButton({
           <Form.Item label={i18n("AddGroupButton.group.role")} name="role">
             <Radio.Group
               style={{ display: "flex" }}
-              onChange={(e) => setRole(e.target.value)}
+              onChange={(e) => {
+                setRole(e.target.value);
+                if (e.target.value === "PROJECT_OWNER") {
+                  setMetadataRole("LEVEL_4");
+                }
+              }}
             >
               {roles.map((role) => (
+                <Radio.Button key={role.value} value={role.value}>
+                  {role.label}
+                </Radio.Button>
+              ))}
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item
+            label={i18n("AddMemberButton.modal.metadataRole")}
+            name="metadataRole"
+          >
+            <Radio.Group
+              style={{ display: "flex" }}
+              onChange={(e) => setMetadataRole(e.target.value)}
+              disabled={role === "PROJECT_OWNER"}
+            >
+              {metadataRoles.map((role) => (
                 <Radio.Button key={role.value} value={role.value}>
                   {role.label}
                 </Radio.Button>

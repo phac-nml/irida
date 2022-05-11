@@ -12,14 +12,20 @@ public class NewMemberRequest {
 	/*
 	Role to add the user to the project as
 	 */
-	private String role;
+	private String projectRole;
+
+	/*
+	Project metadata role to assign to new user user
+	 */
+	private String metadataRole;
 
 	public NewMemberRequest() {
 	}
 
-	public NewMemberRequest(Long id, String role) {
+	public NewMemberRequest(Long id, String projectRole, String metadataRole) {
 		this.id = id;
-		this.role = role;
+		this.projectRole = projectRole;
+		this.metadataRole = metadataRole;
 	}
 
 	public Long getId() {
@@ -30,11 +36,19 @@ public class NewMemberRequest {
 		this.id = id;
 	}
 
-	public String getRole() {
-		return role;
+	public String getProjectRole() {
+		return projectRole;
 	}
 
-	public void setRole(String role) {
-		this.role = role;
+	public void setProjectRole(String projectRole) {
+		this.projectRole = projectRole;
+	}
+
+	public String getMetadataRole() {
+		return metadataRole;
+	}
+
+	public void setMetadataRole(String metadataRole) {
+		this.metadataRole = metadataRole;
 	}
 }

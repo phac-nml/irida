@@ -1,1 +1,1 @@
-export { OntologySelect } from "./OntologySelect";
+export { OntologyInput } from "./OntologyInput";

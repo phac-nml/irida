@@ -5,6 +5,8 @@ import { RemoteApiTable } from "../admin/components/remote-connections/RemoteApi
 import { AddNewButton } from "../../components/Buttons/AddNewButton";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { PagedTableProvider } from "../../components/ant.design/PagedTable";
+import { CreateRemoteApiModal } from "./CreateRemoteApiModal";
+import { isAdmin } from "../../utilities/role-utilities";
 
 /**
  * React component to render Remote APIs page.
@@ -13,21 +15,20 @@ import { PagedTableProvider } from "../../components/ant.design/PagedTable";
  */
 export function RemoteApiPage({}) {
   return (
-    <PageWrapper
-      title={i18n("RemoteApi.title")}
-      headerExtras={
-        window.PAGE.admin ? (
-          <AddNewButton
-            text={i18n("remoteapi.add")}
-            href={setBaseUrl("remote_api/create")}
-          />
-        ) : null
-      }
-    >
-      <PagedTableProvider url={setBaseUrl("ajax/remote_api/list")}>
+    <PagedTableProvider url={setBaseUrl("ajax/remote_api/list")}>
+      <PageWrapper
+        title={i18n("RemoteApi.title")}
+        headerExtras={
+          isAdmin() ? (
+            <CreateRemoteApiModal>
+              <AddNewButton text={i18n("RemoteApi.add")} />
+            </CreateRemoteApiModal>
+          ) : null
+        }
+      >
         <RemoteApiTable />
-      </PagedTableProvider>
-    </PageWrapper>
+      </PageWrapper>
+    </PagedTableProvider>
   );
 }
 

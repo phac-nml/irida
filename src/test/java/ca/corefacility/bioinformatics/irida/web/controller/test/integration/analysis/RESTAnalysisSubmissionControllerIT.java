@@ -14,17 +14,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.IanaLinkRelations;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
@@ -32,15 +27,12 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
+import ca.corefacility.bioinformatics.irida.annotation.RestIntegrationTest;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTAnalysisSubmissionController;
 import ca.corefacility.bioinformatics.irida.web.spring.view.NewickFileView;
 
-@Tag("IntegrationTest") @Tag("Rest")
-@ActiveProfiles("it")
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@Import(IridaIntegrationTestUriConfig.class)
+@RestIntegrationTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/analysis/RESTAnalysisSubmissionControllerIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
@@ -52,38 +44,41 @@ public class RESTAnalysisSubmissionControllerIT {
 	public static final String ANALYSIS_BASE = "/api/analysisSubmissions";
 	public static String ANALYSIS_PHYLOGENOMICS_BASE = "/api/analysisSubmissions/analysisType/phylogenomics";
 	public static String ANALYSIS_SISTR_BASE = "/api/analysisSubmissions/analysisType/sistr";
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(RESTAnalysisSubmissionControllerIT.class);
-	
+
 	@Autowired
 	@Qualifier("outputFileBaseDirectory")
 	private Path outputFileBaseDirectory;
-	
+
 	@Test
 	public void testReadAllSubmissionsAdmin() {
-		asAdmin().expect().body("resource.resources.identifier", hasItems("1", "2", "3", "4")).when().get(ANALYSIS_BASE);
+		asAdmin().expect().body("resource.resources.identifier", hasItems("1", "2", "3", "4")).when()
+				.get(ANALYSIS_BASE);
 	}
-	
+
 	@Test
 	public void testReadAllSubmissionsUser() {
 		asUser().expect().body("resource.resources.identifier", hasItems("3", "4")).when().get(ANALYSIS_BASE);
 	}
-	
+
 	@Test
 	public void testReadAllSubmissionsByPhylogenomicsTypeAdmin() {
-		asAdmin().expect().body("resource.resources.identifier", hasItems("1", "2")).when().get(ANALYSIS_PHYLOGENOMICS_BASE);
+		asAdmin().expect().body("resource.resources.identifier", hasItems("1", "2")).when()
+				.get(ANALYSIS_PHYLOGENOMICS_BASE);
 	}
-	
+
 	@Test
 	public void testReadAllSubmissionsBySistrTypeAdmin() {
 		asAdmin().expect().body("resource.resources.identifier", hasItems("3", "4")).when().get(ANALYSIS_SISTR_BASE);
 	}
-	
+
 	@Test
 	public void testReadAllSubmissionsByPhylogenomicsTypeUser() {
-		asUser().expect().body("resource.resources.identifier", Matchers.hasSize(0)).when().get(ANALYSIS_PHYLOGENOMICS_BASE);
+		asUser().expect().body("resource.resources.identifier", Matchers.hasSize(0)).when()
+				.get(ANALYSIS_PHYLOGENOMICS_BASE);
 	}
-	
+
 	@Test
 	public void testReadAllSubmissionsBySistrTypeUser() {
 		asUser().expect().body("resource.resources.identifier", hasItems("3", "4")).when().get(ANALYSIS_SISTR_BASE);
@@ -93,7 +88,8 @@ public class RESTAnalysisSubmissionControllerIT {
 	public void testReadSubmission() {
 		asAdmin().expect().body("resource.name", equalTo("another analysis")).and()
 				.body("resource.analysisState", equalTo(AnalysisState.COMPLETED.toString()))
-				.body("resource.links.rel", hasItems(IanaLinkRelations.SELF.value(), RESTAnalysisSubmissionController.ANALYSIS_REL))
+				.body("resource.links.rel",
+						hasItems(IanaLinkRelations.SELF.value(), RESTAnalysisSubmissionController.ANALYSIS_REL))
 				.when().get(ANALYSIS_BASE + "/1");
 	}
 
@@ -106,18 +102,15 @@ public class RESTAnalysisSubmissionControllerIT {
 
 	@Test
 	public void testGetAnalysis() {
-		asAdmin()
-				.expect()
-				.body("resource.executionManagerAnalysisId", equalTo("XYZABC"))
-				.and()
+		asAdmin().expect().body("resource.executionManagerAnalysisId", equalTo("XYZABC")).and()
 				.body("resource.links.rel",
-						hasItems(IanaLinkRelations.SELF.value(), RESTAnalysisSubmissionController.FILE_REL + "/tree")).when()
-				.get(ANALYSIS_BASE + "/1/analysis");
+						hasItems(IanaLinkRelations.SELF.value(), RESTAnalysisSubmissionController.FILE_REL + "/tree"))
+				.when().get(ANALYSIS_BASE + "/1/analysis");
 	}
 
 	@Test
 	public void testGetOutputFile() throws IOException {
-		
+
 		final Path snpTree = Paths.get("src/test/resources/files/snp_tree.tree");
 		try {
 			Files.createDirectories(outputFileBaseDirectory.resolve(snpTree.getParent()));
@@ -129,10 +122,11 @@ public class RESTAnalysisSubmissionControllerIT {
 		} catch (final FileAlreadyExistsException e) {
 			logger.info("Already moved snp tree into directory.");
 		}
-		
+
 		asAdmin().expect().body("resource.executionManagerFileId", equalTo("123-456-789")).and()
-				.body("resource.label", equalTo("snp_tree.tree")).body("resource.links.rel", hasItems(IanaLinkRelations.SELF.value()))
-				.when().get(ANALYSIS_BASE + "/1/analysis/file/1");
+				.body("resource.label", equalTo("snp_tree.tree"))
+				.body("resource.links.rel", hasItems(IanaLinkRelations.SELF.value())).when()
+				.get(ANALYSIS_BASE + "/1/analysis/file/1");
 
 		// get the tree file
 		asAdmin().given().header("Accept", NewickFileView.DEFAULT_CONTENT_TYPE).expect().body(containsString("c6706"))

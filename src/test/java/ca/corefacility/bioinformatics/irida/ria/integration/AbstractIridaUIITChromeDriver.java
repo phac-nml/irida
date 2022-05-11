@@ -26,7 +26,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import ca.corefacility.bioinformatics.irida.IridaApplication;
 import ca.corefacility.bioinformatics.irida.config.IridaIntegrationTestUriConfig;
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestFilesystemConfig;
 import ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -42,9 +44,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Common functionality to all UI integration tests.
  */
-@Tag("IntegrationTest") @Tag("UI")
+@Tag("IntegrationTest")
+@Tag("UI")
 @ActiveProfiles("it")
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = { IridaApplication.class,
+		IridaApiTestFilesystemConfig.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
 @Import(IridaIntegrationTestUriConfig.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
@@ -60,52 +64,52 @@ public class AbstractIridaUIITChromeDriver {
 	private static final String CHROMEDRIVER_PROP_KEY = "webdriver.chrome.driver";
 	private static final String CHROMEDRIVER_LOCATION = "src/main/webapp/chromedriver";
 
-    @RegisterExtension
-    public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
+	@RegisterExtension
+	public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
 
-    /**
-     * Code to execute before *each* test.
-     */
-    @BeforeEach
-    public void setUpTest() throws IOException {
-    	// logout before everything else.
-    	LoginPage.logout(driver());
-    }
+	/**
+	 * Code to execute before *each* test.
+	 */
+	@BeforeEach
+	public void setUpTest() throws IOException {
+		// logout before everything else.
+		LoginPage.logout(driver());
+	}
 
-    /**
-     * Code to execute after *each* test.
-     */
-    @AfterEach
-    public void tearDown() {
-    	// NOTE: DO **NOT** log out in this method. This method happens because
-    	// the @After method happens immediately after test failure, but before
-    	// the @Rule TestWatcher checks the outcome of the test. We want to take
-    	// a screenshot of the application state **before** logging out.
-    }
+	/**
+	 * Code to execute after *each* test.
+	 */
+	@AfterEach
+	public void tearDown() {
+		// NOTE: DO **NOT** log out in this method. This method happens because
+		// the @After method happens immediately after test failure, but before
+		// the @Rule TestWatcher checks the outcome of the test. We want to take
+		// a screenshot of the application state **before** logging out.
+	}
 
-    /**
-     * Code to execute *once* after the class is finished.
-     */
-    @AfterAll
-    public static void destroy() {
-        if (isSingleTest) {
-            logger.debug("Closing ChromeDriver for single test class.");
-            IntegrationUITestListener.stopWebDriver();
-        }
-    }
+	/**
+	 * Code to execute *once* after the class is finished.
+	 */
+	@AfterAll
+	public static void destroy() {
+		if (isSingleTest) {
+			logger.debug("Closing ChromeDriver for single test class.");
+			IntegrationUITestListener.stopWebDriver();
+		}
+	}
 
-    /**
-     * Get a reference to the {@link WebDriver} used in the tests.
-     * @return the instance of {@link WebDriver} used in the tests.
-     */
-    public static WebDriver driver() {
-        if (IntegrationUITestListener.driver() == null) {
+	/**
+	 * Get a reference to the {@link WebDriver} used in the tests.
+	 * 
+	 * @return the instance of {@link WebDriver} used in the tests.
+	 */
+	public static WebDriver driver() {
+		if (IntegrationUITestListener.driver() == null) {
 			final String chromeDriverProp = System.getProperty(CHROMEDRIVER_PROP_KEY);
 			System.setProperty(CHROMEDRIVER_PROP_KEY,
 					Strings.isNullOrEmpty(chromeDriverProp) ? CHROMEDRIVER_LOCATION : chromeDriverProp);
-			logger.debug(
-					"Starting ChromeDriver for a single test class. Using `chromedriver` at '" + System.getProperty(
-							CHROMEDRIVER_PROP_KEY) + "'");
+			logger.debug("Starting ChromeDriver for a single test class. Using `chromedriver` at '"
+					+ System.getProperty(CHROMEDRIVER_PROP_KEY) + "'");
 			isSingleTest = true;
 			IntegrationUITestListener.startWebDriver();
 		}
@@ -115,12 +119,18 @@ public class AbstractIridaUIITChromeDriver {
 	}
 
 	/**
-	 * Method to use on any page to check to ensure that internationalization messages are being
-	 * automatically loaded onto the page.
+	 * Method to use on any page to check to ensure that internationalization
+	 * messages are being automatically loaded onto the page.
 	 *
-	 * @param page    - the instance of {@link AbstractPage} to check for internationalization.
-	 * @param entries - a {@link List} of bundle names.  This will correspond to the loaded webpack bundles.
-	 * @param header  - Expected text for the main heading on the page.  Needs to have class name `t-main-heading`
+	 * @param page
+	 *            - the instance of {@link AbstractPage} to check for
+	 *            internationalization.
+	 * @param entries
+	 *            - a {@link List} of bundle names. This will correspond to the
+	 *            loaded webpack bundles.
+	 * @param header
+	 *            - Expected text for the main heading on the page. Needs to
+	 *            have class name `t-main-heading`
 	 */
 	public void checkTranslations(AbstractPage page, List<String> entries, String header) {
 		// Always check for app :)
@@ -140,24 +150,23 @@ public class AbstractIridaUIITChromeDriver {
 		private static final Logger logger = LoggerFactory.getLogger(ScreenshotOnFailureWatcher.class);
 
 		/**
-    	 * {@inheritDoc}
-    	 */
-    	@Override
-    	public void testFailed(ExtensionContext context, Throwable t) {
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void testFailed(ExtensionContext context, Throwable t) {
 			logger.debug("Handling exception of type [" + t.getClass() + "], taking screenshot: " + t.getMessage(), t);
-    		final TakesScreenshot takesScreenshot = (TakesScreenshot) driver();
+			final TakesScreenshot takesScreenshot = (TakesScreenshot) driver();
 
-    		final Path screenshot = Paths.get(takesScreenshot.getScreenshotAs(OutputType.FILE).toURI());
+			final Path screenshot = Paths.get(takesScreenshot.getScreenshotAs(OutputType.FILE).toURI());
 
-    		try {
-				final Path destination = Files.createTempFile(
-						"irida-" + context.getRequiredTestClass().getSimpleName() + "#" + context.getRequiredTestMethod().getName(),
-						".png");
-    			Files.move(screenshot, destination, StandardCopyOption.REPLACE_EXISTING);
-    			logger.info("Screenshot deposited at: [" + destination.toString() + "]");
-    		} catch (final IOException e) {
-    			logger.error("Unable to write screenshot out.", e);
-    		}
-    	}
-    }
+			try {
+				final Path destination = Files.createTempFile("irida-" + context.getRequiredTestClass().getSimpleName()
+						+ "#" + context.getRequiredTestMethod().getName(), ".png");
+				Files.move(screenshot, destination, StandardCopyOption.REPLACE_EXISTING);
+				logger.info("Screenshot deposited at: [" + destination.toString() + "]");
+			} catch (final IOException e) {
+				logger.error("Unable to write screenshot out.", e);
+			}
+		}
+	}
 }

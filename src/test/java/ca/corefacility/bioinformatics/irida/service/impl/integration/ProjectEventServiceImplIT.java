@@ -9,20 +9,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectWithoutOwnerException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.event.ProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
@@ -36,15 +32,10 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
-@Tag("IntegrationTest") @Tag("Service")
-@SpringBootTest
-@ActiveProfiles("it")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
-		WithSecurityContextTestExecutionListener.class })
+@ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/ProjectEventServiceImplIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectEventServiceImplIT {
@@ -66,7 +57,7 @@ public class ProjectEventServiceImplIT {
 		Project project = projectService.read(1L);
 		User user = userService.read(2L);
 
-		projectService.addUserToProject(project, user, ProjectRole.PROJECT_USER);
+		projectService.addUserToProject(project, user, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1);
 
 		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, PageRequest.of(0, 10));
 
@@ -85,7 +76,7 @@ public class ProjectEventServiceImplIT {
 		Project project = projectService.read(1L);
 		User user = userService.read(1L);
 
-		projectService.updateUserProjectRole(project, user, ProjectRole.PROJECT_USER);
+		projectService.updateUserProjectRole(project, user, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1);
 
 		Page<ProjectEvent> eventsForProject = projectEventService.getEventsForProject(project, PageRequest.of(0, 10));
 
@@ -162,10 +153,8 @@ public class ProjectEventServiceImplIT {
 		Project project1 = projectService.read(1L);
 		Project project3 = projectService.read(3L);
 
-		Page<ProjectEvent> eventsForProject1 = projectEventService
-				.getEventsForProject(project1, PageRequest.of(0, 10));
-		Page<ProjectEvent> eventsForProject2 = projectEventService
-				.getEventsForProject(project3, PageRequest.of(0, 10));
+		Page<ProjectEvent> eventsForProject1 = projectEventService.getEventsForProject(project1, PageRequest.of(0, 10));
+		Page<ProjectEvent> eventsForProject2 = projectEventService.getEventsForProject(project3, PageRequest.of(0, 10));
 
 		assertEquals(0L, eventsForProject1.getTotalElements());
 		assertEquals(1L, eventsForProject2.getTotalElements());
@@ -200,12 +189,12 @@ public class ProjectEventServiceImplIT {
 	@Test
 	public void testGetEventsForIndividualUser() {
 		User user1 = userService.read(1L);
-		
+
 		Page<ProjectEvent> events1 = projectEventService.getEventsForUser(user1, PageRequest.of(0, 10));
-		
+
 		assertEquals(1L, events1.getTotalElements());
 	}
-	
+
 	@WithMockUser(username = "tom", password = "password1", roles = "ADMIN")
 	@Test
 	public void testGetEventsAfterDate() throws ParseException {
@@ -218,7 +207,7 @@ public class ProjectEventServiceImplIT {
 
 		assertEquals(1, events.size(), "1 event should be returned");
 	}
-	
+
 	@WithMockUser(username = "tom", password = "password1", roles = "ADMIN")
 	@Test
 	public void testGetEmptyEventsAfterDate() throws ParseException {

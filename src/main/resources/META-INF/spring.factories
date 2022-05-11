@@ -1,5 +1,2 @@
 org.springframework.boot.env.EnvironmentPostProcessor=\
 ca.corefacility.bioinformatics.irida.config.environment.IridaEnvironmentPostProcessor
-
-org.springframework.boot.env.PropertySourceLoader=\
-ca.corefacility.bioinformatics.irida.config.IridaConfPropertySourceLoader

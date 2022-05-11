@@ -24,7 +24,7 @@ public class ProjectDetailsPage extends AbstractPage {
 	@FindBy(className = "t-project-id")
 	private WebElement projectIdLabel;
 
-	@FindBy(className = "t-project-organism")
+	@FindBy(css = ".t-project-organism > span")
 	private WebElement projectOrganismLabel;
 
 

@@ -1,35 +1,24 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.springframework.org/security/tags"
-      data-layout-decorate="~{template/page}">
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        data-layout-decorate="~{template/page}"
+>
 <head>
-  <title th:text="#{dashboard.title}">THIS IS SOMETHING WRONG</title>
-  <webpacker:css entry="dashboard" />
+    <title th:text="#{dashboard.title}"></title>
+    <webpacker:css entry="dashboard" />
 </head>
-<body ng-app="irida.dashboard">
-  <div class="row" style="margin-top: 1em;" layout:fragment="page">
-    <div class="col-md-8 col-lg-6 col-sm-12" style="float: none; margin: 0 auto;">
-      <section class="panel panel-primary">
-        <div class="panel-heading clearfix">
-          <h4 class="pull-left" th:text="#{event.title}">_Recent Activities_</h4>
-          <div class="btn-group pull-right">
-            <a class="btn btn-primary btn-sm" th:href="@{/events/admin}" sec:authorize="hasRole('ROLE_ADMIN')"
-               th:text="#{event.admin.link}">_All Projects_
-            </a>
-          </div>
-        </div>
-        <div class="panel-body">
-          <div class="form-group">
-              <events data:url="@{/events/current_user}"></events>
-          </div>
-        </div>
-      </section>
-    </div>
-  </div>
+<body>
+<div id="root" style="height: 100%;" layout:fragment="page">
+    <!--
+             This is a DOM element for React to render the dashboard into.
+             See  src/main/webapp/resources/js/pages/dashboard/Dashboard.jsx
+          -->
+</div>
 
 <th:block layout:fragment="scripts">
-  <webpacker:js entry="dashboard" />
+    <webpacker:js  entry="dashboard" />
 </th:block>
 </body>
 </html>
+

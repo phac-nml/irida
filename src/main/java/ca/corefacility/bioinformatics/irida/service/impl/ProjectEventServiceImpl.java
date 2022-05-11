@@ -9,7 +9,6 @@ import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -56,10 +55,8 @@ public class ProjectEventServiceImpl extends CRUDServiceImpl<Long, ProjectEvent>
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@Override
-	public Page<ProjectEvent> list(int page, int size, Direction order, String... sortProperties)
-			throws IllegalArgumentException {
-		return super.list(page, size, order, sortProperties);
+	public Page<ProjectEvent> getAllProjectsEvents(Pageable pageable) {
+		return repository.getAllProjectsEvents(pageable);
 	}
 
 	/**

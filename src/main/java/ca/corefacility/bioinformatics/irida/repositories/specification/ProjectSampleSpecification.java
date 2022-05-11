@@ -53,10 +53,11 @@ public class ProjectSampleSpecification {
 			}
 			// Check for the table search.
 			// This can be expanded in future to search any attribute on the sample (e.g. description)
-			// Underscores within the search term are escaped as the underscores were being treated the same 
+			// Underscores within the search term are escaped as the underscores were being treated the same
 			// as hyphens.
 			if (!Strings.isNullOrEmpty(searchTerm)) {
-				predicates.add(criteriaBuilder.like(root.get("sample").get("sampleName"), "%" + searchTerm.replace("_", "\\_") + "%"));
+				predicates.add(criteriaBuilder.like(root.get("sample").get("sampleName"),
+						"%" + searchTerm.replace("_", "\\_") + "%"));
 			}
 			// Check for organism
 			if (!Strings.isNullOrEmpty(organism)) {
@@ -64,12 +65,10 @@ public class ProjectSampleSpecification {
 			}
 			// Check if there is a minimum search date
 			if (minDate != null) {
-				predicates.add(criteriaBuilder.greaterThanOrEqualTo(
-						root.get("sample").get("modifiedDate"), minDate));
+				predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("sample").get("modifiedDate"), minDate));
 			}
 			if (maxDate != null) {
-				predicates.add(criteriaBuilder
-						.lessThanOrEqualTo(root.get("sample").get("modifiedDate"), maxDate));
+				predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("sample").get("modifiedDate"), maxDate));
 			}
 			return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 		};

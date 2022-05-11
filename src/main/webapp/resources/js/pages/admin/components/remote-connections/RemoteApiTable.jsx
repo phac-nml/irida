@@ -3,12 +3,11 @@ import {
   PagedTable,
   PagedTableContext,
 } from "../../../../components/ant.design/PagedTable";
-import {
-  formatInternationalizedDateTime
-} from "../../../../utilities/date-utilities";
+import { Button, Popconfirm, Space, Typography } from "antd";
+import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import { isAdmin } from "../../../../utilities/role-utilities";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { RemoteApiStatus } from "./RemoteApiStatus";
+import { deleteRemoteApi } from "../../../../apis/remote-api/remote-api";
 
 /**
  * Render a table to display remote API's
@@ -18,22 +17,19 @@ import { RemoteApiStatus } from "./RemoteApiStatus";
 export function RemoteApiTable() {
   const { updateTable } = useContext(PagedTableContext);
 
+  const removeConnection = (id) => {
+    deleteRemoteApi({ id }).then(updateTable);
+  };
+
+  const admin = isAdmin();
+
   const columnDefs = [
     {
-      title: i18n("remoteapi.name"),
+      title: i18n("RemoteApi.name"),
       key: "name",
       dataIndex: "name",
-      render(text, record) {
-        return isAdmin() ? (
-          <a
-            href={setBaseUrl(`/admin/remote_api/${record.id}`)}
-            className="t-api-name"
-          >
-            {text}
-          </a>
-        ) : (
-          <span className="t-api-name">{text}</span>
-        );
+      render(text) {
+        return <span className="t-api-name">{text}</span>;
       },
     },
     {
@@ -45,14 +41,59 @@ export function RemoteApiTable() {
       },
     },
     {
-      title: i18n("remoteapi.status"),
+      title: "",
       align: "right",
-      width: 330,
+      fixed: "right",
+      width: 430,
       render(text, item) {
-        return <RemoteApiStatus api={item} updateTable={updateTable} />;
+        return (
+          <Space>
+            <RemoteApiStatus api={item} updateTable={updateTable} />
+            {admin && (
+              <Popconfirm
+                title={i18n("RemoteApi.delete-confirm")}
+                placement="topRight"
+                onConfirm={() => removeConnection(item.id)}
+                okButtonProps={{ className: "t-delete-confirm" }}
+              >
+                <Button size="small" type="link">
+                  {i18n("RemoteApi.delete")}
+                </Button>
+              </Popconfirm>
+            )}
+          </Space>
+        );
       },
     },
   ];
+
+  if (admin) {
+    columnDefs.splice(
+      2,
+      0,
+      {
+        title: i18n("RemoteApi.serviceurl"),
+        key: "serviceURI",
+        dataIndex: "serviceURI",
+      },
+      {
+        title: i18n("RemoteApi.clientid"),
+        key: "clientId",
+        dataIndex: "clientId",
+        render(text) {
+          return <Typography.Text copyable>{text}</Typography.Text>;
+        },
+      },
+      {
+        title: i18n("RemoteApi.secret"),
+        key: "clientSecret",
+        dataIndex: "clientSecret",
+        render(text) {
+          return <Typography.Text copyable>{text}</Typography.Text>;
+        },
+      }
+    );
+  }
 
   return <PagedTable className="t-remoteapi-table" columns={columnDefs} />;
 }

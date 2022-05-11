@@ -6,15 +6,14 @@ import {
   removeMemberFromUserGroup,
   updateUserRoleOnUserGroups,
 } from "../../../apis/users/groups";
-import {
-  AddMemberButton,
-  RemoveTableItemButton,
-} from "../../../components/Buttons";
+import { RemoveTableItemButton } from "../../../components/Buttons";
 import { GroupRole } from "../../../components/roles/GroupRole";
 import { SPACE_XS } from "../../../styles/spacing";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { stringSorter } from "../../../utilities/table-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import { AddUserToGroupButton } from "../../admin/components/user-groups/AddUserToGroupButton";
+import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 
 /**
  * Custom sorter for the name column since this is NOT paged server side.
@@ -37,6 +36,12 @@ export default function UserGroupMembersTable({
   groupId,
   updateTable,
 }) {
+  const [total] = React.useState(members?.length);
+
+  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
+    total,
+  ]);
+
   const columns = [
     {
       dataIndex: "name",
@@ -129,7 +134,7 @@ export default function UserGroupMembersTable({
       <div style={{ display: "flex", marginBottom: SPACE_XS }}>
         <div style={{ flex: 1 }}>
           {canManage ? (
-            <AddMemberButton
+            <AddUserToGroupButton
               defaultRole="GROUP_MEMBER"
               label={i18n("UserGroupMembersTable.add")}
               modalTitle={i18n("UserGroupMembersTable.add.title")}
@@ -141,7 +146,7 @@ export default function UserGroupMembersTable({
         </div>
       </div>
       <Table
-        pagination={{ hideOnSinglePage: true }}
+        pagination={paginationOptions}
         columns={columns}
         dataSource={members}
       />

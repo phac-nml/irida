@@ -19,6 +19,9 @@ import { AdminContent } from "./AdminContent";
 import AdminHeader from "./AdminHeader";
 import AdminSideMenu from "./AdminSideMenu";
 
+import store from '../../user/store'
+import { Provider } from 'react-redux'
+
 const { Content } = Layout;
 
 const AdvancedStatistics = lazy(() =>
@@ -46,9 +49,6 @@ const AnnouncementAdminPage = lazy(() =>
 const AdminNcbiExportsPage = lazy(() =>
   import("./ncbi-exports/AdminNcbiExportsPage")
 );
-const AdminRemoteApiDetailsPage = lazy(() =>
-  import("./remote-connections/RemoteConnectionDetails")
-);
 
 export default function Admin() {
   const DEFAULT_URL = setBaseUrl("/admin");
@@ -58,6 +58,7 @@ export default function Admin() {
    * the components are only loaded if the corresponding tab is clicked
    */
   return (
+  <Provider store={store}>
     <Layout>
       <AdminSideMenu />
       <Layout>
@@ -91,10 +92,6 @@ export default function Admin() {
                   element={<AdminRemoteApiPage />}
                 />
                 <Route
-                  path={`${ADMIN.REMOTEAPI}/:remoteId`}
-                  element={<AdminRemoteApiDetailsPage />}
-                />
-                <Route
                   path={ADMIN.SEQUENCINGRUNS}
                   element={<AdminSequencingRunsPage />}
                 />
@@ -112,5 +109,6 @@ export default function Admin() {
         </Content>
       </Layout>
     </Layout>
+  </Provider>
   );
 }

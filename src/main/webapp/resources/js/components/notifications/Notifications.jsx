@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, message, notification } from "antd";
+import { Button, notification } from "antd";
 
 export const MESSAGE_EVENT = "EVENT/MESSAGE";
 export const NOTIFICATION_EVENT = "EVENT/NOTIFICATION";
@@ -16,17 +16,8 @@ export function Notifications() {
   });
 
   function showMessage({ detail }) {
-    const { text, type } = detail;
-    switch (type) {
-      case "info":
-        message.warning(text);
-        break;
-      case "error":
-        message.error(text);
-        break;
-      default:
-        message.success(text);
-    }
+    const { text, type, duration } = detail;
+    notification.open({ type, message: text, duration });
   }
 
   function showUndoNotification({ detail }) {
@@ -51,11 +42,9 @@ export function Notifications() {
         >
           UNDO
         </Button>
-      )
+      ),
     });
   }
 
   return <div />;
 }
-
-Notifications.propTypes = {};

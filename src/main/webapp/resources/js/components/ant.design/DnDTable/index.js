@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Table } from "antd";
 import { blue6 } from "../../../styles/colors";
 import React from "react";
-import { createDndContext, DndProvider } from "react-dnd";
+import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import update from "immutability-helper";
 import { DraggableBodyRow } from "./DraggableBodyRow";
@@ -16,8 +16,6 @@ const DraggableTable = styled(Table)`
     border-top: 2px dashed ${blue6};
   }
 `;
-
-const RNDContext = createDndContext(HTML5Backend);
 
 /**
  * React component to render and Ant Design table with drag and drop rows for sorting
@@ -37,8 +35,6 @@ export default function DnDTable({
   onRowUpdate = Function.prototype,
   ...props
 }) {
-  const manager = React.useRef(RNDContext);
-
   const moveRow = React.useCallback(
     (dragIndex, hoverIndex) => {
       const dragRow = data[dragIndex];
@@ -55,7 +51,7 @@ export default function DnDTable({
   );
 
   return (
-    <DndProvider manager={manager.current.dragDropManager}>
+    <DndProvider backend={HTML5Backend}>
       <DraggableTable
         size={size}
         pagination={false}
