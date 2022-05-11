@@ -100,7 +100,7 @@ public class UIAssociatedProjectsService {
 	 * @param locale              currently logged in users locale
 	 * @throws UIAddAssociatedProjectException if the project or associated project cannot be found
 	 */
-	public void addAssociatedProject(long projectId, long associatedProjectId, Locale locale)
+	public void addAssociatedProject(Long projectId, Long associatedProjectId, Locale locale)
 			throws UIAddAssociatedProjectException {
 		try {
 			Project project = projectService.read(projectId);
@@ -120,7 +120,7 @@ public class UIAssociatedProjectsService {
 	 * @param locale              current users locale
 	 * @throws UIRemoveAssociatedProjectException if there is an issue removing the associated project
 	 */
-	public void removeAssociatedProject(long projectId, long associatedProjectId, Locale locale)
+	public void removeAssociatedProject(Long projectId, Long associatedProjectId, Locale locale)
 			throws UIRemoveAssociatedProjectException {
 		try {
 			Project project = projectService.read(projectId);
