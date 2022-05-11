@@ -41,23 +41,23 @@ public class UIProjectSampleService {
 	}
 
 	/**
-	 * Validate a sample name to ensure can be stored correctly.  Must be:
-	 * - at least 3 characters long,
-	 * - no special characters (including spaces)
-	 * - name must not already exist for a sample in the project
+	 * Validate a sample name to ensure can be stored correctly.  Must be: - at least 3 characters Long, - no special
+	 * characters (including spaces) - name must not already exist for a sample in the project
 	 *
 	 * @param name      Name to validate.
 	 * @param projectId current project identifier
 	 * @param locale    current users locale
 	 * @return result of the validation.
 	 */
-	public ResponseEntity<SampleNameValidationResponse> validateNewSampleName(String name, long projectId, Locale locale) {
+	public ResponseEntity<SampleNameValidationResponse> validateNewSampleName(String name, Long projectId,
+			Locale locale) {
 		int SAMPLE_NAME_MIN_LENGTH = 3;
 
 		// Make sure it has the correct length
 		if (name.length() <= SAMPLE_NAME_MIN_LENGTH) {
 			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY.value())
-					.body(new SampleNameValidationResponse("error", messageSource.getMessage("server.AddSample.error.length", new Object[] {}, locale)));
+					.body(new SampleNameValidationResponse("error",
+							messageSource.getMessage("server.AddSample.error.length", new Object[] {}, locale)));
 		}
 
 		/*
@@ -88,10 +88,10 @@ public class UIProjectSampleService {
 	 *
 	 * @param request   {@link CreateSampleRequest} details about the sample to create
 	 * @param projectId Identifier for the current project
-	 * @param locale Users current locale
+	 * @param locale    Users current locale
 	 * @return result of creating the sample
 	 */
-	public ResponseEntity<AjaxResponse> createSample(CreateSampleRequest request, long projectId, Locale locale) {
+	public ResponseEntity<AjaxResponse> createSample(CreateSampleRequest request, Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		try {
 			Sample sample = new Sample(request.getName());
