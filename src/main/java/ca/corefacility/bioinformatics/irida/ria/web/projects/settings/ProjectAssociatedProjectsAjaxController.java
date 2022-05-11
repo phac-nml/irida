@@ -36,7 +36,7 @@ public class ProjectAssociatedProjectsAjaxController {
 	 * @return list of projects
 	 */
 	@GetMapping("")
-	public ResponseEntity<List<AssociatedProject>> getAssociatedProjects(@RequestParam long projectId) {
+	public ResponseEntity<List<AssociatedProject>> getAssociatedProjects(@RequestParam Long projectId) {
 		return ResponseEntity.ok(service.getAssociatedProjects(projectId));
 	}
 
@@ -47,7 +47,7 @@ public class ProjectAssociatedProjectsAjaxController {
 	 * @return list of projects
 	 */
 	@GetMapping("/list")
-	public ResponseEntity<List<AssociatedProject>> getAssociatedProjectsForProject(@RequestParam long projectId) {
+	public ResponseEntity<List<AssociatedProject>> getAssociatedProjectsForProject(@RequestParam Long projectId) {
 		return ResponseEntity.ok(service.getAssociatedProjectsForProject(projectId));
 	}
 
@@ -60,8 +60,8 @@ public class ProjectAssociatedProjectsAjaxController {
 	 * @return The result of adding the associated project
 	 */
 	@PostMapping("")
-	public ResponseEntity<AjaxResponse> addAssociatedProject(@RequestParam long projectId,
-			@RequestParam long associatedProjectId, Locale locale) {
+	public ResponseEntity<AjaxResponse> addAssociatedProject(@RequestParam Long projectId,
+			@RequestParam Long associatedProjectId, Locale locale) {
 		try {
 			service.addAssociatedProject(projectId, associatedProjectId, locale);
 			return ResponseEntity.ok(new AjaxSuccessResponse(""));
@@ -79,8 +79,8 @@ public class ProjectAssociatedProjectsAjaxController {
 	 * @return the result of removing the project
 	 */
 	@DeleteMapping("")
-	public ResponseEntity<AjaxResponse> removeAssociatedProject(@RequestParam long projectId,
-			@RequestParam long associatedProjectId, Locale locale) {
+	public ResponseEntity<AjaxResponse> removeAssociatedProject(@RequestParam Long projectId,
+			@RequestParam Long associatedProjectId, Locale locale) {
 		try {
 			service.removeAssociatedProject(projectId, associatedProjectId, locale);
 			return ResponseEntity.ok(new AjaxSuccessResponse(""));
