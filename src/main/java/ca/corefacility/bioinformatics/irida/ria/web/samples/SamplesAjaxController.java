@@ -185,7 +185,7 @@ public class SamplesAjaxController {
 	 * Check if a list of sample names exist within a project
 	 *
 	 * @param request {@link SampleNameCheckRequest} containing the project id and sample names
-	 * @return @link SampleNameCheckResponse} containing list of valid and invalid sample names
+	 * @return {@link SampleNameCheckResponse} containing list of valid and invalid sample names
 	 */
 	@PostMapping("/validate")
 	public SampleNameCheckResponse checkSampleNames(@RequestBody SampleNameCheckRequest request) {
