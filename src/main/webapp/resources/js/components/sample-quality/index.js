@@ -12,15 +12,11 @@ import { IconCheck, IconWarning } from "../icons/Icons";
  * @constructor
  */
 export default function SampleQuality({ qualities }) {
-  if (qualities.length === 0) {
-    return (
-      <Tag color="success" icon={<IconCheck />}>
-        {i18n("SampleQuality.pass").toUpperCase()}
-      </Tag>
-    );
-  }
-
-  return (
+  return qualities.length === 0 ? (
+    <Tag color="success" icon={<IconCheck />}>
+      {i18n("SampleQuality.pass").toUpperCase()}
+    </Tag>
+  ) : (
     <Popover
       placement="right"
       content={
