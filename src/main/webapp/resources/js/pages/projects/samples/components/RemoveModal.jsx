@@ -51,7 +51,9 @@ export default function RemoveModal({
           <List
             size="small"
             bordered
-            header={<Typography.Text>Samples to be removed</Typography.Text>}
+            header={
+              <Typography.Text>{i18n("RemoveModal.good")}</Typography.Text>
+            }
             dataSource={samples.valid}
             renderItem={(sample) => (
               <List.Item>
