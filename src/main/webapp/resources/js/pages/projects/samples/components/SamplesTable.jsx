@@ -20,7 +20,6 @@ import SampleQuality from "../../../../components/sample-quality";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconSearch } from "../../../../components/icons/Icons";
 import { blue6 } from "../../../../styles/colors";
-import { useGetProjectDetailsQuery } from "../../../../apis/projects/project";
 import { generateColourForItem } from "../../../../utilities/colour-utilities";
 
 const { RangePicker } = DatePicker;
@@ -41,9 +40,6 @@ export function SamplesTable() {
     loadingLong,
     filterByFile,
   } = useSelector((state) => state.samples);
-  const { data: projectDetails = {} } = useGetProjectDetailsQuery(projectId, {
-    skip: !projectId,
-  });
 
   /**
    * Fetch the current state of the table.  Will refetch whenever one of the
@@ -52,7 +48,6 @@ export function SamplesTable() {
   const {
     data: { content: samples, total } = {},
     isFetching,
-    isLoading: detailsLoaded,
   } = useListSamplesQuery(options, {
     refetchOnMountOrArgChange: true,
   });
@@ -62,10 +57,9 @@ export function SamplesTable() {
    * Request formats them into a format that can be consumed by the
    * project column filter.
    */
-  const {
-    data: associatedProjects,
-    isSuccess: associatedLoaded,
-  } = useListAssociatedProjectsQuery(projectId);
+  const { data: associatedProjects } = useListAssociatedProjectsQuery(
+    projectId
+  );
 
   /**
    * Handle row selection change event
