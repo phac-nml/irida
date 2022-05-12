@@ -1,7 +1,7 @@
 import React from "react";
 
 import isEqual from "lodash/isEqual";
-import { Button, Checkbox, Form, Modal, Select } from "antd";
+import { AutoComplete, Button, Checkbox, Form, Modal, Select } from "antd";
 
 const { Item } = Form;
 const { Option } = Select;
@@ -38,7 +38,7 @@ function Footer(props) {
  * Component to render a modal for the user to save the current state of the
  * linelist as a new MetadataTemplate.
  */
-export class SaveTemplateModal extends React.Component {
+class SaveTemplateModal__ extends React.Component {
   validations = [
     {
       type: "required",
@@ -87,6 +87,7 @@ export class SaveTemplateModal extends React.Component {
 
   constructor(props) {
     super(props);
+    console.log({ props });
     this._options = this.props.templates.map((t) => t.name).sort(sortNames);
 
     this.state = {
@@ -241,4 +242,57 @@ export class SaveTemplateModal extends React.Component {
       </Modal>
     );
   }
+}
+
+export function SaveTemplateModal({
+  onClose,
+  saveTemplate,
+  templates,
+  visible,
+  template,
+}) {
+  console.log({ onClose, saveTemplate, templates, visible, template });
+  const [form] = Form.useForm();
+
+  const [options, setOptions] = React.useState(() =>
+    templates.slice(1).map(({ name }) => ({ label: name, value: name }))
+  );
+
+  const onSearch = (term) => {
+    const lowerTerm = term.toLowerCase();
+    const newOptions = templates
+      .slice(1)
+      .filter((template) => template.name.toLowerCase().includes(lowerTerm))
+      .map(({ name }) => ({ label: name, value: name }));
+    setOptions(newOptions);
+  };
+
+  const onOk = () => {
+    form.validateFields().then((values) => console.log({ values }));
+  };
+
+  return (
+    <Modal
+      title={i18n("linelist.templates.saveModal.title")}
+      visible={visible}
+      onOk={onOk}
+    >
+      <Form layout="vertical" form={form} initialValues={{ name: "" }}>
+        <Form.Item
+          label={i18n("linelist.templates.saveModal.name")}
+          name="name"
+          rules={[{ required: true }]}
+        >
+          <AutoComplete
+            options={options}
+            allowClear={true}
+            backfill={true}
+            showSearch
+            notFoundContent={null}
+            onSearch={onSearch}
+          />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
 }
