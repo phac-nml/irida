@@ -367,22 +367,39 @@ public class FileUtilities {
 					}
 					CellType cellType = cell.getCellType();
 					int columnIndex = cell.getColumnIndex();
+					String columnType = "text";
+					String cellStringValue = "";
+					Double cellNumericValue = null;
+					ExcelCol excelColumn;
+
 					if (columnIndex < headers.size()) {
-						// Convert a boolean or numeric column value to a string if
-						// the cell type is not a string otherwise just get the string
-						// from the column
-						String cellStringValue = !cellType.equals(CellType.BLANK) ?
-								!cellType.equals(CellType.STRING) ?
-										(cellType.equals(CellType.NUMERIC) ?
-												String.valueOf(cell.getNumericCellValue()).trim() :
-												String.valueOf(cell.getBooleanCellValue())).trim() :
-										cell.getStringCellValue().trim() :
-								"";
+						/*
+						If the cell isn't blank then check if the cell type
+						is string, numeric, or boolean and set the variables
+						accordingly. This fixes the issue with getNumericCellValue()
+						being returned in scientific notation when converting to a
+						string
+						 */
+						if(!cellType.equals(CellType.BLANK)) {
+							if(cellType.equals(CellType.STRING)) {
+								cellStringValue = cell.getStringCellValue().trim();
+							} else if (cellType.equals(CellType.NUMERIC)) {
+								columnType = "numeric";
+								cellNumericValue = cell.getNumericCellValue();
+							} else if (cellType.equals(CellType.BOOLEAN)) {
+								cellStringValue = String.valueOf(cell.getBooleanCellValue()).trim();
+							}
+						}
 
 						if (!cellStringValue.equals("") && !hasRowData) {
 							hasRowData = true;
 						}
-						ExcelCol excelColumn = new ExcelCol(columnIndex, cellStringValue);
+
+						if(columnType.equals("text")) {
+							excelColumn = new ExcelCol(columnIndex, cellStringValue, columnType);
+						} else {
+							excelColumn = new ExcelCol(columnIndex, cellNumericValue, columnType);
+						}
 						excelCols.add(excelColumn);
 					}
 				}
