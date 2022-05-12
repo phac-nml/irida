@@ -22,17 +22,18 @@ const ExcelOutputWrapper = styled.div`
 
 export default function AnalysisExcelPreview({ output }) {
   const [excelHeaders, setExcelHeaders] = React.useState([]);
-  const [excelRows, setExcelRows] = React.useState([]);
   const [excelSheetNames, setExcelSheetNames] = React.useState([]);
   const MAX_TABLE_ROWS_PER_PAGE = 5;
   const [currSheetIndex, setCurrSheetIndex] = React.useState("0");
   const [parseError, setParseError] = React.useState(null);
+  const [rowData, setRowData] = React.useState([]);
 
   const [total, setTotal] = React.useState(0);
 
-  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
-    total,
-  ]);
+  const paginationOptions = React.useMemo(
+    () => getPaginationOptions(total),
+    [total]
+  );
 
   React.useEffect(() => {
     parseExcel(
@@ -42,7 +43,7 @@ export default function AnalysisExcelPreview({ output }) {
     ).then(({ data }) => {
       if (!data.parseError) {
         setExcelHeaders(data.excelHeaders);
-        setExcelRows(data.excelRows);
+        getFormattedRowData(data.excelRows);
         setExcelSheetNames(data.excelSheetNames);
         setParseError(data.parseError);
       } else {
@@ -55,8 +56,8 @@ export default function AnalysisExcelPreview({ output }) {
    * to the appropriate format that the antd
    * table is expecting.
    */
-  function getFormattedRowData() {
-    let rowData = [];
+  function getFormattedRowData(excelRows) {
+    let formattedRowData = [];
     if (excelRows.length > 0) {
       setTotal(excelRows.length);
       for (const [i, row] of excelRows.entries()) {
@@ -67,10 +68,10 @@ export default function AnalysisExcelPreview({ output }) {
         }
         columnData["index"] = i + 1;
         columnData["key"] = i + 1;
-        rowData.push(columnData);
+        formattedRowData.push(columnData);
       }
+      setRowData(formattedRowData);
     }
-    return rowData;
   }
 
   // Set the index of the excel sheet selected
@@ -117,7 +118,7 @@ export default function AnalysisExcelPreview({ output }) {
           <Table
             layout="auto"
             columns={excelHeaders}
-            dataSource={getFormattedRowData()}
+            dataSource={rowData}
             scroll={{ x: "max-content" }}
             pagination={{
               total: total,
