@@ -57,6 +57,7 @@ export function SaveTemplateModal({
         id = templates.find(({ name }) => name === values.name).id;
       }
       saveTemplate(values.name, fields, id);
+      form.resetFields();
       onClose();
     });
   };
@@ -84,8 +85,16 @@ export function SaveTemplateModal({
       visible={visible}
       onCancel={onClose}
       onOk={onOk}
+      okButtonProps={{
+        className: "t-modal-save-template-btn",
+      }}
+      className="t-save-modal"
     >
-      <Form layout="vertical" form={form} initialValues={{ name: "" }}>
+      <Form
+        layout="vertical"
+        form={form}
+        initialValues={{ name: "", overwrite: false }}
+      >
         <Form.Item
           label={i18n("linelist.templates.saveModal.name")}
           name="name"
