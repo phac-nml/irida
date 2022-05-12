@@ -149,7 +149,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
                     checked={renameSample}
                     onChange={(e) => setRenameSample(e.target.checked)}
                   >
-                    Rename Sample
+                    {i18n("MergeModal.rename")}
                   </Checkbox>
                   <Form.Item
                     name="newName"
