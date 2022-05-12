@@ -26,6 +26,7 @@ Changes
 * [All]: Added functionality for project managers to restrict metadata fields depending on the Collaborator's metadata role on the project.
 * [Developer]: Removed IRIDA virtual appliance build scripts and references in documentation.
 * [Workflow]: Disable the built-in SISTR and the MentaLiST pipelines by default as they are deprecated. They can be re-enabled in `/etc/irida/irida.conf`.
+* [Workflow]: Automated pipelines which become marked as disabled will now be prevented from running, similar to out-of-date automated pipelines.
 
 22.01 to 22.03
 --------------
