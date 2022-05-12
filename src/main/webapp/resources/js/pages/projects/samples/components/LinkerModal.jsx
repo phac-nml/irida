@@ -1,5 +1,14 @@
 import React from "react";
-import { Button, Checkbox, Form, Input, Modal, Space, Typography } from "antd";
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  Modal,
+  Space,
+  Typography,
+} from "antd";
 import styled from "styled-components";
 import { SPACE_SM } from "../../../../styles/spacing";
 import { BORDER_RADIUS, BORDERED_LIGHT } from "../../../../styles/borders";
@@ -30,6 +39,7 @@ export default function LinkerModal({
   const [form] = Form.useForm();
   const [scriptString, setScriptString] = React.useState();
   const [command, setCommand] = React.useState();
+  const [error, setError] = React.useState(true);
 
   const updateCommand = () => {
     const types = form.getFieldValue("type");
@@ -44,10 +54,12 @@ export default function LinkerModal({
   ];
 
   React.useEffect(() => {
-    getNGSLinkerCode({ sampleIds, projectId }).then(({ data }) => {
-      // Post data to the server to get the linker command.
-      setScriptString(data);
-    });
+    getNGSLinkerCode({ sampleIds, projectId })
+      .then(({ data }) => {
+        // Post data to the server to get the linker command.
+        setScriptString(data);
+      })
+      .catch(() => setError(true));
   }, [projectId, sampleIds]);
 
   React.useEffect(updateCommand, [scriptString]);
@@ -83,22 +95,26 @@ export default function LinkerModal({
           <Input className="t-linker-cmd" />
         </Form.Item>
       </Form>
-      <CommandWrapper>
-        {scriptString === undefined ? (
-          <Space>
-            <LoadingOutlined />
-            <span>{i18n("Linker.loading")}</span>
-          </Space>
-        ) : (
-          <CommandText
-            className="t-cmd-text"
-            ellipsis={{ rows: 1 }}
-            copyable={command}
-          >
-            {command}
-          </CommandText>
-        )}
-      </CommandWrapper>
+      {error ? (
+        <Alert message={i18n("Linker.error")} type="error" showIcon />
+      ) : (
+        <CommandWrapper>
+          {scriptString === undefined ? (
+            <Space>
+              <LoadingOutlined />
+              <span>{i18n("Linker.loading")}</span>
+            </Space>
+          ) : (
+            <CommandText
+              className="t-cmd-text"
+              ellipsis={{ rows: 1 }}
+              copyable={command}
+            >
+              {command}
+            </CommandText>
+          )}
+        </CommandWrapper>
+      )}
     </Modal>
   );
 }
