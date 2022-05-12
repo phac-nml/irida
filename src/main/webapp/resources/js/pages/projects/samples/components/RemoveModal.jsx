@@ -52,7 +52,7 @@ export default function RemoveModal({
             size="small"
             bordered
             header={
-              <Typography.Text>{i18n("RemoveModal.good")}</Typography.Text>
+              <Typography.Text>{i18n("RemoveModal.valid")}</Typography.Text>
             }
             dataSource={samples.valid}
             renderItem={(sample) => (
