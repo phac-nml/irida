@@ -5,11 +5,11 @@ import { List, Space, Typography } from "antd";
 /**
  * React Element to render a list of associated samples.  Use this when they
  * cannot be used in the requested action (e.g. remove).
- * @param {array} associated - list of samples belonging to associated projects
+ * @param {array} associatedSamples - list of samples belonging to associated projects
  * @returns {JSX.Element}
  * @constructor
  */
-export default function AssociatedSamplesList({ associated }) {
+export default function AssociatedSamplesList({ associatedSamples }) {
   return (
     <List
       size="small"
@@ -22,7 +22,7 @@ export default function AssociatedSamplesList({ associated }) {
           </Typography.Text>
         </Space>
       }
-      dataSource={associated}
+      dataSource={associatedSamples}
       renderItem={(sample) => (
         <List.Item>
           <List.Item.Meta title={sample.sampleName} />
