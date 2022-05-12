@@ -57,11 +57,35 @@ export default function SamplesMenu() {
   } = useSelector((state) => state.samples);
   const { data: details = {} } = useGetProjectDetailsQuery(projectId);
 
+  /**
+   * Flag for if the merge samples modal is visible
+   */
   const [mergeVisible, setMergeVisible] = React.useState(false);
+
+  /**
+   * Flag for if the remove samples modal is visible
+   */
   const [removedVisible, setRemovedVisible] = React.useState(false);
+
+  /**
+   * Flag for if the create sample modal is visible
+   */
   const [createSampleVisible, setCreateSampleVisible] = React.useState(false);
+
+  /**
+   * Flag for if the command line linker modal is visible
+   */
   const [linkerVisible, setLinkerVisible] = React.useState(false);
+
+  /**
+   * Flag for if the filter by file modal is visible
+   */
   const [filterByFileVisible, setFilterByFileVisible] = React.useState(false);
+
+  /**
+   * Variable to hold sorted samples (locked, unlocked, or associated).  This is used to
+   * send the correct sample to whichever modal is displayed.
+   */
   const [sorted, setSorted] = React.useState({});
 
   /**
