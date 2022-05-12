@@ -13,19 +13,19 @@ public class ExcelCol {
 	/*
 	If column type is text
 	 */
-	public ExcelCol(int dataIndex, String value, String columnType) {
+	public ExcelCol(int dataIndex, String value) {
 		this.dataIndex = dataIndex;
 		this.value = value;
-		this.columnType = columnType;
+		this.columnType = "text";
 	}
 
 	/*
 	If column type is numeric
 	 */
-	public ExcelCol(int dataIndex, Double numericValue, String columnType) {
+	public ExcelCol(int dataIndex, Double numericValue) {
 		this.dataIndex = dataIndex;
 		this.numericValue = numericValue;
-		this.columnType = columnType;
+		this.columnType = "numeric";
 	}
 
 	public int getDataIndex() {

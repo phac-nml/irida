@@ -396,9 +396,9 @@ public class FileUtilities {
 						}
 
 						if(columnType.equals("text")) {
-							excelColumn = new ExcelCol(columnIndex, cellStringValue, columnType);
+							excelColumn = new ExcelCol(columnIndex, cellStringValue);
 						} else {
-							excelColumn = new ExcelCol(columnIndex, cellNumericValue, columnType);
+							excelColumn = new ExcelCol(columnIndex, cellNumericValue);
 						}
 						excelCols.add(excelColumn);
 					}
