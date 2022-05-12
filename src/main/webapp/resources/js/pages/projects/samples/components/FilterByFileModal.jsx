@@ -9,8 +9,8 @@ import { SPACE_SM } from "../../../../styles/spacing";
 const ROW_HEIGHT = 43;
 
 /**
- * React component to render a modal to allow the user to select a file containing coma or new
- * line seperated sample name to be used to filter the samples table by.
+ * React component to render a modal to allow the user to select a file containing comma or new
+ * line seperated sample names to be used to filter the samples' table by.
  *
  * @param {boolean} visible - whether the modal is currently visible
  * @param {function} onComplete - function to call when the sample names are available
