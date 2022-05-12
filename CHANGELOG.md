@@ -26,6 +26,7 @@ Changes
 * [All]: Added functionality for project managers to restrict metadata fields depending on the Collaborator's metadata role on the project.
 * [Developer]: Removed IRIDA virtual appliance build scripts and references in documentation.
 * [Developer]: Upgrade to Apache POI 5.2.2, and switched to excel-streaming-reader 3.6.1 from xlsx-streamer 2.1.0
+* [UI]: Fixed: Excel output file preview displaying numeric values as a whole number rather than in scientific notation.
 
 22.01 to 22.03
 --------------
