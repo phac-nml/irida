@@ -12,7 +12,9 @@ import {
 } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
-import { serverValidateSampleName } from "../../../../utilities/validation-utilities";
+import {
+  serverValidateSampleName
+} from "../../../../utilities/validation-utilities";
 import { useMergeMutation } from "../../../../apis/projects/samples";
 import LockedSamplesList from "./LockedSamplesList";
 
@@ -61,6 +63,11 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
     try {
       values = await form.validateFields();
     } catch {
+      /*
+      If the form is in an invalid state it will hit here.  This will prevent the
+      invalid date from being submitted and display the errors (if not already displayed)
+       to the user.
+       */
       return;
     }
     const ids = samples.valid
@@ -82,8 +89,6 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
     onComplete();
   };
 
-  // TODO: Handle rendering many samples?
-  // TODO: Handle rendering many locked samples?k
   return (
     <Modal
       title={i18n("MergeModal.title")}
