@@ -39,7 +39,7 @@ export default function LinkerModal({
   const [form] = Form.useForm();
   const [scriptString, setScriptString] = React.useState();
   const [command, setCommand] = React.useState();
-  const [error, setError] = React.useState(true);
+  const [error, setError] = React.useState(false);
 
   const updateCommand = () => {
     const types = form.getFieldValue("type");
