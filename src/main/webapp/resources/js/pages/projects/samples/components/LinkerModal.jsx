@@ -87,7 +87,7 @@ export default function LinkerModal({
         {scriptString === undefined ? (
           <Space>
             <LoadingOutlined />
-            <span>LOADING...</span>
+            <span>{i18n("Linker.loading")}</span>
           </Space>
         ) : (
           <CommandText
