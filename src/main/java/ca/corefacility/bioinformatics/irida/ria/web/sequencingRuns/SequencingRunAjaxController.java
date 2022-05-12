@@ -59,8 +59,8 @@ public class SequencingRunAjaxController {
 	 * @return a list of {@link SequenceFileDetails}s
 	 */
 	@RequestMapping("/{runId}/sequenceFiles")
-	public ResponseEntity<List<SequenceFileDetails>> getSequencingRunFiles2(@PathVariable long runId) {
-		return ResponseEntity.ok(service.getSequencingRunFiles2(runId));
+	public ResponseEntity<List<SequenceFileDetails>> getSequencingRunFiles(@PathVariable long runId) {
+		return ResponseEntity.ok(service.getSequencingRunFiles(runId));
 	}
 
 	/**

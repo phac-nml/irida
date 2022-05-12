@@ -60,27 +60,11 @@ public class UISequencingRunService {
 	 * Get the files for a specific sequencing run.
 	 *
 	 * @param runId - the id of the sequencing run
-	 * @return a set of {@link SequencingObject}s
-	 */
-	public Set<SequencingObject> getSequencingRunFiles(Long runId) {
-		SequencingRun run = runService.read(runId);
-		return objectService.getSequencingObjectsForSequencingRun(run);
-	}
-
-	/**
-	 * Get the files for a specific sequencing run.
-	 *
-	 * @param runId - the id of the sequencing run
 	 * @return a list of {@link SequenceFileDetails}s
 	 */
-	public List<SequenceFileDetails> getSequencingRunFiles2(Long runId) {
+	public List<SequenceFileDetails> getSequencingRunFiles(Long runId) {
 		SequencingRun run = runService.read(runId);
-
 		Set<SequencingObject> sequencingObjects = objectService.getSequencingObjectsForSequencingRun(run);
-		//		Set<SequenceFileDetails> response = sequencingObjects.stream()
-		//				.flatMap(so -> so.getFiles().stream())
-		//				.map(SequenceFileDetails::new)
-		//				.collect(Collectors.toSet());\
 
 		List<SequenceFileDetails> response = new ArrayList<>();
 		for (SequencingObject object : sequencingObjects) {
