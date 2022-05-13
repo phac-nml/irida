@@ -25,6 +25,8 @@ Changes
 * [Developer]: Updated redux API within the cart page to use Redux Toolkit.
 * [All]: Added functionality for project managers to restrict metadata fields depending on the Collaborator's metadata role on the project.
 * [Developer]: Removed IRIDA virtual appliance build scripts and references in documentation.
+* [Workflow]: Disable the built-in SISTR and the MentaLiST pipelines by default as they are deprecated. They can be re-enabled in `/etc/irida/irida.conf`.
+* [Workflow]: Automated pipelines which become marked as disabled will now be prevented from running, similar to out-of-date automated pipelines.
 * [Developer]: Upgrade to Apache POI 5.2.2, and switched to excel-streaming-reader 3.6.1 from xlsx-streamer 2.1.0
 * [UI]: Updated project samples page to use Ant Design.
 
