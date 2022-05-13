@@ -337,7 +337,7 @@ export function SamplesTable() {
       loading={isFetching || loadingLong}
       columns={columns}
       dataSource={samples}
-      pagination={{ ...options.pagination, ...getPaginationOptions(total) }}
+      pagination={getPaginationOptions(total)}
       onChange={onTableChange}
       summary={() => (
         <Table.Summary.Row>
