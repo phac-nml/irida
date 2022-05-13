@@ -21,6 +21,7 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconSearch } from "../../../../components/icons/Icons";
 import { blue6 } from "../../../../styles/colors";
 import { generateColourForItem } from "../../../../utilities/colour-utilities";
+import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
 
 const { RangePicker } = DatePicker;
 
@@ -336,7 +337,7 @@ export function SamplesTable() {
       loading={isFetching || loadingLong}
       columns={columns}
       dataSource={samples}
-      pagination={{ ...options.pagination, total }}
+      pagination={{ ...options.pagination, ...getPaginationOptions(total) }}
       onChange={onTableChange}
       summary={() => (
         <Table.Summary.Row>
