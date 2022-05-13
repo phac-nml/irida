@@ -340,6 +340,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		nameFilterInput.sendKeys(name);
 		nameFilterInput.sendKeys(Keys.ENTER);
 		sampleNameFilterToggle.click();
+		waitForTableToUpdate();
 	}
 
 	public void clearIndividualSampleNameFilter(String name) {
@@ -347,6 +348,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebElement filter = nameFilterSelectedOptions.findElement(By.cssSelector("[title=\"" + name + "\"]"));
 		filter.findElement(By.className("ant-select-selection-item-remove")).click();
 		sampleNameFilterToggle.click();
+		waitForTableToUpdate();
 	}
 
 	public void filterByOrganism(String organism) {
@@ -354,6 +356,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		organismSelectInput.sendKeys(organism);
 		organismSelectInput.sendKeys(Keys.ENTER);
 		organismFilterToggle.click();
+		waitForTableToUpdate();
 	}
 
 	public void clearIndividualOrganismFilter(String organism) {
@@ -361,6 +364,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebElement filter = organismFilterSelectedOptions.findElement(By.cssSelector("[title=\"" + organism + "\"]"));
 		filter.findElement(By.className("ant-select-selection-item-remove")).click();
 		organismFilterToggle.click();
+		waitForTableToUpdate();
 	}
 
 	public void toggleAssociatedProject(String projectName) {
@@ -369,7 +373,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 				By.xpath("//li[@class='ant-dropdown-menu-item' and span='" + projectName + "']"));
 		selection.click();
 		driver.findElement(By.xpath("//button[@type='button' and span='OK']")).click();
-		waitForTime(200);
+		waitForTableToUpdate();
 	}
 
 	public void removeAssociatedProject(String projectName) {
@@ -389,14 +393,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		endInput.sendKeys(end);
 		endInput.sendKeys(Keys.ENTER);
 		createdDateFilter.findElement(By.className("t-search-btn")).click();
-		WebDriverWait wait = new WebDriverWait(driver, 5);
-		wait.until(ExpectedConditions.textMatches(By.className("t-summary"), Pattern.compile("Selected: 0 of (\\d+)")));
+		waitForTableToUpdate();
 	}
 
 	public void clearFilterByCreatedDate() {
 		createdDateFilterToggle.click();
 		createdDateFilter.findElement(By.className("t-clear-btn")).click();
 		createdDateFilterToggle.click();
+		waitForTableToUpdate();
 	}
 
 	public void filterByModifiedDate(String start, String end) {
@@ -408,14 +412,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		endInput.sendKeys(end);
 		endInput.sendKeys(Keys.ENTER);
 		modifiedDateFilter.findElement(By.className("t-search-btn")).click();
-		WebDriverWait wait = new WebDriverWait(driver, 5);
-		wait.until(ExpectedConditions.textMatches(By.className("t-summary"), Pattern.compile("Selected: 0 of (\\d+)")));
+		waitForTableToUpdate();
 	}
 
 	public void clearFilterByModifiedDate() {
 		modifiedDateFilterToggle.click();
 		modifiedDateFilter.findElement(By.className("t-clear-btn")).click();
 		modifiedDateFilterToggle.click();
+		waitForTableToUpdate();
 	}
 
 	public void selectSampleByName(String sampleName) {
@@ -519,5 +523,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public boolean isSampleNameErrorDisplayed() {
 		return driver.findElements(By.cssSelector(".t-sample-name-wrapper .ant-form-item-explain-error")).size() > 0;
+	}
+
+	private void waitForTableToUpdate() {
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		wait.until(ExpectedConditions.textMatches(By.className("t-summary"), Pattern.compile("Selected: 0 of (\\d+)")));
 	}
 }
