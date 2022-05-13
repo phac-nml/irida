@@ -25,6 +25,7 @@ Changes
 * [Developer]: Updated redux API within the cart page to use Redux Toolkit.
 * [All]: Added functionality for project managers to restrict metadata fields depending on the Collaborator's metadata role on the project.
 * [Developer]: Removed IRIDA virtual appliance build scripts and references in documentation.
+* [Developer]: Upgrade to Apache POI 5.2.2, and switched to excel-streaming-reader 3.6.1 from xlsx-streamer 2.1.0
 * [UI]: Updated project samples page to use Ant Design.
 
 22.01 to 22.03
