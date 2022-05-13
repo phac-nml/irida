@@ -20,11 +20,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleNameCheckRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleNameCheckResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -57,7 +56,7 @@ public class SamplesAjaxController {
 	 *
 	 * @param sampleId The {@link Sample} id to upload to
 	 * @param request  The current request which contains {@link MultipartFile}
-	 * @param locale   The locale for the currently logged in user
+	 * @param locale   The locale for the currently logged-in user
 	 * @return {@link ResponseEntity} containing the message for the user on the status of the action
 	 */
 	@RequestMapping(value = { "/{sampleId}/sequenceFiles/upload" }, method = RequestMethod.POST)
@@ -88,8 +87,7 @@ public class SamplesAjaxController {
 			return ResponseEntity.ok(messageSource.getMessage("server.SampleFileUploader.success",
 					new Object[] { sample.getSampleName() }, locale));
 		} catch (IOException e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
 		}
 	}
 
@@ -98,7 +96,7 @@ public class SamplesAjaxController {
 	 *
 	 * @param sampleId the ID of the sample to upload to
 	 * @param request  The current request which contains {@link MultipartFile}
-	 * @param locale   The locale for the currently logged in user
+	 * @param locale   The locale for the currently logged-in user
 	 * @return {@link ResponseEntity} containing the message for the user on the status of the action
 	 */
 	@RequestMapping(value = "/{sampleId}/fast5/upload", method = RequestMethod.POST)
@@ -118,8 +116,7 @@ public class SamplesAjaxController {
 			return ResponseEntity.ok(messageSource.getMessage("server.SampleFileUploader.success",
 					new Object[]{sample.getSampleName()}, locale));
 		} catch (IOException e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
 		}
 	}
 
@@ -128,7 +125,7 @@ public class SamplesAjaxController {
 	 *
 	 * @param sampleId the ID of the sample to upload to
 	 * @param request  The current request which contains {@link MultipartFile}
-	 * @param locale   The locale for the currently logged in user
+	 * @param locale   The locale for the currently logged-in user
 	 * @return {@link ResponseEntity} containing the message for the user on the status of the action
 	 */
 	@RequestMapping(value = { "/{sampleId}/assemblies/upload" }, method = RequestMethod.POST)
@@ -173,7 +170,8 @@ public class SamplesAjaxController {
 
 	/**
 	 * Get sequencing files associated with a sample
-	 * @param id Identifier for a sample
+	 *
+	 * @param id        Identifier for a sample
 	 * @param projectId Identifier for a project
 	 * @return All sequencing files associated with a sample.
 	 */
@@ -184,38 +182,18 @@ public class SamplesAjaxController {
 	}
 
 	/**
-	 * Get a list of all {@link Sample} identifiers within a specific project
+	 * Check if a list of sample names exist within a project
 	 *
-	 * @param projectId Identifier for a Project
-	 * @return {@link List} of {@link Sample} identifiers
+	 * @param request {@link SampleNameCheckRequest} containing the project id and sample names
+	 * @return {@link SampleNameCheckResponse} containing list of valid and invalid sample names
 	 */
-	@GetMapping("/identifiers")
-	public List<Long> getSampleIdsForProject(@RequestParam Long projectId) {
-		return uiSampleService.getSampleIdsForProject(projectId);
+	@PostMapping("/validate")
+	public SampleNameCheckResponse checkSampleNames(@RequestBody SampleNameCheckRequest request) {
+		return uiSampleService.checkSampleNames(request);
 	}
 
 	/**
-	 * Share / Move samples between projects
-	 *
-	 * @param request {@link ShareSamplesRequest} details about the samples to share
-	 * @param locale  current users {@link Locale}
-	 * @return Outcome of the share/move
-	 */
-	@PostMapping("/share")
-	public ResponseEntity<AjaxResponse> shareSamplesWithProject(@RequestBody ShareSamplesRequest request,
-			Locale locale) {
-		try {
-			uiSampleService.shareSamplesWithProject(request, locale);
-			return ResponseEntity.ok(new AjaxSuccessResponse(""));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN)
-					.body(new AjaxErrorResponse(e.getLocalizedMessage()));
-		}
-	}
-
-	/**
-	 * Create {@link SequenceFile}'s then add them as {@link SequenceFilePair}
-	 * to a {@link Sample}
+	 * Create {@link SequenceFile}'s then add them as {@link SequenceFilePair} to a {@link Sample}
 	 *
 	 * @param pair   {@link List} of {@link MultipartFile}
 	 * @param sample {@link Sample} to add the pair to.
