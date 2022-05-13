@@ -7745,6 +7745,7 @@ __metadata:
     properties-reader: ^2.2.0
     qs: ^6.10.3
     rc-util: ^5.20.1
+    rc-virtual-list: ^3.4.6
     react: 17.0.2
     react-dnd: ^15.1.2
     react-dnd-html5-backend: ^15.1.3
@@ -7766,6 +7767,8 @@ __metadata:
     styled-components: ^5.3.5
     terser-webpack-plugin: ^5.3.1
     tslib: ^2.3.1
+    uniqolor: ^1.0.2
+    uuid: ^8.3.2
     webpack: ^5.72.0
     webpack-assets-manifest: ^5.1.0
     webpack-cli: ^4.9.2
@@ -12739,6 +12742,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rc-virtual-list@npm:^3.4.6":
+  version: 3.4.6
+  resolution: "rc-virtual-list@npm:3.4.6"
+  dependencies:
+    classnames: ^2.2.6
+    rc-resize-observer: ^1.0.0
+    rc-util: ^5.15.0
+  peerDependencies:
+    react: "*"
+    react-dom: "*"
+  checksum: dcccc9c223013e741749d098ccf4f4fa7c935d114123d48f1259da3118ad956fea239761ec07bdc221b138b67fccba3b9ac7e4a8ea8050372fe68a75ac6e6a7e
+  languageName: node
+  linkType: hard
+
 "react-clientside-effect@npm:^1.2.5":
   version: 1.2.5
   resolution: "react-clientside-effect@npm:1.2.5"
@@ -14712,6 +14729,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"uniqolor@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "uniqolor@npm:1.0.2"
+  checksum: ee6797b32ef15d2313a5bbb652136089ed9ec78f5870f077bedac10b0ef99bf1ee5938400f652cc9e47529d4baf724f5233cdfe58e69dd5c75ba619b11981cab
+  languageName: node
+  linkType: hard
+
 "unique-filename@npm:^1.1.1":
   version: 1.1.1
   resolution: "unique-filename@npm:1.1.1"
@@ -14876,6 +14900,15 @@ __metadata:
   bin:
     uuid: ./bin/uuid
   checksum: 58de2feed61c59060b40f8203c0e4ed7fd6f99d42534a499f1741218a1dd0c129f4aa1de797bcf822c8ea5da7e4137aa3673431a96dae729047f7aca7b27866f
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^8.3.2":
+  version: 8.3.2
+  resolution: "uuid@npm:8.3.2"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: 5575a8a75c13120e2f10e6ddc801b2c7ed7d8f3c8ac22c7ed0c7b2ba6383ec0abda88c905085d630e251719e0777045ae3236f04c812184b7c765f63a70e58df
   languageName: node
   linkType: hard
 
