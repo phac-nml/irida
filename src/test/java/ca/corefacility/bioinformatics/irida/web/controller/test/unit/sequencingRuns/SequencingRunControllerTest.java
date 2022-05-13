@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.unit.web;
+package ca.corefacility.bioinformatics.irida.web.controller.test.unit.sequencingRuns;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

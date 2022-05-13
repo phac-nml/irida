@@ -79,12 +79,14 @@ public class SequencingRunAjaxController {
 	/**
 	 * Delete a sequencing run.
 	 *
-	 * @param runId - the id of the sequencing run
+	 * @param runId  - the id of the sequencing run
+	 * @param locale - current users locale return Message to user about what happened
+	 * @return a success message
 	 */
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/{runId}")
-	public void deleteMetadataTemplate(@PathVariable long runId) {
-		service.deleteSequencingRun(runId);
+	public ResponseEntity<String> deleteSequencingRun(@PathVariable long runId, Locale locale) {
+		return ResponseEntity.ok(service.deleteSequencingRun(runId, locale));
 	}
 
 }

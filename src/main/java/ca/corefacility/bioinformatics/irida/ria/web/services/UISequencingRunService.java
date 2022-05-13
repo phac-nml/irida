@@ -92,7 +92,7 @@ public class UISequencingRunService {
 		List<SequencingRunModel> runs = new ArrayList<>();
 		for (SequencingRun run : list.getContent()) {
 			runs.add(new SequencingRunModel(run,
-					messageSource.getMessage("sequencingruns.status." + run.getUploadStatus().toString(),
+					messageSource.getMessage("server.sequencingruns.status." + run.getUploadStatus().toString(),
 							new Object[] {}, locale)));
 		}
 
@@ -102,10 +102,13 @@ public class UISequencingRunService {
 	/**
 	 * Delete a sequencing run.
 	 *
-	 * @param runId - the id of the sequencing run
+	 * @param runId  - the id of the sequencing run
+	 * @param locale - current users locale
+	 * @return a success message
 	 */
-	public void deleteSequencingRun(Long runId) {
+	public String deleteSequencingRun(Long runId, Locale locale) {
 		runService.delete(runId);
+		return messageSource.getMessage("server.sequencingruns.delete.success", new Object[] { runId }, locale);
 	}
 }
 
