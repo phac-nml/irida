@@ -389,6 +389,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		endInput.sendKeys(end);
 		endInput.sendKeys(Keys.ENTER);
 		createdDateFilter.findElement(By.className("t-search-btn")).click();
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		wait.until(ExpectedConditions.textMatches(By.className("t-summary"), Pattern.compile("Selected: 0 of (\\d+)")));
 	}
 
 	public void clearFilterByCreatedDate() {
@@ -406,6 +408,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		endInput.sendKeys(end);
 		endInput.sendKeys(Keys.ENTER);
 		modifiedDateFilter.findElement(By.className("t-search-btn")).click();
+		WebDriverWait wait = new WebDriverWait(driver, 5);
+		wait.until(ExpectedConditions.textMatches(By.className("t-summary"), Pattern.compile("Selected: 0 of (\\d+)")));
 	}
 
 	public void clearFilterByModifiedDate() {
