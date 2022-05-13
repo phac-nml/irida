@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto;
 
+import java.util.Objects;
+
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
@@ -38,5 +40,21 @@ public class SequenceFileDetails implements Comparable<SequenceFileDetails> {
 	@Override
 	public int compareTo(SequenceFileDetails sequenceFileDetails) {
 		return id.compareTo(sequenceFileDetails.id);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		SequenceFileDetails that = (SequenceFileDetails) o;
+		return Objects.equals(id, that.id) && Objects.equals(sequencingObjectId, that.sequencingObjectId)
+				&& Objects.equals(fileName, that.fileName) && Objects.equals(fileSize, that.fileSize);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, sequencingObjectId, fileName, fileSize);
 	}
 }

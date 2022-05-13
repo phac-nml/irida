@@ -1,9 +1,10 @@
-package ca.corefacility.bioinformatics.irida.web.controller.test.unit.sequencingRuns;
+package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,14 +12,14 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
-import ca.corefacility.bioinformatics.irida.model.run.SequencingRun.LayoutType;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.SequencingRunAjaxController;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequenceFileDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunModel;
@@ -32,17 +33,19 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SequencingRunAjaxControllerTest {
+public class UISequencingRunServiceTest {
 
-	private UISequencingRunService uiService;
+	private static final String SUCCESS_MESSAGE = "Successfully deleted sequencing run 1";
+	private UISequencingRunService service;
 	private SequencingRunService runService;
 	private SequencingObjectService objectService;
-
 	private MessageSource messageSource;
-	private SequencingRunAjaxController controller;
+
 	private User user1, user2;
 	private SequencingRun run1, run2;
 
+	private SequenceFile file1, file2, file3;
+	private SequencingObject object1, object2;
 	private Page<SequencingRun> page;
 
 	@BeforeEach
@@ -50,21 +53,35 @@ public class SequencingRunAjaxControllerTest {
 		runService = mock(SequencingRunService.class);
 		objectService = mock(SequencingObjectService.class);
 		messageSource = mock(MessageSource.class);
-		uiService = new UISequencingRunService(runService, objectService, messageSource);
-		controller = new SequencingRunAjaxController(uiService);
+		service = new UISequencingRunService(runService, objectService, messageSource);
 
 		user1 = new User(1L, "mirabel", "mirabel@casita.ca", "Password1!", "Mirabel", "Madrigal", "1234");
 		user2 = new User(2L, "isabela", "isabela@casita.ca", "Password1!", "Isabela", "Madrigal", "5678");
 
-		run1 = new SequencingRun(LayoutType.SINGLE_END, "miseq");
+		run1 = new SequencingRun(SequencingRun.LayoutType.SINGLE_END, "miseq");
 		run1.setId(1L);
 		run1.setDescription("Sequencing Run 1");
 		run1.setUser(user1);
 
-		run2 = new SequencingRun(LayoutType.PAIRED_END, "miseq");
+		run2 = new SequencingRun(SequencingRun.LayoutType.PAIRED_END, "miseq");
 		run2.setId(2L);
 		run2.setDescription("Sequencing Run 2");
 		run2.setUser(user2);
+
+		file1 = new SequenceFile(Path.of("/tmp/file1.fastq"));
+		file1.setId(1L);
+
+		file2 = new SequenceFile(Path.of("/tmp/file2.fastq"));
+		file2.setId(2L);
+
+		file3 = new SequenceFile(Path.of("/tmp/file3.fastq"));
+		file3.setId(3L);
+
+		object1 = new SingleEndSequenceFile(file1);
+		object1.setId(1L);
+
+		object2 = new SequenceFilePair(file2, file3);
+		object2.setId(2L);
 
 		page = new Page<SequencingRun>() {
 			@Override
@@ -148,27 +165,34 @@ public class SequencingRunAjaxControllerTest {
 			}
 		};
 
-		when(uiService.getSequencingRun(anyLong())).thenReturn(run1);
 		when(runService.read(anyLong())).thenReturn(run1);
 		when(runService.list(anyInt(), anyInt(), any(Sort.class))).thenReturn(page);
+		when(objectService.getSequencingObjectsForSequencingRun(any())).thenReturn(
+				Stream.of(object1, object2).collect(Collectors.toCollection(HashSet::new)));
+		when(messageSource.getMessage(anyString(), any(), any())).thenReturn(SUCCESS_MESSAGE);
 	}
 
 	@Test
 	void getSequencingRunTest() {
-		ResponseEntity<SequencingRun> response = controller.getSequencingRun(run1.getId());
-		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
+		SequencingRun response = service.getSequencingRun(run1.getId());
+		assertEquals(response, run1, "Received the correct sequencing run response");
 	}
 
 	@Test
 	void getSequencingRunDetailsTest() {
-		ResponseEntity<SequencingRunDetails> response = controller.getSequencingRunDetails(run1.getId());
-		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
+		SequencingRunDetails response = service.getSequencingRunDetails(run1.getId());
+		SequencingRunDetails expectedResponse = new SequencingRunDetails(run1);
+		assertEquals(response, expectedResponse, "Received the correct sequencing run details response");
 	}
 
 	@Test
 	void getSequencingRunFilesTest() {
-		ResponseEntity<List<SequenceFileDetails>> response = controller.getSequencingRunFiles(run1.getId());
-		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
+		List<SequenceFileDetails> response = service.getSequencingRunFiles(run1.getId());
+		List<SequenceFileDetails> expectedResponse = new ArrayList<>();
+		expectedResponse.add(new SequenceFileDetails(file1, object1.getId()));
+		expectedResponse.add(new SequenceFileDetails(file2, object2.getId()));
+		expectedResponse.add(new SequenceFileDetails(file3, object2.getId()));
+		assertEquals(response, expectedResponse, "Received the correct sequencing run files response");
 	}
 
 	@Test
@@ -178,13 +202,14 @@ public class SequencingRunAjaxControllerTest {
 		request.setSortDirection("ascend");
 		request.setCurrent(1);
 		request.setPageSize(10);
-		TableResponse<SequencingRunModel> response = controller.listSequencingRuns(request, Locale.ENGLISH);
-		assertEquals(2, response.getDataSource().size(), "Should have 2 sequencing runs");
+		TableResponse<SequencingRunModel> response = service.listSequencingRuns(request, Locale.ENGLISH);
+		assertEquals(2, response.getDataSource().size(), "Received the correct sequencing run table response");
+
 	}
 
 	@Test
-	void deleteMetadataTemplateTest() {
-		ResponseEntity<String> response = controller.deleteSequencingRun(run1.getId(), Locale.ENGLISH);
-		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
+	void deleteSequencingRunTest() {
+		String response = service.deleteSequencingRun(run1.getId(), Locale.ENGLISH);
+		assertEquals(response, SUCCESS_MESSAGE, "Received the correct delete sequencing run response");
 	}
 }

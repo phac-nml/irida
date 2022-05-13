@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 
@@ -53,5 +54,24 @@ public class SequencingRunDetails {
 
 	public String getUserName() {
 		return userName;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		SequencingRunDetails that = (SequencingRunDetails) o;
+		return Objects.equals(description, that.description) && Objects.equals(createdDate, that.createdDate)
+				&& Objects.equals(sequencerType, that.sequencerType) && Objects.equals(uploadStatus, that.uploadStatus)
+				&& Objects.equals(optionalProperties, that.optionalProperties) && Objects.equals(userID, that.userID)
+				&& Objects.equals(userName, that.userName);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(description, createdDate, sequencerType, uploadStatus, optionalProperties, userID,
+				userName);
 	}
 }

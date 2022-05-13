@@ -92,15 +92,6 @@ public class SequencingRun extends IridaRepresentationModel implements MutableIr
 		setSequencerType(sequencerType);
 	}
 
-	public SequencingRun(Long id, String description, LayoutType layoutType, String sequencerType, User user) {
-		this();
-		this.id = id;
-		this.description = description;
-		this.layoutType = layoutType;
-		setSequencerType(sequencerType);
-		this.user = user;
-	}
-
 	@Override
 	public Long getId() {
 		return id;
