@@ -21,9 +21,9 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Add some samples to the cart and test to see if they get displayed/
 		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
-		samplesPage.selectSample(0);
-		samplesPage.selectSample(2);
-		samplesPage.selectSample(3);
+		samplesPage.selectSampleByName("sample5fg44");
+		samplesPage.selectSampleByName("sample5fdgr");
+		samplesPage.selectSampleByName("sample554sg5");
 		samplesPage.addSelectedSamplesToCart();
 
 		// Make sure 3 samples are in the cart
