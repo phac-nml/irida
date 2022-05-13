@@ -184,8 +184,9 @@ E.g.
 ![Filter by File button](images/filter-by-file-button.png)
 
 To filter the table by file click the "Filter by File" button at the top of the table. This will open a modal window
-which will allow you to select the file containing the list of names to filter by. Once selected, IRIDA will if the
-sample names are within the projects currently visible in the table (you can add other project's samples to the table
+which will allow you to select the file containing the list of names to filter by. Once selected, IRIDA will display the
+sample names that are within the projects currently visible in the table (you can add other project's samples to the
+table
 using the projects filter). Once validated, you will see a summary:
 
 ![Example of summary of filtering by file.](images/filter-by-file-modal.png)
