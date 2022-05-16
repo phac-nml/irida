@@ -30,6 +30,7 @@ Changes
 * [Developer]: Upgrade to Apache POI 5.2.2, and switched to excel-streaming-reader 3.6.1 from xlsx-streamer 2.1.0
 * [UI]: Added clarification that deleting or removing genomics data will not remove the underlying data files (e.g., sequencing data) but will only make it inaccessible.
 * [UI]: Updated project samples page to use Ant Design.
+* [Documentation]: Updated SNVPhyl install instructions since installing `bcftools_view` separately is no longer needed. Fixed broken link for sequence read test data. Removed **Search** option since it no longer works in our documentation.
 * [UI]: Fixed: Excel output file preview displaying numeric values as a whole number rather than in scientific notation.
 
 22.01 to 22.03
