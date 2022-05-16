@@ -47,7 +47,7 @@ A Galaxy workflow and some test data has been included with this documentation t
     https://phac-nml.github.io/irida-documentation/administrator/galaxy/pipelines/test/snvphyl/reads/c_2.fastq
     ```
 
-   Once the files are uploaded, you may wish to rename each of them in Galaxy so that your history looksl ike the following.
+   Once the files are uploaded, you may wish to rename each of them in Galaxy so that your history looks like the following.
 
     ![upload-history][]
 
