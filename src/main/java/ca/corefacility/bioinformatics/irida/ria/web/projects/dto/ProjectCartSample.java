@@ -1,7 +1,7 @@
 
 package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
 
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 
 /**
  * This class is USED ONLY for when a user selects all sample to be added to the cart from the project samples page.
@@ -10,19 +10,25 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
  */
 public class ProjectCartSample {
 	private long id;
+	private long key;
 	private long projectId;
 	private String sampleName;
 	private boolean owner;
 
-	public ProjectCartSample(Sample sample, long projectId, boolean owner) {
-		this.id = sample.getId();
-		this.sampleName = sample.getSampleName();
-		this.projectId = projectId;
-		this.owner = owner;
+	public ProjectCartSample(ProjectSampleJoin psj) {
+		this.id = psj.getObject().getId(); // Sample ID
+		this.key = psj.getId(); // ProjectSampleJoin ID
+		this.sampleName = psj.getObject().getSampleName(); // Sample Name
+		this.projectId = psj.getSubject().getId();
+		this.owner = psj.isOwner();
 	}
 
 	public long getId() {
 		return id;
+	}
+
+	public long getKey() {
+		return key;
 	}
 
 	public long getProjectId() {

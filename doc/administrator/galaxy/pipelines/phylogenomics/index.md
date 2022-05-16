@@ -12,7 +12,6 @@ IRIDA uses the software [SNVPhyl][] for constructing whole genome phylogenies.  
 | Tool Name               | Tool Revision   | Toolshed Installable Revision | Toolshed              |
 |:-----------------------:|:---------------:|:-----------------------------:|:---------------------:|
 | **suite_snvphyl_1_2_3** | [bc72925159fc]  | 0                             | [Galaxy Main Shed][]  |
-| **bcftools_view**       | [98d5499ead46]  | 13 (2021-04-13)               | [Galaxy Main Shed][]  |
 
 To install these tools, please proceed through the following steps.
 
@@ -37,7 +36,18 @@ A Galaxy workflow and some test data has been included with this documentation t
 
 1. Upload the [SNVPhyl Galaxy Workflow][] by going to **Workflow > Upload or import workflow**.
 2. Upload a reference genome by going to **Analyze Data** and then clicking on the **upload files from disk** ![upload-icon][] icon in the **Tools** panel.  Select the [pipelines/test/snvphyl/reference.fasta][] file.
-3. Upload the sequence reads by going to **Analyze Data** and then clicking on the **upload files from disk**.  Select the [pipelines/test/snvphyl/reads][] files.  Make sure to change the **Type** of each file from **Auto-detect** to **fastqsanger**.  When uploaded you should see the following in your history.
+3. Upload the sequence reads by going to **Analyze Data** and then clicking on **Upload File**.  Select **Paste/Fetch data** and paste the following URLs to download these files. Make sure to change the **Type** from **Auto-detect** to **fastqsanger**.
+
+    ```
+    https://phac-nml.github.io/irida-documentation/administrator/galaxy/pipelines/test/snvphyl/reads/a_1.fastq
+    https://phac-nml.github.io/irida-documentation/administrator/galaxy/pipelines/test/snvphyl/reads/a_2.fastq
+    https://phac-nml.github.io/irida-documentation/administrator/galaxy/pipelines/test/snvphyl/reads/b_1.fastq
+    https://phac-nml.github.io/irida-documentation/administrator/galaxy/pipelines/test/snvphyl/reads/b_2.fastq
+    https://phac-nml.github.io/irida-documentation/administrator/galaxy/pipelines/test/snvphyl/reads/c_1.fastq
+    https://phac-nml.github.io/irida-documentation/administrator/galaxy/pipelines/test/snvphyl/reads/c_2.fastq
+    ```
+
+   Once the files are uploaded, you may wish to rename each of them in Galaxy so that your history looks like the following.
 
     ![upload-history][]
 

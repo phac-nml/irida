@@ -6,14 +6,12 @@ import { SPACE_LG, SPACE_MD } from "../../styles/spacing";
 import { theme } from "../../utilities/theme-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { IconUser } from "../icons/Icons";
-import {
-  AnnouncementsSubMenu
-} from "./main-navigation/components/AnnouncementsSubMenu";
+import { AnnouncementsSubMenu } from "./main-navigation/components/AnnouncementsSubMenu";
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
 import "./main-navigation/style.css";
 
-const {Header} = Layout;
+const { Header } = Layout;
 
 const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 const isManager = isAdmin || window.TL._USER.systemRole === "ROLE_MANAGER";
@@ -31,7 +29,7 @@ const StyledAnchor = styled.a`
 
 const StyledHeader = styled(Header)`
   position: fixed;
-  z-index: 1;
+  z-index: 1000;
   width: 100%;
   display: flex;
 
@@ -40,7 +38,7 @@ const StyledHeader = styled(Header)`
   }
 
   .anticon {
-    font-size: 20px;
+    font-size: 20px !important;
     color: ${theme === "dark" ? grey1 : grey10};
   }
 `;
@@ -62,7 +60,7 @@ export function MainNavigation() {
     <StyledHeader>
       <a href={setBaseUrl("/")}>
         <img
-          style={{height: 28, width: 129, marginRight: SPACE_LG}}
+          style={{ height: 28, width: 129, marginRight: SPACE_LG }}
           src={setBaseUrl(`/resources/img/irida_logo_${theme}.svg`)}
           alt={i18n("global.title")}
         />
@@ -96,7 +94,7 @@ export function MainNavigation() {
                 </a>
               </Menu.Item>
             )}
-            <Menu.Divider/>
+            <Menu.Divider />
             <Menu.Item key="project:sync">
               <a href={setBaseUrl("/projects/synchronize")}>
                 {i18n("nav.main.project-sync")}
@@ -124,7 +122,7 @@ export function MainNavigation() {
                 </a>
               </Menu.Item>
             )}
-            <Menu.Divider/>
+            <Menu.Divider />
             <Menu.Item key="analyses:output">
               <a href={setBaseUrl("/analysis/user/analysis-outputs")}>
                 {i18n("Analysis.outputFiles")}
@@ -197,7 +195,7 @@ export function MainNavigation() {
                 </a>
               </Menu.Item>
             )}
-            <Menu.Divider/>
+            <Menu.Divider />
             <Menu.Item key="project:sync">
               <a href={setBaseUrl("/projects/synchronize")}>
                 {i18n("nav.main.project-sync")}
@@ -225,7 +223,7 @@ export function MainNavigation() {
                 </a>
               </Menu.Item>
             )}
-            <Menu.Divider/>
+            <Menu.Divider />
             <Menu.Item key="analyses:output">
               <a href={setBaseUrl("/analysis/user/analysis-outputs")}>
                 {i18n("Analysis.outputFiles")}
@@ -271,10 +269,10 @@ export function MainNavigation() {
         </Menu>
       )}
 
-      <div style={{content: "", flexGrow: 1}}/>
-      <GlobalSearch/>
+      <div style={{ content: "", flexGrow: 1 }} />
+      <GlobalSearch />
       {isAdmin && (
-        <div style={{padding: `0 ${SPACE_MD}`}}>
+        <div style={{ padding: `0 ${SPACE_MD}` }}>
           <Button
             type="primary"
             className="t-admin-panel-btn"
@@ -284,10 +282,10 @@ export function MainNavigation() {
           </Button>
         </div>
       )}
-      <CartLink/>
-      <AnnouncementsSubMenu/>
+      <CartLink />
+      <AnnouncementsSubMenu />
       <Menu theme={theme} mode="horizontal" defaultSelectedKeys={[""]}>
-        <Menu.SubMenu key="account-dropdown-link" icon={<IconUser/>}>
+        <Menu.SubMenu key="account-dropdown-link" icon={<IconUser />}>
           <Menu.Item key="account">
             <a href={setBaseUrl(`/users/current`)}>
               {i18n("nav.main.account")}
@@ -314,7 +312,7 @@ export function MainNavigation() {
                 </a>
               </Menu.Item>
             )}
-            <Menu.Divider/>
+            <Menu.Divider />
             <Menu.Item key="website">
               <a
                 href="http://www.irida.ca"
@@ -324,7 +322,7 @@ export function MainNavigation() {
                 {i18n("generic.irida.website")}
               </a>
             </Menu.Item>
-            <Menu.Divider/>
+            <Menu.Divider />
             <Menu.Item key="help:version" disabled>
               {i18n("irida.version")}
             </Menu.Item>
