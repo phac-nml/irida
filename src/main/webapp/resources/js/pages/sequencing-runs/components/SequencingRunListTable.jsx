@@ -25,7 +25,7 @@ export default function SequencingRunListTable() {
         return (
           <Button
             type="link"
-            className="t-run-link"
+            className="t-run-details-link"
             href={setBaseUrl(`sequencing-runs/${text}`)}
           >
             {text}
@@ -60,6 +60,7 @@ export default function SequencingRunListTable() {
       ...dateColumnFormat(),
       title: i18n("SequencingRunListPage.table.createdDate"),
       dataIndex: "createdDate",
+      sorter: true,
     },
   ];
 
@@ -78,7 +79,7 @@ export default function SequencingRunListTable() {
               deleteSequencingRun({ runId: record.id }).then(updateTable)
             }
           >
-            <Button className="t-remove-btn" type="link" size="small">
+            <Button className="t-run-remove-link" type="link" size="small">
               {i18n("SequencingRunListPage.button.delete")}
             </Button>
           </Popconfirm>
@@ -93,6 +94,7 @@ export default function SequencingRunListTable() {
       scroll={{ x: "max-content" }}
       rowKey={(record) => record.id}
       columns={columns}
+      className="t-runs-table"
     />
   );
 }

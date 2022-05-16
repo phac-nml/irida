@@ -81,6 +81,7 @@ export default function SequencingRunDetailsPage() {
         return (
           <LinkButton
             text={text}
+            className="t-file-link"
             href={setBaseUrl(
               `/sequencing-runs/${runId}/sequenceFiles/${item.sequencingObjectId}/file/${item.id}/summary`
             )}
@@ -166,6 +167,7 @@ export default function SequencingRunDetailsPage() {
                 scroll={{ x: "max-content", y: 600 }}
                 pagination={false}
                 rowKey={(record) => record.id}
+                className="t-files-table"
               />
             </Col>
           </Row>
