@@ -52,13 +52,18 @@ export default function AnalysisExcelPreview({ output }) {
    */
   function getFormattedRowData(excelRows) {
     let formattedRowData = [];
+
     if (excelRows.length > 0) {
       setTotal(excelRows.length);
       for (const [i, row] of excelRows.entries()) {
         const excelHeaderColumns = row.excelCols;
         let columnData = {};
         for (const [j, col] of excelHeaderColumns.entries()) {
-          columnData[j] = col.value;
+          if (col.columnType === "text") {
+            columnData[j] = col.value;
+          } else {
+            columnData[j] = col.numericValue;
+          }
         }
         columnData["index"] = i + 1;
         columnData["key"] = i + 1;
