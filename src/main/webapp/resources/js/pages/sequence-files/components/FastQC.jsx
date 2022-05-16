@@ -66,6 +66,7 @@ function FastQCContent({ children, current, uri }) {
             style={{
               backgroundColor: grey1,
               padding: SPACE_LG,
+              marginBottom: SPACE_LG,
             }}
           >
             {fastQC ? (

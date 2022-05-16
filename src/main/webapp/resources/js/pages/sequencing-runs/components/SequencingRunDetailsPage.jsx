@@ -129,6 +129,7 @@ export default function SequencingRunDetailsPage() {
           style={{
             backgroundColor: grey1,
             padding: SPACE_LG,
+            marginBottom: SPACE_LG,
           }}
         >
           <Row justify="center" gutter={[0, 16]}>
