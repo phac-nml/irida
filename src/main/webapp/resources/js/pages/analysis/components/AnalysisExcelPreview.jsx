@@ -23,17 +23,11 @@ const ExcelOutputWrapper = styled.div`
 export default function AnalysisExcelPreview({ output }) {
   const [excelHeaders, setExcelHeaders] = React.useState([]);
   const [excelSheetNames, setExcelSheetNames] = React.useState([]);
-  const MAX_TABLE_ROWS_PER_PAGE = 5;
   const [currSheetIndex, setCurrSheetIndex] = React.useState("0");
   const [parseError, setParseError] = React.useState(null);
   const [rowData, setRowData] = React.useState([]);
 
   const [total, setTotal] = React.useState(0);
-
-  const paginationOptions = React.useMemo(
-    () => getPaginationOptions(total),
-    [total]
-  );
 
   React.useEffect(() => {
     parseExcel(
@@ -125,11 +119,7 @@ export default function AnalysisExcelPreview({ output }) {
             columns={excelHeaders}
             dataSource={rowData}
             scroll={{ x: "max-content" }}
-            pagination={{
-              total: total,
-              hideOnSinglePage: paginationOptions?.hideOnSinglePage,
-              pageSize: MAX_TABLE_ROWS_PER_PAGE,
-            }}
+            pagination={getPaginationOptions(total)}
           />
         </ExcelOutputWrapper>
         <Divider />

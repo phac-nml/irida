@@ -69,10 +69,6 @@ export function ProjectsTable() {
   const [loading, setLoading] = React.useState(false);
   const [projects, setProjects] = React.useState(undefined);
 
-  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
-    total,
-  ]);
-
   React.useEffect(() => {
     setLoading(true);
     const params = {
@@ -216,7 +212,7 @@ export function ProjectsTable() {
         <Table
           rowKey={(record) => record.id}
           loading={loading}
-          pagination={paginationOptions}
+          pagination={getPaginationOptions(total)}
           scroll={{ x: "max-content" }}
           columns={columns}
           dataSource={projects}
