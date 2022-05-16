@@ -37,7 +37,7 @@ const StyledHeader = styled(Header)`
   }
 
   .anticon {
-    font-size: 20px;
+    font-size: 20px !important;
     color: ${theme === "dark" ? grey1 : grey10};
   }
 `;
