@@ -31,8 +31,8 @@ public class SequencingRunDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testGetDetails() {
 		Map<String, String> runDetails = page.getRunDetails();
-		assertEquals(runDetails.get("Description"), "A cool run", "Description should exist.");
-		assertEquals(runDetails.get("Workflow"), "test workflow", "Workflow should exist.");
+		assertEquals("A cool run", runDetails.get("Description"), "Description should exist.");
+		assertEquals("test workflow", runDetails.get("Workflow"), "Workflow should exist.");
 	}
 
 	@Test

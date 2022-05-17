@@ -33,16 +33,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class SequencingRunAjaxControllerTest {
-
 	private UISequencingRunService uiService;
 	private SequencingRunService runService;
 	private SequencingObjectService objectService;
-
 	private MessageSource messageSource;
 	private SequencingRunAjaxController controller;
 	private User user1, user2;
 	private SequencingRun run1, run2;
-
 	private Page<SequencingRun> page;
 
 	@BeforeEach
@@ -156,19 +153,19 @@ public class SequencingRunAjaxControllerTest {
 	@Test
 	void getSequencingRunTest() {
 		ResponseEntity<SequencingRun> response = controller.getSequencingRun(run1.getId());
-		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
+		assertEquals(HttpStatus.OK, response.getStatusCode(), "Received an 200 OK response");
 	}
 
 	@Test
 	void getSequencingRunDetailsTest() {
 		ResponseEntity<SequencingRunDetails> response = controller.getSequencingRunDetails(run1.getId());
-		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
+		assertEquals(HttpStatus.OK, response.getStatusCode(), "Received an 200 OK response");
 	}
 
 	@Test
 	void getSequencingRunFilesTest() {
 		ResponseEntity<List<SequenceFileDetails>> response = controller.getSequencingRunFiles(run1.getId());
-		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
+		assertEquals(HttpStatus.OK, response.getStatusCode(), "Received an 200 OK response");
 	}
 
 	@Test
@@ -185,6 +182,6 @@ public class SequencingRunAjaxControllerTest {
 	@Test
 	void deleteMetadataTemplateTest() {
 		ResponseEntity<String> response = controller.deleteSequencingRun(run1.getId(), Locale.ENGLISH);
-		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
+		assertEquals(HttpStatus.OK, response.getStatusCode(), "Received an 200 OK response");
 	}
 }
