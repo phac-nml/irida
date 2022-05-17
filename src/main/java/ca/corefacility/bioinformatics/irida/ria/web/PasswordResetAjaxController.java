@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserPasswordResetDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
@@ -32,11 +33,11 @@ import com.google.common.collect.ImmutableList;
 @RestController
 @RequestMapping("/ajax/password_reset")
 public class PasswordResetAjaxController {
-	private final UIPasswordResetService UIPasswordResetService;
+	private final UIPasswordResetService service;
 
 	@Autowired
 	public PasswordResetAjaxController(UIPasswordResetService UIPasswordResetService) {
-		this.UIPasswordResetService = UIPasswordResetService;
+		this.service = UIPasswordResetService;
 	}
 
 	/**
@@ -53,7 +54,7 @@ public class PasswordResetAjaxController {
 			Locale locale) {
 		try {
 			return ResponseEntity.ok(
-					new AjaxSuccessResponse(UIPasswordResetService.adminNewPasswordReset(userId, principal, locale)));
+					new AjaxSuccessResponse(service.adminNewPasswordReset(userId, principal, locale)));
 		} catch (UIEmailSendException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage()));
 		}
@@ -65,20 +66,28 @@ public class PasswordResetAjaxController {
 	 * @param email The email address to create a password reset for
 	 * @return Reset created page if the email exists in the system
 	 */
-	@PostMapping("/create_password_reset")
+	@RequestMapping(method = RequestMethod.POST)
 	public  ResponseEntity<AjaxResponse> createAndSendNewPasswordResetEmail(@RequestParam String email) {
 		try {
 			return ResponseEntity.ok(
-					new AjaxSuccessResponse(UIPasswordResetService.createAndSendNewPasswordResetEmail(email)));
-		} catch (UIEmailSendException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
+					new AjaxSuccessResponse(service.createAndSendNewPasswordResetEmail(email)));
 		} catch (EntityNotFoundException e) {
 			return ResponseEntity.ok(
 					new AjaxSuccessResponse(e.getMessage()));
+		} catch (UIEmailSendException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
-
+	@RequestMapping(value = "/activate_account", method = RequestMethod.POST)
+	public  ResponseEntity<UserPasswordResetDetails> activateAccount(@RequestParam String identifier) {
+		try {
+			return ResponseEntity.ok(
+					service.activateAccount(identifier));
+		} catch (UIEmailSendException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+	}
 
 
 }

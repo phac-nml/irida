@@ -5,7 +5,10 @@ import { IconLocked, IconMail, IconUser } from "../components/icons/Icons";
 import { setBaseUrl } from "../utilities/url-utilities";
 import { SPACE_MD } from "../styles/spacing";
 import { blue6 } from "../styles/colors";
-import { useCreatePasswordResetEmailMutation } from "../apis/passwordReset";
+import {
+  useCreatePasswordResetEmailMutation,
+  useActivateAccountMutation,
+} from "../apis/passwordReset";
 import { Provider } from "react-redux";
 import store from "./store";
 import { InfoAlert } from "../components/alerts";
@@ -117,9 +120,39 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
 }
 
 function ActivationPage({ updateDisplayLoginPage }) {
+  const [activateAccount] = useActivateAccountMutation();
+  const [activateAccountForm] = Form.useForm();
+  const [messageAlert, setMessageAlert] = React.useState(false);
+  const [message, setMessage] = React.useState("");
+
+  const handleSubmit = () => {
+    activateAccount({
+      identifier: activateAccountForm.getFieldValue("activationId"),
+    }).then((res) => {
+      console.log(res);
+      if (res.error) {
+        setMessageAlert(true);
+        setMessage("Invalid activation ID");
+      } else {
+        window.location.replace(
+          setBaseUrl(`/password_reset/${res.data.identifier}`)
+        );
+      }
+    });
+  };
+
   return (
     <div>
-      <Form name="accountActivationForm" action="#" method="POST" size="large">
+      <Title level={5}>Activate Account</Title>
+      {messageAlert && (
+        <InfoAlert message={message} style={{ marginTop: SPACE_MD }} />
+      )}
+      <Form
+        name="accountActivationForm"
+        form={activateAccountForm}
+        size="large"
+        style={{ marginTop: SPACE_MD }}
+      >
         <Item
           name="activationId"
           rules={[
@@ -133,7 +166,12 @@ function ActivationPage({ updateDisplayLoginPage }) {
         </Item>
 
         <Item>
-          <Button id="t-submit-btn" type="primary" block htmlType="submit">
+          <Button
+            id="t-submit-btn"
+            type="primary"
+            block
+            onClick={() => handleSubmit()}
+          >
             Submit
           </Button>
         </Item>
@@ -156,14 +194,18 @@ function ForgotPasswordPage({ updateDisplayLoginPage }) {
   const [message, setMessage] = React.useState("");
 
   const submitResetEmail = () => {
-    resetPassword({ email: resetPasswordForm.getFieldValue("email") })
-      .then((res) => {
+    resetPassword({ email: resetPasswordForm.getFieldValue("email") }).then(
+      (res) => {
         console.log(res);
         resetPasswordForm.resetFields();
         setMessageAlert(true);
-        setMessage(res.data.message);
-      })
-      .catch((error) => console.log(error));
+        if (res.error) {
+          setMessage(res.error.data.error);
+        } else {
+          setMessage(res.data.message);
+        }
+      }
+    );
   };
 
   return (

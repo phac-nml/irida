@@ -2,22 +2,34 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.security.Principal;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSendException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserPasswordResetDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
@@ -88,13 +100,24 @@ public class UIPasswordResetService {
 //						.encodeToString(email.getBytes());
 			} catch (final MailSendException e) {
 				SecurityContextHolder.clearContext();
-				throw new UIEmailSendException(e.getMessage());
+				throw new UIEmailSendException("There was an error sending password reset instructions. Please contact the system administrator");
 			}
 		} catch (EntityNotFoundException ex) {
 			SecurityContextHolder.clearContext();
 			throw new EntityNotFoundException("If a user with the provided email address exists you will receive an email with password reset instructions");
 		}
+	}
 
+	public UserPasswordResetDetails activateAccount(String identifier) {
+		setAuthentication();
+
+		try {
+			PasswordReset passwordReset = passwordResetService.read(identifier);
+			User user = passwordReset.getUser();
+			return new UserPasswordResetDetails(identifier, user);
+		} catch (EntityNotFoundException e) {
+			throw new EntityNotFoundException(e.getMessage());
+		}
 	}
 
 	/**
@@ -119,4 +142,5 @@ public class UIPasswordResetService {
 		SecurityContextHolder.getContext()
 				.setAuthentication(anonymousToken);
 	}
+
 }
