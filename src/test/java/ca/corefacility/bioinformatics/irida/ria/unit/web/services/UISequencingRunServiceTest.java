@@ -34,16 +34,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class UISequencingRunServiceTest {
-
 	private static final String SUCCESS_MESSAGE = "Successfully deleted sequencing run 1";
 	private UISequencingRunService service;
 	private SequencingRunService runService;
 	private SequencingObjectService objectService;
 	private MessageSource messageSource;
-
 	private User user1, user2;
 	private SequencingRun run1, run2;
-
 	private SequenceFile file1, file2, file3;
 	private SequencingObject object1, object2;
 	private Page<SequencingRun> page;
@@ -175,14 +172,14 @@ public class UISequencingRunServiceTest {
 	@Test
 	void getSequencingRunTest() {
 		SequencingRun response = service.getSequencingRun(run1.getId());
-		assertEquals(response, run1, "Received the correct sequencing run response");
+		assertEquals(run1, response, "Received the correct sequencing run response");
 	}
 
 	@Test
 	void getSequencingRunDetailsTest() {
 		SequencingRunDetails response = service.getSequencingRunDetails(run1.getId());
 		SequencingRunDetails expectedResponse = new SequencingRunDetails(run1);
-		assertEquals(response, expectedResponse, "Received the correct sequencing run details response");
+		assertEquals(expectedResponse, response, "Received the correct sequencing run details response");
 	}
 
 	@Test
@@ -192,7 +189,7 @@ public class UISequencingRunServiceTest {
 		expectedResponse.add(new SequenceFileDetails(file1, object1.getId()));
 		expectedResponse.add(new SequenceFileDetails(file2, object2.getId()));
 		expectedResponse.add(new SequenceFileDetails(file3, object2.getId()));
-		assertEquals(response, expectedResponse, "Received the correct sequencing run files response");
+		assertEquals(expectedResponse, response, "Received the correct sequencing run files response");
 	}
 
 	@Test
@@ -210,6 +207,6 @@ public class UISequencingRunServiceTest {
 	@Test
 	void deleteSequencingRunTest() {
 		String response = service.deleteSequencingRun(run1.getId(), Locale.ENGLISH);
-		assertEquals(response, SUCCESS_MESSAGE, "Received the correct delete sequencing run response");
+		assertEquals(SUCCESS_MESSAGE, response, "Received the correct delete sequencing run response");
 	}
 }
