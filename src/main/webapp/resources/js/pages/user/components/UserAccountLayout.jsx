@@ -38,13 +38,12 @@ export default function UserAccountLayout() {
       }
       onBack={showBack ? goToAdminUserListPage : undefined}
     >
-      <Layout>
-        <Sider width={200} style={{ backgroundColor: grey1 }}>
+      <Layout style={{ backgroundColor: grey1 }}>
+        <Sider width={200}>
           <UserAccountNav />
         </Sider>
         <Content
           style={{
-            backgroundColor: grey1,
             padding: SPACE_LG,
             marginBottom: SPACE_LG,
           }}

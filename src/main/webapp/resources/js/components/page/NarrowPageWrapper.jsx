@@ -1,5 +1,6 @@
 import React from "react";
 import { Col, Layout, PageHeader, Row } from "antd";
+import "./styles.css";
 
 /**
  * Standard page layout for pages that have a narrow width layout (e.g. user account details)

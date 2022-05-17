@@ -6,15 +6,10 @@
 >
 <head>
     <title th:text="#{dashboard.title}"></title>
-    <webpacker:css entry="dashboard" />
-    <style>
-        body {
-            background-color: hsl(216deg 20% 95%);
-        }
-    </style>
+    <webpacker:css entry="dashboard"/>
 </head>
 <body>
-<div id="root" style="height: 100%;" layout:fragment="page">
+<div id="root" layout:fragment="page">
     <!--
              This is a DOM element for React to render the dashboard into.
              See  src/main/webapp/resources/js/pages/dashboard/Dashboard.jsx
@@ -22,7 +17,7 @@
 </div>
 
 <th:block layout:fragment="scripts">
-    <webpacker:js  entry="dashboard" />
+    <webpacker:js entry="dashboard"/>
 </th:block>
 </body>
 </html>
