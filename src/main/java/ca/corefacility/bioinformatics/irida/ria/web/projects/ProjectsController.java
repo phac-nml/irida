@@ -131,8 +131,7 @@ public class ProjectsController {
 	 * @return Name of the project samples list view
 	 */
 	@RequestMapping(value = {
-			"/projects/{projectId}",
-			"/projects/{projectId}/samples", })
+			"/projects/{projectId}", "/projects/{projectId}/samples", })
 	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
@@ -140,6 +139,16 @@ public class ProjectsController {
 		// Set up the template information
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return "projects/project_samples";
+	}
+
+	@RequestMapping("/projects/{projectId}/ncbi")
+	public String getProjectNCBIPage(final Model model, final Principal principal, @PathVariable long projectId) {
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+
+		// Set up the template information
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+		return "projects/ncbi";
 	}
 
 	/**

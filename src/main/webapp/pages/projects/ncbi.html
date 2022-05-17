@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{projects/_base}"
+>
+  <head>
+    <title th:text="${project.label} + ' - ' + #{project.nav.samples}"></title>
+    <webpacker:css entry="ncbi" />
+  </head>
+  <body>
+    <main id="root" layout:fragment="main"></main>
+    <th:block layout:fragment="scripts">
+      <webpacker:js entry="ncbi" />
+    </th:block>
+  </body>
+</html>

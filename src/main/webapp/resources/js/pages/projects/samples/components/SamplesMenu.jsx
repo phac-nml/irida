@@ -89,6 +89,30 @@ export default function SamplesMenu() {
   const [sorted, setSorted] = React.useState({});
 
   /**
+   * Add selected samples to local storage for use on another page.
+   */
+  function addSelectedToLocalStorage() {
+    const samples = Object.values(selected).map(
+      ({ id, sampleName: name, owner, projectId }) => ({
+        id,
+        name,
+        owner,
+        projectId,
+      })
+    );
+
+    // Store them to window storage for later use.
+    window.sessionStorage.setItem(
+      "share",
+      JSON.stringify({
+        samples,
+        projectId,
+        timestamp: Date.now(),
+      })
+    );
+  }
+
+  /**
    * When a merge is completed, hide the modal and ask
    * the table to reset
    */
@@ -116,11 +140,10 @@ export default function SamplesMenu() {
   };
 
   const onNCBI = () => {
-    window.location.href = setBaseUrl(
-      `/projects/${projectId}/export/ncbi?ids=${Object.values(selected)
-        .map((s) => s.id)
-        .join(",")}`
-    );
+    if (selected.size === 0) return;
+    addSelectedToLocalStorage();
+
+    window.location.href = setBaseUrl(`/projects/${projectId}/ncbi`);
   };
 
   const onExport = (type) => {
@@ -133,25 +156,7 @@ export default function SamplesMenu() {
    */
   const shareSamples = () => {
     if (selected.size === 0) return;
-
-    const samples = Object.values(selected).map(
-      ({ id, sampleName: name, owner, projectId }) => ({
-        id,
-        name,
-        owner,
-        projectId,
-      })
-    );
-
-    // Store them to window storage for later use.
-    window.sessionStorage.setItem(
-      "share",
-      JSON.stringify({
-        samples,
-        projectId,
-        timestamp: Date.now(),
-      })
-    );
+    addSelectedToLocalStorage();
 
     // Redirect user to share page
     window.location.href = setBaseUrl(`/projects/${projectId}/share`);
