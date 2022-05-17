@@ -1,24 +1,30 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
 import java.security.Principal;
+import java.util.Base64;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailSendException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPasswordResetService;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Handles asynchronous requests for password resets.
@@ -52,5 +58,27 @@ public class PasswordResetAjaxController {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
+
+	/**
+	 * Create a password reset for the given email address
+	 *
+	 * @param email The email address to create a password reset for
+	 * @return Reset created page if the email exists in the system
+	 */
+	@PostMapping("/create_password_reset")
+	public  ResponseEntity<AjaxResponse> createAndSendNewPasswordResetEmail(@RequestParam String email) {
+		try {
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(UIPasswordResetService.createAndSendNewPasswordResetEmail(email)));
+		} catch (UIEmailSendException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(e.getMessage()));
+		}
+	}
+
+
+
 
 }

@@ -34,6 +34,7 @@ import {
   LoadingOutlined,
   LockOutlined,
   LoginOutlined,
+  MailOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   OrderedListOutlined,
@@ -230,8 +231,9 @@ export const IconCalendarTwoTone = ({ ...props }) => (
 
 export const IconShare = ({ ...props }) => <ShareAltOutlined {...props} />;
 
-export const IconWarningOutlined = ({ ...props }) =>
-  <WarningOutlined {...props} />;
+export const IconWarningOutlined = ({ ...props }) => (
+  <WarningOutlined {...props} />
+);
 
 /*
 File Type Icons
@@ -270,3 +272,5 @@ export const IconFileUpload = ({ ...props }) => <UploadOutlined {...props} />;
 export const IconDatabaseOutlined = ({ ...props }) => (
   <DatabaseOutlined {...props} />
 );
+
+export const IconMail = ({ ...props }) => <MailOutlined {...props} />;

@@ -173,51 +173,51 @@ public class PasswordResetController {
 		return PASSWORD_RESET_SUCCESS;
 	}
 
-	/**
-	 * Get the reset password page
-	 *
-	 * @param model Model for this view
-	 * @return The view name for the email entry page
-	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public String noLoginResetPassword(Model model) {
-		return CREATE_RESET_PAGE;
-	}
-
-	/**
-	 * Create a password reset for the given email address
-	 *
-	 * @param email The email address to create a password reset for
-	 * @param model Model for the view
-	 * @return Reset created page if the email exists in the system
-	 */
-	@RequestMapping(method = RequestMethod.POST)
-	public String submitEmail(@RequestParam String email, Model model) {
-		setAuthentication();
-		String page;
-
-		model.addAttribute("email", email);
-
-		try {
-			User user = userService.loadUserByEmail(email);
-
-			try {
-				createNewPasswordReset(user);
-				page = CREATED_REDIRECT + Base64.getEncoder()
-						.encodeToString(email.getBytes());
-			} catch (final MailSendException e) {
-				model.addAttribute("mailSendError", true);
-				SecurityContextHolder.clearContext();
-				page = noLoginResetPassword(model);
-			}
-		} catch (EntityNotFoundException ex) {
-			model.addAttribute("emailError", true);
-			SecurityContextHolder.clearContext();
-			page = noLoginResetPassword(model);
-		}
-
-		return page;
-	}
+//	/**
+//	 * Get the reset password page
+//	 *
+//	 * @param model Model for this view
+//	 * @return The view name for the email entry page
+//	 */
+//	@RequestMapping(method = RequestMethod.GET)
+//	public String noLoginResetPassword(Model model) {
+//		return CREATE_RESET_PAGE;
+//	}
+//
+//	/**
+//	 * Create a password reset for the given email address
+//	 *
+//	 * @param email The email address to create a password reset for
+//	 * @param model Model for the view
+//	 * @return Reset created page if the email exists in the system
+//	 */
+//	@RequestMapping(method = RequestMethod.POST)
+//	public String submitEmail(@RequestParam String email, Model model) {
+//		setAuthentication();
+//		String page;
+//
+//		model.addAttribute("email", email);
+//
+//		try {
+//			User user = userService.loadUserByEmail(email);
+//
+//			try {
+//				createNewPasswordReset(user);
+//				page = CREATED_REDIRECT + Base64.getEncoder()
+//						.encodeToString(email.getBytes());
+//			} catch (final MailSendException e) {
+//				model.addAttribute("mailSendError", true);
+//				SecurityContextHolder.clearContext();
+//				page = noLoginResetPassword(model);
+//			}
+//		} catch (EntityNotFoundException ex) {
+//			model.addAttribute("emailError", true);
+//			SecurityContextHolder.clearContext();
+//			page = noLoginResetPassword(model);
+//		}
+//
+//		return page;
+//	}
 
 	/**
 	 * Success page for creating a password reset

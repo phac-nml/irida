@@ -1,19 +1,25 @@
 import React, { useEffect, useRef } from "react";
 import { render } from "react-dom";
-import { Alert, Button, Col, Form, Input, Row } from "antd";
-import { IconLocked, IconUser } from "../components/icons/Icons";
+import { Alert, Button, Col, Form, Input, Row, Typography } from "antd";
+import { IconLocked, IconMail, IconUser } from "../components/icons/Icons";
 import { setBaseUrl } from "../utilities/url-utilities";
 import { SPACE_MD } from "../styles/spacing";
 import { blue6 } from "../styles/colors";
+import { useCreatePasswordResetEmailMutation } from "../apis/passwordReset";
+import { Provider } from "react-redux";
+import store from "./store";
+import { InfoAlert } from "../components/alerts";
 
 const { Item } = Form;
+
+const { Title } = Typography;
 
 /**
  * React component to render the login form
  * @returns {*}
  * @constructor
  */
-function LoginForm() {
+function LoginForm({ updateDisplayLoginPage, updatePageType }) {
   const [form] = Form.useForm();
   const usernameRef = useRef();
 
@@ -76,15 +82,140 @@ function LoginForm() {
           {i18n("LoginPage.submit")}
         </Button>
       </Item>
-      {window.TL.emailConfigured ? <Item>
-        <Row justify="space-between">
-          <a href={setBaseUrl(`password_reset`)}>{i18n("LoginPage.forgot")}</a>
-          <a href={setBaseUrl(`password_reset/activate`)}>
-            {i18n("LoginPage.activate")}
-          </a>
-        </Row>
-      </Item> : null}
+      {window.TL.emailConfigured ? (
+        <Item>
+          <Row justify="space-between">
+            <Col>
+              <Button
+                type="link"
+                onClick={() => {
+                  updateDisplayLoginPage(false);
+                  updatePageType("forgot-password");
+                  //history.pushState("forgot", "Forgot Password", "/forgot");
+                }}
+                style={{ padding: 0 }}
+              >
+                {i18n("LoginPage.forgot")}
+              </Button>
+
+              <Button
+                type="link"
+                onClick={() => {
+                  updateDisplayLoginPage(false);
+                  updatePageType("activate-account");
+                }}
+                style={{ marginLeft: 10 }}
+              >
+                {i18n("LoginPage.activate")}
+              </Button>
+            </Col>
+          </Row>
+        </Item>
+      ) : null}
     </Form>
+  );
+}
+
+function ActivationPage({ updateDisplayLoginPage }) {
+  return (
+    <div>
+      <Form name="accountActivationForm" action="#" method="POST" size="large">
+        <Item
+          name="activationId"
+          rules={[
+            {
+              required: true,
+              message: "Activation ID is required",
+            },
+          ]}
+        >
+          <Input name="activationId" placeholder="Activation ID" />
+        </Item>
+
+        <Item>
+          <Button id="t-submit-btn" type="primary" block htmlType="submit">
+            Submit
+          </Button>
+        </Item>
+      </Form>
+      <Button
+        type="link"
+        style={{ padding: 0 }}
+        onClick={() => updateDisplayLoginPage(true)}
+      >
+        Return to Login Page
+      </Button>
+    </div>
+  );
+}
+
+function ForgotPasswordPage({ updateDisplayLoginPage }) {
+  const [resetPassword] = useCreatePasswordResetEmailMutation();
+  const [resetPasswordForm] = Form.useForm();
+  const [messageAlert, setMessageAlert] = React.useState(false);
+  const [message, setMessage] = React.useState("");
+
+  const submitResetEmail = () => {
+    resetPassword({ email: resetPasswordForm.getFieldValue("email") })
+      .then((res) => {
+        console.log(res);
+        resetPasswordForm.resetFields();
+        setMessageAlert(true);
+        setMessage(res.data.message);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  return (
+    <div>
+      <Title level={5}>Forgot Password</Title>
+      {messageAlert && (
+        <InfoAlert message={message} style={{ marginTop: SPACE_MD }} />
+      )}
+      <Form
+        name="forgotPasswordForm"
+        form={resetPasswordForm}
+        size="large"
+        style={{ marginTop: SPACE_MD }}
+      >
+        <Item
+          name="email"
+          rules={[
+            {
+              required: true,
+              message: "Email address is required",
+            },
+          ]}
+        >
+          <Input
+            name="email"
+            type="email"
+            prefix={<IconMail style={{ color: blue6 }} />}
+            placeholder="Email"
+            disabled={messageAlert}
+          />
+        </Item>
+
+        <Item>
+          <Button
+            id="t-submit-btn"
+            type="primary"
+            onClick={() => submitResetEmail()}
+            disabled={messageAlert}
+            block
+          >
+            Submit
+          </Button>
+        </Item>
+      </Form>
+      <Button
+        type="link"
+        style={{ padding: 0 }}
+        onClick={() => updateDisplayLoginPage(true)}
+      >
+        Return to Login Page
+      </Button>
+    </div>
   );
 }
 
@@ -96,6 +227,17 @@ function LoginForm() {
  */
 function LoginPage() {
   const urlParams = new URLSearchParams(window.location.search);
+  const [displayLoginPage, setDisplayLoginPage] = React.useState(true);
+  const [type, setType] = React.useState(null);
+
+  const updateDisplayLoginPage = (value) => {
+    setDisplayLoginPage(value);
+  };
+
+  const updatePageType = (pageType) => {
+    setType(pageType);
+  };
+
   return (
     <Row justify="center">
       <Col style={{ width: 300 }}>
@@ -119,15 +261,28 @@ function LoginPage() {
             description={
               <>
                 {i18n("LoginPage.error.description")}{" "}
-                <a href={setBaseUrl("password_reset")}>
+                <Button onClick={() => setDisplayLoginPage(false)}>
                   {i18n("LoginPage.recover")}
-                </a>
+                </Button>
               </>
             }
             showIcon
           />
         ) : null}
-        <LoginForm />
+        <Provider store={store}>
+          {displayLoginPage ? (
+            <LoginForm
+              updateDisplayLoginPage={updateDisplayLoginPage}
+              updatePageType={updatePageType}
+            />
+          ) : type === "forgot-password" ? (
+            <ForgotPasswordPage
+              updateDisplayLoginPage={updateDisplayLoginPage}
+            />
+          ) : type === "activate-account" ? (
+            <ActivationPage updateDisplayLoginPage={updateDisplayLoginPage} />
+          ) : null}
+        </Provider>
       </Col>
     </Row>
   );

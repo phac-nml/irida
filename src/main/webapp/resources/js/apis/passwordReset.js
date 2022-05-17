@@ -23,7 +23,20 @@ export const passwordResetApi = createApi({
       }),
       invalidatesTags: ["PasswordReset"],
     }),
+    createPasswordResetEmail: build.mutation({
+      query: ({ email }) => ({
+        url: "create_password_reset",
+        method: "POST",
+        params: {
+          email,
+        },
+      }),
+      invalidatesTags: ["PasswordReset"],
+    }),
   }),
 });
 
-export const { useCreatePasswordResetMutation } = passwordResetApi;
+export const {
+  useCreatePasswordResetMutation,
+  useCreatePasswordResetEmailMutation,
+} = passwordResetApi;

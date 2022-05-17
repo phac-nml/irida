@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.security.Principal;
+import java.util.Base64;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -8,15 +9,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.MailSendException;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Handles service calls for password resets.
@@ -68,6 +75,28 @@ public class UIPasswordResetService {
 				locale);
 	}
 
+	public String createAndSendNewPasswordResetEmail(String email) {
+		setAuthentication();
+
+		try {
+			User user = userService.loadUserByEmail(email);
+
+			try {
+				createNewPasswordReset(user);
+				return "Check your email for password reset instructions";
+//				page = CREATED_REDIRECT + Base64.getEncoder()
+//						.encodeToString(email.getBytes());
+			} catch (final MailSendException e) {
+				SecurityContextHolder.clearContext();
+				throw new UIEmailSendException(e.getMessage());
+			}
+		} catch (EntityNotFoundException ex) {
+			SecurityContextHolder.clearContext();
+			throw new EntityNotFoundException("If a user with the provided email address exists you will receive an email with password reset instructions");
+		}
+
+	}
+
 	/**
 	 * Create a new password reset for a given {@link User} and send a reset password link via email
 	 *
@@ -79,5 +108,15 @@ public class UIPasswordResetService {
 
 		// send a reset password link to user via email
 		emailController.sendPasswordResetLinkEmail(user, passwordReset);
+	}
+
+	/**
+	 * Set an anonymous authentication token
+	 */
+	private void setAuthentication() {
+		AnonymousAuthenticationToken anonymousToken = new AnonymousAuthenticationToken("nobody", "nobody",
+				ImmutableList.of(Role.ROLE_ANONYMOUS));
+		SecurityContextHolder.getContext()
+				.setAuthentication(anonymousToken);
 	}
 }
