@@ -1,0 +1,11 @@
+export const PLATFORMS = [
+  "_LS454",
+  "ILLUMINA",
+  "HELICOS",
+  "ABI_SOLID",
+  "COMPLETE_GENOMICS",
+  "PACBIO_SMRT",
+  "ION_TORRENT",
+  "CAPILLARY",
+  "OXFORD_NANOPORE",
+];
