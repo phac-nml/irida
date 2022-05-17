@@ -39,9 +39,7 @@ module.exports = {
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
   "sample-files-concatenate":
     "./resources/js/pages/samples/sample-files-concatenate.js",
-  "sequencing-runs":
-    "./resources/js/pages/sequencing-runs/SequencingRunsPage.jsx",
-  "sequencing-run-details": "./resources/js/pages/sequencing-runs/details",
+  "sequencing-runs": "./resources/js/pages/sequencing-runs/index.js",
   groups: "./resources/js/pages/UserGroupsPage",
   "project-ncbi-exports": "./resources/js/pages/projects/ncbi-export",
   "project-ncbi-export": "./resources/js/pages/projects/ncbi-export/ncbi-export.js",
