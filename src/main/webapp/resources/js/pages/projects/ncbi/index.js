@@ -2,6 +2,7 @@ import React from "react";
 import { render } from "react-dom";
 import {
   Button,
+  Cascader,
   Col,
   Form,
   Input,
@@ -14,7 +15,13 @@ import {
 } from "antd";
 import { MinusCircleOutlined } from "@ant-design/icons";
 import { grey1 } from "../../../styles/colors";
-import { PLATFORMS } from "./contstants";
+import {
+  LIBRARY_SELECTION,
+  LIBRARY_SELECTION_OPTIONS,
+  LIBRARY_SOURCE_OPTIONS,
+  LIBRARY_STRATEGY_OPTIONS,
+  PLATFORMS,
+} from "./contstants";
 import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 
 function NCBIPage() {
@@ -38,11 +45,22 @@ function NCBIPage() {
     }
     return [];
   });
+
+  const modelOptions = PLATFORMS.map((platform) => ({
+    value: platform,
+    label: platform,
+    children: LIBRARY_SELECTION[platform].map((child) => ({
+      value: child,
+      label: child,
+    })),
+  }));
+
   const columns = [
     {
       title: "_SAMPLE",
       dataIndex: "name",
       key: "sample",
+      fixed: "left",
     },
     {
       title: i18n("project.export.biosample.title"),
@@ -58,11 +76,49 @@ function NCBIPage() {
       title: i18n("project.export.library_strategy.title"),
       dataIndex: "library_strategy",
       key: "library_strategy",
+      render: (_, item) => {
+        return (
+          <Form.Item
+            name={[item.name, "library_strategy"]}
+            style={{
+              margin: 0,
+            }}
+          >
+            <Select
+              style={{ width: `100%` }}
+              defaultValue={LIBRARY_STRATEGY_OPTIONS[0]}
+            >
+              {LIBRARY_STRATEGY_OPTIONS.map((option) => (
+                <Select.Option key={option}>{option}</Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        );
+      },
     },
     {
       title: i18n("project.export.library_strategy.title"),
       dataIndex: "library_source",
       key: "library_source",
+      render: (_, item) => {
+        return (
+          <Form.Item
+            name={[item.name, "library_source"]}
+            style={{
+              margin: 0,
+            }}
+          >
+            <Select
+              style={{ width: `100%` }}
+              defaultValue={LIBRARY_SOURCE_OPTIONS[0]}
+            >
+              {LIBRARY_SOURCE_OPTIONS.map((option) => (
+                <Select.Option key={option}>{option}</Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        );
+      },
     },
     {
       title: i18n("project.export.library_construction_protocol.title"),
@@ -73,7 +129,7 @@ function NCBIPage() {
       title: i18n("project.export.instrument_model.title"),
       dataIndex: "instrument_model",
       key: "instrument_model",
-      render: (_, item, index) => {
+      render: (_, item) => {
         return (
           <Form.Item
             name={[item.name, "instrument_model"]}
@@ -81,11 +137,7 @@ function NCBIPage() {
               margin: 0,
             }}
           >
-            <Select style={{ width: `100%` }}>
-              {PLATFORMS.map((platform) => (
-                <Select.Option key={platform}>{platform}</Select.Option>
-              ))}
-            </Select>
+            <Cascader options={modelOptions} />
           </Form.Item>
         );
       },
@@ -94,6 +146,25 @@ function NCBIPage() {
       title: i18n("project.export.library_selection.title"),
       dataIndex: "library_selection",
       key: "library_selection",
+      render: (_, item) => {
+        return (
+          <Form.Item
+            name={[item.name, "library_selection"]}
+            style={{
+              margin: 0,
+            }}
+          >
+            <Select
+              style={{ width: `100%` }}
+              defaultValue={LIBRARY_SELECTION_OPTIONS[0]}
+            >
+              {LIBRARY_SELECTION_OPTIONS.map((option) => (
+                <Select.Option key={option}>{option}</Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        );
+      },
     },
     {
       title: "",
@@ -125,9 +196,10 @@ function NCBIPage() {
           <Row gutter={[16, 16]}>
             <Col>
               <Form
+                onFieldsChange={console.log}
                 layout="vertical"
                 form={form}
-                initialValues={{ instrument_model: PLATFORMS[0] }}
+                initialValues={{ samples }}
               >
                 <Form.Item
                   label={i18n("project.export.bioproject.title")}
@@ -162,12 +234,12 @@ function NCBIPage() {
                 >
                   <Input type="text" />
                 </Form.Item>
+                <Table
+                  columns={columns}
+                  dataSource={samples}
+                  pagination={getPaginationOptions(samples.length)}
+                />
               </Form>
-              <Table
-                columns={columns}
-                dataSource={samples}
-                pagination={getPaginationOptions(samples.length)}
-              />
             </Col>
           </Row>
         </Layout.Content>
