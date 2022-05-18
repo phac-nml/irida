@@ -94,7 +94,7 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
                 onClick={() => {
                   updateDisplayLoginPage(false);
                   updatePageType("forgot-password");
-                  //history.pushState("forgot", "Forgot Password", "/forgot");
+                  history.pushState("forgot", "Forgot Password", "/forgot");
                 }}
                 style={{ padding: 0 }}
               >
@@ -106,6 +106,11 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
                 onClick={() => {
                   updateDisplayLoginPage(false);
                   updatePageType("activate-account");
+                  history.pushState(
+                    "activate",
+                    "Activate Account",
+                    "/activate"
+                  );
                 }}
                 style={{ marginLeft: 10 }}
               >
@@ -143,7 +148,6 @@ function ActivationPage({ updateDisplayLoginPage }) {
 
   return (
     <div>
-      <Title level={5}>Activate Account</Title>
       {messageAlert && (
         <InfoAlert message={message} style={{ marginTop: SPACE_MD }} />
       )}
@@ -179,7 +183,10 @@ function ActivationPage({ updateDisplayLoginPage }) {
       <Button
         type="link"
         style={{ padding: 0 }}
-        onClick={() => updateDisplayLoginPage(true)}
+        onClick={() => {
+          updateDisplayLoginPage(true);
+          window.history.back();
+        }}
       >
         Return to Login Page
       </Button>
@@ -210,7 +217,6 @@ function ForgotPasswordPage({ updateDisplayLoginPage }) {
 
   return (
     <div>
-      <Title level={5}>Forgot Password</Title>
       {messageAlert && (
         <InfoAlert message={message} style={{ marginTop: SPACE_MD }} />
       )}
@@ -233,7 +239,7 @@ function ForgotPasswordPage({ updateDisplayLoginPage }) {
             name="email"
             type="email"
             prefix={<IconMail style={{ color: blue6 }} />}
-            placeholder="Email"
+            placeholder="Username or Email Address"
             disabled={messageAlert}
           />
         </Item>
@@ -253,7 +259,10 @@ function ForgotPasswordPage({ updateDisplayLoginPage }) {
       <Button
         type="link"
         style={{ padding: 0 }}
-        onClick={() => updateDisplayLoginPage(true)}
+        onClick={() => {
+          updateDisplayLoginPage(true);
+          window.history.back();
+        }}
       >
         Return to Login Page
       </Button>
