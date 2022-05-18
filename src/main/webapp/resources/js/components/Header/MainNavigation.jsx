@@ -15,6 +15,7 @@ const { Header } = Layout;
 
 const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 const isManager = isAdmin || window.TL._USER.systemRole === "ROLE_MANAGER";
+const isTechnician = window.TL._USER.systemRole === "ROLE_TECHNICIAN";
 
 const StyledAnchor = styled.a`
   color: ${grey2};
@@ -148,6 +149,15 @@ export function MainNavigation() {
               </Menu.Item>
             </Menu.SubMenu>
           )}
+
+          {isTechnician && (
+            <Menu.Item key="sequencing-runs">
+              <Button type="link" href={setBaseUrl("/sequencing-runs")}>
+                {i18n("nav.main.sequencing-runs")}
+              </Button>
+            </Menu.Item>
+          )}
+
           {!isAdmin && (
             <Menu.Item key="remote_api">
               <Button type="link" href={setBaseUrl("/remote_api")}>
@@ -240,6 +250,15 @@ export function MainNavigation() {
               </Menu.Item>
             </Menu.SubMenu>
           )}
+
+          {isTechnician && (
+            <Menu.Item key="sequencing-runs">
+              <Button type="link" href={setBaseUrl("/sequencing-runs")}>
+                {i18n("nav.main.sequencing-runs")}
+              </Button>
+            </Menu.Item>
+          )}
+
           {!isAdmin && (
             <Menu.Item key="remote_api">
               <Button type="link" href={setBaseUrl("/remote_api")}>
@@ -284,9 +303,10 @@ export function MainNavigation() {
             </Menu.Item>
             {isAdmin && (
               <Menu.Item key="adminguide">
-                <a href="https://phac-nml.github.io/irida-documentation/user/administrator/"
-                   target="_blank"
-                   rel="noreferrer"
+                <a
+                  href="https://phac-nml.github.io/irida-documentation/user/administrator/"
+                  target="_blank"
+                  rel="noreferrer"
                 >
                   {i18n("nav.main.adminguide")}
                 </a>

@@ -2,6 +2,7 @@ import React from "react";
 import { Layout, PageHeader } from "antd";
 import { grey1 } from "../../styles/colors";
 import { SPACE_MD } from "../../styles/spacing";
+import "./styles.css";
 
 const { Content } = Layout;
 
@@ -24,7 +25,7 @@ export function PageWrapper({
   subTitle = "",
 }) {
   return (
-    <Layout style={{ height: "100%", minHeight: "100%" }}>
+    <Layout>
       <PageHeader
         className="t-main-heading"
         title={title}
