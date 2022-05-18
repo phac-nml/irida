@@ -16,7 +16,12 @@
     </script>
   </head>
   <body ng-app="irida.advanced.visualization">
-    <div layout:fragment="page">
+    <div id="root" style="height: 100%;" layout:fragment="page">
+      <div id="fake-root"></div>
+      <!--
+               This is a DOM element for React to render the analysis details into.
+               See  src/main/webapp/resources/js/pages/analysis/components/AdvancedPhylo.jsx
+            -->
       <app-component></app-component>
     </div>
     <th:block layout:fragment="scripts">
