@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserPasswordResetDe
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPasswordResetService;
 
@@ -88,6 +89,16 @@ public class PasswordResetAjaxController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
 	}
+
+	@RequestMapping(value = "/update_password", method = RequestMethod.POST)
+	public ResponseEntity<AjaxResponse> updatePassword(@RequestParam String resetId, @RequestParam String password, Model model, Locale locale) {
+		try {
+			return ResponseEntity.ok(new AjaxSuccessResponse(service.setNewPassword(resetId, password, model, locale)));
+		} catch (UIConstraintViolationException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxSuccessResponse(e.getMessage()));
+		}
+	}
+
 
 
 }

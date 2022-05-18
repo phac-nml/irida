@@ -1,9 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.security.Principal;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Locale;
+import java.util.*;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSendException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -30,6 +34,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserPasswordResetDe
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
@@ -117,6 +122,54 @@ public class UIPasswordResetService {
 			return new UserPasswordResetDetails(identifier, user);
 		} catch (EntityNotFoundException e) {
 			throw new EntityNotFoundException(e.getMessage());
+		}
+	}
+
+
+	public String setNewPassword(String resetId, String password, Model model, Locale locale) throws UIConstraintViolationException {
+		setAuthentication();
+		Map<String, String> errors = new HashMap<>();
+
+		// read the reset to verify it exists first
+		PasswordReset passwordReset = passwordResetService.read(resetId);
+		User user = passwordReset.getUser();
+
+//		if (!password.equals(confirmPassword)) {
+//			errors.put("password", messageSource.getMessage("server.user.edit.password.match", null, locale));
+//		}
+
+
+		// Set the user's authentication to update the password and log them
+		// in
+		Authentication token = new UsernamePasswordAuthenticationToken(user, password,
+				ImmutableList.of(user.getSystemRole()));
+		SecurityContextHolder.getContext()
+				.setAuthentication(token);
+
+		try {
+			userService.changePassword(user.getId(), password);
+		} catch (ConstraintViolationException ex) {
+			Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
+
+			for (ConstraintViolation<?> violation : constraintViolations) {
+				logger.debug(violation.getMessage());
+				String errorKey = violation.getPropertyPath()
+						.toString();
+				errors.put(errorKey, violation.getMessage());
+			}
+		} catch (PasswordReusedException ex) {
+			errors.put("password", messageSource.getMessage("server.user.edit.passwordReused", null, locale));
+		}
+
+
+		if (!errors.isEmpty()) {
+			throw new UIConstraintViolationException(errors);
+		} else {
+			passwordResetService.delete(resetId);
+
+			User currUser = userService.loadUserByEmail(user.getEmail());
+			model.addAttribute("user", currUser);
+			return "success";
 		}
 	}
 
