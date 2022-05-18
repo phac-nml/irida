@@ -88,6 +88,14 @@ export default function SamplesMenu() {
    */
   const [sorted, setSorted] = React.useState({});
 
+  React.useEffect(() => {
+    function handleResize() {
+      // DO resize here
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener(handleResize());
+  }, []);
+
   /**
    * Add selected samples to local storage for use on another page.
    */

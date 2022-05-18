@@ -2,7 +2,7 @@
  * Values imported directly from https://www.ncbi.nlm.nih.gov/core/assets/sra/files/SRA_metadata_SP.xlsx
  */
 export const PLATFORMS = [
-  "_LS454",
+  "LS454",
   "ILLUMINA",
   "HELICOS",
   "ABI_SOLID",
@@ -13,7 +13,7 @@ export const PLATFORMS = [
   "OXFORD_NANOPORE",
 ];
 
-const _LS454 = [
+const LS454 = [
   "454 GS",
   "454 GS 20",
   "454 GS FLX",
@@ -74,7 +74,7 @@ const CAPILLARY = [
 const OXFORD_NANOPORE = ["GridION", "MinION"];
 
 export const PLATFORM_OPTIONS = {
-  _LS454,
+  LS454,
   ILLUMINA,
   HELICOS,
   ABI_SOLID,

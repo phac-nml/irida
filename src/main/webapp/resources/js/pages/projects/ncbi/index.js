@@ -19,13 +19,12 @@ import {
   LIBRARY_SELECTION_OPTIONS,
   LIBRARY_SOURCE_OPTIONS,
   LIBRARY_STRATEGY_OPTIONS,
-  PLATFORM_OPTIONS,
-  PLATFORMS,
 } from "./contstants";
 import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 
 function NCBIPage() {
   const [form] = Form.useForm();
+  const [platforms, setPlatforms] = React.useState();
   const samples = (() => {
     const stored = window.sessionStorage.getItem("share");
     const storedJson = stored && stored.length ? JSON.parse(stored) : [];
@@ -48,14 +47,22 @@ function NCBIPage() {
     return [];
   })();
 
-  const modelOptions = PLATFORMS.map((platform) => ({
-    value: platform,
-    label: platform,
-    children: PLATFORM_OPTIONS[platform].map((child) => ({
-      value: child,
-      label: child,
-    })),
-  }));
+  React.useEffect(() => {
+    fetch(`/ajax/projects/4/ncbi/platforms`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        const options = Object.keys(data.platforms).map((platform) => ({
+          value: platform,
+          label: platform,
+          children: data.platforms[platform].map((child) => ({
+            value: child,
+            label: child,
+          })),
+        }));
+        setPlatforms(options);
+      });
+  }, []);
 
   const columns = [
     {
@@ -146,7 +153,7 @@ function NCBIPage() {
               margin: 0,
             }}
           >
-            <Cascader options={modelOptions} />
+            <Cascader options={platforms} />
           </Form.Item>
         );
       },
