@@ -339,7 +339,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		sampleNameFilterToggle.click();
 		nameFilterInput.sendKeys(name);
 		nameFilterInput.sendKeys(Keys.ENTER);
-		sampleNameFilterToggle.click();
+		nameFilterInput.sendKeys(Keys.TAB);
 		waitForTableToUpdate();
 	}
 
@@ -347,7 +347,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		sampleNameFilterToggle.click();
 		WebElement filter = nameFilterSelectedOptions.findElement(By.cssSelector("[title=\"" + name + "\"]"));
 		filter.findElement(By.className("ant-select-selection-item-remove")).click();
-		sampleNameFilterToggle.click();
+		sampleNameFilterToggle.sendKeys(Keys.TAB);
 		waitForTableToUpdate();
 	}
 
@@ -355,7 +355,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		organismFilterToggle.click();
 		organismSelectInput.sendKeys(organism);
 		organismSelectInput.sendKeys(Keys.ENTER);
-		organismFilterToggle.click();
+		organismFilterToggle.sendKeys(Keys.TAB);
 		waitForTableToUpdate();
 	}
 
@@ -363,7 +363,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		organismFilterToggle.click();
 		WebElement filter = organismFilterSelectedOptions.findElement(By.cssSelector("[title=\"" + organism + "\"]"));
 		filter.findElement(By.className("ant-select-selection-item-remove")).click();
-		organismFilterToggle.click();
+		organismFilterToggle.sendKeys(Keys.TAB);
 		waitForTableToUpdate();
 	}
 
