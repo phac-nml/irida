@@ -16,18 +16,20 @@ import {
 import { MinusCircleOutlined } from "@ant-design/icons";
 import { grey1 } from "../../../styles/colors";
 import {
-  LIBRARY_SELECTION,
   LIBRARY_SELECTION_OPTIONS,
   LIBRARY_SOURCE_OPTIONS,
   LIBRARY_STRATEGY_OPTIONS,
+  PLATFORM_OPTIONS,
   PLATFORMS,
 } from "./contstants";
 import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 
 function NCBIPage() {
   const [form] = Form.useForm();
-  const [samples, setSamples] = React.useState(() => {
+  const samples = (() => {
     const stored = window.sessionStorage.getItem("share");
+    const storedJson = stored && stored.length ? JSON.parse(stored) : [];
+
     if (stored.length) {
       const storedJson = JSON.parse(stored);
       return storedJson.samples.map(({ id, name }) => ({
@@ -36,20 +38,20 @@ function NCBIPage() {
         name,
         bioSample: "",
         instrument_model: "",
-        library_name: "",
+        library_name: name,
         library_construction_protocol: "",
-        library_strategy: "",
-        library_selection: "",
-        library_source: "",
+        library_strategy: LIBRARY_STRATEGY_OPTIONS[0],
+        library_selection: LIBRARY_SELECTION_OPTIONS[0],
+        library_source: LIBRARY_SOURCE_OPTIONS[0],
       }));
     }
     return [];
-  });
+  })();
 
   const modelOptions = PLATFORMS.map((platform) => ({
     value: platform,
     label: platform,
-    children: LIBRARY_SELECTION[platform].map((child) => ({
+    children: PLATFORM_OPTIONS[platform].map((child) => ({
       value: child,
       label: child,
     })),
@@ -71,6 +73,13 @@ function NCBIPage() {
       title: i18n("project.export.library_name.title"),
       dataIndex: "library_strategy",
       key: "library_strategy",
+      render: (_, item) => {
+        return (
+          <Form.Item name={[item.name, "library_name"]} style={{ margin: 0 }}>
+            <Input type="text" defaultValue={item.library_name} />
+          </Form.Item>
+        );
+      },
     },
     {
       title: i18n("project.export.library_strategy.title"),
@@ -110,7 +119,7 @@ function NCBIPage() {
           >
             <Select
               style={{ width: `100%` }}
-              defaultValue={LIBRARY_SOURCE_OPTIONS[0]}
+              defaultValue={item.library_source}
             >
               {LIBRARY_SOURCE_OPTIONS.map((option) => (
                 <Select.Option key={option}>{option}</Select.Option>
@@ -156,7 +165,7 @@ function NCBIPage() {
           >
             <Select
               style={{ width: `100%` }}
-              defaultValue={LIBRARY_SELECTION_OPTIONS[0]}
+              defaultValue={item.library_selection}
             >
               {LIBRARY_SELECTION_OPTIONS.map((option) => (
                 <Select.Option key={option}>{option}</Select.Option>
@@ -178,6 +187,10 @@ function NCBIPage() {
     },
   ];
 
+  const validateAndSubmit = () => {
+    form.validateFields().then(console.log);
+  };
+
   return (
     <>
       <PageHeader
@@ -196,7 +209,7 @@ function NCBIPage() {
           <Row gutter={[16, 16]}>
             <Col>
               <Form
-                onFieldsChange={console.log}
+                onFinish={validateAndSubmit}
                 layout="vertical"
                 form={form}
                 initialValues={{ samples }}
@@ -239,6 +252,9 @@ function NCBIPage() {
                   dataSource={samples}
                   pagination={getPaginationOptions(samples.length)}
                 />
+                <Button htmlType="submit" type="primary">
+                  Send
+                </Button>
               </Form>
             </Col>
           </Row>

@@ -73,7 +73,7 @@ const CAPILLARY = [
 
 const OXFORD_NANOPORE = ["GridION", "MinION"];
 
-export const LIBRARY_SELECTION = {
+export const PLATFORM_OPTIONS = {
   _LS454,
   ILLUMINA,
   HELICOS,
