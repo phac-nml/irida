@@ -63,6 +63,7 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
           name="username"
           ref={usernameRef}
           prefix={<IconUser style={{ color: blue6 }} />}
+          placeholder="Username"
         />
       </Item>
       <Item
@@ -78,6 +79,7 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
           name="password"
           prefix={<IconLocked style={{ color: blue6 }} />}
           type="password"
+          placeholder="Password"
         />
       </Item>
       <Item>
