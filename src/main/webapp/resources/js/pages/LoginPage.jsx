@@ -96,7 +96,11 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
                 onClick={() => {
                   updateDisplayLoginPage(false);
                   updatePageType("forgot-password");
-                  history.pushState("forgot", "Forgot Password", "/forgot");
+                  history.pushState(
+                    "forgot",
+                    "Forgot Password",
+                    "/forgot_password"
+                  );
                 }}
                 style={{ padding: 0 }}
               >
@@ -111,7 +115,7 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
                   history.pushState(
                     "activate",
                     "Activate Account",
-                    "/activate"
+                    "/activate_account"
                   );
                 }}
                 style={{ marginLeft: 10 }}
@@ -131,6 +135,12 @@ function ActivationPage({ updateDisplayLoginPage }) {
   const [activateAccountForm] = Form.useForm();
   const [messageAlert, setMessageAlert] = React.useState(false);
   const [message, setMessage] = React.useState("");
+  const activationIdRef = useRef();
+
+  useEffect(() => {
+    activationIdRef.current.focus();
+    activationIdRef.current.select();
+  }, []);
 
   const handleSubmit = () => {
     activateAccount({
@@ -168,7 +178,11 @@ function ActivationPage({ updateDisplayLoginPage }) {
             },
           ]}
         >
-          <Input name="activationId" placeholder="Activation ID" />
+          <Input
+            name="activationId"
+            ref={activationIdRef}
+            placeholder="Activation ID"
+          />
         </Item>
 
         <Item>
@@ -201,6 +215,12 @@ function ForgotPasswordPage({ updateDisplayLoginPage }) {
   const [resetPasswordForm] = Form.useForm();
   const [messageAlert, setMessageAlert] = React.useState(false);
   const [message, setMessage] = React.useState("");
+  const emailRef = useRef();
+
+  useEffect(() => {
+    emailRef.current.focus();
+    emailRef.current.select();
+  }, []);
 
   const submitResetEmail = () => {
     resetPassword({ email: resetPasswordForm.getFieldValue("email") }).then(
@@ -240,6 +260,7 @@ function ForgotPasswordPage({ updateDisplayLoginPage }) {
           <Input
             name="email"
             type="email"
+            ref={emailRef}
             prefix={<IconMail style={{ color: blue6 }} />}
             placeholder="Username or Email Address"
             disabled={messageAlert}
