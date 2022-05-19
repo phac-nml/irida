@@ -23,3 +23,10 @@ export async function getNCBIPlatforms() {
     .then((response) => response.platforms)
     .catch((error) => console.log(error));
 }
+
+export async function getNCBISources() {
+  return await fetch(`${EXPORT_BASE}/sources`)
+    .then((response) => response.json())
+    .then((response) => response)
+    .catch((error) => console.log(error));
+}

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getNCBIPlatforms } from "../../../apis/ncbi/ncbi";
+import { getNCBIPlatforms, getNCBISources } from "../../../apis/ncbi/ncbi";
 
 export const fetchPlatforms = createAsyncThunk(`ncbi/platforms`, async () => {
   const platforms = await getNCBIPlatforms();
@@ -13,6 +13,12 @@ export const fetchPlatforms = createAsyncThunk(`ncbi/platforms`, async () => {
   }));
 });
 
+export const fetchSources = createAsyncThunk(`ncbi/sources`, async () => {
+  const sources = await getNCBISources();
+  console.log({ sources });
+  return sources;
+});
+
 const ncbiSlice = createSlice({
   name: "ncbi",
   initialState: {
@@ -22,6 +28,9 @@ const ncbiSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchPlatforms.fulfilled, (state, action) => {
       state.platforms = action.payload;
+    });
+    builder.addCase(fetchSources.fulfilled, (state, action) => {
+      state.sources = action.payload;
     });
   },
 });
