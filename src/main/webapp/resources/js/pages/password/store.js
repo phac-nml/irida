@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { passwordResetApi } from "../../apis/passwordReset";
 
 /*
-Redux Store for user details.
+Redux Store for password resets.
 For more information on redux stores see: https://redux.js.org/tutorials/fundamentals/part-4-store
  */
 export default configureStore({
