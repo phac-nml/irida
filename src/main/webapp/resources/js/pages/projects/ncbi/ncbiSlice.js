@@ -14,9 +14,7 @@ export const fetchPlatforms = createAsyncThunk(`ncbi/platforms`, async () => {
 });
 
 export const fetchSources = createAsyncThunk(`ncbi/sources`, async () => {
-  const sources = await getNCBISources();
-  console.log({ sources });
-  return sources;
+  return await getNCBISources();
 });
 
 const ncbiSlice = createSlice({
