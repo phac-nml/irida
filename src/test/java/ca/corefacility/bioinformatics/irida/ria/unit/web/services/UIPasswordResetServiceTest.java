@@ -35,8 +35,7 @@ public class UIPasswordResetServiceTest {
 		passwordResetService = mock(PasswordResetService.class);
 		emailController = mock(EmailController.class);
 		messageSource = mock(MessageSource.class);
-		passwordResetController = new PasswordResetController(userService, passwordResetService, emailController,
-				messageSource);
+		passwordResetController = new PasswordResetController(passwordResetService);
 		service = new UIPasswordResetService(userService, passwordResetService, emailController, messageSource);
 	}
 

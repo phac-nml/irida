@@ -24,17 +24,18 @@ function PasswordResetForm() {
   const [form] = Form.useForm();
   const [setPassword] = useSetPasswordMutation();
 
-  const [updateSucess, setUpdateSuccess] = React.useState(false);
+  const [updateSuccess, setUpdateSuccess] = React.useState(false);
   const [updateError, setUpdateError] = React.useState(false);
+  const [errorMessages, setErrorMessages] = React.useState(null);
 
   const passwordRules = [
-    i18n("UserChangePasswordForm.alert.rule2"),
-    i18n("UserChangePasswordForm.alert.rule3"),
-    i18n("UserChangePasswordForm.alert.rule4"),
-    i18n("UserChangePasswordForm.alert.rule5"),
-    i18n("UserChangePasswordForm.alert.rule6"),
-    "Passwords for admins are recommended to be atleast 11 characters",
-    "Passwords should not form any words or contain any personal information",
+    i18n("PasswordReset.alert.rule2"),
+    i18n("PasswordReset.alert.rule3"),
+    i18n("PasswordReset.alert.rule4"),
+    i18n("PasswordReset.alert.rule5"),
+    i18n("PasswordReset.alert.rule6"),
+    i18n("PasswordReset.alert.recommendation1"),
+    i18n("PasswordReset.alert.recommendation2"),
   ];
 
   const handleSubmit = () => {
@@ -43,17 +44,18 @@ function PasswordResetForm() {
       password: form.getFieldValue("password"),
     })
       .then((res) => {
-        console.log(res);
-        if (res.data.message === "success") {
-          console.log(res);
-          setUpdateSuccess(true);
-        } else {
+        form.resetFields();
+        if (res.error) {
+          setErrorMessages(res.error.data.errors);
           setUpdateError(true);
+        } else {
+          setUpdateSuccess(true);
+          setUpdateError(false);
         }
       })
       .catch((error) => {
-        console.log(error);
         setUpdateError(true);
+        setErrorMessages(error.data.errors);
       });
   };
 
@@ -68,36 +70,7 @@ function PasswordResetForm() {
           />
         </Row>
 
-        {!updateSucess
-          ? passwordExpired && (
-              <Alert
-                style={{ marginBottom: SPACE_SM }}
-                message={i18n("password.reset.password_expired")}
-                type="error"
-                showIcon
-              />
-            )
-          : null}
-
-        {!updateSucess && (
-          <Alert
-            style={{ marginBottom: SPACE_SM }}
-            message={i18n("UserChangePasswordForm.alert.title")}
-            description={
-              <Typography.Paragraph>
-                <List
-                  header={i18n("UserChangePasswordForm.alert.description")}
-                  dataSource={passwordRules}
-                  renderItem={(item) => <List.Item>- {item}</List.Item>}
-                />
-              </Typography.Paragraph>
-            }
-            type="info"
-            showIcon
-          />
-        )}
-
-        {updateSucess && (
+        {updateSuccess && (
           <Alert
             style={{ marginBottom: SPACE_SM }}
             message={i18n("password.reset.success")}
@@ -114,43 +87,90 @@ function PasswordResetForm() {
           />
         )}
 
-        <Form form={form} name="resetPasswordForm" size="large">
-          <Item
-            name="password"
-            rules={[
-              {
-                required: true,
-                message: "Password is required",
-              },
-            ]}
-          >
-            <Input
-              name="password"
-              type="password"
-              prefix={<IconLocked style={{ color: blue6 }} />}
-              placeholder="New Password"
-              disabled={updateSucess}
+        {updateError && (
+          <Alert
+            style={{ marginBottom: SPACE_SM }}
+            message="The following errors occurred:"
+            description={
+              <Typography.Paragraph>
+                {
+                  <List>
+                    {Object.keys(errorMessages).map(function (keyName) {
+                      return (
+                        <List.Item key={keyName}>
+                          {errorMessages[keyName]}
+                        </List.Item>
+                      );
+                    })}
+                  </List>
+                }
+              </Typography.Paragraph>
+            }
+            type="error"
+            showIcon
+          />
+        )}
+
+        {!updateSuccess
+          ? passwordExpired && (
+              <Alert
+                style={{ marginBottom: SPACE_SM }}
+                message={i18n("password.reset.password_expired")}
+                type="error"
+                showIcon
+              />
+            )
+          : null}
+
+        {!updateSuccess && (
+          <div>
+            <Alert
+              style={{ marginBottom: SPACE_SM }}
+              message={i18n("PasswordReset.alert.title")}
+              description={
+                <Typography.Paragraph>
+                  <List
+                    header={i18n("PasswordReset.alert.description")}
+                    dataSource={passwordRules}
+                    renderItem={(item) => <List.Item>- {item}</List.Item>}
+                  />
+                </Typography.Paragraph>
+              }
+              type="info"
+              showIcon
             />
-          </Item>
-          <Item>
-            <Button
-              id="t-submit-btn"
-              type="primary"
-              disabled={updateSucess}
-              block
-              onClick={() => handleSubmit()}
-            >
-              Set Password
-            </Button>
-          </Item>
-        </Form>
-        <Button
-          type="link"
-          style={{ padding: 0 }}
-          onClick={() => window.location.replace(setBaseUrl("/login"))}
-        >
-          Return to Login Page
-        </Button>
+            <Form form={form} name="resetPasswordForm" size="large">
+              <Item
+                name="password"
+                rules={[
+                  {
+                    required: true,
+                    message: i18n("PasswordReset.passwordIsRequired"),
+                  },
+                ]}
+              >
+                <Input
+                  name="password"
+                  type="password"
+                  prefix={<IconLocked style={{ color: blue6 }} />}
+                  placeholder={i18n("PasswordReset.input.placeholder")}
+                  disabled={updateSuccess}
+                />
+              </Item>
+              <Item>
+                <Button
+                  id="t-submit-btn"
+                  type="primary"
+                  disabled={updateSuccess}
+                  block
+                  onClick={() => handleSubmit()}
+                >
+                  {i18n("PasswordReset.button.setPassword")}
+                </Button>
+              </Item>
+            </Form>
+          </div>
+        )}
       </Col>
     </Row>
   );

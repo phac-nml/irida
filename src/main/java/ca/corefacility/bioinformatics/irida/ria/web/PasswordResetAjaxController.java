@@ -1,22 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.web;
 
 import java.security.Principal;
-import java.util.Base64;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.MailSendException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
-import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserPasswordResetDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
@@ -25,8 +20,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessRes
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPasswordResetService;
-
-import com.google.common.collect.ImmutableList;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.PasswordResetResponse;
 
 /**
  * Handles asynchronous requests for password resets.
@@ -64,17 +58,15 @@ public class PasswordResetAjaxController {
 	/**
 	 * Create a password reset for the given email address
 	 *
-	 * @param email The email address to create a password reset for
+	 * @param usernameOrEmail The email address or username to create a password reset for
 	 * @return Reset created page if the email exists in the system
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public  ResponseEntity<AjaxResponse> createAndSendNewPasswordResetEmail(@RequestParam String email) {
+	public ResponseEntity<AjaxResponse> createAndSendNewPasswordResetEmail(@RequestParam String usernameOrEmail, Locale locale) {
 		try {
-			return ResponseEntity.ok(
-					new AjaxSuccessResponse(service.createAndSendNewPasswordResetEmail(email)));
+			return ResponseEntity.ok(new AjaxSuccessResponse(service.createAndSendNewPasswordResetEmail(usernameOrEmail, locale)));
 		} catch (EntityNotFoundException e) {
-			return ResponseEntity.ok(
-					new AjaxSuccessResponse(e.getMessage()));
+			return ResponseEntity.ok(new AjaxSuccessResponse(e.getMessage()));
 		} catch (UIEmailSendException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
 		}
@@ -91,11 +83,11 @@ public class PasswordResetAjaxController {
 	}
 
 	@RequestMapping(value = "/update_password", method = RequestMethod.POST)
-	public ResponseEntity<AjaxResponse> updatePassword(@RequestParam String resetId, @RequestParam String password, Model model, Locale locale) {
+	public ResponseEntity<PasswordResetResponse> updatePassword(@RequestParam String resetId, @RequestParam String password, Model model, Locale locale) {
 		try {
-			return ResponseEntity.ok(new AjaxSuccessResponse(service.setNewPassword(resetId, password, model, locale)));
+			return ResponseEntity.ok(new PasswordResetResponse(service.setNewPassword(resetId, password, model, locale), null));
 		} catch (UIConstraintViolationException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxSuccessResponse(e.getMessage()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PasswordResetResponse("error",e.getErrors()));
 		}
 	}
 
