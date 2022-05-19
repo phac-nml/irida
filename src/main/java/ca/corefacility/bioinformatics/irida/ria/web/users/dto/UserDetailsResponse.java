@@ -12,7 +12,6 @@ public class UserDetailsResponse extends AjaxResponse {
 
 	private UserDetailsModel userDetails;
 	private String currentRole;
-	private boolean mailConfigured;
 	private boolean mailFailure;
 	private boolean isAdmin;
 	private boolean canEditUserInfo;
@@ -21,12 +20,11 @@ public class UserDetailsResponse extends AjaxResponse {
 	private boolean canCreatePasswordReset;
 	private Map<String, String> errors;
 
-	public UserDetailsResponse(UserDetailsModel userDetails, String currentRole, boolean mailConfigured,
-			boolean mailFailure, boolean isAdmin, boolean canEditUserInfo, boolean canEditUserStatus,
-			boolean canChangePassword, boolean canCreatePasswordReset) {
+	public UserDetailsResponse(UserDetailsModel userDetails, String currentRole, boolean mailFailure, boolean isAdmin,
+			boolean canEditUserInfo, boolean canEditUserStatus, boolean canChangePassword,
+			boolean canCreatePasswordReset) {
 		this.userDetails = userDetails;
 		this.currentRole = currentRole;
-		this.mailConfigured = mailConfigured;
 		this.mailFailure = mailFailure;
 		this.isAdmin = isAdmin;
 		this.canEditUserInfo = canEditUserInfo;
@@ -58,14 +56,6 @@ public class UserDetailsResponse extends AjaxResponse {
 
 	public void setCurrentRole(String currentRole) {
 		this.currentRole = currentRole;
-	}
-
-	public boolean isMailConfigured() {
-		return mailConfigured;
-	}
-
-	public void setMailConfigured(boolean mailConfigured) {
-		this.mailConfigured = mailConfigured;
 	}
 
 	public boolean isMailFailure() {
@@ -140,16 +130,16 @@ public class UserDetailsResponse extends AjaxResponse {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		UserDetailsResponse that = (UserDetailsResponse) o;
-		return mailConfigured == that.mailConfigured && mailFailure == that.mailFailure && isAdmin == that.isAdmin
-				&& canEditUserInfo == that.canEditUserInfo && canEditUserStatus == that.canEditUserStatus
-				&& canChangePassword == that.canChangePassword && canCreatePasswordReset == that.canCreatePasswordReset
-				&& Objects.equals(userDetails, that.userDetails) && Objects.equals(currentRole, that.currentRole)
-				&& Objects.equals(errors, that.errors);
+		return mailFailure == that.mailFailure && isAdmin == that.isAdmin && canEditUserInfo == that.canEditUserInfo
+				&& canEditUserStatus == that.canEditUserStatus && canChangePassword == that.canChangePassword
+				&& canCreatePasswordReset == that.canCreatePasswordReset && Objects.equals(userDetails,
+				that.userDetails) && Objects.equals(currentRole, that.currentRole) && Objects.equals(errors,
+				that.errors);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(userDetails, currentRole, mailConfigured, mailFailure, isAdmin, canEditUserInfo,
-				canEditUserStatus, canChangePassword, canCreatePasswordReset, errors);
+		return Objects.hash(userDetails, currentRole, mailFailure, isAdmin, canEditUserInfo, canEditUserStatus,
+				canChangePassword, canCreatePasswordReset, errors);
 	}
 }

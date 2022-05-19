@@ -217,7 +217,6 @@ public class UIUsersService {
 		UserDetailsModel userDetails = new UserDetailsModel(user);
 		User principalUser = userService.getUserByUsername(principal.getName());
 		Locale locale = LocaleContextHolder.getLocale();
-		Boolean mailConfigured = emailController.isMailConfigured();
 		boolean isAdmin = RoleUtilities.isAdmin(principalUser);
 		boolean canEditUserInfo = canEditUserInfo(principalUser, user);
 		boolean canEditUserStatus = canEditUserStatus(principalUser, user);
@@ -226,8 +225,8 @@ public class UIUsersService {
 
 		String currentRoleName = messageSource.getMessage("systemRole." + user.getSystemRole().getName(), null, locale);
 
-		return new UserDetailsResponse(userDetails, currentRoleName, mailConfigured, mailFailure, isAdmin,
-				canEditUserInfo, canEditUserStatus, canChangePassword, canCreatePasswordReset);
+		return new UserDetailsResponse(userDetails, currentRoleName, mailFailure, isAdmin, canEditUserInfo,
+				canEditUserStatus, canChangePassword, canCreatePasswordReset);
 	}
 
 	/**
