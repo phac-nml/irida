@@ -4,6 +4,7 @@ import {
   Button,
   Cascader,
   Col,
+  DatePicker,
   Form,
   Input,
   Layout,
@@ -13,6 +14,7 @@ import {
   Table,
 } from "antd";
 import { MinusCircleOutlined } from "@ant-design/icons";
+import * as moment from "moment";
 import { grey1 } from "../../../styles/colors";
 import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 import { configureStore } from "@reduxjs/toolkit";
@@ -28,18 +30,7 @@ function NCBIPage() {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
 
-  const { platforms, selections, sources, strategies } = useSelector(
-    (state) => state.ncbi
-  );
-
-  React.useEffect(() => {
-    dispatch(fetchPlatforms());
-    dispatch(fetchSources());
-    dispatch(fetchStrategies());
-    dispatch(fetchSelections());
-  }, [dispatch]);
-
-  const samples = (() => {
+  const [samples, setSamples] = React.useState(() => {
     const stored = window.sessionStorage.getItem("share");
 
     if (stored.length) {
@@ -64,8 +55,18 @@ function NCBIPage() {
       );
     }
     return [];
-  })();
-  console.log(samples);
+  });
+
+  const { platforms, selections, sources, strategies } = useSelector(
+    (state) => state.ncbi
+  );
+
+  React.useEffect(() => {
+    dispatch(fetchPlatforms());
+    dispatch(fetchSources());
+    dispatch(fetchStrategies());
+    dispatch(fetchSelections());
+  }, [dispatch]);
 
   const columns = [
     {
@@ -81,6 +82,7 @@ function NCBIPage() {
       render: (_, item) => {
         return (
           <Form.Item
+            rules={[{ required: true, message: "BioSample ID is required" }]}
             name={["samples", item.name, "biosample"]}
             style={{ margin: 0 }}
           >
@@ -96,6 +98,7 @@ function NCBIPage() {
       render: (_, item) => {
         return (
           <Form.Item
+            rules={[{ required: true, message: "Library Name is required" }]}
             name={["samples", item.name, "library_name"]}
             style={{ margin: 0 }}
           >
@@ -115,6 +118,9 @@ function NCBIPage() {
       render: (_, item) => {
         return (
           <Form.Item
+            rules={[
+              { required: true, message: "Library Strategy is required" },
+            ]}
             name={["samples", item.name, "library_strategy"]}
             style={{
               margin: 0,
@@ -136,6 +142,7 @@ function NCBIPage() {
       render: (_, item) => {
         return (
           <Form.Item
+            rules={[{ required: true, message: "Library Source is required" }]}
             name={["samples", item.name, "library_source"]}
             style={{
               margin: 0,
@@ -158,6 +165,12 @@ function NCBIPage() {
       render: (_, item) => {
         return (
           <Form.Item
+            rules={[
+              {
+                required: true,
+                message: "Library Construction Protocol is required",
+              },
+            ]}
             name={["samples", item.name, "library_construction_protocol"]}
             style={{ margin: 0 }}
           >
@@ -173,6 +186,12 @@ function NCBIPage() {
       render: (_, item) => {
         return (
           <Form.Item
+            rules={[
+              {
+                required: true,
+                message: "Interment Model is required",
+              },
+            ]}
             name={["samples", item.name, "instrument_model"]}
             style={{
               margin: 0,
@@ -190,6 +209,12 @@ function NCBIPage() {
       render: (_, item) => {
         return (
           <Form.Item
+            rules={[
+              {
+                required: true,
+                message: "Library Selection is required",
+              },
+            ]}
             name={["samples", item.name, "library_selection"]}
             style={{
               margin: 0,
@@ -213,15 +238,25 @@ function NCBIPage() {
       key: "actions",
       fixed: "right",
       width: 60,
-      render: () => {
+      render: (_, item) => {
         return (
-          <Button shape="circle" type="text" icon={<MinusCircleOutlined />} />
+          <Button
+            shape="circle"
+            type="text"
+            icon={<MinusCircleOutlined />}
+            onClick={() => {
+              const copy = { ...samples };
+              delete copy[item.name];
+              setSamples(copy);
+            }}
+          />
         );
       },
     },
   ];
 
   const validateAndSubmit = () => {
+    // TODO: convert release date from momentjs
     form.validateFields().then(console.log);
   };
 
@@ -246,7 +281,7 @@ function NCBIPage() {
                 onFinish={validateAndSubmit}
                 layout="vertical"
                 form={form}
-                initialValues={{ samples }}
+                initialValues={{ samples, release_date: moment(new Date()) }}
               >
                 <Form.Item
                   label={i18n("project.export.bioproject.title")}
@@ -279,7 +314,7 @@ function NCBIPage() {
                   rules={[{ required: true }]}
                   name="release_date"
                 >
-                  <Input type="text" />
+                  <DatePicker />
                 </Form.Item>
                 <Table
                   scroll={{ x: "max-content" }}
