@@ -14,3 +14,12 @@ export async function getProjectNCBIExports() {
   );
   return response.json();
 }
+
+const EXPORT_BASE = setBaseUrl(`/ajax/export/ncbi`);
+
+export async function getNCBIPlatforms() {
+  return await fetch(`${EXPORT_BASE}/platforms`)
+    .then((response) => response.json())
+    .then((response) => response.platforms)
+    .catch((error) => console.log(error));
+}

@@ -101,17 +101,6 @@ export const LIBRARY_SELECTION_OPTIONS = [
   "other",
   "unspecified",
 ];
-
-export const LIBRARY_SOURCE_OPTIONS = [
-  "GENOMIC",
-  "TRANSCRIPTOMIC",
-  "METAGENOMIC",
-  "METATRANSCRIPTOMIC",
-  "SYNTHETIC",
-  "VIRAL RNA",
-  "OTHER",
-];
-
 export const LIBRARY_STRATEGY_OPTIONS = [
   "WGA",
   "WGS",
