@@ -20,7 +20,6 @@ import {
   LIBRARY_STRATEGY_OPTIONS,
 } from "./contstants";
 import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
-import { setBaseUrl } from "../../../utilities/url-utilities";
 import { configureStore } from "@reduxjs/toolkit";
 import ncbiReducer, { fetchPlatforms, fetchSources } from "./ncbiSlice";
 import { Provider, useDispatch, useSelector } from "react-redux";
@@ -57,14 +56,6 @@ function NCBIPage() {
     }
     return [];
   })();
-
-  React.useEffect(() => {
-    fetch(setBaseUrl(`/ajax/export/ncbi/sources`))
-      .then((response) => response.json())
-      .then((data) => {
-        setSources(data);
-      });
-  }, []);
 
   const columns = [
     {
