@@ -10,15 +10,14 @@ export function PhylocanvasTreeComponent({
   fields: originalFields,
   templates,
 }) {
-  const canvasRef = React.createRef();
-  const treeRef = React.createRef();
+  const canvasRef = React.useRef();
+  const treeRef = React.useRef();
   const [fields, setFields] = React.useState(() => {
     return originalFields.reduce(
       (prev, current) => ({ ...prev, [current]: true }),
       {}
     );
   });
-  const [blocks, setBlocks] = React.useState(originalFields);
 
   const renderTree = () => {
     treeRef.current = new PhylocanvasGL(
@@ -31,26 +30,22 @@ export function PhylocanvasTreeComponent({
         showLeafLabels: true,
         nodeShape: "dot",
         showBlockHeaders: true,
-        blocks,
+        blocks: originalFields,
         source,
         metadata:
-          metadata !== null ? formatMetadata(metadata, blocks) : metadata,
+          metadata !== null ? formatMetadata(metadata, originalFields) : metadata,
       },
       []
     );
   };
 
   React.useEffect(() => {
-    setBlocks(Object.keys(fields).filter((field) => fields[field]));
-  }, [fields]);
-
-  React.useEffect(() => {
+    // only update visible metadata fields after tree has initialized
+    // i.e. ignore on first initialization of fields
     if (treeRef.current) {
-      treeRef.current.setProps({ blocks });
-    } else {
-      renderTree();
+      treeRef.current.setProps({ blocks: Object.keys(fields).filter((field) => fields[field]) });
     }
-  }, [blocks, renderTree, treeRef]);
+  }, [fields]);
 
   const downloadTree = () => {
     const blob = treeRef.current.exportSVG();
@@ -72,28 +67,38 @@ export function PhylocanvasTreeComponent({
     }
 
     window.addEventListener("resize", handleResize);
+    renderTree();
 
     return () => {
       treeRef.current.destroy();
       window.removeEventListener("resize", handleResize);
     };
-  });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleChecked = (event, field, checked) => {
-    e.stopPropagation();
+    event.stopPropagation();
     setFields({ ...fields, [field]: checked });
   };
 
   const metadataMenu = (
     <Space direction="vertical">
       {Object.keys(fields)?.map((field) => (
-        <Space direction="horizontal" key={field}>
+        <div
+          key={field}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}
+        >
+          <Typography.Text strong>{field}</Typography.Text>
           <Switch
             checked={fields[field]}
             onChange={(checked, event) => handleChecked(event, field, checked)}
+            size="small"
           />
-          <Typography.Text strong>{field}</Typography.Text>
-        </Space>
+        </div>
       ))}
     </Space>
   );
