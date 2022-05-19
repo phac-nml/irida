@@ -1,11 +1,11 @@
 import React from "react";
 import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
-import { Modal } from "antd";
 import {
   useVisibility,
   VisibilityProvider,
 } from "../../../../contexts/visibility-context";
 import CreateNewUserForm from "./CreateNewUserForm";
+import { ScrollableModal } from "../../../../components/ant.design/ScrollableModal";
 
 /**
  * Component to add a button which will open a modal to create a user.
@@ -22,7 +22,7 @@ function CreateNewUserButton() {
         onClick={() => setVisibility(true)}
         text={i18n("CreateNewUser.button")}
       />
-      <Modal
+      <ScrollableModal
         title={i18n("CreateNewUser.title")}
         onCancel={() => setVisibility(false)}
         visible={visible}
@@ -31,7 +31,7 @@ function CreateNewUserButton() {
         maskClosable={false}
       >
         <CreateNewUserForm />
-      </Modal>
+      </ScrollableModal>
     </>
   );
 }
