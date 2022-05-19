@@ -1,8 +1,9 @@
 import React from "react";
 import PhylocanvasGL from "@phylocanvas/phylocanvas.gl";
-import { Button, Popover, Space, Switch, Typography } from "antd";
+import { Button, Popover, Select, Space, Switch, Typography } from "antd";
 import { FilterOutlined } from "@ant-design/icons";
 import { formatMetadata } from "../metadata-utilities";
+const { Option } = Select;
 
 export function PhylocanvasTreeComponent({
   source,
@@ -18,6 +19,14 @@ export function PhylocanvasTreeComponent({
       {}
     );
   });
+  const allFields = originalFields.reduce(
+      (prev, current) => ({ ...prev, [current]: true }),
+      {}
+    );
+  const noFields = originalFields.reduce(
+      (prev, current) => ({ ...prev, [current]: false }),
+      {}
+    );
 
   const renderTree = () => {
     treeRef.current = new PhylocanvasGL(
@@ -81,8 +90,46 @@ export function PhylocanvasTreeComponent({
     setFields({ ...fields, [field]: checked });
   };
 
+  const fetchMetadataTemplateFields = async (templateIdx) => {
+    let data = await templates[templateIdx]["callback"]();
+    let templateFields = {};
+
+    if (data.fields) {
+      templateFields = data.fields.filter(field => field in fields).reduce(
+        (prev, current) => ( { ...prev, [current]: true }),
+        {}
+      );
+    }
+
+    return templateFields;
+  };
+
+  const handleTemplateChange = (templateIdx) => {
+    if (templateIdx === -1) {
+      setFields(allFields);
+    } else {
+      if ("fields" in templates[templateIdx]) {
+        setFields({...noFields, ...templates[templateIdx]["fields"]});
+      } else {
+        fetchMetadataTemplateFields(templateIdx).then((templateFields) => {
+          templates[templateIdx]["fields"] = templateFields;
+          setFields({...noFields, ...templateFields});
+        })
+      }
+    }
+  };
+
+  const metadataTemplateOptions = [];
+  metadataTemplateOptions.push(<Option key="template-default" value={-1}>{i18n("visualization.phylogenomics.select-template.all-field")}</Option>);
+  for (let i=0; i<templates?.length; i++) {
+    metadataTemplateOptions.push(<Option key={`template-${i}`} value={i}>{templates[i]["label"]}</Option>);
+  }
+
   const metadataMenu = (
     <Space direction="vertical">
+      <Select defaultValue={-1} style={{ width: 150 }} onChange={handleTemplateChange}>
+        {metadataTemplateOptions}
+      </Select>
       {Object.keys(fields)?.map((field) => (
         <div
           key={field}

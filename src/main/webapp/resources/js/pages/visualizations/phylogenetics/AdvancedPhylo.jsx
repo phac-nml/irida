@@ -8,7 +8,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { ContentLoading } from "../../../components/loader";
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
-import { getMetadata, getMetadataTemplates, getNewickTree } from "../../../apis/analysis/analysis";
+import { getMetadata, getMetadataTemplateFields, getMetadataTemplates, getNewickTree } from "../../../apis/analysis/analysis";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_XS } from "../../../styles/spacing";
 import { PhylocanvasTreeComponent } from "./components/PhylocanvasTreeComponent";
@@ -31,12 +31,16 @@ export default function AdvancedPhylo() {
           return;
         }
 
+        let templates = metadataTemplateData.templates;
+        for (let i=0; i < templates?.length; i++) {
+          templates[i]["callback"] = () => { return getMetadataTemplateFields(analysisIdentifier, templates[i]["id"])};
+        }
 
         setTreeState({
           source: newickData.newick,
           metadata: metadataData.metadata,
           fields: metadataData.terms,
-          templates: metadataTemplateData.templates,
+          templates,
         });
 
       });

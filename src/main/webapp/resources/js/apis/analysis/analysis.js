@@ -300,6 +300,21 @@ export async function getMetadataTemplates(submissionId) {
 }
 
 /**
+ * Get the metadata template fields for the submission and metadata template.
+ * @param {number} submissionId
+ * @param {number} tempalteId
+ * @returns {Promise<*>} `data` contains the OK response; `error` contains error information if an error occured.
+ */
+export async function getMetadataTemplateFields(submissionId, templateId) {
+  try {
+    const res = await axios.get(`${ANALYSIS_URL}/${submissionId}/metadata-template-fields?templateId=${templateId}`);
+    return res.data;
+  } catch (error) {
+    return { error };
+  }
+}
+
+/**
  * Download output files as a zip file using an analysis submission id.
  * @param {number} submissionId submission for which to download output file for.
  * @return zip file of analysis outputs
