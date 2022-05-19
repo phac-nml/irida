@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsModel;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserEditRequest;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 public class UIUsersServiceTest {
 	private HttpServletRequest request;
 	private UserService userService;
-	private ProjectService projectService;
+	private PasswordResetService passwordResetService;
 	private EmailController emailController;
 	private MessageSource messageSource;
 	private PasswordEncoder passwordEncoder;
@@ -42,11 +42,12 @@ public class UIUsersServiceTest {
 	void setUp() {
 		request = mock(HttpServletRequest.class);
 		userService = mock(UserService.class);
-		projectService = mock(ProjectService.class);
+		passwordResetService = mock(PasswordResetService.class);
 		emailController = mock(EmailController.class);
 		messageSource = mock(MessageSource.class);
 		passwordEncoder = new BCryptPasswordEncoder();
-		service = new UIUsersService(userService, projectService, emailController, messageSource, passwordEncoder);
+		service = new UIUsersService(userService, passwordResetService, emailController, messageSource,
+				passwordEncoder);
 
 		when(userService.read(anyLong())).thenReturn(USER2);
 		when(userService.getUserByUsername(anyString())).thenReturn(USER1);

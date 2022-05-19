@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUsersService;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsModel;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserEditRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
 
 /**
  * Handles asynchronous requests for the administration users table.
@@ -44,6 +41,28 @@ public class UsersAjaxController {
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 	public TableResponse<UserDetailsModel> getUsersPagedList(@RequestBody AdminUsersTableRequest request) {
 		return UIUsersService.getUsersPagedList(request);
+	}
+
+	/**
+	 * Create a new user
+	 *
+	 * @param userCreateRequest a {@link UserCreateRequest} containing details about a specific user
+	 * @param principal         a reference to the logged in user
+	 * @param locale            the logged in user's request locale
+	 * @return A list or errors
+	 */
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, String>> createUser(@RequestBody UserCreateRequest userCreateRequest,
+			Principal principal, Locale locale) {
+
+		UserDetailsResponse response = UIUsersService.createUser(userCreateRequest, principal, locale);
+
+		if (response.hasErrors())
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getErrors());
+			//TODO: handle mail failure?
+		else
+			return ResponseEntity.ok(null);
+
 	}
 
 	/**
@@ -77,8 +96,7 @@ public class UsersAjaxController {
 		UserDetailsResponse response = UIUsersService.updateUser(userId, userEditRequest, principal, request);
 
 		if (response.hasErrors())
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(response.getErrors());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getErrors());
 		else
 			return ResponseEntity.ok(null);
 
@@ -103,8 +121,7 @@ public class UsersAjaxController {
 				request);
 
 		if (response.hasErrors())
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(response.getErrors());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getErrors());
 		else
 			return ResponseEntity.ok(null);
 	}

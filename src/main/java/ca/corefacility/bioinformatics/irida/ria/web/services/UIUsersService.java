@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.security.Principal;
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -9,6 +10,8 @@ import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -18,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailSendException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -26,21 +30,20 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
+import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.AdminUsersTableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsModel;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserEditRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.RoleUtilities;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
@@ -49,17 +52,19 @@ import com.google.common.collect.ImmutableMap;
  */
 @Component
 public class UIUsersService {
+
+	private static final Logger logger = LoggerFactory.getLogger(UIUsersService.class);
 	private final UserService userService;
-	private final ProjectService projectService;
+	private final PasswordResetService passwordResetService;
 	private final EmailController emailController;
 	private final MessageSource messageSource;
 	private final PasswordEncoder passwordEncoder;
 
 	@Autowired
-	public UIUsersService(UserService userService, ProjectService projectService, EmailController emailController,
-			MessageSource messageSource, PasswordEncoder passwordEncoder) {
+	public UIUsersService(UserService userService, PasswordResetService passwordResetService,
+			EmailController emailController, MessageSource messageSource, PasswordEncoder passwordEncoder) {
 		this.userService = userService;
-		this.projectService = projectService;
+		this.passwordResetService = passwordResetService;
 		this.emailController = emailController;
 		this.messageSource = messageSource;
 		this.passwordEncoder = passwordEncoder;
@@ -83,6 +88,91 @@ public class UIUsersService {
 				.collect(Collectors.toList());
 
 		return new TableResponse<>(users, userPage.getTotalElements());
+	}
+
+	/**
+	 * Submit a new user
+	 *
+	 * @param userCreateRequest a {@link UserCreateRequest} containing details about a specific user
+	 * @param principal         a reference to the logged in user
+	 * @param locale            The logged in user's request locale
+	 * @return The name of the user view
+	 */
+	public UserDetailsResponse createUser(UserCreateRequest userCreateRequest, Principal principal, Locale locale) {
+		boolean mailFailure = false;
+		Map<String, String> errors = new HashMap<>();
+
+		User user = new User();
+		if (!Strings.isNullOrEmpty(userCreateRequest.getUsername())) {
+			user.setUsername(userCreateRequest.getUsername());
+		}
+
+		if (!Strings.isNullOrEmpty(userCreateRequest.getFirstName())) {
+			user.setFirstName(userCreateRequest.getFirstName());
+		}
+
+		if (!Strings.isNullOrEmpty(userCreateRequest.getLastName())) {
+			user.setLastName(userCreateRequest.getLastName());
+		}
+
+		if (!Strings.isNullOrEmpty(userCreateRequest.getEmail())) {
+			user.setEmail(userCreateRequest.getEmail());
+		}
+
+		if (!Strings.isNullOrEmpty(userCreateRequest.getPhoneNumber())) {
+			user.setPhoneNumber(userCreateRequest.getPhoneNumber());
+		}
+
+		if (!Strings.isNullOrEmpty(userCreateRequest.getLocale())) {
+			user.setLocale(userCreateRequest.getLocale());
+		}
+
+		// Check if we need to generate a password
+		boolean generateActivation = !Strings.isNullOrEmpty(userCreateRequest.getActivate());
+		if (generateActivation) {
+			user.setPassword(generatePassword());
+			user.setCredentialsNonExpired(false);
+		} else {
+			if (!Strings.isNullOrEmpty(userCreateRequest.getPassword()) || !Strings.isNullOrEmpty(
+					userCreateRequest.getConfirmPassword())) {
+				if (userCreateRequest.getPassword().equals(userCreateRequest.getConfirmPassword())) {
+					user.setPassword(userCreateRequest.getPassword());
+				} else {
+					errors.put("password", messageSource.getMessage("server.user.edit.password.match", null, locale));
+				}
+			} else {
+				errors.put("password", messageSource.getMessage("server.user.edit.password.empty", null, locale));
+			}
+		}
+
+		if (errors.isEmpty()) {
+			if (!Strings.isNullOrEmpty(userCreateRequest.getRole()) && isAdmin(principal)) {
+				user.setSystemRole(Role.valueOf(userCreateRequest.getRole()));
+			} else {
+				user.setSystemRole(Role.ROLE_USER);
+			}
+
+			try {
+				user = userService.create(user);
+
+				// if the password isn't set, we'll generate a password reset
+				PasswordReset passwordReset = null;
+				if (generateActivation) {
+					passwordReset = passwordResetService.create(new PasswordReset(user));
+					logger.trace("Created password reset for activation");
+				}
+
+				User creator = userService.getUserByUsername(principal.getName());
+				emailController.sendWelcomeEmail(user, creator, passwordReset);
+			} catch (ConstraintViolationException | DataIntegrityViolationException | EntityExistsException ex) {
+				errors = handleCreateUpdateException(ex, locale);
+			} catch (final MailSendException e) {
+				logger.error("Failed to send user activation e-mail.", e);
+				mailFailure = true;
+			}
+		}
+
+		return new UserDetailsResponse(mailFailure, errors);
 	}
 
 	/**
@@ -317,6 +407,74 @@ public class UIUsersService {
 		boolean usersEqual = user.equals(principalUser);
 
 		return usersEqual;
+	}
+
+	/**
+	 * Check if the logged in user is an Admin
+	 *
+	 * @param principal The logged in user to check
+	 * @return if the user is an admin
+	 */
+	private boolean isAdmin(Principal principal) {
+		User readPrincipal = userService.getUserByUsername(principal.getName());
+		return readPrincipal.getAuthorities().contains(Role.ROLE_ADMIN);
+	}
+
+	/**
+	 * Generate a temporary password for a user
+	 *
+	 * @return A temporary password
+	 */
+	private static String generatePassword() {
+		int PASSWORD_LENGTH = 32;
+		int ALPHABET_SIZE = 26;
+		int SINGLE_DIGIT_SIZE = 10;
+		int RANDOM_LENGTH = PASSWORD_LENGTH - 3;
+		String SPECIAL_CHARS = "!@#$%^&*()+?/<>=.\\{}";
+
+		List<Character> pwdArray = new ArrayList<>(PASSWORD_LENGTH);
+		SecureRandom random = new SecureRandom();
+
+		// 1. Create 1 random uppercase.
+		pwdArray.add((char) ('A' + random.nextInt(ALPHABET_SIZE)));
+
+		// 2. Create 1 random lowercase.
+		pwdArray.add((char) ('a' + random.nextInt(ALPHABET_SIZE)));
+
+		// 3. Create 1 random number.
+		pwdArray.add((char) ('0' + random.nextInt(SINGLE_DIGIT_SIZE)));
+
+		// 4. Add 1 special character
+		pwdArray.add(SPECIAL_CHARS.charAt(random.nextInt(SPECIAL_CHARS.length())));
+
+		// 5. Create 5 random.
+		int c = 'A';
+		int rand;
+		for (int i = 0; i < RANDOM_LENGTH; i++) {
+			rand = random.nextInt(4);
+			switch (rand) {
+			case 0:
+				c = '0' + random.nextInt(SINGLE_DIGIT_SIZE);
+				break;
+			case 1:
+				c = 'a' + random.nextInt(ALPHABET_SIZE);
+				break;
+			case 2:
+				c = 'A' + random.nextInt(ALPHABET_SIZE);
+				break;
+			case 3:
+				c = SPECIAL_CHARS.charAt(random.nextInt(SPECIAL_CHARS.length()));
+				break;
+			}
+			pwdArray.add((char) c);
+		}
+
+		// 6. Shuffle.
+		Collections.shuffle(pwdArray, random);
+
+		// 7. Create string.
+		Joiner joiner = Joiner.on("");
+		return joiner.join(pwdArray);
 	}
 
 }

@@ -35,6 +35,11 @@ public class UserDetailsResponse extends AjaxResponse {
 		this.canCreatePasswordReset = canCreatePasswordReset;
 	}
 
+	public UserDetailsResponse(boolean mailFailure, Map<String, String> errors) {
+		this.mailFailure = mailFailure;
+		this.errors = errors;
+	}
+
 	public UserDetailsResponse(Map<String, String> errors) {
 		this.errors = errors;
 	}

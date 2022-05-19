@@ -19,7 +19,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.users.UsersAjaxController;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserEditRequest;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 
 public class UsersAjaxControllerTest {
 	private UserService userService;
-	private ProjectService projectService;
+	private PasswordResetService passwordResetService;
 	private EmailController emailController;
 	private MessageSource messageSource;
 	private PasswordEncoder passwordEncoder;
@@ -41,12 +41,12 @@ public class UsersAjaxControllerTest {
 	@BeforeEach
 	void setUp() {
 		userService = mock(UserService.class);
-		projectService = mock(ProjectService.class);
+		passwordResetService = mock(PasswordResetService.class);
 		emailController = mock(EmailController.class);
 		messageSource = mock(MessageSource.class);
 		passwordEncoder = new BCryptPasswordEncoder();
 		request = mock(HttpServletRequest.class);
-		uiUsersService = new UIUsersService(userService, projectService, emailController, messageSource,
+		uiUsersService = new UIUsersService(userService, passwordResetService, emailController, messageSource,
 				passwordEncoder);
 		controller = new UsersAjaxController(uiUsersService);
 
