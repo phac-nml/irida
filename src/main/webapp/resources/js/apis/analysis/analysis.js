@@ -272,6 +272,34 @@ export async function getNewickTree(submissionId) {
 }
 
 /**
+ * Get the metadata for the submission.
+ * @param {number} submissionId
+ * @returns {Promise<*>} `data` contains the OK response; `error` contains error information if an error occured.
+ */
+export async function getMetadata(submissionId) {
+  try {
+    const res = await axios.get(`${ANALYSIS_URL}/${submissionId}/metadata`);
+    return res.data;
+  } catch (error) {
+    return { error };
+  }
+}
+
+/**
+ * Get the metadata templates for the submission.
+ * @param {number} submissionId
+ * @returns {Promise<*>} `data` contains the OK response; `error` contains error information if an error occured.
+ */
+export async function getMetadataTemplates(submissionId) {
+  try {
+    const res = await axios.get(`${ANALYSIS_URL}/${submissionId}/metadata-templates`);
+    return res.data;
+  } catch (error) {
+    return { error };
+  }
+}
+
+/**
  * Download output files as a zip file using an analysis submission id.
  * @param {number} submissionId submission for which to download output file for.
  * @return zip file of analysis outputs
