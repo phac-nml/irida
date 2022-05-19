@@ -6,7 +6,8 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 public class NCBIPlatformModel {
-	private EnumMap<NCBIPlatform, List<String>> platforms = new EnumMap<NCBIPlatform, List<String>>(NCBIPlatform.class);
+	private final EnumMap<NCBIPlatform, List<String>> platforms = new EnumMap<NCBIPlatform, List<String>>(
+			NCBIPlatform.class);
 
 	public NCBIPlatformModel() {
 		List<String> ABI_SOLID = ImmutableList.of(NCBIInstrumentModel.AB_5500_GENETIC_ANALYZER.getModel(),

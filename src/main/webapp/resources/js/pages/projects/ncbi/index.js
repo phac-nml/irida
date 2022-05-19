@@ -17,14 +17,16 @@ import { MinusCircleOutlined } from "@ant-design/icons";
 import { grey1 } from "../../../styles/colors";
 import {
   LIBRARY_SELECTION_OPTIONS,
-  LIBRARY_SOURCE_OPTIONS,
   LIBRARY_STRATEGY_OPTIONS,
 } from "./contstants";
 import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 function NCBIPage() {
   const [form] = Form.useForm();
   const [platforms, setPlatforms] = React.useState();
+  const [sources, setSources] = React.useState();
+
   const samples = (() => {
     const stored = window.sessionStorage.getItem("share");
     const storedJson = stored && stored.length ? JSON.parse(stored) : [];
@@ -39,9 +41,9 @@ function NCBIPage() {
         instrument_model: "",
         library_name: name,
         library_construction_protocol: "",
-        library_strategy: LIBRARY_STRATEGY_OPTIONS[0],
-        library_selection: LIBRARY_SELECTION_OPTIONS[0],
-        library_source: LIBRARY_SOURCE_OPTIONS[0],
+        library_strategy: "",
+        library_selection: "",
+        library_source: "",
       }));
     }
     return [];
@@ -61,6 +63,14 @@ function NCBIPage() {
           })),
         }));
         setPlatforms(options);
+      });
+  }, []);
+
+  React.useEffect(() => {
+    fetch(setBaseUrl(`/ajax/projects/4/ncbi/sources`))
+      .then((response) => response.json())
+      .then((data) => {
+        setSources(data);
       });
   }, []);
 
@@ -113,7 +123,7 @@ function NCBIPage() {
       },
     },
     {
-      title: i18n("project.export.library_strategy.title"),
+      title: i18n("project.export.library_source.title"),
       dataIndex: "library_source",
       key: "library_source",
       render: (_, item) => {
@@ -128,7 +138,7 @@ function NCBIPage() {
               style={{ width: `100%` }}
               defaultValue={item.library_source}
             >
-              {LIBRARY_SOURCE_OPTIONS.map((option) => (
+              {sources?.map((option) => (
                 <Select.Option key={option}>{option}</Select.Option>
               ))}
             </Select>

@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.model.export;
 /**
  * Library source of an NCBI export
  */
-public enum NcbiLibrarySource {
+public enum NCBILibrarySource {
 	GENOMIC("GENOMIC"),
 
 	METAGENOMIC("METAGENOMIC"),
@@ -20,7 +20,7 @@ public enum NcbiLibrarySource {
 
 	private String value;
 
-	private NcbiLibrarySource(String value) {
+	private NCBILibrarySource(String value) {
 		this.value = value;
 	}
 

@@ -1,17 +1,20 @@
 package ca.corefacility.bioinformatics.irida.model.export;
 
+import java.util.Set;
+import java.util.UUID;
+
+import javax.persistence.*;
+
+import org.hibernate.envers.Audited;
+
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Sets;
-import org.hibernate.envers.Audited;
-
-import javax.persistence.*;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * {@link SequenceFile}s and {@link SequenceFilePair}s associated with a
@@ -52,7 +55,7 @@ public class NcbiBioSampleFiles {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "library_source")
-	private NcbiLibrarySource librarySource;
+	private NCBILibrarySource librarySource;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "library_strategy")
@@ -85,7 +88,7 @@ public class NcbiBioSampleFiles {
 
 	public NcbiBioSampleFiles(String bioSample, Set<SingleEndSequenceFile> files, Set<SequenceFilePair> pairs,
 			NcbiInstrumentModel instrument_model, String library_name, NcbiLibrarySelection library_selection,
-			NcbiLibrarySource library_source, NcbiLibraryStrategy library_strategy,
+			NCBILibrarySource library_source, NcbiLibraryStrategy library_strategy,
 			String library_construction_protocol, String namespace) {
 		this(namespace);
 		this.bioSample = bioSample;
@@ -110,7 +113,7 @@ public class NcbiBioSampleFiles {
 		private NcbiInstrumentModel instrumentModel;
 		private String libraryName;
 		private NcbiLibrarySelection librarySelection;
-		private NcbiLibrarySource librarySource;
+		private NCBILibrarySource librarySource;
 		private NcbiLibraryStrategy libraryStrategy;
 		private String libraryConstructionProtocol;
 		private String namespace;
@@ -178,7 +181,7 @@ public class NcbiBioSampleFiles {
 		 * @param library_source the library_source
 		 * @return a builder
 		 */
-		public Builder librarySource(NcbiLibrarySource library_source) {
+		public Builder librarySource(NCBILibrarySource library_source) {
 			this.librarySource = library_source;
 			return this;
 		}
@@ -286,7 +289,7 @@ public class NcbiBioSampleFiles {
 		return librarySelection;
 	}
 
-	public NcbiLibrarySource getLibrarySource() {
+	public NCBILibrarySource getLibrarySource() {
 		return librarySource;
 	}
 
