@@ -15,7 +15,7 @@ export async function getProjectNCBIExports() {
   return response.json();
 }
 
-const EXPORT_BASE = setBaseUrl(`/ajax/export/ncbi`);
+const EXPORT_BASE = setBaseUrl(`/ajax/ncbi`);
 
 export async function getNCBIPlatforms() {
   return await fetch(`${EXPORT_BASE}/platforms`)
@@ -27,6 +27,17 @@ export async function getNCBIPlatforms() {
 export async function getNCBISources() {
   return await fetch(`${EXPORT_BASE}/sources`)
     .then((response) => response.json())
-    .then((response) => response)
+    .catch((error) => console.log(error));
+}
+
+export async function getNCBIStrategies() {
+  return await fetch(`${EXPORT_BASE}/strategies`)
+    .then((response) => response.json())
+    .catch((error) => console.log(error));
+}
+
+export async function getNCBISelections() {
+  return await fetch(`${EXPORT_BASE}/selections`)
+    .then((response) => response.json())
     .catch((error) => console.log(error));
 }

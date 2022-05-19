@@ -1,17 +1,20 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax.export;
+package ca.corefacility.bioinformatics.irida.ria.web.export;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.model.export.NCBILibrarySource;
+import ca.corefacility.bioinformatics.irida.model.export.NcbiLibrarySelection;
+import ca.corefacility.bioinformatics.irida.model.export.NcbiLibraryStrategy;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NcbiExportSubmissionAdminTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NcbiExportSubmissionTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.export.dto.NCBIPlatformModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UINcbiService;
@@ -51,5 +54,29 @@ public class NCBIAjaxController {
 	public ResponseEntity<TableResponse<NcbiExportSubmissionAdminTableModel>> getNCBIExportsForAdmin(
 			@RequestBody TableRequest request) {
 		return ResponseEntity.ok(service.getNCBIExportsForAdmin(request));
+	}
+
+	@GetMapping("/platforms")
+	public NCBIPlatformModel getNCBIPlatforms() {
+		return new NCBIPlatformModel();
+	}
+
+	@GetMapping("/sources")
+	public List<String> getNCBISources() {
+		return Arrays.stream(NCBILibrarySource.values()).map(NCBILibrarySource::getValue).collect(Collectors.toList());
+	}
+
+	@GetMapping("/strategies")
+	public List<String> getNCBIStrategies() {
+		return Arrays.stream(NcbiLibraryStrategy.values())
+				.map(NcbiLibraryStrategy::getValue)
+				.collect(Collectors.toList());
+	}
+
+	@GetMapping("/selections")
+	public List<String> getNCBISelection() {
+		return Arrays.stream(NcbiLibrarySelection.values())
+				.map(NcbiLibrarySelection::getValue)
+				.collect(Collectors.toList());
 	}
 }
