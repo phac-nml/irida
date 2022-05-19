@@ -1,7 +1,10 @@
-package ca.corefacility.bioinformatics.irida.model.export;
+package ca.corefacility.bioinformatics.irida.ria.web.export.dto;
 
 import java.util.EnumMap;
 import java.util.List;
+
+import ca.corefacility.bioinformatics.irida.model.export.NCBIInstrumentModel;
+import ca.corefacility.bioinformatics.irida.model.export.NCBIPlatform;
 
 import com.google.common.collect.ImmutableList;
 
