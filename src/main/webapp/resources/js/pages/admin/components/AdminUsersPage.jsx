@@ -18,20 +18,20 @@ import CreateNewUser from "./user/CreateNewUser";
 export default function AdminUsersPage() {
   // The following renders the Users component view
   return (
-    <PageWrapper
-      title={i18n("AdminPanel.users")}
-      headerExtras={[
-        <CreateNewUser />,
-        <AddNewButton
-          className={"t-add-user-btn"}
-          href={setBaseUrl(`users/create`)}
-          text={i18n("AdminPanel.addUser")}
-        />,
-      ]}
-    >
-      <PagedTableProvider url={setBaseUrl("ajax/users/list")}>
+    <PagedTableProvider url={setBaseUrl("ajax/users/list")}>
+      <PageWrapper
+        title={i18n("AdminPanel.users")}
+        headerExtras={[
+          <CreateNewUser />,
+          <AddNewButton
+            className={"t-add-user-btn"}
+            href={setBaseUrl(`users/create`)}
+            text={i18n("AdminPanel.addUser")}
+          />,
+        ]}
+      >
         <UsersTable />
-      </PagedTableProvider>
-    </PageWrapper>
+      </PageWrapper>
+    </PagedTableProvider>
   );
 }

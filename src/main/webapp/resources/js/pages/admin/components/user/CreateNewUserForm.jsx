@@ -18,6 +18,7 @@ import {
 } from "../../../../apis/settings/settings";
 import { SPACE_SM } from "../../../../styles/spacing";
 import { useVisibility } from "../../../../contexts/visibility-context";
+import { PagedTableContext } from "../../../../components/ant.design/PagedTable";
 
 /**
  * React component to display the create new user form.
@@ -25,6 +26,7 @@ import { useVisibility } from "../../../../contexts/visibility-context";
  * @constructor
  */
 export default function CreateNewUserForm() {
+  const { updateTable } = React.useContext(PagedTableContext);
   const { data: locales = [] } = useGetLocalesQuery();
   const { data: systemRoles = [] } = useGetSystemRolesQuery();
   const { data: emailConfigured = false } = useGetEmailConfiguredQuery();
@@ -51,6 +53,7 @@ export default function CreateNewUserForm() {
         });
         form.resetFields();
         setVisibility(false);
+        updateTable();
       })
       .catch((error) => {
         console.log("FAILED");
