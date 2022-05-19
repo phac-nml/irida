@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.projects;
+package ca.corefacility.bioinformatics.irida.ria.web.export;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,8 +12,8 @@ import ca.corefacility.bioinformatics.irida.model.export.NCBILibrarySource;
 import ca.corefacility.bioinformatics.irida.model.export.NCBIPlatformModel;
 
 @RestController
-@RequestMapping("/ajax/projects/{projectId}/ncbi")
-public class ProjectNCBIExportAjaxController {
+@RequestMapping("/ajax/export/ncbi")
+public class NCBIExportController {
 
 	@GetMapping("/platforms")
 	public NCBIPlatformModel getNCBIPlatforms() {

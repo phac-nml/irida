@@ -21,11 +21,20 @@ import {
 } from "./contstants";
 import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import { configureStore } from "@reduxjs/toolkit";
+import ncbiReducer, { fetchPlatforms } from "./ncbiSlice";
+import { Provider, useDispatch, useSelector } from "react-redux";
 
 function NCBIPage() {
+  const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const [platforms, setPlatforms] = React.useState();
   const [sources, setSources] = React.useState();
+
+  const { platforms } = useSelector((state) => state.ncbi);
+
+  React.useEffect(() => {
+    dispatch(fetchPlatforms());
+  }, [dispatch]);
 
   const samples = (() => {
     const stored = window.sessionStorage.getItem("share");
@@ -50,24 +59,7 @@ function NCBIPage() {
   })();
 
   React.useEffect(() => {
-    fetch(`/ajax/projects/4/ncbi/platforms`)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        const options = Object.keys(data.platforms).map((platform) => ({
-          value: platform,
-          label: platform,
-          children: data.platforms[platform].map((child) => ({
-            value: child,
-            label: child,
-          })),
-        }));
-        setPlatforms(options);
-      });
-  }, []);
-
-  React.useEffect(() => {
-    fetch(setBaseUrl(`/ajax/projects/4/ncbi/sources`))
+    fetch(setBaseUrl(`/ajax/export/ncbi/sources`))
       .then((response) => response.json())
       .then((data) => {
         setSources(data);
@@ -126,6 +118,7 @@ function NCBIPage() {
       title: i18n("project.export.library_source.title"),
       dataIndex: "library_source",
       key: "library_source",
+      width: 220,
       render: (_, item) => {
         return (
           <Form.Item
@@ -155,6 +148,7 @@ function NCBIPage() {
       title: i18n("project.export.instrument_model.title"),
       dataIndex: "instrument_model",
       key: "instrument_model",
+      width: 220,
       render: (_, item) => {
         return (
           <Form.Item
@@ -281,4 +275,16 @@ function NCBIPage() {
   );
 }
 
-render(<NCBIPage />, document.querySelector("#root"));
+const store = configureStore({
+  reducer: {
+    ncbi: ncbiReducer,
+  },
+  devTools: process.env.NODE_ENV !== "production",
+});
+
+render(
+  <Provider store={store}>
+    <NCBIPage />
+  </Provider>,
+  document.querySelector("#root")
+);
