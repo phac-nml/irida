@@ -92,6 +92,7 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
             <Col>
               <Button
                 type="link"
+                className="t-forgot-password-link"
                 onClick={() => {
                   updateDisplayLoginPage(false);
                   updatePageType("forgot-password");
@@ -108,6 +109,7 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
 
               <Button
                 type="link"
+                className="t-activate-account-link"
                 onClick={() => {
                   updateDisplayLoginPage(false);
                   updatePageType("activate-account");

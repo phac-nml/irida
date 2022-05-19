@@ -13,20 +13,25 @@ public class CreatePasswordResetPage extends AbstractPage {
 	}
 
 	public void goTo() {
-		get(driver, "password_reset/");
+		// Go to the login page
+		get(driver, "/");
+	}
+
+	public void clickForgotPasswordLink() {
+		driver.findElement(By.className("t-forgot-password-link")).click();
 	}
 
 	public void enterEmail(String email) {
-		WebElement emailElement = driver.findElement(By.id("email"));
+		WebElement emailElement = driver.findElement(By.id("usernameOrEmail"));
 		emailElement.sendKeys(email);
 
-		driver.findElement(By.className("submit")).click();
+		driver.findElement(By.className("t-submit-btn")).click();
 	}
 
 	public boolean checkSuccess() {
 		try {
-			WebElement el = waitForElementVisible(By.className("reset-desc"));
-			return el.getText().contains("Password reset created for ");
+			WebElement el = waitForElementVisible(By.className("t-forgot-password-alert"));
+			return el.getText().contains("Check your email for password reset instructions");
 		} catch (Exception e) {
 			return false;
 		}

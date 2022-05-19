@@ -1,8 +1,7 @@
 import { useActivateAccountMutation } from "../../apis/passwordReset";
-import { Button, Form, Input } from "antd";
+import { Alert, Button, Form, Input } from "antd";
 import React, { useEffect, useRef } from "react";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { InfoAlert } from "../../components/alerts";
 import { SPACE_MD } from "../../styles/spacing";
 const { Item } = Form;
 
@@ -46,7 +45,13 @@ export function ActivateAccount({ updateDisplayLoginPage }) {
   return (
     <div>
       {messageAlert && (
-        <InfoAlert message={message} style={{ marginTop: SPACE_MD }} />
+        <Alert
+          message={message}
+          className="t-activation-id-error-alert"
+          style={{ marginTop: SPACE_MD }}
+          type="error"
+          showIcon
+        />
       )}
       <Form
         name="accountActivationForm"
@@ -65,6 +70,7 @@ export function ActivateAccount({ updateDisplayLoginPage }) {
         >
           <Input
             name="activationId"
+            id="activationId"
             ref={activationIdRef}
             placeholder={i18n("ActivateAccount.input.placeholder")}
           />
@@ -72,7 +78,7 @@ export function ActivateAccount({ updateDisplayLoginPage }) {
 
         <Item>
           <Button
-            id="t-submit-btn"
+            className="t-submit-btn"
             type="primary"
             block
             onClick={() => handleSubmit()}
@@ -82,6 +88,7 @@ export function ActivateAccount({ updateDisplayLoginPage }) {
         </Item>
       </Form>
       <Button
+        className="t-return-to-login"
         type="link"
         size="large"
         style={{ padding: 0 }}

@@ -151,7 +151,7 @@ public class UIPasswordResetService {
 	 * @param model    A model for the page
 	 * @param locale   The logged in user's locale
 	 * @return message if successful or not
-	 * @throws {@link UIConstraintViolationException} if any constraints are violated
+	 * @throws UIConstraintViolationException if any constraints are violated
 	 */
 	public String setNewPassword(String resetId, String password, Model model, Locale locale)
 			throws UIConstraintViolationException {

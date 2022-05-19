@@ -17,21 +17,27 @@ public class PasswordResetPage extends AbstractPage {
 		get(driver, RELATIVE_URL + key);
 	}
 
-	public void enterPassword(String password, String confirmPassword) {
+	public void enterPassword(String password) {
 		WebElement passwordElement = driver.findElement(By.id("password"));
-		WebElement confirmElement = driver.findElement(By.id("confirmPassword"));
 		passwordElement.sendKeys(password);
-		confirmElement.sendKeys(confirmPassword);
 	}
 
 	public void clickSubmit() {
-		submitAndWait(driver.findElement(By.className("t-submit-btn")));
+		driver.findElement(By.className("t-submit-btn")).click();
 	}
 
 	public boolean checkSuccess() {
 		try {
-			WebElement el = waitForElementVisible(By.className("t-reset-success"));
-			return el.getText().contains("Password successfully updated.");
+			WebElement el = waitForElementVisible(By.className("t-reset-success-alert"));
+			return el.getText().contains("Password successfully updated. You may use your new credentials to log in to IRIDA.");
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public boolean isErrorAlertDisplayed() {
+		try {
+			return driver.findElement(By.className("t-reset-error-alert")).isDisplayed();
 		} catch (Exception e) {
 			return false;
 		}

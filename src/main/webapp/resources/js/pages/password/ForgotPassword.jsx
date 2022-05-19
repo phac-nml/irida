@@ -46,7 +46,11 @@ export function ForgotPassword({ updateDisplayLoginPage }) {
   return (
     <div>
       {messageAlert && (
-        <InfoAlert message={message} style={{ marginTop: SPACE_MD }} />
+        <InfoAlert
+          message={message}
+          className="t-forgot-password-alert"
+          style={{ marginTop: SPACE_MD }}
+        />
       )}
       <Form
         name="forgotPasswordForm"
@@ -65,6 +69,7 @@ export function ForgotPassword({ updateDisplayLoginPage }) {
         >
           <Input
             name="usernameOrEmail"
+            id="usernameOrEmail"
             ref={emailRef}
             prefix={<IconMail style={{ color: blue6 }} />}
             placeholder={i18n("ForgotPassword.input.placeholder")}
@@ -74,7 +79,7 @@ export function ForgotPassword({ updateDisplayLoginPage }) {
 
         <Item>
           <Button
-            id="t-submit-btn"
+            className="t-submit-btn"
             type="primary"
             onClick={() => submitResetEmail()}
             disabled={messageAlert}
@@ -85,6 +90,7 @@ export function ForgotPassword({ updateDisplayLoginPage }) {
         </Item>
       </Form>
       <Button
+        className="t-return-to-login"
         size="large"
         type="link"
         style={{ padding: 0 }}

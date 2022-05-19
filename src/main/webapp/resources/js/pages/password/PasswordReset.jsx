@@ -74,6 +74,7 @@ function PasswordResetForm() {
           <Alert
             style={{ marginBottom: SPACE_SM }}
             message={i18n("password.reset.success")}
+            className="t-reset-success-alert"
             action={
               <Button
                 type="link"
@@ -90,6 +91,7 @@ function PasswordResetForm() {
         {updateError && (
           <Alert
             style={{ marginBottom: SPACE_SM }}
+            className="t-reset-error-alert"
             message="The following errors occurred:"
             description={
               <Typography.Paragraph>
@@ -115,6 +117,7 @@ function PasswordResetForm() {
           ? passwordExpired && (
               <Alert
                 style={{ marginBottom: SPACE_SM }}
+                className="t-password-expired-alert"
                 message={i18n("password.reset.password_expired")}
                 type="error"
                 showIcon
@@ -127,6 +130,7 @@ function PasswordResetForm() {
             <Alert
               style={{ marginBottom: SPACE_SM }}
               message={i18n("PasswordReset.alert.title")}
+              className="t-password-policy-alert"
               description={
                 <Typography.Paragraph>
                   <List
@@ -152,6 +156,7 @@ function PasswordResetForm() {
                 <Input
                   name="password"
                   type="password"
+                  id="password"
                   prefix={<IconLocked style={{ color: blue6 }} />}
                   placeholder={i18n("PasswordReset.input.placeholder")}
                   disabled={updateSuccess}
@@ -159,7 +164,7 @@ function PasswordResetForm() {
               </Item>
               <Item>
                 <Button
-                  id="t-submit-btn"
+                  className="t-submit-btn"
                   type="primary"
                   disabled={updateSuccess}
                   block
