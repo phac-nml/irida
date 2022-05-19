@@ -22,18 +22,18 @@ import {
 import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { configureStore } from "@reduxjs/toolkit";
-import ncbiReducer, { fetchPlatforms } from "./ncbiSlice";
+import ncbiReducer, { fetchPlatforms, fetchSources } from "./ncbiSlice";
 import { Provider, useDispatch, useSelector } from "react-redux";
 
 function NCBIPage() {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const [sources, setSources] = React.useState();
 
-  const { platforms } = useSelector((state) => state.ncbi);
+  const { platforms, sources } = useSelector((state) => state.ncbi);
 
   React.useEffect(() => {
     dispatch(fetchPlatforms());
+    dispatch(fetchSources());
   }, [dispatch]);
 
   const samples = (() => {
