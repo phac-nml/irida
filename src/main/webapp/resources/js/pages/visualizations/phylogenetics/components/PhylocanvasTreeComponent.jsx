@@ -1,6 +1,6 @@
 import React from "react";
 import PhylocanvasGL from "@phylocanvas/phylocanvas.gl";
-import { Button, Popover, Select, Space, Switch, Typography } from "antd";
+import { Button, Checkbox, Popover, Select, Space, Switch, Typography } from "antd";
 import { FilterOutlined } from "@ant-design/icons";
 import { formatMetadata } from "../metadata-utilities";
 const { Option } = Select;
@@ -85,9 +85,18 @@ export function PhylocanvasTreeComponent({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleChecked = (event, field, checked) => {
+  const handleFieldChecked = (event, field) => {
     event.stopPropagation();
-    setFields({ ...fields, [field]: checked });
+    setFields({ ...fields, [field]: event.target.checked });
+  };
+
+  const handleSelectAllChecked = (event, checked) => {
+    event.stopPropagation();
+    if (checked) {
+      setFields(allFields);
+    } else {
+      setFields(noFields);
+    }
   };
 
   const fetchMetadataTemplateFields = async (templateIdx) => {
@@ -130,22 +139,29 @@ export function PhylocanvasTreeComponent({
       <Select defaultValue={-1} style={{ width: 150 }} onChange={handleTemplateChange}>
         {metadataTemplateOptions}
       </Select>
-      {Object.keys(fields)?.map((field) => (
-        <div
-          key={field}
+      <div
+          key={"select-all"}
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center"
           }}
         >
-          <Typography.Text strong>{field}</Typography.Text>
+          <Typography.Text strong>{i18n("visualization.phylogenomics.select-all")}</Typography.Text>
           <Switch
-            checked={fields[field]}
-            onChange={(checked, event) => handleChecked(event, field, checked)}
+            checked={JSON.stringify(fields) === JSON.stringify(allFields)}
+            onChange={(checked, event) => handleSelectAllChecked(event, checked)}
             size="small"
           />
         </div>
+      {Object.keys(fields)?.map((field) => (
+        <Space key={field} direction="horizontal">
+          <Checkbox
+            checked={fields[field]}
+            onChange={(event) => handleFieldChecked(event, field)}
+          />
+          <Typography.Text strong>{field}</Typography.Text>
+        </Space>
       ))}
     </Space>
   );
