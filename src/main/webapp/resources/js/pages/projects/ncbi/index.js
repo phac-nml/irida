@@ -12,6 +12,7 @@ import {
   Row,
   Select,
   Table,
+  Tooltip,
 } from "antd";
 import { MinusCircleOutlined } from "@ant-design/icons";
 import * as moment from "moment";
@@ -240,16 +241,18 @@ function NCBIPage() {
       width: 60,
       render: (_, item) => {
         return (
-          <Button
-            shape="circle"
-            type="text"
-            icon={<MinusCircleOutlined />}
-            onClick={() => {
-              const copy = { ...samples };
-              delete copy[item.name];
-              setSamples(copy);
-            }}
-          />
+          <Tooltip title={"Remove Sample"} placement="left">
+            <Button
+              shape="circle"
+              type="text"
+              icon={<MinusCircleOutlined />}
+              onClick={() => {
+                const copy = { ...samples };
+                delete copy[item.name];
+                setSamples(copy);
+              }}
+            />
+          </Tooltip>
         );
       },
     },
@@ -275,14 +278,14 @@ function NCBIPage() {
         {/*  </Steps>*/}
         {/*</Layout.Sider>*/}
         <Layout.Content style={{ backgroundColor: grey1 }}>
-          <Row gutter={[16, 16]}>
-            <Col>
-              <Form
-                onFinish={validateAndSubmit}
-                layout="vertical"
-                form={form}
-                initialValues={{ samples, release_date: moment(new Date()) }}
-              >
+          <Form
+            onFinish={validateAndSubmit}
+            layout="vertical"
+            form={form}
+            initialValues={{ samples, release_date: moment(new Date()) }}
+          >
+            <Row gutter={[16, 16]}>
+              <Col xs={24} sm={{ span: 12, offset: 6 }}>
                 <Form.Item
                   label={i18n("project.export.bioproject.title")}
                   help={i18n("project.export.bioproject.description")}
@@ -307,7 +310,6 @@ function NCBIPage() {
                 >
                   <Input type="text" />
                 </Form.Item>
-                {/* TODO: Datepicker */}
                 <Form.Item
                   label={i18n("project.export.release_date.title")}
                   help={i18n("project.export.release_date.description")}
@@ -316,18 +318,22 @@ function NCBIPage() {
                 >
                   <DatePicker />
                 </Form.Item>
+              </Col>
+              <Col span={24}>
                 <Table
                   scroll={{ x: "max-content" }}
                   columns={columns}
                   dataSource={Object.values(samples)}
                   pagination={getPaginationOptions(Object.keys(samples).length)}
                 />
+              </Col>
+              <Col xs={24} sm={{ span: 24, offset: 6 }}>
                 <Button htmlType="submit" type="primary">
                   Send
                 </Button>
-              </Form>
-            </Col>
-          </Row>
+              </Col>
+            </Row>
+          </Form>
         </Layout.Content>
       </Layout>
     </>
