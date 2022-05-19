@@ -73,6 +73,7 @@ export function ActivateAccount({ updateDisplayLoginPage }) {
       </Form>
       <Button
         type="link"
+        size="large"
         style={{ padding: 0 }}
         onClick={() => {
           updateDisplayLoginPage(true);

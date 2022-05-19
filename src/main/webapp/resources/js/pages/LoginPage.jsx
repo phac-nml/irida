@@ -99,7 +99,7 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
                     "/forgot_password"
                   );
                 }}
-                style={{ padding: 0 }}
+                style={{ padding: 0, marginLeft: 15 }}
               >
                 {i18n("LoginPage.forgot")}
               </Button>
@@ -115,7 +115,7 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
                     "/activate_account"
                   );
                 }}
-                style={{ marginLeft: 10 }}
+                style={{ padding: 0, marginLeft: 25 }}
               >
                 {i18n("LoginPage.activate")}
               </Button>

@@ -77,6 +77,7 @@ export function ForgotPassword({ updateDisplayLoginPage }) {
         </Item>
       </Form>
       <Button
+        size="large"
         type="link"
         style={{ padding: 0 }}
         onClick={() => {
