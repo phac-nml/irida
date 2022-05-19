@@ -1,6 +1,7 @@
 import React from "react";
 import PhylocanvasGL from "@phylocanvas/phylocanvas.gl";
-import { Button, Checkbox } from "antd";
+import { Button, Popover, Space, Switch, Typography } from "antd";
+import { FilterOutlined } from "@ant-design/icons";
 import { formatMetadata } from "../metadata-utilities";
 
 export function PhylocanvasTreeComponent({
@@ -78,9 +79,24 @@ export function PhylocanvasTreeComponent({
     };
   });
 
-  const handleChecked = (e, field) => {
-    setFields({ ...fields, [field]: e.target.checked });
+  const handleChecked = (event, field, checked) => {
+    e.stopPropagation();
+    setFields({ ...fields, [field]: checked });
   };
+
+  const metadataMenu = (
+    <Space direction="vertical">
+      {Object.keys(fields)?.map((field) => (
+        <Space direction="horizontal" key={field}>
+          <Switch
+            checked={fields[field]}
+            onChange={(checked, event) => handleChecked(event, field, checked)}
+          />
+          <Typography.Text strong>{field}</Typography.Text>
+        </Space>
+      ))}
+    </Space>
+  );
 
   return (
     <div
@@ -99,20 +115,14 @@ export function PhylocanvasTreeComponent({
           flexDirection: "row-reverse",
         }}
       >
-        <Button onClick={downloadTree}>
-          {i18n("visualization.button.export.svg")}
-        </Button>
-        <div>
-          {Object.keys(fields).map((field) => (
-            <Checkbox
-              key={field}
-              checked={fields[field]}
-              onChange={(e) => handleChecked(e, field)}
-            >
-              {field}
-            </Checkbox>
-          ))}
-        </div>
+        <Space>
+          <Popover content={metadataMenu} placement="bottomRight">
+            <Button shape="circle" icon={<FilterOutlined />} />
+          </Popover>
+          <Button onClick={downloadTree}>
+            {i18n("visualization.button.export.svg")}
+          </Button>
+        </Space>
       </div>
       <div style={{ flex: "1 1 auto", minHeight: "0" }}>
         <div ref={canvasRef} />
