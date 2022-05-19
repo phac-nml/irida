@@ -48,23 +48,25 @@ public class PasswordResetAjaxController {
 	public ResponseEntity<AjaxResponse> adminNewPasswordReset(@PathVariable Long userId, Principal principal,
 			Locale locale) {
 		try {
-			return ResponseEntity.ok(
-					new AjaxSuccessResponse(service.adminNewPasswordReset(userId, principal, locale)));
+			return ResponseEntity.ok(new AjaxSuccessResponse(service.adminNewPasswordReset(userId, principal, locale)));
 		} catch (UIEmailSendException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
 	/**
-	 * Create a password reset for the given email address
+	 * Create a password reset for the given email address or username
 	 *
 	 * @param usernameOrEmail The email address or username to create a password reset for
-	 * @return Reset created page if the email exists in the system
+	 * @param locale          The logged in user's locale
+	 * @return message indicating if the password reset was successfully created or not
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<AjaxResponse> createAndSendNewPasswordResetEmail(@RequestParam String usernameOrEmail, Locale locale) {
+	public ResponseEntity<AjaxResponse> createAndSendNewPasswordResetEmail(@RequestParam String usernameOrEmail,
+			Locale locale) {
 		try {
-			return ResponseEntity.ok(new AjaxSuccessResponse(service.createAndSendNewPasswordResetEmail(usernameOrEmail, locale)));
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(service.createAndSendNewPasswordResetEmail(usernameOrEmail, locale)));
 		} catch (EntityNotFoundException e) {
 			return ResponseEntity.ok(new AjaxSuccessResponse(e.getMessage()));
 		} catch (UIEmailSendException e) {
@@ -72,25 +74,40 @@ public class PasswordResetAjaxController {
 		}
 	}
 
+	/**
+	 * Activate the user account
+	 *
+	 * @param identifier The ID of the {@link PasswordReset}
+	 * @return response with {@link UserPasswordResetDetails}
+	 */
 	@RequestMapping(value = "/activate_account", method = RequestMethod.POST)
-	public  ResponseEntity<UserPasswordResetDetails> activateAccount(@RequestParam String identifier) {
+	public ResponseEntity<UserPasswordResetDetails> activateAccount(@RequestParam String identifier) {
 		try {
-			return ResponseEntity.ok(
-					service.activateAccount(identifier));
+			return ResponseEntity.ok(service.activateAccount(identifier));
 		} catch (UIEmailSendException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
 	}
 
+	/**
+	 * Update the password for the {@link User}
+	 *
+	 * @param resetId  The {@link PasswordReset} identifier
+	 * @param password The new password to set for the user
+	 * @param model    A model for the page
+	 * @param locale   The logged in user's locale
+	 * @return response with {@link PasswordResetResponse}
+	 */
 	@RequestMapping(value = "/update_password", method = RequestMethod.POST)
-	public ResponseEntity<PasswordResetResponse> updatePassword(@RequestParam String resetId, @RequestParam String password, Model model, Locale locale) {
+	public ResponseEntity<PasswordResetResponse> updatePassword(@RequestParam String resetId,
+			@RequestParam String password, Model model, Locale locale) {
 		try {
-			return ResponseEntity.ok(new PasswordResetResponse(service.setNewPassword(resetId, password, model, locale), null));
+			return ResponseEntity.ok(
+					new PasswordResetResponse(service.setNewPassword(resetId, password, model, locale), null));
 		} catch (UIConstraintViolationException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PasswordResetResponse("error",e.getErrors()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new PasswordResetResponse("error", e.getErrors()));
 		}
 	}
-
-
 
 }

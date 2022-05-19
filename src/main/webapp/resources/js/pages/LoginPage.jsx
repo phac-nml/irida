@@ -16,6 +16,8 @@ const { Item } = Form;
 
 /**
  * React component to render the login form
+ * @param {function} updateDisplayLoginPage Function to update whether to display login page
+ * @param {function} updatePageType Function to update the page type
  * @returns {*}
  * @constructor
  */

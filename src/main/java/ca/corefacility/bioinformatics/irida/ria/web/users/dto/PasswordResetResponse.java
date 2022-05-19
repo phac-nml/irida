@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.users.dto;
 
 import java.util.Map;
 
+/**
+ * Data transfer object for password reset response
+ */
 public class PasswordResetResponse {
 	private String statusMessage;
 	private Map<String, String> errors;

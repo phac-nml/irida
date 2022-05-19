@@ -16,7 +16,7 @@ const passwordExpired = params.get("expired") || false;
 const passwordResetObj = window.PAGE.passwordReset;
 
 /**
- * React component to layout the Password Reset page.
+ * React component to render the Password Reset form.
  * @returns {*}
  * @constructor
  */
@@ -176,6 +176,11 @@ function PasswordResetForm() {
   );
 }
 
+/**
+ * React component to render the Password Reset page and provide the store.
+ * @returns {*}
+ * @constructor
+ */
 export default function PasswordReset() {
   return (
     <Provider store={store}>

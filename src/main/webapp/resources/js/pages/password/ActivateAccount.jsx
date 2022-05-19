@@ -6,6 +6,12 @@ import { InfoAlert } from "../../components/alerts";
 import { SPACE_MD } from "../../styles/spacing";
 const { Item } = Form;
 
+/**
+ * React component to render the forgot password form
+ * @param {function} updateDisplayLoginPage Function to update whether to display login page
+ * @returns {*}
+ * @constructor
+ */
 export function ActivateAccount({ updateDisplayLoginPage }) {
   const [activateAccount] = useActivateAccountMutation();
   const [activateAccountForm] = Form.useForm();
@@ -13,6 +19,10 @@ export function ActivateAccount({ updateDisplayLoginPage }) {
   const [message, setMessage] = React.useState("");
   const activationIdRef = useRef();
 
+  /**
+   * When the component gets added to the page,
+   * focus on the activationId input.
+   */
   useEffect(() => {
     activationIdRef.current.focus();
     activationIdRef.current.select();

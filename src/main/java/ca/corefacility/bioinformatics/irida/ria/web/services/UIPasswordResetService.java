@@ -85,6 +85,13 @@ public class UIPasswordResetService {
 				locale);
 	}
 
+	/**
+	 * Create a password reset for the given email address or username
+	 *
+	 * @param usernameOrEmail The email address or username to create a password reset for
+	 * @param locale          The logged in user's locale
+	 * @return message indicating if the password reset was successfully created or not
+	 */
 	public String createAndSendNewPasswordResetEmail(String usernameOrEmail, Locale locale) {
 		setAuthentication();
 
@@ -97,7 +104,7 @@ public class UIPasswordResetService {
 			Matcher matcher = pattern.matcher(usernameOrEmail);
 			User user;
 
-			if(matcher.matches()) {
+			if (matcher.matches()) {
 				user = userService.loadUserByEmail(usernameOrEmail);
 			} else {
 				user = userService.getUserByUsername(usernameOrEmail);
@@ -108,14 +115,22 @@ public class UIPasswordResetService {
 				return messageSource.getMessage("server.ForgotPassword.checkEmail", null, locale);
 			} catch (final MailSendException e) {
 				SecurityContextHolder.clearContext();
-				throw new UIEmailSendException(messageSource.getMessage("server.ForgotPassword.errorSendingInstructions", null, locale));
+				throw new UIEmailSendException(
+						messageSource.getMessage("server.ForgotPassword.errorSendingInstructions", null, locale));
 			}
 		} catch (EntityNotFoundException ex) {
 			SecurityContextHolder.clearContext();
-			throw new EntityNotFoundException(messageSource.getMessage("server.ForgotPassword.emailOrUsernameNotExist", null, locale));
+			throw new EntityNotFoundException(
+					messageSource.getMessage("server.ForgotPassword.emailOrUsernameNotExist", null, locale));
 		}
 	}
 
+	/**
+	 * Activate the user account
+	 *
+	 * @param identifier The ID of the {@link PasswordReset}
+	 * @return {@link UserPasswordResetDetails}
+	 */
 	public UserPasswordResetDetails activateAccount(String identifier) {
 		setAuthentication();
 
@@ -128,8 +143,17 @@ public class UIPasswordResetService {
 		}
 	}
 
-
-	public String setNewPassword(String resetId, String password, Model model, Locale locale) throws UIConstraintViolationException {
+	/**
+	 * Set the password for the {@link User}
+	 *
+	 * @param resetId  The {@link PasswordReset} identifier
+	 * @param password The new password to set for the user
+	 * @param model    A model for the page
+	 * @param locale   The logged in user's locale
+	 * @return message if successful or not
+	 */
+	public String setNewPassword(String resetId, String password, Model model, Locale locale)
+			throws UIConstraintViolationException {
 		setAuthentication();
 		Map<String, String> errors = new HashMap<>();
 
@@ -137,17 +161,11 @@ public class UIPasswordResetService {
 		PasswordReset passwordReset = passwordResetService.read(resetId);
 		User user = passwordReset.getUser();
 
-//		if (!password.equals(confirmPassword)) {
-//			errors.put("password", messageSource.getMessage("server.user.edit.password.match", null, locale));
-//		}
-
-
 		// Set the user's authentication to update the password and log them
 		// in
 		Authentication token = new UsernamePasswordAuthenticationToken(user, password,
 				ImmutableList.of(user.getSystemRole()));
-		SecurityContextHolder.getContext()
-				.setAuthentication(token);
+		SecurityContextHolder.getContext().setAuthentication(token);
 
 		try {
 			userService.changePassword(user.getId(), password);
@@ -156,14 +174,12 @@ public class UIPasswordResetService {
 
 			for (ConstraintViolation<?> violation : constraintViolations) {
 				logger.debug(violation.getMessage());
-				String errorKey = violation.getPropertyPath()
-						.toString();
+				String errorKey = violation.getPropertyPath().toString();
 				errors.put(errorKey, violation.getMessage());
 			}
 		} catch (PasswordReusedException ex) {
 			errors.put("password", messageSource.getMessage("server.user.edit.passwordReused", null, locale));
 		}
-
 
 		if (!errors.isEmpty()) {
 			throw new UIConstraintViolationException(errors);
@@ -195,8 +211,7 @@ public class UIPasswordResetService {
 	private void setAuthentication() {
 		AnonymousAuthenticationToken anonymousToken = new AnonymousAuthenticationToken("nobody", "nobody",
 				ImmutableList.of(Role.ROLE_ANONYMOUS));
-		SecurityContextHolder.getContext()
-				.setAuthentication(anonymousToken);
+		SecurityContextHolder.getContext().setAuthentication(anonymousToken);
 	}
 
 	/**

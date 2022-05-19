@@ -7,6 +7,12 @@ import { IconMail } from "../../components/icons/Icons";
 import { blue6 } from "../../styles/colors";
 const { Item } = Form;
 
+/**
+ * React component to render the forgot password form
+ * @param {function} updateDisplayLoginPage Function to update whether to display login page
+ * @returns {*}
+ * @constructor
+ */
 export function ForgotPassword({ updateDisplayLoginPage }) {
   const [forgotPassword] = useCreatePasswordResetEmailMutation();
   const [forgotPasswordForm] = Form.useForm();
@@ -14,14 +20,16 @@ export function ForgotPassword({ updateDisplayLoginPage }) {
   const [message, setMessage] = React.useState("");
   const emailRef = useRef();
 
+  /**
+   * When the component gets added to the page,
+   * focus on the usernameOrEmail input.
+   */
   useEffect(() => {
     emailRef.current.focus();
     emailRef.current.select();
   }, []);
 
   const submitResetEmail = () => {
-    console.log(forgotPasswordForm.getFieldValue("usernameOrEmail"));
-
     forgotPassword({
       usernameOrEmail: forgotPasswordForm.getFieldValue("usernameOrEmail"),
     }).then((res) => {
