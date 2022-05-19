@@ -158,7 +158,7 @@ public class ProjectExportController {
 
 		model.addAttribute("instrument_model", NcbiInstrumentModel.values());
 		model.addAttribute("library_selection", NcbiLibrarySelection.values());
-		model.addAttribute("library_source", NcbiLibrarySource.values());
+		model.addAttribute("library_source", NCBILibrarySource.values());
 		model.addAttribute("library_strategy", NcbiLibraryStrategy.values());
 		model.addAttribute("defaultNamespace", namespace);
 		model.addAttribute("activeNav", "export");
@@ -325,7 +325,7 @@ public class ProjectExportController {
 		NcbiLibrarySelection librarySelection;
 
 		@JsonProperty("library_source")
-		NcbiLibrarySource librarySource;
+		NCBILibrarySource librarySource;
 
 		@JsonProperty("library_strategy")
 		NcbiLibraryStrategy libraryStrategy;
@@ -370,7 +370,7 @@ public class ProjectExportController {
 			return librarySelection;
 		}
 
-		public NcbiLibrarySource getLibrarySource() {
+		public NCBILibrarySource getLibrarySource() {
 			return librarySource;
 		}
 
