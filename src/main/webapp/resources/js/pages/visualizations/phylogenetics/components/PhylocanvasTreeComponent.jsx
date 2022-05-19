@@ -8,16 +8,12 @@ export function PhylocanvasTreeComponent({source}) {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   function renderTree() {
-    if (treeRef.current !== null) {
-      treeRef.current.destroy();
-    }
     treeRef.current = new PhylocanvasGL(
       canvasRef.current,
       {
-        //size: phylocanvasComponentRef.current.parentElement?.getBoundingClientRect(),
         size: canvasRef.current.parentElement?.getBoundingClientRect(),
         alignLabels: true,
-        interative: true,
+        interactive: true,
         showLabels: true,
         showLeafLabels: true,
         source
@@ -42,20 +38,27 @@ export function PhylocanvasTreeComponent({source}) {
   }
 
   React.useEffect(() => {
-    window.addEventListener("resize", renderTree);
-      return () => window.removeEventListener(renderTree);
-  }, [canvasRef, renderTree]);
+    function handleResize() {
+      console.log("hello I just resized");
+      treeRef.current.destroy();
+      renderTree();
+    }
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  });
 
   React.useEffect(() => {
     renderTree();
-  }, [canvasRef, renderTree, source]);
+  });
 
   return (
     <div style={{display: "flex", flexDirection: "column", alignItems: "stretch", width: "100%", margin: 16}}>
       <div style={{flex: "0 1 auto", display: "flex", flexDirection: "row-reverse"}}>
         <Button onClick={downloadTree}>{i18n("visualization.button.export.svg")}</Button>
       </div>
-      <div style={{flex: "1 1 auto"}}>
+      <div style={{flex: "1 1 auto", minHeight: "0"}}>
         <div ref={canvasRef}/>
       </div>
     </div>
