@@ -26,10 +26,12 @@ import ncbiReducer, {
   fetchStrategies,
 } from "./ncbiSlice";
 import { Provider, useDispatch, useSelector } from "react-redux";
+import TableHeaderWithSelectOptions from "../../../components/ant.design/TableHeaderWithSelectOptions";
 
 function NCBIPage() {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
+  const strategyForm = Form.useForm();
 
   const [samples, setSamples] = React.useState(() => {
     const stored = window.sessionStorage.getItem("share");
@@ -68,6 +70,20 @@ function NCBIPage() {
     dispatch(fetchStrategies());
     dispatch(fetchSelections());
   }, [dispatch]);
+
+  function updateAllSamplesForField(column) {
+    return (value) => {
+      const formSamples = form.getFieldValue("samples");
+      const updated = Object.values(formSamples).reduce(
+        (prev, curr) => ({
+          ...prev,
+          [curr.name]: { ...curr, [column]: value },
+        }),
+        {}
+      );
+      form.setFieldsValue({ samples: updated });
+    };
+  }
 
   const columns = [
     {
@@ -113,7 +129,17 @@ function NCBIPage() {
       },
     },
     {
-      title: i18n("project.export.library_strategy.title"),
+      title: () => {
+        return (
+          <TableHeaderWithSelectOptions
+            options={strategies}
+            title={i18n("project.export.library_strategy.title")}
+            onChange={updateAllSamplesForField("library_strategy")}
+            popoverText={"Select value for all samples"}
+            formRef={strategyForm}
+          />
+        );
+      },
       dataIndex: "library_strategy",
       key: "library_strategy",
       render: (_, item) => {
@@ -127,7 +153,10 @@ function NCBIPage() {
               margin: 0,
             }}
           >
-            <Select style={{ width: 200 }}>
+            <Select
+              style={{ width: 200 }}
+              onChange={() => strategyForm.resetFields()}
+            >
               {strategies?.map((option) => (
                 <Select.Option key={option}>{option}</Select.Option>
               ))}
@@ -327,7 +356,7 @@ function NCBIPage() {
                   pagination={getPaginationOptions(Object.keys(samples).length)}
                 />
               </Col>
-              <Col xs={24} sm={{ span: 24, offset: 6 }}>
+              <Col xs={24} sm={{ span: 12, offset: 6 }}>
                 <Button htmlType="submit" type="primary">
                   Send
                 </Button>
