@@ -62,7 +62,8 @@ const initialState = {
     showLabels: true,
     showLeafLabels: true,
     nodeShape: "dot",
-    blocks: []
+    blocks: [],
+    padding: 20
   },
   terms: []
 }

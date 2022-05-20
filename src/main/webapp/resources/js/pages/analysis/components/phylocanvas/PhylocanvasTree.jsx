@@ -74,21 +74,29 @@ export function PhylocanvasTree() {
       }}
     >
       <div
-        style={{
-          flex: "0 1 auto",
-          display: "flex",
-          flexDirection: "row-reverse",
-        }}
+        ref={canvasRef}
+        style={{border: "1px solid lightgray"}}
       >
-        <Space>
-          <MetadataMenu />
-          <Button onClick={downloadTree}>
-            {i18n("visualization.button.export.svg")}
-          </Button>
-        </Space>
-      </div>
-      <div style={{ flex: "1 1 auto", minHeight: "0" }}>
-        <div ref={canvasRef} style={{border: "1px solid lightgray"}} />
+        <div
+          style={{
+            flex: "0 1 auto",
+            display: "flex",
+            flexDirection: "row-reverse",
+            position: "absolute",
+            zIndex: "4",
+            height: 0,
+            right: "4px",
+            top: "20px",
+            userSelect: "none"
+          }}
+        >
+          <Space>
+            <MetadataMenu />
+            <Button onClick={downloadTree}>
+              {i18n("visualization.button.export.svg")}
+            </Button>
+          </Space>
+        </div>
       </div>
     </div>
   );
