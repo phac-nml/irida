@@ -1,0 +1,58 @@
+#############################################################################
+# Workflow for using Grype to scan for security issues in IRIDA dependencies
+#############################################################################
+
+name: Grype WAR security scan
+
+on:
+  pull_request: # Run on all pull requests
+  push:
+    branches: # Run on any push to development or master
+      - development
+      - master
+  schedule: # Run daily on development and weekly on master
+    - cron: 0 1 * * *
+      branches: development
+    - cron: 0 2 * * 0
+      branches: master
+
+jobs:
+  war-build: # Build WAR file
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2 #Checkout the project from git
+      - name: Cache Maven dependencies #Pull the cache for Maven.  This caches all dependencies assuming the pom file is the same
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+      - name: Cache PNP  #Pull the Yarn cache for PNP (package management strategy - see https://classic.yarnpkg.com/en/docs/pnp).  This caches all dependencies assuming the yarn.lock file stays the same
+        uses: actions/cache@v2
+        with:
+          path: '**/.pnp.js'
+          key: ${{ runner.os }}-pnp-${{ hashFiles('**/yarn.lock') }}
+      - name: Cache yarn  #Pull the cache for yarn.  This caches all dependencies assuming the yarn.lock file stays the same
+        uses: actions/cache@v2
+        with:
+          path: '**/.yarn'
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+      - name: Set up JDK 11 # Installs java 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Install libraries # Install our non-maven backed dependencies
+        run: pushd lib; ./install-libs.sh; popd
+      - name: Build WAR file # Build the WAR file
+        id: package
+        run: | 
+          mvn clean package -DskipTests
+          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          ln -s target/irida-${VERSION}.war target/irida.war
+      - name: Scan image
+        uses: anchore/scan-action@v3
+        with:
+          path: target/irida.war
+          fail-build: true
+          severity-cutoff: high
+
