@@ -2,7 +2,7 @@ import React from "react";
 import { Button, notification, Popconfirm, Typography } from "antd";
 import { IconQuestionCircle } from "../../../components/icons/Icons";
 import { red6 } from "../../../styles/colors";
-import { useCreatePasswordResetMutation } from "../../../apis/password-reset";
+import { useCreatePasswordResetMutation } from "../../../apis/users/users";
 
 /**
  * React component to display the user account reset password link with confirmation.

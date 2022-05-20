@@ -13,16 +13,6 @@ export const passwordResetApi = createApi({
   }),
   tagTypes: ["PasswordReset"],
   endpoints: (build) => ({
-    /*
-    Create a password reset.
-    */
-    createPasswordReset: build.mutation({
-      query: ({ userId }) => ({
-        url: `create/${userId}`,
-        method: "POST",
-      }),
-      invalidatesTags: ["PasswordReset"],
-    }),
     createPasswordResetEmail: build.mutation({
       query: ({ usernameOrEmail }) => ({
         url: "",
@@ -59,7 +49,6 @@ export const passwordResetApi = createApi({
 
 export const {
   useActivateAccountMutation,
-  useCreatePasswordResetMutation,
   useCreatePasswordResetEmailMutation,
   useSetPasswordMutation,
 } = passwordResetApi;

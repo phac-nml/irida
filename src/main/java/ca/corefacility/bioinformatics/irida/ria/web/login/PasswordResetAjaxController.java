@@ -1,12 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.login;
 
-import java.security.Principal;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIPasswordResetServ
 
 /**
  * Handles asynchronous requests for password resets.
+ * Note: This controller is for unauthenticated requests only.
  */
 @RestController
 @RequestMapping("/ajax/password_reset")
@@ -32,25 +31,6 @@ public class PasswordResetAjaxController {
 	@Autowired
 	public PasswordResetAjaxController(UIPasswordResetService UIPasswordResetService) {
 		this.service = UIPasswordResetService;
-	}
-
-	/**
-	 * Create a new {@link PasswordReset} for the given {@link User}
-	 *
-	 * @param userId    The ID of the {@link User}
-	 * @param principal a reference to the logged in user.
-	 * @param locale    a reference to the locale specified by the browser.
-	 * @return text to display to the user about the result of creating a password reset.
-	 */
-	@RequestMapping(value = "/create/{userId}", method = RequestMethod.POST)
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
-	public ResponseEntity<AjaxResponse> adminNewPasswordReset(@PathVariable Long userId, Principal principal,
-			Locale locale) {
-		try {
-			return ResponseEntity.ok(new AjaxSuccessResponse(service.adminNewPasswordReset(userId, principal, locale)));
-		} catch (UIEmailSendException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage()));
-		}
 	}
 
 	/**

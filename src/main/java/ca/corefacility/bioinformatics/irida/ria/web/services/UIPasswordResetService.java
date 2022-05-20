@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.security.Principal;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,36 +52,6 @@ public class UIPasswordResetService {
 		this.passwordResetService = passwordResetService;
 		this.emailController = emailController;
 		this.messageSource = messageSource;
-	}
-
-	/**
-	 * Create a new {@link PasswordReset} for the given {@link User}
-	 *
-	 * @param userId    The ID of the {@link User}
-	 * @param principal a reference to the logged in user.
-	 * @param locale    a reference to the locale specified by the browser.
-	 * @return text to display to the user about the result of creating a password reset.
-	 * @throws UIEmailSendException if there is an error emailing the password reset.
-	 */
-	public String adminNewPasswordReset(Long userId, Principal principal, Locale locale) throws UIEmailSendException {
-		User user = userService.read(userId);
-		User principalUser = userService.getUserByUsername(principal.getName());
-
-		if (canCreatePasswordReset(principalUser, user)) {
-			try {
-				createNewPasswordReset(user);
-			} catch (final MailSendException e) {
-				logger.error("Failed to send password reset e-mail.");
-				throw new UIEmailSendException(
-						messageSource.getMessage("server.password.reset.error.message", null, locale));
-			}
-		} else {
-			throw new UIEmailSendException(
-					messageSource.getMessage("server.password.reset.error.message", null, locale));
-		}
-
-		return messageSource.getMessage("server.password.reset.success.message", new Object[] { user.getFirstName() },
-				locale);
 	}
 
 	/**
@@ -219,32 +188,6 @@ public class UIPasswordResetService {
 		AnonymousAuthenticationToken anonymousToken = new AnonymousAuthenticationToken("nobody", "nobody",
 				ImmutableList.of(Role.ROLE_ANONYMOUS));
 		SecurityContextHolder.getContext().setAuthentication(anonymousToken);
-	}
-
-	/**
-	 * Test if a user should be able to click the password reset button
-	 *
-	 * @param principalUser The currently logged in principal
-	 * @param user          The user being edited
-	 * @return true if the principal can create a password reset for the user
-	 */
-	private boolean canCreatePasswordReset(User principalUser, User user) {
-		Role userRole = user.getSystemRole();
-		Role principalRole = principalUser.getSystemRole();
-
-		if (principalUser.equals(user)) {
-			return false;
-		} else if (principalRole.equals(Role.ROLE_ADMIN)) {
-			return true;
-		} else if (principalRole.equals(Role.ROLE_MANAGER)) {
-			if (userRole.equals(Role.ROLE_ADMIN)) {
-				return false;
-			} else {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 }

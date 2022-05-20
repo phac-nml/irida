@@ -40,19 +40,5 @@ public class PasswordResetAjaxControllerTest {
 		controller = new PasswordResetAjaxController(uiPasswordResetService);
 	}
 
-	@Test
-	void adminNewPasswordResetTest() {
-		User user1 = new User(1L, "Elsa", "elsa@arendelle.ca", "Password1!", "Elsa", "Oldenburg", "1234");
-		user1.setSystemRole(Role.ROLE_ADMIN);
-		User user2 = new User(2L, "Anna", "anna@arendelle.ca", "Password2!", "Anna", "Oldenburg", "5678");
-		Principal principal = () -> user1.getFirstName();
-		Locale locale = new Locale("en");
 
-		when(userService.read(anyLong())).thenReturn(user2);
-		when(userService.getUserByUsername(anyString())).thenReturn(user1);
-		when(messageSource.getMessage(anyString(), any(), any(Locale.class))).thenReturn("Anything can work here");
-
-		ResponseEntity<AjaxResponse> response = controller.adminNewPasswordReset(user2.getId(), principal, locale);
-		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
-	}
 }
