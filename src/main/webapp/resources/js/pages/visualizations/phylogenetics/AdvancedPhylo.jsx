@@ -11,7 +11,7 @@ import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { getMetadata, getMetadataTemplateFields, getMetadataTemplates, getNewickTree } from "../../../apis/analysis/analysis";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_XS } from "../../../styles/spacing";
-import { PhylocanvasTreeComponent } from "./components/PhylocanvasTreeComponent";
+import { PhylocanvasTree } from "./components/PhylocanvasTree";
 
 export default function AdvancedPhylo() {
   const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
@@ -72,7 +72,7 @@ export default function AdvancedPhylo() {
                 message={i18n("AnalysisPhylogeneticTree.noPreviewAvailable")}
               />
             ) : (
-              <PhylocanvasTreeComponent
+              <PhylocanvasTree
                 {...treeState}
               />
             )

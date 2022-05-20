@@ -4,7 +4,7 @@ import { Button, Space } from "antd";
 import { formatMetadata, fetchMetadataTemplateFields } from "../metadata-utilities";
 import { MetadataMenu } from "./MetadataMenu";
 
-export function PhylocanvasTreeComponent({
+export function PhylocanvasTree({
   source,
   metadata,
   fields: originalFields,
