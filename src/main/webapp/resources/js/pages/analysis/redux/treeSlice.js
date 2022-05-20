@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getMetadata, getMetadataTemplateFields, getMetadataTemplates, getNewickTree } from "../../../../apis/analysis/analysis";
+import { getMetadata, getMetadataTemplateFields, getMetadataTemplates, getNewickTree } from "../../../apis/analysis/analysis";
 import { formatMetadata } from "../metadata-utilities";
 
 export const fetchTreeAndMetadata = createAsyncThunk(`tree/fetchTreeAndMetadata`, async (id, {rejectWithValue}) => {

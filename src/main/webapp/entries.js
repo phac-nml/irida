@@ -28,8 +28,6 @@ module.exports = {
   "project-share": "./resources/js/pages/projects/share",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
-  "visualizations-phylogenetics":
-    "./resources/js/pages/visualizations/phylogenetics/index.js",
   sample: "./resources/js/pages/SamplePage.jsx",
   "sample-files": "./resources/js/pages/samples/sample-files.js",
   "project-analyses": "./resources/js/pages/projects/project-analyses/",

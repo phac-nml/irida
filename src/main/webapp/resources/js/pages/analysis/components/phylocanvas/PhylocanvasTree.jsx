@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { resize } from '../redux/treeSlice';
+import { resize } from "../../redux/treeSlice";
 import PhylocanvasGL from "@phylocanvas/phylocanvas.gl";
 import { Button, Space } from "antd";
 import { MetadataMenu } from "./MetadataMenu";
@@ -68,7 +68,9 @@ export function PhylocanvasTree() {
         flexDirection: "column",
         alignItems: "stretch",
         width: "100%",
-        margin: 16,
+        height: "100%",
+        flex: "1 1 auto",
+        minHeight: "0",
       }}
     >
       <div
@@ -86,7 +88,7 @@ export function PhylocanvasTree() {
         </Space>
       </div>
       <div style={{ flex: "1 1 auto", minHeight: "0" }}>
-        <div ref={canvasRef} />
+        <div ref={canvasRef} style={{border: "1px solid lightgray"}} />
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
 import { PhylocanvasComponent } from "../../../components/PhylocanvasComponent";
-import { Button, Layout, Radio } from "antd";
+import { Layout, Radio } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { getNewickTree } from "../../../apis/analysis/analysis";
 import { ContentLoading } from "../../../components/loader/ContentLoading";
@@ -16,6 +16,8 @@ import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
 import { BORDERED_LIGHT } from "../../../styles/borders";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { grey1 } from "../../../styles/colors";
+import { ANALYSIS } from "../routes";
+import { Link } from "react-router-dom";
 
 const CANVAS_HEIGHT = 600;
 const URL = setBaseUrl("analysis");
@@ -113,15 +115,13 @@ export default function Tree() {
                     {i18n("AnalysisPhylogeneticTree.hierarchical")}
                   </Radio.Button>
                 </Radio.Group>
-                <Button
-                  type="primary"
-                  href={`${URL}/${analysisIdentifier}/advanced-phylo`}
-                  target="_blank"
+                <Link
+                  to={`${URL}/${analysisIdentifier}/${ANALYSIS.ADVANCED_PHYLO}`}
                   key="advphylo"
-                  className="t-advanced-phylo-btn"
+                  className="ant-btn ant-btn-primary t-advanced-phylo-btn"
                 >
                   {i18n("AnalysisPhylogeneticTree.viewAdvVisualization")}
-                </Button>
+                </Link>
               </ButtonGroupWrapper>
               <VisualizationWrapper className="t-phylocanvas-wrapper">
                 {getTree()}

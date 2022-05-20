@@ -10,6 +10,7 @@ export const ANALYSIS = {
   PROVENANCE: "provenance",
   OUTPUT: "output",
   TREE: "tree",
+  ADVANCED_PHYLO: "advanced-phylo",
   ERROR: "error"
 };
 

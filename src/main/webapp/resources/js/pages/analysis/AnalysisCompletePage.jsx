@@ -1,5 +1,5 @@
-import { Space } from "antd";
 import React, { Suspense, useContext } from "react";
+import { Provider } from "react-redux";
 import { Outlet, Route, Routes } from "react-router-dom";
 import { ContentLoading } from "../../components/loader";
 import { AnalysisContext } from "../../contexts/AnalysisContext";
@@ -8,6 +8,7 @@ import { SPACE_LG } from "../../styles/spacing";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import AnalysisMenu from "./components/AnalysisMenu";
 import { ANALYSIS } from "./routes";
+import store from "./store";
 
 const AnalysisBioHansel = React.lazy(() =>
   import("./components/AnalysisBioHansel")
@@ -17,6 +18,9 @@ const AnalysisOutputFiles = React.lazy(() =>
 );
 const AnalysisPhylogeneticTree = React.lazy(() =>
   import("./components/AnalysisPhylogeneticTree")
+);
+const AnalysisAdvancedPhylo = React.lazy(() =>
+  import("./components/AnalysisAdvancedPhylo")
 );
 const AnalysisProvenance = React.lazy(() =>
   import("./components/AnalysisProvenance")
@@ -94,47 +98,59 @@ export default function AnalysisCompletePage() {
   }
 
   return (
-    <Space
-      direction="vertical"
-      size="large"
-      style={{ width: `100%`, padding: SPACE_LG }}
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "stretch",
+        width: "100%",
+        padding: SPACE_LG,
+        gap: SPACE_LG
+      }}
     >
-      <AnalysisMenu type={type} />
-      <Routes>
-        <Route path={DEFAULT_URL} element={<AnalysisOutlet />}>
-          {type === "output" ? (
-            <>
-              <Route index element={<AnalysisOutputFiles />} />
-              <Route path={ANALYSIS.OUTPUT} element={<AnalysisOutputFiles />} />
-              <Route
-                path={ANALYSIS.PROVENANCE}
-                element={<AnalysisProvenance />}
-              />
-            </>
-          ) : (
-            <>
-              <Route path={componentPath} element={component} />
-              <Route index element={component} />
-              <Route
-                path={ANALYSIS.PROVENANCE}
-                element={<AnalysisProvenance />}
-              />
-              <Route path={ANALYSIS.OUTPUT} element={<AnalysisOutputFiles />} />
-            </>
-          )}
-          <Route
-            path={ANALYSIS.SETTINGS}
-            element={<AnalysisSettingsContainer />}
-          >
-            <Route index element={<AnalysisDetails />} />
-            <Route path="samples" element={<AnalysisSamples />} />
-            <Route path="share" element={<AnalysisShare />} />
-            <Route path="delete" element={<AnalysisDelete />} />
-            <Route path="*" element={<AnalysisDetails />} />
+      <div>
+        <AnalysisMenu type={type} />
+      </div>
+      <div style={{ flex: "1 1 auto", minHeight: "0" }}>
+        <Routes>
+          <Route path={DEFAULT_URL} element={<AnalysisOutlet />}>
+            {type === "output" ? (
+              <>
+                <Route index element={<AnalysisOutputFiles />} />
+                <Route path={ANALYSIS.OUTPUT} element={<AnalysisOutputFiles />} />
+                <Route
+                  path={ANALYSIS.PROVENANCE}
+                  element={<AnalysisProvenance />}
+                />
+              </>
+            ) : (
+              <>
+                <Route path={componentPath} element={component} />
+                <Route index element={component} />
+                <Route
+                  path={ANALYSIS.PROVENANCE}
+                  element={<AnalysisProvenance />}
+                />
+                <Route path={ANALYSIS.OUTPUT} element={<AnalysisOutputFiles />} />
+              </>
+            )}
+            {type === "tree" ? (
+              <Route path={ANALYSIS.ADVANCED_PHYLO} element={<Provider store={store}><AnalysisAdvancedPhylo /></Provider>} />
+            ) : (<></>)}
+            <Route
+              path={ANALYSIS.SETTINGS}
+              element={<AnalysisSettingsContainer />}
+            >
+              <Route index element={<AnalysisDetails />} />
+              <Route path="samples" element={<AnalysisSamples />} />
+              <Route path="share" element={<AnalysisShare />} />
+              <Route path="delete" element={<AnalysisDelete />} />
+              <Route path="*" element={<AnalysisDetails />} />
+            </Route>
+            <Route path="*" element={component} />
           </Route>
-          <Route path="*" element={component} />
-        </Route>
-      </Routes>
-    </Space>
+        </Routes>
+      </div>
+    </div>
   );
 }

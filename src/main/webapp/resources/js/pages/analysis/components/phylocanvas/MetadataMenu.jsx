@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Button, Checkbox, Popover, Select, Space, Switch, Typography } from "antd";
 import { FilterOutlined } from "@ant-design/icons";
 const { Option } = Select;
-import { fetchMetadataTemplateFields, selectAllTerms, setFieldVisibility } from '../redux/treeSlice';
+import { fetchMetadataTemplateFields, selectAllTerms, setFieldVisibility } from "../../redux/treeSlice";
 
 export function MetadataMenu() {
   const { templates, terms, treeProps } = useSelector((state) => state.tree);
