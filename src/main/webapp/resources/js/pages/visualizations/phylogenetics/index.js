@@ -1,9 +1,10 @@
 import React from "react";
 import { render } from "react-dom";
-import { BrowserRouter } from "react-router-dom";
-import { AnalysisProvider } from "../../../contexts/AnalysisContext";
+import store from './store';
+import { Provider } from "react-redux";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import AdvancedPhylo from "./AdvancedPhylo";
+import { AnalysisProvider } from "../../../contexts/AnalysisContext";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -14,11 +15,11 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
 render(
-  <BrowserRouter>
-    <AnalysisProvider>
+  <AnalysisProvider>
+    <Provider store={store}>
       <AdvancedPhylo />
-    </AnalysisProvider>
-  </BrowserRouter>,
+    </Provider>
+  </AnalysisProvider>,
   document.getElementById("root")
 );
 

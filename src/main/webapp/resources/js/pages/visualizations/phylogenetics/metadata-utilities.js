@@ -42,17 +42,3 @@ const EMPTY_COLOUR = "transparent";
 
   return result;
 };
-
-export async function fetchMetadataTemplateFields(template, fields) {
-  let data = await template.fetchFields();
-  let templateFields = {};
-
-  if (data.fields) {
-    templateFields = data.fields.filter(field => field in fields).reduce(
-      (prev, current) => ( { ...prev, [current]: true }),
-      {}
-    );
-  }
-
-  return templateFields;
-}

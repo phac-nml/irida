@@ -1,59 +1,28 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { resize } from '../redux/treeSlice';
 import PhylocanvasGL from "@phylocanvas/phylocanvas.gl";
 import { Button, Space } from "antd";
-import { formatMetadata, fetchMetadataTemplateFields } from "../metadata-utilities";
 import { MetadataMenu } from "./MetadataMenu";
 
-export function PhylocanvasTree({
-  source,
-  metadata,
-  fields: originalFields,
-  templates,
-}) {
+export function PhylocanvasTree() {
   const canvasRef = React.useRef();
   const treeRef = React.useRef();
-  const [fields, setFields] = React.useState(() => {
-    return originalFields.reduce(
-      (prev, current) => ({ ...prev, [current]: true }),
-      {}
-    );
-  });
-  const allFields = originalFields.reduce(
-      (prev, current) => ({ ...prev, [current]: true }),
-      {}
-    );
-  const noFields = originalFields.reduce(
-      (prev, current) => ({ ...prev, [current]: false }),
-      {}
-    );
+  const {treeProps} = useSelector((state) => state.tree);
+  const dispatch = useDispatch();
 
-  const renderTree = () => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const renderTree = (treeProps) => {
+    console.log(treeProps);
     treeRef.current = new PhylocanvasGL(
       canvasRef.current,
       {
+        ...treeProps,
         size: canvasRef.current.parentElement?.getBoundingClientRect(),
-        alignLabels: true,
-        interactive: true,
-        showLabels: true,
-        showLeafLabels: true,
-        nodeShape: "dot",
-        showBlockHeaders: true,
-        blocks: originalFields,
-        source,
-        metadata:
-          metadata !== null ? formatMetadata(metadata, originalFields) : metadata,
       },
       []
     );
   };
-
-  React.useEffect(() => {
-    // only update visible metadata fields after tree has initialized
-    // i.e. ignore on first initialization of fields
-    if (treeRef.current) {
-      treeRef.current.setProps({ blocks: Object.keys(fields).filter((field) => fields[field]) });
-    }
-  }, [fields]);
 
   const downloadTree = () => {
     const blob = treeRef.current.exportSVG();
@@ -68,50 +37,29 @@ export function PhylocanvasTree({
   };
 
   React.useEffect(() => {
+    if (treeRef.current) {
+      treeRef.current.setProps(treeProps);
+    } else {
+      renderTree(treeProps);
+    }
+  }, [renderTree, treeProps])
+
+  React.useEffect(() => {
     function handleResize() {
-      treeRef.current.setProps({
-        size: canvasRef.current.parentElement?.getBoundingClientRect(),
-      });
+      const {height, width} = canvasRef.current.parentElement.getBoundingClientRect();
+      dispatch(resize({height, width}));
     }
 
     window.addEventListener("resize", handleResize);
-    renderTree();
 
     return () => {
-      treeRef.current.destroy();
+      if (treeRef.currnt) {
+        treeRef.current.destroy();
+      }
       window.removeEventListener("resize", handleResize);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const handleFieldChecked = (event, field) => {
-    event.stopPropagation();
-    setFields({ ...fields, [field]: event.target.checked });
-  };
-
-  const handleSelectAllChecked = (event, checked) => {
-    event.stopPropagation();
-    if (checked) {
-      setFields(allFields);
-    } else {
-      setFields(noFields);
-    }
-  };
-
-  const handleTemplateChange = (templateIdx) => {
-    if (templateIdx === -1) {
-      setFields(allFields);
-    } else {
-      if ("fields" in templates[templateIdx]) {
-        setFields({...noFields, ...templates[templateIdx]["fields"]});
-      } else {
-        fetchMetadataTemplateFields(templates[templateIdx], fields).then((templateFields) => {
-          templates[templateIdx].fields = templateFields;
-          setFields({...noFields, ...templateFields});
-        })
-      }
-    }
-  };
 
   return (
     <div
@@ -131,14 +79,7 @@ export function PhylocanvasTree({
         }}
       >
         <Space>
-          <MetadataMenu
-            fields={fields}
-            templates={templates}
-            allSelected={JSON.stringify(fields) === JSON.stringify(allFields)}
-            onTemplateChange={handleTemplateChange}
-            onFieldChecked={handleFieldChecked}
-            onSelectAllChange={handleSelectAllChecked}
-          />
+          <MetadataMenu />
           <Button onClick={downloadTree}>
             {i18n("visualization.button.export.svg")}
           </Button>

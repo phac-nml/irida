@@ -4,49 +4,28 @@
  */
 
 import { Layout, PageHeader, Skeleton } from "antd";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { ContentLoading } from "../../../components/loader";
 import { WarningAlert } from "../../../components/alerts/WarningAlert";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
-import { getMetadata, getMetadataTemplateFields, getMetadataTemplates, getNewickTree } from "../../../apis/analysis/analysis";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_XS } from "../../../styles/spacing";
 import { PhylocanvasTree } from "./components/PhylocanvasTree";
+import { fetchTreeAndMetadata } from "./redux/treeSlice";
 
 export default function AdvancedPhylo() {
   const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
   const { analysisName, loading } = analysisContext;
-  const [treeState, setTreeState] = useState(null)
-  const [serverMsg, setServerMsg] = useState(null);
+  const { error, fetching, treeProps } = useSelector((state) => state.tree);
+  const dispatch = useDispatch();
 
   // On load gets the newick string for the analysis
   useEffect(() => {
     if (analysisIdentifier) {
-      const promises = [getNewickTree(analysisIdentifier), getMetadata(analysisIdentifier), getMetadataTemplates(analysisIdentifier)];
-
-      Promise.all(promises).then(([newickData, metadataData, metadataTemplateData]) => {
-        // Check for errors
-        if (!newickData.newick) {
-          setServerMsg(newickData.message ? newickData.message : newickData.error.message);
-          return;
-        }
-
-        let templates = metadataTemplateData.templates;
-        for (let i=0; i < templates?.length; i++) {
-          templates[i].fetchFields = () => { return getMetadataTemplateFields(analysisIdentifier, templates[i].id)};
-        }
-
-        setTreeState({
-          source: newickData.newick,
-          metadata: metadataData.metadata,
-          fields: metadataData.terms,
-          templates,
-        });
-
-      });
-
+      dispatch(fetchTreeAndMetadata(analysisIdentifier));
     }
-  }, [analysisIdentifier]);
+  }, [analysisIdentifier, dispatch]);
 
   return (
     <Layout style={{ height: `100%`, width: `100%` }}>
@@ -60,21 +39,19 @@ export default function AdvancedPhylo() {
             display: "flex",
           }}
         >
-          {serverMsg && (
+          {error && (
             <WarningAlert
-              message={serverMsg}
+              message={error}
               style={{ marginBottom: SPACE_XS }}
             />
           )}
-          {treeState !== null ? (
-            treeState.source === "" ? (
+          {!fetching ? (
+            treeProps.source === "" ? (
               <WarningAlert
                 message={i18n("AnalysisPhylogeneticTree.noPreviewAvailable")}
               />
             ) : (
-              <PhylocanvasTree
-                {...treeState}
-              />
+              <PhylocanvasTree/>
             )
           ) : (
             <ContentLoading/>
