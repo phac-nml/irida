@@ -32,13 +32,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'java', 'javascript', 'python' ]
+        language: [ 'java', 'javascript' ]
         # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
         # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+
+    - name: Install Java libraries
+      run: pushd lib; ./install-libs.sh; popd;
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
