@@ -1,9 +1,8 @@
 import React from "react";
 import PhylocanvasGL from "@phylocanvas/phylocanvas.gl";
-import { Button, Checkbox, Popover, Select, Space, Switch, Typography } from "antd";
-import { FilterOutlined } from "@ant-design/icons";
-import { formatMetadata } from "../metadata-utilities";
-const { Option } = Select;
+import { Button, Space } from "antd";
+import { formatMetadata, fetchMetadataTemplateFields } from "../metadata-utilities";
+import { MetadataMenu } from "./MetadataMenu";
 
 export function PhylocanvasTreeComponent({
   source,
@@ -99,20 +98,6 @@ export function PhylocanvasTreeComponent({
     }
   };
 
-  const fetchMetadataTemplateFields = async (templateIdx) => {
-    let data = await templates[templateIdx]["callback"]();
-    let templateFields = {};
-
-    if (data.fields) {
-      templateFields = data.fields.filter(field => field in fields).reduce(
-        (prev, current) => ( { ...prev, [current]: true }),
-        {}
-      );
-    }
-
-    return templateFields;
-  };
-
   const handleTemplateChange = (templateIdx) => {
     if (templateIdx === -1) {
       setFields(allFields);
@@ -120,51 +105,13 @@ export function PhylocanvasTreeComponent({
       if ("fields" in templates[templateIdx]) {
         setFields({...noFields, ...templates[templateIdx]["fields"]});
       } else {
-        fetchMetadataTemplateFields(templateIdx).then((templateFields) => {
-          templates[templateIdx]["fields"] = templateFields;
+        fetchMetadataTemplateFields(templates[templateIdx], fields).then((templateFields) => {
+          templates[templateIdx].fields = templateFields;
           setFields({...noFields, ...templateFields});
         })
       }
     }
   };
-
-  const metadataTemplateOptions = [];
-  metadataTemplateOptions.push(<Option key="template-default" value={-1}>{i18n("visualization.phylogenomics.select-template.all-field")}</Option>);
-  for (let i=0; i<templates?.length; i++) {
-    metadataTemplateOptions.push(<Option key={`template-${i}`} value={i}>{templates[i]["label"]}</Option>);
-  }
-
-  const metadataMenu = (
-    <Space direction="vertical">
-      <Select defaultValue={-1} style={{ width: 150 }} onChange={handleTemplateChange}>
-        {metadataTemplateOptions}
-      </Select>
-      <div
-          key={"select-all"}
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center"
-          }}
-        >
-          <Typography.Text strong>{i18n("visualization.phylogenomics.select-all")}</Typography.Text>
-          <Switch
-            checked={JSON.stringify(fields) === JSON.stringify(allFields)}
-            onChange={(checked, event) => handleSelectAllChecked(event, checked)}
-            size="small"
-          />
-        </div>
-      {Object.keys(fields)?.map((field) => (
-        <Space key={field} direction="horizontal">
-          <Checkbox
-            checked={fields[field]}
-            onChange={(event) => handleFieldChecked(event, field)}
-          />
-          <Typography.Text strong>{field}</Typography.Text>
-        </Space>
-      ))}
-    </Space>
-  );
 
   return (
     <div
@@ -184,9 +131,14 @@ export function PhylocanvasTreeComponent({
         }}
       >
         <Space>
-          <Popover content={metadataMenu} placement="bottomRight">
-            <Button shape="circle" icon={<FilterOutlined />} />
-          </Popover>
+          <MetadataMenu
+            fields={fields}
+            templates={templates}
+            allSelected={JSON.stringify(fields) === JSON.stringify(allFields)}
+            onTemplateChange={handleTemplateChange}
+            onFieldChecked={handleFieldChecked}
+            onSelectAllChange={handleSelectAllChecked}
+          />
           <Button onClick={downloadTree}>
             {i18n("visualization.button.export.svg")}
           </Button>

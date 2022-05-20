@@ -33,7 +33,7 @@ export default function AdvancedPhylo() {
 
         let templates = metadataTemplateData.templates;
         for (let i=0; i < templates?.length; i++) {
-          templates[i]["callback"] = () => { return getMetadataTemplateFields(analysisIdentifier, templates[i]["id"])};
+          templates[i].fetchFields = () => { return getMetadataTemplateFields(analysisIdentifier, templates[i].id)};
         }
 
         setTreeState({
