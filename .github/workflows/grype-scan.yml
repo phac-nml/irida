@@ -49,7 +49,8 @@ jobs:
           mvn clean package -DskipTests
       - name: Link WAR file
         run: |
-          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          export VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo $VERSION
           ln -s target/irida-${VERSION}.war target/irida.war
           ls -l target
       - name: Scan image
