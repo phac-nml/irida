@@ -57,6 +57,7 @@ jobs:
         uses: anchore/scan-action@v3
         with:
           image: target/irida.war
+          fail-build: false
           acs-report-enable: true
       - name: Inspect action SARIF report
         run: cat ${{ steps.scan.outputs.sarif }}
