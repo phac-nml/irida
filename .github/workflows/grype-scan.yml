@@ -50,9 +50,8 @@ jobs:
       - name: Link WAR file
         run: |
           export VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          echo $VERSION
-          ln -s target/irida-${VERSION}.war target/irida.war
-          ls -l target
+          ln -s irida-${VERSION}.war target/irida.war
+          ls -l target/irida.war
       - name: Scan image
         id: scan
         uses: anchore/scan-action@v3
