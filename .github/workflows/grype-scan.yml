@@ -47,12 +47,20 @@ jobs:
         id: package
         run: | 
           mvn clean package -DskipTests
+      - name: Link WAR file
+        run: |
           VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
           ln -s target/irida-${VERSION}.war target/irida.war
+          ls -l target
       - name: Scan image
+        id: scan
         uses: anchore/scan-action@v3
         with:
-          path: target/irida.war
-          fail-build: true
-          severity-cutoff: high
-
+          image: target/irida.war
+          acs-report-enable: true
+      - name: Inspect action SARIF report
+        run: cat ${{ steps.scan.outputs.sarif }}
+      - name: upload Anchore scan SARIF report
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
