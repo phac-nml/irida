@@ -1,8 +1,3 @@
-//import angular from "angular";
-//import { AppModule } from "./components/app/app.module";
-
-//angular.module("irida.advanced.visualization", [AppModule]);
-
 import React from "react";
 import { render } from "react-dom";
 import { BrowserRouter } from "react-router-dom";
