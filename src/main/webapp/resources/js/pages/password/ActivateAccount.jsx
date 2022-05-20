@@ -1,8 +1,10 @@
-import { useActivateAccountMutation } from "../../apis/passwordReset";
+import React from "react";
 import { Alert, Button, Form, Input } from "antd";
-import React, { useEffect, useRef } from "react";
+import { LoadingOutlined } from "@ant-design/icons";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { SPACE_MD } from "../../styles/spacing";
+import { useActivateAccountMutation } from "../../apis/password-reset";
+
 const { Item } = Form;
 
 /**
@@ -12,39 +14,42 @@ const { Item } = Form;
  * @constructor
  */
 export function ActivateAccount({ updateDisplayLoginPage }) {
+  const [loading, setLoading] = React.useState(false);
   const [activateAccount] = useActivateAccountMutation();
   const [activateAccountForm] = Form.useForm();
-  const [messageAlert, setMessageAlert] = React.useState(false);
-  const [message, setMessage] = React.useState("");
-  const activationIdRef = useRef();
+  const [message, setMessage] = React.useState(null);
+  const activationIdRef = React.useRef();
 
   /**
    * When the component gets added to the page,
    * focus on the activationId input.
    */
-  useEffect(() => {
+  React.useEffect(() => {
     activationIdRef.current.focus();
     activationIdRef.current.select();
   }, []);
 
-  const handleSubmit = () => {
+  const submitActivateAccountForm = () => {
+    setLoading(true);
     activateAccount({
       identifier: activateAccountForm.getFieldValue("activationId"),
-    }).then((res) => {
-      if (res.error) {
-        setMessageAlert(true);
-        setMessage(i18n("ActivateAccount.invalidActivationId"));
+    }).then((response) => {
+      if (response.error) {
+        setLoading(false);
+        setMessage(response.error.data.error);
       } else {
+        // response.data.message has the identifier
         window.location.replace(
-          setBaseUrl(`/password_reset/${res.data.identifier}`)
+          setBaseUrl(`/password_reset/${response.data.message}`)
         );
       }
+      activateAccountForm.resetFields();
     });
   };
 
   return (
     <div>
-      {messageAlert && (
+      {message !== null && (
         <Alert
           message={message}
           className="t-activation-id-error-alert"
@@ -56,6 +61,7 @@ export function ActivateAccount({ updateDisplayLoginPage }) {
       <Form
         name="accountActivationForm"
         form={activateAccountForm}
+        onFinish={submitActivateAccountForm}
         size="large"
         style={{ marginTop: SPACE_MD }}
       >
@@ -80,8 +86,10 @@ export function ActivateAccount({ updateDisplayLoginPage }) {
           <Button
             className="t-submit-btn"
             type="primary"
+            disabled={loading}
+            icon={loading && <LoadingOutlined />}
             block
-            onClick={() => handleSubmit()}
+            htmlType="submit"
           >
             {i18n("ActivateAccount.button.activateAccount")}
           </Button>

@@ -1,10 +1,11 @@
-import { useCreatePasswordResetEmailMutation } from "../../apis/passwordReset";
+import React from "react";
 import { Button, Form, Input } from "antd";
-import React, { useEffect, useRef } from "react";
+import { LoadingOutlined, MailOutlined } from "@ant-design/icons";
 import { InfoAlert } from "../../components/alerts";
 import { SPACE_MD } from "../../styles/spacing";
-import { IconMail } from "../../components/icons/Icons";
 import { blue6 } from "../../styles/colors";
+import { useCreatePasswordResetEmailMutation } from "../../apis/password-reset";
+
 const { Item } = Form;
 
 /**
@@ -16,36 +17,39 @@ const { Item } = Form;
 export function ForgotPassword({ updateDisplayLoginPage }) {
   const [forgotPassword] = useCreatePasswordResetEmailMutation();
   const [forgotPasswordForm] = Form.useForm();
-  const [messageAlert, setMessageAlert] = React.useState(false);
-  const [message, setMessage] = React.useState("");
-  const emailRef = useRef();
+  const [loading, setLoading] = React.useState(false);
+  const [message, setMessage] = React.useState(null);
+  const usernameOrEmailRef = React.useRef();
 
   /**
    * When the component gets added to the page,
    * focus on the usernameOrEmail input.
    */
-  useEffect(() => {
-    emailRef.current.focus();
-    emailRef.current.select();
+  React.useEffect(() => {
+    usernameOrEmailRef.current.focus();
+    usernameOrEmailRef.current.select();
   }, []);
 
-  const submitResetEmail = () => {
+  const submitForgotPasswordForm = () => {
+    setLoading(true);
+    setMessage(null);
+
     forgotPassword({
       usernameOrEmail: forgotPasswordForm.getFieldValue("usernameOrEmail"),
-    }).then((res) => {
-      forgotPasswordForm.resetFields();
-      setMessageAlert(true);
-      if (res.error) {
-        setMessage(res.error.data.error);
+    }).then((response) => {
+      if (response.error) {
+        setMessage(response.error.data.error);
       } else {
-        setMessage(res.data.message);
+        setMessage(response.data.message);
       }
+      forgotPasswordForm.resetFields();
+      setLoading(false);
     });
   };
 
   return (
     <div>
-      {messageAlert && (
+      {message !== null && (
         <InfoAlert
           message={message}
           className="t-forgot-password-alert"
@@ -55,6 +59,7 @@ export function ForgotPassword({ updateDisplayLoginPage }) {
       <Form
         name="forgotPasswordForm"
         form={forgotPasswordForm}
+        onFinish={submitForgotPasswordForm}
         size="large"
         style={{ marginTop: SPACE_MD }}
       >
@@ -70,10 +75,10 @@ export function ForgotPassword({ updateDisplayLoginPage }) {
           <Input
             name="usernameOrEmail"
             id="usernameOrEmail"
-            ref={emailRef}
-            prefix={<IconMail style={{ color: blue6 }} />}
+            ref={usernameOrEmailRef}
+            prefix={<MailOutlined style={{ color: blue6 }} />}
             placeholder={i18n("ForgotPassword.input.placeholder")}
-            disabled={messageAlert}
+            disabled={loading}
           />
         </Item>
 
@@ -81,9 +86,10 @@ export function ForgotPassword({ updateDisplayLoginPage }) {
           <Button
             className="t-submit-btn"
             type="primary"
-            onClick={() => submitResetEmail()}
-            disabled={messageAlert}
+            disabled={loading}
+            icon={loading && <LoadingOutlined />}
             block
+            htmlType="submit"
           >
             {i18n("ForgotPassword.button.resetPassword")}
           </Button>

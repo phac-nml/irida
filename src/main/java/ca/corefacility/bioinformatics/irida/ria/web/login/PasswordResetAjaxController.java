@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web;
+package ca.corefacility.bioinformatics.irida.ria.web.login;
 
 import java.security.Principal;
 import java.util.Locale;
@@ -13,14 +13,13 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserPasswordResetDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxFormErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIPasswordResetService;
-import ca.corefacility.bioinformatics.irida.ria.web.users.dto.PasswordResetResponse;
 
 /**
  * Handles asynchronous requests for password resets.
@@ -67,9 +66,7 @@ public class PasswordResetAjaxController {
 		try {
 			return ResponseEntity.ok(
 					new AjaxSuccessResponse(service.createAndSendNewPasswordResetEmail(usernameOrEmail, locale)));
-		} catch (EntityNotFoundException e) {
-			return ResponseEntity.ok(new AjaxSuccessResponse(e.getMessage()));
-		} catch (UIEmailSendException e) {
+		} catch (EntityNotFoundException | UIEmailSendException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
@@ -78,14 +75,15 @@ public class PasswordResetAjaxController {
 	 * Activate the user account
 	 *
 	 * @param identifier The ID of the {@link PasswordReset}
-	 * @return response with {@link UserPasswordResetDetails}
+	 * @param locale     The logged in user's locale
+	 * @return message indicating if account was successfully activated or not
 	 */
 	@RequestMapping(value = "/activate_account", method = RequestMethod.POST)
-	public ResponseEntity<UserPasswordResetDetails> activateAccount(@RequestParam String identifier) {
+	public ResponseEntity<AjaxResponse> activateAccount(@RequestParam String identifier, Locale locale) {
 		try {
-			return ResponseEntity.ok(service.activateAccount(identifier));
-		} catch (UIEmailSendException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+			return ResponseEntity.ok(new AjaxSuccessResponse(service.activateAccount(identifier, locale)));
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
@@ -96,17 +94,15 @@ public class PasswordResetAjaxController {
 	 * @param password The new password to set for the user
 	 * @param model    A model for the page
 	 * @param locale   The logged in user's locale
-	 * @return response with {@link PasswordResetResponse}
+	 * @return message indicating if the password reset was successfully created or not
 	 */
 	@RequestMapping(value = "/update_password", method = RequestMethod.POST)
-	public ResponseEntity<PasswordResetResponse> updatePassword(@RequestParam String resetId,
-			@RequestParam String password, Model model, Locale locale) {
+	public ResponseEntity<AjaxResponse> updatePassword(@RequestParam String resetId, @RequestParam String password,
+			Model model, Locale locale) {
 		try {
-			return ResponseEntity.ok(
-					new PasswordResetResponse(service.setNewPassword(resetId, password, model, locale), null));
+			return ResponseEntity.ok(new AjaxSuccessResponse(service.setNewPassword(resetId, password, model, locale)));
 		} catch (UIConstraintViolationException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new PasswordResetResponse("error", e.getErrors()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxFormErrorResponse(e.getErrors()));
 		}
 	}
 

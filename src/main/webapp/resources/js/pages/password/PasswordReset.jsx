@@ -1,18 +1,17 @@
 import React from "react";
 import { render } from "react-dom";
 import { Alert, Button, Col, Form, Input, List, Row, Typography } from "antd";
+import { LoadingOutlined, LockOutlined } from "@ant-design/icons";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { IconLocked } from "../../components/icons/Icons";
 import { blue6 } from "../../styles/colors";
 import { SPACE_MD, SPACE_SM } from "../../styles/spacing";
-import { useSetPasswordMutation } from "../../apis/passwordReset";
+import { useSetPasswordMutation } from "../../apis/password-reset";
 import store from "../store";
 import { Provider } from "react-redux";
+
 const { Item } = Form;
-
-const params = new URLSearchParams(window.location.search);
-
-const passwordExpired = params.get("expired") || false;
+const passwordExpired =
+  new URLSearchParams(window.location.search).get("expired") || false;
 const passwordResetObj = window.PAGE.passwordReset;
 
 /**
@@ -21,12 +20,23 @@ const passwordResetObj = window.PAGE.passwordReset;
  * @constructor
  */
 function PasswordResetForm() {
-  const [form] = Form.useForm();
+  const [passwordResetForm] = Form.useForm();
   const [setPassword] = useSetPasswordMutation();
 
+  const [loading, setLoading] = React.useState(false);
   const [updateSuccess, setUpdateSuccess] = React.useState(false);
   const [updateError, setUpdateError] = React.useState(false);
   const [errorMessages, setErrorMessages] = React.useState(null);
+  const passwordRef = React.useRef();
+
+  /**
+   * When the component gets added to the page,
+   * focus on the password input input.
+   */
+  React.useEffect(() => {
+    passwordRef.current.focus();
+    passwordRef.current.select();
+  }, []);
 
   const passwordRules = [
     i18n("PasswordReset.alert.rule2"),
@@ -38,25 +48,22 @@ function PasswordResetForm() {
     i18n("PasswordReset.alert.recommendation2"),
   ];
 
-  const handleSubmit = () => {
+  const submitPasswordResetForm = () => {
+    setLoading(true);
     setPassword({
       resetId: passwordResetObj.id,
-      password: form.getFieldValue("password"),
-    })
-      .then((res) => {
-        form.resetFields();
-        if (res.error) {
-          setErrorMessages(res.error.data.errors);
-          setUpdateError(true);
-        } else {
-          setUpdateSuccess(true);
-          setUpdateError(false);
-        }
-      })
-      .catch((error) => {
+      password: passwordResetForm.getFieldValue("password"),
+    }).then((res) => {
+      if (res.error) {
+        setErrorMessages(res.error.data.errors);
         setUpdateError(true);
-        setErrorMessages(error.data.errors);
-      });
+      } else {
+        setUpdateSuccess(true);
+        setUpdateError(false);
+      }
+      passwordResetForm.resetFields();
+      setLoading(false);
+    });
   };
 
   return (
@@ -143,7 +150,12 @@ function PasswordResetForm() {
               type="info"
               showIcon
             />
-            <Form form={form} name="resetPasswordForm" size="large">
+            <Form
+              form={passwordResetForm}
+              name="resetPasswordForm"
+              size="large"
+              onFinish={submitPasswordResetForm}
+            >
               <Item
                 name="password"
                 rules={[
@@ -157,18 +169,20 @@ function PasswordResetForm() {
                   name="password"
                   type="password"
                   id="password"
-                  prefix={<IconLocked style={{ color: blue6 }} />}
+                  ref={passwordRef}
+                  prefix={<LockOutlined style={{ color: blue6 }} />}
                   placeholder={i18n("PasswordReset.input.placeholder")}
-                  disabled={updateSuccess}
+                  disabled={loading}
                 />
               </Item>
               <Item>
                 <Button
                   className="t-submit-btn"
                   type="primary"
-                  disabled={updateSuccess}
+                  disabled={loading}
+                  icon={loading && <LoadingOutlined />}
                   block
-                  onClick={() => handleSubmit()}
+                  htmlType="submit"
                 >
                   {i18n("PasswordReset.button.setPassword")}
                 </Button>

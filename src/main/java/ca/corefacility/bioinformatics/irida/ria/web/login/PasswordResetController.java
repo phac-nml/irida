@@ -1,9 +1,7 @@
-package ca.corefacility.bioinformatics.irida.ria.web;
+package ca.corefacility.bioinformatics.irida.ria.web.login;
 
 import java.util.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 
@@ -29,7 +27,6 @@ import com.google.common.collect.ImmutableList;
 @Controller
 @RequestMapping(value = "/password_reset")
 public class PasswordResetController {
-	private static final Logger logger = LoggerFactory.getLogger(PasswordResetController.class);
 	public static final String PASSWORD_RESET_PAGE = "password/password_reset";
 	private final PasswordResetService passwordResetService;
 

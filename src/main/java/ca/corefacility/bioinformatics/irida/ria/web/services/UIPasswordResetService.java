@@ -18,6 +18,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
@@ -26,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UserPasswordResetDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
@@ -118,7 +118,12 @@ public class UIPasswordResetService {
 				throw new UIEmailSendException(
 						messageSource.getMessage("server.ForgotPassword.errorSendingInstructions", null, locale));
 			}
-		} catch (EntityNotFoundException ex) {
+			catch (EntityNotFoundException ex) {
+				SecurityContextHolder.clearContext();
+				throw new EntityNotFoundException(
+						messageSource.getMessage("server.ForgotPassword.emailOrUsernameNotExist", null, locale));
+			}
+		} catch (EntityNotFoundException | UsernameNotFoundException ex) {
 			SecurityContextHolder.clearContext();
 			throw new EntityNotFoundException(
 					messageSource.getMessage("server.ForgotPassword.emailOrUsernameNotExist", null, locale));
@@ -129,17 +134,18 @@ public class UIPasswordResetService {
 	 * Activate the user account
 	 *
 	 * @param identifier The ID of the {@link PasswordReset}
-	 * @return {@link UserPasswordResetDetails}
+	 * @param locale     The logged in user's locale
+	 * @return message if successful or not
 	 */
-	public UserPasswordResetDetails activateAccount(String identifier) {
+	public String activateAccount(String identifier, Locale locale) {
 		setAuthentication();
 
 		try {
 			PasswordReset passwordReset = passwordResetService.read(identifier);
-			User user = passwordReset.getUser();
-			return new UserPasswordResetDetails(identifier, user);
+			return passwordReset.getId();
 		} catch (EntityNotFoundException e) {
-			throw new EntityNotFoundException(e.getMessage());
+			throw new EntityNotFoundException(
+					messageSource.getMessage("ActivateAccount.invalidActivationId", null, locale));
 		}
 	}
 
@@ -198,7 +204,7 @@ public class UIPasswordResetService {
 	 *
 	 * @param user The user to create the reset for
 	 */
-	public void createNewPasswordReset(User user) {
+	private void createNewPasswordReset(User user) {
 		PasswordReset passwordReset = new PasswordReset(user);
 		passwordResetService.create(passwordReset);
 

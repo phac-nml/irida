@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { passwordResetApi } from "../../apis/passwordReset";
+import { passwordResetApi } from "../../apis/password-reset";
 
 /*
 Redux Store for password resets.

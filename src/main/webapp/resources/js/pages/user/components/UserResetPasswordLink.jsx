@@ -2,7 +2,7 @@ import React from "react";
 import { Button, notification, Popconfirm, Typography } from "antd";
 import { IconQuestionCircle } from "../../../components/icons/Icons";
 import { red6 } from "../../../styles/colors";
-import { useCreatePasswordResetMutation } from "../../../apis/passwordReset";
+import { useCreatePasswordResetMutation } from "../../../apis/password-reset";
 
 /**
  * React component to display the user account reset password link with confirmation.
@@ -12,14 +12,14 @@ import { useCreatePasswordResetMutation } from "../../../apis/passwordReset";
  * @returns {JSX.Element}
  * @constructor
  */
-export function UserResetPasswordLink({userId, firstName, lastName}) {
+export function UserResetPasswordLink({ userId, firstName, lastName }) {
   const [resetPassword] = useCreatePasswordResetMutation();
 
   const handleResetPassword = () => {
-    resetPassword({userId})
+    resetPassword({ userId })
       .unwrap()
-      .then(({message}) => {
-        notification.success({message});
+      .then(({ message }) => {
+        notification.success({ message });
       })
       .catch((payload) => {
         notification.error({
@@ -40,10 +40,11 @@ export function UserResetPasswordLink({userId, firstName, lastName}) {
         placement={"topLeft"}
         title={i18n("UserResetPasswordLink.confirm.title", firstName, lastName)}
         onConfirm={handleResetPassword}
-        icon={<IconQuestionCircle style={{color: red6}}/>}
+        icon={<IconQuestionCircle style={{ color: red6 }} />}
       >
-        <Button
-          className="t-password-reset-link">{i18n("UserResetPasswordLink.button.text")}</Button>
+        <Button className="t-password-reset-link">
+          {i18n("UserResetPasswordLink.button.text")}
+        </Button>
       </Popconfirm>
     </>
   );

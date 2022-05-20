@@ -1,10 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { userApi } from "../../apis/users/users";
 import { settingsApi } from "../../apis/settings/settings";
-import { passwordResetApi } from "../../apis/passwordReset";
-import {
-  projectSubscriptionsApi
-} from "../../apis/projects/project-subscriptions";
+import { passwordResetApi } from "../../apis/password-reset";
+import { projectSubscriptionsApi } from "../../apis/projects/project-subscriptions";
 
 /*
 Redux Store for user details.
@@ -22,6 +20,6 @@ export default configureStore({
       passwordResetApi.middleware,
       projectSubscriptionsApi.middleware,
       userApi.middleware,
-      settingsApi.middleware,
+      settingsApi.middleware
     ),
 });

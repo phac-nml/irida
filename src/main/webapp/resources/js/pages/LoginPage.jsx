@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { render } from "react-dom";
 import { Alert, Button, Col, Form, Input, Row } from "antd";
-import { IconLocked, IconUser } from "../components/icons/Icons";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { setBaseUrl } from "../utilities/url-utilities";
 import { SPACE_MD } from "../styles/spacing";
 import { blue6 } from "../styles/colors";
@@ -61,7 +61,7 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
         <Input
           name="username"
           ref={usernameRef}
-          prefix={<IconUser style={{ color: blue6 }} />}
+          prefix={<UserOutlined style={{ color: blue6 }} />}
           placeholder={i18n("LoginPage.username")}
         />
       </Item>
@@ -76,7 +76,7 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
       >
         <Input
           name="password"
-          prefix={<IconLocked style={{ color: blue6 }} />}
+          prefix={<LockOutlined style={{ color: blue6 }} />}
           type="password"
           placeholder={i18n("LoginPage.password")}
         />
@@ -173,7 +173,17 @@ function LoginPage() {
             description={
               <>
                 {i18n("LoginPage.error.description")}{" "}
-                <Button onClick={() => setDisplayLoginPage(false)}>
+                <Button
+                  onClick={() => {
+                    setDisplayLoginPage(false);
+                    updatePageType("forgot-password");
+                    history.pushState(
+                      "forgot",
+                      "Forgot Password",
+                      "/forgot_password"
+                    );
+                  }}
+                >
                   {i18n("LoginPage.recover")}
                 </Button>
               </>

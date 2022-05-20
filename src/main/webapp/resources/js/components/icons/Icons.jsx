@@ -34,7 +34,6 @@ import {
   LoadingOutlined,
   LockOutlined,
   LoginOutlined,
-  MailOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   OrderedListOutlined,
@@ -272,5 +271,3 @@ export const IconFileUpload = ({ ...props }) => <UploadOutlined {...props} />;
 export const IconDatabaseOutlined = ({ ...props }) => (
   <DatabaseOutlined {...props} />
 );
-
-export const IconMail = ({ ...props }) => <MailOutlined {...props} />;
