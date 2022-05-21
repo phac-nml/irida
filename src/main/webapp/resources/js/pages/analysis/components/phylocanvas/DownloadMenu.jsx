@@ -1,11 +1,16 @@
 import { MenuOutlined } from "@ant-design/icons";
 import { Button, Popover, Space } from "antd";
 import React from "react";
+import styled from "styled-components";
+
+const DownloadButton = styled(Button)`
+  text-align: left;
+  width: 100%;
+`;
 
 export function DownloadMenu({treeRef}) {
 
-  const downloadBlob = (blob, name) => {
-    const url = window.URL.createObjectURL(blob);
+  const downloadUrl = (url, name) => {
     const link = document.createElement("a");
     link.style.display = "none";
     link.href = url;
@@ -16,33 +21,35 @@ export function DownloadMenu({treeRef}) {
   }
 
   const downloadNewick = () => {
-    const blob = treeRef.current.exportNewick();
-    downloadBlob(blob, `tree.newick`)
+    const blob = new Blob([treeRef.current.exportNewick()], {type: 'text/plain'});
+    const url = window.URL.createObjectURL(blob);
+    downloadUrl(url, `tree.newick`)
   };
 
   const downloadSVG = () => {
     const blob = treeRef.current.exportSVG();
-    downloadBlob(blob, `tree.svg`)
+    const url = window.URL.createObjectURL(blob);
+    downloadUrl(url, `tree.svg`)
   };
 
   const downloadPNG = () => {
-    const blob = treeRef.current.exportPNG();
-    downloadBlob(blob, `tree.png`)
+    const url = treeRef.current.exportPNG();
+    downloadUrl(url, `tree.png`)
   };
 
   return (
     <Popover
       content={
         <Space direction="vertical">
-          <Button onClick={downloadNewick}>
+          <DownloadButton onClick={downloadNewick} type="text">
             {i18n("visualization.phylogenomics.button.download.newick")}
-          </Button>
-          <Button onClick={downloadSVG}>
+          </DownloadButton>
+          <DownloadButton onClick={downloadSVG} type="text">
             {i18n("visualization.phylogenomics.button.download.svg")}
-          </Button>
-          <Button onClick={downloadPNG}>
+          </DownloadButton>
+          <DownloadButton onClick={downloadPNG} type="text">
             {i18n("visualization.phylogenomics.button.download.png")}
-          </Button>
+          </DownloadButton>
         </Space>
       }
       placement="bottomRight"

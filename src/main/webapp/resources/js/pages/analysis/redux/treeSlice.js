@@ -1,6 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { Shapes, TreeTypes } from "@phylocanvas/phylocanvas.gl";
 import { getMetadata, getMetadataTemplateFields, getMetadataTemplates, getNewickTree } from "../../../apis/analysis/analysis";
 import { formatMetadata } from "../metadata-utilities";
+
+const zoomStepSize = 0.1;
 
 export const fetchTreeAndMetadata = createAsyncThunk(`tree/fetchTreeAndMetadata`, async (id, {rejectWithValue}) => {
   const promises = [getNewickTree(id), getMetadata(id), getMetadataTemplates(id)];
@@ -58,14 +61,20 @@ const initialState = {
   fetching: true,
   treeProps: {
     alignLabels: true,
+    blocks: [],
+    branchZoom: 0,
+    fontFamily: "sans-serif",
     interactive: true,
+    nodeShape: Shapes.Dot,
+    padding: 20,
     showLabels: true,
     showLeafLabels: true,
-    nodeShape: "dot",
-    blocks: [],
-    padding: 20
+    stepZoom: 0,
+    type: TreeTypes.Rectangular,
+    zoom: -0.1,
   },
-  terms: []
+  terms: [],
+  zoomMode: 0, // normal zoom
 }
 
 export const treeSlice = createSlice({
@@ -88,7 +97,34 @@ export const treeSlice = createSlice({
       } else {
         state.treeProps.blocks = state.treeProps.blocks.filter(field => field !== action.payload.field);
       }
-    }
+    },
+    setZoomMode: (state, action) => {
+      state.zoomMode = action.payload;
+    },
+    zoomIn: (state) => {
+      if (state.zoomMode === 0) {
+        // normal zoom
+        state.treeProps.zoom += zoomStepSize;
+      } else if (state.zoomMode === 1) {
+        // horizontal zoom aka branch zoom
+        state.treeProps.branchZoom += zoomStepSize;
+      } else if (state.zoomMode === 2) {
+        // vertical zoom aka step zoom
+        state.treeProps.stepZoom += zoomStepSize;
+      }
+    },
+    zoomOut: (state) => {
+      if (state.zoomMode === 0) {
+        // normal zoom
+        state.treeProps.zoom -= zoomStepSize;
+      } else if (state.zoomMode === 1) {
+        // horizontal zoom aka branch zoom
+        state.treeProps.branchZoom -= zoomStepSize;
+      } else if (state.zoomMode === 2) {
+        // vertical zoom aka step zoom
+        state.treeProps.stepZoom -= zoomStepSize;
+      }
+    },
   },
   extraReducers: builder => {
     builder.addCase(fetchTreeAndMetadata.fulfilled, (state, action ) => {
@@ -111,6 +147,6 @@ export const treeSlice = createSlice({
   }
 });
 
-export const { resize, selectAllTerms, setFieldVisibility } = treeSlice.actions;
+export const { resize, selectAllTerms, setFieldVisibility, setZoomMode, zoomIn, zoomOut } = treeSlice.actions;
 
 export default treeSlice.reducer;

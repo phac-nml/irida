@@ -1,10 +1,11 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { resize } from "../../redux/treeSlice";
-import PhylocanvasGL from "@phylocanvas/phylocanvas.gl";
-import { Button, Space } from "antd";
+import * as phylocanvas from "@phylocanvas/phylocanvas.gl";
+import { Space } from "antd";
 import { MetadataMenu } from "./MetadataMenu";
 import { DownloadMenu } from "./DownloadMenu";
+import { ZoomButtons } from "./ZoomButtons";
 
 export function PhylocanvasTree() {
   const canvasRef = React.useRef();
@@ -15,26 +16,16 @@ export function PhylocanvasTree() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const renderTree = (treeProps) => {
     console.log(treeProps);
-    treeRef.current = new PhylocanvasGL(
+    treeRef.current = new phylocanvas.PhylocanvasGL(
       canvasRef.current,
       {
         ...treeProps,
         size: canvasRef.current.parentElement?.getBoundingClientRect(),
       },
-      []
+      [
+        phylocanvas.plugins.scalebar
+      ]
     );
-  };
-
-  const downloadTree = () => {
-    const blob = treeRef.current.exportSVG();
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.style.display = "none";
-    link.href = url;
-    link.setAttribute("download", `tree.svg`);
-    document.body.appendChild(link);
-    link.click();
-    window.URL.revokeObjectURL(url);
   };
 
   React.useEffect(() => {
@@ -92,6 +83,7 @@ export function PhylocanvasTree() {
           <MetadataMenu />
           <DownloadMenu treeRef={treeRef}/>
         </Space>
+        <ZoomButtons />
       </div>
     </div>
   );
