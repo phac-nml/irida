@@ -1,7 +1,6 @@
 import { Button } from "antd";
 import React from "react";
 import styled from "styled-components";
-import { Legend } from "./Legend";
 
 const SidebarContainer = styled.div`
   display: flex;
@@ -27,32 +26,42 @@ const SidebarContent = styled.div`
   height: 100%;
   min-height: 0px;
   overflow: auto;
-`
+`;
 
-export function CollapsibleSidebar({onToggle}) {
-  const [activeItem, setActiveItem] = React.useState();
+export function CollapsibleSidebar({items, onToggle}) {
+  const [activeItem, setActiveItem] = React.useState(null);
 
-  const onLegendBtnClick = () => {
-    if (!activeItem || activeItem !== "legend") {
-      setActiveItem("legend");
+  const onMenuItemClick = (index) => {
+    if (activeItem === null || activeItem !== index) {
+      setActiveItem(index);
     } else {
       setActiveItem(null);
     }
-  }
+  };
 
   React.useEffect(() => {
     onToggle();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeItem]);
 
   return (
     <SidebarContainer>
-      { activeItem ? (
+      { activeItem !== null ? (
         <SidebarContent>
-          <Legend />
+          {items[activeItem].component}
         </SidebarContent>
       ) : null }
       <SidebarMenu>
-        <Button onClick={onLegendBtnClick}>Legend</Button>
+        {items.map((item, index) => (
+          <Button
+            key={index}
+            value={index}
+            onClick={() => onMenuItemClick(index)}
+            type={index === activeItem ? "primary" : "default"}
+          >
+            {item.text}
+          </Button>
+        ))}
       </SidebarMenu>
     </SidebarContainer>
   );

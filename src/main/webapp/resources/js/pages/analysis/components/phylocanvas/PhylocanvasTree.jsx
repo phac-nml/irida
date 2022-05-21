@@ -7,6 +7,7 @@ import { MetadataMenu } from "./MetadataMenu";
 import { DownloadMenu } from "./DownloadMenu";
 import { ZoomButtons } from "./ZoomButtons";
 import { CollapsibleSidebar } from "./CollapsibleSidebar";
+import { Legend } from "./Legend";
 
 export function PhylocanvasTree() {
   const canvasRef = React.useRef();
@@ -98,7 +99,15 @@ export function PhylocanvasTree() {
 
         </div>
       </div>
-      <CollapsibleSidebar onToggle={handleResize} />
+      <CollapsibleSidebar
+        items={[
+          {
+            text: i18n("visualization.phylogenomics.sidebar.legend.title"),
+            component: <Legend />
+          }
+        ]}
+        onToggle={handleResize}
+      />
     </div>
   );
 }

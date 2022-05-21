@@ -10,29 +10,29 @@ const EMPTY_COLOUR = "transparent";
  * @return {object} Map of metadata with colours for Phylocanvas to consume.
  */
  export function formatMetadata(metadata, metadataFieldLabels) {
-  const result = {};
-  const colourMap = {};
+  const formattedMetadata = {};
+  const metadataColourMap = {};
   const sampleNames = Object.keys(metadata);
 
   for (const sampleName of sampleNames) {
     const sampleMetadata = metadata[sampleName];
-    result[sampleName] = {};
+    formattedMetadata[sampleName] = {};
     for (const field of metadataFieldLabels) {
       const metadataLabel = sampleMetadata[field].value;
 
       if (metadataLabel && metadataLabel.length !== 0) {
         // Find out if the field has already been assigned a colour
         // If not, get it a new one.
-        colourMap[field] = colourMap[field] || {};
-        colourMap[field][metadataLabel] =
-          colourMap[field][metadataLabel] || uniqolor(metadataLabel)["color"];
-        result[sampleName][field] = {
+        metadataColourMap[field] = metadataColourMap[field] || {};
+        metadataColourMap[field][metadataLabel] =
+          metadataColourMap[field][metadataLabel] || uniqolor(metadataLabel)["color"];
+        formattedMetadata[sampleName][field] = {
           label: metadataLabel,
-          colour: colourMap[field][metadataLabel]
+          colour: metadataColourMap[field][metadataLabel]
         };
       } else {
         // If the label is empty, then do not give it a colour.
-        result[sampleName][field] = {
+        formattedMetadata[sampleName][field] = {
           label: metadataLabel,
           colour: EMPTY_COLOUR
         };
@@ -40,5 +40,5 @@ const EMPTY_COLOUR = "transparent";
     }
   }
 
-  return result;
+  return {formattedMetadata, metadataColourMap};
 };

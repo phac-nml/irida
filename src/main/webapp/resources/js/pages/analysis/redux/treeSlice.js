@@ -16,16 +16,19 @@ export const fetchTreeAndMetadata = createAsyncThunk(`tree/fetchTreeAndMetadata`
 
   }
 
+  const { formattedMetadata, metadataColourMap } = formatMetadata(metadataData.metadata, metadataData.terms);
+
   return {
     analysisId: id,
     treeProps: {
       source: newickData.newick,
       showBlockHeaders: true,
-      metadata: metadataData.metadata ? formatMetadata(metadataData.metadata, metadataData.terms) : null,
+      metadata: formattedMetadata,
       blocks: metadataData.terms,
     },
     terms: metadataData.terms,
     metadata: metadataData.metadata,
+    metadataColourMap: metadataColourMap,
     templates: metadataTemplateData.templates
   };
 });
@@ -74,6 +77,7 @@ const initialState = {
     zoom: -0.1,
   },
   terms: [],
+  metadataColourMap: {},
   zoomMode: 0, // normal zoom
 }
 
@@ -132,6 +136,7 @@ export const treeSlice = createSlice({
       state.analysisId = action.payload.analysisId;
       state.treeProps = {...state.treeProps, ...action.payload.treeProps};
       state.metadata = action.payload.metadata;
+      state.metadataColourMap = action.payload.metadataColourMap;
       state.terms = action.payload.terms;
       state.templates = action.payload.templates;
     });
