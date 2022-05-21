@@ -4,6 +4,7 @@ import { resize } from "../../redux/treeSlice";
 import PhylocanvasGL from "@phylocanvas/phylocanvas.gl";
 import { Button, Space } from "antd";
 import { MetadataMenu } from "./MetadataMenu";
+import { DownloadMenu } from "./DownloadMenu";
 
 export function PhylocanvasTree() {
   const canvasRef = React.useRef();
@@ -89,9 +90,7 @@ export function PhylocanvasTree() {
           }}
         >
           <MetadataMenu />
-          <Button onClick={downloadTree}>
-            {i18n("visualization.button.export.svg")}
-          </Button>
+          <DownloadMenu treeRef={treeRef}/>
         </Space>
       </div>
     </div>
