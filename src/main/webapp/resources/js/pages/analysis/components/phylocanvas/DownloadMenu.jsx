@@ -41,13 +41,13 @@ export function DownloadMenu({treeRef}) {
     <Popover
       content={
         <Space direction="vertical">
-          <DownloadButton onClick={downloadNewick} type="text">
+          <DownloadButton onClick={downloadNewick}>
             {i18n("visualization.phylogenomics.button.download.newick")}
           </DownloadButton>
-          <DownloadButton onClick={downloadSVG} type="text">
+          <DownloadButton onClick={downloadSVG}>
             {i18n("visualization.phylogenomics.button.download.svg")}
           </DownloadButton>
-          <DownloadButton onClick={downloadPNG} type="text">
+          <DownloadButton onClick={downloadPNG}>
             {i18n("visualization.phylogenomics.button.download.png")}
           </DownloadButton>
         </Space>

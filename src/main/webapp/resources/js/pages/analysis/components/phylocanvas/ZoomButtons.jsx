@@ -45,7 +45,7 @@ export function ZoomButtons() {
 
   return (
     <VerticalButtonBar>
-      <Tooltip title={i18n("visualization.phylogenomics.zoom.zoom-in")}>
+      <Tooltip placement="left" title={i18n("visualization.phylogenomics.zoom.zoom-in")}>
         <Button
           icon={<ZoomInOutlined />}
           onClick={onZoomInClick}
@@ -53,7 +53,7 @@ export function ZoomButtons() {
         />
       </Tooltip>
       <Divider />
-      <Tooltip title={i18n("visualization.phylogenomics.zoom.zoom-toggle")}>
+      <Tooltip placement="left" title={i18n("visualization.phylogenomics.zoom.zoom-toggle")}>
         <Button
           icon={zoomModeIcons[zoomMode]}
           onClick={onZoomModeClick}
@@ -61,7 +61,7 @@ export function ZoomButtons() {
         />
       </Tooltip>
       <Divider />
-      <Tooltip title={i18n("visualization.phylogenomics.zoom.zoom-out")}>
+      <Tooltip placement="left" title={i18n("visualization.phylogenomics.zoom.zoom-out")}>
         <Button
           icon={<ZoomOutOutlined />}
           onClick={onZoomOutClick}
