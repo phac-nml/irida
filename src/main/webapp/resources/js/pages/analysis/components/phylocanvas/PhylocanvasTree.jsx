@@ -6,6 +6,7 @@ import { Space } from "antd";
 import { MetadataMenu } from "./MetadataMenu";
 import { DownloadMenu } from "./DownloadMenu";
 import { ZoomButtons } from "./ZoomButtons";
+import { CollapsibleSidebar } from "./CollapsibleSidebar";
 
 export function PhylocanvasTree() {
   const canvasRef = React.useRef();
@@ -28,6 +29,12 @@ export function PhylocanvasTree() {
     );
   };
 
+  const handleResize = () => {
+    console.log()
+    const {height, width} = canvasRef.current.parentElement.getBoundingClientRect();
+    dispatch(resize({height, width}));
+  }
+
   React.useEffect(() => {
     if (treeRef.current) {
       treeRef.current.setProps(treeProps);
@@ -37,11 +44,6 @@ export function PhylocanvasTree() {
   }, [renderTree, treeProps])
 
   React.useEffect(() => {
-    function handleResize() {
-      const {height, width} = canvasRef.current.parentElement.getBoundingClientRect();
-      dispatch(resize({height, width}));
-    }
-
     window.addEventListener("resize", handleResize);
 
     return () => {
@@ -57,8 +59,8 @@ export function PhylocanvasTree() {
     <div
       style={{
         display: "flex",
-        flexDirection: "column",
-        alignItems: "stretch",
+        flexDirection: "row",
+        alignItems: "start",
         width: "100%",
         height: "100%",
         flex: "1 1 auto",
@@ -66,25 +68,37 @@ export function PhylocanvasTree() {
       }}
     >
       <div
-        ref={canvasRef}
-        style={{border: "1px solid lightgray"}}
+        style={{
+          border: "1px solid lightgray",
+          flex: "1 1 auto",
+          minHeight: 0,
+          minWidth: 0,
+          width: "100%",
+          height: "100%",
+        }}
       >
-        <Space
-          align="top"
-          style={{
-            position: "absolute",
-            zIndex: 4,
-            height: 0,
-            right: 4,
-            top: 4,
-            userSelect: "none"
-          }}
+        <div
+          ref={canvasRef}
         >
-          <MetadataMenu />
-          <DownloadMenu treeRef={treeRef}/>
-        </Space>
-        <ZoomButtons />
+          <Space
+            align="top"
+            style={{
+              position: "absolute",
+              zIndex: 4,
+              height: 0,
+              right: 4,
+              top: 4,
+              userSelect: "none"
+            }}
+          >
+            <MetadataMenu />
+            <DownloadMenu treeRef={treeRef}/>
+          </Space>
+          <ZoomButtons />
+
+        </div>
       </div>
+      <CollapsibleSidebar onToggle={handleResize} />
     </div>
   );
 }
