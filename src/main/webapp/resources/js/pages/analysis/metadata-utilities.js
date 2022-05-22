@@ -3,7 +3,7 @@ import uniqolor from "uniqolor";
 const EMPTY_COLOUR = "transparent";
 
 /**
- * Format the metadata into an object that can be conssome by Phylocanvas.
+ * Format the metadata into an object that can be consumed by Phylocanvas.
  *  { leaf-label: { templateMetadataField : { label, color} }}
  * @param {array} metadata list of metaterms for the samples.
  * @param {array} metadataFieldLabels list of metadata field labels
@@ -41,4 +41,42 @@ const EMPTY_COLOUR = "transparent";
   }
 
   return {formattedMetadata, metadataColourMap};
+};
+
+/**
+ * Format the metadata into an object that can be consumed by Phylocanvas.
+ *  { leaf-label: { templateMetadataField : { label, color} }}
+ * @param {array} metadata list of metaterms for the samples.
+ * @param {array} metadataFieldLabels list of metadata field labels
+ * @param {object} metadataColourMap Map of metadata fields with a Map of values to colours
+ * @param
+ * @return {object} Map of metadata with colours for Phylocanvas to consume.
+ */
+export function updateMetadataColours(metadata, metadataFieldLabels, metadataColourMap) {
+  const formattedMetadata = {};
+
+  const sampleNames = Object.keys(metadata);
+
+  for (const sampleName of sampleNames) {
+    const sampleMetadata = metadata[sampleName];
+    formattedMetadata[sampleName] = {};
+    for (const field of metadataFieldLabels) {
+      const metadataLabel = sampleMetadata[field].value;
+
+      if (metadataLabel && metadataLabel.length !== 0) {
+        formattedMetadata[sampleName][field] = {
+          label: metadataLabel,
+          colour: metadataColourMap[field][metadataLabel]
+        };
+      } else {
+        // If the label is empty, then do not give it a colour.
+        formattedMetadata[sampleName][field] = {
+          label: metadataLabel,
+          colour: EMPTY_COLOUR
+        };
+      }
+    }
+  }
+
+  return formattedMetadata;
 };

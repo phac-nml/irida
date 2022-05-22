@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { Shapes, TreeTypes } from "@phylocanvas/phylocanvas.gl";
 import { getMetadata, getMetadataTemplateFields, getMetadataTemplates, getNewickTree } from "../../../apis/analysis/analysis";
-import { formatMetadata } from "../metadata-utilities";
+import { formatMetadata, updateMetadataColours } from "../metadata-utilities";
 
 const zoomStepSize = 0.1;
 
@@ -102,6 +102,10 @@ export const treeSlice = createSlice({
         state.treeProps.blocks = state.treeProps.blocks.filter(field => field !== action.payload.field);
       }
     },
+    setMetadataColourForTermWithValue: (state, action) => {
+      state.metadataColourMap[action.payload.item][action.payload.key] = action.payload.color;
+      state.treeProps.metadata=updateMetadataColours(state.metadata, state.terms, state.metadataColourMap);
+    },
     setZoomMode: (state, action) => {
       state.zoomMode = action.payload;
     },
@@ -152,6 +156,6 @@ export const treeSlice = createSlice({
   }
 });
 
-export const { resize, selectAllTerms, setFieldVisibility, setZoomMode, zoomIn, zoomOut } = treeSlice.actions;
+export const { resize, selectAllTerms, setFieldVisibility, setMetadataColourForTermWithValue, setZoomMode, zoomIn, zoomOut } = treeSlice.actions;
 
 export default treeSlice.reducer;

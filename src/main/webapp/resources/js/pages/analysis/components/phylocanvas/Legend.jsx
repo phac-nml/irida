@@ -1,12 +1,9 @@
-import { List, Space, Typography } from "antd";
+import { Button, List, Popover, Space, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
-
-const ColourBlock = styled.div`
-  width: 16px;
-  height: 16px;
-`
+import { BlankIcon } from "./BlankIcon";
+import { HexColorPicker } from "react-colorful";
+import { setMetadataColourForTermWithValue } from "../../redux/treeSlice";
 
 export function Legend() {
   const { metadataColourMap, terms } = useSelector((state) => state.tree);
@@ -25,7 +22,21 @@ export function Legend() {
             {item in metadataColourMap ? Object.keys(metadataColourMap[item]).map((key) => (
               <div key={item + "-" + key}>
                 <Space direction="horizontal">
-                  <ColourBlock style={{backgroundColor: metadataColourMap[item][key]}}/>
+                  <Popover
+                    content={
+                      <HexColorPicker color={metadataColourMap[item][key]} onChange={(color) => dispatch(setMetadataColourForTermWithValue({item, key, color}))}/>
+                    }
+                    placement="left"
+                  >
+                    <Button
+                      icon={<BlankIcon />}
+                      size="small"
+                      style={{
+                        background: metadataColourMap[item][key],
+                        borderColor: metadataColourMap[item][key]
+                      }}
+                    />
+                  </Popover>
                   <Typography.Text>{key}</Typography.Text>
                 </Space>
               </div>
