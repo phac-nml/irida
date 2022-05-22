@@ -1,7 +1,12 @@
 import React from "react";
 import { render } from "react-dom";
 import { Alert, Button, Col, Form, Input, List, Row, Typography } from "antd";
-import { LoadingOutlined, LockOutlined } from "@ant-design/icons";
+import {
+  EyeInvisibleOutlined,
+  EyeTwoTone,
+  LoadingOutlined,
+  LockOutlined,
+} from "@ant-design/icons";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { blue6 } from "../../styles/colors";
 import { SPACE_MD, SPACE_SM } from "../../styles/spacing";
@@ -64,6 +69,26 @@ function PasswordResetForm() {
       passwordResetForm.resetFields();
       setLoading(false);
     });
+  };
+
+  // Validator to check if password meets password policy requirements
+  const validatePassword = (password) => {
+    const passwordRegex =
+      /^(?=.*\d)(?=.*[!@#$%^&*()+?/<>={}.\\])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    const minimumPasswordLength = 8;
+
+    if (password.length !== 0) {
+      if (password.length >= minimumPasswordLength) {
+        if (passwordRegex.test(password)) {
+          return Promise.resolve();
+        } else {
+          return Promise.reject(i18n("PasswordReset.input.passwordNotMatch"));
+        }
+      }
+      return Promise.reject(i18n("PasswordReset.input.minLength"));
+    } else {
+      return Promise.reject(i18n("PasswordReset.passwordIsRequired"));
+    }
   };
 
   return (
@@ -159,20 +184,23 @@ function PasswordResetForm() {
               <Item
                 name="password"
                 rules={[
-                  {
-                    required: true,
-                    message: i18n("PasswordReset.passwordIsRequired"),
-                  },
+                  ({}) => ({
+                    validator(_, value) {
+                      return validatePassword(value);
+                    },
+                  }),
                 ]}
               >
-                <Input
+                <Input.Password
                   name="password"
-                  type="password"
                   id="password"
                   ref={passwordRef}
                   prefix={<LockOutlined style={{ color: blue6 }} />}
                   placeholder={i18n("PasswordReset.input.placeholder")}
                   disabled={loading}
+                  iconRender={(visible) =>
+                    visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+                  }
                 />
               </Item>
               <Item>
