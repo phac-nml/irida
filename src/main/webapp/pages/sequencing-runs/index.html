@@ -5,15 +5,15 @@
   data-layout-decorate="~{template/page}"
 >
   <head>
-    <title th:text="#{user.account}">_USER PAGE_</title>
-    <webpacker:css entry="user" />
+    <title th:text="#{SequencingRunListPage.title}">Sequencing Runs</title>
+    <webpacker:css entry="sequencing-runs" />
   </head>
   <body>
-    <div id="user-account-root" style="height: 100%;" layout:fragment="page">
-      <!-- Contents rendered from UserDetailsPage.jsx -->
+    <div id="root" layout:fragment="page">
+      <!-- Contents rendered from SequencingRunListPage.jsx -->
     </div>
     <th:block layout:fragment="scripts">
-      <webpacker:js entry="user" />
+      <webpacker:js entry="sequencing-runs" />
     </th:block>
   </body>
 </html>
