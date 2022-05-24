@@ -77,6 +77,10 @@ export default function CreateNewUserForm() {
             required: true,
             message: i18n("CreateNewUserForm.form.username.required"),
           },
+          {
+            min: 3,
+            message: i18n("CreateNewUserForm.form.username.min"),
+          },
         ]}
       >
         <Input />
@@ -89,6 +93,10 @@ export default function CreateNewUserForm() {
             required: true,
             message: i18n("CreateNewUserForm.form.firstName.required"),
           },
+          {
+            min: 2,
+            message: i18n("CreateNewUserForm.form.firstName.min"),
+          },
         ]}
       >
         <Input />
@@ -100,6 +108,10 @@ export default function CreateNewUserForm() {
           {
             required: true,
             message: i18n("CreateNewUserForm.form.lastName.required"),
+          },
+          {
+            min: 2,
+            message: i18n("CreateNewUserForm.form.lastName.min"),
           },
         ]}
       >
@@ -117,6 +129,10 @@ export default function CreateNewUserForm() {
             type: "email",
             message: i18n("CreateNewUserForm.form.email.type"),
           },
+          {
+            min: 5,
+            message: i18n("CreateNewUserForm.form.email.min"),
+          },
         ]}
       >
         <Input />
@@ -128,6 +144,10 @@ export default function CreateNewUserForm() {
           {
             required: true,
             message: i18n("CreateNewUserForm.form.phoneNumber.required"),
+          },
+          {
+            min: 4,
+            message: i18n("CreateNewUserForm.form.phoneNumber.min"),
           },
         ]}
       >
