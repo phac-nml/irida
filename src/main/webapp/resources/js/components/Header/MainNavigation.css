@@ -1,7 +1,7 @@
 .main-navigation {
-  height: 64px;
   display: flex;
   align-content: center;
+  height: 64px;
 }
 
 .dark-theme.main-navigation {
@@ -15,8 +15,8 @@
 .main-navigation header {
   position: fixed;
   z-index: 1000;
-  width: 100%;
   display: flex;
+  width: 100%;
 }
 
 .main-navigation .ant-menu-item-active {
@@ -38,8 +38,8 @@
 }
 
 .main-navigation .ant-menu-title-content a {
-  font-size: 1.5rem;
   font-weight: 600;
+  font-size: 1.5rem;
 }
 
 .dark-theme .main-navigation .ant-menu-title-content a:hover {
