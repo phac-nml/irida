@@ -254,7 +254,7 @@ export function MainNavigation() {
           <Menu.SubMenu key="help" title={i18n("nav.main.help")}>
             <Menu.Item key="userguide">
               <a
-                href="src/main/webapp/resources/js/components/Header/MainNavigation/MainNavigation"
+                href="https://phac-nml.github.io/irida-documentation/user/user/"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -264,7 +264,7 @@ export function MainNavigation() {
             {isAdmin && (
               <Menu.Item key="adminguide">
                 <a
-                  href="src/main/webapp/resources/js/components/Header/MainNavigation/MainNavigation"
+                  href="https://phac-nml.github.io/irida-documentation/user/administrator/"
                   target="_blank"
                   rel="noreferrer"
                 >
