@@ -13,7 +13,7 @@ const ColourInput = styled.input.attrs({ type: "color" })`
   -webkit-appearance: none;
 `;
 
-export function LegendItem({ label, colour: initialColour, onChange }) {
+export function LegendSectionItem({ label, colour: initialColour, onChange }) {
   const [colour, setColour] = React.useState(initialColour);
 
   const debouncedColour = useDebounce(colour, 500);

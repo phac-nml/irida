@@ -1,8 +1,8 @@
-import { List, Space, Typography } from "antd";
+import { List, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setMetadataColourForTermWithValue } from "../../redux/treeSlice";
-import { LegendItem } from "./LegendItem";
+import { LegendSection } from "./LegendSection";
 
 export function Legend() {
   const { metadataColourMap, terms } = useSelector((state) => state.tree);
@@ -18,32 +18,13 @@ export function Legend() {
       dataSource={terms}
       renderItem={(item) => (
         <List.Item style={{ width: "100%" }}>
-          <Space direction="vertical" style={{ width: "100%" }}>
-            <List.Item.Meta
-              title={i18n(
-                "visualization.phylogenomics.sidebar.legend.colour-by",
-                item
-              )}
-            />
-            {item in metadataColourMap
-              ? Object.keys(metadataColourMap[item]).map((key) => (
-                  <LegendItem
-                    key={item + "-" + key}
-                    label={key}
-                    colour={metadataColourMap[item][key]}
-                    onChange={(colour) =>
-                      dispatch(
-                        setMetadataColourForTermWithValue({
-                          item,
-                          key,
-                          colour,
-                        })
-                      )
-                    }
-                  />
-                ))
-              : null}
-          </Space>
+          <LegendSection
+            title={item}
+            sectionColourMap={metadataColourMap[item]}
+            onSectionItemColourChange={(key, colour) =>
+              dispatch(setMetadataColourForTermWithValue({ item, key, colour }))
+            }
+          />
         </List.Item>
       )}
       style={{
