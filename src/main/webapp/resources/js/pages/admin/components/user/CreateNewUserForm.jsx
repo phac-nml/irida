@@ -33,6 +33,7 @@ export default function CreateNewUserForm() {
   const [createUser] = useCreateNewUserMutation();
   const [form] = Form.useForm();
   const [, setVisibility] = useVisibility();
+  const [activationEmail, setActivationEmail] = React.useState(false);
 
   const passwordRules = [
     i18n("CreateNewUserForm.changePassword.alert.rule2"),
@@ -46,7 +47,6 @@ export default function CreateNewUserForm() {
     createUser({ ...values })
       .unwrap()
       .then(() => {
-        console.log("SUCCESS");
         notification.success({
           message: i18n("CreateNewUserForm.notification.success"),
           className: "t-user-page-notification-success",
@@ -56,7 +56,6 @@ export default function CreateNewUserForm() {
         updateTable();
       })
       .catch((error) => {
-        console.log("FAILED");
         notification.error({
           message: i18n("CreateNewUserForm.notification.error"),
         });
@@ -190,82 +189,92 @@ export default function CreateNewUserForm() {
         />
       )}
       <Form.Item name="activate" valuePropName="checked">
-        <Checkbox disabled={!emailConfigured}>
+        <Checkbox
+          disabled={!emailConfigured}
+          checked={activationEmail}
+          onChange={(e) => setActivationEmail(e.target.checked)}
+        >
           {i18n("CreateNewUserForm.form.activate.label")}
         </Checkbox>
       </Form.Item>
-      <Alert
-        style={{ marginBottom: SPACE_SM }}
-        message={i18n("CreateNewUserForm.changePassword.alert.title")}
-        description={
-          <Typography.Paragraph>
-            <List
-              header={i18n(
-                "CreateNewUserForm.changePassword.alert.description"
-              )}
-              dataSource={passwordRules}
-              renderItem={(item) => <List.Item>{item}</List.Item>}
-            />
-          </Typography.Paragraph>
-        }
-        type="info"
-        showIcon
-      />
-      <Form.Item
-        label={i18n("CreateNewUserForm.form.label.password")}
-        name="password"
-        rules={[
-          {
-            required: true,
-            message: i18n("CreateNewUserForm.changePassword.alert.rule1"),
-          },
-          {
-            min: 8,
-            message: i18n("CreateNewUserForm.changePassword.alert.rule2"),
-          },
-          {
-            pattern: new RegExp("^.*[A-Z].*$"),
-            message: i18n("CreateNewUserForm.changePassword.alert.rule3"),
-          },
-          {
-            pattern: new RegExp("^.*[a-z].*$"),
-            message: i18n("CreateNewUserForm.changePassword.alert.rule4"),
-          },
-          {
-            pattern: new RegExp("^.*[0-9].*$"),
-            message: i18n("CreateNewUserForm.changePassword.alert.rule5"),
-          },
-          {
-            pattern: new RegExp("^.*[^A-Za-z0-9].*$"),
-            message: i18n("CreateNewUserForm.changePassword.alert.rule6"),
-          },
-        ]}
-      >
-        <Input.Password />
-      </Form.Item>
-      <Form.Item
-        label={i18n("CreateNewUserForm.form.label.confirmPassword")}
-        name="confirmPassword"
-        dependencies={["password"]}
-        rules={[
-          {
-            required: true,
-            message: i18n("CreateNewUserForm.changePassword.alert.rule1"),
-          },
-          ({ getFieldValue }) => ({
-            validator(_, value) {
-              if (!value || getFieldValue("password") === value) {
-                return Promise.resolve();
-              }
-              return Promise.reject(
-                new Error(i18n("CreateNewUserForm.changePassword.alert.rule7"))
-              );
-            },
-          }),
-        ]}
-      >
-        <Input.Password />
-      </Form.Item>
+      {!activationEmail && (
+        <>
+          <Alert
+            style={{ marginBottom: SPACE_SM }}
+            message={i18n("CreateNewUserForm.changePassword.alert.title")}
+            description={
+              <Typography.Paragraph>
+                <List
+                  header={i18n(
+                    "CreateNewUserForm.changePassword.alert.description"
+                  )}
+                  dataSource={passwordRules}
+                  renderItem={(item) => <List.Item>{item}</List.Item>}
+                />
+              </Typography.Paragraph>
+            }
+            type="info"
+            showIcon
+          />
+          <Form.Item
+            label={i18n("CreateNewUserForm.form.label.password")}
+            name="password"
+            rules={[
+              {
+                required: true,
+                message: i18n("CreateNewUserForm.changePassword.alert.rule1"),
+              },
+              {
+                min: 8,
+                message: i18n("CreateNewUserForm.changePassword.alert.rule2"),
+              },
+              {
+                pattern: new RegExp("^.*[A-Z].*$"),
+                message: i18n("CreateNewUserForm.changePassword.alert.rule3"),
+              },
+              {
+                pattern: new RegExp("^.*[a-z].*$"),
+                message: i18n("CreateNewUserForm.changePassword.alert.rule4"),
+              },
+              {
+                pattern: new RegExp("^.*[0-9].*$"),
+                message: i18n("CreateNewUserForm.changePassword.alert.rule5"),
+              },
+              {
+                pattern: new RegExp("^.*[^A-Za-z0-9].*$"),
+                message: i18n("CreateNewUserForm.changePassword.alert.rule6"),
+              },
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item
+            label={i18n("CreateNewUserForm.form.label.confirmPassword")}
+            name="confirmPassword"
+            dependencies={["password"]}
+            rules={[
+              {
+                required: true,
+                message: i18n("CreateNewUserForm.changePassword.alert.rule1"),
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("password") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error(
+                      i18n("CreateNewUserForm.changePassword.alert.rule7")
+                    )
+                  );
+                },
+              }),
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+        </>
+      )}
       <Form.Item>
         <Button className="t-submit-btn" type="primary" htmlType="submit">
           {i18n("CreateNewUserForm.form.button.submit")}
