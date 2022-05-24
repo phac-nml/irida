@@ -5,13 +5,13 @@ import { Notifications } from "../notifications/Notifications";
 import GalaxyAlert from "./GalaxyAlert";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { MainNavigation } from "./MainNavigation";
+import { MainNavigation } from "./MainNavigation/MainNavigation";
 import {
   AnnouncementProvider
-} from "./main-navigation/components/announcements-context";
+} from "./MainNavigation/components/announcements-context";
 import {
   AnnouncementsModal
-} from "./main-navigation/components/AnnouncementsModal";
+} from "./MainNavigation/components/AnnouncementsModal";
 
 /*
 WEBPACK PUBLIC PATH:

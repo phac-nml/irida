@@ -1,12 +1,12 @@
 import React from "react";
 import { Button, Layout, Menu } from "antd";
-import { SPACE_LG, SPACE_MD } from "../../styles/spacing";
-import { theme } from "../../utilities/theme-utilities";
-import { setBaseUrl } from "../../utilities/url-utilities";
-import { IconUser } from "../icons/Icons";
-import { AnnouncementsSubMenu } from "./main-navigation/components/AnnouncementsSubMenu";
-import { CartLink } from "./main-navigation/components/CartLink";
-import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
+import { SPACE_LG, SPACE_MD } from "../../../styles/spacing";
+import { theme } from "../../../utilities/theme-utilities";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+import { IconUser } from "../../icons/Icons";
+import { AnnouncementsSubMenu } from "./components/AnnouncementsSubMenu";
+import { CartLink } from "./components/CartLink";
+import { GlobalSearch } from "./components/GlobalSearch";
 import "./MainNavigation.css";
 
 const { Header } = Layout;
@@ -254,7 +254,7 @@ export function MainNavigation() {
           <Menu.SubMenu key="help" title={i18n("nav.main.help")}>
             <Menu.Item key="userguide">
               <a
-                href="https://phac-nml.github.io/irida-documentation/user/user/"
+                href="src/main/webapp/resources/js/components/Header/MainNavigation/MainNavigation"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -264,7 +264,7 @@ export function MainNavigation() {
             {isAdmin && (
               <Menu.Item key="adminguide">
                 <a
-                  href="https://phac-nml.github.io/irida-documentation/user/administrator/"
+                  href="src/main/webapp/resources/js/components/Header/MainNavigation/MainNavigation"
                   target="_blank"
                   rel="noreferrer"
                 >
