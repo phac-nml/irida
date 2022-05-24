@@ -121,6 +121,8 @@ public class UIUsersService {
 
 		if (!Strings.isNullOrEmpty(userCreateRequest.getPhoneNumber())) {
 			user.setPhoneNumber(userCreateRequest.getPhoneNumber());
+		} else {
+			user.setPhoneNumber(null);
 		}
 
 		if (!Strings.isNullOrEmpty(userCreateRequest.getLocale())) {
@@ -253,6 +255,8 @@ public class UIUsersService {
 
 		if (!Strings.isNullOrEmpty(userEditRequest.getPhoneNumber())) {
 			updatedValues.put("phoneNumber", userEditRequest.getPhoneNumber());
+		} else {
+			updatedValues.put("phoneNumber", null);
 		}
 
 		if (!Strings.isNullOrEmpty(userEditRequest.getLocale())) {

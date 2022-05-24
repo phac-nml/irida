@@ -60,7 +60,8 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	// longer than 1024 (who's going to remember a password that long anyway?)
 	// to prevent DOS attacks on our password hashing.
 	@Size(min = 8, max = 1024, message = "{user.password.size}")
-	@Pattern.List({ @Pattern(regexp = "^.*[A-Z].*$", message = "{user.password.uppercase}"),
+	@Pattern.List({
+			@Pattern(regexp = "^.*[A-Z].*$", message = "{user.password.uppercase}"),
 			@Pattern(regexp = "^.*[0-9].*$", message = "{user.password.number}"),
 			@Pattern(regexp = "^.*[a-z].*$", message = "{user.password.lowercase}"),
 			@Pattern(regexp = "^.*[!@#$%^&*()+?/<>=.\\\\{}].*$", message = "{user.password.special}") })
@@ -74,7 +75,6 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	@Size(min = 2, message = "{user.lastName.size}")
 	private String lastName;
 
-	@NotNull(message = "{user.phoneNumber.notnull}")
 	@Size(min = 4, message = "{user.phoneNumber.size}")
 	private String phoneNumber;
 

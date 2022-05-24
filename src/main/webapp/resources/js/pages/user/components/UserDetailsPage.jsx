@@ -122,10 +122,6 @@ export default function UserDetailsPage() {
           name="phoneNumber"
           rules={[
             {
-              required: true,
-              message: i18n("UserDetailsPage.form.phoneNumber.required"),
-            },
-            {
               min: 4,
               message: i18n("UserDetailsPage.form.phoneNumber.min"),
             },

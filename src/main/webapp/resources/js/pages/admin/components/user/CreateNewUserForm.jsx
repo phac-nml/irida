@@ -150,10 +150,6 @@ export default function CreateNewUserForm() {
         name="phoneNumber"
         rules={[
           {
-            required: true,
-            message: i18n("CreateNewUserForm.form.phoneNumber.required"),
-          },
-          {
             min: 4,
             message: i18n("CreateNewUserForm.form.phoneNumber.min"),
           },

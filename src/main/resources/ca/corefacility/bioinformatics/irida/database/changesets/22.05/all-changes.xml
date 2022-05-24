@@ -7,4 +7,5 @@
   <include file="user-account-project-subscription.xml" relativeToChangelogFile="true"/>
   <include file="one-project-per-template.xml" relativeToChangelogFile="true" />
   <include file="metadata-restrictions.xml" relativeToChangelogFile="true" />
+  <include file="user-account-drop-phone-constraint.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
