@@ -26,6 +26,7 @@ function CreateNewUserButton() {
         title={i18n("CreateNewUser.title")}
         onCancel={() => setVisibility(false)}
         visible={visible}
+        maxHeight={window.innerHeight - 250}
         width={640}
         footer={null}
         maskClosable={false}
