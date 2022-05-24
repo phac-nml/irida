@@ -5,15 +5,15 @@
 }
 
 .light-theme .global-search {
-  color: var(--grey-000);
+  color: var(--grey-1);
 }
 
 .dark-theme .global-search {
-  color: var(--grey-900);
+  color: var(--grey-11);
 }
 
 .global-search .ant-input-prefix svg,
 .global-search .anticon-close-circle svg {
-  color: var(--grey-500);
+  color: var(--grey-6);
   font-size: 14px;
 }
