@@ -8,7 +8,6 @@ module.exports = {
   login: "./resources/js/pages/LoginPage.jsx",
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
-  "client-base": "./resources/js/client.js",
   announcements: "./resources/js/pages/announcement",
   analysis: "./resources/js/pages/analysis",
   app: "./resources/js/app.js",
@@ -21,9 +20,6 @@ module.exports = {
     "./resources/js/pages/projects/samples-metadata-import",
   samples: "./resources/js/pages/projects/samples",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
-  "project-metadata-edit":
-    "./resources/js/pages/projects/project-metadata-edit.js",
-  "project-create": "./resources/js/pages/projects/create",
   "project-settings": "./resources/js/pages/projects/settings",
   "project-share": "./resources/js/pages/projects/share",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
