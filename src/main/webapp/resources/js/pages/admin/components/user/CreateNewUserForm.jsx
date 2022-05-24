@@ -68,7 +68,15 @@ export default function CreateNewUserForm() {
   };
 
   return (
-    <Form form={form} layout="vertical" onFinish={onFormFinish}>
+    <Form
+      form={form}
+      layout="vertical"
+      initialValues={{
+        locale: "en",
+        role: "ROLE_USER",
+      }}
+      onFinish={onFormFinish}
+    >
       <Form.Item
         label={i18n("CreateNewUserForm.form.username.label")}
         name="username"
