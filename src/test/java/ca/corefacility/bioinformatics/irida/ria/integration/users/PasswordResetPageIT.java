@@ -42,8 +42,7 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		passwordResetPage.enterPassword(password);
 		assertTrue(passwordResetPage.isSubmitEnabled(), "Submit button should be enabled");
 		passwordResetPage.clickSubmit();
-		assertFalse(passwordResetPage.isErrorAlertDisplayed(),
-				"There should be no error alert");
+		assertFalse(passwordResetPage.isErrorAlertDisplayed(), "There should be no error alert");
 		assertTrue(passwordResetPage.checkSuccess(), "Should have successfully reset password.");
 	}
 
@@ -52,10 +51,9 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		String password = "notcomplex";
 		passwordResetPage.getPasswordReset("XYZ");
 		passwordResetPage.enterPassword(password);
-		assertTrue(passwordResetPage.isSubmitEnabled(), "Submit button should be enabled");
-		passwordResetPage.clickSubmit();
-		assertTrue(passwordResetPage.isErrorAlertDisplayed(),
-				"There should be an error alert for the password not meeting required requirements");
+		assertTrue(passwordResetPage.passwordErrorDisplayed(),
+				"Error should be displayed that the password does not match the password policy requirements");
+		assertFalse(passwordResetPage.isSubmitEnabled(), "Submit button should not be enabled");
 	}
 
 	@Test
@@ -66,8 +64,7 @@ public class PasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		passwordResetPage.enterPassword(password);
 		assertTrue(passwordResetPage.isSubmitEnabled(), "Submit button should be enabled");
 		passwordResetPage.clickSubmit();
-		assertFalse(passwordResetPage.isErrorAlertDisplayed(),
-				"There should be no error alert");
+		assertFalse(passwordResetPage.isErrorAlertDisplayed(), "There should be no error alert");
 		assertTrue(passwordResetPage.checkSuccess(), "Should have successfully reset password.");
 
 		AbstractPage.logout(driver());

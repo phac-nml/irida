@@ -29,6 +29,7 @@ function PasswordResetForm() {
   const [setPassword] = useSetPasswordMutation();
 
   const [loading, setLoading] = React.useState(false);
+  const [invalidPassword, setInvalidPassword] = React.useState(true);
   const [updateSuccess, setUpdateSuccess] = React.useState(false);
   const [updateError, setUpdateError] = React.useState(false);
   const [errorMessages, setErrorMessages] = React.useState(null);
@@ -76,10 +77,12 @@ function PasswordResetForm() {
     const passwordRegex =
       /^(?=.*\d)(?=.*[!@#$%^&*()+?/<>={}.\\])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     const minimumPasswordLength = 8;
+    setInvalidPassword(true);
 
     if (password.length !== 0) {
       if (password.length >= minimumPasswordLength) {
         if (passwordRegex.test(password)) {
+          setInvalidPassword(false);
           return Promise.resolve();
         } else {
           return Promise.reject(i18n("PasswordReset.input.passwordNotMatch"));
@@ -207,7 +210,7 @@ function PasswordResetForm() {
                 <Button
                   className="t-submit-btn"
                   type="primary"
-                  disabled={loading}
+                  disabled={loading || invalidPassword}
                   icon={loading && <LoadingOutlined />}
                   block
                   htmlType="submit"

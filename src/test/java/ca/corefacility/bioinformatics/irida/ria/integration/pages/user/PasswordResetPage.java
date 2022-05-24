@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.user;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
@@ -29,7 +31,8 @@ public class PasswordResetPage extends AbstractPage {
 	public boolean checkSuccess() {
 		try {
 			WebElement el = waitForElementVisible(By.className("t-reset-success-alert"));
-			return el.getText().contains("Password successfully updated. You may use your new credentials to log in to IRIDA.");
+			return el.getText()
+					.contains("Password successfully updated. You may use your new credentials to log in to IRIDA.");
 		} catch (Exception e) {
 			return false;
 		}
@@ -38,6 +41,19 @@ public class PasswordResetPage extends AbstractPage {
 	public boolean isErrorAlertDisplayed() {
 		try {
 			return driver.findElement(By.className("t-reset-error-alert")).isDisplayed();
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public boolean passwordErrorDisplayed() {
+		try {
+			WebDriverWait wait = new WebDriverWait(driver, 10L);
+			WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(By.className("ant-form-item-explain-error")));
+			if (element.getText().equals("Password does not match the password policy")) {
+				return true;
+			}
+			return false;
 		} catch (Exception e) {
 			return false;
 		}
