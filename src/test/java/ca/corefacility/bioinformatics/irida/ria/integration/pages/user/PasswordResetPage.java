@@ -47,10 +47,12 @@ public class PasswordResetPage extends AbstractPage {
 	}
 
 	public boolean passwordErrorDisplayed() {
+		String invalidPasswordErrorMessage = "Password does not match the password policy";
 		try {
 			WebDriverWait wait = new WebDriverWait(driver, 20L);
 			WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(By.className("ant-form-item-explain-error")));
-			if (element.getText().equals("Password does not match the password policy")) {
+			wait.until(ExpectedConditions.textToBePresentInElement(element, invalidPasswordErrorMessage));
+			if (element.getText().equals(invalidPasswordErrorMessage)) {
 				return true;
 			}
 			return false;
