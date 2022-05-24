@@ -133,13 +133,8 @@ public class UIUsersService {
 			user.setPassword(generatePassword());
 			user.setCredentialsNonExpired(false);
 		} else {
-			if (!Strings.isNullOrEmpty(userCreateRequest.getPassword()) || !Strings.isNullOrEmpty(
-					userCreateRequest.getConfirmPassword())) {
-				if (userCreateRequest.getPassword().equals(userCreateRequest.getConfirmPassword())) {
-					user.setPassword(userCreateRequest.getPassword());
-				} else {
-					errors.put("password", messageSource.getMessage("server.user.edit.password.match", null, locale));
-				}
+			if (!Strings.isNullOrEmpty(userCreateRequest.getPassword())) {
+				user.setPassword(userCreateRequest.getPassword());
 			} else {
 				errors.put("password", messageSource.getMessage("server.user.edit.password.empty", null, locale));
 			}

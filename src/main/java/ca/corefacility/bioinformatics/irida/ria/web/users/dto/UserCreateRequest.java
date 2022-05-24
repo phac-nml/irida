@@ -13,10 +13,9 @@ public class UserCreateRequest {
 	private String locale;
 	private String activate;
 	private String password;
-	private String confirmPassword;
 
 	public UserCreateRequest(String username, String firstName, String lastName, String email, String phoneNumber,
-			String role, String locale, String activate, String password, String confirmPassword) {
+			String role, String locale, String activate, String password) {
 		this.username = username;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -26,7 +25,6 @@ public class UserCreateRequest {
 		this.locale = locale;
 		this.activate = activate;
 		this.password = password;
-		this.confirmPassword = confirmPassword;
 	}
 
 	public String getUsername() {
@@ -65,7 +63,4 @@ public class UserCreateRequest {
 		return password;
 	}
 
-	public String getConfirmPassword() {
-		return confirmPassword;
-	}
 }

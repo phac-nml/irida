@@ -248,31 +248,6 @@ export default function CreateNewUserForm() {
           >
             <Input.Password />
           </Form.Item>
-          <Form.Item
-            label={i18n("CreateNewUserForm.form.label.confirmPassword")}
-            name="confirmPassword"
-            dependencies={["password"]}
-            rules={[
-              {
-                required: true,
-                message: i18n("CreateNewUserForm.changePassword.alert.rule1"),
-              },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue("password") === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error(
-                      i18n("CreateNewUserForm.changePassword.alert.rule7")
-                    )
-                  );
-                },
-              }),
-            ]}
-          >
-            <Input.Password />
-          </Form.Item>
         </>
       )}
       <Form.Item>
