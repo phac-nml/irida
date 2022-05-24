@@ -1,64 +1,86 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { Shapes, TreeTypes } from "@phylocanvas/phylocanvas.gl";
-import { getMetadata, getMetadataTemplateFields, getMetadataTemplates, getNewickTree } from "../../../apis/analysis/analysis";
+import {
+  getMetadata,
+  getMetadataTemplateFields,
+  getMetadataTemplates,
+  getNewickTree,
+} from "../../../apis/analysis/analysis";
 import { formatMetadata, updateMetadataColours } from "../metadata-utilities";
 
 const zoomStepSize = 0.1;
 
-export const fetchTreeAndMetadata = createAsyncThunk(`tree/fetchTreeAndMetadata`, async (id, {rejectWithValue}) => {
-  const promises = [getNewickTree(id), getMetadata(id), getMetadataTemplates(id)];
+export const fetchTreeAndMetadata = createAsyncThunk(
+  `tree/fetchTreeAndMetadata`,
+  async (id, { rejectWithValue }) => {
+    const promises = [
+      getNewickTree(id),
+      getMetadata(id),
+      getMetadataTemplates(id),
+    ];
 
-  const [newickData, metadataData, metadataTemplateData] = await Promise.all(promises);
+    const [newickData, metadataData, metadataTemplateData] = await Promise.all(
+      promises
+    );
 
-  // Check for errors
-  if (!newickData.newick) {
-    return rejectWithValue(newickData.message ? newickData.message : newickData.error.message)
+    // Check for errors
+    if (!newickData.newick) {
+      return rejectWithValue(
+        newickData.message ? newickData.message : newickData.error.message
+      );
+    }
 
+    const { formattedMetadata, metadataColourMap } = formatMetadata(
+      metadataData.metadata,
+      metadataData.terms
+    );
+
+    return {
+      analysisId: id,
+      treeProps: {
+        source: newickData.newick,
+        showBlockHeaders: true,
+        metadata: formattedMetadata,
+        blocks: metadataData.terms,
+      },
+      terms: metadataData.terms,
+      metadata: metadataData.metadata,
+      metadataColourMap: metadataColourMap,
+      templates: metadataTemplateData.templates,
+    };
   }
+);
 
-  const { formattedMetadata, metadataColourMap } = formatMetadata(metadataData.metadata, metadataData.terms);
+export const fetchMetadataTemplateFields = createAsyncThunk(
+  `tree/fetchMetadataTemplateFields`,
+  async (index, { getState }) => {
+    const { tree } = getState();
+    const { analysisId, terms, templates } = tree;
 
-  return {
-    analysisId: id,
-    treeProps: {
-      source: newickData.newick,
-      showBlockHeaders: true,
-      metadata: formattedMetadata,
-      blocks: metadataData.terms,
-    },
-    terms: metadataData.terms,
-    metadata: metadataData.metadata,
-    metadataColourMap: metadataColourMap,
-    templates: metadataTemplateData.templates
-  };
-});
-
-export const fetchMetadataTemplateFields = createAsyncThunk(`tree/fetchMetadataTemplateFields`, async (index, {getState}) => {
-  const { tree } = getState();
-  const { analysisId, terms, templates } = tree;
-
-
-  if (index === -1) {
-    return {fields: terms};
-  } else if (index > templates.length) {
-      return {fields: []};
-  } else {
-    if ("fields" in templates[index]) {
-      return {fields: templates[index].fields};
+    if (index === -1) {
+      return { fields: terms };
+    } else if (index > templates.length) {
+      return { fields: [] };
     } else {
-      const data = await getMetadataTemplateFields(analysisId, templates[index].id)
-      let fields = []
-      if (data.fields) {
-        fields = data.fields.filter(field => terms.includes(field));
+      if ("fields" in templates[index]) {
+        return { fields: templates[index].fields };
+      } else {
+        const data = await getMetadataTemplateFields(
+          analysisId,
+          templates[index].id
+        );
+        let fields = [];
+        if (data.fields) {
+          fields = data.fields.filter((field) => terms.includes(field));
+        }
+        return {
+          fields: fields,
+          index: index,
+        };
       }
-      return {
-        fields: fields,
-        index: index
-      };
     }
   }
-
-});
+);
 
 const initialState = {
   fetching: true,
@@ -79,7 +101,7 @@ const initialState = {
   terms: [],
   metadataColourMap: {},
   zoomMode: 0, // normal zoom
-}
+};
 
 export const treeSlice = createSlice({
   name: "treeSlice",
@@ -99,12 +121,21 @@ export const treeSlice = createSlice({
       if (action.payload.visible) {
         state.treeProps.blocks.push(action.payload.field);
       } else {
-        state.treeProps.blocks = state.treeProps.blocks.filter(field => field !== action.payload.field);
+        state.treeProps.blocks = state.treeProps.blocks.filter(
+          (field) => field !== action.payload.field
+        );
       }
     },
     setMetadataColourForTermWithValue: (state, action) => {
-      state.metadataColourMap[action.payload.item][action.payload.key] = action.payload.color;
-      state.treeProps.metadata=updateMetadataColours(state.metadata, state.terms, state.metadataColourMap);
+      const { item, key, colour } = action.payload;
+      if (colour !== state.metadataColourMap[item][key]) {
+        state.metadataColourMap[item][key] = colour;
+        state.treeProps.metadata = updateMetadataColours(
+          state.metadata,
+          state.terms,
+          state.metadataColourMap
+        );
+      }
     },
     setZoomMode: (state, action) => {
       state.zoomMode = action.payload;
@@ -134,11 +165,10 @@ export const treeSlice = createSlice({
       }
     },
   },
-  extraReducers: builder => {
-    builder.addCase(fetchTreeAndMetadata.fulfilled, (state, action ) => {
-      state.fetching = false,
-      state.analysisId = action.payload.analysisId;
-      state.treeProps = {...state.treeProps, ...action.payload.treeProps};
+  extraReducers: (builder) => {
+    builder.addCase(fetchTreeAndMetadata.fulfilled, (state, action) => {
+      (state.fetching = false), (state.analysisId = action.payload.analysisId);
+      state.treeProps = { ...state.treeProps, ...action.payload.treeProps };
       state.metadata = action.payload.metadata;
       state.metadataColourMap = action.payload.metadataColourMap;
       state.terms = action.payload.terms;
@@ -152,10 +182,18 @@ export const treeSlice = createSlice({
       if (action.payload.index) {
         state.templates[action.payload.index].fields = action.payload.fields;
       }
-    })
-  }
+    });
+  },
 });
 
-export const { resize, selectAllTerms, setFieldVisibility, setMetadataColourForTermWithValue, setZoomMode, zoomIn, zoomOut } = treeSlice.actions;
+export const {
+  resize,
+  selectAllTerms,
+  setFieldVisibility,
+  setMetadataColourForTermWithValue,
+  setZoomMode,
+  zoomIn,
+  zoomOut,
+} = treeSlice.actions;
 
 export default treeSlice.reducer;
