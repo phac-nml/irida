@@ -118,11 +118,14 @@ export const treeSlice = createSlice({
       }
     },
     setFieldVisibility: (state, action) => {
-      if (action.payload.visible) {
-        state.treeProps.blocks.push(action.payload.field);
+      const { field, visible, only } = action.payload;
+      if (only && visible) {
+        state.treeProps.blocks = [field];
+      } else if (!only && visible) {
+        state.treeProps.blocks.push(field);
       } else {
         state.treeProps.blocks = state.treeProps.blocks.filter(
-          (field) => field !== action.payload.field
+          (visibleField) => visibleField !== field
         );
       }
     },

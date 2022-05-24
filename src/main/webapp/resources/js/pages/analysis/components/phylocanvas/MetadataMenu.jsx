@@ -1,71 +1,76 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Button, Checkbox, Popover, Select, Space, Switch, Typography } from "antd";
+import { Button, Dropdown, Menu, Select } from "antd";
 import { FilterOutlined } from "@ant-design/icons";
 const { Option } = Select;
-import { fetchMetadataTemplateFields, selectAllTerms, setFieldVisibility } from "../../redux/treeSlice";
+import {
+  fetchMetadataTemplateFields,
+  selectAllTerms,
+  setFieldVisibility,
+} from "../../redux/treeSlice";
+import { MetadataSelectAll } from "./MetadataSelectAll";
+import { MetadataFieldSelect } from "./MetadataFieldToggle";
 
 export function MetadataMenu() {
   const { templates, terms, treeProps } = useSelector((state) => state.tree);
   const dispatch = useDispatch();
 
   const metadataTemplateOptions = [];
-  metadataTemplateOptions.push(<Option key="template-default" value={-1}>{i18n("visualization.phylogenomics.select-template.all-field")}</Option>);
-  for (let i=0; i<templates?.length; i++) {
-    metadataTemplateOptions.push(<Option key={`template-${i}`} value={i}>{templates[i]["label"]}</Option>);
+  metadataTemplateOptions.push(
+    <Option key="template-default" value={-1}>
+      {i18n("visualization.phylogenomics.select-template.all-field")}
+    </Option>
+  );
+  for (let i = 0; i < templates?.length; i++) {
+    metadataTemplateOptions.push(
+      <Option key={`template-${i}`} value={i}>
+        {templates[i]["label"]}
+      </Option>
+    );
   }
 
-  const onFieldChecked = (event, field) => {
-    event.stopPropagation();
-    dispatch(setFieldVisibility({field, visible: event.target.checked}));
-  };
-
-  const onSelectAllChange = (event, checked) => {
-    event.stopPropagation();
-    dispatch(selectAllTerms({checked}));
-  };
-
-  const onTemplateChange = (templateIdx) => {
-    dispatch(fetchMetadataTemplateFields(templateIdx));
-  };
+  const menu = (
+    <Menu>
+      <Menu.Item key="1">
+        <Select
+          defaultValue={-1}
+          style={{ width: "100%" }}
+          onChange={(templateIdx) =>
+            dispatch(fetchMetadataTemplateFields(templateIdx))
+          }
+          onClick={(e) => e.stopPropagation()}
+        >
+          {metadataTemplateOptions}
+        </Select>
+      </Menu.Item>
+      {terms.length > 0 ? (
+        <Menu.Item key="2">
+          <MetadataSelectAll
+            checked={
+              JSON.stringify(terms.slice().sort()) ===
+              JSON.stringify(treeProps.blocks.slice().sort())
+            }
+            onChange={(checked) => dispatch(selectAllTerms({ checked }))}
+          />
+        </Menu.Item>
+      ) : null}
+      {terms.map((field) => (
+        <Menu.Item key={field}>
+          <MetadataFieldSelect
+            checked={treeProps.blocks.includes(field)}
+            field={field}
+            onChange={(visible, only) =>
+              dispatch(setFieldVisibility({ field, visible, only }))
+            }
+          />
+        </Menu.Item>
+      ))}
+    </Menu>
+  );
 
   return (
-    <Popover
-      content={
-        <Space direction="vertical">
-          <Select defaultValue={-1} style={{ width: 150 }} onChange={onTemplateChange}>
-            {metadataTemplateOptions}
-          </Select>
-          <div
-            key={"select-all"}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center"
-            }}
-          >
-            <Typography.Text strong>{i18n("visualization.phylogenomics.select-all")}</Typography.Text>
-            <Switch
-              checked={JSON.stringify(terms.slice().sort()) === JSON.stringify(treeProps.blocks.slice().sort())}
-              onChange={(checked, event) => onSelectAllChange(event, checked)}
-              size="small"
-            />
-          </div>
-          {terms.map((field) => (
-            <Space key={field} direction="horizontal">
-              <Checkbox
-                checked={treeProps.blocks.includes(field)}
-                onChange={(event) => onFieldChecked(event, field)}
-              >
-                <Typography.Text strong>{field}</Typography.Text>
-              </Checkbox>
-            </Space>
-          ))}
-        </Space>
-      }
-      placement="bottomRight"
-    >
+    <Dropdown overlay={menu} placement="bottomRight" trigger="click">
       <Button shape="circle" icon={<FilterOutlined />} />
-    </Popover>
+    </Dropdown>
   );
 }
