@@ -5,6 +5,19 @@
 @import "components/tables.css";
 @import "components/typography.css";
 
+:root {
+  --grey-000: hsl(115,100%,100%);
+  --grey-100: hsl(116,0%,98%);
+  --grey-200: hsl(116,0%,96%);
+  --grey-300: hsl(116,0%,91%);
+  --grey-400: hsl(116,0%,85%);
+  --grey-500: hsl(116,0%,75%);
+  --grey-600: hsl(116,0%,55%);
+  --grey-700: hsl(116,0%,35%);
+  --grey-800: hsl(116,0%,15%);
+  --grey-900: hsl(0,0%,0%);
+}
+
 html,
 body {
   height: 100%;

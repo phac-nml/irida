@@ -1,0 +1,19 @@
+.global-search {
+  background-color: transparent;
+  width: 300px;
+  margin-right: 15px;
+}
+
+.light-theme .global-search {
+  color: var(--grey-000);
+}
+
+.dark-theme .global-search {
+  color: var(--grey-900);
+}
+
+.global-search .ant-input-prefix svg,
+.global-search .anticon-close-circle svg {
+  color: var(--grey-500);
+  font-size: 14px;
+}

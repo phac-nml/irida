@@ -1,7 +1,5 @@
 import React from "react";
 import { Button, Layout, Menu } from "antd";
-import styled from "styled-components";
-import { grey1, grey10, grey2 } from "../../styles/colors";
 import { SPACE_LG, SPACE_MD } from "../../styles/spacing";
 import { theme } from "../../utilities/theme-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
@@ -9,39 +7,13 @@ import { IconUser } from "../icons/Icons";
 import { AnnouncementsSubMenu } from "./main-navigation/components/AnnouncementsSubMenu";
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
-import "./main-navigation/style.css";
+import "./MainNavigation.css";
 
 const { Header } = Layout;
 
 const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 const isManager = isAdmin || window.TL._USER.systemRole === "ROLE_MANAGER";
 const isTechnician = window.TL._USER.systemRole === "ROLE_TECHNICIAN";
-
-const StyledAnchor = styled.a`
-  color: ${grey2};
-  font-size: 1.5rem;
-  font-weight: 600;
-
-  &:hover {
-    color: ${grey1};
-  }
-`;
-
-const StyledHeader = styled(Header)`
-  position: fixed;
-  z-index: 1000;
-  width: 100%;
-  display: flex;
-
-  .ant-menu-item-active {
-    background-color: transparent !important;
-  }
-
-  .anticon {
-    font-size: 20px !important;
-    color: ${theme === "dark" ? grey1 : grey10};
-  }
-`;
 
 export function MainNavigation() {
   const [isLargeScreen, setIsLargeScreen] = React.useState(
@@ -57,7 +29,7 @@ export function MainNavigation() {
   }, []);
 
   return (
-    <StyledHeader>
+    <Header className="main-navigation">
       <a href={setBaseUrl("/")}>
         <img
           style={{ height: 28, width: 129, marginRight: SPACE_LG }}
@@ -77,9 +49,7 @@ export function MainNavigation() {
           <Menu.SubMenu
             key="projects"
             title={
-              <StyledAnchor href={setBaseUrl(`/projects`)}>
-                {i18n("nav.main.projects")}
-              </StyledAnchor>
+              <a href={setBaseUrl(`/projects`)}>{i18n("nav.main.projects")}</a>
             }
           >
             <Menu.Item key="project:list">
@@ -105,9 +75,7 @@ export function MainNavigation() {
           <Menu.SubMenu
             key="analysis"
             title={
-              <StyledAnchor href={setBaseUrl(`/analysis`)}>
-                {i18n("nav.main.analysis")}
-              </StyledAnchor>
+              <a href={setBaseUrl(`/analysis`)}>{i18n("nav.main.analysis")}</a>
             }
           >
             <Menu.Item key="analyses:user">
@@ -134,9 +102,7 @@ export function MainNavigation() {
             <Menu.SubMenu
               key="users"
               title={
-                <StyledAnchor href={setBaseUrl("/users")}>
-                  {i18n("nav.main.users")}
-                </StyledAnchor>
+                <a href={setBaseUrl("/users")}>{i18n("nav.main.users")}</a>
               }
             >
               <Menu.Item key="user:users">
@@ -178,9 +144,7 @@ export function MainNavigation() {
           <Menu.SubMenu
             key="projects"
             title={
-              <StyledAnchor href={setBaseUrl(`/projects`)}>
-                {i18n("nav.main.projects")}
-              </StyledAnchor>
+              <a href={setBaseUrl(`/projects`)}>{i18n("nav.main.projects")}</a>
             }
           >
             <Menu.Item key="project:list">
@@ -206,9 +170,7 @@ export function MainNavigation() {
           <Menu.SubMenu
             key="analysis"
             title={
-              <StyledAnchor href={setBaseUrl(`/analysis`)}>
-                {i18n("nav.main.analysis")}
-              </StyledAnchor>
+              <a href={setBaseUrl(`/analysis`)}>{i18n("nav.main.analysis")}</a>
             }
           >
             <Menu.Item key="analyses:user">
@@ -235,9 +197,7 @@ export function MainNavigation() {
             <Menu.SubMenu
               key="users"
               title={
-                <StyledAnchor href={setBaseUrl("/users")}>
-                  {i18n("nav.main.users")}
-                </StyledAnchor>
+                <a href={setBaseUrl("/users")}>{i18n("nav.main.users")}</a>
               }
             >
               <Menu.Item key="user:users">
@@ -332,6 +292,6 @@ export function MainNavigation() {
           </Menu.Item>
         </Menu.SubMenu>
       </Menu>
-    </StyledHeader>
+    </Header>
   );
 }
