@@ -20,8 +20,6 @@ module.exports = {
     "./resources/js/pages/projects/samples-metadata-import",
   samples: "./resources/js/pages/projects/samples",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
-  "project-metadata-edit":
-    "./resources/js/pages/projects/project-metadata-edit.js",
   "project-settings": "./resources/js/pages/projects/settings",
   "project-share": "./resources/js/pages/projects/share",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
