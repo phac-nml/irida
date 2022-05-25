@@ -39,7 +39,7 @@ export function ForgotPassword({ updateDisplayLoginPage }) {
     })
       .unwrap()
       .then((response) => {
-        setMessage(response.data.message);
+        setMessage(response.message);
       })
       .catch((error) => setMessage(error.data.error))
       .finally(() => {
