@@ -22,7 +22,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSendException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -52,7 +51,6 @@ import com.google.common.collect.ImmutableMap;
  */
 @Component
 public class UIUsersService {
-
 	private static final Logger logger = LoggerFactory.getLogger(UIUsersService.class);
 	private final UserService userService;
 	private final PasswordResetService passwordResetService;
@@ -76,7 +74,6 @@ public class UIUsersService {
 	 * @param request - the information about the current page of users to return
 	 * @return {@link TableResponse}
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 	public TableResponse<UserDetailsModel> getUsersPagedList(AdminUsersTableRequest request) {
 		Specification<User> specification = UserSpecification.searchUser(request.getSearch());
 		PageRequest pageRequest = PageRequest.of(request.getCurrent(), request.getPageSize(), request.getSort());
@@ -180,7 +177,6 @@ public class UIUsersService {
 	 * @param locale    - users {@link Locale}
 	 * @return {@link ResponseEntity}
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 	public ResponseEntity<String> updateUserStatus(Long id, boolean isEnabled, Locale locale) {
 		User user = userService.read(id);
 		if (user.isEnabled() != isEnabled) {
