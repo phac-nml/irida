@@ -10,10 +10,12 @@ import { AnnouncementsSubMenu } from "./main-navigation/components/Announcements
 import { CartLink } from "./main-navigation/components/CartLink";
 import { GlobalSearch } from "./main-navigation/components/GlobalSearch";
 import "./main-navigation/style.css";
+
 const { Header } = Layout;
 
 const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 const isManager = isAdmin || window.TL._USER.systemRole === "ROLE_MANAGER";
+const isTechnician = window.TL._USER.systemRole === "ROLE_TECHNICIAN";
 
 const StyledAnchor = styled.a`
   color: ${grey2};
@@ -27,7 +29,7 @@ const StyledAnchor = styled.a`
 
 const StyledHeader = styled(Header)`
   position: fixed;
-  z-index: 1;
+  z-index: 1000;
   width: 100%;
   display: flex;
 
@@ -36,7 +38,7 @@ const StyledHeader = styled(Header)`
   }
 
   .anticon {
-    font-size: 20px;
+    font-size: 20px !important;
     color: ${theme === "dark" ? grey1 : grey10};
   }
 `;
@@ -147,6 +149,15 @@ export function MainNavigation() {
               </Menu.Item>
             </Menu.SubMenu>
           )}
+
+          {isTechnician && (
+            <Menu.Item key="sequencing-runs">
+              <Button type="link" href={setBaseUrl("/sequencing-runs")}>
+                {i18n("nav.main.sequencing-runs")}
+              </Button>
+            </Menu.Item>
+          )}
+
           {!isAdmin && (
             <Menu.Item key="remote_api">
               <Button type="link" href={setBaseUrl("/remote_api")}>
@@ -239,6 +250,15 @@ export function MainNavigation() {
               </Menu.Item>
             </Menu.SubMenu>
           )}
+
+          {isTechnician && (
+            <Menu.Item key="sequencing-runs">
+              <Button type="link" href={setBaseUrl("/sequencing-runs")}>
+                {i18n("nav.main.sequencing-runs")}
+              </Button>
+            </Menu.Item>
+          )}
+
           {!isAdmin && (
             <Menu.Item key="remote_api">
               <Button type="link" href={setBaseUrl("/remote_api")}>
@@ -283,9 +303,10 @@ export function MainNavigation() {
             </Menu.Item>
             {isAdmin && (
               <Menu.Item key="adminguide">
-                <a href="https://phac-nml.github.io/irida-documentation/user/administrator/"
-                   target="_blank"
-                   rel="noreferrer"
+                <a
+                  href="https://phac-nml.github.io/irida-documentation/user/administrator/"
+                  target="_blank"
+                  rel="noreferrer"
                 >
                   {i18n("nav.main.adminguide")}
                 </a>

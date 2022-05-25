@@ -39,11 +39,6 @@ export default function SingleSampleAnalysisOutputs({
   const [selectedRowKeys, setSelectedRowKeys] = React.useState([]);
   const [filteredOutputs, setFilteredOutputs] = React.useState(null);
 
-  const paginationOptions = React.useMemo(
-    () => getPaginationOptions(outputs.length),
-    [outputs.length]
-  );
-
   // Regex for getting file name from path
   const FILENAME_REGEX = /.*\/(.+\.\w+)/;
 
@@ -233,7 +228,7 @@ export default function SingleSampleAnalysisOutputs({
         dataSource={filteredOutputs || (!isLoading && outputs)}
         tableLayout="auto"
         rowSelection={rowSelection}
-        pagination={paginationOptions}
+        pagination={getPaginationOptions(outputs.length)}
       />
     </Space>
   );

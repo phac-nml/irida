@@ -22,14 +22,8 @@ export function AnalysisTabularPreview({ output }) {
 
   const [fileRows, setFileRows] = React.useState([]);
   const [fileCols, setFileCols] = React.useState([]);
-  const MAX_TABLE_ROWS_PER_PAGE = 5;
   const [loading, setLoading] = React.useState(false);
-
   const [total, setTotal] = React.useState(0);
-
-  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
-    total,
-  ]);
 
   /*
    * Get tabular file output data from the start of a file to the end
@@ -62,11 +56,7 @@ export function AnalysisTabularPreview({ output }) {
           loading={loading}
           dataSource={fileRows}
           scroll={{ x: "max-content" }}
-          pagination={{
-            total: total,
-            hideOnSinglePage: paginationOptions?.hideOnSinglePage,
-            pageSize: MAX_TABLE_ROWS_PER_PAGE,
-          }}
+          pagination={getPaginationOptions(total)}
         />
       </TabularOutputWrapper>
       <Divider />

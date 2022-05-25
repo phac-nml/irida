@@ -6,11 +6,26 @@ package ca.corefacility.bioinformatics.irida.ria.web.dto;
 
 public class ExcelCol {
 	private int dataIndex;
+	private String columnType;
 	private String value;
+	private Double numericValue;
 
+	/*
+	If column type is text
+	 */
 	public ExcelCol(int dataIndex, String value) {
 		this.dataIndex = dataIndex;
 		this.value = value;
+		this.columnType = "text";
+	}
+
+	/*
+	If column type is numeric
+	 */
+	public ExcelCol(int dataIndex, Double numericValue) {
+		this.dataIndex = dataIndex;
+		this.numericValue = numericValue;
+		this.columnType = "numeric";
 	}
 
 	public int getDataIndex() {
@@ -29,4 +44,19 @@ public class ExcelCol {
 		this.value = value;
 	}
 
+	public Double getNumericValue() {
+		return numericValue;
+	}
+
+	public void setNumericValue(Double numericValue) {
+		this.numericValue = numericValue;
+	}
+
+	public String getColumnType() {
+		return columnType;
+	}
+
+	public void setColumnType(String columnType) {
+		this.columnType = columnType;
+	}
 }

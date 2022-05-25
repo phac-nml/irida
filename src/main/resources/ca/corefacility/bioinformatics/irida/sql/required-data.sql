@@ -409,10 +409,10 @@ INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `d
 INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:09', '2015-08-21 08:24:09' , '01-1111', 'The 51th sample');
 INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `description`) VALUES ('2014-07-30 08:24:10', '2015-08-22 08:24:09' , '02-2222', 'The 52nd sample');
 INSERT INTO sample (`createdDate`, `modifiedDate`, `sampleName`, `description`, `latitude`, `longitude`) VALUES ('2014-07-30 08:24:10', '2015-08-23 08:24:09' , '03-3333', 'The 53rd sample', '49.8994','-97.1392');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES (now(), 'E. coli', now(), '11-0001', 'The 55th sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES (now(), 'E. coli', now(), '11-0002', 'The 56th sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES (now(), 'E. coli', now(), '11-0003', 'The 57th sample');
-INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES (now(), 'E. coli', now(), '11-0004', 'The 58th sample');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`, `collectedBy`) VALUES (now(), 'E. coli', now(), '11-0001', 'The 55th sample', 'NML Winnipeg');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`, `collectedBy`) VALUES (now(), 'E. coli', now(), '11-0002', 'The 56th sample', 'CDC');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`, `collectedBy`) VALUES (now(), 'E. coli', now(), '11-0003', 'The 57th sample', 'Public Health Nova Scotia');
+INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`, `collectedBy`) VALUES (now(), 'E. coli', now(), '11-0004', 'The 58th sample', 'NML Winnipeg');
 INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES (DATE_SUB(NOW(), INTERVAL 1 DAY), 'E. coli', DATE_SUB(NOW(), INTERVAL 1 DAY), '11-0005', 'The 59th sample');
 INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES (DATE_SUB(NOW(), INTERVAL 1 DAY), 'E. coli', DATE_SUB(NOW(), INTERVAL 1 DAY), '11-0006', 'The 60th sample');
 INSERT INTO sample (`createdDate`,  `organism`, `modifiedDate`, `sampleName`, `description`) VALUES (DATE_SUB(NOW(), INTERVAL 1 DAY), 'E. coli', DATE_SUB(NOW(), INTERVAL 1 DAY), '11-0007', 'The 61st sample');

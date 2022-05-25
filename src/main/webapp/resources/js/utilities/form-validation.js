@@ -4,7 +4,7 @@ import $ from "jquery";
 // bootstrap style errors.
 export const validationConfig = {
   errorElement: "em",
-  errorPlacement: function(error, element) {
+  errorPlacement: function (error, element) {
     error.addClass("help-block");
     error.insertAfter(element);
   },
@@ -23,11 +23,9 @@ export const validationConfig = {
   },
   // Disable the button of clicking to prevent multiple clicks.
   submitHandler(form) {
-    $(form)
-      .find(":submit")
-      .attr("disabled", true);
+    $(form).find(":submit").attr("disabled", true);
     form.submit();
-  }
+  },
 };
 
 /**
@@ -47,7 +45,7 @@ export const validationConfig = {
  */
 export function sampleNameCharacterValidation() {
   if (typeof $.validator === "function") {
-    $.validator.addMethod("checkallowedchars", value => {
+    $.validator.addMethod("checkallowedchars", (value) => {
       return value.length === 0 || /^[A-Za-z\d-_!@#$%~`]+$/i.test(value);
     });
     return;
@@ -83,16 +81,16 @@ export function minLengthIfPresentValidation() {
  */
 export function passwordCharacterReqsValidation() {
   if (typeof $.validator === "function") {
-    $.validator.addMethod("hasLowercaseLetter", value => {
+    $.validator.addMethod("hasLowercaseLetter", (value) => {
       return /^.*[a-z].*$/.test(value);
     });
-    $.validator.addMethod("hasUppercaseLetter", value => {
+    $.validator.addMethod("hasUppercaseLetter", (value) => {
       return /^.*[A-Z].*$/.test(value);
     });
-    $.validator.addMethod("hasNumber", value => {
+    $.validator.addMethod("hasNumber", (value) => {
       return /^.*[0-9].*$/.test(value);
     });
-    $.validator.addMethod("hasSpecialChar", value => {
+    $.validator.addMethod("hasSpecialChar", (value) => {
       return /^.*[!@#$%^&*()+?/<>=.\\{}].*$/.test(value);
     });
     return;

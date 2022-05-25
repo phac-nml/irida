@@ -4,15 +4,17 @@
  * FastQCCharts component.
  */
 
-import { Badge, Menu, Skeleton, Space } from "antd";
+import { Badge, Layout, Menu, Skeleton, Space } from "antd";
 import React from "react";
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import { InfoAlert } from "../../../components/alerts";
-import { PageWrapper } from "../../../components/page/PageWrapper";
-import { blue6 } from "../../../styles/colors";
+import { blue6, grey1 } from "../../../styles/colors";
 
-import { SPACE_XS } from "../../../styles/spacing";
+import { SPACE_LG, SPACE_XS } from "../../../styles/spacing";
 import { FastQCProvider, useFastQCState } from "../fastqc-context";
+import { NarrowPageWrapper } from "../../../components/page/NarrowPageWrapper";
+
+const { Content } = Layout;
 
 function FastQCMenu({ current }) {
   const location = useLocation();
@@ -66,22 +68,32 @@ function FastQCContent({ children, current, uri }) {
 
   return (
     <Skeleton loading={loading} active>
-      <PageWrapper title={file.fileName}>
-        {fastQC ? (
-          <Space direction="vertical" style={{ width: `100%` }}>
-            <FastQCMenu current={current} uri={uri} />
-            {children}
-          </Space>
-        ) : (
-          <div>
-            <InfoAlert
-              message={processingStateTranslations[processingState]}
-              style={{ marginBottom: SPACE_XS }}
-              className="t-fastQC-no-run"
-            />
-          </div>
-        )}
-      </PageWrapper>
+      <NarrowPageWrapper title={file.fileName}>
+        <Layout>
+          <Content
+            style={{
+              backgroundColor: grey1,
+              padding: SPACE_LG,
+              marginBottom: SPACE_LG,
+            }}
+          >
+            {fastQC ? (
+              <Space direction="vertical" style={{ width: `100%` }}>
+                <FastQCMenu current={current} uri={uri} />
+                {children}
+              </Space>
+            ) : (
+              <div>
+                <InfoAlert
+                  message={i18n("FastQC.noResults")}
+                  style={{ marginBottom: SPACE_XS }}
+                  className="t-fastQC-no-run"
+                />
+              </div>
+            )}
+          </Content>
+        </Layout>
+      </NarrowPageWrapper>
     </Skeleton>
   );
 }

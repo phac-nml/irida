@@ -24,10 +24,18 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnalysesService;
+
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleNameCheckRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleNameCheckResponse;
+
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 
 /**
@@ -300,32 +308,14 @@ public class SamplesAjaxController {
 
 	/**
 	 * Get a list of all {@link Sample} identifiers within a specific project
+	 * Check if a list of sample names exist within a project
 	 *
-	 * @param projectId Identifier for a Project
-	 * @return {@link List} of {@link Sample} identifiers
+	 * @param request {@link SampleNameCheckRequest} containing the project id and sample names
+	 * @return {@link SampleNameCheckResponse} containing list of valid and invalid sample names
 	 */
-	@GetMapping("/identifiers")
-	public List<Long> getSampleIdsForProject(@RequestParam Long projectId) {
-		return uiSampleService.getSampleIdsForProject(projectId);
-	}
-
-	/**
-	 * Share / Move samples between projects
-	 *
-	 * @param request {@link ShareSamplesRequest} details about the samples to share
-	 * @param locale  current users {@link Locale}
-	 * @return Outcome of the share/move
-	 */
-	@PostMapping("/share")
-	public ResponseEntity<AjaxResponse> shareSamplesWithProject(@RequestBody ShareSamplesRequest request,
-			Locale locale) {
-		try {
-			uiSampleService.shareSamplesWithProject(request, locale);
-			return ResponseEntity.ok(new AjaxSuccessResponse(""));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN)
-					.body(new AjaxErrorResponse(e.getLocalizedMessage()));
-		}
+	@PostMapping("/validate")
+	public SampleNameCheckResponse checkSampleNames(@RequestBody SampleNameCheckRequest request) {
+		return uiSampleService.checkSampleNames(request);
 	}
 
 	/**

@@ -14,19 +14,6 @@ You can find individual download links, and links to corresponding documentation
 * This comment becomes the toc
 {:toc}
 
-IRIDA Virtual Appliance
------------------------
-
-Documentation for installing IRIDA can be found [here](../administrator/), but is time consuming and must be adjusted to the quirks of your environment. We provide a fully-configured virtual appliance that can be opened with [Oracle VirtualBox](https://www.virtualbox.org/) for demonstration purposes. You can download the complete package at:
-
-<https://sairidapublic.blob.core.windows.net/downloads/irida-vm-virtualbox-latest.zip>
-
-### Using the Virtual Appliance
-
-The virtual appliance is currently configured to use 8 CPU cores and requires **at least** 8GB of RAM. You *may* reduce the number of CPU cores allocated to the virtual appliance, however, we do not recommend that you use any less than 4 CPU cores.
-
-Once you start the virtual appliance, you can connect to IRIDA in several ways: using your web browser, using an uploader tool, or using SSH. Please see "[Using the Virtual Appliance](./using-the-virtual-appliance.html)" for more information about how to use the IRIDA virtual appliance.
-
 IRIDA Web Interface
 -------------------
 

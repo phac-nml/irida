@@ -184,7 +184,9 @@ public class LaunchPipelinePage extends AbstractPage {
 	}
 
 	public void saveModifiedTemplateAs(String name) {
-		WebDriverWait wait = new WebDriverWait(driver, 1);
+		driver.manage().window().maximize(); // Fixes issue where save button scrolled off page.
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.elementToBeClickable(modifiedSaveAsButton));
 		modifiedSaveAsButton.click();
 		wait.until(ExpectedConditions.elementToBeClickable(modifiedSubmit));
 		modifiedNameInput.sendKeys(name);
