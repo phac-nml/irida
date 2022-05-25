@@ -34,7 +34,7 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.web.PasswordResetController;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.RoleUtilities;
@@ -53,19 +53,19 @@ import com.google.common.collect.ImmutableMap;
 public class UIUsersService {
 	private static final Logger logger = LoggerFactory.getLogger(UIUsersService.class);
 	private final UserService userService;
-	private final PasswordResetService passwordResetService;
 	private final EmailController emailController;
 	private final MessageSource messageSource;
 	private final PasswordEncoder passwordEncoder;
+	private final PasswordResetService passwordResetService;
 
 	@Autowired
-	public UIUsersService(UserService userService, PasswordResetService passwordResetService,
-			EmailController emailController, MessageSource messageSource, PasswordEncoder passwordEncoder) {
+	public UIUsersService(UserService userService, EmailController emailController, MessageSource messageSource,
+			PasswordEncoder passwordEncoder, PasswordResetService passwordResetService) {
 		this.userService = userService;
-		this.passwordResetService = passwordResetService;
 		this.emailController = emailController;
 		this.messageSource = messageSource;
 		this.passwordEncoder = passwordEncoder;
+		this.passwordResetService = passwordResetService;
 	}
 
 	/**
@@ -214,7 +214,7 @@ public class UIUsersService {
 		boolean canEditUserInfo = canEditUserInfo(principalUser, user);
 		boolean canEditUserStatus = canEditUserStatus(principalUser, user);
 		boolean canChangePassword = canChangePassword(principalUser, user);
-		boolean canCreatePasswordReset = PasswordResetController.canCreatePasswordReset(principalUser, user);
+		boolean canCreatePasswordReset = canCreatePasswordReset(principalUser, user);
 
 		String currentRoleName = messageSource.getMessage("systemRole." + user.getSystemRole().getName(), null, locale);
 
@@ -325,6 +325,48 @@ public class UIUsersService {
 		}
 
 		return new UserDetailsResponse(errors);
+	}
+
+	/**
+	 * Create a new {@link PasswordReset} for the given {@link User}
+	 *
+	 * @param userId    The ID of the {@link User}
+	 * @param principal a reference to the logged in user.
+	 * @param locale    a reference to the locale specified by the browser.
+	 * @return text to display to the user about the result of creating a password reset.
+	 * @throws UIEmailSendException if there is an error emailing the password reset.
+	 */
+	public String adminNewPasswordReset(Long userId, Principal principal, Locale locale) throws UIEmailSendException {
+		User user = userService.read(userId);
+		User principalUser = userService.getUserByUsername(principal.getName());
+
+		if (canCreatePasswordReset(principalUser, user)) {
+			try {
+				createNewPasswordReset(user);
+			} catch (final MailSendException e) {
+				throw new UIEmailSendException(
+						messageSource.getMessage("server.password.reset.error.message", null, locale));
+			}
+		} else {
+			throw new UIEmailSendException(
+					messageSource.getMessage("server.password.reset.error.message", null, locale));
+		}
+
+		return messageSource.getMessage("server.password.reset.success.message", new Object[] { user.getFirstName() },
+				locale);
+	}
+
+	/**
+	 * Create a new password reset for a given {@link User} and send a reset password link via email
+	 *
+	 * @param user The user to create the reset for
+	 */
+	private void createNewPasswordReset(User user) {
+		PasswordReset passwordReset = new PasswordReset(user);
+		passwordResetService.create(passwordReset);
+
+		// send a reset password link to user via email
+		emailController.sendPasswordResetLinkEmail(user, passwordReset);
 	}
 
 	/**
@@ -466,6 +508,32 @@ public class UIUsersService {
 		// 7. Create string.
 		Joiner joiner = Joiner.on("");
 		return joiner.join(pwdArray);
+	}
+
+	/**
+	 * Test if a user should be able to click the password reset button
+	 *
+	 * @param principalUser The currently logged in principal
+	 * @param user          The user being edited
+	 * @return true if the principal can create a password reset for the user
+	 */
+	private boolean canCreatePasswordReset(User principalUser, User user) {
+		Role userRole = user.getSystemRole();
+		Role principalRole = principalUser.getSystemRole();
+
+		if (principalUser.equals(user)) {
+			return false;
+		} else if (principalRole.equals(Role.ROLE_ADMIN)) {
+			return true;
+		} else if (principalRole.equals(Role.ROLE_MANAGER)) {
+			if (userRole.equals(Role.ROLE_ADMIN)) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 }

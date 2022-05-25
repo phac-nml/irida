@@ -31,7 +31,7 @@ export const userApi = createApi({
       query: (userId) => ({
         url: `/${userId}`,
       }),
-      providesTags: ["User"],
+      providesTags: ["User", "PasswordReset"],
     }),
     /*
     Edit user details.
@@ -66,6 +66,16 @@ export const userApi = createApi({
       }),
       invalidatesTags: ["User"],
     }),
+    /*
+    Create a password reset.
+    */
+    createPasswordReset: build.mutation({
+      query: ({ userId }) => ({
+        url: `/${userId}/reset-password`,
+        method: "POST",
+      }),
+      invalidatesTags: ["PasswordReset"],
+    }),
   }),
 });
 
@@ -75,4 +85,5 @@ export const {
   useEditUserDetailsMutation,
   useChangeUserPasswordMutation,
   useSetUsersDisabledStatusMutation,
+  useCreatePasswordResetMutation,
 } = userApi;

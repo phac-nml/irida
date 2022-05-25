@@ -32,6 +32,8 @@ Changes
 * [UI]: Updated project samples page to use Ant Design.
 * [Documentation]: Updated SNVPhyl install instructions since installing `bcftools_view` separately is no longer needed. Fixed broken link for sequence read test data. Removed **Search** option since it no longer works in our documentation.
 * [UI]: Fixed: Excel output file preview displaying numeric values as a whole number rather than in scientific notation.
+* [UI]: Updated the sequence run page to use Ant Design.
+* [UI]: Updated `forgot password`, `account activation`, and `reset password` pages to use Ant Design.
 
 22.01 to 22.03
 --------------

@@ -8,7 +8,7 @@ export const ADMIN = {
   USERGROUPS: "groups",
   CLIENTS: "clients",
   REMOTEAPI: "remote_api",
-  SEQUENCINGRUNS: "sequencing_runs",
+  SEQUENCINGRUNS: "sequencing-runs",
   NCBIEXPORTS: "ncbi_exports",
   ANNOUNCEMENTS: "announcements",
   STATISTICS: "statistics"

@@ -1,36 +1,66 @@
 package ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequenceFileDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunModel;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunsListRequest;
-import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UISequencingRunService;
 
 /**
  * Controller to handle AJAX requests for sequencing run data
  */
 @RestController
-@RequestMapping("/ajax/sequencingRuns")
+@RequestMapping("/ajax/sequencing-runs")
 public class SequencingRunAjaxController {
 
-	private final SequencingRunService sequencingRunService;
-	private final MessageSource messageSource;
+	private final UISequencingRunService service;
 
 	@Autowired
-	public SequencingRunAjaxController(SequencingRunService sequencingRunService, MessageSource messageSource) {
-		this.sequencingRunService = sequencingRunService;
-		this.messageSource = messageSource;
+	public SequencingRunAjaxController(UISequencingRunService service) {
+		this.service = service;
+	}
+
+	/**
+	 * Get the details for a specific sequencing run.
+	 *
+	 * @param runId - the id of the sequencing run
+	 * @return a {@link SequencingRun}
+	 */
+	@RequestMapping("/{runId}")
+	public ResponseEntity<SequencingRun> getSequencingRun(@PathVariable long runId) {
+		return ResponseEntity.ok(service.getSequencingRun(runId));
+	}
+
+	/**
+	 * Get the details for a specific sequencing run.
+	 *
+	 * @param runId - the id of the sequencing run
+	 * @return a {@link SequencingRunDetails}
+	 */
+	@RequestMapping("/{runId}/details")
+	public ResponseEntity<SequencingRunDetails> getSequencingRunDetails(@PathVariable long runId) {
+		return ResponseEntity.ok(service.getSequencingRunDetails(runId));
+	}
+
+	/**
+	 * Get the files for a specific sequencing run.
+	 *
+	 * @param runId - the id of the sequencing run
+	 * @return a list of {@link SequenceFileDetails}s
+	 */
+	@RequestMapping("/{runId}/sequenceFiles")
+	public ResponseEntity<List<SequenceFileDetails>> getSequencingRunFiles(@PathVariable long runId) {
+		return ResponseEntity.ok(service.getSequencingRunFiles(runId));
 	}
 
 	/**
@@ -41,17 +71,22 @@ public class SequencingRunAjaxController {
 	 * @return {@link TableResponse}
 	 */
 	@RequestMapping("/list")
-	public TableResponse<SequencingRunModel> listSequencingRuns(@RequestBody SequencingRunsListRequest sequencingRunsListRequest, Locale locale) {
-		Page<SequencingRun> list = sequencingRunService.list(sequencingRunsListRequest.getCurrent(),
-				sequencingRunsListRequest.getPageSize(), sequencingRunsListRequest.getSort());
-
-		List<SequencingRunModel> runs = new ArrayList<>();
-		for (SequencingRun run : list.getContent()) {
-			runs.add(new SequencingRunModel(run, messageSource.getMessage(
-					"sequencingruns.status." + run.getUploadStatus()
-							.toString(), new Object[] {}, locale)));
-		}
-
-		return new TableResponse<>(runs, list.getTotalElements());
+	public TableResponse<SequencingRunModel> listSequencingRuns(
+			@RequestBody SequencingRunsListRequest sequencingRunsListRequest, Locale locale) {
+		return service.listSequencingRuns(sequencingRunsListRequest, locale);
 	}
+
+	/**
+	 * Delete a sequencing run.
+	 *
+	 * @param runId  - the id of the sequencing run
+	 * @param locale - current users locale return Message to user about what happened
+	 * @return a success message
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@DeleteMapping("/{runId}")
+	public ResponseEntity<String> deleteSequencingRun(@PathVariable long runId, Locale locale) {
+		return ResponseEntity.ok(service.deleteSequencingRun(runId, locale));
+	}
+
 }
