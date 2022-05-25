@@ -76,31 +76,4 @@ public class PasswordResetController {
 				.setAuthentication(anonymousToken);
 	}
 
-
-	/**
-	 * Test if a user should be able to click the password reset button
-	 *
-	 * @param principalUser The currently logged in principal
-	 * @param user          The user being edited
-	 * @return true if the principal can create a password reset for the user
-	 */
-	public static boolean canCreatePasswordReset(User principalUser, User user) {
-		Role userRole = user.getSystemRole();
-		Role principalRole = principalUser.getSystemRole();
-
-		if (principalUser.equals(user)) {
-			return false;
-		} else if (principalRole.equals(Role.ROLE_ADMIN)) {
-			return true;
-		} else if (principalRole.equals(Role.ROLE_MANAGER)) {
-			if (userRole.equals(Role.ROLE_ADMIN)) {
-				return false;
-			} else {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 }

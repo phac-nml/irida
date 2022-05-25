@@ -139,7 +139,7 @@ public class UIUsersService {
 		boolean canEditUserInfo = canEditUserInfo(principalUser, user);
 		boolean canEditUserStatus = canEditUserStatus(principalUser, user);
 		boolean canChangePassword = canChangePassword(principalUser, user);
-		boolean canCreatePasswordReset = PasswordResetController.canCreatePasswordReset(principalUser, user);
+		boolean canCreatePasswordReset = canCreatePasswordReset(principalUser, user);
 
 		String currentRoleName = messageSource.getMessage("systemRole." + user.getSystemRole().getName(), null, locale);
 
