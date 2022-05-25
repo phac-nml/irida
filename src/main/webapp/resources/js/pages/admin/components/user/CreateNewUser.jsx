@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Alert,
   Button,
@@ -35,6 +35,7 @@ export default function CreateNewUser() {
   const [form] = Form.useForm();
   const [visible, setVisibility] = React.useState(false);
   const [activationEmail, setActivationEmail] = React.useState(false);
+  const usernameInput = React.useRef();
 
   const passwordRules = [
     i18n("CreateNewUser.changePassword.alert.rule2"),
@@ -43,6 +44,12 @@ export default function CreateNewUser() {
     i18n("CreateNewUser.changePassword.alert.rule5"),
     i18n("CreateNewUser.changePassword.alert.rule6"),
   ];
+
+  useEffect(() => {
+    if (visible) {
+      usernameInput.current.focus();
+    }
+  }, [visible]);
 
   const onFormFinish = (values) => {
     createUser({ ...values })
@@ -116,7 +123,7 @@ export default function CreateNewUser() {
               },
             ]}
           >
-            <Input />
+            <Input ref={usernameInput} />
           </Form.Item>
           <Form.Item
             label={i18n("CreateNewUser.form.firstName.label")}
