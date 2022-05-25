@@ -9,14 +9,18 @@ const EMPTY_COLOUR = "#ffffff";
  */
 export function generateColourMap(metadata, terms) {
   const colourMap = terms.reduce((prev, curr) => {
-    return Object.assign(prev, { [curr]: { "": EMPTY_COLOUR } });
+    return Object.assign(prev, { [curr]: {} });
   }, {});
 
   Object.values(metadata).forEach((sampleMetadata) => {
-    Object.keys(sampleMetadata).forEach((term) => {
-      const value = sampleMetadata[term].value;
+    terms.forEach((term) => {
+      const value = term in sampleMetadata ? sampleMetadata[term].value : "";
       if (!(value in colourMap[term])) {
-        colourMap[term][value] = uniqolor(value)["color"];
+        if (value === "") {
+          colourMap[term][value] = EMPTY_COLOUR;
+        } else {
+          colourMap[term][value] = uniqolor(value)["color"];
+        }
       }
     });
   });
