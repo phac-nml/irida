@@ -1,19 +1,72 @@
 import React from "react";
-import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
 import {
-  useVisibility,
-  VisibilityProvider,
-} from "../../../../contexts/visibility-context";
-import CreateNewUserForm from "./CreateNewUserForm";
+  Alert,
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  List,
+  notification,
+  Select,
+  Typography,
+} from "antd";
+import { useCreateNewUserMutation } from "../../../../apis/users/users";
+import {
+  useGetEmailConfiguredQuery,
+  useGetLocalesQuery,
+  useGetSystemRolesQuery,
+} from "../../../../apis/settings/settings";
+import { SPACE_SM } from "../../../../styles/spacing";
+import { PagedTableContext } from "../../../../components/ant.design/PagedTable";
+import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
 import { ScrollableModal } from "../../../../components/ant.design/ScrollableModal";
 
 /**
- * Component to add a button which will open a modal to create a user.
+ * React component to display the create new user form.
  * @returns {*}
  * @constructor
  */
-function CreateNewUserButton() {
-  const [visible, setVisibility] = useVisibility();
+export default function CreateNewUser() {
+  const { updateTable } = React.useContext(PagedTableContext);
+  const { data: locales = [] } = useGetLocalesQuery();
+  const { data: systemRoles = [] } = useGetSystemRolesQuery();
+  const { data: emailConfigured = false } = useGetEmailConfiguredQuery();
+  const [createUser] = useCreateNewUserMutation();
+  const [form] = Form.useForm();
+  const [visible, setVisibility] = React.useState(false);
+  const [activationEmail, setActivationEmail] = React.useState(false);
+
+  const passwordRules = [
+    i18n("CreateNewUser.changePassword.alert.rule2"),
+    i18n("CreateNewUser.changePassword.alert.rule3"),
+    i18n("CreateNewUser.changePassword.alert.rule4"),
+    i18n("CreateNewUser.changePassword.alert.rule5"),
+    i18n("CreateNewUser.changePassword.alert.rule6"),
+  ];
+
+  const onFormFinish = (values) => {
+    createUser({ ...values })
+      .unwrap()
+      .then(() => {
+        notification.success({
+          message: i18n("CreateNewUser.notification.success"),
+          className: "t-user-page-notification-success",
+        });
+        form.resetFields();
+        setVisibility(false);
+        updateTable();
+      })
+      .catch((error) => {
+        notification.error({
+          message: i18n("CreateNewUser.notification.error"),
+        });
+        const fields = Object.entries(error.data).map(([field, error]) => ({
+          name: field,
+          errors: [error],
+        }));
+        form.setFields(fields);
+      });
+  };
 
   return (
     <>
@@ -28,19 +81,226 @@ function CreateNewUserButton() {
         visible={visible}
         maxHeight={window.innerHeight - 250}
         width={640}
-        footer={null}
+        footer={
+          <Button
+            className="t-submit-btn"
+            type="primary"
+            htmlType="submit"
+            onClick={form.submit}
+          >
+            {i18n("CreateNewUser.form.button.submit")}
+          </Button>
+        }
         maskClosable={false}
       >
-        <CreateNewUserForm />
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={{
+            locale: "en",
+            role: "ROLE_USER",
+          }}
+          onFinish={onFormFinish}
+        >
+          <Form.Item
+            label={i18n("CreateNewUser.form.username.label")}
+            name="username"
+            rules={[
+              {
+                required: true,
+                message: i18n("CreateNewUser.form.username.required"),
+              },
+              {
+                min: 3,
+                message: i18n("CreateNewUser.form.username.min"),
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label={i18n("CreateNewUser.form.firstName.label")}
+            name="firstName"
+            rules={[
+              {
+                required: true,
+                message: i18n("CreateNewUser.form.firstName.required"),
+              },
+              {
+                min: 2,
+                message: i18n("CreateNewUser.form.firstName.min"),
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label={i18n("CreateNewUser.form.lastName.label")}
+            name="lastName"
+            rules={[
+              {
+                required: true,
+                message: i18n("CreateNewUser.form.lastName.required"),
+              },
+              {
+                min: 2,
+                message: i18n("CreateNewUser.form.lastName.min"),
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label={i18n("CreateNewUser.form.email.label")}
+            name="email"
+            rules={[
+              {
+                required: true,
+                message: i18n("CreateNewUser.form.email.required"),
+              },
+              {
+                type: "email",
+                message: i18n("CreateNewUser.form.email.type"),
+              },
+              {
+                min: 5,
+                message: i18n("CreateNewUser.form.email.min"),
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label={i18n("CreateNewUser.form.phoneNumber.label")}
+            name="phoneNumber"
+            rules={[
+              {
+                min: 4,
+                message: i18n("CreateNewUser.form.phoneNumber.min"),
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label={i18n("CreateNewUser.form.locale.label")}
+            name="locale"
+            rules={[
+              {
+                required: true,
+                message: i18n("CreateNewUser.form.locale.required"),
+              },
+            ]}
+          >
+            <Select>
+              {locales.map((locale, index) => (
+                <Select.Option
+                  key={`create-new-user-account-locale-${index}`}
+                  value={locale.language}
+                >
+                  {locale.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label={i18n("CreateNewUser.form.role.label")}
+            name="role"
+            rules={[
+              {
+                required: true,
+                message: i18n("CreateNewUser.form.role.required"),
+              },
+            ]}
+          >
+            <Select>
+              {systemRoles.map((role, index) => (
+                <Select.Option
+                  key={`create-new-user-account-role-${index}`}
+                  value={role.code}
+                >
+                  {role.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          {!emailConfigured && (
+            <Alert
+              style={{ marginBottom: SPACE_SM }}
+              message={i18n("CreateNewUser.emailConfigured.alert.title")}
+              description={
+                <Typography.Paragraph>
+                  {i18n("CreateNewUser.emailConfigured.alert.description")}
+                </Typography.Paragraph>
+              }
+              type="warning"
+              showIcon
+            />
+          )}
+          <Form.Item name="activate" valuePropName="checked">
+            <Checkbox
+              disabled={!emailConfigured}
+              checked={activationEmail}
+              onChange={(e) => setActivationEmail(e.target.checked)}
+            >
+              {i18n("CreateNewUser.form.activate.label")}
+            </Checkbox>
+          </Form.Item>
+          {!activationEmail && (
+            <>
+              <Alert
+                style={{ marginBottom: SPACE_SM }}
+                message={i18n("CreateNewUser.changePassword.alert.title")}
+                description={
+                  <Typography.Paragraph>
+                    <List
+                      header={i18n(
+                        "CreateNewUser.changePassword.alert.description"
+                      )}
+                      dataSource={passwordRules}
+                      renderItem={(item) => <List.Item>{item}</List.Item>}
+                    />
+                  </Typography.Paragraph>
+                }
+                type="info"
+                showIcon
+              />
+              <Form.Item
+                label={i18n("CreateNewUser.form.label.password")}
+                name="password"
+                rules={[
+                  {
+                    required: true,
+                    message: i18n("CreateNewUser.changePassword.alert.rule1"),
+                  },
+                  {
+                    min: 8,
+                    message: i18n("CreateNewUser.changePassword.alert.rule2"),
+                  },
+                  {
+                    pattern: new RegExp("^.*[A-Z].*$"),
+                    message: i18n("CreateNewUser.changePassword.alert.rule3"),
+                  },
+                  {
+                    pattern: new RegExp("^.*[a-z].*$"),
+                    message: i18n("CreateNewUser.changePassword.alert.rule4"),
+                  },
+                  {
+                    pattern: new RegExp("^.*[0-9].*$"),
+                    message: i18n("CreateNewUser.changePassword.alert.rule5"),
+                  },
+                  {
+                    pattern: new RegExp("^.*[^A-Za-z0-9].*$"),
+                    message: i18n("CreateNewUser.changePassword.alert.rule6"),
+                  },
+                ]}
+              >
+                <Input.Password />
+              </Form.Item>
+            </>
+          )}
+        </Form>
       </ScrollableModal>
     </>
-  );
-}
-
-export default function CreateNewUser() {
-  return (
-    <VisibilityProvider>
-      <CreateNewUserButton />
-    </VisibilityProvider>
   );
 }
