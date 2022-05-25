@@ -132,6 +132,12 @@ export default function UserDetailsPage() {
         <Form.Item
           label={i18n("UserDetailsPage.form.locale.label")}
           name="locale"
+          rules={[
+            {
+              required: true,
+              message: i18n("UserDetailsPage.form.locale.required"),
+            },
+          ]}
         >
           <Select>
             {locales.map((locale, index) => (
@@ -148,6 +154,12 @@ export default function UserDetailsPage() {
           label={i18n("UserDetailsPage.form.role.label")}
           name="role"
           hidden={!userDetails.admin}
+          rules={[
+            {
+              required: true,
+              message: i18n("UserDetailsPage.form.role.required"),
+            },
+          ]}
         >
           <Select disabled={!userDetails.canEditUserStatus}>
             {systemRoles.map((role, index) => (
