@@ -32,18 +32,19 @@ export function ActivateAccount({ updateDisplayLoginPage }) {
     setLoading(true);
     activateAccount({
       identifier: activateAccountForm.getFieldValue("activationId"),
-    }).then((response) => {
-      if (response.error) {
-        setLoading(false);
-        setMessage(response.error.data.error);
-      } else {
+    })
+      .unwrap()
+      .then((response) => {
         // response.data.message has the identifier
         window.location.replace(
-          setBaseUrl(`/password_reset/${response.data.message}`)
+          setBaseUrl(`/password_reset/${response.message}`)
         );
-      }
-      activateAccountForm.resetFields();
-    });
+        activateAccountForm.resetFields();
+      })
+      .catch((error) => {
+        setLoading(false);
+        setMessage(error.data.error);
+      });
   };
 
   return (

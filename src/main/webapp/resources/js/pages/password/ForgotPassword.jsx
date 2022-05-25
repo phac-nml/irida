@@ -36,15 +36,16 @@ export function ForgotPassword({ updateDisplayLoginPage }) {
 
     forgotPassword({
       usernameOrEmail: forgotPasswordForm.getFieldValue("usernameOrEmail"),
-    }).then((response) => {
-      if (response.error) {
-        setMessage(response.error.data.error);
-      } else {
+    })
+      .unwrap()
+      .then((response) => {
         setMessage(response.data.message);
-      }
-      forgotPasswordForm.resetFields();
-      setLoading(false);
-    });
+      })
+      .catch((error) => setMessage(error.data.error))
+      .finally(() => {
+        forgotPasswordForm.resetFields();
+        setLoading(false);
+      });
   };
 
   return (

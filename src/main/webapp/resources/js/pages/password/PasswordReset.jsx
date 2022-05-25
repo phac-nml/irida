@@ -29,6 +29,7 @@ function PasswordResetForm() {
   const [setPassword] = useSetPasswordMutation();
 
   const [loading, setLoading] = React.useState(false);
+  const [invalidPassword, setInvalidPassword] = React.useState(false);
   const [updateSuccess, setUpdateSuccess] = React.useState(false);
   const [updateError, setUpdateError] = React.useState(false);
   const [errorMessages, setErrorMessages] = React.useState(null);
@@ -58,17 +59,20 @@ function PasswordResetForm() {
     setPassword({
       resetId: passwordResetObj.id,
       password: passwordResetForm.getFieldValue("password"),
-    }).then((res) => {
-      if (res.error) {
-        setErrorMessages(res.error.data.errors);
-        setUpdateError(true);
-      } else {
+    })
+      .unwrap()
+      .then(() => {
         setUpdateSuccess(true);
         setUpdateError(false);
-      }
-      passwordResetForm.resetFields();
-      setLoading(false);
-    });
+      })
+      .catch((error) => {
+        setErrorMessages(error.data.errors);
+        setUpdateError(true);
+      })
+      .finally(() => {
+        passwordResetForm.resetFields();
+        setLoading(false);
+      });
   };
 
   return (
@@ -166,7 +170,11 @@ function PasswordResetForm() {
                 rules={[
                   ({}) => ({
                     validator(_, value) {
-                      return validatePassword(value);
+                      let validationResult = validatePassword(value);
+                      validationResult
+                        .then(() => setInvalidPassword(false))
+                        .catch(() => setInvalidPassword(true));
+                      return validationResult;
                     },
                   }),
                 ]}
@@ -187,7 +195,7 @@ function PasswordResetForm() {
                 <Button
                   className="t-submit-btn"
                   type="primary"
-                  disabled={loading}
+                  disabled={loading || invalidPassword}
                   loading={loading}
                   block
                   htmlType="submit"
