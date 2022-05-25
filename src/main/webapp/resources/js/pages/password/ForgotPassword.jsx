@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Form, Input } from "antd";
-import { LoadingOutlined, MailOutlined } from "@ant-design/icons";
+import { MailOutlined } from "@ant-design/icons";
 import { InfoAlert } from "../../components/alerts";
 import { SPACE_MD } from "../../styles/spacing";
 import { blue6 } from "../../styles/colors";

@@ -4,7 +4,6 @@ import { Alert, Button, Col, Form, Input, List, Row, Typography } from "antd";
 import {
   EyeInvisibleOutlined,
   EyeTwoTone,
-  LoadingOutlined,
   LockOutlined,
 } from "@ant-design/icons";
 import { setBaseUrl } from "../../utilities/url-utilities";

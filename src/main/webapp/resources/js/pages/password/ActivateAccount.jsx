@@ -1,6 +1,5 @@
 import React from "react";
 import { Alert, Button, Form, Input } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { SPACE_MD } from "../../styles/spacing";
 import { useActivateAccountMutation } from "../../apis/password-reset";
