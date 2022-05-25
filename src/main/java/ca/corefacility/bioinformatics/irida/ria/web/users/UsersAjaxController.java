@@ -58,7 +58,7 @@ public class UsersAjaxController {
 	public ResponseEntity<AjaxResponse> createUser(@RequestBody UserCreateRequest userCreateRequest,
 			Principal principal, Locale locale) {
 
-		UserDetailsResponse response = UIUsersService.createUser(userCreateRequest, principal, locale);
+		UserDetailsResponse response = uiUsersService.createUser(userCreateRequest, principal, locale);
 
 		if (response.hasErrors())
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxFormErrorResponse(response.getErrors()));
