@@ -2,15 +2,30 @@ import { List, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setMetadataColourForTermWithValue } from "../../redux/treeSlice";
+import { exportLegendSVG } from "../../tree-utilities";
 import { LegendDownloadMenu } from "./LegendDownloadMenu";
 import { LegendSection } from "./LegendSection";
 
 export function Legend() {
-  const { metadataColourMap, terms } = useSelector((state) => state.tree);
+  const { metadataColourMap, terms, treeProps } = useSelector(
+    (state) => state.tree
+  );
   const dispatch = useDispatch();
 
+  const downloadUrl = (url, name) => {
+    const link = document.createElement("a");
+    link.style.display = "none";
+    link.href = url;
+    link.setAttribute("download", name);
+    document.body.appendChild(link);
+    link.click();
+    window.URL.revokeObjectURL(url);
+  };
+
   const onItemClick = (term, format) => {
-    console.log(`Downloading ${term} as ${format}`);
+    const blob = exportLegendSVG(term, metadataColourMap, treeProps);
+    const url = window.URL.createObjectURL(blob);
+    downloadUrl(url, `${term}-legend.svg`);
   };
 
   return (

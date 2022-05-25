@@ -92,8 +92,10 @@ const initialState = {
   treeProps: {
     alignLabels: true,
     blocks: [],
+    blockLength: 16,
     branchZoom: 0,
     fontFamily: "sans-serif",
+    fontSize: 16,
     interactive: true,
     nodeShape: Shapes.Dot,
     padding: 20,
