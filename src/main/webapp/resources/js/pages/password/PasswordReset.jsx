@@ -127,7 +127,7 @@ function PasswordResetForm() {
           <Alert
             style={{ marginBottom: SPACE_SM }}
             className="t-reset-error-alert"
-            message="The following errors occurred:"
+            message={i18n("PasswordReset.followingErrorsOccurred")}
             description={
               <Typography.Paragraph>
                 {
@@ -161,7 +161,7 @@ function PasswordResetForm() {
           : null}
 
         {!updateSuccess && (
-          <div>
+          <>
             <Alert
               style={{ marginBottom: SPACE_SM }}
               message={i18n("PasswordReset.alert.title")}
@@ -211,7 +211,7 @@ function PasswordResetForm() {
                   className="t-submit-btn"
                   type="primary"
                   disabled={loading || invalidPassword}
-                  icon={loading && <LoadingOutlined />}
+                  loading={loading}
                   block
                   htmlType="submit"
                 >
@@ -219,7 +219,7 @@ function PasswordResetForm() {
                 </Button>
               </Item>
             </Form>
-          </div>
+          </>
         )}
       </Col>
     </Row>

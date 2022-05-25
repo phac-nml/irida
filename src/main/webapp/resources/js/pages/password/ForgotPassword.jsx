@@ -48,7 +48,7 @@ export function ForgotPassword({ updateDisplayLoginPage }) {
   };
 
   return (
-    <div>
+    <>
       {message !== null && (
         <InfoAlert
           message={message}
@@ -87,7 +87,7 @@ export function ForgotPassword({ updateDisplayLoginPage }) {
             className="t-submit-btn"
             type="primary"
             disabled={loading}
-            icon={loading && <LoadingOutlined />}
+            loading={loading}
             block
             htmlType="submit"
           >
@@ -97,7 +97,6 @@ export function ForgotPassword({ updateDisplayLoginPage }) {
       </Form>
       <Button
         className="t-return-to-login"
-        size="large"
         type="link"
         style={{ padding: 0 }}
         onClick={() => {
@@ -107,6 +106,6 @@ export function ForgotPassword({ updateDisplayLoginPage }) {
       >
         {i18n("ForgotPassword.link.returnToLogin")}
       </Button>
-    </div>
+    </>
   );
 }

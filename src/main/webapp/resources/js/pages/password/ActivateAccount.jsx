@@ -87,7 +87,7 @@ export function ActivateAccount({ updateDisplayLoginPage }) {
             className="t-submit-btn"
             type="primary"
             disabled={loading}
-            icon={loading && <LoadingOutlined />}
+            loading={loading}
             block
             htmlType="submit"
           >
@@ -98,7 +98,6 @@ export function ActivateAccount({ updateDisplayLoginPage }) {
       <Button
         className="t-return-to-login"
         type="link"
-        size="large"
         style={{ padding: 0 }}
         onClick={() => {
           updateDisplayLoginPage(true);
