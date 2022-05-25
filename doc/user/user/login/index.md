@@ -83,3 +83,18 @@ After you enter a new password you should automatically be redirected to the mai
 Once you've logged in, you can proceed to the [dashboard overview](../dashboard) page.
 
 <a href="../system-overview/">Previous: System Overview</a><a href="../dashboard/" style="float: right;">Next: Dashboard Overview</a>
+
+Activating account
+------------------
+
+If for some reason the `Activate Account` link in the email does not work, then you can click on the `Activate Account` link on the IRIDA login page (IRIDA URL provided in your welcome e-mail).
+
+![IRIDA login screen, activate highlighted.](images/irida-login-activate-account.png)
+
+Enter the Activation ID provided in the email
+
+![IRIDA activate account page.](images/irida-activate-account-page.png)
+
+Once you have entered your Activation ID and click the `Reset Password` button, you will be redirected to set your password
+
+![Create password.](images/create-password.png)
