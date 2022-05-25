@@ -14,6 +14,7 @@ import { MetadataFieldSelect } from "./MetadataFieldToggle";
 export function MetadataMenu() {
   const { templates, terms, treeProps } = useSelector((state) => state.tree);
   const dispatch = useDispatch();
+  const width = 300;
 
   const metadataTemplateOptions = [];
   metadataTemplateOptions.push(
@@ -34,7 +35,7 @@ export function MetadataMenu() {
       <Menu.Item key="1">
         <Select
           defaultValue={-1}
-          style={{ width: "100%" }}
+          style={{ width: width }}
           onChange={(templateIdx) =>
             dispatch(fetchMetadataTemplateFields(templateIdx))
           }
@@ -59,6 +60,7 @@ export function MetadataMenu() {
           <MetadataFieldSelect
             checked={treeProps.blocks.includes(field)}
             field={field}
+            width={width}
             onChange={(visible, only) =>
               dispatch(setFieldVisibility({ field, visible, only }))
             }

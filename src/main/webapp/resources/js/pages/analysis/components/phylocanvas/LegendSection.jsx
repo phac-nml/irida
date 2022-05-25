@@ -10,10 +10,8 @@ export function LegendSection({
   return (
     <Space direction="vertical" style={{ width: "100%" }}>
       <List.Item.Meta
-        title={i18n(
-          "visualization.phylogenomics.sidebar.legend.colour-by",
-          title
-        )}
+        // prettier-ignore
+        title={i18n("visualization.phylogenomics.sidebar.legend.colour-by", title)}
       />
       {sectionColourMap
         ? Object.keys(sectionColourMap).map((key) => (

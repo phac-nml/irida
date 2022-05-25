@@ -13,14 +13,23 @@ const OnlyButton = styled(Button)`
   }
 `;
 
-export function MetadataFieldSelect({ checked, field, onChange }) {
+const FieldCheckbox = styled(Checkbox)`
+  min-width: 0;
+
+  span:nth-child(2) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`;
+
+export function MetadataFieldSelect({ checked, field, width, onChange }) {
   const [onlyBtnVisible, setOnlyBtnVisible] = React.useState(false);
 
   return (
     <div
       style={{
-        width: "100%",
         height: 24,
+        width,
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
@@ -31,18 +40,21 @@ export function MetadataFieldSelect({ checked, field, onChange }) {
       onMouseEnter={() => setOnlyBtnVisible(true)}
       onMouseLeave={() => setOnlyBtnVisible(false)}
     >
-      <Checkbox
+      <FieldCheckbox
         checked={checked}
+        value={field}
         onChange={(event) => onChange(event.target.checked, false)}
-        style={{ width: "100%" }}
       >
-        {field}
-      </Checkbox>
-      {onlyBtnVisible && (
-        <OnlyButton size="small" onClick={() => onChange(true, true)}>
-          {i18n("visualization.phylogenomics.metadata.fields.only")}
-        </OnlyButton>
-      )}
+        <span title={field}>{field}</span>
+      </FieldCheckbox>
+      <OnlyButton
+        size="small"
+        title={i18n("visualization.phylogenomics.metadata.fields.only-hint")}
+        onClick={() => onChange(true, true)}
+        style={{ display: onlyBtnVisible ? "inline-block" : "none" }}
+      >
+        {i18n("visualization.phylogenomics.metadata.fields.only")}
+      </OnlyButton>
     </div>
   );
 }
