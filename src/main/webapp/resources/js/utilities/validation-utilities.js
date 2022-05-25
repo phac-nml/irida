@@ -3,10 +3,22 @@ import { validateSampleName } from "../apis/projects/samples";
 const emailRegex =
   /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 
-const passwordRegex =
-  /^(?=.*\d)(?=.*[!@#$%^&*()+?/<>={}.\\])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-
 const minimumPasswordLength = 8;
+
+/*
+  Regex checks for:
+  1 uppercase letter
+  1 lowercase letter
+  1 number
+  1 symbol
+  Minimum of 8 characters
+ */
+const passwordRegex = new RegExp(
+  "^(?=.*\\d)(?=.*[!@#$%^&*()+?/<>={}.\\\\])(?=.*[a-z])(?=.*[A-Z]).{" +
+    minimumPasswordLength +
+    ",}$",
+  ""
+);
 
 /**
  * Ensure that an email address is formatted correctly.
