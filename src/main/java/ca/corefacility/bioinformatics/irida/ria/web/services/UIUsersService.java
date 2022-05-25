@@ -270,19 +270,16 @@ public class UIUsersService {
 				updatedValues.put("systemRole", newRole);
 			}
 		}
+		try {
+			User user = userService.updateFields(userId, updatedValues);
 
-		if (errors.isEmpty()) {
-			try {
-				User user = userService.updateFields(userId, updatedValues);
-
-				// If the user is updating their account make sure you update it in the session variable
-				if (user != null && principal.getName().equals(user.getUsername())) {
-					HttpSession session = request.getSession();
-					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
-				}
-			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
-				errors = handleCreateUpdateException(ex, request.getLocale());
+			// If the user is updating their account make sure you update it in the session variable
+			if (user != null && principal.getName().equals(user.getUsername())) {
+				HttpSession session = request.getSession();
+				session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
 			}
+		} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
+			errors = handleCreateUpdateException(ex, request.getLocale());
 		}
 
 		return new UserDetailsResponse(errors);

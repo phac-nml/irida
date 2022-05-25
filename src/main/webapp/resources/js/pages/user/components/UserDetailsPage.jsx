@@ -7,6 +7,7 @@ import {
   Input,
   notification,
   Select,
+  Skeleton,
   Space,
   Typography,
 } from "antd";
@@ -27,7 +28,7 @@ import {
  */
 export default function UserDetailsPage() {
   const { userId } = useParams();
-  const { data: userDetails = {} } = useGetUserDetailsQuery(userId);
+  const { data: userDetails = {}, isLoading } = useGetUserDetailsQuery(userId);
   const { data: locales = [] } = useGetLocalesQuery();
   const { data: systemRoles = [] } = useGetSystemRolesQuery();
   const [editUser] = useEditUserDetailsMutation();
@@ -55,7 +56,7 @@ export default function UserDetailsPage() {
   };
 
   return (
-    <>
+    <Skeleton loading={isLoading}>
       <Typography.Title level={4}>
         {i18n("UserDetailsPage.title")}
       </Typography.Title>
@@ -218,6 +219,6 @@ export default function UserDetailsPage() {
             : ""}
         </Typography.Text>
       </Space>
-    </>
+    </Skeleton>
   );
 }

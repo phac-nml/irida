@@ -2,17 +2,17 @@ package ca.corefacility.bioinformatics.irida.ria.web.users;
 
 import java.security.Principal;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxFormErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUsersService;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
@@ -23,7 +23,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
 @RestController
 @RequestMapping("/ajax/users")
 public class UsersAjaxController {
-
 	private final UIUsersService UIUsersService;
 
 	@Autowired
@@ -38,7 +37,6 @@ public class UsersAjaxController {
 	 * @return {@link TableResponse}
 	 */
 	@RequestMapping("/list")
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 	public TableResponse<UserDetailsModel> getUsersPagedList(@RequestBody AdminUsersTableRequest request) {
 		return UIUsersService.getUsersPagedList(request);
 	}
@@ -52,17 +50,15 @@ public class UsersAjaxController {
 	 * @return A list or errors
 	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, String>> createUser(@RequestBody UserCreateRequest userCreateRequest,
+	public ResponseEntity<AjaxResponse> createUser(@RequestBody UserCreateRequest userCreateRequest,
 			Principal principal, Locale locale) {
 
 		UserDetailsResponse response = UIUsersService.createUser(userCreateRequest, principal, locale);
 
 		if (response.hasErrors())
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getErrors());
-			//TODO: handle mail failure?
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxFormErrorResponse(response.getErrors()));
 		else
 			return ResponseEntity.ok(null);
-
 	}
 
 	/**
@@ -74,7 +70,6 @@ public class UsersAjaxController {
 	 * @return {@link ResponseEntity} internationalized response to the update
 	 */
 	@RequestMapping("/edit")
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 	public ResponseEntity<String> updateUserStatus(@RequestParam Long id, @RequestParam boolean isEnabled,
 			Locale locale) {
 		return UIUsersService.updateUserStatus(id, isEnabled, locale);
@@ -90,13 +85,13 @@ public class UsersAjaxController {
 	 * @return The name of the user view
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, String>> updateUser(@PathVariable Long userId,
+	public ResponseEntity<AjaxResponse> updateUser(@PathVariable Long userId,
 			@RequestBody UserEditRequest userEditRequest, Principal principal, HttpServletRequest request) {
 
 		UserDetailsResponse response = UIUsersService.updateUser(userId, userEditRequest, principal, request);
 
 		if (response.hasErrors())
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getErrors());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxFormErrorResponse(response.getErrors()));
 		else
 			return ResponseEntity.ok(null);
 
@@ -113,15 +108,14 @@ public class UsersAjaxController {
 	 * @return The name of the user view
 	 */
 	@RequestMapping(value = "/{userId}/changePassword", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, String>> changeUserPassword(@PathVariable Long userId,
-			@RequestParam String oldPassword, @RequestParam String newPassword, Principal principal,
-			HttpServletRequest request) {
+	public ResponseEntity<AjaxResponse> changeUserPassword(@PathVariable Long userId, @RequestParam String oldPassword,
+			@RequestParam String newPassword, Principal principal, HttpServletRequest request) {
 
 		UserDetailsResponse response = UIUsersService.changeUserPassword(userId, oldPassword, newPassword, principal,
 				request);
 
 		if (response.hasErrors())
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getErrors());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxFormErrorResponse(response.getErrors()));
 		else
 			return ResponseEntity.ok(null);
 	}

@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit.users;
 
 import java.security.Principal;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUsersService;
 import ca.corefacility.bioinformatics.irida.ria.web.users.UsersAjaxController;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
@@ -62,7 +62,7 @@ public class UsersAjaxControllerTest {
 				USER2.getEmail(), USER2.getPhoneNumber(), USER2.getSystemRole().getName(), USER2.getLocale(),
 				"checked");
 
-		ResponseEntity<Map<String, String>> response = controller.updateUser(USER2.getId(), userEditRequest, principal,
+		ResponseEntity<AjaxResponse> response = controller.updateUser(USER2.getId(), userEditRequest, principal,
 				request);
 		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
 	}
@@ -76,7 +76,7 @@ public class UsersAjaxControllerTest {
 
 		when(userService.getUserByUsername(anyString())).thenReturn(savedUser);
 
-		ResponseEntity<Map<String, String>> response = controller.changeUserPassword(USER1.getId(), USER1.getPassword(),
+		ResponseEntity<AjaxResponse> response = controller.changeUserPassword(USER1.getId(), USER1.getPassword(),
 				"Password3!", principal, request);
 		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
 	}
