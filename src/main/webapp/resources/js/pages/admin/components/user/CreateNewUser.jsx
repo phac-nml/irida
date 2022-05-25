@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Button,
@@ -35,6 +35,7 @@ export default function CreateNewUser() {
   const [form] = Form.useForm();
   const [visible, setVisibility] = React.useState(false);
   const [activationEmail, setActivationEmail] = React.useState(emailConfigured);
+  const [submitting, setSubmitting] = useState(false);
   const usernameInput = React.useRef();
 
   const passwordRules = [
@@ -52,6 +53,7 @@ export default function CreateNewUser() {
   }, [visible]);
 
   const onFormFinish = (values) => {
+    setSubmitting(true);
     createUser({ ...values })
       .unwrap()
       .then(() => {
@@ -72,7 +74,8 @@ export default function CreateNewUser() {
           errors: [error],
         }));
         form.setFields(fields);
-      });
+      })
+      .finally(() => setSubmitting(false));
   };
 
   return (
@@ -94,6 +97,7 @@ export default function CreateNewUser() {
             type="primary"
             htmlType="submit"
             onClick={form.submit}
+            loading={submitting}
           >
             {i18n("CreateNewUser.form.button.submit")}
           </Button>
