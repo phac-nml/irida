@@ -89,14 +89,14 @@ function PasswordResetForm() {
         {updateSuccess && (
           <Alert
             style={{ marginBottom: SPACE_SM }}
-            message={i18n("password.reset.success")}
+            message={i18n("PasswordReset.alert.success")}
             className="t-reset-success-alert"
             action={
               <Button
                 type="link"
                 onClick={() => window.location.replace(setBaseUrl("/"))}
               >
-                {i18n("password.reset.success.link")}
+                {i18n("PasswordReset.alert.success.link")}
               </Button>
             }
             type="success"
@@ -134,7 +134,7 @@ function PasswordResetForm() {
               <Alert
                 style={{ marginBottom: SPACE_SM }}
                 className="t-password-expired-alert"
-                message={i18n("password.reset.password_expired")}
+                message={i18n("PasswordReset.password.expired")}
                 type="error"
                 showIcon
               />
