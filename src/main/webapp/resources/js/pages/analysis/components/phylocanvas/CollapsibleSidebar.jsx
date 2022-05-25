@@ -21,14 +21,15 @@ const SidebarMenu = styled.div`
 `;
 
 const SidebarContent = styled.div`
+  position: relative;
   border: 1px solid lightgray;
+  background-color: #ffffff;
   width: 250px;
-  height: 100%;
   min-height: 0px;
-  overflow: auto;
+  height: inherit;
 `;
 
-export function CollapsibleSidebar({items, onToggle}) {
+export function CollapsibleSidebar({ items, onToggle }) {
   const [activeItem, setActiveItem] = React.useState(null);
 
   const onMenuItemClick = (index) => {
@@ -41,16 +42,14 @@ export function CollapsibleSidebar({items, onToggle}) {
 
   React.useEffect(() => {
     onToggle();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeItem]);
 
   return (
     <SidebarContainer>
-      { activeItem !== null ? (
-        <SidebarContent>
-          {items[activeItem].component}
-        </SidebarContent>
-      ) : null }
+      {activeItem !== null ? (
+        <SidebarContent>{items[activeItem].component}</SidebarContent>
+      ) : null}
       <SidebarMenu>
         {items.map((item, index) => (
           <Button
@@ -65,4 +64,4 @@ export function CollapsibleSidebar({items, onToggle}) {
       </SidebarMenu>
     </SidebarContainer>
   );
-};
+}

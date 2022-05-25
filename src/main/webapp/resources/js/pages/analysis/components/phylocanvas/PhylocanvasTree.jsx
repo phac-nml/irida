@@ -12,7 +12,7 @@ import { Legend } from "./Legend";
 export function PhylocanvasTree() {
   const canvasRef = React.useRef();
   const treeRef = React.useRef();
-  const {treeProps} = useSelector((state) => state.tree);
+  const { treeProps } = useSelector((state) => state.tree);
   const dispatch = useDispatch();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -24,17 +24,16 @@ export function PhylocanvasTree() {
         ...treeProps,
         size: canvasRef.current.parentElement?.getBoundingClientRect(),
       },
-      [
-        phylocanvas.plugins.scalebar
-      ]
+      [phylocanvas.plugins.scalebar]
     );
   };
 
   const handleResize = () => {
-    console.log()
-    const {height, width} = canvasRef.current.parentElement.getBoundingClientRect();
-    dispatch(resize({height, width}));
-  }
+    console.log();
+    const { height, width } =
+      canvasRef.current.parentElement.getBoundingClientRect();
+    dispatch(resize({ height, width }));
+  };
 
   React.useEffect(() => {
     if (treeRef.current) {
@@ -42,7 +41,7 @@ export function PhylocanvasTree() {
     } else {
       renderTree(treeProps);
     }
-  }, [renderTree, treeProps])
+  }, [renderTree, treeProps]);
 
   React.useEffect(() => {
     window.addEventListener("resize", handleResize);
@@ -53,7 +52,7 @@ export function PhylocanvasTree() {
       }
       window.removeEventListener("resize", handleResize);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -78,9 +77,7 @@ export function PhylocanvasTree() {
           height: "100%",
         }}
       >
-        <div
-          ref={canvasRef}
-        >
+        <div ref={canvasRef}>
           <Space
             align="top"
             style={{
@@ -89,22 +86,21 @@ export function PhylocanvasTree() {
               height: 0,
               right: 4,
               top: 4,
-              userSelect: "none"
+              userSelect: "none",
             }}
           >
             <MetadataMenu />
-            <DownloadMenu treeRef={treeRef}/>
+            <DownloadMenu treeRef={treeRef} />
           </Space>
           <ZoomButtons />
-
         </div>
       </div>
       <CollapsibleSidebar
         items={[
           {
             text: i18n("visualization.phylogenomics.sidebar.legend.title"),
-            component: <Legend />
-          }
+            component: <Legend />,
+          },
         ]}
         onToggle={handleResize}
       />
