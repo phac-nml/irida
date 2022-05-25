@@ -34,7 +34,7 @@ export default function CreateNewUser() {
   const [createUser] = useCreateNewUserMutation();
   const [form] = Form.useForm();
   const [visible, setVisibility] = React.useState(false);
-  const [activationEmail, setActivationEmail] = React.useState(false);
+  const [activationEmail, setActivationEmail] = React.useState(emailConfigured);
   const usernameInput = React.useRef();
 
   const passwordRules = [
@@ -106,6 +106,7 @@ export default function CreateNewUser() {
           initialValues={{
             locale: "en",
             role: "ROLE_USER",
+            activate: activationEmail,
           }}
           onFinish={onFormFinish}
         >
@@ -247,7 +248,6 @@ export default function CreateNewUser() {
           <Form.Item name="activate" valuePropName="checked">
             <Checkbox
               disabled={!emailConfigured}
-              checked={activationEmail}
               onChange={(e) => setActivationEmail(e.target.checked)}
             >
               {i18n("CreateNewUser.form.activate.label")}
