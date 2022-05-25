@@ -48,7 +48,14 @@ export function ActivateAccount({ updateDisplayLoginPage }) {
   };
 
   return (
-    <div>
+    <>
+      <Alert
+        message={i18n("ActivateAccount.alert.description")}
+        className="t-activation-id-description"
+        style={{ marginTop: SPACE_MD }}
+        type="info"
+        showIcon
+      />
       {message !== null && (
         <Alert
           message={message}
@@ -58,6 +65,7 @@ export function ActivateAccount({ updateDisplayLoginPage }) {
           showIcon
         />
       )}
+
       <Form
         name="accountActivationForm"
         form={activateAccountForm}
@@ -106,6 +114,6 @@ export function ActivateAccount({ updateDisplayLoginPage }) {
       >
         {i18n("ActivateAccount.link.returnToLogin")}
       </Button>
-    </div>
+    </>
   );
 }
