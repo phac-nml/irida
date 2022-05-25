@@ -6,7 +6,7 @@ import {
   getMetadataTemplates,
   getNewickTree,
 } from "../../../apis/analysis/analysis";
-import { formatMetadata, updateMetadataColours } from "../metadata-utilities";
+import { formatMetadata, generateColourMap } from "../tree-utilities";
 
 const zoomStepSize = 0.1;
 
@@ -30,9 +30,14 @@ export const fetchTreeAndMetadata = createAsyncThunk(
       );
     }
 
-    const { formattedMetadata, metadataColourMap } = formatMetadata(
+    const metadataColourMap = generateColourMap(
       metadataData.metadata,
       metadataData.terms
+    );
+    const formattedMetadata = formatMetadata(
+      metadataData.metadata,
+      metadataData.terms,
+      metadataColourMap
     );
 
     return {
@@ -133,7 +138,7 @@ export const treeSlice = createSlice({
       const { item, key, colour } = action.payload;
       if (colour !== state.metadataColourMap[item][key]) {
         state.metadataColourMap[item][key] = colour;
-        state.treeProps.metadata = updateMetadataColours(
+        state.treeProps.metadata = formatMetadata(
           state.metadata,
           state.terms,
           state.metadataColourMap
