@@ -30,7 +30,11 @@ As in the [system introduction](..), passwords must:
 
 {% include tutorials/common/password-requirements.md %}
 
-After you enter a new password you should automatically be redirected to the main IRIDA dashboard:
+After you enter a new password you should see a success message with a link to return to IRIDA:
+
+![IRIDA password set success](images/irida-password-updated.png)
+
+Clicking on the `Return to IRIDA` link should take you to the dashboard
 
 ![IRIDA main dashboard](images/irida-dashboard.png)
 
@@ -56,7 +60,7 @@ If you have forgotten your IRIDA password, you can have IRIDA reset your passwor
 
 ![IRIDA login screen, password reset highlighted.](images/irida-login-password-reset.png)
 
-You will be required to enter the e-mail address associated with your IRIDA account:
+You will be required to enter either the username or e-mail address associated with your IRIDA account:
 
 ![Password reset page.](images/password-reset.png)
 
