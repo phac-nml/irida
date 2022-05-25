@@ -12,6 +12,7 @@ import { SPACE_MD, SPACE_SM } from "../../styles/spacing";
 import { useSetPasswordMutation } from "../../apis/password-reset";
 import store from "../store";
 import { Provider } from "react-redux";
+import { validatePassword } from "../../utilities/validation-utilities";
 
 const { Item } = Form;
 const passwordExpired =
@@ -28,7 +29,6 @@ function PasswordResetForm() {
   const [setPassword] = useSetPasswordMutation();
 
   const [loading, setLoading] = React.useState(false);
-  const [invalidPassword, setInvalidPassword] = React.useState(true);
   const [updateSuccess, setUpdateSuccess] = React.useState(false);
   const [updateError, setUpdateError] = React.useState(false);
   const [errorMessages, setErrorMessages] = React.useState(null);
@@ -69,28 +69,6 @@ function PasswordResetForm() {
       passwordResetForm.resetFields();
       setLoading(false);
     });
-  };
-
-  // Validator to check if password meets password policy requirements
-  const validatePassword = (password) => {
-    const passwordRegex =
-      /^(?=.*\d)(?=.*[!@#$%^&*()+?/<>={}.\\])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-    const minimumPasswordLength = 8;
-    setInvalidPassword(true);
-
-    if (password.length !== 0) {
-      if (password.length >= minimumPasswordLength) {
-        if (passwordRegex.test(password)) {
-          setInvalidPassword(false);
-          return Promise.resolve();
-        } else {
-          return Promise.reject(i18n("PasswordReset.input.passwordNotMatch"));
-        }
-      }
-      return Promise.reject(i18n("PasswordReset.input.minLength"));
-    } else {
-      return Promise.reject(i18n("PasswordReset.passwordIsRequired"));
-    }
   };
 
   return (
@@ -209,7 +187,7 @@ function PasswordResetForm() {
                 <Button
                   className="t-submit-btn"
                   type="primary"
-                  disabled={loading || invalidPassword}
+                  disabled={loading}
                   loading={loading}
                   block
                   htmlType="submit"
