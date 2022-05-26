@@ -40,5 +40,9 @@ export function getProjectIdFromUrl(url = window.location.href) {
   const projectIdRegex = /\/projects\/(?<projectId>\d+)/;
 
   const found = url.match(projectIdRegex);
-  return found.groups?.projectId;
+  if (found) {
+    if (found.groups) {
+      return found.groups.projectId;
+    }
+  }
 }

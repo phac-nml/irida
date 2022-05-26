@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -31,8 +32,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.CreateProjectRe
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.NewProjectMetadataRestriction;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.UpdateProjectAttributeRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.NewProjectMetadataRestriction;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ManageLocalProjectSettingsPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -40,7 +41,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -54,10 +54,7 @@ public class UIProjectsService {
 	private final ProjectOwnerPermission projectOwnerPermission;
 	private final ManageLocalProjectSettingsPermission projectMembersPermission;
 	private final MetadataTemplateService metadataTemplateService;
-	/*
-	 * All roles that are available on a project.
-	 */
-	private final List<String> PROJECT_ROLES = ImmutableList.of("PROJECT_USER", "PROJECT_OWNER");
+
 
 	@Autowired
 	public UIProjectsService(ProjectService projectService, SampleService sampleService, MessageSource messageSource,
@@ -113,9 +110,12 @@ public class UIProjectsService {
 	 * @return list of roles and their internationalized strings
 	 */
 	public List<Role> getProjectRoles(Locale locale) {
-		return PROJECT_ROLES.stream()
-				.map(role -> new Role(role, messageSource.getMessage("projectRole." + role, new Object[] {}, locale)))
-				.collect(Collectors.toList());
+		List<Role> roles = new ArrayList<>();
+		for (ProjectRole role : ProjectRole.values()) {
+			roles.add(new Role(role.toString(),
+					messageSource.getMessage("projectRole." + role, new Object[] {}, locale)));
+		}
+		return roles;
 	}
 
 	/**
@@ -211,8 +211,9 @@ public class UIProjectsService {
 			project.setOrganism(request.getValue());
 			break;
 		default:
-			throw new UpdateException(messageSource.getMessage("server.ProjectDetails.error",
-					new Object[] { request.getField() }, locale));
+			throw new UpdateException(
+					messageSource.getMessage("server.ProjectDetails.error", new Object[] { request.getField() },
+							locale));
 		}
 
 		try {

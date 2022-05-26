@@ -18,7 +18,6 @@ export function OverRepresentedSequences() {
   const { loading, sequencingObjectId, fileId, fastQC } = useSelector(
     (state) => state.fastQCReducer
   );
-  const [total, setTotal] = React.useState(0);
 
   React.useEffect(() => {
     if (Object.keys(fastQC).length === 0) {
@@ -29,7 +28,6 @@ export function OverRepresentedSequences() {
               fastQC: analysisFastQC,
             })
           );
-          setTotal(analysisFastQC.overrepresentedSequences.length);
         }
       );
     }
@@ -39,7 +37,7 @@ export function OverRepresentedSequences() {
     () =>
       getPaginationOptions(
         Object.keys(fastQC).length > 0 &&
-          typeof fastQC.overrepresentedSequences !== undefined
+          typeof fastQC.overrepresentedSequences !== "undefined"
           ? fastQC.overrepresentedSequences.length
           : 0
       ),
@@ -96,7 +94,8 @@ export function OverRepresentedSequences() {
           bordered
           pagination={{
             ...paginationOptions,
-            showTotal: (total) => `Total ${total} items`,
+            showTotal: (total) =>
+              i18n("FastQC.overrepresented.sequences.total", total),
           }}
           rowKey={(item) => item.identifier}
           loading={loading}

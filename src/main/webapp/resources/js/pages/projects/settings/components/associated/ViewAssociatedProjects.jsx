@@ -51,10 +51,6 @@ export default function ViewAssociatedProjects({ projectId }) {
     }
   }, [associatedProjects]);
 
-  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
-    total,
-  ]);
-
   React.useEffect(() => {
     const error = removeError?.data.error || addError?.data.error;
     error && notification.error({ message: error });
@@ -135,7 +131,7 @@ export default function ViewAssociatedProjects({ projectId }) {
       loading={isLoading}
       columns={columns}
       dataSource={associatedProjects}
-      pagination={paginationOptions}
+      pagination={getPaginationOptions(total)}
     />
   ) : (
     <Alert

@@ -25,7 +25,10 @@ import {
   IconRemove,
 } from "../../icons/Icons";
 import { useInterval } from "../../../hooks";
-import { setDefaultSequencingObject, setDefaultGenomeAssembly } from "../sampleSlice";
+import {
+  setDefaultSequencingObject,
+  setDefaultGenomeAssembly,
+} from "../sampleSlice";
 
 /**
  * React component to display, remove, download files
@@ -36,12 +39,11 @@ import { setDefaultSequencingObject, setDefaultGenomeAssembly } from "../sampleS
 export function SampleFileList() {
   const dispatch = useDispatch();
   const [removeSampleFilesFromSample] = useRemoveSampleFilesMutation();
-  const [
-    updateSampleDefaultSequencingObject,
-  ] = useUpdateDefaultSampleSequencingObjectMutation();
-  const [
-    updateSampleDefaultGenomeAssembly,
-  ] = useUpdateDefaultSampleGenomeAssemblyMutation();
+  const [updateSampleDefaultSequencingObject] =
+    useUpdateDefaultSampleSequencingObjectMutation();
+  const [updateSampleDefaultGenomeAssembly] =
+    useUpdateDefaultSampleGenomeAssemblyMutation();
+
   const { sample, projectId } = useSelector((state) => state.sampleReducer);
   const { files } = useSelector((state) => state.sampleFilesReducer);
 
@@ -246,7 +248,7 @@ export function SampleFileList() {
         <SequenceFileTypeRenderer title={i18n("SampleFiles.paired")}>
           {files.paired.map((pair) => (
             <PairedFileRenderer
-              key={`pair-${pair.identifier}`}
+              key={`pair-${pair.fileInfo.identifier}`}
               pair={pair}
               sampleId={sample.identifier}
               downloadSequenceFile={downloadSequenceFile}

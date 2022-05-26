@@ -33,14 +33,13 @@ export function FastQC() {
           title={
             <Space direction="horizontal" size="small">
               <Button
-                type="link"
+                type="text"
                 onClick={() => dispatch(clearFastQCData())}
-                style={{ padding: 0 }}
-              >
-                <IconArrowLeft />
-              </Button>
-              <Text level={3} strong>
-                <span>{fileLabel}</span>
+                className="t-fastqc-modal-close"
+                icon={<IconArrowLeft />}
+              />
+              <Text level={3} strong className="t-fastqc-modal-file-name">
+                {fileLabel}
               </Text>
             </Space>
           }

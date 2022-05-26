@@ -38,6 +38,7 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(id="rc-tabs-0-tab-files")
 	private WebElement filesTabLink;
 
+
 	@FindBy(id="rc-tabs-0-tab-analyses")
 	private WebElement sampleAnalysesTabLink;
 
@@ -155,6 +156,7 @@ public class SampleDetailsViewer extends AbstractPage {
 	}
 
 	public int numberOfFilesDisplayed() {
+		waitForTime(300);
 		if(files != null) {
 			return files.size();
 		}
@@ -320,6 +322,12 @@ public class SampleDetailsViewer extends AbstractPage {
 	public void clearSampleAnalysesFilter() {
 		WebElement searchInput = sampleAnalysesSearchInput.findElement(By.className("ant-input"));
 		searchInput.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
+		waitForTime(500);
+	}
+
+	public void clickSampleName() {
+		WebElement ele = driver.findElement(By.className("t-file-label"));
+		ele.click();
 		waitForTime(500);
 	}
 

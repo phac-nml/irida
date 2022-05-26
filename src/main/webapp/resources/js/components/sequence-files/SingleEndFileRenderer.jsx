@@ -37,6 +37,10 @@ export function SingleEndFileRenderer({
   autoDefaultFirstAssembly = null
 }) {
   const { sample } = useSelector((state) => state.sampleReducer);
+  const { fastQCModalVisible, sequencingObjectId } = useSelector(
+    (state) => state.fastQCReducer
+  );
+
   const dispatch = useDispatch();
   /*
   Function to download the sequence file or genome assembly
@@ -82,7 +86,13 @@ export function SingleEndFileRenderer({
           className="t-file-details"
         >
           <List.Item.Meta
-            avatar={<Avatar size={`small`} icon={<IconFile />} />}
+            avatar={
+              <Avatar
+                size={`small`}
+                style={file.fileType !== "assembly" && { marginTop: 3 }}
+                icon={<IconFile />}
+              />
+            }
             title={
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 {fastqcResults &&
@@ -91,7 +101,6 @@ export function SingleEndFileRenderer({
                     <Button
                       type="link"
                       style={{ padding: 0 }}
-                      className="t-file-label"
                       onClick={() =>
                         dispatch(
                           setFastQCModalData({
@@ -106,9 +115,14 @@ export function SingleEndFileRenderer({
                         )
                       }
                     >
-                      {file.fileInfo.label}
+                      <span className="t-file-label">
+                        {file.fileInfo.label}
+                      </span>
                     </Button>
-                    <FastQC />
+                    {fastQCModalVisible &&
+                    sequencingObjectId === file.fileInfo.identifier ? (
+                      <FastQC />
+                    ) : null}
                   </div>
                 ) : (
                   <span className="t-file-label">{file.fileInfo.label}</span>

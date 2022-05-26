@@ -94,7 +94,7 @@ const fastQCSlice = createSlice({
     builder.addCase(clearFastQCData, (state) => {
       state.fastQC = {};
       state.file = {};
-      state.proessingState = null;
+      state.processingState = null;
       state.fastQCModalVisible = false;
     });
   },

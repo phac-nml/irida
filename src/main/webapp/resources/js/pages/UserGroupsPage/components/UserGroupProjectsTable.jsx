@@ -1,9 +1,13 @@
 import React from "react";
 import { getProjectsForUserGroup } from "../../../apis/users/groups";
 import { Button, Table } from "antd";
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import {
+  formatInternationalizedDateTime
+} from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
+import {
+  getPaginationOptions
+} from "../../../utilities/antdesign-table-utilities";
 
 /**
  * Display a table of projects the current user group is used on.
@@ -14,10 +18,6 @@ import { getPaginationOptions } from "../../../utilities/antdesign-table-utiliti
 export function UserGroupProjectsTable({ groupId }) {
   const [projects, setProjects] = React.useState();
   const [total, setTotal] = React.useState(0);
-
-  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
-    total,
-  ]);
 
   const columns = [
     {
@@ -52,7 +52,7 @@ export function UserGroupProjectsTable({ groupId }) {
     <Table
       columns={columns}
       dataSource={projects}
-      pagination={paginationOptions}
+      pagination={getPaginationOptions(total)}
     />
   );
 }

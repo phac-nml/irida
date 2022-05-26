@@ -18,7 +18,8 @@ public class CurrentUser {
 		this.username = user.getUsername();
 		this.firstName = user.getFirstName();
 		this.lastName = user.getLastName();
-		this.isAdmin = user.getSystemRole().equals(Role.ROLE_ADMIN);;
+		this.isAdmin = user.getSystemRole().equals(Role.ROLE_ADMIN);
+		;
 	}
 
 	public Long getIdentifier() {

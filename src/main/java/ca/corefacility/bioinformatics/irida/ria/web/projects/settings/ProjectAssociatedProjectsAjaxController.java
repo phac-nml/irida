@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIAddAssociatedProjectException;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIRemoveAssociatedProjectException;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.AssociatedProject;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIAssociatedProjectsService;
 
@@ -27,15 +29,26 @@ public class ProjectAssociatedProjectsAjaxController {
 	}
 
 	/**
-	 * Get a list of all projects associated with the current project.  If the user is a manager or administrator, the
+	 * Get a list of all projects associated with the current project. If the user is a manager or administrator, the
 	 * list will also contain all projects they have access to.
 	 *
 	 * @param projectId project identifier for the currently active project
 	 * @return list of projects
 	 */
 	@GetMapping("")
-	public ResponseEntity<List<AssociatedProject>> getAssociatedProjects(@RequestParam long projectId) {
+	public ResponseEntity<List<AssociatedProject>> getAssociatedProjects(@RequestParam Long projectId) {
 		return ResponseEntity.ok(service.getAssociatedProjects(projectId));
+	}
+
+	/**
+	 * Get a list of all projects associated with the current project.
+	 *
+	 * @param projectId project identifier for the currently active project
+	 * @return list of projects
+	 */
+	@GetMapping("/list")
+	public ResponseEntity<List<AssociatedProject>> getAssociatedProjectsForProject(@RequestParam Long projectId) {
+		return ResponseEntity.ok(service.getAssociatedProjectsForProject(projectId));
 	}
 
 	/**
@@ -47,14 +60,13 @@ public class ProjectAssociatedProjectsAjaxController {
 	 * @return The result of adding the associated project
 	 */
 	@PostMapping("")
-	public ResponseEntity<AjaxResponse> addAssociatedProject(@RequestParam long projectId,
-			@RequestParam long associatedProjectId, Locale locale) {
+	public ResponseEntity<AjaxResponse> addAssociatedProject(@RequestParam Long projectId,
+			@RequestParam Long associatedProjectId, Locale locale) {
 		try {
 			service.addAssociatedProject(projectId, associatedProjectId, locale);
 			return ResponseEntity.ok(new AjaxSuccessResponse(""));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.SC_NOT_FOUND)
-					.body(new AjaxErrorResponse(e.getMessage()));
+		} catch (UIAddAssociatedProjectException e) {
+			return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
@@ -67,14 +79,13 @@ public class ProjectAssociatedProjectsAjaxController {
 	 * @return the result of removing the project
 	 */
 	@DeleteMapping("")
-	public ResponseEntity<AjaxResponse> removeAssociatedProject(@RequestParam long projectId,
-			@RequestParam long associatedProjectId, Locale locale) {
+	public ResponseEntity<AjaxResponse> removeAssociatedProject(@RequestParam Long projectId,
+			@RequestParam Long associatedProjectId, Locale locale) {
 		try {
 			service.removeAssociatedProject(projectId, associatedProjectId, locale);
 			return ResponseEntity.ok(new AjaxSuccessResponse(""));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.SC_NOT_FOUND)
-					.body(new AjaxErrorResponse(e.getMessage()));
+		} catch (UIRemoveAssociatedProjectException e) {
+			return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 }

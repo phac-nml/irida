@@ -8,7 +8,6 @@ module.exports = {
   login: "./resources/js/pages/LoginPage.jsx",
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
-  "client-base": "./resources/js/client.js",
   announcements: "./resources/js/pages/announcement",
   analysis: "./resources/js/pages/analysis",
   app: "./resources/js/app.js",
@@ -19,19 +18,8 @@ module.exports = {
   projects: "./resources/js/pages/projects/list/index.js",
   "samples-metadata-import":
     "./resources/js/pages/projects/samples-metadata-import",
-  "project-samples": "./resources/js/pages/projects/samples/project-samples.js",
-  "project-samples-merge":
-    "./resources/js/pages/projects/samples/modals/samples-merge.js",
-  "project-samples-copy":
-    "./resources/js/pages/projects/samples/modals/samples-copy.js",
-  "project-samples-remove":
-    "./resources/js/pages/projects/samples/modals/samples-remove.js",
-  "project-samples-linker":
-    "./resources/js/pages/projects/samples/modals/samples-linker.js",
+  samples: "./resources/js/pages/projects/samples",
   "project-linelist": "./resources/js/pages/projects/linelist/index.js",
-  "project-metadata-edit":
-    "./resources/js/pages/projects/project-metadata-edit.js",
-  "project-create": "./resources/js/pages/projects/create",
   "project-settings": "./resources/js/pages/projects/settings",
   "project-share": "./resources/js/pages/projects/share",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
@@ -47,17 +35,14 @@ module.exports = {
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
   "sample-files-concatenate":
     "./resources/js/pages/samples/sample-files-concatenate.js",
-  "sequencing-runs":
-    "./resources/js/pages/sequencing-runs/SequencingRunsPage.jsx",
-  "sequencing-run-details": "./resources/js/pages/sequencing-runs/details",
+  "sequencing-runs": "./resources/js/pages/sequencing-runs/index.js",
   groups: "./resources/js/pages/UserGroupsPage",
   "project-ncbi-exports": "./resources/js/pages/projects/ncbi-export",
-  "project-ncbi-export": "./resources/js/pages/projects/ncbi-export/ncbi-export.js",
+  "project-ncbi-export":
+    "./resources/js/pages/projects/ncbi-export/ncbi-export.js",
   search: "./resources/js/pages/search/search.js",
-  "run-files": "./resources/js/pages/sequence-files/run-files.js",
-  "user-details": "./resources/js/pages/user-details.js",
-  "user": "./resources/js/pages/user",
+  user: "./resources/js/pages/user",
   admin: "./resources/js/pages/admin/index.js",
-  "sequence-files": "./resources/js/pages/sequence-files/",
-  "analyses-outputs": "./resources/js/pages/analyses/analyses-outputs/index.js",
+  "analyses-outputs": "./resources/js/pages/analyses/analyses-outputs/",
+  password: "./resources/js/pages/password/PasswordReset.jsx",
 };

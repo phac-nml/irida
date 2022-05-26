@@ -20,7 +20,7 @@ export const userApi = createApi({
       query: (userId) => ({
         url: `/${userId}`,
       }),
-      providesTags: ["User"],
+      providesTags: ["User", "PasswordReset"],
     }),
     /*
     Edit user details.
@@ -37,9 +37,9 @@ export const userApi = createApi({
     Change user password.
     */
     changeUserPassword: build.mutation({
-      query: ({userId, oldPassword, newPassword}) => ({
+      query: ({ userId, oldPassword, newPassword }) => ({
         url: `/${userId}/changePassword`,
-        params: {oldPassword, newPassword},
+        params: { oldPassword, newPassword },
         method: "POST",
       }),
       invalidatesTags: ["User"],
@@ -48,19 +48,30 @@ export const userApi = createApi({
     Update the disabled status of a user by user id.
     */
     setUsersDisabledStatus: build.mutation({
-      query: ({isEnabled, id}) => ({
+      query: ({ isEnabled, id }) => ({
         url: `/edit`,
-        params: {isEnabled, id},
+        params: { isEnabled, id },
         method: "PUT",
       }),
       invalidatesTags: ["User"],
+    }),
+    /*
+    Create a password reset.
+    */
+    createPasswordReset: build.mutation({
+      query: ({ userId }) => ({
+        url: `/${userId}/reset-password`,
+        method: "POST",
+      }),
+      invalidatesTags: ["PasswordReset"],
     }),
   }),
 });
 
 export const {
+  useCreatePasswordResetMutation,
   useGetUserDetailsQuery,
   useEditUserDetailsMutation,
   useChangeUserPasswordMutation,
-  useSetUsersDisabledStatusMutation
+  useSetUsersDisabledStatusMutation,
 } = userApi;

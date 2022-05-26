@@ -3,7 +3,7 @@ import "jquery-validation";
 
 import {
   passwordCharacterReqsValidation,
-  validationConfig
+  validationConfig,
 } from "../../utilities/form-validation";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
@@ -44,13 +44,13 @@ function passwordResetValidation() {
           hasUppercaseLetter: true,
           hasLowercaseLetter: true,
           hasNumber: true,
-          hasSpecialChar: true
+          hasSpecialChar: true,
         },
         confirmPassword: {
           required: true,
-          equalTo: "#password"
-        }
-      }
+          equalTo: "#password",
+        },
+      },
     })
   );
   $pwdInputs.on("keyup blur", submitBtnToggle);
@@ -61,32 +61,32 @@ function editUserDetailsValidation() {
     Object.assign({}, validationConfig, {
       rules: {
         firstName: {
-          minlength: 2
+          minlength: 2,
         },
         lastName: {
-          minlength: 2
+          minlength: 2,
         },
         phoneNumber: {
           minlength: 4,
-          hasNumber: true
+          hasNumber: true,
         },
         email: {
           minlength: 5,
-          remote: getEmailValidationUrl()
+          remote: getEmailValidationUrl(),
         },
         password: {
           minlength: PWD_MIN_LENGTH,
           hasUppercaseLetter: true,
           hasLowercaseLetter: true,
           hasNumber: true,
-          hasSpecialChar: true
+          hasSpecialChar: true,
         },
         confirmPassword: {
-          equalTo: "#password"
-        }
+          equalTo: "#password",
+        },
       },
       // don't validate password input or other non-password inputs if empty/blank
-      ignore: "#password:blank,input:blank:not(.js-password-input)"
+      ignore: "#password:blank,input:blank:not(.js-password-input)",
     })
   );
   $pwdInputs.on("keyup blur", submitBtnToggle);
@@ -98,25 +98,25 @@ function createUserValidation() {
       username: {
         required: true,
         minlength: 3,
-        remote: getUsernameValidationUrl()
+        remote: getUsernameValidationUrl(),
       },
       firstName: {
         required: true,
-        minlength: 2
+        minlength: 2,
       },
       lastName: {
         required: true,
-        minlength: 2
+        minlength: 2,
       },
       email: {
         required: true,
         minlength: 5,
-        remote: getEmailValidationUrl()
+        remote: getEmailValidationUrl(),
       },
       phoneNumber: {
         required: true,
         minlength: 4,
-        hasNumber: true
+        hasNumber: true,
       },
       password: {
         required: true,
@@ -124,14 +124,14 @@ function createUserValidation() {
         hasUppercaseLetter: true,
         hasLowercaseLetter: true,
         hasNumber: true,
-        hasSpecialChar: true
+        hasSpecialChar: true,
       },
       confirmPassword: {
         required: true,
-        equalTo: "#password"
-      }
+        equalTo: "#password",
+      },
     },
-    ignore: ":hidden,:disabled"
+    ignore: ":hidden,:disabled",
   });
 
   function toggleShowPassword() {
