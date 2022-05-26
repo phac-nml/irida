@@ -1,29 +1,37 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
 import javax.validation.Validator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.data.domain.PageRequest;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectUserJoinRepository;
+import ca.corefacility.bioinformatics.irida.repositories.joins.project.UserGroupProjectJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectEventService;
 import ca.corefacility.bioinformatics.irida.service.impl.ProjectEventServiceImpl;
+
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class ProjectEventServiceImplTest {
 	ProjectEventService service;
 	Validator validator;
 	ProjectEventRepository repository;
+	@Mock
+	ProjectUserJoinRepository pujRepository;
+	@Mock
+	UserGroupProjectJoinRepository ugpjRepository;
 
 	@BeforeEach
 	public void setUp() {
 		repository = mock(ProjectEventRepository.class);
-		service = new ProjectEventServiceImpl(repository, validator);
+		service = new ProjectEventServiceImpl(repository, pujRepository, ugpjRepository, validator);
 	}
 
 	@Test
@@ -41,7 +49,9 @@ public class ProjectEventServiceImplTest {
 		PageRequest pageable = PageRequest.of(0, 1);
 
 		service.getEventsForUser(user, pageable);
-		verify(repository).getEventsForUser(user, pageable);
+		verify(pujRepository).getProjectsForUser(user);
+		verify(ugpjRepository).findProjectsByUser(user);
+		verify(repository).getEventsForProjects(anyList(), pageable);
 
 	}
 

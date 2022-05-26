@@ -34,8 +34,7 @@ public interface ProjectEventService extends CRUDService<Long, ProjectEvent> {
 	public Page<ProjectEvent> getEventsForUser(User user, Pageable pageable);
 
 	/**
-	 * Get a list of events for a {@link User} which occurred after the given
-	 * date.
+	 * Get a list of events for a {@link User} which occurred after the given date.
 	 *
 	 * @param user      {@link User} to get events for
 	 * @param beginning Get events after this date

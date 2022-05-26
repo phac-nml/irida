@@ -63,8 +63,8 @@ public class ProjectEventEmailScheduledTaskImpl implements ProjectEventEmailSche
 				List<ProjectEvent> eventsToEmailToUser = eventService.getEventsForUserAfterDate(user, lastTime);
 
 				// Get the set of projects the user is subscribed to
-				List<Project> projectsWithSubscription = projectSubscriptionService.getProjectsForUserWithEmailSubscriptions(
-						user);
+				List<Project> projectsWithSubscription = projectSubscriptionService
+						.getProjectsForUserWithEmailSubscriptions(user);
 
 				// filter the events to ensure the user is subscribed
 				eventsToEmailToUser = eventsToEmailToUser.stream()
