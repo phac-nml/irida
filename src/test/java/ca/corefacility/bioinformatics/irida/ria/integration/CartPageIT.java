@@ -121,7 +121,6 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(4, sampleDetailsViewer.getNumberOfMetadataEntries(), "Should have the proper number of metadata entries");
 		assertEquals("AB-1003", sampleDetailsViewer.getValueForMetadataField("symptom"), "Should be able to diplay the proper metadata");
 
-
 		sampleDetailsViewer.clickFilesTabLink();
 		// Check that the upload option is not available to a user on a project (only project owner should be able to view)
 		assertFalse(sampleDetailsViewer.fileUploadVisible(), "Drag upload should not be visible to user");
@@ -201,7 +200,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertEquals(sampleName, sampleDetailsViewer.getSampleName(), "Should be viewing the proper sample");
 		assertEquals(projectName, sampleDetailsViewer.getProjectName(), "Should have proper project name displayed for sample");
-		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Shoauld display the correct created date");
+		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Should display the correct created date");
 
 		sampleDetailsViewer.clickMetadataTabLink();
 		assertTrue(sampleDetailsViewer.addNewMetadataButtonVisible());

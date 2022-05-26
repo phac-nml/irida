@@ -41,7 +41,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -53,34 +52,20 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.DateFormatConverter;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
-
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-
-
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleGenomeAssemblyFileModel;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleSequencingObjectFileModel;
-
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -89,9 +74,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleFiles;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareMetadataRestriction;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
-
-
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchCriteria;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchOperation;
@@ -106,7 +88,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.Project
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.ProjectSamplesFilter;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.SampleObject;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.error.SampleMergeException;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
@@ -936,7 +917,7 @@ public class UISampleService {
 		}
 	}
 
-	 /* Get a page of samples based on the current state of the table options (filters, sort, and pagination)
+	/** Get a page of samples based on the current state of the table options (filters, sort, and pagination)
 	 *
 	 * @param projectId Identifier for the current project.
 	 * @param request   Information about the state of the table (filters, sort, and pagination).
@@ -1207,7 +1188,7 @@ public class UISampleService {
 		return new SequenceFile(target);
 	}
 
-	 /* Remove 1 or more samples from a project.
+	/** Remove 1 or more samples from a project.
 	 *
 	 * @param projectId identifier for the project
 	 * @param sampleIds list of sampleIds to remove
