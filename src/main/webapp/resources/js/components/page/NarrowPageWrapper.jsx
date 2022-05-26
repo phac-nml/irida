@@ -21,7 +21,7 @@ export function NarrowPageWrapper({
   children,
 }) {
   return (
-    <Layout style={{ height: "100%", minHeight: "100%" }}>
+    <Layout style={{ minHeight: "100%" }}>
       <Row>
         <Col
           xxl={{ span: 12, offset: 6 }}
