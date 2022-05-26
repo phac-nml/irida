@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/beta")
 public class BetaController {
 
-	@RequestMapping("/admin")
+	@RequestMapping("/admin/**")
 	public String getAdminPage() {
 		return "beta/admin";
 	}

@@ -2,7 +2,6 @@ import React from "react";
 import {
   Badge,
   Box,
-  Container,
   createTheme,
   CssBaseline,
   Divider,
@@ -17,6 +16,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { Drawer } from "./Drawer";
+import { Outlet } from "react-router-dom";
 
 const theme = createTheme();
 
@@ -84,9 +84,7 @@ export function Dashboard({ navigation = [], title }) {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            hello
-          </Container>
+          <Outlet />
         </Box>
       </Box>
     </ThemeProvider>

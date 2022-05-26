@@ -56,12 +56,12 @@ export const navigationItems = (
     <RouterLink to="/clients" text={"Client"} icon={<ComputerIcon />} />
     <RouterLink
       to="/remote-connections"
-      text={"Client"}
+      text={"Remote Connections"}
       icon={<RemoteIcon />}
     />
     <RouterLink
       to="/ncbi-exports"
-      text={"Statistics"}
+      text={"NCBI Exports"}
       icon={<IosShareIcon />}
     />
     <RouterLink
