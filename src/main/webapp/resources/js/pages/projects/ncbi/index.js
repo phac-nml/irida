@@ -307,7 +307,7 @@ function NCBIPage() {
             initialValues={{ samples, release_date: moment(new Date()) }}
           >
             <Row gutter={[16, 16]}>
-              <Col xs={24} sm={{ span: 12, offset: 6 }}>
+              <Col xs={24} sm={12}>
                 <Form.Item
                   label={i18n("project.export.bioproject.title")}
                   help={i18n("project.export.bioproject.description")}
@@ -349,7 +349,7 @@ function NCBIPage() {
                   pagination={getPaginationOptions(Object.keys(samples).length)}
                 />
               </Col>
-              <Col xs={24} sm={{ span: 12, offset: 6 }}>
+              <Col>
                 <Button htmlType="submit" type="primary">
                   Send
                 </Button>
