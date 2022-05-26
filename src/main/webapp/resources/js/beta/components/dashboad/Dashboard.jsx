@@ -2,9 +2,12 @@ import React from "react";
 import {
   Badge,
   Box,
+  Container,
   createTheme,
   CssBaseline,
+  Divider,
   IconButton,
+  List,
   ThemeProvider,
   Toolbar,
   Typography,
@@ -17,7 +20,7 @@ import { Drawer } from "./Drawer";
 
 const theme = createTheme();
 
-export function Dashboard() {
+export function Dashboard({ navigation = [], title }) {
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => setOpen(!open);
 
@@ -43,7 +46,7 @@ export function Dashboard() {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              IRIDA Admin
+              {title}
             </Typography>
             <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">
@@ -65,7 +68,26 @@ export function Dashboard() {
               <ChevronLeftIcon />
             </IconButton>
           </Toolbar>
+          <Divider />
+          <List component="nav">{navigation}</List>
         </Drawer>
+        <Box
+          component="main"
+          sx={{
+            backgroundColor: (theme) =>
+              theme.palette.mode === "light"
+                ? theme.palette.grey[100]
+                : theme.palette.grey[900],
+            flexGrow: 1,
+            height: "100vh",
+            overflow: "auto",
+          }}
+        >
+          <Toolbar />
+          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            hello
+          </Container>
+        </Box>
       </Box>
     </ThemeProvider>
   );
