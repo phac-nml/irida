@@ -1,4 +1,3 @@
-import { ConsoleSqlOutlined } from "@ant-design/icons";
 import uniqolor from "uniqolor";
 
 const EMPTY_COLOUR = "#ffffff";
@@ -7,6 +6,7 @@ const EMPTY_COLOUR = "#ffffff";
  * Generate a colour for each unique value per metadata term
  * @param {object} metadata Map of sampleNames to Map of metadata terms to metadata values
  * @param {array} terms List of metadata terms
+ * @return {object} Map of metadata terms and values to colours for phylocanvas to consume
  */
 export function generateColourMap(metadata, terms) {
   const colourMap = terms.reduce((prev, curr) => {
@@ -32,9 +32,10 @@ export function generateColourMap(metadata, terms) {
 /**
  * Format the metadata into an object that can be consumed by Phylocanvas.
  *  { leaf-label: { templateMetadataField : { label, color} }}
- * @param {array} metadata list of metaterms for the samples.
- * @param {array} metadataFieldLabels list of metadata field labels
- * @return {object} Map of metadata with colours for Phylocanvas to consume.
+ * @param {object} metadata Map of sampleNames to Map of metadata terms to metadata values
+ * @param {array} terms list of metadata terms
+ * @param {object} colourMap Map of metadata terms and values to colours for phylocanvas to consume
+ * @return {object} Map of metadata with colours for Phylocanvas to consume
  */
 export function formatMetadata(metadata, terms, colourMap) {
   const sampleMetadataTemplate = () => {
@@ -68,6 +69,13 @@ export function formatMetadata(metadata, terms, colourMap) {
   return formattedMetadata;
 }
 
+/**
+ * Export a SVG blob of the provided legend section identified by term
+ * @param {string} term the legend section to download
+ * @param {object} colourMap Map of metadata terms and values to colours for phylocanvas to consume
+ * @param {object} treeProps Map of treeProps for phylocanvas
+ * @returns
+ */
 export function exportLegendSVG(term, colourMap, treeProps) {
   const svg = [];
   const padding = 16;
@@ -100,7 +108,7 @@ export function exportLegendSVG(term, colourMap, treeProps) {
     padding;
 
   svg.push(
-    `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">\n`
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">\n`
   );
 
   svg.push(`<g font-family="${fontFamily}" font-size="${fontSize}px">\n`);

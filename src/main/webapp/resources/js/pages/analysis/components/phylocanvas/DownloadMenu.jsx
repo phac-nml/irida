@@ -1,35 +1,26 @@
 import { MenuOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Menu } from "antd";
 import React from "react";
+import { downloadObjectURL } from "../../../../utilities/file-utilities";
 
 export function DownloadMenu({ treeRef }) {
-  const downloadUrl = (url, name) => {
-    const link = document.createElement("a");
-    link.style.display = "none";
-    link.href = url;
-    link.setAttribute("download", name);
-    document.body.appendChild(link);
-    link.click();
-    window.URL.revokeObjectURL(url);
-  };
-
   const downloadNewick = () => {
     const blob = new Blob([treeRef.current.exportNewick()], {
       type: "text/plain",
     });
     const url = window.URL.createObjectURL(blob);
-    downloadUrl(url, `tree.newick`);
+    downloadObjectURL(url, `tree.newick`);
   };
 
   const downloadSVG = () => {
     const blob = treeRef.current.exportSVG();
     const url = window.URL.createObjectURL(blob);
-    downloadUrl(url, `tree.svg`);
+    downloadObjectURL(url, `tree.svg`);
   };
 
   const downloadPNG = () => {
     const url = treeRef.current.exportPNG();
-    downloadUrl(url, `tree.png`);
+    downloadObjectURL(url, `tree.png`);
   };
 
   const menu = (

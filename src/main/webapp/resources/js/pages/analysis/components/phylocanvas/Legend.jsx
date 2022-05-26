@@ -1,6 +1,7 @@
 import { List, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { downloadObjectURL } from "../../../../utilities/file-utilities";
 import { setMetadataColourForTermWithValue } from "../../redux/treeSlice";
 import { exportLegendSVG } from "../../tree-utilities";
 import { LegendDownloadMenu } from "./LegendDownloadMenu";
@@ -12,20 +13,10 @@ export function Legend() {
   );
   const dispatch = useDispatch();
 
-  const downloadUrl = (url, name) => {
-    const link = document.createElement("a");
-    link.style.display = "none";
-    link.href = url;
-    link.setAttribute("download", name);
-    document.body.appendChild(link);
-    link.click();
-    window.URL.revokeObjectURL(url);
-  };
-
   const onItemClick = (term, format) => {
     const blob = exportLegendSVG(term, metadataColourMap, treeProps);
     const url = window.URL.createObjectURL(blob);
-    downloadUrl(url, `${term}-legend.svg`);
+    downloadObjectURL(url, `${term}-legend.svg`);
   };
 
   return (
