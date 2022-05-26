@@ -119,11 +119,7 @@ function NCBIPage() {
             name={["samples", item.name, "library_name"]}
             style={{ margin: 0 }}
           >
-            <Input
-              type="text"
-              defaultValue={item.library_name}
-              style={{ width: 200 }}
-            />
+            <Input type="text" style={{ width: 200 }} />
           </Form.Item>
         );
       },
@@ -178,7 +174,7 @@ function NCBIPage() {
               margin: 0,
             }}
           >
-            <Select defaultValue={item.library_source} style={{ width: 200 }}>
+            <Select style={{ width: 200 }}>
               {sources?.map((option) => (
                 <Select.Option key={option}>{option}</Select.Option>
               ))}
@@ -250,10 +246,7 @@ function NCBIPage() {
               margin: 0,
             }}
           >
-            <Select
-              defaultValue={item.library_selection}
-              style={{ width: 200 }}
-            >
+            <Select style={{ width: 200 }}>
               {selections?.map((option) => (
                 <Select.Option key={option}>{option}</Select.Option>
               ))}
