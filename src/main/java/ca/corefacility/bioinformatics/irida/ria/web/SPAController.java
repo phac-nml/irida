@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/beta")
-public class BetaController {
+public class SPAController {
 
 	@RequestMapping("/admin/**")
 	public String getAdminPage() {
