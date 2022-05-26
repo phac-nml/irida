@@ -26,12 +26,12 @@ import ncbiReducer, {
   fetchStrategies,
 } from "./ncbiSlice";
 import { Provider, useDispatch, useSelector } from "react-redux";
-import TableHeaderWithSelectOptions from "../../../components/ant.design/TableHeaderWithSelectOptions";
+import { TableHeaderWithSelectOptions } from "../../../components/ant.design/TableHeaderWithSelectOptions";
 
 function NCBIPage() {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const strategyForm = Form.useForm();
+  const strategyForm = React.useRef();
 
   const [samples, setSamples] = React.useState(() => {
     const stored = window.sessionStorage.getItem("share");
@@ -45,13 +45,7 @@ function NCBIPage() {
             key: name,
             id,
             name,
-            bioSample: "",
-            instrument_model: "",
             library_name: name,
-            library_construction_protocol: "",
-            library_strategy: "",
-            library_selection: "",
-            library_source: "",
           },
         }),
         {}
@@ -103,7 +97,7 @@ function NCBIPage() {
             name={["samples", item.name, "biosample"]}
             style={{ margin: 0 }}
           >
-            <Input type="text" style={{ width: 200 }} />
+            <Input type="text" style={{ display: "block" }} />
           </Form.Item>
         );
       },
@@ -119,7 +113,7 @@ function NCBIPage() {
             name={["samples", item.name, "library_name"]}
             style={{ margin: 0 }}
           >
-            <Input type="text" style={{ width: 200 }} />
+            <Input type="text" style={{ display: "block" }} />
           </Form.Item>
         );
       },
@@ -131,8 +125,8 @@ function NCBIPage() {
             options={strategies}
             title={i18n("project.export.library_strategy.title")}
             onChange={updateAllSamplesForField("library_strategy")}
-            popoverText={"Select value for all samples"}
-            formRef={strategyForm}
+            helpText={i18n("project.export.library_strategy.description")}
+            ref={strategyForm}
           />
         );
       },
@@ -150,8 +144,8 @@ function NCBIPage() {
             }}
           >
             <Select
-              style={{ width: 200 }}
-              onChange={() => strategyForm.resetFields()}
+              style={{ display: "block" }}
+              onChange={() => strategyForm.current.resetSelect()}
             >
               {strategies?.map((option) => (
                 <Select.Option key={option}>{option}</Select.Option>
@@ -174,7 +168,7 @@ function NCBIPage() {
               margin: 0,
             }}
           >
-            <Select style={{ width: 200 }}>
+            <Select style={{ display: "block" }}>
               {sources?.map((option) => (
                 <Select.Option key={option}>{option}</Select.Option>
               ))}
@@ -200,7 +194,7 @@ function NCBIPage() {
             name={["samples", item.name, "library_construction_protocol"]}
             style={{ margin: 0 }}
           >
-            <Input type="text" style={{ width: 200 }} />
+            <Input type="text" style={{ display: "block" }} />
           </Form.Item>
         );
       },
@@ -223,7 +217,7 @@ function NCBIPage() {
               margin: 0,
             }}
           >
-            <Cascader options={platforms} style={{ width: 250 }} />
+            <Cascader options={platforms} style={{ display: "block" }} />
           </Form.Item>
         );
       },
@@ -246,7 +240,7 @@ function NCBIPage() {
               margin: 0,
             }}
           >
-            <Select style={{ width: 200 }}>
+            <Select style={{ display: "block" }}>
               {selections?.map((option) => (
                 <Select.Option key={option}>{option}</Select.Option>
               ))}
@@ -343,6 +337,7 @@ function NCBIPage() {
               </Col>
               <Col span={24}>
                 <Table
+                  style={{ maxWidth: 1600 }}
                   scroll={{ x: "max-content" }}
                   columns={columns}
                   dataSource={Object.values(samples)}
