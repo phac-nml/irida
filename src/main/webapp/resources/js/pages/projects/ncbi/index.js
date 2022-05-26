@@ -31,7 +31,8 @@ import { TableHeaderWithSelectOptions } from "../../../components/ant.design/Tab
 function NCBIPage() {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const strategyForm = React.useRef();
+  const strategyRef = React.useRef();
+  const sourceRef = React.useRef();
 
   const [samples, setSamples] = React.useState(() => {
     const stored = window.sessionStorage.getItem("share");
@@ -126,7 +127,7 @@ function NCBIPage() {
             title={i18n("project.export.library_strategy.title")}
             onChange={updateAllSamplesForField("library_strategy")}
             helpText={i18n("project.export.library_strategy.description")}
-            ref={strategyForm}
+            ref={strategyRef}
           />
         );
       },
@@ -145,7 +146,7 @@ function NCBIPage() {
           >
             <Select
               style={{ display: "block" }}
-              onChange={() => strategyForm.current.resetSelect()}
+              onChange={() => strategyRef.current.resetSelect()}
             >
               {strategies?.map((option) => (
                 <Select.Option key={option}>{option}</Select.Option>
@@ -156,7 +157,17 @@ function NCBIPage() {
       },
     },
     {
-      title: i18n("project.export.library_source.title"),
+      title: () => {
+        return (
+          <TableHeaderWithSelectOptions
+            options={sources}
+            title={i18n("project.export.library_source.title")}
+            onChange={updateAllSamplesForField("library_source")}
+            helpText={i18n("project.export.library_source.description")}
+            ref={sourceRef}
+          />
+        );
+      },
       dataIndex: "library_source",
       key: "library_source",
       render: (_, item) => {
@@ -168,7 +179,10 @@ function NCBIPage() {
               margin: 0,
             }}
           >
-            <Select style={{ display: "block" }}>
+            <Select
+              style={{ display: "block" }}
+              onChange={() => sourceRef.current.resetSelect()}
+            >
               {sources?.map((option) => (
                 <Select.Option key={option}>{option}</Select.Option>
               ))}
