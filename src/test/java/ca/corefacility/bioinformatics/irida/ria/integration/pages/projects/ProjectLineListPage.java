@@ -131,12 +131,12 @@ public class ProjectLineListPage extends ProjectPageBase {
 
 	public void saveMetadataTemplate(String name) {
 		templateSaveBtn.click();
-		waitForElementsVisible(By.className("ant-select-selection-search"));
-		templateNameInputWrapper.click();
-		modalTemplateNameInput.sendKeys(name);
-		modalTemplateNameInput.sendKeys(Keys.ENTER);
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebElement input = wait.until(ExpectedConditions.elementToBeClickable(
+				By.xpath("//div[contains(@class, 't-save-modal')]//input[@type='search']")));
+		input.sendKeys(name);
+		input.sendKeys(Keys.TAB);
 		modalSaveTemplateBtn.click();
-		waitForElementInvisible(By.className("ant-modal"));
 	}
 
 	public String getCellContents(int rowIndex, String columnName) {

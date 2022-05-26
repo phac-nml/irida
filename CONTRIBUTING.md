@@ -22,7 +22,7 @@ Reporting a bug is the easiest, and one of the most useful ways you can contribu
 
 If you do not find a similar issue, please create a new issue with (at least) the following information:
 
-1. Where were you using IRIDA? (public IRIDA, private install, virtual machine, etc)
+1. Where were you using IRIDA? (public IRIDA, private install, etc)
 2. What were you doing when the issue happened?
 3. What did you expect to happen?
 4. What actually happened?

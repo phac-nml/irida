@@ -22,12 +22,15 @@ src/main/webapp/node
 /doc/.jekyll-cache/Jekyll/Cache/
 /doc/developer/apidocs
 
+# YARN
+/src/main/webapp/.pnp.*
 /src/main/webapp/.yarn/*
 !/src/main/webapp/.yarn/patches
-!/src/main/webapp/.yarn/releases
 !/src/main/webapp/.yarn/plugins
+!/src/main/webapp/.yarn/releases
 !/src/main/webapp/.yarn/sdks
 !/src/main/webapp/.yarn/versions
-/src/main/webapp/.pnp.*
 
 doc/swagger-ui/open-api.json
+/.theia/launch.json
+/yarn.lock

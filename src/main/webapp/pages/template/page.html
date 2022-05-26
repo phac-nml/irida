@@ -4,19 +4,13 @@
       data-layout-decorate="~{template/base}">
 <head>
 	<webpacker:css entry="app" />
-  <style>
-    <!-- This is used by angular to prevent page flickering. Remove when done with angular -->
-    .ng-cloak {
-      display: none !important;
-    }
-  </style>
   <script th:inline="javascript">
     window.breadcrumbs = /*[[${breadcrumbs}]]*/ [];
   </script>
 </head>
 <body>
 <th:block layout:fragment="content">
-  <div class="ant-layout" style="height: 100vw; background-color: white;">
+  <div class="ant-layout">
     <header class="js-page-header"></header>
     <div class="ant-layout-content" layout:fragment="page"></div>
   </div>

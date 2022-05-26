@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotDisplayableException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -196,17 +197,26 @@ public class AutomatedAnalysisFileProcessor implements FileProcessor {
 		//get the workflow for the template
 		IridaWorkflow iridaWorkflow = null;
 		try {
-			iridaWorkflow = workflowsService.getIridaWorkflow(workflowId);
+			iridaWorkflow = workflowsService.getDisplayableIridaWorkflow(workflowId);
 
-		} catch (IridaWorkflowNotFoundException e) {
+		} catch (IridaWorkflowNotFoundException | IridaWorkflowNotDisplayableException e) {
+			String message;
+
 			//if the workflow doesn't exist
-			logger.warn("Project " + template.getSubmittedProject()
-					.getId() + " attempted to run workflow " + workflowId
-					+ " but it does not exist.  This template will be disabled.", e);
+			if (e instanceof IridaWorkflowNotDisplayableException) {
+				logger.warn("Project " + template.getSubmittedProject()
+						.getId() + " attempted to run workflow " + workflowId
+						+ " but it is disabled (via 'irida.workflow.types.disabled'). This template will be disabled.", e);
+				message = messageSource.getMessage("analysis.template.status.disabled", null, Locale.getDefault());
+			} else {
+				logger.warn("Project " + template.getSubmittedProject()
+						.getId() + " attempted to run workflow " + workflowId
+						+ " but it does not exist.  This template will be disabled.", e);
+				message = messageSource.getMessage("analysis.template.status.notexists", null, Locale.getDefault());
+			}
 
 			//disable the template and set a message in the status
 			template.setEnabled(false);
-			String message = messageSource.getMessage("analysis.template.status.notexists", null, Locale.getDefault());
 			template.setStatusMessage(message);
 
 			analysisTemplateRepository.save(template);

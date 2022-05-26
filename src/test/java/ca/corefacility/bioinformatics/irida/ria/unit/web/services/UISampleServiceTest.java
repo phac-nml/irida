@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Locale;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
@@ -22,14 +24,30 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntPagination;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntSort;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleTableItem;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSamplesTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareMetadataRestriction;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
+
 import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
@@ -42,7 +60,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import static org.mockito.Mockito.*;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 
 public class UISampleServiceTest {
 	private UISampleService service;
@@ -83,6 +108,18 @@ public class UISampleServiceTest {
 	SampleSequencingObjectJoin sampleSequencingObjectJoin;
 	SampleGenomeAssemblyJoin sampleGenomeAssemblyJoin;
 
+	Sample sample2 = new Sample("SAMPLE_02");
+	Sample sample3 = new Sample("SAMPLE_03");
+	private final Long PROJECT_ID_1 = 1L;
+	private final Long PROJECT_ID_2 = 2L;
+	private Project PROJECT_1 = new Project("PROJECT 1");
+	private Project PROJECT_2 = new Project("PROJECT 2");
+	private final ProjectSamplesTableRequest request = new ProjectSamplesTableRequest();
+	private final ProjectSampleJoinSpecification specification = new ProjectSampleJoinSpecification();
+	List<ProjectSampleJoin> joins = ImmutableList.of(new ProjectSampleJoin(PROJECT_1, SAMPLE_1, true),
+			new ProjectSampleJoin(PROJECT_2, sample2, true), new ProjectSampleJoin(PROJECT_2, sample3, true));
+
+
 	@BeforeEach
 	public void setUp() {
 		sampleService = mock(SampleService.class);
@@ -111,9 +148,17 @@ public class UISampleServiceTest {
 		SAMPLE_1.setDescription(SAMPLE_DESCRIPTION);
 		SAMPLE_1.setOrganism(SAMPLE_ORGANISM);
 		USER_1.setSystemRole(Role.ROLE_ADMIN);
+		PROJECT_1.setId(PROJECT_ID_1);
+		PROJECT_2.setId(PROJECT_ID_2);
+		AntPagination pagination = new AntPagination(0, 10);
+		request.setPagination(pagination);
+		request.setSearch(ImmutableList.of());
+		request.setOrder(ImmutableList.of(new AntSort("modifiedDate", "desc")));
+
 		Authentication authentication = mock(Authentication.class);
 		SecurityContext securityContext = mock(SecurityContext.class);
 		when(securityContext.getAuthentication()).thenReturn(authentication);
+		Page<ProjectSampleJoin> page = new PageImpl<>(joins);
 
 		when(sampleService.read(1L)).thenReturn(SAMPLE_1);
 		when(updateSamplePermission.isAllowed(authentication, SAMPLE_1)).thenReturn(true);
@@ -124,6 +169,9 @@ public class UISampleServiceTest {
 		MOCK_PAIR_FILE_02 = createMultiPartFile(PAIR_02, "src/test/resources/files/pairs/pair_test_R2_001.fastq");
 		MOCK_FAST5_FILE_01 = createMultiPartFile(FAST5_01, "src/test/resources/files/testfast5file.fast5");
 		MOCK_ASSEMBLY_FILE_01 = createMultiPartFile(ASSEMBLY_01, "src/test/resources/files/test_file.fasta");
+
+		when(sampleService.getFilteredProjectSamples(anyList(), any(ProjectSampleJoinSpecification.class), anyInt(),
+				anyInt(), any(Sort.class))).thenReturn(page);
 	}
 
 	private MockMultipartFile createMultiPartFile(String name, String path) {
@@ -334,4 +382,15 @@ public class UISampleServiceTest {
 				"Sequencing object should be set as default for sample");
 	}
 
+	public void testGetPagedProjectSamples() {
+		AntTableResponse<ProjectSampleTableItem> response = service.getPagedProjectSamples(1L, request, Locale.CANADA);
+		assertEquals(3, response.getTotal(), "Should return 3 items");
+		List<?> items = response.getContent();
+		for (int index = 0; index < items.size(); index++) {
+			assertTrue(items.get(index) instanceof ProjectSampleTableItem, "Should return ProjectSampleTableItems");
+			assertEquals(((ProjectSampleTableItem) items.get(index)).getProject().getName(),
+					joins.get(index).getSubject().getName(), "Should return the proper project name");
+
+		}
+	}
 }

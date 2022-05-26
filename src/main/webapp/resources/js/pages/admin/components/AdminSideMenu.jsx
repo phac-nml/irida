@@ -11,8 +11,8 @@ import { Link } from "react-router-dom";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ADMIN } from "../routes";
 
-const { SubMenu } = Menu;
-const { Sider } = Layout;
+const {SubMenu} = Menu;
+const {Sider} = Layout;
 export default function AdminHeader() {
   const [selectedKeys, setSelectedKeys] = React.useState(() => {
     // Grab it from the URL, look for where you are which
@@ -27,7 +27,7 @@ export default function AdminHeader() {
     <Sider width={220}>
       <section>
         <Link
-          style={{ paddingLeft: 10, paddingRight: 10 }}
+          style={{paddingLeft: 10, paddingRight: 10}}
           to={`${DEFAULT_URL}/${ADMIN.USERS}`}
         >
           <img
@@ -38,7 +38,7 @@ export default function AdminHeader() {
         </Link>
         <Menu
           className={"t-admin-side-menu"}
-          style={{ height: "calc(100vh - 65px)" }}
+          style={{height: "calc(100vh - 65px)"}}
           theme={"dark"}
           mode={"inline"}
           selectedKeys={[selectedKeys]}
@@ -93,9 +93,9 @@ export default function AdminHeader() {
               {i18n("AdminPanel.remoteApi")}
             </Link>
           </Menu.Item>
-          <Menu.Item key="sequencing_runs">
+          <Menu.Item key="sequencing-runs">
             <Link
-              onClick={() => setSelectedKeys("sequencing_runs")}
+              onClick={() => setSelectedKeys("sequencing-runs")}
               to={`${DEFAULT_URL}/${ADMIN.SEQUENCINGRUNS}`}
               className={"t-admin-sequencing-runs-link"}
             >
