@@ -46,4 +46,5 @@ module.exports = {
   "sequence-files": "./resources/js/pages/sequence-files/",
   "analyses-outputs": "./resources/js/pages/analyses/analyses-outputs/",
   password: "./resources/js/pages/password/PasswordReset.jsx",
+  "beta-admin": "./resources/js/beta/admin",
 };
