@@ -4,6 +4,11 @@ import { SampleDetails } from "./components/SampleDetails";
 import { Provider } from "react-redux";
 import store from "../../components/samples/store";
 import { useGetSampleDetailsQuery } from "../../apis/samples/samples";
+import {
+  putSampleInCart,
+  useRemoveSampleMutation,
+  useGetCartSampleIdsQuery,
+} from "../../apis/cart/cart";
 
 const { Text } = Typography;
 
@@ -16,8 +21,12 @@ const { Text } = Typography;
  * @returns {JSX.Element}
  * @constructor
  */
-function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
+function DisplaySampleDetails({ sampleId, projectId, children }) {
   const [visible, setVisible] = React.useState(false);
+  const [addSampleToCartVisible, setAddSampleToCartVisible] =
+    React.useState(true);
+  const [removeSampleFromCartVisible, setRemoveSampleFromCartVisible] =
+    React.useState(false);
   const { data: details = {}, isLoading } = useGetSampleDetailsQuery(
     {
       sampleId,
@@ -27,6 +36,12 @@ function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
       skip: !visible,
     }
   );
+  const { data: sampleIds = {} } = useGetCartSampleIdsQuery({ skip: !visible });
+  const [removeSample] = useRemoveSampleMutation();
+
+  const isSampleAlreadyInCart = () => {
+    return sampleIds.includes(sampleId);
+  };
 
   /*
   Empty useEffect hook to update visible const required by redux
@@ -35,7 +50,17 @@ function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
   React.useEffect(() => {}, [visible]);
 
   const removeSampleFromCart = () => {
-    removeSample({ sampleId });
+    removeSample({ sampleId }).then((res) => {
+      setAddSampleToCartVisible(true);
+      setRemoveSampleFromCartVisible(false);
+    });
+  };
+
+  const addSampleToCart = () => {
+    putSampleInCart(projectId, [details.sample]).then((res) => {
+      setAddSampleToCartVisible(false);
+      setRemoveSampleFromCartVisible(true);
+    });
   };
 
   return (
@@ -70,7 +95,16 @@ function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
                     </Text>
                   ) : null}
                 </Space>
-                {removeSample && (
+                {!isSampleAlreadyInCart() ? (
+                  <Button
+                    size="small"
+                    style={{ marginRight: 30 }}
+                    onClick={addSampleToCart}
+                  >
+                    Add To Cart
+                  </Button>
+                ) : null}
+                {isSampleAlreadyInCart() ? (
                   <Button
                     size="small"
                     danger
@@ -79,7 +113,7 @@ function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
                   >
                     {i18n("SampleDetailsSidebar.removeFromCart")}
                   </Button>
-                )}
+                ) : null}
               </div>
             )
           }

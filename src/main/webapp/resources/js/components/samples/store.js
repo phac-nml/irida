@@ -3,6 +3,7 @@ import { sampleApi } from "../../apis/samples/samples";
 import sampleReducer from "./sampleSlice";
 import sampleFilesReducer from "./sampleFilesSlice";
 import sampleAnalysesReducer from "./sampleAnalysesSlice";
+import { cartApi } from "../../apis/cart/cart";
 
 /*
 Redux Store for sample details and metadata.
@@ -14,7 +15,8 @@ export default configureStore({
     sampleFilesReducer,
     sampleAnalysesReducer,
     [sampleApi.reducerPath]: sampleApi.reducer,
+    [cartApi.reducerPath]: cartApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(sampleApi.middleware),
+    getDefaultMiddleware().concat(sampleApi.middleware, cartApi.middleware),
 });
