@@ -36,6 +36,7 @@ export default function CreateNewUser() {
   const [visible, setVisibility] = React.useState(false);
   const [activationEmail, setActivationEmail] = React.useState(emailConfigured);
   const [submitting, setSubmitting] = useState(false);
+  const [mailFailure, setMailFailure] = useState(false);
   const usernameInput = React.useRef();
 
   const passwordRules = [
@@ -74,6 +75,9 @@ export default function CreateNewUser() {
           errors: [error],
         }));
         form.setFields(fields);
+        if (error.status === 409) {
+          setMailFailure(true);
+        }
       })
       .finally(() => setSubmitting(false));
   };
@@ -249,15 +253,28 @@ export default function CreateNewUser() {
               showIcon
             />
           )}
+          {mailFailure && (
+            <Alert
+              style={{ marginBottom: SPACE_SM }}
+              message={i18n("CreateNewUser.mailFailure.alert.title")}
+              description={
+                <Typography.Paragraph>
+                  {i18n("CreateNewUser.mailFailure.alert.description")}
+                </Typography.Paragraph>
+              }
+              type="error"
+              showIcon
+            />
+          )}
           <Form.Item name="activate" valuePropName="checked">
             <Checkbox
-              disabled={!emailConfigured}
+              disabled={!emailConfigured || mailFailure}
               onChange={(e) => setActivationEmail(e.target.checked)}
             >
               {i18n("CreateNewUser.form.activate.label")}
             </Checkbox>
           </Form.Item>
-          {!activationEmail && (
+          {(!activationEmail || mailFailure) && (
             <>
               <Alert
                 style={{ marginBottom: SPACE_SM }}

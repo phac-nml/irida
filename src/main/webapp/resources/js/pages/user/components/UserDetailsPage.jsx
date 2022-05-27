@@ -35,7 +35,7 @@ export default function UserDetailsPage() {
   const [form] = Form.useForm();
 
   const onFormFinish = (values) => {
-    editUser({ userId: userId, ...values })
+    editUser({ userId, ...values })
       .unwrap()
       .then(() => {
         notification.success({

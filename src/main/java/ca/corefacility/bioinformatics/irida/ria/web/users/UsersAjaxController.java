@@ -57,13 +57,17 @@ public class UsersAjaxController {
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public ResponseEntity<AjaxResponse> createUser(@RequestBody UserCreateRequest userCreateRequest,
 			Principal principal, Locale locale) {
-
-		UserDetailsResponse response = uiUsersService.createUser(userCreateRequest, principal, locale);
+		UserDetailsResponse response;
+		try {
+			response = uiUsersService.createUser(userCreateRequest, principal, locale);
+		} catch (UIEmailSendException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage()));
+		}
 
 		if (response.hasErrors())
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxFormErrorResponse(response.getErrors()));
 		else
-			return ResponseEntity.ok(null);
+			return ResponseEntity.ok(response);
 	}
 
 	/**
@@ -128,16 +132,14 @@ public class UsersAjaxController {
 	/**
 	 * Get the details for a specific user
 	 *
-	 * @param userId      - the id for the user to show details for
-	 * @param mailFailure - if sending a user activation e-mail passed or failed
-	 * @param principal   - the currently logged in user
+	 * @param userId    - the id for the user to show details for
+	 * @param principal - the currently logged in user
 	 * @return a {@link UserDetailsResponse} containing the details for a specific user
 	 */
 	@RequestMapping("/{userId}")
 	public ResponseEntity<UserDetailsResponse> getUserDetails(@PathVariable("userId") Long userId,
-			@RequestParam(value = "mailFailure", required = false, defaultValue = "false") final Boolean mailFailure,
 			Principal principal) {
-		return ResponseEntity.ok(uiUsersService.getUser(userId, mailFailure, principal));
+		return ResponseEntity.ok(uiUsersService.getUser(userId, principal));
 	}
 
 	/**

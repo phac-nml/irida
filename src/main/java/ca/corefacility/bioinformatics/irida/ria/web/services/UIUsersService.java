@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSendException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -94,9 +94,11 @@ public class UIUsersService {
 	 * @param principal         a reference to the logged in user
 	 * @param locale            The logged in user's request locale
 	 * @return The name of the user view
+	 * @throws UIEmailSendException if there is an error emailing the password reset
 	 */
-	public UserDetailsResponse createUser(UserCreateRequest userCreateRequest, Principal principal, Locale locale) {
-		boolean mailFailure = false;
+	@Transactional
+	public UserDetailsResponse createUser(UserCreateRequest userCreateRequest, Principal principal, Locale locale)
+			throws UIEmailSendException {
 		Map<String, String> errors = new HashMap<>();
 
 		User user = new User();
@@ -149,24 +151,31 @@ public class UIUsersService {
 			try {
 				user = userService.create(user);
 
-				// if the password isn't set, we'll generate a password reset
+				// Generate a password reset
 				PasswordReset passwordReset = null;
 				if (generateActivation) {
 					passwordReset = passwordResetService.create(new PasswordReset(user));
 					logger.trace("Created password reset for activation");
 				}
 
-				User creator = userService.getUserByUsername(principal.getName());
-				emailController.sendWelcomeEmail(user, creator, passwordReset);
+				//Send welcome email
+				if (emailController.isMailConfigured()) {
+					User creator = userService.getUserByUsername(principal.getName());
+					emailController.sendWelcomeEmail(user, creator, passwordReset);
+				}
 			} catch (ConstraintViolationException | DataIntegrityViolationException | EntityExistsException ex) {
 				errors = handleCreateUpdateException(ex, locale);
 			} catch (final MailSendException e) {
-				logger.error("Failed to send user activation e-mail.", e);
-				mailFailure = true;
+				//Undo if activation email fails, so the user can try again with setting the password manually
+				if (generateActivation) {
+					logger.error("Failed to send user activation e-mail.", e);
+					throw new UIEmailSendException(
+							messageSource.getMessage("server.password.reset.error.message", null, locale));
+				}
 			}
 		}
 
-		return new UserDetailsResponse(mailFailure, errors);
+		return new UserDetailsResponse(errors);
 	}
 
 	/**
@@ -200,26 +209,22 @@ public class UIUsersService {
 	/**
 	 * Get the details for a specific user
 	 *
-	 * @param userId      - the id for the user to show details for
-	 * @param mailFailure - if sending a user activation e-mail passed or failed
-	 * @param principal   - the currently logged in user
+	 * @param userId    - the id for the user to show details for
+	 * @param principal - the currently logged in user
 	 * @return {@link UserDetailsResponse} that contains user details for a specific user
 	 */
-	public UserDetailsResponse getUser(Long userId, Boolean mailFailure, Principal principal) {
+	public UserDetailsResponse getUser(Long userId, Principal principal) {
 		User user = userService.read(userId);
 		UserDetailsModel userDetails = new UserDetailsModel(user);
 		User principalUser = userService.getUserByUsername(principal.getName());
-		Locale locale = LocaleContextHolder.getLocale();
 		boolean isAdmin = RoleUtilities.isAdmin(principalUser);
 		boolean canEditUserInfo = canEditUserInfo(principalUser, user);
 		boolean canEditUserStatus = canEditUserStatus(principalUser, user);
 		boolean canChangePassword = canChangePassword(principalUser, user);
 		boolean canCreatePasswordReset = canCreatePasswordReset(principalUser, user);
 
-		String currentRoleName = messageSource.getMessage("systemRole." + user.getSystemRole().getName(), null, locale);
-
-		return new UserDetailsResponse(userDetails, currentRoleName, mailFailure, isAdmin, canEditUserInfo,
-				canEditUserStatus, canChangePassword, canCreatePasswordReset);
+		return new UserDetailsResponse(userDetails, isAdmin, canEditUserInfo, canEditUserStatus, canChangePassword,
+				canCreatePasswordReset);
 	}
 
 	/**

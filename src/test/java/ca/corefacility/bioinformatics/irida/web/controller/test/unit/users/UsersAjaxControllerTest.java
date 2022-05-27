@@ -89,7 +89,7 @@ public class UsersAjaxControllerTest {
 	@Test
 	void getUserDetailsTest() {
 		Principal principal = () -> USER1.getFirstName();
-		ResponseEntity<UserDetailsResponse> response = controller.getUserDetails(USER2.getId(), false, principal);
+		ResponseEntity<UserDetailsResponse> response = controller.getUserDetails(USER2.getId(), principal);
 		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
 	}
 
