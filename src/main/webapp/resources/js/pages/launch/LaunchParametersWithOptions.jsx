@@ -17,7 +17,11 @@ import { InputWithOptions } from "../../components/form/InputWithOptions";
  */
 export function LaunchParametersWithOptions({ parameters }) {
   const content = parameters.map((parameter) => (
-    <InputWithOptions key={parameter.name} item={parameter} />
+    <InputWithOptions
+      key={parameter.name}
+      item={parameter}
+      initialValue={parameters[0].value}
+    />
   ));
   return <section>{content}</section>;
 }
