@@ -34,6 +34,7 @@ Changes
 * [UI]: Fixed: Excel output file preview displaying numeric values as a whole number rather than in scientific notation.
 * [UI]: Updated the sequence run page to use Ant Design.
 * [UI]: Updated `forgot password`, `account activation`, and `reset password` pages to use Ant Design.
+* [Developer/Workflow]: Fixed issue with deleting AnalysisSubmission raising null pointer execptions due to bean wiring issue (issue #1287).
 
 22.01 to 22.03
 --------------
