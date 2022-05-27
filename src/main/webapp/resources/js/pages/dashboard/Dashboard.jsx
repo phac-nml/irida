@@ -14,7 +14,7 @@ const { Content } = Layout;
  */
 function Dashboard() {
   return (
-    <Layout style={{ height: "100%", minHeight: "100%" }}>
+    <Layout style={{ minHeight: "100%" }}>
       <Row>
         <Col sm={24} md={{ span: 20, offset: 2 }} xl={{ span: 12, offset: 6 }}>
           <Content style={{ padding: SPACE_MD }}>

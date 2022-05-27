@@ -32,16 +32,18 @@ public class CreatePasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testCreateReset() {
 		passwordResetPage.goTo();
-		String email = "differentUser@nowhere.com";
-		passwordResetPage.enterEmail(email);
+		passwordResetPage.clickForgotPasswordLink();
+		String usernameOrEmail = "differentUser@nowhere.com";
+		passwordResetPage.enterEmail(usernameOrEmail);
 		assertTrue(passwordResetPage.checkSuccess());
 	}
 
 	@Test
 	public void testCreateResetBadEmail() {
 		passwordResetPage.goTo();
-		String email = "notauser@nowhere.com";
-		passwordResetPage.enterEmail(email);
+		passwordResetPage.clickForgotPasswordLink();
+		String usernameOrEmail = "notauser@nowhere.com";
+		passwordResetPage.enterEmail(usernameOrEmail);
 		assertFalse(passwordResetPage.checkSuccess());
 	}
 }

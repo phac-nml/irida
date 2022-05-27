@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web;
+package ca.corefacility.bioinformatics.irida.ria.web.login;
 
 import java.security.Principal;
 
@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 
 /**
