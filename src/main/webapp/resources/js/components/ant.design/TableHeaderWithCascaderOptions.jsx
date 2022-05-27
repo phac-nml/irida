@@ -1,7 +1,8 @@
 import React from "react";
-import { Button, Cascader, Form, Popover, Space, Typography } from "antd";
-import { EditOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import { Button, Cascader, Form, Popover } from "antd";
+import { EditOutlined } from "@ant-design/icons";
 import { grey } from "@ant-design/colors";
+import TextWithHelpPopover from "./TextWithHelpPopover";
 
 // TODO: WTF should I call this thing
 
@@ -25,16 +26,7 @@ export const TableHeaderWithCascaderOptions = React.forwardRef(
 
     return (
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <Space size="small">
-          <Typography.Text>{title}</Typography.Text>
-          {helpText && (
-            <Popover
-              content={<div dangerouslySetInnerHTML={{ __html: helpText }} />}
-            >
-              <QuestionCircleOutlined style={{ color: grey[2] }} />
-            </Popover>
-          )}
-        </Space>
+        <TextWithHelpPopover text={title} help={helpText} />
         <Popover
           title={"Select value for all samples"}
           content={

@@ -27,7 +27,8 @@ import ncbiReducer, {
 } from "./ncbiSlice";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { TableHeaderWithSelectOptions } from "../../../components/ant.design/TableHeaderWithSelectOptions";
-import { TableHeaderWithCascaderOptions } from "../../../components/TableHeaderWithCascaderOptions";
+import { TableHeaderWithCascaderOptions } from "../../../components/ant.design/TableHeaderWithCascaderOptions";
+import TextWithHelpPopover from "../../../components/ant.design/TextWithHelpPopover";
 
 function NCBIPage() {
   const dispatch = useDispatch();
@@ -92,7 +93,12 @@ function NCBIPage() {
       fixed: "left",
     },
     {
-      title: i18n("project.export.biosample.title"),
+      title: (
+        <TextWithHelpPopover
+          text={i18n("project.export.biosample.title")}
+          help={i18n("project.export.biosample.description")}
+        />
+      ),
       dataIndex: "biosample",
       width,
       key: "biosample",
@@ -109,7 +115,12 @@ function NCBIPage() {
       },
     },
     {
-      title: i18n("project.export.library_name.title"),
+      title: (
+        <TextWithHelpPopover
+          text={i18n("project.export.library_name.title")}
+          help={i18n("project.export.library_name.description")}
+        />
+      ),
       dataIndex: "library_strategy",
       width,
       key: "library_strategy",
