@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Form, Popover, Select, Space, Typography } from "antd";
+import { Button, Cascader, Form, Popover, Space, Typography } from "antd";
 import { EditOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { grey } from "@ant-design/colors";
 
@@ -10,7 +10,7 @@ import { grey } from "@ant-design/colors";
  * @returns {JSX.Element}
  * @constructor
  */
-export const TableHeaderWithSelectOptions = React.forwardRef(
+export const TableHeaderWithCascaderOptions = React.forwardRef(
   function TableHeaderWithSelectOptions(
     { title, options = [], onChange, helpText },
     ref
@@ -40,11 +40,11 @@ export const TableHeaderWithSelectOptions = React.forwardRef(
           content={
             <Form form={form}>
               <Form.Item style={{ margin: 0 }} name="select">
-                <Select style={{ display: "block" }} onChange={onChange}>
-                  {options.map((option) => (
-                    <Select.Option key={option}>{option}</Select.Option>
-                  ))}
-                </Select>
+                <Cascader
+                  options={options}
+                  style={{ display: "block" }}
+                  onChange={onChange}
+                />
               </Form.Item>
             </Form>
           }

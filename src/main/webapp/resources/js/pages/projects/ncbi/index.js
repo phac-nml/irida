@@ -27,12 +27,14 @@ import ncbiReducer, {
 } from "./ncbiSlice";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { TableHeaderWithSelectOptions } from "../../../components/ant.design/TableHeaderWithSelectOptions";
+import { TableHeaderWithCascaderOptions } from "../../../components/TableHeaderWithCascaderOptions";
 
 function NCBIPage() {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const strategyRef = React.useRef();
   const sourceRef = React.useRef();
+  const platformRef = React.useRef();
 
   const [samples, setSamples] = React.useState(() => {
     const stored = window.sessionStorage.getItem("share");
@@ -80,16 +82,19 @@ function NCBIPage() {
     };
   }
 
+  const width = 200;
   const columns = [
     {
       title: "_SAMPLE",
       dataIndex: "name",
+      width,
       key: "sample",
       fixed: "left",
     },
     {
       title: i18n("project.export.biosample.title"),
       dataIndex: "biosample",
+      width,
       key: "biosample",
       render: (_, item) => {
         return (
@@ -106,6 +111,7 @@ function NCBIPage() {
     {
       title: i18n("project.export.library_name.title"),
       dataIndex: "library_strategy",
+      width,
       key: "library_strategy",
       render: (_, item) => {
         return (
@@ -132,6 +138,7 @@ function NCBIPage() {
         );
       },
       dataIndex: "library_strategy",
+      width,
       key: "library_strategy",
       render: (_, item) => {
         return (
@@ -170,6 +177,7 @@ function NCBIPage() {
       },
       dataIndex: "library_source",
       key: "library_source",
+      width,
       render: (_, item) => {
         return (
           <Form.Item
@@ -194,6 +202,7 @@ function NCBIPage() {
     {
       title: i18n("project.export.library_construction_protocol.title"),
       dataIndex: "library_construction_protocol",
+      width,
       key: "library_construction_protocol",
       width: 200,
       render: (_, item) => {
@@ -214,8 +223,19 @@ function NCBIPage() {
       },
     },
     {
-      title: i18n("project.export.instrument_model.title"),
+      title: () => {
+        return (
+          <TableHeaderWithCascaderOptions
+            options={platforms}
+            title={i18n("project.export.instrument_model.title")}
+            onChange={updateAllSamplesForField("instrument_model")}
+            helpText={i18n("project.export.instrument_model.description")}
+            ref={platformRef}
+          />
+        );
+      },
       dataIndex: "instrument_model",
+      width,
       key: "instrument_model",
       render: (_, item) => {
         return (
@@ -231,14 +251,29 @@ function NCBIPage() {
               margin: 0,
             }}
           >
-            <Cascader options={platforms} style={{ display: "block" }} />
+            <Cascader
+              options={platforms}
+              style={{ display: "block" }}
+              onChange={() => platformRef.current.resetSelect()}
+            />
           </Form.Item>
         );
       },
     },
     {
-      title: i18n("project.export.library_selection.title"),
+      title: () => {
+        return (
+          <TableHeaderWithSelectOptions
+            options={strategies}
+            title={i18n("project.export.library_selection.title")}
+            onChange={updateAllSamplesForField("library_selection")}
+            helpText={i18n("project.export.library_selection.description")}
+            ref={strategyRef}
+          />
+        );
+      },
       dataIndex: "library_selection",
+      width,
       key: "library_selection",
       render: (_, item) => {
         return (
@@ -351,7 +386,7 @@ function NCBIPage() {
               </Col>
               <Col span={24}>
                 <Table
-                  style={{ maxWidth: 1600 }}
+                  style={{ maxWidth: 2000 }}
                   scroll={{ x: "max-content" }}
                   columns={columns}
                   dataSource={Object.values(samples)}

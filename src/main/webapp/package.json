@@ -18,6 +18,7 @@
   ],
   "dependencies": {
     "@ag-grid-community/csv-export": "^27.1.0",
+    "@ant-design/colors": "^6.0.0",
     "@ant-design/icons": "^4.7.0",
     "@ant-design/plots": "^1.0.9",
     "@antv/color-util": "^2.0.6",
