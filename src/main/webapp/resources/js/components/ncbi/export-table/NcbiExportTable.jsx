@@ -1,14 +1,15 @@
-import React from "react";
 import { Table } from "antd";
+import React from "react";
+import { Link } from "react-router-dom";
 import { getProjectNCBIExports } from "../../../apis/ncbi/ncbi";
+import {
+  getPaginationOptions
+} from "../../../utilities/antdesign-table-utilities";
 import {
   formatInternationalizedDateTime
 } from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import NcbiUploadStates from "../upload-states";
-import {
-  getPaginationOptions
-} from "../../../utilities/antdesign-table-utilities";
 
 /**
  * Render a list of all Project NCBI Exports.
@@ -32,12 +33,9 @@ export function NcbiExportTable() {
       dataIndex: "id",
       render(id, item) {
         return (
-          <a
-            className="t-biosample-id"
-            href={setBaseUrl(`/projects/${window.project.id}/export/${id}`)}
-          >
+          <Link className="t-biosample-id" to={`${id}`}>
             {item.bioProjectId}
-          </a>
+          </Link>
         );
       },
     },
