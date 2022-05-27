@@ -11,11 +11,11 @@ public class UserCreateRequest {
 	private String phoneNumber;
 	private String role;
 	private String locale;
-	private String activate;
+	private boolean activate;
 	private String password;
 
 	public UserCreateRequest(String username, String firstName, String lastName, String email, String phoneNumber,
-			String role, String locale, String activate, String password) {
+			String role, String locale, boolean activate, String password) {
 		this.username = username;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -55,7 +55,7 @@ public class UserCreateRequest {
 		return locale;
 	}
 
-	public String getActivate() {
+	public boolean getActivate() {
 		return activate;
 	}
 

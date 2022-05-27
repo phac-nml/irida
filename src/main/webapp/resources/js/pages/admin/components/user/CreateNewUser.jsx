@@ -33,8 +33,8 @@ export default function CreateNewUser() {
   const { data: emailConfigured = false } = useGetEmailConfiguredQuery();
   const [createUser] = useCreateNewUserMutation();
   const [form] = Form.useForm();
-  const [visible, setVisibility] = React.useState(false);
   const [activationEmail, setActivationEmail] = React.useState(emailConfigured);
+  const [visible, setVisibility] = React.useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [mailFailure, setMailFailure] = useState(false);
   const usernameInput = React.useRef();
@@ -70,12 +70,17 @@ export default function CreateNewUser() {
         notification.error({
           message: i18n("CreateNewUser.notification.error"),
         });
-        const fields = Object.entries(error.data).map(([field, error]) => ({
-          name: field,
-          errors: [error],
-        }));
-        form.setFields(fields);
-        if (error.status === 409) {
+        if (error.status === 400) {
+          const fields = Object.entries(error.data.errors).map(
+            ([field, error]) => ({
+              name: field,
+              errors: [error],
+            })
+          );
+          form.setFields(fields);
+        } else if (error.status === 409) {
+          form.setFieldsValue({ activate: false });
+          setActivationEmail(true);
           setMailFailure(true);
         }
       })
@@ -269,12 +274,12 @@ export default function CreateNewUser() {
           <Form.Item name="activate" valuePropName="checked">
             <Checkbox
               disabled={!emailConfigured || mailFailure}
-              onChange={(e) => setActivationEmail(e.target.checked)}
+              onChange={(e) => setActivationEmail(!e.target.checked)}
             >
               {i18n("CreateNewUser.form.activate.label")}
             </Checkbox>
           </Form.Item>
-          {(!activationEmail || mailFailure) && (
+          {!activationEmail && (
             <>
               <Alert
                 style={{ marginBottom: SPACE_SM }}

@@ -11,7 +11,7 @@ export const userApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: setBaseUrl(BASE_URL),
   }),
-  tagTypes: ["User"],
+  tagTypes: ["User", "PasswordReset"],
   endpoints: (build) => ({
     /*
     Create new user.

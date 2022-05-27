@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
 import java.security.Principal;
-import java.util.HashMap;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIUserFormException;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUsersService;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsModel;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
@@ -79,29 +79,29 @@ public class UIUsersServiceTest {
 	}
 
 	@Test
-	void updateUserTest() {
+	void updateUserTest() throws UIUserFormException {
 		Principal principal = () -> USER1.getFirstName();
+		String successMessage = "The user was successfully updated.";
 		UserEditRequest userEditRequest = new UserEditRequest(USER1.getFirstName(), USER1.getLastName(),
 				USER1.getEmail(), USER1.getPhoneNumber(), USER1.getSystemRole().getName(), USER1.getLocale(),
-				USER1.isEnabled() ? "checked" : "unchecked");
-		UserDetailsResponse expectedResponse = new UserDetailsResponse(new HashMap<>());
-		UserDetailsResponse response = service.updateUser(USER1.getId(), userEditRequest, principal, request);
-		assertEquals(response, expectedResponse, "Received the correct user details response");
+				USER1.isEnabled());
+		String response = service.updateUser(USER1.getId(), userEditRequest, principal, request, Locale.ENGLISH);
+		assertEquals(successMessage, response, "Incorrect success message.");
 	}
 
 	@Test
-	void changeUserPasswordTest() {
+	void changeUserPasswordTest() throws UIUserFormException {
 		Principal principal = () -> USER1.getFirstName();
-		UserDetailsResponse expectedResponse = new UserDetailsResponse(new HashMap<>());
+		String successMessage = "Password successfully changed.";
 		User savedUser = new User(USER1.getId(), USER1.getEmail(), USER1.getUsername(),
 				passwordEncoder.encode(USER1.getPassword()), USER1.getFirstName(), USER1.getLastName(),
 				USER1.getPhoneNumber());
 
 		when(userService.getUserByUsername(anyString())).thenReturn(savedUser);
 
-		UserDetailsResponse response = service.changeUserPassword(USER1.getId(), USER1.getPassword(), "Password3!",
-				principal, request);
-		assertEquals(response, expectedResponse, "Received the correct user details response");
+		String response = service.changeUserPassword(USER1.getId(), USER1.getPassword(), "Password3!", principal,
+				request, Locale.ENGLISH);
+		assertEquals(successMessage, response, "Incorrect success message.");
 	}
 
 	@Test

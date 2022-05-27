@@ -47,10 +47,12 @@ export default function UserDetailsPage() {
         notification.error({
           message: i18n("UserDetailsPage.notification.error"),
         });
-        const fields = Object.entries(error.data).map(([field, error]) => ({
-          name: field,
-          errors: [error],
-        }));
+        const fields = Object.entries(error.data.errors).map(
+          ([field, error]) => ({
+            name: field,
+            errors: [error],
+          })
+        );
         form.setFields(fields);
       });
   };

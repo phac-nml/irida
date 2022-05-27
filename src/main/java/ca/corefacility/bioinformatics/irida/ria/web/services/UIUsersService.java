@@ -35,6 +35,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIUserFormException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.RoleUtilities;
@@ -95,10 +96,11 @@ public class UIUsersService {
 	 * @param locale            The logged in user's request locale
 	 * @return The name of the user view
 	 * @throws UIEmailSendException if there is an error emailing the password reset
+	 * @throws UIUserFormException  if there are errors creating the new user
 	 */
 	@Transactional
-	public UserDetailsResponse createUser(UserCreateRequest userCreateRequest, Principal principal, Locale locale)
-			throws UIEmailSendException {
+	public Long createUser(UserCreateRequest userCreateRequest, Principal principal, Locale locale)
+			throws UIEmailSendException, UIUserFormException {
 		Map<String, String> errors = new HashMap<>();
 
 		User user = new User();
@@ -129,7 +131,7 @@ public class UIUsersService {
 		}
 
 		// Check if we need to generate a password
-		boolean generateActivation = !Strings.isNullOrEmpty(userCreateRequest.getActivate());
+		boolean generateActivation = userCreateRequest.getActivate();
 		if (generateActivation) {
 			user.setPassword(generatePassword());
 			user.setCredentialsNonExpired(false);
@@ -154,8 +156,8 @@ public class UIUsersService {
 				// Generate a password reset
 				PasswordReset passwordReset = null;
 				if (generateActivation) {
-					passwordReset = passwordResetService.create(new PasswordReset(user));
 					logger.trace("Created password reset for activation");
+					passwordReset = passwordResetService.create(new PasswordReset(user));
 				}
 
 				//Send welcome email
@@ -165,17 +167,20 @@ public class UIUsersService {
 				}
 			} catch (ConstraintViolationException | DataIntegrityViolationException | EntityExistsException ex) {
 				errors = handleCreateUpdateException(ex, locale);
+				throw new UIUserFormException(errors);
 			} catch (final MailSendException e) {
-				//Undo if activation email fails, so the user can try again with setting the password manually
+				//Undo user creation if activation email fails, so the user can try again with setting the password manually
 				if (generateActivation) {
 					logger.error("Failed to send user activation e-mail.", e);
 					throw new UIEmailSendException(
 							messageSource.getMessage("server.password.reset.error.message", null, locale));
 				}
 			}
+		} else {
+			throw new UIUserFormException(errors);
 		}
 
-		return new UserDetailsResponse(errors);
+		return user.getId();
 	}
 
 	/**
@@ -234,13 +239,15 @@ public class UIUsersService {
 	 * @param userEditRequest a {@link UserEditRequest} containing details about a specific user
 	 * @param principal       a reference to the logged in user
 	 * @param request         the request
-	 * @return The name of the user view
+	 * @param locale          logged in users {@link Locale}
+	 * @return a success message
+	 * @throws UIUserFormException if there are errors updating the user
 	 */
-	public UserDetailsResponse updateUser(Long userId, UserEditRequest userEditRequest, Principal principal,
-			HttpServletRequest request) {
+	public String updateUser(Long userId, UserEditRequest userEditRequest, Principal principal,
+			HttpServletRequest request, Locale locale) throws UIUserFormException {
 		User principalUser = userService.getUserByUsername(principal.getName());
 		Map<String, Object> updatedValues = new HashMap<>();
-		Map<String, String> errors = new HashMap<>();
+		Map<String, String> errors;
 
 		if (!Strings.isNullOrEmpty(userEditRequest.getFirstName())) {
 			updatedValues.put("firstName", userEditRequest.getFirstName());
@@ -265,13 +272,10 @@ public class UIUsersService {
 		}
 
 		if (RoleUtilities.isAdmin(principalUser)) {
-			if (!Strings.isNullOrEmpty(userEditRequest.getEnabled())) {
-				updatedValues.put("enabled", userEditRequest.getEnabled());
-			}
+			updatedValues.put("enabled", userEditRequest.getEnabled());
 
 			if (!Strings.isNullOrEmpty(userEditRequest.getRole())) {
 				Role newRole = Role.valueOf(userEditRequest.getRole());
-
 				updatedValues.put("systemRole", newRole);
 			}
 		}
@@ -285,9 +289,10 @@ public class UIUsersService {
 			}
 		} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
 			errors = handleCreateUpdateException(ex, request.getLocale());
+			throw new UIUserFormException(errors);
 		}
 
-		return new UserDetailsResponse(errors);
+		return messageSource.getMessage("server.user.edit.success", null, locale);
 	}
 
 	/**
@@ -298,10 +303,12 @@ public class UIUsersService {
 	 * @param newPassword The new password of the user for password change
 	 * @param principal   a reference to the logged in user
 	 * @param request     the request
-	 * @return The name of the user view
+	 * @param locale      logged in users {@link Locale}
+	 * @return a success message
+	 * @throws UIUserFormException if there is an error changing the password
 	 */
-	public UserDetailsResponse changeUserPassword(Long userId, String oldPassword, String newPassword,
-			Principal principal, HttpServletRequest request) {
+	public String changeUserPassword(Long userId, String oldPassword, String newPassword, Principal principal,
+			HttpServletRequest request, Locale locale) throws UIUserFormException {
 		User principalUser = userService.getUserByUsername(principal.getName());
 		Map<String, Object> updatedValues = new HashMap<>();
 		Map<String, String> errors = new HashMap<>();
@@ -326,10 +333,13 @@ public class UIUsersService {
 				}
 			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
 				errors = handleCreateUpdateException(ex, request.getLocale());
+				throw new UIUserFormException(errors);
 			}
+		} else {
+			throw new UIUserFormException(errors);
 		}
 
-		return new UserDetailsResponse(errors);
+		return messageSource.getMessage("server.user.edit.password.success", null, locale);
 	}
 
 	/**

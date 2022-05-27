@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.users.dto;
 
-import java.util.Map;
 import java.util.Objects;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
@@ -15,7 +14,6 @@ public class UserDetailsResponse extends AjaxResponse {
 	private boolean canEditUserStatus;
 	private boolean canChangePassword;
 	private boolean canCreatePasswordReset;
-	private Map<String, String> errors;
 
 	public UserDetailsResponse(UserDetailsModel userDetails, boolean isAdmin, boolean canEditUserInfo,
 			boolean canEditUserStatus, boolean canChangePassword, boolean canCreatePasswordReset) {
@@ -25,10 +23,6 @@ public class UserDetailsResponse extends AjaxResponse {
 		this.canEditUserStatus = canEditUserStatus;
 		this.canChangePassword = canChangePassword;
 		this.canCreatePasswordReset = canCreatePasswordReset;
-	}
-
-	public UserDetailsResponse(Map<String, String> errors) {
-		this.errors = errors;
 	}
 
 	public UserDetailsModel getUser() {
@@ -79,23 +73,6 @@ public class UserDetailsResponse extends AjaxResponse {
 		this.canCreatePasswordReset = canCreatePasswordReset;
 	}
 
-	public Map<String, String> getErrors() {
-		return errors;
-	}
-
-	public void setErrors(Map<String, String> errors) {
-		this.errors = errors;
-	}
-
-	/**
-	 * Returns whether there are errors
-	 *
-	 * @return if there is an error
-	 */
-	public boolean hasErrors() {
-		return errors != null && !errors.isEmpty();
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -106,12 +83,12 @@ public class UserDetailsResponse extends AjaxResponse {
 		return isAdmin == that.isAdmin && canEditUserInfo == that.canEditUserInfo
 				&& canEditUserStatus == that.canEditUserStatus && canChangePassword == that.canChangePassword
 				&& canCreatePasswordReset == that.canCreatePasswordReset && Objects.equals(userDetails,
-				that.userDetails) && Objects.equals(errors, that.errors);
+				that.userDetails);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(userDetails, isAdmin, canEditUserInfo, canEditUserStatus, canChangePassword,
-				canCreatePasswordReset, errors);
+				canCreatePasswordReset);
 	}
 }

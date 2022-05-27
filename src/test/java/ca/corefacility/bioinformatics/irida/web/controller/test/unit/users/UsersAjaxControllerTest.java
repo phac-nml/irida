@@ -64,11 +64,11 @@ public class UsersAjaxControllerTest {
 	void userEditRequestTest() {
 		Principal principal = () -> USER1.getFirstName();
 		UserEditRequest userEditRequest = new UserEditRequest(USER2.getFirstName(), USER2.getLastName(),
-				USER2.getEmail(), USER2.getPhoneNumber(), USER2.getSystemRole().getName(), USER2.getLocale(),
-				"checked");
+				USER2.getEmail(), USER2.getPhoneNumber(), USER2.getSystemRole().getName(), USER2.getLocale(), true);
+		Locale locale = new Locale("en");
 
 		ResponseEntity<AjaxResponse> response = controller.updateUser(USER2.getId(), userEditRequest, principal,
-				request);
+				request, locale);
 		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
 	}
 
@@ -78,11 +78,12 @@ public class UsersAjaxControllerTest {
 		User savedUser = new User(USER1.getId(), USER1.getEmail(), USER1.getUsername(),
 				passwordEncoder.encode(USER1.getPassword()), USER1.getFirstName(), USER1.getLastName(),
 				USER1.getPhoneNumber());
+		Locale locale = new Locale("en");
 
 		when(userService.getUserByUsername(anyString())).thenReturn(savedUser);
 
 		ResponseEntity<AjaxResponse> response = controller.changeUserPassword(USER1.getId(), USER1.getPassword(),
-				"Password3!", principal, request);
+				"Password3!", principal, request, locale);
 		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
 	}
 
