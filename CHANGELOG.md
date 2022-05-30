@@ -2,6 +2,9 @@
 Changes
 =======
 
+22.05 to 22.09
+--------------
+
 22.03 to 22.05
 --------------
 * [ALL]: Upgraded to Spring Boot 2.6.6 which fixes CVE-2022-22965. (22.03.1)
