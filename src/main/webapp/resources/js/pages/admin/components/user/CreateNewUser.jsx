@@ -274,7 +274,7 @@ export default function CreateNewUser() {
           <Form.Item name="activate" valuePropName="checked">
             <Checkbox
               disabled={!emailConfigured || mailFailure}
-              onChange={(e) => setActivationEmail(!e.target.checked)}
+              onChange={(e) => setActivationEmail(e.target.checked)}
             >
               {i18n("CreateNewUser.form.activate.label")}
             </Checkbox>

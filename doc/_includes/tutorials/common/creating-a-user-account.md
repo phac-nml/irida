@@ -16,8 +16,8 @@ When you click "Create User", an e-mail will be sent to the user (to the e-mail 
 
 ![User welcome e-mail.]({{ site.baseurl }}/images/tutorials/common/users/user-welcome-email.png)
 
-On successfully creating a new user account, you will see the user details that you entered:
+On successfully creating a new user account, you will be redirected back to the admin users table and see a successful notification pop-up:
 
-![User details page.]({{ site.baseurl }}/images/tutorials/common/users/user-details-page.png)
+![User details page.]({{ site.baseurl }}/images/tutorials/common/users/create-user-success.png)
 
 **Note**: Only announcements created within the last month will be shown to new users.
