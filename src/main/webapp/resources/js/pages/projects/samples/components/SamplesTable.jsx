@@ -22,6 +22,7 @@ import { IconSearch } from "../../../../components/icons/Icons";
 import { blue6 } from "../../../../styles/colors";
 import { generateColourForItem } from "../../../../utilities/colour-utilities";
 import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
+import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
 
 const { RangePicker } = DatePicker;
 
@@ -46,21 +47,18 @@ export function SamplesTable() {
    * Fetch the current state of the table.  Will refetch whenever one of the
    * table options (filter, sort, or pagination) changes.
    */
-  const {
-    data: { content: samples, total } = {},
-    isFetching,
-  } = useListSamplesQuery(options, {
-    refetchOnMountOrArgChange: true,
-  });
+  const { data: { content: samples, total } = {}, isFetching } =
+    useListSamplesQuery(options, {
+      refetchOnMountOrArgChange: true,
+    });
 
   /**
    * Fetch projects that have been associated with this project.
    * Request formats them into a format that can be consumed by the
    * project column filter.
    */
-  const { data: associatedProjects } = useListAssociatedProjectsQuery(
-    projectId
-  );
+  const { data: associatedProjects } =
+    useListAssociatedProjectsQuery(projectId);
 
   /**
    * Handle row selection change event
@@ -215,7 +213,6 @@ export function SamplesTable() {
     ),
   });
 
-  const sampleUrl = setBaseUrl(`/projects/${projectId}/samples`);
   const columns = [
     {
       title: () => {
@@ -249,7 +246,11 @@ export function SamplesTable() {
       dataIndex: ["sample", "sampleName"],
       sorter: { multiple: 1 },
       render: (name, row) => (
-        <a href={`${sampleUrl}/${row.sample.id}`}>{name}</a>
+        <SampleDetailViewer sampleId={row.sample.id} projectId={row.project.id}>
+          <Button type="link" className="t-sample-name" style={{ padding: 0 }}>
+            {name}
+          </Button>
+        </SampleDetailViewer>
       ),
       ...getColumnSearchProps(
         ["sample", "sampleName"],

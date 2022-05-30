@@ -42,6 +42,7 @@ export class SampleRenderer extends React.Component {
             <SampleDetailViewer
               sampleId={sample.id}
               removeSample={this.props.removeSample}
+              projectId={this.props.data.project.id}
             >
               <Button
                 className="t-sample-details-btn"

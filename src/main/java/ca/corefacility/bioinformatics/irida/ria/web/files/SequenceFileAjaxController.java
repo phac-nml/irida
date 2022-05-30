@@ -2,13 +2,12 @@ package ca.corefacility.bioinformatics.irida.ria.web.files;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -36,8 +35,8 @@ public class SequenceFileAjaxController {
 	 *
 	 * @param sequencingObjectId ID for the {@link SequencingObject}
 	 * @param sequenceFileId     Id for the {@link SequenceFile}
-	 * @return {@link FastQCDetailsResponse} dto which contains the sequencing object,
-	 * sequence file, and the fastqc result.
+	 * @return {@link FastQCDetailsResponse} dto which contains the sequencing object, sequence file, and the fastqc
+	 * result.
 	 */
 	@GetMapping("/fastqc-details")
 	public ResponseEntity<FastQCDetailsResponse> getFastQCDetails(@RequestParam Long sequencingObjectId,
@@ -50,8 +49,7 @@ public class SequenceFileAjaxController {
 	 *
 	 * @param sequencingObjectId ID for the {@link SequencingObject}
 	 * @param sequenceFileId     Id for the {@link SequenceFile}
-	 * @return {@link FastQCImagesResponse} dto which has the byte arrays for the images
-	 * as well as the fastqc version
+	 * @return {@link FastQCImagesResponse} dto which has the byte arrays for the images as well as the fastqc version
 	 * @throws IOException if entity is not found
 	 */
 	@GetMapping("/fastqc-charts")
@@ -61,8 +59,7 @@ public class SequenceFileAjaxController {
 	}
 
 	/**
-	 * Gets the overrepresented sequences for the file from the
-	 * fastqc results.
+	 * Gets the overrepresented sequences for the file from the fastqc results.
 	 *
 	 * @param sequencingObjectId ID for the {@link SequencingObject}
 	 * @param sequenceFileId     Id for the {@link SequenceFile}
@@ -72,5 +69,19 @@ public class SequenceFileAjaxController {
 	public ResponseEntity<AnalysisFastQC> getOverRepresentedSequences(@RequestParam Long sequencingObjectId,
 			@RequestParam Long sequenceFileId) {
 		return ResponseEntity.ok(uiSequenceFileService.getOverRepresentedSequences(sequencingObjectId, sequenceFileId));
+	}
+
+	/**
+	 * Download the sequence file
+	 *
+	 * @param sequencingObjectId ID for the {@link SequencingObject}
+	 * @param sequenceFileId     Id for the {@link SequenceFile}
+	 * @param response           HTTP response object
+	 * @throws IOException if file is not found
+	 */
+	@GetMapping("/download")
+	public void downloadSequenceFile(@RequestParam Long sequencingObjectId, @RequestParam Long sequenceFileId,
+			HttpServletResponse response) throws IOException {
+		uiSequenceFileService.downloadSequenceFile(sequencingObjectId, sequenceFileId, response);
 	}
 }

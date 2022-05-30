@@ -13,8 +13,13 @@ import { updatedLocked, updateMoveSamples } from "./shareSlice";
  */
 export function ShareSamples({ samples = [] }) {
   const dispatch = useDispatch();
-  const { associated, originalSamples, locked, remove, currentProject } =
-    useSelector((state) => state.shareReducer);
+  const {
+    associated,
+    originalSamples,
+    locked,
+    remove,
+    currentProject,
+  } = useSelector((state) => state.shareReducer);
 
   const SHOW_SAMPLES = samples.length > 0;
   const SHOW_NO_SAMPLES_WARNING = samples.length === 0;
@@ -30,7 +35,7 @@ export function ShareSamples({ samples = [] }) {
       {SHOW_ASSOCIATED && <ShareAssociated />}
       {SHOW_SAMPLES && (
         <>
-          <SharedSamplesList list={samples} currentProject={currentProject} />
+          <SharedSamplesList list={samples} />
           <Checkbox
             className="t-move-checkbox"
             checked={remove}

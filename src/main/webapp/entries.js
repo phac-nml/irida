@@ -44,7 +44,6 @@ module.exports = {
   search: "./resources/js/pages/search/search.js",
   user: "./resources/js/pages/user",
   admin: "./resources/js/pages/admin/index.js",
-  "sequence-files": "./resources/js/pages/sequence-files/",
   "analyses-outputs": "./resources/js/pages/analyses/analyses-outputs/",
   password: "./resources/js/pages/password/PasswordReset.jsx",
 };

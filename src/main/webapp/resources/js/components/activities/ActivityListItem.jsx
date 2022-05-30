@@ -1,4 +1,4 @@
-import { Avatar, List, Typography } from "antd";
+import { Avatar, Button, List, Typography } from "antd";
 import isNumeric from "antd/es/_util/isNumeric";
 import React from "react";
 import { blue6, blue8, grey6, red6 } from "../../styles/colors";
@@ -6,6 +6,7 @@ import { SPACE_XS } from "../../styles/spacing";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import styled from "styled-components";
+import { SampleDetailViewer } from "../samples/SampleDetailViewer";
 
 import {
   IconCalendarTwoTone,
@@ -26,6 +27,9 @@ const CustomListItem = styled(List.Item)`
     text-decoration: underline;
   }
 `;
+
+const PROJECT_SAMPLE_ADDED = "project_sample_added";
+const PROJECT_SAMPLE_DATA_ADDED = "project_sample_data_added";
 
 /**
  * Component for rendering an activity (event) within an Ant Design List.
@@ -54,7 +58,21 @@ export function ActivityListItem({ activity }) {
         // get the item and decide how to add it.
         const item = activity.items[parseInt(fragments[i])];
 
-        if (item.href) {
+        if (
+          parseInt(fragments[i]) === 0 &&
+          (activity.type === PROJECT_SAMPLE_DATA_ADDED ||
+            activity.type === PROJECT_SAMPLE_ADDED)
+        ) {
+          const projectId = activity.items[0].href.match(/\d+/g)?.[0];
+          const sampleId = activity.items[0].href.match(/\d+/g)?.[1];
+          content.push(
+            <SampleDetailViewer sampleId={sampleId} projectId={projectId}>
+              <Button type="link" style={{ padding: 0 }}>
+                {item.label}
+              </Button>
+            </SampleDetailViewer>
+          );
+        } else if (item.href) {
           // If there is a href create a link to the item
           content.push(
             <Typography.Link key={key} type="link" href={setBaseUrl(item.href)}>

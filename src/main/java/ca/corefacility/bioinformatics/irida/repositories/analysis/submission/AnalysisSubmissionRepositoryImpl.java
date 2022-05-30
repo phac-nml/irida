@@ -66,7 +66,8 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 			+ "  asub.id AS analysisSubmissionId,\n"
 			+ "  u.id AS userId,\n"
 			+ "  u.firstName AS userFirstName,\n"
-			+ "  u.lastName AS userLastName\n"
+			+ "  u.lastName AS userLastName,\n"
+			+ "  psample.project_id AS projectId\n"
 			+ "FROM analysis_output_file aof\n"
 			+ "  INNER JOIN analysis_output_file_map aofmap ON aof.id = aofmap.analysisOutputFilesMap_id\n"
 			+ "  INNER JOIN analysis a ON aofmap.analysis_id = a.id\n"
@@ -115,7 +116,8 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 			+ "  asub.id AS analysisSubmissionId,\n"
 			+ "  u.id AS userId,\n"
 			+ "  u.firstName AS userFirstName,\n"
-			+ "  u.lastName AS userLastName\n"
+			+ "  u.lastName AS userLastName,\n"
+			+ "  psample.project_id AS projectId\n"
 			+ "FROM analysis_output_file aof\n"
 			+ "  INNER JOIN analysis_output_file_map aofmap ON aof.id = aofmap.analysisOutputFilesMap_id\n"
 			+ "  INNER JOIN analysis a ON aofmap.analysis_id = a.id\n"
@@ -128,7 +130,7 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 			+ "WHERE\n"
 			+ "  psample.project_id = :projectId\n"
 			+ "  AND asub.workflow_id IN (:workflowIds)\n"
-			+ "  AND asub.automated=1";
+			+ "  AND asub.automated=1\n";
 		// @formatter:on
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("projectId", projectId);
@@ -159,7 +161,8 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 			+ "  asub.workflow_id AS workflowId,\n"
 			+ "  aof.created_date AS createdDate,\n"
 			+ "  asub.name AS analysisSubmissionName,\n"
-			+ "  asub.id AS analysisSubmissionId\n"
+			+ "  asub.id AS analysisSubmissionId,\n"
+			+ "  psample.project_id AS projectId\n"
 			+ "FROM analysis_output_file aof\n"
 			+ "  INNER JOIN analysis_output_file_map aofmap ON aof.id = aofmap.analysisOutputFilesMap_id\n"
 			+ "  INNER JOIN analysis a ON aofmap.analysis_id = a.id\n"
@@ -167,12 +170,13 @@ public class AnalysisSubmissionRepositoryImpl implements AnalysisSubmissionRepos
 			+ "  INNER JOIN analysis_submission_sequencing_object o ON asub.id = o.analysis_submission_id\n"
 			+ "  INNER JOIN sample_sequencingobject sso ON sso.sequencingobject_id = o.sequencing_object_id\n"
 			+ "  INNER JOIN sample s ON sso.sample_id = s.id\n"
+			+ "  INNER JOIN project_sample psample ON s.id = psample.sample_id\n"
 			+ "WHERE\n"
-			+ "  asub.submitter = :userId";
+			+ "  asub.submitter = :userId\n";
 		// @formatter:on
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("userId", userId);
-		logger.trace("Getting all automated analysis output file info for user id=" + userId);
+		logger.trace("Getting all analysis output file info for user id=" + userId);
 		NamedParameterJdbcTemplate tmpl = new NamedParameterJdbcTemplate(dataSource);
 		List<ProjectSampleAnalysisOutputInfo> analysisOutputs = tmpl.query(query, parameters, psaoiRowMapper);
 

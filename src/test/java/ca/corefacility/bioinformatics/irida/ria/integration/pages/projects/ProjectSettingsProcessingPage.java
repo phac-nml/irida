@@ -40,6 +40,7 @@ public class ProjectSettingsProcessingPage extends AbstractPage {
 	public static ProjectSettingsProcessingPage goToPage(WebDriver driver, Long projectId) {
 		waitForTime(800);
 		get(driver, "projects/" + projectId + "/settings/processing");
+		waitForTime(1000);
 		return initPage(driver);
 	}
 

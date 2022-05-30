@@ -47,8 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag("IntegrationTest")
 @Tag("UI")
 @ActiveProfiles("it")
-@SpringBootTest(classes = { IridaApplication.class,
-		IridaApiTestFilesystemConfig.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = { IridaApplication.class, IridaApiTestFilesystemConfig.class },webEnvironment = WebEnvironment.RANDOM_PORT)
 @Import(IridaIntegrationTestUriConfig.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")

@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssembl
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.validators.annotations.Latitude;
 import ca.corefacility.bioinformatics.irida.validators.annotations.Longitude;
 import ca.corefacility.bioinformatics.irida.validators.annotations.ValidSampleName;
@@ -143,6 +144,10 @@ public class Sample extends IridaRepresentationModel
 	@NotNull(message = "{sample.longitude.notnull}", groups = NCBISubmission.class)
 	@Longitude
 	private String longitude;
+
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "default_sequencing_object")
+	private SequencingObject defaultSequencingObject;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private List<ProjectSampleJoin> projects;
@@ -345,5 +350,13 @@ public class Sample extends IridaRepresentationModel
 	@Override
 	public void setRemoteStatus(RemoteStatus status) {
 		this.remoteStatus = status;
+	}
+
+	public SequencingObject getDefaultSequencingObject() {
+		return defaultSequencingObject;
+	}
+
+	public void setDefaultSequencingObject(SequencingObject sequencingObject) {
+		this.defaultSequencingObject = sequencingObject;
 	}
 }
