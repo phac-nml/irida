@@ -2,6 +2,9 @@
 Changes
 =======
 
+22.05 to 22.09
+--------------
+
 22.03 to 22.05
 --------------
 * [ALL]: Upgraded to Spring Boot 2.6.6 which fixes CVE-2022-22965. (22.03.1)
@@ -34,6 +37,7 @@ Changes
 * [UI]: Fixed: Excel output file preview displaying numeric values as a whole number rather than in scientific notation.
 * [UI]: Updated the sequence run page to use Ant Design.
 * [UI]: Updated `forgot password`, `account activation`, and `reset password` pages to use Ant Design.
+* [Developer/Workflow]: Fixed issue with deleting AnalysisSubmission raising null pointer execptions due to bean wiring issue (issue #1287).
 
 22.01 to 22.03
 --------------
