@@ -13,9 +13,12 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.*;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxFormErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIUserFormException;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIUserStatusException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUsersService;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
@@ -56,8 +59,7 @@ public class UsersAjaxController {
 	public ResponseEntity<AjaxResponse> createUser(@RequestBody UserCreateRequest userCreateRequest,
 			Principal principal, Locale locale) {
 		try {
-			return ResponseEntity.ok(
-					new AjaxCreateItemSuccessResponse(uiUsersService.createUser(userCreateRequest, principal, locale)));
+			return ResponseEntity.ok(uiUsersService.createUser(userCreateRequest, principal, locale));
 		} catch (UIEmailSendException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage()));
 		} catch (UIUserFormException e) {
@@ -74,9 +76,13 @@ public class UsersAjaxController {
 	 * @return {@link ResponseEntity} internationalized response to the update
 	 */
 	@RequestMapping("/edit")
-	public ResponseEntity<String> updateUserStatus(@RequestParam Long id, @RequestParam boolean isEnabled,
+	public ResponseEntity<AjaxResponse> updateUserStatus(@RequestParam Long id, @RequestParam boolean isEnabled,
 			Locale locale) {
-		return uiUsersService.updateUserStatus(id, isEnabled, locale);
+		try {
+			return ResponseEntity.status(HttpStatus.OK).body(uiUsersService.updateUserStatus(id, isEnabled, locale));
+		} catch (UIUserStatusException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new AjaxErrorResponse(e.getMessage()));
+		}
 	}
 
 	/**
@@ -94,8 +100,7 @@ public class UsersAjaxController {
 			@RequestBody UserEditRequest userEditRequest, Principal principal, HttpServletRequest request,
 			Locale locale) {
 		try {
-			return ResponseEntity.ok(new AjaxSuccessResponse(
-					uiUsersService.updateUser(userId, userEditRequest, principal, request, locale)));
+			return ResponseEntity.ok(uiUsersService.updateUser(userId, userEditRequest, principal, request, locale));
 		} catch (UIUserFormException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxFormErrorResponse(e.getErrors()));
 		}
@@ -117,8 +122,8 @@ public class UsersAjaxController {
 	public ResponseEntity<AjaxResponse> changeUserPassword(@PathVariable Long userId, @RequestParam String oldPassword,
 			@RequestParam String newPassword, Principal principal, HttpServletRequest request, Locale locale) {
 		try {
-			return ResponseEntity.ok(new AjaxSuccessResponse(
-					uiUsersService.changeUserPassword(userId, oldPassword, newPassword, principal, request, locale)));
+			return ResponseEntity.ok(
+					uiUsersService.changeUserPassword(userId, oldPassword, newPassword, principal, request, locale));
 		} catch (UIUserFormException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxFormErrorResponse(e.getErrors()));
 		}
@@ -150,8 +155,7 @@ public class UsersAjaxController {
 	public ResponseEntity<AjaxResponse> adminNewPasswordReset(@PathVariable Long userId, Principal principal,
 			Locale locale) {
 		try {
-			return ResponseEntity.ok(
-					new AjaxSuccessResponse(uiUsersService.adminNewPasswordReset(userId, principal, locale)));
+			return ResponseEntity.ok(uiUsersService.adminNewPasswordReset(userId, principal, locale));
 		} catch (UIEmailSendException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage()));
 		}

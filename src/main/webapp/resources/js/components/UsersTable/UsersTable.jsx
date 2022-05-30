@@ -1,9 +1,9 @@
 import React from "react";
 import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
-import { useSetUsersDisabledStatusMutation } from "../../apis/users/users";
 import { Checkbox } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { dateColumnFormat } from "../ant.design/table-renderers";
+import { useSetUserStatusMutation } from "../../apis/users/users";
 
 /**
  * React component for displaying paged table of all users in the system
@@ -13,10 +13,10 @@ import { dateColumnFormat } from "../ant.design/table-renderers";
 export function UsersTable() {
   const { updateTable } = React.useContext(PagedTableContext);
   const IS_ADMIN = window.TL._USER.systemRole === "ROLE_ADMIN";
-  const [setUsersDisabledStatus] = useSetUsersDisabledStatusMutation();
+  const [updateUserStatus] = useSetUserStatusMutation();
 
   function updateUser(user) {
-    setUsersDisabledStatus({
+    updateUserStatus({
       isEnabled: !user.enabled,
       id: user.id,
     }).then(updateTable);

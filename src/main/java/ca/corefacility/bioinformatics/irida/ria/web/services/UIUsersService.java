@@ -18,8 +18,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSendException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -33,8 +31,11 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIUserFormException;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIUserStatusException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.RoleUtilities;
@@ -93,12 +94,12 @@ public class UIUsersService {
 	 * @param userCreateRequest a {@link UserCreateRequest} containing details about a specific user
 	 * @param principal         a reference to the logged in user
 	 * @param locale            The logged in user's request locale
-	 * @return The name of the user view
+	 * @return The id of the new user
 	 * @throws UIEmailSendException if there is an error emailing the password reset
 	 * @throws UIUserFormException  if there are errors creating the new user
 	 */
-	public Long createUser(UserCreateRequest userCreateRequest, Principal principal, Locale locale)
-			throws UIEmailSendException, UIUserFormException {
+	public AjaxCreateItemSuccessResponse createUser(UserCreateRequest userCreateRequest, Principal principal,
+			Locale locale) throws UIEmailSendException, UIUserFormException {
 		Map<String, String> errors = new HashMap<>();
 
 		User user = new User();
@@ -167,7 +168,6 @@ public class UIUsersService {
 				errors = handleCreateUpdateException(ex, locale);
 				throw new UIUserFormException(errors);
 			} catch (final MailSendException e) {
-				//Not sure if I like this...
 				//Undo user creation if activation email fails, so the user can try again with setting the password manually
 				if (generateActivation) {
 					logger.error("Failed to send user activation e-mail.", e);
@@ -181,7 +181,7 @@ public class UIUsersService {
 			throw new UIUserFormException(errors);
 		}
 
-		return user.getId();
+		return new AjaxCreateItemSuccessResponse(user.getId());
 	}
 
 	/**
@@ -190,26 +190,23 @@ public class UIUsersService {
 	 * @param id        - identifier for an {@link User}
 	 * @param isEnabled - whether the user should be enabled.
 	 * @param locale    - users {@link Locale}
-	 * @return {@link ResponseEntity}
+	 * @return a success message
+	 * @throws UIUserStatusException if there is an error updating the user status
 	 */
-	public ResponseEntity<String> updateUserStatus(Long id, boolean isEnabled, Locale locale) {
+	public AjaxSuccessResponse updateUserStatus(Long id, boolean isEnabled, Locale locale)
+			throws UIUserStatusException {
 		User user = userService.read(id);
-		if (user.isEnabled() != isEnabled) {
-			try {
-				userService.updateFields(id, ImmutableMap.of("enabled", isEnabled));
-				String key = isEnabled ? "server.AdminUsersService.enabled" : "server.AdminUsersService.disabled";
-				return ResponseEntity.status(HttpStatus.OK)
-						.body(messageSource.getMessage(key, new Object[] { user.getUsername() }, locale));
-			} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException |
-					 InvalidPropertyException e) {
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-						.body(messageSource.getMessage("server.AdminUsersService.error",
-								new Object[] { user.getUsername() }, locale));
-			}
 
+		try {
+			userService.updateFields(id, ImmutableMap.of("enabled", isEnabled));
+			String key = isEnabled ? "server.AdminUsersService.enabled" : "server.AdminUsersService.disabled";
+			return new AjaxSuccessResponse(messageSource.getMessage(key, new Object[] { user.getUsername() }, locale));
+		} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException |
+				 InvalidPropertyException e) {
+			throw new UIUserStatusException(
+					messageSource.getMessage("server.AdminUsersService.error", new Object[] { user.getUsername() },
+							locale));
 		}
-		// Should never hit here!
-		return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("");
 	}
 
 	/**
@@ -244,11 +241,10 @@ public class UIUsersService {
 	 * @return a success message
 	 * @throws UIUserFormException if there are errors updating the user
 	 */
-	public String updateUser(Long userId, UserEditRequest userEditRequest, Principal principal,
+	public AjaxSuccessResponse updateUser(Long userId, UserEditRequest userEditRequest, Principal principal,
 			HttpServletRequest request, Locale locale) throws UIUserFormException {
 		User principalUser = userService.getUserByUsername(principal.getName());
 		Map<String, Object> updatedValues = new HashMap<>();
-		Map<String, String> errors;
 
 		if (!Strings.isNullOrEmpty(userEditRequest.getFirstName())) {
 			updatedValues.put("firstName", userEditRequest.getFirstName());
@@ -280,20 +276,9 @@ public class UIUsersService {
 				updatedValues.put("systemRole", newRole);
 			}
 		}
-		try {
-			User user = userService.updateFields(userId, updatedValues);
+		updateUser(userId, principal, request, updatedValues);
 
-			// If the user is updating their account make sure you update it in the session variable
-			if (user != null && principal.getName().equals(user.getUsername())) {
-				HttpSession session = request.getSession();
-				session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
-			}
-		} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
-			errors = handleCreateUpdateException(ex, request.getLocale());
-			throw new UIUserFormException(errors);
-		}
-
-		return messageSource.getMessage("server.user.edit.success", null, locale);
+		return new AjaxSuccessResponse(messageSource.getMessage("server.user.edit.success", null, locale));
 	}
 
 	/**
@@ -308,8 +293,8 @@ public class UIUsersService {
 	 * @return a success message
 	 * @throws UIUserFormException if there is an error changing the password
 	 */
-	public String changeUserPassword(Long userId, String oldPassword, String newPassword, Principal principal,
-			HttpServletRequest request, Locale locale) throws UIUserFormException {
+	public AjaxSuccessResponse changeUserPassword(Long userId, String oldPassword, String newPassword,
+			Principal principal, HttpServletRequest request, Locale locale) throws UIUserFormException {
 		User principalUser = userService.getUserByUsername(principal.getName());
 		Map<String, Object> updatedValues = new HashMap<>();
 		Map<String, String> errors = new HashMap<>();
@@ -324,23 +309,12 @@ public class UIUsersService {
 		}
 
 		if (errors.isEmpty()) {
-			try {
-				User user = userService.updateFields(userId, updatedValues);
-
-				// If the user is updating their account make sure you update it in the session variable
-				if (user != null && principal.getName().equals(user.getUsername())) {
-					HttpSession session = request.getSession();
-					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
-				}
-			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
-				errors = handleCreateUpdateException(ex, request.getLocale());
-				throw new UIUserFormException(errors);
-			}
+			updateUser(userId, principal, request, updatedValues);
 		} else {
 			throw new UIUserFormException(errors);
 		}
 
-		return messageSource.getMessage("server.user.edit.password.success", null, locale);
+		return new AjaxSuccessResponse(messageSource.getMessage("server.user.edit.password.success", null, locale));
 	}
 
 	/**
@@ -352,7 +326,8 @@ public class UIUsersService {
 	 * @return text to display to the user about the result of creating a password reset.
 	 * @throws UIEmailSendException if there is an error emailing the password reset.
 	 */
-	public String adminNewPasswordReset(Long userId, Principal principal, Locale locale) throws UIEmailSendException {
+	public AjaxSuccessResponse adminNewPasswordReset(Long userId, Principal principal, Locale locale)
+			throws UIEmailSendException {
 		User user = userService.read(userId);
 		User principalUser = userService.getUserByUsername(principal.getName());
 
@@ -368,8 +343,9 @@ public class UIUsersService {
 					messageSource.getMessage("server.password.reset.error.message", null, locale));
 		}
 
-		return messageSource.getMessage("server.password.reset.success.message", new Object[] { user.getFirstName() },
-				locale);
+		return new AjaxSuccessResponse(
+				messageSource.getMessage("server.password.reset.success.message", new Object[] { user.getFirstName() },
+						locale));
 	}
 
 	/**
@@ -550,6 +526,32 @@ public class UIUsersService {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Update the {@link User} and in the session variable
+	 *
+	 * @param userId        The id of the user to edit (required)
+	 * @param principal     a reference to the logged in user
+	 * @param request       the request
+	 * @param updatedValues the user values to be updated
+	 * @throws UIUserFormException if there is an error emailing the password reset.
+	 */
+	private void updateUser(Long userId, Principal principal, HttpServletRequest request,
+			Map<String, Object> updatedValues) throws UIUserFormException {
+		Map<String, String> errors;
+		try {
+			User user = userService.updateFields(userId, updatedValues);
+
+			// If the user is updating their account make sure you update it in the session variable
+			if (user != null && principal.getName().equals(user.getUsername())) {
+				HttpSession session = request.getSession();
+				session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
+			}
+		} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
+			errors = handleCreateUpdateException(ex, request.getLocale());
+			throw new UIUserFormException(errors);
+		}
 	}
 
 }

@@ -8,15 +8,15 @@ import javax.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIUserFormException;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIUserStatusException;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUsersService;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsModel;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
@@ -64,9 +64,15 @@ public class UIUsersServiceTest {
 	}
 
 	@Test
-	void updateUserStatusTest() {
-		ResponseEntity<String> response = service.updateUserStatus(USER2.getId(), false, Locale.ENGLISH);
-		assertEquals(response.getStatusCode(), HttpStatus.OK, "Received an 200 OK response");
+	void updateUserStatusTest() throws UIUserStatusException {
+		String successMessage = "Anna has been disabled";
+
+		when(messageSource.getMessage(eq("server.AdminUsersService.disabled"), any(), any(Locale.class))).thenReturn(
+				successMessage);
+
+		AjaxSuccessResponse response = service.updateUserStatus(USER2.getId(), false, Locale.ENGLISH);
+
+		assertEquals(response.getMessage(), successMessage, "Incorrect success message.");
 	}
 
 	@Test
@@ -75,7 +81,7 @@ public class UIUsersServiceTest {
 		UserDetailsModel userDetails = new UserDetailsModel(USER2);
 		UserDetailsResponse expectedResponse = new UserDetailsResponse(userDetails, false, false, true, false, false);
 		UserDetailsResponse response = service.getUser(USER1.getId(), principal);
-		assertEquals(response, expectedResponse, "Received the correct user details response");
+		assertEquals(response, expectedResponse, "Incorrect user details.");
 	}
 
 	@Test
@@ -89,8 +95,9 @@ public class UIUsersServiceTest {
 		when(messageSource.getMessage(eq("server.user.edit.success"), any(), any(Locale.class))).thenReturn(
 				successMessage);
 
-		String response = service.updateUser(USER1.getId(), userEditRequest, principal, request, Locale.ENGLISH);
-		assertEquals(successMessage, response, "Incorrect success message.");
+		AjaxSuccessResponse response = service.updateUser(USER1.getId(), userEditRequest, principal, request,
+				Locale.ENGLISH);
+		assertEquals(successMessage, response.getMessage(), "Incorrect success message.");
 	}
 
 	@Test
@@ -105,9 +112,9 @@ public class UIUsersServiceTest {
 		when(messageSource.getMessage(eq("server.user.edit.password.success"), any(), any(Locale.class))).thenReturn(
 				successMessage);
 
-		String response = service.changeUserPassword(USER1.getId(), USER1.getPassword(), "Password3!", principal,
-				request, Locale.ENGLISH);
-		assertEquals(successMessage, response, "Incorrect success message.");
+		AjaxSuccessResponse response = service.changeUserPassword(USER1.getId(), USER1.getPassword(), "Password3!",
+				principal, request, Locale.ENGLISH);
+		assertEquals(successMessage, response.getMessage(), "Incorrect success message.");
 	}
 
 	@Test
@@ -116,7 +123,7 @@ public class UIUsersServiceTest {
 		user1.setSystemRole(Role.ROLE_ADMIN);
 		User user2 = new User(2L, "Anna", "anna@arendelle.ca", "Password2!", "Anna", "Oldenburg", "5678");
 		Principal principal = () -> user1.getFirstName();
-		String response = null;
+		AjaxSuccessResponse response = null;
 
 		when(userService.read(anyLong())).thenReturn(user2);
 		when(userService.getUserByUsername(anyString())).thenReturn(user1);
@@ -127,6 +134,6 @@ public class UIUsersServiceTest {
 		} catch (UIEmailSendException e) {
 			e.printStackTrace();
 		}
-		assertEquals(response, "success");
+		assertEquals(response.getMessage(), "success");
 	}
 }

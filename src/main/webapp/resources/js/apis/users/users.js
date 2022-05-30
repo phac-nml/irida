@@ -56,9 +56,9 @@ export const userApi = createApi({
       invalidatesTags: ["User"],
     }),
     /*
-    Update the disabled status of a user by user id.
+    Update user status.
     */
-    setUsersDisabledStatus: build.mutation({
+    setUserStatus: build.mutation({
       query: ({ isEnabled, id }) => ({
         url: `/edit`,
         params: { isEnabled, id },
@@ -84,6 +84,6 @@ export const {
   useGetUserDetailsQuery,
   useEditUserDetailsMutation,
   useChangeUserPasswordMutation,
-  useSetUsersDisabledStatusMutation,
+  useSetUserStatusMutation,
   useCreatePasswordResetMutation,
 } = userApi;
