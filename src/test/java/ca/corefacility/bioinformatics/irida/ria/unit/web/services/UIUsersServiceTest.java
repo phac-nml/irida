@@ -85,6 +85,10 @@ public class UIUsersServiceTest {
 		UserEditRequest userEditRequest = new UserEditRequest(USER1.getFirstName(), USER1.getLastName(),
 				USER1.getEmail(), USER1.getPhoneNumber(), USER1.getSystemRole().getName(), USER1.getLocale(),
 				USER1.isEnabled());
+
+		when(messageSource.getMessage(eq("server.user.edit.success"), any(), any(Locale.class))).thenReturn(
+				successMessage);
+
 		String response = service.updateUser(USER1.getId(), userEditRequest, principal, request, Locale.ENGLISH);
 		assertEquals(successMessage, response, "Incorrect success message.");
 	}
@@ -98,6 +102,8 @@ public class UIUsersServiceTest {
 				USER1.getPhoneNumber());
 
 		when(userService.getUserByUsername(anyString())).thenReturn(savedUser);
+		when(messageSource.getMessage(eq("server.user.edit.password.success"), any(), any(Locale.class))).thenReturn(
+				successMessage);
 
 		String response = service.changeUserPassword(USER1.getId(), USER1.getPassword(), "Password3!", principal,
 				request, Locale.ENGLISH);
