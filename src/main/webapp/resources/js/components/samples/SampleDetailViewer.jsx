@@ -1,14 +1,20 @@
-import { Button, Modal, Skeleton, Space, Tag, Typography } from "antd";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Button, Modal, Skeleton, Space, Tag, Typography } from "antd";
 import { SampleDetails } from "./components/SampleDetails";
-import { Provider } from "react-redux";
-import store from "../../components/samples/store";
 import { useGetSampleDetailsQuery } from "../../apis/samples/samples";
 import {
   putSampleInCart,
-  useRemoveSampleMutation,
-  useGetCartSampleIdsQuery,
+  getCartSampleIds,
+  removeSample,
 } from "../../apis/cart/cart";
+import {
+  setCartSampleIds,
+  addCartSampleId,
+  removeCartSampleId,
+} from "./cartSamplesSlice";
+import { Provider } from "react-redux";
+import store from "../../components/samples/store";
 
 const { Text } = Typography;
 
@@ -16,17 +22,13 @@ const { Text } = Typography;
  * Function to render (details, metadata, files, and analyses) for a sample.
  * @param sampleId - identifier for a sample
  * @param projectId - identifier for a project
- * @param removeSample - function to remove the sample from the cart.
  * @param children
  * @returns {JSX.Element}
  * @constructor
  */
 function DisplaySampleDetails({ sampleId, projectId, children }) {
+  const dispatch = useDispatch();
   const [visible, setVisible] = React.useState(false);
-  const [addSampleToCartVisible, setAddSampleToCartVisible] =
-    React.useState(true);
-  const [removeSampleFromCartVisible, setRemoveSampleFromCartVisible] =
-    React.useState(false);
   const { data: details = {}, isLoading } = useGetSampleDetailsQuery(
     {
       sampleId,
@@ -36,12 +38,7 @@ function DisplaySampleDetails({ sampleId, projectId, children }) {
       skip: !visible,
     }
   );
-  const { data: sampleIds = {} } = useGetCartSampleIdsQuery({ skip: !visible });
-  const [removeSample] = useRemoveSampleMutation();
-
-  const isSampleAlreadyInCart = () => {
-    return sampleIds.includes(sampleId);
-  };
+  const { sampleIds } = useSelector((state) => state.cartSamplesReducer);
 
   /*
   Empty useEffect hook to update visible const required by redux
@@ -49,17 +46,42 @@ function DisplaySampleDetails({ sampleId, projectId, children }) {
    */
   React.useEffect(() => {}, [visible]);
 
-  const removeSampleFromCart = () => {
-    removeSample({ sampleId }).then((res) => {
-      setAddSampleToCartVisible(true);
-      setRemoveSampleFromCartVisible(false);
+  /*
+  If sampleIds haven't already been added to
+  the state then we go ahead and do that on
+  first render
+   */
+  React.useEffect(() => {
+    if (sampleIds.length === 0) {
+      getCartSampleIds().then((res) => {
+        dispatch(setCartSampleIds({ sampleIds: res }));
+      });
+    }
+  }, [sampleIds.length]);
+
+  /*
+  Check if the current sample is in the cart or not
+  Used to display `add to cart` and `remove from cart` buttons
+   */
+  const isSampleAlreadyInCart = () => {
+    return sampleIds.includes(parseInt(sampleId));
+  };
+
+  /*
+  Add sample to cart and update the state sampleIds
+   */
+  const addSampleToCart = () => {
+    putSampleInCart(projectId, [details.sample]).then(() => {
+      dispatch(addCartSampleId({ sampleId: details.sample.identifier }));
     });
   };
 
-  const addSampleToCart = () => {
-    putSampleInCart(projectId, [details.sample]).then((res) => {
-      setAddSampleToCartVisible(false);
-      setRemoveSampleFromCartVisible(true);
+  /*
+  Remove sample from cart and update the state sampleIds
+   */
+  const removeSampleFromCart = () => {
+    removeSample(projectId, sampleId).then(() => {
+      dispatch(removeCartSampleId({ sampleId }));
     });
   };
 
@@ -103,8 +125,7 @@ function DisplaySampleDetails({ sampleId, projectId, children }) {
                   >
                     Add To Cart
                   </Button>
-                ) : null}
-                {isSampleAlreadyInCart() ? (
+                ) : (
                   <Button
                     size="small"
                     danger
@@ -113,7 +134,7 @@ function DisplaySampleDetails({ sampleId, projectId, children }) {
                   >
                     {i18n("SampleDetailsSidebar.removeFromCart")}
                   </Button>
-                ) : null}
+                )}
               </div>
             )
           }
@@ -139,24 +160,14 @@ function DisplaySampleDetails({ sampleId, projectId, children }) {
  * React component to provide redux store to sampledetailviewer
  * @param sampleId - identifier for a sample
  * @param projectId - identifier for a project
- * @param removeSample - function to remove the sample from the cart.
  * @param children
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleDetailViewer({
-  sampleId,
-  projectId,
-  removeSample,
-  children,
-}) {
+export function SampleDetailViewer({ sampleId, projectId, children }) {
   return (
     <Provider store={store}>
-      <DisplaySampleDetails
-        sampleId={sampleId}
-        projectId={projectId}
-        removeSample={removeSample}
-      >
+      <DisplaySampleDetails sampleId={sampleId} projectId={projectId}>
         {children}
       </DisplaySampleDetails>
     </Provider>

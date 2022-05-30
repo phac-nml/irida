@@ -80,15 +80,11 @@ export const cartApi = createApi({
         { type: "Samples", id: sampleId },
       ],
     }),
-    getCartSampleIds: build.query({
-      query: () => ({ url: "/sample-ids" }),
-    }),
   }),
 });
 
 export const {
   useGetCartSamplesQuery,
-  useGetCartSampleIdsQuery,
   useGetCartQuery,
   useCountQuery,
   useEmptyMutation,
@@ -109,8 +105,6 @@ const updateCart = (data) => {
  * @returns {Promise<{count: any}>}
  */
 export const putSampleInCart = async (projectId, samples) => {
-  console.log(projectId);
-  console.log(samples);
   const { data } = await axios.post(AJAX_URL, {
     projectId,
     sampleIds: samples.map((s) => s.id || s.identifier),
@@ -144,4 +138,13 @@ export const removeSample = async (projectId, sampleId) => {
     `${AJAX_URL}/sample?sampleId=${sampleId}`
   );
   return updateCart(data);
+};
+
+/**
+ * Get sample ids of the samples currently in the cart
+ * @returns {Promise<* | never>}
+ */
+export const getCartSampleIds = async () => {
+  const { data } = await axios.get(`${AJAX_URL}/sample-ids`);
+  return data;
 };
