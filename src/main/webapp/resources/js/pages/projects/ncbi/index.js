@@ -1,7 +1,7 @@
 import { Col, PageHeader, Row, Typography } from "antd";
 import React from "react";
 import { render } from "react-dom";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import ProjectSPA from "../ProjectSPA";
 
 const { Title } = Typography;
@@ -12,6 +12,14 @@ const { Title } = Typography;
  * @constructor
  */
 export default function ProjectNCBILayout() {
+  const { id: submissionId } = useParams();
+  const navigate = useNavigate();
+  const [showBack, setShowBack] = React.useState(false);
+
+  React.useEffect(() => {
+    setShowBack(!!submissionId);
+  }, [submissionId]);
+
   return (
     <Row gutter={[16, 16]}>
       <Col
@@ -19,7 +27,10 @@ export default function ProjectNCBILayout() {
         xl={{ span: 20, offset: 2 }}
         sm={{ span: 22, offset: 1 }}
       >
-        <PageHeader title={i18n("NcbiExportPage.title")} />
+        <PageHeader
+          onBack={showBack ? () => navigate(-1) : null}
+          title={i18n("NcbiExportPage.title")}
+        />
         <Outlet />
       </Col>
     </Row>
