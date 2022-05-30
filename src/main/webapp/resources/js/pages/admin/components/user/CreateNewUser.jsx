@@ -80,7 +80,7 @@ export default function CreateNewUser() {
           form.setFields(fields);
         } else if (error.status === 409) {
           form.setFieldsValue({ activate: false });
-          setActivationEmail(true);
+          setActivationEmail(false);
           setMailFailure(true);
         }
       })

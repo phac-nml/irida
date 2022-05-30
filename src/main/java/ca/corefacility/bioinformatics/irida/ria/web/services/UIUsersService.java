@@ -23,7 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSendException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -98,7 +97,6 @@ public class UIUsersService {
 	 * @throws UIEmailSendException if there is an error emailing the password reset
 	 * @throws UIUserFormException  if there are errors creating the new user
 	 */
-	@Transactional
 	public Long createUser(UserCreateRequest userCreateRequest, Principal principal, Locale locale)
 			throws UIEmailSendException, UIUserFormException {
 		Map<String, String> errors = new HashMap<>();
@@ -150,11 +148,11 @@ public class UIUsersService {
 				user.setSystemRole(Role.ROLE_USER);
 			}
 
+			PasswordReset passwordReset = null;
 			try {
 				user = userService.create(user);
 
 				// Generate a password reset
-				PasswordReset passwordReset = null;
 				if (generateActivation) {
 					logger.trace("Created password reset for activation");
 					passwordReset = passwordResetService.create(new PasswordReset(user));
@@ -169,9 +167,12 @@ public class UIUsersService {
 				errors = handleCreateUpdateException(ex, locale);
 				throw new UIUserFormException(errors);
 			} catch (final MailSendException e) {
+				//Not sure if I like this...
 				//Undo user creation if activation email fails, so the user can try again with setting the password manually
 				if (generateActivation) {
 					logger.error("Failed to send user activation e-mail.", e);
+					passwordResetService.delete(passwordReset.getId());
+					userService.delete(user.getId());
 					throw new UIEmailSendException(
 							messageSource.getMessage("server.password.reset.error.message", null, locale));
 				}
