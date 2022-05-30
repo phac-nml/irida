@@ -1,8 +1,6 @@
 import { Typography } from "antd";
 import React from "react";
-import { render } from "react-dom";
 import { NcbiExportTable } from "../../../components/ncbi/export-table/NcbiExportTable";
-import ProjectSPA from "../ProjectSPA";
 
 const { Title } = Typography;
 
@@ -19,6 +17,3 @@ export function ProjectNcbiExportsPage() {
     </>
   );
 }
-
-// TODO: This will need to be moved up as the project SPA gets created.
-render(<ProjectSPA />, document.querySelector("#root"));

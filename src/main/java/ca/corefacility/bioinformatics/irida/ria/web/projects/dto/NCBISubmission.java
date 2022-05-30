@@ -1,8 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
+import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 
 public class NCBISubmission {
 	private final Long id;
@@ -14,6 +16,7 @@ public class NCBISubmission {
 	private final String bioProject;
 	private final String ncbiNamespace;
 	private final Date releaseDate;
+	private final List<NcbiBioSampleFiles> samples;
 
 	public NCBISubmission(NcbiExportSubmission submission) {
 		this.id = submission.getId();
@@ -26,6 +29,7 @@ public class NCBISubmission {
 		this.bioProject = submission.getBioProjectId();
 		this.ncbiNamespace = submission.getNcbiNamespace();
 		this.releaseDate = submission.getReleaseDate();
+		this.samples = submission.getBioSampleFiles();
 	}
 
 	public Long getId() {
@@ -62,5 +66,9 @@ public class NCBISubmission {
 
 	public Date getReleaseDate() {
 		return releaseDate;
+	}
+
+	public List<NcbiBioSampleFiles> getSamples() {
+		return samples;
 	}
 }

@@ -1,5 +1,4 @@
-import { LoadingOutlined } from "@ant-design/icons";
-import { Card, Col, Row, Skeleton, Typography } from "antd";
+import { Card, List, Skeleton, Space, Typography } from "antd";
 import * as React from "react";
 import { useParams } from "react-router-dom";
 import { BasicList } from "../../../components/lists/index";
@@ -7,20 +6,11 @@ import NcbiUploadStates from "../../../components/ncbi/upload-states/index";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
-function LoadingValue({ loading, value }) {
-  return loading ? (
-    <LoadingOutlined />
-  ) : value && value.length ? (
-    <Typography.Text>{value}</Typography.Text>
-  ) : (
-    ""
-  );
-}
-
 export default function NCBIExportDetails() {
   const { projectId, id } = useParams();
 
   const [details, setDetails] = React.useState([]);
+  const [samples, setSamples] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
 
   const formatResponse = (data) => [
@@ -64,29 +54,82 @@ export default function NCBIExportDetails() {
     },
   ];
 
+  const formatSamples = (samples) =>
+    samples.map((sample) => {
+      console.table(sample);
+      return [
+        {
+          title: i18n("project.export.biosample.title"),
+          desc: sample.bioSample,
+        },
+        {
+          title: i18n("project.export.status"),
+          desc: <NcbiUploadStates state={sample.submissionStatus} />,
+        },
+        {
+          title: i18n("project.export.accession"),
+          desc: sample.accession,
+        },
+        {
+          title: i18n("project.export.library_name.title"),
+          desc: sample.libraryName,
+        },
+        {
+          title: i18n("project.export.instrument_model.title"),
+          desc: sample.instrumentModel,
+        },
+        {
+          title: i18n("project.export.library_strategy.title"),
+          desc: sample.libraryStrategy,
+        },
+        {
+          title: i18n("project.export.library_source.title"),
+          desc: sample.librarySource,
+        },
+        {
+          title: i18n("project.export.library_construction_protocol.title"),
+          desc: sample.libraryConstructionProtocol,
+        },
+      ];
+    });
+
   React.useEffect(() => {
     fetch(`/ajax/ncbi/project/${projectId}/details/${id}`)
       .then((response) => response.json())
       .then((response) => {
         console.log({ response });
         setDetails(formatResponse(response));
+        setSamples(formatSamples(response.samples));
         setLoading(false);
       });
   }, [id, projectId]);
 
   return (
-    <Row gutter={[16, 16]}>
-      <Col
-        xxl={{ span: 12, offset: 6 }}
-        xl={{ span: 20, offset: 2 }}
-        sm={{ span: 22, offset: 1 }}
-      >
-        <Card>
-          <Skeleton active={true} loading={loading}>
-            <BasicList dataSource={details} grid={{ gutter: 16, column: 4 }} />
-          </Skeleton>
-        </Card>
-      </Col>
-    </Row>
+    <Skeleton active={true} loading={loading}>
+      <Card title={i18n("project.export.sidebar.title")}>
+        <Space direction="vertical" style={{ width: `100%` }}>
+          <BasicList dataSource={details} grid={{ gutter: 16, column: 2 }} />
+
+          <List
+            header={
+              <Typography.Text strong>
+                {i18n("project.export.files")}
+              </Typography.Text>
+            }
+            bordered
+            dataSource={samples}
+            renderItem={(sample) => (
+              <div style={{ paddingTop: 16 }}>
+                <BasicList
+                  key={sample.bioSample}
+                  dataSource={sample}
+                  grid={{ gutter: 16, column: 3 }}
+                />
+              </div>
+            )}
+          />
+        </Space>
+      </Card>
+    </Skeleton>
   );
 }
