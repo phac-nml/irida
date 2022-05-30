@@ -86,6 +86,7 @@ public class UsersAjaxController {
 	 * @param userEditRequest a {@link UserEditRequest} containing details about a specific user
 	 * @param principal       a reference to the logged in user
 	 * @param request         the request
+	 * @param locale          the logged in user's request locale
 	 * @return a status message
 	 */
 	@RequestMapping(value = "/{userId}/edit", method = RequestMethod.POST)
@@ -109,6 +110,7 @@ public class UsersAjaxController {
 	 * @param newPassword The new password of the user for password change
 	 * @param principal   a reference to the logged in user
 	 * @param request     the request
+	 * @param locale      the logged in user's request locale
 	 * @return a status message
 	 */
 	@RequestMapping(value = "/{userId}/changePassword", method = RequestMethod.POST)
