@@ -31,7 +31,6 @@ module.exports = {
   "project-analyses": "./resources/js/pages/projects/project-analyses/",
   analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
   "users-list": "./resources/js/pages/user/components/UserListPage.jsx",
-  "users-password": "./resources/js/pages/users/users-password.js",
   "sample-edit": "./resources/js/pages/samples/sample-edit.js",
   "sample-files-concatenate":
     "./resources/js/pages/samples/sample-files-concatenate.js",
