@@ -1,10 +1,14 @@
 import React from "react";
-import { Alert, Button, Form, Input } from "antd";
+import { Alert, Button, Form, Input, InputRef } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { SPACE_MD } from "../../styles/spacing";
 import { useActivateAccountMutation } from "../../apis/password-reset";
 
 const { Item } = Form;
+
+interface Props {
+  updateDisplayLoginPage: (value: boolean) => void;
+}
 
 /**
  * React component to render the forgot password form
@@ -12,21 +16,23 @@ const { Item } = Form;
  * @returns {*}
  * @constructor
  */
-export function ActivateAccount({ updateDisplayLoginPage }) {
+export const ActivateAccount: React.FC<Props> = ({ updateDisplayLoginPage }) => {
   const [loading, setLoading] = React.useState(false);
   const [activateAccount] = useActivateAccountMutation();
   const [activateAccountForm] = Form.useForm();
   const [message, setMessage] = React.useState(null);
-  const activationIdRef = React.useRef();
+  const activationIdRef = React.useRef<InputRef>(null);
 
   /**
    * When the component gets added to the page,
    * focus on the activationId input.
    */
   React.useEffect(() => {
-    activationIdRef.current.focus();
-    activationIdRef.current.select();
-  }, []);
+    if (activationIdRef.current !== null) {
+      activationIdRef.current.focus();
+      activationIdRef.current.select();
+    }
+  }, [activationIdRef]);
 
   const submitActivateAccountForm = () => {
     setLoading(true);
@@ -116,4 +122,4 @@ export function ActivateAccount({ updateDisplayLoginPage }) {
       </Button>
     </>
   );
-}
+};

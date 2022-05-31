@@ -5,7 +5,7 @@
  */
 module.exports = {
   vendor: ["expose-loader?exposes=$,jQuery!jquery", "./resources/js/vendors"],
-  login: "./resources/js/pages/LoginPage.jsx",
+  login: "./resources/js/pages/LoginPage.tsx",
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.js",
   announcements: "./resources/js/pages/announcement",

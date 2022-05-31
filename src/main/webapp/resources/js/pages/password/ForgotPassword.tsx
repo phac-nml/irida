@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, InputRef } from "antd";
 import { MailOutlined } from "@ant-design/icons";
 import { InfoAlert } from "../../components/alerts";
 import { SPACE_MD } from "../../styles/spacing";
@@ -8,27 +8,33 @@ import { useCreatePasswordResetEmailMutation } from "../../apis/password-reset";
 
 const { Item } = Form;
 
+interface Props {
+  updateDisplayLoginPage: (value: boolean) => void;
+}
+
 /**
  * React component to render the forgot password form
  * @param {function} updateDisplayLoginPage Function to update whether to display login page
  * @returns {*}
  * @constructor
  */
-export function ForgotPassword({ updateDisplayLoginPage }) {
+export const ForgotPassword: React.FC<Props> = ({ updateDisplayLoginPage }) => {
   const [forgotPassword] = useCreatePasswordResetEmailMutation();
   const [forgotPasswordForm] = Form.useForm();
   const [loading, setLoading] = React.useState(false);
   const [message, setMessage] = React.useState(null);
-  const usernameOrEmailRef = React.useRef();
+  const usernameOrEmailRef = React.useRef<InputRef>(null);
 
   /**
    * When the component gets added to the page,
    * focus on the usernameOrEmail input.
    */
   React.useEffect(() => {
-    usernameOrEmailRef.current.focus();
-    usernameOrEmailRef.current.select();
-  }, []);
+    if (usernameOrEmailRef.current !== null) {
+      usernameOrEmailRef.current.focus();
+      usernameOrEmailRef.current.select();
+    }
+  }, [usernameOrEmailRef]);
 
   const submitForgotPasswordForm = () => {
     setLoading(true);
@@ -53,7 +59,7 @@ export function ForgotPassword({ updateDisplayLoginPage }) {
       {message !== null && (
         <InfoAlert
           message={message}
-          className="t-forgot-password-alert"
+          className={"t-forgot-password-alert"}
           style={{ marginTop: SPACE_MD }}
         />
       )}
@@ -109,4 +115,4 @@ export function ForgotPassword({ updateDisplayLoginPage }) {
       </Button>
     </>
   );
-}
+};

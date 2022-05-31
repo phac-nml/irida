@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from "react";
+import React, { FC, useEffect, useRef } from "react";
 import { render } from "react-dom";
-import { Alert, Button, Col, Form, Input, Row } from "antd";
+import { Alert, Button, Col, Form, Input, InputRef, Row } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { setBaseUrl } from "../utilities/url-utilities";
 import { SPACE_MD } from "../styles/spacing";
@@ -14,6 +14,11 @@ import { ActivateAccount } from "./password/ActivateAccount";
 
 const { Item } = Form;
 
+interface LoginFormProps {
+  updateDisplayLoginPage: (value: boolean) => void;
+  updatePageType: (value: string) => void;
+};
+
 /**
  * React component to render the login form
  * @param {function} updateDisplayLoginPage Function to update whether to display login page
@@ -21,24 +26,26 @@ const { Item } = Form;
  * @returns {*}
  * @constructor
  */
-function LoginForm({ updateDisplayLoginPage, updatePageType }) {
+const LoginForm: FC<LoginFormProps> = ({ updateDisplayLoginPage, updatePageType }) => {
   const [form] = Form.useForm();
-  const usernameRef = useRef();
+  const usernameRef = useRef<InputRef>(null);
 
   /**
    * When the component gets added to the page,
    * focus on the username input.
    */
   useEffect(() => {
-    usernameRef.current.focus();
-    usernameRef.current.select();
-  }, []);
+    if (usernameRef.current !== null) {
+      usernameRef.current.focus();
+      usernameRef.current.select();
+    }
+  }, [usernameRef]);
 
   /**
    * Handler for submitting the login form once all fields are correctly filled out
    * @returns {*}
    */
-  const onFinish = () => document.getElementById("loginForm").submit();
+  const onFinish = () => (document.getElementById("loginForm") as HTMLFormElement).submit();
 
   return (
     <Form
@@ -86,7 +93,7 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
           {i18n("LoginPage.submit")}
         </Button>
       </Item>
-      {window.TL.emailConfigured ? (
+      {(window as any).TL.emailConfigured ? (
         <Item>
           <Row justify="space-between">
             <Col>
@@ -129,7 +136,7 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
       ) : null}
     </Form>
   );
-}
+};
 
 /**
  * React component to layout the Login Page.
@@ -140,13 +147,13 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
 function LoginPage() {
   const urlParams = new URLSearchParams(window.location.search);
   const [displayLoginPage, setDisplayLoginPage] = React.useState(true);
-  const [type, setType] = React.useState(null);
+  const [type, setType] = React.useState("");
 
-  const updateDisplayLoginPage = (value) => {
+  const updateDisplayLoginPage = (value: boolean) => {
     setDisplayLoginPage(value);
   };
 
-  const updatePageType = (pageType) => {
+  const updatePageType = (pageType: string) => {
     setType(pageType);
   };
 

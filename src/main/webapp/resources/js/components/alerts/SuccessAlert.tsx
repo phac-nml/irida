@@ -3,7 +3,12 @@
  */
 
 import React from "react";
-import { Alert } from "antd";
+import { Alert, AlertProps } from "antd";
+
+interface Props extends AlertProps {
+  message: any,
+  description?: string,
+}
 
 /**
  * Stateless UI component for displaying an [antd success Alert]{@link https://ant.design/components/alert/}
@@ -14,7 +19,7 @@ import { Alert } from "antd";
  * @returns {Element} - Returns an antd success 'Alert' component
  */
 
-export function SuccessAlert({ message, description, ...props }) {
+export const SuccessAlert: React.FC<Props> = ({ message, description, ...props }) => {
   return (
     <Alert
       type="success"
@@ -24,4 +29,4 @@ export function SuccessAlert({ message, description, ...props }) {
       {...props}
     />
   );
-}
+};
