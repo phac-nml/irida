@@ -4,6 +4,7 @@ Changes
 
 22.05 to 22.09
 --------------
+* [Developer/UI]: Added in typescript support to webpack build, moving forward all new frontend development will use typescript.
 
 22.03 to 22.05
 --------------
