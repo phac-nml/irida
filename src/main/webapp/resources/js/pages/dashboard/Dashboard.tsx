@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { Col, Layout, Row } from "antd";
 import { render } from "react-dom";
 import { UserProjectStatistics } from "./components/UserProjectStatistics";
@@ -12,7 +12,7 @@ const { Content } = Layout;
  * @returns {JSX.Element}
  * @constructor
  */
-function Dashboard() {
+const Dashboard: React.FC = () => {
   return (
     <Layout style={{ minHeight: "100%" }}>
       <Row>
@@ -31,6 +31,6 @@ function Dashboard() {
       </Row>
     </Layout>
   );
-}
+};
 
 render(<Dashboard />, document.querySelector("#root"));

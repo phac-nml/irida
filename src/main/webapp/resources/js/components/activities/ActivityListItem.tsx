@@ -1,6 +1,6 @@
 import { Avatar, List, Typography } from "antd";
 import isNumeric from "antd/es/_util/isNumeric";
-import React from "react";
+import * as React from "react";
 import { blue6, blue8, grey6, red6 } from "../../styles/colors";
 import { SPACE_XS } from "../../styles/spacing";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
@@ -16,6 +16,7 @@ import {
   IconUsergroupAdd,
   IconUsergroupDelete,
 } from "../icons/Icons";
+import { Activity } from "../../apis/activities/activities";
 
 const CustomListItem = styled(List.Item)`
   .ant-list-item-meta-title > a {
@@ -27,13 +28,17 @@ const CustomListItem = styled(List.Item)`
   }
 `;
 
+export interface ActivityListItemProps {
+  activity: Activity;
+}
+
 /**
  * Component for rendering an activity (event) within an Ant Design List.
  * @param {Object} activity - the activity to render
  * @returns {JSX.Element}
  * @constructor
  */
-export function ActivityListItem({ activity }) {
+export const ActivityListItem: React.FC<ActivityListItemProps> = ({ activity }) => {
   const [title] = React.useState(() => {
     /*
     The description (title) is sent from the server with placeholders, e.g.
@@ -57,7 +62,7 @@ export function ActivityListItem({ activity }) {
         if (item.href) {
           // If there is a href create a link to the item
           content.push(
-            <Typography.Link key={key} type="link" href={setBaseUrl(item.href)}>
+            <Typography.Link key={key} href={setBaseUrl(item.href)}>
               {item.label}
             </Typography.Link>
           );
@@ -77,12 +82,16 @@ export function ActivityListItem({ activity }) {
     return content;
   });
 
+  type ttypeAvatar = {
+    [key: string]: JSX.Element;
+  }
+
   /**
    * Different icons for each type of activity
    * @constant
    * @type {{project_user_group_added: JSX.Element, project_user_group_removed: JSX.Element, project_sample_data_added: JSX.Element, project_sample_added: JSX.Element, project_user_role_updated: JSX.Element, project_user_removed: JSX.Element}}
    */
-  const typeAvatar = {
+  const typeAvatar : ttypeAvatar = {
     project_user_role_updated: (
       <Avatar
         data-activity={"project_user_role_updated"}

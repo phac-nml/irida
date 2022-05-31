@@ -1,7 +1,16 @@
 import { Button, Col, List, Row, Space, Typography } from "antd";
 import React from "react";
+import { Activity } from "../../../apis/activities/activities";
 import { ActivityListItem } from "../../../components/activities/ActivityListItem";
 import { BORDERED_LIGHT } from "../../../styles/borders";
+
+export interface RecentActivityListProps {
+  activities: Activity[],
+  total: number,
+  page: number,
+  setPage: (value: number) => void,
+  loading: boolean,
+}
 
 /**
  * Component to display list of recent activity
@@ -13,13 +22,13 @@ import { BORDERED_LIGHT } from "../../../styles/borders";
  * @returns {JSX.Element}
  * @constructor
  */
-export function RecentActivityList({
+export const RecentActivityList: React.FC<RecentActivityListProps> = ({
   activities,
   total,
   page,
   setPage,
   loading,
-}) {
+}) => {
   return (
     <Row gutter={[16, 16]}>
       <Col span={24}>

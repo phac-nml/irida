@@ -3275,7 +3275,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/hoist-non-react-statics@npm:^3.3.0":
+"@types/hoist-non-react-statics@npm:*, @types/hoist-non-react-statics@npm:^3.3.0":
   version: 3.3.1
   resolution: "@types/hoist-non-react-statics@npm:3.3.1"
   dependencies:
@@ -3443,6 +3443,17 @@ __metadata:
   version: 2.0.0
   resolution: "@types/stack-utils@npm:2.0.0"
   checksum: b3fbae25b073116977ecb5c67d22f14567b51a7792403b0bf46e5de8f29bde3bd4ec1626afb22065495ca7f1c699c8bd66720050c94b8f8f9bcefbee79d161fd
+  languageName: node
+  linkType: hard
+
+"@types/styled-components@npm:^5.1.25":
+  version: 5.1.25
+  resolution: "@types/styled-components@npm:5.1.25"
+  dependencies:
+    "@types/hoist-non-react-statics": "*"
+    "@types/react": "*"
+    csstype: ^3.0.2
+  checksum: 60ce64f13283b01da54fd3a4c5703769d8575c979d5ec6b67ad124c2d4df980c9b96bb91af87e03f6447a816a5d2b0270c63eefad60cfa885091b594984525f5
   languageName: node
   linkType: hard
 
@@ -7474,6 +7485,7 @@ __metadata:
     "@types/react": ^17.0.39
     "@types/react-dom": ^17.0.11
     "@types/react-redux": ^7.1.24
+    "@types/styled-components": ^5.1.25
     "@typescript-eslint/eslint-plugin": ^5.27.0
     "@typescript-eslint/parser": ^5.27.0
     ag-grid-community: ^27.1.0

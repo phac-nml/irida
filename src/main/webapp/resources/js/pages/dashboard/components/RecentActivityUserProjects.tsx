@@ -1,7 +1,7 @@
 import { notification } from "antd";
-import React from "react";
+import * as React from "react";
 import { addKeysToList } from "../../../utilities/http-utilities";
-import { getUserActivities } from "../../../apis/activities/activities";
+import { Activity, getUserActivities } from "../../../apis/activities/activities";
 import { RecentActivityList } from "./RecentActivityList";
 
 /**
@@ -9,11 +9,11 @@ import { RecentActivityList } from "./RecentActivityList";
  * @returns {JSX.Element}
  * @constructor
  */
-export function RecentActivityUserProjects() {
+export const RecentActivityUserProjects: React.FC = () => {
   /**
    * List of recent activities to render
    */
-  const [activities, setActivities] = React.useState([]);
+  const [activities, setActivities] = React.useState<Activity[]>([]);
 
   /**
    * Total number of recent activities for all projects associated with this user
@@ -31,7 +31,7 @@ export function RecentActivityUserProjects() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    getUserActivities({ page })
+    getUserActivities(page)
       .then((data) => {
         const list = addKeysToList(data.content, "activity", "date");
         setActivities([...activities, ...list]);
@@ -50,4 +50,4 @@ export function RecentActivityUserProjects() {
       loading={loading}
     />
   );
-}
+};
