@@ -23,11 +23,17 @@ const { Text } = Typography;
  * Function to render (details, metadata, files, and analyses) for a sample.
  * @param sampleId - identifier for a sample
  * @param projectId - identifier for a project
+ * @param displayActions - Whether to display add to/remove from cart buttons. Displayed by default
  * @param children
  * @returns {JSX.Element}
  * @constructor
  */
-function DisplaySampleDetails({ sampleId, projectId, children }) {
+function DisplaySampleDetails({
+  sampleId,
+  projectId,
+  displayActions,
+  children,
+}) {
   const dispatch = useDispatch();
   const [visible, setVisible] = React.useState(false);
   const { data: details = {}, isLoading } = useGetSampleDetailsQuery(
@@ -128,24 +134,26 @@ function DisplaySampleDetails({ sampleId, projectId, children }) {
                     </Text>
                   ) : null}
                 </Space>
-                {!isSampleAlreadyInCart() ? (
-                  <Button
-                    size="small"
-                    style={{ marginRight: 30 }}
-                    onClick={addSampleToCart}
-                  >
-                    Add To Cart
-                  </Button>
-                ) : (
-                  <Button
-                    size="small"
-                    danger
-                    style={{ marginRight: 30 }}
-                    onClick={removeSampleFromCart}
-                  >
-                    {i18n("SampleDetailsSidebar.removeFromCart")}
-                  </Button>
-                )}
+                {displayActions ? (
+                  !isSampleAlreadyInCart() ? (
+                    <Button
+                      size="small"
+                      style={{ marginRight: 30 }}
+                      onClick={addSampleToCart}
+                    >
+                      Add To Cart
+                    </Button>
+                  ) : (
+                    <Button
+                      size="small"
+                      danger
+                      style={{ marginRight: 30 }}
+                      onClick={removeSampleFromCart}
+                    >
+                      {i18n("SampleDetailsSidebar.removeFromCart")}
+                    </Button>
+                  )
+                ) : null}
               </div>
             )
           }
@@ -171,14 +179,24 @@ function DisplaySampleDetails({ sampleId, projectId, children }) {
  * React component to provide redux store to sampledetailviewer
  * @param sampleId - identifier for a sample
  * @param projectId - identifier for a project
+ * @param displayActions - Whether to display add to/remove from cart buttons. Displayed by default
  * @param children
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleDetailViewer({ sampleId, projectId, children }) {
+export function SampleDetailViewer({
+  sampleId,
+  projectId,
+  displayActions = true,
+  children,
+}) {
   return (
     <Provider store={store}>
-      <DisplaySampleDetails sampleId={sampleId} projectId={projectId}>
+      <DisplaySampleDetails
+        sampleId={sampleId}
+        projectId={projectId}
+        displayActions={displayActions}
+      >
         {children}
       </DisplaySampleDetails>
     </Provider>
