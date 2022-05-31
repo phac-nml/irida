@@ -38,7 +38,7 @@ export default function CreateNewUser() {
   const [submitting, setSubmitting] = useState(false);
   const [mailFailure, setMailFailure] = useState(false);
   const usernameInput = React.useRef();
-  const isManager = window.TL._USER.systemRole === "ROLE_MANAGER";
+  const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 
   const passwordRules = [
     i18n("CreateNewUser.changePassword.alert.rule2"),
@@ -225,27 +225,29 @@ export default function CreateNewUser() {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item
-            label={i18n("CreateNewUser.form.role.label")}
-            name="role"
-            rules={[
-              {
-                required: true,
-                message: i18n("CreateNewUser.form.role.required"),
-              },
-            ]}
-          >
-            <Select disabled={isManager}>
-              {systemRoles.map((role, index) => (
-                <Select.Option
-                  key={`create-new-user-account-role-${index}`}
-                  value={role.code}
-                >
-                  {role.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
+          {isAdmin && (
+            <Form.Item
+              label={i18n("CreateNewUser.form.role.label")}
+              name="role"
+              rules={[
+                {
+                  required: true,
+                  message: i18n("CreateNewUser.form.role.required"),
+                },
+              ]}
+            >
+              <Select>
+                {systemRoles.map((role, index) => (
+                  <Select.Option
+                    key={`create-new-user-account-role-${index}`}
+                    value={role.code}
+                  >
+                    {role.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          )}
           {!emailConfigured && (
             <Alert
               style={{ marginBottom: SPACE_SM }}
