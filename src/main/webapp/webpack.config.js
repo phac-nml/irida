@@ -47,7 +47,7 @@ module.exports = (env, argv) => {
         },
     entry: entries,
     resolve: {
-      extensions: [".js", ".jsx"],
+      extensions: [".js", ".jsx", ".ts", ".tsx"],
       symlinks: false,
     },
     output: {
@@ -67,18 +67,13 @@ module.exports = (env, argv) => {
     module: {
       rules: [
         {
-          test: /\.(js|jsx)$/i,
+          test: /\.(js|jsx|ts|tsx)$/i,
           include: path.resolve(__dirname, "resources", "js"),
           loader: "babel-loader",
           options: {
             cacheCompression: false,
             cacheDirectory: isProduction ? false : true,
           },
-        },
-        {
-          test: /\.(ts|tsx)$/i,
-          include: path.resolve(__dirname, "resources", "js"),
-          loader: "ts-loader",
         },
         {
           test: /\.less$/i,
