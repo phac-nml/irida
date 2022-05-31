@@ -38,6 +38,7 @@ export default function CreateNewUser() {
   const [submitting, setSubmitting] = useState(false);
   const [mailFailure, setMailFailure] = useState(false);
   const usernameInput = React.useRef();
+  const isManager = window.TL._USER.systemRole === "ROLE_MANAGER";
 
   const passwordRules = [
     i18n("CreateNewUser.changePassword.alert.rule2"),
@@ -234,7 +235,7 @@ export default function CreateNewUser() {
               },
             ]}
           >
-            <Select>
+            <Select disabled={isManager}>
               {systemRoles.map((role, index) => (
                 <Select.Option
                   key={`create-new-user-account-role-${index}`}
