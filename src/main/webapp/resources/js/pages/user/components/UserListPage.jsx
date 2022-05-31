@@ -3,7 +3,7 @@ import { render } from "react-dom";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { PagedTableProvider } from "../../../components/ant.design/PagedTable";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { UsersTable } from "../../../components/UsersTable/UsersTable";
+import { UserTable } from "./UserTable";
 
 import store from "../store";
 import { Provider } from "react-redux";
@@ -22,7 +22,7 @@ export function UserListPage() {
           title={i18n("UserListPage.title")}
           headerExtras={<CreateNewUser />}
         >
-          <UsersTable />
+          <UserTable />
         </PageWrapper>
       </PagedTableProvider>
     </Provider>

@@ -1,16 +1,19 @@
 import React from "react";
-import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
+import {
+  PagedTable,
+  PagedTableContext,
+} from "../../../components/ant.design/PagedTable";
 import { Checkbox } from "antd";
-import { setBaseUrl } from "../../utilities/url-utilities";
-import { dateColumnFormat } from "../ant.design/table-renderers";
-import { useSetUserStatusMutation } from "../../apis/users/users";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
+import { useSetUserStatusMutation } from "../../../apis/users/users";
 
 /**
  * React component for displaying paged table of all users in the system
  * @returns {string|*}
  * @constructor
  */
-export function UsersTable() {
+export function UserTable() {
   const { updateTable } = React.useContext(PagedTableContext);
   const IS_ADMIN = window.TL._USER.systemRole === "ROLE_ADMIN";
   const [updateUserStatus] = useSetUserStatusMutation();
@@ -45,9 +48,7 @@ export function UsersTable() {
     },
     {
       title: (
-        <span className="t-username-col">
-          {i18n("AdminUsersTable.username")}
-        </span>
+        <span className="t-username-col">{i18n("UserTable.username")}</span>
       ),
       key: "username",
       dataIndex: "name",
@@ -62,19 +63,19 @@ export function UsersTable() {
       },
     },
     {
-      title: i18n("AdminUsersTable.firstName"),
+      title: i18n("UserTable.firstName"),
       key: "firstName",
       sorter: true,
       dataIndex: "firstName",
     },
     {
-      title: i18n("AdminUsersTable.lastName"),
+      title: i18n("UserTable.lastName"),
       key: "lastName",
       sorter: true,
       dataIndex: "lastName",
     },
     {
-      title: i18n("AdminUsersTable.email"),
+      title: i18n("UserTable.email"),
       key: "email",
       dataIndex: "email",
       render(text, full) {
@@ -82,7 +83,7 @@ export function UsersTable() {
       },
     },
     {
-      title: i18n("AdminUsersTable.role"),
+      title: i18n("UserTable.role"),
       key: "role",
       dataIndex: "role",
       sorter: true,
@@ -104,16 +105,14 @@ export function UsersTable() {
     {
       ...dateColumnFormat({ className: "t-created" }),
       key: "createdDate",
-      title: i18n("AdminUsersTable.created"),
+      title: i18n("UserTable.created"),
       dataIndex: "createdDate",
     },
     {
       ...dateColumnFormat({ className: "t-modified" }),
       key: "lastLogin",
       title: (
-        <span className="t-modified-col">
-          {i18n("AdminUsersTable.lastLogin")}
-        </span>
+        <span className="t-modified-col">{i18n("UserTable.lastLogin")}</span>
       ),
       dataIndex: "lastLogin",
     },

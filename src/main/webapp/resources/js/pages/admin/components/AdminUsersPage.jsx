@@ -7,7 +7,7 @@ import React from "react";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { PagedTableProvider } from "../../../components/ant.design/PagedTable";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { UsersTable } from "../../../components/UsersTable/UsersTable";
+import { UserTable } from "../../user/components/UserTable";
 import CreateNewUser from "./user/CreateNewUser";
 
 export default function AdminUsersPage() {
@@ -17,7 +17,7 @@ export default function AdminUsersPage() {
         title={i18n("AdminPanel.users")}
         headerExtras={<CreateNewUser />}
       >
-        <UsersTable />
+        <UserTable />
       </PageWrapper>
     </PagedTableProvider>
   );
