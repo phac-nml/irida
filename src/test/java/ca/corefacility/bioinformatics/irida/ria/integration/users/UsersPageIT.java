@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.UsersPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.UserListPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
@@ -15,12 +15,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/users/UsersPageIT.xml")
 public class UsersPageIT extends AbstractIridaUIITChromeDriver {
-	private UsersPage usersPage;
+	private UserListPage usersPage;
 
 	@Test
 	public void testUsersTableAsAdmin() {
 		LoginPage.loginAsAdmin(driver());
-		usersPage = UsersPage.goToAdminPanel(driver());
+		usersPage = UserListPage.goToAdminPanel(driver());
 
 		assertEquals(3, usersPage.usersTableSize(), "Projects table should be populated by 3 projects");
 
@@ -39,7 +39,7 @@ public class UsersPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testUsersTableAsManager() {
 		LoginPage.loginAsManager(driver());
-		usersPage = UsersPage.goTo(driver());
+		usersPage = UserListPage.goTo(driver());
 
 		assertEquals(3, usersPage.usersTableSize(), "Projects table should be populated by 3 projects");
 
