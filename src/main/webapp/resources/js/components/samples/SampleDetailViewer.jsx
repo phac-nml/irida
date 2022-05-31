@@ -15,6 +15,7 @@ import {
 } from "./cartSamplesSlice";
 import { Provider } from "react-redux";
 import store from "../../components/samples/store";
+import { generateColourForItem } from "../../utilities/colour-utilities";
 
 const { Text } = Typography;
 
@@ -39,7 +40,10 @@ function DisplaySampleDetails({ sampleId, projectId, children }) {
     }
   );
   const { sampleIds } = useSelector((state) => state.cartSamplesReducer);
-
+  const projectColour = generateColourForItem({
+    id: projectId,
+    label: details.projectName,
+  });
   /*
   Empty useEffect hook to update visible const required by redux
   call "useGetSampleDetailsQuery" above
@@ -112,8 +116,15 @@ function DisplaySampleDetails({ sampleId, projectId, children }) {
                     {details.sample.sampleName}
                   </Text>
                   {projectId ? (
-                    <Text className="t-sample-details-project-name" strong>
-                      <Tag color="#87d068">{details.projectName}</Tag>
+                    <Text className="t-sample-details-project-name">
+                      <Tag
+                        color={projectColour.background}
+                        style={{ border: `1px solid ${projectColour.text}` }}
+                      >
+                        <span style={{ color: projectColour.text }}>
+                          {details.projectName}
+                        </span>
+                      </Tag>
                     </Text>
                   ) : null}
                 </Space>
