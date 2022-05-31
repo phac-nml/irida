@@ -2,7 +2,7 @@ Fill in the user details fields. All fields are required for a user account in I
 
 ![User details form.]({{ site.baseurl }}/images/tutorials/common/users/user-details-form.png)
 
-By default, a user will be issued a randomly-generated, one-time-use key to activate their account. The first time the user logs in, they will be required to change their password. You may manually enter a user password by unchecking "Require User Activation":
+By default, a user will be issued a randomly-generated, one-time-use key to activate their account. The first time the user logs in, they will be required to change their password. You may manually enter a user password by unchecking "Send Activation Email":
 
 ![Manual password entry.]({{ site.baseurl }}/images/tutorials/common/users/manual-user-password.png)
 
