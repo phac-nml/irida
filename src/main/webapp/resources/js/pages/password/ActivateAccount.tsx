@@ -6,7 +6,7 @@ import { useActivateAccountMutation } from "../../apis/password-reset";
 
 const { Item } = Form;
 
-interface Props {
+export interface ActivateAccountProps {
   updateDisplayLoginPage: (value: boolean) => void;
 }
 
@@ -16,7 +16,7 @@ interface Props {
  * @returns {*}
  * @constructor
  */
-export const ActivateAccount: React.FC<Props> = ({ updateDisplayLoginPage }) => {
+export const ActivateAccount: React.FC<ActivateAccountProps> = ({ updateDisplayLoginPage }) => {
   const [loading, setLoading] = React.useState(false);
   const [activateAccount] = useActivateAccountMutation();
   const [activateAccountForm] = Form.useForm();

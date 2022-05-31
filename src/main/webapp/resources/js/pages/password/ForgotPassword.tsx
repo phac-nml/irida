@@ -8,7 +8,7 @@ import { useCreatePasswordResetEmailMutation } from "../../apis/password-reset";
 
 const { Item } = Form;
 
-interface Props {
+export interface ForgotPasswordProps {
   updateDisplayLoginPage: (value: boolean) => void;
 }
 
@@ -18,7 +18,7 @@ interface Props {
  * @returns {*}
  * @constructor
  */
-export const ForgotPassword: React.FC<Props> = ({ updateDisplayLoginPage }) => {
+export const ForgotPassword: React.FC<ForgotPasswordProps> = ({ updateDisplayLoginPage }) => {
   const [forgotPassword] = useCreatePasswordResetEmailMutation();
   const [forgotPasswordForm] = Form.useForm();
   const [loading, setLoading] = React.useState(false);

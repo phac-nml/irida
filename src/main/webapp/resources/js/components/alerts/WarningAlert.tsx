@@ -5,11 +5,6 @@
 import React from "react";
 import { Alert, AlertProps } from "antd";
 
-interface Props extends AlertProps {
-  message: any,
-  description?: string,
-}
-
 /**
  * Stateless UI component for displaying an [antd warning Alert]{@link https://ant.design/components/alert/}
  *
@@ -18,8 +13,7 @@ interface Props extends AlertProps {
  *
  * @returns {Element} - Returns an antd warning 'Alert' component
  */
-
-export const WarningAlert: React.FC<Props> = ({ message, description, ...props }) => {
+export const WarningAlert: React.FC<AlertProps> = ({ message, description, ...props }) => {
   return (
     <Alert
       type="warning"
