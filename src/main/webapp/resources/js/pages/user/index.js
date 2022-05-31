@@ -26,7 +26,7 @@ const UserSecurityPage = React.lazy(() =>
   import("./components/UserSecurityPage")
 );
 
-function UserAccountApp() {
+export function UserAccountApp() {
   const { userId } = useParams();
   const [current, setCurrent] = React.useState();
 
@@ -61,6 +61,10 @@ function UserAccountApp() {
   );
 }
 
+// Manager: NO ROUTES on view page
+// ADMIN: NO ROUTES - router embedded
+// USER ACCOUNT: NEEDS ROUTES
+
 /**
  * React component that displays the user pages.
  * @returns {*}
@@ -70,6 +74,7 @@ render(
   <Provider store={store}>
     <BrowserRouter basename={setBaseUrl("/users")}>
       <Routes>
+        {" "}
         <Route path="/:userId" element={<UserAccountApp />}>
           <Route index element={<UserDetailsPage />} />
           <Route path="*" element={<UserDetailsPage />} />

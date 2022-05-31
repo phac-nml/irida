@@ -1,8 +1,9 @@
-import React, { useContext } from "react";
-import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
-import { useSetUsersDisabledStatusMutation } from "../../apis/users/users";
 import { Checkbox } from "antd";
+import React, { useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useSetUsersDisabledStatusMutation } from "../../apis/users/users";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { dateColumnFormat } from "../ant.design/table-renderers";
 
 /**
@@ -11,7 +12,14 @@ import { dateColumnFormat } from "../ant.design/table-renderers";
  * @constructor
  */
 export function UsersTable() {
-  const {updateTable} = useContext(PagedTableContext);
+  const location = useLocation();
+  const [BASE_URL] = React.useState(() =>
+    location.pathname.includes(`admin`)
+      ? setBaseUrl(`/admin/users`)
+      : setBaseUrl(`/users`)
+  );
+
+  const { updateTable } = useContext(PagedTableContext);
   const IS_ADMIN = window.TL._USER.systemRole === "ROLE_ADMIN";
   const [setUsersDisabledStatus] = useSetUsersDisabledStatusMutation();
 
@@ -55,9 +63,9 @@ export function UsersTable() {
       fixed: "left",
       render(text, full) {
         return (
-          <a className="t-username" href={setBaseUrl(`users/${full.id}`)}>
+          <Link className="t-username" to={`${BASE_URL}/${full.id}`}>
             {text}
-          </a>
+          </Link>
         );
       },
     },
@@ -102,13 +110,13 @@ export function UsersTable() {
       },
     },
     {
-      ...dateColumnFormat({className: "t-created"}),
+      ...dateColumnFormat({ className: "t-created" }),
       key: "createdDate",
       title: i18n("AdminUsersTable.created"),
       dataIndex: "createdDate",
     },
     {
-      ...dateColumnFormat({className: "t-modified"}),
+      ...dateColumnFormat({ className: "t-modified" }),
       key: "lastLogin",
       title: (
         <span className="t-modified-col">
@@ -122,7 +130,7 @@ export function UsersTable() {
   return (
     <PagedTable
       columns={columns}
-      onRow={(record) => (record.enabled ? {} : {className: "disabled"})}
+      onRow={(record) => (record.enabled ? {} : { className: "disabled" })}
     />
   );
 }
