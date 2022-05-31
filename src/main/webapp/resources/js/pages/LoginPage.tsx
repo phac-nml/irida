@@ -14,6 +14,8 @@ import { ActivateAccount } from "./password/ActivateAccount";
 
 const { Item } = Form;
 
+declare let window: IridaWindow;
+
 interface LoginFormProps {
   updateDisplayLoginPage: (value: boolean) => void;
   updatePageType: (value: string) => void;
@@ -93,7 +95,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ updateDisplayLoginPage, updatePag
           {i18n("LoginPage.submit")}
         </Button>
       </Item>
-      {(window as any).TL.emailConfigured ? (
+      {window.TL.emailConfigured ? (
         <Item>
           <Row justify="space-between">
             <Col>
