@@ -4,6 +4,7 @@ import { Avatar, Button, List, Tooltip } from "antd";
 import { green6 } from "../../../styles/colors";
 import { IconLocked, IconUnlocked } from "../../../components/icons/Icons";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
+import { removeSample } from "../../projects/share/shareSlice";
 
 /**
  * Render a list item for the samples to be shared with another project.
@@ -54,7 +55,11 @@ export default function ShareSamplesListItem({ sample, style }) {
           )
         }
         title={
-          <SampleDetailViewer sampleId={sample.id} projectId={sample.projectId}>
+          <SampleDetailViewer
+            sampleId={sample.id}
+            projectId={sample.projectId}
+            displayActions={false}
+          >
             <Button>{sample.name}</Button>
           </SampleDetailViewer>
         }
