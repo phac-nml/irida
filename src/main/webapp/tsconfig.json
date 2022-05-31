@@ -1,9 +1,19 @@
 {
     "compilerOptions": {
+        "outDir": "./dist",
         "sourceMap": true,
-        "jsx": "react",
+        "strict": true,
+        "noImplicitReturns": true,
+        "noImplicitAny": true,
+        "module": "ES6",
+        "moduleResolution": "node",
         "target": "ES6",
         "allowJs": true, //remove when all js jsx files changed to ts tsx
-        "esModuleInterop": true,
-    }
+        "jsx": "react",
+        "allowSyntheticDefaultImports": true,
+    },
+    "include": [
+        "./resources/js/**/*.ts",
+        "./resources/js/**/*.tsx",
+    ]
 }
