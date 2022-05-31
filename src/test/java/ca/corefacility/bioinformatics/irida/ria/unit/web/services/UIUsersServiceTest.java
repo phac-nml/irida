@@ -8,16 +8,21 @@ import javax.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
+import org.springframework.mail.MailSendException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIUserFormException;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIUserStatusException;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIUsersService;
+import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserCreateRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsModel;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.users.dto.UserEditRequest;
@@ -26,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class UIUsersServiceTest {
@@ -39,6 +45,7 @@ public class UIUsersServiceTest {
 
 	private final User USER1 = new User(1L, "Elsa", "elsa@arendelle.ca", "Password1!", "Elsa", "Oldenburg", "1234");
 	private final User USER2 = new User(2L, "Anna", "anna@arendelle.ca", "Password2!", "Anna", "Oldenburg", "5678");
+	private final PasswordReset PASSWORD_RESET = new PasswordReset(USER2);
 
 	@BeforeEach
 	void setUp() {
@@ -51,9 +58,11 @@ public class UIUsersServiceTest {
 		service = new UIUsersService(userService, emailController, messageSource, passwordEncoder,
 				passwordResetService);
 
+		when(userService.create(any())).thenReturn(USER2);
 		when(userService.read(anyLong())).thenReturn(USER2);
 		when(userService.getUserByUsername(anyString())).thenReturn(USER1);
 		when(userService.updateFields(anyLong(), anyMap())).thenReturn(USER2);
+		when(passwordResetService.create(new PasswordReset(any()))).thenReturn(PASSWORD_RESET);
 		when(messageSource.getMessage(eq("systemRole.ROLE_ADMIN"), any(), any(Locale.class))).thenReturn("Admin");
 		when(messageSource.getMessage(eq("systemRole.ROLE_MANAGER"), any(), any(Locale.class))).thenReturn("Manager");
 		when(messageSource.getMessage(eq("systemRole.ROLE_USER"), any(), any(Locale.class))).thenReturn("User");
@@ -61,6 +70,45 @@ public class UIUsersServiceTest {
 				"Technician");
 		when(messageSource.getMessage(eq("systemRole.ROLE_SEQUENCER"), any(), any(Locale.class))).thenReturn(
 				"Sequencer");
+	}
+
+	@Test
+	void createUserTest() throws UIUserFormException {
+		Principal principal = () -> USER1.getFirstName();
+		UserCreateRequest userCreateRequest = new UserCreateRequest(USER2.getUsername(), USER2.getFirstName(),
+				USER2.getLastName(), USER2.getEmail(), USER2.getPhoneNumber(), USER2.getSystemRole().getName(),
+				USER2.getLocale(), false, USER2.getPassword());
+
+		AjaxCreateItemSuccessResponse response = service.createUser(userCreateRequest, principal, Locale.ENGLISH);
+
+		assertEquals(response.getId(), USER2.getId(), "Incorrect user id.");
+	}
+
+	@Test
+	void createUserTestWithEmailFailure() {
+		Principal principal = () -> USER1.getFirstName();
+		UserCreateRequest userCreateRequest = new UserCreateRequest(USER2.getUsername(), USER2.getFirstName(),
+				USER2.getLastName(), USER2.getEmail(), USER2.getPhoneNumber(), USER2.getSystemRole().getName(),
+				USER2.getLocale(), true, "");
+
+		when(emailController.isMailConfigured()).thenReturn(true);
+		doThrow(new MailSendException("Failed to send e-mail when creating user account.")).when(emailController)
+				.sendWelcomeEmail(any(), any(), any());
+
+		assertThrows(UIEmailSendException.class,
+				() -> service.createUser(userCreateRequest, principal, Locale.ENGLISH));
+	}
+
+	@Test
+	void createUserTestWithConstraint() {
+		Principal principal = () -> USER1.getFirstName();
+		UserCreateRequest userCreateRequest = new UserCreateRequest(USER2.getUsername(), USER2.getFirstName(),
+				USER2.getLastName(), USER2.getEmail(), USER2.getPhoneNumber(), USER2.getSystemRole().getName(),
+				USER2.getLocale(), false, USER2.getPassword());
+
+		when(userService.create(any())).thenThrow(new EntityExistsException("This user already exists."));
+
+		assertThrows(UIUserFormException.class, () -> service.createUser(userCreateRequest, principal, Locale.ENGLISH));
 	}
 
 	@Test
