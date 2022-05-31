@@ -1,5 +1,3 @@
-import React from "react";
-import { useParams } from "react-router-dom";
 import {
   Button,
   Checkbox,
@@ -10,15 +8,17 @@ import {
   Space,
   Typography,
 } from "antd";
-import { formatDate } from "../../../utilities/date-utilities";
-import {
-  useEditUserDetailsMutation,
-  useGetUserDetailsQuery
-} from "../../../apis/users/users";
+import React from "react";
+import { useParams } from "react-router-dom";
 import {
   useGetLocalesQuery,
-  useGetSystemRolesQuery
+  useGetSystemRolesQuery,
 } from "../../../apis/settings/settings";
+import {
+  useEditUserDetailsMutation,
+  useGetUserDetailsQuery,
+} from "../../../apis/users/users";
+import { formatDate } from "../../../utilities/date-utilities";
 
 /**
  * React component to display the user details page.
@@ -26,20 +26,20 @@ import {
  * @constructor
  */
 export default function UserDetailsPage() {
-  const {userId} = useParams();
-  const {data: userDetails = {}} = useGetUserDetailsQuery(userId);
-  const {data: locales = []} = useGetLocalesQuery();
-  const {data: systemRoles = []} = useGetSystemRolesQuery();
+  const { userId } = useParams();
+  const { data: userDetails = {} } = useGetUserDetailsQuery(userId); // TODO: Too much information in this response, just get user details
+  const { data: locales = [] } = useGetLocalesQuery(); // TODO: should not be query - never changes
+  const { data: systemRoles = [] } = useGetSystemRolesQuery(); // TODO: should not be query - never changes
   const [editUser] = useEditUserDetailsMutation();
   const [form] = Form.useForm();
 
   const onFormFinish = (values) => {
-    editUser({userId: userId, ...values})
+    editUser({ userId: userId, ...values })
       .unwrap()
       .then(() => {
         notification.success({
           message: i18n("UserDetailsPage.notification.success"),
-          className: 't-user-page-notification-success',
+          className: "t-user-page-notification-success",
         });
       })
       .catch((error) => {
@@ -75,7 +75,7 @@ export default function UserDetailsPage() {
             },
           ]}
         >
-          <Input/>
+          <Input />
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.lastName.label")}
@@ -87,7 +87,7 @@ export default function UserDetailsPage() {
             },
           ]}
         >
-          <Input/>
+          <Input />
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.email.label")}
@@ -103,7 +103,7 @@ export default function UserDetailsPage() {
             },
           ]}
         >
-          <Input/>
+          <Input />
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.phoneNumber.label")}
@@ -115,7 +115,7 @@ export default function UserDetailsPage() {
             },
           ]}
         >
-          <Input/>
+          <Input />
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.locale.label")}
@@ -148,15 +148,22 @@ export default function UserDetailsPage() {
             ))}
           </Select>
         </Form.Item>
-        <Form.Item name="enabled" valuePropName="checked"
-                   hidden={!userDetails.admin}>
+        <Form.Item
+          name="enabled"
+          valuePropName="checked"
+          hidden={!userDetails.admin}
+        >
           <Checkbox disabled={!userDetails.canEditUserStatus}>
             {i18n("UserDetailsPage.form.enabled.label")}
           </Checkbox>
         </Form.Item>
         <Form.Item>
-          <Button className="t-submit-btn" type="primary" htmlType="submit"
-                  disabled={!userDetails.canEditUserInfo}>
+          <Button
+            className="t-submit-btn"
+            type="primary"
+            htmlType="submit"
+            disabled={!userDetails.canEditUserInfo}
+          >
             {i18n("UserDetailsPage.form.button.submit")}
           </Button>
         </Form.Item>
@@ -165,25 +172,25 @@ export default function UserDetailsPage() {
         <Typography.Text type="secondary">
           {userDetails.user?.createdDate
             ? i18n(
-              "UserDetailsPage.createdDate",
-              formatDate({date: userDetails.user?.createdDate})
-            )
+                "UserDetailsPage.createdDate",
+                formatDate({ date: userDetails.user?.createdDate })
+              )
             : ""}
         </Typography.Text>
         <Typography.Text type="secondary">
           {userDetails.user?.modifiedDate
             ? i18n(
-              "UserDetailsPage.modifiedDate",
-              formatDate({date: userDetails.user?.modifiedDate})
-            )
+                "UserDetailsPage.modifiedDate",
+                formatDate({ date: userDetails.user?.modifiedDate })
+              )
             : ""}
         </Typography.Text>
         <Typography.Text type="secondary">
           {userDetails.user?.lastLogin
             ? i18n(
-              "UserDetailsPage.lastLogin",
-              formatDate({date: userDetails.user?.lastLogin})
-            )
+                "UserDetailsPage.lastLogin",
+                formatDate({ date: userDetails.user?.lastLogin })
+              )
             : ""}
         </Typography.Text>
       </Space>
