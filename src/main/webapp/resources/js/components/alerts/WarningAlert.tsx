@@ -2,7 +2,7 @@
  * Component to render a Warning alert with an icon
  */
 
-import React from "react";
+import * as React from "react";
 import { Alert, AlertProps } from "antd";
 
 /**

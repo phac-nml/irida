@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { Alert, Button, Form, Input, InputRef } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { SPACE_MD } from "../../styles/spacing";

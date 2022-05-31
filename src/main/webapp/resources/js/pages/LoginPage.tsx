@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef } from "react";
+import * as React from "react";
 import { render } from "react-dom";
 import { Alert, Button, Col, Form, Input, InputRef, Row } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
@@ -26,15 +26,15 @@ interface LoginFormProps {
  * @returns {*}
  * @constructor
  */
-const LoginForm: FC<LoginFormProps> = ({ updateDisplayLoginPage, updatePageType }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ updateDisplayLoginPage, updatePageType }) => {
   const [form] = Form.useForm();
-  const usernameRef = useRef<InputRef>(null);
+  const usernameRef = React.useRef<InputRef>(null);
 
   /**
    * When the component gets added to the page,
    * focus on the username input.
    */
-  useEffect(() => {
+  React.useEffect(() => {
     if (usernameRef.current !== null) {
       usernameRef.current.focus();
       usernameRef.current.select();

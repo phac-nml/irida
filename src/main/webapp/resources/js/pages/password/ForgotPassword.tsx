@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { Button, Form, Input, InputRef } from "antd";
 import { MailOutlined } from "@ant-design/icons";
 import { InfoAlert } from "../../components/alerts";

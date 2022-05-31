@@ -2,7 +2,7 @@
  * Component to render an Info alert with an icon
  */
 
-import React from "react";
+import * as React from "react";
 import { Alert, AlertProps } from "antd";
 
 /**
