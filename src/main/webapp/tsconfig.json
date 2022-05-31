@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "sourceMap": true,
+        "jsx": "react",
+        "target": "ES6",
+        "allowJs": true, //remove when all js jsx files changed to ts tsx
+        "esModuleInterop": true,
+    }
+}
