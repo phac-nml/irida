@@ -52,30 +52,24 @@ export default function AdminHeader() {
               {i18n("AdminPanel.statistics")}
             </Link>
           </Menu.Item>
-          <SubMenu
-            title={i18n("AdminPanel.users")}
-            className={"t-admin-users-submenu"}
-            key="users-sub"
-          >
-            <Menu.Item key="users">
-              <Link
-                onClick={() => setSelectedKeys("users")}
-                to={`${DEFAULT_URL}/${ADMIN.USERS}`}
-                className={"t-admin-users-link"}
-              >
-                {i18n("AdminPanel.userList")}
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="groups">
-              <Link
-                onClick={() => setSelectedKeys("groups")}
-                to={`${DEFAULT_URL}/${ADMIN.USERGROUPS}/list`}
-                className={"t-admin-groups-link"}
-              >
-                {i18n("AdminPanel.userGroupList")}
-              </Link>
-            </Menu.Item>
-          </SubMenu>
+          <Menu.Item key="users">
+            <Link
+              onClick={() => setSelectedKeys("users")}
+              to={`${DEFAULT_URL}/${ADMIN.USERS}`}
+              className={"t-admin-users-link"}
+            >
+              {i18n("AdminPanel.userList")}
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="groups">
+            <Link
+              onClick={() => setSelectedKeys("groups")}
+              to={`${DEFAULT_URL}/${ADMIN.USERGROUPS}/list`}
+              className={"t-admin-groups-link"}
+            >
+              {i18n("AdminPanel.userGroupList")}
+            </Link>
+          </Menu.Item>
           <Menu.Item key="clients">
             <Link
               onClick={() => setSelectedKeys("clients")}
