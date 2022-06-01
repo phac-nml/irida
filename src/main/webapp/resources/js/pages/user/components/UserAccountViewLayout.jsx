@@ -11,8 +11,6 @@ export default function UserAccountViewLayout() {
   const { data, isSuccess } = useGetUserDetailsQuery(userId);
   const [details, setDetails] = React.useState([]);
 
-  console.log({ data, isSuccess });
-
   const formatUserDetails = (user) => [
     {
       title: i18n("UserDetailsPage.form.firstName.label"),

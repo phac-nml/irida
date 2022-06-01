@@ -31,18 +31,18 @@ const BasicStats = lazy(() => import("./statistics/BasicStats"));
 
 const AdminUsersPage = lazy(() => import("./AdminUsersPage"));
 
-const UserAccountEditLayout = React.lazy(() =>
-  import("../../user/components/UserAccountEditLayout")
+const UserAccountApp = React.lazy(() =>
+  import("../../user/components/UserAccountApp")
 );
 const UserDetailsPage = React.lazy(() =>
   import("../../user/components/UserDetailsPage")
 );
 
-const UserSecurityPage = React.lazy(() =>
+const UserProjectsPage = React.lazy(() =>
   import("../../user/components/UserProjectsPage")
 );
 
-const UserProjectsPage = React.lazy(() =>
+const UserSecurityPage = React.lazy(() =>
   import("../../user/components/UserSecurityPage")
 );
 
@@ -90,10 +90,7 @@ export default function Admin() {
                   />
                   <Route path={ADMIN.USERS}>
                     <Route index element={<AdminUsersPage />} />
-                    <Route
-                      path={`${ADMIN.USERS}/:userId`}
-                      element={<UserAccountEditLayout />}
-                    >
+                    <Route path={`:userId`} element={<UserAccountApp />}>
                       <Route index element={<UserDetailsPage />} />
                       <Route
                         path="projects"

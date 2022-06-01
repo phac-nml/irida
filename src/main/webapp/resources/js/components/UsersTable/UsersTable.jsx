@@ -2,7 +2,6 @@ import { Checkbox } from "antd";
 import React, { useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useSetUsersDisabledStatusMutation } from "../../apis/users/users";
-import { setBaseUrl } from "../../utilities/url-utilities";
 import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { dateColumnFormat } from "../ant.design/table-renderers";
 
@@ -13,14 +12,11 @@ import { dateColumnFormat } from "../ant.design/table-renderers";
  */
 export function UsersTable() {
   const location = useLocation();
-  const [BASE_URL] = React.useState(() =>
+  const [isAdminPage] = React.useState(() =>
     location.pathname.includes(`admin`)
-      ? setBaseUrl(`/admin/users`)
-      : setBaseUrl(`/users`)
   );
 
   const { updateTable } = useContext(PagedTableContext);
-  const IS_ADMIN = window.TL._USER.systemRole === "ROLE_ADMIN";
   const [setUsersDisabledStatus] = useSetUsersDisabledStatusMutation();
 
   function updateUser(user) {
@@ -40,7 +36,7 @@ export function UsersTable() {
       render(text, full) {
         // Don't let the current user disabled themselves!
         const disabled =
-          !IS_ADMIN || window.TL._USER.username === full.username;
+          !isAdminPage || window.TL._USER.username === full.username;
         return (
           <Checkbox
             className="t-cb-enable"
@@ -63,7 +59,7 @@ export function UsersTable() {
       fixed: "left",
       render(text, full) {
         return (
-          <Link className="t-username" to={`${BASE_URL}/${full.id}`}>
+          <Link className="t-username" to={`${full.id}`}>
             {text}
           </Link>
         );
@@ -85,7 +81,7 @@ export function UsersTable() {
       title: i18n("AdminUsersTable.email"),
       key: "email",
       dataIndex: "email",
-      render(text, full) {
+      render(text) {
         return <a href={`mailto:${text}`}>{text}</a>;
       },
     },
