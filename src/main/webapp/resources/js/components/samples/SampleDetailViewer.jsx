@@ -138,6 +138,7 @@ function DisplaySampleDetails({
                   !isSampleAlreadyInCart() ? (
                     <Button
                       size="small"
+                      className="t-add-sample-to-cart"
                       style={{ marginRight: 30 }}
                       onClick={addSampleToCart}
                     >
@@ -146,6 +147,7 @@ function DisplaySampleDetails({
                   ) : (
                     <Button
                       size="small"
+                      className="t-remove-sample-from-cart"
                       danger
                       style={{ marginRight: 30 }}
                       onClick={removeSampleFromCart}
