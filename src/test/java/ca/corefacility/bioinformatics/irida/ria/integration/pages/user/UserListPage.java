@@ -19,6 +19,9 @@ public class UserListPage extends AbstractPage {
 	@FindBy(css = ".t-cb-enable input[type='checkbox']")
 	private List<WebElement> enableCheckboxes;
 
+	@FindBy(className = "t-add-user-btn")
+	private WebElement addNewUserButton;
+
 	public UserListPage(WebDriver driver) {
 		super(driver);
 	}
@@ -57,5 +60,9 @@ public class UserListPage extends AbstractPage {
 
 	public boolean canUserModifyUserState() {
 		return enableCheckboxes.get(0).isEnabled();
+	}
+
+	public void clickAddNewUserButton() {
+		addNewUserButton.click();
 	}
 }
