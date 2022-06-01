@@ -306,7 +306,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	private void closeDropdown(WebElement dropdown) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		Actions act = new Actions(driver);
-		act.moveByOffset(300, 300).click().perform();
+		act.moveByOffset(250, 250).click().perform();
 		wait.until(ExpectedConditions.invisibilityOf(dropdown));
 	}
 
@@ -423,7 +423,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void selectSampleByName(String sampleName) {
-		WebElement checkbox = samplesTable.findElement(By.xpath("//td/a[text()='" + sampleName + "']/../..//input"));
+		WebElement checkbox = samplesTable.findElement(By.xpath("//td/button[span[text()='" + sampleName + "']]/../..//input"));
 		checkbox.click();
 	}
 
@@ -491,7 +491,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public String getMostRecentlyModifiedSampleName() {
-		WebElement nameAnchor = driver.findElement(By.xpath("//tbody/tr[1]/td[2]/a"));
+		WebElement nameAnchor = driver.findElement(By.xpath("//tbody/tr[1]/td[2]/button"));
 		return nameAnchor.getText();
 	}
 
