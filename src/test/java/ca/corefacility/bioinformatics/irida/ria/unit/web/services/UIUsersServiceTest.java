@@ -81,7 +81,7 @@ public class UIUsersServiceTest {
 
 		AjaxCreateItemSuccessResponse response = service.createUser(userCreateRequest, principal, Locale.ENGLISH);
 
-		assertEquals(response.getId(), USER2.getId(), "Incorrect user id.");
+		assertEquals(USER2.getId(), response.getId(), "Incorrect user id.");
 	}
 
 	@Test
@@ -120,7 +120,7 @@ public class UIUsersServiceTest {
 
 		AjaxSuccessResponse response = service.updateUserStatus(USER2.getId(), false, Locale.ENGLISH);
 
-		assertEquals(response.getMessage(), successMessage, "Incorrect success message.");
+		assertEquals(successMessage, response.getMessage(), "Incorrect success message.");
 	}
 
 	@Test
@@ -129,7 +129,7 @@ public class UIUsersServiceTest {
 		UserDetailsModel userDetails = new UserDetailsModel(USER2);
 		UserDetailsResponse expectedResponse = new UserDetailsResponse(userDetails, false, false, true, false, false);
 		UserDetailsResponse response = service.getUser(USER1.getId(), principal);
-		assertEquals(response, expectedResponse, "Incorrect user details.");
+		assertEquals(expectedResponse, response, "Incorrect user details.");
 	}
 
 	@Test
@@ -182,6 +182,6 @@ public class UIUsersServiceTest {
 		} catch (UIEmailSendException e) {
 			e.printStackTrace();
 		}
-		assertEquals(response.getMessage(), "success");
+		assertEquals("success", response.getMessage());
 	}
 }

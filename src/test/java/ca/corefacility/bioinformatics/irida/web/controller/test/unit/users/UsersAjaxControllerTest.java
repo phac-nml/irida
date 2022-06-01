@@ -77,7 +77,7 @@ public class UsersAjaxControllerTest {
 
 		ResponseEntity<AjaxResponse> response = controller.createUser(userCreateRequest, principal, locale);
 
-		assertEquals(response.getStatusCode(), HttpStatus.OK, "A 200 OK response was not received.");
+		assertEquals(HttpStatus.OK, response.getStatusCode(), "A 200 OK response was not received.");
 	}
 
 	@Test
@@ -94,7 +94,7 @@ public class UsersAjaxControllerTest {
 
 		ResponseEntity<AjaxResponse> response = controller.createUser(userCreateRequest, principal, locale);
 
-		assertEquals(response.getStatusCode(), HttpStatus.CONFLICT, "A 409 CONFLICT response was not received.");
+		assertEquals(HttpStatus.CONFLICT, response.getStatusCode(), "A 409 CONFLICT response was not received.");
 	}
 
 	@Test
@@ -109,7 +109,7 @@ public class UsersAjaxControllerTest {
 
 		ResponseEntity<AjaxResponse> response = controller.createUser(userCreateRequest, principal, locale);
 
-		assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST, "A 400 BAD REQUEST response was not received.");
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(), "A 400 BAD REQUEST response was not received.");
 	}
 
 	@Test
@@ -121,7 +121,7 @@ public class UsersAjaxControllerTest {
 
 		ResponseEntity<AjaxResponse> response = controller.updateUser(USER2.getId(), userEditRequest, principal,
 				request, locale);
-		assertEquals(response.getStatusCode(), HttpStatus.OK, "A 200 OK response was not received.");
+		assertEquals(HttpStatus.OK, response.getStatusCode(), "A 200 OK response was not received.");
 	}
 
 	@Test
@@ -136,14 +136,14 @@ public class UsersAjaxControllerTest {
 
 		ResponseEntity<AjaxResponse> response = controller.changeUserPassword(USER1.getId(), USER1.getPassword(),
 				"Password3!", principal, request, locale);
-		assertEquals(response.getStatusCode(), HttpStatus.OK, "A 200 OK response was not received.");
+		assertEquals(HttpStatus.OK, response.getStatusCode(), "A 200 OK response was not received.");
 	}
 
 	@Test
 	void getUserDetailsTest() {
 		Principal principal = () -> USER1.getFirstName();
 		ResponseEntity<UserDetailsResponse> response = controller.getUserDetails(USER2.getId(), principal);
-		assertEquals(response.getStatusCode(), HttpStatus.OK, "A 200 OK response was not received.");
+		assertEquals(HttpStatus.OK, response.getStatusCode(), "A 200 OK response was not received.");
 	}
 
 	@Test
@@ -159,6 +159,6 @@ public class UsersAjaxControllerTest {
 		when(messageSource.getMessage(anyString(), any(), any(Locale.class))).thenReturn("Anything can work here");
 
 		ResponseEntity<AjaxResponse> response = controller.adminNewPasswordReset(user2.getId(), principal, locale);
-		assertEquals(response.getStatusCode(), HttpStatus.OK, "A 200 OK response was not received.");
+		assertEquals(HttpStatus.OK, response.getStatusCode(), "A 200 OK response was not received.");
 	}
 }
