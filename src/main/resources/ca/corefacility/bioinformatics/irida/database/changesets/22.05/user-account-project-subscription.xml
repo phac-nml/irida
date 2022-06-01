@@ -6,7 +6,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
 
     <changeSet id="user-account-project-subscription" author="katherine">
-        <validChecksum>8:e75125f4b2af1759f21078bafe3b8ed9</validChecksum>
+        <validCheckSum>8:e75125f4b2af1759f21078bafe3b8ed9</validCheckSum>
         <createTable tableName="project_subscription">
             <column name="id" type="bigint(20)" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
