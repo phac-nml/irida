@@ -6,6 +6,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
 
     <changeSet id="user-account-project-subscription" author="katherine">
+        <validChecksum>8:e75125f4b2af1759f21078bafe3b8ed9</validChecksum>
         <createTable tableName="project_subscription">
             <column name="id" type="bigint(20)" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -57,7 +58,7 @@
             INSERT INTO project_subscription (project_id, user_id, email_subscription, created_date)
             SELECT project_id, user_id, IF(email_subscription=b'1', 1, 0), now() FROM project_user
             UNION
-            SELECT p.project_id, m.user_id, 0, now() from user_group_member m LEFT JOIN user_group_project p ON
+            SELECT p.project_id, m.user_id, 0, now() from user_group_member m INNER JOIN user_group_project p ON
             m.group_id = p.user_group_id;
         </sql>
 

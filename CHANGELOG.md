@@ -2,6 +2,11 @@
 Changes
 =======
 
+22.05 to 22.07
+--------------
+* [UI]: Fixed bug where samples could not be removed from share page. (22.05.1)
+* [Developer]: Fixed bug where project_subscriptions were added for groups without projects. (22.05.1)
+
 22.03 to 22.05
 --------------
 * [ALL]: Upgraded to Spring Boot 2.6.6 which fixes CVE-2022-22965. (22.03.1)
