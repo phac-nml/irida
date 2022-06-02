@@ -58,6 +58,7 @@ export default function CreateNewUser() {
         });
         form.resetFields();
         setVisibility(false);
+        setMailFailure(false);
         updateTable();
       })
       .catch((error) => {
