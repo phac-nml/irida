@@ -1,17 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Alert,
-  Button,
-  Form,
-  Input,
-  List,
-  notification,
-  Typography,
-} from "antd";
+import { Button, Form, Input, notification, Typography } from "antd";
 import { useChangeUserPasswordMutation } from "../../../apis/users/users";
-import { SPACE_SM } from "../../../styles/spacing";
 import { validatePassword } from "../../../utilities/validation-utilities";
+import { PasswordPolicyAlert } from "../../../components/alerts/PasswordPolicyAlert";
 
 /**
  * React component to display the user change password form.
@@ -23,14 +15,6 @@ export function UserChangePasswordForm({ userId }) {
   const [changeUserPassword] = useChangeUserPasswordMutation();
   const [form] = Form.useForm();
   const navigate = useNavigate();
-
-  const passwordRules = [
-    i18n("validation-utilities.password.minimumLength"),
-    i18n("validation-utilities.password.uppercase"),
-    i18n("validation-utilities.password.lowercase"),
-    i18n("validation-utilities.password.number"),
-    i18n("validation-utilities.password.specialCharacters"),
-  ];
 
   const onFormFinish = (values) => {
     changeUserPassword({ userId: userId, ...values })
@@ -61,21 +45,7 @@ export function UserChangePasswordForm({ userId }) {
       <Typography.Title level={5}>
         {i18n("UserChangePasswordForm.title")}
       </Typography.Title>
-      <Alert
-        style={{ marginBottom: SPACE_SM }}
-        message={i18n("UserChangePasswordForm.alert.title")}
-        description={
-          <Typography.Paragraph>
-            <List
-              header={i18n("UserChangePasswordForm.alert.description")}
-              dataSource={passwordRules}
-              renderItem={(item) => <List.Item>{item}</List.Item>}
-            />
-          </Typography.Paragraph>
-        }
-        type="info"
-        showIcon
-      />
+      <PasswordPolicyAlert />
       <Form
         form={form}
         layout="vertical"

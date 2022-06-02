@@ -5,7 +5,6 @@ import {
   Checkbox,
   Form,
   Input,
-  List,
   notification,
   Select,
   Typography,
@@ -21,6 +20,7 @@ import { PagedTableContext } from "../../../../components/ant.design/PagedTable"
 import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
 import { ScrollableModal } from "../../../../components/ant.design/ScrollableModal";
 import { validatePassword } from "../../../../utilities/validation-utilities";
+import { PasswordPolicyAlert } from "../../../../components/alerts/PasswordPolicyAlert";
 
 /**
  * React component to display the create new user form.
@@ -40,14 +40,6 @@ export default function CreateNewUser() {
   const [mailFailure, setMailFailure] = useState(false);
   const usernameInput = React.useRef();
   const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
-
-  const passwordRules = [
-    i18n("validation-utilities.password.minimumLength"),
-    i18n("validation-utilities.password.uppercase"),
-    i18n("validation-utilities.password.lowercase"),
-    i18n("validation-utilities.password.number"),
-    i18n("validation-utilities.password.specialCharacters"),
-  ];
 
   useEffect(() => {
     if (visible) {
@@ -285,23 +277,7 @@ export default function CreateNewUser() {
           </Form.Item>
           {!activationEmail && (
             <>
-              <Alert
-                style={{ marginBottom: SPACE_SM }}
-                message={i18n("CreateNewUser.changePassword.alert.title")}
-                description={
-                  <Typography.Paragraph>
-                    <List
-                      header={i18n(
-                        "CreateNewUser.changePassword.alert.description"
-                      )}
-                      dataSource={passwordRules}
-                      renderItem={(item) => <List.Item>{item}</List.Item>}
-                    />
-                  </Typography.Paragraph>
-                }
-                type="info"
-                showIcon
-              />
+              <PasswordPolicyAlert />
               <Form.Item
                 label={i18n("CreateNewUser.form.label.password")}
                 name="password"

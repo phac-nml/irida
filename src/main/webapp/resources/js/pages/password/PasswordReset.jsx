@@ -44,16 +44,6 @@ function PasswordResetForm() {
     passwordRef.current.select();
   }, []);
 
-  const passwordRules = [
-    i18n("validation-utilities.password.minimumLength"),
-    i18n("validation-utilities.password.uppercase"),
-    i18n("validation-utilities.password.lowercase"),
-    i18n("validation-utilities.password.number"),
-    i18n("validation-utilities.password.specialCharacters"),
-    i18n("PasswordReset.alert.recommendation1"),
-    i18n("PasswordReset.alert.recommendation2"),
-  ];
-
   const submitPasswordResetForm = () => {
     setLoading(true);
     setPassword({
@@ -143,22 +133,7 @@ function PasswordResetForm() {
 
         {!updateSuccess && (
           <>
-            <Alert
-              style={{ marginBottom: SPACE_SM }}
-              message={i18n("PasswordReset.alert.title")}
-              className="t-password-policy-alert"
-              description={
-                <Typography.Paragraph>
-                  <List
-                    header={i18n("PasswordReset.alert.description")}
-                    dataSource={passwordRules}
-                    renderItem={(item) => <List.Item>- {item}</List.Item>}
-                  />
-                </Typography.Paragraph>
-              }
-              type="info"
-              showIcon
-            />
+            <PasswordPolicyAlert />
             <Form
               form={passwordResetForm}
               name="resetPasswordForm"
