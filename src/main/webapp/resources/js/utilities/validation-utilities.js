@@ -32,7 +32,7 @@ export const serverValidateSampleName = async (name) => {
  * @returns {Promise<void>}
  */
 export const validatePassword = (password) => {
-  if (password.length === 0) {
+  if (!password) {
     return Promise.reject(i18n("validation-utilities.password.required"));
   }
 
