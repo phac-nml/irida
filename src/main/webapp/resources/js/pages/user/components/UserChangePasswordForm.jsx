@@ -11,6 +11,7 @@ import {
 } from "antd";
 import { useChangeUserPasswordMutation } from "../../../apis/users/users";
 import { SPACE_SM } from "../../../styles/spacing";
+import { validatePassword } from "../../../utilities/validation-utilities";
 
 /**
  * React component to display the user change password form.
@@ -24,11 +25,11 @@ export function UserChangePasswordForm({ userId }) {
   const navigate = useNavigate();
 
   const passwordRules = [
-    i18n("UserChangePasswordForm.alert.rule2"),
-    i18n("UserChangePasswordForm.alert.rule3"),
-    i18n("UserChangePasswordForm.alert.rule4"),
-    i18n("UserChangePasswordForm.alert.rule5"),
-    i18n("UserChangePasswordForm.alert.rule6"),
+    i18n("validation-utilities.password.minimumLength"),
+    i18n("validation-utilities.password.uppercase"),
+    i18n("validation-utilities.password.lowercase"),
+    i18n("validation-utilities.password.number"),
+    i18n("validation-utilities.password.specialCharacters"),
   ];
 
   const onFormFinish = (values) => {
@@ -87,7 +88,7 @@ export function UserChangePasswordForm({ userId }) {
           rules={[
             {
               required: true,
-              message: i18n("UserChangePasswordForm.alert.rule1"),
+              message: i18n("validation-utilities.password.required"),
             },
           ]}
         >
@@ -97,27 +98,11 @@ export function UserChangePasswordForm({ userId }) {
           label={i18n("UserChangePasswordForm.form.label.newPassword")}
           name="newPassword"
           rules={[
-            {
-              required: true,
-              message: i18n("UserChangePasswordForm.alert.rule1"),
-            },
-            { min: 8, message: i18n("UserChangePasswordForm.alert.rule2") },
-            {
-              pattern: new RegExp("^.*[A-Z].*$"),
-              message: i18n("UserChangePasswordForm.alert.rule3"),
-            },
-            {
-              pattern: new RegExp("^.*[a-z].*$"),
-              message: i18n("UserChangePasswordForm.alert.rule4"),
-            },
-            {
-              pattern: new RegExp("^.*[0-9].*$"),
-              message: i18n("UserChangePasswordForm.alert.rule5"),
-            },
-            {
-              pattern: new RegExp("^.*[^A-Za-z0-9].*$"),
-              message: i18n("UserChangePasswordForm.alert.rule6"),
-            },
+            ({}) => ({
+              validator(_, value) {
+                return validatePassword(value);
+              },
+            }),
           ]}
         >
           <Input.Password />

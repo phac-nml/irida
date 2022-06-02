@@ -45,11 +45,11 @@ function PasswordResetForm() {
   }, []);
 
   const passwordRules = [
-    i18n("PasswordReset.alert.rule2"),
-    i18n("PasswordReset.alert.rule3"),
-    i18n("PasswordReset.alert.rule4"),
-    i18n("PasswordReset.alert.rule5"),
-    i18n("PasswordReset.alert.rule6"),
+    i18n("validation-utilities.password.minimumLength"),
+    i18n("validation-utilities.password.uppercase"),
+    i18n("validation-utilities.password.lowercase"),
+    i18n("validation-utilities.password.number"),
+    i18n("validation-utilities.password.specialCharacters"),
     i18n("PasswordReset.alert.recommendation1"),
     i18n("PasswordReset.alert.recommendation2"),
   ];

@@ -20,6 +20,7 @@ import { SPACE_SM } from "../../../../styles/spacing";
 import { PagedTableContext } from "../../../../components/ant.design/PagedTable";
 import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
 import { ScrollableModal } from "../../../../components/ant.design/ScrollableModal";
+import { validatePassword } from "../../../../utilities/validation-utilities";
 
 /**
  * React component to display the create new user form.
@@ -41,11 +42,11 @@ export default function CreateNewUser() {
   const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 
   const passwordRules = [
-    i18n("CreateNewUser.changePassword.alert.rule2"),
-    i18n("CreateNewUser.changePassword.alert.rule3"),
-    i18n("CreateNewUser.changePassword.alert.rule4"),
-    i18n("CreateNewUser.changePassword.alert.rule5"),
-    i18n("CreateNewUser.changePassword.alert.rule6"),
+    i18n("validation-utilities.password.minimumLength"),
+    i18n("validation-utilities.password.uppercase"),
+    i18n("validation-utilities.password.lowercase"),
+    i18n("validation-utilities.password.number"),
+    i18n("validation-utilities.password.specialCharacters"),
   ];
 
   useEffect(() => {
@@ -305,30 +306,11 @@ export default function CreateNewUser() {
                 label={i18n("CreateNewUser.form.label.password")}
                 name="password"
                 rules={[
-                  {
-                    required: true,
-                    message: i18n("CreateNewUser.changePassword.alert.rule1"),
-                  },
-                  {
-                    min: 8,
-                    message: i18n("CreateNewUser.changePassword.alert.rule2"),
-                  },
-                  {
-                    pattern: new RegExp("^.*[A-Z].*$"),
-                    message: i18n("CreateNewUser.changePassword.alert.rule3"),
-                  },
-                  {
-                    pattern: new RegExp("^.*[a-z].*$"),
-                    message: i18n("CreateNewUser.changePassword.alert.rule4"),
-                  },
-                  {
-                    pattern: new RegExp("^.*[0-9].*$"),
-                    message: i18n("CreateNewUser.changePassword.alert.rule5"),
-                  },
-                  {
-                    pattern: new RegExp("^.*[^A-Za-z0-9].*$"),
-                    message: i18n("CreateNewUser.changePassword.alert.rule6"),
-                  },
+                  ({}) => ({
+                    validator(_, value) {
+                      return validatePassword(value);
+                    },
+                  }),
                 ]}
               >
                 <Input.Password />

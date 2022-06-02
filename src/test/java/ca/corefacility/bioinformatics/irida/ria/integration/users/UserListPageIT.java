@@ -45,7 +45,7 @@ public class UserListPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void createGoodUserAsAdmin() {
+	public void testcreateGoodUserAsAdmin() {
 		LoginPage.loginAsAdmin(driver());
 		usersPage = UserListPage.goToAdminPanel(driver());
 		CreateNewUserComponent createNewUserComponent = CreateNewUserComponent.goTo(driver());
@@ -57,7 +57,7 @@ public class UserListPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void createGoodUserAsAdminAsManager() {
+	public void testcreateGoodUserAsAdminAsManager() {
 		LoginPage.loginAsManager(driver());
 		usersPage = UserListPage.goTo(driver());
 		CreateNewUserComponent createNewUserComponent = CreateNewUserComponent.goTo(driver());
@@ -69,7 +69,7 @@ public class UserListPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void createExistingUsername() {
+	public void testcreateExistingUsername() {
 		LoginPage.loginAsAdmin(driver());
 		usersPage = UserListPage.goToAdminPanel(driver());
 		CreateNewUserComponent createNewUserComponent = CreateNewUserComponent.goTo(driver());
@@ -81,7 +81,7 @@ public class UserListPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void createExistingEmail() {
+	public void testcreateExistingEmail() {
 		LoginPage.loginAsAdmin(driver());
 		usersPage = UserListPage.goToAdminPanel(driver());
 		CreateNewUserComponent createNewUserComponent = CreateNewUserComponent.goTo(driver());
