@@ -27,6 +27,7 @@ export interface ViewAssociatedProjectsProps {
 }
 
 export const ViewAssociatedProjects = ({ projectId }: ViewAssociatedProjectsProps): JSX.Element => {
+  const [associated, setAssociated] = React.useState<AssociatedProject[]>([] as AssociatedProject[]);
   const [organismFilters, setOrganismFilters] = React.useState<ColumnFilterItem[]>([] as ColumnFilterItem[]);
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const [switches, setSwitches] = React.useState<Record<string, boolean>>({} as Record<string, boolean>);
@@ -48,6 +49,7 @@ export const ViewAssociatedProjects = ({ projectId }: ViewAssociatedProjectsProp
 
   React.useEffect(() => {
     if (associatedProjects?.length) {
+      setAssociated(associatedProjects);
       setTotal(associatedProjects.length);
       setOrganismFilters(
         createListFilterByUniqueAttribute({
@@ -72,7 +74,14 @@ export const ViewAssociatedProjects = ({ projectId }: ViewAssociatedProjectsProp
     updateFn({
       projectId,
       associatedProjectId: project.id,
-    }).then(() => setSwitches({ ...switches, [project.id]: false }));
+    }).then(() => {
+      setSwitches({ ...switches, [project.id]: false });
+      const index = associated.indexOf(project);
+      const updated = [...associated];
+      const updatedProject = {...updated[index], associated: checked};
+      updated[index] = updatedProject;
+      setAssociated(updated);
+    });
   }
 
   const columns: ColumnsType<AssociatedProject> = [
@@ -140,7 +149,7 @@ export const ViewAssociatedProjects = ({ projectId }: ViewAssociatedProjectsProp
       rowKey="id"
       loading={isLoading}
       columns={columns}
-      dataSource={associatedProjects}
+      dataSource={associated}
       pagination={getPaginationOptions(total)}
     />
   ) : (

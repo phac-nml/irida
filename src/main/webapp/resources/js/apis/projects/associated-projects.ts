@@ -36,29 +36,20 @@ export const associatedProjectsApi = createApi({
   endpoints: builder => ({
     getAssociatedProjects: builder.query<AssociatedProjectsResponse, number>({
       query: projectId => ({ url: "", params: { projectId } }),
-      providesTags: result =>
-        result
-          ? result.map(({ id }) => ({
-              type: "AssociatedProject",
-              id
-            }))
-          : []
     }),
     addAssociatedProject: builder.mutation<AssociatedProjectsResponse, AssociatedProjectsParams>({
       query: ({ projectId, associatedProjectId }) => ({
         url: "",
         params: { projectId, associatedProjectId },
         method: "POST"
-      }),
-      invalidatesTags: ["AssociatedProject"]
+      })
     }),
     removeAssociatedProject: builder.mutation<AssociatedProjectsResponse, AssociatedProjectsParams>({
       query: ({ projectId, associatedProjectId }) => ({
         url: "",
         params: { projectId, associatedProjectId },
         method: "DELETE"
-      }),
-      invalidatesTags: ["AssociatedProject"]
+      })
     }),
     listAssociatedProjects: builder.query<ListAssociatedProjectsResponse, string>({
       query: projectId => ({ url: "/list", params: { projectId } }),
