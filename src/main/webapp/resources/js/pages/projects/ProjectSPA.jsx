@@ -3,7 +3,7 @@ import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import { NcbiExportTable } from "../../components/ncbi/export-table/NcbiExportTable";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import ProjectNCBILayout from "./ncbi";
-import NCBIExportDetails from "./ncbi-details/index";
+import NCBIExportDetails from "./ncbi/details";
 
 function ProjectBase() {
   return (
