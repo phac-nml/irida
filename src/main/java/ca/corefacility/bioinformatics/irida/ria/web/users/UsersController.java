@@ -45,7 +45,7 @@ public class UsersController {
 	 * @return The name of the user account page
 	 */
 	@RequestMapping({ "/{userId}", "/{userId}/*" })
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER') or principal.id == #userId")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or principal.id == #userId")
 	public String getUserDetailsPage(@PathVariable Long userId) {
 		return SPECIFIC_USER_PAGE;
 	}

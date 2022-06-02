@@ -55,10 +55,12 @@ export function UserTable() {
       sorter: true,
       fixed: "left",
       render(text, full) {
-        return (
+        return IS_ADMIN ? (
           <a className="t-username" href={setBaseUrl(`users/${full.id}`)}>
             {text}
           </a>
+        ) : (
+          text
         );
       },
     },
@@ -81,6 +83,11 @@ export function UserTable() {
       render(text, full) {
         return <a href={`mailto:${text}`}>{text}</a>;
       },
+    },
+    {
+      title: i18n("UserTable.phoneNumber"),
+      key: "phoneNumber",
+      dataIndex: "phoneNumber",
     },
     {
       title: i18n("UserTable.role"),
