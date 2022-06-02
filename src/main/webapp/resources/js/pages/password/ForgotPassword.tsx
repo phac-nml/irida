@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { Button, Form, Input, InputRef } from "antd";
 import { MailOutlined } from "@ant-design/icons";
 import { InfoAlert } from "../../components/alerts";
@@ -18,7 +18,7 @@ export interface ForgotPasswordProps {
  * @returns {*}
  * @constructor
  */
-export const ForgotPassword: React.FC<ForgotPasswordProps> = ({ updateDisplayLoginPage }) => {
+export const ForgotPassword = ({ updateDisplayLoginPage }: ForgotPasswordProps): JSX.Element => {
   const [forgotPassword] = useCreatePasswordResetEmailMutation();
   const [forgotPasswordForm] = Form.useForm();
   const [loading, setLoading] = React.useState(false);

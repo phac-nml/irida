@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { Card, Col, notification, Row, Statistic } from "antd";
 import {
   IconDatabaseOutlined,
@@ -12,14 +12,14 @@ declare let window: IridaWindow;
 
 const userId = window.TL._USER.identifier;
 
-const StatCol: React.FC = ({ children }) => <Col span={8}>{children}</Col>;
+const StatCol = ({ children }: {children: React.ReactNode}): JSX.Element => <Col span={8}>{children}</Col>;
 
 /**
  * Component to display user statistics
  * @returns {JSX.Element}
  * @constructor
  */
-export const UserProjectStatistics: React.FC = () => {
+export const UserProjectStatistics = (): JSX.Element => {
   const [statistics, setStatistics] = React.useState<UserStatistics>();
   const [loading, setLoading] = React.useState(true);
 

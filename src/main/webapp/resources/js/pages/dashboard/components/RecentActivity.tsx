@@ -1,5 +1,5 @@
 import { Button, Col, Row, Typography } from "antd";
-import * as React from "react";
+import React from "react";
 
 import { RecentActivityAllProjects } from "./RecentActivityAllProjects";
 import { RecentActivityUserProjects } from "./RecentActivityUserProjects";
@@ -12,7 +12,7 @@ import { SPACE_XS } from "../../../styles/spacing";
  * @returns {JSX.Element}
  * @constructor
  */
-export const RecentActivity: React.FC = () => {
+export const RecentActivity = (): JSX.Element => {
   const [allProjectsVisible, setAllProjectsVisible] = React.useState(false);
   const [userProjectsVisible, setUserProjectsVisible] = React.useState(true);
   const admin = isAdmin();

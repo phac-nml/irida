@@ -2,7 +2,7 @@
  * Component to render a Warning alert with an icon
  */
 
-import * as React from "react";
+import React from "react";
 import { Alert, AlertProps } from "antd";
 
 /**
@@ -13,7 +13,7 @@ import { Alert, AlertProps } from "antd";
  *
  * @returns {Element} - Returns an antd warning 'Alert' component
  */
-export const WarningAlert: React.FC<AlertProps> = ({ message, description, ...props }) => {
+export const WarningAlert = ({ message, description, ...props }: AlertProps): JSX.Element => {
   return (
     <Alert
       type="warning"

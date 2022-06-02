@@ -1,5 +1,5 @@
 import { notification } from "antd";
-import * as React from "react";
+import React from "react";
 import { addKeysToList } from "../../../utilities/http-utilities";
 import { Activity, getUserActivities } from "../../../apis/activities/activities";
 import { RecentActivityList } from "./RecentActivityList";
@@ -9,7 +9,7 @@ import { RecentActivityList } from "./RecentActivityList";
  * @returns {JSX.Element}
  * @constructor
  */
-export const RecentActivityUserProjects: React.FC = () => {
+export const RecentActivityUserProjects = (): JSX.Element => {
   /**
    * List of recent activities to render
    */

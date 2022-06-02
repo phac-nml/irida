@@ -2,7 +2,7 @@
  * Component to render an Info alert with an icon
  */
 
-import * as React from "react";
+import React from "react";
 import { Alert, AlertProps } from "antd";
 
 /**
@@ -13,7 +13,7 @@ import { Alert, AlertProps } from "antd";
  * @param {object} props - remainder of props passed
  * @returns {Element} - Returns an antd info 'Alert' component
  */
-export const InfoAlert: React.FC<AlertProps> = ({ message, description, ...props }) => {
+export const InfoAlert = ({ message, description, ...props }: AlertProps): JSX.Element => {
   return (
     <Alert
       type="info"

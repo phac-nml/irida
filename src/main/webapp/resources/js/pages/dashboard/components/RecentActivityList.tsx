@@ -22,13 +22,13 @@ export interface RecentActivityListProps {
  * @returns {JSX.Element}
  * @constructor
  */
-export const RecentActivityList: React.FC<RecentActivityListProps> = ({
+export const RecentActivityList = ({
   activities,
   total,
   page,
   setPage,
   loading,
-}) => {
+}: RecentActivityListProps): JSX.Element => {
   return (
     <Row gutter={[16, 16]}>
       <Col span={24}>
@@ -65,4 +65,4 @@ export const RecentActivityList: React.FC<RecentActivityListProps> = ({
       </Col>
     </Row>
   );
-}
+};

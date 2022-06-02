@@ -1,6 +1,6 @@
 import { Avatar, List, Typography } from "antd";
 import isNumeric from "antd/es/_util/isNumeric";
-import * as React from "react";
+import React from "react";
 import { blue6, blue8, grey6, red6 } from "../../styles/colors";
 import { SPACE_XS } from "../../styles/spacing";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
@@ -38,7 +38,7 @@ export interface ActivityListItemProps {
  * @returns {JSX.Element}
  * @constructor
  */
-export const ActivityListItem: React.FC<ActivityListItemProps> = ({ activity }) => {
+export const ActivityListItem = ({ activity } : ActivityListItemProps): JSX.Element => {
   const [title] = React.useState(() => {
     /*
     The description (title) is sent from the server with placeholders, e.g.

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { render } from "react-dom";
 import { Alert, Button, Col, Form, Input, InputRef, Row } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
@@ -28,7 +28,7 @@ interface LoginFormProps {
  * @returns {*}
  * @constructor
  */
-const LoginForm: React.FC<LoginFormProps> = ({ updateDisplayLoginPage, updatePageType }) => {
+const LoginForm = ({ updateDisplayLoginPage, updatePageType }: LoginFormProps): JSX.Element => {
   const [form] = Form.useForm();
   const usernameRef = React.useRef<InputRef>(null);
 

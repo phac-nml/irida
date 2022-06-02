@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { Alert, Button, Form, Input, InputRef } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { SPACE_MD } from "../../styles/spacing";
@@ -16,7 +16,7 @@ export interface ActivateAccountProps {
  * @returns {*}
  * @constructor
  */
-export const ActivateAccount: React.FC<ActivateAccountProps> = ({ updateDisplayLoginPage }) => {
+export const ActivateAccount = ({ updateDisplayLoginPage }: ActivateAccountProps): JSX.Element => {
   const [loading, setLoading] = React.useState(false);
   const [activateAccount] = useActivateAccountMutation();
   const [activateAccountForm] = Form.useForm();

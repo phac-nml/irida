@@ -2,7 +2,7 @@
  * Component to render a Success alert with an icon
  */
 
-import * as React from "react";
+import React from "react";
 import { Alert, AlertProps } from "antd";
 
 /**
@@ -13,7 +13,7 @@ import { Alert, AlertProps } from "antd";
  *
  * @returns {Element} - Returns an antd success 'Alert' component
  */
-export const SuccessAlert: React.FC<AlertProps> = ({ message, description, ...props }) => {
+export const SuccessAlert = ({ message, description, ...props }: AlertProps): JSX.Element => {
   return (
     <Alert
       type="success"
