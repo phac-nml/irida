@@ -6,6 +6,7 @@
 import { Alert, Avatar, notification, Switch, Table, Typography } from "antd";
 import React from "react";
 import {
+  AssociatedProject,
   useAddAssociatedProjectMutation,
   useGetAssociatedProjectsQuery,
   useRemoveAssociatedProjectMutation,
@@ -16,14 +17,20 @@ import { createListFilterByUniqueAttribute } from "../../../../../components/Tab
 import { TextFilter } from "../../../../../components/Tables/fitlers";
 import { setBaseUrl } from "../../../../../utilities/url-utilities";
 import { getPaginationOptions } from "../../../../../utilities/antdesign-table-utilities";
+import { ColumnsType, ColumnType } from "antd/lib/table";
+import { ColumnFilterItem } from "antd/lib/table/interface";
 
 const { Text } = Typography;
 
-export default function ViewAssociatedProjects({ projectId }) {
-  const [organismFilters, setOrganismFilters] = React.useState([]);
+export interface ViewAssociatedProjectsProps {
+  projectId: number;
+}
+
+export const ViewAssociatedProjects = ({ projectId }: ViewAssociatedProjectsProps): JSX.Element => {
+  const [organismFilters, setOrganismFilters] = React.useState<ColumnFilterItem[]>([] as ColumnFilterItem[]);
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
-  const [switches, setSwitches] = React.useState({});
-  const [total, setTotal] = React.useState(0);
+  const [switches, setSwitches] = React.useState<Record<string, boolean>>({} as Record<string, boolean>);
+  const [total, setTotal] = React.useState<number>(0);
 
   const {
     data: associatedProjects,
@@ -52,11 +59,14 @@ export default function ViewAssociatedProjects({ projectId }) {
   }, [associatedProjects]);
 
   React.useEffect(() => {
-    const error = removeError?.data.error || addError?.data.error;
-    error && notification.error({ message: error });
+    if (removeError && 'data' in removeError) {
+      notification.error({message: (removeError.data as AjaxErrorResponse).error});
+    } else if (addError && 'data' in addError) {
+      notification.error({message: (addError.data as AjaxErrorResponse).error});
+    }
   }, [removeError, addError]);
 
-  function updateProject(checked, project) {
+  function updateProject(checked: boolean, project: AssociatedProject) {
     const updateFn = checked ? addAssociatedProject : removeAssociatedProject;
     setSwitches({ ...switches, [project.id]: true });
     updateFn({
@@ -65,7 +75,7 @@ export default function ViewAssociatedProjects({ projectId }) {
     }).then(() => setSwitches({ ...switches, [project.id]: false }));
   }
 
-  const columns = [
+  const columns: ColumnsType<AssociatedProject> = [
     project.canManage
       ? {
           key: "switch",
@@ -105,7 +115,7 @@ export default function ViewAssociatedProjects({ projectId }) {
         return project.label
           .toString()
           .toLowerCase()
-          .includes(value.toLowerCase());
+          .includes(value.toString().toLowerCase());
       },
       sorter: (a, b) => ("" + a.label).localeCompare("" + b.label),
     },
@@ -141,4 +151,6 @@ export default function ViewAssociatedProjects({ projectId }) {
       showIcon
     />
   );
-}
+};
+
+export default ViewAssociatedProjects;

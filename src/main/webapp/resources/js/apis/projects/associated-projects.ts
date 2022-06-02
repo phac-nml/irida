@@ -1,11 +1,27 @@
 /**
  * @file API the ProjectSettingsAssociatedProjectsController
  */
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import axios from "axios";
+import { buildCreateApi, createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
 const BASE_URL = setBaseUrl(`/ajax/projects/associated`);
+
+export interface AssociatedProject {
+  label: string;
+  id: number;
+  organism: string;
+  createdDate: Date;
+  associated: boolean;
+}
+
+export type AssociatedProjectsResponse = AssociatedProject[];
+
+export type ListAssociatedProjectsResponse = object[];
+
+export interface AssociatedProjectsParams {
+  projectId: number, 
+  associatedProjectId: number
+}
 
 /**
  * API for CRUD operations for Associated projects
@@ -17,8 +33,8 @@ export const associatedProjectsApi = createApi({
     baseUrl: BASE_URL
   }),
   tagTypes: ["AssociatedProject"],
-  endpoints: build => ({
-    getAssociatedProjects: build.query({
+  endpoints: builder => ({
+    getAssociatedProjects: builder.query<AssociatedProjectsResponse, number>({
       query: projectId => ({ url: "", params: { projectId } }),
       providesTags: result =>
         result
@@ -28,7 +44,7 @@ export const associatedProjectsApi = createApi({
             }))
           : []
     }),
-    addAssociatedProject: build.mutation({
+    addAssociatedProject: builder.mutation<AssociatedProjectsResponse, AssociatedProjectsParams>({
       query: ({ projectId, associatedProjectId }) => ({
         url: "",
         params: { projectId, associatedProjectId },
@@ -36,7 +52,7 @@ export const associatedProjectsApi = createApi({
       }),
       invalidatesTags: ["AssociatedProject"]
     }),
-    removeAssociatedProject: build.mutation({
+    removeAssociatedProject: builder.mutation<AssociatedProjectsResponse, AssociatedProjectsParams>({
       query: ({ projectId, associatedProjectId }) => ({
         url: "",
         params: { projectId, associatedProjectId },
@@ -44,9 +60,9 @@ export const associatedProjectsApi = createApi({
       }),
       invalidatesTags: ["AssociatedProject"]
     }),
-    listAssociatedProjects: build.query({
+    listAssociatedProjects: builder.query<ListAssociatedProjectsResponse, string>({
       query: projectId => ({ url: "/list", params: { projectId } }),
-      transformResponse: response => {
+      transformResponse: (response: AssociatedProjectsResponse) => {
         return response.map(item => ({
           text: item.label,
           value: item.id

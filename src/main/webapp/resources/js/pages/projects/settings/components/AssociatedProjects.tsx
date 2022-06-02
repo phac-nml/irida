@@ -6,7 +6,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import ViewAssociatedProjects from "./associated/ViewAssociatedProjects";
 
-export default function AssociatedProjects() {
+export default function AssociatedProjects(): JSX.Element {
   const { projectId } = useParams();
   return (
     <>
@@ -17,7 +17,7 @@ export default function AssociatedProjects() {
         <Typography.Text type="secondary">
           {i18n("AssociatedProjects.subTitle")}
         </Typography.Text>
-        <ViewAssociatedProjects projectId={projectId} />
+        { projectId && <ViewAssociatedProjects projectId={parseInt(projectId)} />}
       </Space>
     </>
   );
