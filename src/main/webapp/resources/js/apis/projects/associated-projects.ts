@@ -36,20 +36,55 @@ export const associatedProjectsApi = createApi({
   endpoints: builder => ({
     getAssociatedProjects: builder.query<AssociatedProjectsResponse, number>({
       query: projectId => ({ url: "", params: { projectId } }),
+      providesTags: result =>
+        result
+          ? result.map(({ id }) => ({
+              type: "AssociatedProject",
+              id
+            }))
+          : []
     }),
     addAssociatedProject: builder.mutation<AssociatedProjectsResponse, AssociatedProjectsParams>({
       query: ({ projectId, associatedProjectId }) => ({
         url: "",
         params: { projectId, associatedProjectId },
         method: "POST"
-      })
+      }),
+      async onQueryStarted({projectId, associatedProjectId}, { dispatch, queryFulfilled}) {
+        try {
+          await queryFulfilled;
+          const patchResult = dispatch(
+            associatedProjectsApi.util.updateQueryData('getAssociatedProjects', projectId, (draft) => {
+              // find and update the corresponding associatedProject in the cache if it exists
+              const draftAssociatedProject = draft.find((_draftAssociatedProject) => _draftAssociatedProject.id === associatedProjectId);
+              if (!draftAssociatedProject) return;
+              const updatedAssociatedProject = {...draftAssociatedProject, associated: true};
+              Object.assign(draftAssociatedProject, updatedAssociatedProject);
+            })
+          )
+        } catch {}
+      }
     }),
     removeAssociatedProject: builder.mutation<AssociatedProjectsResponse, AssociatedProjectsParams>({
       query: ({ projectId, associatedProjectId }) => ({
         url: "",
         params: { projectId, associatedProjectId },
         method: "DELETE"
-      })
+      }),
+      async onQueryStarted({projectId, associatedProjectId}, { dispatch, queryFulfilled}) {
+        try {
+          await queryFulfilled;
+          const patchResult = dispatch(
+            associatedProjectsApi.util.updateQueryData('getAssociatedProjects', projectId, (draft) => {
+              // find and update the corresponding associatedProject in the cache if it exists
+              const draftAssociatedProject = draft.find((_draftAssociatedProject) => _draftAssociatedProject.id === associatedProjectId);
+              if (!draftAssociatedProject) return;
+              const updatedAssociatedProject = {...draftAssociatedProject, associated: false};
+              Object.assign(draftAssociatedProject, updatedAssociatedProject);
+            })
+          )
+        } catch {}
+      }
     }),
     listAssociatedProjects: builder.query<ListAssociatedProjectsResponse, string>({
       query: projectId => ({ url: "/list", params: { projectId } }),

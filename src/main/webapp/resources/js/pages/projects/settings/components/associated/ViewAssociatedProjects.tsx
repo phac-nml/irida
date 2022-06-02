@@ -17,7 +17,7 @@ import { createListFilterByUniqueAttribute } from "../../../../../components/Tab
 import { TextFilter } from "../../../../../components/Tables/fitlers";
 import { setBaseUrl } from "../../../../../utilities/url-utilities";
 import { getPaginationOptions } from "../../../../../utilities/antdesign-table-utilities";
-import { ColumnsType, ColumnType } from "antd/lib/table";
+import { ColumnsType } from "antd/lib/table";
 import { ColumnFilterItem } from "antd/lib/table/interface";
 
 const { Text } = Typography;
@@ -27,7 +27,6 @@ export interface ViewAssociatedProjectsProps {
 }
 
 export const ViewAssociatedProjects = ({ projectId }: ViewAssociatedProjectsProps): JSX.Element => {
-  const [associated, setAssociated] = React.useState<AssociatedProject[]>([] as AssociatedProject[]);
   const [organismFilters, setOrganismFilters] = React.useState<ColumnFilterItem[]>([] as ColumnFilterItem[]);
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const [switches, setSwitches] = React.useState<Record<string, boolean>>({} as Record<string, boolean>);
@@ -49,7 +48,6 @@ export const ViewAssociatedProjects = ({ projectId }: ViewAssociatedProjectsProp
 
   React.useEffect(() => {
     if (associatedProjects?.length) {
-      setAssociated(associatedProjects);
       setTotal(associatedProjects.length);
       setOrganismFilters(
         createListFilterByUniqueAttribute({
@@ -76,11 +74,6 @@ export const ViewAssociatedProjects = ({ projectId }: ViewAssociatedProjectsProp
       associatedProjectId: project.id,
     }).then(() => {
       setSwitches({ ...switches, [project.id]: false });
-      const index = associated.indexOf(project);
-      const updated = [...associated];
-      const updatedProject = {...updated[index], associated: checked};
-      updated[index] = updatedProject;
-      setAssociated(updated);
     });
   }
 
@@ -149,7 +142,7 @@ export const ViewAssociatedProjects = ({ projectId }: ViewAssociatedProjectsProp
       rowKey="id"
       loading={isLoading}
       columns={columns}
-      dataSource={associated}
+      dataSource={associatedProjects}
       pagination={getPaginationOptions(total)}
     />
   ) : (
