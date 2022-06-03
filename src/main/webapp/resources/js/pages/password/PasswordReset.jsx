@@ -13,6 +13,7 @@ import { useSetPasswordMutation } from "../../apis/password-reset";
 import store from "../store";
 import { Provider } from "react-redux";
 import { validatePassword } from "../../utilities/validation-utilities";
+import { PasswordPolicyAlert } from "../../components/alerts/PasswordPolicyAlert";
 
 const { Item } = Form;
 const passwordExpired =
