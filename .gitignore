@@ -21,6 +21,7 @@ src/main/webapp/node
 /src/main/webapp/pages/templates/i18n/*.html
 /doc/.jekyll-cache/Jekyll/Cache/
 /doc/developer/apidocs
+/src/main/resources/application-local.properties
 
 # YARN
 /src/main/webapp/.pnp.*

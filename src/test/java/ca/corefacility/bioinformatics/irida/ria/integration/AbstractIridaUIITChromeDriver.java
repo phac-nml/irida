@@ -24,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.IridaApplication;
@@ -53,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 @DbUnitConfiguration(dataSetLoader = NullReplacementDatasetLoader.class)
+@TestPropertySource(properties = "server.servlet.context-path=/irida")
 public class AbstractIridaUIITChromeDriver {
 
 	private static final Logger logger = LoggerFactory.getLogger(AbstractIridaUIITChromeDriver.class);
