@@ -1,5 +1,7 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
-import { compareRestrictionLevels } from "../../../utilities/restriction-utilities";
+import {
+  compareRestrictionLevels
+} from "../../../utilities/restriction-utilities";
 
 /**
  * Action to set the target project for the samples
@@ -83,8 +85,9 @@ const initialState = (() => {
     return {};
   }
 
-  const { samples: allSamples, projectId: currentProject } =
-    JSON.parse(stringData);
+  const { samples: allSamples, projectId: currentProject } = JSON.parse(
+    stringData
+  );
   const samples = [];
   const associated = [];
   allSamples.forEach((sample) => {
@@ -96,7 +99,6 @@ const initialState = (() => {
   });
 
   return {
-    originalSamples: samples,
     samples,
     associated,
     currentProject,
@@ -115,7 +117,7 @@ const shareSlice = createSlice({
     });
 
     builder.addCase(removeSample, (state, action) => {
-      state.originalSamples = state.originalSamples.filter(
+      state.samples = state.samples.filter(
         (sample) => sample.id !== action.payload.sampleId
       );
     });
