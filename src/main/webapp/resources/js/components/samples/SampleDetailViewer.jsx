@@ -86,7 +86,7 @@ function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
           visible={visible}
           onCancel={() => setVisible(false)}
           footer={null}
-          width={720}
+          width={900}
         >
           <div style={{ margin: 24 }}>
             {isLoading ? (

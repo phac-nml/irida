@@ -1,8 +1,7 @@
 import React from "react";
-import { notification, Space, Tag, Tooltip } from "antd";
+import { Button, notification, Space, Tag, Tooltip } from "antd";
 import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
-import { SingleEndFileRenderer } from "../../sequence-files/SingleEndFileRenderer";
-import { PairedFileRenderer } from "../../sequence-files/PairedFileRenderer";
+
 import {
   downloadGenomeAssemblyFile,
   downloadSequencingObjectFile,
@@ -25,6 +24,8 @@ import {
 } from "../../icons/Icons";
 import { useInterval } from "../../../hooks";
 import { setDefaultSequencingObject } from "../sampleSlice";
+import { SequenceObjectListItem } from "../../sequence-files/SequenceObjectListItem";
+import { GenomeAssemblyListItem } from "../../sequence-files/GenomeAssemblyListItem";
 
 /**
  * React component to display, remove, download files
@@ -35,9 +36,8 @@ import { setDefaultSequencingObject } from "../sampleSlice";
 export function SampleFileList() {
   const dispatch = useDispatch();
   const [removeSampleFilesFromSample] = useRemoveSampleFilesMutation();
-  const [
-    updateSampleDefaultSequencingObject,
-  ] = useUpdateDefaultSampleSequencingObjectMutation();
+  const [updateSampleDefaultSequencingObject] =
+    useUpdateDefaultSampleSequencingObjectMutation();
   const { sample, projectId } = useSelector((state) => state.sampleReducer);
   const { files } = useSelector((state) => state.sampleFilesReducer);
 
@@ -201,6 +201,86 @@ export function SampleFileList() {
     );
   };
 
+  const getActionsForSequencingObject = (seqObj) => {
+    let actions = [];
+
+    actions.push(
+      <Button
+        size="small"
+        key={`set-default-${seqObj.fileInfo.identifier}`}
+        // onClick={() => updateDefaultSequencingObject(file)}
+        type="link"
+        className="t-set-default-seq-obj-button"
+      >
+        {i18n("SequenceFileHeaderOwner.setAsDefault")}
+      </Button>,
+      getProcessingStateTag(seqObj.fileInfo.processingState),
+      <span className="t-file-size">{seqObj.firstFileSize}</span>,
+      <Button
+        type="link"
+        style={{ padding: 0 }}
+        className="t-download-file-btn"
+        // onClick={() => {
+        //   downloadSequenceFile({
+        //     sequencingObjectId: fileObjectId,
+        //     sequenceFileId: file.id,
+        //   });
+        //}}
+      >
+        Download
+      </Button>,
+      <Button
+        type="link"
+        style={{ padding: 0 }}
+        className="t-remove-file-btn"
+        // onClick={() => {
+        //   downloadSequenceFile({
+        //     sequencingObjectId: fileObjectId,
+        //     sequenceFileId: file.id,
+        //   });
+        //}}
+      >
+        Remove
+      </Button>
+    );
+    return actions;
+  };
+
+  const getActionsForGenomeAssembly = (genomeAssembly) => {
+    let actions = [];
+
+    actions.push(
+      <span className="t-file-size">{genomeAssembly.firstFileSize}</span>,
+      <Button
+        type="link"
+        style={{ padding: 0 }}
+        className="t-download-file-btn"
+        // onClick={() => {
+        //   downloadSequenceFile({
+        //     sequencingObjectId: fileObjectId,
+        //     sequenceFileId: file.id,
+        //   });
+        //}}
+      >
+        Download
+      </Button>,
+      <Button
+        type="link"
+        style={{ padding: 0 }}
+        className="t-remove-file-btn"
+        // onClick={() => {
+        //   downloadSequenceFile({
+        //     sequencingObjectId: fileObjectId,
+        //     sequenceFileId: file.id,
+        //   });
+        //}}
+      >
+        Remove
+      </Button>
+    );
+    return actions;
+  };
+
   return (
     <Space
       size="large"
@@ -210,59 +290,83 @@ export function SampleFileList() {
     >
       {files.singles && (
         <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>
-          <SingleEndFileRenderer
-            files={files.singles}
-            sampleId={sample.identifier}
-            downloadSequenceFile={downloadSequenceFile}
-            removeSampleFiles={removeSampleFiles}
-            getProcessingState={getProcessingStateTag}
-            qcEntryTranslations={qcEntryTranslations}
-            displayConcatenationCheckbox={files.singles?.length >= 2}
-          />
+          {files.singles.map((sequenceObject) => (
+            <SequenceObjectListItem
+              sequenceObject={sequenceObject}
+              actions={getActionsForSequencingObject(sequenceObject)}
+              displayConcatenationCheckbox={true}
+            />
+            // <SingleEndFileRenderer
+            //   files={files.singles}
+            //   sampleId={sample.identifier}
+            //   downloadSequenceFile={downloadSequenceFile}
+            //   removeSampleFiles={removeSampleFiles}
+            //   getProcessingState={getProcessingStateTag}
+            //   qcEntryTranslations={qcEntryTranslations}
+            //   displayConcatenationCheckbox={files.singles?.length >= 2}
+            // />
+          ))}
         </SequenceFileTypeRenderer>
       )}
       {files.paired && (
         <SequenceFileTypeRenderer title={i18n("SampleFiles.paired")}>
           {files.paired.map((pair) => (
-            <PairedFileRenderer
-              key={`pair-${pair.identifier}`}
-              pair={pair}
-              sampleId={sample.identifier}
-              downloadSequenceFile={downloadSequenceFile}
-              removeSampleFiles={removeSampleFiles}
-              getProcessingState={getProcessingStateTag}
-              qcEntryTranslations={qcEntryTranslations}
-              displayConcatenationCheckbox={files.paired?.length >= 2}
-              updateDefaultSequencingObject={updateDefaultSequencingObject}
-              autoDefaultFirstPair={
-                sample.defaultSequencingObject === null ? files.paired[0] : null
-              }
+            <SequenceObjectListItem
+              sequenceObject={pair}
+              actions={getActionsForSequencingObject(pair)}
+              displayConcatenationCheckbox={true}
             />
+            // <PairedFileRenderer
+            //   key={`pair-${pair.identifier}`}
+            //   pair={pair}
+            //   sampleId={sample.identifier}
+            //   downloadSequenceFile={downloadSequenceFile}
+            //   removeSampleFiles={removeSampleFiles}
+            //   getProcessingState={getProcessingStateTag}
+            //   qcEntryTranslations={qcEntryTranslations}
+            //   displayConcatenationCheckbox={files.paired?.length >= 2}
+            //   updateDefaultSequencingObject={updateDefaultSequencingObject}
+            //   autoDefaultFirstPair={
+            //     sample.defaultSequencingObject === null ? files.paired[0] : null
+            //   }
+            // />
           ))}
         </SequenceFileTypeRenderer>
       )}
       {files.fast5 && (
         <SequenceFileTypeRenderer title={i18n("SampleFiles.fast5")}>
-          <SingleEndFileRenderer
-            files={files.fast5}
-            sampleId={sample.identifier}
-            downloadSequenceFile={downloadSequenceFile}
-            removeSampleFiles={removeSampleFiles}
-            getProcessingState={getProcessingStateTag}
-            qcEntryTranslations={qcEntryTranslations}
-          />
+          {files.fast5.map((fast5Obj) => (
+            <SequenceObjectListItem
+              sequenceObject={fast5Obj}
+              actions={getActionsForSequencingObject(fast5Obj)}
+            />
+            // <SingleEndFileRenderer
+            // files={files.fast5}
+            // sampleId={sample.identifier}
+            // downloadSequenceFile={downloadSequenceFile}
+            // removeSampleFiles={removeSampleFiles}
+            // getProcessingState={getProcessingStateTag}
+            // qcEntryTranslations={qcEntryTranslations}
+            // />
+          ))}
         </SequenceFileTypeRenderer>
       )}
       {files.assemblies && (
         <SequenceFileTypeRenderer title={i18n("SampleFiles.assemblies")}>
-          <SingleEndFileRenderer
-            files={files.assemblies}
-            fastqcResults={false}
-            sampleId={sample.identifier}
-            downloadAssemblyFile={downloadAssemblyFile}
-            removeSampleFiles={removeSampleFiles}
-            qcEntryTranslations={qcEntryTranslations}
-          />
+          {files.assemblies.map((assembly) => (
+            <GenomeAssemblyListItem
+              genomeAssembly={assembly}
+              actions={getActionsForGenomeAssembly(assembly)}
+            />
+            // <SingleEndFileRenderer
+            //   files={files.assemblies}
+            //   fastqcResults={false}
+            //   sampleId={sample.identifier}
+            //   downloadAssemblyFile={downloadAssemblyFile}
+            //   removeSampleFiles={removeSampleFiles}
+            //   qcEntryTranslations={qcEntryTranslations}
+            // />
+          ))}
         </SequenceFileTypeRenderer>
       )}
     </Space>
