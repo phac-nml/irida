@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Alert,
-  Button,
   Checkbox,
   Form,
   Input,
@@ -91,21 +90,17 @@ export default function CreateNewUser() {
       />
       <ScrollableModal
         title={i18n("CreateNewUser.title")}
+        okText={i18n("CreateNewUser.form.button.submit")}
+        okButtonProps={{
+          className: "t-submit-btn",
+          htmlType: "submit",
+          loading: submitting,
+          onClick: form.submit,
+        }}
         onCancel={() => setVisibility(false)}
         visible={visible}
         maxHeight={window.innerHeight - 250}
         width={640}
-        footer={
-          <Button
-            className="t-submit-btn"
-            type="primary"
-            htmlType="submit"
-            onClick={form.submit}
-            loading={submitting}
-          >
-            {i18n("CreateNewUser.form.button.submit")}
-          </Button>
-        }
         maskClosable={false}
       >
         <Form
