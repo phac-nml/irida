@@ -12,11 +12,10 @@ export interface ActivateAccountProps {
 
 /**
  * React component to render the forgot password form
- * @param {function} updateDisplayLoginPage Function to update whether to display login page
- * @returns {*}
+ * @param updateDisplayLoginPage Function to update whether to display login page
  * @constructor
  */
-export const ActivateAccount = ({ updateDisplayLoginPage }: ActivateAccountProps): JSX.Element => {
+export function ActivateAccount({ updateDisplayLoginPage }: ActivateAccountProps): JSX.Element {
   const [loading, setLoading] = React.useState(false);
   const [activateAccount] = useActivateAccountMutation();
   const [activateAccountForm] = Form.useForm();
@@ -122,4 +121,4 @@ export const ActivateAccount = ({ updateDisplayLoginPage }: ActivateAccountProps
       </Button>
     </>
   );
-};
+}

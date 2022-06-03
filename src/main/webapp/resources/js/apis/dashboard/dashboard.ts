@@ -11,14 +11,21 @@ export interface UserStatistics {
 
 /**
  * Get user statistics
- * @param {number} userId - identifier for a user
- * @returns {Promise<any>}
+ * @param userId - identifier for a user
  */
-export async function fetchUserStatistics(userId: number): Promise<UserStatistics | never> {
+export async function fetchUserStatistics(userId: number): Promise<UserStatistics> {
   try {
     const { data } = await axios.get(`${URL}?userId=${userId}`);
     return data;
-  } catch (e: any) {
-    return Promise.reject(e.response.data.error);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        return Promise.reject(error.response.data.error);
+      } else {
+        return Promise.reject(error.message);
+      }
+    } else {
+      return Promise.reject('An unexpected error occured');
+    }
   }
 }

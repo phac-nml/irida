@@ -17,18 +17,17 @@ export interface RecentActivityListProps {
  * @param activities List of recent activities
  * @param total The total number of recent activities
  * @param page The last loaded page of activities
- * @param {function} setPage Function to set the page number
+ * @param setPage Function to set the page number
  * @param loading Whether the data has finished loading or not
- * @returns {JSX.Element}
  * @constructor
  */
-export const RecentActivityList = ({
+export function RecentActivityList({
   activities,
   total,
   page,
   setPage,
   loading,
-}: RecentActivityListProps): JSX.Element => {
+}: RecentActivityListProps): JSX.Element {
   return (
     <Row gutter={[16, 16]}>
       <Col span={24}>
@@ -65,4 +64,4 @@ export const RecentActivityList = ({
       </Col>
     </Row>
   );
-};
+}

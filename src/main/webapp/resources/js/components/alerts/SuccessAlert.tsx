@@ -8,12 +8,11 @@ import { Alert, AlertProps } from "antd";
 /**
  * Stateless UI component for displaying an [antd success Alert]{@link https://ant.design/components/alert/}
  *
- * @param {string} message - Text to display in alert
- * @param {string} description - Optional description
- *
- * @returns {Element} - Returns an antd success 'Alert' component
+ * @param message - Text to display in alert
+ * @param description - Optional description
+ * @param props - remainder of props passed
  */
-export const SuccessAlert = ({ message, description, ...props }: AlertProps): JSX.Element => {
+export function SuccessAlert({ message, description, ...props }: AlertProps): JSX.Element {
   return (
     <Alert
       type="success"
@@ -23,4 +22,4 @@ export const SuccessAlert = ({ message, description, ...props }: AlertProps): JS
       {...props}
     />
   );
-};
+}

@@ -23,12 +23,11 @@ interface LoginFormProps {
 
 /**
  * React component to render the login form
- * @param {function} updateDisplayLoginPage Function to update whether to display login page
- * @param {function} updatePageType Function to update the page type
- * @returns {*}
+ * @param updateDisplayLoginPage Function to update whether to display login page
+ * @param updatePageType Function to update the page type
  * @constructor
  */
-const LoginForm = ({ updateDisplayLoginPage, updatePageType }: LoginFormProps): JSX.Element => {
+function LoginForm({ updateDisplayLoginPage, updatePageType }: LoginFormProps): JSX.Element {
   const [form] = Form.useForm();
   const usernameRef = React.useRef<InputRef>(null);
 
@@ -138,15 +137,14 @@ const LoginForm = ({ updateDisplayLoginPage, updatePageType }: LoginFormProps): 
       ) : null}
     </Form>
   );
-};
+}
 
 /**
  * React component to layout the Login Page.
  * Responsible for displaying any errors that are returned from the server.
- * @returns {*}
  * @constructor
  */
-function LoginPage() {
+function LoginPage(): JSX.Element {
   const urlParams = new URLSearchParams(window.location.search);
   const [displayLoginPage, setDisplayLoginPage] = React.useState(true);
   const [type, setType] = React.useState("");

@@ -53,7 +53,7 @@ export const associatedProjectsApi = createApi({
       async onQueryStarted({projectId, associatedProjectId}, { dispatch, queryFulfilled}) {
         try {
           await queryFulfilled;
-          const patchResult = dispatch(
+          dispatch(
             associatedProjectsApi.util.updateQueryData('getAssociatedProjects', projectId, (draft) => {
               // find and update the corresponding associatedProject in the cache if it exists
               const draftAssociatedProject = draft.find((_draftAssociatedProject) => _draftAssociatedProject.id === associatedProjectId);
@@ -62,7 +62,9 @@ export const associatedProjectsApi = createApi({
               Object.assign(draftAssociatedProject, updatedAssociatedProject);
             })
           )
-        } catch {}
+        } catch {
+          //do nothing
+        }
       }
     }),
     removeAssociatedProject: builder.mutation<AssociatedProjectsResponse, AssociatedProjectsParams>({
@@ -74,7 +76,7 @@ export const associatedProjectsApi = createApi({
       async onQueryStarted({projectId, associatedProjectId}, { dispatch, queryFulfilled}) {
         try {
           await queryFulfilled;
-          const patchResult = dispatch(
+          dispatch(
             associatedProjectsApi.util.updateQueryData('getAssociatedProjects', projectId, (draft) => {
               // find and update the corresponding associatedProject in the cache if it exists
               const draftAssociatedProject = draft.find((_draftAssociatedProject) => _draftAssociatedProject.id === associatedProjectId);
@@ -83,7 +85,9 @@ export const associatedProjectsApi = createApi({
               Object.assign(draftAssociatedProject, updatedAssociatedProject);
             })
           )
-        } catch {}
+        } catch {
+          //do nothing
+        }
       }
     }),
     listAssociatedProjects: builder.query<ListAssociatedProjectsResponse, string>({

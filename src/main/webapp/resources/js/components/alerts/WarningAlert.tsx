@@ -8,12 +8,11 @@ import { Alert, AlertProps } from "antd";
 /**
  * Stateless UI component for displaying an [antd warning Alert]{@link https://ant.design/components/alert/}
  *
- * @param {string} message - Text to display in alert
- * @param {string} description - Optional description
- *
- * @returns {Element} - Returns an antd warning 'Alert' component
+ * @param message - Text to display in alert
+ * @param description - Optional description
+ * @param props - remainder of props passed
  */
-export const WarningAlert = ({ message, description, ...props }: AlertProps): JSX.Element => {
+export function WarningAlert({ message, description, ...props }: AlertProps): JSX.Element {
   return (
     <Alert
       type="warning"
@@ -23,4 +22,4 @@ export const WarningAlert = ({ message, description, ...props }: AlertProps): JS
       {...props}
     />
   );
-};
+}

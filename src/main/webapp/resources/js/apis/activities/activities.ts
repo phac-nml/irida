@@ -31,11 +31,10 @@ export interface ActivityItem {
 /**
  * Get a page of activities for a project
  *
- * @param {number} projectId - current project identifier
- * @param {number} page - page of activities requested
- * @returns {Promise<AxiosResponse<any>>}
+ * @param projectId - current project identifier
+ * @param page - page of activities requested
  */
-export function getProjectActivities(projectId: number, page: number = 0): Promise<Activities> {
+export function getProjectActivities(projectId: number, page = 0): Promise<Activities> {
   try {
     return axios
       .get(`${BASE_URL}/project?projectId=${projectId}&page=${page}`)
@@ -48,10 +47,9 @@ export function getProjectActivities(projectId: number, page: number = 0): Promi
 /**
  * Get a page of recent activities for all of user's projects
  *
- * @param {number} page - page of activities requested
- * @returns {Promise<AxiosResponse<any>>}
+ * @param page - page of activities requested
  */
-export function getUserActivities(page: number = 0): Promise<Activities> {
+export function getUserActivities(page = 0): Promise<Activities> {
   try {
     return axios.get(`${BASE_URL}/user?page=${page}`).then(({ data }) => data);
   } catch (e) {
@@ -62,10 +60,9 @@ export function getUserActivities(page: number = 0): Promise<Activities> {
 /**
  * Get a page of recent activities for all projects
  *
- * @param {number} page - page of activities requested
- * @returns {Promise<AxiosResponse<any>>}
+ * @param page - page of activities requested
  */
-export function getAllRecentActivities(page: number = 0): Promise<Activities> {
+export function getAllRecentActivities(page = 0): Promise<Activities> {
   try {
     return axios.get(`${BASE_URL}/all?page=${page}`).then(({ data }) => data);
   } catch (e) {

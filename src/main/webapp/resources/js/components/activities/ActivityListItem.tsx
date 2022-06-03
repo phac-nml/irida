@@ -34,11 +34,10 @@ export interface ActivityListItemProps {
 
 /**
  * Component for rendering an activity (event) within an Ant Design List.
- * @param {Object} activity - the activity to render
- * @returns {JSX.Element}
+ * @param activity - the activity to render
  * @constructor
  */
-export const ActivityListItem = ({ activity } : ActivityListItemProps): JSX.Element => {
+export function ActivityListItem({ activity } : ActivityListItemProps): JSX.Element {
   const [title] = React.useState(() => {
     /*
     The description (title) is sent from the server with placeholders, e.g.

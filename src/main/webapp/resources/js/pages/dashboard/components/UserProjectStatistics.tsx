@@ -19,7 +19,7 @@ const StatCol = ({ children }: {children: React.ReactNode}): JSX.Element => <Col
  * @returns {JSX.Element}
  * @constructor
  */
-export const UserProjectStatistics = (): JSX.Element => {
+export function UserProjectStatistics(): JSX.Element {
   const [statistics, setStatistics] = React.useState<UserStatistics>();
   const [loading, setLoading] = React.useState(true);
 
@@ -71,4 +71,4 @@ export const UserProjectStatistics = (): JSX.Element => {
       </StatCol>
     </Row>
   );
-};
+}

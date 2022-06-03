@@ -26,7 +26,7 @@ export interface ViewAssociatedProjectsProps {
   projectId: number;
 }
 
-export const ViewAssociatedProjects = ({ projectId }: ViewAssociatedProjectsProps): JSX.Element => {
+export function ViewAssociatedProjects({ projectId }: ViewAssociatedProjectsProps): JSX.Element {
   const [organismFilters, setOrganismFilters] = React.useState<ColumnFilterItem[]>([] as ColumnFilterItem[]);
   const { data: project = {} } = useGetProjectDetailsQuery(projectId);
   const [switches, setSwitches] = React.useState<Record<string, boolean>>({} as Record<string, boolean>);
@@ -153,6 +153,6 @@ export const ViewAssociatedProjects = ({ projectId }: ViewAssociatedProjectsProp
       showIcon
     />
   );
-};
+}
 
 export default ViewAssociatedProjects;

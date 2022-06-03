@@ -22,15 +22,14 @@ import { FilterDropdownProps } from "antd/lib/table/interface";
  * @param selectedKeys - the current value of the table filter
  * @param confirm - triggers the table filter to run.
  * @param clearFilters - clears the filters on the column.
- * @returns {*}
  * @constructor
  */
-export const TextFilter = ({
+export function TextFilter({
   setSelectedKeys,
   selectedKeys,
   confirm,
   clearFilters
-}: FilterDropdownProps): JSX.Element => {
+}: FilterDropdownProps): JSX.Element {
   return (
     <div>
       <div style={{ padding: SPACE_XS, borderBottom: `1px solid ${grey4}` }}>
@@ -63,4 +62,4 @@ export const TextFilter = ({
       </div>
     </div>
   );
-};
+}

@@ -29,10 +29,8 @@ export interface PageTableResponse {
 
 /**
  * Default function to fetch paged table data.
- * @param {string} url
- * @param {PageTableRequest} data = expected:
- *          { current, pageSize, sortColumn, sortDirection, search, filters }
- * @returns {Promise<PageTableResponse>}
+ * @param url - datasource url for the paged table
+ * @param data - table request payload for the paged table
  */
 export async function fetchPageTableUpdate(url: string, data: PageTableRequest): Promise<PageTableResponse> {
   return axios.post(url, data).then(({ data }) => data);

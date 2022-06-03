@@ -9,7 +9,7 @@ import { RecentActivityList } from "./RecentActivityList";
  * @returns {JSX.Element}
  * @constructor
  */
-export const RecentActivityUserProjects = (): JSX.Element => {
+export function RecentActivityUserProjects(): JSX.Element {
   /**
    * List of recent activities to render
    */
@@ -34,7 +34,7 @@ export const RecentActivityUserProjects = (): JSX.Element => {
     getUserActivities(page)
       .then((data) => {
         const list = addKeysToList(data.content, "activity", "date");
-        setActivities([...activities, ...list]);
+        setActivities((prevState) => ([...prevState, ...list]));
         setTotal(data.total);
         setLoading(false);
       })
@@ -50,4 +50,4 @@ export const RecentActivityUserProjects = (): JSX.Element => {
       loading={loading}
     />
   );
-};
+}
