@@ -97,7 +97,10 @@ export default function CreateNewUser() {
           loading: submitting,
           onClick: form.submit,
         }}
-        onCancel={() => setVisibility(false)}
+        onCancel={() => {
+          setVisibility(false);
+          form.resetFields();
+        }}
         visible={visible}
         maxHeight={window.innerHeight - 250}
         width={640}
