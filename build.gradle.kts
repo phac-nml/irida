@@ -270,7 +270,7 @@ fun createIntegrationTestTask(name: String, tags: String?, excludeListeners: Str
             showStandardStreams = true
         }
         retry {
-            maxRetries.set(5)
+            maxRetries.set(4)
         }
     }
 }
