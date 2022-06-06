@@ -14,7 +14,7 @@ while [ $# -ne 0 ];
        echo "Dropping then Creating/Recreating database schema"
     elif [ "$1" = "--no-yarn" ];
     then
-      COMMANDS+=("-Dskip.yarn")
+      COMMANDS+=("-xassembleFrontend")
     elif [ "$1" = "--prod" ];
     then
       PROFILE="prod"
