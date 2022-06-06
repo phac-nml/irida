@@ -13,24 +13,19 @@ import { updatedLocked, updateMoveSamples } from "./shareSlice";
  */
 export function ShareSamples({ samples = [] }) {
   const dispatch = useDispatch();
-  const { associated, originalSamples, locked, remove, currentProject } =
-    useSelector((state) => state.shareReducer);
-
-  const SHOW_SAMPLES = samples.length > 0;
-  const SHOW_NO_SAMPLES_WARNING = samples.length === 0;
-  const SHOW_SOME_SAMPLES_WARNING =
-    SHOW_SAMPLES && samples.length < originalSamples.length;
-  const SHOW_ASSOCIATED = SHOW_SAMPLES && associated.length > 0;
+  const { associated, samples: originalSamples, locked, remove } = useSelector(
+    (state) => state.shareReducer
+  );
 
   return (
     <Space direction="vertical" style={{ width: `100%` }}>
       <Typography.Title level={5}>
         {i18n("ShareSamplesList.title")}
       </Typography.Title>
-      {SHOW_ASSOCIATED && <ShareAssociated />}
-      {SHOW_SAMPLES && (
+      {associated.length > 0 && <ShareAssociated />}
+      {samples.length > 0 && (
         <>
-          <SharedSamplesList list={samples} currentProject={currentProject} />
+          <SharedSamplesList list={samples} />
           <Checkbox
             className="t-move-checkbox"
             checked={remove}
@@ -52,7 +47,7 @@ export function ShareSamples({ samples = [] }) {
           </Checkbox>
         </>
       )}
-      {SHOW_NO_SAMPLES_WARNING && (
+      {samples.length === 0 && (
         <Alert
           type="warning"
           className="t-no-sample-warning"
@@ -61,7 +56,7 @@ export function ShareSamples({ samples = [] }) {
           description={i18n("ShareSamples.no-samples.description")}
         />
       )}
-      {SHOW_SOME_SAMPLES_WARNING && (
+      {originalSamples.length - samples.length > 0 && (
         <Alert
           className="t-same-samples-warning"
           type="info"
