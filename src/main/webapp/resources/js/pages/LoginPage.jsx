@@ -106,7 +106,7 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
                   history.pushState(
                     "forgot",
                     "Forgot Password",
-                    "/forgot_password"
+                    setBaseUrl("/forgot_password")
                   );
                 }}
                 style={{ padding: 0, marginLeft: 15 }}
@@ -123,7 +123,7 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
                   history.pushState(
                     "activate",
                     "Activate Account",
-                    "/activate_account"
+                    setBaseUrl("/activate_account")
                   );
                 }}
                 style={{ padding: 0, marginLeft: 25 }}
@@ -187,7 +187,7 @@ function LoginPage() {
                     history.pushState(
                       "forgot",
                       "Forgot Password",
-                      "/forgot_password"
+                      setBaseUrl("/forgot_password")
                     );
                   }}
                 >

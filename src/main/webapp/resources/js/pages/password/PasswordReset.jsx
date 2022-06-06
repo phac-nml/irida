@@ -17,6 +17,7 @@ import { validatePassword } from "../../utilities/validation-utilities";
 const { Item } = Form;
 const passwordExpired =
   new URLSearchParams(window.location.search).get("expired") || false;
+const passwordResetObj = window.PAGE.passwordReset;
 
 /*
 WEBPACK PUBLIC PATH:
