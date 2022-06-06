@@ -5,6 +5,7 @@ plugins {
     id("org.siouan.frontend-jdk11") version "6.0.0"
     id("org.springdoc.openapi-gradle-plugin") version "1.3.4"
     java
+    `maven-publish`
     war
 }
 
@@ -15,6 +16,90 @@ description = "irida"
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            versionMapping {
+                usage("java-api") {
+                    fromResolutionOf("runtimeClasspath")
+                }
+                usage("java-runtime") {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("eric")
+                        name.set("Eric Enns")
+                        email.set("eric.enns@phac-aspc.gc.ca")
+                        organization.set("Public Health Agency of Canada")
+                        organizationUrl.set("https://www.canada.ca/en/public-health.html")
+                    }
+                    developer {
+                        id.set("aaron")
+                        name.set("Aaron Petkau")
+                        email.set("aaron.petkau@phac-aspc.gc.ca")
+                        organization.set("Public Health Agency of Canada")
+                        organizationUrl.set("https://www.canada.ca/en/public-health.html")
+                    }
+                    developer {
+                        id.set("josh")
+                        name.set("Josh Adam")
+                        email.set("josh.adam@phac-aspc.gc.ca")
+                        organization.set("Public Health Agency of Canada")
+                        organizationUrl.set("https://www.canada.ca/en/public-health.html")
+                    }
+                    developer {
+                        id.set("deep")
+                        name.set("Sukhdeep Sidhu")
+                        email.set("sukhdeep.sidhu@phac-aspc.gc.ca")
+                        organization.set("Public Health Agency of Canada")
+                        organizationUrl.set("https://www.canada.ca/en/public-health.html")
+                    }
+                    developer {
+                        id.set("jeff")
+                        name.set("Jeffrey Thiessen")
+                        email.set("jeffrey.thiessen@phac-aspc.gc.ca")
+                        organization.set("Public Health Agency of Canada")
+                        organizationUrl.set("https://www.canada.ca/en/public-health.html")
+                    }
+                    developer {
+                        id.set("katherine")
+                        name.set("Katherine Thiessen")
+                        email.set("katherine.thiessen@phac-aspc.gc.ca")
+                        organization.set("Public Health Agency of Canada")
+                        organizationUrl.set("https://www.canada.ca/en/public-health.html")
+                    }
+                }
+                contributors {
+                    contributor {
+                        name.set("Franklin Bristow")
+                    }
+                    contributor {
+                        name.set("Thomas Matthews")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:https://github.com/phac-nml/irida.git")
+                    developerConnection.set("scm:git:ssh://git@github.com:phac-nml/irida.git")
+                    url.set("https://github.com/phac-nml/irida")
+                }
+            }
+
+            from(components["java"])
+        }
+    }
 }
 
 repositories {
@@ -111,6 +196,29 @@ dependencies {
     providedCompile("org.springframework.boot:spring-boot-starter-tomcat")
 }
 
+tasks.jar {
+    archiveClassifier.set("")
+}
+
+// we do not want to build an executable war so skip this task
+tasks.bootWar { enabled = false }
+
+tasks.war {
+    archiveClassifier.set("")
+    exclude("node")
+    exclude("node_modules/")
+    exclude(".yarn/")
+    exclude("resources/css/")
+    exclude("resources/js/")
+    exclude("webpack*")
+    exclude(".yarn*")
+    exclude("package.json")
+    exclude("styles.js")
+    exclude("entries.js")
+    exclude(".eslintrc.js")
+    exclude("postcss.config.js")
+}
+
 tasks.bootRun {
     dependsOn(":assembleFrontend")
     systemProperties(System.getProperties().mapKeys { it.key as String })
@@ -192,24 +300,6 @@ val integrationTestsMap = mapOf(
 
 integrationTestsMap.forEach {
     createIntegrationTestTask(it.key, it.value.get("tags"), it.value.get("excludeListeners"))
-}
-
-// we do not want to build an executable war so skip this task
-tasks.bootWar { enabled = false }
-
-tasks.war {
-    exclude("node")
-    exclude("node_modules/")
-    exclude(".yarn/")
-    exclude("resources/css/")
-    exclude("resources/js/")
-    exclude("webpack*")
-    exclude(".yarn*")
-    exclude("package.json")
-    exclude("styles.js")
-    exclude("entries.js")
-    exclude(".eslintrc.js")
-    exclude("postcss.config.js")
 }
 
 task<JavaExec>("toolsListExport") {
