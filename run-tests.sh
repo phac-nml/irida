@@ -146,22 +146,22 @@ test_ui() {
 }
 
 test_galaxy() {
-	test_galaxy_internal galaxy_testing $@
+	test_galaxy_internal galaxyITest $@
 	exit_code=$?
 	return $exit_code
 }
 
 test_galaxy_pipelines() {
-	test_galaxy_internal galaxy_pipeline_testing $@
+	test_galaxy_internal galaxyPipelineITest $@
 	exit_code=$?
 	return $exit_code
 }
 
 test_galaxy_internal() {
-	profile=$1
+	task=$1
 	shift
 	docker run -d -p $GALAXY_PORT:80 --name $GALAXY_DOCKER_NAME -v $TMP_DIRECTORY:$TMP_DIRECTORY -v $SCRIPT_DIR:$SCRIPT_DIR $GALAXY_DOCKER && \
-    ./gradlew clean restITest -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2 -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
+    ./gradlew clean $task -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2 -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
 	if [ "$DO_KILL_DOCKER" = true ]; then docker rm -f -v $GALAXY_DOCKER_NAME; fi
 	return $exit_code
@@ -204,8 +204,8 @@ then
 	echo -e "\t--no-kill-docker: Do not kill Galaxy Docker after Galaxy tests have run."
 	echo -e "\t--no-headless: Do not run chrome in headless mode (for viewing results of UI tests)."
 	echo -e "\t--selenium-docker: Use selenium/standalone-chrome docker container for executing UI tests."
-	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, galaxy_pipeline_testing, doc_testing, open_api_testing, all}."
-	echo -e "\t[Maven options]: Additional options to pass to 'mvn'.  In particular, can pass '-Dit.test=ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
+	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, galaxy_pipeline_testing, open_api_testing, all}."
+	echo -e "\t[test options]: Additional options to pass to 'mvn'.  In particular, can pass '--test ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
 	echo -e "Examples:\n"
 	echo -e "$0 service_testing\n"
 	echo -e "\tThis will test the Service layer of IRIDA, cleaning up the test database/docker containers first.\n"
