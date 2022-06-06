@@ -90,6 +90,6 @@ jobs:
       - name: Install doc libraries
         run: pushd doc; bundle install; popd
       - name: Build Javadoc
-        run: mvn clean site
+        run: ./gradlew clean javadoc
       - name: Build Jekyll Site
         run: pushd doc; bundle exec jekyll build;

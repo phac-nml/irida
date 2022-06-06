@@ -230,3 +230,7 @@ openApi {
 tasks.named("processResources") {
     dependsOn(":assembleFrontend")
 }
+
+tasks.javadoc {
+    destinationDir = file("${projectDir}/doc/developer/apidocs")
+}

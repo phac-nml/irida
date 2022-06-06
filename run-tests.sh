@@ -160,17 +160,10 @@ test_galaxy_pipelines() {
 test_galaxy_internal() {
 	profile=$1
 	shift
-
 	docker run -d -p $GALAXY_PORT:80 --name $GALAXY_DOCKER_NAME -v $TMP_DIRECTORY:$TMP_DIRECTORY -v $SCRIPT_DIR:$SCRIPT_DIR $GALAXY_DOCKER && \
     ./gradlew clean restITest -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2 -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
 	if [ "$DO_KILL_DOCKER" = true ]; then docker rm -f -v $GALAXY_DOCKER_NAME; fi
-	return $exit_code
-}
-
-test_doc() {
-	mvn clean site $@
-	exit_code=$?
 	return $exit_code
 }
 
@@ -182,7 +175,7 @@ test_open_api() {
 }
 
 test_all() {
-	for test_profile in test_rest test_service test_ui test_galaxy test_galaxy_pipelines test_doc test_open_api;
+	for test_profile in test_rest test_service test_ui test_galaxy test_galaxy_pipelines test_open_api;
 	do
 		tmp_dir_cleanup
 		eval $test_profile
@@ -304,13 +297,6 @@ case "$1" in
 		shift
 		pretest_cleanup
 		test_galaxy_pipelines $@
-		exit_code=$?
-		posttest_cleanup
-	;;
-	doc_testing)
-		shift
-		#pretest_cleanup
-		test_doc $@
 		exit_code=$?
 		posttest_cleanup
 	;;
