@@ -33,9 +33,9 @@ jobs:
         suite: [ 'service_testing', 'rest_testing', 'ui_testing', 'galaxy_testing', 'galaxy_pipeline_testing', 'open_api_testing' ]
 
     steps:
-      - uses: actions/checkout@v2 #Checkout the project from git
+      - uses: actions/checkout@v3 #Checkout the project from git
       - name: Cache PNP  #Pull the Yarn cache for PNP (package management strategy - see https://classic.yarnpkg.com/en/docs/pnp).  This caches all dependencies assuming the yarn.lock file stays the same
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: '**/.pnp.js'
           key: ${{ runner.os }}-pnp-${{ hashFiles('**/yarn.lock') }}
@@ -73,7 +73,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - uses: actions/checkout@v2 #Checkout the project from git
+      - uses: actions/checkout@v3 #Checkout the project from git
       - name: Setup Ruby
         uses: actions/setup-ruby@v1
         with:
