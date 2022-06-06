@@ -5,12 +5,19 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { setBaseUrl } from "../utilities/url-utilities";
 import { SPACE_MD } from "../styles/spacing";
 import { blue6 } from "../styles/colors";
-
 import { Provider } from "react-redux";
 import store from "./store";
 
 import { ForgotPassword } from "./password/ForgotPassword";
 import { ActivateAccount } from "./password/ActivateAccount";
+
+/*
+WEBPACK PUBLIC PATH:
+Webpack does not know what the servlet context path is.  To fix this, webpack exposed
+the variable `__webpack_public_path__`
+See: https://webpack.js.org/guides/public-path/#on-the-fly
+ */
+__webpack_public_path__ = setBaseUrl(`/dist/`);
 
 const { Item } = Form;
 
