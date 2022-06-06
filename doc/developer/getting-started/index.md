@@ -79,7 +79,7 @@ Galaxy is used as IRIDA's analysis workflow engine.  Analysis pipelines must be 
 Development platform
 --------------------
 
-The development platform used by most IRIDA developers is the [Eclipse](https://eclipse.org/ide/) IDE.  
+The development platform used by most IRIDA developers is the [Eclipse](https://eclipse.org/ide/) IDE.
 
 The following plugins are recommended:
 
@@ -146,22 +146,22 @@ An IRIDA development server can be run with the `run.sh` script available in the
 Running the `run.sh` without arguments script is equivalent to running:
 
 ```bash
-mvn clean spring-boot:run -Dspring.profiles.active=dev
+./gradlew clean bootRun -Dspring.profiles.active=dev
 ```
 
-Any arguments added after `run.sh` will be proxied to the `mvn ...` command.
+Any arguments added after `run.sh` will be proxied to the `./gradlew ...` command.
 
 #### Spring profiles
 
 Spring allows us to set profiles in the application that can be used to set up certain services for running in different environments.
 
 ##### Basic profiles
-* `prod` - Production mode.  
-  * Hibernate will not be allowed to make changes to the database schema.  
-  * Database will be managed by Liquibase.  
+* `prod` - Production mode.
+  * Hibernate will not be allowed to make changes to the database schema.
+  * Database will be managed by Liquibase.
   * Attempt to connect to Galaxy to run workflows
   * Run all scheduled tasks such as NCBI uploads, data synchronization, etc.
-* `dev` - Development mode.  
+* `dev` - Development mode.
   * Hibernate to attempt to update the IRIDA database as you make code changes.
   * No galaxy connection.
   * Run only the file processing scheduled task.
@@ -170,7 +170,7 @@ Spring allows us to set profiles in the application that can be used to set up c
 
 The advanced profiles allow you to configure your server to run specific components of the IRIDA application.  The different profiles enable specific scheduled tasks which are used to run many of IRIDA's analysis, processing, or data transfer tools.  For more information on setting up an IRIDA server to run in multi-server mode, see the [installation documentation](../../administrator/web/#multi-web-server-configuration).
 
-* `web` - Run the IRIDA user interface and REST API web application servers.  
+* `web` - Run the IRIDA user interface and REST API web application servers.
 * `email` - Run the email subscription service.  This will send email digests out to users on a scheduled basis.
 * `analysis` - Run the IRIDA analysis engine.  This profile launches and monitors progress of all analysis pipelines in IRIDA.
 * `processing` - File processing pipeline for uploaded sequencing data.
@@ -200,7 +200,7 @@ See the [IRIDA tests](#irida-tests) section for more on how IRIDA's tests are de
 IRIDA's unit tests can be run with the following command:
 
 ```bash
-mvn clean test
+./gradlew clean test
 ```
 
 Maven will download all required dependencies and run the full suite of unit tests.  This will take a couple minutes and a report stating what tests passed and failed will be presented.
@@ -218,7 +218,7 @@ IRIDA has 5 integration test profiles which splits the integration test suite in
 
 See the `<profiles>` section of the `pom.xml` file to see how the profiles are defined.
 
-As the integration tests simulate a running IRIDA installation, in order to run any integration test the requirements needed to run a production IRIDA server must be installed on your development machine.  The test profiles can each by run directly with `mvn verify`, but additional setup may be required for the tests to work properly.  To perform this setup and run all the tests, the `run-tests.sh` script can be used.  To run a test profile with `run-tests.sh` please run the following:
+As the integration tests simulate a running IRIDA installation, in order to run any integration test the requirements needed to run a production IRIDA server must be installed on your development machine.  The test profiles can each by run directly with `./gradlew verify`, but additional setup may be required for the tests to work properly.  To perform this setup and run all the tests, the `run-tests.sh` script can be used.  To run a test profile with `run-tests.sh` please run the following:
 
 ```bash
 ./run-tests.sh <TEST PROFILE>
@@ -257,10 +257,10 @@ Additional Maven parameters can be passed to `run-tests.sh`.  In particular, ind
 Run the following:
 
 ```bash
-mvn clean package -DskipTests
+./gradlew clean build -xtest
 ```
 
-This will create the `.war` and `.zip` files for IRIDA release under the `target/` directory.
+This will create the `.war` and `.zip` files for IRIDA release under the `build/libs/` directory.
 
 #### Building IRIDA documentation
 IRIDA documentation can be found in the <https://github.com/phac-nml/irida-docs> GitHub project.  IRIDA's documentation is built using [Jekyll][] and [GitHub Pages](https://pages.github.com/).  Jekyll allows us to write documentation in Markdown format and it will convert the pages to HTML.  We can use Jekyll both for viewing the documentation locally and for publishing to GitHub Pages.  The current documentation can be found at <https://phac-nml.github.io/irida-docs>.
@@ -438,7 +438,7 @@ To mark a class as a unit test, the java file must be named with a `*IT.java` su
 
 ### Database Updates
 
-While in development we use Hibernate to manage our database changes, in production we use [Liquibase][]. 
+While in development we use Hibernate to manage our database changes, in production we use [Liquibase][].
 
 Liquibase allows you to create changesets for an application's database in incremental, database agnostic XML files.  In practice IRIDA requires MariaDB or MySQL, but it's still worthwhile to use a tool to properly manage the updates.  Liquibase ensures that all changes to the database are performed in the correct order, and manages this by keeping track of a hashcode of the last applied changeset.  When IRIDA is started, liquibase runs first to check if there are new changesets to be applied, and also that the current state of the database is in the format that IRIDA will be expecting.
 

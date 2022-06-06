@@ -56,7 +56,7 @@ bash install-libs.sh
 Once you've installed the required dependencies (and if your `$PATH` is configured correctly), you should be able to compile and package IRIDA by running:
 
 ```bash
-mvn clean package -DskipTests=true
+./gradlew clean build -xtest
 ```
 
 From the root IRIDA directory.

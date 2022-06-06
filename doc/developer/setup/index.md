@@ -2,7 +2,7 @@
 layout: default
 ---
 
-This guide describes how to set up a workstation for hacking on IRIDA. 
+This guide describes how to set up a workstation for hacking on IRIDA.
 
 * This comment becomes the table of contents
 {:toc}
@@ -113,9 +113,9 @@ Checking to see that Tomcat starts will ensure that you're able to start hacking
 
 #### Checking to see that Tomcat starts
 
-IRIDA uses Maven for build and dependency management. You can check to see that Tomcat starts like so:
+IRIDA uses Gradle for build and dependency management. You can check to see that Tomcat starts like so:
 
-    mvn clean spring-boot:run
+    ./gradlew clean bootRun
 
 #### Database first-time setup
 
@@ -182,12 +182,12 @@ To enable eslinting (JavaScript linting) in IntelliJ, open the preferences panel
 * Check the "Enable" checkbox.
 * Node interpreter should be you system node by default.
 * ESLint package is the `eslint` within the projects `node_modules` directory.
-* Configuration file is the `src/main/webapp/.eslintrc.json`. 
+* Configuration file is the `src/main/webapp/.eslintrc.json`.
 
 <video controls="controls" style="width: 960px">
     <source src="images/intellij-eslint.mp4" type="video/mp4" />
-</video>   
- 
+</video>
+
 ### Visual Studio Code Setup
 
 To enable eslinting (JavaScript linting) in VS Code:
@@ -199,6 +199,6 @@ To enable eslinting (JavaScript linting) in VS Code:
 
 <video controls="controls" style="width: 960px">
     <source src="images/vs-code-eslint.mp4" type="video/mp4" />
-</video>   
+</video>
 
 [galaxy-install]: ../../administrator/galaxy

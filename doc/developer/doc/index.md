@@ -26,7 +26,7 @@ Deploying documentation
 -----------------------
 You can create the complete deployable documentation package by running
 
-    mvn clean site
+    ./gradlew clean javadoc
 
 from your root IRIDA directory, where pom.xml lives. Running this command will execute `jekyll` using the `_build-config.yml` file, and produce [JavaDoc](http://maven.apache.org/plugins/maven-javadoc-plugin/) inside the target `doc/_site` directory. You can copy the contents of the `doc/_site` directory to the web server hosting the documentation.
 
