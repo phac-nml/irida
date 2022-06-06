@@ -14,6 +14,7 @@ import { NarrowPageWrapper } from "../../../components/page/NarrowPageWrapper";
 import { SequencingRunStatusBadge } from "./SequencingRunStatusBadge";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_LG } from "../../../styles/spacing";
+import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 
 const { Content } = Layout;
 
@@ -123,6 +124,12 @@ export default function SequencingRunDetailsPage() {
     <NarrowPageWrapper
       title={i18n("SequencingRunDetailsPage.title", runId)}
       onBack={showBack ? goToAdminSequenceRunListPage : undefined}
+      headerExtras={
+        <AddNewButton
+          href={setBaseUrl(`sequencing-runs/${runId}/samples/create`)}
+          text={i18n("SequencingRunDetailsPage.button")}
+        />
+      }
     >
       <Layout>
         <Content
