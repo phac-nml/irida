@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, notification, Space, Tag, Tooltip } from "antd";
+import { Button, notification, Popconfirm, Space, Tag, Tooltip } from "antd";
 import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
 
 import {
@@ -26,6 +26,7 @@ import { useInterval } from "../../../hooks";
 import { setDefaultSequencingObject } from "../sampleSlice";
 import { SequenceObjectListItem } from "../../sequence-files/SequenceObjectListItem";
 import { GenomeAssemblyListItem } from "../../sequence-files/GenomeAssemblyListItem";
+import { primaryColour } from "../../../utilities/theme-utilities";
 
 /**
  * React component to display, remove, download files
@@ -38,7 +39,11 @@ export function SampleFileList() {
   const [removeSampleFilesFromSample] = useRemoveSampleFilesMutation();
   const [updateSampleDefaultSequencingObject] =
     useUpdateDefaultSampleSequencingObjectMutation();
-  const { sample, projectId } = useSelector((state) => state.sampleReducer);
+  const {
+    sample,
+    projectId,
+    modifiable: isModifiable,
+  } = useSelector((state) => state.sampleReducer);
   const { files } = useSelector((state) => state.sampleFilesReducer);
 
   const fileProcessTranslations = {
@@ -49,10 +54,6 @@ export function SampleFileList() {
     ERROR: i18n("SampleFilesList.fileProcessingState.ERROR"),
   };
 
-  const qcEntryTranslations = {
-    COVERAGE: i18n("SampleFilesList.qcEntry.COVERAGE"),
-    PROCESSING: i18n("SampleFilesList.qcEntry.PROCESSING"),
-  };
   /*
   Download sequence files (paired, single, fast5)
  */
@@ -204,44 +205,128 @@ export function SampleFileList() {
   const getActionsForSequencingObject = (seqObj) => {
     let actions = [];
 
+    const obj = seqObj.fileInfo
+      ? seqObj.fileInfo
+      : seqObj.file
+      ? seqObj.file
+      : seqObj;
+
+    if (isModifiable && obj.files && obj.files.length === 2) {
+      if (
+        sample.defaultSequencingObject !== null &&
+        obj.identifier === sample.defaultSequencingObject.identifier
+      ) {
+        actions.push(
+          <Tag color="#108ee9" className="t-default-seq-obj-tag">
+            {i18n("SequenceFileHeaderOwner.default")}
+          </Tag>
+        );
+      } else {
+        actions.push(
+          <Tooltip
+            title={
+              "Set this paired end sequencing object as the default for the sample. The sequencing object will be selected by default when running a pipeline"
+            }
+            placement="top"
+          >
+            <Button
+              size="small"
+              key={`set-default-${obj.identifier}`}
+              onClick={() => updateDefaultSequencingObject(obj)}
+              type="link"
+              className="t-set-default-seq-obj-button"
+            >
+              {i18n("SequenceFileHeaderOwner.setAsDefault")}
+            </Button>
+          </Tooltip>
+        );
+      }
+    }
+
     actions.push(
-      <Button
-        size="small"
-        key={`set-default-${seqObj.fileInfo.identifier}`}
-        // onClick={() => updateDefaultSequencingObject(file)}
-        type="link"
-        className="t-set-default-seq-obj-button"
-      >
-        {i18n("SequenceFileHeaderOwner.setAsDefault")}
-      </Button>,
-      getProcessingStateTag(seqObj.fileInfo.processingState),
-      <span className="t-file-size">{seqObj.firstFileSize}</span>,
       <Button
         type="link"
         style={{ padding: 0 }}
         className="t-download-file-btn"
-        // onClick={() => {
-        //   downloadSequenceFile({
-        //     sequencingObjectId: fileObjectId,
-        //     sequenceFileId: file.id,
-        //   });
-        //}}
+        onClick={() => {
+          downloadSequenceFile({
+            sequencingObjectId: obj.identifier,
+            sequenceFileId: obj.files[0].identifier,
+          });
+        }}
       >
         Download
-      </Button>,
+      </Button>
+    );
+
+    if (isModifiable) {
+      actions.push(
+        <Popconfirm
+          placement="left"
+          title="Are you sure you want to remove this sequencing object?"
+          okText={i18n("SampleFiles.okText")}
+          cancelText={i18n("SampleFiles.cancelText")}
+          okButtonProps={{ className: "t-remove-file-confirm-btn" }}
+          cancelButtonProps={{
+            className: "t-remove-file-confirm-cancel-btn",
+          }}
+          onConfirm={() => {
+            removeSampleFiles({
+              fileObjectId: obj.identifier,
+              type: "sequencingObject",
+            });
+          }}
+        >
+          <Tooltip
+            title={
+              "This will remove this complete sequencing object (paired end, single end, fast5) from the sample."
+            }
+            placement="top"
+          >
+            <Button
+              type="link"
+              className="t-remove-file-btn"
+              style={{ padding: 0 }}
+            >
+              Remove
+            </Button>
+          </Tooltip>
+        </Popconfirm>
+      );
+    }
+
+    actions.push(
+      getProcessingStateTag(obj.processingState),
+      <span className="t-file-size">{seqObj.firstFileSize}</span>
+    );
+    return actions;
+  };
+
+  const getActionsForSequencingObjectPairedReverse = (seqObj) => {
+    let actions = [];
+
+    const obj = seqObj.fileInfo
+      ? seqObj.fileInfo
+      : seqObj.file
+      ? seqObj.file
+      : seqObj;
+
+    actions.push(
       <Button
         type="link"
         style={{ padding: 0 }}
-        className="t-remove-file-btn"
-        // onClick={() => {
-        //   downloadSequenceFile({
-        //     sequencingObjectId: fileObjectId,
-        //     sequenceFileId: file.id,
-        //   });
-        //}}
+        className="t-download-file-btn"
+        onClick={() => {
+          downloadSequenceFile({
+            sequencingObjectId: obj.identifier,
+            sequenceFileId: obj.files[1].identifier,
+          });
+        }}
       >
-        Remove
-      </Button>
+        Download
+      </Button>,
+      getProcessingStateTag(obj.processingState),
+      <span className="t-file-size">{seqObj.secondFileSize}</span>
     );
     return actions;
   };
@@ -255,28 +340,39 @@ export function SampleFileList() {
         type="link"
         style={{ padding: 0 }}
         className="t-download-file-btn"
-        // onClick={() => {
-        //   downloadSequenceFile({
-        //     sequencingObjectId: fileObjectId,
-        //     sequenceFileId: file.id,
-        //   });
-        //}}
+        onClick={() => {
+          downloadAssemblyFile({
+            sampleId: sample.identifier,
+            genomeAssemblyId: genomeAssembly.fileInfo.identifier,
+          });
+        }}
       >
         Download
       </Button>,
-      <Button
-        type="link"
-        style={{ padding: 0 }}
-        className="t-remove-file-btn"
-        // onClick={() => {
-        //   downloadSequenceFile({
-        //     sequencingObjectId: fileObjectId,
-        //     sequenceFileId: file.id,
-        //   });
-        //}}
+      <Popconfirm
+        placement="left"
+        title="Are you sure you want to remove this genome assembly?"
+        okText={i18n("SampleFiles.okText")}
+        cancelText={i18n("SampleFiles.cancelText")}
+        okButtonProps={{ className: "t-remove-file-confirm-btn" }}
+        cancelButtonProps={{
+          className: "t-remove-file-confirm-cancel-btn",
+        }}
+        onConfirm={() => {
+          removeSampleFiles({
+            fileObjectId: genomeAssembly.fileInfo.identifier,
+            type: "assembly",
+          });
+        }}
       >
-        Remove
-      </Button>
+        <Button
+          type="link"
+          className="t-remove-file-btn"
+          style={{ padding: 0 }}
+        >
+          Remove
+        </Button>
+      </Popconfirm>
     );
     return actions;
   };
@@ -294,17 +390,8 @@ export function SampleFileList() {
             <SequenceObjectListItem
               sequenceObject={sequenceObject}
               actions={getActionsForSequencingObject(sequenceObject)}
-              displayConcatenationCheckbox={true}
+              displayConcatenationCheckbox={files.singles?.length >= 2}
             />
-            // <SingleEndFileRenderer
-            //   files={files.singles}
-            //   sampleId={sample.identifier}
-            //   downloadSequenceFile={downloadSequenceFile}
-            //   removeSampleFiles={removeSampleFiles}
-            //   getProcessingState={getProcessingStateTag}
-            //   qcEntryTranslations={qcEntryTranslations}
-            //   displayConcatenationCheckbox={files.singles?.length >= 2}
-            // />
           ))}
         </SequenceFileTypeRenderer>
       )}
@@ -314,7 +401,10 @@ export function SampleFileList() {
             <SequenceObjectListItem
               sequenceObject={pair}
               actions={getActionsForSequencingObject(pair)}
-              displayConcatenationCheckbox={true}
+              pairedReverseActions={getActionsForSequencingObjectPairedReverse(
+                pair
+              )}
+              displayConcatenationCheckbox={files.paired?.length >= 2}
             />
             // <PairedFileRenderer
             //   key={`pair-${pair.identifier}`}
@@ -340,14 +430,6 @@ export function SampleFileList() {
               sequenceObject={fast5Obj}
               actions={getActionsForSequencingObject(fast5Obj)}
             />
-            // <SingleEndFileRenderer
-            // files={files.fast5}
-            // sampleId={sample.identifier}
-            // downloadSequenceFile={downloadSequenceFile}
-            // removeSampleFiles={removeSampleFiles}
-            // getProcessingState={getProcessingStateTag}
-            // qcEntryTranslations={qcEntryTranslations}
-            // />
           ))}
         </SequenceFileTypeRenderer>
       )}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Checkbox, List, Tooltip } from "antd";
+import { Avatar, Checkbox, List, Space, Tag, Tooltip } from "antd";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import {
   FileOutlined,
@@ -18,6 +18,7 @@ import { useDispatch } from "react-redux";
 export function SequenceObjectListItem({
   sequenceObject,
   actions = [],
+  pairedReverseActions = [],
   displayConcatenationCheckbox = false,
 }) {
   const obj = sequenceObject.fileInfo
@@ -27,8 +28,12 @@ export function SequenceObjectListItem({
     : sequenceObject;
 
   const { files, sequenceFile, file } = obj;
-
   const dispatch = useDispatch();
+
+  const qcEntryTranslations = {
+    COVERAGE: i18n("SampleFilesList.qcEntry.COVERAGE"),
+    PROCESSING: i18n("SampleFilesList.qcEntry.PROCESSING"),
+  };
 
   const updateSelected = (e) => {
     if (e.target.checked) {
@@ -37,6 +42,18 @@ export function SequenceObjectListItem({
       dispatch(removeFromConcatenateSelected({ seqObject: obj }));
     }
   };
+
+  const getQcEntries = (entry) => {
+    return (
+      <Tag
+        key={`file-${file.id}-qc-entry-status`}
+        color={entry.status === "POSITIVE" ? "green" : "red"}
+      >
+        {qcEntryTranslations[entry.type]} {entry.message ? entry.message : ""}
+      </Tag>
+    );
+  };
+
   return (
     <List.Item>
       <div
@@ -96,17 +113,30 @@ export function SequenceObjectListItem({
                   </span>
                 </div>
               }
-              description={formatInternationalizedDateTime(
-                files?.length
-                  ? files[0].createdDate
-                  : sequenceFile
-                  ? sequenceFile.createdDate
-                  : file.createdDate
-              )}
+              description={
+                <Space
+                  direction="vertical"
+                  size="small"
+                  style={{ width: "100%" }}
+                >
+                  {formatInternationalizedDateTime(
+                    files?.length
+                      ? files[0].createdDate
+                      : sequenceFile
+                      ? sequenceFile.createdDate
+                      : file.createdDate
+                  )}
+
+                  {sequenceObject.qcEntries !== null &&
+                    sequenceObject.qcEntries.map((entry) => {
+                      return getQcEntries(entry);
+                    })}
+                </Space>
+              }
             />
           </List.Item>
           {files?.length && (
-            <List.Item actions={actions}>
+            <List.Item actions={pairedReverseActions}>
               <List.Item.Meta
                 title={
                   <div
@@ -115,9 +145,19 @@ export function SequenceObjectListItem({
                     <span>{files[1].label}</span>
                   </div>
                 }
-                description={formatInternationalizedDateTime(
-                  files[1].createdDate
-                )}
+                description={
+                  <Space
+                    direction="vertical"
+                    size="small"
+                    style={{ width: "100%" }}
+                  >
+                    {formatInternationalizedDateTime(files[1].createdDate)}
+                    {sequenceObject.qcEntries !== null &&
+                      sequenceObject.qcEntries.map((entry) => {
+                        return getQcEntries(entry);
+                      })}
+                  </Space>
+                }
               />
             </List.Item>
           )}

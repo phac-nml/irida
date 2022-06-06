@@ -6,7 +6,6 @@ import { blue6 } from "../../styles/colors";
 
 export function GenomeAssemblyListItem({ genomeAssembly, actions = [] }) {
   const { label, createdDate } = genomeAssembly.fileInfo;
-
   return (
     <List.Item>
       <div
