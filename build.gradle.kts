@@ -199,8 +199,6 @@ integrationTestsMap.forEach {
 tasks.bootWar { enabled = false }
 
 tasks.war {
-    //dependsOn(":toolsListExport")
-    //archiveClassifier.set("")
     exclude("node")
     exclude("node_modules/")
     exclude(".yarn/")
@@ -222,9 +220,9 @@ task<JavaExec>("toolsListExport") {
 }
 
 openApi {
-    outputDir.set(file("${buildDir}/doc"))
+    outputDir.set(file("${projectDir}/doc/swagger-ui"))
     outputFileName.set("open-api.json")
-    //forkProperties.set("-Dspring.profiles.active=dev,swagger -Dirida.db.profile=it -Dspring.datasource.url=jdbc:mysql://localhost:3306/irida_integration_test")
+    System.setProperty("spring.profiles.active", "dev,swagger")
 }
 
 tasks.named("processResources") {

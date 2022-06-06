@@ -168,7 +168,7 @@ test_galaxy_internal() {
 }
 
 test_open_api() {
-	mvn clean verify -B -Dspring-boot.run.arguments="--spring.datasource.url=$JDBC_URL --spring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS --spring.profiles.active=dev,swagger" -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true -Dspring.datasource.url=$JDBC_URL -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS
+    ./gradlew clean generateOpenApiDocs -Dspring.profiles.active=dev,swagger -Dliquibase.update.database.schema=true -Dspring.datasource.url=$JDBC_URL -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS
 	test -f $OPEN_API_FILE
 	exit_code=$?
 	return $exit_code
