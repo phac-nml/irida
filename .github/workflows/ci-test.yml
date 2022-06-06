@@ -34,11 +34,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2 #Checkout the project from git
-      - name: Cache Maven dependencies #Pull the cache for Maven.  This caches all dependencies assuming the pom file is the same
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ matrix.suite }}-${{ hashFiles('**/pom.xml') }}
       - name: Cache PNP  #Pull the Yarn cache for PNP (package management strategy - see https://classic.yarnpkg.com/en/docs/pnp).  This caches all dependencies assuming the yarn.lock file stays the same
         uses: actions/cache@v2
         with:
@@ -64,19 +59,21 @@ jobs:
           java-version: 11
       - name: Install libraries # Install our non-maven backed dependencies
         run: pushd lib; ./install-libs.sh; popd
-      - name: Run tests with Maven # Run the test suite
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Run tests with Gradle # Run the test suite
         run: ./run-tests.sh --db-host ${{ env.MYSQL_HOST }} --db-port ${{ env.MYSQL_PORT }} --database ${{ env.MYSQL_DATABASE}} ${{ matrix.suite }}
+      - name: Upload build reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-reports
+          path: build/reports/
 
   docs-build: # Testing the javadoc and jekyll documentation builds
     runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v2 #Checkout the project from git
-      - name: Cache Maven dependencies #Pull the cache for Maven.  This caches all dependencies assuming the pom file is the same
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-doc_testing-${{ hashFiles('**/pom.xml') }}
       - name: Setup Ruby
         uses: actions/setup-ruby@v1
         with:
@@ -87,6 +84,8 @@ jobs:
           java-version: 11
       - name: Install Java libraries
         run: pushd lib; ./install-libs.sh; popd;
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
       - name: Install doc libraries
         run: pushd doc; bundle install; popd
       - name: Build Javadoc
