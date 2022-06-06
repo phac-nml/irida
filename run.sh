@@ -9,7 +9,7 @@ while [ $# -ne 0 ];
   do
     if [ "$1" = "--create-db" ];
     then
-       COMMANDS+=("-Dspring-boot.run.arguments=\"--hbm.dev.auto=create\"")
+       COMMANDS+=("-Dhbm.dev.auto=create")
        ADD_DB=true
        echo "Dropping then Creating/Recreating database schema"
     elif [ "$1" = "--no-yarn" ];
@@ -27,4 +27,4 @@ if [ "$ADD_DB" = false ]; then
 fi
 
 ADD="$(printf "%s " "${COMMANDS[@]}" )"
-mvn clean spring-boot:run -Dspring-boot.run.profiles=${PROFILE} $ADD
+./gradlew clean bootRun -Dspring.profiles.active=${PROFILE} $ADD

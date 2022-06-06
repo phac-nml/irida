@@ -36,7 +36,7 @@ if not (result_dir.endswith('docs') or result_dir.endswith('docs/')) or not os.p
 
 # first generate the Open API file
 print("========== Generating the Open API file")
-retval = os.system('mvn clean verify -B -Dspring-boot.run.arguments="--spring.profiles.active=dev,swagger --liquibase.update.database.schema=false" -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=false')
+retval = os.system('./gradlew clean generateOpenApiDocs -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=false')
 
 # ensure it generated correctly
 if retval != 0:
@@ -45,7 +45,7 @@ if retval != 0:
 
 # second run mvn site to build the javadoc
 print("========== Building documentation pages")
-retval = os.system('mvn clean site')
+retval = os.system('./gradlew clean javadoc')
 
 # ensure it built correctly
 if retval != 0:

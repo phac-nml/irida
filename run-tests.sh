@@ -205,7 +205,7 @@ then
 	echo -e "\t--no-headless: Do not run chrome in headless mode (for viewing results of UI tests)."
 	echo -e "\t--selenium-docker: Use selenium/standalone-chrome docker container for executing UI tests."
 	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, galaxy_pipeline_testing, open_api_testing, all}."
-	echo -e "\t[test options]: Additional options to pass to 'mvn'.  In particular, can pass '--test ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
+	echo -e "\t[gradle options]: Additional options to pass to 'gradle'.  In particular, can pass '--test ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
 	echo -e "Examples:\n"
 	echo -e "$0 service_testing\n"
 	echo -e "\tThis will test the Service layer of IRIDA, cleaning up the test database/docker containers first.\n"
