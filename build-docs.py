@@ -43,7 +43,7 @@ if retval != 0:
     print("========== Open API file generation failed.  See above for error messages")
     exit(1)
 
-# second run mvn site to build the javadoc
+# second run gradle javadoc to build the javadoc
 print("========== Building documentation pages")
 retval = os.system('./gradlew clean javadoc')
 
