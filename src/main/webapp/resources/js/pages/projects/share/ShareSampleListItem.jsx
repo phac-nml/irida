@@ -1,10 +1,13 @@
+import { Avatar, Button, List, Tooltip } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { Avatar, Button, List, Tooltip } from "antd";
-import { green6 } from "../../../styles/colors";
 import { IconLocked, IconUnlocked } from "../../../components/icons/Icons";
-import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
-import { removeSample } from "../../projects/share/shareSlice";
+import {
+  SampleDetailViewer
+} from "../../../components/samples/SampleDetailViewer";
+import { green6 } from "../../../styles/colors";
+import { removeSample } from "./shareSlice";
+
 
 /**
  * Render a list item for the samples to be shared with another project.
