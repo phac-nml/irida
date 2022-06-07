@@ -4,9 +4,15 @@ import { SampleDetails } from "./components/SampleDetails";
 import { Provider } from "react-redux";
 import store from "../../components/samples/store";
 import { useGetSampleDetailsQuery } from "../../apis/samples/samples";
-import { Activity } from "../../apis/activities/activities";
 
 const { Text } = Typography;
+
+export interface DisplaySampleDetailsProps {
+    sampleId: number;
+    projectId: number;
+    removeSample?: ((value:{sampleId: number}) => void) | undefined;
+    children: React.ReactNode;
+}
 
 /**
  * Function to render (details, metadata, files, and analyses) for a sample.
@@ -17,7 +23,7 @@ const { Text } = Typography;
  * @returns {JSX.Element}
  * @constructor
  */
-function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
+function DisplaySampleDetails({ sampleId, projectId, removeSample, children }: DisplaySampleDetailsProps): JSX.Element {
   const [visible, setVisible] = React.useState(false);
   const { data: details = {}, isLoading } = useGetSampleDetailsQuery(
     {
@@ -36,7 +42,9 @@ function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
   React.useEffect(() => {}, [visible]);
 
   const removeSampleFromCart = () => {
-    removeSample({ sampleId });
+      if (removeSample) {
+          removeSample({sampleId});
+      }
   };
 
   return (
@@ -111,12 +119,21 @@ function DisplaySampleDetails({ sampleId, projectId, removeSample, children }) {
  * @returns {JSX.Element}
  * @constructor
  */
+
+export interface SampleDetailViewerProps {
+    sampleId: number;
+    projectId: number;
+    removeSample?: (value:{sampleId: number}) => void;
+    children: React.ReactNode;
+}
+
+
 export function SampleDetailViewer({
   sampleId,
   projectId,
   removeSample,
   children,
-}) {
+}: SampleDetailViewerProps): JSX.Element {
   return (
     <Provider store={store}>
       <DisplaySampleDetails
