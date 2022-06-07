@@ -4,6 +4,13 @@ import { formatInternationalizedDateTime } from "../../utilities/date-utilities"
 import { FileOutlined } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 
+/**
+ * Component to be used anywhere genome assemblies need to be listed
+ * @param genomeAssembly The genome assembly to list
+ * @param actions Actions for genome assembly
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function GenomeAssemblyListItem({ genomeAssembly, actions = [] }) {
   const { label, createdDate } = genomeAssembly.fileInfo;
   return (
