@@ -260,7 +260,7 @@ frontend {
     nodeVersion.set("16.15.0")
     nodeInstallDirectory.set(file("${projectDir}/src/main/webapp/node"))
     yarnEnabled.set(true)
-    yarnVersion.set("3.1.1")
+    yarnVersion.set("3.2.1")
     assembleScript.set("build")
     installScript.set("install")
     packageJsonDirectory.set(file("${projectDir}/src/main/webapp"))
