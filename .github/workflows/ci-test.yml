@@ -59,6 +59,8 @@ jobs:
           java-version: 11
       - name: Install libraries # Install our non-maven backed dependencies
         run: pushd lib; ./install-libs.sh; popd
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: Run tests with Gradle # Run the test suite
@@ -85,6 +87,8 @@ jobs:
           java-version: 11
       - name: Install Java libraries
         run: pushd lib; ./install-libs.sh; popd;
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: Install doc libraries
