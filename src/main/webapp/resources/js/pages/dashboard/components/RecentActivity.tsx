@@ -12,7 +12,7 @@ import { SPACE_XS } from "../../../styles/spacing";
  * @returns {JSX.Element}
  * @constructor
  */
-export function RecentActivity() {
+export const RecentActivity = (): JSX.Element => {
   const [allProjectsVisible, setAllProjectsVisible] = React.useState(false);
   const [userProjectsVisible, setUserProjectsVisible] = React.useState(true);
   const admin = isAdmin();
@@ -59,4 +59,4 @@ export function RecentActivity() {
       </Col>
     </Row>
   );
-}
+};

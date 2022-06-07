@@ -12,7 +12,7 @@ const { Content } = Layout;
  * @returns {JSX.Element}
  * @constructor
  */
-function Dashboard() {
+const Dashboard = (): JSX.Element => {
   return (
     <Layout style={{ minHeight: "100%" }}>
       <Row>
@@ -31,6 +31,6 @@ function Dashboard() {
       </Row>
     </Layout>
   );
-}
+};
 
 render(<Dashboard />, document.querySelector("#root"));

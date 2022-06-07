@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { render } from "react-dom";
-import { Alert, Button, Col, Form, Input, Row } from "antd";
+import { Alert, Button, Col, Form, Input, InputRef, Row } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { setBaseUrl } from "../utilities/url-utilities";
 import { SPACE_MD } from "../styles/spacing";
@@ -14,31 +14,39 @@ import { ActivateAccount } from "./password/ActivateAccount";
 
 const { Item } = Form;
 
+declare let window: IridaWindow;
+
+interface LoginFormProps {
+  updateDisplayLoginPage: (value: boolean) => void;
+  updatePageType: (value: string) => void;
+};
+
 /**
  * React component to render the login form
- * @param {function} updateDisplayLoginPage Function to update whether to display login page
- * @param {function} updatePageType Function to update the page type
- * @returns {*}
+ * @param updateDisplayLoginPage Function to update whether to display login page
+ * @param updatePageType Function to update the page type
  * @constructor
  */
-function LoginForm({ updateDisplayLoginPage, updatePageType }) {
+function LoginForm({ updateDisplayLoginPage, updatePageType }: LoginFormProps): JSX.Element {
   const [form] = Form.useForm();
-  const usernameRef = useRef();
+  const usernameRef = React.useRef<InputRef>(null);
 
   /**
    * When the component gets added to the page,
    * focus on the username input.
    */
-  useEffect(() => {
-    usernameRef.current.focus();
-    usernameRef.current.select();
-  }, []);
+  React.useEffect(() => {
+    if (usernameRef.current !== null) {
+      usernameRef.current.focus();
+      usernameRef.current.select();
+    }
+  }, [usernameRef]);
 
   /**
    * Handler for submitting the login form once all fields are correctly filled out
    * @returns {*}
    */
-  const onFinish = () => document.getElementById("loginForm").submit();
+  const onFinish = () => (document.getElementById("loginForm") as HTMLFormElement).submit();
 
   return (
     <Form
@@ -134,19 +142,18 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
 /**
  * React component to layout the Login Page.
  * Responsible for displaying any errors that are returned from the server.
- * @returns {*}
  * @constructor
  */
-function LoginPage() {
+function LoginPage(): JSX.Element {
   const urlParams = new URLSearchParams(window.location.search);
   const [displayLoginPage, setDisplayLoginPage] = React.useState(true);
-  const [type, setType] = React.useState(null);
+  const [type, setType] = React.useState("");
 
-  const updateDisplayLoginPage = (value) => {
+  const updateDisplayLoginPage = (value: boolean) => {
     setDisplayLoginPage(value);
   };
 
-  const updatePageType = (pageType) => {
+  const updatePageType = (pageType: string) => {
     setType(pageType);
   };
 

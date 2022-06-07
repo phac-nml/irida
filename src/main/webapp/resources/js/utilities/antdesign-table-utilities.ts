@@ -2,6 +2,8 @@
  * This file is for any dynamic settings required for an ant design table.
  */
 
+import { TablePaginationConfig } from "antd";
+
 /**
  * Default page size for ant design tables
  */
@@ -12,7 +14,7 @@ export const defaultShowPageSizeChanger = true;
 /**
  * Set the common pagination options for the ant design tables
  */
-export function getPaginationOptions(totalEntries) {
+export function getPaginationOptions(totalEntries: number): TablePaginationConfig {
   const config = {
     total: totalEntries,
     hideOnSinglePage: totalEntries <= defaultPageSize,
@@ -21,18 +23,18 @@ export function getPaginationOptions(totalEntries) {
   };
 
   if (totalEntries <= 10) {
-    return { ...config, pageSizeOptions: [10] };
+    return { ...config, pageSizeOptions: ["10"] };
   } else if (totalEntries <= 20) {
-    return { ...config, pageSizeOptions: [10, 20] };
+    return { ...config, pageSizeOptions: ["10", "20"] };
   } else if (totalEntries <= 50) {
     return {
       ...config,
-      pageSizeOptions: [10, 20, 50],
+      pageSizeOptions: ["10", "20", "50"],
     };
   } else {
     return {
       ...config,
-      pageSizeOptions: [10, 20, 50, 100],
+      pageSizeOptions: ["10", "20", "50", '100'],
     };
   }
 }

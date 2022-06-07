@@ -3,18 +3,16 @@
  */
 
 import React from "react";
-import { Alert } from "antd";
+import { Alert, AlertProps } from "antd";
 
 /**
  * Stateless UI component for displaying an [antd success Alert]{@link https://ant.design/components/alert/}
  *
- * @param {string} message - Text to display in alert
- * @param {string} description - Optional description
- *
- * @returns {Element} - Returns an antd success 'Alert' component
+ * @param message - Text to display in alert
+ * @param description - Optional description
+ * @param props - remainder of props passed
  */
-
-export function SuccessAlert({ message, description, ...props }) {
+export function SuccessAlert({ message, description, ...props }: AlertProps): JSX.Element {
   return (
     <Alert
       type="success"

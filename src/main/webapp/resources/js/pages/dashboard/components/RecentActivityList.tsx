@@ -1,16 +1,24 @@
 import { Button, Col, List, Row, Space, Typography } from "antd";
 import React from "react";
+import { Activity } from "../../../apis/activities/activities";
 import { ActivityListItem } from "../../../components/activities/ActivityListItem";
 import { BORDERED_LIGHT } from "../../../styles/borders";
+
+export interface RecentActivityListProps {
+  activities: Activity[],
+  total: number,
+  page: number,
+  setPage: (value: number) => void,
+  loading: boolean,
+}
 
 /**
  * Component to display list of recent activity
  * @param activities List of recent activities
  * @param total The total number of recent activities
  * @param page The last loaded page of activities
- * @param {function} setPage Function to set the page number
+ * @param setPage Function to set the page number
  * @param loading Whether the data has finished loading or not
- * @returns {JSX.Element}
  * @constructor
  */
 export function RecentActivityList({
@@ -19,7 +27,7 @@ export function RecentActivityList({
   page,
   setPage,
   loading,
-}) {
+}: RecentActivityListProps): JSX.Element {
   return (
     <Row gutter={[16, 16]}>
       <Col span={24}>

@@ -6,6 +6,7 @@ import { Button, Input } from "antd";
 import { grey4 } from "../../../styles/colors";
 import { SPACE_XS } from "../../../styles/spacing";
 import { IconSearch } from "../../icons/Icons";
+import { FilterDropdownProps } from "antd/lib/table/interface";
 
 /**
  * This callback type is `setSelectedKeys` and is used by ant.design table to
@@ -17,19 +18,18 @@ import { IconSearch } from "../../icons/Icons";
 
 /**
  * Render a text filter component to an ant.design column
- * @param {setSelectedKeys} setSelectedKeys - callback to handle the actual table filtering.
- * @param {string[]} selectedKeys - the current value of the table filter
- * @param {function} confirm - triggers the table filter to run.
- * @param {function} clearFilters - clears the filters on the column.
- * @returns {*}
+ * @param setSelectedKeys - callback to handle the actual table filtering.
+ * @param selectedKeys - the current value of the table filter
+ * @param confirm - triggers the table filter to run.
+ * @param clearFilters - clears the filters on the column.
  * @constructor
  */
-export const TextFilter = ({
+export function TextFilter({
   setSelectedKeys,
   selectedKeys,
   confirm,
   clearFilters
-}) => {
+}: FilterDropdownProps): JSX.Element {
   return (
     <div>
       <div style={{ padding: SPACE_XS, borderBottom: `1px solid ${grey4}` }}>
@@ -39,7 +39,7 @@ export const TextFilter = ({
           onChange={e =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
-          onPressEnter={confirm}
+          onPressEnter={() => confirm()}
         />
       </div>
       <div style={{ padding: SPACE_XS }}>
@@ -52,7 +52,7 @@ export const TextFilter = ({
         </Button>
         <Button
           type="primary"
-          onClick={confirm}
+          onClick={() => confirm()}
           size="small"
           style={{ width: 90 }}
         >
@@ -62,4 +62,4 @@ export const TextFilter = ({
       </div>
     </div>
   );
-};
+}

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 /**
  * @file API for handling activities
@@ -6,14 +6,35 @@ import axios from "axios";
 
 const BASE_URL = `/ajax/activities`;
 
+export interface ActivitiesResponse extends AxiosResponse {
+  data: Activities;
+}
+
+export interface Activities {
+  total: number;
+  content: Activity[];
+}
+
+export interface Activity {
+  id: number;
+  type: string;
+  description: string;
+  date: Date;
+  items: ActivityItem[];
+}
+
+export interface ActivityItem {
+  href: string;
+  label: string;
+}
+
 /**
  * Get a page of activities for a project
  *
- * @param {number} projectId - current project identifier
- * @param {number} page - page of activities requested
- * @returns {Promise<AxiosResponse<any>>}
+ * @param projectId - current project identifier
+ * @param page - page of activities requested
  */
-export function getProjectActivities({ projectId, page = 0 }) {
+export function getProjectActivities(projectId: number, page = 0): Promise<Activities> {
   try {
     return axios
       .get(`${BASE_URL}/project?projectId=${projectId}&page=${page}`)
@@ -26,10 +47,9 @@ export function getProjectActivities({ projectId, page = 0 }) {
 /**
  * Get a page of recent activities for all of user's projects
  *
- * @param {number} page - page of activities requested
- * @returns {Promise<AxiosResponse<any>>}
+ * @param page - page of activities requested
  */
-export function getUserActivities({ page = 0 }) {
+export function getUserActivities(page = 0): Promise<Activities> {
   try {
     return axios.get(`${BASE_URL}/user?page=${page}`).then(({ data }) => data);
   } catch (e) {
@@ -40,10 +60,9 @@ export function getUserActivities({ page = 0 }) {
 /**
  * Get a page of recent activities for all projects
  *
- * @param {number} page - page of activities requested
- * @returns {Promise<AxiosResponse<any>>}
+ * @param page - page of activities requested
  */
-export function getAllRecentActivities({ page = 0 }) {
+export function getAllRecentActivities(page = 0): Promise<Activities> {
   try {
     return axios.get(`${BASE_URL}/all?page=${page}`).then(({ data }) => data);
   } catch (e) {

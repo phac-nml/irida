@@ -1,19 +1,19 @@
 import { notification } from "antd";
 import React from "react";
 import { addKeysToList } from "../../../utilities/http-utilities";
-import { getAllRecentActivities } from "../../../apis/activities/activities";
+import { Activity, getAllRecentActivities } from "../../../apis/activities/activities";
 import { RecentActivityList } from "./RecentActivityList";
 
 /**
  * Component to display all projects recent activity
- * @returns {JSX.Element}
  * @constructor
  */
-export function RecentActivityAllProjects() {
+
+export function RecentActivityAllProjects(): JSX.Element {
   /**
    * List of all recent activities to render
    */
-  const [activities, setActivities] = React.useState([]);
+  const [activities, setActivities] = React.useState<Activity[]>([]);
 
   /**
    * Total number of recent activities for all projects in IRIDA
@@ -31,10 +31,10 @@ export function RecentActivityAllProjects() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    getAllRecentActivities({ page })
+    getAllRecentActivities(page)
       .then((data) => {
         const list = addKeysToList(data.content, "activity", "date");
-        setActivities([...activities, ...list]);
+        setActivities((prevState) => ([...prevState, ...list]));
         setTotal(data.total);
         setLoading(false);
       })
