@@ -1,5 +1,13 @@
 import React from "react";
-import { Button, notification, Popconfirm, Space, Tag, Tooltip } from "antd";
+import {
+  Button,
+  Checkbox,
+  notification,
+  Popconfirm,
+  Space,
+  Tag,
+  Tooltip,
+} from "antd";
 import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
 
 import {
@@ -14,6 +22,8 @@ import {
   removeFileObjectFromSample,
   updatedSequencingObjects,
   fetchUpdatedSeqObjectsDelay,
+  addToConcatenateSelected,
+  removeFromConcatenateSelected,
 } from "../sampleFilesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -27,6 +37,7 @@ import { setDefaultSequencingObject } from "../sampleSlice";
 import { SequenceObjectListItem } from "../../sequence-files/SequenceObjectListItem";
 import { GenomeAssemblyListItem } from "../../sequence-files/GenomeAssemblyListItem";
 import { primaryColour } from "../../../utilities/theme-utilities";
+import { SPACE_XS } from "../../../styles/spacing";
 
 /**
  * React component to display, remove, download files
@@ -44,7 +55,9 @@ export function SampleFileList() {
     projectId,
     modifiable: isModifiable,
   } = useSelector((state) => state.sampleReducer);
-  const { files } = useSelector((state) => state.sampleFilesReducer);
+  const { files, concatenateSelected } = useSelector(
+    (state) => state.sampleFilesReducer
+  );
 
   const fileProcessTranslations = {
     UNPROCESSED: i18n("SampleFilesList.fileProcessingState.UNPROCESSED"),
@@ -202,6 +215,9 @@ export function SampleFileList() {
     );
   };
 
+  /*
+   Get the actions required for a Paired End -> Forward sequence file, single end sequence file, and/or fast5 object
+   */
   const getActionsForSequencingObject = (seqObj) => {
     let actions = [];
 
@@ -302,6 +318,9 @@ export function SampleFileList() {
     return actions;
   };
 
+  /*
+   Get the actions required for a Paired End -> Reverse sequence file
+   */
   const getActionsForSequencingObjectPairedReverse = (seqObj) => {
     let actions = [];
 
@@ -331,11 +350,13 @@ export function SampleFileList() {
     return actions;
   };
 
+  /*
+   Get the actions required for a Genome Assembly
+   */
   const getActionsForGenomeAssembly = (genomeAssembly) => {
     let actions = [];
 
     actions.push(
-      <span className="t-file-size">{genomeAssembly.firstFileSize}</span>,
       <Button
         type="link"
         style={{ padding: 0 }}
@@ -348,33 +369,84 @@ export function SampleFileList() {
         }}
       >
         Download
-      </Button>,
-      <Popconfirm
-        placement="left"
-        title="Are you sure you want to remove this genome assembly?"
-        okText={i18n("SampleFiles.okText")}
-        cancelText={i18n("SampleFiles.cancelText")}
-        okButtonProps={{ className: "t-remove-file-confirm-btn" }}
-        cancelButtonProps={{
-          className: "t-remove-file-confirm-cancel-btn",
-        }}
-        onConfirm={() => {
-          removeSampleFiles({
-            fileObjectId: genomeAssembly.fileInfo.identifier,
-            type: "assembly",
-          });
-        }}
-      >
-        <Button
-          type="link"
-          className="t-remove-file-btn"
-          style={{ padding: 0 }}
+      </Button>
+    );
+
+    if (isModifiable) {
+      actions.push(
+        <Popconfirm
+          placement="left"
+          title="Are you sure you want to remove this genome assembly?"
+          okText={i18n("SampleFiles.okText")}
+          cancelText={i18n("SampleFiles.cancelText")}
+          okButtonProps={{ className: "t-remove-file-confirm-btn" }}
+          cancelButtonProps={{
+            className: "t-remove-file-confirm-cancel-btn",
+          }}
+          onConfirm={() => {
+            removeSampleFiles({
+              fileObjectId: genomeAssembly.fileInfo.identifier,
+              type: "assembly",
+            });
+          }}
         >
-          Remove
-        </Button>
-      </Popconfirm>
+          <Button
+            type="link"
+            className="t-remove-file-btn"
+            style={{ padding: 0 }}
+          >
+            Remove
+          </Button>
+        </Popconfirm>
+      );
+    }
+
+    actions.push(
+      <span className="t-file-size">{genomeAssembly.firstFileSize}</span>
     );
     return actions;
+  };
+
+  /*
+   Returns a checkbox with a toolbox for the passed in sequencing object
+   */
+  const getConcatenationCheckboxForSequencingObject = (seqObj) => {
+    const obj = seqObj.fileInfo
+      ? seqObj.fileInfo
+      : seqObj.file
+      ? seqObj.file
+      : seqObj;
+
+    return (
+      <div>
+        <Tooltip
+          title={i18n("SampleFilesConcatenate.checkboxDescription")}
+          color={primaryColour}
+          placement="right"
+        >
+          <Checkbox
+            style={{ marginRight: SPACE_XS }}
+            className="t-concatenation-checkbox"
+            onChange={(e) => updateSelected(e, obj)}
+            checked={
+              concatenateSelected.filter((e) => e.identifier === obj.identifier)
+                .length > 0
+            }
+          />
+        </Tooltip>
+      </div>
+    );
+  };
+
+  /*
+   Update which sequencing objects are selected for concatenation
+   */
+  const updateSelected = (e, seqObj) => {
+    if (e.target.checked) {
+      dispatch(addToConcatenateSelected({ seqObject: seqObj }));
+    } else {
+      dispatch(removeFromConcatenateSelected({ seqObject: seqObj }));
+    }
   };
 
   return (
@@ -388,9 +460,16 @@ export function SampleFileList() {
         <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>
           {files.singles.map((sequenceObject) => (
             <SequenceObjectListItem
+              key={`single-${sequenceObject.fileInfo.identifier}`}
               sequenceObject={sequenceObject}
               actions={getActionsForSequencingObject(sequenceObject)}
-              displayConcatenationCheckbox={files.singles?.length >= 2}
+              displayConcatenationCheckbox={
+                isModifiable && files.singles?.length >= 2
+              }
+              concatenationCheckbox={
+                isModifiable &&
+                getConcatenationCheckboxForSequencingObject(sequenceObject)
+              }
             />
           ))}
         </SequenceFileTypeRenderer>
@@ -399,27 +478,20 @@ export function SampleFileList() {
         <SequenceFileTypeRenderer title={i18n("SampleFiles.paired")}>
           {files.paired.map((pair) => (
             <SequenceObjectListItem
+              key={`pair-${pair.fileInfo.identifier}`}
               sequenceObject={pair}
               actions={getActionsForSequencingObject(pair)}
               pairedReverseActions={getActionsForSequencingObjectPairedReverse(
                 pair
               )}
-              displayConcatenationCheckbox={files.paired?.length >= 2}
+              displayConcatenationCheckbox={
+                isModifiable && files.paired?.length >= 2
+              }
+              concatenationCheckbox={
+                isModifiable &&
+                getConcatenationCheckboxForSequencingObject(pair)
+              }
             />
-            // <PairedFileRenderer
-            //   key={`pair-${pair.identifier}`}
-            //   pair={pair}
-            //   sampleId={sample.identifier}
-            //   downloadSequenceFile={downloadSequenceFile}
-            //   removeSampleFiles={removeSampleFiles}
-            //   getProcessingState={getProcessingStateTag}
-            //   qcEntryTranslations={qcEntryTranslations}
-            //   displayConcatenationCheckbox={files.paired?.length >= 2}
-            //   updateDefaultSequencingObject={updateDefaultSequencingObject}
-            //   autoDefaultFirstPair={
-            //     sample.defaultSequencingObject === null ? files.paired[0] : null
-            //   }
-            // />
           ))}
         </SequenceFileTypeRenderer>
       )}
@@ -427,6 +499,7 @@ export function SampleFileList() {
         <SequenceFileTypeRenderer title={i18n("SampleFiles.fast5")}>
           {files.fast5.map((fast5Obj) => (
             <SequenceObjectListItem
+              key={`fast5-${fast5Obj.fileInfo.identifier}`}
               sequenceObject={fast5Obj}
               actions={getActionsForSequencingObject(fast5Obj)}
             />
@@ -437,17 +510,10 @@ export function SampleFileList() {
         <SequenceFileTypeRenderer title={i18n("SampleFiles.assemblies")}>
           {files.assemblies.map((assembly) => (
             <GenomeAssemblyListItem
+              key={`assembly-${assembly.fileInfo.identifier}`}
               genomeAssembly={assembly}
               actions={getActionsForGenomeAssembly(assembly)}
             />
-            // <SingleEndFileRenderer
-            //   files={files.assemblies}
-            //   fastqcResults={false}
-            //   sampleId={sample.identifier}
-            //   downloadAssemblyFile={downloadAssemblyFile}
-            //   removeSampleFiles={removeSampleFiles}
-            //   qcEntryTranslations={qcEntryTranslations}
-            // />
           ))}
         </SequenceFileTypeRenderer>
       )}

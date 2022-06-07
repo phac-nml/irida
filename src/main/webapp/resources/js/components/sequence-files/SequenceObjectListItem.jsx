@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Checkbox, List, Space, Tag, Tooltip } from "antd";
+import { Avatar, List, Space, Tag } from "antd";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import {
   FileOutlined,
@@ -7,19 +7,25 @@ import {
   SwapRightOutlined,
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
-import { primaryColour } from "../../utilities/theme-utilities";
-import { SPACE_XS } from "../../styles/spacing";
-import {
-  addToConcatenateSelected,
-  removeFromConcatenateSelected,
-} from "../samples/sampleFilesSlice";
-import { useDispatch } from "react-redux";
+
+/**
+ * Component to be used anywhere sequencing objects need to be listed
+ * @param sequenceObject
+ * @param pairedReverseActions
+ * @param displayConcatenationCheckbox
+ * @param concatenationCheckbox
+ * @param displayFileProcessingStatus
+ * @returns {JSX.Element}
+ * @constructor
+ */
 
 export function SequenceObjectListItem({
   sequenceObject,
   actions = [],
   pairedReverseActions = [],
   displayConcatenationCheckbox = false,
+  concatenationCheckbox = null,
+  displayFileProcessingStatus = false,
 }) {
   const obj = sequenceObject.fileInfo
     ? sequenceObject.fileInfo
@@ -28,21 +34,15 @@ export function SequenceObjectListItem({
     : sequenceObject;
 
   const { files, sequenceFile, file } = obj;
-  const dispatch = useDispatch();
 
   const qcEntryTranslations = {
     COVERAGE: i18n("SampleFilesList.qcEntry.COVERAGE"),
     PROCESSING: i18n("SampleFilesList.qcEntry.PROCESSING"),
   };
 
-  const updateSelected = (e) => {
-    if (e.target.checked) {
-      dispatch(addToConcatenateSelected({ seqObject: obj }));
-    } else {
-      dispatch(removeFromConcatenateSelected({ seqObject: obj }));
-    }
-  };
-
+  /*
+   Function to display file processing status
+   */
   const getQcEntries = (entry) => {
     return (
       <Tag
@@ -66,21 +66,7 @@ export function SequenceObjectListItem({
           padding: 5,
         }}
       >
-        {displayConcatenationCheckbox && (
-          <div>
-            <Tooltip
-              title={i18n("SampleFilesConcatenate.checkboxDescription")}
-              color={primaryColour}
-              placement="right"
-            >
-              <Checkbox
-                style={{ marginRight: SPACE_XS }}
-                className="t-concatenation-checkbox"
-                onChange={updateSelected}
-              />
-            </Tooltip>
-          </div>
-        )}
+        {displayConcatenationCheckbox && concatenationCheckbox}
         <Avatar
           style={{
             backgroundColor: blue6,
@@ -127,10 +113,12 @@ export function SequenceObjectListItem({
                       : file.createdDate
                   )}
 
-                  {sequenceObject.qcEntries !== null &&
-                    sequenceObject.qcEntries.map((entry) => {
-                      return getQcEntries(entry);
-                    })}
+                  {displayFileProcessingStatus &&
+                  sequenceObject.qcEntries !== null
+                    ? sequenceObject.qcEntries.map((entry) => {
+                        return getQcEntries(entry);
+                      })
+                    : null}
                 </Space>
               }
             />
@@ -152,10 +140,12 @@ export function SequenceObjectListItem({
                     style={{ width: "100%" }}
                   >
                     {formatInternationalizedDateTime(files[1].createdDate)}
-                    {sequenceObject.qcEntries !== null &&
-                      sequenceObject.qcEntries.map((entry) => {
-                        return getQcEntries(entry);
-                      })}
+                    {displayFileProcessingStatus &&
+                    sequenceObject.qcEntries !== null
+                      ? sequenceObject.qcEntries.map((entry) => {
+                          return getQcEntries(entry);
+                        })
+                      : null}
                   </Space>
                 }
               />
