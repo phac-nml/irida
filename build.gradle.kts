@@ -343,6 +343,7 @@ task<JavaExec>("toolsListExport") {
 openApi {
     outputDir.set(file("${projectDir}/doc/swagger-ui"))
     outputFileName.set("open-api.json")
+    waitTimeInSeconds.set(45)
 }
 
 tasks.processResources {
