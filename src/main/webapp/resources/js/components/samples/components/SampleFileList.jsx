@@ -470,6 +470,7 @@ export function SampleFileList() {
                 isModifiable &&
                 getConcatenationCheckboxForSequencingObject(sequenceObject)
               }
+              displayFileProcessingStatus={true}
             />
           ))}
         </SequenceFileTypeRenderer>
@@ -491,6 +492,7 @@ export function SampleFileList() {
                 isModifiable &&
                 getConcatenationCheckboxForSequencingObject(pair)
               }
+              displayFileProcessingStatus={true}
             />
           ))}
         </SequenceFileTypeRenderer>
@@ -502,6 +504,7 @@ export function SampleFileList() {
               key={`fast5-${fast5Obj.fileInfo.identifier}`}
               sequenceObject={fast5Obj}
               actions={getActionsForSequencingObject(fast5Obj)}
+              displayFileProcessingStatus={true}
             />
           ))}
         </SequenceFileTypeRenderer>
