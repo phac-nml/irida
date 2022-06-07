@@ -260,7 +260,7 @@ Run the following:
 ./gradlew clean build -xtest
 ```
 
-This will create the `.war` and `.zip` files for IRIDA release under the `build/libs/` directory.
+This will create the `.war` and `.zip` files for IRIDA release under the `build/dist/` directory.
 
 #### Building IRIDA documentation
 IRIDA documentation can be found in the <https://github.com/phac-nml/irida-docs> GitHub project.  IRIDA's documentation is built using [Jekyll][] and [GitHub Pages](https://pages.github.com/).  Jekyll allows us to write documentation in Markdown format and it will convert the pages to HTML.  We can use Jekyll both for viewing the documentation locally and for publishing to GitHub Pages.  The current documentation can be found at <https://phac-nml.github.io/irida-docs>.

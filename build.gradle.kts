@@ -4,6 +4,7 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("org.siouan.frontend-jdk11") version "6.0.0"
     id("org.springdoc.openapi-gradle-plugin") version "1.3.4"
+    base
     java
     `maven-publish`
     war
@@ -196,6 +197,36 @@ dependencies {
     providedCompile("org.springframework.boot:spring-boot-starter-tomcat")
 }
 
+tasks.register<Zip>("packageDistribution") {
+    dependsOn(listOf(":war", ":toolsListExport"))
+    destinationDirectory.set(layout.buildDirectory.dir("dist"))
+
+    from(layout.buildDirectory.dir("dist")) {
+        include("*.war")
+        into("${project.name}-${project.version}")
+    }
+
+    from(layout.buildDirectory) {
+        include("tools-list.yml")
+        into("${project.name}-${project.version}")
+    }
+
+    from(layout.projectDirectory) {
+        include(listOf("CHANGELOG.md", "UPGRADING.md", "LICENSE"))
+        into("${project.name}-${project.version}")
+    }
+
+    from(layout.projectDirectory.dir("packaging")) {
+        include("README.md")
+        into("${project.name}-${project.version}")
+    }
+}
+
+tasks.build {
+    dependsOn("packageDistribution")
+}
+
+// we want the plain jar to have a normal name (for )
 tasks.jar {
     archiveClassifier.set("")
 }
@@ -205,6 +236,7 @@ tasks.bootWar { enabled = false }
 
 tasks.war {
     archiveClassifier.set("")
+    destinationDirectory.set(layout.buildDirectory.dir("dist"))
     exclude("node")
     exclude("node_modules/")
     exclude(".yarn/")
