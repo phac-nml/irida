@@ -5,7 +5,7 @@ import { Notifications } from "../notifications/Notifications";
 import GalaxyAlert from "./GalaxyAlert";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { MainNavigation } from "./MainNavigation/MainNavigation";
+import { MainNavigation } from "./MainNavigation";
 import {
   AnnouncementProvider
 } from "./MainNavigation/components/announcements-context";
