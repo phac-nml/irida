@@ -298,10 +298,10 @@ public class UISampleService {
 					sequencingObjectId);
 			sample.setDefaultSequencingObject(sequencingObject);
 			sampleService.update(sample);
-			return messageSource.getMessage("server.SequenceFileHeaderOwner.successfully.set.default.seq.object",
+			return messageSource.getMessage("server.SampleFilesList.successfully.set.default.seq.object",
 					new Object[] {  }, locale);
 		} catch (EntityNotFoundException e) {
-			return messageSource.getMessage("server.SequenceFileHeaderOwner.unable.to.update.sample",
+			return messageSource.getMessage("server.SampleFilesList.unable.to.update.sample",
 					new Object[] {  }, locale);
 		}
 	}

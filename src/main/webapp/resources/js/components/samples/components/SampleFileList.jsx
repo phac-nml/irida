@@ -218,7 +218,7 @@ export function SampleFileList() {
   /*
    Get the actions required for a Paired End -> Forward sequence file, single end sequence file, and/or fast5 object
    */
-  const getActionsForSequencingObject = (seqObj) => {
+  const getActionsForSequencingObject = (seqObj, index= -1) => {
     let actions = [];
 
     const obj = seqObj.fileInfo
@@ -229,19 +229,20 @@ export function SampleFileList() {
 
     if (isModifiable && obj.files && obj.files.length === 2) {
       if (
-        sample.defaultSequencingObject !== null &&
-        obj.identifier === sample.defaultSequencingObject.identifier
+        (sample.defaultSequencingObject !== null &&
+        obj.identifier === sample.defaultSequencingObject.identifier) ||
+        (sample.defaultSequencingObject === null && index === 0)
       ) {
         actions.push(
           <Tag color="#108ee9" className="t-default-seq-obj-tag">
-            {i18n("SequenceFileHeaderOwner.default")}
+            {i18n("SampleFilesList.default")}
           </Tag>
         );
       } else {
         actions.push(
           <Tooltip
             title={
-              "Set this paired end sequencing object as the default for the sample. The sequencing object will be selected by default when running a pipeline"
+              i18n("SampleFilesList.tooltip.setAsDefault")
             }
             placement="top"
           >
@@ -252,7 +253,7 @@ export function SampleFileList() {
               type="link"
               className="t-set-default-seq-obj-button"
             >
-              {i18n("SequenceFileHeaderOwner.setAsDefault")}
+              {i18n("SampleFilesList.setAsDefault")}
             </Button>
           </Tooltip>
         );
@@ -271,7 +272,7 @@ export function SampleFileList() {
           });
         }}
       >
-        Download
+        {i18n("SampleFilesList.download")}
       </Button>
     );
 
@@ -279,7 +280,7 @@ export function SampleFileList() {
       actions.push(
         <Popconfirm
           placement="left"
-          title="Are you sure you want to remove this sequencing object?"
+          title={i18n("SampleFilesList.removeSequencingObject")}
           okText={i18n("SampleFiles.okText")}
           cancelText={i18n("SampleFiles.cancelText")}
           okButtonProps={{ className: "t-remove-file-confirm-btn" }}
@@ -295,7 +296,7 @@ export function SampleFileList() {
         >
           <Tooltip
             title={
-              "This will remove this complete sequencing object (paired end, single end, fast5) from the sample."
+              i18n("SampleFilesList.tooltip.remove")
             }
             placement="top"
           >
@@ -304,7 +305,7 @@ export function SampleFileList() {
               className="t-remove-file-btn"
               style={{ padding: 0 }}
             >
-              Remove
+              {i18n("SampleFilesList.remove")}
             </Button>
           </Tooltip>
         </Popconfirm>
@@ -342,7 +343,7 @@ export function SampleFileList() {
           });
         }}
       >
-        Download
+        {i18n("SampleFilesList.download")}
       </Button>,
       getProcessingStateTag(obj.processingState),
       <span className="t-file-size">{seqObj.secondFileSize}</span>
@@ -368,7 +369,7 @@ export function SampleFileList() {
           });
         }}
       >
-        Download
+        {i18n("SampleFilesList.download")}
       </Button>
     );
 
@@ -376,7 +377,7 @@ export function SampleFileList() {
       actions.push(
         <Popconfirm
           placement="left"
-          title="Are you sure you want to remove this genome assembly?"
+          title={i18n("SampleFilesList.removeGenomeAssembly")}
           okText={i18n("SampleFiles.okText")}
           cancelText={i18n("SampleFiles.cancelText")}
           okButtonProps={{ className: "t-remove-file-confirm-btn" }}
@@ -395,7 +396,7 @@ export function SampleFileList() {
             className="t-remove-file-btn"
             style={{ padding: 0 }}
           >
-            Remove
+            {i18n("SampleFilesList.remove")}
           </Button>
         </Popconfirm>
       );
@@ -477,11 +478,11 @@ export function SampleFileList() {
       )}
       {files.paired && (
         <SequenceFileTypeRenderer title={i18n("SampleFiles.paired")}>
-          {files.paired.map((pair) => (
+          {files.paired.map((pair, index) => (
             <SequenceObjectListItem
               key={`pair-${pair.fileInfo.identifier}`}
               sequenceObject={pair}
-              actions={getActionsForSequencingObject(pair)}
+              actions={getActionsForSequencingObject(pair, index)}
               pairedReverseActions={getActionsForSequencingObjectPairedReverse(
                 pair
               )}
