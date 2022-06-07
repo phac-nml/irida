@@ -1,26 +1,34 @@
 package ca.corefacility.bioinformatics.irida.ria.web.users.dto;
 
 /**
- * Data transfer object for editing user details.
+ * Data transfer object for creating a new user account.
  */
-public class UserEditRequest {
+public class UserCreateRequest {
+	private String username;
 	private String firstName;
 	private String lastName;
 	private String email;
 	private String phoneNumber;
 	private String role;
 	private String locale;
-	private boolean enabled;
+	private boolean activate;
+	private String password;
 
-	public UserEditRequest(String firstName, String lastName, String email, String phoneNumber, String role,
-			String locale, boolean enabled) {
+	public UserCreateRequest(String username, String firstName, String lastName, String email, String phoneNumber,
+			String role, String locale, boolean activate, String password) {
+		this.username = username;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.phoneNumber = phoneNumber;
 		this.role = role;
 		this.locale = locale;
-		this.enabled = enabled;
+		this.activate = activate;
+		this.password = password;
+	}
+
+	public String getUsername() {
+		return username;
 	}
 
 	public String getFirstName() {
@@ -47,7 +55,12 @@ public class UserEditRequest {
 		return locale;
 	}
 
-	public boolean getEnabled() {
-		return enabled;
+	public boolean getActivate() {
+		return activate;
 	}
+
+	public String getPassword() {
+		return password;
+	}
+
 }
