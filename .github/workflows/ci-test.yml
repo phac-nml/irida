@@ -71,6 +71,11 @@ jobs:
         with:
           name: build-reports
           path: build/reports/
+      - name: Publist Test Report
+        uses: mikepenz/action-junit-report@v3
+        if: matrix.suite != 'open_api_testing' && always()
+        with:
+          report_paths: '**/build/test-results/*ITest/TEST-*.xml' # Publish Integration Test results
 
   docs-build: # Testing the javadoc and jekyll documentation builds
     runs-on: ubuntu-20.04
