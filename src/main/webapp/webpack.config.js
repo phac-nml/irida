@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require("path");
 const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -40,12 +41,14 @@ module.exports = (env, argv) => {
     /*
     Cache the generated webpack modules and chunks to improve build speed.
      */
-    cache: isProduction ? false : {
-      type: "filesystem",
-    },
+    cache: isProduction
+      ? false
+      : {
+          type: "filesystem",
+        },
     entry: entries,
     resolve: {
-      extensions: [".js", ".jsx"],
+      extensions: [".js", ".jsx", ".ts", ".tsx"],
       symlinks: false,
     },
     output: {
@@ -65,7 +68,7 @@ module.exports = (env, argv) => {
     module: {
       rules: [
         {
-          test: /\.(js|jsx)$/i,
+          test: /\.(js|jsx|ts|tsx)$/i,
           include: path.resolve(__dirname, "resources", "js"),
           loader: "babel-loader",
           options: {
@@ -101,10 +104,7 @@ module.exports = (env, argv) => {
         {
           test: /\.css$/i,
           exclude: path.resolve(__dirname, "resources"),
-          use: [
-            MiniCssExtractPlugin.loader,
-            "css-loader",
-          ],
+          use: [MiniCssExtractPlugin.loader, "css-loader"],
         },
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
@@ -168,10 +168,12 @@ module.exports = (env, argv) => {
     ],
   });
 
-  config.plugins.push(new MiniCssExtractPlugin({
-    ignoreOrder: true,
-    filename: "css/[name]-[contenthash].css",
-  }));
+  config.plugins.push(
+    new MiniCssExtractPlugin({
+      ignoreOrder: true,
+      filename: "css/[name]-[contenthash].css",
+    })
+  );
 
   return config;
 };

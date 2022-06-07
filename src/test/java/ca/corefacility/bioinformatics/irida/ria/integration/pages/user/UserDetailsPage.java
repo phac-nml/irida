@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.user;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -23,11 +24,13 @@ public class UserDetailsPage extends AbstractPage {
 
 	public void enterFirstName(String newName) {
 		WebElement firstNameBox = driver.findElement(By.id("firstName"));
+		firstNameBox.sendKeys(Keys.chord(Keys.CONTROL, "a", Keys.DELETE));
 		firstNameBox.sendKeys(newName);
 	}
 
 	public void enterEmail(String newEmail) {
 		WebElement emailBox = driver.findElement(By.id("email"));
+		emailBox.sendKeys(Keys.chord(Keys.CONTROL, "a", Keys.DELETE));
 		emailBox.sendKeys(newEmail);
 	}
 
