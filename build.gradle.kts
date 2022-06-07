@@ -313,7 +313,10 @@ openApi {
     outputFileName.set("open-api.json")
 }
 
-tasks.named("processResources") {
+tasks.processResources {
+    filesMatching("version.properties") {
+        expand(project.properties)
+    }
     dependsOn(":assembleFrontend")
 }
 
