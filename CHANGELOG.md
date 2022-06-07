@@ -2,7 +2,8 @@
 # Changelog
 
 ## [Unreleased]
-* [Developer/UI]: Added in typescript support to webpack build, moving forward all new frontend development will use typescript.
+* [Developer/UI]: Refreshed the create new user account page. See [PR 1285](https://github.com/phac-nml/irida/pull/1285) for more.
+* [Developer/UI]: Added in typescript support to webpack build, moving forward all new frontend development will use typescript. See [PR 1294](https://github.com/phac-nml/irida/pull/1294) for more.
 
 ## [22.05.1] - 2022/06/01
 * [UI]: Fixed bug where samples could not be removed from share page. See [PR 1296](https://github.com/phac-nml/irida/pull/1296) for more.
