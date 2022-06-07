@@ -28,10 +28,19 @@ export const settingsApi = createApi({
         url: `/roles`,
       }),
     }),
+    /*
+    Get if email is configured.
+     */
+    getEmailConfigured: build.query({
+      query: () => ({
+        url: `/emailConfigured`,
+      }),
+    }),
   }),
 });
 
 export const {
   useGetLocalesQuery,
   useGetSystemRolesQuery,
+  useGetEmailConfiguredQuery,
 } = settingsApi;

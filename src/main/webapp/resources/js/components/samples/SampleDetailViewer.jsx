@@ -4,6 +4,7 @@ import { SampleDetails } from "./components/SampleDetails";
 import { Provider } from "react-redux";
 import store from "../../components/samples/store";
 import { useGetSampleDetailsQuery } from "../../apis/samples/samples";
+import { Activity } from "../../apis/activities/activities";
 
 const { Text } = Typography;
 

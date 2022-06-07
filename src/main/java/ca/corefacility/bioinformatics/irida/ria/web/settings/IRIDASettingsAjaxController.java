@@ -45,4 +45,15 @@ public class IRIDASettingsAjaxController {
 	public ResponseEntity<List<Role>> getSystemRoles(Locale locale) {
 		return ResponseEntity.ok(service.getSystemRoles(locale));
 	}
+
+	/**
+	 * Get if email is configured.
+	 *
+	 * @return if email is configured
+	 */
+	@RequestMapping("/emailConfigured")
+	public ResponseEntity<Boolean> getEmailConfigured() {
+		return ResponseEntity.ok(service.getEmailConfigured());
+	}
+
 }
