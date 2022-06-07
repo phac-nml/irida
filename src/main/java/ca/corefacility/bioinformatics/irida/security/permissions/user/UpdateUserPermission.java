@@ -12,10 +12,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 
 /**
- * Confirms that the authenticated user is allowed to modify another (or their
- * own) user account.
- * 
- * 
+ * Confirms that the authenticated user is allowed to modify another (or their own) user account.
  */
 @Component
 public class UpdateUserPermission extends RepositoryBackedPermission<User, Long> {
@@ -28,9 +25,8 @@ public class UpdateUserPermission extends RepositoryBackedPermission<User, Long>
 
 	/**
 	 * Construct an instance of {@link UpdateUserPermission}.
-	 * 
-	 * @param userRepository
-	 *            the user repository.
+	 *
+	 * @param userRepository the user repository.
 	 */
 	@Autowired
 	public UpdateUserPermission(UserRepository userRepository) {
@@ -56,22 +52,14 @@ public class UpdateUserPermission extends RepositoryBackedPermission<User, Long>
 		boolean isOwnAccount = modifyingOwnAccount(authentication, u);
 		boolean isAdmin = authentication.getAuthorities().contains(Role.ROLE_ADMIN);
 
-		// We're not allowing a manager to modify an admin. This is checking if
-		// the logged in user is a manager and if the passed model object is an
-		// admin.
-		boolean isManagerModifyingAdmin = authentication.getAuthorities().contains(Role.ROLE_MANAGER)
-				&& u.getAuthorities().contains(Role.ROLE_ADMIN);
-
-		return (isOwnAccount || isAdmin) && !isManagerModifyingAdmin;
+		return (isOwnAccount || isAdmin);
 	}
 
 	/**
 	 * Check to see if the user is modifying their own account.
-	 * 
-	 * @param authentication
-	 *            the currently logged in user.
-	 * @param u
-	 *            the user that is being modified
+	 *
+	 * @param authentication the currently logged in user.
+	 * @param u              the user that is being modified
 	 * @return true if the authentication and user are the same thing.
 	 */
 	private boolean modifyingOwnAccount(Authentication authentication, User u) {

@@ -14,7 +14,7 @@ public class UserSecurityPage extends AbstractPage {
 
 	private PageUtilities pageUtilities;
 
-	public static String SECURITY_PAGE = "users/1/security";
+	public static String SECURITY_PAGE = "users/3/security";
 
 	public UserSecurityPage(WebDriver driver) {
 		super(driver);
