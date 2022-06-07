@@ -1,22 +1,25 @@
-import React, { useContext } from "react";
-import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
-import { useSetUsersDisabledStatusMutation } from "../../apis/users/users";
+import React from "react";
+import {
+  PagedTable,
+  PagedTableContext,
+} from "../../../components/ant.design/PagedTable";
 import { Checkbox } from "antd";
-import { setBaseUrl } from "../../utilities/url-utilities";
-import { dateColumnFormat } from "../ant.design/table-renderers";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
+import { useSetUserStatusMutation } from "../../../apis/users/users";
 
 /**
  * React component for displaying paged table of all users in the system
  * @returns {string|*}
  * @constructor
  */
-export function UsersTable() {
-  const {updateTable} = useContext(PagedTableContext);
+export function UserTable() {
+  const { updateTable } = React.useContext(PagedTableContext);
   const IS_ADMIN = window.TL._USER.systemRole === "ROLE_ADMIN";
-  const [setUsersDisabledStatus] = useSetUsersDisabledStatusMutation();
+  const [updateUserStatus] = useSetUserStatusMutation();
 
   function updateUser(user) {
-    setUsersDisabledStatus({
+    updateUserStatus({
       isEnabled: !user.enabled,
       id: user.id,
     }).then(updateTable);
@@ -45,36 +48,36 @@ export function UsersTable() {
     },
     {
       title: (
-        <span className="t-username-col">
-          {i18n("AdminUsersTable.username")}
-        </span>
+        <span className="t-username-col">{i18n("UserTable.username")}</span>
       ),
       key: "username",
       dataIndex: "name",
       sorter: true,
       fixed: "left",
       render(text, full) {
-        return (
+        return IS_ADMIN ? (
           <a className="t-username" href={setBaseUrl(`users/${full.id}`)}>
             {text}
           </a>
+        ) : (
+          text
         );
       },
     },
     {
-      title: i18n("AdminUsersTable.firstName"),
+      title: i18n("UserTable.firstName"),
       key: "firstName",
       sorter: true,
       dataIndex: "firstName",
     },
     {
-      title: i18n("AdminUsersTable.lastName"),
+      title: i18n("UserTable.lastName"),
       key: "lastName",
       sorter: true,
       dataIndex: "lastName",
     },
     {
-      title: i18n("AdminUsersTable.email"),
+      title: i18n("UserTable.email"),
       key: "email",
       dataIndex: "email",
       render(text, full) {
@@ -82,7 +85,12 @@ export function UsersTable() {
       },
     },
     {
-      title: i18n("AdminUsersTable.role"),
+      title: i18n("UserTable.phoneNumber"),
+      key: "phoneNumber",
+      dataIndex: "phoneNumber",
+    },
+    {
+      title: i18n("UserTable.role"),
       key: "role",
       dataIndex: "role",
       sorter: true,
@@ -102,18 +110,16 @@ export function UsersTable() {
       },
     },
     {
-      ...dateColumnFormat({className: "t-created"}),
+      ...dateColumnFormat({ className: "t-created" }),
       key: "createdDate",
-      title: i18n("AdminUsersTable.created"),
+      title: i18n("UserTable.created"),
       dataIndex: "createdDate",
     },
     {
-      ...dateColumnFormat({className: "t-modified"}),
+      ...dateColumnFormat({ className: "t-modified" }),
       key: "lastLogin",
       title: (
-        <span className="t-modified-col">
-          {i18n("AdminUsersTable.lastLogin")}
-        </span>
+        <span className="t-modified-col">{i18n("UserTable.lastLogin")}</span>
       ),
       dataIndex: "lastLogin",
     },
@@ -122,7 +128,7 @@ export function UsersTable() {
   return (
     <PagedTable
       columns={columns}
-      onRow={(record) => (record.enabled ? {} : {className: "disabled"})}
+      onRow={(record) => (record.enabled ? {} : { className: "disabled" })}
     />
   );
 }
