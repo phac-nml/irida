@@ -3,8 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.user;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
@@ -47,17 +45,7 @@ public class PasswordResetPage extends AbstractPage {
 	}
 
 	public boolean passwordErrorDisplayed() {
-		String invalidPasswordErrorMessage = "Password does not match the password policy";
-		try {
-			WebDriverWait wait = new WebDriverWait(driver, 20L);
-			WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(By.className("ant-form-item-explain-error")));
-			wait.until(ExpectedConditions.textToBePresentInElement(element, invalidPasswordErrorMessage));
-			if (element.getText().equals(invalidPasswordErrorMessage)) {
-				return true;
-			}
-			return false;
-		} catch (Exception e) {
-			return false;
-		}
+		return !driver.findElements(By.className("ant-form-item-has-error")).isEmpty();
 	}
+
 }

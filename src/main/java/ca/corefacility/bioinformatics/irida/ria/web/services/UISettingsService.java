@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 
 import com.google.common.collect.ImmutableList;
 
@@ -17,14 +18,17 @@ import com.google.common.collect.ImmutableList;
  */
 @Component
 public class UISettingsService {
-	private final MessageSource messageSource;
 	private final List<Locale> locales;
+	private final EmailController emailController;
+	private final MessageSource messageSource;
 	private final List<Role> SYSTEM_ROLES = ImmutableList.of(Role.ROLE_ADMIN, Role.ROLE_MANAGER, Role.ROLE_USER,
 			Role.ROLE_TECHNICIAN, Role.ROLE_SEQUENCER);
 
-	public UISettingsService(IridaApiServicesConfig.IridaLocaleList locales, MessageSource messageSource) {
-		this.messageSource = messageSource;
+	public UISettingsService(IridaApiServicesConfig.IridaLocaleList locales, EmailController emailController,
+			MessageSource messageSource) {
 		this.locales = locales.getLocales();
+		this.emailController = emailController;
+		this.messageSource = messageSource;
 	}
 
 	/**
@@ -50,5 +54,14 @@ public class UISettingsService {
 				.map(role -> new ca.corefacility.bioinformatics.irida.ria.web.settings.dto.Role(role.getName(),
 						messageSource.getMessage("systemRole." + role.getName(), new Object[] {}, locale)))
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Get if email is configured.
+	 *
+	 * @return if email is configured.
+	 */
+	public Boolean getEmailConfigured() {
+		return emailController.isMailConfigured();
 	}
 }
