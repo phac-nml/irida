@@ -67,7 +67,7 @@ jobs:
         run: ./run-tests.sh --db-host ${{ env.MYSQL_HOST }} --db-port ${{ env.MYSQL_PORT }} --database ${{ env.MYSQL_DATABASE}} ${{ matrix.suite }}
       - name: Upload build reports
         uses: actions/upload-artifact@v3
-        if: always()
+        if: matrix.suite !== open_api_testing && always()
         with:
           name: build-reports
           path: build/reports/
