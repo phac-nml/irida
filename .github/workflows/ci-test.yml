@@ -71,11 +71,14 @@ jobs:
         with:
           name: build-reports
           path: build/reports/
-      - name: Publist Test Report
+      - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3
         if: matrix.suite != 'open_api_testing' && always()
         with:
           report_paths: '**/build/test-results/*ITest/TEST-*.xml' # Publish Integration Test results
+          fail_on_failure: false
+          check_name: "JUnit Test Report (${{ matrix.suite }})"
+          annotate_only: true
 
   docs-build: # Testing the javadoc and jekyll documentation builds
     runs-on: ubuntu-20.04
