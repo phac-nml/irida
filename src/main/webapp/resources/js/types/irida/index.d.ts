@@ -59,7 +59,7 @@ declare namespace IRIDA {
         email: string;
         firstName: string;
         lastName: string;
-        phoneNumber: string; // TODO (Josh - 6/7/22): Should this be a number?  Why is it a string on server?
+        phoneNumber: string;
         enabled: boolean;
         systemRole: SystemRole;
         lastLogin: Date;
@@ -69,6 +69,4 @@ declare namespace IRIDA {
         announcements: Announcement[];
         subscriptions: string[]; // TODO (Josh - 6/7/22): Look into this one as well
     }
-
-
 }
