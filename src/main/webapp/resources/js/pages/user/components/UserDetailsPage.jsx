@@ -20,6 +20,14 @@ import {
   useGetLocalesQuery,
   useGetSystemRolesQuery,
 } from "../../../apis/settings/settings";
+import {
+  emailRuleList,
+  firstNameRuleList,
+  lastNameRuleList,
+  localeRuleList,
+  phoneNumberRuleList,
+  roleRuleList,
+} from "../../../utilities/validation-utilities";
 
 /**
  * React component to display the user details page.
@@ -71,76 +79,35 @@ export default function UserDetailsPage() {
         <Form.Item
           label={i18n("UserDetailsPage.form.firstName.label")}
           name="firstName"
-          rules={[
-            {
-              required: true,
-              message: i18n("UserDetailsPage.form.firstName.required"),
-            },
-            {
-              min: 2,
-              message: i18n("UserDetailsPage.form.firstName.min"),
-            },
-          ]}
+          rules={firstNameRuleList}
         >
           <Input />
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.lastName.label")}
           name="lastName"
-          rules={[
-            {
-              required: true,
-              message: i18n("UserDetailsPage.form.lastName.required"),
-            },
-            {
-              min: 2,
-              message: i18n("UserDetailsPage.form.lastName.min"),
-            },
-          ]}
+          rules={lastNameRuleList}
         >
           <Input />
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.email.label")}
           name="email"
-          rules={[
-            {
-              required: true,
-              message: i18n("UserDetailsPage.form.email.required"),
-            },
-            {
-              type: "email",
-              message: i18n("UserDetailsPage.form.email.type"),
-            },
-            {
-              min: 5,
-              message: i18n("UserDetailsPage.form.email.min"),
-            },
-          ]}
+          rules={emailRuleList}
         >
           <Input />
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.phoneNumber.label")}
           name="phoneNumber"
-          rules={[
-            {
-              min: 4,
-              message: i18n("UserDetailsPage.form.phoneNumber.min"),
-            },
-          ]}
+          rules={phoneNumberRuleList}
         >
           <Input />
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.locale.label")}
           name="locale"
-          rules={[
-            {
-              required: true,
-              message: i18n("UserDetailsPage.form.locale.required"),
-            },
-          ]}
+          rules={localeRuleList}
         >
           <Select>
             {locales.map((locale, index) => (
@@ -157,12 +124,7 @@ export default function UserDetailsPage() {
           label={i18n("UserDetailsPage.form.role.label")}
           name="role"
           hidden={!userDetails.admin}
-          rules={[
-            {
-              required: true,
-              message: i18n("UserDetailsPage.form.role.required"),
-            },
-          ]}
+          rules={roleRuleList}
         >
           <Select disabled={!userDetails.canEditUserStatus}>
             {systemRoles.map((role, index) => (

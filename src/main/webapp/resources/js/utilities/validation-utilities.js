@@ -3,6 +3,75 @@ import { validateSampleName } from "../apis/projects/samples";
 const emailRegex =
   /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 
+export const usernameRuleList = [
+  {
+    required: true,
+    message: i18n("validation-utilities.username.required"),
+  },
+  {
+    min: 3,
+    message: i18n("validation-utilities.username.min"),
+  },
+];
+
+export const firstNameRuleList = [
+  {
+    required: true,
+    message: i18n("validation-utilities.firstName.required"),
+  },
+  {
+    min: 2,
+    message: i18n("validation-utilities.firstName.min"),
+  },
+];
+
+export const lastNameRuleList = [
+  {
+    required: true,
+    message: i18n("validation-utilities.lastName.required"),
+  },
+  {
+    min: 2,
+    message: i18n("validation-utilities.lastName.min"),
+  },
+];
+
+export const emailRuleList = [
+  {
+    required: true,
+    message: i18n("validation-utilities.email.required"),
+  },
+  {
+    type: "email",
+    message: i18n("validation-utilities.email.type"),
+  },
+  {
+    min: 5,
+    message: i18n("validation-utilities.email.min"),
+  },
+];
+
+export const phoneNumberRuleList = [
+  {
+    min: 4,
+    message: i18n("validation-utilities.phoneNumber.min"),
+  },
+];
+
+export const localeRuleList = [
+  {
+    required: true,
+    message: i18n("validation-utilities.locale.required"),
+  },
+];
+
+export const roleRuleList = [
+  {
+    required: true,
+    message: i18n("validation-utilities.role.required"),
+  },
+];
+
 /**
  * Ensure that an email address is formatted correctly.
  * This regular expression is taken from (https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript)

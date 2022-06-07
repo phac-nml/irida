@@ -18,7 +18,16 @@ import { SPACE_SM } from "../../../../styles/spacing";
 import { PagedTableContext } from "../../../../components/ant.design/PagedTable";
 import { AddNewButton } from "../../../../components/Buttons/AddNewButton";
 import { ScrollableModal } from "../../../../components/ant.design/ScrollableModal";
-import { validatePassword } from "../../../../utilities/validation-utilities";
+import {
+  emailRuleList,
+  firstNameRuleList,
+  lastNameRuleList,
+  localeRuleList,
+  phoneNumberRuleList,
+  roleRuleList,
+  usernameRuleList,
+  validatePassword,
+} from "../../../../utilities/validation-utilities";
 import { PasswordPolicyAlert } from "../../../../components/alerts/PasswordPolicyAlert";
 
 /**
@@ -119,92 +128,42 @@ export default function CreateNewUser() {
           <Form.Item
             label={i18n("CreateNewUser.form.username.label")}
             name="username"
-            rules={[
-              {
-                required: true,
-                message: i18n("CreateNewUser.form.username.required"),
-              },
-              {
-                min: 3,
-                message: i18n("CreateNewUser.form.username.min"),
-              },
-            ]}
+            rules={usernameRuleList}
           >
             <Input ref={usernameInput} />
           </Form.Item>
           <Form.Item
             label={i18n("CreateNewUser.form.firstName.label")}
             name="firstName"
-            rules={[
-              {
-                required: true,
-                message: i18n("CreateNewUser.form.firstName.required"),
-              },
-              {
-                min: 2,
-                message: i18n("CreateNewUser.form.firstName.min"),
-              },
-            ]}
+            rules={firstNameRuleList}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label={i18n("CreateNewUser.form.lastName.label")}
             name="lastName"
-            rules={[
-              {
-                required: true,
-                message: i18n("CreateNewUser.form.lastName.required"),
-              },
-              {
-                min: 2,
-                message: i18n("CreateNewUser.form.lastName.min"),
-              },
-            ]}
+            rules={lastNameRuleList}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label={i18n("CreateNewUser.form.email.label")}
             name="email"
-            rules={[
-              {
-                required: true,
-                message: i18n("CreateNewUser.form.email.required"),
-              },
-              {
-                type: "email",
-                message: i18n("CreateNewUser.form.email.type"),
-              },
-              {
-                min: 5,
-                message: i18n("CreateNewUser.form.email.min"),
-              },
-            ]}
+            rules={emailRuleList}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label={i18n("CreateNewUser.form.phoneNumber.label")}
             name="phoneNumber"
-            rules={[
-              {
-                min: 4,
-                message: i18n("CreateNewUser.form.phoneNumber.min"),
-              },
-            ]}
+            rules={phoneNumberRuleList}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label={i18n("CreateNewUser.form.locale.label")}
             name="locale"
-            rules={[
-              {
-                required: true,
-                message: i18n("CreateNewUser.form.locale.required"),
-              },
-            ]}
+            rules={localeRuleList}
           >
             <Select>
               {locales.map((locale, index) => (
@@ -221,12 +180,7 @@ export default function CreateNewUser() {
             <Form.Item
               label={i18n("CreateNewUser.form.role.label")}
               name="role"
-              rules={[
-                {
-                  required: true,
-                  message: i18n("CreateNewUser.form.role.required"),
-                },
-              ]}
+              rules={roleRuleList}
             >
               <Select>
                 {systemRoles.map((role, index) => (
@@ -278,7 +232,7 @@ export default function CreateNewUser() {
             <>
               <PasswordPolicyAlert />
               <Form.Item
-                label={i18n("CreateNewUser.form.label.password")}
+                label={i18n("CreateNewUser.form.password.label")}
                 name="password"
                 rules={[
                   ({}) => ({
