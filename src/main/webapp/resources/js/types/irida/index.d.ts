@@ -20,7 +20,7 @@ declare namespace IRIDA {
 
     interface Project extends IridaBase {
         description: string;
-        organism: string; // TODO (Josh - 6/7/22): Make own type?
+        organism: string;
         genomeSize: number;
         minimumCoverage: number;
         maximumCoverage: number;
@@ -33,7 +33,7 @@ declare namespace IRIDA {
 
     interface Sample extends IridaBase {
         description: string;
-        organism: string; // TODO (Josh - 6/7/22): this should probably be it's own type.
+        organism: string;
         isolate: string;
         strain: string;
         collectedBy: string;
