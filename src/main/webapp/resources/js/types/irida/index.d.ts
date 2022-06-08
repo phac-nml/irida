@@ -38,7 +38,7 @@ declare namespace IRIDA {
   interface NcbiBioSampleFile {
     id: number;
     bioSample: string;
-    files: SequenceFile[];
+    files: SingleEndSequenceFile[];
     pairs: SequenceFilePair[];
     instrumentModel: string;
     libraryName: string;

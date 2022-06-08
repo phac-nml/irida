@@ -2,12 +2,17 @@ import * as React from "react";
 import ExportUploadStateTag from "../../../../components/ncbi/ExportUploadStateTag";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
-import { NcbiSubmission } from "../../../../types/irida";
-import type { NcbiSubmissionDetail } from "./NcbiExportDetails.types";
+import {
+  NcbiBioSampleFile,
+  NcbiSubmission,
+  SequenceFilePair,
+  SingleEndSequenceFile,
+} from "../../../../types/irida";
+import { BasicListItem } from "../../../../components/lists/BasicList.types";
 
 export const formatNcbiUploadDetails = (
   submission: Omit<NcbiSubmission, "bioSampleFiles">
-): NcbiSubmissionDetail[] => {
+): BasicListItem[] => {
   const releaseDate = submission.releaseDate
     ? formatInternationalizedDateTime(submission.releaseDate)
     : "Not Released"; // TODO (Josh - 6/8/22): i18n
@@ -51,3 +56,59 @@ export const formatNcbiUploadDetails = (
     },
   ];
 };
+
+export interface BioSampleFileDetails {
+  key: string;
+  details: BasicListItem[];
+  files: {
+    singles: SingleEndSequenceFile[];
+    pairs: SequenceFilePair[];
+  };
+}
+
+export const formatNcbiUploadFiles = (
+  bioSampleFiles: NcbiBioSampleFile[]
+): BioSampleFileDetails[] =>
+  bioSampleFiles.map((bioSampleFile) => {
+    return {
+      key: bioSampleFile.bioSample,
+      details: [
+        {
+          title: i18n("project.export.biosample.title"),
+          desc: bioSampleFile.bioSample,
+        },
+        {
+          title: i18n("project.export.status"),
+          desc: bioSampleFile.submissionStatus, //<NcbiUploadState state={sample.submissionStatus} />,
+        },
+        {
+          title: i18n("project.export.accession"),
+          desc: bioSampleFile.accession,
+        },
+        {
+          title: i18n("project.export.library_name.title"),
+          desc: bioSampleFile.libraryName,
+        },
+        {
+          title: i18n("project.export.instrument_model.title"),
+          desc: bioSampleFile.instrumentModel,
+        },
+        {
+          title: i18n("project.export.library_strategy.title"),
+          desc: bioSampleFile.libraryStrategy,
+        },
+        {
+          title: i18n("project.export.library_source.title"),
+          desc: bioSampleFile.librarySource,
+        },
+        {
+          title: i18n("project.export.library_construction_protocol.title"),
+          desc: bioSampleFile.libraryConstructionProtocol,
+        },
+      ],
+      files: {
+        singles: bioSampleFile.files,
+        pairs: bioSampleFile.pairs,
+      },
+    };
+  });
