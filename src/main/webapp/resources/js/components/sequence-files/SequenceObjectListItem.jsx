@@ -65,12 +65,15 @@ export function SequenceObjectListItem({
         padding: 5,
       }}
     >
+      <div style={{marginTop: sequenceObject.qcEntries?.length ? -50 : 0}}>
       {displayConcatenationCheckbox && concatenationCheckbox}
+      </div>
       <Avatar
         style={{
           backgroundColor: blue6,
           verticalAlign: "middle",
           marginRight: 10,
+          marginTop: sequenceObject.qcEntries?.length ? -50 : 0
         }}
         icon={
           files?.length && files.length > 1 ? (
@@ -99,26 +102,13 @@ export function SequenceObjectListItem({
               </div>
             }
             description={
-              <Space
-                direction="vertical"
-                size="small"
-                style={{ width: "100%" }}
-              >
-                {formatInternationalizedDateTime(
+                formatInternationalizedDateTime(
                   files?.length
                     ? files[0].createdDate
                     : sequenceFile
                     ? sequenceFile.createdDate
                     : file.createdDate
-                )}
-
-                {displayFileProcessingStatus &&
-                sequenceObject.qcEntries !== null
-                  ? sequenceObject.qcEntries.map((entry) => {
-                      return getQcEntries(entry);
-                    })
-                  : null}
-              </Space>
+                )
             }
           />
         </List.Item>
@@ -133,23 +123,23 @@ export function SequenceObjectListItem({
                 </div>
               }
               description={
-                <Space
-                  direction="vertical"
-                  size="small"
-                  style={{ width: "100%" }}
-                >
-                  {formatInternationalizedDateTime(files[1].createdDate)}
-                  {displayFileProcessingStatus &&
-                  sequenceObject.qcEntries !== null
-                    ? sequenceObject.qcEntries.map((entry) => {
-                        return getQcEntries(entry);
-                      })
-                    : null}
-                </Space>
+               formatInternationalizedDateTime(files[1].createdDate)
               }
             />
           </List.Item>
         )}
+        {displayFileProcessingStatus &&
+        sequenceObject.qcEntries?.length ?
+          <List.Item>
+            <List.Item.Meta
+              title={
+                sequenceObject.qcEntries.map((entry) => {
+                  return getQcEntries(entry);
+                })
+              }
+            />
+          </List.Item>
+        : null}
       </List>
     </div>
   );
