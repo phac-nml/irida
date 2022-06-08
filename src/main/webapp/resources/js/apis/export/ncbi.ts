@@ -9,7 +9,6 @@ export async function getNcbiSubmission(
     const { data } = await axios.get(
       `/ajax/ncbi/project/${projectId}/details/${uploadId}`
     );
-    console.log(JSON.stringify(data, null, 2));
     return data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

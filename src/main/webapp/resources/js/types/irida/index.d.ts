@@ -35,7 +35,22 @@ declare namespace IRIDA {
     | "retired"
     | "unknown";
 
-  type NcbiSubmission = {
+  interface NcbiBioSampleFile {
+    id: number;
+    bioSample: string;
+    files: SequenceFile[];
+    pairs: SequenceFilePair[];
+    instrumentModel: string;
+    libraryName: string;
+    librarySelection: string;
+    librarySource: string;
+    libraryStrategy: string;
+    libraryConstructionProtocol: string;
+    status: ExportUploadState;
+    accession: string;
+  }
+
+  interface NcbiSubmission {
     id: number;
     project: Pick<Project, "id" | "name">;
     state: ExportUploadState;
@@ -45,8 +60,8 @@ declare namespace IRIDA {
     bioProject: string;
     ncbiNamespace: string;
     releaseDate: Date | null;
-    // Samples here
-  };
+    bioSampleFiles: NcbiBioSampleFile[];
+  }
 
   interface Project extends IridaBase {
     description: string;
@@ -76,7 +91,19 @@ declare namespace IRIDA {
     sequenceFiles: any[]; // TODO (Josh - 6/7/22): FLush this out
   }
 
-  export type SystemRole =
+  interface SequenceFile extends IridaBase {
+    // TODO (Josh - 6/8/22): Anything in here?
+  }
+
+  interface SequenceFilePair {
+    files: SequenceFile[];
+  }
+
+  interface SingleEndSequenceFile {
+    file: SequenceFile;
+  }
+
+  type SystemRole =
     | "ROLE_ANONYMOUS"
     | "ROLE_ADMIN"
     | "ROLE_USER"

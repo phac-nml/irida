@@ -16,7 +16,7 @@ public class NCBISubmission {
 	private final String bioProject;
 	private final String ncbiNamespace;
 	private final Date releaseDate;
-	private final List<NCBIBioSample> samples;
+	private final List<NcbiBioSampleFile> bioSampleFiles;
 
 	public NCBISubmission(NcbiExportSubmission submission) {
 		this.id = submission.getId();
@@ -29,7 +29,10 @@ public class NCBISubmission {
 		this.bioProject = submission.getBioProjectId();
 		this.ncbiNamespace = submission.getNcbiNamespace();
 		this.releaseDate = submission.getReleaseDate();
-		this.samples = submission.getBioSampleFiles().stream().map(NCBIBioSample::new).collect(Collectors.toList());
+		this.bioSampleFiles = submission.getBioSampleFiles()
+				.stream()
+				.map(NcbiBioSampleFile::new)
+				.collect(Collectors.toList());
 	}
 
 	public Long getId() {
@@ -68,7 +71,7 @@ public class NCBISubmission {
 		return releaseDate;
 	}
 
-	public List<NCBIBioSample> getSamples() {
-		return samples;
+	public List<NcbiBioSampleFile> getBioSampleFiles() {
+		return bioSampleFiles;
 	}
 }

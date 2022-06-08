@@ -6,7 +6,7 @@ import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 
-public class NCBIBioSample {
+public class NcbiBioSampleFile {
 	private final String id;
 	private final String bioSample;
 	private final String instrumentModel;
@@ -20,7 +20,7 @@ public class NCBIBioSample {
 	private final Set<SingleEndSequenceFile> singles;
 	private final Set<SequenceFilePair> pairs;
 
-	public NCBIBioSample(NcbiBioSampleFiles bioSample) {
+	public NcbiBioSampleFile(NcbiBioSampleFiles bioSample) {
 		this.id = bioSample.getId();
 		this.bioSample = bioSample.getBioSample();
 		this.instrumentModel = bioSample.getInstrumentModel().getValue();
