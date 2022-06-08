@@ -2,14 +2,10 @@ import { Table } from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
 import { getProjectNCBIExports } from "../../../apis/ncbi/ncbi";
-import {
-  getPaginationOptions
-} from "../../../utilities/antdesign-table-utilities";
-import {
-  formatInternationalizedDateTime
-} from "../../../utilities/date-utilities";
+import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import NcbiUploadStates from "../upload-states";
+import ExportUploadStateTag from "../ExportUploadStateTag";
 
 /**
  * Render a list of all Project NCBI Exports.
@@ -46,7 +42,7 @@ export function NcbiExportTable() {
     {
       title: i18n("NcbiExportTable.state"),
       dataIndex: "state",
-      render: (state) => <NcbiUploadStates state={state} />,
+      render: (state) => <ExportUploadStateTag state={state} />,
     },
     {
       title: i18n("NcbiExportTable.submitter"),

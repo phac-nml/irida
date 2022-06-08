@@ -1,6 +1,6 @@
 import React from "react";
 import { PagedTable } from "../../../../components/ant.design/PagedTable";
-import NcbiUploadStates from "../../../../components/ncbi/upload-states";
+import ExportUploadStateTag from "../../../../components/ncbi/ExportUploadStateTag";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 
@@ -30,7 +30,7 @@ export default function AdminNcbiExportsTable() {
     {
       title: i18n("NcbiExportTable.state"),
       dataIndex: "state",
-      render: (state) => <NcbiUploadStates state={state} />,
+      render: (state) => <ExportUploadStateTag state={state} />,
     },
     {
       title: i18n("NcbiExportTable.project"),

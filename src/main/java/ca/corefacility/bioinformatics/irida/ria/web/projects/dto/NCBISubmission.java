@@ -8,9 +8,9 @@ import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 
 public class NCBISubmission {
 	private final Long id;
-	private final ItemLabelAndId project;
+	private final ItemNameAndId project;
 	private final String state;
-	private final ItemLabelAndId submitter;
+	private final ItemNameAndId submitter;
 	private final Date createdDate;
 	private final String organization;
 	private final String bioProject;
@@ -20,9 +20,9 @@ public class NCBISubmission {
 
 	public NCBISubmission(NcbiExportSubmission submission) {
 		this.id = submission.getId();
-		this.project = new ItemLabelAndId(submission.getProject().getId(), submission.getProject().getLabel());
+		this.project = new ItemNameAndId(submission.getProject().getId(), submission.getProject().getLabel());
 		this.state = submission.getUploadState().name();
-		this.submitter = new ItemLabelAndId(submission.getSubmitter().getId(),
+		this.submitter = new ItemNameAndId(submission.getSubmitter().getId(),
 				submission.getSubmitter().getFirstName() + " " + submission.getSubmitter().getLastName());
 		this.createdDate = submission.getCreatedDate();
 		this.organization = submission.getOrganization();
@@ -36,7 +36,7 @@ public class NCBISubmission {
 		return id;
 	}
 
-	public ItemLabelAndId getProject() {
+	public ItemNameAndId getProject() {
 		return project;
 	}
 
@@ -44,7 +44,7 @@ public class NCBISubmission {
 		return state;
 	}
 
-	public ItemLabelAndId getSubmitter() {
+	public ItemNameAndId getSubmitter() {
 		return submitter;
 	}
 

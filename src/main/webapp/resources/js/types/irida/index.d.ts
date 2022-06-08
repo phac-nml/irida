@@ -22,7 +22,7 @@ declare namespace IRIDA {
     | "NEW"
     | "UPLOADING"
     | "UPLOADED"
-    | "UPLOADED_ERROR"
+    | "UPLOAD_ERROR"
     | "created"
     | "failed"
     | "queued"
@@ -34,6 +34,19 @@ declare namespace IRIDA {
     | "Submission deleted"
     | "retired"
     | "unknown";
+
+  type NcbiSubmission = {
+    id: number;
+    project: Pick<Project, "id" | "name">;
+    state: ExportUploadState;
+    submitter: Pick<User, "id" | "name">;
+    createdDate: Date;
+    organization: string;
+    bioProject: string;
+    ncbiNamespace: string;
+    releaseDate: Date | null;
+    // Samples here
+  };
 
   interface Project extends IridaBase {
     description: string;
