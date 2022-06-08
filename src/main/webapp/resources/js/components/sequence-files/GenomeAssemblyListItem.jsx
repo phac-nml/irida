@@ -36,9 +36,7 @@ export function GenomeAssemblyListItem({ genomeAssembly, actions = [] }) {
         <List.Item actions={actions}>
           <List.Item.Meta
             title={
-              <div
-                style={{ display: "flex", justifyContent: "space-between" }}
-              >
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <span>{label}</span>
               </div>
             }

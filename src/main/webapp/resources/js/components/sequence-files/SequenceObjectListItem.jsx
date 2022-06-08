@@ -65,15 +65,15 @@ export function SequenceObjectListItem({
         padding: 5,
       }}
     >
-      <div style={{marginTop: sequenceObject.qcEntries?.length ? -50 : 0}}>
-      {displayConcatenationCheckbox && concatenationCheckbox}
+      <div style={{ marginTop: sequenceObject.qcEntries?.length ? -50 : 0 }}>
+        {displayConcatenationCheckbox && concatenationCheckbox}
       </div>
       <Avatar
         style={{
           backgroundColor: blue6,
           verticalAlign: "middle",
           marginRight: 10,
-          marginTop: sequenceObject.qcEntries?.length ? -50 : 0
+          marginTop: sequenceObject.qcEntries?.length ? -50 : 0,
         }}
         icon={
           files?.length && files.length > 1 ? (
@@ -89,9 +89,7 @@ export function SequenceObjectListItem({
         <List.Item actions={actions}>
           <List.Item.Meta
             title={
-              <div
-                style={{ display: "flex", justifyContent: "space-between" }}
-              >
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <span>
                   {files?.length
                     ? files[0].label
@@ -101,15 +99,13 @@ export function SequenceObjectListItem({
                 </span>
               </div>
             }
-            description={
-                formatInternationalizedDateTime(
-                  files?.length
-                    ? files[0].createdDate
-                    : sequenceFile
-                    ? sequenceFile.createdDate
-                    : file.createdDate
-                )
-            }
+            description={formatInternationalizedDateTime(
+              files?.length
+                ? files[0].createdDate
+                : sequenceFile
+                ? sequenceFile.createdDate
+                : file.createdDate
+            )}
           />
         </List.Item>
         {files?.length && (
@@ -122,24 +118,21 @@ export function SequenceObjectListItem({
                   <span>{files[1].label}</span>
                 </div>
               }
-              description={
-               formatInternationalizedDateTime(files[1].createdDate)
-              }
+              description={formatInternationalizedDateTime(
+                files[1].createdDate
+              )}
             />
           </List.Item>
         )}
-        {displayFileProcessingStatus &&
-        sequenceObject.qcEntries?.length ?
+        {displayFileProcessingStatus && sequenceObject.qcEntries?.length ? (
           <List.Item>
             <List.Item.Meta
-              title={
-                sequenceObject.qcEntries.map((entry) => {
-                  return getQcEntries(entry);
-                })
-              }
+              title={sequenceObject.qcEntries.map((entry) => {
+                return getQcEntries(entry);
+              })}
             />
           </List.Item>
-        : null}
+        ) : null}
       </List>
     </div>
   );

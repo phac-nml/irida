@@ -218,7 +218,7 @@ export function SampleFileList() {
   /*
    Get the actions required for a Paired End -> Forward sequence file, single end sequence file, and/or fast5 object
    */
-  const getActionsForSequencingObject = (seqObj, index= -1) => {
+  const getActionsForSequencingObject = (seqObj, index = -1) => {
     let actions = [];
 
     const obj = seqObj.fileInfo
@@ -230,7 +230,7 @@ export function SampleFileList() {
     if (isModifiable && obj.files && obj.files.length === 2) {
       if (
         (sample.defaultSequencingObject !== null &&
-        obj.identifier === sample.defaultSequencingObject.identifier) ||
+          obj.identifier === sample.defaultSequencingObject.identifier) ||
         (sample.defaultSequencingObject === null && index === 0)
       ) {
         actions.push(
@@ -241,9 +241,7 @@ export function SampleFileList() {
       } else {
         actions.push(
           <Tooltip
-            title={
-              i18n("SampleFilesList.tooltip.setAsDefault")
-            }
+            title={i18n("SampleFilesList.tooltip.setAsDefault")}
             placement="top"
           >
             <Button
@@ -268,7 +266,11 @@ export function SampleFileList() {
         onClick={() => {
           downloadSequenceFile({
             sequencingObjectId: obj.identifier,
-            sequenceFileId: obj.files[0].identifier,
+            sequenceFileId: obj.files?.length
+              ? obj.files[0].identifier
+              : obj.sequenceFile
+              ? obj.sequenceFile.identifier
+              : obj.file.identifier,
           });
         }}
       >
@@ -295,9 +297,7 @@ export function SampleFileList() {
           }}
         >
           <Tooltip
-            title={
-              i18n("SampleFilesList.tooltip.remove")
-            }
+            title={i18n("SampleFilesList.tooltip.remove")}
             placement="top"
           >
             <Button
