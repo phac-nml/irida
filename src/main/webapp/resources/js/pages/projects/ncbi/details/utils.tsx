@@ -79,7 +79,7 @@ export const formatNcbiUploadFiles = (
         },
         {
           title: i18n("project.export.status"),
-          desc: bioSampleFile.submissionStatus, //<NcbiUploadState state={sample.submissionStatus} />,
+          desc: <ExportUploadStateTag state={bioSampleFile.status} />,
         },
         {
           title: i18n("project.export.accession"),

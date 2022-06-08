@@ -15,7 +15,7 @@ public class NcbiBioSampleFile {
 	private final String librarySource;
 	private final String libraryStrategy;
 	private final String libraryConstructionProtocol;
-	private final String submissionStatus;
+	private final String status;
 	private final String accession;
 	private final Set<SingleEndSequenceFile> singles;
 	private final Set<SequenceFilePair> pairs;
@@ -29,7 +29,7 @@ public class NcbiBioSampleFile {
 		this.librarySource = bioSample.getLibrarySource().getValue();
 		this.libraryStrategy = bioSample.getLibraryStrategy().getValue();
 		this.libraryConstructionProtocol = bioSample.getLibraryConstructionProtocol();
-		this.submissionStatus = bioSample.getSubmissionStatus().toString();
+		this.status = bioSample.getSubmissionStatus().toString();
 		this.accession = bioSample.getAccession();
 		this.singles = bioSample.getFiles();
 		this.pairs = bioSample.getPairs();
@@ -67,8 +67,8 @@ public class NcbiBioSampleFile {
 		return libraryConstructionProtocol;
 	}
 
-	public String getSubmissionStatus() {
-		return submissionStatus;
+	public String getStatus() {
+		return status;
 	}
 
 	public String getAccession() {

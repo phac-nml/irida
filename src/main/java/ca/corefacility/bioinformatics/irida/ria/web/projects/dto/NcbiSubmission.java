@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 
-public class NCBISubmission {
+public class NcbiSubmission {
 	private final Long id;
 	private final ItemNameAndId project;
 	private final String state;
@@ -18,7 +18,7 @@ public class NCBISubmission {
 	private final Date releaseDate;
 	private final List<NcbiBioSampleFile> bioSampleFiles;
 
-	public NCBISubmission(NcbiExportSubmission submission) {
+	public NcbiSubmission(NcbiExportSubmission submission) {
 		this.id = submission.getId();
 		this.project = new ItemNameAndId(submission.getProject().getId(), submission.getProject().getLabel());
 		this.state = submission.getUploadState().name();
