@@ -155,7 +155,7 @@ Example:
     <script id="cart-translations" th:inline="javascript" th:fragment="i18n">
         window.translations = window.translations || [];
         window.translations.unshift({
-            "SampleDetailsSidebar.removeFromCart": /*[[#{SampleDetailsSidebar.removeFromCart}]]*/ "",
+            "SampleDetailsViewer.removeFromCart": /*[[#{SampleDetailsViewer.removeFromCart}]]*/ "",
             "SampleDetails.metadata": /*[[#{SampleDetails.metadata}]]*/ "",
             "SampleDetails.files": /*[[#{SampleDetails.files}]]*/ "",
             "SampleFiles.singles": /*[[#{SampleFiles.singles}]]*/ "",
@@ -188,7 +188,7 @@ Example:
     <script id="cart-translations">
         window.translations = window.translations || [];
         window.translations.unshift({
-            "SampleDetailsSidebar.removeFromCart": "Remove From Cart",
+            "SampleDetailsViewer.removeFromCart": "Remove From Cart",
             "SampleDetails.metadata": "Metadata",
             "SampleDetails.files": "Files",
             "SampleFiles.singles": "Single End Data",

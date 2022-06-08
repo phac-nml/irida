@@ -20,10 +20,10 @@ import { generateColourForItem } from "../../utilities/colour-utilities";
 const { Text } = Typography;
 
 export interface DisplaySampleDetailsProps {
-    sampleId: number;
-    projectId: number;
-    displayActions?: boolean;
-    children: React.ReactNode;
+  sampleId: number;
+  projectId: number;
+  displayActions?: boolean;
+  children: React.ReactNode;
 }
 
 /**
@@ -150,7 +150,7 @@ function DisplaySampleDetails({
                       style={{ marginRight: 30 }}
                       onClick={addSampleToCart}
                     >
-                      Add To Cart
+                      {i18n("SampleDetailsViewer.addToCart")}
                     </Button>
                   ) : (
                     <Button
@@ -160,7 +160,7 @@ function DisplaySampleDetails({
                       style={{ marginRight: 30 }}
                       onClick={removeSampleFromCart}
                     >
-                      {i18n("SampleDetailsSidebar.removeFromCart")}
+                      {i18n("SampleDetailsViewer.removeFromCart")}
                     </Button>
                   )
                 ) : null}
@@ -196,12 +196,11 @@ function DisplaySampleDetails({
  */
 
 export interface SampleDetailViewerProps {
-    sampleId: number;
-    projectId: number;
-    displayActions?: boolean;
-    children: React.ReactNode;
+  sampleId: number;
+  projectId: number;
+  displayActions?: boolean;
+  children: React.ReactNode;
 }
-
 
 export function SampleDetailViewer({
   sampleId,
