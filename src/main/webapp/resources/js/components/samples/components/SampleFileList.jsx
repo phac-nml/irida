@@ -324,12 +324,7 @@ export function SampleFileList() {
    */
   const getActionsForSequencingObjectPairedReverse = (seqObj) => {
     let actions = [];
-
-    const obj = seqObj.fileInfo
-      ? seqObj.fileInfo
-      : seqObj.file
-      ? seqObj.file
-      : seqObj;
+    const { fileInfo: obj } = seqObj;
 
     actions.push(
       <Button
