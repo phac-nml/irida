@@ -86,11 +86,21 @@ export function SequenceObjectListItem({
         }
       />
       <List style={{ width: `100%` }} itemLayout="horizontal" component="div">
-        <List.Item actions={actions}>
+        <List.Item
+          actions={actions}
+          className="t-file-details"
+          key={
+            files?.length
+              ? files[0].identifier
+              : sequenceFile
+              ? sequenceFile.identifier
+              : file.identifier
+          }
+        >
           <List.Item.Meta
             title={
               <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>
+                <span className="t-file-label">
                   {files?.length
                     ? files[0].label
                     : sequenceFile
@@ -109,13 +119,17 @@ export function SequenceObjectListItem({
           />
         </List.Item>
         {files?.length && (
-          <List.Item actions={pairedReverseActions}>
+          <List.Item
+            actions={pairedReverseActions}
+            className="t-file-details"
+            key={files[1].identifier}
+          >
             <List.Item.Meta
               title={
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span>{files[1].label}</span>
+                  <span className="t-file-label">{files[1].label}</span>
                 </div>
               }
               description={formatInternationalizedDateTime(
@@ -125,7 +139,7 @@ export function SequenceObjectListItem({
           </List.Item>
         )}
         {displayFileProcessingStatus && sequenceObject.qcEntries?.length ? (
-          <List.Item>
+          <List.Item key={`qc-entry-${obj.identifier}`}>
             <List.Item.Meta
               title={sequenceObject.qcEntries.map((entry) => {
                 return getQcEntries(entry);

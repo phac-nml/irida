@@ -33,11 +33,11 @@ export function GenomeAssemblyListItem({ genomeAssembly, actions = [] }) {
         icon={<FileOutlined />}
       />
       <List style={{ width: `100%` }} itemLayout="horizontal">
-        <List.Item actions={actions}>
+        <List.Item actions={actions} className="t-file-details">
           <List.Item.Meta
             title={
               <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>{label}</span>
+                <span className="t-file-label">{label}</span>
               </div>
             }
             description={formatInternationalizedDateTime(createdDate)}
