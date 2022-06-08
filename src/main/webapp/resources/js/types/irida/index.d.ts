@@ -96,10 +96,14 @@ declare namespace IRIDA {
   }
 
   interface SequenceFilePair {
+    label: string;
+    identifier: number;
     files: SequenceFile[];
   }
 
   interface SingleEndSequenceFile {
+    label: string;
+    identifier: number;
     file: SequenceFile;
   }
 
