@@ -1,28 +1,52 @@
-target/
-.idea/*
-.vscode/*
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+gradle-app.setting
+!gradle-wrapper.properties
+.gradletasknamecache
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
 .classpath
+.factorypath
 .project
 .settings
-.checkstyle
-build/
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ##
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### VS Code ###
+.vscode/
+
+### MAC OS ###
 .DS_Store/
-irida.iml
-phantomjsdriver.log
-node_modules
-.sass-cache
-/src/main/java/a
+
+### Docs ###
 doc/_site
-*.swp
-/.idea/
-/.vscode/
-src/main/webapp/node
-/src/main/webapp/dist
-/src/main/webapp/pages/templates/i18n/*.html
 /doc/.jekyll-cache/Jekyll/Cache/
 /doc/developer/apidocs
+doc/swagger-ui/open-api.json
 
-# YARN
+### Frontend ###
+src/main/webapp/node
+src/main/webapp/node_modules
+/src/main/webapp/dist
+/src/main/webapp/pages/templates/i18n/*.html
+
+### YARN ###
 /src/main/webapp/.pnp.*
 /src/main/webapp/.yarn/*
 !/src/main/webapp/.yarn/patches
@@ -30,29 +54,8 @@ src/main/webapp/node
 !/src/main/webapp/.yarn/releases
 !/src/main/webapp/.yarn/sdks
 !/src/main/webapp/.yarn/versions
-
-doc/swagger-ui/open-api.json
-/.theia/launch.json
 /yarn.lock
 
-.gradle
-**/build/
-!src/**/build/
-
-# Ignore Gradle GUI config
-gradle-app.setting
-
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
-
-# Avoid ignore Gradle wrappper properties
-!gradle-wrapper.properties
-
-# Cache of project
-.gradletasknamecache
-
-# Eclipse Gradle plugin generated files
-# Eclipse Core
-.project
-# JDT-specific (Eclipse Java Development Tools)
-.classpath
+### MISC ###
+/.theia/launch.json
+*.swp
