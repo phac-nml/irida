@@ -5,13 +5,15 @@ import { Provider } from "react-redux";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { ContentLoading } from "../../components/loader";
 import store from "./store";
-import { SequencingRunCreateSamples } from "./components/SequencingRunCreateSamples";
 
 const SequencingRunListPage = React.lazy(() =>
   import("./components/SequencingRunListPage")
 );
 const SequencingRunDetailsPage = React.lazy(() =>
   import("./components/SequencingRunDetailsPage")
+);
+const SequencingRunCreateSamplesPage = React.lazy(() =>
+  import("./components/SequencingRunCreateSamplesPage")
 );
 
 /*
@@ -35,8 +37,8 @@ render(
           <Route path="/" element={<SequencingRunListPage />} />
           <Route path="/:runId" element={<SequencingRunDetailsPage />} />
           <Route
-            path="/:runId/samples/create"
-            element={<SequencingRunCreateSamples />}
+            path="/:runId/samples"
+            element={<SequencingRunCreateSamplesPage />}
           />
         </Routes>
       </React.Suspense>

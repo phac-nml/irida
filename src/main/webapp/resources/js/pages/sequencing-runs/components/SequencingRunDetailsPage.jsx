@@ -126,7 +126,7 @@ export default function SequencingRunDetailsPage() {
       onBack={showBack ? goToAdminSequenceRunListPage : undefined}
       headerExtras={
         <AddNewButton
-          href={setBaseUrl(`sequencing-runs/${runId}/samples/create`)}
+          href={setBaseUrl(`sequencing-runs/${runId}/samples`)}
           text={i18n("SequencingRunDetailsPage.button")}
         />
       }

@@ -1,10 +1,11 @@
 import React from "react";
 import { useDrop } from "react-dnd";
-import { List } from "antd";
+import { Empty, List } from "antd";
 
 /**
  * React component to render a drag'n'drop list.
  * @param {string} name - name of the drag'n'drop item
+ * @param {string} emptyDescription - message to be displayed when list is empty
  * @param {string} type - type of the drag'n'drop item
  * @param {boolean} dropCondition - whether the drag'n'drop item should be dropped
  * @param {object} children - content to display in list
@@ -13,6 +14,7 @@ import { List } from "antd";
  */
 export function DnDList({
   name,
+  emptyDescription,
   type = "card",
   dropCondition = true,
   children,
@@ -37,7 +39,14 @@ export function DnDList({
 
   return (
     <div ref={drop}>
-      <List {...props}>{children}</List>
+      {props.dataSource.length === 0 ? (
+        <Empty
+          description={emptyDescription}
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+        />
+      ) : (
+        <List {...props}>{children}</List>
+      )}
     </div>
   );
 }
