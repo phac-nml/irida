@@ -27,11 +27,15 @@ export function SequencingRunCreateSamples() {
     return files.filter((item) => item.list === listName);
   };
 
+  const returnCountForList = (listName) => {
+    return returnItemsForList(listName).length;
+  };
+
   const addNewSample = () => {
     setSamples([
       {
         sampleName: "Sample " + samples.length,
-        list: "New Sample List " + samples.length,
+        list: "samplesList" + samples.length,
       },
       ...samples,
     ]);
@@ -57,6 +61,7 @@ export function SequencingRunCreateSamples() {
                   <Card title={item.sampleName}>
                     <DnDList
                       name={item.list}
+                      dropCondition={returnCountForList(item.list) < 2}
                       grid={{ column: 2 }}
                       dataSource={returnItemsForList(item.list)}
                       renderItem={(item) => (
@@ -79,7 +84,7 @@ export function SequencingRunCreateSamples() {
             <DnDList
               name="filesList"
               grid={{ column: 1 }}
-              dataSource={returnItemsForList("Sequencing File List")}
+              dataSource={returnItemsForList("filesList")}
               renderItem={(item) => (
                 <List.Item>
                   <DnDCard id={item.id} setList={setFiles}>

@@ -31,7 +31,7 @@ export const sequencingRunsApi = createApi({
       }),
       transformResponse(response, meta) {
         return response.map((file) => {
-          return { ...file, list: "Sequencing File List" };
+          return { ...file, list: "filesList" };
         });
       },
     }),
