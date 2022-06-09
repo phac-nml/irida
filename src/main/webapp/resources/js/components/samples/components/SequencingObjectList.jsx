@@ -1,5 +1,13 @@
 import React from "react";
-import { Button, Checkbox, notification, Popconfirm, Tag, Tooltip } from "antd";
+import {
+  Button,
+  Checkbox,
+  notification,
+  Popconfirm,
+  Space,
+  Tag,
+  Tooltip,
+} from "antd";
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -345,7 +353,7 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
   };
 
   return (
-    <>
+    <Space size="large" direction="vertical" style={{ width: `100%` }}>
       {files.singles && (
         <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>
           {files.singles.map((sequenceObject) => (
@@ -395,6 +403,6 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
           ))}
         </SequenceFileTypeRenderer>
       )}
-    </>
+    </Space>
   );
 }
