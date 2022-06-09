@@ -90,24 +90,23 @@ export function SampleMetadata() {
         {isModifiable && (
           <Space size="small" direction="horizontal">
             <Button
-              shape="circle"
-              icon={
-                <IconEdit
-                  onClick={() => {
-                    dispatch(
-                      setEditSampleMetadata({
-                        editModalVisible: true,
-                        field: item.metadataTemplateField,
-                        fieldId: item.fieldId,
-                        entryId: item.entryId,
-                        entry: item.metadataEntry,
-                        restriction: item.metadataRestriction,
-                      })
-                    );
-                  }}
-                />
-              }
-            />
+              type="link"
+              style={{ padding: 0 }}
+              onClick={() => {
+                dispatch(
+                  setEditSampleMetadata({
+                    editModalVisible: true,
+                    field: item.metadataTemplateField,
+                    fieldId: item.fieldId,
+                    entryId: item.entryId,
+                    entry: item.metadataEntry,
+                    restriction: item.metadataRestriction,
+                  })
+                );
+              }}
+            >
+              {i18n("SampleMetadata.button.edit")}
+            </Button>
             <Popconfirm
               placement={"topRight"}
               title={i18n(
@@ -119,7 +118,9 @@ export function SampleMetadata() {
               }
               okText="Confirm"
             >
-              <Button shape="circle" icon={<IconRemove />} />
+              <Button type="link" style={{ padding: 0 }}>
+                {i18n("SampleMetadata.button.remove")}
+              </Button>
             </Popconfirm>
           </Space>
         )}

@@ -41,7 +41,6 @@ export class SampleRenderer extends React.Component {
           <Space>
             <SampleDetailViewer
               sampleId={sample.id}
-              removeSample={this.props.removeSample}
               projectId={this.props.data.project.id}
             >
               <Button
