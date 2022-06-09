@@ -39,7 +39,7 @@ declare namespace IRIDA {
     id: number;
     bioSample: string;
     files: SingleEndSequenceFile[];
-    pairs: SequenceFilePair[];
+    pairs: PairedEndSequenceFile[];
     instrumentModel: string;
     libraryName: string;
     librarySelection: string;
@@ -95,9 +95,7 @@ declare namespace IRIDA {
     // TODO (Josh - 6/8/22): Anything in here?
   }
 
-  interface SequenceFilePair {
-    label: string;
-    identifier: number;
+  interface PairedEndSequenceFile extends IridaBase {
     files: SequenceFile[];
   }
 

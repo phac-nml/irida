@@ -1,10 +1,7 @@
 import * as React from "react";
-import {
-  SequenceFilePair,
-  SingleEndSequenceFile,
-} from "../../../../types/irida";
+import {PairedEndSequenceFile, SingleEndSequenceFile,} from "../../../../types/irida";
 
-type File = SingleEndSequenceFile | SequenceFilePair;
+type File = SingleEndSequenceFile | PairedEndSequenceFile;
 
 type BioSampleFileProps = {
   bioSampleFile: File;

@@ -1,14 +1,14 @@
 import * as React from "react";
 import ExportUploadStateTag from "../../../../components/ncbi/ExportUploadStateTag";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
+import {setBaseUrl} from "../../../../utilities/url-utilities";
+import {formatInternationalizedDateTime} from "../../../../utilities/date-utilities";
 import {
   NcbiBioSampleFile,
   NcbiSubmission,
-  SequenceFilePair,
+  PairedEndSequenceFile,
   SingleEndSequenceFile,
 } from "../../../../types/irida";
-import { BasicListItem } from "../../../../components/lists/BasicList.types";
+import {BasicListItem} from "../../../../components/lists/BasicList.types";
 
 export const formatNcbiUploadDetails = (
   submission: Omit<NcbiSubmission, "bioSampleFiles">
@@ -62,7 +62,7 @@ export interface BioSampleFileDetails {
   details: BasicListItem[];
   files: {
     singles: SingleEndSequenceFile[];
-    pairs: SequenceFilePair[];
+    pairs: PairedEndSequenceFile[];
   };
 }
 
