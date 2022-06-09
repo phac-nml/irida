@@ -32,9 +32,7 @@ export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
    Get the actions required for a Genome Assembly
    */
   const getActionsForGenomeAssembly = (genomeAssembly) => {
-    let actions = [];
-
-    actions.push(
+    let actions = [
       <Button
         type="link"
         style={{ padding: 0 }}
@@ -47,8 +45,8 @@ export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
         }}
       >
         {i18n("SampleFilesList.download")}
-      </Button>
-    );
+      </Button>,
+    ];
 
     if (isModifiable) {
       actions.push(

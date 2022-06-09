@@ -6,7 +6,7 @@ import {
   SwapOutlined,
   SwapRightOutlined,
 } from "@ant-design/icons";
-import { blue6 } from "../../styles/colors";
+import { blue6, grey3 } from "../../styles/colors";
 
 /**
  * Component to be used anywhere sequencing objects need to be listed
@@ -30,6 +30,13 @@ export function SequenceObjectListItem({
     : sequenceObject.file
     ? sequenceObject.file
     : sequenceObject;
+
+  /*
+   If there are qc entries then another list item is added to the sequencing object which causes the
+   avatar to shift vertically. This constant restores the location of the avatar to be beside the files.
+   Same applies if concatenation checkboxes are present.
+   */
+  const ELEMENT_ALIGN_MARGIN_TOP = sequenceObject.qcEntries?.length ? -50 : 0;
 
   const { files, sequenceFile, file } = obj;
 
@@ -59,12 +66,12 @@ export function SequenceObjectListItem({
         justifyContent: "space-between",
         alignItems: "center",
         width: `100%`,
-        border: "solid 1px #EEE",
+        border: `solid 1px ${grey3}`,
         padding: 5,
       }}
     >
       {displayConcatenationCheckbox !== null && (
-        <div style={{ marginTop: sequenceObject.qcEntries?.length ? -50 : 0 }}>
+        <div style={{ marginTop: ELEMENT_ALIGN_MARGIN_TOP }}>
           {displayConcatenationCheckbox}
         </div>
       )}
@@ -73,7 +80,7 @@ export function SequenceObjectListItem({
           backgroundColor: blue6,
           verticalAlign: "middle",
           marginRight: 10,
-          marginTop: sequenceObject.qcEntries?.length ? -50 : 0,
+          marginTop: ELEMENT_ALIGN_MARGIN_TOP,
         }}
         icon={
           files?.length && files.length > 1 ? (
@@ -86,58 +93,80 @@ export function SequenceObjectListItem({
         }
       />
       <List style={{ width: `100%` }} itemLayout="horizontal" component="div">
-        <List.Item
-          actions={actions}
-          className="t-file-details"
-          key={
-            files?.length
-              ? files[0].identifier
-              : sequenceFile
-              ? sequenceFile.identifier
-              : file.identifier
-          }
-        >
-          <List.Item.Meta
-            title={
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span className="t-file-label">
-                  {files?.length
-                    ? files[0].label
+        {files?.length ? (
+          <div>
+            <List.Item
+              actions={actions}
+              className="t-file-details"
+              key={`seqobj-pair-forward-${files[0].identifier}`}
+            >
+              <List.Item.Meta
+                title={
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <span className="t-file-label">{files[0].label}</span>
+                  </div>
+                }
+                description={formatInternationalizedDateTime(
+                  files?.length
+                    ? files[0].createdDate
                     : sequenceFile
-                    ? sequenceFile.label
-                    : file.label}
-                </span>
-              </div>
-            }
-            description={formatInternationalizedDateTime(
-              files?.length
-                ? files[0].createdDate
-                : sequenceFile
-                ? sequenceFile.createdDate
-                : file.createdDate
-            )}
-          />
-        </List.Item>
-        {files?.length && (
+                    ? sequenceFile.createdDate
+                    : file.createdDate
+                )}
+              />
+            </List.Item>
+            <List.Item
+              actions={pairedReverseActions}
+              className="t-file-details"
+              key={`seqobj-pair-reverse-${files[1].identifier}`}
+            >
+              <List.Item.Meta
+                title={
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <span className="t-file-label">{files[1].label}</span>
+                  </div>
+                }
+                description={formatInternationalizedDateTime(
+                  files[1].createdDate
+                )}
+              />
+            </List.Item>
+          </div>
+        ) : (
           <List.Item
-            actions={pairedReverseActions}
+            actions={actions}
             className="t-file-details"
-            key={files[1].identifier}
+            key={`seqobj-file-${
+              sequenceFile ? sequenceFile.identifier : file.identifier
+            }`}
           >
             <List.Item.Meta
               title={
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span className="t-file-label">{files[1].label}</span>
+                  <span className="t-file-label">
+                    {sequenceFile ? sequenceFile.label : file.label}
+                  </span>
                 </div>
               }
               description={formatInternationalizedDateTime(
-                files[1].createdDate
+                sequenceFile ? sequenceFile.createdDate : file.createdDate
               )}
             />
           </List.Item>
         )}
+
         {displayFileProcessingStatus && sequenceObject.qcEntries?.length ? (
           <List.Item key={`qc-entry-${obj.identifier}`}>
             <List.Item.Meta

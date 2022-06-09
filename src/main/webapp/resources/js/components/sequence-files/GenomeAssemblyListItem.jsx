@@ -2,7 +2,7 @@ import React from "react";
 import { Avatar, List } from "antd";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { FileOutlined } from "@ant-design/icons";
-import { blue6 } from "../../styles/colors";
+import { blue6, grey3 } from "../../styles/colors";
 
 /**
  * Component to be used anywhere genome assemblies need to be listed
@@ -20,7 +20,7 @@ export function GenomeAssemblyListItem({ genomeAssembly, actions = [] }) {
         justifyContent: "space-between",
         alignItems: "center",
         width: `100%`,
-        border: "solid 1px #EEE",
+        border: `solid 1px ${grey3}`,
         padding: 5,
       }}
     >

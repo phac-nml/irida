@@ -69,7 +69,12 @@ export function SampleFiles() {
    Get the sample files and set them in the redux store on component load
    and to refetch if the sample identifier or project change
    */
-  React.useEffect(getSampleFiles, [sample.identifier, projectId]);
+  React.useEffect(() => {
+    if (Object.keys(files).length !== 0) {
+      dispatch(setSampleFiles({}));
+    }
+    getSampleFiles();
+  }, [sample.identifier, projectId]);
 
   /*
   Call function to upload files to server once files are
