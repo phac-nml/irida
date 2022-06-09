@@ -181,6 +181,13 @@ function DisplaySampleDetails({
   );
 }
 
+export interface SampleDetailViewerProps {
+  sampleId: Pick<Sample, "id">;
+  projectId: Pick<Project, "id">;
+  displayActions?: boolean;
+  children: React.ReactNode;
+}
+
 /**
  * React component to provide redux store to sampledetailviewer
  * @param sampleId - identifier for a sample
@@ -190,14 +197,6 @@ function DisplaySampleDetails({
  * @returns {JSX.Element}
  * @constructor
  */
-
-export interface SampleDetailViewerProps {
-  sampleId: Pick<Sample, "id">;
-  projectId: Pick<Project, "id">;
-  displayActions?: boolean;
-  children: React.ReactNode;
-}
-
 export function SampleDetailViewer({
   sampleId,
   projectId,
