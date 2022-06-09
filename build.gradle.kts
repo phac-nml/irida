@@ -1,13 +1,13 @@
 plugins {
-    id("org.gradle.test-retry") version "1.4.0"
-    id("org.springframework.boot") version "2.6.6"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    id("org.siouan.frontend-jdk11") version "6.0.0"
-    id("org.springdoc.openapi-gradle-plugin") version "1.3.4"
-    base
-    java
-    `maven-publish`
-    war
+    id("base")
+    id("java")
+    id("maven-publish")
+    id("war")
+    id("org.gradle.test-retry")
+    id("org.springframework.boot")
+    id("io.spring.dependency-management")
+    id("org.siouan.frontend-jdk11")
+    id("org.springdoc.openapi-gradle-plugin")
 }
 
 group = "ca.corefacility.bioinformatics"
@@ -194,7 +194,7 @@ dependencies {
     testImplementation("org.seleniumhq.selenium:selenium-support:3.141.59")
     testImplementation("org.seleniumhq.selenium:selenium-chrome-driver:3.141.59")
     testImplementation("org.mockftpserver:MockFtpServer:2.6")
-    providedCompile("org.springframework.boot:spring-boot-starter-tomcat")
+    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 }
 
 tasks.register<Zip>("packageDistribution") {
@@ -253,7 +253,6 @@ tasks.war {
 
 tasks.bootRun {
     dependsOn(":assembleFrontend")
-    systemProperties(System.getProperties().mapKeys { it.key as String })
 }
 
 frontend {
@@ -277,6 +276,8 @@ tasks.withType<Test> {
     }
 }
 
+val permittedTestSystemProperties = listOf("java.io.tmpdir", "server.base.url", "server.port", "file.processing.decompress", "spring.datasource.dbcp2.max-wait", "webdriver.chrome.driver", "webdriver.selenium.url", "test.galaxy.url", "test.galaxy.invalid.url", "test.galaxy.invalid.url2")
+
 fun createIntegrationTestTask(name: String, tags: String?, excludeListeners: String?): TaskProvider<Test> {
     return tasks.register<Test>("${name}ITest") {
         val defaultSystemProperties = mapOf(
@@ -292,7 +293,8 @@ fun createIntegrationTestTask(name: String, tags: String?, excludeListeners: Str
             "output.file.base.directory" to "${temporaryDir}/output-file-base"
         )
         val providedSystemProperties = System.getProperties().mapKeys { it.key as String }
-        systemProperties(defaultSystemProperties + providedSystemProperties)
+        val filteredProvidedSystemProperties = providedSystemProperties.filterKeys { it !in permittedTestSystemProperties && it !in defaultSystemProperties}
+        systemProperties(defaultSystemProperties + filteredProvidedSystemProperties)
 
         useJUnitPlatform {
             includeTags(tags)
