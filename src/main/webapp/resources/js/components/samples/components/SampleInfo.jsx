@@ -20,6 +20,7 @@ import { EditMetadata } from "./EditMetadata";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
 import { updateDetails } from "../sampleSlice";
+import { EditableParagraph } from "../../ant.design";
 
 const DEFAULT_HEIGHT = 600;
 
@@ -53,16 +54,16 @@ export function SampleInfo() {
       field,
       value: value || "",
     })
+      .unwrap()
       .then((response) => {
-        if (response.error) {
-          notification.error({ message: response.error.data.error });
-        } else {
-          dispatch(updateDetails({ field, value: value || "" }));
-          notification.success({ message: response.data.message });
-        }
+        let formattedVal = moment.isMoment(value)
+          ? value.format(dateFormat)
+          : value || "";
+        dispatch(updateDetails({ field, value: formattedVal }));
+        notification.success({ message: response.message });
       })
       .catch((error) => {
-        notification.error({ message: error });
+        notification.error({ message: error.data.error });
       });
   };
 
@@ -116,13 +117,18 @@ export function SampleInfo() {
     {
       title: i18n("SampleInfo.organism"),
       value: isModifiable ? (
-        <OntologyInput
-          term={sample.organism}
-          ontology={TAXONOMY}
-          onTermSelected={(value) => updateField("organism", value)}
-          className="t-sample-organism"
-          autofocus={false}
-        />
+        <EditableParagraph
+          value={sample.organism}
+          valueClassName="t-project-organism"
+        >
+          <OntologyInput
+            term={sample.organism}
+            ontology={TAXONOMY}
+            onTermSelected={(value) => updateField("organism", value)}
+            className="t-sample-organism"
+            autofocus={false}
+          />
+        </EditableParagraph>
       ) : (
         <span className="t-sample-organism">{sample.organism}</span>
       ),
@@ -169,17 +175,23 @@ export function SampleInfo() {
     {
       title: i18n("SampleInfo.dateCollected"),
       value: isModifiable ? (
-        <DatePicker
-          onChange={(value) => updateField("collectionDate", value)}
-          defaultValue={
-            sample.collectionDate !== null
-              ? moment(sample.collectionDate, dateFormat)
-              : ""
-          }
-          format={dateFormat}
-          allowClear={false}
-          className="t-sample-collected-date"
-        />
+        <EditableParagraph
+          value={sample.collectionDate}
+          valueClassName="t-sample-collected-date-value"
+        >
+          <DatePicker
+            onChange={(value) => updateField("collectionDate", value)}
+            defaultValue={
+              sample.collectionDate !== null
+                ? moment(sample.collectionDate, dateFormat)
+                : ""
+            }
+            format={dateFormat}
+            allowClear={false}
+            className="t-sample-collected-date"
+            disabledDate={(current) => current.isAfter(moment())}
+          />
+        </EditableParagraph>
       ) : (
         <span className="t-sample-collected-date">{sample.collectionDate}</span>
       ),

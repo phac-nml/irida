@@ -93,6 +93,12 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "ant-table-row")
 	private List<WebElement> sampleAnalysesList;
 
+	@FindBy(className = "t-add-sample-to-cart")
+	private WebElement addSampleToCartBtn;
+
+	@FindBy(className = "t-remove-sample-from-cart")
+	private WebElement removeSampleFromCartBtn;
+
 
 	public SampleDetailsViewer(WebDriver driver) {
 		super(driver);
@@ -282,7 +288,7 @@ public class SampleDetailsViewer extends AbstractPage {
 		removeFileBtns.get(index).click();
 		waitForTime(500);
 		confirmBtns.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 20);
+		WebDriverWait wait = new WebDriverWait(driver, 30);
 		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.className("ant-notification"))));
 	}
 
@@ -325,9 +331,35 @@ public class SampleDetailsViewer extends AbstractPage {
 		waitForTime(500);
 	}
 
+
 	public void clickSampleName() {
 		WebElement ele = driver.findElement(By.className("t-file-label"));
 		ele.click();
+	}
+
+	public boolean isAddSampleToCartButtonVisible() {
+		try {
+			return addSampleToCartBtn.isDisplayed();
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public boolean isRemoveSampleFromCartButtonVisible() {
+		try {
+			return removeSampleFromCartBtn.isDisplayed();
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public void clickAddSampleToCartButton() {
+		addSampleToCartBtn.click();
+		waitForTime(500);
+	}
+
+	public void clickRemoveSampleFromCartButton() {
+		removeSampleFromCartBtn.click();
 		waitForTime(500);
 	}
 

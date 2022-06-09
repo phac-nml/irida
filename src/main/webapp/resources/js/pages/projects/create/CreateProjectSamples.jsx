@@ -90,6 +90,7 @@ export function CreateProjectSamples({ form }) {
                   <SampleDetailViewer
                     sampleId={projectSample.sample.identifier}
                     projectId={projectSample.projectId}
+                    displayActions={false}
                   >
                     <Button size="small">{projectSample.sample.label}</Button>
                   </SampleDetailViewer>
