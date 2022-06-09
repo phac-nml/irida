@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.run.BootRun
+
 plugins {
     id("base")
     id("java")
@@ -293,7 +295,7 @@ fun createIntegrationTestTask(name: String, tags: String?, excludeListeners: Str
             "output.file.base.directory" to "${temporaryDir}/output-file-base"
         )
         val providedSystemProperties = System.getProperties().mapKeys { it.key as String }
-        val filteredProvidedSystemProperties = providedSystemProperties.filterKeys { it !in permittedTestSystemProperties && it !in defaultSystemProperties}
+        val filteredProvidedSystemProperties = providedSystemProperties.filterKeys { it in permittedTestSystemProperties && it in defaultSystemProperties}
         systemProperties(defaultSystemProperties + filteredProvidedSystemProperties)
 
         useJUnitPlatform {
@@ -346,6 +348,16 @@ openApi {
     outputDir.set(file("${projectDir}/doc/swagger-ui"))
     outputFileName.set("open-api.json")
     waitTimeInSeconds.set(45)
+    val defaultSystemProperties = mapOf(
+        "spring.profiles.active" to "dev,swagger",
+        "liquibase.update.database.schema" to "false",
+        "spring.datasource.url" to "jdbc:mysql://localhost:3306/irida_test",
+        "spring.datasource.dbcp2.max-wait" to "5000"
+    )
+    val providedSystemProperties = System.getProperties().mapKeys { it.key as String }
+    val filteredProvidedSystemProperties = providedSystemProperties.filterKeys { it in defaultSystemProperties}
+    val bootRun = project.tasks.named("bootRun").get() as BootRun
+    bootRun.systemProperties(defaultSystemProperties + filteredProvidedSystemProperties)
 }
 
 tasks.processResources {
