@@ -404,7 +404,7 @@ export function SampleFileList() {
   };
 
   /*
-   Returns a checkbox with a toolbox for the passed in sequencing object
+   Returns a checkbox with a tooltip for the passed in sequencing object
    */
   const getConcatenationCheckboxForSequencingObject = (seqObj) => {
     const obj = seqObj.fileInfo
@@ -461,10 +461,8 @@ export function SampleFileList() {
               actions={getActionsForSequencingObject(sequenceObject)}
               displayConcatenationCheckbox={
                 isModifiable && files.singles?.length >= 2
-              }
-              concatenationCheckbox={
-                isModifiable &&
-                getConcatenationCheckboxForSequencingObject(sequenceObject)
+                  ? getConcatenationCheckboxForSequencingObject(sequenceObject)
+                  : null
               }
               displayFileProcessingStatus={true}
             />
@@ -483,10 +481,8 @@ export function SampleFileList() {
               )}
               displayConcatenationCheckbox={
                 isModifiable && files.paired?.length >= 2
-              }
-              concatenationCheckbox={
-                isModifiable &&
-                getConcatenationCheckboxForSequencingObject(pair)
+                  ? getConcatenationCheckboxForSequencingObject(pair)
+                  : null
               }
               displayFileProcessingStatus={true}
             />

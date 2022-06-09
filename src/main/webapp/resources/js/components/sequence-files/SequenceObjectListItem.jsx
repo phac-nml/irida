@@ -14,7 +14,6 @@ import { blue6 } from "../../styles/colors";
  * @param actions Actions for paired end forward files, single end files, and fast5 files
  * @param pairedReverseActions Actions for the paired end reverse file
  * @param displayConcatenationCheckbox Whether to display the concatenation checkbox for the sequencing object
- * @param concatenationCheckbox Concatenation checkbox if displayConcatenationCheckbox above is set to true
  * @param displayFileProcessingStatus Whether to display file processing/coverage
  * @returns {JSX.Element}
  * @constructor
@@ -23,8 +22,7 @@ export function SequenceObjectListItem({
   sequenceObject,
   actions = [],
   pairedReverseActions = [],
-  displayConcatenationCheckbox = false,
-  concatenationCheckbox = null,
+  displayConcatenationCheckbox = null,
   displayFileProcessingStatus = false,
 }) {
   const obj = sequenceObject.fileInfo
@@ -65,9 +63,11 @@ export function SequenceObjectListItem({
         padding: 5,
       }}
     >
-      <div style={{ marginTop: sequenceObject.qcEntries?.length ? -50 : 0 }}>
-        {displayConcatenationCheckbox && concatenationCheckbox}
-      </div>
+      {displayConcatenationCheckbox !== null && (
+        <div style={{ marginTop: sequenceObject.qcEntries?.length ? -50 : 0 }}>
+          {displayConcatenationCheckbox}
+        </div>
+      )}
       <Avatar
         style={{
           backgroundColor: blue6,
