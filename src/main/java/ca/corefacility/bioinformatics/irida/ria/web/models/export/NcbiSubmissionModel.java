@@ -1,12 +1,14 @@
-package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
+package ca.corefacility.bioinformatics.irida.ria.web.models.export;
 
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ItemNameAndId;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.NcbiBioSampleFile;
 
-public class NcbiSubmission {
+public class NcbiSubmissionModel {
 	private final Long id;
 	private final ItemNameAndId project;
 	private final String state;
@@ -18,7 +20,7 @@ public class NcbiSubmission {
 	private final Date releaseDate;
 	private final List<NcbiBioSampleFile> bioSampleFiles;
 
-	public NcbiSubmission(NcbiExportSubmission submission) {
+	public NcbiSubmissionModel(NcbiExportSubmission submission) {
 		this.id = submission.getId();
 		this.project = new ItemNameAndId(submission.getProject().getId(), submission.getProject().getLabel());
 		this.state = submission.getUploadState().name();

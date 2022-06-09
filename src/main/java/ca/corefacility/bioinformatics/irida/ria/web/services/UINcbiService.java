@@ -11,9 +11,9 @@ import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NcbiExportSubmissionAdminTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NcbiExportSubmissionTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiSubmissionModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.NcbiSubmission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
 
@@ -62,8 +62,8 @@ public class UINcbiService {
 		return new TableResponse<>(submissions, page.getTotalElements());
 	}
 
-	public NcbiSubmission getExportDetails(Long exportId) {
+	public NcbiSubmissionModel getExportDetails(Long exportId) {
 		NcbiExportSubmission submission = ncbiService.read(exportId);
-		return new NcbiSubmission(submission);
+		return new NcbiSubmissionModel(submission);
 	}
 }

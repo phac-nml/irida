@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NcbiExportSubmissionAdminTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NcbiExportSubmissionTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiSubmissionModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.NcbiSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UINcbiService;
 
 /**
@@ -39,7 +39,8 @@ public class NCBIAjaxController {
 	}
 
 	@GetMapping("/project/{projectId}/details/{exportId}")
-	public ResponseEntity<NcbiSubmission> getExportDetails(@PathVariable Long projectId, @PathVariable Long exportId) {
+	public ResponseEntity<NcbiSubmissionModel> getExportDetails(@PathVariable Long projectId,
+			@PathVariable Long exportId) {
 		return ResponseEntity.ok(service.getExportDetails(exportId));
 	}
 
