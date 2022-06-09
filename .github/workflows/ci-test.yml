@@ -27,29 +27,37 @@ jobs:
       MYSQL_HOST: 127.0.0.1
 
     strategy:
-      fail-fast: false  #Setting so that if one of the test suites fail, the other will continue
+      fail-fast: false #Setting so that if one of the test suites fail, the other will continue
       matrix:
         #The list of test suites to run
-        suite: [ 'service_testing', 'rest_testing', 'ui_testing', 'galaxy_testing', 'galaxy_pipeline_testing', 'open_api_testing' ]
+        suite:
+          [
+            "service_testing",
+            "rest_testing",
+            "ui_testing",
+            "galaxy_testing",
+            "galaxy_pipeline_testing",
+            "open_api_testing",
+          ]
 
     steps:
       - uses: actions/checkout@v3 #Checkout the project from git
-      - name: Cache PNP  #Pull the Yarn cache for PNP (package management strategy - see https://classic.yarnpkg.com/en/docs/pnp).  This caches all dependencies assuming the yarn.lock file stays the same
+      - name: Cache PNP #Pull the Yarn cache for PNP (package management strategy - see https://classic.yarnpkg.com/en/docs/pnp).  This caches all dependencies assuming the yarn.lock file stays the same
         uses: actions/cache@v3
         with:
-          path: '**/.pnp.js'
+          path: "**/.pnp.js"
           key: ${{ runner.os }}-pnp-${{ hashFiles('**/yarn.lock') }}
-      - name: Cache yarn  #Pull the cache for yarn.  This caches all dependencies assuming the yarn.lock file stays the same
+      - name: Cache yarn #Pull the cache for yarn.  This caches all dependencies assuming the yarn.lock file stays the same
         uses: actions/cache@v2
         with:
-          path: '**/.yarn'
+          path: "**/.yarn"
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - uses: mirromutth/mysql-action@v1.1
         with:
           host port: ${{ env.MYSQL_PORT }}
-          character set server: 'utf8'
-          collation server: 'utf8_general_ci'
-          mysql version: '5.7'
+          character set server: "utf8"
+          collation server: "utf8_general_ci"
+          mysql version: "5.7"
           mysql database: ${{ env.MYSQL_DATABASE }}
           mysql user: ${{ env.MYSQL_USER }}
           mysql password: ${{ env.MYSQL_PASSWORD }}
@@ -65,17 +73,11 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Run tests with Gradle # Run the test suite
         run: ./run-tests.sh --db-host ${{ env.MYSQL_HOST }} --db-port ${{ env.MYSQL_PORT }} --database ${{ env.MYSQL_DATABASE}} ${{ matrix.suite }}
-      - name: Upload build reports
-        uses: actions/upload-artifact@v3
-        if: matrix.suite != 'open_api_testing' && always()
-        with:
-          name: build-reports
-          path: build/reports/
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v3
         if: matrix.suite != 'open_api_testing' && always()
         with:
-          report_paths: '**/build/test-results/*ITest/TEST-*.xml' # Publish Integration Test results
+          report_paths: "**/build/test-results/*ITest/TEST-*.xml" # Publish Integration Test results
           fail_on_failure: false
           check_name: "JUnit Test Report (${{ matrix.suite }})"
           annotate_only: true
@@ -88,7 +90,7 @@ jobs:
       - name: Setup Ruby
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: '2.7'
+          ruby-version: "2.7"
       - name: Set up JDK 11 # Installs java 11
         uses: actions/setup-java@v1
         with:
