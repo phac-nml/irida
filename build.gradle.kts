@@ -253,10 +253,6 @@ tasks.war {
     exclude("postcss.config.js")
 }
 
-tasks.bootRun {
-    dependsOn(":assembleFrontend")
-}
-
 frontend {
     nodeVersion.set("16.15.0")
     nodeInstallDirectory.set(file("${projectDir}/src/main/webapp/node"))
