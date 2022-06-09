@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.models;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 
+/**
+ * IRIDA UI model to represent {@link SingleEndSequenceFile}
+ */
 public class SingleEndSequenceFileModel extends IridaBase {
 	private final SequenceFileModel file;
 
@@ -11,4 +14,7 @@ public class SingleEndSequenceFileModel extends IridaBase {
 		this.file = new SequenceFileModel(file.getSequenceFile());
 	}
 
+	public SequenceFileModel getFile() {
+		return file;
+	}
 }
