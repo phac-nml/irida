@@ -278,7 +278,18 @@ tasks.withType<Test> {
     }
 }
 
-val permittedTestSystemProperties = listOf("java.io.tmpdir", "server.base.url", "server.port", "file.processing.decompress", "spring.datasource.dbcp2.max-wait", "webdriver.chrome.driver", "webdriver.selenium.url", "test.galaxy.url", "test.galaxy.invalid.url", "test.galaxy.invalid.url2")
+val permittedTestSystemProperties = listOf(
+    "java.io.tmpdir",
+    "server.base.url",
+    "server.port",
+    "file.processing.decompress",
+    "spring.datasource.dbcp2.max-wait",
+    "webdriver.chrome.driver",
+    "webdriver.selenium.url",
+    "test.galaxy.url",
+    "test.galaxy.invalid.url",
+    "test.galaxy.invalid.url2",
+)
 
 fun createIntegrationTestTask(name: String, tags: String?, excludeListeners: String?): TaskProvider<Test> {
     return tasks.register<Test>("${name}ITest") {
@@ -295,7 +306,7 @@ fun createIntegrationTestTask(name: String, tags: String?, excludeListeners: Str
             "output.file.base.directory" to "${temporaryDir}/output-file-base"
         )
         val providedSystemProperties = System.getProperties().mapKeys { it.key as String }
-        val filteredProvidedSystemProperties = providedSystemProperties.filterKeys { it in permittedTestSystemProperties && it in defaultSystemProperties}
+        val filteredProvidedSystemProperties = providedSystemProperties.filterKeys { it in permittedTestSystemProperties || it in defaultSystemProperties}
         systemProperties(defaultSystemProperties + filteredProvidedSystemProperties)
 
         useJUnitPlatform {
@@ -347,7 +358,7 @@ task<JavaExec>("toolsListExport") {
 openApi {
     outputDir.set(file("${projectDir}/doc/swagger-ui"))
     outputFileName.set("open-api.json")
-    waitTimeInSeconds.set(45)
+    waitTimeInSeconds.set(60)
     val defaultSystemProperties = mapOf(
         "spring.profiles.active" to "dev,swagger",
         "liquibase.update.database.schema" to "false",
