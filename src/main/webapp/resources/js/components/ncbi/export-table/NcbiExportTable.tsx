@@ -1,6 +1,6 @@
 import React from "react";
 import { Table } from "antd";
-import { getProjectNCBIExports } from "../../../apis/ncbi/ncbi";
+import {getProjectNCBIExports, NcbiExportSubmissionTableModel} from "../../../apis/export/ncbi";
 import {
   formatInternationalizedDateTime
 } from "../../../utilities/date-utilities";
@@ -9,35 +9,42 @@ import NcbiUploadStates from "../upload-states";
 import {
   getPaginationOptions
 } from "../../../utilities/antdesign-table-utilities";
+import {Link, useParams} from "react-router-dom";
+import NcbiUploadStateTag from "../ExportUploadStateTag/NcbiUploadStateTag";
+import {ExportUploadState, NcbiSubmission, User, UserMinimal} from "../../../types/irida";
 
 /**
  * Render a list of all Project NCBI Exports.
  * @returns {JSX.Element|string}
  * @constructor
  */
-export function NcbiExportTable() {
-  const [exports, setExports] = React.useState(null);
-  const [total, setTotal] = React.useState(0);
+export function NcbiExportTable(): JSX.Element {
+  const {projectId} = useParams();
+
+  const [exports, setExports] = React.useState<NcbiExportSubmissionTableModel[] | undefined>(undefined);
+  const [total, setTotal] = React.useState<number>(0);
 
   React.useEffect(() => {
-    getProjectNCBIExports().then((data) => {
-      setExports(data);
-      setTotal(data.length);
-    });
-  }, []);
+    if (projectId) {
+      getProjectNCBIExports(parseInt(projectId)).then((data) => {
+        setExports(data);
+        setTotal(data.length);
+      });
+    }
+  }, [projectId]);
 
   const columns = [
     {
       title: i18n("NcbiExportTable.id"),
       dataIndex: "id",
-      render(id, item) {
+      render(id:number, item: NcbiExportSubmissionTableModel) {
         return (
-          <a
+          <Link
             className="t-biosample-id"
-            href={setBaseUrl(`/projects/${window.project.id}/export/${id}`)}
+            to={`${id}`}
           >
             {item.bioProjectId}
-          </a>
+          </Link>
         );
       },
     },
@@ -48,12 +55,12 @@ export function NcbiExportTable() {
     {
       title: i18n("NcbiExportTable.state"),
       dataIndex: "state",
-      render: (state) => <NcbiUploadStates state={state} />,
+      render: (state:ExportUploadState) => <NcbiUploadStateTag state={state} />,
     },
     {
       title: i18n("NcbiExportTable.submitter"),
       dataIndex: "submitter",
-      render(submitter) {
+      render(submitter: UserMinimal) {
         return (
           <a href={setBaseUrl(`/users/${submitter.id}`)}>{submitter.name}</a>
         );
@@ -62,7 +69,7 @@ export function NcbiExportTable() {
     {
       title: i18n("NcbiExportTable.createdDate"),
       dataIndex: "createdDate",
-      render(date) {
+      render(date : Date) {
         return formatInternationalizedDateTime(date);
       },
     },
@@ -72,7 +79,7 @@ export function NcbiExportTable() {
     <Table
       columns={columns}
       dataSource={exports}
-      rowKey={(item) => item.id}
+      rowKey={(item) => item.bioProjectId}
       pagination={getPaginationOptions(total)}
     />
   );

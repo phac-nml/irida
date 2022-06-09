@@ -18,6 +18,51 @@ declare namespace IRIDA {
         users: User[];
     }
 
+    type ExportUploadState =
+        | "NEW"
+        | "UPLOADING"
+        | "UPLOADED"
+        | "UPLOAD_ERROR"
+        | "created"
+        | "failed"
+        | "queued"
+        | "processing"
+        | "processed-ok"
+        | "processed-error"
+        | "waiting"
+        | "submitted"
+        | "Submission deleted"
+        | "retired"
+        | "unknown";
+
+    interface NcbiBioSampleFiles {
+        id: number;
+        bioSample: string;
+        singles: SingleEndSequenceFile[];
+        pairs: PairedEndSequenceFile[];
+        instrumentModel: string;
+        libraryName: string;
+        librarySelection: string;
+        librarySource: string;
+        libraryStrategy: string;
+        libraryConstructionProtocol: string;
+        status: ExportUploadState;
+        accession: string;
+    }
+
+    interface NcbiSubmission {
+        id: number;
+        project: ProjectMinimal;
+        state: ExportUploadState;
+        submitter: UserMinimal;
+        createdDate: Date;
+        organization: string;
+        bioProject: string;
+        ncbiNamespace: string;
+        releaseDate: Date | null;
+        bioSampleFiles: NcbiBioSampleFiles[];
+    }
+
     interface Project extends IridaBase {
         description: string;
         organism: string;
@@ -31,6 +76,8 @@ declare namespace IRIDA {
         analysisTemplates: string[]; // TODO (Josh - 6/7/22): What should this be
     }
 
+    type ProjectMinimal = Pick<Project, "id" | "name">;
+
     interface Sample extends IridaBase {
         description: string;
         organism: string;
@@ -43,11 +90,23 @@ declare namespace IRIDA {
         latitude: string;
         longitude: string;
         projects: Project[];
-        sequenceFiles: any[]; // TODO (Josh - 6/7/22): FLush this out
+        sequenceFiles: any[]; // TODO (Josh - 6/7/22): Flush this out
     }
 
-    export type SystemRole =
-        "ROLE_ANONYMOUS"
+    interface SequenceFile extends IridaBase {
+        // Nothing required here
+    }
+
+    interface PairedEndSequenceFile extends IridaBase {
+        files: SequenceFile[];
+    }
+
+    interface SingleEndSequenceFile extends IridaBase{
+        file: SequenceFile;
+    }
+
+    type SystemRole =
+        | "ROLE_ANONYMOUS"
         | "ROLE_ADMIN"
         | "ROLE_USER"
         | "ROLE_MANAGER"
@@ -69,4 +128,6 @@ declare namespace IRIDA {
         announcements: Announcement[];
         subscriptions: string[]; // TODO (Josh - 6/7/22): Look into this one as well
     }
+
+    type UserMinimal = Pick<User, "name" | "id">
 }
