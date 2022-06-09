@@ -78,6 +78,9 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		page.viewSampleDetailsFor(sampleName);
 		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
 
+		assertFalse(sampleDetailsViewer.isAddSampleToCartButtonVisible(), "The add cart to sample button should not be displayed");
+		assertTrue(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(), "The remove sample from cart button should be displayed");
+
 		assertEquals(sampleName, sampleDetailsViewer.getSampleName(), "Should be viewing the proper sample");
 		assertEquals(projectName, sampleDetailsViewer.getProjectName(), "Should have proper project name displayed for sample");
 		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Should display the correct created date");
@@ -112,6 +115,14 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		sampleDetailsViewer.clearSampleAnalysesFilter();
 		assertEquals(1, sampleDetailsViewer.numberOfSampleAnalysesVisible(), "AUser should only see listing of 1 analysis ran with this sample");
 
+		sampleDetailsViewer.clickRemoveSampleFromCartButton();
+
+		assertTrue(sampleDetailsViewer.isAddSampleToCartButtonVisible(), "The add cart to sample button should be displayed");
+		assertFalse(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(), "The remove sample from cart button should not be displayed");
+
+		sampleDetailsViewer.clickAddSampleToCartButton();
+		assertFalse(sampleDetailsViewer.isAddSampleToCartButtonVisible(), "The add cart to sample button should not be displayed");
+		assertTrue(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(), "The remove sample from cart button should be displayed");
 
 		sampleDetailsViewer.closeDetails();
 
@@ -150,9 +161,12 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		page.viewSampleDetailsFor(sampleName);
 		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
 
+		assertFalse(sampleDetailsViewer.isAddSampleToCartButtonVisible(), "The add cart to sample button should not be displayed");
+		assertTrue(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(), "The remove sample from cart button should be displayed");
+
 		assertEquals(sampleName, sampleDetailsViewer.getSampleName(), "Should be viewing the proper sample");
 		assertEquals(projectName, sampleDetailsViewer.getProjectName(), "Should have proper project name displayed for sample");
-		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Shoauld display the correct created date");
+		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Should display the correct created date");
 
 		sampleDetailsViewer.clickMetadataTabLink();
 		assertTrue(sampleDetailsViewer.addNewMetadataButtonVisible());
@@ -236,6 +250,16 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		sampleDetailsViewer.removeFile(1);
 		sampleDetailsViewer.removeFile(0);
 		assertEquals(0, sampleDetailsViewer.numberOfFilesDisplayed(), "No files should be left for sample after file removal");
+
+		sampleDetailsViewer.clickRemoveSampleFromCartButton();
+
+		assertTrue(sampleDetailsViewer.isAddSampleToCartButtonVisible(), "The add cart to sample button should be displayed");
+		assertFalse(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(), "The remove sample from cart button should not be displayed");
+
+		sampleDetailsViewer.clickAddSampleToCartButton();
+
+		assertFalse(sampleDetailsViewer.isAddSampleToCartButtonVisible(), "The add cart to sample button should not be displayed");
+		assertTrue(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(), "The remove sample from cart button should be displayed");
 
 		sampleDetailsViewer.closeDetails();
 
