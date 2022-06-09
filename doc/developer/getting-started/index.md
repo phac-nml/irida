@@ -146,10 +146,8 @@ An IRIDA development server can be run with the `run.sh` script available in the
 Running the `run.sh` without arguments script is equivalent to running:
 
 ```bash
-./gradlew clean bootRun -Dspring.profiles.active=dev
+./gradlew clean bootRun --args="--spring.profiles.active=dev"
 ```
-
-Any arguments added after `run.sh` will be proxied to the `./gradlew ...` command.
 
 #### Spring profiles
 

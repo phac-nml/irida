@@ -32,13 +32,13 @@ EOF
 You'll need the DB in the proper state to run the UI tests. To do this, you will need to run Liquibase in order to apply all of the necessary DB migration scripts. This can be done with the following command:
 
 ```
-./gradlew clean bootRun
-    -Dspring.profiles.active=it \ # run IRIDA with the `it` Spring profile active
-    -Dspring.datasource.url=jdbc:mysql://localhost:3306/irida_integration_test \
-    -Dirida.it.rootdirectory=/tmp/irida/ \
-    -Dspring.jpa.properties.hibernate.hbm2ddl.import_files= \
-    -Dspring.jpa.hibernate.ddl-auto= \
-    -Dliquibase.update.database.schema=true
+./gradlew clean bootRun --args="\
+    --spring.profiles.active=it \ # run IRIDA with the `it` Spring profile active
+    --spring.datasource.url=jdbc:mysql://localhost:3306/irida_integration_test \
+    --irida.it.rootdirectory=/tmp/irida/ \
+    --spring.jpa.properties.hibernate.hbm2ddl.import_files= \
+    --spring.jpa.hibernate.ddl-auto= \
+    --liquibase.update.database.schema=true"
 ```
 
 **NOTE:**
