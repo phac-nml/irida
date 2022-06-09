@@ -29,6 +29,11 @@ export const sequencingRunsApi = createApi({
       query: (runId) => ({
         url: `${runId}/sequenceFiles`,
       }),
+      transformResponse(response, meta) {
+        return response.map((file) => {
+          return { ...file, list: "Sequencing File List" };
+        });
+      },
     }),
     /*
     Delete a sequencing run.
