@@ -1,10 +1,9 @@
 import React from "react";
 import { Button, notification, Popconfirm } from "antd";
-import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
-
-import { downloadGenomeAssemblyFile } from "../../../apis/samples/samples";
-
 import { useSelector } from "react-redux";
+
+import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
+import { downloadGenomeAssemblyFile } from "../../../apis/samples/samples";
 import { GenomeAssemblyListItem } from "../../sequence-files/GenomeAssemblyListItem";
 
 /**

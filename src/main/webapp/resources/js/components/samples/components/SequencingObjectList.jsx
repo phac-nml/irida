@@ -1,29 +1,30 @@
 import React from "react";
-import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
 import { Button, Checkbox, notification, Popconfirm, Tag, Tooltip } from "antd";
+import {
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  CloseOutlined,
+  SyncOutlined,
+} from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
+import { useInterval } from "../../../hooks";
+import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
 import { SequenceObjectListItem } from "../../sequence-files/SequenceObjectListItem";
+import { primaryColour } from "../../../utilities/theme-utilities";
+import { SPACE_XS } from "../../../styles/spacing";
+
 import {
   addToConcatenateSelected,
   fetchUpdatedSeqObjectsDelay,
   removeFromConcatenateSelected,
   updatedSequencingObjects,
 } from "../sampleFilesSlice";
-import { primaryColour } from "../../../utilities/theme-utilities";
-import { SPACE_XS } from "../../../styles/spacing";
-import {
-  IconCheckCircle,
-  IconClock,
-  IconRemove,
-  IconSyncSpin,
-} from "../../icons/Icons";
 import { setDefaultSequencingObject } from "../sampleSlice";
 import {
   downloadSequencingObjectFile,
   fetchUpdatedSequencingObjects,
   useUpdateDefaultSampleSequencingObjectMutation,
 } from "../../../apis/samples/samples";
-import { useInterval } from "../../../hooks";
 
 /**
  * React component to display, remove, download sequencing objects
@@ -129,8 +130,8 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
   };
 
   /*
- Returns a checkbox with a tooltip for the passed in sequencing object
- */
+   Returns a checkbox with a tooltip for the passed in sequencing object
+   */
   const getConcatenationCheckboxForSequencingObject = (seqObj) => {
     const obj = seqObj.fileInfo
       ? seqObj.fileInfo
@@ -264,8 +265,8 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
   };
 
   /*
-     Get the actions required for a Paired End -> Reverse sequence file
-     */
+   Get the actions required for a Paired End -> Reverse sequence file
+   */
   const getActionsForSequencingObjectPairedReverse = (seqObj) => {
     let actions = [];
     const { fileInfo: obj } = seqObj;
@@ -291,21 +292,21 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
   };
 
   /*
-  Gets the processing state as a tag (icon) with a tooltip
-   */
+   Gets the processing state as a tag (icon) with a tooltip
+  */
   const getProcessingStateTag = (processingState) => {
     let tagColor = "default";
-    let icon = <IconClock />;
+    let icon = <ClockCircleOutlined />;
 
     if (processingState === "FINISHED") {
       tagColor = "success";
-      icon = <IconCheckCircle />;
+      icon = <CheckCircleOutlined />;
     } else if (processingState === "ERROR") {
       tagColor = "error";
-      icon = <IconRemove />;
+      icon = <CloseOutlined />;
     } else if (processingState === "PROCESSING") {
       tagColor = "processing";
-      icon = <IconSyncSpin />;
+      icon = <SyncOutlined />;
     }
     return (
       <Tooltip placement="top" title={fileProcessTranslations[processingState]}>
@@ -335,7 +336,7 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
 
   /*
   Download sequence files (paired, single, fast5)
- */
+   */
   const downloadSequenceFile = ({ sequencingObjectId, sequenceFileId }) => {
     notification.success({
       message: i18n("SampleFiles.startingSequenceFileDownload"),
