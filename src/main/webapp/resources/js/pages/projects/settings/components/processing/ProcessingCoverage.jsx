@@ -29,7 +29,7 @@ export function ProcessingCoverage({ projectId, canManage = false }) {
   const {
     data: { coverage = {} },
     isLoading,
-  } = useGetProjectDetailsQuery(projectId);
+  } = useGetProjectDetailsQuery(projectId, {skip: !projectId});
   const [updateProjectCoverage] = useUpdateProjectCoverageMutation();
 
   const NOT_SET = i18n("ProcessingCoverage.not-set");
