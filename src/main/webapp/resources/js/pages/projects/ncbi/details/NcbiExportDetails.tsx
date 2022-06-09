@@ -1,15 +1,11 @@
 import * as React from "react";
-import { useParams } from "react-router-dom";
-import { getNcbiSubmission } from "../../../../apis/export/ncbi";
-import type { NcbiSubmission } from "../../../../types/irida";
-import {
-  BioSampleFileDetails,
-  formatNcbiUploadDetails,
-  formatNcbiUploadFiles,
-} from "./utils";
-import { Card, List, Skeleton } from "antd";
-import { BasicList } from "../../../../components/lists";
-import { BasicListItem } from "../../../../components/lists/BasicList.types";
+import {useParams} from "react-router-dom";
+import {getNcbiSubmission} from "../../../../apis/export/ncbi";
+import type {NcbiSubmission} from "../../../../types/irida";
+import {BioSampleFileDetails, formatNcbiUploadDetails, formatNcbiUploadFiles,} from "./utils";
+import {Card, List, Skeleton} from "antd";
+import {BasicList} from "../../../../components/lists";
+import {BasicListItem} from "../../../../components/lists/BasicList.types";
 import NcbiBioSampleFile from "./NcbiBioSampleFile";
 
 interface RouteParams {
@@ -37,8 +33,6 @@ function NcbiExportDetails(): JSX.Element {
     );
   }, [id, projectId]);
 
-  console.log(JSON.stringify(bioSampleFiles, null, 2));
-
   return (
     <Skeleton active={true} loading={loading}>
       <Card title={i18n("project.export.sidebar.title")}>
@@ -51,7 +45,7 @@ function NcbiExportDetails(): JSX.Element {
           renderItem={(sample) => (
             <List.Item>
               <List.Item.Meta title={sample.key} />
-              {<NcbiBioSampleFile key={sample.key} bioSample={sample} />}
+              <NcbiBioSampleFile key={sample.key} bioSample={sample} />
             </List.Item>
           )}
         />

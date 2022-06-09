@@ -1,12 +1,13 @@
-package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
+package ca.corefacility.bioinformatics.irida.ria.web.models.export;
 
-import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.PairedEndSequenceFileModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.SingleEndSequenceFileModel;
 
-public class NcbiBioSampleFile {
+public class NcbiBioSampleFilesModel {
 	private final String id;
 	private final String bioSample;
 	private final String instrumentModel;
@@ -17,10 +18,10 @@ public class NcbiBioSampleFile {
 	private final String libraryConstructionProtocol;
 	private final String status;
 	private final String accession;
-	private final Set<SingleEndSequenceFile> singles;
-	private final Set<SequenceFilePair> pairs;
+	private final List<SingleEndSequenceFileModel> singles;
+	private final List<PairedEndSequenceFileModel> pairs;
 
-	public NcbiBioSampleFile(NcbiBioSampleFiles bioSample) {
+	public NcbiBioSampleFilesModel(NcbiBioSampleFiles bioSample) {
 		this.id = bioSample.getId();
 		this.bioSample = bioSample.getBioSample();
 		this.instrumentModel = bioSample.getInstrumentModel().getValue();
@@ -31,8 +32,8 @@ public class NcbiBioSampleFile {
 		this.libraryConstructionProtocol = bioSample.getLibraryConstructionProtocol();
 		this.status = bioSample.getSubmissionStatus().toString();
 		this.accession = bioSample.getAccession();
-		this.singles = bioSample.getFiles();
-		this.pairs = bioSample.getPairs();
+		this.singles = bioSample.getFiles().stream().map(SingleEndSequenceFileModel::new).collect(Collectors.toList());
+		this.pairs = bioSample.getPairs().stream().map(PairedEndSequenceFileModel::new).collect(Collectors.toList());
 	}
 
 	public String getId() {
@@ -75,11 +76,11 @@ public class NcbiBioSampleFile {
 		return accession;
 	}
 
-	public Set<SingleEndSequenceFile> getSingles() {
+	public List<SingleEndSequenceFileModel> getSingles() {
 		return singles;
 	}
 
-	public Set<SequenceFilePair> getPairs() {
+	public List<PairedEndSequenceFileModel> getPairs() {
 		return pairs;
 	}
 }

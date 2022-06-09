@@ -35,10 +35,10 @@ declare namespace IRIDA {
     | "retired"
     | "unknown";
 
-  interface NcbiBioSampleFile {
+  interface NcbiBioSampleFiles {
     id: number;
     bioSample: string;
-    files: SingleEndSequenceFile[];
+    singles: SingleEndSequenceFile[];
     pairs: PairedEndSequenceFile[];
     instrumentModel: string;
     libraryName: string;
@@ -60,7 +60,7 @@ declare namespace IRIDA {
     bioProject: string;
     ncbiNamespace: string;
     releaseDate: Date | null;
-    bioSampleFiles: NcbiBioSampleFile[];
+    bioSampleFiles: NcbiBioSampleFiles[];
   }
 
   interface Project extends IridaBase {
@@ -99,9 +99,7 @@ declare namespace IRIDA {
     files: SequenceFile[];
   }
 
-  interface SingleEndSequenceFile {
-    label: string;
-    identifier: number;
+  interface SingleEndSequenceFile extends IridaBase{
     file: SequenceFile;
   }
 

@@ -3,7 +3,7 @@ import ExportUploadStateTag from "../../../../components/ncbi/ExportUploadStateT
 import {setBaseUrl} from "../../../../utilities/url-utilities";
 import {formatInternationalizedDateTime} from "../../../../utilities/date-utilities";
 import {
-  NcbiBioSampleFile,
+  NcbiBioSampleFiles,
   NcbiSubmission,
   PairedEndSequenceFile,
   SingleEndSequenceFile,
@@ -67,7 +67,7 @@ export interface BioSampleFileDetails {
 }
 
 export const formatNcbiUploadFiles = (
-  bioSampleFiles: NcbiBioSampleFile[]
+  bioSampleFiles: NcbiBioSampleFiles[]
 ): BioSampleFileDetails[] =>
   bioSampleFiles.map((bioSampleFile) => {
     return {
@@ -107,7 +107,7 @@ export const formatNcbiUploadFiles = (
         },
       ],
       files: {
-        singles: bioSampleFile.files,
+        singles: bioSampleFile.singles,
         pairs: bioSampleFile.pairs,
       },
     };

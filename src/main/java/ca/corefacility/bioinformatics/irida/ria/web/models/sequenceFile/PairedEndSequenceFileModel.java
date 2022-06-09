@@ -1,8 +1,10 @@
-package ca.corefacility.bioinformatics.irida.ria.web.models;
+package ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile;
 
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.ria.web.models.IridaBase;
+import ca.corefacility.bioinformatics.irida.ria.web.models.ModelKeys;
 
 import com.google.common.collect.ImmutableList;
 

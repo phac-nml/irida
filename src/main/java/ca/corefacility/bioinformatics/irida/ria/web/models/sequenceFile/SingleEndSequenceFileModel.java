@@ -1,6 +1,8 @@
-package ca.corefacility.bioinformatics.irida.ria.web.models;
+package ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.models.IridaBase;
+import ca.corefacility.bioinformatics.irida.ria.web.models.ModelKeys;
 
 /**
  * IRIDA UI model to represent {@link SingleEndSequenceFile}

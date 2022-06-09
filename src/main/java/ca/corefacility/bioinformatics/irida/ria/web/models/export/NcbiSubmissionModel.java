@@ -6,11 +6,10 @@ import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ItemNameAndId;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.NcbiBioSampleFile;
 
 public class NcbiSubmissionModel {
 	private final Long id;
-	private final ItemNameAndId project;
+	private final ItemNameAndId project;  // <==== TALK TO ERIC ABOUT THIS
 	private final String state;
 	private final ItemNameAndId submitter;
 	private final Date createdDate;
@@ -18,7 +17,7 @@ public class NcbiSubmissionModel {
 	private final String bioProject;
 	private final String ncbiNamespace;
 	private final Date releaseDate;
-	private final List<NcbiBioSampleFile> bioSampleFiles;
+	private final List<NcbiBioSampleFilesModel> bioSampleFiles;
 
 	public NcbiSubmissionModel(NcbiExportSubmission submission) {
 		this.id = submission.getId();
@@ -31,9 +30,7 @@ public class NcbiSubmissionModel {
 		this.bioProject = submission.getBioProjectId();
 		this.ncbiNamespace = submission.getNcbiNamespace();
 		this.releaseDate = submission.getReleaseDate();
-		this.bioSampleFiles = submission.getBioSampleFiles()
-				.stream()
-				.map(NcbiBioSampleFile::new)
+		this.bioSampleFiles = submission.getBioSampleFiles().stream().map(NcbiBioSampleFilesModel::new)
 				.collect(Collectors.toList());
 	}
 
@@ -73,7 +70,7 @@ public class NcbiSubmissionModel {
 		return releaseDate;
 	}
 
-	public List<NcbiBioSampleFile> getBioSampleFiles() {
+	public List<NcbiBioSampleFilesModel> getBioSampleFiles() {
 		return bioSampleFiles;
 	}
 }
