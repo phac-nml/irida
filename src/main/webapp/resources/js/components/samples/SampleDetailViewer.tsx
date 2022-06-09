@@ -58,11 +58,6 @@ function DisplaySampleDetails({
     id: projectId,
     label: details.projectName,
   });
-  /*
-  Empty useEffect hook to update visible const required by redux
-  call "useGetSampleDetailsQuery" above
-   */
-  React.useEffect(() => {}, [visible]);
 
   /*
   If sampleIds haven't already been added to
