@@ -16,12 +16,13 @@ import {
 import { Provider } from "react-redux";
 import store from "../../components/samples/store";
 import { generateColourForItem } from "../../utilities/colour-utilities";
+import { Project, Sample } from "../../types/irida";
 
 const { Text } = Typography;
 
 export interface DisplaySampleDetailsProps {
-  sampleId: number;
-  projectId: number;
+  sampleId: Pick<Sample, "id">;
+  projectId: Pick<Project, "id">;
   displayActions?: boolean;
   children: React.ReactNode;
 }
@@ -191,8 +192,8 @@ function DisplaySampleDetails({
  */
 
 export interface SampleDetailViewerProps {
-  sampleId: number;
-  projectId: number;
+  sampleId: Pick<Sample, "id">;
+  projectId: Pick<Project, "id">;
   displayActions?: boolean;
   children: React.ReactNode;
 }
