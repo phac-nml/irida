@@ -4,6 +4,7 @@
 ## [Unreleased]
 * [Developer/UI]: Refreshed the create new user account page. See [PR 1285](https://github.com/phac-nml/irida/pull/1285) for more.
 * [Developer/UI]: Added in typescript support to webpack build, moving forward all new frontend development will use typescript. See [PR 1294](https://github.com/phac-nml/irida/pull/1294) for more.
+* [Developer/UI]: Removed `styled-components` from page header and replaced with CSS variables. See [PR 1284](https://github.com/phac-nml/irida/pull/1284)
 
 ## [22.05.1] - 2022/06/01
 * [UI]: Fixed bug where samples could not be removed from share page. See [PR 1296](https://github.com/phac-nml/irida/pull/1296) for more.
@@ -37,7 +38,7 @@
 * [UI]: Fixed: Excel output file preview displaying numeric values as a whole number rather than in scientific notation.
 * [UI]: Updated the sequence run page to use Ant Design.
 * [UI]: Updated `forgot password`, `account activation`, and `reset password` pages to use Ant Design.
-* [Developer/Workflow]: Fixed issue with deleting AnalysisSubmission raising null pointer execptions due to bean wiring issue (issue #1287).
+* [Developer/Workflow]: Fixed issue with deleting AnalysisSubmission raising null pointer executions due to bean wiring issue (issue #1287).
 
 ## [22.03.1] - 2022/04/05
 * [ALL]: Upgraded to Spring Boot 2.6.6 which fixes CVE-2022-22965.

@@ -1,17 +1,10 @@
-import { Badge, Button, Menu } from "antd";
+import { Badge, Button } from "antd";
 import React from "react";
 import { getCartCount } from "../../../../apis/cart/cart";
 import { SPACE_MD } from "../../../../styles/spacing";
 import { CART } from "../../../../utilities/events-utilities";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconShoppingCart } from "../../../icons/Icons";
-import styled from "styled-components";
-
-const BadgeStyle = styled(Badge)`
-  margin-left: -5px !important;
-  margin-top: -5px !important;
-  position: fixed !important;
-`;
 
 /**
  * React component to display the cart icon and current counts in the
