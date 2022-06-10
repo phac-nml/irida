@@ -3,10 +3,12 @@ import {useParams} from "react-router-dom";
 import {getNcbiSubmission} from "../../../../apis/export/ncbi";
 import type {NcbiSubmission} from "../../../../types/irida";
 import {BioSampleFileDetails, formatNcbiUploadDetails, formatNcbiUploadFiles,} from "./utils";
-import {Card, List, Skeleton} from "antd";
+import {Card, Divider, List, Skeleton, Typography} from "antd";
 import {BasicList} from "../../../../components/lists";
 import {BasicListItem} from "../../../../components/lists/BasicList.types";
 import NcbiBioSampleFiles from "./NcbiBioSampleFiles";
+import {BORDERED_LIGHT} from "../../../../styles/borders";
+import {blue6} from "../../../../styles/colors";
 
 interface RouteParams {
     projectId: string;
@@ -14,18 +16,16 @@ interface RouteParams {
 }
 
 function NcbiExportDetails(): JSX.Element {
-    const { projectId, id } = useParams<keyof RouteParams>() as RouteParams;
+    const {projectId, id} = useParams<keyof RouteParams>() as RouteParams;
 
     const [details, setDetails] = React.useState<BasicListItem[]>([]);
-    const [bioSampleFiles, setBioSampleFiles] = React.useState<
-        BioSampleFileDetails[]
-        >([]);
+    const [bioSampleFiles, setBioSampleFiles] = React.useState<BioSampleFileDetails[]>([]);
     const [loading, setLoading] = React.useState<boolean>(true);
 
     React.useEffect(() => {
         getNcbiSubmission(parseInt(projectId), parseInt(id)).then(
             (submission: NcbiSubmission) => {
-                const { bioSampleFiles, ...info } = submission;
+                const {bioSampleFiles, ...info} = submission;
                 setDetails(formatNcbiUploadDetails(info));
                 setBioSampleFiles(formatNcbiUploadFiles(bioSampleFiles));
                 setLoading(false);
@@ -33,22 +33,28 @@ function NcbiExportDetails(): JSX.Element {
         );
     }, [id, projectId]);
 
+    console.log(JSON.stringify(bioSampleFiles, null, 2));
+
     return (
         <Skeleton active={true} loading={loading}>
             <Card title={i18n("project.export.sidebar.title")}>
-                <BasicList dataSource={details} grid={{ gutter: 16, column: 2 }} />
-
-                <List
-                    bordered
-                    itemLayout="vertical"
-                    dataSource={bioSampleFiles}
-                    renderItem={(sample) => (
-                        <List.Item>
-                            <List.Item.Meta title={sample.key} />
-                            <NcbiBioSampleFiles key={sample.key} bioSample={sample} />
-                        </List.Item>
-                    )}
-                />
+                <BasicList dataSource={details} grid={{gutter: 16, column: 2}}/>
+                <Divider/>
+                <Typography.Title level={5} style={{color: blue6}}>__BioSample Files</Typography.Title>
+                {bioSampleFiles.map(bioSample => {
+                    return <BasicList key={bioSample.key} grid={{gutter: 16, column: 2}}
+                                      dataSource={bioSample.details}/>
+                })}
+                {/*<List*/}
+                {/*    itemLayout="vertical"*/}
+                {/*    dataSource={bioSampleFiles}*/}
+                {/*    renderItem={(sample) => (*/}
+                {/*        <List.Item>*/}
+                {/*            <List.Item.Meta title={sample.key}/>*/}
+                {/*            <NcbiBioSampleFiles key={sample.key} bioSample={sample}/>*/}
+                {/*        </List.Item>*/}
+                {/*    )}*/}
+                {/*/>*/}
             </Card>
         </Skeleton>
     );
