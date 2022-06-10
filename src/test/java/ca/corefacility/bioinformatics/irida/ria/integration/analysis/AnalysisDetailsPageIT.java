@@ -29,9 +29,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.Sets;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/analysis/AnalysisAdminView.xml")
@@ -61,8 +59,13 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// Analysis Description doesn't have a value
 		assertEquals(6, page.getNumberOfListItemValues(), "There should be only 6 values for these labels");
 
-		String[] expectedAnalysisDetails = new String[] { "My Completed Submission", "4",
-				"SNVPhyl Phylogenomics Pipeline (1.0.1)", "MEDIUM", "Oct 6, 2013, 10:01 AM", "a few seconds" };
+		String[] expectedAnalysisDetails = new String[] {
+				"My Completed Submission",
+				"4",
+				"SNVPhyl Phylogenomics Pipeline (1.0.1)",
+				"MEDIUM",
+				"Oct 6, 2013, 10:01 AM",
+				"a few seconds" };
 		assertTrue(page.analysisDetailsEqual(expectedAnalysisDetails),
 				"The correct details are displayed for the analysis");
 	}
@@ -122,7 +125,9 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testOutputFiles() {
+	public void testOutputFiles() throws IOException {
+		fileUtilities.copyFileToDirectory(outputFileBaseDirectory, "src/test/resources/files/filterStats.txt");
+
 		LoginPage.loginAsManager(driver());
 
 		// Has output files
@@ -130,8 +135,10 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(page.compareTabTitle("Output File Preview"), "Page title should equal");
 		assertEquals(2, page.getNumberOfFilesDisplayed(), "There should be two output files");
 		assertTrue(page.downloadAllFilesButtonVisible(), "There should be exactly one download all files button");
-		assertTrue(page.downloadIndividualFilesMenuButtonVisible(), "There should be exactly one download individual files dropdown button");
-		assertTrue(page.downloadIndividualFilesMenuVisible(), "There should be exactly one download individual files dropdown menu");
+		assertTrue(page.downloadIndividualFilesMenuButtonVisible(),
+				"There should be exactly one download individual files dropdown button");
+		assertTrue(page.downloadIndividualFilesMenuVisible(),
+				"There should be exactly one download individual files dropdown menu");
 		assertTrue(page.downloadOutputFileButtonVisible(2),
 				"There should be a download button for the files that are displayed");
 
@@ -371,8 +378,8 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		IridaWorkflow unknownWorkflow;
 
 		// Register an UNKNOWN workflow
-		Path workflowVersion1DirectoryPath = Paths.get(TestAnalysis.class.getResource("workflows/TestAnalysis/1.0")
-				.toURI());
+		Path workflowVersion1DirectoryPath = Paths
+				.get(TestAnalysis.class.getResource("workflows/TestAnalysis/1.0").toURI());
 
 		iridaWorkflowsService = new IridaWorkflowsService(new IridaWorkflowSet(Sets.newHashSet()),
 				new IridaWorkflowIdSet(Sets.newHashSet()));
@@ -409,8 +416,13 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		// Analysis Description doesn't have a value
 		assertEquals(6, page.getNumberOfListItemValues(), "There should be only 6 values for these labels");
 
-		String[] expectedAnalysisDetails = new String[] { "My Completed Submission UNKNOWN PIPELINE", "14",
-				"Unknown Pipeline (Unknown Version)", "MEDIUM", "Oct 6, 2013, 10:01 AM", "a few seconds" };
+		String[] expectedAnalysisDetails = new String[] {
+				"My Completed Submission UNKNOWN PIPELINE",
+				"14",
+				"Unknown Pipeline (Unknown Version)",
+				"MEDIUM",
+				"Oct 6, 2013, 10:01 AM",
+				"a few seconds" };
 		assertTrue(page.analysisDetailsEqual(expectedAnalysisDetails),
 				"The correct details are displayed for the analysis");
 	}
