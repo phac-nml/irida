@@ -112,11 +112,7 @@ export function SequenceObjectListItem({
                   </div>
                 }
                 description={formatInternationalizedDateTime(
-                  files?.length
-                    ? files[0].createdDate
-                    : sequenceFile
-                    ? sequenceFile.createdDate
-                    : file.createdDate
+                  files[0].createdDate
                 )}
               />
             </List.Item>
