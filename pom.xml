@@ -9,7 +9,7 @@
   <groupId>ca.corefacility.bioinformatics</groupId>
   <artifactId>irida</artifactId>
   <packaging>war</packaging>
-  <version>22.05.1</version>
+  <version>22.05.2</version>
   <name>irida</name>
   <url>http://www.irida.ca</url>
 
@@ -543,6 +543,15 @@
         </configuration>
         <executions>
           <execution>
+            <id>repackage</id>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </execution>
+          <execution>
             <id>pre-integration-test</id>
             <goals>
               <goal>start</goal>
@@ -749,10 +758,18 @@
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
           <packagingExcludes>
+						node/,
 						node_modules/,
 						.yarn/,
 						resources/css/,
-						resources/js/
+						resources/js/,
+            webpack*,
+            .yarn*,
+            package.json,
+            styles.js,
+            entries.js,
+            .eslintr.js,
+            postcss.config.js
 </packagingExcludes>
           <attachClasses>true</attachClasses>
         </configuration>

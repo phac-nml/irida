@@ -1,6 +1,12 @@
 
 # Changelog
 
+## [22.05.2] - 2022/06/10
+* [Developer/UI]: Fix flaky UI Integration tests. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
+* [Developer]: Update war build to decrease size and remove executable ability. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
+* [Developer/UI]: Fixed bug where context path was not set for login and password reset components. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
+* [Developer]: Fixed bug where duplicate project_subscriptions were added for users who had direct project membership with email subscriptions and were also a member of the project through group membership. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
+
 ## [22.05.1] - 2022/06/01
 * [UI]: Fixed bug where samples could not be removed from share page. See [PR 1296](https://github.com/phac-nml/irida/pull/1296) for more.
 * [Developer]: Fixed bug where project_subscriptions were added for groups without projects. See [PR 1296](https://github.com/phac-nml/irida/pull/1296) for more.
@@ -80,6 +86,7 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
+[22.05.2]: https://github.com/phac-nml/irida/compare/22.05.1...22.05.2
 [22.05.1]: https://github.com/phac-nml/irida/compare/22.05...22.05.1
 [22.05]: https://github.com/phac-nml/irida/compare/22.03.1...22.05
 [22.03.1]: https://github.com/phac-nml/irida/compare/22.03...22.03.1

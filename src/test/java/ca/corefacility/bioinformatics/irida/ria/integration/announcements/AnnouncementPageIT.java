@@ -9,7 +9,10 @@ import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.*;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.AnnouncementControlPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.CreateAnnouncementComponent;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.EditAnnouncementComponent;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements.ViewAnnouncementComponent;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
@@ -27,7 +30,6 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 	// Page objects
 	private AnnouncementControlPage controlPage;
 
-	@Override
 	@BeforeEach
 	public void setUpTest() {
 		LoginPage.loginAsAdmin(driver());
@@ -141,9 +143,7 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 	/**
 	 * Checks if a List of {@link Date} is sorted in ascending order.
 	 *
-	 * @param dates
-	 *            List of {@link Date}
-	 *
+	 * @param dates List of {@link Date}
 	 * @return if the list is sorted ascending
 	 */
 	private boolean checkDatesSortedAscending(List<Date> dates) {
@@ -160,9 +160,7 @@ public class AnnouncementPageIT extends AbstractIridaUIITChromeDriver {
 	/**
 	 * Checks if a list of {@link Date} is sorted in descending order.
 	 *
-	 * @param dates
-	 *            List of {@link Date}
-	 *
+	 * @param dates List of {@link Date}
 	 * @return if the list is sorted ascending
 	 */
 	private boolean checkDatesSortedDescending(List<Date> dates) {

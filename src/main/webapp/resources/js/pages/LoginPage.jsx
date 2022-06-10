@@ -12,6 +12,14 @@ import store from "./store";
 import { ForgotPassword } from "./password/ForgotPassword";
 import { ActivateAccount } from "./password/ActivateAccount";
 
+/*
+WEBPACK PUBLIC PATH:
+Webpack does not know what the servlet context path is.  To fix this, webpack exposed
+the variable `__webpack_public_path__`
+See: https://webpack.js.org/guides/public-path/#on-the-fly
+ */
+__webpack_public_path__ = setBaseUrl(`/dist/`);
+
 const { Item } = Form;
 
 /**
@@ -99,7 +107,7 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
                   history.pushState(
                     "forgot",
                     "Forgot Password",
-                    "/forgot_password"
+                    setBaseUrl("/forgot_password")
                   );
                 }}
                 style={{ padding: 0, marginLeft: 15 }}
@@ -116,7 +124,7 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }) {
                   history.pushState(
                     "activate",
                     "Activate Account",
-                    "/activate_account"
+                    setBaseUrl("/activate_account")
                   );
                 }}
                 style={{ padding: 0, marginLeft: 25 }}
@@ -180,7 +188,7 @@ function LoginPage() {
                     history.pushState(
                       "forgot",
                       "Forgot Password",
-                      "/forgot_password"
+                      setBaseUrl("/forgot_password")
                     );
                   }}
                 >
