@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
 import { downloadGenomeAssemblyFile } from "../../../apis/samples/samples";
 import { GenomeAssemblyListItem } from "../../sequence-files/GenomeAssemblyListItem";
+import { DEFAULT_ACTION_WIDTH } from "../sampleFilesSlice";
 
 /**
  * React component to display, remove, download genome assemblies
@@ -17,6 +18,7 @@ export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
     (state) => state.sampleReducer
   );
   const { files } = useSelector((state) => state.sampleFilesReducer);
+  const ACTION_MARGIN_RIGHT = isModifiable ? 0 : 5;
 
   /*
    Download genome assembly files
@@ -33,9 +35,14 @@ export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
    */
   const getActionsForGenomeAssembly = (genomeAssembly) => {
     let actions = [
+      <span className="t-file-size">{genomeAssembly.firstFileSize}</span>,
       <Button
         type="link"
-        style={{ padding: 0 }}
+        style={{
+          padding: 0,
+          width: DEFAULT_ACTION_WIDTH,
+          marginRight: ACTION_MARGIN_RIGHT,
+        }}
         className="t-download-file-btn"
         onClick={() => {
           downloadAssemblyFile({
@@ -69,7 +76,7 @@ export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
           <Button
             type="link"
             className="t-remove-file-btn"
-            style={{ padding: 0 }}
+            style={{ padding: 0, width: DEFAULT_ACTION_WIDTH }}
           >
             {i18n("SampleFilesList.remove")}
           </Button>
@@ -77,9 +84,6 @@ export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
       );
     }
 
-    actions.push(
-      <span className="t-file-size">{genomeAssembly.firstFileSize}</span>
-    );
     return actions;
   };
 

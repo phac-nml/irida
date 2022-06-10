@@ -23,6 +23,7 @@ import { SPACE_XS } from "../../../styles/spacing";
 
 import {
   addToConcatenateSelected,
+  DEFAULT_ACTION_WIDTH,
   fetchUpdatedSeqObjectsDelay,
   removeFromConcatenateSelected,
   updatedSequencingObjects,
@@ -52,6 +53,7 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
   const { files, concatenateSelected } = useSelector(
     (state) => state.sampleFilesReducer
   );
+  const ACTION_MARGIN_RIGHT = isModifiable ? 0 : 5;
 
   const fileProcessTranslations = {
     UNPROCESSED: i18n("SampleFilesList.fileProcessingState.UNPROCESSED"),
@@ -180,6 +182,11 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
       ? seqObj.file
       : seqObj;
 
+    actions.push(
+      getProcessingStateTag(obj.processingState),
+      <span className="t-file-size">{seqObj.firstFileSize}</span>
+    );
+
     if (isModifiable && obj.files && obj.files.length === 2) {
       if (
         (sample.defaultSequencingObject !== null &&
@@ -187,9 +194,14 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
         (sample.defaultSequencingObject === null && index === 0)
       ) {
         actions.push(
-          <Tag color="#108ee9" className="t-default-seq-obj-tag">
-            {i18n("SampleFilesList.default")}
-          </Tag>
+          <Tooltip
+            title={i18n("SampleFilesList.defaultSelected")}
+            placement="top"
+          >
+            <Tag color="#108ee9" className="t-default-seq-obj-tag">
+              {i18n("SampleFilesList.default")}
+            </Tag>
+          </Tooltip>
         );
       } else {
         actions.push(
@@ -203,6 +215,7 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
               onClick={() => updateDefaultSequencingObject(obj)}
               type="link"
               className="t-set-default-seq-obj-button"
+              style={{ width: 100 }}
             >
               {i18n("SampleFilesList.setAsDefault")}
             </Button>
@@ -214,7 +227,11 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
     actions.push(
       <Button
         type="link"
-        style={{ padding: 0 }}
+        style={{
+          padding: 0,
+          width: DEFAULT_ACTION_WIDTH,
+          marginRight: ACTION_MARGIN_RIGHT,
+        }}
         className="t-download-file-btn"
         onClick={() => {
           downloadSequenceFile({
@@ -256,7 +273,7 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
             <Button
               type="link"
               className="t-remove-file-btn"
-              style={{ padding: 0 }}
+              style={{ padding: 0, width: DEFAULT_ACTION_WIDTH }}
             >
               {i18n("SampleFilesList.remove")}
             </Button>
@@ -265,10 +282,6 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
       );
     }
 
-    actions.push(
-      getProcessingStateTag(obj.processingState),
-      <span className="t-file-size">{seqObj.firstFileSize}</span>
-    );
     return actions;
   };
 
@@ -280,9 +293,15 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
     const { fileInfo: obj } = seqObj;
 
     actions.push(
+      getProcessingStateTag(obj.processingState),
+      <span className="t-file-size">{seqObj.secondFileSize}</span>,
       <Button
         type="link"
-        style={{ padding: 0 }}
+        style={{
+          padding: 0,
+          width: DEFAULT_ACTION_WIDTH,
+          marginRight: 5,
+        }}
         className="t-download-file-btn"
         onClick={() => {
           downloadSequenceFile({
@@ -292,9 +311,7 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
         }}
       >
         {i18n("SampleFilesList.download")}
-      </Button>,
-      getProcessingStateTag(obj.processingState),
-      <span className="t-file-size">{seqObj.secondFileSize}</span>
+      </Button>
     );
     return actions;
   };
