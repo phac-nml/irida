@@ -71,7 +71,7 @@ function DisplaySampleDetails({
         dispatch(setCartSampleIds({ sampleIds: res }));
       });
     }
-  }, [sampleIds.length]);
+  }, []);
 
   /*
   Check if the current sample is in the cart or not
