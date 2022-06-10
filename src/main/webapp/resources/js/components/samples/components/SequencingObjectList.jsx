@@ -331,7 +331,7 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
       icon = <CloseOutlined />;
     } else if (processingState === "PROCESSING") {
       tagColor = "processing";
-      icon = <SyncOutlined />;
+      icon = <SyncOutlined spin />;
     }
     return (
       <Tooltip placement="top" title={fileProcessTranslations[processingState]}>
