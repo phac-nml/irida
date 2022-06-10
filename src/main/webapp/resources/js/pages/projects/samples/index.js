@@ -13,6 +13,15 @@ import {
 } from "../../../apis/projects/associated-projects";
 import samplesReducer from "../redux/samplesSlice";
 import { projectApi } from "../../../apis/projects/project";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+
+/*
+WEBPACK PUBLIC PATH:
+Webpack does not know what the servlet context path is.  To fix this, webpack exposed
+the variable `__webpack_public_path__`
+See: https://webpack.js.org/guides/public-path/#on-the-fly
+ */
+__webpack_public_path__ = setBaseUrl(`/dist/`);
 
 /**
  * Redux store for project samples

@@ -142,11 +142,17 @@ public class AbstractIridaUIITChromeDriver {
 			testFinished();
 		}
 
+		/**
+		 * {@inheritDoc}}
+		 */
 		@Override
 		public void testSuccessful(ExtensionContext context) {
 			testFinished();
 		}
 
+		/**
+		 * Logout after test has finished executing
+		 */
 		private void testFinished() {
 			LoginPage.logout(driver());
 		}
