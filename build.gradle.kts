@@ -1,3 +1,4 @@
+import com.github.gradle.node.yarn.task.YarnTask
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
@@ -5,10 +6,10 @@ plugins {
     id("java")
     id("maven-publish")
     id("war")
+    id("com.github.node-gradle.node")
+    id("io.spring.dependency-management")
     id("org.gradle.test-retry")
     id("org.springframework.boot")
-    id("io.spring.dependency-management")
-    id("org.siouan.frontend-jdk11")
     id("org.springdoc.openapi-gradle-plugin")
 }
 
@@ -253,14 +254,25 @@ tasks.war {
     exclude("postcss.config.js")
 }
 
-frontend {
-    nodeVersion.set("16.15.0")
-    nodeInstallDirectory.set(file("${projectDir}/src/main/webapp/node"))
-    yarnEnabled.set(true)
-    yarnVersion.set("3.2.1")
-    assembleScript.set("build")
-    installScript.set("install")
-    packageJsonDirectory.set(file("${projectDir}/src/main/webapp"))
+node {
+    download.set(true)
+    version.set("16.15.0")
+    yarnVersion.set("1.22.17") // we actualy use yarn 3 but we cannot specify that here
+    workDir.set(file("${project.projectDir}/.gradle/nodejs"))
+    yarnWorkDir.set(file("${project.projectDir}/.gradle/yarn"))
+    nodeProjectDir.set(file("${projectDir}/src/main/webapp"))
+}
+
+tasks.register<YarnTask>("cleanWebapp") {
+    dependsOn("yarn_install")
+    yarnCommand.set(listOf("clean"))
+}
+
+tasks.register<YarnTask>("buildWebapp") {
+    dependsOn(":cleanWebapp")
+    yarnCommand.set(listOf("build"))
+    inputs.dir("${project.projectDir}/src/main/webapp/resources")
+    outputs.dir("${project.projectDir}/src/main/webapp/dist")
 }
 
 tasks.withType<Test> {
@@ -371,7 +383,7 @@ tasks.processResources {
     filesMatching("version.properties") {
         expand(project.properties)
     }
-    dependsOn(":assembleFrontend")
+    dependsOn(":buildWebapp")
 }
 
 tasks.javadoc {
