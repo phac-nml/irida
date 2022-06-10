@@ -50,7 +50,7 @@
 
         <sql>
             INSERT INTO project_subscription (project_id, user_id, email_subscription, created_date)
-            SELECT project_id, user_id, email_subscription, created_date FROM
+            SELECT project_id, user_id, MAX(email_subscription), MIN(created_date) FROM
             (SELECT project_id, user_id, IF(email_subscription=b'1', 1, 0) as email_subscription, now() as created_date FROM project_user
             UNION
             SELECT p.project_id, m.user_id, 0 as email_subscription, now() as created_date from user_group_member m INNER JOIN user_group_project p ON
