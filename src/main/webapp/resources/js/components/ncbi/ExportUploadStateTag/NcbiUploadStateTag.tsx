@@ -1,60 +1,70 @@
-import React from "react";
 import { Tag } from "antd";
-import { ExportUploadState } from "../../../types/irida";
-import {ExportTagStates} from "./NcbiUploadStateTage.types";
+import React from "react";
+import { ExportTagStates } from "./NcbiUploadStateTag.types";
+import {TagColor} from "../../ant.design/ant.types.";
+import { ExportUploadState } from "../../../types/irida/ExportUpoadState";
 
 const states: ExportTagStates = {
-    NEW: {
-        color: "blue",
-        text: i18n("ExportUploadState.NEW"),
-    },
-    UPLOADING: {
-        color: "blue",
-        text: i18n("ExportUploadState.UPLOADING"),
-    },
-    UPLOADED: {
-        color: "green",
-        text: i18n("ExportUploadState.UPLOADED"),
-    },
-    UPLOAD_ERROR: {
-        color: "red",
-        text: i18n("ExportUploadState.UPLOAD_ERROR"),
-    },
-    created: {
-        text: i18n("ExportUploadState.created"),
-    },
-    failed: {
-        color: "red",
-        text: i18n("ExportUploadState.failed"),
-    },
-    queued: {
-        text: i18n("ExportUploadState.queued"),
-    },
-    processing: {
-        text: i18n("ExportUploadState.processing"),
-    },
-    "processed-ok": {
-        text: i18n("ExportUploadState.processed-ok"),
-    },
-    "processed-error": {
-        color: "red",
-        text: i18n("ExportUploadState.processed-error"),
-    },
-    waiting: {
-        text: i18n("ExportUploadState.waiting"),
-    },
-    submitted: {
-        text: i18n("ExportUploadState.submitted"),
-    },
-    "Submission deleted": {
-        text: "DELETED",
-    },
-    retired: {
-        text: "RETIRED",
-    },
-    unknown: {
-        text: "UNKNOWN",
-    },
+  [ExportUploadState.NEW]: {
+    color: TagColor.LIME,
+    text: i18n("ExportUploadState.NEW"),
+  },
+  [ExportUploadState.UPLOADING]: {
+    color: TagColor.LIME,
+    text: i18n("ExportUploadState.UPLOADING"),
+  },
+  [ExportUploadState.UPLOADED]: {
+    color: TagColor.LIME,
+    text: i18n("ExportUploadState.UPLOADED"),
+  },
+  [ExportUploadState.UPLOADED_ERROR]: {
+    color: TagColor.RED,
+    text: i18n("ExportUploadState.UPLOAD_ERROR"),
+  },
+  [ExportUploadState.CREATED]: {
+    color: TagColor.BLUE,
+    text: i18n("ExportUploadState.created"),
+  },
+  [ExportUploadState.FAILED]: {
+    color: TagColor.RED,
+    text: i18n("ExportUploadState.failed"),
+  },
+  [ExportUploadState.QUEUED]: {
+    color: TagColor.BLUE,
+    text: i18n("ExportUploadState.queued"),
+  },
+  [ExportUploadState.PROCESSING]: {
+    color: TagColor.BLUE,
+    text: i18n("ExportUploadState.processing"),
+  },
+  [ExportUploadState.PROCESSED_OK]: {
+    color: TagColor.GREEN,
+    text: i18n("ExportUploadState.processed-ok"),
+  },
+  [ExportUploadState.PROCESSED_ERROR]: {
+    color: TagColor.RED,
+    text: i18n("ExportUploadState.processed-error"),
+  },
+  [ExportUploadState.WAITING]: {
+    color: TagColor.CYAN,
+    text: i18n("ExportUploadState.waiting"),
+  },
+  [ExportUploadState.SUBMITTED]: {
+    color: TagColor.BLUE,
+    text: i18n("ExportUploadState.submitted"),
+  },
+  [ExportUploadState.DELETED]: {
+    color: TagColor.VOLCANO,
+    text: "DELETED",
+  },
+  [ExportUploadState.RETIRED]: {
+    color: TagColor.GOLD,
+    text: "RETIRED",
+  },
+  [ExportUploadState.UNKNOWN]: {
+    color: TagColor.ORANGE,
+    text: "UNKNOWN",
+  },
 };
 
 /**
@@ -63,15 +73,15 @@ const states: ExportTagStates = {
  * @param state
  */
 const ExportUploadStateTag = ({
-                                  state,
-                              }: {
-    state: ExportUploadState;
+  state,
+}: {
+  state: ExportUploadState;
 }): JSX.Element => {
-    return states[state] ? (
-        <Tag color={states[state].color}>{states[state].text}</Tag>
-    ) : (
-        <Tag>{i18n("ExportUploadState.unknown")}</Tag>
-    );
+  return states[state] ? (
+    <Tag color={states[state].color}>{states[state].text}</Tag>
+  ) : (
+    <Tag>{i18n("ExportUploadState.unknown")}</Tag>
+  );
 };
 
 export default ExportUploadStateTag;

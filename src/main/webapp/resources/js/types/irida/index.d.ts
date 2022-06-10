@@ -1,3 +1,5 @@
+import {ExportUploadState} from "./ExportUpoadState";
+
 export = IRIDA;
 export as namespace IRIDA;
 
@@ -16,24 +18,6 @@ declare namespace IRIDA {
         priority: boolean;
         createdBy: User;
         users: User[];
-    }
-
-    enum ExportUploadState {
-        NEW = "NEW",
-        UPLOADING = "UPLOADING",
-        UPLOADED = "UPLOADED",
-        UPLOADED_ERROR = "UPLOAD_ERROR",
-        CREATED = "created",
-        FAILED = "failed",
-        QUEUED = "queued",
-        PROCESSING = "processing",
-        PROCESSED_OK = "processed-ok",
-        PROCESSED_ERROR = "processed-error",
-        WAITING = "waiting",
-        SUBMITTED = "submitted",
-        SUBMISSION_DELETED = "Submission deleted",
-        RETIRED = "retired",
-        UNKNOWN = "unknown",
     }
 
     interface NcbiBioSampleFiles {

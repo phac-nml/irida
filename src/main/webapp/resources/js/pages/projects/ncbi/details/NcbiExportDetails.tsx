@@ -1,17 +1,19 @@
-import * as React from "react";
+import { SwapOutlined } from "@ant-design/icons";
+import { Avatar, Card, Divider, Skeleton, Space, Typography } from "antd";
+import React from "react";
 import { useParams } from "react-router-dom";
 import { getNcbiSubmission } from "../../../../apis/export/ncbi";
+import { BasicList } from "../../../../components/lists";
+import { BasicListItem } from "../../../../components/lists/BasicList.types";
+import { blue6 } from "../../../../styles/colors";
 import type { NcbiSubmission } from "../../../../types/irida";
 import {
   BioSampleFileDetails,
   formatNcbiUploadDetails,
   formatNcbiUploadFiles,
 } from "./utils";
-import { Avatar, Card, Divider, Skeleton, Space, Typography } from "antd";
-import { BasicList } from "../../../../components/lists";
-import { BasicListItem } from "../../../../components/lists/BasicList.types";
-import { blue6 } from "../../../../styles/colors";
-import { SwapOutlined } from "@ant-design/icons";
+import { BORDER_RADIUS, BORDERED_LIGHT } from "../../../../styles/borders";
+import { SPACE_SM } from "../../../../styles/spacing";
 
 interface RouteParams {
   projectId: string;
@@ -48,25 +50,35 @@ function NcbiExportDetails(): JSX.Element {
         <Typography.Title level={5} style={{ color: blue6 }}>
           __BioSample Files
         </Typography.Title>
-        {bioSampleFiles.map((bioSample) => {
+        {bioSampleFiles.map((bioSample: BioSampleFileDetails) => {
           return (
-            <Card>
+            <Card key={bioSample.key}>
               <BasicList
-                key={bioSample.key}
                 grid={{ gutter: 16, column: 2 }}
                 dataSource={bioSample.details}
               />
-              {bioSample.files.pairs.map((pair) => (
-                <div key={pair.key}>
-                  <Space>
-                    <Avatar
-                      style={{ backgroundColor: blue6 }}
-                      icon={<SwapOutlined />}
-                    />
-                    {pair.name}
-                  </Space>
-                </div>
-              ))}
+              <Space direction="vertical" style={{ width: `100%` }}>
+                <Typography.Text strong>__FILES</Typography.Text>
+                {bioSample.files.pairs.map((pair) => (
+                  <div
+                    key={pair.key}
+                    style={{
+                      border: BORDERED_LIGHT,
+                      borderRadius: BORDER_RADIUS,
+                      padding: SPACE_SM,
+                    }}
+                  >
+                    <Space>
+                      <Avatar
+                        size="small"
+                        style={{ backgroundColor: blue6 }}
+                        icon={<SwapOutlined />}
+                      />
+                      {pair.name}
+                    </Space>
+                  </div>
+                ))}
+              </Space>
             </Card>
           );
         })}
