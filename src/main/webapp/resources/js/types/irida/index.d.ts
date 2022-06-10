@@ -18,22 +18,23 @@ declare namespace IRIDA {
         users: User[];
     }
 
-    type ExportUploadState =
-        | "NEW"
-        | "UPLOADING"
-        | "UPLOADED"
-        | "UPLOAD_ERROR"
-        | "created"
-        | "failed"
-        | "queued"
-        | "processing"
-        | "processed-ok"
-        | "processed-error"
-        | "waiting"
-        | "submitted"
-        | "Submission deleted"
-        | "retired"
-        | "unknown";
+    enum ExportUploadState {
+        NEW = "NEW",
+        UPLOADING = "UPLOADING",
+        UPLOADED = "UPLOADED",
+        UPLOADED_ERROR = "UPLOAD_ERROR",
+        CREATED = "created",
+        FAILED = "failed",
+        QUEUED = "queued",
+        PROCESSING = "processing",
+        PROCESSED_OK = "processed-ok",
+        PROCESSED_ERROR = "processed-error",
+        WAITING = "waiting",
+        SUBMITTED = "submitted",
+        SUBMISSION_DELETED = "Submission deleted",
+        RETIRED = "retired",
+        UNKNOWN = "unknown",
+    }
 
     interface NcbiBioSampleFiles {
         id: number;
@@ -101,17 +102,18 @@ declare namespace IRIDA {
         files: SequenceFile[];
     }
 
-    interface SingleEndSequenceFile extends IridaBase{
+    interface SingleEndSequenceFile extends IridaBase {
         file: SequenceFile;
     }
 
-    type SystemRole =
-        | "ROLE_ANONYMOUS"
-        | "ROLE_ADMIN"
-        | "ROLE_USER"
-        | "ROLE_MANAGER"
-        | "ROLE_SEQUENCER"
-        | "ROLE_TECHNICIAN";
+    enum SystemRole {
+        ROLE_ANONYMOUS = "ROLE_ANONYMOUS",
+        ROLE_ADMIN = "ROLE_ADMIN",
+        ROLE_USER = "ROLE_USER",
+        ROLE_MANAGER = "ROLE_MANAGER",
+        ROLE_SEQUENCER = "ROLE_SEQUENCER",
+        ROLE_TECHNICIAN = "ROLE_TECHNICIAN",
+    }
 
     interface User extends IridaBase {
         username: string;
