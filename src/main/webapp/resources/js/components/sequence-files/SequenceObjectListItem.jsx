@@ -6,7 +6,8 @@ import {
   SwapOutlined,
   SwapRightOutlined,
 } from "@ant-design/icons";
-import { blue6, grey3 } from "../../styles/colors";
+import { blue6 } from "../../styles/colors";
+import { BORDERED_LIGHT } from "../../styles/borders";
 
 /**
  * Component to be used anywhere sequencing objects need to be listed
@@ -66,7 +67,7 @@ export function SequenceObjectListItem({
         justifyContent: "space-between",
         alignItems: "center",
         width: `100%`,
-        border: `solid 1px ${grey3}`,
+        border: `${BORDERED_LIGHT}`,
         padding: 5,
       }}
     >
@@ -79,6 +80,7 @@ export function SequenceObjectListItem({
         style={{
           backgroundColor: blue6,
           verticalAlign: "middle",
+          marginLeft: 5,
           marginRight: 10,
           marginTop: ELEMENT_ALIGN_MARGIN_TOP,
         }}

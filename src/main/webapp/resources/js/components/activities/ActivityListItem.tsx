@@ -72,7 +72,11 @@ export function ActivityListItem({
           const projectId = activity.items[0].href.match(/\d+/g)?.[0];
           const sampleId = activity.items[0].href.match(/\d+/g)?.[1];
           content.push(
-            <SampleDetailViewer sampleId={sampleId} projectId={projectId}>
+            <SampleDetailViewer
+              sampleId={sampleId}
+              projectId={projectId}
+              key={key}
+            >
               <Button type="link" style={{ padding: 0 }}>
                 {item.label}
               </Button>
