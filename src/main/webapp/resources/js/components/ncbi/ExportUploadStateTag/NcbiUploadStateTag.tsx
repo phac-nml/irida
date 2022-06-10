@@ -1,7 +1,7 @@
 import React from "react";
 import { Tag } from "antd";
 import { ExportUploadState } from "../../../types/irida";
-import {ExportTagStates} from "./index";
+import {ExportTagStates} from "./NcbiUploadStateTage.types";
 
 const states: ExportTagStates = {
     NEW: {

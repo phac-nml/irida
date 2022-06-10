@@ -12,29 +12,29 @@ const { Title } = Typography;
  * @constructor
  */
 export default function ProjectNCBILayout() {
-    const { id: submissionId } = useParams();
-    const navigate = useNavigate();
-    const [showBack, setShowBack] = React.useState(false);
+  const { id: submissionId } = useParams();
+  const navigate = useNavigate();
+  const [showBack, setShowBack] = React.useState(false);
 
-    React.useEffect(() => {
-        setShowBack(!!submissionId);
-    }, [submissionId]);
+  React.useEffect(() => {
+    setShowBack(!!submissionId);
+  }, [submissionId]);
 
-    return (
-        <Row gutter={[16, 16]}>
-            <Col
-                xxl={{ span: 12, offset: 6 }}
-                xl={{ span: 20, offset: 2 }}
-                sm={{ span: 22, offset: 1 }}
-            >
-                <PageHeader
-                    onBack={showBack ? () => navigate(-1) : undefined}
-                    title={i18n("NcbiExportPage.title")}
-                />
-                <Outlet />
-            </Col>
-        </Row>
-    );
+  return (
+    <Row gutter={[16, 16]}>
+      <Col
+        xxl={{ span: 12, offset: 6 }}
+        xl={{ span: 20, offset: 2 }}
+        sm={{ span: 22, offset: 1 }}
+      >
+        <PageHeader
+          onBack={showBack ? () => navigate(-1) : undefined}
+          title={i18n("NcbiExportPage.title")}
+        />
+        <Outlet />
+      </Col>
+    </Row>
+  );
 }
 
 // TODO: This will need to be moved up as the project SPA gets created.
