@@ -14,6 +14,14 @@ import store from "../store";
 import { Provider } from "react-redux";
 import { validatePassword } from "../../utilities/validation-utilities";
 
+/*
+WEBPACK PUBLIC PATH:
+Webpack does not know what the servlet context path is.  To fix this, webpack exposed
+the variable `__webpack_public_path__`
+See: https://webpack.js.org/guides/public-path/#on-the-fly
+ */
+__webpack_public_path__ = setBaseUrl(`/dist/`);
+
 const { Item } = Form;
 const passwordExpired =
   new URLSearchParams(window.location.search).get("expired") || false;
