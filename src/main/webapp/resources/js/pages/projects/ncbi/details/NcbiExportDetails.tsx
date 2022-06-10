@@ -7,10 +7,11 @@ import {
   formatNcbiUploadDetails,
   formatNcbiUploadFiles,
 } from "./utils";
-import { Card, Divider, Skeleton, Typography } from "antd";
+import { Avatar, Card, Divider, Skeleton, Space, Typography } from "antd";
 import { BasicList } from "../../../../components/lists";
 import { BasicListItem } from "../../../../components/lists/BasicList.types";
 import { blue6 } from "../../../../styles/colors";
+import { SwapOutlined } from "@ant-design/icons";
 
 interface RouteParams {
   projectId: string;
@@ -55,6 +56,17 @@ function NcbiExportDetails(): JSX.Element {
                 grid={{ gutter: 16, column: 2 }}
                 dataSource={bioSample.details}
               />
+              {bioSample.files.pairs.map((pair) => (
+                <div key={pair.key}>
+                  <Space>
+                    <Avatar
+                      style={{ backgroundColor: blue6 }}
+                      icon={<SwapOutlined />}
+                    />
+                    {pair.name}
+                  </Space>
+                </div>
+              ))}
             </Card>
           );
         })}
