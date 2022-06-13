@@ -1,99 +1,87 @@
 import { SwapOutlined } from "@ant-design/icons";
-import { Avatar, Card, Divider, Skeleton, Space, Typography } from "antd";
+import { Avatar, Card, Divider, List, Space, Tag, Typography } from "antd";
 import React from "react";
-import { useParams } from "react-router-dom";
-import { getNcbiSubmission } from "../../../../apis/export/ncbi";
+import { useLoaderData } from "react-router-dom";
 import { BasicList } from "../../../../components/lists";
-import { BasicListItem } from "../../../../components/lists/BasicList.types";
 import { blue6 } from "../../../../styles/colors";
-import type { NcbiSubmission } from "../../../../types/irida";
-import {
-  BioSampleFileDetails,
-  formatNcbiUploadDetails,
-  formatNcbiUploadFiles,
-} from "./utils";
-import { BORDER_RADIUS, BORDERED_LIGHT } from "../../../../styles/borders";
-import { SPACE_SM } from "../../../../styles/spacing";
+import type { SequenceFile } from "../../../../types/irida";
+import { PairedEndSequenceFile } from "../../../../types/irida";
+import { BioSampleFileDetails } from "./utils";
+import { BasicListItem } from "../../../../components/lists/BasicList.types";
+import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 
-interface RouteParams {
-  projectId: string;
-  id: string;
-}
+type LoaderParams = [BasicListItem[], BioSampleFileDetails[]];
 
 function NcbiExportDetails(): JSX.Element {
-  const { projectId, id } = useParams<keyof RouteParams>() as RouteParams;
-
-  const [details, setDetails] = React.useState<BasicListItem[]>([]);
-  const [bioSampleFiles, setBioSampleFiles] = React.useState<
-    BioSampleFileDetails[]
-  >([]);
-  const [loading, setLoading] = React.useState<boolean>(true);
-
-  React.useEffect(() => {
-    getNcbiSubmission(parseInt(projectId), parseInt(id)).then(
-      (submission: NcbiSubmission) => {
-        const { bioSampleFiles, ...info } = submission;
-        setDetails(formatNcbiUploadDetails(info));
-        setBioSampleFiles(formatNcbiUploadFiles(bioSampleFiles));
-        setLoading(false);
-      }
-    );
-  }, [id, projectId]);
-
-  console.log(JSON.stringify(bioSampleFiles, null, 2));
+  const [details, bioSampleFiles]: LoaderParams = useLoaderData();
 
   return (
-    <Skeleton active={true} loading={loading}>
+    <Space direction="vertical" style={{ width: `100%` }}>
       <Card title={i18n("project.export.sidebar.title")}>
         <BasicList dataSource={details} grid={{ gutter: 16, column: 2 }} />
-        <Divider />
-        <Typography.Title level={5} style={{ color: blue6 }}>
-          __BioSample Files
-        </Typography.Title>
-        {bioSampleFiles.map((bioSample: BioSampleFileDetails) => {
-          return (
-            <Card key={bioSample.key}>
+      </Card>
+      <Typography.Title level={5} style={{ color: blue6 }}>
+        __BioSample Files
+      </Typography.Title>
+      {bioSampleFiles.map((bioSampleFile: BioSampleFileDetails) => {
+        console.log(bioSampleFile);
+        return (
+          <Card>
+            <Space
+              key={bioSampleFile.key}
+              direction="vertical"
+              style={{ width: `100%` }}
+            >
               <BasicList
                 grid={{ gutter: 16, column: 2 }}
-                dataSource={bioSample.details}
+                dataSource={bioSampleFile.details}
               />
-              <Space direction="vertical" style={{ width: `100%` }}>
-                <Typography.Text strong>__FILES</Typography.Text>
-                {bioSample.files.pairs.map((pair) => (
-                  <div
-                    key={pair.key}
-                    style={{
-                      border: BORDERED_LIGHT,
-                      borderRadius: BORDER_RADIUS,
-                      padding: SPACE_SM,
-                    }}
-                  >
-                    <Space>
+
+              <List
+                size="small"
+                dataSource={bioSampleFile.files.pairs}
+                renderItem={(pair: PairedEndSequenceFile) => (
+                  <List.Item>
+                    <div
+                      style={{
+                        width: `100%`,
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
                       <Avatar
                         size="small"
                         style={{ backgroundColor: blue6 }}
                         icon={<SwapOutlined />}
                       />
-                      {pair.name}
-                    </Space>
-                  </div>
-                ))}
-              </Space>
-            </Card>
-          );
-        })}
-        {/*<List*/}
-        {/*    itemLayout="vertical"*/}
-        {/*    dataSource={bioSampleFiles}*/}
-        {/*    renderItem={(sample) => (*/}
-        {/*        <List.Item>*/}
-        {/*            <List.Item.Meta title={sample.key}/>*/}
-        {/*            <NcbiBioSampleFiles key={sample.key} bioSample={sample}/>*/}
-        {/*        </List.Item>*/}
-        {/*    )}*/}
-        {/*/>*/}
-      </Card>
-    </Skeleton>
+                      <List
+                        style={{ flexGrow: 1 }}
+                        key={pair.key}
+                        dataSource={pair.files}
+                        renderItem={(file: SequenceFile) => (
+                          <List.Item
+                            actions={[
+                              <Tag key={file.key}>{file.fileSize}</Tag>,
+                            ]}
+                          >
+                            <List.Item.Meta
+                              title={file.name}
+                              description={formatInternationalizedDateTime(
+                                file.createdDate
+                              )}
+                            />
+                          </List.Item>
+                        )}
+                      />
+                    </div>
+                  </List.Item>
+                )}
+              />
+            </Space>
+          </Card>
+        );
+      })}
+    </Space>
   );
 }
 

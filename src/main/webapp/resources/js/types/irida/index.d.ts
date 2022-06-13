@@ -79,6 +79,7 @@ declare namespace IRIDA {
     }
 
     interface SequenceFile extends IridaBase {
+        fileSize: string;
         // Nothing required here
     }
 

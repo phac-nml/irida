@@ -1,17 +1,13 @@
 import React from "react";
-import { Table } from "antd";
-import {getProjectNCBIExports, NcbiExportSubmissionTableModel} from "../../../apis/export/ncbi";
-import {
-  formatInternationalizedDateTime
-} from "../../../utilities/date-utilities";
-import { setBaseUrl } from "../../../utilities/url-utilities";
-import NcbiUploadStates from "../upload-states";
-import {
-  getPaginationOptions
-} from "../../../utilities/antdesign-table-utilities";
-import {Link, useParams} from "react-router-dom";
+import {Table} from "antd";
+import {NcbiExportSubmissionTableModel} from "../../../apis/export/ncbi";
+import {formatInternationalizedDateTime} from "../../../utilities/date-utilities";
+import {setBaseUrl} from "../../../utilities/url-utilities";
+import {getPaginationOptions} from "../../../utilities/antdesign-table-utilities";
+import {Link, useLoaderData} from "react-router-dom";
 import NcbiUploadStateTag from "../ExportUploadStateTag/NcbiUploadStateTag";
-import {ExportUploadState, NcbiSubmission, User, UserMinimal} from "../../../types/irida";
+import {UserMinimal} from "../../../types/irida";
+import {ExportUploadState} from "../../../types/irida/ExportUpoadState";
 
 /**
  * Render a list of all Project NCBI Exports.
@@ -19,19 +15,7 @@ import {ExportUploadState, NcbiSubmission, User, UserMinimal} from "../../../typ
  * @constructor
  */
 export function NcbiExportTable(): JSX.Element {
-  const {projectId} = useParams();
-
-  const [exports, setExports] = React.useState<NcbiExportSubmissionTableModel[] | undefined>(undefined);
-  const [total, setTotal] = React.useState<number>(0);
-
-  React.useEffect(() => {
-    if (projectId) {
-      getProjectNCBIExports(parseInt(projectId)).then((data) => {
-        setExports(data);
-        setTotal(data.length);
-      });
-    }
-  }, [projectId]);
+  const exports = useLoaderData();
 
   const columns = [
     {
@@ -80,7 +64,7 @@ export function NcbiExportTable(): JSX.Element {
       columns={columns}
       dataSource={exports}
       rowKey={(item) => item.bioProjectId}
-      pagination={getPaginationOptions(total)}
+      pagination={getPaginationOptions(exports.length)}
     />
   );
 }

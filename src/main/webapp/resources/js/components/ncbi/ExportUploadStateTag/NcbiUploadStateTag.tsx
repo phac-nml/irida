@@ -6,15 +6,15 @@ import { ExportUploadState } from "../../../types/irida/ExportUpoadState";
 
 const states: ExportTagStates = {
   [ExportUploadState.NEW]: {
-    color: TagColor.LIME,
+    color: undefined,
     text: i18n("ExportUploadState.NEW"),
   },
   [ExportUploadState.UPLOADING]: {
-    color: TagColor.LIME,
+    color: TagColor.BLUE,
     text: i18n("ExportUploadState.UPLOADING"),
   },
   [ExportUploadState.UPLOADED]: {
-    color: TagColor.LIME,
+    color: TagColor.CYAN,
     text: i18n("ExportUploadState.UPLOADED"),
   },
   [ExportUploadState.UPLOADED_ERROR]: {
@@ -22,7 +22,7 @@ const states: ExportTagStates = {
     text: i18n("ExportUploadState.UPLOAD_ERROR"),
   },
   [ExportUploadState.CREATED]: {
-    color: TagColor.BLUE,
+    color: TagColor.CYAN,
     text: i18n("ExportUploadState.created"),
   },
   [ExportUploadState.FAILED]: {
@@ -30,7 +30,7 @@ const states: ExportTagStates = {
     text: i18n("ExportUploadState.failed"),
   },
   [ExportUploadState.QUEUED]: {
-    color: TagColor.BLUE,
+    color: TagColor.CYAN,
     text: i18n("ExportUploadState.queued"),
   },
   [ExportUploadState.PROCESSING]: {
@@ -50,7 +50,7 @@ const states: ExportTagStates = {
     text: i18n("ExportUploadState.waiting"),
   },
   [ExportUploadState.SUBMITTED]: {
-    color: TagColor.BLUE,
+    color: TagColor.CYAN,
     text: i18n("ExportUploadState.submitted"),
   },
   [ExportUploadState.DELETED]: {
