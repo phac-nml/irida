@@ -98,13 +98,7 @@ An (incomplete) set of instructions for getting the IRIDA service layer and web 
 * Install the following dependencies from your chosen package manager:
   * MariaDB
   * Java 11 JDK
-  * Apache Maven
-* Run the library installation script in the `lib/` directory:
-
-```
-cd irida/lib/
-./install-libs.sh
-```
+  * Gradle
 * Create a test database in MariaDB with the name `irida_test` and user `test` with password `test`.
 * Create a second test database in MariaDB with the name `irida_integration_test` and user `test` with password `test` (for running local integration tests).
 

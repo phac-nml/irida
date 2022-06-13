@@ -52,12 +52,9 @@ You've *probably* already figured out how to clone IRIDA if you're reading this 
 
 Importing IRIDA into an IDE is left to the developer.
 
-### Installing dependencies
+### Custom dependencies
 
-IRIDA uses some custom libraries that are either a) not currently available in a Maven repository, or b) a custom version of the software available in Maven central. We provide a convenient `bash` script for installing our additional Java dependencies in the `lib` directory:
-
-    cd irida/lib/
-    bash install-libs.sh
+IRIDA uses some custom libraries that are either a) not currently available in a Maven repository, or b) a custom version of the software available in Maven central. These Java dependencies are located in the `lib` directory and are automatically installed with Gradle.
 
 ### Custom configuration
 

@@ -107,7 +107,6 @@ publishing {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven {
         url = uri("https://clojars.org/repo")
@@ -164,16 +163,11 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-to-slf4j")
     implementation("com.google.guava:guava:31.0.1-jre")
     implementation("commons-cli:commons-cli:1.2")
-    implementation("uk.ac.babraham:fastqc:0.11.9-nml-custom")
     implementation("org.aspectj:aspectjweaver")
-    implementation("org.biojava:biojava3-core:3.0")
     implementation("org.apache.commons:commons-csv:1.8")
     implementation("com.sksamuel.diff:diff:1.1.11")
     implementation("org.pf4j:pf4j:2.4.0")
-    implementation("com.github.jmchilton.blend4j:blend4j:0.2.1-2201df9") {
-        exclude(group = "javax.xml.stream")
-        exclude(group = "com.sun.xml.bind")
-    }
+    implementation("org.biojava:biojava3-core:3.0")
     implementation("net.matlux:jvm-breakglass:0.0.8")
     implementation("com.google.code.gson:gson")
     implementation("com.github.pjfanning:excel-streaming-reader:3.6.1")
@@ -181,7 +175,28 @@ dependencies {
         exclude(group = "jakarta.xml.bind", module = "jakarta.xml.bind-api")
         exclude(group = "jakarta.validation", module = "jakarta.validation-api")
     }
+
+    // Customized fastqc
+    implementation(files("${projectDir}/lib/jbzip2-0.9.jar"))
+    implementation(files("${projectDir}/lib/sam-1.103.jar"))
+    implementation(files("${projectDir}/lib/cisd-jhdf5.jar"))
+    implementation(files("${projectDir}/lib/fastqc-0.11.9.jar"))
+
+    // Customized blend4j
+    implementation("com.sun.jersey:jersey-client:1.19.4")
+    implementation("com.sun.jersey:jersey-json:1.19.4")
+    implementation("com.sun.jersey:jersey-core:1.19.4")
+    implementation("com.sun.jersey.contribs:jersey-multipart:1.19.4")
+    implementation("org.codehaus.jackson:jackson-core-asl:1.9.12")
+    implementation("org.codehaus.jackson:jackson-mapper-asl:1.9.12")
+    implementation("org.codehaus.jackson:jackson-jaxrs:1.9.12")
+    implementation(files("${projectDir}/lib/blend4j-0.2.1-2201df9.jar"))
+
+    // Runtime dependencies
     runtimeOnly("mysql:mysql-connector-java")
+    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+
+    // Testing dependencies
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.springframework.boot", module = "spring-boot-test-autoconfigure")
     }
@@ -197,7 +212,6 @@ dependencies {
     testImplementation("org.seleniumhq.selenium:selenium-support:3.141.59")
     testImplementation("org.seleniumhq.selenium:selenium-chrome-driver:3.141.59")
     testImplementation("org.mockftpserver:MockFtpServer:2.6")
-    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 }
 
 tasks.register<Zip>("packageDistribution") {
