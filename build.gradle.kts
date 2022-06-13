@@ -247,9 +247,9 @@ tasks.build {
     dependsOn("packageDistribution")
 }
 
-// we want the plain jar to have a normal name (for )
+// we need to set the classifier to "classes" for building pipeline plugins
 tasks.jar {
-    archiveClassifier.set("")
+    archiveClassifier.set("classes")
 }
 
 // we do not want to build an executable war so skip this task
