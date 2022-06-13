@@ -112,9 +112,6 @@ publishing {
 
 repositories {
     mavenCentral()
-    maven {
-        url = uri("https://clojars.org/repo")
-    }
 }
 
 dependencies {
@@ -172,7 +169,6 @@ dependencies {
     implementation("com.sksamuel.diff:diff:1.1.11")
     implementation("org.pf4j:pf4j:2.4.0")
     implementation("org.biojava:biojava3-core:3.0")
-    implementation("net.matlux:jvm-breakglass:0.0.8")
     implementation("com.google.code.gson:gson")
     implementation("com.github.pjfanning:excel-streaming-reader:3.6.1")
     implementation("org.springdoc:springdoc-openapi-webmvc-core:1.5.6") {
