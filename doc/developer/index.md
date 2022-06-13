@@ -39,4 +39,3 @@ Other IRIDA developer resources
 * [IRIDA data model](data-model)
 * [Database change management with Liquibase](database)
 * [GMI REST API proposal](gmi-rest-api)
-* [Clojure nREPL](clojure-repl)
