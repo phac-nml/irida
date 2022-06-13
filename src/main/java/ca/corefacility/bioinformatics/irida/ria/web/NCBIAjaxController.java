@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax.export;
+package ca.corefacility.bioinformatics.irida.ria.web;
 
 import java.util.List;
 
