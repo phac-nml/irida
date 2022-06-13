@@ -5,7 +5,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.MinimalModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.ModelKeys;
 
 /**
- * Bare minimal representation for a project in the UI
+ * Minimal model for a {@link Project} in the UI
  */
 public class ProjectMinimalModel extends MinimalModel {
 
