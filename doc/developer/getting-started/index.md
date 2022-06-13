@@ -38,14 +38,14 @@ IRIDA uses the Spring Framework as the main backbone of the application.  Spring
 
 For a better understanding of how Spring works, it's recommended that IRIDA developers attend a *Core Spring Training* course [https://pivotal.io/training/courses/core-spring-training](https://pivotal.io/training/courses/core-spring-training).
 
-#### Apache Maven
+#### Gradle
 {:.no_toc}
 
-Documentation: [http://maven.apache.org/guides/](http://maven.apache.org/guides/)
+Documentation: [https://docs.gradle.org/current/userguide/userguide.html](https://docs.gradle.org/current/userguide/userguide.html)
 
-IRIDA uses Apache Maven for dependency management and build automation.  Maven allows developers to specify dependencies for a Java application and Maven will handle downloading all necessary required packages and ensuring they're available for developers on the Java classpath.  It also allows you to specify build lifecycles to automate packaging an application for distribution or execute code for development.
+IRIDA uses Gradle for dependency management and build automation.  Gradle allows developers to specify dependencies for a Java application and Gradle will handle downloading all necessary required packages and ensuring they're available for developers on the Java classpath.  It also allows you to specify build lifecycles to automate packaging an application for distribution or execute code for development.
 
-Maven settings and dependencies can generally be found in the `pom.xml` file in the IRIDA root directory.
+Gradle settings and dependencies can generally be found in the `settings.gradle.kts` and `build.gradle.kts` files in the IRIDA root directory.
 
 #### Hibernate
 {:.no_toc}
@@ -84,7 +84,6 @@ The development platform used by most IRIDA developers is the [Eclipse](https://
 The following plugins are recommended:
 
 * Eclipse EGit - Git integration.  Helps by showing changes made to your codebase.
-* Eclipse m2e - Maven integration.  Helps build your Maven project.
 
 The following code formatting file should be imported into Eclipse for consistency between developers: [IRIDA eclipse code format](irida-code-format.xml)
 
@@ -182,7 +181,7 @@ When running IRIDA from the command line, a profile can be set by adding the fol
 
 #### Running IRIDA tests locally
 
-While GitHub Actions runs all IRIDA's testing on every pull request, it is often useful to run IRIDA's test suite locally for debugging or development.  IRIDA's test suite can be run with Maven using the `test` and `verify` goals.
+While GitHub Actions runs all IRIDA's testing on every pull request, it is often useful to run IRIDA's test suite locally for debugging or development.  IRIDA's test suite can be run with Grade using the `test` and `check` goals.
 
 See the [IRIDA tests](#irida-tests) section for more on how IRIDA's tests are developed.
 
@@ -195,7 +194,7 @@ IRIDA's unit tests can be run with the following command:
 ./gradlew clean test
 ```
 
-Maven will download all required dependencies and run the full suite of unit tests.  This will take a couple minutes and a report stating what tests passed and failed will be presented.
+Gradle will download all required dependencies and run the full suite of unit tests.  This will take a couple minutes and a report stating what tests passed and failed will be presented.
 
 ##### Integration tests
 {:.no_toc}
@@ -238,10 +237,10 @@ This will:
 4. Run IRIDA `galaxy_testing` integration test profile.
 5. Remove Docker image on <http://localhost:48889>.
 
-Additional Maven parameters can be passed to `run-tests.sh`.  In particular, individual test classes can be run using `-Dit.test=ca.corefacilty.bioinformatics.irida.TheTestClass`. For example:
+Additional Gradle parameters can be passed to `run-tests.sh`.  In particular, individual test classes can be run using `--tests=ca.corefacilty.bioinformatics.irida.TheTestClass`. For example:
 
 ```bash
-./run-tests.sh rest_testing -Dit.test=ca.corefacility.bioinformatics.irida.web.controller.test.integration.analysis.RESTAnalysisSubmissionControllerIT
+./run-tests.sh rest_testing --tests=ca.corefacility.bioinformatics.irida.web.controller.test.integration.analysis.RESTAnalysisSubmissionControllerIT
 ```
 
 #### Building IRIDA for release
@@ -309,7 +308,7 @@ IRIDA is organized as a fairly classic Java web application.  All main source ca
 
 All files are found under the `ca.corefacility.bioinformatics.irida` package root.
 
-* `config` - Configuration classes.  All Spring application config, web config, Maven config, and scheduled task configuration can be found here.
+* `config` - Configuration classes.  All Spring application config, web config, and scheduled task configuration can be found here.
 * `database.changesets` - Java Liquibase changesets.  See more about our liquibase usage in the [Database Updates section](#database-updates).
 * `events` - Classes here handle the `ProjectEvent` structure in IRIDA.  These are the messages you can find on the IRIDA dashboard and project recent activity pages.
 * `exceptions` - Java `Exception` classes written for IRIDA.
@@ -410,12 +409,12 @@ IRIDA has 2 main types of tests:
 #### Unit tests
 {:.no_toc}
 
-IRIDA unit tests are written entirely with JUnit and run with Maven Surefire.  Any classes or methods performing any sort of business logic should have unit tests written for them.  In general all test requirements should be mocked with Mockito, and tests should be written for expected behaviour, failure cases, and edge cases.  To mark a class as a unit test, the java file must be named with a `*Test.java` suffix.  For examples of existing IRIDA unit tests, see any classes under `src/test/java` class path `ca.corefacility.bioinformatics.irida.service.impl.unit`.
+IRIDA unit tests are written entirely with JUnit and run with Gradle.  Any classes or methods performing any sort of business logic should have unit tests written for them.  In general all test requirements should be mocked with Mockito, and tests should be written for expected behaviour, failure cases, and edge cases.  To mark a class as a unit test, the java file must be named with a `*Test.java` suffix.  For examples of existing IRIDA unit tests, see any classes under `src/test/java` class path `ca.corefacility.bioinformatics.irida.service.impl.unit`.
 
 #### Integration tests
 {:.no_toc}
 
-IRIDA's integration tests are again developed using JUnit and run with Maven Failsafe.  In addition to the unit tests described above, IRIDA's integration tests verify that all components of the application work correctly together to produce the intended result.  Integration tests are generally written using the `SpringJUnit4ClassRunner` class which allows us to use a Spring application context and `@Autowired` to wire in test dependencies.  Mocking generally should not be used for dependencies in any integration tests.
+IRIDA's integration tests are again developed using JUnit and run with Gradle.  In addition to the unit tests described above, IRIDA's integration tests verify that all components of the application work correctly together to produce the intended result.  Integration tests are generally written using the `SpringJUnit4ClassRunner` class which allows us to use a Spring application context and `@Autowired` to wire in test dependencies.  Mocking generally should not be used for dependencies in any integration tests.
 
 As integration tests rely on the full application stack, database entries must be created at the beginning of each test.  To do this IRIDA uses the [DBUnit](http://dbunit.sourceforge.net/) library to load test data into the database prior to every test, and to clear the database after the test is completed.  Test database files are generally created for each test class, but some are reused between test classes.  DBUnit test files are written in an easy XML format.
 

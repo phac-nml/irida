@@ -14,7 +14,7 @@ You're required to install a few different pieces of software on your machine be
 
 1. DB: A MySQL or MariaDB server,
 2. Languages: Java 11 (we have a hard requirement on Java 11), Python, Node
-3. Build: Apache Maven
+3. Build: Gradle
 4. SCM: Git
 5. IDE: Eclipse, Netbeans, IntelliJ, vim... (whatever you want, really).
 
@@ -31,7 +31,7 @@ These instructions work for a fresh, up-to-date install of Ubuntu 14.04 LTS. No 
     sudo apt-get update
 
     # You will be prompted to set a root password for mysql and to accept the license for the Java installer.
-    sudo apt-get install --yes --no-install-recommends mysql-server maven git openjdk-11-jdk
+    sudo apt-get install --yes --no-install-recommends mysql-server gradle git openjdk-11-jdk
 
 
 Install instructions for CentOS
@@ -142,7 +142,7 @@ To run the full integration test suite for IRIDA please run the following:
 
     ./run-tests.sh all
 
-This will run all the integration test profiles using Maven, and print out reports for each profile.
+This will run all the integration test profiles using Gradle, and print out reports for each profile.
 
 Setting up Galaxy
 -----------------
