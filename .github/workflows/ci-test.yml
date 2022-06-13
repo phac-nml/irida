@@ -23,6 +23,7 @@ jobs:
       MYSQL_PORT: 3800
       MYSQL_USER: test
       MYSQL_PASSWORD: test
+      MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: irida_integration_test
       MYSQL_HOST: 127.0.0.1
 
@@ -52,7 +53,8 @@ jobs:
         with:
           path: "**/.yarn"
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      - uses: mirromutth/mysql-action@v1.1
+      - name: Setup MySQL
+        uses: mirromutth/mysql-action@v1.1
         with:
           host port: ${{ env.MYSQL_PORT }}
           character set server: "utf8"
@@ -61,6 +63,7 @@ jobs:
           mysql database: ${{ env.MYSQL_DATABASE }}
           mysql user: ${{ env.MYSQL_USER }}
           mysql password: ${{ env.MYSQL_PASSWORD }}
+          mysql root password: ${{ env.MYSQL_ROOT_PASSWORD }}
       - name: Set up JDK 11 # Installs java 11
         uses: actions/setup-java@v1
         with:
@@ -69,6 +72,11 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
+      - name: Wait for MySQL
+        run: |
+          while ! mysqladmin ping --host=${{ env.MYSQL_HOST }} --port=${{ env.MYSQL_PORT }} --password=${{ env.MYSQL_ROOT_PASSWORD }} --silent; do
+            sleep 1
+          done
       - name: Run tests with Gradle # Run the test suite
         run: ./run-tests.sh --db-host ${{ env.MYSQL_HOST }} --db-port ${{ env.MYSQL_PORT }} --database ${{ env.MYSQL_DATABASE}} ${{ matrix.suite }}
       - name: Publish Test Report
