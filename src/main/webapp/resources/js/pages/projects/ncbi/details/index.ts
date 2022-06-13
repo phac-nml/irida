@@ -1,1 +1,1 @@
-export { default } from "./NcbiExportDetails";
+export { default, loader } from "./NcbiExportDetailsView";

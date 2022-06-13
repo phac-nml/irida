@@ -1,10 +1,8 @@
-import { Col, PageHeader, Row, Typography } from "antd";
+import { Col, PageHeader, Row } from "antd";
 import React from "react";
 import { render } from "react-dom";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import ProjectSPA from "../ProjectSPA";
-
-const { Title } = Typography;
 
 /**
  * Render NCBI Export listing for a project page.
@@ -14,11 +12,6 @@ const { Title } = Typography;
 export default function ProjectNCBILayout() {
   const { id: submissionId } = useParams();
   const navigate = useNavigate();
-  const [showBack, setShowBack] = React.useState(false);
-
-  React.useEffect(() => {
-    setShowBack(!!submissionId);
-  }, [submissionId]);
 
   return (
     <Row gutter={[16, 16]}>
@@ -28,7 +21,7 @@ export default function ProjectNCBILayout() {
         sm={{ span: 22, offset: 1 }}
       >
         <PageHeader
-          onBack={showBack ? () => navigate(-1) : undefined}
+          onBack={submissionId ? () => navigate(-1) : undefined}
           title={i18n("NcbiExportPage.title")}
         />
         <Outlet />

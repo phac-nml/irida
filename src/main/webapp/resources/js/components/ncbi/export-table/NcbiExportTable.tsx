@@ -1,6 +1,6 @@
 import React from "react";
 import {Table} from "antd";
-import {NcbiExportSubmissionTableModel} from "../../../apis/export/ncbi";
+import {getProjectNCBIExports, NcbiExportSubmissionTableModel} from "../../../apis/export/ncbi";
 import {formatInternationalizedDateTime} from "../../../utilities/date-utilities";
 import {setBaseUrl} from "../../../utilities/url-utilities";
 import {getPaginationOptions} from "../../../utilities/antdesign-table-utilities";
@@ -8,13 +8,23 @@ import {Link, useLoaderData} from "react-router-dom";
 import NcbiUploadStateTag from "../ExportUploadStateTag/NcbiUploadStateTag";
 import {UserMinimal} from "../../../types/irida";
 import {ExportUploadState} from "../../../types/irida/ExportUpoadState";
+import {DataFunctionArgs} from "@remix-run/router/utils";
+
+
+export async function loader({params}:DataFunctionArgs) : Promise<NcbiExportSubmissionTableModel[]>{
+  if (params.projectId) {
+    return getProjectNCBIExports(parseInt(params.projectId));
+  } else {
+    return Promise.reject("Requires a project id");
+  }
+}
 
 /**
  * Render a list of all Project NCBI Exports.
  * @returns {JSX.Element|string}
  * @constructor
  */
-export function NcbiExportTable(): JSX.Element {
+function NcbiExportTable(): JSX.Element {
   const exports = useLoaderData();
 
   const columns = [
@@ -68,3 +78,5 @@ export function NcbiExportTable(): JSX.Element {
     />
   );
 }
+
+export default  NcbiExportTable
