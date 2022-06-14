@@ -7,6 +7,9 @@ import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.PairedEndSequenceFileModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.SingleEndSequenceFileModel;
 
+/**
+ * Describes an NCBI SRA Submission's BioSamples's files for the UI.
+ */
 public class NcbiBioSampleFilesModel {
 	private final String id;
 	private final String bioSample;
