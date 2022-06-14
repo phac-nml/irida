@@ -155,8 +155,10 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
           title={i18n("SampleFilesConcatenate.checkboxDescription")}
           color={primaryColour}
           placement="right"
+          key={`concatenation-checkbox-tooltip-${obj.identifier}`}
         >
           <Checkbox
+            key={`concatenation-checkbox-${obj.identifier}`}
             style={{ marginRight: SPACE_XS }}
             className="t-concatenation-checkbox"
             onChange={(e) => updateSelected(e, obj)}
@@ -183,8 +185,10 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
       : seqObj;
 
     actions.push(
-      getProcessingStateTag(obj.processingState),
-      <span className="t-file-size">{seqObj.firstFileSize}</span>
+      getProcessingStateTag(obj),
+      <span key={`file1-size-${obj.identifier}`} className="t-file-size">
+        {seqObj.firstFileSize}
+      </span>
     );
 
     if (isModifiable && obj.files && obj.files.length === 2) {
@@ -197,8 +201,13 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
           <Tooltip
             title={i18n("SampleFilesList.defaultSelected")}
             placement="top"
+            key={`default-tag-tooltip-${obj.identifier}`}
           >
-            <Tag color="#108ee9" className="t-default-seq-obj-tag">
+            <Tag
+              color="#108ee9"
+              key={`default-tag-${obj.identifier}`}
+              className="t-default-seq-obj-tag"
+            >
               {i18n("SampleFilesList.default")}
             </Tag>
           </Tooltip>
@@ -208,6 +217,7 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
           <Tooltip
             title={i18n("SampleFilesList.tooltip.setAsDefault")}
             placement="top"
+            key={`set-default-tooltip-${obj.identifier}`}
           >
             <Button
               size="small"
@@ -227,6 +237,7 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
     actions.push(
       <Button
         type="link"
+        key={`download-file1-${obj.identifier}`}
         style={{
           padding: 0,
           width: DEFAULT_ACTION_WIDTH,
@@ -252,6 +263,7 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
       actions.push(
         <Popconfirm
           placement="left"
+          key={`remove-seqobj-confirm-${obj.identifier}`}
           title={i18n("SampleFilesList.removeSequencingObject")}
           okText={i18n("SampleFiles.okText")}
           cancelText={i18n("SampleFiles.cancelText")}
@@ -269,9 +281,11 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
           <Tooltip
             title={i18n("SampleFilesList.tooltip.remove")}
             placement="top"
+            key={`remove-seqobj-tooltip-${obj.identifier}`}
           >
             <Button
               type="link"
+              key={`remove-seqobj-${obj.identifier}`}
               className="t-remove-file-btn"
               style={{ padding: 0, width: DEFAULT_ACTION_WIDTH }}
             >
@@ -293,10 +307,13 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
     const { fileInfo: obj } = seqObj;
 
     actions.push(
-      getProcessingStateTag(obj.processingState),
-      <span className="t-file-size">{seqObj.secondFileSize}</span>,
+      getProcessingStateTag(obj, "paired"),
+      <span className="t-file-size" key={`file2-size-${obj.identifier}`}>
+        {seqObj.secondFileSize}
+      </span>,
       <Button
         type="link"
+        key={`download-file2-${obj.identifier}`}
         style={{
           padding: 0,
           width: DEFAULT_ACTION_WIDTH,
@@ -319,23 +336,32 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
   /*
    Gets the processing state as a tag (icon) with a tooltip
   */
-  const getProcessingStateTag = (processingState) => {
+  const getProcessingStateTag = (obj, type = "single") => {
     let tagColor = "default";
     let icon = <ClockCircleOutlined />;
 
-    if (processingState === "FINISHED") {
+    let key =
+      type === "single"
+        ? `file-processing-status-file1-${obj.identifier}`
+        : `file-processing-status-file2-${obj.identifier}`;
+
+    if (obj.processingState === "FINISHED") {
       tagColor = "success";
       icon = <CheckCircleOutlined />;
-    } else if (processingState === "ERROR") {
+    } else if (obj.processingState === "ERROR") {
       tagColor = "error";
       icon = <CloseOutlined />;
-    } else if (processingState === "PROCESSING") {
+    } else if (obj.processingState === "PROCESSING") {
       tagColor = "processing";
       icon = <SyncOutlined spin />;
     }
     return (
-      <Tooltip placement="top" title={fileProcessTranslations[processingState]}>
-        <Tag color={tagColor} className="t-file-processing-status">
+      <Tooltip
+        placement="top"
+        key={key}
+        title={fileProcessTranslations[obj.processingState]}
+      >
+        <Tag color={tagColor} key={key} className="t-file-processing-status">
           {icon}
         </Tag>
       </Tooltip>

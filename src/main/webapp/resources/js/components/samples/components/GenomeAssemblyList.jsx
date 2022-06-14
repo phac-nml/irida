@@ -35,9 +35,15 @@ export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
    */
   const getActionsForGenomeAssembly = (genomeAssembly) => {
     let actions = [
-      <span className="t-file-size">{genomeAssembly.firstFileSize}</span>,
+      <span
+        key={`${genomeAssembly.fileInfo.identifier}-file-size`}
+        className="t-file-size"
+      >
+        {genomeAssembly.firstFileSize}
+      </span>,
       <Button
         type="link"
+        key={`${genomeAssembly.fileInfo.identifier}-download-btn`}
         style={{
           padding: 0,
           width: DEFAULT_ACTION_WIDTH,
@@ -77,6 +83,7 @@ export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
             type="link"
             className="t-remove-file-btn"
             style={{ padding: 0, width: DEFAULT_ACTION_WIDTH }}
+            key={`${genomeAssembly.fileInfo.identifier}-remove-btn`}
           >
             {i18n("SampleFilesList.remove")}
           </Button>
