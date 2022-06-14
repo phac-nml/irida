@@ -1,5 +1,8 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
 
+// The default width for action buttons
+export const DEFAULT_ACTION_WIDTH = 75;
+
 /**
  * Action to set the target sample files
  */

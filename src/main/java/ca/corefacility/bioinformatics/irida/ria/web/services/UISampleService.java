@@ -55,6 +55,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
+
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
@@ -283,10 +284,10 @@ public class UISampleService {
 					sequencingObjectId);
 			sample.setDefaultSequencingObject(sequencingObject);
 			sampleService.update(sample);
-			return messageSource.getMessage("server.SequenceFileHeaderOwner.successfully.set.default.seq.object",
+			return messageSource.getMessage("server.SampleFilesList.successfully.set.default.seq.object",
 					new Object[] {  }, locale);
 		} catch (EntityNotFoundException e) {
-			return messageSource.getMessage("server.SequenceFileHeaderOwner.unable.to.update.sample",
+			return messageSource.getMessage("server.SampleFilesList.unable.to.update.sample",
 					new Object[] {  }, locale);
 		}
 	}
