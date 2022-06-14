@@ -62,6 +62,12 @@ public class UINcbiService {
 		return new TableResponse<>(submissions, page.getTotalElements());
 	}
 
+	/**
+	 * Get the details for an {@link NcbiExportSubmission} for the UI
+	 *
+	 * @param exportId Identifier for the submission
+	 * @return Submission details
+	 */
 	public NcbiSubmissionModel getExportDetails(Long exportId) {
 		NcbiExportSubmission submission = ncbiService.read(exportId);
 		return new NcbiSubmissionModel(submission);
