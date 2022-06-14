@@ -124,7 +124,7 @@ module.exports = (env, argv) => {
         ? {
             minimize: true,
             minimizer: [
-              new CssMinimizerPlugin({ parallel: true }),
+              new CssMinimizerPlugin({ parallel: false }),
               new TerserPlugin({ parallel: true, include: /\/resources/ }),
             ],
             runtimeChunk: "single",

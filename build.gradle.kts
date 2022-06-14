@@ -270,7 +270,7 @@ tasks.war {
 
 node {
     download.set(true)
-    version.set("18.3.0")
+    version.set("16.15.1")
     yarnVersion.set("1.22.17") // we actualy use yarn 3 but we cannot specify that here
     workDir.set(file("${project.projectDir}/.gradle/nodejs"))
     yarnWorkDir.set(file("${project.projectDir}/.gradle/yarn"))
