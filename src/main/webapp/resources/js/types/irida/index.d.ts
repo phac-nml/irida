@@ -75,12 +75,11 @@ declare namespace IRIDA {
         latitude: string;
         longitude: string;
         projects: Project[];
-        sequenceFiles: any[]; // TODO (Josh - 6/7/22): Flush this out
+        sequenceFiles: SequenceFile[];
     }
 
     interface SequenceFile extends IridaBase {
         fileSize: string;
-        // Nothing required here
     }
 
     interface PairedEndSequenceFile extends IridaBase {

@@ -1,9 +1,9 @@
-import { SwapOutlined } from "@ant-design/icons";
+import { SwapOutlined, SwapRightOutlined } from "@ant-design/icons";
 import { Avatar, Card, List, Space, Tag, Typography } from "antd";
 import React from "react";
 import { useLoaderData } from "react-router-dom";
 import { BasicList } from "../../lists";
-import type { SequenceFile } from "../../../types/irida";
+import type { SequenceFile, SingleEndSequenceFile } from "../../../types/irida";
 import { NcbiSubmission, PairedEndSequenceFile } from "../../../types/irida";
 import {
   BioSampleFileDetails,
@@ -66,46 +66,86 @@ function NcbiExportDetailsView(): JSX.Element {
                 dataSource={bioSampleFile.details}
               />
 
-              <List
-                size="small"
-                dataSource={bioSampleFile.files.pairs}
-                renderItem={(pair: PairedEndSequenceFile) => (
-                  <List.Item>
-                    <div
-                      style={{
-                        width: `100%`,
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Avatar
-                        size="small"
-                        style={{ backgroundColor: `var(--blue-6)` }}
-                        icon={<SwapOutlined />}
-                      />
-                      <List
-                        style={{ flexGrow: 1 }}
-                        key={pair.key}
-                        dataSource={pair.files}
-                        renderItem={(file: SequenceFile) => (
+              {bioSampleFile.files.pairs.length > 0 && (
+                <List
+                  size="small"
+                  dataSource={bioSampleFile.files.pairs}
+                  renderItem={(pair: PairedEndSequenceFile) => (
+                    <List.Item>
+                      <div
+                        style={{
+                          width: `100%`,
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Avatar
+                          size="small"
+                          style={{ backgroundColor: `var(--blue-6)` }}
+                          icon={<SwapOutlined />}
+                        />
+                        <List
+                          style={{ flexGrow: 1 }}
+                          key={pair.key}
+                          dataSource={pair.files}
+                          renderItem={(file: SequenceFile) => (
+                            <List.Item
+                              actions={[
+                                <Tag key={file.key}>{file.fileSize}</Tag>,
+                              ]}
+                            >
+                              <List.Item.Meta
+                                title={file.name}
+                                description={formatInternationalizedDateTime(
+                                  file.createdDate
+                                )}
+                              />
+                            </List.Item>
+                          )}
+                        />
+                      </div>
+                    </List.Item>
+                  )}
+                />
+              )}
+
+              {bioSampleFile.files.singles.length > 0 && (
+                <List
+                  size="small"
+                  dataSource={bioSampleFile.files.singles}
+                  renderItem={(file: SingleEndSequenceFile) => (
+                    <List.Item>
+                      <div
+                        style={{
+                          width: `100%`,
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Avatar
+                          size="small"
+                          style={{ backgroundColor: `var(--blue-6)` }}
+                          icon={<SwapRightOutlined />}
+                        />
+                        <List style={{ flexGrow: 1 }}>
                           <List.Item
                             actions={[
-                              <Tag key={file.key}>{file.fileSize}</Tag>,
+                              <Tag key={file.key}>{file.file.fileSize}</Tag>,
                             ]}
                           >
                             <List.Item.Meta
-                              title={file.name}
+                              title={file.file.name}
                               description={formatInternationalizedDateTime(
-                                file.createdDate
+                                file.file.createdDate
                               )}
                             />
                           </List.Item>
-                        )}
-                      />
-                    </div>
-                  </List.Item>
-                )}
-              />
+                        </List>
+                      </div>
+                    </List.Item>
+                  )}
+                />
+              )}
             </Space>
           </Card>
         );

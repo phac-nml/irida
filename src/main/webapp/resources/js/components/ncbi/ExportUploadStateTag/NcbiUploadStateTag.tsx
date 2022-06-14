@@ -1,8 +1,14 @@
 import { Tag } from "antd";
 import React from "react";
-import { ExportTagStates } from "./NcbiUploadStateTag.types";
 import { TagColor } from "../../ant.design/ant.types";
 import { ExportUploadState } from "../../../types/irida/ExportUpoadState";
+
+export type ExportTagStates = {
+  [state in ExportUploadState]: {
+    color?: TagColor;
+    text: string;
+  };
+};
 
 const states: ExportTagStates = {
   [ExportUploadState.NEW]: {
