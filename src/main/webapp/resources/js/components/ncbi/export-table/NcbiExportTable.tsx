@@ -15,6 +15,7 @@ import { DataFunctionArgs } from "@remix-run/router/utils";
 
 /**
  * React router data loader (https://beta.reactrouter.com/en/dev/route/loader)
+ * Fetches a list of all NCBI SRA Exported submissions for this project.
  * @param params
  */
 export async function loader({
