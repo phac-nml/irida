@@ -8,6 +8,9 @@ import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.models.project.ProjectMinimalModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.user.UserMinimalModel;
 
+/**
+ * Describes an NCBI SRA Submission for the UI
+ */
 public class NcbiSubmissionModel {
 	private final Long id;
 	private final ProjectMinimalModel project;
@@ -30,10 +33,7 @@ public class NcbiSubmissionModel {
 		this.bioProject = submission.getBioProjectId();
 		this.ncbiNamespace = submission.getNcbiNamespace();
 		this.releaseDate = submission.getReleaseDate();
-		this.bioSampleFiles = submission.getBioSampleFiles()
-				.stream()
-				.map(NcbiBioSampleFilesModel::new)
-				.collect(Collectors.toList());
+		this.bioSampleFiles = submission.getBioSampleFiles().stream().map(NcbiBioSampleFilesModel::new).collect(Collectors.toList());
 	}
 
 	public Long getId() {
