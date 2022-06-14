@@ -2,19 +2,19 @@ import { SwapOutlined } from "@ant-design/icons";
 import { Avatar, Card, List, Space, Tag, Typography } from "antd";
 import React from "react";
 import { useLoaderData } from "react-router-dom";
-import { BasicList } from "../../../../components/lists";
-import type { SequenceFile } from "../../../../types/irida";
-import { NcbiSubmission, PairedEndSequenceFile } from "../../../../types/irida";
+import { BasicList } from "../../lists";
+import type { SequenceFile } from "../../../types/irida";
+import { NcbiSubmission, PairedEndSequenceFile } from "../../../types/irida";
 import {
   BioSampleFileDetails,
   formatNcbiSubmissionDetails,
   formatNcbiBioSampleFiles,
 } from "./utils";
-import { BasicListItem } from "../../../../components/lists/BasicList.types";
-import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
-import { getNcbiSubmission } from "../../../../apis/export/ncbi";
+import { BasicListItem } from "../../lists/BasicList.types";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import { getNcbiSubmission } from "../../../apis/export/ncbi";
 import { DataFunctionArgs } from "@remix-run/router/utils";
-import { SPACE_LG } from "../../../../styles/spacing";
+import { SPACE_LG } from "../../../styles/spacing";
 
 export async function loader({
   params,

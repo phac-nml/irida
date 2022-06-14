@@ -1,17 +1,21 @@
 import React from "react";
-import {Table} from "antd";
-import {getProjectNCBIExports, NcbiExportSubmissionTableModel} from "../../../apis/export/ncbi";
-import {formatInternationalizedDateTime} from "../../../utilities/date-utilities";
-import {setBaseUrl} from "../../../utilities/url-utilities";
-import {getPaginationOptions} from "../../../utilities/antdesign-table-utilities";
-import {Link, useLoaderData} from "react-router-dom";
+import { Table } from "antd";
+import {
+  getProjectNCBIExports,
+  NcbiExportSubmissionTableModel,
+} from "../../../apis/export/ncbi";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
+import { Link, useLoaderData } from "react-router-dom";
 import NcbiUploadStateTag from "../ExportUploadStateTag/NcbiUploadStateTag";
-import {UserMinimal} from "../../../types/irida";
-import {ExportUploadState} from "../../../types/irida/ExportUpoadState";
-import {DataFunctionArgs} from "@remix-run/router/utils";
+import { UserMinimal } from "../../../types/irida";
+import { ExportUploadState } from "../../../types/irida/ExportUpoadState";
+import { DataFunctionArgs } from "@remix-run/router/utils";
 
-
-export async function loader({params}:DataFunctionArgs) : Promise<NcbiExportSubmissionTableModel[]>{
+export async function loader({
+  params,
+}: DataFunctionArgs): Promise<NcbiExportSubmissionTableModel[]> {
   if (params.projectId) {
     return getProjectNCBIExports(parseInt(params.projectId));
   } else {
@@ -31,12 +35,9 @@ function NcbiExportTable(): JSX.Element {
     {
       title: i18n("NcbiExportTable.id"),
       dataIndex: "id",
-      render(id:number, item: NcbiExportSubmissionTableModel) {
+      render(id: number, item: NcbiExportSubmissionTableModel) {
         return (
-          <Link
-            className="t-biosample-id"
-            to={`${id}`}
-          >
+          <Link className="t-biosample-id" to={`${id}`}>
             {item.bioProjectId}
           </Link>
         );
@@ -49,7 +50,9 @@ function NcbiExportTable(): JSX.Element {
     {
       title: i18n("NcbiExportTable.state"),
       dataIndex: "state",
-      render: (state:ExportUploadState) => <NcbiUploadStateTag state={state} />,
+      render: (state: ExportUploadState) => (
+        <NcbiUploadStateTag state={state} />
+      ),
     },
     {
       title: i18n("NcbiExportTable.submitter"),
@@ -63,7 +66,7 @@ function NcbiExportTable(): JSX.Element {
     {
       title: i18n("NcbiExportTable.createdDate"),
       dataIndex: "createdDate",
-      render(date : Date) {
+      render(date: Date) {
         return formatInternationalizedDateTime(date);
       },
     },
@@ -79,4 +82,4 @@ function NcbiExportTable(): JSX.Element {
   );
 }
 
-export default  NcbiExportTable
+export default NcbiExportTable;

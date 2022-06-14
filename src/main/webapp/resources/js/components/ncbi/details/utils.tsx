@@ -1,21 +1,21 @@
 import * as React from "react";
-import ExportUploadStateTag from "../../../../components/ncbi/ExportUploadStateTag";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
+import ExportUploadStateTag from "../ExportUploadStateTag";
+import { setBaseUrl } from "../../../utilities/url-utilities";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import {
   NcbiBioSampleFiles,
   NcbiSubmission,
   PairedEndSequenceFile,
   SingleEndSequenceFile,
-} from "../../../../types/irida";
-import { BasicListItem } from "../../../../components/lists/BasicList.types";
+} from "../../../types/irida";
+import { BasicListItem } from "../../lists/BasicList.types";
 
 export const formatNcbiSubmissionDetails = (
   submission: Omit<NcbiSubmission, "bioSampleFiles">
 ): BasicListItem[] => {
   const releaseDate = submission.releaseDate
     ? formatInternationalizedDateTime(submission.releaseDate)
-    : i18n("NcbiExportDetailsView.not-released")
+    : i18n("NcbiExportDetailsView.not-released");
 
   return [
     {

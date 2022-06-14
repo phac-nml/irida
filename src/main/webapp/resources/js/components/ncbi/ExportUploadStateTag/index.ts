@@ -1,1 +1,1 @@
-export {default} from "./NcbiUploadStateTag";
+export { default } from "./NcbiUploadStateTag";

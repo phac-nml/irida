@@ -2,10 +2,10 @@ import React from "react";
 import { DataBrowserRouter, Outlet, Route } from "react-router-dom";
 import NcbiExportTable, {
   loader as exportsLoader,
-} from "../../components/ncbi/export-table/NcbiExportTable";
+} from "../../components/ncbi/export-table";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import ProjectNCBILayout from "./ncbi";
-import NCBIExportDetails, { loader as detailsLoader } from "./ncbi/details";
+import NCBIExportDetails, { loader as detailsLoader } from "../../components/ncbi/details";
 
 function ProjectBase(): JSX.Element {
   return (

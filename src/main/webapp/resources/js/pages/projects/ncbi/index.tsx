@@ -9,7 +9,7 @@ import ProjectSPA from "../ProjectSPA";
  * @returns {JSX.Element}
  * @constructor
  */
-export default function ProjectNCBILayout() {
+function ProjectNCBILayout() {
   const { id: submissionId } = useParams();
   const navigate = useNavigate();
 
@@ -29,6 +29,8 @@ export default function ProjectNCBILayout() {
     </Row>
   );
 }
+
+export default ProjectNCBILayout;
 
 // TODO: This will need to be moved up as the project SPA gets created.
 render(<ProjectSPA />, document.querySelector("#root"));
