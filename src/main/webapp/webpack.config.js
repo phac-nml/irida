@@ -8,9 +8,12 @@ const WebpackAssetsManifest = require("webpack-assets-manifest");
 const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin");
 const entries = require("./entries");
 const formatAntStyles = require("./styles");
+const os = require("os");
 
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 const smp = new SpeedMeasurePlugin();
+
+const MINIMIZER_CORES = Math.min(8, Math.max(1, os.cpus().length - 1));
 
 /**
  * @file Webpack Build configuration file.
@@ -124,8 +127,8 @@ module.exports = (env, argv) => {
         ? {
             minimize: true,
             minimizer: [
-              new CssMinimizerPlugin({ parallel: false }),
-              new TerserPlugin({ parallel: true, include: /\/resources/ }),
+              new TerserPlugin({ parallel: MINIMIZER_CORES, include: /\/resources/ }),
+              new CssMinimizerPlugin({ parallel: MINIMIZER_CORES }),
             ],
             runtimeChunk: "single",
             splitChunks: {
