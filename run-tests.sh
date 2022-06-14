@@ -36,12 +36,6 @@ then
 fi
 
 check_dependencies() {
-	mvn --version 1>/dev/null 2>/dev/null
-	if [ $? -ne 0 ];
-	then
-		exit_error "Command 'mvn' does not exist.  Please install Maven (e.g., 'apt-get install maven') to continue."
-	fi
-
 	docker --version 1>/dev/null 2>/dev/null
 	if [ $? -ne 0 ];
 	then
