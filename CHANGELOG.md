@@ -1,6 +1,10 @@
 
 # Changelog
 
+## [22.05.3] - 2022/06/14
+* [Developer]: Fix bug where users with only group access to a project couldn't view sample details or metadata. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
+* [Developer]: Fix sql order by bug on admin statistics page that was causing page not to load when `ONLY_FULL_GROUP_BY` enabled. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
+
 ## [22.05.2] - 2022/06/10
 * [Developer/UI]: Fix flaky UI Integration tests. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
 * [Developer]: Update war build to decrease size and remove executable ability. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
@@ -86,6 +90,7 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
+[22.05.3]: https://github.com/phac-nml/irida/compare/22.05.2...22.05.3
 [22.05.2]: https://github.com/phac-nml/irida/compare/22.05.1...22.05.2
 [22.05.1]: https://github.com/phac-nml/irida/compare/22.05...22.05.1
 [22.05]: https://github.com/phac-nml/irida/compare/22.03.1...22.05
