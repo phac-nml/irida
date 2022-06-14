@@ -7,13 +7,14 @@ import type { SequenceFile } from "../../../../types/irida";
 import { NcbiSubmission, PairedEndSequenceFile } from "../../../../types/irida";
 import {
   BioSampleFileDetails,
-  formatNcbiUploadDetails,
-  formatNcbiUploadFiles,
+  formatNcbiSubmissionDetails,
+  formatNcbiBioSampleFiles,
 } from "./utils";
 import { BasicListItem } from "../../../../components/lists/BasicList.types";
 import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import { getNcbiSubmission } from "../../../../apis/export/ncbi";
 import { DataFunctionArgs } from "@remix-run/router/utils";
+import { SPACE_LG } from "../../../../styles/spacing";
 
 export async function loader({
   params,
@@ -25,8 +26,8 @@ export async function loader({
         submission: NcbiSubmission
       ): [BasicListItem[], BioSampleFileDetails[]] => {
         const { bioSampleFiles, ...info } = submission;
-        const details = formatNcbiUploadDetails(info);
-        const bioSamples = formatNcbiUploadFiles(bioSampleFiles);
+        const details = formatNcbiSubmissionDetails(info);
+        const bioSamples = formatNcbiBioSampleFiles(bioSampleFiles);
         return [details, bioSamples];
       }
     );
@@ -36,15 +37,21 @@ export async function loader({
 }
 
 function NcbiExportDetailsView(): JSX.Element {
-  const [details, bioSampleFiles]  = useLoaderData();
+  const [details, bioSampleFiles] = useLoaderData();
 
   return (
     <Space direction="vertical" style={{ width: `100%` }}>
-      <Card title={i18n("project.export.sidebar.title")}>
+      <Typography.Title level={4} style={{ color: `var(--grey-7)` }}>
+        {i18n("NcbiExportDetailsView.title")}
+      </Typography.Title>
+      <Card>
         <BasicList dataSource={details} grid={{ gutter: 16, column: 2 }} />
       </Card>
-      <Typography.Title level={5} style={{ color: `var(--blue-6)` }}>
-        __BioSample Files
+      <Typography.Title
+        level={5}
+        style={{ color: `var(--grey-7)`, marginTop: SPACE_LG }}
+      >
+        {i18n("NcbiExportDetailsView.files")}
       </Typography.Title>
       {bioSampleFiles.map((bioSampleFile: BioSampleFileDetails) => {
         return (

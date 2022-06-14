@@ -10,12 +10,12 @@ import {
 } from "../../../../types/irida";
 import { BasicListItem } from "../../../../components/lists/BasicList.types";
 
-export const formatNcbiUploadDetails = (
+export const formatNcbiSubmissionDetails = (
   submission: Omit<NcbiSubmission, "bioSampleFiles">
 ): BasicListItem[] => {
   const releaseDate = submission.releaseDate
     ? formatInternationalizedDateTime(submission.releaseDate)
-    : "Not Released"; // TODO (Josh - 6/8/22): i18n
+    : i18n("NcbiExportDetailsView.not-released")
 
   return [
     {
@@ -66,7 +66,7 @@ export interface BioSampleFileDetails {
   };
 }
 
-export const formatNcbiUploadFiles = (
+export const formatNcbiBioSampleFiles = (
   bioSampleFiles: NcbiBioSampleFiles[]
 ): BioSampleFileDetails[] =>
   bioSampleFiles.map((bioSampleFile) => {

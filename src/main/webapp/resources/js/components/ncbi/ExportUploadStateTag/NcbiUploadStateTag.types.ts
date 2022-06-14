@@ -3,7 +3,7 @@ import {TagColor} from "../../ant.design/ant.types";
 
 export type ExportTagStates = {
   [state in ExportUploadState]: {
-    color: TagColor;
+    color?: TagColor;
     text: string;
   };
 };

@@ -6,7 +6,7 @@ import { ExportUploadState } from "../../../types/irida/ExportUpoadState";
 
 const states: ExportTagStates = {
   [ExportUploadState.NEW]: {
-    color: undefined,
+    color: undefined, // Defaults to gray
     text: i18n("ExportUploadState.NEW"),
   },
   [ExportUploadState.UPLOADING]: {
