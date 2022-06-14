@@ -83,6 +83,6 @@ public interface SampleRepository extends IridaJpaRepository<Sample, Long>, Samp
 	 * @return A list of {@link GenericStatModel}s
 	 */
 	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', s.createdDate, ?2), count(s.id))"
-			+ "from Sample s where s.createdDate >= ?1 group by function('date_format', s.createdDate, ?2) order by s.createdDate asc")
+			+ "from Sample s where s.createdDate >= ?1 group by function('date_format', s.createdDate, ?2) order by function('date_format', s.createdDate, ?2) asc")
 	public List<GenericStatModel> countSamplesCreatedGrouped(Date createdDate, String groupByFormat);
 }
