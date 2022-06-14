@@ -16,6 +16,11 @@ import { getNcbiSubmission } from "../../../apis/export/ncbi";
 import { DataFunctionArgs } from "@remix-run/router/utils";
 import { SPACE_LG } from "../../../styles/spacing";
 
+/**
+ * React router data loader (https://beta.reactrouter.com/en/dev/route/loader)
+ * Fetches the submission details and formats them to be used by the component.
+ * @param params
+ */
 export async function loader({
   params,
 }: DataFunctionArgs): Promise<[BasicListItem[], BioSampleFileDetails[]]> {
@@ -36,6 +41,10 @@ export async function loader({
   }
 }
 
+/**
+ * Render the details of a NCBI SRA Submission
+ * @constructor
+ */
 function NcbiExportDetailsView(): JSX.Element {
   const [details, bioSampleFiles] = useLoaderData();
 

@@ -13,6 +13,10 @@ import { UserMinimal } from "../../../types/irida";
 import { ExportUploadState } from "../../../types/irida/ExportUpoadState";
 import { DataFunctionArgs } from "@remix-run/router/utils";
 
+/**
+ * React router data loader (https://beta.reactrouter.com/en/dev/route/loader)
+ * @param params
+ */
 export async function loader({
   params,
 }: DataFunctionArgs): Promise<NcbiExportSubmissionTableModel[]> {
@@ -25,7 +29,6 @@ export async function loader({
 
 /**
  * Render a list of all Project NCBI Exports.
- * @returns {JSX.Element|string}
  * @constructor
  */
 function NcbiExportTable(): JSX.Element {
