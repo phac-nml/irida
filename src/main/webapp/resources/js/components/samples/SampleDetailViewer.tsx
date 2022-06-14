@@ -66,12 +66,14 @@ function DisplaySampleDetails({
   first render
    */
   React.useEffect(() => {
-    if (sampleIds.length === 0) {
-      getCartSampleIds().then((res) => {
-        dispatch(setCartSampleIds({ sampleIds: res }));
-      });
+    if (displayActions && visible) {
+      if (sampleIds === null) {
+        getCartSampleIds().then((res) => {
+          dispatch(setCartSampleIds({ sampleIds: res }));
+        });
+      }
     }
-  }, [sampleIds.length]);
+  }, [visible]);
 
   /*
   Check if the current sample is in the cart or not
@@ -166,7 +168,7 @@ function DisplaySampleDetails({
           visible={visible}
           onCancel={() => setVisible(false)}
           footer={null}
-          width={720}
+          width={900}
         >
           <div style={{ margin: 24 }}>
             {isLoading ? (
