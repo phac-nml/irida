@@ -38,6 +38,13 @@ public class NCBIAjaxController {
 		return ResponseEntity.ok(service.getNCBIExportsForProject(projectId));
 	}
 
+	/**
+	 * Get the details of a specific NCBI SRA submission
+	 *
+	 * @param projectId Identifier for the current project
+	 * @param exportId  Identifier for the NCBI SRA Submission
+	 * @return details about the submission
+	 */
 	@GetMapping("/project/{projectId}/details/{exportId}")
 	public ResponseEntity<NcbiSubmissionModel> getExportDetails(@PathVariable Long projectId,
 			@PathVariable Long exportId) {
