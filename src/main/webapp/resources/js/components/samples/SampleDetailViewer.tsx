@@ -66,12 +66,14 @@ function DisplaySampleDetails({
   first render
    */
   React.useEffect(() => {
-    if (sampleIds.length === 0) {
-      getCartSampleIds().then((res) => {
-        dispatch(setCartSampleIds({ sampleIds: res }));
-      });
+    if (displayActions && visible) {
+      if (sampleIds === null) {
+        getCartSampleIds().then((res) => {
+          dispatch(setCartSampleIds({ sampleIds: res }));
+        });
+      }
     }
-  }, []);
+  }, [visible]);
 
   /*
   Check if the current sample is in the cart or not
