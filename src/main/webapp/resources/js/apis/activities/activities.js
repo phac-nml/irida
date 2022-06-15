@@ -1,10 +1,11 @@
 import axios from "axios";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 /**
  * @file API for handling activities
  */
 
-const BASE_URL = `/ajax/activities`;
+const BASE_URL = setBaseUrl(`/ajax/activities`);
 
 /**
  * Get a page of activities for a project
