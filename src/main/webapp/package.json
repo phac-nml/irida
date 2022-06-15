@@ -120,7 +120,7 @@
     "postcss-import": "^14.1.0",
     "postcss-loader": "^6.2.1",
     "postcss-preset-env": "^7.4.3",
-    "prettier": "^2.6.2",
+    "prettier": "^2.7.0",
     "properties-reader": "^2.2.0",
     "react-is": "^17.0.2",
     "speed-measure-webpack-plugin": "^1.5.0",
