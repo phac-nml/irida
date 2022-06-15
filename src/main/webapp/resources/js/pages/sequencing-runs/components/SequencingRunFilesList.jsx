@@ -16,6 +16,13 @@ export function SequencingRunFilesList({ samples, files }) {
 
   const [{ canDrop, isOver }, drop] = useDrop({
     accept: "card",
+    canDrop: (item, monitor) => {
+      if (item.prevIndex === null) {
+        return false;
+      } else {
+        return true;
+      }
+    },
     drop: (item) => {
       const { file, prevIndex } = item;
       const prevSample = samples[prevIndex];

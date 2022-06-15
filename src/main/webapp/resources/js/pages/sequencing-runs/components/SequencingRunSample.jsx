@@ -48,6 +48,20 @@ export function SequencingRunSample({ samples, sample, index }) {
 
   const [{ canDrop, isOver }, drop] = useDrop({
     accept: "card",
+    canDrop: (item, monitor) => {
+      //do not drop on the same sample card
+      if (item.prevIndex === index) {
+        return false;
+        //do not drop on a full sample card
+      } else if (
+        sample.forwardSequenceFile !== null &&
+        sample.reverseSequenceFile !== null
+      ) {
+        return false;
+      } else {
+        return true;
+      }
+    },
     drop: (item) => {
       const { file, prevIndex } = item;
 
