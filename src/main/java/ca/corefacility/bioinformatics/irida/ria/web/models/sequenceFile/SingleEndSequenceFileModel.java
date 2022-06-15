@@ -13,7 +13,6 @@ public class SingleEndSequenceFileModel extends IridaBase {
 		super(file.getId(), file.getLabel(), file.getCreatedDate(), file.getModifiedDate());
 		this.file = new SequenceFileModel(file.getSequenceFile());
 	}
-
 	public SequenceFileModel getFile() {
 		return file;
 	}
