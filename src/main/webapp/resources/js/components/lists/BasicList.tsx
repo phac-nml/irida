@@ -18,24 +18,24 @@ const { Text } = Typography;
  * @param {object} grid - grid type of list
  */
 export function BasicList({
-                              itemLayout = "horizontal",
-                              dataSource,
-                              grid = undefined,
-                          }: BasicListProps): JSX.Element {
-    return (
-        <List
-            itemLayout={itemLayout}
-            dataSource={dataSource}
-            grid={grid}
-            renderItem={(item) => (
-                <List.Item>
-                    <List.Item.Meta
-                        title={<Text strong>{item.title}</Text>}
-                        description={item.desc}
-                        {...item.props}
-                    />
-                </List.Item>
-            )}
-        />
-    );
+  itemLayout = "horizontal",
+  dataSource,
+  grid = undefined,
+}: BasicListProps): JSX.Element {
+  return (
+    <List
+      itemLayout={itemLayout}
+      dataSource={dataSource}
+      grid={grid}
+      renderItem={(item) => (
+        <List.Item>
+          <List.Item.Meta
+            title={<Text strong>{item.title}</Text>}
+            description={item.desc}
+            {...item.props}
+          />
+        </List.Item>
+      )}
+    />
+  );
 }
