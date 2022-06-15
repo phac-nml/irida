@@ -7,6 +7,7 @@ module.exports = {
         development: process.env.BABEL_ENV === "development",
       },
     ],
+    "@babel/preset-typescript",
   ],
   plugins: [
     [

@@ -9,7 +9,7 @@
   <groupId>ca.corefacility.bioinformatics</groupId>
   <artifactId>irida</artifactId>
   <packaging>war</packaging>
-  <version>22.09-SNAPSHOT</version>
+  <version>22.07-SNAPSHOT</version>
   <name>irida</name>
   <url>http://www.irida.ca</url>
 
@@ -97,10 +97,6 @@
     <repository>
       <id>spring-milestones</id>
       <url>https://repo.spring.io/milestone/</url>
-    </repository>
-    <repository>
-      <id>clojars.org</id>
-      <url>https://clojars.org/repo</url>
     </repository>
   </repositories>
 
@@ -465,12 +461,6 @@
       </exclusions>
     </dependency>
 
-    <!-- Clojure nREPL -->
-    <dependency>
-      <groupId>net.matlux</groupId>
-      <artifactId>jvm-breakglass</artifactId>
-      <version>${jvm-breakglass.version}</version>
-    </dependency>
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
@@ -542,6 +532,15 @@
           <jvmArguments>${failsafeArgLine}</jvmArguments>
         </configuration>
         <executions>
+          <execution>
+            <id>repackage</id>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </execution>
           <execution>
             <id>pre-integration-test</id>
             <goals>
@@ -749,10 +748,18 @@
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
           <packagingExcludes>
+						node/,
 						node_modules/,
 						.yarn/,
 						resources/css/,
-						resources/js/
+						resources/js/,
+            webpack*,
+            .yarn*,
+            package.json,
+            styles.js,
+            entries.js,
+            .eslintr.js,
+            postcss.config.js
 </packagingExcludes>
           <attachClasses>true</attachClasses>
         </configuration>
