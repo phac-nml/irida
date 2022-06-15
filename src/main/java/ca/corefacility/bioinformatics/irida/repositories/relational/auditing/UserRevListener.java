@@ -44,10 +44,10 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
         rev.setClientId(clientId);
 
         if (userId == null && clientId == null){
+            logger.trace("Revision with no user or client in ldap/adldap authenticationMode");
             if (isLdapMode() && iridaUserDetailsContextMapper.isCreatingNewUser()) {
-                //todo: add something to the UserRevEntity object to indicate that the change was made?
-                // add a column to UserRevEntity for type of addition?
-                logger.trace("Revision with no user or client in ldap/adldap authenticationMode");
+                logger.trace("Setting revision user id to -1 for ldap user creation");
+                rev.setUserId(-1L);
             }
             else {
                 // This is unreachable in production.
