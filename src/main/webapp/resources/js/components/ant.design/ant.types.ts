@@ -1,3 +1,6 @@
+/**
+ * Default colours that are available on the Ant Design Tag Component
+ */
 export enum TagColor {
   MAGENTA = "magenta",
   RED = "red",
