@@ -43,6 +43,16 @@ export const updateSample = createAction(
   })
 );
 
+/**
+ * Action to delete a sample
+ */
+export const deleteSample = createAction(
+  `rootReducers/deleteSample`,
+  (index) => ({
+    payload: { index },
+  })
+);
+
 /*
 Redux reducer for creating sequencing run samples.
 For more information on redux reducers see: https://redux-toolkit.js.org/api/createReducer
@@ -77,5 +87,9 @@ export const runReducer = createReducer(initialState, (builder) => {
   builder.addCase(updateSample, (state, action) => {
     const { newSample, index } = action.payload;
     state.samples[index] = newSample;
+  });
+
+  builder.addCase(deleteSample, (state, action) => {
+    state.samples.splice(action.payload.index, 1);
   });
 });

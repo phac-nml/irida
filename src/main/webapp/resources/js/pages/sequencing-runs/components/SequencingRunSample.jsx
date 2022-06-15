@@ -4,13 +4,19 @@ import { Button, Card, Col, Row } from "antd";
 import {
   IconArrowLeft,
   IconArrowRight,
+  IconRemove,
   IconSwap,
 } from "../../../components/icons/Icons";
 import { grey1 } from "../../../styles/colors";
 import { FONT_COLOR_PRIMARY } from "../../../styles/fonts";
 import { SequencingRunFileCard } from "./SequencingRunFileCard";
 import { SPACE_LG } from "../../../styles/spacing";
-import { removeFile, updateSample } from "../services/runReducer";
+import {
+  addFile,
+  deleteSample,
+  removeFile,
+  updateSample,
+} from "../services/runReducer";
 import { useDispatch } from "react-redux";
 
 /**
@@ -23,8 +29,16 @@ import { useDispatch } from "react-redux";
 export function SequencingRunSample({ samples, sample, index }) {
   const dispatch = useDispatch();
 
+  const removeSample = () => {
+    if (sample.forwardSequenceFile !== null)
+      dispatch(addFile(sample.forwardSequenceFile.id));
+    if (sample.reverseSequenceFile !== null)
+      dispatch(addFile(sample.reverseSequenceFile.id));
+    dispatch(deleteSample(index));
+  };
+
   const switchPair = () => {
-    let newSample = {
+    const newSample = {
       sampleName: sample.sampleName,
       forwardSequenceFile: sample.reverseSequenceFile,
       reverseSequenceFile: sample.forwardSequenceFile,
@@ -75,7 +89,17 @@ export function SequencingRunSample({ samples, sample, index }) {
   });
 
   return (
-    <Card title={sample.sampleName} ref={drop}>
+    <Card
+      title={sample.sampleName}
+      ref={drop}
+      extra={
+        <Button
+          onClick={removeSample}
+          style={{ border: "none" }}
+          icon={<IconRemove />}
+        />
+      }
+    >
       <Row align="middle" justify="center">
         {sample.forwardSequenceFile !== null && (
           <>
