@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+>
+  <head>
+    <title th:text="#{SequencingRunListPage.title}">Sequencing Runs</title>
+    <webpacker:css entry="sequencing-runs" />
+  </head>
+  <body>
+    <div id="root" layout:fragment="page">
+      <!-- Contents rendered from SequencingRunListPage.jsx -->
+    </div>
+    <th:block layout:fragment="scripts">
+      <webpacker:js entry="sequencing-runs" />
+    </th:block>
+  </body>
+</html>

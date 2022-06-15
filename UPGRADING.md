@@ -4,6 +4,15 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+22.03 to 22.05
+--------------
+* This upgrade deprecates two pipelines, SISTR_TYPING and MLST_MENTALIST, and disables them from being executed. Any previously-run analysis results will still function as normal. If you wish to re-enable these pipelines you can set `irida.workflow.types.disabled=` (i.e., set the value to empty) in the `/etc/irida/irida.conf` file and restart IRIDA. If you wish to keep these pipelines disabled but include your own additional disabled pipelines you can set `irida.workflow.types.disabled=SISTR_TYPING,MLST_MENTALIST` and add your own pipelines to disable after this list.
+   * For SISTR_TYPING, it is recommended to switch to using the version implemented as a plugin <https://github.com/phac-nml/irida-plugin-sistr>. For MLST_MENTALIST, we can no longer provide support for the installation of this software in IRIDA and Galaxy and have chosen to deprecate it.
+
+22.01 to 22.03
+--------------
+* It is recommended to stop the servlet container before deploying the new `war` file.
+
 21.09 to 22.01
 --------------
 * This upgrade converted the project from bare Spring to Spring Boot, which deprecated a number of properties relating to database connection and setup. These deprecated properties are mentioned in [/etc/irida/irida.conf](https://phac-nml.github.io/irida-documentation/administrator/web/#core-configuration).

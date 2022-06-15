@@ -139,6 +139,3 @@ session = oauth_service.get_session(access_token)
 response = session.get(url)
 ...
 ```
-
-### Java
-* [IRIDA OAuth2 Web Client Demo](https://github.com/phac-nml/irida/tree/development/samples/oauth-web-client) - This is a sample web application demoing the use of the *authorization_code* OAuth2 grant type using [Spring Security OAuth](http://projects.spring.io/spring-security-oauth/).

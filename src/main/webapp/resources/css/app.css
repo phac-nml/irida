@@ -5,6 +5,22 @@
 @import "components/tables.css";
 @import "components/typography.css";
 
+:root {
+  --grey-1: #ffffff;
+  --grey-2: #fafafa;
+  --grey-3: #f5f5f5;
+  --grey-4: #f0f0f0;
+  --grey-5: #d9d9d9;
+  --grey-6: #bfbfbf;
+  --grey-7: #8c8c8c;
+  --grey-8: #595959;
+  --grey-9: #434343;
+  --grey-10: #262626;
+  --grey-11: #1f1f1f;
+  --grey-12: #141414;
+  --grey-13: #000000;
+}
+
 html,
 body {
   height: 100%;
@@ -13,6 +29,11 @@ body {
 body {
   display: flex;
   flex-direction: column;
+}
+
+body > .ant-layout {
+  height: 100vh;
+  background-color: #ffffff;
 }
 
 /****************************************************************************************
@@ -26,8 +47,8 @@ body {
 }
 
 .nav-tabs {
-  border-bottom: 1px solid #e6e8eb !important;
   margin-bottom: 1.3rem;
+  border-bottom: 1px solid #e6e8eb !important;
   li {
     a {
       border: none !important;
@@ -38,8 +59,8 @@ body {
       border-bottom: 1px solid #1c2833 !important;
     }
     &:not(.active) a {
-      background-color: transparent !important;
       color: #717f8c !important;
+      background-color: transparent !important;
     }
   }
 }
@@ -54,20 +75,20 @@ label.ant-checkbox-wrapper {
 
 @keyframes fadeInDown {
   from {
-    opacity: 0;
     transform: translate3d(0, -100%, 0);
+    opacity: 0;
   }
 
   to {
-    opacity: 1;
     transform: translate3d(0, 0, 0);
+    opacity: 1;
   }
 }
 
 .fadeInDown {
+  animation-name: fadeInDown;
   animation-duration: 0.5s;
   animation-fill-mode: both;
-  animation-name: fadeInDown;
 }
 
 @keyframes fadeOutUp {
@@ -76,15 +97,15 @@ label.ant-checkbox-wrapper {
   }
 
   to {
-    opacity: 0;
     transform: translate3d(0, -100%, 0);
+    opacity: 0;
   }
 }
 
 .fadeOutUp {
+  animation-name: fadeOutUp;
   animation-duration: 0.5s;
   animation-fill-mode: both;
-  animation-name: fadeOutUp;
 }
 
 /****************************************************************************************
@@ -96,10 +117,10 @@ label.ant-checkbox-wrapper {
 }
 
 .body-content {
-  flex-grow: 1;
-  width: 100%;
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
+  width: 100%;
 }
 
 .navbar-collapse {
@@ -131,23 +152,23 @@ label.ant-checkbox-wrapper {
 
 /*// Notifications*/
 .navbar-notification .angular-notifications-icon {
-  background-color: #3092d0;
-  border-radius: 10px;
   top: 3px;
   right: -3px;
-  height: 20px;
   width: 20px !important;
+  height: 20px;
   padding: 0 !important;
   font-size: 1.3rem;
   line-height: 2rem;
+  background-color: #3092d0;
+  border-radius: 10px;
 }
 
 /*// Allow for proper styling in collapsed navigation.*/
 @media (max-width: 768px) {
   #global-search {
     .search-wrapper {
-      width: 100%;
       display: block;
+      width: 100%;
 
       input[type="search"] {
         width: 100%;
@@ -194,26 +215,26 @@ h2.h2-muted {
 }
 
 .selected__counts {
-  color: white !important;
-  border-radius: 4px;
-  padding: 4px 8px 6px 8px;
   margin: 5px;
+  padding: 4px 8px 6px 8px;
+  color: white !important;
   background-color: rgba(0, 0, 0, 0.5);
   border-top: 1px solid rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
 }
 
 .crop {
   max-width: 250px !important;
-  white-space: nowrap !important;
   overflow: hidden !important;
+  white-space: nowrap !important;
   text-overflow: ellipsis !important;
 }
 
 .wrap-cell {
   max-width: 160px !important;
   white-space: normal;
-  word-wrap: break-word;
   text-align: left !important;
+  word-wrap: break-word;
 }
 
 /*// Defaults spacing for the bottom of elements.*/
@@ -261,22 +282,22 @@ ol.continue li:before {
 }
 
 .remote-hint {
-  font-size: 1.4em;
   padding-bottom: 10px;
+  font-size: 1.4em;
 }
 
 /*// Display a number next above and to the right*/
 /*// of a button. Ex. Cart icon in navbar.*/
 .btn__badge {
-  background-color: RGB(54, 147, 206);
-  border-radius: 2px;
-  color: white;
-
-  padding: 1px 5px;
-  font-size: 0.8em;
   position: absolute;
   top: 5px;
   right: 0;
+
+  padding: 1px 5px;
+  color: white;
+  font-size: 0.8em;
+  background-color: RGB(54, 147, 206);
+  border-radius: 2px;
 }
 
 /*// Wrapping long sample names to the size of the container*/
@@ -290,9 +311,9 @@ ol.continue li:before {
 
 /*// OVERLAY*/
 .ag-overlay-loading-center.irida-ag-overlay {
-  border-color: #95d7fb !important;
-  background-color: #e7f7ff !important;
   font-size: 14px !important;
+  background-color: #e7f7ff !important;
+  border-color: #95d7fb !important;
 }
 
 .irida-ag-overlay-loading-icon {
