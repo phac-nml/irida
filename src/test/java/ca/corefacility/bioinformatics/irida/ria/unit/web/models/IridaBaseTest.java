@@ -9,14 +9,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.IridaBase;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class IridaBaseTest {
-	private final Long id = 1L;
-	private final String key = "pro-";
-	private final String name = "ITEM NAME";
-	private final Date createdDate = new Date(1590160849L);
-	private final Date modifiedDate = new Date(1653232849L);
-
 	@Test
 	public void testIridaBase() {
+		Long id = 1L;
+		String key = "pro-";
+		String name = "ITEM NAME";
+		Date createdDate = new Date(1590160849L);
+		Date modifiedDate = new Date(1653232849L);
+
 		IridaBase iridaBase = new IridaBase(id, key, name, createdDate, modifiedDate);
 		assertEquals(id, iridaBase.getId(), "Id should not be changed");
 		assertEquals(key + id, iridaBase.getKey(), "Key should be concatenated with id");
