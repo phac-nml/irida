@@ -158,7 +158,7 @@ export class TableComponent extends React.Component {
     /*
     Combine back the sample name plus the new ordered state for the table.
      */
-    this.columnApi.setColumnState([...defaults, ...final]);
+    this.columnApi.applyColumnState({ state: [...defaults, ...final] });
   };
 
   /*
@@ -383,7 +383,9 @@ export class TableComponent extends React.Component {
         columnDefs={this.props.fields}
         rowData={this.props.entries}
         components={this.components}
-        loadingOverlayComponent="LoadingOverlay"
+        loadingOverlayComponent={
+          window.PAGE.totalSamples > 0 ? "LoadingOverlay" : null
+        }
         onGridReady={this.onGridReady}
         onDragStopped={this.onColumnDropped}
         rowDeselection={true}

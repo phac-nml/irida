@@ -79,6 +79,13 @@ public class ProjectsAjaxController {
 	 * @param currentId Current project identifier
 	 * @return {@link List} of {@link Project}s
 	 */
+
+	/**
+	 * Get a list of projects that the user can share sample to.
+	 *
+	 * @param currentId Current project identifier
+	 * @return {@link List} of {@link Project}s
+	 */
 	@RequestMapping("/samples-share/projects")
 	public List<Project> getPotentialProjectsToShareTo(@RequestParam long currentId) {
 		return projectsService.getPotentialProjectsToShareTo(currentId);

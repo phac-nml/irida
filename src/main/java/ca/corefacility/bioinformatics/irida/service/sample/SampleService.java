@@ -22,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadat
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
@@ -216,6 +217,19 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public Double estimateCoverageForSample(Sample sample, ReferenceFile referenceFile)
 			throws SequenceFileAnalysisException;
+
+	/**
+	 * Get a {@link Page} of {@link ProjectSampleJoin} for samples from 1 or more projects based on filtering criteria.
+	 *
+	 * @param projects    {@link List} of {@link Project} the {@link Sample}s must be found within.
+	 * @param filterSpec  {@link ProjectSampleJoinSpecification}
+	 * @param currentPage {@link Integer} the current page the table is on.
+	 * @param pageSize    {@link Integer} the number of {@link ProjectSampleJoin} in the {@link Page}.
+	 * @param sort        {@link Sort} chained sort definitions to sort page by.
+	 * @return a {@link Page} of {@link ProjectSampleJoin} that are filtered and sorted.
+	 */
+	public Page<ProjectSampleJoin> getFilteredProjectSamples(List<Project> projects,
+			ProjectSampleJoinSpecification filterSpec, int currentPage, int pageSize, Sort sort);
 
 	/**
 	 * Get a {@link Page} of {@link ProjectSampleJoin} for samples from 1 or more projects based on filtering criteria.

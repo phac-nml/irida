@@ -138,11 +138,6 @@ function PagedTableProvider({
     });
   };
 
-  const paginationOptions = React.useMemo(
-    () => getPaginationOptions(state.total),
-    [state.total]
-  );
-
   return (
     <Provider
       value={{
@@ -152,7 +147,10 @@ function PagedTableProvider({
           dataSource: state.dataSource,
           loading: state.loading,
           onChange: handleTableChange,
-          pagination: { ...state.pagination, ...paginationOptions },
+          pagination: {
+            ...state.pagination,
+            ...getPaginationOptions(state.total),
+          },
         },
       }}
     >

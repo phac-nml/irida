@@ -9,7 +9,7 @@
   <groupId>ca.corefacility.bioinformatics</groupId>
   <artifactId>irida</artifactId>
   <packaging>war</packaging>
-  <version>22.05-SNAPSHOT</version>
+  <version>22.07-SNAPSHOT</version>
   <name>irida</name>
   <url>http://www.irida.ca</url>
 
@@ -97,10 +97,6 @@
     <repository>
       <id>spring-milestones</id>
       <url>https://repo.spring.io/milestone/</url>
-    </repository>
-    <repository>
-      <id>clojars.org</id>
-      <url>https://clojars.org/repo</url>
     </repository>
   </repositories>
 
@@ -473,27 +469,14 @@
       </exclusions>
     </dependency>
 
-    <!-- Clojure nREPL -->
-    <dependency>
-      <groupId>net.matlux</groupId>
-      <artifactId>jvm-breakglass</artifactId>
-      <version>${jvm-breakglass.version}</version>
-    </dependency>
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/com.monitorjbl/xlsx-streamer -->
     <dependency>
-      <groupId>com.monitorjbl</groupId>
-      <artifactId>xlsx-streamer</artifactId>
-      <version>${com.monitorjbl.xml.streamer.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>com.github.pjfanning</groupId>
+      <artifactId>excel-streaming-reader</artifactId>
+      <version>${com.github.pjfanning.excel-streaming-reader.version}</version>
     </dependency>
     <!-- Generates the OpenAPI rest service definition located at http://localhost:8080/v3/api-docs -->
     <!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
@@ -557,6 +540,15 @@
           <jvmArguments>${failsafeArgLine}</jvmArguments>
         </configuration>
         <executions>
+          <execution>
+            <id>repackage</id>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </execution>
           <execution>
             <id>pre-integration-test</id>
             <goals>
@@ -764,10 +756,18 @@
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
           <packagingExcludes>
+						node/,
 						node_modules/,
 						.yarn/,
 						resources/css/,
-						resources/js/
+						resources/js/,
+            webpack*,
+            .yarn*,
+            package.json,
+            styles.js,
+            entries.js,
+            .eslintr.js,
+            postcss.config.js
 </packagingExcludes>
           <attachClasses>true</attachClasses>
         </configuration>
@@ -915,13 +915,13 @@
     <biojava.version>3.0</biojava.version>
     <commons.fileupload.version>1.4</commons.fileupload.version>
     <oltu.version>1.0.0</oltu.version>
-    <apache.poi.version>5.1.0</apache.poi.version>
+    <apache.poi.version>5.2.2</apache.poi.version>
     <selenium-driver.version>3.141.59</selenium-driver.version>
     <selenium-chrome-driver.version>3.141.59</selenium-chrome-driver.version>
     <mockftpserver.version>2.6</mockftpserver.version>
     <jvm-breakglass.version>0.0.8</jvm-breakglass.version>
     <pf4j.version>2.4.0</pf4j.version>
-    <com.monitorjbl.xml.streamer.version>2.1.0</com.monitorjbl.xml.streamer.version>
+    <com.github.pjfanning.excel-streaming-reader.version>3.6.1</com.github.pjfanning.excel-streaming-reader.version>
     <org.springdoc.openapi.webmvc.version>1.5.6</org.springdoc.openapi.webmvc.version>
     <commons.beanutils.version>1.9.4</commons.beanutils.version>
 

@@ -6,7 +6,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 
 export function getRootPath(pathname) {
   const BASE = setBaseUrl(""); // will either be a '/' or '/[contextPath]/'
-  const path = pathname.match(new RegExp(`${BASE}([a-zA-Z]*)`))[1];
+  const path = pathname.match(new RegExp(`${BASE}([a-zA-Z-]*)`))[1];
   const possible = pathname.match(/(charts|overrepresented|details)$/);
   const route = possible ? possible[0] : "charts";
 
@@ -23,9 +23,9 @@ export function getRootPath(pathname) {
       ];
     case "sequenceFiles":
       return [`${BASE}sequenceFiles/:sequenceObjectId/file/:fileId/`, route];
-    case "sequencingRuns":
+    case "sequencing-runs":
       return [
-        `${BASE}sequencingRuns/:runId/sequenceFiles/:sequenceObjectId/file/:fileId/`,
+        `${BASE}sequencing-runs/:runId/sequenceFiles/:sequenceObjectId/file/:fileId/`,
         route,
       ];
     default:

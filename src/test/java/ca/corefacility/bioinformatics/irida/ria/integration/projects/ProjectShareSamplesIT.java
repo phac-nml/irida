@@ -22,7 +22,10 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		ProjectSamplesPage projectSamplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		// SHARING SINGLE SAMPLE
-		addOneSample();
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		samplesPage.selectSampleByName("sample5fg44");
+		samplesPage.shareSamples();
+
 		assertFalse(shareSamplesPage.isNextButtonEnabled(), "");
 		shareSamplesPage.searchForProject("project2");
 		assertTrue(shareSamplesPage.isNextButtonEnabled(), "Next button should be enabled");
@@ -37,8 +40,13 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(shareSamplesPage.isShareSingleSuccessDisplayed(), "Success message should be displayed");
 
 		// MOVING MULTIPLE SAMPLES
+		samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		samplesPage.selectSampleByName("sample5fg44");
+		samplesPage.selectSampleByName("sample554sg5");
+		samplesPage.selectSampleByName("sample5ddfg4");
+		samplesPage.selectSampleByName("sample57567");
+		samplesPage.shareSamples();
 
-		addMultipleSamples();
 		assertFalse(shareSamplesPage.isNextButtonEnabled(),
 				"Share button should be disabled without a project selected");
 		shareSamplesPage.searchForProject("project2");
@@ -54,8 +62,10 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(shareSamplesPage.getSuccessTitle(), "Successfully Moved Samples");
 
 		// MOVE SINGLE SAMPLE
+		samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		samplesPage.selectSampleByName("sample5fg44");
+		samplesPage.shareSamples();
 
-		addOneSample();
 		assertFalse(shareSamplesPage.isNextButtonEnabled(),
 				"Share button should be disabled without a project selected");
 		shareSamplesPage.searchForProject("project4");
@@ -68,8 +78,12 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(shareSamplesPage.getSuccessTitle(), "Successfully Moved 1 Sample");
 
 		// SHARING MULTIPLE SAMPLES
-
-		addMultipleSamples();
+		samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		samplesPage.selectSampleByName("sample_5_fg_22");
+		samplesPage.selectSampleByName("sample-5-fg-22");
+		samplesPage.selectSampleByName("sample5dt5");
+		samplesPage.selectSampleByName("sample55422r");
+		samplesPage.shareSamples();
 		assertFalse(shareSamplesPage.isNextButtonEnabled(),
 				"Share button should be disabled without a project selected");
 		shareSamplesPage.searchForProject("project2");
@@ -80,20 +94,5 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(shareSamplesPage.isSuccessResultDisplayed(), "Success result should be displayed");
 		assertEquals(shareSamplesPage.getSuccessTitle(), "Successfully Shared Samples");
 
-	}
-
-	private void addOneSample() {
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
-		samplesPage.selectSample(0);
-		samplesPage.shareSamples();
-	}
-
-	private void addMultipleSamples() {
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
-		samplesPage.selectSample(0);
-		samplesPage.selectSample(1);
-		samplesPage.selectSample(2);
-		samplesPage.selectSample(3);
-		samplesPage.shareSamples();
 	}
 }

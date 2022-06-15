@@ -1,22 +1,25 @@
 package ca.corefacility.bioinformatics.irida.model.run;
 
-import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
-import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
-import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.*;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import java.util.*;
+import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
+import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
+import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * This class represents a collection of sequence files that have come off one run of a sequencer.
@@ -62,8 +65,9 @@ public class SequencingRun extends IridaRepresentationModel implements MutableIr
 	@ElementCollection(fetch = FetchType.EAGER)
 	@MapKeyColumn(name = "property_key", nullable = false)
 	@Column(name = "property_value", nullable = false)
-	@CollectionTable(name = "sequencing_run_properties", joinColumns = @JoinColumn(name = "sequencing_run_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
-			"sequencing_run_id", "property_key" }, name = "UK_SEQUENCING_RUN_PROPERTY_KEY"))
+	@CollectionTable(name = "sequencing_run_properties", joinColumns = @JoinColumn(name = "sequencing_run_id"),
+			uniqueConstraints = @UniqueConstraint(columnNames = {
+					"sequencing_run_id", "property_key" }, name = "UK_SEQUENCING_RUN_PROPERTY_KEY"))
 	private Map<String, String> optionalProperties;
 
 	@NotNull
@@ -219,8 +223,7 @@ public class SequencingRun extends IridaRepresentationModel implements MutableIr
 
 	@Override
 	public int compareTo(SequencingRun o) {
-		return this.getCreatedDate()
-				.compareTo(o.getCreatedDate());
+		return this.getCreatedDate().compareTo(o.getCreatedDate());
 	}
 
 }
