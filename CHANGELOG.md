@@ -2,7 +2,7 @@
 # Changelog
 
 ## [22.05.4] - 2022/06/16
-* [UI]: Fixed bug preventing filter samples by file to fail on invalid url. 
+* [UI]: Fixed bug preventing filter samples by file to fail on invalid url. See [PR 1318](https://github.com/phac-nml/irida/pull/1318)
 
 ## [22.05.3] - 2022/06/14
 * [Developer]: Fix bug where users with only group access to a project couldn't view sample details or metadata. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
