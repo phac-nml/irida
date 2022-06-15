@@ -1,6 +1,9 @@
 
 # Changelog
 
+## [22.05.4] - 2022/06/16
+* [UI]: Fixed bug preventing filter samples by file to fail on invalid url. 
+
 ## [22.05.3] - 2022/06/14
 * [Developer]: Fix bug where users with only group access to a project couldn't view sample details or metadata. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
 * [Developer]: Fix sql order by bug on admin statistics page that was causing page not to load when `ONLY_FULL_GROUP_BY` enabled. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
