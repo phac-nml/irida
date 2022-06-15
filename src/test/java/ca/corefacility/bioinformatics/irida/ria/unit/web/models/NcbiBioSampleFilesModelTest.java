@@ -53,5 +53,7 @@ class NcbiBioSampleFilesModelTest {
 		assertEquals(libraryConstructionProtocol, model.getLibraryConstructionProtocol(),
 				"Library construction protocol should not be changed");
 		assertEquals(ExportUploadState.NEW.toString(), model.getStatus(), "Status should be set properly");
+		assertEquals(pairs.size(), model.getPairs().size(), "Pairs should not be changed");
+		assertEquals(singles.size(), model.getSingles().size(), "Singles should not be changed");
 	}
 }
