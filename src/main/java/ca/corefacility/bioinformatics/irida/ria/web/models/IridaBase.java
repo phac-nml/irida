@@ -12,9 +12,9 @@ public class IridaBase {
 	private final Date createdDate;
 	private final Date modifiedDate;
 
-	public IridaBase(Long id, String key, String name, Date createdDate, Date modifiedDate) {
+	public IridaBase(Long id, String name, Date createdDate, Date modifiedDate) {
 		this.id = id;
-		this.key = key + id;
+		this.key = ModelKeys.valueOf(this.getClass().getSimpleName()).label + id;
 		this.name = name;
 		this.createdDate = createdDate;
 		this.modifiedDate = modifiedDate;
