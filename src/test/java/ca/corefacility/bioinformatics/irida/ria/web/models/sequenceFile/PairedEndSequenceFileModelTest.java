@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 class PairedEndSequenceFileModelTest {
 	@Test
 	public void testPairedEndSequenceFileModel() {
-		long pairId = 1L;
+		Long pairId = 1L;
 		String pairName = "PAIR NAME";
 		Date createdDate = new Date(1623784232L);
 		Date modifiedDate = new Date(1655320232L);
