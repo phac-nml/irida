@@ -2,41 +2,40 @@ import React from "react";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { DnDCard } from "./example/DnDCard";
 import { useGetSequencingRunFilesQuery } from "../../../apis/sequencing-runs/sequencing-runs";
 import { useNavigate, useParams } from "react-router-dom";
-import { Col, List, Row, Typography } from "antd";
+import { Col, Row, Typography } from "antd";
 import { AddNewButton } from "../../../components/Buttons/AddNewButton";
-import { DnDList } from "./example/DnDList";
 import { SequencingRunSamplesList } from "./SequencingRunSamplesList";
+import { SequencingRunFilesList } from "./SequencingRunFilesList";
+import { useDispatch, useSelector } from "react-redux";
+import { addSample, setFiles } from "../services/runReducer";
 
 /**
  * React component to display page that creates samples from a sequencing run.
  * @returns {*}
+ * @constructor
  */
 export default function SequencingRunCreateSamplesPage() {
   const { runId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { data = [] } = useGetSequencingRunFilesQuery(runId);
-  const [files, setFiles] = React.useState([]);
-  const [samples, setSamples] = React.useState([]);
 
   React.useEffect(() => {
-    setFiles(data);
+    dispatch(setFiles(data));
   }, [data]);
 
-  const returnItemsForList = (listName) => {
-    return files.filter((item) => item.list === listName);
-  };
+  const { files, samples } = useSelector((state) => state.reducer);
 
   const addNewSample = () => {
-    setSamples([
-      {
-        sampleName: "Sample " + samples.length,
-        list: "samplesList" + samples.length,
-      },
-      ...samples,
-    ]);
+    dispatch(
+      addSample({
+        sampleName: "New Sample",
+        forwardSequenceFile: null,
+        reverseSequenceFile: null,
+      })
+    );
   };
 
   return (
@@ -52,32 +51,19 @@ export default function SequencingRunCreateSamplesPage() {
     >
       <DndProvider backend={HTML5Backend}>
         <Row gutter={32}>
-          <Col span={12}>
+          <Col span={16}>
             <Typography.Title level={5}>
               {i18n("SequencingRunCreateSamplesPage.samples.title")}
             </Typography.Title>
-            <SequencingRunSamplesList
-              samples={samples}
-              returnItemsForList={returnItemsForList}
-              setFiles={setFiles}
-            />
+            <SequencingRunSamplesList samples={samples} />
           </Col>
-          <Col span={12}>
+          <Col span={8}>
             <Typography.Title level={5}>
               {i18n("SequencingRunCreateSamplesPage.files.title")}
             </Typography.Title>
-            <DnDList
-              name="filesList"
-              emptyDescription={i18n("SequencingRunCreateSamplesPage.empty")}
-              grid={{ column: 1 }}
-              dataSource={returnItemsForList("filesList")}
-              renderItem={(item) => (
-                <List.Item>
-                  <DnDCard id={item.id} setList={setFiles}>
-                    {item.fileName}
-                  </DnDCard>
-                </List.Item>
-              )}
+            <SequencingRunFilesList
+              samples={samples}
+              files={files.filter((item) => item.show)}
             />
           </Col>
         </Row>

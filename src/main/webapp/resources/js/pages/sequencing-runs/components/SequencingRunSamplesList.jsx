@@ -1,19 +1,13 @@
-import { Card, Empty, List } from "antd";
+import { Empty, List } from "antd";
 import React from "react";
-import { SequencingRunSampleFilesList } from "./SequencingRunSampleFilesList";
+import { SequencingRunSample } from "./SequencingRunSample";
 
 /**
  * React component to render the samples list.
  * @param {array} samples - list of samples
- * @param {function} returnItemsForList - the function that filters the list
- * @param {function} setFiles - the function that sets the list
  * @returns {JSX.Element} - Returns a sample list component
  */
-export function SequencingRunSamplesList({
-  samples,
-  returnItemsForList,
-  setFiles,
-}) {
+export function SequencingRunSamplesList({ samples }) {
   return samples.length === 0 ? (
     <Empty
       description={i18n("SequencingRunSamplesList.empty")}
@@ -23,17 +17,17 @@ export function SequencingRunSamplesList({
     <List
       grid={{ column: 1 }}
       dataSource={samples}
-      renderItem={(item) => (
-        <List.Item>
-          <Card title={item.sampleName}>
-            <SequencingRunSampleFilesList
-              item={item}
-              returnItemsForList={returnItemsForList}
-              setFiles={setFiles}
+      renderItem={(sample, index) => {
+        return (
+          <List.Item>
+            <SequencingRunSample
+              samples={samples}
+              sample={sample}
+              index={index}
             />
-          </Card>
-        </List.Item>
-      )}
+          </List.Item>
+        );
+      }}
     />
   );
 }
