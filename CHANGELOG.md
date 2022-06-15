@@ -3,6 +3,18 @@
 
 ## [Unreleased]
 * [Developer/UI]: Refreshed the create new user account page. See [PR 1285](https://github.com/phac-nml/irida/pull/1285) for more.
+* [Developer/UI]: Added in typescript support to webpack build, moving forward all new frontend development will use typescript. See [PR 1294](https://github.com/phac-nml/irida/pull/1294) for more.
+* [Developer/UI]: Removed `styled-components` from page header and replaced with CSS variables. See [PR 1284](https://github.com/phac-nml/irida/pull/1284)
+
+## [22.05.3] - 2022/06/14
+* [Developer]: Fix bug where users with only group access to a project couldn't view sample details or metadata. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
+* [Developer]: Fix sql order by bug on admin statistics page that was causing page not to load when `ONLY_FULL_GROUP_BY` enabled. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
+
+## [22.05.2] - 2022/06/10
+* [Developer/UI]: Fix flaky UI Integration tests. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
+* [Developer]: Update war build to decrease size and remove executable ability. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
+* [Developer/UI]: Fixed bug where context path was not set for login and password reset components. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
+* [Developer]: Fixed bug where duplicate project_subscriptions were added for users who had direct project membership with email subscriptions and were also a member of the project through group membership. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
 
 ## [22.05.1] - 2022/06/01
 * [UI]: Fixed bug where samples could not be removed from share page. See [PR 1296](https://github.com/phac-nml/irida/pull/1296) for more.
@@ -36,7 +48,7 @@
 * [UI]: Fixed: Excel output file preview displaying numeric values as a whole number rather than in scientific notation.
 * [UI]: Updated the sequence run page to use Ant Design.
 * [UI]: Updated `forgot password`, `account activation`, and `reset password` pages to use Ant Design.
-* [Developer/Workflow]: Fixed issue with deleting AnalysisSubmission raising null pointer execptions due to bean wiring issue (issue #1287).
+* [Developer/Workflow]: Fixed issue with deleting AnalysisSubmission raising null pointer executions due to bean wiring issue (issue #1287).
 
 ## [22.03.1] - 2022/04/05
 * [ALL]: Upgraded to Spring Boot 2.6.6 which fixes CVE-2022-22965.
@@ -83,8 +95,10 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
-[Unreleased]: https://github.com/phac-nml/irida/compare/22.05.1...HEAD
+[Unreleased]: https://github.com/phac-nml/irida/compare/22.05.3...HEAD
 
+[22.05.3]: https://github.com/phac-nml/irida/compare/22.05.2...22.05.3
+[22.05.2]: https://github.com/phac-nml/irida/compare/22.05.1...22.05.2
 [22.05.1]: https://github.com/phac-nml/irida/compare/22.05...22.05.1
 [22.05]: https://github.com/phac-nml/irida/compare/22.03.1...22.05
 [22.03.1]: https://github.com/phac-nml/irida/compare/22.03...22.03.1

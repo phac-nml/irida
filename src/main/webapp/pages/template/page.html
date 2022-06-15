@@ -8,7 +8,7 @@
     window.breadcrumbs = /*[[${breadcrumbs}]]*/ [];
   </script>
 </head>
-<body>
+<body th:class="${session.siteTheme + '-theme'}">
 <th:block layout:fragment="content">
   <div class="ant-layout">
     <header class="js-page-header"></header>
