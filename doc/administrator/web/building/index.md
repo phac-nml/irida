@@ -18,7 +18,6 @@ Prerequisites
 The following software is required to build IRIDA from source:
 
 * Java 11 JDK (http://www.oracle.com/technetwork/java/javase/downloads/index.html)
-* Gradle 7.4.2 (https://gradle.org/)
 * Git (http://git-scm.com/)
 * Node (http://nodejs.org/)
 * Yarn (https://yarnpkg.com/lang/en/)
@@ -27,7 +26,6 @@ Installing these dependencies varies greatly, depending on the host operating sy
 
 * `java`
 * `javac`
-* `gradle`
 * `git`
 
 Building IRIDA
