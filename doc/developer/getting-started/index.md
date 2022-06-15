@@ -176,7 +176,7 @@ The advanced profiles allow you to configure your server to run specific compone
 When running IRIDA from the command line, a profile can be set by adding the following parameter:
 
 ```bash
--Dspring.profiles.active=YOURPROFILE
+--args="--spring.profiles.active=YOURPROFILE"
 ```
 
 #### Running IRIDA tests locally
@@ -199,21 +199,28 @@ Gradle will download all required dependencies and run the full suite of unit te
 ##### Integration tests
 {:.no_toc}
 
-IRIDA has 5 integration test profiles which splits the integration test suite into functional groups.  This allows GitHub Actions to run the tests in parallel, and local test executions to only run the required portion of the test suite.  The 5 profiles are the following:
+IRIDA has 5 integration test tasks which splits the integration test suite into functional groups.  This allows GitHub Actions to run the tests in parallel, and local test executions to only run the required portion of the test suite.  The 5 tasks are the following:
 
-* `service_testing` - Runs the service layer and repository testing.
-* `ui_testing` - Integration tests for IRIDA's web interface.
-* `rest_testing` - Tests IRIDA's REST API.
-* `galaxy_testing` - Runs tests for IRIDA communicating with Galaxy.  This profile will automatically start a test galaxy instance to test with.
-* `galaxy_pipeline_testing` - Runs tests for running a pipeline with Galaxy.  This profile will automatically start a test galaxy instance to test with.
+* `serviceITest` - Runs the service layer and repository testing.
+* `uiITest` - Integration tests for IRIDA's web interface.
+* `restITest` - Tests IRIDA's REST API.
+* `galaxyITest` - Runs tests for IRIDA communicating with Galaxy.  This profile will automatically start a test galaxy instance to test with.
+* `galaxyPipelineITest` - Runs tests for running a pipeline with Galaxy.  This profile will automatically start a test galaxy instance to test with.
 
-See the `<profiles>` section of the `pom.xml` file to see how the profiles are defined.
+See the `integrationTestMap` definition in the `build.gradle.kts` file to see how the tasks are defined.
 
-As the integration tests simulate a running IRIDA installation, in order to run any integration test the requirements needed to run a production IRIDA server must be installed on your development machine.  The test profiles can each by run directly with `./gradlew verify`, but additional setup may be required for the tests to work properly.  To perform this setup and run all the tests, the `run-tests.sh` script can be used.  To run a test profile with `run-tests.sh` please run the following:
+As the integration tests simulate a running IRIDA installation, in order to run any integration test the requirements needed to run a production IRIDA server must be installed on your development machine.  The test tasks can each be run directly with `./gradlew TEST_TASK`, but additional setup may be required for the tests to work properly.  To perform this setup and run all the tests, the `run-tests.sh` script can be used.  To run a test task with `run-tests.sh` please run the following:
 
 ```bash
 ./run-tests.sh <TEST PROFILE>
 ```
+
+Where <TEST PROFILE> is one of the following:
+* `service_testing` - Runs the `serviceITest` task
+* `ui_testing` - Runs the `uiITest` task
+* `rest_testing` - Runs the `restITest` task
+* `galaxy_testing` - Runs the `galaxyITest` task
+* `galaxy_pipeline_testing` - Runs the `galaxyPipelineITest` task
 
 This will clean and setup an empty database for IRIDA on the local machine named **irida_integration_test**.  This will also, for the Galaxy test profile, start up a Galaxy IRIDA testing Docker image running on <http://localhost:48889> and destroy this Docker image afterwards (you can skip destroying the Docker image by passing `--no-kill-docker` to this script).  If you wish to use a different database than the default **irida_integration_test**, you may pass the name of the database with the `-d` flag:
 
@@ -234,7 +241,7 @@ This will:
 1. Clean/re-build the IRIDA database on `irida_integration_test` (use `-d` to override).
 2. Remove any previous Docker images from previous tests (named *irida-galaxy-test*).
 3. Start up a new Docker image with Galaxy running on <http://localhost:48889>.
-4. Run IRIDA `galaxy_testing` integration test profile.
+4. Run IRIDA `galaxyITest` integration test task.
 5. Remove Docker image on <http://localhost:48889>.
 
 Additional Gradle parameters can be passed to `run-tests.sh`.  In particular, individual test classes can be run using `--tests=ca.corefacilty.bioinformatics.irida.TheTestClass`. For example:

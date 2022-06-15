@@ -16,13 +16,13 @@ if len(sys.argv) == 1:
     print("TARGET_DIRECTORY should be the 'irida-documentation/docs' directory")
     exit(0)
 
-pom_file = 'pom.xml'
+gradle_build_file = 'build.gradle.kts'
 result_dir = sys.argv[1]
 doc_dir = 'doc/'
 
 # Check if we're in the irida directory
-if not os.path.exists(pom_file):
-    print("Cannot find pom file.  This script must be run in the base directory of the IRIDA repository.")
+if not os.path.exists(gradle_build_file):
+    print("Cannot find gradle build file.  This script must be run in the base directory of the IRIDA repository.")
     exit(1)
 
 if not os.path.isdir(doc_dir):
