@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.unit.web.models;
+package ca.corefacility.bioinformatics.irida.ria.web.models.project;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.unit.web.models;
+package ca.corefacility.bioinformatics.irida.ria.web.models.project;
 
 import java.nio.file.Path;
 import java.util.Set;
