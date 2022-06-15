@@ -14,3 +14,17 @@ export enum TagColor {
   GEEKBLUE = "geekblue",
   PURPLE = "purple",
 }
+
+/**
+ * Properties that are available on the Ant Design Grid Component
+ */
+export type GridProps = {
+  column?: number;
+  gutter?: number;
+  xs?: number;
+  sm?: number;
+  md?: number;
+  lg?: number;
+  xl?: number;
+  xxl?: number;
+};

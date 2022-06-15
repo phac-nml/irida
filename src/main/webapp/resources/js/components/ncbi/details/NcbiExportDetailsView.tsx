@@ -10,11 +10,11 @@ import {
   formatNcbiSubmissionDetails,
   formatNcbiBioSampleFiles,
 } from "./utils";
-import { BasicListItem } from "../../lists/BasicList.types";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { getNcbiSubmission } from "../../../apis/export/ncbi";
 import { DataFunctionArgs } from "@remix-run/router/utils";
 import { SPACE_LG } from "../../../styles/spacing";
+import {BasicListItem} from "../../lists/BasicList";
 
 /**
  * React router data loader (https://beta.reactrouter.com/en/dev/route/loader)

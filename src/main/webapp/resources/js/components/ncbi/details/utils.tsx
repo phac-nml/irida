@@ -8,7 +8,7 @@ import {
   PairedEndSequenceFile,
   SingleEndSequenceFile,
 } from "../../../types/irida";
-import { BasicListItem } from "../../lists/BasicList.types";
+import {BasicListItem} from "../../lists/BasicList";
 
 export const formatNcbiSubmissionDetails = (
   submission: Omit<NcbiSubmission, "bioSampleFiles">
