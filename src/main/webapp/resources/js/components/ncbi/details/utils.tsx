@@ -10,6 +10,11 @@ import {
 } from "../../../types/irida";
 import {BasicListItem} from "../../lists/BasicList";
 
+/**
+ * Format all details in a NcbiSubmission (without the files) to a form that
+ * can be consumed by the BasicList component.
+ * @param submission
+ */
 export const formatNcbiSubmissionDetails = (
   submission: Omit<NcbiSubmission, "bioSampleFiles">
 ): BasicListItem[] => {
@@ -66,6 +71,11 @@ export interface BioSampleFileDetails {
   };
 }
 
+/**
+ * Format the files from a NcbiSubmission.  The files detail will be formatted into a manner that
+ * can be consumed by a BasicList component.
+ * @param bioSampleFiles
+ */
 export const formatNcbiBioSampleFiles = (
   bioSampleFiles: NcbiBioSampleFiles[]
 ): BioSampleFileDetails[] =>
