@@ -26,7 +26,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 
 /**
- * An controller that handles all exceptions that might be thrown when a user is navigating around in the web interface.
+ * Exception Handler for when a user is navigating around in the web interface.
  */
 @ControllerAdvice(basePackages = "ca.corefacility.bioinformatics.irida.ria.web")
 public class IridaCustomExceptionHandler extends ResponseEntityExceptionHandler {
@@ -48,7 +48,9 @@ public class IridaCustomExceptionHandler extends ResponseEntityExceptionHandler 
 	/**
 	 * Handle an {@link EntityNotFoundException}
 	 * 
-	 * @param ex The EntityNotFoundException caught
+	 * @param ex       The EntityNotFoundException caught
+	 * @param response The HttpServletResponse
+	 * @throws IOException If an input or output exception occurs
 	 */
 	@ExceptionHandler(EntityNotFoundException.class)
 	public void handleResourceNotFoundException(EntityNotFoundException ex, HttpServletResponse response)
@@ -78,8 +80,10 @@ public class IridaCustomExceptionHandler extends ResponseEntityExceptionHandler 
 	/**
 	 * Catch and handle {@link IOException}s. Render an error that's just a general storage exception.
 	 * 
-	 * @param e      the exception that was originally thrown.
-	 * @param locale the locale of the request.
+	 * @param e        the exception that was originally thrown.
+	 * @param locale   the locale of the request.
+	 * @param response The HttpServletResponse
+	 * @throws IOException If an input or output exception occurs
 	 */
 	@ExceptionHandler(IOException.class)
 	public void handleIOException(final IOException e, final Locale locale, HttpServletResponse response)
@@ -92,9 +96,10 @@ public class IridaCustomExceptionHandler extends ResponseEntityExceptionHandler 
 	/**
 	 * Catch and handle all {@link StorageException}s. Try your best to figure out the root cause of the exception.
 	 * 
-	 * @param e      the exception that was originally thrown.
-	 * @param locale the locale of the request.
-	 * @return an error message (hopefully) more specific than a general storage exception.
+	 * @param e        the exception that was originally thrown.
+	 * @param locale   the locale of the request.
+	 * @param response The HttpServletResponse
+	 * @throws IOException If an input or output exception occurs
 	 */
 	@ExceptionHandler(StorageException.class)
 	public void handleStorageException(final StorageException e, final Locale locale, HttpServletResponse response)
