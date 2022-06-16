@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -61,6 +62,20 @@ public class IridaCustomExceptionHandler extends ResponseEntityExceptionHandler 
 	}
 
 	/**
+	 * Handle an {@link AccessDeniedException}
+	 * 
+	 * @param ex       The AccessDeniedException caught
+	 * @param response The HttpServletResponse
+	 * @throws IOException If an input or output exception occurs
+	 */
+	@ExceptionHandler(AccessDeniedException.class)
+	public void handleAccessDeniedException(AccessDeniedException ex, HttpServletResponse response) throws IOException {
+		logger.error(ex.getMessage(), ex);
+		// Override the status code here and then let SpringBoot BasicErrorController handle the exception
+		response.sendError(HttpStatus.FORBIDDEN.value());
+	}
+
+	/**
 	 * Catch an {@link OAuthProblemException} and return an http 500 error
 	 * 
 	 * @param ex the caught {@link OAuthProblemException}
@@ -75,6 +90,19 @@ public class IridaCustomExceptionHandler extends ResponseEntityExceptionHandler 
 		modelAndView.addObject("exception", ex);
 		modelAndView.addObject("adminEmail", adminEmail);
 		return modelAndView;
+	}
+
+	/**
+	 * Catch and handle all other exception types and respond with 500 status code.
+	 * 
+	 * @param e        the exception that was originally thrown.
+	 * @param response The HttpServletResponse
+	 * @throws IOException If an input or output exception occurs
+	 */
+	@ExceptionHandler(Exception.class)
+	public void handleOtherExceptions(final Exception ex, HttpServletResponse response) throws IOException {
+		logger.error(ex.getMessage(), ex);
+		response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value());
 	}
 
 	/**
