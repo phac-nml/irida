@@ -93,7 +93,7 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
-[22.05.3]: https://github.com/phac-nml/irida/compare/22.05.3...22.05.4
+[22.05.4]: https://github.com/phac-nml/irida/compare/22.05.3...22.05.4
 [22.05.3]: https://github.com/phac-nml/irida/compare/22.05.2...22.05.3
 [22.05.2]: https://github.com/phac-nml/irida/compare/22.05.1...22.05.2
 [22.05.1]: https://github.com/phac-nml/irida/compare/22.05...22.05.1
