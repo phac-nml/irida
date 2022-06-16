@@ -290,6 +290,10 @@ tasks.register<YarnTask>("buildWebapp") {
     outputs.dir("${project.projectDir}/src/main/webapp/dist")
 }
 
+springBoot {
+    mainClass.set("ca.corefacility.bioinformatics.irida.IridaApplication")
+}
+
 tasks.withType<Test> {
     systemProperties(mapOf("junit.platform.execution.listeners.deactivate" to "ca.corefacility.bioinformatics.irida.junit5.listeners.Integration*"))
     useJUnitPlatform {
@@ -378,20 +382,24 @@ task<JavaExec>("toolsListExport") {
     args("${buildDir}/tools-list.yml")
 }
 
+tasks.named<BootRun>("bootRun") {
+    if (project.gradle.taskGraph.hasTask(":generateOpenApiDocs")) {
+        val defaultSystemProperties = mapOf(
+            "spring.profiles.active" to "dev,swagger",
+            "liquibase.update.database.schema" to "false",
+            "spring.datasource.url" to "jdbc:mysql://localhost:3306/irida_test",
+            "spring.datasource.dbcp2.max-wait" to "5000"
+        )
+        val providedSystemProperties = System.getProperties().mapKeys { it.key as String }
+        val filteredProvidedSystemProperties = providedSystemProperties.filterKeys { it in defaultSystemProperties}
+        systemProperties(defaultSystemProperties + filteredProvidedSystemProperties)
+    }
+}
+
 openApi {
     outputDir.set(file("${projectDir}/doc/swagger-ui"))
     outputFileName.set("open-api.json")
     waitTimeInSeconds.set(60)
-    val defaultSystemProperties = mapOf(
-        "spring.profiles.active" to "dev,swagger",
-        "liquibase.update.database.schema" to "false",
-        "spring.datasource.url" to "jdbc:mysql://localhost:3306/irida_test",
-        "spring.datasource.dbcp2.max-wait" to "5000"
-    )
-    val providedSystemProperties = System.getProperties().mapKeys { it.key as String }
-    val filteredProvidedSystemProperties = providedSystemProperties.filterKeys { it in defaultSystemProperties}
-    val bootRun = project.tasks.named("bootRun").get() as BootRun
-    bootRun.systemProperties(defaultSystemProperties + filteredProvidedSystemProperties)
 }
 
 tasks.processResources {
