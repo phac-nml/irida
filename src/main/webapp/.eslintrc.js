@@ -3,6 +3,7 @@ module.exports = {
     node: "true",
     browser: true,
     es2021: true,
+    jest: true,
   },
   globals: {
     i18n: true,
@@ -26,7 +27,7 @@ module.exports = {
   settings: {
     react: {
       version: "detect",
-    }
+    },
   },
   rules: {
     "react/prop-types": 0,
