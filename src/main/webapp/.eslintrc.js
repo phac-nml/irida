@@ -7,6 +7,7 @@ module.exports = {
   },
   globals: {
     i18n: true,
+    __webpack_public_path__: true,
   },
   extends: [
     "eslint:recommended",
