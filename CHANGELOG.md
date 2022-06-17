@@ -6,6 +6,7 @@
 * [Developer/UI]: Added in typescript support to webpack build, moving forward all new frontend development will use typescript. See [PR 1294](https://github.com/phac-nml/irida/pull/1294) for more.
 * [Developer/UI]: Removed `styled-components` from page header and replaced with CSS variables. See [PR 1284](https://github.com/phac-nml/irida/pull/1284)
 * [Developer/UI]: Updated eslint rule to check for object and array destructuring. See [PR 1322](https://github.com/phac-nml/irida/pull/1322)
+* [UI]: Updated the NCBI SRA Submission details page to Ant Design.  See [PR 1311](https://github.com/phac-nml/irida/pull/1311)
 
 ## [22.05.4] - 2022/06/16
 * [UI]: Fixed bug preventing filter samples by file to fail on invalid url. See [PR 1318](https://github.com/phac-nml/irida/pull/1318)
