@@ -8,6 +8,8 @@ import org.openqa.selenium.support.PageFactory;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class ExportDetailsPage extends AbstractPage {
+	@FindBy(id = "t-details-id")
+	WebElement detailsId;
 
 	@FindBy(className = "t-upload-status")
 	WebElement status;

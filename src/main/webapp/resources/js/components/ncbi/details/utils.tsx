@@ -25,7 +25,7 @@ export const formatNcbiSubmissionDetails = (
   return [
     {
       title: i18n("iridaThing.id"),
-      desc: submission.id,
+      desc: <span className="t-details-id">{submission.id}</span>,
     },
     {
       title: i18n("project.export.status"),
