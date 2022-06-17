@@ -23,5 +23,22 @@ module.exports = {
     sourceType: "module",
   },
   plugins: ["react", "jsx-a11y", "@typescript-eslint"],
-  rules: { "react/prop-types": 0 },
+  settings: {
+    react: {
+      version: "detect",
+    }
+  },
+  rules: {
+    "react/prop-types": 0,
+    "prefer-destructuring": [
+      "error",
+      {
+        array: true,
+        object: true,
+      },
+      {
+        enforceForRenamedProperties: false,
+      },
+    ],
+  },
 };
