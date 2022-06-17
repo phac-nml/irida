@@ -95,7 +95,7 @@ public class IridaCustomExceptionHandler extends ResponseEntityExceptionHandler 
 	/**
 	 * Catch and handle all other exception types and respond with 500 status code.
 	 * 
-	 * @param e        the exception that was originally thrown.
+	 * @param ex       the exception that was originally thrown.
 	 * @param response The HttpServletResponse
 	 * @throws IOException If an input or output exception occurs
 	 */
