@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.util.List;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -29,6 +31,12 @@ public class ExportDetailsPage extends AbstractPage {
 
 	@FindBy(className = "t-release-date")
 	WebElement releaseDate;
+
+	@FindBy(className = "t-pair")
+	List<WebElement> pairsList;
+
+	@FindBy(className = "t-single")
+	List<WebElement> singlesList;
 
 	public ExportDetailsPage(WebDriver driver) {
 		super(driver);
@@ -64,5 +72,13 @@ public class ExportDetailsPage extends AbstractPage {
 
 	public String getReleaseDate() {
 		return releaseDate.getText();
+	}
+
+	public int getNumberOfPairs() {
+		return pairsList.size();
+	}
+
+	public int getNumberOfSingles() {
+		return singlesList.size();
 	}
 }

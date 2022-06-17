@@ -80,7 +80,8 @@ function NcbiExportDetailsView(): JSX.Element {
                   size="small"
                   dataSource={bioSampleFile.files.pairs}
                   renderItem={(pair: PairedEndSequenceFile) => (
-                    <List.Item>
+                    <List.Item
+                        className={"t-pair"}>
                       <div
                         style={{
                           width: `100%`,
@@ -123,7 +124,7 @@ function NcbiExportDetailsView(): JSX.Element {
                   size="small"
                   dataSource={bioSampleFile.files.singles}
                   renderItem={(file: SingleEndSequenceFile) => (
-                    <List.Item>
+                    <List.Item className="t-single">
                       <div
                         style={{
                           width: `100%`,
