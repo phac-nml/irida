@@ -68,7 +68,7 @@ export function UserChangePasswordForm({ userId }) {
           label={i18n("UserChangePasswordForm.form.label.newPassword")}
           name="newPassword"
           rules={[
-            ({}) => ({
+            () => ({
               validator(_, value) {
                 return validatePassword(value);
               },
