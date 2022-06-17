@@ -80,7 +80,7 @@ export function UserTable() {
       title: i18n("UserTable.email"),
       key: "email",
       dataIndex: "email",
-      render(text, full) {
+      render(text) {
         return <a href={`mailto:${text}`}>{text}</a>;
       },
     },
