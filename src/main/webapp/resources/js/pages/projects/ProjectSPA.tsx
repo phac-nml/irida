@@ -1,10 +1,15 @@
-import React from "react";
+import React, {Suspense} from "react";
 import {DataBrowserRouter, Outlet, Route} from "react-router-dom";
-import NcbiExportTable, {loader as exportsLoader,} from "../../components/ncbi/export-table";
+import {loader as exportsLoader,} from "../../components/ncbi/export-table";
 import {setBaseUrl} from "../../utilities/url-utilities";
 import ProjectNCBILayout from "./ncbi";
-import NCBIExportDetails, {loader as detailsLoader,} from "../../components/ncbi/details";
-import DefaultErrorBoundary from "../../components/DefaultErrorBoundary";
+import {loader as detailsLoader,} from "../../components/ncbi/details";
+import {LoadingOutlined} from "@ant-design/icons";
+
+
+const NCBIExportDetails = React.lazy(() => import("../../components/ncbi/details"));
+const NcbiExportTable = React.lazy(() => import("../../components/ncbi/export-table"));
+const DefaultErrorBoundary = React.lazy(() => import ("../../components/DefaultErrorBoundary"));
 
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
@@ -16,7 +21,7 @@ function ProjectBase(): JSX.Element {
   return (
     <div>
       {/* TODO: NAV AND OTHER TOP LEVEL ITEMS HERE */}
-      <Outlet />
+        <Suspense fallback={<LoadingOutlined />}><Outlet/></Suspense>
     </div>
   );
 }
