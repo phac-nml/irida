@@ -97,6 +97,6 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long>, Pr
 	 * @return A list of {@link GenericStatModel}s
 	 */
 	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', p.createdDate, ?2), count(p.id))"
-			+ "from Project p where p.createdDate >= ?1 group by function('date_format', p.createdDate, ?2) order by p.createdDate asc")
+			+ "from Project p where p.createdDate >= ?1 group by function('date_format', p.createdDate, ?2) order by function('date_format', p.createdDate, ?2) asc")
 	public List<GenericStatModel> countProjectsCreatedGrouped(Date createdDate, String groupByFormat);
 }

@@ -98,10 +98,6 @@
       <id>spring-milestones</id>
       <url>https://repo.spring.io/milestone/</url>
     </repository>
-    <repository>
-      <id>clojars.org</id>
-      <url>https://clojars.org/repo</url>
-    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -465,12 +461,6 @@
       </exclusions>
     </dependency>
 
-    <!-- Clojure nREPL -->
-    <dependency>
-      <groupId>net.matlux</groupId>
-      <artifactId>jvm-breakglass</artifactId>
-      <version>${jvm-breakglass.version}</version>
-    </dependency>
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
