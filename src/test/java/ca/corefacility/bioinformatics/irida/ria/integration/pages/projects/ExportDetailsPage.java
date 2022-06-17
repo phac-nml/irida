@@ -9,7 +9,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class ExportDetailsPage extends AbstractPage {
 
-	@FindBy(id = "upload-status")
+	@FindBy(className = "t-upload-status")
 	WebElement status;
 
 	public ExportDetailsPage(WebDriver driver) {

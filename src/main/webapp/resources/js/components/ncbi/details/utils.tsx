@@ -8,7 +8,7 @@ import {
   PairedEndSequenceFile,
   SingleEndSequenceFile,
 } from "../../../types/irida";
-import {BasicListItem} from "../../lists/BasicList";
+import { BasicListItem } from "../../lists/BasicList";
 
 /**
  * Format all details in a NcbiSubmission (without the files) to a form that

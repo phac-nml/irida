@@ -84,9 +84,13 @@ const ExportUploadStateTag = ({
   state: ExportUploadState;
 }): JSX.Element => {
   return states[state] ? (
-    <Tag color={states[state].color}>{states[state].text}</Tag>
+    <Tag className="t-upload-status" color={states[state].color}>
+      {states[state].text}
+    </Tag>
   ) : (
-    <Tag>{i18n("ExportUploadState.unknown")}</Tag>
+    <Tag className="t-upload-status" color={TagColor.ORANGE}>
+      {i18n("ExportUploadState.unknown")}
+    </Tag>
   );
 };
 
