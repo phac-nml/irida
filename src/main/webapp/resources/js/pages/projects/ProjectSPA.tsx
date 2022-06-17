@@ -6,6 +6,8 @@ import ProjectNCBILayout from "./ncbi";
 import NCBIExportDetails, {loader as detailsLoader,} from "../../components/ncbi/details";
 import DefaultErrorBoundary from "../../components/DefaultErrorBoundary";
 
+__webpack_public_path__ = setBaseUrl(`/dist/`);
+
 /**
  * Default layout for the Project Single Page Application
  * @constructor
