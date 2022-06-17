@@ -36,9 +36,11 @@ out/
 
 ### Docs ###
 doc/_site
-/doc/.jekyll-cache/Jekyll/Cache/
-/doc/developer/apidocs
+doc/.jekyll-cache/Jekyll/Cache/
+doc/developer/apidocs
 doc/swagger-ui/open-api.json
+doc/Gemfile.lock
+.vendor/
 
 ### Frontend ###
 src/main/webapp/node

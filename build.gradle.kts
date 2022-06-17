@@ -410,5 +410,47 @@ tasks.processResources {
 }
 
 tasks.javadoc {
-    destinationDir = file("${projectDir}/doc/developer/apidocs")
+    destinationDir = file("${project.projectDir}/doc/developer/apidocs")
+    outputs.dir(file("${project.projectDir}/doc/developer/apidocs"))
+}
+
+task<Exec>("docsSiteDependencies") {
+    workingDir(file("${projectDir}/doc"))
+
+    commandLine(listOf("bundle", "install"))
+
+    inputs.file("${project.projectDir}/doc/Gemfile")
+    outputs.file("${project.projectDir}/doc/Gemfile.lock")
+}
+
+task<Exec>("buildDocsSite") {
+    dependsOn(listOf(":generateOpenApiDocs", ":javadoc", ":docsSiteDependencies"))
+
+    workingDir(file("${project.projectDir}/doc"))
+
+    commandLine("bundle")
+    args(listOf("exec", "jekyll", "build"))
+
+    inputs.dir("${project.projectDir}/doc")
+    outputs.dir("${project.projectDir}/doc/_site")
+}
+
+task<Exec>("serveDocsSite") {
+    dependsOn(listOf(":generateOpenApiDocs", ":javadoc", ":docsSiteDependencies"))
+
+    workingDir(file("${project.projectDir}/doc"))
+
+    commandLine("bundle")
+    args(listOf("exec", "jekyll", "serve"))
+
+    inputs.dir("${project.projectDir}/doc")
+    outputs.dir("${project.projectDir}/doc/_site")
+}
+
+task<Delete>("cleanDocsSite") {
+    project.delete("${project.projectDir}/doc/_site")
+}
+
+tasks.clean {
+    dependsOn(":cleanDocsSite")
 }
