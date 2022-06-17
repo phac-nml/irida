@@ -34,30 +34,37 @@ export const formatNcbiSubmissionDetails = (
     {
       title: i18n("project.export.submitter"),
       desc: (
-        <a href={setBaseUrl(`/users/${submission.submitter.id}`)}>
+        <a
+          className="t-submitter"
+          href={setBaseUrl(`/users/${submission.submitter.id}`)}
+        >
           {submission.submitter.name}
         </a>
       ),
     },
     {
       title: i18n("iridaThing.timestamp"),
-      desc: formatInternationalizedDateTime(submission.createdDate),
+      desc: (
+        <span className="t-created">
+          {formatInternationalizedDateTime(submission.createdDate)}
+        </span>
+      ),
     },
     {
       title: i18n("project.export.bioproject.title"),
-      desc: submission.bioProject,
+      desc: <span className="t-bioproject">{submission.bioProject}</span>,
     },
     {
       title: i18n("project.export.organization.title"),
-      desc: submission.organization,
+      desc: <span className="t-organization">{submission.organization}</span>,
     },
     {
       title: i18n("project.export.namespace.title"),
-      desc: submission.ncbiNamespace,
+      desc: <span className="t-namespace">{submission.ncbiNamespace}</span>,
     },
     {
       title: i18n("project.export.release_date.title"),
-      desc: releaseDate,
+      desc: <span className="t-release-date">{releaseDate}</span>,
     },
   ];
 };

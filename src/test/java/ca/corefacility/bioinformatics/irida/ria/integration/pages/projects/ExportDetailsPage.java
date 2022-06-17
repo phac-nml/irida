@@ -8,11 +8,27 @@ import org.openqa.selenium.support.PageFactory;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class ExportDetailsPage extends AbstractPage {
-	@FindBy(id = "t-details-id")
-	WebElement detailsId;
 
 	@FindBy(className = "t-upload-status")
 	WebElement status;
+
+	@FindBy(className = "t-submitter")
+	WebElement submitter;
+
+	@FindBy(className = "t-created-date")
+	WebElement createdDate;
+
+	@FindBy(className = "t-bioproject")
+	WebElement bioproject;
+
+	@FindBy(className = "t-organization")
+	WebElement organization;
+
+	@FindBy(className = "t-namespace")
+	WebElement namespace;
+
+	@FindBy(className = "t-release-date")
+	WebElement releaseDate;
 
 	public ExportDetailsPage(WebDriver driver) {
 		super(driver);
@@ -26,4 +42,27 @@ public class ExportDetailsPage extends AbstractPage {
 		return status.getText();
 	}
 
+	public String getSubmitter() {
+		return submitter.getText();
+	}
+
+	public String getCreatedDate() {
+		return createdDate.getText();
+	}
+
+	public String getBioproject() {
+		return bioproject.getText();
+	}
+
+	public String getOrganization() {
+		return organization.getText();
+	}
+
+	public String getNamespace() {
+		return namespace.getText();
+	}
+
+	public String getReleaseDate() {
+		return releaseDate.getText();
+	}
 }
