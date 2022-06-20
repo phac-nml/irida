@@ -3,7 +3,7 @@ import { NcbiSubmission, UserMinimal } from "../../types/irida";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { ExportUploadState } from "../../types/irida/ExportUpoadState";
 
-const BASE_URL = setBaseUrl(`/ajax/ncbi/project`);
+const BASE_URL = setBaseUrl(`/ajax/ncbi`);
 
 export interface NcbiExportSubmissionTableModel {
   exportedSamples: number;
@@ -20,7 +20,7 @@ export async function getProjectNCBIExports(
   projectId: number
 ): Promise<NcbiExportSubmissionTableModel[]> {
   try {
-    const { data } = await axios.get(`/ajax/ncbi/project/${projectId}/list`);
+    const { data } = await axios.get(`${BASE_URL}/project/${projectId}/list`);
     return data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -46,7 +46,7 @@ export async function getNcbiSubmission(
 ): Promise<NcbiSubmission> {
   try {
     const { data } = await axios.get(
-      `${BASE_URL}/${projectId}/details/${uploadId}`
+      `${BASE_URL}/project/${projectId}/details/${uploadId}`
     );
     return data;
   } catch (error) {
