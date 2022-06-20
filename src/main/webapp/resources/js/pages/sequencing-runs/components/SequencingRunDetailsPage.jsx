@@ -15,6 +15,7 @@ import { SequencingRunStatusBadge } from "./SequencingRunStatusBadge";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_LG } from "../../../styles/spacing";
 import { AddNewButton } from "../../../components/Buttons/AddNewButton";
+import { isAdmin } from "../../../utilities/role-utilities";
 
 const { Content } = Layout;
 
@@ -25,9 +26,8 @@ const { Content } = Layout;
  */
 export default function SequencingRunDetailsPage() {
   const ADMIN_SEQUENCE_RUNS_URL = "admin/sequencing-runs";
-  const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
   const showBack =
-    isAdmin && document.referrer.includes(ADMIN_SEQUENCE_RUNS_URL);
+    isAdmin() && document.referrer.includes(ADMIN_SEQUENCE_RUNS_URL);
   const { runId } = useParams();
   const goToAdminSequenceRunListPage = () =>
     (window.location.href = setBaseUrl(ADMIN_SEQUENCE_RUNS_URL));
@@ -126,7 +126,11 @@ export default function SequencingRunDetailsPage() {
       onBack={showBack ? goToAdminSequenceRunListPage : undefined}
       headerExtras={
         <AddNewButton
-          href={setBaseUrl(`sequencing-runs/${runId}/samples`)}
+          href={
+            isAdmin()
+              ? setBaseUrl(`admin/sequencing-runs/${runId}/samples`)
+              : setBaseUrl(`sequencing-runs/${runId}/samples`)
+          }
           text={i18n("SequencingRunDetailsPage.button")}
         />
       }

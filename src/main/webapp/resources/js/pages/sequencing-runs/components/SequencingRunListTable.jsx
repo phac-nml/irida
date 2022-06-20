@@ -7,6 +7,7 @@ import { dateColumnFormat } from "../../../components/ant.design/table-renderers
 import { Button, Popconfirm } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { useDeleteSequencingRunMutation } from "../../../apis/sequencing-runs/sequencing-runs";
+import { isAdmin } from "../../../utilities/role-utilities";
 
 /**
  * React component to display the sequencing run list table.
@@ -26,7 +27,11 @@ export default function SequencingRunListTable() {
           <Button
             type="link"
             className="t-run-details-link"
-            href={setBaseUrl(`sequencing-runs/${text}`)}
+            href={
+              isAdmin()
+                ? setBaseUrl(`admin/sequencing-runs/${text}`)
+                : setBaseUrl(`/sequencing-runs/${text}`)
+            }
           >
             {text}
           </Button>
@@ -64,7 +69,7 @@ export default function SequencingRunListTable() {
     },
   ];
 
-  if (window.TL._USER.systemRole === "ROLE_ADMIN") {
+  if (isAdmin()) {
     columns.push({
       dataIndex: "actions",
       align: "right",
