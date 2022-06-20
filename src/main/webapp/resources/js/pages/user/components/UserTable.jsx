@@ -56,7 +56,7 @@ export function UserTable() {
       fixed: "left",
       render(text, full) {
         return IS_ADMIN ? (
-          <a className="t-username" href={setBaseUrl(`users/${full.id}`)}>
+          <a className="t-username" href={setBaseUrl(`admin/users/${full.id}`)}>
             {text}
           </a>
         ) : (
