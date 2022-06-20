@@ -1,15 +1,21 @@
-import React, {Suspense} from "react";
-import {DataBrowserRouter, Outlet, Route} from "react-router-dom";
-import {loader as exportsLoader,} from "../../components/ncbi/export-table";
-import {setBaseUrl} from "../../utilities/url-utilities";
-import ProjectNCBILayout from "./ncbi";
-import {loader as detailsLoader,} from "../../components/ncbi/details";
-import {LoadingOutlined} from "@ant-design/icons";
+import React, { Suspense } from "react";
+import { DataBrowserRouter, Outlet, Route } from "react-router-dom";
+import { loader as exportsLoader } from "../../components/ncbi/export-table";
+import { setBaseUrl } from "../../utilities/url-utilities";
+import { loader as detailsLoader } from "../../components/ncbi/details";
+import { LoadingOutlined } from "@ant-design/icons";
 
-
-const NCBIExportDetails = React.lazy(() => import("../../components/ncbi/details"));
-const NcbiExportTable = React.lazy(() => import("../../components/ncbi/export-table"));
-const DefaultErrorBoundary = React.lazy(() => import ("../../components/DefaultErrorBoundary"));
+const ProjectNCBILayout = React.lazy(() => import("./ncbi"));
+const NCBIExportDetails = React.lazy(
+  () => import("../../components/ncbi/details")
+);
+const NcbiExportTable = React.lazy(
+  () => import("../../components/ncbi/export-table")
+);
+const NcbiCreateExport = React.lazy(() => import("./ncbi/create"));
+const DefaultErrorBoundary = React.lazy(
+  () => import("../../components/DefaultErrorBoundary")
+);
 
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
@@ -21,7 +27,9 @@ function ProjectBase(): JSX.Element {
   return (
     <div>
       {/* TODO: NAV AND OTHER TOP LEVEL ITEMS HERE */}
-        <Suspense fallback={<LoadingOutlined />}><Outlet/></Suspense>
+      <Suspense fallback={<LoadingOutlined />}>
+        <Outlet />
+      </Suspense>
     </div>
   );
 }
@@ -39,6 +47,11 @@ export default function ProjectSPA(): JSX.Element {
         path={setBaseUrl(`/projects/:projectId`)}
         element={<ProjectBase />}
       >
+        <Route
+          path="ncbi"
+          element={<NcbiCreateExport />}
+          errorElement={<DefaultErrorBoundary />}
+        />
         <Route path="export" element={<ProjectNCBILayout />}>
           <Route
             index

@@ -38,7 +38,7 @@ module.exports = {
   groups: "./resources/js/pages/UserGroupsPage",
   "project-ncbi-exports": "./resources/js/pages/projects/ncbi",
   "project-ncbi-export":
-    "./resources/js/pages/projects/ncbi-export/ncbi-export.js",
+    "./resources/js/pages/projects/ncbi/create",
   search: "./resources/js/pages/search/search.js",
   user: "./resources/js/pages/user",
   admin: "./resources/js/pages/admin/index.tsx",

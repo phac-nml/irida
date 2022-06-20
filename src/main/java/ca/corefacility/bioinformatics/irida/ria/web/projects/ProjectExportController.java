@@ -74,7 +74,7 @@ public class ProjectExportController {
 	 * @param principal {@link Principal} currently logged in user
 	 * @return Name of the NCBI export page
 	 */
-	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.GET)
+	@RequestMapping(value = "/projects/{projectId}/ncbi", method = RequestMethod.GET)
 	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("ids") List<Long> sampleIds,
 			Model model, Principal principal) {
 		Project project = projectService.read(projectId);
