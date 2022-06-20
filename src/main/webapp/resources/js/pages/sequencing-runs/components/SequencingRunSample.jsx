@@ -1,6 +1,6 @@
 import React from "react";
 import { useDrop } from "react-dnd";
-import { Avatar, Button, Card, Col, Row } from "antd";
+import { Avatar, Button, Card, Col, Row, Skeleton } from "antd";
 import {
   IconRemove,
   IconSwap,
@@ -16,6 +16,12 @@ import {
   updateSample,
 } from "../services/runReducer";
 import { useDispatch } from "react-redux";
+
+function Shadow() {
+  return (
+    <Skeleton avatar={{ shape: "circle", size: "large" }} paragraph={false} />
+  );
+}
 
 /**
  * React component to render a sample.
@@ -44,8 +50,11 @@ export function SequencingRunSample({ samples, sample, index }) {
     dispatch(updateSample(newSample, index));
   };
 
-  const [{ canDrop, isOver }, drop] = useDrop({
+  const [{ isOver }, drop] = useDrop({
     accept: "card",
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
     canDrop: (item, monitor) => {
       //do not drop on the same sample card
       if (item.prevIndex === index) {
@@ -100,6 +109,8 @@ export function SequencingRunSample({ samples, sample, index }) {
     },
   });
 
+  console.log("options", { isOver });
+
   return (
     <Card
       title={sample.sampleName}
@@ -113,6 +124,9 @@ export function SequencingRunSample({ samples, sample, index }) {
       }
     >
       <Row align="middle" justify="center">
+        {sample.forwardSequenceFile === null &&
+          sample.reverseSequenceFile === null &&
+          isOver && <Shadow />}
         {sample.forwardSequenceFile !== null && (
           <>
             <Col flex="75px">

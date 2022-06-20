@@ -6,7 +6,7 @@ import { passwordResetApi } from "../../apis/password-reset";
 import { projectSubscriptionsApi } from "../../apis/projects/project-subscriptions";
 import { runReducer } from "../sequencing-runs/services/runReducer";
 /*
-Redux Store for user details.
+Redux Store for admin panel.
 For more information on redux stores see: https://redux.js.org/tutorials/fundamentals/part-4-store
  */
 export default configureStore({
