@@ -5,6 +5,8 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +22,15 @@ import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 
 import javax.validation.ConstraintViolationException;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 @ConditionalOnExpression("'${irida.administrative.authentication.mode}'.equals('ldap') || '${irida.administrative.authentication.mode}'.equals('adldap')")
 public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
     private static final Logger logger = LoggerFactory.getLogger(IridaUserDetailsContextMapper.class);
 
-    // TODO: Why oh why does his break tests but the code works fine...
     @Autowired
     private UserService userService;
 
@@ -35,6 +39,18 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
 
     @Value("${irida.administrative.authentication.mode}")
     private String authenticationMode;
+
+    @Value("${irida.administrative.authentication.ldap.userInfoEmail}")
+    private String userInfoEmail;
+
+    @Value("${irida.administrative.authentication.ldap.userInfoFirstName}")
+    private String userInfoFirstName;
+
+    @Value("${irida.administrative.authentication.ldap.userInfoLastName}")
+    private String userInfoLastName;
+
+    @Value("${irida.administrative.authentication.ldap.userInfoPhoneNumber}")
+    private String userInfoPhoneNumber;
 
     private boolean creatingNewUser = false;
 
@@ -52,10 +68,8 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
             User u;
             switch(authenticationMode) {
                 case "ldap":
-                    u = ldapCreateUser(dirContextOperations, username);
-                    break;
                 case "adldap":
-                    u = adLdapCreateUser(dirContextOperations, username);
+                    u = ldapCreateUser(dirContextOperations, username);
                     break;
                 default:
                     String errorMessage = "Configured authentication mode not one of the supported modes for context mapping [ldap, adldap]";
@@ -78,21 +92,34 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
     }
 
     private User ldapCreateUser(DirContextOperations dirContextOperations, String username) {
-        String randomPassword = "Password1!";
-        String fieldLdapEmail = username + "@user.us";
-        String fieldLdapFirstName = username;
-        String fieldLdapLastName = username;
-        String fieldLdapPhoneNumber = "1234";
+        // todo: figure out if this works for adldap too, it probably should
+        String randomPassword = generateCommonLangPassword();
+        String fieldLdapEmail = dirContextOperations.getStringAttribute(userInfoEmail);
+        String fieldLdapFirstName = dirContextOperations.getStringAttribute(userInfoFirstName);
+        String fieldLdapLastName = dirContextOperations.getStringAttribute(userInfoLastName);
+        String fieldLdapPhoneNumber = dirContextOperations.getStringAttribute(userInfoPhoneNumber);
         return new User(username, fieldLdapEmail, randomPassword, fieldLdapFirstName, fieldLdapLastName, fieldLdapPhoneNumber);
     }
 
-    private User adLdapCreateUser(DirContextOperations dirContextOperations, String username) {
-        String randomPassword = "Password1!";
-        String fieldLdapEmail = username + "@user.us";
-        String fieldLdapFirstName = username;
-        String fieldLdapLastName = username;
-        String fieldLdapPhoneNumber = "1234";
-        return new User(username, fieldLdapEmail, randomPassword, fieldLdapFirstName, fieldLdapLastName, fieldLdapPhoneNumber);
+    public String generateCommonLangPassword() {
+        // https://www.baeldung.com/java-generate-secure-password
+        // todo: is this the best place for this function to live?
+        String upperCaseLetters = RandomStringUtils.random(2, 65, 90, true, true);
+        String lowerCaseLetters = RandomStringUtils.random(2, 97, 122, true, true);
+        String numbers = RandomStringUtils.randomNumeric(2);
+        String specialChar = RandomStringUtils.random(2, 33, 47, false, false);
+        String totalChars = RandomStringUtils.randomAlphanumeric(2);
+        String combinedChars = upperCaseLetters.concat(lowerCaseLetters)
+                .concat(numbers)
+                .concat(specialChar)
+                .concat(totalChars);
+        List<Character> pwdChars = combinedChars.chars()
+                .mapToObj(c -> (char) c)
+                .collect(Collectors.toList());
+        Collections.shuffle(pwdChars);
+        return pwdChars.stream()
+                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                .toString();
     }
 
     private void commitUser(User u) {
