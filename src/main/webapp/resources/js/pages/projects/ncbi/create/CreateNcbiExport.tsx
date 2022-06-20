@@ -9,6 +9,7 @@ import {
   Layout,
   PageHeader,
   Row,
+  Space,
   Table,
 } from "antd";
 import moment from "moment";
@@ -33,51 +34,53 @@ function CreateNcbiExport(): JSX.Element {
         >
           <PageHeader title={i18n("project.export.title")}>
             <Form layout="vertical" initialValues={initialValues}>
-              <Card title={"Export Details"}>
-                <Row gutter={[16, 16]}>
-                  <Col xxl={12}>
-                    <Form.Item
-                      label={i18n("project.export.bioproject.title")}
-                      help={i18n("project.export.bioproject.description")}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col xxl={12}>
-                    <Form.Item
-                      label={i18n("project.export.organization.title")}
-                      help={i18n("project.export.organization.description")}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col xxl={12}>
-                    <Form.Item
-                      label={i18n("project.export.namespace.title")}
-                      help={i18n("project.export.namespace.description")}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col xxl={12}>
-                    <Form.Item
-                      label={i18n("project.export.release_date.title")}
-                      help={i18n("project.export.release_date.description")}
-                      name="release_date"
-                    >
-                      <DatePicker
-                        style={{ width: "100%" }}
-                        disabledDate={disabledDate}
-                      />
-                    </Form.Item>
+              <Space direction="vertical" style={{ width: `100%` }}>
+                <Card title={"Export Details"}>
+                  <Row gutter={[16, 16]}>
+                    <Col md={12} xs={24}>
+                      <Form.Item
+                        label={i18n("project.export.bioproject.title")}
+                        help={i18n("project.export.bioproject.description")}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col md={12} xs={24}>
+                      <Form.Item
+                        label={i18n("project.export.organization.title")}
+                        help={i18n("project.export.organization.description")}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col md={12} xs={24}>
+                      <Form.Item
+                        label={i18n("project.export.namespace.title")}
+                        help={i18n("project.export.namespace.description")}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col md={12} xs={24}>
+                      <Form.Item
+                        label={i18n("project.export.release_date.title")}
+                        help={i18n("project.export.release_date.description")}
+                        name="release_date"
+                      >
+                        <DatePicker
+                          style={{ width: "100%" }}
+                          disabledDate={disabledDate}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </Card>
+                <Row>
+                  <Col>
+                    <Table />
                   </Col>
                 </Row>
-              </Card>
-              <Row>
-                <Col>
-                  <Table />
-                </Col>
-              </Row>
+              </Space>
             </Form>
           </PageHeader>
         </Col>
