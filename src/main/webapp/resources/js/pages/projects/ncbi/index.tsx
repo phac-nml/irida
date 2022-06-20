@@ -23,8 +23,9 @@ function ProjectNCBILayout() {
         <PageHeader
           onBack={submissionId ? () => navigate(-1) : undefined}
           title={i18n("NcbiExportPage.title")}
-        />
-        <Outlet />
+        >
+          <Outlet />
+        </PageHeader>
       </Col>
     </Row>
   );
