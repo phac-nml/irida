@@ -1,16 +1,14 @@
 import React from "react";
 import { useDrop } from "react-dnd";
-import { Button, Card, Col, Row } from "antd";
+import { Avatar, Button, Card, Col, Row } from "antd";
 import {
-  IconArrowLeft,
-  IconArrowRight,
   IconRemove,
   IconSwap,
+  IconSwapLeft,
+  IconSwapRight,
 } from "../../../components/icons/Icons";
-import { grey1 } from "../../../styles/colors";
 import { FONT_COLOR_PRIMARY } from "../../../styles/fonts";
 import { SequencingRunFileCard } from "./SequencingRunFileCard";
-import { SPACE_LG } from "../../../styles/spacing";
 import {
   addFile,
   deleteSample,
@@ -118,14 +116,10 @@ export function SequencingRunSample({ samples, sample, index }) {
         {sample.forwardSequenceFile !== null && (
           <>
             <Col flex="75px">
-              <IconArrowRight
-                style={{
-                  fontSize: "2em",
-                  flex: 1,
-                  padding: SPACE_LG,
-                  color: grey1,
-                  backgroundColor: FONT_COLOR_PRIMARY,
-                }}
+              <Avatar
+                size={60}
+                style={{ backgroundColor: FONT_COLOR_PRIMARY }}
+                icon={<IconSwapRight />}
               />
             </Col>
             <Col flex="auto">
@@ -148,14 +142,10 @@ export function SequencingRunSample({ samples, sample, index }) {
               />
             </Col>
             <Col flex="75px">
-              <IconArrowLeft
-                style={{
-                  fontSize: "2em",
-                  flex: 1,
-                  padding: SPACE_LG,
-                  color: grey1,
-                  backgroundColor: FONT_COLOR_PRIMARY,
-                }}
+              <Avatar
+                size={60}
+                style={{ backgroundColor: FONT_COLOR_PRIMARY }}
+                icon={<IconSwapLeft />}
               />
             </Col>
             <Col flex="auto">
