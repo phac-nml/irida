@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, List, Space, Tag } from "antd";
+import { Avatar, Button, List, Tag } from "antd";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import {
   FileOutlined,
@@ -8,6 +8,10 @@ import {
 } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 import { BORDERED_LIGHT } from "../../styles/borders";
+
+import { FastQC } from "../samples/components/fastqc/FastQC";
+import { setFastQCModalData } from "../samples/components/fastqc/fastQCSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 /**
  * Component to be used anywhere sequencing objects need to be listed
@@ -31,6 +35,11 @@ export function SequenceObjectListItem({
     : sequenceObject.file
     ? sequenceObject.file
     : sequenceObject;
+
+  const dispatch = useDispatch();
+  const { fastQCModalVisible, sequencingObjectId, fileId } = useSelector(
+    (state) => state.fastQCReducer
+  );
 
   /*
    If there are qc entries then another list item is added to the sequencing object which causes the
@@ -110,7 +119,28 @@ export function SequenceObjectListItem({
                       justifyContent: "space-between",
                     }}
                   >
-                    <span className="t-file-label">{files[0].label}</span>
+                    <Button
+                      type="link"
+                      style={{ padding: 0 }}
+                      onClick={() =>
+                        dispatch(
+                          setFastQCModalData({
+                            fileLabel: files[0].label,
+                            fileId: files[0].identifier,
+                            sequencingObjectId: obj.identifier,
+                            fastQCModalVisible: true,
+                            processingState: obj.processingState,
+                          })
+                        )
+                      }
+                    >
+                      <span className="t-file-label">{files[0].label}</span>
+                    </Button>
+                    {fastQCModalVisible &&
+                    sequencingObjectId === obj.identifier &&
+                    fileId === files[0].identifier ? (
+                      <FastQC />
+                    ) : null}
                   </div>
                 }
                 description={formatInternationalizedDateTime(
@@ -131,7 +161,28 @@ export function SequenceObjectListItem({
                       justifyContent: "space-between",
                     }}
                   >
-                    <span className="t-file-label">{files[1].label}</span>
+                    <Button
+                      type="link"
+                      style={{ padding: 0 }}
+                      onClick={() =>
+                        dispatch(
+                          setFastQCModalData({
+                            fileLabel: files[1].label,
+                            fileId: files[1].identifier,
+                            sequencingObjectId: obj.identifier,
+                            fastQCModalVisible: true,
+                            processingState: obj.processingState,
+                          })
+                        )
+                      }
+                    >
+                      <span className="t-file-label">{files[1].label}</span>
+                    </Button>
+                    {fastQCModalVisible &&
+                    sequencingObjectId === obj.identifier &&
+                    fileId === files[1].identifier ? (
+                      <FastQC />
+                    ) : null}
                   </div>
                 }
                 description={formatInternationalizedDateTime(
@@ -153,9 +204,37 @@ export function SequenceObjectListItem({
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <span className="t-file-label">
-                    {sequenceFile ? sequenceFile.label : file.label}
-                  </span>
+                  <Button
+                    type="link"
+                    style={{ padding: 0 }}
+                    onClick={() =>
+                      dispatch(
+                        setFastQCModalData({
+                          fileLabel: sequenceFile
+                            ? sequenceFile.label
+                            : file.label,
+                          fileId: sequenceFile
+                            ? sequenceFile.identifier
+                            : file.identifier,
+                          sequencingObjectId: obj.identifier,
+                          fastQCModalVisible: true,
+                          processingState: obj.processingState,
+                        })
+                      )
+                    }
+                  >
+                    <span className="t-file-label">
+                      {sequenceFile ? sequenceFile.label : file.label}
+                    </span>
+                  </Button>
+                  {fastQCModalVisible &&
+                  sequencingObjectId === obj.identifier &&
+                  fileId ===
+                    (sequenceFile
+                      ? sequenceFile.identifier
+                      : file.identifier) ? (
+                    <FastQC />
+                  ) : null}
                 </div>
               }
               description={formatInternationalizedDateTime(

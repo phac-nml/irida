@@ -1,7 +1,3 @@
-/*
- * This file renders the FastQC charts component.
- */
-
 import { Col, Image, Row, Typography } from "antd";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
@@ -10,6 +6,7 @@ import styled from "styled-components";
 import { getFastQCImages } from "../../../../apis/files/sequence-files";
 import { grey4 } from "../../../../styles/colors";
 import { SPACE_MD } from "../../../../styles/spacing";
+import { InfoAlert } from "../../../alerts";
 
 const StyledImage = styled(Image)`
   border: 1px solid ${grey4};
@@ -17,6 +14,11 @@ const StyledImage = styled(Image)`
   border-radius: 2px;
 `;
 
+/**
+ * React component to render FastQC charts
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function FastQCCharts() {
   const [perBase, setPerBase] = useState("");
   const [perSeq, setPerSeq] = useState("");

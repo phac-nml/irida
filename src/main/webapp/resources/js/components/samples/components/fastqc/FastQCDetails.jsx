@@ -1,39 +1,21 @@
-/*
- * This file renders the FastQC details component which
- * lists the file details as well as the sequence details.
- */
-
 import React from "react";
 import { Col, List, Row } from "antd";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { formatDate } from "../../../../utilities/date-utilities";
 import { ContentLoading } from "../../../loader";
-import { getFastQCDetails } from "../../../../apis/files/sequence-files";
-import { setFastQCDetails } from "./fastQCSlice";
+
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
 
 const DEFAULT_HEIGHT = 600;
 
+/**
+ * React component to render FastQC details
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function FastQCDetails() {
-  const { loading, sequencingObjectId, fileId, file, fastQC } = useSelector(
-    (state) => state.fastQCReducer
-  );
-  const dispatch = useDispatch();
-
-  React.useEffect(() => {
-    getFastQCDetails(sequencingObjectId, fileId).then(
-      ({ analysisFastQC, sequenceFile, sequencingObject }) => {
-        dispatch(
-          setFastQCDetails({
-            fastQC: analysisFastQC,
-            file: sequenceFile,
-            processingState: sequencingObject.processingState,
-          })
-        );
-      }
-    );
-  }, [sequencingObjectId, fileId]);
+  const { loading, file, fastQC } = useSelector((state) => state.fastQCReducer);
 
   // List details for file
   const fileDetails = [
