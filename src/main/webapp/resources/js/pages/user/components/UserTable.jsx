@@ -7,6 +7,7 @@ import { Checkbox } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
 import { useSetUserStatusMutation } from "../../../apis/users/users";
+import { Link } from "react-router-dom";
 
 const BASE_URL = setBaseUrl("admin/users");
 
@@ -58,9 +59,9 @@ export function UserTable() {
       fixed: "left",
       render(text, full) {
         return IS_ADMIN ? (
-          <a className="t-username" href={`${BASE_URL}/${full.id}`}>
+          <Link className="t-username" to={`${BASE_URL}/${full.id}`}>
             {text}
-          </a>
+          </Link>
         ) : (
           text
         );
