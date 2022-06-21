@@ -8,7 +8,7 @@ import { Col, Row, Typography } from "antd";
 import { SequencingRunSamplesList } from "./SequencingRunSamplesList";
 import { SequencingRunFilesList } from "./SequencingRunFilesList";
 import { useDispatch, useSelector } from "react-redux";
-import { setFiles } from "../services/runReducer";
+import { setFiles, setSamples } from "../services/runReducer";
 
 /**
  * React component to display page that creates samples from a sequencing run.
@@ -22,6 +22,7 @@ export default function SequencingRunCreateSamplesPage() {
   const { data = [] } = useGetSequencingRunFilesQuery(runId);
 
   React.useEffect(() => {
+    dispatch(setSamples([]));
     dispatch(setFiles(data));
   }, [data]);
 

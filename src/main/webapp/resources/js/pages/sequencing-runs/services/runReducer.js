@@ -27,6 +27,13 @@ export const removeFile = createAction(`rootReducers/removeFile`, (fileId) => ({
 }));
 
 /**
+ * Action to set the samples
+ */
+export const setSamples = createAction(`rootReducers/setSample`, (samples) => ({
+  payload: { samples },
+}));
+
+/**
  * Action to add a sample
  */
 export const addSample = createAction(`rootReducers/addSample`, (sample) => ({
@@ -78,6 +85,10 @@ export const runReducer = createReducer(initialState, (builder) => {
         show: file.id === action.payload.fileId ? false : file.show,
       };
     });
+  });
+
+  builder.addCase(setSamples, (state, action) => {
+    state.samples = action.payload.samples;
   });
 
   builder.addCase(addSample, (state, action) => {
