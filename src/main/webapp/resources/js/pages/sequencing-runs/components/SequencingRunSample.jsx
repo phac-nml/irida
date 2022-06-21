@@ -1,6 +1,6 @@
 import React from "react";
 import { useDrop } from "react-dnd";
-import { Avatar, Button, Card, Col, Row, Skeleton } from "antd";
+import { Avatar, Button, Card, Col, Empty, Row, Skeleton } from "antd";
 import {
   IconRemove,
   IconSwap,
@@ -16,12 +16,6 @@ import {
   updateSample,
 } from "../services/runReducer";
 import { useDispatch } from "react-redux";
-
-function Shadow() {
-  return (
-    <Skeleton avatar={{ shape: "circle", size: "large" }} paragraph={false} />
-  );
-}
 
 /**
  * React component to render a sample.
@@ -124,9 +118,6 @@ export function SequencingRunSample({ samples, sample, index }) {
       }
     >
       <Row align="middle" justify="center">
-        {sample.forwardSequenceFile === null &&
-          sample.reverseSequenceFile === null &&
-          isOver && <Shadow />}
         {sample.forwardSequenceFile !== null && (
           <>
             <Col flex="75px">
@@ -172,6 +163,43 @@ export function SequencingRunSample({ samples, sample, index }) {
             </Col>
           </>
         )}
+
+        {isOver && (
+          <>
+            {sample.forwardSequenceFile === null &&
+              sample.reverseSequenceFile === null && (
+                <>
+                  <Col flex="75px">
+                    <Skeleton.Avatar shape="circle" size={60} />
+                  </Col>
+                  <Col flex="auto">
+                    <Skeleton.Input size="large" block={true} />
+                  </Col>
+                </>
+              )}
+            {sample.forwardSequenceFile !== null &&
+              sample.reverseSequenceFile === null && (
+                <>
+                  <Col span={2} offset={1}>
+                    <Skeleton.Button size="small" shape="circle" />
+                  </Col>
+                  <Col flex="75px">
+                    <Skeleton.Avatar shape="circle" size={60} />
+                  </Col>
+                  <Col flex="auto">
+                    <Skeleton.Input size="large" block={true} />
+                  </Col>
+                </>
+              )}
+          </>
+        )}
+      </Row>
+      <Row align="middle" justify="center">
+        <Empty
+          style={{ paddingTop: "20px" }}
+          description={i18n("SequencingRunSample.empty")}
+          imageStyle={{ display: "none" }}
+        />
       </Row>
     </Card>
   );
