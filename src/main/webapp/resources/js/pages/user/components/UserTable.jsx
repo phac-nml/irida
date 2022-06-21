@@ -8,6 +8,8 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
 import { useSetUserStatusMutation } from "../../../apis/users/users";
 
+const BASE_URL = setBaseUrl("admin/users");
+
 /**
  * React component for displaying paged table of all users in the system
  * @returns {string|*}
@@ -56,7 +58,7 @@ export function UserTable() {
       fixed: "left",
       render(text, full) {
         return IS_ADMIN ? (
-          <a className="t-username" href={setBaseUrl(`admin/users/${full.id}`)}>
+          <a className="t-username" href={`${BASE_URL}/${full.id}`}>
             {text}
           </a>
         ) : (
