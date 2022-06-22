@@ -1,4 +1,4 @@
-import {MinusCircleOutlined} from "@ant-design/icons";
+import { MinusCircleOutlined } from "@ant-design/icons";
 import {
   Button,
   Card,
@@ -15,10 +15,10 @@ import {
   Table,
   Tooltip,
 } from "antd";
-import type {RangePickerProps} from "antd/es/date-picker";
+import type { RangePickerProps } from "antd/es/date-picker";
 import moment from "moment";
 import React from "react";
-import {useLoaderData} from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import {
   FullNcbiPlatforms,
   getNCBIPlatforms,
@@ -26,22 +26,34 @@ import {
   getNCBISources,
   getNCBIStrategies,
 } from "../../../../apis/export/ncbi";
-import {TableHeaderWithCascaderOptions} from "../../../../components/ant.design/TableHeaderWithCascaderOptions";
-import {TableHeaderWithSelectOptions} from "../../../../components/ant.design/TableHeaderWithSelectOptions";
+import { TableHeaderWithCascaderOptions } from "../../../../components/ant.design/TableHeaderWithCascaderOptions";
+import { TableHeaderWithSelectOptions } from "../../../../components/ant.design/TableHeaderWithSelectOptions";
 import TextWithHelpPopover from "../../../../components/ant.design/TextWithHelpPopover";
-import {NcbiSelection, NcbiSource, NcbiStrategy, Sample} from "../../../../types/irida";
-import {getSharedSamples, SharedStorage,} from "../../../../utilities/share-utilities";
+import {
+  NcbiBiosample,
+  NcbiPlatform,
+  NcbiSelection,
+  NcbiSource,
+  NcbiStrategy,
+} from "../../../../types/irida";
+import {
+  getSharedSamples,
+  SharedStorage,
+} from "../../../../utilities/share-utilities";
 
 interface SampleRecord {
-  [k: string] : {
-    key: string;
-    name: Pick<Sample, "id">;
-    id: Pick<Sample, "name">;
-    library_name: string;
-  }
+  [k: string]: NcbiBiosample;
 }
 
-export async function loader(): Promise<[SharedStorage, FullNcbiPlatforms, NcbiStrategy[], NcbiSource[], NcbiSelection[]]> {
+export async function loader(): Promise<
+  [
+    SharedStorage,
+    FullNcbiPlatforms,
+    NcbiStrategy[],
+    NcbiSource[],
+    NcbiSelection[]
+  ]
+> {
   const stored = getSharedSamples();
   const platforms = getNCBIPlatforms();
   const strategies = getNCBIStrategies();
@@ -51,28 +63,29 @@ export async function loader(): Promise<[SharedStorage, FullNcbiPlatforms, NcbiS
 }
 
 function CreateNcbiExport(): JSX.Element {
-  const [stored, rawPlatforms, strategies, sources, selections] = useLoaderData();
-  console.log({stored, rawPlatforms, strategies, sources, selections});
+  const [stored, rawPlatforms, strategies, sources, selections] =
+    useLoaderData();
+  console.log({ stored, rawPlatforms, strategies, sources, selections });
   const [samples, setSamples] = React.useState<SampleRecord>({});
   const [platforms, setPlatforms] = React.useState<CascaderOption[]>([]);
 
   React.useEffect(() => {
     const tempSamples = stored.samples.reduce(
-        (prev: object, { id, name }: { id: string; name: string }) => ({
-          ...prev,
-          [name]: {
-            key: name,
-            id,
-            name,
-            library_name: name,
-          },
-        }),
-        {}
+      (prev: object, { id, name }: { id: string; name: string }) => ({
+        ...prev,
+        [name]: {
+          key: name,
+          id,
+          name,
+          library_name: name,
+        },
+      }),
+      {}
     );
     const tempPlatforms = Object.keys(rawPlatforms).map((platform) => ({
       value: platform,
       label: platform,
-      children: rawPlatforms[platform].map((child) => ({
+      children: rawPlatforms[platform].map((child: NcbiPlatform) => ({
         value: child,
         label: child,
       })),
@@ -90,19 +103,21 @@ function CreateNcbiExport(): JSX.Element {
     release_date: moment(new Date()),
   };
 
-  const disabledDate: RangePickerProps["disabledDate"] = (current) => {
+  const disabledDate: RangePickerProps["disabledDate"] = (current: moment) => {
     // Can not select days before today for release
     return current && current < moment().startOf("day");
   };
 
   function updateAllSamplesForField(column: string) {
     return (value: string) => {
-      const formSamples = form.getFieldValue("samples");
+      const formSamples: NcbiBiosample[] = form.getFieldValue("samples");
       const updated = Object.values(formSamples).reduce(
-        (prev: object, curr: object) => ({
-          ...prev,
-          [curr.name]: { ...curr, [column]: value },
-        }),
+        (prev: SampleRecord, curr: NcbiBiosample): SampleRecord => {
+          return {
+            ...prev,
+            [curr.name]: { ...curr, [column]: value },
+          };
+        },
         {}
       );
       form.setFieldsValue({ samples: updated });
