@@ -65,12 +65,9 @@ function CreateNcbiExport(): JSX.Element {
   const [stored, rawPlatforms, strategies, sources, selections] =
     useLoaderData();
 
-  const [samples, setSamples] = React.useState<SampleRecord>({});
-  const [platforms, setPlatforms] = React.useState<CascaderOption[]>([]);
-
-  React.useEffect(() => {
-    const tempSamples = stored.samples.reduce(
-      (prev: object, { id, name }: { id: string; name: string }) => ({
+  const [samples, setSamples] = React.useState<SampleRecord>(() =>
+    stored.samples.reduce(
+      (prev: SampleRecord, { id, name }: { id: string; name: string }) => ({
         ...prev,
         [name]: {
           key: name,
@@ -80,28 +77,23 @@ function CreateNcbiExport(): JSX.Element {
         },
       }),
       {}
-    );
-    const tempPlatforms = Object.keys(rawPlatforms).map((platform) => ({
+    )
+  );
+  const [platforms] = React.useState<CascaderOption[]>(() =>
+    Object.keys(rawPlatforms).map((platform) => ({
       value: platform,
       label: platform,
       children: rawPlatforms[platform].map((child: NcbiPlatform) => ({
         value: child,
         label: child,
       })),
-    }));
-    setSamples(tempSamples);
-    setPlatforms(tempPlatforms);
-  }, [rawPlatforms, stored.samples]);
+    }))
+  );
 
   const [form] = Form.useForm();
   const strategyRef = React.useRef();
   const sourceRef = React.useRef();
   const platformRef = React.useRef();
-
-  const initialValues = {
-    release_date: moment(new Date()),
-    samples
-  };
 
   const disabledDate: RangePickerProps["disabledDate"] = (date): boolean => {
     // Can not select days before today for release
@@ -143,7 +135,7 @@ function CreateNcbiExport(): JSX.Element {
       dataIndex: "biosample",
       width,
       key: "biosample",
-      render: (text: string, sample : NcbiBiosample) => {
+      render: (text: string, sample: NcbiBiosample) => {
         return (
           <Form.Item
             rules={[{ required: true, message: "BioSample ID is required" }]}
@@ -165,7 +157,7 @@ function CreateNcbiExport(): JSX.Element {
       dataIndex: "library_strategy",
       width,
       key: "library_strategy",
-      render: (text: string, sample : NcbiBiosample) => {
+      render: (text: string, sample: NcbiBiosample) => {
         return (
           <Form.Item
             rules={[{ required: true, message: "Library Name is required" }]}
@@ -192,7 +184,7 @@ function CreateNcbiExport(): JSX.Element {
       dataIndex: "library_strategy",
       width,
       key: "library_strategy",
-      render: (text: string, sample : NcbiBiosample) => {
+      render: (text: string, sample: NcbiBiosample) => {
         return (
           <Form.Item
             rules={[
@@ -230,7 +222,7 @@ function CreateNcbiExport(): JSX.Element {
       dataIndex: "library_source",
       key: "library_source",
       width,
-      render: (text: string, sample : NcbiBiosample) => {
+      render: (text: string, sample: NcbiBiosample) => {
         return (
           <Form.Item
             rules={[{ required: true, message: "Library Source is required" }]}
@@ -257,7 +249,7 @@ function CreateNcbiExport(): JSX.Element {
       width,
       key: "library_construction_protocol",
       width: 200,
-      render: (text: string, sample : NcbiBiosample) => {
+      render: (text: string, sample: NcbiBiosample) => {
         return (
           <Form.Item
             rules={[
@@ -327,7 +319,7 @@ function CreateNcbiExport(): JSX.Element {
       dataIndex: "library_selection",
       width,
       key: "library_selection",
-      render: (_, item) => {
+      render: (text: string, sample: NcbiBiosample) => {
         return (
           <Form.Item
             rules={[
@@ -336,7 +328,7 @@ function CreateNcbiExport(): JSX.Element {
                 message: "Library Selection is required",
               },
             ]}
-            name={["samples", item.name, "library_selection"]}
+            name={["samples", sample.name, "library_selection"]}
             style={{
               margin: 0,
             }}
@@ -356,7 +348,7 @@ function CreateNcbiExport(): JSX.Element {
       key: "actions",
       fixed: "right",
       width: 60,
-      render: (text: string, sample : NcbiBiosample) => {
+      render: (text: string, sample: NcbiBiosample) => {
         return (
           <Tooltip title={"Remove Sample"} placement="left">
             <Button
@@ -375,10 +367,23 @@ function CreateNcbiExport(): JSX.Element {
     },
   ];
 
+  const validateAndSubmit = () => {
+    // TODO: convert release date from momentjs
+    form.validateFields().then(console.log);
+  };
+
   return (
     <Layout.Content>
       <PageHeader title={i18n("project.export.title")}>
-        <Form layout="vertical" initialValues={initialValues}>
+        <Form
+          layout="vertical"
+          initialValues={{
+            release_date: moment(new Date()),
+            samples,
+          }}
+          form={form}
+          onFinish={validateAndSubmit}
+        >
           <Row gutter={[16, 16]}>
             <Col
               xxl={{ span: 16, offset: 4 }}
@@ -434,6 +439,15 @@ function CreateNcbiExport(): JSX.Element {
                 scroll={{ x: "max-content", y: 600 }}
                 pagination={false}
               />
+            </Col>
+            <Col
+              xxl={{ span: 16, offset: 4 }}
+              xl={{ span: 20, offset: 2 }}
+              sm={{ span: 22, offset: 1 }}
+            >
+              <Button type="primary" htmlType="submit">
+                __SUBMIT
+              </Button>
             </Col>
           </Row>
         </Form>

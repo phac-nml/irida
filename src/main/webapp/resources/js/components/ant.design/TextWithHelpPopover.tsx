@@ -19,7 +19,7 @@ export default function TextWithHelpPopover({
               __html: help,
           }}
       />}>
-        <QuestionCircleOutlined style={{ color: `var(--gray-2)` }} />
+        <QuestionCircleOutlined style={{ color: `var(--grey-7)` }} />
       </Popover>
     </Space>
   );

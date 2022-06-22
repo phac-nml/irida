@@ -45,7 +45,7 @@ export const TableHeaderWithSelectOptions = React.forwardRef(
           <Button
             size="small"
             type="text"
-            icon={<EditOutlined style={{ color: `var(--grey-2)` }} />}
+            icon={<EditOutlined style={{ color: `var(--grey-7)` }} />}
           />
         </Popover>
       </div>
