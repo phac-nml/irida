@@ -15,12 +15,15 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.constraints.NotNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -71,34 +74,59 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
                 case "adldap":
                     u = ldapCreateUser(dirContextOperations, username);
                     break;
-                default:
+                default: // This class is not loaded in this case, so this may be unreachable
                     String errorMessage = "Configured authentication mode not one of the supported modes for context mapping [ldap, adldap]";
                     logger.error(errorMessage);
                     throw new IllegalStateException(errorMessage);
             }
-
-            commitUser(u);
+            try {
+                commitUser(u);
+            } catch (EntityExistsException err) {
+                String error_msg = "User being created already exists.";
+                logger.error(error_msg + e);
+                throw new AuthenticationServiceException(error_msg);
+            } catch (ConstraintViolationException err) {
+                String error_msg = "Fields in User are incompatible with local database constraints.";
+                logger.error(error_msg + e);
+                throw new AuthenticationServiceException(error_msg);
+            }
 
             try {
                 // return the newly created user
                 return userRepository.loadUserByUsername(username);
             }
-            catch(UsernameNotFoundException usernameNotFoundException) {
-                String msg = "Username found in LDAP/ADLDAP server, but could not be created in local database.";
-                logger.error(msg);
-                throw new UsernameNotFoundException(msg);
+            catch(UsernameNotFoundException err) {
+                String error_msg = "Username found in LDAP/ADLDAP server, but could not be created in local database.";
+                logger.error(error_msg);
+                throw new AuthenticationServiceException(error_msg);
             }
         }
     }
 
     private User ldapCreateUser(DirContextOperations dirContextOperations, String username) {
-        // todo: figure out if this works for adldap too, it probably should
+        // This works for both ldap and adLdap
+        // todo: handle bad fields / User can't be created (required and not required)
         String randomPassword = generateCommonLangPassword();
-        String fieldLdapEmail = dirContextOperations.getStringAttribute(userInfoEmail);
-        String fieldLdapFirstName = dirContextOperations.getStringAttribute(userInfoFirstName);
-        String fieldLdapLastName = dirContextOperations.getStringAttribute(userInfoLastName);
-        String fieldLdapPhoneNumber = dirContextOperations.getStringAttribute(userInfoPhoneNumber);
+        String fieldLdapEmail = getAttribute(dirContextOperations, userInfoEmail, true, "");
+        String fieldLdapFirstName = getAttribute(dirContextOperations, userInfoFirstName, false, "FirstName");
+        String fieldLdapLastName = getAttribute(dirContextOperations, userInfoLastName, false, "LastName");
+        String fieldLdapPhoneNumber = getAttribute(dirContextOperations, userInfoPhoneNumber, false, "0000");
         return new User(username, fieldLdapEmail, randomPassword, fieldLdapFirstName, fieldLdapLastName, fieldLdapPhoneNumber);
+    }
+
+    private String getAttribute( DirContextOperations dirContextOperations, String field, boolean required, @NotNull String fallback) {
+        String res = null;
+            res = dirContextOperations.getStringAttribute(field);
+
+        if (res==null || res.equals("")) {
+            if (required) {
+                throw new AuthenticationServiceException("Could not fetch required fields from ldap/adldap service.");
+            }
+            else {
+                res = fallback;
+            }
+        }
+        return res;
     }
 
     public String generateCommonLangPassword() {
