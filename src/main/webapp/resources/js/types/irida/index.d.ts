@@ -20,6 +20,19 @@ declare namespace IRIDA {
     users: User[];
   }
 
+  interface NcbiBiosample {
+    key: string;
+    name: string;
+    id: string;
+    biosample: string;
+    library_name: string;
+    library_strategy: NcbiStrategy;
+    library_source: NcbiSource;
+    library_construction_protocol: string;
+    instrument_model: NcbiInstrument;
+    library_selection: NcbiSelection;
+  }
+
   interface NcbiBioSampleFiles {
     id: number;
     bioSample: string;
