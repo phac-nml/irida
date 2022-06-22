@@ -1,5 +1,4 @@
-import React from "react";
-import type { RangePickerProps } from "antd/es/date-picker";
+import {MinusCircleOutlined} from "@ant-design/icons";
 import {
   Button,
   Card,
@@ -16,34 +15,24 @@ import {
   Table,
   Tooltip,
 } from "antd";
+import type {RangePickerProps} from "antd/es/date-picker";
 import moment from "moment";
+import React from "react";
+import {useLoaderData} from "react-router-dom";
 import {
+  FullNcbiPlatforms,
   getNCBIPlatforms,
   getNCBISelections,
   getNCBISources,
   getNCBIStrategies,
 } from "../../../../apis/export/ncbi";
-import { TableHeaderWithCascaderOptions } from "../../../../components/ant.design/TableHeaderWithCascaderOptions";
-import {NcbiInstrument, NcbiPlatform, Sample} from "../../../../types/irida";
-import {
-  getSharedSamples,
-  SharedStorage,
-} from "../../../../utilities/share-utilities";
-import { useLoaderData } from "react-router-dom";
-import { MinusCircleOutlined } from "@ant-design/icons";
+import {TableHeaderWithCascaderOptions} from "../../../../components/ant.design/TableHeaderWithCascaderOptions";
+import {TableHeaderWithSelectOptions} from "../../../../components/ant.design/TableHeaderWithSelectOptions";
 import TextWithHelpPopover from "../../../../components/ant.design/TextWithHelpPopover";
-import { TableHeaderWithSelectOptions } from "../../../../components/ant.design/TableHeaderWithSelectOptions";
+import {NcbiSelection, NcbiSource, NcbiStrategy, Sample} from "../../../../types/irida";
+import {getSharedSamples, SharedStorage,} from "../../../../utilities/share-utilities";
 
-interface Option {
-  value: string;
-  label: string;
-};
-
-interface CascaderOption extends Option {
-  children: CascaderOption[];
-}
-
-interface NcbiSamples {
+interface SampleRecord {
   [k: string] : {
     key: string;
     name: Pick<Sample, "id">;
@@ -52,11 +41,7 @@ interface NcbiSamples {
   }
 }
 
-interface FullNcbiPlatforms {
-  [k :string] : NcbiInstrument[]
-}
-
-export async function loader(): Promise<[SharedStorage, FullNcbiPlatforms, ]> {
+export async function loader(): Promise<[SharedStorage, FullNcbiPlatforms, NcbiStrategy[], NcbiSource[], NcbiSelection[]]> {
   const stored = getSharedSamples();
   const platforms = getNCBIPlatforms();
   const strategies = getNCBIStrategies();
@@ -68,10 +53,8 @@ export async function loader(): Promise<[SharedStorage, FullNcbiPlatforms, ]> {
 function CreateNcbiExport(): JSX.Element {
   const [stored, rawPlatforms, strategies, sources, selections] = useLoaderData();
   console.log({stored, rawPlatforms, strategies, sources, selections});
-  const [samples, setSamples] = React.useState<NcbiSamples>({});
+  const [samples, setSamples] = React.useState<SampleRecord>({});
   const [platforms, setPlatforms] = React.useState<CascaderOption[]>([]);
-
-
 
   React.useEffect(() => {
     const tempSamples = stored.samples.reduce(

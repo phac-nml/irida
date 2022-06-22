@@ -9,7 +9,7 @@ import ProjectSPA from "../ProjectSPA";
  * @returns {JSX.Element}
  * @constructor
  */
-function ProjectNCBILayout() : JSX.Element {
+function ProjectNCBILayout(): JSX.Element {
   const { id: submissionId } = useParams();
   const navigate = useNavigate();
 

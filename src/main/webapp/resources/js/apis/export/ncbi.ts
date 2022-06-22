@@ -1,4 +1,5 @@
 import {
+  NcbiInstrument,
   NcbiPlatform, NcbiSelection,
   NcbiSource,
   NcbiStrategy,
@@ -13,6 +14,10 @@ export interface NcbiExportSubmissionTableModel {
   state: ExportUploadState;
   submitter: UserMinimal;
   bioProjectId: string;
+}
+
+export interface FullNcbiPlatforms {
+  [k :string] : NcbiInstrument[]
 }
 
 /**
@@ -38,7 +43,7 @@ export async function getNcbiSubmission(
 }
 
 // TODO: this is not the right return type
-export async function getNCBIPlatforms(): Promise<NcbiPlatform[]> {
+export async function getNCBIPlatforms(): Promise<FullNcbiPlatforms> {
   const data =  await get(`/ncbi/platforms`);
   return data.platforms;
 }

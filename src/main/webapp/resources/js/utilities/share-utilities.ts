@@ -11,7 +11,7 @@ export interface SharedStorage  {
     timestamp: Date;
 }
 
-export function storeSamples(samples: SharedStorage) {
+export function storeSamples(samples: SharedStorage):void {
     sessionStorage.setItem("samples", JSON.stringify(samples));
 }
 
