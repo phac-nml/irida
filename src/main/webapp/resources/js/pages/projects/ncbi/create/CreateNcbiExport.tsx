@@ -44,10 +44,11 @@ export async function loader(): Promise<[SharedStorage, NcbiPlatform[]]> {
 }
 
 function CreateNcbiExport(): JSX.Element {
-  const [stored, platforms, strategies, sources, selections] = useLoaderData();
+  const [stored, rawPlatforms, strategies, sources, selections] = useLoaderData();
   const [samples, setSamples] = React.useState([]);
+  const [platforms, setPlatforms] = React.useState([]);
 
-  console.log({ stored, platforms, strategies, sources, selections });
+
 
   React.useEffect(() => {
     const tempSamples = stored.samples.reduce(
@@ -62,7 +63,16 @@ function CreateNcbiExport(): JSX.Element {
         }),
         {}
     );
+    const tempPlatforms = Object.keys(rawPlatforms).map((platform) => ({
+      value: platform,
+      label: platform,
+      children: rawPlatforms[platform].map((child) => ({
+        value: child,
+        label: child,
+      })),
+    }));
     setSamples(tempSamples);
+    setPlatforms(tempPlatforms);
   }, [stored.samples]);
 
   const [form] = Form.useForm();
