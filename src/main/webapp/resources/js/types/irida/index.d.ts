@@ -25,7 +25,7 @@ declare namespace IRIDA {
     bioSample: string;
     singles: SingleEndSequenceFile[];
     pairs: PairedEndSequenceFile[];
-    instrumentModel: string;
+    instrumentModel: NcbiInstrument;
     libraryName: string;
     librarySelection: string;
     librarySource: string;
@@ -34,6 +34,8 @@ declare namespace IRIDA {
     status: ExportUploadState;
     accession: string;
   }
+
+  type NcbiInstrument = string;
 
   type NcbiPlatform =
     | "ABI_SOLID"

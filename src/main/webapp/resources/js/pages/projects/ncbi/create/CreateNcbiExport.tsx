@@ -24,7 +24,7 @@ import {
   getNCBIStrategies,
 } from "../../../../apis/export/ncbi";
 import { TableHeaderWithCascaderOptions } from "../../../../components/ant.design/TableHeaderWithCascaderOptions";
-import { NcbiPlatform } from "../../../../types/irida";
+import {NcbiInstrument, NcbiPlatform, Sample} from "../../../../types/irida";
 import {
   getSharedSamples,
   SharedStorage,
@@ -34,7 +34,29 @@ import { MinusCircleOutlined } from "@ant-design/icons";
 import TextWithHelpPopover from "../../../../components/ant.design/TextWithHelpPopover";
 import { TableHeaderWithSelectOptions } from "../../../../components/ant.design/TableHeaderWithSelectOptions";
 
-export async function loader(): Promise<[SharedStorage, NcbiPlatform[]]> {
+interface Option {
+  value: string;
+  label: string;
+};
+
+interface CascaderOption extends Option {
+  children: CascaderOption[];
+}
+
+interface NcbiSamples {
+  [k: string] : {
+    key: string;
+    name: Pick<Sample, "id">;
+    id: Pick<Sample, "name">;
+    library_name: string;
+  }
+}
+
+interface FullNcbiPlatforms {
+  [k :string] : NcbiInstrument[]
+}
+
+export async function loader(): Promise<[SharedStorage, FullNcbiPlatforms, ]> {
   const stored = getSharedSamples();
   const platforms = getNCBIPlatforms();
   const strategies = getNCBIStrategies();
@@ -45,8 +67,9 @@ export async function loader(): Promise<[SharedStorage, NcbiPlatform[]]> {
 
 function CreateNcbiExport(): JSX.Element {
   const [stored, rawPlatforms, strategies, sources, selections] = useLoaderData();
-  const [samples, setSamples] = React.useState([]);
-  const [platforms, setPlatforms] = React.useState([]);
+  console.log({stored, rawPlatforms, strategies, sources, selections});
+  const [samples, setSamples] = React.useState<NcbiSamples>({});
+  const [platforms, setPlatforms] = React.useState<CascaderOption[]>([]);
 
 
 
@@ -73,7 +96,7 @@ function CreateNcbiExport(): JSX.Element {
     }));
     setSamples(tempSamples);
     setPlatforms(tempPlatforms);
-  }, [stored.samples]);
+  }, [rawPlatforms, stored.samples]);
 
   const [form] = Form.useForm();
   const strategyRef = React.useRef();
