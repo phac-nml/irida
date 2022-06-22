@@ -4,12 +4,10 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 
 import { getFastQCImages } from "../../../../apis/files/sequence-files";
-import { grey4 } from "../../../../styles/colors";
 import { SPACE_MD } from "../../../../styles/spacing";
-import { InfoAlert } from "../../../alerts";
 
 const StyledImage = styled(Image)`
-  border: 1px solid ${grey4};
+  border: 1px solid var(--grey-4);
   padding: ${SPACE_MD};
   border-radius: 2px;
 `;
