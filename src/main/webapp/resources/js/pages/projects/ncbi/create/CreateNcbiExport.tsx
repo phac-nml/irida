@@ -64,7 +64,7 @@ export async function loader(): Promise<
 function CreateNcbiExport(): JSX.Element {
   const [stored, rawPlatforms, strategies, sources, selections] =
     useLoaderData();
-  console.log({ stored, rawPlatforms, strategies, sources, selections });
+
   const [samples, setSamples] = React.useState<SampleRecord>({});
   const [platforms, setPlatforms] = React.useState<CascaderOption[]>([]);
 
@@ -100,11 +100,12 @@ function CreateNcbiExport(): JSX.Element {
 
   const initialValues = {
     release_date: moment(new Date()),
+    samples
   };
 
-  const disabledDate: RangePickerProps["disabledDate"] = (current: moment) => {
+  const disabledDate: RangePickerProps["disabledDate"] = (date): boolean => {
     // Can not select days before today for release
-    return current && current < moment().startOf("day");
+    return date && date < moment().startOf("day");
   };
 
   function updateAllSamplesForField(column: string) {
@@ -142,11 +143,11 @@ function CreateNcbiExport(): JSX.Element {
       dataIndex: "biosample",
       width,
       key: "biosample",
-      render: (_, item) => {
+      render: (text: string, sample : NcbiBiosample) => {
         return (
           <Form.Item
             rules={[{ required: true, message: "BioSample ID is required" }]}
-            name={["samples", item.name, "biosample"]}
+            name={["samples", sample.name, "biosample"]}
             style={{ margin: 0 }}
           >
             <Input type="text" style={{ display: "block" }} />
@@ -164,11 +165,11 @@ function CreateNcbiExport(): JSX.Element {
       dataIndex: "library_strategy",
       width,
       key: "library_strategy",
-      render: (_, item) => {
+      render: (text: string, sample : NcbiBiosample) => {
         return (
           <Form.Item
             rules={[{ required: true, message: "Library Name is required" }]}
-            name={["samples", item.name, "library_name"]}
+            name={["samples", sample.name, "library_name"]}
             style={{ margin: 0 }}
           >
             <Input type="text" style={{ display: "block" }} />
@@ -191,13 +192,13 @@ function CreateNcbiExport(): JSX.Element {
       dataIndex: "library_strategy",
       width,
       key: "library_strategy",
-      render: (_, item) => {
+      render: (text: string, sample : NcbiBiosample) => {
         return (
           <Form.Item
             rules={[
               { required: true, message: "Library Strategy is required" },
             ]}
-            name={["samples", item.name, "library_strategy"]}
+            name={["samples", sample.name, "library_strategy"]}
             style={{
               margin: 0,
             }}
@@ -229,11 +230,11 @@ function CreateNcbiExport(): JSX.Element {
       dataIndex: "library_source",
       key: "library_source",
       width,
-      render: (_, item) => {
+      render: (text: string, sample : NcbiBiosample) => {
         return (
           <Form.Item
             rules={[{ required: true, message: "Library Source is required" }]}
-            name={["samples", item.name, "library_source"]}
+            name={["samples", sample.name, "library_source"]}
             style={{
               margin: 0,
             }}
@@ -256,7 +257,7 @@ function CreateNcbiExport(): JSX.Element {
       width,
       key: "library_construction_protocol",
       width: 200,
-      render: (_, item) => {
+      render: (text: string, sample : NcbiBiosample) => {
         return (
           <Form.Item
             rules={[
@@ -265,7 +266,7 @@ function CreateNcbiExport(): JSX.Element {
                 message: "Library Construction Protocol is required",
               },
             ]}
-            name={["samples", item.name, "library_construction_protocol"]}
+            name={["samples", sample.name, "library_construction_protocol"]}
             style={{ margin: 0 }}
           >
             <Input type="text" style={{ display: "block" }} />
@@ -355,7 +356,7 @@ function CreateNcbiExport(): JSX.Element {
       key: "actions",
       fixed: "right",
       width: 60,
-      render: (_, item) => {
+      render: (text: string, sample : NcbiBiosample) => {
         return (
           <Tooltip title={"Remove Sample"} placement="left">
             <Button
@@ -364,7 +365,7 @@ function CreateNcbiExport(): JSX.Element {
               icon={<MinusCircleOutlined />}
               onClick={() => {
                 const copy = { ...samples };
-                delete copy[item.name];
+                delete copy[sample.name];
                 setSamples(copy);
               }}
             />

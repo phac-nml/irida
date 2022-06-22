@@ -6,7 +6,7 @@ import {
   NcbiSubmission,
   UserMinimal,
 } from "../../types/irida";
-import { ExportUploadState } from "../../types/irida/export/ExportUpoadState";
+import { ExportUploadState } from "../../types/irida/export/ExportUploadState";
 import { get } from "../axios-default";
 
 export interface NcbiExportSubmissionTableModel {

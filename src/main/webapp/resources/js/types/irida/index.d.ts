@@ -1,4 +1,4 @@
-import { ExportUploadState } from "./export/ExportUpoadState";
+import { ExportUploadState } from "./export/ExportUploadState";
 
 export = IRIDA;
 export as namespace IRIDA;
