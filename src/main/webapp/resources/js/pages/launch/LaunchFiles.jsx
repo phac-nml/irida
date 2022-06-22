@@ -60,7 +60,22 @@ export function LaunchFiles() {
         const firstSamples = [];
         data.forEach((sample) => {
           if (sample.files.length) {
-            if (sample.defaultSequencingObject != null) {
+            let defaultSequencingObjectAccepted = sample.files.filter(
+              (sampleFile) => {
+                if (
+                  sample.defaultSequencingObject !== null &&
+                  sampleFile.fileInfo.identifier ===
+                    sample.defaultSequencingObject.identifier
+                ) {
+                  return true;
+                }
+              }
+            );
+
+            if (
+              sample.defaultSequencingObject !== null &&
+              defaultSequencingObjectAccepted.length > 0
+            ) {
               sample.selected = sample.defaultSequencingObject.identifier;
             } else {
               sample.selected = sample.files[0].fileInfo.identifier;

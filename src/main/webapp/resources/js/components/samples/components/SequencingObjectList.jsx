@@ -191,7 +191,10 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
       </span>
     );
 
-    if (isModifiable && obj.files && obj.files.length === 2) {
+    if (
+      (isModifiable && obj.files && obj.files.length === 2) ||
+      obj.sequenceFile
+    ) {
       if (
         (sample.defaultSequencingObject !== null &&
           obj.identifier === sample.defaultSequencingObject.identifier) ||
@@ -399,11 +402,11 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
     <Space size="large" direction="vertical" style={{ width: `100%` }}>
       {files.singles && (
         <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>
-          {files.singles.map((sequenceObject) => (
+          {files.singles.map((sequenceObject, index) => (
             <SequenceObjectListItem
               key={`single-${sequenceObject.fileInfo.identifier}`}
               sequenceObject={sequenceObject}
-              actions={getActionsForSequencingObject(sequenceObject)}
+              actions={getActionsForSequencingObject(sequenceObject, index)}
               displayConcatenationCheckbox={
                 isModifiable && files.singles?.length >= 2
                   ? getConcatenationCheckboxForSequencingObject(sequenceObject)
