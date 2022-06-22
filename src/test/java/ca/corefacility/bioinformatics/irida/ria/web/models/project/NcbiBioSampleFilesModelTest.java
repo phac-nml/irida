@@ -22,7 +22,7 @@ class NcbiBioSampleFilesModelTest {
 		String id = "1";
 		String namespace = "BIOSAMPLE_NAME";
 		String bioSample = "BIOSAMPLE";
-		NcbiInstrumentModel instrumentModel = NcbiInstrumentModel.ABSOLID;
+		NcbiInstrumentModel instrumentModel = NcbiInstrumentModel.AB_SOLID_SYSTEM;
 		NcbiLibrarySelection librarySelection = NcbiLibrarySelection.CFH;
 		String libraryName = "LIBRARY_NAME";
 		NcbiLibrarySource librarySource = NcbiLibrarySource.GENOMIC;
@@ -44,7 +44,7 @@ class NcbiBioSampleFilesModelTest {
 
 		assertEquals(id, model.getId(), "Id should not be changed");
 		assertEquals(bioSample, model.getBioSample(), "Biosample should not be changed");
-		assertEquals(instrumentModel.getValue(), model.getInstrumentModel(), "Instrument model should not be changed");
+		assertEquals(instrumentModel.getModel(), model.getInstrumentModel(), "Instrument model should not be changed");
 		assertEquals(libraryName, model.getLibraryName(), "Library name should not be changed");
 		assertEquals(librarySelection.getValue(), model.getLibrarySelection(),
 				"Library selection should not be changed");

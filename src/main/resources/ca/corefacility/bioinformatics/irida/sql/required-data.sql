@@ -947,7 +947,7 @@ INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id,
 INSERT INTO `project_event` (created_date, role, project_id, user_id, sample_id, DTYPE) values (now(), NULL, 1, 3, NULL, 'UserRemovedProjectEvent');
 
 INSERT INTO `ncbi_export_submission` (id, created_date, bio_project_id, namespace, organization, upload_state, project_id, submitter) VALUES (1, now(), 'FakeBioProjet001', 'IRIDA', 'IRIDA', 'NEW', 4, 3);
-INSERT INTO `ncbi_export_biosample` (id, bioSample, instrument_model, library_construction_protocol, library_name, library_selection, library_source, library_strategy, submission_status) VALUES ('SUB001XXX', 'FakeBioSample001', 'ILLUMINAMISEQ', 'Fake Library Prep', 'Library001', 'RANDOM', 'GENOMIC', 'WGS', 'NEW');
+INSERT INTO `ncbi_export_biosample` (id, bioSample, instrument_model, library_construction_protocol, library_name, library_selection, library_source, library_strategy, submission_status) VALUES ('SUB001XXX', 'FakeBioSample001', 'ILLUMINA_MI_SEQ', 'Fake Library Prep', 'Library001', 'RANDOM', 'GENOMIC', 'WGS', 'NEW');
 INSERT INTO `ncbi_export_submission_biosample` (ncbi_export_submission_id, bioSampleFiles_id) VALUES (1, 'SUB001XXX');
 INSERT INTO `ncbi_export_biosample_sequence_file_pair` (ncbi_export_biosample_id, pairs_id) VALUES ('SUB001XXX', 1);
 

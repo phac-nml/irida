@@ -1,9 +1,11 @@
 import React, { Suspense } from "react";
+import {render} from "react-dom";
 import { DataBrowserRouter, Outlet, Route } from "react-router-dom";
 import { loader as exportsLoader } from "../../components/ncbi/export-table";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { loader as detailsLoader } from "../../components/ncbi/details";
 import { LoadingOutlined } from "@ant-design/icons";
+import { loader as ncbiLoader } from "./ncbi/create";
 
 const ProjectNCBILayout = React.lazy(() => import("./ncbi"));
 const NCBIExportDetails = React.lazy(
@@ -46,13 +48,21 @@ export default function ProjectSPA(): JSX.Element {
       <Route
         path={setBaseUrl(`/projects/:projectId`)}
         element={<ProjectBase />}
+        errorElement={
+          <DefaultErrorBoundary message={"Highest level, WTF happened?"} />
+        }
       >
         <Route
           path="ncbi"
           element={<NcbiCreateExport />}
+          loader={ncbiLoader}
           errorElement={<DefaultErrorBoundary />}
         />
-        <Route path="export" element={<ProjectNCBILayout />}>
+        <Route
+          path="export"
+          element={<ProjectNCBILayout />}
+          errorElement={<DefaultErrorBoundary />}
+        >
           <Route
             index
             element={<NcbiExportTable />}
@@ -70,3 +80,5 @@ export default function ProjectSPA(): JSX.Element {
     </DataBrowserRouter>
   );
 }
+
+render(<ProjectSPA/>, document.querySelector("#root"));

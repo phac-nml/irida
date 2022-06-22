@@ -1,4 +1,4 @@
-import { ExportUploadState } from "./ExportUpoadState";
+import { ExportUploadState } from "./export/ExportUpoadState";
 
 export = IRIDA;
 export as namespace IRIDA;
@@ -35,6 +35,18 @@ declare namespace IRIDA {
     accession: string;
   }
 
+  type NcbiPlatform =
+    | "ABI_SOLID"
+    | "BGISEQ"
+    | "CAPILLARY"
+    | "ILLUMINA"
+    | "ION_TORRENT"
+    | "LS454"
+    | "OXFORD_NANOPORE"
+    | "PACBIO_SMRT";
+
+  type NcbiSelection = string;
+
   interface NcbiSubmission {
     id: number;
     project: ProjectMinimal;
@@ -47,6 +59,10 @@ declare namespace IRIDA {
     releaseDate: Date | null;
     bioSampleFiles: NcbiBioSampleFiles[];
   }
+
+  type NcbiStrategy = string;
+
+  type NcbiSource = string;
 
   interface Project extends IridaBase {
     description: string;

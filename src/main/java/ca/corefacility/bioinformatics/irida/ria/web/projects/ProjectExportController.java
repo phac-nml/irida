@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -39,9 +38,6 @@ public class ProjectExportController {
 	private static final Logger logger = LoggerFactory.getLogger(ProjectExportController.class);
 
 	public static final String NCBI_EXPORT_VIEW = "projects/export/ncbi";
-	public static final String EXPORT_DETAILS_VIEW = "projects/export/details";
-	public static final String EXPORT_LIST_VIEW = "projects/export/list";
-	public static final String EXPORT_ADMIN_VIEW = "projects/export/admin";
 
 	@Value("${ncbi.upload.namespace}")
 	private String namespace = "";
@@ -74,7 +70,7 @@ public class ProjectExportController {
 	 * @param principal {@link Principal} currently logged in user
 	 * @return Name of the NCBI export page
 	 */
-	@RequestMapping(value = "/projects/{projectId}/ncbi", method = RequestMethod.GET)
+	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.GET)
 	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("ids") List<Long> sampleIds,
 			Model model, Principal principal) {
 		Project project = projectService.read(projectId);
@@ -214,36 +210,6 @@ public class ProjectExportController {
 		ncbiExportSubmission = exportSubmissionService.create(ncbiExportSubmission);
 
 		return ImmutableMap.of("submissionId", ncbiExportSubmission.getId());
-	}
-
-	/**
-	 * Get the project export list view
-	 *
-	 * @param projectId which {@link Project} to get exports for
-	 * @param model     model for the view
-	 * @param principal The currently logged in user
-	 * @return name of the exports list view
-	 */
-	@RequestMapping(value = { "/projects/{projectId}/export", "/projects/{projectId}/export/*" })
-	public String getExportsPage(@PathVariable Long projectId, Model model, Principal principal) {
-		Project project = projectService.read(projectId);
-		// Set up the template information
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("project", project);
-		model.addAttribute("activeNav", "export");
-		return EXPORT_LIST_VIEW;
-	}
-
-	/**
-	 * Get the view to see all ncbi exports
-	 *
-	 * @param model model for the view
-	 * @return name of the exports list view
-	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@RequestMapping("/export/ncbi")
-	public String getExportsPage(Model model) {
-		return EXPORT_ADMIN_VIEW;
 	}
 
 	/**

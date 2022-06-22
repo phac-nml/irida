@@ -56,7 +56,6 @@ public class ProjectsController {
 	public static final String PROJECTS_DIR = "projects/";
 	public static final String LIST_PROJECTS_PAGE = PROJECTS_DIR + "projects";
 	public static final String SYNC_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_sync";
-	public static final String CREATE_NEW_PROJECT_PAGE = PROJECTS_DIR + "project_new";
 
 	// Services
 	private final ProjectService projectService;
@@ -131,8 +130,7 @@ public class ProjectsController {
 	 * @return Name of the project samples list view
 	 */
 	@RequestMapping(value = {
-			"/projects/{projectId}",
-			"/projects/{projectId}/samples", })
+			"/projects/{projectId}", "/projects/{projectId}/samples", })
 	public String getProjectSamplesPage(final Model model, final Principal principal, @PathVariable long projectId) {
 		Project project = projectService.read(projectId);
 		model.addAttribute("project", project);
@@ -140,6 +138,20 @@ public class ProjectsController {
 		// Set up the template information
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
 		return "projects/project_samples";
+	}
+
+	@RequestMapping(
+			value = { "/projects/{projectId}/ncbi", "/projects/{projectId}/export", "/projects/{projectId}/export/**" })
+	public String getProjectSPA(final Model model, final Principal principal, @PathVariable long projectId) {
+
+		// TODO: get rid of this once project object off page.
+		Project project = projectService.read(projectId);
+		model.addAttribute("project", project);
+
+		// Set up the template information
+		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+
+		return "projects/project-spa";
 	}
 
 	/**

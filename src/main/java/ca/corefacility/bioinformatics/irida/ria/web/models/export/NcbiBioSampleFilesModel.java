@@ -27,7 +27,7 @@ public class NcbiBioSampleFilesModel {
 	public NcbiBioSampleFilesModel(NcbiBioSampleFiles bioSample) {
 		this.id = bioSample.getId();
 		this.bioSample = bioSample.getBioSample();
-		this.instrumentModel = bioSample.getInstrumentModel().getValue();
+		this.instrumentModel = bioSample.getInstrumentModel().getModel();
 		this.libraryName = bioSample.getLibraryName();
 		this.librarySelection = bioSample.getLibrarySelection().getValue();
 		this.librarySource = bioSample.getLibrarySource().getValue();

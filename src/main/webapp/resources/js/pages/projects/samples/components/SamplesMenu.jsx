@@ -117,7 +117,7 @@ export default function SamplesMenu() {
 
   const onNCBI = () => {
     window.location.href = setBaseUrl(
-      `/projects/${projectId}/export/ncbi?ids=${Object.values(selected)
+      `/projects/${projectId}/ncbi?ids=${Object.values(selected)
         .map((s) => s.id)
         .join(",")}`
     );

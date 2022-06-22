@@ -10,7 +10,7 @@ import { getPaginationOptions } from "../../../utilities/antdesign-table-utiliti
 import { Link, useLoaderData } from "react-router-dom";
 import NcbiUploadStateTag from "../ExportUploadStateTag/NcbiUploadStateTag";
 import { UserMinimal } from "../../../types/irida";
-import { ExportUploadState } from "../../../types/irida/ExportUpoadState";
+import { ExportUploadState } from "../../../types/irida/export/ExportUpoadState";
 import { DataFunctionArgs } from "@remix-run/router/utils";
 
 /**
