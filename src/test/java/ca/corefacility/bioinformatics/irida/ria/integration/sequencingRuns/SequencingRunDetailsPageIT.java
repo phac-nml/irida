@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SequencingRunDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	private SequencingRunDetailsPage page;
 
-	@Override
 	@BeforeEach
 	public void setUpTest() {
 		LoginPage.loginAsAdmin(driver());

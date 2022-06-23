@@ -37,11 +37,11 @@ export const cartApi = createApi({
               { type: "Samples", id: "LIST" },
             ]
           : [{ type: "Samples", id: "LIST" }],
-      transformResponse(response, meta) {
+      transformResponse(response) {
         return response
           .map((project) => {
             const { samples, ...p } = project;
-            return project.samples.map((sample) => ({ ...sample, project: p }));
+            return samples.map((sample) => ({ ...sample, project: p }));
           })
           .flat();
       },

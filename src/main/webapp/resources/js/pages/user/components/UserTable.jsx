@@ -7,6 +7,9 @@ import { Checkbox } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { dateColumnFormat } from "../../../components/ant.design/table-renderers";
 import { useSetUserStatusMutation } from "../../../apis/users/users";
+import { Link } from "react-router-dom";
+
+const BASE_URL = setBaseUrl("admin/users");
 
 /**
  * React component for displaying paged table of all users in the system
@@ -56,9 +59,9 @@ export function UserTable() {
       fixed: "left",
       render(text, full) {
         return IS_ADMIN ? (
-          <a className="t-username" href={setBaseUrl(`users/${full.id}`)}>
+          <Link className="t-username" to={`${BASE_URL}/${full.id}`}>
             {text}
-          </a>
+          </Link>
         ) : (
           text
         );
@@ -80,7 +83,7 @@ export function UserTable() {
       title: i18n("UserTable.email"),
       key: "email",
       dataIndex: "email",
-      render(text, full) {
+      render(text) {
         return <a href={`mailto:${text}`}>{text}</a>;
       },
     },

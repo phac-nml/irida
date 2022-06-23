@@ -3,9 +3,11 @@ module.exports = {
     node: "true",
     browser: true,
     es2021: true,
+    jest: true,
   },
   globals: {
     i18n: true,
+    __webpack_public_path__: true,
   },
   extends: [
     "eslint:recommended",
@@ -23,5 +25,22 @@ module.exports = {
     sourceType: "module",
   },
   plugins: ["react", "jsx-a11y", "@typescript-eslint"],
-  rules: { "react/prop-types": 0 },
+  settings: {
+    react: {
+      version: "detect",
+    },
+  },
+  rules: {
+    "react/prop-types": 0,
+    "prefer-destructuring": [
+      "error",
+      {
+        array: true,
+        object: true,
+      },
+      {
+        enforceForRenamedProperties: false,
+      },
+    ],
+  },
 };

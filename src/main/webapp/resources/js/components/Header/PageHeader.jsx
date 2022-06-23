@@ -6,8 +6,12 @@ import GalaxyAlert from "./GalaxyAlert";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { MainNavigation } from "./MainNavigation";
-import { AnnouncementProvider } from "./main-navigation/components/announcements-context";
-import { AnnouncementsModal } from "./main-navigation/components/AnnouncementsModal";
+import {
+  AnnouncementProvider
+} from "./MainNavigation/components/announcements-context";
+import {
+  AnnouncementsModal
+} from "./MainNavigation/components/AnnouncementsModal";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -27,9 +31,7 @@ export function PageHeader() {
   return (
     <>
       <AnnouncementProvider>
-        <div style={{ height: 64 }}>
-          <MainNavigation />
-        </div>
+        <MainNavigation />
         <AnnouncementsModal />
       </AnnouncementProvider>
       <Breadcrumbs crumbs={window.breadcrumbs} />
