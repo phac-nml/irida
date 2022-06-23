@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
@@ -85,7 +84,6 @@ import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisWorkspaceServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Tests out preparing a workspace for execution of workflows in Galaxy.
@@ -1058,8 +1056,6 @@ public class AnalysisWorkspaceServiceGalaxyIT {
 	 * @throws TimeoutException
 	 */
 	@Test
-//	@Transactional
-//	@DirtiesContext
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testGetAnalysisResultsTestAnalysisPairedSingleSampleSuccess()
 			throws InterruptedException, ExecutionManagerException, IridaWorkflowNotFoundException, IOException,
