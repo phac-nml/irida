@@ -33,6 +33,7 @@ import {
   MergeCellsOutlined,
 } from "@ant-design/icons";
 import { useGetProjectDetailsQuery } from "../../../../apis/projects/project";
+import { storeSamples } from "../../../../utilities/share-utilities";
 
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));
@@ -116,25 +117,18 @@ export default function SamplesMenu() {
   };
 
   const onNCBI = () => {
-    window.location.href = setBaseUrl(
-      `/projects/${projectId}/ncbi?ids=${Object.values(selected)
-        .map((s) => s.id)
-        .join(",")}`
-    );
+    if (selected.size === 0) return;
+    const samples = formatSamplesForStorage();
+    storeSamples({ samples, projectId });
+    window.location.href = setBaseUrl(`/projects/${projectId}/ncbi`);
   };
 
   const onExport = (type) => {
     dispatch(exportSamplesToFile(type));
   };
 
-  /**
-   * Format samples to share with other projects,
-   * store minimal information in localStorage
-   */
-  const shareSamples = () => {
-    if (selected.size === 0) return;
-
-    const samples = Object.values(selected).map(
+  const formatSamplesForStorage = () =>
+    Object.values(selected).map(
       ({ id, sampleName: name, owner, projectId }) => ({
         id,
         name,
@@ -143,15 +137,17 @@ export default function SamplesMenu() {
       })
     );
 
+  /**
+   * Format samples to share with other projects,
+   * store minimal information in localStorage
+   */
+  const shareSamples = () => {
+    if (selected.size === 0) return;
+
+    const samples = formatSamplesForStorage();
+
     // Store them to window storage for later use.
-    window.sessionStorage.setItem(
-      "share",
-      JSON.stringify({
-        samples,
-        projectId,
-        timestamp: Date.now(),
-      })
-    );
+    storeSamples({ samples, projectId });
 
     // Redirect user to share page
     window.location.href = setBaseUrl(`/projects/${projectId}/share`);

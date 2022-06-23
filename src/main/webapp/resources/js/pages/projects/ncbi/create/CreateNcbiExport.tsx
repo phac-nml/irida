@@ -12,7 +12,7 @@ import {
   Row,
   Select,
   Table,
-  Tooltip,
+  Tooltip
 } from "antd";
 import type { RangePickerProps } from "antd/es/date-picker";
 import moment from "moment";
@@ -23,7 +23,7 @@ import {
   getNCBIPlatforms,
   getNCBISelections,
   getNCBISources,
-  getNCBIStrategies,
+  getNCBIStrategies
 } from "../../../../apis/export/ncbi";
 import { TableHeaderWithCascaderOptions } from "../../../../components/ant.design/TableHeaderWithCascaderOptions";
 import { TableHeaderWithSelectOptions } from "../../../../components/ant.design/TableHeaderWithSelectOptions";
@@ -33,11 +33,11 @@ import {
   NcbiPlatform,
   NcbiSelection,
   NcbiSource,
-  NcbiStrategy,
+  NcbiStrategy
 } from "../../../../types/irida";
 import {
   getSharedSamples,
-  SharedStorage,
+  SharedStorage
 } from "../../../../utilities/share-utilities";
 
 interface SampleRecord {
@@ -367,7 +367,7 @@ function CreateNcbiExport(): JSX.Element {
     },
   ];
 
-  const validateAndSubmit = () => {
+  const validateAndSubmit = (): void => {
     // TODO: convert release date from momentjs
     form.validateFields().then(console.log);
   };

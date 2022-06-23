@@ -1,24 +1,39 @@
-import {Project, Sample} from "../types/irida";
+import { Project, Sample } from "../types/irida";
 
-export interface SharedStorage  {
-    projectId: Pick<Project, "id">;
-    samples: {
-        id: Pick<Sample, "id">;
-        name: Pick<Sample, "name">;
-        owner: boolean;
-        projectId: Pick<Project, "id">
-    }[],
-    timestamp: Date;
+export interface SharedStorage {
+  projectId: Pick<Project, "id">;
+  samples: StoredSample[];
+  timestamp: Date;
 }
 
-export function storeSamples(samples: SharedStorage):void {
-    sessionStorage.setItem("samples", JSON.stringify(samples));
+export type StoredSample = {
+  id: Pick<Sample, "id">;
+  name: Pick<Sample, "name">;
+  projectId: Pick<Project, "id">;
+  owner: boolean;
+};
+
+export function storeSamples({
+  samples,
+  projectId,
+}: {
+  samples: StoredSample[];
+  projectId: Pick<Project, "id">;
+}): void {
+  sessionStorage.setItem(
+    "share",
+    JSON.stringify({
+      projectId,
+      samples,
+      timestamp: Date.now(),
+    })
+  );
 }
 
 export async function getSharedSamples(): Promise<SharedStorage> {
-    const stored = sessionStorage.getItem('share');
-    if (stored) {
-        return Promise.resolve(JSON.parse(stored));
-    }
-    return  Promise.reject("No shared samples");
+  const stored = sessionStorage.getItem("share");
+  if (stored) {
+    return Promise.resolve(JSON.parse(stored));
+  }
+  return Promise.reject("No shared samples");
 }
