@@ -118,8 +118,7 @@ export default function SamplesMenu() {
 
   const onNCBI = () => {
     if (selected.size === 0) return;
-    const samples = formatSamplesForStorage();
-    storeSamples({ samples, projectId });
+    formatAndStoreSamples();
     window.location.href = setBaseUrl(`/projects/${projectId}/ncbi`);
   };
 
@@ -127,8 +126,8 @@ export default function SamplesMenu() {
     dispatch(exportSamplesToFile(type));
   };
 
-  const formatSamplesForStorage = () =>
-    Object.values(selected).map(
+  const formatAndStoreSamples = () => {
+    const samples = Object.values(selected).map(
       ({ id, sampleName: name, owner, projectId }) => ({
         id,
         name,
@@ -136,6 +135,8 @@ export default function SamplesMenu() {
         projectId,
       })
     );
+    storeSamples({ samples, projectId });
+  };
 
   /**
    * Format samples to share with other projects,
@@ -143,12 +144,7 @@ export default function SamplesMenu() {
    */
   const shareSamples = () => {
     if (selected.size === 0) return;
-
-    const samples = formatSamplesForStorage();
-
-    // Store them to window storage for later use.
-    storeSamples({ samples, projectId });
-
+    formatAndStoreSamples();
     // Redirect user to share page
     window.location.href = setBaseUrl(`/projects/${projectId}/share`);
   };

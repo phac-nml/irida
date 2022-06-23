@@ -12,7 +12,7 @@ import {
   Row,
   Select,
   Table,
-  Tooltip
+  Tooltip,
 } from "antd";
 import type { RangePickerProps } from "antd/es/date-picker";
 import moment from "moment";
@@ -23,7 +23,7 @@ import {
   getNCBIPlatforms,
   getNCBISelections,
   getNCBISources,
-  getNCBIStrategies
+  getNCBIStrategies,
 } from "../../../../apis/export/ncbi";
 import { TableHeaderWithCascaderOptions } from "../../../../components/ant.design/TableHeaderWithCascaderOptions";
 import { TableHeaderWithSelectOptions } from "../../../../components/ant.design/TableHeaderWithSelectOptions";
@@ -33,11 +33,11 @@ import {
   NcbiPlatform,
   NcbiSelection,
   NcbiSource,
-  NcbiStrategy
+  NcbiStrategy,
 } from "../../../../types/irida";
 import {
   getSharedSamples,
-  SharedStorage
+  SharedStorage,
 } from "../../../../utilities/share-utilities";
 
 interface SampleRecord {
@@ -79,6 +79,7 @@ function CreateNcbiExport(): JSX.Element {
       {}
     )
   );
+
   const [platforms] = React.useState<CascaderOption[]>(() =>
     Object.keys(rawPlatforms).map((platform) => ({
       value: platform,
@@ -388,12 +389,13 @@ function CreateNcbiExport(): JSX.Element {
             <Col
               xxl={{ span: 16, offset: 4 }}
               xl={{ span: 20, offset: 2 }}
-              sm={{ span: 22, offset: 1 }}
+              sm={24}
             >
               <Card title={"Export Details"}>
                 <Row gutter={[16, 16]}>
                   <Col md={12} xs={24}>
                     <Form.Item
+                      required
                       label={i18n("project.export.bioproject.title")}
                       help={i18n("project.export.bioproject.description")}
                     >
@@ -402,6 +404,7 @@ function CreateNcbiExport(): JSX.Element {
                   </Col>
                   <Col md={12} xs={24}>
                     <Form.Item
+                      required
                       label={i18n("project.export.organization.title")}
                       help={i18n("project.export.organization.description")}
                     >
@@ -410,6 +413,7 @@ function CreateNcbiExport(): JSX.Element {
                   </Col>
                   <Col md={12} xs={24}>
                     <Form.Item
+                      required
                       label={i18n("project.export.namespace.title")}
                       help={i18n("project.export.namespace.description")}
                     >
@@ -418,6 +422,7 @@ function CreateNcbiExport(): JSX.Element {
                   </Col>
                   <Col md={12} xs={24}>
                     <Form.Item
+                      required
                       label={i18n("project.export.release_date.title")}
                       help={i18n("project.export.release_date.description")}
                       name="release_date"
@@ -435,7 +440,7 @@ function CreateNcbiExport(): JSX.Element {
               <Table
                 columns={columns}
                 dataSource={Object.values(samples)}
-                style={{ maxWidth: 2000 }}
+                style={{ width: `100%` }}
                 scroll={{ x: "max-content", y: 600 }}
                 pagination={false}
               />
@@ -443,7 +448,7 @@ function CreateNcbiExport(): JSX.Element {
             <Col
               xxl={{ span: 16, offset: 4 }}
               xl={{ span: 20, offset: 2 }}
-              sm={{ span: 22, offset: 1 }}
+              sm={24}
             >
               <Button type="primary" htmlType="submit">
                 __SUBMIT
