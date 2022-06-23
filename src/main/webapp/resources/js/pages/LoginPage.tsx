@@ -165,6 +165,21 @@ function LoginPage(): JSX.Element {
     setType(pageType);
   };
 
+  function getLdapError(){
+    switch(urlParams.get("ldap-error")) {
+      case "1":
+        return <> {i18n("LoginPage.ldap_error.description_1")}{" "} </>
+      case "2":
+        return <> {i18n("LoginPage.ldap_error.description_2")}{" "} </>
+      case "3":
+        return <> {i18n("LoginPage.ldap_error.description_3")}{" "} </>
+      case "4":
+        return <> {i18n("LoginPage.ldap_error.description_4")}{" "} </>
+      default:
+        return <> {i18n("LoginPage.ldap_error.description_default")}{" "} </>
+    }
+  }
+
   return (
     <Row justify="center">
       <Col style={{ width: 300 }}>
@@ -203,6 +218,20 @@ function LoginPage(): JSX.Element {
                 </Button>
               </>
             }
+            showIcon
+          />
+        ) : null}
+        {urlParams.has("ldap-error") ? (
+          <Alert
+            type="error"
+            className="t-login-error"
+            style={{ marginBottom: SPACE_MD }}
+            message={
+              <span className="t-login-error">
+                {i18n("LoginPage.ldap_error.message")}
+              </span>
+            }
+            description={ getLdapError() }
             showIcon
           />
         ) : null}
