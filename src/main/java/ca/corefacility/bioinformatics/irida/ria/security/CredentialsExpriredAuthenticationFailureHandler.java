@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -71,7 +72,14 @@ public class CredentialsExpriredAuthenticationFailureHandler extends SimpleUrlAu
 			String contextPath = request.getContextPath();
 			String resetId = create.getId();
 			response.sendRedirect(contextPath + "/password_reset/" + resetId + "?expired=true");
-
+		} else if (exception instanceof AuthenticationServiceException) {
+			logger.trace(exception.toString());
+			// redirect the user to the ldap/adldap error page
+			String contextPath = request.getContextPath();
+			// todo make a page w/ error message
+//			response.sendRedirect(contextPath + "/ldap_error");
+			//todo remove this
+			response.sendRedirect("https://www.google.com");
 		} else {
 			super.onAuthenticationFailure(request, response, exception);
 		}
