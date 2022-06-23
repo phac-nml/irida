@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaLdapAuthenticationException;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
@@ -12,10 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,18 +29,32 @@ import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
+/**
+ * UserDetailsContextMapper that manages relation between {@link UserRepository} and Ldap/adLdap services
+ * Handles mapping for login, as well as first time login account creation
+ */
 @Configuration
 @ConditionalOnExpression("'${irida.administrative.authentication.mode}'.equals('ldap') || '${irida.administrative.authentication.mode}'.equals('adldap')")
 public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
     private static final Logger logger = LoggerFactory.getLogger(IridaUserDetailsContextMapper.class);
 
-    @Autowired
+    /**
+     * Reference to {@link UserService}
+     */
     private UserService userService;
 
-    @Autowired
+    /**
+     * Reference to {@link UserRepository}
+     */
     private UserRepository userRepository;
+
+    /**
+     * Reference to {@link MessageSource}
+     */
+    private MessageSource messageSource;
 
     @Value("${irida.administrative.authentication.mode}")
     private String authenticationMode;
@@ -57,11 +73,20 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
 
     private boolean creatingNewUser = false;
 
+    @Autowired
+    public IridaUserDetailsContextMapper(UserService userService, UserRepository userRepository,
+            MessageSource messageSource) {
+        this.userService = userService;
+        this.userRepository = userRepository;
+        this.messageSource = messageSource;
+    }
+
     public boolean isCreatingNewUser() { return creatingNewUser; }
 
     @Override
     public UserDetails mapUserFromContext(DirContextOperations dirContextOperations, String username, Collection<? extends GrantedAuthority> collection) {
-        // Here we could use dirContextOperations to fetch other user attributes from ldap, not needed for our use case
+        Locale locale = LocaleContextHolder.getLocale();
+
         try {
             // return the user if it exists
             return userRepository.loadUserByUsername(username);
@@ -82,13 +107,15 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
             try {
                 commitUser(u);
             } catch (EntityExistsException err) {
-                String error_msg = "User being created already exists.";
-                logger.error(error_msg + e);
-                throw new AuthenticationServiceException(error_msg);
+                String ldap_error1 = messageSource.getMessage(
+                        "LoginPage.ldap_error.description_1", null, locale);
+                logger.error(ldap_error1 + err);
+                throw new IridaLdapAuthenticationException(ldap_error1, err, 1);
             } catch (ConstraintViolationException err) {
-                String error_msg = "Fields in User are incompatible with local database constraints.";
-                logger.error(error_msg + e);
-                throw new AuthenticationServiceException(error_msg);
+                String ldap_error2 = messageSource.getMessage(
+                        "LoginPage.ldap_error.description_2", null, locale);
+                logger.error(ldap_error2 + err);
+                throw new IridaLdapAuthenticationException(ldap_error2, err, 2);
             }
 
             try {
@@ -96,13 +123,20 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
                 return userRepository.loadUserByUsername(username);
             }
             catch(UsernameNotFoundException err) {
-                String error_msg = "Username found in LDAP/ADLDAP server, but could not be created in local database.";
-                logger.error(error_msg);
-                throw new AuthenticationServiceException(error_msg);
+                String ldap_error3 = messageSource.getMessage(
+                        "LoginPage.ldap_error.description_3", null, locale);
+                logger.error(ldap_error3 + err);
+                throw new IridaLdapAuthenticationException(ldap_error3, err, 3);
             }
         }
     }
 
+    /**
+     *
+     * @param dirContextOperations Ldap/adLdap service context
+     * @param username username used for sign-in
+     * @return new {@link User} object
+     */
     private User ldapCreateUser(DirContextOperations dirContextOperations, String username) {
         // This works for both ldap and adLdap
         // todo: handle bad fields / User can't be created (required and not required)
@@ -114,13 +148,25 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
         return new User(username, fieldLdapEmail, randomPassword, fieldLdapFirstName, fieldLdapLastName, fieldLdapPhoneNumber);
     }
 
+    /**
+     * Fetches attribute from Ldap/adLdap service
+     * @param dirContextOperations Ldap/adLdap context
+     * @param field String as defined in the Ldap/adLdap server
+     * @param required Boolean, if required and not found, an {@link IridaLdapAuthenticationException} will be thrown
+     * @param fallback String, default value
+     * @return String value fetched from Ldap/adLdap service
+     */
     private String getAttribute( DirContextOperations dirContextOperations, String field, boolean required, @NotNull String fallback) {
-        String res = null;
-            res = dirContextOperations.getStringAttribute(field);
+        Locale locale = LocaleContextHolder.getLocale();
+
+        String res = dirContextOperations.getStringAttribute(field);
 
         if (res==null || res.equals("")) {
             if (required) {
-                throw new AuthenticationServiceException("Could not fetch required fields from ldap/adldap service.");
+                String ldap_error4 = messageSource.getMessage(
+                        "LoginPage.ldap_error.description_4", null, locale);
+                logger.error(ldap_error4);
+                throw new IridaLdapAuthenticationException(ldap_error4, 4);
             }
             else {
                 res = fallback;
@@ -129,9 +175,12 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
         return res;
     }
 
+    /**
+     * Generates a random password that adhears to our password requirements
+     * @return String
+     */
     public String generateCommonLangPassword() {
         // https://www.baeldung.com/java-generate-secure-password
-        // todo: is this the best place for this function to live?
         String upperCaseLetters = RandomStringUtils.random(2, 65, 90, true, true);
         String lowerCaseLetters = RandomStringUtils.random(2, 97, 122, true, true);
         String numbers = RandomStringUtils.randomNumeric(2);
@@ -150,6 +199,10 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
                 .toString();
     }
 
+    /**
+     * Uses {@link UserService} to create a user in the database
+     * @param u User to add to database
+     */
     private void commitUser(User u) {
         u.setSystemRole(Role.ROLE_USER);
         try {

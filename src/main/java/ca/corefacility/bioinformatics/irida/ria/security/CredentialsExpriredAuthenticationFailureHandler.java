@@ -10,13 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaLdapAuthenticationException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -47,8 +47,9 @@ public class CredentialsExpriredAuthenticationFailureHandler extends SimpleUrlAu
 	}
 
 	/**
-	 * Handle CredentialsExpiredException and create a {@link PasswordReset}. If
-	 * not CredentialsExpiredException pass to super.
+	 * Handle CredentialsExpiredException and create a {@link PasswordReset}.
+	 * Handle IridaLdapAuthenticationException and redirect with appropriate error code
+	 * If not CredentialsExpiredException or IridaLdapAuthenticationException pass to super.
 	 */
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
@@ -72,14 +73,10 @@ public class CredentialsExpriredAuthenticationFailureHandler extends SimpleUrlAu
 			String contextPath = request.getContextPath();
 			String resetId = create.getId();
 			response.sendRedirect(contextPath + "/password_reset/" + resetId + "?expired=true");
-		} else if (exception instanceof AuthenticationServiceException) {
+		} else if (exception instanceof IridaLdapAuthenticationException) {
 			logger.trace(exception.toString());
-			// redirect the user to the ldap/adldap error page
 			String contextPath = request.getContextPath();
-			// todo make a page w/ error message
-//			response.sendRedirect(contextPath + "/ldap_error");
-			//todo remove this
-			response.sendRedirect("https://www.google.com");
+			response.sendRedirect(contextPath + "/login?ldap-error="+((IridaLdapAuthenticationException) exception).getErrorCode());
 		} else {
 			super.onAuthenticationFailure(request, response, exception);
 		}
