@@ -1,7 +1,6 @@
 import React from "react";
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import UserAccountNav from "./UserAccountNav";
-import { setBaseUrl } from "../../../utilities/url-utilities";
 import { useGetUserDetailsQuery } from "../../../apis/users/users";
 import { ContentLoading } from "../../../components/loader";
 import { NarrowPageWrapper } from "../../../components/page/NarrowPageWrapper";
@@ -10,24 +9,17 @@ import { SPACE_LG } from "../../../styles/spacing";
 import { Layout } from "antd";
 
 const { Content, Sider } = Layout;
-
 /**
  * React component that layouts the user account page.
  * @returns {*}
  * @constructor
  */
 export default function UserAccountLayout() {
-  const ADMIN_USERS_URL = "admin/users";
-  const CREATE_USER_URL = "/users/create";
-
+  const navigate = useNavigate();
+  const location = useLocation();
   const { userId } = useParams();
   const { data: userDetails = {} } = useGetUserDetailsQuery(userId);
-  const showBack =
-    userDetails.admin &&
-    (document.referrer.includes(ADMIN_USERS_URL, 0) ||
-      document.referrer.includes(CREATE_USER_URL, 0));
-  const goToAdminUserListPage = () =>
-    (window.location.href = setBaseUrl(ADMIN_USERS_URL));
+  const showBack = location.pathname.includes("admin");
 
   return (
     <NarrowPageWrapper
@@ -36,7 +28,7 @@ export default function UserAccountLayout() {
           ? i18n("UserAccountLayout.page.title", userDetails.user?.username)
           : userDetails.user?.username
       }
-      onBack={showBack ? goToAdminUserListPage : undefined}
+      onBack={showBack ? () => navigate(-1) : undefined}
     >
       <Layout style={{ backgroundColor: grey1 }}>
         <Sider width={200}>

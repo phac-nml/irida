@@ -68,7 +68,8 @@ public class UIAdminStatisticsService {
 		StatisticTimePeriod statisticTimePeriod = getStatisticTimePeriod(timePeriod);
 
 		return new StatisticsResponse(
-				analysisSubmissionService.getAnalysesRanGrouped(minimumCreatedDate, statisticTimePeriod));
+				analysisSubmissionService.getAnalysesRanGrouped(minimumCreatedDate, statisticTimePeriod),
+				statisticTimePeriod);
 	}
 
 	/**
@@ -81,8 +82,8 @@ public class UIAdminStatisticsService {
 		Date minimumCreatedDate = getMinimumCreatedDate(timePeriod);
 		StatisticTimePeriod statisticTimePeriod = getStatisticTimePeriod(timePeriod);
 
-		return new StatisticsResponse(
-				projectService.getProjectsCreatedGrouped(minimumCreatedDate, statisticTimePeriod));
+		return new StatisticsResponse(projectService.getProjectsCreatedGrouped(minimumCreatedDate, statisticTimePeriod),
+				statisticTimePeriod);
 	}
 
 	/**
@@ -95,7 +96,8 @@ public class UIAdminStatisticsService {
 		Date minimumCreatedDate = getMinimumCreatedDate(timePeriod);
 		StatisticTimePeriod statisticTimePeriod = getStatisticTimePeriod(timePeriod);
 
-		return new StatisticsResponse(sampleService.getSamplesCreatedGrouped(minimumCreatedDate, statisticTimePeriod));
+		return new StatisticsResponse(sampleService.getSamplesCreatedGrouped(minimumCreatedDate, statisticTimePeriod),
+				statisticTimePeriod);
 	}
 
 	/**
@@ -108,7 +110,8 @@ public class UIAdminStatisticsService {
 		Date minimumCreatedDate = getMinimumCreatedDate(timePeriod);
 		StatisticTimePeriod statisticTimePeriod = getStatisticTimePeriod(timePeriod);
 
-		return new StatisticsResponse(userService.getUsersCreatedGrouped(minimumCreatedDate, statisticTimePeriod));
+		return new StatisticsResponse(userService.getUsersCreatedGrouped(minimumCreatedDate, statisticTimePeriod),
+				statisticTimePeriod);
 	}
 
 	/**

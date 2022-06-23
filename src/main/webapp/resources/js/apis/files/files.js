@@ -15,7 +15,7 @@ export function uploadFiles({ files, url, onSuccess, onError }) {
    * This prompts the user if they want to continue leaving the site.
    * @param event
    */
-  const listener = event => {
+  const listener = (event) => {
     // Cancel the event as stated by the standard.
     event.preventDefault();
     // Chrome requires returnValue to be set.
@@ -23,25 +23,25 @@ export function uploadFiles({ files, url, onSuccess, onError }) {
   };
   window.addEventListener("beforeunload", listener);
 
-  const names = files.map(f => f.name);
+  const names = files.map((f) => f.name);
   const formData = new FormData();
   files.forEach((f, i) => formData.append(`files[${i}]`, f));
 
-  const CancelToken = axios.CancelToken;
+  const { CancelToken } = axios;
   const source = CancelToken.source();
 
   const notification = new UploadProgressNotification({
     names,
-    request: source
+    request: source,
   });
 
   return axios
     .post(url, formData, {
       headers: {
-        "Content-Type": "multipart/form-data"
+        "Content-Type": "multipart/form-data",
       },
       cancelToken: source.token,
-      onUploadProgress: function(progressEvent) {
+      onUploadProgress: function (progressEvent) {
         const totalLength = progressEvent.lengthComputable
           ? progressEvent.total
           : progressEvent.target.getResponseHeader("content-length") ||
@@ -54,10 +54,10 @@ export function uploadFiles({ files, url, onSuccess, onError }) {
           );
           notification.show(progress);
         }
-      }
+      },
     })
     .then(({ data }) => onSuccess(data))
-    .catch(error => {
+    .catch((error) => {
       if (!axios.isCancel(error)) {
         onError();
       }

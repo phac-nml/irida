@@ -53,7 +53,8 @@ public enum ProjectMetadataRole {
 	}
 
 	/**
-	 * Static method to compare a {@link ProjectUserJoin} and a collection of {@link UserGroupProjectJoin} and return the max {@link ProjectMetadataRole} from them
+	 * Static method to compare a {@link ProjectUserJoin} and a collection of {@link UserGroupProjectJoin} and return
+	 * the max {@link ProjectMetadataRole} from them
 	 *
 	 * @param userJoin   a user's {@link ProjectUserJoin}
 	 * @param groupJoins a collection of {@link UserGroupProjectJoin}
@@ -65,14 +66,16 @@ public enum ProjectMetadataRole {
 
 		if (userJoin != null) {
 			metadataRole = userJoin.getMetadataRole();
+			if (metadataRole == ProjectMetadataRole.LEVEL_4) {
+				return metadataRole;
+			}
 		}
 
-		if(metadataRole != ProjectMetadataRole.LEVEL_4) {
+		if (metadataRole != ProjectMetadataRole.LEVEL_4) {
 			for (UserGroupProjectJoin group : groupJoins) {
-				if (metadataRole.getLevel() < group.getMetadataRole()
-						.getLevel()) {
+				if (metadataRole == null || metadataRole.getLevel() < group.getMetadataRole().getLevel()) {
 					metadataRole = group.getMetadataRole();
-					if(metadataRole == ProjectMetadataRole.LEVEL_4) {
+					if (metadataRole == ProjectMetadataRole.LEVEL_4) {
 						break;
 					}
 				}

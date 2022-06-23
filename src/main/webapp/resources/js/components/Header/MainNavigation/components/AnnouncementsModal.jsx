@@ -6,9 +6,9 @@ import { formatDate } from "../../../../utilities/date-utilities";
 import ReactMarkdown from "react-markdown";
 import { TYPES, useAnnouncements } from "./announcements-context";
 import {
+  readAndCloseAnnouncement,
   readAndNextAnnouncement,
   readAndPreviousAnnouncement,
-  readAndCloseAnnouncement,
 } from "./announcement-dispatch";
 
 const { Text } = Typography;
