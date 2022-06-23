@@ -57,19 +57,14 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
-
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-
-
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleGenomeAssemblyFileModel;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleSequencingObjectFileModel;
-
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -1173,7 +1168,7 @@ public class UISampleService {
 		return new SequenceFile(target);
 	}
 
- 	/** Remove 1 or more samples from a project.
+	/** Remove 1 or more samples from a project.
 	 *
 	 * @param projectId identifier for the project
 	 * @param sampleIds list of sampleIds to remove

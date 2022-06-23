@@ -3,6 +3,8 @@ import { sampleApi } from "../../apis/samples/samples";
 import sampleReducer from "./sampleSlice";
 import sampleFilesReducer from "./sampleFilesSlice";
 import sampleAnalysesReducer from "./sampleAnalysesSlice";
+
+import fastQCReducer from "./components/fastqc/fastQCSlice";
 import cartSamplesReducer from "./cartSamplesSlice";
 import { cartApi } from "../../apis/cart/cart";
 
@@ -12,6 +14,7 @@ For more information on redux stores see: https://redux.js.org/tutorials/fundame
  */
 export default configureStore({
   reducer: {
+    fastQCReducer,
     sampleReducer,
     sampleFilesReducer,
     sampleAnalysesReducer,
