@@ -35,7 +35,7 @@ export const removeCartSampleId = createAction(
  */
 const initialState = (() => {
   return {
-    sampleIds: [],
+    sampleIds: null,
     loading: true,
   };
 })();

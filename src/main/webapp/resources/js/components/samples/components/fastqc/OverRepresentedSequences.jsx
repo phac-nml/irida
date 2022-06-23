@@ -1,37 +1,18 @@
-/*
- * This file renders the OverRepresentedSequences component
- * which is a table.
- */
-
 import React from "react";
 import { Col, Row, Table, Typography } from "antd";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Monospace } from "../../../typography";
-import { getOverRepresentedSequences } from "../../../../apis/files/sequence-files";
-import { setAnalysisFastQC } from "./fastQCSlice";
 import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
 
 const DEFAULT_HEIGHT = 600;
 
+/**
+ * React component to render FastQC overrepresented sequences
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export function OverRepresentedSequences() {
-  const dispatch = useDispatch();
-  const { loading, sequencingObjectId, fileId, fastQC } = useSelector(
-    (state) => state.fastQCReducer
-  );
-
-  React.useEffect(() => {
-    if (Object.keys(fastQC).length === 0) {
-      getOverRepresentedSequences(sequencingObjectId, fileId).then(
-        (analysisFastQC) => {
-          dispatch(
-            setAnalysisFastQC({
-              fastQC: analysisFastQC,
-            })
-          );
-        }
-      );
-    }
-  }, [sequencingObjectId, fileId]);
+  const { loading, fastQC } = useSelector((state) => state.fastQCReducer);
 
   const paginationOptions = React.useMemo(
     () =>
@@ -76,7 +57,7 @@ export function OverRepresentedSequences() {
     },
   ];
 
-  return fastQC ? (
+  return (
     <Row gutter={16} style={{ padding: 10 }}>
       <Col span={24}>
         <Typography.Paragraph className="text-info">
@@ -105,5 +86,5 @@ export function OverRepresentedSequences() {
         />
       </Col>
     </Row>
-  ) : null;
+  );
 }
