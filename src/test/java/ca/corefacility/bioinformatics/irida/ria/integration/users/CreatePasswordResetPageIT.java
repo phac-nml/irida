@@ -1,11 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.CreatePasswordResetPage;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.CreatePasswordResetPage;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -21,12 +22,6 @@ public class CreatePasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		// logging in
 
 		passwordResetPage = new CreatePasswordResetPage(driver());
-	}
-
-	@AfterEach
-	@Override
-	public void tearDown() {
-		// don't log out, we didn't log in!
 	}
 
 	@Test
