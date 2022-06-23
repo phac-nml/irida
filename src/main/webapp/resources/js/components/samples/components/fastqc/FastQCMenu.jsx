@@ -12,30 +12,28 @@ import { FastQCDetails } from "./FastQCDetails";
  */
 export function FastQCMenu() {
   return (
-    <>
-      <Tabs defaultActiveKey="charts">
-        <Tabs.TabPane
-          tab={i18n("FastQC.charts")}
-          key="charts"
-          className="t-fastqc-modal-charts-tab"
-        >
-          <FastQCCharts />
-        </Tabs.TabPane>
-        <Tabs.TabPane
-          tab={i18n("FastQC.overrepresentedSequences")}
-          key="overrepresented"
-          className="t-fastqc-modal-overrepresented-tab"
-        >
-          <OverRepresentedSequences />
-        </Tabs.TabPane>
-        <Tabs.TabPane
-          tab={i18n("FastQC.details")}
-          key="details"
-          className="t-fastqc-modal-details-tab"
-        >
-          <FastQCDetails />
-        </Tabs.TabPane>
-      </Tabs>
-    </>
+    <Tabs defaultActiveKey="charts">
+      <Tabs.TabPane
+        tab={i18n("FastQC.charts")}
+        key="charts"
+        className="t-fastqc-modal-charts-tab"
+      >
+        <FastQCCharts />
+      </Tabs.TabPane>
+      <Tabs.TabPane
+        tab={i18n("FastQC.overrepresentedSequences")}
+        key="overrepresented"
+        className="t-fastqc-modal-overrepresented-tab"
+      >
+        <OverRepresentedSequences />
+      </Tabs.TabPane>
+      <Tabs.TabPane
+        tab={i18n("FastQC.details")}
+        key="details"
+        className="t-fastqc-modal-details-tab"
+      >
+        <FastQCDetails />
+      </Tabs.TabPane>
+    </Tabs>
   );
 }

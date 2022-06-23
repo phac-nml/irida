@@ -13,6 +13,11 @@ import { FastQC } from "../samples/components/fastqc/FastQC";
 import { setFastQCModalData } from "../samples/components/fastqc/fastQCSlice";
 import { useDispatch, useSelector } from "react-redux";
 
+const qcEntryTranslations = {
+  COVERAGE: i18n("SequenceObjectListItem.qcEntry.COVERAGE"),
+  PROCESSING: i18n("SequenceObjectListItem.qcEntry.PROCESSING"),
+};
+
 /**
  * Component to be used anywhere sequencing objects need to be listed
  * @param sequenceObject The sequencing object to list
@@ -49,11 +54,6 @@ export function SequenceObjectListItem({
   const ELEMENT_ALIGN_MARGIN_TOP = sequenceObject.qcEntries?.length ? -50 : 0;
 
   const { files, sequenceFile, file } = obj;
-
-  const qcEntryTranslations = {
-    COVERAGE: i18n("SequenceObjectListItem.qcEntry.COVERAGE"),
-    PROCESSING: i18n("SequenceObjectListItem.qcEntry.PROCESSING"),
-  };
 
   /*
    Function to display file processing status

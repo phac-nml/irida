@@ -21,6 +21,14 @@ import { SequenceObjectListItem } from "../../sequence-files/SequenceObjectListI
 import { primaryColour } from "../../../utilities/theme-utilities";
 import { SPACE_XS } from "../../../styles/spacing";
 
+const fileProcessTranslations = {
+  UNPROCESSED: i18n("SampleFilesList.fileProcessingState.UNPROCESSED"),
+  QUEUED: i18n("SampleFilesList.fileProcessingState.QUEUED"),
+  PROCESSING: i18n("SampleFilesList.fileProcessingState.PROCESSING"),
+  FINISHED: i18n("SampleFilesList.fileProcessingState.FINISHED"),
+  ERROR: i18n("SampleFilesList.fileProcessingState.ERROR"),
+};
+
 import {
   addToConcatenateSelected,
   DEFAULT_ACTION_WIDTH,
@@ -54,14 +62,6 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
     (state) => state.sampleFilesReducer
   );
   const ACTION_MARGIN_RIGHT = isModifiable ? 0 : 5;
-
-  const fileProcessTranslations = {
-    UNPROCESSED: i18n("SampleFilesList.fileProcessingState.UNPROCESSED"),
-    QUEUED: i18n("SampleFilesList.fileProcessingState.QUEUED"),
-    PROCESSING: i18n("SampleFilesList.fileProcessingState.PROCESSING"),
-    FINISHED: i18n("SampleFilesList.fileProcessingState.FINISHED"),
-    ERROR: i18n("SampleFilesList.fileProcessingState.ERROR"),
-  };
 
   const dispatch = useDispatch();
 
