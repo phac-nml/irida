@@ -91,7 +91,6 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
 
     @Override
     public UserDetails mapUserFromContext(DirContextOperations dirContextOperations, String username, Collection<? extends GrantedAuthority> collection) {
-
         try {
             // return the user if it exists
             User u = userRepository.loadUserByUsername(username);
@@ -108,6 +107,12 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Checks if LDAP/ADLDAP fields differ from local User data, and updates
+     * @param dirContextOperations LDAP/ADLDAP context
+     * @param u User to check/update
+     * @return User
+     */
     private User updateUserFromLdap(DirContextOperations dirContextOperations, User u) {
         logger.info("Comparing IRIDA user with LDAP/ADLDAP user fields: " + u.getUsername());
         Locale locale = LocaleContextHolder.getLocale();
@@ -138,6 +143,12 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
         return u;
     }
 
+    /**
+     * Creates a new user that exists in LDAP/ADLDAP
+     * @param dirContextOperations LDAP/ADLDAP context
+     * @param username User name to assign to local User, used for signing in
+     * @return User
+     */
     private User createNewUserFromLdap(DirContextOperations dirContextOperations, String username) {
         logger.info("Creating new IRIDA user for found LDAP user: " + username);
         Locale locale = LocaleContextHolder.getLocale();
@@ -192,6 +203,11 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
         );
     }
 
+    /**
+     * Fetch data from LDAP/ADLDAP and create a map that aligns with {@link User}
+     * @param dirContextOperations LDAP/ADLDAP context
+     * @return Map<String {@link User} property, String LDAP/ADLDAP field value>
+     */
     private Map<String, String> getLdapFields(DirContextOperations dirContextOperations) {
         Map<String, String> map = new HashMap<>();
         map.put(iridaUserFieldEmail, getAttribute(dirContextOperations, userInfoEmail, true, ""));
@@ -201,6 +217,11 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
         return map;
     }
 
+    /**
+     * Fetch data from {@link User} and create a map that aligns with {@link User}
+     * @param u {@link User} to fetch data from
+     * @return Map<String {@link User} property, String {@link User} field value>
+     */
     private Map<String, String> getUserFields(User u) {
         Map<String, String> map = new HashMap<>();
         map.put(iridaUserFieldEmail, u.getEmail());
