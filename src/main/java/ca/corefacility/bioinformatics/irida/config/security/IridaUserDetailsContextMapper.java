@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.config.security;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaLdapAuthenticationException;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -27,11 +28,11 @@ import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import com.google.common.collect.MapDifference;
+import com.google.common.collect.Maps;
 
 /**
  * UserDetailsContextMapper that manages relation between {@link UserRepository} and Ldap/adLdap services
@@ -57,9 +58,7 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
      */
     private MessageSource messageSource;
 
-    @Value("${irida.administrative.authentication.mode}")
-    private String authenticationMode;
-
+    // Field Strings used to fetch from ldap/adldap
     @Value("${irida.administrative.authentication.ldap.userInfoEmail}")
     private String userInfoEmail;
 
@@ -72,7 +71,13 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
     @Value("${irida.administrative.authentication.ldap.userInfoPhoneNumber}")
     private String userInfoPhoneNumber;
 
-    private boolean creatingNewUser = false;
+    // property Strings for IRIDA user fields
+    private final String iridaUserFieldEmail = "email";
+    private final String iridaUserFieldFirstName = "firstName";
+    private final String iridaUserFieldLastName = "lastName";
+    private final String iridaUserFieldPhoneNumber = "phoneNumber";
+
+    private boolean ldapUserRevision = false;
 
     @Autowired
     public IridaUserDetailsContextMapper(UserService userService, UserRepository userRepository,
@@ -82,7 +87,7 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
         this.messageSource = messageSource;
     }
 
-    public boolean isCreatingNewUser() { return creatingNewUser; }
+    public boolean isLdapUserRevision() { return ldapUserRevision; }
 
     @Override
     public UserDetails mapUserFromContext(DirContextOperations dirContextOperations, String username, Collection<? extends GrantedAuthority> collection) {
@@ -104,12 +109,37 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
     }
 
     private User updateUserFromLdap(DirContextOperations dirContextOperations, User u) {
+        logger.info("Comparing IRIDA user with LDAP/ADLDAP user fields: " + u.getUsername());
+        Locale locale = LocaleContextHolder.getLocale();
+
+        Map<String, String> ldapUserFields = getLdapFields(dirContextOperations);
+        Map<String, String> iridaUserFields = getUserFields(u);
+        MapDifference<String, String> diff = Maps.difference(ldapUserFields, iridaUserFields);
+        if (!diff.areEqual()){
+            logger.info("Updating IRIDA user fields from LDAP: " + u.getUsername());
+            Map<String, Object> propertiesToUpdate = new HashMap<>();
+            for (Map.Entry<String, MapDifference.ValueDifference<String>> entry : diff.entriesDiffering().entrySet()) {
+                propertiesToUpdate.put(entry.getKey(), ldapUserFields.get(entry.getKey()));
+            }
+
+            try {
+                updateUser(u, propertiesToUpdate);
+            } catch (ConstraintViolationException e) { // This should be unreachable, but is here for safety
+                String ldap_error2 = messageSource.getMessage("LoginPage.ldap_error.description_2", null, locale);
+                logger.error(ldap_error2 + e);
+                throw new IridaLdapAuthenticationException(ldap_error2, e, 2);
+            } catch (EntityNotFoundException | EntityExistsException | InvalidPropertyException e) {
+                String ldap_error5 = messageSource.getMessage("LoginPage.ldap_error.description_5", null, locale);
+                logger.error(ldap_error5 + e);
+                throw new IridaLdapAuthenticationException(ldap_error5, e, 5);
+            }
+        }
 
         return u;
     }
 
     private User createNewUserFromLdap(DirContextOperations dirContextOperations, String username) {
-        logger.info("Creating new IRIDA user for found LDAP user");
+        logger.info("Creating new IRIDA user for found LDAP user: " + username);
         Locale locale = LocaleContextHolder.getLocale();
 
         User u = ldapCreateUser(dirContextOperations, username);
@@ -117,27 +147,27 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
         try {
             // Commit user to the database
             commitUser(u);
-        } catch (EntityExistsException err) {
+        } catch (EntityExistsException e) {
             String ldap_error1 = messageSource.getMessage(
                     "LoginPage.ldap_error.description_1", null, locale);
-            logger.error(ldap_error1 + err);
-            throw new IridaLdapAuthenticationException(ldap_error1, err, 1);
-        } catch (ConstraintViolationException err) {
+            logger.error(ldap_error1 + e);
+            throw new IridaLdapAuthenticationException(ldap_error1, e, 1);
+        } catch (ConstraintViolationException e) {
             String ldap_error2 = messageSource.getMessage(
                     "LoginPage.ldap_error.description_2", null, locale);
-            logger.error(ldap_error2 + err);
-            throw new IridaLdapAuthenticationException(ldap_error2, err, 2);
+            logger.error(ldap_error2 + e);
+            throw new IridaLdapAuthenticationException(ldap_error2, e, 2);
         }
 
         try {
             // return the newly created user
             return userRepository.loadUserByUsername(username);
         }
-        catch(UsernameNotFoundException err) {
+        catch(UsernameNotFoundException e) {
             String ldap_error3 = messageSource.getMessage(
                     "LoginPage.ldap_error.description_3", null, locale);
-            logger.error(ldap_error3 + err);
-            throw new IridaLdapAuthenticationException(ldap_error3, err, 3);
+            logger.error(ldap_error3 + e);
+            throw new IridaLdapAuthenticationException(ldap_error3, e, 3);
         }
     }
 
@@ -151,11 +181,33 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
         // This works for both ldap and adLdap
         // todo: handle bad fields / User can't be created (required and not required)
         String randomPassword = generateCommonLangPassword();
-        String fieldLdapEmail = getAttribute(dirContextOperations, userInfoEmail, true, "");
-        String fieldLdapFirstName = getAttribute(dirContextOperations, userInfoFirstName, false, "FirstName");
-        String fieldLdapLastName = getAttribute(dirContextOperations, userInfoLastName, false, "LastName");
-        String fieldLdapPhoneNumber = getAttribute(dirContextOperations, userInfoPhoneNumber, false, "0000");
-        return new User(username, fieldLdapEmail, randomPassword, fieldLdapFirstName, fieldLdapLastName, fieldLdapPhoneNumber);
+        Map<String, String> map = getLdapFields(dirContextOperations);
+        return new User(
+                username,
+                map.get(iridaUserFieldEmail),
+                randomPassword,
+                map.get(iridaUserFieldFirstName),
+                map.get(iridaUserFieldLastName),
+                map.get(iridaUserFieldPhoneNumber)
+        );
+    }
+
+    private Map<String, String> getLdapFields(DirContextOperations dirContextOperations) {
+        Map<String, String> map = new HashMap<>();
+        map.put(iridaUserFieldEmail, getAttribute(dirContextOperations, userInfoEmail, true, ""));
+        map.put(iridaUserFieldFirstName, getAttribute(dirContextOperations, userInfoFirstName, false, "FirstName"));
+        map.put(iridaUserFieldLastName, getAttribute(dirContextOperations, userInfoLastName, false, "LastName"));
+        map.put(iridaUserFieldPhoneNumber, getAttribute(dirContextOperations, userInfoPhoneNumber, false, "0000"));
+        return map;
+    }
+
+    private Map<String, String> getUserFields(User u) {
+        Map<String, String> map = new HashMap<>();
+        map.put(iridaUserFieldEmail, u.getEmail());
+        map.put(iridaUserFieldFirstName, u.getFirstName());
+        map.put(iridaUserFieldLastName, u.getLastName());
+        map.put(iridaUserFieldPhoneNumber, u.getPhoneNumber());
+        return map;
     }
 
     /**
@@ -165,7 +217,7 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
     private void commitUser(User u) {
         u.setSystemRole(Role.ROLE_USER);
         try {
-            creatingNewUser = true;
+            ldapUserRevision = true;
             userService.create(u);
         } catch (EntityExistsException e) {
             logger.error("User being created already exists: " + e);
@@ -174,27 +226,29 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
             logger.error("Fields in User are incompatible with local database constraints: " + e);
             throw e;
         } finally {
-            creatingNewUser = false;
+            ldapUserRevision = false;
         }
     }
 
     /**
      * Uses {@link UserService} to update a user in the database
-     * @param u User to add to database
+     * @param u User to update in database
+     * @param updatedProperties Map of userproperties to update
      */
-    private void updateUser(User u) {
+    private void updateUser(User u, Map<String, Object> updatedProperties) {
         try {
-            //            creatingNewUser = true;
-            userService.update(u);
-        } catch (EntityNotFoundException e) { // This should be unreachable, but is here for safety
-            logger.error("User being modified does not exist: " + e);
-            throw e;
+            ldapUserRevision = true;
+            userService.updateFields(u.getId(), updatedProperties);
         } catch (ConstraintViolationException e) {
             logger.error("Fields in User are incompatible with local database constraints: " + e);
             throw e;
-        } //finally {
-        //            creatingNewUser = false;
-        //}
+        } catch (EntityNotFoundException | EntityExistsException | InvalidPropertyException e) {
+            // This should be unreachable, but is here for safety
+            logger.error("IRIDA was unable to update user from LDAP/ADLAP fields: " + e);
+            throw e;
+        } finally {
+            ldapUserRevision = false;
+        }
     }
 
     /**

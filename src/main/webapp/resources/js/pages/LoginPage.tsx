@@ -175,6 +175,8 @@ function LoginPage(): JSX.Element {
         return <> {i18n("LoginPage.ldap_error.description_3")}{" "} </>
       case "4":
         return <> {i18n("LoginPage.ldap_error.description_4")}{" "} </>
+      case "5":
+        return <> {i18n("LoginPage.ldap_error.description_5")}{" "} </>
       default:
         return <> {i18n("LoginPage.ldap_error.description_default")}{" "} </>
     }
