@@ -1,10 +1,11 @@
 import axios, { AxiosResponse } from "axios";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 /**
  * @file API for handling activities
  */
 
-const BASE_URL = `/ajax/activities`;
+const BASE_URL = setBaseUrl(`/ajax/activities`);
 
 export interface ActivitiesResponse extends AxiosResponse {
   data: Activities;
