@@ -4,9 +4,10 @@ import { Button, Card, Col, Empty, Row, Skeleton, Typography } from "antd";
 import { IconRemove } from "../../../components/icons/Icons";
 import {
   addFile,
+  addFileToNewPairInSample,
   deleteSample,
   removeFile,
-  updateSample,
+  removeFileFromSample,
 } from "../services/runReducer";
 import { useDispatch } from "react-redux";
 import { SequencingRunSamplePair } from "./SequencingRunSamplePair";
@@ -41,43 +42,16 @@ export function SequencingRunSample({ samples, sample, sampleIndex }) {
     drop: (item) => {
       const { file, prevSampleIndex, prevPairIndex } = item;
 
-      //remove file from sequencing files list
       if (prevSampleIndex === null) {
+        //remove file from sequencing files list
         dispatch(removeFile(file.id));
       } else {
         //remove file from previous sample
-        const prevSample = samples[prevSampleIndex];
-        const prevPairs = [...prevSample.pairs];
-        const prevPair = prevSample.pairs[prevPairIndex];
-
-        if (prevPair.reverse === null) {
-          //the pair is going to be empty
-          //removing it from the pair list
-          prevPairs.splice(prevPairIndex, 1);
-        } else {
-          //converting the pair into single
-          prevPairs[prevPairIndex] = {
-            forward:
-              prevPair.forward?.id === file.id
-                ? prevPair.reverse
-                : prevPair.forward,
-            reverse: null,
-          };
-        }
-        const updatedSample = {
-          sampleName: prevSample.sampleName,
-          pairs: prevPairs,
-        };
-        dispatch(updateSample(updatedSample, prevSampleIndex));
+        dispatch(removeFileFromSample(file.id, prevSampleIndex, prevPairIndex));
       }
 
-      //add file to target location
-      let newFile = { forward: file, reverse: null };
-      const newSample = {
-        sampleName: sample.sampleName,
-        pairs: [...sample.pairs, newFile],
-      };
-      dispatch(updateSample(newSample, sampleIndex));
+      //add file to new pair in sample
+      dispatch(addFileToNewPairInSample(file, sampleIndex));
     },
   });
 

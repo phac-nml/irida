@@ -2,7 +2,7 @@ import { Empty, List } from "antd";
 import { SequencingRunFileCard } from "./SequencingRunFileCard";
 import React from "react";
 import { useDrop } from "react-dnd";
-import { addFile, updateSample } from "../services/runReducer";
+import { addFile, removeFileFromSample } from "../services/runReducer";
 import { useDispatch } from "react-redux";
 
 /**
@@ -27,29 +27,7 @@ export function SequencingRunFilesList({ samples, files }) {
       const { file, prevSampleIndex, prevPairIndex } = item;
 
       //remove file from previous sample
-      const prevSample = samples[prevSampleIndex];
-      const prevPairs = [...prevSample.pairs];
-      const prevPair = prevSample.pairs[prevPairIndex];
-
-      if (prevPair.reverse === null) {
-        //the pair is going to be empty
-        //removing it from the pair list
-        prevPairs.splice(prevPairIndex, 1);
-      } else {
-        //converting the pair into single
-        prevPairs[prevPairIndex] = {
-          forward:
-            prevPair.forward?.id === file.id
-              ? prevPair.reverse
-              : prevPair.forward,
-          reverse: null,
-        };
-      }
-      const updatedSample = {
-        sampleName: prevSample.sampleName,
-        pairs: prevPairs,
-      };
-      dispatch(updateSample(updatedSample, prevSampleIndex));
+      dispatch(removeFileFromSample(file.id, prevSampleIndex, prevPairIndex));
 
       //add file to sequencing run file list
       dispatch(addFile(file.id));

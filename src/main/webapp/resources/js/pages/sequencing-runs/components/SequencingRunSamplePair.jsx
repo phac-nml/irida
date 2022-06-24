@@ -1,5 +1,11 @@
 import React from "react";
-import { removeFile, updateSample } from "../services/runReducer";
+import {
+  addFileToExistingPairInSample,
+  moveFileWithinSample,
+  removeFile,
+  removeFileFromSample,
+  updateSample,
+} from "../services/runReducer";
 import { FONT_COLOR_PRIMARY } from "../../../styles/fonts";
 import {
   IconSwap,
@@ -56,35 +62,10 @@ export function SequencingRunSamplePair({
       const { file, prevSampleIndex, prevPairIndex } = item;
 
       if (prevSampleIndex === sampleIndex) {
-        //remove file from another pair within the sample
-        const updatedPairs = [...sample.pairs];
-        const prevPair = sample.pairs[prevPairIndex];
-
-        updatedPairs[pairIndex] = {
-          forward: pair.forward,
-          reverse: file,
-        };
-
-        if (prevPair.reverse === null) {
-          //the pair is going to be empty
-          //removing it from the pair list
-          updatedPairs.splice(prevPairIndex, 1);
-        } else {
-          //converting the pair into single
-          updatedPairs[prevPairIndex] = {
-            forward:
-              prevPair.forward?.id === file.id
-                ? prevPair.reverse
-                : prevPair.forward,
-            reverse: null,
-          };
-        }
-
-        const updatedSample = {
-          sampleName: sample.sampleName,
-          pairs: updatedPairs,
-        };
-        dispatch(updateSample(updatedSample, prevSampleIndex));
+        //move file between pairs within the sample
+        dispatch(
+          moveFileWithinSample(file, sampleIndex, prevPairIndex, pairIndex)
+        );
       } else {
         //remove file from source location
         if (prevSampleIndex === null) {
@@ -92,39 +73,12 @@ export function SequencingRunSamplePair({
           dispatch(removeFile(file.id));
         } else {
           //remove file from previous sample
-          const prevSample = samples[prevSampleIndex];
-          const prevPairs = [...prevSample.pairs];
-          const prevPair = prevSample.pairs[prevPairIndex];
-
-          if (prevPair.reverse === null) {
-            //the pair is going to be empty
-            //removing it from the pair list
-            prevPairs.splice(prevPairIndex, 1);
-          } else {
-            //converting the pair into single
-            prevPairs[prevPairIndex] = {
-              forward:
-                prevPair.forward?.id === file.id
-                  ? prevPair.reverse
-                  : prevPair.forward,
-              reverse: null,
-            };
-          }
-          const updatedSample = {
-            sampleName: prevSample.sampleName,
-            pairs: prevPairs,
-          };
-          dispatch(updateSample(updatedSample, prevSampleIndex));
+          dispatch(
+            removeFileFromSample(file.id, prevSampleIndex, prevPairIndex)
+          );
         }
         //add file to target location
-        //assume the pair already has a forward file
-        const updatedPairs = [...sample.pairs];
-        updatedPairs[pairIndex] = { forward: pair.forward, reverse: file };
-        const updatedSample = {
-          sampleName: sample.sampleName,
-          pairs: updatedPairs,
-        };
-        dispatch(updateSample(updatedSample, sampleIndex));
+        dispatch(addFileToExistingPairInSample(file, sampleIndex, pairIndex));
       }
     },
   });
