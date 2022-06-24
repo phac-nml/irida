@@ -17,8 +17,7 @@ export function SequencingRunSamplesList({ samples }) {
     dispatch(
       addSample({
         sampleName: "New Sample",
-        forwardSequenceFile: null,
-        reverseSequenceFile: null,
+        pairs: [],
       })
     );
   };
@@ -39,13 +38,13 @@ export function SequencingRunSamplesList({ samples }) {
         <List
           grid={{ column: 1 }}
           dataSource={samples}
-          renderItem={(sample, index) => {
+          renderItem={(sample, sampleIndex) => {
             return (
               <List.Item>
                 <SequencingRunSample
                   samples={samples}
                   sample={sample}
-                  index={index}
+                  sampleIndex={sampleIndex}
                 />
               </List.Item>
             );

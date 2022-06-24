@@ -1,14 +1,7 @@
 import React from "react";
 import { useDrop } from "react-dnd";
-import { Avatar, Button, Card, Col, Empty, Row, Skeleton } from "antd";
-import {
-  IconRemove,
-  IconSwap,
-  IconSwapLeft,
-  IconSwapRight,
-} from "../../../components/icons/Icons";
-import { FONT_COLOR_PRIMARY } from "../../../styles/fonts";
-import { SequencingRunFileCard } from "./SequencingRunFileCard";
+import { Button, Card, Col, Empty, Row, Skeleton, Typography } from "antd";
+import { IconRemove } from "../../../components/icons/Icons";
 import {
   addFile,
   deleteSample,
@@ -16,99 +9,75 @@ import {
   updateSample,
 } from "../services/runReducer";
 import { useDispatch } from "react-redux";
+import { SequencingRunSamplePair } from "./SequencingRunSamplePair";
 
 /**
  * React component to render a sample.
  * @param {array} samples - list of samples
  * @param {object} sample - the sample
- * @param {number} index - the index of the sample in the samples array
+ * @param {number} sampleIndex - the index of the sample in the sample array
  * @returns {JSX.Element} - Returns a sample component
  */
-export function SequencingRunSample({ samples, sample, index }) {
+export function SequencingRunSample({ samples, sample, sampleIndex }) {
   const dispatch = useDispatch();
 
   const removeSample = () => {
-    if (sample.forwardSequenceFile !== null)
-      dispatch(addFile(sample.forwardSequenceFile.id));
-    if (sample.reverseSequenceFile !== null)
-      dispatch(addFile(sample.reverseSequenceFile.id));
-    dispatch(deleteSample(index));
+    sample.pairs.map((pair) => {
+      if (pair.forward !== null) {
+        dispatch(addFile(pair.forward.id));
+      }
+      if (pair.reverse !== null) {
+        dispatch(addFile(pair.reverse.id));
+      }
+    });
+    dispatch(deleteSample(sampleIndex));
   };
 
-  const switchPair = () => {
-    const newSample = {
-      sampleName: sample.sampleName,
-      forwardSequenceFile: sample.reverseSequenceFile,
-      reverseSequenceFile: sample.forwardSequenceFile,
-    };
-    dispatch(updateSample(newSample, index));
-  };
-
-  const [{ isOver }, drop] = useDrop({
+  const [{ isOver: isDropOnNewPairOver }, dropOnNewPair] = useDrop({
     accept: "card",
     collect: (monitor) => ({
       isOver: monitor.isOver(),
     }),
-    canDrop: (item, monitor) => {
-      //do not drop on the same sample card
-      if (item.prevIndex === index) {
-        return false;
-        //do not drop on a full sample card
-      } else if (
-        sample.forwardSequenceFile !== null &&
-        sample.reverseSequenceFile !== null
-      ) {
-        return false;
-      } else {
-        return true;
-      }
-    },
     drop: (item) => {
-      const { file, prevIndex } = item;
+      const { file, prevSampleIndex, prevPairIndex } = item;
 
-      //remove file from previous location
-      if (prevIndex === null) {
+      //remove file from sequencing files list
+      if (prevSampleIndex === null) {
         dispatch(removeFile(file.id));
       } else {
-        const prevSample = samples[prevIndex];
-        const newSample = {
-          sampleName: prevSample.sampleName,
-          forwardSequenceFile:
-            file.id === prevSample.forwardSequenceFile?.id
-              ? prevSample.reverseSequenceFile
-              : prevSample.forwardSequenceFile,
-          reverseSequenceFile: null,
+        //remove file from previous sample
+        const prevSample = samples[prevSampleIndex];
+        const prevPairs = [...prevSample.pairs];
+        const prevPair = prevSample.pairs[prevPairIndex];
+
+        prevPairs[prevPairIndex] = {
+          forward:
+            prevPair.forward?.id === file.id
+              ? prevPair.reverse
+              : prevPair.forward,
+          reverse: null,
         };
-        dispatch(updateSample(newSample, prevIndex));
+
+        const updatedSample = {
+          sampleName: prevSample.sampleName,
+          pairs: prevPairs,
+        };
+        dispatch(updateSample(updatedSample, prevSampleIndex));
       }
 
+      let newFile = { forward: file, reverse: null };
       //add file to target location
-      if (sample.forwardSequenceFile === null) {
-        const newSample = {
-          sampleName: sample.sampleName,
-          forwardSequenceFile: file,
-          reverseSequenceFile: sample.reverseSequenceFile,
-        };
-        dispatch(updateSample(newSample, index));
-      } else if (sample.reverseSequenceFile === null) {
-        const newSample = {
-          sampleName: sample.sampleName,
-          forwardSequenceFile: sample.forwardSequenceFile,
-          reverseSequenceFile: file,
-        };
-        dispatch(updateSample(newSample, index));
-      } else {
-        //do nothing
-      }
+      const newSample = {
+        sampleName: sample.sampleName,
+        pairs: [...sample.pairs, newFile],
+      };
+      dispatch(updateSample(newSample, sampleIndex));
     },
   });
-
-  console.log("options", { isOver });
 
   return (
     <Card
       title={sample.sampleName}
-      ref={drop}
       extra={
         <Button
           onClick={removeSample}
@@ -117,89 +86,39 @@ export function SequencingRunSample({ samples, sample, index }) {
         />
       }
     >
-      <Row align="middle" justify="center">
-        {sample.forwardSequenceFile !== null && (
-          <>
-            <Col flex="75px">
-              <Avatar
-                size={60}
-                style={{ backgroundColor: FONT_COLOR_PRIMARY }}
-                icon={<IconSwapRight />}
-              />
-            </Col>
-            <Col flex="auto">
-              <SequencingRunFileCard
-                file={sample.forwardSequenceFile}
-                index={index}
-              >
-                {sample.forwardSequenceFile.fileName}
-              </SequencingRunFileCard>
-            </Col>
-          </>
-        )}
-        {sample.reverseSequenceFile !== null && (
-          <>
-            <Col span={2} offset={1}>
-              <Button
-                onClick={switchPair}
-                style={{ border: "none" }}
-                icon={<IconSwap />}
-              />
-            </Col>
-            <Col flex="75px">
-              <Avatar
-                size={60}
-                style={{ backgroundColor: FONT_COLOR_PRIMARY }}
-                icon={<IconSwapLeft />}
-              />
-            </Col>
-            <Col flex="auto">
-              <SequencingRunFileCard
-                file={sample.reverseSequenceFile}
-                index={index}
-              >
-                {sample.reverseSequenceFile.fileName}
-              </SequencingRunFileCard>
-            </Col>
-          </>
-        )}
-
-        {isOver && (
-          <>
-            {sample.forwardSequenceFile === null &&
-              sample.reverseSequenceFile === null && (
-                <>
-                  <Col flex="75px">
-                    <Skeleton.Avatar shape="circle" size={60} />
-                  </Col>
-                  <Col flex="auto">
-                    <Skeleton.Input size="large" block={true} />
-                  </Col>
-                </>
-              )}
-            {sample.forwardSequenceFile !== null &&
-              sample.reverseSequenceFile === null && (
-                <>
-                  <Col span={2} offset={1}>
-                    <Skeleton.Button size="small" shape="circle" />
-                  </Col>
-                  <Col flex="75px">
-                    <Skeleton.Avatar shape="circle" size={60} />
-                  </Col>
-                  <Col flex="auto">
-                    <Skeleton.Input size="large" block={true} />
-                  </Col>
-                </>
-              )}
-          </>
-        )}
-      </Row>
-      <Row align="middle" justify="center">
-        <Empty
-          style={{ paddingTop: "20px" }}
-          description={i18n("SequencingRunSample.empty")}
-          imageStyle={{ display: "none" }}
+      {sample.pairs.map((pair, pairIndex) => (
+        <SequencingRunSamplePair
+          key={`sequencing-run-sample-pair-${pairIndex}`}
+          pair={pair}
+          pairIndex={pairIndex}
+          sample={sample}
+          sampleIndex={sampleIndex}
+          samples={samples}
         />
+      ))}
+
+      <Row ref={dropOnNewPair} align="middle" justify="center">
+        {isDropOnNewPairOver && (
+          <>
+            <Col flex="75px">
+              <Skeleton.Avatar shape="circle" size={60} />
+            </Col>
+            <Col flex="auto">
+              <Skeleton.Input size="large" block={true} />
+            </Col>
+          </>
+        )}
+        <Col span={24}>
+          <Empty
+            style={{ paddingTop: "10px" }}
+            description={
+              <Typography.Text type="secondary">
+                {i18n("SequencingRunSample.empty")}
+              </Typography.Text>
+            }
+            imageStyle={{ display: "none" }}
+          />
+        </Col>
       </Row>
     </Card>
   );

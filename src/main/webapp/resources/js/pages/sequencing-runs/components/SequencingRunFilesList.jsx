@@ -6,7 +6,7 @@ import { addFile, updateSample } from "../services/runReducer";
 import { useDispatch } from "react-redux";
 
 /**
- * React component to render the list of sequencing run files.
+ * React component to render the list of samples and sequencing run files.
  * @param {array} samples - list of samples
  * @param {array} files - list of sequencing run files
  * @returns {JSX.Element} - Returns a list component
@@ -14,9 +14,9 @@ import { useDispatch } from "react-redux";
 export function SequencingRunFilesList({ samples, files }) {
   const dispatch = useDispatch();
 
-  const [{ canDrop, isOver }, drop] = useDrop({
+  const [{ isOver }, drop] = useDrop({
     accept: "card",
-    canDrop: (item, monitor) => {
+    canDrop: (item) => {
       if (item.prevIndex === null) {
         return false;
       } else {
@@ -24,17 +24,25 @@ export function SequencingRunFilesList({ samples, files }) {
       }
     },
     drop: (item) => {
-      const { file, prevIndex } = item;
-      const prevSample = samples[prevIndex];
-      const newSample = {
-        sampleName: prevSample.sampleName,
-        forwardSequenceFile:
-          prevSample.forwardSequenceFile?.id === file.id
-            ? prevSample.reverseSequenceFile
-            : prevSample.forwardSequenceFile,
-        reverseSequenceFile: null,
+      const { file, prevSampleIndex, prevPairIndex } = item;
+      //remove file from previous sample
+      const prevSample = samples[prevSampleIndex];
+      const prevPairs = [...prevSample.pairs];
+      const prevPair = prevSample.pairs[prevPairIndex];
+
+      prevPairs[prevPairIndex] = {
+        forward:
+          prevPair.forward?.id === file.id
+            ? prevPair.reverse
+            : prevPair.forward,
+        reverse: null,
       };
-      dispatch(updateSample(newSample, prevIndex));
+
+      const updatedSample = {
+        sampleName: prevSample.sampleName,
+        pairs: prevPairs,
+      };
+      dispatch(updateSample(updatedSample, prevSampleIndex));
       dispatch(addFile(file.id));
     },
   });
