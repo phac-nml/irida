@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaLdapAuthenticationException;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -85,49 +86,58 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
 
     @Override
     public UserDetails mapUserFromContext(DirContextOperations dirContextOperations, String username, Collection<? extends GrantedAuthority> collection) {
-        Locale locale = LocaleContextHolder.getLocale();
 
         try {
             // return the user if it exists
-            return userRepository.loadUserByUsername(username);
+            User u = userRepository.loadUserByUsername(username);
+            // update any fields that don't match current ldap fields
+            return updateUserFromLdap(dirContextOperations, u);
         }
         catch(UsernameNotFoundException e) {
-            logger.info("Creating new IRIDA user for found LDAP user");
-            User u;
-            switch(authenticationMode) {
-                case "ldap":
-                case "adldap":
-                    u = ldapCreateUser(dirContextOperations, username);
-                    break;
-                default: // This class is not loaded in this case, so this may be unreachable
-                    String errorMessage = "Configured authentication mode not one of the supported modes for context mapping [ldap, adldap]";
-                    logger.error(errorMessage);
-                    throw new IllegalStateException(errorMessage);
-            }
-            try {
-                commitUser(u);
-            } catch (EntityExistsException err) {
-                String ldap_error1 = messageSource.getMessage(
-                        "LoginPage.ldap_error.description_1", null, locale);
-                logger.error(ldap_error1 + err);
-                throw new IridaLdapAuthenticationException(ldap_error1, err, 1);
-            } catch (ConstraintViolationException err) {
-                String ldap_error2 = messageSource.getMessage(
-                        "LoginPage.ldap_error.description_2", null, locale);
-                logger.error(ldap_error2 + err);
-                throw new IridaLdapAuthenticationException(ldap_error2, err, 2);
-            }
+            return createNewUserFromLdap(dirContextOperations, username);
+        }
+    }
 
-            try {
-                // return the newly created user
-                return userRepository.loadUserByUsername(username);
-            }
-            catch(UsernameNotFoundException err) {
-                String ldap_error3 = messageSource.getMessage(
-                        "LoginPage.ldap_error.description_3", null, locale);
-                logger.error(ldap_error3 + err);
-                throw new IridaLdapAuthenticationException(ldap_error3, err, 3);
-            }
+    @Override
+    public void mapUserToContext(UserDetails userDetails, DirContextAdapter dirContextAdapter) {
+        throw new UnsupportedOperationException();
+    }
+
+    private User updateUserFromLdap(DirContextOperations dirContextOperations, User u) {
+
+        return u;
+    }
+
+    private User createNewUserFromLdap(DirContextOperations dirContextOperations, String username) {
+        logger.info("Creating new IRIDA user for found LDAP user");
+        Locale locale = LocaleContextHolder.getLocale();
+
+        User u = ldapCreateUser(dirContextOperations, username);
+
+        try {
+            // Commit user to the database
+            commitUser(u);
+        } catch (EntityExistsException err) {
+            String ldap_error1 = messageSource.getMessage(
+                    "LoginPage.ldap_error.description_1", null, locale);
+            logger.error(ldap_error1 + err);
+            throw new IridaLdapAuthenticationException(ldap_error1, err, 1);
+        } catch (ConstraintViolationException err) {
+            String ldap_error2 = messageSource.getMessage(
+                    "LoginPage.ldap_error.description_2", null, locale);
+            logger.error(ldap_error2 + err);
+            throw new IridaLdapAuthenticationException(ldap_error2, err, 2);
+        }
+
+        try {
+            // return the newly created user
+            return userRepository.loadUserByUsername(username);
+        }
+        catch(UsernameNotFoundException err) {
+            String ldap_error3 = messageSource.getMessage(
+                    "LoginPage.ldap_error.description_3", null, locale);
+            logger.error(ldap_error3 + err);
+            throw new IridaLdapAuthenticationException(ldap_error3, err, 3);
         }
     }
 
@@ -146,6 +156,45 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
         String fieldLdapLastName = getAttribute(dirContextOperations, userInfoLastName, false, "LastName");
         String fieldLdapPhoneNumber = getAttribute(dirContextOperations, userInfoPhoneNumber, false, "0000");
         return new User(username, fieldLdapEmail, randomPassword, fieldLdapFirstName, fieldLdapLastName, fieldLdapPhoneNumber);
+    }
+
+    /**
+     * Uses {@link UserService} to create a user in the database
+     * @param u User to add to database
+     */
+    private void commitUser(User u) {
+        u.setSystemRole(Role.ROLE_USER);
+        try {
+            creatingNewUser = true;
+            userService.create(u);
+        } catch (EntityExistsException e) {
+            logger.error("User being created already exists: " + e);
+            throw e;
+        } catch (ConstraintViolationException e) {
+            logger.error("Fields in User are incompatible with local database constraints: " + e);
+            throw e;
+        } finally {
+            creatingNewUser = false;
+        }
+    }
+
+    /**
+     * Uses {@link UserService} to update a user in the database
+     * @param u User to add to database
+     */
+    private void updateUser(User u) {
+        try {
+            //            creatingNewUser = true;
+            userService.update(u);
+        } catch (EntityNotFoundException e) { // This should be unreachable, but is here for safety
+            logger.error("User being modified does not exist: " + e);
+            throw e;
+        } catch (ConstraintViolationException e) {
+            logger.error("Fields in User are incompatible with local database constraints: " + e);
+            throw e;
+        } //finally {
+        //            creatingNewUser = false;
+        //}
     }
 
     /**
@@ -199,28 +248,4 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
                 .toString();
     }
 
-    /**
-     * Uses {@link UserService} to create a user in the database
-     * @param u User to add to database
-     */
-    private void commitUser(User u) {
-        u.setSystemRole(Role.ROLE_USER);
-        try {
-            creatingNewUser = true;
-            userService.create(u);
-        } catch (EntityExistsException e) {
-            logger.error("User being created already exists: " + e);
-            throw e;
-        } catch (ConstraintViolationException e) {
-            logger.error("Fields in User are incompatible with local database constraints: " + e);
-            throw e;
-        } finally {
-            creatingNewUser = false;
-        }
-    }
-
-    @Override
-    public void mapUserToContext(UserDetails userDetails, DirContextAdapter dirContextAdapter) {
-        throw new UnsupportedOperationException();
-    }
 }
