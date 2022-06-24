@@ -59,17 +59,27 @@ export function SequencingRunSamplePair({
         //remove file from another pair within the sample
         const updatedPairs = [...sample.pairs];
         const prevPair = sample.pairs[prevPairIndex];
-        updatedPairs[prevPairIndex] = {
-          forward:
-            prevPair.forward?.id === file.id
-              ? prevPair.reverse
-              : prevPair.forward,
-          reverse: null,
-        };
+
         updatedPairs[pairIndex] = {
           forward: pair.forward,
           reverse: file,
         };
+
+        if (prevPair.reverse === null) {
+          //the pair is going to be empty
+          //removing it from the pair list
+          updatedPairs.splice(prevPairIndex, 1);
+        } else {
+          //converting the pair into single
+          updatedPairs[prevPairIndex] = {
+            forward:
+              prevPair.forward?.id === file.id
+                ? prevPair.reverse
+                : prevPair.forward,
+            reverse: null,
+          };
+        }
+
         const updatedSample = {
           sampleName: sample.sampleName,
           pairs: updatedPairs,
@@ -86,14 +96,20 @@ export function SequencingRunSamplePair({
           const prevPairs = [...prevSample.pairs];
           const prevPair = prevSample.pairs[prevPairIndex];
 
-          prevPairs[prevPairIndex] = {
-            forward:
-              prevPair.forward?.id === file.id
-                ? prevPair.reverse
-                : prevPair.forward,
-            reverse: null,
-          };
-
+          if (prevPair.reverse === null) {
+            //the pair is going to be empty
+            //removing it from the pair list
+            prevPairs.splice(prevPairIndex, 1);
+          } else {
+            //converting the pair into single
+            prevPairs[prevPairIndex] = {
+              forward:
+                prevPair.forward?.id === file.id
+                  ? prevPair.reverse
+                  : prevPair.forward,
+              reverse: null,
+            };
+          }
           const updatedSample = {
             sampleName: prevSample.sampleName,
             pairs: prevPairs,

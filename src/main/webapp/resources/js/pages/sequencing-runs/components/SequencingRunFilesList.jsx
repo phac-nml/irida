@@ -25,24 +25,33 @@ export function SequencingRunFilesList({ samples, files }) {
     },
     drop: (item) => {
       const { file, prevSampleIndex, prevPairIndex } = item;
+
       //remove file from previous sample
       const prevSample = samples[prevSampleIndex];
       const prevPairs = [...prevSample.pairs];
       const prevPair = prevSample.pairs[prevPairIndex];
 
-      prevPairs[prevPairIndex] = {
-        forward:
-          prevPair.forward?.id === file.id
-            ? prevPair.reverse
-            : prevPair.forward,
-        reverse: null,
-      };
-
+      if (prevPair.reverse === null) {
+        //the pair is going to be empty
+        //removing it from the pair list
+        prevPairs.splice(prevPairIndex, 1);
+      } else {
+        //converting the pair into single
+        prevPairs[prevPairIndex] = {
+          forward:
+            prevPair.forward?.id === file.id
+              ? prevPair.reverse
+              : prevPair.forward,
+          reverse: null,
+        };
+      }
       const updatedSample = {
         sampleName: prevSample.sampleName,
         pairs: prevPairs,
       };
       dispatch(updateSample(updatedSample, prevSampleIndex));
+
+      //add file to sequencing run file list
       dispatch(addFile(file.id));
     },
   });
