@@ -2,9 +2,14 @@
 # Changelog
 
 ## [Unreleased]
-* [Developer/UI]: Refreshed the create new user account page. See [PR 1285](https://github.com/phac-nml/irida/pull/1285) for more.
+* [Developer/UI]: Refreshed the create new user account page. See [PR 1285](https://github.com/phac-nml/irida/pull/1285)
 * [Developer/UI]: Added in typescript support to webpack build, moving forward all new frontend development will use typescript. See [PR 1294](https://github.com/phac-nml/irida/pull/1294) for more.
 * [Developer/UI]: Removed `styled-components` from page header and replaced with CSS variables. See [PR 1284](https://github.com/phac-nml/irida/pull/1284)
+* [Developer/UI]: Updated eslint rule to check for object and array destructuring. See [PR 1322](https://github.com/phac-nml/irida/pull/1322)
+* [UI]: Fixed user routes for admin panel. See [PR 1323](https://github.com/phac-nml/irida/pull/1323)
+
+## [22.05.4] - 2022/06/16
+* [UI]: Fixed bug preventing filter samples by file to fail on invalid url. See [PR 1318](https://github.com/phac-nml/irida/pull/1318)
 
 ## [22.05.3] - 2022/06/14
 * [Developer]: Fix bug where users with only group access to a project couldn't view sample details or metadata. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
@@ -95,8 +100,9 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
-[Unreleased]: https://github.com/phac-nml/irida/compare/22.05.3...HEAD
+[Unreleased]: https://github.com/phac-nml/irida/compare/22.05.4...HEAD
 
+[22.05.4]: https://github.com/phac-nml/irida/compare/22.05.3...22.05.4
 [22.05.3]: https://github.com/phac-nml/irida/compare/22.05.2...22.05.3
 [22.05.2]: https://github.com/phac-nml/irida/compare/22.05.1...22.05.2
 [22.05.1]: https://github.com/phac-nml/irida/compare/22.05...22.05.1
