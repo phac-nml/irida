@@ -5,24 +5,24 @@
 
 import React from "react";
 import { List, Typography } from "antd";
-import {GridProps} from "../../types/ant-design/ant-design";
-import {ListItemLayout} from "antd/lib/list";
+import { ListItemLayout } from "antd/lib/list";
+import { GridProps } from "../ant.design/antd";
 
 const { Text } = Typography;
 
 export type BasicListItem =
-    | { title: string; desc: number; props?: JSX.ElementAttributesProperty[] }
-    | {
-    title: string;
-    desc: JSX.Element;
-    props?: JSX.ElementAttributesProperty[];
-}
-    | { title: string; desc: string; props?: JSX.ElementAttributesProperty[] };
+  | { title: string; desc: number; props?: JSX.ElementAttributesProperty[] }
+  | {
+      title: string;
+      desc: JSX.Element;
+      props?: JSX.ElementAttributesProperty[];
+    }
+  | { title: string; desc: string; props?: JSX.ElementAttributesProperty[] };
 
 export interface BasicListProps {
-    itemLayout?: ListItemLayout | undefined;
-    dataSource: BasicListItem[];
-    grid?: GridProps;
+  itemLayout?: ListItemLayout | undefined;
+  dataSource: BasicListItem[];
+  grid?: GridProps;
 }
 
 /**

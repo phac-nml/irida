@@ -33,7 +33,7 @@ import {
   MergeCellsOutlined,
 } from "@ant-design/icons";
 import { useGetProjectDetailsQuery } from "../../../../apis/projects/project";
-import { storeSamples } from "../../../../utilities/share-utilities";
+import { storeSamples } from "../../../../utilities/session-utilities";
 
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));

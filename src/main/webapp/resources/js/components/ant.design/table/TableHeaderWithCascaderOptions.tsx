@@ -1,14 +1,16 @@
 import React from "react";
 import { Button, Cascader, Form, Popover } from "antd";
 import { EditOutlined } from "@ant-design/icons";
-import TextWithHelpPopover from "./TextWithHelpPopover";
+import TextWithHelpPopover from "../TextWithHelpPopover";
+import { Option } from "../../../types/ant-design";
+import { TableWithOptionsHandles } from "./index";
 
 type Props = {
-    title: JSX.Element | string;
-    options: string[];
-    onChange: (value: string) => void;
-    helpText: string;
-}
+  title: JSX.Element | string;
+  options: Option[];
+  onChange: (value: string) => void;
+  helpText: string;
+};
 
 // TODO: WTF should I call this thing
 
@@ -19,9 +21,9 @@ type Props = {
  */
 export const TableHeaderWithCascaderOptions = React.forwardRef(
   function TableHeaderWithSelectOptions(
-    { title, options = [], onChange, helpText } : Props,
-    ref
-  ) : JSX.Element {
+    { title, options = [], onChange, helpText }: Props,
+    ref: React.ForwardedRef<TableWithOptionsHandles>
+  ): JSX.Element {
     const [form] = Form.useForm();
 
     React.useImperativeHandle(ref, () => ({

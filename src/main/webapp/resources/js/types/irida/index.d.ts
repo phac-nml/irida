@@ -23,14 +23,14 @@ declare namespace IRIDA {
   interface NcbiBiosample {
     key: string;
     name: string;
-    id: string;
-    biosample: string;
+    id: number;
+    biosample?: string;
     library_name: string;
-    library_strategy: NcbiStrategy;
-    library_source: NcbiSource;
-    library_construction_protocol: string;
-    instrument_model: NcbiInstrument;
-    library_selection: NcbiSelection;
+    library_strategy?: NcbiStrategy;
+    library_source?: NcbiSource;
+    library_construction_protocol?: string;
+    instrument_model?: NcbiInstrument;
+    library_selection?: NcbiSelection;
   }
 
   interface NcbiBioSampleFiles {

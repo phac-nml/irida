@@ -1,17 +1,19 @@
 import { Project, Sample } from "../types/irida";
 
-export interface SharedStorage {
+const SAMPLE_STORE = "samples";
+
+export interface SessionSample {
   projectId: Pick<Project, "id">;
   samples: StoredSample[];
   timestamp: Date;
 }
 
-export type StoredSample = {
-  id: Pick<Sample, "id">;
-  name: Pick<Sample, "name">;
-  projectId: Pick<Project, "id">;
+export interface StoredSample {
+  id: number;
+  name: string;
+  projectId: number;
   owner: boolean;
-};
+}
 
 export function storeSamples({
   samples,
@@ -21,7 +23,7 @@ export function storeSamples({
   projectId: Pick<Project, "id">;
 }): void {
   sessionStorage.setItem(
-    "share",
+    SAMPLE_STORE,
     JSON.stringify({
       projectId,
       samples,
@@ -30,8 +32,8 @@ export function storeSamples({
   );
 }
 
-export async function getSharedSamples(): Promise<SharedStorage> {
-  const stored = sessionStorage.getItem("share");
+export async function getStoredSamples(): Promise<SessionSample> {
+  const stored = sessionStorage.getItem(SAMPLE_STORE);
   if (stored) {
     return Promise.resolve(JSON.parse(stored));
   }

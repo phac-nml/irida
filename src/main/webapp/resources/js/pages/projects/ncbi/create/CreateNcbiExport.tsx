@@ -25,35 +25,40 @@ import {
   getNCBISources,
   getNCBIStrategies,
 } from "../../../../apis/export/ncbi";
-import { TableHeaderWithCascaderOptions } from "../../../../components/ant.design/TableHeaderWithCascaderOptions";
-import { TableHeaderWithSelectOptions } from "../../../../components/ant.design/TableHeaderWithSelectOptions";
+import type { TableWithOptionsHandles } from "../../../../components/ant.design/table";
+import { TableHeaderWithCascaderOptions } from "../../../../components/ant.design/table/TableHeaderWithCascaderOptions";
+import { TableHeaderWithSelectOptions } from "../../../../components/ant.design/table/TableHeaderWithSelectOptions";
 import TextWithHelpPopover from "../../../../components/ant.design/TextWithHelpPopover";
-import {
+import type { Option } from "../../../../types/ant-design";
+import type {
   NcbiBiosample,
-  NcbiPlatform,
   NcbiSelection,
   NcbiSource,
   NcbiStrategy,
 } from "../../../../types/irida";
 import {
-  getSharedSamples,
-  SharedStorage,
-} from "../../../../utilities/share-utilities";
+  getStoredSamples,
+  SessionSample,
+} from "../../../../utilities/session-utilities";
+import {
+  formatPlatformsAsCascaderOptions,
+  formatStoredAsNcbiBiosample,
+} from "./ncbi-utilities";
 
-interface SampleRecord {
+export type SampleRecord = {
   [k: string]: NcbiBiosample;
-}
+};
 
-export async function loader(): Promise<
-  [
-    SharedStorage,
-    FullNcbiPlatforms,
-    NcbiStrategy[],
-    NcbiSource[],
-    NcbiSelection[]
-  ]
-> {
-  const stored = getSharedSamples();
+type LoaderValues = [
+  SessionSample,
+  FullNcbiPlatforms,
+  NcbiStrategy[],
+  NcbiSource[],
+  NcbiSelection[]
+];
+
+export async function loader(): Promise<LoaderValues> {
+  const stored = getStoredSamples();
   const platforms = getNCBIPlatforms();
   const strategies = getNCBIStrategies();
   const sources = getNCBISources();
@@ -62,47 +67,42 @@ export async function loader(): Promise<
 }
 
 function CreateNcbiExport(): JSX.Element {
-  const [stored, rawPlatforms, strategies, sources, selections] =
-    useLoaderData();
+  const [
+    stored,
+    fullNcbiPlatforms,
+    strategies,
+    sources,
+    selections,
+  ]: LoaderValues = useLoaderData();
 
-  const [samples, setSamples] = React.useState<SampleRecord>(() =>
-    stored.samples.reduce(
-      (prev: SampleRecord, { id, name }: { id: string; name: string }) => ({
-        ...prev,
-        [name]: {
-          key: name,
-          id,
-          name,
-          library_name: name,
-        },
-      }),
-      {}
-    )
+  const [samples, setSamples] = React.useState<SampleRecord>(
+    (): SampleRecord => stored.samples.reduce(formatStoredAsNcbiBiosample, {})
   );
 
-  const [platforms] = React.useState<CascaderOption[]>(() =>
-    Object.keys(rawPlatforms).map((platform) => ({
-      value: platform,
-      label: platform,
-      children: rawPlatforms[platform].map((child: NcbiPlatform) => ({
-        value: child,
-        label: child,
-      })),
-    }))
+  const [platforms] = React.useState<Option[]>(() =>
+    formatPlatformsAsCascaderOptions(fullNcbiPlatforms)
   );
 
   const [form] = Form.useForm();
-  const strategyRef = React.useRef();
-  const sourceRef = React.useRef();
-  const platformRef = React.useRef();
+  const strategyRef = React.useRef<TableWithOptionsHandles>(null);
+  const sourceRef = React.useRef<TableWithOptionsHandles>(null);
+  const platformRef = React.useRef<TableWithOptionsHandles>(null);
 
   const disabledDate: RangePickerProps["disabledDate"] = (date): boolean => {
     // Can not select days before today for release
     return date && date < moment().startOf("day");
   };
 
-  function updateAllSamplesForField(column: string) {
-    return (value: string) => {
+  /**
+   * Update the values for all samples based on the column name.
+   * @param column Name of the column (corresponds to attribute on sample).
+   * @return setter function that takes the value to set
+   */
+  function updateAllSamplesForField(column: string): (value: string) => void {
+    /**
+     *
+     */
+    return (value: string): void => {
       const formSamples: NcbiBiosample[] = form.getFieldValue("samples");
       const updated = Object.values(formSamples).reduce(
         (prev: SampleRecord, curr: NcbiBiosample): SampleRecord => {
@@ -117,12 +117,20 @@ function CreateNcbiExport(): JSX.Element {
     };
   }
 
-  const width = 200;
+  function clearSelectByRef(
+    selectRef: React.RefObject<TableWithOptionsHandles>
+  ) {
+    if (selectRef !== null) {
+      selectRef.current?.resetSelect();
+    }
+  }
+
+  const DEFAULT_COLUMN_WIDTH = 200;
   const columns = [
     {
       title: "_SAMPLE",
       dataIndex: "name",
-      width,
+      width: DEFAULT_COLUMN_WIDTH,
       key: "sample",
       fixed: "left",
     },
@@ -134,7 +142,7 @@ function CreateNcbiExport(): JSX.Element {
         />
       ),
       dataIndex: "biosample",
-      width,
+      width: DEFAULT_COLUMN_WIDTH,
       key: "biosample",
       render: (text: string, sample: NcbiBiosample) => {
         return (
@@ -156,7 +164,7 @@ function CreateNcbiExport(): JSX.Element {
         />
       ),
       dataIndex: "library_strategy",
-      width,
+      width: DEFAULT_COLUMN_WIDTH,
       key: "library_strategy",
       render: (text: string, sample: NcbiBiosample) => {
         return (
@@ -183,7 +191,7 @@ function CreateNcbiExport(): JSX.Element {
         );
       },
       dataIndex: "library_strategy",
-      width,
+      width: DEFAULT_COLUMN_WIDTH,
       key: "library_strategy",
       render: (text: string, sample: NcbiBiosample) => {
         return (
@@ -198,9 +206,9 @@ function CreateNcbiExport(): JSX.Element {
           >
             <Select
               style={{ display: "block" }}
-              onChange={() => strategyRef.current.resetSelect()}
+              onChange={() => clearSelectByRef(strategyRef)}
             >
-              {strategies?.map((option) => (
+              {strategies?.map((option: string) => (
                 <Select.Option key={option}>{option}</Select.Option>
               ))}
             </Select>
@@ -222,7 +230,7 @@ function CreateNcbiExport(): JSX.Element {
       },
       dataIndex: "library_source",
       key: "library_source",
-      width,
+      width: DEFAULT_COLUMN_WIDTH,
       render: (text: string, sample: NcbiBiosample) => {
         return (
           <Form.Item
@@ -234,9 +242,9 @@ function CreateNcbiExport(): JSX.Element {
           >
             <Select
               style={{ display: "block" }}
-              onChange={() => sourceRef.current.resetSelect()}
+              onChange={() => sourceRef.current!.resetSelect()}
             >
-              {sources?.map((option) => (
+              {sources.map((option: string) => (
                 <Select.Option key={option}>{option}</Select.Option>
               ))}
             </Select>
@@ -247,9 +255,8 @@ function CreateNcbiExport(): JSX.Element {
     {
       title: i18n("project.export.library_construction_protocol.title"),
       dataIndex: "library_construction_protocol",
-      width,
+      width: DEFAULT_COLUMN_WIDTH,
       key: "library_construction_protocol",
-      width: 200,
       render: (text: string, sample: NcbiBiosample) => {
         return (
           <Form.Item
@@ -280,9 +287,9 @@ function CreateNcbiExport(): JSX.Element {
         );
       },
       dataIndex: "instrument_model",
-      width,
+      width: DEFAULT_COLUMN_WIDTH,
       key: "instrument_model",
-      render: (_, item) => {
+      render: (text: string, sample: NcbiBiosample) => {
         return (
           <Form.Item
             rules={[
@@ -291,7 +298,7 @@ function CreateNcbiExport(): JSX.Element {
                 message: "Interment Model is required",
               },
             ]}
-            name={["samples", item.name, "instrument_model"]}
+            name={["samples", sample.name, "instrument_model"]}
             style={{
               margin: 0,
             }}
@@ -299,7 +306,7 @@ function CreateNcbiExport(): JSX.Element {
             <Cascader
               options={platforms}
               style={{ display: "block" }}
-              onChange={() => platformRef.current.resetSelect()}
+              onChange={() => clearSelectByRef(platformRef)}
             />
           </Form.Item>
         );
@@ -318,7 +325,7 @@ function CreateNcbiExport(): JSX.Element {
         );
       },
       dataIndex: "library_selection",
-      width,
+      width: DEFAULT_COLUMN_WIDTH,
       key: "library_selection",
       render: (text: string, sample: NcbiBiosample) => {
         return (
@@ -335,7 +342,7 @@ function CreateNcbiExport(): JSX.Element {
             }}
           >
             <Select style={{ display: "block" }}>
-              {selections?.map((option) => (
+              {selections.map((option) => (
                 <Select.Option key={option}>{option}</Select.Option>
               ))}
             </Select>

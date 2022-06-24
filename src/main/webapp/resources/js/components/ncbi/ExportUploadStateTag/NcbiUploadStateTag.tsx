@@ -1,7 +1,7 @@
 import { Tag } from "antd";
 import React from "react";
-import { TagColor } from "../../../types/ant-design";
 import { ExportUploadState } from "../../../types/irida/export/ExportUploadState";
+import { TagColor } from "../../../types/ant-design/TagColor";
 
 export type ExportTagStates = {
   [state in ExportUploadState]: {
