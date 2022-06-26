@@ -1,16 +1,16 @@
+import {EditOutlined} from "@ant-design/icons";
+import {Button, Cascader, Form, Popover} from "antd";
 import React from "react";
-import { Button, Cascader, Form, Popover } from "antd";
-import { EditOutlined } from "@ant-design/icons";
+import {Option} from "../../../types/ant-design";
 import TextWithHelpPopover from "../TextWithHelpPopover";
-import { Option } from "../../../types/ant-design";
-import { TableWithOptionsHandles } from "./index";
+import {TableWithOptionsHandles} from "./index";
 
-type Props = {
+interface Props {
   title: JSX.Element | string;
   options: Option[];
-  onChange: (value: string) => void;
+  onChange: (value: string, selectedOptions: Option[]) => void;
   helpText: string;
-};
+}
 
 // TODO: WTF should I call this thing
 
@@ -46,7 +46,7 @@ export const TableHeaderWithCascaderOptions = React.forwardRef(
                   onChange={onChange}
                 />
               </Form.Item>
-            </Form>
+            </Form>k
           }
         >
           <Button
