@@ -52,7 +52,8 @@ public class UIUsersServiceTest {
 		messageSource = mock(MessageSource.class);
 		passwordEncoder = new BCryptPasswordEncoder();
 		passwordResetService = mock(PasswordResetService.class);
-		service = new UIUsersService(userService, projectService, emailController, messageSource, passwordEncoder, passwordResetService);
+		service = new UIUsersService(userService, projectService, emailController, messageSource, passwordEncoder,
+				passwordResetService);
 
 		when(userService.read(anyLong())).thenReturn(USER2);
 		when(userService.getUserByUsername(anyString())).thenReturn(USER1);
@@ -77,7 +78,7 @@ public class UIUsersServiceTest {
 		Principal principal = () -> USER1.getFirstName();
 		UserDetailsModel userDetails = new UserDetailsModel(USER2);
 		UserDetailsResponse expectedResponse = new UserDetailsResponse(userDetails, "User", false, false, false, false,
-				true, false, false);
+				true, false);
 		UserDetailsResponse response = service.getUser(USER1.getId(), false, principal);
 		assertEquals(response, expectedResponse, "Received the correct user details response");
 	}

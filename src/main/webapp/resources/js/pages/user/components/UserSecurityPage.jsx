@@ -12,8 +12,8 @@ import { useGetUserDetailsQuery } from "../../../apis/users/users";
  * @constructor
  */
 export default function UserSecurityPage() {
-  const {userId} = useParams();
-  const {data: userDetails = {}} = useGetUserDetailsQuery(userId);
+  const { userId } = useParams();
+  const { data: userDetails = {} } = useGetUserDetailsQuery(userId);
 
   return (
     <>
@@ -22,7 +22,7 @@ export default function UserSecurityPage() {
       </Typography.Title>
       {userDetails.canCreatePasswordReset && !userDetails.mailConfigured && (
         <Alert
-          style={{marginBottom: SPACE_SM}}
+          style={{ marginBottom: SPACE_SM }}
           message={i18n("UserSecurityPage.alert.title")}
           description={
             <Typography.Paragraph>
@@ -33,8 +33,9 @@ export default function UserSecurityPage() {
           showIcon
         />
       )}
-      {userDetails.canChangePassword &&
-        <UserChangePasswordForm userId={userId}/>}
+      {userDetails.canEditUserInfo && (
+        <UserChangePasswordForm userId={userId} />
+      )}
       {userDetails.canCreatePasswordReset && userDetails.mailConfigured && (
         <UserResetPasswordLink
           userId={userId}
