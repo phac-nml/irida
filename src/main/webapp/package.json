@@ -7,7 +7,8 @@
     "start": "webpack --mode development --watch",
     "clean": "rm -rf node/ node_modules/ dist/ pages/templates/i18n/",
     "test": "jest resources/js/**/*.test.js",
-    "test:watch": "jest --watch resources/js/**/*.test.js"
+    "test:watch": "jest --watch resources/js/**/*.test.js",
+    "lint": "eslint --ext resources/js/**/*.{js,jsx,ts,tsx}"
   },
   "browserslist": [
     "last 2 Chrome versions",
@@ -106,6 +107,7 @@
     "eslint": "^8.13.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.4.0",
     "expose-loader": "^3.1.0",
