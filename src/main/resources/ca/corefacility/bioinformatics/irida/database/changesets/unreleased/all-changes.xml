@@ -6,4 +6,5 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
   <include file="user-account-drop-phone-constraint.xml" relativeToChangelogFile="true" />
   <include file="add-default-sequencing-object-to-sample.xml" relativeToChangelogFile="true" />
+  <include file="add-default-genome-assembly-to-sample.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
