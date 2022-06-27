@@ -58,6 +58,9 @@ type LoaderValues = [
   NcbiSelection[]
 ];
 
+/**
+ * React router loader
+ */
 export async function loader(): Promise<LoaderValues> {
   const stored = getStoredSamples();
   const platforms = getNCBIPlatforms();
@@ -89,6 +92,9 @@ function CreateNcbiExport(): JSX.Element {
   const sourceRef = React.useRef<TableWithOptionsHandles>(null);
   const platformRef = React.useRef<TableWithOptionsHandles>(null);
 
+  /*
+  This prevents the release date to be in the past.
+   */
   const disabledDate: RangePickerProps["disabledDate"] = (date): boolean => {
     // Can not select days before today for release
     return date && date < moment().startOf("day");

@@ -24,13 +24,15 @@ export const TableHeaderWithSelectOptions = React.forwardRef(
     { title, options = [], onChange, helpText }: Props,
     ref
   ): JSX.Element {
-    const [form] = Form.useForm();
+    const [form] = Form.useForm<{ select: string | undefined }>();
 
-    React.useImperativeHandle(ref, () => ({
-      resetSelect() {
-        form.resetFields();
-      },
-    }));
+    React.useImperativeHandle(ref, function () {
+      return {
+        resetSelect() {
+          form.resetFields();
+        },
+      };
+    });
 
     return (
       <div style={{ display: "flex", justifyContent: "space-between" }}>
