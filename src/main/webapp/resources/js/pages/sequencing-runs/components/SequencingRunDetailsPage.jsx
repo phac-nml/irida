@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   useGetSequencingRunDetailsQuery,
   useGetSequencingRunFilesQuery,
@@ -25,6 +25,7 @@ const { Content } = Layout;
  * @constructor
  */
 export default function SequencingRunDetailsPage() {
+  const navigate = useNavigate();
   const ADMIN_SEQUENCE_RUNS_URL = "admin/sequencing-runs";
   const showBack =
     isAdmin() && document.referrer.includes(ADMIN_SEQUENCE_RUNS_URL);
@@ -126,10 +127,11 @@ export default function SequencingRunDetailsPage() {
       onBack={showBack ? goToAdminSequenceRunListPage : undefined}
       headerExtras={
         <AddNewButton
-          href={
+          onClick={
             isAdmin()
-              ? setBaseUrl(`admin/sequencing-runs/${runId}/samples`)
-              : setBaseUrl(`sequencing-runs/${runId}/samples`)
+              ? () =>
+                  navigate(setBaseUrl(`admin/sequencing-runs/${runId}/samples`))
+              : () => navigate(setBaseUrl(`${runId}/samples`))
           }
           text={i18n("SequencingRunDetailsPage.button")}
         />

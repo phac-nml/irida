@@ -8,6 +8,10 @@ import { Button, Popconfirm } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { useDeleteSequencingRunMutation } from "../../../apis/sequencing-runs/sequencing-runs";
 import { isAdmin } from "../../../utilities/role-utilities";
+import { useNavigate } from "react-router-dom";
+
+const USERS_BASE_URL = setBaseUrl("users");
+const ADMIN_RUNS_BASE_URL = setBaseUrl("admin/sequencing-runs");
 
 /**
  * React component to display the sequencing run list table.
@@ -15,6 +19,7 @@ import { isAdmin } from "../../../utilities/role-utilities";
  * @constructor
  */
 export default function SequencingRunListTable() {
+  const navigate = useNavigate();
   const { updateTable } = useContext(PagedTableContext);
   const [deleteSequencingRun] = useDeleteSequencingRunMutation();
   const columns = [
@@ -27,10 +32,10 @@ export default function SequencingRunListTable() {
           <Button
             type="link"
             className="t-run-details-link"
-            href={
+            onClick={
               isAdmin()
-                ? setBaseUrl(`admin/sequencing-runs/${text}`)
-                : setBaseUrl(`/sequencing-runs/${text}`)
+                ? () => navigate(`${ADMIN_RUNS_BASE_URL}/${text}`)
+                : () => navigate(`${text}`)
             }
           >
             {text}
@@ -55,7 +60,7 @@ export default function SequencingRunListTable() {
           return null;
         }
         return (
-          <Button type="link" href={setBaseUrl(`users/${text.identifier}`)}>
+          <Button type="link" href={`${USERS_BASE_URL}/${text.identifier}`}>
             {text.label}
           </Button>
         );
