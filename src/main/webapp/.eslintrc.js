@@ -42,5 +42,11 @@ module.exports = {
         enforceForRenamedProperties: false,
       },
     ],
+    "prettier/prettier": [
+      "error",
+      {
+        endOfLine: "auto",
+      },
+    ],
   },
 };
