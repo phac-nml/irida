@@ -1,6 +1,6 @@
 import {
   NcbiInstrument,
-  NcbiPlatform, NcbiSelection,
+  NcbiSelection,
   NcbiSource,
   NcbiStrategy,
   NcbiSubmission,
@@ -17,7 +17,7 @@ export interface NcbiExportSubmissionTableModel {
 }
 
 export interface FullNcbiPlatforms {
-  [k :string] : NcbiInstrument[]
+  [k: string]: NcbiInstrument[];
 }
 
 /**
@@ -42,20 +42,31 @@ export async function getNcbiSubmission(
   return get(`/ncbi/project/${projectId}/details/${uploadId}`);
 }
 
-// TODO: this is not the right return type
+/**
+ * Fetch NCBI listed sequencing platforms.
+ */
 export async function getNCBIPlatforms(): Promise<FullNcbiPlatforms> {
-  const data =  await get(`/ncbi/platforms`);
+  const data = await get(`/ncbi/platforms`);
   return data.platforms;
 }
 
+/**
+ * Fetch list of NCBI listed sources
+ */
 export async function getNCBISources(): Promise<NcbiSource[]> {
   return await get(`/ncbi/sources`);
 }
 
+/**
+ * Fetch list of NCBI sequencing strategies
+ */
 export async function getNCBIStrategies(): Promise<NcbiStrategy[]> {
   return await get(`/ncbi/strategies`);
 }
 
-export async function getNCBISelections() : Promise<NcbiSelection[]> {
+/**
+ * Fetch list of NCBI selections
+ */
+export async function getNCBISelections(): Promise<NcbiSelection[]> {
   return await get(`/ncbi/selections`);
 }
