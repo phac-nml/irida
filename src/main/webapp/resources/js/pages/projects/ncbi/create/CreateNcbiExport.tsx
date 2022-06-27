@@ -15,6 +15,7 @@ import {
   Tooltip,
 } from "antd";
 import type { RangePickerProps } from "antd/es/date-picker";
+import { ColumnType } from "antd/lib/table";
 import moment from "moment";
 import React from "react";
 import { useLoaderData } from "react-router-dom";
@@ -126,7 +127,7 @@ function CreateNcbiExport(): JSX.Element {
   }
 
   const DEFAULT_COLUMN_WIDTH = 200;
-  const columns = [
+  const columns: ColumnType<NcbiBiosample>[] = [
     {
       title: "_SAMPLE",
       dataIndex: "name",
@@ -242,7 +243,7 @@ function CreateNcbiExport(): JSX.Element {
           >
             <Select
               style={{ display: "block" }}
-              onChange={() => sourceRef.current!.resetSelect()}
+              onChange={() => clearSelectByRef(sourceRef)}
             >
               {sources.map((option: string) => (
                 <Select.Option key={option}>{option}</Select.Option>
