@@ -1,7 +1,7 @@
 
 # Changelog
 
-## [22.05.5] - 2022/06/27
+## [22.05.5] - 2022/06/28
 * [UI]: Fixed bug preventing export of project samples table due to invalid url. [PR 1331](https://github.com/phac-nml/irida/pull/1331)
 
 ## [22.05.4] - 2022/06/16
