@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.security.Principal;
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,6 +45,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
@@ -137,13 +139,12 @@ public class UIUsersService {
 		boolean isAdmin = RoleUtilities.isAdmin(principalUser);
 		boolean canEditUserInfo = canEditUserInfo(principalUser, user);
 		boolean canEditUserStatus = canEditUserStatus(principalUser, user);
-		boolean canChangePassword = canChangePassword(principalUser, user);
 		boolean canCreatePasswordReset = canCreatePasswordReset(principalUser, user);
 
 		String currentRoleName = messageSource.getMessage("systemRole." + user.getSystemRole().getName(), null, locale);
 
 		return new UserDetailsResponse(userDetails, currentRoleName, mailConfigured, mailFailure, isAdmin,
-				canEditUserInfo, canEditUserStatus, canChangePassword, canCreatePasswordReset);
+				canEditUserInfo, canEditUserStatus, canCreatePasswordReset);
 	}
 
 	/**
@@ -355,16 +356,71 @@ public class UIUsersService {
 	}
 
 	/**
-	 * Check if the logged in user is allowed to change their password.
+	 * Check if the logged in user is an Admin
 	 *
-	 * @param principalUser - the currently logged in principal
-	 * @param user          - the user to edit
-	 * @return boolean if the principal can change their password
+	 * @param principal The logged in user to check
+	 * @return if the user is an admin
 	 */
-	private boolean canChangePassword(User principalUser, User user) {
-		boolean usersEqual = user.equals(principalUser);
+	private boolean isAdmin(Principal principal) {
+		User readPrincipal = userService.getUserByUsername(principal.getName());
+		return readPrincipal.getAuthorities().contains(Role.ROLE_ADMIN);
+	}
 
-		return usersEqual;
+	/**
+	 * Generate a temporary password for a user
+	 *
+	 * @return A temporary password
+	 */
+	private static String generatePassword() {
+		int PASSWORD_LENGTH = 32;
+		int ALPHABET_SIZE = 26;
+		int SINGLE_DIGIT_SIZE = 10;
+		int RANDOM_LENGTH = PASSWORD_LENGTH - 3;
+		String SPECIAL_CHARS = "!@#$%^&*()+?/<>=.\\{}";
+
+		List<Character> pwdArray = new ArrayList<>(PASSWORD_LENGTH);
+		SecureRandom random = new SecureRandom();
+
+		// 1. Create 1 random uppercase.
+		pwdArray.add((char) ('A' + random.nextInt(ALPHABET_SIZE)));
+
+		// 2. Create 1 random lowercase.
+		pwdArray.add((char) ('a' + random.nextInt(ALPHABET_SIZE)));
+
+		// 3. Create 1 random number.
+		pwdArray.add((char) ('0' + random.nextInt(SINGLE_DIGIT_SIZE)));
+
+		// 4. Add 1 special character
+		pwdArray.add(SPECIAL_CHARS.charAt(random.nextInt(SPECIAL_CHARS.length())));
+
+		// 5. Create 5 random.
+		int c = 'A';
+		int rand;
+		for (int i = 0; i < RANDOM_LENGTH; i++) {
+			rand = random.nextInt(4);
+			switch (rand) {
+			case 0:
+				c = '0' + random.nextInt(SINGLE_DIGIT_SIZE);
+				break;
+			case 1:
+				c = 'a' + random.nextInt(ALPHABET_SIZE);
+				break;
+			case 2:
+				c = 'A' + random.nextInt(ALPHABET_SIZE);
+				break;
+			case 3:
+				c = SPECIAL_CHARS.charAt(random.nextInt(SPECIAL_CHARS.length()));
+				break;
+			}
+			pwdArray.add((char) c);
+		}
+
+		// 6. Shuffle.
+		Collections.shuffle(pwdArray, random);
+
+		// 7. Create string.
+		Joiner joiner = Joiner.on("");
+		return joiner.join(pwdArray);
 	}
 
 	/**
