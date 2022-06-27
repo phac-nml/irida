@@ -137,8 +137,8 @@ function CreateNcbiExport(): JSX.Element {
     {
       title: (
         <TextWithHelpPopover
-          text={i18n("project.export.biosample.title")}
-          help={i18n("project.export.biosample.description")}
+          text={i18n("CreateNcbiExport.biosample-id")}
+          help={i18n("CreateNcbiExport.biosample-id.desc")}
         />
       ),
       dataIndex: "biosample",
