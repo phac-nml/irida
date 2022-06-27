@@ -15,6 +15,8 @@ interface Props {
 // TODO: WTF should I call this thing
 
 /**
+ * React component for the Ant Design Table that renders a popover containing a Cascader,
+ * allowing the user to select a default value for all entries in the column.
  *
  * @returns {JSX.Element}
  * @constructor
@@ -38,15 +40,15 @@ export const TableHeaderWithCascaderOptions = React.forwardRef(
         <Popover
           title={"Select value for all samples"}
           content={
-            <Form form={form}>
-              <Form.Item style={{ margin: 0 }} name="select">
-                <Cascader
-                  options={options}
-                  style={{ display: "block" }}
-                  onChange={onChange}
-                />
-              </Form.Item>
-            </Form>k
+              <Form form={form}>
+                  <Form.Item style={{margin: 0}} name="select">
+                      <Cascader
+                          options={options}
+                          style={{display: "block"}}
+                          onChange={onChange}
+                      />
+                  </Form.Item>
+              </Form>
           }
         >
           <Button
