@@ -73,7 +73,6 @@ export function SequencingRunSample({ samples, sample, sampleIndex }) {
           pairIndex={pairIndex}
           sample={sample}
           sampleIndex={sampleIndex}
-          samples={samples}
         />
       ))}
 

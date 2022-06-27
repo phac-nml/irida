@@ -23,7 +23,6 @@ import { useDispatch } from "react-redux";
  * @param {number} pairIndex - the index of the file pair in the sample's pair array
  * @param {object} sample - the sample
  * @param {number} sampleIndex - the index of the sample in the sample array
- * @param {array} samples - list of samples
  * @returns {JSX.Element} - Returns a sample component
  */
 export function SequencingRunSamplePair({
@@ -31,7 +30,6 @@ export function SequencingRunSamplePair({
   pairIndex,
   sample,
   sampleIndex,
-  samples,
 }) {
   const dispatch = useDispatch();
 
