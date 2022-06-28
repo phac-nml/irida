@@ -11,14 +11,14 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssembl
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.ReadSamplePermission;
 
 /**
  * Evaluate whether or not a user can read a {@link GenomeAssembly}
  */
 @Component
-public class ReadGenomeAssemblyPermission extends BasePermission<GenomeAssembly, Long> {
+public class ReadGenomeAssemblyPermission extends RepositoryBackedPermission<GenomeAssembly, Long> {
     private static final String PERMISSION_PROVIDED = "canReadGenomeAssembly";
 
     private static final Logger logger = LoggerFactory.getLogger(ReadGenomeAssemblyPermission.class);
