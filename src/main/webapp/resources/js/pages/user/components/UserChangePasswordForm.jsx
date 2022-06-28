@@ -15,11 +15,11 @@ import { SPACE_SM } from "../../../styles/spacing";
 /**
  * React component to display the user change password form.
  * @param {number} userId the identification number of the user
- * @param {boolean} showOldPassword whether to show the old password form field
+ * @param {boolean} requireOldPassword whether to show the old password form field
  * @returns {*}
  * @constructor
  */
-export function UserChangePasswordForm({ userId, showOldPassword }) {
+export function UserChangePasswordForm({ userId, requireOldPassword }) {
   const [changeUserPassword] = useChangeUserPasswordMutation();
   const [form] = Form.useForm();
   const navigate = useNavigate();
@@ -77,7 +77,7 @@ export function UserChangePasswordForm({ userId, showOldPassword }) {
         onFinish={onFormFinish}
         autoComplete="off"
       >
-        {showOldPassword && (
+        {requireOldPassword && (
           <Form.Item
             label={i18n("UserChangePasswordForm.form.label.oldPassword")}
             name="oldPassword"
