@@ -137,13 +137,13 @@ public class UIUsersService {
 		boolean isAdmin = RoleUtilities.isAdmin(principalUser);
 		boolean canEditUserInfo = canEditUserInfo(principalUser, user);
 		boolean canEditUserStatus = canEditUserStatus(principalUser, user);
-		boolean canChangePassword = canChangePassword(principalUser, user);
+		boolean isOwnAccount = isOwnAccount(principalUser, user);
 		boolean canCreatePasswordReset = canCreatePasswordReset(principalUser, user);
 
 		String currentRoleName = messageSource.getMessage("systemRole." + user.getSystemRole().getName(), null, locale);
 
 		return new UserDetailsResponse(userDetails, currentRoleName, mailConfigured, mailFailure, isAdmin,
-				canEditUserInfo, canEditUserStatus, canChangePassword, canCreatePasswordReset);
+				canEditUserInfo, canEditUserStatus, isOwnAccount, canCreatePasswordReset);
 	}
 
 	/**
@@ -357,14 +357,14 @@ public class UIUsersService {
 	}
 
 	/**
-	 * Check if the logged in user is allowed to change another user's password.
+	 * Check if the logged in user is modifying their own account.
 	 *
 	 * @param principalUser - the currently logged in principal
 	 * @param user          - the user to edit
 	 * @return boolean if the principal can change their password
 	 * @return if the user is an admin
 	 */
-	private boolean canChangePassword(User principalUser, User user) {
+	private boolean isOwnAccount(User principalUser, User user) {
 		boolean usersEqual = user.equals(principalUser);
 		return usersEqual;
 	}
