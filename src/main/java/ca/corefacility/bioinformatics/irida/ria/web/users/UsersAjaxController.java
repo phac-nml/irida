@@ -82,8 +82,7 @@ public class UsersAjaxController {
 		UserDetailsResponse response = uiUsersService.updateUser(userId, userEditRequest, principal, request);
 
 		if (response.hasErrors())
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(response.getErrors());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getErrors());
 		else
 			return ResponseEntity.ok(null);
 
@@ -101,15 +100,14 @@ public class UsersAjaxController {
 	 */
 	@RequestMapping(value = "/{userId}/changePassword", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, String>> changeUserPassword(@PathVariable Long userId,
-			@RequestParam String oldPassword, @RequestParam String newPassword, Principal principal,
+			@RequestParam(required = false) String oldPassword, @RequestParam String newPassword, Principal principal,
 			HttpServletRequest request) {
 
 		UserDetailsResponse response = uiUsersService.changeUserPassword(userId, oldPassword, newPassword, principal,
 				request);
 
 		if (response.hasErrors())
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(response.getErrors());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getErrors());
 		else
 			return ResponseEntity.ok(null);
 	}
@@ -142,7 +140,8 @@ public class UsersAjaxController {
 	public ResponseEntity<AjaxResponse> adminNewPasswordReset(@PathVariable Long userId, Principal principal,
 			Locale locale) {
 		try {
-			return ResponseEntity.ok(new AjaxSuccessResponse(uiUsersService.adminNewPasswordReset(userId, principal, locale)));
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(uiUsersService.adminNewPasswordReset(userId, principal, locale)));
 		} catch (UIEmailSendException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage()));
 		}

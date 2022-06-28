@@ -15,10 +15,11 @@ import { SPACE_SM } from "../../../styles/spacing";
 /**
  * React component to display the user change password form.
  * @param {number} userId the identification number of the user
+ * @param {boolean} showOldPassword whether to show the old password form field
  * @returns {*}
  * @constructor
  */
-export function UserChangePasswordForm({userId}) {
+export function UserChangePasswordForm({ userId, showOldPassword }) {
   const [changeUserPassword] = useChangeUserPasswordMutation();
   const [form] = Form.useForm();
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ export function UserChangePasswordForm({userId}) {
   ];
 
   const onFormFinish = (values) => {
-    changeUserPassword({userId: userId, ...values})
+    changeUserPassword({ userId: userId, ...values })
       .unwrap()
       .then(() => {
         notification.success({
@@ -56,7 +57,7 @@ export function UserChangePasswordForm({userId}) {
         {i18n("UserChangePasswordForm.title")}
       </Typography.Title>
       <Alert
-        style={{marginBottom: SPACE_SM}}
+        style={{ marginBottom: SPACE_SM }}
         message={i18n("UserChangePasswordForm.alert.title")}
         description={
           <Typography.Paragraph>
@@ -76,18 +77,20 @@ export function UserChangePasswordForm({userId}) {
         onFinish={onFormFinish}
         autoComplete="off"
       >
-        <Form.Item
-          label={i18n("UserChangePasswordForm.form.label.oldPassword")}
-          name="oldPassword"
-          rules={[
-            {
-              required: true,
-              message: i18n("UserChangePasswordForm.alert.rule1"),
-            },
-          ]}
-        >
-          <Input.Password/>
-        </Form.Item>
+        {showOldPassword && (
+          <Form.Item
+            label={i18n("UserChangePasswordForm.form.label.oldPassword")}
+            name="oldPassword"
+            rules={[
+              {
+                required: true,
+                message: i18n("UserChangePasswordForm.alert.rule1"),
+              },
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+        )}
         <Form.Item
           label={i18n("UserChangePasswordForm.form.label.newPassword")}
           name="newPassword"
@@ -96,7 +99,7 @@ export function UserChangePasswordForm({userId}) {
               required: true,
               message: i18n("UserChangePasswordForm.alert.rule1"),
             },
-            {min: 8, message: i18n("UserChangePasswordForm.alert.rule2")},
+            { min: 8, message: i18n("UserChangePasswordForm.alert.rule2") },
             {
               pattern: new RegExp("^.*[A-Z].*$"),
               message: i18n("UserChangePasswordForm.alert.rule3"),
@@ -115,7 +118,7 @@ export function UserChangePasswordForm({userId}) {
             },
           ]}
         >
-          <Input.Password/>
+          <Input.Password />
         </Form.Item>
         <Form.Item>
           <Button className="t-submit-btn" type="primary" htmlType="submit">

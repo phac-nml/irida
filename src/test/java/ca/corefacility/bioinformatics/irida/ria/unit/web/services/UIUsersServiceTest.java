@@ -78,7 +78,7 @@ public class UIUsersServiceTest {
 		Principal principal = () -> USER1.getFirstName();
 		UserDetailsModel userDetails = new UserDetailsModel(USER2);
 		UserDetailsResponse expectedResponse = new UserDetailsResponse(userDetails, "User", false, false, false, false,
-				true, false);
+				true, false, false);
 		UserDetailsResponse response = service.getUser(USER1.getId(), false, principal);
 		assertEquals(response, expectedResponse, "Received the correct user details response");
 	}

@@ -139,12 +139,13 @@ public class UIUsersService {
 		boolean isAdmin = RoleUtilities.isAdmin(principalUser);
 		boolean canEditUserInfo = canEditUserInfo(principalUser, user);
 		boolean canEditUserStatus = canEditUserStatus(principalUser, user);
+		boolean canChangePassword = canChangePassword(principalUser, user);
 		boolean canCreatePasswordReset = canCreatePasswordReset(principalUser, user);
 
 		String currentRoleName = messageSource.getMessage("systemRole." + user.getSystemRole().getName(), null, locale);
 
 		return new UserDetailsResponse(userDetails, currentRoleName, mailConfigured, mailFailure, isAdmin,
-				canEditUserInfo, canEditUserStatus, canCreatePasswordReset);
+				canEditUserInfo, canEditUserStatus, canChangePassword, canCreatePasswordReset);
 	}
 
 	/**
@@ -227,13 +228,15 @@ public class UIUsersService {
 		Map<String, Object> updatedValues = new HashMap<>();
 		Map<String, String> errors = new HashMap<>();
 
-		if (!Strings.isNullOrEmpty(oldPassword) || !Strings.isNullOrEmpty(newPassword)) {
+		if (!Strings.isNullOrEmpty(oldPassword) && !Strings.isNullOrEmpty(newPassword)) {
 			if (!passwordEncoder.matches(oldPassword, principalUser.getPassword())) {
 				errors.put("oldPassword",
 						messageSource.getMessage("server.user.edit.password.old.incorrect", null, request.getLocale()));
 			} else {
 				updatedValues.put("password", newPassword);
 			}
+		} else {
+			updatedValues.put("password", newPassword);
 		}
 
 		if (errors.isEmpty()) {
@@ -321,7 +324,7 @@ public class UIUsersService {
 			EntityExistsException eex = (EntityExistsException) ex;
 			errors.put(eex.getFieldName(), eex.getMessage());
 		} else if (ex instanceof PasswordReusedException) {
-			errors.put("password", messageSource.getMessage("server.user.edit.passwordReused", null, locale));
+			errors.put("newPassword", messageSource.getMessage("server.user.edit.passwordReused", null, locale));
 		}
 
 		return errors;
@@ -353,6 +356,19 @@ public class UIUsersService {
 		boolean usersEqual = user.equals(principalUser);
 
 		return !(principalAdmin && usersEqual);
+	}
+
+	/**
+	 * Check if the logged in user is allowed to change another user's password.
+	 *
+	 * @param principalUser - the currently logged in principal
+	 * @param user          - the user to edit
+	 * @return boolean if the principal can change their password
+	 * @return if the user is an admin
+	 */
+	private boolean canChangePassword(User principalUser, User user) {
+		boolean usersEqual = user.equals(principalUser);
+		return usersEqual;
 	}
 
 	/**
