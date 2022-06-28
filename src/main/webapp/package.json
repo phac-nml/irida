@@ -5,8 +5,8 @@
   "scripts": {
     "build": "webpack --mode production",
     "start": "webpack --mode development --watch",
-    "clean": "rm -r node* dist/ pages/templates/i18n/",
-    "test": "jest",
+    "clean": "rm -rf node/ node_modules/ dist/ pages/templates/i18n/",
+    "test": "jest resources/js/**/*.test.js",
     "test:watch": "jest --watch resources/js/**/*.test.js",
     "lint": "eslint --ext resources/js/**/*.{js,jsx,ts,tsx}"
   },
@@ -53,7 +53,6 @@
     "jquery-validation": "^1.19.3",
     "lodash": "^4.17.21",
     "moment": "^2.29.2",
-    "npm": "^8.7.0",
     "phylocanvas": "^2.8.1",
     "phylocanvas-plugin-export-svg": "^1.0.0",
     "phylocanvas-plugin-metadata": "^2.2.0",
@@ -118,7 +117,6 @@
     "less": "^4.1.2",
     "less-loader": "^10.2.0",
     "mini-css-extract-plugin": "^2.6.0",
-    "path": "^0.12.7",
     "postcss": "^8.4.12",
     "postcss-import": "^14.1.0",
     "postcss-loader": "^6.2.1",
