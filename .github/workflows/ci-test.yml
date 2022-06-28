@@ -17,7 +17,7 @@ on:
       branches: master
 
 jobs:
-  maven-build: # Maven integration tests
+  gradle-build: # Gradle integration tests
     runs-on: ubuntu-20.04 #See pre-installed software at https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-Readme.md
     env:
       MYSQL_PORT: 3800
@@ -27,34 +27,38 @@ jobs:
       MYSQL_HOST: 127.0.0.1
 
     strategy:
-      fail-fast: false  #Setting so that if one of the test suites fail, the other will continue
+      fail-fast: false #Setting so that if one of the test suites fail, the other will continue
       matrix:
         #The list of test suites to run
-        suite: [ 'service_testing', 'rest_testing', 'ui_testing', 'galaxy_testing', 'galaxy_pipeline_testing', 'open_api_testing' ]
+        suite:
+          [
+            "service_testing",
+            "rest_testing",
+            "ui_testing",
+            "galaxy_testing",
+            "galaxy_pipeline_testing",
+            "open_api_testing",
+          ]
 
     steps:
-      - uses: actions/checkout@v2 #Checkout the project from git
-      - name: Cache Maven dependencies #Pull the cache for Maven.  This caches all dependencies assuming the pom file is the same
-        uses: actions/cache@v2
+      - uses: actions/checkout@v3 #Checkout the project from git
+      - name: Cache PNP #Pull the Yarn cache for PNP (package management strategy - see https://classic.yarnpkg.com/en/docs/pnp).  This caches all dependencies assuming the yarn.lock file stays the same
+        uses: actions/cache@v3
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ matrix.suite }}-${{ hashFiles('**/pom.xml') }}
-      - name: Cache PNP  #Pull the Yarn cache for PNP (package management strategy - see https://classic.yarnpkg.com/en/docs/pnp).  This caches all dependencies assuming the yarn.lock file stays the same
-        uses: actions/cache@v2
-        with:
-          path: '**/.pnp.js'
+          path: "**/.pnp.js"
           key: ${{ runner.os }}-pnp-${{ hashFiles('**/yarn.lock') }}
-      - name: Cache yarn  #Pull the cache for yarn.  This caches all dependencies assuming the yarn.lock file stays the same
+      - name: Cache yarn #Pull the cache for yarn.  This caches all dependencies assuming the yarn.lock file stays the same
         uses: actions/cache@v2
         with:
-          path: '**/.yarn'
+          path: "**/.yarn"
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      - uses: mirromutth/mysql-action@v1.1
+      - name: Setup MySQL
+        uses: mirromutth/mysql-action@v1.1
         with:
           host port: ${{ env.MYSQL_PORT }}
-          character set server: 'utf8'
-          collation server: 'utf8_general_ci'
-          mysql version: '5.7'
+          character set server: "utf8"
+          collation server: "utf8_general_ci"
+          mysql version: "5.7"
           mysql database: ${{ env.MYSQL_DATABASE }}
           mysql user: ${{ env.MYSQL_USER }}
           mysql password: ${{ env.MYSQL_PASSWORD }}
@@ -62,36 +66,73 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Install libraries # Install our non-maven backed dependencies
-        run: pushd lib; ./install-libs.sh; popd
-      - name: Run tests with Maven # Run the test suite
-        env:
-          NODE_OPTIONS: "--max-old-space-size=8192"
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Wait for MySQL
+        run: |
+          while ! mysqladmin ping --host=${{ env.MYSQL_HOST }} --port=${{ env.MYSQL_PORT }} --user=${{ env.MYSQL_USER }} --password=${{ env.MYSQL_ROOT_PASSWORD }} --silent; do
+            sleep 1
+          done
+      - name: Run tests with Gradle # Run the test suite
         run: ./run-tests.sh --db-host ${{ env.MYSQL_HOST }} --db-port ${{ env.MYSQL_PORT }} --database ${{ env.MYSQL_DATABASE}} ${{ matrix.suite }}
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v3
+        if: matrix.suite != 'open_api_testing' && always()
+        with:
+          report_paths: "**/build/test-results/*ITest/TEST-*.xml" # Publish Integration Test results
+          fail_on_failure: false
+          check_name: "JUnit Test Report (${{ matrix.suite }})"
+          annotate_only: true
 
   docs-build: # Testing the javadoc and jekyll documentation builds
     runs-on: ubuntu-20.04
+    env:
+      MYSQL_PORT: 3800
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+      MYSQL_DATABASE: irida_integration_test
+      MYSQL_HOST: 127.0.0.1
 
     steps:
-      - uses: actions/checkout@v2 #Checkout the project from git
-      - name: Cache Maven dependencies #Pull the cache for Maven.  This caches all dependencies assuming the pom file is the same
+      - uses: actions/checkout@v3 #Checkout the project from git
+      - name: Cache PNP #Pull the Yarn cache for PNP (package management strategy - see https://classic.yarnpkg.com/en/docs/pnp).  This caches all dependencies assuming the yarn.lock file stays the same
+        uses: actions/cache@v3
+        with:
+          path: "**/.pnp.js"
+          key: ${{ runner.os }}-pnp-${{ hashFiles('**/yarn.lock') }}
+      - name: Cache yarn #Pull the cache for yarn.  This caches all dependencies assuming the yarn.lock file stays the same
         uses: actions/cache@v2
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-doc_testing-${{ hashFiles('**/pom.xml') }}
+          path: "**/.yarn"
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+      - name: Setup MySQL
+        uses: mirromutth/mysql-action@v1.1
+        with:
+          host port: ${{ env.MYSQL_PORT }}
+          character set server: "utf8"
+          collation server: "utf8_general_ci"
+          mysql version: "5.7"
+          mysql database: ${{ env.MYSQL_DATABASE }}
+          mysql user: ${{ env.MYSQL_USER }}
+          mysql password: ${{ env.MYSQL_PASSWORD }}
       - name: Setup Ruby
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: '2.7'
+          ruby-version: "2.7"
       - name: Set up JDK 11 # Installs java 11
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Install Java libraries
-        run: pushd lib; ./install-libs.sh; popd;
-      - name: Install doc libraries
-        run: pushd doc; bundle install; popd
-      - name: Build Javadoc
-        run: mvn clean site
-      - name: Build Jekyll Site
-        run: pushd doc; bundle exec jekyll build;
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Wait for MySQL
+        run: |
+          while ! mysqladmin ping --host=${{ env.MYSQL_HOST }} --port=${{ env.MYSQL_PORT }} --user=${{ env.MYSQL_USER }} --password=${{ env.MYSQL_ROOT_PASSWORD }} --silent; do
+            sleep 1
+          done
+      - name: Build Documentation Site
+        run: ./gradlew clean buildDocsSite -Dliquibase.update.database.schema=true -Dspring.datasource.url=jdbc:mysql://${{env.MYSQL_HOST}}:${{env.MYSQL_PORT}}/${{env.MYSQL_DATABASE}} -Dspring.datasource.dbcp2.max-wait=10000
