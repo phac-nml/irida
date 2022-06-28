@@ -17,13 +17,13 @@ public class UserDetailsResponse extends AjaxResponse {
 	private boolean isAdmin;
 	private boolean canEditUserInfo;
 	private boolean canEditUserStatus;
-	private boolean canChangePassword;
+	private boolean isOwnAccount;
 	private boolean canCreatePasswordReset;
 	private Map<String, String> errors;
 
 	public UserDetailsResponse(UserDetailsModel userDetails, String currentRole, boolean mailConfigured,
 			boolean mailFailure, boolean isAdmin, boolean canEditUserInfo, boolean canEditUserStatus,
-			boolean canChangePassword, boolean canCreatePasswordReset) {
+			boolean isOwnAccount, boolean canCreatePasswordReset) {
 		this.userDetails = userDetails;
 		this.currentRole = currentRole;
 		this.mailConfigured = mailConfigured;
@@ -31,7 +31,7 @@ public class UserDetailsResponse extends AjaxResponse {
 		this.isAdmin = isAdmin;
 		this.canEditUserInfo = canEditUserInfo;
 		this.canEditUserStatus = canEditUserStatus;
-		this.canChangePassword = canChangePassword;
+		this.isOwnAccount = isOwnAccount;
 		this.canCreatePasswordReset = canCreatePasswordReset;
 	}
 
@@ -95,12 +95,12 @@ public class UserDetailsResponse extends AjaxResponse {
 		this.canEditUserStatus = canEditUserStatus;
 	}
 
-	public boolean isCanChangePassword() {
-		return canChangePassword;
+	public boolean isOwnAccount() {
+		return isOwnAccount;
 	}
 
-	public void setCanChangePassword(boolean canChangePassword) {
-		this.canChangePassword = canChangePassword;
+	public void setOwnAccount(boolean isOwnAccount) {
+		this.isOwnAccount = isOwnAccount;
 	}
 
 	public boolean isCanCreatePasswordReset() {
@@ -137,7 +137,7 @@ public class UserDetailsResponse extends AjaxResponse {
 		UserDetailsResponse that = (UserDetailsResponse) o;
 		return mailConfigured == that.mailConfigured && mailFailure == that.mailFailure && isAdmin == that.isAdmin
 				&& canEditUserInfo == that.canEditUserInfo && canEditUserStatus == that.canEditUserStatus
-				&& canChangePassword == that.canChangePassword && canCreatePasswordReset == that.canCreatePasswordReset
+				&& isOwnAccount == that.isOwnAccount && canCreatePasswordReset == that.canCreatePasswordReset
 				&& Objects.equals(userDetails, that.userDetails) && Objects.equals(currentRole, that.currentRole)
 				&& Objects.equals(errors, that.errors);
 	}
@@ -145,6 +145,6 @@ public class UserDetailsResponse extends AjaxResponse {
 	@Override
 	public int hashCode() {
 		return Objects.hash(userDetails, currentRole, mailConfigured, mailFailure, isAdmin, canEditUserInfo,
-				canEditUserStatus, canChangePassword, canCreatePasswordReset, errors);
+				canEditUserStatus, isOwnAccount, canCreatePasswordReset, errors);
 	}
 }

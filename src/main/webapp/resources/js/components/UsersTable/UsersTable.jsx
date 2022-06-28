@@ -2,8 +2,8 @@ import React, { useContext } from "react";
 import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { useSetUsersDisabledStatusMutation } from "../../apis/users/users";
 import { Checkbox } from "antd";
-import { setBaseUrl } from "../../utilities/url-utilities";
 import { dateColumnFormat } from "../ant.design/table-renderers";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 /**
  * React component for displaying paged table of all users in the system
@@ -11,7 +11,7 @@ import { dateColumnFormat } from "../ant.design/table-renderers";
  * @constructor
  */
 export function UsersTable() {
-  const {updateTable} = useContext(PagedTableContext);
+  const { updateTable } = useContext(PagedTableContext);
   const IS_ADMIN = window.TL._USER.systemRole === "ROLE_ADMIN";
   const [setUsersDisabledStatus] = useSetUsersDisabledStatusMutation();
 
@@ -54,10 +54,12 @@ export function UsersTable() {
       sorter: true,
       fixed: "left",
       render(text, full) {
-        return (
+        return IS_ADMIN ? (
           <a className="t-username" href={setBaseUrl(`users/${full.id}`)}>
             {text}
           </a>
+        ) : (
+          text
         );
       },
     },
@@ -102,13 +104,13 @@ export function UsersTable() {
       },
     },
     {
-      ...dateColumnFormat({className: "t-created"}),
+      ...dateColumnFormat({ className: "t-created" }),
       key: "createdDate",
       title: i18n("AdminUsersTable.created"),
       dataIndex: "createdDate",
     },
     {
-      ...dateColumnFormat({className: "t-modified"}),
+      ...dateColumnFormat({ className: "t-modified" }),
       key: "lastLogin",
       title: (
         <span className="t-modified-col">
@@ -122,7 +124,7 @@ export function UsersTable() {
   return (
     <PagedTable
       columns={columns}
-      onRow={(record) => (record.enabled ? {} : {className: "disabled"})}
+      onRow={(record) => (record.enabled ? {} : { className: "disabled" })}
     />
   );
 }

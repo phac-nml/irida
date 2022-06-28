@@ -52,7 +52,8 @@ public class UIUsersServiceTest {
 		messageSource = mock(MessageSource.class);
 		passwordEncoder = new BCryptPasswordEncoder();
 		passwordResetService = mock(PasswordResetService.class);
-		service = new UIUsersService(userService, projectService, emailController, messageSource, passwordEncoder, passwordResetService);
+		service = new UIUsersService(userService, projectService, emailController, messageSource, passwordEncoder,
+				passwordResetService);
 
 		when(userService.read(anyLong())).thenReturn(USER2);
 		when(userService.getUserByUsername(anyString())).thenReturn(USER1);
