@@ -1,23 +1,32 @@
-<!doctype html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      th:lang="${#locale}">
-<head>
-	<meta charset="UTF-8"/>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<title data-layout-title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE" th:text="#{global.title}">IRIDA
-		Platform</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="icon" href="/resources/img/favicon.ico" th:href="@{/resources/img/favicon.ico}" />
-	<webpacker:css entry="vendor" />
-</head>
-<body>
-<th:block layout:fragment="content">
-</th:block>
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  th:lang="${#locale}"
+  th:data-context="@{/}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title
+      data-layout-title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE"
+      th:text="#{global.title}"
+    >
+      IRIDA Platform
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="icon"
+      href="/resources/img/favicon.ico"
+      th:href="@{/resources/img/favicon.ico}"
+    />
+    <webpacker:css entry="vendor" />
+  </head>
+  <body>
+    <th:block layout:fragment="content"> </th:block>
 
-<th:block th:if="${analytics}">
-	<th:block th:utext="${analytics}"></th:block>
-</th:block>
-</body>
-</body>
+    <th:block th:if="${analytics}">
+      <th:block th:utext="${analytics}"></th:block>
+    </th:block>
+  </body>
 </html>
