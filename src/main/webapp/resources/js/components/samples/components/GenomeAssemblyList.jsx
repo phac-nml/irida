@@ -70,7 +70,7 @@ export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
       ) {
         actions.push(
           <Tooltip
-            title={i18n("SampleFilesList.defaultSelected")}
+            title={i18n("SampleFilesList.defaultSelectedAssembly")}
             placement="top"
             key={`default-tag-tooltip-ga-${genomeAssemblyObj.identifier}`}
           >
@@ -86,7 +86,7 @@ export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
       } else {
         actions.push(
           <Tooltip
-            title={i18n("SampleFilesList.tooltip.setAsDefault")}
+            title={i18n("SampleFilesList.tooltip.setAsDefaultAssembly")}
             placement="top"
             key={`set-default-tooltip-ga-${genomeAssemblyObj.identifier}`}
           >

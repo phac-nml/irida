@@ -212,6 +212,12 @@
                    modified_date="2014-08-06 10:01:03"
                    file_path="src/test/resources/files/sequence-files/04-4444_S1_L001_R2_001.fastq" />
 
+    <genome_assembly id="1" created_date="2014-07-30 08:24:34" />
+    <genome_assembly id="2" created_date="2014-07-30 08:24:34" />
+
+    <uploaded_assembly id="1" file_path="src/test/resources/files/test_file.fasta" />
+    <uploaded_assembly id="2" file_path="src/test/resources/files/test_file_2.fasta" />
+
     <sequencing_object id="1" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
     <sequencing_object id="2" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
     <sequencing_object id="3" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
@@ -252,6 +258,9 @@
                              sample_id="19" sequencingobject_id="4" />
     <sample_sequencingobject id="5" created_date="2013-07-18 14:20:19.0"
                              sample_id="19" sequencingobject_id="5" />
+
+    <sample_genome_assembly id="1" sample_id="19" genome_assembly_id="1" createdDate="2014-07-30 08:24:34" />
+    <sample_genome_assembly id="2" sample_id="19" genome_assembly_id="2" createdDate="2014-07-30 08:24:34" />
 
     <analysis_submission id="1" name="another analysis" remote_analysis_id="1" analysis_id="1" reference_file_id="1"
                          analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19"
