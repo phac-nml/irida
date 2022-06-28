@@ -8,10 +8,11 @@ import { PasswordPolicyAlert } from "../../../components/alerts/PasswordPolicyAl
 /**
  * React component to display the user change password form.
  * @param {number} userId the identification number of the user
+ * @param {boolean} requireOldPassword whether to show the old password form field
  * @returns {*}
  * @constructor
  */
-export function UserChangePasswordForm({ userId }) {
+export function UserChangePasswordForm({ userId, requireOldPassword }) {
   const [changeUserPassword] = useChangeUserPasswordMutation();
   const [form] = Form.useForm();
   const navigate = useNavigate();
@@ -52,18 +53,20 @@ export function UserChangePasswordForm({ userId }) {
         onFinish={onFormFinish}
         autoComplete="off"
       >
-        <Form.Item
-          label={i18n("UserChangePasswordForm.form.label.oldPassword")}
-          name="oldPassword"
-          rules={[
-            {
-              required: true,
-              message: i18n("validation-utilities.password.required"),
-            },
-          ]}
-        >
-          <Input.Password />
-        </Form.Item>
+        {requireOldPassword && (
+          <Form.Item
+            label={i18n("UserChangePasswordForm.form.label.oldPassword")}
+            name="oldPassword"
+            rules={[
+              {
+                required: true,
+                message: i18n("validation-utilities.password.required"),
+              },
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+        )}
         <Form.Item
           label={i18n("UserChangePasswordForm.form.label.newPassword")}
           name="newPassword"
