@@ -1,11 +1,11 @@
-import axios, { AxiosResponse } from "axios";
-import { setBaseUrl } from "../../utilities/url-utilities";
+import axios, {AxiosResponse} from "axios";
+import {activitiesRoute} from "../routes";
 
 /**
  * @file API for handling activities
  */
 
-const BASE_URL = setBaseUrl(`/ajax/activities`);
+const BASE_URL = activitiesRoute();
 
 export interface ActivitiesResponse extends AxiosResponse {
   data: Activities;
@@ -35,7 +35,10 @@ export interface ActivityItem {
  * @param projectId - current project identifier
  * @param page - page of activities requested
  */
-export function getProjectActivities(projectId: number, page = 0): Promise<Activities> {
+export function getProjectActivities(
+  projectId: number,
+  page = 0
+): Promise<Activities> {
   try {
     return axios
       .get(`${BASE_URL}/project?projectId=${projectId}&page=${page}`)
