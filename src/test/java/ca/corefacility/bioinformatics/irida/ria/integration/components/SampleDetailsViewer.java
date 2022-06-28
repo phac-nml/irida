@@ -84,6 +84,12 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-default-seq-obj-tag")
 	private List<WebElement> defaultSeqObjTags;
 
+	@FindBy(className = "t-set-default-genome-assembly-button")
+	private List<WebElement> setDefaultGenomeAssemblyBtns;
+
+	@FindBy(className = "t-default-genome-assembly-tag")
+	private List<WebElement> defaultGenomeAssemblyTags;
+
 	@FindBy(className= "t-sample-analyses")
 	private WebElement sampleAnalysesTable;
 
@@ -361,6 +367,22 @@ public class SampleDetailsViewer extends AbstractPage {
 	public void clickRemoveSampleFromCartButton() {
 		removeSampleFromCartBtn.click();
 		waitForTime(500);
+	}
+
+	public int numberOfSequencingObjectsSetAsDefault() {
+		return defaultSeqObjTags.size();
+	}
+
+	public int numberOfGenomeAssembliesSetAsDefault() {
+		return defaultGenomeAssemblyTags.size();
+	}
+
+	public int numberOfSetAsDefaultSeqObjsButtons() {
+		return setDefaultSeqObjBtns.size();
+	}
+
+	public int numberOfGenomeAssembliesSetAsDefaultButtons() {
+		return setDefaultGenomeAssemblyBtns.size();
 	}
 
 }
