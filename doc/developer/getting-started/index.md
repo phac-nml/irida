@@ -38,14 +38,14 @@ IRIDA uses the Spring Framework as the main backbone of the application.  Spring
 
 For a better understanding of how Spring works, it's recommended that IRIDA developers attend a *Core Spring Training* course [https://pivotal.io/training/courses/core-spring-training](https://pivotal.io/training/courses/core-spring-training).
 
-#### Apache Maven
+#### Gradle
 {:.no_toc}
 
-Documentation: [http://maven.apache.org/guides/](http://maven.apache.org/guides/)
+Documentation: [https://docs.gradle.org/current/userguide/userguide.html](https://docs.gradle.org/current/userguide/userguide.html)
 
-IRIDA uses Apache Maven for dependency management and build automation.  Maven allows developers to specify dependencies for a Java application and Maven will handle downloading all necessary required packages and ensuring they're available for developers on the Java classpath.  It also allows you to specify build lifecycles to automate packaging an application for distribution or execute code for development.
+IRIDA uses Gradle for dependency management and build automation.  Gradle allows developers to specify dependencies for a Java application and Gradle will handle downloading all necessary required packages and ensuring they're available for developers on the Java classpath.  It also allows you to specify build lifecycles to automate packaging an application for distribution or execute code for development.
 
-Maven settings and dependencies can generally be found in the `pom.xml` file in the IRIDA root directory.
+Gradle settings and dependencies can generally be found in the `settings.gradle.kts` and `build.gradle.kts` files in the IRIDA root directory.
 
 #### Hibernate
 {:.no_toc}
@@ -79,12 +79,11 @@ Galaxy is used as IRIDA's analysis workflow engine.  Analysis pipelines must be 
 Development platform
 --------------------
 
-The development platform used by most IRIDA developers is the [Eclipse](https://eclipse.org/ide/) IDE.  
+The development platform used by most IRIDA developers is the [Eclipse](https://eclipse.org/ide/) IDE.
 
 The following plugins are recommended:
 
 * Eclipse EGit - Git integration.  Helps by showing changes made to your codebase.
-* Eclipse m2e - Maven integration.  Helps build your Maven project.
 
 The following code formatting file should be imported into Eclipse for consistency between developers: [IRIDA eclipse code format](irida-code-format.xml)
 
@@ -98,13 +97,7 @@ An (incomplete) set of instructions for getting the IRIDA service layer and web 
 * Install the following dependencies from your chosen package manager:
   * MariaDB
   * Java 11 JDK
-  * Apache Maven
-* Run the library installation script in the `lib/` directory:
-
-```
-cd irida/lib/
-./install-libs.sh
-```
+  * Gradle
 * Create a test database in MariaDB with the name `irida_test` and user `test` with password `test`.
 * Create a second test database in MariaDB with the name `irida_integration_test` and user `test` with password `test` (for running local integration tests).
 
@@ -146,22 +139,20 @@ An IRIDA development server can be run with the `run.sh` script available in the
 Running the `run.sh` without arguments script is equivalent to running:
 
 ```bash
-mvn clean spring-boot:run -Dspring.profiles.active=dev
+./gradlew clean bootRun --args="--spring.profiles.active=dev"
 ```
-
-Any arguments added after `run.sh` will be proxied to the `mvn ...` command.
 
 #### Spring profiles
 
 Spring allows us to set profiles in the application that can be used to set up certain services for running in different environments.
 
 ##### Basic profiles
-* `prod` - Production mode.  
-  * Hibernate will not be allowed to make changes to the database schema.  
-  * Database will be managed by Liquibase.  
+* `prod` - Production mode.
+  * Hibernate will not be allowed to make changes to the database schema.
+  * Database will be managed by Liquibase.
   * Attempt to connect to Galaxy to run workflows
   * Run all scheduled tasks such as NCBI uploads, data synchronization, etc.
-* `dev` - Development mode.  
+* `dev` - Development mode.
   * Hibernate to attempt to update the IRIDA database as you make code changes.
   * No galaxy connection.
   * Run only the file processing scheduled task.
@@ -170,7 +161,7 @@ Spring allows us to set profiles in the application that can be used to set up c
 
 The advanced profiles allow you to configure your server to run specific components of the IRIDA application.  The different profiles enable specific scheduled tasks which are used to run many of IRIDA's analysis, processing, or data transfer tools.  For more information on setting up an IRIDA server to run in multi-server mode, see the [installation documentation](../../administrator/web/#multi-web-server-configuration).
 
-* `web` - Run the IRIDA user interface and REST API web application servers.  
+* `web` - Run the IRIDA user interface and REST API web application servers.
 * `email` - Run the email subscription service.  This will send email digests out to users on a scheduled basis.
 * `analysis` - Run the IRIDA analysis engine.  This profile launches and monitors progress of all analysis pipelines in IRIDA.
 * `processing` - File processing pipeline for uploaded sequencing data.
@@ -185,12 +176,12 @@ The advanced profiles allow you to configure your server to run specific compone
 When running IRIDA from the command line, a profile can be set by adding the following parameter:
 
 ```bash
--Dspring.profiles.active=YOURPROFILE
+--args="--spring.profiles.active=YOURPROFILE"
 ```
 
 #### Running IRIDA tests locally
 
-While GitHub Actions runs all IRIDA's testing on every pull request, it is often useful to run IRIDA's test suite locally for debugging or development.  IRIDA's test suite can be run with Maven using the `test` and `verify` goals.
+While GitHub Actions runs all IRIDA's testing on every pull request, it is often useful to run IRIDA's test suite locally for debugging or development.  IRIDA's test suite can be run with Grade using the `test` and `check` goals.
 
 See the [IRIDA tests](#irida-tests) section for more on how IRIDA's tests are developed.
 
@@ -200,29 +191,36 @@ See the [IRIDA tests](#irida-tests) section for more on how IRIDA's tests are de
 IRIDA's unit tests can be run with the following command:
 
 ```bash
-mvn clean test
+./gradlew clean test
 ```
 
-Maven will download all required dependencies and run the full suite of unit tests.  This will take a couple minutes and a report stating what tests passed and failed will be presented.
+Gradle will download all required dependencies and run the full suite of unit tests.  This will take a couple minutes and a report stating what tests passed and failed will be presented.
 
 ##### Integration tests
 {:.no_toc}
 
-IRIDA has 5 integration test profiles which splits the integration test suite into functional groups.  This allows GitHub Actions to run the tests in parallel, and local test executions to only run the required portion of the test suite.  The 5 profiles are the following:
+IRIDA has 5 integration test tasks which splits the integration test suite into functional groups.  This allows GitHub Actions to run the tests in parallel, and local test executions to only run the required portion of the test suite.  The 5 tasks are the following:
 
-* `service_testing` - Runs the service layer and repository testing.
-* `ui_testing` - Integration tests for IRIDA's web interface.
-* `rest_testing` - Tests IRIDA's REST API.
-* `galaxy_testing` - Runs tests for IRIDA communicating with Galaxy.  This profile will automatically start a test galaxy instance to test with.
-* `galaxy_pipeline_testing` - Runs tests for running a pipeline with Galaxy.  This profile will automatically start a test galaxy instance to test with.
+* `serviceITest` - Runs the service layer and repository testing.
+* `uiITest` - Integration tests for IRIDA's web interface.
+* `restITest` - Tests IRIDA's REST API.
+* `galaxyITest` - Runs tests for IRIDA communicating with Galaxy.  This profile will automatically start a test galaxy instance to test with.
+* `galaxyPipelineITest` - Runs tests for running a pipeline with Galaxy.  This profile will automatically start a test galaxy instance to test with.
 
-See the `<profiles>` section of the `pom.xml` file to see how the profiles are defined.
+See the `integrationTestMap` definition in the `build.gradle.kts` file to see how the tasks are defined.
 
-As the integration tests simulate a running IRIDA installation, in order to run any integration test the requirements needed to run a production IRIDA server must be installed on your development machine.  The test profiles can each by run directly with `mvn verify`, but additional setup may be required for the tests to work properly.  To perform this setup and run all the tests, the `run-tests.sh` script can be used.  To run a test profile with `run-tests.sh` please run the following:
+As the integration tests simulate a running IRIDA installation, in order to run any integration test the requirements needed to run a production IRIDA server must be installed on your development machine.  The test tasks can each be run directly with `./gradlew TEST_TASK`, but additional setup may be required for the tests to work properly.  To perform this setup and run all the tests, the `run-tests.sh` script can be used.  To run a test task with `run-tests.sh` please run the following:
 
 ```bash
 ./run-tests.sh <TEST PROFILE>
 ```
+
+Where <TEST PROFILE> is one of the following:
+* `service_testing` - Runs the `serviceITest` task
+* `ui_testing` - Runs the `uiITest` task
+* `rest_testing` - Runs the `restITest` task
+* `galaxy_testing` - Runs the `galaxyITest` task
+* `galaxy_pipeline_testing` - Runs the `galaxyPipelineITest` task
 
 This will clean and setup an empty database for IRIDA on the local machine named **irida_integration_test**.  This will also, for the Galaxy test profile, start up a Galaxy IRIDA testing Docker image running on <http://localhost:48889> and destroy this Docker image afterwards (you can skip destroying the Docker image by passing `--no-kill-docker` to this script).  If you wish to use a different database than the default **irida_integration_test**, you may pass the name of the database with the `-d` flag:
 
@@ -243,13 +241,13 @@ This will:
 1. Clean/re-build the IRIDA database on `irida_integration_test` (use `-d` to override).
 2. Remove any previous Docker images from previous tests (named *irida-galaxy-test*).
 3. Start up a new Docker image with Galaxy running on <http://localhost:48889>.
-4. Run IRIDA `galaxy_testing` integration test profile.
+4. Run IRIDA `galaxyITest` integration test task.
 5. Remove Docker image on <http://localhost:48889>.
 
-Additional Maven parameters can be passed to `run-tests.sh`.  In particular, individual test classes can be run using `-Dit.test=ca.corefacilty.bioinformatics.irida.TheTestClass`. For example:
+Additional Gradle parameters can be passed to `run-tests.sh`.  In particular, individual test classes can be run using `--tests=ca.corefacilty.bioinformatics.irida.TheTestClass`. For example:
 
 ```bash
-./run-tests.sh rest_testing -Dit.test=ca.corefacility.bioinformatics.irida.web.controller.test.integration.analysis.RESTAnalysisSubmissionControllerIT
+./run-tests.sh rest_testing --tests=ca.corefacility.bioinformatics.irida.web.controller.test.integration.analysis.RESTAnalysisSubmissionControllerIT
 ```
 
 #### Building IRIDA for release
@@ -257,10 +255,10 @@ Additional Maven parameters can be passed to `run-tests.sh`.  In particular, ind
 Run the following:
 
 ```bash
-mvn clean package -DskipTests
+./gradlew clean build -xtest
 ```
 
-This will create the `.war` and `.zip` files for IRIDA release under the `target/` directory.
+This will create the `.war` and `.zip` files for IRIDA release under the `build/dist/` directory.
 
 #### Building IRIDA documentation
 IRIDA documentation can be found in the <https://github.com/phac-nml/irida-docs> GitHub project.  IRIDA's documentation is built using [Jekyll][] and [GitHub Pages](https://pages.github.com/).  Jekyll allows us to write documentation in Markdown format and it will convert the pages to HTML.  We can use Jekyll both for viewing the documentation locally and for publishing to GitHub Pages.  The current documentation can be found at <https://phac-nml.github.io/irida-docs>.
@@ -317,7 +315,7 @@ IRIDA is organized as a fairly classic Java web application.  All main source ca
 
 All files are found under the `ca.corefacility.bioinformatics.irida` package root.
 
-* `config` - Configuration classes.  All Spring application config, web config, Maven config, and scheduled task configuration can be found here.
+* `config` - Configuration classes.  All Spring application config, web config, and scheduled task configuration can be found here.
 * `database.changesets` - Java Liquibase changesets.  See more about our liquibase usage in the [Database Updates section](#database-updates).
 * `events` - Classes here handle the `ProjectEvent` structure in IRIDA.  These are the messages you can find on the IRIDA dashboard and project recent activity pages.
 * `exceptions` - Java `Exception` classes written for IRIDA.
@@ -418,12 +416,12 @@ IRIDA has 2 main types of tests:
 #### Unit tests
 {:.no_toc}
 
-IRIDA unit tests are written entirely with JUnit and run with Maven Surefire.  Any classes or methods performing any sort of business logic should have unit tests written for them.  In general all test requirements should be mocked with Mockito, and tests should be written for expected behaviour, failure cases, and edge cases.  To mark a class as a unit test, the java file must be named with a `*Test.java` suffix.  For examples of existing IRIDA unit tests, see any classes under `src/test/java` class path `ca.corefacility.bioinformatics.irida.service.impl.unit`.
+IRIDA unit tests are written entirely with JUnit and run with Gradle.  Any classes or methods performing any sort of business logic should have unit tests written for them.  In general all test requirements should be mocked with Mockito, and tests should be written for expected behaviour, failure cases, and edge cases.  To mark a class as a unit test, the java file must be named with a `*Test.java` suffix.  For examples of existing IRIDA unit tests, see any classes under `src/test/java` class path `ca.corefacility.bioinformatics.irida.service.impl.unit`.
 
 #### Integration tests
 {:.no_toc}
 
-IRIDA's integration tests are again developed using JUnit and run with Maven Failsafe.  In addition to the unit tests described above, IRIDA's integration tests verify that all components of the application work correctly together to produce the intended result.  Integration tests are generally written using the `SpringJUnit4ClassRunner` class which allows us to use a Spring application context and `@Autowired` to wire in test dependencies.  Mocking generally should not be used for dependencies in any integration tests.
+IRIDA's integration tests are again developed using JUnit and run with Gradle.  In addition to the unit tests described above, IRIDA's integration tests verify that all components of the application work correctly together to produce the intended result.  Integration tests are generally written using the `SpringJUnit4ClassRunner` class which allows us to use a Spring application context and `@Autowired` to wire in test dependencies.  Mocking generally should not be used for dependencies in any integration tests.
 
 As integration tests rely on the full application stack, database entries must be created at the beginning of each test.  To do this IRIDA uses the [DBUnit](http://dbunit.sourceforge.net/) library to load test data into the database prior to every test, and to clear the database after the test is completed.  Test database files are generally created for each test class, but some are reused between test classes.  DBUnit test files are written in an easy XML format.
 
@@ -438,7 +436,7 @@ To mark a class as a unit test, the java file must be named with a `*IT.java` su
 
 ### Database Updates
 
-While in development we use Hibernate to manage our database changes, in production we use [Liquibase][]. 
+While in development we use Hibernate to manage our database changes, in production we use [Liquibase][].
 
 Liquibase allows you to create changesets for an application's database in incremental, database agnostic XML files.  In practice IRIDA requires MariaDB or MySQL, but it's still worthwhile to use a tool to properly manage the updates.  Liquibase ensures that all changes to the database are performed in the correct order, and manages this by keeping track of a hashcode of the last applied changeset.  When IRIDA is started, liquibase runs first to check if there are new changesets to be applied, and also that the current state of the database is in the format that IRIDA will be expecting.
 

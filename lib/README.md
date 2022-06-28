@@ -9,7 +9,4 @@ cisd-jhdf5 is included in the above FastQC repository and is required for readin
 
 The included samtools and jbzip2 jars included are directly from the FastQC repository unmodified.
 
-Installing
-----------
-
-To install these libraries to your local Maven repository, run `./install-libs.sh`.  The script will take care of the rest.
+Note: These are automatically installed via Gradle

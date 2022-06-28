@@ -124,7 +124,7 @@ In order to compile the IRIDA plugin, you will have to install the main IRIDA co
 ```bash
 git clone https://github.com/phac-nml/irida.git
 cd irida
-mvn clean install -DskipTests
+./gradlew clean publishToMavenLocal -xtest
 ```
 
 ### 3.2.2. Download IRIDA plugin example
@@ -161,39 +161,39 @@ The `irida_workflow_structure.ga` file contains the workflow structure (generate
 
 ```json
 {
-    "a_galaxy_workflow": "true", 
-    "annotation": "", 
-    "format-version": "0.1", 
-    "name": "Read info", 
+    "a_galaxy_workflow": "true",
+    "annotation": "",
+    "format-version": "0.1",
+    "name": "Read info",
     "steps": {
         "0": {
-            "annotation": "", 
-            "content_id": null, 
-            "id": 0, 
-            "input_connections": {}, 
+            "annotation": "",
+            "content_id": null,
+            "id": 0,
+            "input_connections": {},
             "inputs": [
                 {
-                    "description": "", 
+                    "description": "",
                     "name": "sequence_reads"
                 }
-            ], 
-            "label": null, 
-            "name": "Input dataset collection", 
-            "outputs": [], 
+            ],
+            "label": null,
+            "name": "Input dataset collection",
+            "outputs": [],
             "position": {
-                "left": 200, 
+                "left": 200,
                 "top": 200
-            }, 
-            "tool_errors": null, 
-            "tool_id": null, 
-            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads\"}", 
-            "tool_version": null, 
-            "type": "data_collection_input", 
-            "uuid": "e267248b-6ddc-4b5e-a476-e805ce1bc4d5", 
+            },
+            "tool_errors": null,
+            "tool_id": null,
+            "tool_state": "{\"collection_type\": \"list:paired\", \"name\": \"sequence_reads\"}",
+            "tool_version": null,
+            "type": "data_collection_input",
+            "uuid": "e267248b-6ddc-4b5e-a476-e805ce1bc4d5",
             "workflow_outputs": [
                 {
-                    "label": null, 
-                    "output_name": "output", 
+                    "label": null,
+                    "output_name": "output",
                     "uuid": "ae59d874-94ab-4b14-b456-15e2fee2860d"
                 }
             ]
@@ -304,7 +304,7 @@ public class ExamplePlugin extends Plugin {
 	public static class PluginInfo implements IridaPlugin {
 
 		/*** Required ***/
-		
+
 		@Override
 		public AnalysisType getAnalysisType() {
 			return new AnalysisType("READ_INFO");
@@ -314,19 +314,19 @@ public class ExamplePlugin extends Plugin {
 		public UUID getDefaultWorkflowUUID() {
 			return UUID.fromString("79d90ca8-00ae-441b-b5c7-193c9e85a968");
 		}
-		
+
 		/*** Optional ***/
-		
+
 		@Override
 		public Optional<Color> getBackgroundColor() {
 			return Optional.of(Color.decode("#dd1c77"));
 		}
-		
+
 		@Override
 		public Optional<Color> getTextColor() {
 			return Optional.of(Color.BLACK);
 		}
-		
+
 		@Override
 		public Optional<AnalysisSampleUpdater> getUpdater(MetadataTemplateService metadataTemplateService,
 				SampleService sampleService, IridaWorkflowsService iridaWorkflowsService) throws IridaPluginException {
@@ -347,10 +347,10 @@ The purpose of each method is as follows:
 
 * `getDefaultWorkflowUUID()`: This returns the id of the workflow (matching the `<id>79d90ca8-00ae-441b-b5c7-193c9e85a968</id>` entry in the **irida_workflow.xml** file). Returning the appropriate value here is especially important if there are multiple versions of the same pipeline in this plugin (this will define the default or "latest" version).
 
-* `getBackgroundColor()` and `getTextColor()`: The background and text color to display in the UI (defaults to grey for background and black for text). This is **optional**. See example below: 
+* `getBackgroundColor()` and `getTextColor()`: The background and text color to display in the UI (defaults to grey for background and black for text). This is **optional**. See example below:
 
   ![example-plugin-pipeline.png][]
-   
+
 * `getUpdater()`: Gets an instance of a class used for post-processing on pipeline results (e.g., updating the IRIDA metadata). This is **optional**. Additional documentation about this class is described below.
 
 ### 3.2.5. (Optional) Implement an [Updater][irida-updater] class
@@ -369,7 +369,7 @@ This contains the message to display asking the user if they wish to **Save Resu
 
 ### 3.2.6. (Optional) Set a viewer for analysis results
 
-Your plugin can use one of IRIDA's built in analysis results viewers by implementing the `getAnalysisViewer()` method in `IridaPlugin`.  
+Your plugin can use one of IRIDA's built in analysis results viewers by implementing the `getAnalysisViewer()` method in `IridaPlugin`.
 
 The viewers available to plugins in IRIDA are the following:
 
@@ -416,7 +416,7 @@ The `<plugin.*>` entries contain information about your particular plugin as def
 * `plugin.version`: A version number for your plugin.
 * `plugin.provider`: The provider of this plugin.
 * `plugin.dependencies`: Other IRIDA plugins this plugin depends on.
-* `plugin.requires.runtime`: The **exact** version of the IRIDA plugin API this plugin requires at runtime (stored in the [IridaPlugin.java][irida-plugin-java] interface). You normally don't need to update this unless the version is also updated in IRIDA. 
+* `plugin.requires.runtime`: The **exact** version of the IRIDA plugin API this plugin requires at runtime (stored in the [IridaPlugin.java][irida-plugin-java] interface). You normally don't need to update this unless the version is also updated in IRIDA.
 
 The `<irida.version.compiletime>` contains the exact IRIDA version this plugin will need to be compiled against (compile-time version).
 

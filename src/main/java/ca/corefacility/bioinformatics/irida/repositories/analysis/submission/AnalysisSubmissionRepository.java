@@ -149,7 +149,7 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 * @return A list of {@link GenericStatModel}s
 	 */
 	@Query("select new ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel(function('date_format', s.createdDate, ?2), count(s.id))"
-			+ "from AnalysisSubmission s where s.createdDate >= ?1 group by function('date_format', s.createdDate, ?2) order by s.createdDate asc")
+			+ "from AnalysisSubmission s where s.createdDate >= ?1 group by function('date_format', s.createdDate, ?2) order by function('date_format', s.createdDate, ?2) asc")
 	public List<GenericStatModel> countAnalysesRanGrouped(Date createdDate, String groupByFormat);
 
 	/**
@@ -161,5 +161,3 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	@Query("select count(s.id) from AnalysisSubmission s where s.submitter = ?1")
 	public int countAnalysesRanByUser(User user);
 }
-
-

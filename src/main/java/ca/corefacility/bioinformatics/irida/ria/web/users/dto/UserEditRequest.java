@@ -10,10 +10,10 @@ public class UserEditRequest {
 	private String phoneNumber;
 	private String role;
 	private String locale;
-	private String enabled;
+	private boolean enabled;
 
 	public UserEditRequest(String firstName, String lastName, String email, String phoneNumber, String role,
-			String locale, String enabled) {
+			String locale, boolean enabled) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
@@ -47,7 +47,7 @@ public class UserEditRequest {
 		return locale;
 	}
 
-	public String getEnabled() {
+	public boolean getEnabled() {
 		return enabled;
 	}
 }
