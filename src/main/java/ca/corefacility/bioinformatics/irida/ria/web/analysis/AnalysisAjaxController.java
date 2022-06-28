@@ -25,7 +25,6 @@ import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConf
 import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -125,9 +124,11 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Update an analysis email pipeline completion result
-	 *
-	 * @param parameters parameters which include the submission id and the new email pipeline result value
+	 * Update an analysis email pipeline completion result <<<<<<< HEAD
+	 * 
+	 * @param parameters parameters which include the submission id and the new email pipeline result value =======
+	 * @param parameters parameters which include the submission id and the new email pipeline result value >>>>>>>
+	 *                   development
 	 * @param locale     User's locale
 	 * @param response   HTTP response object
 	 * @return dto with message
@@ -312,9 +313,10 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Update an analysis name and/or priority
-	 *
-	 * @param parameters parameters which include the submission id and the new name and/or priority
+	 * Update an analysis name and/or priority <<<<<<< HEAD
+	 * 
+	 * @param parameters parameters which include the submission id and the new name and/or priority =======
+	 * @param parameters parameters which include the submission id and the new name and/or priority >>>>>>> development
 	 * @param locale     User's locale
 	 * @param response   HTTP response object
 	 * @return dto with message
@@ -405,9 +407,10 @@ public class AnalysisAjaxController {
 
 	/**
 	 * Add the {@code firstLine} and {@code filePointer} file byte position after reading the first line of an
-	 * {@link AnalysisOutputFile} to a {@link AnalysisOutputFileInfo} object.
-	 *
-	 * @param info Object to add {@code firstLine} and {@code filePointer} info to
+	 * {@link AnalysisOutputFile} to a {@link AnalysisOutputFileInfo} object. <<<<<<< HEAD
+	 * 
+	 * @param info Object to add {@code firstLine} and {@code filePointer} info to =======
+	 * @param info Object to add {@code firstLine} and {@code filePointer} info to >>>>>>> development
 	 * @param aof  {@link AnalysisOutputFile} to read from
 	 */
 	private void addFirstLine(AnalysisOutputFileInfo info, AnalysisOutputFile aof) {
@@ -442,8 +445,9 @@ public class AnalysisAjaxController {
 	 * @param end      Optional line to stop reading at
 	 * @param seek     Optional file byte position to seek to and begin reading
 	 * @param chunk    Optional number of bytes to read from file
-	 * @param response HTTP response object
-	 * @return JSON with file text or lines as well as information about the file.
+	 * @param response HTTP response object <<<<<<< HEAD
+	 * @return JSON with file text or lines as well as information about the file. =======
+	 * @return JSON with file text or lines as well as information about the file. >>>>>>> development
 	 */
 	@RequestMapping(value = "/{id}/outputs/{fileId}", method = RequestMethod.GET)
 	@ResponseBody
@@ -609,8 +613,10 @@ public class AnalysisAjaxController {
 	/**
 	 * Update the share status of a given {@link AnalysisSubmission} for a given {@link Project}
 	 *
-	 * @param submissionId the {@link AnalysisSubmission} id to share/unshare
-	 * @param projectShare {@link AnalysisProjectShare} describes of the project and the share status.
+	 * @param submissionId the {@link AnalysisSubmission} id to share/unshare <<<<<<< HEAD
+	 * @param projectShare {@link AnalysisProjectShare} describes of the project and the share status. =======
+	 * @param projectShare {@link AnalysisProjectShare} describes of the project and the share status. >>>>>>>
+	 *                     development
 	 * @param locale       Locale of the logged in user
 	 * @return Success message if successful
 	 */
@@ -804,8 +810,9 @@ public class AnalysisAjaxController {
 	 * Get an image file associated with a specific {@link AnalysisSubmission} by file name.
 	 *
 	 * @param submissionId {@link Long} id for an {@link AnalysisSubmission}
-	 * @param filename     {@link String} filename for an {@link AnalysisOutputFile}
-	 * @return {@link String} containing the image file contents as a base64 encoded string.
+	 * @param filename     {@link String} filename for an {@link AnalysisOutputFile} <<<<<<< HEAD
+	 * @return {@link String} containing the image file contents as a base64 encoded string. =======
+	 * @return {@link String} containing the image file contents as a base64 encoded string. >>>>>>> development
 	 */
 	@RequestMapping("{submissionId}/image")
 	@ResponseBody
@@ -900,10 +907,8 @@ public class AnalysisAjaxController {
 				projectIds.add(project.getId());
 
 				// Get the templates for the project
-				List<ProjectMetadataTemplateJoin> templateList = metadataTemplateService
-						.getMetadataTemplatesForProject(project);
-				for (ProjectMetadataTemplateJoin projectMetadataTemplateJoin : templateList) {
-					MetadataTemplate metadataTemplate = projectMetadataTemplateJoin.getObject();
+				List<MetadataTemplate> templateList = metadataTemplateService.getMetadataTemplatesForProject(project);
+				for (MetadataTemplate metadataTemplate : templateList) {
 					Map<String, Object> templateMap = ImmutableMap.of("label", metadataTemplate.getLabel(), "id",
 							metadataTemplate.getId());
 					templates.add(templateMap);
@@ -915,16 +920,19 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Generates a list of metadata fields for a five template.
-	 *
-	 * @param templateId {@link Long} id for the {@link MetadataTemplate} that the fields are required.
+	 * Generates a list of metadata fields for a five template. <<<<<<< HEAD
+	 * 
+	 * @param templateId {@link Long} id for the {@link MetadataTemplate} that the fields are required. =======
+	 * @param templateId {@link Long} id for the {@link MetadataTemplate} that the fields are required. >>>>>>>
+	 *                   development
 	 * @return {@link Map}
 	 */
 	@RequestMapping("/{submissionId}/metadata-template-fields")
 	@ResponseBody
 	public Map<String, Object> getMetadataTemplateFields(@RequestParam Long templateId) {
 		MetadataTemplate template = metadataTemplateService.read(templateId);
-		List<MetadataTemplateField> metadataFields = template.getFields();
+
+		List<MetadataTemplateField> metadataFields = metadataTemplateService.getPermittedFieldsForTemplate(template);
 		List<String> fields = new ArrayList<>();
 		for (MetadataTemplateField metadataField : metadataFields) {
 			fields.add(metadataField.getLabel());
@@ -1087,7 +1095,8 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Private method which gets whether the tree view should be the default view or not
+	 * <<<<<<< HEAD Private method which gets whether the tree view should be the default view or not ======= Private
+	 * method which gets whether the tree view should be the default view or not >>>>>>> development
 	 * 
 	 * @param submission The analysis submission
 	 * @param locale     The user's locale
@@ -1114,7 +1123,7 @@ public class AnalysisAjaxController {
 	}
 
 	/**
-	 * Private method which gets the analysis viewer type
+	 * Private method which gets the analysis viewer type <<<<<<< HEAD ======= >>>>>>> development
 	 * 
 	 * @param submission The analysis submission
 	 * @return the viewer (tree, sistr, biohansel, etc)
@@ -1189,7 +1198,7 @@ public class AnalysisAjaxController {
 	 *
 	 * @param tool The tool to get the previous execution tools and their
 	 * parameters for
-	 * 
+	 *
 	 * @return an arraylist of previous execution tools for the tool
 	 */
 	private ArrayList<AnalysisToolExecution> getPreviousExecutionTools(ToolExecution tool) {
@@ -1209,7 +1218,7 @@ public class AnalysisAjaxController {
 	 * Gets the previous steps (tools) for the tool
 	 *
 	 * @param tool The tool to get the previous steps for
-	 * 
+	 *
 	 * @return set of previous execution tools for the tool
 	 */
 	private Set<ToolExecution> getPrevTools(ToolExecution tool) {
@@ -1255,7 +1264,7 @@ public class AnalysisAjaxController {
 	 * Gets the execution parameters for the tool
 	 *
 	 * @param tool The tool to get the execution parameters for
-	 * 
+	 *
 	 * @return an arraylist of execution parameters for the tool
 	 */
 	private ArrayList<AnalysisToolExecutionParameters> getExecutionParameters(ToolExecution tool) {

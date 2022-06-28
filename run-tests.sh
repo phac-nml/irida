@@ -36,12 +36,6 @@ then
 fi
 
 check_dependencies() {
-	mvn --version 1>/dev/null 2>/dev/null
-	if [ $? -ne 0 ];
-	then
-		exit_error "Command 'mvn' does not exist.  Please install Maven (e.g., 'apt-get install maven') to continue."
-	fi
-
 	docker --version 1>/dev/null 2>/dev/null
 	if [ $? -ne 0 ];
 	then
@@ -105,13 +99,13 @@ exit_error() {
 }
 
 test_service() {
-	mvn clean verify -B -Pservice_testing -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
+    ./gradlew clean check serviceITest -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
 	return $exit_code
 }
 
 test_rest() {
-	mvn clean verify -B -Prest_testing -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
+    ./gradlew clean check restITest -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
 	return $exit_code
 }
@@ -139,50 +133,43 @@ test_ui() {
         docker start $SELENIUM_DOCKER_NAME || docker run -d -p 4444:4444 --name $SELENIUM_DOCKER_NAME -v $PWD:$PWD -v $TMP_DIRECTORY/irida:$TMP_DIRECTORY/irida -v /dev/shm:/dev/shm selenium/standalone-chrome:$SELENIUM_DOCKER_TAG
         SELENIUM_OPTS="-Dwebdriver.selenium_url=$SELENIUM_URL -Dserver.port=33333 -Dserver.base.url=http://$HOSTNAME:33333 -Djava.io.tmpdir=$TMP_DIRECTORY/irida"
     fi
-	mvn clean verify -B -Pui_testing $SELENIUM_OPTS -Dirida.it.nosandbox=true -Dirida.it.headless=$HEADLESS -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
+    ./gradlew clean check uiITest $SELENIUM_OPTS -Dirida.it.nosandbox=true -Dirida.it.headless=$HEADLESS -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
 	if [[ "$DO_KILL_DOCKER" = true && "$SELENIUM_DOCKER" = true ]]; then docker rm -f -v $SELENIUM_DOCKER_NAME; fi
 	return $exit_code
 }
 
 test_galaxy() {
-	test_galaxy_internal galaxy_testing $@
+	test_galaxy_internal galaxyITest $@
 	exit_code=$?
 	return $exit_code
 }
 
 test_galaxy_pipelines() {
-	test_galaxy_internal galaxy_pipeline_testing $@
+	test_galaxy_internal galaxyPipelineITest $@
 	exit_code=$?
 	return $exit_code
 }
 
 test_galaxy_internal() {
-	profile=$1
+	task=$1
 	shift
-
 	docker run -d -p $GALAXY_PORT:80 --name $GALAXY_DOCKER_NAME -v $TMP_DIRECTORY:$TMP_DIRECTORY -v $SCRIPT_DIR:$SCRIPT_DIR $GALAXY_DOCKER && \
-	mvn clean verify -B -P$profile -Dfile.processing.decompress=true -Dspring.datasource.url=$JDBC_URL -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2 -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
+    ./gradlew clean check $task -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dtest.galaxy.url=$GALAXY_URL -Dtest.galaxy.invalid.url=$GALAXY_INVALID_URL -Dtest.galaxy.invalid.url2=$GALAXY_INVALID_URL2 -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
 	if [ "$DO_KILL_DOCKER" = true ]; then docker rm -f -v $GALAXY_DOCKER_NAME; fi
 	return $exit_code
 }
 
-test_doc() {
-	mvn clean site $@
-	exit_code=$?
-	return $exit_code
-}
-
 test_open_api() {
-	mvn clean verify -B -Dspring-boot.run.arguments="--spring.datasource.url=$JDBC_URL --spring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS --spring.profiles.active=dev,swagger" -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=true -Dspring.datasource.url=$JDBC_URL -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS
+    ./gradlew clean generateOpenApiDocs -Dspring.profiles.active=dev,swagger -Dliquibase.update.database.schema=true -Dspring.datasource.url=$JDBC_URL -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS
 	test -f $OPEN_API_FILE
 	exit_code=$?
 	return $exit_code
 }
 
 test_all() {
-	for test_profile in test_rest test_service test_ui test_galaxy test_galaxy_pipelines test_doc test_open_api;
+	for test_profile in test_rest test_service test_ui test_galaxy test_galaxy_pipelines test_open_api;
 	do
 		tmp_dir_cleanup
 		eval $test_profile
@@ -211,8 +198,8 @@ then
 	echo -e "\t--no-kill-docker: Do not kill Galaxy Docker after Galaxy tests have run."
 	echo -e "\t--no-headless: Do not run chrome in headless mode (for viewing results of UI tests)."
 	echo -e "\t--selenium-docker: Use selenium/standalone-chrome docker container for executing UI tests."
-	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, galaxy_pipeline_testing, doc_testing, open_api_testing, all}."
-	echo -e "\t[Maven options]: Additional options to pass to 'mvn'.  In particular, can pass '-Dit.test=ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
+	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, galaxy_pipeline_testing, open_api_testing, all}."
+	echo -e "\t[gradle options]: Additional options to pass to 'gradle'.  In particular, can pass '--test ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
 	echo -e "Examples:\n"
 	echo -e "$0 service_testing\n"
 	echo -e "\tThis will test the Service layer of IRIDA, cleaning up the test database/docker containers first.\n"
@@ -304,13 +291,6 @@ case "$1" in
 		shift
 		pretest_cleanup
 		test_galaxy_pipelines $@
-		exit_code=$?
-		posttest_cleanup
-	;;
-	doc_testing)
-		shift
-		#pretest_cleanup
-		test_doc $@
 		exit_code=$?
 		posttest_cleanup
 	;;

@@ -12,7 +12,6 @@ Developer documentation
 Setup
 -----
 * [Workstation setup guide](setup/)
-* [Building VMs with packer](packer/)
 
 Tool Development
 ----------------
@@ -40,4 +39,3 @@ Other IRIDA developer resources
 * [IRIDA data model](data-model)
 * [Database change management with Liquibase](database)
 * [GMI REST API proposal](gmi-rest-api)
-* [Clojure nREPL](clojure-repl)

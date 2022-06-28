@@ -21,6 +21,8 @@ function ShareSamplesButtonComponent({ selected }) {
       id: sample["irida-static-sample-id"],
       name: sample["irida-static-sample-name"],
       owner: sample.owner,
+      projectId: sample["irida-static-project-id"],
+      projectName: sample["irida-static-project-name"],
     }));
     window.sessionStorage.setItem(
       "share",

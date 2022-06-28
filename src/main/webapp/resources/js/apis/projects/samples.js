@@ -1,34 +1,56 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { setBaseUrl } from "../../utilities/url-utilities";
+import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
 
-const URL = setBaseUrl(`/ajax/projects/${window.project.id}/samples`);
+const PROJECT_ID = getProjectIdFromUrl();
+const URL = setBaseUrl(`/ajax/projects/${PROJECT_ID}/samples`);
 
 /**
  * Redux API for handling project samples queries.
  * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, {status: number, data: unknown} | {status: "FETCH_ERROR", data?: undefined, error: string} | {status: "PARSING_ERROR", originalStatus: number, data: string, error: string} | {status: "CUSTOM_ERROR", data?: unknown, error: string}, FetchBaseQueryMeta>>, {getSampleIdsForProject: *}, string, never, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, {status: number, data: unknown} | {status: "FETCH_ERROR", data?: undefined, error: string} | {status: "PARSING_ERROR", originalStatus: number, data: string, error: string} | {status: "CUSTOM_ERROR", data?: unknown, error: string}, FetchBaseQueryMeta>>, {getSampleIdsForProject: *}, string, never, any>}
  */
 export const samplesApi = createApi({
-  reducerPath: `samplesApi`,
+  reducerPath: "samplesApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: setBaseUrl(`/ajax/samples`),
+    baseUrl: URL,
   }),
-  endpoints: (build) => ({
-    getSampleIdsForProject: build.query({
-      query: (projectId) => ({
-        url: `identifiers?projectId=${projectId}`,
+  endpoints: (builder) => ({
+    listSamples: builder.query({
+      query: (body) => ({ method: "POST", body }),
+    }),
+    merge: builder.mutation({
+      query: ({ projectId, request }) => ({
+        url: "/merge",
+        method: "POST",
+        body: request,
       }),
     }),
-    shareSamplesWithProject: build.mutation({
+    remove: builder.mutation({
+      query: (sampleIds) => ({
+        url: "/remove",
+        method: "DELETE",
+        body: { sampleIds },
+      }),
+    }),
+    shareSamplesWithProject: builder.mutation({
       query: (body) => ({
-        url: `share`,
+        url: `/share`,
         method: `POST`,
         body,
+      }),
+    }),
+    //TODO: This should not be in the slice but async thunk (update in metadata security)
+    getSampleIdsForProject: builder.query({
+      query: (projectId) => ({
+        url: `/identifiers?id=${projectId}`,
       }),
     }),
   }),
 });
 
 export const {
+  useListSamplesQuery,
+  useMergeMutation,
+  useRemoveMutation,
   useGetSampleIdsForProjectQuery,
   useShareSamplesWithProjectMutation,
 } = samplesApi;
@@ -52,7 +74,7 @@ export async function validateSampleName(name) {
  * @returns {Promise<Response>}
  */
 export async function createNewSample({ name, organism }) {
-  const response = await fetch(setBaseUrl(`${URL}/add-sample`), {
+  const response = await fetch(`${URL}/add-sample`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -76,4 +98,19 @@ export async function shareSamplesWithProject({
     },
     body: JSON.stringify({ currentId, sampleIds, targetId, locked, remove }),
   });
+}
+
+/**
+ * Get get minimal information for all samples in a project.
+ * @param {object} options - current table filters
+ * @returns {Promise<*>}
+ */
+export async function getMinimalSampleDetailsForFilteredProject(options) {
+  return await fetch(`${URL}/ids`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(options),
+  }).then((response) => response.json());
 }

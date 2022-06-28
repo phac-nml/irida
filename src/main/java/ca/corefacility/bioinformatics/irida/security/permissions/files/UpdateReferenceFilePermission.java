@@ -11,7 +11,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectReferenceFileJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 
 /**
@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.security.permissions.project.Project
  * 
  */
 @Component
-public class UpdateReferenceFilePermission extends BasePermission<ReferenceFile, Long> {
+public class UpdateReferenceFilePermission extends RepositoryBackedPermission<ReferenceFile, Long> {
 
 	public static final String PERMISSION_PROVIDED = "canUpdateReferenceFile";
 

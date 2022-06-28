@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,6 +41,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -57,11 +59,14 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepositor
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleSpecification;
+import ca.corefacility.bioinformatics.irida.repositories.specification.SearchCriteria;
+import ca.corefacility.bioinformatics.irida.repositories.specification.SearchOperation;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.base.Strings;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -190,6 +195,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 * {@inheritDoc}
 	 */
 	@PreAuthorize("hasPermission(#sample, 'canReadSample')")
+	@PostFilter("hasPermission(filterObject, 'canReadMetadataEntry')")
 	@Override
 	public Set<MetadataEntry> getMetadataForSample(Sample sample) {
 		return metadataEntryRepository.getMetadataForSample(sample);
@@ -209,17 +215,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
-	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project) {
-		return metadataEntryRepository.getMetadataForProject(project);
-	}
+	@PostAuthorize("hasPermission(returnObject,'readProjectMetadataResponse')")
+	public ProjectMetadataResponse getMetadataForProjectSamples(Project project, List<Long> sampleIds, List<MetadataTemplateField> fields) {
+		checkArgument(!fields.isEmpty(), "fields must not be empty");
+		Map<Long, Set<MetadataEntry>> metadataForProjectSamples = metadataEntryRepository.getMetadataForProjectSamples(project, sampleIds, fields);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	@PreAuthorize("hasPermission(#project, 'canReadProject')")
-	public Map<Long, Set<MetadataEntry>> getMetadataForProjectSamples(Project project, List<Long> sampleIds) {
-		return metadataEntryRepository.getMetadataForProjectSamples(project, sampleIds);
+		return new ProjectMetadataResponse(project, metadataForProjectSamples);
 	}
 
 	/**
@@ -408,8 +409,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		// confirm that all samples are part of the same project:
 		confirmProjectSampleJoin(project, mergeInto);
 
-		logger.debug("Merging samples " + toMerge.stream().map(t -> t.getId()).collect(Collectors.toList())
-				+ " into sample [" + mergeInto.getId() + "]");
+		logger.debug(
+				"Merging samples " + toMerge.stream().map(Sample::getId).collect(Collectors.toList()) + " into sample ["
+						+ mergeInto.getId() + "]");
 
 		for (Sample s : toMerge) {
 			confirmProjectSampleJoin(project, s);
@@ -440,6 +442,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			psjRepository.delete(readSampleForProject);
 			sampleRepository.deleteById(s.getId());
 		}
+		mergeInto.setModifiedDate(new Date());
+		sampleRepository.save(mergeInto);
 		return mergeInto;
 	}
 
@@ -484,8 +488,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			Direction order, String... sortProperties) {
 		sortProperties = verifySortProperties(sortProperties);
 
-		return psjRepository.findAll(ProjectSampleJoinSpecification.searchSampleWithNameInProject(name, project),
-				PageRequest.of(page, size, order, sortProperties));
+		ProjectSampleJoinSpecification psjSampleWithNameInProject = new ProjectSampleJoinSpecification();
+
+		psjSampleWithNameInProject.add(new SearchCriteria("project", project, SearchOperation.EQUAL));
+		psjSampleWithNameInProject.add(new SearchCriteria("sample.sampleName", name, SearchOperation.MATCH));
+
+		return psjRepository.findAll(psjSampleWithNameInProject, PageRequest.of(page, size, order, sortProperties));
 	}
 
 	/**
@@ -567,11 +575,64 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projects, 'canReadProject')")
+	public Page<ProjectSampleJoin> getFilteredProjectSamples(List<Project> projects,
+			ProjectSampleJoinSpecification filterSpec, int currentPage, int pageSize, Sort sort) {
+		filterSpec.add(new SearchCriteria("project", projects, SearchOperation.IN));
+
+		return psjRepository.findAll(filterSpec, PageRequest.of(currentPage, pageSize, sort));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN') or hasPermission(#projects, 'canReadProject')")
 	public Page<ProjectSampleJoin> getFilteredSamplesForProjects(List<Project> projects, List<String> sampleNames,
 			String sampleName, String searchTerm, String organism, Date minDate, Date maxDate, int currentPage,
 			int pageSize, Sort sort) {
-		return psjRepository.findAll(ProjectSampleSpecification.getSamples(projects, sampleNames, sampleName,
-				searchTerm, organism, minDate, maxDate), PageRequest.of(currentPage, pageSize, sort));
+
+		ProjectSampleJoinSpecification psjFilteredSamplesForProjects = new ProjectSampleJoinSpecification();
+
+		psjFilteredSamplesForProjects.add(new SearchCriteria("project", projects, SearchOperation.IN));
+
+		// Check to see if the sampleNames are in the samples
+		if (sampleNames.size() > 0) {
+			psjFilteredSamplesForProjects.add(new SearchCriteria("sample.sampleName", sampleNames, SearchOperation.IN));
+		}
+
+		// Check to see if there is a specific sample name
+		if (!Strings.isNullOrEmpty(sampleName)) {
+			psjFilteredSamplesForProjects
+					.add(new SearchCriteria("sample.sampleName", sampleName, SearchOperation.MATCH));
+		}
+
+		// Check for the table search.
+		// This can be expanded in future to search any attribute on the sample (e.g. description)
+		// Underscores within the search term are escaped as the underscores were being treated the same
+		// as hyphens.
+		if (!Strings.isNullOrEmpty(searchTerm)) {
+			psjFilteredSamplesForProjects.add(
+					new SearchCriteria("sample.sampleName", searchTerm.replace("_", "\\_"), SearchOperation.MATCH));
+		}
+
+		// Check for organism
+		if (!Strings.isNullOrEmpty(organism)) {
+			psjFilteredSamplesForProjects.add(new SearchCriteria("sample.organism", organism, SearchOperation.MATCH));
+		}
+
+		// Check if there is a minimum search date
+		if (minDate != null) {
+			psjFilteredSamplesForProjects
+					.add(new SearchCriteria("sample.modifiedDate", minDate, SearchOperation.GREATER_THAN_EQUAL));
+		}
+
+		// Check if there is a maximum search date
+		if (maxDate != null) {
+			psjFilteredSamplesForProjects
+					.add(new SearchCriteria("sample.modifiedDate", maxDate, SearchOperation.LESS_THAN_EQUAL));
+		}
+
+		return psjRepository.findAll(psjFilteredSamplesForProjects, PageRequest.of(currentPage, pageSize, sort));
 	}
 
 	/**

@@ -9,12 +9,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Sort;
 
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.LineListController;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.EntriesResponse;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
@@ -55,11 +55,11 @@ public class LineListControllerTest {
 	public void testGetProjectMetadataTemplateFields() {
 		long projectId = 1L;
 		Project project = new Project("p1");
-		List<ProjectMetadataTemplateJoin> templateJoins = new ArrayList<>();
+
 		when(projectService.read(anyLong())).thenReturn(project);
-		lineListController.getProjectMetadataTemplateFields(projectId, templateJoins, Locale.ENGLISH);
+		lineListController.getProjectMetadataTemplateFields(projectId, Locale.ENGLISH);
 		verify(projectService, times(1)).read(projectId);
-		verify(metadataTemplateService, times(1)).getMetadataFieldsForProject(any(Project.class));
+		verify(metadataTemplateService, times(1)).getPermittedFieldsForCurrentUser(any(Project.class), eq(true));
 	}
 
 	@Test
@@ -74,6 +74,7 @@ public class LineListControllerTest {
 		s2.setId(2L);
 		s2.setModifiedDate(new Date());
 		MetadataTemplateField field = new MetadataTemplateField("field", "text");
+		List<MetadataTemplateField> fieldList = Lists.newArrayList(field);
 
 		ProjectSampleJoin psj1 = mock(ProjectSampleJoin.class);
 		when(psj1.getSubject()).thenReturn(project);
@@ -85,22 +86,25 @@ public class LineListControllerTest {
 		Map<Long, Set<MetadataEntry>> metadata = new HashMap<>();
 		metadata.put(s1.getId(), Sets.newHashSet(new MetadataEntry("value", "text", field)));
 		metadata.put(s2.getId(), Sets.newHashSet(new MetadataEntry("value2", "text", field)));
+		ProjectMetadataResponse projectMetadata = new ProjectMetadataResponse(project, metadata);
 
 		Page<ProjectSampleJoin> pageOne = new PageImpl<>(Lists.newArrayList(psj1, psj2));
 		Page<ProjectSampleJoin> pageTwo = new PageImpl<>(Lists.newArrayList());
 
 		when(projectService.read(projectId)).thenReturn(project);
+		when(metadataTemplateService.getPermittedFieldsForCurrentUser(project, true)).thenReturn(fieldList);
 		when(sampleService.getFilteredSamplesForProjects(eq(Arrays.asList(project)), eq(Collections.emptyList()),
 				eq(""), eq(""), eq(""), isNull(), isNull(), eq(0), any(Integer.class), any(Sort.class)))
 						.thenReturn(pageOne);
 		when(sampleService.getFilteredSamplesForProjects(eq(Arrays.asList(project)), eq(Collections.emptyList()),
 				eq(""), eq(""), eq(""), isNull(), isNull(), eq(1), any(Integer.class), any(Sort.class)))
 						.thenReturn(pageTwo);
-		when(sampleService.getMetadataForProjectSamples(eq(project), anyList())).thenReturn(metadata);
+		when(sampleService.getMetadataForProjectSamples(eq(project), anyList(), eq(fieldList)))
+				.thenReturn(projectMetadata);
 		EntriesResponse response = lineListController.getProjectSamplesMetadataEntries(projectId, 0, 5000);
 
 		assertEquals(2, response.getTotal());
 
-		verify(sampleService, times(1)).getMetadataForProjectSamples(project, Lists.newArrayList(1L, 2L));
+		verify(sampleService, times(1)).getMetadataForProjectSamples(project, Lists.newArrayList(1L, 2L), fieldList);
 	}
 }

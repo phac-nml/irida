@@ -19,14 +19,28 @@ import { AdminContent } from "./AdminContent";
 import AdminHeader from "./AdminHeader";
 import AdminSideMenu from "./AdminSideMenu";
 
+import store from "../store";
+import { Provider } from "react-redux";
+
 const { Content } = Layout;
 
 const AdvancedStatistics = lazy(() =>
   import("./statistics/AdvancedStatistics")
 );
 const BasicStats = lazy(() => import("./statistics/BasicStats"));
-
 const AdminUsersPage = lazy(() => import("./AdminUsersPage"));
+const UserAccountLayout = React.lazy(() =>
+  import("../../user/components/UserAccountLayout")
+);
+const UserDetailsPage = React.lazy(() =>
+  import("../../user/components/UserDetailsPage")
+);
+const UserProjectsPage = React.lazy(() =>
+  import("../../user/components/UserProjectsPage")
+);
+const UserSecurityPage = React.lazy(() =>
+  import("../../user/components/UserSecurityPage")
+);
 const UserGroupsPage = lazy(() =>
   import("../../UserGroupsPage/components/UserGroupsPage")
 );
@@ -55,55 +69,65 @@ export default function Admin() {
    * the components are only loaded if the corresponding tab is clicked
    */
   return (
-    <Layout>
-      <AdminSideMenu />
+    <Provider store={store}>
       <Layout>
-        <AdminHeader />
-        <Content>
-          <Suspense fallback={<ContentLoading />}>
-            <Routes>
-              <Route path={DEFAULT_URL} element={<AdminContent />}>
-                <Route index element={<BasicStats />} />
-                <Route
-                  path={`${ADMIN.STATISTICS}/:statType`}
-                  element={<AdvancedStatistics />}
-                />
-                <Route path={ADMIN.USERS} element={<AdminUsersPage />} />
-
-                <Route
-                  path={`${ADMIN.USERGROUPS}/list`}
-                  element={
-                    <UserGroupsPage
-                      baseUrl={`${DEFAULT_URL}/${ADMIN.USERGROUPS}`}
-                    />
-                  }
-                />
-                <Route
-                  path={`${ADMIN.USERGROUPS}/:id`}
-                  element={<UserGroupsDetailsPage />}
-                />
-                <Route path={ADMIN.CLIENTS} element={<ClientListingPage />} />
-                <Route
-                  path={ADMIN.REMOTEAPI}
-                  element={<AdminRemoteApiPage />}
-                />
-                <Route
-                  path={ADMIN.SEQUENCINGRUNS}
-                  element={<AdminSequencingRunsPage />}
-                />
-                <Route
-                  path={ADMIN.NCBIEXPORTS}
-                  element={<AdminNcbiExportsPage />}
-                />
-                <Route
-                  path={ADMIN.ANNOUNCEMENTS}
-                  element={<AnnouncementAdminPage />}
-                />
-              </Route>
-            </Routes>
-          </Suspense>
-        </Content>
+        <AdminSideMenu />
+        <Layout>
+          <AdminHeader />
+          <Content>
+            <Suspense fallback={<ContentLoading />}>
+              <Routes>
+                <Route path={DEFAULT_URL} element={<AdminContent />}>
+                  <Route index element={<BasicStats />} />
+                  <Route
+                    path={`${ADMIN.STATISTICS}/:statType`}
+                    element={<AdvancedStatistics />}
+                  />
+                  <Route path={ADMIN.USERS} element={<AdminUsersPage />} />
+                  <Route
+                    path={`${ADMIN.USERS}/:userId`}
+                    element={<UserAccountLayout />}
+                  >
+                    <Route index element={<UserDetailsPage />} />
+                    <Route path="*" element={<UserDetailsPage />} />
+                    <Route path="projects" element={<UserProjectsPage />} />
+                    <Route path="security" element={<UserSecurityPage />} />
+                  </Route>
+                  <Route
+                    path={`${ADMIN.USERGROUPS}/list`}
+                    element={
+                      <UserGroupsPage
+                        baseUrl={`${DEFAULT_URL}/${ADMIN.USERGROUPS}`}
+                      />
+                    }
+                  />
+                  <Route
+                    path={`${ADMIN.USERGROUPS}/:id`}
+                    element={<UserGroupsDetailsPage />}
+                  />
+                  <Route path={ADMIN.CLIENTS} element={<ClientListingPage />} />
+                  <Route
+                    path={ADMIN.REMOTEAPI}
+                    element={<AdminRemoteApiPage />}
+                  />
+                  <Route
+                    path={ADMIN.SEQUENCINGRUNS}
+                    element={<AdminSequencingRunsPage />}
+                  />
+                  <Route
+                    path={ADMIN.NCBIEXPORTS}
+                    element={<AdminNcbiExportsPage />}
+                  />
+                  <Route
+                    path={ADMIN.ANNOUNCEMENTS}
+                    element={<AnnouncementAdminPage />}
+                  />
+                </Route>
+              </Routes>
+            </Suspense>
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
+    </Provider>
   );
 }

@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectUserJoin;
+import ca.corefacility.bioinformatics.irida.model.subscription.ProjectSubscription;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,10 +30,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * A user object.
  */
 @Entity
-@Table(name = "user",
-		uniqueConstraints = {
-				@UniqueConstraint(name = User.USER_EMAIL_CONSTRAINT_NAME, columnNames = "email"),
-				@UniqueConstraint(name = User.USER_USERNAME_CONSTRAINT_NAME, columnNames = "username") })
+@Table(name = "user", uniqueConstraints = {
+		@UniqueConstraint(name = User.USER_EMAIL_CONSTRAINT_NAME, columnNames = "email"),
+		@UniqueConstraint(name = User.USER_USERNAME_CONSTRAINT_NAME, columnNames = "username") })
 @Audited
 @EntityListeners(AuditingEntityListener.class)
 public class User extends IridaRepresentationModel implements MutableIridaThing, Comparable<User>, UserDetails {
@@ -75,7 +75,6 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	@Size(min = 2, message = "{user.lastName.size}")
 	private String lastName;
 
-	@NotNull(message = "{user.phoneNumber.notnull}")
 	@Size(min = 4, message = "{user.phoneNumber.size}")
 	private String phoneNumber;
 
@@ -114,6 +113,9 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
 	private List<AnnouncementUserJoin> announcements;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
+	private List<ProjectSubscription> projectSubscriptions;
 
 	/**
 	 * Construct an instance of {@link User} with no properties set.
@@ -178,11 +180,11 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	public boolean equals(Object other) {
 		if (other instanceof User) {
 			User u = (User) other;
-			return Objects.equals(username, u.username) && Objects.equals(email, u.email)
-					&& Objects.equals(password, u.password) && Objects.equals(firstName, u.firstName)
-					&& Objects.equals(lastName, u.lastName) && Objects.equals(phoneNumber, u.phoneNumber)
-					&& Objects.equals(createdDate, u.createdDate) && Objects.equals(modifiedDate, u.modifiedDate)
-					&& Objects.equals(credentialsNonExpired, u.credentialsNonExpired);
+			return Objects.equals(username, u.username) && Objects.equals(email, u.email) && Objects.equals(password,
+					u.password) && Objects.equals(firstName, u.firstName) && Objects.equals(lastName, u.lastName)
+					&& Objects.equals(phoneNumber, u.phoneNumber) && Objects.equals(createdDate, u.createdDate)
+					&& Objects.equals(modifiedDate, u.modifiedDate) && Objects.equals(credentialsNonExpired,
+					u.credentialsNonExpired);
 		}
 
 		return false;

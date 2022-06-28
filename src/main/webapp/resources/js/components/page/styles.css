@@ -1,0 +1,4 @@
+body,
+body > .ant-layout {
+  background-color: hsl(216deg 20% 95%);
+}

@@ -31,6 +31,14 @@ When samples are in the cart, only samples that you have full permissions on can
 
 To prevent samples from being modified or copied within the new project, check the "Prevent modification and copying of these samples" box. This setting will only allow the sample owner to edit any sample data.
 
-Once you've finished entering the details for your new project, click on the "Create Project" button. You will be redirected to the projects list.
+Clicking the "Next" button allows you to set metadata field restrictions that are available from the samples that are added from the cart. The `Current Restriction` is the metadata restriction on the field from the project that it was added from. The `Target Restriction` is the metadata restriction to apply to the field in the new project.
+
+![Metadata Restrictions]({{ site.baseurl }}/images/tutorials/common/projects/create-project-samples-metadata-restrictions.png)
+
+If there are no samples currently in the cart or if there are and they weren't selected to be added to the new project then you should see the following message displayed:
+
+![Metadata Restrictions]({{ site.baseurl }}/images/tutorials/common/projects/create-project-no-samples-metadata-restrictions.png)
+
+Once you've finished entering the details, selecting any samples from the cart, and setting the metadata restrictions (if available) for your new project, click on the "Create Project" button. You will be redirected to the projects list.
 
 IRIDA will automatically generate a numeric project identifier for your project. The project identifier is used by external tools for uploading sequencing data to IRIDA. The project identifier can be found in the ["Project Details" panel]({{ site.baseurl }}/user/user/project/index.html#viewing-project-details), or in the [projects list]({{ site.baseurl }}/user/user/project/index.html#viewing-existing-projects).

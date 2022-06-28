@@ -55,6 +55,7 @@ export default function AdminHeader() {
           <SubMenu
             title={i18n("AdminPanel.users")}
             className={"t-admin-users-submenu"}
+            key="users-sub"
           >
             <Menu.Item key="users">
               <Link
@@ -67,7 +68,7 @@ export default function AdminHeader() {
             </Menu.Item>
             <Menu.Item key="groups">
               <Link
-                onClick={() => setSelectedKeys("users")}
+                onClick={() => setSelectedKeys("groups")}
                 to={`${DEFAULT_URL}/${ADMIN.USERGROUPS}/list`}
                 className={"t-admin-groups-link"}
               >
@@ -93,9 +94,9 @@ export default function AdminHeader() {
               {i18n("AdminPanel.remoteApi")}
             </Link>
           </Menu.Item>
-          <Menu.Item key="sequencing_runs">
+          <Menu.Item key="sequencing-runs">
             <Link
-              onClick={() => setSelectedKeys("sequencing_runs")}
+              onClick={() => setSelectedKeys("sequencing-runs")}
               to={`${DEFAULT_URL}/${ADMIN.SEQUENCINGRUNS}`}
               className={"t-admin-sequencing-runs-link"}
             >

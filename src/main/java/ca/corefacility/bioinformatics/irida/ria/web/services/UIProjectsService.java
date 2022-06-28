@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -19,7 +16,11 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.Coverage;
@@ -32,13 +33,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsR
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.UpdateProjectAttributeRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.NewProjectMetadataRestriction;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ManageLocalProjectSettingsPermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -51,20 +53,19 @@ public class UIProjectsService {
 	private final MessageSource messageSource;
 	private final ProjectOwnerPermission projectOwnerPermission;
 	private final ManageLocalProjectSettingsPermission projectMembersPermission;
-	/*
-	 * All roles that are available on a project.
-	 */
-	private final List<String> PROJECT_ROLES = ImmutableList.of("PROJECT_USER", "PROJECT_OWNER");
+	private final MetadataTemplateService metadataTemplateService;
+
 
 	@Autowired
 	public UIProjectsService(ProjectService projectService, SampleService sampleService, MessageSource messageSource,
 			ProjectOwnerPermission projectOwnerPermission,
-			ManageLocalProjectSettingsPermission projectMembersPermission) {
+			ManageLocalProjectSettingsPermission projectMembersPermission, MetadataTemplateService metadataTemplateService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.messageSource = messageSource;
 		this.projectOwnerPermission = projectOwnerPermission;
 		this.projectMembersPermission = projectMembersPermission;
+		this.metadataTemplateService = metadataTemplateService;
 	}
 
 	/**
@@ -87,6 +88,18 @@ public class UIProjectsService {
 		} else {
 			createdProject = projectService.create(project);
 		}
+
+		// Update metadata restrictions in target project
+		List<NewProjectMetadataRestriction> restrictions = request.getMetadataRestrictions();
+		List<MetadataTemplateField> fields = metadataTemplateService.getPermittedFieldsForCurrentUser(createdProject,
+				false);
+		for (NewProjectMetadataRestriction restriction : restrictions) {
+			fields.stream()
+					.filter(f -> Objects.equals(restriction.getIdentifier(), f.getId()))
+					.findFirst()
+					.ifPresent(field -> metadataTemplateService.setMetadataRestriction(createdProject, field,
+							ProjectMetadataRole.fromString(restriction.getRestriction())));
+		}
 		return createdProject.getId();
 	}
 
@@ -97,9 +110,12 @@ public class UIProjectsService {
 	 * @return list of roles and their internationalized strings
 	 */
 	public List<Role> getProjectRoles(Locale locale) {
-		return PROJECT_ROLES.stream()
-				.map(role -> new Role(role, messageSource.getMessage("projectRole." + role, new Object[] {}, locale)))
-				.collect(Collectors.toList());
+		List<Role> roles = new ArrayList<>();
+		for (ProjectRole role : ProjectRole.values()) {
+			roles.add(new Role(role.toString(),
+					messageSource.getMessage("projectRole." + role, new Object[] {}, locale)));
+		}
+		return roles;
 	}
 
 	/**
@@ -162,7 +178,9 @@ public class UIProjectsService {
 
 			boolean isOwnerAllowRemote = projectMembersPermission.isAllowed(authentication, project);
 
-			return new ProjectDetailsResponse(project, isAdmin || isOwner, isAdmin || isOwnerAllowRemote);
+			MetadataTemplate defaultTemplateForProject = metadataTemplateService.getDefaultTemplateForProject(project);
+
+			return new ProjectDetailsResponse(project, isAdmin || isOwner, isAdmin || isOwnerAllowRemote, defaultTemplateForProject);
 		} catch (EntityNotFoundException e) {
 			throw new AjaxItemNotFoundException(
 					messageSource.getMessage("server.ProjectDetails.project-not-found", new Object[] {}, locale));
@@ -193,8 +211,9 @@ public class UIProjectsService {
 			project.setOrganism(request.getValue());
 			break;
 		default:
-			throw new UpdateException(messageSource.getMessage("server.ProjectDetails.error",
-					new Object[] { request.getField() }, locale));
+			throw new UpdateException(
+					messageSource.getMessage("server.ProjectDetails.error", new Object[] { request.getField() },
+							locale));
 		}
 
 		try {

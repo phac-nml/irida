@@ -43,7 +43,7 @@ public class AnalysesUserPage extends AbstractPage {
 	@FindBy(css = ".ant-input-search .ant-input")
 	private WebElement outputsSearchInput;
 
-	@FindBy(className = "ant-input-clear-icon")
+	@FindBy(css = ".ant-input-group .ant-input-suffix")
 	private WebElement outputsSearchInputClearBtn;
 
 

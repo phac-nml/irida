@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectMetadataTemplateJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -26,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.StaticMetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.agGrid.AgGridColumn;
 import ca.corefacility.bioinformatics.irida.ria.web.linelist.dto.*;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
@@ -85,13 +85,28 @@ public class LineListController {
 				Collections.emptyList(), "", "", "", null, null, current, pageSize, sort);
 		List<Sample> samples = page.stream().map(ProjectSampleJoin::getObject).collect(Collectors.toList());
 		List<Long> sampleIds = samples.stream().map(Sample::getId).collect(Collectors.toList());
-		Map<Long, Set<MetadataEntry>> metadataForProject = sampleService.getMetadataForProjectSamples(project,
-				sampleIds);
+
+		List<MetadataTemplateField> metadataTemplateFields = metadataTemplateService
+				.getPermittedFieldsForCurrentUser(project, true);
+
+		Map<Long, Set<MetadataEntry>> metadataForProject;
+
+		//check that we have some fields
+		if (!metadataTemplateFields.isEmpty()) {
+			//if we have fields, get all the metadata
+			ProjectMetadataResponse metadataResponse = sampleService.getMetadataForProjectSamples(project, sampleIds,
+					metadataTemplateFields);
+
+			metadataForProject = metadataResponse.getMetadata();
+		} else {
+			//if we have no fields, just give an empty map.  We'll just show the date fields
+			metadataForProject = new HashMap<>();
+		}
 
 		//for each sample
 		for (Sample s : samples) {
 			//get the metadata for that sample
-			Set<MetadataEntry> metadata = metadataForProject.get(s.getId());
+			Set<MetadataEntry> metadata = metadataForProject.getOrDefault(s.getId(), new HashSet<>());
 
 			//check if the project owns the sample
 			boolean ownership = !lockedSamplesInProject.contains(s.getId());
@@ -157,16 +172,14 @@ public class LineListController {
 		 * Need all MetadataTemplate fields (either already on the project, or
 		 * in templates associated with the project).
 		 */
-		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService
-				.getMetadataTemplatesForProject(project);
-		List<AgGridColumn> allFields = this.getProjectMetadataTemplateFields(projectId, templateJoins, locale);
+		List<MetadataTemplate> templateJoins = metadataTemplateService.getMetadataTemplatesForProject(project);
+		List<AgGridColumn> allFields = this.getProjectMetadataTemplateFields(projectId, locale);
 
 		// Add a "Template" for all fields
 		templates.add(new UIMetadataTemplate(-1L,
 				messages.getMessage("linelist.templates.Select.none", new Object[] {}, locale), allFields));
 
-		for (ProjectMetadataTemplateJoin join : templateJoins) {
-			MetadataTemplate template = join.getObject();
+		for (MetadataTemplate template : templateJoins) {
 			List<AgGridColumn> fields = formatTemplateForUI(template, allFields, canEdit);
 			templates.add(new UIMetadataTemplate(template.getId(), template.getName(), fields));
 		}
@@ -205,6 +218,9 @@ public class LineListController {
 		AgGridColumn iconCol = allFieldsAgGridColumns.get(0);
 		AgGridColumn sampleNameCol = allFieldsAgGridColumns.get(1);
 
+		List<MetadataTemplateField> permittedFieldsForTemplate = metadataTemplateService
+				.getPermittedFieldsForTemplate(template);
+
 		/*
 		Get a list of all the column field keys to facilitate faster look ups.
 		 */
@@ -227,7 +243,7 @@ public class LineListController {
 		1. Create an AgGridColumn for the field and add it to the template.
 		2. Add the fieldKey to the templateFieldsLabels list for use later in hiding non template fields.
 		 */
-		for (MetadataTemplateField field : template.getFields()) {
+		for (MetadataTemplateField field : permittedFieldsForTemplate) {
 			// Need to add parameter for if they have permissions to edit.
 			templateAgGridColumns.add(mapFieldToColumn(field, canEdit));
 			templateFieldsLabels.add(field.getFieldKey());
@@ -263,9 +279,6 @@ public class LineListController {
 			@RequestParam Long projectId, Locale locale, HttpServletResponse response) {
 		Project project = projectService.read(projectId);
 
-		List<ProjectMetadataTemplateJoin> templateJoins = metadataTemplateService
-				.getMetadataTemplatesForProject(project);
-
 		// Get or create the template fields.
 		List<MetadataTemplateField> fields = new ArrayList<>();
 		for (AgGridColumn field : template.getFields()) {
@@ -287,9 +300,8 @@ public class LineListController {
 		if (template.getId() == null) {
 			// NO ID means that this is a new template
 			metadataTemplate = new MetadataTemplate(template.getName(), fields);
-			ProjectMetadataTemplateJoin join = metadataTemplateService.createMetadataTemplateInProject(metadataTemplate,
-					project);
-			metadataTemplate = join.getObject();
+			metadataTemplate = metadataTemplateService.createMetadataTemplateInProject(metadataTemplate, project);
+
 			response.setStatus(HttpServletResponse.SC_CREATED);
 		} else {
 			metadataTemplate = metadataTemplateService.read(template.getId());
@@ -297,25 +309,22 @@ public class LineListController {
 			metadataTemplate = metadataTemplateService.updateMetadataTemplateInProject(metadataTemplate);
 			response.setStatus(HttpServletResponse.SC_OK);
 		}
-		return new UIMetadataTemplate(metadataTemplate.getId(), metadataTemplate.getName(),
-				formatTemplateForUI(metadataTemplate,
-						getProjectMetadataTemplateFields(projectId, templateJoins, locale), canUserEdit(project)));
+		return new UIMetadataTemplate(metadataTemplate.getId(), metadataTemplate.getName(), formatTemplateForUI(
+				metadataTemplate, getProjectMetadataTemplateFields(projectId, locale), canUserEdit(project)));
 	}
 
 	/**
 	 * Get a list of all {@link MetadataTemplateField}s on a {@link Project}
 	 *
-	 * @param projectId     {@link Long} identifier for a {@link Project}
-	 * @param templateJoins {@link List} of {@link ProjectMetadataTemplateJoin}s
-	 * @param locale        {@link Locale}
+	 * @param projectId {@link Long} identifier for a {@link Project}
+	 * @param locale    {@link Locale}
 	 * @return {@link List} of {@link UIMetadataField}
 	 */
-	public List<AgGridColumn> getProjectMetadataTemplateFields(long projectId,
-			final List<ProjectMetadataTemplateJoin> templateJoins, Locale locale) {
+	public List<AgGridColumn> getProjectMetadataTemplateFields(long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
-		List<MetadataTemplateField> metadataFieldsForProject = metadataTemplateService
-				.getMetadataFieldsForProject(project);
-		Set<MetadataTemplateField> fieldSet = new HashSet<>(metadataFieldsForProject);
+
+		List<MetadataTemplateField> permittedFieldsForCurrentUser = metadataTemplateService
+				.getPermittedFieldsForCurrentUser(project, true);
 
 		/*
 		 * IGNORED TEMPLATE FIELDS: These fields are ignored here because they
@@ -327,18 +336,10 @@ public class LineListController {
 		 */
 		List<StaticMetadataTemplateField> staticMetadataFields = metadataTemplateService.getStaticMetadataFields();
 
-		/*
-		 * Get all unique fields from the templates.
-		 */
-		for (ProjectMetadataTemplateJoin join : templateJoins) {
-			MetadataTemplate template = join.getObject();
-			List<MetadataTemplateField> templateFields = template.getFields();
-			for (MetadataTemplateField field : templateFields) {
-				if (!staticMetadataFields.contains(field)) {
-					fieldSet.add(field);
-				}
-			}
-		}
+		//converting to set and removing fields that are in the staticMetadataFields above
+		Set<MetadataTemplateField> fieldSet = permittedFieldsForCurrentUser.stream()
+				.filter(f -> !staticMetadataFields.contains(f))
+				.collect(Collectors.toSet());
 
 		List<AgGridColumn> fields = fieldSet.stream()
 				.map(f -> new UIMetadataField(f, false, true))

@@ -2,6 +2,8 @@ package ca.corefacility.bioinformatics.irida.service.sample;
 
 import java.util.*;
 
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -18,10 +20,11 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
@@ -79,23 +82,16 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public List<Long> getLockedSamplesInProject(Project project);
 
 	/**
-	 * Get the metadata collections for an entire project. This will return a Map of {@link Sample} ID with a Set of the
-	 * {@link MetadataEntry}s
-	 *
-	 * @param project the {@link Project} to get metadata for
-	 * @return a map of metadata
-	 */
-	public Map<Long, Set<MetadataEntry>> getMetadataForProject(Project project);
-
-	/**
 	 * Get the metadata collections for a set of samples in a project. This will return a Map of {@link Sample} ID with
 	 * a Set of the {@link MetadataEntry}s
 	 *
 	 * @param project   the {@link Project} to get metadata for
 	 * @param sampleIds the {@link Sample} ids to get metadata for
+	 * @param fields    the fields to get metadata from in the project. This must not be empty.
 	 * @return a map of metadata
 	 */
-	public Map<Long, Set<MetadataEntry>> getMetadataForProjectSamples(Project project, List<Long> sampleIds);
+	public ProjectMetadataResponse getMetadataForProjectSamples(Project project, List<Long> sampleIds,
+			List<MetadataTemplateField> fields);
 
 	/**
 	 * Find a {@link Sample} assocaited with a {@link SequencingObject}
@@ -231,6 +227,19 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 */
 	public Double estimateCoverageForSample(Sample sample, ReferenceFile referenceFile)
 			throws SequenceFileAnalysisException;
+
+	/**
+	 * Get a {@link Page} of {@link ProjectSampleJoin} for samples from 1 or more projects based on filtering criteria.
+	 *
+	 * @param projects    {@link List} of {@link Project} the {@link Sample}s must be found within.
+	 * @param filterSpec  {@link ProjectSampleJoinSpecification}
+	 * @param currentPage {@link Integer} the current page the table is on.
+	 * @param pageSize    {@link Integer} the number of {@link ProjectSampleJoin} in the {@link Page}.
+	 * @param sort        {@link Sort} chained sort definitions to sort page by.
+	 * @return a {@link Page} of {@link ProjectSampleJoin} that are filtered and sorted.
+	 */
+	public Page<ProjectSampleJoin> getFilteredProjectSamples(List<Project> projects,
+			ProjectSampleJoinSpecification filterSpec, int currentPage, int pageSize, Sort sort);
 
 	/**
 	 * Get a {@link Page} of {@link ProjectSampleJoin} for samples from 1 or more projects based on filtering criteria.

@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import org.junit.jupiter.api.Test;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -36,9 +37,8 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(page.isNotificationDisplayed());
 		assertEquals(1, page.getNumberOfMembers(), "Should be 1 member in the project");
 
-		// Should not be able to remove the manager
-		page.removeManager(0);
-		assertTrue(page.isNotificationDisplayed());
+		// Should not be able to remove the manager so the remove button should be disabled
+		assertFalse(page.lastManagerRemoveButtonEnabled(0));
 		assertEquals(1, page.getNumberOfMembers(), "Should be 1 member in the project");
 
 		// Test Add user to project
@@ -46,8 +46,19 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		page.isNotificationDisplayed();
 		assertEquals(2, page.getNumberOfMembers(), "Should be 2 members in the project");
 
-		// Tye updating the users role
+		// Try updating the users role to owner
 		page.updateUserRole(0, ProjectRole.PROJECT_OWNER.toString());
+		assertTrue(page.isNotificationDisplayed());
+
+		// A manager has a metadata role of Level 4 and cannot be modified
+		assertFalse(page.userMetadataRoleSelectEnabled(0));
+
+		// Change first manager back to a collaborator
+		page.updateUserRole(0, ProjectRole.PROJECT_USER.toString());
+		assertTrue(page.isNotificationDisplayed());
+
+		// Try updating the users metadata role
+		page.updateMetadataRole(0, ProjectMetadataRole.LEVEL_2.toString());
 		assertTrue(page.isNotificationDisplayed());
 	}
 

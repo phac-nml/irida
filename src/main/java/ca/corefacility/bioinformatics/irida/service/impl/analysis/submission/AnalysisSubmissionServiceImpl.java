@@ -10,6 +10,7 @@ import javax.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -110,6 +111,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	private JobErrorRepository jobErrorRepository;
 
 	// required, but not constructor injected because we have circular dependencies :(
+	@Lazy
 	@Autowired
 	private AnalysisExecutionServiceGalaxyCleanupAsync analysisExecutionService;
 

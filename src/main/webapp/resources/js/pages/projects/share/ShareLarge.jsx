@@ -15,6 +15,7 @@ export default function ShareLarge({
   target,
   locked,
   remove,
+  restrictions,
   onComplete,
 }) {
   const [progress, setProgress] = React.useState(0);
@@ -30,6 +31,10 @@ export default function ShareLarge({
         currentId: current,
         targetId: target,
         remove,
+        restrictions: restrictions.map(({ restriction, id }) => ({
+          restriction,
+          identifier: id,
+        })),
       }).then((response) => {
         shared += sampleIds.length;
         setProgress(Math.ceil((shared / samples.length) * 100));
@@ -44,7 +49,9 @@ export default function ShareLarge({
       const sampleIds = ids.slice(i * MAX_SHARE_SIZE, (i + 1) * MAX_SHARE_SIZE);
       share(sampleIds);
     }
-    Promise.all(promises).then(() => onComplete());
+    Promise.all(promises).then(() => {
+      setTimeout(onComplete, 1000);
+    });
   }, []);
 
   return (

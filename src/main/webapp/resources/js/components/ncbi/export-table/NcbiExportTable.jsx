@@ -1,10 +1,14 @@
 import React from "react";
 import { Table } from "antd";
 import { getProjectNCBIExports } from "../../../apis/ncbi/ncbi";
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import {
+  formatInternationalizedDateTime
+} from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import NcbiUploadStates from "../upload-states";
-import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
+import {
+  getPaginationOptions
+} from "../../../utilities/antdesign-table-utilities";
 
 /**
  * Render a list of all Project NCBI Exports.
@@ -21,10 +25,6 @@ export function NcbiExportTable() {
       setTotal(data.length);
     });
   }, []);
-
-  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
-    total,
-  ]);
 
   const columns = [
     {
@@ -73,7 +73,7 @@ export function NcbiExportTable() {
       columns={columns}
       dataSource={exports}
       rowKey={(item) => item.id}
-      pagination={paginationOptions}
+      pagination={getPaginationOptions(total)}
     />
   );
 }

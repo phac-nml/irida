@@ -11,13 +11,13 @@ import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.SequencingRunRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 
 /**
  * Permission allowing a user to read a {@link SequencingRun}
  */
 @Component
-public class ReadSequencingRunPermission extends BasePermission<SequencingRun, Long> {
+public class ReadSequencingRunPermission extends RepositoryBackedPermission<SequencingRun, Long> {
 
 	private static String PERMISSION_PROVIDED = "canReadSequencingRun";
 

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+>
+  <head>
+    <title th:text="#{user.account}">_USER PAGE_</title>
+    <webpacker:css entry="user" />
+  </head>
+  <body>
+    <div id="user-account-root" style="height: 100%;" layout:fragment="page">
+      <!-- Contents rendered from UserDetailsPage.jsx -->
+    </div>
+    <th:block layout:fragment="scripts">
+      <webpacker:js entry="user" />
+    </th:block>
+  </body>
+</html>

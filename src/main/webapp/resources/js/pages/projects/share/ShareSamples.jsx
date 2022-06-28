@@ -1,6 +1,7 @@
 import { Alert, Checkbox, Space, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import ShareAssociated from "./ShareAssociated";
 import { SharedSamplesList } from "./SharedSamplesList";
 import { updatedLocked, updateMoveSamples } from "./shareSlice";
 
@@ -10,21 +11,20 @@ import { updatedLocked, updateMoveSamples } from "./shareSlice";
  * @returns {JSX.Element}
  * @constructor
  */
-export function ShareSamples({ samples = [], redirect }) {
+export function ShareSamples({ samples = [] }) {
   const dispatch = useDispatch();
-  const { originalSamples, locked, remove } = useSelector(
+  const { associated, samples: originalSamples, locked, remove } = useSelector(
     (state) => state.shareReducer
   );
 
-  const SHOW_SAMPLES = samples.length > 0;
-  const SHOW_NO_SAMPLES_WARNING = samples.length === 0;
-  const SHOW_SOME_SAMPLES_WARNING =
-    SHOW_SAMPLES && samples.length < originalSamples.length;
-
   return (
-    <>
-      {SHOW_SAMPLES && (
-        <Space direction="vertical" style={{ width: `100%` }}>
+    <Space direction="vertical" style={{ width: `100%` }}>
+      <Typography.Title level={5}>
+        {i18n("ShareSamplesList.title")}
+      </Typography.Title>
+      {associated.length > 0 && <ShareAssociated />}
+      {samples.length > 0 && (
+        <>
           <SharedSamplesList list={samples} />
           <Checkbox
             className="t-move-checkbox"
@@ -45,9 +45,9 @@ export function ShareSamples({ samples = [], redirect }) {
               {i18n("ShareSamples.checkbox.lock")}
             </Typography.Text>
           </Checkbox>
-        </Space>
+        </>
       )}
-      {SHOW_NO_SAMPLES_WARNING && (
+      {samples.length === 0 && (
         <Alert
           type="warning"
           className="t-no-sample-warning"
@@ -56,7 +56,7 @@ export function ShareSamples({ samples = [], redirect }) {
           description={i18n("ShareSamples.no-samples.description")}
         />
       )}
-      {SHOW_SOME_SAMPLES_WARNING && (
+      {originalSamples.length - samples.length > 0 && (
         <Alert
           className="t-same-samples-warning"
           type="info"
@@ -67,6 +67,6 @@ export function ShareSamples({ samples = [], redirect }) {
           )}
         />
       )}
-    </>
+    </Space>
   );
 }
