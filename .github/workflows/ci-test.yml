@@ -103,9 +103,5 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
-      - name: Install doc libraries
-        run: pushd doc; bundle install; popd
-      - name: Build Javadoc
-        run: ./gradlew clean javadoc
-      - name: Build Jekyll Site
-        run: pushd doc; bundle exec jekyll build;
+      - name: Build Documentation Site
+        run: ./gradlew clean buildDocsSite
