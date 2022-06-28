@@ -249,7 +249,7 @@ public class UIUsersService {
 			//only check newPassword exists if an admin is updating another user's password
 			if (principalAdmin) {
 				if (Strings.isNullOrEmpty(newPassword)) {
-					errors.put("oldPassword", messageSource.getMessage("server.user.edit.password.old.required", null,
+					errors.put("newPassword", messageSource.getMessage("server.user.edit.password.new.required", null,
 							request.getLocale()));
 				} else {
 					updatedValues.put("password", newPassword);
