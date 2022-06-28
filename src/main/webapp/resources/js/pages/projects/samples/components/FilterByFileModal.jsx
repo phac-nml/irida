@@ -5,6 +5,7 @@ import { CheckCircleTwoTone, WarningTwoTone } from "@ant-design/icons";
 import { green6, red6 } from "../../../../styles/colors";
 import VirtualList from "rc-virtual-list";
 import { SPACE_SM } from "../../../../styles/spacing";
+import { setBaseUrl } from "../../../../utilities/url-utilities";
 
 const ROW_HEIGHT = 43;
 
@@ -47,7 +48,7 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
       let parsed = contents.split(/[\s,]+/);
       const projectIds = [projectId, ...associated];
 
-      fetch(`/ajax/samples/validate`, {
+      fetch(setBaseUrl(`/ajax/samples/validate`), {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
