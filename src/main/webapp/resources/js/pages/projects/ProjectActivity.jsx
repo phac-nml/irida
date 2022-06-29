@@ -33,7 +33,7 @@ function ProjectActivity() {
   const [page, setPage] = React.useState(0);
 
   React.useEffect(() => {
-    getProjectActivities({ projectId, page })
+    getProjectActivities(projectId, page)
       .then((data) => {
         const list = addKeysToList(data.content, "activity", "date");
         setActivities([...activities, ...list]);

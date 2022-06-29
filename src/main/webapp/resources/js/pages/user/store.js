@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { userApi } from "../../apis/users/users";
 import { settingsApi } from "../../apis/settings/settings";
-import { passwordResetApi } from "../../apis/passwordReset";
+import { passwordResetApi } from "../../apis/password-reset";
 import { projectSubscriptionsApi } from "../../apis/projects/project-subscriptions";
 import { sequencingRunsApi } from "../../apis/sequencing-runs/sequencing-runs";
 

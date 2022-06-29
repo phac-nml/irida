@@ -108,9 +108,9 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 			+ "((#u.getSystemRole() == T(ca.corefacility.bioinformatics.irida.model.user.Role).ROLE_USER) and hasRole('ROLE_MANAGER'))";
 
 	/**
-	 * If a user is an administrator, they are permitted to update any user property. If a manager or user is updating
-	 * an account, they should not be permitted to change the role of the user (only administrators can create users
-	 * with role other than Role.ROLE_USER).
+	 * If a user is an administrator, they are permitted to update any user property. If a user is updating an account,
+	 * they should not be permitted to change the role of the user (only administrators can create users with role other
+	 * than Role.ROLE_USER).
 	 */
 	static final String UPDATE_USER_PERMISSIONS = "hasRole('ROLE_ADMIN') or "
 			+ "(!#properties.containsKey('systemRole') and hasPermission(#uid, 'canUpdateUser'))";
@@ -262,9 +262,9 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	}
 
 	/**
-	 * Throws an {@link UnsupportedOperationException} telling user to use {@link UserServiceImpl#updateFields(Long,
-	 * Map)} instead. They should use the other method so that they cannot update a password without explicitly trying
-	 * to do so.
+	 * Throws an {@link UnsupportedOperationException} telling user to use
+	 * {@link UserServiceImpl#updateFields(Long, Map)} instead. They should use the other method so that they cannot
+	 * update a password without explicitly trying to do so.
 	 */
 	@Override
 	public User update(User object) {

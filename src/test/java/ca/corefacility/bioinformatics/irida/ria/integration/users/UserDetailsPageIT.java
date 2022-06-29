@@ -47,6 +47,7 @@ public class UserDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		userPage.goTo();
 		String newEmail = "differentUser@nowhere.com";
 		userPage.enterEmail(newEmail);
+		userPage.clickSubmit();
 		assertTrue(userPage.hasErrors());
 	}
 
