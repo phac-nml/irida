@@ -44,13 +44,13 @@
 		<repository>
 			<name>spades</name>
 			<owner>lionelguy</owner>
-			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<url>https://toolshed.g2.bx.psu.edu/</url>
 			<revision>21734680d921</revision>
 		</repository>
 		<repository>
 			<name>prokka</name>
 			<owner>crs4</owner>
-			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<url>https://toolshed.g2.bx.psu.edu/</url>
 			<revision>3ad7ef0ba385</revision>
 		</repository>
 	</toolRepositories>

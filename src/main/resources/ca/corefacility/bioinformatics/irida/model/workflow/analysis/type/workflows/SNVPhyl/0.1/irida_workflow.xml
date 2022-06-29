@@ -78,25 +78,25 @@
 		<repository>
 			<name>sam_to_bam</name>
 			<owner>devteam</owner>
-			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<url>https://toolshed.g2.bx.psu.edu/</url>
 			<revision>c73bf16b45df</revision>
 		</repository>
 		<repository>
 			<name>samtools_mpileup</name>
 			<owner>devteam</owner>
-			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<url>https://toolshed.g2.bx.psu.edu/</url>
 			<revision>973fea5b4bdf</revision>
 		</repository>
 		<repository>
 			<name>bcftools_view</name>
 			<owner>gregory-minevich</owner>
-			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<url>https://toolshed.g2.bx.psu.edu/</url>
 			<revision>6572c40a8505</revision>
 		</repository>
 		<repository>
 			<name>msa_datatypes</name>
 			<owner>iuc</owner>
-			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<url>https://toolshed.g2.bx.psu.edu/</url>
 			<revision>70227007b991</revision>
 		</repository>
 	</toolRepositories>
