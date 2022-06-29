@@ -29,13 +29,13 @@ IRIDA uses the design system [Ant Design](https://ant.design/), a [React JS](htt
 
 ### Build Process:
 
-#### Production Mode: `yarn build`
+#### Production Mode: `./gradlew buildWebapp`
 - Minimal source map
 - File minification
 - Bundle Chunking: Splits code into various bundles which can then me loaded on demand or in parallel. This makes for smaller bundle sizes and controls resource load prioritization. Bundle chunking also for code that is loaded on different pages be bundled together and cached by the browser.
 - Hash code added to file name to allow for browser cache breaking.
 
-#### Development Mode: `yarn start`
+#### Development Mode: `./gradlew startWebapp`
 - **watch** mode set; any changes to JavaScript of CSS files will be automatically compiled
 - Extensive source map
 - No file minification
@@ -48,6 +48,17 @@ Current babel plugins for UI development:
 - [Class Properties](https://babeljs.io/docs/en/babel-plugin-proposal-class-properties)
 - [Export default from](https://babeljs.io/docs/en/babel-plugin-proposal-export-default-from) 
 - [Optional Chaining](https://babeljs.io/docs/en/babel-plugin-proposal-optional-chaining)
+
+#### Adding dependencies
+
+IRIDA uses [pnpm](https://pnpm.io/) to manage node dependencies.
+
+To add a new dependency you can run the following command:
+```bash
+./gradlew pnpm_add DEPENDENCY
+```
+
+This follows the same argument structure as https://pnpm.io/cli/add.
 
 ### CSS
 
@@ -86,7 +97,7 @@ For entries:
 
 ##### Webpack
 
-- `yarn build`: runs webpack in production mode
+- `./gradlew buildWebapp`: runs webpack in production mode
     * Compilation, minification, and chunking of CSS and JavaScript assets.
     * Extraction for internationalization strings.
     * Creation of webpack manifest file

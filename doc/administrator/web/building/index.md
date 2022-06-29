@@ -20,7 +20,7 @@ The following software is required to build IRIDA from source:
 * Java 11 JDK (http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 * Git (http://git-scm.com/)
 * Node (http://nodejs.org/)
-* Yarn (https://yarnpkg.com/lang/en/)
+* Pnpm (https://pnpm.io/)
 
 Installing these dependencies varies greatly, depending on the host operating system that you are using, so no install instructions are provided. The following commands must be available on your `$PATH`:
 
@@ -41,7 +41,7 @@ git clone https://github.com/phac-nml/irida.git
 
 ### Installing dependencies
 
-IRIDA uses Gradle and Yarn for managing external dependencies. Some of the libraries that we're using to build IRIDA are either not available in the Maven central repository, or we've had to seperately modify/update the code to accomplish the task we want, and the changes have not yet been accepted upstream.
+IRIDA uses Gradle and Pnpm for managing external dependencies. Some of the libraries that we're using to build IRIDA are either not available in the Maven central repository, or we've had to seperately modify/update the code to accomplish the task we want, and the changes have not yet been accepted upstream.
 
 These libraries are located in `/lib` folder and are automatically installed via gradle.
 

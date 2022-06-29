@@ -42,16 +42,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3 #Checkout the project from git
-      - name: Cache PNP #Pull the Yarn cache for PNP (package management strategy - see https://classic.yarnpkg.com/en/docs/pnp).  This caches all dependencies assuming the yarn.lock file stays the same
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(./gradlew pnpmCacheDir -q)"
+      - name: Setup pnpm cache
         uses: actions/cache@v3
         with:
-          path: "**/.pnp.js"
-          key: ${{ runner.os }}-pnp-${{ hashFiles('**/yarn.lock') }}
-      - name: Cache yarn #Pull the cache for yarn.  This caches all dependencies assuming the yarn.lock file stays the same
-        uses: actions/cache@v2
-        with:
-          path: "**/.yarn"
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
       - name: Setup MySQL
         uses: mirromutth/mysql-action@v1.1
         with:
@@ -97,16 +98,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3 #Checkout the project from git
-      - name: Cache PNP #Pull the Yarn cache for PNP (package management strategy - see https://classic.yarnpkg.com/en/docs/pnp).  This caches all dependencies assuming the yarn.lock file stays the same
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(./gradlew pnpmCacheDir -q)"
+      - name: Setup pnpm cache
         uses: actions/cache@v3
         with:
-          path: "**/.pnp.js"
-          key: ${{ runner.os }}-pnp-${{ hashFiles('**/yarn.lock') }}
-      - name: Cache yarn #Pull the cache for yarn.  This caches all dependencies assuming the yarn.lock file stays the same
-        uses: actions/cache@v2
-        with:
-          path: "**/.yarn"
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
       - name: Setup MySQL
         uses: mirromutth/mysql-action@v1.1
         with:
