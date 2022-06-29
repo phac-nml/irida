@@ -1,5 +1,9 @@
-import axios, {AxiosResponse} from "axios";
-import {activities_project_route, activities_recent_route, activities_user_route,} from "../routes";
+import axios, { AxiosResponse } from "axios";
+import {
+  activities_project_route,
+  activities_recent_route,
+  activities_user_route,
+} from "../routes";
 
 /**
  * @file API for handling activities
@@ -40,9 +44,11 @@ export function getProjectActivities(
   try {
     return axios
       .get(
-        activities_project_route(undefined, {
-          projectId: `${projectId}`,
-          page: `${page}`,
+        activities_project_route({
+          queryParams: {
+            projectId: `${projectId}`,
+            page: `${page}`,
+          },
         })
       )
       .then(({ data }) => data);
@@ -60,8 +66,10 @@ export function getUserActivities(page = 0): Promise<Activities> {
   try {
     return axios
       .get(
-        activities_user_route(undefined, {
-          page: `${page}`,
+        activities_user_route({
+          queryParams: {
+            page: `${page}`,
+          },
         })
       )
       .then(({ data }) => data);
@@ -78,7 +86,7 @@ export function getUserActivities(page = 0): Promise<Activities> {
 export function getAllRecentActivities(page = 0): Promise<Activities> {
   try {
     return axios
-      .get(activities_recent_route(undefined, { page: `${page}` }))
+      .get(activities_recent_route({ queryParams: { page: `${page}` } }))
       .then(({ data }) => data);
   } catch (e) {
     return Promise.reject(i18n("RecentActivity.loadError"));
