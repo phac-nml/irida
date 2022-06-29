@@ -4,6 +4,7 @@ import React from "react";
 import { useDrop } from "react-dnd";
 import { addFile, removeFileFromSample } from "../services/runReducer";
 import { useDispatch } from "react-redux";
+import { grey5 } from "../../../styles/colors";
 
 /**
  * React component to render the list of samples and sequencing run files.
@@ -16,6 +17,9 @@ export function SequencingRunFilesList({ samples, files }) {
 
   const [{ isOver }, drop] = useDrop({
     accept: "card",
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+    }),
     canDrop: (item) => {
       if (item.prevSampleIndex === null) {
         return false;
@@ -39,7 +43,8 @@ export function SequencingRunFilesList({ samples, files }) {
       style={{
         overflowY: "auto",
         maxHeight: window.innerHeight - 272,
-        paddingRight: 10,
+        padding: 10,
+        backgroundColor: isOver ? grey5 : undefined,
       }}
       ref={drop}
     >
