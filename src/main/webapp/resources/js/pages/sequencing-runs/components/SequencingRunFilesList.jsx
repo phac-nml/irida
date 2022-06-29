@@ -35,7 +35,14 @@ export function SequencingRunFilesList({ samples, files }) {
   });
 
   return (
-    <div ref={drop}>
+    <div
+      style={{
+        overflowY: "auto",
+        maxHeight: window.innerHeight - 272,
+        paddingRight: 10,
+      }}
+      ref={drop}
+    >
       {files.length === 0 ? (
         <Empty
           description={i18n("SequencingRunCreateSamplesPage.empty")}

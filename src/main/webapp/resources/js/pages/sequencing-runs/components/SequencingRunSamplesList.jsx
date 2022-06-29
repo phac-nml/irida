@@ -23,7 +23,13 @@ export function SequencingRunSamplesList({ samples }) {
   };
 
   return (
-    <>
+    <div
+      style={{
+        overflowY: "auto",
+        maxHeight: window.innerHeight - 272,
+        paddingRight: 10,
+      }}
+    >
       <Empty
         style={{ paddingBottom: "15px" }}
         description=""
@@ -51,6 +57,6 @@ export function SequencingRunSamplesList({ samples }) {
           }}
         />
       )}
-    </>
+    </div>
   );
 }
