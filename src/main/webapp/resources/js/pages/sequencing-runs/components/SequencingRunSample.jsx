@@ -5,9 +5,9 @@ import { IconRemove } from "../../../components/icons/Icons";
 import {
   addFile,
   addFileToNewPairInSample,
-  deleteSample,
   removeFile,
   removeFileFromSample,
+  removeSample,
 } from "../services/runReducer";
 import { useDispatch } from "react-redux";
 import { SequencingRunSamplePair } from "./SequencingRunSamplePair";
@@ -22,7 +22,7 @@ import { SequencingRunSamplePair } from "./SequencingRunSamplePair";
 export function SequencingRunSample({ samples, sample, sampleIndex }) {
   const dispatch = useDispatch();
 
-  const removeSample = () => {
+  const removeSampleFromList = () => {
     sample.pairs.map((pair) => {
       if (pair.forward !== null) {
         dispatch(addFile(pair.forward.id));
@@ -31,7 +31,7 @@ export function SequencingRunSample({ samples, sample, sampleIndex }) {
         dispatch(addFile(pair.reverse.id));
       }
     });
-    dispatch(deleteSample(sampleIndex));
+    dispatch(removeSample(sampleIndex));
   };
 
   const [{ isOver: isDropOnNewPairOver }, dropOnNewPair] = useDrop({
@@ -60,7 +60,7 @@ export function SequencingRunSample({ samples, sample, sampleIndex }) {
       title={sample.sampleName}
       extra={
         <Button
-          onClick={removeSample}
+          onClick={removeSampleFromList}
           style={{ border: "none" }}
           icon={<IconRemove />}
         />

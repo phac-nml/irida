@@ -51,10 +51,10 @@ export const updateSample = createAction(
 );
 
 /**
- * Action to delete a sample
+ * Action to remove a sample
  */
-export const deleteSample = createAction(
-  `rootReducers/deleteSample`,
+export const removeSample = createAction(
+  `rootReducers/removeSample`,
   (index) => ({
     payload: { index },
   })
@@ -140,7 +140,7 @@ export const runReducer = createReducer(initialState, (builder) => {
     state.samples[index] = newSample;
   });
 
-  builder.addCase(deleteSample, (state, action) => {
+  builder.addCase(removeSample, (state, action) => {
     state.samples.splice(action.payload.index, 1);
   });
 
