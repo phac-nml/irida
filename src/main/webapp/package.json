@@ -7,7 +7,7 @@
     "start": "webpack --mode development --watch",
     "clean": "rm -rf node/ node_modules/ dist/ pages/templates/i18n/",
     "test": "jest resources/js/**/*.test.js",
-    "test:watch": "jest --watch resources/js/**/*.test.js",
+    "test:watch": "jest --watch resources/js/**/*.test.{js,ts}",
     "lint": "eslint --ext resources/js/**/*.{js,jsx,ts,tsx}"
   },
   "browserslist": [

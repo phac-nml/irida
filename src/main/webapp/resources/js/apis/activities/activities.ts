@@ -1,11 +1,9 @@
 import axios, {AxiosResponse} from "axios";
-import {activitiesRoute} from "../routes";
+import {activities_project, activities_recent, activities_user,} from "../routes";
 
 /**
  * @file API for handling activities
  */
-
-const BASE_URL = activitiesRoute();
 
 export interface ActivitiesResponse extends AxiosResponse {
   data: Activities;
@@ -41,7 +39,12 @@ export function getProjectActivities(
 ): Promise<Activities> {
   try {
     return axios
-      .get(`${BASE_URL}/project?projectId=${projectId}&page=${page}`)
+      .get(
+        activities_project(undefined, {
+          projectId: `${projectId}`,
+          page: `${page}`,
+        })
+      )
       .then(({ data }) => data);
   } catch (e) {
     return Promise.reject(i18n("ProjectActivity.error"));
@@ -55,7 +58,13 @@ export function getProjectActivities(
  */
 export function getUserActivities(page = 0): Promise<Activities> {
   try {
-    return axios.get(`${BASE_URL}/user?page=${page}`).then(({ data }) => data);
+    return axios
+      .get(
+        activities_user(undefined, {
+          page: `${page}`,
+        })
+      )
+      .then(({ data }) => data);
   } catch (e) {
     return Promise.reject(i18n("RecentActivity.loadError"));
   }
@@ -68,7 +77,9 @@ export function getUserActivities(page = 0): Promise<Activities> {
  */
 export function getAllRecentActivities(page = 0): Promise<Activities> {
   try {
-    return axios.get(`${BASE_URL}/all?page=${page}`).then(({ data }) => data);
+    return axios
+      .get(activities_recent(undefined, { page: `${page}` }))
+      .then(({ data }) => data);
   } catch (e) {
     return Promise.reject(i18n("RecentActivity.loadError"));
   }
