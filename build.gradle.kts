@@ -273,7 +273,7 @@ node {
     version.set("16.15.1")
     pnpmVersion.set("7.4.0")
     workDir.set(file("${project.projectDir}/.gradle/nodejs"))
-    nodeProjectDir.set(file("${projectDir}/src/main/webapp"))
+    nodeProjectDir.set(file("${project.projectDir}/src/main/webapp"))
 }
 
 tasks.register<PnpmTask>("pnpmCachePrune") {
