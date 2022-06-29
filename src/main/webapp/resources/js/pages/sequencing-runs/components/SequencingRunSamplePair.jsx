@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  addFile,
   addFileToExistingPairInSample,
   moveFileWithinSample,
   removeFile,
@@ -8,6 +9,7 @@ import {
 } from "../services/runReducer";
 import { FONT_COLOR_PRIMARY } from "../../../styles/fonts";
 import {
+  IconRemove,
   IconSwap,
   IconSwapLeft,
   IconSwapRight,
@@ -33,7 +35,7 @@ export function SequencingRunSamplePair({
 }) {
   const dispatch = useDispatch();
 
-  const switchPair = () => {
+  const clickSwitchPair = () => {
     const updatedPairs = [...sample.pairs];
     updatedPairs[pairIndex] = { forward: pair.reverse, reverse: pair.forward };
     const updatedSample = {
@@ -42,6 +44,11 @@ export function SequencingRunSamplePair({
     };
     dispatch(updateSample(updatedSample, sampleIndex));
   };
+
+  function clickRemoveFileFromList(fileId) {
+    dispatch(removeFileFromSample(fileId, sampleIndex, pairIndex));
+    dispatch(addFile(fileId));
+  }
 
   const [{ isOver: isDropOnPairOver }, dropOnPair] = useDrop({
     accept: "card",
@@ -87,17 +94,18 @@ export function SequencingRunSamplePair({
       style={{ padding: "10px 0px" }}
       align="middle"
       justify="center"
+      wrap={false}
     >
       {pair.forward !== null && (
         <>
-          <Col flex="75px">
+          <Col flex="initial">
             <Avatar
               size={60}
               style={{ backgroundColor: FONT_COLOR_PRIMARY }}
               icon={<IconSwapRight />}
             />
           </Col>
-          <Col flex="auto">
+          <Col flex="1">
             <SequencingRunFileCard
               file={pair.forward}
               sampleIndex={sampleIndex}
@@ -106,25 +114,32 @@ export function SequencingRunSamplePair({
               {pair.forward.fileName}
             </SequencingRunFileCard>
           </Col>
+          <Col flex="initial">
+            <Button
+              onClick={() => clickRemoveFileFromList(pair.forward.id)}
+              style={{ border: "none" }}
+              icon={<IconRemove />}
+            />
+          </Col>
         </>
       )}
       {pair.reverse !== null && (
         <>
           <Col span={2} offset={1}>
             <Button
-              onClick={switchPair}
+              onClick={clickSwitchPair}
               style={{ border: "none" }}
               icon={<IconSwap />}
             />
           </Col>
-          <Col flex="75px">
+          <Col flex="initial">
             <Avatar
               size={60}
               style={{ backgroundColor: FONT_COLOR_PRIMARY }}
               icon={<IconSwapLeft />}
             />
           </Col>
-          <Col flex="auto">
+          <Col flex="1">
             <SequencingRunFileCard
               file={pair.reverse}
               sampleIndex={sampleIndex}
@@ -133,16 +148,23 @@ export function SequencingRunSamplePair({
               {pair.reverse.fileName}
             </SequencingRunFileCard>
           </Col>
+          <Col flex="initial">
+            <Button
+              onClick={() => clickRemoveFileFromList(pair.reverse.id)}
+              style={{ border: "none" }}
+              icon={<IconRemove />}
+            />
+          </Col>
         </>
       )}
       {isDropOnPairOver && (
         <>
           {pair.forward === null && pair.reverse === null && (
             <>
-              <Col flex="75px">
+              <Col flex="initial">
                 <Skeleton.Avatar shape="circle" size={60} />
               </Col>
-              <Col flex="auto">
+              <Col flex="1">
                 <Skeleton.Input size="large" block={true} />
               </Col>
             </>
@@ -152,10 +174,10 @@ export function SequencingRunSamplePair({
               <Col span={2} offset={1}>
                 <Skeleton.Button size="small" shape="circle" />
               </Col>
-              <Col flex="75px">
+              <Col flex="initial">
                 <Skeleton.Avatar shape="circle" size={60} />
               </Col>
-              <Col flex="auto">
+              <Col flex="1">
                 <Skeleton.Input size="large" block={true} />
               </Col>
             </>

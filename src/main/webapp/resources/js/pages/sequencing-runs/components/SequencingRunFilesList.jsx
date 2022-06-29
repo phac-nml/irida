@@ -1,10 +1,7 @@
 import { Empty, List } from "antd";
 import { SequencingRunFileCard } from "./SequencingRunFileCard";
 import React from "react";
-import { useDrop } from "react-dnd";
-import { addFile, removeFileFromSample } from "../services/runReducer";
 import { useDispatch } from "react-redux";
-import { grey5 } from "../../../styles/colors";
 
 /**
  * React component to render the list of samples and sequencing run files.
@@ -15,28 +12,28 @@ import { grey5 } from "../../../styles/colors";
 export function SequencingRunFilesList({ samples, files }) {
   const dispatch = useDispatch();
 
-  const [{ isOver }, drop] = useDrop({
-    accept: "card",
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
-    }),
-    canDrop: (item) => {
-      if (item.prevSampleIndex === null) {
-        return false;
-      } else {
-        return true;
-      }
-    },
-    drop: (item) => {
-      const { file, prevSampleIndex, prevPairIndex } = item;
-
-      //remove file from previous sample
-      dispatch(removeFileFromSample(file.id, prevSampleIndex, prevPairIndex));
-
-      //add file to sequencing run file list
-      dispatch(addFile(file.id));
-    },
-  });
+  // const [{ isOver }, drop] = useDrop({
+  //   accept: "card",
+  //   collect: (monitor) => ({
+  //     isOver: !!monitor.isOver(),
+  //   }),
+  //   canDrop: (item) => {
+  //     if (item.prevSampleIndex === null) {
+  //       return false;
+  //     } else {
+  //       return true;
+  //     }
+  //   },
+  //   drop: (item) => {
+  //     const { file, prevSampleIndex, prevPairIndex } = item;
+  //
+  //     //remove file from previous sample
+  //     dispatch(removeFileFromSample(file.id, prevSampleIndex, prevPairIndex));
+  //
+  //     //add file to sequencing run file list
+  //     dispatch(addFile(file.id));
+  //   },
+  // });
 
   return (
     <div
@@ -44,9 +41,9 @@ export function SequencingRunFilesList({ samples, files }) {
         overflowY: "auto",
         maxHeight: window.innerHeight - 272,
         padding: 10,
-        backgroundColor: isOver ? grey5 : undefined,
+        // backgroundColor: isOver ? grey5 : undefined,
       }}
-      ref={drop}
+      // ref={drop}
     >
       {files.length === 0 ? (
         <Empty
