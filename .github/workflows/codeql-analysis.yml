@@ -27,9 +27,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Install Java libraries
-      run: pushd lib; ./install-libs.sh; popd;
-
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
