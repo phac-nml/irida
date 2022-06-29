@@ -260,7 +260,7 @@ tasks.war {
     exclude("resources/js/")
     exclude("webpack*")
     exclude(".npmrc")
-    exlcude("pnpm-lock.yaml")
+    exclude("pnpm-lock.yaml")
     exclude("package.json")
     exclude("styles.js")
     exclude("entries.js")
