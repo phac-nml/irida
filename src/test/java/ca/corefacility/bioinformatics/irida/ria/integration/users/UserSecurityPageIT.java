@@ -19,7 +19,6 @@ public class UserSecurityPageIT extends AbstractIridaUIITChromeDriver {
 
 	@BeforeEach
 	public void setUpTest() {
-		LoginPage.loginAsAdmin(driver());
 		userPage = new UserSecurityPage(driver());
 	}
 
