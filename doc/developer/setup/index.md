@@ -132,7 +132,7 @@ will cause Tomcat to start up much faster.
 
 Other arguments can be be passed to the script:
 
-* `--no-yarn`: Skip running the `yarn build` script along with the build, useful during development.
+* `--no-webapp-build`: Skip running the `buildWebapp` task along with the build, useful during development.
 * `--prod`: Run spring using the production profile.
 
 #### Integration Testing
@@ -151,18 +151,13 @@ Please refer to the [Galaxy Install Guide][galaxy-install] for information on se
 Front End Development Setup
 ---------------------------
 
-IRIDA uses [Yarn 2](https://yarnpkg.com) for front-end dependency management.  [Install yarn](https://yarnpkg.com/getting-started/install) by following the directions for your machine.  For production, it is automatically installed during the build process.
-
-From within `src/main/webapp/`:
-
-You will need to run `yarn install` to install all dependencies required to run the following from the command line.
+IRIDA uses [Pnpm](hhttps://pnpm.io/) for front-end dependency management. It is automatically installed when running gradle tasks that require the webapp to be built.
 
 Tasks
 =====
 
-* `yarn sass` - compile all `.scss` files into `.css` files, with sourcemaps.
-* `yarn build` - compile all es6 files to es2015.
-* `yarn start` - use when developing front end code.  Webpack will monitor for changes to the entry files, compile them, and then updates the browser with the changes.
+* `./gradlew buildWebapp` - compile all es6 files to es2015.
+* `./gradlew startWebapp` - use when developing front end code.  Webpack will monitor for changes to the entry files, compile them, and then updates the browser with the changes.
 
 JavaScript and SCSS Code Formatting and Linting
 ===============================================
