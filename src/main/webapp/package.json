@@ -6,8 +6,8 @@
     "build": "webpack --mode production",
     "start": "webpack --mode development --watch",
     "clean": "rm -rf dist/ pages/templates/i18n/",
-    "test": "jest resources/js/**/*.test.js",
-    "test_watch": "jest --watch resources/js/**/*.test.{js,ts}",
+    "test": "jest resources/js/**/*.test.{js,ts}",
+    "test-watch": "jest --watchAll",
     "lint": "eslint --ext resources/js/**/*.{js,jsx,ts,tsx}"
   },
   "browserslist": [
@@ -112,7 +112,7 @@
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.4.0",
     "expose-loader": "^3.1.0",
-    "jest": "^27.5.1",
+    "jest": "^28.1.2",
     "jsdom": "^20.0.0",
     "less": "^4.1.2",
     "less-loader": "^10.2.0",
