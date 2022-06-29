@@ -116,7 +116,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter") {
+    implementation("org.springframework.boot:spring-boot-starter:2.7.1") {
         exclude(group = "org.apache.logging.log4j", module = "log4j-to-slf4j")
     }
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -171,7 +171,7 @@ dependencies {
     implementation("org.pf4j:pf4j:2.4.0")
     implementation("org.biojava:biojava3-core:3.0")
     implementation("com.google.code.gson:gson")
-    implementation("com.github.pjfanning:excel-streaming-reader:3.6.1")
+    implementation("com.github.pjfanning:excel-streaming-reader:4.0.1")
     implementation("org.springdoc:springdoc-openapi-webmvc-core:1.5.6") {
         exclude(group = "jakarta.xml.bind", module = "jakarta.xml.bind-api")
         exclude(group = "jakarta.validation", module = "jakarta.validation-api")
