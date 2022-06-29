@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
-const BASE_URL = `ajax/project/details`;
+const BASE_URL = setBaseUrl(`ajax/project/details`);
 /**
  *
  * Redux API for all things project
@@ -11,7 +11,7 @@ const BASE_URL = `ajax/project/details`;
 export const projectApi = createApi({
   reducerPath: `projectApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: setBaseUrl(BASE_URL),
+    baseUrl: BASE_URL,
   }),
   tagTypes: ["Project", "MetadataTemplate"],
   endpoints: (build) => ({

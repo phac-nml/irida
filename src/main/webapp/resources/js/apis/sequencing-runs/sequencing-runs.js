@@ -1,7 +1,7 @@
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const BASE_URL = `ajax/sequencing-runs`;
+const BASE_URL = setBaseUrl(`ajax/sequencing-runs`);
 
 /**
  * Redux API for sequencing runs.
@@ -9,7 +9,7 @@ const BASE_URL = `ajax/sequencing-runs`;
 export const sequencingRunsApi = createApi({
   reducerPath: `sequencingRunsApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: setBaseUrl(BASE_URL),
+    baseUrl: BASE_URL,
   }),
   tagTypes: ["Run"],
   endpoints: (build) => ({
