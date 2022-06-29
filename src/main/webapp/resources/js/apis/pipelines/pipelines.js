@@ -54,7 +54,7 @@ export const getPipelineDetails = ({ id }) =>
   axios
     .get(`${AJAX_URL}/${id}`)
     .then(({ data }) => data)
-    .catch((error) => {
+    .catch((e) => {
       return Promise.reject(e.response.error.message);
     });
 
@@ -94,10 +94,10 @@ export function saveNewPipelineParameters({ label, parameters, id }) {
  * @param singles
  * @returns {Promise<any>}
  */
-export async function fetchPipelineSamples({ paired, singles }) {
+export async function fetchPipelineSamples({ paired, singles, assemblies }) {
   try {
     const response = await axios.get(
-      `${AJAX_URL}/samples?singles=${singles}&paired=${paired}`
+      `${AJAX_URL}/samples?singles=${singles}&paired=${paired}&assemblies=${assemblies}`
     );
     return response.data;
   } catch (e) {

@@ -37,6 +37,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class UIPipelineServiceTest {
@@ -80,18 +81,16 @@ public class UIPipelineServiceTest {
 		when(messageSource.getMessage(any(), any(), any())).thenReturn("I want cookies");
 
 		when(cartService.getProjectIdsInCart()).thenReturn(new HashSet<>(PROJECT_IDS));
-		List<Project> projects = PROJECT_IDS.stream()
-				.map(id -> {
-					Project project = new Project("project-" + id);
-					project.setId(id);
-					return project;
-				})
-				.collect(Collectors.toList());
+		List<Project> projects = PROJECT_IDS.stream().map(id -> {
+			Project project = new Project("project-" + id);
+			project.setId(id);
+			return project;
+		}).collect(Collectors.toList());
 		when(projectService.readMultiple(any())).thenReturn(projects);
 		when(projectService.read(1L)).thenReturn(projects.get(0));
 
-		List<AnalysisSubmissionTemplate> templates = ImmutableList.of(
-				new AnalysisSubmissionTemplate("Superman", WORKFLOW_ID, ImmutableMap.of(), null, true,
+		List<AnalysisSubmissionTemplate> templates = ImmutableList
+				.of(new AnalysisSubmissionTemplate("Superman", WORKFLOW_ID, ImmutableMap.of(), null, true,
 						"Interesting superhero with cape", true, true, projects.get(0)));
 		when(analysisSubmissionService.getAnalysisTemplatesForProject(projects.get(0))).thenReturn(templates);
 
@@ -110,8 +109,8 @@ public class UIPipelineServiceTest {
 		});
 		when(cartService.getFullCart()).thenReturn(cart);
 
-		when(analysisSubmissionService.readAnalysisSubmissionTemplateForProject(TEMPLATE_ID,
-				projects.get(0))).thenReturn(templates.get(0));
+		when(analysisSubmissionService.readAnalysisSubmissionTemplateForProject(TEMPLATE_ID, projects.get(0)))
+				.thenReturn(templates.get(0));
 	}
 
 	@Test
@@ -149,7 +148,8 @@ public class UIPipelineServiceTest {
 			try {
 				IridaWorkflowDescription description = mock(IridaWorkflowDescription.class);
 				when(description.getName()).thenReturn(type.getType());
-				when(description.getInputs()).thenReturn(new IridaWorkflowInput(null, null, null, requiresIter.next()));
+				when(description.getInputs())
+						.thenReturn(new IridaWorkflowInput(null, null, null, null, requiresIter.next()));
 				IridaWorkflowStructure structure = mock(IridaWorkflowStructure.class);
 				IridaWorkflow workflow = new IridaWorkflow(description, structure);
 				when(workflowsService.getDefaultWorkflowByType(type)).thenReturn(workflow);

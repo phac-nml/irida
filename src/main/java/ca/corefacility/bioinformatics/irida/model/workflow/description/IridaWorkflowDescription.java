@@ -1,16 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.description;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
@@ -19,13 +11,11 @@ import com.google.common.collect.ImmutableList;
 
 /**
  * Class providing access to generic information about a workflow.
- * 
- *
  */
 @XmlRootElement(name = "iridaWorkflow")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IridaWorkflowDescription {
-	
+
 	@XmlElement(name = "id")
 	private UUID id;
 
@@ -44,7 +34,7 @@ public class IridaWorkflowDescription {
 	@XmlElementWrapper(name = "outputs")
 	@XmlElement(name = "output")
 	private List<IridaWorkflowOutput> outputs;
-	
+
 	@XmlElementWrapper(name = "parameters")
 	@XmlElement(name = "parameter")
 	private List<IridaWorkflowParameter> parameters;
@@ -57,28 +47,19 @@ public class IridaWorkflowDescription {
 	}
 
 	/**
-	 * Generates a new {@link IridaWorkflowDescription} with the given
-	 * information.
+	 * Generates a new {@link IridaWorkflowDescription} with the given information.
 	 * 
-	 * @param id
-	 *            The {@link UUID} for a workflow.
-	 * @param name
-	 *            The name of the workflow.
-	 * @param version
-	 *            The version of the workflow.
-	 * @param analysisType
-	 *            The class type of the {@link Analysis}.
-	 * @param inputs
-	 *            The inputs to the workflow.
-	 * @param outputs
-	 *            The outputs to the workflow.
-	 * @param toolRepositories
-	 *            The list of tools repositories for this workflow.
-	 * @param parameters
-	 *            The valid parameters that can be modified for this workflow.
+	 * @param id               The {@link UUID} for a workflow.
+	 * @param name             The name of the workflow.
+	 * @param version          The version of the workflow.
+	 * @param analysisType     The class type of the {@link Analysis}.
+	 * @param inputs           The inputs to the workflow.
+	 * @param outputs          The outputs to the workflow.
+	 * @param toolRepositories The list of tools repositories for this workflow.
+	 * @param parameters       The valid parameters that can be modified for this workflow.
 	 */
-	public IridaWorkflowDescription(UUID id, String name, String version,
-			AnalysisType analysisType, IridaWorkflowInput inputs, List<IridaWorkflowOutput> outputs,
+	public IridaWorkflowDescription(UUID id, String name, String version, AnalysisType analysisType,
+			IridaWorkflowInput inputs, List<IridaWorkflowOutput> outputs,
 			List<IridaWorkflowToolRepository> toolRepositories, List<IridaWorkflowParameter> parameters) {
 		this.id = id;
 		this.name = name;
@@ -129,8 +110,7 @@ public class IridaWorkflowDescription {
 	/**
 	 * Whether or not this workflow accepts single sequence files as input.
 	 * 
-	 * @return True if this workflow accepts single sequence files, false
-	 *         otherwise.
+	 * @return True if this workflow accepts single sequence files, false otherwise.
 	 */
 	public boolean acceptsSingleSequenceFiles() {
 		return inputs.getSequenceReadsSingle().isPresent();
@@ -139,11 +119,19 @@ public class IridaWorkflowDescription {
 	/**
 	 * Whether or not this workflow accepts paired sequence files as input.
 	 * 
-	 * @return True if this workflow accepts paired sequence files, false
-	 *         otherwise.
+	 * @return True if this workflow accepts paired sequence files, false otherwise.
 	 */
 	public boolean acceptsPairedSequenceFiles() {
 		return inputs.getSequenceReadsPaired().isPresent();
+	}
+
+	/**
+	 * Whether or not this workflow accepts genome assemblies as input.
+	 * 
+	 * @return True if this workflow accepts genome assemblies, false otherwise.
+	 */
+	public boolean acceptsGenomeAssemblies() {
+		return inputs.getGenomeAssemblies().isPresent();
 	}
 
 	public IridaWorkflowInput getInputs() {
@@ -153,17 +141,16 @@ public class IridaWorkflowDescription {
 	public List<IridaWorkflowOutput> getOutputs() {
 		return outputs;
 	}
-	
+
 	public List<IridaWorkflowParameter> getParameters() {
 		return parameters;
 	}
 
 	/**
-	 * Gets a {@link Map} representation of the outputs of a workflow, linking
-	 * the output name to the {@link IridaWorkflowOutput} entry.
+	 * Gets a {@link Map} representation of the outputs of a workflow, linking the output name to the
+	 * {@link IridaWorkflowOutput} entry.
 	 * 
-	 * @return A {@link Map} linking the output name to the
-	 *         {@link IridaWorkflowOutput} entry.
+	 * @return A {@link Map} linking the output name to the {@link IridaWorkflowOutput} entry.
 	 */
 	public Map<String, IridaWorkflowOutput> getOutputsMap() {
 		Map<String, IridaWorkflowOutput> outputsMap = new HashMap<>();
@@ -182,7 +169,7 @@ public class IridaWorkflowDescription {
 	public AnalysisType getAnalysisType() {
 		return analysisType;
 	}
-	
+
 	/**
 	 * Determines if this workflow accepts parameters.
 	 * 
@@ -215,7 +202,7 @@ public class IridaWorkflowDescription {
 
 	@Override
 	public String toString() {
-		return "IridaWorkflowDescription [id=" + id + ", name=" + name + ", version=" + version 
-				+ ", analysisType=" + analysisType + "]";
+		return "IridaWorkflowDescription [id=" + id + ", name=" + name + ", version=" + version + ", analysisType="
+				+ analysisType + "]";
 	}
 }

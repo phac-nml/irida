@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -25,11 +23,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerDownloadE
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerObjectNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.DeleteGalaxyObjectFailedException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.GalaxyDatasetNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.galaxy.NoGalaxyHistoryException;
+import ca.corefacility.bioinformatics.irida.exceptions.galaxy.*;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
@@ -39,18 +33,8 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
-import com.github.jmchilton.blend4j.galaxy.GalaxyResponseException;
-import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
-import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
-import com.github.jmchilton.blend4j.galaxy.ToolsClient;
-import com.github.jmchilton.blend4j.galaxy.beans.Dataset;
-import com.github.jmchilton.blend4j.galaxy.beans.FilesystemPathsLibraryUpload;
-import com.github.jmchilton.blend4j.galaxy.beans.History;
-import com.github.jmchilton.blend4j.galaxy.beans.HistoryDeleteResponse;
-import com.github.jmchilton.blend4j.galaxy.beans.HistoryDetails;
-import com.github.jmchilton.blend4j.galaxy.beans.Library;
-import com.github.jmchilton.blend4j.galaxy.beans.LibraryContent;
+import com.github.jmchilton.blend4j.galaxy.*;
+import com.github.jmchilton.blend4j.galaxy.beans.*;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionResponse;
@@ -58,9 +42,10 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.google.common.collect.Sets;
 import com.sun.jersey.api.client.ClientResponse;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Tests for building Galaxy histories.
- *
  */
 @GalaxyIntegrationTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
@@ -73,6 +58,7 @@ public class GalaxyHistoriesServiceIT {
 
 	private GalaxyHistoriesService galaxyHistory;
 	private GalaxyInstance galaxyInstanceAdmin;
+	@Autowired
 	private GalaxyLibrariesService galaxyLibrariesService;
 	private HistoriesClient historiesClient;
 
@@ -83,17 +69,6 @@ public class GalaxyHistoriesServiceIT {
 
 	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
 	private static final InputFileType INVALID_FILE_TYPE = null;
-
-	/**
-	 * Timeout in seconds to stop polling a Galaxy library.
-	 */
-	private static final int LIBRARY_TIMEOUT = 5 * 60;
-
-	/**
-	 * Polling time in seconds to poll a Galaxy library to check if datasets
-	 * have been properly uploaded.
-	 */
-	private static final int LIBRARY_POLLING_TIME = 5;
 
 	/**
 	 * Sets up files for history tests.
@@ -111,8 +86,6 @@ public class GalaxyHistoriesServiceIT {
 		galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
 		historiesClient = galaxyInstanceAdmin.getHistoriesClient();
 		ToolsClient toolsClient = galaxyInstanceAdmin.getToolsClient();
-		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
-		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
 
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);
 	}
@@ -120,8 +93,7 @@ public class GalaxyHistoriesServiceIT {
 	/**
 	 * Builds a library with the given name.
 	 * 
-	 * @param name
-	 *            The name of the new library.
+	 * @param name The name of the new library.
 	 * @return A library with the given name.
 	 * @throws CreateLibraryException
 	 */
@@ -132,10 +104,8 @@ public class GalaxyHistoriesServiceIT {
 	/**
 	 * Sets up library for test.
 	 * 
-	 * @param testLibrary
-	 *            The library to upload a file to.
-	 * @param galaxyInstanceAdmin
-	 *            The Galaxy Instance to connect to Galaxy.
+	 * @param testLibrary         The library to upload a file to.
+	 * @param galaxyInstanceAdmin The Galaxy Instance to connect to Galaxy.
 	 * @return Returns the id of the file in a library.
 	 * @throws CreateLibraryException
 	 * @throws ExecutionManagerObjectNotFoundException
@@ -342,19 +312,22 @@ public class GalaxyHistoriesServiceIT {
 		String datasetId2 = datasetsMap.get(dataFile2);
 		String datasetIdCompressed = datasetsMap.get(dataFileCompressed);
 
-		Dataset actualDataset1 = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient().showDataset(history.getId(),
-				datasetId1);
+		Dataset actualDataset1 = localGalaxy.getGalaxyInstanceAdmin()
+				.getHistoriesClient()
+				.showDataset(history.getId(), datasetId1);
 		assertNotNull(actualDataset1);
 		assertEquals(actualDataset1.getDataTypeExt(), InputFileType.FASTQ_SANGER.toString(),
 				"Invalid data type extension");
 
-		Dataset actualDataset2 = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient().showDataset(history.getId(),
-				datasetId2);
+		Dataset actualDataset2 = localGalaxy.getGalaxyInstanceAdmin()
+				.getHistoriesClient()
+				.showDataset(history.getId(), datasetId2);
 		assertNotNull(actualDataset2);
 		assertEquals(actualDataset2.getDataTypeExt(), InputFileType.FASTQ_SANGER.toString(),
 				"Invalid data type extension");
 
-		Dataset actualDatasetCompressed = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient()
+		Dataset actualDatasetCompressed = localGalaxy.getGalaxyInstanceAdmin()
+				.getHistoriesClient()
 				.showDataset(history.getId(), datasetIdCompressed);
 		assertNotNull(actualDatasetCompressed);
 		assertEquals(actualDatasetCompressed.getDataTypeExt(), InputFileType.FASTQ_SANGER_GZ.toString(),
@@ -362,8 +335,7 @@ public class GalaxyHistoriesServiceIT {
 	}
 
 	/**
-	 * Tests successful upload of a file to a Galaxy history through a Library
-	 * (where files are remote files).
+	 * Tests successful upload of a file to a Galaxy history through a Library (where files are remote files).
 	 * 
 	 * @throws UploadException
 	 * @throws GalaxyDatasetException
@@ -379,18 +351,19 @@ public class GalaxyHistoriesServiceIT {
 		String datasetId1 = datasetsMap.get(dataFile);
 		String datasetId2 = datasetsMap.get(dataFile2);
 
-		Dataset actualDataset1 = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient().showDataset(history.getId(),
-				datasetId1);
+		Dataset actualDataset1 = localGalaxy.getGalaxyInstanceAdmin()
+				.getHistoriesClient()
+				.showDataset(history.getId(), datasetId1);
 		assertNotNull(actualDataset1);
 
-		Dataset actualDataset2 = localGalaxy.getGalaxyInstanceAdmin().getHistoriesClient().showDataset(history.getId(),
-				datasetId2);
+		Dataset actualDataset2 = localGalaxy.getGalaxyInstanceAdmin()
+				.getHistoriesClient()
+				.showDataset(history.getId(), datasetId2);
 		assertNotNull(actualDataset2);
 	}
 
 	/**
-	 * Tests failure to upload a list of files to a Galaxy history through a
-	 * Library (no library).
+	 * Tests failure to upload a list of files to a Galaxy history through a Library (no library).
 	 * 
 	 * @throws UploadException
 	 * @throws GalaxyDatasetException
@@ -406,8 +379,7 @@ public class GalaxyHistoriesServiceIT {
 	}
 
 	/**
-	 * Tests failure to upload a list of files to a Galaxy history through a
-	 * Library (no history).
+	 * Tests failure to upload a list of files to a Galaxy history through a Library (no history).
 	 * 
 	 * @throws UploadException
 	 * @throws GalaxyDatasetException
@@ -559,8 +531,7 @@ public class GalaxyHistoriesServiceIT {
 	}
 
 	/**
-	 * Tests getting a dataset for a file in the history when there is a dataset
-	 * collection with the same name.
+	 * Tests getting a dataset for a file in the history when there is a dataset collection with the same name.
 	 * 
 	 * @throws UploadException
 	 * @throws GalaxyDatasetException
@@ -606,8 +577,7 @@ public class GalaxyHistoriesServiceIT {
 	}
 
 	/**
-	 * Tests getting a dataset for a file in the history and failing due to
-	 * multiple datasets.
+	 * Tests getting a dataset for a file in the history and failing due to multiple datasets.
 	 * 
 	 * @throws UploadException
 	 * @throws GalaxyDatasetException

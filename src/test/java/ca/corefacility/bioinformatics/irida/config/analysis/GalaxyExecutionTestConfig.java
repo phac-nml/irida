@@ -61,6 +61,13 @@ public class GalaxyExecutionTestConfig {
 	}
 
 	@Lazy
+	@Bean(name = "galaxyLibrariesServiceTimeout")
+	public GalaxyLibrariesService galaxyLibrariesServiceTimeout() {
+		LibrariesClient librariesClient = localGalaxy.getGalaxyInstanceAdmin().getLibrariesClient();
+		return new GalaxyLibrariesService(librariesClient, 1, 2, 1);
+	}
+
+	@Lazy
 	@Bean
 	public GalaxyWorkflowService galaxyWorkflowService() {
 		WorkflowsClient workflowsClient = localGalaxy.getGalaxyInstanceAdmin().getWorkflowsClient();

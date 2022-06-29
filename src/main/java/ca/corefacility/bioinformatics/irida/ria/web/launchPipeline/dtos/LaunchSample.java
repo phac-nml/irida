@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.launchPipeline.dtos;
 
 import java.util.List;
 
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
@@ -17,6 +18,8 @@ public class LaunchSample {
 	 * This is for the type of files that are allowed in the pipeline.
 	 */
 	private List<SequencingObject> files;
+
+	private List<GenomeAssembly> assemblyFiles;
 
 	public LaunchSample(Sample sample, ca.corefacility.bioinformatics.irida.model.project.Project project) {
 		this.id = sample.getId();
@@ -42,6 +45,15 @@ public class LaunchSample {
 
 	public void setFiles(List<SequencingObject> files) {
 		this.files = files;
+
+	}
+
+	public List<GenomeAssembly> getAssemblyFiles() {
+		return assemblyFiles;
+	}
+
+	public void setAssemblyFiles(List<GenomeAssembly> assemblyFiles) {
+		this.assemblyFiles = assemblyFiles;
 	}
 
 	/**

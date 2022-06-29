@@ -22,6 +22,7 @@ const TYPES = {
   SAVE_MODIFIED_PARAMETERS: "launch:save_modified_params",
   ADD_REFERENCE: "launch:add_reference",
   UPDATE_FILES: "launch:update_files",
+  UPDATE_ASSEMBLIES: "launch:update_assemblies",
 };
 
 const reducer = (state, action) => {
@@ -54,6 +55,11 @@ const reducer = (state, action) => {
       return {
         ...state,
         files: action.payload.files,
+      };
+    case TYPES.UPDATE_ASSEMBLIES:
+      return {
+        ...state,
+        assemblies: action.payload.assemblies,
       };
   }
 };
@@ -133,6 +139,7 @@ function LaunchProvider({ children }) {
             parameterSets: formattedParameterSets,
             dynamicSources,
             files: [],
+            assemblies: [],
             automatedId: AUTOMATED_ID,
           },
         });

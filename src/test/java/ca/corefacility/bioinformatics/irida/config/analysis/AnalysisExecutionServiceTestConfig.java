@@ -17,10 +17,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
-import com.github.jmchilton.blend4j.galaxy.JobsClient;
-import com.github.jmchilton.blend4j.galaxy.ToolsClient;
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.config.conditions.NonWindowsPlatformCondition;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -34,10 +30,7 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.L
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
-import ca.corefacility.bioinformatics.irida.service.AnalysisService;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
-import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxy;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyAsync;
@@ -49,10 +42,12 @@ import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.An
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
+import com.github.jmchilton.blend4j.galaxy.JobsClient;
+import com.github.jmchilton.blend4j.galaxy.ToolsClient;
+import com.google.common.collect.Lists;
+
 /**
  * Test configuration for {@link AnalysisExecutionService} classes.
- * 
- *
  */
 @TestConfiguration
 @EnableAsync(order = AnalysisExecutionServiceConfig.ASYNC_ORDER)
@@ -96,6 +91,9 @@ public class AnalysisExecutionServiceTestConfig {
 	private SequencingObjectService sequencingObjectService;
 
 	@Autowired
+	private GenomeAssemblyService genomeAssemblyService;
+
+	@Autowired
 	private AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor;
 
 	@Autowired
@@ -135,7 +133,7 @@ public class AnalysisExecutionServiceTestConfig {
 	public AnalysisWorkspaceServiceGalaxy analysisWorkspaceService() {
 		return new AnalysisWorkspaceServiceGalaxy(galaxyHistoriesService, galaxyWorkflowService, galaxyLibrariesService,
 				iridaWorkflowsService, analysisCollectionServiceGalaxy(), analysisProvenanceServiceGalaxy(),
-				analysisParameterServiceGalaxy, sequencingObjectService);
+				analysisParameterServiceGalaxy, sequencingObjectService, genomeAssemblyService);
 	}
 
 	@Lazy

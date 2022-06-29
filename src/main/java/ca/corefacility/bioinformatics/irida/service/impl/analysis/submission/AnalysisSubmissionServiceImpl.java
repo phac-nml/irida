@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.NoPercentageCompleteException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.enums.StatisticTimePeriod;
@@ -35,7 +36,6 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -57,6 +57,7 @@ import ca.corefacility.bioinformatics.irida.repositories.specification.AnalysisS
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.ria.web.admin.dto.statistics.GenericStatModel;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.galaxy.AnalysisExecutionServiceGalaxyCleanupAsync;
 import ca.corefacility.bioinformatics.irida.service.impl.CRUDServiceImpl;
@@ -105,6 +106,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	private final ReferenceFileRepository referenceFileRepository;
 	private final GalaxyHistoriesService galaxyHistoriesService;
 	private final SequencingObjectService sequencingObjectService;
+	private final GenomeAssemblyService genomeAssemblyService;
 	private final IridaWorkflowsService iridaWorkflowsService;
 	private JobErrorRepository jobErrorRepository;
 
@@ -120,7 +122,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * @param analysisTemplateRepository   repository for {@link AnalysisSubmissionTemplate}s
 	 * @param userRepository               A repository for accessing user information.
 	 * @param referenceFileRepository      the reference file repository
-	 * @param sequencingObjectService      the {@link SequencingObject} service.
+	 * @param sequencingObjectService      the {@link SequencingObjectService}.
+	 * @param genomeAssemblyService        the {@link GenomeAssemblyService}.
 	 * @param galaxyHistoriesService       The {@link GalaxyHistoriesService}.
 	 * @param pasRepository                The {@link ProjectAnalysisSubmissionJoinRepository}
 	 * @param jobErrorRepository           A repository for accessing {@link JobError}
@@ -131,9 +134,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	public AnalysisSubmissionServiceImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			AnalysisSubmissionTemplateRepository analysisTemplateRepository, UserRepository userRepository,
 			final ReferenceFileRepository referenceFileRepository,
-			final SequencingObjectService sequencingObjectService, final GalaxyHistoriesService galaxyHistoriesService,
-			ProjectAnalysisSubmissionJoinRepository pasRepository, JobErrorRepository jobErrorRepository,
-			IridaWorkflowsService iridaWorkflowsService, Validator validator) {
+			final SequencingObjectService sequencingObjectService, final GenomeAssemblyService genomeAssemblyService,
+			final GalaxyHistoriesService galaxyHistoriesService, ProjectAnalysisSubmissionJoinRepository pasRepository,
+			JobErrorRepository jobErrorRepository, IridaWorkflowsService iridaWorkflowsService, Validator validator) {
 		super(analysisSubmissionRepository, validator, AnalysisSubmission.class);
 		this.userRepository = userRepository;
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
@@ -141,6 +144,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		this.referenceFileRepository = referenceFileRepository;
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.sequencingObjectService = sequencingObjectService;
+		this.genomeAssemblyService = genomeAssemblyService;
 		this.pasRepository = pasRepository;
 		this.jobErrorRepository = jobErrorRepository;
 		this.iridaWorkflowsService = iridaWorkflowsService;
@@ -527,8 +531,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Collection<AnalysisSubmission> createSingleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
-			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String name,
-			String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples,
+			List<GenomeAssembly> assemblies, Map<String, String> params, IridaWorkflowNamedParameters namedParameters,
+			String name, String analysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples,
 			boolean emailPipelineResultCompleted, boolean emailPipelineResultError) {
 		final Collection<AnalysisSubmission> createdSubmissions = new HashSet<AnalysisSubmission>();
 
@@ -619,6 +623,48 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 			}
 		}
 
+		// genome assemblies
+		if (description.acceptsGenomeAssemblies()) {
+			final Map<Sample, GenomeAssembly> samplesMap = genomeAssemblyService
+					.getUniqueSamplesForGenomeAssemblies(Sets.newHashSet(assemblies));
+
+			for (final Map.Entry<Sample, GenomeAssembly> entry : samplesMap.entrySet()) {
+				Sample s = entry.getKey();
+				GenomeAssembly assembly = entry.getValue();
+				// Build the analysis submission
+				AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
+				builder.name(name + "_" + s.getSampleName());
+				builder.inputAssemblies(ImmutableSet.of(assembly));
+				builder.updateSamples(writeResultsToSamples);
+				builder.priority(AnalysisSubmission.Priority.MEDIUM);
+				// Add if user should be emailed on pipeline completion/error
+				builder.emailPipelineResultCompleted(emailPipelineResultCompleted);
+				builder.emailPipelineResultError(emailPipelineResultError);
+				// Add reference file
+				if (ref != null && description.requiresReference()) {
+					// Note: This cannot be empty if through the UI if the
+					// pipeline required a reference file.
+					ReferenceFile referenceFile = referenceFileRepository.findById(ref).orElse(null);
+					builder.referenceFile(referenceFile);
+				}
+
+				if (description.acceptsParameters()) {
+					if (namedParameters != null) {
+						builder.withNamedParameters(namedParameters);
+					} else {
+						if (!params.isEmpty()) {
+							// Note: This cannot be empty if through the UI if
+							// the pipeline required params.
+							builder.inputParameters(params);
+						}
+					}
+				}
+
+				// Create the submission
+				createdSubmissions.add(create(builder.build()));
+			}
+		}
+
 		// Share with the required projects
 		for (AnalysisSubmission submission : createdSubmissions) {
 			for (Project project : projectsToShare) {
@@ -636,8 +682,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission createMultipleSampleSubmission(IridaWorkflow workflow, Long ref,
 			List<SingleEndSequenceFile> sequenceFiles, List<SequenceFilePair> sequenceFilePairs,
-			Map<String, String> params, IridaWorkflowNamedParameters namedParameters, String name,
-			String newAnalysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples,
+			List<GenomeAssembly> assemblies, Map<String, String> params, IridaWorkflowNamedParameters namedParameters,
+			String name, String newAnalysisDescription, List<Project> projectsToShare, boolean writeResultsToSamples,
 			boolean emailPipelineResultCompleted, boolean emailPipelineResultError) {
 		AnalysisSubmission.Builder builder = AnalysisSubmission.builder(workflow.getWorkflowIdentifier());
 		builder.name(name);
@@ -662,6 +708,13 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		if (description.acceptsPairedSequenceFiles()) {
 			if (!sequenceFilePairs.isEmpty()) {
 				builder.inputFiles(Sets.newHashSet(sequenceFilePairs));
+			}
+		}
+
+		// Add any genome assemblies.
+		if (description.acceptsGenomeAssemblies()) {
+			if (!assemblies.isEmpty()) {
+				builder.inputAssemblies(Sets.newHashSet(assemblies));
 			}
 		}
 

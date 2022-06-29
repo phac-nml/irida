@@ -1,6 +1,16 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.submission;
 
+import java.util.*;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -8,16 +18,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.JobError;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -60,15 +64,23 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 
 	// Analysis entity for this analysis submission. Cascading everything except
 	// removals
-	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
-			CascadeType.REFRESH })
+	@OneToOne(fetch = FetchType.EAGER,
+			cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	@JoinColumn(name = "analysis_id")
 	@NotAudited
 	private Analysis analysis;
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
-	@JoinTable(name = "analysis_submission_sequencing_object", joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "sequencing_object_id", nullable = false))
+	@JoinTable(name = "analysis_submission_sequencing_object",
+			joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false),
+			inverseJoinColumns = @JoinColumn(name = "sequencing_object_id", nullable = false))
 	protected Set<SequencingObject> inputFiles;
+
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+	@JoinTable(name = "analysis_submission_genome_assembly",
+			joinColumns = @JoinColumn(name = "analysis_submission_id", nullable = false),
+			inverseJoinColumns = @JoinColumn(name = "genome_assembly_id", nullable = false))
+	protected Set<GenomeAssembly> inputAssemblies;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -100,11 +112,12 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		this();
 		checkNotNull(builder.workflowId, "workflowId is null");
 
-		checkArgument(builder.inputFiles != null,
+		checkArgument(builder.inputFiles != null || builder.inputAssemblies != null,
 				"input file collection is null.  You must supply at least one set of input files");
 
 		this.name = (builder.name != null) ? builder.name : "Unknown";
 		this.inputFiles = builder.inputFiles;
+		this.inputAssemblies = builder.inputAssemblies;
 		this.inputParameters = (builder.inputParameters != null) ?
 				ImmutableMap.copyOf(builder.inputParameters) :
 				ImmutableMap.of();
@@ -219,9 +232,9 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 	}
 
 	/**
-	 * Set the {@link Analysis} generated as a result of this submission. Note: {@link
-	 * AnalysisSubmission#setAnalysis(Analysis)} can only be set **once**; if the current {@link Analysis} is non-null,
-	 * then this method will throw a {@link AnalysisAlreadySetException}.
+	 * Set the {@link Analysis} generated as a result of this submission. Note:
+	 * {@link AnalysisSubmission#setAnalysis(Analysis)} can only be set **once**; if the current {@link Analysis} is
+	 * non-null, then this method will throw a {@link AnalysisAlreadySetException}.
 	 *
 	 * @param analysis the analysis to set
 	 * @throws AnalysisAlreadySetException if the {@link Analysis} reference has already been created for this
@@ -265,6 +278,7 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 	public static class Builder {
 		private String name;
 		private Set<SequencingObject> inputFiles;
+		private Set<GenomeAssembly> inputAssemblies;
 		private ReferenceFile referenceFile;
 		private UUID workflowId;
 		private Map<String, String> inputParameters;
@@ -304,10 +318,8 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 			emailPipelineResultCompleted(template.getEmailPipelineResultCompleted());
 			emailPipelineResultError(template.getEmailPipelineResultError());
 
-			if (template.getReferenceFile()
-					.isPresent()) {
-				referenceFile(template.getReferenceFile()
-						.get());
+			if (template.getReferenceFile().isPresent()) {
+				referenceFile(template.getReferenceFile().get());
 			}
 
 			//check if we have named params.  If so, add them
@@ -343,6 +355,20 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 			checkArgument(!inputFiles.isEmpty(), "inputFiles is empty");
 
 			this.inputFiles = inputFiles;
+			return this;
+		}
+
+		/**
+		 * Sets the inputAssemblies for this submission.
+		 * 
+		 * @param inputAssemblies The inputAssemblies for this submission.
+		 * @return A {@link Builder}.
+		 */
+		public Builder inputAssemblies(Set<GenomeAssembly> inputAssemblies) {
+			checkNotNull(inputAssemblies, "inputAssemblies is null");
+			checkArgument(!inputAssemblies.isEmpty(), "inputAssemblies is empty");
+
+			this.inputAssemblies = inputAssemblies;
 			return this;
 		}
 
@@ -497,7 +523,7 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		 * @return the new AnalysisSubmission
 		 */
 		public AnalysisSubmission build() {
-			checkArgument(inputFiles != null,
+			checkArgument(inputFiles != null || inputAssemblies != null,
 					"input file collection is null.  You must supply at least one set of input files");
 
 			return new AnalysisSubmission(this);
@@ -553,13 +579,15 @@ public class AnalysisSubmission extends AbstractAnalysisSubmission implements Co
 		if (other instanceof AnalysisSubmission) {
 			AnalysisSubmission p = (AnalysisSubmission) other;
 			return Objects.equals(createdDate, p.createdDate) && Objects.equals(modifiedDate, p.modifiedDate)
-					&& Objects.equals(name, p.name) && Objects.equals(workflowId, p.workflowId) && Objects.equals(
-					remoteAnalysisId, p.remoteAnalysisId) && Objects.equals(remoteInputDataId, p.remoteInputDataId)
-					&& Objects.equals(remoteWorkflowId, p.remoteWorkflowId) && Objects.equals(analysisState,
-					p.analysisState) && Objects.equals(analysisCleanedState, p.analysisCleanedState) && Objects.equals(
-					referenceFile, p.referenceFile) && Objects.equals(analysis, p.analysis) && Objects.equals(
-					namedParameters, p.namedParameters) && Objects.equals(submitter, p.submitter) && Objects.equals(
-					priority, p.priority);
+					&& Objects.equals(name, p.name) && Objects.equals(workflowId, p.workflowId)
+					&& Objects.equals(remoteAnalysisId, p.remoteAnalysisId)
+					&& Objects.equals(remoteInputDataId, p.remoteInputDataId)
+					&& Objects.equals(remoteWorkflowId, p.remoteWorkflowId)
+					&& Objects.equals(analysisState, p.analysisState)
+					&& Objects.equals(analysisCleanedState, p.analysisCleanedState)
+					&& Objects.equals(referenceFile, p.referenceFile) && Objects.equals(analysis, p.analysis)
+					&& Objects.equals(namedParameters, p.namedParameters) && Objects.equals(submitter, p.submitter)
+					&& Objects.equals(priority, p.priority);
 		}
 
 		return false;

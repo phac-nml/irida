@@ -9,8 +9,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.InputWithOptions
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ui.SelectOption;
 
 /**
- * Model class to send details about a workflow pipeline to the UI
- * Used on the launch pipeline page.
+ * Model class to send details about a workflow pipeline to the UI Used on the launch pipeline page.
  */
 public class UIPipelineDetailsResponse extends AjaxResponse {
     private String name;
@@ -23,6 +22,7 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
     private List<UIReferenceFile> referenceFiles;
     private boolean acceptsSingleSequenceFiles;
     private boolean acceptsPairedSequenceFiles;
+    private boolean acceptsGenomeAssemblies;
     private List<InputWithOptions> dynamicSources;
     private List<SelectOption> projects;
 
@@ -104,6 +104,14 @@ public class UIPipelineDetailsResponse extends AjaxResponse {
 
     public void setAcceptsPairedSequenceFiles(boolean acceptsPairedSequenceFiles) {
         this.acceptsPairedSequenceFiles = acceptsPairedSequenceFiles;
+    }
+
+    public boolean isAcceptsGenomeAssemblies() {
+        return acceptsGenomeAssemblies;
+    }
+
+    public void setAcceptsGenomeAssemblies(boolean acceptsGenomeAssemblies) {
+        this.acceptsGenomeAssemblies = acceptsGenomeAssemblies;
     }
 
     public List<InputWithOptions> getDynamicSources() {

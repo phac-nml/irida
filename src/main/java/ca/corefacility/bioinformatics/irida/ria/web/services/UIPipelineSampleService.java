@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -27,27 +28,33 @@ public class UIPipelineSampleService {
 	}
 
 	/**
-	 * Get a list of the samples that are in the cart and get their associated sequence files that
-	 * can be used on the current pipeline
+	 * Get a list of the samples that are in the cart and get their associated sequence files that can be used on the
+	 * current pipeline
 	 *
-	 * @param paired  Whether paired end files can be run on the current pipeline
-	 * @param singles Whether single end files can be run on the current pipeline
+	 * @param paired     Whether paired end files can be run on the current pipeline
+	 * @param singles    Whether single end files can be run on the current pipeline
+	 * @param assemblies Whether assemblies can be run on the current pipeline
 	 * @return list of samples containing their associated sequencing data
 	 */
-	public List<LaunchSample> getPipelineSamples(boolean paired, boolean singles) {
+	public List<LaunchSample> getPipelineSamples(boolean paired, boolean singles, boolean assemblies) {
 		Map<Project, List<Sample>> cart = cartService.getFullCart();
 		List<LaunchSample> samples = new ArrayList<>();
 		cart.forEach((project, projectSamples) -> {
 			for (Sample sample : projectSamples) {
 				LaunchSample launchSample = new LaunchSample(sample, project);
 				List<SequencingObject> files = new ArrayList<>();
+				List<GenomeAssembly> assemblyFiles = new ArrayList<>();
 				if (paired) {
 					files.addAll(sampleService.getPairedSequenceFilesForSample(sample, project));
 				}
 				if (singles) {
 					files.addAll(sampleService.getSingleEndSequenceFilesForSample(sample, project));
 				}
+				if (assemblies) {
+					assemblyFiles.addAll(sampleService.getGenomeAssembliesForSample(sample));
+				}
 				launchSample.setFiles(files);
+				launchSample.setAssemblyFiles(assemblyFiles);
 				samples.add(launchSample);
 			}
 		});
