@@ -1,14 +1,8 @@
 import axios from "axios";
 
-const http = axios.create({
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
 export async function get(url: string) {
   try {
-    const { data } = await http.get(url);
+    const { data } = await axios.get(url);
     return data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
