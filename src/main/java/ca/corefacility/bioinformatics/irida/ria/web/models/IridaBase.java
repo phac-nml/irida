@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Base for UI models
  */
-public class IridaBase {
+public abstract class IridaBase {
 	private final Long id;
 	private final String key;
 	private final String name;
