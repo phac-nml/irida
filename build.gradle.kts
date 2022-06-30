@@ -276,6 +276,10 @@ node {
     nodeProjectDir.set(file("${project.projectDir}/src/main/webapp"))
 }
 
+tasks.named<PnpmTask>("pnpmInstall") {
+    args.set(listOf("--frozen-lockfile"))
+}
+
 tasks.register<PnpmTask>("pnpmCachePrune") {
     group = "pnpm"
     description = "Prune pnpm cache directory."
