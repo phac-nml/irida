@@ -33,14 +33,7 @@ export const formatNcbiSubmissionDetails = (
     },
     {
       title: i18n("project.export.submitter"),
-      desc: (
-        <a
-          className="t-submitter"
-          href={setBaseUrl(`/users/${submission.submitter.id}`)}
-        >
-          {submission.submitter.name}
-        </a>
-      ),
+      desc: <span className="t-submitter">{submission.submitter.name}</span>,
     },
     {
       title: i18n("iridaThing.timestamp"),

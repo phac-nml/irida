@@ -62,9 +62,7 @@ function NcbiExportTable(): JSX.Element {
       title: i18n("NcbiExportTable.submitter"),
       dataIndex: "submitter",
       render(submitter: UserMinimal) {
-        return (
-          <a href={setBaseUrl(`/users/${submitter.id}`)}>{submitter.name}</a>
-        );
+        return submitter.name;
       },
     },
     {
