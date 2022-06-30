@@ -1,4 +1,5 @@
-import axios, { AxiosResponse } from "axios";
+import type { AxiosResponse } from "axios";
+import { get } from "../requests";
 import {
   activities_project_route,
   activities_recent_route,
@@ -42,16 +43,14 @@ export function getProjectActivities(
   page = 0
 ): Promise<Activities> {
   try {
-    return axios
-      .get(
-        activities_project_route({
-          queryParams: {
-            projectId: `${projectId}`,
-            page: `${page}`,
-          },
-        })
-      )
-      .then(({ data }) => data);
+    return get(
+      activities_project_route({
+        queryParams: {
+          projectId: `${projectId}`,
+          page: `${page}`,
+        },
+      })
+    );
   } catch (e) {
     return Promise.reject(i18n("ProjectActivity.error"));
   }
@@ -64,15 +63,13 @@ export function getProjectActivities(
  */
 export function getUserActivities(page = 0): Promise<Activities> {
   try {
-    return axios
-      .get(
-        activities_user_route({
-          queryParams: {
-            page: `${page}`,
-          },
-        })
-      )
-      .then(({ data }) => data);
+    return get(
+      activities_user_route({
+        queryParams: {
+          page: `${page}`,
+        },
+      })
+    );
   } catch (e) {
     return Promise.reject(i18n("RecentActivity.loadError"));
   }
@@ -85,9 +82,7 @@ export function getUserActivities(page = 0): Promise<Activities> {
  */
 export function getAllRecentActivities(page = 0): Promise<Activities> {
   try {
-    return axios
-      .get(activities_recent_route({ queryParams: { page: `${page}` } }))
-      .then(({ data }) => data);
+    return get(activities_recent_route({ queryParams: { page: `${page}` } }));
   } catch (e) {
     return Promise.reject(i18n("RecentActivity.loadError"));
   }
