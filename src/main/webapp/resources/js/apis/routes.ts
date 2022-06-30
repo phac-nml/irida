@@ -12,7 +12,7 @@ function formatUrl(path: TemplateStringsArray, ...keys: (number | string)[]) {
     urlParams,
     queryParams,
   }: {
-    urlParams?: { [key: string]: string | number };
+    urlParams?: Record<string, string | number>;
     queryParams?: SearchParams;
   }): string {
     let url = CONTEXT_PATH;
@@ -39,6 +39,6 @@ function formatUrl(path: TemplateStringsArray, ...keys: (number | string)[]) {
   };
 }
 
-export const activities_project_route = formatUrl`/ajax/activities/project`;
-export const activities_recent_route = formatUrl`/ajax/activities/all`;
-export const activities_user_route = formatUrl`/ajax/activities/user`;
+export const activities_project_route = formatUrl`ajax/activities/project`;
+export const activities_recent_route = formatUrl`ajax/activities/all`;
+export const activities_user_route = formatUrl`ajax/activities/user`;
