@@ -49,17 +49,6 @@ Current babel plugins for UI development:
 - [Export default from](https://babeljs.io/docs/en/babel-plugin-proposal-export-default-from) 
 - [Optional Chaining](https://babeljs.io/docs/en/babel-plugin-proposal-optional-chaining)
 
-#### Adding dependencies
-
-IRIDA uses [pnpm](https://pnpm.io/) to manage node dependencies.
-
-To add a new dependency you can run the following command:
-```bash
-./gradlew pnpm_add DEPENDENCY
-```
-
-This follows the same argument structure as https://pnpm.io/cli/add.
-
 ### CSS
 
 IRIDA uses [PostCSS](https://postcss.org/) to transform CSS:
