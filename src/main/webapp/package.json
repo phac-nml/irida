@@ -5,9 +5,9 @@
   "scripts": {
     "build": "webpack --mode production",
     "start": "webpack --mode development --watch",
-    "clean": "rm -rf node/ node_modules/ dist/ pages/templates/i18n/",
+    "clean": "rm -rf dist/ pages/templates/i18n/",
     "test": "jest resources/js/**/*.test.js",
-    "test:watch": "jest --watch resources/js/**/*.test.js",
+    "test_watch": "jest --watch resources/js/**/*.test.js",
     "lint": "eslint --ext resources/js/**/*.{js,jsx,ts,tsx}"
   },
   "browserslist": [
@@ -138,6 +138,5 @@
     "set-value": "^4.1.0",
     "yargs": "^17.4.1",
     "yargs-parser": "^21.0.1"
-  },
-  "packageManager": "yarn@3.2.1"
+  }
 }

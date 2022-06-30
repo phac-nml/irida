@@ -48,15 +48,8 @@ src/main/webapp/node_modules
 /src/main/webapp/dist
 /src/main/webapp/pages/templates/i18n/*.html
 
-### YARN ###
-/src/main/webapp/.pnp.*
-/src/main/webapp/.yarn/*
-!/src/main/webapp/.yarn/patches
-!/src/main/webapp/.yarn/plugins
-!/src/main/webapp/.yarn/releases
-!/src/main/webapp/.yarn/sdks
-!/src/main/webapp/.yarn/versions
-/yarn.lock
+### PNPM ###
+/src/main/webapp/.pnpm-debug.log*
 
 ### MISC ###
 /.theia/launch.json

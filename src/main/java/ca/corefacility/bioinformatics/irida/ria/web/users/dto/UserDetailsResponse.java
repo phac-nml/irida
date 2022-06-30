@@ -12,16 +12,16 @@ public class UserDetailsResponse extends AjaxResponse {
 	private boolean isAdmin;
 	private boolean canEditUserInfo;
 	private boolean canEditUserStatus;
-	private boolean canChangePassword;
+	private boolean isOwnAccount;
 	private boolean canCreatePasswordReset;
 
 	public UserDetailsResponse(UserDetailsModel userDetails, boolean isAdmin, boolean canEditUserInfo,
-			boolean canEditUserStatus, boolean canChangePassword, boolean canCreatePasswordReset) {
+			boolean canEditUserStatus, boolean isOwnAccount, boolean canCreatePasswordReset) {
 		this.userDetails = userDetails;
 		this.isAdmin = isAdmin;
 		this.canEditUserInfo = canEditUserInfo;
 		this.canEditUserStatus = canEditUserStatus;
-		this.canChangePassword = canChangePassword;
+		this.isOwnAccount = isOwnAccount;
 		this.canCreatePasswordReset = canCreatePasswordReset;
 	}
 
@@ -57,12 +57,12 @@ public class UserDetailsResponse extends AjaxResponse {
 		this.canEditUserStatus = canEditUserStatus;
 	}
 
-	public boolean isCanChangePassword() {
-		return canChangePassword;
+	public boolean isOwnAccount() {
+		return isOwnAccount;
 	}
 
-	public void setCanChangePassword(boolean canChangePassword) {
-		this.canChangePassword = canChangePassword;
+	public void setOwnAccount(boolean isOwnAccount) {
+		this.isOwnAccount = isOwnAccount;
 	}
 
 	public boolean isCanCreatePasswordReset() {
@@ -81,14 +81,14 @@ public class UserDetailsResponse extends AjaxResponse {
 			return false;
 		UserDetailsResponse that = (UserDetailsResponse) o;
 		return isAdmin == that.isAdmin && canEditUserInfo == that.canEditUserInfo
-				&& canEditUserStatus == that.canEditUserStatus && canChangePassword == that.canChangePassword
+				&& canEditUserStatus == that.canEditUserStatus && isOwnAccount == that.isOwnAccount
 				&& canCreatePasswordReset == that.canCreatePasswordReset && Objects.equals(userDetails,
 				that.userDetails);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(userDetails, isAdmin, canEditUserInfo, canEditUserStatus, canChangePassword,
+		return Objects.hash(userDetails, isAdmin, canEditUserInfo, canEditUserStatus, isOwnAccount,
 				canCreatePasswordReset);
 	}
 }
