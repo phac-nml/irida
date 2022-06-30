@@ -1,8 +1,11 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 
-export async function get<T>(url: string): Promise<T> {
+export async function get<T>(
+  url: string,
+  config?: AxiosRequestConfig
+): Promise<T> {
   try {
-    const { data } = await axios.get(url);
+    const { data } = await axios.get(url, config);
     return data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

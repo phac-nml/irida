@@ -43,14 +43,12 @@ export function getProjectActivities(
   page = 0
 ): Promise<Activities> {
   try {
-    return get(
-      activities_project_route({
-        queryParams: {
-          projectId: `${projectId}`,
-          page: `${page}`,
-        },
-      })
-    );
+    return get(activities_project_route(), {
+      params: {
+        projectId,
+        page,
+      },
+    });
   } catch (e) {
     return Promise.reject(i18n("ProjectActivity.error"));
   }
@@ -63,13 +61,7 @@ export function getProjectActivities(
  */
 export function getUserActivities(page = 0): Promise<Activities> {
   try {
-    return get(
-      activities_user_route({
-        queryParams: {
-          page: `${page}`,
-        },
-      })
-    );
+    return get(activities_user_route(), { params: { page } });
   } catch (e) {
     return Promise.reject(i18n("RecentActivity.loadError"));
   }
@@ -82,7 +74,7 @@ export function getUserActivities(page = 0): Promise<Activities> {
  */
 export function getAllRecentActivities(page = 0): Promise<Activities> {
   try {
-    return get(activities_recent_route({ queryParams: { page: `${page}` } }));
+    return get(activities_recent_route(), { params: { page } });
   } catch (e) {
     return Promise.reject(i18n("RecentActivity.loadError"));
   }
