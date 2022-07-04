@@ -9,6 +9,7 @@ import { getMinimalSampleDetailsForFilteredProject } from "../../../apis/project
 import { putSampleInCart } from "../../../apis/cart/cart";
 import { downloadPost } from "../../../utilities/file-utilities";
 import { formatFilterBySampleNames } from "../../../utilities/table-utilities";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const updateTable = createAction("samples/table/update");
 const reloadTable = createAction("samples/table/reload");
@@ -62,7 +63,7 @@ const downloadSamples = createAsyncThunk(
     const { samples } = getState();
     const sampleIds = Object.values(samples.selected).map((s) => s.id);
     return await downloadPost(
-      `/ajax/projects/${samples.projectId}/samples/download`,
+      setBaseUrl(`/ajax/projects/${samples.projectId}/samples/download`),
       { sampleIds }
     );
   }
@@ -85,7 +86,9 @@ const exportSamplesToFile = createAsyncThunk(
     }
 
     return await downloadPost(
-      `/ajax/projects/${samples.projectId}/samples/export?type=${type}`,
+      setBaseUrl(
+        `/ajax/projects/${samples.projectId}/samples/export?type=${type}`
+      ),
       options
     );
   }

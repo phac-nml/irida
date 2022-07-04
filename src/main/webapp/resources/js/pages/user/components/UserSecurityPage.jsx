@@ -35,8 +35,11 @@ export default function UserSecurityPage() {
           showIcon
         />
       )}
-      {userDetails.canChangePassword && (
-        <UserChangePasswordForm userId={userId} />
+      {userDetails.canEditUserInfo && (
+        <UserChangePasswordForm
+          userId={userId}
+          requireOldPassword={userDetails.ownAccount}
+        />
       )}
       {userDetails.canCreatePasswordReset && emailConfigured && (
         <UserResetPasswordLink
