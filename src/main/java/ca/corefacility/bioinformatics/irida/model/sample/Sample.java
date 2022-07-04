@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.event.SampleAddedProjectEvent;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
@@ -148,6 +149,10 @@ public class Sample extends IridaRepresentationModel
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "default_sequencing_object")
 	private SequencingObject defaultSequencingObject;
+
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "default_genome_assembly")
+	private GenomeAssembly defaultGenomeAssembly;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "sample")
 	private List<ProjectSampleJoin> projects;
@@ -358,5 +363,11 @@ public class Sample extends IridaRepresentationModel
 
 	public void setDefaultSequencingObject(SequencingObject sequencingObject) {
 		this.defaultSequencingObject = sequencingObject;
+	}
+
+	public GenomeAssembly getDefaultGenomeAssembly() { return defaultGenomeAssembly; }
+
+	public void setDefaultGenomeAssembly(GenomeAssembly genomeAssembly) {
+		this.defaultGenomeAssembly = genomeAssembly;
 	}
 }

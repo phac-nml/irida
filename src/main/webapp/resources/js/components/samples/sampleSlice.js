@@ -95,6 +95,16 @@ export const setDefaultSequencingObject = createAction(
 );
 
 /**
+ * Action to set the default genome assembly for a sample
+ */
+export const setDefaultGenomeAssembly = createAction(
+  `sample/setDefaultGenomeAssembly`,
+  (genomeAssembly) => ({
+    payload: { genomeAssembly },
+  })
+);
+
+/**
  * Action to update sample details
  */
 export const updateDetails = createAction(
@@ -140,6 +150,10 @@ const sampleSlice = createSlice({
 
     builder.addCase(setDefaultSequencingObject, (state, action) => {
       state.sample.defaultSequencingObject = action.payload.sequencingObject;
+    });
+
+    builder.addCase(setDefaultGenomeAssembly, (state, action) => {
+      state.sample.defaultGenomeAssembly = action.payload.genomeAssembly;
     });
 
     builder.addCase(setProjectDetails, (state, action) => {

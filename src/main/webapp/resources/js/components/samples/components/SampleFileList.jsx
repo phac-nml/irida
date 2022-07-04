@@ -1,8 +1,8 @@
 import React from "react";
 import { notification, Space } from "antd";
-import { useDispatch, useSelector } from "react-redux";
 import { useRemoveSampleFilesMutation } from "../../../apis/samples/samples";
 import { removeFileObjectFromSample } from "../sampleFilesSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { setDefaultSequencingObject } from "../sampleSlice";
 import { GenomeAssemblyList } from "./GenomeAssemblyList";
 import { SequencingObjectList } from "./SequencingObjectList";

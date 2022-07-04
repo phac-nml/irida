@@ -21,14 +21,6 @@ import { SequenceObjectListItem } from "../../sequence-files/SequenceObjectListI
 import { primaryColour } from "../../../utilities/theme-utilities";
 import { SPACE_XS } from "../../../styles/spacing";
 
-const fileProcessTranslations = {
-  UNPROCESSED: i18n("SampleFilesList.fileProcessingState.UNPROCESSED"),
-  QUEUED: i18n("SampleFilesList.fileProcessingState.QUEUED"),
-  PROCESSING: i18n("SampleFilesList.fileProcessingState.PROCESSING"),
-  FINISHED: i18n("SampleFilesList.fileProcessingState.FINISHED"),
-  ERROR: i18n("SampleFilesList.fileProcessingState.ERROR"),
-};
-
 import {
   addToConcatenateSelected,
   DEFAULT_ACTION_WIDTH,
@@ -42,6 +34,14 @@ import {
   fetchUpdatedSequencingObjects,
   useUpdateDefaultSampleSequencingObjectMutation,
 } from "../../../apis/samples/samples";
+
+const fileProcessTranslations = {
+  UNPROCESSED: i18n("SampleFilesList.fileProcessingState.UNPROCESSED"),
+  QUEUED: i18n("SampleFilesList.fileProcessingState.QUEUED"),
+  PROCESSING: i18n("SampleFilesList.fileProcessingState.PROCESSING"),
+  FINISHED: i18n("SampleFilesList.fileProcessingState.FINISHED"),
+  ERROR: i18n("SampleFilesList.fileProcessingState.ERROR"),
+};
 
 /**
  * React component to display, remove, download sequencing objects
@@ -204,7 +204,7 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
             key={`default-tag-tooltip-${obj.identifier}`}
           >
             <Tag
-              color="#108ee9"
+              color={`var(--blue-6)`}
               key={`default-tag-${obj.identifier}`}
               className="t-default-seq-obj-tag"
             >

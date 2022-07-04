@@ -1,11 +1,13 @@
 import React from "react";
-import { Button, notification, Popconfirm } from "antd";
-import { useSelector } from "react-redux";
+import { Button, notification, Popconfirm, Tag, Tooltip } from "antd";
+import { useDispatch, useSelector } from "react-redux";
 
 import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
 import { downloadGenomeAssemblyFile } from "../../../apis/samples/samples";
 import { GenomeAssemblyListItem } from "../../sequence-files/GenomeAssemblyListItem";
 import { DEFAULT_ACTION_WIDTH } from "../sampleFilesSlice";
+import { useUpdateDefaultSampleGenomeAssemblyMutation } from "../../../apis/samples/samples";
+import { setDefaultGenomeAssembly } from "../sampleSlice";
 
 /**
  * React component to display, remove, download genome assemblies
@@ -14,11 +16,14 @@ import { DEFAULT_ACTION_WIDTH } from "../sampleFilesSlice";
  * @constructor
  */
 export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
+  const [updateSampleDefaultGenomeAssembly] =
+    useUpdateDefaultSampleGenomeAssemblyMutation();
   const { sample, modifiable: isModifiable } = useSelector(
     (state) => state.sampleReducer
   );
   const { files } = useSelector((state) => state.sampleFilesReducer);
   const ACTION_MARGIN_RIGHT = isModifiable ? 0 : 5;
+  const dispatch = useDispatch();
 
   /*
    Download genome assembly files
@@ -31,19 +36,85 @@ export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
   };
 
   /*
+  Set default genome assembly for sample to be used for analyses
+   */
+  const updateDefaultGenomeAssembly = (genomeAssembly) => {
+    const { fileInfo: genomeAssemblyObj } = genomeAssembly;
+
+    updateSampleDefaultGenomeAssembly({
+      sampleId: sample.identifier,
+      genomeAssemblyId: genomeAssemblyObj.identifier,
+    })
+      .then(({ data }) => {
+        dispatch(setDefaultGenomeAssembly(genomeAssemblyObj));
+        notification.success({ message: data.message });
+      })
+      .catch((error) => {
+        notification.error({ message: error });
+      });
+  };
+
+  /*
    Get the actions required for a Genome Assembly
    */
-  const getActionsForGenomeAssembly = (genomeAssembly) => {
-    let actions = [
+  const getActionsForGenomeAssembly = (genomeAssembly, index) => {
+    const { fileInfo: genomeAssemblyObj } = genomeAssembly;
+    let actions = [];
+
+    if (isModifiable) {
+      if (
+        (sample.defaultGenomeAssembly !== null &&
+          genomeAssemblyObj.identifier ===
+            sample.defaultGenomeAssembly.identifier) ||
+        (sample.defaultGenomeAssembly === null && index === 0)
+      ) {
+        actions.push(
+          <Tooltip
+            title={i18n("SampleFilesList.defaultSelectedAssembly")}
+            placement="top"
+            key={`default-tag-tooltip-ga-${genomeAssemblyObj.identifier}`}
+          >
+            <Tag
+              color={`var(--blue-6)`}
+              key={`default-tag-ga-${genomeAssemblyObj.identifier}`}
+              className="t-default-genome-assembly-tag"
+            >
+              {i18n("SampleFilesList.default")}
+            </Tag>
+          </Tooltip>
+        );
+      } else {
+        actions.push(
+          <Tooltip
+            title={i18n("SampleFilesList.tooltip.setAsDefaultAssembly")}
+            placement="top"
+            key={`set-default-tooltip-ga-${genomeAssemblyObj.identifier}`}
+          >
+            <Button
+              size="small"
+              key={`set-default-ga-${genomeAssemblyObj.identifier}`}
+              onClick={() => updateDefaultGenomeAssembly(genomeAssembly)}
+              type="link"
+              className="t-set-default-genome-assembly-button"
+              style={{ width: 100 }}
+            >
+              {i18n("SampleFilesList.setAsDefault")}
+            </Button>
+          </Tooltip>
+        );
+      }
+    }
+
+    actions.push(
       <span
-        key={`${genomeAssembly.fileInfo.identifier}-file-size`}
+        key={`${genomeAssemblyObj.identifier}-file-size`}
         className="t-file-size"
       >
         {genomeAssembly.firstFileSize}
       </span>,
       <Button
         type="link"
-        key={`${genomeAssembly.fileInfo.identifier}-download-btn`}
+        key={`${genomeAssemblyObj.identifier}-download-btn`}
         style={{
           padding: 0,
           width: DEFAULT_ACTION_WIDTH,
@@ -53,13 +124,13 @@ export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
         onClick={() => {
           downloadAssemblyFile({
             sampleId: sample.identifier,
-            genomeAssemblyId: genomeAssembly.fileInfo.identifier,
+            genomeAssemblyId: genomeAssemblyObj.identifier,
           });
         }}
       >
         {i18n("SampleFilesList.download")}
-      </Button>,
-    ];
+      </Button>
+    );
 
     if (isModifiable) {
       actions.push(
@@ -74,7 +145,7 @@ export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
           }}
           onConfirm={() => {
             removeSampleFiles({
-              fileObjectId: genomeAssembly.fileInfo.identifier,
+              fileObjectId: genomeAssemblyObj.identifier,
               type: "assembly",
             });
           }}
@@ -83,7 +154,7 @@ export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
             type="link"
             className="t-remove-file-btn"
             style={{ padding: 0, width: DEFAULT_ACTION_WIDTH }}
-            key={`${genomeAssembly.fileInfo.identifier}-remove-btn`}
+            key={`${genomeAssemblyObj.identifier}-remove-btn`}
           >
             {i18n("SampleFilesList.remove")}
           </Button>
@@ -96,11 +167,11 @@ export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
 
   return (
     <SequenceFileTypeRenderer title={i18n("SampleFiles.assemblies")}>
-      {files.assemblies.map((assembly) => (
+      {files.assemblies.map((assembly, index) => (
         <GenomeAssemblyListItem
           key={`assembly-${assembly.fileInfo.identifier}`}
           genomeAssembly={assembly}
-          actions={getActionsForGenomeAssembly(assembly)}
+          actions={getActionsForGenomeAssembly(assembly, index)}
         />
       ))}
     </SequenceFileTypeRenderer>

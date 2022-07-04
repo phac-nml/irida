@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.io.IOException;
 
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -103,7 +102,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.ImmutableList;
 import liquibase.util.csv.CSVWriter;
 
-
 /**
  * UI Service for samples
  */
@@ -131,7 +129,6 @@ public class UISampleService {
 			"server.SamplesTable.sampleId", "server.SamplesTable.quality", "server.SamplesTable.organism",
 			"server.SamplesTable.project", "server.SamplesTable.projectId", "server.SamplesTable.collectedBy",
 			"server.SamplesTable.created", "server.SamplesTable.modified");
-
 
 	@Autowired
 	public UISampleService(SampleService sampleService, ProjectService projectService,
@@ -184,10 +181,8 @@ public class UISampleService {
 		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
 
 		List<SampleMetadataFieldEntry> metadata = metadataForSample.stream()
-				.map(s -> new SampleMetadataFieldEntry(s.getField()
-						.getId(), s.getField()
-						.getLabel(), s.getValue(), s.getId(), getMetadataFieldRestriction(projectId, s.getField()
-						.getId())))
+				.map(s -> new SampleMetadataFieldEntry(s.getField().getId(), s.getField().getLabel(), s.getValue(),
+						s.getId(), getMetadataFieldRestriction(projectId, s.getField().getId())))
 				.sorted(Comparator.comparing(SampleMetadataFieldEntry::getMetadataTemplateField))
 				.collect(Collectors.toList());
 
@@ -280,10 +275,30 @@ public class UISampleService {
 			sample.setDefaultSequencingObject(sequencingObject);
 			sampleService.update(sample);
 			return messageSource.getMessage("server.SampleFilesList.successfully.set.default.seq.object",
-					new Object[] {  }, locale);
+					new Object[] {}, locale);
 		} catch (EntityNotFoundException e) {
-			return messageSource.getMessage("server.SampleFilesList.unable.to.update.sample",
-					new Object[] {  }, locale);
+			return messageSource.getMessage("server.SampleFilesList.unable.to.update.sample", new Object[] {}, locale);
+		}
+	}
+
+	/**
+	 * Update the default genome assembly for the sample
+	 *
+	 * @param sampleId         The sample identifier
+	 * @param genomeAssemblyId The genome assembly identifier
+	 * @param locale           {@link Locale} for the currently logged in user
+	 * @return message indicating if update was successful or not
+	 */
+	public String updateDefaultGenomeAssemblyForSample(Long sampleId, Long genomeAssemblyId, Locale locale) {
+		try {
+			Sample sample = sampleService.read(sampleId);
+			GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, genomeAssemblyId);
+			sample.setDefaultGenomeAssembly(genomeAssembly);
+			sampleService.update(sample);
+			return messageSource.getMessage("server.SampleFilesList.successfully.set.default.genome.assembly",
+					new Object[] {}, locale);
+		} catch (EntityNotFoundException e) {
+			return messageSource.getMessage("server.SampleFilesList.unable.to.update.sample", new Object[] {}, locale);
 		}
 	}
 
@@ -331,19 +346,15 @@ public class UISampleService {
 			MetadataTemplateField finalTemplateField = templateField;
 			Optional<MetadataEntry> savedEntry = sampleService.getMetadataForSample(sample)
 					.stream()
-					.filter(s -> s.getField()
-							.equals(finalTemplateField))
+					.filter(s -> s.getField().equals(finalTemplateField))
 					.findFirst();
 
 			if (savedEntry.isPresent()) {
-				entryId = savedEntry.get()
-						.getId();
+				entryId = savedEntry.get().getId();
 
-				entryValue = savedEntry.get()
-						.getValue();
+				entryValue = savedEntry.get().getValue();
 
-				metadataTemplateField = savedEntry.get()
-						.getField();
+				metadataTemplateField = savedEntry.get().getField();
 
 				metadataRestriction = metadataTemplateService.setMetadataRestriction(project, metadataTemplateField,
 						metadataRole);
@@ -352,14 +363,13 @@ public class UISampleService {
 			String metadataRestrictionString = messageSource.getMessage(
 					"metadataRole." + metadataRestriction.getLevel(), new Object[] {}, locale);
 
-			message = messageSource.getMessage("server.sample.metadata.add.success",
-					new Object[] { addSampleMetadataRequest.getMetadataField(),
-							addSampleMetadataRequest.getMetadataEntry(), metadataRestrictionString }, locale);
+			message = messageSource.getMessage("server.sample.metadata.add.success", new Object[] {
+					addSampleMetadataRequest.getMetadataField(), addSampleMetadataRequest.getMetadataEntry(),
+					metadataRestrictionString }, locale);
 		}
 
 		return new AddSampleMetadataResponse(metadataTemplateField.getId(), metadataTemplateField.getLabel(),
-				entryValue, entryId, metadataRestriction.getLevel()
-				.name(), message);
+				entryValue, entryId, metadataRestriction.getLevel().name(), message);
 
 	}
 
@@ -430,10 +440,9 @@ public class UISampleService {
 			metadataTemplateService.updateMetadataField(metadataTemplateField);
 		} else {
 			ProjectMetadataRole roleFromUpdateRequest = projectMetadataRole;
-			ProjectMetadataRole currRestriction = getMetadataFieldRestriction(project.getId(), metadataTemplateField.getId());
-			projectMetadataRole = currRestriction != null ?
-					currRestriction :
-					ProjectMetadataRole.fromString("LEVEL_1");
+			ProjectMetadataRole currRestriction = getMetadataFieldRestriction(project.getId(),
+					metadataTemplateField.getId());
+			projectMetadataRole = currRestriction != null ? currRestriction : ProjectMetadataRole.fromString("LEVEL_1");
 
 			/*
 			 We want to only set the role from the update request if it
@@ -441,7 +450,8 @@ public class UISampleService {
 			 or if a previous metadata role was not set for the field
 			 */
 
-			if ((projectMetadataRole != null && !projectMetadataRole.equals(roleFromUpdateRequest)) || projectMetadataRole == null) {
+			if ((projectMetadataRole != null && !projectMetadataRole.equals(roleFromUpdateRequest))
+					|| projectMetadataRole == null) {
 				projectMetadataRole = roleFromUpdateRequest;
 			}
 		}
@@ -451,13 +461,11 @@ public class UISampleService {
 				sample);
 		boolean fieldOrValUpdated = false;
 		if (prevEntry != null) {
-			if (!prevEntry.getField()
-					.equals(metadataTemplateField)) {
+			if (!prevEntry.getField().equals(metadataTemplateField)) {
 				prevEntry.setField(metadataTemplateField);
 				fieldOrValUpdated = true;
 			}
-			if (!prevEntry.getValue()
-					.equals(updateSampleMetadataRequest.getMetadataEntry())) {
+			if (!prevEntry.getValue().equals(updateSampleMetadataRequest.getMetadataEntry())) {
 				prevEntry.setValue(updateSampleMetadataRequest.getMetadataEntry());
 				fieldOrValUpdated = true;
 			}
@@ -488,8 +496,7 @@ public class UISampleService {
 			metadataTemplateService.setMetadataRestriction(project, metadataTemplateField, projectMetadataRole);
 			sampleUpdated = true;
 		} else {
-			if (!currentRestriction.getLevel()
-					.equals(projectMetadataRole)) {
+			if (!currentRestriction.getLevel().equals(projectMetadataRole)) {
 				currentRestriction.setLevel(projectMetadataRole);
 				sampleUpdated = true;
 				metadataRestrictionRepository.save(currentRestriction);
@@ -499,8 +506,7 @@ public class UISampleService {
 		// Delete existing field/entry/restriction if user updates field to an existing field label
 		MetadataTemplateField fieldToDelete = metadataTemplateService.readMetadataField(
 				updateSampleMetadataRequest.getMetadataFieldId());
-		if (fieldToDelete != null && !fieldToDelete.getLabel()
-				.equals(metadataTemplateField.getLabel())) {
+		if (fieldToDelete != null && !fieldToDelete.getLabel().equals(metadataTemplateField.getLabel())) {
 			MetadataEntry metadataEntryToDelete = metadataEntryRepository.getMetadataEntryById(
 					updateSampleMetadataRequest.getMetadataEntryId());
 			MetadataRestriction restrictionToDelete = metadataTemplateService.getMetadataRestrictionForFieldAndProject(
@@ -587,8 +593,8 @@ public class UISampleService {
 		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
 
 		try {
-			if (sample.getDefaultSequencingObject() != null && sample.getDefaultSequencingObject()
-					.getId() == sequencingObjectId) {
+			if (sample.getDefaultSequencingObject() != null
+					&& sample.getDefaultSequencingObject().getId() == sequencingObjectId) {
 				sample.setDefaultSequencingObject(null);
 				sampleService.update(sample);
 			}
@@ -615,10 +621,10 @@ public class UISampleService {
 
 		try {
 			genomeAssemblyService.removeGenomeAssemblyFromSample(sample, genomeAssemblyId);
-			return messageSource.getMessage("server.SampleFiles.removeGenomeAssemblySuccess", new Object[] {},
-					locale);
+			return messageSource.getMessage("server.SampleFiles.removeGenomeAssemblySuccess", new Object[] {}, locale);
 		} catch (Exception e) {
-			return messageSource.getMessage("samples.files.remove.error", new Object[] { genomeAssembly.getLabel() }, locale);
+			return messageSource.getMessage("samples.files.remove.error", new Object[] { genomeAssembly.getLabel() },
+					locale);
 		}
 	}
 
@@ -636,8 +642,7 @@ public class UISampleService {
 		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, genomeAssemblyId);
 
 		Path path = genomeAssembly.getFile();
-		response.setHeader("Content-Disposition",
-				"attachment; filename=\"" + genomeAssembly.getLabel() + "\"");
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + genomeAssembly.getLabel() + "\"");
 		Files.copy(path, response.getOutputStream());
 		response.flushBuffer();
 	}
@@ -656,8 +661,7 @@ public class UISampleService {
 				sequencingObjectService.getSequencesForSampleOfType(sample, SequenceFilePair.class) :
 				sequencingObjectService.getSequencesForSampleOfType(sample, SequenceFilePair.class)
 						.stream()
-						.filter(j -> sequencingObjectIds.contains(j.getObject()
-								.getId()))
+						.filter(j -> sequencingObjectIds.contains(j.getObject().getId()))
 						.collect(Collectors.toList());
 
 		// add project to qc entries and filter any unavailable entries
@@ -666,12 +670,10 @@ public class UISampleService {
 			SequencingObject obj = join.getObject();
 			enhanceQcEntries(obj, project);
 			SequenceFilePair sfp = (SequenceFilePair) obj;
-			String firstFileSize = sfp.getForwardSequenceFile()
-					.getFileSize();
-			String secondFileSize = sfp.getReverseSequenceFile()
-					.getFileSize();
+			String firstFileSize = sfp.getForwardSequenceFile().getFileSize();
+			String secondFileSize = sfp.getReverseSequenceFile().getFileSize();
 
-			filePairs.add(new SampleSequencingObjectFileModel(obj, firstFileSize, secondFileSize,  obj.getQcEntries()));
+			filePairs.add(new SampleSequencingObjectFileModel(obj, firstFileSize, secondFileSize, obj.getQcEntries()));
 		}
 
 		return filePairs;
@@ -691,8 +693,7 @@ public class UISampleService {
 				sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class) :
 				sequencingObjectService.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class)
 						.stream()
-						.filter(j -> sequencingObjectIds.contains(j.getObject()
-								.getId()))
+						.filter(j -> sequencingObjectIds.contains(j.getObject().getId()))
 						.collect(Collectors.toList());
 
 		List<SampleSequencingObjectFileModel> singles = new ArrayList<>();
@@ -700,9 +701,8 @@ public class UISampleService {
 			SequencingObject obj = join.getObject();
 			enhanceQcEntries(obj, project);
 			SingleEndSequenceFile sf = (SingleEndSequenceFile) obj;
-			String fileSize = sf.getSequenceFile()
-					.getFileSize();
-			singles.add(new SampleSequencingObjectFileModel(obj, fileSize, null,  obj.getQcEntries()));
+			String fileSize = sf.getSequenceFile().getFileSize();
+			singles.add(new SampleSequencingObjectFileModel(obj, fileSize, null, obj.getQcEntries()));
 		}
 
 		return singles;
@@ -722,8 +722,7 @@ public class UISampleService {
 				sequencingObjectService.getSequencesForSampleOfType(sample, Fast5Object.class) :
 				sequencingObjectService.getSequencesForSampleOfType(sample, Fast5Object.class)
 						.stream()
-						.filter(j -> sequencingObjectIds.contains(j.getObject()
-								.getId()))
+						.filter(j -> sequencingObjectIds.contains(j.getObject().getId()))
 						.collect(Collectors.toList());
 
 		List<SampleSequencingObjectFileModel> fast5Files = new ArrayList<>();
@@ -731,9 +730,8 @@ public class UISampleService {
 			SequencingObject obj = join.getObject();
 			enhanceQcEntries(obj, project);
 			Fast5Object f5 = (Fast5Object) obj;
-			String fileSize = f5.getFile()
-					.getFileSize();
-			fast5Files.add(new SampleSequencingObjectFileModel(obj, fileSize, null,  obj.getQcEntries()));
+			String fileSize = f5.getFile().getFileSize();
+			fast5Files.add(new SampleSequencingObjectFileModel(obj, fileSize, null, obj.getQcEntries()));
 		}
 		return fast5Files;
 	}
@@ -812,8 +810,8 @@ public class UISampleService {
 			try {
 				projectService.shareSamples(currentProject, targetProject, samples, !request.getLocked());
 			} catch (Exception e) {
-				throw new UIShareSamplesException(
-						messageSource.getMessage("server.ShareSamples.copy-error", new Object[] { targetProject.getLabel() }, locale));
+				throw new UIShareSamplesException(messageSource.getMessage("server.ShareSamples.copy-error",
+						new Object[] { targetProject.getLabel() }, locale));
 			}
 		}
 
@@ -878,7 +876,8 @@ public class UISampleService {
 	 * @return list {@link SampleSequencingObjectFileModel} containing the newly created sequencing objects
 	 * @throws IOException Exception thrown if there is an error handling the file.
 	 */
-	public List<SampleSequencingObjectFileModel> uploadFast5Files(Long sampleId, MultipartHttpServletRequest request) throws IOException {
+	public List<SampleSequencingObjectFileModel> uploadFast5Files(Long sampleId, MultipartHttpServletRequest request)
+			throws IOException {
 		Sample sample = sampleService.read(sampleId);
 		Iterator<String> fileNames = request.getFileNames();
 		List<MultipartFile> files = new ArrayList<>();
@@ -897,7 +896,8 @@ public class UISampleService {
 		}
 	}
 
-	/** Get a page of samples based on the current state of the table options (filters, sort, and pagination)
+	/**
+	 * Get a page of samples based on the current state of the table options (filters, sort, and pagination)
 	 *
 	 * @param projectId Identifier for the current project.
 	 * @param request   Information about the state of the table (filters, sort, and pagination).
@@ -1060,19 +1060,12 @@ public class UISampleService {
 			SequencingObject sequencingObject = concatenatedSequencingObjects.getObject();
 			String firstFileSize;
 			String secondFileSize = null;
-			if (sequencingObject.getFiles()
-					.size() == 1) {
-				firstFileSize = sequencingObject.getFiles()
-						.stream()
-						.findFirst()
-						.get()
-						.getFileSize();
+			if (sequencingObject.getFiles().size() == 1) {
+				firstFileSize = sequencingObject.getFiles().stream().findFirst().get().getFileSize();
 			} else {
 				SequenceFilePair s = (SequenceFilePair) sequencingObject;
-				firstFileSize = s.getForwardSequenceFile()
-						.getFileSize();
-				secondFileSize = s.getReverseSequenceFile()
-						.getFileSize();
+				firstFileSize = s.getForwardSequenceFile().getFileSize();
+				secondFileSize = s.getReverseSequenceFile().getFileSize();
 			}
 			sampleSequencingObjectFileModels.add(
 					new SampleSequencingObjectFileModel(sequencingObject, firstFileSize, secondFileSize,
@@ -1104,8 +1097,7 @@ public class UISampleService {
 	}
 
 	/**
-	 * Create {@link SequenceFile}'s then add them as {@link SequenceFilePair}
-	 * to a {@link Sample}
+	 * Create {@link SequenceFile}'s then add them as {@link SequenceFilePair} to a {@link Sample}
 	 *
 	 * @param pair   {@link List} of {@link MultipartFile}
 	 * @param sample {@link Sample} to add the pair to.
@@ -1115,10 +1107,10 @@ public class UISampleService {
 			throws IOException {
 		SequenceFile firstFile = createSequenceFile(pair.get(0));
 		SequenceFile secondFile = createSequenceFile(pair.get(1));
-		SequencingObject sequencingObject = sequencingObjectService.createSequencingObjectInSample(new SequenceFilePair(firstFile, secondFile),
-				sample).getObject();
-		return new SampleSequencingObjectFileModel(
-				sequencingObject, firstFile.getFileSize(), secondFile.getFileSize(), sequencingObject.getQcEntries());
+		SequencingObject sequencingObject = sequencingObjectService.createSequencingObjectInSample(
+				new SequenceFilePair(firstFile, secondFile), sample).getObject();
+		return new SampleSequencingObjectFileModel(sequencingObject, firstFile.getFileSize(), secondFile.getFileSize(),
+				sequencingObject.getQcEntries());
 	}
 
 	/**
@@ -1131,10 +1123,10 @@ public class UISampleService {
 	private SampleSequencingObjectFileModel createSequenceFileInSample(MultipartFile file, Sample sample)
 			throws IOException {
 		SequenceFile sequenceFile = createSequenceFile(file);
-		SequencingObject sequencingObject = sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample)
-				.getObject();
-		return new SampleSequencingObjectFileModel(
-				sequencingObject, sequenceFile.getFileSize(), null, sequencingObject.getQcEntries());
+		SequencingObject sequencingObject = sequencingObjectService.createSequencingObjectInSample(
+				new SingleEndSequenceFile(sequenceFile), sample).getObject();
+		return new SampleSequencingObjectFileModel(sequencingObject, sequenceFile.getFileSize(), null,
+				sequencingObject.getQcEntries());
 	}
 
 	/**
@@ -1147,15 +1139,14 @@ public class UISampleService {
 	private SampleSequencingObjectFileModel createFast5FileInSample(MultipartFile file, Sample sample)
 			throws IOException {
 		SequenceFile sequenceFile = createSequenceFile(file);
-		SequencingObject sequencingObject = sequencingObjectService.createSequencingObjectInSample(new Fast5Object(sequenceFile), sample)
-				.getObject();
-		return new SampleSequencingObjectFileModel(
-				sequencingObject, sequenceFile.getFileSize(), null, sequencingObject.getQcEntries());
+		SequencingObject sequencingObject = sequencingObjectService.createSequencingObjectInSample(
+				new Fast5Object(sequenceFile), sample).getObject();
+		return new SampleSequencingObjectFileModel(sequencingObject, sequenceFile.getFileSize(), null,
+				sequencingObject.getQcEntries());
 	}
 
 	/**
-	 * Private method to move the sequence file into the correct directory and
-	 * create the {@link SequenceFile} object.
+	 * Private method to move the sequence file into the correct directory and create the {@link SequenceFile} object.
 	 *
 	 * @param file {@link MultipartFile} sequence file uploaded.
 	 * @return {@link SequenceFile}
@@ -1168,7 +1159,8 @@ public class UISampleService {
 		return new SequenceFile(target);
 	}
 
-	/** Remove 1 or more samples from a project.
+	/**
+	 * Remove 1 or more samples from a project.
 	 *
 	 * @param projectId identifier for the project
 	 * @param sampleIds list of sampleIds to remove
@@ -1201,15 +1193,16 @@ public class UISampleService {
 
 			try {
 				for (Sample sample : samples) {
-					Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService
-							.getSequencingObjectsForSample(sample);
+					Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService.getSequencingObjectsForSample(
+							sample);
 
 					for (SampleSequencingObjectJoin join : sequencingObjectsForSample) {
 						for (SequenceFile file : join.getObject().getFiles()) {
 							Path path = file.getFile();
 
-							String fileName = project.getName() + "/" + sample.getSampleName() + "/"
-									+ path.getFileName().toString();
+							String fileName =
+									project.getName() + "/" + sample.getSampleName() + "/" + path.getFileName()
+											.toString();
 							if (usedFileNames.contains(fileName)) {
 								fileName = handleDuplicate(fileName, usedFileNames);
 							}
@@ -1435,15 +1428,9 @@ public class UISampleService {
 			SampleObject sample = item.getSample();
 			ProjectObject project = item.getProject();
 			String[] row = {
-					sample.getSampleName(),
-					sample.getId().toString(),
-					StringUtils.join(item.getQuality(), "; "),
-					sample.getOrganism(),
-					project.getName(),
-					project.getId().toString(),
-					sample.getCollectedBy(),
-					sample.getCreatedDate().toString(),
-					sample.getModifiedDate().toString() };
+					sample.getSampleName(), sample.getId().toString(), StringUtils.join(item.getQuality(), "; "),
+					sample.getOrganism(), project.getName(), project.getId().toString(), sample.getCollectedBy(),
+					sample.getCreatedDate().toString(), sample.getModifiedDate().toString() };
 			results.add(row);
 		}
 
