@@ -204,7 +204,7 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
             key={`default-tag-tooltip-${obj.identifier}`}
           >
             <Tag
-              color="#108ee9"
+              color={`var(--blue-6)`}
               key={`default-tag-${obj.identifier}`}
               className="t-default-seq-obj-tag"
             >

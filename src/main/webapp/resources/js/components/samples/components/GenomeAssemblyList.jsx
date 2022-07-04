@@ -75,7 +75,7 @@ export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
             key={`default-tag-tooltip-ga-${genomeAssemblyObj.identifier}`}
           >
             <Tag
-              color="#108ee9"
+              color={`var(--blue-6)`}
               key={`default-tag-ga-${genomeAssemblyObj.identifier}`}
               className="t-default-genome-assembly-tag"
             >
