@@ -1,6 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { setBaseUrl } from "../../utilities/url-utilities";
-import axios from "axios";
 import { post } from "../requests";
 import {
   analyses_outputs_download_file_route,
