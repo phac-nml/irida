@@ -336,44 +336,49 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void filterBySampleName(String name) {
+		int prevTotal = getTableSummary().getTotal();
 		sampleNameFilterToggle.click();
 		nameFilterInput.sendKeys(name);
 		nameFilterInput.sendKeys(Keys.ENTER);
 		nameFilterInput.sendKeys(Keys.TAB);
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void clearIndividualSampleNameFilter(String name) {
+		int prevTotal = getTableSummary().getTotal();
 		sampleNameFilterToggle.click();
 		WebElement filter = nameFilterSelectedOptions.findElement(By.cssSelector("[title=\"" + name + "\"]"));
 		filter.findElement(By.className("ant-select-selection-item-remove")).click();
 		sampleNameFilterToggle.sendKeys(Keys.TAB);
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void filterByOrganism(String organism) {
+		int prevTotal = getTableSummary().getTotal();
 		organismFilterToggle.click();
 		organismSelectInput.sendKeys(organism);
 		organismSelectInput.sendKeys(Keys.ENTER);
 		organismFilterToggle.sendKeys(Keys.TAB);
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void clearIndividualOrganismFilter(String organism) {
+		int prevTotal = getTableSummary().getTotal();
 		organismFilterToggle.click();
 		WebElement filter = organismFilterSelectedOptions.findElement(By.cssSelector("[title=\"" + organism + "\"]"));
 		filter.findElement(By.className("ant-select-selection-item-remove")).click();
 		organismFilterToggle.sendKeys(Keys.TAB);
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void toggleAssociatedProject(String projectName) {
+		int prevTotal = getTableSummary().getTotal();
 		projectsFilterToggle.click();
-		WebElement selection = driver.findElement(
-				By.xpath("//li[@class='ant-dropdown-menu-item' and span='" + projectName + "']"));
+		WebElement selection = driver
+				.findElement(By.xpath("//li[@class='ant-dropdown-menu-item' and span='" + projectName + "']"));
 		selection.click();
 		driver.findElement(By.xpath("//button[@type='button' and span='OK']")).click();
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void removeAssociatedProject(String projectName) {
@@ -385,41 +390,45 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void filterByCreatedDate(String start, String end) {
+		int prevTotal = getTableSummary().getTotal();
 		createdDateFilterToggle.click();
 		driver.findElement(By.xpath("//div[@class='t-created-filter']//input[@placeholder='Start date']"))
 				.sendKeys(start);
-		WebElement endInput = driver.findElement(
-				By.xpath("//div[@class='t-created-filter']//input[@placeholder='End date']"));
+		WebElement endInput = driver
+				.findElement(By.xpath("//div[@class='t-created-filter']//input[@placeholder='End date']"));
 		endInput.sendKeys(end);
 		endInput.sendKeys(Keys.ENTER);
 		createdDateFilter.findElement(By.className("t-search-btn")).click();
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void clearFilterByCreatedDate() {
+		int prevTotal = getTableSummary().getTotal();
 		createdDateFilterToggle.click();
 		createdDateFilter.findElement(By.className("t-clear-btn")).click();
 		createdDateFilterToggle.click();
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void filterByModifiedDate(String start, String end) {
+		int prevTotal = getTableSummary().getTotal();
 		modifiedDateFilterToggle.click();
 		driver.findElement(By.xpath("//div[@class='t-modified-filter']//input[@placeholder='Start date']"))
 				.sendKeys(start);
-		WebElement endInput = driver.findElement(
-				By.xpath("//div[@class='t-modified-filter']//input[@placeholder='End date']"));
+		WebElement endInput = driver
+				.findElement(By.xpath("//div[@class='t-modified-filter']//input[@placeholder='End date']"));
 		endInput.sendKeys(end);
 		endInput.sendKeys(Keys.ENTER);
 		modifiedDateFilter.findElement(By.className("t-search-btn")).click();
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void clearFilterByModifiedDate() {
+		int prevTotal = getTableSummary().getTotal();
 		modifiedDateFilterToggle.click();
 		modifiedDateFilter.findElement(By.className("t-clear-btn")).click();
 		modifiedDateFilterToggle.click();
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void selectSampleByName(String sampleName) {
@@ -525,8 +534,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		return driver.findElements(By.cssSelector(".t-sample-name-wrapper .ant-form-item-explain-error")).size() > 0;
 	}
 
-	private void waitForTableToUpdate() {
+	private void waitForTableToUpdate(int prevTotal) {
 		WebDriverWait wait = new WebDriverWait(driver, 5);
-		wait.until(ExpectedConditions.textMatches(By.className("t-summary"), Pattern.compile("Selected: 0 of (\\d+)")));
+		wait.until(ExpectedConditions.presenceOfElementLocated(
+				By.xpath("//td[contains(@class, 't-summary') and not(text()='Selected: 0 of " + prevTotal + "')]")));
 	}
 }

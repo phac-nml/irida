@@ -1,4 +1,4 @@
-import com.github.gradle.node.yarn.task.YarnTask
+import com.github.gradle.node.pnpm.task.PnpmTask
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
@@ -255,13 +255,12 @@ tasks.bootWar { enabled = false }
 tasks.war {
     archiveClassifier.set("")
     destinationDirectory.set(layout.buildDirectory.dir("dist"))
-    exclude("node")
     exclude("node_modules/")
-    exclude(".yarn/")
     exclude("resources/css/")
     exclude("resources/js/")
     exclude("webpack*")
-    exclude(".yarn*")
+    exclude(".npmrc")
+    exclude("pnpm-lock.yaml")
     exclude("package.json")
     exclude("styles.js")
     exclude("entries.js")
@@ -272,20 +271,46 @@ tasks.war {
 node {
     download.set(true)
     version.set("16.15.1")
-    yarnVersion.set("1.22.17") // we actualy use yarn 3 but we cannot specify that here
+    pnpmVersion.set("7.4.0")
     workDir.set(file("${project.projectDir}/.gradle/nodejs"))
-    yarnWorkDir.set(file("${project.projectDir}/.gradle/yarn"))
-    nodeProjectDir.set(file("${projectDir}/src/main/webapp"))
+    nodeProjectDir.set(file("${project.projectDir}/src/main/webapp"))
 }
 
-tasks.register<YarnTask>("cleanWebapp") {
-    dependsOn("yarn_install")
-    yarnCommand.set(listOf("clean"))
+tasks.named<PnpmTask>("pnpmInstall") {
+    args.set(listOf("--frozen-lockfile"))
 }
 
-tasks.register<YarnTask>("buildWebapp") {
+tasks.register<PnpmTask>("pnpmCachePrune") {
+    group = "pnpm"
+    description = "Prune pnpm cache directory."
+    pnpmCommand.set(listOf("store", "prune"))
+}
+
+tasks.register<PnpmTask>("pnpmCacheDir") {
+    group = "pnpm"
+    description = "Report pnpm cache directory."
+    pnpmCommand.set(listOf("store", "path"))
+}
+
+tasks.named<PnpmTask>("pnpmInstall") {
+    finalizedBy(":pnpmCachePrune")
+}
+
+tasks.register<PnpmTask>("cleanWebapp") {
+    dependsOn(":pnpmInstall")
+    pnpmCommand.set(listOf("clean"))
+}
+
+tasks.register<PnpmTask>("buildWebapp") {
     dependsOn(":cleanWebapp")
-    yarnCommand.set(listOf("build"))
+    pnpmCommand.set(listOf("build"))
+    inputs.dir("${project.projectDir}/src/main/webapp/resources")
+    outputs.dir("${project.projectDir}/src/main/webapp/dist")
+}
+
+tasks.register<PnpmTask>("startWebapp") {
+    dependsOn(":cleanWebapp")
+    pnpmCommand.set(listOf("start"))
     inputs.dir("${project.projectDir}/src/main/webapp/resources")
     outputs.dir("${project.projectDir}/src/main/webapp/dist")
 }
@@ -320,6 +345,8 @@ val permittedTestSystemProperties = listOf(
 
 fun createIntegrationTestTask(name: String, tags: String?, excludeListeners: String?): TaskProvider<Test> {
     return tasks.register<Test>("${name}ITest") {
+        group = "verification"
+        description = "Runs the ${name} integration test suite."
         val defaultSystemProperties = mapOf(
             "junit.platform.execution.listeners.deactivate" to excludeListeners,
             "spring.datasource.url" to "jdbc:mysql://localhost:3306/irida_integration_test",
