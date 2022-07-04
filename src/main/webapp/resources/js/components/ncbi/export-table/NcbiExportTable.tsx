@@ -24,7 +24,7 @@ export async function loader({
   if (params.projectId) {
     return getProjectNCBIExports(parseInt(params.projectId));
   } else {
-    return Promise.reject("Requires a project id");
+    return Promise.reject(i18n("NcbiExportTable.loader-error"));
   }
 }
 
