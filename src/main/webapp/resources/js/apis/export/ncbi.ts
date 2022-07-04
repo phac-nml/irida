@@ -30,7 +30,7 @@ export async function getProjectNCBIExports(
         return Promise.reject(error.message);
       }
     } else {
-      return Promise.reject("An unexpected error occurred");
+      return Promise.reject(i18n("generic.ajax-unexpected-error"));
     }
   }
 }
@@ -57,7 +57,7 @@ export async function getNcbiSubmission(
         return Promise.reject(error.message);
       }
     } else {
-      return Promise.reject("An unexpected error occurred");
+      return Promise.reject(i18n("generic.ajax-unexpected-error"));
     }
   }
 }
