@@ -13,7 +13,7 @@ while [ $# -ne 0 ];
        SPRING_BOOT_ARGS+=("--hbm.dev.auto=create")
        ADD_DB=true
        echo "Dropping then Creating/Recreating database schema"
-    elif [ "$1" = "--no-yarn" ];
+    elif [ "$1" = "--no-webapp-build" ];
     then
       GRADLE_ARGS+=("-xbuildWebapp")
     elif [ "$1" = "--prod" ];
