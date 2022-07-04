@@ -76,16 +76,16 @@ export function SequencingRunSample({ samples, sample, sampleIndex }) {
         />
       ))}
 
-      <Row ref={dropOnNewPair} align="middle" justify="center">
+      <Row
+        ref={dropOnNewPair}
+        style={{ padding: "2.5px 0px" }}
+        align="middle"
+        justify="center"
+      >
         {isDropOnNewPairOver && (
-          <>
-            <Col flex="initial">
-              <Skeleton.Avatar shape="circle" size={60} />
-            </Col>
-            <Col flex="1">
-              <Skeleton.Input size="large" block={true} />
-            </Col>
-          </>
+          <Col flex="1">
+            <Skeleton.Input size="default" block={true} />
+          </Col>
         )}
         <Col span={24}>
           <Empty

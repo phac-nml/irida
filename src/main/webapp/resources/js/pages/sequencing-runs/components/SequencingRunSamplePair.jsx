@@ -18,6 +18,7 @@ import { SequencingRunFileCard } from "./SequencingRunFileCard";
 import { useDrop } from "react-dnd";
 import { Avatar, Button, Col, Row, Skeleton } from "antd";
 import { useDispatch } from "react-redux";
+import { BORDERED_LIGHT } from "../../../styles/borders";
 
 /**
  * React component to render a sample pair of files.
@@ -91,37 +92,40 @@ export function SequencingRunSamplePair({
   return (
     <Row
       ref={dropOnPair}
-      style={{ padding: "10px 0px" }}
+      style={{ padding: "2.5px 0px" }}
       align="middle"
       justify="center"
       wrap={false}
     >
       {pair.forward !== null && (
-        <>
-          <Col flex="initial">
-            <Avatar
-              size={60}
-              style={{ backgroundColor: FONT_COLOR_PRIMARY }}
-              icon={<IconSwapRight />}
-            />
-          </Col>
-          <Col flex="1">
-            <SequencingRunFileCard
-              file={pair.forward}
-              sampleIndex={sampleIndex}
-              pairIndex={pairIndex}
-            >
-              {pair.forward.fileName}
-            </SequencingRunFileCard>
-          </Col>
-          <Col flex="initial">
-            <Button
-              onClick={() => clickRemoveFileFromList(pair.forward.id)}
-              style={{ border: "none" }}
-              icon={<IconRemove />}
-            />
-          </Col>
-        </>
+        <Col flex="1" style={{ border: BORDERED_LIGHT }}>
+          <Row align="middle" justify="center" wrap={false}>
+            <Col flex="initial">
+              <Avatar
+                size="default"
+                style={{ backgroundColor: FONT_COLOR_PRIMARY }}
+                icon={<IconSwapRight />}
+              />
+            </Col>
+            <Col flex="1">
+              <SequencingRunFileCard
+                file={pair.forward}
+                sampleIndex={sampleIndex}
+                pairIndex={pairIndex}
+                style={{ border: "none" }}
+              >
+                {pair.forward.fileName}
+              </SequencingRunFileCard>
+            </Col>
+            <Col flex="initial">
+              <Button
+                onClick={() => clickRemoveFileFromList(pair.forward.id)}
+                style={{ border: "none" }}
+                icon={<IconRemove />}
+              />
+            </Col>
+          </Row>
+        </Col>
       )}
       {pair.reverse !== null && (
         <>
@@ -132,28 +136,33 @@ export function SequencingRunSamplePair({
               icon={<IconSwap />}
             />
           </Col>
-          <Col flex="initial">
-            <Avatar
-              size={60}
-              style={{ backgroundColor: FONT_COLOR_PRIMARY }}
-              icon={<IconSwapLeft />}
-            />
-          </Col>
-          <Col flex="1">
-            <SequencingRunFileCard
-              file={pair.reverse}
-              sampleIndex={sampleIndex}
-              pairIndex={pairIndex}
-            >
-              {pair.reverse.fileName}
-            </SequencingRunFileCard>
-          </Col>
-          <Col flex="initial">
-            <Button
-              onClick={() => clickRemoveFileFromList(pair.reverse.id)}
-              style={{ border: "none" }}
-              icon={<IconRemove />}
-            />
+          <Col flex="1" style={{ border: BORDERED_LIGHT }}>
+            <Row align="middle" justify="center" wrap={false}>
+              <Col flex="initial">
+                <Avatar
+                  size="default"
+                  style={{ backgroundColor: FONT_COLOR_PRIMARY }}
+                  icon={<IconSwapLeft />}
+                />
+              </Col>
+              <Col flex="1">
+                <SequencingRunFileCard
+                  file={pair.reverse}
+                  sampleIndex={sampleIndex}
+                  pairIndex={pairIndex}
+                  style={{ border: "none" }}
+                >
+                  {pair.reverse.fileName}
+                </SequencingRunFileCard>
+              </Col>
+              <Col flex="initial">
+                <Button
+                  onClick={() => clickRemoveFileFromList(pair.reverse.id)}
+                  style={{ border: "none" }}
+                  icon={<IconRemove />}
+                />
+              </Col>
+            </Row>
           </Col>
         </>
       )}
@@ -161,11 +170,8 @@ export function SequencingRunSamplePair({
         <>
           {pair.forward === null && pair.reverse === null && (
             <>
-              <Col flex="initial">
-                <Skeleton.Avatar shape="circle" size={60} />
-              </Col>
               <Col flex="1">
-                <Skeleton.Input size="large" block={true} />
+                <Skeleton.Input size="default" block={true} />
               </Col>
             </>
           )}
@@ -174,11 +180,8 @@ export function SequencingRunSamplePair({
               <Col span={2} offset={1}>
                 <Skeleton.Button size="small" shape="circle" />
               </Col>
-              <Col flex="initial">
-                <Skeleton.Avatar shape="circle" size={60} />
-              </Col>
               <Col flex="1">
-                <Skeleton.Input size="large" block={true} />
+                <Skeleton.Input size="default" block={true} />
               </Col>
             </>
           )}

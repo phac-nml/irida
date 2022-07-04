@@ -56,7 +56,7 @@ export function SequencingRunFilesList({ samples, files }) {
           dataSource={files}
           renderItem={(file) => {
             return (
-              <List.Item>
+              <List.Item style={{ marginBottom: "5px" }}>
                 <SequencingRunFileCard file={file}>
                   {file.fileName}
                 </SequencingRunFileCard>

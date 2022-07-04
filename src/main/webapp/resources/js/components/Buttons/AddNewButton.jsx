@@ -12,10 +12,21 @@ import { primaryColour } from "../../utilities/theme-utilities";
  * @param {object} props any other props that should be added to the button
  * @returns {*}
  */
-export function AddNewButton({ text, href, onClick, ...props }) {
+export function AddNewButton({
+  type = "primary",
+  text,
+  href,
+  onClick,
+  ...props
+}) {
   return (
-    <Button type={"primary"} href={href} onClick={onClick} {...props}>
-      <IconPlusCircle twoToneColor={primaryColour} />
+    <Button
+      type={type}
+      icon={<IconPlusCircle twoToneColor={primaryColour} />}
+      href={href}
+      onClick={onClick}
+      {...props}
+    >
       {text}
     </Button>
   );

@@ -4,11 +4,12 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useGetSequencingRunFilesQuery } from "../../../apis/sequencing-runs/sequencing-runs";
 import { useNavigate, useParams } from "react-router-dom";
-import { Col, Row, Typography } from "antd";
+import { Col, Row, Space, Typography } from "antd";
 import { SequencingRunSamplesList } from "./SequencingRunSamplesList";
 import { SequencingRunFilesList } from "./SequencingRunFilesList";
 import { useDispatch, useSelector } from "react-redux";
-import { setFiles, setSamples } from "../services/runReducer";
+import { addSample, setFiles, setSamples } from "../services/runReducer";
+import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 
 /**
  * React component to display page that creates samples from a sequencing run.
@@ -28,6 +29,15 @@ export default function SequencingRunCreateSamplesPage() {
 
   const { files, samples } = useSelector((state) => state.reducer);
 
+  const addNewSample = () => {
+    dispatch(
+      addSample({
+        sampleName: "New Sample",
+        pairs: [],
+      })
+    );
+  };
+
   return (
     <PageWrapper
       title={i18n("SequencingRunCreateSamplesPage.title", runId)}
@@ -36,9 +46,16 @@ export default function SequencingRunCreateSamplesPage() {
       <DndProvider backend={HTML5Backend}>
         <Row gutter={32}>
           <Col span={16}>
-            <Typography.Title level={5}>
-              {i18n("SequencingRunCreateSamplesPage.samples.title")}
-            </Typography.Title>
+            <Space>
+              <Typography.Title level={5}>
+                {i18n("SequencingRunCreateSamplesPage.samples.title")}
+              </Typography.Title>
+              <AddNewButton
+                type="default"
+                onClick={addNewSample}
+                text={i18n("SequencingRunSamplesList.empty.button")}
+              />
+            </Space>
             <SequencingRunSamplesList samples={samples} />
           </Col>
           <Col span={8}>

@@ -1,6 +1,16 @@
 import React from "react";
 import { useDrag } from "react-dnd";
 import { Card } from "antd";
+import styled from "styled-components";
+
+const StyledCard = styled(Card)`
+  &:hover {
+    cursor: pointer;
+  }
+  .ant-card-body {
+    padding: 5px;
+  }
+`;
 
 /**
  * React component to render a drag'n'drop card.
@@ -18,14 +28,14 @@ export function SequencingRunFileCard({
   children,
   ...props
 }) {
-  const [{ isDragging }, drag] = useDrag({
+  const [{}, drag] = useDrag({
     type: "card",
     item: { file, prevSampleIndex: sampleIndex, prevPairIndex: pairIndex },
   });
 
   return (
-    <Card ref={drag} {...props}>
+    <StyledCard ref={drag} {...props}>
       {children}
-    </Card>
+    </StyledCard>
   );
 }
