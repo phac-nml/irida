@@ -1,18 +1,22 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import axios from "axios";
+import { post } from "../requests";
+import {
+  analyses_outputs_download_file_route,
+  analyses_outputs_download_files_zip_route,
+  analyses_outputs_prepare_download_route,
+  analyses_outputs_route,
+} from "../routes";
 
 /**
  * API for CRUD operations for Single Sample Analysis Outputs
  * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getSharedSingleSampleAnalysisOutputs: *, getAutomatedSingleSampleAnalysisOutputs: *}, string, string, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getSharedSingleSampleAnalysisOutputs: *, getAutomatedSingleSampleAnalysisOutputs: *}, string, string, typeof coreModuleName | typeof reactHooksModuleName>}
  */
-
-const ANALYSES_OUTPUTS_BASE_URL = setBaseUrl("/ajax/analyses-outputs");
-
 export const singleSampleAnalysisOutputsApi = createApi({
   reducerPath: `singleSampleAnalysisOutputsApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: ANALYSES_OUTPUTS_BASE_URL,
+    baseUrl: analyses_outputs_route(),
   }),
   tagTypes: ["ProjectSampleAnalysisOutputInfo"],
   endpoints: (build) => ({
@@ -47,28 +51,33 @@ export const {
 
 /**
  * Download the selected  individual single sample analysis output file
- * @param {submissionId} the submission identifier
- * @param {fileId} the analysis output file id
- * @param {fileName} the name to give the downloaded file
  */
 export function downloadIndividualOutputFile(
-  submissionId,
-  fileId,
-  fileName = ""
-) {
+  submissionId: number,
+  fileId: number,
+  fileName?: string
+): void {
+  const params = new URLSearchParams();
+  params.append("submissionId", String(submissionId));
+  params.append("fileId", String(fileId));
+  params.append("fileName", fileName || "");
+
   window.open(
-    `${ANALYSES_OUTPUTS_BASE_URL}/download/file?analysisSubmissionId=${submissionId}&fileId=${fileId}&filename=${fileName}`,
+    `${analyses_outputs_download_file_route()}?${params.toString()}`,
     "_blank"
   );
 }
 
 /**
- * Download selected single sample analysis output files which were prepared in the call to `prepareAnalysisOutputsDownload`
- * @param {zipFolderName} the name to give the downloaded zip folder containing the selected files
+ * Download selected single sample analysis output files
+ * which were prepared in the call to `prepareAnalysisOutputsDownload`
  */
-export function downloadSelectedOutputFiles(zipFolderName) {
+export function downloadSelectedOutputFiles(zipFolderName: string): void {
+  const params = new URLSearchParams();
+  params.append("zipFolderName", zipFolderName);
+
   window.open(
-    `${ANALYSES_OUTPUTS_BASE_URL}/download/selection?filename=${zipFolderName}`,
+    `${analyses_outputs_download_files_zip_route()}${params.toString()}`,
     "_blank"
   );
 }
@@ -79,14 +88,5 @@ export function downloadSelectedOutputFiles(zipFolderName) {
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
 export async function prepareAnalysisOutputsDownload(outputs) {
-  try {
-    const { data } = await axios({
-      method: "post",
-      url: `${ANALYSES_OUTPUTS_BASE_URL}/download/prepare`,
-      data: outputs,
-    });
-    return { data };
-  } catch (error) {
-    return { error };
-  }
+  return post(analyses_outputs_prepare_download_route(), outputs);
 }

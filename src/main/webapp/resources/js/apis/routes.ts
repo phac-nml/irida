@@ -26,3 +26,8 @@ export const admin_statistics_users_route = formatUrl`ajax/statistics/users`;
 export const admin_statistics_samples_route = formatUrl`ajax/statistics/samples`;
 export const admin_statistics_analyses_route = formatUrl`ajax/statistics/analyses`;
 export const admin_statistics_projects_route = formatUrl`ajax/statistics/projects`;
+
+export const analyses_outputs_route = formatUrl`ajax/analyses-outputs`;
+export const analyses_outputs_download_file_route = formatUrl`ajax/analyses-outputs/download/file`;
+export const analyses_outputs_download_files_zip_route = formatUrl`ajax/analyses-outputs/download/file/zip`;
+export const analyses_outputs_prepare_download_route = formatUrl`ajax/analyses-outputs/download/prepare`;
