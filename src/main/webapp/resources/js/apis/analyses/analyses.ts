@@ -85,6 +85,6 @@ export function downloadSelectedOutputFiles(zipFolderName: string): void {
  * @param {Array<Object>} outputs List of analysis output file info to prepare download of.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function prepareAnalysisOutputsDownload(outputs) {
-  return post(analyses_outputs_prepare_download_route(), outputs);
+export async function prepareAnalysisOutputsDownload(outputs): Promise<void> {
+  return await post(analyses_outputs_prepare_download_route(), outputs);
 }

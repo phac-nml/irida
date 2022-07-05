@@ -3,6 +3,34 @@
  */
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { get, post } from "../requests";
+import {
+  analyses_delete_submissions_route,
+  analyses_pipeline_states_route,
+  analyses_pipeline_types_route,
+  analyses_queue_count_route,
+  analyses_update_table_progress_route,
+  analysis_data_via_chunks_route,
+  analysis_data_via_lines_route,
+  analysis_delete_route,
+  analysis_details_route,
+  analysis_download_zip_route,
+  analysis_image_route,
+  analysis_info_route,
+  analysis_input_files_route,
+  analysis_job_errors_router,
+  analysis_newick_route,
+  analysis_output_info_route,
+  analysis_parse_excel_route,
+  analysis_progress_update_route,
+  analysis_provenance_by_file_route,
+  analysis_save_to_sample_route,
+  analysis_share_route,
+  analysis_shared_projects_route,
+  analysis_sistr_results_route,
+  analysis_update_email_route,
+  analysis_update_route,
+} from "../routes";
 
 const ANALYSES_URL = setBaseUrl(`/ajax/analyses`);
 
@@ -14,26 +42,20 @@ const ANALYSIS_URL = setBaseUrl(`/ajax/analysis`);
  * @return {Promise<*>} `data` contains the OK response and the details map;
  *                      `error` contains error information if an error occurred.
  */
-export async function getAnalysisInfo(submissionId) {
-  try {
-    const { data } = await axios.get(
-      `${ANALYSIS_URL}/${submissionId}/analysis-details`
-    );
-    return data;
-  } catch (error) {
-    return { error };
-  }
+export async function getAnalysisInfo(submissionId: number): Promise<any> {
+  return await get(analysis_info_route({ submissionId }));
 }
 
 /*
  * Get all the data required for the analysis -> settings -> details page.
- * @param {number} submissionId Submission ID
+ * @param submissionId Submission ID
  * @return {Promise<*>} `data` contains the OK response and the details map;
  *                      `error` contains error information if an error occurred.
  */
-export async function getVariablesForDetails(submissionId) {
-  const { data } = await axios.get(`${ANALYSIS_URL}/details/${submissionId}`);
-  return data;
+export async function getVariablesForDetails(
+  submissionId: number
+): Promise<any> {
+  return await get(analysis_details_route({ submissionId }));
 }
 
 /*
@@ -42,9 +64,13 @@ export async function getVariablesForDetails(submissionId) {
  * @return {Promise<*>} `data` contains the OK response and input files data;
  *                      `error` contains error information if an error occurred.
  */
-export async function getAnalysisInputFiles(submissionId) {
+export async function getAnalysisInputFiles(
+  submissionId: number
+): Promise<any> {
   try {
-    const { data } = await axios.get(`${ANALYSIS_URL}/inputs/${submissionId}`);
+    const { data } = await axios.get(
+      analysis_input_files_route({ submissionId })
+    );
     return data;
   } catch (error) {
     return { samples: [], referenceFile: null };
@@ -54,24 +80,25 @@ export async function getAnalysisInputFiles(submissionId) {
 /*
  * Updates user preference to either receive or not receive an email on
  * analysis error or completion.
- * @param {number} submissionId Submission ID
- * @param {boolean} emailPipelineResult True or False
+ * @param submissionId Submission ID
+ * @param emailPipelineResult True or False
  * @return {Promise<*>} `data` contains the OK response; error` contains error information if an error occurred.
  */
 export async function updateAnalysisEmailPipelineResult({
   submissionId,
   emailPipelineResultCompleted,
   emailPipelineResultError,
-}) {
+}: {
+  submissionId: number;
+  emailPipelineResultCompleted: boolean;
+  emailPipelineResultError: boolean;
+}): Promise<any> {
   try {
-    const { data } = await axios.patch(
-      `${ANALYSIS_URL}/update-email-pipeline-result`,
-      {
-        analysisSubmissionId: submissionId,
-        emailPipelineResultCompleted: emailPipelineResultCompleted,
-        emailPipelineResultError: emailPipelineResultError,
-      }
-    );
+    const { data } = await axios.patch(analysis_update_email_route(), {
+      analysisSubmissionId: submissionId,
+      emailPipelineResultCompleted: emailPipelineResultCompleted,
+      emailPipelineResultError: emailPipelineResultError,
+    });
     return data.message;
   } catch (error) {
     return { text: error.response.data.message, type: "error" };
@@ -80,14 +107,22 @@ export async function updateAnalysisEmailPipelineResult({
 
 /*
  * Updates analysis name and/or analysis priority.
- * @param {number} submissionId Submission ID
- * @param {string} analysisName Name of analysis
- * @param {string} priority [LOW, MEDIUM, HIGH]
+ * @param submissionId Submission ID
+ * @param analysisName Name of analysis
+ * @param priority [LOW, MEDIUM, HIGH]
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function updateAnalysis({ submissionId, analysisName, priority }) {
+export async function updateAnalysis({
+  submissionId,
+  analysisName,
+  priority,
+}: {
+  submissionId: number;
+  analysisName: string;
+  priority: string;
+}): Promise<any> {
   try {
-    const { data } = await axios.patch(`${ANALYSIS_URL}/update-analysis/`, {
+    const { data } = await axios.patch(analysis_update_route(), {
       analysisSubmissionId: submissionId,
       analysisName: analysisName,
       priority: priority,
@@ -103,8 +138,8 @@ export async function updateAnalysis({ submissionId, analysisName, priority }) {
  * @param {number} submissionID Submission ID
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function deleteAnalysis(submissionId) {
-  const { data } = await axios.delete(`${ANALYSIS_URL}/delete/${submissionId}`);
+export async function deleteAnalysis(submissionId: number): Promise<any> {
+  const { data } = await axios.delete(analysis_delete_route({ submissionId }));
   return data;
 }
 
@@ -113,39 +148,41 @@ export async function deleteAnalysis(submissionId) {
  * @param {number} submissionID Submission ID
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function getSharedProjects(submissionId) {
-  const { data } = await axios.get(`${ANALYSIS_URL}/${submissionId}/share`);
-  return data;
+export async function getSharedProjects(submissionId: number): Promise<any> {
+  return await get(analysis_shared_projects_route({ submissionId }));
 }
 
 /*
  * Updates whether or not an analysis is shared with a project.
- * @param {number} submissionID Submission ID
- * @param {number} projectID Project ID
- * @param {boolean} shareStatus True of False
+ * @param submissionID Submission ID
+ * @param projectID Project ID
+ * @param shareStatus True of False
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
 export async function updateSharedProject({
   submissionId,
   projectId,
   shareStatus,
+}: {
+  submissionId: number;
+  projectId: number;
+  shareStatus: boolean;
 }) {
-  const { data } = await axios.post(`${ANALYSIS_URL}/${submissionId}/share`, {
+  return await post(analysis_share_route({ submissionId }), {
     projectId: projectId,
     shareStatus: shareStatus,
   });
-  return data;
 }
 
 /*
  * Saves analysis to related samples.
- * @param {number} submissionID Submission ID
+ * @param submissionID Submission ID
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function saveToRelatedSamples(submissionId) {
+export async function saveToRelatedSamples(submissionId: number): Promise<any> {
   try {
     const { data } = await axios.post(
-      `${ANALYSIS_URL}/${submissionId}/save-results`
+      analysis_save_to_sample_route({ submissionId })
     );
     return data.message;
   } catch (error) {
@@ -155,62 +192,38 @@ export async function saveToRelatedSamples(submissionId) {
 
 /**
  * Get the job errors.
- * @param {number} submissionID Submission ID
+ * @param submissionId Submission ID
  * @return {Promise<*>} `data` contains the OK response.
  */
-export async function getJobErrors(submissionId) {
-  try {
-    const { data } = await axios.get(
-      `${ANALYSIS_URL}/${submissionId}/job-errors`
-    );
-    return data;
-  } catch (error) {
-    return { error };
-  }
+export async function getJobErrors(submissionId: number): Promise<any> {
+  return await get(analysis_job_errors_router({ submissionId }));
 }
 
 /**
  * Get the sistr results.
- * @param {number} submissionID Submission ID
+ * @param submissionId Submission ID
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function getSistrResults(submissionId) {
-  try {
-    const { data } = await axios.get(`${ANALYSIS_URL}/sistr/${submissionId}`);
-    return data;
-  } catch (error) {
-    return { error };
-  }
+export async function getSistrResults(submissionId: number): Promise<any> {
+  return await get(analysis_sistr_results_route({ submissionId }));
 }
 
 /**
  * Get the output file info
- * @param {number} submissionID Submission ID
+ * @param submissionId Submission ID
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function getOutputInfo(submissionId) {
-  try {
-    const res = await axios.get(`${ANALYSIS_URL}/${submissionId}/outputs`);
-    return res.data;
-  } catch (error) {
-    return { error };
-  }
+export async function getOutputInfo(submissionId: number): Promise<any> {
+  return await get(analysis_output_info_route({ submissionId }));
 }
 
 /**
  * Get the updated progress of an analysis
- * @param {number} submissionID Submission ID
+ * @param submissionId Submission ID
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function getUpdatedDetails(submissionId) {
-  try {
-    const res = await axios.get(
-      `${ANALYSIS_URL}/${submissionId}/updated-progress`
-    );
-    return res.data;
-  } catch (error) {
-    return { error };
-  }
+export async function getUpdatedDetails(submissionId: number): Promise<any> {
+  return await get(analysis_progress_update_route({ submissionId }));
 }
 
 /**
@@ -218,138 +231,137 @@ export async function getUpdatedDetails(submissionId) {
  * @param {object} contains the output file data
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function getDataViaChunks({ submissionId, fileId, seek, chunk }) {
-  try {
-    const res = await axios.get(
-      `${ANALYSIS_URL}/${submissionId}/outputs/${fileId}`,
-      {
-        params: {
-          seek,
-          chunk,
-        },
-      }
-    );
-    return res.data;
-  } catch (error) {
-    return { error };
-  }
+export async function getDataViaChunks({
+  submissionId,
+  fileId,
+  seek,
+  chunk,
+}: {
+  submissionId: number;
+  fileId: number;
+  seek: number;
+  chunk: number;
+}): Promise<any> {
+  return await get(analysis_data_via_chunks_route({ submissionId, fileId }), {
+    params: {
+      seek,
+      chunk,
+    },
+  });
 }
 
 /**
  * Get the file output from line x upto line y.
- * @param {object} contains the output file data
+ * @param contains the output file data
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function getDataViaLines({ submissionId, fileId, start, end }) {
-  try {
-    const res = await axios.get(
-      `${ANALYSIS_URL}/${submissionId}/outputs/${fileId}`,
-      {
-        params: {
-          start,
-          end,
-        },
-      }
-    );
-    return res.data;
-  } catch (error) {
-    return { error };
-  }
+export async function getDataViaLines({
+  submissionId,
+  fileId,
+  start,
+  end,
+}: {
+  submissionId: number;
+  fileId: number;
+  start: number;
+  end: number;
+}): Promise<any> {
+  return await get(analysis_data_via_lines_route({ submissionId, fileId }), {
+    params: {
+      start,
+      end,
+    },
+  });
 }
 
 /**
  * Get the newick string for the submission.
- * @param {number} submissionID Submission ID
+ * @param submissionId Submission ID
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function getNewickTree(submissionId) {
-  try {
-    const res = await axios.get(`${ANALYSIS_URL}/${submissionId}/tree`);
-    return res.data;
-  } catch (error) {
-    return { error };
-  }
+export async function getNewickTree(submissionId: number): Promise<any> {
+  return await get(analysis_newick_route({ submissionId }));
 }
 
 /**
  * Download output files as a zip file using an analysis submission id.
- * @param {number} submissionId submission for which to download output file for.
+ * @param submissionId submission for which to download output file for.
  * @return zip file of analysis outputs
  */
-export function downloadFilesAsZip(submissionId) {
-  window.open(`${ANALYSIS_URL}/download/${submissionId}`, "_blank");
+export function downloadFilesAsZip(submissionId: number): void {
+  window.open(analysis_download_zip_route({ submissionId }), "_blank");
 }
 
 /**
  * Get the provenance for the analysis output files
- * @param {number} submissionId submission for which to get provenance for.
- * @param {string} filename file for which provenance is requested
+ * @param  submissionId submission for which to get provenance for.
+ * @param  filename file for which provenance is requested
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function getAnalysisProvenanceByFile(submissionId, filename) {
-  try {
-    const { data } = await axios.get(
-      `${ANALYSIS_URL}/${submissionId}/provenance`,
-      {
-        params: {
-          filename,
-        },
-      }
-    );
-    return { data };
-  } catch (error) {
-    return { error };
-  }
+export async function getAnalysisProvenanceByFile(
+  submissionId: number,
+  filename: string
+): Promise<any> {
+  return await get(analysis_provenance_by_file_route({ submissionId }), {
+    params: {
+      filename,
+    },
+  });
 }
 
 /**
  * Gets the parsed excel data
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function parseExcel(submissionId, filename, sheetIndex) {
-  try {
-    const { data } = await axios.get(
-      `${ANALYSIS_URL}/${submissionId}/parseExcel`,
-      {
-        params: {
-          filename,
-          sheetIndex,
-        },
-      }
-    );
-    return { data };
-  } catch (error) {
-    return { error };
-  }
+export async function parseExcel(
+  submissionId: number,
+  filename: string,
+  sheetIndex: number
+): Promise<any> {
+  return await get(analysis_parse_excel_route({ submissionId }), {
+    params: {
+      filename,
+      sheetIndex,
+    },
+  });
 }
 
 /**
  * Gets the image file data as a base64 encoded string.
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function getImageFile(submissionId, filename) {
-  try {
-    const { data } = await axios.get(`${ANALYSIS_URL}/${submissionId}/image`, {
-      params: {
-        filename,
-      },
-    });
-    return { data };
-  } catch (error) {
-    return { error };
-  }
+export async function getImageFile(submissionId: number, filename: string) {
+  return await get(analysis_image_route({ submissionId }), {
+    params: {
+      filename,
+    },
+  });
 }
 
-export async function fetchAllPipelinesStates() {
-  return axios.get(`${ANALYSES_URL}/states`).then((response) => response.data);
+/**
+ * Get all pipeline states
+ */
+export async function fetchAllPipelinesStates(): Promise<any> {
+  return await get(analyses_pipeline_states_route()).then(
+    (response) => response.data
+  );
 }
 
+/**
+ * Get all pipeline types
+ */
 export async function fetchAllPipelinesTypes() {
-  return axios.get(`${ANALYSES_URL}/types`).then((response) => response.data);
+  return await get(analyses_pipeline_types_route());
 }
 
-export async function deleteAnalysisSubmissions({ ids }) {
-  return axios.delete(`${ANALYSES_URL}/delete?ids=${ids.join(",")}`);
+/**
+ * Delete analysis submissions
+ * @param ids - list of identifiers for analysis submissions to delete
+ */
+export async function deleteAnalysisSubmissions({ ids }: { ids: number[] }) {
+  return await axios.delete(
+    `${analyses_delete_submissions_route()}?ids=${ids.join(",")}`
+  );
 }
 
 /**
@@ -357,21 +369,16 @@ export async function deleteAnalysisSubmissions({ ids }) {
  * @return {Promise<T>} return a map of the running an queued counts.
  */
 export async function fetchAnalysesQueueCounts() {
-  return axios.get(`${ANALYSES_URL}/queue`).then(({ data }) => data);
+  return await get(analyses_queue_count_route());
 }
 
 /**
  * Get the updated progress of an analysis
- * @param {number} submissionID Submission ID
+ * @param submissionId Submission ID
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function getUpdatedTableDetails(submissionId) {
-  try {
-    const res = await axios.get(
-      `${ANALYSES_URL}/${submissionId}/updated-table-progress`
-    );
-    return res.data;
-  } catch (error) {
-    return { error };
-  }
+export async function getUpdatedTableDetails(
+  submissionId: number
+): Promise<any> {
+  return await get(analyses_update_table_progress_route({ submissionId }));
 }

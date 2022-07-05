@@ -38,12 +38,12 @@ export interface ActivityItem {
  * @param projectId - current project identifier
  * @param page - page of activities requested
  */
-export function getProjectActivities(
+export async function getProjectActivities(
   projectId: number,
   page = 0
 ): Promise<Activities> {
   try {
-    return get(activities_project_route(), {
+    return await get(activities_project_route(), {
       params: {
         projectId,
         page,
@@ -59,9 +59,9 @@ export function getProjectActivities(
  *
  * @param page - page of activities requested
  */
-export function getUserActivities(page = 0): Promise<Activities> {
+export async function getUserActivities(page = 0): Promise<Activities> {
   try {
-    return get(activities_user_route(), { params: { page } });
+    return await get(activities_user_route(), { params: { page } });
   } catch (e) {
     return Promise.reject(i18n("RecentActivity.loadError"));
   }
@@ -72,9 +72,9 @@ export function getUserActivities(page = 0): Promise<Activities> {
  *
  * @param page - page of activities requested
  */
-export function getAllRecentActivities(page = 0): Promise<Activities> {
+export async function getAllRecentActivities(page = 0): Promise<Activities> {
   try {
-    return get(activities_recent_route(), { params: { page } });
+    return await get(activities_recent_route(), { params: { page } });
   } catch (e) {
     return Promise.reject(i18n("RecentActivity.loadError"));
   }
