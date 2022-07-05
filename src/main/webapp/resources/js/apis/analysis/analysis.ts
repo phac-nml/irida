@@ -164,10 +164,15 @@ export async function updateSharedProject({
   projectId: number;
   shareStatus: boolean;
 }) {
-  return await post(analysis_share_route({ submissionId }), {
-    projectId: projectId,
-    shareStatus: shareStatus,
-  });
+  try {
+    const { data } = await axios.post(analysis_share_route({ submissionId }), {
+      projectId: projectId,
+      shareStatus: shareStatus,
+    });
+    return data.message;
+  } catch (error) {
+    return { text: error.response.data.message, type: "error" };
+  }
 }
 
 /*
@@ -298,11 +303,19 @@ export async function getAnalysisProvenanceByFile(
   submissionId: number,
   filename: string
 ): Promise<any> {
-  return await get(analysis_provenance_by_file_route({ submissionId }), {
-    params: {
-      filename,
-    },
-  });
+  try {
+    const { data } = await axios.get(
+      analysis_provenance_by_file_route({ submissionId }),
+      {
+        params: {
+          filename,
+        },
+      }
+    );
+    return { data };
+  } catch (error) {
+    return { error };
+  }
 }
 
 /**
@@ -314,12 +327,20 @@ export async function parseExcel(
   filename: string,
   sheetIndex: number
 ): Promise<any> {
-  return await get(analysis_parse_excel_route({ submissionId }), {
-    params: {
-      filename,
-      sheetIndex,
-    },
-  });
+  try {
+    const { data } = await axios.get(
+      analysis_parse_excel_route({ submissionId }),
+      {
+        params: {
+          filename,
+          sheetIndex,
+        },
+      }
+    );
+    return { data };
+  } catch (error) {
+    return { error };
+  }
 }
 
 /**
@@ -327,11 +348,16 @@ export async function parseExcel(
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
 export async function getImageFile(submissionId: number, filename: string) {
-  return await get(analysis_image_route({ submissionId }), {
-    params: {
-      filename,
-    },
-  });
+  try {
+    const { data } = await axios.get(analysis_image_route({ submissionId }), {
+      params: {
+        filename,
+      },
+    });
+    return { data };
+  } catch (error) {
+    return { error };
+  }
 }
 
 /**
