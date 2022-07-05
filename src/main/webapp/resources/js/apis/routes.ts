@@ -79,3 +79,5 @@ export const clients_create_route = formatUrl`ajax/clients`;
 export const clients_delete_route = formatUrl`ajax/clients`;
 export const clients_regenerate_secret_route = formatUrl`ajax/clients/secret`;
 export const clients_update_route = formatUrl`ajax/clients`;
+
+export const dashboard_route = formatUrl`ajax/user/statistics`;

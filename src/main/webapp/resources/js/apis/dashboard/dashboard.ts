@@ -1,7 +1,5 @@
-import axios from "axios";
-import { setBaseUrl } from "../../utilities/url-utilities";
-
-const URL = setBaseUrl(`/ajax/user/statistics`);
+import { get } from "../requests";
+import { dashboard_route } from "../routes";
 
 export interface UserStatistics {
   numberOfProjects: number;
@@ -13,19 +11,8 @@ export interface UserStatistics {
  * Get user statistics
  * @param userId - identifier for a user
  */
-export async function fetchUserStatistics(userId: number): Promise<UserStatistics> {
-  try {
-    const { data } = await axios.get(`${URL}?userId=${userId}`);
-    return data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response) {
-        return Promise.reject(error.response.data.error);
-      } else {
-        return Promise.reject(error.message);
-      }
-    } else {
-      return Promise.reject('An unexpected error occured');
-    }
-  }
+export async function fetchUserStatistics(
+  userId: number
+): Promise<UserStatistics> {
+  return await get(`${dashboard_route()}?userId=${userId}`);
 }
