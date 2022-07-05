@@ -9,7 +9,7 @@ const BASE_URL = setBaseUrl(`ajax/settings`);
 export const settingsApi = createApi({
   reducerPath: `settingsApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: setBaseUrl(BASE_URL),
+    baseUrl: BASE_URL,
   }),
   endpoints: (build) => ({
     /*
@@ -28,10 +28,19 @@ export const settingsApi = createApi({
         url: `/roles`,
       }),
     }),
+    /*
+    Get if email is configured.
+     */
+    getEmailConfigured: build.query({
+      query: () => ({
+        url: `/emailConfigured`,
+      }),
+    }),
   }),
 });
 
 export const {
   useGetLocalesQuery,
   useGetSystemRolesQuery,
+  useGetEmailConfiguredQuery,
 } = settingsApi;

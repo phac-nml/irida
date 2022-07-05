@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require("path");
 const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -7,17 +8,20 @@ const WebpackAssetsManifest = require("webpack-assets-manifest");
 const i18nThymeleafWebpackPlugin = require("./webpack/i18nThymeleafWebpackPlugin");
 const entries = require("./entries");
 const formatAntStyles = require("./styles");
+const os = require("os");
 
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 const smp = new SpeedMeasurePlugin();
 
+const MINIMIZER_CORES = Math.min(8, Math.max(1, os.cpus().length - 1));
+
 /**
  * @file Webpack Build configuration file.
  * Directs webpack how to compile CSS and JavaScript assets.
- * Run in development: `yarn start`
+ * Run in development: `pnpm start`
  *  - Better source maps
  *  - No minification
- * Run for production: `yarn build`
+ * Run for production: `pnpm build`
  *  - Assets will be chunked into proper sizes
  *  - Hashes will be appended to break cache with older files.
  */
@@ -40,12 +44,14 @@ module.exports = (env, argv) => {
     /*
     Cache the generated webpack modules and chunks to improve build speed.
      */
-    cache: isProduction ? false : {
-      type: "filesystem",
-    },
+    cache: isProduction
+      ? false
+      : {
+          type: "filesystem",
+        },
     entry: entries,
     resolve: {
-      extensions: [".js", ".jsx"],
+      extensions: [".js", ".jsx", ".ts", ".tsx"],
       symlinks: false,
     },
     output: {
@@ -65,7 +71,7 @@ module.exports = (env, argv) => {
     module: {
       rules: [
         {
-          test: /\.(js|jsx)$/i,
+          test: /\.(js|jsx|ts|tsx)$/i,
           include: path.resolve(__dirname, "resources", "js"),
           loader: "babel-loader",
           options: {
@@ -101,10 +107,7 @@ module.exports = (env, argv) => {
         {
           test: /\.css$/i,
           exclude: path.resolve(__dirname, "resources"),
-          use: [
-            MiniCssExtractPlugin.loader,
-            "css-loader",
-          ],
+          use: [MiniCssExtractPlugin.loader, "css-loader"],
         },
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
@@ -124,8 +127,11 @@ module.exports = (env, argv) => {
         ? {
             minimize: true,
             minimizer: [
-              new CssMinimizerPlugin({ parallel: true }),
-              new TerserPlugin({ parallel: true, include: /\/resources/ }),
+              new TerserPlugin({
+                parallel: MINIMIZER_CORES,
+                include: /\/resources/,
+              }),
+              new CssMinimizerPlugin({ parallel: MINIMIZER_CORES }),
             ],
             runtimeChunk: "single",
             splitChunks: {
@@ -168,10 +174,12 @@ module.exports = (env, argv) => {
     ],
   });
 
-  config.plugins.push(new MiniCssExtractPlugin({
-    ignoreOrder: true,
-    filename: "css/[name]-[contenthash].css",
-  }));
+  config.plugins.push(
+    new MiniCssExtractPlugin({
+      ignoreOrder: true,
+      filename: "css/[name]-[contenthash].css",
+    })
+  );
 
   return config;
 };

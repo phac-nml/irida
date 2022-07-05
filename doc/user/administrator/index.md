@@ -293,13 +293,15 @@ Note that a priority change will only effect analyses in the `Queued` state.  Th
 
 Viewing Sequencing Runs
 =======================
-First navigate to the sequencing runs page via the admin panel side menu:
+To view the list of all sequencing runs uploaded to IRIDA, navigate to the sequencing runs page via the admin panel side menu:
 
 ![Sequencing runs menu.](images/sequencing-runs-side-menu.png)
 
-The "Sequencing Runs" page lists all of the sequencing runs uploaded to IRIDA:
+To delete a sequencing run, click the `Remove` button in the right-most column: 
 
-![Sequencing runs list.](images/sequencing-runs-list.png)
+Note: This will remove the sequencing run and all associated sequence files.  If this operation results in a sample being empty, the sample will also be removed.
+
+![Sequencing run remove.](images/remove-run.png)
 
 You can view the specific details about a sequencing run by clicking on the ID of the sequencing run:
 
@@ -308,14 +310,6 @@ You can view the specific details about a sequencing run by clicking on the ID o
 The sequencing run details page shows information that was captured from the sequencing run file, and provides you a method to view a complete collection of files that were uploaded as part of a run:
 
 ![Sequencing run details page.](images/sequencing-run-details.png)
-
-To delete a sequencing run, click the `Remove` button on the details page.  Note: This will remove the sequencing run and all assocaited sequence files.  If this operation results in a sample being empty, the sample will also be removed.
-
-![Sequencing run remove.](images/remove-run.png)
-
-To view the collection of files that were uploaded as part of the run, click on the "Files" tab, above the quick-details pane:
-
-![Sequencing run details file tab.](images/sequencing-run-details-files-tab.png)
 
 On the sequencing run files list you can download individual files by clicking on the ![download icon](images/file-download-icon.png) button, or you can view the quality control results produced by FastQC by clicking on the filename in the table:
 

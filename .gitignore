@@ -1,39 +1,59 @@
-target/
-.idea/*
-.vscode/*
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+gradle-app.setting
+!gradle-wrapper.properties
+.gradletasknamecache
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
 .classpath
+.factorypath
 .project
 .settings
-.checkstyle
-build/
-.DS_Store/
-irida.iml
-phantomjsdriver.log
-node_modules
-.sass-cache
-/src/main/java/a
-doc/_site
-*.swp
-/.idea/
-/.vscode/
-src/main/webapp/node
-/src/main/webapp/dist
-/src/main/webapp/pages/templates/i18n/*.html
-/doc/.jekyll-cache/Jekyll/Cache/
-/doc/developer/apidocs
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
 
+### IntelliJ IDEA ##
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### VS Code ###
+.vscode/
+
+### MAC OS ###
+.DS_Store/
+
+### Docs ###
+doc/_site
+doc/.jekyll-cache/Jekyll/Cache/
+doc/developer/apidocs
+doc/swagger-ui/open-api.json
+doc/Gemfile.lock
+.vendor/
 irida-documentation/static/apidocs
 irida-documentation/static/open-api.json
 
-# YARN
-/src/main/webapp/.pnp.*
-/src/main/webapp/.yarn/*
-!/src/main/webapp/.yarn/patches
-!/src/main/webapp/.yarn/plugins
-!/src/main/webapp/.yarn/releases
-!/src/main/webapp/.yarn/sdks
-!/src/main/webapp/.yarn/versions
+### Frontend ###
+src/main/webapp/node
+src/main/webapp/node_modules
+/src/main/webapp/dist
+/src/main/webapp/pages/templates/i18n/*.html
 
-doc/swagger-ui/open-api.json
+### PNPM ###
+/src/main/webapp/.pnpm-debug.log*
+
+### MISC ###
 /.theia/launch.json
-/yarn.lock
+*.swp
+/src/main/resources/application-local.properties

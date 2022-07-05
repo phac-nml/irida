@@ -19,7 +19,6 @@ public class UserSecurityPageIT extends AbstractIridaUIITChromeDriver {
 
 	@BeforeEach
 	public void setUpTest() {
-		LoginPage.loginAsManager(driver());
 		userPage = new UserSecurityPage(driver());
 	}
 
@@ -27,6 +26,7 @@ public class UserSecurityPageIT extends AbstractIridaUIITChromeDriver {
 	public void testChangeUserPasswordGood() {
 		String oldPassword = "Password1!";
 		String newPassword = "Password2!";
+		LoginPage.loginAsManager(driver());
 		userPage.goTo();
 		userPage.changePassword(oldPassword, newPassword);
 		assertTrue(userPage.checkSuccessNotification());
@@ -36,6 +36,7 @@ public class UserSecurityPageIT extends AbstractIridaUIITChromeDriver {
 	public void testChangeUserPasswordBad() {
 		String oldPassword = "Password1!";
 		String newPassword = "notagoodpassword";
+		LoginPage.loginAsManager(driver());
 		userPage.goTo();
 		userPage.changePassword(oldPassword, newPassword);
 		assertTrue(userPage.hasErrors());
@@ -43,6 +44,7 @@ public class UserSecurityPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testResetUserPassword() {
+		LoginPage.loginAsAdmin(driver());
 		userPage.getOtherUser(2L);
 		userPage.sendPasswordReset();
 		assertTrue(userPage.checkSuccessNotification());
