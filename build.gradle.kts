@@ -424,7 +424,7 @@ tasks.named<BootRun>("bootRun") {
 }
 
 openApi {
-    outputDir.set(file("${projectDir}/doc/swagger-ui"))
+    outputDir.set(file("${projectDir}/irida-documentation/static"))
     outputFileName.set("open-api.json")
     waitTimeInSeconds.set(60)
 }
@@ -437,8 +437,8 @@ tasks.processResources {
 }
 
 tasks.javadoc {
-    destinationDir = file("${project.projectDir}/doc/developer/apidocs")
-    outputs.dir(file("${project.projectDir}/doc/developer/apidocs"))
+    destinationDir = file("${project.projectDir}/irida-documentation/static/apidocs")
+    outputs.dir(file("${project.projectDir}/irida-documentation/static/apidocs"))
 }
 
 task<Exec>("docsSiteDependencies") {
