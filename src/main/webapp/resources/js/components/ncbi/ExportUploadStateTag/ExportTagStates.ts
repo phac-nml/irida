@@ -53,15 +53,15 @@ const states: ExportTagStates = {
   },
   [ExportUploadState.DELETED]: {
     color: TagColor.VOLCANO,
-    text: "DELETED",
+    text: i18n("ExportUploadState.DELETED"),
   },
   [ExportUploadState.RETIRED]: {
     color: TagColor.GOLD,
-    text: "RETIRED",
+    text: i18n("ExportUploadState.RETIRED"),
   },
   [ExportUploadState.UNKNOWN]: {
     color: TagColor.ORANGE,
-    text: "UNKNOWN",
+    text: i18n("ExportUploadState.unknown"),
   },
 };
 
