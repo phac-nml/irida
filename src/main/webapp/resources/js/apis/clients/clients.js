@@ -1,5 +1,13 @@
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import {
+  clients_create_route,
+  clients_delete_route,
+  clients_regenerate_secret_route,
+  clients_revoke_token_route,
+  clients_update_route,
+  clients_validate_route,
+} from "../routes";
 
 const BASE_URL = setBaseUrl(`/ajax/clients`);
 
@@ -9,7 +17,7 @@ const BASE_URL = setBaseUrl(`/ajax/clients`);
  * @return {Promise<AxiosResponse<T>>}
  */
 export async function revokeClientTokens(id) {
-  return await axios.delete(`${BASE_URL}/revoke?id=${id}`);
+  return await axios.delete(`${clients_revoke_token_route()}?id=${id}`);
 }
 
 /**
@@ -18,7 +26,7 @@ export async function revokeClientTokens(id) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function validateClientId(clientId) {
-  return axios.get(`${BASE_URL}/validate?clientId=${clientId}`);
+  return axios.get(`${clients_validate_route()}?clientId=${clientId}`);
 }
 
 /**
@@ -27,7 +35,7 @@ export async function validateClientId(clientId) {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function createClient(details) {
-  return axios.post(`${BASE_URL}`, details).then(({ data }) => data);
+  return axios.post(clients_create_route(), details).then(({ data }) => data);
 }
 
 /**
@@ -36,7 +44,7 @@ export async function createClient(details) {
  * @returns {Promise<*>}
  */
 export async function deleteClient(id) {
-  return axios.delete(BASE_URL, {
+  return axios.delete(clients_delete_route(), {
     params: { id },
   });
 }
@@ -47,7 +55,7 @@ export async function deleteClient(id) {
  * @returns
  */
 export async function regenerateClientSecret(id) {
-  return axios.put(`${BASE_URL}/secret?id=${id}`);
+  return axios.put(`${clients_regenerate_secret_route()}?id=${id}`);
 }
 
 /**
@@ -56,5 +64,5 @@ export async function regenerateClientSecret(id) {
  * @returns
  */
 export async function updateClientDetails(details) {
-  return axios.put(BASE_URL, details).then(({ data }) => data);
+  return axios.put(clients_update_route(), details).then(({ data }) => data);
 }

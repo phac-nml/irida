@@ -72,3 +72,10 @@ export const cart_add_samples_route = formatUrl`ajax/cart`;
 export const cart_count_route = formatUrl`ajax/cart/count`;
 export const cart_empty_route = formatUrl`ajax/cart`;
 export const cart_remove_sample_route = formatUrl`ajax/cart/sample`;
+
+export const clients_revoke_token_route = formatUrl`ajax/clients/revoke`;
+export const clients_validate_route = formatUrl`ajax/clients/validate`;
+export const clients_create_route = formatUrl`ajax/clients`;
+export const clients_delete_route = formatUrl`ajax/clients`;
+export const clients_regenerate_secret_route = formatUrl`ajax/clients/secret`;
+export const clients_update_route = formatUrl`ajax/clients`;
