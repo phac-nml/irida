@@ -32,10 +32,6 @@ import {
   analysis_update_route,
 } from "../routes";
 
-const ANALYSES_URL = setBaseUrl(`/ajax/analyses`);
-
-const ANALYSIS_URL = setBaseUrl(`/ajax/analysis`);
-
 /*
  * Get all the data required for the analysis on load
  * @param {number} submissionId Submission ID
