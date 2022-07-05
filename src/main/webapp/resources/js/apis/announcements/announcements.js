@@ -4,7 +4,6 @@
  */
 
 import axios from "axios";
-import { setBaseUrl } from "../../utilities/url-utilities";
 import {
   announcements_create_route,
   announcements_delete_route,
@@ -16,8 +15,6 @@ import {
   announcements_user_unread_route,
 } from "../routes";
 import { get, post } from "../requests";
-
-const BASE = setBaseUrl(`ajax/announcements`);
 
 /**
  * Get an announcement.
