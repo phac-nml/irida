@@ -18,7 +18,7 @@ public class NcbiExportsListingPage extends AbstractPage {
 	}
 
 	public static NcbiExportsListingPage goTo(WebDriver driver) {
-		get(driver, "/projects/1/export");
+		get(driver, "projects/1/export");
 		return PageFactory.initElements(driver, NcbiExportsListingPage.class);
 	}
 
