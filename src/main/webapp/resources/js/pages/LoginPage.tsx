@@ -5,7 +5,6 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { setBaseUrl } from "../utilities/url-utilities";
 import { SPACE_MD } from "../styles/spacing";
 import { blue6 } from "../styles/colors";
-
 import { Provider } from "react-redux";
 import store from "./store";
 

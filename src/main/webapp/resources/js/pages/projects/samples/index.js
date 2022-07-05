@@ -8,9 +8,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { Provider } from "react-redux";
 import { samplesApi } from "../../../apis/projects/samples";
-import {
-  associatedProjectsApi
-} from "../../../apis/projects/associated-projects";
+import { associatedProjectsApi } from "../../../apis/projects/associated-projects";
 import samplesReducer from "../redux/samplesSlice";
 import { projectApi } from "../../../apis/projects/project";
 import { setBaseUrl } from "../../../utilities/url-utilities";

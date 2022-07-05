@@ -36,7 +36,7 @@ module.exports = {
     "./resources/js/pages/samples/sample-files-concatenate.js",
   "sequencing-runs": "./resources/js/pages/sequencing-runs/index.js",
   groups: "./resources/js/pages/UserGroupsPage",
-  "project-ncbi-exports": "./resources/js/pages/projects/ncbi-export",
+  "project-ncbi-exports": "./resources/js/pages/projects/ncbi",
   "project-ncbi-export":
     "./resources/js/pages/projects/ncbi-export/ncbi-export.js",
   search: "./resources/js/pages/search/search.js",
