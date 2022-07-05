@@ -57,3 +57,12 @@ export const analysis_download_zip_route = formatUrl`ajax/analysis/download/${"s
 export const analysis_provenance_by_file_route = formatUrl`ajax/analysis/${"submissionId"}/provenance`;
 export const analysis_parse_excel_route = formatUrl`ajax/analysis/${"submissionId"}/parseExcel`;
 export const analysis_image_route = formatUrl`ajax/analysis/${"submissionId"}/image`;
+
+export const announcements_get_route = formatUrl`ajax/announcements/${"aID"}`;
+export const announcements_user_list_route = formatUrl`ajax/announcements/user/list`;
+export const announcements_user_read_route = formatUrl`ajax/announcements/user/read`;
+export const announcements_user_unread_route = formatUrl`ajax/announcements/user/unread`;
+export const announcements_mark_as_read_route = formatUrl`ajax/announcements/read/${"aID"}`;
+export const announcements_create_route = formatUrl`ajax/announcements/create`;
+export const announcements_update_route = formatUrl`ajax/announcements/update`;
+export const announcements_delete_route = formatUrl`ajax/announcements/delete`;

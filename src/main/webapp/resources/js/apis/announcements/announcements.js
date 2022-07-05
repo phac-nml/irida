@@ -5,67 +5,59 @@
 
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import {
+  announcements_create_route,
+  announcements_delete_route,
+  announcements_get_route,
+  announcements_mark_as_read_route,
+  announcements_update_route,
+  announcements_user_list_route,
+  announcements_user_read_route,
+  announcements_user_unread_route,
+} from "../routes";
+import { get, post } from "../requests";
 
 const BASE = setBaseUrl(`ajax/announcements`);
 
 /**
  * Get an announcement.
+ * @param {number} aID The announcement id.
  * @returns {Promise<AxiosResponse<T>>}
  */
-export function getAnnouncement({ aID }) {
-  try {
-    return axios.get(`${BASE}/${aID}`).then(({ data }) => data);
-  } catch (error) {
-    return Promise.reject(error.response.data.error);
-  }
+export async function getAnnouncement({ aID }) {
+  return await get(announcements_get_route({ aID }));
 }
 
 /**
  * Get all the read and unread announcements.
  * @returns {Promise<AxiosResponse<T>>}
  */
-export function getAnnouncements() {
-  try {
-    return axios.get(`${BASE}/user/list`).then(({ data }) => data);
-  } catch (error) {
-    return Promise.reject(error.response.data.error);
-  }
+export async function getAnnouncements() {
+  return await get(announcements_user_list_route());
 }
 
 /**
  * Get all the read announcements.
  * @returns {Promise<AxiosResponse<T>>}
  */
-export function getReadAnnouncements() {
-  try {
-    return axios.get(`${BASE}/user/read`).then(({ data }) => data);
-  } catch (error) {
-    return Promise.reject(error.response.data.error);
-  }
+export async function getReadAnnouncements() {
+  return await get(announcements_user_read_route());
 }
 
 /**
  * Get all the unread announcements.
  * @returns {Promise<AxiosResponse<T>>}
  */
-export function getUnreadAnnouncements() {
-  try {
-    return axios.get(`${BASE}/user/unread`).then(({ data }) => data);
-  } catch (error) {
-    return Promise.reject(error.response.data.error);
-  }
+export async function getUnreadAnnouncements() {
+  return await get(announcements_user_unread_route());
 }
 
 /**
  * Mark announcement as read.
  * @returns {Promise<AxiosResponse<T>>}
  */
-export function markAnnouncementRead({ aID }) {
-  try {
-    return axios.post(`${BASE}/read/${aID}`).then(({ data }) => data);
-  } catch (error) {
-    return Promise.reject(error.response.data.error);
-  }
+export async function markAnnouncementRead({ aID }) {
+  return await post(announcements_mark_as_read_route({ aID }));
 }
 
 /**
@@ -76,13 +68,7 @@ export function markAnnouncementRead({ aID }) {
  * @returns {Promise<AxiosResponse<T>>}
  */
 export function createNewAnnouncement({ title, message, priority }) {
-  try {
-    return axios
-      .post(`${BASE}/create`, { title, message, priority })
-      .then(({ data }) => data);
-  } catch (error) {
-    return Promise.reject(error.response.data.error);
-  }
+  return post(announcements_create_route(), { title, message, priority });
 }
 
 /**
@@ -96,7 +82,7 @@ export function createNewAnnouncement({ title, message, priority }) {
 export function updateAnnouncement({ id, title, message, priority }) {
   try {
     return axios
-      .put(`${BASE}/update`, { id, title, message, priority })
+      .put(announcements_update_route(), { id, title, message, priority })
       .then(({ data }) => data);
   } catch (error) {
     return Promise.reject(error.response.data.error);
@@ -111,7 +97,7 @@ export function updateAnnouncement({ id, title, message, priority }) {
 export function deleteAnnouncement({ id }) {
   return axios({
     method: "delete",
-    url: `${BASE}/delete`,
+    url: announcements_delete_route(),
     data: {
       id,
     },
