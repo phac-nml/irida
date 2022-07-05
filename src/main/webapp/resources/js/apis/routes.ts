@@ -81,3 +81,6 @@ export const clients_regenerate_secret_route = formatUrl`ajax/clients/secret`;
 export const clients_update_route = formatUrl`ajax/clients`;
 
 export const dashboard_route = formatUrl`ajax/user/statistics`;
+
+export const export_ncbi_project_route = formatUrl`ajax/ncbi/project/${"projectId"}/list`;
+export const export_ncbi_details_route = formatUrl`ajax/ncbi/project/${"projectId"}/details/${"uploadId"}`;

@@ -1,9 +1,10 @@
-import axios from "axios";
 import { NcbiSubmission, UserMinimal } from "../../types/irida";
-import { setBaseUrl } from "../../utilities/url-utilities";
 import { ExportUploadState } from "../../types/irida/ExportUpoadState";
-
-const BASE_URL = setBaseUrl(`/ajax/ncbi`);
+import { get } from "../requests";
+import {
+  export_ncbi_details_route,
+  export_ncbi_project_route,
+} from "../routes";
 
 export interface NcbiExportSubmissionTableModel {
   exportedSamples: number;
@@ -20,18 +21,9 @@ export async function getProjectNCBIExports(
   projectId: number
 ): Promise<NcbiExportSubmissionTableModel[]> {
   try {
-    const { data } = await axios.get(`${BASE_URL}/project/${projectId}/list`);
-    return data;
+    return await get(export_ncbi_project_route({ projectId }));
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response) {
-        return Promise.reject(error.response.data.error);
-      } else {
-        return Promise.reject(error.message);
-      }
-    } else {
-      return Promise.reject(i18n("generic.ajax-unexpected-error"));
-    }
+    return Promise.reject(i18n("generic.ajax-unexpected-error"));
   }
 }
 
@@ -45,19 +37,8 @@ export async function getNcbiSubmission(
   uploadId: number
 ): Promise<NcbiSubmission> {
   try {
-    const { data } = await axios.get(
-      `${BASE_URL}/project/${projectId}/details/${uploadId}`
-    );
-    return data;
+    return await get(export_ncbi_details_route({ projectId, uploadId }));
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response) {
-        return Promise.reject(error.response.data.error);
-      } else {
-        return Promise.reject(error.message);
-      }
-    } else {
-      return Promise.reject(i18n("generic.ajax-unexpected-error"));
-    }
+    return Promise.reject(i18n("generic.ajax-unexpected-error"));
   }
 }
