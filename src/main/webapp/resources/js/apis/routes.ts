@@ -66,3 +66,9 @@ export const announcements_mark_as_read_route = formatUrl`ajax/announcements/rea
 export const announcements_create_route = formatUrl`ajax/announcements/create`;
 export const announcements_update_route = formatUrl`ajax/announcements/update`;
 export const announcements_delete_route = formatUrl`ajax/announcements/delete`;
+
+export const cart_api_route = formatUrl`ajax/cart`;
+export const cart_add_samples_route = formatUrl`ajax/cart`;
+export const cart_count_route = formatUrl`ajax/cart/count`;
+export const cart_empty_route = formatUrl`ajax/cart`;
+export const cart_remove_sample_route = formatUrl`ajax/cart/sample`;

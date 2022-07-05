@@ -3,12 +3,19 @@ import { notification } from "antd";
 import axios from "axios";
 import { cartUpdated } from "../../utilities/events-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import {
+  cart_add_samples_route,
+  cart_api_route,
+  cart_count_route,
+  cart_empty_route,
+  cart_remove_sample_route,
+} from "../routes";
 
 const AJAX_URL = setBaseUrl(`/ajax/cart`);
 
 export const cartApi = createApi({
   reducerPath: `cartApi`,
-  baseQuery: fetchBaseQuery({ baseUrl: AJAX_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: cart_api_route() }),
   tagTypes: ["Samples", "CartCount"],
   endpoints: (build) => ({
     /*
@@ -105,7 +112,7 @@ const updateCart = (data) => {
  * @returns {Promise<{count: any}>}
  */
 export const putSampleInCart = async (projectId, samples) => {
-  const { data } = await axios.post(AJAX_URL, {
+  const { data } = await axios.post(cart_add_samples_route(), {
     projectId,
     sampleIds: samples.map((s) => s.id),
   });
@@ -117,7 +124,7 @@ export const putSampleInCart = async (projectId, samples) => {
  * @returns {Promise<{count: any}>}
  */
 export const getCartCount = async () => {
-  const { data: count } = await axios.get(`${AJAX_URL}/count`);
+  const { data: count } = await axios.get(cart_count_route());
   cartUpdated(count);
   return count;
 };
@@ -125,7 +132,7 @@ export const getCartCount = async () => {
 /**
  * Remove all samples from the cart
  */
-export const emptyCart = async () => axios.delete(`${AJAX_URL}`);
+export const emptyCart = async () => axios.delete(cart_empty_route());
 
 /**
  * Remove an individual sample from the cart.
@@ -134,8 +141,9 @@ export const emptyCart = async () => axios.delete(`${AJAX_URL}`);
  * @returns {Promise<* | never>}
  */
 export const removeSample = async (projectId, sampleId) => {
+  const params = new URLSearchParams({ sampleId: String(sampleId) });
   const { data } = await axios.delete(
-    `${AJAX_URL}/sample?sampleId=${sampleId}`
+    `${cart_remove_sample_route()}?${params.toString()}`
   );
   return updateCart(data);
 };
