@@ -1,7 +1,7 @@
 interface AjaxErrorResponse {
-    error: string;
+  error: string;
 }
 
 interface AjaxSuccessResponse {
-    message: string;
+  message: string;
 }

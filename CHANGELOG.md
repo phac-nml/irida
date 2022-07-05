@@ -14,6 +14,7 @@
 ## [22.05.5] - 2022/06/28
 * [UI]: Fixed bug preventing export of project samples table due to invalid url. [PR 1331](https://github.com/phac-nml/irida/pull/1331)
 * [UI]: Updated user account security page to allow admins to change passwords for other users. See [PR 1330](https://github.com/phac-nml/irida/pull/1330)
+* [UI]: Updated the NCBI SRA Submission details page to Ant Design.  See [PR 1311](https://github.com/phac-nml/irida/pull/1311)
 
 ## [22.05.4] - 2022/06/16
 * [UI]: Fixed bug preventing filter samples by file to fail on invalid url. See [PR 1318](https://github.com/phac-nml/irida/pull/1318)
