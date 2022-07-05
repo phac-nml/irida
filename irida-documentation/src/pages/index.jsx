@@ -21,7 +21,7 @@ export default function Homepage() {
           href="https://phac-nml.github.io/irida-documentation"
         />
       </Head>
-      <Redirect to="./introduction/getting-started" />
+      <Redirect to="./introduction" />
     </>
   );
 }

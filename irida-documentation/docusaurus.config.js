@@ -30,11 +30,13 @@ const config = {
         docs: {
           routeBasePath: "/",
           sidebarPath: require.resolve("./sidebars.js"),
-          sidebarCollapsible: false,
-          lastVersion: "current",
+          sidebarCollapsible: true,
+          showLastUpdateTime: true,
+          lastVersion: undefined,
           versions: {
             current: {
-              label: "22.05-SNAPSHOT",
+              label: "22.07-SNAPSHOT 🚧",
+              badge: true,
             },
           },
         },
@@ -66,7 +68,7 @@ const config = {
         items: [
           {
             type: "doc",
-            docId: "introduction/getting-started",
+            docId: "introduction",
             label: "Docs",
             position: "left",
           },

@@ -1,7 +1,6 @@
 ---
-id: getting-started
-title: Getting Started
-sidebar_position: 1
+id: introduction
+title: Introduction
 hide_table_of_contents: true
 ---
 
