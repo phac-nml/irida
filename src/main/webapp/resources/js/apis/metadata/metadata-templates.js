@@ -1,8 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { addKeysToList } from "../../utilities/http-utilities";
-import { setBaseUrl } from "../../utilities/url-utilities";
-
-const BASE_URL = setBaseUrl(`/ajax/metadata/templates`);
+import { metadata_templates_api_route } from "../routes";
 
 /**
  * API to get information about metadata templates
@@ -10,7 +8,7 @@ const BASE_URL = setBaseUrl(`/ajax/metadata/templates`);
  */
 export const templateApi = createApi({
   reducerPath: `templateApi`,
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: metadata_templates_api_route() }),
   tagTypes: ["MetadataTemplate"],
   endpoints: (build) => ({
     /*

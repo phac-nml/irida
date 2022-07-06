@@ -1,13 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { validateSampleName } from "./sample-utils";
-import { metadata_upload_api } from "../routes";
+import { metadata_upload_api_route } from "../routes";
 
 /**
  * Redux API for Sample Metadata
  */
 export const metadataImportApi = createApi({
   reducerPath: `metadataImportApi`,
-  baseQuery: fetchBaseQuery({ baseUrl: metadata_upload_api() }),
+  baseQuery: fetchBaseQuery({ baseUrl: metadata_upload_api_route() }),
   tagTypes: ["MetadataImport"],
   endpoints: (build) => ({
     getProjectSampleMetadata: build.query({

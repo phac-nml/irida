@@ -101,7 +101,9 @@ export const metadata_field_restrictions_route = formatUrl`ajax/metadata/field/r
 export const metadata_fields_in_project_route = formatUrl`ajax/metadata/fields/project`;
 export const metadata_roles_route = formatUrl`ajax/metadata/roles`;
 
-export const metadata_upload_api = formatUrl`ajax/projects/sample-metadata/upload`;
+export const metadata_upload_api_route = formatUrl`ajax/projects/sample-metadata/upload`;
+
+export const metadata_templates_api_route = formatUrl`ajax/metadata/templates`;
 
 export const sequence_file_fastqc_details_route = formatUrl`ajax/sequenceFiles/fastqc-details`;
 export const sequence_file_fastqc_charts_route = formatUrl`ajax/sequenceFiles/fastqc-charts`;
