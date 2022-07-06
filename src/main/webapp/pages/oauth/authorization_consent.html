@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title th:text="#{auth.title}">IRIDA OAuth2 Approval Page</title>
+    <webpacker:css entry="access_confirmation" />
+    <style>
+      body {
+        padding: 14px;
+      }
+
+      form {
+        display: inline-block;
+      }
+    </style>
+    <script>
+      function cancelConsent() {
+        document.consent_form.reset();
+        document.consent_form.submit();
+      }
+    </script>
+  </head>
+
+  <body>
+    <section class="modal-body" style="margin-top: 0">
+      <h3 style="margin-top: 0" th:text="#{auth.title}">
+        _IRIDA OAuth2 Approval Page_
+      </h3>
+
+      <h4 th:text="#{auth.subtitle(${clientId})}">
+        _Confirm access for clientID_
+      </h4>
+      <p th:text="#{auth.usermessage(${principalName})}">
+        _You are logged in as userName._
+      </p>
+      <p th:text="#{auth.approvalmessage(${clientId},${requestedScopes})}">
+        _The client clientId is requesting access to your data on this IRIDA
+        site. Approving this request will allow clientId allowedScopes access to
+        the following resources on this site:_
+      </p>
+      <ul>
+        <li th:text="#{auth.projects}">Projects</li>
+        <li th:text="#{auth.samples}">Samples</li>
+        <li th:text="#{auth.sequenceFiles}">Sequence files</li>
+      </ul>
+      <p th:text="#{auth.adminmessage(${clientId})}">
+        _Note: clientId has been authorized as part of the IRIDA network by the
+        site's administrators._
+      </p>
+    </section>
+
+    <div>
+      <form
+        id="consent_form"
+        class="button-form"
+        name="consent_form"
+        th:action="@{/api/oauth/authorize}"
+        method="post"
+      >
+        <input type="hidden" name="client_id" th:value="${clientId}" />
+        <input type="hidden" name="state" th:value="${state}" />
+
+        <div th:each="scope: ${scopes}" class="form-group form-check py-1">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            name="scope"
+            th:value="${scope}"
+            th:id="${scope}"
+          />
+          <label
+            class="form-check-label font-weight-bold"
+            th:for="${scope}"
+            th:text="${scope}"
+          ></label>
+        </div>
+
+        <p th:if="${not #lists.isEmpty(previouslyApprovedScopes)}">
+          You have already granted the following permissions to the above app:
+        </p>
+        <div
+          th:each="scope: ${previouslyApprovedScopes}"
+          class="form-group form-check py-1"
+        >
+          <input
+            class="form-check-input"
+            type="checkbox"
+            th:id="${scope}"
+            disabled
+            checked
+          />
+          <label
+            class="form-check-label font-weight-bold"
+            th:for="${scope}"
+            th:text="${scope}"
+          ></label>
+        </div>
+
+        <button
+          class="ant-btn ant-btn-primary"
+          type="submit"
+          id="submit-consent"
+        >
+          <span th:text="#{auth.authorize}">Authorize</span>
+        </button>
+        <button
+          class="btn btn-link regular"
+          type="button"
+          id="cancel-consent"
+          onclick="cancelConsent();"
+        >
+          <span th:text="#{auth.deny}">deny</span>
+        </button>
+      </form>
+    </div>
+    <div class="row pt-4">
+      <div class="col text-center">
+        <p>
+          <small>
+            Your consent to provide access is required.
+            <br />If you do not approve, click Deny, in which case no
+            information will be shared with the app.
+          </small>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

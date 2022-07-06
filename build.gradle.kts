@@ -121,6 +121,8 @@ dependencies {
     }
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.security:spring-security-oauth2-authorization-server:0.3.0")
+    implementation("org.springframework.security:spring-security-oauth2-resource-server:5.7.2")
     implementation("org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.0") {
         exclude(group = "org.slf4j")
     }
