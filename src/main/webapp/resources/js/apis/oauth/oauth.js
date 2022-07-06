@@ -1,4 +1,3 @@
-import { setBaseUrl } from "../../utilities/url-utilities";
 import {
   oauth_authenticate_client_route,
   oauth_authorize_route,
