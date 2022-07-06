@@ -97,8 +97,8 @@ export const linker_cmd_route = formatUrl`ajax/ngs-linker/cmd`;
 export const metadata_entries_route = formatUrl`linelist/entries`;
 
 export const metadata_fields_api_route = formatUrl`ajax/metadata/fields`;
-export const metadata_field_restrictions_route = formatUrl`ajax/metadata/field/restrictions`;
-export const metadata_fields_in_project_route = formatUrl`ajax/metadata/fields/project`;
+export const metadata_field_restrictions_route = formatUrl`ajax/metadata/fields/restrictions`;
+export const metadata_fields_in_projects_route = formatUrl`ajax/metadata/fields/projects`;
 export const metadata_roles_route = formatUrl`ajax/metadata/roles`;
 
 export const metadata_upload_api_route = formatUrl`ajax/projects/sample-metadata/upload`;

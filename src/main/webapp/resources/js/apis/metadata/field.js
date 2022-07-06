@@ -7,7 +7,7 @@ import { addKeysToList } from "../../utilities/http-utilities";
 import {
   metadata_field_restrictions_route,
   metadata_fields_api_route,
-  metadata_fields_in_project_route,
+  metadata_fields_in_projects_route,
 } from "../routes";
 import { get } from "../requests";
 
@@ -67,7 +67,7 @@ export async function getMetadataRestrictions() {
 export async function getAllMetadataFieldsForProjects({ projectIds }) {
   try {
     const { data } = await axios.get(
-      `${metadata_fields_in_project_route()}?projectIds=${projectIds}`
+      `${metadata_fields_in_projects_route()}?projectIds=${projectIds}`
     );
     return addKeysToList(data, "field", "id");
   } catch (e) {
