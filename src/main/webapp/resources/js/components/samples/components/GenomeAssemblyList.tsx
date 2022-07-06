@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, notification, Popconfirm, Tag, Tooltip } from "antd";
-import { useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 
 import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
 import { downloadGenomeAssemblyFile } from "../../../apis/samples/samples";
@@ -9,19 +9,22 @@ import { DEFAULT_ACTION_WIDTH } from "../sampleFilesSlice";
 import { useUpdateDefaultSampleGenomeAssemblyMutation } from "../../../apis/samples/samples";
 import { setDefaultGenomeAssembly } from "../sampleSlice";
 
+export interface GenomeAssemblyListProps {
+  removeSampleFiles: ({fileObjectId: number, type: string}) => void;
+}
 /**
  * React component to display, remove, download genome assemblies
  * @param {function} removeSampleFiles The function to remove genome assemblies
  * @returns {JSX.Element}
  * @constructor
  */
-export function GenomeAssemblyList({ removeSampleFiles = () => {} }) {
+export function GenomeAssemblyList({ removeSampleFiles = () => {} }: GenomeAssemblyListProps): JSX.Element {
   const [updateSampleDefaultGenomeAssembly] =
     useUpdateDefaultSampleGenomeAssemblyMutation();
   const { sample, modifiable: isModifiable } = useSelector(
-    (state) => state.sampleReducer
+    (state: RootStateOrAny) => state.sampleReducer
   );
-  const { files } = useSelector((state) => state.sampleFilesReducer);
+  const { files } = useSelector((state: RootStateOrAny) => state.sampleFilesReducer);
   const ACTION_MARGIN_RIGHT = isModifiable ? 0 : 5;
   const dispatch = useDispatch();
 

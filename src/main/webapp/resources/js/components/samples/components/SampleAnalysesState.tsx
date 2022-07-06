@@ -11,13 +11,17 @@ const commonIconStyle = {
   fontSize: "16px",
 };
 
+export interface SampleAnalysesStateProps {
+  state: string;
+}
+
 /**
  * React component to display sample analyses state
  *
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleAnalysesState({ state }) {
+export function SampleAnalysesState({ state }: SampleAnalysesStateProps): JSX.Element {
   return (
     <span className="t-analysis-state">
       {state === "COMPLETED" ? (

@@ -3,6 +3,12 @@ import { Collapse, List, Progress } from "antd";
 
 const { Panel } = Collapse;
 
+export interface FileUploadProgressProps {
+  files: any;
+  uploadProgress: number;
+  type: string;
+}
+
 /**
  * React component to display file upload progress
  *
@@ -12,7 +18,7 @@ const { Panel } = Collapse;
  * @returns {JSX.Element}
  * @constructor
  */
-export function FileUploadProgress({ files, uploadProgress, type }) {
+export function FileUploadProgress({ files, uploadProgress, type }: FileUploadProgressProps): JSX.Element {
   return (
     <div>
       {i18n("SampleFiles.uploadProgress", type)}

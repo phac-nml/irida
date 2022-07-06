@@ -41,6 +41,7 @@ const initialState = (() => {
 })();
 
 const cartSamplesSlice = createSlice({
+  reducers: {},
   name: "cartSamples",
   initialState,
   extraReducers: (builder) => {
@@ -58,7 +59,7 @@ const cartSamplesSlice = createSlice({
         (sampleId) => sampleId !== parseInt(action.payload.sampleId)
       );
     });
-  },
+  }
 });
 
 export default cartSamplesSlice.reducer;

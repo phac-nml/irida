@@ -21,6 +21,7 @@ const initialState = (() => {
 })();
 
 const sampleAnalysesSlice = createSlice({
+  reducers: {},
   name: "sampleAnalyses",
   initialState,
   extraReducers: (builder) => {
@@ -28,7 +29,7 @@ const sampleAnalysesSlice = createSlice({
       state.analyses = action.payload.analyses;
       state.loading = false;
     });
-  },
+  }
 });
 
 export default sampleAnalysesSlice.reducer;

@@ -135,6 +135,7 @@ const initialState = (() => {
 })();
 
 const sampleSlice = createSlice({
+  reducers: {},
   name: "sample",
   initialState,
   extraReducers: (builder) => {
@@ -214,7 +215,7 @@ const sampleSlice = createSlice({
     builder.addCase(updateDetails, (state, action) => {
       state.sample[action.payload.field] = action.payload.value;
     });
-  },
+  }
 });
 
 export default sampleSlice.reducer;

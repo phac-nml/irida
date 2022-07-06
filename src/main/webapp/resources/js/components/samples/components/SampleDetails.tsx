@@ -9,6 +9,10 @@ import { setProjectDetails, setSample } from "../sampleSlice";
 
 const { Paragraph } = Typography;
 
+export interface SampleDetailsProps {
+  details: any;
+}
+
 /**
  * React component to render the details of a sample, including metadata
  * and files.
@@ -17,7 +21,7 @@ const { Paragraph } = Typography;
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleDetails({ details }) {
+export function SampleDetails({ details }: SampleDetailsProps): JSX.Element {
   const dispatch = useDispatch();
 
   React.useEffect(() => {

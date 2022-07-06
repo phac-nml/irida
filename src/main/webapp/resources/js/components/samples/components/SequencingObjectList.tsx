@@ -14,7 +14,7 @@ import {
   CloseOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { useInterval } from "../../../hooks";
 import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
 import { SequenceObjectListItem } from "../../sequence-files/SequenceObjectListItem";
@@ -43,13 +43,17 @@ const fileProcessTranslations = {
   ERROR: i18n("SampleFilesList.fileProcessingState.ERROR"),
 };
 
+export interface SequencingObjectListProps {
+  removeSampleFiles: (fileObjectId: number, type: string) => void;
+}
+
 /**
  * React component to display, remove, download sequencing objects
  * @param {function} removeSampleFiles The function to remove sequencing objects
  * @returns {JSX.Element}
  * @constructor
  */
-export function SequencingObjectList({ removeSampleFiles = () => {} }) {
+export function SequencingObjectList({ removeSampleFiles = () => {} }: SequencingObjectListProps): JSX.Element {
   const [updateSampleDefaultSequencingObject] =
     useUpdateDefaultSampleSequencingObjectMutation();
 
@@ -57,9 +61,9 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
     sample,
     modifiable: isModifiable,
     projectId,
-  } = useSelector((state) => state.sampleReducer);
+  } = useSelector((state: RootStateOrAny) => state.sampleReducer);
   const { files, concatenateSelected } = useSelector(
-    (state) => state.sampleFilesReducer
+    (state: RootStateOrAny) => state.sampleFilesReducer
   );
   const ACTION_MARGIN_RIGHT = isModifiable ? 0 : 5;
 
@@ -71,33 +75,33 @@ export function SequencingObjectList({ removeSampleFiles = () => {} }) {
    */
   useInterval(() => {
     let seqObjIdsSingles = files.singles
-      ?.filter((singleEndFile) => {
+      ?.filter((singleEndFile: { fileInfo: { processingState: string; }; }) => {
         return (
           singleEndFile.fileInfo.processingState !== "FINISHED" &&
           singleEndFile.fileInfo.processingState !== "ERROR"
         );
       })
-      .map((singleEndFile) => singleEndFile.fileInfo.identifier);
+      .map((singleEndFile: { fileInfo: { identifier: string; }; }) => singleEndFile.fileInfo.identifier);
 
     let seqObjIdsPaired = files.paired
-      ?.filter((pair) => {
+      ?.filter((pair: { fileInfo: { processingState: string; }; }) => {
         return (
           pair.fileInfo.processingState !== "FINISHED" &&
           pair.fileInfo.processingState !== "ERROR"
         );
       })
-      .map((pair) => pair.fileInfo.identifier);
+      .map((pair: { fileInfo: { identifier: string; }; }) => pair.fileInfo.identifier);
 
     let seqObjIdsFast5 = files.fast5
-      ?.filter((fast5File) => {
+      ?.filter((fast5File: { fileInfo: { processingState: string; }; }) => {
         return (
           fast5File.fileInfo.processingState !== "FINISHED" &&
           fast5File.fileInfo.processingState !== "ERROR"
         );
       })
-      .map((fast5File) => fast5File.fileInfo.identifier);
+      .map((fast5File: { fileInfo: { identifier: string; }; }) => fast5File.fileInfo.identifier);
 
-    let sequencingObjectIds = [];
+    let sequencingObjectIds: string[] = [];
 
     if (typeof seqObjIdsSingles !== "undefined") {
       sequencingObjectIds = [...sequencingObjectIds, ...seqObjIdsSingles];

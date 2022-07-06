@@ -7,7 +7,7 @@ import { SampleFileConcatenate } from "./SampleFileContenate";
 import { DragUpload } from "../../files/DragUpload";
 import { FileUploadProgress } from "./upload-progress/FileUploadProgress";
 import { SampleFileList } from "./SampleFileList";
-import { useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import {
   addToSequenceFiles,
   addToAssemblyFiles,
@@ -31,10 +31,10 @@ import { SPACE_MD } from "../../../styles/spacing";
  */
 export function SampleFiles() {
   const { sample, projectId, modifiable } = useSelector(
-    (state) => state.sampleReducer
+    (state: RootStateOrAny) => state.sampleReducer
   );
   const { files, loading, concatenateSelected } = useSelector(
-    (state) => state.sampleFilesReducer
+    (state: RootStateOrAny) => state.sampleFilesReducer
   );
   const dispatch = useDispatch();
 

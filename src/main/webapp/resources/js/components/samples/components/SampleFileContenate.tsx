@@ -10,7 +10,7 @@ import {
   Typography,
 } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { useResetFormOnCloseModal } from "../../../hooks";
 import { useConcatenateSequencingObjectsMutation } from "../../../apis/samples/samples";
 import {
@@ -22,19 +22,23 @@ import { IconArrowLeft, IconArrowRight, IconFile } from "../../icons/Icons";
 
 const { Title } = Typography;
 
+export interface SampleFileConcatenateProps {
+  children: React.ReactNode;
+}
+
 /**
  * Function to render Sequencing Object concatenation modal
  * @param children
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleFileConcatenate({ children }) {
+export function SampleFileConcatenate({ children }: SampleFileConcatenateProps): JSX.Element {
   const [visible, setVisible] = React.useState(false);
   const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const { sample } = useSelector((state) => state.sampleReducer);
+  const { sample } = useSelector((state: RootStateOrAny) => state.sampleReducer);
   const { concatenateSelected } = useSelector(
-    (state) => state.sampleFilesReducer
+    (state: RootStateOrAny) => state.sampleFilesReducer
   );
   const [concatenateSeqObjectFiles] = useConcatenateSequencingObjectsMutation();
 
@@ -45,7 +49,7 @@ export function SampleFileConcatenate({ children }) {
 
   const concatenateFiles = () => {
     let sequencingObjectIds = concatenateSelected.map(
-      (seqObject) => seqObject.identifier
+      (seqObject: { identifier: number; }) => seqObject.identifier
     );
 
     form.validateFields().then((values) => {

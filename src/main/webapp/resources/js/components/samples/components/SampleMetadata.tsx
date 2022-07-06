@@ -12,12 +12,12 @@ import {
 import { AddNewMetadata } from "./AddNewMetadata";
 import { useRemoveSampleMetadataMutation } from "../../../apis/samples/samples";
 import { ContentLoading } from "../../loader";
-import { IconEdit, IconPlusCircle, IconRemove } from "../../icons/Icons";
+import { IconPlusCircle } from "../../icons/Icons";
 import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context";
 import { EditMetadata } from "./EditMetadata";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
-import { useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import {
   fetchSampleMetadata,
   removeSampleMetadataField,
@@ -39,7 +39,7 @@ export function SampleMetadata() {
     projectId,
     metadata,
     loading,
-  } = useSelector((state) => state.sampleReducer);
+  } = useSelector((state: RootStateOrAny) => state.sampleReducer);
 
   const [removeSampleMetadata] = useRemoveSampleMetadataMutation();
   const dispatch = useDispatch();

@@ -14,7 +14,7 @@ const { Paragraph } = Typography;
 import moment from "moment";
 import { OntologyInput } from "../../ontology";
 import { TAXONOMY } from "../../../apis/ontology/taxonomy";
-import { useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context";
 import { EditMetadata } from "./EditMetadata";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -32,7 +32,7 @@ const DEFAULT_HEIGHT = 600;
  */
 export function SampleInfo() {
   const { sample, modifiable: isModifiable } = useSelector(
-    (state) => state.sampleReducer
+    (state: RootStateOrAny) => state.sampleReducer
   );
   const dispatch = useDispatch();
   const [updateSampleDetails] = useUpdateSampleDetailsMutation();

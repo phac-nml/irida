@@ -5,7 +5,11 @@ import { useResetFormOnCloseModal } from "../../../hooks";
 import { useMetadataRoles } from "../../../contexts/metadata-roles-context";
 const { Title } = Typography;
 import { addSampleMetadataField } from "../sampleSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+
+export interface AddNewMetadataProps {
+  children: React.ReactElement;
+}
 
 /**
  * Function to render Add New Metadata Field modal
@@ -13,8 +17,8 @@ import { useDispatch, useSelector } from "react-redux";
  * @returns {JSX.Element}
  * @constructor
  */
-export function AddNewMetadata({ children }) {
-  const { sample, projectId } = useSelector((state) => state.sampleReducer);
+export function AddNewMetadata({ children }: AddNewMetadataProps): JSX.Element  {
+  const { sample, projectId } = useSelector((state:RootStateOrAny) => state.sampleReducer);
   const [visible, setVisible] = React.useState(false);
   const [addSampleMetadata] = useAddSampleMetadataMutation();
   const { roles: metadataRoles } = useMetadataRoles();

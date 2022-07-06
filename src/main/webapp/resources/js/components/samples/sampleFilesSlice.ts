@@ -107,6 +107,7 @@ const initialState = (() => {
 })();
 
 const sampleFilesSlice = createSlice({
+  reducers: {},
   name: "sampleFiles",
   initialState,
   extraReducers: (builder) => {
@@ -289,7 +290,7 @@ const sampleFilesSlice = createSlice({
     builder.addCase(resetConcatenateSelected, (state) => {
       state.concatenateSelected = [];
     });
-  },
+  }
 });
 
 export default sampleFilesSlice.reducer;

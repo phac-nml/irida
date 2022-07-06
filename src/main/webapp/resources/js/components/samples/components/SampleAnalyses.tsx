@@ -1,6 +1,6 @@
 import React from "react";
-import { Col, Input, Row, Table, Typography } from "antd";
-import { useDispatch, useSelector } from "react-redux";
+import { Col, Input, Row, Table } from "antd";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { fetchSampleAnalyses } from "../../../apis/samples/samples";
 import { setSampleAnalyses } from "../sampleAnalysesSlice";
 import { SampleAnalysesState } from "./SampleAnalysesState";
@@ -8,7 +8,6 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 
 const { Search } = Input;
-const { Paragraph } = Typography;
 
 /**
  * React component to display sample analyses
@@ -20,10 +19,10 @@ export function SampleAnalyses() {
   const [filteredSubmissions, setFilteredSubmissions] = React.useState(null);
   const dispatch = useDispatch();
 
-  const { sample } = useSelector((state) => state.sampleReducer);
+  const { sample } = useSelector((state: RootStateOrAny) => state.sampleReducer);
 
   const { analyses, loading } = useSelector(
-    (state) => state.sampleAnalysesReducer
+    (state: RootStateOrAny) => state.sampleAnalysesReducer
   );
 
   /*

@@ -2,7 +2,7 @@ import React from "react";
 import { notification, Space } from "antd";
 import { useRemoveSampleFilesMutation } from "../../../apis/samples/samples";
 import { removeFileObjectFromSample } from "../sampleFilesSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { setDefaultSequencingObject } from "../sampleSlice";
 import { GenomeAssemblyList } from "./GenomeAssemblyList";
 import { SequencingObjectList } from "./SequencingObjectList";
@@ -17,8 +17,8 @@ export function SampleFileList() {
   const dispatch = useDispatch();
   const [removeSampleFilesFromSample] = useRemoveSampleFilesMutation();
 
-  const { sample } = useSelector((state) => state.sampleReducer);
-  const { files } = useSelector((state) => state.sampleFilesReducer);
+  const { sample } = useSelector((state: RootStateOrAny) => state.sampleReducer);
+  const { files } = useSelector((state: RootStateOrAny) => state.sampleFilesReducer);
 
   /*
   Remove sequencing objects and/or genome assembly objects from sample

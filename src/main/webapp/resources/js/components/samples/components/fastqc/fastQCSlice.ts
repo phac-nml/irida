@@ -68,13 +68,14 @@ const initialState = (() => {
 })();
 
 const fastQCSlice = createSlice({
+  reducers: {},
   name: "fastQC",
   initialState,
   extraReducers: (builder) => {
     builder.addCase(setFastQCDetails, (state, action) => {
       state.fastQC = action.payload.fastQC;
       state.file = action.payload.file;
-      state.proessingState = action.payload.processingState;
+      state.processingState = action.payload.processingState;
       state.loading = false;
     });
 
@@ -97,7 +98,7 @@ const fastQCSlice = createSlice({
       state.processingState = null;
       state.fastQCModalVisible = false;
     });
-  },
+  }
 });
 
 export default fastQCSlice.reducer;

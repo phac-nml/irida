@@ -8,7 +8,7 @@ import {
   Typography,
 } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { useUpdateSampleMetadataMutation } from "../../../apis/samples/samples";
 import { useResetFormOnCloseModal } from "../../../hooks";
 import { useMetadataRoles } from "../../../contexts/metadata-roles-context";
@@ -36,7 +36,7 @@ export function EditMetadata() {
     restriction,
     sample,
     projectId,
-  } = useSelector((state) => state.sampleReducer);
+  } = useSelector((state: RootStateOrAny) => state.sampleReducer);
 
   const [form] = Form.useForm();
 

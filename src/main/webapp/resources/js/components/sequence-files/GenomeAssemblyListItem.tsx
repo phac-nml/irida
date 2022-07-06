@@ -4,7 +4,12 @@ import { formatInternationalizedDateTime } from "../../utilities/date-utilities"
 import { FileOutlined } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 import { BORDERED_LIGHT } from "../../styles/borders";
+import { SequenceObjectListItemProps } from "./SequenceObjectListItem";
 
+export interface GenomeAssemblyListItemProps {
+  genomeAssembly: any;
+  actions: JSX.Element[];
+}
 /**
  * Component to be used anywhere genome assemblies need to be listed
  * @param genomeAssembly The genome assembly to list
@@ -12,7 +17,10 @@ import { BORDERED_LIGHT } from "../../styles/borders";
  * @returns {JSX.Element}
  * @constructor
  */
-export function GenomeAssemblyListItem({ genomeAssembly, actions = [] }) {
+export function GenomeAssemblyListItem({
+  genomeAssembly,
+  actions = []
+}: GenomeAssemblyListItemProps): JSX.Element {
   const { createdDate, identifier, label } = genomeAssembly.fileInfo;
   return (
     <div

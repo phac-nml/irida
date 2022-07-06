@@ -11,12 +11,21 @@ import { BORDERED_LIGHT } from "../../styles/borders";
 
 import { FastQC } from "../samples/components/fastqc/FastQC";
 import { setFastQCModalData } from "../samples/components/fastqc/fastQCSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import {SequencingObject} from "../../types/irida";
 
 const qcEntryTranslations = {
   COVERAGE: i18n("SequenceObjectListItem.qcEntry.COVERAGE"),
   PROCESSING: i18n("SequenceObjectListItem.qcEntry.PROCESSING"),
 };
+
+export interface SequenceObjectListItemProps {
+  sequenceObject: SequencingObject;
+  actions: JSX.Element[];
+  pairedReverseActions: JSX.Element[];
+  displayConcatenationCheckbox: JSX.Element | null;
+  displayFileProcessingStatus: boolean;
+}
 
 /**
  * Component to be used anywhere sequencing objects need to be listed
@@ -34,7 +43,7 @@ export function SequenceObjectListItem({
   pairedReverseActions = [],
   displayConcatenationCheckbox = null,
   displayFileProcessingStatus = false,
-}) {
+}: SequenceObjectListItemProps): JSX.Element {
   const obj = sequenceObject.fileInfo
     ? sequenceObject.fileInfo
     : sequenceObject.file
@@ -43,7 +52,7 @@ export function SequenceObjectListItem({
 
   const dispatch = useDispatch();
   const { fastQCModalVisible, sequencingObjectId, fileId } = useSelector(
-    (state) => state.fastQCReducer
+    (state: RootStateOrAny) => state.fastQCReducer
   );
 
   /*

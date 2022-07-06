@@ -44,6 +44,8 @@ declare namespace IRIDA {
         longitude: string;
         projects: Project[];
         sequenceFiles: any[]; // TODO (Josh - 6/7/22): FLush this out
+        defaultSequencingObject: number;
+        defaultGenomeAssembly: number;
     }
 
     export type SystemRole =
@@ -68,5 +70,22 @@ declare namespace IRIDA {
         tokens: string[]; // TODO (Josh - 6/7/22): Look into this one
         announcements: Announcement[];
         subscriptions: string[]; // TODO (Josh - 6/7/22): Look into this one as well
+    }
+
+    export type ProcessingState =
+        "UNPROCESSED"
+        | "QUEUED"
+        | "PROCESSING"
+        | "FINISHED"
+        | "ERROR";
+
+    interface SequencingObject extends IridaBase {
+        sequencingRun: number;
+        sample: Sample;
+        automatedAssembly: number;
+        sistrTyping: number;
+        remoteStatus: number;
+        processingState: ProcessingState;
+        fileProcessor: string;
     }
 }
