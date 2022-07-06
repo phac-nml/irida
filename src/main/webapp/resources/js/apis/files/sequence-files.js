@@ -4,6 +4,12 @@
 
 import { setBaseUrl } from "../../utilities/url-utilities";
 import axios from "axios";
+import {
+  sequence_file_fastqc_charts_route,
+  sequence_file_fastqc_details_route,
+  sequence_file_overrepresented_sequences_route,
+} from "../routes";
+import { get } from "../requests";
 
 const BASE_URL = setBaseUrl(`/ajax/sequenceFiles`);
 
@@ -15,17 +21,12 @@ const BASE_URL = setBaseUrl(`/ajax/sequenceFiles`);
  *                      `error` contains error information if an error occurred.
  */
 export async function getFastQCDetails(sequencingObjectId, sequenceFileId) {
-  return await axios
-    .get(`${BASE_URL}/fastqc-details`, {
-      params: {
-        sequencingObjectId,
-        sequenceFileId
-      },
-    })
-    .then(({ data }) => data)
-    .catch((error) => {
-      throw new Error(error.response.data.error);
-    });
+  return await get(sequence_file_fastqc_details_route(), {
+    params: {
+      sequencingObjectId,
+      sequenceFileId,
+    },
+  });
 }
 
 /*
@@ -36,17 +37,12 @@ export async function getFastQCDetails(sequencingObjectId, sequenceFileId) {
  *                      `error` contains error information if an error occurred.
  */
 export async function getFastQCImages(sequencingObjectId, sequenceFileId) {
-  return await axios
-    .get(`${BASE_URL}/fastqc-charts`, {
-      params: {
-        sequencingObjectId,
-        sequenceFileId
-      },
-    })
-    .then(({ data }) => data)
-    .catch((error) => {
-      throw new Error(error.response.data.error);
-    });
+  return await get(sequence_file_fastqc_charts_route(), {
+    params: {
+      sequencingObjectId,
+      sequenceFileId,
+    },
+  });
 }
 
 /*
@@ -56,16 +52,14 @@ export async function getFastQCImages(sequencingObjectId, sequenceFileId) {
  * @return {Promise<*>} `data` contains the OK response and a AnalysisFastQC model object;
  *                      `error` contains error information if an error occurred.
  */
-export async function getOverRepresentedSequences(sequencingObjectId, sequenceFileId) {
-  return await axios
-    .get(`${BASE_URL}/overrepresented-sequences`, {
-      params: {
-        sequencingObjectId,
-        sequenceFileId
-      },
-    })
-    .then(({ data }) => data)
-    .catch((error) => {
-      throw new Error(error.response.data.error);
-    });
+export async function getOverRepresentedSequences(
+  sequencingObjectId,
+  sequenceFileId
+) {
+  return await get(sequence_file_overrepresented_sequences_route(), {
+    params: {
+      sequencingObjectId,
+      sequenceFileId,
+    },
+  });
 }

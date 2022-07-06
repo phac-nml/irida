@@ -84,3 +84,11 @@ export const dashboard_route = formatUrl`ajax/user/statistics`;
 
 export const export_ncbi_project_route = formatUrl`ajax/ncbi/project/${"projectId"}/list`;
 export const export_ncbi_details_route = formatUrl`ajax/ncbi/project/${"projectId"}/details/${"uploadId"}`;
+
+export const files_sequence_file_upload_route = formatUrl`ajax/samples/${"sampleId"}/sequenceFiles/upload`;
+export const files_fast5_upload_route = formatUrl`ajax/samples/${"sampleId"}/fast5/upload`;
+export const files_assembly_upload_route = formatUrl`ajax/samples/${"sampleId"}/assembly/upload`;
+
+export const sequence_file_fastqc_details_route = formatUrl`ajax/sequenceFiles/fastqc-details`;
+export const sequence_file_fastqc_charts_route = formatUrl`ajax/sequenceFiles/fastqc-charts`;
+export const sequence_file_overrepresented_sequences_route = formatUrl`ajax/sequenceFiles/overrepresented-sequences`;

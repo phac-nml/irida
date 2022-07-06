@@ -4,6 +4,11 @@ import { FileUploader } from "../files/FileUploader";
 import { Button, Dropdown, Menu, notification } from "antd";
 import { IconCloudUpload, IconDropDown, IconLoading } from "../icons/Icons";
 import { SPACE_XS } from "../../styles/spacing";
+import {
+  files_assembly_upload_route,
+  files_fast5_upload_route,
+  files_sequence_file_upload_route,
+} from "../../apis/routes";
 
 /**
  * React component to upload sequence files for a sample.
@@ -44,9 +49,7 @@ export function SampleFileUploader() {
       <Menu.Item>
         <FileUploader
           allowedTypes=".fastq,.gz"
-          url={setBaseUrl(
-            `ajax/samples/${window.PAGE.id}/sequenceFiles/upload`
-          )}
+          url={files_sequence_file_upload_route({ sampleId: window.PAGE.id })}
           onSuccess={onSuccess}
           onUpload={onUpload}
           onError={onError}
@@ -58,7 +61,7 @@ export function SampleFileUploader() {
       <Menu.Item>
         <FileUploader
           allowedTypes=".fast5,.gz"
-          url={setBaseUrl(`ajax/samples/${window.PAGE.id}/fast5/upload`)}
+          url={files_fast5_upload_route({ sampleId: window.PAGE.id })}
           onSuccess={onSuccess}
           onUpload={onUpload}
           onError={onError}
@@ -70,7 +73,7 @@ export function SampleFileUploader() {
       <Menu.Item>
         <FileUploader
           allowedTypes=".fasta,.fna"
-          url={setBaseUrl(`ajax/samples/${window.PAGE.id}/assemblies/upload`)}
+          url={files_assembly_upload_route({ sampleId: window.PAGE.id })}
           onSuccess={onSuccess}
           onUpload={onUpload}
           onError={onError}
