@@ -1,9 +1,19 @@
 import { setBaseUrl } from "../../utilities/url-utilities";
+import {
+  oauth_authenticate_client_route,
+  oauth_authorize_route,
+} from "../routes";
 
-const createHref = (clientId, redirectUrl) =>
-  setBaseUrl(
-    `api/oauth/authorize?client_id=${clientId}&response_type=code&scope=read&redirect_uri=${redirectUrl}`
-  );
+const createHref = (clientId, redirectUrl) => {
+  const params = new URLSearchParams([
+    ["client_id", clientId],
+    ["redirect_uri", redirectUrl],
+    ["response_type", "code"],
+    ["scope", "read"],
+  ]);
+  return `${oauth_authorize_route()}?${params.toString()}`;
+};
+
 /**
  * Create a DOMString containing a comma-separated list of window features for the pop up window.
  * @returns {string}
@@ -62,7 +72,7 @@ export async function authenticateOauthClient(clientId, redirectUrl) {
  * @returns {Promise<boolean>}
  */
 export async function authenticateRemoteClient(api) {
-  const href = setBaseUrl(`remote_api/connect/${api.id}`);
+  const href = oauth_authenticate_client_route({ clientId: api.id });
   const options = getWindowFeatures();
 
   return new Promise((resolve) => {

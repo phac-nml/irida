@@ -104,6 +104,10 @@ export const metadata_roles_route = formatUrl`ajax/metadata/roles`;
 export const metadata_upload_api_route = formatUrl`ajax/projects/sample-metadata/upload`;
 
 export const metadata_templates_api_route = formatUrl`ajax/metadata/templates`;
+export const metadata_templates_project_route = formatUrl`linelist/templates`;
+
+export const oauth_authorize_route = formatUrl`api/oauth/authorize`;
+export const oauth_authenticate_client_route = formatUrl`remote_api/connect/${"clientId"}`;
 
 export const sequence_file_fastqc_details_route = formatUrl`ajax/sequenceFiles/fastqc-details`;
 export const sequence_file_fastqc_charts_route = formatUrl`ajax/sequenceFiles/fastqc-charts`;

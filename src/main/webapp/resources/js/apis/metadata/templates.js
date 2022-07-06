@@ -1,7 +1,6 @@
 import axios from "axios";
-import { setBaseUrl } from "../../utilities/url-utilities";
+import { metadata_templates_project_route } from "../routes";
 
-const URL = setBaseUrl(`linelist/templates`);
 let projectId;
 
 /**
@@ -13,7 +12,7 @@ export function fetchTemplates(id) {
   projectId = id;
   return axios({
     method: "get",
-    url: `${URL}?projectId=${projectId}`
+    url: `${metadata_templates_project_route()}?projectId=${projectId}`,
   });
 }
 
@@ -25,7 +24,7 @@ export function fetchTemplates(id) {
 export function saveTemplate(data) {
   return axios({
     method: "post",
-    url: `${URL}?projectId=${projectId}`,
-    data
+    url: `${metadata_templates_project_route()}?projectId=${projectId}`,
+    data,
   });
 }
