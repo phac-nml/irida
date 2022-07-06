@@ -112,3 +112,5 @@ export const oauth_authenticate_client_route = formatUrl`remote_api/connect/${"c
 export const sequence_file_fastqc_details_route = formatUrl`ajax/sequenceFiles/fastqc-details`;
 export const sequence_file_fastqc_charts_route = formatUrl`ajax/sequenceFiles/fastqc-charts`;
 export const sequence_file_overrepresented_sequences_route = formatUrl`ajax/sequenceFiles/overrepresented-sequences`;
+
+export const taxonomy_search_ontology_route = formatUrl`ajax/taxonomy`;

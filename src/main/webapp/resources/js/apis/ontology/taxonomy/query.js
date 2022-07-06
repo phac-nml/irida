@@ -1,8 +1,8 @@
 import axios from "axios";
-import { setBaseUrl } from "../../../utilities/url-utilities";
+import { taxonomy_search_ontology_route } from "../../routes";
 
 const TAXONOMY = "taxonomy";
-const ONTOLOGY_URLS = { [TAXONOMY]: setBaseUrl("ajax/taxonomy") };
+const ONTOLOGY_URLS = { [TAXONOMY]: taxonomy_search_ontology_route() };
 
 /**
  * Search an ontology for a specific term
