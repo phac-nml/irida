@@ -94,6 +94,8 @@ export const galaxy_remove_session_route = formatUrl`ajax/galaxy-export/remove`;
 
 export const linker_cmd_route = formatUrl`ajax/ngs-linker/cmd`;
 
+export const metadata_entries_route = formatUrl`linelist/entries`;
+
 export const sequence_file_fastqc_details_route = formatUrl`ajax/sequenceFiles/fastqc-details`;
 export const sequence_file_fastqc_charts_route = formatUrl`ajax/sequenceFiles/fastqc-charts`;
 export const sequence_file_overrepresented_sequences_route = formatUrl`ajax/sequenceFiles/overrepresented-sequences`;

@@ -3,6 +3,7 @@
  */
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { metadata_entries_route } from "../routes";
 
 const URL = setBaseUrl(`linelist/entries`);
 
@@ -13,9 +14,14 @@ const URL = setBaseUrl(`linelist/entries`);
  * @returns {Promise}
  */
 export function fetchMetadataEntries({ projectId, current, pageSize }) {
+  const params = new URLSearchParams([
+    ["projectId", String(projectId)],
+    ["current", String(current)],
+    ["pageSize", String(pageSize)],
+  ]);
   return axios({
     method: "get",
-    url: `${URL}?projectId=${projectId}&current=${current}&pageSize=${pageSize}`,
+    url: `${metadata_entries_route()}?${params.toString()}`,
   }).then((response) => response.data.content);
 }
 
@@ -28,8 +34,8 @@ export function fetchMetadataEntries({ projectId, current, pageSize }) {
  */
 export function saveMetadataEntryField(sampleId, value, label) {
   const params = new URLSearchParams();
-  params.append("sampleId", sampleId);
+  params.append("sampleId", String(sampleId));
   params.append("value", value);
   params.append("label", label);
-  return axios.post(URL, params);
+  return axios.post(metadata_entries_route(), params);
 }
