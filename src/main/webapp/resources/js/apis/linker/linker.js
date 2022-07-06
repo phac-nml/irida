@@ -1,11 +1,9 @@
 import axios from "axios";
-import { setBaseUrl } from "../../utilities/url-utilities";
-
-const BASE_URL = setBaseUrl(`ajax/ngs-linker`);
+import { linker_cmd_route } from "../routes";
 
 export function getNGSLinkerCode({ sampleIds, projectId }) {
-  return axios.post(`${BASE_URL}/cmd`, {
+  return axios.post(linker_cmd_route(), {
     sampleIds,
-    projectId
+    projectId,
   });
 }

@@ -1,9 +1,6 @@
 import axios from "axios";
 import { authenticateOauthClient } from "../oauth/oauth";
-import { setBaseUrl } from "../../utilities/url-utilities";
 import { galaxy_remove_session_route, galaxy_samples_route } from "../routes";
-
-const GALAXY_AJAX_URL = setBaseUrl(`ajax/galaxy-export`);
 
 /**
  * This will open an new window providing the user with the ability to authenticate
