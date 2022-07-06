@@ -96,6 +96,10 @@ export const linker_cmd_route = formatUrl`ajax/ngs-linker/cmd`;
 
 export const metadata_entries_route = formatUrl`linelist/entries`;
 
+export const metadata_fields_api_route = formatUrl`ajax/metadata/fields`;
+export const metadata_field_restrictions_route = formatUrl`ajax/metadata/field/restrictions`;
+export const metadata_fields_in_project_route = formatUrl`ajax/metadata/fields/project`;
+
 export const sequence_file_fastqc_details_route = formatUrl`ajax/sequenceFiles/fastqc-details`;
 export const sequence_file_fastqc_charts_route = formatUrl`ajax/sequenceFiles/fastqc-charts`;
 export const sequence_file_overrepresented_sequences_route = formatUrl`ajax/sequenceFiles/overrepresented-sequences`;

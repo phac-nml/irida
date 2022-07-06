@@ -4,9 +4,12 @@
 import axios from "axios";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { addKeysToList } from "../../utilities/http-utilities";
-import { setBaseUrl } from "../../utilities/url-utilities";
-
-const BASE_URL = setBaseUrl(`/ajax/metadata/fields`);
+import {
+  metadata_field_restrictions_route,
+  metadata_fields_api_route,
+  metadata_fields_in_project_route,
+} from "../routes";
+import { get } from "../requests";
 
 /**
  * Redux API for metadata fields.
@@ -14,7 +17,7 @@ const BASE_URL = setBaseUrl(`/ajax/metadata/fields`);
  */
 export const fieldsApi = createApi({
   reducerPath: `fieldsApi`,
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: fetchBaseQuery({ baseUrl: metadata_fields_api_route() }),
   tagTypes: ["MetadataFields"],
   endpoints: (build) => ({
     /*
@@ -54,12 +57,7 @@ export const {
  * @returns {Promise<any>}
  */
 export async function getMetadataRestrictions() {
-  try {
-    const { data } = await axios.get(`${BASE_URL}/restrictions`);
-    return data;
-  } catch (e) {
-    return Promise.reject(e.response.data.message);
-  }
+  return await get(metadata_field_restrictions_route());
 }
 
 /**
@@ -69,7 +67,7 @@ export async function getMetadataRestrictions() {
 export async function getAllMetadataFieldsForProjects({ projectIds }) {
   try {
     const { data } = await axios.get(
-      `${BASE_URL}/projects?projectIds=${projectIds}`
+      `${metadata_fields_in_project_route()}?projectIds=${projectIds}`
     );
     return addKeysToList(data, "field", "id");
   } catch (e) {
