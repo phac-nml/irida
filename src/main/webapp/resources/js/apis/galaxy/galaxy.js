@@ -1,6 +1,7 @@
 import axios from "axios";
 import { authenticateOauthClient } from "../oauth/oauth";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { galaxy_remove_session_route, galaxy_samples_route } from "../routes";
 
 const GALAXY_AJAX_URL = setBaseUrl(`ajax/galaxy-export`);
 
@@ -12,8 +13,8 @@ const GALAXY_AJAX_URL = setBaseUrl(`ajax/galaxy-export`);
 export function validateOauthClient() {
   const redirect = `${window.PAGE.galaxyRedirect}`;
   return authenticateOauthClient(window.GALAXY.CLIENT_ID, redirect)
-    .then(code => code)
-    .catch(response => response);
+    .then((code) => code)
+    .catch((response) => response);
 }
 
 /**
@@ -21,14 +22,14 @@ export function validateOauthClient() {
  * @returns {Promise<AxiosResponse<any> | never>}
  */
 export const getGalaxySamples = () =>
-  axios.get(`${GALAXY_AJAX_URL}/samples`).then(({ data }) => data);
+  axios.get(galaxy_samples_route()).then(({ data }) => data);
 
 /**
  * Remove galaxy from the IRIDA session.
  * @returns {Promise<AxiosResponse<any> | never>}
  */
 export const removeGalaxySession = () =>
-  axios.get(`${GALAXY_AJAX_URL}/remove`).then(() => {
+  axios.get(galaxy_remove_session_route()).then(() => {
     // Let's components depending on the galaxy session know
     // that it is no longer available
     document.body.dispatchEvent(new Event("galaxy:removal"));
