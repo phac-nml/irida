@@ -3,33 +3,24 @@
  */
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import {
+  pipeline_analysis_workflow_route,
+  pipeline_automated_analysis_route,
+  pipeline_details_route,
+  pipeline_launch_router,
+  pipeline_samples_route,
+  pipeline_save_parameters_route,
+} from "../routes";
+import { get, post } from "../requests";
 
-const URL = setBaseUrl(`pipelines/ajax`);
 const AJAX_URL = setBaseUrl(`ajax/pipeline`);
-
-/**
- * Get the IRIDA workflow description info for a workflow
- * @param workflowUUID Workflow UUID
- * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
- */
-export async function getIridaWorkflowDescription(workflowUUID) {
-  try {
-    const { data } = await axios({
-      method: "get",
-      url: `${URL}/${workflowUUID}`,
-    });
-    return { data };
-  } catch (error) {
-    return Promise.reject(error.response.data.message);
-  }
-}
 
 /**
  * Get a listing of all Pipelines in IRIDA.
  * @returns {Promise<AxiosResponse<any> | never>}
  */
 export const fetchIridaAnalysisWorkflows = async function () {
-  return axios.get(AJAX_URL).then((response) => response.data);
+  return get(pipeline_analysis_workflow_route());
 };
 
 /**
@@ -37,12 +28,7 @@ export const fetchIridaAnalysisWorkflows = async function () {
  * @returns {Promise<AxiosResponse<any>>}
  */
 export const fetchAutomatedIridaAnalysisWorkflows = async function () {
-  try {
-    const { data } = await axios.get(`${AJAX_URL}/automated`);
-    return data;
-  } catch (e) {
-    return Promise.reject(e.response.error.message);
-  }
+  return get(pipeline_automated_analysis_route());
 };
 
 /**
@@ -50,13 +36,9 @@ export const fetchAutomatedIridaAnalysisWorkflows = async function () {
  * @param id - UUID identifier for the pipeline
  * @returns {*}
  */
-export const getPipelineDetails = ({ id }) =>
-  axios
-    .get(`${AJAX_URL}/${id}`)
-    .then(({ data }) => data)
-    .catch((error) => {
-      return Promise.reject(e.response.error.message);
-    });
+export const getPipelineDetails = ({ id }) => {
+  return get(pipeline_details_route({ pipelineId: id }));
+};
 
 /**
  * Initiate a new IRIDA workflow pipeline
@@ -64,13 +46,9 @@ export const getPipelineDetails = ({ id }) =>
  * @param parameters - pipeline parameters
  * @returns {Promise<AxiosResponse<any>>}
  */
-export const launchPipeline = (id, parameters) =>
-  axios
-    .post(`${AJAX_URL}/${id}`, parameters)
-    .then(({ data }) => data)
-    .catch((error) => {
-      throw Promise.reject(error.response.data);
-    });
+export const launchPipeline = (id, parameters) => {
+  return post(pipeline_launch_router({ pipelineId: id }), parameters);
+};
 
 /**
  * Save a set of pipeline parameters for future use.
@@ -80,12 +58,10 @@ export const launchPipeline = (id, parameters) =>
  * @returns {Promise<AxiosResponse<any> | void>}
  */
 export function saveNewPipelineParameters({ label, parameters, id }) {
-  return axios
-    .post(`${AJAX_URL}/${id}/parameters`, { label, parameters })
-    .then(({ data }) => data)
-    .catch((error) => {
-      throw Promise.reject(error.response.data);
-    });
+  return post(pipeline_save_parameters_route({ pipelineId: id }), {
+    label,
+    parameters,
+  });
 }
 
 /**
@@ -95,12 +71,9 @@ export function saveNewPipelineParameters({ label, parameters, id }) {
  * @returns {Promise<any>}
  */
 export async function fetchPipelineSamples({ paired, singles }) {
-  try {
-    const response = await axios.get(
-      `${AJAX_URL}/samples?singles=${singles}&paired=${paired}`
-    );
-    return response.data;
-  } catch (e) {
-    return Promise.reject(e.response.data);
-  }
+  const params = new URLSearchParams([
+    ["paired", paired],
+    ["singles", singles],
+  ]);
+  return get(`${pipeline_samples_route()}?${params.toString()}`);
 }

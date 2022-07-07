@@ -109,6 +109,13 @@ export const metadata_templates_project_route = formatUrl`linelist/templates`;
 export const oauth_authorize_route = formatUrl`api/oauth/authorize`;
 export const oauth_authenticate_client_route = formatUrl`remote_api/connect/${"clientId"}`;
 
+export const pipeline_analysis_workflow_route = formatUrl`ajax/pipeline`;
+export const pipeline_automated_analysis_route = formatUrl`ajax/pipeline/automated`;
+export const pipeline_details_route = formatUrl`ajax/pipeline/${"pipelineId"}`;
+export const pipeline_launch_router = formatUrl`ajax/pipeline/${"pipelineId"}`;
+export const pipeline_save_parameters_route = formatUrl`ajax/pipeline/${"pipelineId"}/parameters`;
+export const pipeline_samples_route = formatUrl`ajax/pipeline/samples`;
+
 export const sequence_file_fastqc_details_route = formatUrl`ajax/sequenceFiles/fastqc-details`;
 export const sequence_file_fastqc_charts_route = formatUrl`ajax/sequenceFiles/fastqc-charts`;
 export const sequence_file_overrepresented_sequences_route = formatUrl`ajax/sequenceFiles/overrepresented-sequences`;
