@@ -116,6 +116,8 @@ export const pipeline_launch_router = formatUrl`ajax/pipeline/${"pipelineId"}`;
 export const pipeline_save_parameters_route = formatUrl`ajax/pipeline/${"pipelineId"}/parameters`;
 export const pipeline_samples_route = formatUrl`ajax/pipeline/samples`;
 
+export const projects_associated_api_route = formatUrl`ajax/projects/associated`;
+
 export const sequence_file_fastqc_details_route = formatUrl`ajax/sequenceFiles/fastqc-details`;
 export const sequence_file_fastqc_charts_route = formatUrl`ajax/sequenceFiles/fastqc-charts`;
 export const sequence_file_overrepresented_sequences_route = formatUrl`ajax/sequenceFiles/overrepresented-sequences`;
