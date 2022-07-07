@@ -5,7 +5,7 @@ import { Button, Dropdown, Menu, notification } from "antd";
 import { IconCloudUpload, IconDropDown, IconLoading } from "../icons/Icons";
 import { SPACE_XS } from "../../styles/spacing";
 import {
-  files_assembly_upload_route,
+  files_assemblies_upload_route,
   files_fast5_upload_route,
   files_sequence_file_upload_route,
 } from "../../apis/routes";
@@ -73,7 +73,7 @@ export function SampleFileUploader() {
       <Menu.Item>
         <FileUploader
           allowedTypes=".fasta,.fna"
-          url={files_assembly_upload_route({ sampleId: window.PAGE.id })}
+          url={files_assemblies_upload_route({ sampleId: window.PAGE.id })}
           onSuccess={onSuccess}
           onUpload={onUpload}
           onError={onError}

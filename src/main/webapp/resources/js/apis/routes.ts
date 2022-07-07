@@ -87,7 +87,7 @@ export const export_ncbi_details_route = formatUrl`ajax/ncbi/project/${"projectI
 
 export const files_sequence_file_upload_route = formatUrl`ajax/samples/${"sampleId"}/sequenceFiles/upload`;
 export const files_fast5_upload_route = formatUrl`ajax/samples/${"sampleId"}/fast5/upload`;
-export const files_assembly_upload_route = formatUrl`ajax/samples/${"sampleId"}/assembly/upload`;
+export const files_assemblies_upload_route = formatUrl`ajax/samples/${"sampleId"}/assemblies/upload`;
 
 export const galaxy_samples_route = formatUrl`ajax/galaxy-export/samples`;
 export const galaxy_remove_session_route = formatUrl`ajax/galaxy-export/remove`;
