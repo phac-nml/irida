@@ -123,7 +123,8 @@ export const projects_details_api = formatUrl`ajax/projects/details`;
 export const projects_members_add_route = formatUrl`ajax/projects/members/add`;
 export const projects_members_remove_route = formatUrl`ajax/projects/members`;
 export const projects_members_role_update_route = formatUrl`ajax/projects/members/role`;
-export const projects_memberS_metadata_role_update_route = formatUrl`ajax/projects/members/metadata-role`;
+export const projects_members_metadata_role_update_route = formatUrl`ajax/projects/members/metadata-role`;
+export const projects_subscription_api_route = formatUrl`ajax/subscriptions`;
 
 export const sequence_file_fastqc_details_route = formatUrl`ajax/sequenceFiles/fastqc-details`;
 export const sequence_file_fastqc_charts_route = formatUrl`ajax/sequenceFiles/fastqc-charts`;

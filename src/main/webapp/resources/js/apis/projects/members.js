@@ -3,7 +3,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import {
   projects_available_route,
   projects_members_add_route,
-  projects_memberS_metadata_role_update_route,
+  projects_members_metadata_role_update_route,
   projects_members_remove_route,
   projects_members_role_update_route,
 } from "../routes";
@@ -90,7 +90,7 @@ export async function updateUserMetadataRoleOnProject({
   try {
     return await axios
       .put(
-        `${projects_memberS_metadata_role_update_route()}?${params.toString()}`
+        `${projects_members_metadata_role_update_route()}?${params.toString()}`
       )
       .then(({ data }) => data);
   } catch (e) {

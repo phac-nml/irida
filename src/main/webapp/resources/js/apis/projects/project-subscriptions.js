@@ -1,7 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { setBaseUrl } from "../../utilities/url-utilities";
-
-const BASE_URL = setBaseUrl(`ajax/subscriptions`);
+import { projects_subscription_api_route } from "../routes";
 
 /**
  * Redux API for project subscriptions.
@@ -9,7 +7,7 @@ const BASE_URL = setBaseUrl(`ajax/subscriptions`);
 export const projectSubscriptionsApi = createApi({
   reducerPath: `projectSubscriptionsApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: setBaseUrl(BASE_URL),
+    baseUrl: projects_subscription_api_route(),
   }),
   tagTypes: ["ProjectSubscription"],
   endpoints: (build) => ({
