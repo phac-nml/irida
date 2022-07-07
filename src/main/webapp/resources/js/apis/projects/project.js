@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { projects_details_api } from "../routes";
 
-const BASE_URL = setBaseUrl(`ajax/project/details`);
 /**
  *
  * Redux API for all things project
@@ -11,7 +11,7 @@ const BASE_URL = setBaseUrl(`ajax/project/details`);
 export const projectApi = createApi({
   reducerPath: `projectApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: BASE_URL,
+    baseUrl: projects_details_api(),
   }),
   tagTypes: ["Project", "MetadataTemplate"],
   endpoints: (build) => ({
@@ -94,7 +94,7 @@ export const {
 
 export async function deleteProject(projectId) {
   try {
-    await axios.delete(`${BASE_URL}?projectId=${projectId}`);
+    await axios.delete(`${projects_details_api()}?projectId=${projectId}`);
     window.location.href = setBaseUrl("/projects");
   } catch (e) {
     return Promise.reject(e.response.data.error);

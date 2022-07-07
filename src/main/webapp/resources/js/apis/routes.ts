@@ -119,6 +119,7 @@ export const pipeline_samples_route = formatUrl`ajax/pipeline/samples`;
 export const projects_associated_api_route = formatUrl`ajax/projects/associated`;
 export const projects_available_route = formatUrl`ajax/projects/available`;
 export const projects_create_route = formatUrl`ajax/projects/new`;
+export const projects_details_api = formatUrl`ajax/projects/details`;
 export const projects_members_add_route = formatUrl`ajax/projects/members/add`;
 export const projects_members_remove_route = formatUrl`ajax/projects/members`;
 export const projects_members_role_update_route = formatUrl`ajax/projects/members/role`;
