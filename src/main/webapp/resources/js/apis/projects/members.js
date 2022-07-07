@@ -1,5 +1,13 @@
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import {
+  projects_available_route,
+  projects_members_add_route,
+  projects_memberS_metadata_role_update_route,
+  projects_members_remove_route,
+  projects_members_role_update_route,
+} from "../routes";
+import { post } from "../requests";
 
 /**
  * @file API for handle server interactions for members of a project
@@ -20,9 +28,14 @@ const BASE_URL = setBaseUrl(`/ajax/projects/members`);
  * @returns {Promise<unknown>}
  */
 export async function removeUserFromProject({ projectId, id }) {
-  const params = new URLSearchParams({ projectId, id });
+  const params = new URLSearchParams([
+    [projectId, String(projectId)],
+    [id, String(id)],
+  ]);
   try {
-    const { data } = await axios.delete(`${BASE_URL}?${params.toString()}`);
+    const { data } = await axios.delete(
+      `${projects_members_remove_route()}?${params.toString()}`
+    );
     return Promise.resolve(data);
   } catch (e) {
     return Promise.reject(e.response.data);
@@ -40,16 +53,16 @@ export async function removeUserFromProject({ projectId, id }) {
 export async function updateUserRoleOnProject({
   projectId,
   id,
-  projectRole = ""
+  projectRole = "",
 }) {
   const params = new URLSearchParams({
     projectRole,
-    id,
-    projectId
+    id: String(id),
+    projectId: String(projectId),
   });
   try {
     return await axios
-      .put(`${BASE_URL}/role?${params.toString()}`)
+      .put(`${projects_members_role_update_route()}?${params.toString()}`)
       .then(({ data }) => data);
   } catch (e) {
     return Promise.reject(e.response.data);
@@ -70,14 +83,16 @@ export async function updateUserMetadataRoleOnProject({
   metadataRole = "",
 }) {
   const params = new URLSearchParams({
-    id,
-    projectId,
+    id: String(id),
+    projectId: String(projectId),
     metadataRole,
   });
   try {
     return await axios
-        .put(`${BASE_URL}/metadata-role?${params.toString()}`)
-        .then(({ data }) => data);
+      .put(
+        `${projects_memberS_metadata_role_update_route()}?${params.toString()}`
+      )
+      .then(({ data }) => data);
   } catch (e) {
     return Promise.reject(e.response.data);
   }
@@ -91,9 +106,10 @@ export async function updateUserMetadataRoleOnProject({
  * @returns {Promise<AxiosResponse<any>>}
  */
 export async function getAvailableUsersForProject({ projectId, query }) {
-  const params = new URLSearchParams({ projectId, query });
+  // TODO (Josh - 7/7/22): Why is this request in the members file?
+  const params = new URLSearchParams({ projectId: String(projectId), query });
   return await axios
-    .get(`${BASE_URL}/available?${params.toString()}`)
+    .get(`${projects_available_route()}?${params.toString()}`)
     .then(({ data }) => data || []);
 }
 
@@ -112,11 +128,9 @@ export async function addMemberToProject({
   projectRole,
   metadataRole,
 }) {
-  return await axios
-    .post(`${BASE_URL}/add?projectId=${projectId}`, {
-      id,
-      projectRole,
-      metadataRole,
-    })
-    .then(({ data }) => data);
+  return await post(`${projects_members_add_route}?projectId=${projectId}`, {
+    id,
+    projectRole,
+    metadataRole,
+  });
 }
