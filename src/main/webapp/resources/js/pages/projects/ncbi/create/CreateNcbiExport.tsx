@@ -17,7 +17,7 @@ import {
 import type { RangePickerProps } from "antd/es/date-picker";
 import { ColumnType } from "antd/lib/table";
 import moment from "moment";
-import React from "react";
+import React, { useMemo } from "react";
 import { useLoaderData } from "react-router-dom";
 import {
   FullNcbiPlatforms,
@@ -26,6 +26,7 @@ import {
   getNCBISources,
   getNCBIStrategies,
 } from "../../../../apis/export/ncbi";
+import { fetchSampleFiles } from "../../../../apis/samples/samples";
 import type { TableWithOptionsHandles } from "../../../../components/ant.design/table";
 import { TableHeaderWithCascaderOptions } from "../../../../components/ant.design/table/TableHeaderWithCascaderOptions";
 import { TableHeaderWithSelectOptions } from "../../../../components/ant.design/table/TableHeaderWithSelectOptions";
@@ -51,7 +52,7 @@ export type SampleRecord = {
 };
 
 type LoaderValues = [
-  SessionSample,
+  SampleRecord,
   FullNcbiPlatforms,
   NcbiStrategy[],
   NcbiSource[],
@@ -62,26 +63,37 @@ type LoaderValues = [
  * React router loader
  */
 export async function loader(): Promise<LoaderValues> {
-  const stored = getStoredSamples();
-  const platforms = getNCBIPlatforms();
-  const strategies = getNCBIStrategies();
-  const sources = getNCBISources();
-  const selections = getNCBISelections();
+  const stored = await getStoredSamples().then(({ samples }) => {
+    const formatted = {};
+    samples.forEach((sample) => {
+      fetchSampleFiles({ sampleId: sample.id }).then((files) => {
+        formatted[sample.name] = {
+          key: sample.name,
+          name: sample.name,
+          id: sample.id,
+          library_name: sample.name,
+          files,
+        };
+      });
+    });
+    return formatted;
+  });
+  const platforms = await getNCBIPlatforms();
+  const strategies = await getNCBIStrategies();
+  const sources = await getNCBISources();
+  const selections = await getNCBISelections();
   return Promise.all([stored, platforms, strategies, sources, selections]);
 }
 
 function CreateNcbiExport(): JSX.Element {
   const [
-    stored,
+    samples,
     fullNcbiPlatforms,
     strategies,
     sources,
     selections,
   ]: LoaderValues = useLoaderData();
-
-  const [samples, setSamples] = React.useState<SampleRecord>(
-    (): SampleRecord => stored.samples.reduce(formatStoredAsNcbiBiosample, {})
-  );
+  console.log(samples);
 
   const [platforms] = React.useState<Option[]>(() =>
     formatPlatformsAsCascaderOptions(fullNcbiPlatforms)
@@ -457,12 +469,14 @@ function CreateNcbiExport(): JSX.Element {
                 style={{ width: `100%` }}
                 scroll={{ x: "max-content", y: 600 }}
                 pagination={false}
-                expandable={{
-                  expandedRowRender: (sample: NcbiBiosample) => {
-                    return <div>JELLO</div>;
-                  },
-                }}
               />
+            </Col>
+            <Col span={24}>
+              {Object.values(samples).map((sample) => {
+                return sample.files.singles.map((file) => {
+                  return <div>{file.label}</div>;
+                });
+              })}
             </Col>
             <Col
               xxl={{ span: 16, offset: 4 }}

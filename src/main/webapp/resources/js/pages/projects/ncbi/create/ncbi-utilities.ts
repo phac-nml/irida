@@ -2,11 +2,14 @@ import { FullNcbiPlatforms } from "../../../../apis/export/ncbi";
 import { Option } from "../../../../types/ant-design";
 import { StoredSample } from "../../../../utilities/session-utilities";
 import { SampleRecord } from "./CreateNcbiExport";
+import { fetchSampleFiles } from "../../../../apis/samples/samples";
 
 export function formatStoredAsNcbiBiosample(
   prev: SampleRecord,
   { id, name }: StoredSample
 ): SampleRecord {
+  fetchSampleFiles;
+
   return {
     ...prev,
     [name]: {
