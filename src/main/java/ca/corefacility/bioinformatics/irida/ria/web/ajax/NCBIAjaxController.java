@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax;
 
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.model.export.NcbiLibrarySource;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiLibraryStrategy;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NcbiExportSubmissionTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiExportSubmissionAdminTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiPlatform;
 import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiPlatformModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiSubmissionModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
@@ -71,8 +73,8 @@ public class NCBIAjaxController {
 	}
 
 	@GetMapping("/platforms")
-	public NcbiPlatformModel getNcbiPlatforms() {
-		return new NcbiPlatformModel();
+	public EnumMap<NcbiPlatform, List<String>> getNcbiPlatforms() {
+		return (new NcbiPlatformModel()).getPlatforms();
 	}
 
 	@GetMapping("/sources")

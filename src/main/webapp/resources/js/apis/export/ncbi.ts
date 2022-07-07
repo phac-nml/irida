@@ -28,7 +28,7 @@ export interface FullNcbiPlatforms {
 export async function getProjectNCBIExports(
   projectId: number
 ): Promise<NcbiExportSubmissionTableModel[]> {
-  return get(setBaseUrl(`/ncbi/project/${projectId}/list`));
+  return get(setBaseUrl(`ajax/ncbi/project/${projectId}/list`));
 }
 
 /**
@@ -40,33 +40,33 @@ export async function getNcbiSubmission(
   projectId: number,
   uploadId: number
 ): Promise<NcbiSubmission> {
-  return get(setBaseUrl(`/ncbi/project/${projectId}/details/${uploadId}`));
+  return get(setBaseUrl(`ajax/ncbi/project/${projectId}/details/${uploadId}`));
 }
 
 /**
  * Fetch NCBI listed sequencing platforms.
  */
 export async function getNCBIPlatforms(): Promise<FullNcbiPlatforms> {
-  return await get(setBaseUrl(`/ncbi/platforms`));
+  return await get(setBaseUrl(`ajax/ncbi/platforms`));
 }
 
 /**
  * Fetch a list of NCBI listed sources
  */
 export async function getNCBISources(): Promise<NcbiSource[]> {
-  return await get(setBaseUrl(`/ncbi/sources`));
+  return await get(setBaseUrl(`ajax/ncbi/sources`));
 }
 
 /**
  * Fetch a list of NCBI sequencing strategies
  */
 export async function getNCBIStrategies(): Promise<NcbiStrategy[]> {
-  return await get(setBaseUrl(`/ncbi/strategies`));
+  return await get(setBaseUrl(`ajax/ncbi/strategies`));
 }
 
 /**
  * Fetch a list of NCBI selections
  */
 export async function getNCBISelections(): Promise<NcbiSelection[]> {
-  return await get(setBaseUrl(`/ncbi/selections`));
+  return await get(setBaseUrl(`ajax/ncbi/selections`));
 }

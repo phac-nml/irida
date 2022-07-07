@@ -78,7 +78,6 @@ function CreateNcbiExport(): JSX.Element {
     sources,
     selections,
   ]: LoaderValues = useLoaderData();
-  console.log({ stored, fullNcbiPlatforms, strategies, sources, selections });
 
   const [samples, setSamples] = React.useState<SampleRecord>(
     (): SampleRecord => stored.samples.reduce(formatStoredAsNcbiBiosample, {})
@@ -458,6 +457,11 @@ function CreateNcbiExport(): JSX.Element {
                 style={{ width: `100%` }}
                 scroll={{ x: "max-content", y: 600 }}
                 pagination={false}
+                expandable={{
+                  expandedRowRender: (sample: NcbiBiosample) => {
+                    return <div>JELLO</div>;
+                  },
+                }}
               />
             </Col>
             <Col
