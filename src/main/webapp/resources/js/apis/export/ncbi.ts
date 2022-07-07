@@ -7,6 +7,7 @@ import {
   UserMinimal,
 } from "../../types/irida";
 import { ExportUploadState } from "../../types/irida/export/ExportUploadState";
+import { setBaseUrl } from "../../utilities/url-utilities";
 import { get } from "../requests";
 
 export interface NcbiExportSubmissionTableModel {
@@ -27,7 +28,7 @@ export interface FullNcbiPlatforms {
 export async function getProjectNCBIExports(
   projectId: number
 ): Promise<NcbiExportSubmissionTableModel[]> {
-  return get(`/ncbi/project/${projectId}/list`);
+  return get(setBaseUrl(`/ncbi/project/${projectId}/list`));
 }
 
 /**
@@ -39,33 +40,33 @@ export async function getNcbiSubmission(
   projectId: number,
   uploadId: number
 ): Promise<NcbiSubmission> {
-  return get(`/ncbi/project/${projectId}/details/${uploadId}`);
+  return get(setBaseUrl(`/ncbi/project/${projectId}/details/${uploadId}`));
 }
 
 /**
  * Fetch NCBI listed sequencing platforms.
  */
 export async function getNCBIPlatforms(): Promise<FullNcbiPlatforms> {
-  return await get(`/ncbi/platforms`);
+  return await get(setBaseUrl(`/ncbi/platforms`));
 }
 
 /**
  * Fetch a list of NCBI listed sources
  */
 export async function getNCBISources(): Promise<NcbiSource[]> {
-  return await get(`/ncbi/sources`);
+  return await get(setBaseUrl(`/ncbi/sources`));
 }
 
 /**
  * Fetch a list of NCBI sequencing strategies
  */
 export async function getNCBIStrategies(): Promise<NcbiStrategy[]> {
-  return await get(`/ncbi/strategies`);
+  return await get(setBaseUrl(`/ncbi/strategies`));
 }
 
 /**
  * Fetch a list of NCBI selections
  */
 export async function getNCBISelections(): Promise<NcbiSelection[]> {
-  return await get(`/ncbi/selections`);
+  return await get(setBaseUrl(`/ncbi/selections`));
 }
