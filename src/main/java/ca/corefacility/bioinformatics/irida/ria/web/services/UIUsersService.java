@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -30,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
-import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
@@ -333,13 +331,7 @@ public class UIUsersService {
 			updateUser(userId, principal, request, updatedValues);
 		} else {
 			try {
-				User updatedUser = userService.updateFields(userId, updatedValues);
-
-				// If the user is updating their account make sure you update it in the session variable
-				if (updatedUser != null && usersEqual) {
-					HttpSession session = request.getSession();
-					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, updatedUser);
-				}
+				userService.updateFields(userId, updatedValues);
 			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
 				errors = handleCreateUpdateException(ex, request.getLocale());
 			}
@@ -572,13 +564,7 @@ public class UIUsersService {
 			Map<String, Object> updatedValues) throws UIUserFormException {
 		Map<String, String> errors;
 		try {
-			User user = userService.updateFields(userId, updatedValues);
-
-			// If the user is updating their account make sure you update it in the session variable
-			if (user != null && principal.getName().equals(user.getUsername())) {
-				HttpSession session = request.getSession();
-				session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
-			}
+			userService.updateFields(userId, updatedValues);
 		} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
 			errors = handleCreateUpdateException(ex, request.getLocale());
 			throw new UIUserFormException(errors);

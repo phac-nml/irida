@@ -21,7 +21,6 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -210,9 +209,11 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	@PostAuthorize("hasPermission(returnObject,'readProjectMetadataResponse')")
-	public ProjectMetadataResponse getMetadataForProjectSamples(Project project, List<Long> sampleIds, List<MetadataTemplateField> fields) {
+	public ProjectMetadataResponse getMetadataForProjectSamples(Project project, List<Long> sampleIds,
+			List<MetadataTemplateField> fields) {
 		checkArgument(!fields.isEmpty(), "fields must not be empty");
-		Map<Long, Set<MetadataEntry>> metadataForProjectSamples = metadataEntryRepository.getMetadataForProjectSamples(project, sampleIds, fields);
+		Map<Long, Set<MetadataEntry>> metadataForProjectSamples = metadataEntryRepository
+				.getMetadataForProjectSamples(project, sampleIds, fields);
 
 		return new ProjectMetadataResponse(project, metadataForProjectSamples);
 	}
@@ -394,9 +395,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		// confirm that all samples are part of the same project:
 		confirmProjectSampleJoin(project, mergeInto);
 
-		logger.debug(
-				"Merging samples " + toMerge.stream().map(Sample::getId).collect(Collectors.toList()) + " into sample ["
-						+ mergeInto.getId() + "]");
+		logger.debug("Merging samples " + toMerge.stream().map(Sample::getId).collect(Collectors.toList())
+				+ " into sample [" + mergeInto.getId() + "]");
 
 		for (Sample s : toMerge) {
 			confirmProjectSampleJoin(project, s);
@@ -666,10 +666,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	public Page<ProjectSampleJoin> searchSamplesForUser(String query, final Integer page, final Integer count,
 			final Sort sort) {
-		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext()
-				.getAuthentication()
-				.getPrincipal();
-		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
+		final String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		final User loggedIn = userRepository.loadUserByUsername(username);
 
 		final PageRequest pr = PageRequest.of(page, count, sort);
 

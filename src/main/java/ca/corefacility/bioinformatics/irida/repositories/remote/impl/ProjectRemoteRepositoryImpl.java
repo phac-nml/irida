@@ -7,7 +7,9 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWr
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
 import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ProjectHashResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +40,13 @@ public class ProjectRemoteRepositoryImpl extends RemoteRepositoryImpl<Project> i
     private static final String HASH_REL = RESTProjectsController.PROJECT_HASH_REL;
 
     /**
-     * Create a new {@link ProjectRemoteRepositoryImpl} with the given
-     * {@link RemoteAPITokenService}
+     * Create a new {@link ProjectRemoteRepositoryImpl} with the given {@link RemoteAPITokenService}
      *
      * @param tokenService the {@link RemoteAPITokenService}
      */
     @Autowired
-    public ProjectRemoteRepositoryImpl(RemoteAPITokenService tokenService) {
-        super(tokenService, listTypeReference, objectTypeReference);
+    public ProjectRemoteRepositoryImpl(RemoteAPITokenService tokenService, UserService userService) {
+        super(tokenService, userService, listTypeReference, objectTypeReference);
         this.tokenService = tokenService;
     }
 
@@ -63,7 +64,8 @@ public class ProjectRemoteRepositoryImpl extends RemoteRepositoryImpl<Project> i
         OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
         Link link = project.getLink(HASH_REL).map(i -> i).orElse(null);
 
-        ResponseEntity<ResourceWrapper<ProjectHashResource>> exchange = restTemplate.exchange(link.getHref(), HttpMethod.GET, HttpEntity.EMPTY, projectHashReference);
+        ResponseEntity<ResourceWrapper<ProjectHashResource>> exchange = restTemplate.exchange(link.getHref(),
+                HttpMethod.GET, HttpEntity.EMPTY, projectHashReference);
 
         Integer projectHash = exchange.getBody().getResource().getProjectHash();
 

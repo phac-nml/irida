@@ -23,6 +23,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,6 +36,7 @@ import static org.mockito.Mockito.*;
 public class RemoteAPIAjaxControllerTest {
 	private RemoteAPIService remoteAPIService;
 	private UIRemoteAPIService uiRemoteAPIService;
+	private UserService userService;
 	private RemoteAPIAjaxController controller;
 
 	private final RemoteAPI REMOTE_API_01 = new RemoteAPI("Toronto", "http://toronto.nowhere", "", "toronto", "123456");
@@ -46,8 +48,9 @@ public class RemoteAPIAjaxControllerTest {
 	public void init() {
 		remoteAPIService = mock(RemoteAPIService.class);
 		uiRemoteAPIService = mock(UIRemoteAPIService.class);
+		userService = mock(UserService.class);
 		MessageSource messageSource = mock(MessageSource.class);
-		controller = new RemoteAPIAjaxController(remoteAPIService, uiRemoteAPIService, messageSource);
+		controller = new RemoteAPIAjaxController(remoteAPIService, uiRemoteAPIService, messageSource, userService);
 
 		Page<RemoteAPI> remoteAPIPage = new Page<>() {
 			@Override

@@ -19,16 +19,14 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFileRemo
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.SequenceFileMessageConverter;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
- * Implementation of {@link SequenceFileRemoteRepository} using
- * {@link OAuthTokenRestTemplate} for making requests
- * 
- *
+ * Implementation of {@link SequenceFileRemoteRepository} using {@link OAuthTokenRestTemplate} for making requests
  */
 @Repository
-public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<SequenceFile> implements
-		SequenceFileRemoteRepository {
+public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<SequenceFile>
+		implements SequenceFileRemoteRepository {
 	public static final MediaType DEFAULT_DOWNLOAD_MEDIA_TYPE = new MediaType("application", "fastq");
 	private static final ParameterizedTypeReference<ListResourceWrapper<SequenceFile>> listTypeReference = new ParameterizedTypeReference<>() {
 	};
@@ -40,12 +38,11 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 	/**
 	 * Create a new SequenceFileRemoteRepositoryImpl
 	 * 
-	 * @param tokenService
-	 *            The {@link TokenService} storing OAuth2 tokens
+	 * @param tokenService The {@link TokenService} storing OAuth2 tokens
 	 */
 	@Autowired
-	public SequenceFileRemoteRepositoryImpl(RemoteAPITokenService tokenService) {
-		super(tokenService, listTypeReference, objectTypeReference);
+	public SequenceFileRemoteRepositoryImpl(RemoteAPITokenService tokenService, UserService userService) {
+		super(tokenService, userService, listTypeReference, objectTypeReference);
 		this.tokenService = tokenService;
 	}
 
