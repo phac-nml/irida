@@ -7,7 +7,7 @@ import {
   UserMinimal,
 } from "../../types/irida";
 import { ExportUploadState } from "../../types/irida/export/ExportUploadState";
-import { get } from "../axios-default";
+import { get } from "../requests";
 
 export interface NcbiExportSubmissionTableModel {
   exportedSamples: number;
@@ -46,8 +46,7 @@ export async function getNcbiSubmission(
  * Fetch NCBI listed sequencing platforms.
  */
 export async function getNCBIPlatforms(): Promise<FullNcbiPlatforms> {
-  const data = await get(`/ncbi/platforms`);
-  return data.platforms;
+  return await get(`/ncbi/platforms`);
 }
 
 /**
