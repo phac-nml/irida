@@ -21,10 +21,18 @@ export const projectsApi = createApi({
         url: `/samples-share/projects?currentId=${currentId}`,
       }),
     }),
+    getProjectsForUser: build.query({
+      query: () => ({
+        url: `/user`,
+      }),
+    }),
   }),
 });
 
-export const { useGetPotentialProjectsToShareToQuery } = projectsApi;
+export const {
+  useGetPotentialProjectsToShareToQuery,
+  useGetProjectsForUserQuery,
+} = projectsApi;
 
 /**
  * Returns the projects on the current page of the projects table.

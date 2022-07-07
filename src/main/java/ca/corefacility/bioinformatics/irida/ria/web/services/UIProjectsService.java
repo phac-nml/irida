@@ -55,11 +55,11 @@ public class UIProjectsService {
 	private final ManageLocalProjectSettingsPermission projectMembersPermission;
 	private final MetadataTemplateService metadataTemplateService;
 
-
 	@Autowired
 	public UIProjectsService(ProjectService projectService, SampleService sampleService, MessageSource messageSource,
 			ProjectOwnerPermission projectOwnerPermission,
-			ManageLocalProjectSettingsPermission projectMembersPermission, MetadataTemplateService metadataTemplateService) {
+			ManageLocalProjectSettingsPermission projectMembersPermission,
+			MetadataTemplateService metadataTemplateService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.messageSource = messageSource;
@@ -135,6 +135,15 @@ public class UIProjectsService {
 	}
 
 	/**
+	 * Get a list of projects for a user
+	 *
+	 * @return {@link List} of {@link Project}s
+	 */
+	public List<Project> getProjectsForUser() {
+		return projectService.getProjectsForUser();
+	}
+
+	/**
 	 * Get the table contents for the projects listing table for an administrator based on the table request.
 	 *
 	 * @param tableRequest - {@link TableRequest}
@@ -180,7 +189,8 @@ public class UIProjectsService {
 
 			MetadataTemplate defaultTemplateForProject = metadataTemplateService.getDefaultTemplateForProject(project);
 
-			return new ProjectDetailsResponse(project, isAdmin || isOwner, isAdmin || isOwnerAllowRemote, defaultTemplateForProject);
+			return new ProjectDetailsResponse(project, isAdmin || isOwner, isAdmin || isOwnerAllowRemote,
+					defaultTemplateForProject);
 		} catch (EntityNotFoundException e) {
 			throw new AjaxItemNotFoundException(
 					messageSource.getMessage("server.ProjectDetails.project-not-found", new Object[] {}, locale));

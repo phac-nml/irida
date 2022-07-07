@@ -5,6 +5,7 @@ import { settingsApi } from "../../apis/settings/settings";
 import { passwordResetApi } from "../../apis/password-reset";
 import { projectSubscriptionsApi } from "../../apis/projects/project-subscriptions";
 import { runReducer } from "../sequencing-runs/services/runReducer";
+import { projectsApi } from "../../apis/projects/projects";
 
 /*
 Redux Store for admin panel.
@@ -18,6 +19,7 @@ export default configureStore({
     [userApi.reducerPath]: userApi.reducer,
     [settingsApi.reducerPath]: settingsApi.reducer,
     [sequencingRunsApi.reducerPath]: sequencingRunsApi.reducer,
+    [projectsApi.reducerPath]: projectsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -25,6 +27,7 @@ export default configureStore({
       projectSubscriptionsApi.middleware,
       userApi.middleware,
       settingsApi.middleware,
-      sequencingRunsApi.middleware
+      sequencingRunsApi.middleware,
+      projectsApi.middleware
     ),
 });

@@ -8,6 +8,7 @@ import {
   validateSampleName,
 } from "../../../apis/projects/samples";
 import searchOntology from "../../../apis/ontology/taxonomy/query";
+import { useGetProjectsForUserQuery } from "../../../apis/projects/projects";
 
 /**
  * React component to display the sequencing run create new sample modal.
@@ -20,6 +21,13 @@ export function SequencingRunCreateSampleButton() {
   const [visible, setVisible] = React.useState(false);
   const [organisms, setOrganisms] = React.useState([]);
   const [form] = Form.useForm();
+
+  // const { data = [] } = useGetSequencingRunFilesQuery(1);
+  const { data = [], isSuccess } = useGetProjectsForUserQuery();
+
+  if (isSuccess) {
+    console.log(data);
+  }
 
   const addNewSample = () => {
     setVisible(true);
@@ -62,6 +70,10 @@ export function SequencingRunCreateSampleButton() {
     form.resetFields();
   };
 
+  const onChange = (e) => {
+    console.log("radio checked", e.target.value);
+  };
+
   const onOk = () => {
     form.validateFields().then((values) => {
       createNewSample(values).then(() => {
@@ -85,11 +97,19 @@ export function SequencingRunCreateSampleButton() {
       >
         <Form
           form={form}
-          initialValues={{ name: "", organism: "" }}
+          initialValues={{
+            project_new: "false",
+            project_name: "",
+            sample_name: "",
+            organism: "",
+          }}
           layout="vertical"
         >
+          <Form.Item name="project" label="Project">
+            <Input />
+          </Form.Item>
           <Form.Item
-            name="name"
+            name="sample_name"
             label="Sample Name"
             rules={[
               ({}) => ({
