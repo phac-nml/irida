@@ -1,5 +1,5 @@
-import axios from "axios";
-import { setBaseUrl } from "../../utilities/url-utilities";
+import { post } from "../requests";
+import { projects_create_route } from "../routes";
 
 /**
  * AJAX request to create a new project
@@ -7,13 +7,5 @@ import { setBaseUrl } from "../../utilities/url-utilities";
  * @returns {Promise<any>}
  */
 export async function createProject(details) {
-  try {
-    const { data } = await axios.post(
-      setBaseUrl(`/ajax/projects/new`),
-      details
-    );
-    return data;
-  } catch (e) {
-    return Promise.reject(e.response.data.message);
-  }
+  return post(projects_create_route(), details);
 }
