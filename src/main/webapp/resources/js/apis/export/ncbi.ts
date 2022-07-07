@@ -1,9 +1,13 @@
-import axios from "axios";
-import { NcbiSubmission, UserMinimal } from "../../types/irida";
-import { setBaseUrl } from "../../utilities/url-utilities";
-import { ExportUploadState } from "../../types/irida/ExportUpoadState";
-
-const BASE_URL = setBaseUrl(`/ajax/ncbi`);
+import {
+  NcbiInstrument,
+  NcbiSelection,
+  NcbiSource,
+  NcbiStrategy,
+  NcbiSubmission,
+  UserMinimal,
+} from "../../types/irida";
+import { ExportUploadState } from "../../types/irida/export/ExportUploadState";
+import { get } from "../axios-default";
 
 export interface NcbiExportSubmissionTableModel {
   exportedSamples: number;
@@ -17,7 +21,7 @@ export interface FullNcbiPlatforms {
 }
 
 /**
- * Fetch a list of all NCBI SRA Submission for a given project
+ * Fetch a list of all NCBI SRA Submissions for a given project
  * @param projectId - Identifier for the current project
  */
 export async function getProjectNCBIExports(
@@ -47,21 +51,21 @@ export async function getNCBIPlatforms(): Promise<FullNcbiPlatforms> {
 }
 
 /**
- * Fetch list of NCBI listed sources
+ * Fetch a list of NCBI listed sources
  */
 export async function getNCBISources(): Promise<NcbiSource[]> {
   return await get(`/ncbi/sources`);
 }
 
 /**
- * Fetch list of NCBI sequencing strategies
+ * Fetch a list of NCBI sequencing strategies
  */
 export async function getNCBIStrategies(): Promise<NcbiStrategy[]> {
   return await get(`/ncbi/strategies`);
 }
 
 /**
- * Fetch list of NCBI selections
+ * Fetch a list of NCBI selections
  */
 export async function getNCBISelections(): Promise<NcbiSelection[]> {
   return await get(`/ncbi/selections`);

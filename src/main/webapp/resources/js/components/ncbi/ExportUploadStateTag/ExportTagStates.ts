@@ -1,5 +1,5 @@
-import { TagColor } from "../../../types/ant-design";
-import { ExportUploadState } from "../../../types/irida/ExportUpoadState";
+import { TagColor } from "../../../types/ant-design/TagColor";
+import { ExportUploadState } from "../../../types/irida/export/ExportUploadState";
 import { ExportTagStates } from "./NcbiUploadStateTag";
 
 const states: ExportTagStates = {

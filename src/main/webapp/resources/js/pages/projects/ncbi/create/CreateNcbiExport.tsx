@@ -78,6 +78,7 @@ function CreateNcbiExport(): JSX.Element {
     sources,
     selections,
   ]: LoaderValues = useLoaderData();
+  console.log({ stored, fullNcbiPlatforms, strategies, sources, selections });
 
   const [samples, setSamples] = React.useState<SampleRecord>(
     (): SampleRecord => stored.samples.reduce(formatStoredAsNcbiBiosample, {})

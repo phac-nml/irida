@@ -1,4 +1,4 @@
-import { Project, Sample } from "../types/irida";
+import { Project } from "../types/irida";
 
 const SAMPLE_STORE = "samples";
 
