@@ -11,40 +11,40 @@ const URL = setBaseUrl(`/ajax/projects/${PROJECT_ID}/samples`);
 export const samplesApi = createApi({
   reducerPath: "samplesApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: URL
+    baseUrl: URL,
   }),
-  endpoints: builder => ({
+  endpoints: (builder) => ({
     listSamples: builder.query({
-      query: body => ({ method: "POST", body })
+      query: (body) => ({ method: "POST", body }),
     }),
     merge: builder.mutation({
       query: ({ projectId, request }) => ({
         url: "/merge",
         method: "POST",
-        body: request
-      })
+        body: request,
+      }),
     }),
     remove: builder.mutation({
-      query: sampleIds => ({
+      query: (sampleIds) => ({
         url: "/remove",
         method: "DELETE",
-        body: { sampleIds }
-      })
+        body: { sampleIds },
+      }),
     }),
     shareSamplesWithProject: builder.mutation({
-      query: body => ({
+      query: (body) => ({
         url: `/share`,
         method: `POST`,
-        body
-      })
+        body,
+      }),
     }),
     //TODO: This should not be in the slice but async thunk (update in metadata security)
     getSampleIdsForProject: builder.query({
-      query: projectId => ({
-        url: `/identifiers?id=${projectId}`
-      })
-    })
-  })
+      query: (projectId) => ({
+        url: `/identifiers?id=${projectId}`,
+      }),
+    }),
+  }),
 });
 
 export const {
@@ -52,7 +52,7 @@ export const {
   useMergeMutation,
   useRemoveMutation,
   useGetSampleIdsForProjectQuery,
-  useShareSamplesWithProjectMutation
+  useShareSamplesWithProjectMutation,
 } = samplesApi;
 
 /**
@@ -74,12 +74,12 @@ export async function validateSampleName(name) {
  * @returns {Promise<Response>}
  */
 export async function createNewSample({ name, organism }) {
-  const response = await fetch(setBaseUrl(`${URL}/add-sample`), {
+  const response = await fetch(`${URL}/add-sample`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ name: name.trim(), organism })
+    body: JSON.stringify({ name: name.trim(), organism }),
   });
 
   return response;
@@ -89,14 +89,14 @@ export async function shareSamplesWithProject({
   sampleIds,
   targetId,
   locked,
-  remove
+  remove,
 }) {
   return await fetch(setBaseUrl(`ajax/samples/share`), {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ currentId, sampleIds, targetId, locked, remove })
+    body: JSON.stringify({ currentId, sampleIds, targetId, locked, remove }),
   });
 }
 
@@ -109,8 +109,8 @@ export async function getMinimalSampleDetailsForFilteredProject(options) {
   return await fetch(`${URL}/ids`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(options)
-  }).then(response => response.json());
+    body: JSON.stringify(options),
+  }).then((response) => response.json());
 }

@@ -1,13 +1,9 @@
-import {
-  NcbiInstrument,
-  NcbiSelection,
-  NcbiSource,
-  NcbiStrategy,
-  NcbiSubmission,
-  UserMinimal,
-} from "../../types/irida";
-import { ExportUploadState } from "../../types/irida/export/ExportUploadState";
-import { get } from "../axios-default";
+import axios from "axios";
+import { NcbiSubmission, UserMinimal } from "../../types/irida";
+import { setBaseUrl } from "../../utilities/url-utilities";
+import { ExportUploadState } from "../../types/irida/ExportUpoadState";
+
+const BASE_URL = setBaseUrl(`/ajax/ncbi`);
 
 export interface NcbiExportSubmissionTableModel {
   exportedSamples: number;

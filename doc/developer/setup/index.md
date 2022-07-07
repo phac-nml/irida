@@ -2,7 +2,7 @@
 layout: default
 ---
 
-This guide describes how to set up a workstation for hacking on IRIDA. 
+This guide describes how to set up a workstation for hacking on IRIDA.
 
 * This comment becomes the table of contents
 {:toc}
@@ -14,7 +14,6 @@ You're required to install a few different pieces of software on your machine be
 
 1. DB: A MySQL or MariaDB server,
 2. Languages: Java 11 (we have a hard requirement on Java 11), Python, Node
-3. Build: Apache Maven
 4. SCM: Git
 5. IDE: Eclipse, Netbeans, IntelliJ, vim... (whatever you want, really).
 
@@ -31,7 +30,7 @@ These instructions work for a fresh, up-to-date install of Ubuntu 14.04 LTS. No 
     sudo apt-get update
 
     # You will be prompted to set a root password for mysql and to accept the license for the Java installer.
-    sudo apt-get install --yes --no-install-recommends mysql-server maven git openjdk-11-jdk
+    sudo apt-get install --yes --no-install-recommends mysql-server git openjdk-11-jdk
 
 
 Install instructions for CentOS
@@ -52,12 +51,9 @@ You've *probably* already figured out how to clone IRIDA if you're reading this 
 
 Importing IRIDA into an IDE is left to the developer.
 
-### Installing dependencies
+### Custom dependencies
 
-IRIDA uses some custom libraries that are either a) not currently available in a Maven repository, or b) a custom version of the software available in Maven central. We provide a convenient `bash` script for installing our additional Java dependencies in the `lib` directory:
-
-    cd irida/lib/
-    bash install-libs.sh
+IRIDA uses some custom libraries that are either a) not currently available in a Maven repository, or b) a custom version of the software available in Maven central. These Java dependencies are located in the `lib` directory and are automatically installed with Gradle.
 
 ### Custom configuration
 
@@ -113,9 +109,9 @@ Checking to see that Tomcat starts will ensure that you're able to start hacking
 
 #### Checking to see that Tomcat starts
 
-IRIDA uses Maven for build and dependency management. You can check to see that Tomcat starts like so:
+IRIDA uses Gradle for build and dependency management. You can check to see that Tomcat starts like so:
 
-    mvn clean spring-boot:run
+    ./gradlew clean bootRun
 
 #### Database first-time setup
 
@@ -136,7 +132,7 @@ will cause Tomcat to start up much faster.
 
 Other arguments can be be passed to the script:
 
-* `--no-yarn`: Skip running the `yarn build` script along with the build, useful during development.
+* `--no-webapp-build`: Skip running the `buildWebapp` task along with the build, useful during development.
 * `--prod`: Run spring using the production profile.
 
 #### Integration Testing
@@ -145,7 +141,7 @@ To run the full integration test suite for IRIDA please run the following:
 
     ./run-tests.sh all
 
-This will run all the integration test profiles using Maven, and print out reports for each profile.
+This will run all the integration test profiles using Gradle, and print out reports for each profile.
 
 Setting up Galaxy
 -----------------
@@ -155,18 +151,13 @@ Please refer to the [Galaxy Install Guide][galaxy-install] for information on se
 Front End Development Setup
 ---------------------------
 
-IRIDA uses [Yarn 2](https://yarnpkg.com) for front-end dependency management.  [Install yarn](https://yarnpkg.com/getting-started/install) by following the directions for your machine.  For production, it is automatically installed during the build process.
-
-From within `src/main/webapp/`:
-
-You will need to run `yarn install` to install all dependencies required to run the following from the command line.
+IRIDA uses [Pnpm](hhttps://pnpm.io/) for front-end dependency management. It is automatically installed when running gradle tasks that require the webapp to be built.
 
 Tasks
 =====
 
-* `yarn sass` - compile all `.scss` files into `.css` files, with sourcemaps.
-* `yarn build` - compile all es6 files to es2015.
-* `yarn start` - use when developing front end code.  Webpack will monitor for changes to the entry files, compile them, and then updates the browser with the changes.
+* `./gradlew buildWebapp` - compile all es6 files to es2015.
+* `./gradlew startWebapp` - use when developing front end code.  Webpack will monitor for changes to the entry files, compile them, and then updates the browser with the changes.
 
 JavaScript and SCSS Code Formatting and Linting
 ===============================================
@@ -182,12 +173,12 @@ To enable eslinting (JavaScript linting) in IntelliJ, open the preferences panel
 * Check the "Enable" checkbox.
 * Node interpreter should be you system node by default.
 * ESLint package is the `eslint` within the projects `node_modules` directory.
-* Configuration file is the `src/main/webapp/.eslintrc.json`. 
+* Configuration file is the `src/main/webapp/.eslintrc.json`.
 
 <video controls="controls" style="width: 960px">
     <source src="images/intellij-eslint.mp4" type="video/mp4" />
-</video>   
- 
+</video>
+
 ### Visual Studio Code Setup
 
 To enable eslinting (JavaScript linting) in VS Code:
@@ -199,6 +190,6 @@ To enable eslinting (JavaScript linting) in VS Code:
 
 <video controls="controls" style="width: 960px">
     <source src="images/vs-code-eslint.mp4" type="video/mp4" />
-</video>   
+</video>
 
 [galaxy-install]: ../../administrator/galaxy

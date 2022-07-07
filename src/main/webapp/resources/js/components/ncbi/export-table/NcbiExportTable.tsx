@@ -24,7 +24,7 @@ export async function loader({
   if (params.projectId) {
     return getProjectNCBIExports(parseInt(params.projectId));
   } else {
-    return Promise.reject("Requires a project id");
+    return Promise.reject(i18n("NcbiExportTable.loader-error"));
   }
 }
 
@@ -62,9 +62,7 @@ function NcbiExportTable(): JSX.Element {
       title: i18n("NcbiExportTable.submitter"),
       dataIndex: "submitter",
       render(submitter: UserMinimal) {
-        return (
-          <a href={setBaseUrl(`/users/${submitter.id}`)}>{submitter.name}</a>
-        );
+        return submitter.name;
       },
     },
     {

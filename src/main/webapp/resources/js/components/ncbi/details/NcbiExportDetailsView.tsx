@@ -37,7 +37,7 @@ export async function loader({
       }
     );
   } else {
-    return Promise.reject("No project id or export id");
+    return Promise.reject(i18n("NcbiExportDetailsView.loader-error"));
   }
 }
 
@@ -80,8 +80,7 @@ function NcbiExportDetailsView(): JSX.Element {
                   size="small"
                   dataSource={bioSampleFile.files.pairs}
                   renderItem={(pair: PairedEndSequenceFile) => (
-                    <List.Item
-                        className={"t-pair"}>
+                    <List.Item className={"t-pair"}>
                       <div
                         style={{
                           width: `100%`,

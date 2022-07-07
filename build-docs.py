@@ -16,13 +16,13 @@ if len(sys.argv) == 1:
     print("TARGET_DIRECTORY should be the 'irida-documentation/docs' directory")
     exit(0)
 
-pom_file = 'pom.xml'
+gradle_build_file = 'build.gradle.kts'
 result_dir = sys.argv[1]
 doc_dir = 'doc/'
 
 # Check if we're in the irida directory
-if not os.path.exists(pom_file):
-    print("Cannot find pom file.  This script must be run in the base directory of the IRIDA repository.")
+if not os.path.exists(gradle_build_file):
+    print("Cannot find gradle build file.  This script must be run in the base directory of the IRIDA repository.")
     exit(1)
 
 if not os.path.isdir(doc_dir):
@@ -36,16 +36,16 @@ if not (result_dir.endswith('docs') or result_dir.endswith('docs/')) or not os.p
 
 # first generate the Open API file
 print("========== Generating the Open API file")
-retval = os.system('mvn clean verify -B -Dspring-boot.run.arguments="--spring.profiles.active=dev,swagger --liquibase.update.database.schema=false" -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=false')
+retval = os.system('./gradlew clean generateOpenApiDocs -Dspring.profiles.active=dev,swagger -DskipTests=true -Dliquibase.update.database.schema=false')
 
 # ensure it generated correctly
 if retval != 0:
     print("========== Open API file generation failed.  See above for error messages")
     exit(1)
 
-# second run mvn site to build the javadoc
+# second run gradle javadoc to build the javadoc
 print("========== Building documentation pages")
-retval = os.system('mvn clean site')
+retval = os.system('./gradlew clean javadoc')
 
 # ensure it built correctly
 if retval != 0:

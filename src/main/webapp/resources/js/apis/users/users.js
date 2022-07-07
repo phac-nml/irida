@@ -9,7 +9,7 @@ const BASE_URL = setBaseUrl(`ajax/users`);
 export const userApi = createApi({
   reducerPath: `userApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: setBaseUrl(BASE_URL),
+    baseUrl: BASE_URL,
   }),
   tagTypes: ["User", "PasswordReset"],
   endpoints: (build) => ({
