@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mail.MailSendException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.specification.UserSpecification;
+import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIEmailSendException;
@@ -331,7 +334,13 @@ public class UIUsersService {
 			updateUser(userId, principal, request, updatedValues);
 		} else {
 			try {
-				userService.updateFields(userId, updatedValues);
+				User updatedUser = userService.updateFields(userId, updatedValues);
+
+				// If the user is updating their account make sure you update it in the session variable
+				if (updatedUser != null && usersEqual) {
+					HttpSession session = request.getSession();
+					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, (UserDetails) updatedUser);
+				}
 			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
 				errors = handleCreateUpdateException(ex, request.getLocale());
 			}
