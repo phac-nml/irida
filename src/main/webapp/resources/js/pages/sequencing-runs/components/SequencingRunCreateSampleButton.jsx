@@ -1,5 +1,5 @@
 import React from "react";
-import { AutoComplete, Form, Input, Modal } from "antd";
+import { AutoComplete, Form, Input, Modal, Select } from "antd";
 import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 import { addSample } from "../services/runReducer";
 import { useDispatch } from "react-redux";
@@ -22,12 +22,13 @@ export function SequencingRunCreateSampleButton() {
   const [organisms, setOrganisms] = React.useState([]);
   const [form] = Form.useForm();
 
-  // const { data = [] } = useGetSequencingRunFilesQuery(1);
-  const { data = [], isSuccess } = useGetProjectsForUserQuery();
+  const { data = {} } = useGetProjectsForUserQuery();
 
-  if (isSuccess) {
-    console.log(data);
-  }
+  const options = data.projects?.map((project) => (
+    <Select.Option value={project.id} key={`project-list-item-${project.id}`}>
+      {project.id + " - " + project.name}
+    </Select.Option>
+  ));
 
   const addNewSample = () => {
     setVisible(true);
@@ -70,10 +71,6 @@ export function SequencingRunCreateSampleButton() {
     form.resetFields();
   };
 
-  const onChange = (e) => {
-    console.log("radio checked", e.target.value);
-  };
-
   const onOk = () => {
     form.validateFields().then((values) => {
       createNewSample(values).then(() => {
@@ -98,15 +95,14 @@ export function SequencingRunCreateSampleButton() {
         <Form
           form={form}
           initialValues={{
-            project_new: "false",
-            project_name: "",
+            project: "",
             sample_name: "",
             organism: "",
           }}
           layout="vertical"
         >
           <Form.Item name="project" label="Project">
-            <Input />
+            <Select showSearch>{options}</Select>
           </Form.Item>
           <Form.Item
             name="sample_name"

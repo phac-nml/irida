@@ -753,12 +753,21 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TECHNICIAN')")
-	public List<Project> getProjectsForUser() {
+	public List<Project> getProjects() {
+		List<Project> projects;
 		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext()
 				.getAuthentication()
 				.getPrincipal();
 		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
-		return projectRepository.getProjectsForUser(loggedIn);
+		boolean isAdmin = loggedIn.getSystemRole()
+				.equals(ca.corefacility.bioinformatics.irida.model.user.Role.ROLE_ADMIN);
+
+		if (isAdmin) {
+			projects = (List<Project>) projectRepository.findAll();
+		} else {
+			projects = projectRepository.getProjectsForUser(loggedIn);
+		}
+		return projects;
 	}
 
 	/**

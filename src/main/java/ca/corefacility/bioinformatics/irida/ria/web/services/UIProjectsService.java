@@ -28,9 +28,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.excep
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.errors.AjaxItemNotFoundException;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.CreateProjectRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.UpdateProjectAttributeRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.NewProjectMetadataRestriction;
@@ -135,12 +133,17 @@ public class UIProjectsService {
 	}
 
 	/**
-	 * Get a list of projects for a user
+	 * Get a list of projects for a user or admin
 	 *
 	 * @return {@link List} of {@link Project}s
 	 */
-	public List<Project> getProjectsForUser() {
-		return projectService.getProjectsForUser();
+	public ProjectListResponse getProjects() {
+		List<ProjectListItemModel> projects = projectService.getProjects()
+				.stream()
+				.map(project -> new ProjectListItemModel(project.getId(), project.getName()))
+				.collect(Collectors.toList());
+
+		return new ProjectListResponse(projects);
 	}
 
 	/**

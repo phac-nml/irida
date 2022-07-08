@@ -85,7 +85,7 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long>, Pr
 	 * @param user the user account to load projects for
 	 * @return a list of {@link Project}s
 	 */
-	@Query("FROM Project p WHERE " + PROJECT_PERMISSIONS)
+	@Query("FROM Project p WHERE " + PROJECT_MANAGER_PERMISSION)
 	public List<Project> getProjectsForUser(final @Param("forUser") User user);
 
 	/**

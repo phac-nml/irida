@@ -322,11 +322,11 @@ public interface ProjectService extends CRUDService<Long, Project> {
 			final Sort sort);
 
 	/**
-	 * Get a list of projects for a user
+	 * Get a list of projects for a user or admin
 	 *
 	 * @return {@link List} of {@link Project}s
 	 */
-	public List<Project> getProjectsForUser();
+	public List<Project> getProjects();
 
 	/**
 	 * Find a paged list of all projects (for admin) using the specified search criteria.
