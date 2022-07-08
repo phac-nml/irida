@@ -38,7 +38,6 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.authorization.*;
 import org.springframework.security.oauth2.server.authorization.authentication.ClientSecretAuthenticationProvider;
-import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
 import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module;
@@ -193,11 +192,6 @@ public class IridaOauthSecurityConfig {
 
 			// This will add new authentication provider in the list of existing authentication providers.
 			http.authenticationProvider(resourceOwnerPasswordAuthenticationProvider);
-		}
-
-		@Bean
-		public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate) {
-			return new JdbcRegisteredClientRepository(jdbcTemplate);
 		}
 
 		@Bean
