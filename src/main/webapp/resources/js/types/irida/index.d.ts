@@ -79,6 +79,10 @@ declare namespace IRIDA {
 
   type NcbiSource = string;
 
+  interface PairedEndSequenceFile extends SequencingObject {
+    files: SequencingObject[];
+  }
+
   interface Project extends IridaBase {
     description: string;
     organism: string;
@@ -106,19 +110,17 @@ declare namespace IRIDA {
     latitude: string;
     longitude: string;
     projects: Project[];
-    sequenceFiles: SequenceFile[];
+    sequenceFiles: SequencingObject[];
   }
 
-  interface SequenceFile extends IridaBase {
+  interface SequencingObject extends Omit<IridaBase, "id" | "name"> {
+    identifier: number;
+    label: string;
     fileSize: string;
   }
 
-  interface PairedEndSequenceFile extends IridaBase {
-    files: SequenceFile[];
-  }
-
-  interface SingleEndSequenceFile extends IridaBase {
-    file: SequenceFile;
+  interface SingleEndSequenceFile extends SequencingObject {
+    file: SequencingObject;
   }
 
   enum SystemRole {

@@ -3,7 +3,10 @@ import { Avatar, Card, List, Space, Tag, Typography } from "antd";
 import React from "react";
 import { useLoaderData } from "react-router-dom";
 import { BasicList } from "../../lists";
-import type { SequenceFile, SingleEndSequenceFile } from "../../../types/irida";
+import type {
+  SequencingObject,
+  SingleEndSequenceFile,
+} from "../../../types/irida";
 import { NcbiSubmission, PairedEndSequenceFile } from "../../../types/irida";
 import {
   BioSampleFileDetails,
@@ -97,7 +100,7 @@ function NcbiExportDetailsView(): JSX.Element {
                           style={{ flexGrow: 1 }}
                           key={pair.key}
                           dataSource={pair.files}
-                          renderItem={(file: SequenceFile) => (
+                          renderItem={(file: SequencingObject) => (
                             <List.Item
                               actions={[
                                 <Tag key={file.key}>{file.fileSize}</Tag>,

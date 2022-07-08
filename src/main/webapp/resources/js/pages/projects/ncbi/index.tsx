@@ -1,8 +1,6 @@
 import { Col, PageHeader, Row } from "antd";
 import React from "react";
-import { render } from "react-dom";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
-import ProjectSPA from "../ProjectSPA";
 
 /**
  * Render NCBI Export listing for a project page.
