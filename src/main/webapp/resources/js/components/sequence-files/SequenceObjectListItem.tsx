@@ -12,15 +12,15 @@ import { BORDERED_LIGHT } from "../../styles/borders";
 import { FastQC } from "../samples/components/fastqc/FastQC";
 import { setFastQCModalData } from "../samples/components/fastqc/fastQCSlice";
 import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
-import {SequencingObject} from "../../types/irida";
+import {SampleSequencingObject} from "../../types/irida";
 
-const qcEntryTranslations = {
+const qcEntryTranslations: {[key: string]: any} = {
   COVERAGE: i18n("SequenceObjectListItem.qcEntry.COVERAGE"),
   PROCESSING: i18n("SequenceObjectListItem.qcEntry.PROCESSING"),
 };
 
 export interface SequenceObjectListItemProps {
-  sequenceObject: SequencingObject;
+  sequenceObject: SampleSequencingObject;
   actions: JSX.Element[];
   pairedReverseActions: JSX.Element[];
   displayConcatenationCheckbox: JSX.Element | null;
@@ -67,7 +67,7 @@ export function SequenceObjectListItem({
   /*
    Function to display file processing status
    */
-  const getQcEntries = (entry) => {
+  const getQcEntries = (entry: { status: string; type: string | number; message: boolean | null | undefined; }) => {
     return (
       <Tag
         key={`file-${obj.identifier}-qc-entry-status`}
@@ -112,7 +112,7 @@ export function SequenceObjectListItem({
           )
         }
       />
-      <List style={{ width: `100%` }} itemLayout="horizontal" component="div">
+      <List style={{ width: `100%` }} itemLayout="horizontal">
         {files?.length ? (
           <div>
             <List.Item
@@ -256,7 +256,7 @@ export function SequenceObjectListItem({
         {displayFileProcessingStatus && sequenceObject.qcEntries?.length ? (
           <List.Item key={`qc-entry-${obj.identifier}`}>
             <List.Item.Meta
-              title={sequenceObject.qcEntries.map((entry) => {
+              title={sequenceObject.qcEntries.map((entry: { status: string; type: string | number; message: boolean | null | undefined; }) => {
                 return getQcEntries(entry);
               })}
             />

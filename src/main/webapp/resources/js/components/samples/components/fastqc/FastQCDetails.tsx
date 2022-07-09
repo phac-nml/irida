@@ -1,6 +1,6 @@
 import React from "react";
 import { Col, List, Row } from "antd";
-import { useSelector } from "react-redux";
+import { RootStateOrAny, useSelector } from "react-redux";
 import { formatDate } from "../../../../utilities/date-utilities";
 import { ContentLoading } from "../../../loader";
 
@@ -15,7 +15,9 @@ const DEFAULT_HEIGHT = 600;
  * @constructor
  */
 export function FastQCDetails() {
-  const { loading, file, fastQC } = useSelector((state) => state.fastQCReducer);
+  const { loading, file, fastQC } = useSelector(
+    (state: RootStateOrAny) => state.fastQCReducer
+  );
 
   // List details for file
   const fileDetails = [

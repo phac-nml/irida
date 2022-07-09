@@ -53,7 +53,7 @@ export function SampleMetadata() {
     );
   }, []);
 
-  const removeMetadata = (field, entryId) => {
+  const removeMetadata = (field: string, entryId: number) => {
     removeSampleMetadata({
       projectId,
       field,

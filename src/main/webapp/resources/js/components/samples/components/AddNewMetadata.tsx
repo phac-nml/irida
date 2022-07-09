@@ -17,8 +17,10 @@ export interface AddNewMetadataProps {
  * @returns {JSX.Element}
  * @constructor
  */
-export function AddNewMetadata({ children }: AddNewMetadataProps): JSX.Element  {
-  const { sample, projectId } = useSelector((state:RootStateOrAny) => state.sampleReducer);
+export function AddNewMetadata({ children }: AddNewMetadataProps): JSX.Element {
+  const { sample, projectId } = useSelector(
+    (state: RootStateOrAny) => state.sampleReducer
+  );
   const [visible, setVisible] = React.useState(false);
   const [addSampleMetadata] = useAddSampleMetadataMutation();
   const { roles: metadataRoles } = useMetadataRoles();
@@ -129,15 +131,17 @@ export function AddNewMetadata({ children }: AddNewMetadataProps): JSX.Element  
               ]}
             >
               <Select style={{ width: "100%" }}>
-                {metadataRoles?.map((role) => (
-                  <Select.Option
-                    className={`t-${role.value}`}
-                    value={role.value}
-                    key={role.value}
-                  >
-                    {role.label}
-                  </Select.Option>
-                ))}
+                {metadataRoles?.map(
+                  (role: { value: string; label: string }) => (
+                    <Select.Option
+                      className={`t-${role.value}`}
+                      value={role.value}
+                      key={role.value}
+                    >
+                      {role.label}
+                    </Select.Option>
+                  )
+                )}
               </Select>
             </Form.Item>
           </Form>

@@ -18,7 +18,11 @@ export interface FileUploadProgressProps {
  * @returns {JSX.Element}
  * @constructor
  */
-export function FileUploadProgress({ files, uploadProgress, type }: FileUploadProgressProps): JSX.Element {
+export function FileUploadProgress({
+  files,
+  uploadProgress,
+  type,
+}: FileUploadProgressProps): JSX.Element {
   return (
     <div>
       {i18n("SampleFiles.uploadProgress", type)}
@@ -27,7 +31,7 @@ export function FileUploadProgress({ files, uploadProgress, type }: FileUploadPr
       <Collapse>
         <Panel header={i18n("SampleFiles.filesUploading", type)} key="1">
           <List split={false}>
-            {files.map((currFile, index) => {
+            {files.map((currFile: any, index: number) => {
               return (
                 <List.Item key={`${type}-file-${index}`}>
                   - {currFile.name}

@@ -10,7 +10,7 @@ import { useUpdateDefaultSampleGenomeAssemblyMutation } from "../../../apis/samp
 import { setDefaultGenomeAssembly } from "../sampleSlice";
 
 export interface GenomeAssemblyListProps {
-  removeSampleFiles: ({fileObjectId: number, type: string}) => void;
+  removeSampleFiles: ({ fileObjectId: number, type: string }) => void;
 }
 /**
  * React component to display, remove, download genome assemblies
@@ -18,13 +18,17 @@ export interface GenomeAssemblyListProps {
  * @returns {JSX.Element}
  * @constructor
  */
-export function GenomeAssemblyList({ removeSampleFiles = () => {} }: GenomeAssemblyListProps): JSX.Element {
+export function GenomeAssemblyList({
+  removeSampleFiles = () => {},
+}: GenomeAssemblyListProps): JSX.Element {
   const [updateSampleDefaultGenomeAssembly] =
     useUpdateDefaultSampleGenomeAssemblyMutation();
   const { sample, modifiable: isModifiable } = useSelector(
     (state: RootStateOrAny) => state.sampleReducer
   );
-  const { files } = useSelector((state: RootStateOrAny) => state.sampleFilesReducer);
+  const { files } = useSelector(
+    (state: RootStateOrAny) => state.sampleFilesReducer
+  );
   const ACTION_MARGIN_RIGHT = isModifiable ? 0 : 5;
   const dispatch = useDispatch();
 
@@ -170,7 +174,7 @@ export function GenomeAssemblyList({ removeSampleFiles = () => {} }: GenomeAssem
 
   return (
     <SequenceFileTypeRenderer title={i18n("SampleFiles.assemblies")}>
-      {files.assemblies.map((assembly, index) => (
+      {files.assemblies.map((assembly: any, index: number) => (
         <GenomeAssemblyListItem
           key={`assembly-${assembly.fileInfo.identifier}`}
           genomeAssembly={assembly}

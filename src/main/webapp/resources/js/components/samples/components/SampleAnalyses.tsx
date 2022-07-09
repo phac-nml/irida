@@ -19,7 +19,9 @@ export function SampleAnalyses() {
   const [filteredSubmissions, setFilteredSubmissions] = React.useState(null);
   const dispatch = useDispatch();
 
-  const { sample } = useSelector((state: RootStateOrAny) => state.sampleReducer);
+  const { sample } = useSelector(
+    (state: RootStateOrAny) => state.sampleReducer
+  );
 
   const { analyses, loading } = useSelector(
     (state: RootStateOrAny) => state.sampleAnalysesReducer
@@ -44,7 +46,7 @@ export function SampleAnalyses() {
       key: "name",
       ellipsis: true,
       width: 250,
-      render(name, data) {
+      render(name: string, data: any) {
         return (
           <a
             className="t-analysis-name"
@@ -68,7 +70,7 @@ export function SampleAnalyses() {
       dataIndex: "createdDate",
       key: "createdDate",
       width: 200,
-      render: (date) => (
+      render: (date: string) => (
         <span className="t-analysis-created-date">
           {date ? formatInternationalizedDateTime(date) : ""}
         </span>
@@ -79,14 +81,14 @@ export function SampleAnalyses() {
       dataIndex: "state",
       key: "analysisType",
       width: 100,
-      render: (state) => <SampleAnalysesState state={state} />,
+      render: (state: string) => <SampleAnalysesState state={state} />,
     },
   ];
 
   /*
   Filter displayed submissions by name or type
    */
-  const searchSubmissions = (searchStr) => {
+  const searchSubmissions = (searchStr: string) => {
     if (
       searchStr.trim() === "" ||
       searchStr === "undefined" ||
@@ -96,7 +98,7 @@ export function SampleAnalyses() {
     } else {
       searchStr = String(searchStr).toLowerCase();
       const submissionsContainingSearchValue = analyses.filter(
-        (submission) =>
+        (submission: any) =>
           submission.name.toLowerCase().includes(searchStr) ||
           submission.analysisType.toLowerCase().includes(searchStr)
       );

@@ -2,90 +2,90 @@ export = IRIDA;
 export as namespace IRIDA;
 
 declare namespace IRIDA {
-    interface IridaBase {
-        id: number;
-        key: string;
-        name: string;
-        createdDate: Date;
-        modifiedDate: Date;
-    }
+  interface IridaBase {
+    id: number;
+    key: string;
+    name: string;
+    createdDate: Date;
+    modifiedDate: Date;
+  }
 
-    interface Announcement extends IridaBase {
-        title: string;
-        message: string;
-        priority: boolean;
-        createdBy: User;
-        users: User[];
-    }
+  interface Announcement extends IridaBase {
+    title: string;
+    message: string;
+    priority: boolean;
+    createdBy: User;
+    users: User[];
+  }
 
-    interface Project extends IridaBase {
-        description: string;
-        organism: string;
-        genomeSize: number;
-        minimumCoverage: number;
-        maximumCoverage: number;
-        remoteStatus: number;
-        syncFrequency: string; // TODO (Josh - 6/7/22): is this a string?
-        analysisPriority: string;
-        users: User[];
-        analysisTemplates: string[]; // TODO (Josh - 6/7/22): What should this be
-    }
+  interface Project extends IridaBase {
+    description: string;
+    organism: string;
+    genomeSize: number;
+    minimumCoverage: number;
+    maximumCoverage: number;
+    remoteStatus: number;
+    syncFrequency: string; // TODO (Josh - 6/7/22): is this a string?
+    analysisPriority: string;
+    users: User[];
+    analysisTemplates: string[]; // TODO (Josh - 6/7/22): What should this be
+  }
 
-    interface Sample extends IridaBase {
-        description: string;
-        organism: string;
-        isolate: string;
-        strain: string;
-        collectedBy: string;
-        collectionDate: Date;
-        geographicLocationName: string;
-        isolationSource: string;
-        latitude: string;
-        longitude: string;
-        projects: Project[];
-        sequenceFiles: any[]; // TODO (Josh - 6/7/22): FLush this out
-        defaultSequencingObject: number;
-        defaultGenomeAssembly: number;
-    }
+  interface Sample extends IridaBase {
+    description: string;
+    organism: string;
+    isolate: string;
+    strain: string;
+    collectedBy: string;
+    collectionDate: Date;
+    geographicLocationName: string;
+    isolationSource: string;
+    latitude: string;
+    longitude: string;
+    projects: Project[];
+    sequenceFiles: any[]; // TODO (Josh - 6/7/22): FLush this out
+    defaultSequencingObject: number | null;
+    defaultGenomeAssembly: number | null;
+  }
 
-    export type SystemRole =
-        "ROLE_ANONYMOUS"
-        | "ROLE_ADMIN"
-        | "ROLE_USER"
-        | "ROLE_MANAGER"
-        | "ROLE_SEQUENCER"
-        | "ROLE_TECHNICIAN";
+  export type SystemRole =
+    | "ROLE_ANONYMOUS"
+    | "ROLE_ADMIN"
+    | "ROLE_USER"
+    | "ROLE_MANAGER"
+    | "ROLE_SEQUENCER"
+    | "ROLE_TECHNICIAN";
 
-    interface User extends IridaBase {
-        username: string;
-        email: string;
-        firstName: string;
-        lastName: string;
-        phoneNumber: string;
-        enabled: boolean;
-        systemRole: SystemRole;
-        lastLogin: Date;
-        locale: string;
-        projects: Project[];
-        tokens: string[]; // TODO (Josh - 6/7/22): Look into this one
-        announcements: Announcement[];
-        subscriptions: string[]; // TODO (Josh - 6/7/22): Look into this one as well
-    }
+  interface User extends IridaBase {
+    username: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    enabled: boolean;
+    systemRole: SystemRole;
+    lastLogin: Date;
+    locale: string;
+    projects: Project[];
+    tokens: string[]; // TODO (Josh - 6/7/22): Look into this one
+    announcements: Announcement[];
+    subscriptions: string[]; // TODO (Josh - 6/7/22): Look into this one as well
+  }
 
-    export type ProcessingState =
-        "UNPROCESSED"
-        | "QUEUED"
-        | "PROCESSING"
-        | "FINISHED"
-        | "ERROR";
+  export type ProcessingState =
+    | "UNPROCESSED"
+    | "QUEUED"
+    | "PROCESSING"
+    | "FINISHED"
+    | "ERROR";
 
-    interface SequencingObject extends IridaBase {
-        sequencingRun: number;
-        sample: Sample;
-        automatedAssembly: number;
-        sistrTyping: number;
-        remoteStatus: number;
-        processingState: ProcessingState;
-        fileProcessor: string;
-    }
+  interface SampleSequencingObject {
+    fileInfo: any;
+    secondFileSize: string;
+    firstFileSize: string;
+    processingState: ProcessingState;
+    fileType: string;
+    file: any;
+    qcEntries: any;
+  }
 }

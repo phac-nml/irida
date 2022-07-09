@@ -152,15 +152,17 @@ export function EditMetadata() {
               initialValue={restriction ? restriction : "LEVEL_1"}
             >
               <Select style={{ width: "100%" }}>
-                {metadataRoles?.map((role) => (
-                  <Select.Option
-                    className={`t-${role.value}`}
-                    value={role.value}
-                    key={role.value}
-                  >
-                    {role.label}
-                  </Select.Option>
-                ))}
+                {metadataRoles?.map(
+                  (role: { value: string; label: string }) => (
+                    <Select.Option
+                      className={`t-${role.value}`}
+                      value={role.value}
+                      key={role.value}
+                    >
+                      {role.label}
+                    </Select.Option>
+                  )
+                )}
               </Select>
             </Form.Item>
           </Form>

@@ -1,5 +1,6 @@
 import { createAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchMetadataForSample } from "../../apis/samples/samples";
+import { Sample } from "../../types/irida";
 
 /**
  * Action to set the target sample
@@ -117,9 +118,25 @@ export const updateDetails = createAction(
 /**
  * Set up the initial state.
  */
-const initialState = (() => {
+const initialState: {
+  entry: null;
+  metadata: any[];
+  field: null;
+  editModalVisible: boolean;
+  restriction: string;
+  modifiable: boolean;
+  projectName: null;
+  loading: boolean;
+  sample: {
+    defaultSequencingObject: number | null;
+    defaultGenomeAssembly: number | null;
+  };
+  projectId: null;
+  fieldId: null;
+  entryId: null;
+} = (() => {
   return {
-    sample: {},
+    sample: { defaultSequencingObject: null, defaultGenomeAssembly: null },
     modifiable: false,
     projectId: null,
     projectName: null,
@@ -213,9 +230,10 @@ const sampleSlice = createSlice({
     });
 
     builder.addCase(updateDetails, (state, action) => {
+      // @ts-ignore
       state.sample[action.payload.field] = action.payload.value;
     });
-  }
+  },
 });
 
 export default sampleSlice.reducer;
