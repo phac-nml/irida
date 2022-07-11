@@ -109,8 +109,7 @@ function CreateNcbiExport(): JSX.Element {
    * @param field the field to update
    * @param value new value
    */
-  const updateDefaultValue = (field: string, value: string): void => {
-    console.log(value);
+  const updateDefaultValue: UpdateDefaultValues = (field, value) => {
     // Update all the samples in the Ant Design form with the new value.
     const values: SampleRecords = form.getFieldValue("samples");
     Object.values(values).forEach((sample) => {
@@ -150,9 +149,17 @@ function CreateNcbiExport(): JSX.Element {
                   <Row gutter={[16, 16]}>
                     <Col md={12} xs={24}>
                       <Form.Item
-                        required
-                        label={i18n("project.export.bioproject.title")}
-                        help={i18n("project.export.bioproject.description")}
+                        rules={[
+                          {
+                            required: true,
+                            message: i18n(
+                              "CreateNcbiExport.bioproject.description"
+                            ),
+                          },
+                        ]}
+                        name="bioproject"
+                        label={i18n("CreateNcbiExport.bioproject.title")}
+                        help={i18n("CreateNcbiExport.bioproject.description")}
                       >
                         <Input />
                       </Form.Item>
