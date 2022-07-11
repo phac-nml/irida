@@ -8,6 +8,7 @@ import {
   Layout,
   PageHeader,
   Row,
+  Space,
 } from "antd";
 import type { RangePickerProps } from "antd/es/date-picker";
 import moment from "moment";
@@ -49,6 +50,10 @@ export interface LoaderValues {
   strategies: NcbiStrategy[];
   sources: NcbiSource[];
   selections: NcbiSelection[];
+}
+
+export interface UpdateDefaultValues {
+  (field: string, value: string): void;
 }
 
 /**
@@ -101,8 +106,9 @@ function CreateNcbiExport(): JSX.Element {
    * @param value new value
    */
   const updateDefaultValue = (field: string, value: string): void => {
+    console.log(value);
     // Update all the samples in the Ant Design form with the new value.
-    const values = form.getFieldValue("samples");
+    const values: SampleRecords = form.getFieldValue("samples");
     Object.values(values).forEach((sample) => {
       form.setFieldsValue({ samples: { [sample.name]: { [field]: value } } });
     });
@@ -135,56 +141,60 @@ function CreateNcbiExport(): JSX.Element {
               form={form}
               onFinish={validateAndSubmit}
             >
-              <Card title={"Export Details"}>
-                <Row gutter={[16, 16]}>
-                  <Col md={12} xs={24}>
-                    <Form.Item
-                      required
-                      label={i18n("project.export.bioproject.title")}
-                      help={i18n("project.export.bioproject.description")}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col md={12} xs={24}>
-                    <Form.Item
-                      required
-                      label={i18n("project.export.organization.title")}
-                      help={i18n("project.export.organization.description")}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col md={12} xs={24}>
-                    <Form.Item
-                      required
-                      label={i18n("project.export.namespace.title")}
-                      help={i18n("project.export.namespace.description")}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col md={12} xs={24}>
-                    <Form.Item
-                      required
-                      label={i18n("project.export.release_date.title")}
-                      help={i18n("project.export.release_date.description")}
-                      name="release_date"
-                    >
-                      <DatePicker
-                        style={{ width: "100%" }}
-                        disabledDate={disabledDate}
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Card>
-              <CreateNcbiDefaultOptions onChange={updateDefaultValue} />
-              <CreateNcbiExportSamples form={form} />
+              <Space direction="vertical">
+                <Card title={"Export Details"}>
+                  <Row gutter={[16, 16]}>
+                    <Col md={12} xs={24}>
+                      <Form.Item
+                        required
+                        label={i18n("project.export.bioproject.title")}
+                        help={i18n("project.export.bioproject.description")}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col md={12} xs={24}>
+                      <Form.Item
+                        required
+                        label={i18n("project.export.organization.title")}
+                        help={i18n("project.export.organization.description")}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col md={12} xs={24}>
+                      <Form.Item
+                        required
+                        label={i18n("project.export.namespace.title")}
+                        help={i18n("project.export.namespace.description")}
+                      >
+                        <Input />
+                      </Form.Item>
+                    </Col>
+                    <Col md={12} xs={24}>
+                      <Form.Item
+                        required
+                        label={i18n("project.export.release_date.title")}
+                        help={i18n("project.export.release_date.description")}
+                        name="release_date"
+                      >
+                        <DatePicker
+                          style={{ width: "100%" }}
+                          disabledDate={disabledDate}
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </Card>
+                <Card title={"Samples"}>
+                  <CreateNcbiDefaultOptions onChange={updateDefaultValue} />
+                  <CreateNcbiExportSamples form={form} />
+                </Card>
 
-              <Button type="primary" htmlType="submit">
-                __SUBMIT
-              </Button>
+                <Button type="primary" htmlType="submit">
+                  __SUBMIT
+                </Button>
+              </Space>
             </Form>
           </PageHeader>
         </Col>

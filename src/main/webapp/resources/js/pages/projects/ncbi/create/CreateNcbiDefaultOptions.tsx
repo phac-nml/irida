@@ -1,11 +1,12 @@
 import { Cascader, Col, Collapse, Form, Input, Row, Select } from "antd";
 import React from "react";
 import { useLoaderData } from "react-router-dom";
+import { LoaderValues, UpdateDefaultValues } from "./CreateNcbiExport";
 
 function CreateNcbiDefaultOptions({
   onChange,
 }: {
-  onChange: () => void;
+  onChange: UpdateDefaultValues;
 }): JSX.Element {
   const { strategies, sources, platforms, selections }: LoaderValues =
     useLoaderData();
@@ -16,10 +17,7 @@ function CreateNcbiDefaultOptions({
         <Row gutter={[16, 16]}>
           <Col md={12} xs={24}>
             <Form.Item label={i18n("project.export.library_strategy.title")}>
-              <Select
-                style={{ display: "block" }}
-                onChange={(value) => onChange("library_strategy", value)}
-              >
+              <Select onChange={(value) => onChange("library_strategy", value)}>
                 {strategies?.map((option: string) => (
                   <Select.Option key={option}>{option}</Select.Option>
                 ))}
@@ -29,8 +27,7 @@ function CreateNcbiDefaultOptions({
           <Col md={12} xs={24}>
             <Form.Item label={i18n("project.export.library_source.title")}>
               <Select
-                style={{ display: "block" }}
-                onSelect={(value) => onChange("library_source", value)}
+                onSelect={(value: string) => onChange("library_source", value)}
               >
                 {sources.map((option: string) => (
                   <Select.Option key={option}>{option}</Select.Option>
@@ -44,20 +41,27 @@ function CreateNcbiDefaultOptions({
             >
               <Input
                 type="text"
-                onChange={(value) =>
-                  onChange("library_construction_protocol", value)
+                onChange={(e) =>
+                  onChange("library_construction_protocol", e.target.value)
                 }
               />
             </Form.Item>
           </Col>
           <Col md={12} xs={24}>
             <Form.Item label={i18n("project.export.instrument_model.title")}>
-              <Cascader options={platforms} style={{ display: "block" }} />
+              <Cascader
+                options={platforms}
+                onChange={(value) => onChange("instrument_model", value)}
+              />
             </Form.Item>
           </Col>
           <Col md={12} xs={24}>
             <Form.Item label={i18n("project.export.library_selection.title")}>
-              <Select style={{ display: "block" }}>
+              <Select
+                onSelect={(value: string) =>
+                  onChange("library_selection", value)
+                }
+              >
                 {selections.map((option: string) => (
                   <Select.Option key={option}>{option}</Select.Option>
                 ))}
