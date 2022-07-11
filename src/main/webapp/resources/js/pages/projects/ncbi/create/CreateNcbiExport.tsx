@@ -76,27 +76,37 @@ export async function loader(): Promise<LoaderValues> {
   const strategies = await getNCBIStrategies();
   const sources = await getNCBISources();
   const selections = await getNCBISelections();
-  const results = Promise.all([
+  return Promise.all([
     samples,
     platforms,
     strategies,
     sources,
     selections,
-  ]);
-  return results.then(
-    ([samples, platforms, strategies, sources, selections]) => ({
-      samples,
-      platforms,
-      strategies,
-      sources,
-      selections,
-    })
-  );
+  ]).then(([samples, platforms, strategies, sources, selections]) => ({
+    samples,
+    platforms,
+    strategies,
+    sources,
+    selections,
+  }));
 }
 
 function CreateNcbiExport(): JSX.Element {
   const { samples }: LoaderValues = useLoaderData();
   const [form] = Form.useForm();
+
+  /**
+   * Update the default value for each sample in the form
+   * @param field the field to update
+   * @param value new value
+   */
+  const updateDefaultValue = (field: string, value: string): void => {
+    // Update all the samples in the Ant Design form with the new value.
+    const values = form.getFieldValue("samples");
+    Object.values(values).forEach((sample) => {
+      form.setFieldsValue({ samples: { [sample.name]: { [field]: value } } });
+    });
+  };
 
   /*
   This prevents the release date to be in the past.
@@ -113,18 +123,18 @@ function CreateNcbiExport(): JSX.Element {
 
   return (
     <Layout.Content>
-      <PageHeader title={i18n("project.export.title")}>
-        <Form
-          layout="vertical"
-          initialValues={{
-            release_date: moment(new Date()),
-            samples,
-          }}
-          form={form}
-          onFinish={validateAndSubmit}
-        >
-          <Row gutter={[16, 16]} justify="center">
-            <Col xxl={16} xl={20} sm={24}>
+      <Row justify="center">
+        <Col xxl={16} xl={20} sm={24}>
+          <PageHeader title={i18n("project.export.title")}>
+            <Form
+              layout="vertical"
+              initialValues={{
+                release_date: moment(new Date()),
+                samples,
+              }}
+              form={form}
+              onFinish={validateAndSubmit}
+            >
               <Card title={"Export Details"}>
                 <Row gutter={[16, 16]}>
                   <Col md={12} xs={24}>
@@ -169,26 +179,16 @@ function CreateNcbiExport(): JSX.Element {
                   </Col>
                 </Row>
               </Card>
-            </Col>
-            <Col xxl={16} xl={20} sm={24}>
-              <CreateNcbiDefaultOptions />
-            </Col>
-            <Col xxl={16} xl={20} sm={24}>
+              <CreateNcbiDefaultOptions onChange={updateDefaultValue} />
               <CreateNcbiExportSamples form={form} />
-            </Col>
 
-            <Col
-              xxl={{ span: 16, offset: 4 }}
-              xl={{ span: 20, offset: 2 }}
-              sm={24}
-            >
               <Button type="primary" htmlType="submit">
                 __SUBMIT
               </Button>
-            </Col>
-          </Row>
-        </Form>
-      </PageHeader>
+            </Form>
+          </PageHeader>
+        </Col>
+      </Row>
     </Layout.Content>
   );
 }
