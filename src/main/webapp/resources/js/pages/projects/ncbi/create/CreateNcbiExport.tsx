@@ -31,6 +31,7 @@ import type {
   NcbiStrategy,
 } from "../../../../types/irida";
 import { getStoredSamples } from "../../../../utilities/session-utilities";
+import CreateNcbiDefaultOptions from "./CreateNcbiDefaultOptions";
 import CreateNcbiExportSamples from "./CreateNcbiExportSamples";
 import { formatPlatformsAsCascaderOptions } from "./ncbi-utilities";
 
@@ -42,13 +43,13 @@ export interface SampleRecords {
   [k: string]: SampleRecord;
 }
 
-type LoaderValues = {
+export interface LoaderValues {
   samples: SampleRecords;
   platforms: Option[];
   strategies: NcbiStrategy[];
   sources: NcbiSource[];
   selections: NcbiSelection[];
-};
+}
 
 /**
  * React router loader
@@ -168,6 +169,9 @@ function CreateNcbiExport(): JSX.Element {
                   </Col>
                 </Row>
               </Card>
+            </Col>
+            <Col xxl={16} xl={20} sm={24}>
+              <CreateNcbiDefaultOptions />
             </Col>
             <Col xxl={16} xl={20} sm={24}>
               <CreateNcbiExportSamples form={form} />

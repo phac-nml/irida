@@ -10,6 +10,7 @@ import {
   Col,
   Collapse,
   Form,
+  FormInstance,
   Input,
   Radio,
   Row,
@@ -18,7 +19,7 @@ import {
 } from "antd";
 import React from "react";
 import { useLoaderData } from "react-router-dom";
-import { SampleRecord, SampleRecords } from "./CreateNcbiExport";
+import { LoaderValues, SampleRecord, SampleRecords } from "./CreateNcbiExport";
 
 function SampleDetails({
   sample,
@@ -27,7 +28,8 @@ function SampleDetails({
   sample: SampleRecord;
   onChange: () => void;
 }): JSX.Element {
-  const { strategies, sources, platforms, selections } = useLoaderData();
+  const { strategies, sources, platforms, selections }: LoaderValues =
+    useLoaderData();
 
   return (
     <Row gutter={[16, 16]}>
@@ -143,7 +145,7 @@ function SampleDetails({
                   <Space>
                     <Avatar
                       size="small"
-                      style={{ backgroundColor: `var(--blue-6)` }}
+                      style={{ backgroundColor: `var(--primary-grey)` }}
                       icon={<SwapRightOutlined />}
                     />
                     {file.label}
@@ -155,7 +157,7 @@ function SampleDetails({
                   <Space>
                     <Avatar
                       size="small"
-                      style={{ backgroundColor: `var(--blue-6)` }}
+                      style={{ backgroundColor: `var(--primary-grey)` }}
                       icon={<SwapOutlined />}
                     />
                     {file.label}
@@ -192,7 +194,11 @@ function SampleValidIcon({ status }: { status: boolean }) {
   );
 }
 
-function CreateNcbiExportSamples({ form }) {
+function CreateNcbiExportSamples({
+  form,
+}: {
+  form: FormInstance;
+}): JSX.Element {
   const { samples }: { samples: SampleRecords } = useLoaderData();
   const values = Object.values(samples);
   const [validationStatus, setValidationStatus] = React.useState<boolean[]>(

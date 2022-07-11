@@ -20,6 +20,7 @@
     --grey-11: #1f1f1f;
     --grey-12: #141414;
     --grey-13: #000000;
+    --primary-grey: var(--grey-6);
 
     --blue-1: #e6f7ff;
     --blue-2: #bae7ff;
@@ -31,6 +32,7 @@
     --blue-8: #0050b3;
     --blue-9: #003a8c;
     --blue-10: #002766;
+    --primary-blue: var(--blue-6);
 
     --green-1: #f6ffed;
     --green-2: #d9f7be;
