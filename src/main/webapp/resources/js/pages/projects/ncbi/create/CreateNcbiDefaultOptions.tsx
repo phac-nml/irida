@@ -51,7 +51,9 @@ function CreateNcbiDefaultOptions({
             <Form.Item label={i18n("project.export.instrument_model.title")}>
               <Cascader
                 options={platforms}
-                onChange={(value) => onChange("instrument_model", value)}
+                onChange={(value) =>
+                  onChange("instrument_model", value as string[])
+                }
               />
             </Form.Item>
           </Col>

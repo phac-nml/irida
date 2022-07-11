@@ -53,7 +53,7 @@ export interface LoaderValues {
 }
 
 export interface UpdateDefaultValues {
-  (field: string, value: string): void;
+  (field: string, value: string | string[]): void;
 }
 
 /**
@@ -96,6 +96,10 @@ export async function loader(): Promise<LoaderValues> {
   }));
 }
 
+/**
+ * React component to render a form for created a new NCBI SRA Export
+ * @constructor
+ */
 function CreateNcbiExport(): JSX.Element {
   const { samples }: LoaderValues = useLoaderData();
   const [form] = Form.useForm();
