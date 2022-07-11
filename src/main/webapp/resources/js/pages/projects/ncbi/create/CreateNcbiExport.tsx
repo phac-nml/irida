@@ -135,7 +135,7 @@ function CreateNcbiExport(): JSX.Element {
     <Layout.Content>
       <Row justify="center">
         <Col xxl={16} xl={20} sm={24}>
-          <PageHeader title={i18n("project.export.title")}>
+          <PageHeader title={i18n("CreateNcbiExport.title")}>
             <Form
               layout="vertical"
               initialValues={{
@@ -196,7 +196,7 @@ function CreateNcbiExport(): JSX.Element {
                 </Card>
 
                 <Button type="primary" htmlType="submit">
-                  __SUBMIT
+                  {i18n("CreateNcbiExport.submit")}
                 </Button>
               </Space>
             </Form>

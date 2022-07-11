@@ -248,7 +248,7 @@ function CreateNcbiExportSamples({
   };
 
   return (
-    <Collapse accordion defaultActiveKey={values[0].key}>
+    <Collapse accordion>
       {values.map((sample, index) => (
         <Collapse.Panel
           key={String(sample.key)}
