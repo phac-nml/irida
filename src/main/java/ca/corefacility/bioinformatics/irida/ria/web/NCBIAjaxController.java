@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax;
+package ca.corefacility.bioinformatics.irida.ria.web;
 
 import java.util.Arrays;
 import java.util.EnumMap;
