@@ -151,6 +151,7 @@ public class RemoteAPIAjaxControllerTest {
 		Long userId = 1L;
 		User puser = new User(userId, USER_NAME, null, null, null, null, null);
 		puser.setSystemRole(Role.ROLE_USER);
+		when(userService.getUserByUsername(puser.getUsername())).thenReturn(puser);
 
 		Authentication auth = new UsernamePasswordAuthenticationToken(puser, null);
 		SecurityContextHolder.getContext().setAuthentication(auth);

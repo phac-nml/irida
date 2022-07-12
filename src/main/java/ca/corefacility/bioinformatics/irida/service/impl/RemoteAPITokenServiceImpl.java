@@ -14,9 +14,9 @@ import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -187,7 +187,7 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 	 */
 	private String getUserName() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null && (authentication instanceof UsernamePasswordAuthenticationToken
+		if (authentication != null && (authentication.getPrincipal() instanceof UserDetails
 				|| authentication instanceof JwtAuthenticationToken)) {
 			String username = authentication.getName();
 

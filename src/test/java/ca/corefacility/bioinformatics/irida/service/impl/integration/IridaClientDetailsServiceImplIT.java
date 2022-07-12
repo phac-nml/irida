@@ -2,10 +2,10 @@ package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.provider.NoSuchClientException;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.service.impl.IridaClientDetailsServiceImpl;
 
@@ -32,7 +32,7 @@ public class IridaClientDetailsServiceImplIT {
 	@Test
 	@WithMockUser(username = "anonymous", roles = "ANONYMOUS")
 	public void testClientNotExists() {
-		assertThrows(NoSuchClientException.class, () -> {
+		assertThrows(EntityNotFoundException.class, () -> {
 			clientDetailsService.loadClientByClientId("badClient");
 		});
 	}

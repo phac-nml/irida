@@ -11,19 +11,15 @@ import ca.corefacility.bioinformatics.irida.annotation.RestIntegrationTest;
 
 /**
  * General tests relating to security for the REST API.
- * 
  */
 @RestIntegrationTest
 public class SecurityIT {
 
 	/**
-	 * Test that we get the right type of response when we don't have valid
-	 * credentials.
+	 * Test that we get the right type of response when we don't have valid credentials.
 	 */
 	@Test
 	public void testAccessWithoutAuthentication() {
-		expect().body("error", is("invalid_request")).and()
-				.body("error_description", containsString("No client credentials were provided"))
-				.statusCode(HttpStatus.SC_UNAUTHORIZED).when().get("/api");
+		expect().statusCode(HttpStatus.SC_UNAUTHORIZED).when().get("/api");
 	}
 }

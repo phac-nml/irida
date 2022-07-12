@@ -148,9 +148,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-web-services")
     implementation("org.springframework.boot:spring-boot-starter-hateoas")
-    implementation("org.springframework.security.oauth:spring-security-oauth2:2.3.6.RELEASE") {
-        exclude(group = "org.codehaus.jackson", module = "jackson-mapper-asl")
-    }
     implementation("commons-io:commons-io:2.11.0")
     implementation("commons-fileupload:commons-fileupload:1.4")
     implementation("org.apache.poi:poi-ooxml:5.2.2") {

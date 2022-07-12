@@ -79,13 +79,21 @@ public class IridaRegisteredClientsRepository implements RegisteredClientReposit
                 .clientSecret(client.getClientSecret())
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
-                .authorizationGrantTypes((grantTypes) -> client.getAuthorizedGrantTypes()
-                        .forEach(grantType -> grantTypes.add(new AuthorizationGrantType(grantType))))
+                .authorizationGrantTypes((grantTypes) -> {
+                    // if refresh token validaty is null disable refresh tokens
+                    if (client.getRefreshTokenValiditySeconds() == null) {
+                        grantTypes.removeIf(filter -> filter.equals(AuthorizationGrantType.REFRESH_TOKEN));
+                    }
+                    client.getAuthorizedGrantTypes()
+                            .forEach(grantType -> grantTypes.add(new AuthorizationGrantType(grantType)));
+                })
                 .scopes((scopes) -> scopes.addAll(client.getScope()))
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
                 .tokenSettings(TokenSettings.builder()
                         .accessTokenTimeToLive(Duration.ofSeconds(client.getAccessTokenValiditySeconds()))
-                        .refreshTokenTimeToLive(Duration.ofSeconds(client.getRefreshTokenValiditySeconds()))
+                        .refreshTokenTimeToLive(Duration.ofSeconds(client.getRefreshTokenValiditySeconds() == null ?
+                                1L :
+                                client.getRefreshTokenValiditySeconds()))
                         .build());
 
         String redirectUri = client.getRedirectUri();
