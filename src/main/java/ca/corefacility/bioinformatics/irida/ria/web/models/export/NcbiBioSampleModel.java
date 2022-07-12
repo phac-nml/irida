@@ -10,7 +10,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.SingleEn
 /**
  * Describes an NCBI SRA Submission's BioSample's files for the UI.
  */
-public class NcbiBioSampleFilesModel {
+public class NcbiBioSampleModel {
 	private final String id;
 	private final String bioSample;
 	private final String instrumentModel;
@@ -24,7 +24,7 @@ public class NcbiBioSampleFilesModel {
 	private final List<SingleEndSequenceFileModel> singles;
 	private final List<PairedEndSequenceFileModel> pairs;
 
-	public NcbiBioSampleFilesModel(NcbiBioSampleFiles bioSample) {
+	public NcbiBioSampleModel(NcbiBioSampleFiles bioSample) {
 		this.id = bioSample.getId();
 		this.bioSample = bioSample.getBioSample();
 		this.instrumentModel = bioSample.getInstrumentModel().getModel();

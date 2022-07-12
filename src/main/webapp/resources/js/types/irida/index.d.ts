@@ -1,5 +1,3 @@
-import { ExportUploadState } from "./export/ExportUploadState";
-
 export = IRIDA;
 export as namespace IRIDA;
 
@@ -20,32 +18,36 @@ declare namespace IRIDA {
     users: User[];
   }
 
-  interface NcbiBiosample {
-    key: string;
-    name: string;
-    id: number;
-    biosample?: string;
-    library_name: string;
-    library_strategy?: NcbiStrategy;
-    library_source?: NcbiSource;
-    library_construction_protocol?: string;
-    instrument_model?: NcbiInstrument;
-    library_selection?: NcbiSelection;
-  }
+  export type ExportUploadState =
+    | "NEW"
+    | "UPLOADING"
+    | "UPLOADED"
+    | "UPLOAD_ERROR"
+    | "created"
+    | "failed"
+    | "queued"
+    | "processing"
+    | "processed-ok"
+    | "processed-error"
+    | "waiting"
+    | "submitted"
+    | "deleted"
+    | "retired"
+    | "unknown";
 
-  interface NcbiBioSampleFiles {
-    id: number;
+  interface NcbiBioSample {
+    id: string;
+    accession: string;
     bioSample: string;
+    libraryName: string;
+    libraryStrategy: NcbiStrategy;
+    librarySource: NcbiSource;
+    libraryConstructionProtocol: string;
+    instrumentModel: NcbiInstrument;
+    librarySelection: NcbiSelection;
+    status: ExportUploadState;
     singles: SingleEndSequenceFile[];
     pairs: PairedEndSequenceFile[];
-    instrumentModel: NcbiInstrument;
-    libraryName: string;
-    librarySelection: string;
-    librarySource: string;
-    libraryStrategy: string;
-    libraryConstructionProtocol: string;
-    status: ExportUploadState;
-    accession: string;
   }
 
   type NcbiInstrument = string;
@@ -72,7 +74,7 @@ declare namespace IRIDA {
     bioProject: string;
     ncbiNamespace: string;
     releaseDate: Date | null;
-    bioSampleFiles: NcbiBioSampleFiles[];
+    bioSampleFiles: NcbiBioSample[];
   }
 
   type NcbiStrategy = string;
@@ -113,9 +115,8 @@ declare namespace IRIDA {
     sequenceFiles: SequencingObject[];
   }
 
-  interface SequencingObject extends Omit<BaseRecord, "id" | "name"> {
+  interface SequencingObject extends Omit<BaseRecord, "id"> {
     identifier: number;
-    label: string;
     fileSize: string;
   }
 

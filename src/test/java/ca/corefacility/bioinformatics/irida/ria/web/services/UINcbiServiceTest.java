@@ -51,7 +51,8 @@ class UINcbiServiceTest {
 	void setUp() {
 		projectService = mock(ProjectService.class);
 		ncbiExportSubmissionService = mock(NcbiExportSubmissionService.class);
-		this.uiNcbiService = new UINcbiService(projectService, ncbiExportSubmissionService);
+		this.uiNcbiService = new UINcbiService(projectService, ncbiExportSubmissionService, sequencingObjectService,
+				userService);
 
 		User user = mock(User.class);
 		when(user.getId()).thenReturn(1L);

@@ -14,10 +14,7 @@ import ca.corefacility.bioinformatics.irida.model.export.NcbiLibrarySelection;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiLibrarySource;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiLibraryStrategy;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NcbiExportSubmissionTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiExportSubmissionAdminTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiPlatform;
-import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiPlatformModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiSubmissionModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.export.*;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UINcbiService;
@@ -79,7 +76,9 @@ public class NCBIAjaxController {
 
 	@GetMapping("/sources")
 	public List<String> getNcbiSources() {
-		return Arrays.stream(NcbiLibrarySource.values()).map(NcbiLibrarySource::getValue).collect(Collectors.toList());
+		return Arrays.stream(NcbiLibrarySource.values())
+				.map(NcbiLibrarySource::getValue)
+				.collect(Collectors.toList());
 	}
 
 	@GetMapping("/strategies")
@@ -95,4 +94,10 @@ public class NCBIAjaxController {
 				.map(NcbiLibrarySelection::getValue)
 				.collect(Collectors.toList());
 	}
+
+	@PostMapping("")
+	public void submitNcbiExport(@RequestBody NcbiSubmissionBody submission) {
+		service.submitNcbiExport(submission);
+	}
 }
+

@@ -1,4 +1,5 @@
 import {
+  ExportUploadState,
   NcbiInstrument,
   NcbiSelection,
   NcbiSource,
@@ -6,7 +7,6 @@ import {
   NcbiSubmission,
   UserMinimal,
 } from "../../types/irida";
-import { ExportUploadState } from "../../types/irida/export/ExportUploadState";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { get } from "../requests";
 

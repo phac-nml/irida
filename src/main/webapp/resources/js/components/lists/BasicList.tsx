@@ -6,7 +6,7 @@
 import React from "react";
 import { List, Typography } from "antd";
 import { ListItemLayout } from "antd/lib/list";
-import { GridProps } from "../ant.design/antd";
+import { GridProps } from "../../types/ant-design";
 
 const { Text } = Typography;
 

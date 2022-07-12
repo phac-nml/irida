@@ -10,13 +10,13 @@ import ca.corefacility.bioinformatics.irida.model.export.*;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiBioSampleFilesModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiBioSampleModel;
 
 import com.google.common.collect.ImmutableSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class NcbiBioSampleFilesModelTest {
+class NcbiBioSampleModelTest {
 	@Test
 	public void testNcbiBioSamplesFilesModel() {
 		String id = "1";
@@ -40,7 +40,7 @@ class NcbiBioSampleFilesModelTest {
 		bioSampleFiles.setId(id);
 		bioSampleFiles.setAccession(accession);
 
-		NcbiBioSampleFilesModel model = new NcbiBioSampleFilesModel(bioSampleFiles);
+		NcbiBioSampleModel model = new NcbiBioSampleModel(bioSampleFiles);
 
 		assertEquals(id, model.getId(), "Id should not be changed");
 		assertEquals(bioSample, model.getBioSample(), "Biosample should not be changed");

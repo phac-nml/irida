@@ -14,7 +14,20 @@ export interface GridProps {
 
 interface Option {
   value: string | number;
-  label?: React.ReactNode;
+  label?: JSX.Element;
   disabled?: boolean;
   children?: Option[];
 }
+
+export type TagColor =
+  | "magenta"
+  | "red"
+  | "volcano"
+  | "orange"
+  | "gold"
+  | "lime"
+  | "green"
+  | "cyan"
+  | "blue"
+  | "geekblue"
+  | "purple";

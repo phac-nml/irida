@@ -1,17 +1,15 @@
-import React from "react";
+import { DataFunctionArgs } from "@remix-run/router/utils";
 import { Table } from "antd";
+import React from "react";
+import { Link, useLoaderData } from "react-router-dom";
 import {
   getProjectNCBIExports,
   NcbiExportSubmissionTableModel,
 } from "../../../apis/export/ncbi";
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import { setBaseUrl } from "../../../utilities/url-utilities";
+import { ExportUploadState, UserMinimal } from "../../../types/irida";
 import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
-import { Link, useLoaderData } from "react-router-dom";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import NcbiUploadStateTag from "../ExportUploadStateTag/NcbiUploadStateTag";
-import { UserMinimal } from "../../../types/irida";
-import { ExportUploadState } from "../../../types/irida/export/ExportUploadState";
-import { DataFunctionArgs } from "@remix-run/router/utils";
 
 /**
  * React router data loader (https://beta.reactrouter.com/en/dev/route/loader)

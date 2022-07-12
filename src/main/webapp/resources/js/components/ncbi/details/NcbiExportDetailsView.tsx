@@ -9,7 +9,7 @@ import type {
 } from "../../../types/irida";
 import { NcbiSubmission, PairedEndSequenceFile } from "../../../types/irida";
 import {
-  BioSampleFileDetails,
+  BioSampleDetails,
   formatNcbiSubmissionDetails,
   formatNcbiBioSampleFiles,
 } from "./utils";
@@ -19,6 +19,8 @@ import { DataFunctionArgs } from "@remix-run/router/utils";
 import { SPACE_LG } from "../../../styles/spacing";
 import { BasicListItem } from "../../lists/BasicList";
 
+type LoaderType = [BasicListItem[], BioSampleDetails[]];
+
 /**
  * React router data loader (https://beta.reactrouter.com/en/dev/route/loader)
  * Fetches the submission details and formats them to be used by the component.
@@ -26,13 +28,11 @@ import { BasicListItem } from "../../lists/BasicList";
  */
 export async function loader({
   params,
-}: DataFunctionArgs): Promise<[BasicListItem[], BioSampleFileDetails[]]> {
+}: DataFunctionArgs): Promise<LoaderType> {
   const { id, projectId } = params;
   if (projectId && id) {
     return getNcbiSubmission(parseInt(projectId), parseInt(id)).then(
-      (
-        submission: NcbiSubmission
-      ): [BasicListItem[], BioSampleFileDetails[]] => {
+      (submission: NcbiSubmission): LoaderType => {
         const { bioSampleFiles, ...info } = submission;
         const details = formatNcbiSubmissionDetails(info);
         const bioSamples = formatNcbiBioSampleFiles(bioSampleFiles);
@@ -49,7 +49,7 @@ export async function loader({
  * @constructor
  */
 function NcbiExportDetailsView(): JSX.Element {
-  const [details, bioSampleFiles] = useLoaderData();
+  const [details, bioSampleFiles]: LoaderType = useLoaderData();
 
   return (
     <Space direction="vertical" style={{ width: `100%` }}>
@@ -65,7 +65,7 @@ function NcbiExportDetailsView(): JSX.Element {
       >
         {i18n("NcbiExportDetailsView.files")}
       </Typography.Title>
-      {bioSampleFiles.map((bioSampleFile: BioSampleFileDetails) => {
+      {bioSampleFiles.map((bioSampleFile: BioSampleDetails) => {
         return (
           <Card key={bioSampleFile.key}>
             <Space
