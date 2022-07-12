@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="oauth2-authorization-tables" author="eric">
+        <createTable tableName="oauth2_authorization">
+            <column name="id" type="VARCHAR(100)">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="registered_client_id" type="VARCHAR(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="principal_name" type="VARCHAR(200)">
+                <constraints nullable="false" />
+            </column>
+            <column name="authorization_grant_type" type="VARCHAR(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="attributes" type="VARCHAR(4000)" />
+            <column name="state" type="VARCHAR(500)" />
+            <column name="authorization_code_value" type="blob" />
+            <column name="authorization_code_issued_at" type="timestamp" />
+            <column name="authorization_code_expires_at" type="timestamp" />
+            <column name="authorization_code_metadata" type="varchar(2000)" />
+            <column name="access_token_value" type="blob" />
+            <column name="access_token_issued_at" type="timestamp" />
+            <column name="access_token_expires_at" type="timestamp" />
+            <column name="access_token_metadata" type="varchar(2000)" />
+            <column name="access_token_type" type="varchar(100)" />
+            <column name="access_token_scopes" type="varchar(1000)" />
+            <column name="oidc_id_token_value" type="blob" />
+            <column name="oidc_id_token_issued_at" type="timestamp" />
+            <column name="oidc_id_token_expires_at" type="timestamp" />
+            <column name="oidc_id_token_metadata" type="varchar(2000)" />
+            <column name="refresh_token_value" type="blob" />
+            <column name="refresh_token_issued_at" type="timestamp" />
+            <column name="refresh_token_expires_at" type="timestamp" />
+            <column name="refresh_token_metadata" type="varchar(2000)" />
+        </createTable>
+
+        <createTable tableName="oauth2_authorization_consent">
+            <column name="registered_client_id" type="VARCHAR(100)">
+                <constraints primaryKey="true" primaryKeyName="PK_OAUTH2_AUTHORIZATION_CONSENT" nullable="false" />
+            </column>
+            <column name="principal_name" type="VARCHAR(200)">
+                <constraints primaryKey="true" primaryKeyName="PK_OAUTH2_AUTHORIZATION_CONSENT" nullable="false" />
+            </column>
+            <column name="authorities" type="VARCHAR(1000)" />
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

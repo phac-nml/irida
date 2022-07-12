@@ -41,37 +41,6 @@ insert into client_details_resource_ids (client_details_id,resource_id) values (
 insert into client_details_resource_ids (client_details_id,resource_id) values (4,"NmlIrida");
 insert into client_details_resource_ids (client_details_id,resource_id) values (5,"NmlIrida");
 
-CREATE TABLE `oauth2_authorization` (
-    `id` varchar(100) NOT NULL,
-    `registered_client_id` varchar(100) NOT NULL,
-    `principal_name` varchar(200) NOT NULL,
-    `authorization_grant_type` varchar(100) NOT NULL,
-    `attributes` varchar(4000) DEFAULT NULL,
-    `state` varchar(500) DEFAULT NULL,
-    `authorization_code_value` blob DEFAULT NULL,
-    `authorization_code_issued_at` timestamp NULL DEFAULT NULL,
-    `authorization_code_expires_at` timestamp NULL DEFAULT NULL,
-    `authorization_code_metadata` varchar(2000) DEFAULT NULL,
-    `access_token_value` blob DEFAULT NULL,
-    `access_token_issued_at` timestamp NULL DEFAULT NULL,
-    `access_token_expires_at` timestamp NULL DEFAULT NULL,
-    `access_token_metadata` varchar(2000) DEFAULT NULL,
-    `access_token_type` varchar(100) DEFAULT NULL,
-    `access_token_scopes` varchar(1000) DEFAULT NULL,
-    `oidc_id_token_value` blob DEFAULT NULL,
-    `oidc_id_token_issued_at` timestamp NULL DEFAULT NULL,
-    `oidc_id_token_expires_at` timestamp NULL DEFAULT NULL,
-    `oidc_id_token_metadata` varchar(2000) DEFAULT NULL,
-    `refresh_token_value` blob DEFAULT NULL,
-    `refresh_token_issued_at` timestamp NULL DEFAULT NULL,
-    `refresh_token_expires_at` timestamp NULL DEFAULT NULL,
-    `refresh_token_metadata` varchar(2000) DEFAULT NULL,
-    PRIMARY KEY (`id`)
-);
+CREATE TABLE `oauth2_authorization` ( `id` varchar(100) NOT NULL, `registered_client_id` varchar(100) NOT NULL, `principal_name` varchar(200) NOT NULL, `authorization_grant_type` varchar(100) NOT NULL, `attributes` varchar(4000) DEFAULT NULL, `state` varchar(500) DEFAULT NULL, `authorization_code_value` blob DEFAULT NULL, `authorization_code_issued_at` timestamp NULL DEFAULT NULL, `authorization_code_expires_at` timestamp NULL DEFAULT NULL, `authorization_code_metadata` varchar(2000) DEFAULT NULL, `access_token_value` blob DEFAULT NULL, `access_token_issued_at` timestamp NULL DEFAULT NULL, `access_token_expires_at` timestamp NULL DEFAULT NULL, `access_token_metadata` varchar(2000) DEFAULT NULL, `access_token_type` varchar(100) DEFAULT NULL, `access_token_scopes` varchar(1000) DEFAULT NULL, `oidc_id_token_value` blob DEFAULT NULL, `oidc_id_token_issued_at` timestamp NULL DEFAULT NULL, `oidc_id_token_expires_at` timestamp NULL DEFAULT NULL, `oidc_id_token_metadata` varchar(2000) DEFAULT NULL, `refresh_token_value` blob DEFAULT NULL, `refresh_token_issued_at` timestamp NULL DEFAULT NULL, `refresh_token_expires_at` timestamp NULL DEFAULT NULL, `refresh_token_metadata` varchar(2000) DEFAULT NULL, PRIMARY KEY (`id`));
 
-CREATE TABLE `oauth2_authorization_consent` (
-    `registered_client_id` varchar(100) NOT NULL,
-    `principal_name` varchar(200) NOT NULL,
-    `authorities` varchar(1000) NOT NULL,
-    PRIMARY KEY (`registered_client_id`, `principal_name`)
-);
+CREATE TABLE `oauth2_authorization_consent` ( `registered_client_id` varchar(100) NOT NULL, `principal_name` varchar(200) NOT NULL, `authorities` varchar(1000) NOT NULL, PRIMARY KEY (`registered_client_id`, `principal_name`));
