@@ -166,27 +166,51 @@ function CreateNcbiExport(): JSX.Element {
                     </Col>
                     <Col md={12} xs={24}>
                       <Form.Item
-                        required
-                        label={i18n("project.export.organization.title")}
-                        help={i18n("project.export.organization.description")}
+                        name="organization"
+                        rules={[
+                          {
+                            required: true,
+                            message: i18n(
+                              "CreateNcbiExport.organization.description"
+                            ),
+                          },
+                        ]}
+                        label={i18n("CreateNcbiExport.organization.title")}
+                        help={i18n("CreateNcbiExport.organization.description")}
                       >
                         <Input />
                       </Form.Item>
                     </Col>
                     <Col md={12} xs={24}>
                       <Form.Item
-                        required
-                        label={i18n("project.export.namespace.title")}
-                        help={i18n("project.export.namespace.description")}
+                        name="namespace"
+                        rules={[
+                          {
+                            required: true,
+                            message: i18n(
+                              "CreateNcbiExport.namespace.description"
+                            ),
+                          },
+                        ]}
+                        label={i18n("CreateNcbiExport.namespace.title")}
+                        help={i18n("CreateNcbiExport.namespace.description")}
                       >
                         <Input />
                       </Form.Item>
                     </Col>
                     <Col md={12} xs={24}>
                       <Form.Item
-                        required
-                        label={i18n("project.export.release_date.title")}
-                        help={i18n("project.export.release_date.description")}
+                        name="release_date"
+                        rules={[
+                          {
+                            required: true,
+                            message: i18n(
+                              "CreateNcbiExport.release_date.description"
+                            ),
+                          },
+                        ]}
+                        label={i18n("CreateNcbiExport.release_date.title")}
+                        help={i18n("CreateNcbiExport.release_date.description")}
                         name="release_date"
                       >
                         <DatePicker

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.ria.web.models.IridaBase;
+import ca.corefacility.bioinformatics.irida.ria.web.models.BaseRecord;
 import ca.corefacility.bioinformatics.irida.ria.web.models.ModelKeys;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +36,7 @@ class SingleEndSequenceFileModelTest {
 		when(singleEndSequenceFile.getSequenceFile()).thenReturn(sequenceFile);
 
 		SingleEndSequenceFileModel model = new SingleEndSequenceFileModel(singleEndSequenceFile);
-		assertThat(model).isInstanceOf(IridaBase.class);
+		assertThat(model).isInstanceOf(BaseRecord.class);
 
 		assertEquals(id, model.getId(), "Id should not be changed");
 		assertEquals(ModelKeys.SingleEndSequenceFileModel.label + id, model.getKey(),

@@ -3,14 +3,14 @@ package ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.ria.web.models.IridaBase;
+import ca.corefacility.bioinformatics.irida.ria.web.models.BaseRecord;
 
 import com.google.common.collect.ImmutableList;
 
 /**
  * Describes a {@link SequenceFilePair} for the UI
  */
-public class PairedEndSequenceFileModel extends IridaBase {
+public class PairedEndSequenceFileModel extends BaseRecord {
 	/*
 	This will always be a pair of:
 	  [ forward, reverse ]

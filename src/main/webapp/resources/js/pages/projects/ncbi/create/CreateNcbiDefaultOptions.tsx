@@ -1,4 +1,13 @@
-import { Cascader, Col, Collapse, Form, Input, Row, Select } from "antd";
+import {
+  Cascader,
+  Col,
+  Collapse,
+  Form,
+  Input,
+  Row,
+  Select,
+  Typography,
+} from "antd";
 import React from "react";
 import { useLoaderData } from "react-router-dom";
 import { LoaderValues, UpdateDefaultValues } from "./CreateNcbiExport";
@@ -12,8 +21,10 @@ function CreateNcbiDefaultOptions({
     useLoaderData();
   return (
     <Collapse ghost>
-      <Collapse.Panel header="Default Sample Settings" key="1">
-        <p>These will be applied to all samples:</p>
+      <Collapse.Panel header={i18n("CreateNcbiExport.default.title")} key="1">
+        <Typography.Text strong>
+          {i18n("CreateNcbiExport.default.description")}
+        </Typography.Text>
         <Row gutter={[16, 16]}>
           <Col md={12} xs={24}>
             <Form.Item label={i18n("project.export.library_strategy.title")}>

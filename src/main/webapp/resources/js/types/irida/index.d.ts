@@ -4,7 +4,7 @@ export = IRIDA;
 export as namespace IRIDA;
 
 declare namespace IRIDA {
-  interface IridaBase {
+  interface BaseRecord {
     id: number;
     key: string;
     name: string;
@@ -12,7 +12,7 @@ declare namespace IRIDA {
     modifiedDate: Date;
   }
 
-  interface Announcement extends IridaBase {
+  interface Announcement extends BaseRecord {
     title: string;
     message: string;
     priority: boolean;
@@ -83,7 +83,7 @@ declare namespace IRIDA {
     files: SequencingObject[];
   }
 
-  interface Project extends IridaBase {
+  interface Project extends BaseRecord {
     description: string;
     organism: string;
     genomeSize: number;
@@ -98,7 +98,7 @@ declare namespace IRIDA {
 
   type ProjectMinimal = Pick<Project, "id" | "name">;
 
-  interface Sample extends IridaBase {
+  interface Sample extends BaseRecord {
     description: string;
     organism: string;
     isolate: string;
@@ -113,7 +113,7 @@ declare namespace IRIDA {
     sequenceFiles: SequencingObject[];
   }
 
-  interface SequencingObject extends Omit<IridaBase, "id" | "name"> {
+  interface SequencingObject extends Omit<BaseRecord, "id" | "name"> {
     identifier: number;
     label: string;
     fileSize: string;
@@ -132,7 +132,7 @@ declare namespace IRIDA {
     ROLE_TECHNICIAN = "ROLE_TECHNICIAN",
   }
 
-  interface User extends IridaBase {
+  interface User extends BaseRecord {
     username: string;
     email: string;
     firstName: string;

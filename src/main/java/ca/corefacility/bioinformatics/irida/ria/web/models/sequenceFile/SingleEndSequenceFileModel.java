@@ -1,12 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.ria.web.models.IridaBase;
+import ca.corefacility.bioinformatics.irida.ria.web.models.BaseRecord;
 
 /**
  * IRIDA UI model to represent {@link SingleEndSequenceFile}
  */
-public class SingleEndSequenceFileModel extends IridaBase {
+public class SingleEndSequenceFileModel extends BaseRecord {
 	private final SequenceFileModel file;
 
 	public SingleEndSequenceFileModel(SingleEndSequenceFile file) {
