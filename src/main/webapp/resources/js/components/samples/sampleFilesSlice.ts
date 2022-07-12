@@ -102,7 +102,7 @@ const initialState = (() => {
   return {
     files: {},
     loading: true,
-    concatenateSelected: [],
+    concatenateSelected: [] as any[],
   };
 })();
 
@@ -290,7 +290,7 @@ const sampleFilesSlice = createSlice({
     builder.addCase(resetConcatenateSelected, (state) => {
       state.concatenateSelected = [];
     });
-  }
+  },
 });
 
 export default sampleFilesSlice.reducer;

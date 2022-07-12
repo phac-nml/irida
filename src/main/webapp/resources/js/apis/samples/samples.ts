@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
@@ -15,7 +14,7 @@ export const sampleApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: setBaseUrl(URL),
   }),
-  tagTypes: ["SampleDetails"],
+  tagTypes: ["SampleDetails", "SampleMetadata"],
   endpoints: (build) => ({
     /*
     Get the default information about a sample
@@ -132,7 +131,13 @@ export const {
  * @param {Object} params
  * @returns {Promise<{}|T>}
  */
-export const fetchMetadataForSample = async ({ sampleId, projectId }) => {
+export const fetchMetadataForSample = async ({
+  sampleId,
+  projectId,
+}: {
+  sampleId: number;
+  projectId: number;
+}) => {
   try {
     const { data } = await axios.get(
       setBaseUrl(`${URL}/${sampleId}/metadata?projectId=${projectId}`)
@@ -149,29 +154,33 @@ export const fetchMetadataForSample = async ({ sampleId, projectId }) => {
  * @param {number} projectId - identifier for a project (if the sample is in the cart), not required.
  * @returns {Promise<any>}
  */
-export async function fetchSampleFiles({ sampleId, projectId }) {
+export async function fetchSampleFiles({
+  sampleId,
+  projectId,
+}: {
+  sampleId: number;
+  projectId: number;
+}) {
   try {
     const response = await axios.get(
       `${URL}/${sampleId}/files${projectId && `?projectId=${projectId}`}`
     );
     return response.data;
-  } catch (e) {
+  } catch (e: any) {
     return Promise.reject(e.response.data);
   }
 }
-
-
 
 /**
  * Get analyses ran for sample
  * @param {number} sampleId - identifier for a sample
  * @returns {Promise<any>}
  */
-export async function fetchSampleAnalyses({ sampleId }) {
+export async function fetchSampleAnalyses({ sampleId }: { sampleId: number }) {
   try {
     const response = await axios.get(`${URL}/${sampleId}/analyses`);
     return response.data;
-  } catch (e) {
+  } catch (e: any) {
     return Promise.reject(e.response.data);
   }
 }
@@ -187,6 +196,10 @@ export async function fetchUpdatedSequencingObjects({
   sampleId,
   projectId,
   sequencingObjectIds,
+}: {
+  sampleId: number;
+  projectId: number;
+  sequencingObjectIds: string[];
 }) {
   try {
     const response = await axios.get(
@@ -195,7 +208,7 @@ export async function fetchUpdatedSequencingObjects({
       }`
     );
     return response.data;
-  } catch (e) {
+  } catch (e: any) {
     return Promise.reject(e.response.data);
   }
 }
@@ -206,7 +219,13 @@ export async function fetchUpdatedSequencingObjects({
  * @param {number} genomeAssemblyId - identifier for the genomeassembly to download
  * @returns {Promise<any>}
  */
-export function downloadGenomeAssemblyFile({ sampleId, genomeAssemblyId }) {
+export function downloadGenomeAssemblyFile({
+  sampleId,
+  genomeAssemblyId,
+}: {
+  sampleId: number;
+  genomeAssemblyId: number;
+}) {
   window.open(
     `${URL}/${sampleId}/assembly/download?genomeAssemblyId=${genomeAssemblyId}`,
     "_blank"
@@ -222,6 +241,9 @@ export function downloadGenomeAssemblyFile({ sampleId, genomeAssemblyId }) {
 export function downloadSequencingObjectFile({
   sequencingObjectId,
   sequenceFileId,
+}: {
+  sequencingObjectId: number;
+  sequenceFileId: number;
 }) {
   window.open(
     `${SEQUENCE_FILES_AJAX_URL}/download?sequencingObjectId=${sequencingObjectId}&sequenceFileId=${sequenceFileId}`,
@@ -236,7 +258,15 @@ export function downloadSequencingObjectFile({
  * @param config - configuration for the upload
  * @returns {Promise<any>}
  */
-export async function uploadSequenceFiles({ sampleId, formData, config }) {
+export async function uploadSequenceFiles({
+  sampleId,
+  formData,
+  config,
+}: {
+  sampleId: number;
+  formData: any;
+  config: {};
+}) {
   try {
     const response = await axios.post(
       `${URL}/${sampleId}/sequenceFiles/upload`,
@@ -244,7 +274,7 @@ export async function uploadSequenceFiles({ sampleId, formData, config }) {
       config
     );
     return response.data;
-  } catch (e) {
+  } catch (e: any) {
     return Promise.reject(e.response.data);
   }
 }
@@ -256,7 +286,15 @@ export async function uploadSequenceFiles({ sampleId, formData, config }) {
  * @param config - configuration for the upload
  * @returns {Promise<any>}
  */
-export async function uploadAssemblyFiles({ sampleId, formData, config }) {
+export async function uploadAssemblyFiles({
+  sampleId,
+  formData,
+  config,
+}: {
+  sampleId: number;
+  formData: any;
+  config: {};
+}) {
   try {
     const response = await axios.post(
       `${URL}/${sampleId}/assemblies/upload`,
@@ -264,7 +302,7 @@ export async function uploadAssemblyFiles({ sampleId, formData, config }) {
       config
     );
     return response.data;
-  } catch (e) {
+  } catch (e: any) {
     return Promise.reject(e.response.data);
   }
 }
@@ -276,7 +314,15 @@ export async function uploadAssemblyFiles({ sampleId, formData, config }) {
  * @param config - configuration for the upload
  * @returns {Promise<any>}
  */
-export async function uploadFast5Files({ sampleId, formData, config }) {
+export async function uploadFast5Files({
+  sampleId,
+  formData,
+  config,
+}: {
+  sampleId: number;
+  formData: any;
+  config: {};
+}) {
   try {
     const response = await axios.post(
       `${URL}/${sampleId}/fast5/upload`,
@@ -284,8 +330,7 @@ export async function uploadFast5Files({ sampleId, formData, config }) {
       config
     );
     return response.data;
-  } catch (e) {
+  } catch (e: any) {
     return Promise.reject(e.response.data);
   }
 }
-

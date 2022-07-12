@@ -14,7 +14,15 @@ import { SPACE_SM } from "../../styles/spacing";
  * @returns {Element} - Returns a 'Spin' component from antd with optional text
  */
 
-export function ContentLoading({ message = "Loading", ...props }) {
+export interface ContentLoadingProps {
+  message: string;
+  props: any;
+}
+
+export function ContentLoading({
+  message = "Loading",
+  ...props
+}: ContentLoadingProps): JSX.Element {
   return (
     <span>
       <Spin {...props} style={{ marginRight: SPACE_SM }} />

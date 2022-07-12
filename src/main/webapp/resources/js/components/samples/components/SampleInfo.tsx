@@ -42,7 +42,7 @@ export function SampleInfo() {
   Updates the field with the provided value. If nothing has
   changed then no updates are done.
    */
-  const updateField = (field, value) => {
+  const updateField = (field: string, value: string) => {
     /*
     Make sure the value actually changed, if it hasn't then don't update it.
      */
@@ -65,6 +65,10 @@ export function SampleInfo() {
       .catch((error) => {
         notification.error({ message: error.data.error });
       });
+  };
+
+  const ontologyProps = {
+    className: "t-sample-organism",
   };
 
   const detailsData = [
@@ -124,8 +128,8 @@ export function SampleInfo() {
           <OntologyInput
             term={sample.organism}
             ontology={TAXONOMY}
-            onTermSelected={(value) => updateField("organism", value)}
-            className="t-sample-organism"
+            onTermSelected={(value: string) => updateField("organism", value)}
+            props={ontologyProps}
             autofocus={false}
           />
         </EditableParagraph>
@@ -258,11 +262,12 @@ export function SampleInfo() {
     },
   ];
 
-  const renderDetailsListItem = ({ index, style }) => {
+  const renderDetailsListItem = ({ index, style }: ListStyles) => {
+    const concatenatedStyle = { ...style, padding: 15 };
     const item = detailsData[index];
 
     return (
-      <List.Item style={{ ...style, padding: 15 }}>
+      <List.Item {...concatenatedStyle}>
         <List.Item.Meta title={item.title} description={item.value} />
       </List.Item>
     );

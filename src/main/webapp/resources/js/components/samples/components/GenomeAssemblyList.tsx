@@ -10,7 +10,13 @@ import { useUpdateDefaultSampleGenomeAssemblyMutation } from "../../../apis/samp
 import { setDefaultGenomeAssembly } from "../sampleSlice";
 
 export interface GenomeAssemblyListProps {
-  removeSampleFiles: ({ fileObjectId: number, type: string }) => void;
+  removeSampleFiles: ({
+    fileObjectId,
+    type,
+  }: {
+    fileObjectId: number;
+    type: string;
+  }) => void;
 }
 /**
  * React component to display, remove, download genome assemblies
@@ -35,7 +41,13 @@ export function GenomeAssemblyList({
   /*
    Download genome assembly files
    */
-  const downloadAssemblyFile = ({ sampleId, genomeAssemblyId }) => {
+  const downloadAssemblyFile = ({
+    sampleId,
+    genomeAssemblyId,
+  }: {
+    sampleId: number;
+    genomeAssemblyId: number;
+  }) => {
     notification.success({
       message: i18n("SampleFiles.startingAssemblyDownload"),
     });
@@ -45,7 +57,7 @@ export function GenomeAssemblyList({
   /*
   Set default genome assembly for sample to be used for analyses
    */
-  const updateDefaultGenomeAssembly = (genomeAssembly) => {
+  const updateDefaultGenomeAssembly = (genomeAssembly: any) => {
     const { fileInfo: genomeAssemblyObj } = genomeAssembly;
 
     updateSampleDefaultGenomeAssembly({
@@ -64,7 +76,7 @@ export function GenomeAssemblyList({
   /*
    Get the actions required for a Genome Assembly
    */
-  const getActionsForGenomeAssembly = (genomeAssembly, index) => {
+  const getActionsForGenomeAssembly = (genomeAssembly: any, index: number) => {
     const { fileInfo: genomeAssemblyObj } = genomeAssembly;
     let actions = [];
 

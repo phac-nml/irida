@@ -33,7 +33,7 @@ export function OverRepresentedSequences() {
       title: i18n("FastQC.overrepresented.sequence"),
       key: "sequence",
       dataIndex: "sequence",
-      render(data) {
+      render(data: string) {
         // Display sequence in monospace font
         return <Monospace>{data}</Monospace>;
       },
@@ -42,7 +42,7 @@ export function OverRepresentedSequences() {
       title: i18n("FastQC.overrepresented.percentage"),
       key: "percentage",
       dataIndex: "percentage",
-      render(data) {
+      render(data: number) {
         // Round to the nearest 10th and display 1 decimal point
         return `${(Math.round(data * 10) / 10).toFixed(1)} %`;
       },

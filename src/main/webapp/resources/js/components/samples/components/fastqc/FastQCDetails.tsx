@@ -79,11 +79,12 @@ export function FastQCDetails() {
     },
   ];
 
-  const renderDetailsListItem = ({ index, style }) => {
+  const renderDetailsListItem = ({ index, style }: ListStyles) => {
+    const concatenatedStyle = { ...style, padding: 15 };
     const item = fileDetails[index];
 
     return (
-      <List.Item style={{ ...style, padding: 15 }}>
+      <List.Item {...concatenatedStyle}>
         <List.Item.Meta
           title={item.title}
           description={item.desc}
@@ -97,7 +98,10 @@ export function FastQCDetails() {
     <>
       {loading ? (
         <div>
-          <ContentLoading message={i18n("FastQC.fetchingDetails")} />
+          <ContentLoading
+            message={i18n("FastQC.fetchingDetails")}
+            props={undefined}
+          />
         </div>
       ) : (
         <Row gutter={16}>

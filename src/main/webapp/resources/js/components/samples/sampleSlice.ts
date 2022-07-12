@@ -28,7 +28,7 @@ export const setProjectDetails = createAction(
  */
 export const fetchSampleMetadata = createAsyncThunk(
   `sample/fetchSampleMetadata`,
-  async ({ sampleId, projectId }) => {
+  async ({ sampleId, projectId }: { sampleId: number; projectId: number }) => {
     return await fetchMetadataForSample({ sampleId, projectId });
   }
 );

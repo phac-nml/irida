@@ -5,6 +5,12 @@ import { IconButton } from "../Buttons";
 import { blue6 } from "../../styles/colors";
 import { SPACE_XS } from "../../styles/spacing";
 
+export interface EditableParagraphProps {
+  value: string;
+  valueClassName: string;
+  children: React.ReactNode;
+}
+
 /**
  * React component to be used when the text field for the Ant Design Paragraph
  * editable is not enough, example you need a select input.
@@ -15,7 +21,11 @@ import { SPACE_XS } from "../../styles/spacing";
  * @returns {*}
  * @constructor
  */
-export function EditableParagraph({ value, valueClassName, children }) {
+export function EditableParagraph({
+  value,
+  valueClassName,
+  children,
+}: EditableParagraphProps): JSX.Element {
   const [editing, setEditing] = useState(false);
 
   useEffect(() => {

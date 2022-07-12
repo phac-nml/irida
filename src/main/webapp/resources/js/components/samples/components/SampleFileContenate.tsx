@@ -32,11 +32,15 @@ export interface SampleFileConcatenateProps {
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleFileConcatenate({ children }: SampleFileConcatenateProps): JSX.Element {
+export function SampleFileConcatenate({
+  children,
+}: SampleFileConcatenateProps): JSX.Element {
   const [visible, setVisible] = React.useState(false);
   const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const { sample } = useSelector((state: RootStateOrAny) => state.sampleReducer);
+  const { sample } = useSelector(
+    (state: RootStateOrAny) => state.sampleReducer
+  );
   const { concatenateSelected } = useSelector(
     (state: RootStateOrAny) => state.sampleFilesReducer
   );
@@ -49,7 +53,7 @@ export function SampleFileConcatenate({ children }: SampleFileConcatenateProps):
 
   const concatenateFiles = () => {
     let sequencingObjectIds = concatenateSelected.map(
-      (seqObject: { identifier: number; }) => seqObject.identifier
+      (seqObject: { identifier: number }) => seqObject.identifier
     );
 
     form.validateFields().then((values) => {
@@ -64,7 +68,7 @@ export function SampleFileConcatenate({ children }: SampleFileConcatenateProps):
 
           if (values.remove_original_files) {
             message = i18n("SampleFilesConcatenate.concatenationRemoveSuccess");
-            sequencingObjectIds.map((seqObjId) => {
+            sequencingObjectIds.map((seqObjId: number) => {
               dispatch(
                 removeFileObjectFromSample({
                   fileObjectId: seqObjId,
@@ -74,7 +78,7 @@ export function SampleFileConcatenate({ children }: SampleFileConcatenateProps):
             });
           }
 
-          dispatch(resetConcatenateSelected({}));
+          dispatch(resetConcatenateSelected());
           dispatch(addToSequenceFiles({ sequenceFiles: data }));
           notification.success({ message });
           form.resetFields();
@@ -97,7 +101,7 @@ export function SampleFileConcatenate({ children }: SampleFileConcatenateProps):
     let pairedCount = 0;
     let singleEndCount = 0;
 
-    concatenateSelected.map((selected) => {
+    concatenateSelected.map((selected: { files: any; sequenceFile: any }) => {
       if (selected.files !== undefined) {
         pairedCount++;
       } else if (selected.sequenceFile !== undefined) {
@@ -108,6 +112,10 @@ export function SampleFileConcatenate({ children }: SampleFileConcatenateProps):
     if (pairedCount === numFilesSelected) return true;
     if (singleEndCount === numFilesSelected) return true;
     return false;
+  };
+
+  const layoutProps = {
+    layout: "vertical",
   };
 
   return (
@@ -122,7 +130,7 @@ export function SampleFileConcatenate({ children }: SampleFileConcatenateProps):
               message: i18n("SampleFilesConcatenate.mixedFileTypesWarning"),
               duration: 10,
             });
-            dispatch(resetConcatenateSelected({}));
+            dispatch(resetConcatenateSelected());
           }
         },
       })}
@@ -130,7 +138,7 @@ export function SampleFileConcatenate({ children }: SampleFileConcatenateProps):
         <Modal
           className="t-concatenate-confirm-modal"
           onCancel={() => {
-            dispatch(resetConcatenateSelected({}));
+            dispatch(resetConcatenateSelected());
             setVisible(false);
           }}
           visible={visible}
@@ -145,9 +153,9 @@ export function SampleFileConcatenate({ children }: SampleFileConcatenateProps):
 
             <List
               bordered
-              layout={`vertical`}
+              {...layoutProps}
               dataSource={concatenateSelected}
-              renderItem={(seqObject) => {
+              renderItem={(seqObject: any) => {
                 if (seqObject.files !== undefined) {
                   return (
                     <>

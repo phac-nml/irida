@@ -3,8 +3,18 @@ import { Collapse, List, Progress } from "antd";
 
 const { Panel } = Collapse;
 
+export interface FileProps {
+  uid: string;
+  lastModified: number;
+  lastModifiedDate: Date;
+  name: string;
+  size: number;
+  type: string;
+  webkitRelativePath: string;
+}
+
 export interface FileUploadProgressProps {
-  files: any;
+  files: FileProps[];
   uploadProgress: number;
   type: string;
 }
@@ -23,6 +33,7 @@ export function FileUploadProgress({
   uploadProgress,
   type,
 }: FileUploadProgressProps): JSX.Element {
+  console.log(files);
   return (
     <div>
       {i18n("SampleFiles.uploadProgress", type)}
@@ -31,7 +42,7 @@ export function FileUploadProgress({
       <Collapse>
         <Panel header={i18n("SampleFiles.filesUploading", type)} key="1">
           <List split={false}>
-            {files.map((currFile: any, index: number) => {
+            {files.map((currFile, index) => {
               return (
                 <List.Item key={`${type}-file-${index}`}>
                   - {currFile.name}

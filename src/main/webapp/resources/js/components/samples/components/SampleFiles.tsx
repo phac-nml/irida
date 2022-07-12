@@ -95,7 +95,10 @@ export function SampleFiles() {
     if (sequenceFiles.length) {
       const seqFileUploadconfig = {
         headers: { "content-type": "multipart/form-data" },
-        onUploadProgress: (progressEvent) => {
+        onUploadProgress: (progressEvent: {
+          loaded: number;
+          total: number;
+        }) => {
           if (progressEvent.loaded === progressEvent.total) {
             setSequenceFiles([]);
             setSeqFileProgress(0);
@@ -133,7 +136,10 @@ export function SampleFiles() {
     if (assemblyFiles.length) {
       const assemblyUploadConfig = {
         headers: { "content-type": "multipart/form-data" },
-        onUploadProgress: (progressEvent) => {
+        onUploadProgress: (progressEvent: {
+          loaded: number;
+          total: number;
+        }) => {
           if (progressEvent.loaded === progressEvent.total) {
             setAssemblyFiles([]);
             setAssemblyProgress(0);
@@ -171,7 +177,10 @@ export function SampleFiles() {
     if (fast5Files.length) {
       const fast5UploadConfig = {
         headers: { "content-type": "multipart/form-data" },
-        onUploadProgress: (progressEvent) => {
+        onUploadProgress: (progressEvent: {
+          loaded: number;
+          total: number;
+        }) => {
           if (progressEvent.loaded === progressEvent.total) {
             setFast5Files([]);
             setFast5Progress(0);
@@ -267,6 +276,8 @@ export function SampleFiles() {
     },
   };
 
+  const props = { className: "t-upload-sample-files" };
+
   return loading ? (
     <IconLoading />
   ) : (
@@ -275,10 +286,10 @@ export function SampleFiles() {
         <Col span={24}>
           <div>
             <DragUpload
-              className="t-upload-sample-files"
               uploadText={i18n("SampleFiles.uploadText")}
               uploadHint={i18n("SampleFiles.uploadHint")}
               options={sampleFileUploadOptions}
+              props={props}
             />
           </div>
           <div>

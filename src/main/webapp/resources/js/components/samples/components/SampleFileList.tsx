@@ -17,13 +17,23 @@ export function SampleFileList() {
   const dispatch = useDispatch();
   const [removeSampleFilesFromSample] = useRemoveSampleFilesMutation();
 
-  const { sample } = useSelector((state: RootStateOrAny) => state.sampleReducer);
-  const { files } = useSelector((state: RootStateOrAny) => state.sampleFilesReducer);
+  const { sample } = useSelector(
+    (state: RootStateOrAny) => state.sampleReducer
+  );
+  const { files } = useSelector(
+    (state: RootStateOrAny) => state.sampleFilesReducer
+  );
 
   /*
   Remove sequencing objects and/or genome assembly objects from sample
    */
-  const removeSampleFiles = ({ fileObjectId, type }) => {
+  const removeSampleFiles = ({
+    fileObjectId,
+    type,
+  }: {
+    fileObjectId: number;
+    type: string;
+  }) => {
     removeSampleFilesFromSample({
       sampleId: sample.identifier,
       fileObjectId,

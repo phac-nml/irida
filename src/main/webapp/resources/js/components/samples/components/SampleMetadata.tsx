@@ -68,12 +68,13 @@ export function SampleMetadata() {
       });
   };
 
-  const renderMetadataFieldListItem = ({ index, style }) => {
+  const renderMetadataFieldListItem = ({ index, style }: ListStyles) => {
+    const concatenatedStyle = { ...style, paddingRight: 15 };
     const item = metadata[index];
     return (
       <List.Item
         className="t-sample-details-metadata-item"
-        style={{ ...style, paddingRight: "15px" }}
+        {...concatenatedStyle}
       >
         <List.Item.Meta
           title={

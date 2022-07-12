@@ -5,6 +5,14 @@ import { useDebounce } from "../../hooks";
 
 const { Option } = AutoComplete;
 
+export interface OntologyInputProps {
+  term: string;
+  onTermSelected: any;
+  ontology: string;
+  autofocus: boolean;
+  props: any;
+}
+
 /**
  * Component to render a AutoComplete input to search for a term in an ontology.
  *
@@ -20,7 +28,7 @@ export function OntologyInput({
   onTermSelected,
   ontology,
   autofocus = true,
-}) {
+}: OntologyInputProps): JSX.Element {
   const [options, setOptions] = useState([]);
   const [query, setQuery] = useState("");
   const selectRef = useRef();
@@ -86,7 +94,7 @@ export function OntologyInput({
       className="t-organism-input"
       allowClear={true}
       backfill={true}
-      ref={selectRef}
+      {...selectRef}
       showSearch
       defaultValue={term || ""}
       notFoundContent={null}

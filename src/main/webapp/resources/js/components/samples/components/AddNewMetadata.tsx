@@ -42,7 +42,7 @@ export function AddNewMetadata({ children }: AddNewMetadataProps): JSX.Element {
         metadataEntry: values.metadata_field_value,
         metadataRestriction: values.metadata_field_permission,
       })
-        .then((response) => {
+        .then((response: any) => {
           const resData = response.data;
           if (response.error) {
             notification.error({ message: response.error.data.error });

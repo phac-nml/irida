@@ -5,11 +5,11 @@ import { FastQCMenu } from "./FastQCMenu";
 const { Text } = Typography;
 import { IconArrowLeft } from "../../../icons/Icons";
 import { clearFastQCData, setFastQCDetails } from "./fastQCSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { getFastQCDetails } from "../../../../apis/files/sequence-files";
 import { InfoAlert } from "../../../alerts";
 
-const qcEntryTranslations = {
+const qcEntryTranslations: { [key: string]: any } = {
   UNPROCESSED: i18n("FastQC.sequencingobject.UNPROCESSED"),
   QUEUED: i18n("FastQC.sequencingobject.QUEUED"),
   ERRORED: i18n("FastQC.sequencingobject.ERRORED"),
@@ -31,7 +31,7 @@ export function FastQC() {
     fileId,
     fastQC,
     processingState,
-  } = useSelector((state) => state.fastQCReducer);
+  } = useSelector((state: RootStateOrAny) => state.fastQCReducer);
 
   React.useEffect(() => {
     getFastQCDetails(sequencingObjectId, fileId).then(
@@ -46,6 +46,10 @@ export function FastQC() {
       }
     );
   }, [sequencingObjectId, fileId]);
+
+  const textLevel = {
+    level: 3,
+  };
 
   return (
     <Modal
@@ -64,7 +68,7 @@ export function FastQC() {
             className="t-fastqc-modal-close"
             icon={<IconArrowLeft />}
           />
-          <Text level={3} strong className="t-fastqc-modal-file-name">
+          <Text {...textLevel} strong className="t-fastqc-modal-file-name">
             {fileLabel}
           </Text>
         </Space>

@@ -123,7 +123,7 @@ function DisplaySampleDetails({
                   alignItems: "center",
                 }}
               >
-                <Space direction="horiztontal" size="small">
+                <Space direction="horizontal" size="small">
                   <Text className="t-sample-details-name" strong>
                     {details.sample.sampleName}
                   </Text>
