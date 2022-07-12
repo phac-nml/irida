@@ -211,7 +211,6 @@ function CreateNcbiExport(): JSX.Element {
                         ]}
                         label={i18n("CreateNcbiExport.release_date.title")}
                         help={i18n("CreateNcbiExport.release_date.description")}
-                        name="release_date"
                       >
                         <DatePicker
                           style={{ width: "100%" }}
@@ -221,7 +220,7 @@ function CreateNcbiExport(): JSX.Element {
                     </Col>
                   </Row>
                 </Card>
-                <Card title={"Samples"}>
+                <Card title={i18n("CreateNcbiExport.samples")}>
                   <CreateNcbiDefaultOptions onChange={updateDefaultValue} />
                   <CreateNcbiExportSamples form={form} />
                 </Card>
