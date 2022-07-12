@@ -21,9 +21,9 @@ export const projectsApi = createApi({
         url: `/samples-share/projects?currentId=${currentId}`,
       }),
     }),
-    getProjectsForUser: build.query({
+    getProjectNamesForUser: build.query({
       query: () => ({
-        url: `/user`,
+        url: `/names`,
       }),
     }),
   }),
@@ -31,7 +31,7 @@ export const projectsApi = createApi({
 
 export const {
   useGetPotentialProjectsToShareToQuery,
-  useGetProjectsForUserQuery,
+  useGetProjectNamesForUserQuery,
 } = projectsApi;
 
 /**

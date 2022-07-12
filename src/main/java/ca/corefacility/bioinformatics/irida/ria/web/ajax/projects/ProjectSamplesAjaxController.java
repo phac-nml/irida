@@ -62,6 +62,17 @@ public class ProjectSamplesAjaxController {
 	}
 
 	/**
+	 * Get a list of sample names for a project
+	 *
+	 * @param projectId Identifier for the current project
+	 * @return a list of sample names
+	 */
+	@RequestMapping("/names")
+	public ResponseEntity<AjaxResponse> getSampleNamesForProject(@PathVariable Long projectId) {
+		return ResponseEntity.ok(uiSampleService.getSampleNamesForProject(projectId));
+	}
+
+	/**
 	 * Create a new sample within a project
 	 *
 	 * @param request   Details about the sample - name and organism

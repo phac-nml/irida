@@ -55,9 +55,9 @@ public class ProjectsAjaxController {
 	 *
 	 * @return {@link List} of {@link Project}s
 	 */
-	@RequestMapping("/user")
-	public ResponseEntity<AjaxResponse> getProjectsForUser() {
-		return ResponseEntity.ok(projectsService.getProjects());
+	@RequestMapping("/names")
+	public ResponseEntity<AjaxResponse> getProjectNamesForUser() {
+		return ResponseEntity.ok(projectsService.getProjectNameForUser());
 	}
 
 	/**

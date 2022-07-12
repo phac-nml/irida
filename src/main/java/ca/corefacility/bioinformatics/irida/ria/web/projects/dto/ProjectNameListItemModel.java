@@ -3,11 +3,11 @@ package ca.corefacility.bioinformatics.irida.ria.web.projects.dto;
 /**
  * Model for UI to represent a project list item.
  */
-public class ProjectListItemModel {
+public class ProjectNameListItemModel {
 	private Long id;
 	private String name;
 
-	public ProjectListItemModel(Long id, String name) {
+	public ProjectNameListItemModel(Long id, String name) {
 		this.id = id;
 		this.name = name;
 	}

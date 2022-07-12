@@ -137,13 +137,13 @@ public class UIProjectsService {
 	 *
 	 * @return {@link List} of {@link Project}s
 	 */
-	public ProjectListResponse getProjects() {
-		List<ProjectListItemModel> projects = projectService.getProjects()
+	public ProjectNameListResponse getProjectNameForUser() {
+		List<ProjectNameListItemModel> projects = projectService.getProjects()
 				.stream()
-				.map(project -> new ProjectListItemModel(project.getId(), project.getName()))
+				.map(project -> new ProjectNameListItemModel(project.getId(), project.getName()))
 				.collect(Collectors.toList());
 
-		return new ProjectListResponse(projects);
+		return new ProjectNameListResponse(projects);
 	}
 
 	/**

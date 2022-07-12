@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { sequencingRunsApi } from "../../apis/sequencing-runs/sequencing-runs";
 import { runReducer } from "./services/runReducer";
 import { projectsApi } from "../../apis/projects/projects";
+import { samplesApi } from "../../apis/projects/samples";
 
 /*
 Redux Store for sequencing runs.
@@ -12,10 +13,12 @@ export default configureStore({
     reducer: runReducer,
     [sequencingRunsApi.reducerPath]: sequencingRunsApi.reducer,
     [projectsApi.reducerPath]: projectsApi.reducer,
+    [samplesApi.reducerPath]: samplesApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       sequencingRunsApi.middleware,
-      projectsApi.middleware
+      projectsApi.middleware,
+      samplesApi.middleware
     ),
 });

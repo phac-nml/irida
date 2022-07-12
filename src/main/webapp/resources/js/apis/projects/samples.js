@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
 
 const PROJECT_ID = getProjectIdFromUrl();
-const URL = setBaseUrl(`/ajax/projects/${PROJECT_ID}/samples`);
+const URL = setBaseUrl(`/ajax/projects`);
 
 /**
  * Redux API for handling project samples queries.
@@ -14,26 +14,29 @@ export const samplesApi = createApi({
     baseUrl: URL,
   }),
   endpoints: (builder) => ({
+    getSampleNamesForProject: builder.query({
+      query: (projectId) => ({ url: `${projectId}/samples/names` }),
+    }),
     listSamples: builder.query({
       query: (body) => ({ method: "POST", body }),
     }),
     merge: builder.mutation({
       query: ({ projectId, request }) => ({
-        url: "/merge",
+        url: "/${PROJECT_ID}/samples/merge",
         method: "POST",
         body: request,
       }),
     }),
     remove: builder.mutation({
       query: (sampleIds) => ({
-        url: "/remove",
+        url: "/${PROJECT_ID}/samples/remove",
         method: "DELETE",
         body: { sampleIds },
       }),
     }),
     shareSamplesWithProject: builder.mutation({
       query: (body) => ({
-        url: `/share`,
+        url: `/${PROJECT_ID}/samples/share`,
         method: `POST`,
         body,
       }),
@@ -41,13 +44,14 @@ export const samplesApi = createApi({
     //TODO: This should not be in the slice but async thunk (update in metadata security)
     getSampleIdsForProject: builder.query({
       query: (projectId) => ({
-        url: `/identifiers?id=${projectId}`,
+        url: `/${PROJECT_ID}/samples/identifiers?id=${projectId}`,
       }),
     }),
   }),
 });
 
 export const {
+  useGetSampleNamesForProjectQuery,
   useListSamplesQuery,
   useMergeMutation,
   useRemoveMutation,

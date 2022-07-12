@@ -7,15 +7,15 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 /**
  * Return a list of projects.
  */
-public class ProjectListResponse extends AjaxResponse {
+public class ProjectNameListResponse extends AjaxResponse {
 
-	private List<ProjectListItemModel> projects;
+	private List<ProjectNameListItemModel> projects;
 
-	public ProjectListResponse(List<ProjectListItemModel> projects) {
+	public ProjectNameListResponse(List<ProjectNameListItemModel> projects) {
 		this.projects = projects;
 	}
 
-	public List<ProjectListItemModel> getProjects() {
+	public List<ProjectNameListItemModel> getProjects() {
 		return projects;
 	}
 

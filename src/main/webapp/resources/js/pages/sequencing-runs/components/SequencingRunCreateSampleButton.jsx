@@ -1,14 +1,14 @@
 import React from "react";
-import { AutoComplete, Form, Input, Modal, Select } from "antd";
+import { AutoComplete, Form, Input, Modal, Radio, Select } from "antd";
 import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 import { addSample } from "../services/runReducer";
 import { useDispatch } from "react-redux";
 import {
-  createNewSample,
+  useGetSampleNamesForProjectQuery,
   validateSampleName,
 } from "../../../apis/projects/samples";
 import searchOntology from "../../../apis/ontology/taxonomy/query";
-import { useGetProjectsForUserQuery } from "../../../apis/projects/projects";
+import { useGetProjectNamesForUserQuery } from "../../../apis/projects/projects";
 
 /**
  * React component to display the sequencing run create new sample modal.
@@ -18,13 +18,25 @@ import { useGetProjectsForUserQuery } from "../../../apis/projects/projects";
  */
 export function SequencingRunCreateSampleButton() {
   const dispatch = useDispatch();
+  const [projectId, setProjectId] = React.useState();
+  const [isSampleNew, setIsSampleNew] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
   const [organisms, setOrganisms] = React.useState([]);
+  const [showSampleSection, setShowSampleSection] = React.useState(false);
   const [form] = Form.useForm();
 
-  const { data = {} } = useGetProjectsForUserQuery();
+  const { data: projects = {} } = useGetProjectNamesForUserQuery();
+  const { data: samples = {} } = useGetSampleNamesForProjectQuery(projectId, {
+    skip: !showSampleSection,
+  });
 
-  const options = data.projects?.map((project) => (
+  const sampleOptions = samples.samples?.map((sample) => (
+    <Select.Option value={sample.id} key={`sample-list-item-${sample.id}`}>
+      {sample.id + " - " + sample.name}
+    </Select.Option>
+  ));
+
+  const projectOptions = projects.projects?.map((project) => (
     <Select.Option value={project.id} key={`project-list-item-${project.id}`}>
       {project.id + " - " + project.name}
     </Select.Option>
@@ -32,12 +44,6 @@ export function SequencingRunCreateSampleButton() {
 
   const addNewSample = () => {
     setVisible(true);
-    dispatch(
-      addSample({
-        sampleName: "New Sample",
-        pairs: [],
-      })
-    );
   };
 
   const validateName = async (value) => {
@@ -66,6 +72,16 @@ export function SequencingRunCreateSampleButton() {
     setOrganisms(data.reduce(optionsReducer, []));
   };
 
+  const onNewSampleChange = ({ target: { value } }) => {
+    console.log("is new sample value ", value);
+    setIsSampleNew(value);
+  };
+
+  const onProjectChange = (value) => {
+    setProjectId(value);
+    setShowSampleSection(true);
+  };
+
   const onCancel = () => {
     setVisible(false);
     form.resetFields();
@@ -73,9 +89,13 @@ export function SequencingRunCreateSampleButton() {
 
   const onOk = () => {
     form.validateFields().then((values) => {
-      createNewSample(values).then(() => {
-        form.resetFields();
-      });
+      dispatch(
+        addSample({
+          sampleName: "New Sample",
+          pairs: [],
+        })
+      );
+      form.resetFields();
     });
   };
 
@@ -96,35 +116,55 @@ export function SequencingRunCreateSampleButton() {
           form={form}
           initialValues={{
             project: "",
+            isSampleNew,
             sample_name: "",
             organism: "",
           }}
           layout="vertical"
         >
           <Form.Item name="project" label="Project">
-            <Select showSearch>{options}</Select>
+            <Select showSearch onChange={onProjectChange}>
+              {projectOptions}
+            </Select>
           </Form.Item>
-          <Form.Item
-            name="sample_name"
-            label="Sample Name"
-            rules={[
-              ({}) => ({
-                validator(_, value) {
-                  return validateName(value);
-                },
-              }),
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item name="organism" label="Organism">
-            <AutoComplete
-              allowClear={true}
-              backfill={true}
-              onSearch={searchOrganism}
-              options={organisms}
-            />
-          </Form.Item>
+          {showSampleSection && (
+            <Form.Item name="isSampleNew">
+              <Radio.Group onChange={onNewSampleChange}>
+                <Radio.Button value={true}>New</Radio.Button>
+                <Radio.Button value={false}>Existing</Radio.Button>
+              </Radio.Group>
+            </Form.Item>
+          )}
+          {showSampleSection && !isSampleNew && (
+            <Form.Item name="sample" label="Sample">
+              <Select showSearch>{sampleOptions}</Select>
+            </Form.Item>
+          )}
+          {showSampleSection && isSampleNew && (
+            <>
+              <Form.Item
+                name="sample_name"
+                label="Sample Name"
+                rules={[
+                  ({}) => ({
+                    validator(_, value) {
+                      return validateName(value);
+                    },
+                  }),
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item name="organism" label="Organism">
+                <AutoComplete
+                  allowClear={true}
+                  backfill={true}
+                  onSearch={searchOrganism}
+                  options={organisms}
+                />
+              </Form.Item>
+            </>
+          )}
         </Form>
       </Modal>
     </>
