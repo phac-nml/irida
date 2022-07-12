@@ -33,10 +33,11 @@ export async function loader({
   if (projectId && id) {
     return getNcbiSubmission(parseInt(projectId), parseInt(id)).then(
       (submission: NcbiSubmission): LoaderType => {
-        const { bioSampleFiles, ...info } = submission;
+        const { bioSamples, ...info } = submission;
         const details = formatNcbiSubmissionDetails(info);
-        const bioSamples = formatNcbiBioSampleFiles(bioSampleFiles);
-        return [details, bioSamples];
+        const bioSampleDetails = formatNcbiBioSampleFiles(bioSamples);
+        console.log({ bioSampleDetails, details });
+        return [details, bioSampleDetails];
       }
     );
   } else {
@@ -49,7 +50,7 @@ export async function loader({
  * @constructor
  */
 function NcbiExportDetailsView(): JSX.Element {
-  const [details, bioSampleFiles]: LoaderType = useLoaderData();
+  const [details, bioSamplesDetails]: LoaderType = useLoaderData();
 
   return (
     <Space direction="vertical" style={{ width: `100%` }}>
@@ -63,25 +64,25 @@ function NcbiExportDetailsView(): JSX.Element {
         level={5}
         style={{ color: `var(--grey-7)`, marginTop: SPACE_LG }}
       >
-        {i18n("NcbiExportDetailsView.files")}
+        {i18n("NcbiSubmission.bioSamples")}
       </Typography.Title>
-      {bioSampleFiles.map((bioSampleFile: BioSampleDetails) => {
+      {bioSamplesDetails.map((bioSample: BioSampleDetails) => {
         return (
-          <Card key={bioSampleFile.key}>
+          <Card key={bioSample.key}>
             <Space
-              key={bioSampleFile.key}
+              key={bioSample.key}
               direction="vertical"
               style={{ width: `100%` }}
             >
               <BasicList
                 grid={{ gutter: 16, column: 2 }}
-                dataSource={bioSampleFile.details}
+                dataSource={bioSample.details}
               />
 
-              {bioSampleFile.files.pairs.length > 0 && (
+              {bioSample.files.pairs.length > 0 && (
                 <List
                   size="small"
-                  dataSource={bioSampleFile.files.pairs}
+                  dataSource={bioSample.files.pairs}
                   renderItem={(pair: PairedEndSequenceFile) => (
                     <List.Item className={"t-pair"}>
                       <div
@@ -121,10 +122,10 @@ function NcbiExportDetailsView(): JSX.Element {
                 />
               )}
 
-              {bioSampleFile.files.singles.length > 0 && (
+              {bioSample.files.singles.length > 0 && (
                 <List
                   size="small"
-                  dataSource={bioSampleFile.files.singles}
+                  dataSource={bioSample.files.singles}
                   renderItem={(file: SingleEndSequenceFile) => (
                     <List.Item className="t-single">
                       <div

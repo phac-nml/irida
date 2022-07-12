@@ -74,7 +74,7 @@ declare namespace IRIDA {
     bioProject: string;
     ncbiNamespace: string;
     releaseDate: Date | null;
-    bioSampleFiles: NcbiBioSample[];
+    bioSamples: NcbiBioSample[];
   }
 
   type NcbiStrategy = string;

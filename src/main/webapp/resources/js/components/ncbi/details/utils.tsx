@@ -15,7 +15,7 @@ import ExportUploadStateTag from "../ExportUploadStateTag";
  * @param submission
  */
 export const formatNcbiSubmissionDetails = (
-  submission: Omit<NcbiSubmission, "bioSampleFiles">
+  submission: Omit<NcbiSubmission, "bioSamples">
 ): BasicListItem[] => {
   const releaseDate = submission.releaseDate
     ? formatInternationalizedDateTime(submission.releaseDate)
