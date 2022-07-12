@@ -27,7 +27,7 @@ function CreateNcbiDefaultOptions({
         </Typography.Text>
         <Row gutter={[16, 16]}>
           <Col md={12} xs={24}>
-            <Form.Item label={i18n("project.export.library_strategy.title")}>
+            <Form.Item label={i18n("CreateNcbiExport.library_strategy")}>
               <Select onChange={(value) => onChange("library_strategy", value)}>
                 {strategies?.map((option: string) => (
                   <Select.Option key={option}>{option}</Select.Option>
@@ -36,7 +36,7 @@ function CreateNcbiDefaultOptions({
             </Form.Item>
           </Col>
           <Col md={12} xs={24}>
-            <Form.Item label={i18n("project.export.library_source.title")}>
+            <Form.Item label={i18n("CreateNcbiExport.library_source")}>
               <Select
                 onSelect={(value: string) => onChange("library_source", value)}
               >
@@ -48,7 +48,7 @@ function CreateNcbiDefaultOptions({
           </Col>
           <Col md={12} xs={24}>
             <Form.Item
-              label={i18n("project.export.library_construction_protocol.title")}
+              label={i18n("CreateNcbiExport.library_construction_protocol")}
             >
               <Input
                 type="text"
@@ -59,7 +59,7 @@ function CreateNcbiDefaultOptions({
             </Form.Item>
           </Col>
           <Col md={12} xs={24}>
-            <Form.Item label={i18n("project.export.instrument_model.title")}>
+            <Form.Item label={i18n("CreateNcbiExport.instrument_model")}>
               <Cascader
                 options={platforms}
                 onChange={(value) =>
@@ -69,7 +69,7 @@ function CreateNcbiDefaultOptions({
             </Form.Item>
           </Col>
           <Col md={12} xs={24}>
-            <Form.Item label={i18n("project.export.library_selection.title")}>
+            <Form.Item label={i18n("CreateNcbiExport.library_selection")}>
               <Select
                 onSelect={(value: string) =>
                   onChange("library_selection", value)

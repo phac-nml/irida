@@ -21,6 +21,13 @@ import React from "react";
 import { useLoaderData } from "react-router-dom";
 import { LoaderValues, SampleRecord, SampleRecords } from "./CreateNcbiExport";
 
+const rules = [
+  {
+    required: true,
+    message: i18n("CreateNcbiExport.required"),
+  },
+];
+
 function SampleDetails({
   sample,
   onChange,
@@ -35,7 +42,7 @@ function SampleDetails({
     <Row gutter={[16, 16]}>
       <Col md={12} xs={24}>
         <Form.Item
-          rules={[{ required: true, message: "BioSample ID is required" }]}
+          rules={rules}
           name={["samples", sample.name, "biosample"]}
           label={i18n("CreateNcbiExport.biosample-id")}
         >
@@ -44,18 +51,18 @@ function SampleDetails({
       </Col>
       <Col md={12} xs={24}>
         <Form.Item
-          rules={[{ required: true, message: "Library Name is required" }]}
+          rules={rules}
           name={["samples", sample.name, "library_name"]}
-          label={i18n("project.export.library_name.title")}
+          label={i18n("CreateNcbiExport.library_name")}
         >
           <Input type="text" onChange={onChange} />
         </Form.Item>
       </Col>
       <Col md={12} xs={24}>
         <Form.Item
-          rules={[{ required: true, message: "Library Strategy is required" }]}
+          rules={rules}
           name={["samples", sample.name, "library_strategy"]}
-          label={i18n("project.export.library_strategy.title")}
+          label={i18n("CreateNcbiExport.library_strategy")}
         >
           <Select style={{ display: "block" }} onChange={onChange}>
             {strategies?.map((option: string) => (
@@ -66,9 +73,9 @@ function SampleDetails({
       </Col>
       <Col md={12} xs={24}>
         <Form.Item
-          rules={[{ required: true, message: "Library Source is required" }]}
+          rules={rules}
           name={["samples", sample.name, "library_source"]}
-          label={i18n("project.export.library_source.title")}
+          label={i18n("CreateNcbiExport.library_source")}
         >
           <Select style={{ display: "block" }} onChange={onChange}>
             {sources.map((option: string) => (
@@ -79,28 +86,18 @@ function SampleDetails({
       </Col>
       <Col md={12} xs={24}>
         <Form.Item
-          rules={[
-            {
-              required: true,
-              message: "Library Construction Protocol is required",
-            },
-          ]}
+          rules={rules}
           name={["samples", sample.name, "library_construction_protocol"]}
-          label={i18n("project.export.library_construction_protocol.title")}
+          label={i18n("CreateNcbiExport.library_construction_protocol")}
         >
           <Input type="text" onChange={onChange} />
         </Form.Item>
       </Col>
       <Col md={12} xs={24}>
         <Form.Item
-          rules={[
-            {
-              required: true,
-              message: "Interment Model is required",
-            },
-          ]}
+          rules={rules}
           name={["samples", sample.name, "instrument_model"]}
-          label={i18n("project.export.instrument_model.title")}
+          label={i18n("CreateNcbiExport.instrument_model")}
         >
           <Cascader
             options={platforms}
@@ -111,14 +108,9 @@ function SampleDetails({
       </Col>
       <Col md={12} xs={24}>
         <Form.Item
-          rules={[
-            {
-              required: true,
-              message: "Library Selection is required",
-            },
-          ]}
+          rules={rules}
           name={["samples", sample.name, "library_selection"]}
-          label={i18n("project.export.library_selection.title")}
+          label={i18n("CreateNcbiExport.library_selection")}
         >
           <Select style={{ display: "block" }} onChange={onChange}>
             {selections.map((option) => (
@@ -130,11 +122,11 @@ function SampleDetails({
       <Col span={24}>
         <Form.Item
           name={["samples", sample.name, "file"]}
-          label={"_Sequencing Files_"}
+          label={i18n("CreateNcbiExport.files.title")}
           rules={[
             {
               required: true,
-              message: "Must select at least one sequencing file",
+              message: i18n("CreateNcbiExport.files.required"),
             },
           ]}
         >
