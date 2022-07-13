@@ -1,5 +1,5 @@
 import React from "react";
-import { AutoComplete, Form, Input, Modal, Radio, Select } from "antd";
+import { AutoComplete, Form, Modal, Select, Typography } from "antd";
 import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 import { addSample } from "../services/runReducer";
 import { useDispatch } from "react-redux";
@@ -7,8 +7,10 @@ import {
   useGetSampleNamesForProjectQuery,
   validateSampleName,
 } from "../../../apis/projects/samples";
-import searchOntology from "../../../apis/ontology/taxonomy/query";
 import { useGetProjectNamesForUserQuery } from "../../../apis/projects/projects";
+import { SPACE_XS } from "../../../styles/spacing";
+
+const { Text } = Typography;
 
 /**
  * React component to display the sequencing run create new sample modal.
@@ -18,33 +20,40 @@ import { useGetProjectNamesForUserQuery } from "../../../apis/projects/projects"
  */
 export function SequencingRunCreateSampleButton() {
   const dispatch = useDispatch();
-  const [projectId, setProjectId] = React.useState();
-  const [isSampleNew, setIsSampleNew] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
-  const [organisms, setOrganisms] = React.useState([]);
-  const [showSampleSection, setShowSampleSection] = React.useState(false);
+  const [projectId, setProjectId] = React.useState(null);
+  const [skip, setSkip] = React.useState(true);
+  const [samples, setSamples] = React.useState([]);
   const [form] = Form.useForm();
 
-  const { data: projects = {} } = useGetProjectNamesForUserQuery();
-  const { data: samples = {} } = useGetSampleNamesForProjectQuery(projectId, {
-    skip: !showSampleSection,
-  });
+  const { data: projectsData = {} } = useGetProjectNamesForUserQuery();
+  const { data: samplesData = {}, isSuccess } =
+    useGetSampleNamesForProjectQuery(projectId, {
+      skip,
+    });
 
-  const sampleOptions = samples.samples?.map((sample) => (
+  React.useEffect(() => {
+    setSamples(
+      samplesData.samples?.map(({ name }) => ({ label: name, value: name }))
+    );
+  }, [isSuccess]);
+
+  const addNewSample = () => {
+    setVisible(true);
+  };
+
+  const sampleOptions = samplesData.samples?.map((sample) => (
     <Select.Option value={sample.id} key={`sample-list-item-${sample.id}`}>
       {sample.id + " - " + sample.name}
     </Select.Option>
   ));
 
-  const projectOptions = projects.projects?.map((project) => (
-    <Select.Option value={project.id} key={`project-list-item-${project.id}`}>
-      {project.id + " - " + project.name}
+  const projectOptions = projectsData.projects?.map((project) => (
+    <Select.Option value={project.id} key={`${project.id} ${project.name}`}>
+      <Text style={{ marginRight: SPACE_XS }}>{project.id}</Text>
+      <Text type="secondary">{project.name}</Text>
     </Select.Option>
   ));
-
-  const addNewSample = () => {
-    setVisible(true);
-  };
 
   const validateName = async (value) => {
     await validateSampleName(value).then((response) => {
@@ -56,30 +65,17 @@ export function SequencingRunCreateSampleButton() {
     });
   };
 
-  function optionsReducer(accumulator, current) {
-    accumulator.push({ value: current.value });
-    if (current.children) {
-      accumulator.push(...current.children.reduce(optionsReducer, []));
-    }
-    return accumulator;
-  }
-
-  const searchOrganism = async (term) => {
-    const data = await searchOntology({
-      query: term,
-      ontology: "taxonomy",
-    });
-    setOrganisms(data.reduce(optionsReducer, []));
-  };
-
-  const onNewSampleChange = ({ target: { value } }) => {
-    console.log("is new sample value ", value);
-    setIsSampleNew(value);
+  const onSamplesSearch = (term) => {
+    const lowerTerm = term.toLowerCase();
+    const newSamples = samples
+      .filter((sample) => sample.name.toLowerCase().includes(lowerTerm))
+      .map(({ name }) => ({ label: name, value: name }));
+    setSamples(newSamples);
   };
 
   const onProjectChange = (value) => {
     setProjectId(value);
-    setShowSampleSection(true);
+    setSkip(false);
   };
 
   const onCancel = () => {
@@ -107,7 +103,7 @@ export function SequencingRunCreateSampleButton() {
         text={i18n("SequencingRunSamplesList.empty.button")}
       />
       <Modal
-        title="Create New Sample"
+        title="Add Sample"
         visible={visible}
         onOk={onOk}
         onCancel={onCancel}
@@ -115,10 +111,9 @@ export function SequencingRunCreateSampleButton() {
         <Form
           form={form}
           initialValues={{
-            project: "",
-            isSampleNew,
-            sample_name: "",
-            organism: "",
+            projectId: "",
+            sampleId: "",
+            sampleName: "",
           }}
           layout="vertical"
         >
@@ -127,44 +122,29 @@ export function SequencingRunCreateSampleButton() {
               {projectOptions}
             </Select>
           </Form.Item>
-          {showSampleSection && (
-            <Form.Item name="isSampleNew">
-              <Radio.Group onChange={onNewSampleChange}>
-                <Radio.Button value={true}>New</Radio.Button>
-                <Radio.Button value={false}>Existing</Radio.Button>
-              </Radio.Group>
-            </Form.Item>
-          )}
-          {showSampleSection && !isSampleNew && (
-            <Form.Item name="sample" label="Sample">
-              <Select showSearch>{sampleOptions}</Select>
-            </Form.Item>
-          )}
-          {showSampleSection && isSampleNew && (
-            <>
-              <Form.Item
-                name="sample_name"
-                label="Sample Name"
-                rules={[
-                  ({}) => ({
-                    validator(_, value) {
-                      return validateName(value);
-                    },
-                  }),
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item name="organism" label="Organism">
-                <AutoComplete
-                  allowClear={true}
-                  backfill={true}
-                  onSearch={searchOrganism}
-                  options={organisms}
-                />
-              </Form.Item>
-            </>
-          )}
+          <Form.Item
+            name="sampleName"
+            label="Sample Name"
+            // rules={[
+            //   ({}) => ({
+            //     validator(_, value) {
+            //       return validateName(value);
+            //     },
+            //   }),
+            // ]}
+          >
+            <AutoComplete
+              // allowClear={true}
+              // backfill={true}
+              // onSearch={onSamplesSearch}
+              options={samples}
+              filterOption={(inputValue, option) =>
+                option.value.toLowerCase().indexOf(inputValue.toLowerCase()) !==
+                -1
+              }
+              disabled={projectId === null}
+            />
+          </Form.Item>
         </Form>
       </Modal>
     </>
