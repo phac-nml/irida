@@ -1,6 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
+import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Controller for handling OAuth2 authorizations
@@ -45,30 +52,34 @@ public class OltuAuthorizationController {
 	}
 
 	/**
-	 * Begin authentication procedure by redirecting to remote authorization
-	 * location
+	 * Begin authentication procedure by redirecting to remote authorization location
 	 *
 	 * @param remoteAPI The API we need to authenticate with
-	 * @param redirect  The location to redirect back to after authentication is
-	 *                  complete
+	 * @param redirect  The location to redirect back to after authentication is complete
 	 * @return A ModelAndView beginning the authentication procedure
 	 * @throws OAuthSystemException if we can't read from the authorization server.
 	 */
-	public String authenticate(RemoteAPI remoteAPI, String redirect) throws OAuthSystemException {
+	public String authenticate(RemoteAPI remoteAPI, String redirect) throws IOException, OAuthSystemException {
 		// get the URI for the remote service we'll be requesting from
 		String serviceURI = remoteAPI.getServiceURI();
 
 		// build the authorization path
-		URI serviceAuthLocation = UriBuilder.fromUri(serviceURI)
-				.path("oauth")
-				.path("authorize")
-				.build();
+		URI serviceAuthLocation = UriBuilder.fromUri(serviceURI).path("oauth").path("authorize").build();
 
 		logger.debug("Authenticating for service: " + remoteAPI);
 		logger.debug("Redirect after authentication: " + redirect);
 
 		// build a redirect URI to redirect to after auth flow is completed
-		String tokenRedirect = buildRedirectURI(remoteAPI.getId(), redirect);
+		String tokenRedirect = buildRedirectURI();
+
+		// build state object which is used to extract the authCode to the correct remoteAPI
+		Map<String, String> stateMap = new HashMap<String, String>();
+		stateMap.put("apiId", remoteAPI.getId().toString());
+		stateMap.put("redirect", redirect);
+
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		String stateString = objectMapper.writeValueAsString(stateMap);
 
 		// build the redirect query to request an authorization code from the
 		// remote API
@@ -77,6 +88,7 @@ public class OltuAuthorizationController {
 				.setRedirectURI(tokenRedirect)
 				.setResponseType(ResponseType.CODE.toString())
 				.setScope("read")
+				.setState(Base64.getEncoder().encodeToString(stateString.getBytes()))
 				.buildQueryMessage();
 
 		String locURI = request.getLocationUri();
@@ -92,23 +104,29 @@ public class OltuAuthorizationController {
 	 * @param response The response to redirect
 	 * @param apiId    the Long ID of the API we're requesting from
 	 * @param redirect The URL location to redirect to after completion
-	 * @return A ModelAndView redirecting back to the resource that was
-	 * requested
+	 * @return A ModelAndView redirecting back to the resource that was requested
 	 * @throws OAuthSystemException  if we can't get an access token for the current request.
 	 * @throws OAuthProblemException if we can't get a response from the authorization server
 	 */
 	@RequestMapping(TOKEN_ENDPOINT)
 	public String getTokenFromAuthCode(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam("apiId") Long apiId, @RequestParam("redirect") String redirect)
-			throws OAuthSystemException, OAuthProblemException {
+			@RequestParam("state") String state) throws IOException, OAuthSystemException, OAuthProblemException {
 
 		// Get the OAuth2 auth code
 		OAuthAuthzResponse oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);
 		String code = oar.getCode();
 		logger.trace("Received auth code: " + code);
 
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		String stateString = new String(Base64.getDecoder().decode(state), StandardCharsets.UTF_8);
+		Map<String, String> stateMap = (Map<String, String>) objectMapper.readValue(stateString, HashMap.class);
+
+		Long apiId = Long.parseLong(stateMap.get("apiId"));
+		String redirect = stateMap.get("redirect");
+
 		// Build the redirect URI to request a token from
-		String tokenRedirect = buildRedirectURI(apiId, redirect);
+		String tokenRedirect = buildRedirectURI();
 
 		// Read the RemoteAPI from the RemoteAPIService and get the base URI
 		RemoteAPI remoteAPI = remoteAPIService.read(apiId);
@@ -122,18 +140,11 @@ public class OltuAuthorizationController {
 	/**
 	 * Build the redirect URI for the token page with the API and resource page
 	 *
-	 * @param apiId        the Long ID of the API to request from
-	 * @param redirectPage the resource page to redirect to once the authorizatino is
-	 *                     complete
 	 * @return
 	 */
-	private String buildRedirectURI(Long apiId, String redirectPage) {
+	private String buildRedirectURI() {
 
-		URI build = UriBuilder.fromUri(serverBase)
-				.path(TOKEN_ENDPOINT)
-				.queryParam("apiId", apiId)
-				.queryParam("redirect", redirectPage)
-				.build();
+		URI build = UriBuilder.fromUri(serverBase).path(TOKEN_ENDPOINT).build();
 
 		return build.toString();
 	}

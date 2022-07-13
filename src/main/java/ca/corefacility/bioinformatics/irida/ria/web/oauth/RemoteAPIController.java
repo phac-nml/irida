@@ -19,11 +19,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.io.IOException;
 import java.util.Map;
 
 /**
- * Controller handling basic operations for listing, viewing, adding, and
- * removing {@link RemoteAPI}s
+ * Controller handling basic operations for listing, viewing, adding, and removing {@link RemoteAPI}s
  */
 @Controller
 @RequestMapping("/remote_api")
@@ -40,11 +41,12 @@ public class RemoteAPIController extends BaseController {
     // Map storing the message names for the
     // getErrorsFromDataIntegrityViolationException method
     private final Map<String, ExceptionPropertyAndMessage> errorMessages = ImmutableMap.of(
-            RemoteAPI.SERVICE_URI_CONSTRAINT_NAME, new ExceptionPropertyAndMessage("serviceURI",
-                    "remoteapi.create.serviceURIConflict"));
+            RemoteAPI.SERVICE_URI_CONSTRAINT_NAME,
+            new ExceptionPropertyAndMessage("serviceURI", "remoteapi.create.serviceURIConflict"));
 
     @Autowired
-    public RemoteAPIController(RemoteAPIService remoteAPIService, ProjectRemoteService projectRemoteService, OltuAuthorizationController authController) {
+    public RemoteAPIController(RemoteAPIService remoteAPIService, ProjectRemoteService projectRemoteService,
+            OltuAuthorizationController authController) {
         this.remoteAPIService = remoteAPIService;
         this.projectRemoteService = projectRemoteService;
         this.authController = authController;
@@ -61,10 +63,8 @@ public class RemoteAPIController extends BaseController {
     }
 
     /**
-     * Initiate a token request on a remote api if one does not yet exist. Works
-     * with
-     * {@link #handleOAuthException(HttpServletRequest, IridaOAuthException)} to
-     * initiate the request.
+     * Initiate a token request on a remote api if one does not yet exist. Works with
+     * {@link #handleOAuthException(HttpServletRequest, IridaOAuthException)} to initiate the request.
      *
      * @param apiId the ID of the api to connect to
      * @param model the model to add attributes to.
@@ -84,12 +84,12 @@ public class RemoteAPIController extends BaseController {
      *
      * @param request The incoming request method
      * @param ex      The thrown exception
-     * @return A redirect to the {@link OltuAuthorizationController}'s
-     * authentication
+     * @return A redirect to the {@link OltuAuthorizationController}'s authentication
      * @throws OAuthSystemException if the request cannot be authenticated.
      */
     @ExceptionHandler(IridaOAuthException.class)
-    public String handleOAuthException(HttpServletRequest request, IridaOAuthException ex) throws OAuthSystemException {
+    public String handleOAuthException(HttpServletRequest request, IridaOAuthException ex)
+            throws IOException, OAuthSystemException {
         logger.debug("Caught IridaOAuthException.  Beginning OAuth2 authentication token flow.");
         String requestURI = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 

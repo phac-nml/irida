@@ -3,15 +3,7 @@ package ca.corefacility.bioinformatics.irida.model;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -19,13 +11,12 @@ import org.hibernate.envers.Audited;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 
 /**
- * OAuth2 token for communicating with a {@link RemoteAPI} for a given
- * {@link User}
- * 
- *
+ * OAuth2 token for communicating with a {@link RemoteAPI} for a given {@link User}
  */
 @Entity
-@Table(name = "remote_api_token", uniqueConstraints = @UniqueConstraint(columnNames = { "user_id", "remote_api_id" }, name = "UK_remote_api_token_user"))
+@Table(name = "remote_api_token",
+		uniqueConstraints = @UniqueConstraint(columnNames = { "user_id", "remote_api_id" },
+				name = "UK_remote_api_token_user"))
 @Audited
 public class RemoteAPIToken {
 	@Id
@@ -33,9 +24,12 @@ public class RemoteAPIToken {
 	private Long id;
 
 	@NotNull
+	@Lob
+	@Column(name = "tokenString", columnDefinition = "BLOB")
 	private String tokenString;
-	
-	@Column(name = "refresh_token")
+
+	@Lob
+	@Column(name = "refresh_token", columnDefinition = "BLOB")
 	private String refreshToken;
 
 	@NotNull
@@ -60,7 +54,7 @@ public class RemoteAPIToken {
 		this.remoteApi = remoteApi;
 		this.expiryDate = expiryDate;
 	}
-	
+
 	public RemoteAPIToken(String tokenString, String refreshToken, RemoteAPI remoteApi, Date expiryDate) {
 		super();
 		this.tokenString = tokenString;
@@ -77,8 +71,7 @@ public class RemoteAPIToken {
 	}
 
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param id the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
@@ -92,8 +85,7 @@ public class RemoteAPIToken {
 	}
 
 	/**
-	 * @param tokenString
-	 *            the tokenString to set
+	 * @param tokenString the tokenString to set
 	 */
 	public void setTokenString(String tokenString) {
 		this.tokenString = tokenString;
@@ -107,8 +99,7 @@ public class RemoteAPIToken {
 	}
 
 	/**
-	 * @param remoteApi
-	 *            the remoteApi to set
+	 * @param remoteApi the remoteApi to set
 	 */
 	public void setRemoteApi(RemoteAPI remoteApi) {
 		this.remoteApi = remoteApi;
@@ -122,8 +113,7 @@ public class RemoteAPIToken {
 	}
 
 	/**
-	 * @param user
-	 *            the user to set
+	 * @param user the user to set
 	 */
 	public void setUser(User user) {
 		this.user = user;
@@ -160,11 +150,11 @@ public class RemoteAPIToken {
 	public boolean isExpired() {
 		return (new Date()).after(expiryDate);
 	}
-	
+
 	public String getRefreshToken() {
 		return refreshToken;
 	}
-	
+
 	public void setRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
 	}

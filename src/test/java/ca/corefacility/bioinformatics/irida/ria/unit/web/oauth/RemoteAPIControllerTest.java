@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.servlet.HandlerMapping;
 
+import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,8 +30,7 @@ public class RemoteAPIControllerTest {
 		remoteAPIService = mock(RemoteAPIService.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
 		authController = mock(OltuAuthorizationController.class);
-		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService,
-				authController);
+		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService, authController);
 
 	}
 
@@ -62,7 +62,7 @@ public class RemoteAPIControllerTest {
 	}
 
 	@Test
-	public void testHandleOAuthException() throws OAuthSystemException {
+	public void testHandleOAuthException() throws IOException, OAuthSystemException {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		String redirect = "http://request";
 		when(request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE)).thenReturn(redirect);

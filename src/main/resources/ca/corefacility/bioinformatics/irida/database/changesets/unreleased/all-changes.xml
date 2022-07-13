@@ -4,4 +4,5 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
   <include file="user-account-drop-phone-constraint.xml" relativeToChangelogFile="true" />
   <include file="oauth2-authorization-tables.xml" relativeToChangelogFile="true" />
+  <include file="update-remote-api-token-token-types.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>

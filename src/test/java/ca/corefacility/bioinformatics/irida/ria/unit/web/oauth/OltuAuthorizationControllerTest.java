@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +29,8 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class OltuAuthorizationControllerTest {
 	private OltuAuthorizationController controller;
@@ -51,7 +54,7 @@ public class OltuAuthorizationControllerTest {
 	}
 
 	@Test
-	public void testAuthenticate() throws OAuthSystemException, UnsupportedEncodingException {
+	public void testAuthenticate() throws IOException, OAuthSystemException, UnsupportedEncodingException {
 		RemoteAPI remoteAPI = new RemoteAPI("name", "http://uri", "a description", "id", "secret");
 		remoteAPI.setId(1L);
 		String redirect = "http://base";
@@ -62,18 +65,25 @@ public class OltuAuthorizationControllerTest {
 		String decoded = URLDecoder.decode(authenticate, "UTF-8");
 
 		assertTrue(decoded.startsWith("redirect:"));
-		assertTrue(decoded.contains(redirect));
 		assertTrue(decoded.contains(serverBase));
 	}
 
 	@Test
-	public void testGetTokenFromAuthCode() throws IOException, OAuthSystemException, OAuthProblemException,
-			URISyntaxException {
+	public void testGetTokenFromAuthCode()
+			throws IOException, OAuthSystemException, OAuthProblemException, URISyntaxException {
 		Long apiId = 1L;
 		RemoteAPI remoteAPI = new RemoteAPI("name", "http://remoteLocation", "a description", "id", "secret");
 		remoteAPI.setId(apiId);
 		String code = "code";
 		String redirect = "http://originalPage";
+
+		Map<String, String> stateMap = new HashMap<String, String>();
+		stateMap.put("apiId", apiId.toString());
+		stateMap.put("redirect", redirect);
+
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		String stateString = objectMapper.writeValueAsString(stateMap);
 
 		when(apiService.read(apiId)).thenReturn(remoteAPI);
 
@@ -84,26 +94,33 @@ public class OltuAuthorizationControllerTest {
 
 		when(request.getParameterMap()).thenReturn(requestParams);
 
-		controller.getTokenFromAuthCode(request, response, apiId, redirect);
+		controller.getTokenFromAuthCode(request, response, Base64.getEncoder().encodeToString(stateString.getBytes()));
 
 		verify(apiService).read(apiId);
 
 		ArgumentCaptor<String> redirectArg = ArgumentCaptor.forClass(String.class);
 		verify(tokenService).createTokenFromAuthCode(eq(code), eq(remoteAPI), redirectArg.capture());
-		
+
 		String capturedRedirect = redirectArg.getValue();
-		assertTrue(capturedRedirect.contains(redirect));
 		assertTrue(capturedRedirect.contains(serverBase));
 	}
 
 	@Test
-	public void testGetTokenFromAuthCodeExtraSlash() throws IOException, OAuthSystemException, OAuthProblemException,
-			URISyntaxException {
+	public void testGetTokenFromAuthCodeExtraSlash()
+			throws IOException, OAuthSystemException, OAuthProblemException, URISyntaxException {
 		Long apiId = 1L;
 		RemoteAPI remoteAPI = new RemoteAPI("name", "http://remoteLocation", "a description", "id", "secret");
 		remoteAPI.setId(apiId);
 		String code = "code";
 		String redirect = "http://originalPage";
+
+		Map<String, String> stateMap = new HashMap<String, String>();
+		stateMap.put("apiId", apiId.toString());
+		stateMap.put("redirect", redirect);
+
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		String stateString = objectMapper.writeValueAsString(stateMap);
 
 		//adding a trailing slash to the serverbase to try to confuse the redirect URI
 		controller.setServerBase(serverBase + "/");
@@ -117,7 +134,7 @@ public class OltuAuthorizationControllerTest {
 
 		when(request.getParameterMap()).thenReturn(requestParams);
 
-		controller.getTokenFromAuthCode(request, response, apiId, redirect);
+		controller.getTokenFromAuthCode(request, response, Base64.getEncoder().encodeToString(stateString.getBytes()));
 
 		verify(apiService).read(apiId);
 
@@ -125,7 +142,6 @@ public class OltuAuthorizationControllerTest {
 		verify(tokenService).createTokenFromAuthCode(eq(code), eq(remoteAPI), redirectArg.capture());
 
 		String capturedRedirect = redirectArg.getValue();
-		assertTrue(capturedRedirect.contains(redirect));
 		assertTrue(capturedRedirect.contains(serverBase));
 		assertFalse(capturedRedirect.contains(serverBase + "//"));
 	}
