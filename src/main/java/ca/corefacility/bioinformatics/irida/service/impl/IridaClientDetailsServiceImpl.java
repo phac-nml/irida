@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.Collection;
+
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
@@ -8,11 +10,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
+import ca.corefacility.bioinformatics.irida.oauth2.IridaOAuth2AuthorizationService;
 import ca.corefacility.bioinformatics.irida.repositories.IridaClientDetailsRepository;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
@@ -25,13 +30,14 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 		implements IridaClientDetailsService {
 	private final IridaClientDetailsRepository clientDetailsRepository;
 
-	//private final TokenStore tokenStore;
+	private final OAuth2AuthorizationService authorizationService;
 
 	@Autowired
-	public IridaClientDetailsServiceImpl(IridaClientDetailsRepository repository, Validator validator) {
+	public IridaClientDetailsServiceImpl(IridaClientDetailsRepository repository,
+			OAuth2AuthorizationService authorizationService, Validator validator) {
 		super(repository, validator, IridaClientDetails.class);
 		this.clientDetailsRepository = repository;
-		//this.tokenStore = tokenStore;
+		this.authorizationService = authorizationService;
 	}
 
 	/**
@@ -90,33 +96,32 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	 * {@inheritDoc}
 	 */
 	public int countActiveTokensForClient(IridaClientDetails client) {
-		// Collection<OAuth2AccessToken> findTokensByClientId = tokenStore.findTokensByClientId(client.getClientId());
-		// int active = findTokensByClientId.stream().mapToInt((t) -> {
-		// 	return t.isExpired() ? 0 : 1;
-		// }).sum();
-		// return active;
-		return 0;
+		Collection<OAuth2Authorization> accessTokenAuthorizations = ((IridaOAuth2AuthorizationService) authorizationService)
+				.findAccessTokensByRegisteredClientId(client.getId().toString());
+		int active = accessTokenAuthorizations.stream().mapToInt((a) -> {
+			return a.getAccessToken().isActive() ? 1 : 0;
+		}).sum();
+		return active;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public int countTokensForClient(IridaClientDetails client) {
-		return 0;
-		//return tokenStore.findTokensByClientId(client.getClientId()).size();
+		return ((IridaOAuth2AuthorizationService) authorizationService)
+				.findAccessTokensByRegisteredClientId(client.getId().toString())
+				.size();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void revokeTokensForClient(IridaClientDetails client) {
-		// Collection<OAuth2AccessToken> findTokensByClientId = tokenStore.findTokensByClientId(client.getClientId());
-		// for (OAuth2AccessToken token : findTokensByClientId) {
-		// 	tokenStore.removeAccessToken(token);
-		// 	if (token.getRefreshToken() != null) {
-		// 		tokenStore.removeRefreshToken(token.getRefreshToken());
-		// 	}
-		// }
+		Collection<OAuth2Authorization> accessTokenAuthorizations = ((IridaOAuth2AuthorizationService) authorizationService)
+				.findAccessTokensByRegisteredClientId(client.getId().toString());
+		for (OAuth2Authorization authorization : accessTokenAuthorizations) {
+			authorizationService.remove(authorization);
+		}
 	}
 
 }

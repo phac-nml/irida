@@ -29,13 +29,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.jackson2.SecurityJackson2Modules;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.OAuth2Token;
-import org.springframework.security.oauth2.core.OAuth2TokenType;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.core.*;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.authorization.*;
 import org.springframework.security.oauth2.server.authorization.authentication.ClientSecretAuthenticationProvider;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -59,6 +54,7 @@ import ca.corefacility.bioinformatics.irida.jackson2.mixin.TimestampMixin;
 import ca.corefacility.bioinformatics.irida.jackson2.mixin.UserMixin;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.oauth2.IridaOAuth2AuthorizationService;
 import ca.corefacility.bioinformatics.irida.oauth2.OAuth2ResourceOwnerPasswordAuthenticationConverter;
 import ca.corefacility.bioinformatics.irida.oauth2.OAuth2ResourceOwnerPasswordAuthenticationProvider;
 import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousAuthenticationFilter;
@@ -77,11 +73,6 @@ public class IridaOauthSecurityConfig {
 
 	private static final String AUTHORITIES_CLAIM = "authorities";
 
-	// @Bean
-	// public WebResponseExceptionTranslator<OAuth2Exception> exceptionTranslator() {
-	// 	return new CustomOAuth2ExceptionTranslator();
-	// }
-
 	/**
 	 * Class for configuring the OAuth resource server security
 	 */
@@ -90,6 +81,12 @@ public class IridaOauthSecurityConfig {
 
 		@Value("${server.base.url}")
 		private String serverBase;
+
+		@Autowired
+		OAuth2AuthorizationService authorizationService;
+
+		@Autowired
+		JwtDecoder jwtDecoder;
 
 		@Bean
 		@Order(Ordered.HIGHEST_PRECEDENCE + 2)
@@ -197,7 +194,7 @@ public class IridaOauthSecurityConfig {
 		@Bean
 		public OAuth2AuthorizationService authorizationService(JdbcTemplate jdbcTemplate,
 				RegisteredClientRepository registeredClientRepository) {
-			JdbcOAuth2AuthorizationService service = new JdbcOAuth2AuthorizationService(jdbcTemplate,
+			IridaOAuth2AuthorizationService service = new IridaOAuth2AuthorizationService(jdbcTemplate,
 					registeredClientRepository);
 			JdbcOAuth2AuthorizationService.OAuth2AuthorizationRowMapper rowMapper = new JdbcOAuth2AuthorizationService.OAuth2AuthorizationRowMapper(
 					registeredClientRepository);
@@ -294,7 +291,26 @@ public class IridaOauthSecurityConfig {
 
 		@Bean
 		public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
-			return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
+			OAuth2TokenValidator<Jwt> timestampValidator = new JwtTimestampValidator();
+
+			OAuth2TokenValidator<Jwt> revocationValidator = jwt -> {
+				OAuth2Authorization authorization = this.authorizationService.findByToken(jwt.getTokenValue(),
+						OAuth2TokenType.ACCESS_TOKEN);
+
+				if (authorization != null && authorization.getAccessToken().isActive()) {
+					return OAuth2TokenValidatorResult.success();
+				} else {
+					OAuth2Error error = new OAuth2Error(OAuth2ErrorCodes.INVALID_TOKEN, "The token is revoked",
+							"https://tools.ietf.org/html/rfc6750#section-3.1");
+					return OAuth2TokenValidatorResult.failure(error);
+				}
+			};
+
+			OAuth2TokenValidator<Jwt> validator = new DelegatingOAuth2TokenValidator<>(timestampValidator,
+					revocationValidator);
+			NimbusJwtDecoder decoder = (NimbusJwtDecoder) OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
+			decoder.setJwtValidator(validator);
+			return decoder;
 		}
 
 		@Bean
@@ -328,29 +344,4 @@ public class IridaOauthSecurityConfig {
 			return keyPair;
 		}
 	}
-
-	/**
-	 * Forcibly set the exception translator on the `authenticationEntryPoint` so that we can supply our own errors on
-	 * authentication failure. The `authenticationEntryPoint` field on {@link AbstractOAuth2SecurityExceptionHandler} is
-	 * marked `private`, and is not accessible for customizing.
-	 *
-	 * @param configurer          the instance of the configurer that we're customizing
-	 * @param exceptionTranslator the {@link WebResponseExceptionTranslator} that we want to set.
-	 * @param <T>                 The type of security configurer
-	 */
-	// private static <T> void forceExceptionTranslator(final T configurer,
-	// 		final WebResponseExceptionTranslator<OAuth2Exception> exceptionTranslator) {
-	// 	try {
-	// 		final Field authenticationEntryPointField = ReflectionUtils.findField(configurer.getClass(),
-	// 				"authenticationEntryPoint");
-	// 		ReflectionUtils.makeAccessible(authenticationEntryPointField);
-	// 		final OAuth2AuthenticationEntryPoint authenticationEntryPoint = (OAuth2AuthenticationEntryPoint) authenticationEntryPointField
-	// 				.get(configurer);
-
-	// 		logger.debug("Customizing the authentication entry point by brute force.");
-	// 		authenticationEntryPoint.setExceptionTranslator(exceptionTranslator);
-	// 	} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-	// 		logger.error("Failed to configure the authenticationEntryPoint on ResourceServerSecurityConfigurer.", e);
-	// 	}
-	// }
 }
