@@ -11,6 +11,7 @@ public interface IridaClientDetailsService extends CRUDService<Long, IridaClient
 	 * Get the {@link IridaClientDetails} by clientDetails
 	 * 
 	 * @param clientId The client_id of the client to fetch.
+	 * @return The client
 	 */
 	public IridaClientDetails loadClientByClientId(String clientId);
 

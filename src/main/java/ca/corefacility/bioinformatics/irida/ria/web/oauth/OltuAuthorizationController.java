@@ -59,8 +59,8 @@ public class OltuAuthorizationController {
 	 * @param remoteAPI The API we need to authenticate with
 	 * @param redirect  The location to redirect back to after authentication is complete
 	 * @return A ModelAndView beginning the authentication procedure
-	 * @throws OAuthSystemException   if we can't read from the authorization server.
-	 * @throws JsonProcessinException if we can't convert stateMap object to json string.
+	 * @throws OAuthSystemException    if we can't read from the authorization server.
+	 * @throws JsonProcessingException if we can't convert stateMap object to json string.
 	 */
 	public String authenticate(RemoteAPI remoteAPI, String redirect)
 			throws JsonProcessingException, OAuthSystemException {
