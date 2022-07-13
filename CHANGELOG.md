@@ -10,6 +10,7 @@
 * [Developer/UI]: Added `eslint-prettier-pluggin`. See [PR 1328](https://github.com/phac-nml/irida/pull/1328)
 * [Developer]: Replaced Maven with Gradle for build. See [PR 1300](https://github.com/phac-nml/irida/pull/1300)
 * [Developer/UI]: Switched to pnpm from yarn for frontend dependency management. See [PR 1332](https://github.com/phac-nml/irida/pull/1334)
+* [Developer]: Switched custom exception handling to use built in Spring Boot exception handling. See [PR 1319](https://github.com/phac-nml/irida/pull/1319)
 
 ## [22.05.5] - 2022/06/28
 * [UI]: Fixed bug preventing export of project samples table due to invalid url. [PR 1331](https://github.com/phac-nml/irida/pull/1331)
