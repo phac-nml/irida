@@ -77,8 +77,8 @@ public class LoginPageIT extends AbstractIridaUIITChromeDriver {
 		page.login(LoginPage.SEQUENCER_USERNAME, LoginPage.GOOD_PASSWORD);
 		assertFalse(driver().getTitle().contains("Dashboard"),
 				"The sequencer user should not be able to see the dashboard");
-		assertTrue(driver().getCurrentUrl().contains("login?error=true&sequencer_login=true"),
-				"Should update the url with '?error=true&sequencer_login=true'");
+		assertTrue(driver().getCurrentUrl().contains("login?error=true&sequencer-login=true"),
+				"Should update the url with '?error=true&sequencer-login=true'");
 		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
 	}
 }
