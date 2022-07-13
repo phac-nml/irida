@@ -8,7 +8,9 @@ import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 public interface IridaClientDetailsService extends CRUDService<Long, IridaClientDetails> {
 
 	/**
-	 * {@inheritDoc}
+	 * Get the {@link IridaClientDetails} by clientDetails
+	 * 
+	 * @param clientId The client_id of the client to fetch.
 	 */
 	public IridaClientDetails loadClientByClientId(String clientId);
 

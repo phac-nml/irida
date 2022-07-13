@@ -39,6 +39,7 @@ public class SequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<Seque
 	 * Create a new SequenceFileRemoteRepositoryImpl
 	 * 
 	 * @param tokenService The {@link TokenService} storing OAuth2 tokens
+	 * @param userService  The {@link UserService} for reading users
 	 */
 	@Autowired
 	public SequenceFileRemoteRepositoryImpl(RemoteAPITokenService tokenService, UserService userService) {

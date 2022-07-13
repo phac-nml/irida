@@ -6,6 +6,8 @@ import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMe
 import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.ImmutableMap;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.slf4j.Logger;
@@ -85,11 +87,12 @@ public class RemoteAPIController extends BaseController {
      * @param request The incoming request method
      * @param ex      The thrown exception
      * @return A redirect to the {@link OltuAuthorizationController}'s authentication
-     * @throws OAuthSystemException if the request cannot be authenticated.
+     * @throws OAuthSystemException    if the request cannot be authenticated.
+     * @throws JsonProcessingException if the request cannot be created.
      */
     @ExceptionHandler(IridaOAuthException.class)
     public String handleOAuthException(HttpServletRequest request, IridaOAuthException ex)
-            throws IOException, OAuthSystemException {
+            throws JsonProcessingException, OAuthSystemException {
         logger.debug("Caught IridaOAuthException.  Beginning OAuth2 authentication token flow.");
         String requestURI = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 

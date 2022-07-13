@@ -28,6 +28,8 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -57,9 +59,11 @@ public class OltuAuthorizationController {
 	 * @param remoteAPI The API we need to authenticate with
 	 * @param redirect  The location to redirect back to after authentication is complete
 	 * @return A ModelAndView beginning the authentication procedure
-	 * @throws OAuthSystemException if we can't read from the authorization server.
+	 * @throws OAuthSystemException   if we can't read from the authorization server.
+	 * @throws JsonProcessinException if we can't convert stateMap object to json string.
 	 */
-	public String authenticate(RemoteAPI remoteAPI, String redirect) throws IOException, OAuthSystemException {
+	public String authenticate(RemoteAPI remoteAPI, String redirect)
+			throws JsonProcessingException, OAuthSystemException {
 		// get the URI for the remote service we'll be requesting from
 		String serviceURI = remoteAPI.getServiceURI();
 
@@ -102,15 +106,15 @@ public class OltuAuthorizationController {
 	 *
 	 * @param request  The incoming request
 	 * @param response The response to redirect
-	 * @param apiId    the Long ID of the API we're requesting from
-	 * @param redirect The URL location to redirect to after completion
+	 * @param state    The state param which contains a map including apiId and redirect
 	 * @return A ModelAndView redirecting back to the resource that was requested
 	 * @throws OAuthSystemException  if we can't get an access token for the current request.
 	 * @throws OAuthProblemException if we can't get a response from the authorization server
+	 * @throws JacksonException      if we can't parse the stateMap from the state param
 	 */
 	@RequestMapping(TOKEN_ENDPOINT)
 	public String getTokenFromAuthCode(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam("state") String state) throws IOException, OAuthSystemException, OAuthProblemException {
+			@RequestParam("state") String state) throws JacksonException, OAuthSystemException, OAuthProblemException {
 
 		// Get the OAuth2 auth code
 		OAuthAuthzResponse oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);

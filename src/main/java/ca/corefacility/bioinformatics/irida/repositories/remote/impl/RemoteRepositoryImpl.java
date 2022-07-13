@@ -43,6 +43,7 @@ public abstract class RemoteRepositoryImpl<Type extends IridaRepresentationModel
 	 * Create a new repository with the given rest template and object params
 	 * 
 	 * @param tokenService        service storing api tokens for communication with the remote APIs
+	 * @param userService         service for reading users
 	 * @param listTypeReference   A {@link ParameterizedTypeReference} for objects listed by the rest template
 	 * @param objectTypeReference A {@link ParameterizedTypeReference} for individual resources read by the rest
 	 *                            template

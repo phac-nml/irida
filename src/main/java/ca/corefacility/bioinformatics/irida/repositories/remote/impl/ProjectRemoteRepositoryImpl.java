@@ -7,7 +7,6 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWr
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrapper;
 import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
-import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ProjectHashResource;
@@ -43,6 +42,7 @@ public class ProjectRemoteRepositoryImpl extends RemoteRepositoryImpl<Project> i
      * Create a new {@link ProjectRemoteRepositoryImpl} with the given {@link RemoteAPITokenService}
      *
      * @param tokenService the {@link RemoteAPITokenService}
+     * @param userService  The {@link UserService} for reading users
      */
     @Autowired
     public ProjectRemoteRepositoryImpl(RemoteAPITokenService tokenService, UserService userService) {

@@ -140,51 +140,30 @@ public class IridaClientDetails implements MutableIridaThing {
 		this.authorities = authorities;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public String getClientId() {
 		return clientId;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public Set<String> getResourceIds() {
 		return resourceIds;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public boolean isSecretRequired() {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public String getClientSecret() {
 		return clientSecret;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public boolean isScoped() {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public Set<String> getScope() {
 		return scope;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public Set<String> getAuthorizedGrantTypes() {
 		return authorizedGrantTypes;
 	}
@@ -201,51 +180,30 @@ public class IridaClientDetails implements MutableIridaThing {
 		return registeredRedirectUri;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public Collection<GrantedAuthority> getAuthorities() {
 		return new ArrayList<>(authorities);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public Integer getAccessTokenValiditySeconds() {
 		return accessTokenValiditySeconds;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public Integer getRefreshTokenValiditySeconds() {
 		return refreshTokenValiditySeconds;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public Map<String, Object> getAdditionalInformation() {
 		return Maps.newHashMap(additionalInformation);
 	}
 
-	/**
-	 * @return the id
-	 */
 	public Long getId() {
 		return id;
 	}
 
-	/**
-	 * @param id the id to set
-	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	/**
-	 * @param clientId the clientId to set
-	 */
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
 	}
