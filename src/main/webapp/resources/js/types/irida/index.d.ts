@@ -124,6 +124,13 @@ declare namespace IRIDA {
     file: SequencingObject;
   }
 
+  interface StoredSample {
+    id: number;
+    name: string;
+    owner: boolean;
+    projectId: number;
+  }
+
   enum SystemRole {
     ROLE_ANONYMOUS = "ROLE_ANONYMOUS",
     ROLE_ADMIN = "ROLE_ADMIN",

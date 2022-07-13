@@ -1,4 +1,4 @@
-import { Project } from "../types/irida";
+import { Project, StoredSample } from "../types/irida";
 
 const SAMPLE_STORE = "samples";
 
@@ -6,13 +6,6 @@ export interface SessionSample {
   projectId: Pick<Project, "id">;
   samples: StoredSample[];
   timestamp: Date;
-}
-
-export interface StoredSample {
-  id: number;
-  name: string;
-  projectId: number;
-  owner: boolean;
 }
 
 export function storeSamples({

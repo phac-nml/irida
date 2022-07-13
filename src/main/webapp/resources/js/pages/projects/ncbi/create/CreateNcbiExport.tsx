@@ -20,25 +20,32 @@ import {
   getNCBISources,
   getNCBIStrategies,
 } from "../../../../apis/export/ncbi";
-import {
-  fetchSampleFiles,
-  SamplesFiles,
-} from "../../../../apis/samples/samples";
+import { fetchSampleFiles } from "../../../../apis/samples/samples";
 import type { Option } from "../../../../types/ant-design";
 import type {
-  NcbiBiosample,
+  NcbiBioSample,
   NcbiSelection,
   NcbiSource,
   NcbiStrategy,
+  PairedEndSequenceFile,
+  SingleEndSequenceFile,
+  StoredSample,
 } from "../../../../types/irida";
 import { getStoredSamples } from "../../../../utilities/session-utilities";
 import CreateNcbiDefaultOptions from "./CreateNcbiDefaultOptions";
 import CreateNcbiExportSamples from "./CreateNcbiExportSamples";
 import { formatPlatformsAsCascaderOptions } from "./ncbi-utilities";
 
-export interface SampleRecord extends NcbiBiosample {
-  files: SamplesFiles;
-}
+export type SampleRecord =
+  | {
+      key: string;
+      files: {
+        paired: PairedEndSequenceFile[];
+        singles: SingleEndSequenceFile[];
+      };
+    }
+  | StoredSample
+  | Omit<NcbiBioSample, "paired" | "singles">;
 
 export interface SampleRecords {
   [k: string]: SampleRecord;
@@ -68,7 +75,7 @@ export async function loader(): Promise<LoaderValues> {
           key: sample.name,
           name: sample.name,
           id: sample.id,
-          library_name: sample.name,
+          libraryName: sample.name,
           files,
         };
       });
@@ -113,7 +120,9 @@ function CreateNcbiExport(): JSX.Element {
     // Update all the samples in the Ant Design form with the new value.
     const values: SampleRecords = form.getFieldValue("samples");
     Object.values(values).forEach((sample) => {
-      form.setFieldsValue({ samples: { [sample.name]: { [field]: value } } });
+      if ("name" in sample) {
+        form.setFieldsValue({ samples: { [sample.name]: { [field]: value } } });
+      }
     });
   };
 
