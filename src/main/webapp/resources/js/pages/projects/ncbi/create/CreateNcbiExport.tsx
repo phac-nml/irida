@@ -36,16 +36,23 @@ import CreateNcbiDefaultOptions from "./CreateNcbiDefaultOptions";
 import CreateNcbiExportSamples from "./CreateNcbiExportSamples";
 import { formatPlatformsAsCascaderOptions } from "./ncbi-utilities";
 
-export type SampleRecord =
-  | {
-      key: string;
-      files: {
-        paired: PairedEndSequenceFile[];
-        singles: SingleEndSequenceFile[];
-      };
-    }
-  | StoredSample
-  | Omit<NcbiBioSample, "paired" | "singles">;
+export interface SampleRecord {
+  key: string;
+  id: number;
+  name: string;
+  bioSample?: string;
+  libraryName: string;
+  libraryStrategy?: string;
+  librarySource?: string;
+  libraryConstructionProtocol?: string;
+  instrumentModel?: string;
+  librarySelection?: string;
+  status?: string;
+  files: {
+    paired: PairedEndSequenceFile[];
+    singles: SingleEndSequenceFile[];
+  };
+}
 
 export interface SampleRecords {
   [k: string]: SampleRecord;
