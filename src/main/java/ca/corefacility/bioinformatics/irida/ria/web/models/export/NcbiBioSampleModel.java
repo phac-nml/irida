@@ -1,11 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models.export;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
-import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.PairedEndSequenceFileModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.SingleEndSequenceFileModel;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 
 /**
  * Describes an NCBI SRA Submission's BioSample's files for the UI.
@@ -21,10 +19,10 @@ public class NcbiBioSampleModel {
 	private final String libraryConstructionProtocol;
 	private final String status;
 	private final String accession;
-	private final List<SingleEndSequenceFileModel> singles;
-	private final List<PairedEndSequenceFileModel> pairs;
+	private final List<SequencingObject> singles;
+	private final List<SequencingObject> pairs;
 
-	public NcbiBioSampleModel(NcbiBioSampleFiles bioSample) {
+	public NcbiBioSampleModel(NcbiBioSampleFiles bioSample, List<SequencingObject> pairs, List<SequencingObject> singles) {
 		this.id = bioSample.getId();
 		this.bioSample = bioSample.getBioSample();
 		this.instrumentModel = bioSample.getInstrumentModel().getModel();
@@ -35,8 +33,8 @@ public class NcbiBioSampleModel {
 		this.libraryConstructionProtocol = bioSample.getLibraryConstructionProtocol();
 		this.status = bioSample.getSubmissionStatus().toString();
 		this.accession = bioSample.getAccession();
-		this.singles = bioSample.getFiles().stream().map(SingleEndSequenceFileModel::new).collect(Collectors.toList());
-		this.pairs = bioSample.getPairs().stream().map(PairedEndSequenceFileModel::new).collect(Collectors.toList());
+		this.singles = singles;
+		this.pairs = pairs;
 	}
 
 	public String getId() {
@@ -79,11 +77,11 @@ public class NcbiBioSampleModel {
 		return accession;
 	}
 
-	public List<SingleEndSequenceFileModel> getSingles() {
+	public List<SequencingObject> getSingles() {
 		return singles;
 	}
 
-	public List<PairedEndSequenceFileModel> getPairs() {
+	public List<SequencingObject> getPairs() {
 		return pairs;
 	}
 }

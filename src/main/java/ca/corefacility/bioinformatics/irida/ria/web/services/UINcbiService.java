@@ -14,9 +14,11 @@ import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NcbiExportSubmissionTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiBioSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiExportSubmissionAdminTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiSubmissionBody;
 import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiSubmissionModel;
@@ -36,14 +38,16 @@ public class UINcbiService {
 	private final NcbiExportSubmissionService ncbiService;
 	private final SequencingObjectService sequencingObjectService;
 	private final UserService userService;
+	private final UISampleService uiSampleService;
 
 	@Autowired
 	public UINcbiService(ProjectService projectService, NcbiExportSubmissionService ncbiService,
-			SequencingObjectService sequencingObjectService, UserService userService) {
+			SequencingObjectService sequencingObjectService, UserService userService, UISampleService uiSampleService) {
 		this.projectService = projectService;
 		this.ncbiService = ncbiService;
 		this.sequencingObjectService = sequencingObjectService;
 		this.userService = userService;
+		this.uiSampleService = uiSampleService;
 	}
 
 	/**
@@ -85,7 +89,19 @@ public class UINcbiService {
 	 */
 	public NcbiSubmissionModel getExportDetails(Long exportId) {
 		NcbiExportSubmission submission = ncbiService.read(exportId);
-		return new NcbiSubmissionModel(submission);
+		Project project = projectService.read(submission.getProject().getId());
+
+		List<NcbiBioSampleModel> bioSamples = submission.getBioSampleFiles().stream().map(bioSampleFile -> {
+			List<SequencingObject> pairs = bioSampleFile.getPairs().stream()
+					.peek(pair -> uiSampleService.enhanceQcEntries(pair, project))
+					.collect(Collectors.toList());
+			List<SequencingObject> singles = bioSampleFile.getFiles().stream()
+					.peek(single -> uiSampleService.enhanceQcEntries(single, project))
+					.collect(Collectors.toList());
+			return new NcbiBioSampleModel(bioSampleFile, pairs, singles);
+		}).collect(Collectors.toList());
+
+		return new NcbiSubmissionModel(submission, bioSamples);
 	}
 
 	public void submitNcbiExport(NcbiSubmissionBody submission) {

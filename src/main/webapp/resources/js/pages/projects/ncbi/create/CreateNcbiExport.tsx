@@ -23,13 +23,11 @@ import {
 import { fetchSampleFiles } from "../../../../apis/samples/samples";
 import type { Option } from "../../../../types/ant-design";
 import type {
-  NcbiBioSample,
   NcbiSelection,
   NcbiSource,
   NcbiStrategy,
   PairedEndSequenceFile,
   SingleEndSequenceFile,
-  StoredSample,
 } from "../../../../types/irida";
 import { getStoredSamples } from "../../../../utilities/session-utilities";
 import CreateNcbiDefaultOptions from "./CreateNcbiDefaultOptions";

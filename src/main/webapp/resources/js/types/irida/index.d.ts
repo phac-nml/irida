@@ -115,7 +115,7 @@ declare namespace IRIDA {
     sequenceFiles: SequencingObject[];
   }
 
-  interface SequencingObject extends Omit<BaseRecord, "id" | "name"> {
+  interface SequencingObject extends Omit<BaseRecord, "id", "name"> {
     identifier: number;
     label: string;
     fileSize: string;

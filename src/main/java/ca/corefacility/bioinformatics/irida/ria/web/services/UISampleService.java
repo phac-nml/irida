@@ -218,7 +218,7 @@ public class UISampleService {
 	 * @param obj     the {@link SequencingObject} to enhance
 	 * @param project the {@link Project} to add
 	 */
-	private void enhanceQcEntries(SequencingObject obj, Project project) {
+	public void enhanceQcEntries(SequencingObject obj, Project project) {
 		Set<QCEntry> availableEntries = new HashSet<>();
 		if (obj.getQcEntries() != null) {
 			for (QCEntry q : obj.getQcEntries()) {
