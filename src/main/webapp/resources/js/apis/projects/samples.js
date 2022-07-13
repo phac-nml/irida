@@ -18,18 +18,22 @@ export const samplesApi = createApi({
       query: (projectId) => ({ url: `${projectId}/samples/names` }),
     }),
     listSamples: builder.query({
-      query: (body) => ({ method: "POST", body }),
+      query: (body) => ({
+        url: `/${PROJECT_ID}/samples`,
+        method: "POST",
+        body,
+      }),
     }),
     merge: builder.mutation({
       query: ({ projectId, request }) => ({
-        url: "/${PROJECT_ID}/samples/merge",
+        url: `/${PROJECT_ID}/samples/merge`,
         method: "POST",
         body: request,
       }),
     }),
     remove: builder.mutation({
       query: (sampleIds) => ({
-        url: "/${PROJECT_ID}/samples/remove",
+        url: `/${PROJECT_ID}/samples/remove`,
         method: "DELETE",
         body: { sampleIds },
       }),
