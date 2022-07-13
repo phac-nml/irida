@@ -24,12 +24,10 @@ public class RemoteAPIToken {
 	private Long id;
 
 	@NotNull
-	@Lob
-	@Column(name = "tokenString", columnDefinition = "BLOB")
+	@Column(name = "tokenString", columnDefinition = "TEXT")
 	private String tokenString;
 
-	@Lob
-	@Column(name = "refresh_token", columnDefinition = "BLOB")
+	@Column(name = "refresh_token", columnDefinition = "TEXT")
 	private String refreshToken;
 
 	@NotNull
