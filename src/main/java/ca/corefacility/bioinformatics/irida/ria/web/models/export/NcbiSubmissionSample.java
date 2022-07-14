@@ -7,6 +7,9 @@ import ca.corefacility.bioinformatics.irida.model.export.NcbiLibrarySelection;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiLibrarySource;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiLibraryStrategy;
 
+/**
+ * Represents a sample in a {@link NcbiSubmissionRequest}
+ */
 public class NcbiSubmissionSample {
 	private String bioSample;
 	private String libraryName;
