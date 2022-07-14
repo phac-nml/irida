@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -30,6 +31,7 @@ import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConf
 @ActiveProfiles("test")
 @SpringBootTest(classes = {
 		DataSourceAutoConfiguration.class,
+		HibernateJpaAutoConfiguration.class,
 		IridaApiTestFilesystemConfig.class,
 		IridaApiServicesConfig.class,
 		IridaApiGalaxyTestConfig.class })
