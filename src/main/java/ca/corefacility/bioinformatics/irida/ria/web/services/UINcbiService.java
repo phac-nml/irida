@@ -20,7 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NcbiExportSubmissionTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiBioSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiExportSubmissionAdminTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiSubmissionBody;
+import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiSubmissionRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiSubmissionModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
@@ -104,7 +104,7 @@ public class UINcbiService {
 		return new NcbiSubmissionModel(submission, bioSamples);
 	}
 
-	public void submitNcbiExport(NcbiSubmissionBody submission) {
+	public void submitNcbiExport(NcbiSubmissionRequest submission) {
 		Project project = projectService.read(submission.getProjectId());
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		User user = userService.getUserByUsername(username);

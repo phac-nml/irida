@@ -3,7 +3,10 @@ package ca.corefacility.bioinformatics.irida.ria.web.models.export;
 import java.util.Date;
 import java.util.List;
 
-public class NcbiSubmissionBody {
+/**
+ * Request for submitting to the NCBI SRA
+ */
+public class NcbiSubmissionRequest {
 	private Long projectId;
 	private String bioProject;
 	private String namespace;

@@ -121,7 +121,7 @@ public class NCBIAjaxController {
 	 * @param submission details about the submission
 	 */
 	@PostMapping("")
-	public void submitNcbiExport(@RequestBody NcbiSubmissionBody submission) {
+	public void submitNcbiExport(@RequestBody NcbiSubmissionRequest submission) {
 		service.submitNcbiExport(submission);
 	}
 }
