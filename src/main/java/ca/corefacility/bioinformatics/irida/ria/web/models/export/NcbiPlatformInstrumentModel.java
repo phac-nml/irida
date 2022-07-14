@@ -7,6 +7,9 @@ import ca.corefacility.bioinformatics.irida.model.export.NcbiInstrumentModel;
 
 import com.google.common.collect.ImmutableList;
 
+/**
+ * Represents the relationship between sequencing platforms and instruments allowed by NCBI
+ */
 public class NcbiPlatformInstrumentModel {
 	private final EnumMap<NcbiPlatform, List<String>> platforms = new EnumMap<NcbiPlatform, List<String>>(
 			NcbiPlatform.class);
