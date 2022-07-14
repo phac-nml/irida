@@ -76,7 +76,7 @@ public class NCBIAjaxController {
 	 */
 	@GetMapping("/platforms")
 	public EnumMap<NcbiPlatform, List<String>> getNcbiPlatforms() {
-		return (new NcbiPlatformModel()).getPlatforms();
+		return (new NcbiPlatformInstrumentModel()).getPlatforms();
 	}
 
 	/**

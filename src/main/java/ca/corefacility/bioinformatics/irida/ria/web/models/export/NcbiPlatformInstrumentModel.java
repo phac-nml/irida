@@ -7,14 +7,11 @@ import ca.corefacility.bioinformatics.irida.model.export.NcbiInstrumentModel;
 
 import com.google.common.collect.ImmutableList;
 
-/**
- * Describes all possible Sequencing Platforms and their models recognized by NCBI
- */
-public class NcbiPlatformModel {
+public class NcbiPlatformInstrumentModel {
 	private final EnumMap<NcbiPlatform, List<String>> platforms = new EnumMap<NcbiPlatform, List<String>>(
 			NcbiPlatform.class);
 
-	public NcbiPlatformModel() {
+	public NcbiPlatformInstrumentModel() {
 		List<String> ABI_SOLID = ImmutableList.of(NcbiInstrumentModel.AB_5500_GENETIC_ANALYZER.getModel(),
 				NcbiInstrumentModel.AB_5500_XL_GENETIC_ANALYZER.getModel(),
 				NcbiInstrumentModel.AB_5500_XL_W_GENETIC_ANALYSIS_SYSTEM.getModel(),
