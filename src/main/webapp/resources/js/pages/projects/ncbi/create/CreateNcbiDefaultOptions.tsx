@@ -28,7 +28,7 @@ function CreateNcbiDefaultOptions({
         <Row gutter={[16, 16]}>
           <Col md={12} xs={24}>
             <Form.Item label={i18n("CreateNcbiExport.library_strategy")}>
-              <Select onChange={(value) => onChange("library_strategy", value)}>
+              <Select onChange={(value) => onChange("libraryStrategy", value)}>
                 {strategies?.map((option: string) => (
                   <Select.Option key={option}>{option}</Select.Option>
                 ))}
@@ -38,7 +38,7 @@ function CreateNcbiDefaultOptions({
           <Col md={12} xs={24}>
             <Form.Item label={i18n("CreateNcbiExport.library_source")}>
               <Select
-                onSelect={(value: string) => onChange("library_source", value)}
+                onSelect={(value: string) => onChange("librarySource", value)}
               >
                 {sources.map((option: string) => (
                   <Select.Option key={option}>{option}</Select.Option>
@@ -53,7 +53,7 @@ function CreateNcbiDefaultOptions({
               <Input
                 type="text"
                 onChange={(e) =>
-                  onChange("library_construction_protocol", e.target.value)
+                  onChange("libraryConstructionProtocol", e.target.value)
                 }
               />
             </Form.Item>
@@ -63,7 +63,7 @@ function CreateNcbiDefaultOptions({
               <Cascader
                 options={platforms}
                 onChange={(value) =>
-                  onChange("instrument_model", value as string[])
+                  onChange("instrumentModel", value as string[])
                 }
               />
             </Form.Item>
@@ -72,7 +72,7 @@ function CreateNcbiDefaultOptions({
             <Form.Item label={i18n("CreateNcbiExport.library_selection")}>
               <Select
                 onSelect={(value: string) =>
-                  onChange("library_selection", value)
+                  onChange("librarySelection", value)
                 }
               >
                 {selections.map((option: string) => (

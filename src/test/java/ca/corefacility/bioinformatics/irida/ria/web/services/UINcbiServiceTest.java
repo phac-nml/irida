@@ -21,7 +21,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiSubmission
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.export.NcbiExportSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 
@@ -34,6 +36,9 @@ class UINcbiServiceTest {
 	private UINcbiService uiNcbiService;
 	private ProjectService projectService;
 	private NcbiExportSubmissionService ncbiExportSubmissionService;
+	private UserService userService;
+	private SequencingObjectService sequencingObjectService;
+	private UISampleService uiSampleService;
 
 	// DATA // ---------------------------------------------------------------------------------------------------------
 
@@ -51,8 +56,11 @@ class UINcbiServiceTest {
 	void setUp() {
 		projectService = mock(ProjectService.class);
 		ncbiExportSubmissionService = mock(NcbiExportSubmissionService.class);
+		sequencingObjectService = mock(SequencingObjectService.class);
+		userService = mock(UserService.class);
+		uiSampleService = mock(UISampleService.class);
 		this.uiNcbiService = new UINcbiService(projectService, ncbiExportSubmissionService, sequencingObjectService,
-				userService);
+				userService, uiSampleService);
 
 		User user = mock(User.class);
 		when(user.getId()).thenReturn(1L);
@@ -138,7 +146,8 @@ class UINcbiServiceTest {
 	@Test
 	void getNCBIExportsForAdmin() {
 		TableResponse<NcbiExportSubmissionAdminTableModel> response = uiNcbiService.getNCBIExportsForAdmin(request);
-		assertEquals(3, response.getDataSource().size(), "There should be 3 NCBI export submissions");
+		assertEquals(3, response.getDataSource()
+				.size(), "There should be 3 NCBI export submissions");
 		assertEquals(3, response.getTotal(), "There should be 3 NCBI export submissions");
 	}
 
@@ -147,7 +156,8 @@ class UINcbiServiceTest {
 		when(ncbiExportSubmissionService.list(request.getCurrent(), request.getPageSize(),
 				request.getSort())).thenReturn(new PageImpl<>(Collections.emptyList()));
 		TableResponse<NcbiExportSubmissionAdminTableModel> response = uiNcbiService.getNCBIExportsForAdmin(request);
-		assertEquals(0, response.getDataSource().size(), "There should be 0 NCBI export submissions");
+		assertEquals(0, response.getDataSource()
+				.size(), "There should be 0 NCBI export submissions");
 		assertEquals(0, response.getTotal(), "There should be 0 NCBI export submissions");
 	}
 
@@ -156,8 +166,11 @@ class UINcbiServiceTest {
 		NcbiSubmissionModel model = uiNcbiService.getExportDetails(submission1.getId());
 		assertEquals(submission1.getId(), model.getId(), "The ID should be 1");
 		assertEquals(submission1.getBioProjectId(), model.getBioProject(), "The BioProject ID should be 12345");
-		assertEquals(submission1.getUploadState().name(), model.getState(), "The upload state should be CREATED");
-		assertEquals(submission1.getSubmitter().getId(), model.getSubmitter().getId(), "The submitter ID should be 1");
+		assertEquals(submission1.getUploadState()
+				.name(), model.getState(), "The upload state should be CREATED");
+		assertEquals(submission1.getSubmitter()
+				.getId(), model.getSubmitter()
+				.getId(), "The submitter ID should be 1");
 	}
 
 	@Test

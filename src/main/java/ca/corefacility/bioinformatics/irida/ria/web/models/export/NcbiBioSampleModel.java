@@ -1,9 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models.export;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.PairedEndSequenceFileModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.SingleEndSequenceFileModel;
 
 /**
  * Describes an NCBI SRA Submission's BioSample's files for the UI.
@@ -19,22 +24,32 @@ public class NcbiBioSampleModel {
 	private final String libraryStrategy;
 	private final String libraryConstructionProtocol;
 	private final String status;
-	private final List<SequencingObject> singles;
-	private final List<SequencingObject> pairs;
+	private final List<SingleEndSequenceFileModel> singles;
+	private final List<PairedEndSequenceFileModel> pairs;
 
-	public NcbiBioSampleModel(NcbiBioSampleFiles bioSample, List<SequencingObject> pairs, List<SequencingObject> singles) {
+	public NcbiBioSampleModel(NcbiBioSampleFiles bioSample, List<SequencingObject> pairs,
+			List<SequencingObject> singles) {
 		this.id = bioSample.getId();
 		this.accession = bioSample.getAccession();
 		this.bioSample = bioSample.getBioSample();
-		this.instrumentModel = bioSample.getInstrumentModel().getModel();
+		this.instrumentModel = bioSample.getInstrumentModel()
+				.getModel();
 		this.libraryName = bioSample.getLibraryName();
-		this.librarySelection = bioSample.getLibrarySelection().getValue();
-		this.librarySource = bioSample.getLibrarySource().getValue();
-		this.libraryStrategy = bioSample.getLibraryStrategy().getValue();
+		this.librarySelection = bioSample.getLibrarySelection()
+				.getValue();
+		this.librarySource = bioSample.getLibrarySource()
+				.getValue();
+		this.libraryStrategy = bioSample.getLibraryStrategy()
+				.getValue();
 		this.libraryConstructionProtocol = bioSample.getLibraryConstructionProtocol();
-		this.status = bioSample.getSubmissionStatus().toString();
-		this.singles = singles;
-		this.pairs = pairs;
+		this.status = bioSample.getSubmissionStatus()
+				.toString();
+		this.singles = singles.stream()
+				.map(single -> new SingleEndSequenceFileModel((SingleEndSequenceFile) single))
+				.collect(Collectors.toList());
+		this.pairs = pairs.stream()
+				.map(pair -> new PairedEndSequenceFileModel((SequenceFilePair) pair))
+				.collect(Collectors.toList());
 	}
 
 	public String getId() {
@@ -77,11 +92,11 @@ public class NcbiBioSampleModel {
 		return accession;
 	}
 
-	public List<SequencingObject> getSingles() {
+	public List<SingleEndSequenceFileModel> getSingles() {
 		return singles;
 	}
 
-	public List<SequencingObject> getPairs() {
+	public List<PairedEndSequenceFileModel> getPairs() {
 		return pairs;
 	}
 }

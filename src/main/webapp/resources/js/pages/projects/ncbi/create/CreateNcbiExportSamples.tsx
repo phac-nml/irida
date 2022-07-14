@@ -52,7 +52,7 @@ function SampleDetails({
       <Col md={12} xs={24}>
         <Form.Item
           rules={rules}
-          name={["samples", sample.name, "library_name"]}
+          name={["samples", sample.name, "libraryName"]}
           label={i18n("CreateNcbiExport.library_name")}
         >
           <Input type="text" onChange={onChange} />
@@ -61,7 +61,7 @@ function SampleDetails({
       <Col md={12} xs={24}>
         <Form.Item
           rules={rules}
-          name={["samples", sample.name, "library_strategy"]}
+          name={["samples", sample.name, "libraryStrategy"]}
           label={i18n("CreateNcbiExport.library_strategy")}
         >
           <Select style={{ display: "block" }} onChange={onChange}>
@@ -74,7 +74,7 @@ function SampleDetails({
       <Col md={12} xs={24}>
         <Form.Item
           rules={rules}
-          name={["samples", sample.name, "library_source"]}
+          name={["samples", sample.name, "librarySource"]}
           label={i18n("CreateNcbiExport.library_source")}
         >
           <Select style={{ display: "block" }} onChange={onChange}>
@@ -87,7 +87,7 @@ function SampleDetails({
       <Col md={12} xs={24}>
         <Form.Item
           rules={rules}
-          name={["samples", sample.name, "library_construction_protocol"]}
+          name={["samples", sample.name, "libraryConstructionProtocol"]}
           label={i18n("CreateNcbiExport.library_construction_protocol")}
         >
           <Input type="text" onChange={onChange} />
@@ -96,7 +96,7 @@ function SampleDetails({
       <Col md={12} xs={24}>
         <Form.Item
           rules={rules}
-          name={["samples", sample.name, "instrument_model"]}
+          name={["samples", sample.name, "instrumentModel"]}
           label={i18n("CreateNcbiExport.instrument_model")}
         >
           <Cascader
@@ -109,7 +109,7 @@ function SampleDetails({
       <Col md={12} xs={24}>
         <Form.Item
           rules={rules}
-          name={["samples", sample.name, "library_selection"]}
+          name={["samples", sample.name, "librarySelection"]}
           label={i18n("CreateNcbiExport.library_selection")}
         >
           <Select style={{ display: "block" }} onChange={onChange}>
@@ -133,26 +133,26 @@ function SampleDetails({
           <Radio.Group onChange={onChange}>
             <Space direction="vertical">
               {sample.files.singles.map((file) => (
-                <Radio key={`file-${file.identifier}`} value={file.identifier}>
+                <Radio key={`file-${file.id}`} value={file.id}>
                   <Space>
                     <Avatar
                       size="small"
                       style={{ backgroundColor: `var(--primary-grey)` }}
                       icon={<SwapRightOutlined />}
                     />
-                    {file.label}
+                    {file.name}
                   </Space>
                 </Radio>
               ))}
               {sample.files.paired.map((file) => (
-                <Radio key={`file-${file.identifier}`} value={file.identifier}>
+                <Radio key={`file-${file.id}`} value={file.id}>
                   <Space>
                     <Avatar
                       size="small"
                       style={{ backgroundColor: `var(--primary-grey)` }}
                       icon={<SwapOutlined />}
                     />
-                    {file.label}
+                    {file.name}
                   </Space>
                 </Radio>
               ))}
@@ -202,12 +202,12 @@ function CreateNcbiExportSamples({
     const untouched: string[][] = [];
     [
       ["samples", sample.name, "biosample"],
-      ["samples", sample.name, "library_name"],
-      ["samples", sample.name, "library_strategy"],
-      ["samples", sample.name, "library_source"],
-      ["samples", sample.name, "library_construction_protocol"],
-      ["samples", sample.name, "instrument_model"],
-      ["samples", sample.name, "library_selection"],
+      ["samples", sample.name, "libraryName"],
+      ["samples", sample.name, "libraryStrategy"],
+      ["samples", sample.name, "librarySource"],
+      ["samples", sample.name, "libraryConstructionProtocol"],
+      ["samples", sample.name, "instrumentModel"],
+      ["samples", sample.name, "librarySelection"],
       ["samples", sample.name, "file"],
     ].map((field) => {
       if (form.isFieldTouched(field)) {

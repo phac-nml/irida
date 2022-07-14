@@ -5,17 +5,19 @@ import java.util.List;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.PairedEndSequenceFileModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.SingleEndSequenceFileModel;
 
 /**
  * Collection of different files that can be on a sample
  */
 public class SampleFiles extends AjaxResponse {
-	private final List<SequencingObject> singles;
-	private final List<SequencingObject> paired;
+	private final List<SingleEndSequenceFileModel> singles;
+	private final List<PairedEndSequenceFileModel> paired;
 	private final List<SequencingObject> fast5;
 	private final List<GenomeAssembly> assemblies;
 
-	public SampleFiles(List<SequencingObject> singles, List<SequencingObject> paired, List<SequencingObject> fast5,
+	public SampleFiles(List<SingleEndSequenceFileModel> singles, List<PairedEndSequenceFileModel> paired, List<SequencingObject> fast5,
 			List<GenomeAssembly> assemblies) {
 		this.singles = singles;
 		this.paired = paired;
@@ -23,11 +25,11 @@ public class SampleFiles extends AjaxResponse {
 		this.assemblies = assemblies;
 	}
 
-	public List<SequencingObject> getSingles() {
+	public List<SingleEndSequenceFileModel> getSingles() {
 		return singles;
 	}
 
-	public List<SequencingObject> getPaired() {
+	public List<PairedEndSequenceFileModel> getPaired() {
 		return paired;
 	}
 
