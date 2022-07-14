@@ -10,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
  */
 public class NcbiBioSampleModel {
 	private final String id;
+	private final String accession;
 	private final String bioSample;
 	private final String instrumentModel;
 	private final String libraryName;
@@ -18,12 +19,12 @@ public class NcbiBioSampleModel {
 	private final String libraryStrategy;
 	private final String libraryConstructionProtocol;
 	private final String status;
-	private final String accession;
 	private final List<SequencingObject> singles;
 	private final List<SequencingObject> pairs;
 
 	public NcbiBioSampleModel(NcbiBioSampleFiles bioSample, List<SequencingObject> pairs, List<SequencingObject> singles) {
 		this.id = bioSample.getId();
+		this.accession = bioSample.getAccession();
 		this.bioSample = bioSample.getBioSample();
 		this.instrumentModel = bioSample.getInstrumentModel().getModel();
 		this.libraryName = bioSample.getLibraryName();
@@ -32,7 +33,6 @@ public class NcbiBioSampleModel {
 		this.libraryStrategy = bioSample.getLibraryStrategy().getValue();
 		this.libraryConstructionProtocol = bioSample.getLibraryConstructionProtocol();
 		this.status = bioSample.getSubmissionStatus().toString();
-		this.accession = bioSample.getAccession();
 		this.singles = singles;
 		this.pairs = pairs;
 	}
