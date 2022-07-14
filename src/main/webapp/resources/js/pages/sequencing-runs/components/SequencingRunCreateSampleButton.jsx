@@ -9,8 +9,18 @@ import {
 } from "../../../apis/projects/samples";
 import { useGetProjectNamesForUserQuery } from "../../../apis/projects/projects";
 import { SPACE_XS } from "../../../styles/spacing";
+import styled from "styled-components";
 
 const { Text } = Typography;
+
+const StyledFormItem = styled(Form.Item)`
+  .ant-select-status-success > .ant-select-selector {
+    border-color: green;
+  }
+  .ant-form-item-explain-success {
+    color: green;
+  }
+`;
 
 /**
  * React component to display the sequencing run create new sample modal.
@@ -56,7 +66,7 @@ export function SequencingRunCreateSampleButton() {
   ));
 
   const validateName = async (value) => {
-    await validateSampleName(value).then((response) => {
+    await validateSampleName(value, projectId).then((response) => {
       if (response.status === "success") {
         return Promise.resolve();
       } else {
@@ -122,16 +132,18 @@ export function SequencingRunCreateSampleButton() {
               {projectOptions}
             </Select>
           </Form.Item>
-          <Form.Item
+          <StyledFormItem
             name="sampleName"
             label="Sample Name"
-            // rules={[
-            //   ({}) => ({
-            //     validator(_, value) {
-            //       return validateName(value);
-            //     },
-            //   }),
-            // ]}
+            validateStatus={"success"}
+            help={"Name cannot be empty"}
+            rules={[
+              ({}) => ({
+                validator(_, value) {
+                  return validateName(value);
+                },
+              }),
+            ]}
           >
             <AutoComplete
               // allowClear={true}
@@ -144,7 +156,7 @@ export function SequencingRunCreateSampleButton() {
               }
               disabled={projectId === null}
             />
-          </Form.Item>
+          </StyledFormItem>
         </Form>
       </Modal>
     </>

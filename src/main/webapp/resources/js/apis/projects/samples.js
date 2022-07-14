@@ -66,14 +66,19 @@ export const {
 /**
  * Server side validation of a new sample name.
  * @param {string} name - sample name to validate
+ * @param {number} projectId - project identifier
  * @returns {Promise<any>}
  */
-export async function validateSampleName(name) {
+export async function validateSampleName(name, projectId = undefined) {
+  let url;
   const params = new URLSearchParams();
   params.append("name", name.trim());
-  const response = await fetch(
-    `${URL}/${PROJECT_ID}/samples/add-sample/validate?${params}`
-  );
+
+  if (projectId === undefined)
+    url = `${URL}/${PROJECT_ID}/samples/add-sample/validate?${params}`;
+  else url = `${URL}/${projectId}/samples/add-sample/validate?${params}`;
+
+  const response = await fetch(url);
   return response.json();
 }
 
