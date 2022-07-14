@@ -18,8 +18,8 @@ public class NcbiSubmissionSample {
 	private NcbiLibraryStrategy libraryStrategy;
 	private String libraryConstructionProtocol;
 	private NcbiInstrumentModel instrumentModel;
-	private List<Long> paired;
-	private List<Long> single;
+	private List<Long> pairs;
+	private List<Long> singles;
 
 	public String getBioSample() {
 		return bioSample;
@@ -77,19 +77,19 @@ public class NcbiSubmissionSample {
 		this.instrumentModel = instrumentModel;
 	}
 
-	public List<Long> getPaired() {
-		return paired;
+	public List<Long> getPairs() {
+		return pairs;
 	}
 
-	public void setPaired(List<Long> paired) {
-		this.paired = paired;
+	public void setPairs(List<Long> pairs) {
+		this.pairs = pairs;
 	}
 
-	public List<Long> getSingle() {
-		return single;
+	public List<Long> getSingles() {
+		return singles;
 	}
 
-	public void setSingle(List<Long> single) {
-		this.single = single;
+	public void setSingles(List<Long> singles) {
+		this.singles = singles;
 	}
 }

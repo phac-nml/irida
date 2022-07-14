@@ -13,12 +13,14 @@ import {
 import type { RangePickerProps } from "antd/es/date-picker";
 import moment from "moment";
 import React from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useParams } from "react-router-dom";
 import {
   getNCBIPlatforms,
   getNCBISelections,
   getNCBISources,
   getNCBIStrategies,
+  NcbiSubmissionBioSample,
+  NcbiSubmissionRequest,
 } from "../../../../apis/export/ncbi";
 import { fetchSampleFiles } from "../../../../apis/samples/samples";
 import type { Option } from "../../../../types/ant-design";
@@ -47,7 +49,7 @@ export interface SampleRecord {
   librarySelection?: string;
   status?: string;
   files: {
-    paired: PairedEndSequenceFile[];
+    pairs: PairedEndSequenceFile[];
     singles: SingleEndSequenceFile[];
   };
 }
@@ -114,6 +116,7 @@ export async function loader(): Promise<LoaderValues> {
  */
 function CreateNcbiExport(): JSX.Element {
   const { samples }: LoaderValues = useLoaderData();
+  const { projectId } = useParams();
   const [form] = Form.useForm();
 
   /**
@@ -141,7 +144,28 @@ function CreateNcbiExport(): JSX.Element {
 
   const validateAndSubmit = (): void => {
     // TODO: convert release date from momentjs
-    form.validateFields().then(console.log);
+    form
+      .validateFields()
+      .then(({ bioProject, namespace, organization, releaseDate, samples }) => {
+        console.log({
+          bioProject,
+          namespace,
+          organization,
+          releaseDate,
+          samples,
+        });
+        const request: NcbiSubmissionRequest = {
+          projectId: Number(projectId),
+          bioProject,
+          namespace,
+          organization,
+          releaseDate: releaseDate.unix(),
+          samples: Object.values(samples).map(
+            (sample): NcbiSubmissionBioSample => {}
+          ),
+        };
+        console.log(request);
+      });
   };
 
   return (
@@ -152,14 +176,14 @@ function CreateNcbiExport(): JSX.Element {
             <Form
               layout="vertical"
               initialValues={{
-                release_date: moment(new Date()),
+                releaseDate: moment(new Date()),
                 samples,
               }}
               form={form}
               onFinish={validateAndSubmit}
             >
               <Space direction="vertical">
-                <Card title={"Export Details"}>
+                <Card title={i18n("CreateNcbiExport.details")}>
                   <Row gutter={[16, 16]}>
                     <Col md={12} xs={24}>
                       <Form.Item
@@ -167,13 +191,15 @@ function CreateNcbiExport(): JSX.Element {
                           {
                             required: true,
                             message: i18n(
-                              "CreateNcbiExport.bioproject.description"
+                              "NcbiSubmissionRequest.projectId.description"
                             ),
                           },
                         ]}
-                        name="bioproject"
-                        label={i18n("CreateNcbiExport.bioproject.title")}
-                        help={i18n("CreateNcbiExport.bioproject.description")}
+                        name="bioProject"
+                        label={i18n("NcbiSubmissionRequest.projectId")}
+                        help={i18n(
+                          "NcbiSubmissionRequest.projectId.description"
+                        )}
                       >
                         <Input />
                       </Form.Item>
@@ -185,12 +211,14 @@ function CreateNcbiExport(): JSX.Element {
                           {
                             required: true,
                             message: i18n(
-                              "CreateNcbiExport.organization.description"
+                              "NcbiSubmissionRequest.organization.description"
                             ),
                           },
                         ]}
-                        label={i18n("CreateNcbiExport.organization.title")}
-                        help={i18n("CreateNcbiExport.organization.description")}
+                        label={i18n("NcbiSubmissionRequest.organization")}
+                        help={i18n(
+                          "NcbiSubmissionRequest.organization.description"
+                        )}
                       >
                         <Input />
                       </Form.Item>
@@ -202,29 +230,33 @@ function CreateNcbiExport(): JSX.Element {
                           {
                             required: true,
                             message: i18n(
-                              "CreateNcbiExport.namespace.description"
+                              "NcbiSubmissionRequest.namespace.description"
                             ),
                           },
                         ]}
-                        label={i18n("CreateNcbiExport.namespace.title")}
-                        help={i18n("CreateNcbiExport.namespace.description")}
+                        label={i18n("NcbiSubmissionRequest.namespace")}
+                        help={i18n(
+                          "NcbiSubmissionRequest.namespace.description"
+                        )}
                       >
                         <Input />
                       </Form.Item>
                     </Col>
                     <Col md={12} xs={24}>
                       <Form.Item
-                        name="release_date"
+                        name="releaseDate"
                         rules={[
                           {
                             required: true,
                             message: i18n(
-                              "CreateNcbiExport.release_date.description"
+                              "NcbiSubmissionRequest.releaseDate.description"
                             ),
                           },
                         ]}
-                        label={i18n("CreateNcbiExport.release_date.title")}
-                        help={i18n("CreateNcbiExport.release_date.description")}
+                        label={i18n("NcbiSubmissionRequest.releaseDate")}
+                        help={i18n(
+                          "NcbiSubmissionRequest.releaseDate.description"
+                        )}
                       >
                         <DatePicker
                           style={{ width: "100%" }}

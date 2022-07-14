@@ -1,5 +1,6 @@
 import {
   ExportUploadState,
+  NcbiBioSample,
   NcbiInstrument,
   NcbiSelection,
   NcbiSource,
@@ -8,13 +9,30 @@ import {
   UserMinimal,
 } from "../../types/irida";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { get } from "../requests";
+import { get, post } from "../requests";
 
 export interface NcbiExportSubmissionTableModel {
   exportedSamples: number;
   state: ExportUploadState;
   submitter: UserMinimal;
   bioProjectId: string;
+}
+
+export type NcbiSubmissionBioSample = Omit<
+  NcbiBioSample,
+  "id" | "accession" | "status" | "singles" | "pairs"
+> & {
+  pairs: number[];
+  singles: number[];
+};
+
+export interface NcbiSubmissionRequest {
+  projectId: number;
+  bioProject: string;
+  namespace: string;
+  organization: string;
+  releaseDate: Date;
+  samples: Array<NcbiSubmissionBioSample>;
 }
 
 export interface FullNcbiPlatforms {
@@ -69,4 +87,14 @@ export async function getNCBIStrategies(): Promise<NcbiStrategy[]> {
  */
 export async function getNCBISelections(): Promise<NcbiSelection[]> {
   return await get(setBaseUrl(`ajax/ncbi/selections`));
+}
+
+/**
+ * Submit a request for a new NCBI SRA Submission
+ * @param request
+ */
+export async function submitNcbiSubmissionRequest(
+  request: NcbiSubmissionRequest
+) {
+  return await post(setBaseUrl(`ajax/ncbi/submit`), request);
 }

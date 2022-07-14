@@ -13,14 +13,14 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.SingleEn
  */
 public class SampleFiles extends AjaxResponse {
 	private final List<SingleEndSequenceFileModel> singles;
-	private final List<PairedEndSequenceFileModel> paired;
+	private final List<PairedEndSequenceFileModel> pairs;
 	private final List<SequencingObject> fast5;
 	private final List<GenomeAssembly> assemblies;
 
-	public SampleFiles(List<SingleEndSequenceFileModel> singles, List<PairedEndSequenceFileModel> paired, List<SequencingObject> fast5,
+	public SampleFiles(List<SingleEndSequenceFileModel> singles, List<PairedEndSequenceFileModel> pairs, List<SequencingObject> fast5,
 			List<GenomeAssembly> assemblies) {
 		this.singles = singles;
-		this.paired = paired;
+		this.pairs = pairs;
 		this.fast5 = fast5;
 		this.assemblies = assemblies;
 	}
@@ -29,8 +29,8 @@ public class SampleFiles extends AjaxResponse {
 		return singles;
 	}
 
-	public List<PairedEndSequenceFileModel> getPaired() {
-		return paired;
+	public List<PairedEndSequenceFileModel> getPairs() {
+		return pairs;
 	}
 
 	public List<SequencingObject> getFast5() {

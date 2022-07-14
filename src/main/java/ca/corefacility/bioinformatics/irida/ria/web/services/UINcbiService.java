@@ -126,11 +126,11 @@ public class UINcbiService {
 				.stream()
 				.map(sample -> {
 					Set<SingleEndSequenceFile> singleFiles = new HashSet<>();
-					sequencingObjectService.readMultiple(sample.getSingle())
+					sequencingObjectService.readMultiple(sample.getSingles())
 							.forEach(f -> singleFiles.add((SingleEndSequenceFile) f));
 
 					HashSet<SequenceFilePair> paired = new HashSet<>();
-					sequencingObjectService.readMultiple(sample.getPaired())
+					sequencingObjectService.readMultiple(sample.getPairs())
 							.forEach(f -> paired.add((SequenceFilePair) f));
 
 					NcbiBioSampleFiles.Builder sampleBuilder = new NcbiBioSampleFiles.Builder();

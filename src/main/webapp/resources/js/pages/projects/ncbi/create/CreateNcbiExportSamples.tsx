@@ -7,6 +7,7 @@ import {
 import {
   Avatar,
   Cascader,
+  Checkbox,
   Col,
   Collapse,
   Form,
@@ -43,8 +44,8 @@ function SampleDetails({
       <Col md={12} xs={24}>
         <Form.Item
           rules={rules}
-          name={["samples", sample.name, "biosample"]}
-          label={i18n("CreateNcbiExport.biosample-id")}
+          name={["samples", sample.name, "bioSample"]}
+          label={i18n("NcbiBioSample.id")}
         >
           <Input type="text" onChange={onChange} />
         </Form.Item>
@@ -53,7 +54,7 @@ function SampleDetails({
         <Form.Item
           rules={rules}
           name={["samples", sample.name, "libraryName"]}
-          label={i18n("CreateNcbiExport.library_name")}
+          label={i18n("NcbiBioSample.libraryName")}
         >
           <Input type="text" onChange={onChange} />
         </Form.Item>
@@ -62,7 +63,7 @@ function SampleDetails({
         <Form.Item
           rules={rules}
           name={["samples", sample.name, "libraryStrategy"]}
-          label={i18n("CreateNcbiExport.library_strategy")}
+          label={i18n("NcbiBioSample.libraryStrategy")}
         >
           <Select style={{ display: "block" }} onChange={onChange}>
             {strategies?.map((option: string) => (
@@ -75,7 +76,7 @@ function SampleDetails({
         <Form.Item
           rules={rules}
           name={["samples", sample.name, "librarySource"]}
-          label={i18n("CreateNcbiExport.library_source")}
+          label={i18n("NcbiBioSample.librarySource")}
         >
           <Select style={{ display: "block" }} onChange={onChange}>
             {sources.map((option: string) => (
@@ -88,7 +89,7 @@ function SampleDetails({
         <Form.Item
           rules={rules}
           name={["samples", sample.name, "libraryConstructionProtocol"]}
-          label={i18n("CreateNcbiExport.library_construction_protocol")}
+          label={i18n("NcbiBioSample.libraryConstructionProtocol")}
         >
           <Input type="text" onChange={onChange} />
         </Form.Item>
@@ -97,7 +98,7 @@ function SampleDetails({
         <Form.Item
           rules={rules}
           name={["samples", sample.name, "instrumentModel"]}
-          label={i18n("CreateNcbiExport.instrument_model")}
+          label={i18n("NcbiBioSample.instrumentModel")}
         >
           <Cascader
             options={platforms}
@@ -110,7 +111,7 @@ function SampleDetails({
         <Form.Item
           rules={rules}
           name={["samples", sample.name, "librarySelection"]}
-          label={i18n("CreateNcbiExport.library_selection")}
+          label={i18n("NcbiBioSample.librarySelection")}
         >
           <Select style={{ display: "block" }} onChange={onChange}>
             {selections.map((option) => (
@@ -119,47 +120,74 @@ function SampleDetails({
           </Select>
         </Form.Item>
       </Col>
-      <Col span={24}>
-        <Form.Item
-          name={["samples", sample.name, "file"]}
-          label={i18n("CreateNcbiExport.files.title")}
-          rules={[
-            {
-              required: true,
-              message: i18n("CreateNcbiExport.files.required"),
-            },
-          ]}
-        >
-          <Radio.Group onChange={onChange}>
-            <Space direction="vertical">
-              {sample.files.singles.map((file) => (
-                <Radio key={`file-${file.id}`} value={file.id}>
-                  <Space>
-                    <Avatar
-                      size="small"
-                      style={{ backgroundColor: `var(--primary-grey)` }}
-                      icon={<SwapRightOutlined />}
-                    />
-                    {file.name}
-                  </Space>
-                </Radio>
-              ))}
-              {sample.files.paired.map((file) => (
-                <Radio key={`file-${file.id}`} value={file.id}>
-                  <Space>
-                    <Avatar
-                      size="small"
-                      style={{ backgroundColor: `var(--primary-grey)` }}
-                      icon={<SwapOutlined />}
-                    />
-                    {file.name}
-                  </Space>
-                </Radio>
-              ))}
-            </Space>
-          </Radio.Group>
-        </Form.Item>
-      </Col>
+      {sample.files.singles.length > 0 && (
+        <Col span={24}>
+          <Form.Item
+            name={["samples", sample.name, "files", "singles"]}
+            label={i18n("CreateNcbiExport.singles")}
+            valuePropName="checked"
+            rules={[
+              {
+                required: true,
+                message: i18n("CreateNcbiExport.files.required"),
+              },
+            ]}
+          >
+            <Checkbox.Group style={{ width: `100%` }}>
+              <Row>
+                {sample.files.singles.map((pair) => (
+                  <Col key={pair.key} span={24}>
+                    <Checkbox value={pair.id}>
+                      <Space>
+                        <Avatar
+                          size="small"
+                          style={{ backgroundColor: `var(--primary-grey)` }}
+                          icon={<SwapRightOutlined />}
+                        />
+                        {pair.name}
+                      </Space>
+                    </Checkbox>
+                  </Col>
+                ))}
+              </Row>
+            </Checkbox.Group>
+          </Form.Item>
+        </Col>
+      )}
+      {sample.files.pairs.length > 0 && (
+        <Col span={24}>
+          <Form.Item
+            name={["samples", sample.name, "files", "pairs"]}
+            label={i18n("CreateNcbiExport.pairs")}
+            valuePropName="checked"
+            rules={[
+              {
+                required: true,
+                message: i18n("CreateNcbiExport.files.required"),
+              },
+            ]}
+          >
+            <Checkbox.Group style={{ width: `100%` }}>
+              <Row>
+                {sample.files.pairs.map((pair) => (
+                  <Col key={pair.key} span={24}>
+                    <Checkbox value={pair.id}>
+                      <Space>
+                        <Avatar
+                          size="small"
+                          style={{ backgroundColor: `var(--primary-grey)` }}
+                          icon={<SwapOutlined />}
+                        />
+                        {pair.name}
+                      </Space>
+                    </Checkbox>
+                  </Col>
+                ))}
+              </Row>
+            </Checkbox.Group>
+          </Form.Item>
+        </Col>
+      )}
     </Row>
   );
 }
@@ -186,6 +214,13 @@ function SampleValidIcon({ status }: { status: boolean }) {
   );
 }
 
+type SampleFormField = [
+  "samples",
+  string,
+  keyof SampleRecord,
+  (keyof SampleRecord["files"])?
+];
+
 function CreateNcbiExportSamples({
   form,
 }: {
@@ -198,28 +233,36 @@ function CreateNcbiExportSamples({
   );
 
   const checkStatus = (sample: SampleRecord, index: number): void => {
-    const touched: string[][] = [];
-    const untouched: string[][] = [];
-    [
-      ["samples", sample.name, "biosample"],
+    const fields: Array<SampleFormField> = [
+      ["samples", sample.name, "bioSample"],
       ["samples", sample.name, "libraryName"],
       ["samples", sample.name, "libraryStrategy"],
       ["samples", sample.name, "librarySource"],
       ["samples", sample.name, "libraryConstructionProtocol"],
       ["samples", sample.name, "instrumentModel"],
       ["samples", sample.name, "librarySelection"],
-      ["samples", sample.name, "file"],
-    ].map((field) => {
+      ["samples", sample.name, "files", "singles"],
+      ["samples", sample.name, "files", "pairs"],
+    ];
+
+    // TODO (Josh - 7/14/22): Files validation not working yet, must check to see if at least of
+    // of the pairs or singles is checked.
+
+    const touched: Array<SampleFormField> = [];
+    let hasUntouched = false;
+
+    fields.map((field) => {
       if (form.isFieldTouched(field)) {
         touched.push(field);
       } else {
         if (form.getFieldValue(field) === undefined) {
-          untouched.push(field);
+          hasUntouched = true;
         }
       }
     });
 
-    if (untouched.length) {
+    if (hasUntouched) {
+      // If it has untouched fields, then it is not valid yet!
       const updated = [...validationStatus];
       updated[index] = false;
       setValidationStatus(updated);

@@ -27,7 +27,7 @@ function CreateNcbiDefaultOptions({
         </Typography.Text>
         <Row gutter={[16, 16]}>
           <Col md={12} xs={24}>
-            <Form.Item label={i18n("CreateNcbiExport.library_strategy")}>
+            <Form.Item label={i18n("NcbiBioSample.libraryStrategy")}>
               <Select onChange={(value) => onChange("libraryStrategy", value)}>
                 {strategies?.map((option: string) => (
                   <Select.Option key={option}>{option}</Select.Option>
@@ -36,7 +36,7 @@ function CreateNcbiDefaultOptions({
             </Form.Item>
           </Col>
           <Col md={12} xs={24}>
-            <Form.Item label={i18n("CreateNcbiExport.library_source")}>
+            <Form.Item label={i18n("NcbiBioSample.librarySource")}>
               <Select
                 onSelect={(value: string) => onChange("librarySource", value)}
               >
@@ -48,7 +48,7 @@ function CreateNcbiDefaultOptions({
           </Col>
           <Col md={12} xs={24}>
             <Form.Item
-              label={i18n("CreateNcbiExport.library_construction_protocol")}
+              label={i18n("NcbiBioSample.libraryConstructionProtocol")}
             >
               <Input
                 type="text"
@@ -59,7 +59,7 @@ function CreateNcbiDefaultOptions({
             </Form.Item>
           </Col>
           <Col md={12} xs={24}>
-            <Form.Item label={i18n("CreateNcbiExport.instrument_model")}>
+            <Form.Item label={i18n("NcbiBioSample.instrumentModel")}>
               <Cascader
                 options={platforms}
                 onChange={(value) =>
@@ -69,7 +69,7 @@ function CreateNcbiDefaultOptions({
             </Form.Item>
           </Col>
           <Col md={12} xs={24}>
-            <Form.Item label={i18n("CreateNcbiExport.library_selection")}>
+            <Form.Item label={i18n("NcbiBioSample.librarySelection")}>
               <Select
                 onSelect={(value: string) =>
                   onChange("librarySelection", value)
