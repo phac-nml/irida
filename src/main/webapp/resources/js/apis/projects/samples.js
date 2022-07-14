@@ -71,7 +71,9 @@ export const {
 export async function validateSampleName(name) {
   const params = new URLSearchParams();
   params.append("name", name.trim());
-  const response = await fetch(`${URL}/add-sample/validate?${params}`);
+  const response = await fetch(
+    `${URL}/${PROJECT_ID}/samples/add-sample/validate?${params}`
+  );
   return response.json();
 }
 
@@ -82,7 +84,7 @@ export async function validateSampleName(name) {
  * @returns {Promise<Response>}
  */
 export async function createNewSample({ name, organism }) {
-  const response = await fetch(`${URL}/add-sample`, {
+  const response = await fetch(`${URL}/${PROJECT_ID}/samples/add-sample`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -109,12 +111,12 @@ export async function shareSamplesWithProject({
 }
 
 /**
- * Get get minimal information for all samples in a project.
+ * Get minimal information for all samples in a project.
  * @param {object} options - current table filters
  * @returns {Promise<*>}
  */
 export async function getMinimalSampleDetailsForFilteredProject(options) {
-  return await fetch(`${URL}/ids`, {
+  return await fetch(`${URL}/${PROJECT_ID}/samples/ids`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
