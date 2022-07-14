@@ -8,12 +8,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.junit.jupiter.api.Tag;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import ca.corefacility.bioinformatics.irida.IridaApplication;
 import ca.corefacility.bioinformatics.irida.config.IridaApiGalaxyTestConfig;
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestFilesystemConfig;
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 
 /**
  * Annotation that is to be specified on Galaxy integration tests. Simplifies the configuration of tests by
@@ -27,8 +28,11 @@ import ca.corefacility.bioinformatics.irida.config.data.IridaApiTestFilesystemCo
 @Tag("IntegrationTest")
 @Tag("Galaxy")
 @ActiveProfiles("test")
-@SpringBootTest(
-		classes = { IridaApplication.class, IridaApiTestFilesystemConfig.class, IridaApiGalaxyTestConfig.class })
+@SpringBootTest(classes = {
+		DataSourceAutoConfiguration.class,
+		IridaApiTestFilesystemConfig.class,
+		IridaApiServicesConfig.class,
+		IridaApiGalaxyTestConfig.class })
 public @interface GalaxyIntegrationTest {
 
 }
