@@ -45,6 +45,7 @@ public class UserSecurityInterceptor implements AsyncHandlerInterceptor {
 
 			// Disallow SEQUENCER role from doing anything in the IRIDA UI
 			if (currentUserDetails.getAuthorities().contains(Role.ROLE_SEQUENCER)) {
+				session.invalidate();
 				throw new AccessDeniedException("Sequencer should not be able to interact with IRIDA UI");
 			}
 
