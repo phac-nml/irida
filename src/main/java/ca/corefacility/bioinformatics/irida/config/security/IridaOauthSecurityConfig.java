@@ -1,9 +1,13 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.security.KeyFactory;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -273,8 +277,32 @@ public class IridaOauthSecurityConfig {
 		}
 
 		@Bean
-		public RSAKey rsaKey() {
-			return generateRsa();
+		public ProviderSettings providerSettings() {
+			return ProviderSettings.builder()
+					.issuer(serverBase)
+					.authorizationEndpoint("/api/oauth/authorize")
+					.tokenEndpoint("/api/oauth/token")
+					.jwkSetEndpoint("/api/oauth/jwks")
+					.tokenRevocationEndpoint("/api/oauth/revoke")
+					.tokenIntrospectionEndpoint("/api/oauth/introspect")
+					.build();
+		}
+	}
+
+	/**
+	 * Class for configuring the JSON Web Key for JSON Web Tokens used in OAuth2
+	 */
+	@Configuration
+	protected static class JWKConfig {
+
+		@Autowired
+		private OAuth2AuthorizationService authorizationService;
+
+		@Bean
+		public RSAKey rsaKey(@Value("${oauth2.jwk.rsakey.id}") String rsaKeyId,
+				@Value("${oauth2.jwk.rsakey.private}") String rsaPrivateKey,
+				@Value("${oauth2.jwk.rsakey.public}") String rsaPublicKey) throws Exception {
+			return generateRsa(rsaKeyId, rsaPrivateKey, rsaPublicKey);
 		}
 
 		@Bean
@@ -291,7 +319,7 @@ public class IridaOauthSecurityConfig {
 
 		@Bean
 		public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
-			OAuth2TokenValidator<Jwt> timestampValidator = new JwtTimestampValidator();
+			OAuth2TokenValidator<Jwt> defaultValidator = JwtValidators.createDefault();
 
 			OAuth2TokenValidator<Jwt> revocationValidator = jwt -> {
 				OAuth2Authorization authorization = this.authorizationService.findByToken(jwt.getTokenValue(),
@@ -306,42 +334,64 @@ public class IridaOauthSecurityConfig {
 				}
 			};
 
-			OAuth2TokenValidator<Jwt> validator = new DelegatingOAuth2TokenValidator<>(timestampValidator,
+			OAuth2TokenValidator<Jwt> validator = new DelegatingOAuth2TokenValidator<>(defaultValidator,
 					revocationValidator);
 			NimbusJwtDecoder decoder = (NimbusJwtDecoder) OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
 			decoder.setJwtValidator(validator);
 			return decoder;
 		}
 
-		@Bean
-		public ProviderSettings providerSettings() {
-			return ProviderSettings.builder()
-					.issuer(serverBase)
-					.authorizationEndpoint("/api/oauth/authorize")
-					.tokenEndpoint("/api/oauth/token")
-					.jwkSetEndpoint("/api/oauth/jwks")
-					.tokenRevocationEndpoint("/api/oauth/revoke")
-					.tokenIntrospectionEndpoint("/api/oauth/introspect")
-					.build();
-		}
+		private static RSAKey generateRsa(String rsaKeyId, String rsaPrivateKey, String rsaPublicKey) throws Exception {
+			InputStream publicKeyStream;
+			InputStream privateKeyStream;
 
-		private static RSAKey generateRsa() {
-			KeyPair keyPair = generateRsaKey();
-			RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-			RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
-			return new RSAKey.Builder(publicKey).privateKey(privateKey).keyID(UUID.randomUUID().toString()).build();
-		}
-
-		private static KeyPair generateRsaKey() {
-			KeyPair keyPair;
-			try {
-				KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-				keyPairGenerator.initialize(2048);
-				keyPair = keyPairGenerator.generateKeyPair();
-			} catch (Exception ex) {
-				throw new IllegalStateException(ex);
+			if (rsaPrivateKey.startsWith("classpath")) {
+				privateKeyStream = JWKConfig.class.getClassLoader()
+						.getResourceAsStream(rsaPrivateKey.replace("classpath:/", ""));
+			} else {
+				privateKeyStream = new FileInputStream(new File(rsaPrivateKey));
 			}
-			return keyPair;
+
+			if (rsaPublicKey.startsWith("classpath")) {
+				publicKeyStream = JWKConfig.class.getClassLoader()
+						.getResourceAsStream(rsaPublicKey.replace("classpath:/", ""));
+			} else {
+				publicKeyStream = new FileInputStream(new File(rsaPublicKey));
+			}
+
+			RSAPublicKey publicKey = getRSAPublicKeyFromPem(publicKeyStream);
+			RSAPrivateKey privateKey = getRSAPrivateKeyFromPem(privateKeyStream);
+			return new RSAKey.Builder(publicKey).privateKey(privateKey).keyID(rsaKeyId).build();
+		}
+
+		private static RSAPrivateKey getRSAPrivateKeyFromPem(InputStream is) throws Exception {
+			byte[] keyBytes = is.readAllBytes();
+
+			String key = new String(keyBytes);
+			String privateKeyPem = key.replace("-----BEGIN PRIVATE KEY-----", "")
+					.replaceAll(System.lineSeparator(), "")
+					.replace("-----END PRIVATE KEY-----", "");
+
+			byte[] encoded = Base64.getDecoder().decode(privateKeyPem);
+
+			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+			PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
+			return (RSAPrivateKey) keyFactory.generatePrivate(keySpec);
+		}
+
+		private static RSAPublicKey getRSAPublicKeyFromPem(InputStream is) throws Exception {
+			byte[] keyBytes = is.readAllBytes();
+
+			String key = new String(keyBytes);
+			String publicKeyPem = key.replace("-----BEGIN PUBLIC KEY-----", "")
+					.replaceAll(System.lineSeparator(), "")
+					.replace("-----END PUBLIC KEY-----", "");
+
+			byte[] encoded = Base64.getDecoder().decode(publicKeyPem);
+
+			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+			X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
+			return (RSAPublicKey) keyFactory.generatePublic(keySpec);
 		}
 	}
 }

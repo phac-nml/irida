@@ -265,6 +265,7 @@ tasks.war {
     exclude("entries.js")
     exclude(".eslintrc.js")
     exclude("postcss.config.js")
+    rootSpec.exclude("**/jwk-*.pem")
 }
 
 node {
@@ -422,6 +423,32 @@ tasks.named<BootRun>("bootRun") {
     }
 }
 
+task<Exec>("generateRSAKeyPair") {
+    workingDir(file("${projectDir}/src/main/resources"))
+    commandLine(listOf("openssl", "genpkey", "-algorithm", "RSA", "-out", "jwk-keypair.pem"))
+    outputs.file(file("${projectDir}/src/main/resources/jwk-keypair.pem"))
+}
+
+task<Exec>("generateRSAPrivateKey") {
+    dependsOn(":generateRSAKeyPair")
+    workingDir(file("${projectDir}/src/main/resources"))
+    commandLine(listOf("openssl", "pkcs8", "-inform", "PEM", "-outform", "PEM", "-nocrypt", "-in", "jwk-keypair.pem", "-out", "jwk-private.pem"))
+    outputs.file(file("${projectDir}/src/main/resources/jwk-private.pem"))
+}
+
+task<Exec>("generateRSAPublicKey") {
+    dependsOn(":generateRSAKeyPair")
+    workingDir(file("${projectDir}/src/main/resources"))
+    commandLine(listOf("openssl", "rsa", "-in", "jwk-keypair.pem", "-pubout", "-out", "jwk-public.pem"))
+    outputs.file(file("${projectDir}/src/main/resources/jwk-public.pem"))
+}
+
+task<DefaultTask>("generateJWK") {
+    dependsOn("generateRSAKeyPair")
+    dependsOn("generateRSAPrivateKey")
+    dependsOn("generateRSAPublicKey")
+}
+
 openApi {
     outputDir.set(file("${projectDir}/doc/swagger-ui"))
     outputFileName.set("open-api.json")
@@ -433,6 +460,7 @@ tasks.processResources {
         expand(project.properties)
     }
     dependsOn(":buildWebapp")
+    dependsOn(":generateJWK")
 }
 
 tasks.javadoc {
