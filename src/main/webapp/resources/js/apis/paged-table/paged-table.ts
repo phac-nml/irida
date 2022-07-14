@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BaseRecord } from "../../types/irida";
+import { BaseModel } from "../../types/irida";
 
 export interface PageTableFilters {
   [key: string]: string[];
@@ -19,7 +19,7 @@ export interface PageTableResponse {
   total: number;
 }
 
-export interface PageTableModel extends BaseRecord {
+export interface PageTableModel extends BaseModel {
   [key: string]: any; // allows any additional keys of any type value
 }
 

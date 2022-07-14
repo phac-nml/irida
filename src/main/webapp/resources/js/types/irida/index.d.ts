@@ -2,7 +2,7 @@ export = IRIDA;
 export as namespace IRIDA;
 
 declare namespace IRIDA {
-  interface BaseRecord {
+  interface BaseModel {
     id: number;
     key: string;
     name: string;
@@ -10,7 +10,7 @@ declare namespace IRIDA {
     modifiedDate: Date;
   }
 
-  interface Announcement extends BaseRecord {
+  interface Announcement extends BaseModel {
     title: string;
     message: string;
     priority: boolean;
@@ -85,7 +85,7 @@ declare namespace IRIDA {
     files: SequencingObject[];
   }
 
-  interface Project extends BaseRecord {
+  interface Project extends BaseModel {
     description: string;
     organism: string;
     genomeSize: number;
@@ -100,7 +100,7 @@ declare namespace IRIDA {
 
   type ProjectMinimal = Pick<Project, "id" | "name">;
 
-  interface Sample extends BaseRecord {
+  interface Sample extends BaseModel {
     description: string;
     organism: string;
     isolate: string;
@@ -115,7 +115,7 @@ declare namespace IRIDA {
     sequenceFiles: SequencingObject[];
   }
 
-  interface SequencingObject extends Omit<BaseRecord, "id", "name"> {
+  interface SequencingObject extends Omit<BaseModel, "id" | "name"> {
     identifier: number;
     label: string;
     fileSize: string;
@@ -133,7 +133,6 @@ declare namespace IRIDA {
   }
 
   enum SystemRole {
-    ROLE_ANONYMOUS = "ROLE_ANONYMOUS",
     ROLE_ADMIN = "ROLE_ADMIN",
     ROLE_USER = "ROLE_USER",
     ROLE_MANAGER = "ROLE_MANAGER",
@@ -141,7 +140,7 @@ declare namespace IRIDA {
     ROLE_TECHNICIAN = "ROLE_TECHNICIAN",
   }
 
-  interface User extends BaseRecord {
+  interface User extends BaseModel {
     username: string;
     email: string;
     firstName: string;
