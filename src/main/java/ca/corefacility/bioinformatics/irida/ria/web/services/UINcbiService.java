@@ -89,34 +89,49 @@ public class UINcbiService {
 	 */
 	public NcbiSubmissionModel getExportDetails(Long exportId) {
 		NcbiExportSubmission submission = ncbiService.read(exportId);
-		Project project = projectService.read(submission.getProject().getId());
+		Project project = projectService.read(submission.getProject()
+				.getId());
 
-		List<NcbiBioSampleModel> bioSamples = submission.getBioSampleFiles().stream().map(bioSampleFile -> {
-			List<SequencingObject> pairs = bioSampleFile.getPairs().stream()
-					.peek(pair -> uiSampleService.enhanceQcEntries(pair, project))
-					.collect(Collectors.toList());
-			List<SequencingObject> singles = bioSampleFile.getFiles().stream()
-					.peek(single -> uiSampleService.enhanceQcEntries(single, project))
-					.collect(Collectors.toList());
-			return new NcbiBioSampleModel(bioSampleFile, pairs, singles);
-		}).collect(Collectors.toList());
+		List<NcbiBioSampleModel> bioSamples = submission.getBioSampleFiles()
+				.stream()
+				.map(bioSampleFile -> {
+					List<SequencingObject> pairs = bioSampleFile.getPairs()
+							.stream()
+							.peek(pair -> uiSampleService.enhanceQcEntries(pair, project))
+							.collect(Collectors.toList());
+					List<SequencingObject> singles = bioSampleFile.getFiles()
+							.stream()
+							.peek(single -> uiSampleService.enhanceQcEntries(single, project))
+							.collect(Collectors.toList());
+					return new NcbiBioSampleModel(bioSampleFile, pairs, singles);
+				})
+				.collect(Collectors.toList());
 
 		return new NcbiSubmissionModel(submission, bioSamples);
 	}
 
+	/**
+	 * Create a new submission to the NCBI SRA.
+	 *
+	 * @param submission details about the submission
+	 */
 	public void submitNcbiExport(NcbiSubmissionRequest submission) {
 		Project project = projectService.read(submission.getProjectId());
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		String username = SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getName();
 		User user = userService.getUserByUsername(username);
 
-		List<NcbiBioSampleFiles> files = submission.getSamples().stream()
+		List<NcbiBioSampleFiles> files = submission.getSamples()
+				.stream()
 				.map(sample -> {
 					Set<SingleEndSequenceFile> singleFiles = new HashSet<>();
 					sequencingObjectService.readMultiple(sample.getSingle())
 							.forEach(f -> singleFiles.add((SingleEndSequenceFile) f));
 
 					HashSet<SequenceFilePair> paired = new HashSet<>();
-					sequencingObjectService.readMultiple(sample.getPaired()).forEach(f -> paired.add((SequenceFilePair) f));
+					sequencingObjectService.readMultiple(sample.getPaired())
+							.forEach(f -> paired.add((SequenceFilePair) f));
 
 					NcbiBioSampleFiles.Builder sampleBuilder = new NcbiBioSampleFiles.Builder();
 					sampleBuilder.bioSample(sample.getBioSample())
