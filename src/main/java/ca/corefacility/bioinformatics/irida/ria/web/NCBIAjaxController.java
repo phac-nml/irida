@@ -69,11 +69,21 @@ public class NCBIAjaxController {
 		return ResponseEntity.ok(service.getNCBIExportsForAdmin(request));
 	}
 
+	/**
+	 * Get all the available NCBI Sequencing platforms.
+	 *
+	 * @return {@link EnumMap} with the key being the brand and the value a {@link List} of their platforms.
+	 */
 	@GetMapping("/platforms")
 	public EnumMap<NcbiPlatform, List<String>> getNcbiPlatforms() {
 		return (new NcbiPlatformModel()).getPlatforms();
 	}
 
+	/**
+	 * Get a list of NCBI Library Sources
+	 *
+	 * @return {@link List} of NCBI Library Sources
+	 */
 	@GetMapping("/sources")
 	public List<String> getNcbiSources() {
 		return Arrays.stream(NcbiLibrarySource.values())
@@ -81,6 +91,11 @@ public class NCBIAjaxController {
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Get a list of NCBI allowed Library strategies
+	 *
+	 * @return {@link List} of NCBI Library Strategies
+	 */
 	@GetMapping("/strategies")
 	public List<String> getNcbiStrategies() {
 		return Arrays.stream(NcbiLibraryStrategy.values())
@@ -88,6 +103,11 @@ public class NCBIAjaxController {
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Get a list of NCBI allowed Library selectionn techniques
+	 *
+	 * @return {@link List} of NCBI Library Selections
+	 */
 	@GetMapping("/selections")
 	public List<String> getNcbiSelection() {
 		return Arrays.stream(NcbiLibrarySelection.values())
@@ -95,6 +115,11 @@ public class NCBIAjaxController {
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Submit a NCBI SRA Submission
+	 *
+	 * @param submission details about the submission
+	 */
 	@PostMapping("")
 	public void submitNcbiExport(@RequestBody NcbiSubmissionBody submission) {
 		service.submitNcbiExport(submission);
