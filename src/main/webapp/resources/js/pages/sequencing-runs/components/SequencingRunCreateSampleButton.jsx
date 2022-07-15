@@ -3,10 +3,7 @@ import { AutoComplete, Form, Modal, Select, Typography } from "antd";
 import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 import { addSample } from "../services/runReducer";
 import { useDispatch } from "react-redux";
-import {
-  useGetSampleNamesForProjectQuery,
-  validateSampleName,
-} from "../../../apis/projects/samples";
+import { useGetSampleNamesForProjectQuery } from "../../../apis/projects/samples";
 import { useGetProjectNamesForUserQuery } from "../../../apis/projects/projects";
 import { SPACE_XS } from "../../../styles/spacing";
 import styled from "styled-components";
@@ -32,6 +29,9 @@ export function SequencingRunCreateSampleButton() {
   const dispatch = useDispatch();
   const [visible, setVisible] = React.useState(false);
   const [projectId, setProjectId] = React.useState(null);
+  const [sampleNameValidateStatus, setSampleNameValidateStatus] =
+    React.useState(null);
+  const [sampleNameHelp, setSampleNameHelp] = React.useState(null);
   const [skip, setSkip] = React.useState(true);
   const [samples, setSamples] = React.useState([]);
   const [form] = Form.useForm();
@@ -52,12 +52,6 @@ export function SequencingRunCreateSampleButton() {
     setVisible(true);
   };
 
-  const sampleOptions = samplesData.samples?.map((sample) => (
-    <Select.Option value={sample.id} key={`sample-list-item-${sample.id}`}>
-      {sample.id + " - " + sample.name}
-    </Select.Option>
-  ));
-
   const projectOptions = projectsData.projects?.map((project) => (
     <Select.Option value={project.id} key={`${project.id} ${project.name}`}>
       <Text style={{ marginRight: SPACE_XS }}>{project.id}</Text>
@@ -65,22 +59,25 @@ export function SequencingRunCreateSampleButton() {
     </Select.Option>
   ));
 
-  const validateName = async (value) => {
-    await validateSampleName(value, projectId).then((response) => {
-      if (response.status === "success") {
-        return Promise.resolve();
-      } else {
-        return Promise.reject(response.help);
-      }
-    });
-  };
-
-  const onSamplesSearch = (term) => {
-    const lowerTerm = term.toLowerCase();
-    const newSamples = samples
-      .filter((sample) => sample.name.toLowerCase().includes(lowerTerm))
-      .map(({ name }) => ({ label: name, value: name }));
-    setSamples(newSamples);
+  const validateSampleName = (value) => {
+    if (!value) {
+      setSampleNameValidateStatus("error");
+      setSampleNameHelp("Sample name must not be empty.");
+    } else if (value.length < 3) {
+      setSampleNameValidateStatus("error");
+      setSampleNameHelp("Sample name must have at least 3 characters.");
+    } else if (!new RegExp("^.[A-Za-z\\d-_!@#$%~`]+$").test(value)) {
+      setSampleNameValidateStatus("error");
+      setSampleNameHelp(
+        "Sample name cannot contain any spaces or special characters."
+      );
+    } else if (samplesData.samples?.find((sample) => sample.name === value)) {
+      setSampleNameValidateStatus("success");
+      setSampleNameHelp("Files will be added to this existing sample");
+    } else {
+      setSampleNameValidateStatus("success");
+      setSampleNameHelp("A new sample will be created within project");
+    }
   };
 
   const onProjectChange = (value) => {
@@ -122,7 +119,6 @@ export function SequencingRunCreateSampleButton() {
           form={form}
           initialValues={{
             projectId: "",
-            sampleId: "",
             sampleName: "",
           }}
           layout="vertical"
@@ -135,26 +131,17 @@ export function SequencingRunCreateSampleButton() {
           <StyledFormItem
             name="sampleName"
             label="Sample Name"
-            validateStatus={"success"}
-            help={"Name cannot be empty"}
-            rules={[
-              ({}) => ({
-                validator(_, value) {
-                  return validateName(value);
-                },
-              }),
-            ]}
+            validateStatus={sampleNameValidateStatus}
+            help={sampleNameHelp}
           >
             <AutoComplete
-              // allowClear={true}
-              // backfill={true}
-              // onSearch={onSamplesSearch}
               options={samples}
               filterOption={(inputValue, option) =>
                 option.value.toLowerCase().indexOf(inputValue.toLowerCase()) !==
                 -1
               }
               disabled={projectId === null}
+              onChange={(value) => validateSampleName(value)}
             />
           </StyledFormItem>
         </Form>
