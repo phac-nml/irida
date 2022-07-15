@@ -1,6 +1,6 @@
 import React from "react";
 import { useDrop } from "react-dnd";
-import { Button, Card, Col, Empty, Row, Skeleton, Typography } from "antd";
+import { Button, Card, Col, Empty, Row, Skeleton, Tag, Typography } from "antd";
 import { IconRemove } from "../../../components/icons/Icons";
 import {
   addFile,
@@ -57,7 +57,12 @@ export function SequencingRunSample({ samples, sample, sampleIndex }) {
 
   return (
     <Card
-      title={sample.sampleName}
+      title={
+        <>
+          {sample.sampleId === null && <Tag color="green">NEW!</Tag>}
+          {sample.sampleName}
+        </>
+      }
       extra={
         <Button
           onClick={removeSampleFromList}

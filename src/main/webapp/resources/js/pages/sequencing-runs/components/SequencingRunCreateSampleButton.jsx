@@ -1,5 +1,5 @@
 import React from "react";
-import { AutoComplete, Form, Modal, Select, Typography } from "antd";
+import { AutoComplete, Form, Input, Modal, Select, Typography } from "antd";
 import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 import { addSample } from "../services/runReducer";
 import { useDispatch } from "react-redux";
@@ -36,8 +36,9 @@ export function SequencingRunCreateSampleButton() {
   const [samples, setSamples] = React.useState([]);
   const [form] = Form.useForm();
 
-  const { data: projectsData = {} } = useGetProjectNamesForUserQuery();
-  const { data: samplesData = {}, isSuccess } =
+  const { data: projectsData = {}, isProjectsSuccess } =
+    useGetProjectNamesForUserQuery();
+  const { data: samplesData = {}, isSamplesSuccess } =
     useGetSampleNamesForProjectQuery(projectId, {
       skip,
     });
@@ -46,7 +47,7 @@ export function SequencingRunCreateSampleButton() {
     setSamples(
       samplesData.samples?.map(({ name }) => ({ label: name, value: name }))
     );
-  }, [isSuccess]);
+  }, [isSamplesSuccess]);
 
   const addNewSample = () => {
     setVisible(true);
@@ -61,22 +62,28 @@ export function SequencingRunCreateSampleButton() {
 
   const validateSampleName = (value) => {
     if (!value) {
-      setSampleNameValidateStatus("error");
-      setSampleNameHelp("Sample name must not be empty.");
+      return Promise.reject("Sample name must not be empty.");
     } else if (value.length < 3) {
-      setSampleNameValidateStatus("error");
-      setSampleNameHelp("Sample name must have at least 3 characters.");
+      return Promise.reject("Sample name must have at least 3 characters.");
     } else if (!new RegExp("^.[A-Za-z\\d-_!@#$%~`]+$").test(value)) {
-      setSampleNameValidateStatus("error");
-      setSampleNameHelp(
+      return Promise.reject(
         "Sample name cannot contain any spaces or special characters."
       );
-    } else if (samplesData.samples?.find((sample) => sample.name === value)) {
-      setSampleNameValidateStatus("success");
-      setSampleNameHelp("Files will be added to this existing sample");
     } else {
-      setSampleNameValidateStatus("success");
-      setSampleNameHelp("A new sample will be created within project");
+      const sampleId = samplesData.samples?.find(
+        (sample) => sample.name === value
+      )?.id;
+      if (sampleId) {
+        setSampleNameValidateStatus("success");
+        setSampleNameHelp("Files will be added to this existing sample");
+        form.setFieldsValue({ sampleId });
+        return Promise.resolve();
+      } else {
+        setSampleNameValidateStatus("success");
+        setSampleNameHelp("A new sample will be created within project");
+        form.setFieldsValue({ sampleId: null });
+        return Promise.resolve();
+      }
     }
   };
 
@@ -87,14 +94,27 @@ export function SequencingRunCreateSampleButton() {
 
   const onCancel = () => {
     setVisible(false);
+    setSkip(true);
+    setProjectId(null);
+    setSamples([]);
+    setSampleNameValidateStatus(null);
+    setSampleNameHelp(null);
     form.resetFields();
   };
 
   const onOk = () => {
     form.validateFields().then((values) => {
+      console.log(values);
+      setVisible(false);
+      setSkip(true);
+      setProjectId(null);
+      setSamples([]);
+      setSampleNameValidateStatus(null);
+      setSampleNameHelp(null);
       dispatch(
         addSample({
-          sampleName: "New Sample",
+          sampleName: values.sampleName,
+          sampleId: values.sampleId,
           pairs: [],
         })
       );
@@ -118,12 +138,22 @@ export function SequencingRunCreateSampleButton() {
         <Form
           form={form}
           initialValues={{
-            projectId: "",
+            projectId: null,
             sampleName: "",
+            sampleId: null,
           }}
           layout="vertical"
         >
-          <Form.Item name="project" label="Project">
+          <Form.Item
+            name="project"
+            label="Project"
+            rules={[
+              {
+                required: true,
+                message: "Project is required",
+              },
+            ]}
+          >
             <Select showSearch onChange={onProjectChange}>
               {projectOptions}
             </Select>
@@ -133,6 +163,13 @@ export function SequencingRunCreateSampleButton() {
             label="Sample Name"
             validateStatus={sampleNameValidateStatus}
             help={sampleNameHelp}
+            rules={[
+              () => ({
+                validator(_, value) {
+                  return validateSampleName(value);
+                },
+              }),
+            ]}
           >
             <AutoComplete
               options={samples}
@@ -144,6 +181,9 @@ export function SequencingRunCreateSampleButton() {
               onChange={(value) => validateSampleName(value)}
             />
           </StyledFormItem>
+          <Form.Item name="sampleId" hidden={true}>
+            <Input />
+          </Form.Item>
         </Form>
       </Modal>
     </>
