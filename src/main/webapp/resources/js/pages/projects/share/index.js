@@ -15,6 +15,7 @@ import { Provider, useSelector } from "react-redux";
 import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
 import {
   useGetSampleIdsForProjectQuery,
+  useGetSampleNamesForProjectQuery,
   useShareSamplesWithProjectMutation,
 } from "../../../apis/projects/samples";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -65,12 +66,22 @@ function ShareApp() {
     }
   );
 
+  const { data: existingNames = [] } = useGetSampleNamesForProjectQuery(
+    targetProject?.identifier,
+    {
+      skip: !targetProject?.identifier,
+    }
+  );
+
   const { data: projects, isLoading: projectsLoading } =
     useGetPotentialProjectsToShareToQuery(currentProject, {
       skip: !currentProject,
     });
 
-  const filtered = samples.filter((sample) => !existingIds.includes(sample.id));
+  const filtered = samples.filter(
+    (sample) =>
+      !existingIds.includes(sample.id) && !existingNames.includes(sample.name)
+  );
 
   const steps = [
     {
