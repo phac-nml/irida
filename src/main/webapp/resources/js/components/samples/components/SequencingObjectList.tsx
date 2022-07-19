@@ -35,7 +35,7 @@ import {
   useUpdateDefaultSampleSequencingObjectMutation,
 } from "../../../apis/samples/samples";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
-import { SequencingObject } from "../../../types/irida";
+import { SampleSequencingObject, SequencingObject } from "../../../types/irida";
 
 const fileProcessTranslations: { [key: string]: any } = {
   UNPROCESSED: i18n("SampleFilesList.fileProcessingState.UNPROCESSED"),
@@ -189,8 +189,10 @@ export function SequencingObjectList({
             className="t-concatenation-checkbox"
             onChange={(e) => updateSelected(e, obj)}
             checked={
-              concatenateSelected.filter((e) => e.identifier === obj.identifier)
-                .length > 0
+              concatenateSelected.filter(
+                (e: { identifier: string | number }) =>
+                  e.identifier === obj.identifier
+              ).length > 0
             }
           />
         </Tooltip>
@@ -201,7 +203,10 @@ export function SequencingObjectList({
   /*
    Get the actions required for a Paired End -> Forward sequence file, single end sequence file, and/or fast5 object
    */
-  const getActionsForSequencingObject = (seqObj, index = -1) => {
+  const getActionsForSequencingObject = (
+    seqObj: SampleSequencingObject,
+    index = -1
+  ) => {
     let actions = [];
 
     const obj = seqObj.fileInfo
@@ -328,7 +333,10 @@ export function SequencingObjectList({
   /*
    Get the actions required for a Paired End -> Reverse sequence file
    */
-  const getActionsForSequencingObjectPairedReverse = (seqObj) => {
+  const getActionsForSequencingObjectPairedReverse = (seqObj: {
+    secondFileSize?: string;
+    fileInfo?: any;
+  }) => {
     let actions = [];
     const { fileInfo: obj } = seqObj;
 
@@ -362,7 +370,10 @@ export function SequencingObjectList({
   /*
    Gets the processing state as a tag (icon) with a tooltip
   */
-  const getProcessingStateTag = (obj, type = "single") => {
+  const getProcessingStateTag = (
+    obj: { identifier: any; processingState: string },
+    type = "single"
+  ) => {
     let tagColor = "default";
     let icon = <ClockCircleOutlined />;
 
@@ -397,7 +408,9 @@ export function SequencingObjectList({
   /*
   Set default sequencingobject for sample to be used for analyses
    */
-  const updateDefaultSequencingObject = (sequencingObject) => {
+  const updateDefaultSequencingObject = (sequencingObject: {
+    identifier: string | number;
+  }) => {
     updateSampleDefaultSequencingObject({
       sampleId: sample.identifier,
       sequencingObjectId: sequencingObject.identifier,
@@ -431,7 +444,7 @@ export function SequencingObjectList({
     <Space size="large" direction="vertical" style={{ width: `100%` }}>
       {files.singles && (
         <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>
-          {files.singles.map((sequenceObject) => (
+          {files.singles.map((sequenceObject: SampleSequencingObject) => (
             <SequenceObjectListItem
               key={`single-${sequenceObject.fileInfo.identifier}`}
               sequenceObject={sequenceObject}
@@ -471,7 +484,7 @@ export function SequencingObjectList({
       )}
       {files.fast5 && (
         <SequenceFileTypeRenderer title={i18n("SampleFiles.fast5")}>
-          {files.fast5.map((fast5Obj) => (
+          {files.fast5.map((fast5Obj: SampleSequencingObject) => (
             <SequenceObjectListItem
               key={`fast5-${fast5Obj.fileInfo.identifier}`}
               sequenceObject={fast5Obj}

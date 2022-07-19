@@ -228,7 +228,7 @@ export function SampleFiles() {
       /*
       Get the fastq, assembly, and fast5 files from the fileList (files selected to upload)
        */
-      let fastqFilesList = fileList.filter((currFile) => {
+      let fastqFilesList = fileList.filter((currFile: { name: string }) => {
         let name = currFile.name;
         let tokens = name.split(".");
 
@@ -239,7 +239,7 @@ export function SampleFiles() {
         );
       });
 
-      let assemblyFilesList = fileList.filter((currFile) => {
+      let assemblyFilesList = fileList.filter((currFile: { name: string }) => {
         let name = currFile.name;
         let tokens = name.split(".");
 
@@ -249,7 +249,7 @@ export function SampleFiles() {
         );
       });
 
-      let fast5FilesList = fileList.filter((currFile) => {
+      let fast5FilesList = fileList.filter((currFile: { name: string }) => {
         let name = currFile.name;
         let tokens = name.split(".");
 

@@ -3,7 +3,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import duration from "dayjs/plugin/duration";
 
 export function formatInternationalizedDateTime(
-  date,
+  date: string | number,
   options = {
     hour: "numeric",
     minute: "numeric",
@@ -22,7 +22,7 @@ export function formatInternationalizedDateTime(
  * @param {Number} date to format
  * @return {string} humanized version of the date
  */
-export function getHumanizedDuration({ date }) {
+export function getHumanizedDuration({ date }: { date: string | number }) {
   dayjs.extend(duration);
   dayjs.extend(relativeTime);
   return dayjs.duration(-date).humanize(false);
@@ -33,7 +33,7 @@ export function getHumanizedDuration({ date }) {
  * @param {number} date raw string date from server
  * @return {*}
  */
-export function fromNow({ date }) {
+export function fromNow({ date }: { date: string | number }) {
   // Using dayjs because Intl.RelativeTimeFormat does not have browser
   // support in IE11 or safari yet.
   dayjs.extend(duration);
@@ -47,7 +47,13 @@ export function fromNow({ date }) {
  * @param {String} format defaults to "lll" which is mmm dd, YYYY h:mm AM
  * @return {string} formatted date
  */
-export function formatDate({ date, format }) {
+export function formatDate({
+  date,
+  format,
+}: {
+  date: string | number;
+  format: any;
+}) {
   return formatInternationalizedDateTime(date, format);
 }
 
@@ -56,10 +62,11 @@ export function formatDate({ date, format }) {
  * @param {(number | string)} date
  * @returns {boolean}
  */
-export const isDate = (date) => !isNaN(new Date(date).valueOf());
+export const isDate = (date: string | number) =>
+  !isNaN(new Date(date).valueOf());
 
 // get a readable string of the time from a given number of seconds
-export function getDurationFromSeconds(seconds) {
+export function getDurationFromSeconds(seconds: number) {
   dayjs.extend(duration);
   dayjs.extend(relativeTime);
   return dayjs.duration(seconds * 1000).humanize(false);

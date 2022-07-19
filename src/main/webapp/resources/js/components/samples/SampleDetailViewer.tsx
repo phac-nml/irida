@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { Button, Modal, Skeleton, Space, Tag, Typography } from "antd";
 import { SampleDetails } from "./components/SampleDetails";
 import { useGetSampleDetailsQuery } from "../../apis/samples/samples";
@@ -54,7 +54,9 @@ function DisplaySampleDetails({
       skip: !visible,
     }
   );
-  const { sampleIds } = useSelector((state) => state.cartSamplesReducer);
+  const { sampleIds } = useSelector(
+    (state: RootStateOrAny) => state.cartSamplesReducer
+  );
   const projectColour = generateColourForItem({
     id: projectId,
     label: details.projectName,

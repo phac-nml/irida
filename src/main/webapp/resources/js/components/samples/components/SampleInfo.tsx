@@ -106,7 +106,7 @@ export function SampleInfo() {
       title: i18n("SampleInfo.createdDate"),
       value: (
         <span className="t-sample-created-date">
-          {formatDate({ date: sample.createdDate })}
+          {formatDate({ date: sample.createdDate, format: undefined })}
         </span>
       ),
     },
@@ -114,7 +114,7 @@ export function SampleInfo() {
       title: i18n("SampleInfo.modifiedDate"),
       value: (
         <span className="t-sample-modified-date">
-          {formatDate({ date: sample.modifiedDate })}
+          {formatDate({ date: sample.modifiedDate, format: undefined })}
         </span>
       ),
     },

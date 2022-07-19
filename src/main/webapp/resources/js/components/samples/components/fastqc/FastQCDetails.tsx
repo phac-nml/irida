@@ -30,7 +30,7 @@ export function FastQCDetails() {
     },
     {
       title: i18n("FastQC.uploadedOn"),
-      desc: formatDate({ date: file.createdDate }),
+      desc: formatDate({ date: file.createdDate, format: undefined }),
       props: {
         className: "t-fastqc-uploaded-on",
       },

@@ -1,7 +1,7 @@
 import React from "react";
 import { notification } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { DragUpload } from "../../../components/files/DragUpload.jsx";
+import { DragUpload } from "../../../components/files/DragUpload";
 import { useLaunch } from "../launch-context";
 import { referenceFileUploadComplete } from "../launch-dispatch";
 
@@ -32,7 +32,7 @@ export function UploadReferenceFile({ form }) {
       } else if (status === "error") {
         notification.error({
           message: i18n("ReferenceFile.uploadFileError", info.file.name),
-          description: response.error
+          description: response.error,
         });
       }
     },
