@@ -83,10 +83,16 @@ function ShareApp() {
       !existingIds.includes(sample.id) && !existingNames.includes(sample.name)
   );
 
+  /*
+  Samples in target project which have the same ids as the ones being shared from the source project
+   */
   const targetProjectSampleIdsDuplicate = samples.filter((sample) =>
     existingIds.includes(sample.id)
   );
 
+  /*
+  Samples in target project which have the same names as the ones being shared from the source project
+   */
   const targetProjectSampleNamesDuplicate = samples.filter(
     (sample) =>
       existingNames.includes(sample.name) && !existingIds.includes(sample.id)
