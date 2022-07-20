@@ -1,14 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
-import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMessage;
-import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
-import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.collect.ImmutableMap;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +16,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.HandlerMapping;
 
-import javax.servlet.http.HttpServletRequest;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.ria.utilities.ExceptionPropertyAndMessage;
+import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 
-import java.io.IOException;
-import java.util.Map;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller handling basic operations for listing, viewing, adding, and removing {@link RemoteAPI}s
@@ -87,16 +87,15 @@ public class RemoteAPIController extends BaseController {
      * @param request The incoming request method
      * @param ex      The thrown exception
      * @return A redirect to the {@link OltuAuthorizationController}'s authentication
-     * @throws OAuthSystemException    if the request cannot be authenticated.
-     * @throws JsonProcessingException if the request cannot be created.
+     * @throws OAuthSystemException if the request cannot be authenticated.
      */
     @ExceptionHandler(IridaOAuthException.class)
-    public String handleOAuthException(HttpServletRequest request, IridaOAuthException ex)
-            throws JsonProcessingException, OAuthSystemException {
+    public String handleOAuthException(HttpServletRequest request, IridaOAuthException ex) throws OAuthSystemException {
         logger.debug("Caught IridaOAuthException.  Beginning OAuth2 authentication token flow.");
         String requestURI = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        HttpSession session = request.getSession();
 
-        return authController.authenticate(ex.getRemoteAPI(), requestURI);
+        return authController.authenticate(session, ex.getRemoteAPI(), requestURI);
     }
 
 }

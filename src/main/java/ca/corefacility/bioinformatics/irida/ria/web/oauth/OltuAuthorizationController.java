@@ -1,14 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
-import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
@@ -27,10 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
-
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Controller for handling OAuth2 authorizations
@@ -59,11 +54,9 @@ public class OltuAuthorizationController {
 	 * @param remoteAPI The API we need to authenticate with
 	 * @param redirect  The location to redirect back to after authentication is complete
 	 * @return A ModelAndView beginning the authentication procedure
-	 * @throws OAuthSystemException    if we can't read from the authorization server.
-	 * @throws JsonProcessingException if we can't convert stateMap object to json string.
+	 * @throws OAuthSystemException if we can't read from the authorization server.
 	 */
-	public String authenticate(RemoteAPI remoteAPI, String redirect)
-			throws JsonProcessingException, OAuthSystemException {
+	public String authenticate(HttpSession session, RemoteAPI remoteAPI, String redirect) throws OAuthSystemException {
 		// get the URI for the remote service we'll be requesting from
 		String serviceURI = remoteAPI.getServiceURI();
 
@@ -77,13 +70,11 @@ public class OltuAuthorizationController {
 		String tokenRedirect = buildRedirectURI();
 
 		// build state object which is used to extract the authCode to the correct remoteAPI
+		String stateUuid = UUID.randomUUID().toString();
 		Map<String, String> stateMap = new HashMap<String, String>();
 		stateMap.put("apiId", remoteAPI.getId().toString());
 		stateMap.put("redirect", redirect);
-
-		ObjectMapper objectMapper = new ObjectMapper();
-
-		String stateString = objectMapper.writeValueAsString(stateMap);
+		session.setAttribute(stateUuid, stateMap);
 
 		// build the redirect query to request an authorization code from the
 		// remote API
@@ -92,7 +83,7 @@ public class OltuAuthorizationController {
 				.setRedirectURI(tokenRedirect)
 				.setResponseType(ResponseType.CODE.toString())
 				.setScope("read")
-				.setState(Base64.getEncoder().encodeToString(stateString.getBytes()))
+				.setState(stateUuid)
 				.buildQueryMessage();
 
 		String locURI = request.getLocationUri();
@@ -110,21 +101,19 @@ public class OltuAuthorizationController {
 	 * @return A ModelAndView redirecting back to the resource that was requested
 	 * @throws OAuthSystemException  if we can't get an access token for the current request.
 	 * @throws OAuthProblemException if we can't get a response from the authorization server
-	 * @throws JacksonException      if we can't parse the stateMap from the state param
 	 */
 	@RequestMapping(TOKEN_ENDPOINT)
 	public String getTokenFromAuthCode(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam("state") String state) throws JacksonException, OAuthSystemException, OAuthProblemException {
+			@RequestParam("state") String state) throws OAuthSystemException, OAuthProblemException {
 
 		// Get the OAuth2 auth code
 		OAuthAuthzResponse oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);
 		String code = oar.getCode();
 		logger.trace("Received auth code: " + code);
 
-		ObjectMapper objectMapper = new ObjectMapper();
+		HttpSession session = request.getSession();
 
-		String stateString = new String(Base64.getDecoder().decode(state), StandardCharsets.UTF_8);
-		Map<String, String> stateMap = (Map<String, String>) objectMapper.readValue(stateString, HashMap.class);
+		Map<String, String> stateMap = (Map<String, String>) session.getAttribute(state);
 
 		Long apiId = Long.parseLong(stateMap.get("apiId"));
 		String redirect = stateMap.get("redirect");

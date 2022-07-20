@@ -1,19 +1,21 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
-import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
-import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
-import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.servlet.HandlerMapping;
 
-import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
+import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -71,6 +73,6 @@ public class RemoteAPIControllerTest {
 		IridaOAuthException ex = new IridaOAuthException("msg", client);
 
 		remoteAPIController.handleOAuthException(request, ex);
-		verify(authController).authenticate(client, redirect);
+		verify(authController).authenticate(request.getSession(), client, redirect);
 	}
 }
