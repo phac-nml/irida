@@ -68,8 +68,9 @@ export function ShareSamples({
       )}
       {originalSamples.length - samples.length > 0 &&
         targetProjectSampleIdsDuplicate.length > 0 && (
-          <Collapse className="t-same-sample-ids-warning">
+          <Collapse>
             <Panel
+              className="t-same-sample-ids-warning"
               header={
                 <div>
                   <ExclamationCircleOutlined
@@ -90,8 +91,9 @@ export function ShareSamples({
         )}
       {originalSamples.length - samples.length > 0 &&
         targetProjectSampleNamesDuplicate.length > 0 && (
-          <Collapse className="t-same-sample-names-warning">
+          <Collapse>
             <Panel
+              className="t-same-sample-names-warning"
               header={
                 <div>
                   <ExclamationCircleOutlined
