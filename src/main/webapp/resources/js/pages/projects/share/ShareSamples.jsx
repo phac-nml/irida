@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import ShareAssociated from "./ShareAssociated";
 import { SharedSamplesList } from "./SharedSamplesList";
 import { updatedLocked, updateMoveSamples } from "./shareSlice";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { SPACE_XS } from "../../../styles/spacing";
 
 const { Panel } = Collapse;
 /**
@@ -68,8 +70,16 @@ export function ShareSamples({
         targetProjectSampleIdsDuplicate.length > 0 && (
           <Collapse className="t-same-sample-ids-warning">
             <Panel
-              header={i18n("ShareSamples.some-samples-same-ids.message")}
+              header={
+                <div>
+                  <ExclamationCircleOutlined
+                    style={{ color: `var(--gold-6)`, marginRight: SPACE_XS }}
+                  />
+                  {i18n("ShareSamples.some-samples-same-ids.message")}
+                </div>
+              }
               key="1"
+              style={{ backgroundColor: `var(--grey-1)` }}
             >
               <SharedSamplesList
                 list={targetProjectSampleIdsDuplicate}
@@ -82,8 +92,16 @@ export function ShareSamples({
         targetProjectSampleNamesDuplicate.length > 0 && (
           <Collapse className="t-same-sample-names-warning">
             <Panel
-              header={i18n("ShareSamples.some-samples-same-names.message")}
+              header={
+                <div>
+                  <ExclamationCircleOutlined
+                    style={{ color: `var(--gold-6)`, marginRight: SPACE_XS }}
+                  />
+                  {i18n("ShareSamples.some-samples-same-names.message")}
+                </div>
+              }
               key="1"
+              style={{ backgroundColor: `var(--grey-1)` }}
             >
               <SharedSamplesList
                 list={targetProjectSampleNamesDuplicate}
