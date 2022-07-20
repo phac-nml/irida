@@ -1,13 +1,11 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.security;
 
-import static io.restassured.RestAssured.expect;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.annotation.RestIntegrationTest;
+
+import static io.restassured.RestAssured.expect;
 
 /**
  * General tests relating to security for the REST API.
@@ -20,6 +18,7 @@ public class SecurityIT {
 	 */
 	@Test
 	public void testAccessWithoutAuthentication() {
-		expect().statusCode(HttpStatus.SC_UNAUTHORIZED).when().get("/api");
+
+		expect().statusCode(HttpStatus.SC_UNAUTHORIZED).header("WWW-Authenticate", "Bearer").when().get("/api");
 	}
 }
