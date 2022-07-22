@@ -98,6 +98,21 @@ The main configuration parameters you will need to change are:
   * `ncbi.upload.namespace` - Prefix for file upload identifiers to NCBI. The namespace is used to guarantee upload IDs are unique.  This configuration option is used as a placeholder and may still be set by the user.
 5. **Security configuration**
  * `security.password.expiry` - The number of days a password is valid for in IRIDA.  After a password expires the user will be required to create a new one.  Passwords cannot be reused.
+6. **OAuth2 JWK security configuration** - IRIDA uses JWT (Json Web Tokens) for OAuth2 and as such requires a JWK (Json Web Key) in RSA format to encrypt and decrypt these tokens.
+ * `oauth2.jwk.rsakey.id=CHANGEME` - The id for the RSA private and public keys (used to select the correct keys for encryption and decryption)
+ * `oauth2.jwk.rsakey.private=/etc/irida/jwk-private.pem` - The RSA private key 
+ * `oauth2.jwk.rsakey.public=classpath:/jwk-public.pem` - The RSA public key
+
+### OAuth2 JWK RSA Key generation
+The RSA keys used to encrypt and decrypt the JWT's can be generated with the following commands:
+```bash
+# First generate the RSA Keypair
+openssl genpkey -algorithm RSA -out /etc/irida/jwk-keypair.pem
+# Second extract the RSA private key from the RSA Keypair
+openssl pkcs8 -inform PEM -outform PEM -nocrypt -in /etc/irida/jwk-keypair.pem -out /etc/irida/jwk-private.pem
+# Third extract the RSA public key from the RSA Keypair
+openssl rsa -in /etc/irida/jwk-keypair.pem -pubout -out /etc/irida/jwk-public.pem
+```
 
 Web Configuration
 -----------------
