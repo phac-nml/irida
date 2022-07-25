@@ -48,5 +48,9 @@
             </column>
             <column name="authorities" type="VARCHAR(1000)" />
         </createTable>
+
+        <dropTable tableName="oauth_access_token" />
+
+        <dropTable tableName="oauth_refresh_token" />
     </changeSet>
 </databaseChangeLog>

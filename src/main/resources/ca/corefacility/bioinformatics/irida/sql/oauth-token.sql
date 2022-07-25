@@ -1,7 +1,6 @@
 DROP TABLE IF EXISTS `oauth2_authorization`;
 DROP TABLE IF EXISTS `oauth2_authorization_consent`;
 
--- Data from client details must be manually removed due to FK constraints with oauth_access_token
 DELETE FROM client_details_authorities;
 DELETE FROM client_details_scope;
 DELETE FROM client_details_grant_types;
