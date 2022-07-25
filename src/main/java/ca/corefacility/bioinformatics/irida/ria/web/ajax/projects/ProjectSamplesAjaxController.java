@@ -62,14 +62,14 @@ public class ProjectSamplesAjaxController {
 	}
 
 	/**
-	 * Get a list of sample names for a project
+	 * Get a drop-down list of samples for a project
 	 *
 	 * @param projectId Identifier for the current project
 	 * @return a list of sample names
 	 */
-	@RequestMapping("/names")
-	public ResponseEntity<AjaxResponse> getSampleNamesForProject(@PathVariable Long projectId) {
-		return ResponseEntity.ok(uiSampleService.getSampleNamesForProject(projectId));
+	@RequestMapping("/dropdown")
+	public ResponseEntity<AjaxResponse> getSampleNamesAndIdsForProject(@PathVariable Long projectId) {
+		return ResponseEntity.ok(uiSampleService.getSampleNamesAndIdsForProject(projectId));
 	}
 
 	/**
@@ -187,6 +187,17 @@ public class ProjectSamplesAjaxController {
 	@GetMapping("/identifiers")
 	public List<Long> getSampleIdsForProject(@RequestParam Long id) {
 		return uiSampleService.getSampleIdsForProject(id);
+	}
+
+	/**
+	 * Get a list of all {@link Sample} names within a specific project
+	 *
+	 * @param id Identifier for a Project
+	 * @return {@link List} of {@link Sample} names
+	 */
+	@GetMapping("/names")
+	public List<String> getSampleNamesForProject(@RequestParam Long id) {
+		return uiSampleService.getSampleNamesForProject(id);
 	}
 
 	/**

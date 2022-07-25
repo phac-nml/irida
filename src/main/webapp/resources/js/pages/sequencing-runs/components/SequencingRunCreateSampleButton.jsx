@@ -3,10 +3,10 @@ import { AutoComplete, Form, Input, Modal, Select, Typography } from "antd";
 import { AddNewButton } from "../../../components/Buttons/AddNewButton";
 import { addSample } from "../services/runReducer";
 import { useDispatch } from "react-redux";
-import { useGetSampleNamesForProjectQuery } from "../../../apis/projects/samples";
 import { useGetProjectNamesForUserQuery } from "../../../apis/projects/projects";
 import { SPACE_XS } from "../../../styles/spacing";
 import styled from "styled-components";
+import { useGetSampleDropDownForProjectQuery } from "../../../apis/projects/samples";
 
 const { Text } = Typography;
 
@@ -37,7 +37,7 @@ export function SequencingRunCreateSampleButton() {
   const [form] = Form.useForm();
 
   const { data: projectsData = {} } = useGetProjectNamesForUserQuery();
-  const { data: samplesData = {} } = useGetSampleNamesForProjectQuery(
+  const { data: samplesData = {} } = useGetSampleDropDownForProjectQuery(
     projectId,
     { skip }
   );

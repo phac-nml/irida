@@ -252,7 +252,7 @@ public class UISampleService {
 	 * @param projectId Identifier for the current project
 	 * @return a list of sample names
 	 */
-	public SampleNameListResponse getSampleNamesForProject(Long projectId) {
+	public SampleNameListResponse getSampleNamesAndIdsForProject(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<SampleNameListItemModel> samples = sampleService.getSamplesForProjectShallow(project)
 				.stream()
@@ -260,6 +260,18 @@ public class UISampleService {
 				.collect(Collectors.toList());
 
 		return new SampleNameListResponse(samples);
+	}
+
+	/**
+	 * Get a list of all {@link Sample} names within a specific project
+	 *
+	 * @param projectId Identifier for a {@link Project}
+	 * @return {@link List} of {@link Sample} names
+	 */
+	public List<String> getSampleNamesForProject(Long projectId) {
+		Project project = projectService.read(projectId);
+		List<Sample> samples = sampleService.getSamplesForProjectShallow(project);
+		return samples.stream().map(Sample::getLabel).collect(Collectors.toUnmodifiableList());
 	}
 
 	/**

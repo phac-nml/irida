@@ -1,12 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.security;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -22,12 +15,16 @@ import org.springframework.security.core.AuthenticationException;
 
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpriredAuthenticationFailureHandler;
+import ca.corefacility.bioinformatics.irida.ria.security.IridaPostAuthenticationFailureHandler;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
-public class CredentialsExpiredAuthenticationFailureHandlerTest {
-	private CredentialsExpriredAuthenticationFailureHandler handler;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+public class IridaPostAuthenticationFailureHandlerTest {
+	private IridaPostAuthenticationFailureHandler handler;
 	private PasswordResetService resetService;
 	private UserService userService;
 
@@ -35,7 +32,7 @@ public class CredentialsExpiredAuthenticationFailureHandlerTest {
 	public void setUp() {
 		resetService = mock(PasswordResetService.class);
 		userService = mock(UserService.class);
-		handler = new CredentialsExpriredAuthenticationFailureHandler(resetService, userService);
+		handler = new IridaPostAuthenticationFailureHandler(resetService, userService);
 
 	}
 

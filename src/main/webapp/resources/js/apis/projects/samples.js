@@ -14,8 +14,8 @@ export const samplesApi = createApi({
     baseUrl: URL,
   }),
   endpoints: (builder) => ({
-    getSampleNamesForProject: builder.query({
-      query: (projectId) => ({ url: `${projectId}/samples/names` }),
+    getSampleDropDownForProject: builder.query({
+      query: (projectId) => ({ url: `${projectId}/samples/dropdown` }),
     }),
     listSamples: builder.query({
       query: (body) => ({
@@ -51,15 +51,21 @@ export const samplesApi = createApi({
         url: `/${PROJECT_ID}/samples/identifiers?id=${projectId}`,
       }),
     }),
+    getSampleNamesForProject: builder.query({
+      query: (projectId) => ({
+        url: `/names?id=${projectId}`,
+      }),
+    }),
   }),
 });
 
 export const {
-  useGetSampleNamesForProjectQuery,
+  useGetSampleDropDownForProjectQuery,
   useListSamplesQuery,
   useMergeMutation,
   useRemoveMutation,
   useGetSampleIdsForProjectQuery,
+  useGetSampleNamesForProjectQuery,
   useShareSamplesWithProjectMutation,
 } = samplesApi;
 

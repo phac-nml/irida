@@ -185,7 +185,11 @@ function LoginPage(): JSX.Element {
               </span>
             }
             description={
-              <>
+              urlParams.has("sequencer-login") ?
+                <>
+                  {i18n("LoginPage.error.sequencer_login_description")}{" "}
+                </>
+              : <>
                 {i18n("LoginPage.error.description")}{" "}
                 <Button
                   onClick={() => {

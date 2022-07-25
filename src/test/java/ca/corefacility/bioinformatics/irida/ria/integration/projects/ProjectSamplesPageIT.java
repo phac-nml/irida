@@ -169,7 +169,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		String NAME_FILTER_2 = "sample6";
 		String ORGANISM_FILTER_1 = "Listeria";
 		String ORGANISM_FILTER_2 = "E. coli";
-		String ASSOCIATED_PROJECT_FILTER = "project5";
+		String ASSOCIATED_PROJECT_FILTER = "project6";
 
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
