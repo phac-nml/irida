@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
@@ -38,6 +39,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	private String bucketName;
 	private BasicAWSCredentials awsCreds;
 	private AmazonS3 s3;
+	private final StorageType storageType = StorageType.AWS;
 
 	@Autowired
 	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey) {
@@ -388,5 +390,13 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	@Override
 	public boolean isStorageTypeLocal() {
 		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getStorageType() {
+		return storageType.toString();
 	}
 }

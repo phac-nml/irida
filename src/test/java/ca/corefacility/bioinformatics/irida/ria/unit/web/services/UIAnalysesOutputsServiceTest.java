@@ -4,13 +4,17 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
 
 import ca.corefacility.bioinformatics.irida.model.user.Role;
+
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
 import ca.corefacility.bioinformatics.irida.ria.web.components.AnalysisOutputFileDownloadManager;

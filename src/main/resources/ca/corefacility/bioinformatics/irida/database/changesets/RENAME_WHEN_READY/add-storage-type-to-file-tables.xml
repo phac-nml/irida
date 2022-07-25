@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="add-storage-type-to-file-tables" author="deep">
+        <addColumn tableName="sequence_file">
+            <column name="storage_type" type="varchar(255)" defaultValue="local"></column>
+        </addColumn>
+        <addColumn tableName="sequence_file_AUD">
+            <column name="storage_type" type="varchar(255)" defaultValue="local" />
+        </addColumn>
+
+        <addColumn tableName="genome_assembly">
+            <column name="storage_type" type="varchar(255)" defaultValue="local"></column>
+        </addColumn>
+        <addColumn tableName="genome_assembly_AUD">
+            <column name="storage_type" type="varchar(255)" defaultValue="local" />
+        </addColumn>
+
+        <addColumn tableName="uploaded_assembly">
+            <column name="storage_type" type="varchar(255)" defaultValue="local"></column>
+        </addColumn>
+        <addColumn tableName="uploaded_assembly_AUD">
+            <column name="storage_type" type="varchar(255)" defaultValue="local" />
+        </addColumn>
+
+        <addColumn tableName="analysis_output_file">
+            <column name="storage_type" type="varchar(255)" defaultValue="local"></column>
+        </addColumn>
+
+        <addColumn tableName="reference_file">
+            <column name="storage_type" type="varchar(255)" defaultValue="local"></column>
+        </addColumn>
+        <addColumn tableName="reference_file_AUD">
+            <column name="storage_type" type="varchar(255)" defaultValue="local" />
+        </addColumn>
+
+        <sql>UPDATE sequence_file SET storage_type="local"</sql>
+        <sql>UPDATE sequence_file_AUD SET storage_type="local"</sql>
+
+        <sql>UPDATE genome_assembly SET storage_type="local"</sql>
+        <sql>UPDATE genome_assembly_AUD SET storage_type="local"</sql>
+
+        <sql>UPDATE uploaded_assembly SET storage_type="local"</sql>
+        <sql>UPDATE uploaded_assembly_AUD SET storage_type="local"</sql>
+
+        <sql>UPDATE analysis_output_file SET storage_type="local"</sql>
+
+        <sql>UPDATE reference_file SET storage_type="local"</sql>
+        <sql>UPDATE reference_file_AUD SET storage_type="local"</sql>
+    </changeSet>
+</databaseChangeLog>

@@ -23,6 +23,7 @@ public class FileUtilitiesTest {
         iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
         IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
     }
+
     @Test
     public void testIsZippedFile() throws IOException {
         Path snpTreePath = Paths.get("src/test/resources/files/snp_tree.tree");

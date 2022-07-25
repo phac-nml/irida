@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.utilities;
 
 import java.io.*;
-import java.nio.charset.Charset;
 
 import java.nio.file.Path;
 
@@ -22,6 +21,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
@@ -287,25 +287,6 @@ public class FileUtilities {
 	}
 
 	/**
-	 * Read bytes of length {@code chunk} of a file starting at byte {@code seek}.
-	 *
-	 * @param raf   File reader
-	 * @param seek  FilePointer position to start reading at
-	 * @param chunk Number of bytes to read from file
-	 * @return Chunk of file as String
-	 * @throws IOException if error enountered while reading file
-	 */
-	public static String readChunk(RandomAccessFile raf, Long seek, Long chunk) throws IOException {
-		raf.seek(seek);
-		byte[] bytes = new byte[Math.toIntExact(chunk)];
-		final int bytesRead = raf.read(bytes);
-		if (bytesRead == -1) {
-			return "";
-		}
-		return new String(bytes, 0, bytesRead, Charset.defaultCharset());
-	}
-
-	/**
 	 * Read a specified number of lines from a file.
 	 *
 	 * @param reader File reader
@@ -356,10 +337,7 @@ public class FileUtilities {
 	 * @return parsed excel file data
 	 */
 	public static ExcelData parseExcelFile(AnalysisOutputFile outputFile, int sheetIndex) {
-		try {
-			InputStream is = new FileInputStream(new File(outputFile.getFile()
-					.toAbsolutePath()
-					.toString()));
+		try(InputStream is = outputFile.getFileInputStream()) {
 			Workbook workbook = StreamingReader.builder()
 					.open(is);
 
@@ -411,7 +389,7 @@ public class FileUtilities {
 				}
 			}
 			return new ExcelData(headers, excelRows, excelSheetNames, false);
-		} catch (IOException e) {
+		} catch (IOException | StorageException e) {
 			logger.error("Error opening file" + outputFile.getLabel());
 		}
 		// Should only reach here if the file could not be opened

@@ -105,4 +105,12 @@ public final class IridaFiles {
 		return iridaFileStorageUtility.fileExists(file);
 	}
 
+	/**
+	 * Get the storage type from the iridaFileStorageUtility.
+	 *
+	 * @return {@link String} The storage type
+	 */
+	public static String getStorageType() {
+		return iridaFileStorageUtility.getStorageType();
+	}
 }

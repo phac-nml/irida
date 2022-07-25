@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
@@ -32,6 +33,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaTemporaryFile;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
@@ -60,15 +63,18 @@ public class AnalysisController {
 	private IridaWorkflowsService workflowsService;
 	private UserService userService;
 	private MessageSource messageSource;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Autowired
 	public AnalysisController(AnalysisSubmissionService analysisSubmissionService,
-			IridaWorkflowsService iridaWorkflowsService, UserService userService, MessageSource messageSource) {
+			IridaWorkflowsService iridaWorkflowsService, UserService userService, MessageSource messageSource,
+			IridaFileStorageUtility iridaFileStorageUtility) {
 
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
 		this.userService = userService;
 		this.messageSource = messageSource;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	// ************************************************************************************************
@@ -194,9 +200,10 @@ public class AnalysisController {
 		// Set the common Http headers
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline");
 		response.setHeader(HttpHeaders.CONTENT_TYPE, "text/html");
-
+		IridaTemporaryFile iridaTemporaryFile = null;
 		if (zipped) {
-			String htmlFile = outputFile.getFile().toFile().toString();
+			iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(outputFile.getFile());
+			String htmlFile = iridaTemporaryFile.getFile().toFile().toString();
 			if (htmlFile.endsWith(".html.zip")) {
 				htmlFile = htmlFile.substring(0, htmlFile.length()-4);
 			}
@@ -235,14 +242,18 @@ public class AnalysisController {
 				outputStream.write(htmlOutputNotFound.getBytes(StandardCharsets.UTF_8));
 				outputStream.flush();
 				outputStream.close();
+			} finally {
+				if(iridaTemporaryFile != null) {
+					iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
+				}
 			}
 		} else {
 
-			try (InputStream inputStream = new FileInputStream(outputFile.getFile()
-					.toString()); OutputStream outputStream = response.getOutputStream()) {
+			try (InputStream inputStream = outputFile.getFileInputStream();
+					OutputStream outputStream = response.getOutputStream()) {
 				// Copy the file contents to the response outputstream
 				IOUtils.copy(inputStream, outputStream);
-			} catch (IOException e) {
+			} catch (IOException | StorageException e) {
 				logger.debug("Html output not found.");
 				String htmlOutputNotFound = messageSource.getMessage("analysis.html.file.not.found",
 						new Object[] { filename }, locale);

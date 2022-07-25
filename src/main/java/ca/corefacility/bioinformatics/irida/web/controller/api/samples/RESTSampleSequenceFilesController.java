@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -403,6 +404,7 @@ public class RESTSampleSequenceFilesController {
 			}
 
 			sf.setFile(target);
+			sf.setStorageType(IridaFiles.getStorageType());
 
 			SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(sf);
 			if (miseqRun != null) {
@@ -517,6 +519,7 @@ public class RESTSampleSequenceFilesController {
 			}
 
 			sf.setFile(target);
+			sf.setStorageType(IridaFiles.getStorageType());
 
 			Fast5Object fast5Object = new Fast5Object(sf);
 

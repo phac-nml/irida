@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.model.assembly;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +48,9 @@ public abstract class GenomeAssembly extends IridaRepresentationModel
 	@Column(name = "created_date", updatable = false)
 	private Date createdDate;
 
+	@Column(name = "storage_type")
+	private String storageType;
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "genomeAssembly")
 	private List<SampleGenomeAssemblyJoin> sampleGenomeAssemblies;
 
@@ -61,6 +63,7 @@ public abstract class GenomeAssembly extends IridaRepresentationModel
 	public GenomeAssembly(Date createdDate) {
 		this.createdDate = createdDate;
 		this.sampleGenomeAssemblies = Lists.newArrayList();
+		this.storageType = IridaFiles.getStorageType();
 	}
 
 	@Override
@@ -80,14 +83,14 @@ public abstract class GenomeAssembly extends IridaRepresentationModel
 	}
 
 	/**
-	 * Get the size of the genome assembly files
+	 * Get the size of the genome assembly files in bytes
 	 *
 	 * @return file size
 	 * @throws IOException if the file cannot be read
 	 */
 	@JsonIgnore
-	public long getFileSizeBytes() throws IOException {
-		return Files.size(getFile());
+	public Long getFileSizeBytes() throws IOException {
+		return IridaFiles.getFileSizeBytes(getFile());
 	}
 
 	/**
@@ -102,7 +105,7 @@ public abstract class GenomeAssembly extends IridaRepresentationModel
 	}
 
 	/**
-	 * Gets the assembly file size.
+	 * Gets the assembly file size as a human readable string.
 	 *
 	 * @return The assembly file size.
 	 */
@@ -153,5 +156,13 @@ public abstract class GenomeAssembly extends IridaRepresentationModel
 	@JsonIgnore
 	public InputStream getFileInputStream() {
 		return IridaFiles.getFileInputStream(getFile());
+	}
+
+	public String getStorageType(){
+		return storageType;
+	}
+
+	public void setStorageType(String storageType) {
+		this.storageType = storageType;
 	}
 }
