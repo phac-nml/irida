@@ -425,7 +425,7 @@ tasks.named<BootRun>("bootRun") {
 
 task<Exec>("generateRSAKeyPair") {
     workingDir(file("${projectDir}/src/main/resources"))
-    commandLine(listOf("openssl", "genpkey", "-algorithm", "RSA", "-out", "jwk-keypair.pem"))
+    commandLine(listOf("openssl", "genpkey", "-algorithm", "RSA", "-pkeyopt", "rsa_keygen_bits:2048", "-out", "jwk-keypair.pem"))
     outputs.file(file("${projectDir}/src/main/resources/jwk-keypair.pem"))
 }
 
