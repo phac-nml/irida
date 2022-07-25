@@ -33,27 +33,25 @@ export function SequencingRunCreateSampleButton() {
     React.useState(null);
   const [sampleNameHelp, setSampleNameHelp] = React.useState(null);
   const [skip, setSkip] = React.useState(true);
-  const [samples, setSamples] = React.useState([]);
+
   const [form] = Form.useForm();
 
-  const { data: projectsData = {}, isProjectsSuccess } =
-    useGetProjectNamesForUserQuery();
-  const { data: samplesData = {}, isSamplesSuccess } =
-    useGetSampleNamesForProjectQuery(projectId, {
-      skip,
-    });
+  const { data: projectsData = {} } = useGetProjectNamesForUserQuery();
+  const { data: samplesData = {} } = useGetSampleNamesForProjectQuery(
+    projectId,
+    { skip }
+  );
 
-  React.useEffect(() => {
-    setSamples(
-      samplesData.samples?.map(({ name }) => ({ label: name, value: name }))
-    );
-  }, [isSamplesSuccess]);
+  const samples = samplesData?.samples?.map(({ name }) => ({
+    label: name,
+    value: name,
+  }));
 
   const addNewSample = () => {
     setVisible(true);
   };
 
-  const projectOptions = projectsData.projects?.map((project) => (
+  const projectOptions = projectsData?.projects?.map((project) => (
     <Select.Option value={project.id} key={`${project.id} ${project.name}`}>
       <Text style={{ marginRight: SPACE_XS }}>{project.id}</Text>
       <Text type="secondary">{project.name}</Text>
@@ -96,7 +94,6 @@ export function SequencingRunCreateSampleButton() {
     setVisible(false);
     setSkip(true);
     setProjectId(null);
-    setSamples([]);
     setSampleNameValidateStatus(null);
     setSampleNameHelp(null);
     form.resetFields();
@@ -108,7 +105,6 @@ export function SequencingRunCreateSampleButton() {
       setVisible(false);
       setSkip(true);
       setProjectId(null);
-      setSamples([]);
       setSampleNameValidateStatus(null);
       setSampleNameHelp(null);
       dispatch(
@@ -145,7 +141,7 @@ export function SequencingRunCreateSampleButton() {
           layout="vertical"
         >
           <Form.Item
-            name="project"
+            name="projectId"
             label="Project"
             rules={[
               {
