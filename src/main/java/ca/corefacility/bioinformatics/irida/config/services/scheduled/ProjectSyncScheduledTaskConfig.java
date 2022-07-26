@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 /**
  * Scheduled task configuration for synchronizing projects from other IRIDA installations
  */
-@Profile({ "prod", "sync" })
+@Profile({ "prod", "sync", "dev" })
 @Configuration
 public class ProjectSyncScheduledTaskConfig {
 
