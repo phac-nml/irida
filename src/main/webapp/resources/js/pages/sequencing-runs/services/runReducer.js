@@ -172,6 +172,8 @@ export const runReducer = createReducer(initialState, (builder) => {
     }
     const updatedSample = {
       sampleName: sample.sampleName,
+      sampleId: sample.sampleId,
+      projectId: sample.projectId,
       pairs: updatedPairs,
     };
     state.samples[sampleIndex] = updatedSample;
@@ -196,6 +198,8 @@ export const runReducer = createReducer(initialState, (builder) => {
     }
     const updatedSample = {
       sampleName: sample.sampleName,
+      sampleId: sample.sampleId,
+      projectId: sample.projectId,
       pairs: updatedPairs,
     };
     state.samples[sampleIndex] = updatedSample;
@@ -207,6 +211,8 @@ export const runReducer = createReducer(initialState, (builder) => {
     const newPair = { forward: file, reverse: null };
     const updatedSample = {
       sampleName: sample.sampleName,
+      sampleId: sample.sampleId,
+      projectId: sample.projectId,
       pairs: [...sample.pairs, newPair],
     };
     state.samples[sampleIndex] = updatedSample;
@@ -221,6 +227,8 @@ export const runReducer = createReducer(initialState, (builder) => {
     updatedPairs[pairIndex] = { forward: pair.forward, reverse: file };
     const updatedSample = {
       sampleName: sample.sampleName,
+      sampleId: sample.sampleId,
+      projectId: sample.projectId,
       pairs: updatedPairs,
     };
     state.samples[sampleIndex] = updatedSample;

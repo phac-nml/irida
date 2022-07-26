@@ -1,6 +1,6 @@
 import { List } from "antd";
 import React from "react";
-import { SequencingRunSample } from "./SequencingRunSample";
+import { SequencingRunSampleCard } from "./SequencingRunSampleCard";
 
 /**
  * React component to render the samples list.
@@ -23,7 +23,7 @@ export function SequencingRunSamplesList({ samples }) {
           renderItem={(sample, sampleIndex) => {
             return (
               <List.Item>
-                <SequencingRunSample
+                <SequencingRunSampleCard
                   samples={samples}
                   sample={sample}
                   sampleIndex={sampleIndex}

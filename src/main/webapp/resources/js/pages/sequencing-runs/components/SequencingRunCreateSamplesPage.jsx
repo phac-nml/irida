@@ -4,7 +4,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useGetSequencingRunFilesQuery } from "../../../apis/sequencing-runs/sequencing-runs";
 import { useNavigate, useParams } from "react-router-dom";
-import { Col, Row, Space, Typography } from "antd";
+import { Button, Col, Row, Space, Typography } from "antd";
 import { SequencingRunSamplesList } from "./SequencingRunSamplesList";
 import { SequencingRunFilesList } from "./SequencingRunFilesList";
 import { useDispatch, useSelector } from "react-redux";
@@ -33,6 +33,7 @@ export default function SequencingRunCreateSamplesPage() {
     <PageWrapper
       title={i18n("SequencingRunCreateSamplesPage.title", runId)}
       onBack={() => navigate(-1)}
+      headerExtras={<Button type="primary">Save</Button>}
     >
       <DndProvider backend={HTML5Backend}>
         <Row gutter={32}>

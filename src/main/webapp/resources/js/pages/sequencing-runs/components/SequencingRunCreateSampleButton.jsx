@@ -111,6 +111,7 @@ export function SequencingRunCreateSampleButton() {
         addSample({
           sampleName: values.sampleName,
           sampleId: values.sampleId,
+          projectId: values.projectId,
           pairs: [],
         })
       );

@@ -1,6 +1,16 @@
 import React from "react";
 import { useDrop } from "react-dnd";
-import { Button, Card, Col, Empty, Row, Skeleton, Tag, Typography } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Empty,
+  Row,
+  Skeleton,
+  Space,
+  Tag,
+  Typography,
+} from "antd";
 import { IconRemove } from "../../../components/icons/Icons";
 import {
   addFile,
@@ -19,7 +29,7 @@ import { SequencingRunSamplePair } from "./SequencingRunSamplePair";
  * @param {number} sampleIndex - the index of the sample in the sample array
  * @returns {JSX.Element} - Returns a sample component
  */
-export function SequencingRunSample({ samples, sample, sampleIndex }) {
+export function SequencingRunSampleCard({ samples, sample, sampleIndex }) {
   const dispatch = useDispatch();
 
   const removeSampleFromList = () => {
@@ -57,11 +67,15 @@ export function SequencingRunSample({ samples, sample, sampleIndex }) {
 
   return (
     <Card
+      size="small"
       title={
-        <>
-          {sample.sampleId === null && <Tag color="green">NEW!</Tag>}
+        <Space>
           {sample.sampleName}
-        </>
+          <Typography.Text type="secondary">
+            Project {sample.projectId}
+          </Typography.Text>
+          {sample.sampleId === null && <Tag color="green">NEW!</Tag>}
+        </Space>
       }
       extra={
         <Button
