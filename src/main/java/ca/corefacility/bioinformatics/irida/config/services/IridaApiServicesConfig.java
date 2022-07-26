@@ -5,7 +5,6 @@ import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConf
 import ca.corefacility.bioinformatics.irida.config.repository.ForbidJpqlUpdateDeletePostProcessor;
 import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositoriesConfig;
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
-import ca.corefacility.bioinformatics.irida.config.services.conditions.NreplServerSpringCondition;
 import ca.corefacility.bioinformatics.irida.config.services.scheduled.IridaScheduledTasksConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
 import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
@@ -30,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.util.IridaPluginMessageSource;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import net.matlux.NreplServerSpring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,11 +76,20 @@ import static com.google.common.base.Preconditions.checkArgument;
  * Configuration for the IRIDA platform.
  */
 @Configuration
-@Import({ IridaApiSecurityConfig.class, IridaApiAspectsConfig.class, IridaApiRepositoriesConfig.class,
-		ExecutionManagerConfig.class, AnalysisExecutionServiceConfig.class,
-		WebEmailConfig.class, IridaScheduledTasksConfig.class, IridaPluginConfig.class, IridaWorkflowsConfig.class})
-@ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.service",
-		"ca.corefacility.bioinformatics.irida.processing", "ca.corefacility.bioinformatics.irida.pipeline.results.updater" })
+@Import({
+		IridaApiSecurityConfig.class,
+		IridaApiAspectsConfig.class,
+		IridaApiRepositoriesConfig.class,
+		ExecutionManagerConfig.class,
+		AnalysisExecutionServiceConfig.class,
+		WebEmailConfig.class,
+		IridaScheduledTasksConfig.class,
+		IridaPluginConfig.class,
+		IridaWorkflowsConfig.class })
+@ComponentScan(basePackages = {
+		"ca.corefacility.bioinformatics.irida.service",
+		"ca.corefacility.bioinformatics.irida.processing",
+		"ca.corefacility.bioinformatics.irida.pipeline.results.updater" })
 public class IridaApiServicesConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiServicesConfig.class);
 
@@ -122,9 +129,6 @@ public class IridaApiServicesConfig {
 
 	@Value("${file.processing.queue.capacity}")
 	private int fpQueueCapacity;
-
-	@Value("${irida.debug.nrepl.server.port:#{null}}")
-	private Integer nreplPort;
 
 	@Value("${irida.workflow.analysis.threads}")
 	private int analysisTaskThreads;
@@ -188,9 +192,11 @@ public class IridaApiServicesConfig {
 
 		try {
 			final String WORKFLOWS_DIRECTORY = "/ca/corefacility/bioinformatics/irida/model/workflow/analysis/type/workflows/";
-			final List<String> workflowMessageSources = findWorkflowMessageSources(this.getClass().getClassLoader(), WORKFLOWS_DIRECTORY);
+			final List<String> workflowMessageSources = findWorkflowMessageSources(this.getClass().getClassLoader(),
+					WORKFLOWS_DIRECTORY);
 			workflowMessageSources.addAll(Arrays.asList(RESOURCE_LOCATIONS));
-			final String[] allMessageSources = workflowMessageSources.toArray(new String[workflowMessageSources.size()]);
+			final String[] allMessageSources = workflowMessageSources
+					.toArray(new String[workflowMessageSources.size()]);
 			source.setBasenames(allMessageSources);
 		} catch (IOException e) {
 			logger.error("Could not set/load workflow message sources. " + e);
@@ -259,15 +265,11 @@ public class IridaApiServicesConfig {
 	}
 
 	/**
-	 * Finds a list of resource paths to directories containing message.properties
-	 * files.
+	 * Finds a list of resource paths to directories containing message.properties files.
 	 *
 	 * @param classLoader        The {@link ClassLoader} used to get resource paths.
-	 * @param workflowsDirectory The directory containing the workflow files (and
-	 *                           messages.properties files).
-	 *
-	 * @return A {@link List} of resource paths to directories containing
-	 *         message.properties files.
+	 * @param workflowsDirectory The directory containing the workflow files (and messages.properties files).
+	 * @return A {@link List} of resource paths to directories containing message.properties files.
 	 */
 	private List<String> findWorkflowMessageSources(ClassLoader classLoader, String workflowsDirectory)
 			throws IOException {
@@ -286,19 +288,19 @@ public class IridaApiServicesConfig {
 		// 'messages_en.properties' files
 		final Pattern pattern = Pattern
 				.compile(String.format("^.+(%s.+\\/messages)_en.properties$", workflowsDirectory));
-		return Arrays.stream(resources).map(x -> getClasspathResourceBasename(pattern, x)).filter(Objects::nonNull)
-				.sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+		return Arrays.stream(resources)
+				.map(x -> getClasspathResourceBasename(pattern, x))
+				.filter(Objects::nonNull)
+				.sorted(Comparator.reverseOrder())
+				.collect(Collectors.toList());
 	}
 
 	/**
-	 * Gets the basename to a classpath resource path given a particular pattern to
-	 * match for the file name.
+	 * Gets the basename to a classpath resource path given a particular pattern to match for the file name.
 	 *
 	 * @param pattern The {@link Pattern} to use for stripping off the filename.
 	 * @param x       The resource to extract the path name from.
-	 *
-	 * @return The basename for a classpath resource path, or null if the pattern
-	 *         does not match the resource.
+	 * @return The basename for a classpath resource path, or null if the pattern does not match the resource.
 	 */
 	private String getClasspathResourceBasename(Pattern pattern, Resource x) {
 		try {
@@ -390,7 +392,6 @@ public class IridaApiServicesConfig {
 	 * Builds a new {@link Executor} for analysis tasks.
 	 *
 	 * @param userService a reference to the user service.
-	 *
 	 * @return A new {@link Executor} for analysis tasks.
 	 */
 	@Bean
@@ -426,9 +427,7 @@ public class IridaApiServicesConfig {
 	/**
 	 * Creates a security context object for the analysis tasks.
 	 *
-	 * @param userService
-	 *            A {@link UserService}.
-	 *
+	 * @param userService A {@link UserService}.
 	 * @return A {@link SecurityContext} for the analysis tasks.
 	 */
 	private SecurityContext createAnalysisTaskSecurityContext(UserService userService) {
@@ -481,13 +480,6 @@ public class IridaApiServicesConfig {
 		return exportUploadTemplateEngine;
 	}
 
-	@Bean
-	@Profile("dev")
-	@Conditional(NreplServerSpringCondition.class)
-	public NreplServerSpring nRepl() {
-		return new NreplServerSpring(nreplPort);
-	}
-
 	/**
 	 * Inner class storing the enabled locales for IRIDA
 	 */
@@ -503,4 +495,3 @@ public class IridaApiServicesConfig {
 		}
 	}
 }
-

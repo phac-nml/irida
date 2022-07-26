@@ -7,18 +7,27 @@ import {
   Input,
   notification,
   Select,
+  Skeleton,
   Space,
   Typography,
 } from "antd";
 import { formatDate } from "../../../utilities/date-utilities";
 import {
   useEditUserDetailsMutation,
-  useGetUserDetailsQuery
+  useGetUserDetailsQuery,
 } from "../../../apis/users/users";
 import {
   useGetLocalesQuery,
-  useGetSystemRolesQuery
+  useGetSystemRolesQuery,
 } from "../../../apis/settings/settings";
+import {
+  emailRuleList,
+  firstNameRuleList,
+  lastNameRuleList,
+  localeRuleList,
+  phoneNumberRuleList,
+  roleRuleList,
+} from "../../../utilities/validation-utilities";
 
 /**
  * React component to display the user details page.
@@ -26,36 +35,38 @@ import {
  * @constructor
  */
 export default function UserDetailsPage() {
-  const {userId} = useParams();
-  const {data: userDetails = {}} = useGetUserDetailsQuery(userId);
-  const {data: locales = []} = useGetLocalesQuery();
-  const {data: systemRoles = []} = useGetSystemRolesQuery();
+  const { userId } = useParams();
+  const { data: userDetails = {}, isLoading } = useGetUserDetailsQuery(userId);
+  const { data: locales = [] } = useGetLocalesQuery();
+  const { data: systemRoles = [] } = useGetSystemRolesQuery();
   const [editUser] = useEditUserDetailsMutation();
   const [form] = Form.useForm();
 
   const onFormFinish = (values) => {
-    editUser({userId: userId, ...values})
+    editUser({ userId, ...values })
       .unwrap()
       .then(() => {
         notification.success({
           message: i18n("UserDetailsPage.notification.success"),
-          className: 't-user-page-notification-success',
+          className: "t-user-page-notification-success",
         });
       })
       .catch((error) => {
         notification.error({
           message: i18n("UserDetailsPage.notification.error"),
         });
-        const fields = Object.entries(error.data).map(([field, error]) => ({
-          name: field,
-          errors: [error],
-        }));
+        const fields = Object.entries(error.data.errors).map(
+          ([field, error]) => ({
+            name: field,
+            errors: [error],
+          })
+        );
         form.setFields(fields);
       });
   };
 
   return (
-    <>
+    <Skeleton loading={isLoading}>
       <Typography.Title level={4}>
         {i18n("UserDetailsPage.title")}
       </Typography.Title>
@@ -68,58 +79,35 @@ export default function UserDetailsPage() {
         <Form.Item
           label={i18n("UserDetailsPage.form.firstName.label")}
           name="firstName"
-          rules={[
-            {
-              required: true,
-              message: i18n("UserDetailsPage.form.firstName.required"),
-            },
-          ]}
+          rules={firstNameRuleList}
         >
-          <Input/>
+          <Input />
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.lastName.label")}
           name="lastName"
-          rules={[
-            {
-              required: true,
-              message: i18n("UserDetailsPage.form.lastName.required"),
-            },
-          ]}
+          rules={lastNameRuleList}
         >
-          <Input/>
+          <Input />
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.email.label")}
           name="email"
-          rules={[
-            {
-              required: true,
-              message: i18n("UserDetailsPage.form.email.required"),
-            },
-            {
-              type: "email",
-              message: i18n("UserDetailsPage.form.email.type"),
-            },
-          ]}
+          rules={emailRuleList}
         >
-          <Input/>
+          <Input />
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.phoneNumber.label")}
           name="phoneNumber"
-          rules={[
-            {
-              required: true,
-              message: i18n("UserDetailsPage.form.phoneNumber.required"),
-            },
-          ]}
+          rules={phoneNumberRuleList}
         >
-          <Input/>
+          <Input />
         </Form.Item>
         <Form.Item
           label={i18n("UserDetailsPage.form.locale.label")}
           name="locale"
+          rules={localeRuleList}
         >
           <Select>
             {locales.map((locale, index) => (
@@ -136,6 +124,7 @@ export default function UserDetailsPage() {
           label={i18n("UserDetailsPage.form.role.label")}
           name="role"
           hidden={!userDetails.admin}
+          rules={roleRuleList}
         >
           <Select disabled={!userDetails.canEditUserStatus}>
             {systemRoles.map((role, index) => (
@@ -148,15 +137,22 @@ export default function UserDetailsPage() {
             ))}
           </Select>
         </Form.Item>
-        <Form.Item name="enabled" valuePropName="checked"
-                   hidden={!userDetails.admin}>
+        <Form.Item
+          name="enabled"
+          valuePropName="checked"
+          hidden={!userDetails.admin}
+        >
           <Checkbox disabled={!userDetails.canEditUserStatus}>
             {i18n("UserDetailsPage.form.enabled.label")}
           </Checkbox>
         </Form.Item>
         <Form.Item>
-          <Button className="t-submit-btn" type="primary" htmlType="submit"
-                  disabled={!userDetails.canEditUserInfo}>
+          <Button
+            className="t-submit-btn"
+            type="primary"
+            htmlType="submit"
+            disabled={!userDetails.canEditUserInfo}
+          >
             {i18n("UserDetailsPage.form.button.submit")}
           </Button>
         </Form.Item>
@@ -165,28 +161,28 @@ export default function UserDetailsPage() {
         <Typography.Text type="secondary">
           {userDetails.user?.createdDate
             ? i18n(
-              "UserDetailsPage.createdDate",
-              formatDate({date: userDetails.user?.createdDate})
-            )
+                "UserDetailsPage.createdDate",
+                formatDate({ date: userDetails.user?.createdDate })
+              )
             : ""}
         </Typography.Text>
         <Typography.Text type="secondary">
           {userDetails.user?.modifiedDate
             ? i18n(
-              "UserDetailsPage.modifiedDate",
-              formatDate({date: userDetails.user?.modifiedDate})
-            )
+                "UserDetailsPage.modifiedDate",
+                formatDate({ date: userDetails.user?.modifiedDate })
+              )
             : ""}
         </Typography.Text>
         <Typography.Text type="secondary">
           {userDetails.user?.lastLogin
             ? i18n(
-              "UserDetailsPage.lastLogin",
-              formatDate({date: userDetails.user?.lastLogin})
-            )
+                "UserDetailsPage.lastLogin",
+                formatDate({ date: userDetails.user?.lastLogin })
+              )
             : ""}
         </Typography.Text>
       </Space>
-    </>
+    </Skeleton>
   );
 }

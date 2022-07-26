@@ -19,6 +19,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.RelatedProjectJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIAddAssociatedProjectException;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIRemoveAssociatedProjectException;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.AssociatedProject;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -41,7 +43,21 @@ public class UIAssociatedProjectsService {
 	}
 
 	/**
-	 * Get a list of all projects associated with the current project.  If the user is a manager or administrator, the
+	 * Get a list of all projects associated with the current project.
+	 *
+	 * @param projectId project identifier for the currently active project
+	 * @return list of projects
+	 */
+	public List<AssociatedProject> getAssociatedProjectsForProject(Long projectId) {
+		Project project = projectService.read(projectId);
+		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(project);
+		return relatedProjectJoins.stream()
+				.map(j -> new AssociatedProject(j.getObject(), true))
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Get a list of all projects associated with the current project. If the user is a manager or administrator, the
 	 * list will also contain all projects they have access to.
 	 *
 	 * @param projectId project identifier for the currently active project
@@ -49,11 +65,10 @@ public class UIAssociatedProjectsService {
 	 */
 	public List<AssociatedProject> getAssociatedProjects(Long projectId) {
 		Project project = projectService.read(projectId);
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User user = (User) authentication.getPrincipal();
-		boolean hasPermission = user.getSystemRole()
-				.equals(Role.ROLE_ADMIN) || projectOwnerPermission.isAllowed(authentication, project);
+		boolean hasPermission = user.getSystemRole().equals(Role.ROLE_ADMIN)
+				|| projectOwnerPermission.isAllowed(authentication, project);
 		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(project);
 
 		List<AssociatedProject> associatedProjects = relatedProjectJoins.stream()
@@ -68,15 +83,13 @@ public class UIAssociatedProjectsService {
 		if (hasPermission) {
 			Page<Project> page = projectService.getUnassociatedProjects(project, "", 0, Integer.MAX_VALUE,
 					Sort.Direction.ASC, "name");
-			page.getContent()
-					.forEach(p -> {
-						if (!associatedIds.contains(p.getId())) {
-							unassociatedProjects.add(new AssociatedProject(p, false));
-						}
-					});
+			page.getContent().forEach(p -> {
+				if (!associatedIds.contains(p.getId())) {
+					unassociatedProjects.add(new AssociatedProject(p, false));
+				}
+			});
 		}
-		return Stream.concat(associatedProjects.stream(), unassociatedProjects.stream())
-				.collect(Collectors.toList());
+		return Stream.concat(associatedProjects.stream(), unassociatedProjects.stream()).collect(Collectors.toList());
 	}
 
 	/**
@@ -85,15 +98,16 @@ public class UIAssociatedProjectsService {
 	 * @param projectId           identifier for the current project
 	 * @param associatedProjectId identifier for the project to associate
 	 * @param locale              currently logged in users locale
-	 * @throws Exception if the project or associated project cannot be found
+	 * @throws UIAddAssociatedProjectException if the project or associated project cannot be found
 	 */
-	public void addAssociatedProject(long projectId, long associatedProjectId, Locale locale) throws Exception {
+	public void addAssociatedProject(Long projectId, Long associatedProjectId, Locale locale)
+			throws UIAddAssociatedProjectException {
 		try {
 			Project project = projectService.read(projectId);
 			Project associatedProject = projectService.read(associatedProjectId);
 			projectService.addRelatedProject(project, associatedProject);
 		} catch (EntityNotFoundException e) {
-			throw new Exception(
+			throw new UIAddAssociatedProjectException(
 					messageSource.getMessage("server.ViewAssociatedProjects.add-error", new Object[] {}, locale));
 		}
 	}
@@ -104,15 +118,16 @@ public class UIAssociatedProjectsService {
 	 * @param projectId           identifier for the current project
 	 * @param associatedProjectId identifier for the project to associate
 	 * @param locale              current users locale
-	 * @throws Exception if there is an issue removing the associated project
+	 * @throws UIRemoveAssociatedProjectException if there is an issue removing the associated project
 	 */
-	public void removeAssociatedProject(long projectId, long associatedProjectId, Locale locale) throws Exception {
+	public void removeAssociatedProject(Long projectId, Long associatedProjectId, Locale locale)
+			throws UIRemoveAssociatedProjectException {
 		try {
 			Project project = projectService.read(projectId);
 			Project associatedProject = projectService.read(associatedProjectId);
 			projectService.removeRelatedProject(project, associatedProject);
 		} catch (EntityNotFoundException e) {
-			throw new Exception(
+			throw new UIRemoveAssociatedProjectException(
 					messageSource.getMessage("server.ViewAssociatedProjects.remove-error", new Object[] {}, locale));
 		}
 	}

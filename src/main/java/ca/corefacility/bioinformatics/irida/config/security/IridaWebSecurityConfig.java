@@ -17,7 +17,7 @@ import org.springframework.web.servlet.LocaleResolver;
 
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.ria.config.filters.SessionFilter;
-import ca.corefacility.bioinformatics.irida.ria.security.CredentialsExpriredAuthenticationFailureHandler;
+import ca.corefacility.bioinformatics.irida.ria.security.IridaPostAuthenticationFailureHandler;
 import ca.corefacility.bioinformatics.irida.ria.security.LoginSuccessHandler;
 
 /**
@@ -47,7 +47,7 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		}
 
 		@Autowired
-		CredentialsExpriredAuthenticationFailureHandler authFailureHandler;
+		IridaPostAuthenticationFailureHandler authFailureHandler;
 
 		@Override
 		public void configure(WebSecurity web) throws Exception {
@@ -89,6 +89,7 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/dist/**").permitAll()
 				.antMatchers("/v3/api-docs/**").permitAll()
 				.antMatchers("/password_reset/**").permitAll()
+				.antMatchers("/ajax/password_reset/**").permitAll()
 				.antMatchers("/admin/**").hasRole("ADMIN")
 				.antMatchers("/**").fullyAuthenticated()
 			.and().addFilterAfter(getSessionModelFilter(), SecurityContextHolderAwareRequestFilter.class);

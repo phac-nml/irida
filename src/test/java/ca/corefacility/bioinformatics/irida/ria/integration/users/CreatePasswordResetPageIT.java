@@ -1,11 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.users;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.CreatePasswordResetPage;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.CreatePasswordResetPage;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,25 +24,21 @@ public class CreatePasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		passwordResetPage = new CreatePasswordResetPage(driver());
 	}
 
-	@AfterEach
-	@Override
-	public void tearDown() {
-		// don't log out, we didn't log in!
-	}
-
 	@Test
 	public void testCreateReset() {
 		passwordResetPage.goTo();
-		String email = "differentUser@nowhere.com";
-		passwordResetPage.enterEmail(email);
+		passwordResetPage.clickForgotPasswordLink();
+		String usernameOrEmail = "differentUser@nowhere.com";
+		passwordResetPage.enterEmail(usernameOrEmail);
 		assertTrue(passwordResetPage.checkSuccess());
 	}
 
 	@Test
 	public void testCreateResetBadEmail() {
 		passwordResetPage.goTo();
-		String email = "notauser@nowhere.com";
-		passwordResetPage.enterEmail(email);
+		passwordResetPage.clickForgotPasswordLink();
+		String usernameOrEmail = "notauser@nowhere.com";
+		passwordResetPage.enterEmail(usernameOrEmail);
 		assertFalse(passwordResetPage.checkSuccess());
 	}
 }

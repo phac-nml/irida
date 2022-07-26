@@ -32,13 +32,11 @@ import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelHeader;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelRow;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
-import com.monitorjbl.xlsx.StreamingReader;
-import com.monitorjbl.xlsx.impl.StreamingCell;
+import com.github.pjfanning.xlsx.StreamingReader;
+import com.github.pjfanning.xlsx.impl.StreamingCell;
 
 /**
- * Download a zip archive of all output files within an
- * {@link AnalysisSubmission}
- *
+ * Download a zip archive of all output files within an {@link AnalysisSubmission}
  */
 public class FileUtilities {
 	private static final Logger logger = LoggerFactory.getLogger(FileUtilities.class);
@@ -51,8 +49,7 @@ public class FileUtilities {
 	private static final Pattern regexExt = Pattern.compile("^.*\\.(\\w+)$");
 
 	/**
-	 * Utility method for download a zip file containing all output files from
-	 * an analysis.
+	 * Utility method for download a zip file containing all output files from an analysis.
 	 *
 	 * @param response                {@link HttpServletResponse}
 	 * @param fileName                Name fo the file to create
@@ -134,7 +131,8 @@ public class FileUtilities {
 		 * Content-disposition response header.
 		 */
 		fileName = formatName(fileName);
-		logger.debug("Creating zipped file response. [" + fileName + "] with " + files.size() + " analysis output files.");
+		logger.debug(
+				"Creating zipped file response. [" + fileName + "] with " + files.size() + " analysis output files.");
 
 		// set the response headers before we do *ANYTHING* so that the filename
 		// actually appears in the download dialog for zip file
@@ -152,7 +150,8 @@ public class FileUtilities {
 				}
 				// 1) Build a folder/file name
 				// trying to pack as much useful info into the filename as possible!
-				String outputFilename = getUniqueFilename(file.getFile(), outputInfo.getSampleName(), outputInfo.getSampleId(), + outputInfo.getAnalysisSubmissionId());
+				String outputFilename = getUniqueFilename(file.getFile(), outputInfo.getSampleName(),
+						outputInfo.getSampleId(), +outputInfo.getAnalysisSubmissionId());
 				// 2) Tell the zip stream that we are starting a new entry in
 				// the archive.
 				outputStream.putNextEntry(new ZipEntry(fileName + "/" + outputFilename));
@@ -189,7 +188,8 @@ public class FileUtilities {
 	 * @param file                    Set of {@link AnalysisOutputFile}
 	 * @param fileName                Filename
 	 */
-	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file, String fileName) {
+	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file,
+			String fileName) {
 		fileName = formatName(fileName);
 
 		// set the response headers before we do *ANYTHING* so that the filename
@@ -220,13 +220,10 @@ public class FileUtilities {
 		FileUtilities.createSingleFileResponse(response, file, fileName);
 	}
 
-
-
 	/**
 	 * Method to remove unwanted characters from the filename.
 	 *
-	 * @param name
-	 *            Name of the file
+	 * @param name Name of the file
 	 * @return The name with unwanted characters removed.
 	 */
 	private static String formatName(String name) {
@@ -266,16 +263,17 @@ public class FileUtilities {
 	/**
 	 * Get a unique filename for a filePath from an analysis output file.
 	 *
-	 * @param filePath The {@link Path} of the file to generate a unique filename for
-	 * @param sampleName The name of the {@link Sample} associated with the analysis
-	 * @param sampleId The id of the {@link Sample} associated with the analysis
+	 * @param filePath             The {@link Path} of the file to generate a unique filename for
+	 * @param sampleName           The name of the {@link Sample} associated with the analysis
+	 * @param sampleId             The id of the {@link Sample} associated with the analysis
 	 * @param analysisSubmissionId The id of the {@link AnalysisSubmission} that generated the file
-	 * @return Unique filename of the format SAMPLENAME-sampleId-SAMPLEID-analysisSubmissionId-ANALYSISSUBMISSIONID-ORIGFILENAME
+	 * @return Unique filename of the format
+	 *         SAMPLENAME-sampleId-SAMPLEID-analysisSubmissionId-ANALYSISSUBMISSIONID-ORIGFILENAME
 	 */
 	public static String getUniqueFilename(Path filePath, String sampleName, Long sampleId, Long analysisSubmissionId) {
 		String ext = getFileExt(filePath);
 		String filename = filePath.getFileName().toString();
-	
+
 		String prefix = sampleName + "-sampleId-" + sampleId + "-analysisSubmissionId-" + analysisSubmissionId + "-";
 		filename = prefix + filename;
 		if (ext.equals("html-zip") && !filename.endsWith(EXTENSION_HTML_ZIP)) {
@@ -301,10 +299,7 @@ public class FileUtilities {
 		if (end != null && end > start) {
 			linesLimit = end - start + 1;
 		}
-		return reader.lines()
-				.skip(start == 0 ? 1L : start)
-				.limit(linesLimit)
-				.collect(Collectors.toList());
+		return reader.lines().skip(start == 0 ? 1L : start).limit(linesLimit).collect(Collectors.toList());
 	}
 
 	/**
@@ -357,28 +352,43 @@ public class FileUtilities {
 					// we add a a null column in place if the column
 					// is blank
 					if (cell == null) {
-						cell = new StreamingCell(i, row.getRowNum(), false);
+						cell = new StreamingCell(sheet, i, row.getRowNum(), false);
 					}
 					CellType cellType = cell.getCellType();
 					int columnIndex = cell.getColumnIndex();
-					if (columnIndex < headers.size()) {
-						// Convert a boolean or numeric column value to a string if
-						// the cell type is not a string otherwise just get the string
-						// from the column
-						String cellStringValue = !cellType.equals(CellType.BLANK) ?
-								!cellType.equals(CellType.STRING) ?
-										(cellType.equals(CellType.NUMERIC) ?
-												String.valueOf(cell.getNumericCellValue())
-														.trim() :
-												String.valueOf(cell.getBooleanCellValue())).trim() :
-										cell.getStringCellValue()
-												.trim() :
-								"";
+					String columnType = "text";
+					String cellStringValue = "";
+					Double cellNumericValue = null;
+					ExcelCol excelColumn;
 
-						if(!cellStringValue.equals("") && !hasRowData) {
+					if (columnIndex < headers.size()) {
+						/*
+						If the cell isn't blank then check if the cell type
+						is string, numeric, or boolean and set the variables
+						accordingly. This fixes the issue with getNumericCellValue()
+						being returned in scientific notation when converting to a
+						string
+						 */
+						if(!cellType.equals(CellType.BLANK)) {
+							if(cellType.equals(CellType.STRING)) {
+								cellStringValue = cell.getStringCellValue().trim();
+							} else if (cellType.equals(CellType.NUMERIC)) {
+								columnType = "numeric";
+								cellNumericValue = cell.getNumericCellValue();
+							} else if (cellType.equals(CellType.BOOLEAN)) {
+								cellStringValue = String.valueOf(cell.getBooleanCellValue()).trim();
+							}
+						}
+
+						if (!cellStringValue.equals("") && !hasRowData) {
 							hasRowData = true;
 						}
-						ExcelCol excelColumn = new ExcelCol(columnIndex, cellStringValue);
+
+						if(columnType.equals("text")) {
+							excelColumn = new ExcelCol(columnIndex, cellStringValue);
+						} else {
+							excelColumn = new ExcelCol(columnIndex, cellNumericValue);
+						}
 						excelCols.add(excelColumn);
 					}
 				}
@@ -415,11 +425,9 @@ public class FileUtilities {
 
 			String headerValue;
 			if (cellType.equals(CellType.STRING)) {
-				headerValue = headerCell.getStringCellValue()
-						.trim();
+				headerValue = headerCell.getStringCellValue().trim();
 			} else {
-				headerValue = String.valueOf(headerCell.getNumericCellValue())
-						.trim();
+				headerValue = String.valueOf(headerCell.getNumericCellValue()).trim();
 			}
 			ExcelHeader excelHeader = new ExcelHeader(headerValue, columnIndex, Integer.toString(columnIndex));
 			headers.add(excelHeader);

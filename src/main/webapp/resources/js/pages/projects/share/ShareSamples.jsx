@@ -1,36 +1,41 @@
-import { Alert, Checkbox, Space, Typography } from "antd";
+import { Alert, Checkbox, Collapse, Space, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ShareAssociated from "./ShareAssociated";
 import { SharedSamplesList } from "./SharedSamplesList";
 import { updatedLocked, updateMoveSamples } from "./shareSlice";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { SPACE_XS } from "../../../styles/spacing";
 
+const { Panel } = Collapse;
 /**
  * React component to review the samples to be shared with another project.
  *
  * @returns {JSX.Element}
  * @constructor
  */
-export function ShareSamples({ samples = [] }) {
+export function ShareSamples({
+  samples = [],
+  targetProjectSampleIdsDuplicate = [],
+  targetProjectSampleNamesDuplicate = [],
+}) {
   const dispatch = useDispatch();
-  const { associated, originalSamples, locked, remove, currentProject } =
-    useSelector((state) => state.shareReducer);
-
-  const SHOW_SAMPLES = samples.length > 0;
-  const SHOW_NO_SAMPLES_WARNING = samples.length === 0;
-  const SHOW_SOME_SAMPLES_WARNING =
-    SHOW_SAMPLES && samples.length < originalSamples.length;
-  const SHOW_ASSOCIATED = SHOW_SAMPLES && associated.length > 0;
+  const {
+    associated,
+    samples: originalSamples,
+    locked,
+    remove,
+  } = useSelector((state) => state.shareReducer);
 
   return (
     <Space direction="vertical" style={{ width: `100%` }}>
       <Typography.Title level={5}>
         {i18n("ShareSamplesList.title")}
       </Typography.Title>
-      {SHOW_ASSOCIATED && <ShareAssociated />}
-      {SHOW_SAMPLES && (
+      {associated.length > 0 && <ShareAssociated />}
+      {samples.length > 0 && (
         <>
-          <SharedSamplesList list={samples} currentProject={currentProject} />
+          <SharedSamplesList list={samples} />
           <Checkbox
             className="t-move-checkbox"
             checked={remove}
@@ -52,7 +57,7 @@ export function ShareSamples({ samples = [] }) {
           </Checkbox>
         </>
       )}
-      {SHOW_NO_SAMPLES_WARNING && (
+      {samples.length === 0 && (
         <Alert
           type="warning"
           className="t-no-sample-warning"
@@ -61,17 +66,52 @@ export function ShareSamples({ samples = [] }) {
           description={i18n("ShareSamples.no-samples.description")}
         />
       )}
-      {SHOW_SOME_SAMPLES_WARNING && (
-        <Alert
-          className="t-same-samples-warning"
-          type="info"
-          showIcon
-          message={i18n(
-            "ShareSamples.some-samples.message",
-            originalSamples.length - samples.length
-          )}
-        />
-      )}
+      {originalSamples.length - samples.length > 0 &&
+        targetProjectSampleIdsDuplicate.length > 0 && (
+          <Collapse>
+            <Panel
+              className="t-same-sample-ids-warning"
+              header={
+                <div>
+                  <ExclamationCircleOutlined
+                    style={{ color: `var(--gold-6)`, marginRight: SPACE_XS }}
+                  />
+                  {i18n("ShareSamples.some-samples-same-ids.message")}
+                </div>
+              }
+              key="1"
+              style={{ backgroundColor: `var(--grey-1)` }}
+            >
+              <SharedSamplesList
+                list={targetProjectSampleIdsDuplicate}
+                itemActionsRequired={false}
+              />
+            </Panel>
+          </Collapse>
+        )}
+      {originalSamples.length - samples.length > 0 &&
+        targetProjectSampleNamesDuplicate.length > 0 && (
+          <Collapse>
+            <Panel
+              className="t-same-sample-names-warning"
+              header={
+                <div>
+                  <ExclamationCircleOutlined
+                    style={{ color: `var(--gold-6)`, marginRight: SPACE_XS }}
+                  />
+                  {i18n("ShareSamples.some-samples-same-names.message")}
+                </div>
+              }
+              key="1"
+              style={{ backgroundColor: `var(--grey-1)` }}
+            >
+              <SharedSamplesList
+                list={targetProjectSampleNamesDuplicate}
+                itemActionsRequired={false}
+              />
+            </Panel>
+          </Collapse>
+        )}
     </Space>
   );
 }

@@ -1,5 +1,16 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import ca.corefacility.bioinformatics.irida.events.annotations.LaunchesProjectEvent;
 import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.model.event.DataAddedToSampleProjectEvent;
@@ -19,26 +30,17 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SampleSequencingObjectSpecification;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+
 import com.google.common.collect.ImmutableMap;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
- * Implementation of {@link SequencingObjectService} using a
- * {@link SequencingObjectRepository} and
+ * Implementation of {@link SequencingObjectService} using a {@link SequencingObjectRepository} and
  * {@link SampleSequencingObjectJoinRepository} to persist and load objects.
  */
 @Service
-public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, SequencingObject> implements
-		SequencingObjectService {
+public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, SequencingObject>
+		implements SequencingObjectService {
 
 	private final SampleSequencingObjectJoinRepository ssoRepository;
 	private final SequenceFileRepository sequenceFileRepository;
@@ -64,7 +66,8 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	/**
 	 * {@inheritDoc}
 	 */
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER', 'ROLE_TECHNICIAN') or hasPermission(#id, 'canReadSequencingObject')")
+	@PreAuthorize(
+			"hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER', 'ROLE_TECHNICIAN') or hasPermission(#id, 'canReadSequencingObject')")
 	@Override
 	public SequencingObject read(Long id) throws EntityNotFoundException {
 		return super.read(id);
@@ -156,8 +159,8 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 			SampleSequencingObjectJoin join = ssoRepository.getSampleForSequencingObject(seqObj);
 
 			if (join == null) {
-				throw new EntityNotFoundException("No sample associated with sequence file " + seqObj.getClass()
-						+ "[id=" + seqObj.getId() + "]");
+				throw new EntityNotFoundException(
+						"No sample associated with sequence file " + seqObj.getClass() + "[id=" + seqObj.getId() + "]");
 			} else {
 				Sample sample = join.getSubject();
 				if (sequenceFilesSampleMap.containsKey(sample)) {
@@ -200,7 +203,7 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	public Boolean exists(Long id) {
 		return super.exists(id);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -242,10 +245,11 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#toJoin, 'canReadSequencingObject') and hasPermission(#targetSample, 'canUpdateSample')")
+	@PreAuthorize(
+			"hasPermission(#toJoin, 'canReadSequencingObject') and hasPermission(#targetSample, 'canUpdateSample')")
 	@Transactional
-	public SampleSequencingObjectJoin concatenateSequences(List<SequencingObject> toJoin, String filename, Sample targetSample, boolean removeOriginals)
-			throws ConcatenateException {
+	public SampleSequencingObjectJoin concatenateSequences(List<SequencingObject> toJoin, String filename,
+			Sample targetSample, boolean removeOriginals) throws ConcatenateException {
 
 		SequencingObjectConcatenator<? extends SequencingObject> concatenator = SequencingObjectConcatenatorFactory
 				.getConcatenator(toJoin, iridaFileStorageUtility);
@@ -253,9 +257,9 @@ public class SequencingObjectServiceImpl extends CRUDServiceImpl<Long, Sequencin
 		SequencingObject concatenated = concatenator.concatenateFiles(toJoin, filename);
 
 		SampleSequencingObjectJoin created = createSequencingObjectInSample(concatenated, targetSample);
-		
+
 		concatenationRepository.save(new SequenceConcatenation(created.getObject(), toJoin));
-		
+
 		if (removeOriginals) {
 			for (SequencingObject obj : toJoin) {
 				SampleSequencingObjectJoin sampleForSequencingObject = ssoRepository.getSampleForSequencingObject(obj);

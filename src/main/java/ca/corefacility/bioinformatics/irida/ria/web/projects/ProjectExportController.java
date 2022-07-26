@@ -75,7 +75,7 @@ public class ProjectExportController {
 	 * @return Name of the NCBI export page
 	 */
 	@RequestMapping(value = "/projects/{projectId}/export/ncbi", method = RequestMethod.GET)
-	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("ids[]") List<Long> sampleIds,
+	public String getUploadNcbiPage(@PathVariable Long projectId, @RequestParam("ids") List<Long> sampleIds,
 			Model model, Principal principal) {
 		Project project = projectService.read(projectId);
 		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
@@ -217,26 +217,6 @@ public class ProjectExportController {
 	}
 
 	/**
-	 * Get the details view of a given {@link NcbiExportSubmission}
-	 *
-	 * @param projectId    ID of the {@link Project} the export is for
-	 * @param submissionId the {@link NcbiExportSubmission} id
-	 * @param model        model for the view
-	 * @param principal    {@link Principal} currently logged in user
-	 * @return name of the details view
-	 */
-	@RequestMapping("/projects/{projectId}/export/{submissionId}")
-	public String getDetailsView(@PathVariable Long projectId, @PathVariable Long submissionId, Model model,
-			Principal principal) {
-		NcbiExportSubmission submission = exportSubmissionService.read(submissionId);
-		Project project = projectService.read(projectId);
-		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-		model.addAttribute("submission", submission);
-		model.addAttribute("activeNav", "export");
-		return EXPORT_DETAILS_VIEW;
-	}
-
-	/**
 	 * Get the project export list view
 	 *
 	 * @param projectId which {@link Project} to get exports for
@@ -244,7 +224,7 @@ public class ProjectExportController {
 	 * @param principal The currently logged in user
 	 * @return name of the exports list view
 	 */
-	@RequestMapping("/projects/{projectId}/export")
+	@RequestMapping(value = { "/projects/{projectId}/export", "/projects/{projectId}/export/*" })
 	public String getExportsPage(@PathVariable Long projectId, Model model, Principal principal) {
 		Project project = projectService.read(projectId);
 		// Set up the template information

@@ -1,19 +1,20 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
-
-import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.user.PasswordResetPage;
 
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
- * <p> Integration test to ensure that the Login Page works and redirects the user to the dashboard. </p>
- *
+ * <p>
+ * Integration test to ensure that the Login Page works and redirects the user to the dashboard.
+ * </p>
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/LoginPageIT.xml")
 public class LoginPageIT extends AbstractIridaUIITChromeDriver {
@@ -59,7 +60,7 @@ public class LoginPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage page = LoginPage.to(driver());
 		page.login(EXPIRED_USERNAME, EXPIRED_PASSWORD);
 		PasswordResetPage passwordResetPage = new PasswordResetPage(driver());
-		passwordResetPage.enterPassword(newPassword, newPassword);
+		passwordResetPage.enterPassword(newPassword);
 		passwordResetPage.clickSubmit();
 		assertTrue(passwordResetPage.checkSuccess(), "Should have succeeded in changing password.");
 
@@ -71,8 +72,13 @@ public class LoginPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	public void testSequencerLogin() throws Exception {
-		LoginPage.login(driver(), LoginPage.SEQUENCER_USERNAME, LoginPage.GOOD_PASSWORD);
-		assertFalse(driver().getTitle().contains("Dashboard"), "The sequencer user should not be able to see the dashboard");
-		assertTrue(driver().getTitle().contains("Access Denied"), "The sequencer user should get access denied");
+		LoginPage page = LoginPage.to(driver());
+		assertFalse(page.isLoginErrorDisplayed(), "No login errors should be originally displayed");
+		page.login(LoginPage.SEQUENCER_USERNAME, LoginPage.GOOD_PASSWORD);
+		assertFalse(driver().getTitle().contains("Dashboard"),
+				"The sequencer user should not be able to see the dashboard");
+		assertTrue(driver().getCurrentUrl().contains("login?error=true&sequencer-login=true"),
+				"Should update the url with '?error=true&sequencer-login=true'");
+		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
 	}
 }

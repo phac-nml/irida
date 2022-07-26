@@ -8,8 +8,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -24,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import ca.corefacility.bioinformatics.irida.IridaApplication;
@@ -47,12 +46,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag("IntegrationTest")
 @Tag("UI")
 @ActiveProfiles("it")
-@SpringBootTest(classes = { IridaApplication.class,
-		IridaApiTestFilesystemConfig.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = { IridaApplication.class, IridaApiTestFilesystemConfig.class },
+		webEnvironment = WebEnvironment.RANDOM_PORT)
 @Import(IridaIntegrationTestUriConfig.class)
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 @DbUnitConfiguration(dataSetLoader = NullReplacementDatasetLoader.class)
+@TestPropertySource(properties = "server.servlet.context-path=/irida")
 public class AbstractIridaUIITChromeDriver {
 
 	private static final Logger logger = LoggerFactory.getLogger(AbstractIridaUIITChromeDriver.class);
@@ -68,26 +68,6 @@ public class AbstractIridaUIITChromeDriver {
 	public ScreenshotOnFailureWatcher watcher = new ScreenshotOnFailureWatcher();
 
 	/**
-	 * Code to execute before *each* test.
-	 */
-	@BeforeEach
-	public void setUpTest() throws IOException {
-		// logout before everything else.
-		LoginPage.logout(driver());
-	}
-
-	/**
-	 * Code to execute after *each* test.
-	 */
-	@AfterEach
-	public void tearDown() {
-		// NOTE: DO **NOT** log out in this method. This method happens because
-		// the @After method happens immediately after test failure, but before
-		// the @Rule TestWatcher checks the outcome of the test. We want to take
-		// a screenshot of the application state **before** logging out.
-	}
-
-	/**
 	 * Code to execute *once* after the class is finished.
 	 */
 	@AfterAll
@@ -100,7 +80,7 @@ public class AbstractIridaUIITChromeDriver {
 
 	/**
 	 * Get a reference to the {@link WebDriver} used in the tests.
-	 * 
+	 *
 	 * @return the instance of {@link WebDriver} used in the tests.
 	 */
 	public static WebDriver driver() {
@@ -119,18 +99,12 @@ public class AbstractIridaUIITChromeDriver {
 	}
 
 	/**
-	 * Method to use on any page to check to ensure that internationalization
-	 * messages are being automatically loaded onto the page.
+	 * Method to use on any page to check to ensure that internationalization messages are being automatically loaded
+	 * onto the page.
 	 *
-	 * @param page
-	 *            - the instance of {@link AbstractPage} to check for
-	 *            internationalization.
-	 * @param entries
-	 *            - a {@link List} of bundle names. This will correspond to the
-	 *            loaded webpack bundles.
-	 * @param header
-	 *            - Expected text for the main heading on the page. Needs to
-	 *            have class name `t-main-heading`
+	 * @param page    - the instance of {@link AbstractPage} to check for internationalization.
+	 * @param entries - a {@link List} of bundle names. This will correspond to the loaded webpack bundles.
+	 * @param header  - Expected text for the main heading on the page. Needs to have class name `t-main-heading`
 	 */
 	public void checkTranslations(AbstractPage page, List<String> entries, String header) {
 		// Always check for app :)
@@ -167,6 +141,22 @@ public class AbstractIridaUIITChromeDriver {
 			} catch (final IOException e) {
 				logger.error("Unable to write screenshot out.", e);
 			}
+			testFinished();
+		}
+
+		/**
+		 * {@inheritDoc}}
+		 */
+		@Override
+		public void testSuccessful(ExtensionContext context) {
+			testFinished();
+		}
+
+		/**
+		 * Logout after test has finished executing
+		 */
+		private void testFinished() {
+			LoginPage.logout(driver());
 		}
 	}
 }

@@ -47,12 +47,13 @@ public class SequenceFileController {
 	 * @param httpServletRequest The request object
 	 * @return redirect.
 	 */
-	@RequestMapping(value = {"/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary**",
+	@RequestMapping(value = {
+			"/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary**",
 			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary**",
-			"/sequencingRuns/{runId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary**",
-			"samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary**"
-	})
-	public String getSequenceFilePageRedirect(@PathVariable Long sequencingObjectId, @PathVariable Long sequenceFileId, HttpServletRequest httpServletRequest) {
+			"/sequencing-runs/{runId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary**",
+			"samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/summary**" })
+	public String getSequenceFilePageRedirect(@PathVariable Long sequencingObjectId, @PathVariable Long sequenceFileId,
+			HttpServletRequest httpServletRequest) {
 		return "redirect:" + httpServletRequest.getServletPath().replace("/summary", "");
 	}
 
@@ -63,10 +64,11 @@ public class SequenceFileController {
 	 * @param sequenceFileId     Id for the {@link SequenceFile}
 	 * @return The name of the template.
 	 */
-	@RequestMapping(value = { "/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/**",
+	@RequestMapping(value = {
+			"/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/**",
 			"/projects/{projectId}/samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/**",
-			"/sequencingRuns/{runId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/**",
-			"samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/**"})
+			"/sequencing-runs/{runId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/**",
+			"samples/{sampleId}/sequenceFiles/{sequencingObjectId}/file/{sequenceFileId}/**" })
 	public String getSequenceFilePage(@PathVariable Long sequencingObjectId, @PathVariable Long sequenceFileId) {
 		logger.debug("Loading sequence files page for id: " + sequenceFileId);
 		return FASTQC_PAGE;

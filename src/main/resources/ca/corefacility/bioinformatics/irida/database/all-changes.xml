@@ -71,6 +71,6 @@
   <include file="changesets/21.05/all-changes.xml" relativeToChangelogFile="true" />
   <include file="changesets/22.03/all-changes.xml" relativeToChangelogFile="true" />
   <include file="changesets/22.05/all-changes.xml" relativeToChangelogFile="true" />
-  <include file="changesets/RENAME_WHEN_READY/all-changes.xml" relativeToChangelogFile="true"/>
+  <include file="changesets/unreleased/all-changes.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
 

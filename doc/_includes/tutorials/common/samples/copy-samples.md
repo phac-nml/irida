@@ -37,6 +37,10 @@ not be modifiable in the destination project.
 
 ![Share samples locked sample icon.]({{ site.baseurl }}/images/tutorials/common/samples/share-locked-sample.png)
 
+If the destination project already has the same samples (sample ids and/or sample names) in it that are being shared from the source project, then you will see expandable warnings with these samples listed
+
+![Share samples duplicates.]({{ site.baseurl }}/images/tutorials/common/samples/share-sample-duplicates.png)
+
 ### Moving Samples
 
 If you want to move samples, which means they will be in the destination project, but removed from the current project,

@@ -35,10 +35,6 @@ export default function ReferenceFiles() {
   const [, setProgress] = React.useState(0);
   const [total, setTotal] = React.useState(0);
 
-  const paginationOptions = React.useMemo(() => getPaginationOptions(total), [
-    total,
-  ]);
-
   React.useEffect(updateReferenceFileTable, [projectId]);
 
   // Object to hold alert messages for if a user can manage the project or not
@@ -169,7 +165,7 @@ export default function ReferenceFiles() {
         onError("Error");
         notification.error({
           message: i18n("ReferenceFile.uploadFileError", file.name),
-          description: error
+          description: error,
         });
         document
           .querySelectorAll(".ant-upload-list-item-error")
@@ -206,7 +202,7 @@ export default function ReferenceFiles() {
             dataSource={projectReferenceFiles}
             rowKey={(file) => file.id}
             className="t-files-table"
-            pagination={paginationOptions}
+            pagination={getPaginationOptions(total)}
           />
         ) : (
           <InfoAlert
