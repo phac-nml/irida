@@ -2,7 +2,10 @@ import React from "react";
 import { PageWrapper } from "../../../components/page/PageWrapper";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { useGetSequencingRunFilesQuery } from "../../../apis/sequencing-runs/sequencing-runs";
+import {
+  useCreateSamplesMutation,
+  useGetSequencingRunFilesQuery,
+} from "../../../apis/sequencing-runs/sequencing-runs";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Col, Row, Space, Typography } from "antd";
 import { SequencingRunSamplesList } from "./SequencingRunSamplesList";
@@ -21,6 +24,7 @@ export default function SequencingRunCreateSamplesPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { data = [] } = useGetSequencingRunFilesQuery(runId);
+  const [createSamples] = useCreateSamplesMutation();
 
   React.useEffect(() => {
     dispatch(setSamples([]));
@@ -33,7 +37,17 @@ export default function SequencingRunCreateSamplesPage() {
     <PageWrapper
       title={i18n("SequencingRunCreateSamplesPage.title", runId)}
       onBack={() => navigate(-1)}
-      headerExtras={<Button type="primary">Save</Button>}
+      headerExtras={
+        <Button
+          type="primary"
+          onClick={() => {
+            console.log({ samples: samples });
+            createSamples({ samples });
+          }}
+        >
+          Save
+        </Button>
+      }
     >
       <DndProvider backend={HTML5Backend}>
         <Row gutter={32}>

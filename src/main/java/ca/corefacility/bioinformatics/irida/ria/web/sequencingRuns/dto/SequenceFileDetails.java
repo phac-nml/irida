@@ -14,6 +14,9 @@ public class SequenceFileDetails implements Comparable<SequenceFileDetails> {
 	private String fileName;
 	private String fileSize;
 
+	public SequenceFileDetails() {
+	}
+
 	public SequenceFileDetails(SequenceFile file, Long sequencingObjectId) {
 		this.id = file.getId();
 		this.sequencingObjectId = sequencingObjectId;
