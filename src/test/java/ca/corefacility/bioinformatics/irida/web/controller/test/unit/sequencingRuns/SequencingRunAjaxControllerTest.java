@@ -24,8 +24,11 @@ import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.Sequencin
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunModel;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunsListRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISequencingRunService;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
@@ -36,6 +39,9 @@ public class SequencingRunAjaxControllerTest {
 	private UISequencingRunService uiService;
 	private SequencingRunService runService;
 	private SequencingObjectService objectService;
+	private ProjectService projectService;
+	private SampleService sampleService;
+	private SequenceFileService sequenceFileService;
 	private MessageSource messageSource;
 	private SequencingRunAjaxController controller;
 	private User user1, user2;
@@ -46,8 +52,12 @@ public class SequencingRunAjaxControllerTest {
 	void setUp() {
 		runService = mock(SequencingRunService.class);
 		objectService = mock(SequencingObjectService.class);
+		projectService = mock(ProjectService.class);
+		sampleService = mock(SampleService.class);
+		sequenceFileService = mock(SequenceFileService.class);
 		messageSource = mock(MessageSource.class);
-		uiService = new UISequencingRunService(runService, objectService, messageSource);
+		uiService = new UISequencingRunService(runService, objectService, projectService, sampleService,
+				sequenceFileService, messageSource);
 		controller = new SequencingRunAjaxController(uiService);
 
 		user1 = new User(1L, "mirabel", "mirabel@casita.ca", "Password1!", "Mirabel", "Madrigal", "1234");

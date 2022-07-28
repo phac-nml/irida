@@ -81,8 +81,7 @@ public class SequencingRunAjaxController {
 	 */
 	@PostMapping("/samples")
 	public ResponseEntity<String> createSamples(@RequestBody CreateSampleRequest request) {
-		System.out.println(request);
-		return ResponseEntity.ok("SUCCESS");
+		return ResponseEntity.ok(service.createSamples(request));
 	}
 
 	/**

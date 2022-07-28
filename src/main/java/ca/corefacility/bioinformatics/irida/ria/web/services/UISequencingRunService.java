@@ -7,16 +7,20 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequenceFileDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunModel;
-import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunsListRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.*;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
  * UI Service for handling requests related to {@link SequencingRun}s
@@ -25,13 +29,20 @@ import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
 public class UISequencingRunService {
 	private final SequencingRunService runService;
 	private final SequencingObjectService objectService;
+	private final ProjectService projectService;
+	private final SampleService sampleService;
+	private final SequenceFileService sequenceFileService;
 	private final MessageSource messageSource;
 
 	@Autowired
 	public UISequencingRunService(SequencingRunService runService, SequencingObjectService objectService,
+			ProjectService projectService, SampleService sampleService, SequenceFileService sequenceFileService,
 			MessageSource messageSource) {
 		this.runService = runService;
 		this.objectService = objectService;
+		this.projectService = projectService;
+		this.sampleService = sampleService;
+		this.sequenceFileService = sequenceFileService;
 		this.messageSource = messageSource;
 	}
 
@@ -97,6 +108,47 @@ public class UISequencingRunService {
 		}
 
 		return new TableResponse<>(runs, list.getTotalElements());
+	}
+
+	/**
+	 * Update or create new samples with sequence files
+	 *
+	 * @param request - details about the samples
+	 * @return a success message
+	 */
+	public String createSamples(CreateSampleRequest request) {
+		List<SampleModel> sampleModelList = request.getSamples();
+		for (SampleModel sampleModel : sampleModelList) {
+			Sample sample;
+			Long sampleId = sampleModel.getSampleId();
+			if (sampleId != null) {
+				sample = sampleService.read(sampleId);
+			} else {
+				Long projectId = sampleModel.getProjectId();
+				Project project = projectService.read(projectId);
+				String sampleName = sampleModel.getSampleName();
+				sample = new Sample(sampleName);
+				projectService.addSampleToProject(project, sample, true);
+			}
+
+			List<SequenceFilePairModel> sequenceFilePairModelList = sampleModel.getPairs();
+			for (SequenceFilePairModel sequenceFilePairModel : sequenceFilePairModelList) {
+				Long forwardFileId = sequenceFilePairModel.getForward().getId();
+				Long reverseFileId = sequenceFilePairModel.getReverse().getId();
+
+				SequenceFile forwardFile = sequenceFileService.read(forwardFileId);
+				if (reverseFileId != null) {
+					SequenceFile reverseFile = sequenceFileService.read(reverseFileId);
+					objectService.createSequencingObjectInSample(new SequenceFilePair(forwardFile, reverseFile),
+							sample);
+				} else {
+					objectService.createSequencingObjectInSample(new SingleEndSequenceFile(forwardFile), sample);
+				}
+
+				//fast5?
+			}
+		}
+		return "SUCCESS";
 	}
 
 	/**
