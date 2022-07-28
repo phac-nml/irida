@@ -38,9 +38,9 @@
         the following resources on this site:_
       </p>
       <ul>
-        <li th:text="#{auth.projects}">Projects</li>
-        <li th:text="#{auth.samples}">Samples</li>
-        <li th:text="#{auth.sequenceFiles}">Sequence files</li>
+        <li th:text="#{auth.projects}">_Projects_</li>
+        <li th:text="#{auth.samples}">_Samples_</li>
+        <li th:text="#{auth.sequenceFiles}">_Sequence files_</li>
       </ul>
       <p th:text="#{auth.adminmessage(${clientId})}">
         _Note: clientId has been authorized as part of the IRIDA network by the
@@ -74,8 +74,8 @@
           ></label>
         </div>
 
-        <p th:if="${not #lists.isEmpty(previouslyApprovedScopes)}">
-          You have already granted the following permissions to the above app:
+        <p th:if="${not #lists.isEmpty(previouslyApprovedScopes)}" th:text="#{auth.previouslyapprovedmessage}">
+          _You have already granted the following permissions to the above app:_
         </p>
         <div
           th:each="scope: ${previouslyApprovedScopes}"
@@ -100,7 +100,7 @@
           type="submit"
           id="authorize-btn"
         >
-          <span th:text="#{auth.authorize}">Authorize</span>
+          <span th:text="#{auth.authorize}">_Authorize_</span>
         </button>
         <button
           class="btn btn-link regular"
@@ -108,7 +108,7 @@
           id="cancel-consent"
           onclick="cancelConsent();"
         >
-          <span th:text="#{auth.deny}">deny</span>
+          <span th:text="#{auth.deny}">_Deny_</span>
         </button>
       </form>
     </div>
@@ -116,9 +116,9 @@
       <div class="col text-center">
         <p>
           <small>
-            Your consent to provide access is required.
-            <br />If you do not approve, click Deny, in which case no
-            information will be shared with the app.
+            <span th:text="#{auth.consenthelp.partone}">_Your consent to provide access is required._</span>
+            <br />
+            <span th:text="#{auth.consenthelp.parttwo}">_If you do not approve, click Deny, in which case no information will be shared with the app._</span>
           </small>
         </p>
       </div>
