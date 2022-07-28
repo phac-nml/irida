@@ -20,6 +20,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
+/**
+ * Attempts to extract an Access Token Request from {@link HttpServletRequest} for the OAuth 2.0 Resource Owner Password
+ * Credentials Grant and then converts it to an {@link OAuth2ResourceOwnerPasswordAuthenticationToken} used for
+ * authenticating the authorization grant.
+ */
 public class OAuth2ResourceOwnerPasswordAuthenticationConverter implements AuthenticationConverter {
 
     static final String ACCESS_TOKEN_REQUEST_ERROR_URI = "https://datatracker.ietf.org/doc/html/rfc6749#section-5.2";

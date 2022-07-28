@@ -69,8 +69,7 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
      */
     private void setClientId(UserRevEntity entity) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        // If the user is connecting via OAuth2 this object will be an
-        // JwtAuthenticationToken
+        // If the user is connecting via OAuth2 this object will be a JwtAuthenticationToken
         if (auth instanceof JwtAuthenticationToken) {
             try {
                 logger.trace("Found JwtAuthenticationToken in session.  Storing clientId in revision.");

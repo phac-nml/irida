@@ -26,6 +26,13 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+/**
+ * An {@link AuthenticationProvider} impementation for the OAuth 2.0 Resource Owner Password Credentials Grant.
+ *
+ * @see OAuth2ResourceOwnerPasswordAuthenticationToken
+ * @see <a target="_blank" href="https://datatracker.ietf.org/doc/html/rfc6749#section-4.3">Section 4.3 Resource Owner Password Credentials Grant</a>
+ * @see <a target="_blank" href="https://datatracker.ietf.org/doc/html/rfc6749#section-4.3.2">Section 4.3.2 Access Token Request</a>
+ */
 public class OAuth2ResourceOwnerPasswordAuthenticationProvider implements AuthenticationProvider {
 
     private static final String ERROR_URI = "https://datatracker.ietf.org/doc/html/rfc6749#section-5.2";
@@ -33,6 +40,9 @@ public class OAuth2ResourceOwnerPasswordAuthenticationProvider implements Authen
     private final OAuth2AuthorizationService authorizationService;
     private final OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
 
+    /**
+     * Constructs an {@code OAuth2ResourceOwnerPasswordAuthenticationProvider} using the provided parameters.
+     */
     public OAuth2ResourceOwnerPasswordAuthenticationProvider(AuthenticationManager authenticationManager,
             OAuth2AuthorizationService authorizationService,
             OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) {

@@ -8,11 +8,17 @@ import javax.transaction.Transactional;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 
+/**
+ * A customized version of {@link JdbcOAuth2AuthorizationService} that adds a method to find
+ * {@link OAuth2Authorization}s with {@link OAuth2AccessToken}s for a specific {@link RegisteredClient}.
+ */
 public class IridaOAuth2AuthorizationService extends JdbcOAuth2AuthorizationService {
 
     private final String QUERY_AUTHORIZATION_BY_REGISTERED_CLIENT_ID = "SELECT * FROM oauth2_authorization WHERE access_token_value IS NOT NULL and registered_client_id = ?";

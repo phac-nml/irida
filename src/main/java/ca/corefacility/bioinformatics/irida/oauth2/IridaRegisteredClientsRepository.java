@@ -14,6 +14,10 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.repositories.IridaClientDetailsRepository;
 
+/**
+ * A converter implementation of {@link RegisteredClientRepository}, that transforms {@link IridaClientDetails} to/from
+ * {@link RegisteredClient}.
+ */
 @Component
 public class IridaRegisteredClientsRepository implements RegisteredClientRepository {
 

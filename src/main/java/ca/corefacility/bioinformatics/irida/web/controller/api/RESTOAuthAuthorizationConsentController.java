@@ -19,6 +19,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.common.base.Joiner;
 
+/**
+ * Controller class for serving custom OAuth2 authorization consent pages
+ */
 @Controller
 public class RESTOAuthAuthorizationConsentController {
 
@@ -31,6 +34,16 @@ public class RESTOAuthAuthorizationConsentController {
         this.authorizationConsentService = authorizationConsentService;
     }
 
+    /**
+     * Basic authorization consent controller for OAuth2
+     * 
+     * @param principal The princiapl user making the auth request
+     * @param model     Model objects to be passed to the view
+     * @param clientId  The clientId
+     * @param scope     The requested scopes
+     * @param state     The state object from the auth request
+     * @return
+     */
     @GetMapping("/api/oauth/consent")
     public ModelAndView consent(Principal principal, Map<String, Object> model,
             @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
