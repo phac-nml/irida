@@ -9,7 +9,7 @@ const URL = setBaseUrl(`ajax/samples`);
 
 export interface SamplesFiles {
   singles: SingleEndSequenceFile[];
-  paired: PairedEndSequenceFile[];
+  pairs: PairedEndSequenceFile[];
 }
 
 /**
