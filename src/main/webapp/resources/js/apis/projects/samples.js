@@ -53,7 +53,7 @@ export const samplesApi = createApi({
     }),
     getSampleNamesForProject: builder.query({
       query: (projectId) => ({
-        url: `/names?id=${projectId}`,
+        url: `/${PROJECT_ID}/samples/names?id=${projectId}`,
       }),
     }),
   }),
