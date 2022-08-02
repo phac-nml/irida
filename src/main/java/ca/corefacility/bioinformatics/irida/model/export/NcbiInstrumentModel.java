@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.model.export;
 
+/**
+￼ * Instrument model for NCBI Upload.
+￼ */
 public enum NcbiInstrumentModel {
 	AB_5500_GENETIC_ANALYZER("AB 5500 Genetic Analyzer"),
 	AB_5500_XL_GENETIC_ANALYZER("AB 5500xl Genetic Analyzer"),
