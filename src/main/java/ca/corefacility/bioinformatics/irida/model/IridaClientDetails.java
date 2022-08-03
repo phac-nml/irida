@@ -1,18 +1,20 @@
 package ca.corefacility.bioinformatics.irida.model;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import java.util.*;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import java.util.*;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * Object representing a client that has been registered to communicate with this API via OAuth2
@@ -60,12 +62,6 @@ public class IridaClientDetails implements MutableIridaThing {
 	@Column(name = "scope", nullable = false)
 	@CollectionTable(name = "client_details_scope", joinColumns = @JoinColumn(name = "client_details_id"))
 	private Set<String> scope;
-
-	@ElementCollection(fetch = FetchType.EAGER)
-	@Column(name = "auto_approvable_scope")
-	@CollectionTable(name = "client_details_auto_approvable_scope",
-			joinColumns = @JoinColumn(name = "client_details_id"))
-	private Set<String> autoApprovableScopes;
 
 	@Size(min = 1, message = "{client.details.grant.notempty}")
 	@NotNull
@@ -286,21 +282,5 @@ public class IridaClientDetails implements MutableIridaThing {
 	@Override
 	public Date getCreatedDate() {
 		return createdDate;
-	}
-
-	public boolean isAutoApprove(String scope) {
-		boolean approved = false;
-		if (autoApprovableScopes != null) {
-			approved = autoApprovableScopes.contains(scope);
-		}
-		return approved;
-	}
-
-	public Set<String> getAutoApprovableScopes() {
-		return autoApprovableScopes;
-	}
-
-	public void setAutoApprovableScopes(Set<String> autoApprovableScopes) {
-		this.autoApprovableScopes = autoApprovableScopes;
 	}
 }

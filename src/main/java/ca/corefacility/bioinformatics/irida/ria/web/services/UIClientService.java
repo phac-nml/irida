@@ -35,7 +35,6 @@ public class UIClientService {
     private final IridaClientDetailsService clientDetailsService;
     private final MessageSource messageSource;
 
-    private final String AUTO_APPROVE = "auto";
     private final String SCOPE_READ = "read";
     private final String SCOPE_WRITE = "write";
     private final String GRANT_TYPE_AUTH_CODE = "authorization_code";
@@ -112,23 +111,15 @@ public class UIClientService {
 
         // Let's set up the scopes for this client
         Set<String> scopes = new HashSet<>();
-        Set<String> autoScopes = new HashSet<>();
         // 1. Read scope
         if (request.getRead().equals(SCOPE_READ)) {
             scopes.add(SCOPE_READ);
-        } else if (request.getRead().equals(AUTO_APPROVE)) {
-            scopes.add(SCOPE_READ);
-            autoScopes.add(SCOPE_READ);
         }
         // 2. Write scope
         if (request.getWrite().equals(SCOPE_WRITE)) {
             scopes.add(SCOPE_WRITE);
-        } else if (request.getWrite().equals(AUTO_APPROVE)) {
-            scopes.add(SCOPE_WRITE);
-            autoScopes.add(SCOPE_WRITE);
         }
         client.setScope(scopes);
-        client.setAutoApprovableScopes(autoScopes);
 
         // Set the grant type
         client.setAuthorizedGrantTypes(Sets.newHashSet(request.getGrantType()));

@@ -52,5 +52,8 @@
         <dropTable tableName="oauth_access_token" />
 
         <dropTable tableName="oauth_refresh_token" />
+
+        <dropTable tableName="client_details_auto_approvable_scope" />
+        <dropTable tableName="client_details_auto_approvable_scope_AUD" />
     </changeSet>
 </databaseChangeLog>
