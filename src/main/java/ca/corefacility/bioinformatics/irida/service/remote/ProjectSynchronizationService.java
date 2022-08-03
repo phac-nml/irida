@@ -1,5 +1,16 @@
 package ca.corefacility.bioinformatics.irida.service.remote;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.exceptions.LinkNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.ProjectSynchronizationException;
@@ -17,22 +28,15 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthenticationToken;
 import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import org.apache.commons.lang3.time.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
@@ -387,14 +391,14 @@ public class ProjectSynchronizationService {
 				.map(fast5Object -> fast5Object.getRemoteStatus().getURL())
 				.collect(Collectors.toSet()));
 
-		//get a list of all remote sequencingObject URLs in the sample
+		//get a list of all local sequencingObject URLs in the sample
 		Set<String> localObjectUrls = new HashSet<>(objectsByUrl.keySet());
 		//remove any URL from the local list that we've seen remotely
 		remoteObjectUrls.forEach(objectUrl -> {
 			localObjectUrls.remove(objectUrl);
 		});
 
-		//if any URLs still exists in localObjectUrls, it must have been deleted remotely
+		//if any URLs still exist in localObjectUrls, it must have been deleted remotely
 		for (String localObjectUrl : localObjectUrls) {
 			logger.trace(
 					"SequencingObject " + localObjectUrl + " has been removed remotely. Removing from local sample.");
@@ -467,14 +471,14 @@ public class ProjectSynchronizationService {
 				.map(fast5Object -> fast5Object.getRemoteStatus().getURL())
 				.collect(Collectors.toSet()));
 
-		//get a list of all remote assembly URLs in the sample
+		//get a list of all local assembly URLs in the sample
 		Set<String> localAssemblyUrls = new HashSet<>(assembliesByUrl.keySet());
 		//remove any URL from the local list that we've seen remotely
 		remoteAssemblyUrls.forEach(assemblyUrl -> {
 			localAssemblyUrls.remove(assemblyUrl);
 		});
 
-		//if any URLs still exists in localAssemblyUrls, it must have been deleted remotely
+		//if any URLs still exist in localAssemblyUrls, it must have been deleted remotely
 		for (String localAssemblyUrl : localAssemblyUrls) {
 			logger.trace(
 					"GenomeAssembly " + localAssemblyUrl + " has been removed remotely. Removing from local sample.");
