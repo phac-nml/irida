@@ -43,8 +43,8 @@ public class NcbiPlatformInstrumentModel {
 				NcbiInstrumentModel.ILLUMINA_HI_SEQ_4000.getModel(), NcbiInstrumentModel.ILLUMINA_HI_SEQ_X.getModel(),
 				NcbiInstrumentModel.ILLUMINA_I_SEQ_100.getModel(), NcbiInstrumentModel.ILLUMINA_MI_SEQ.getModel(),
 				NcbiInstrumentModel.ILLUMINA_MINI_SEQ.getModel(), NcbiInstrumentModel.ILLUMINA_NOVA_SEQ_6000.getModel(),
-				NcbiInstrumentModel.NEXT_SEQ_500.getModel(), NcbiInstrumentModel.NEXT_SEQ_550.getModel()
-				NcbiInstrumentModel.NEXT_SEQ_1000.getModel(), NcbiInstrumentModel.NEXT_SEQ_2000.getModel(), );
+				NcbiInstrumentModel.NEXT_SEQ_500.getModel(), NcbiInstrumentModel.NEXT_SEQ_550.getModel(),
+				NcbiInstrumentModel.NEXT_SEQ_1000.getModel(), NcbiInstrumentModel.NEXT_SEQ_2000.getModel());
 
 		List<String> ION_TORRENT = ImmutableList.of(NcbiInstrumentModel.ION_GENE_STUDIO_S_5_PLUS.getModel(),
 				NcbiInstrumentModel.ION_GENE_STUDIO_S_5_PRIME.getModel(),
