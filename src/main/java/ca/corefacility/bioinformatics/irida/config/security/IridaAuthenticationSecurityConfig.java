@@ -2,7 +2,7 @@ package ca.corefacility.bioinformatics.irida.config.security;
 
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
-import ca.corefacility.bioinformatics.irida.security.IgnoreExpiredCredentialsForPasswordChangeChecker;
+import ca.corefacility.bioinformatics.irida.security.IridaPostAuthenicationChecker;
 import ca.corefacility.bioinformatics.irida.security.PasswordExpiryChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,7 +122,7 @@ public class IridaAuthenticationSecurityConfig {
          * authenticated users with expired credentials to invoke one method, the
          * {@link UserService#changePassword(Long, String)} method.
          */
-        authenticationProvider.setPostAuthenticationChecks(new IgnoreExpiredCredentialsForPasswordChangeChecker());
+        authenticationProvider.setPostAuthenticationChecks(new IridaPostAuthenicationChecker());
         return authenticationProvider;
     }
 

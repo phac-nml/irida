@@ -5,7 +5,6 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { setBaseUrl } from "../utilities/url-utilities";
 import { SPACE_MD } from "../styles/spacing";
 import { blue6 } from "../styles/colors";
-
 import { Provider } from "react-redux";
 import store from "./store";
 
@@ -203,7 +202,11 @@ function LoginPage(): JSX.Element {
               </span>
             }
             description={
-              <>
+              urlParams.has("sequencer-login") ?
+                <>
+                  {i18n("LoginPage.error.sequencer_login_description")}{" "}
+                </>
+              : <>
                 {i18n("LoginPage.error.description")}{" "}
                 <Button
                   onClick={() => {

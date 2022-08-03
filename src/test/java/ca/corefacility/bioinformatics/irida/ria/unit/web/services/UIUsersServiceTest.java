@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.*;import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 public class UIUsersServiceTest {
@@ -66,10 +67,10 @@ public class UIUsersServiceTest {
 		when(messageSource.getMessage(eq("systemRole.ROLE_ADMIN"), any(), any(Locale.class))).thenReturn("Admin");
 		when(messageSource.getMessage(eq("systemRole.ROLE_MANAGER"), any(), any(Locale.class))).thenReturn("Manager");
 		when(messageSource.getMessage(eq("systemRole.ROLE_USER"), any(), any(Locale.class))).thenReturn("User");
-		when(messageSource.getMessage(eq("systemRole.ROLE_TECHNICIAN"), any(), any(Locale.class))).thenReturn(
-				"Technician");
-		when(messageSource.getMessage(eq("systemRole.ROLE_SEQUENCER"), any(), any(Locale.class))).thenReturn(
-				"Sequencer");
+		when(messageSource.getMessage(eq("systemRole.ROLE_TECHNICIAN"), any(), any(Locale.class)))
+				.thenReturn("Technician");
+		when(messageSource.getMessage(eq("systemRole.ROLE_SEQUENCER"), any(), any(Locale.class)))
+				.thenReturn("Sequencer");
 	}
 
 	@Test
@@ -115,8 +116,8 @@ public class UIUsersServiceTest {
 	void updateUserStatusTest() throws UIUserStatusException {
 		String successMessage = "Anna has been disabled";
 
-		when(messageSource.getMessage(eq("server.AdminUsersService.disabled"), any(), any(Locale.class))).thenReturn(
-				successMessage);
+		when(messageSource.getMessage(eq("server.AdminUsersService.disabled"), any(), any(Locale.class)))
+				.thenReturn(successMessage);
 
 		AjaxSuccessResponse response = service.updateUserStatus(USER2.getId(), false, Locale.ENGLISH);
 
@@ -140,8 +141,8 @@ public class UIUsersServiceTest {
 				USER1.getEmail(), USER1.getPhoneNumber(), USER1.getSystemRole().getName(), USER1.getLocale(),
 				USER1.isEnabled());
 
-		when(messageSource.getMessage(eq("server.user.edit.success"), any(), any(Locale.class))).thenReturn(
-				successMessage);
+		when(messageSource.getMessage(eq("server.user.edit.success"), any(), any(Locale.class)))
+				.thenReturn(successMessage);
 
 		AjaxSuccessResponse response = service.updateUser(USER1.getId(), userEditRequest, principal, request,
 				Locale.ENGLISH);
@@ -157,8 +158,8 @@ public class UIUsersServiceTest {
 				USER1.getPhoneNumber());
 
 		when(userService.getUserByUsername(anyString())).thenReturn(savedUser);
-		when(messageSource.getMessage(eq("server.user.edit.password.success"), any(), any(Locale.class))).thenReturn(
-				successMessage);
+		when(messageSource.getMessage(eq("server.user.edit.password.success"), any(), any(Locale.class)))
+				.thenReturn(successMessage);
 
 		AjaxSuccessResponse response = service.changeUserPassword(USER1.getId(), USER1.getPassword(), "Password3!",
 				principal, request, Locale.ENGLISH);

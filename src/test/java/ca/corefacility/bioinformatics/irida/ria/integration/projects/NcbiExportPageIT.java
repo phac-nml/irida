@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +13,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.NcbiE
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.Lists;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/NcbiExportPageIT.xml")
 public class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
@@ -46,8 +46,13 @@ public class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
 
 		ExportDetailsPage exportPage = ExportDetailsPage.initPage(driver());
 
+		assertEquals("Mr. Manager", exportPage.getSubmitter(), "Submitter should be set properly");
 		assertEquals(ExportUploadState.NEW.toString(), exportPage.getUploadStatus(),
 				"submission should be created with new status");
+		assertEquals("project", exportPage.getBioproject(), "bioproject should be set properly");
+		assertEquals("NML", exportPage.getOrganization(), "organization should be set properly");
+		assertEquals(2, exportPage.getNumberOfSingles(), "should be 2 singles");
+		assertEquals(0, exportPage.getNumberOfPairs(), "should be no pairs");
 	}
 
 	@Test

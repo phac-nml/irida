@@ -1,10 +1,11 @@
 import { render } from "react-dom";
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { ContentLoading } from "../../components/loader";
 import store from "./store";
+
 const UserAccountLayout = React.lazy(() =>
   import("./components/UserAccountLayout")
 );

@@ -9,7 +9,7 @@ const BASE_URL = setBaseUrl(`ajax/settings`);
 export const settingsApi = createApi({
   reducerPath: `settingsApi`,
   baseQuery: fetchBaseQuery({
-    baseUrl: setBaseUrl(BASE_URL),
+    baseUrl: BASE_URL,
   }),
   endpoints: (build) => ({
     /*

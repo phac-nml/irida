@@ -7,6 +7,17 @@
 * [Developer/UI]: Removed `styled-components` from page header and replaced with CSS variables. See [PR 1284](https://github.com/phac-nml/irida/pull/1284)
 * [Developer/UI]: Updated eslint rule to check for object and array destructuring. See [PR 1322](https://github.com/phac-nml/irida/pull/1322)
 * [UI]: Fixed user routes for admin panel. See [PR 1323](https://github.com/phac-nml/irida/pull/1323)
+* [Developer/UI]: Added `eslint-prettier-pluggin`. See [PR 1328](https://github.com/phac-nml/irida/pull/1328)
+* [Developer]: Replaced Maven with Gradle for build. See [PR 1300](https://github.com/phac-nml/irida/pull/1300)
+* [Developer/UI]: Switched to pnpm from yarn for frontend dependency management. See [PR 1332](https://github.com/phac-nml/irida/pull/1334)
+* [Developer]: Switched custom exception handling to use built in Spring Boot exception handling. See [PR 1319](https://github.com/phac-nml/irida/pull/1319)
+* [UI]: Fixed issue with sorting OAuth clients table in admin panel. See [PR 1342](https://github.com/phac-nml/irida/pull/1342)
+* [UI]: Updated share samples review page to list the actual samples which will not be shared with the target project either due to the same sample identifiers or the same samples names already in the target project. See [PR 1343](https://github.com/phac-nml/irida/pull/1343)
+
+## [22.05.5] - 2022/06/28
+* [UI]: Fixed bug preventing export of project samples table due to invalid url. [PR 1331](https://github.com/phac-nml/irida/pull/1331)
+* [UI]: Updated user account security page to allow admins to change passwords for other users. See [PR 1330](https://github.com/phac-nml/irida/pull/1330)
+* [UI]: Updated the NCBI SRA Submission details page to Ant Design.  See [PR 1311](https://github.com/phac-nml/irida/pull/1311)
 
 ## [22.05.4] - 2022/06/16
 * [UI]: Fixed bug preventing filter samples by file to fail on invalid url. See [PR 1318](https://github.com/phac-nml/irida/pull/1318)
@@ -100,8 +111,9 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
-[Unreleased]: https://github.com/phac-nml/irida/compare/22.05.4...HEAD
+[Unreleased]: https://github.com/phac-nml/irida/compare/22.05.5...HEAD
 
+[22.05.5]: https://github.com/phac-nml/irida/compare/22.05.4...22.05.5
 [22.05.4]: https://github.com/phac-nml/irida/compare/22.05.3...22.05.4
 [22.05.3]: https://github.com/phac-nml/irida/compare/22.05.2...22.05.3
 [22.05.2]: https://github.com/phac-nml/irida/compare/22.05.1...22.05.2

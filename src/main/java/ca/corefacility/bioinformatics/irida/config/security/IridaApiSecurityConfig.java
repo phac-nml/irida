@@ -42,15 +42,17 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	private static final String ANONYMOUS_AUTHENTICATION_KEY = "anonymousTokenAuthProvider";
 
-	private static final String[] ROLE_HIERARCHIES = new String[] { "ROLE_ADMIN > ROLE_MANAGER",
-			"ROLE_ADMIN > ROLE_TECHNICIAN", "ROLE_MANAGER > ROLE_USER", "ROLE_TECHNICIAN > ROLE_USER" };
+	private static final String[] ROLE_HIERARCHIES = new String[] {
+			"ROLE_ADMIN > ROLE_MANAGER",
+			"ROLE_ADMIN > ROLE_TECHNICIAN",
+			"ROLE_MANAGER > ROLE_USER",
+			"ROLE_TECHNICIAN > ROLE_USER" };
 
 	private static final String ROLE_HIERARCHY = Joiner.on('\n').join(ROLE_HIERARCHIES);
 
 	/**
-	 * Loads all of the {@link BasePermission} sub-classes found in the security
-	 * package during component scan. {@link BasePermission} classes are used in
-	 * {@link @PreAuthorize} annotations for verifying that a user has
+	 * Loads all of the {@link BasePermission} sub-classes found in the security package during component scan.
+	 * {@link BasePermission} classes are used in {@link @PreAuthorize} annotations for verifying that a user has
 	 * permission to invoke a method by the expression handler.
 	 */
 	@Autowired
@@ -74,8 +76,8 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	}
 
 	/**
-	 * Authentication provider for anonymous requests. Will be used for
-	 * username/password grants requesting /oauth/token.
+	 * Authentication provider for anonymous requests. Will be used for username/password grants requesting
+	 * /oauth/token.
 	 *
 	 * @return an anonymous authentication provider
 	 */
@@ -96,11 +98,10 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	}
 
 	/**
-	 * Default {@link DefaultWebSecurityExpressionHandler}. This is used by Thymeleaf's
-	 * Spring Security plugin, and isn't actually used anywhere in the back-end,
-	 * but it needs to be in the back-end configuration classes because the
-	 * Thymeleaf plugin looks for this expression handler in the ROOT context
-	 * instead of in the context that it's running in.
+	 * Default {@link DefaultWebSecurityExpressionHandler}. This is used by Thymeleaf's Spring Security plugin, and
+	 * isn't actually used anywhere in the back-end, but it needs to be in the back-end configuration classes because
+	 * the Thymeleaf plugin looks for this expression handler in the ROOT context instead of in the context that it's
+	 * running in.
 	 *
 	 * @return the web security expression handler.
 	 */
