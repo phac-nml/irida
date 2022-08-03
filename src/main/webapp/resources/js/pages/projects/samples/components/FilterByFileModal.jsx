@@ -37,6 +37,7 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
   React.useEffect(() => {
     if (contents.length) {
       const associated = options.filters.associated || [];
+      // Split the contents of the file on either new line or coma, and filter empty entries.
       let parsed = contents.split(/[\s,]+/).filter(Boolean);
       const projectIds = [projectId, ...associated];
 
