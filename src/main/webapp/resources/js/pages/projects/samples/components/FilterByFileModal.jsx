@@ -26,26 +26,18 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
   const [valid, setValid] = React.useState([]);
   const [invalid, setInvalid] = React.useState([]);
 
-  const onFileAdded = (e) => {
+  const onFileAdded = async (e) => {
     const [file] = e.target.files;
     setFilename(file.name);
 
-    const reader = new FileReader();
-    reader.addEventListener("load", (e) => {
-      if (e.target.readyState === FileReader.DONE) {
-        // DONE == 2
-        setContents(e.target.result);
-      }
-    });
-
-    const blob = file.slice(0, file.size);
-    reader.readAsText(blob);
+    const fileContent = await file.text();
+    setContents(fileContent);
   };
 
   React.useEffect(() => {
     if (contents.length) {
       const associated = options.filters.associated || [];
-      let parsed = contents.split(/[\s,]+/);
+      let parsed = contents.split(/[\s,]+/).filter(Boolean);
       const projectIds = [projectId, ...associated];
 
       fetch(setBaseUrl(`/ajax/samples/validate`), {
