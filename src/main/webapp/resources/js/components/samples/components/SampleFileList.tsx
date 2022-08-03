@@ -31,7 +31,7 @@ export function SampleFileList() {
     fileObjectId,
     type,
   }: {
-    fileObjectId: number;
+    fileObjectId: string | number;
     type: string;
   }) => {
     removeSampleFilesFromSample({
@@ -39,8 +39,9 @@ export function SampleFileList() {
       fileObjectId,
       type,
     })
-      .then(({ data }) => {
-        notification.success({ message: data.message });
+      .unwrap()
+      .then(({ message }) => {
+        notification.success({ message });
         dispatch(removeFileObjectFromSample({ fileObjectId, type }));
 
         if (sample.defaultsequencingObject?.identifier === fileObjectId) {
