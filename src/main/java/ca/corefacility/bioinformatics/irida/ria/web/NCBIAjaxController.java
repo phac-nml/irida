@@ -104,7 +104,7 @@ public class NCBIAjaxController {
 	}
 
 	/**
-	 * Get a list of NCBI allowed Library selectionn techniques
+	 * Get a list of NCBI allowed Library selection techniques
 	 *
 	 * @return {@link List} of NCBI Library Selections
 	 */
