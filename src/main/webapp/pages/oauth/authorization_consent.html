@@ -14,6 +14,10 @@
     </style>
     <script>
       function cancelConsent() {
+        const scopeInputs = document.querySelectorAll("input.scope-input");
+        scopeInputs.forEach((scopeInput) => {
+          scopeInput.parentNode.removeChild(scopeInput);
+        });
         document.consent_form.reset();
         document.consent_form.submit();
       }
@@ -59,41 +63,13 @@
         <input type="hidden" name="client_id" th:value="${clientId}" />
         <input type="hidden" name="state" th:value="${state}" />
 
-        <div th:each="scope: ${scopes}" class="form-group form-check py-1">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            name="scope"
-            th:value="${scope}"
-            th:id="${scope}"
-          />
-          <label
-            class="form-check-label font-weight-bold"
-            th:for="${scope}"
-            th:text="${scope}"
-          ></label>
-        </div>
-
-        <p th:if="${not #lists.isEmpty(previouslyApprovedScopes)}" th:text="#{auth.previouslyapprovedmessage}">
-          _You have already granted the following permissions to the above app:_
-        </p>
-        <div
-          th:each="scope: ${previouslyApprovedScopes}"
-          class="form-group form-check py-1"
-        >
-          <input
-            class="form-check-input"
-            type="checkbox"
-            th:id="${scope}"
-            disabled
-            checked
-          />
-          <label
-            class="form-check-label font-weight-bold"
-            th:for="${scope}"
-            th:text="${scope}"
-          ></label>
-        </div>
+        <input
+          th:each="scope : ${scopes}"
+          class="scope-input"
+          type="hidden"
+          name="scope"
+          th:value="${scope}"
+        />
 
         <button
           class="ant-btn ant-btn-primary"
@@ -103,7 +79,7 @@
           <span th:text="#{auth.authorize}">_Authorize_</span>
         </button>
         <button
-          class="btn btn-link regular"
+          class="ant-btn"
           type="button"
           id="cancel-consent"
           onclick="cancelConsent();"
@@ -111,17 +87,6 @@
           <span th:text="#{auth.deny}">_Deny_</span>
         </button>
       </form>
-    </div>
-    <div class="row pt-4">
-      <div class="col text-center">
-        <p>
-          <small>
-            <span th:text="#{auth.consenthelp.partone}">_Your consent to provide access is required._</span>
-            <br />
-            <span th:text="#{auth.consenthelp.parttwo}">_If you do not approve, click Deny, in which case no information will be shared with the app._</span>
-          </small>
-        </p>
-      </div>
     </div>
   </body>
 </html>
