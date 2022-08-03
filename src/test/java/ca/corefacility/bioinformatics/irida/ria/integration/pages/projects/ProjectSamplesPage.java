@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -226,6 +229,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	@FindBy(id = "name")
 	private WebElement sampleNameInput;
+
+	@FindBy(className = "t-filter-by-file-btn")
+	private WebElement filterByFileBtn;
+
+	@FindBy(className = "t-filter-by-file-input")
+	private WebElement filterByFileInput;
 
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
@@ -538,5 +547,23 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebDriverWait wait = new WebDriverWait(driver, 5);
 		wait.until(ExpectedConditions.presenceOfElementLocated(
 				By.xpath("//td[contains(@class, 't-summary') and not(text()='Selected: 0 of " + prevTotal + "')]")));
+	}
+
+	public void filterByFile(String file1) {
+		filterByFileBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		wait.until(ExpectedConditions.visibilityOf(filterByFileInput));
+		Path path = Paths.get(file1);
+		filterByFileInput.sendKeys(path.toAbsolutePath().toString());
+		waitForTime(200);
+	}
+
+	public List<String> getInvalidSampleNames() {
+		List<String> invalidSampleNames = new ArrayList<>();
+		List<WebElement> invalidSampleNamesElements = driver.findElements(By.cssSelector(".t-invalid-sample"));
+		for (WebElement invalidSampleNameElement : invalidSampleNamesElements) {
+			invalidSampleNames.add(invalidSampleNameElement.getText());
+		}
+		return invalidSampleNames;
 	}
 }

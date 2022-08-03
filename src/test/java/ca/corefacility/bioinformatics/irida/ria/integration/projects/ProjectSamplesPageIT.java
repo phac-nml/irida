@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -8,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.TableSummary;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.ImmutableList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -304,5 +307,17 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(page.isSampleNameErrorDisplayed(), "Should show a warning message");
 		page.enterSampleName("GOOD_NAME");
 		assertFalse(page.isSampleNameErrorDisplayed(), "Sample name error should not be displayed");
+	}
+
+	@Test
+	public void testFilterByFileWindowsEncoding() {
+		List<String> actualInvalidNames = ImmutableList.of("11-0001", "10-1928", "10-8727");
+
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		page.filterByFile("src/test/resources/files/sample-filter-windows.txt");
+		List<String> invalidSamples = page.getInvalidSampleNames();
+		invalidSamples.forEach(
+				name -> assertTrue(actualInvalidNames.contains(name), name + " should be in the actual name list"));
 	}
 }

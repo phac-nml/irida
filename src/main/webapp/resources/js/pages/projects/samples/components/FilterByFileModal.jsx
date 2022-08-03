@@ -79,7 +79,11 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
       <>
         <Form layout="vertical">
           <Form.Item label={i18n("FilterByFile.file-label")}>
-            <Input type="file" onChange={onFileAdded} />
+            <Input
+              type="file"
+              onChange={onFileAdded}
+              className="t-filter-by-file-input"
+            />
           </Form.Item>
         </Form>
         <Row gutter={[16, 16]}>
@@ -122,7 +126,11 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
                     >
                       {(item) => (
                         <List.Item key={item}>
-                          <List.Item.Meta title={<span>{item}</span>} />
+                          <List.Item.Meta
+                            title={
+                              <span className="t-invalid-sample">{item}</span>
+                            }
+                          />
                         </List.Item>
                       )}
                     </VirtualList>
