@@ -14,10 +14,25 @@ export interface GenomeAssemblyListProps {
     fileObjectId,
     type,
   }: {
-    fileObjectId: number;
+    fileObjectId: string | number;
     type: string;
   }) => void;
 }
+
+export interface GenomeAssembly {
+  fileInfo: {
+    createdDate: string;
+    file: string;
+    fileName: string;
+    fileRevisionNumber: number;
+    identifier: string | number;
+    label: string;
+    links: [];
+  };
+  fileType: string;
+  firstFileSize: string;
+}
+
 /**
  * React component to display, remove, download genome assemblies
  * @param {function} removeSampleFiles The function to remove genome assemblies
@@ -46,7 +61,7 @@ export function GenomeAssemblyList({
     genomeAssemblyId,
   }: {
     sampleId: number;
-    genomeAssemblyId: number;
+    genomeAssemblyId: string | number;
   }) => {
     notification.success({
       message: i18n("SampleFiles.startingAssemblyDownload"),
@@ -57,16 +72,17 @@ export function GenomeAssemblyList({
   /*
   Set default genome assembly for sample to be used for analyses
    */
-  const updateDefaultGenomeAssembly = (genomeAssembly: any) => {
+  const updateDefaultGenomeAssembly = (genomeAssembly: GenomeAssembly) => {
     const { fileInfo: genomeAssemblyObj } = genomeAssembly;
 
     updateSampleDefaultGenomeAssembly({
       sampleId: sample.identifier,
       genomeAssemblyId: genomeAssemblyObj.identifier,
     })
-      .then(({ data }) => {
+      .unwrap()
+      .then(({ message }: { message: string }) => {
         dispatch(setDefaultGenomeAssembly(genomeAssemblyObj));
-        notification.success({ message: data.message });
+        notification.success({ message });
       })
       .catch((error) => {
         notification.error({ message: error });
@@ -76,9 +92,12 @@ export function GenomeAssemblyList({
   /*
    Get the actions required for a Genome Assembly
    */
-  const getActionsForGenomeAssembly = (genomeAssembly: any, index: number) => {
+  const getActionsForGenomeAssembly = (
+    genomeAssembly: GenomeAssembly,
+    index: number
+  ) => {
     const { fileInfo: genomeAssemblyObj } = genomeAssembly;
-    let actions = [];
+    const actions = [];
 
     if (isModifiable) {
       if (
@@ -186,7 +205,7 @@ export function GenomeAssemblyList({
 
   return (
     <SequenceFileTypeRenderer title={i18n("SampleFiles.assemblies")}>
-      {files.assemblies.map((assembly: any, index: number) => (
+      {files.assemblies.map((assembly: GenomeAssembly, index: number) => (
         <GenomeAssemblyListItem
           key={`assembly-${assembly.fileInfo.identifier}`}
           genomeAssembly={assembly}

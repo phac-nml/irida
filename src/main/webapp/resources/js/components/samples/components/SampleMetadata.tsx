@@ -69,7 +69,7 @@ export function SampleMetadata() {
   };
 
   const renderMetadataFieldListItem = ({ index, style }: ListStyles) => {
-    const concatenatedStyle = { ...style, paddingRight: 15 };
+    const concatenatedStyle = { ...style, paddingright: 15 };
     const item = metadata[index];
     return (
       <List.Item

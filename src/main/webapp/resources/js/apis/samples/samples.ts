@@ -224,7 +224,7 @@ export function downloadGenomeAssemblyFile({
   genomeAssemblyId,
 }: {
   sampleId: number;
-  genomeAssemblyId: number;
+  genomeAssemblyId: string | number;
 }) {
   window.open(
     `${URL}/${sampleId}/assembly/download?genomeAssemblyId=${genomeAssemblyId}`,

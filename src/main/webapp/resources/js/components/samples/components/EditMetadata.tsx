@@ -18,6 +18,12 @@ import { grey6 } from "../../../styles/colors";
 import { WarningAlert } from "../../alerts";
 
 const { Title } = Typography;
+
+export interface MetadataRoles {
+  value: string;
+  label: string;
+}
+
 /**
  * Function to render Update Metadata Field modal
  * @returns {JSX.Element}
@@ -57,8 +63,8 @@ export function EditMetadata() {
         metadataRestriction: values.metadata_field_permission,
       })
         .unwrap()
-        .then((response: any) => {
-          notification.success({ message: response.data.message });
+        .then(({ message }: { message: string }) => {
+          notification.success({ message });
           dispatch(
             editSampleMetadata({
               fieldId,
@@ -153,17 +159,15 @@ export function EditMetadata() {
               initialValue={restriction ? restriction : "LEVEL_1"}
             >
               <Select style={{ width: "100%" }}>
-                {metadataRoles?.map(
-                  (role: { value: string; label: string }) => (
-                    <Select.Option
-                      className={`t-${role.value}`}
-                      value={role.value}
-                      key={role.value}
-                    >
-                      {role.label}
-                    </Select.Option>
-                  )
-                )}
+                {metadataRoles?.map((role: MetadataRoles) => (
+                  <Select.Option
+                    className={`t-${role.value}`}
+                    value={role.value}
+                    key={role.value}
+                  >
+                    {role.label}
+                  </Select.Option>
+                ))}
               </Select>
             </Form.Item>
           </Form>
