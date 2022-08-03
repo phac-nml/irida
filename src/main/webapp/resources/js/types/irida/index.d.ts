@@ -88,4 +88,39 @@ declare namespace IRIDA {
     file: any;
     qcEntries: any;
   }
+
+  interface SampleGenomeAssembly {
+    fileInfo: {
+      createdDate: string;
+      file: string;
+      fileName: string;
+      fileRevisionNumber: number;
+      identifier: string | number;
+      label: string;
+      links: [];
+    };
+    fileType: string;
+    firstFileSize: string;
+  }
+
+  export type AnalysisState =
+    | "NEW"
+    | "PREPARING"
+    | "PREPARED"
+    | "SUBMITTING"
+    | "RUNNING"
+    | "FINISHED_RUNNING"
+    | "COMPLETING"
+    | "COMPLETED"
+    | "TRANSFERRED"
+    | "POST_PROCESSING"
+    | "ERROR";
+
+  interface SampleAnalyses {
+    analysisType: string;
+    createdDate: string;
+    id: number;
+    name: string;
+    state: AnalysisState;
+  }
 }

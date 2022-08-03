@@ -6,6 +6,7 @@ import { setSampleAnalyses } from "../sampleAnalysesSlice";
 import { SampleAnalysesState } from "./SampleAnalysesState";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import { SampleAnalyses as SampleAnalysesItem } from "../../../types/irida";
 
 const { Search } = Input;
 
@@ -46,13 +47,14 @@ export function SampleAnalyses() {
       key: "name",
       ellipsis: true,
       width: 250,
-      render(name: string, data: any) {
+      render(name: string, data: SampleAnalysesItem) {
         return (
           <a
             className="t-analysis-name"
             href={setBaseUrl(`analysis/${data.id}`)}
             title={name}
             target="_blank"
+            rel="noreferrer"
           >
             {name}
           </a>
@@ -98,7 +100,7 @@ export function SampleAnalyses() {
     } else {
       searchStr = String(searchStr).toLowerCase();
       const submissionsContainingSearchValue = analyses.filter(
-        (submission: any) =>
+        (submission: SampleAnalysesItem) =>
           submission.name.toLowerCase().includes(searchStr) ||
           submission.analysisType.toLowerCase().includes(searchStr)
       );
