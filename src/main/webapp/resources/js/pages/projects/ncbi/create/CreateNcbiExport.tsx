@@ -70,6 +70,20 @@ export interface UpdateDefaultValues {
   (field: string, value: string | string[]): void;
 }
 
+function isSampleRecordProperty(
+  str: string | number
+): str is keyof SampleRecord {
+  return [
+    "bioSample",
+    "libraryName",
+    "libraryStrategy",
+    "librarySource",
+    "libraryConstructionProtocol",
+    "instrumentModel",
+    "librarySelection",
+  ].includes(str);
+}
+
 /**
  * React router loader
  */
@@ -125,17 +139,23 @@ function CreateNcbiExport(): JSX.Element {
    * @param value new value
    */
   const updateDefaultValue: UpdateDefaultValues = (field, value) => {
-    // Update all the samples in the Ant Design form with the new value.
-    const values: SampleRecords = form.getFieldValue("samples");
-    Object.values(values).forEach((sample) => {
-      if (
-        "name" in sample &&
-        (!(field in sample) || sample[field].length === 0)
-      ) {
-        console.log(sample);
-        form.setFieldsValue({ samples: { [sample.name]: { [field]: value } } });
-      }
-    });
+    if (isSampleRecordProperty(field)) {
+      // Update all the samples in the Ant Design form with the new value.
+      const values: SampleRecords = form.getFieldValue("samples");
+      Object.values(values).forEach((sample) => {
+        if (sample === undefined) return;
+        if (
+          "name" in sample &&
+          (field in sample ||
+            (sample[field] !== undefined && sample[field].length !== 0))
+        ) {
+          console.log(sample);
+          form.setFieldsValue({
+            samples: { [sample.name]: { [field]: value } },
+          });
+        }
+      });
+    }
   };
 
   /*
