@@ -111,7 +111,7 @@ export function SequencingRunSampleCard({ samples, sample, sampleIndex }) {
             style={{ paddingTop: "10px" }}
             description={
               <Typography.Text type="secondary">
-                {i18n("SequencingRunSample.empty")}
+                {i18n("SequencingRunSampleCard.empty")}
               </Typography.Text>
             }
             imageStyle={{ display: "none" }}

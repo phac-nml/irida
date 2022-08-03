@@ -11,15 +11,17 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 public class SequenceFileDetails implements Comparable<SequenceFileDetails> {
 	private Long id;
 	private Long sequencingObjectId;
+	private String sequencingObjectType;
 	private String fileName;
 	private String fileSize;
 
 	public SequenceFileDetails() {
 	}
 
-	public SequenceFileDetails(SequenceFile file, Long sequencingObjectId) {
+	public SequenceFileDetails(SequenceFile file, Long sequencingObjectId, String sequencingObjectType) {
 		this.id = file.getId();
 		this.sequencingObjectId = sequencingObjectId;
+		this.sequencingObjectType = sequencingObjectType;
 		this.fileName = file.getFileName();
 		this.fileSize = file.getFileSize();
 	}
@@ -30,6 +32,10 @@ public class SequenceFileDetails implements Comparable<SequenceFileDetails> {
 
 	public Long getSequencingObjectId() {
 		return sequencingObjectId;
+	}
+
+	public String getSequencingObjectType() {
+		return sequencingObjectType;
 	}
 
 	public String getFileName() {

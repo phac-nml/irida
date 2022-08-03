@@ -196,9 +196,9 @@ public class UISequencingRunServiceTest {
 	void getSequencingRunFilesTest() {
 		List<SequenceFileDetails> response = service.getSequencingRunFiles(run1.getId());
 		List<SequenceFileDetails> expectedResponse = new ArrayList<>();
-		expectedResponse.add(new SequenceFileDetails(file1, object1.getId()));
-		expectedResponse.add(new SequenceFileDetails(file2, object2.getId()));
-		expectedResponse.add(new SequenceFileDetails(file3, object2.getId()));
+		expectedResponse.add(new SequenceFileDetails(file1, object1.getId(), object1.getClass().getSimpleName()));
+		expectedResponse.add(new SequenceFileDetails(file2, object2.getId(), object2.getClass().getSimpleName()));
+		expectedResponse.add(new SequenceFileDetails(file3, object2.getId(), object2.getClass().getSimpleName()));
 		assertEquals(expectedResponse, response, "Received the correct sequencing run files response");
 	}
 

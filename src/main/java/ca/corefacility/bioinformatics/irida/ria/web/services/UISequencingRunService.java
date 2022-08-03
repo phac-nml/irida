@@ -81,7 +81,7 @@ public class UISequencingRunService {
 		for (SequencingObject object : sequencingObjects) {
 			Set<SequenceFile> files = object.getFiles();
 			for (SequenceFile file : files) {
-				response.add(new SequenceFileDetails(file, object.getId()));
+				response.add(new SequenceFileDetails(file, object.getId(), object.getClass().getSimpleName()));
 			}
 		}
 		Collections.sort(response);

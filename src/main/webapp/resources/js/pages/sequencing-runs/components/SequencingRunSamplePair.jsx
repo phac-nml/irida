@@ -56,9 +56,18 @@ export function SequencingRunSamplePair({
     collect: (monitor) => ({
       isOver: monitor.isOver(),
     }),
-    canDrop: () => {
-      //do not drop on a full pair
+    canDrop: (item) => {
       if (pair.forward !== null && pair.reverse !== null) {
+        //do not drop on an already full pair
+        return false;
+      } else if (pair.forward?.sequencingObjectType === "Fast5Object") {
+        //do not create pair if forward is already fast5
+        return false;
+      } else if (
+        pair.forward !== null &&
+        item.file?.sequencingObjectType === "Fast5Object"
+      ) {
+        //do not create pair if reverse is to be fast5
         return false;
       } else {
         return true;
