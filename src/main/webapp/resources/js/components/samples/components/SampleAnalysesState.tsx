@@ -21,7 +21,9 @@ export interface SampleAnalysesStateProps {
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleAnalysesState({ state }: SampleAnalysesStateProps): JSX.Element {
+export function SampleAnalysesState({
+  state,
+}: SampleAnalysesStateProps): JSX.Element {
   return (
     <span className="t-analysis-state">
       {state === "COMPLETED" ? (

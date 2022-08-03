@@ -79,19 +79,43 @@ declare namespace IRIDA {
     | "FINISHED"
     | "ERROR";
 
+  interface SequencingFile {
+    createdDate: Date;
+    file: string;
+    fileName: string;
+    identifier: string;
+    label: string;
+    links: [];
+    modifiedDate: Date;
+    uploadSha: string;
+  }
+
+  interface SequencingObject {
+    createdDate: Date;
+    fileProcessor: string;
+    files: SequencingFile[];
+    forwardSequenceFile: SequencingFile;
+    identifier: string;
+    label: string;
+    links: [];
+    processingState: ProcessingState;
+    reverseSequenceFile: SequencingFile;
+    sequenceFile: SequencingFile;
+  }
+
   interface SampleSequencingObject {
-    fileInfo: any;
+    fileInfo: SequencingObject;
     secondFileSize: string;
     firstFileSize: string;
     processingState: ProcessingState;
     fileType: string;
-    file: any;
+    file: any | undefined;
     qcEntries: any;
   }
 
   interface SampleGenomeAssembly {
     fileInfo: {
-      createdDate: string;
+      createdDate: Date;
       file: string;
       fileName: string;
       fileRevisionNumber: number;
@@ -118,7 +142,7 @@ declare namespace IRIDA {
 
   interface SampleAnalyses {
     analysisType: string;
-    createdDate: string;
+    createdDate: Date;
     id: number;
     name: string;
     state: AnalysisState;

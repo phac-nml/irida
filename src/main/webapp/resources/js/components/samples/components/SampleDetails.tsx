@@ -6,11 +6,17 @@ import { SampleInfo } from "./SampleInfo";
 import { SampleAnalyses } from "./SampleAnalyses";
 import { useDispatch } from "react-redux";
 import { setProjectDetails, setSample } from "../sampleSlice";
+import { Sample } from "../../../types/irida";
 
 const { Paragraph } = Typography;
 
 export interface SampleDetailsProps {
-  details: any;
+  details: {
+    modifiable: boolean;
+    projectId: number;
+    projectName: string;
+    sample: Sample;
+  };
 }
 
 /**

@@ -19,6 +19,11 @@ import {
   resetConcatenateSelected,
 } from "../sampleFilesSlice";
 import { IconArrowLeft, IconArrowRight, IconFile } from "../../icons/Icons";
+import {
+  SampleSequencingObject,
+  SequencingFile,
+  SequencingObject,
+} from "../../../types/irida";
 
 const { Title } = Typography;
 
@@ -52,8 +57,8 @@ export function SampleFileConcatenate({
   });
 
   const concatenateFiles = () => {
-    let sequencingObjectIds = concatenateSelected.map(
-      (seqObject: { identifier: number }) => seqObject.identifier
+    const sequencingObjectIds = concatenateSelected.map(
+      (seqObject: SequencingObject) => seqObject.identifier
     );
 
     form.validateFields().then((values) => {
@@ -63,7 +68,8 @@ export function SampleFileConcatenate({
         newFileName: values.new_file_name,
         removeOriginals: values.remove_original_files,
       })
-        .then(({ data }) => {
+        .unwrap()
+        .then((data: SampleSequencingObject[]) => {
           let message = i18n("SampleFilesConcatenate.concatenationSuccess");
 
           if (values.remove_original_files) {
@@ -101,13 +107,15 @@ export function SampleFileConcatenate({
     let pairedCount = 0;
     let singleEndCount = 0;
 
-    concatenateSelected.map((selected: { files: any; sequenceFile: any }) => {
-      if (selected.files !== undefined) {
-        pairedCount++;
-      } else if (selected.sequenceFile !== undefined) {
-        singleEndCount++;
+    concatenateSelected.map(
+      (selected: { files: SequencingFile[]; sequenceFile: SequencingFile }) => {
+        if (selected.files !== undefined) {
+          pairedCount++;
+        } else if (selected.sequenceFile !== undefined) {
+          singleEndCount++;
+        }
       }
-    });
+    );
 
     if (pairedCount === numFilesSelected) return true;
     if (singleEndCount === numFilesSelected) return true;
@@ -122,7 +130,7 @@ export function SampleFileConcatenate({
     <>
       {React.cloneElement(children, {
         onClick: () => {
-          let fileTypesValid = validateFileTypes();
+          const fileTypesValid = validateFileTypes();
           if (fileTypesValid) {
             setVisible(true);
           } else {
@@ -155,7 +163,7 @@ export function SampleFileConcatenate({
               bordered
               {...layoutProps}
               dataSource={concatenateSelected}
-              renderItem={(seqObject: any) => {
+              renderItem={(seqObject: SequencingObject) => {
                 if (seqObject.files !== undefined) {
                   return (
                     <>
