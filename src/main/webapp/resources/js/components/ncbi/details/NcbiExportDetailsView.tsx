@@ -36,7 +36,6 @@ export async function loader({
         const { bioSamples, ...info } = submission;
         const details = formatNcbiSubmissionDetails(info);
         const bioSampleDetails = formatNcbiBioSampleFiles(bioSamples);
-        console.log({ bioSampleDetails, details });
         return [details, bioSampleDetails];
       }
     );
