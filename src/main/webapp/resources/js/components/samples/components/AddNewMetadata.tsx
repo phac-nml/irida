@@ -11,6 +11,20 @@ export interface AddNewMetadataProps {
   children: React.ReactElement;
 }
 
+export interface AddMetadataRequest {
+  fieldId: number;
+  metadataTemplateField: string;
+  metadataEntry: string;
+  entryId: number;
+  metadataRestriction: string;
+  responseMessage: string;
+}
+
+export interface MetadataRoles {
+  value: string;
+  label: string;
+}
+
 /**
  * Function to render Add New Metadata Field modal
  * @param children
@@ -42,27 +56,33 @@ export function AddNewMetadata({ children }: AddNewMetadataProps): JSX.Element {
         metadataEntry: values.metadata_field_value,
         metadataRestriction: values.metadata_field_permission,
       })
-        .then((response: any) => {
-          const resData = response.data;
-          if (response.error) {
-            notification.error({ message: response.error.data.error });
-          } else {
-            notification.success({ message: response.data.responseMessage });
+        .unwrap()
+        .then(
+          ({
+            fieldId,
+            entryId,
+            metadataEntry,
+            metadataTemplateField,
+            metadataRestriction,
+            responseMessage,
+          }: AddMetadataRequest) => {
+            notification.success({ message: responseMessage });
             dispatch(
               addSampleMetadataField({
-                fieldId: resData.fieldId,
-                entryId: resData.entryId,
-                metadataTemplateField: resData.metadataTemplateField,
-                metadataEntry: resData.metadataEntry,
-                metadataRestriction: resData.metadataRestriction,
+                fieldId,
+                entryId,
+                metadataTemplateField,
+                metadataEntry,
+                metadataRestriction,
               })
             );
+
+            form.resetFields();
+            setVisible(false);
           }
-          form.resetFields();
-          setVisible(false);
-        })
-        .catch((error) => {
-          notification.error({ message: error });
+        )
+        .catch(() => {
+          notification.error({ message: i18n("SampleMetadata.add.error") });
         });
     });
   };
@@ -131,17 +151,15 @@ export function AddNewMetadata({ children }: AddNewMetadataProps): JSX.Element {
               ]}
             >
               <Select style={{ width: "100%" }}>
-                {metadataRoles?.map(
-                  (role: { value: string; label: string }) => (
-                    <Select.Option
-                      className={`t-${role.value}`}
-                      value={role.value}
-                      key={role.value}
-                    >
-                      {role.label}
-                    </Select.Option>
-                  )
-                )}
+                {metadataRoles?.map((role: MetadataRoles) => (
+                  <Select.Option
+                    className={`t-${role.value}`}
+                    value={role.value}
+                    key={role.value}
+                  >
+                    {role.label}
+                  </Select.Option>
+                ))}
               </Select>
             </Form.Item>
           </Form>
