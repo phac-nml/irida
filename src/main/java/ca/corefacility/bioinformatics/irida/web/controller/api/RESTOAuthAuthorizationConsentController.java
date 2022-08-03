@@ -4,8 +4,6 @@ import java.security.Principal;
 import java.util.Map;
 
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,15 +17,6 @@ import com.google.common.base.Joiner;
  */
 @Controller
 public class RESTOAuthAuthorizationConsentController {
-
-    private final RegisteredClientRepository registeredClientRepository;
-    private final OAuth2AuthorizationConsentService authorizationConsentService;
-
-    public RESTOAuthAuthorizationConsentController(RegisteredClientRepository registeredClientRepository,
-            OAuth2AuthorizationConsentService authorizationConsentService) {
-        this.registeredClientRepository = registeredClientRepository;
-        this.authorizationConsentService = authorizationConsentService;
-    }
 
     /**
      * Basic authorization consent controller for OAuth2

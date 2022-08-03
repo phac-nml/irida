@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi;
 
-import java.util.List;
 import java.util.Set;
 
 import org.openqa.selenium.By;
@@ -107,13 +106,6 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		driver.switchTo().window(subWindowHandler); // switch to popup window
 
 		// Now you are in the popup window, perform necessary actions here
-		List<WebElement> scopeCheckboxes = driver.findElements(By.name("scope"));
-		for (WebElement scopeCheckbox : scopeCheckboxes) {
-			if (!scopeCheckbox.isSelected()) {
-				scopeCheckbox.click();
-			}
-		}
-
 		WebElement authorizeButton = driver.findElement(By.id("authorize-btn"));
 		authorizeButton.click();
 
