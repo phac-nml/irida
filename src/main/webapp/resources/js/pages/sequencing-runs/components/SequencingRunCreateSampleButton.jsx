@@ -5,6 +5,7 @@ import { addSample } from "../services/runReducer";
 import { useDispatch } from "react-redux";
 import { useGetProjectNamesForUserQuery } from "../../../apis/projects/projects";
 import { SPACE_XS } from "../../../styles/spacing";
+import { green7 } from "../../../styles/colors";
 import styled from "styled-components";
 import { useGetSampleDropDownForProjectQuery } from "../../../apis/projects/samples";
 
@@ -12,10 +13,10 @@ const { Text } = Typography;
 
 const StyledFormItem = styled(Form.Item)`
   .ant-select-status-success > .ant-select-selector {
-    border-color: green;
+    border-color: ${green7};
   }
   .ant-form-item-explain-success {
-    color: green;
+    color: ${green7};
   }
 `;
 

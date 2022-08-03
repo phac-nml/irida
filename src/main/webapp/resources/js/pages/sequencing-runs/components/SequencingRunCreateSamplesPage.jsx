@@ -45,7 +45,7 @@ export default function SequencingRunCreateSamplesPage() {
             createSamples({ samples });
           }}
         >
-          Save
+          {i18n("SequencingRunCreateSamplesPage.button")}
         </Button>
       }
     >
