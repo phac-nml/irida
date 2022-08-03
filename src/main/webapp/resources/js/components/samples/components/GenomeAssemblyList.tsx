@@ -8,6 +8,7 @@ import { GenomeAssemblyListItem } from "../../sequence-files/GenomeAssemblyListI
 import { DEFAULT_ACTION_WIDTH } from "../sampleFilesSlice";
 import { useUpdateDefaultSampleGenomeAssemblyMutation } from "../../../apis/samples/samples";
 import { setDefaultGenomeAssembly } from "../sampleSlice";
+import { SampleGenomeAssembly } from "../../../types/irida";
 
 export interface GenomeAssemblyListProps {
   removeSampleFiles: ({
@@ -17,20 +18,6 @@ export interface GenomeAssemblyListProps {
     fileObjectId: string | number;
     type: string;
   }) => void;
-}
-
-export interface GenomeAssembly {
-  fileInfo: {
-    createdDate: string;
-    file: string;
-    fileName: string;
-    fileRevisionNumber: number;
-    identifier: string | number;
-    label: string;
-    links: [];
-  };
-  fileType: string;
-  firstFileSize: string;
 }
 
 /**
@@ -72,7 +59,9 @@ export function GenomeAssemblyList({
   /*
   Set default genome assembly for sample to be used for analyses
    */
-  const updateDefaultGenomeAssembly = (genomeAssembly: GenomeAssembly) => {
+  const updateDefaultGenomeAssembly = (
+    genomeAssembly: SampleGenomeAssembly
+  ) => {
     const { fileInfo: genomeAssemblyObj } = genomeAssembly;
 
     updateSampleDefaultGenomeAssembly({
@@ -93,7 +82,7 @@ export function GenomeAssemblyList({
    Get the actions required for a Genome Assembly
    */
   const getActionsForGenomeAssembly = (
-    genomeAssembly: GenomeAssembly,
+    genomeAssembly: SampleGenomeAssembly,
     index: number
   ) => {
     const { fileInfo: genomeAssemblyObj } = genomeAssembly;
@@ -205,7 +194,7 @@ export function GenomeAssemblyList({
 
   return (
     <SequenceFileTypeRenderer title={i18n("SampleFiles.assemblies")}>
-      {files.assemblies.map((assembly: GenomeAssembly, index: number) => (
+      {files.assemblies.map((assembly: SampleGenomeAssembly, index: number) => (
         <GenomeAssemblyListItem
           key={`assembly-${assembly.fileInfo.identifier}`}
           genomeAssembly={assembly}
