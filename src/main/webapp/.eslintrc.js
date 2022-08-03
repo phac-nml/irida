@@ -15,7 +15,7 @@ module.exports = {
     "plugin:react-hooks/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
-    "prettier",
+    "plugin:prettier/recommended",
   ],
   parserOptions: {
     ecmaFeatures: {
@@ -40,6 +40,12 @@ module.exports = {
       },
       {
         enforceForRenamedProperties: false,
+      },
+    ],
+    "prettier/prettier": [
+      "error",
+      {
+        endOfLine: "auto",
       },
     ],
   },
