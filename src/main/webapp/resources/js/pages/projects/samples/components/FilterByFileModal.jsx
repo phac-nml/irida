@@ -38,7 +38,7 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
       }
     });
 
-    const blob = file.slice(0, file.size - 1);
+    const blob = file.slice(0, file.size);
     reader.readAsText(blob);
   };
 
