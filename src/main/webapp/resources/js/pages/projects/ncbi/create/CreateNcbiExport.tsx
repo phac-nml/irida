@@ -54,6 +54,24 @@ export interface SampleRecord {
   };
 }
 
+/**
+ * TypeGuard for SampleRecord interface.
+ * @param attribute
+ */
+function isModifiableFieldOnSampleRecordProperty(
+  attribute: string
+): attribute is keyof SampleRecord {
+  return [
+    "bioSample",
+    "libraryName",
+    "libraryStrategy",
+    "librarySource",
+    "libraryConstructionProtocol",
+    "instrumentModel",
+    "librarySelection",
+  ].includes(attribute);
+}
+
 export interface SampleRecords {
   [k: string]: SampleRecord;
 }
@@ -68,20 +86,6 @@ export interface LoaderValues {
 
 export interface UpdateDefaultValues {
   (field: string, value: string | string[]): void;
-}
-
-function isSampleRecordProperty(
-  str: string | number
-): str is keyof SampleRecord {
-  return [
-    "bioSample",
-    "libraryName",
-    "libraryStrategy",
-    "librarySource",
-    "libraryConstructionProtocol",
-    "instrumentModel",
-    "librarySelection",
-  ].includes(str);
 }
 
 /**
@@ -138,18 +142,12 @@ function CreateNcbiExport(): JSX.Element {
    * @param field the field to update
    * @param value new value
    */
-  const updateDefaultValue: UpdateDefaultValues = (field, value) => {
-    if (isSampleRecordProperty(field)) {
-      // Update all the samples in the Ant Design form with the new value.
+  const updateDefaultValue: UpdateDefaultValues = (field, value): void => {
+    if (isModifiableFieldOnSampleRecordProperty(field)) {
+      // Update all the samples that do not currently have a value.
       const values: SampleRecords = form.getFieldValue("samples");
       Object.values(values).forEach((sample) => {
-        if (sample === undefined) return;
-        if (
-          "name" in sample &&
-          (field in sample ||
-            (sample[field] !== undefined && sample[field].length !== 0))
-        ) {
-          console.log(sample);
+        if (sample[field] === undefined) {
           form.setFieldsValue({
             samples: { [sample.name]: { [field]: value } },
           });
