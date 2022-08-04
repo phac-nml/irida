@@ -236,6 +236,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-filter-by-file-input")
 	private WebElement filterByFileInput;
 
+	@FindBy(className = "t-filter-submit")
+	private WebElement filterSubmitBtn;
+
+	@FindBy(className = "t-filter-cancel")
+	private WebElement filterCancelBtn;
+
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
 	}
@@ -565,5 +571,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 			invalidSampleNames.add(invalidSampleNameElement.getText());
 		}
 		return invalidSampleNames;
+	}
+
+	public void cancelFilterByFile() {
+		filterCancelBtn.click();
+	}
+
+	public void submitFilterByFile() {
+		int total = getTableSummary().getTotal();
+		filterSubmitBtn.click();
+		waitForTableToUpdate(total);
 	}
 }

@@ -72,7 +72,11 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
       visible={visible}
       onCancel={onCancel}
       onOk={onOk}
-      okButtonProps={{ disabled: valid.length === 0 }}
+      cancelButtonProps={{ className: "t-filter-cancel" }}
+      okButtonProps={{
+        disabled: valid.length === 0,
+        className: "t-filter-submit",
+      }}
       okText={i18n("FilterByFile.filter")}
       width={600}
     >

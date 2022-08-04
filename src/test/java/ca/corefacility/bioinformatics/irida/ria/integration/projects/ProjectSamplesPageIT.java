@@ -310,12 +310,63 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	public void testFilterByFile() {
+		String invalidName = "name_not_in_list";
+		int numberValidSampleNames = 5;
+
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+
+		TableSummary summary = page.getTableSummary();
+		assertEquals(23, summary.getTotal(), "Without the filter there should be 23 elements in the table");
+
+		page.filterByFile("src/test/resources/files/filter-by-file/sample-names.txt");
+		List<String> invalidSamples = page.getInvalidSampleNames();
+		assertEquals(1, invalidSamples.size(), "Should have one invalid sample");
+		assertEquals(invalidName, invalidSamples.get(0), "Should have the correct invalid sample");
+
+		page.submitFilterByFile();
+
+		summary = page.getTableSummary();
+		assertEquals(numberValidSampleNames, summary.getTotal(), "Should have the correct number of samples");
+	}
+
+	@Test
+	public void testFilterByFileWithAssociatedProjects() {
+		String ASSOCIATED_PROJECT_FILTER = "project6";
+		String ASSOCIATED_SAMPLE_NAME = "sample5fg44";
+
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+
+		TableSummary summary = page.getTableSummary();
+		assertEquals(23, summary.getTotal(), "Without the filter there should be 23 elements in the table");
+
+		page.filterByFile("src/test/resources/files/filter-by-file/sample-names-with-associated.txt");
+		List<String> invalidSamples = page.getInvalidSampleNames();
+		invalidSamples.forEach(
+				name -> assertEquals(ASSOCIATED_SAMPLE_NAME, invalidSamples.get(0), "Should have the correct invalid sample"));
+		page.cancelFilterByFile();
+
+		page.toggleAssociatedProject(ASSOCIATED_PROJECT_FILTER);
+		summary = page.getTableSummary();
+		assertEquals(24, summary.getTotal(), "Should have 24 elements in the table with the associated project");
+
+		page.filterByFile("src/test/resources/files/filter-by-file/sample-names-with-associated.txt");
+		page.submitFilterByFile();
+
+		summary = page.getTableSummary();
+		assertEquals(7, summary.getTotal(), "Should have 7 samples in the table with the associated project");
+		String foobar = "foobar";
+	}
+
+	@Test
 	public void testFilterByFileWindowsEncoding() {
 		List<String> actualInvalidNames = ImmutableList.of("11-0001", "10-1928", "10-8727");
 
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
-		page.filterByFile("src/test/resources/files/sample-filter-windows.txt");
+		page.filterByFile("src/test/resources/files/filter-by-file/sample-filter-windows.txt");
 		List<String> invalidSamples = page.getInvalidSampleNames();
 		invalidSamples.forEach(
 				name -> assertTrue(actualInvalidNames.contains(name), name + " should be in the actual name list"));
