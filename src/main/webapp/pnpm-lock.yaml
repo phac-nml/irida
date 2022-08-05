@@ -37,6 +37,7 @@ specifiers:
   '@luma.gl/webgl': '>=8.4.0 <9.0.0'
   '@phylocanvas/phylocanvas.gl': ^1.43.0
   '@reduxjs/toolkit': 1.8.1
+  '@remix-run/router': ^0.1.0
   '@types/lodash': ^4.14.182
   '@types/lodash.uniqby': ^4.7.7
   '@types/node': ^17.0.39
@@ -96,7 +97,7 @@ specifiers:
   postcss-loader: ^6.2.1
   postcss-nested: ^5.0.6
   postcss-preset-env: ^7.4.3
-  prettier: ^2.6.2
+  prettier: ^2.7.0
   process: ^0.11.10
   properties-reader: ^2.2.0
   qs: ^6.10.3
@@ -112,7 +113,7 @@ specifiers:
   react-markdown: ^8.0.2
   react-mde: ^11.5.0
   react-redux: ^7.2.8
-  react-router-dom: ^6.3.0
+  react-router-dom: ^6.4.0-pre.7
   react-virtualized-auto-sizer: ^1.0.6
   react-window: ^1.8.6
   reactour: ^1.18.7
@@ -151,6 +152,7 @@ dependencies:
   '@luma.gl/webgl': 8.5.14
   '@phylocanvas/phylocanvas.gl': 1.43.0_deck.gl@8.7.12
   '@reduxjs/toolkit': 1.8.1_bjryulbxll5jujtwpu5a2wm2cy
+  '@remix-run/router': 0.1.0
   ag-grid-community: 27.1.0
   ag-grid-react: 27.1.0_w6hrqnyrd37qujkkojqwgzxsou
   angular: 1.8.3
@@ -193,7 +195,7 @@ dependencies:
   react-markdown: 8.0.2_hx2b44akkvgcgvvtmk7ds2qk6q
   react-mde: 11.5.0_sfoxds7t5ydpegc3knd667wn6m
   react-redux: 7.2.8_sfoxds7t5ydpegc3knd667wn6m
-  react-router-dom: 6.3.0_sfoxds7t5ydpegc3knd667wn6m
+  react-router-dom: 6.4.0-pre.8_sfoxds7t5ydpegc3knd667wn6m
   react-virtualized-auto-sizer: 1.0.6_sfoxds7t5ydpegc3knd667wn6m
   react-window: 1.8.6_sfoxds7t5ydpegc3knd667wn6m
   reactour: 1.18.7_c7dgqabs4tvn3myjgibvwpzy7e
@@ -230,7 +232,7 @@ devDependencies:
   eslint: 8.13.0
   eslint-config-prettier: 8.5.0_eslint@8.13.0
   eslint-plugin-jsx-a11y: 6.5.1_eslint@8.13.0
-  eslint-plugin-prettier: 4.0.0_dak2zfnx7mtmcpd5jcuo55rnb4
+  eslint-plugin-prettier: 4.0.0_vyq77qlfwyijisbn35utc2xrra
   eslint-plugin-react: 7.29.4_eslint@8.13.0
   eslint-plugin-react-hooks: 4.4.0_eslint@8.13.0
   expose-loader: 3.1.0_webpack@5.72.0
@@ -242,7 +244,7 @@ devDependencies:
   postcss-import: 14.1.0_postcss@8.4.12
   postcss-loader: 6.2.1_ophkbroklgd6jdvupnp5h6xq4i
   postcss-preset-env: 7.4.3_postcss@8.4.12
-  prettier: 2.6.2
+  prettier: 2.7.1
   properties-reader: 2.2.0
   react-is: 17.0.2
   speed-measure-webpack-plugin: 1.5.0_webpack@5.72.0
@@ -2688,6 +2690,14 @@ packages:
       reselect: 4.1.5
     dev: false
 
+  /@remix-run/router/0.1.0:
+    resolution: {integrity: sha512-mK2wZWAFsijTGIk7ZhKvEAzU7qIS6F6RhPy5AiEosaEs3mB3J2NvUWRoN3W74V+5Jju/AisT5NaM2pIbnfGXWg==}
+    dev: false
+
+  /@remix-run/router/0.2.0-pre.3:
+    resolution: {integrity: sha512-/1vRiMh8j31PBgLgB2lqcwDDEBEwsnucOouZ8GvJTRNHULkPOU3kvQ1ZUpt9IPd1lS5AVC93I9pVLnFhlNA4Mw==}
+    dev: false
+
   /@rooks/use-mutation-observer/4.11.2_react@17.0.2:
     resolution: {integrity: sha512-vpsdrZdr6TkB1zZJcHx+fR1YC/pHs2BaqcuYiEGjBVbwY5xcC49+h0hAUtQKHth3oJqXfIX/Ng8S7s5HFHdM/A==}
     peerDependencies:
@@ -4752,7 +4762,7 @@ packages:
       minimatch: 3.1.2
     dev: true
 
-  /eslint-plugin-prettier/4.0.0_dak2zfnx7mtmcpd5jcuo55rnb4:
+  /eslint-plugin-prettier/4.0.0_vyq77qlfwyijisbn35utc2xrra:
     resolution: {integrity: sha512-98MqmCJ7vJodoQK359bqQWaxOE0CS8paAz/GgjaZLyex4TTk3g9HugoO89EqWCrFiOqn9EVvcoo7gZzONCWVwQ==}
     engines: {node: '>=6.0.0'}
     peerDependencies:
@@ -4765,7 +4775,7 @@ packages:
     dependencies:
       eslint: 8.13.0
       eslint-config-prettier: 8.5.0_eslint@8.13.0
-      prettier: 2.6.2
+      prettier: 2.7.1
       prettier-linter-helpers: 1.0.0
     dev: true
 
@@ -5279,12 +5289,6 @@ packages:
 
   /hast-util-whitespace/2.0.0:
     resolution: {integrity: sha512-Pkw+xBHuV6xFeJprJe2BBEoDV+AvQySaz3pPDRUs5PNZEMQjpXJJueqrpcHIXxnWTcAGi/UOCgVShlkY6kLoqg==}
-    dev: false
-
-  /history/5.3.0:
-    resolution: {integrity: sha512-ZqaKwjjrAYUYfLG+htGaIIZ4nioX2L70ZUMIFysS3xvBsSG4x/n1V6TXV3N8ZYNuFGlDirFg32T7B6WOUPDYcQ==}
-    dependencies:
-      '@babel/runtime': 7.17.9
     dev: false
 
   /hoist-non-react-statics/3.3.2:
@@ -7750,8 +7754,8 @@ packages:
       fast-diff: 1.2.0
     dev: true
 
-  /prettier/2.6.2:
-    resolution: {integrity: sha512-PkUpF+qoXTqhOeWL9fu7As8LXsIUZ1WYaJiY/a7McAQzxjk82OF0tibkFXVCDImZtWxbvojFjerkiLb0/q8mew==}
+  /prettier/2.7.1:
+    resolution: {integrity: sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==}
     engines: {node: '>=10.13.0'}
     hasBin: true
     dev: true
@@ -8512,24 +8516,23 @@ packages:
       react-is: 17.0.2
     dev: false
 
-  /react-router-dom/6.3.0_sfoxds7t5ydpegc3knd667wn6m:
-    resolution: {integrity: sha512-uaJj7LKytRxZNQV8+RbzJWnJ8K2nPsOOEuX7aQstlMZKQT0164C+X2w6bnkqU3sjtLvpd5ojrezAyfZ1+0sStw==}
+  /react-router-dom/6.4.0-pre.8_sfoxds7t5ydpegc3knd667wn6m:
+    resolution: {integrity: sha512-5hxQdiPOG98YOANbJ8IBUKbRgU6k4/TSX4VyO6jRWoG6KY0K2EG5wjEZgZ0tlAN9fXFgnHsro/HKi/r+HxugAg==}
     peerDependencies:
       react: '>=16.8'
       react-dom: '>=16.8'
     dependencies:
-      history: 5.3.0
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
-      react-router: 6.3.0_react@17.0.2
+      react-router: 6.4.0-pre.8_react@17.0.2
     dev: false
 
-  /react-router/6.3.0_react@17.0.2:
-    resolution: {integrity: sha512-7Wh1DzVQ+tlFjkeo+ujvjSqSJmkt1+8JO+T5xklPlgrh70y7ogx75ODRW0ThWhY7S+6yEDks8TYrtQe/aoboBQ==}
+  /react-router/6.4.0-pre.8_react@17.0.2:
+    resolution: {integrity: sha512-xwt2s9jW5NaakymlSRG0hZoGda6E/Skfgmj/4vlwvRX/kqoO8jU0g+Vi3sHDCatH/V+GjDyTQkdMEDm8qGsBsQ==}
     peerDependencies:
       react: '>=16.8'
     dependencies:
-      history: 5.3.0
+      '@remix-run/router': 0.2.0-pre.3
       react: 17.0.2
     dev: false
 

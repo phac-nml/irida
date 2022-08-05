@@ -179,6 +179,17 @@ public class ProjectSamplesAjaxController {
 	}
 
 	/**
+	 * Get a list of all {@link Sample} names within a specific project
+	 *
+	 * @param id Identifier for a Project
+	 * @return {@link List} of {@link Sample} names
+	 */
+	@GetMapping("/names")
+	public List<String> getSampleNamesForProject(@RequestParam Long id) {
+		return uiSampleService.getSampleNamesForProject(id);
+	}
+
+	/**
 	 * Share / Move samples between projects
 	 *
 	 * @param request {@link ShareSamplesRequest} details about the samples to share
