@@ -24,7 +24,9 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	String FIRST_SAMPLE_NAME = "sample55422r";
 	String SECOND_SAMPLE_NAME = "sample-5-fg-22";
 	String THIRD_SAMPLE_NAME = "sample64565";
-	int PROJECT_TOTAL_SAMPLES = 23;
+	int PROJECT_SAMPLES_COUNT = 23;
+	int ASSOCIATED_SAMPLES_COUNT = 2;
+	int COMBINED_SAMPLES_COUNT = PROJECT_SAMPLES_COUNT + ASSOCIATED_SAMPLES_COUNT;
 
 	@Test
 	public void testGoingToInvalidPage() {
@@ -97,7 +99,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		TableSummary summary = page.getTableSummary();
 		assertEquals(0, summary.getSelected(), "Should be 0 selected samples");
-		assertEquals(PROJECT_TOTAL_SAMPLES, summary.getTotal(), "Should be 0 selected samples");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(), "Should be 0 selected samples");
 
 		page.selectSampleByName("sample-5-fg-22");
 		summary = page.getTableSummary();
@@ -109,7 +111,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.toggleSelectAll();
 		summary = page.getTableSummary();
-		assertEquals(PROJECT_TOTAL_SAMPLES, summary.getSelected(), "Should be 0 selected samples");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getSelected(), "Should be 0 selected samples");
 	}
 
 	@Test
@@ -178,7 +180,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 		TableSummary summary = page.getTableSummary();
-		assertEquals(PROJECT_TOTAL_SAMPLES, summary.getTotal(), "Without the filter there should be 23 elements in the table");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(), "Without the filter there should be 23 elements in the table");
 
 		/*
 		SAMPLE NAME FILTERING
@@ -201,7 +203,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(13, summary.getTotal(), "Removing a sample name filter");
 		page.clearIndividualSampleNameFilter(NAME_FILTER_1);
 		summary = page.getTableSummary();
-		assertEquals(PROJECT_TOTAL_SAMPLES, summary.getTotal(), "Removing all name filters should return to initial number of samples");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(), "Removing all name filters should return to initial number of samples");
 
 		/*
 		ORGANISM FILTER
@@ -216,10 +218,10 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		 */
 		page.toggleAssociatedProject(ASSOCIATED_PROJECT_FILTER);
 		summary = page.getTableSummary();
-		assertEquals(24, summary.getTotal(), "Should have more samples visible with another project selected");
+		assertEquals(COMBINED_SAMPLES_COUNT, summary.getTotal(), "Should have more samples visible with another project selected");
 		page.removeAssociatedProject(ASSOCIATED_PROJECT_FILTER);
 		summary = page.getTableSummary();
-		assertEquals(PROJECT_TOTAL_SAMPLES, summary.getTotal(), "Should only display samples for the main project");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(), "Should only display samples for the main project");
 
 		/*
 		TEST MULTIPLE FILTERS
@@ -237,7 +239,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(3, summary.getTotal(), "Filtering by organism");
 		page.clearIndividualSampleNameFilter("sample3");
 		summary = page.getTableSummary();
-		assertEquals(PROJECT_TOTAL_SAMPLES, summary.getTotal(), "Filtering by organism");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(), "Filtering by organism");
 
 		// TEST CREATED DATE
 		page.filterByCreatedDate("2013-07-12", "2013-07-13");
@@ -245,7 +247,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(2, summary.getTotal(), "Filtering by created date");
 		page.clearFilterByCreatedDate();
 		summary = page.getTableSummary();
-		assertEquals(PROJECT_TOTAL_SAMPLES, summary.getTotal(), "Clearing created by filter");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(), "Clearing created by filter");
 
 		// TEST CREATED DATE
 		page.filterByModifiedDate("2015-07-17", "2015-07-20");
@@ -253,7 +255,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(4, summary.getTotal(), "Filtering by modified date");
 		page.clearFilterByModifiedDate();
 		summary = page.getTableSummary();
-		assertEquals(PROJECT_TOTAL_SAMPLES, summary.getTotal(), "Clearing modified by filter");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(), "Clearing modified by filter");
 	}
 
 	@Test
@@ -319,7 +321,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		TableSummary summary = page.getTableSummary();
-		assertEquals(PROJECT_TOTAL_SAMPLES, summary.getTotal(), "Without the filter there should be 23 elements in the table");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(), "Without the filter there should be 23 elements in the table");
 
 		page.filterByFile("src/test/resources/files/filter-by-file/sample-names.txt");
 		List<String> invalidSamples = page.getInvalidSampleNames();
@@ -341,7 +343,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		TableSummary summary = page.getTableSummary();
-		assertEquals(PROJECT_TOTAL_SAMPLES, summary.getTotal(), "Without the filter there should be 23 elements in the table");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(), "Without the filter there should be 23 elements in the table");
 
 		page.filterByFile("src/test/resources/files/filter-by-file/sample-names-with-associated.txt");
 		List<String> invalidSamples = page.getInvalidSampleNames();
@@ -350,7 +352,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.toggleAssociatedProject(ASSOCIATED_PROJECT_FILTER);
 		summary = page.getTableSummary();
-		assertEquals(24, summary.getTotal(), "Should have 24 elements in the table with the associated project");
+		assertEquals(COMBINED_SAMPLES_COUNT, summary.getTotal(), "Should have " + COMBINED_SAMPLES_COUNT + " elements in the table with the associated project");
 
 		page.filterByFile("src/test/resources/files/filter-by-file/sample-names-with-associated.txt");
 		page.submitFilterByFile();
