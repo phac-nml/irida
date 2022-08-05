@@ -1,7 +1,9 @@
-import { Select, Space, Typography } from "antd";
+import { Select, Space, Tag, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setProject } from "./shareSlice";
+
+const { Text } = Typography;
 
 /**
  * React component for selecting the project to share a sample with.
@@ -45,6 +47,15 @@ export function ShareProject({ projects }) {
     dispatch(setProject(project));
   }
 
+  const new_options = projects.map((project) => (
+    <Select.Option key={project.identifier} value={project.identifier}>
+      <>
+        <Text>{project.name}</Text>
+        <Tag style={{ float: "right" }}>{project.identifier}</Tag>
+      </>
+    </Select.Option>
+  ));
+
   return (
     <Space direction="vertical" style={{ display: "block" }}>
       <Typography.Title level={5}>
@@ -55,13 +66,14 @@ export function ShareProject({ projects }) {
         showSearch
         size="large"
         style={{ width: `100%` }}
-        options={options}
         className="t-share-project"
         filterOption={false}
         onSearch={handleSearch}
         onChange={onChange}
         defaultValue={targetProject ? targetProject.identifier : null}
-      />
+      >
+        {new_options}
+      </Select>
     </Space>
   );
 }
