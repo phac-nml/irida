@@ -65,6 +65,7 @@
         <sample id="25" createdDate="2013-07-22 14:20:19.0" modifiedDate="2015-07-22 14:00:19.0" description="description25" sampleName="sample_5_fg_22" />
         <sample id="26" createdDate="2013-07-22 14:20:19.0" modifiedDate="2015-07-22 14:00:19.0" description="description26" sampleName="sample-5-fg-22" />
         <sample id="27" createdDate="2013-07-21 14:20:19.0" modifiedDate="2015-07-22 14:00:19.0" description="description27" sampleName="sample5fg44" />
+        <sample id="28" createdDate="2013-07-21 14:20:19.0" modifiedDate="2015-07-22 14:00:19.0" description="description28" sampleName="sample5fg45" />
 
         <project_sample id="1" project_id="1" sample_id="1" createdDate="2013-07-10 14:21:19.0" owner="true" />
         <project_sample id="2" project_id="1" sample_id="2" createdDate="2013-07-12 14:22:19.0" owner="true" />
@@ -87,13 +88,14 @@
         <project_sample id="19" project_id="1" sample_id="19" createdDate="2013-07-18 14:40:19.0" owner="true" />
         <project_sample id="20" project_id="1" sample_id="20" createdDate="2013-07-18 14:41:19.0" owner="false" />
         <project_sample id="21" project_id="1" sample_id="21" createdDate="2013-07-18 14:42:19.0" owner="true" />
-        <project_sample id="22" project_id="6" sample_id="21" createdDate="2013-07-18 14:42:19.0" owner="true" />
+        <project_sample id="22" project_id="6" sample_id="27" createdDate="2013-07-18 14:42:19.0" owner="true" />
         <project_sample id="23" project_id="3" sample_id="21" createdDate="2013-07-18 14:42:19.0" owner="true" />
         <project_sample id="24" project_id="7" sample_id="23" createdDate="2013-07-18 14:42:19.0" owner="true" />
         <project_sample id="25" project_id="7" sample_id="24" createdDate="2013-07-18 14:42:19.0" owner="true" />
         <project_sample id="26" project_id="1" sample_id="25" createdDate="2013-07-18 14:42:19.0" owner="true" />
         <project_sample id="27" project_id="1" sample_id="26" createdDate="2013-07-18 14:42:19.0" owner="true" />
         <project_sample id="28" project_id="8" sample_id="27" createdDate="2013-07-18 14:42:19.0" owner="true" />
+        <project_sample id="29" project_id="6" sample_id="28" createdDate="2013-07-18 14:42:19.0" owner="true" />
 
         <sequence_file id="1" created_date="2013-07-18 14:20:19.0" file_path="src/test/resources/files/test_file.fastq" />
         <sequence_file id="2" created_date="2013-07-18 14:20:19.0" file_path="/sequenceFile2" />
