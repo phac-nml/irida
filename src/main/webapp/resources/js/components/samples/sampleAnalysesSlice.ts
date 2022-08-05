@@ -29,7 +29,7 @@ const sampleAnalysesSlice = createSlice({
       state.analyses = action.payload.analyses;
       state.loading = false;
     });
-  }
+  },
 });
 
 export default sampleAnalysesSlice.reducer;

@@ -63,7 +63,7 @@ export function EditMetadata() {
         metadataRestriction: values.metadata_field_permission,
       })
         .unwrap()
-        .then(({ message }: { message: string }) => {
+        .then(({ message }) => {
           notification.success({ message });
           dispatch(
             editSampleMetadata({

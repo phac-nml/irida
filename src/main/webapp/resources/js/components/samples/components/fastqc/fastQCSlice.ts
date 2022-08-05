@@ -98,7 +98,7 @@ const fastQCSlice = createSlice({
       state.processingState = null;
       state.fastQCModalVisible = false;
     });
-  }
+  },
 });
 
 export default fastQCSlice.reducer;

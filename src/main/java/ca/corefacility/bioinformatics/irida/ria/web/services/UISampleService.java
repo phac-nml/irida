@@ -222,10 +222,14 @@ public class UISampleService {
 				sample.setCollectedBy(request.getValue());
 				break;
 			case "collectionDate":
-				Instant instant = Instant.parse(request.getValue());
-				Date collectionDate = Date.from(instant);
-				dateValue = new SimpleDateFormat("yyyy-MM-dd").format(collectionDate);
-				sample.setCollectionDate(collectionDate);
+				if(!request.getValue().equals("")) {
+					Instant instant = Instant.parse(request.getValue());
+					Date collectionDate = Date.from(instant);
+					dateValue = new SimpleDateFormat("yyyy-MM-dd").format(collectionDate);
+					sample.setCollectionDate(collectionDate);
+				} else {
+					sample.setCollectionDate(null);
+				}
 				break;
 			case "isolationSource":
 				sample.setIsolationSource(request.getValue());

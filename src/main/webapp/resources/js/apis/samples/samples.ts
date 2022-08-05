@@ -242,8 +242,8 @@ export function downloadSequencingObjectFile({
   sequencingObjectId,
   sequenceFileId,
 }: {
-  sequencingObjectId: number;
-  sequenceFileId: number;
+  sequencingObjectId: string | number;
+  sequenceFileId: string | number;
 }) {
   window.open(
     `${SEQUENCE_FILES_AJAX_URL}/download?sequencingObjectId=${sequencingObjectId}&sequenceFileId=${sequenceFileId}`,

@@ -24,7 +24,7 @@ export interface DisplaySampleDetailsProps {
   sampleId: Pick<Sample, "id">;
   projectId: Pick<Project, "id">;
   displayActions?: boolean;
-  children: React.ReactNode;
+  children: React.ReactElement;
 }
 
 /**
@@ -189,7 +189,7 @@ export interface SampleDetailViewerProps {
   sampleId: Pick<Sample, "id">;
   projectId: Pick<Project, "id">;
   displayActions?: boolean;
-  children: React.ReactNode;
+  children: React.ReactElement;
 }
 
 /**

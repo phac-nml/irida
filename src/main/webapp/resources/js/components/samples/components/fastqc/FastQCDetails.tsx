@@ -1,4 +1,4 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 import { Col, List, Row } from "antd";
 import { RootStateOrAny, useSelector } from "react-redux";
 import { formatDate } from "../../../../utilities/date-utilities";
@@ -79,12 +79,17 @@ export function FastQCDetails() {
     },
   ];
 
-  const renderDetailsListItem = ({ index, style }: ListStyles) => {
-    const concatenatedStyle = { ...style, padding: 15 };
+  const renderDetailsListItem = ({
+    index,
+    style,
+  }: {
+    index: number;
+    style: CSSProperties;
+  }) => {
     const item = fileDetails[index];
 
     return (
-      <List.Item {...concatenatedStyle}>
+      <List.Item style={{ ...style, padding: 15 }}>
         <List.Item.Meta
           title={item.title}
           description={item.desc}

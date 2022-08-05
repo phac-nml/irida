@@ -28,7 +28,7 @@ import {
 const { Title } = Typography;
 
 export interface SampleFileConcatenateProps {
-  children: React.ReactNode;
+  children: React.ReactElement;
 }
 
 /**

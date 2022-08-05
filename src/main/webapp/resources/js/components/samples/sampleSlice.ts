@@ -230,6 +230,7 @@ const sampleSlice = createSlice({
     });
 
     builder.addCase(updateDetails, (state, action) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       state.sample[action.payload.field] = action.payload.value;
     });

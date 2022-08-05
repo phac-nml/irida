@@ -1,4 +1,4 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 import {
   Button,
   Col,
@@ -59,8 +59,9 @@ export function SampleMetadata() {
       field,
       entryId,
     })
-      .then(({ data }) => {
-        notification.success({ message: data.message });
+      .unwrap()
+      .then(({ message }) => {
+        notification.success({ message });
         dispatch(removeSampleMetadataField({ field, entryId }));
       })
       .catch((error) => {
@@ -68,13 +69,18 @@ export function SampleMetadata() {
       });
   };
 
-  const renderMetadataFieldListItem = ({ index, style }: ListStyles) => {
-    const concatenatedStyle = { ...style, paddingright: 15 };
+  const renderMetadataFieldListItem = ({
+    index,
+    style,
+  }: {
+    index: number;
+    style: CSSProperties;
+  }) => {
     const item = metadata[index];
     return (
       <List.Item
         className="t-sample-details-metadata-item"
-        {...concatenatedStyle}
+        style={{ ...style, paddingRight: 15 }}
       >
         <List.Item.Meta
           title={
@@ -174,7 +180,7 @@ export function SampleMetadata() {
             <Empty description={i18n("SampleDetails.no-metadata")} />
           )
         ) : (
-          <ContentLoading />
+          <ContentLoading message={""} props={undefined} />
         )}
       </Col>
     </Row>

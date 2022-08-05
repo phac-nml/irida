@@ -84,39 +84,36 @@ export function SequencingObjectList({
    which were still getting processed
    */
   useInterval(() => {
-    let seqObjIdsSingles = files.singles
-      ?.filter((singleEndFile: { fileInfo: { processingState: string } }) => {
+    const seqObjIdsSingles = files.singles
+      ?.filter((singleEndFile: SampleSequencingObject) => {
         return (
           singleEndFile.fileInfo.processingState !== "FINISHED" &&
           singleEndFile.fileInfo.processingState !== "ERROR"
         );
       })
       .map(
-        (singleEndFile: { fileInfo: { identifier: string } }) =>
+        (singleEndFile: SampleSequencingObject) =>
           singleEndFile.fileInfo.identifier
       );
 
-    let seqObjIdsPaired = files.paired
-      ?.filter((pair: { fileInfo: { processingState: string } }) => {
+    const seqObjIdsPaired = files.paired
+      ?.filter((pair: SampleSequencingObject) => {
         return (
           pair.fileInfo.processingState !== "FINISHED" &&
           pair.fileInfo.processingState !== "ERROR"
         );
       })
-      .map(
-        (pair: { fileInfo: { identifier: string } }) => pair.fileInfo.identifier
-      );
+      .map((pair: SampleSequencingObject) => pair.fileInfo.identifier);
 
-    let seqObjIdsFast5 = files.fast5
-      ?.filter((fast5File: { fileInfo: { processingState: string } }) => {
+    const seqObjIdsFast5 = files.fast5
+      ?.filter((fast5File: SampleSequencingObject) => {
         return (
           fast5File.fileInfo.processingState !== "FINISHED" &&
           fast5File.fileInfo.processingState !== "ERROR"
         );
       })
       .map(
-        (fast5File: { fileInfo: { identifier: string } }) =>
-          fast5File.fileInfo.identifier
+        (fast5File: SampleSequencingObject) => fast5File.fileInfo.identifier
       );
 
     let sequencingObjectIds: string[] = [];
@@ -132,7 +129,6 @@ export function SequencingObjectList({
     }
 
     if (sequencingObjectIds.length) {
-      // @ts-ignore
       fetchUpdatedSequencingObjects({
         sampleId: sample.identifier,
         projectId,
@@ -154,7 +150,10 @@ export function SequencingObjectList({
   /*
   Update which sequencing objects are selected for concatenation
   */
-  const updateSelected = (e: CheckboxChangeEvent, seqObj: any): void => {
+  const updateSelected = (
+    e: CheckboxChangeEvent,
+    seqObj: SequencingObject
+  ): void => {
     if (e.target.checked) {
       dispatch(addToConcatenateSelected({ seqObject: seqObj }));
     } else {
@@ -165,10 +164,9 @@ export function SequencingObjectList({
   /*
    Returns a checkbox with a tooltip for the passed in sequencing object
    */
-  const getConcatenationCheckboxForSequencingObject = (seqObj: {
-    fileInfo: any;
-    file: any;
-  }) => {
+  const getConcatenationCheckboxForSequencingObject = (
+    seqObj: SampleSequencingObject
+  ) => {
     const obj = seqObj.fileInfo
       ? seqObj.fileInfo
       : seqObj.file
@@ -190,8 +188,7 @@ export function SequencingObjectList({
             onChange={(e) => updateSelected(e, obj)}
             checked={
               concatenateSelected.filter(
-                (e: { identifier: string | number }) =>
-                  e.identifier === obj.identifier
+                (e: SequencingObject) => e.identifier === obj.identifier
               ).length > 0
             }
           />
@@ -207,7 +204,7 @@ export function SequencingObjectList({
     seqObj: SampleSequencingObject,
     index = -1
   ) => {
-    let actions = [];
+    const actions = [];
 
     const obj = seqObj.fileInfo
       ? seqObj.fileInfo
@@ -333,11 +330,10 @@ export function SequencingObjectList({
   /*
    Get the actions required for a Paired End -> Reverse sequence file
    */
-  const getActionsForSequencingObjectPairedReverse = (seqObj: {
-    secondFileSize?: string;
-    fileInfo?: any;
-  }) => {
-    let actions = [];
+  const getActionsForSequencingObjectPairedReverse = (
+    seqObj: SampleSequencingObject
+  ) => {
+    const actions = [];
     const { fileInfo: obj } = seqObj;
 
     actions.push(
@@ -370,14 +366,11 @@ export function SequencingObjectList({
   /*
    Gets the processing state as a tag (icon) with a tooltip
   */
-  const getProcessingStateTag = (
-    obj: { identifier: any; processingState: string },
-    type = "single"
-  ) => {
+  const getProcessingStateTag = (obj: SequencingObject, type = "single") => {
     let tagColor = "default";
     let icon = <ClockCircleOutlined />;
 
-    let key =
+    const key =
       type === "single"
         ? `file-processing-status-file1-${obj.identifier}`
         : `file-processing-status-file2-${obj.identifier}`;
@@ -408,16 +401,17 @@ export function SequencingObjectList({
   /*
   Set default sequencingobject for sample to be used for analyses
    */
-  const updateDefaultSequencingObject = (sequencingObject: {
-    identifier: string | number;
-  }) => {
+  const updateDefaultSequencingObject = (
+    sequencingObject: SequencingObject
+  ) => {
     updateSampleDefaultSequencingObject({
       sampleId: sample.identifier,
       sequencingObjectId: sequencingObject.identifier,
     })
-      .then(({ data }) => {
+      .unwrap()
+      .then(({ message }) => {
         dispatch(setDefaultSequencingObject(sequencingObject));
-        notification.success({ message: data.message });
+        notification.success({ message });
       })
       .catch((error) => {
         notification.error({ message: error });
@@ -431,8 +425,8 @@ export function SequencingObjectList({
     sequencingObjectId,
     sequenceFileId,
   }: {
-    sequencingObjectId: number;
-    sequenceFileId: number;
+    sequencingObjectId: string | number;
+    sequenceFileId: string | number;
   }) => {
     notification.success({
       message: i18n("SampleFiles.startingSequenceFileDownload"),
@@ -462,24 +456,22 @@ export function SequencingObjectList({
       )}
       {files.paired && (
         <SequenceFileTypeRenderer title={i18n("SampleFiles.paired")}>
-          {files.paired.map(
-            (pair: SequencingObject, index: number | undefined) => (
-              <SequenceObjectListItem
-                key={`pair-${pair.fileInfo.identifier}`}
-                sequenceObject={pair}
-                actions={getActionsForSequencingObject(pair, index)}
-                pairedReverseActions={getActionsForSequencingObjectPairedReverse(
-                  pair
-                )}
-                displayConcatenationCheckbox={
-                  isModifiable && files.paired?.length >= 2
-                    ? getConcatenationCheckboxForSequencingObject(pair)
-                    : null
-                }
-                displayFileProcessingStatus={true}
-              />
-            )
-          )}
+          {files.paired.map((pair: SampleSequencingObject, index: number) => (
+            <SequenceObjectListItem
+              key={`pair-${pair.fileInfo.identifier}`}
+              sequenceObject={pair}
+              actions={getActionsForSequencingObject(pair, index)}
+              pairedReverseActions={getActionsForSequencingObjectPairedReverse(
+                pair
+              )}
+              displayConcatenationCheckbox={
+                isModifiable && files.paired?.length >= 2
+                  ? getConcatenationCheckboxForSequencingObject(pair)
+                  : null
+              }
+              displayFileProcessingStatus={true}
+            />
+          ))}
         </SequenceFileTypeRenderer>
       )}
       {files.fast5 && (

@@ -23,6 +23,15 @@ import {
 } from "../../../apis/samples/samples";
 import { SPACE_MD } from "../../../styles/spacing";
 
+export interface FileUpload {
+  uid: string;
+  name: string;
+  lastModified: number;
+  lastModifiedDate: Date;
+  size: number;
+  type: string;
+  webkitRelativePath: string;
+}
 /**
  * React component to display sample files and upload files to sample
  *
@@ -42,11 +51,11 @@ export function SampleFiles() {
   const [assemblyProgress, setAssemblyProgress] = React.useState(0);
   const [fast5Progress, setFast5Progress] = React.useState(0);
 
-  const [sequenceFiles, setSequenceFiles] = React.useState([]);
-  const [assemblyFiles, setAssemblyFiles] = React.useState([]);
-  const [fast5Files, setFast5Files] = React.useState([]);
+  const [sequenceFiles, setSequenceFiles] = React.useState<FileUpload[]>([]);
+  const [assemblyFiles, setAssemblyFiles] = React.useState<FileUpload[]>([]);
+  const [fast5Files, setFast5Files] = React.useState<FileUpload[]>([]);
 
-  const [filesToUpload, setFilesToUpload] = React.useState([]);
+  const [filesToUpload, setFilesToUpload] = React.useState<FileUpload[]>([]);
 
   const acceptedFileTypes =
     ".fasta, .fastq, .fast5, .fastq.gz, .fast5.gz, .fna";
@@ -110,9 +119,12 @@ export function SampleFiles() {
         },
       };
 
-      let formData = new FormData();
+      const formData = new FormData();
       sequenceFiles.map((f, index) => {
-        formData.append(`file[${index}]`, sequenceFiles[index]);
+        formData.append(
+          `file[${index}]`,
+          sequenceFiles[index] as unknown as File as Blob
+        );
       });
 
       uploadSequenceFiles({
@@ -151,9 +163,12 @@ export function SampleFiles() {
         },
       };
 
-      let formData = new FormData();
+      const formData = new FormData();
       assemblyFiles.map((f, index) => {
-        formData.append(`file[${index}]`, assemblyFiles[index]);
+        formData.append(
+          `file[${index}]`,
+          assemblyFiles[index] as unknown as File as Blob
+        );
       });
 
       uploadAssemblyFiles({
@@ -192,9 +207,12 @@ export function SampleFiles() {
         },
       };
 
-      let formData = new FormData();
+      const formData = new FormData();
       fast5Files.map((f, index) => {
-        formData.append(`file[${index}]`, fast5Files[index]);
+        formData.append(
+          `file[${index}]`,
+          fast5Files[index] as unknown as File as Blob
+        );
       });
 
       uploadFast5Files({
@@ -222,15 +240,15 @@ export function SampleFiles() {
     showUploadList: false,
     accept: acceptedFileTypes,
     progress: { strokeWidth: 5 },
-    beforeUpload(file, fileList) {
+    beforeUpload(file: FileUpload, fileList: FileUpload[]) {
       setFilesToUpload(fileList);
 
       /*
       Get the fastq, assembly, and fast5 files from the fileList (files selected to upload)
        */
-      let fastqFilesList = fileList.filter((currFile: { name: string }) => {
-        let name = currFile.name;
-        let tokens = name.split(".");
+      const fastqFilesList = fileList.filter((currFile: FileUpload) => {
+        const { name } = currFile;
+        const tokens = name.split(".");
 
         return (
           tokens[tokens.length - 1] === "fastq" ||
@@ -239,9 +257,9 @@ export function SampleFiles() {
         );
       });
 
-      let assemblyFilesList = fileList.filter((currFile: { name: string }) => {
-        let name = currFile.name;
-        let tokens = name.split(".");
+      const assemblyFilesList = fileList.filter((currFile: FileUpload) => {
+        const { name } = currFile;
+        const tokens = name.split(".");
 
         return (
           tokens[tokens.length - 1] === "fasta" ||
@@ -249,9 +267,9 @@ export function SampleFiles() {
         );
       });
 
-      let fast5FilesList = fileList.filter((currFile: { name: string }) => {
-        let name = currFile.name;
-        let tokens = name.split(".");
+      const fast5FilesList = fileList.filter((currFile: FileUpload) => {
+        const { name } = currFile;
+        const tokens = name.split(".");
 
         return (
           tokens[tokens.length - 1] === "fast5" ||

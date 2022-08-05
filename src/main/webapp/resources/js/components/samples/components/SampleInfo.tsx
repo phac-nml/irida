@@ -1,4 +1,4 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 import {
   Col,
   DatePicker,
@@ -13,6 +13,8 @@ import { formatDate } from "../../../utilities/date-utilities";
 const { Paragraph } = Typography;
 import moment from "moment";
 import { OntologyInput } from "../../ontology";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { TAXONOMY } from "../../../apis/ontology/taxonomy";
 import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context";
@@ -42,7 +44,10 @@ export function SampleInfo() {
   Updates the field with the provided value. If nothing has
   changed then no updates are done.
    */
-  const updateField = (field: string, value: string) => {
+  const updateField = (
+    field: string,
+    value: moment.Moment | string | null | undefined
+  ) => {
     /*
     Make sure the value actually changed, if it hasn't then don't update it.
      */
@@ -56,7 +61,7 @@ export function SampleInfo() {
     })
       .unwrap()
       .then((response) => {
-        let formattedVal = moment.isMoment(value)
+        const formattedVal = moment.isMoment(value)
           ? value.format(dateFormat)
           : value || "";
         dispatch(updateDetails({ field, value: formattedVal }));
@@ -184,14 +189,16 @@ export function SampleInfo() {
           valueClassName="t-sample-collected-date-value"
         >
           <DatePicker
-            onChange={(value) => updateField("collectionDate", value)}
+            onChange={(value?: moment.Moment | null) =>
+              updateField("collectionDate", value)
+            }
             defaultValue={
               sample.collectionDate !== null
                 ? moment(sample.collectionDate, dateFormat)
-                : ""
+                : undefined
             }
             format={dateFormat}
-            allowClear={false}
+            allowClear={true}
             className="t-sample-collected-date"
             disabledDate={(current) => current.isAfter(moment())}
           />
@@ -262,12 +269,17 @@ export function SampleInfo() {
     },
   ];
 
-  const renderDetailsListItem = ({ index, style }: ListStyles) => {
-    const concatenatedStyle = { ...style, padding: 15 };
+  const renderDetailsListItem = ({
+    index,
+    style,
+  }: {
+    index: number;
+    style: CSSProperties;
+  }) => {
     const item = detailsData[index];
 
     return (
-      <List.Item {...concatenatedStyle}>
+      <List.Item style={{ ...style, padding: 15 }}>
         <List.Item.Meta title={item.title} description={item.value} />
       </List.Item>
     );

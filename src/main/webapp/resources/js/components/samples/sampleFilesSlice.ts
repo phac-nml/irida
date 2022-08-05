@@ -1,4 +1,9 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
+import {
+  SampleGenomeAssembly,
+  SampleSequencingObject,
+  SequencingObject,
+} from "../../types/irida";
 
 // The default width for action buttons
 export const DEFAULT_ACTION_WIDTH = 75;
@@ -99,10 +104,15 @@ export const fetchUpdatedSeqObjectsDelay = 30000; // 30 seconds
  * Set up the initial state.
  */
 const initialState = (() => {
+  const singles: SampleSequencingObject[] = [];
+  const paired: SampleSequencingObject[] = [];
+  const fast5: SampleSequencingObject[] = [];
+  const assemblies: SampleGenomeAssembly[] = [];
+
   return {
-    files: {},
+    files: { singles, paired, fast5, assemblies },
     loading: true,
-    concatenateSelected: [] as any[],
+    concatenateSelected: [] as SequencingObject[],
   };
 })();
 
@@ -113,7 +123,7 @@ const sampleFilesSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(setSampleFiles, (state, action) => {
       if (typeof action.payload.data !== "undefined") {
-        let fileData = action.payload.data;
+        const fileData = action.payload.data;
         Object.keys(fileData).forEach(
           (key) => !fileData[key].length && delete fileData[key]
         );
@@ -124,9 +134,9 @@ const sampleFilesSlice = createSlice({
     });
 
     builder.addCase(addToSequenceFiles, (state, action) => {
-      let seqFiles = action.payload.sequenceFiles;
+      const seqFiles = action.payload.sequenceFiles;
 
-      seqFiles.map((seqFile) => {
+      seqFiles.map((seqFile: SampleSequencingObject) => {
         if (seqFile.secondFileSize !== null) {
           if (!state.files["paired"]) {
             state.files.paired = [];
@@ -143,20 +153,20 @@ const sampleFilesSlice = createSlice({
     });
 
     builder.addCase(addToAssemblyFiles, (state, action) => {
-      let newAssemblies = action.payload.assemblies;
+      const newAssemblies = action.payload.assemblies;
 
       if (!state.files["assemblies"]) {
         state.files.assemblies = [];
       }
-      newAssemblies.map((newAssembly) => {
+      newAssemblies.map((newAssembly: SampleGenomeAssembly) => {
         state.files.assemblies = [...state.files.assemblies, newAssembly];
       });
     });
 
     builder.addCase(addToFast5Files, (state, action) => {
-      let newFast5s = action.payload.fast5;
+      const newFast5s = action.payload.fast5;
 
-      newFast5s.map((newFast5) => {
+      newFast5s.map((newFast5: SampleSequencingObject) => {
         if (!state.files["fast5"]) {
           state.files.fast5 = [];
         }
@@ -165,56 +175,64 @@ const sampleFilesSlice = createSlice({
     });
 
     builder.addCase(updatedSequencingObjects, (state, action) => {
-      let updatedSeqObjects = action.payload.updatedSeqObjects;
+      const { updatedSeqObjects } = action.payload;
 
-      if (Boolean(updatedSeqObjects.paired.length)) {
-        updatedSeqObjects.paired.map((updatedPairedObj) => {
-          state.files.paired = state.files.paired.map((currentPairedObj) =>
-            currentPairedObj.fileInfo.identifier ===
-            updatedPairedObj.fileInfo.identifier
-              ? {
-                  ...currentPairedObj,
-                  fileInfo: updatedPairedObj.fileInfo,
-                  firstFileSize: updatedPairedObj.firstFileSize,
-                  secondFileSize: updatedPairedObj.secondFileSize,
-                  qcEntries: updatedPairedObj.qcEntries,
-                }
-              : currentPairedObj
-          );
-        });
+      if (updatedSeqObjects.paired.length) {
+        updatedSeqObjects.paired.map(
+          (updatedPairedObj: SampleSequencingObject) => {
+            state.files.paired = state.files.paired.map(
+              (currentPairedObj: SampleSequencingObject) =>
+                currentPairedObj.fileInfo.identifier ===
+                updatedPairedObj.fileInfo.identifier
+                  ? {
+                      ...currentPairedObj,
+                      fileInfo: updatedPairedObj.fileInfo,
+                      firstFileSize: updatedPairedObj.firstFileSize,
+                      secondFileSize: updatedPairedObj.secondFileSize,
+                      qcEntries: updatedPairedObj.qcEntries,
+                    }
+                  : currentPairedObj
+            );
+          }
+        );
       }
 
       if (updatedSeqObjects.singles.length) {
-        updatedSeqObjects.singles.map((updatedSingleEndFileObj) => {
-          state.files.singles = state.files.singles.map(
-            (currentSingleFileObj) =>
-              currentSingleFileObj.fileInfo.identifier ===
-              updatedSingleEndFileObj.fileInfo.identifier
-                ? {
-                    ...currentSingleFileObj,
-                    fileInfo: updatedSingleEndFileObj.fileInfo,
-                    firstFileSize: updatedSingleEndFileObj.firstFileSize,
-                    qcEntries: updatedSingleEndFileObj.qcEntries,
-                  }
-                : currentSingleFileObj
-          );
-        });
+        updatedSeqObjects.singles.map(
+          (updatedSingleEndFileObj: SampleSequencingObject) => {
+            state.files.singles = state.files.singles.map(
+              (currentSingleFileObj: SampleSequencingObject) =>
+                currentSingleFileObj.fileInfo.identifier ===
+                updatedSingleEndFileObj.fileInfo.identifier
+                  ? {
+                      ...currentSingleFileObj,
+                      fileInfo: updatedSingleEndFileObj.fileInfo,
+                      firstFileSize: updatedSingleEndFileObj.firstFileSize,
+                      qcEntries: updatedSingleEndFileObj.qcEntries,
+                    }
+                  : currentSingleFileObj
+            );
+          }
+        );
       }
 
-      if (Boolean(updatedSeqObjects.fast5.length)) {
-        updatedSeqObjects.fast5.map((updatedFast5FileObj) => {
-          state.files.fast5 = state.files.fast5.map((currentFast5FileObj) =>
-            currentFast5FileObj.fileInfo.identifier ===
-            updatedFast5FileObj.fileInfo.identifier
-              ? {
-                  ...currentFast5FileObj,
-                  fileInfo: updatedFast5FileObj.fileInfo,
-                  firstFileSize: updatedFast5FileObj.firstFileSize,
-                  qcEntries: updatedFast5FileObj.qcEntries,
-                }
-              : currentFast5FileObj
-          );
-        });
+      if (updatedSeqObjects.fast5.length) {
+        updatedSeqObjects.fast5.map(
+          (updatedFast5FileObj: SampleSequencingObject) => {
+            state.files.fast5 = state.files.fast5.map(
+              (currentFast5FileObj: SampleSequencingObject) =>
+                currentFast5FileObj.fileInfo.identifier ===
+                updatedFast5FileObj.fileInfo.identifier
+                  ? {
+                      ...currentFast5FileObj,
+                      fileInfo: updatedFast5FileObj.fileInfo,
+                      firstFileSize: updatedFast5FileObj.firstFileSize,
+                      qcEntries: updatedFast5FileObj.qcEntries,
+                    }
+                  : currentFast5FileObj
+            );
+          }
+        );
       }
     });
 
@@ -222,52 +240,62 @@ const sampleFilesSlice = createSlice({
       const fileTypes = state.files;
 
       if (action.payload.type === "sequencingObject") {
-        if (Boolean(fileTypes.paired)) {
+        if (fileTypes.paired) {
           fileTypes.paired = fileTypes.paired.filter(
-            (pair) => pair.fileInfo.identifier !== action.payload.fileObjectId
+            (pair: SampleSequencingObject) =>
+              pair.fileInfo.identifier !== action.payload.fileObjectId
           );
 
           if (fileTypes.paired.length) {
             state.files.paired = fileTypes.paired;
           } else {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             delete state.files["paired"];
           }
         }
 
-        if (Boolean(fileTypes.singles)) {
+        if (fileTypes.singles) {
           fileTypes.singles = fileTypes.singles.filter(
-            (single) =>
+            (single: SampleSequencingObject) =>
               single.fileInfo.identifier !== action.payload.fileObjectId
           );
 
           if (fileTypes.singles.length) {
             state.files.singles = fileTypes.singles;
           } else {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             delete state.files["singles"];
           }
         }
 
-        if (Boolean(fileTypes.fast5)) {
+        if (fileTypes.fast5) {
           fileTypes.fast5 = fileTypes.fast5.filter(
-            (fast5) => fast5.fileInfo.identifier !== action.payload.fileObjectId
+            (fast5: SampleSequencingObject) =>
+              fast5.fileInfo.identifier !== action.payload.fileObjectId
           );
 
           if (fileTypes.fast5.length) {
             state.files.fast5 = fileTypes.fast5;
           } else {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             delete state.files["fast5"];
           }
         }
       } else {
-        if (Boolean(fileTypes.assemblies)) {
+        if (fileTypes.assemblies) {
           fileTypes.assemblies = fileTypes.assemblies.filter(
-            (assembly) =>
+            (assembly: SampleGenomeAssembly) =>
               assembly.fileInfo.identifier !== action.payload.fileObjectId
           );
 
           if (fileTypes.assemblies.length) {
             state.files.assemblies = fileTypes.assemblies;
           } else {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             delete state.files["assemblies"];
           }
         }
