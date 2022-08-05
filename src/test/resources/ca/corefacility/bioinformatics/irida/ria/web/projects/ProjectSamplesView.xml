@@ -20,7 +20,8 @@
         <project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" modifiedDate="2013-07-18 14:18:19.0" />
         <project id="4" createdDate="2013-07-18 14:21:19.0" name="project4" modifiedDate="2013-07-18 14:17:19.0" />
         <project id="5" createdDate="2013-07-18 14:21:19.0" name="project5" modifiedDate="2013-07-18 14:17:19.0" />
-        <project id="6" createdDate="2013-07-18 14:21:19.0" name="project5" modifiedDate="2013-07-18 14:17:19.0" />
+        <project id="6" createdDate="2013-07-18 14:21:19.0" name="project6" modifiedDate="2013-07-18 14:17:19.0" />
+        <project id="8" createdDate="2013-07-18 14:21:19.0" name="project8" modifiedDate="2013-07-18 14:17:19.0" />
 
         <related_project id="1" subject_id="1" relatedProject_id="6" createdDate="2013-07-18 14:20:19.0" />
 
@@ -35,6 +36,7 @@
         <project_user id="10" project_id="7" user_id="1" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
         <project_user id="11" project_id="7" user_id="2" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
         <project_user id="12" project_id="4" user_id="2" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
+        <project_user id="13" project_id="8" user_id="1" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
 
         <sample id="23" createdDate="2013-07-22 14:20:19.0" modifiedDate="2015-07-22 14:00:19.0" description="description23" sampleName="sample23p7" remote_status="2" />
         <sample id="24" createdDate="2013-07-22 14:20:19.0" modifiedDate="2015-07-22 14:00:19.0" description="description24" sampleName="sample24p7" remote_status="3" />
@@ -62,6 +64,7 @@
         <sample id="22" createdDate="2013-07-22 14:20:19.0" modifiedDate="2015-07-22 14:00:19.0" description="description22" sampleName="sample5fg22" />
         <sample id="25" createdDate="2013-07-22 14:20:19.0" modifiedDate="2015-07-22 14:00:19.0" description="description25" sampleName="sample_5_fg_22" />
         <sample id="26" createdDate="2013-07-22 14:20:19.0" modifiedDate="2015-07-22 14:00:19.0" description="description26" sampleName="sample-5-fg-22" />
+        <sample id="27" createdDate="2013-07-21 14:20:19.0" modifiedDate="2015-07-22 14:00:19.0" description="description27" sampleName="sample5fg44" />
 
         <project_sample id="1" project_id="1" sample_id="1" createdDate="2013-07-10 14:21:19.0" owner="true" />
         <project_sample id="2" project_id="1" sample_id="2" createdDate="2013-07-12 14:22:19.0" owner="true" />
@@ -90,6 +93,7 @@
         <project_sample id="25" project_id="7" sample_id="24" createdDate="2013-07-18 14:42:19.0" owner="true" />
         <project_sample id="26" project_id="1" sample_id="25" createdDate="2013-07-18 14:42:19.0" owner="true" />
         <project_sample id="27" project_id="1" sample_id="26" createdDate="2013-07-18 14:42:19.0" owner="true" />
+        <project_sample id="28" project_id="8" sample_id="27" createdDate="2013-07-18 14:42:19.0" owner="true" />
 
         <sequence_file id="1" created_date="2013-07-18 14:20:19.0" file_path="src/test/resources/files/test_file.fastq" />
         <sequence_file id="2" created_date="2013-07-18 14:20:19.0" file_path="/sequenceFile2" />
