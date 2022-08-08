@@ -15,7 +15,7 @@ export interface GenomeAssemblyListProps {
     fileObjectId,
     type,
   }: {
-    fileObjectId: string | number;
+    fileObjectId: string;
     type: string;
   }) => void;
 }
@@ -62,7 +62,8 @@ export function GenomeAssemblyList({
   const updateDefaultGenomeAssembly = (
     genomeAssembly: SampleGenomeAssembly
   ) => {
-    const { fileInfo: genomeAssemblyObj } = genomeAssembly;
+    const { fileInfo: genomeAssemblyObj }: SampleGenomeAssembly =
+      genomeAssembly;
 
     updateSampleDefaultGenomeAssembly({
       sampleId: sample.identifier,
@@ -86,7 +87,7 @@ export function GenomeAssemblyList({
     index: number
   ) => {
     const { fileInfo: genomeAssemblyObj } = genomeAssembly;
-    const actions = [];
+    const actions: React.ReactElement[] = [];
 
     if (isModifiable) {
       if (

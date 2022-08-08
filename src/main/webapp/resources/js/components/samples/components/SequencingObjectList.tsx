@@ -37,7 +37,7 @@ import {
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { SampleSequencingObject, SequencingObject } from "../../../types/irida";
 
-const fileProcessTranslations: { [key: string]: any } = {
+const fileProcessTranslations: { [key: string]: string } = {
   UNPROCESSED: i18n("SampleFilesList.fileProcessingState.UNPROCESSED"),
   QUEUED: i18n("SampleFilesList.fileProcessingState.QUEUED"),
   PROCESSING: i18n("SampleFilesList.fileProcessingState.PROCESSING"),
@@ -50,7 +50,7 @@ export interface SequencingObjectListProps {
     fileObjectId,
     type,
   }: {
-    fileObjectId: number;
+    fileObjectId: string;
     type: string;
   }) => void;
 }
@@ -204,7 +204,7 @@ export function SequencingObjectList({
     seqObj: SampleSequencingObject,
     index = -1
   ) => {
-    const actions = [];
+    const actions: React.ReactElement[] = [];
 
     const obj = seqObj.fileInfo
       ? seqObj.fileInfo
@@ -333,8 +333,8 @@ export function SequencingObjectList({
   const getActionsForSequencingObjectPairedReverse = (
     seqObj: SampleSequencingObject
   ) => {
-    const actions = [];
-    const { fileInfo: obj } = seqObj;
+    const actions: React.ReactElement[] = [];
+    const { fileInfo: obj }: SampleSequencingObject = seqObj;
 
     actions.push(
       getProcessingStateTag(obj, "paired"),

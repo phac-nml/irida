@@ -31,7 +31,7 @@ export function SampleFileList() {
     fileObjectId,
     type,
   }: {
-    fileObjectId: string | number;
+    fileObjectId: string;
     type: string;
   }) => {
     removeSampleFilesFromSample({
@@ -40,7 +40,7 @@ export function SampleFileList() {
       type,
     })
       .unwrap()
-      .then(({ message }) => {
+      .then(({ message }: { message: string }) => {
         notification.success({ message });
         dispatch(removeFileObjectFromSample({ fileObjectId, type }));
 

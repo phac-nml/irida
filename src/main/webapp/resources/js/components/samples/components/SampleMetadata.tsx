@@ -8,10 +8,10 @@ import {
   Popconfirm,
   Row,
   Space,
+  Spin,
 } from "antd";
 import { AddNewMetadata } from "./AddNewMetadata";
 import { useRemoveSampleMetadataMutation } from "../../../apis/samples/samples";
-import { ContentLoading } from "../../loader";
 import { IconPlusCircle } from "../../icons/Icons";
 import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context";
 import { EditMetadata } from "./EditMetadata";
@@ -60,7 +60,7 @@ export function SampleMetadata() {
       entryId,
     })
       .unwrap()
-      .then(({ message }) => {
+      .then(({ message }: { message: string }) => {
         notification.success({ message });
         dispatch(removeSampleMetadataField({ field, entryId }));
       })
@@ -180,7 +180,7 @@ export function SampleMetadata() {
             <Empty description={i18n("SampleDetails.no-metadata")} />
           )
         ) : (
-          <ContentLoading message={""} props={undefined} />
+          <Spin />
         )}
       </Col>
     </Row>

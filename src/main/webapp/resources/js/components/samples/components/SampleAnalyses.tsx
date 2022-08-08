@@ -6,7 +6,11 @@ import { setSampleAnalyses } from "../sampleAnalysesSlice";
 import { SampleAnalysesState } from "./SampleAnalysesState";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import { SampleAnalyses as SampleAnalysesItem } from "../../../types/irida";
+import {
+  AnalysisState,
+  AnalysisStateType,
+  SampleAnalyses as SampleAnalysesItem,
+} from "../../../types/irida";
 
 const { Search } = Input;
 
@@ -83,7 +87,9 @@ export function SampleAnalyses() {
       dataIndex: "state",
       key: "analysisType",
       width: 100,
-      render: (state: string) => <SampleAnalysesState state={state} />,
+      render: (state: AnalysisStateType) => (
+        <SampleAnalysesState state={state} />
+      ),
     },
   ];
 

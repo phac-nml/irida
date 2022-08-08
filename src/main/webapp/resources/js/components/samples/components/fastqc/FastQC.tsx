@@ -9,7 +9,7 @@ import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { getFastQCDetails } from "../../../../apis/files/sequence-files";
 import { InfoAlert } from "../../../alerts";
 
-const qcEntryTranslations: { [key: string]: any } = {
+const qcEntryTranslations: { [key: string]: string } = {
   UNPROCESSED: i18n("FastQC.sequencingobject.UNPROCESSED"),
   QUEUED: i18n("FastQC.sequencingobject.QUEUED"),
   ERRORED: i18n("FastQC.sequencingobject.ERRORED"),

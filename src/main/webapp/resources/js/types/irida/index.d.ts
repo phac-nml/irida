@@ -109,7 +109,7 @@ declare namespace IRIDA {
     firstFileSize: string;
     processingState: ProcessingState;
     fileType: string;
-    file: any | undefined;
+    file: any | undefined; //TODO: (deep - 08/08/22): Flush this out
     qcEntries: any;
   }
 
@@ -119,7 +119,7 @@ declare namespace IRIDA {
       file: string;
       fileName: string;
       fileRevisionNumber: number;
-      identifier: string | number;
+      identifier: string;
       label: string;
       links: [];
     };
@@ -127,7 +127,7 @@ declare namespace IRIDA {
     firstFileSize: string;
   }
 
-  export type AnalysisState =
+  export type AnalysisStateType =
     | "NEW"
     | "PREPARING"
     | "PREPARED"
@@ -145,6 +145,10 @@ declare namespace IRIDA {
     createdDate: Date;
     id: number;
     name: string;
-    state: AnalysisState;
+    state: AnalysisStateType;
+  }
+
+  interface AnalysisState {
+    state: AnalysisStateType;
   }
 }

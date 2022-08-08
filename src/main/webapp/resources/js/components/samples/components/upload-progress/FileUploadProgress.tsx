@@ -33,7 +33,6 @@ export function FileUploadProgress({
   uploadProgress,
   type,
 }: FileUploadProgressProps): JSX.Element {
-  console.log(files);
   return (
     <div>
       {i18n("SampleFiles.uploadProgress", type)}
