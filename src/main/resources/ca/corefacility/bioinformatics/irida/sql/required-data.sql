@@ -351,7 +351,6 @@ INSERT INTO project_subscription (`created_date`, `project_id`, `user_id`, `emai
 INSERT INTO project_subscription (`created_date`, `project_id`, `user_id`, `email_subscription`) VALUES (now(), 50, 1, 0);
 INSERT INTO project_subscription (`created_date`, `project_id`, `user_id`, `email_subscription`) VALUES (now(), 50, 2, 0);
 INSERT INTO project_subscription (`created_date`, `project_id`, `user_id`, `email_subscription`) VALUES (now(), 50, 3, 0);
->>>>>>> development
 
 -- genome assembly
 INSERT INTO `genome_assembly` (id,created_date) VALUES (1, '2014-07-30 08:24:35');

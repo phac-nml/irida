@@ -14,6 +14,8 @@
 * [UI]: Fixed issue with sorting OAuth clients table in admin panel. See [PR 1342](https://github.com/phac-nml/irida/pull/1342)
 * [UI]: Updated share samples review page to list the actual samples which will not be shared with the target project either due to the same sample identifiers or the same samples names already in the target project. See [PR 1343](https://github.com/phac-nml/irida/pull/1343)
 * [REST]: Updated synchronizing of sample data to remove sequencing objects and assemblies that no longer exist on the remote sample. See [PR 1345](https://github.com/phac-nml/irida/pull/1345)
+* [UI]: Fixed issue with filtering samples by files using a windows encoded text file causing sample name truncation. See [PR 1346](https://github.com/phac-nml/irida/pull/1346)
+* [Developer]: Fixed deleting a project with project subscriptions. See [PR 1348](https://github.com/phac-nml/irida/pull/1348)
 
 ## [22.05.5] - 2022/06/28
 * [UI]: Fixed bug preventing export of project samples table due to invalid url. [PR 1331](https://github.com/phac-nml/irida/pull/1331)
