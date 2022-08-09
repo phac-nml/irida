@@ -14,32 +14,14 @@ const { Text } = Typography;
 export function ShareProject({ projects }) {
   const dispatch = useDispatch();
   const { targetProject } = useSelector((state) => state.shareReducer);
-  const [options, setOptions] = React.useState(() => formatOptions(projects));
-
-  function formatOptions(values) {
-    if (!values) return [];
-    return values.map((project) => ({
-      label: project.name,
-      value: project.identifier,
-    }));
-  }
-
-  React.useEffect(() => {
-    setOptions(
-      projects.map((project) => ({
-        label: project.name,
-        value: project.identifier,
-      }))
-    );
-  }, [projects]);
+  const [selectList, setSelectList] = React.useState(() => projects);
 
   const handleSearch = (value) => {
     const lowerValue = value.toLowerCase();
-    const available = projects.filter((project) =>
+    const filteredProjects = projects.filter((project) =>
       project.name.toLowerCase().includes(lowerValue)
     );
-    const formatted = formatOptions(available);
-    setOptions(formatted);
+    setSelectList(filteredProjects);
   };
 
   function onChange(projectId) {
@@ -47,7 +29,7 @@ export function ShareProject({ projects }) {
     dispatch(setProject(project));
   }
 
-  const new_options = projects.map((project) => (
+  const options = selectList.map((project) => (
     <Select.Option key={project.identifier} value={project.identifier}>
       <>
         <Text>{project.name}</Text>
@@ -72,7 +54,7 @@ export function ShareProject({ projects }) {
         onChange={onChange}
         defaultValue={targetProject ? targetProject.identifier : null}
       >
-        {new_options}
+        {options}
       </Select>
     </Space>
   );
