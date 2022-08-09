@@ -6,7 +6,7 @@ gradle-app.setting
 .gradletasknamecache
 !**/src/main/**/build/
 !**/src/test/**/build/
-*.pem
+*.jks
 
 ### STS ###
 .apt_generated

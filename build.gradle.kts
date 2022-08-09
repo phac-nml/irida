@@ -423,30 +423,10 @@ tasks.named<BootRun>("bootRun") {
     }
 }
 
-task<Exec>("generateRSAKeyPair") {
+task<Exec>("generateJWKKeyStore") {
     workingDir(file("${projectDir}/src/main/resources"))
-    commandLine(listOf("openssl", "genpkey", "-algorithm", "RSA", "-pkeyopt", "rsa_keygen_bits:2048", "-out", "jwk-keypair.pem"))
-    outputs.file(file("${projectDir}/src/main/resources/jwk-keypair.pem"))
-}
-
-task<Exec>("generateRSAPrivateKey") {
-    dependsOn(":generateRSAKeyPair")
-    workingDir(file("${projectDir}/src/main/resources"))
-    commandLine(listOf("openssl", "pkcs8", "-inform", "PEM", "-outform", "PEM", "-nocrypt", "-in", "jwk-keypair.pem", "-out", "jwk-private.pem"))
-    outputs.file(file("${projectDir}/src/main/resources/jwk-private.pem"))
-}
-
-task<Exec>("generateRSAPublicKey") {
-    dependsOn(":generateRSAKeyPair")
-    workingDir(file("${projectDir}/src/main/resources"))
-    commandLine(listOf("openssl", "rsa", "-in", "jwk-keypair.pem", "-pubout", "-out", "jwk-public.pem"))
-    outputs.file(file("${projectDir}/src/main/resources/jwk-public.pem"))
-}
-
-task<DefaultTask>("generateJWK") {
-    dependsOn("generateRSAKeyPair")
-    dependsOn("generateRSAPrivateKey")
-    dependsOn("generateRSAPublicKey")
+    commandLine(listOf("keytool", "-genkeypair", "-alias", "JWK", "-keyalg", "RSA", "-noprompt", "-dname", "CN=irida.bioinformatics.corefacility.ca, OU=ID, O=IRIDA, L=IRIDA, S=IRIDA, C=CA", "-keystore", "jwk-key-store.jks", "-validity", "3650", "-storepass", "SECRET", "-keypass", "SECRET", "-storetype", "PKCS12"))
+    outputs.file(file("${projectDir}/src/main/resources/jwk-key-store.jks"))
 }
 
 openApi {
@@ -460,7 +440,7 @@ tasks.processResources {
         expand(project.properties)
     }
     dependsOn(":buildWebapp")
-    dependsOn(":generateJWK")
+    dependsOn(":generateJWKKeyStore")
 }
 
 tasks.javadoc {

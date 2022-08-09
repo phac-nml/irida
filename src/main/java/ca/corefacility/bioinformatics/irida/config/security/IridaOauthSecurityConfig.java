@@ -1,18 +1,18 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
-import java.security.KeyFactory;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +52,7 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.util.ResourceUtils;
 
 import ca.corefacility.bioinformatics.irida.jackson2.mixin.RoleMixin;
 import ca.corefacility.bioinformatics.irida.jackson2.mixin.TimestampMixin;
@@ -63,8 +64,10 @@ import ca.corefacility.bioinformatics.irida.oauth2.OAuth2ResourceOwnerPasswordAu
 import ca.corefacility.bioinformatics.irida.oauth2.OAuth2ResourceOwnerPasswordAuthenticationProvider;
 import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousAuthenticationFilter;
 
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.PasswordLookup;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
@@ -299,15 +302,19 @@ public class IridaOauthSecurityConfig {
 		private OAuth2AuthorizationService authorizationService;
 
 		@Bean
-		public RSAKey rsaKey(@Value("${oauth2.jwk.rsakey.id}") String rsaKeyId,
-				@Value("${oauth2.jwk.rsakey.private}") String rsaPrivateKey,
-				@Value("${oauth2.jwk.rsakey.public}") String rsaPublicKey) throws Exception {
-			return generateRsa(rsaKeyId, rsaPrivateKey, rsaPublicKey);
-		}
+		public JWKSource<SecurityContext> jwkSource(@Value("${oauth2.jwk.key-store}") String keyStoreLocation,
+				@Value("${oauth2.jwk.key-store-password}") String keyStorePassword) throws KeyStoreException,
+				NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException {
+			KeyStore keyStore = KeyStore.getInstance("JKS");
 
-		@Bean
-		public JWKSource<SecurityContext> jwkSource(RSAKey rsaKey) {
-			JWKSet jwkSet = new JWKSet(rsaKey);
+			keyStore.load(new FileInputStream(ResourceUtils.getFile(keyStoreLocation)), keyStorePassword.toCharArray());
+
+			JWKSet jwkSet = JWKSet.load(keyStore, new PasswordLookup() {
+				@Override
+				public char[] lookupPassword(String name) {
+					return keyStorePassword.toCharArray();
+				}
+			});
 			return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
 		}
 
@@ -339,59 +346,6 @@ public class IridaOauthSecurityConfig {
 			NimbusJwtDecoder decoder = (NimbusJwtDecoder) OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
 			decoder.setJwtValidator(validator);
 			return decoder;
-		}
-
-		private static RSAKey generateRsa(String rsaKeyId, String rsaPrivateKey, String rsaPublicKey) throws Exception {
-			InputStream publicKeyStream;
-			InputStream privateKeyStream;
-
-			if (rsaPrivateKey.startsWith("classpath")) {
-				privateKeyStream = JWKConfig.class.getClassLoader()
-						.getResourceAsStream(rsaPrivateKey.replace("classpath:/", ""));
-			} else {
-				privateKeyStream = new FileInputStream(new File(rsaPrivateKey));
-			}
-
-			if (rsaPublicKey.startsWith("classpath")) {
-				publicKeyStream = JWKConfig.class.getClassLoader()
-						.getResourceAsStream(rsaPublicKey.replace("classpath:/", ""));
-			} else {
-				publicKeyStream = new FileInputStream(new File(rsaPublicKey));
-			}
-
-			RSAPublicKey publicKey = getRSAPublicKeyFromPem(publicKeyStream);
-			RSAPrivateKey privateKey = getRSAPrivateKeyFromPem(privateKeyStream);
-			return new RSAKey.Builder(publicKey).privateKey(privateKey).keyID(rsaKeyId).build();
-		}
-
-		private static RSAPrivateKey getRSAPrivateKeyFromPem(InputStream is) throws Exception {
-			byte[] keyBytes = is.readAllBytes();
-
-			String key = new String(keyBytes);
-			String privateKeyPem = key.replace("-----BEGIN PRIVATE KEY-----", "")
-					.replaceAll(System.lineSeparator(), "")
-					.replace("-----END PRIVATE KEY-----", "");
-
-			byte[] encoded = Base64.getDecoder().decode(privateKeyPem);
-
-			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-			PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
-			return (RSAPrivateKey) keyFactory.generatePrivate(keySpec);
-		}
-
-		private static RSAPublicKey getRSAPublicKeyFromPem(InputStream is) throws Exception {
-			byte[] keyBytes = is.readAllBytes();
-
-			String key = new String(keyBytes);
-			String publicKeyPem = key.replace("-----BEGIN PUBLIC KEY-----", "")
-					.replaceAll(System.lineSeparator(), "")
-					.replace("-----END PUBLIC KEY-----", "");
-
-			byte[] encoded = Base64.getDecoder().decode(publicKeyPem);
-
-			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-			X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
-			return (RSAPublicKey) keyFactory.generatePublic(keySpec);
 		}
 	}
 }
