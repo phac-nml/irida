@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -24,7 +23,6 @@ public class ProjectDeletePageIT extends AbstractIridaUIITChromeDriver {
 	private ProjectDeletePage page;
 
 	@Test
-	@Disabled
 	public void deleteProjectAsAdmin() {
 		LoginPage.loginAsAdmin(driver());
 
@@ -48,7 +46,6 @@ public class ProjectDeletePageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	@Disabled
 	public void deleteProjectAsOwner() {
 		LoginPage.loginAsManager(driver());
 
