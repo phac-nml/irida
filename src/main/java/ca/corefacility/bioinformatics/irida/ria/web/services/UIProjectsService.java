@@ -28,9 +28,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.excep
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.ant.table.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.errors.AjaxItemNotFoundException;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.CreateProjectRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectDetailsResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectModel;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Role;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.UpdateProjectAttributeRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.NewProjectMetadataRestriction;
@@ -55,11 +53,11 @@ public class UIProjectsService {
 	private final ManageLocalProjectSettingsPermission projectMembersPermission;
 	private final MetadataTemplateService metadataTemplateService;
 
-
 	@Autowired
 	public UIProjectsService(ProjectService projectService, SampleService sampleService, MessageSource messageSource,
 			ProjectOwnerPermission projectOwnerPermission,
-			ManageLocalProjectSettingsPermission projectMembersPermission, MetadataTemplateService metadataTemplateService) {
+			ManageLocalProjectSettingsPermission projectMembersPermission,
+			MetadataTemplateService metadataTemplateService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.messageSource = messageSource;
@@ -135,6 +133,20 @@ public class UIProjectsService {
 	}
 
 	/**
+	 * Get a list of projects for a user or admin
+	 *
+	 * @return {@link List} of {@link Project}s
+	 */
+	public ProjectNameListResponse getProjectNameForUser() {
+		List<ProjectNameListItemModel> projects = projectService.getProjects()
+				.stream()
+				.map(project -> new ProjectNameListItemModel(project.getId(), project.getName()))
+				.collect(Collectors.toList());
+
+		return new ProjectNameListResponse(projects);
+	}
+
+	/**
 	 * Get the table contents for the projects listing table for an administrator based on the table request.
 	 *
 	 * @param tableRequest - {@link TableRequest}
@@ -180,7 +192,8 @@ public class UIProjectsService {
 
 			MetadataTemplate defaultTemplateForProject = metadataTemplateService.getDefaultTemplateForProject(project);
 
-			return new ProjectDetailsResponse(project, isAdmin || isOwner, isAdmin || isOwnerAllowRemote, defaultTemplateForProject);
+			return new ProjectDetailsResponse(project, isAdmin || isOwner, isAdmin || isOwnerAllowRemote,
+					defaultTemplateForProject);
 		} catch (EntityNotFoundException e) {
 			throw new AjaxItemNotFoundException(
 					messageSource.getMessage("server.ProjectDetails.project-not-found", new Object[] {}, locale));

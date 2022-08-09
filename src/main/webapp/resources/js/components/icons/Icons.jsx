@@ -50,7 +50,9 @@ import {
   SortDescendingOutlined,
   StopOutlined,
   StrikethroughOutlined,
+  SwapLeftOutlined,
   SwapOutlined,
+  SwapRightOutlined,
   SyncOutlined,
   TableOutlined,
   TeamOutlined,
@@ -167,6 +169,10 @@ export const IconEye = ({ ...props }) => <EyeOutlined {...props} />;
 export const IconStop = ({ ...props }) => <StopOutlined {...props} />;
 
 export const IconSwap = ({ ...props }) => <SwapOutlined {...props} />;
+
+export const IconSwapRight = ({ ...props }) => <SwapRightOutlined {...props} />;
+
+export const IconSwapLeft = ({ ...props }) => <SwapLeftOutlined {...props} />;
 
 export const IconCog = ({ ...props }) => <SettingOutlined {...props} />;
 

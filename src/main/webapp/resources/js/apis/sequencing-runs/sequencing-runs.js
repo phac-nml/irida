@@ -11,7 +11,7 @@ export const sequencingRunsApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL,
   }),
-  tagTypes: ["Run"],
+  tagTypes: ["Run", "Sample"],
   endpoints: (build) => ({
     /*
     Get a sequencing run.
@@ -29,6 +29,22 @@ export const sequencingRunsApi = createApi({
       query: (runId) => ({
         url: `${runId}/sequenceFiles`,
       }),
+      transformResponse(response, meta) {
+        return response.map((file) => {
+          return { ...file, show: true };
+        });
+      },
+    }),
+    /*
+    Create samples from a sequencing run.
+    */
+    createSamples: build.mutation({
+      query: (body) => ({
+        url: `/samples`,
+        body,
+        method: "POST",
+      }),
+      invalidatesTags: ["Sample"],
     }),
     /*
     Delete a sequencing run.
@@ -46,5 +62,6 @@ export const sequencingRunsApi = createApi({
 export const {
   useGetSequencingRunDetailsQuery,
   useGetSequencingRunFilesQuery,
+  useCreateSamplesMutation,
   useDeleteSequencingRunMutation,
 } = sequencingRunsApi;

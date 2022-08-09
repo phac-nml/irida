@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequenceFileDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunModel;
-import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunsListRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISequencingRunService;
 
 /**
@@ -74,6 +71,17 @@ public class SequencingRunAjaxController {
 	public TableResponse<SequencingRunModel> listSequencingRuns(
 			@RequestBody SequencingRunsListRequest sequencingRunsListRequest, Locale locale) {
 		return service.listSequencingRuns(sequencingRunsListRequest, locale);
+	}
+
+	/**
+	 * Update or create new samples with sequence files
+	 *
+	 * @param request - details about the samples
+	 * @return a success message
+	 */
+	@PostMapping("/samples")
+	public ResponseEntity<String> createSamples(@RequestBody CreateSampleRequest request) {
+		return ResponseEntity.ok(service.createSamples(request));
 	}
 
 	/**

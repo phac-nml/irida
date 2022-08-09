@@ -25,8 +25,11 @@ import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.Sequencin
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunModel;
 import ca.corefacility.bioinformatics.irida.ria.web.sequencingRuns.dto.SequencingRunsListRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISequencingRunService;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequenceFileService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingRunService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
@@ -38,6 +41,9 @@ public class UISequencingRunServiceTest {
 	private UISequencingRunService service;
 	private SequencingRunService runService;
 	private SequencingObjectService objectService;
+	private ProjectService projectService;
+	private SampleService sampleService;
+	private SequenceFileService sequenceFileService;
 	private MessageSource messageSource;
 	private User user1, user2;
 	private SequencingRun run1, run2;
@@ -49,8 +55,12 @@ public class UISequencingRunServiceTest {
 	void setUp() {
 		runService = mock(SequencingRunService.class);
 		objectService = mock(SequencingObjectService.class);
+		projectService = mock(ProjectService.class);
+		sampleService = mock(SampleService.class);
+		sequenceFileService = mock(SequenceFileService.class);
 		messageSource = mock(MessageSource.class);
-		service = new UISequencingRunService(runService, objectService, messageSource);
+		service = new UISequencingRunService(runService, objectService, projectService, sampleService,
+				sequenceFileService, messageSource);
 
 		user1 = new User(1L, "mirabel", "mirabel@casita.ca", "Password1!", "Mirabel", "Madrigal", "1234");
 		user2 = new User(2L, "isabela", "isabela@casita.ca", "Password1!", "Isabela", "Madrigal", "5678");
@@ -186,9 +196,9 @@ public class UISequencingRunServiceTest {
 	void getSequencingRunFilesTest() {
 		List<SequenceFileDetails> response = service.getSequencingRunFiles(run1.getId());
 		List<SequenceFileDetails> expectedResponse = new ArrayList<>();
-		expectedResponse.add(new SequenceFileDetails(file1, object1.getId()));
-		expectedResponse.add(new SequenceFileDetails(file2, object2.getId()));
-		expectedResponse.add(new SequenceFileDetails(file3, object2.getId()));
+		expectedResponse.add(new SequenceFileDetails(file1, object1.getId(), object1.getClass().getSimpleName()));
+		expectedResponse.add(new SequenceFileDetails(file2, object2.getId(), object2.getClass().getSimpleName()));
+		expectedResponse.add(new SequenceFileDetails(file3, object2.getId(), object2.getClass().getSimpleName()));
 		assertEquals(expectedResponse, response, "Received the correct sequencing run files response");
 	}
 

@@ -53,7 +53,15 @@ const ClientListingPage = lazy(() =>
 const AdminRemoteApiPage = lazy(() =>
   import("./remote-connections/AdminRemoteApiPage")
 );
-const AdminSequencingRunsPage = lazy(() => import("./AdminSequencingRunsPage"));
+const SequencingRunListPage = React.lazy(() =>
+  import("../../sequencing-runs/components/SequencingRunListPage")
+);
+const SequencingRunDetailsPage = React.lazy(() =>
+  import("../../sequencing-runs/components/SequencingRunDetailsPage")
+);
+const SequencingRunCreateSamplesPage = React.lazy(() =>
+  import("../../sequencing-runs/components/SequencingRunCreateSamplesPage")
+);
 const AnnouncementAdminPage = lazy(() =>
   import("./announcements/AnnouncementAdminPage")
 );
@@ -112,7 +120,15 @@ export default function Admin() {
                   />
                   <Route
                     path={ADMIN.SEQUENCINGRUNS}
-                    element={<AdminSequencingRunsPage />}
+                    element={<SequencingRunListPage />}
+                  />
+                  <Route
+                    path={`${ADMIN.SEQUENCINGRUNS}/:runId`}
+                    element={<SequencingRunDetailsPage />}
+                  />
+                  <Route
+                    path={`${ADMIN.SEQUENCINGRUNS}/:runId/samples`}
+                    element={<SequencingRunCreateSamplesPage />}
                   />
                   <Route
                     path={ADMIN.NCBIEXPORTS}

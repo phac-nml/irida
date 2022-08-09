@@ -80,6 +80,15 @@ public interface ProjectRepository extends IridaJpaRepository<Project, Long>, Pr
 	public List<Project> getRemoteProjects();
 
 	/**
+	 * Get a list of all {@link Project}s for a {@link User}
+	 *
+	 * @param user the user account to load projects for
+	 * @return a list of {@link Project}s
+	 */
+	@Query("FROM Project p WHERE " + PROJECT_MANAGER_PERMISSION)
+	public List<Project> getProjectsForUser(final @Param("forUser") User user);
+
+	/**
 	 * Get a count of all {@link Project}s created within time period
 	 *
 	 * @param createdDate the minimum created date for projects

@@ -239,7 +239,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@LaunchesProjectEvent(UserRoleSetProjectEvent.class)
 	@PreAuthorize("hasPermission(#project, 'canManageLocalProjectSettings')")
-	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role, ProjectMetadataRole metadataRole) {
+	public Join<Project, User> addUserToProject(Project project, User user, ProjectRole role,
+			ProjectMetadataRole metadataRole) {
 		try {
 			ProjectUserJoin join = pujRepository.save(new ProjectUserJoin(project, user, role, metadataRole));
 			projectSubscriptionService.addProjectSubscriptionForProjectAndUser(project, user);
@@ -316,7 +317,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project,'canManageLocalProjectSettings')")
-	public Join<Project, User> updateUserProjectMetadataRole(Project project, User user, ProjectMetadataRole metadataRole) {
+	public Join<Project, User> updateUserProjectMetadataRole(Project project, User user,
+			ProjectMetadataRole metadataRole) {
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, user);
 		if (projectJoinForUser == null) {
 			throw new EntityNotFoundException(
@@ -335,7 +337,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
 	public Join<Project, UserGroup> updateUserGroupProjectRole(Project project, UserGroup userGroup,
 			ProjectRole projectRole, ProjectMetadataRole metadataRole) throws ProjectWithoutOwnerException {
-		final UserGroupProjectJoin projectJoinForUserGroup = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
+		final UserGroupProjectJoin projectJoinForUserGroup = ugpjRepository.findByProjectAndUserGroup(project,
+				userGroup);
 		if (projectJoinForUserGroup == null) {
 			throw new EntityNotFoundException(
 					"Join between this project and group does not exist. Group: " + userGroup + " Project: " + project);
@@ -355,8 +358,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canManageLocalProjectSettings')")
 	public Join<Project, UserGroup> updateUserGroupProjectMetadataRole(Project project, UserGroup userGroup,
-																	   ProjectMetadataRole metadataRole) {
-		final UserGroupProjectJoin projectJoinForUserGroup = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
+			ProjectMetadataRole metadataRole) {
+		final UserGroupProjectJoin projectJoinForUserGroup = ugpjRepository.findByProjectAndUserGroup(project,
+				userGroup);
 		if (projectJoinForUserGroup == null) {
 			throw new EntityNotFoundException(
 					"Join between this project and group does not exist. Group: " + userGroup + " Project: " + project);
@@ -559,7 +563,10 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public List<Project> getProjectsForUserUnique(User user) {
-		final List<Project> projectListUser = pujRepository.getProjectsForUser(user).stream().map(u -> u.getSubject()).collect(Collectors.toList());
+		final List<Project> projectListUser = pujRepository.getProjectsForUser(user)
+				.stream()
+				.map(u -> u.getSubject())
+				.collect(Collectors.toList());
 
 		final List<Project> projectListUserGroup = ugpjRepository.findProjectsByUser(user)
 				.stream()
@@ -567,9 +574,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 				.map(j -> j.getSubject())
 				.collect(Collectors.toList());
 
-		return new ImmutableList.Builder<Project>().addAll(projectListUser)
-				.addAll(projectListUserGroup)
-				.build();
+		return new ImmutableList.Builder<Project>().addAll(projectListUser).addAll(projectListUserGroup).build();
 	}
 
 	/**
@@ -741,6 +746,28 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
 		final PageRequest pr = PageRequest.of(page, count, getOrDefaultSort(sort));
 		return projectRepository.findAll(searchForProjects(search, null, null, loggedIn), pr);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TECHNICIAN')")
+	public List<Project> getProjects() {
+		List<Project> projects;
+		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext()
+				.getAuthentication()
+				.getPrincipal();
+		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
+		boolean isAdmin = loggedIn.getSystemRole()
+				.equals(ca.corefacility.bioinformatics.irida.model.user.Role.ROLE_ADMIN);
+
+		if (isAdmin) {
+			projects = (List<Project>) projectRepository.findAll();
+		} else {
+			projects = projectRepository.getProjectsForUser(loggedIn);
+		}
+		return projects;
 	}
 
 	/**
@@ -1040,7 +1067,6 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		Long projectsCount = projectRepository.countProjectsCreatedInTimePeriod(createdDate);
 		return projectsCount;
 	}
-
 
 	/**
 	 * {@inheritDoc}

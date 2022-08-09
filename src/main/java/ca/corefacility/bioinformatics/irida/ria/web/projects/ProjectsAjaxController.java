@@ -37,7 +37,7 @@ public class ProjectsAjaxController {
 	 * Create a new project.
 	 *
 	 * @param request {@link CreateProjectRequest} containing the name for the project and any other details
-	 * @param locale {@link Locale} for the currently logged-in user
+	 * @param locale  {@link Locale} for the currently logged-in user
 	 * @return Response will contain the created project identifier, or an error message
 	 */
 	@PostMapping("/new")
@@ -45,8 +45,19 @@ public class ProjectsAjaxController {
 		try {
 			return new AjaxCreateItemSuccessResponse(projectsService.createProject(request));
 		} catch (Exception e) {
-			return new AjaxErrorResponse(messageSource.getMessage("server.CreateProject.error", new Object[]{}, locale));
+			return new AjaxErrorResponse(
+					messageSource.getMessage("server.CreateProject.error", new Object[] {}, locale));
 		}
+	}
+
+	/**
+	 * Handle request for getting a list of projects for a user
+	 *
+	 * @return {@link List} of {@link Project}s
+	 */
+	@RequestMapping("/names")
+	public ResponseEntity<AjaxResponse> getProjectNamesForUser() {
+		return ResponseEntity.ok(projectsService.getProjectNameForUser());
 	}
 
 	/**
@@ -72,13 +83,6 @@ public class ProjectsAjaxController {
 	public ResponseEntity<List<Role>> getProjectRoles(Locale locale) {
 		return ResponseEntity.ok(projectsService.getProjectRoles(locale));
 	}
-
-	/**
-	 * Get a list of projects that the user can share sample to.
-	 *
-	 * @param currentId Current project identifier
-	 * @return {@link List} of {@link Project}s
-	 */
 
 	/**
 	 * Get a list of projects that the user can share sample to.

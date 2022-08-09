@@ -12,6 +12,9 @@ const SequencingRunListPage = React.lazy(() =>
 const SequencingRunDetailsPage = React.lazy(() =>
   import("./components/SequencingRunDetailsPage")
 );
+const SequencingRunCreateSamplesPage = React.lazy(() =>
+  import("./components/SequencingRunCreateSamplesPage")
+);
 
 /*
 WEBPACK PUBLIC PATH:
@@ -28,11 +31,15 @@ __webpack_public_path__ = setBaseUrl(`/dist/`);
  */
 render(
   <Provider store={store}>
-    <BrowserRouter basename={setBaseUrl("/sequencing-runs")}>
+    <BrowserRouter basename={setBaseUrl("sequencing-runs")}>
       <React.Suspense fallback={<ContentLoading />}>
         <Routes>
-          <Route path="/" element={<SequencingRunListPage />} />
-          <Route path="/:runId" element={<SequencingRunDetailsPage />} />
+          <Route index element={<SequencingRunListPage />} />
+          <Route path=":runId" element={<SequencingRunDetailsPage />} />
+          <Route
+            path=":runId/samples"
+            element={<SequencingRunCreateSamplesPage />}
+          />
         </Routes>
       </React.Suspense>
     </BrowserRouter>
