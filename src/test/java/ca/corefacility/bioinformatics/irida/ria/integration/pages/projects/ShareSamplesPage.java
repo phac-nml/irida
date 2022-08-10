@@ -11,7 +11,7 @@ import org.openqa.selenium.support.PageFactory;
 import static ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage.waitForTime;
 
 public class ShareSamplesPage {
-	@FindBy(css = ".t-share-project .ant-select-selection-search-input")
+	@FindBy(css = ".t-project-select .ant-select-selection-search-input")
 	private WebElement shareProjectSelect;
 
 	@FindBy(className = "ant-select-dropdown")
@@ -147,7 +147,7 @@ public class ShareSamplesPage {
 	public boolean isSomeSamplesSameIdsWarningDisplayed() {
 		try {
 			return someSamplesSameIdsWarning.isDisplayed();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			return false;
 		}
 	}
@@ -155,7 +155,7 @@ public class ShareSamplesPage {
 	public boolean isSomeSamplesSameNamesWarningDisplayed() {
 		try {
 			return someSamplesSameNamesWarning.isDisplayed();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			return false;
 		}
 	}

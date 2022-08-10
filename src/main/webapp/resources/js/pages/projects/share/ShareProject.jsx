@@ -1,7 +1,8 @@
-import { Select, Space, Tag, Typography } from "antd";
+import { Space, Typography } from "antd";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { ProjectSelect } from "../../../components/project/ProjectSelect";
 import { setProject } from "./shareSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 /**
  * React component for selecting the project to share a sample with.
@@ -12,46 +13,6 @@ import { setProject } from "./shareSlice";
 export function ShareProject({ projects }) {
   const dispatch = useDispatch();
   const { targetProject } = useSelector((state) => state.shareReducer);
-  const [options, setOptions] = React.useState(() => formatOptions(projects));
-
-  function formatOptions(values) {
-    if (!values) return [];
-    return values.map((project) => ({
-      label: (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            width: "100%",
-          }}
-        >
-          <Typography.Text ellipsis={{ tooltip: true }}>
-            {project.name}
-          </Typography.Text>
-          <Tag style={{ lineHeight: "35px" }}>
-            {i18n("ShareProject.label.id", project.identifier)}
-          </Tag>
-        </div>
-      ),
-      value: project.identifier,
-      selected: project.name,
-    }));
-  }
-
-  React.useEffect(() => {
-    setOptions(formatOptions(projects));
-  }, [projects]);
-
-  const handleSearch = (value) => {
-    const lowerValue = value.toLowerCase();
-    const available = projects.filter(
-      (project) =>
-        project.name.toLowerCase().includes(lowerValue) ||
-        project.identifier === value
-    );
-    const formatted = formatOptions(available);
-    setOptions(formatted);
-  };
 
   function onChange(projectId) {
     const project = projects.find((p) => p.identifier === projectId);
@@ -63,18 +24,10 @@ export function ShareProject({ projects }) {
       <Typography.Title level={5}>
         {i18n("ShareSamples.projects")}
       </Typography.Title>
-      <Select
-        optionLabelProp="selected"
-        autoFocus
-        showSearch
-        size="large"
-        style={{ width: `100%` }}
-        options={options}
-        className="t-share-project"
-        filterOption={false}
-        onSearch={handleSearch}
+      <ProjectSelect
+        projects={projects}
         onChange={onChange}
-        defaultValue={targetProject ? targetProject.identifier : null}
+        defaultValue={targetProject?.identifier}
       />
     </Space>
   );
