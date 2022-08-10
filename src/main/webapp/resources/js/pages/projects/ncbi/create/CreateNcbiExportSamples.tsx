@@ -13,11 +13,11 @@ import {
   Form,
   FormInstance,
   Input,
-  Radio,
   Row,
   Select,
   Space,
 } from "antd";
+import { NamePath } from "antd/lib/form/interface";
 import React from "react";
 import { useLoaderData } from "react-router-dom";
 import { LoaderValues, SampleRecord, SampleRecords } from "./CreateNcbiExport";
@@ -214,13 +214,6 @@ function SampleValidIcon({ status }: { status: boolean }) {
   );
 }
 
-type SampleFormField = [
-  "samples",
-  string,
-  keyof SampleRecord,
-  (keyof SampleRecord["files"])?
-];
-
 function CreateNcbiExportSamples({
   form,
 }: {
@@ -237,7 +230,7 @@ function CreateNcbiExportSamples({
   );
 
   const checkStatus = (sample: SampleRecord, index: number): void => {
-    const fields: Array<SampleFormField> = [
+    const fields: Array<NamePath> = [
       ["samples", sample.name, "bioSample"],
       ["samples", sample.name, "libraryName"],
       ["samples", sample.name, "libraryStrategy"],
@@ -249,7 +242,7 @@ function CreateNcbiExportSamples({
       ["samples", sample.name, "files", "pairs"],
     ];
 
-    const touched: Array<SampleFormField> = [];
+    const touched: Array<NamePath> = [];
     let hasUntouched = false;
 
     fields.map((field) => {
