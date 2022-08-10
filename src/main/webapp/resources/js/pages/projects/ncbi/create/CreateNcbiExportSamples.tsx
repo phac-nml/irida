@@ -249,9 +249,6 @@ function CreateNcbiExportSamples({
       ["samples", sample.name, "files", "pairs"],
     ];
 
-    // TODO (Josh - 7/14/22): Files validation not working yet, must check to see if at least of
-    // of the pairs or singles is checked.
-
     const touched: Array<SampleFormField> = [];
     let hasUntouched = false;
 
