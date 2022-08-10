@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidatio
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIShareSamplesException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.DownloadRequest;
@@ -206,4 +207,16 @@ public class ProjectSamplesAjaxController {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new AjaxErrorResponse(e.getLocalizedMessage()));
 		}
 	}
+
+	/**
+	 * Validate a list of samples names
+	 *
+	 * @param request {@link ValidateSampleNamesRequest} details about the sample names to validate
+	 * @return a list of validated sample names
+	 */
+	@PostMapping("/validate")
+	public ResponseEntity<AjaxResponse> validateSampleNames(@RequestBody ValidateSampleNamesRequest request) {
+		return ResponseEntity.ok(uiSampleService.validateSampleNames(request));
+	}
+
 }

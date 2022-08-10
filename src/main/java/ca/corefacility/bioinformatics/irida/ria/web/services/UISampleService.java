@@ -46,6 +46,9 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchCriteria;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchOperation;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNameModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIShareSamplesException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntSearch;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
@@ -153,8 +156,8 @@ public class UISampleService {
 	 * @return list of paired end sequence files
 	 */
 	public List<SequencingObject> getPairedSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService
-				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
+		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, SequenceFilePair.class);
 		// add project to qc entries and filter any unavailable entries
 		List<SequencingObject> filePairs = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : filePairJoins) {
@@ -174,8 +177,8 @@ public class UISampleService {
 	 * @return list of single end sequence files
 	 */
 	public List<SequencingObject> getSingleEndSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService
-				.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
+		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, SingleEndSequenceFile.class);
 
 		List<SequencingObject> singles = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : singleFileJoins) {
@@ -194,8 +197,8 @@ public class UISampleService {
 	 * @return list of fast5 sequence files
 	 */
 	public List<SequencingObject> getFast5FilesForSample(Sample sample) {
-		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService
-				.getSequencesForSampleOfType(sample, Fast5Object.class);
+		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, Fast5Object.class);
 		return fast5FileJoins.stream().map(SampleSequencingObjectJoin::getObject).collect(Collectors.toList());
 	}
 
@@ -279,8 +282,8 @@ public class UISampleService {
 			try {
 				projectService.shareSamples(currentProject, targetProject, samples, !request.getLocked());
 			} catch (Exception e) {
-				throw new UIShareSamplesException(
-						messageSource.getMessage("server.ShareSamples.copy-error", new Object[] { targetProject.getLabel() }, locale));
+				throw new UIShareSamplesException(messageSource.getMessage("server.ShareSamples.copy-error",
+						new Object[] { targetProject.getLabel() }, locale));
 			}
 		}
 
@@ -295,6 +298,18 @@ public class UISampleService {
 					.ifPresent(field -> metadataTemplateService.setMetadataRestriction(targetProject, field,
 							ProjectMetadataRole.fromString(restriction.getRestriction())));
 		}
+	}
+
+	/**
+	 * Validate a list of sample names
+	 *
+	 * @param request {@link ValidateSampleNamesRequest} details about the sample names to validate
+	 * @return a list of validated sample names
+	 */
+	public ValidateSampleNamesResponse validateSampleNames(ValidateSampleNamesRequest request) {
+		List<ValidateSampleNameModel> samples = request.getSamples();
+		System.out.println("HERE");
+		return new ValidateSampleNamesResponse(samples);
 	}
 
 	/**
@@ -435,15 +450,16 @@ public class UISampleService {
 
 			try {
 				for (Sample sample : samples) {
-					Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService
-							.getSequencingObjectsForSample(sample);
+					Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService.getSequencingObjectsForSample(
+							sample);
 
 					for (SampleSequencingObjectJoin join : sequencingObjectsForSample) {
 						for (SequenceFile file : join.getObject().getFiles()) {
 							Path path = file.getFile();
 
-							String fileName = project.getName() + "/" + sample.getSampleName() + "/"
-									+ path.getFileName().toString();
+							String fileName =
+									project.getName() + "/" + sample.getSampleName() + "/" + path.getFileName()
+											.toString();
 							if (usedFileNames.contains(fileName)) {
 								fileName = handleDuplicate(fileName, usedFileNames);
 							}
@@ -669,15 +685,9 @@ public class UISampleService {
 			SampleObject sample = item.getSample();
 			ProjectObject project = item.getProject();
 			String[] row = {
-					sample.getSampleName(),
-					sample.getId().toString(),
-					StringUtils.join(item.getQuality(), "; "),
-					sample.getOrganism(),
-					project.getName(),
-					project.getId().toString(),
-					sample.getCollectedBy(),
-					sample.getCreatedDate().toString(),
-					sample.getModifiedDate().toString() };
+					sample.getSampleName(), sample.getId().toString(), StringUtils.join(item.getQuality(), "; "),
+					sample.getOrganism(), project.getName(), project.getId().toString(), sample.getCollectedBy(),
+					sample.getCreatedDate().toString(), sample.getModifiedDate().toString() };
 			results.add(row);
 		}
 
