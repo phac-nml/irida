@@ -164,7 +164,8 @@ public class IridaAuthenticationSecurityConfig {
             ldapContextSource.getReadOnlyContext();
         } catch (Exception e) {
             logger.error("Failed to connect to LDAP - " + e.getMessage());
-            throw new IllegalStateException("Failed to connect to LDAP - " + e.getMessage(), e);
+            //todo: retest all this stuff manually
+//            throw new IllegalStateException("Failed to connect to LDAP - " + e.getMessage(), e);
         }
         return ldapContextSource;
     }

@@ -1,0 +1,33 @@
+dn: ou=Users, o=phac
+ou: User
+description: MyUser
+objectClass: top
+objectClass: organizationalunit
+
+dn: cn=123456, ou=Users, o=phac
+objectClass: top
+objectClass: person
+cn: 123456
+sn: 823456
+
+dn: cn=mrtest, ou=Users, o=phac
+objectClass: top
+objectClass: person
+cn: mrtest
+sn: something
+userPassword: Password1!
+
+dn: cn=Jane Doe,ou=Users,o=phac
+objectClass: person
+objectClass: top
+cn: Jane Doe
+sn: Doe
+description: 19650324000000Z
+employeeNumber: 12
+givenName: Jane
+mail: jane@example.com
+telephoneNumber: 169-637-3314
+telephoneNumber: 907-547-9114
+uid: jdoe
+userPassword:: e1NTSEF9ZnBDWmVWZFlVZDM2RjgwQjRaY3p2YTc2MnhCQmJvZ3FFSHZ5Nnc9P
+ Q==
