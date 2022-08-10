@@ -229,7 +229,11 @@ function CreateNcbiExportSamples({
   const { samples }: { samples: SampleRecords } = useLoaderData();
   const values = Object.values(samples);
   const [validationStatus, setValidationStatus] = React.useState<boolean[]>(
-    () => values.map(() => false)
+    () =>
+      values.map(
+        (sample) =>
+          sample.files.singles.length > 0 || sample.files.pairs.length > 0
+      )
   );
 
   const checkStatus = (sample: SampleRecord, index: number): void => {
