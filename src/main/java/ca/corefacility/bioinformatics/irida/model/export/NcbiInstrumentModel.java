@@ -80,4 +80,13 @@ public enum NcbiInstrumentModel {
 	public String getModel() {
 		return model;
 	}
+
+	public static NcbiInstrumentModel fromString(String model) {
+		for (NcbiInstrumentModel m : NcbiInstrumentModel.values()) {
+			if (m.getModel().equals(model)) {
+				return m;
+			}
+		}
+		return null;
+	}
 }

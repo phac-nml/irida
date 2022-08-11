@@ -42,7 +42,7 @@ public class NcbiSubmissionSample {
 	}
 
 	public void setLibrarySelection(String librarySelection) {
-		this.librarySelection = NcbiLibrarySelection.valueOf(librarySelection);
+		this.librarySelection = NcbiLibrarySelection.fromString(librarySelection);
 	}
 
 	public NcbiLibrarySource getLibrarySource() {
@@ -50,7 +50,7 @@ public class NcbiSubmissionSample {
 	}
 
 	public void setLibrarySource(String librarySource) {
-		this.librarySource = NcbiLibrarySource.valueOf(librarySource);
+		this.librarySource = NcbiLibrarySource.fromString(librarySource);
 	}
 
 	public NcbiLibraryStrategy getLibraryStrategy() {
@@ -58,7 +58,7 @@ public class NcbiSubmissionSample {
 	}
 
 	public void setLibraryStrategy(String libraryStrategy) {
-		this.libraryStrategy = NcbiLibraryStrategy.valueOf(libraryStrategy);
+		this.libraryStrategy = NcbiLibraryStrategy.fromString(libraryStrategy);
 	}
 
 	public String getLibraryConstructionProtocol() {
@@ -74,7 +74,7 @@ public class NcbiSubmissionSample {
 	}
 
 	public void setInstrumentModel(String instrumentModel) {
-		this.instrumentModel = NcbiInstrumentModel.valueOf(instrumentModel);
+		this.instrumentModel = NcbiInstrumentModel.fromString(instrumentModel);
 	}
 
 	public List<Long> getPairs() {
