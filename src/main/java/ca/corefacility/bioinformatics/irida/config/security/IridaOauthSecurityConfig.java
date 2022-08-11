@@ -96,7 +96,7 @@ public class IridaOauthSecurityConfig {
 		JwtDecoder jwtDecoder;
 
 		@Bean
-		@Order(Ordered.HIGHEST_PRECEDENCE + 2)
+		@Order(Ordered.HIGHEST_PRECEDENCE + 2) // lower precedence by 2 (i.e. apply this SecurityFilterChain last)
 		public SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http) throws Exception {
 			http.antMatcher("/api/**")
 					.authorizeRequests()
@@ -157,7 +157,7 @@ public class IridaOauthSecurityConfig {
 
 		// @formatter:off
 		@Bean
-		@Order(Ordered.HIGHEST_PRECEDENCE)
+		@Order(Ordered.HIGHEST_PRECEDENCE) // apply this SecurityFilterChain first
 		public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
 			OAuth2AuthorizationServerConfigurer<HttpSecurity> authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer<>();
 
