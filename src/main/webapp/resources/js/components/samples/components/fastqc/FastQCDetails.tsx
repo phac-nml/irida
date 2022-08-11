@@ -1,8 +1,7 @@
 import React, { CSSProperties } from "react";
-import { Col, List, Row } from "antd";
-import { RootStateOrAny, useSelector } from "react-redux";
+import { Col, List, Row, Spin } from "antd";
+import { useAppSelector } from "../../../../hooks/useState";
 import { formatDate } from "../../../../utilities/date-utilities";
-import { ContentLoading } from "../../../loader";
 
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
@@ -15,8 +14,8 @@ const DEFAULT_HEIGHT = 600;
  * @constructor
  */
 export function FastQCDetails() {
-  const { loading, file, fastQC } = useSelector(
-    (state: RootStateOrAny) => state.fastQCReducer
+  const { loading, file, fastQC } = useAppSelector(
+    (state) => state.fastQCReducer
   );
 
   // List details for file
@@ -103,10 +102,7 @@ export function FastQCDetails() {
     <>
       {loading ? (
         <div>
-          <ContentLoading
-            message={i18n("FastQC.fetchingDetails")}
-            props={undefined}
-          />
+          <Spin />
         </div>
       ) : (
         <Row gutter={16}>

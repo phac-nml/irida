@@ -3,9 +3,10 @@ import React from "react";
 import { useAddSampleMetadataMutation } from "../../../apis/samples/samples";
 import { useResetFormOnCloseModal } from "../../../hooks";
 import { useMetadataRoles } from "../../../contexts/metadata-roles-context";
-const { Title } = Typography;
 import { addSampleMetadataField } from "../sampleSlice";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
+
+const { Title } = Typography;
 
 export interface AddNewMetadataProps {
   children: React.ReactElement;
@@ -32,13 +33,11 @@ export interface MetadataRoles {
  * @constructor
  */
 export function AddNewMetadata({ children }: AddNewMetadataProps): JSX.Element {
-  const { sample, projectId } = useSelector(
-    (state: RootStateOrAny) => state.sampleReducer
-  );
-  const [visible, setVisible] = React.useState(false);
+  const { sample, projectId } = useAppSelector((state) => state.sampleReducer);
+  const [visible, setVisible] = React.useState<boolean>(false);
   const [addSampleMetadata] = useAddSampleMetadataMutation();
   const { roles: metadataRoles } = useMetadataRoles();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const [form] = Form.useForm();
   useResetFormOnCloseModal({

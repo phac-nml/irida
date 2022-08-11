@@ -103,16 +103,20 @@ export const fetchUpdatedSeqObjectsDelay = 30000; // 30 seconds
 /**
  * Set up the initial state.
  */
-const initialState = (() => {
-  const singles: SampleSequencingObject[] = [];
-  const paired: SampleSequencingObject[] = [];
-  const fast5: SampleSequencingObject[] = [];
-  const assemblies: SampleGenomeAssembly[] = [];
-
+const initialState: {
+  loading: boolean;
+  files: {
+    singles?: SampleSequencingObject[];
+    paired?: SampleSequencingObject[];
+    fast5?: SampleSequencingObject[];
+    assemblies?: SampleGenomeAssembly[];
+  };
+  concatenateSelected: SequencingObject[];
+} = (() => {
   return {
-    files: { singles, paired, fast5, assemblies },
+    files: { singles: [], paired: [], fast5: [], assemblies: [] },
     loading: true,
-    concatenateSelected: [] as SequencingObject[],
+    concatenateSelected: [],
   };
 })();
 
@@ -155,10 +159,10 @@ const sampleFilesSlice = createSlice({
     builder.addCase(addToAssemblyFiles, (state, action) => {
       const newAssemblies = action.payload.assemblies;
 
-      if (!state.files["assemblies"]) {
-        state.files.assemblies = [];
-      }
       newAssemblies.map((newAssembly: SampleGenomeAssembly) => {
+        if (!state.files["assemblies"]) {
+          state.files.assemblies = [];
+        }
         state.files.assemblies = [...state.files.assemblies, newAssembly];
       });
     });
@@ -180,7 +184,7 @@ const sampleFilesSlice = createSlice({
       if (updatedSeqObjects.paired.length) {
         updatedSeqObjects.paired.map(
           (updatedPairedObj: SampleSequencingObject) => {
-            state.files.paired = state.files.paired.map(
+            state.files.paired = state.files.paired?.map(
               (currentPairedObj: SampleSequencingObject) =>
                 currentPairedObj.fileInfo.identifier ===
                 updatedPairedObj.fileInfo.identifier
@@ -200,7 +204,7 @@ const sampleFilesSlice = createSlice({
       if (updatedSeqObjects.singles.length) {
         updatedSeqObjects.singles.map(
           (updatedSingleEndFileObj: SampleSequencingObject) => {
-            state.files.singles = state.files.singles.map(
+            state.files.singles = state.files.singles?.map(
               (currentSingleFileObj: SampleSequencingObject) =>
                 currentSingleFileObj.fileInfo.identifier ===
                 updatedSingleEndFileObj.fileInfo.identifier
@@ -219,7 +223,7 @@ const sampleFilesSlice = createSlice({
       if (updatedSeqObjects.fast5.length) {
         updatedSeqObjects.fast5.map(
           (updatedFast5FileObj: SampleSequencingObject) => {
-            state.files.fast5 = state.files.fast5.map(
+            state.files.fast5 = state.files.fast5?.map(
               (currentFast5FileObj: SampleSequencingObject) =>
                 currentFast5FileObj.fileInfo.identifier ===
                 updatedFast5FileObj.fileInfo.identifier
@@ -249,8 +253,6 @@ const sampleFilesSlice = createSlice({
           if (fileTypes.paired.length) {
             state.files.paired = fileTypes.paired;
           } else {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             delete state.files["paired"];
           }
         }
@@ -264,8 +266,6 @@ const sampleFilesSlice = createSlice({
           if (fileTypes.singles.length) {
             state.files.singles = fileTypes.singles;
           } else {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             delete state.files["singles"];
           }
         }
@@ -279,8 +279,6 @@ const sampleFilesSlice = createSlice({
           if (fileTypes.fast5.length) {
             state.files.fast5 = fileTypes.fast5;
           } else {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             delete state.files["fast5"];
           }
         }
@@ -294,8 +292,6 @@ const sampleFilesSlice = createSlice({
           if (fileTypes.assemblies.length) {
             state.files.assemblies = fileTypes.assemblies;
           } else {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             delete state.files["assemblies"];
           }
         }

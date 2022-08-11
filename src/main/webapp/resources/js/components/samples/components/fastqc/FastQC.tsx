@@ -1,13 +1,13 @@
 import { Button, Modal, Space, Typography } from "antd";
 import React from "react";
 import { FastQCMenu } from "./FastQCMenu";
-
-const { Text } = Typography;
 import { IconArrowLeft } from "../../../icons/Icons";
 import { clearFastQCData, setFastQCDetails } from "./fastQCSlice";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../../../hooks/useState";
 import { getFastQCDetails } from "../../../../apis/files/sequence-files";
 import { InfoAlert } from "../../../alerts";
+
+const { Text } = Typography;
 
 const qcEntryTranslations: { [key: string]: string } = {
   UNPROCESSED: i18n("FastQC.sequencingobject.UNPROCESSED"),
@@ -22,7 +22,7 @@ const qcEntryTranslations: { [key: string]: string } = {
  * @constructor
  */
 export function FastQC() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const {
     fileLabel,
@@ -31,7 +31,7 @@ export function FastQC() {
     fileId,
     fastQC,
     processingState,
-  } = useSelector((state: RootStateOrAny) => state.fastQCReducer);
+  } = useAppSelector((state) => state.fastQCReducer);
 
   React.useEffect(() => {
     getFastQCDetails(sequencingObjectId, fileId).then(
@@ -46,10 +46,6 @@ export function FastQC() {
       }
     );
   }, [sequencingObjectId, fileId]);
-
-  const textLevel = {
-    level: 3,
-  };
 
   return (
     <Modal
@@ -68,7 +64,7 @@ export function FastQC() {
             className="t-fastqc-modal-close"
             icon={<IconArrowLeft />}
           />
-          <Text {...textLevel} strong className="t-fastqc-modal-file-name">
+          <Text strong className="t-fastqc-modal-file-name">
             {fileLabel}
           </Text>
         </Space>
@@ -82,7 +78,9 @@ export function FastQC() {
       <div style={{ margin: 24 }}>
         {fastQC !== null ? (
           <FastQCMenu />
-        ) : fastQC === null && processingState !== "FINISHED" ? (
+        ) : fastQC === null &&
+          processingState !== "" &&
+          processingState !== "FINISHED" ? (
           <InfoAlert message={qcEntryTranslations[processingState]} />
         ) : (
           <InfoAlert

@@ -1,6 +1,10 @@
 import { createAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchMetadataForSample } from "../../apis/samples/samples";
-import { Sample } from "../../types/irida";
+import {
+  Sample,
+  SampleGenomeAssembly,
+  SampleSequencingObject,
+} from "../../types/irida";
 
 /**
  * Action to set the target sample
@@ -119,32 +123,29 @@ export const updateDetails = createAction(
  * Set up the initial state.
  */
 const initialState: {
-  entry: null;
-  metadata: any[];
-  field: null;
+  entry: string;
+  metadata: Record<string, string>[];
+  field: string;
   editModalVisible: boolean;
   restriction: string;
   modifiable: boolean;
-  projectName: null;
+  projectName: string;
   loading: boolean;
-  sample: {
-    defaultSequencingObject: number | null;
-    defaultGenomeAssembly: number | null;
-  };
-  projectId: null;
-  fieldId: null;
-  entryId: null;
+  sample: Sample;
+  projectId: number;
+  fieldId: number;
+  entryId: number;
 } = (() => {
   return {
-    sample: { defaultSequencingObject: null, defaultGenomeAssembly: null },
+    sample: {} as Sample,
     modifiable: false,
-    projectId: null,
-    projectName: null,
+    projectId: 0,
+    projectName: "",
     editModalVisible: false,
-    field: null,
-    fieldId: null,
-    entryId: null,
-    entry: null,
+    field: "",
+    fieldId: 0,
+    entryId: 0,
+    entry: "",
     restriction: "LEVEL_1",
     metadata: [],
     loading: true,
@@ -230,8 +231,6 @@ const sampleSlice = createSlice({
     });
 
     builder.addCase(updateDetails, (state, action) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       state.sample[action.payload.field] = action.payload.value;
     });
   },

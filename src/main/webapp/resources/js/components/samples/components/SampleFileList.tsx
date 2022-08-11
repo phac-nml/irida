@@ -2,7 +2,7 @@ import React from "react";
 import { notification, Space } from "antd";
 import { useRemoveSampleFilesMutation } from "../../../apis/samples/samples";
 import { removeFileObjectFromSample } from "../sampleFilesSlice";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { setDefaultSequencingObject } from "../sampleSlice";
 import { GenomeAssemblyList } from "./GenomeAssemblyList";
 import { SequencingObjectList } from "./SequencingObjectList";
@@ -14,15 +14,11 @@ import { SequencingObjectList } from "./SequencingObjectList";
  * @constructor
  */
 export function SampleFileList() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [removeSampleFilesFromSample] = useRemoveSampleFilesMutation();
 
-  const { sample } = useSelector(
-    (state: RootStateOrAny) => state.sampleReducer
-  );
-  const { files } = useSelector(
-    (state: RootStateOrAny) => state.sampleFilesReducer
-  );
+  const { sample } = useAppSelector((state) => state.sampleReducer);
+  const { files } = useAppSelector((state) => state.sampleFilesReducer);
 
   /*
   Remove sequencing objects and/or genome assembly objects from sample
@@ -31,7 +27,7 @@ export function SampleFileList() {
     fileObjectId,
     type,
   }: {
-    fileObjectId: string;
+    fileObjectId: number;
     type: string;
   }) => {
     removeSampleFilesFromSample({
@@ -44,7 +40,7 @@ export function SampleFileList() {
         notification.success({ message });
         dispatch(removeFileObjectFromSample({ fileObjectId, type }));
 
-        if (sample.defaultsequencingObject?.identifier === fileObjectId) {
+        if (sample.defaultSequencingObject?.identifier === fileObjectId) {
           dispatch(setDefaultSequencingObject(null));
         }
       })

@@ -8,8 +8,8 @@ const { Dragger } = Upload;
 export interface DragUploadProps {
   uploadText: string;
   uploadHint: string;
-  options: any;
-  props: any;
+  options: Record<string, unknown>;
+  props: Record<string, unknown>;
 }
 /**
  * React component for rendering the drag and drop upload functionality.

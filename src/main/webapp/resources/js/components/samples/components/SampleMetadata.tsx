@@ -17,7 +17,7 @@ import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context"
 import { EditMetadata } from "./EditMetadata";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import {
   fetchSampleMetadata,
   removeSampleMetadataField,
@@ -39,10 +39,10 @@ export function SampleMetadata() {
     projectId,
     metadata,
     loading,
-  } = useSelector((state: RootStateOrAny) => state.sampleReducer);
+  } = useAppSelector((state) => state.sampleReducer);
 
   const [removeSampleMetadata] = useRemoveSampleMetadataMutation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   React.useEffect(() => {
     dispatch(
@@ -121,7 +121,10 @@ export function SampleMetadata() {
                 item.metadataTemplateField
               )}
               onConfirm={() =>
-                removeMetadata(item.metadataTemplateField, item.entryId)
+                removeMetadata(
+                  item.metadataTemplateField,
+                  parseInt(item.entryId)
+                )
               }
               okText="Confirm"
             >

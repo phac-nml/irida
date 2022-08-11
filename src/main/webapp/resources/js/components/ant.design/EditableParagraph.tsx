@@ -6,9 +6,9 @@ import { blue6 } from "../../styles/colors";
 import { SPACE_XS } from "../../styles/spacing";
 
 export interface EditableParagraphProps {
-  value: string;
+  value: string | Date;
   valueClassName: string;
-  children: React.ReactNode;
+  children: React.ReactElement;
 }
 
 /**

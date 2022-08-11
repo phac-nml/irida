@@ -8,7 +8,7 @@ import {
   Typography,
 } from "antd";
 import React from "react";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { useUpdateSampleMetadataMutation } from "../../../apis/samples/samples";
 import { useResetFormOnCloseModal } from "../../../hooks";
 import { useMetadataRoles } from "../../../contexts/metadata-roles-context";
@@ -30,7 +30,7 @@ export interface MetadataRoles {
  * @constructor
  */
 export function EditMetadata() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [updateSampleMetadata] = useUpdateSampleMetadataMutation();
   const { roles: metadataRoles } = useMetadataRoles();
   const {
@@ -42,7 +42,7 @@ export function EditMetadata() {
     restriction,
     sample,
     projectId,
-  } = useSelector((state: RootStateOrAny) => state.sampleReducer);
+  } = useAppSelector((state) => state.sampleReducer);
 
   const [form] = Form.useForm();
 

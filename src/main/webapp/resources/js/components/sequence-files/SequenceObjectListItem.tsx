@@ -11,10 +11,10 @@ import { BORDERED_LIGHT } from "../../styles/borders";
 
 import { FastQC } from "../samples/components/fastqc/FastQC";
 import { setFastQCModalData } from "../samples/components/fastqc/fastQCSlice";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
-import {SampleSequencingObject} from "../../types/irida";
+import { useAppDispatch, useAppSelector } from "../../hooks/useState";
+import { SampleSequencingObject } from "../../types/irida";
 
-const qcEntryTranslations: {[key: string]: any} = {
+const qcEntryTranslations: { [key: string]: any } = {
   COVERAGE: i18n("SequenceObjectListItem.qcEntry.COVERAGE"),
   PROCESSING: i18n("SequenceObjectListItem.qcEntry.PROCESSING"),
 };
@@ -50,9 +50,9 @@ export function SequenceObjectListItem({
     ? sequenceObject.file
     : sequenceObject;
 
-  const dispatch = useDispatch();
-  const { fastQCModalVisible, sequencingObjectId, fileId } = useSelector(
-    (state: RootStateOrAny) => state.fastQCReducer
+  const dispatch = useAppDispatch();
+  const { fastQCModalVisible, sequencingObjectId, fileId } = useAppSelector(
+    (state) => state.fastQCReducer
   );
 
   /*
@@ -67,7 +67,11 @@ export function SequenceObjectListItem({
   /*
    Function to display file processing status
    */
-  const getQcEntries = (entry: { status: string; type: string | number; message: boolean | null | undefined; }) => {
+  const getQcEntries = (entry: {
+    status: string;
+    type: string | number;
+    message: boolean | null | undefined;
+  }) => {
     return (
       <Tag
         key={`file-${obj.identifier}-qc-entry-status`}
@@ -256,9 +260,15 @@ export function SequenceObjectListItem({
         {displayFileProcessingStatus && sequenceObject.qcEntries?.length ? (
           <List.Item key={`qc-entry-${obj.identifier}`}>
             <List.Item.Meta
-              title={sequenceObject.qcEntries.map((entry: { status: string; type: string | number; message: boolean | null | undefined; }) => {
-                return getQcEntries(entry);
-              })}
+              title={sequenceObject.qcEntries.map(
+                (entry: {
+                  status: string;
+                  type: string | number;
+                  message: boolean | null | undefined;
+                }) => {
+                  return getQcEntries(entry);
+                }
+              )}
             />
           </List.Item>
         ) : null}

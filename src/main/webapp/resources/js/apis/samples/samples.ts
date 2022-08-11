@@ -143,8 +143,16 @@ export const fetchMetadataForSample = async ({
       setBaseUrl(`${URL}/${sampleId}/metadata?projectId=${projectId}`)
     );
     return data;
-  } catch (e) {
-    return Promise.reject();
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        return Promise.reject(error.response.data.error);
+      } else {
+        return Promise.reject(error.message);
+      }
+    } else {
+      return Promise.reject("An unexpected error occurred");
+    }
   }
 };
 
@@ -166,8 +174,16 @@ export async function fetchSampleFiles({
       `${URL}/${sampleId}/files${projectId && `?projectId=${projectId}`}`
     );
     return response.data;
-  } catch (e: any) {
-    return Promise.reject(e.response.data);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        return Promise.reject(error.response.data.error);
+      } else {
+        return Promise.reject(error.message);
+      }
+    } else {
+      return Promise.reject("An unexpected error occurred");
+    }
   }
 }
 
@@ -180,8 +196,16 @@ export async function fetchSampleAnalyses({ sampleId }: { sampleId: number }) {
   try {
     const response = await axios.get(`${URL}/${sampleId}/analyses`);
     return response.data;
-  } catch (e: any) {
-    return Promise.reject(e.response.data);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        return Promise.reject(error.response.data.error);
+      } else {
+        return Promise.reject(error.message);
+      }
+    } else {
+      return Promise.reject("An unexpected error occurred");
+    }
   }
 }
 
@@ -199,7 +223,7 @@ export async function fetchUpdatedSequencingObjects({
 }: {
   sampleId: number;
   projectId: number;
-  sequencingObjectIds: string[];
+  sequencingObjectIds: number[];
 }) {
   try {
     const response = await axios.get(
@@ -208,8 +232,16 @@ export async function fetchUpdatedSequencingObjects({
       }`
     );
     return response.data;
-  } catch (e: any) {
-    return Promise.reject(e.response.data);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        return Promise.reject(error.response.data.error);
+      } else {
+        return Promise.reject(error.message);
+      }
+    } else {
+      return Promise.reject("An unexpected error occurred");
+    }
   }
 }
 
@@ -274,8 +306,16 @@ export async function uploadSequenceFiles({
       config
     );
     return response.data;
-  } catch (e: any) {
-    return Promise.reject(e.response.data);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        return Promise.reject(error.response.data.error);
+      } else {
+        return Promise.reject(error.message);
+      }
+    } else {
+      return Promise.reject("An unexpected error occurred");
+    }
   }
 }
 
@@ -302,8 +342,16 @@ export async function uploadAssemblyFiles({
       config
     );
     return response.data;
-  } catch (e: any) {
-    return Promise.reject(e.response.data);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        return Promise.reject(error.response.data.error);
+      } else {
+        return Promise.reject(error.message);
+      }
+    } else {
+      return Promise.reject("An unexpected error occurred");
+    }
   }
 }
 
@@ -330,7 +378,15 @@ export async function uploadFast5Files({
       config
     );
     return response.data;
-  } catch (e: any) {
-    return Promise.reject(e.response.data);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        return Promise.reject(error.response.data.error);
+      } else {
+        return Promise.reject(error.message);
+      }
+    } else {
+      return Promise.reject("An unexpected error occurred");
+    }
   }
 }

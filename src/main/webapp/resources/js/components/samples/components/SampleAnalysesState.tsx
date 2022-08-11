@@ -5,12 +5,16 @@ import {
   IconCloseCircle,
   IconLoading,
 } from "../../icons/Icons";
-import { blue6, green6, grey6, red6 } from "../../../styles/colors";
+
 import { AnalysisState } from "../../../types/irida";
 
 const commonIconStyle = {
   fontSize: "16px",
 };
+
+export interface SampleAnalysesStateProps {
+  state: AnalysisState;
+}
 
 /**
  * React component to display sample analyses state
@@ -18,17 +22,23 @@ const commonIconStyle = {
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleAnalysesState({ state }: AnalysisState): JSX.Element {
+export function SampleAnalysesState({
+  state,
+}: SampleAnalysesStateProps): JSX.Element {
   return (
     <span className="t-analysis-state">
       {state === "COMPLETED" ? (
-        <IconCheckCircle style={{ ...commonIconStyle, color: green6 }} />
+        <IconCheckCircle
+          style={{ ...commonIconStyle, color: `var(--green-6)` }}
+        />
       ) : state === "ERROR" ? (
-        <IconCloseCircle style={{ ...commonIconStyle, color: red6 }} />
+        <IconCloseCircle
+          style={{ ...commonIconStyle, color: `var(--red-6)` }}
+        />
       ) : state === "NEW" ? (
-        <IconClock style={{ ...commonIconStyle, color: grey6 }} />
+        <IconClock style={{ ...commonIconStyle, color: `var(--grey-6)` }} />
       ) : (
-        <IconLoading style={{ ...commonIconStyle, color: blue6 }} />
+        <IconLoading style={{ ...commonIconStyle, color: `var(--blue-6)` }} />
       )}
     </span>
   );

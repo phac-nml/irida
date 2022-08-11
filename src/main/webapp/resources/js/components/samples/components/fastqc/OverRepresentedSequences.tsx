@@ -1,6 +1,6 @@
 import React from "react";
 import { Col, Row, Table, Typography } from "antd";
-import { RootStateOrAny, useSelector } from "react-redux";
+import { useAppSelector } from "../../../../hooks/useState";
 import { Monospace } from "../../../typography";
 import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
 
@@ -12,10 +12,7 @@ const DEFAULT_HEIGHT = 600;
  * @constructor
  */
 export function OverRepresentedSequences() {
-  const { loading, fastQC } = useSelector(
-    (state: RootStateOrAny) => state.fastQCReducer
-  );
-
+  const { loading, fastQC } = useAppSelector((state) => state.fastQCReducer);
   const paginationOptions = React.useMemo(
     () =>
       getPaginationOptions(

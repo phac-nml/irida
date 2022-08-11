@@ -8,7 +8,21 @@ declare namespace IRIDA {
     name: string;
     createdDate: Date;
     modifiedDate: Date;
+    identifier: number;
   }
+
+  export type AnalysisState =
+    | "NEW"
+    | "PREPARING"
+    | "PREPARED"
+    | "SUBMITTING"
+    | "RUNNING"
+    | "FINISHED_RUNNING"
+    | "COMPLETING"
+    | "COMPLETED"
+    | "TRANSFERRED"
+    | "POST_PROCESSING"
+    | "ERROR";
 
   interface Announcement extends IridaBase {
     title: string;
@@ -17,6 +31,51 @@ declare namespace IRIDA {
     createdBy: User;
     users: User[];
   }
+
+  interface GenomeAssembly {
+    createdDate: Date;
+    file: string;
+    identifier: number;
+    label: string;
+    links: [];
+  }
+
+  interface FastQC {
+    additionalProperties: Record<string, unknown>[];
+    analysisType: Record<string, string>;
+    createdDate: Date;
+    description: string;
+    encoding: string;
+    executionManagerAnalysisId: string;
+    fastqcVersion: string;
+    fileType: string;
+    filteredSequences: number;
+    gcContent: number;
+    identifier: number;
+    label: string;
+    links: any[];
+    maxLength: number;
+    minLength: number;
+    overrepresentedSequences: OverrepresentedSequences[];
+    totalBases: number;
+    totalSequences: number;
+  }
+
+  interface OverrepresentedSequences {
+    sequences: string;
+    overrepresentedSequenceCount: number;
+    percentage: number;
+    possibleSource: string;
+    createdDate: Date;
+    identifier: number;
+  }
+
+  export type ProcessingState =
+    | "UNPROCESSED"
+    | "QUEUED"
+    | "PROCESSING"
+    | "FINISHED"
+    | "ERROR";
 
   interface Project extends IridaBase {
     description: string;
@@ -44,8 +103,65 @@ declare namespace IRIDA {
     longitude: string;
     projects: Project[];
     sequenceFiles: any[]; // TODO (Josh - 6/7/22): FLush this out
-    defaultSequencingObject: number | null;
-    defaultGenomeAssembly: number | null;
+    defaultSequencingObject: SequencingObject;
+    defaultGenomeAssembly: GenomeAssembly;
+    sampleName: string;
+  }
+
+  interface SampleAnalyses {
+    analysisType: string;
+    createdDate: Date;
+    id: number;
+    name: string;
+    state: AnalysisState;
+  }
+
+  interface SampleGenomeAssembly {
+    fileInfo: {
+      createdDate: Date;
+      file: string;
+      fileName: string;
+      fileRevisionNumber: number;
+      identifier: number;
+      label: string;
+      links: [];
+    };
+    fileType: string;
+    firstFileSize: string;
+  }
+
+  interface SampleSequencingObject {
+    fileInfo: SequencingObject;
+    secondFileSize: string;
+    firstFileSize: string;
+    processingState: ProcessingState;
+    fileType: string;
+    file: any | undefined; //TODO: (deep - 08/08/22): Flush this out
+    qcEntries: any;
+  }
+
+  interface SequencingFile {
+    createdDate: Date;
+    file: string;
+    fileName: string;
+    identifier: string;
+    label: string;
+    links: [];
+    modifiedDate: Date;
+    uploadSha: string;
+  }
+
+  interface SequencingObject {
+    createdDate: Date;
+    fileProcessor: string;
+    files: SequencingFile[];
+    forwardSequenceFile: SequencingFile;
+    identifier: number;
+    label: string;
+    links: [];
+    processingState: ProcessingState;
+    reverseSequenceFile: SequencingFile;
+    sequenceFile: SequencingFile;
   }
 
   export type SystemRole =
@@ -70,85 +186,5 @@ declare namespace IRIDA {
     tokens: string[]; // TODO (Josh - 6/7/22): Look into this one
     announcements: Announcement[];
     subscriptions: string[]; // TODO (Josh - 6/7/22): Look into this one as well
-  }
-
-  export type ProcessingState =
-    | "UNPROCESSED"
-    | "QUEUED"
-    | "PROCESSING"
-    | "FINISHED"
-    | "ERROR";
-
-  interface SequencingFile {
-    createdDate: Date;
-    file: string;
-    fileName: string;
-    identifier: string;
-    label: string;
-    links: [];
-    modifiedDate: Date;
-    uploadSha: string;
-  }
-
-  interface SequencingObject {
-    createdDate: Date;
-    fileProcessor: string;
-    files: SequencingFile[];
-    forwardSequenceFile: SequencingFile;
-    identifier: string;
-    label: string;
-    links: [];
-    processingState: ProcessingState;
-    reverseSequenceFile: SequencingFile;
-    sequenceFile: SequencingFile;
-  }
-
-  interface SampleSequencingObject {
-    fileInfo: SequencingObject;
-    secondFileSize: string;
-    firstFileSize: string;
-    processingState: ProcessingState;
-    fileType: string;
-    file: any | undefined; //TODO: (deep - 08/08/22): Flush this out
-    qcEntries: any;
-  }
-
-  interface SampleGenomeAssembly {
-    fileInfo: {
-      createdDate: Date;
-      file: string;
-      fileName: string;
-      fileRevisionNumber: number;
-      identifier: string;
-      label: string;
-      links: [];
-    };
-    fileType: string;
-    firstFileSize: string;
-  }
-
-  export type AnalysisStateType =
-    | "NEW"
-    | "PREPARING"
-    | "PREPARED"
-    | "SUBMITTING"
-    | "RUNNING"
-    | "FINISHED_RUNNING"
-    | "COMPLETING"
-    | "COMPLETED"
-    | "TRANSFERRED"
-    | "POST_PROCESSING"
-    | "ERROR";
-
-  interface SampleAnalyses {
-    analysisType: string;
-    createdDate: Date;
-    id: number;
-    name: string;
-    state: AnalysisStateType;
-  }
-
-  interface AnalysisState {
-    state: AnalysisStateType;
   }
 }

@@ -1,5 +1,4 @@
 import React from "react";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { Button, Modal, Skeleton, Space, Tag, Typography } from "antd";
 import { SampleDetails } from "./components/SampleDetails";
 import { useGetSampleDetailsQuery } from "../../apis/samples/samples";
@@ -14,15 +13,15 @@ import {
   removeCartSampleId,
 } from "./cartSamplesSlice";
 import { Provider } from "react-redux";
-import store from "../../components/samples/store";
+import { store } from "../samples/store";
+import { useAppDispatch, useAppSelector } from "../../hooks/useState";
 import { generateColourForItem } from "../../utilities/colour-utilities";
-import { Project, Sample } from "../../types/irida";
 
 const { Text } = Typography;
 
 export interface DisplaySampleDetailsProps {
-  sampleId: Pick<Sample, "id">;
-  projectId: Pick<Project, "id">;
+  sampleId: number;
+  projectId: number;
   displayActions?: boolean;
   children: React.ReactElement;
 }
@@ -42,8 +41,6 @@ function DisplaySampleDetails({
   displayActions,
   children,
 }: DisplaySampleDetailsProps): JSX.Element {
-  const dispatch = useDispatch();
-
   const [visible, setVisible] = React.useState(false);
   const { data: details = {}, isLoading } = useGetSampleDetailsQuery(
     {
@@ -54,13 +51,13 @@ function DisplaySampleDetails({
       skip: !visible,
     }
   );
-  const { sampleIds } = useSelector(
-    (state: RootStateOrAny) => state.cartSamplesReducer
-  );
+  const { sampleIds } = useAppSelector((state) => state.cartSamplesReducer);
   const projectColour = generateColourForItem({
     id: projectId,
     label: details.projectName,
   });
+
+  const dispatch = useAppDispatch();
 
   /*
   If sampleIds haven't already been added to
@@ -69,7 +66,7 @@ function DisplaySampleDetails({
    */
   React.useEffect(() => {
     if (displayActions && visible) {
-      if (sampleIds === null) {
+      if (!sampleIds.length) {
         getCartSampleIds().then((res) => {
           dispatch(setCartSampleIds({ sampleIds: res }));
         });
@@ -82,7 +79,7 @@ function DisplaySampleDetails({
   Used to display `add to cart` and `remove from cart` buttons
    */
   const isSampleAlreadyInCart = () => {
-    return sampleIds.includes(parseInt(sampleId));
+    return sampleIds.includes(sampleId);
   };
 
   /*
@@ -186,8 +183,8 @@ function DisplaySampleDetails({
 }
 
 export interface SampleDetailViewerProps {
-  sampleId: Pick<Sample, "id">;
-  projectId: Pick<Project, "id">;
+  sampleId: number;
+  projectId: number;
   displayActions?: boolean;
   children: React.ReactElement;
 }

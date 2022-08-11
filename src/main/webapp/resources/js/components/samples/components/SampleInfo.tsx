@@ -13,16 +13,15 @@ import { formatDate } from "../../../utilities/date-utilities";
 const { Paragraph } = Typography;
 import moment from "moment";
 import { OntologyInput } from "../../ontology";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { TAXONOMY } from "../../../apis/ontology/taxonomy";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { TAXONOMY } from "../../../apis/ontology/taxonomy/query";
+import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context";
 import { EditMetadata } from "./EditMetadata";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
 import { updateDetails } from "../sampleSlice";
 import { EditableParagraph } from "../../ant.design";
+import { Sample } from "../../../types/irida";
 
 const DEFAULT_HEIGHT = 600;
 
@@ -33,10 +32,10 @@ const DEFAULT_HEIGHT = 600;
  * @constructor
  */
 export function SampleInfo() {
-  const { sample, modifiable: isModifiable } = useSelector(
-    (state: RootStateOrAny) => state.sampleReducer
+  const { sample, modifiable: isModifiable } = useAppSelector(
+    (state) => state.sampleReducer
   );
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [updateSampleDetails] = useUpdateSampleDetailsMutation();
   const dateFormat = i18n("SampleInfo.date.format");
 
@@ -51,8 +50,8 @@ export function SampleInfo() {
     /*
     Make sure the value actually changed, if it hasn't then don't update it.
      */
-    if (sample[field] === value) return;
-    if (sample[field] === null && value === "") return;
+    if (sample[field as keyof Sample] === value) return;
+    if (sample[field as keyof Sample] === null && value === "") return;
 
     updateSampleDetails({
       sampleId: sample.identifier,

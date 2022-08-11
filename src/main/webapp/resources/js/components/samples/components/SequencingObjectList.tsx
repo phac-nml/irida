@@ -14,7 +14,7 @@ import {
   CloseOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { useInterval } from "../../../hooks";
 import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
 import { SequenceObjectListItem } from "../../sequence-files/SequenceObjectListItem";
@@ -50,7 +50,7 @@ export interface SequencingObjectListProps {
     fileObjectId,
     type,
   }: {
-    fileObjectId: string;
+    fileObjectId: number;
     type: string;
   }) => void;
 }
@@ -71,13 +71,13 @@ export function SequencingObjectList({
     sample,
     modifiable: isModifiable,
     projectId,
-  } = useSelector((state: RootStateOrAny) => state.sampleReducer);
-  const { files, concatenateSelected } = useSelector(
-    (state: RootStateOrAny) => state.sampleFilesReducer
+  } = useAppSelector((state) => state.sampleReducer);
+  const { files, concatenateSelected } = useAppSelector(
+    (state) => state.sampleFilesReducer
   );
   const ACTION_MARGIN_RIGHT = isModifiable ? 0 : 5;
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   /*
    Get updated processing states for the sequencing objects
@@ -116,7 +116,7 @@ export function SequencingObjectList({
         (fast5File: SampleSequencingObject) => fast5File.fileInfo.identifier
       );
 
-    let sequencingObjectIds: string[] = [];
+    let sequencingObjectIds: number[] = [];
 
     if (typeof seqObjIdsSingles !== "undefined") {
       sequencingObjectIds = [...sequencingObjectIds, ...seqObjIdsSingles];
@@ -444,7 +444,9 @@ export function SequencingObjectList({
               sequenceObject={sequenceObject}
               actions={getActionsForSequencingObject(sequenceObject)}
               displayConcatenationCheckbox={
-                isModifiable && files.singles?.length >= 2
+                isModifiable &&
+                files.singles !== undefined &&
+                files.singles?.length >= 2
                   ? getConcatenationCheckboxForSequencingObject(sequenceObject)
                   : null
               }
@@ -465,7 +467,9 @@ export function SequencingObjectList({
                 pair
               )}
               displayConcatenationCheckbox={
-                isModifiable && files.paired?.length >= 2
+                isModifiable &&
+                files.paired !== undefined &&
+                files.paired.length >= 2
                   ? getConcatenationCheckboxForSequencingObject(pair)
                   : null
               }

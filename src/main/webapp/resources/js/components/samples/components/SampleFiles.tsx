@@ -7,7 +7,7 @@ import { SampleFileConcatenate } from "./SampleFileContenate";
 import { DragUpload } from "../../files/DragUpload";
 import { FileUploadProgress } from "./upload-progress/FileUploadProgress";
 import { SampleFileList } from "./SampleFileList";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import {
   addToSequenceFiles,
   addToAssemblyFiles,
@@ -39,13 +39,13 @@ export interface FileUpload {
  * @constructor
  */
 export function SampleFiles() {
-  const { sample, projectId, modifiable } = useSelector(
-    (state: RootStateOrAny) => state.sampleReducer
+  const { sample, projectId, modifiable } = useAppSelector(
+    (state) => state.sampleReducer
   );
-  const { files, loading, concatenateSelected } = useSelector(
-    (state: RootStateOrAny) => state.sampleFilesReducer
+  const { files, loading, concatenateSelected } = useAppSelector(
+    (state) => state.sampleFilesReducer
   );
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const [seqFileProgress, setSeqFileProgress] = React.useState(0);
   const [assemblyProgress, setAssemblyProgress] = React.useState(0);

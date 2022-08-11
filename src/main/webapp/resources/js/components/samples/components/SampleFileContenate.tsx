@@ -10,7 +10,7 @@ import {
   Typography,
 } from "antd";
 import React from "react";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { useResetFormOnCloseModal } from "../../../hooks";
 import { useConcatenateSequencingObjectsMutation } from "../../../apis/samples/samples";
 import {
@@ -40,14 +40,12 @@ export interface SampleFileConcatenateProps {
 export function SampleFileConcatenate({
   children,
 }: SampleFileConcatenateProps): JSX.Element {
-  const [visible, setVisible] = React.useState(false);
-  const dispatch = useDispatch();
+  const [visible, setVisible] = React.useState<boolean>(false);
+  const dispatch = useAppDispatch();
   const [form] = Form.useForm();
-  const { sample } = useSelector(
-    (state: RootStateOrAny) => state.sampleReducer
-  );
-  const { concatenateSelected } = useSelector(
-    (state: RootStateOrAny) => state.sampleFilesReducer
+  const { sample } = useAppSelector((state) => state.sampleReducer);
+  const { concatenateSelected } = useAppSelector(
+    (state) => state.sampleFilesReducer
   );
   const [concatenateSeqObjectFiles] = useConcatenateSequencingObjectsMutation();
 

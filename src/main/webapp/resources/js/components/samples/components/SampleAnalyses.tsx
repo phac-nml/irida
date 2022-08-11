@@ -1,6 +1,6 @@
 import React from "react";
 import { Col, Input, Row, Table } from "antd";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { fetchSampleAnalyses } from "../../../apis/samples/samples";
 import { setSampleAnalyses } from "../sampleAnalysesSlice";
 import { SampleAnalysesState } from "./SampleAnalysesState";
@@ -8,7 +8,6 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import {
   AnalysisState,
-  AnalysisStateType,
   SampleAnalyses as SampleAnalysesItem,
 } from "../../../types/irida";
 
@@ -21,15 +20,15 @@ const { Search } = Input;
  * @constructor
  */
 export function SampleAnalyses() {
-  const [filteredSubmissions, setFilteredSubmissions] = React.useState(null);
-  const dispatch = useDispatch();
+  const [filteredSubmissions, setFilteredSubmissions] = React.useState<
+    SampleAnalysesItem[]
+  >([]);
+  const dispatch = useAppDispatch();
 
-  const { sample } = useSelector(
-    (state: RootStateOrAny) => state.sampleReducer
-  );
+  const { sample } = useAppSelector((state) => state.sampleReducer);
 
-  const { analyses, loading } = useSelector(
-    (state: RootStateOrAny) => state.sampleAnalysesReducer
+  const { analyses, loading } = useAppSelector(
+    (state) => state.sampleAnalysesReducer
   );
 
   /*
@@ -76,7 +75,7 @@ export function SampleAnalyses() {
       dataIndex: "createdDate",
       key: "createdDate",
       width: 200,
-      render: (date: string) => (
+      render: (date: Date) => (
         <span className="t-analysis-created-date">
           {date ? formatInternationalizedDateTime(date) : ""}
         </span>
@@ -87,9 +86,7 @@ export function SampleAnalyses() {
       dataIndex: "state",
       key: "analysisType",
       width: 100,
-      render: (state: AnalysisStateType) => (
-        <SampleAnalysesState state={state} />
-      ),
+      render: (state: AnalysisState) => <SampleAnalysesState state={state} />,
     },
   ];
 
@@ -105,12 +102,12 @@ export function SampleAnalyses() {
       setFilteredSubmissions(analyses);
     } else {
       searchStr = String(searchStr).toLowerCase();
-      const submissionsContainingSearchValue = analyses.filter(
-        (submission: SampleAnalysesItem) =>
-          submission.name.toLowerCase().includes(searchStr) ||
-          submission.analysisType.toLowerCase().includes(searchStr)
-      );
-
+      const submissionsContainingSearchValue: SampleAnalysesItem[] =
+        analyses.filter(
+          (submission: SampleAnalysesItem) =>
+            submission.name.toLowerCase().includes(searchStr) ||
+            submission.analysisType.toLowerCase().includes(searchStr)
+        );
       setFilteredSubmissions(submissionsContainingSearchValue);
     }
   };
@@ -130,7 +127,7 @@ export function SampleAnalyses() {
           columns={columns}
           loading={loading}
           dataSource={
-            filteredSubmissions !== null ? filteredSubmissions : analyses
+            filteredSubmissions.length ? filteredSubmissions : analyses
           }
           rowKey={(item) => `analysis-submission-${item.id}`}
           className="t-sample-analyses"

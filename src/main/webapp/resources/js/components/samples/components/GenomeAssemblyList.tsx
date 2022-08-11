@@ -1,7 +1,6 @@
 import React from "react";
 import { Button, notification, Popconfirm, Tag, Tooltip } from "antd";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
-
+import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
 import { downloadGenomeAssemblyFile } from "../../../apis/samples/samples";
 import { GenomeAssemblyListItem } from "../../sequence-files/GenomeAssemblyListItem";
@@ -15,7 +14,7 @@ export interface GenomeAssemblyListProps {
     fileObjectId,
     type,
   }: {
-    fileObjectId: string;
+    fileObjectId: number;
     type: string;
   }) => void;
 }
@@ -31,14 +30,12 @@ export function GenomeAssemblyList({
 }: GenomeAssemblyListProps): JSX.Element {
   const [updateSampleDefaultGenomeAssembly] =
     useUpdateDefaultSampleGenomeAssemblyMutation();
-  const { sample, modifiable: isModifiable } = useSelector(
-    (state: RootStateOrAny) => state.sampleReducer
+  const { sample, modifiable: isModifiable } = useAppSelector(
+    (state) => state.sampleReducer
   );
-  const { files } = useSelector(
-    (state: RootStateOrAny) => state.sampleFilesReducer
-  );
+  const { files } = useAppSelector((state) => state.sampleFilesReducer);
   const ACTION_MARGIN_RIGHT = isModifiable ? 0 : 5;
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   /*
    Download genome assembly files
@@ -48,7 +45,7 @@ export function GenomeAssemblyList({
     genomeAssemblyId,
   }: {
     sampleId: number;
-    genomeAssemblyId: string | number;
+    genomeAssemblyId: number;
   }) => {
     notification.success({
       message: i18n("SampleFiles.startingAssemblyDownload"),
@@ -64,7 +61,6 @@ export function GenomeAssemblyList({
   ) => {
     const { fileInfo: genomeAssemblyObj }: SampleGenomeAssembly =
       genomeAssembly;
-
     updateSampleDefaultGenomeAssembly({
       sampleId: sample.identifier,
       genomeAssemblyId: genomeAssemblyObj.identifier,
@@ -195,13 +191,15 @@ export function GenomeAssemblyList({
 
   return (
     <SequenceFileTypeRenderer title={i18n("SampleFiles.assemblies")}>
-      {files.assemblies.map((assembly: SampleGenomeAssembly, index: number) => (
-        <GenomeAssemblyListItem
-          key={`assembly-${assembly.fileInfo.identifier}`}
-          genomeAssembly={assembly}
-          actions={getActionsForGenomeAssembly(assembly, index)}
-        />
-      ))}
+      {files.assemblies?.map(
+        (assembly: SampleGenomeAssembly, index: number) => (
+          <GenomeAssemblyListItem
+            key={`assembly-${assembly.fileInfo.identifier}`}
+            genomeAssembly={assembly}
+            actions={getActionsForGenomeAssembly(assembly, index)}
+          />
+        )
+      )}
     </SequenceFileTypeRenderer>
   );
 }

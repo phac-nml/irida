@@ -33,9 +33,12 @@ export const removeCartSampleId = createAction(
 /**
  * Set up the initial state.
  */
-const initialState = (() => {
+const initialState: {
+  sampleIds: number[];
+  loading: boolean;
+} = (() => {
   return {
-    sampleIds: [] as (string | number)[],
+    sampleIds: [],
     loading: true,
   };
 })();
@@ -56,8 +59,7 @@ const cartSamplesSlice = createSlice({
 
     builder.addCase(removeCartSampleId, (state, action) => {
       state.sampleIds = state.sampleIds.filter(
-        (sampleId: string | number) =>
-          sampleId !== parseInt(action.payload.sampleId)
+        (sampleId: number) => sampleId !== parseInt(action.payload.sampleId)
       );
     });
   },

@@ -4,7 +4,7 @@ import { Tabs, Typography } from "antd";
 import { SampleFiles } from "./SampleFiles";
 import { SampleInfo } from "./SampleInfo";
 import { SampleAnalyses } from "./SampleAnalyses";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../../../hooks/useState";
 import { setProjectDetails, setSample } from "../sampleSlice";
 import { Sample } from "../../../types/irida";
 
@@ -28,7 +28,7 @@ export interface SampleDetailsProps {
  * @constructor
  */
 export function SampleDetails({ details }: SampleDetailsProps): JSX.Element {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   React.useEffect(() => {
     dispatch(

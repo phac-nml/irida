@@ -1,16 +1,16 @@
 import { AutoComplete } from "antd";
 import React, { useEffect, useRef, useState } from "react";
-import { searchOntology } from "../../apis/ontology/taxonomy";
+import searchOntology from "../../apis/ontology/taxonomy/query";
 import { useDebounce } from "../../hooks";
 
 const { Option } = AutoComplete;
 
 export interface OntologyInputProps {
   term: string;
-  onTermSelected: any;
+  onTermSelected: (value: string) => void;
   ontology: string;
   autofocus: boolean;
-  props: any;
+  props: Record<string, unknown>;
 }
 
 /**
@@ -30,7 +30,7 @@ export function OntologyInput({
   autofocus = true,
 }: OntologyInputProps): JSX.Element {
   const [options, setOptions] = useState([]);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState<string>("");
   const selectRef = useRef();
 
   /**

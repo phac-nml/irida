@@ -3,7 +3,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import duration from "dayjs/plugin/duration";
 
 export function formatInternationalizedDateTime(
-  date: string | number,
+  date: Date,
   options = {
     hour: "numeric",
     minute: "numeric",
@@ -47,13 +47,7 @@ export function fromNow({ date }: { date: string | number }) {
  * @param {String} format defaults to "lll" which is mmm dd, YYYY h:mm AM
  * @return {string} formatted date
  */
-export function formatDate({
-  date,
-  format,
-}: {
-  date: string | number;
-  format: any;
-}) {
+export function formatDate({ date, format }: { date: Date; format: any }) {
   return formatInternationalizedDateTime(date, format);
 }
 
@@ -62,8 +56,7 @@ export function formatDate({
  * @param {(number | string)} date
  * @returns {boolean}
  */
-export const isDate = (date: string | number) =>
-  !isNaN(new Date(date).valueOf());
+export const isDate = (date: Date) => !isNaN(new Date(date).valueOf());
 
 // get a readable string of the time from a given number of seconds
 export function getDurationFromSeconds(seconds: number) {

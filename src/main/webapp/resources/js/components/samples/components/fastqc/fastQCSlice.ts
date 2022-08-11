@@ -1,4 +1,5 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
+import { FastQC, SequencingFile } from "../../../../types/irida";
 
 /**
  * Action to set the fast qc details
@@ -54,16 +55,25 @@ export const clearFastQCData = createAction(`fastQC/clearFastQCData`, () => ({
 /**
  * Set up the initial state.
  */
-const initialState = (() => {
+const initialState: {
+  processingState: string;
+  file: SequencingFile;
+  sequencingObjectId: number;
+  fastQCModalVisible: boolean;
+  fastQC: FastQC;
+  loading: boolean;
+  fileLabel: string;
+  fileId: number;
+} = (() => {
   return {
     loading: true,
-    fastQC: {},
-    file: {},
-    processingState: null,
+    fastQC: {} as FastQC,
+    file: {} as SequencingFile,
+    processingState: "",
     fastQCModalVisible: false,
-    sequencingObjectId: null,
-    fileId: null,
-    fileLabel: null,
+    sequencingObjectId: 0,
+    fileId: 0,
+    fileLabel: "",
   };
 })();
 
@@ -93,9 +103,9 @@ const fastQCSlice = createSlice({
     });
 
     builder.addCase(clearFastQCData, (state) => {
-      state.fastQC = {};
-      state.file = {};
-      state.processingState = null;
+      state.fastQC = {} as FastQC;
+      state.file = {} as SequencingFile;
+      state.processingState = "";
       state.fastQCModalVisible = false;
     });
   },

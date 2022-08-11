@@ -1,4 +1,5 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
+import { SampleAnalyses } from "../../types/irida";
 
 /**
  * Action to set the target sample analyses
@@ -13,7 +14,10 @@ export const setSampleAnalyses = createAction(
 /**
  * Set up the initial state.
  */
-const initialState = (() => {
+const initialState: {
+  analyses: SampleAnalyses[];
+  loading: boolean;
+} = (() => {
   return {
     analyses: [],
     loading: true,

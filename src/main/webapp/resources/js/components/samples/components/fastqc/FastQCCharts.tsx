@@ -1,6 +1,6 @@
 import { Col, Image, Row, Typography } from "antd";
 import React, { useState } from "react";
-import { RootStateOrAny, useSelector } from "react-redux";
+import { useAppSelector } from "../../../../hooks/useState";
 import styled from "styled-components";
 
 import { getFastQCImages } from "../../../../apis/files/sequence-files";
@@ -23,8 +23,8 @@ export function FastQCCharts() {
   const [duplicationLevel, setDuplicationLevel] = useState("");
   const [fastQCVersion, setFastQCVersion] = useState("");
 
-  const { sequencingObjectId, fileId } = useSelector(
-    (state: RootStateOrAny) => state.fastQCReducer
+  const { sequencingObjectId, fileId } = useAppSelector(
+    (state) => state.fastQCReducer
   );
 
   React.useEffect(() => {
