@@ -1,5 +1,11 @@
 import React from "react";
-import { Select, Tag, Typography } from "antd";
+import { Select, SelectProps, Tag, Typography } from "antd";
+
+export type Project = { identifier: number; name: string };
+
+export interface ProjectSelectProps extends SelectProps {
+  projects: Project[];
+}
 
 /**
  * React component for displaying a project drop-down menu.
@@ -13,10 +19,10 @@ export function ProjectSelect({
   projects,
   onChange = undefined,
   defaultValue = null,
-}) {
+}: ProjectSelectProps): JSX.Element {
   const [options, setOptions] = React.useState(() => formatOptions(projects));
 
-  function formatOptions(values) {
+  function formatOptions(values: Project[]) {
     if (!values) return [];
     return values.map((project) => ({
       label: (
@@ -42,12 +48,13 @@ export function ProjectSelect({
     setOptions(formatOptions(projects));
   }, [projects]);
 
-  const handleSearch = (value) => {
+  const handleSearch = (value: string) => {
     const lowerValue = value.toLowerCase();
+
     const available = projects.filter(
       (project) =>
         project.name.toLowerCase().includes(lowerValue) ||
-        project.identifier === value
+        project.identifier.toString() === value
     );
     const formatted = formatOptions(available);
     setOptions(formatted);
