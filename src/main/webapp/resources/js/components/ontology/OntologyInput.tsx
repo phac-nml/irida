@@ -10,7 +10,6 @@ export interface OntologyInputProps {
   onTermSelected: (value: string) => void;
   ontology: string;
   autofocus: boolean;
-  props: Record<string, unknown>;
 }
 
 /**

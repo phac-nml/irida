@@ -71,10 +71,6 @@ export function SampleInfo() {
       });
   };
 
-  const ontologyProps = {
-    className: "t-sample-organism",
-  };
-
   const detailsData = [
     {
       title: i18n("SampleInfo.sampleName"),
@@ -133,7 +129,6 @@ export function SampleInfo() {
             term={sample.organism}
             ontology={TAXONOMY}
             onTermSelected={(value: string) => updateField("organism", value)}
-            props={ontologyProps}
             autofocus={false}
           />
         </EditableParagraph>
