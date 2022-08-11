@@ -49,7 +49,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.ResourceUtils;
@@ -116,7 +116,7 @@ public class IridaOauthSecurityConfig {
 			// user filter into the filter chain after that.
 			http.antMatcher("/api/**")
 					.addFilterAfter(new UnauthenticatedAnonymousAuthenticationFilter("anonymousTokenAuthProvider"),
-							SecurityContextPersistenceFilter.class);
+							SecurityContextHolderFilter.class);
 
 			return http.build();
 		}

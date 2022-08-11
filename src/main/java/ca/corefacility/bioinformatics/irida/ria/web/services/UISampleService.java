@@ -14,6 +14,8 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -67,7 +69,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import liquibase.util.csv.CSVWriter;
 
 /**
  * UI Service for samples
@@ -279,8 +280,8 @@ public class UISampleService {
 			try {
 				projectService.shareSamples(currentProject, targetProject, samples, !request.getLocked());
 			} catch (Exception e) {
-				throw new UIShareSamplesException(
-						messageSource.getMessage("server.ShareSamples.copy-error", new Object[] { targetProject.getLabel() }, locale));
+				throw new UIShareSamplesException(messageSource.getMessage("server.ShareSamples.copy-error",
+						new Object[] { targetProject.getLabel() }, locale));
 			}
 		}
 
@@ -654,8 +655,7 @@ public class UISampleService {
 	 *
 	 * @param response {@link HttpServletResponse}
 	 * @param filename {@link String} name of the file to download.
-	 * @param items    {@link ProjectSampleTableItem} details about each row of the table   Data to download in the
-	 *                 table
+	 * @param items    {@link ProjectSampleTableItem} details about each row of the table Data to download in the table
 	 * @param headers  for the table
 	 * @throws IOException thrown if file cannot be written
 	 */
@@ -684,10 +684,10 @@ public class UISampleService {
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + ".csv\"");
 		response.setContentType("text/csv");
 		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(response.getOutputStream());
-		CSVWriter csvWriter = new CSVWriter(outputStreamWriter, ',');
-		csvWriter.writeAll(results);
-		csvWriter.flush();
-		csvWriter.close();
+		CSVPrinter printer = CSVFormat.DEFAULT.print(outputStreamWriter);
+		printer.printRecords(results);
+		printer.flush();
+		outputStreamWriter.close();
 	}
 
 	/**
