@@ -27,6 +27,15 @@
       <project_user id="9" project_id="7" user_id="1" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
       <project_user id="10" project_id="8" user_id="1" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
 
+      <project_subscription id="1" project_id="1" user_id="1" created_date="2013-07-18 14:20:19.0" email_subscription="false" />
+      <project_subscription id="2" project_id="2" user_id="1" created_date="2013-07-18 14:20:19.0" email_subscription="true" />
+      <project_subscription id="3" project_id="3" user_id="1" created_date="2013-07-18 14:20:19.0" email_subscription="false" />
+      <project_subscription id="4" project_id="4" user_id="1" created_date="2013-07-18 14:20:19.0" email_subscription="false" />
+      <project_subscription id="5" project_id="1" user_id="2" created_date="2013-07-18 14:20:19.0" email_subscription="false" />
+      <project_subscription id="6" project_id="2" user_id="2" created_date="2013-07-18 14:20:19.0" email_subscription="false" />
+      <project_subscription id="7" project_id="6" user_id="1" created_date="2013-07-18 14:20:19.0" email_subscription="false" />
+      <project_subscription id="8" project_id="7" user_id="1" created_date="2013-07-18 14:20:19.0" email_subscription="false" />
+      <project_subscription id="9" project_id="8" user_id="1" created_date="2013-07-18 14:20:19.0" email_subscription="false" />
 
       <related_project id="1" subject_id="1" relatedProject_id="2" createdDate="2013-07-18 14:20:19.0" />
       <related_project id="2" subject_id="1" relatedProject_id="3" createdDate="2013-07-18 14:20:19.0" />
