@@ -1,9 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
@@ -106,14 +106,14 @@ public class AbstractPage {
 	}
 
 	public Collection<WebElement> waitForElementsVisible(By locator) {
-		new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS).until(
-				ExpectedConditions.visibilityOfElementLocated(locator));
+		new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)
+				.until(ExpectedConditions.visibilityOfElementLocated(locator));
 		return driver.findElements(locator);
 	}
 
 	public void waitForElementInvisible(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(
-				ExpectedConditions.invisibilityOfElementLocated(locator));
+		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS))
+				.until(ExpectedConditions.invisibilityOfElementLocated(locator));
 	}
 
 	public static void waitForTime(int length) {
@@ -131,11 +131,11 @@ public class AbstractPage {
 	}
 
 	public boolean isElementOnScreen(String id) {
-		driver.manage().timeouts().implicitlyWait(0, TimeUnit.MILLISECONDS);
+		driver.manage().timeouts().implicitlyWait(Duration.ZERO);
 		boolean exists = driver.findElements(By.id(id)).size() != 0;
 		driver.manage()
 				.timeouts()
-				.implicitlyWait(AbstractIridaUIITChromeDriver.DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+				.implicitlyWait(Duration.ofSeconds(AbstractIridaUIITChromeDriver.DRIVER_TIMEOUT_IN_SECONDS));
 		return exists;
 	}
 
@@ -237,13 +237,13 @@ public class AbstractPage {
 	 * Wait for jQuery AJAX calls to complete on a page
 	 */
 	public void waitForJQueryAjaxResponse() {
-		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(
-				(ExpectedCondition<Boolean>) wd -> (Boolean) ((JavascriptExecutor) wd).executeScript(
-						"return jQuery.active == 0"));
+		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
+				.until((ExpectedCondition<Boolean>) wd -> (Boolean) ((JavascriptExecutor) wd)
+						.executeScript("return jQuery.active == 0"));
 	}
 
 	/**
-	 * Selenium is having issues sending complete sequences of strings to the UI. Sending one at a time might help.  See
+	 * Selenium is having issues sending complete sequences of strings to the UI. Sending one at a time might help. See
 	 * thread: https://github.com/angular/protractor/issues/698
 	 *
 	 * @param keys         {@link String} value to send to the input
