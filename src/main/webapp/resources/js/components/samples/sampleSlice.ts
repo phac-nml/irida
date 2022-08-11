@@ -231,7 +231,10 @@ const sampleSlice = createSlice({
     });
 
     builder.addCase(updateDetails, (state, action) => {
-      state.sample[action.payload.field] = action.payload.value;
+      state.sample = {
+        ...state.sample,
+        [action.payload.field]: action.payload.value,
+      };
     });
   },
 });
