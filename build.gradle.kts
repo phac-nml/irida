@@ -265,7 +265,7 @@ tasks.war {
     exclude("entries.js")
     exclude(".eslintrc.js")
     exclude("postcss.config.js")
-    rootSpec.exclude("**/jwk-*.pem")
+    rootSpec.exclude("**/jwk-key-store.jks")
 }
 
 node {
