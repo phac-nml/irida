@@ -31,7 +31,7 @@ export interface NcbiSubmissionRequest {
   bioProject: string;
   namespace: string;
   organization: string;
-  releaseDate: Date;
+  releaseDate: number;
   samples: Array<NcbiSubmissionBioSample>;
 }
 

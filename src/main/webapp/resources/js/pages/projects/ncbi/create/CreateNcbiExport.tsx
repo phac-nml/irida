@@ -21,6 +21,7 @@ import {
   getNCBIStrategies,
   NcbiSubmissionBioSample,
   NcbiSubmissionRequest,
+  submitNcbiSubmissionRequest,
 } from "../../../../apis/export/ncbi";
 import { fetchSampleFiles } from "../../../../apis/samples/samples";
 import type { Option } from "../../../../types/ant-design";
@@ -40,13 +41,13 @@ export interface SampleRecord {
   key: string;
   id: number;
   name: string;
-  bioSample?: string;
+  bioSample: string;
   libraryName: string;
-  libraryStrategy?: string;
-  librarySource?: string;
-  libraryConstructionProtocol?: string;
-  instrumentModel?: string;
-  librarySelection?: string;
+  libraryStrategy: string;
+  librarySource: string;
+  libraryConstructionProtocol: string;
+  instrumentModel: string;
+  librarySelection: string;
   status?: string;
   files: {
     pairs: PairedEndSequenceFile[];
@@ -97,6 +98,12 @@ export async function loader(): Promise<LoaderValues> {
     samples.forEach((sample) => {
       fetchSampleFiles({ sampleId: sample.id }).then((files) => {
         formatted[sample.name] = {
+          bioSample: "",
+          instrumentModel: "",
+          libraryConstructionProtocol: "",
+          librarySelection: "",
+          librarySource: "",
+          libraryStrategy: "",
           key: sample.name,
           name: sample.name,
           id: sample.id,
@@ -165,17 +172,34 @@ function CreateNcbiExport(): JSX.Element {
   };
 
   const validateAndSubmit = (): void => {
-    // TODO: convert release date from momentjs
-    form
-      .validateFields()
-      .then(({ bioProject, namespace, organization, releaseDate, samples }) => {
-        console.log({
-          bioProject,
-          namespace,
-          organization,
-          releaseDate,
-          samples,
-        });
+    form.validateFields().then(
+      ({
+        bioProject,
+        namespace,
+        organization,
+        releaseDate,
+        samples,
+      }: {
+        bioProject: string;
+        namespace: string;
+        organization: string;
+        releaseDate: moment.Moment;
+        samples: {
+          [k: string]: {
+            files: {
+              pairs?: number[];
+              singles?: number[];
+            };
+            bioSample: string;
+            libraryName: string;
+            libraryStrategy: string;
+            librarySource: string;
+            libraryConstructionProtocol: string;
+            instrumentModel: [string, string];
+            librarySelection: string;
+          };
+        };
+      }) => {
         const request: NcbiSubmissionRequest = {
           projectId: Number(projectId),
           bioProject,
@@ -183,11 +207,30 @@ function CreateNcbiExport(): JSX.Element {
           organization,
           releaseDate: releaseDate.unix(),
           samples: Object.values(samples).map(
-            (sample): NcbiSubmissionBioSample => {}
+            ({
+              files = { pairs: [], singles: [] },
+              instrumentModel,
+              ...rest
+            }): NcbiSubmissionBioSample => {
+              return {
+                ...rest,
+                instrumentModel: instrumentModel[1],
+                singles: files.singles ? files.singles : [],
+                pairs: files.pairs ? files.pairs : [],
+              };
+            }
           ),
         };
-        console.log(request);
-      });
+
+        submitNcbiSubmissionRequest(request)
+          .then((response) => {
+            console.log(response);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    );
   };
 
   return (

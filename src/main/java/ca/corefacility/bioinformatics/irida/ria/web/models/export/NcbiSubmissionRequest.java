@@ -42,8 +42,8 @@ public class NcbiSubmissionRequest {
 		return releaseDate;
 	}
 
-	public void setReleaseDate(Date releaseDate) {
-		this.releaseDate = releaseDate;
+	public void setReleaseDate(Long releaseDate) {
+		this.releaseDate = new Date(releaseDate);
 	}
 
 	public List<NcbiSubmissionSample> getSamples() {
