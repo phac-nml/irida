@@ -262,8 +262,9 @@ export function SamplesTable() {
     },
     {
       title: i18n("SamplesTable.Column.coverage"),
-      width: 100,
+      className: "t-td-coverage",
       dataIndex: "coverage",
+      sorter: { multiple: 1 },
     },
     {
       title: i18n("SamplesTable.Column.organism"),

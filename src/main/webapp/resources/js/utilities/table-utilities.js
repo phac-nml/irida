@@ -7,7 +7,13 @@ import moment from "moment";
  */
 export function formatSort(sorter) {
   const order = { ascend: "asc", descend: "desc" };
-  const formatProperty = (property) => property.join(".");
+  const formatProperty = (property) => {
+    if (typeof property === "string") {
+      return property;
+    } else {
+      return property.join(".");
+    }
+  };
   const fromSorter = (item) => ({
     property: formatProperty(item.field),
     direction: order[item.order],
