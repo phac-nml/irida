@@ -6,7 +6,9 @@ import java.util.Objects;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Formula;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -49,6 +51,10 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 	@Column(name = "owner")
 	@NotNull
 	private boolean owner;
+
+	@Formula("(Select IF(p.genome_size is NULL, NULL, ROUND(SUM(qc.total_bases)/p.genome_size)) from project_sample ps join project p on ps.project_id = p.id join sample_sequencingobject sso on sso.sample_id = ps.sample_id join qc_entry qc on sso.sequencingobject_id = qc.sequencingObject_id where ps.project_id = project_id and ps.sample_id = sample_id and qc.DTYPE = \"CoverageQcEntry\")")
+	@NotAudited
+	private Integer coverage;
 
 	public ProjectSampleJoin() {
 		createdDate = new Date();
@@ -111,6 +117,10 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 
 	public void setOwner(boolean owner) {
 		this.owner = owner;
+	}
+
+	public Integer getCoverage() {
+		return coverage;
 	}
 
 	@Override

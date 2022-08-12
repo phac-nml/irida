@@ -89,9 +89,9 @@ public class UISampleService {
 	 These correspond to their internationalized strings in the messages file
 	 */
 	private final List<String> TABLE_HEADERS = ImmutableList.of("server.SamplesTable.sampleName",
-			"server.SamplesTable.sampleId", "server.SamplesTable.quality", "server.SamplesTable.organism",
-			"server.SamplesTable.project", "server.SamplesTable.projectId", "server.SamplesTable.collectedBy",
-			"server.SamplesTable.created", "server.SamplesTable.modified");
+			"server.SamplesTable.sampleId", "server.SamplesTable.quality", "server.SamplesTable.coverage",
+			"server.SamplesTable.organism", "server.SamplesTable.project", "server.SamplesTable.projectId",
+			"server.SamplesTable.collectedBy", "server.SamplesTable.created", "server.SamplesTable.modified");
 
 	@Autowired
 	public UISampleService(SampleService sampleService, ProjectService projectService,
@@ -279,8 +279,8 @@ public class UISampleService {
 			try {
 				projectService.shareSamples(currentProject, targetProject, samples, !request.getLocked());
 			} catch (Exception e) {
-				throw new UIShareSamplesException(
-						messageSource.getMessage("server.ShareSamples.copy-error", new Object[] { targetProject.getLabel() }, locale));
+				throw new UIShareSamplesException(messageSource.getMessage("server.ShareSamples.copy-error",
+						new Object[] { targetProject.getLabel() }, locale));
 			}
 		}
 
@@ -621,6 +621,9 @@ public class UISampleService {
 			Cell sampleQualityCell = row.createCell(cellNum++);
 			sampleQualityCell.setCellValue(StringUtils.join(item.getQuality(), "; "));
 
+			Cell sampleCoverageCell = row.createCell(cellNum++);
+			sampleCoverageCell.setCellValue(item.getCoverage());
+
 			Cell sampleOrganismCell = row.createCell(cellNum++);
 			sampleOrganismCell.setCellValue(sample.getOrganism());
 
@@ -654,8 +657,7 @@ public class UISampleService {
 	 *
 	 * @param response {@link HttpServletResponse}
 	 * @param filename {@link String} name of the file to download.
-	 * @param items    {@link ProjectSampleTableItem} details about each row of the table   Data to download in the
-	 *                 table
+	 * @param items    {@link ProjectSampleTableItem} details about each row of the table Data to download in the table
 	 * @param headers  for the table
 	 * @throws IOException thrown if file cannot be written
 	 */
@@ -672,6 +674,7 @@ public class UISampleService {
 					sample.getSampleName(),
 					sample.getId().toString(),
 					StringUtils.join(item.getQuality(), "; "),
+					item.getCoverage().toString(),
 					sample.getOrganism(),
 					project.getName(),
 					project.getId().toString(),
