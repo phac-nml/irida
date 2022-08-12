@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   Card,
   Col,
@@ -133,6 +134,13 @@ export async function loader(): Promise<LoaderValues> {
   }));
 }
 
+enum CreateStatus {
+  REJECTED,
+  RESOLVED,
+  PENDING,
+  IDLE,
+}
+
 /**
  * React component to render a form for created a new NCBI SRA Export
  * @constructor
@@ -142,6 +150,9 @@ function CreateNcbiExport(): JSX.Element {
   const { projectId } = useParams();
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const [createStatus, setCreatestatus] = React.useState<CreateStatus>(
+    CreateStatus.IDLE
+  );
 
   /**
    * Update the default value for each sample in the form
@@ -199,6 +210,7 @@ function CreateNcbiExport(): JSX.Element {
           };
         };
       }) => {
+        setCreatestatus(CreateStatus.PENDING);
         const request: NcbiSubmissionRequest = {
           projectId: Number(projectId),
           bioProject,
@@ -223,10 +235,11 @@ function CreateNcbiExport(): JSX.Element {
 
         submitNcbiSubmissionRequest(request)
           .then(() => {
-            navigate(-1);
+            setCreatestatus(CreateStatus.RESOLVED);
+            setTimeout(() => navigate(-1), 2000);
           })
           .catch((error) => {
-            console.log(error);
+            setCreatestatus(CreateStatus.REJECTED);
           });
       }
     );
@@ -335,9 +348,20 @@ function CreateNcbiExport(): JSX.Element {
                   <CreateNcbiExportSamples form={form} />
                 </Card>
 
-                <Button type="primary" htmlType="submit">
-                  {i18n("CreateNcbiExport.submit")}
-                </Button>
+                {createStatus !== CreateStatus.RESOLVED ? (
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    loading={createStatus === CreateStatus.PENDING}
+                  >
+                    {i18n("CreateNcbiExport.submit")}
+                  </Button>
+                ) : (
+                  <Alert
+                    type="success"
+                    message={"Succes uploaded sample to the NCBI SRA"}
+                  />
+                )}
               </Space>
             </Form>
           </PageHeader>
