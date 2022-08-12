@@ -30,6 +30,10 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 @EntityListeners(AuditingEntityListener.class)
 public class ProjectSampleJoin implements Join<Project, Sample> {
 
+	static final String COVERAGE_SUB_QUERY = "(Select IF(p.genome_size is NULL, NULL, ROUND(SUM(qc.total_bases)/p.genome_size)) from project_sample ps join project p on ps.project_id = p.id join sample_sequencingobject sso on sso.sample_id = ps.sample_id join qc_entry qc on sso.sequencingobject_id = qc.sequencingObject_id where ps.project_id = project_id and ps.sample_id = sample_id and qc.DTYPE = 'CoverageQCEntry' group by p.genome_size)";
+
+	static final String QC_STATUS_SUB_QUERY = "(Select IF(count(sso.id) = 0, NULL, IF(sum(IF(qc.DTYPE = 'CoverageQCEntry' and (p.genome_size is NULL or p.minimum_coverage is NULL or p.maximum_coverage is NULL or (qc.total_bases / p.genome_size > p.minimum_coverage and qc.total_bases / p.genome_size < p.maximum_coverage)), NULL, 1)) is NULL, 'pass', 'fail')) from project_sample ps join project p on ps.project_id = p.id join sample_sequencingobject sso on sso.sample_id = ps.sample_id join qc_entry qc on sso.sequencingobject_id = qc.sequencingObject_id where ps.project_id = project_id and ps.sample_id = sample_id)";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -52,9 +56,13 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 	@NotNull
 	private boolean owner;
 
-	@Formula("(Select IF(p.genome_size is NULL, NULL, ROUND(SUM(qc.total_bases)/p.genome_size)) from project_sample ps join project p on ps.project_id = p.id join sample_sequencingobject sso on sso.sample_id = ps.sample_id join qc_entry qc on sso.sequencingobject_id = qc.sequencingObject_id where ps.project_id = project_id and ps.sample_id = sample_id and qc.DTYPE = \"CoverageQCEntry\" group by p.genome_size)")
+	@Formula(COVERAGE_SUB_QUERY)
 	@NotAudited
 	private Integer coverage;
+
+	@Formula(QC_STATUS_SUB_QUERY)
+	@NotAudited
+	private String qcStatus;
 
 	public ProjectSampleJoin() {
 		createdDate = new Date();
@@ -121,6 +129,10 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 
 	public Integer getCoverage() {
 		return coverage;
+	}
+
+	public String getQcStatus() {
+		return qcStatus;
 	}
 
 	@Override

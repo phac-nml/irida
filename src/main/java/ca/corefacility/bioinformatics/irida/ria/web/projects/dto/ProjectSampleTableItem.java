@@ -16,6 +16,7 @@ public class ProjectSampleTableItem extends AntTableItem {
 	private final ProjectObject project;
 	private final List<String> quality;
 	private final Integer coverage;
+	private final String qcStatus;
 
 	public ProjectSampleTableItem(ProjectSampleJoin join, List<String> quality) {
 		super(join.getId());
@@ -24,6 +25,7 @@ public class ProjectSampleTableItem extends AntTableItem {
 		this.project = new ProjectObject(join.getSubject());
 		this.quality = quality;
 		this.coverage = join.getCoverage();
+		this.qcStatus = join.getQcStatus();
 	}
 
 	public SampleObject getSample() {
@@ -44,5 +46,9 @@ public class ProjectSampleTableItem extends AntTableItem {
 
 	public Integer getCoverage() {
 		return coverage;
+	}
+
+	public String getQcStatus() {
+		return qcStatus;
 	}
 }
