@@ -9,10 +9,9 @@ export interface ProjectSelectProps extends SelectProps {
 
 /**
  * React component for displaying a project drop-down menu.
- * @param {list} projects - list of projects that is to be displayed
- * @param {function} onChange - function that is called when select option has changed
- * @param {number} defaultValue - project identifier of the project that is to be displayed by default
- * @returns {JSX.Element}
+ * @param projects - list of projects that is to be displayed
+ * @param onChange - function that is called when select option has changed
+ * @param defaultValue - project identifier of the project that is to be displayed by default
  * @constructor
  */
 export function ProjectSelect({
