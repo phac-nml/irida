@@ -133,9 +133,8 @@ export function SamplesTable() {
           className={filterName}
           mode="tags"
           placeholder={placeholder}
-          value={selectedKeys[0]}
-          onChange={(e) => {
-            const values = Array.isArray(e) && e.length > 0 ? [e] : e;
+          value={selectedKeys}
+          onChange={(values) => {
             setSelectedKeys(values);
             confirm({ closeDropdown: false });
           }}
@@ -143,7 +142,7 @@ export function SamplesTable() {
         />
         <Space>
           <Button
-            disabled={selectedKeys.length === 0 || selectedKeys[0].length === 0}
+            disabled={selectedKeys.length === 0}
             onClick={() => handleClearSearch(clearFilters, confirm)}
             size="small"
             style={{ width: 89 }}
@@ -177,11 +176,14 @@ export function SamplesTable() {
       <div style={{ padding: 8 }} className={filterName}>
         <div style={{ marginBottom: 8, display: "block" }}>
           <RangePicker
-            onChange={(dates) =>
-              setSelectedKeys([
-                [dates[0].startOf("day"), dates[1].endOf("day")],
-              ])
-            }
+            onChange={(dates) => {
+              if (Array.isArray(dates)) {
+                setSelectedKeys([
+                  dates[0].startOf("day"),
+                  dates[1].endOf("day"),
+                ]);
+              }
+            }}
           />
         </div>
         <Space>
@@ -196,7 +198,9 @@ export function SamplesTable() {
           </Button>
           <Button
             type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm)}
+            onClick={() => {
+              handleSearch(selectedKeys, confirm);
+            }}
             icon={<IconSearch />}
             size="small"
             style={{ width: 90 }}
@@ -262,6 +266,16 @@ export function SamplesTable() {
       render: (qcStatus, row) => (
         <SampleQuality qcStatus={qcStatus} qualities={row.quality} />
       ),
+      filters: [
+        {
+          text: i18n("SampleQuality.pass").toUpperCase(),
+          value: "pass",
+        },
+        {
+          text: i18n("SampleQuality.fail").toUpperCase(),
+          value: "fail",
+        },
+      ],
     },
     {
       title: i18n("SamplesTable.Column.coverage"),

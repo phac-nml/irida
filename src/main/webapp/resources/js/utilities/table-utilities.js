@@ -37,8 +37,9 @@ export function formatSearch(filters) {
   const formattedSearch = [];
 
   for (const filter in filters) {
-    for (const index in filters[filter]) {
-      const value = filters[filter][index];
+    const value = filters[filter];
+    // ignore empty filters
+    if (value != null) {
       // if we have two values, and they are both moment objects then add searches for date range.
       if (
         Array.isArray(value) &&
@@ -60,8 +61,8 @@ export function formatSearch(filters) {
         // if more than one value is provided use "IN" operation, otherwise use "MATCH" operation
         formattedSearch.push({
           property: filter,
-          value,
-          operation: Array.isArray(value) ? "MATCH_IN" : defaultOperation,
+          value: value.length == 1 ? value[0] : value,
+          operation: value.length > 1 ? "MATCH_IN" : defaultOperation,
         });
       }
     }
