@@ -46,9 +46,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchCriteria;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchOperation;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNameModel;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIShareSamplesException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntSearch;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
@@ -298,18 +295,6 @@ public class UISampleService {
 					.ifPresent(field -> metadataTemplateService.setMetadataRestriction(targetProject, field,
 							ProjectMetadataRole.fromString(restriction.getRestriction())));
 		}
-	}
-
-	/**
-	 * Validate a list of sample names
-	 *
-	 * @param request {@link ValidateSampleNamesRequest} details about the sample names to validate
-	 * @return a list of validated sample names
-	 */
-	public ValidateSampleNamesResponse validateSampleNames(ValidateSampleNamesRequest request) {
-		List<ValidateSampleNameModel> samples = request.getSamples();
-		System.out.println("HERE");
-		return new ValidateSampleNamesResponse(samples);
 	}
 
 	/**

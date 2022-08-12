@@ -17,6 +17,7 @@ import {
   useGetSampleIdsForProjectQuery,
   useGetSampleNamesForProjectQuery,
   useShareSamplesWithProjectMutation,
+  useValidateSamplesMutation,
 } from "../../../apis/projects/samples";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ShareMetadata } from "./ShareMetadata";
@@ -40,6 +41,7 @@ function ShareApp() {
   const [shareLarge, setShareLarge] = React.useState(false);
   const [error, setError] = React.useState(undefined);
   const [finished, setFinished] = React.useState(false);
+  const [validateSamples] = useValidateSamplesMutation();
 
   /*
   Create redirect href to project samples page.
@@ -115,6 +117,18 @@ function ShareApp() {
     },
     { title: i18n("ShareLayout.restrictions"), component: <ShareMetadata /> },
   ];
+
+  React.useEffect(() => {
+    if (targetProject?.identifier) {
+      console.log(samples);
+      validateSamples({
+        projectId: targetProject?.identifier,
+        body: { samples: [{ id: 1, name: "test" }] },
+      }).then((response) => {
+        console.log(response);
+      });
+    }
+  }, [targetProject?.identifier]);
 
   React.useEffect(() => {
     if (step === 0) {

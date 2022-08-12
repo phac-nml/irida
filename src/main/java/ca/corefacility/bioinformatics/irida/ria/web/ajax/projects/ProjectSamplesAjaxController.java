@@ -211,12 +211,14 @@ public class ProjectSamplesAjaxController {
 	/**
 	 * Validate a list of samples names
 	 *
-	 * @param request {@link ValidateSampleNamesRequest} details about the sample names to validate
+	 * @param projectId project identifier
+	 * @param request   {@link ValidateSampleNamesRequest} details about the sample names to validate
 	 * @return a list of validated sample names
 	 */
 	@PostMapping("/validate")
-	public ResponseEntity<AjaxResponse> validateSampleNames(@RequestBody ValidateSampleNamesRequest request) {
-		return ResponseEntity.ok(uiSampleService.validateSampleNames(request));
+	public ResponseEntity<AjaxResponse> validateSampleNames(@PathVariable Long projectId,
+			@RequestBody ValidateSampleNamesRequest request) {
+		return ResponseEntity.ok(uiProjectSampleService.validateSampleNames(projectId, request));
 	}
 
 }

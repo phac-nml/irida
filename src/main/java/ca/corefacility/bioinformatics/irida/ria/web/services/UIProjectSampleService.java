@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidatio
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNameModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -38,6 +42,19 @@ public class UIProjectSampleService {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.messageSource = messageSource;
+	}
+
+	/**
+	 * Validate a list of sample names
+	 *
+	 * @param projectId project identifier
+	 * @param request   {@link ValidateSampleNamesRequest} details about the sample names to validate
+	 * @return a list of validated sample names
+	 */
+	public ValidateSampleNamesResponse validateSampleNames(Long projectId, ValidateSampleNamesRequest request) {
+		List<ValidateSampleNameModel> samples = request.getSamples();
+		System.out.println("HERE");
+		return new ValidateSampleNamesResponse(samples);
 	}
 
 	/**
@@ -65,7 +82,9 @@ public class UIProjectSampleService {
 		 */
 		if (!name.matches("[A-Za-z\\d-_!@#$%~`]+")) {
 			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY.value())
-					.body(new SampleNameValidationResponse("error", messageSource.getMessage("server.AddSample.error.special.characters", new Object[] {}, locale)));
+					.body(new SampleNameValidationResponse("error",
+							messageSource.getMessage("server.AddSample.error.special.characters", new Object[] {},
+									locale)));
 		}
 
 		// Check to see if the sample name already exists.
