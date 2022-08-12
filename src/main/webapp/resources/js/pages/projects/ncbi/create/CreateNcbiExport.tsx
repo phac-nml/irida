@@ -13,7 +13,7 @@ import {
 import type { RangePickerProps } from "antd/es/date-picker";
 import moment from "moment";
 import React from "react";
-import { useLoaderData, useParams } from "react-router-dom";
+import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import {
   getNCBIPlatforms,
   getNCBISelections,
@@ -73,9 +73,7 @@ function isModifiableFieldOnSampleRecordProperty(
   ].includes(attribute);
 }
 
-export interface SampleRecords {
-  [k: string]: SampleRecord;
-}
+export type SampleRecords = Record<string, SampleRecord>;
 
 export interface LoaderValues {
   samples: SampleRecords;
@@ -143,6 +141,7 @@ function CreateNcbiExport(): JSX.Element {
   const { samples }: LoaderValues = useLoaderData();
   const { projectId } = useParams();
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   /**
    * Update the default value for each sample in the form
@@ -185,7 +184,7 @@ function CreateNcbiExport(): JSX.Element {
         organization: string;
         releaseDate: moment.Moment;
         samples: {
-          [k: string]: {
+          string: {
             files: {
               pairs?: number[];
               singles?: number[];
@@ -223,8 +222,8 @@ function CreateNcbiExport(): JSX.Element {
         };
 
         submitNcbiSubmissionRequest(request)
-          .then((response) => {
-            console.log(response);
+          .then(() => {
+            navigate(-1);
           })
           .catch((error) => {
             console.log(error);
