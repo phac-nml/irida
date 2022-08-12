@@ -7,6 +7,7 @@ import {
   Form,
   Input,
   Layout,
+  notification,
   PageHeader,
   Row,
   Space,
@@ -150,7 +151,7 @@ function CreateNcbiExport(): JSX.Element {
   const { projectId } = useParams();
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const [createStatus, setCreatestatus] = React.useState<CreateStatus>(
+  const [createStatus, setCreateStatus] = React.useState<CreateStatus>(
     CreateStatus.IDLE
   );
 
@@ -210,7 +211,7 @@ function CreateNcbiExport(): JSX.Element {
           };
         };
       }) => {
-        setCreatestatus(CreateStatus.PENDING);
+        setCreateStatus(CreateStatus.PENDING);
         const request: NcbiSubmissionRequest = {
           projectId: Number(projectId),
           bioProject,
@@ -235,11 +236,15 @@ function CreateNcbiExport(): JSX.Element {
 
         submitNcbiSubmissionRequest(request)
           .then(() => {
-            setCreatestatus(CreateStatus.RESOLVED);
+            setCreateStatus(CreateStatus.RESOLVED);
+            // Redirect the user back to the referrer page
             setTimeout(() => navigate(-1), 2000);
           })
-          .catch((error) => {
-            setCreatestatus(CreateStatus.REJECTED);
+          .catch((message = i18n("CreateNcbiExport.error")) => {
+            setCreateStatus(CreateStatus.REJECTED);
+            notification.error({
+              message,
+            });
           });
       }
     );
@@ -359,7 +364,7 @@ function CreateNcbiExport(): JSX.Element {
                 ) : (
                   <Alert
                     type="success"
-                    message={"Succes uploaded sample to the NCBI SRA"}
+                    message={i18n("CreateNcbiExport.success")}
                   />
                 )}
               </Space>
