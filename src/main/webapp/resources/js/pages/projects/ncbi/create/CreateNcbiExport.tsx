@@ -164,8 +164,9 @@ function CreateNcbiExport(): JSX.Element {
     if (isModifiableFieldOnSampleRecordProperty(field)) {
       // Update all the samples that do not currently have a value.
       const values: SampleRecords = form.getFieldValue("samples");
+
       Object.values(values).forEach((sample) => {
-        if (sample[field] === undefined) {
+        if (sample[field] !== undefined && String(sample[field]).length === 0) {
           form.setFieldsValue({
             samples: { [sample.name]: { [field]: value } },
           });
