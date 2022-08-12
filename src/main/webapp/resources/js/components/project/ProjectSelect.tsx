@@ -1,5 +1,6 @@
 import React from "react";
 import { Select, SelectProps, Tag, Typography } from "antd";
+import { LabeledValue } from "antd/lib/select";
 
 export type Project = { identifier: number; name: string };
 
@@ -19,7 +20,9 @@ export function ProjectSelect({
   onChange = () => {},
   defaultValue = null,
 }: ProjectSelectProps): JSX.Element {
-  const [options, setOptions] = React.useState(() => formatOptions(projects));
+  const [options, setOptions] = React.useState<LabeledValue[]>(() =>
+    formatOptions(projects)
+  );
 
   function formatOptions(values: Project[]) {
     if (!values) return [];
