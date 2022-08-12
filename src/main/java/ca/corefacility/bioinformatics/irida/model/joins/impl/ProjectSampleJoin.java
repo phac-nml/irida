@@ -52,7 +52,7 @@ public class ProjectSampleJoin implements Join<Project, Sample> {
 	@NotNull
 	private boolean owner;
 
-	@Formula("(Select IF(p.genome_size is NULL, NULL, ROUND(SUM(qc.total_bases)/p.genome_size)) from project_sample ps join project p on ps.project_id = p.id join sample_sequencingobject sso on sso.sample_id = ps.sample_id join qc_entry qc on sso.sequencingobject_id = qc.sequencingObject_id where ps.project_id = project_id and ps.sample_id = sample_id and qc.DTYPE = \"CoverageQcEntry\")")
+	@Formula("(Select IF(p.genome_size is NULL, NULL, ROUND(SUM(qc.total_bases)/p.genome_size)) from project_sample ps join project p on ps.project_id = p.id join sample_sequencingobject sso on sso.sample_id = ps.sample_id join qc_entry qc on sso.sequencingobject_id = qc.sequencingObject_id where ps.project_id = project_id and ps.sample_id = sample_id and qc.DTYPE = \"CoverageQCEntry\" group by p.genome_size)")
 	@NotAudited
 	private Integer coverage;
 
