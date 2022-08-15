@@ -20,7 +20,7 @@ import {
 import { NamePath } from "antd/lib/form/interface";
 import React from "react";
 import { useLoaderData } from "react-router-dom";
-import { LoaderValues, SampleRecord, SampleRecords } from "./CreateNcbiExport";
+import { LoaderValues, SampleRecord } from "./CreateNcbiExport";
 
 const rules = [
   {
@@ -219,7 +219,7 @@ function CreateNcbiExportSamples({
 }: {
   form: FormInstance;
 }): JSX.Element {
-  const { samples }: { samples: SampleRecords } = useLoaderData();
+  const { samples }: LoaderValues = useLoaderData();
   const values = Object.values(samples);
   const [validationStatus, setValidationStatus] = React.useState<boolean[]>(
     () =>
