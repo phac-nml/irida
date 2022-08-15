@@ -222,6 +222,11 @@ function SampleValidIcon({ status }: { status: boolean }) {
   );
 }
 
+/**
+ * React component to render a sample to be exported to the NCBI SRA
+ * @param form
+ * @constructor
+ */
 function CreateNcbiExportSamples({
   form,
 }: {
