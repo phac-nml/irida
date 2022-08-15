@@ -59,12 +59,12 @@ export function SampleInfo() {
       value: value || "",
     })
       .unwrap()
-      .then((response) => {
+      .then(({ message }: { message: string }) => {
         const formattedVal = moment.isMoment(value)
           ? value.format(dateFormat)
           : value || "";
         dispatch(updateDetails({ field, value: formattedVal }));
-        notification.success({ message: response.message });
+        notification.success({ message });
       })
       .catch((error) => {
         notification.error({ message: error.data.error });

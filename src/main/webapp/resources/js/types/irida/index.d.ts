@@ -1,3 +1,5 @@
+import { GenomeAssembly, SequencingObject } from "../../apis/samples/samples";
+
 export = IRIDA;
 export as namespace IRIDA;
 
@@ -11,19 +13,6 @@ declare namespace IRIDA {
     identifier: number;
   }
 
-  export type AnalysisState =
-    | "NEW"
-    | "PREPARING"
-    | "PREPARED"
-    | "SUBMITTING"
-    | "RUNNING"
-    | "FINISHED_RUNNING"
-    | "COMPLETING"
-    | "COMPLETED"
-    | "TRANSFERRED"
-    | "POST_PROCESSING"
-    | "ERROR";
-
   interface Announcement extends IridaBase {
     title: string;
     message: string;
@@ -31,51 +20,6 @@ declare namespace IRIDA {
     createdBy: User;
     users: User[];
   }
-
-  interface GenomeAssembly {
-    createdDate: Date;
-    file: string;
-    identifier: number;
-    label: string;
-    links: [];
-  }
-
-  interface FastQC {
-    additionalProperties: Record<string, unknown>[];
-    analysisType: Record<string, string>;
-    createdDate: Date;
-    description: string;
-    encoding: string;
-    executionManagerAnalysisId: string;
-    fastqcVersion: string;
-    fileType: string;
-    filteredSequences: number;
-    gcContent: number;
-    identifier: number;
-    label: string;
-    links: any[];
-    maxLength: number;
-    minLength: number;
-    overrepresentedSequences: OverrepresentedSequences[];
-    totalBases: number;
-    totalSequences: number;
-  }
-
-  interface OverrepresentedSequences {
-    sequences: string;
-    overrepresentedSequenceCount: number;
-    percentage: number;
-    possibleSource: string;
-    createdDate: Date;
-    identifier: number;
-  }
-
-  export type ProcessingState =
-    | "UNPROCESSED"
-    | "QUEUED"
-    | "PROCESSING"
-    | "FINISHED"
-    | "ERROR";
 
   interface Project extends IridaBase {
     description: string;
@@ -106,62 +50,6 @@ declare namespace IRIDA {
     defaultSequencingObject: SequencingObject;
     defaultGenomeAssembly: GenomeAssembly;
     sampleName: string;
-  }
-
-  interface SampleAnalyses {
-    analysisType: string;
-    createdDate: Date;
-    id: number;
-    name: string;
-    state: AnalysisState;
-  }
-
-  interface SampleGenomeAssembly {
-    fileInfo: {
-      createdDate: Date;
-      file: string;
-      fileName: string;
-      fileRevisionNumber: number;
-      identifier: number;
-      label: string;
-      links: [];
-    };
-    fileType: string;
-    firstFileSize: string;
-  }
-
-  interface SampleSequencingObject {
-    fileInfo: SequencingObject;
-    secondFileSize: string;
-    firstFileSize: string;
-    processingState: ProcessingState;
-    fileType: string;
-    file: any | undefined; //TODO: (deep - 08/08/22): Flush this out
-    qcEntries: any;
-  }
-
-  interface SequencingFile {
-    createdDate: Date;
-    file: string;
-    fileName: string;
-    identifier: string;
-    label: string;
-    links: [];
-    modifiedDate: Date;
-    uploadSha: string;
-  }
-
-  interface SequencingObject {
-    createdDate: Date;
-    fileProcessor: string;
-    files: SequencingFile[];
-    forwardSequenceFile: SequencingFile;
-    identifier: number;
-    label: string;
-    links: [];
-    processingState: ProcessingState;
-    reverseSequenceFile: SequencingFile;
-    sequenceFile: SequencingFile;
   }
 
   export type SystemRole =

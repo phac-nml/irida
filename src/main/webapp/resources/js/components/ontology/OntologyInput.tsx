@@ -39,7 +39,20 @@ export function OntologyInput({
    * @param {object} current
    * @returns {*}
    */
-  function optionsReducer(accumulator, current) {
+  function optionsReducer(
+    accumulator: JSX.Element[],
+    current: {
+      value: React.Key | null | undefined;
+      text:
+        | boolean
+        | React.ReactChild
+        | React.ReactFragment
+        | React.ReactPortal
+        | null
+        | undefined;
+      children: any[];
+    }
+  ) {
     accumulator.push(
       <Option key={current.value} value={current.value}>
         {current.text}

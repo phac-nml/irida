@@ -1,6 +1,5 @@
 import React from "react";
-import { Button, Col, Empty, notification, Row } from "antd";
-import { IconLoading } from "../../icons/Icons";
+import { Button, Col, Empty, notification, Row, Spin } from "antd";
 import { WarningAlert } from "../../alerts";
 import { SampleFileConcatenate } from "./SampleFileContenate";
 
@@ -47,9 +46,9 @@ export function SampleFiles() {
   );
   const dispatch = useAppDispatch();
 
-  const [seqFileProgress, setSeqFileProgress] = React.useState(0);
-  const [assemblyProgress, setAssemblyProgress] = React.useState(0);
-  const [fast5Progress, setFast5Progress] = React.useState(0);
+  const [seqFileProgress, setSeqFileProgress] = React.useState<number>(0);
+  const [assemblyProgress, setAssemblyProgress] = React.useState<number>(0);
+  const [fast5Progress, setFast5Progress] = React.useState<number>(0);
 
   const [sequenceFiles, setSequenceFiles] = React.useState<FileUpload[]>([]);
   const [assemblyFiles, setAssemblyFiles] = React.useState<FileUpload[]>([]);
@@ -297,7 +296,7 @@ export function SampleFiles() {
   const props = { className: "t-upload-sample-files" };
 
   return loading ? (
-    <IconLoading />
+    <Spin />
   ) : (
     <Row gutter={[16, 16]}>
       {modifiable ? (

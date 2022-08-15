@@ -3,7 +3,7 @@ import {
   SampleGenomeAssembly,
   SampleSequencingObject,
   SequencingObject,
-} from "../../types/irida";
+} from "../../apis/samples/samples";
 
 // The default width for action buttons
 export const DEFAULT_ACTION_WIDTH = 75;

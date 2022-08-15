@@ -14,12 +14,15 @@ const BASE_URL = setBaseUrl(`/ajax/sequenceFiles`);
  * @return {Promise<*>} `data` contains the OK response and a dto with the fastqc details;
  *                      `error` contains error information if an error occurred.
  */
-export async function getFastQCDetails(sequencingObjectId, sequenceFileId) {
+export async function getFastQCDetails(
+  sequencingObjectId: number,
+  sequenceFileId: number
+) {
   return await axios
     .get(`${BASE_URL}/fastqc-details`, {
       params: {
         sequencingObjectId,
-        sequenceFileId
+        sequenceFileId,
       },
     })
     .then(({ data }) => data)
@@ -35,12 +38,15 @@ export async function getFastQCDetails(sequencingObjectId, sequenceFileId) {
  * @return {Promise<*>} `data` contains the OK response and a dto with the fastqc charts;
  *                      `error` contains error information if an error occurred.
  */
-export async function getFastQCImages(sequencingObjectId, sequenceFileId) {
+export async function getFastQCImages(
+  sequencingObjectId: number,
+  sequenceFileId: number
+) {
   return await axios
     .get(`${BASE_URL}/fastqc-charts`, {
       params: {
         sequencingObjectId,
-        sequenceFileId
+        sequenceFileId,
       },
     })
     .then(({ data }) => data)
@@ -56,12 +62,15 @@ export async function getFastQCImages(sequencingObjectId, sequenceFileId) {
  * @return {Promise<*>} `data` contains the OK response and a AnalysisFastQC model object;
  *                      `error` contains error information if an error occurred.
  */
-export async function getOverRepresentedSequences(sequencingObjectId, sequenceFileId) {
+export async function getOverRepresentedSequences(
+  sequencingObjectId: number,
+  sequenceFileId: number
+) {
   return await axios
     .get(`${BASE_URL}/overrepresented-sequences`, {
       params: {
         sequencingObjectId,
-        sequenceFileId
+        sequenceFileId,
       },
     })
     .then(({ data }) => data)

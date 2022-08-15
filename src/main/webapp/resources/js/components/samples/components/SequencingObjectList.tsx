@@ -35,7 +35,10 @@ import {
   useUpdateDefaultSampleSequencingObjectMutation,
 } from "../../../apis/samples/samples";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
-import { SampleSequencingObject, SequencingObject } from "../../../types/irida";
+import {
+  SampleSequencingObject,
+  SequencingObject,
+} from "../../../apis/samples/samples";
 
 const fileProcessTranslations: { [key: string]: string } = {
   UNPROCESSED: i18n("SampleFilesList.fileProcessingState.UNPROCESSED"),
@@ -62,7 +65,9 @@ export interface SequencingObjectListProps {
  * @constructor
  */
 export function SequencingObjectList({
-  removeSampleFiles = () => {},
+  removeSampleFiles = () => {
+    /*Function to remove sample sequencing objects*/
+  },
 }: SequencingObjectListProps): JSX.Element {
   const [updateSampleDefaultSequencingObject] =
     useUpdateDefaultSampleSequencingObjectMutation();
@@ -353,7 +358,7 @@ export function SequencingObjectList({
         onClick={() => {
           downloadSequenceFile({
             sequencingObjectId: obj.identifier,
-            sequenceFileId: obj.files[1].identifier,
+            sequenceFileId: parseInt(obj.files[1].identifier),
           });
         }}
       >
@@ -409,7 +414,7 @@ export function SequencingObjectList({
       sequencingObjectId: sequencingObject.identifier,
     })
       .unwrap()
-      .then(({ message }) => {
+      .then(({ message }: { message: string }) => {
         dispatch(setDefaultSequencingObject(sequencingObject));
         notification.success({ message });
       })
@@ -425,8 +430,8 @@ export function SequencingObjectList({
     sequencingObjectId,
     sequenceFileId,
   }: {
-    sequencingObjectId: string | number;
-    sequenceFileId: string | number;
+    sequencingObjectId: number;
+    sequenceFileId: number;
   }) => {
     notification.success({
       message: i18n("SampleFiles.startingSequenceFileDownload"),

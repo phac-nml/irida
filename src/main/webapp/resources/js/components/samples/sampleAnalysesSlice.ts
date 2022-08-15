@@ -1,5 +1,5 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
-import { SampleAnalyses } from "../../types/irida";
+import { SampleAnalyses } from "../../apis/samples/samples";
 
 /**
  * Action to set the target sample analyses

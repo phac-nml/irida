@@ -1,10 +1,9 @@
 import { createAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchMetadataForSample } from "../../apis/samples/samples";
 import {
-  Sample,
-  SampleGenomeAssembly,
-  SampleSequencingObject,
-} from "../../types/irida";
+  fetchMetadataForSample,
+  SampleMetadataFieldEntry,
+} from "../../apis/samples/samples";
+import { Sample } from "../../types/irida";
 
 /**
  * Action to set the target sample
@@ -124,7 +123,7 @@ export const updateDetails = createAction(
  */
 const initialState: {
   entry: string;
-  metadata: Record<string, string>[];
+  metadata: SampleMetadataFieldEntry[];
   field: string;
   editModalVisible: boolean;
   restriction: string;
@@ -147,7 +146,7 @@ const initialState: {
     entryId: 0,
     entry: "",
     restriction: "LEVEL_1",
-    metadata: [],
+    metadata: [] as SampleMetadataFieldEntry[],
     loading: true,
   };
 })();

@@ -6,7 +6,7 @@ import {
   IconLoading,
 } from "../../icons/Icons";
 
-import { AnalysisState } from "../../../types/irida";
+import { AnalysisState } from "../../../apis/samples/samples";
 
 const commonIconStyle = {
   fontSize: "16px",

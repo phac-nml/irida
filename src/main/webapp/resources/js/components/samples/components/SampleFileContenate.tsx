@@ -23,7 +23,7 @@ import {
   SampleSequencingObject,
   SequencingFile,
   SequencingObject,
-} from "../../../types/irida";
+} from "../../../apis/samples/samples";
 
 const { Title } = Typography;
 

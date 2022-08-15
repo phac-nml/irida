@@ -9,7 +9,7 @@ import { formatInternationalizedDateTime } from "../../../utilities/date-utiliti
 import {
   AnalysisState,
   SampleAnalyses as SampleAnalysesItem,
-} from "../../../types/irida";
+} from "../../../apis/samples/samples";
 
 const { Search } = Input;
 
@@ -23,6 +23,9 @@ export function SampleAnalyses() {
   const [filteredSubmissions, setFilteredSubmissions] = React.useState<
     SampleAnalysesItem[]
   >([]);
+  const [allAnalysesDisplayed, setAllAnalysesDisplayed] =
+    React.useState<boolean>(true);
+
   const dispatch = useAppDispatch();
 
   const { sample } = useAppSelector((state) => state.sampleReducer);
@@ -108,6 +111,10 @@ export function SampleAnalyses() {
             submission.name.toLowerCase().includes(searchStr) ||
             submission.analysisType.toLowerCase().includes(searchStr)
         );
+
+      if (submissionsContainingSearchValue.length) {
+        setAllAnalysesDisplayed(false);
+      }
       setFilteredSubmissions(submissionsContainingSearchValue);
     }
   };
@@ -127,7 +134,9 @@ export function SampleAnalyses() {
           columns={columns}
           loading={loading}
           dataSource={
-            filteredSubmissions.length ? filteredSubmissions : analyses
+            !allAnalysesDisplayed || filteredSubmissions.length > 0
+              ? filteredSubmissions
+              : analyses
           }
           rowKey={(item) => `analysis-submission-${item.id}`}
           className="t-sample-analyses"

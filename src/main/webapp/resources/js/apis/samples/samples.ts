@@ -1,10 +1,116 @@
-import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
+import { get, post } from "../requests";
 
 const URL = setBaseUrl(`ajax/samples`);
 
 const SEQUENCE_FILES_AJAX_URL = setBaseUrl("ajax/sequenceFiles");
+
+export type AnalysisState =
+  | "NEW"
+  | "PREPARING"
+  | "PREPARED"
+  | "SUBMITTING"
+  | "RUNNING"
+  | "FINISHED_RUNNING"
+  | "COMPLETING"
+  | "COMPLETED"
+  | "TRANSFERRED"
+  | "POST_PROCESSING"
+  | "ERROR";
+
+export interface GenomeAssembly {
+  createdDate: Date;
+  file: string;
+  identifier: number;
+  label: string;
+  links: [];
+}
+
+export type ProcessingState =
+  | "UNPROCESSED"
+  | "QUEUED"
+  | "PROCESSING"
+  | "FINISHED"
+  | "ERROR";
+
+export type ProjectMetadataRole = "LEVEL_1" | "LEVEL_2" | "LEVEL_3" | "LEVEL_4";
+
+export interface SampleAnalyses {
+  analysisType: string;
+  createdDate: Date;
+  id: number;
+  name: string;
+  state: AnalysisState;
+}
+
+export interface SampleGenomeAssembly {
+  fileInfo: {
+    createdDate: Date;
+    file: string;
+    fileName: string;
+    fileRevisionNumber: number;
+    identifier: number;
+    label: string;
+    links: [];
+  };
+  fileType: string;
+  firstFileSize: string;
+}
+
+export interface SampleMetadata {
+  metadata: SampleMetadataFieldEntry[];
+}
+
+export interface SampleMetadataFieldEntry {
+  fieldId: number;
+  metadataTemplateField: string;
+  metadataEntry: string;
+  entryId: number;
+  metadataRestriction: ProjectMetadataRole;
+}
+
+export interface SampleSequencingObject {
+  fileInfo: SequencingObject;
+  secondFileSize: string;
+  firstFileSize: string;
+  processingState: ProcessingState;
+  fileType: string;
+  file: any | undefined; //TODO: (deep - 08/08/22): Flush this out
+  qcEntries: any;
+}
+
+export interface SampleFiles {
+  singles: SampleSequencingObject[];
+  paired: SampleSequencingObject[];
+  fast5: SampleSequencingObject[];
+  assemblies: SampleGenomeAssembly[];
+}
+
+export interface SequencingFile {
+  createdDate: Date;
+  file: string;
+  fileName: string;
+  identifier: string;
+  label: string;
+  links: [];
+  modifiedDate: Date;
+  uploadSha: string;
+}
+
+export interface SequencingObject {
+  createdDate: Date;
+  fileProcessor: string;
+  files: SequencingFile[];
+  forwardSequenceFile: SequencingFile;
+  identifier: number;
+  label: string;
+  links: [];
+  processingState: ProcessingState;
+  reverseSequenceFile: SequencingFile;
+  sequenceFile: SequencingFile;
+}
 
 /**
  * Redux API to handle queries based on samples
@@ -128,8 +234,9 @@ export const {
 
 /**
  * Gets the sample metadata.
- * @param {Object} params
- * @returns {Promise<{}|T>}
+ * @param {number} sampleId - identifier for a sample
+ * @param {number} projectId - identifier for a project
+ * @returns {Promise<SampleMetadata>}
  */
 export const fetchMetadataForSample = async ({
   sampleId,
@@ -137,86 +244,49 @@ export const fetchMetadataForSample = async ({
 }: {
   sampleId: number;
   projectId: number;
-}) => {
-  try {
-    const { data } = await axios.get(
-      setBaseUrl(`${URL}/${sampleId}/metadata?projectId=${projectId}`)
-    );
-    return data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response) {
-        return Promise.reject(error.response.data.error);
-      } else {
-        return Promise.reject(error.message);
-      }
-    } else {
-      return Promise.reject("An unexpected error occurred");
-    }
-  }
+}): Promise<SampleMetadata> => {
+  return get(setBaseUrl(`${URL}/${sampleId}/metadata?projectId=${projectId}`));
 };
 
 /**
  * Get file details for a sample
  * @param {number} sampleId - identifier for a sample
  * @param {number} projectId - identifier for a project (if the sample is in the cart), not required.
- * @returns {Promise<any>}
+ * @returns {Promise<SampleFiles>}
  */
-export async function fetchSampleFiles({
+export const fetchSampleFiles = async ({
   sampleId,
   projectId,
 }: {
   sampleId: number;
   projectId: number;
-}) {
-  try {
-    const response = await axios.get(
-      `${URL}/${sampleId}/files${projectId && `?projectId=${projectId}`}`
-    );
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response) {
-        return Promise.reject(error.response.data.error);
-      } else {
-        return Promise.reject(error.message);
-      }
-    } else {
-      return Promise.reject("An unexpected error occurred");
-    }
-  }
-}
+}): Promise<SampleFiles> => {
+  return get(
+    `${URL}/${sampleId}/files${projectId && `?projectId=${projectId}`}`
+  );
+};
 
 /**
  * Get analyses ran for sample
  * @param {number} sampleId - identifier for a sample
- * @returns {Promise<any>}
+ * @returns {Promise<SampleAnalyses[]>}
  */
-export async function fetchSampleAnalyses({ sampleId }: { sampleId: number }) {
-  try {
-    const response = await axios.get(`${URL}/${sampleId}/analyses`);
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response) {
-        return Promise.reject(error.response.data.error);
-      } else {
-        return Promise.reject(error.message);
-      }
-    } else {
-      return Promise.reject("An unexpected error occurred");
-    }
-  }
-}
+export const fetchSampleAnalyses = async ({
+  sampleId,
+}: {
+  sampleId: number;
+}): Promise<SampleAnalyses[]> => {
+  return get(`${URL}/${sampleId}/analyses`);
+};
 
 /**
  * Get updated sequencing objects details for a sample
  * @param {number} sampleId - identifier for a sample
- * @param {number} projectId - identifier for a project (if the sample is in the cart), not required.
+ * @param {number} projectId - identifier for a project
  * @param {array} sequencingObjectIds - identifiers for updated sequencing objects to get.
- * @returns {Promise<any>}
+ * @returns {Promise<SampleFiles>}
  */
-export async function fetchUpdatedSequencingObjects({
+export const fetchUpdatedSequencingObjects = ({
   sampleId,
   projectId,
   sequencingObjectIds,
@@ -224,26 +294,13 @@ export async function fetchUpdatedSequencingObjects({
   sampleId: number;
   projectId: number;
   sequencingObjectIds: number[];
-}) {
-  try {
-    const response = await axios.get(
-      `${URL}/${sampleId}/updated-sequencing-objects?sequencingObjectIds=${sequencingObjectIds}&projectId=${
-        projectId ? projectId : ""
-      }`
-    );
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response) {
-        return Promise.reject(error.response.data.error);
-      } else {
-        return Promise.reject(error.message);
-      }
-    } else {
-      return Promise.reject("An unexpected error occurred");
-    }
-  }
-}
+}): Promise<SampleFiles> => {
+  return get(
+    `${URL}/${sampleId}/updated-sequencing-objects?sequencingObjectIds=${sequencingObjectIds}&projectId=${
+      projectId ? projectId : ""
+    }`
+  );
+};
 
 /**
  * Download genome assembly file
@@ -290,7 +347,7 @@ export function downloadSequencingObjectFile({
  * @param config - configuration for the upload
  * @returns {Promise<any>}
  */
-export async function uploadSequenceFiles({
+export const uploadSequenceFiles = async ({
   sampleId,
   formData,
   config,
@@ -298,26 +355,9 @@ export async function uploadSequenceFiles({
   sampleId: number;
   formData: any;
   config: {};
-}) {
-  try {
-    const response = await axios.post(
-      `${URL}/${sampleId}/sequenceFiles/upload`,
-      formData,
-      config
-    );
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response) {
-        return Promise.reject(error.response.data.error);
-      } else {
-        return Promise.reject(error.message);
-      }
-    } else {
-      return Promise.reject("An unexpected error occurred");
-    }
-  }
-}
+}): Promise<SampleSequencingObject[]> => {
+  return post(`${URL}/${sampleId}/sequenceFiles/upload`, formData, config);
+};
 
 /**
  * Upload assembly files
@@ -326,7 +366,7 @@ export async function uploadSequenceFiles({
  * @param config - configuration for the upload
  * @returns {Promise<any>}
  */
-export async function uploadAssemblyFiles({
+export const uploadAssemblyFiles = ({
   sampleId,
   formData,
   config,
@@ -334,26 +374,9 @@ export async function uploadAssemblyFiles({
   sampleId: number;
   formData: any;
   config: {};
-}) {
-  try {
-    const response = await axios.post(
-      `${URL}/${sampleId}/assemblies/upload`,
-      formData,
-      config
-    );
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response) {
-        return Promise.reject(error.response.data.error);
-      } else {
-        return Promise.reject(error.message);
-      }
-    } else {
-      return Promise.reject("An unexpected error occurred");
-    }
-  }
-}
+}): Promise<SampleGenomeAssembly[]> => {
+  return post(`${URL}/${sampleId}/assemblies/upload`, formData, config);
+};
 
 /**
  * Upload fast5 files
@@ -362,7 +385,7 @@ export async function uploadAssemblyFiles({
  * @param config - configuration for the upload
  * @returns {Promise<any>}
  */
-export async function uploadFast5Files({
+export const uploadFast5Files = ({
   sampleId,
   formData,
   config,
@@ -370,23 +393,6 @@ export async function uploadFast5Files({
   sampleId: number;
   formData: any;
   config: {};
-}) {
-  try {
-    const response = await axios.post(
-      `${URL}/${sampleId}/fast5/upload`,
-      formData,
-      config
-    );
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response) {
-        return Promise.reject(error.response.data.error);
-      } else {
-        return Promise.reject(error.message);
-      }
-    } else {
-      return Promise.reject("An unexpected error occurred");
-    }
-  }
-}
+}): Promise<SampleSequencingObject[]> => {
+  return post(`${URL}/${sampleId}/fast5/upload`, formData, config);
+};

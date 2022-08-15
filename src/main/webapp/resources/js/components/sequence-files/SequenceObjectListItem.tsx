@@ -12,7 +12,7 @@ import { BORDERED_LIGHT } from "../../styles/borders";
 import { FastQC } from "../samples/components/fastqc/FastQC";
 import { setFastQCModalData } from "../samples/components/fastqc/fastQCSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks/useState";
-import { SampleSequencingObject } from "../../types/irida";
+import { SampleSequencingObject } from "../../apis/samples/samples";
 
 const qcEntryTranslations: { [key: string]: any } = {
   COVERAGE: i18n("SequenceObjectListItem.qcEntry.COVERAGE"),

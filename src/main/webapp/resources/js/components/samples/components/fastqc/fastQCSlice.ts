@@ -1,5 +1,35 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
-import { FastQC, SequencingFile } from "../../../../types/irida";
+import { SequencingFile } from "../../../../apis/samples/samples";
+
+export interface FastQC {
+  additionalProperties: Record<string, unknown>[];
+  analysisType: Record<string, string>;
+  createdDate: Date;
+  description: string;
+  encoding: string;
+  executionManagerAnalysisId: string;
+  fastqcVersion: string;
+  fileType: string;
+  filteredSequences: number;
+  gcContent: number;
+  identifier: number;
+  label: string;
+  links: any[];
+  maxLength: number;
+  minLength: number;
+  overrepresentedSequences: OverrepresentedSequences[];
+  totalBases: number;
+  totalSequences: number;
+}
+
+export interface OverrepresentedSequences {
+  sequences: string;
+  overrepresentedSequenceCount: number;
+  percentage: number;
+  possibleSource: string;
+  createdDate: Date;
+  identifier: number;
+}
 
 /**
  * Action to set the fast qc details

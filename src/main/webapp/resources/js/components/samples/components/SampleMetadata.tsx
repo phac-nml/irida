@@ -121,10 +121,7 @@ export function SampleMetadata() {
                 item.metadataTemplateField
               )}
               onConfirm={() =>
-                removeMetadata(
-                  item.metadataTemplateField,
-                  parseInt(item.entryId)
-                )
+                removeMetadata(item.metadataTemplateField, item.entryId)
               }
               okText="Confirm"
             >

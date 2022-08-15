@@ -2,12 +2,14 @@ import React from "react";
 import { Button, notification, Popconfirm, Tag, Tooltip } from "antd";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
-import { downloadGenomeAssemblyFile } from "../../../apis/samples/samples";
+import {
+  downloadGenomeAssemblyFile,
+  SampleGenomeAssembly,
+  useUpdateDefaultSampleGenomeAssemblyMutation,
+} from "../../../apis/samples/samples";
 import { GenomeAssemblyListItem } from "../../sequence-files/GenomeAssemblyListItem";
 import { DEFAULT_ACTION_WIDTH } from "../sampleFilesSlice";
-import { useUpdateDefaultSampleGenomeAssemblyMutation } from "../../../apis/samples/samples";
 import { setDefaultGenomeAssembly } from "../sampleSlice";
-import { SampleGenomeAssembly } from "../../../types/irida";
 
 export interface GenomeAssemblyListProps {
   removeSampleFiles: ({
@@ -26,7 +28,9 @@ export interface GenomeAssemblyListProps {
  * @constructor
  */
 export function GenomeAssemblyList({
-  removeSampleFiles = () => {},
+  removeSampleFiles = () => {
+    /* function to remove sample genome assemblies*/
+  },
 }: GenomeAssemblyListProps): JSX.Element {
   const [updateSampleDefaultGenomeAssembly] =
     useUpdateDefaultSampleGenomeAssemblyMutation();
