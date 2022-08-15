@@ -13,6 +13,7 @@ import {
   Form,
   FormInstance,
   Input,
+  List,
   Row,
   Select,
   Space,
@@ -135,16 +136,16 @@ function SampleDetails({
           >
             <Checkbox.Group style={{ width: `100%` }}>
               <Row>
-                {sample.files.singles.map((pair) => (
-                  <Col key={pair.key} span={24}>
-                    <Checkbox value={pair.id}>
+                {sample.files.singles.map((single) => (
+                  <Col key={single.key} span={24}>
+                    <Checkbox value={single.id}>
                       <Space>
                         <Avatar
                           size="small"
                           style={{ backgroundColor: `var(--primary-grey)` }}
                           icon={<SwapRightOutlined />}
                         />
-                        {pair.name}
+                        {single.name} - {single.file.fileSize}
                       </Space>
                     </Checkbox>
                   </Col>
@@ -178,7 +179,14 @@ function SampleDetails({
                           style={{ backgroundColor: `var(--primary-grey)` }}
                           icon={<SwapOutlined />}
                         />
-                        {pair.name}
+                        <List size="small">
+                          <List.Item>
+                            {pair.files[0].name} - {pair.files[0].fileSize}
+                          </List.Item>
+                          <List.Item>
+                            {pair.files[1].name} - {pair.files[1].fileSize}
+                          </List.Item>
+                        </List>
                       </Space>
                     </Checkbox>
                   </Col>
