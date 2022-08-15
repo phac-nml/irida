@@ -58,7 +58,7 @@ class NcbiSubmissionModelTest {
 		when(submission.getBioSampleFiles()).thenReturn(files);
 		when(submission.getUploadState()).thenReturn(ExportUploadState.CREATED);
 
-		NcbiSubmissionModel model = new NcbiSubmissionModel(submission);
+		NcbiSubmissionModel model = new NcbiSubmissionModel(submission, ImmutableList.of());
 
 		assertEquals(1L, model.getId(), "Id should not be changed");
 		assertEquals(project.getName(), model.getProject().getName(), "Project should not be changed");
