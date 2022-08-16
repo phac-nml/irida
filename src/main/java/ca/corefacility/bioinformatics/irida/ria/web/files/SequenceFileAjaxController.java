@@ -59,19 +59,6 @@ public class SequenceFileAjaxController {
 	}
 
 	/**
-	 * Gets the overrepresented sequences for the file from the fastqc results.
-	 *
-	 * @param sequencingObjectId ID for the {@link SequencingObject}
-	 * @param sequenceFileId     Id for the {@link SequenceFile}
-	 * @return {@link AnalysisFastQC} model
-	 */
-	@GetMapping("/overrepresented-sequences")
-	public ResponseEntity<AnalysisFastQC> getOverRepresentedSequences(@RequestParam Long sequencingObjectId,
-			@RequestParam Long sequenceFileId) {
-		return ResponseEntity.ok(uiSequenceFileService.getOverRepresentedSequences(sequencingObjectId, sequenceFileId));
-	}
-
-	/**
 	 * Download the sequence file
 	 *
 	 * @param sequencingObjectId ID for the {@link SequencingObject}

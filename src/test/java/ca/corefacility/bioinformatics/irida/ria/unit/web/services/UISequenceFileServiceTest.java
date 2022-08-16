@@ -72,14 +72,6 @@ public class UISequenceFileServiceTest {
 	}
 
 	@Test
-	public void testOverRepresentedSequences() {
-		AnalysisFastQC analysisFastQC = service.getOverRepresentedSequences(OBJECT_ID, FILE_ID);
-		verify(sequencingObjectService, times(1)).read(OBJECT_ID);
-		verify(analysisService, times(1)).getFastQCAnalysisForSequenceFile(seqObject, FILE_ID);
-		assertTrue(analysisFastQC != null, "Has a an AnalysisFastQC object");
-	}
-
-	@Test
 	public void testDownloadSequenceFile() throws IOException {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		service.downloadSequenceFile(OBJECT_ID, FILE_ID, response);
