@@ -111,8 +111,7 @@ export function SampleAnalyses() {
             submission.name.toLowerCase().includes(searchStr) ||
             submission.analysisType.toLowerCase().includes(searchStr)
         );
-
-      if (submissionsContainingSearchValue.length) {
+      if (submissionsContainingSearchValue.length >= 0) {
         setAllAnalysesDisplayed(false);
       }
       setFilteredSubmissions(submissionsContainingSearchValue);
@@ -134,7 +133,7 @@ export function SampleAnalyses() {
           columns={columns}
           loading={loading}
           dataSource={
-            !allAnalysesDisplayed || filteredSubmissions.length > 0
+            !allAnalysesDisplayed && filteredSubmissions.length >= 0
               ? filteredSubmissions
               : analyses
           }
