@@ -1,11 +1,10 @@
 import React from "react";
 import { Select, SelectProps, Tag, Typography } from "antd";
 import { LabeledValue } from "antd/lib/select";
-
-export type Project = { identifier: number; name: string };
+import { ProjectMinimal } from "../../types/irida";
 
 export interface ProjectSelectProps extends SelectProps {
-  projects: Project[];
+  projects: ProjectMinimal[];
 }
 
 /**
@@ -24,7 +23,7 @@ export function ProjectSelect({
     formatOptions(projects)
   );
 
-  function formatOptions(values: Project[]) {
+  function formatOptions(values: ProjectMinimal[]) {
     if (!values) return [];
     return values.map((project) => ({
       label: (
@@ -38,10 +37,10 @@ export function ProjectSelect({
           <Typography.Text ellipsis={{ tooltip: true }}>
             {project.name}
           </Typography.Text>
-          <Tag>{i18n("ProjectSelect.label.id", project.identifier)}</Tag>
+          <Tag>{i18n("ProjectSelect.label.id", project.id)}</Tag>
         </div>
       ),
-      value: project.identifier,
+      value: project.id,
       selected: project.name,
     }));
   }
@@ -56,7 +55,7 @@ export function ProjectSelect({
     const available = projects.filter(
       (project) =>
         project.name.toLowerCase().includes(lowerValue) ||
-        project.identifier.toString() === value
+        project.id.toString() === value
     );
     const formatted = formatOptions(available);
     setOptions(formatted);

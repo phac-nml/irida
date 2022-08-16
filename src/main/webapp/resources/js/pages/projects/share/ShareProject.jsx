@@ -15,7 +15,7 @@ export function ShareProject({ projects }) {
   const { targetProject } = useSelector((state) => state.shareReducer);
 
   function onChange(projectId) {
-    const project = projects.find((p) => p.identifier === projectId);
+    const project = projects.find((p) => p.id === projectId);
     dispatch(setProject(project));
   }
 
@@ -27,7 +27,7 @@ export function ShareProject({ projects }) {
       <ProjectSelect
         projects={projects}
         onChange={onChange}
-        defaultValue={targetProject?.identifier}
+        defaultValue={targetProject?.id}
       />
     </Space>
   );
