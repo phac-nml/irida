@@ -105,7 +105,7 @@ The main configuration parameters you will need to change are:
 ### OAuth2 JWK Java Key Store generation
 The Java Key Store required to encrypt and decrypt the JWT's can be generated with the following commands:
 ```bash
-keytool -genkeypair -alias JWK -keyalg RSA -noprompt -dname "CN=irida.bioinformatics.corefacility.ca, OU=ID, O=IRIDA, L=IRIDA, S=IRIDA, C=CA" -keystore ./etc/irida/jwk-key-store.jks -validity 3650 -storepass SECRET -keypass SECRET -storetype PKCS12
+keytool -genkeypair -alias JWK -keyalg RSA -noprompt -dname "CN=irida.bioinformatics.corefacility.ca, OU=ID, O=IRIDA, L=IRIDA, S=IRIDA, C=CA" -keystore /etc/irida/jwk-key-store.jks -validity 3650 -storepass SECRET -keypass SECRET -storetype PKCS12
 ```
 
 This will generate a Java Key Store with an entry aliased `JWK` with an expiry of 10 years and a password of `SECRET`.
