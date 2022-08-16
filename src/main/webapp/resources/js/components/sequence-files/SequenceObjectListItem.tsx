@@ -134,7 +134,7 @@ export function SequenceObjectListItem({
                         dispatch(
                           setFastQCModalData({
                             fileLabel: files[0].label,
-                            fileId: files[0].identifier,
+                            fileId: parseInt(files[0].identifier),
                             sequencingObjectId: obj.identifier,
                             fastQCModalVisible: true,
                             processingState: obj.processingState,
