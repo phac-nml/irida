@@ -1,8 +1,9 @@
 import React from "react";
 import { Select, SelectProps, Tag, Typography } from "antd";
 import { LabeledValue } from "antd/lib/select";
+import { IridaBase } from "../../types/irida";
 
-export type SelectListItem = { id: number; name: string };
+export type SelectListItem = Pick<IridaBase, "id" | "name">;
 export interface SelectListProps extends SelectProps {
   selectList: SelectListItem[];
 }
