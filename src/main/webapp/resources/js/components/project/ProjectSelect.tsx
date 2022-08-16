@@ -16,7 +16,7 @@ export interface ProjectSelectProps extends SelectProps {
  */
 export function ProjectSelect({
   projects,
-  onChange = () => {},
+  onChange,
   defaultValue = null,
 }: ProjectSelectProps): JSX.Element {
   const [options, setOptions] = React.useState<LabeledValue[]>(() =>
