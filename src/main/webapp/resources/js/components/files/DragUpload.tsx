@@ -5,11 +5,15 @@ import { SPACE_SM, SPACE_XS } from "../../styles/spacing";
 
 const { Dragger } = Upload;
 
+interface Dictionary<T> {
+  [Key: string]: T;
+}
+
 export interface DragUploadProps {
   uploadText: string;
   uploadHint: string;
-  options: Record<string, unknown>;
-  props: Record<string, unknown>;
+  options: Dictionary<string>;
+  props: Dictionary<string>;
 }
 /**
  * React component for rendering the drag and drop upload functionality.
