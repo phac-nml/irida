@@ -1,6 +1,6 @@
 import { Space, Typography } from "antd";
 import React from "react";
-import { ProjectSelect } from "../../../components/project/ProjectSelect";
+import { SearchByNameAndIdSelect } from "../../../components/selects/SearchByNameAndIdSelect";
 import { setProject } from "./shareSlice";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -15,7 +15,7 @@ export function ShareProject({ projects }) {
   const { targetProject } = useSelector((state) => state.shareReducer);
 
   function onChange(projectId) {
-    const project = projects.find((p) => p.id === projectId);
+    const project = projects.find((p) => p.identifier === projectId);
     dispatch(setProject(project));
   }
 
@@ -24,10 +24,14 @@ export function ShareProject({ projects }) {
       <Typography.Title level={5}>
         {i18n("ShareSamples.projects")}
       </Typography.Title>
-      <ProjectSelect
-        projects={projects}
+      <SearchByNameAndIdSelect
+        selectList={projects.map((project) => ({
+          id: project.identifier,
+          name: project.name,
+        }))}
         onChange={onChange}
-        defaultValue={targetProject?.id}
+        defaultValue={targetProject?.identifier}
+        className="t-project-select"
       />
     </Space>
   );

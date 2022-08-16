@@ -20,13 +20,6 @@ export const projectsApi = createApi({
       query: (currentId) => ({
         url: `/samples-share/projects?currentId=${currentId}`,
       }),
-      transformResponse(response) {
-        return response.map((project) => {
-          project["id"] = project["identifier"];
-          delete project["identifier"];
-          return project;
-        });
-      },
     }),
   }),
 });

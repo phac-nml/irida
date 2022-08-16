@@ -1,31 +1,33 @@
 import React from "react";
 import { Select, SelectProps, Tag, Typography } from "antd";
 import { LabeledValue } from "antd/lib/select";
-import { ProjectMinimal } from "../../types/irida";
 
-export interface ProjectSelectProps extends SelectProps {
-  projects: ProjectMinimal[];
+export type SelectListItem = { id: number; name: string };
+export interface SelectListProps extends SelectProps {
+  selectList: SelectListItem[];
 }
 
 /**
- * React component for displaying a project drop-down menu.
- * @param projects - list of projects that is to be displayed
+ * React component for displaying a drop-down menu.
+ * @param selectList - list that is to be displayed
+ * @param className - class name of the select list
  * @param onChange - function that is called when select option has changed
- * @param defaultValue - project identifier of the project that is to be displayed by default
+ * @param defaultValue - identifier of the select list item that is to be displayed by default
  * @constructor
  */
-export function ProjectSelect({
-  projects,
+export function SearchByNameAndIdSelect({
+  selectList,
   onChange,
+  className,
   defaultValue = null,
-}: ProjectSelectProps): JSX.Element {
+}: SelectListProps): JSX.Element {
   const [options, setOptions] = React.useState<LabeledValue[]>(() =>
-    formatOptions(projects)
+    formatOptions(selectList)
   );
 
-  function formatOptions(values: ProjectMinimal[]) {
+  function formatOptions(values: SelectListItem[]) {
     if (!values) return [];
-    return values.map((project) => ({
+    return values.map((selectListItem) => ({
       label: (
         <div
           style={{
@@ -35,27 +37,29 @@ export function ProjectSelect({
           }}
         >
           <Typography.Text ellipsis={{ tooltip: true }}>
-            {project.name}
+            {selectListItem.name}
           </Typography.Text>
-          <Tag>{i18n("ProjectSelect.label.id", project.id)}</Tag>
+          <Tag>
+            {i18n("SearchByNameAndIdSelect.label.id", selectListItem.id)}
+          </Tag>
         </div>
       ),
-      value: project.id,
-      selected: project.name,
+      value: selectListItem.id,
+      selected: selectListItem.name,
     }));
   }
 
   React.useEffect(() => {
-    setOptions(formatOptions(projects));
-  }, [projects]);
+    setOptions(formatOptions(selectList));
+  }, [selectList]);
 
   const handleSearch = (value: string) => {
     const lowerValue = value.toLowerCase();
 
-    const available = projects.filter(
-      (project) =>
-        project.name.toLowerCase().includes(lowerValue) ||
-        project.id.toString() === value
+    const available = selectList.filter(
+      (selectItem: { name: string; id: { toString: () => string } }) =>
+        selectItem.name.toLowerCase().includes(lowerValue) ||
+        selectItem.id.toString() === value
     );
     const formatted = formatOptions(available);
     setOptions(formatted);
@@ -69,7 +73,7 @@ export function ProjectSelect({
       size="large"
       style={{ width: `100%` }}
       options={options}
-      className="t-project-select"
+      className={className}
       filterOption={false}
       onSearch={handleSearch}
       onChange={onChange}
