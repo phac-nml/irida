@@ -12,7 +12,7 @@ interface Dictionary<T> {
 export interface DragUploadProps {
   uploadText: string;
   uploadHint: string;
-  options: Dictionary<string>;
+  options: Record<string, unknown>;
   props: Dictionary<string>;
 }
 /**
