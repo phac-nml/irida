@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models.project;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,7 @@ class NcbiBioSampleModelTest {
 		bioSampleFiles.setId(id);
 		bioSampleFiles.setAccession(accession);
 
-		NcbiBioSampleModel model = new NcbiBioSampleModel(bioSampleFiles, ImmutableList.of(), ImmutableList.of());
+		NcbiBioSampleModel model = new NcbiBioSampleModel(bioSampleFiles);
 
 		assertEquals(id, model.getId(), "Id should not be changed");
 		assertEquals(bioSample, model.getBioSample(), "Biosample should not be changed");

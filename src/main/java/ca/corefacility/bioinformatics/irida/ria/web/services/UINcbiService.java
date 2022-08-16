@@ -103,7 +103,7 @@ public class UINcbiService {
 							.stream()
 							.peek(single -> uiSampleService.enhanceQcEntries(single, project))
 							.collect(Collectors.toList());
-					return new NcbiBioSampleModel(bioSampleFile, pairs, singles);
+					return new NcbiBioSampleModel(bioSampleFile);
 				})
 				.collect(Collectors.toList());
 

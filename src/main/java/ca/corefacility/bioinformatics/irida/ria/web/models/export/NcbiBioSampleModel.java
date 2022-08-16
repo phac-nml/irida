@@ -27,8 +27,7 @@ public class NcbiBioSampleModel {
 	private final List<SingleEndSequenceFileModel> singles;
 	private final List<PairedEndSequenceFileModel> pairs;
 
-	public NcbiBioSampleModel(NcbiBioSampleFiles bioSample, List<SequencingObject> pairs,
-			List<SequencingObject> singles) {
+	public NcbiBioSampleModel(NcbiBioSampleFiles bioSample) {
 		this.id = bioSample.getId();
 		this.accession = bioSample.getAccession();
 		this.bioSample = bioSample.getBioSample();
@@ -44,10 +43,10 @@ public class NcbiBioSampleModel {
 		this.libraryConstructionProtocol = bioSample.getLibraryConstructionProtocol();
 		this.status = bioSample.getSubmissionStatus()
 				.toString();
-		this.singles = singles.stream()
+		this.singles = bioSample.getFiles().stream()
 				.map(single -> new SingleEndSequenceFileModel((SingleEndSequenceFile) single))
 				.collect(Collectors.toList());
-		this.pairs = pairs.stream()
+		this.pairs = bioSample.getPairs().stream()
 				.map(pair -> new PairedEndSequenceFileModel((SequenceFilePair) pair))
 				.collect(Collectors.toList());
 	}
