@@ -293,8 +293,6 @@ export function SampleFiles() {
     },
   };
 
-  const props = { className: "t-upload-sample-files" };
-
   return loading ? (
     <Spin />
   ) : (
@@ -306,7 +304,7 @@ export function SampleFiles() {
               uploadText={i18n("SampleFiles.uploadText")}
               uploadHint={i18n("SampleFiles.uploadHint")}
               options={sampleFileUploadOptions}
-              props={props}
+              props={{ className: "t-upload-sample-files" }}
             />
           </div>
           <div>

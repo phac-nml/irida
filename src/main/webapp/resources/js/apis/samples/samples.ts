@@ -59,6 +59,21 @@ export interface SampleGenomeAssembly {
   firstFileSize: string;
 }
 
+export interface SampleFiles {
+  singles: SampleSequencingObject[];
+  paired: SampleSequencingObject[];
+  fast5: SampleSequencingObject[];
+  assemblies: SampleGenomeAssembly[];
+}
+
+export interface SampleFileQCEntry {
+  id: number;
+  createdDate: Date;
+  status: string;
+  type: string;
+  message: string | null;
+}
+
 export interface SampleMetadata {
   metadata: SampleMetadataFieldEntry[];
 }
@@ -77,15 +92,7 @@ export interface SampleSequencingObject {
   firstFileSize: string;
   processingState: ProcessingState;
   fileType: string;
-  file: any | undefined; //TODO: (deep - 08/08/22): Flush this out
-  qcEntries: any;
-}
-
-export interface SampleFiles {
-  singles: SampleSequencingObject[];
-  paired: SampleSequencingObject[];
-  fast5: SampleSequencingObject[];
-  assemblies: SampleGenomeAssembly[];
+  qcEntries: SampleFileQCEntry[];
 }
 
 export interface SequencingFile {
@@ -110,6 +117,7 @@ export interface SequencingObject {
   processingState: ProcessingState;
   reverseSequenceFile: SequencingFile;
   sequenceFile: SequencingFile;
+  file: SequencingFile;
 }
 
 /**
@@ -306,14 +314,13 @@ export const fetchUpdatedSequencingObjects = ({
  * Download genome assembly file
  * @param {number} sampleId - identifier for a sample
  * @param {number} genomeAssemblyId - identifier for the genomeassembly to download
- * @returns {Promise<any>}
  */
 export function downloadGenomeAssemblyFile({
   sampleId,
   genomeAssemblyId,
 }: {
   sampleId: number;
-  genomeAssemblyId: string | number;
+  genomeAssemblyId: number;
 }) {
   window.open(
     `${URL}/${sampleId}/assembly/download?genomeAssemblyId=${genomeAssemblyId}`,
@@ -325,14 +332,13 @@ export function downloadGenomeAssemblyFile({
  * Download a sequence file
  * @param {number} sequencingObjectId - identifier for the sequencingobject
  * @param {number} sequenceFileId - identifier for the sequence file to download
- * @returns {Promise<any>}
  */
 export function downloadSequencingObjectFile({
   sequencingObjectId,
   sequenceFileId,
 }: {
-  sequencingObjectId: string | number;
-  sequenceFileId: string | number;
+  sequencingObjectId: number;
+  sequenceFileId: number;
 }) {
   window.open(
     `${SEQUENCE_FILES_AJAX_URL}/download?sequencingObjectId=${sequencingObjectId}&sequenceFileId=${sequenceFileId}`,
@@ -345,7 +351,7 @@ export function downloadSequencingObjectFile({
  * @param sampleId - identifier for the sample
  * @param formData - sequence files to upload
  * @param config - configuration for the upload
- * @returns {Promise<any>}
+ * @returns {Promise<SampleSequencingObject[]>}
  */
 export const uploadSequenceFiles = async ({
   sampleId,
@@ -354,7 +360,7 @@ export const uploadSequenceFiles = async ({
 }: {
   sampleId: number;
   formData: any;
-  config: {};
+  config: Record<string, unknown>;
 }): Promise<SampleSequencingObject[]> => {
   return post(`${URL}/${sampleId}/sequenceFiles/upload`, formData, config);
 };
@@ -364,7 +370,7 @@ export const uploadSequenceFiles = async ({
  * @param sampleId - identifier for the sample
  * @param formData - assembly files to upload
  * @param config - configuration for the upload
- * @returns {Promise<any>}
+ * @returns {Promise<SampleGenomeAssembly[]>}
  */
 export const uploadAssemblyFiles = ({
   sampleId,
@@ -373,7 +379,7 @@ export const uploadAssemblyFiles = ({
 }: {
   sampleId: number;
   formData: any;
-  config: {};
+  config: Record<string, unknown>;
 }): Promise<SampleGenomeAssembly[]> => {
   return post(`${URL}/${sampleId}/assemblies/upload`, formData, config);
 };
@@ -383,7 +389,7 @@ export const uploadAssemblyFiles = ({
  * @param sampleId - identifier for the sample
  * @param formData - fast5 files to upload
  * @param config - configuration for the upload
- * @returns {Promise<any>}
+ * @returns {Promise<SampleSequencingObject[]>}
  */
 export const uploadFast5Files = ({
   sampleId,
@@ -392,7 +398,7 @@ export const uploadFast5Files = ({
 }: {
   sampleId: number;
   formData: any;
-  config: {};
+  config: Record<string, unknown>;
 }): Promise<SampleSequencingObject[]> => {
   return post(`${URL}/${sampleId}/fast5/upload`, formData, config);
 };

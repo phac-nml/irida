@@ -3,7 +3,10 @@ import { notification, Space } from "antd";
 import { useRemoveSampleFilesMutation } from "../../../apis/samples/samples";
 import { removeFileObjectFromSample } from "../sampleFilesSlice";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
-import { setDefaultSequencingObject } from "../sampleSlice";
+import {
+  setDefaultGenomeAssembly,
+  setDefaultSequencingObject,
+} from "../sampleSlice";
 import { GenomeAssemblyList } from "./GenomeAssemblyList";
 import { SequencingObjectList } from "./SequencingObjectList";
 
@@ -40,8 +43,18 @@ export function SampleFileList() {
         notification.success({ message });
         dispatch(removeFileObjectFromSample({ fileObjectId, type }));
 
-        if (sample.defaultSequencingObject?.identifier === fileObjectId) {
+        if (
+          type === "sequencingObject" &&
+          sample.defaultSequencingObject?.identifier === fileObjectId
+        ) {
           dispatch(setDefaultSequencingObject(null));
+        }
+
+        if (
+          type === "assembly" &&
+          sample.defaultGenomeAssembly?.identifier === fileObjectId
+        ) {
+          dispatch(setDefaultGenomeAssembly(null));
         }
       })
       .catch((error) => {

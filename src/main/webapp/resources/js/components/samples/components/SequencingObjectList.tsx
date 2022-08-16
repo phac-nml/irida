@@ -172,11 +172,7 @@ export function SequencingObjectList({
   const getConcatenationCheckboxForSequencingObject = (
     seqObj: SampleSequencingObject
   ) => {
-    const obj = seqObj.fileInfo
-      ? seqObj.fileInfo
-      : seqObj.file
-      ? seqObj.file
-      : seqObj;
+    const obj = seqObj.fileInfo;
 
     return (
       <div>
@@ -211,11 +207,7 @@ export function SequencingObjectList({
   ) => {
     const actions: React.ReactElement[] = [];
 
-    const obj = seqObj.fileInfo
-      ? seqObj.fileInfo
-      : seqObj.file
-      ? seqObj.file
-      : seqObj;
+    const obj = seqObj.fileInfo;
 
     actions.push(
       getProcessingStateTag(obj),
@@ -281,10 +273,10 @@ export function SequencingObjectList({
           downloadSequenceFile({
             sequencingObjectId: obj.identifier,
             sequenceFileId: obj.files?.length
-              ? obj.files[0].identifier
+              ? parseInt(obj.files[0].identifier)
               : obj.sequenceFile
-              ? obj.sequenceFile.identifier
-              : obj.file.identifier,
+              ? parseInt(obj.sequenceFile.identifier)
+              : parseInt(obj.file.identifier),
           });
         }}
       >

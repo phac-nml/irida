@@ -21,7 +21,7 @@ export function DragUpload({
   uploadText,
   uploadHint,
   options,
-  ...props
+  props,
 }: DragUploadProps): JSX.Element {
   return (
     <div style={{ marginBottom: SPACE_SM }} {...props}>

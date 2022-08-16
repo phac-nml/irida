@@ -12,9 +12,12 @@ import { BORDERED_LIGHT } from "../../styles/borders";
 import { FastQC } from "../samples/components/fastqc/FastQC";
 import { setFastQCModalData } from "../samples/components/fastqc/fastQCSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks/useState";
-import { SampleSequencingObject } from "../../apis/samples/samples";
+import {
+  SampleFileQCEntry,
+  SampleSequencingObject,
+} from "../../apis/samples/samples";
 
-const qcEntryTranslations: { [key: string]: any } = {
+const qcEntryTranslations: { [key: string]: string } = {
   COVERAGE: i18n("SequenceObjectListItem.qcEntry.COVERAGE"),
   PROCESSING: i18n("SequenceObjectListItem.qcEntry.PROCESSING"),
 };
@@ -44,11 +47,7 @@ export function SequenceObjectListItem({
   displayConcatenationCheckbox = null,
   displayFileProcessingStatus = false,
 }: SequenceObjectListItemProps): JSX.Element {
-  const obj = sequenceObject.fileInfo
-    ? sequenceObject.fileInfo
-    : sequenceObject.file
-    ? sequenceObject.file
-    : sequenceObject;
+  const obj = sequenceObject.fileInfo;
 
   const dispatch = useAppDispatch();
   const { fastQCModalVisible, sequencingObjectId, fileId } = useAppSelector(
@@ -67,11 +66,7 @@ export function SequenceObjectListItem({
   /*
    Function to display file processing status
    */
-  const getQcEntries = (entry: {
-    status: string;
-    type: string | number;
-    message: boolean | null | undefined;
-  }) => {
+  const getQcEntries = (entry: SampleFileQCEntry) => {
     return (
       <Tag
         key={`file-${obj.identifier}-qc-entry-status`}
@@ -151,7 +146,7 @@ export function SequenceObjectListItem({
                     </Button>
                     {fastQCModalVisible &&
                     sequencingObjectId === obj.identifier &&
-                    fileId === files[0].identifier ? (
+                    fileId === parseInt(files[0].identifier) ? (
                       <FastQC />
                     ) : null}
                   </div>
@@ -181,7 +176,7 @@ export function SequenceObjectListItem({
                         dispatch(
                           setFastQCModalData({
                             fileLabel: files[1].label,
-                            fileId: files[1].identifier,
+                            fileId: parseInt(files[1].identifier),
                             sequencingObjectId: obj.identifier,
                             fastQCModalVisible: true,
                             processingState: obj.processingState,
@@ -193,7 +188,7 @@ export function SequenceObjectListItem({
                     </Button>
                     {fastQCModalVisible &&
                     sequencingObjectId === obj.identifier &&
-                    fileId === files[1].identifier ? (
+                    fileId === parseInt(files[1].identifier) ? (
                       <FastQC />
                     ) : null}
                   </div>
@@ -227,8 +222,8 @@ export function SequenceObjectListItem({
                             ? sequenceFile.label
                             : file.label,
                           fileId: sequenceFile
-                            ? sequenceFile.identifier
-                            : file.identifier,
+                            ? parseInt(sequenceFile.identifier)
+                            : parseInt(file.identifier),
                           sequencingObjectId: obj.identifier,
                           fastQCModalVisible: true,
                           processingState: obj.processingState,
@@ -244,8 +239,8 @@ export function SequenceObjectListItem({
                   sequencingObjectId === obj.identifier &&
                   fileId ===
                     (sequenceFile
-                      ? sequenceFile.identifier
-                      : file.identifier) ? (
+                      ? parseInt(sequenceFile.identifier)
+                      : parseInt(file.identifier)) ? (
                     <FastQC />
                   ) : null}
                 </div>
@@ -261,11 +256,7 @@ export function SequenceObjectListItem({
           <List.Item key={`qc-entry-${obj.identifier}`}>
             <List.Item.Meta
               title={sequenceObject.qcEntries.map(
-                (entry: {
-                  status: string;
-                  type: string | number;
-                  message: boolean | null | undefined;
-                }) => {
+                (entry: SampleFileQCEntry) => {
                   return getQcEntries(entry);
                 }
               )}

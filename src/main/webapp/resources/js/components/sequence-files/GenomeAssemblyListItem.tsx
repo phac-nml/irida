@@ -4,10 +4,10 @@ import { formatInternationalizedDateTime } from "../../utilities/date-utilities"
 import { FileOutlined } from "@ant-design/icons";
 import { blue6 } from "../../styles/colors";
 import { BORDERED_LIGHT } from "../../styles/borders";
-import { SequenceObjectListItemProps } from "./SequenceObjectListItem";
+import { SampleGenomeAssembly } from "../../apis/samples/samples";
 
 export interface GenomeAssemblyListItemProps {
-  genomeAssembly: any;
+  genomeAssembly: SampleGenomeAssembly;
   actions: JSX.Element[];
 }
 /**
@@ -19,7 +19,7 @@ export interface GenomeAssemblyListItemProps {
  */
 export function GenomeAssemblyListItem({
   genomeAssembly,
-  actions = []
+  actions = [],
 }: GenomeAssemblyListItemProps): JSX.Element {
   const { createdDate, identifier, label } = genomeAssembly.fileInfo;
   return (
