@@ -182,7 +182,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(sampleDetailsViewer.sampleAnalysesTableVisible());
 		assertEquals(1, sampleDetailsViewer.numberOfSampleAnalysesVisible(),
 				"User should only see listing of 1 analysis ran with this sample");
-		assertEquals(0, sampleDetailsViewer.filterSampleAnalyses("bio"),
+		assertEquals(0, sampleDetailsViewer.filterSampleAnalyses("bioh"),
 				"Filtering analyses by 'bio' should yield 0 results");
 		sampleDetailsViewer.clearSampleAnalysesFilter();
 		assertEquals(1, sampleDetailsViewer.numberOfSampleAnalysesVisible(),
