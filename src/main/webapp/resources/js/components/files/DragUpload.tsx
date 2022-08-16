@@ -5,14 +5,25 @@ import { SPACE_SM, SPACE_XS } from "../../styles/spacing";
 
 const { Dragger } = Upload;
 
-interface Dictionary<T> {
+export interface Dictionary<T> {
   [Key: string]: T;
+}
+
+export interface UploadOptions {
+  multiple: boolean;
+  showUploadList: boolean | Dictionary<boolean>;
+  accept: string;
+  progress: Dictionary<number>;
+  beforeUpload: () => void;
+  customRequest: () => void;
+  action: string;
+  onChange: () => void;
 }
 
 export interface DragUploadProps {
   uploadText: string;
   uploadHint: string;
-  options: Record<string, unknown>;
+  options: UploadOptions;
   props: Dictionary<string>;
 }
 /**
