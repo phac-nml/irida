@@ -3,7 +3,6 @@
  */
 
 import { setBaseUrl } from "../../utilities/url-utilities";
-import axios from "axios";
 import { SequencingFile, SequencingObject } from "../samples/samples";
 import { get } from "../requests";
 

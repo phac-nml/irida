@@ -20,6 +20,16 @@ export type AnalysisState =
   | "POST_PROCESSING"
   | "ERROR";
 
+export interface FileUpload {
+  uid: string;
+  name: string;
+  lastModified: number;
+  lastModifiedDate: Date;
+  size: number;
+  type: string;
+  webkitRelativePath: string;
+}
+
 export interface GenomeAssembly {
   createdDate: Date;
   file: string;

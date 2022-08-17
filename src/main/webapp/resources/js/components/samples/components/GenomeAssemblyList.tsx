@@ -29,7 +29,7 @@ export interface GenomeAssemblyListProps {
  */
 export function GenomeAssemblyList({
   removeSampleFiles = () => {
-    /* function to remove sample genome assemblies*/
+    /* function to remove sample genome assemblies */
   },
 }: GenomeAssemblyListProps): JSX.Element {
   const [updateSampleDefaultGenomeAssembly] =

@@ -21,16 +21,8 @@ import {
   uploadFast5Files,
 } from "../../../apis/samples/samples";
 import { SPACE_MD } from "../../../styles/spacing";
+import { FileUpload } from "../../../apis/samples/samples";
 
-export interface FileUpload {
-  uid: string;
-  name: string;
-  lastModified: number;
-  lastModifiedDate: Date;
-  size: number;
-  type: string;
-  webkitRelativePath: string;
-}
 /**
  * React component to display sample files and upload files to sample
  *
@@ -101,7 +93,7 @@ export function SampleFiles() {
    */
   const uploadFiles = () => {
     if (sequenceFiles.length) {
-      const seqFileUploadconfig = {
+      const seqFileUploadConfig = {
         headers: { "content-type": "multipart/form-data" },
         onUploadProgress: (progressEvent: {
           loaded: number;
@@ -129,7 +121,7 @@ export function SampleFiles() {
       uploadSequenceFiles({
         sampleId: sample.identifier,
         formData,
-        config: seqFileUploadconfig,
+        config: seqFileUploadConfig,
       })
         .then((response) => {
           notification.success({

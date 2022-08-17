@@ -172,7 +172,7 @@ export function SequencingObjectList({
   const getConcatenationCheckboxForSequencingObject = (
     seqObj: SampleSequencingObject
   ) => {
-    const obj = seqObj.fileInfo;
+    const { fileInfo: obj }: SampleSequencingObject = seqObj;
 
     return (
       <div>
@@ -207,7 +207,7 @@ export function SequencingObjectList({
   ) => {
     const actions: React.ReactElement[] = [];
 
-    const obj = seqObj.fileInfo;
+    const { fileInfo: obj }: SampleSequencingObject = seqObj;
 
     actions.push(
       getProcessingStateTag(obj),

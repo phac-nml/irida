@@ -2,6 +2,7 @@ import React from "react";
 import { Upload } from "antd";
 import { IconFileUpload } from "../icons/Icons";
 import { SPACE_SM, SPACE_XS } from "../../styles/spacing";
+import { FileUpload } from "../../apis/samples/samples";
 
 const { Dragger } = Upload;
 
@@ -13,11 +14,11 @@ export interface UploadOptions {
   multiple: boolean;
   showUploadList: boolean | Dictionary<boolean>;
   accept: string;
-  progress: Dictionary<number>;
-  beforeUpload: () => void;
-  customRequest: () => void;
-  action: string;
-  onChange: () => void;
+  progress?: Dictionary<number>;
+  beforeUpload?: (file: FileUpload, fileList: FileUpload[]) => boolean;
+  customRequest?: () => void;
+  action?: string;
+  onChange?: () => void;
 }
 
 export interface DragUploadProps {

@@ -7,7 +7,7 @@ const { Option } = AutoComplete;
 
 export interface OntologyInputProps {
   term: string;
-  onTermSelected: (value: string) => void;
+  onTermSelected: { (value: string): void; (): void };
   ontology: string;
   autofocus: boolean;
 }
@@ -30,7 +30,7 @@ export function OntologyInput({
 }: OntologyInputProps): JSX.Element {
   const [options, setOptions] = useState([]);
   const [query, setQuery] = useState<string>("");
-  const selectRef = useRef();
+  const selectRef = useRef<HTMLInputElement>(null);
 
   /**
    * Reducer: Create the dropdown contents from the taxonomy.
@@ -71,7 +71,7 @@ export function OntologyInput({
   Since we don't want a post being send until the user is done typing, set a
   delay when to send the request based on the last typed letter.
    */
-  const debouncedQuery = useDebounce(query, 350);
+  const debouncedQuery: string = useDebounce(query, 350);
 
   useEffect(() => {
     /*
@@ -90,7 +90,8 @@ export function OntologyInput({
       /*
     Focus on the input when the component is mounted.
      */
-      selectRef.current.focus();
+      const autoCompleteInput = selectRef.current;
+      autoCompleteInput?.focus();
     }
   }, [autofocus]);
 
@@ -99,14 +100,15 @@ export function OntologyInput({
    *
    * @param {SyntheticEvent} e React input synthetic event for input
    */
-  const onBlur = (e) => onTermSelected(e.target.value);
+  const onBlur = (e: React.FocusEvent<HTMLInputElement>) =>
+    onTermSelected(e.target.value);
 
   return (
     <AutoComplete
       className="t-organism-input"
       allowClear={true}
       backfill={true}
-      {...selectRef}
+      ref={selectRef}
       showSearch
       defaultValue={term || ""}
       notFoundContent={null}

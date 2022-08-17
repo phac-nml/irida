@@ -2,7 +2,13 @@ import axios from "axios";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const TAXONOMY = "taxonomy";
-const ONTOLOGY_URLS = { [TAXONOMY]: setBaseUrl("ajax/taxonomy") };
+const ONTOLOGY_URLS: ontologyDictionary = {
+  [TAXONOMY]: setBaseUrl("ajax/taxonomy"),
+};
+
+export interface ontologyDictionary {
+  [key: string]: string;
+}
 
 /**
  * Search an ontology for a specific term
@@ -11,7 +17,13 @@ const ONTOLOGY_URLS = { [TAXONOMY]: setBaseUrl("ajax/taxonomy") };
  * @param {string} ontology - which ontology to search
  * @returns {Promise<void|AxiosResponse<any>>}
  */
-export default async function searchOntology({ query, ontology }) {
+export default async function searchOntology({
+  query,
+  ontology,
+}: {
+  query: string;
+  ontology: string;
+}) {
   // Make sure the ontology we are searching actually exits.
   if (ONTOLOGY_URLS[ontology]) {
     return axios

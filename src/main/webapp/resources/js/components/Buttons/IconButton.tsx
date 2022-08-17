@@ -1,4 +1,10 @@
 import React from "react";
+import { Button } from "antd";
+
+export interface IconButtonProps {
+  children: React.ReactElement;
+  onClick: () => void;
+}
 
 /**
  * React component to render an icon as a button, this allows for proper web
@@ -9,8 +15,11 @@ import React from "react";
  * @returns {*}
  * @constructor
  */
-export const IconButton = ({ children, onClick }) => (
-  <button
+export const IconButton = ({
+  children,
+  onClick,
+}: IconButtonProps): JSX.Element => (
+  <Button
     type="link"
     style={{
       border: "none",
@@ -21,5 +30,5 @@ export const IconButton = ({ children, onClick }) => (
     onClick={onClick}
   >
     {children}
-  </button>
+  </Button>
 );
