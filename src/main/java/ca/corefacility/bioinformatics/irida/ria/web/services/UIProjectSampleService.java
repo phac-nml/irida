@@ -31,7 +31,6 @@ import com.google.common.base.Strings;
  */
 @Component
 public class UIProjectSampleService {
-
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final MessageSource messageSource;
@@ -53,7 +52,16 @@ public class UIProjectSampleService {
 	 */
 	public ValidateSampleNamesResponse validateSampleNames(Long projectId, ValidateSampleNamesRequest request) {
 		List<ValidateSampleNameModel> samples = request.getSamples();
-		System.out.println("HERE");
+		Project project = projectService.read(projectId);
+		for (ValidateSampleNameModel sample : samples) {
+			try {
+				String sampleName = sample.getName();
+				Sample found = sampleService.getSampleBySampleName(project, sampleName);
+				sample.setId(found.getId());
+			} catch (EntityNotFoundException e) {
+				sample.setId(null);
+			}
+		}
 		return new ValidateSampleNamesResponse(samples);
 	}
 

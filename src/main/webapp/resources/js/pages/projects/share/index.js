@@ -120,10 +120,14 @@ function ShareApp() {
 
   React.useEffect(() => {
     if (targetProject?.identifier) {
-      console.log(samples);
       validateSamples({
         projectId: targetProject?.identifier,
-        body: { samples: [{ id: 1, name: "test" }] },
+        body: {
+          samples: samples.map((sample) => ({
+            id: sample.id,
+            name: sample.name,
+          })),
+        },
       }).then((response) => {
         console.log(response);
       });
