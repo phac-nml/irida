@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Share
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesView.xml")
@@ -28,7 +29,7 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 
 		assertFalse(shareSamplesPage.isNextButtonEnabled(), "");
 		shareSamplesPage.searchForProject("3");
-		assertEquals(shareSamplesPage.getProjectSelectText(), "project_three");
+		assertThat(shareSamplesPage.getProjectSelectText()).contains("project_three");
 		assertTrue(shareSamplesPage.isNextButtonEnabled(), "Next button should be enabled");
 		shareSamplesPage.searchForProject("project2");
 		assertTrue(shareSamplesPage.isNextButtonEnabled(), "Next button should be enabled");
