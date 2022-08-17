@@ -7,7 +7,7 @@ import { LoaderValues, SampleRecord } from "./CreateNcbiExport";
 import CreateNcbiSampleDetails from "./CreateNcbiSampleDetails";
 
 /**
- * React component to display if a sample if valid for export to the NCBI.
+ * React component to display if a sample is valid for export to the NCBI.
  * @param status
  * @constructor
  */
