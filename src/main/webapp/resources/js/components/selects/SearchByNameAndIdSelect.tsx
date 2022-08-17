@@ -34,6 +34,7 @@ export function SearchByNameAndIdSelect({
           style={{
             display: "flex",
             justifyContent: "space-between",
+            alignItems: "center",
             width: "100%",
           }}
         >
@@ -46,7 +47,6 @@ export function SearchByNameAndIdSelect({
         </div>
       ),
       value: selectListItem.id,
-      selected: selectListItem.name,
     }));
   }
 
@@ -68,7 +68,6 @@ export function SearchByNameAndIdSelect({
 
   return (
     <Select
-      optionLabelProp="selected"
       autoFocus
       showSearch
       size="large"
