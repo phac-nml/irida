@@ -116,6 +116,7 @@ function CreateNcbiExportSamples({
     <Collapse accordion>
       {values.map((sample, index) => (
         <Collapse.Panel
+          className="t-sample-panel"
           key={String(sample.key)}
           header={
             <Space>
