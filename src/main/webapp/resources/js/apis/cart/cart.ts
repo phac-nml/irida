@@ -3,8 +3,32 @@ import { notification } from "antd";
 import axios from "axios";
 import { cartUpdated } from "../../utilities/events-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { Sample } from "../../types/irida";
 
 const AJAX_URL = setBaseUrl(`/ajax/cart`);
+
+export interface CartUpdated {
+  count: number;
+  notifications: Notification[];
+}
+
+export interface Notification {
+  type: string;
+  message: string;
+  description: string | null;
+}
+
+export interface CartProjectSample {
+  id: number;
+  label: string;
+  samples: CartSample[];
+}
+
+export interface CartSample {
+  id: number;
+  label: string;
+  owner: boolean;
+}
 
 export const cartApi = createApi({
   reducerPath: `cartApi`,
@@ -33,15 +57,21 @@ export const cartApi = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Samples", id })),
+              ...result.map(({ id }: { id: number }) => ({
+                type: "Samples",
+                id,
+              })),
               { type: "Samples", id: "LIST" },
             ]
           : [{ type: "Samples", id: "LIST" }],
-      transformResponse(response) {
+      transformResponse(response: CartProjectSample[]) {
         return response
-          .map((project) => {
+          .map((project: CartProjectSample) => {
             const { samples, ...p } = project;
-            return samples.map((sample) => ({ ...sample, project: p }));
+            return samples.map((sample: CartSample) => ({
+              ...sample,
+              project: p,
+            }));
           })
           .flat();
       },
@@ -61,7 +91,7 @@ export const cartApi = createApi({
         params: { id },
       }),
       invalidatesTags: [{ type: "Samples", id: "LIST" }, "CartCount"],
-      transformResponse: (response) => {
+      transformResponse: (response: CartUpdated) => {
         cartUpdated(response.count);
         return response.notifications[0];
       },
@@ -72,7 +102,7 @@ export const cartApi = createApi({
         method: "DELETE",
         params: { sampleId },
       }),
-      transformResponse: (response) => {
+      transformResponse: (response: CartUpdated) => {
         cartUpdated(response.count);
         return response.notifications[0];
       },
@@ -92,7 +122,7 @@ export const {
   useRemoveSampleMutation,
 } = cartApi;
 
-const updateCart = (data) => {
+const updateCart = (data: CartUpdated) => {
   data.notifications.forEach((n) => notification[n.type](n));
   cartUpdated(data.count);
   return data.count;
@@ -104,7 +134,7 @@ const updateCart = (data) => {
  * @param {array} samples array of sample {ids } to add to cart.
  * @returns {Promise<{count: any}>}
  */
-export const putSampleInCart = async (projectId, samples) => {
+export const putSampleInCart = async (projectId: number, samples: Sample[]) => {
   const { data } = await axios.post(AJAX_URL, {
     projectId,
     sampleIds: samples.map((s) => s.id || s.identifier),
@@ -133,7 +163,7 @@ export const emptyCart = async () => axios.delete(`${AJAX_URL}`);
  * @param {number} sampleId - Identifier for a sample
  * @returns {Promise<* | never>}
  */
-export const removeSample = async (projectId, sampleId) => {
+export const removeSample = async (projectId: number, sampleId: number) => {
   const { data } = await axios.delete(
     `${AJAX_URL}/sample?sampleId=${sampleId}`
   );
