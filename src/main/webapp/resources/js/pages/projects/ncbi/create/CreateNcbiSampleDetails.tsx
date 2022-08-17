@@ -1,9 +1,4 @@
-import {
-  CheckOutlined,
-  CloseOutlined,
-  SwapOutlined,
-  SwapRightOutlined,
-} from "@ant-design/icons";
+import { SwapOutlined, SwapRightOutlined } from "@ant-design/icons";
 import {
   Avatar,
   Cascader,
