@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models.project;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -13,14 +12,13 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiBioSampleModel;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class NcbiBioSampleModelTest {
 	@Test
-	public void testNcbiBioSamplesFilesModel() {
+	void testNcbiBioSamplesFilesModel() {
 		String id = "1";
 		String namespace = "BIOSAMPLE_NAME";
 		String bioSample = "BIOSAMPLE";
@@ -55,7 +53,9 @@ class NcbiBioSampleModelTest {
 		assertEquals(libraryConstructionProtocol, model.getLibraryConstructionProtocol(),
 				"Library construction protocol should not be changed");
 		assertEquals(ExportUploadState.NEW.toString(), model.getStatus(), "Status should be set properly");
-		assertEquals(pairs.size(), model.getPairs().size(), "Pairs should not be changed");
-		assertEquals(singles.size(), model.getSingles().size(), "Singles should not be changed");
+		assertEquals(pairs.size(), model.getPairs()
+				.size(), "Pairs should not be changed");
+		assertEquals(singles.size(), model.getSingles()
+				.size(), "Singles should not be changed");
 	}
 }
