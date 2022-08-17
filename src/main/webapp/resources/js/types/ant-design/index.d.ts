@@ -12,13 +12,6 @@ export interface GridProps {
   xxl?: number;
 }
 
-interface Option {
-  value: string | number;
-  label?: JSX.Element;
-  disabled?: boolean;
-  children?: Option[];
-}
-
 export type TagColor =
   | "magenta"
   | "red"

@@ -13,6 +13,7 @@ import {
   Space,
 } from "antd";
 import type { RangePickerProps } from "antd/es/date-picker";
+import { LabeledValue } from "antd/lib/select";
 import moment from "moment";
 import React from "react";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
@@ -26,7 +27,6 @@ import {
   submitNcbiSubmissionRequest,
 } from "../../../../apis/export/ncbi";
 import { fetchSampleFiles } from "../../../../apis/samples/samples";
-import type { Option } from "../../../../types/ant-design";
 import type {
   NcbiSelection,
   NcbiSource,
@@ -79,7 +79,7 @@ export type SampleRecords = Record<string, SampleRecord>;
 
 export interface LoaderValues {
   samples: SampleRecords;
-  platforms: Option[];
+  platforms: LabeledValue[];
   strategies: NcbiStrategy[];
   sources: NcbiSource[];
   selections: NcbiSelection[];
