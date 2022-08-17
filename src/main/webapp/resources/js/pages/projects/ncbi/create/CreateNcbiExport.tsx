@@ -93,7 +93,7 @@ export interface UpdateDefaultValues {
  * React router loader
  */
 export async function loader(): Promise<LoaderValues> {
-  const samples = await getStoredSamples().then(({ samples }) => {
+  const samplesPromise = await getStoredSamples().then(({ samples }) => {
     const formatted: SampleRecords = {};
     samples.forEach((sample) => {
       fetchSampleFiles({ sampleId: sample.id }).then((files) => {
@@ -114,18 +114,18 @@ export async function loader(): Promise<LoaderValues> {
     });
     return formatted;
   });
-  const platforms = await getNCBIPlatforms().then((platforms) =>
+  const platformsPromise = await getNCBIPlatforms().then((platforms) =>
     formatPlatformsAsCascaderOptions(platforms)
   );
-  const strategies = await getNCBIStrategies();
-  const sources = await getNCBISources();
-  const selections = await getNCBISelections();
+  const strategiesPromise = await getNCBIStrategies();
+  const sourcesPromise = await getNCBISources();
+  const selectionsPromise = await getNCBISelections();
   return Promise.all([
-    samples,
-    platforms,
-    strategies,
-    sources,
-    selections,
+    samplesPromise,
+    platformsPromise,
+    strategiesPromise,
+    sourcesPromise,
+    selectionsPromise,
   ]).then(([samples, platforms, strategies, sources, selections]) => ({
     samples,
     platforms,
@@ -176,8 +176,8 @@ function CreateNcbiExport(): JSX.Element {
   };
 
   /*
-  This prevents the release date to be in the past.
-   */
+    This prevents the release date to be in the past.
+     */
   const disabledDate: RangePickerProps["disabledDate"] = (date): boolean => {
     // Can not select days before today for release
     return date && date < moment().startOf("day");
@@ -190,7 +190,7 @@ function CreateNcbiExport(): JSX.Element {
         namespace,
         organization,
         releaseDate,
-        samples,
+        samples: formSamples,
       }: {
         bioProject: string;
         namespace: string;
@@ -219,7 +219,7 @@ function CreateNcbiExport(): JSX.Element {
           namespace,
           organization,
           releaseDate: releaseDate.unix(),
-          samples: Object.values(samples).map(
+          samples: Object.values(formSamples).map(
             ({
               files = { pairs: [], singles: [] },
               instrumentModel,

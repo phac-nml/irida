@@ -1,5 +1,5 @@
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import { Avatar, Collapse, FormInstance } from "antd";
+import { Avatar, Button, Collapse, FormInstance, Space } from "antd";
 import { NamePath } from "antd/lib/form/interface";
 import React from "react";
 import { useLoaderData } from "react-router-dom";
@@ -44,7 +44,8 @@ function CreateNcbiExportSamples({
   form: FormInstance;
 }): JSX.Element {
   const { samples }: LoaderValues = useLoaderData();
-  const values = Object.values(samples);
+  const [values, setValues] = React.useState(() => Object.values(samples));
+  console.log(samples);
   const [validationStatus, setValidationStatus] = React.useState<boolean[]>(
     () =>
       values.map(
@@ -69,7 +70,7 @@ function CreateNcbiExportSamples({
     const touched: Array<NamePath> = [];
     let hasUntouched = false;
 
-    fields.map((field) => {
+    fields.forEach((field) => {
       if (form.isFieldTouched(field)) {
         touched.push(field);
       } else {
@@ -100,13 +101,36 @@ function CreateNcbiExportSamples({
     }
   };
 
+  function removeSample(
+    event: React.MouseEvent<HTMLElement>,
+    sample: SampleRecord
+  ) {
+    event.stopPropagation();
+    const updatedValues = [...values];
+    const start = updatedValues.findIndex((s) => s.name === sample.name);
+    updatedValues.splice(start, 1);
+    setValues(updatedValues);
+  }
+
   return (
     <Collapse accordion>
       {values.map((sample, index) => (
         <Collapse.Panel
           key={String(sample.key)}
-          header={sample.name}
-          extra={<SampleValidIcon status={validationStatus[index]} />}
+          header={
+            <Space>
+              <SampleValidIcon status={validationStatus[index]} />
+              {sample.name}
+            </Space>
+          }
+          extra={
+            <Button
+              size="small"
+              onClick={(event) => removeSample(event, sample)}
+            >
+              {i18n("CreateNcbiExport.remove")}
+            </Button>
+          }
         >
           <CreateNcbiSampleDetails
             sample={sample}
