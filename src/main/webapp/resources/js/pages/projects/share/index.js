@@ -115,9 +115,9 @@ function ShareApp() {
           })),
         },
       }).then((response) => {
-        let filtered = response.data.samples.filter((sample) => {
-          if (sample.id != null) return sample.id;
-        });
+        let filtered = response.data.samples.filter(
+          (sample) => sample.id !== null
+        );
         setExistingIds(
           filtered.map((sample) => {
             return sample.id;

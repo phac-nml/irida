@@ -5,7 +5,7 @@ import { CheckCircleTwoTone, WarningTwoTone } from "@ant-design/icons";
 import { green6, red6 } from "../../../../styles/colors";
 import VirtualList from "rc-virtual-list";
 import { SPACE_SM } from "../../../../styles/spacing";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { useValidateSamplesMutation } from "../../../../apis/projects/samples";
 
 const ROW_HEIGHT = 43;
 
@@ -25,6 +25,7 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
   const [filename, setFilename] = React.useState("");
   const [valid, setValid] = React.useState([]);
   const [invalid, setInvalid] = React.useState([]);
+  const [validateSamples] = useValidateSamplesMutation();
 
   const onFileAdded = async (e) => {
     const [file] = e.target.files;
@@ -39,24 +40,33 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
       const associated = options.filters.associated || [];
       // Split the contents of the file on either new line or coma, and filter empty entries.
       let parsed = contents.split(/[\s,]+/).filter(Boolean);
-      const projectIds = [projectId, ...associated];
-
-      fetch(setBaseUrl(`/ajax/samples/validate`), {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+      //TODO: handle associated projects
+      validateSamples({
+        projectId: projectId,
+        body: {
+          samples: parsed.map((sample) => ({
+            name: sample,
+          })),
         },
-        method: "POST",
-        body: JSON.stringify({
-          projectIds,
-          names: parsed,
-        }),
-      })
-        .then((response) => response.json())
-        .then(({ valid, invalid }) => {
-          setValid(valid);
-          setInvalid(invalid);
-        });
+      }).then((response) => {
+        let valid = response.data.samples.filter(
+          (sample) => sample.id !== null
+        );
+        let invalid = response.data.samples.filter(
+          (sample) => sample.id === null
+        );
+
+        setValid(
+          valid.map((sample) => {
+            return sample.name;
+          })
+        );
+        setInvalid(
+          invalid.map((sample) => {
+            return sample.name;
+          })
+        );
+      });
     } else {
       setValid([]);
       setInvalid([]);
