@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
@@ -166,28 +165,6 @@ public class ProjectSamplesAjaxController {
 			@RequestBody ProjectSamplesTableRequest request, HttpServletResponse response, Locale locale)
 			throws IOException {
 		uiSampleService.downloadSamplesSpreadsheet(projectId, type, request, response, locale);
-	}
-
-	/**
-	 * Get a list of all {@link Sample} identifiers within a specific project
-	 *
-	 * @param id Identifier for a Project
-	 * @return {@link List} of {@link Sample} identifiers
-	 */
-	@GetMapping("/identifiers")
-	public List<Long> getSampleIdsForProject(@RequestParam Long id) {
-		return uiSampleService.getSampleIdsForProject(id);
-	}
-
-	/**
-	 * Get a list of all {@link Sample} names within a specific project
-	 *
-	 * @param id Identifier for a Project
-	 * @return {@link List} of {@link Sample} names
-	 */
-	@GetMapping("/names")
-	public List<String> getSampleNamesForProject(@RequestParam Long id) {
-		return uiSampleService.getSampleNamesForProject(id);
 	}
 
 	/**

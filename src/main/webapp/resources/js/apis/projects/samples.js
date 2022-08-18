@@ -49,17 +49,6 @@ export const samplesApi = createApi({
         body,
       }),
     }),
-    //TODO: This should not be in the slice but async thunk (update in metadata security)
-    getSampleIdsForProject: builder.query({
-      query: (projectId) => ({
-        url: `/${PROJECT_ID}/samples/identifiers?id=${projectId}`,
-      }),
-    }),
-    getSampleNamesForProject: builder.query({
-      query: (projectId) => ({
-        url: `/${PROJECT_ID}/samples/names?id=${projectId}`,
-      }),
-    }),
   }),
 });
 
@@ -68,8 +57,6 @@ export const {
   useMergeMutation,
   useRemoveMutation,
   useValidateSamplesMutation,
-  useGetSampleIdsForProjectQuery,
-  useGetSampleNamesForProjectQuery,
   useShareSamplesWithProjectMutation,
 } = samplesApi;
 
