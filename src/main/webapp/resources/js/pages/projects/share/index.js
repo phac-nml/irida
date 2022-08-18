@@ -14,8 +14,6 @@ import { render } from "react-dom";
 import { Provider, useSelector } from "react-redux";
 import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
 import {
-  useGetSampleIdsForProjectQuery,
-  useGetSampleNamesForProjectQuery,
   useShareSamplesWithProjectMutation,
   useValidateSamplesMutation,
 } from "../../../apis/projects/samples";
@@ -41,6 +39,8 @@ function ShareApp() {
   const [shareLarge, setShareLarge] = React.useState(false);
   const [error, setError] = React.useState(undefined);
   const [finished, setFinished] = React.useState(false);
+  const [existingIds, setExistingIds] = React.useState([]);
+  const [existingNames, setExistingNames] = React.useState([]);
   const [validateSamples] = useValidateSamplesMutation();
 
   /*
@@ -60,20 +60,6 @@ function ShareApp() {
   } = useSelector((state) => state.shareReducer);
 
   const [shareSamplesWithProject] = useShareSamplesWithProjectMutation();
-
-  const { data: existingIds = [] } = useGetSampleIdsForProjectQuery(
-    targetProject?.identifier,
-    {
-      skip: !targetProject?.identifier,
-    }
-  );
-
-  const { data: existingNames = [] } = useGetSampleNamesForProjectQuery(
-    targetProject?.identifier,
-    {
-      skip: !targetProject?.identifier,
-    }
-  );
 
   const { data: projects, isLoading: projectsLoading } =
     useGetPotentialProjectsToShareToQuery(currentProject, {
@@ -129,7 +115,19 @@ function ShareApp() {
           })),
         },
       }).then((response) => {
-        console.log(response);
+        let filtered = response.data.samples.filter((sample) => {
+          if (sample.id != null) return sample.id;
+        });
+        setExistingIds(
+          filtered.map((sample) => {
+            return sample.id;
+          })
+        );
+        setExistingNames(
+          filtered.map((sample) => {
+            return sample.name;
+          })
+        );
       });
     }
   }, [targetProject?.identifier]);
