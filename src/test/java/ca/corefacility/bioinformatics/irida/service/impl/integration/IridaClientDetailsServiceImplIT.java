@@ -1,20 +1,18 @@
 package ca.corefacility.bioinformatics.irida.service.impl.integration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.provider.ClientDetails;
-import org.springframework.security.oauth2.provider.NoSuchClientException;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.service.impl.IridaClientDetailsServiceImpl;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @ServiceIntegrationTest
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/service/impl/IridaClientDetailsServiceImplIT.xml")
@@ -26,7 +24,7 @@ public class IridaClientDetailsServiceImplIT {
 	@Test
 	@WithMockUser(username = "anonymous", roles = "ANONYMOUS")
 	public void testReadClientDetailsAnonymous() {
-		ClientDetails loadClientByClientId = clientDetailsService.loadClientByClientId("testClient");
+		IridaClientDetails loadClientByClientId = clientDetailsService.loadClientByClientId("testClient");
 		assertNotNull(loadClientByClientId);
 		assertEquals(loadClientByClientId.getClientId(), "testClient");
 	}
@@ -34,7 +32,7 @@ public class IridaClientDetailsServiceImplIT {
 	@Test
 	@WithMockUser(username = "anonymous", roles = "ANONYMOUS")
 	public void testClientNotExists() {
-		assertThrows(NoSuchClientException.class, () -> {
+		assertThrows(EntityNotFoundException.class, () -> {
 			clientDetailsService.loadClientByClientId("badClient");
 		});
 	}

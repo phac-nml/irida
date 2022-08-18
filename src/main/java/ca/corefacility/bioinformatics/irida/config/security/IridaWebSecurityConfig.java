@@ -7,9 +7,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.firewall.DefaultHttpFirewall;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.web.filter.GenericFilterBean;
@@ -24,16 +23,14 @@ import ca.corefacility.bioinformatics.irida.ria.security.LoginSuccessHandler;
  * Configuration for web security using OAuth2
  */
 @Configuration
-@EnableWebSecurity
 @Import({ IridaOauthSecurityConfig.class })
-public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class IridaWebSecurityConfig {
 
 	/**
 	 * UI security config for IRIDA
 	 */
 	@Configuration
-	@Order(Ordered.HIGHEST_PRECEDENCE + 1)
-	protected static class UISecurityConfig extends WebSecurityConfigurerAdapter {
+	protected static class UISecurityConfig {
 
 		@Autowired
 		private UserRepository userRepository;
@@ -49,21 +46,9 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		@Autowired
 		IridaPostAuthenticationFailureHandler authFailureHandler;
 
-		@Override
-		public void configure(WebSecurity web) throws Exception {
-			// @formatter:off
-			web.ignoring()
-					.antMatchers("/node_modules/**")
-					.antMatchers("/dist/**")
-					.antMatchers("/static/**")
-					.antMatchers("/resources/**");
-
-			// @formatter:on
-			web.httpFirewall(new DefaultHttpFirewall());
-		}
-
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
+		@Bean
+		@Order(Ordered.HIGHEST_PRECEDENCE + 1)
+		public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 			authFailureHandler.setDefaultFailureUrl("/login?error=true");
 			// @formatter:off
 			http.requestMatcher(request -> {
@@ -94,6 +79,20 @@ public class IridaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/**").fullyAuthenticated()
 			.and().addFilterAfter(getSessionModelFilter(), SecurityContextHolderAwareRequestFilter.class);
 			// @formatter:on
+
+			return http.build();
+		}
+
+		@Bean
+		public WebSecurityCustomizer webSecurityCustomizer() {
+			return (web) -> {
+				web.ignoring()
+						.antMatchers("/node_modules/**")
+						.antMatchers("/dist/**")
+						.antMatchers("/static/**")
+						.antMatchers("/resources/**");
+				web.httpFirewall(new DefaultHttpFirewall());
+			};
 		}
 
 		@Bean

@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.security.permissions.project.Project
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 
@@ -28,25 +29,27 @@ public class UIProjectServiceTest {
 	private UIProjectsService service;
 	private ProjectService projectService;
 	private SampleService sampleService;
+	private UserService userService;
 
 	@BeforeEach
 	public void setUp() {
 		projectService = mock(ProjectService.class);
 		sampleService = mock(SampleService.class);
+		userService = mock(UserService.class);
 		MessageSource messageSource = mock(MessageSource.class);
 		ProjectOwnerPermission projectOwnerPermission = mock(ProjectOwnerPermission.class);
 		ManageLocalProjectSettingsPermission manageLocalProjectSettingsPermission = mock(
 				ManageLocalProjectSettingsPermission.class);
 		MetadataTemplateService metadataTemplateService = mock(MetadataTemplateService.class);
 		service = new UIProjectsService(projectService, sampleService, messageSource, projectOwnerPermission,
-				manageLocalProjectSettingsPermission, metadataTemplateService);
+				manageLocalProjectSettingsPermission, metadataTemplateService, userService);
 
 		// Set up the project
 		PROJECT_01.setId(PROJECT_01_ID);
 		PROJECT_01.setName("Test Project");
 		when(projectService.create(any(Project.class))).thenReturn(PROJECT_01);
-		when(projectService.createProjectWithSamples(any(Project.class), anyList(), anyBoolean())).thenReturn(
-				PROJECT_01);
+		when(projectService.createProjectWithSamples(any(Project.class), anyList(), anyBoolean()))
+				.thenReturn(PROJECT_01);
 	}
 
 	@Test
@@ -55,7 +58,7 @@ public class UIProjectServiceTest {
 		request.setName("Test Project");
 		request.setLock(false);
 		request.setMetadataRestrictions(ImmutableList.of());
-		
+
 		service.createProject(request);
 
 		verify(projectService, times(1)).create(any(Project.class));
