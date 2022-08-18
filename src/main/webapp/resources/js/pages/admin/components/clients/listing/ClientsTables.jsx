@@ -44,12 +44,12 @@ export function ClientsTable() {
     {
       title: i18n("ClientsTable.column.id"),
       width: 80,
-      dataIndex: ["details", "identifier"],
+      dataIndex: "id",
       sorter: true,
     },
     {
       title: i18n("ClientsTable.column.clientId"),
-      dataIndex: ["details", "clientId"],
+      dataIndex: "clientId",
       ellipsis: true,
       sorter: true,
       render(name) {
@@ -86,7 +86,7 @@ export function ClientsTable() {
     {
       ...dateColumnFormat(),
       title: i18n("ClientsTable.column.created"),
-      dataIndex: ["details", "createdDate"],
+      dataIndex: "createdDate",
     },
     {
       title: i18n("ClientsTable.column.grants"),

@@ -45,10 +45,14 @@ export default function DeleteProject() {
           }
         />
 
-        <Checkbox onChange={(e) => setDisabled(!e.target.checked)}>
+        <Checkbox
+          className="t-confirm-delete-project"
+          onChange={(e) => setDisabled(!e.target.checked)}
+        >
           {i18n("DeleteProject.confirm")}
         </Checkbox>
         <Button
+          className="t-delete-project-button"
           type="primary"
           danger
           disabled={disabled}

@@ -788,6 +788,18 @@ public class UISampleService {
 	}
 
 	/**
+	 * Get a list of all {@link Sample} names within a specific project
+	 *
+	 * @param projectId Identifier for a {@link Project}
+	 * @return {@link List} of {@link Sample} names
+	 */
+	public List<String> getSampleNamesForProject(Long projectId) {
+		Project project = projectService.read(projectId);
+		List<Sample> samples = sampleService.getSamplesForProjectShallow(project);
+		return samples.stream().map(Sample::getLabel).collect(Collectors.toUnmodifiableList());
+	}
+
+	/**
 	 * Share / Move samples with another project
 	 *
 	 * @param request Request containing the details of the move

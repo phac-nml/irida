@@ -19,35 +19,32 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.ria.web.login.PasswordResetController;
+import ca.corefacility.bioinformatics.irida.security.SequencerUILoginException;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 
 /**
- * AuthenticationFailureHandler used to handle a CredentialsExpiredException.
- * This handler will create a new {@link PasswordReset} and redirect to the
- * appropriate {@link PasswordResetController} page.
- * 
- *
+ * AuthenticationFailureHandler used to handle specific AuthenticationException's. This handler will handle the
+ * exception or defer to default handling from SimpleUrlAuthenticationFailureHandler.
  */
 @Component
-public class CredentialsExpriredAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
-	private static final Logger logger = LoggerFactory.getLogger(CredentialsExpriredAuthenticationFailureHandler.class);
+public class IridaPostAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
+	private static final Logger logger = LoggerFactory.getLogger(IridaPostAuthenticationFailureHandler.class);
 
 	private final PasswordResetService resetService;
 	private final UserService userService;
 
 	@Autowired
-	public CredentialsExpriredAuthenticationFailureHandler(PasswordResetService resetService, UserService userService) {
+	public IridaPostAuthenticationFailureHandler(PasswordResetService resetService, UserService userService) {
 		this.resetService = resetService;
 		this.userService = userService;
 	}
 
 	/**
-	 * Handle CredentialsExpiredException and create a {@link PasswordReset}. If
-	 * not CredentialsExpiredException pass to super.
+	 * Custom authentication failure handling for specific AuthenticationException's otherwise default to
+	 * {@link SimpleUrlAuthenticationFailureHandler} behaviour.
 	 */
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
@@ -71,7 +68,13 @@ public class CredentialsExpriredAuthenticationFailureHandler extends SimpleUrlAu
 			String contextPath = request.getContextPath();
 			String resetId = create.getId();
 			response.sendRedirect(contextPath + "/password_reset/" + resetId + "?expired=true");
+		} else if (exception instanceof SequencerUILoginException) {
+			// Clear the anonymous auth token
+			SecurityContextHolder.clearContext();
 
+			// redirect the user to the login page with the sequencer-login url param
+			String contextPath = request.getContextPath();
+			response.sendRedirect(contextPath + "/login?error=true&sequencer-login=true");
 		} else {
 			super.onAuthenticationFailure(request, response, exception);
 		}
