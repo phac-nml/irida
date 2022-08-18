@@ -137,7 +137,7 @@ export async function getMinimalSampleDetailsForFilteredProject(options: {
 /**
  * Get files for a list of samples.
  * @param ids - List of ids for samples
- * @param projectId - Current proeject id
+ * @param projectId - Current project id
  */
 export async function getFilesForSamples({
   ids,
