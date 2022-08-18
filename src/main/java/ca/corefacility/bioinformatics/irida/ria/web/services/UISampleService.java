@@ -222,7 +222,7 @@ public class UISampleService {
 				sample.setCollectedBy(request.getValue());
 				break;
 			case "collectionDate":
-				if(!request.getValue().equals("")) {
+				if (!request.getValue().equals("")) {
 					Instant instant = Instant.parse(request.getValue());
 					Date collectionDate = Date.from(instant);
 					dateValue = new SimpleDateFormat("yyyy-MM-dd").format(collectionDate);
@@ -624,6 +624,11 @@ public class UISampleService {
 		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, genomeAssemblyId);
 
 		try {
+			if (sample.getDefaultGenomeAssembly() != null
+					&& sample.getDefaultGenomeAssembly().getId() == genomeAssemblyId) {
+				sample.setDefaultGenomeAssembly(null);
+				sampleService.update(sample);
+			}
 			genomeAssemblyService.removeGenomeAssemblyFromSample(sample, genomeAssemblyId);
 			return messageSource.getMessage("server.SampleFiles.removeGenomeAssemblySuccess", new Object[] {}, locale);
 		} catch (Exception e) {
