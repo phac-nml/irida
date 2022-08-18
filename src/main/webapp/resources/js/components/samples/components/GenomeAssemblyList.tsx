@@ -94,7 +94,7 @@ export function GenomeAssemblyList({
         (sample.defaultGenomeAssembly !== null &&
           genomeAssemblyObj.identifier ===
             sample.defaultGenomeAssembly.identifier) ||
-        (sample.defaultGenomeAssembly === null && index === 0)
+        sample.defaultGenomeAssembly === null
       ) {
         actions.push(
           <Tooltip
