@@ -44,6 +44,11 @@ export const samplesApi = createApi({
         url: `/identifiers?id=${projectId}`,
       }),
     }),
+    getSampleNamesForProject: builder.query({
+      query: (projectId) => ({
+        url: `/names?id=${projectId}`,
+      }),
+    }),
   }),
 });
 
@@ -52,6 +57,7 @@ export const {
   useMergeMutation,
   useRemoveMutation,
   useGetSampleIdsForProjectQuery,
+  useGetSampleNamesForProjectQuery,
   useShareSamplesWithProjectMutation,
 } = samplesApi;
 

@@ -8,6 +8,7 @@ import {
 import DnDTable from "../../../../../components/ant.design/DnDTable";
 import { HelpPopover } from "../../../../../components/popovers";
 import { addKeysToList } from "../../../../../utilities/http-utilities";
+import { setBaseUrl } from "../../../../../utilities/url-utilities";
 
 const { Text } = Typography;
 
@@ -27,10 +28,8 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
   const [visible, setVisible] = React.useState(false);
   const [fieldsState, setFieldsState] = React.useState([]);
   const [form] = Form.useForm();
-  const {
-    data: templates,
-    refetch: refetchTemplates,
-  } = useGetTemplatesForProjectQuery(projectId);
+  const { data: templates, refetch: refetchTemplates } =
+    useGetTemplatesForProjectQuery(projectId);
 
   React.useEffect(() => {
     if (fields.length) {
@@ -65,7 +64,9 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
         setVisible(false);
         refetchTemplates();
         navigate(
-          `/projects/${projectId}/settings/metadata/templates/${template.identifier}`
+          setBaseUrl(
+            `/projects/${projectId}/settings/metadata/templates/${template.identifier}`
+          )
         );
       })
       .catch(({ data }) => notification.info({ message: data.error }));

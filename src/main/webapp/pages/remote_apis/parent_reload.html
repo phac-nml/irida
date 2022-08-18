@@ -20,7 +20,7 @@
          */
         const opener = window.opener;
         if (opener) {
-          opener.postMessage("remote_api_connect", /*[[@{/}]]*/ "/");
+          opener.postMessage("remote_api_connect", window.location.origin);
           window.close();
         }
       }

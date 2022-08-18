@@ -327,6 +327,7 @@ export default function SamplesMenu() {
           <Button
             onClick={() => setFilterByFileVisible(true)}
             icon={<FileTextOutlined />}
+            className="t-filter-by-file-btn"
           >
             {i18n("SampleMenu.fileFilter")}
           </Button>

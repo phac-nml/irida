@@ -54,3 +54,4 @@ src/main/webapp/node_modules
 ### MISC ###
 /.theia/launch.json
 *.swp
+/src/main/resources/application-local.properties

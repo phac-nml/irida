@@ -1,4 +1,5 @@
 import { GenomeAssembly, SequencingObject } from "../../apis/samples/samples";
+import { ExportUploadState } from "./ExportUpoadState";
 
 export = IRIDA;
 export as namespace IRIDA;
@@ -75,4 +76,48 @@ declare namespace IRIDA {
     announcements: Announcement[];
     subscriptions: string[]; // TODO (Josh - 6/7/22): Look into this one as well
   }
+
+  interface NcbiBioSampleFiles {
+    id: number;
+    bioSample: string;
+    singles: SingleEndSequenceFile[];
+    pairs: PairedEndSequenceFile[];
+    instrumentModel: string;
+    libraryName: string;
+    librarySelection: string;
+    librarySource: string;
+    libraryStrategy: string;
+    libraryConstructionProtocol: string;
+    status: ExportUploadState;
+    accession: string;
+  }
+
+  interface NcbiSubmission {
+    id: number;
+    project: ProjectMinimal;
+    state: ExportUploadState;
+    submitter: UserMinimal;
+    createdDate: Date;
+    organization: string;
+    bioProject: string;
+    ncbiNamespace: string;
+    releaseDate: Date | null;
+    bioSampleFiles: NcbiBioSampleFiles[];
+  }
+
+  type ProjectMinimal = Pick<Project, "id" | "name">;
+
+  interface SequenceFile extends IridaBase {
+    fileSize: string;
+  }
+
+  interface PairedEndSequenceFile extends IridaBase {
+    files: SequenceFile[];
+  }
+
+  interface SingleEndSequenceFile extends IridaBase {
+    file: SequenceFile;
+  }
+
+  type UserMinimal = Pick<User, "name" | "id">;
 }

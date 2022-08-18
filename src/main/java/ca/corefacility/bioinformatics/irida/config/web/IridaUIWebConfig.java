@@ -2,25 +2,30 @@ package ca.corefacility.bioinformatics.irida.config.web;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
@@ -150,9 +155,8 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	}
 
 	/**
-	 * Default template resolver for IRIDA. Templates can be overridden using
-	 * the external template resolver below. This will look for templates in
-	 * `/src/main/webapp/pages/*`
+	 * Default template resolver for IRIDA. Templates can be overridden using the external template resolver below. This
+	 * will look for templates in `/src/main/webapp/pages/*`
 	 *
 	 * @return {@link SpringResourceTemplateResolver}
 	 */
@@ -176,9 +180,8 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	}
 
 	/**
-	 * This is to handle any templates (usually just the login page) that are
-	 * overridden by and organization. The location of these files can be
-	 * modified within the application.properties file.
+	 * This is to handle any templates (usually just the login page) that are overridden by and organization. The
+	 * location of these files can be modified within the application.properties file.
 	 *
 	 * @return {@link FileTemplateResolver}
 	 */
@@ -216,6 +219,33 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		viewResolver.setTemplateEngine(templateEngine());
 		viewResolver.setOrder(1);
 		return viewResolver;
+	}
+
+	@Bean
+	public ErrorViewResolver errorViewResolver() {
+		return new ErrorViewResolver() {
+			@Value("${mail.server.email}")
+			private String adminEmail;
+
+			@Override
+			public ModelAndView resolveErrorView(HttpServletRequest request, HttpStatus status,
+					Map<String, Object> model) {
+
+				ModelAndView modelAndView;
+				if (status == HttpStatus.NOT_FOUND) {
+					modelAndView = new ModelAndView("errors/not_found");
+				} else if (status == HttpStatus.FORBIDDEN) {
+					modelAndView = new ModelAndView("errors/access_denied");
+				} else {
+					modelAndView = new ModelAndView("errors/error");
+				}
+
+				modelAndView.addAllObjects(model);
+				modelAndView.addObject("adminEmail", adminEmail);
+
+				return modelAndView;
+			}
+		};
 	}
 
 	@Override

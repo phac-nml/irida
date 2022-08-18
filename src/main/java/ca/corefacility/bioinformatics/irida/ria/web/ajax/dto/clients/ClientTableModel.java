@@ -20,6 +20,10 @@ public class ClientTableModel extends TableModel {
 		return details;
 	}
 
+	public String getClientId() {
+		return details.getClientId();
+	}
+
 	public int getTokens() {
 		return tokens;
 	}

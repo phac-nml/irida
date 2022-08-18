@@ -1,17 +1,15 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax.export;
+package ca.corefacility.bioinformatics.irida.ria.web.ajax;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NcbiExportSubmissionAdminTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NcbiExportSubmissionTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiExportSubmissionAdminTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiSubmissionModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UINcbiService;
@@ -38,6 +36,19 @@ public class NCBIAjaxController {
 	@RequestMapping("/project/{projectId}/list")
 	public ResponseEntity<List<NcbiExportSubmissionTableModel>> getNCBIExportsForProject(@PathVariable Long projectId) {
 		return ResponseEntity.ok(service.getNCBIExportsForProject(projectId));
+	}
+
+	/**
+	 * Get the details of a specific NCBI SRA submission
+	 *
+	 * @param projectId Identifier for the current project
+	 * @param exportId  Identifier for the NCBI SRA Submission
+	 * @return details about the submission
+	 */
+	@GetMapping("/project/{projectId}/details/{exportId}")
+	public ResponseEntity<NcbiSubmissionModel> getExportDetails(@PathVariable Long projectId,
+			@PathVariable Long exportId) {
+		return ResponseEntity.ok(service.getExportDetails(exportId));
 	}
 
 	/**
