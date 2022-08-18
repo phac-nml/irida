@@ -2,8 +2,7 @@ import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { Avatar, Button, Collapse, FormInstance, Space } from "antd";
 import { NamePath } from "antd/lib/form/interface";
 import React from "react";
-import { useLoaderData } from "react-router-dom";
-import { LoaderValues, SampleRecord } from "./CreateNcbiExport";
+import { SampleRecord } from "./CreateNcbiExport";
 import CreateNcbiSampleDetails from "./CreateNcbiSampleDetails";
 
 /**
@@ -36,23 +35,18 @@ function SampleValidIcon({ status }: { status: boolean }) {
 /**
  * React component to render a sample to be exported to the NCBI SRA
  * @param form
+ * @param samples
  * @constructor
  */
 function CreateNcbiExportSamples({
   form,
+  samples,
 }: {
   form: FormInstance;
+  samples: SampleRecord[];
 }): JSX.Element {
-  const { samples }: LoaderValues = useLoaderData();
-  const [values, setValues] = React.useState(() => Object.values(samples));
+  const [validationStatus, setValidationStatus] = React.useState<boolean[]>([]);
   console.log(samples);
-  const [validationStatus, setValidationStatus] = React.useState<boolean[]>(
-    () =>
-      values.map(
-        (sample) =>
-          sample.files.singles.length > 0 || sample.files.pairs.length > 0
-      )
-  );
 
   const checkStatus = (sample: SampleRecord, index: number): void => {
     const fields: Array<NamePath> = [
@@ -106,22 +100,22 @@ function CreateNcbiExportSamples({
     sample: SampleRecord
   ) {
     event.stopPropagation();
-    const updatedValues = [...values];
+    const updatedValues = [...sampleRecords];
     const start = updatedValues.findIndex((s) => s.name === sample.name);
     updatedValues.splice(start, 1);
-    setValues(updatedValues);
+    setSampleRecords(updatedValues);
   }
 
   return (
     <Collapse accordion>
-      {values.map((sample, index) => (
+      {samples.map((sample, index) => (
         <Collapse.Panel
           className="t-sample-panel"
           key={String(sample.key)}
           header={
             <Space>
               <SampleValidIcon status={validationStatus[index]} />
-              {sample.name}
+              <span className="t-sample-name">{sample.name}</span>
             </Space>
           }
           extra={

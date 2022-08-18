@@ -582,4 +582,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		filterSubmitBtn.click();
 		waitForTableToUpdate(total);
 	}
+
+	public void shareExportSamplesToNcbi() {
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		openExportDropdown();
+		ncbiExportBtn.click();
+		wait.until(ExpectedConditions.urlContains("/ncbi"));
+	}
 }

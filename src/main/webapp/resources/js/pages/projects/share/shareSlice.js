@@ -1,7 +1,5 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
-import {
-  compareRestrictionLevels
-} from "../../../utilities/restriction-utilities";
+import { compareRestrictionLevels } from "../../../utilities/restriction-utilities";
 
 /**
  * Action to set the target project for the samples
@@ -79,15 +77,14 @@ export const updateMetadataRestriction = createAction(
  * @type {{currentProject, samples}}
  */
 const initialState = (() => {
-  const stringData = window.sessionStorage.getItem("share");
+  const stringData = window.sessionStorage.getItem("samples");
 
   if (stringData === null) {
     return {};
   }
 
-  const { samples: allSamples, projectId: currentProject } = JSON.parse(
-    stringData
-  );
+  const { samples: allSamples, projectId: currentProject } =
+    JSON.parse(stringData);
   const samples = [];
   const associated = [];
   allSamples.forEach((sample) => {

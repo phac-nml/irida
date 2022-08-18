@@ -152,6 +152,10 @@ public class UISampleService {
 		return new SampleFiles(singles, filePairs, fast5, genomeAssemblies);
 	}
 
+	public List<SampleFiles> getFilesForSamples(List<Long> ids, Long projectId) {
+		return ids.stream().map(id -> getSampleFiles(id, projectId)).collect(Collectors.toList());
+	}
+
 	/**
 	 * Get a list of paired end sequence files for a sample
 	 *
@@ -267,7 +271,9 @@ public class UISampleService {
 	public List<String> getSampleNamesForProject(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<Sample> samples = sampleService.getSamplesForProjectShallow(project);
-		return samples.stream().map(Sample::getLabel).collect(Collectors.toUnmodifiableList());
+		return samples.stream()
+				.map(Sample::getLabel)
+				.collect(Collectors.toUnmodifiableList());
 	}
 
 	/**

@@ -26,7 +26,7 @@ import {
   NcbiSubmissionRequest,
   submitNcbiSubmissionRequest,
 } from "../../../../apis/export/ncbi";
-import { fetchSampleFiles } from "../../../../apis/samples/samples";
+import { getFilesForSamples } from "../../../../apis/projects/samples";
 import type {
   NcbiSelection,
   NcbiSource,
@@ -93,11 +93,26 @@ export interface UpdateDefaultValues {
  * React router loader
  */
 export async function loader(): Promise<LoaderValues> {
-  const samplesPromise = await getStoredSamples().then(({ samples }) => {
-    const formatted: SampleRecords = {};
-    samples.forEach((sample) => {
-      fetchSampleFiles({ sampleId: sample.id }).then((files) => {
-        formatted[sample.name] = {
+  // const samplesPromise = await getStoredSamples().then(({ samples }) => {
+  //   const formatted: SampleRecords = {};
+  //   samples.forEach((sample) => {
+  //     fetchSampleFiles({ sampleId: sample.id }).then((files) => {
+  //       formatted[sample.name] = {
+
+  //       };
+  //     });
+  //   });
+  //   return formatted;
+  // });
+  const { samples, projectId } = await getStoredSamples();
+  const samplesPromise = await getFilesForSamples({
+    ids: samples.map((sample) => sample.id),
+    projectId,
+  }).then((files) => {
+    return samples.reduce(
+      (prev, sample) => ({
+        ...prev,
+        [sample.name]: {
           bioSample: "",
           instrumentModel: "",
           libraryConstructionProtocol: "",
@@ -109,11 +124,12 @@ export async function loader(): Promise<LoaderValues> {
           id: sample.id,
           libraryName: sample.name,
           files,
-        };
-      });
-    });
-    return formatted;
+        },
+      }),
+      {}
+    );
   });
+
   const platformsPromise = await getNCBIPlatforms().then((platforms) =>
     formatPlatformsAsCascaderOptions(platforms)
   );
@@ -126,8 +142,8 @@ export async function loader(): Promise<LoaderValues> {
     strategiesPromise,
     sourcesPromise,
     selectionsPromise,
-  ]).then(([samples, platforms, strategies, sources, selections]) => ({
-    samples,
+  ]).then(([samplesResponse, platforms, strategies, sources, selections]) => ({
+    samples: samplesResponse,
     platforms,
     strategies,
     sources,
@@ -351,7 +367,10 @@ function CreateNcbiExport(): JSX.Element {
                 </Card>
                 <Card title={i18n("CreateNcbiExport.samples")}>
                   <CreateNcbiDefaultOptions onChange={updateDefaultValue} />
-                  <CreateNcbiExportSamples form={form} />
+                  <CreateNcbiExportSamples
+                    form={form}
+                    samples={Object.values(samples)}
+                  />
                 </Card>
 
                 {createStatus !== CreateStatus.RESOLVED ? (

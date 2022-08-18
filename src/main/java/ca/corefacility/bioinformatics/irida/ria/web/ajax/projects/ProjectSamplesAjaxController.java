@@ -27,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSamplesT
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.MergeRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.RemoveSamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.error.SampleMergeException;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleFiles;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
@@ -118,7 +119,8 @@ public class ProjectSamplesAjaxController {
 			String response = uiSampleService.mergeSamples(projectId, request, locale);
 			return ResponseEntity.ok(new AjaxSuccessResponse(response));
 		} catch (SampleMergeException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
@@ -203,7 +205,13 @@ public class ProjectSamplesAjaxController {
 			uiSampleService.shareSamplesWithProject(request, locale);
 			return ResponseEntity.ok(new AjaxSuccessResponse(""));
 		} catch (UIShareSamplesException e) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new AjaxErrorResponse(e.getLocalizedMessage()));
+			return ResponseEntity.status(HttpStatus.FORBIDDEN)
+					.body(new AjaxErrorResponse(e.getLocalizedMessage()));
 		}
+	}
+
+	@GetMapping("/files")
+	public List<SampleFiles> getFilesForSamples(@RequestParam List<Long> ids, @PathVariable Long projectId) {
+		return uiSampleService.getFilesForSamples(ids, projectId);
 	}
 }

@@ -21,16 +21,48 @@ public class NcbiExportPage extends AbstractPage {
 
 	@FindBy(className = "t-sample-panel")
 	private List<WebElement> samplePanels;
+
+	@FindBy(xpath = "//*[@id=\"bioProject\"]")
+	private WebElement bioProjectInput;
+
+	@FindBy(xpath = "//*[@id=\"organization\"]")
+	private WebElement organizationInput;
+
+	@FindBy(xpath = "//*[@id=\"namespace\"]")
+	private WebElement namespaceInput;
+
 	public NcbiExportPage(WebDriver driver) {
 		super(driver);
 	}
 
-	public static NcbiExportPage goToPage(WebDriver driver, long projectId) {
-		get(driver, "projects/" + projectId + "/ncbi");
+	public static NcbiExportPage init(WebDriver driver) {
 		return PageFactory.initElements(driver, NcbiExportPage.class);
 	}
 
 	public int getNumberOfSamples() {
 		return samplePanels.size();
+	}
+
+	public void openSamplePanelBySampleName(String sampleName) {
+		for (WebElement panel : samplePanels) {
+			String text = panel.findElement(By.className("t-sample-name"))
+					.getText();
+			if (text.equals(sampleName)) {
+				panel.click();
+				return;
+			}
+		}
+	}
+
+	public void enterBioProject(String value) {
+		bioProjectInput.sendKeys(value);
+	}
+
+	public void enterOrganization(String value) {
+		organizationInput.sendKeys(value);
+	}
+
+	public void enterNamespace(String value) {
+		namespaceInput.sendKeys(value);
 	}
 }

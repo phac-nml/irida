@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
+import { get, post } from "../requests";
 
 const PROJECT_ID = getProjectIdFromUrl();
 const URL = setBaseUrl(`/ajax/projects/${PROJECT_ID}/samples`);
@@ -75,34 +76,50 @@ export async function validateSampleName(name) {
 
 /**
  * Create a new sample within a project
- * @param {string} name - name of the new sample
- * @param {string} organism - name of the organism (optional)
+ * @param name - name of the new sample
+ * @param organism - name of the organism (optional)
  * @returns {Promise<Response>}
  */
-export async function createNewSample({ name, organism }) {
-  const response = await fetch(`${URL}/add-sample`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ name: name.trim(), organism }),
+export async function createNewSample({
+  name,
+  organism,
+}: {
+  name: string;
+  organism: string;
+}) {
+  return post(`${URL}/add-sample`, {
+    name: name.trim(),
+    organism,
   });
-
-  return response;
 }
+
+/**
+ * Share or move samples with another project.
+ * @param currentId - current projectId
+ * @param sampleIds - list of ids for the samples to share
+ * @param targetId - target project id
+ * @param locked - if the samples should be locked (unmodifiable) in target project
+ * @param remove - remove samples from the current project (move operation).
+ */
 export async function shareSamplesWithProject({
   currentId,
   sampleIds,
   targetId,
   locked,
   remove,
+}: {
+  currentId: number;
+  sampleIds: number[];
+  targetId: number;
+  locked: boolean;
+  remove: boolean;
 }) {
-  return await fetch(setBaseUrl(`ajax/samples/share`), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ currentId, sampleIds, targetId, locked, remove }),
+  return post(setBaseUrl(`ajax/samples/share`), {
+    currentId,
+    sampleIds,
+    targetId,
+    locked,
+    remove,
   });
 }
 
@@ -111,12 +128,25 @@ export async function shareSamplesWithProject({
  * @param {object} options - current table filters
  * @returns {Promise<*>}
  */
-export async function getMinimalSampleDetailsForFilteredProject(options) {
-  return await fetch(`${URL}/ids`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(options),
-  }).then((response) => response.json());
+export async function getMinimalSampleDetailsForFilteredProject(options: {
+  [key: string]: string | string[];
+}) {
+  return post(`${URL}/ids`, options);
+}
+
+/**
+ * Get files for a list of samples.
+ * @param ids - List of ids for samples
+ * @param projectId - Current proeject id
+ */
+export async function getFilesForSamples({
+  ids,
+  projectId,
+}: {
+  ids: number[];
+  projectId: number;
+}) {
+  const params = new URLSearchParams();
+  ids.forEach((id) => params.append("ids", `${id}`));
+  return get(`/ajax/projects/${projectId}/samples/files?${params.toString()}`);
 }
