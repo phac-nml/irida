@@ -18,7 +18,6 @@ import moment from "moment";
 import React from "react";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import {
-  getNCBIPlatforms,
   getNCBISelections,
   getNCBISources,
   getNCBIStrategies,
@@ -26,7 +25,6 @@ import {
   NcbiSubmissionRequest,
   submitNcbiSubmissionRequest,
 } from "../../../../apis/export/ncbi";
-import { getFilesForSamples } from "../../../../apis/projects/samples";
 import type {
   NcbiSelection,
   NcbiSource,
@@ -34,10 +32,12 @@ import type {
   PairedEndSequenceFile,
   SingleEndSequenceFile,
 } from "../../../../types/irida";
-import { getStoredSamples } from "../../../../utilities/session-utilities";
 import CreateNcbiDefaultOptions from "./CreateNcbiDefaultOptions";
 import CreateNcbiExportSamples from "./CreateNcbiExportSamples";
-import { formatPlatformsAsCascaderOptions } from "./ncbi-utilities";
+import {
+  getNCBIPlatformsAsCascaderOptions,
+  hydrateStoredSamples,
+} from "./ncbi-utilities";
 
 export interface SampleRecord {
   key: string;
@@ -89,42 +89,23 @@ export interface UpdateDefaultValues {
   (field: string, value: string | string[]): void;
 }
 
+enum CreateStatus {
+  REJECTED,
+  RESOLVED,
+  PENDING,
+  IDLE,
+}
+
 /**
  * React router loader
  */
 export async function loader(): Promise<LoaderValues> {
-  const { samples, projectId } = await getStoredSamples();
-  const samplesPromise = await getFilesForSamples({
-    ids: samples.map((sample) => sample.id),
-    projectId,
-  }).then((files) => {
-    return samples.reduce(
-      (prev, sample) => ({
-        ...prev,
-        [sample.name]: {
-          bioSample: "",
-          instrumentModel: "",
-          libraryConstructionProtocol: "",
-          librarySelection: "",
-          librarySource: "",
-          libraryStrategy: "",
-          key: sample.name,
-          name: sample.name,
-          id: sample.id,
-          libraryName: sample.name,
-          files,
-        },
-      }),
-      {}
-    );
-  });
-
-  const platformsPromise = await getNCBIPlatforms().then((platforms) =>
-    formatPlatformsAsCascaderOptions(platforms)
-  );
+  const samplesPromise = await hydrateStoredSamples();
+  const platformsPromise = await getNCBIPlatformsAsCascaderOptions();
   const strategiesPromise = await getNCBIStrategies();
   const sourcesPromise = await getNCBISources();
   const selectionsPromise = await getNCBISelections();
+
   return Promise.all([
     samplesPromise,
     platformsPromise,
@@ -138,13 +119,6 @@ export async function loader(): Promise<LoaderValues> {
     sources,
     selections,
   }));
-}
-
-enum CreateStatus {
-  REJECTED,
-  RESOLVED,
-  PENDING,
-  IDLE,
 }
 
 /**
@@ -190,9 +164,9 @@ function CreateNcbiExport(): JSX.Element {
 
   /**
    * When submitting the form, validate that all fields are valid, format the data
-   * and submit to the server.
-   * onSuccess: show message and return the user to the calling page after 1 second.
-   * onError: show error message to user.
+   * and submitted to the server.
+   * onSuccess: show a message and return the user to the calling page after 1 second.
+   * onError: show an error message to the user.
    */
   const validateAndSubmit = (): void => {
     form.validateFields().then(

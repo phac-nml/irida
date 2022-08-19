@@ -29,6 +29,7 @@ export default function CreateNcbiSampleDetails({
   sample: SampleRecord;
   onChange: () => void;
 }): JSX.Element {
+  console.log({ sample });
   const { strategies, sources, platforms, selections }: LoaderValues =
     useLoaderData();
 

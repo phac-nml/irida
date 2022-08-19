@@ -1,6 +1,15 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  PairedEndSequenceFile,
+  SingleEndSequenceFile,
+} from "../../types/irida";
 import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
 import { get, post } from "../requests";
+
+export interface SequencingFiles {
+  singles?: SingleEndSequenceFile[];
+  pairs?: PairedEndSequenceFile[];
+}
 
 const PROJECT_ID = getProjectIdFromUrl();
 const URL = setBaseUrl(`/ajax/projects/${PROJECT_ID}/samples`);
@@ -145,7 +154,7 @@ export async function getFilesForSamples({
 }: {
   ids: number[];
   projectId: number;
-}) {
+}): Promise<SequencingFiles[]> {
   const params = new URLSearchParams();
   ids.forEach((id) => params.append("ids", `${id}`));
   return get(`/ajax/projects/${projectId}/samples/files?${params.toString()}`);
