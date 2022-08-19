@@ -45,8 +45,8 @@ function CreateNcbiExportSamples({
   form: FormInstance;
   samples: SampleRecord[];
 }): JSX.Element {
+  const [sampleRecords, setSampleRecords] = React.useState(samples);
   const [validationStatus, setValidationStatus] = React.useState<boolean[]>([]);
-  console.log(samples);
 
   const checkStatus = (sample: SampleRecord, index: number): void => {
     const fields: Array<NamePath> = [
@@ -108,7 +108,7 @@ function CreateNcbiExportSamples({
 
   return (
     <Collapse accordion>
-      {samples.map((sample, index) => (
+      {sampleRecords.map((sample, index) => (
         <Collapse.Panel
           className="t-sample-panel"
           key={String(sample.key)}
