@@ -199,6 +199,12 @@ function CreateNcbiExport(): JSX.Element {
     return date && date < moment().startOf("day");
   };
 
+  /**
+   * When submitting the form, validate that all fields are valid, format the data
+   * and submit to the server.
+   * onSuccess: show message and return the user to the calling page after 1 second.
+   * onError: show error message to user.
+   */
   const validateAndSubmit = (): void => {
     form.validateFields().then(
       ({
