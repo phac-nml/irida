@@ -13,10 +13,11 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.repositories.remote.Fast5ObjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
- * A repository implementaion for reading {@link Fast5Object} from remote
- * locations using a {@link OAuthTokenRestTemplate}
+ * A repository implementaion for reading {@link Fast5Object} from remote locations using a
+ * {@link OAuthTokenRestTemplate}
  */
 @Repository
 public class Fast5ObjectRemoteRepositoryImpl extends RemoteRepositoryImpl<Fast5Object>
@@ -29,8 +30,8 @@ public class Fast5ObjectRemoteRepositoryImpl extends RemoteRepositoryImpl<Fast5O
 	};
 
 	@Autowired
-	public Fast5ObjectRemoteRepositoryImpl(RemoteAPITokenService tokenService) {
-		super(tokenService, listTypeReference, objectTypeReference);
+	public Fast5ObjectRemoteRepositoryImpl(RemoteAPITokenService tokenService, UserService userService) {
+		super(tokenService, userService, listTypeReference, objectTypeReference);
 	}
 
 	@Override

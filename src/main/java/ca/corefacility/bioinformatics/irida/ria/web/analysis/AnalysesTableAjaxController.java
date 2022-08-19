@@ -37,6 +37,7 @@ import ca.corefacility.bioinformatics.irida.security.permissions.analysis.Update
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisTypesService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 
 import com.google.common.base.Strings;
@@ -54,12 +55,14 @@ public class AnalysesTableAjaxController {
 	private MessageSource messageSource;
 	private UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission;
 	private AnalysisAudit analysisAudit;
+	private UserService userService;
 
 	@Autowired
 	public AnalysesTableAjaxController(AnalysisSubmissionService analysisSubmissionService,
 			AnalysisTypesService analysisTypesService, ProjectService projectService,
 			IridaWorkflowsService iridaWorkflowsService, MessageSource messageSource,
-			UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission, AnalysisAudit analysisAudit) {
+			UpdateAnalysisSubmissionPermission updateAnalysisSubmissionPermission, AnalysisAudit analysisAudit,
+			UserService userService) {
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.analysisTypesService = analysisTypesService;
 		this.projectService = projectService;
@@ -67,6 +70,7 @@ public class AnalysesTableAjaxController {
 		this.messageSource = messageSource;
 		this.updateAnalysisSubmissionPermission = updateAnalysisSubmissionPermission;
 		this.analysisAudit = analysisAudit;
+		this.userService = userService;
 	}
 
 	/**
@@ -103,7 +107,7 @@ public class AnalysesTableAjaxController {
 	/**
 	 * Returns a list of analyses based on paging, sorting and filter requirements sent in {@link AnalysesListRequest}
 	 *
-	 * @param analysesListRequest description of the paging requirements.  Includes sorting, filtering, and paging
+	 * @param analysesListRequest description of the paging requirements. Includes sorting, filtering, and paging
 	 * @param admin               {@link Boolean} whether this is from the admin page.
 	 * @param projectId           {@link Long} if the request is from a specific project
 	 * @param locale              of the current user
@@ -115,35 +119,28 @@ public class AnalysesTableAjaxController {
 			@RequestParam(required = false, defaultValue = "false") Boolean admin,
 			@RequestParam(required = false) Long projectId, Locale locale) throws IridaWorkflowNotFoundException {
 
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
-		User user = (User) authentication.getPrincipal();
-		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = userService.getUserByUsername(authentication.getName());
+
 		/*
 		Check to see if there is a name filter
 		 */
 		String nameFilter = null;
-		if (!Strings.isNullOrEmpty(analysesListRequest.getFilters()
-				.getName())) {
-			nameFilter = analysesListRequest.getFilters()
-					.getName();
+		if (!Strings.isNullOrEmpty(analysesListRequest.getFilters().getName())) {
+			nameFilter = analysesListRequest.getFilters().getName();
 		}
 
 		/*
 		Check to see if we are filtering by workflow type
 		 */
 		Set<UUID> workflowIds = new HashSet<>();
-		if (analysesListRequest.getFilters()
-				.getType()
-				.size() > 0) {
-			List<String> workflowTypesFilter = analysesListRequest.getFilters()
-					.getType();
+		if (analysesListRequest.getFilters().getType().size() > 0) {
+			List<String> workflowTypesFilter = analysesListRequest.getFilters().getType();
 			for (String type : workflowTypesFilter) {
 				AnalysisType workflowType = analysisTypesService.fromString(type);
 				Set<IridaWorkflow> workflows = iridaWorkflowsService.getAllWorkflowsByType(workflowType);
-				workflowIds.addAll(workflows.stream()
-						.map(IridaWorkflow::getWorkflowIdentifier)
-						.collect(Collectors.toSet()));
+				workflowIds.addAll(
+						workflows.stream().map(IridaWorkflow::getWorkflowIdentifier).collect(Collectors.toSet()));
 			}
 		}
 
@@ -151,11 +148,8 @@ public class AnalysesTableAjaxController {
 		Check to see if the filter includes the state.  This can be any number of states.
 		 */
 		Set<AnalysisState> stateFilters = new HashSet<>();
-		if (analysesListRequest.getFilters()
-				.getState()
-				.size() > 0) {
-			List<AnalysisState> states = analysesListRequest.getFilters()
-					.getState();
+		if (analysesListRequest.getFilters().getState().size() > 0) {
+			List<AnalysisState> states = analysesListRequest.getFilters().getState();
 			stateFilters.addAll(states);
 		}
 
@@ -167,8 +161,7 @@ public class AnalysesTableAjaxController {
 			Project project = projectService.read(projectId);
 			page = analysisSubmissionService.listSubmissionsForProject(analysesListRequest.getSearch(), nameFilter,
 					stateFilters, workflowIds, project, pageRequest);
-		} else if (admin && user.getSystemRole()
-				.equals(Role.ROLE_ADMIN)) {
+		} else if (admin && user.getSystemRole().equals(Role.ROLE_ADMIN)) {
 			// User is an admin and requesting the listing of all pages.
 			page = analysisSubmissionService.listAllSubmissions(analysesListRequest.getSearch(), nameFilter,
 					stateFilters, workflowIds, pageRequest);
@@ -214,14 +207,13 @@ public class AnalysesTableAjaxController {
 	private AnalysisModel createAnalysisModel(AnalysisSubmission submission, Locale locale) {
 		AnalysisState analysisState = submission.getAnalysisState();
 		IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflowOrUnknown(submission);
-		String workflowType = iridaWorkflow.getWorkflowDescription()
-				.getAnalysisType()
-				.getType();
+		String workflowType = iridaWorkflow.getWorkflowDescription().getAnalysisType().getType();
 		String stateString = messageSource.getMessage("analysis.state." + analysisState.toString(), null, locale);
 		AnalysisStateModel state = new AnalysisStateModel(stateString, analysisState.toString());
 		String workflow = messageSource.getMessage("workflow." + workflowType + ".title", null, workflowType, locale);
 		Long duration;
-		if(submission.getAnalysisState() != AnalysisState.COMPLETED && submission.getAnalysisState() != AnalysisState.ERROR) {
+		if (submission.getAnalysisState() != AnalysisState.COMPLETED
+				&& submission.getAnalysisState() != AnalysisState.ERROR) {
 			Date currentDate = new Date();
 			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), currentDate);
 		} else {
@@ -231,8 +223,7 @@ public class AnalysesTableAjaxController {
 		/*
 		Check to see if the user has authority to update (delete) this particular submission.
 		 */
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		boolean updatePermission = this.updateAnalysisSubmissionPermission.isAllowed(authentication, submission);
 
 		return new AnalysisModel(submission, state, duration, workflow, updatePermission);
@@ -255,6 +246,7 @@ public class AnalysesTableAjaxController {
 
 	/**
 	 * Fetch the current status of the analysis server.
+	 * 
 	 * @return {@link Map} of the running and queued counts.
 	 */
 	@RequestMapping("/queue")
@@ -266,11 +258,12 @@ public class AnalysesTableAjaxController {
 	 * Get the updated state and duration of an analysis
 	 *
 	 * @param submissionId The analysis submission id
-	 * @param locale {@link Locale} Users locale
+	 * @param locale       {@link Locale} Users locale
 	 * @return dto which contains the updated analysis state and duration
 	 */
 	@RequestMapping(value = "/{submissionId}/updated-table-progress")
-	public ResponseEntity<UpdatedAnalysisTableProgress> getUpdatedProgress(@PathVariable Long submissionId, Locale locale) {
+	public ResponseEntity<UpdatedAnalysisTableProgress> getUpdatedProgress(@PathVariable Long submissionId,
+			Locale locale) {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
 
 		AnalysisState analysisState = submission.getAnalysisState();
@@ -280,7 +273,8 @@ public class AnalysesTableAjaxController {
 
 		// Get the run time of the analysis runtime using the analysis
 		Long duration;
-		if(submission.getAnalysisState() != AnalysisState.COMPLETED && submission.getAnalysisState() != AnalysisState.ERROR) {
+		if (submission.getAnalysisState() != AnalysisState.COMPLETED
+				&& submission.getAnalysisState() != AnalysisState.ERROR) {
 			Date currentDate = new Date();
 			duration = DateUtilities.getDurationInMilliseconds(submission.getCreatedDate(), currentDate);
 		} else {

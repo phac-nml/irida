@@ -21,7 +21,6 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -449,15 +448,11 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
-	 * Confirm that a {@link ProjectSampleJoin} exists between the given {@link Project} and {@link Sample}. <<<<<<<
-	 * HEAD
+	 * Confirm that a {@link ProjectSampleJoin} exists between the given {@link Project} and {@link Sample}.
 	 *
 	 * @param project the {@link Project} to check
 	 * @param sample  the {@link Sample} to check
-	 * @param project the {@link Project} to check
-	 * @param sample  the {@link Sample} to check
-	 * @throws IllegalArgumentException if join does not exist =======
-	 * @throws IllegalArgumentException if join does not exist >>>>>>> master
+	 * @throws IllegalArgumentException if join does not exist
 	 */
 	private void confirmProjectSampleJoin(Project project, Sample sample) throws IllegalArgumentException {
 		Set<Project> projects = new HashSet<>();
@@ -682,10 +677,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	public Page<ProjectSampleJoin> searchSamplesForUser(String query, final Integer page, final Integer count,
 			final Sort sort) {
-		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext()
-				.getAuthentication()
-				.getPrincipal();
-		final User loggedIn = userRepository.loadUserByUsername(loggedInDetails.getUsername());
+		final String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		final User loggedIn = userRepository.loadUserByUsername(username);
 
 		final PageRequest pr = PageRequest.of(page, count, sort);
 
@@ -722,12 +715,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
-	 * Specification for searching {@link Sample}s <<<<<<< HEAD
+	 * Specification for searching {@link Sample}s
 	 *
 	 * @param user        the {@link User} to get samples for. If this property is null, will serch for all users.
-	 * @param queryString the query string to search for =======
-	 * @param user        the {@link User} to get samples for. If this property is null, will serch for all users.
-	 * @param queryString the query string to search for >>>>>>> master
+	 * @param queryString the query string to search for
 	 * @return a {@link Specification} for {@link ProjectSampleJoin}
 	 */
 	private static Specification<ProjectSampleJoin> sampleForUserSpecification(final User user,
