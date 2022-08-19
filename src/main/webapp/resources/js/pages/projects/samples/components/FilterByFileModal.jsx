@@ -46,7 +46,7 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
           samples: parsed.map((sample) => ({
             name: sample,
           })),
-          associated_project_ids: associated,
+          associatedProjectIds: associated,
         },
       }).then((response) => {
         let valid = response.data.samples.filter(
