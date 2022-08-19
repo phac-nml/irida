@@ -95,6 +95,13 @@ function CreateNcbiExportSamples({
     }
   };
 
+  /**
+   * Remove a sample from the export.
+   * Note: this only removes from the export, but if the page is reloaded, they still
+   * exist in the sessionStorage.
+   * @param event
+   * @param sample - sample to remove
+   */
   function removeSample(
     event: React.MouseEvent<HTMLElement>,
     sample: SampleRecord
