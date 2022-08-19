@@ -40,25 +40,25 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
       const associated = options.filters.associated || [];
       // Split the contents of the file on either new line or coma, and filter empty entries.
       let parsed = contents.split(/[\s,]+/).filter(Boolean);
-      //TODO: handle associated projects
       validateSamples({
         projectId: projectId,
         body: {
           samples: parsed.map((sample) => ({
             name: sample,
           })),
+          associated_project_ids: associated,
         },
       }).then((response) => {
         let valid = response.data.samples.filter(
-          (sample) => sample.id !== null
+          (sample) => sample.ids.length !== 0
         );
         let invalid = response.data.samples.filter(
-          (sample) => sample.id === null
+          (sample) => sample.ids.length === 0
         );
 
         setValid(
           valid.map((sample) => {
-            return sample.name;
+            return { sampleName: sample.name };
           })
         );
         setInvalid(

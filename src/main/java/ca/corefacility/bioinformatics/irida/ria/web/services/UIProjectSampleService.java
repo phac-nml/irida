@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -52,15 +53,16 @@ public class UIProjectSampleService {
 	 */
 	public ValidateSampleNamesResponse validateSampleNames(Long projectId, ValidateSampleNamesRequest request) {
 		List<ValidateSampleNameModel> samples = request.getSamples();
-		Project project = projectService.read(projectId);
+		List<Long> associatedProjectIds = request.getAssociatedProjectIds();
+		List<Long> projectIds = new ArrayList<>();
+		projectIds.add(projectId);
+		if (associatedProjectIds != null) {
+			projectIds.addAll(associatedProjectIds);
+		}
 		for (ValidateSampleNameModel sample : samples) {
-			try {
-				String sampleName = sample.getName();
-				Sample found = sampleService.getSampleBySampleName(project, sampleName);
-				sample.setId(found.getId());
-			} catch (EntityNotFoundException e) {
-				sample.setId(null);
-			}
+			String sampleName = sample.getName();
+			List<Long> foundSampleIds = sampleService.getSamplesBySampleNameForProjects(projectIds, sampleName);
+			sample.setIds(foundSampleIds);
 		}
 		return new ValidateSampleNamesResponse(samples);
 	}

@@ -1,23 +1,25 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto;
 
+import java.util.List;
+
 /**
  * Model for UI to represent a sample.
  */
 public class ValidateSampleNameModel {
-	private Long id;
+	private List<Long> ids;
 	private String name;
 
-	public ValidateSampleNameModel(Long id, String name) {
-		this.id = id;
+	public ValidateSampleNameModel(List<Long> ids, String name) {
+		this.ids = ids;
 		this.name = name;
 	}
 
-	public Long getId() {
-		return id;
+	public List<Long> getIds() {
+		return ids;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setIds(List<Long> ids) {
+		this.ids = ids;
 	}
 
 	public String getName() {

@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class ValidateSampleNamesRequest {
 	private List<ValidateSampleNameModel> samples;
-	private List<Long> associated_project_ids;
+	private List<Long> associatedProjectIds;
 
 	public ValidateSampleNamesRequest() {
 	}
@@ -20,11 +20,11 @@ public class ValidateSampleNamesRequest {
 		this.samples = samples;
 	}
 
-	public List<Long> getAssociated_project_ids() {
-		return associated_project_ids;
+	public List<Long> getAssociatedProjectIds() {
+		return associatedProjectIds;
 	}
 
-	public void setAssociated_project_ids(List<Long> associated_project_ids) {
-		this.associated_project_ids = associated_project_ids;
+	public void setAssociatedProjectIds(List<Long> associatedProjectIds) {
+		this.associatedProjectIds = associatedProjectIds;
 	}
 }

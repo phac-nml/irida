@@ -1,9 +1,10 @@
 package ca.corefacility.bioinformatics.irida.service.sample;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -15,9 +16,11 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -157,13 +160,22 @@ public interface SampleService extends CRUDService<Long, Sample> {
 			Direction order, String... sortProperties);
 
 	/**
-	 * Get the {@link Sample} for the given ID
+	 * Get the {@link Sample} with the given sample name
 	 *
 	 * @param project    the {@link Project} that the {@link Sample} belongs to.
 	 * @param sampleName The name for the requested sample
 	 * @return A {@link Sample} with the given ID
 	 */
 	public Sample getSampleBySampleName(Project project, String sampleName);
+
+	/**
+	 * Get the {@link Sample} identifiers with the given sample name
+	 *
+	 * @param projectIds The {@link Project} identifiers that the {@link Sample} belongs to.
+	 * @param sampleName The name for the requested sample
+	 * @return A {@link Sample} with the given ID
+	 */
+	public List<Long> getSamplesBySampleNameForProjects(List<Long> projectIds, String sampleName);
 
 	/**
 	 * Remove a {@link SequencingObject} from a given {@link Sample}. This will delete the
@@ -299,7 +311,8 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public Long getSamplesCreated(Date createdDate);
 
 	/**
-	 * Get list of {@link GenericStatModel} of samples created in the past n time period grouped by the format provided.
+	 * Get list of {@link GenericStatModel} of samples created in the past n time period grouped by the format
+	 * provided.
 	 *
 	 * @param createdDate         the minimum date for samples created
 	 * @param statisticTimePeriod the enum containing format for which to group the results by

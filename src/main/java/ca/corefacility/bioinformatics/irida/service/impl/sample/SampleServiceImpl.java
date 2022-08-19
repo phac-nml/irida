@@ -170,8 +170,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#id, 'canUpdateSample')")
-	public Sample updateFields(Long id, Map<String, Object> updatedFields) throws ConstraintViolationException,
-			ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException, InvalidPropertyException {
+	public Sample updateFields(Long id, Map<String, Object> updatedFields)
+			throws ConstraintViolationException, ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException,
+			InvalidPropertyException {
 		return super.updateFields(id, updatedFields);
 	}
 
@@ -210,9 +211,11 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	@PostAuthorize("hasPermission(returnObject,'readProjectMetadataResponse')")
-	public ProjectMetadataResponse getMetadataForProjectSamples(Project project, List<Long> sampleIds, List<MetadataTemplateField> fields) {
+	public ProjectMetadataResponse getMetadataForProjectSamples(Project project, List<Long> sampleIds,
+			List<MetadataTemplateField> fields) {
 		checkArgument(!fields.isEmpty(), "fields must not be empty");
-		Map<Long, Set<MetadataEntry>> metadataForProjectSamples = metadataEntryRepository.getMetadataForProjectSamples(project, sampleIds, fields);
+		Map<Long, Set<MetadataEntry>> metadataForProjectSamples = metadataEntryRepository.getMetadataForProjectSamples(
+				project, sampleIds, fields);
 
 		return new ProjectMetadataResponse(project, metadataForProjectSamples);
 	}
@@ -292,7 +295,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or (hasPermission(#project, 'canReadProject') and hasPermission(#sampleId, 'canReadSample'))")
+	@PreAuthorize(
+			"hasAnyRole('ROLE_ADMIN','ROLE_SEQUENCER') or (hasPermission(#project, 'canReadProject') and hasPermission(#sampleId, 'canReadSample'))")
 	public ProjectSampleJoin getSampleForProject(Project project, Long sampleId) {
 		Sample sample = read(sampleId);
 		ProjectSampleJoin join = psjRepository.readSampleForProject(project, sample);
@@ -327,14 +331,25 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
-	public Sample getSampleBySampleName(Project project, String sampleId) {
-		Sample s = sampleRepository.getSampleBySampleName(project, sampleId);
+	public Sample getSampleBySampleName(Project project, String sampleName) {
+		Sample s = sampleRepository.getSampleBySampleName(project, sampleName);
 		if (s != null) {
 			return s;
 		} else {
 			throw new EntityNotFoundException(
-					"No sample with external id [" + sampleId + "] in project [" + project.getId() + "]");
+					"No sample with name [" + sampleName + "] in project [" + project.getId() + "]");
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
+	public List<Long> getSamplesBySampleNameForProjects(List<Long> projectIds, String sampleName) {
+		List<Long> sampleIds = sampleRepository.getSampleBySampleNameInProjects(projectIds, sampleName);
+		return sampleIds;
 	}
 
 	/**
@@ -389,7 +404,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional
-	@PreAuthorize("hasPermission(#project, 'isProjectOwner') and hasPermission(#mergeInto, 'canUpdateSample') and hasPermission(#toMerge, 'canUpdateSample')")
+	@PreAuthorize(
+			"hasPermission(#project, 'isProjectOwner') and hasPermission(#mergeInto, 'canUpdateSample') and hasPermission(#toMerge, 'canUpdateSample')")
 	public Sample mergeSamples(Project project, Sample mergeInto, Collection<Sample> toMerge) {
 		// confirm that all samples are part of the same project:
 		confirmProjectSampleJoin(project, mergeInto);
@@ -407,8 +423,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 				addSequencingObjectToSample(mergeInto, sequencingObject);
 			}
 
-			Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = sampleGenomeAssemblyJoinRepository
-					.findBySample(s);
+			Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = sampleGenomeAssemblyJoinRepository.findBySample(
+					s);
 			for (SampleGenomeAssemblyJoin join : genomeAssemblyJoins) {
 				GenomeAssembly genomeAssembly = join.getObject();
 
@@ -438,9 +454,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 *
 	 * @param project the {@link Project} to check
 	 * @param sample  the {@link Sample} to check
-	 * @throws IllegalArgumentException if join does not exist =======
 	 * @param project the {@link Project} to check
 	 * @param sample  the {@link Sample} to check
+	 * @throws IllegalArgumentException if join does not exist =======
 	 * @throws IllegalArgumentException if join does not exist >>>>>>> master
 	 */
 	private void confirmProjectSampleJoin(Project project, Sample sample) throws IllegalArgumentException {
@@ -495,8 +511,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		List<SampleSequencingObjectJoin> sequencesForSample = ssoRepository.getSequencesForSample(sample);
 		for (SampleSequencingObjectJoin join : sequencesForSample) {
 			for (SequenceFile sequenceFile : join.getObject().getFiles()) {
-				final AnalysisFastQC sequenceFileFastQC = analysisRepository
-						.findFastqcAnalysisForSequenceFile(sequenceFile);
+				final AnalysisFastQC sequenceFileFastQC = analysisRepository.findFastqcAnalysisForSequenceFile(
+						sequenceFile);
 				if (sequenceFileFastQC == null || sequenceFileFastQC.getTotalBases() == null) {
 					throw new SequenceFileAnalysisException(
 							"Missing FastQC analysis for SequenceFile [" + sequenceFile.getId() + "]");
@@ -587,8 +603,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		// Check to see if there is a specific sample name
 		if (!Strings.isNullOrEmpty(sampleName)) {
-			psjFilteredSamplesForProjects
-					.add(new SearchCriteria("sample.sampleName", sampleName, SearchOperation.MATCH));
+			psjFilteredSamplesForProjects.add(
+					new SearchCriteria("sample.sampleName", sampleName, SearchOperation.MATCH));
 		}
 
 		// Check for the table search.
@@ -607,14 +623,14 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 
 		// Check if there is a minimum search date
 		if (minDate != null) {
-			psjFilteredSamplesForProjects
-					.add(new SearchCriteria("sample.modifiedDate", minDate, SearchOperation.GREATER_THAN_EQUAL));
+			psjFilteredSamplesForProjects.add(
+					new SearchCriteria("sample.modifiedDate", minDate, SearchOperation.GREATER_THAN_EQUAL));
 		}
 
 		// Check if there is a maximum search date
 		if (maxDate != null) {
-			psjFilteredSamplesForProjects
-					.add(new SearchCriteria("sample.modifiedDate", maxDate, SearchOperation.LESS_THAN_EQUAL));
+			psjFilteredSamplesForProjects.add(
+					new SearchCriteria("sample.modifiedDate", maxDate, SearchOperation.LESS_THAN_EQUAL));
 		}
 
 		return psjRepository.findAll(psjFilteredSamplesForProjects, PageRequest.of(currentPage, pageSize, sort));
@@ -627,8 +643,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@PreAuthorize("hasPermission(#submission, 'canReadAnalysisSubmission')")
 	@PostFilter("hasPermission(filterObject, 'canReadSample')")
 	public Collection<Sample> getSamplesForAnalysisSubmission(AnalysisSubmission submission) {
-		Set<SequencingObject> objectsForAnalysisSubmission = sequencingObjectRepository
-				.findSequencingObjectsForAnalysisSubmission(submission);
+		Set<SequencingObject> objectsForAnalysisSubmission = sequencingObjectRepository.findSequencingObjectsForAnalysisSubmission(
+				submission);
 		Set<Sample> samples = null;
 		try {
 			samples = objectsForAnalysisSubmission.stream()
@@ -697,8 +713,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	private String[] verifySortProperties(String[] sortProperties) {
 		// if the sort properties are null, empty, or are an empty string, use
 		// CREATED_DATE
-		if (sortProperties == null || sortProperties.length == 0
-				|| (sortProperties.length == 1 && sortProperties[0].equals(""))) {
+		if (sortProperties == null || sortProperties.length == 0 || (sortProperties.length == 1
+				&& sortProperties[0].equals(""))) {
 			sortProperties = new String[] { CREATED_DATE_SORT_PROPERTY };
 		}
 

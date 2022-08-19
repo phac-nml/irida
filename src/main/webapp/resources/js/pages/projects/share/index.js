@@ -110,17 +110,16 @@ function ShareApp() {
         projectId: targetProject?.identifier,
         body: {
           samples: samples.map((sample) => ({
-            id: sample.id,
             name: sample.name,
           })),
         },
       }).then((response) => {
         let filtered = response.data.samples.filter(
-          (sample) => sample.id !== null
+          (sample) => sample.ids.length !== 0
         );
         setExistingIds(
           filtered.map((sample) => {
-            return sample.id;
+            return sample.ids;
           })
         );
         setExistingNames(
