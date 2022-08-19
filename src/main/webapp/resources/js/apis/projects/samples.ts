@@ -19,7 +19,7 @@ export const samplesApi = createApi({
       query: (body) => ({ method: "POST", body }),
     }),
     merge: builder.mutation({
-      query: ({ projectId, request }) => ({
+      query: ({ request }) => ({
         url: "/merge",
         method: "POST",
         body: request,
@@ -64,10 +64,10 @@ export const {
 
 /**
  * Server side validation of a new sample name.
- * @param {string} name - sample name to validate
+ * @param name - sample name to validate
  * @returns {Promise<any>}
  */
-export async function validateSampleName(name) {
+export async function validateSampleName(name: string) {
   const params = new URLSearchParams();
   params.append("name", name.trim());
   const response = await fetch(`${URL}/add-sample/validate?${params}`);
