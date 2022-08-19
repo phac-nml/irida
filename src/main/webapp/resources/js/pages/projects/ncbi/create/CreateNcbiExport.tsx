@@ -93,17 +93,6 @@ export interface UpdateDefaultValues {
  * React router loader
  */
 export async function loader(): Promise<LoaderValues> {
-  // const samplesPromise = await getStoredSamples().then(({ samples }) => {
-  //   const formatted: SampleRecords = {};
-  //   samples.forEach((sample) => {
-  //     fetchSampleFiles({ sampleId: sample.id }).then((files) => {
-  //       formatted[sample.name] = {
-
-  //       };
-  //     });
-  //   });
-  //   return formatted;
-  // });
   const { samples, projectId } = await getStoredSamples();
   const samplesPromise = await getFilesForSamples({
     ids: samples.map((sample) => sample.id),
