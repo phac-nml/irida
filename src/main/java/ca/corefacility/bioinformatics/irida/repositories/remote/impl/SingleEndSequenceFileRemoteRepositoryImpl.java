@@ -11,14 +11,14 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrappe
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SingleEndSequenceFileRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
- * Implementation of a {@link SingleEndSequenceFileRemoteRepository} extending
- * {@link RemoteRepositoryImpl}
+ * Implementation of a {@link SingleEndSequenceFileRemoteRepository} extending {@link RemoteRepositoryImpl}
  */
 @Repository
-public class SingleEndSequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<SingleEndSequenceFile> implements
-		SingleEndSequenceFileRemoteRepository {
+public class SingleEndSequenceFileRemoteRepositoryImpl extends RemoteRepositoryImpl<SingleEndSequenceFile>
+		implements SingleEndSequenceFileRemoteRepository {
 
 	private static final ParameterizedTypeReference<ListResourceWrapper<SingleEndSequenceFile>> listTypeReference = new ParameterizedTypeReference<ListResourceWrapper<SingleEndSequenceFile>>() {
 	};
@@ -26,10 +26,10 @@ public class SingleEndSequenceFileRemoteRepositoryImpl extends RemoteRepositoryI
 	};
 
 	@Autowired
-	public SingleEndSequenceFileRemoteRepositoryImpl(RemoteAPITokenService tokenService) {
-		super(tokenService, listTypeReference, objectTypeReference);
+	public SingleEndSequenceFileRemoteRepositoryImpl(RemoteAPITokenService tokenService, UserService userService) {
+		super(tokenService, userService, listTypeReference, objectTypeReference);
 	}
-	
+
 	@Override
 	protected <T extends IridaRepresentationModel> T setRemoteStatus(T entity, RemoteAPI api) {
 		entity = super.setRemoteStatus(entity, api);

@@ -24,6 +24,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIRemoveAssociate
 import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.AssociatedProject;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
  * Service for handling associated projects
@@ -33,13 +34,15 @@ public class UIAssociatedProjectsService {
 	private final ProjectService projectService;
 	private final ProjectOwnerPermission projectOwnerPermission;
 	private final MessageSource messageSource;
+	private final UserService userService;
 
 	@Autowired
 	public UIAssociatedProjectsService(ProjectService projectService, ProjectOwnerPermission projectOwnerPermission,
-			MessageSource messageSource) {
+			MessageSource messageSource, UserService userService) {
 		this.projectService = projectService;
 		this.projectOwnerPermission = projectOwnerPermission;
 		this.messageSource = messageSource;
+		this.userService = userService;
 	}
 
 	/**
@@ -66,7 +69,7 @@ public class UIAssociatedProjectsService {
 	public List<AssociatedProject> getAssociatedProjects(Long projectId) {
 		Project project = projectService.read(projectId);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		User user = (User) authentication.getPrincipal();
+		User user = userService.getUserByUsername(authentication.getName());
 		boolean hasPermission = user.getSystemRole().equals(Role.ROLE_ADMIN)
 				|| projectOwnerPermission.isAllowed(authentication, project);
 		List<RelatedProjectJoin> relatedProjectJoins = projectService.getRelatedProjects(project);
