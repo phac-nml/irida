@@ -52,8 +52,13 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		shareSamplesPage.searchForProject("project2");
 		shareSamplesPage.gotToNextStep();
 		assertEquals(3, shareSamplesPage.getNumberOfSamplesDisplayed(), "Should display the 3 samples selected");
-		assertTrue(shareSamplesPage.isSomeSamplesWarningDisplayed(),
-				"Should display a warning that some samples cannot be copied");
+		assertTrue(shareSamplesPage.isSomeSamplesSameIdsWarningDisplayed(),
+				"Should display an expandable warning which lists the samples that will not be copied over as the samples with the same identifiers already exist in the target project");
+		shareSamplesPage.expandSameSampleIdsWarning();
+		assertEquals(1, shareSamplesPage.numberOfSamplesWithSameIds(), "There should be one sample listed which exists in the target project with the same identifier");
+
+		assertFalse(shareSamplesPage.isSomeSamplesSameNamesWarningDisplayed(),
+				"Shouldn't display an expandable warning which lists the samples that will not be copied over as the samples with the same names but different identifiers exist in the target project");
 		shareSamplesPage.selectMoveCheckbox();
 		shareSamplesPage.gotToNextStep();
 		shareSamplesPage.submitShareRequest();
@@ -94,5 +99,19 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(shareSamplesPage.isSuccessResultDisplayed(), "Success result should be displayed");
 		assertEquals(shareSamplesPage.getSuccessTitle(), "Successfully Shared Samples");
 
+		samplesPage = ProjectSamplesPage.gotToPage(driver(), 2);
+		samplesPage.selectSampleByName("sample5fg44");
+		samplesPage.shareSamples();
+		assertFalse(shareSamplesPage.isNextButtonEnabled(),
+				"Share button should be disabled without a project selected");
+		shareSamplesPage.searchForProject("project8");
+		shareSamplesPage.gotToNextStep();
+
+		assertFalse(shareSamplesPage.isSomeSamplesSameIdsWarningDisplayed(),
+				"Shouldn't display an expandable warning which lists the samples that will not be copied over as the samples with the same identifiers already exist in the target project");
+		assertTrue(shareSamplesPage.isSomeSamplesSameNamesWarningDisplayed(),
+				"Should display an expandable warning which lists the samples that will not be copied over as the samples with the same names but different identifiers exist in the target project");
+		shareSamplesPage.expandSameSampleNamesWarning();
+		assertEquals(1, shareSamplesPage.numberOfSamplesWithSameNames(), "There should be one sample listed which exists in the target project with the same name and different identifier");
 	}
 }

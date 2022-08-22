@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class SequencingRunListPageIT extends AbstractIridaUIITChromeDriver {
 	private SequencingRunListPage page;
 
-	@Override
 	@BeforeEach
 	public void setUpTest() {
 		LoginPage.loginAsAdmin(driver());
