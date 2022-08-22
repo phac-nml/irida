@@ -16,6 +16,7 @@
 * [REST]: Updated synchronizing of sample data to remove sequencing objects and assemblies that no longer exist on the remote sample. See [PR 1345](https://github.com/phac-nml/irida/pull/1345)
 * [UI]: Fixed issue with filtering samples by files using a windows encoded text file causing sample name truncation. See [PR 1346](https://github.com/phac-nml/irida/pull/1346)
 * [Developer]: Fixed deleting a project with project subscriptions. See [PR 1348](https://github.com/phac-nml/irida/pull/1348)
+* [UI]: Fixed issue with Biohansel pipeline being launched without selecting an option for a required parameter. See [PR 1356](https://github.com/phac-nml/irida/pull/1356)
 
 ## [22.05.5] - 2022/06/28
 * [UI]: Fixed bug preventing export of project samples table due to invalid url. [PR 1331](https://github.com/phac-nml/irida/pull/1331)
