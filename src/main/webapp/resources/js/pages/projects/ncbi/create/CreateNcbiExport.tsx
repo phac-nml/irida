@@ -193,6 +193,8 @@ function CreateNcbiExport(): JSX.Element {
     }
   };
 
+  const removeInvalidSamples = () => setInvalid([]);
+
   /*
     This prevents the release date to be in the past.
      */
@@ -412,6 +414,8 @@ function CreateNcbiExport(): JSX.Element {
                           type="warning"
                           showIcon
                           message={"Some Samples are not valid"}
+                          closable
+                          onClose={removeInvalidSamples}
                         />
                       )}
                       <CreateNcbiDefaultOptions onChange={updateDefaultValue} />

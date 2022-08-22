@@ -23,7 +23,7 @@ function SampleValidIcon({ status }: { status: boolean }) {
 }
 
 /**
- * React component to render a sample to be exported to the NCBI SRA
+ * React component to render a sample that will be exported to the NCBI SRA
  * @param form - export form
  * @param samples - object of samples to export
  * @param removeSample - method to remove a sample from the form
@@ -80,7 +80,7 @@ function CreateNcbiExportSamples({
 
   return (
     <Collapse accordion>
-      {Object.values(samples).map((sample, index) => (
+      {Object.values(samples).map((sample) => (
         <Collapse.Panel
           className="t-sample-panel"
           key={String(sample.key)}
@@ -101,7 +101,7 @@ function CreateNcbiExportSamples({
         >
           <CreateNcbiSampleDetails
             sample={sample}
-            onChange={() => checkStatus(sample, index)}
+            onChange={() => checkStatus(sample)}
           />
         </Collapse.Panel>
       ))}
