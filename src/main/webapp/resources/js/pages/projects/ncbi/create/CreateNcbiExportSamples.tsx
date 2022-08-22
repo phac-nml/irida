@@ -2,7 +2,7 @@ import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { Button, Collapse, FormInstance, Space, Tag } from "antd";
 import { NamePath } from "antd/lib/form/interface";
 import React from "react";
-import { FormSample, SampleRecord } from "./CreateNcbiExport";
+import { SampleRecord } from "./CreateNcbiExport";
 import CreateNcbiSampleDetails from "./CreateNcbiSampleDetails";
 
 /**
@@ -41,9 +41,11 @@ function CreateNcbiExportSamples({
     sample: SampleRecord
   ) => void;
 }): JSX.Element {
-  const [validationStatus, setValidationStatus] = React.useState<boolean[]>([]);
+  const [validationStatus, setValidationStatus] = React.useState<
+    Record<string, boolean>
+  >({});
 
-  const checkStatus = (sample: SampleRecord, index: number): void => {
+  const checkStatus = (sample: SampleRecord): void => {
     const fields: Array<NamePath> = [
       ["samples", sample.name, "bioSample"],
       ["samples", sample.name, "libraryName"],
@@ -52,50 +54,28 @@ function CreateNcbiExportSamples({
       ["samples", sample.name, "libraryConstructionProtocol"],
       ["samples", sample.name, "instrumentModel"],
       ["samples", sample.name, "librarySelection"],
-      ["samples", sample.name, "files", "singles"],
-      ["samples", sample.name, "files", "pairs"],
+      ["samples", sample.name, "singles"],
+      ["samples", sample.name, "pairs"],
     ];
 
-    // const values = form.getFieldsValue(fields);
-    //
-    // // Make sure that each input has a value
-    // const validCount = Object.values(values.samples[sample.name]).filter(
-    //   (value) => value.length === 0
-    // );
+    const values = form.getFieldsValue(fields).samples[sample.name];
 
-    // const touched: Array<NamePath> = [];
-    // let hasUntouched = false;
-    //
-    // fields.forEach((field) => {
-    //   if (form.getFieldError(field)) {
-    //     console.log(form.getFieldError(field));
-    //     touched.push(field);
-    //   } else {
-    //     if (form.getFieldValue(field) === undefined) {
-    //       hasUntouched = true;
-    //     }
-    //   }
-    // });
-    //
-    // if (hasUntouched) {
-    //   // If it has untouched fields, then it is not valid yet!
-    //   const updated = [...validationStatus];
-    //   updated[index] = false;
-    //   setValidationStatus(updated);
-    // } else {
-    //   form
-    //     .validateFields(touched)
-    //     .then(() => {
-    //       const updated = [...validationStatus];
-    //       updated[index] = true;
-    //       setValidationStatus(updated);
-    //     })
-    //     .catch(() => {
-    //       const updated = [...validationStatus];
-    //       updated[index] = false;
-    //       setValidationStatus(updated);
-    //     });
-    // }
+    console.log(values);
+
+    const isValid =
+      values.bioSample.length > 0 &&
+      values.libraryName.length > 0 &&
+      values.libraryStrategy.length > 0 &&
+      values.librarySource.length > 0 &&
+      values.libraryConstructionProtocol.length > 0 &&
+      values.instrumentModel.length > 0 &&
+      values.librarySelection.length > 0 &&
+      (values.singles.length > 0 || values.pairs.length > 0);
+
+    console.log({ isValid });
+
+    const status = { ...validationStatus, [sample.name]: isValid };
+    setValidationStatus(status);
   };
 
   return (
@@ -106,7 +86,7 @@ function CreateNcbiExportSamples({
           key={String(sample.key)}
           header={
             <Space>
-              <SampleValidIcon status={validationStatus[index]} />
+              <SampleValidIcon status={validationStatus[sample.name]} />
               <span className="t-sample-name">{sample.name}</span>
             </Space>
           }

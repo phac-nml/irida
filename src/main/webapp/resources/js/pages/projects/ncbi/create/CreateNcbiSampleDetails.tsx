@@ -32,6 +32,40 @@ export default function CreateNcbiSampleDetails({
   const { strategies, sources, platforms, selections }: LoaderValues =
     useLoaderData();
 
+  const singles = sample.files.singles.map((file) => ({
+    label: (
+      <Space>
+        <Avatar
+          size="small"
+          style={{ backgroundColor: `var(--primary-grey)` }}
+          icon={<SwapRightOutlined />}
+        />
+        {file.name} - {file.file.fileSize}
+      </Space>
+    ),
+    value: file.id,
+  }));
+  const pairs = sample.files.pairs.map((file) => ({
+    label: (
+      <Space>
+        <Avatar
+          size="small"
+          style={{ backgroundColor: `var(--primary-grey)` }}
+          icon={<SwapOutlined />}
+        />
+        <List size="small">
+          <List.Item>
+            {file.files[0].name} - {file.files[0].fileSize}
+          </List.Item>
+          <List.Item>
+            {file.files[1].name} - {file.files[1].fileSize}
+          </List.Item>
+        </List>
+      </Space>
+    ),
+    value: file.id,
+  }));
+
   return (
     <Row gutter={[16, 16]}>
       <Col md={12} xs={24}>
@@ -116,75 +150,30 @@ export default function CreateNcbiSampleDetails({
       {sample.files.singles.length > 0 && (
         <Col span={24}>
           <Form.Item
-            name={["samples", sample.name, "files"]}
+            name={["samples", sample.name, "singles"]}
             label={i18n("CreateNcbiExport.singles")}
             valuePropName="checked"
-            rules={[
-              {
-                required: true,
-                message: i18n("CreateNcbiExport.files.required"),
-              },
-            ]}
           >
-            <Checkbox.Group style={{ width: `100%` }}>
-              <Row>
-                {sample.files.singles.map((single) => (
-                  <Col key={single.key} span={24}>
-                    <Checkbox value={single.id}>
-                      <Space>
-                        <Avatar
-                          size="small"
-                          style={{ backgroundColor: `var(--primary-grey)` }}
-                          icon={<SwapRightOutlined />}
-                        />
-                        {single.name} - {single.file.fileSize}
-                      </Space>
-                    </Checkbox>
-                  </Col>
-                ))}
-              </Row>
-            </Checkbox.Group>
+            <Checkbox.Group
+              style={{ width: `100%` }}
+              options={singles}
+              onChange={onChange}
+            />
           </Form.Item>
         </Col>
       )}
       {sample.files.pairs.length > 0 && (
         <Col span={24}>
           <Form.Item
-            name={["samples", sample.name, "files"]}
+            name={["samples", sample.name, "pairs"]}
             label={i18n("CreateNcbiExport.pairs")}
             valuePropName="checked"
-            rules={[
-              {
-                required: true,
-                message: i18n("CreateNcbiExport.files.required"),
-              },
-            ]}
           >
-            <Checkbox.Group style={{ width: `100%` }}>
-              <Row>
-                {sample.files.pairs.map((pair) => (
-                  <Col key={pair.key} span={24}>
-                    <Checkbox value={pair.id}>
-                      <Space>
-                        <Avatar
-                          size="small"
-                          style={{ backgroundColor: `var(--primary-grey)` }}
-                          icon={<SwapOutlined />}
-                        />
-                        <List size="small">
-                          <List.Item>
-                            {pair.files[0].name} - {pair.files[0].fileSize}
-                          </List.Item>
-                          <List.Item>
-                            {pair.files[1].name} - {pair.files[1].fileSize}
-                          </List.Item>
-                        </List>
-                      </Space>
-                    </Checkbox>
-                  </Col>
-                ))}
-              </Row>
-            </Checkbox.Group>
+            <Checkbox.Group
+              style={{ width: `100%` }}
+              options={pairs}
+              onChange={onChange}
+            />
           </Form.Item>
         </Col>
       )}
