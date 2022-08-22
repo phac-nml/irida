@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -57,7 +56,10 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.Project
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.ProjectSamplesFilter;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.SampleObject;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.error.SampleMergeException;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleFiles;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareMetadataRestriction;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -659,37 +661,5 @@ public class UISampleService {
 		csvWriter.writeAll(results);
 		csvWriter.flush();
 		csvWriter.close();
-	}
-
-	/**
-	 * Check if a list of sample names exist within a project
-	 *
-	 * @param request Request containing the project id and sample names
-	 * @return List of valid and invalid sample names
-	 */
-	public SampleNameCheckResponse checkSampleNames(SampleNameCheckRequest request) {
-		Iterable<Project> projects = projectService.readMultiple(request.getProjectIds());
-		List<ValidSample> valid = new ArrayList<>();
-
-		AtomicReference<Iterator<Project>> iterator = new AtomicReference<>();
-		request.getNames().forEach(name -> {
-			Sample sample = null;
-			iterator.set(projects.iterator());
-
-			// Need to figure out what project it belongs to.
-			while (sample == null && iterator.get().hasNext()) {
-				Project project = iterator.get().next();
-				try {
-					sample = sampleService.getSampleBySampleName(project, name);
-					valid.add(new ValidSample(project, sample));
-				} catch (Exception e) {
-					// Nothing to worry about here
-				}
-			}
-		});
-		List<String> invalid = new ArrayList<>(request.getNames());
-		invalid.removeAll(valid.stream().map(ValidSample::getSampleName).collect(Collectors.toList()));
-
-		return new SampleNameCheckResponse(valid, invalid);
 	}
 }
