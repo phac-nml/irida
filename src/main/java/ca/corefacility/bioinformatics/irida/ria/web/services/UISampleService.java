@@ -46,6 +46,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchCriteria;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchOperation;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleFilesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIShareSamplesException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.PairedEndSequenceFileModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.SingleEndSequenceFileModel;
@@ -152,8 +153,18 @@ public class UISampleService {
 		return new SampleFiles(singles, filePairs, fast5, genomeAssemblies);
 	}
 
-	public List<SampleFiles> getFilesForSamples(List<Long> ids, Long projectId) {
-		return ids.stream().map(id -> getSampleFiles(id, projectId)).collect(Collectors.toList());
+	/**
+	 * Get details about the files belonging to a list of samples
+	 *
+	 * @param ids       - List of sample identifiers to get file details for
+	 * @param projectId - the project id that these samples belong to
+	 * @return A map of sample id and their related file information
+	 */
+	public SampleFilesResponse getFilesForSamples(List<Long> ids, Long projectId) {
+		SampleFilesResponse response = new SampleFilesResponse();
+		ids.stream()
+				.forEach(id -> response.put(id, getSampleFiles(id, projectId)));
+		return response;
 	}
 
 	/**

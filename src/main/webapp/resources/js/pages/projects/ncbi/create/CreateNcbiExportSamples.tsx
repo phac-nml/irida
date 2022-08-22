@@ -1,8 +1,8 @@
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import { Avatar, Button, Collapse, FormInstance, Space } from "antd";
+import { Button, Collapse, FormInstance, Space, Tag } from "antd";
 import { NamePath } from "antd/lib/form/interface";
 import React from "react";
-import { SampleRecord } from "./CreateNcbiExport";
+import { FormSample, SampleRecord } from "./CreateNcbiExport";
 import CreateNcbiSampleDetails from "./CreateNcbiSampleDetails";
 
 /**
@@ -12,40 +12,35 @@ import CreateNcbiSampleDetails from "./CreateNcbiSampleDetails";
  */
 function SampleValidIcon({ status }: { status: boolean }) {
   return status ? (
-    <Avatar
-      icon={<CheckOutlined />}
-      size="small"
-      style={{
-        backgroundColor: `var(--primary-green)`,
-        color: `var(--grey-1)`,
-      }}
-    />
+    <Tag color="green" icon={<CheckOutlined />}>
+      {"VALID"}
+    </Tag>
   ) : (
-    <Avatar
-      icon={<CloseOutlined />}
-      size="small"
-      style={{
-        backgroundColor: `var(--primary-red)`,
-        color: `var(--grey-1)`,
-      }}
-    />
+    <Tag color="red" icon={<CloseOutlined />}>
+      {"INVALID"}
+    </Tag>
   );
 }
 
 /**
  * React component to render a sample to be exported to the NCBI SRA
- * @param form
- * @param samples
+ * @param form - export form
+ * @param samples - object of samples to export
+ * @param removeSample - method to remove a sample from the form
  * @constructor
  */
 function CreateNcbiExportSamples({
   form,
   samples,
+  removeSample,
 }: {
   form: FormInstance;
-  samples: SampleRecord[];
+  samples: Record<string, SampleRecord>;
+  removeSample: (
+    e: React.MouseEvent<HTMLElement>,
+    sample: SampleRecord
+  ) => void;
 }): JSX.Element {
-  const [sampleRecords, setSampleRecords] = React.useState(samples);
   const [validationStatus, setValidationStatus] = React.useState<boolean[]>([]);
 
   const checkStatus = (sample: SampleRecord, index: number): void => {
@@ -61,61 +56,51 @@ function CreateNcbiExportSamples({
       ["samples", sample.name, "files", "pairs"],
     ];
 
-    const touched: Array<NamePath> = [];
-    let hasUntouched = false;
+    // const values = form.getFieldsValue(fields);
+    //
+    // // Make sure that each input has a value
+    // const validCount = Object.values(values.samples[sample.name]).filter(
+    //   (value) => value.length === 0
+    // );
 
-    fields.forEach((field) => {
-      if (form.isFieldTouched(field)) {
-        touched.push(field);
-      } else {
-        if (form.getFieldValue(field) === undefined) {
-          hasUntouched = true;
-        }
-      }
-    });
-
-    if (hasUntouched) {
-      // If it has untouched fields, then it is not valid yet!
-      const updated = [...validationStatus];
-      updated[index] = false;
-      setValidationStatus(updated);
-    } else {
-      form
-        .validateFields(touched)
-        .then(() => {
-          const updated = [...validationStatus];
-          updated[index] = true;
-          setValidationStatus(updated);
-        })
-        .catch(() => {
-          const updated = [...validationStatus];
-          updated[index] = false;
-          setValidationStatus(updated);
-        });
-    }
+    // const touched: Array<NamePath> = [];
+    // let hasUntouched = false;
+    //
+    // fields.forEach((field) => {
+    //   if (form.getFieldError(field)) {
+    //     console.log(form.getFieldError(field));
+    //     touched.push(field);
+    //   } else {
+    //     if (form.getFieldValue(field) === undefined) {
+    //       hasUntouched = true;
+    //     }
+    //   }
+    // });
+    //
+    // if (hasUntouched) {
+    //   // If it has untouched fields, then it is not valid yet!
+    //   const updated = [...validationStatus];
+    //   updated[index] = false;
+    //   setValidationStatus(updated);
+    // } else {
+    //   form
+    //     .validateFields(touched)
+    //     .then(() => {
+    //       const updated = [...validationStatus];
+    //       updated[index] = true;
+    //       setValidationStatus(updated);
+    //     })
+    //     .catch(() => {
+    //       const updated = [...validationStatus];
+    //       updated[index] = false;
+    //       setValidationStatus(updated);
+    //     });
+    // }
   };
-
-  /**
-   * Remove a sample from the export.
-   * Note: this only removes from the export, but if the page is reloaded, they still
-   * exist in the sessionStorage.
-   * @param event
-   * @param sample - sample to remove
-   */
-  function removeSample(
-    event: React.MouseEvent<HTMLElement>,
-    sample: SampleRecord
-  ) {
-    event.stopPropagation();
-    const updatedValues = [...sampleRecords];
-    const start = updatedValues.findIndex((s) => s.name === sample.name);
-    updatedValues.splice(start, 1);
-    setSampleRecords(updatedValues);
-  }
 
   return (
     <Collapse accordion>
-      {sampleRecords.map((sample, index) => (
+      {Object.values(samples).map((sample, index) => (
         <Collapse.Panel
           className="t-sample-panel"
           key={String(sample.key)}

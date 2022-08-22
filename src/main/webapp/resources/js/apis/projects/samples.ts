@@ -7,8 +7,8 @@ import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
 import { get, post } from "../requests";
 
 export interface SequencingFiles {
-  singles?: SingleEndSequenceFile[];
-  pairs?: PairedEndSequenceFile[];
+  singles: SingleEndSequenceFile[];
+  pairs: PairedEndSequenceFile[];
 }
 
 const PROJECT_ID = getProjectIdFromUrl();

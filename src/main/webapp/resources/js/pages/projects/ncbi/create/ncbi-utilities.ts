@@ -5,6 +5,7 @@ import {
 } from "../../../../apis/export/ncbi";
 import { getFilesForSamples } from "../../../../apis/projects/samples";
 import { getStoredSamples } from "../../../../utilities/session-utilities";
+import { FormSample, SampleRecord } from "./CreateNcbiExport";
 
 /**
  * Fetch the NCBI sequencer platforms from the server and format them
@@ -29,30 +30,25 @@ export async function getNCBIPlatformsAsCascaderOptions(): Promise<
  * Hydrate samples stored in samples storage with both sequence file data,
  * and add the required fields for the export to the SRA.
  */
-export async function hydrateStoredSamples() {
+export async function hydrateStoredSamples(): Promise<SampleRecord[]> {
   const { samples, projectId } = await getStoredSamples();
   return getFilesForSamples({
     ids: samples.map((sample) => sample.id),
     projectId,
   }).then((files) => {
-    return samples.reduce(
-      (prev, sample, index) => ({
-        ...prev,
-        [sample.name]: {
-          bioSample: "",
-          instrumentModel: "",
-          libraryConstructionProtocol: "",
-          librarySelection: "",
-          librarySource: "",
-          libraryStrategy: "",
-          key: sample.name,
-          name: sample.name,
-          id: sample.id,
-          libraryName: sample.name,
-          files: files[index],
-        },
+    return samples.map(
+      (sample) => ({
+        key: sample.name,
+        name: sample.name,
+        id: sample.id,
+        libraryName: sample.name,
+        files: files[sample.id],
       }),
       {}
     );
   });
+}
+
+export function validateSample(sample: SampleRecord): boolean {
+  return sample.files.singles.length > 0 || sample.files.pairs.length > 0;
 }

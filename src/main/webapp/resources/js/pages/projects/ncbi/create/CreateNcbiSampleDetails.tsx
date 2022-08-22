@@ -29,7 +29,6 @@ export default function CreateNcbiSampleDetails({
   sample: SampleRecord;
   onChange: () => void;
 }): JSX.Element {
-  console.log({ sample });
   const { strategies, sources, platforms, selections }: LoaderValues =
     useLoaderData();
 
@@ -117,7 +116,7 @@ export default function CreateNcbiSampleDetails({
       {sample.files.singles.length > 0 && (
         <Col span={24}>
           <Form.Item
-            name={["samples", sample.name, "files", "singles"]}
+            name={["samples", sample.name, "files"]}
             label={i18n("CreateNcbiExport.singles")}
             valuePropName="checked"
             rules={[
@@ -151,7 +150,7 @@ export default function CreateNcbiSampleDetails({
       {sample.files.pairs.length > 0 && (
         <Col span={24}>
           <Form.Item
-            name={["samples", sample.name, "files", "pairs"]}
+            name={["samples", sample.name, "files"]}
             label={i18n("CreateNcbiExport.pairs")}
             valuePropName="checked"
             rules={[
