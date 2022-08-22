@@ -1,4 +1,4 @@
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { CheckOutlined, WarningFilled } from "@ant-design/icons";
 import { Button, Collapse, FormInstance, Space, Tag } from "antd";
 import { NamePath } from "antd/lib/form/interface";
 import React from "react";
@@ -13,11 +13,11 @@ import CreateNcbiSampleDetails from "./CreateNcbiSampleDetails";
 function SampleValidIcon({ status }: { status: boolean }) {
   return status ? (
     <Tag color="green" icon={<CheckOutlined />}>
-      {"VALID"}
+      {i18n("SampleValidIcon.valid").toUpperCase()}
     </Tag>
   ) : (
-    <Tag color="red" icon={<CloseOutlined />}>
-      {"INVALID"}
+    <Tag color="orange" icon={<WarningFilled />}>
+      {i18n("SampleValidIcon.invalid").toUpperCase()}
     </Tag>
   );
 }

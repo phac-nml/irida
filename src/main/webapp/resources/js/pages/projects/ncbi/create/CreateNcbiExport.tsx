@@ -431,7 +431,14 @@ function CreateNcbiExport(): JSX.Element {
                 </Form>
               </>
             ) : (
-              <Alert type="error" message={"NO VALID SAMPLES"} />
+              <Alert
+                type="error"
+                showIcon
+                message={"NO VALID SAMPLES"}
+                description={
+                  "None of the samples provided contain any sequencing file data."
+                }
+              />
             )}
           </PageHeader>
         </Col>
