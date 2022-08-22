@@ -118,9 +118,11 @@ function ShareApp() {
           (sample) => sample.ids.length !== 0
         );
         setExistingIds(
-          filtered.map((sample) => {
-            return sample.ids;
-          })
+          filtered
+            .map((sample) => {
+              return sample.ids;
+            })
+            .flat()
         );
         setExistingNames(
           filtered.map((sample) => {
