@@ -9,10 +9,20 @@ import { isTruthy } from "../../utilities/form-utilities";
  * @returns {JSX.Element}
  * @constructor
  */
-export function InputWithOptions({ item, initialValue }) {
+export function InputWithOptions({ item }) {
   if (isTruthy(item.options)) {
     return (
-      <Form.Item name={item.name} valuePropName="checked">
+      <Form.Item
+        name={item.name}
+        valuePropName="checked"
+        rules={[
+          {
+            required: item.required,
+            message: i18n("InputWithOptions.required", item.label),
+          },
+        ]}
+        initialValue={item.value}
+      >
         <Checkbox>{item.label}</Checkbox>
       </Form.Item>
     );
@@ -21,14 +31,30 @@ export function InputWithOptions({ item, initialValue }) {
       <Form.Item
         name={item.name}
         label={item.label}
-        initialValue={initialValue}
+        rules={[
+          {
+            required: item.required,
+            message: i18n("InputWithOptions.required", item.label),
+          },
+        ]}
+        initialValue={item.value}
       >
         <Radio.Group options={item.options} />
       </Form.Item>
     );
   }
   return (
-    <Form.Item name={item.name} label={item.label}>
+    <Form.Item
+      name={item.name}
+      label={item.label}
+      rules={[
+        {
+          required: item.required,
+          message: i18n("InputWithOptions.required", item.label),
+        },
+      ]}
+      initialValue={item.value}
+    >
       <Select>
         {item.options.map((option) => (
           <Select.Option key={option.value} value={option.value}>

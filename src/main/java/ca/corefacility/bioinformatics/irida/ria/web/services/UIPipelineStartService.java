@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -56,19 +53,13 @@ public class UIPipelineStartService {
 	/**
 	 * Start a new pipeline
 	 *
-	 * @param id
-	 *            - pipeline identifier
-	 * @param request
-	 *            - details about the request to start the pipeline
-	 * @param locale
-	 *            - currently logged in users locale
-	 * @return The id of the new {@link AnalysisSubmission}, if more than one
-	 *         are kicked off, then the first id is returned.
-	 * @throws IridaWorkflowNotFoundException
-	 *             thrown if the workflow cannot be found
-	 * @throws ReferenceFileRequiredException
-	 *             thrown if a reference file is required and not sent (should
-	 *             not happen).
+	 * @param id      - pipeline identifier
+	 * @param request - details about the request to start the pipeline
+	 * @param locale  - currently logged in users locale
+	 * @return The id of the new {@link AnalysisSubmission}, if more than one are kicked off, then the first id is
+	 * returned.
+	 * @throws IridaWorkflowNotFoundException thrown if the workflow cannot be found
+	 * @throws ReferenceFileRequiredException thrown if a reference file is required and not sent (should not happen).
 	 */
 	public Long start(UUID id, LaunchRequest request, Locale locale)
 			throws IridaWorkflowNotFoundException, ReferenceFileRequiredException {
