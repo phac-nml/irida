@@ -20,6 +20,11 @@ const removeSelectedSample = createAction("samples/table/selected/remove");
 const clearSelectedSamples = createAction("samples/table/selected/clear");
 const clearFilterByFile = createAction("samples/table/clearFilterByFile");
 
+/**
+ * Updates the state of the table filters and search, which triggers
+ * the re-render of the samples table.
+ * @type {AsyncThunk<unknown, void, {}>}
+ */
 const updateTable = createAsyncThunk(
   "samples/table/update",
   async (values, { getState }) => {
