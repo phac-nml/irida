@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="refactor-client-details" author="eric">
+
+        <dropTable tableName="client_details_additional_information" />
+        <dropTable tableName="client_details_additional_information_AUD" />
+
+        <dropTable tableName="client_details_authorities" />
+        <dropTable tableName="client_details_authorities_AUD" />
+
+        <dropTable tableName="client_details_auto_approvable_scope" />
+        <dropTable tableName="client_details_auto_approvable_scope_AUD" />
+
+        <dropTable tableName="client_details_resource_ids" />
+        <dropTable tableName="client_details_resource_ids_AUD" />
+
+        <dropTable tableName="client_role" />
+        <dropTable tableName="client_role_AUD" />
+    </changeSet>
+</databaseChangeLog>

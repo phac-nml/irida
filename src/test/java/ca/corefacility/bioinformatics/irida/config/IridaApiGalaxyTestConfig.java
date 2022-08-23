@@ -14,20 +14,24 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 
 import java.util.concurrent.Executor;
 
 /**
- * Configuration for any integration tests requiring the use of Galaxy. Used to
- * make sure the configuration is the same for every test requiring Galaxy to
- * avoid duplicate Galaxy beans being created.
- *
- *
+ * Configuration for any integration tests requiring the use of Galaxy. Used to make sure the configuration is the same
+ * for every test requiring Galaxy to avoid duplicate Galaxy beans being created.
  */
 @TestConfiguration
-@Import({ GalaxyExecutionTestConfig.class, NonWindowsLocalGalaxyConfig.class, WindowsLocalGalaxyConfig.class,
-		AnalysisExecutionServiceTestConfig.class, IridaWorkflowsTestConfig.class,
-		IridaWorkflowsGalaxyIntegrationTestConfig.class, IridaDbUnitConfig.class })
+@Import({
+		GalaxyExecutionTestConfig.class,
+		NonWindowsLocalGalaxyConfig.class,
+		WindowsLocalGalaxyConfig.class,
+		AnalysisExecutionServiceTestConfig.class,
+		IridaWorkflowsTestConfig.class,
+		IridaWorkflowsGalaxyIntegrationTestConfig.class,
+		IridaDbUnitConfig.class })
 public class IridaApiGalaxyTestConfig {
 
 	/**
@@ -43,11 +47,19 @@ public class IridaApiGalaxyTestConfig {
 	}
 
 	/**
-	 * @return An ExecutorService executing code in the same thread for testing
-	 *         purposes.
+	 * @return An ExecutorService executing code in the same thread for testing purposes.
 	 */
 	@Bean
 	public Executor uploadExecutor() {
 		return MoreExecutors.directExecutor();
+	}
+
+	/**
+	 * @return An InMemoryOAuth2AuthorizationService so that ClientDetailsService does not have bean errors during
+	 *         Galaxy integration testing.
+	 */
+	@Bean
+	public OAuth2AuthorizationService authorizationService() {
+		return new InMemoryOAuth2AuthorizationService();
 	}
 }

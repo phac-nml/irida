@@ -121,6 +121,8 @@ dependencies {
     }
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.security:spring-security-oauth2-authorization-server:0.3.1")
+    implementation("org.springframework.security:spring-security-oauth2-resource-server:5.7.2")
     implementation("org.springframework.ldap:spring-ldap-core")
     implementation("org.springframework.security:spring-security-ldap")
     implementation("org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.0") {
@@ -148,9 +150,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-web-services")
     implementation("org.springframework.boot:spring-boot-starter-hateoas")
-    implementation("org.springframework.security.oauth:spring-security-oauth2:2.3.6.RELEASE") {
-        exclude(group = "org.codehaus.jackson", module = "jackson-mapper-asl")
-    }
     implementation("commons-io:commons-io:2.11.0")
     implementation("commons-fileupload:commons-fileupload:1.4")
     implementation("org.apache.poi:poi-ooxml:5.2.2") {
@@ -268,6 +267,7 @@ tasks.war {
     exclude("entries.js")
     exclude(".eslintrc.js")
     exclude("postcss.config.js")
+    rootSpec.exclude("**/jwk-key-store.jks")
 }
 
 node {
@@ -425,6 +425,12 @@ tasks.named<BootRun>("bootRun") {
     }
 }
 
+task<Exec>("generateJWKKeyStore") {
+    workingDir(file("${projectDir}/src/main/resources"))
+    commandLine(listOf("keytool", "-genkeypair", "-alias", "JWK", "-keyalg", "RSA", "-noprompt", "-dname", "CN=irida.bioinformatics.corefacility.ca, OU=ID, O=IRIDA, L=IRIDA, S=IRIDA, C=CA", "-keystore", "jwk-key-store.jks", "-validity", "3650", "-storepass", "SECRET", "-keypass", "SECRET", "-storetype", "PKCS12"))
+    outputs.file(file("${projectDir}/src/main/resources/jwk-key-store.jks"))
+}
+
 openApi {
     outputDir.set(file("${projectDir}/doc/swagger-ui"))
     outputFileName.set("open-api.json")
@@ -436,6 +442,7 @@ tasks.processResources {
         expand(project.properties)
     }
     dependsOn(":buildWebapp")
+    dependsOn(":generateJWKKeyStore")
 }
 
 tasks.javadoc {

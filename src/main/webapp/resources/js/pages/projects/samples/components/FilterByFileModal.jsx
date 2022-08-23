@@ -26,26 +26,19 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
   const [valid, setValid] = React.useState([]);
   const [invalid, setInvalid] = React.useState([]);
 
-  const onFileAdded = (e) => {
+  const onFileAdded = async (e) => {
     const [file] = e.target.files;
     setFilename(file.name);
 
-    const reader = new FileReader();
-    reader.addEventListener("load", (e) => {
-      if (e.target.readyState === FileReader.DONE) {
-        // DONE == 2
-        setContents(e.target.result);
-      }
-    });
-
-    const blob = file.slice(0, file.size - 1);
-    reader.readAsText(blob);
+    const fileContent = await file.text();
+    setContents(fileContent);
   };
 
   React.useEffect(() => {
     if (contents.length) {
       const associated = options.filters.associated || [];
-      let parsed = contents.split(/[\s,]+/);
+      // Split the contents of the file on either new line or coma, and filter empty entries.
+      let parsed = contents.split(/[\s,]+/).filter(Boolean);
       const projectIds = [projectId, ...associated];
 
       fetch(setBaseUrl(`/ajax/samples/validate`), {
@@ -79,14 +72,22 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
       visible={visible}
       onCancel={onCancel}
       onOk={onOk}
-      okButtonProps={{ disabled: valid.length === 0 }}
+      cancelButtonProps={{ className: "t-filter-cancel" }}
+      okButtonProps={{
+        disabled: valid.length === 0,
+        className: "t-filter-submit",
+      }}
       okText={i18n("FilterByFile.filter")}
       width={600}
     >
       <>
         <Form layout="vertical">
           <Form.Item label={i18n("FilterByFile.file-label")}>
-            <Input type="file" onChange={onFileAdded} />
+            <Input
+              type="file"
+              onChange={onFileAdded}
+              className="t-filter-by-file-input"
+            />
           </Form.Item>
         </Form>
         <Row gutter={[16, 16]}>
@@ -129,7 +130,11 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
                     >
                       {(item) => (
                         <List.Item key={item}>
-                          <List.Item.Meta title={<span>{item}</span>} />
+                          <List.Item.Meta
+                            title={
+                              <span className="t-invalid-sample">{item}</span>
+                            }
+                          />
                         </List.Item>
                       )}
                     </VirtualList>

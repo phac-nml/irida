@@ -9,7 +9,6 @@ import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
@@ -113,8 +112,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	@PreAuthorize("permitAll()")
 	@Override
 	public MetadataTemplateField readMetadataField(Long id) {
-		return fieldRepository.findById(id)
-				.orElse(null);
+		return fieldRepository.findById(id).orElse(null);
 	}
 
 	/**
@@ -134,8 +132,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 			return fieldRepository.findMetadataFieldByStaticId(stripped);
 		} else {
 			String stripped = key.replaceFirst(MetadataTemplateField.DYNAMIC_FIELD_PREFIX, "");
-			return fieldRepository.findById(Long.parseLong(stripped))
-					.orElse(null);
+			return fieldRepository.findById(Long.parseLong(stripped)).orElse(null);
 		}
 	}
 
@@ -173,23 +170,22 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	public Set<MetadataEntry> convertMetadataStringsToSet(Map<String, MetadataEntry> metadataMap) {
 		Set<MetadataEntry> metadata = new HashSet<>();
 
-		metadataMap.entrySet()
-				.forEach(e -> {
-					MetadataTemplateField field = readMetadataFieldByLabel(e.getKey());
+		metadataMap.entrySet().forEach(e -> {
+			MetadataTemplateField field = readMetadataFieldByLabel(e.getKey());
 
-					// if not, create a new one
-					if (field == null) {
-						field = new MetadataTemplateField(e.getKey(), "text");
-						field = saveMetadataField(field);
-					}
+			// if not, create a new one
+			if (field == null) {
+				field = new MetadataTemplateField(e.getKey(), "text");
+				field = saveMetadataField(field);
+			}
 
-					MetadataEntry entry = e.getValue();
+			MetadataEntry entry = e.getValue();
 
-					entry.setField(field);
+			entry.setField(field);
 
-					metadata.add(entry);
+			metadata.add(entry);
 
-				});
+		});
 
 		return metadata;
 	}
@@ -219,7 +215,8 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	@PreAuthorize("hasPermission(#project, 'isProjectOwner')")
 	@Override
 	@Transactional
-	public MetadataRestriction setMetadataRestriction(Project project, MetadataTemplateField field, ProjectMetadataRole role) {
+	public MetadataRestriction setMetadataRestriction(Project project, MetadataTemplateField field,
+			ProjectMetadataRole role) {
 		MetadataRestriction metadataRestrictionForFieldAndProject = getMetadataRestrictionForFieldAndProject(project,
 				field);
 
@@ -271,35 +268,33 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		}
 
 		//get all restrictions for the project
-		List<MetadataRestriction> restrictionForProject = metadataRestrictionRepository.getRestrictionForProject(
-				project);
+		List<MetadataRestriction> restrictionForProject = metadataRestrictionRepository
+				.getRestrictionForProject(project);
 
 		//collect the fields into a map
 		Map<MetadataTemplateField, MetadataRestriction> restrictionMap = restrictionForProject.stream()
 				.collect(Collectors.toMap(MetadataRestriction::getField, field -> field));
 
 		//for each field to check
-		List<MetadataTemplateField> filteredFields = metadataFieldsForProject.stream()
-				.filter(field -> {
-					//if the restriction map contains the field
-					if (restrictionMap.containsKey(field)) {
-						MetadataRestriction metadataRestriction = restrictionMap.get(field);
-						ProjectMetadataRole restrictionRole = metadataRestriction.getLevel();
+		List<MetadataTemplateField> filteredFields = metadataFieldsForProject.stream().filter(field -> {
+			//if the restriction map contains the field
+			if (restrictionMap.containsKey(field)) {
+				MetadataRestriction metadataRestriction = restrictionMap.get(field);
+				ProjectMetadataRole restrictionRole = metadataRestriction.getLevel();
 
-						//compare the restriction level to the given role.  If it's greater or equal, we're good
-						if (role.getLevel() >= restrictionRole.getLevel()) {
-							return true;
-						}
+				//compare the restriction level to the given role.  If it's greater or equal, we're good
+				if (role.getLevel() >= restrictionRole.getLevel()) {
+					return true;
+				}
 
-						//if it's less, filter out the field
-						return false;
-					} else {
-						//if there's no restriction set for the field, all users can view
-						return true;
-					}
+				//if it's less, filter out the field
+				return false;
+			} else {
+				//if there's no restriction set for the field, all users can view
+				return true;
+			}
 
-				})
-				.collect(Collectors.toList());
+		}).collect(Collectors.toList());
 
 		return filteredFields;
 	}
@@ -311,22 +306,19 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	@Override
 	public List<MetadataTemplateField> getPermittedFieldsForCurrentUser(Project project,
 			boolean includeTemplateFields) {
-		final UserDetails loggedInDetails = (UserDetails) SecurityContextHolder.getContext()
-				.getAuthentication()
-				.getPrincipal();
+		final String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		final User loggedInUser = userRepository.loadUserByUsername(username);
 
-		User loggedInUser = userRepository.loadUserByUsername(loggedInDetails.getUsername());
 		ProjectUserJoin projectJoinForUser = pujRepository.getProjectJoinForUser(project, loggedInUser);
 
-		List<UserGroupProjectJoin> groupsForProjectAndUser = userGroupProjectJoinRepository.findGroupsForProjectAndUser(
-				project, loggedInUser);
+		List<UserGroupProjectJoin> groupsForProjectAndUser = userGroupProjectJoinRepository
+				.findGroupsForProjectAndUser(project, loggedInUser);
 
 		ProjectMetadataRole metadataRole = ProjectMetadataRole.getMaxRoleForProjectAndGroups(projectJoinForUser,
 				groupsForProjectAndUser);
 
 		//if the user isn't on the project and the user is an admin, give them project owner powers
-		if (metadataRole == null && loggedInUser.getSystemRole()
-				.equals(Role.ROLE_ADMIN)) {
+		if (metadataRole == null && loggedInUser.getSystemRole().equals(Role.ROLE_ADMIN)) {
 			metadataRole = ProjectMetadataRole.LEVEL_4;
 		}
 
@@ -342,15 +334,15 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	@PreAuthorize("hasPermission(#project, 'canReadProject')")
 	@Override
 	public MetadataTemplate getDefaultTemplateForProject(Project project) {
-		List<MetadataTemplate> metadataTemplatesForProject = metadataTemplateRepository.getMetadataTemplatesForProject(
-				project);
+		List<MetadataTemplate> metadataTemplatesForProject = metadataTemplateRepository
+				.getMetadataTemplatesForProject(project);
 
 		Optional<MetadataTemplate> templateOptional = metadataTemplatesForProject.stream()
 				.filter(MetadataTemplate::isProjectDefault)
 				.findFirst();
 
 		MetadataTemplate template = null;
-		if(templateOptional.isPresent()){
+		if (templateOptional.isPresent()) {
 			template = templateOptional.get();
 		}
 
@@ -366,7 +358,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	public MetadataTemplate updateDefaultMetadataTemplateForProject(Project project, MetadataTemplate template) {
 
 		MetadataTemplate originalDefault = getDefaultTemplateForProject(project);
-		if(originalDefault != null) {
+		if (originalDefault != null) {
 			originalDefault.setProjectDefault(false);
 			metadataTemplateRepository.save(originalDefault);
 		}
@@ -385,7 +377,7 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	@Transactional
 	public void removeDefaultMetadataTemplateForProject(Project project) {
 		MetadataTemplate originalDefault = getDefaultTemplateForProject(project);
-		if(originalDefault != null) {
+		if (originalDefault != null) {
 			originalDefault.setProjectDefault(false);
 			metadataTemplateRepository.save(originalDefault);
 		}
