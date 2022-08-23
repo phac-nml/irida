@@ -20,9 +20,6 @@ public class LoginPage extends AbstractPage {
 	public static final String BAD_USERNAME = "badman";
 	public static final String BAD_PASSWORD = "notapassword";
 
-	public static final String JANE_USERNAME = "Jane Doe";
-	public static final String JANE_PASSWORD = "Password1!";
-
 	@FindBy(name = "username")
 	private WebElement username;
 

@@ -163,9 +163,8 @@ public class IridaAuthenticationSecurityConfig {
         try {
             ldapContextSource.getReadOnlyContext();
         } catch (Exception e) {
+            // Irida should start even if the service is not working.
             logger.error("Failed to connect to LDAP - " + e.getMessage());
-            //todo: retest all this stuff manually
-//            throw new IllegalStateException("Failed to connect to LDAP - " + e.getMessage(), e);
         }
         return ldapContextSource;
     }

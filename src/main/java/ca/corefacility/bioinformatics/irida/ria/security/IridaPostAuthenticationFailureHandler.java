@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.CredentialsExpiredException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -83,6 +84,11 @@ public class IridaPostAuthenticationFailureHandler extends SimpleUrlAuthenticati
 			logger.trace(exception.toString());
 			String contextPath = request.getContextPath();
 			response.sendRedirect(contextPath + "/login?ldap-error="+((IridaLdapAuthenticationException) exception).getErrorCode());
+		} else if (exception instanceof InternalAuthenticationServiceException) {
+			// LDAP/ADLDAP service is not reachable
+			logger.trace(exception.toString());
+			String contextPath = request.getContextPath();
+			response.sendRedirect(contextPath + "/login?ldap-error=6");
 		} else {
 			super.onAuthenticationFailure(request, response, exception);
 		}

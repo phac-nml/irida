@@ -1,25 +1,42 @@
-dn: ou=Users, o=phac
-ou: User
-description: MyUser
-objectClass: top
-objectClass: organizationalunit
+dn: dc=springframework,dc=org
+objectclass: top
+objectclass: domain
+objectclass: extensibleObject
+dc: springframework
 
-dn: cn=123456, ou=Users, o=phac
-objectClass: top
-objectClass: person
-cn: 123456
-sn: 823456
+dn: ou=groups,dc=springframework,dc=org
+objectclass: top
+objectclass: organizationalUnit
+ou: groups
 
-dn: cn=mrtest, ou=Users, o=phac
-objectClass: top
-objectClass: person
-cn: mrtest
-sn: something
+dn: ou=subgroups,ou=groups,dc=springframework,dc=org
+objectclass: top
+objectclass: organizationalUnit
+ou: subgroups
+
+dn: ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: organizationalUnit
+ou: people
+
+dn: uid=jwick,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: John Wick
+sn: Wick
+uid: jwick
+givenName: John
+mail: jwick@example.com
+telephoneNumber: 169-637-3314
 userPassword: Password1!
 
-dn: cn=Jane Doe,ou=Users,o=phac
-objectClass: person
-objectClass: top
+dn: uid=jdoe,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
 cn: Jane Doe
 sn: Doe
 description: 19650324000000Z
@@ -29,5 +46,40 @@ mail: jane@example.com
 telephoneNumber: 169-637-3314
 telephoneNumber: 907-547-9114
 uid: jdoe
-userPassword:: e1NTSEF9ZnBDWmVWZFlVZDM2RjgwQjRaY3p2YTc2MnhCQmJvZ3FFSHZ5Nnc9P
- Q==
+userPassword: Password1
+
+dn: uid=ttokyo,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Toronto Tokyo
+sn: Tokyo
+uid: ttokyo
+givenName: Toronto
+mail: ttokyo@example.com
+telephoneNumber: 169-637-3314
+userPassword: Password1!
+
+dn: uid=mira,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Miroslaw Kolpakov
+sn: Kolpakov
+uid: mira
+userPassword: Password1!
+
+dn: uid=collapse,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Magomed Khalilov
+sn: Khalilov
+uid: collapse
+givenName: Magomed
+mail: collapse.at.example.com
+telephoneNumber: 12
+userPassword: Password1!

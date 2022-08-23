@@ -216,6 +216,7 @@ dependencies {
     testImplementation("org.seleniumhq.selenium:selenium-chrome-driver:3.141.59")
     testImplementation("org.mockftpserver:MockFtpServer:2.6")
     testImplementation("org.springframework.ldap:spring-ldap-test")
+    implementation("org.springframework.boot:spring-boot-starter-data-ldap")
     testImplementation("com.unboundid:unboundid-ldapsdk:6.0.5")
 }
 
