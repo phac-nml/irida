@@ -18,7 +18,11 @@ export function InputWithOptions({ item }) {
         rules={[
           {
             required: item.required,
-            message: i18n("InputWithOptions.required", item.label),
+            message: (
+              <span className="t-req-param-error">
+                {i18n("InputWithOptions.required", item.label)}
+              </span>
+            ),
           },
         ]}
         initialValue={item.value}
@@ -34,7 +38,11 @@ export function InputWithOptions({ item }) {
         rules={[
           {
             required: item.required,
-            message: i18n("InputWithOptions.required", item.label),
+            message: (
+              <span className="t-req-param-error">
+                {i18n("InputWithOptions.required", item.label)}
+              </span>
+            ),
           },
         ]}
         initialValue={item.value}
@@ -50,7 +58,11 @@ export function InputWithOptions({ item }) {
       rules={[
         {
           required: item.required,
-          message: i18n("InputWithOptions.required", item.label),
+          message: (
+            <span className="t-req-param-error">
+              {i18n("InputWithOptions.required", item.label)}
+            </span>
+          ),
         },
       ]}
       initialValue={item.value}
