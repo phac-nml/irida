@@ -4,8 +4,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
@@ -13,7 +16,7 @@ import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import ca.corefacility.bioinformatics.irida.model.user.Role;
-import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 /**
  * Interceptor Adaptor to add the user to the {@link Model} each server call. Also ensures {@link Role#ROLE_SEQUENCER}
@@ -21,6 +24,10 @@ import ca.corefacility.bioinformatics.irida.model.user.User;
  */
 public class UserSecurityInterceptor implements AsyncHandlerInterceptor {
 	public static final String CURRENT_USER_DETAILS = "CURRENT_USER_DETAILS";
+
+	@Lazy
+	@Autowired
+	private UserRepository userRepository;
 
 	/**
 	 * {@inheritDoc}
@@ -30,11 +37,11 @@ public class UserSecurityInterceptor implements AsyncHandlerInterceptor {
 			ModelAndView modelAndView) throws Exception {
 		HttpSession session = request.getSession();
 
-		User userDetails = (User) session.getAttribute(CURRENT_USER_DETAILS);
-		if (userDetails == null && isAuthenticated()) {
-			UserDetails currentUserDetails = (UserDetails) SecurityContextHolder.getContext()
-					.getAuthentication()
-					.getPrincipal();
+		if (isAuthenticated()) {
+			Authentication currentAuthentication = (Authentication) SecurityContextHolder.getContext()
+					.getAuthentication();
+			UserDetails currentUserDetails = (UserDetails) userRepository
+					.loadUserByUsername(currentAuthentication.getName());
 
 			// Disallow SEQUENCER role from doing anything in the IRIDA UI
 			if (currentUserDetails.getAuthorities().contains(Role.ROLE_SEQUENCER)) {

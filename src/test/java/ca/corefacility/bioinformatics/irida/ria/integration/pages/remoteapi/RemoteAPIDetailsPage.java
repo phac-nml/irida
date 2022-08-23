@@ -75,8 +75,8 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 
 	public void confirmDelete() {
 		logger.debug("clicking confirm-delete button");
-		WebElement confirmButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.className("t-confirm-delete")));
+		WebElement confirmButton = (new WebDriverWait(driver, 10))
+				.until(ExpectedConditions.elementToBeClickable(By.className("t-confirm-delete")));
 		confirmButton.click();
 	}
 
@@ -106,17 +106,17 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 		driver.switchTo().window(subWindowHandler); // switch to popup window
 
 		// Now you are in the popup window, perform necessary actions here
-
 		WebElement authorizeButton = driver.findElement(By.id("authorize-btn"));
 		authorizeButton.click();
 
-
-		driver.switchTo().window(parentWindowHandler);  // switch back to parent window
+		driver.switchTo().window(parentWindowHandler); // switch back to parent window
 
 		waitForTime(8000);
 	}
 
 	public enum ApiStatus {
-		CONNECTED, INVALID, ERROR
+		CONNECTED,
+		INVALID,
+		ERROR
 	}
 }

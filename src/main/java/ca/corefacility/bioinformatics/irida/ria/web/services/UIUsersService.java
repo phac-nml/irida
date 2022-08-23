@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mail.MailSendException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -338,7 +339,7 @@ public class UIUsersService {
 				// If the user is updating their account make sure you update it in the session variable
 				if (updatedUser != null && usersEqual) {
 					HttpSession session = request.getSession();
-					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, updatedUser);
+					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, (UserDetails) updatedUser);
 				}
 			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
 				errors = handleCreateUpdateException(ex, request.getLocale());
@@ -572,13 +573,7 @@ public class UIUsersService {
 			Map<String, Object> updatedValues) throws UIUserFormException {
 		Map<String, String> errors;
 		try {
-			User user = userService.updateFields(userId, updatedValues);
-
-			// If the user is updating their account make sure you update it in the session variable
-			if (user != null && principal.getName().equals(user.getUsername())) {
-				HttpSession session = request.getSession();
-				session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
-			}
+			userService.updateFields(userId, updatedValues);
 		} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
 			errors = handleCreateUpdateException(ex, request.getLocale());
 			throw new UIUserFormException(errors);

@@ -13,10 +13,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.oauth2.provider.NoSuchClientException;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
 import ca.corefacility.bioinformatics.irida.repositories.specification.IridaClientDetailsSpecification;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.clients.ClientTableModel;
@@ -35,7 +35,6 @@ public class UIClientService {
     private final IridaClientDetailsService clientDetailsService;
     private final MessageSource messageSource;
 
-    private final String AUTO_APPROVE = "auto";
     private final String SCOPE_READ = "read";
     private final String SCOPE_WRITE = "write";
     private final String GRANT_TYPE_AUTH_CODE = "authorization_code";
@@ -52,8 +51,8 @@ public class UIClientService {
      * @return Current status of the table
      */
     public TableResponse<ClientTableModel> getClientList(ClientTableRequest tableRequest) {
-        Specification<IridaClientDetails> specification = IridaClientDetailsSpecification.searchClient(
-                tableRequest.getSearch());
+        Specification<IridaClientDetails> specification = IridaClientDetailsSpecification
+                .searchClient(tableRequest.getSearch());
 
         Page<IridaClientDetails> page = clientDetailsService.search(specification,
                 PageRequest.of(tableRequest.getCurrent(), tableRequest.getPageSize(), tableRequest.getSort()));
@@ -79,9 +78,9 @@ public class UIClientService {
      * Validate a client identifier for a new client
      *
      * @param clientId Identifier to check to see if it exists
-     * @throws NoSuchClientException thrown if a client does not exist with the given client id.
+     * @throws EntityNotFoundException thrown if a client does not exist with the given client id.
      */
-    public void validateClientId(String clientId) throws NoSuchClientException {
+    public void validateClientId(String clientId) throws EntityNotFoundException {
         clientDetailsService.loadClientByClientId(clientId);
     }
 
@@ -112,32 +111,19 @@ public class UIClientService {
 
         // Let's set up the scopes for this client
         Set<String> scopes = new HashSet<>();
-        Set<String> autoScopes = new HashSet<>();
         // 1. Read scope
-        if (request.getRead()
-                .equals(SCOPE_READ)) {
+        if (request.getRead().equals(SCOPE_READ)) {
             scopes.add(SCOPE_READ);
-        } else if (request.getRead()
-                .equals(AUTO_APPROVE)) {
-            scopes.add(SCOPE_READ);
-            autoScopes.add(SCOPE_READ);
         }
         // 2. Write scope
-        if (request.getWrite()
-                .equals(SCOPE_WRITE)) {
+        if (request.getWrite().equals(SCOPE_WRITE)) {
             scopes.add(SCOPE_WRITE);
-        } else if (request.getWrite()
-                .equals(AUTO_APPROVE)) {
-            scopes.add(SCOPE_WRITE);
-            autoScopes.add(SCOPE_WRITE);
         }
         client.setScope(scopes);
-        client.setAutoApprovableScopes(autoScopes);
 
         // Set the grant type
         client.setAuthorizedGrantTypes(Sets.newHashSet(request.getGrantType()));
-        if (request.getGrantType()
-                .equals(GRANT_TYPE_AUTH_CODE)) {
+        if (request.getGrantType().equals(GRANT_TYPE_AUTH_CODE)) {
             client.setRegisteredRedirectUri(request.getRedirectURI());
         }
 
