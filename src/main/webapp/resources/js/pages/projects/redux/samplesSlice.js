@@ -31,8 +31,6 @@ const updateTable = createAsyncThunk(
     const {
       samples: { options, selected, selectedCount },
     } = getState();
-    console.log("SEARCH", { state: options.search, values: values.search });
-    console.log("FILTERS", { state: options.filters, values: values.filters });
     if (
       isEqual(values?.search, options.search) &&
       isEqual(values?.filters, options.filters)
@@ -41,7 +39,6 @@ const updateTable = createAsyncThunk(
       return { options: values, selected, selectedCount };
     }
     // Filters applied therefore need to clear any selections
-    console.log("FILTERS CHANGED");
     return { options: values, selected: {}, selectedCount: 0 };
   }
 );
