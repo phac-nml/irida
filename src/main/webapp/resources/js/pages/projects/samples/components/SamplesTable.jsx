@@ -99,7 +99,7 @@ export function SamplesTable() {
 
     dispatch(
       updateTable({
-        filters: { associated },
+        filters: { associated: associated === undefined ? null : associated }, // Null conversion for comparision with default values in slice
         pagination,
         order: formatSort(sorter),
         search,

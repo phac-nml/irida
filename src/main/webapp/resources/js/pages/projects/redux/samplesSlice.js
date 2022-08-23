@@ -31,6 +31,8 @@ const updateTable = createAsyncThunk(
     const {
       samples: { options, selected, selectedCount },
     } = getState();
+    console.log("SEARCH", { state: options.search, values: values.search });
+    console.log("FILTERS", { state: options.filters, values: values.filters });
     if (
       isEqual(values?.search, options.search) &&
       isEqual(values?.filters, options.filters)
@@ -39,6 +41,7 @@ const updateTable = createAsyncThunk(
       return { options: values, selected, selectedCount };
     }
     // Filters applied therefore need to clear any selections
+    console.log("FILTERS CHANGED");
     return { options: values, selected: {}, selectedCount: 0 };
   }
 );
@@ -165,7 +168,6 @@ const initialState = {
 export default createReducer(initialState, (builder) => {
   builder
     .addCase(updateTable.fulfilled, (state, action) => {
-      console.log("FULFILLED", action.payload);
       state.options = action.payload.options;
       state.selected = action.payload.selected;
       state.selectedCount = action.payload.selectedCount;
