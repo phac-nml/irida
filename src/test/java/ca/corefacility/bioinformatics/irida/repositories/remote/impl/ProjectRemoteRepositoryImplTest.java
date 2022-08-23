@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.LinkNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.repositories.remote.ProjectRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.projects.RESTProjectsController;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -19,12 +20,14 @@ public class ProjectRemoteRepositoryImplTest {
 
 	private ProjectRemoteRepository projectRemoteRepository;
 	private RemoteAPITokenService tokenService;
+	private UserService userService;
 	private static final String PROJECT_HASH_REL = RESTProjectsController.PROJECT_HASH_REL;
 
 	@BeforeEach
 	public void setUp() {
 		tokenService = mock(RemoteAPITokenService.class);
-		projectRemoteRepository = new ProjectRemoteRepositoryImpl(tokenService);
+		userService = mock(UserService.class);
+		projectRemoteRepository = new ProjectRemoteRepositoryImpl(tokenService, userService);
 	}
 
 	@Test

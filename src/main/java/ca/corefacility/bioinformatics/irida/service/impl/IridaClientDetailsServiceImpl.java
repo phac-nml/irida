@@ -10,24 +10,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.provider.ClientDetails;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.NoSuchClientException;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
+import ca.corefacility.bioinformatics.irida.oauth2.IridaOAuth2AuthorizationService;
 import ca.corefacility.bioinformatics.irida.repositories.IridaClientDetailsRepository;
 import ca.corefacility.bioinformatics.irida.service.IridaClientDetailsService;
 
 /**
- * Service for storing and retrieving {@link IridaClientDetails} object.
- * Implements {@link ClientDetailsService} for use with OAuth approvals.
- * 
- *
+ * Service for storing and retrieving {@link IridaClientDetails} object. Implements for use with OAuth approvals.
  */
 @Service("clientDetails")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -35,14 +30,14 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 		implements IridaClientDetailsService {
 	private final IridaClientDetailsRepository clientDetailsRepository;
 
-	private final TokenStore tokenStore;
+	private final OAuth2AuthorizationService authorizationService;
 
 	@Autowired
-	public IridaClientDetailsServiceImpl(IridaClientDetailsRepository repository, TokenStore tokenStore,
-			Validator validator) {
+	public IridaClientDetailsServiceImpl(IridaClientDetailsRepository repository,
+			OAuth2AuthorizationService authorizationService, Validator validator) {
 		super(repository, validator, IridaClientDetails.class);
 		this.clientDetailsRepository = repository;
-		this.tokenStore = tokenStore;
+		this.authorizationService = authorizationService;
 	}
 
 	/**
@@ -59,10 +54,10 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	 */
 	@Override
 	@PreAuthorize("permitAll()")
-	public ClientDetails loadClientByClientId(String clientId) throws NoSuchClientException {
+	public IridaClientDetails loadClientByClientId(String clientId) throws EntityNotFoundException {
 		IridaClientDetails client = clientDetailsRepository.loadClientDetailsByClientId(clientId);
 		if (client == null) {
-			throw new NoSuchClientException("Client with this clientId does not exist: " + clientId);
+			throw new EntityNotFoundException("Client with this clientId does not exist: " + clientId);
 		}
 		return client;
 	}
@@ -101,9 +96,10 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	 * {@inheritDoc}
 	 */
 	public int countActiveTokensForClient(IridaClientDetails client) {
-		Collection<OAuth2AccessToken> findTokensByClientId = tokenStore.findTokensByClientId(client.getClientId());
-		int active = findTokensByClientId.stream().mapToInt((t) -> {
-			return t.isExpired() ? 0 : 1;
+		Collection<OAuth2Authorization> accessTokenAuthorizations = ((IridaOAuth2AuthorizationService) authorizationService)
+				.findAccessTokensByRegisteredClientId(client.getId().toString());
+		int active = accessTokenAuthorizations.stream().mapToInt((a) -> {
+			return a.getAccessToken().isActive() ? 1 : 0;
 		}).sum();
 		return active;
 	}
@@ -112,19 +108,19 @@ public class IridaClientDetailsServiceImpl extends CRUDServiceImpl<Long, IridaCl
 	 * {@inheritDoc}
 	 */
 	public int countTokensForClient(IridaClientDetails client) {
-		return tokenStore.findTokensByClientId(client.getClientId()).size();
+		return ((IridaOAuth2AuthorizationService) authorizationService)
+				.findAccessTokensByRegisteredClientId(client.getId().toString())
+				.size();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void revokeTokensForClient(IridaClientDetails client) {
-		Collection<OAuth2AccessToken> findTokensByClientId = tokenStore.findTokensByClientId(client.getClientId());
-		for (OAuth2AccessToken token : findTokensByClientId) {
-			tokenStore.removeAccessToken(token);
-			if (token.getRefreshToken() != null) {
-				tokenStore.removeRefreshToken(token.getRefreshToken());
-			}
+		Collection<OAuth2Authorization> accessTokenAuthorizations = ((IridaOAuth2AuthorizationService) authorizationService)
+				.findAccessTokensByRegisteredClientId(client.getId().toString());
+		for (OAuth2Authorization authorization : accessTokenAuthorizations) {
+			authorizationService.remove(authorization);
 		}
 	}
 

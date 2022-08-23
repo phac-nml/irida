@@ -16,6 +16,7 @@
 * [REST]: Updated synchronizing of sample data to remove sequencing objects and assemblies that no longer exist on the remote sample. See [PR 1345](https://github.com/phac-nml/irida/pull/1345)
 * [UI]: Fixed issue with filtering samples by files using a windows encoded text file causing sample name truncation. See [PR 1346](https://github.com/phac-nml/irida/pull/1346)
 * [Developer]: Fixed deleting a project with project subscriptions. See [PR 1348](https://github.com/phac-nml/irida/pull/1348)
+* [Developer]: Updated OAuth2 implementation to use Spring Security 5 OAuth2 libraries. See [PR 1339](https://github.com/phac-nml/irida/pull/1339)
 * [Developer]: Add identifier to project drop-downs. See [PR 1352](https://github.com/phac-nml/irida/pull/1352)
 
 ## [22.05.5] - 2022/06/28
