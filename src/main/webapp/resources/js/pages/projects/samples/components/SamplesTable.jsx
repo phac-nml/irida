@@ -43,24 +43,22 @@ export function SamplesTable() {
   } = useSelector((state) => state.samples);
 
   /**
-   * Fetch the current state of the table.  Will refetch whenever one of the
+   * Fetch the current state of the table.
+   * Re-fetch whenever one of the
    * table options (filter, sort, or pagination) changes.
    */
-  const {
-    data: { content: samples, total } = {},
-    isFetching,
-  } = useListSamplesQuery(options, {
-    refetchOnMountOrArgChange: true,
-  });
+  const { data: { content: samples, total } = {}, isFetching } =
+    useListSamplesQuery(options, {
+      refetchOnMountOrArgChange: true,
+    });
 
   /**
    * Fetch projects that have been associated with this project.
    * Request formats them into a format that can be consumed by the
    * project column filter.
    */
-  const { data: associatedProjects } = useListAssociatedProjectsQuery(
-    projectId
-  );
+  const { data: associatedProjects } =
+    useListAssociatedProjectsQuery(projectId);
 
   /**
    * Handle row selection change event
@@ -68,8 +66,8 @@ export function SamplesTable() {
    * @param sample
    */
   const onRowSelectionChange = (event, sample) => {
-    const selected = event.target.checked;
-    if (selected) {
+    console.log(selected);
+    if (event.target.checked) {
       dispatch(addSelectedSample(sample));
     } else {
       dispatch(removeSelectedSample(sample.key));
