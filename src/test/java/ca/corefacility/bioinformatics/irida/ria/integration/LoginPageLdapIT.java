@@ -47,6 +47,9 @@ public class LoginPageLdapIT extends AbstractIridaUIITChromeDriver {
 	private static final String COLLAPSE_USERNAME = "collapse";
 	private static final String COLLAPSE_PASSWORD = "Password1!";
 
+	private static final String MRTEST_USERNAME = "mrtest";
+	private static final String MRTEST_PASSWORD = "Password1!";
+
 	@Autowired
 	UserRepository userRepository;
 
@@ -61,7 +64,7 @@ public class LoginPageLdapIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	/**
-	 * Test singing in with user that does not exist in ldap
+	 * Test signing in with user that does not exist in ldap
 	 * @throws Exception
 	 */
 	@Test
@@ -69,6 +72,23 @@ public class LoginPageLdapIT extends AbstractIridaUIITChromeDriver {
 		LoginPage page = LoginPage.to(driver());
 		assertFalse(page.isLoginErrorDisplayed(), "No login errors should be originally displayed");
 		page.login(LoginPage.BAD_USERNAME, LoginPage.GOOD_PASSWORD);
+		assertTrue(driver().getCurrentUrl().contains("login?error=true"), "Should update the url with '?error=true'");
+		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
+	}
+
+	/**
+	 * Test signing in with user that does not exist in ldap but does exist in local db
+	 * @throws Exception
+	 */
+	@Test
+	public void testNotInLdap() throws Exception {
+		// User exists in db
+		UserDetails u = userRepository.loadUserByUsername(MRTEST_USERNAME);
+		assertEquals(MRTEST_USERNAME, u.getUsername());
+		// try sign in
+		LoginPage page = LoginPage.to(driver());
+		assertFalse(page.isLoginErrorDisplayed(), "No login errors should be originally displayed");
+		page.login(MRTEST_USERNAME, MRTEST_PASSWORD);
 		assertTrue(driver().getCurrentUrl().contains("login?error=true"), "Should update the url with '?error=true'");
 		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
 	}
