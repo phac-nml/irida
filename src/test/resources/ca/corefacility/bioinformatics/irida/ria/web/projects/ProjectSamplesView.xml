@@ -17,7 +17,7 @@
         <project id="7" createdDate="2013-07-18 14:20:19.0" name="test_remote" organism="test" remote_status="1" sync_frequency="DAILY" />
         <project id="1" createdDate="2013-07-12 14:20:19.0" name="project" modifiedDate="2013-07-18 14:20:19.0" organism="E. coli" projectDescription="This is an interesting project description." remoteURL="http://google.ca" />
         <project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" modifiedDate="2013-07-18 14:19:19.0" />
-        <project id="3" createdDate="2013-07-18 14:20:19.0" name="project_three" modifiedDate="2013-07-18 14:18:19.0" />
+        <project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" modifiedDate="2013-07-18 14:18:19.0" />
         <project id="4" createdDate="2013-07-18 14:21:19.0" name="project4" modifiedDate="2013-07-18 14:17:19.0" />
         <project id="5" createdDate="2013-07-18 14:21:19.0" name="project5" modifiedDate="2013-07-18 14:17:19.0" />
         <project id="6" createdDate="2013-07-18 14:21:19.0" name="project6" modifiedDate="2013-07-18 14:17:19.0" />

@@ -29,7 +29,7 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 
 		assertFalse(shareSamplesPage.isNextButtonEnabled(), "");
 		shareSamplesPage.searchForProject("3");
-		assertThat(shareSamplesPage.getProjectSelectText()).contains("project_three");
+		assertThat(shareSamplesPage.getProjectSelectText()).contains("ID: 3");
 		assertTrue(shareSamplesPage.isNextButtonEnabled(), "Next button should be enabled");
 		shareSamplesPage.searchForProject("project2");
 		assertTrue(shareSamplesPage.isNextButtonEnabled(), "Next button should be enabled");
