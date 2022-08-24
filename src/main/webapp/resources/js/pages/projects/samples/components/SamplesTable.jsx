@@ -66,7 +66,6 @@ export function SamplesTable() {
    * @param sample
    */
   const onRowSelectionChange = (event, sample) => {
-    console.log(selected);
     if (event.target.checked) {
       dispatch(addSelectedSample(sample));
     } else {
