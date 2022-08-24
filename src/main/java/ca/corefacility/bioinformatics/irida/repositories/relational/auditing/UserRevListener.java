@@ -1,11 +1,5 @@
 package ca.corefacility.bioinformatics.irida.repositories.relational.auditing;
 
-import ca.corefacility.bioinformatics.irida.config.security.IridaUserDetailsContextMapper;
-import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
-import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.IridaClientDetailsRepository;
-import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
-
 import org.hibernate.envers.RevisionListener;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -18,9 +12,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
+import ca.corefacility.bioinformatics.irida.config.security.IridaUserDetailsContextMapper;
+import ca.corefacility.bioinformatics.irida.model.IridaClientDetails;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.repositories.IridaClientDetailsRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 /**
- *
+ *  Handles verifying authentication for user revisions
  */
 public class UserRevListener implements RevisionListener, ApplicationContextAware {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(UserRevListener.class);
@@ -75,7 +74,8 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
     }
     
 	/**
-	 * todo
+	 * fetches user id via SecurityContextHolder
+     * Returns null if no user authentication can be found.
 	 */
     private Long getUserId() {
         try {
@@ -90,12 +90,12 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
     }
 
     /**
-     * todo
+     * Fetches the client ID from SecurityContextHolder for users connected via oAuth
+     * Returns null if no user authentication can be found.
      */
     private Long getClientId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        // If the user is connecting via OAuth2 this object will be an
-        // OAuth2Authentication
+        // If the user is connecting via OAuth2 this object will be a JwtAuthenticationToken
         if (auth instanceof JwtAuthenticationToken) {
             try {
                 logger.trace("Found JwtAuthenticationToken in session.  Storing clientId in revision.");
@@ -113,6 +113,9 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
         }
     }
 
+    /**
+     * checks if IRIDA was started in LDAP/ADLDAP mode
+     */
     private boolean isLdapMode() {
         return authenticationMode.equals("ldap") || authenticationMode.equals("adldap");
     }
