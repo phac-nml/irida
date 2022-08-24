@@ -1,18 +1,21 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.oauth;
 
-import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
-import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
-import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
-import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
-import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
-import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.servlet.HandlerMapping;
 
-import javax.servlet.http.HttpServletRequest;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
+import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
+import ca.corefacility.bioinformatics.irida.ria.web.oauth.OltuAuthorizationController;
+import ca.corefacility.bioinformatics.irida.ria.web.oauth.RemoteAPIController;
+import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
+import ca.corefacility.bioinformatics.irida.service.remote.ProjectRemoteService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -29,8 +32,7 @@ public class RemoteAPIControllerTest {
 		remoteAPIService = mock(RemoteAPIService.class);
 		projectRemoteService = mock(ProjectRemoteService.class);
 		authController = mock(OltuAuthorizationController.class);
-		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService,
-				authController);
+		remoteAPIController = new RemoteAPIController(remoteAPIService, projectRemoteService, authController);
 
 	}
 
@@ -62,7 +64,7 @@ public class RemoteAPIControllerTest {
 	}
 
 	@Test
-	public void testHandleOAuthException() throws OAuthSystemException {
+	public void testHandleOAuthException() throws IOException, OAuthSystemException {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		String redirect = "http://request";
 		when(request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE)).thenReturn(redirect);
@@ -71,6 +73,6 @@ public class RemoteAPIControllerTest {
 		IridaOAuthException ex = new IridaOAuthException("msg", client);
 
 		remoteAPIController.handleOAuthException(request, ex);
-		verify(authController).authenticate(client, redirect);
+		verify(authController).authenticate(request.getSession(), client, redirect);
 	}
 }
