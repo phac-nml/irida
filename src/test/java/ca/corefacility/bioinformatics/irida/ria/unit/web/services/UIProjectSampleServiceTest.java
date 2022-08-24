@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.FieldUpdate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleService;
@@ -72,6 +75,16 @@ public class UIProjectSampleServiceTest {
 	@Test
 	public void testCreateSample() {
 		CreateSampleRequest request = new CreateSampleRequest(GOOD_NAME, null);
+		ResponseEntity<AjaxResponse> response = service.createSample(request, PROJECT_1_ID, Locale.ENGLISH);
+		assertEquals(HttpStatus.OK, response.getStatusCode(), "Sample should be created");
+	}
+
+	@Test
+	public void testCreateSampleWithMetadata() {
+		List<FieldUpdate> metadata = new ArrayList<>();
+		metadata.add(new FieldUpdate("value1", "field1"));
+		metadata.add(new FieldUpdate("value2", "field2"));
+		CreateSampleRequest request = new CreateSampleRequest(GOOD_NAME, null, null, metadata);
 		ResponseEntity<AjaxResponse> response = service.createSample(request, PROJECT_1_ID, Locale.ENGLISH);
 		assertEquals(HttpStatus.OK, response.getStatusCode(), "Sample should be created");
 	}
