@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.pipelines.MissingRequiredParametersException;
 import ca.corefacility.bioinformatics.irida.exceptions.pipelines.ReferenceFileRequiredException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
@@ -49,7 +50,8 @@ public class UIPipelineStartServiceTest {
 	private MessageSource messageSource;
 
 	@Test
-	public void startTest() throws IridaWorkflowNotFoundException, ReferenceFileRequiredException {
+	public void startTest()
+			throws IridaWorkflowNotFoundException, ReferenceFileRequiredException, MissingRequiredParametersException {
 		workflowsService = Mockito.mock(IridaWorkflowsService.class);
 		sequencingObjectService = Mockito.mock(SequencingObjectService.class);
 		submissionService = Mockito.mock(AnalysisSubmissionService.class);
