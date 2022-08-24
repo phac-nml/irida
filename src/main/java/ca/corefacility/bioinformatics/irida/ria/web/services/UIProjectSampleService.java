@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidatio
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -119,5 +122,36 @@ public class UIProjectSampleService {
 			return ResponseEntity.ok(new AjaxErrorResponse(
 					messageSource.getMessage("server.AddSample.error.exists", new Object[] {}, locale)));
 		}
+	}
+
+	/**
+	 * Update a sample in a project
+	 *
+	 * @param request  {@link CreateSampleRequest} details about the sample to create
+	 * @param sampleId Identifier for the sample
+	 * @param locale   Users current locale
+	 * @return result of creating the sample
+	 */
+	public ResponseEntity<AjaxResponse> updateSample(CreateSampleRequest request, Long sampleId, Locale locale) {
+		Map<String, Object> updatedValues = new HashMap<>();
+		if (!Strings.isNullOrEmpty(request.getName())) {
+			updatedValues.put("sampleName", request.getName());
+		}
+		if (!Strings.isNullOrEmpty(request.getOrganism())) {
+			updatedValues.put("organism", request.getOrganism());
+		}
+		if (!Strings.isNullOrEmpty(request.getDescription())) {
+			updatedValues.put("description", request.getDescription());
+		}
+		if (request.getMetadata() != null) {
+			Set<MetadataEntry> metadataEntrySet = request.getMetadata()
+					.stream()
+					.map(entry -> new MetadataEntry(entry.getValue(), entry.getField()))
+					.collect(Collectors.toSet());
+			updatedValues.put("metadataEntries", metadataEntrySet);
+			//			sampleService.updateSampleMetadata(sample, metadataEntrySet);
+		}
+		sampleService.updateFields(sampleId, updatedValues);
+		return ResponseEntity.ok(new AjaxUpdateItemSuccessResponse("SUCCESS"));
 	}
 }

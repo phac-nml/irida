@@ -76,6 +76,20 @@ public class ProjectSamplesAjaxController {
 	}
 
 	/**
+	 * Update a sample within a project
+	 *
+	 * @param request  Details about the sample - name and organism
+	 * @param sampleId sample identifier
+	 * @param locale   current users locale
+	 * @return result of creating the project
+	 */
+	@PatchMapping("/add-sample/{sampleId}")
+	public ResponseEntity<AjaxResponse> updateSampleInProject(@RequestBody CreateSampleRequest request,
+			@PathVariable long sampleId, Locale locale) {
+		return uiProjectSampleService.updateSample(request, sampleId, locale);
+	}
+
+	/**
 	 * Returns a Page of samples for a project based on the information in the {@link ProjectSamplesTableRequest}
 	 *
 	 * @param projectId Identifier for the current project
