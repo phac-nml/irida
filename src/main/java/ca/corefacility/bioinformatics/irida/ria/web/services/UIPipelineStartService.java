@@ -1,12 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.pipelines.MissingRequiredParametersException;
 import ca.corefacility.bioinformatics.irida.exceptions.pipelines.ReferenceFileRequiredException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -62,7 +65,7 @@ public class UIPipelineStartService {
 	 * @throws ReferenceFileRequiredException thrown if a reference file is required and not sent (should not happen).
 	 */
 	public Long start(UUID id, LaunchRequest request, Locale locale)
-			throws IridaWorkflowNotFoundException, ReferenceFileRequiredException {
+			throws IridaWorkflowNotFoundException, ReferenceFileRequiredException, MissingRequiredParametersException {
 		IridaWorkflow workflow = workflowsService.getIridaWorkflow(id);
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
 
@@ -79,6 +82,28 @@ public class UIPipelineStartService {
 		if (description.requiresReference() && request.getReference() == null) {
 			throw new ReferenceFileRequiredException(
 					messageSource.getMessage("server.ReferenceFiles.notFound", new Object[] {}, locale));
+		}
+
+		List<String> requiredParameters = description.getParameters()
+				.stream()
+				.filter(parameter -> parameter.isRequired())
+				.map(requiredParameter -> requiredParameter.getName())
+				.collect(Collectors.toList());
+
+		// Make sure required parameters are provided.
+		if (requiredParameters.size() > 0) {
+			List<String> providedParameters = request.getParameters().keySet().stream().collect(Collectors.toList());
+
+			// Get list of required parameters not provided
+			List<String> parametersNotProvided = (List<String>) CollectionUtils.subtract(requiredParameters,
+					providedParameters);
+
+			if (parametersNotProvided.size() > 0) {
+				String missingParameters = String.join(", ", parametersNotProvided);
+				throw new MissingRequiredParametersException(
+						messageSource.getMessage("server.RequiredParameters.missing",
+								new Object[] { missingParameters }, locale));
+			}
 		}
 
 		if (request.getAutomatedProjectId() != null) {

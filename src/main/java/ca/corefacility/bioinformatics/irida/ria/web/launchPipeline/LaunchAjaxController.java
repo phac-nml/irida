@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.pipelines.MissingRequiredParametersException;
 import ca.corefacility.bioinformatics.irida.exceptions.pipelines.ReferenceFileRequiredException;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
@@ -83,12 +84,13 @@ public class LaunchAjaxController {
 	 */
 	@PostMapping("/{id}")
 	public ResponseEntity<AjaxResponse> launchPipeline(@PathVariable UUID id, @RequestBody LaunchRequest request,
-			Locale locale) throws IridaWorkflowNotFoundException, ReferenceFileRequiredException {
+			Locale locale)
+			throws IridaWorkflowNotFoundException, ReferenceFileRequiredException, MissingRequiredParametersException {
 		try {
 			return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(startService.start(id, request, locale)));
-		} catch (IridaWorkflowNotFoundException | ReferenceFileRequiredException e) {
+		} catch (IridaWorkflowNotFoundException | ReferenceFileRequiredException |
+				 MissingRequiredParametersException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AjaxErrorResponse(e.getMessage()));
-
 		}
 	}
 

@@ -45,10 +45,10 @@ export function LaunchForm() {
             window.location.href = setBaseUrl(url);
           }, 350);
         })
-        .catch(({ error }) => {
+        .catch(({ message }) => {
           setLaunchState(LAUNCH_STATES.WAITING);
           notification.error({
-            message: error,
+            message,
           });
         });
     });
