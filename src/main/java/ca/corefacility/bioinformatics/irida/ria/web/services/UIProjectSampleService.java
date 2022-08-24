@@ -1,6 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -12,6 +14,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
@@ -65,7 +68,9 @@ public class UIProjectSampleService {
 		 */
 		if (!name.matches("[A-Za-z\\d-_!@#$%~`]+")) {
 			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY.value())
-					.body(new SampleNameValidationResponse("error", messageSource.getMessage("server.AddSample.error.special.characters", new Object[] {}, locale)));
+					.body(new SampleNameValidationResponse("error",
+							messageSource.getMessage("server.AddSample.error.special.characters", new Object[] {},
+									locale)));
 		}
 
 		// Check to see if the sample name already exists.
@@ -97,6 +102,16 @@ public class UIProjectSampleService {
 			Sample sample = new Sample(request.getName());
 			if (!Strings.isNullOrEmpty(request.getOrganism())) {
 				sample.setOrganism(request.getOrganism());
+			}
+			if (!Strings.isNullOrEmpty(request.getDescription())) {
+				sample.setDescription(request.getDescription());
+			}
+			if (request.getMetadata() != null) {
+				Set<MetadataEntry> metadataEntrySet = request.getMetadata()
+						.stream()
+						.map(entry -> new MetadataEntry(entry.getValue(), entry.getField()))
+						.collect(Collectors.toSet());
+				sampleService.mergeSampleMetadata(sample, metadataEntrySet);
 			}
 			Join<Project, Sample> join = projectService.addSampleToProject(project, sample, true);
 			return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(join.getObject().getId()));
