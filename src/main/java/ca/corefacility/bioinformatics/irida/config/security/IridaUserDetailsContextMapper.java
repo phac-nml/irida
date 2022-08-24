@@ -190,7 +190,6 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
      */
     private User ldapCreateUser(DirContextOperations dirContextOperations, String username) {
         // This works for both ldap and adLdap
-        // todo: handle bad fields / User can't be created (required and not required)
         String randomPassword = generateCommonLangPassword();
         Map<String, String> map = getLdapFields(dirContextOperations);
         return new User(
@@ -300,7 +299,7 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
     }
 
     /**
-     * Generates a random password that adhears to our password requirements
+     * Generates a random password that adheres to our password requirements
      * @return String
      */
     public String generateCommonLangPassword() {

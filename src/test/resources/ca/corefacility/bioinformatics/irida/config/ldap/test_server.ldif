@@ -83,3 +83,16 @@ givenName: Magomed
 mail: collapse.at.example.com
 telephoneNumber: 12
 userPassword: Password1!
+
+dn: uid=yatoro,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Illya Mulyarchuk
+sn: Mulyarchuk
+uid: yatoro
+givenName: Illya
+mail: yatoro@example.com
+telephoneNumber: 1234
+userPassword: Password1!

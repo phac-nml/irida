@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
+import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 
@@ -46,6 +47,9 @@ public class LoginPageLdapIT extends AbstractIridaUIITChromeDriver {
 
 	private static final String COLLAPSE_USERNAME = "collapse";
 	private static final String COLLAPSE_PASSWORD = "Password1!";
+
+	private static final String YATORO_USERNAME = "yatoro";
+	private static final String YATORO_PASSWORD = "Password1!";
 
 	private static final String MRTEST_USERNAME = "mrtest";
 	private static final String MRTEST_PASSWORD = "Password1!";
@@ -136,6 +140,23 @@ public class LoginPageLdapIT extends AbstractIridaUIITChromeDriver {
 		page.login(MIRA_USERNAME, MIRA_PASSWORD);
 		assertTrue(driver().getCurrentUrl().contains("login?ldap-error=4"), "Should update the url with '?ldap-error=4'");
 		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
+	}
+
+	/**
+	 * Test signing in with user that has updated fields in ldap server
+	 * @throws Exception
+	 */
+	@Test
+	public void testUpdateAccountLogin() throws Exception {
+		// User should have old email in db
+		User u = userRepository.loadUserByUsername(YATORO_USERNAME);
+		assertEquals("yatoro_old_email@example.com", u.getEmail());
+		// Sign in
+		LoginPage.login(driver(), YATORO_USERNAME, YATORO_PASSWORD);
+		assertTrue(driver().getTitle().contains("Dashboard"), "The 'yatoro' user is logged in and redirected.");
+		// User should now have email updated in db
+		u = userRepository.loadUserByUsername(YATORO_USERNAME);
+		assertEquals("yatoro@example.com", u.getEmail());
 	}
 
 	/**
