@@ -242,6 +242,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-filter-cancel")
 	private WebElement filterCancelBtn;
 
+	@FindBy(className = "ant-pagination-prev")
+	private WebElement prevTablePage;
+
+	@FindBy(className = "ant-pagination-next")
+	private WebElement nextTablePage;
+
+
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
 	}
@@ -581,5 +588,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		int total = getTableSummary().getTotal();
 		filterSubmitBtn.click();
 		waitForTableToUpdate(total);
+	}
+
+	public void goToNextTablePage() {
+		nextTablePage.click();
+		waitForTime(200);
+	}
+
+	public void gotToPreviousTablePage() {
+		prevTablePage.click();
+		waitForTime(200);
 	}
 }
