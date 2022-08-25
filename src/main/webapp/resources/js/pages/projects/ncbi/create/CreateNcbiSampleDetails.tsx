@@ -40,7 +40,8 @@ export default function CreateNcbiSampleDetails({
           style={{ backgroundColor: `var(--primary-grey)` }}
           icon={<SwapRightOutlined />}
         />
-        {file.name} - {file.file.fileSize}
+        <span className="t-single-name">{file.name}</span> -{" "}
+        {file.file.fileSize}
       </Space>
     ),
     value: file.id,
@@ -74,7 +75,11 @@ export default function CreateNcbiSampleDetails({
           name={["samples", sample.name, "bioSample"]}
           label={i18n("NcbiBioSample.id")}
         >
-          <Input type="text" onChange={onChange} />
+          <Input
+            type="text"
+            onChange={onChange}
+            className="t-sample-biosample"
+          />
         </Form.Item>
       </Col>
       <Col md={12} xs={24}>
@@ -83,7 +88,7 @@ export default function CreateNcbiSampleDetails({
           name={["samples", sample.name, "libraryName"]}
           label={i18n("NcbiBioSample.libraryName")}
         >
-          <Input type="text" onChange={onChange} />
+          <Input type="text" onChange={onChange} className="t-sample-library" />
         </Form.Item>
       </Col>
       <Col md={12} xs={24}>
@@ -92,7 +97,11 @@ export default function CreateNcbiSampleDetails({
           name={["samples", sample.name, "libraryStrategy"]}
           label={i18n("NcbiBioSample.libraryStrategy")}
         >
-          <Select style={{ display: "block" }} onChange={onChange}>
+          <Select
+            style={{ display: "block" }}
+            onChange={onChange}
+            className="t-sample-strategy"
+          >
             {strategies?.map((option: string) => (
               <Select.Option key={option}>{option}</Select.Option>
             ))}
@@ -105,7 +114,11 @@ export default function CreateNcbiSampleDetails({
           name={["samples", sample.name, "librarySource"]}
           label={i18n("NcbiBioSample.librarySource")}
         >
-          <Select style={{ display: "block" }} onChange={onChange}>
+          <Select
+            style={{ display: "block" }}
+            onChange={onChange}
+            className="t-sample-source"
+          >
             {sources.map((option: string) => (
               <Select.Option key={option}>{option}</Select.Option>
             ))}
@@ -118,7 +131,11 @@ export default function CreateNcbiSampleDetails({
           name={["samples", sample.name, "libraryConstructionProtocol"]}
           label={i18n("NcbiBioSample.libraryConstructionProtocol")}
         >
-          <Input type="text" onChange={onChange} />
+          <Input
+            type="text"
+            onChange={onChange}
+            className="t-sample-protocol"
+          />
         </Form.Item>
       </Col>
       <Col md={12} xs={24}>
@@ -131,6 +148,7 @@ export default function CreateNcbiSampleDetails({
             options={platforms}
             style={{ display: "block" }}
             onChange={onChange}
+            className="t-sample-model"
           />
         </Form.Item>
       </Col>
@@ -140,7 +158,11 @@ export default function CreateNcbiSampleDetails({
           name={["samples", sample.name, "librarySelection"]}
           label={i18n("NcbiBioSample.librarySelection")}
         >
-          <Select style={{ display: "block" }} onChange={onChange}>
+          <Select
+            style={{ display: "block" }}
+            onChange={onChange}
+            className="t-sample-selection"
+          >
             {selections.map((option) => (
               <Select.Option key={option}>{option}</Select.Option>
             ))}
@@ -153,6 +175,7 @@ export default function CreateNcbiSampleDetails({
             name={["samples", sample.name, "singles"]}
             label={i18n("CreateNcbiExport.singles")}
             valuePropName="checked"
+            className="t-samples-singles"
           >
             <Checkbox.Group
               style={{ width: `100%` }}

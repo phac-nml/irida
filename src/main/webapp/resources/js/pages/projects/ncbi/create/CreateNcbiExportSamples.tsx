@@ -60,8 +60,6 @@ function CreateNcbiExportSamples({
 
     const values = form.getFieldsValue(fields).samples[sample.name];
 
-    console.log(values);
-
     const isValid =
       values.bioSample.length > 0 &&
       values.libraryName.length > 0 &&
@@ -72,14 +70,12 @@ function CreateNcbiExportSamples({
       values.librarySelection.length > 0 &&
       (values.singles.length > 0 || values.pairs.length > 0);
 
-    console.log({ isValid });
-
     const status = { ...validationStatus, [sample.name]: isValid };
     setValidationStatus(status);
   };
 
   return (
-    <Collapse accordion>
+    <Collapse className="t-samples" accordion>
       {Object.values(samples).map((sample) => (
         <Collapse.Panel
           className="t-sample-panel"
@@ -94,6 +90,7 @@ function CreateNcbiExportSamples({
             <Button
               size="small"
               onClick={(event) => removeSample(event, sample)}
+              className="t-remove-btn"
             >
               {i18n("CreateNcbiExport.remove")}
             </Button>

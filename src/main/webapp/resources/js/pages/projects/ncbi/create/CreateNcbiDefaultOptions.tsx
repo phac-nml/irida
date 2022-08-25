@@ -12,6 +12,12 @@ import React from "react";
 import { useLoaderData } from "react-router-dom";
 import { LoaderValues, UpdateDefaultValues } from "./CreateNcbiExport";
 
+/**
+ * React component allows the user to set fields for all samples that do not currently
+ * have a value.
+ * @param onChange - What to do when a value changes
+ * @constructor
+ */
 function CreateNcbiDefaultOptions({
   onChange,
 }: {
@@ -21,14 +27,21 @@ function CreateNcbiDefaultOptions({
     useLoaderData();
   return (
     <Collapse ghost>
-      <Collapse.Panel header={i18n("CreateNcbiExport.default.title")} key="1">
+      <Collapse.Panel
+        className="t-defaults-panel"
+        header={i18n("CreateNcbiExport.default.title")}
+        key="1"
+      >
         <Typography.Text strong>
           {i18n("CreateNcbiExport.default.description")}
         </Typography.Text>
         <Row gutter={[16, 16]}>
           <Col md={12} xs={24}>
             <Form.Item label={i18n("NcbiBioSample.libraryStrategy")}>
-              <Select onChange={(value) => onChange("libraryStrategy", value)}>
+              <Select
+                onChange={(value) => onChange("libraryStrategy", value)}
+                className="t-default-strategy"
+              >
                 {strategies?.map((option: string) => (
                   <Select.Option key={option}>{option}</Select.Option>
                 ))}
@@ -52,6 +65,7 @@ function CreateNcbiDefaultOptions({
             >
               <Input
                 type="text"
+                className="t-default-protocol"
                 onChange={(e) =>
                   onChange("libraryConstructionProtocol", e.target.value)
                 }

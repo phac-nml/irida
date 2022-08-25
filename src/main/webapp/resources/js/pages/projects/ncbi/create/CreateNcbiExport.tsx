@@ -301,6 +301,7 @@ function CreateNcbiExport(): JSX.Element {
         htmlType="submit"
         loading={createStatus === CreateStatus.PENDING}
         disabled={createStatus === CreateStatus.PENDING}
+        className="t-submit-button"
       >
         {i18n("CreateNcbiExport.submit")}
       </Button>
