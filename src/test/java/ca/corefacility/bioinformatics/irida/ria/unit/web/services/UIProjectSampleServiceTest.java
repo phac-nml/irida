@@ -21,6 +21,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidatio
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,7 +34,6 @@ public class UIProjectSampleServiceTest {
 
 	// DATA
 	private final Long PROJECT_1_ID = 1L;
-
 	private final Long SAMPLE_1_ID = 11L;
 	private final Project PROJECT_1 = new Project("PROJECT_1");
 	private final String BAD_NAME = "bad name with spaces";
@@ -44,9 +44,10 @@ public class UIProjectSampleServiceTest {
 	public void setUp() {
 		ProjectService projectService = mock(ProjectService.class);
 		SampleService sampleService = mock(SampleService.class);
+		MetadataTemplateService metadataTemplateService = mock(MetadataTemplateService.class);
 		MessageSource messageSource = mock(MessageSource.class);
 
-		service = new UIProjectSampleService(projectService, sampleService, messageSource);
+		service = new UIProjectSampleService(projectService, sampleService, metadataTemplateService, messageSource);
 
 		when(projectService.read(PROJECT_1_ID)).thenReturn(PROJECT_1);
 		when(sampleService.getSampleBySampleName(PROJECT_1, GOOD_NAME)).thenThrow(

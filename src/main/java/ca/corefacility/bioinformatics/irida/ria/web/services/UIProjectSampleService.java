@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
@@ -24,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorRespo
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
@@ -36,13 +38,15 @@ public class UIProjectSampleService {
 
 	private final ProjectService projectService;
 	private final SampleService sampleService;
+	private final MetadataTemplateService metadataTemplateService;
 	private final MessageSource messageSource;
 
 	@Autowired
 	public UIProjectSampleService(ProjectService projectService, SampleService sampleService,
-			MessageSource messageSource) {
+			MetadataTemplateService metadataTemplateService, MessageSource messageSource) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
+		this.metadataTemplateService = metadataTemplateService;
 		this.messageSource = messageSource;
 	}
 
@@ -109,14 +113,15 @@ public class UIProjectSampleService {
 			if (!Strings.isNullOrEmpty(request.getDescription())) {
 				sample.setDescription(request.getDescription());
 			}
+			Join<Project, Sample> join = projectService.addSampleToProject(project, sample, true);
 			if (request.getMetadata() != null) {
-				Set<MetadataEntry> metadataEntrySet = request.getMetadata()
-						.stream()
-						.map(entry -> new MetadataEntry(entry.getValue(), entry.getField()))
-						.collect(Collectors.toSet());
+				Set<MetadataEntry> metadataEntrySet = request.getMetadata().stream().map(entry -> {
+					MetadataTemplateField field = metadataTemplateService.saveMetadataField(
+							new MetadataTemplateField(entry.getField(), "text"));
+					return new MetadataEntry(entry.getValue(), "text", field);
+				}).collect(Collectors.toSet());
 				sampleService.mergeSampleMetadata(sample, metadataEntrySet);
 			}
-			Join<Project, Sample> join = projectService.addSampleToProject(project, sample, true);
 			return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(join.getObject().getId()));
 		} catch (EntityNotFoundException e) {
 			return ResponseEntity.ok(new AjaxErrorResponse(
@@ -134,6 +139,7 @@ public class UIProjectSampleService {
 	 */
 	public ResponseEntity<AjaxResponse> updateSample(CreateSampleRequest request, Long sampleId, Locale locale) {
 		Map<String, Object> updatedValues = new HashMap<>();
+		Sample sample = sampleService.read(sampleId);
 		if (!Strings.isNullOrEmpty(request.getName())) {
 			updatedValues.put("sampleName", request.getName());
 		}
@@ -144,12 +150,12 @@ public class UIProjectSampleService {
 			updatedValues.put("description", request.getDescription());
 		}
 		if (request.getMetadata() != null) {
-			Set<MetadataEntry> metadataEntrySet = request.getMetadata()
-					.stream()
-					.map(entry -> new MetadataEntry(entry.getValue(), entry.getField()))
-					.collect(Collectors.toSet());
-			updatedValues.put("metadataEntries", metadataEntrySet);
-			//			sampleService.updateSampleMetadata(sample, metadataEntrySet);
+			Set<MetadataEntry> metadataEntrySet = request.getMetadata().stream().map(entry -> {
+				MetadataTemplateField field = metadataTemplateService.saveMetadataField(
+						new MetadataTemplateField(entry.getField(), "text"));
+				return new MetadataEntry(entry.getValue(), "text", field);
+			}).collect(Collectors.toSet());
+			sampleService.updateSampleMetadata(sample, metadataEntrySet);
 		}
 		sampleService.updateFields(sampleId, updatedValues);
 		return ResponseEntity.ok(new AjaxUpdateItemSuccessResponse("SUCCESS"));
