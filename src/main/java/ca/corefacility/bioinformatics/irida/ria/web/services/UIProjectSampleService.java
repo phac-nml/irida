@@ -158,6 +158,7 @@ public class UIProjectSampleService {
 			sampleService.updateSampleMetadata(sample, metadataEntrySet);
 		}
 		sampleService.updateFields(sampleId, updatedValues);
-		return ResponseEntity.ok(new AjaxUpdateItemSuccessResponse("SUCCESS"));
+		return ResponseEntity.ok(
+				new AjaxUpdateItemSuccessResponse(messageSource.getMessage("server.AddSample.success", null, locale)));
 	}
 }
