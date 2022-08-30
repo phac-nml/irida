@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import {render} from "react-dom";
+import { render } from "react-dom";
 import { DataBrowserRouter, Outlet, Route } from "react-router-dom";
 import { loader as exportsLoader } from "../../components/ncbi/export-table";
 import { setBaseUrl } from "../../utilities/url-utilities";
@@ -81,4 +81,4 @@ export default function ProjectSPA(): JSX.Element {
   );
 }
 
-render(<ProjectSPA/>, document.querySelector("#root"));
+render(<ProjectSPA />, document.querySelector("#root"));

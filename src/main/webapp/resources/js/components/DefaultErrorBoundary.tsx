@@ -1,23 +1,24 @@
 import React from "react";
-import { Alert } from "antd";
-
-interface DefaultErrorBoundaryProps {
-  message?: string;
-  description?: string;
-}
+import { Alert, Col, Row } from "antd";
+import { useRouteError } from "react-router-dom";
 
 /**
  * Default error boundary for react-router-dom
- * @param message "message" attribute for Alert component
- * @param description "description" attribute for Alert component
  * @constructor
  */
-function DefaultErrorBoundary({
-  message = i18n("DefaultErrorBoundary.message"),
-  description = i18n("DefaultErrorBoundary.description"),
-}: DefaultErrorBoundaryProps): JSX.Element {
+function DefaultErrorBoundary(): JSX.Element {
+  const error = useRouteError();
   return (
-    <Alert message={message} description={description} type="error" showIcon />
+    <Row>
+      <Col md={{ span: 12, offset: 6 }} sm={{ span: 24 }}>
+        <Alert
+          message={i18n("DefaultErrorBoundary.message")}
+          description={error}
+          type="error"
+          showIcon
+        />
+      </Col>
+    </Row>
   );
 }
 

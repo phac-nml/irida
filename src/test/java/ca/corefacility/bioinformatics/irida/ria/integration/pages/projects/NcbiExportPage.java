@@ -194,7 +194,8 @@ public class NcbiExportPage extends AbstractPage {
 
 	public boolean areFormErrorsPresent() {
 		waitForTime(100);
-		return driver.findElements(By.className("ant-form-item-explain-error")).size() > 0;
+		List<WebElement> errors = driver.findElements(By.className("ant-form-item-explain-error"));
+		return errors != null && errors.size() > 0;
 	}
 
 	public void submitExportForm() {

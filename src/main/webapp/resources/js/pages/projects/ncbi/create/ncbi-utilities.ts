@@ -31,22 +31,26 @@ export async function getNCBIPlatformsAsCascaderOptions(): Promise<
  * and add the required fields for the export to the SRA.
  */
 export async function hydrateStoredSamples(): Promise<SampleRecord[]> {
-  const { samples, projectId } = await getStoredSamples();
-  return getFilesForSamples({
-    ids: samples.map((sample) => sample.id),
-    projectId,
-  }).then((files) => {
-    return samples.map(
-      (sample) => ({
-        key: sample.name,
-        name: sample.name,
-        id: sample.id,
-        libraryName: sample.name,
-        files: files[sample.id],
-      }),
-      {}
-    );
-  });
+  try {
+    const { samples, projectId } = await getStoredSamples();
+    return getFilesForSamples({
+      ids: samples.map((sample) => sample.id),
+      projectId,
+    }).then((files) => {
+      return samples.map(
+        (sample) => ({
+          key: sample.name,
+          name: sample.name,
+          id: sample.id,
+          libraryName: sample.name,
+          files: files[sample.id],
+        }),
+        {}
+      );
+    });
+  } catch (e) {
+    return Promise.reject(i18n("NcbiExport.error.samples"));
+  }
 }
 
 export function validateSample(sample: SampleRecord): boolean {
