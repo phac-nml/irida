@@ -175,20 +175,20 @@ public class LoginPageLdapIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
 	}
 
-//	/**
-//	 * Test signing in with sequencer account
-//	 * TODO: This is currently not implemented, sequencer and admin account ldap bypass signin will be in the next PR
-//	 * @throws Exception
-//	 */
-//	@Test
-//	public void testSequencerLogin() throws Exception {
-//		LoginPage page = LoginPage.to(driver());
-//		assertFalse(page.isLoginErrorDisplayed(), "No login errors should be originally displayed");
-//		page.login(LoginPage.SEQUENCER_USERNAME, LoginPage.GOOD_PASSWORD);
-//		assertFalse(driver().getTitle().contains("Dashboard"),
-//				"The sequencer user should not be able to see the dashboard");
-//		assertTrue(driver().getCurrentUrl().contains("login?error=true&sequencer-login=true"),
-//				"Should update the url with '?error=true&sequencer-login=true'");
-//		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
-//	}
+	/**
+	 * Test signing in with sequencer account
+	 * TODO: borked
+	 * @throws Exception
+	 */
+	@Test
+	public void testSequencerLogin() throws Exception {
+		LoginPage page = LoginPage.to(driver());
+		assertFalse(page.isLoginErrorDisplayed(), "No login errors should be originally displayed");
+		page.login(LoginPage.SEQUENCER_USERNAME, LoginPage.GOOD_PASSWORD);
+		assertFalse(driver().getTitle().contains("Dashboard"),
+				"The sequencer user should not be able to see the dashboard");
+		assertTrue(driver().getCurrentUrl().contains("login?error=true&sequencer-login=true"),
+				"Should update the url with '?error=true&sequencer-login=true'");
+		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
+	}
 }

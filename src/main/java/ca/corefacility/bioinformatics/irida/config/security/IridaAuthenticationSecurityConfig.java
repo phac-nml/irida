@@ -68,12 +68,20 @@ public class IridaAuthenticationSecurityConfig {
     @Value("${security.password.expiry}")
     private int passwordExpiryInDays = -1;
 
+    @Bean("defaultAuthenticationProvider")
+    public AuthenticationProvider defaultAuthenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userRepository);
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+        return authenticationProvider;
+    }
+
     /**
      * Builds and returns an {@link AuthenticationProvider} based on the irida.administrative.authentication.mode config option
      *
      * @return {@link AuthenticationProvider}
      */
-    @Bean("apiAuthenticationProvider")
+    @Bean("ldapAuthenticationProvider")
     public AuthenticationProvider authenticationProvider() {
         AuthenticationProvider provider;
 
@@ -87,6 +95,7 @@ public class IridaAuthenticationSecurityConfig {
                 break;
             case "local":
                 provider = DaoAuthenticationProvider();
+//                provider = null;
                 break;
             default:
                 String errorMessage = "Configured authentication mode not one of the supported modes [local, ldap, adldap]";

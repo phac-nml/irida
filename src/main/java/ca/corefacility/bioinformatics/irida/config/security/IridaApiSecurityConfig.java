@@ -9,6 +9,7 @@ import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -35,8 +36,15 @@ import org.springframework.security.web.access.expression.DefaultWebSecurityExpr
 public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Autowired
-	@Qualifier("apiAuthenticationProvider")
-	private AuthenticationProvider authenticationProvider;
+	@Qualifier("ldapAuthenticationProvider")
+	private AuthenticationProvider ldapAuthenticationProvider;
+
+	@Autowired
+	@Qualifier("defaultAuthenticationProvider")
+	private AuthenticationProvider defaultAuthenticationProvider;
+
+	@Value("${irida.administrative.authentication.mode}")
+	private String authenticationMode;
 
 	public static final int METHOD_SECURITY_ORDER = Ordered.LOWEST_PRECEDENCE;
 
@@ -72,7 +80,11 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.authenticationProvider(authenticationProvider).authenticationProvider(anonymousAuthenticationProvider());
+		if(authenticationMode.equals("ldap") || authenticationMode.equals("adldap")) {
+			auth.authenticationProvider(ldapAuthenticationProvider);
+		}
+		auth.authenticationProvider(defaultAuthenticationProvider);
+		auth.authenticationProvider(anonymousAuthenticationProvider());
 	}
 
 	/**
