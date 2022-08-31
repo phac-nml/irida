@@ -433,15 +433,11 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
-	 * Confirm that a {@link ProjectSampleJoin} exists between the given {@link Project} and {@link Sample}. <<<<<<<
-	 * HEAD
+	 * Confirm that a {@link ProjectSampleJoin} exists between the given {@link Project} and {@link Sample}.
 	 *
 	 * @param project the {@link Project} to check
 	 * @param sample  the {@link Sample} to check
-	 * @throws IllegalArgumentException if join does not exist =======
-	 * @param project the {@link Project} to check
-	 * @param sample  the {@link Sample} to check
-	 * @throws IllegalArgumentException if join does not exist >>>>>>> master
+	 * @throws IllegalArgumentException if join does not exist
 	 */
 	private void confirmProjectSampleJoin(Project project, Sample sample) throws IllegalArgumentException {
 		Set<Project> projects = new HashSet<>();

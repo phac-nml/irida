@@ -583,13 +583,15 @@ public class UISampleService {
 			List<QCEntry> qcEntriesForSample = sampleQCEntries.get(sample.getId());
 			List<String> quality = new ArrayList<>();
 
-			qcEntriesForSample.forEach(entry -> {
-				entry.addProjectSettings(project);
-				if (entry.getStatus() == QCEntry.QCEntryStatus.NEGATIVE) {
-					quality.add(messageSource.getMessage("sample.files.qc." + entry.getType(),
-							new Object[] { entry.getMessage() }, locale));
-				}
-			});
+			if (qcEntriesForSample != null) {
+				qcEntriesForSample.forEach(entry -> {
+					entry.addProjectSettings(project);
+					if (entry.getStatus() == QCEntry.QCEntryStatus.NEGATIVE) {
+						quality.add(messageSource.getMessage("sample.files.qc." + entry.getType(),
+								new Object[] { entry.getMessage() }, locale));
+					}
+				});
+			}
 			return new ProjectSampleTableItem(join, quality, coverage);
 		}).collect(Collectors.toList());
 	}
