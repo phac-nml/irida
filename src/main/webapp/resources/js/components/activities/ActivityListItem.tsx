@@ -71,17 +71,23 @@ export function ActivityListItem({
         ) {
           const projectId = activity.items[0].href.match(/\d+/g)?.[0];
           const sampleId = activity.items[0].href.match(/\d+/g)?.[1];
-          content.push(
-            <SampleDetailViewer
-              sampleId={sampleId}
-              projectId={projectId}
-              key={key}
-            >
-              <Button type="link" style={{ padding: 0 }}>
-                {item.label}
-              </Button>
-            </SampleDetailViewer>
-          );
+          if (sampleId !== undefined && projectId !== undefined) {
+            content.push(
+              <SampleDetailViewer
+                sampleId={parseInt(sampleId)}
+                projectId={parseInt(projectId)}
+                key={key}
+              >
+                <Button type="link" style={{ padding: 0 }}>
+                  {item.label}
+                </Button>
+              </SampleDetailViewer>
+            );
+          } else {
+            content.push(
+              <Typography.Text key={key}>{item.label}</Typography.Text>
+            );
+          }
         } else if (item.href) {
           // If there is a href create a link to the item
           content.push(

@@ -86,21 +86,6 @@ public class UISequenceFileService {
 	}
 
 	/**
-	 * Gets the overrepresented sequences for the file
-	 *
-	 * @param sequencingObjectId ID for the {@link SequencingObject}
-	 * @param sequenceFileId     Id for the {@link SequenceFile}
-	 * @return {@link AnalysisFastQC} model
-	 */
-	public AnalysisFastQC getOverRepresentedSequences(Long sequencingObjectId, Long sequenceFileId) {
-		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
-		SequenceFile file = sequencingObject.getFileWithId(sequenceFileId);
-		AnalysisFastQC fastQC = analysisService.getFastQCAnalysisForSequenceFile(sequencingObject, file.getId());
-
-		return fastQC;
-	}
-
-	/**
 	 * Download the sequence file
 	 *
 	 * @param sequencingObjectId ID for the {@link SequencingObject}
