@@ -267,6 +267,15 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public List<QCEntry> getQCEntriesForSample(Sample sample);
 
 	/**
+	 * Find all the {@link QCEntry} associated with {@link SequencingObject}s in a given {@link Sample} for a list of
+	 * {@link Sample}s
+	 *
+	 * @param sample the {@link Sample}s to get {@link QCEntry}s for
+	 * @return a map of sample id to {@link QCEntry}s
+	 */
+	public Map<Long, List<QCEntry>> getQCEntriesForSamples(List<Sample> samples);
+
+	/**
 	 * Search all {@link Sample}s in projects the current logged in user has access to
 	 *
 	 * @param query the query string to search

@@ -567,6 +567,9 @@ public class UISampleService {
 		projectSampleIdsMap.forEach((project, sampleIds) -> projectSamplesCoverageMap.put(project,
 				sampleService.getCoverageForSamplesInProject(project, sampleIds)));
 
+		List<Sample> samples = page.getContent().stream().map(join -> join.getObject()).collect(Collectors.toList());
+		Map<Long, List<QCEntry>> sampleQCEntries = sampleService.getQCEntriesForSamples(samples);
+
 		return page.getContent().stream().map(join -> {
 			Sample sample = join.getObject();
 			Project project = join.getSubject();
@@ -577,7 +580,7 @@ public class UISampleService {
 				coverage = projectSamplesCoverageMap.get(project).get(sample.getId());
 			}
 
-			List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(sample);
+			List<QCEntry> qcEntriesForSample = sampleQCEntries.get(sample.getId());
 			List<String> quality = new ArrayList<>();
 
 			qcEntriesForSample.forEach(entry -> {
