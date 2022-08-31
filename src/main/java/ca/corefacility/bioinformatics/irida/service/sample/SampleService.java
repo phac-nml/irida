@@ -2,8 +2,6 @@ package ca.corefacility.bioinformatics.irida.service.sample;
 
 import java.util.*;
 
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -15,9 +13,11 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -306,4 +306,13 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return An {@link GenericStatModel} list
 	 */
 	public List<GenericStatModel> getSamplesCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod);
+
+	/**
+	 * Get Coverage for samples within a project.
+	 * 
+	 * @param project   the {@link Project} to use to calculate the coverage
+	 * @param sampleIds the {@link Sample} ids to get coverage for
+	 * @return a map of sample id to coverage value
+	 */
+	public Map<Long, Long> getCoverageForSamplesInProject(Project project, List<Long> sampleIds);
 }

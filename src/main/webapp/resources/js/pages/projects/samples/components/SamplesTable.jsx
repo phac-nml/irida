@@ -46,21 +46,18 @@ export function SamplesTable() {
    * Fetch the current state of the table.  Will refetch whenever one of the
    * table options (filter, sort, or pagination) changes.
    */
-  const {
-    data: { content: samples, total } = {},
-    isFetching,
-  } = useListSamplesQuery(options, {
-    refetchOnMountOrArgChange: true,
-  });
+  const { data: { content: samples, total } = {}, isFetching } =
+    useListSamplesQuery(options, {
+      refetchOnMountOrArgChange: true,
+    });
 
   /**
    * Fetch projects that have been associated with this project.
    * Request formats them into a format that can be consumed by the
    * project column filter.
    */
-  const { data: associatedProjects } = useListAssociatedProjectsQuery(
-    projectId
-  );
+  const { data: associatedProjects } =
+    useListAssociatedProjectsQuery(projectId);
 
   /**
    * Handle row selection change event
@@ -262,6 +259,11 @@ export function SamplesTable() {
       width: 100,
       dataIndex: "quality",
       render: (qualities) => <SampleQuality qualities={qualities} />,
+    },
+    {
+      title: i18n("SamplesTable.Column.coverage"),
+      width: 100,
+      dataIndex: "coverage",
     },
     {
       title: i18n("SamplesTable.Column.organism"),

@@ -15,13 +15,15 @@ public class ProjectSampleTableItem extends AntTableItem {
 	private final SampleObject sample;
 	private final ProjectObject project;
 	private final List<String> quality;
+	private final Long coverage;
 
-	public ProjectSampleTableItem(ProjectSampleJoin join, List<String> quality) {
+	public ProjectSampleTableItem(ProjectSampleJoin join, List<String> quality, Long coverage) {
 		super(join.getId());
 		this.owner = join.isOwner();
 		this.sample = new SampleObject(join.getObject());
 		this.project = new ProjectObject(join.getSubject());
 		this.quality = quality;
+		this.coverage = coverage;
 	}
 
 	public SampleObject getSample() {
@@ -38,5 +40,9 @@ public class ProjectSampleTableItem extends AntTableItem {
 
 	public List<String> getQuality() {
 		return quality;
+	}
+
+	public Long getCoverage() {
+		return coverage;
 	}
 }

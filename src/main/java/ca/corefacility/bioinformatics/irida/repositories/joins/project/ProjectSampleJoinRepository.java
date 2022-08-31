@@ -95,4 +95,13 @@ public interface ProjectSampleJoinRepository
 	@Query("SELECT j.sample.id FROM ProjectSampleJoin j where j.owner=false AND j.project=?1")
 	public List<Long> getLockedSamplesForProject(Project project);
 
+	/**
+	 * Calculate the coverage for a list of Samples within a Project.
+	 * 
+	 * @param project   {@link Project} to get sample coverage for.
+	 * @param sampleIds {@link Sample} ids
+	 * @return A List of Objects with first entry as the sample id and second entry as the coverage
+	 */
+	@Query("SELECT ps.sample.id, ROUND(SUM(qc.totalBases)/ps.project.genomeSize) FROM ProjectSampleJoin ps join SampleSequencingObjectJoin sso on sso.sample = ps.sample join CoverageQCEntry qc on qc.sequencingObject = sso.sequencingObject where ps.project=?1 and ps.sample.id in ?2 group by ps.sample.id")
+	public List<Object[]> calculateCoverageForSamplesInProject(Project project, List<Long> sampleIds);
 }

@@ -704,12 +704,10 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	}
 
 	/**
-	 * Specification for searching {@link Sample}s <<<<<<< HEAD
+	 * Specification for searching {@link Sample}s
 	 *
 	 * @param user        the {@link User} to get samples for. If this property is null, will serch for all users.
-	 * @param queryString the query string to search for =======
-	 * @param user        the {@link User} to get samples for. If this property is null, will serch for all users.
-	 * @param queryString the query string to search for >>>>>>> master
+	 * @param queryString the query string to search for
 	 * @return a {@link Specification} for {@link ProjectSampleJoin}
 	 */
 	private static Specification<ProjectSampleJoin> sampleForUserSpecification(final User user,
@@ -800,5 +798,16 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<GenericStatModel> getSamplesCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod) {
 		return sampleRepository.countSamplesCreatedGrouped(createdDate, statisticTimePeriod.getGroupByFormat());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public Map<Long, Long> getCoverageForSamplesInProject(Project project, List<Long> sampleIds) {
+		return psjRepository.calculateCoverageForSamplesInProject(project, sampleIds)
+				.stream()
+				.collect(HashMap::new, (m, o) -> m.put((Long) o[0], (Long) o[1]), Map::putAll);
 	}
 }
