@@ -80,22 +80,23 @@ public class LoginPageLdapIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
 	}
 
-	/**
-	 * Test signing in with user that does not exist in ldap but does exist in local db
-	 * @throws Exception
-	 */
-	@Test
-	public void testNotInLdap() throws Exception {
-		// User exists in db
-		UserDetails u = userRepository.loadUserByUsername(MRTEST_USERNAME);
-		assertEquals(MRTEST_USERNAME, u.getUsername());
-		// try sign in
-		LoginPage page = LoginPage.to(driver());
-		assertFalse(page.isLoginErrorDisplayed(), "No login errors should be originally displayed");
-		page.login(MRTEST_USERNAME, MRTEST_PASSWORD);
-		assertTrue(driver().getCurrentUrl().contains("login?error=true"), "Should update the url with '?error=true'");
-		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
-	}
+	// this is no longer a valid test, as we allow signin's from users not in ldap if they are in local DB
+//	/**
+//	 * Test signing in with user that does not exist in ldap but does exist in local db
+//	 * @throws Exception
+//	 */
+//	@Test
+//	public void testNotInLdap() throws Exception {
+//		// User exists in db
+//		UserDetails u = userRepository.loadUserByUsername(MRTEST_USERNAME);
+//		assertEquals(MRTEST_USERNAME, u.getUsername());
+//		// try sign in
+//		LoginPage page = LoginPage.to(driver());
+//		assertFalse(page.isLoginErrorDisplayed(), "No login errors should be originally displayed");
+//		page.login(MRTEST_USERNAME, MRTEST_PASSWORD);
+//		assertTrue(driver().getCurrentUrl().contains("login?error=true"), "Should update the url with '?error=true'");
+//		assertTrue(page.isLoginErrorDisplayed(), "Should display error on bad login");
+//	}
 
 	/**
 	 * Test signing in with the wrong password for a user that exists in ldap and in database
