@@ -12,18 +12,18 @@ import {
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { useResetFormOnCloseModal } from "../../../hooks";
-import { useConcatenateSequencingObjectsMutation } from "../../../apis/samples/samples";
+import {
+  SampleSequencingObject,
+  SequencingFile,
+  SequencingObject,
+  useConcatenateSequencingObjectsMutation,
+} from "../../../apis/samples/samples";
 import {
   addToSequenceFiles,
   removeFileObjectFromSample,
   resetConcatenateSelected,
 } from "../sampleFilesSlice";
 import { IconArrowLeft, IconArrowRight, IconFile } from "../../icons/Icons";
-import {
-  SampleSequencingObject,
-  SequencingFile,
-  SequencingObject,
-} from "../../../apis/samples/samples";
 
 const { Title } = Typography;
 

@@ -1,15 +1,15 @@
 import React from "react";
 import { Col, Input, Row, Table } from "antd";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
-import { fetchSampleAnalyses } from "../../../apis/samples/samples";
+import {
+  AnalysisState,
+  fetchSampleAnalyses,
+  SampleAnalyses as SampleAnalysesItem,
+} from "../../../apis/samples/samples";
 import { setSampleAnalyses } from "../sampleAnalysesSlice";
 import { SampleAnalysesState } from "./SampleAnalysesState";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import {
-  AnalysisState,
-  SampleAnalyses as SampleAnalysesItem,
-} from "../../../apis/samples/samples";
 
 const { Search } = Input;
 

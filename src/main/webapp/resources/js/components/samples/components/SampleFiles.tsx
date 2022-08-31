@@ -16,12 +16,12 @@ import {
 
 import {
   fetchSampleFiles,
+  FileUpload,
   uploadSequenceFiles,
   uploadAssemblyFiles,
   uploadFast5Files,
 } from "../../../apis/samples/samples";
 import { SPACE_MD } from "../../../styles/spacing";
-import { FileUpload } from "../../../apis/samples/samples";
 
 /**
  * React component to display sample files and upload files to sample

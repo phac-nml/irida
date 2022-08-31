@@ -2,11 +2,11 @@ import axios from "axios";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 
 const TAXONOMY = "taxonomy";
-const ONTOLOGY_URLS: ontologyDictionary = {
+const ONTOLOGY_URLS: OntologyDictionary = {
   [TAXONOMY]: setBaseUrl("ajax/taxonomy"),
 };
 
-export interface ontologyDictionary {
+export interface OntologyDictionary {
   [key: string]: string;
 }
 
