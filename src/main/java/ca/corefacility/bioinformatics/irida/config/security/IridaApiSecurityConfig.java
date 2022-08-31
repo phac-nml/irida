@@ -35,9 +35,13 @@ import org.springframework.security.web.access.expression.DefaultWebSecurityExpr
 @Import({ IridaAuthenticationSecurityConfig.class })
 public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
-	@Autowired
+	@Autowired(required = false)
 	@Qualifier("ldapAuthenticationProvider")
 	private AuthenticationProvider ldapAuthenticationProvider;
+
+	@Autowired(required = false)
+	@Qualifier("activeDirectoryLdapAuthenticationProvider")
+	private AuthenticationProvider activeDirectoryLdapAuthenticationProvider;
 
 	@Autowired
 	@Qualifier("defaultAuthenticationProvider")
@@ -80,10 +84,14 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		if(authenticationMode.equals("ldap") || authenticationMode.equals("adldap")) {
-			auth.authenticationProvider(ldapAuthenticationProvider);
-		}
+		// Order of auth providers matters.
+		// Default DAO must be first to allow admin/local sign-in if ldap servers are unresponsive.
 		auth.authenticationProvider(defaultAuthenticationProvider);
+		if(authenticationMode.equals("ldap")) {
+			auth.authenticationProvider(ldapAuthenticationProvider);
+		} else if(authenticationMode.equals("adldap")) {
+			auth.authenticationProvider(activeDirectoryLdapAuthenticationProvider);
+		}
 		auth.authenticationProvider(anonymousAuthenticationProvider());
 	}
 
