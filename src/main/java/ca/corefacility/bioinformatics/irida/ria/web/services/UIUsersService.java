@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mail.MailSendException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -70,7 +71,7 @@ public class UIUsersService {
 	}
 
 	/**
-	 * Get a paged listing of users for the administration user.  This can be filtered and sorted.
+	 * Get a paged listing of users for the administration user. This can be filtered and sorted.
 	 *
 	 * @param request - the information about the current page of users to return
 	 * @return {@link TableResponse}
@@ -201,11 +202,10 @@ public class UIUsersService {
 			userService.updateFields(id, ImmutableMap.of("enabled", isEnabled));
 			String key = isEnabled ? "server.AdminUsersService.enabled" : "server.AdminUsersService.disabled";
 			return new AjaxSuccessResponse(messageSource.getMessage(key, new Object[] { user.getUsername() }, locale));
-		} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException |
-				 InvalidPropertyException e) {
-			throw new UIUserStatusException(
-					messageSource.getMessage("server.AdminUsersService.error", new Object[] { user.getUsername() },
-							locale));
+		} catch (EntityExistsException | EntityNotFoundException | ConstraintViolationException
+				| InvalidPropertyException e) {
+			throw new UIUserStatusException(messageSource.getMessage("server.AdminUsersService.error",
+					new Object[] { user.getUsername() }, locale));
 		}
 	}
 
@@ -223,10 +223,10 @@ public class UIUsersService {
 		boolean isAdmin = RoleUtilities.isAdmin(principalUser);
 		boolean canEditUserInfo = canEditUserInfo(principalUser, user);
 		boolean canEditUserStatus = canEditUserStatus(principalUser, user);
-		boolean canChangePassword = canChangePassword(principalUser, user);
+		boolean isOwnAccount = isOwnAccount(principalUser, user);
 		boolean canCreatePasswordReset = canCreatePasswordReset(principalUser, user);
 
-		return new UserDetailsResponse(userDetails, isAdmin, canEditUserInfo, canEditUserStatus, canChangePassword,
+		return new UserDetailsResponse(userDetails, isAdmin, canEditUserInfo, canEditUserStatus, isOwnAccount,
 				canCreatePasswordReset);
 	}
 
@@ -295,22 +295,55 @@ public class UIUsersService {
 	 */
 	public AjaxSuccessResponse changeUserPassword(Long userId, String oldPassword, String newPassword,
 			Principal principal, HttpServletRequest request, Locale locale) throws UIUserFormException {
+		User user = userService.read(userId);
 		User principalUser = userService.getUserByUsername(principal.getName());
+		boolean principalAdmin = principalUser.getAuthorities().contains(Role.ROLE_ADMIN);
+		boolean usersEqual = user.equals(principalUser);
 		Map<String, Object> updatedValues = new HashMap<>();
 		Map<String, String> errors = new HashMap<>();
 
-		if (!Strings.isNullOrEmpty(oldPassword) || !Strings.isNullOrEmpty(newPassword)) {
-			if (!passwordEncoder.matches(oldPassword, principalUser.getPassword())) {
+		if (usersEqual) {
+			//check both oldPassword & newPassword exist if a user is updating their own password
+			if (Strings.isNullOrEmpty(oldPassword)) {
 				errors.put("oldPassword",
-						messageSource.getMessage("server.user.edit.password.old.incorrect", null, request.getLocale()));
+						messageSource.getMessage("server.user.edit.password.old.required", null, request.getLocale()));
+			} else if (Strings.isNullOrEmpty(newPassword)) {
+				errors.put("newPassword",
+						messageSource.getMessage("server.user.edit.password.new.required", null, request.getLocale()));
 			} else {
-				updatedValues.put("password", newPassword);
+				if (!passwordEncoder.matches(oldPassword, principalUser.getPassword())) {
+					errors.put("oldPassword", messageSource.getMessage("server.user.edit.password.old.incorrect", null,
+							request.getLocale()));
+				} else {
+					updatedValues.put("password", newPassword);
+				}
+			}
+		} else {
+			//only check newPassword exists if an admin is updating another user's password
+			if (principalAdmin) {
+				if (Strings.isNullOrEmpty(newPassword)) {
+					errors.put("newPassword", messageSource.getMessage("server.user.edit.password.new.required", null,
+							request.getLocale()));
+				} else {
+					updatedValues.put("password", newPassword);
+				}
 			}
 		}
 
 		if (errors.isEmpty()) {
 			updateUser(userId, principal, request, updatedValues);
 		} else {
+			try {
+				User updatedUser = userService.updateFields(userId, updatedValues);
+
+				// If the user is updating their account make sure you update it in the session variable
+				if (updatedUser != null && usersEqual) {
+					HttpSession session = request.getSession();
+					session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, (UserDetails) updatedUser);
+				}
+			} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
+				errors = handleCreateUpdateException(ex, request.getLocale());
+			}
 			throw new UIUserFormException(errors);
 		}
 
@@ -343,9 +376,8 @@ public class UIUsersService {
 					messageSource.getMessage("server.password.reset.error.message", null, locale));
 		}
 
-		return new AjaxSuccessResponse(
-				messageSource.getMessage("server.password.reset.success.message", new Object[] { user.getFirstName() },
-						locale));
+		return new AjaxSuccessResponse(messageSource.getMessage("server.password.reset.success.message",
+				new Object[] { user.getFirstName() }, locale));
 	}
 
 	/**
@@ -387,7 +419,7 @@ public class UIUsersService {
 			EntityExistsException eex = (EntityExistsException) ex;
 			errors.put(eex.getFieldName(), eex.getMessage());
 		} else if (ex instanceof PasswordReusedException) {
-			errors.put("password", messageSource.getMessage("server.user.edit.passwordReused", null, locale));
+			errors.put("newPassword", messageSource.getMessage("server.user.edit.passwordReused", null, locale));
 		}
 
 		return errors;
@@ -422,15 +454,15 @@ public class UIUsersService {
 	}
 
 	/**
-	 * Check if the logged in user is allowed to change their password.
+	 * Check if the logged in user is modifying their own account.
 	 *
 	 * @param principalUser - the currently logged in principal
 	 * @param user          - the user to edit
 	 * @return boolean if the principal can change their password
+	 * @return if the user is an admin
 	 */
-	private boolean canChangePassword(User principalUser, User user) {
+	private boolean isOwnAccount(User principalUser, User user) {
 		boolean usersEqual = user.equals(principalUser);
-
 		return usersEqual;
 	}
 
@@ -541,13 +573,7 @@ public class UIUsersService {
 			Map<String, Object> updatedValues) throws UIUserFormException {
 		Map<String, String> errors;
 		try {
-			User user = userService.updateFields(userId, updatedValues);
-
-			// If the user is updating their account make sure you update it in the session variable
-			if (user != null && principal.getName().equals(user.getUsername())) {
-				HttpSession session = request.getSession();
-				session.setAttribute(UserSecurityInterceptor.CURRENT_USER_DETAILS, user);
-			}
+			userService.updateFields(userId, updatedValues);
 		} catch (ConstraintViolationException | DataIntegrityViolationException | PasswordReusedException ex) {
 			errors = handleCreateUpdateException(ex, request.getLocale());
 			throw new UIUserFormException(errors);

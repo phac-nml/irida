@@ -1,8 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
-import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.user.UserMinimalModel;
 
 /**
  * Represents a {@link NcbiExportSubmission} for use within the UI.
@@ -10,7 +10,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableModel;
 public class NcbiExportSubmissionTableModel extends TableModel {
 	private final int exportedSamples;
 	private final String state;
-	private final Submitter submitter;
+	private final UserMinimalModel submitter;
 	private final String bioProjectId;
 
 
@@ -19,7 +19,7 @@ public class NcbiExportSubmissionTableModel extends TableModel {
 		this.exportedSamples = submission.getBioSampleFiles().size();
 		this.state = submission.getUploadState().toString();
 		this.bioProjectId = submission.getBioProjectId();
-		this.submitter = new Submitter(submission.getSubmitter());
+		this.submitter = new UserMinimalModel(submission.getSubmitter());
 	}
 
 	public int getExportedSamples() {
@@ -30,29 +30,11 @@ public class NcbiExportSubmissionTableModel extends TableModel {
 		return state;
 	}
 
-	public Submitter getSubmitter() {
+	public UserMinimalModel getSubmitter() {
 		return submitter;
 	}
 
 	public String getBioProjectId() {
 		return bioProjectId;
 	}
-
-	static class Submitter {
-		private final long id;
-		private final String name;
-
-		public Submitter(User user) {
-			this.id = user.getId();
-			this.name = user.getLabel();
-		}
-
-		 public long getId() {
-			 return id;
-		 }
-
-		 public String getName() {
-			 return name;
-		 }
-	 }
 }

@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.config.repository;
 
 import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
 
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
@@ -13,8 +12,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.envers.repository.support.EnversRevisionRepositoryFactoryBean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
@@ -23,14 +20,15 @@ import ca.corefacility.bioinformatics.irida.repositories.relational.auditing.Use
 
 /**
  * Configuration for repository/data storage classes.
- * 
- * 
  */
 @Configuration
 @EnableTransactionManagement(order = IridaApiRepositoriesConfig.TRANSACTION_MANAGEMENT_ORDER)
-@EnableJpaRepositories(basePackages = "ca.corefacility.bioinformatics.irida.repositories", repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
+@EnableJpaRepositories(basePackages = "ca.corefacility.bioinformatics.irida.repositories",
+		repositoryFactoryBeanClass = EnversRevisionRepositoryFactoryBean.class)
 @ComponentScan("ca.corefacility.bioinformatics.irida.repositories.remote")
-@Import({ IridaApiPropertyPlaceholderConfig.class, IridaApiJdbcDataSourceConfig.class,
+@Import({
+		IridaApiPropertyPlaceholderConfig.class,
+		IridaApiJdbcDataSourceConfig.class,
 		IridaApiFilesystemRepositoryConfig.class })
 @EnableJpaAuditing
 public class IridaApiRepositoriesConfig {
@@ -48,11 +46,5 @@ public class IridaApiRepositoriesConfig {
 	@Bean
 	public AuditReader auditReader(EntityManagerFactory entityManagerFactory) {
 		return AuditReaderFactory.get(entityManagerFactory.createEntityManager());
-	}
-	
-	@Bean(name="iridaTokenStore")
-	public TokenStore tokenStore(DataSource dataSource) {
-		TokenStore store = new JdbcTokenStore(dataSource);
-		return store;
 	}
 }

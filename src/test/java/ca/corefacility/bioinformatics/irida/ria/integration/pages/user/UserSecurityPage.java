@@ -14,7 +14,7 @@ public class UserSecurityPage extends AbstractPage {
 
 	private PageUtilities pageUtilities;
 
-	public static String SECURITY_PAGE = "users/3/security";
+	public static String SECURITY_PAGE = "users/1/security";
 
 	public UserSecurityPage(WebDriver driver) {
 		super(driver);
@@ -42,8 +42,8 @@ public class UserSecurityPage extends AbstractPage {
 		WebElement passwordResetLink = driver.findElement(By.className("t-password-reset-link"));
 		passwordResetLink.click();
 		pageUtilities.waitForElementVisible(By.className("ant-popover-message"));
-		WebElement confirmButton = driver.findElement(
-				By.cssSelector("div.ant-popover-buttons > button.ant-btn-primary"));
+		WebElement confirmButton = driver
+				.findElement(By.cssSelector("div.ant-popover-buttons > button.ant-btn-primary"));
 		confirmButton.click();
 	}
 

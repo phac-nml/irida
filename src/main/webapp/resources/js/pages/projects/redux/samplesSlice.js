@@ -3,19 +3,45 @@ import {
   createAsyncThunk,
   createReducer,
 } from "@reduxjs/toolkit";
-import { getProjectIdFromUrl } from "../../../utilities/url-utilities";
+import {
+  getProjectIdFromUrl,
+  setBaseUrl,
+} from "../../../utilities/url-utilities";
 import { INITIAL_TABLE_STATE } from "../samples/services/constants";
 import { getMinimalSampleDetailsForFilteredProject } from "../../../apis/projects/samples";
 import { putSampleInCart } from "../../../apis/cart/cart";
 import { downloadPost } from "../../../utilities/file-utilities";
 import { formatFilterBySampleNames } from "../../../utilities/table-utilities";
+import isEqual from "lodash/isEqual";
 
-const updateTable = createAction("samples/table/update");
 const reloadTable = createAction("samples/table/reload");
 const addSelectedSample = createAction("samples/table/selected/add");
 const removeSelectedSample = createAction("samples/table/selected/remove");
 const clearSelectedSamples = createAction("samples/table/selected/clear");
 const clearFilterByFile = createAction("samples/table/clearFilterByFile");
+
+/**
+ * Updates the state of the table filters and search, which triggers
+ * the re-render of the samples table.
+ * @type {AsyncThunk<unknown, void, {}>}
+ */
+const updateTable = createAsyncThunk(
+  "samples/table/update",
+  async (values, { getState }) => {
+    const {
+      samples: { options, selected, selectedCount },
+    } = getState();
+    if (
+      isEqual(values?.search, options.search) &&
+      isEqual(values?.filters, options.filters)
+    ) {
+      // Just a page change, don't update selected
+      return { options: values, selected, selectedCount };
+    }
+    // Filters applied therefore need to clear any selections
+    return { options: values, selected: {}, selectedCount: 0 };
+  }
+);
 
 /**
  * Called when selecting all samples from the Samples Table.
@@ -62,7 +88,7 @@ const downloadSamples = createAsyncThunk(
     const { samples } = getState();
     const sampleIds = Object.values(samples.selected).map((s) => s.id);
     return await downloadPost(
-      `/ajax/projects/${samples.projectId}/samples/download`,
+      setBaseUrl(`/ajax/projects/${samples.projectId}/samples/download`),
       { sampleIds }
     );
   }
@@ -85,7 +111,9 @@ const exportSamplesToFile = createAsyncThunk(
     }
 
     return await downloadPost(
-      `/ajax/projects/${samples.projectId}/samples/export?type=${type}`,
+      setBaseUrl(
+        `/ajax/projects/${samples.projectId}/samples/export?type=${type}`
+      ),
       options
     );
   }
@@ -136,18 +164,10 @@ const initialState = {
 
 export default createReducer(initialState, (builder) => {
   builder
-    .addCase(updateTable, (state, action) => {
-      // reset selected state when changing filters or search
-      if (
-        JSON.stringify(action.payload.search) !==
-          JSON.stringify(state.options.search) ||
-        JSON.stringify(action.payload.filters) !==
-          JSON.stringify(state.options.filters)
-      ) {
-        state.selected = {};
-        state.selectedCount = 0;
-      }
-      state.options = action.payload;
+    .addCase(updateTable.fulfilled, (state, action) => {
+      state.options = action.payload.options;
+      state.selected = action.payload.selected;
+      state.selectedCount = action.payload.selectedCount;
     })
     .addCase(reloadTable, (state) => {
       const newOptions = getInitialTableOptions();

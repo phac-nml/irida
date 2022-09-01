@@ -37,7 +37,7 @@ public class UsersAjaxController {
 	}
 
 	/**
-	 * Get a paged listing of users for the administration user.  This can be filtered and sorted.
+	 * Get a paged listing of users for the administration user. This can be filtered and sorted.
 	 *
 	 * @param request - the information about the current page of users to return
 	 * @return {@link TableResponse}
@@ -104,7 +104,6 @@ public class UsersAjaxController {
 		} catch (UIUserFormException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxFormErrorResponse(e.getErrors()));
 		}
-
 	}
 
 	/**
@@ -119,8 +118,9 @@ public class UsersAjaxController {
 	 * @return a status message
 	 */
 	@RequestMapping(value = "/{userId}/changePassword", method = RequestMethod.POST)
-	public ResponseEntity<AjaxResponse> changeUserPassword(@PathVariable Long userId, @RequestParam String oldPassword,
-			@RequestParam String newPassword, Principal principal, HttpServletRequest request, Locale locale) {
+	public ResponseEntity<AjaxResponse> changeUserPassword(@PathVariable Long userId,
+			@RequestParam(required = false) String oldPassword, @RequestParam String newPassword, Principal principal,
+			HttpServletRequest request, Locale locale) {
 		try {
 			return ResponseEntity.ok(
 					uiUsersService.changeUserPassword(userId, oldPassword, newPassword, principal, request, locale));

@@ -38,6 +38,7 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(id="rc-tabs-0-tab-files")
 	private WebElement filesTabLink;
 
+
 	@FindBy(id="rc-tabs-0-tab-analyses")
 	private WebElement sampleAnalysesTabLink;
 
@@ -82,6 +83,12 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	@FindBy(className = "t-default-seq-obj-tag")
 	private List<WebElement> defaultSeqObjTags;
+
+	@FindBy(className = "t-set-default-genome-assembly-button")
+	private List<WebElement> setDefaultGenomeAssemblyBtns;
+
+	@FindBy(className = "t-default-genome-assembly-tag")
+	private List<WebElement> defaultGenomeAssemblyTags;
 
 	@FindBy(className= "t-sample-analyses")
 	private WebElement sampleAnalysesTable;
@@ -161,6 +168,7 @@ public class SampleDetailsViewer extends AbstractPage {
 	}
 
 	public int numberOfFilesDisplayed() {
+		waitForTime(300);
 		if(files != null) {
 			return files.size();
 		}
@@ -329,6 +337,12 @@ public class SampleDetailsViewer extends AbstractPage {
 		waitForTime(500);
 	}
 
+
+	public void clickSampleName() {
+		WebElement ele = driver.findElement(By.className("t-file-label"));
+		ele.click();
+	}
+
 	public boolean isAddSampleToCartButtonVisible() {
 		try {
 			return addSampleToCartBtn.isDisplayed();
@@ -353,6 +367,22 @@ public class SampleDetailsViewer extends AbstractPage {
 	public void clickRemoveSampleFromCartButton() {
 		removeSampleFromCartBtn.click();
 		waitForTime(500);
+	}
+
+	public int numberOfSequencingObjectsSetAsDefault() {
+		return defaultSeqObjTags.size();
+	}
+
+	public int numberOfGenomeAssembliesSetAsDefault() {
+		return defaultGenomeAssemblyTags.size();
+	}
+
+	public int numberOfSetAsDefaultSeqObjsButtons() {
+		return setDefaultSeqObjBtns.size();
+	}
+
+	public int numberOfGenomeAssembliesSetAsDefaultButtons() {
+		return setDefaultGenomeAssemblyBtns.size();
 	}
 
 }
