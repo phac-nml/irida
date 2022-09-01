@@ -817,6 +817,6 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Map<Long, Long> getCoverageForSamplesInProject(Project project, List<Long> sampleIds) {
 		return psjRepository.calculateCoverageForSamplesInProject(project, sampleIds)
 				.stream()
-				.collect(HashMap::new, (m, o) -> m.put((Long) o[0], (Long) o[1]), Map::putAll);
+				.collect(HashMap::new, (m, t) -> m.put((Long) t.get(0), (Long) t.get(1)), Map::putAll);
 	}
 }
