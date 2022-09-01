@@ -1,7 +1,11 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { setHeaders } from "../services/importReducer";
+import {
+  setHeaders,
+  setMetadata,
+  setSampleNameColumn,
+} from "../services/importReducer";
 import { notification, Typography } from "antd";
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
@@ -9,15 +13,6 @@ import { useClearProjectSampleMetadataMutation } from "../../../../apis/metadata
 import * as XLSX from "xlsx";
 
 const { Text } = Typography;
-
-function processFile(data) {
-  const workbook = XLSX.read(data, { type: "binary", raw: true });
-  const firstSheet = workbook.SheetNames[0];
-  const rows = XLSX.utils.sheet_to_row_object_array(
-    workbook.Sheets[firstSheet]
-  );
-  console.log(rows);
-}
 
 /**
  * React component that displays Step #1 of the Sample Metadata Uploader.
@@ -49,10 +44,21 @@ export function SampleMetadataImportUploadFile() {
         let reader = new FileReader();
         if (reader.readAsBinaryString) {
           reader.onload = (e) => {
-            processFile(reader.result);
+            const workbook = XLSX.read(reader.result, {
+              type: "binary",
+              raw: true,
+            });
+            const firstSheet = workbook.SheetNames[0];
+            const rows = XLSX.utils.sheet_to_row_object_array(
+              workbook.Sheets[firstSheet]
+            );
+            // dispatch(setSampleNameColumn(Object.keys(rows[0])[0]));
+            dispatch(setHeaders(Object.keys(rows[0])));
+            dispatch(setMetadata(rows));
           };
           reader.readAsBinaryString(info.file.originFileObj);
         }
+        navigate(`/${projectId}/sample-metadata/upload/headers`);
         return false;
       }
       if (status === "done") {
@@ -62,12 +68,8 @@ export function SampleMetadataImportUploadFile() {
             info.file.name
           ),
         });
-        dispatch(
-          setHeaders(
-            info.file.response.headers,
-            info.file.response.sampleNameColumn
-          )
-        );
+        dispatch(setSampleNameColumn(info.file.response.sampleNameColumn));
+        dispatch(setHeaders(info.file.response.headers));
         navigate(`/${projectId}/sample-metadata/upload/headers`);
       } else if (status === "error") {
         setStatus("error");
