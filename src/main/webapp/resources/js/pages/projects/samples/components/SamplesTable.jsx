@@ -43,7 +43,8 @@ export function SamplesTable() {
   } = useSelector((state) => state.samples);
 
   /**
-   * Fetch the current state of the table.  Will refetch whenever one of the
+   * Fetch the current state of the table.
+   * Re-fetch whenever one of the
    * table options (filter, sort, or pagination) changes.
    */
   const { data: { content: samples, total } = {}, isFetching } =
@@ -65,8 +66,7 @@ export function SamplesTable() {
    * @param sample
    */
   const onRowSelectionChange = (event, sample) => {
-    const selected = event.target.checked;
-    if (selected) {
+    if (event.target.checked) {
       dispatch(addSelectedSample(sample));
     } else {
       dispatch(removeSelectedSample(sample.key));
@@ -98,7 +98,7 @@ export function SamplesTable() {
 
     dispatch(
       updateTable({
-        filters: { associated },
+        filters: { associated: associated === undefined ? null : associated }, // Null conversion for comparision with default values in slice
         pagination,
         order: formatSort(sorter),
         search,
