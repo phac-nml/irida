@@ -105,6 +105,13 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		summary = page.getTableSummary();
 		assertEquals(1, summary.getSelected(), "Should be 1 selected samples");
 
+		// Ensure selection maintains between pages
+		page.goToNextTablePage();
+		assertEquals(1, summary.getSelected(), "Should be 1 selected samples");
+		page.gotToPreviousTablePage();
+		assertEquals(1, summary.getSelected(), "Should be 1 selected samples");
+
+
 		page.toggleSelectAll();
 		summary = page.getTableSummary();
 		assertEquals(0, summary.getSelected(), "Should have all samples selected");

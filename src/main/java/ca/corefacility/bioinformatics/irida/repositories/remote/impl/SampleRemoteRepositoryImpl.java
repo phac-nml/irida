@@ -24,12 +24,11 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SampleRemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleMetadataController;
 
 /**
  * An implementation of {@link SampleRemoteRepository}
- * 
- *
  */
 @Repository
 public class SampleRemoteRepositoryImpl extends RemoteRepositoryImpl<Sample> implements SampleRemoteRepository {
@@ -49,8 +48,8 @@ public class SampleRemoteRepositoryImpl extends RemoteRepositoryImpl<Sample> imp
 	private RemoteAPITokenService tokenService;
 
 	@Autowired
-	public SampleRemoteRepositoryImpl(RemoteAPITokenService tokenService) {
-		super(tokenService, listTypeReference, objectTypeReference);
+	public SampleRemoteRepositoryImpl(RemoteAPITokenService tokenService, UserService userService) {
+		super(tokenService, userService, listTypeReference, objectTypeReference);
 		this.tokenService = tokenService;
 	}
 

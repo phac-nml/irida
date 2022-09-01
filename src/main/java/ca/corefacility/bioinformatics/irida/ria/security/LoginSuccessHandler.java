@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.web.servlet.LocaleResolver;
 
@@ -53,7 +54,8 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
 		super.onAuthenticationSuccess(httpServletRequest, httpServletResponse, authentication);
 
 		HttpSession session = httpServletRequest.getSession();
-		User user = (User) authentication.getPrincipal();
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		User user = userRepository.loadUserByUsername(username);
 
 		//set the user's selected locale
 		try {

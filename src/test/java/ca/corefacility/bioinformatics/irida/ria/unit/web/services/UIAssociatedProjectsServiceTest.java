@@ -16,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.settings.dto.Associ
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIAssociatedProjectsService;
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.collect.ImmutableList;
 
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.*;
 public class UIAssociatedProjectsServiceTest {
 	private UIAssociatedProjectsService service;
 	private ProjectService projectService;
+	private UserService userService;
 
 	// DATA
 	private final Long PROJECT_1_ID = 1L;
@@ -39,9 +41,10 @@ public class UIAssociatedProjectsServiceTest {
 	@BeforeEach
 	public void setUp() {
 		projectService = mock(ProjectService.class);
+		userService = mock(UserService.class);
 		ProjectOwnerPermission projectOwnerPermission = mock(ProjectOwnerPermission.class);
 		MessageSource messageSource = mock(MessageSource.class);
-		service = new UIAssociatedProjectsService(projectService, projectOwnerPermission, messageSource);
+		service = new UIAssociatedProjectsService(projectService, projectOwnerPermission, messageSource, userService);
 
 		PROJECT_1.setId(PROJECT_1_ID);
 		PROJECT_2.setId(PROJECT_2_ID);
