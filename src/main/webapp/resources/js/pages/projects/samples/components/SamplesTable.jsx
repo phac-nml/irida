@@ -314,7 +314,7 @@ export function SamplesTable() {
       title: i18n("SamplesTable.Column.created"),
       className: "t-td-created",
       dataIndex: ["sample", "createdDate"],
-      sorter: { multiple: 1 },
+      sorter: { multiple: 5 },
       width: 230,
       render: (createdDate) => {
         return formatInternationalizedDateTime(createdDate);
@@ -326,7 +326,7 @@ export function SamplesTable() {
       className: "t-td-modified",
       dataIndex: ["sample", "modifiedDate"],
       defaultSortOrder: "descend",
-      sorter: { multiple: 1 },
+      sorter: { multiple: 6 },
       width: 230,
       render: (modifiedDate) => {
         return formatInternationalizedDateTime(modifiedDate);
