@@ -63,11 +63,11 @@ function CreateNcbiExportSamples({
     const isValid =
       values.bioSample.length > 0 &&
       values.libraryName.length > 0 &&
-      values.libraryStrategy.length > 0 &&
-      values.librarySource.length > 0 &&
-      values.libraryConstructionProtocol.length > 0 &&
-      values.instrumentModel.length > 0 &&
-      values.librarySelection.length > 0 &&
+      values.libraryStrategy.value.length > 0 &&
+      values.librarySource.value.length > 0 &&
+      values.libraryConstructionProtocol.value.length > 0 &&
+      values.instrumentModel.value.length > 0 &&
+      values.librarySelection.value.length > 0 &&
       (values.singles.length > 0 || values.pairs.length > 0);
 
     const status = { ...validationStatus, [sample.name]: isValid };
@@ -97,6 +97,7 @@ function CreateNcbiExportSamples({
           }
         >
           <CreateNcbiSampleDetails
+            form={form}
             sample={sample}
             onChange={() => checkStatus(sample)}
           />

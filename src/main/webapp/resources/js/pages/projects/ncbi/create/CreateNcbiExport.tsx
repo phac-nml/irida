@@ -46,36 +46,30 @@ export interface SampleRecord {
   files: SequencingFiles;
 }
 
+type DefaultFieldValue = {
+  value: string | string[];
+  fromDefault: boolean;
+};
+
 export type FormSample = Omit<SampleRecord, "files" | "key"> & {
   bioSample: string;
   libraryName: string;
-  libraryStrategy: string;
-  librarySource: string;
-  libraryConstructionProtocol: string;
-  instrumentModel: string;
-  librarySelection: string;
+  libraryStrategy: DefaultFieldValue;
+  librarySource: DefaultFieldValue;
+  libraryConstructionProtocol: DefaultFieldValue;
+  instrumentModel: DefaultFieldValue;
+  librarySelection: DefaultFieldValue;
   status?: string;
   singles: number[];
   pairs: number[];
 };
 
-/**
- * TypeGuard for SampleRecord interface.
- * @param attribute
- */
-function isModifiableFieldOnFormSampleProperty(
-  attribute: string
-): attribute is keyof FormSample {
-  return [
-    "bioSample",
-    "libraryName",
-    "libraryStrategy",
-    "librarySource",
-    "libraryConstructionProtocol",
-    "instrumentModel",
-    "librarySelection",
-  ].includes(attribute);
-}
+export type DefaultModifiableField =
+  | "libraryStrategy"
+  | "librarySource"
+  | "libraryConstructionProtocol"
+  | "instrumentModel"
+  | "librarySelection";
 
 export type FormSamples = Record<string, FormSample>;
 
@@ -88,7 +82,7 @@ export interface LoaderValues {
 }
 
 export interface UpdateDefaultValues {
-  (field: string, value: string | string[]): void;
+  (field: DefaultModifiableField, value: string | string[]): void;
 }
 
 enum CreateStatus {
@@ -154,11 +148,11 @@ function CreateNcbiExport(): JSX.Element {
           libraryName: sample.name,
           name: sample.name,
           id: sample.id,
-          instrumentModel: "",
-          libraryConstructionProtocol: "",
-          librarySelection: "",
-          librarySource: "",
-          libraryStrategy: "",
+          instrumentModel: { value: "", fromDefault: true },
+          libraryConstructionProtocol: { value: "", fromDefault: true },
+          librarySelection: { value: "", fromDefault: true },
+          librarySource: { value: "", fromDefault: true },
+          libraryStrategy: { value: "", fromDefault: true },
           singles: [],
           pairs: [],
         };
@@ -179,18 +173,16 @@ function CreateNcbiExport(): JSX.Element {
    * @param value new value
    */
   const updateDefaultValue: UpdateDefaultValues = (field, value): void => {
-    if (isModifiableFieldOnFormSampleProperty(field)) {
-      // Update all the samples that don't currently have a value.
-      const values: FormSamples = form.getFieldValue("samples");
+    // Update all the samples that don't currently have a value set by the sample.
+    const values: FormSamples = form.getFieldValue("samples");
 
-      Object.values(values).forEach((sample) => {
-        if (sample[field] !== undefined && String(sample[field]).length === 0) {
-          form.setFieldsValue({
-            samples: { [sample.name]: { [field]: value } },
-          });
-        }
-      });
-    }
+    Object.values(values).forEach((sample) => {
+      if (sample[field].fromDefault || sample[field].value.length === 0) {
+        form.setFieldsValue({
+          samples: { [sample.name]: { [field]: { value, fromDefault: true } } },
+        });
+      }
+    });
   };
 
   const removeInvalidSamples = () => setInvalid([]);

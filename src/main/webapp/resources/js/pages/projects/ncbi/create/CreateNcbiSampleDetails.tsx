@@ -5,6 +5,7 @@ import {
   Checkbox,
   Col,
   Form,
+  FormInstance,
   Input,
   List,
   Row,
@@ -13,7 +14,11 @@ import {
 } from "antd";
 import React from "react";
 import { useLoaderData } from "react-router-dom";
-import { LoaderValues, SampleRecord } from "./CreateNcbiExport";
+import {
+  DefaultModifiableField,
+  LoaderValues,
+  SampleRecord,
+} from "./CreateNcbiExport";
 
 const rules = [
   {
@@ -23,14 +28,28 @@ const rules = [
 ];
 
 export default function CreateNcbiSampleDetails({
+  form,
   sample,
   onChange,
 }: {
+  form: FormInstance;
   sample: SampleRecord;
   onChange: () => void;
 }): JSX.Element {
   const { strategies, sources, platforms, selections }: LoaderValues =
     useLoaderData();
+
+  const onDefaultModifiableFieldChange = (field: DefaultModifiableField) => {
+    const value = form.getFieldValue(["samples", sample.name, field]);
+
+    // Update that the field was modified directly on the sample
+    form.setFieldsValue({
+      samples: {
+        [sample.name]: { [field]: { ...value, fromDefault: false } },
+      },
+    });
+    onChange();
+  };
 
   const singles = sample.files.singles.map((file) => ({
     label: (
@@ -94,12 +113,12 @@ export default function CreateNcbiSampleDetails({
       <Col md={12} xs={24}>
         <Form.Item
           rules={rules}
-          name={["samples", sample.name, "libraryStrategy"]}
+          name={["samples", sample.name, "libraryStrategy", "value"]}
           label={i18n("NcbiBioSample.libraryStrategy")}
         >
           <Select
             style={{ display: "block" }}
-            onChange={onChange}
+            onChange={() => onDefaultModifiableFieldChange("libraryStrategy")}
             className="t-sample-strategy"
           >
             {strategies?.map((option: string) => (
@@ -111,12 +130,12 @@ export default function CreateNcbiSampleDetails({
       <Col md={12} xs={24}>
         <Form.Item
           rules={rules}
-          name={["samples", sample.name, "librarySource"]}
+          name={["samples", sample.name, "librarySource", "value"]}
           label={i18n("NcbiBioSample.librarySource")}
         >
           <Select
             style={{ display: "block" }}
-            onChange={onChange}
+            onChange={() => onDefaultModifiableFieldChange("librarySource")}
             className="t-sample-source"
           >
             {sources.map((option: string) => (
@@ -128,12 +147,19 @@ export default function CreateNcbiSampleDetails({
       <Col md={12} xs={24}>
         <Form.Item
           rules={rules}
-          name={["samples", sample.name, "libraryConstructionProtocol"]}
+          name={[
+            "samples",
+            sample.name,
+            "libraryConstructionProtocol",
+            "value",
+          ]}
           label={i18n("NcbiBioSample.libraryConstructionProtocol")}
         >
           <Input
             type="text"
-            onChange={onChange}
+            onChange={() =>
+              onDefaultModifiableFieldChange("libraryConstructionProtocol")
+            }
             className="t-sample-protocol"
           />
         </Form.Item>
@@ -141,13 +167,13 @@ export default function CreateNcbiSampleDetails({
       <Col md={12} xs={24}>
         <Form.Item
           rules={rules}
-          name={["samples", sample.name, "instrumentModel"]}
+          name={["samples", sample.name, "instrumentModel", "value"]}
           label={i18n("NcbiBioSample.instrumentModel")}
         >
           <Cascader
             options={platforms}
             style={{ display: "block" }}
-            onChange={onChange}
+            onChange={() => onDefaultModifiableFieldChange("instrumentModel")}
             className="t-sample-model"
           />
         </Form.Item>
@@ -155,12 +181,12 @@ export default function CreateNcbiSampleDetails({
       <Col md={12} xs={24}>
         <Form.Item
           rules={rules}
-          name={["samples", sample.name, "librarySelection"]}
+          name={["samples", sample.name, "librarySelection", "value"]}
           label={i18n("NcbiBioSample.librarySelection")}
         >
           <Select
             style={{ display: "block" }}
-            onChange={onChange}
+            onChange={() => onDefaultModifiableFieldChange("librarySelection")}
             className="t-sample-selection"
           >
             {selections.map((option) => (
