@@ -156,13 +156,13 @@ public class UISampleService {
 	/**
 	 * Get details about the files belonging to a list of samples
 	 *
-	 * @param ids       - List of sample identifiers to get file details for
+	 * @param sampleIds       - List of sample identifiers to get file details for
 	 * @param projectId - the project id that these samples belong to
 	 * @return A map of sample id and their related file information
 	 */
-	public SampleFilesResponse getFilesForSamples(List<Long> ids, Long projectId) {
+	public SampleFilesResponse getFilesForSamples(List<Long> sampleIds, Long projectId) {
 		SampleFilesResponse response = new SampleFilesResponse();
-		ids.stream()
+		sampleIds.stream()
 				.forEach(id -> response.put(id, getSampleFiles(id, projectId)));
 		return response;
 	}
