@@ -11,10 +11,10 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrappe
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.repositories.remote.SequenceFilePairRemoteRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 /**
- * {@link RemoteRepositoryImpl} for reading and listing {@link SequenceFilePair}
- * objects.
+ * {@link RemoteRepositoryImpl} for reading and listing {@link SequenceFilePair} objects.
  */
 @Repository
 public class SequenceFilePairRemoteRepositoryImpl extends RemoteRepositoryImpl<SequenceFilePair>
@@ -25,8 +25,8 @@ public class SequenceFilePairRemoteRepositoryImpl extends RemoteRepositoryImpl<S
 	};
 
 	@Autowired
-	public SequenceFilePairRemoteRepositoryImpl(RemoteAPITokenService tokenService) {
-		super(tokenService, listTypeReference, objectTypeReference);
+	public SequenceFilePairRemoteRepositoryImpl(RemoteAPITokenService tokenService, UserService userService) {
+		super(tokenService, userService, listTypeReference, objectTypeReference);
 	}
 
 	/**

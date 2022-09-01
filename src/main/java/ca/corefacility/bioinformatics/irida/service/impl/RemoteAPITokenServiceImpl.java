@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,8 +105,11 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 				URI serviceTokenLocation = UriBuilder.fromUri(api.getServiceURI()).path("oauth").path("token").build();
 
 				OAuthClientRequest tokenRequest = OAuthClientRequest.tokenLocation(serviceTokenLocation.toString())
-						.setClientId(api.getClientId()).setClientSecret(api.getClientSecret())
-						.setRefreshToken(refreshToken).setGrantType(GrantType.REFRESH_TOKEN).buildBodyMessage();
+						.setClientId(api.getClientId())
+						.setClientSecret(api.getClientSecret())
+						.setRefreshToken(refreshToken)
+						.setGrantType(GrantType.REFRESH_TOKEN)
+						.buildBodyMessage();
 
 				OAuthJSONAccessTokenResponse accessToken = oauthClient.accessToken(tokenRequest);
 
@@ -129,11 +133,12 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 
 	/**
 	 * Get a new token from the given auth code
+	 * 
 	 * @param authcode      the auth code to create a token for
 	 * @param remoteAPI     the remote api to get a token for
 	 * @param tokenRedirect a redirect url to get the token from
 	 * @return a new token
-	 * @throws OAuthSystemException If building the token request fails
+	 * @throws OAuthSystemException  If building the token request fails
 	 * @throws OAuthProblemException If the token request fails
 	 */
 	@Transactional
@@ -147,8 +152,11 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 
 		// Create the token request form the given auth code
 		OAuthClientRequest tokenRequest = OAuthClientRequest.tokenLocation(serviceTokenLocation.toString())
-				.setClientId(remoteAPI.getClientId()).setClientSecret(remoteAPI.getClientSecret())
-				.setRedirectURI(tokenRedirect).setCode(authcode).setGrantType(GrantType.AUTHORIZATION_CODE)
+				.setClientId(remoteAPI.getClientId())
+				.setClientSecret(remoteAPI.getClientSecret())
+				.setRedirectURI(tokenRedirect)
+				.setCode(authcode)
+				.setGrantType(GrantType.AUTHORIZATION_CODE)
 				.buildBodyMessage();
 
 		// execute the request
@@ -168,7 +176,7 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 
 		// create the OAuth2 token and store it
 		RemoteAPIToken token = new RemoteAPIToken(accessToken, refreshToken, remoteAPI, expiry);
-	
+
 		return create(token);
 	}
 
@@ -179,9 +187,9 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 	 */
 	private String getUserName() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-			UserDetails details = (UserDetails) authentication.getPrincipal();
-			String username = details.getUsername();
+		if (authentication != null && (authentication.getPrincipal() instanceof UserDetails
+				|| authentication instanceof JwtAuthenticationToken)) {
+			String username = authentication.getName();
 
 			return username;
 		}
@@ -192,8 +200,7 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 	/**
 	 * Remove any old token for this user from the database
 	 * 
-	 * @param apiToken
-	 *            the api token to remove.
+	 * @param apiToken the api token to remove.
 	 * @return the token that was found.
 	 */
 	protected RemoteAPIToken getOldTokenId(RemoteAPIToken apiToken) {

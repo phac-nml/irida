@@ -39,6 +39,7 @@ import ca.corefacility.bioinformatics.irida.security.permissions.project.Project
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -54,18 +55,20 @@ public class UIProjectsService {
 	private final ProjectOwnerPermission projectOwnerPermission;
 	private final ManageLocalProjectSettingsPermission projectMembersPermission;
 	private final MetadataTemplateService metadataTemplateService;
-
+	private final UserService userService;
 
 	@Autowired
 	public UIProjectsService(ProjectService projectService, SampleService sampleService, MessageSource messageSource,
 			ProjectOwnerPermission projectOwnerPermission,
-			ManageLocalProjectSettingsPermission projectMembersPermission, MetadataTemplateService metadataTemplateService) {
+			ManageLocalProjectSettingsPermission projectMembersPermission,
+			MetadataTemplateService metadataTemplateService, UserService userService) {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.messageSource = messageSource;
 		this.projectOwnerPermission = projectOwnerPermission;
 		this.projectMembersPermission = projectMembersPermission;
 		this.metadataTemplateService = metadataTemplateService;
+		this.userService = userService;
 	}
 
 	/**
@@ -167,8 +170,8 @@ public class UIProjectsService {
 	public ProjectDetailsResponse getProjectInfo(Long projectId, Locale locale) throws AjaxItemNotFoundException {
 		try {
 			Project project = projectService.read(projectId);
-
-			User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			User user = userService.getUserByUsername(username);
 			boolean isAdmin = user.getSystemRole()
 					.equals(ca.corefacility.bioinformatics.irida.model.user.Role.ROLE_ADMIN);
 
@@ -180,7 +183,8 @@ public class UIProjectsService {
 
 			MetadataTemplate defaultTemplateForProject = metadataTemplateService.getDefaultTemplateForProject(project);
 
-			return new ProjectDetailsResponse(project, isAdmin || isOwner, isAdmin || isOwnerAllowRemote, defaultTemplateForProject);
+			return new ProjectDetailsResponse(project, isAdmin || isOwner, isAdmin || isOwnerAllowRemote,
+					defaultTemplateForProject);
 		} catch (EntityNotFoundException e) {
 			throw new AjaxItemNotFoundException(
 					messageSource.getMessage("server.ProjectDetails.project-not-found", new Object[] {}, locale));
@@ -211,9 +215,8 @@ public class UIProjectsService {
 			project.setOrganism(request.getValue());
 			break;
 		default:
-			throw new UpdateException(
-					messageSource.getMessage("server.ProjectDetails.error", new Object[] { request.getField() },
-							locale));
+			throw new UpdateException(messageSource.getMessage("server.ProjectDetails.error",
+					new Object[] { request.getField() }, locale));
 		}
 
 		try {

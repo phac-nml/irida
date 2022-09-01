@@ -6,22 +6,18 @@
 	<analysis_fastqc />
 	<overrepresented_sequence />
 	<analysis_fastqc_overrepresented_sequence />
-	
+
 	<sequence_file />
 	<sequence_file_properties />
 
 	<!--Keeping an admin user in the db for scheduling purposes -->
-	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0"
-		  email="admin@irida.com" firstName="admin" lastName="admin"
-		  password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK"
-		  phoneNumber="867-5309" username="admin" system_role="ROLE_ADMIN"
-		  credentialsNonExpired="true" enabled="true" />
-		
+	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0" email="admin@irida.com" firstName="admin" lastName="admin" password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK" phoneNumber="867-5309" username="admin" system_role="ROLE_ADMIN" credentialsNonExpired="true" enabled="true" />
+
 	<remote_api />
 	<remote_status />
-	
+
 	<sample />
-	
+
 	<sequencing_run />
 	<sequencing_run_properties />
 
@@ -35,63 +31,60 @@
 	<analysis_properties />
 
 	<client_details />
-	<client_role />
-	<client_details_authorities />
-	<client_details_resource_ids />
 	<client_details_grant_types />
 	<client_details_scope />
 
 	<reference_file />
-	
-	<workflow_named_parameters/>
-	<workflow_named_parameter_values/>
 
-	<metadata_field/>
-	<metadata_entry/>
+	<workflow_named_parameters />
+	<workflow_named_parameter_values />
+
+	<metadata_field />
+	<metadata_entry />
 
 	<project />
 	<related_project />
 
-	<metadata_template/>
+	<metadata_template />
 
 	<analysis_submission />
 	<analysis_submission_parameters />
-	<pipeline_metadata_entry/>
-	<project_analysis_submission/>
+	<pipeline_metadata_entry />
+	<project_analysis_submission />
 
 	<job_error />
-	
+
 	<genome_assembly />
 	<genome_assembly_analysis />
 	<sample_genome_assembly />
-	<uploaded_assembly/>
+	<uploaded_assembly />
 
 	<password_reset />
-	
+
 	<remote_api_token />
 	<project_user />
 	<project_sample />
 	<project_referencefile />
 
 	<user_group />
-	<user_group_project/>
-	<user_group_member/>
+	<user_group_project />
+	<user_group_member />
 
 	<sequencing_object />
 	<sequence_file_single_end />
 	<sequence_file_pair />
 	<sequence_file_pair_files />
 	<sequence_file_fast5 />
-	
+
 	<sample_sequencingobject />
-	
+
 	<analysis_submission_sequencing_object />
-	
-	<ncbi_export_submission/>
-	<ncbi_export_biosample/>
-	<ncbi_export_submission_biosample/>
-	<ncbi_export_biosample_sequence_file_single_end/>
-	<ncbi_export_biosample_sequence_file_pair/>
+
+	<ncbi_export_submission />
+	<ncbi_export_biosample />
+	<ncbi_export_submission_biosample />
+	<ncbi_export_biosample_sequence_file_single_end />
+	<ncbi_export_biosample_sequence_file_pair />
 
 	<project_event />
 
@@ -99,11 +92,11 @@
 	<announcement_user />
 	<qc_entry />
 
-	<metadata_template_metadata_field/>
+	<metadata_template_metadata_field />
 	<metadata_restriction />
-	<sequence_concatenation/>
-	<sequence_concatenation_sequencing_object/>
-	
+	<sequence_concatenation />
+	<sequence_concatenation_sequencing_object />
+
 	<project_subscription />
 
 
@@ -133,9 +126,6 @@
 	<remote_api_token_AUD />
 	<client_details_scope_AUD />
 	<client_details_grant_types_AUD />
-	<client_details_resource_ids_AUD />
-	<client_details_authorities_AUD />
-	<client_role_AUD />
 	<client_details_AUD />
 	<project_referencefile_AUD />
 	<reference_file_AUD />
@@ -144,24 +134,24 @@
 	<sequence_file_pair_AUD />
 	<sequence_file_pair_files_AUD />
 	<sequence_file_fast5_AUD />
-	<user_group_AUD/>
-	<user_group_member_AUD/>
-	<user_group_project_AUD/>
+	<user_group_AUD />
+	<user_group_member_AUD />
+	<user_group_project_AUD />
 	<announcement_AUD />
 	<announcement_user_AUD />
 	<remote_status_AUD />
-	<metadata_field_AUD/>
-	<metadata_template_AUD/>
+	<metadata_field_AUD />
+	<metadata_template_AUD />
 	<metadata_restriction_AUD />
-	<metadata_template_metadata_field_AUD/>
-	<project_analysis_submission_AUD/>
-	<metadata_entry_AUD/>
-	<pipeline_metadata_entry_AUD/>
-	<ncbi_export_submission_AUD/>
-	<ncbi_export_biosample_AUD/>
-	<ncbi_export_submission_biosample_AUD/>
-	<ncbi_export_biosample_sequence_file_single_end_AUD/>
-	<ncbi_export_biosample_sequence_file_pair_AUD/>
+	<metadata_template_metadata_field_AUD />
+	<project_analysis_submission_AUD />
+	<metadata_entry_AUD />
+	<pipeline_metadata_entry_AUD />
+	<ncbi_export_submission_AUD />
+	<ncbi_export_biosample_AUD />
+	<ncbi_export_submission_biosample_AUD />
+	<ncbi_export_biosample_sequence_file_single_end_AUD />
+	<ncbi_export_biosample_sequence_file_pair_AUD />
 	<job_error_AUD />
 	<project_subscription_AUD />
 </dataset>
