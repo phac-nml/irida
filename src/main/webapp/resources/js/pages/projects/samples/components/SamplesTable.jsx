@@ -257,8 +257,10 @@ export function SamplesTable() {
     {
       title: i18n("SamplesTable.Column.quality"),
       width: 100,
-      dataIndex: "quality",
-      render: (qualities) => <SampleQuality qualities={qualities} />,
+      dataIndex: "qcStatus",
+      render: (qcStatus, row) => (
+        <SampleQuality qcStatus={qcStatus} qualities={row.quality} />
+      ),
     },
     {
       title: i18n("SamplesTable.Column.coverage"),

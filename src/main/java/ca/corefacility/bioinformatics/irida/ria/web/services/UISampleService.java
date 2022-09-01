@@ -582,7 +582,10 @@ public class UISampleService {
 
 			List<QCEntry> qcEntriesForSample = sampleQCEntries.get(sample.getId());
 			List<String> quality = new ArrayList<>();
+			String qcStatus = null;
 
+			// If the sample has any SequencingObjects we will have at minimum CoverageQCEntry's
+			// which can be checked to set QCStatus.
 			if (qcEntriesForSample != null) {
 				qcEntriesForSample.forEach(entry -> {
 					entry.addProjectSettings(project);
@@ -591,8 +594,14 @@ public class UISampleService {
 								new Object[] { entry.getMessage() }, locale));
 					}
 				});
+				// set qcStatus based on filtered qcEntries
+				if (quality.size() == 0) {
+					qcStatus = "pass";
+				} else {
+					qcStatus = "fail";
+				}
 			}
-			return new ProjectSampleTableItem(join, quality, coverage);
+			return new ProjectSampleTableItem(join, quality, qcStatus, coverage);
 		}).collect(Collectors.toList());
 	}
 
