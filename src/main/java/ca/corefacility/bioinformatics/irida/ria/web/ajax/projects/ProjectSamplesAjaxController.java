@@ -211,6 +211,13 @@ public class ProjectSamplesAjaxController {
 		}
 	}
 
+	/**
+	 * Get the set of files for samples by the sample identifiers
+	 *
+	 * @param ids       List of identifiers for the samples to get files for.
+	 * @param projectId The project the samples belong to
+	 * @return {@link SampleFilesResponse} a map of sample identifier and their corresponding files
+	 */
 	@GetMapping("/files")
 	public SampleFilesResponse getFilesForSamples(@RequestParam List<Long> ids, @PathVariable Long projectId) {
 		return uiSampleService.getFilesForSamples(ids, projectId);
