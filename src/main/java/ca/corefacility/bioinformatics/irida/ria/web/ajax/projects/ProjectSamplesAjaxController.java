@@ -33,7 +33,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleServ
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 
 /**
- * Ajax Controller for handling asynchronous requests for project samples.
+ * AJAX Controller for handling asynchronous requests for project samples.
  */
 @RestController
 @RequestMapping("/ajax/projects/{projectId}/samples")
