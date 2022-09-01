@@ -48,9 +48,6 @@ export default function ProjectSPA(): JSX.Element {
       <Route
         path={setBaseUrl(`/projects/:projectId`)}
         element={<ProjectBase />}
-        errorElement={
-          <DefaultErrorBoundary message={"Highest level, WTF happened?"} />
-        }
       >
         <Route
           path="ncbi"
