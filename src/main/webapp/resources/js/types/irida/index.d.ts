@@ -14,6 +14,27 @@ declare namespace IRIDA {
     identifier: number;
   }
 
+  interface AnalysisSubmission {
+    analysisCleanedState: string;
+    analysisDescription: string | null;
+    analysisState: string;
+    automated: boolean;
+    createdDate: Date;
+    emailPipelineResultCompleted: boolean;
+    emailPipelineResultError: boolean;
+    identifier: number;
+    inputParameters: Record<string, string>;
+    label: string;
+    links: [];
+    modifiedDate: Date;
+    name: string;
+    priority: PRIORITY;
+    remoteInputDataId: string;
+    remoteWorkflowId: string;
+    updateSamples: boolean;
+    workflowId: string;
+  }
+
   interface Announcement extends IridaBase {
     title: string;
     message: string;
@@ -21,6 +42,8 @@ declare namespace IRIDA {
     createdBy: User;
     users: User[];
   }
+
+  export type PRIORITY = "LOW" | "MEDIUM" | "HIGH";
 
   interface Project extends IridaBase {
     description: string;

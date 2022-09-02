@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Button, List, Tag } from "antd";
+import { Avatar, Button, List, Tag, Typography } from "antd";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import {
   FileOutlined,
@@ -16,10 +16,27 @@ import {
   SampleFileQCEntry,
   SampleSequencingObject,
 } from "../../apis/samples/samples";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 const qcEntryTranslations: { [key: string]: string } = {
   COVERAGE: i18n("SequenceObjectListItem.qcEntry.COVERAGE"),
   PROCESSING: i18n("SequenceObjectListItem.qcEntry.PROCESSING"),
+};
+
+const analysisStateTranslations: { [key: string]: string } = {
+  NEW: i18n("AnalysisState.NEW"),
+  PREPARING: i18n("AnalysisState.PREPARING"),
+  PREPARED: i18n("AnalysisState.PREPARED"),
+  SUBMITTED: i18n("AnalysisState.SUBMITTED"),
+  SUBMITTING: i18n("AnalysisState.SUBMITTING"),
+  RUNNING: i18n("AnalysisState.RUNNING"),
+  FINISHED: i18n("AnalysisState.FINISHED"),
+  FINISHED_RUNNING: i18n("AnalysisState.FINISHED_RUNNING"),
+  COMPLETING: i18n("AnalysisState.COMPLETING"),
+  TRANSFERRED: i18n("AnalysisState.TRANSFERRED"),
+  POST_PROCESSING: i18n("AnalysisState.POST_PROCESSING"),
+  COMPLETED: i18n("AnalysisState.COMPLETED"),
+  ERROR: i18n("AnalysisState.ERROR"),
 };
 
 export interface SequenceObjectListItemProps {
@@ -29,6 +46,8 @@ export interface SequenceObjectListItemProps {
   displayConcatenationCheckbox: JSX.Element | null;
   displayFileProcessingStatus: boolean;
 }
+
+const { Text } = Typography;
 
 /**
  * Component to be used anywhere sequencing objects need to be listed
@@ -55,11 +74,18 @@ export function SequenceObjectListItem({
   );
 
   /*
-   If there are qc entries then another list item is added to the sequencing object which causes the
+   If there are qc entries and/or automated assemblies, then list items are added to the sequencing object which causes the
    avatar to shift vertically. This constant restores the location of the avatar to be beside the files.
    Same applies if concatenation checkboxes are present.
    */
-  const ELEMENT_ALIGN_MARGIN_TOP = sequenceObject.qcEntries?.length ? -50 : 0;
+  const ELEMENT_ALIGN_MARGIN_TOP =
+    sequenceObject.qcEntries?.length &&
+    sequenceObject.automatedAssembly !== null
+      ? -100
+      : sequenceObject.automatedAssembly !== null ||
+        sequenceObject.qcEntries?.length
+      ? -50
+      : 0;
 
   const { files, sequenceFile, file } = obj;
 
@@ -73,6 +99,33 @@ export function SequenceObjectListItem({
         color={entry.status === "POSITIVE" ? "green" : "red"}
       >
         {qcEntryTranslations[entry.type]} {entry.message ? entry.message : ""}
+      </Tag>
+    );
+  };
+
+  /*
+  Gets the automated analysis analysis state as a tag (icon) with a tooltip
+  */
+  const getAutomatedAssemblyStatus = () => {
+    let tagColor = "default";
+    if (sequenceObject.automatedAssembly.analysisState === "COMPLETED") {
+      tagColor = "success";
+    } else if (sequenceObject.automatedAssembly.analysisState === "ERROR") {
+      tagColor = "error";
+    } else if (sequenceObject.automatedAssembly.analysisState === "RUNNING") {
+      tagColor = "processing";
+    }
+    return (
+      <Tag
+        color={tagColor}
+        key={`automated-assembly-${sequenceObject.automatedAssembly.identifier}`}
+        className="t-automated-assembly-status"
+      >
+        {
+          analysisStateTranslations[
+            sequenceObject.automatedAssembly.analysisState
+          ]
+        }
       </Tag>
     );
   };
@@ -198,6 +251,37 @@ export function SequenceObjectListItem({
                 )}
               />
             </List.Item>
+            {sequenceObject.automatedAssembly !== null && (
+              <List.Item
+                key={`automated-assembly-${sequenceObject.automatedAssembly.identifier}`}
+              >
+                <List.Item.Meta
+                  title={
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Button
+                        type="link"
+                        href={setBaseUrl(
+                          `analysis/${sequenceObject.automatedAssembly.identifier}`
+                        )}
+                        style={{ padding: 0 }}
+                        target="_blank"
+                      >
+                        {sequenceObject.automatedAssembly.name}
+                      </Button>
+                      <div>
+                        <Text>{i18n("SequenceObjectListItem.status")}: </Text>
+                        {getAutomatedAssemblyStatus()}
+                      </div>
+                    </div>
+                  }
+                />
+              </List.Item>
+            )}
           </div>
         ) : (
           <List.Item

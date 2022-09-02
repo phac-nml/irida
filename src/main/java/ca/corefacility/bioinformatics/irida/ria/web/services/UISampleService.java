@@ -682,7 +682,7 @@ public class UISampleService {
 			String firstFileSize = sfp.getForwardSequenceFile().getFileSize();
 			String secondFileSize = sfp.getReverseSequenceFile().getFileSize();
 
-			filePairs.add(new SampleSequencingObjectFileModel(obj, firstFileSize, secondFileSize, obj.getQcEntries()));
+			filePairs.add(new SampleSequencingObjectFileModel(obj, firstFileSize, secondFileSize, obj.getQcEntries(), obj.getAutomatedAssembly()));
 		}
 
 		return filePairs;
