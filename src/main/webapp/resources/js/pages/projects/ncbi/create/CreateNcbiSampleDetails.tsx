@@ -1,4 +1,8 @@
-import { SwapOutlined, SwapRightOutlined } from "@ant-design/icons";
+import {
+  CalendarOutlined,
+  SwapOutlined,
+  SwapRightOutlined,
+} from "@ant-design/icons";
 import {
   Avatar,
   Cascader,
@@ -11,9 +15,11 @@ import {
   Row,
   Select,
   Space,
+  Tooltip,
 } from "antd";
 import React from "react";
 import { useLoaderData } from "react-router-dom";
+import { formatInternationalizedDateTime } from "../../../../utilities/date-utilities";
 import {
   DefaultModifiableField,
   LoaderValues,
@@ -67,8 +73,17 @@ export default function CreateNcbiSampleDetails({
           style={{ backgroundColor: `var(--primary-grey)` }}
           icon={<SwapRightOutlined />}
         />
-        <span className="t-single-name">{file.name}</span> -{" "}
-        {file.file.fileSize}
+        <span className="t-single-name">{file.name}</span>-
+        <Tooltip title={i18n("CreateNcbiExportSample.file")}>
+          {file.file.fileSize}
+        </Tooltip>
+        -
+        <Tooltip title={i18n("CreateNcbiExportSample.date")}>
+          <Space>
+            <CalendarOutlined style={{ color: `var(--primary-grey)` }} />
+            {formatInternationalizedDateTime(file.createdDate)}
+          </Space>
+        </Tooltip>
       </Space>
     ),
     value: file.id,
@@ -83,10 +98,34 @@ export default function CreateNcbiSampleDetails({
         />
         <List size="small">
           <List.Item>
-            {file.files[0].name} - {file.files[0].fileSize}
+            <Space>
+              <span>{file.files[0].name}</span>-
+              <Tooltip title={i18n("CreateNcbiExportSample.file")}>
+                {file.files[0].fileSize}
+              </Tooltip>
+              -
+              <Tooltip title={i18n("CreateNcbiExportSample.date")}>
+                <Space>
+                  <CalendarOutlined style={{ color: `var(--primary-grey)` }} />
+                  {formatInternationalizedDateTime(file.files[0].createdDate)}
+                </Space>
+              </Tooltip>
+            </Space>
           </List.Item>
           <List.Item>
-            {file.files[1].name} - {file.files[1].fileSize}
+            <Space>
+              <span>{file.files[1].name}</span>-
+              <Tooltip title={i18n("CreateNcbiExportSample.file")}>
+                {file.files[1].fileSize}
+              </Tooltip>
+              -
+              <Tooltip title={i18n("CreateNcbiExportSample.date")}>
+                <Space>
+                  <CalendarOutlined style={{ color: `var(--primary-grey)` }} />
+                  {formatInternationalizedDateTime(file.files[1].createdDate)}
+                </Space>
+              </Tooltip>
+            </Space>
           </List.Item>
         </List>
       </Space>
