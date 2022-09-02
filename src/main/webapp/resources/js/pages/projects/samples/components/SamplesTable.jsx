@@ -244,7 +244,7 @@ export function SamplesTable() {
       title: i18n("SamplesTable.Column.sampleName"),
       className: "t-td-name",
       dataIndex: ["sample", "sampleName"],
-      sorter: { multiple: 1 },
+      sorter: true,
       render: (name, row) => (
         <a href={`${sampleUrl}/${row.sample.id}`}>{name}</a>
       ),
@@ -271,14 +271,14 @@ export function SamplesTable() {
       title: i18n("SamplesTable.Column.organism"),
       className: "t-td-organism",
       dataIndex: ["sample", "organism"],
-      sorter: { multiple: 1 },
+      sorter: true,
       ...getColumnSearchProps(["sample", "organism"], "t-organism-select"),
     },
     {
       title: i18n("SamplesTable.Column.project"),
       className: "t-td-project",
       dataIndex: ["project", "name"],
-      sorter: { multiple: 1 },
+      sorter: true,
       key: "associated",
       render: (name, row) => {
         if (!(row.project.id in projectColours)) {
@@ -307,14 +307,14 @@ export function SamplesTable() {
     {
       title: i18n("SamplesTable.Column.collectedBy"),
       dataIndex: ["sample", "collectedBy"],
-      sorter: { multiple: 1 },
+      sorter: true,
       ...getColumnSearchProps(["sample", "collectedBy"]),
     },
     {
       title: i18n("SamplesTable.Column.created"),
       className: "t-td-created",
       dataIndex: ["sample", "createdDate"],
-      sorter: { multiple: 5 },
+      sorter: true,
       width: 230,
       render: (createdDate) => {
         return formatInternationalizedDateTime(createdDate);
@@ -326,7 +326,7 @@ export function SamplesTable() {
       className: "t-td-modified",
       dataIndex: ["sample", "modifiedDate"],
       defaultSortOrder: "descend",
-      sorter: { multiple: 6 },
+      sorter: true,
       width: 230,
       render: (modifiedDate) => {
         return formatInternationalizedDateTime(modifiedDate);
