@@ -27,6 +27,14 @@ const rules = [
   },
 ];
 
+/**
+ * React component to display a form details for each sample being submitted
+ * to the NCBI SRA.
+ * @param form Parent form being submitted
+ * @param sample Current sample
+ * @param onChange handles updated validation status of the sample
+ * @constructor
+ */
 export default function CreateNcbiSampleDetails({
   form,
   sample,
