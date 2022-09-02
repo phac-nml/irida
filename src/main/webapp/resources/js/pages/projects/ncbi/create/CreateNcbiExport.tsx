@@ -307,122 +307,120 @@ function CreateNcbiExport(): JSX.Element {
         <Col xxl={16} xl={20} sm={24}>
           <PageHeader title={i18n("CreateNcbiExport.title")}>
             {Object.keys(samples).length > 0 ? (
-              <>
-                <Form
-                  layout="vertical"
-                  initialValues={{
-                    releaseDate: moment(new Date()),
-                    samples: formSamples,
-                  }}
-                  form={form}
-                  onFinish={validateAndSubmit}
-                >
-                  <Space direction="vertical">
-                    <Card title={i18n("CreateNcbiExport.details")}>
-                      <Row gutter={[16, 16]}>
-                        <Col md={12} xs={24}>
-                          <Form.Item
-                            rules={[
-                              {
-                                required: true,
-                                message: i18n(
-                                  "NcbiSubmissionRequest.projectId.description"
-                                ),
-                              },
-                            ]}
-                            name="bioProject"
-                            label={i18n("NcbiSubmissionRequest.projectId")}
-                            help={i18n(
-                              "NcbiSubmissionRequest.projectId.description"
-                            )}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        <Col md={12} xs={24}>
-                          <Form.Item
-                            name="organization"
-                            rules={[
-                              {
-                                required: true,
-                                message: i18n(
-                                  "NcbiSubmissionRequest.organization.description"
-                                ),
-                              },
-                            ]}
-                            label={i18n("NcbiSubmissionRequest.organization")}
-                            help={i18n(
-                              "NcbiSubmissionRequest.organization.description"
-                            )}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        <Col md={12} xs={24}>
-                          <Form.Item
-                            name="namespace"
-                            rules={[
-                              {
-                                required: true,
-                                message: i18n(
-                                  "NcbiSubmissionRequest.namespace.description"
-                                ),
-                              },
-                            ]}
-                            label={i18n("NcbiSubmissionRequest.namespace")}
-                            help={i18n(
-                              "NcbiSubmissionRequest.namespace.description"
-                            )}
-                          >
-                            <Input />
-                          </Form.Item>
-                        </Col>
-                        <Col md={12} xs={24}>
-                          <Form.Item
-                            name="releaseDate"
-                            rules={[
-                              {
-                                required: true,
-                                message: i18n(
-                                  "NcbiSubmissionRequest.releaseDate.description"
-                                ),
-                              },
-                            ]}
-                            label={i18n("NcbiSubmissionRequest.releaseDate")}
-                            help={i18n(
-                              "NcbiSubmissionRequest.releaseDate.description"
-                            )}
-                          >
-                            <DatePicker
-                              style={{ width: "100%" }}
-                              disabledDate={disabledDate}
-                            />
-                          </Form.Item>
-                        </Col>
-                      </Row>
-                    </Card>
-                    <Card title={i18n("CreateNcbiExport.samples")}>
-                      {invalid.length > 0 && (
-                        <Alert
-                          type="warning"
-                          showIcon
-                          message={"Some Samples are not valid"}
-                          closable
-                          onClose={removeInvalidSamples}
-                        />
-                      )}
-                      <CreateNcbiDefaultOptions onChange={updateDefaultValue} />
-                      <CreateNcbiExportSamples
-                        form={form}
-                        samples={samples}
-                        removeSample={removeSample}
+              <Form
+                layout="vertical"
+                initialValues={{
+                  releaseDate: moment(new Date()),
+                  samples: formSamples,
+                }}
+                form={form}
+                onFinish={validateAndSubmit}
+              >
+                <Space direction="vertical">
+                  <Card title={i18n("CreateNcbiExport.details")}>
+                    <Row gutter={[16, 16]}>
+                      <Col md={12} xs={24}>
+                        <Form.Item
+                          rules={[
+                            {
+                              required: true,
+                              message: i18n(
+                                "NcbiSubmissionRequest.projectId.description"
+                              ),
+                            },
+                          ]}
+                          name="bioProject"
+                          label={i18n("NcbiSubmissionRequest.projectId")}
+                          help={i18n(
+                            "NcbiSubmissionRequest.projectId.description"
+                          )}
+                        >
+                          <Input />
+                        </Form.Item>
+                      </Col>
+                      <Col md={12} xs={24}>
+                        <Form.Item
+                          name="organization"
+                          rules={[
+                            {
+                              required: true,
+                              message: i18n(
+                                "NcbiSubmissionRequest.organization.description"
+                              ),
+                            },
+                          ]}
+                          label={i18n("NcbiSubmissionRequest.organization")}
+                          help={i18n(
+                            "NcbiSubmissionRequest.organization.description"
+                          )}
+                        >
+                          <Input />
+                        </Form.Item>
+                      </Col>
+                      <Col md={12} xs={24}>
+                        <Form.Item
+                          name="namespace"
+                          rules={[
+                            {
+                              required: true,
+                              message: i18n(
+                                "NcbiSubmissionRequest.namespace.description"
+                              ),
+                            },
+                          ]}
+                          label={i18n("NcbiSubmissionRequest.namespace")}
+                          help={i18n(
+                            "NcbiSubmissionRequest.namespace.description"
+                          )}
+                        >
+                          <Input />
+                        </Form.Item>
+                      </Col>
+                      <Col md={12} xs={24}>
+                        <Form.Item
+                          name="releaseDate"
+                          rules={[
+                            {
+                              required: true,
+                              message: i18n(
+                                "NcbiSubmissionRequest.releaseDate.description"
+                              ),
+                            },
+                          ]}
+                          label={i18n("NcbiSubmissionRequest.releaseDate")}
+                          help={i18n(
+                            "NcbiSubmissionRequest.releaseDate.description"
+                          )}
+                        >
+                          <DatePicker
+                            style={{ width: "100%" }}
+                            disabledDate={disabledDate}
+                          />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </Card>
+                  <Card title={i18n("CreateNcbiExport.samples")}>
+                    {invalid.length > 0 && (
+                      <Alert
+                        type="warning"
+                        showIcon
+                        message={"Some Samples are not valid"}
+                        closable
+                        onClose={removeInvalidSamples}
                       />
-                    </Card>
+                    )}
+                    <CreateNcbiDefaultOptions onChange={updateDefaultValue} />
+                    <CreateNcbiExportSamples
+                      form={form}
+                      samples={samples}
+                      removeSample={removeSample}
+                    />
+                  </Card>
 
-                    {buttons}
-                  </Space>
-                </Form>
-              </>
+                  {buttons}
+                </Space>
+              </Form>
             ) : (
               <Alert
                 type="error"
