@@ -197,7 +197,7 @@ function CreateNcbiExport(): JSX.Element {
 
   /**
    * When submitting the form, validate that all fields are valid, format the data
-   * and submitted to the server.
+   * and submit to the server.
    * onSuccess: show a message and return the user to the calling page after 1 second.
    * onError: show an error message to the user.
    */
