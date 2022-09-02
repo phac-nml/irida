@@ -655,8 +655,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Map<Long, List<QCEntry>> getQCEntriesForSamples(List<Sample> samples) {
 		return qcEntryRepository.getQCEntriesForSamples(samples)
 				.stream()
-				.collect(Collectors.groupingBy(t -> (Long) t.get(0),
-						Collectors.mapping(t -> (QCEntry) t.get(1), Collectors.toList())));
+				.collect(Collectors.groupingBy(sampleQCEntryTuple -> (Long) sampleQCEntryTuple.get(0), Collectors
+						.mapping(sampleQCEntryTuple -> (QCEntry) sampleQCEntryTuple.get(1), Collectors.toList())));
 	}
 
 	/**
@@ -817,6 +817,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Map<Long, Long> getCoverageForSamplesInProject(Project project, List<Long> sampleIds) {
 		return psjRepository.calculateCoverageForSamplesInProject(project, sampleIds)
 				.stream()
-				.collect(HashMap::new, (m, t) -> m.put((Long) t.get(0), (Long) t.get(1)), Map::putAll);
+				.collect(HashMap::new,
+						(sampleCoverageMap, sampleCoverageTuple) -> sampleCoverageMap
+								.put((Long) sampleCoverageTuple.get(0), (Long) sampleCoverageTuple.get(1)),
+						Map::putAll);
 	}
 }
