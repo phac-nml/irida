@@ -23,6 +23,7 @@ import {
   removeFileObjectFromSample,
   resetConcatenateSelected,
 } from "../sampleFilesSlice";
+import { setDefaultSequencingObject } from "../sampleSlice";
 import { IconArrowLeft, IconArrowRight, IconFile } from "../../icons/Icons";
 
 const { Title } = Typography;
@@ -79,6 +80,16 @@ export function SampleFileConcatenate({
                   type: "sequencingObject",
                 })
               );
+
+              const sampleDefaultSequencingObjectRemoved =
+                sequencingObjectIds.filter(
+                  (seqObjectId: number) =>
+                    seqObjectId === sample.defaultSequencingObject.identifier
+                );
+
+              if (sampleDefaultSequencingObjectRemoved.length > 0) {
+                dispatch(setDefaultSequencingObject(null));
+              }
             });
           }
 
