@@ -1078,6 +1078,17 @@ public class UISampleService {
 		try {
 			SampleSequencingObjectJoin concatenatedSequencingObjects = sequencingObjectService.concatenateSequences(
 					Lists.newArrayList(readMultiple), filename, sample, removeOriginals);
+
+			if(removeOriginals) {
+				for(SequencingObject sequencingObject : readMultiple) {
+					if(sample.getDefaultSequencingObject().getId() == sequencingObject.getId()) {
+						sample.setDefaultSequencingObject(null);
+						sampleService.update(sample);
+						break;
+					}
+				}
+			}
+
 			SequencingObject sequencingObject = concatenatedSequencingObjects.getObject();
 			String firstFileSize;
 			String secondFileSize = null;
