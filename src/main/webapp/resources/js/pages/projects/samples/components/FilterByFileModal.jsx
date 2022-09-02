@@ -49,12 +49,8 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
           associatedProjectIds: associated,
         },
       }).then((response) => {
-        let valid = response.data.samples.filter(
-          (sample) => sample.ids && sample.ids.length !== 0
-        );
-        let invalid = response.data.samples.filter(
-          (sample) => sample.ids && sample.ids.length === 0
-        );
+        let valid = response.data.samples.filter((sample) => sample.ids);
+        let invalid = response.data.samples.filter((sample) => !sample.ids);
 
         setValid(
           valid.map((sample) => {
