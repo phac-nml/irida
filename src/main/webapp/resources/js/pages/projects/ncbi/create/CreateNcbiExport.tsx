@@ -405,7 +405,16 @@ function CreateNcbiExport(): JSX.Element {
                       <Alert
                         type="warning"
                         showIcon
-                        message={"Some Samples are not valid"}
+                        message={i18n("CreateNcbiExport.invalid-samples")}
+                        description={
+                          <ul>
+                            {invalid.map((sample) => (
+                              <li key={`invalid-${sample.id}`}>
+                                {sample.name}
+                              </li>
+                            ))}
+                          </ul>
+                        }
                         closable
                         onClose={removeInvalidSamples}
                       />
