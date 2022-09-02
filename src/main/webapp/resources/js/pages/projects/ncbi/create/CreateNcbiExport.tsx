@@ -434,10 +434,10 @@ function CreateNcbiExport(): JSX.Element {
               <Alert
                 type="error"
                 showIcon
-                message={"NO VALID SAMPLES"}
-                description={
-                  "None of the samples provided contain any sequencing file data."
-                }
+                message={i18n(
+                  "CreateNcbiExport.no-samples.message"
+                ).toUpperCase()}
+                description={i18n("CreateNcbiExport.no-samples.description")}
               />
             )}
           </PageHeader>
