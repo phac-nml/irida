@@ -115,7 +115,7 @@ function ShareApp() {
         },
       }).then((response) => {
         let filtered = response.data.samples.filter(
-          (sample) => sample.ids.length !== 0
+          (sample) => sample.ids && sample.ids.length !== 0
         );
         setExistingIds(
           filtered

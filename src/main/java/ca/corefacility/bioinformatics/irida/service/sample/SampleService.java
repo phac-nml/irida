@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.service.sample;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -169,13 +166,13 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public Sample getSampleBySampleName(Project project, String sampleName);
 
 	/**
-	 * Get the {@link Sample} identifiers with the given sample name
+	 * Get the {@link Sample} identifiers with the given list of sample names from a list of projects.
 	 *
-	 * @param projectIds The {@link Project} identifiers that the {@link Sample} belongs to.
-	 * @param sampleName The name for the requested sample
-	 * @return A {@link Sample} with the given ID
+	 * @param projectIds  The {@link Project} identifiers that the {@link Sample} belongs to.
+	 * @param sampleNames The list of sample names
+	 * @return A list of {@link Sample} identifiers
 	 */
-	public List<Long> getSamplesBySampleNameForProjects(List<Long> projectIds, String sampleName);
+	public Map<String, List<Long>> getSampleIdsBySampleNameForProjects(List<Long> projectIds, List<String> sampleNames);
 
 	/**
 	 * Remove a {@link SequencingObject} from a given {@link Sample}. This will delete the

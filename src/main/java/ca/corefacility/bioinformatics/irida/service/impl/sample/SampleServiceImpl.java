@@ -346,9 +346,12 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
-	public List<Long> getSamplesBySampleNameForProjects(List<Long> projectIds, String sampleName) {
-		List<Long> sampleIds = sampleRepository.getSampleBySampleNameInProjects(projectIds, sampleName);
-		return sampleIds;
+	public Map<String, List<Long>> getSampleIdsBySampleNameForProjects(List<Long> projectIds,
+			List<String> sampleNames) {
+		return sampleRepository.getSampleIdsBySampleNameInProjects(projectIds, sampleNames)
+				.stream()
+				.collect(Collectors.groupingBy(t -> (String) t.get(0),
+						Collectors.mapping(t -> (Long) t.get(1), Collectors.toList())));
 	}
 
 	/**

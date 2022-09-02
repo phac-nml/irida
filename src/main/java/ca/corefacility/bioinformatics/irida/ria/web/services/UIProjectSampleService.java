@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -59,9 +61,11 @@ public class UIProjectSampleService {
 		if (associatedProjectIds != null) {
 			projectIds.addAll(associatedProjectIds);
 		}
+		List<String> sampleNames = samples.stream().map(ValidateSampleNameModel::getName).collect(Collectors.toList());
+		Map<String, List<Long>> foundSampleNames = sampleService.getSampleIdsBySampleNameForProjects(projectIds,
+				sampleNames);
 		for (ValidateSampleNameModel sample : samples) {
-			String sampleName = sample.getName();
-			List<Long> foundSampleIds = sampleService.getSamplesBySampleNameForProjects(projectIds, sampleName);
+			List<Long> foundSampleIds = foundSampleNames.get(sample.getName());
 			sample.setIds(foundSampleIds);
 		}
 		return new ValidateSampleNamesResponse(samples);
