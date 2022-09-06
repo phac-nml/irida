@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        data-layout-decorate="~{template/page}"
+>
+<head>
+    <title th:text="${project.label}">Project</title>
+    <script th:inline="javascript">
+      window.project = {
+        canManageRemote: /*[[${isAdmin or isOwnerAllowRemote}]]*/ false,
+        canManage: /*[[${isOwner or isAdmin}]]*/ false,
+        defaultMetadataTemplateId: /*[[${defaultMetadataTemplateId}]]*/ 0,
+        page: /*[[${activeNav}]]*/ "settings",
+        label: /*[[${project.getLabel()}]]*/ 1,
+        id: /*[[${project.getId()}]]*/ 1,
+      };
+    </script>
+    <webpacker:css entry="project" />
+    <webpacker:css entry="project-spa" />
+</head>
+<body>
+
+<div layout:fragment="page">
+    <div class="col-md-12">
+        <div id="project-root">
+            <!--  Get rid of this once fully SPA  -->
+        </div>
+
+        <main id="root" layout:fragment="main">
+            <!-- This is where the main content of every project page will go. -->
+        </main>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <webpacker:js entry="project" />
+    <webpacker:js entry="project-spa" />
+</th:block>
+</body>
+</html>

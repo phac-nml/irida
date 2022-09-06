@@ -157,13 +157,22 @@ public interface SampleService extends CRUDService<Long, Sample> {
 			Direction order, String... sortProperties);
 
 	/**
-	 * Get the {@link Sample} for the given ID
+	 * Get the {@link Sample} with the given sample name
 	 *
 	 * @param project    the {@link Project} that the {@link Sample} belongs to.
 	 * @param sampleName The name for the requested sample
 	 * @return A {@link Sample} with the given ID
 	 */
 	public Sample getSampleBySampleName(Project project, String sampleName);
+
+	/**
+	 * Get the {@link Sample} identifiers with the given list of sample names from a list of projects.
+	 *
+	 * @param projectIds  The {@link Project} identifiers that the {@link Sample} belongs to.
+	 * @param sampleNames The list of sample names
+	 * @return A list of {@link Sample} identifiers
+	 */
+	public Map<String, List<Long>> getSampleIdsBySampleNameForProjects(List<Long> projectIds, List<String> sampleNames);
 
 	/**
 	 * Remove a {@link SequencingObject} from a given {@link Sample}. This will delete the
@@ -308,7 +317,8 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public Long getSamplesCreated(Date createdDate);
 
 	/**
-	 * Get list of {@link GenericStatModel} of samples created in the past n time period grouped by the format provided.
+	 * Get list of {@link GenericStatModel} of samples created in the past n time period grouped by the format
+	 * provided.
 	 *
 	 * @param createdDate         the minimum date for samples created
 	 * @param statisticTimePeriod the enum containing format for which to group the results by

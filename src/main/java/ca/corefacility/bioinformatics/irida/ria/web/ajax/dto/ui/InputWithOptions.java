@@ -11,14 +11,19 @@ import com.google.common.base.Strings;
 public class InputWithOptions extends Input {
 	private final List<SelectOption> options;
 
-	public InputWithOptions(String name, String label, String defaultValue, List<SelectOption> options) {
+	private Boolean required;
+
+	public InputWithOptions(String name, String label, String defaultValue, List<SelectOption> options, Boolean required) {
 		super(name, label, defaultValue);
 		this.options = options;
+		this.required = required;
 	}
 
 	public List<SelectOption> getOptions() {
 		return options;
 	}
+
+	public Boolean getRequired() { return required; }
 
 	/**
 	 * Getter for the value, if there is no value, the value of the first option is returned.
