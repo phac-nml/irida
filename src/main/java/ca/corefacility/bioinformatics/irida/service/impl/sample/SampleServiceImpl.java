@@ -350,8 +350,8 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 			List<String> sampleNames) {
 		return sampleRepository.getSampleIdsBySampleNameInProjects(projectIds, sampleNames)
 				.stream()
-				.collect(Collectors.groupingBy(t -> (String) t.get(0),
-						Collectors.mapping(t -> (Long) t.get(1), Collectors.toList())));
+				.collect(Collectors.groupingBy(sampleNameIDTuple -> (String) sampleNameIDTuple.get(0),
+						Collectors.mapping(sampleNameIDTuple -> (Long) sampleNameIDTuple.get(1), Collectors.toList())));
 	}
 
 	/**
