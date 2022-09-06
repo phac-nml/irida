@@ -12,7 +12,7 @@ export interface SequencingFiles {
 }
 
 const PROJECT_ID = getProjectIdFromUrl();
-const URL = setBaseUrl(`/ajax/projects/${PROJECT_ID}/samples`);
+const URL = setBaseUrl(`/ajax/projects`);
 
 /**
  * Redux API for handling project samples queries.
@@ -25,38 +25,38 @@ export const samplesApi = createApi({
   }),
   endpoints: (builder) => ({
     listSamples: builder.query({
-      query: (body) => ({ method: "POST", body }),
+      query: (body) => ({
+        url: `/${PROJECT_ID}/samples`,
+        method: "POST",
+        body,
+      }),
     }),
     merge: builder.mutation({
       query: ({ request }) => ({
-        url: "/merge",
+        url: `/${PROJECT_ID}/samples/merge`,
         method: "POST",
         body: request,
       }),
     }),
     remove: builder.mutation({
       query: (sampleIds) => ({
-        url: "/remove",
+        url: `/${PROJECT_ID}/samples/remove`,
         method: "DELETE",
         body: { sampleIds },
       }),
     }),
     shareSamplesWithProject: builder.mutation({
       query: (body) => ({
-        url: `/share`,
+        url: `/${PROJECT_ID}/samples/share`,
         method: `POST`,
         body,
       }),
     }),
-    //TODO: This should not be in the slice but async thunk (update in metadata security)
-    getSampleIdsForProject: builder.query({
-      query: (projectId) => ({
-        url: `/identifiers?id=${projectId}`,
-      }),
-    }),
-    getSampleNamesForProject: builder.query({
-      query: (projectId) => ({
-        url: `/names?id=${projectId}`,
+    validateSamples: builder.mutation({
+      query: ({ projectId, body }) => ({
+        url: `/${projectId}/samples/validate`,
+        method: `POST`,
+        body,
       }),
     }),
   }),
@@ -66,8 +66,7 @@ export const {
   useListSamplesQuery,
   useMergeMutation,
   useRemoveMutation,
-  useGetSampleIdsForProjectQuery,
-  useGetSampleNamesForProjectQuery,
+  useValidateSamplesMutation,
   useShareSamplesWithProjectMutation,
 } = samplesApi;
 
@@ -79,7 +78,9 @@ export const {
 export async function validateSampleName(name: string) {
   const params = new URLSearchParams();
   params.append("name", name.trim());
-  const response = await fetch(`${URL}/add-sample/validate?${params}`);
+  const response = await fetch(
+    `${URL}/${PROJECT_ID}/samples/add-sample/validate?${params}`
+  );
   return response.json();
 }
 
@@ -96,7 +97,7 @@ export async function createNewSample({
   name: string;
   organism: string;
 }) {
-  return post(`${URL}/add-sample`, {
+  return post(`${URL}/${PROJECT_ID}/samples/add-sample`, {
     name: name.trim(),
     organism,
   });
@@ -133,14 +134,14 @@ export async function shareSamplesWithProject({
 }
 
 /**
- * Get get minimal information for all samples in a project.
+ * Get minimal information for all samples in a project.
  * @param {object} options - current table filters
  * @returns {Promise<*>}
  */
 export async function getMinimalSampleDetailsForFilteredProject(options: {
   [key: string]: string | string[];
 }) {
-  return post(`${URL}/ids`, options);
+  return post(`${URL}/${PROJECT_ID}/samples/ids`, options);
 }
 
 /**

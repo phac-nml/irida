@@ -12,13 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleFilesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIShareSamplesException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.DownloadRequest;
@@ -119,8 +119,7 @@ public class ProjectSamplesAjaxController {
 			String response = uiSampleService.mergeSamples(projectId, request, locale);
 			return ResponseEntity.ok(new AjaxSuccessResponse(response));
 		} catch (SampleMergeException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new AjaxErrorResponse(e.getMessage()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
@@ -170,28 +169,6 @@ public class ProjectSamplesAjaxController {
 	}
 
 	/**
-	 * Get a list of all {@link Sample} identifiers within a specific project
-	 *
-	 * @param id Identifier for a Project
-	 * @return {@link List} of {@link Sample} identifiers
-	 */
-	@GetMapping("/identifiers")
-	public List<Long> getSampleIdsForProject(@RequestParam Long id) {
-		return uiSampleService.getSampleIdsForProject(id);
-	}
-
-	/**
-	 * Get a list of all {@link Sample} names within a specific project
-	 *
-	 * @param id Identifier for a Project
-	 * @return {@link List} of {@link Sample} names
-	 */
-	@GetMapping("/names")
-	public List<String> getSampleNamesForProject(@RequestParam Long id) {
-		return uiSampleService.getSampleNamesForProject(id);
-	}
-
-	/**
 	 * Share / Move samples between projects
 	 *
 	 * @param request {@link ShareSamplesRequest} details about the samples to share
@@ -205,8 +182,7 @@ public class ProjectSamplesAjaxController {
 			uiSampleService.shareSamplesWithProject(request, locale);
 			return ResponseEntity.ok(new AjaxSuccessResponse(""));
 		} catch (UIShareSamplesException e) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN)
-					.body(new AjaxErrorResponse(e.getLocalizedMessage()));
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new AjaxErrorResponse(e.getLocalizedMessage()));
 		}
 	}
 
@@ -221,4 +197,18 @@ public class ProjectSamplesAjaxController {
 	public SampleFilesResponse getFilesForSamples(@RequestParam List<Long> ids, @PathVariable Long projectId) {
 		return uiSampleService.getFilesForSamples(ids, projectId);
 	}
+
+	/**
+	 * Validate a list of samples names
+	 *
+	 * @param projectId project identifier
+	 * @param request   {@link ValidateSampleNamesRequest} details about the sample names to validate
+	 * @return a list of validated sample names
+	 */
+	@PostMapping("/validate")
+	public ResponseEntity<AjaxResponse> validateSampleNames(@PathVariable Long projectId,
+			@RequestBody ValidateSampleNamesRequest request) {
+		return ResponseEntity.ok(uiProjectSampleService.validateSampleNames(projectId, request));
+	}
+
 }

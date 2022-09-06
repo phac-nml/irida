@@ -22,8 +22,6 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleNameCheckRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleNameCheckResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
@@ -101,7 +99,7 @@ public class SamplesAjaxController {
 	 */
 	@RequestMapping(value = "/{sampleId}/fast5/upload", method = RequestMethod.POST)
 	public ResponseEntity<String> uploadFast5Files(@PathVariable Long sampleId, MultipartHttpServletRequest request,
-												   Locale locale) {
+			Locale locale) {
 		Sample sample = sampleService.read(sampleId);
 		Iterator<String> fileNames = request.getFileNames();
 		List<MultipartFile> files = new ArrayList<>();
@@ -114,7 +112,7 @@ public class SamplesAjaxController {
 				createFast5FileInSample(file, sample);
 			}
 			return ResponseEntity.ok(messageSource.getMessage("server.SampleFileUploader.success",
-					new Object[]{sample.getSampleName()}, locale));
+					new Object[] { sample.getSampleName() }, locale));
 		} catch (IOException e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
 		}
@@ -182,17 +180,6 @@ public class SamplesAjaxController {
 	}
 
 	/**
-	 * Check if a list of sample names exist within a project
-	 *
-	 * @param request {@link SampleNameCheckRequest} containing the project id and sample names
-	 * @return {@link SampleNameCheckResponse} containing list of valid and invalid sample names
-	 */
-	@PostMapping("/validate")
-	public SampleNameCheckResponse checkSampleNames(@RequestBody SampleNameCheckRequest request) {
-		return uiSampleService.checkSampleNames(request);
-	}
-
-	/**
 	 * Create {@link SequenceFile}'s then add them as {@link SequenceFilePair} to a {@link Sample}
 	 *
 	 * @param pair   {@link List} of {@link MultipartFile}
@@ -230,8 +217,7 @@ public class SamplesAjaxController {
 	}
 
 	/**
-	 * Private method to move the sequence file into the correct directory and
-	 * create the {@link SequenceFile} object.
+	 * Private method to move the sequence file into the correct directory and create the {@link SequenceFile} object.
 	 *
 	 * @param file {@link MultipartFile} sequence file uploaded.
 	 * @return {@link SequenceFile}
