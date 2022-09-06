@@ -1,66 +1,64 @@
-import { TagColor } from "../../../types/ant-design";
-import { ExportUploadState } from "../../../types/irida/ExportUpoadState";
 import { ExportTagStates } from "./NcbiUploadStateTag";
 
 const states: ExportTagStates = {
-  [ExportUploadState.NEW]: {
+  NEW: {
     color: undefined, // Defaults to gray
     text: i18n("ExportUploadState.NEW"),
   },
-  [ExportUploadState.UPLOADING]: {
-    color: TagColor.BLUE,
+  UPLOADING: {
+    color: "blue",
     text: i18n("ExportUploadState.UPLOADING"),
   },
-  [ExportUploadState.UPLOADED]: {
-    color: TagColor.CYAN,
+  UPLOADED: {
+    color: "cyan",
     text: i18n("ExportUploadState.UPLOADED"),
   },
-  [ExportUploadState.UPLOADED_ERROR]: {
-    color: TagColor.RED,
+  UPLOAD_ERROR: {
+    color: "red",
     text: i18n("ExportUploadState.UPLOAD_ERROR"),
   },
-  [ExportUploadState.CREATED]: {
-    color: TagColor.CYAN,
+  created: {
+    color: "cyan",
     text: i18n("ExportUploadState.created"),
   },
-  [ExportUploadState.FAILED]: {
-    color: TagColor.RED,
+  failed: {
+    color: "red",
     text: i18n("ExportUploadState.failed"),
   },
-  [ExportUploadState.QUEUED]: {
-    color: TagColor.CYAN,
+  queued: {
+    color: "cyan",
     text: i18n("ExportUploadState.queued"),
   },
-  [ExportUploadState.PROCESSING]: {
-    color: TagColor.BLUE,
+  processing: {
+    color: "blue",
     text: i18n("ExportUploadState.processing"),
   },
-  [ExportUploadState.PROCESSED_OK]: {
-    color: TagColor.GREEN,
+  "processed-ok": {
+    color: "green",
     text: i18n("ExportUploadState.processed-ok"),
   },
-  [ExportUploadState.PROCESSED_ERROR]: {
-    color: TagColor.RED,
+  "processed-error": {
+    color: "red",
     text: i18n("ExportUploadState.processed-error"),
   },
-  [ExportUploadState.WAITING]: {
-    color: TagColor.CYAN,
+  waiting: {
+    color: "cyan",
     text: i18n("ExportUploadState.waiting"),
   },
-  [ExportUploadState.SUBMITTED]: {
-    color: TagColor.CYAN,
+  submitted: {
+    color: "cyan",
     text: i18n("ExportUploadState.submitted"),
   },
-  [ExportUploadState.DELETED]: {
-    color: TagColor.VOLCANO,
+  deleted: {
+    color: "volcano",
     text: i18n("ExportUploadState.DELETED"),
   },
-  [ExportUploadState.RETIRED]: {
-    color: TagColor.GOLD,
+  retired: {
+    color: "gold",
     text: i18n("ExportUploadState.RETIRED"),
   },
-  [ExportUploadState.UNKNOWN]: {
-    color: TagColor.ORANGE,
+  unknown: {
+    color: "orange",
     text: i18n("ExportUploadState.unknown"),
   },
 };

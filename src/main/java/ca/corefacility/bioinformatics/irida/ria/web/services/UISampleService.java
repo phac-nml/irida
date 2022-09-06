@@ -45,7 +45,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchCriteria;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchOperation;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleFilesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIShareSamplesException;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.PairedEndSequenceFileModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.SingleEndSequenceFileModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntSearch;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSample;
@@ -139,12 +142,29 @@ public class UISampleService {
 			project = projectService.read(projectId);
 		}
 
-		List<SequencingObject> filePairs = getPairedSequenceFilesForSample(sample, project);
-		List<SequencingObject> singles = getSingleEndSequenceFilesForSample(sample, project);
+		List<PairedEndSequenceFileModel> filePairs = getPairedSequenceFilesForSample(sample, project).stream()
+				.map(pair -> new PairedEndSequenceFileModel((SequenceFilePair) pair))
+				.collect(Collectors.toList());
+		List<SingleEndSequenceFileModel> singles = getSingleEndSequenceFilesForSample(sample, project).stream()
+				.map(single -> new SingleEndSequenceFileModel((SingleEndSequenceFile) single))
+				.collect(Collectors.toList());
 		List<SequencingObject> fast5 = getFast5FilesForSample(sample);
 		List<GenomeAssembly> genomeAssemblies = getGenomeAssembliesForSample(sample);
 
 		return new SampleFiles(singles, filePairs, fast5, genomeAssemblies);
+	}
+
+	/**
+	 * Get details about the files belonging to a list of samples
+	 *
+	 * @param sampleIds - List of sample identifiers to get file details for
+	 * @param projectId - the project id that these samples belong to
+	 * @return A map of sample id and their related file information
+	 */
+	public SampleFilesResponse getFilesForSamples(List<Long> sampleIds, Long projectId) {
+		SampleFilesResponse response = new SampleFilesResponse();
+		sampleIds.stream().forEach(id -> response.put(id, getSampleFiles(id, projectId)));
+		return response;
 	}
 
 	/**
@@ -220,7 +240,7 @@ public class UISampleService {
 	 * @param obj     the {@link SequencingObject} to enhance
 	 * @param project the {@link Project} to add
 	 */
-	private void enhanceQcEntries(SequencingObject obj, Project project) {
+	public void enhanceQcEntries(SequencingObject obj, Project project) {
 		Set<QCEntry> availableEntries = new HashSet<>();
 		if (obj.getQcEntries() != null) {
 			for (QCEntry q : obj.getQcEntries()) {
@@ -235,8 +255,6 @@ public class UISampleService {
 	}
 
 	/**
-	 * Share / Move samples with another project
-	 *
 	 * @param request Request containing the details of the move
 	 * @param locale  current users {@link Locale}
 	 * @throws UIShareSamplesException if project or samples cannot be found

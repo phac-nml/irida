@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleFilesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
@@ -32,7 +33,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleServ
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 
 /**
- * Ajax Controller for handling asynchronous requests for project samples.
+ * AJAX Controller for handling asynchronous requests for project samples.
  */
 @RestController
 @RequestMapping("/ajax/projects/{projectId}/samples")
@@ -183,6 +184,18 @@ public class ProjectSamplesAjaxController {
 		} catch (UIShareSamplesException e) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new AjaxErrorResponse(e.getLocalizedMessage()));
 		}
+	}
+
+	/**
+	 * Get the set of files for samples by the sample identifiers
+	 *
+	 * @param ids       List of identifiers for the samples to get files for.
+	 * @param projectId The project the samples belong to
+	 * @return {@link SampleFilesResponse} a map of sample identifier and their corresponding files
+	 */
+	@GetMapping("/files")
+	public SampleFilesResponse getFilesForSamples(@RequestParam List<Long> ids, @PathVariable Long projectId) {
+		return uiSampleService.getFilesForSamples(ids, projectId);
 	}
 
 	/**

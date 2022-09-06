@@ -1,8 +1,8 @@
 import axios from "axios";
-import {IridaBase} from "../../types/irida";
+import { BaseModel } from "../../types/irida";
 
 export interface PageTableFilters {
-  [key: string]: string[]
+  [key: string]: string[];
 }
 
 export interface PageTableRequest {
@@ -16,10 +16,10 @@ export interface PageTableRequest {
 
 export interface PageTableResponse {
   dataSource: PageTableModel[];
-  total: number
+  total: number;
 }
 
-export interface PageTableModel extends IridaBase {
+export interface PageTableModel extends BaseModel {
   [key: string]: any; // allows any additional keys of any type value
 }
 
@@ -28,6 +28,9 @@ export interface PageTableModel extends IridaBase {
  * @param url - datasource url for the paged table
  * @param data - table request payload for the paged table
  */
-export async function fetchPageTableUpdate(url: string, data: PageTableRequest): Promise<PageTableResponse> {
+export async function fetchPageTableUpdate(
+  url: string,
+  data: PageTableRequest
+): Promise<PageTableResponse> {
   return axios.post(url, data).then(({ data }) => data);
 }
