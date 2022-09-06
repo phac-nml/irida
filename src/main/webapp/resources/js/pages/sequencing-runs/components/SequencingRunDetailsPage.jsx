@@ -15,6 +15,10 @@ import { SequencingRunStatusBadge } from "./SequencingRunStatusBadge";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_LG } from "../../../styles/spacing";
 
+import { FastQC } from "../../../components/samples/components/fastqc/FastQC";
+import { setFastQCModalData } from "../../../components/samples/components/fastqc/fastQCSlice";
+import { useDispatch, useSelector } from "react-redux";
+
 const { Content } = Layout;
 
 /**
@@ -34,6 +38,13 @@ export default function SequencingRunDetailsPage() {
     useGetSequencingRunDetailsQuery(runId);
   const { data: files = [], isLoading: isFilesLoading } =
     useGetSequencingRunFilesQuery(runId);
+
+  const dispatch = useDispatch();
+
+  const { fastQCModalVisible, sequencingObjectId, fileId } = useSelector(
+    (state) => state.fastQCReducer
+  );
+
   const detailsList = isRunLoading
     ? []
     : [
@@ -79,13 +90,31 @@ export default function SequencingRunDetailsPage() {
       key: "fileName",
       render(text, item) {
         return (
-          <LinkButton
-            text={text}
-            className="t-file-link"
-            href={setBaseUrl(
-              `/sequencing-runs/${runId}/sequenceFiles/${item.sequencingObjectId}/file/${item.id}/summary`
-            )}
-          />
+          <>
+            <Button
+              type="link"
+              className="t-file-link"
+              style={{ padding: 0 }}
+              onClick={() =>
+                dispatch(
+                  setFastQCModalData({
+                    fileLabel: text,
+                    fileId: item.id,
+                    sequencingObjectId: item.sequencingObjectId,
+                    fastQCModalVisible: true,
+                    processingState: item.processingState,
+                  })
+                )
+              }
+            >
+              <span className="t-file-label">{text}</span>
+            </Button>
+            {fastQCModalVisible &&
+            sequencingObjectId === item.sequencingObjectId &&
+            fileId === item.id ? (
+              <FastQC />
+            ) : null}
+          </>
         );
       },
     },
