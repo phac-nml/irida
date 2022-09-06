@@ -590,6 +590,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		waitForTableToUpdate(total);
 	}
 
+	public void shareExportSamplesToNcbi() {
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		openExportDropdown();
+		ncbiExportBtn.click();
+		wait.until(ExpectedConditions.urlContains("/ncbi"));
+	}
+
 	public void goToNextTablePage() {
 		nextTablePage.click();
 		waitForTime(200);

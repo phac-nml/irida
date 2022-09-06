@@ -46,7 +46,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchCriteria;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchOperation;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleFilesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIShareSamplesException;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.PairedEndSequenceFileModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.SingleEndSequenceFileModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntSearch;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSample;
@@ -116,7 +119,8 @@ public class UISampleService {
 	 */
 	public SampleDetails getSampleDetails(Long id) {
 		Sample sample = sampleService.read(id);
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Authentication authentication = SecurityContextHolder.getContext()
+				.getAuthentication();
 		boolean isModifiable = updateSamplePermission.isAllowed(authentication, sample);
 		Set<MetadataEntry> metadataForSample = sampleService.getMetadataForSample(sample);
 		return new SampleDetails(sample, isModifiable, metadataForSample, cartService.isSampleInCart(id));
@@ -137,12 +141,30 @@ public class UISampleService {
 			project = projectService.read(projectId);
 		}
 
-		List<SequencingObject> filePairs = getPairedSequenceFilesForSample(sample, project);
-		List<SequencingObject> singles = getSingleEndSequenceFilesForSample(sample, project);
+		List<PairedEndSequenceFileModel> filePairs = getPairedSequenceFilesForSample(sample, project).stream()
+				.map(pair -> new PairedEndSequenceFileModel((SequenceFilePair) pair))
+				.collect(Collectors.toList());
+		List<SingleEndSequenceFileModel> singles = getSingleEndSequenceFilesForSample(sample, project).stream()
+				.map(single -> new SingleEndSequenceFileModel((SingleEndSequenceFile) single))
+				.collect(Collectors.toList());
 		List<SequencingObject> fast5 = getFast5FilesForSample(sample);
 		List<GenomeAssembly> genomeAssemblies = getGenomeAssembliesForSample(sample);
 
 		return new SampleFiles(singles, filePairs, fast5, genomeAssemblies);
+	}
+
+	/**
+	 * Get details about the files belonging to a list of samples
+	 *
+	 * @param sampleIds       - List of sample identifiers to get file details for
+	 * @param projectId - the project id that these samples belong to
+	 * @return A map of sample id and their related file information
+	 */
+	public SampleFilesResponse getFilesForSamples(List<Long> sampleIds, Long projectId) {
+		SampleFilesResponse response = new SampleFilesResponse();
+		sampleIds.stream()
+				.forEach(id -> response.put(id, getSampleFiles(id, projectId)));
+		return response;
 	}
 
 	/**
@@ -153,8 +175,8 @@ public class UISampleService {
 	 * @return list of paired end sequence files
 	 */
 	public List<SequencingObject> getPairedSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService
-				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
+		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, SequenceFilePair.class);
 		// add project to qc entries and filter any unavailable entries
 		List<SequencingObject> filePairs = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : filePairJoins) {
@@ -174,8 +196,8 @@ public class UISampleService {
 	 * @return list of single end sequence files
 	 */
 	public List<SequencingObject> getSingleEndSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService
-				.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
+		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, SingleEndSequenceFile.class);
 
 		List<SequencingObject> singles = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : singleFileJoins) {
@@ -194,9 +216,11 @@ public class UISampleService {
 	 * @return list of fast5 sequence files
 	 */
 	public List<SequencingObject> getFast5FilesForSample(Sample sample) {
-		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService
-				.getSequencesForSampleOfType(sample, Fast5Object.class);
-		return fast5FileJoins.stream().map(SampleSequencingObjectJoin::getObject).collect(Collectors.toList());
+		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, Fast5Object.class);
+		return fast5FileJoins.stream()
+				.map(SampleSequencingObjectJoin::getObject)
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -208,7 +232,9 @@ public class UISampleService {
 	public List<GenomeAssembly> getGenomeAssembliesForSample(Sample sample) {
 		Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = genomeAssemblyService.getAssembliesForSample(sample);
 
-		return genomeAssemblyJoins.stream().map(SampleGenomeAssemblyJoin::getObject).collect(Collectors.toList());
+		return genomeAssemblyJoins.stream()
+				.map(SampleGenomeAssemblyJoin::getObject)
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -218,12 +244,13 @@ public class UISampleService {
 	 * @param obj     the {@link SequencingObject} to enhance
 	 * @param project the {@link Project} to add
 	 */
-	private void enhanceQcEntries(SequencingObject obj, Project project) {
+	public void enhanceQcEntries(SequencingObject obj, Project project) {
 		Set<QCEntry> availableEntries = new HashSet<>();
 		if (obj.getQcEntries() != null) {
 			for (QCEntry q : obj.getQcEntries()) {
 				q.addProjectSettings(project);
-				if (!q.getStatus().equals(QCEntry.QCEntryStatus.UNAVAILABLE)) {
+				if (!q.getStatus()
+						.equals(QCEntry.QCEntryStatus.UNAVAILABLE)) {
 					availableEntries.add(q);
 				}
 			}
@@ -241,7 +268,9 @@ public class UISampleService {
 	public List<Long> getSampleIdsForProject(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<Sample> samples = sampleService.getSamplesForProjectShallow(project);
-		return samples.stream().map(Sample::getId).collect(Collectors.toUnmodifiableList());
+		return samples.stream()
+				.map(Sample::getId)
+				.collect(Collectors.toUnmodifiableList());
 	}
 
 	/**
@@ -253,7 +282,9 @@ public class UISampleService {
 	public List<String> getSampleNamesForProject(Long projectId) {
 		Project project = projectService.read(projectId);
 		List<Sample> samples = sampleService.getSamplesForProjectShallow(project);
-		return samples.stream().map(Sample::getLabel).collect(Collectors.toUnmodifiableList());
+		return samples.stream()
+				.map(Sample::getLabel)
+				.collect(Collectors.toUnmodifiableList());
 	}
 
 	/**
@@ -279,8 +310,8 @@ public class UISampleService {
 			try {
 				projectService.shareSamples(currentProject, targetProject, samples, !request.getLocked());
 			} catch (Exception e) {
-				throw new UIShareSamplesException(
-						messageSource.getMessage("server.ShareSamples.copy-error", new Object[] { targetProject.getLabel() }, locale));
+				throw new UIShareSamplesException(messageSource.getMessage("server.ShareSamples.copy-error",
+						new Object[] { targetProject.getLabel() }, locale));
 			}
 		}
 
@@ -358,7 +389,8 @@ public class UISampleService {
 				request.getSort());
 
 		while (!page.isEmpty()) {
-			page.getContent().forEach(psj -> filteredProjectSamples.add(new ProjectCartSample(psj)));
+			page.getContent()
+					.forEach(psj -> filteredProjectSamples.add(new ProjectCartSample(psj)));
 			// Get the next page
 			page = sampleService.getFilteredProjectSamples(projects, filterSpec, page.getNumber() + 1, MAX_PAGE_SIZE,
 					request.getSort());
@@ -392,7 +424,8 @@ public class UISampleService {
 
 		List<Sample> samples = (List<Sample>) sampleService.readMultiple(request.getIds());
 		sampleService.mergeSamples(project, primarySample, samples);
-		if (request.getIds().size() == 1) {
+		if (request.getIds()
+				.size() == 1) {
 			return messageSource.getMessage("server.MergeModal.merged-single",
 					new Object[] { samples.get(0).getSampleName(), primarySample.getSampleName() }, locale);
 		} else {
@@ -435,15 +468,17 @@ public class UISampleService {
 
 			try {
 				for (Sample sample : samples) {
-					Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService
-							.getSequencingObjectsForSample(sample);
+					Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService.getSequencingObjectsForSample(
+							sample);
 
 					for (SampleSequencingObjectJoin join : sequencingObjectsForSample) {
-						for (SequenceFile file : join.getObject().getFiles()) {
+						for (SequenceFile file : join.getObject()
+								.getFiles()) {
 							Path path = file.getFile();
 
-							String fileName = project.getName() + "/" + sample.getSampleName() + "/"
-									+ path.getFileName().toString();
+							String fileName =
+									project.getName() + "/" + sample.getSampleName() + "/" + path.getFileName()
+											.toString();
 							if (usedFileNames.contains(fileName)) {
 								fileName = handleDuplicate(fileName, usedFileNames);
 							}
@@ -465,7 +500,8 @@ public class UISampleService {
 			} catch (IOException e) {
 				// Do something here
 			} finally {
-				response.getOutputStream().close();
+				response.getOutputStream()
+						.close();
 			}
 
 		};
@@ -543,7 +579,10 @@ public class UISampleService {
 				.map(header -> messageSource.getMessage(header, new Object[] {}, locale))
 				.collect(Collectors.toList());
 
-		String filename = projects.get(projects.size() - 1).getName().replaceAll(" ", "_").toLowerCase();
+		String filename = projects.get(projects.size() - 1)
+				.getName()
+				.replaceAll(" ", "_")
+				.toLowerCase();
 		if (type.equals("excel")) {
 			writeToExcel(response, filename, items, headers, locale);
 		} else {
@@ -558,22 +597,25 @@ public class UISampleService {
 	 * @return List of {@link ProjectSampleTableItem}
 	 */
 	private List<ProjectSampleTableItem> formatSamplesForTable(Page<ProjectSampleJoin> page, Locale locale) {
-		return page.getContent().stream().map(join -> {
-			Sample sample = join.getObject();
-			Project project = join.getSubject();
+		return page.getContent()
+				.stream()
+				.map(join -> {
+					Sample sample = join.getObject();
+					Project project = join.getSubject();
 
-			List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(sample);
-			List<String> quality = new ArrayList<>();
+					List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(sample);
+					List<String> quality = new ArrayList<>();
 
-			qcEntriesForSample.forEach(entry -> {
-				entry.addProjectSettings(project);
-				if (entry.getStatus() == QCEntry.QCEntryStatus.NEGATIVE) {
-					quality.add(messageSource.getMessage("sample.files.qc." + entry.getType(),
-							new Object[] { entry.getMessage() }, locale));
-				}
-			});
-			return new ProjectSampleTableItem(join, quality);
-		}).collect(Collectors.toList());
+					qcEntriesForSample.forEach(entry -> {
+						entry.addProjectSettings(project);
+						if (entry.getStatus() == QCEntry.QCEntryStatus.NEGATIVE) {
+							quality.add(messageSource.getMessage("sample.files.qc." + entry.getType(),
+									new Object[] { entry.getMessage() }, locale));
+						}
+					});
+					return new ProjectSampleTableItem(join, quality);
+				})
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -594,7 +636,8 @@ public class UISampleService {
 		CellStyle dateCellStyle = workbook.createCellStyle();
 		String excelDatetimeFormatPattern = DateFormatConverter.convert(locale,
 				messageSource.getMessage("generic.datetimeformat", new Object[] {}, locale));
-		short dateTimeFormat = creationHelper.createDataFormat().getFormat(excelDatetimeFormatPattern);
+		short dateTimeFormat = creationHelper.createDataFormat()
+				.getFormat(excelDatetimeFormatPattern);
 		dateCellStyle.setDataFormat(dateTimeFormat);
 
 		// Create the header row
@@ -668,15 +711,9 @@ public class UISampleService {
 			//			results.add(model.getExportableTableRow().toArray(new String[0]));
 			SampleObject sample = item.getSample();
 			ProjectObject project = item.getProject();
-			String[] row = {
-					sample.getSampleName(),
-					sample.getId().toString(),
-					StringUtils.join(item.getQuality(), "; "),
-					sample.getOrganism(),
-					project.getName(),
-					project.getId().toString(),
-					sample.getCollectedBy(),
-					sample.getCreatedDate().toString(),
+			String[] row = { sample.getSampleName(), sample.getId().toString(),
+					StringUtils.join(item.getQuality(), "; "), sample.getOrganism(), project.getName(),
+					project.getId().toString(), sample.getCollectedBy(), sample.getCreatedDate().toString(),
 					sample.getModifiedDate().toString() };
 			results.add(row);
 		}
@@ -701,23 +738,28 @@ public class UISampleService {
 		List<ValidSample> valid = new ArrayList<>();
 
 		AtomicReference<Iterator<Project>> iterator = new AtomicReference<>();
-		request.getNames().forEach(name -> {
-			Sample sample = null;
-			iterator.set(projects.iterator());
+		request.getNames()
+				.forEach(name -> {
+					Sample sample = null;
+					iterator.set(projects.iterator());
 
-			// Need to figure out what project it belongs to.
-			while (sample == null && iterator.get().hasNext()) {
-				Project project = iterator.get().next();
-				try {
-					sample = sampleService.getSampleBySampleName(project, name);
-					valid.add(new ValidSample(project, sample));
-				} catch (Exception e) {
-					// Nothing to worry about here
-				}
-			}
-		});
+					// Need to figure out what project it belongs to.
+					while (sample == null && iterator.get()
+							.hasNext()) {
+						Project project = iterator.get()
+								.next();
+						try {
+							sample = sampleService.getSampleBySampleName(project, name);
+							valid.add(new ValidSample(project, sample));
+						} catch (Exception e) {
+							// Nothing to worry about here
+						}
+					}
+				});
 		List<String> invalid = new ArrayList<>(request.getNames());
-		invalid.removeAll(valid.stream().map(ValidSample::getSampleName).collect(Collectors.toList()));
+		invalid.removeAll(valid.stream()
+				.map(ValidSample::getSampleName)
+				.collect(Collectors.toList()));
 
 		return new SampleNameCheckResponse(valid, invalid);
 	}
