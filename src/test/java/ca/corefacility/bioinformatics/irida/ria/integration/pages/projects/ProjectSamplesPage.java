@@ -10,7 +10,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -248,7 +247,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "ant-pagination-next")
 	private WebElement nextTablePage;
 
-
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
 	}
@@ -327,8 +325,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	private void closeDropdown(WebElement dropdown) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-		Actions act = new Actions(driver);
-		act.moveByOffset(300, 300).click().perform();
+		dropdown.sendKeys(Keys.ESCAPE);
 		wait.until(ExpectedConditions.invisibilityOf(dropdown));
 	}
 
