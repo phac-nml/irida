@@ -273,7 +273,7 @@ export function SequenceObjectListItem({
                       >
                         {sequenceObject.automatedAssembly.name}
                       </Button>
-                      <div>
+                      <div style={{ marginTop: 5 }}>
                         <Text>{i18n("SequenceObjectListItem.status")}: </Text>
                         {getAutomatedAssemblyStatus()}
                       </div>

@@ -103,11 +103,12 @@ export function SequencingObjectList({
 
     const seqObjIdsPaired = files.paired
       ?.filter((pair: SampleSequencingObject) => {
+        console.log(pair);
         return (
           (pair.fileInfo.processingState !== "FINISHED" &&
             pair.fileInfo.processingState !== "ERROR") ||
-          ((pair.automatedAssembly !== null &&
-            pair.automatedAssembly.analysisState) !== "COMPLETED" &&
+          (pair.automatedAssembly !== null &&
+            pair.automatedAssembly.analysisState !== "COMPLETED" &&
             pair.automatedAssembly.analysisState !== "ERROR")
         );
       })
