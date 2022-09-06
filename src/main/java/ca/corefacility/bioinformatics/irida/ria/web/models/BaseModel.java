@@ -5,14 +5,14 @@ import java.util.Date;
 /**
  * Base for UI models
  */
-public abstract class IridaBase {
+public abstract class BaseModel {
 	private final Long id;
 	private final String key;
 	private final String name;
 	private final Date createdDate;
 	private final Date modifiedDate;
 
-	public IridaBase(Long id, String name, Date createdDate, Date modifiedDate) {
+	public BaseModel(Long id, String name, Date createdDate, Date modifiedDate) {
 		this.id = id;
 		this.key = ModelKeys.valueOf(this.getClass().getSimpleName()).label + id;
 		this.name = name;

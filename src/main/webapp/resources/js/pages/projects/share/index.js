@@ -14,9 +14,8 @@ import { render } from "react-dom";
 import { Provider, useSelector } from "react-redux";
 import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
 import {
-  useGetSampleIdsForProjectQuery,
-  useGetSampleNamesForProjectQuery,
   useShareSamplesWithProjectMutation,
+  useValidateSamplesMutation,
 } from "../../../apis/projects/samples";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ShareMetadata } from "./ShareMetadata";
@@ -40,6 +39,9 @@ function ShareApp() {
   const [shareLarge, setShareLarge] = React.useState(false);
   const [error, setError] = React.useState(undefined);
   const [finished, setFinished] = React.useState(false);
+  const [existingIds, setExistingIds] = React.useState([]);
+  const [existingNames, setExistingNames] = React.useState([]);
+  const [validateSamples] = useValidateSamplesMutation();
 
   /*
   Create redirect href to project samples page.
@@ -58,20 +60,6 @@ function ShareApp() {
   } = useSelector((state) => state.shareReducer);
 
   const [shareSamplesWithProject] = useShareSamplesWithProjectMutation();
-
-  const { data: existingIds = [] } = useGetSampleIdsForProjectQuery(
-    targetProject?.identifier,
-    {
-      skip: !targetProject?.identifier,
-    }
-  );
-
-  const { data: existingNames = [] } = useGetSampleNamesForProjectQuery(
-    targetProject?.identifier,
-    {
-      skip: !targetProject?.identifier,
-    }
-  );
 
   const { data: projects, isLoading: projectsLoading } =
     useGetPotentialProjectsToShareToQuery(currentProject, {
@@ -115,6 +103,33 @@ function ShareApp() {
     },
     { title: i18n("ShareLayout.restrictions"), component: <ShareMetadata /> },
   ];
+
+  React.useEffect(() => {
+    if (targetProject?.identifier) {
+      validateSamples({
+        projectId: targetProject?.identifier,
+        body: {
+          samples: samples.map((sample) => ({
+            name: sample.name,
+          })),
+        },
+      }).then((response) => {
+        let filtered = response.data.samples.filter((sample) => sample.ids);
+        setExistingIds(
+          filtered
+            .map((sample) => {
+              return sample.ids;
+            })
+            .flat()
+        );
+        setExistingNames(
+          filtered.map((sample) => {
+            return sample.name;
+          })
+        );
+      });
+    }
+  }, [targetProject?.identifier]);
 
   React.useEffect(() => {
     if (step === 0) {
