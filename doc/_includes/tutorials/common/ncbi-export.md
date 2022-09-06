@@ -23,11 +23,11 @@ Next you must fill in information about the samples to be uploaded.
 * Instrument Model - The sequencing platform used to produce the data.
 * Library Selection - Whether any method was used to select for or against, enrich, or screen the material being sequenced.
 
-Default values fro all samples can be set by clicking on the "Default Sample Settings" and setting the values for Library Strategy, Library Source, Library Construction Protocol, Instrument Model, Library Selection.  You can set any number of these fields that you want, and the values can be overwritten directly within each sample.
+Default values for all samples can be set by clicking on the "Default Sample Settings" and setting the values for Library Strategy, Library Source, Library Construction Protocol, Instrument Model, Library Selection.  You can set any number of these fields that you want, and the values can be overwritten directly within each sample.
 
 ![Default Sample Settings]({{ site.baseurl}}/images/tutorials/common/ncbi-export/ncbi-export-default-sample-settings.png)
 
-Once all fields, and files are selected, for a sample the label will change from "MISSING DATA" to "VALID" indicating that the sample is ready for submission. All samples must be valid before submitting.
+Once all fields and files are selected for a sample, the label will change from "MISSING DATA" to "VALID" indicating that the sample is ready for submission. All samples must be valid before submitting.
 
 ![Default Sample Settings]({{ site.baseurl}}/images/tutorials/common/ncbi-export/ncbi-export-sample-validation.png)
 
