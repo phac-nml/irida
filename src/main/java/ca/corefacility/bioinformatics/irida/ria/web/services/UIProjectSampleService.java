@@ -162,27 +162,24 @@ public class UIProjectSampleService {
 	 * @return result of creating the sample
 	 */
 	public ResponseEntity<AjaxResponse> updateSample(CreateSampleRequest request, Long sampleId, Locale locale) {
-		Map<String, Object> updatedValues = new HashMap<>();
-		Sample sample = sampleService.read(sampleId);
-		if (!Strings.isNullOrEmpty(request.getName())) {
-			updatedValues.put("sampleName", request.getName());
+		try {
+			Sample sample = sampleService.read(sampleId);
+			sample.setSampleName(request.getName());
+			sample.setOrganism(request.getOrganism());
+			sample.setDescription(request.getDescription());
+			if (request.getMetadata() != null) {
+				Set<MetadataEntry> metadataEntrySet = request.getMetadata().stream().map(entry -> {
+					MetadataTemplateField field = metadataTemplateService.saveMetadataField(
+							new MetadataTemplateField(entry.getField(), "text"));
+					return new MetadataEntry(entry.getValue(), "text", field);
+				}).collect(Collectors.toSet());
+				sampleService.updateSampleMetadata(sample, metadataEntrySet);
+			}
+			sampleService.update(sample);
+			return ResponseEntity.ok(new AjaxUpdateItemSuccessResponse(
+					messageSource.getMessage("server.AddSample.success", null, locale)));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage()));
 		}
-		if (!Strings.isNullOrEmpty(request.getOrganism())) {
-			updatedValues.put("organism", request.getOrganism());
-		}
-		if (!Strings.isNullOrEmpty(request.getDescription())) {
-			updatedValues.put("description", request.getDescription());
-		}
-		if (request.getMetadata() != null) {
-			Set<MetadataEntry> metadataEntrySet = request.getMetadata().stream().map(entry -> {
-				MetadataTemplateField field = metadataTemplateService.saveMetadataField(
-						new MetadataTemplateField(entry.getField(), "text"));
-				return new MetadataEntry(entry.getValue(), "text", field);
-			}).collect(Collectors.toSet());
-			sampleService.updateSampleMetadata(sample, metadataEntrySet);
-		}
-		sampleService.updateFields(sampleId, updatedValues);
-		return ResponseEntity.ok(
-				new AjaxUpdateItemSuccessResponse(messageSource.getMessage("server.AddSample.success", null, locale)));
 	}
 }
