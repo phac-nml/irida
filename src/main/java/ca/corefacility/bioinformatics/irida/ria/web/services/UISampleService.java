@@ -1079,9 +1079,11 @@ public class UISampleService {
 			SampleSequencingObjectJoin concatenatedSequencingObjects = sequencingObjectService.concatenateSequences(
 					Lists.newArrayList(readMultiple), filename, sample, removeOriginals);
 
-			if(removeOriginals) {
-				for(SequencingObject sequencingObject : readMultiple) {
-					if(sample.getDefaultSequencingObject().getId().equals(sequencingObject.getId())) {
+			if (removeOriginals) {
+				for (SequencingObject sequencingObject : readMultiple) {
+					if (sample.getDefaultSequencingObject() != null && sample.getDefaultSequencingObject()
+							.getId()
+							.equals(sequencingObject.getId())) {
 						sample.setDefaultSequencingObject(null);
 						sampleService.update(sample);
 						break;

@@ -201,12 +201,9 @@ export function SequencingObjectList({
     if (sample.defaultSequencingObject !== null || index !== 0) return false;
     else
       return (
-        (sample.defaultSequencingObject === null && type === "pair") ||
-        (sample.defaultSequencingObject === null &&
-          files.paired === undefined &&
-          type === "single") ||
-        (sample.defaultSequencingObject === null &&
-          files.paired === undefined &&
+        type === "pair" ||
+        (files.paired === undefined && type === "single") ||
+        (files.paired === undefined &&
           files.singles === undefined &&
           type === "fast5")
       );

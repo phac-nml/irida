@@ -78,27 +78,25 @@ export function SampleFileConcatenate({
             Remove from the state the sequencing objects that were used to concatenate the files
              */
             sequencingObjectIds.forEach((seqObjId: number) => {
+              let defaultRemoved = null;
+
               dispatch(
                 removeFileObjectFromSample({
                   fileObjectId: seqObjId,
                   type: "sequencingObject",
                 })
               );
-
-              /*
-              Check if the sample default sequencing object was removed
-               */
-              const sampleDefaultSequencingObjectRemoved =
-                sequencingObjectIds.filter(
-                  (seqObjectId: number) =>
-                    seqObjectId === sample.defaultSequencingObject.identifier
-                );
-
+              if (
+                sample.defaultSequencingObject !== null &&
+                seqObjId === sample.defaultSequencingObject.identifier
+              ) {
+                defaultRemoved = seqObjId;
+              }
               /*
               If the sample default sequencing object was removed then update defaultSequencingObject
               in the state
                */
-              if (sampleDefaultSequencingObjectRemoved.length > 0) {
+              if (defaultRemoved !== null) {
                 dispatch(setDefaultSequencingObject(null));
               }
             });
@@ -127,7 +125,7 @@ export function SampleFileConcatenate({
     let pairedCount = 0;
     let singleEndCount = 0;
 
-    concatenateSelected.map(
+    concatenateSelected.forEach(
       (selected: { files: SequencingFile[]; sequenceFile: SequencingFile }) => {
         if (selected.files !== undefined) {
           pairedCount++;
