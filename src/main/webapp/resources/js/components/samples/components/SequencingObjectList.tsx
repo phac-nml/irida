@@ -103,7 +103,6 @@ export function SequencingObjectList({
 
     const seqObjIdsPaired = files.paired
       ?.filter((pair: SampleSequencingObject) => {
-        console.log(pair);
         return (
           (pair.fileInfo.processingState !== "FINISHED" &&
             pair.fileInfo.processingState !== "ERROR") ||
