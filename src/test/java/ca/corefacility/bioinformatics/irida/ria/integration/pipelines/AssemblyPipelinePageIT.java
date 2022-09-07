@@ -32,7 +32,7 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 
 	private void addSamplesToCart() {
 		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
 		samplesPage.selectSampleByName("sample1");
 		samplesPage.selectSampleByName("sample2");
 		samplesPage.addSelectedSamplesToCart();
@@ -42,7 +42,8 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 	public void testPageSetup() {
 		CartPage cartPage = new CartPage(driver());
 		cartPage.selectAssemblyPipeline();
-		assertEquals("Assembly and Annotation Pipeline", page.getPipelineName(), "Launch Page should display  the pipeline name");
+		assertEquals("Assembly and Annotation Pipeline", page.getPipelineName(),
+				"Launch Page should display  the pipeline name");
 		assertTrue(page.isLaunchFormDisplayed(), "Launch form should be displayed");
 		assertTrue(page.isLaunchDetailsDisplayed(), "Launch details should be displayed");
 		assertTrue(page.isLaunchParametersDisplayed(), "Launch parameters should be displayed");
@@ -50,7 +51,8 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(page.isShareWithProjectsDisplayed(), "Share with projects should be displayed");
 		assertFalse(page.isReferenceFilesDisplayed(), "Should be able to select a reference file");
 		assertTrue(page.isLaunchFilesDisplayed(), "Should be able to select sample files");
-		assertFalse(page.isReferenceFilesRequiredDisplayed(), "This pipeline does not need a reference file, so there should be none requested");
+		assertFalse(page.isReferenceFilesRequiredDisplayed(),
+				"This pipeline does not need a reference file, so there should be none requested");
 
 		// Test email checkbox
 		assertEquals(page.getEmailValue(), "No Email");

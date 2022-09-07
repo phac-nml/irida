@@ -255,7 +255,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		return PageFactory.initElements(driver, ProjectSamplesPage.class);
 	}
 
-	public static ProjectSamplesPage gotToPage(WebDriver driver, int projectId) {
+	public static ProjectSamplesPage goToPage(WebDriver driver, int projectId) {
 		get(driver, RELATIVE_URL + projectId);
 		// Wait for full page to get loaded
 		waitForTime(800);
@@ -393,8 +393,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void toggleAssociatedProject(String projectName) {
 		int prevTotal = getTableSummary().getTotal();
 		projectsFilterToggle.click();
-		WebElement selection = driver.findElement(
-				By.xpath("//li[@class='ant-dropdown-menu-item' and span='" + projectName + "']"));
+		WebElement selection = driver
+				.findElement(By.xpath("//li[@class='ant-dropdown-menu-item' and span='" + projectName + "']"));
 		selection.click();
 		driver.findElement(By.xpath("//button[@type='button' and span='OK']")).click();
 		waitForTableToUpdate(prevTotal);
@@ -413,8 +413,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		createdDateFilterToggle.click();
 		driver.findElement(By.xpath("//div[@class='t-created-filter']//input[@placeholder='Start date']"))
 				.sendKeys(start);
-		WebElement endInput = driver.findElement(
-				By.xpath("//div[@class='t-created-filter']//input[@placeholder='End date']"));
+		WebElement endInput = driver
+				.findElement(By.xpath("//div[@class='t-created-filter']//input[@placeholder='End date']"));
 		endInput.sendKeys(end);
 		endInput.sendKeys(Keys.ENTER);
 		createdDateFilter.findElement(By.className("t-search-btn")).click();
@@ -434,8 +434,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		modifiedDateFilterToggle.click();
 		driver.findElement(By.xpath("//div[@class='t-modified-filter']//input[@placeholder='Start date']"))
 				.sendKeys(start);
-		WebElement endInput = driver.findElement(
-				By.xpath("//div[@class='t-modified-filter']//input[@placeholder='End date']"));
+		WebElement endInput = driver
+				.findElement(By.xpath("//div[@class='t-modified-filter']//input[@placeholder='End date']"));
 		endInput.sendKeys(end);
 		endInput.sendKeys(Keys.ENTER);
 		modifiedDateFilter.findElement(By.className("t-search-btn")).click();
@@ -453,6 +453,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void selectSampleByName(String sampleName) {
 		WebElement checkbox = samplesTable.findElement(By.xpath("//td/a[text()='" + sampleName + "']/../..//input"));
 		checkbox.click();
+	}
+
+	public Long getCoverageForSampleByName(String sampleName) {
+		WebElement coverageCell = samplesTable.findElement(
+				By.xpath("//td/a[text()='" + sampleName + "']/../../td[contains(@class, 't-td-coverage')]"));
+		String coverageString = coverageCell.getText();
+
+		return coverageString == null || coverageString.isEmpty() ? null : Long.parseLong(coverageString);
 	}
 
 	public void addSelectedSamplesToCart() {

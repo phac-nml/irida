@@ -27,7 +27,7 @@ class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
 		String DEFAULT_PROTOCOL = "DEFAULT_PROTOCOL";
 
 		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
 		samplesPage.selectSampleByName(SAMPLE_1);
 		samplesPage.selectSampleByName(SAMPLE_2);
 		samplesPage.selectSampleByName(SAMPLE_3);
@@ -45,14 +45,17 @@ class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
 		page.setDefaultStrategySelect("WGS");
 		// Check to see that the defaults set in the samples
 		page.openSamplePanelBySampleName(SAMPLE_1);
-		assertEquals("WGS", page.getSelectValueForSampleField("strategy"), "Sample should have the strategy set automatically");
+		assertEquals("WGS", page.getSelectValueForSampleField("strategy"),
+				"Sample should have the strategy set automatically");
 		page.openSamplePanelBySampleName(SAMPLE_2);
-		assertEquals("WGS", page.getSelectValueForSampleField("strategy"), "Sample should have the strategy set automatically");
+		assertEquals("WGS", page.getSelectValueForSampleField("strategy"),
+				"Sample should have the strategy set automatically");
 		page.openSamplePanelBySampleName(SAMPLE_3);
-		assertEquals("WGS", page.getSelectValueForSampleField("strategy"), "Sample should have the strategy set automatically");
+		assertEquals("WGS", page.getSelectValueForSampleField("strategy"),
+				"Sample should have the strategy set automatically");
 		// Update a sample field and make sure the default on doesn't overwrite it.
 		page.openSamplePanelBySampleName(SAMPLE_1);
-		page.setTextInputForSampleFieldValue("protocol", PROTOCOL );
+		page.setTextInputForSampleFieldValue("protocol", PROTOCOL);
 		assertNotEquals(PROTOCOL, page.getInputValueForDefaultField("protocol"));
 		page.setDefaultInputFieldValue("protocol", DEFAULT_PROTOCOL);
 		assertNotEquals(DEFAULT_PROTOCOL, page.getInputValueForSampleField("protocol"));

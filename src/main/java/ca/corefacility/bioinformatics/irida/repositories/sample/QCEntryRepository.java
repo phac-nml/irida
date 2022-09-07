@@ -25,7 +25,7 @@ public interface QCEntryRepository extends IridaJpaRepository<QCEntry, Long> {
 	public List<QCEntry> getQCEntriesForSample(Sample sample);
 
 	/**
-	 * finall the {@link QCEntry} associated with {@link SequencingObject}s in a given {@link Sample} for a list of
+	 * find all the {@link QCEntry} associated with {@link SequencingObject}s in a given {@link Sample} for a list of
 	 * {@link Sample}s.
 	 * 
 	 * @param samples the List of {@link Sample}s to get {@link QCEntry}s for

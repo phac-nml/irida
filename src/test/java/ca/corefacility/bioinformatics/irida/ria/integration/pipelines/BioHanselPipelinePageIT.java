@@ -31,7 +31,7 @@ public class BioHanselPipelinePageIT extends AbstractIridaUIITChromeDriver {
 
 	private void addSamplesToCart() {
 		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
 		samplesPage.selectSampleByName("sample1");
 		samplesPage.selectSampleByName("sample2");
 		samplesPage.addSelectedSamplesToCart();
@@ -49,7 +49,8 @@ public class BioHanselPipelinePageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(page.isShareWithProjectsDisplayed(), "Share with projects should be displayed");
 		assertFalse(page.isReferenceFilesDisplayed(), "Should not be able to select a reference file");
 		assertTrue(page.isLaunchFilesDisplayed(), "Should be able to select sample files");
-		assertFalse(page.isReferenceFilesRequiredDisplayed(), "Should not have an alert showing that reference files were not found");
+		assertFalse(page.isReferenceFilesRequiredDisplayed(),
+				"Should not have an alert showing that reference files were not found");
 
 		// Test the name input
 		page.clearName();
@@ -68,10 +69,11 @@ public class BioHanselPipelinePageIT extends AbstractIridaUIITChromeDriver {
 
 		String MINIMUM_COVERAGE_PARAMETER = "bio_hansel-1-kmer_vals.kmer_min";
 		String originalMinimumPercentCoverageValue = page.getSavedParameterValue(MINIMUM_COVERAGE_PARAMETER);
-		page.updateSavedParameterValue(MINIMUM_COVERAGE_PARAMETER,"123456");
+		page.updateSavedParameterValue(MINIMUM_COVERAGE_PARAMETER, "123456");
 		assertTrue(page.isModifiedAlertVisible(), "Modified parameters alert should be displayed.");
 		page.updateSavedParameterValue(MINIMUM_COVERAGE_PARAMETER, originalMinimumPercentCoverageValue);
-		assertFalse(page.isModifiedAlertVisible(), "Modified alert should go way once the value is the same as the original");
+		assertFalse(page.isModifiedAlertVisible(),
+				"Modified alert should go way once the value is the same as the original");
 
 		// Test saving modified parameters
 		String newCoverage = "123";
@@ -82,11 +84,13 @@ public class BioHanselPipelinePageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(page.isModifiedAlertVisible(), "Modified parameters alert should be displayed.");
 		final String newModifiedTemplateName = "FOOBAR";
 		page.saveModifiedTemplateAs(newModifiedTemplateName);
-		assertEquals(newModifiedTemplateName, page.getSelectedParametersTemplateName(), "Then newly template should be selected");
+		assertEquals(newModifiedTemplateName, page.getSelectedParametersTemplateName(),
+				"Then newly template should be selected");
 
 		// Test submitting
 		page.submit();
-		assertFalse(page.isRequiredParameterErrorDisplayed(), "Subtyping scheme should be selected and not display an error");
+		assertFalse(page.isRequiredParameterErrorDisplayed(),
+				"Subtyping scheme should be selected and not display an error");
 		WebDriverWait wait = new WebDriverWait(driver(), 5);
 		wait.until(ExpectedConditions.urlMatches("/analysis"));
 	}

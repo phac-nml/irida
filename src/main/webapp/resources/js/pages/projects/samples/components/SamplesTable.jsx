@@ -264,6 +264,7 @@ export function SamplesTable() {
     },
     {
       title: i18n("SamplesTable.Column.coverage"),
+      className: "t-td-coverage",
       width: 100,
       dataIndex: "coverage",
     },
