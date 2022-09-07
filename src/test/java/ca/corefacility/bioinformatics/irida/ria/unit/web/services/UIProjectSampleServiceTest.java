@@ -36,6 +36,7 @@ public class UIProjectSampleServiceTest {
 	private final Long PROJECT_1_ID = 1L;
 	private final Long SAMPLE_1_ID = 11L;
 	private final Project PROJECT_1 = new Project("PROJECT_1");
+	private final Sample SAMPLE_1 = new Sample("SAMPLE_1");
 	private final String BAD_NAME = "bad name with spaces";
 	private final String SHORT_NAME = "sho";
 	private final String GOOD_NAME = "good_name";
@@ -50,6 +51,7 @@ public class UIProjectSampleServiceTest {
 		service = new UIProjectSampleService(projectService, sampleService, metadataTemplateService, messageSource);
 
 		when(projectService.read(PROJECT_1_ID)).thenReturn(PROJECT_1);
+		when(sampleService.read(SAMPLE_1_ID)).thenReturn(SAMPLE_1);
 		when(sampleService.getSampleBySampleName(PROJECT_1, GOOD_NAME)).thenThrow(
 				new EntityNotFoundException("Sample not found"));
 		Sample sample = new Sample(GOOD_NAME);
