@@ -73,7 +73,11 @@ export function SampleFileConcatenate({
 
           if (values.remove_original_files) {
             message = i18n("SampleFilesConcatenate.concatenationRemoveSuccess");
-            sequencingObjectIds.map((seqObjId: number) => {
+
+            /*
+            Remove from the state the sequencing objects that were used to concatenate the files
+             */
+            sequencingObjectIds.forEach((seqObjId: number) => {
               dispatch(
                 removeFileObjectFromSample({
                   fileObjectId: seqObjId,
@@ -81,12 +85,19 @@ export function SampleFileConcatenate({
                 })
               );
 
+              /*
+              Check if the sample default sequencing object was removed
+               */
               const sampleDefaultSequencingObjectRemoved =
                 sequencingObjectIds.filter(
                   (seqObjectId: number) =>
                     seqObjectId === sample.defaultSequencingObject.identifier
                 );
 
+              /*
+              If the sample default sequencing object was removed then update defaultSequencingObject
+              in the state
+               */
               if (sampleDefaultSequencingObjectRemoved.length > 0) {
                 dispatch(setDefaultSequencingObject(null));
               }

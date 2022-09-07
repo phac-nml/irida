@@ -173,47 +173,43 @@ export function SequencingObjectList({
     const { fileInfo: obj }: SampleSequencingObject = seqObj;
 
     return (
-      <div>
-        <Tooltip
-          title={i18n("SampleFilesConcatenate.checkboxDescription")}
-          color={primaryColour}
-          placement="right"
-          key={`concatenation-checkbox-tooltip-${obj.identifier}`}
-        >
-          <Checkbox
-            key={`concatenation-checkbox-${obj.identifier}`}
-            style={{ marginRight: SPACE_XS }}
-            className="t-concatenation-checkbox"
-            onChange={(e) => updateSelected(e, obj)}
-            checked={
-              concatenateSelected.filter(
-                (e: SequencingObject) => e.identifier === obj.identifier
-              ).length > 0
-            }
-          />
-        </Tooltip>
-      </div>
+      <Tooltip
+        title={i18n("SampleFilesConcatenate.checkboxDescription")}
+        color={primaryColour}
+        placement="right"
+        key={`concatenation-checkbox-tooltip-${obj.identifier}`}
+      >
+        <Checkbox
+          key={`concatenation-checkbox-${obj.identifier}`}
+          style={{ marginRight: SPACE_XS }}
+          className="t-concatenation-checkbox"
+          onChange={(e) => updateSelected(e, obj)}
+          checked={
+            concatenateSelected.filter(
+              (e: SequencingObject) => e.identifier === obj.identifier
+            ).length > 0
+          }
+        />
+      </Tooltip>
     );
   };
 
   /*
   Check if the sequencing object should be automatically set as default
    */
-  const checkSeqObjectAutoDefault = (type: string, index: number) => {
-    return (
-      (sample.defaultSequencingObject === null &&
-        type === "pair" &&
-        index === 0) ||
-      (sample.defaultSequencingObject === null &&
-        files.paired === undefined &&
-        type === "single" &&
-        index === 0) ||
-      (sample.defaultSequencingObject === null &&
-        files.paired === undefined &&
-        files.singles === undefined &&
-        type === "fast5" &&
-        index === 0)
-    );
+  const checkSeqObjectAutoDefault = (type: string, index: number): boolean => {
+    if (sample.defaultSequencingObject !== null || index !== 0) return false;
+    else
+      return (
+        (sample.defaultSequencingObject === null && type === "pair") ||
+        (sample.defaultSequencingObject === null &&
+          files.paired === undefined &&
+          type === "single") ||
+        (sample.defaultSequencingObject === null &&
+          files.paired === undefined &&
+          files.singles === undefined &&
+          type === "fast5")
+      );
   };
 
   /*
@@ -479,7 +475,6 @@ export function SequencingObjectList({
                       )
                     : null
                 }
-                displayFileProcessingStatus={true}
                 pairedReverseActions={[]}
               />
             )
@@ -503,7 +498,6 @@ export function SequencingObjectList({
                   ? getConcatenationCheckboxForSequencingObject(pair)
                   : null
               }
-              displayFileProcessingStatus={true}
             />
           ))}
         </SequenceFileTypeRenderer>
@@ -520,7 +514,6 @@ export function SequencingObjectList({
                   "fast5",
                   index
                 )}
-                displayFileProcessingStatus={true}
                 displayConcatenationCheckbox={null}
                 pairedReverseActions={[]}
               />

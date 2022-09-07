@@ -1081,7 +1081,7 @@ public class UISampleService {
 
 			if(removeOriginals) {
 				for(SequencingObject sequencingObject : readMultiple) {
-					if(sample.getDefaultSequencingObject().getId() == sequencingObject.getId()) {
+					if(sample.getDefaultSequencingObject().getId().equals(sequencingObject.getId())) {
 						sample.setDefaultSequencingObject(null);
 						sampleService.update(sample);
 						break;
