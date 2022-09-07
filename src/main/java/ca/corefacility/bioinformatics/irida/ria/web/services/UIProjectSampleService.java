@@ -8,6 +8,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
@@ -127,6 +128,7 @@ public class UIProjectSampleService {
 	 * @param locale    Users current locale
 	 * @return result of creating the sample
 	 */
+	@Transactional
 	public ResponseEntity<AjaxResponse> createSample(CreateSampleRequest request, Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		try {
@@ -161,6 +163,7 @@ public class UIProjectSampleService {
 	 * @param locale   Users current locale
 	 * @return result of creating the sample
 	 */
+	@Transactional
 	public ResponseEntity<AjaxResponse> updateSample(CreateSampleRequest request, Long sampleId, Locale locale) {
 		try {
 			Sample sample = sampleService.read(sampleId);
