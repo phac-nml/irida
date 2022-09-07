@@ -78,25 +78,21 @@ export function SampleFileConcatenate({
             Remove from the state the sequencing objects that were used to concatenate the files
              */
             sequencingObjectIds.forEach((seqObjId: number) => {
-              let defaultRemoved = null;
-
               dispatch(
                 removeFileObjectFromSample({
                   fileObjectId: seqObjId,
                   type: "sequencingObject",
                 })
               );
-              if (
-                sample.defaultSequencingObject !== null &&
-                seqObjId === sample.defaultSequencingObject.identifier
-              ) {
-                defaultRemoved = seqObjId;
-              }
+
               /*
               If the sample default sequencing object was removed then update defaultSequencingObject
               in the state
                */
-              if (defaultRemoved !== null) {
+              if (
+                sample.defaultSequencingObject !== null &&
+                seqObjId === sample.defaultSequencingObject.identifier
+              ) {
                 dispatch(setDefaultSequencingObject(null));
               }
             });
