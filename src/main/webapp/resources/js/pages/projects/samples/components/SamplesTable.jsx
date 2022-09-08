@@ -43,24 +43,22 @@ export function SamplesTable() {
   } = useSelector((state) => state.samples);
 
   /**
-   * Fetch the current state of the table.  Will refetch whenever one of the
+   * Fetch the current state of the table.
+   * Re-fetch whenever one of the
    * table options (filter, sort, or pagination) changes.
    */
-  const {
-    data: { content: samples, total } = {},
-    isFetching,
-  } = useListSamplesQuery(options, {
-    refetchOnMountOrArgChange: true,
-  });
+  const { data: { content: samples, total } = {}, isFetching } =
+    useListSamplesQuery(options, {
+      refetchOnMountOrArgChange: true,
+    });
 
   /**
    * Fetch projects that have been associated with this project.
    * Request formats them into a format that can be consumed by the
    * project column filter.
    */
-  const { data: associatedProjects } = useListAssociatedProjectsQuery(
-    projectId
-  );
+  const { data: associatedProjects } =
+    useListAssociatedProjectsQuery(projectId);
 
   /**
    * Handle row selection change event
@@ -68,8 +66,7 @@ export function SamplesTable() {
    * @param sample
    */
   const onRowSelectionChange = (event, sample) => {
-    const selected = event.target.checked;
-    if (selected) {
+    if (event.target.checked) {
       dispatch(addSelectedSample(sample));
     } else {
       dispatch(removeSelectedSample(sample.key));
@@ -101,7 +98,7 @@ export function SamplesTable() {
 
     dispatch(
       updateTable({
-        filters: { associated },
+        filters: { associated: associated === undefined ? null : associated }, // Null conversion for comparision with default values in slice
         pagination,
         order: formatSort(sorter),
         search,
@@ -247,7 +244,7 @@ export function SamplesTable() {
       title: i18n("SamplesTable.Column.sampleName"),
       className: "t-td-name",
       dataIndex: ["sample", "sampleName"],
-      sorter: { multiple: 1 },
+      sorter: true,
       render: (name, row) => (
         <a href={`${sampleUrl}/${row.sample.id}`}>{name}</a>
       ),
@@ -260,21 +257,29 @@ export function SamplesTable() {
     {
       title: i18n("SamplesTable.Column.quality"),
       width: 100,
-      dataIndex: "quality",
-      render: (qualities) => <SampleQuality qualities={qualities} />,
+      dataIndex: "qcStatus",
+      render: (qcStatus, row) => (
+        <SampleQuality qcStatus={qcStatus} qualities={row.quality} />
+      ),
+    },
+    {
+      title: i18n("SamplesTable.Column.coverage"),
+      className: "t-td-coverage",
+      width: 100,
+      dataIndex: "coverage",
     },
     {
       title: i18n("SamplesTable.Column.organism"),
       className: "t-td-organism",
       dataIndex: ["sample", "organism"],
-      sorter: { multiple: 1 },
+      sorter: true,
       ...getColumnSearchProps(["sample", "organism"], "t-organism-select"),
     },
     {
       title: i18n("SamplesTable.Column.project"),
       className: "t-td-project",
       dataIndex: ["project", "name"],
-      sorter: { multiple: 1 },
+      sorter: true,
       key: "associated",
       render: (name, row) => {
         if (!(row.project.id in projectColours)) {
@@ -303,14 +308,14 @@ export function SamplesTable() {
     {
       title: i18n("SamplesTable.Column.collectedBy"),
       dataIndex: ["sample", "collectedBy"],
-      sorter: { multiple: 1 },
+      sorter: true,
       ...getColumnSearchProps(["sample", "collectedBy"]),
     },
     {
       title: i18n("SamplesTable.Column.created"),
       className: "t-td-created",
       dataIndex: ["sample", "createdDate"],
-      sorter: { multiple: 1 },
+      sorter: true,
       width: 230,
       render: (createdDate) => {
         return formatInternationalizedDateTime(createdDate);
@@ -322,7 +327,7 @@ export function SamplesTable() {
       className: "t-td-modified",
       dataIndex: ["sample", "modifiedDate"],
       defaultSortOrder: "descend",
-      sorter: { multiple: 1 },
+      sorter: true,
       width: 230,
       render: (modifiedDate) => {
         return formatInternationalizedDateTime(modifiedDate);

@@ -35,7 +35,7 @@ public class PipelinesPhylogenomicsPageIT extends AbstractIridaUIITChromeDriver 
 
 	private void addSamplesToCart() {
 		LoginPage.loginAsUser(driver());
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
 		samplesPage.selectSampleByName("sample1");
 		samplesPage.selectSampleByName("sample2");
 		samplesPage.addSelectedSamplesToCart();

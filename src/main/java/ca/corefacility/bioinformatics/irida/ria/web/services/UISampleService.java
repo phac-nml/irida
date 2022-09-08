@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -46,7 +45,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchCriteria;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchOperation;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleFilesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIShareSamplesException;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.PairedEndSequenceFileModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.SingleEndSequenceFileModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntSearch;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSample;
@@ -57,7 +59,10 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.Project
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.ProjectSamplesFilter;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.SampleObject;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.error.SampleMergeException;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleFiles;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareMetadataRestriction;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -89,9 +94,9 @@ public class UISampleService {
 	 These correspond to their internationalized strings in the messages file
 	 */
 	private final List<String> TABLE_HEADERS = ImmutableList.of("server.SamplesTable.sampleName",
-			"server.SamplesTable.sampleId", "server.SamplesTable.quality", "server.SamplesTable.organism",
-			"server.SamplesTable.project", "server.SamplesTable.projectId", "server.SamplesTable.collectedBy",
-			"server.SamplesTable.created", "server.SamplesTable.modified");
+			"server.SamplesTable.sampleId", "server.SamplesTable.quality", "server.SamplesTable.coverage",
+			"server.SamplesTable.organism", "server.SamplesTable.project", "server.SamplesTable.projectId",
+			"server.SamplesTable.collectedBy", "server.SamplesTable.created", "server.SamplesTable.modified");
 
 	@Autowired
 	public UISampleService(SampleService sampleService, ProjectService projectService,
@@ -137,12 +142,29 @@ public class UISampleService {
 			project = projectService.read(projectId);
 		}
 
-		List<SequencingObject> filePairs = getPairedSequenceFilesForSample(sample, project);
-		List<SequencingObject> singles = getSingleEndSequenceFilesForSample(sample, project);
+		List<PairedEndSequenceFileModel> filePairs = getPairedSequenceFilesForSample(sample, project).stream()
+				.map(pair -> new PairedEndSequenceFileModel((SequenceFilePair) pair))
+				.collect(Collectors.toList());
+		List<SingleEndSequenceFileModel> singles = getSingleEndSequenceFilesForSample(sample, project).stream()
+				.map(single -> new SingleEndSequenceFileModel((SingleEndSequenceFile) single))
+				.collect(Collectors.toList());
 		List<SequencingObject> fast5 = getFast5FilesForSample(sample);
 		List<GenomeAssembly> genomeAssemblies = getGenomeAssembliesForSample(sample);
 
 		return new SampleFiles(singles, filePairs, fast5, genomeAssemblies);
+	}
+
+	/**
+	 * Get details about the files belonging to a list of samples
+	 *
+	 * @param sampleIds - List of sample identifiers to get file details for
+	 * @param projectId - the project id that these samples belong to
+	 * @return A map of sample id and their related file information
+	 */
+	public SampleFilesResponse getFilesForSamples(List<Long> sampleIds, Long projectId) {
+		SampleFilesResponse response = new SampleFilesResponse();
+		sampleIds.stream().forEach(id -> response.put(id, getSampleFiles(id, projectId)));
+		return response;
 	}
 
 	/**
@@ -218,7 +240,7 @@ public class UISampleService {
 	 * @param obj     the {@link SequencingObject} to enhance
 	 * @param project the {@link Project} to add
 	 */
-	private void enhanceQcEntries(SequencingObject obj, Project project) {
+	public void enhanceQcEntries(SequencingObject obj, Project project) {
 		Set<QCEntry> availableEntries = new HashSet<>();
 		if (obj.getQcEntries() != null) {
 			for (QCEntry q : obj.getQcEntries()) {
@@ -233,20 +255,6 @@ public class UISampleService {
 	}
 
 	/**
-	 * Get a list of all {@link Sample} identifiers within a specific project
-	 *
-	 * @param projectId Identifier for a {@link Project}
-	 * @return {@link List} of {@link Sample} identifiers
-	 */
-	public List<Long> getSampleIdsForProject(Long projectId) {
-		Project project = projectService.read(projectId);
-		List<Sample> samples = sampleService.getSamplesForProjectShallow(project);
-		return samples.stream().map(Sample::getId).collect(Collectors.toUnmodifiableList());
-	}
-
-	/**
-	 * Share / Move samples with another project
-	 *
 	 * @param request Request containing the details of the move
 	 * @param locale  current users {@link Locale}
 	 * @throws UIShareSamplesException if project or samples cannot be found
@@ -267,8 +275,8 @@ public class UISampleService {
 			try {
 				projectService.shareSamples(currentProject, targetProject, samples, !request.getLocked());
 			} catch (Exception e) {
-				throw new UIShareSamplesException(
-						messageSource.getMessage("server.ShareSamples.copy-error", new Object[] { targetProject.getLabel() }, locale));
+				throw new UIShareSamplesException(messageSource.getMessage("server.ShareSamples.copy-error",
+						new Object[] { targetProject.getLabel() }, locale));
 			}
 		}
 
@@ -546,21 +554,50 @@ public class UISampleService {
 	 * @return List of {@link ProjectSampleTableItem}
 	 */
 	private List<ProjectSampleTableItem> formatSamplesForTable(Page<ProjectSampleJoin> page, Locale locale) {
+		Map<Project, List<Long>> projectSampleIdsMap = page.getContent()
+				.stream()
+				.collect(Collectors.groupingBy(ProjectSampleJoin::getSubject,
+						Collectors.mapping(join -> join.getObject().getId(), Collectors.toList())));
+
+		Map<Project, Map<Long, Long>> projectSamplesCoverageMap = new HashMap<Project, Map<Long, Long>>();
+		projectSampleIdsMap.forEach((project, sampleIds) -> projectSamplesCoverageMap.put(project,
+				sampleService.getCoverageForSamplesInProject(project, sampleIds)));
+
+		List<Sample> samples = page.getContent().stream().map(join -> join.getObject()).collect(Collectors.toList());
+		Map<Long, List<QCEntry>> sampleQCEntries = sampleService.getQCEntriesForSamples(samples);
+
 		return page.getContent().stream().map(join -> {
 			Sample sample = join.getObject();
 			Project project = join.getSubject();
 
-			List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(sample);
-			List<String> quality = new ArrayList<>();
+			Long coverage = null;
+			if (projectSamplesCoverageMap.containsKey(project)
+					&& projectSamplesCoverageMap.get(project).containsKey(sample.getId())) {
+				coverage = projectSamplesCoverageMap.get(project).get(sample.getId());
+			}
 
-			qcEntriesForSample.forEach(entry -> {
-				entry.addProjectSettings(project);
-				if (entry.getStatus() == QCEntry.QCEntryStatus.NEGATIVE) {
-					quality.add(messageSource.getMessage("sample.files.qc." + entry.getType(),
-							new Object[] { entry.getMessage() }, locale));
+			List<QCEntry> qcEntriesForSample = sampleQCEntries.get(sample.getId());
+			List<String> quality = new ArrayList<>();
+			String qcStatus = null;
+
+			// If the sample has any SequencingObjects we will have at minimum CoverageQCEntry's
+			// which can be checked to set QCStatus.
+			if (qcEntriesForSample != null) {
+				qcEntriesForSample.forEach(entry -> {
+					entry.addProjectSettings(project);
+					if (entry.getStatus() == QCEntry.QCEntryStatus.NEGATIVE) {
+						quality.add(messageSource.getMessage("sample.files.qc." + entry.getType(),
+								new Object[] { entry.getMessage() }, locale));
+					}
+				});
+				// set qcStatus based on filtered qcEntries
+				if (quality.size() == 0) {
+					qcStatus = "pass";
+				} else {
+					qcStatus = "fail";
 				}
-			});
-			return new ProjectSampleTableItem(join, quality);
+			}
+			return new ProjectSampleTableItem(join, quality, qcStatus, coverage);
 		}).collect(Collectors.toList());
 	}
 
@@ -609,6 +646,11 @@ public class UISampleService {
 			Cell sampleQualityCell = row.createCell(cellNum++);
 			sampleQualityCell.setCellValue(StringUtils.join(item.getQuality(), "; "));
 
+			Cell sampleCoverageCell = row.createCell(cellNum++);
+			if (item.getCoverage() != null) {
+				sampleCoverageCell.setCellValue(item.getCoverage());
+			}
+
 			Cell sampleOrganismCell = row.createCell(cellNum++);
 			sampleOrganismCell.setCellValue(sample.getOrganism());
 
@@ -642,8 +684,7 @@ public class UISampleService {
 	 *
 	 * @param response {@link HttpServletResponse}
 	 * @param filename {@link String} name of the file to download.
-	 * @param items    {@link ProjectSampleTableItem} details about each row of the table   Data to download in the
-	 *                 table
+	 * @param items    {@link ProjectSampleTableItem} details about each row of the table Data to download in the table
 	 * @param headers  for the table
 	 * @throws IOException thrown if file cannot be written
 	 */
@@ -660,6 +701,7 @@ public class UISampleService {
 					sample.getSampleName(),
 					sample.getId().toString(),
 					StringUtils.join(item.getQuality(), "; "),
+					item.getCoverage() != null ? item.getCoverage().toString() : "",
 					sample.getOrganism(),
 					project.getName(),
 					project.getId().toString(),
@@ -676,37 +718,5 @@ public class UISampleService {
 		csvWriter.writeAll(results);
 		csvWriter.flush();
 		csvWriter.close();
-	}
-
-	/**
-	 * Check if a list of sample names exist within a project
-	 *
-	 * @param request Request containing the project id and sample names
-	 * @return List of valid and invalid sample names
-	 */
-	public SampleNameCheckResponse checkSampleNames(SampleNameCheckRequest request) {
-		Iterable<Project> projects = projectService.readMultiple(request.getProjectIds());
-		List<ValidSample> valid = new ArrayList<>();
-
-		AtomicReference<Iterator<Project>> iterator = new AtomicReference<>();
-		request.getNames().forEach(name -> {
-			Sample sample = null;
-			iterator.set(projects.iterator());
-
-			// Need to figure out what project it belongs to.
-			while (sample == null && iterator.get().hasNext()) {
-				Project project = iterator.get().next();
-				try {
-					sample = sampleService.getSampleBySampleName(project, name);
-					valid.add(new ValidSample(project, sample));
-				} catch (Exception e) {
-					// Nothing to worry about here
-				}
-			}
-		});
-		List<String> invalid = new ArrayList<>(request.getNames());
-		invalid.removeAll(valid.stream().map(ValidSample::getSampleName).collect(Collectors.toList()));
-
-		return new SampleNameCheckResponse(valid, invalid);
 	}
 }

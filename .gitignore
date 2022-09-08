@@ -6,6 +6,7 @@ gradle-app.setting
 .gradletasknamecache
 !**/src/main/**/build/
 !**/src/test/**/build/
+*.jks
 
 ### STS ###
 .apt_generated
@@ -54,3 +55,4 @@ src/main/webapp/node_modules
 ### MISC ###
 /.theia/launch.json
 *.swp
+/src/main/resources/application-local.properties

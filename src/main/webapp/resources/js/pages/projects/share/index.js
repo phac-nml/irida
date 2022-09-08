@@ -14,8 +14,8 @@ import { render } from "react-dom";
 import { Provider, useSelector } from "react-redux";
 import { useGetPotentialProjectsToShareToQuery } from "../../../apis/projects/projects";
 import {
-  useGetSampleIdsForProjectQuery,
   useShareSamplesWithProjectMutation,
+  useValidateSamplesMutation,
 } from "../../../apis/projects/samples";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ShareMetadata } from "./ShareMetadata";
@@ -39,6 +39,9 @@ function ShareApp() {
   const [shareLarge, setShareLarge] = React.useState(false);
   const [error, setError] = React.useState(undefined);
   const [finished, setFinished] = React.useState(false);
+  const [existingIds, setExistingIds] = React.useState([]);
+  const [existingNames, setExistingNames] = React.useState([]);
+  const [validateSamples] = useValidateSamplesMutation();
 
   /*
   Create redirect href to project samples page.
@@ -58,19 +61,30 @@ function ShareApp() {
 
   const [shareSamplesWithProject] = useShareSamplesWithProjectMutation();
 
-  const { data: existingIds = [] } = useGetSampleIdsForProjectQuery(
-    targetProject?.identifier,
-    {
-      skip: !targetProject?.identifier,
-    }
-  );
-
   const { data: projects, isLoading: projectsLoading } =
     useGetPotentialProjectsToShareToQuery(currentProject, {
       skip: !currentProject,
     });
 
-  const filtered = samples.filter((sample) => !existingIds.includes(sample.id));
+  const filtered = samples.filter(
+    (sample) =>
+      !existingIds.includes(sample.id) && !existingNames.includes(sample.name)
+  );
+
+  /*
+  Samples in target project which have the same ids as the ones being shared from the source project
+   */
+  const targetProjectSampleIdsDuplicate = samples.filter((sample) =>
+    existingIds.includes(sample.id)
+  );
+
+  /*
+  Samples in target project which have the same names as the ones being shared from the source project
+   */
+  const targetProjectSampleNamesDuplicate = samples.filter(
+    (sample) =>
+      existingNames.includes(sample.name) && !existingIds.includes(sample.id)
+  );
 
   const steps = [
     {
@@ -79,10 +93,43 @@ function ShareApp() {
     },
     {
       title: i18n("ShareLayout.samples"),
-      component: <ShareSamples samples={filtered} />,
+      component: (
+        <ShareSamples
+          samples={filtered}
+          targetProjectSampleIdsDuplicate={targetProjectSampleIdsDuplicate}
+          targetProjectSampleNamesDuplicate={targetProjectSampleNamesDuplicate}
+        />
+      ),
     },
     { title: i18n("ShareLayout.restrictions"), component: <ShareMetadata /> },
   ];
+
+  React.useEffect(() => {
+    if (targetProject?.identifier) {
+      validateSamples({
+        projectId: targetProject?.identifier,
+        body: {
+          samples: samples.map((sample) => ({
+            name: sample.name,
+          })),
+        },
+      }).then((response) => {
+        let filtered = response.data.samples.filter((sample) => sample.ids);
+        setExistingIds(
+          filtered
+            .map((sample) => {
+              return sample.ids;
+            })
+            .flat()
+        );
+        setExistingNames(
+          filtered.map((sample) => {
+            return sample.name;
+          })
+        );
+      });
+    }
+  }, [targetProject?.identifier]);
 
   React.useEffect(() => {
     if (step === 0) {
@@ -93,12 +140,12 @@ function ShareApp() {
       return;
     } else if (step === 1) {
       setPrevDisabled(false);
-      setNextDisabled(filtered.length === 0);
+      setNextDisabled(filtered.length === 0 || samples.length === 0);
       return;
     }
     setPrevDisabled(false);
     setNextDisabled(step === steps.length - 1);
-  }, [error, targetProject, step, steps.length]);
+  }, [error, targetProject, step, steps.length, samples.length]);
 
   /*
   1. No Samples - this would be if the user came to this page from anything

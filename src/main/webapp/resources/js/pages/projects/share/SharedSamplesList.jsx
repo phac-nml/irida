@@ -9,11 +9,17 @@ import ShareSamplesListItem from "./ShareSampleListItem";
  * @returns {JSX.Element}
  * @constructor
  */
-export function SharedSamplesList({ list = [] }) {
+export function SharedSamplesList({ list = [], itemActionsRequired = true }) {
   const Row = ({ index, style }) => {
     const sample = list[index];
 
-    return <ShareSamplesListItem sample={sample} style={style} />;
+    return (
+      <ShareSamplesListItem
+        sample={sample}
+        style={style}
+        actionsRequired={itemActionsRequired}
+      />
+    );
   };
 
   const ROW_HEIGHT = 55;

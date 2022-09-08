@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Tuple;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -34,7 +36,7 @@ public interface SampleRepository extends IridaJpaRepository<Sample, Long>, Samp
 	public List<Sample> getSamplesForProjectShallow(Project project);
 
 	/**
-	 * Get a {@link Sample} with the given string sample identifier from a specific project.
+	 * Get a {@link Sample} with the given string sample name from a specific project.
 	 *
 	 * @param p          The {@link Project} that the {@link Sample} belongs to.
 	 * @param sampleName The string sample name for a sample
@@ -43,6 +45,18 @@ public interface SampleRepository extends IridaJpaRepository<Sample, Long>, Samp
 	 */
 	@Query("select j.sample from ProjectSampleJoin j where j.project = ?1 and j.sample.sampleName = ?2")
 	public Sample getSampleBySampleName(Project p, String sampleName) throws EntityNotFoundException;
+
+	/**
+	 * Get the {@link Sample} identifiers with the given list of sample names from a list of projects.
+	 *
+	 * @param projectIds  The {@link Project} identifiers that the {@link Sample} belongs to.
+	 * @param sampleNames The list of sample names
+	 * @return A list of {@link Sample} identifiers
+	 * @throws EntityNotFoundException if a sample with this identifier doesn't exist
+	 */
+	@Query("select j.sample.sampleName, j.sample.id from ProjectSampleJoin j where j.project.id in ?1 and j.sample.sampleName in ?2")
+	public List<Tuple> getSampleIdsBySampleNameInProjects(List<Long> projectIds, List<String> sampleNames)
+			throws EntityNotFoundException;
 
 	/**
 	 * Get a {@link Page} of {@link Sample}s based on a list of {@link Sample} names

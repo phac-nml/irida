@@ -12,12 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleFilesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIShareSamplesException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.DownloadRequest;
@@ -32,7 +33,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleServ
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 
 /**
- * Ajax Controller for handling asynchronous requests for project samples.
+ * AJAX Controller for handling asynchronous requests for project samples.
  */
 @RestController
 @RequestMapping("/ajax/projects/{projectId}/samples")
@@ -168,17 +169,6 @@ public class ProjectSamplesAjaxController {
 	}
 
 	/**
-	 * Get a list of all {@link Sample} identifiers within a specific project
-	 *
-	 * @param id Identifier for a Project
-	 * @return {@link List} of {@link Sample} identifiers
-	 */
-	@GetMapping("/identifiers")
-	public List<Long> getSampleIdsForProject(@RequestParam Long id) {
-		return uiSampleService.getSampleIdsForProject(id);
-	}
-
-	/**
 	 * Share / Move samples between projects
 	 *
 	 * @param request {@link ShareSamplesRequest} details about the samples to share
@@ -195,4 +185,30 @@ public class ProjectSamplesAjaxController {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new AjaxErrorResponse(e.getLocalizedMessage()));
 		}
 	}
+
+	/**
+	 * Get the set of files for samples by the sample identifiers
+	 *
+	 * @param ids       List of identifiers for the samples to get files for.
+	 * @param projectId The project the samples belong to
+	 * @return {@link SampleFilesResponse} a map of sample identifier and their corresponding files
+	 */
+	@GetMapping("/files")
+	public SampleFilesResponse getFilesForSamples(@RequestParam List<Long> ids, @PathVariable Long projectId) {
+		return uiSampleService.getFilesForSamples(ids, projectId);
+	}
+
+	/**
+	 * Validate a list of samples names
+	 *
+	 * @param projectId project identifier
+	 * @param request   {@link ValidateSampleNamesRequest} details about the sample names to validate
+	 * @return a list of validated sample names
+	 */
+	@PostMapping("/validate")
+	public ResponseEntity<AjaxResponse> validateSampleNames(@PathVariable Long projectId,
+			@RequestBody ValidateSampleNamesRequest request) {
+		return ResponseEntity.ok(uiProjectSampleService.validateSampleNames(projectId, request));
+	}
+
 }

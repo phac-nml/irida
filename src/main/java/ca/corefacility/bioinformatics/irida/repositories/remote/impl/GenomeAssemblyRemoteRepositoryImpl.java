@@ -9,6 +9,7 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.GenomeAssemblyRe
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.SequenceFileMessageConverter;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -21,7 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A repository implementaion for reading {@link GenomeAssembly} from remote locations using a {@link OAuthTokenRestTemplate}
+ * A repository implementaion for reading {@link GenomeAssembly} from remote locations using a
+ * {@link OAuthTokenRestTemplate}
  */
 @Repository
 public class GenomeAssemblyRemoteRepositoryImpl extends RemoteRepositoryImpl<UploadedAssembly>
@@ -36,8 +38,8 @@ public class GenomeAssemblyRemoteRepositoryImpl extends RemoteRepositoryImpl<Upl
 	private RemoteAPITokenService tokenService;
 
 	@Autowired
-	public GenomeAssemblyRemoteRepositoryImpl(RemoteAPITokenService tokenService) {
-		super(tokenService, listTypeReference, objectTypeReference);
+	public GenomeAssemblyRemoteRepositoryImpl(RemoteAPITokenService tokenService, UserService userService) {
+		super(tokenService, userService, listTypeReference, objectTypeReference);
 		this.tokenService = tokenService;
 	}
 
