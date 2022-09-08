@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.FieldUpdate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -99,7 +100,7 @@ public class UIProjectSampleServiceTest {
 		List<FieldUpdate> metadata = new ArrayList<>();
 		metadata.add(new FieldUpdate("field1", "value1"));
 		metadata.add(new FieldUpdate("field2", "value2"));
-		CreateSampleRequest request = new CreateSampleRequest(GOOD_NAME, null, null, metadata);
+		UpdateSampleRequest request = new UpdateSampleRequest(GOOD_NAME, null, null, metadata);
 		ResponseEntity<AjaxResponse> response = service.updateSample(request, SAMPLE_1_ID, Locale.ENGLISH);
 		assertEquals(HttpStatus.OK, response.getStatusCode(), "Sample should be updated");
 	}

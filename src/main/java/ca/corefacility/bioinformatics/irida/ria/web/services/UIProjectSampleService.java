@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
@@ -158,13 +159,13 @@ public class UIProjectSampleService {
 	/**
 	 * Update a sample in a project
 	 *
-	 * @param request  {@link CreateSampleRequest} details about the sample to create
+	 * @param request  {@link UpdateSampleRequest} details about the sample to update
 	 * @param sampleId Identifier for the sample
 	 * @param locale   Users current locale
 	 * @return result of creating the sample
 	 */
 	@Transactional
-	public ResponseEntity<AjaxResponse> updateSample(CreateSampleRequest request, Long sampleId, Locale locale) {
+	public ResponseEntity<AjaxResponse> updateSample(UpdateSampleRequest request, Long sampleId, Locale locale) {
 		try {
 			Sample sample = sampleService.read(sampleId);
 			sample.setSampleName(request.getName());
