@@ -49,7 +49,7 @@ export function SampleFiles() {
   const [filesToUpload, setFilesToUpload] = React.useState<FileUpload[]>([]);
 
   const acceptedFileTypes =
-    ".fasta, .fastq, .fast5, .fastq.gz, .fast5.gz, .fna";
+    ".fasta, .fastq, .fast5, .fastq.gz, .fast5.tar.gz, .fna";
 
   /*
   Function to get sample files from the server and dispatch to the store
