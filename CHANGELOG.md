@@ -21,6 +21,7 @@
 * [UI]: Fixed issue with Biohansel pipeline being launched without selecting an option for a required parameter. See [PR 1356](https://github.com/phac-nml/irida/pull/1356)
 * [Developer]: Unified validate sample names into one endpoint. See [PR 1353](https://github.com/phac-nml/irida/pull/1353)
 * [Developer/UI]: Increased speed of Project Samples table export and added estimated coverage to Project Samples table and exports. See [PR 1360](https://github.com/phac-nml/irida/pull/1360)
+* [Workflow]: Start the Galaxy Data Library timeout when an upload begins rather than when it is first queued up. See [PR 1337](https://github.com/phac-nml/irida/pull/1337)
 
 ## [22.05.5] - 2022/06/28
 * [UI]: Fixed bug preventing export of project samples table due to invalid url. [PR 1331](https://github.com/phac-nml/irida/pull/1331)
@@ -33,7 +34,6 @@
 ## [22.05.3] - 2022/06/14
 * [Developer]: Fix bug where users with only group access to a project couldn't view sample details or metadata. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
 * [Developer]: Fix sql order by bug on admin statistics page that was causing page not to load when `ONLY_FULL_GROUP_BY` enabled. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
-* [Workflow]: Start the Galaxy Data Library timeout when an upload begins rather than when it is first queued up. See [PR 1337](https://github.com/phac-nml/irida/pull/1337)
 
 ## [22.05.2] - 2022/06/10
 * [Developer/UI]: Fix flaky UI Integration tests. See [PR 1313](https://github.com/phac-nml/irida/pull/1313)
