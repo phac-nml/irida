@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.components;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -125,11 +126,6 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	public String getCreatedDateForSample() {
 		return createdDate.getText();
-	}
-
-	public void closeDetails() {
-		modal.findElement(By.className("ant-modal-close"))
-				.click();
 	}
 
 	public int getNumberOfMetadataEntries() {
@@ -383,6 +379,14 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	public int numberOfGenomeAssembliesSetAsDefaultButtons() {
 		return setDefaultGenomeAssemblyBtns.size();
+	}
+
+	public boolean sampleDetailsViewerVisible() {
+		try {
+			return modal.isDisplayed();
+		} catch(Exception e) {
+			return false;
+		}
 	}
 
 }

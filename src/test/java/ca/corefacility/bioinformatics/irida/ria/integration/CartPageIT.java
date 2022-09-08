@@ -190,22 +190,11 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		sampleDetailsViewer.clickRemoveSampleFromCartButton();
 
-		assertTrue(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
-				"The add cart to sample button should be displayed");
-		assertFalse(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(),
-				"The remove sample from cart button should not be displayed");
-
-		sampleDetailsViewer.clickAddSampleToCartButton();
-		assertFalse(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
-				"The add cart to sample button should not be displayed");
-		assertTrue(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(),
-				"The remove sample from cart button should be displayed");
-
-		sampleDetailsViewer.closeDetails();
+		assertFalse(sampleDetailsViewer.sampleDetailsViewerVisible(), "The sample details viewer should not be displayed as the sample was removed from the cart");
 
 		// Test removing a sample from the project
 		page.removeSampleFromCart(0);
-		assertEquals(2, page.getNumberOfSamplesInCart(), "Should be 2 samples in the cart");
+		assertEquals(1, page.getNumberOfSamplesInCart(), "Should be 1 sample in the cart");
 
 		// Test removing the entire project
 		page.removeProjectFromCart();
@@ -373,25 +362,16 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(0, sampleDetailsViewer.numberOfFilesDisplayed(),
 				"No files should be left for sample after file removal");
 
-		sampleDetailsViewer.clickRemoveSampleFromCartButton();
-
-		assertTrue(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
-				"The add cart to sample button should be displayed");
-		assertFalse(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(),
-				"The remove sample from cart button should not be displayed");
-
-		sampleDetailsViewer.clickAddSampleToCartButton();
-
-		assertFalse(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
-				"The add cart to sample button should not be displayed");
 		assertTrue(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(),
 				"The remove sample from cart button should be displayed");
 
-		sampleDetailsViewer.closeDetails();
+		sampleDetailsViewer.clickRemoveSampleFromCartButton();
+
+		assertFalse(sampleDetailsViewer.sampleDetailsViewerVisible(), "The sample details viewer should not be displayed as the sample was removed from the cart");
 
 		// Test removing a sample from the project
 		page.removeSampleFromCart(0);
-		assertEquals(2, page.getNumberOfSamplesInCart(), "Should be 2 samples in the cart");
+		assertEquals(1, page.getNumberOfSamplesInCart(), "Should be 1 samples in the cart");
 
 		// Test removing the entire project
 		page.removeProjectFromCart();
