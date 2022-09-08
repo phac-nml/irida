@@ -121,6 +121,7 @@ dependencies {
     }
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-data-ldap")
     implementation("org.springframework.security:spring-security-oauth2-authorization-server:0.3.1")
     implementation("org.springframework.security:spring-security-oauth2-resource-server:5.7.2")
     implementation("org.springframework.ldap:spring-ldap-core")
@@ -215,7 +216,6 @@ dependencies {
     testImplementation("org.seleniumhq.selenium:selenium-chrome-driver:3.141.59")
     testImplementation("org.mockftpserver:MockFtpServer:2.6")
     testImplementation("org.springframework.ldap:spring-ldap-test")
-    implementation("org.springframework.boot:spring-boot-starter-data-ldap")
     testImplementation("com.unboundid:unboundid-ldapsdk:6.0.5")
 }
 
