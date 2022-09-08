@@ -94,9 +94,9 @@ public class UISampleService {
 	 These correspond to their internationalized strings in the messages file
 	 */
 	private final List<String> TABLE_HEADERS = ImmutableList.of("server.SamplesTable.sampleName",
-			"server.SamplesTable.sampleId", "server.SamplesTable.quality", "server.SamplesTable.organism",
-			"server.SamplesTable.project", "server.SamplesTable.projectId", "server.SamplesTable.collectedBy",
-			"server.SamplesTable.created", "server.SamplesTable.modified");
+			"server.SamplesTable.sampleId", "server.SamplesTable.quality", "server.SamplesTable.coverage",
+			"server.SamplesTable.organism", "server.SamplesTable.project", "server.SamplesTable.projectId",
+			"server.SamplesTable.collectedBy", "server.SamplesTable.created", "server.SamplesTable.modified");
 
 	@Autowired
 	public UISampleService(SampleService sampleService, ProjectService projectService,
@@ -175,8 +175,8 @@ public class UISampleService {
 	 * @return list of paired end sequence files
 	 */
 	public List<SequencingObject> getPairedSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, SequenceFilePair.class);
+		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
 		// add project to qc entries and filter any unavailable entries
 		List<SequencingObject> filePairs = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : filePairJoins) {
@@ -196,8 +196,8 @@ public class UISampleService {
 	 * @return list of single end sequence files
 	 */
 	public List<SequencingObject> getSingleEndSequenceFilesForSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, SingleEndSequenceFile.class);
+		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
 
 		List<SequencingObject> singles = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : singleFileJoins) {
@@ -216,8 +216,8 @@ public class UISampleService {
 	 * @return list of fast5 sequence files
 	 */
 	public List<SequencingObject> getFast5FilesForSample(Sample sample) {
-		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService.getSequencesForSampleOfType(
-				sample, Fast5Object.class);
+		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService
+				.getSequencesForSampleOfType(sample, Fast5Object.class);
 		return fast5FileJoins.stream().map(SampleSequencingObjectJoin::getObject).collect(Collectors.toList());
 	}
 
@@ -431,16 +431,15 @@ public class UISampleService {
 
 			try {
 				for (Sample sample : samples) {
-					Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService.getSequencingObjectsForSample(
-							sample);
+					Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService
+							.getSequencingObjectsForSample(sample);
 
 					for (SampleSequencingObjectJoin join : sequencingObjectsForSample) {
 						for (SequenceFile file : join.getObject().getFiles()) {
 							Path path = file.getFile();
 
-							String fileName =
-									project.getName() + "/" + sample.getSampleName() + "/" + path.getFileName()
-											.toString();
+							String fileName = project.getName() + "/" + sample.getSampleName() + "/"
+									+ path.getFileName().toString();
 							if (usedFileNames.contains(fileName)) {
 								fileName = handleDuplicate(fileName, usedFileNames);
 							}
@@ -555,21 +554,50 @@ public class UISampleService {
 	 * @return List of {@link ProjectSampleTableItem}
 	 */
 	private List<ProjectSampleTableItem> formatSamplesForTable(Page<ProjectSampleJoin> page, Locale locale) {
+		Map<Project, List<Long>> projectSampleIdsMap = page.getContent()
+				.stream()
+				.collect(Collectors.groupingBy(ProjectSampleJoin::getSubject,
+						Collectors.mapping(join -> join.getObject().getId(), Collectors.toList())));
+
+		Map<Project, Map<Long, Long>> projectSamplesCoverageMap = new HashMap<Project, Map<Long, Long>>();
+		projectSampleIdsMap.forEach((project, sampleIds) -> projectSamplesCoverageMap.put(project,
+				sampleService.getCoverageForSamplesInProject(project, sampleIds)));
+
+		List<Sample> samples = page.getContent().stream().map(join -> join.getObject()).collect(Collectors.toList());
+		Map<Long, List<QCEntry>> sampleQCEntries = sampleService.getQCEntriesForSamples(samples);
+
 		return page.getContent().stream().map(join -> {
 			Sample sample = join.getObject();
 			Project project = join.getSubject();
 
-			List<QCEntry> qcEntriesForSample = sampleService.getQCEntriesForSample(sample);
-			List<String> quality = new ArrayList<>();
+			Long coverage = null;
+			if (projectSamplesCoverageMap.containsKey(project)
+					&& projectSamplesCoverageMap.get(project).containsKey(sample.getId())) {
+				coverage = projectSamplesCoverageMap.get(project).get(sample.getId());
+			}
 
-			qcEntriesForSample.forEach(entry -> {
-				entry.addProjectSettings(project);
-				if (entry.getStatus() == QCEntry.QCEntryStatus.NEGATIVE) {
-					quality.add(messageSource.getMessage("sample.files.qc." + entry.getType(),
-							new Object[] { entry.getMessage() }, locale));
+			List<QCEntry> qcEntriesForSample = sampleQCEntries.get(sample.getId());
+			List<String> quality = new ArrayList<>();
+			String qcStatus = null;
+
+			// If the sample has any SequencingObjects we will have at minimum CoverageQCEntry's
+			// which can be checked to set QCStatus.
+			if (qcEntriesForSample != null) {
+				qcEntriesForSample.forEach(entry -> {
+					entry.addProjectSettings(project);
+					if (entry.getStatus() == QCEntry.QCEntryStatus.NEGATIVE) {
+						quality.add(messageSource.getMessage("sample.files.qc." + entry.getType(),
+								new Object[] { entry.getMessage() }, locale));
+					}
+				});
+				// set qcStatus based on filtered qcEntries
+				if (quality.size() == 0) {
+					qcStatus = "pass";
+				} else {
+					qcStatus = "fail";
 				}
-			});
-			return new ProjectSampleTableItem(join, quality);
+			}
+			return new ProjectSampleTableItem(join, quality, qcStatus, coverage);
 		}).collect(Collectors.toList());
 	}
 
@@ -618,6 +646,11 @@ public class UISampleService {
 			Cell sampleQualityCell = row.createCell(cellNum++);
 			sampleQualityCell.setCellValue(StringUtils.join(item.getQuality(), "; "));
 
+			Cell sampleCoverageCell = row.createCell(cellNum++);
+			if (item.getCoverage() != null) {
+				sampleCoverageCell.setCellValue(item.getCoverage());
+			}
+
 			Cell sampleOrganismCell = row.createCell(cellNum++);
 			sampleOrganismCell.setCellValue(sample.getOrganism());
 
@@ -651,8 +684,7 @@ public class UISampleService {
 	 *
 	 * @param response {@link HttpServletResponse}
 	 * @param filename {@link String} name of the file to download.
-	 * @param items    {@link ProjectSampleTableItem} details about each row of the table   Data to download in the
-	 *                 table
+	 * @param items    {@link ProjectSampleTableItem} details about each row of the table Data to download in the table
 	 * @param headers  for the table
 	 * @throws IOException thrown if file cannot be written
 	 */
@@ -666,9 +698,16 @@ public class UISampleService {
 			SampleObject sample = item.getSample();
 			ProjectObject project = item.getProject();
 			String[] row = {
-					sample.getSampleName(), sample.getId().toString(), StringUtils.join(item.getQuality(), "; "),
-					sample.getOrganism(), project.getName(), project.getId().toString(), sample.getCollectedBy(),
-					sample.getCreatedDate().toString(), sample.getModifiedDate().toString() };
+					sample.getSampleName(),
+					sample.getId().toString(),
+					StringUtils.join(item.getQuality(), "; "),
+					item.getCoverage() != null ? item.getCoverage().toString() : "",
+					sample.getOrganism(),
+					project.getName(),
+					project.getId().toString(),
+					sample.getCollectedBy(),
+					sample.getCreatedDate().toString(),
+					sample.getModifiedDate().toString() };
 			results.add(row);
 		}
 

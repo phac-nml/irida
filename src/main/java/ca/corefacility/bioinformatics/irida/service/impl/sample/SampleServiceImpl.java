@@ -667,6 +667,19 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Transactional(readOnly = true)
+	@Override
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#samples, 'canReadSample')")
+	public Map<Long, List<QCEntry>> getQCEntriesForSamples(List<Sample> samples) {
+		return qcEntryRepository.getQCEntriesForSamples(samples)
+				.stream()
+				.collect(Collectors.groupingBy(sampleQCEntryTuple -> (Long) sampleQCEntryTuple.get(0), Collectors
+						.mapping(sampleQCEntryTuple -> (QCEntry) sampleQCEntryTuple.get(1), Collectors.toList())));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@PreAuthorize("hasPermission(#objects, 'canUpdateSample')")
 	@Override
 	public List<Sample> updateMultiple(Collection<Sample> objects) {
@@ -812,5 +825,19 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public List<GenericStatModel> getSamplesCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod) {
 		return sampleRepository.countSamplesCreatedGrouped(createdDate, statisticTimePeriod.getGroupByFormat());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional(readOnly = true)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'canReadProject')")
+	public Map<Long, Long> getCoverageForSamplesInProject(Project project, List<Long> sampleIds) {
+		return psjRepository.calculateCoverageForSamplesInProject(project, sampleIds)
+				.stream()
+				.collect(HashMap::new,
+						(sampleCoverageMap, sampleCoverageTuple) -> sampleCoverageMap
+								.put((Long) sampleCoverageTuple.get(0), (Long) sampleCoverageTuple.get(1)),
+						Map::putAll);
 	}
 }
