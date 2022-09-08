@@ -20,7 +20,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsUser(driver());
 
 		// Add some samples to the cart and test to see if they get displayed/
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
 		samplesPage.selectSampleByName("sample5fg44");
 		samplesPage.selectSampleByName("sample5fdgr");
 		samplesPage.selectSampleByName("sample554sg5");
@@ -41,9 +41,12 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		page.viewSampleDetailsFor(sampleName);
 		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
 		assertEquals(sampleName, sampleDetailsViewer.getSampleName(), "Should be viewing the proper sample");
-		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Should display the correct created date");
-		assertEquals(4, sampleDetailsViewer.getNumberOfMetadataEntries(), "Should have the proper number of metadata entries");
-		assertEquals("AB-1003", sampleDetailsViewer.getValueForMetadataField("symptom"), "Should be able to diplay the proper metadata");
+		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(),
+				"Should display the correct created date");
+		assertEquals(4, sampleDetailsViewer.getNumberOfMetadataEntries(),
+				"Should have the proper number of metadata entries");
+		assertEquals("AB-1003", sampleDetailsViewer.getValueForMetadataField("symptom"),
+				"Should be able to diplay the proper metadata");
 		sampleDetailsViewer.closeDetails();
 
 		// Test removing a sample from the project
