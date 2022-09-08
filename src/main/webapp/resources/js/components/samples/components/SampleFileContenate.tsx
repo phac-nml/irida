@@ -23,6 +23,7 @@ import {
   removeFileObjectFromSample,
   resetConcatenateSelected,
 } from "../sampleFilesSlice";
+import { setDefaultSequencingObject } from "../sampleSlice";
 import { IconArrowLeft, IconArrowRight, IconFile } from "../../icons/Icons";
 
 const { Title } = Typography;
@@ -72,13 +73,28 @@ export function SampleFileConcatenate({
 
           if (values.remove_original_files) {
             message = i18n("SampleFilesConcatenate.concatenationRemoveSuccess");
-            sequencingObjectIds.map((seqObjId: number) => {
+
+            /*
+            Remove from the state the sequencing objects that were used to concatenate the files
+             */
+            sequencingObjectIds.forEach((seqObjId: number) => {
               dispatch(
                 removeFileObjectFromSample({
                   fileObjectId: seqObjId,
                   type: "sequencingObject",
                 })
               );
+
+              /*
+              If the sample default sequencing object was removed then update defaultSequencingObject
+              in the state
+               */
+              if (
+                sample.defaultSequencingObject !== null &&
+                seqObjId === sample.defaultSequencingObject.identifier
+              ) {
+                dispatch(setDefaultSequencingObject(null));
+              }
             });
           }
 
@@ -105,7 +121,7 @@ export function SampleFileConcatenate({
     let pairedCount = 0;
     let singleEndCount = 0;
 
-    concatenateSelected.map(
+    concatenateSelected.forEach(
       (selected: { files: SequencingFile[]; sequenceFile: SequencingFile }) => {
         if (selected.files !== undefined) {
           pairedCount++;

@@ -32,13 +32,11 @@ import { setDefaultSequencingObject } from "../sampleSlice";
 import {
   downloadSequencingObjectFile,
   fetchUpdatedSequencingObjects,
+  SampleSequencingObject,
+  SequencingObject,
   useUpdateDefaultSampleSequencingObjectMutation,
 } from "../../../apis/samples/samples";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
-import {
-  SampleSequencingObject,
-  SequencingObject,
-} from "../../../apis/samples/samples";
 
 const fileProcessTranslations: { [key: string]: string } = {
   UNPROCESSED: i18n("SampleFilesList.fileProcessingState.UNPROCESSED"),
@@ -175,27 +173,40 @@ export function SequencingObjectList({
     const { fileInfo: obj }: SampleSequencingObject = seqObj;
 
     return (
-      <div>
-        <Tooltip
-          title={i18n("SampleFilesConcatenate.checkboxDescription")}
-          color={primaryColour}
-          placement="right"
-          key={`concatenation-checkbox-tooltip-${obj.identifier}`}
-        >
-          <Checkbox
-            key={`concatenation-checkbox-${obj.identifier}`}
-            style={{ marginRight: SPACE_XS }}
-            className="t-concatenation-checkbox"
-            onChange={(e) => updateSelected(e, obj)}
-            checked={
-              concatenateSelected.filter(
-                (e: SequencingObject) => e.identifier === obj.identifier
-              ).length > 0
-            }
-          />
-        </Tooltip>
-      </div>
+      <Tooltip
+        title={i18n("SampleFilesConcatenate.checkboxDescription")}
+        color={primaryColour}
+        placement="right"
+        key={`concatenation-checkbox-tooltip-${obj.identifier}`}
+      >
+        <Checkbox
+          key={`concatenation-checkbox-${obj.identifier}`}
+          style={{ marginRight: SPACE_XS }}
+          className="t-concatenation-checkbox"
+          onChange={(e) => updateSelected(e, obj)}
+          checked={
+            concatenateSelected.filter(
+              (e: SequencingObject) => e.identifier === obj.identifier
+            ).length > 0
+          }
+        />
+      </Tooltip>
     );
+  };
+
+  /*
+  Check if the sequencing object should be automatically set as default
+   */
+  const checkSeqObjectAutoDefault = (type: string, index: number): boolean => {
+    if (sample.defaultSequencingObject !== null || index !== 0) return false;
+    else
+      return (
+        type === "pair" ||
+        (files.paired === undefined && type === "single") ||
+        (files.paired === undefined &&
+          files.singles === undefined &&
+          type === "fast5")
+      );
   };
 
   /*
@@ -203,6 +214,7 @@ export function SequencingObjectList({
    */
   const getActionsForSequencingObject = (
     seqObj: SampleSequencingObject,
+    type: string,
     index = -1
   ) => {
     const actions: React.ReactElement[] = [];
@@ -216,11 +228,11 @@ export function SequencingObjectList({
       </span>
     );
 
-    if (isModifiable && obj.files && obj.files.length === 2) {
+    if (isModifiable) {
       if (
         (sample.defaultSequencingObject !== null &&
           obj.identifier === sample.defaultSequencingObject.identifier) ||
-        (sample.defaultSequencingObject === null && index === 0)
+        checkSeqObjectAutoDefault(type, index)
       ) {
         actions.push(
           <Tooltip
@@ -259,6 +271,16 @@ export function SequencingObjectList({
       }
     }
 
+    let seqFileId = -1;
+
+    if (obj.files?.length) {
+      seqFileId = parseInt(obj.files[0].identifier);
+    } else if (obj.sequenceFile) {
+      seqFileId = parseInt(obj.sequenceFile.identifier);
+    } else {
+      seqFileId = parseInt(obj.file.identifier);
+    }
+
     actions.push(
       <Button
         type="link"
@@ -272,11 +294,7 @@ export function SequencingObjectList({
         onClick={() => {
           downloadSequenceFile({
             sequencingObjectId: obj.identifier,
-            sequenceFileId: obj.files?.length
-              ? parseInt(obj.files[0].identifier)
-              : obj.sequenceFile
-              ? parseInt(obj.sequenceFile.identifier)
-              : parseInt(obj.file.identifier),
+            sequenceFileId: seqFileId,
           });
         }}
       >
@@ -435,22 +453,29 @@ export function SequencingObjectList({
     <Space size="large" direction="vertical" style={{ width: `100%` }}>
       {files.singles && (
         <SequenceFileTypeRenderer title={i18n("SampleFiles.singles")}>
-          {files.singles.map((sequenceObject: SampleSequencingObject) => (
-            <SequenceObjectListItem
-              key={`single-${sequenceObject.fileInfo.identifier}`}
-              sequenceObject={sequenceObject}
-              actions={getActionsForSequencingObject(sequenceObject)}
-              displayConcatenationCheckbox={
-                isModifiable &&
-                files.singles !== undefined &&
-                files.singles?.length >= 2
-                  ? getConcatenationCheckboxForSequencingObject(sequenceObject)
-                  : null
-              }
-              displayFileProcessingStatus={true}
-              pairedReverseActions={[]}
-            />
-          ))}
+          {files.singles.map(
+            (sequenceObject: SampleSequencingObject, index: number) => (
+              <SequenceObjectListItem
+                key={`single-${sequenceObject.fileInfo.identifier}`}
+                sequenceObject={sequenceObject}
+                actions={getActionsForSequencingObject(
+                  sequenceObject,
+                  "single",
+                  index
+                )}
+                displayConcatenationCheckbox={
+                  isModifiable &&
+                  files.singles !== undefined &&
+                  files.singles?.length >= 2
+                    ? getConcatenationCheckboxForSequencingObject(
+                        sequenceObject
+                      )
+                    : null
+                }
+                pairedReverseActions={[]}
+              />
+            )
+          )}
         </SequenceFileTypeRenderer>
       )}
       {files.paired && (
@@ -459,7 +484,7 @@ export function SequencingObjectList({
             <SequenceObjectListItem
               key={`pair-${pair.fileInfo.identifier}`}
               sequenceObject={pair}
-              actions={getActionsForSequencingObject(pair, index)}
+              actions={getActionsForSequencingObject(pair, "pair", index)}
               pairedReverseActions={getActionsForSequencingObjectPairedReverse(
                 pair
               )}
@@ -470,23 +495,27 @@ export function SequencingObjectList({
                   ? getConcatenationCheckboxForSequencingObject(pair)
                   : null
               }
-              displayFileProcessingStatus={true}
             />
           ))}
         </SequenceFileTypeRenderer>
       )}
       {files.fast5 && (
         <SequenceFileTypeRenderer title={i18n("SampleFiles.fast5")}>
-          {files.fast5.map((fast5Obj: SampleSequencingObject) => (
-            <SequenceObjectListItem
-              key={`fast5-${fast5Obj.fileInfo.identifier}`}
-              sequenceObject={fast5Obj}
-              actions={getActionsForSequencingObject(fast5Obj)}
-              displayFileProcessingStatus={true}
-              displayConcatenationCheckbox={null}
-              pairedReverseActions={[]}
-            />
-          ))}
+          {files.fast5.map(
+            (fast5Obj: SampleSequencingObject, index: number) => (
+              <SequenceObjectListItem
+                key={`fast5-${fast5Obj.fileInfo.identifier}`}
+                sequenceObject={fast5Obj}
+                actions={getActionsForSequencingObject(
+                  fast5Obj,
+                  "fast5",
+                  index
+                )}
+                displayConcatenationCheckbox={null}
+                pairedReverseActions={[]}
+              />
+            )
+          )}
         </SequenceFileTypeRenderer>
       )}
     </Space>

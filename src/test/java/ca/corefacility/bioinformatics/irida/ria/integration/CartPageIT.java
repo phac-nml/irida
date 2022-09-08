@@ -318,11 +318,12 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(10, sampleDetailsViewer.downloadFileButtonsVisible(), "Should have 10 download file buttons");
 
 		assertTrue(sampleDetailsViewer.setSetDefaultSeqObjButtonsVisible());
-		assertEquals(1, sampleDetailsViewer.defaultSeqObjTagCount(),
-				"Only one sequencing object (file pair) should be designated as the default sequencing object for the sample");
 
 		JavascriptExecutor js = (JavascriptExecutor) driver();
-		js.executeScript("document.getElementsByClassName('t-filelist-scroll')[0].scrollTop= 450");
+		js.executeScript("document.getElementsByClassName('t-filelist-scroll')[0].scrollTop= 200");
+
+		assertEquals(1, sampleDetailsViewer.defaultSeqObjTagCount(),
+				"Only one sequencing object should be designated as the default sequencing object for the sample");
 
 		sampleDetailsViewer.updateDefaultSequencingObjectForSample();
 
@@ -354,13 +355,13 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 				"Should not have any concatenation checkboxes");
 		assertEquals(7, sampleDetailsViewer.downloadFileButtonsVisible(), "Should have 7 download file buttons");
 
-		assertEquals(1, sampleDetailsViewer.numberOfSequencingObjectsSetAsDefault(), "One sequencing object (pair) should have a default tag");
-		assertEquals(1, sampleDetailsViewer.numberOfSetAsDefaultSeqObjsButtons(), "There should be one set as default button for sequencing objects");
+		assertEquals(1, sampleDetailsViewer.numberOfSequencingObjectsSetAsDefault(), "One sequencing object should have a default tag");
+		assertEquals(2, sampleDetailsViewer.numberOfSetAsDefaultSeqObjsButtons(), "There should be two set as default buttons for sequencing objects");
 
 		// Remove the 5 remaining files (1 single end sequencing object and 2 paired end sequencing objects containing 2 files each, and 2 assemblies)
 		js.executeScript("document.getElementsByClassName('t-filelist-scroll')[0].scrollTop= 600");
 
-		assertEquals(1, sampleDetailsViewer.numberOfGenomeAssembliesSetAsDefault(), "One sequencing object (pair) should have a default tag");
+		assertEquals(1, sampleDetailsViewer.numberOfGenomeAssembliesSetAsDefault(), "One sequencing object should have a default tag");
 		assertEquals(1, sampleDetailsViewer.numberOfGenomeAssembliesSetAsDefaultButtons(), "There should be one set as default button for sequencing objects");
 
 		sampleDetailsViewer.removeFile(4);
