@@ -117,6 +117,9 @@ export const treeSlice = createSlice({
     resize: (state, action) => {
       state.treeProps.size = action.payload;
     },
+    updateTreeType: (state, action) => {
+      state.treeProps.type = action.payload.treeType;
+    },
     selectAllTerms: (state, action) => {
       if (action.payload.checked) {
         state.treeProps.blocks = state.terms;
@@ -198,6 +201,7 @@ export const treeSlice = createSlice({
 
 export const {
   resize,
+  updateTreeType,
   selectAllTerms,
   setFieldVisibility,
   setMetadataColourForTermWithValue,
