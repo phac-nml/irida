@@ -4,13 +4,13 @@
 
 import React, { useContext, useEffect, useState } from "react";
 
-import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
+import { TabPaneContent } from "../../../components/tabs";
 import { PhylocanvasComponent } from "../../../components/PhylocanvasComponent";
 import { Layout, Radio } from "antd";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { getNewickTree } from "../../../apis/analysis/analysis";
-import { ContentLoading } from "../../../components/loader/ContentLoading";
-import { WarningAlert } from "../../../components/alerts/WarningAlert";
+import { ContentLoading } from "../../../components/loader";
+import { WarningAlert } from "../../../components/alerts";
 import styled from "styled-components";
 import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
 import { BORDERED_LIGHT } from "../../../styles/borders";
@@ -34,7 +34,7 @@ const ButtonGroupWrapper = styled.div`
   margin-bottom: ${SPACE_MD};
 `;
 
-export default function Tree() {
+export default function AnalysisPhylogeneticTree() {
   const [newickString, setNewickString] = useState(null);
   const [serverMsg, setServerMsg] = useState(null);
   const [currTreeShape, setCurrTreeShape] = useState("rectangular");
@@ -55,16 +55,6 @@ export default function Tree() {
       }
     });
   }, []);
-
-  function getTree() {
-    return (
-      <PhylocanvasComponent
-        data={newickString}
-        treeType={currTreeShape}
-        style={{ height: "100%" }}
-      />
-    );
-  }
 
   function handleClick(e) {
     setCurrTreeShape(e.target.value);
@@ -124,7 +114,11 @@ export default function Tree() {
                 </Link>
               </ButtonGroupWrapper>
               <VisualizationWrapper className="t-phylocanvas-wrapper">
-                {getTree()}
+                <PhylocanvasComponent
+                  data={newickString}
+                  treeType={currTreeShape}
+                  style={{ height: "100%" }}
+                />
               </VisualizationWrapper>
             </div>
           )
