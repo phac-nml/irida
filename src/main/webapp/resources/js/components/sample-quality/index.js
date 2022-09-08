@@ -11,11 +11,17 @@ import { IconCheck, IconWarning } from "../icons/Icons";
  * @returns {JSX.Element}
  * @constructor
  */
-export default function SampleQuality({ qualities }) {
+export default function SampleQuality({ qcStatus, qualities }) {
   return qualities.length === 0 ? (
-    <Tag color="success" icon={<IconCheck />}>
-      {i18n("SampleQuality.pass").toUpperCase()}
-    </Tag>
+    <>
+      {qcStatus === "pass" ? (
+        <Tag color="success" icon={<IconCheck />}>
+          {i18n("SampleQuality.pass").toUpperCase()}
+        </Tag>
+      ) : (
+        <Tag>{i18n("SampleQuality.na").toUpperCase()}</Tag>
+      )}
+    </>
   ) : (
     <Popover
       placement="right"

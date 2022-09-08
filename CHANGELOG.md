@@ -20,6 +20,7 @@
 * [Developer]: Add identifier to project drop-downs. See [PR 1352](https://github.com/phac-nml/irida/pull/1352)
 * [UI]: Fixed issue with Biohansel pipeline being launched without selecting an option for a required parameter. See [PR 1356](https://github.com/phac-nml/irida/pull/1356)
 * [Developer]: Unified validate sample names into one endpoint. See [PR 1353](https://github.com/phac-nml/irida/pull/1353)
+* [Developer/UI]: Increased speed of Project Samples table export and added estimated coverage to Project Samples table and exports. See [PR 1360](https://github.com/phac-nml/irida/pull/1360)
 * [Developer]: Added description and metadata to create & update project sample endpoints. See [PR 1359](https://github.com/phac-nml/irida/pull/1359)
 
 ## [22.05.5] - 2022/06/28

@@ -276,6 +276,15 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	public List<QCEntry> getQCEntriesForSample(Sample sample);
 
 	/**
+	 * Find all the {@link QCEntry} associated with {@link SequencingObject}s in a given {@link Sample} for a list of
+	 * {@link Sample}s
+	 *
+	 * @param samples the {@link Sample}s to get {@link QCEntry}s for
+	 * @return a map of sample id to {@link QCEntry}s
+	 */
+	public Map<Long, List<QCEntry>> getQCEntriesForSamples(List<Sample> samples);
+
+	/**
 	 * Search all {@link Sample}s in projects the current logged in user has access to
 	 *
 	 * @param query the query string to search
@@ -316,4 +325,13 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @return An {@link GenericStatModel} list
 	 */
 	public List<GenericStatModel> getSamplesCreatedGrouped(Date createdDate, StatisticTimePeriod statisticTimePeriod);
+
+	/**
+	 * Get Coverage for samples within a project.
+	 * 
+	 * @param project   the {@link Project} to use to calculate the coverage
+	 * @param sampleIds the {@link Sample} ids to get coverage for
+	 * @return a map of sample id to coverage value
+	 */
+	public Map<Long, Long> getCoverageForSamplesInProject(Project project, List<Long> sampleIds);
 }
