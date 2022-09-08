@@ -44,7 +44,7 @@ export interface SequenceObjectListItemProps {
   actions: JSX.Element[];
   pairedReverseActions: JSX.Element[];
   displayConcatenationCheckbox: JSX.Element | null;
-  displayFileProcessingStatus: boolean;
+  displayFileProcessingStatus?: boolean;
 }
 
 const { Text } = Typography;
@@ -64,7 +64,7 @@ export function SequenceObjectListItem({
   actions = [],
   pairedReverseActions = [],
   displayConcatenationCheckbox = null,
-  displayFileProcessingStatus = false,
+  displayFileProcessingStatus = true,
 }: SequenceObjectListItemProps): JSX.Element {
   const obj = sequenceObject.fileInfo;
 

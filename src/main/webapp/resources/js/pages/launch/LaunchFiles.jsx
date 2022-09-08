@@ -60,7 +60,26 @@ export function LaunchFiles() {
         const firstSamples = [];
         data.forEach((sample) => {
           if (sample.files.length) {
-            if (sample.defaultSequencingObject !== null) {
+            /*
+             Check if the current default sequencing object is an accepted type (single, paired)
+             for the pipeline.
+             */
+            let defaultSequencingObjectAccepted = sample.files.find(
+              (sampleFile) => {
+                if (
+                  sample.defaultSequencingObject !== null &&
+                  sampleFile.fileInfo.identifier ===
+                    sample.defaultSequencingObject.identifier
+                ) {
+                  return sampleFile;
+                }
+              }
+            );
+
+            if (
+              sample.defaultSequencingObject !== null &&
+              typeof defaultSequencingObjectAccepted !== "undefined"
+            ) {
               sample.selected = sample.defaultSequencingObject.identifier;
             } else {
               sample.selected = sample.files[0].fileInfo.identifier;
