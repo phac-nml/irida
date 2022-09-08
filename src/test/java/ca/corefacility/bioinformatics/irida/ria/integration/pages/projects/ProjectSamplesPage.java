@@ -10,7 +10,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -242,6 +241,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "t-filter-cancel")
 	private WebElement filterCancelBtn;
 
+	@FindBy(className = "ant-pagination-prev")
+	private WebElement prevTablePage;
+
+	@FindBy(className = "ant-pagination-next")
+	private WebElement nextTablePage;
+
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
 	}
@@ -250,7 +255,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		return PageFactory.initElements(driver, ProjectSamplesPage.class);
 	}
 
-	public static ProjectSamplesPage gotToPage(WebDriver driver, int projectId) {
+	public static ProjectSamplesPage goToPage(WebDriver driver, int projectId) {
 		get(driver, RELATIVE_URL + projectId);
 		// Wait for full page to get loaded
 		waitForTime(800);
@@ -320,8 +325,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	private void closeDropdown(WebElement dropdown) {
 		WebDriverWait wait = new WebDriverWait(driver, 10);
-		Actions act = new Actions(driver);
-		act.moveByOffset(300, 300).click().perform();
+		dropdown.sendKeys(Keys.ESCAPE);
 		wait.until(ExpectedConditions.invisibilityOf(dropdown));
 	}
 
@@ -449,6 +453,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void selectSampleByName(String sampleName) {
 		WebElement checkbox = samplesTable.findElement(By.xpath("//td/a[text()='" + sampleName + "']/../..//input"));
 		checkbox.click();
+	}
+
+	public Long getCoverageForSampleByName(String sampleName) {
+		WebElement coverageCell = samplesTable.findElement(
+				By.xpath("//td/a[text()='" + sampleName + "']/../../td[contains(@class, 't-td-coverage')]"));
+		String coverageString = coverageCell.getText();
+
+		return coverageString == null || coverageString.isEmpty() ? null : Long.parseLong(coverageString);
 	}
 
 	public void addSelectedSamplesToCart() {
@@ -581,5 +593,22 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		int total = getTableSummary().getTotal();
 		filterSubmitBtn.click();
 		waitForTableToUpdate(total);
+	}
+
+	public void shareExportSamplesToNcbi() {
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		openExportDropdown();
+		ncbiExportBtn.click();
+		wait.until(ExpectedConditions.urlContains("/ncbi"));
+	}
+
+	public void goToNextTablePage() {
+		nextTablePage.click();
+		waitForTime(200);
+	}
+
+	public void gotToPreviousTablePage() {
+		prevTablePage.click();
+		waitForTime(200);
 	}
 }

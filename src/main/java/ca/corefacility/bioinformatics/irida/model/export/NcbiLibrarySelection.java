@@ -64,4 +64,13 @@ public enum NcbiLibrarySelection {
 	public String getValue() {
 		return value;
 	}
+
+	public static NcbiLibrarySelection fromString(String value) {
+		for (NcbiLibrarySelection selection : NcbiLibrarySelection.values()) {
+			if (selection.getValue().equals(value)) {
+				return selection;
+			}
+		}
+		return UNSPECIFIED;
+	}
 }

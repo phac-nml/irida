@@ -1,6 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -17,6 +21,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidatio
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNameModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -27,7 +34,6 @@ import com.google.common.base.Strings;
  */
 @Component
 public class UIProjectSampleService {
-
 	private final ProjectService projectService;
 	private final SampleService sampleService;
 	private final MessageSource messageSource;
@@ -38,6 +44,31 @@ public class UIProjectSampleService {
 		this.projectService = projectService;
 		this.sampleService = sampleService;
 		this.messageSource = messageSource;
+	}
+
+	/**
+	 * Validate a list of sample names
+	 *
+	 * @param projectId project identifier
+	 * @param request   {@link ValidateSampleNamesRequest} details about the sample names to validate
+	 * @return a list of validated sample names
+	 */
+	public ValidateSampleNamesResponse validateSampleNames(Long projectId, ValidateSampleNamesRequest request) {
+		List<ValidateSampleNameModel> samples = request.getSamples();
+		List<Long> associatedProjectIds = request.getAssociatedProjectIds();
+		List<Long> projectIds = new ArrayList<>();
+		projectIds.add(projectId);
+		if (associatedProjectIds != null) {
+			projectIds.addAll(associatedProjectIds);
+		}
+		List<String> sampleNames = samples.stream().map(ValidateSampleNameModel::getName).collect(Collectors.toList());
+		Map<String, List<Long>> foundSampleNames = sampleService.getSampleIdsBySampleNameForProjects(projectIds,
+				sampleNames);
+		for (ValidateSampleNameModel sample : samples) {
+			List<Long> foundSampleIds = foundSampleNames.get(sample.getName());
+			sample.setIds(foundSampleIds);
+		}
+		return new ValidateSampleNamesResponse(samples);
 	}
 
 	/**
@@ -65,7 +96,9 @@ public class UIProjectSampleService {
 		 */
 		if (!name.matches("[A-Za-z\\d-_!@#$%~`]+")) {
 			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY.value())
-					.body(new SampleNameValidationResponse("error", messageSource.getMessage("server.AddSample.error.special.characters", new Object[] {}, locale)));
+					.body(new SampleNameValidationResponse("error",
+							messageSource.getMessage("server.AddSample.error.special.characters", new Object[] {},
+									locale)));
 		}
 
 		// Check to see if the sample name already exists.

@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class UIUserGroupsServiceTest {
@@ -62,9 +62,8 @@ public class UIUserGroupsServiceTest {
 		SecurityContext securityContext = mock(SecurityContext.class);
 		when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
-		when(SecurityContextHolder.getContext()
-				.getAuthentication()
-				.getPrincipal()).thenReturn(USER_1);
+		when(SecurityContextHolder.getContext().getAuthentication().getName()).thenReturn(USER_1.getUsername());
+		when(userService.getUserByUsername(USER_1.getUsername())).thenReturn(USER_1);
 
 		when(userGroupService.search(any(), any())).thenReturn(getPagedUserGroups());
 		when(userGroupService.read(GROUP_1.getId())).thenReturn(GROUP_1);
