@@ -1,14 +1,14 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Radio, Typography } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import { BlockRadioInput } from "../../../../components/ant.design/forms/BlockRadioInput";
-import { useSetColumnProjectSampleMetadataMutation } from "../../../../apis/metadata/metadata-import";
 import {
   IconArrowLeft,
   IconArrowRight,
 } from "../../../../components/icons/Icons";
+import { setSampleNameColumn } from "../services/importReducer";
 
 const { Text } = Typography;
 
@@ -23,7 +23,7 @@ export function SampleMetadataImportMapHeaders() {
   const navigate = useNavigate();
   const [column, setColumn] = React.useState();
   const { headers, sampleNameColumn } = useSelector((state) => state.reducer);
-  const [updateColumn] = useSetColumnProjectSampleMetadataMutation();
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
     if (!column) {
@@ -32,11 +32,8 @@ export function SampleMetadataImportMapHeaders() {
   }, [sampleNameColumn, headers]);
 
   const onSubmit = () => {
-    updateColumn({ projectId, sampleNameColumn: column })
-      .unwrap()
-      .then((payload) => {
-        navigate(`/${projectId}/sample-metadata/upload/review`);
-      });
+    dispatch(setSampleNameColumn(column));
+    navigate(`/${projectId}/sample-metadata/upload/review`);
   };
 
   return (

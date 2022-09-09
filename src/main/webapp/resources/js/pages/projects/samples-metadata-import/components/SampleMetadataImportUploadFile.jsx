@@ -9,7 +9,6 @@ import {
 import { notification, Typography } from "antd";
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
-import { useClearProjectSampleMetadataMutation } from "../../../../apis/metadata/metadata-import";
 import * as XLSX from "xlsx";
 
 const { Text } = Typography;
@@ -25,19 +24,11 @@ export function SampleMetadataImportUploadFile() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [status, setStatus] = React.useState("process");
-  const [clearStorage] = useClearProjectSampleMetadataMutation();
-
-  React.useEffect(() => {
-    clearStorage(projectId);
-  }, [clearStorage, projectId]);
 
   const options = {
     multiple: false,
     showUploadList: false,
     accept: [".xls", ".xlsx", ".csv"],
-    // action: setBaseUrl(
-    //   `/ajax/projects/sample-metadata/upload/file?projectId=${projectId}`
-    // ),
     onChange(info) {
       const { status } = info.file;
       if (info.file.status !== "uploading") {
@@ -52,7 +43,6 @@ export function SampleMetadataImportUploadFile() {
             const rows = XLSX.utils.sheet_to_row_object_array(
               workbook.Sheets[firstSheet]
             );
-            // dispatch(setSampleNameColumn(Object.keys(rows[0])[0]));
             dispatch(setHeaders(Object.keys(rows[0])));
             dispatch(setMetadata(rows));
           };
