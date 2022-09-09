@@ -96,14 +96,14 @@ export function SampleMetadataImportReview() {
 
   React.useEffect(() => {
     console.log(metadata);
-    // setValid(!data.rows.some((row) => row.isSampleNameValid === false));
+    setValid(!metadata.some((row) => row.isSampleNameValid === false));
 
     const sampleColumn = {
       title: sampleNameColumn,
       dataIndex: sampleNameColumn,
       fixed: "left",
       width: 100,
-      render(text, item) {
+      onCell(text, item) {
         return {
           props: {
             style: { background: item.isSampleNameValid ? null : red1 },
@@ -132,10 +132,7 @@ export function SampleMetadataImportReview() {
       .map((header) => ({
         title: header,
         dataIndex: header,
-        // render: (text, item) => item[header],
       }));
-
-    console.log(otherColumns);
 
     const updatedColumns = [
       savedColumn,
@@ -145,12 +142,12 @@ export function SampleMetadataImportReview() {
     ];
 
     setColumns(updatedColumns);
-    // setSelected(
-    //   metadata.map((row) => {
-    //     if (row.isSampleNameValid && (row.saved === null || row.saved === true))
-    //       return row.rowKey;
-    //   })
-    // );
+    setSelected(
+      metadata.map((row) => {
+        if (row.isSampleNameValid && (row.saved === null || row.saved === true))
+          return row.rowKey;
+      })
+    );
   }, []);
 
   const save = () => {
@@ -188,10 +185,8 @@ export function SampleMetadataImportReview() {
       )}
       <MetadataTable
         className="t-metadata-uploader-review-table"
-        rowKey={(row) => row.rowKey}
-        rowClassName={(record, index) =>
-          record.saved === false ? "row-error" : null
-        }
+        rowKey={(row, index) => `metadata-uploader-row-${index}`}
+        rowClassName={(record) => (record.saved === false ? "row-error" : null)}
         rowSelection={rowSelection}
         columns={columns}
         dataSource={metadata}
