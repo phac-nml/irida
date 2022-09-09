@@ -2,10 +2,7 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Alert, Button, Table, Tag, Tooltip, Typography } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
-import {
-  useGetProjectSampleMetadataQuery,
-  useSaveProjectSampleMetadataMutation,
-} from "../../../../apis/metadata/metadata-import";
+import { useSaveProjectSampleMetadataMutation } from "../../../../apis/metadata/metadata-import";
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -13,6 +10,7 @@ import {
 } from "../../../../components/icons/Icons";
 import { red1, red2, red5 } from "../../../../styles/colors";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
 
 const { Paragraph, Text } = Typography;
 
@@ -49,8 +47,8 @@ export function SampleMetadataImportReview() {
   const [columns, setColumns] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
   const [valid, setValid] = React.useState(true);
-  const { data = {}, isFetching, isSuccess } = useGetProjectSampleMetadataQuery(
-    projectId
+  const { headers, sampleNameColumn, metadata } = useSelector(
+    (state) => state.reducer
   );
   const [saveMetadata] = useSaveProjectSampleMetadataMutation();
 
@@ -97,76 +95,68 @@ export function SampleMetadataImportReview() {
   };
 
   React.useEffect(() => {
-    if (isSuccess) {
-      setValid(!data.rows.some((row) => row.isSampleNameValid === false));
+    console.log(metadata);
+    // setValid(!data.rows.some((row) => row.isSampleNameValid === false));
 
-      const index = data.headers.findIndex(
-        (item) => item === data.sampleNameColumn
-      );
+    const sampleColumn = {
+      title: sampleNameColumn,
+      dataIndex: sampleNameColumn,
+      fixed: "left",
+      width: 100,
+      render(text, item) {
+        return {
+          props: {
+            style: { background: item.isSampleNameValid ? null : red1 },
+          },
+          children: item[sampleNameColumn],
+        };
+      },
+    };
 
-      const headers = [...data.headers];
+    const savedColumn = {
+      dataIndex: "saved",
+      fixed: "left",
+      width: 10,
+      render: (text, item) => {
+        if (item.saved === false)
+          return (
+            <Tooltip title={item.error} color={red5}>
+              <IconExclamationCircle style={{ color: red5 }} />
+            </Tooltip>
+          );
+      },
+    };
 
-      const sample = headers.splice(index, 1)[0];
-
-      const sampleColumn = {
-        title: sample,
-        dataIndex: sample,
-        fixed: "left",
-        width: 100,
-        render(text, item) {
-          return {
-            props: {
-              style: { background: item.isSampleNameValid ? null : red1 },
-            },
-            children: item.entry[sample],
-          };
-        },
-      };
-
-      const savedColumn = {
-        dataIndex: "saved",
-        fixed: "left",
-        width: 10,
-        render: (text, item) => {
-          if (item.saved === false)
-            return (
-              <Tooltip title={item.error} color={red5}>
-                <IconExclamationCircle style={{ color: red5 }} />
-              </Tooltip>
-            );
-        },
-      };
-
-      const otherColumns = headers.map((header) => ({
+    const otherColumns = headers
+      .filter((header) => header !== sampleNameColumn)
+      .map((header) => ({
         title: header,
         dataIndex: header,
-        render: (text, item) => item.entry[header],
+        // render: (text, item) => item[header],
       }));
 
-      const updatedColumns = [
-        savedColumn,
-        sampleColumn,
-        tagColumn,
-        ...otherColumns,
-      ];
+    console.log(otherColumns);
 
-      setColumns(updatedColumns);
-      setSelected(
-        data.rows.map((row) => {
-          if (
-            row.isSampleNameValid &&
-            (row.saved === null || row.saved === true)
-          )
-            return row.rowKey;
-        })
-      );
-    }
-  }, [data, isSuccess]);
+    const updatedColumns = [
+      savedColumn,
+      sampleColumn,
+      tagColumn,
+      ...otherColumns,
+    ];
+
+    setColumns(updatedColumns);
+    // setSelected(
+    //   metadata.map((row) => {
+    //     if (row.isSampleNameValid && (row.saved === null || row.saved === true))
+    //       return row.rowKey;
+    //   })
+    // );
+  }, []);
 
   const save = () => {
-    const sampleNames = data.rows
+    const sampleNames = metadata
       .filter((row) => selected.includes(row.rowKey))
-      .map((row) => row.entry[data.sampleNameColumn]);
+      .map((row) => row.entry[sampleNameColumn]);
     saveMetadata({ projectId, sampleNames })
       .unwrap()
       .then((payload) => {
@@ -199,13 +189,12 @@ export function SampleMetadataImportReview() {
       <MetadataTable
         className="t-metadata-uploader-review-table"
         rowKey={(row) => row.rowKey}
-        loading={isFetching}
         rowClassName={(record, index) =>
           record.saved === false ? "row-error" : null
         }
         rowSelection={rowSelection}
         columns={columns}
-        dataSource={data.rows}
+        dataSource={metadata}
         scroll={{ x: "max-content", y: 600 }}
         pagination={false}
       />
