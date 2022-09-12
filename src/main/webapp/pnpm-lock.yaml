@@ -10,8 +10,6 @@ overrides:
   yargs: ^17.4.1
   yargs-parser: ^21.0.1
 
-patchedDependencies: {}
-
 specifiers:
   '@ag-grid-community/csv-export': ^27.1.0
   '@ant-design/icons': ^4.7.0
@@ -78,6 +76,7 @@ specifiers:
   eslint-plugin-react: ^7.29.4
   eslint-plugin-react-hooks: ^4.4.0
   expose-loader: ^3.1.0
+  flexlayout-react: ^0.7.4
   gl-matrix: ^3.0.0
   i: ^0.3.7
   immutability-helper: ^3.1.1
@@ -171,6 +170,7 @@ dependencies:
   datatables.net-fixedcolumns-bs: 4.0.2
   dayjs: 1.11.1
   deck.gl: 8.7.12_qdym3cmqy3izoldsblxf2ftyey
+  flexlayout-react: 0.7.4_sfoxds7t5ydpegc3knd667wn6m
   gl-matrix: 3.4.3
   i: 0.3.7
   immutability-helper: 3.1.1
@@ -5088,6 +5088,17 @@ packages:
   /flatted/3.1.1:
     resolution: {integrity: sha512-zAoAQiudy+r5SvnSw3KJy5os/oRJYHzrzja/tBDqrZtNhUw8bt6y8OBzMWcjWr+8liV8Eb6yOhw8WZ7VFZ5ZzA==}
     dev: true
+
+  /flexlayout-react/0.7.4_sfoxds7t5ydpegc3knd667wn6m:
+    resolution: {integrity: sha512-6/yR1Fy3qr5LnE+8JfUeOd3sk/aWu5RHMAAl/RiyCmFEkouJyifSDEWz8eBG3R7BFvL5fvhJQjGl4qzr+Bi6aA==}
+    peerDependencies:
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    dependencies:
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+      uuid: 8.3.2
+    dev: false
 
   /focus-lock/0.9.2:
     resolution: {integrity: sha512-YtHxjX7a0IC0ZACL5wsX8QdncXofWpGPNoVMuI/nZUrPGp6LmNI6+D5j0pPj+v8Kw5EpweA+T5yImK0rnWf7oQ==}

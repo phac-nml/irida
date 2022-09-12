@@ -114,9 +114,6 @@ export const treeSlice = createSlice({
   name: "treeSlice",
   initialState,
   reducers: {
-    resize: (state, action) => {
-      state.treeProps.size = action.payload;
-    },
     updateTreeType: (state, action) => {
       state.treeProps.type = action.payload.treeType;
     },
@@ -200,7 +197,6 @@ export const treeSlice = createSlice({
 });
 
 export const {
-  resize,
   updateTreeType,
   selectAllTerms,
   setFieldVisibility,
