@@ -635,7 +635,7 @@ An individual sample contains the metadata associated with an isolate. The sampl
 | `sampleName` | The name used to refer to the sample by the user. This is often the same as `sequencerSampleId`, but *may* be different. | Required. Must be at least 3 characters long. Must not contain any of the following characters: `? ( ) [ ] / \ = + < > : ; " , * ^ | & ' . |` (note: this blocklist of characters is defined by the set of invalid characters on the Windows file system)|
 | `description` | A plain-text description of the sample. | Not required. |
 | `strain` | The microbial or eukaryotic strain name. | Not required. Must be at least 3 characters long. |
-| `collectionDate` | The date that the sample was collected. | Not required. Must be a valid date in the format of "YYYY-MM-DD" (e.g,. "2019-01-25" for January 25, 2019). |
+| `collectionDate` | The date that the sample was collected. | Not required. Must be a valid date in the format of "yyyy-MM-DD" (e.g,. "2019-01-25" for January 25, 2019). |
 | `collectedBy` | The person (or organization) that collected the sample. | Not required. Must be at least 3 characters long. |
 | `latitude` | The latitude of the location where the sample was collected. | Not required. Must be a valid latitude (must match the pattern `^-?(\d){1,2}(\.\d+)?$` and the first number group must be in the range `[-90, 90]`). |
 | `longitude` | The longitude of the location where the sample was collected. | Not required. Must be a valid longitude (must match the pattern `-?(\d){1,3}(\.\d+)?$` and the first number group must be in the range `[-180, 180]`). |
