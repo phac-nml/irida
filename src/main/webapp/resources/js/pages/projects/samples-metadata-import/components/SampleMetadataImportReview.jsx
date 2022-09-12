@@ -185,7 +185,7 @@ export function SampleMetadataImportReview() {
       )}
       <MetadataTable
         className="t-metadata-uploader-review-table"
-        rowKey={(row, index) => `metadata-uploader-row-${index}`}
+        rowKey={(row) => row.rowKey}
         rowClassName={(record) => (record.saved === false ? "row-error" : null)}
         rowSelection={rowSelection}
         columns={columns}

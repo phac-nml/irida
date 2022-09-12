@@ -1,4 +1,5 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
+import { validateSampleName } from "../../../../apis/metadata/sample-utils";
 
 const initialState = {
   sampleNameColumn: "",
@@ -46,6 +47,14 @@ For more information on redux reducers see: https://redux-toolkit.js.org/api/cre
 export const importReducer = createReducer(initialState, (builder) => {
   builder.addCase(setSampleNameColumn, (state, action) => {
     state.sampleNameColumn = action.payload.sampleNameColumn;
+    state.metadata = state.metadata.map((item, index) => {
+      return {
+        ...item,
+        rowKey: `metadata-uploader-row-${index}`,
+        isSampleNameValid: validateSampleName(item[state.sampleNameColumn]),
+        saved: null,
+      };
+    });
   });
   builder.addCase(setHeaders, (state, action) => {
     state.headers = action.payload.headers;
