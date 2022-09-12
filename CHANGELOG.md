@@ -23,6 +23,7 @@
 * [Developer/UI]: Increased speed of Project Samples table export and added estimated coverage to Project Samples table and exports. See [PR 1360](https://github.com/phac-nml/irida/pull/1360)
 * [Workflow]: Start the Galaxy Data Library timeout when an upload begins rather than when it is first queued up. See [PR 1337](https://github.com/phac-nml/irida/pull/1337)
 * [Developer]: Added description and metadata to create & update project sample endpoints. See [PR 1359](https://github.com/phac-nml/irida/pull/1359)
+* [UI]: Fix issue where year is displayed incorrectly when the last day of the week for the date is in another year. See [PR 1364](https://github.com/phac-nml/irida/pull/1364)
 
 ## [22.05.5] - 2022/06/28
 * [UI]: Fixed bug preventing export of project samples table due to invalid url. [PR 1331](https://github.com/phac-nml/irida/pull/1331)
