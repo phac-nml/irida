@@ -103,12 +103,11 @@ export function SampleMetadataImportReview() {
       dataIndex: sampleNameColumn,
       fixed: "left",
       width: 100,
-      onCell(text, item) {
+      onCell: (item) => {
         return {
-          props: {
-            style: { background: item.isSampleNameValid ? null : red1 },
+          style: {
+            background: item.isSampleNameValid === true ? null : red1,
           },
-          children: item[sampleNameColumn],
         };
       },
     };
