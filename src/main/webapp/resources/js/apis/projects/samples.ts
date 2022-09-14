@@ -5,6 +5,7 @@ import {
 } from "../../types/irida";
 import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
 import { get, post } from "../requests";
+import axios from "axios";
 
 export interface SequencingFiles {
   singles: SingleEndSequenceFile[];
@@ -69,6 +70,10 @@ export const {
   useValidateSamplesMutation,
   useShareSamplesWithProjectMutation,
 } = samplesApi;
+
+export async function validateSamples({ projectId, body }) {
+  return await axios.post(`${URL}/${projectId}/samples/validate`, body);
+}
 
 /**
  * Server side validation of a new sample name.

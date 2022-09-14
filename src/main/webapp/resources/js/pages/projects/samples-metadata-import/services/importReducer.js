@@ -1,5 +1,10 @@
-import { createAction, createReducer } from "@reduxjs/toolkit";
+import {
+  createAction,
+  createAsyncThunk,
+  createReducer,
+} from "@reduxjs/toolkit";
 import { validateSampleName } from "../../../../apis/metadata/sample-utils";
+import { validateSamples } from "../../../../apis/projects/samples";
 
 const initialState = {
   sampleNameColumn: "",
@@ -7,15 +12,34 @@ const initialState = {
   metadata: [],
 };
 
-/*
-Redux action for setting the sample name column.
-For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
- */
-export const setSampleNameColumn = createAction(
+export const setSampleNameColumn = createAsyncThunk(
   `importReducer/setSampleNameColumn`,
-  (sampleNameColumn) => ({
-    payload: { sampleNameColumn },
-  })
+  async ({ projectId, column }, { getState }) => {
+    const state = getState();
+    const metadata = state.reducer.metadata;
+    const response = await validateSamples({
+      projectId: projectId,
+      body: {
+        samples: metadata.map((row) => ({
+          name: row[column],
+        })),
+      },
+    });
+
+    const updatedMetadata = metadata.map((metadataItem, index) => {
+      return {
+        ...metadataItem,
+        rowKey: `metadata-uploader-row-${index}`,
+        isSampleNameValid: validateSampleName(metadataItem[column]),
+        foundSampleId: response.data.samples
+          .find((sample) => metadataItem[column] === sample.name)
+          .ids?.at(0),
+        saved: null,
+      };
+    });
+
+    return { sampleNameColumn: column, metadata: updatedMetadata };
+  }
 );
 
 /*
@@ -45,21 +69,15 @@ Redux reducer for project metadata.
 For more information on redux reducers see: https://redux-toolkit.js.org/api/createReducer
  */
 export const importReducer = createReducer(initialState, (builder) => {
-  builder.addCase(setSampleNameColumn, (state, action) => {
-    state.sampleNameColumn = action.payload.sampleNameColumn;
-    state.metadata = state.metadata.map((item, index) => {
-      return {
-        ...item,
-        rowKey: `metadata-uploader-row-${index}`,
-        isSampleNameValid: validateSampleName(item[state.sampleNameColumn]),
-        saved: null,
-      };
-    });
-  });
   builder.addCase(setHeaders, (state, action) => {
     state.headers = action.payload.headers;
   });
   builder.addCase(setMetadata, (state, action) => {
+    state.metadata = action.payload.metadata;
+  });
+  builder.addCase(setSampleNameColumn.fulfilled, (state, action) => {
+    console.log(action);
+    state.sampleNameColumn = action.payload.sampleNameColumn;
     state.metadata = action.payload.metadata;
   });
 });

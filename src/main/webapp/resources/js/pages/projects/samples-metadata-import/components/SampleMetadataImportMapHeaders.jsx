@@ -32,7 +32,7 @@ export function SampleMetadataImportMapHeaders() {
   }, [sampleNameColumn, headers]);
 
   const onSubmit = () => {
-    dispatch(setSampleNameColumn(column));
+    dispatch(setSampleNameColumn({ projectId, column }));
     navigate(`/${projectId}/sample-metadata/upload/review`);
   };
 

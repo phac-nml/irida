@@ -95,7 +95,10 @@ export function SampleMetadataImportReview() {
   };
 
   React.useEffect(() => {
+    console.log(headers);
+    console.log(sampleNameColumn);
     console.log(metadata);
+
     setValid(!metadata.some((row) => row.isSampleNameValid === false));
 
     const sampleColumn = {
