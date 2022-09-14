@@ -21,7 +21,7 @@ import {
   uploadAssemblyFiles,
   uploadFast5Files,
 } from "../../../apis/samples/samples";
-import { SPACE_MD } from "../../../styles/spacing";
+import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
 
 /**
  * React component to display sample files and upload files to sample
@@ -50,7 +50,8 @@ export function SampleFiles() {
 
   const [uploadCancelled, setUploadCancelled] = React.useState<boolean>(false);
 
-  const [abortController, setAbortController] = React.useState<any>();
+  const [abortController, setAbortController] =
+    React.useState<AbortController>();
 
   const acceptedFileTypes =
     ".fasta, .fastq, .fast5, .fastq.gz, .fast5.gz, .fna";
@@ -59,23 +60,25 @@ export function SampleFiles() {
   Function to cancel the current upload request
    */
   const cancelUpload = () => {
-    if (filesToUpload.length) setFilesToUpload([]);
+    if (abortController !== undefined) {
+      if (filesToUpload.length) setFilesToUpload([]);
 
-    if (sequenceFiles.length) {
-      setSequenceFiles([]);
-      setSeqFileProgress(0);
-    }
+      if (sequenceFiles.length) {
+        setSequenceFiles([]);
+        setSeqFileProgress(0);
+      }
 
-    if (fast5Files.length) {
-      setFast5Files([]);
-      setFast5Progress(0);
-    }
+      if (fast5Files.length) {
+        setFast5Files([]);
+        setFast5Progress(0);
+      }
 
-    if (assemblyFiles.length) {
-      setAssemblyFiles([]);
-      setAssemblyProgress(0);
+      if (assemblyFiles.length) {
+        setAssemblyFiles([]);
+        setAssemblyProgress(0);
+      }
+      abortController.abort();
     }
-    abortController.abort();
   };
 
   /*
@@ -312,7 +315,8 @@ export function SampleFiles() {
 
         return (
           tokens[tokens.length - 1] === "fast5" ||
-          (tokens[tokens.length - 2] === "fast5" &&
+          (tokens[tokens.length - 3] === "fast5" &&
+            tokens[tokens.length - 2] === "tar" &&
             tokens[tokens.length - 1] === "gz")
         );
       });
@@ -365,7 +369,7 @@ export function SampleFiles() {
       {uploadCancelled && (
         <InfoAlert
           message={i18n("SampleFiles.uploadCancelled")}
-          style={{ marginLeft: 8 }}
+          style={{ marginLeft: SPACE_XS }}
         />
       )}
       {sequenceFiles.length || assemblyFiles.length || fast5Files.length ? (
