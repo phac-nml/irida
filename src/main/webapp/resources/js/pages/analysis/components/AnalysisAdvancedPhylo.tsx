@@ -31,6 +31,7 @@ const Header = styled(PageHeader)`
     right: 0;
     bottom: 0;
     position: absolute;
+    border: 1px solid var(--grey-4);
   }
 `;
 
