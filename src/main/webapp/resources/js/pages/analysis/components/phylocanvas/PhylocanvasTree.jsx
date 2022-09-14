@@ -8,6 +8,7 @@ import { DownloadMenu } from "./DownloadMenu";
 import { ZoomButtons } from "./ZoomButtons";
 import { CollapsibleSidebar } from "./CollapsibleSidebar";
 import { Legend } from "./Legend";
+import PhylocanvasShapeDropDown from "./PhylocanvasShapeDropDown";
 
 export function PhylocanvasTree({ height, width }) {
   const canvasRef = React.useRef();
@@ -63,6 +64,7 @@ export function PhylocanvasTree({ height, width }) {
           userSelect: "none",
         }}
       >
+        <PhylocanvasShapeDropDown />
         <MetadataMenu />
         <DownloadMenu treeRef={treeRef} />
       </Space>

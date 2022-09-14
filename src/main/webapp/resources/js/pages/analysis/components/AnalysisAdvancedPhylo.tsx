@@ -4,13 +4,14 @@
  */
 
 import { TreeTypes } from "@phylocanvas/phylocanvas.gl";
-import { Layout, PageHeader } from "antd";
+import { Button, Layout, PageHeader } from "antd";
 import React, { useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { WarningAlert } from "../../../components/alerts";
 import { ContentLoading } from "../../../components/loader";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
+import { setBaseUrl } from "../../../utilities/url-utilities";
 import {
   fetchTreeAndMetadata,
   LoadingState,
@@ -65,21 +66,5 @@ export default function AnalysisAdvancedPhylo(): JSX.Element {
       content = <ContentLoading />;
   }
 
-  return (
-    <Header
-      title="Tree Viewer"
-      extra={[
-        <button
-          key="changer"
-          onClick={() =>
-            dispatch(updateTreeType({ treeType: TreeTypes.Radial }))
-          }
-        >
-          CHANGE
-        </button>,
-      ]}
-    >
-      {content}
-    </Header>
-  );
+  return <Header title="Tree Viewer">{content}</Header>;
 }
