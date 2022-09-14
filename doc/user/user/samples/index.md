@@ -36,15 +36,15 @@ All of the sample details that are in IRIDA are currently provided by a user wit
 
 The sample details page shows all of the details that are currently known about a sample:
 
-![Sample details page.]({{ site.baseurl }}/images/tutorials/common/samples/sample-details.png)
+![Sample details page.]({{ site.baseurl }}/images/tutorials/common/samples/sample-detail-viewer.png)
 
 ### Editing sample details
 
-Start by [viewing the details of an individual sample](#viewing-individual-sample-details). On the samples details page, click on the "Edit" button in the top, right-hand corner:
+Start by [viewing the details of an individual sample](#viewing-individual-sample-details). On the samples details page, click on the <img src="images/sample-details-edit-btn.png" alt="Edit icon" class="inline"> button next to the details you would like to update:
 
 ![Sample details edit button.](images/sample-details-edit.png)
 
-You can provide as many or as few sample details that you want -- the sample details are not used by any workflows in IRIDA (except the sample name in the SNVPhyl workflow), and (with the exception of the sample name) none of the sample details are required fields. When you've finished updating the sample details, you can click on the "Update" button at the bottom, right-hand side of the page.
+You can provide as many or as few sample details that you want -- the sample details are not used by any workflows in IRIDA (except the sample name in the SNVPhyl workflow), and (with the exception of the sample name) none of the sample details are required fields.
 
 ### Viewing contained files
 
@@ -72,32 +72,32 @@ You can download all sequence files in a sample by following the instructions in
 
 #### Deleting a sequence file
 
-If you need to delete a sequence file from IRIDA, you can do so by clicking on the <img src="images/delete-icon.png" alt="Delete icon" class="inline"> icon, on the right-hand side of the row for the sequence file.
+If you need to delete a sequence file from IRIDA, you can do so by clicking on the **Remove** button, on the right-hand side of the row for the sequencing object/genome assembly.
 
 You can only delete a sequence file from a sample if you have the project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on the project.
 
 #### Concatenating sequence files
 
-In cases where a top-up run or any other additional data is added to a sample, you may want to combine the sequence files into a single *concatenated* file.  IRIDA allows you to do this under the *Concatenate Files* page.
+In cases where a top-up run or any other additional data is added to a sample, you may want to combine the sequence files into a single *concatenated* file.  IRIDA allows you to do this from the files tab of the sample details viewer.
 
-![Concatenate link]({{ site.baseurl }}/images/tutorials/common/samples/concatenate-link.png)
+![Concatenate link]({{ site.baseurl }}/images/tutorials/common/samples/sequence-file-concatenate.png)
 
-In the concatenation page you must select 2 or more sequence file objects **of the same type** to concatenate.  If you have selected a collection of files which cannot be concatenated, a warning will be displayed.
+On the concatenation tab you must select 2 or more sequence file objects **of the same type** to concatenate.  If you have selected a collection of files which cannot be concatenated, a warning will be displayed.
 
-![Concatenate page]({{ site.baseurl }}/images/tutorials/common/samples/concatenate-page.png)
+![Concatenate page]({{ site.baseurl }}/images/tutorials/common/samples/sequence-file-concatenate-modal.png)
 
-Once you have selected your files to concatenate, you have the following options:
+Once you have selected your files to concatenate, a modal is displayed. You have the following options:
 
-* *New filename* - This will set the base name of the new concatenated files.  For paired-end data a modifier will be appended to determine the forward and reverse files.
-* *Remove originals* - This will remove the original files from the sample, leaving only the new concatenated file.
+* *New File Name* - This will set the base name of the new concatenated files.  For paired-end data a modifier will be appended to determine the forward and reverse files.
+* *Keep Originals / Remove originals* - This will allow you to select if you want to remove or keep the original files from the sample, leaving only the new concatenated file if remove originals is selected.
 
-Once you have selected your files and selected your options, click *Submit* to begin the concatenation.  This may take a while, so you should stay on this page until the process is complete.  Once your files are concatenated, you will be redirected back to the sample-files page.
+Once you have selected your files and selected your options, click *Concatenate* to begin the concatenation.  This may take a while, so you should stay on this page until the process is complete.  Once your files are concatenated, they will be listed in the files tab of the sample detail viewer.
 
 #### Viewing genome assemblies
 
 Samples can also contain assembled genomes.
 
-![sample-automated-assembly](images/sample-automated-assembly.png)
+![sample-automated-assembly](images/sample-contained-files.png)
 
 Genome assemblies can be linked to samples in the following ways:
 
@@ -105,7 +105,7 @@ Genome assemblies can be linked to samples in the following ways:
 2. By enabling the assembly pipeline as an [automated pipeline](../project/#automated-pipelines), which will be triggered on upload of sequencing files in the appropriate project.
 3. Or by selecting the option to save assemblies back to a sample from the [Launch Pipelines](../pipelines/#saving-pipeline-results-to-a-sample) page.
 
-The assembled genome file can be downloaded by clicking the <span class="fa fa-fw fa-download"></span> icon.
+The assembled genome file can be downloaded by clicking the **Download** button on the far right of the row for the assembly.
 
 If the project manager has enabled automated assemblies for uploaded data an assembly will also be shown associated with the particular sequence files used to generate the assembled genome.
 
@@ -117,9 +117,7 @@ See the [project documentation](../project#automated-pipelines) for information 
 
 #### Deleting genome assemblies
 
-Assembled genomes may be deleted from a sample by selecting the <img src="images/delete-icon.png" alt="Delete icon" class="inline"> icon.
-
-![delete-sample-assembly](images/delete-sample-assembly.png)
+Assembled genomes may be deleted from a sample by selecting the **Remove** button on the far right of the row for the assembly.
 
 Adding a new sample
 -------------------

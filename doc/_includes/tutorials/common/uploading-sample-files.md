@@ -9,6 +9,6 @@ Sequence files can be uploaded by either dragging and dropping the files into th
 
 * **Upload Assembly** - Assembly files must have the extension `.fasta` or `.fna`.
 
-Uploading of files will begin immediately. A notification will appear at the top of the sample detail viewer displaying the status of the upload.  If you need to cancel an upload click the <img class="inline" src="{{ site.baseurl }}/images/tutorials/common/samples/upload-sample-cancel-btn.png" alt="Cancel Upload Button" /> button.  **Do not leave or refresh the page as this will cancel the upload**, a warning will be display if you attempt to do this.
+Uploading of files will begin immediately. A progress bar for each of the file types (sequence, assembly, and fast5 files) will be displayed with the status of the upload. Also, expandable panels for each of the file types will be displayed below each progress bar which can be expanded to show the files that are uploading.  If you need to cancel an upload click the **Cancel Upload** button.  **Do not close the sample detail viewer or refresh the page as this will cancel the upload**.
 
-![Cancel upload]({{ site.baseurl }}/images/tutorials/common/samples/sample-detail-viewer-upload-progress.png)
+![Cancel upload]({{ site.baseurl }}/images/tutorials/common/samples/sample-detail-viewer-upload-cancel-btn.png)

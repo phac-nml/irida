@@ -2,6 +2,6 @@ To view details about an individual sample, start by [viewing the samples in a p
 
 ![Sample name button.]({{ site.baseurl }}/images/tutorials/common/samples/sample-name-button.png)
 
-The sample details page shows all of the details that are currently known about a sample:
+The sample details viewer shows all of the details that are currently known about a sample:
 
-![Sample details page.]({{ site.baseurl }}/images/tutorials/common/samples/sample-details.png)
+![Sample details viewer.]({{ site.baseurl }}/images/tutorials/common/samples/sample-detail-viewer.png)
