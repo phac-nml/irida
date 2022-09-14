@@ -41,6 +41,10 @@ export const fetchTreeAndMetadata = createAsyncThunk(
     );
 
     return {
+      loadingState:
+        newickData.newick.length === 0
+          ? LoadingState.empty
+          : LoadingState.complete,
       analysisId: id,
       treeProps: {
         source: newickData.newick,
@@ -87,8 +91,17 @@ export const fetchMetadataTemplateFields = createAsyncThunk(
   }
 );
 
+export enum LoadingState {
+  "fetching",
+  "complete",
+  "error-loading",
+  "empty",
+}
+
 const initialState = {
-  fetching: true,
+  state: {
+    loadingState: LoadingState.fetching,
+  },
   treeProps: {
     alignLabels: true,
     blocks: [],
@@ -177,7 +190,8 @@ export const treeSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchTreeAndMetadata.fulfilled, (state, action) => {
-      (state.fetching = false), (state.analysisId = action.payload.analysisId);
+      state.state.loadingState = action.payload.loadingState;
+      state.analysisId = action.payload.analysisId;
       state.treeProps = { ...state.treeProps, ...action.payload.treeProps };
       state.metadata = action.payload.metadata;
       state.metadataColourMap = action.payload.metadataColourMap;
@@ -185,7 +199,8 @@ export const treeSlice = createSlice({
       state.templates = action.payload.templates;
     });
     builder.addCase(fetchTreeAndMetadata.rejected, (state, action) => {
-      state.error = action.payload;
+      state.state.error = action.payload;
+      state.state.loadingState = LoadingState["error-loading"];
     });
     builder.addCase(fetchMetadataTemplateFields.fulfilled, (state, action) => {
       state.treeProps.blocks = action.payload.fields;
