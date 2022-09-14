@@ -54,46 +54,7 @@ export function SampleFiles() {
     React.useState<AbortController>();
 
   const acceptedFileTypes =
-    ".fasta, .fastq, .fast5, .fastq.gz, .fast5.gz, .fna";
-
-  /*
-  Function to cancel the current upload request
-   */
-  const cancelUpload = () => {
-    if (abortController !== undefined) {
-      if (filesToUpload.length) setFilesToUpload([]);
-
-      if (sequenceFiles.length) {
-        setSequenceFiles([]);
-        setSeqFileProgress(0);
-      }
-
-      if (fast5Files.length) {
-        setFast5Files([]);
-        setFast5Progress(0);
-      }
-
-      if (assemblyFiles.length) {
-        setAssemblyFiles([]);
-        setAssemblyProgress(0);
-      }
-      abortController.abort();
-    }
-  };
-
-  /*
-  Function to get sample files from the server and dispatch to the store
-   */
-  const getSampleFiles = () => {
-    fetchSampleFiles({
-      sampleId: sample.identifier,
-      projectId,
-    })
-      .then((data) => {
-        dispatch(setSampleFiles(data));
-      })
-      .catch((e) => notification.error({ message: e }));
-  };
+    ".fasta, .fastq, .fast5, .fastq.gz, .fast5.tar.gz, .fna";
 
   /*
    Get the sample files and set them in the redux store on component load
@@ -118,16 +79,64 @@ export function SampleFiles() {
   }, [filesToUpload]);
 
   /*
+  Function to get sample files from the server and dispatch to the store
+ */
+  const getSampleFiles = () => {
+    fetchSampleFiles({
+      sampleId: sample.identifier,
+      projectId,
+    })
+      .then((data) => {
+        dispatch(setSampleFiles(data));
+      })
+      .catch((e) => notification.error({ message: e }));
+  };
+
+  /*
   Custom function to upload sequence, assembly, and fast5 files uploaded
   using the ant design upload (DragUpload) component
    */
   const uploadFiles = () => {
-    const abortController = new AbortController();
-    const { signal } = abortController;
+    const controller = new AbortController();
+    const { signal } = controller;
 
     setUploadCancelled(false);
-    setAbortController(abortController);
+    setAbortController(controller);
 
+    uploadSampleSequenceFiles(signal);
+    uploadSampleAssemblyFiles(signal);
+    uploadSampleFast5Files(signal);
+  };
+
+  /*
+  Function to cancel the current upload request
+ */
+  const cancelUpload = () => {
+    if (abortController !== undefined) {
+      if (filesToUpload.length) setFilesToUpload([]);
+
+      if (sequenceFiles.length) {
+        setSequenceFiles([]);
+        setSeqFileProgress(0);
+      }
+
+      if (fast5Files.length) {
+        setFast5Files([]);
+        setFast5Progress(0);
+      }
+
+      if (assemblyFiles.length) {
+        setAssemblyFiles([]);
+        setAssemblyProgress(0);
+      }
+      abortController.abort();
+    }
+  };
+
+  /*
+  Function to upload sequence files
+   */
+  const uploadSampleSequenceFiles = (signal: AbortSignal) => {
     if (sequenceFiles.length) {
       const seqFileUploadConfig = {
         headers: { "content-type": "multipart/form-data" },
@@ -148,7 +157,7 @@ export function SampleFiles() {
       };
 
       const formData = new FormData();
-      sequenceFiles.map((f, index) => {
+      sequenceFiles.forEach((_f, index) => {
         formData.append(
           `file[${index}]`,
           sequenceFiles[index] as unknown as File as Blob
@@ -176,7 +185,12 @@ export function SampleFiles() {
           }
         });
     }
+  };
 
+  /*
+  Function to upload assembly files
+ */
+  const uploadSampleAssemblyFiles = (signal: AbortSignal) => {
     if (assemblyFiles.length) {
       const assemblyUploadConfig = {
         headers: { "content-type": "multipart/form-data" },
@@ -197,7 +211,7 @@ export function SampleFiles() {
       };
 
       const formData = new FormData();
-      assemblyFiles.map((f, index) => {
+      assemblyFiles.forEach((_f, index) => {
         formData.append(
           `file[${index}]`,
           assemblyFiles[index] as unknown as File as Blob
@@ -225,7 +239,12 @@ export function SampleFiles() {
           }
         });
     }
+  };
 
+  /*
+  Function to upload fast5 files
+ */
+  const uploadSampleFast5Files = (signal: AbortSignal) => {
     if (fast5Files.length) {
       const fast5UploadConfig = {
         headers: { "content-type": "multipart/form-data" },
@@ -246,7 +265,7 @@ export function SampleFiles() {
       };
 
       const formData = new FormData();
-      fast5Files.map((f, index) => {
+      fast5Files.forEach((_f, index) => {
         formData.append(
           `file[${index}]`,
           fast5Files[index] as unknown as File as Blob
@@ -282,7 +301,7 @@ export function SampleFiles() {
     showUploadList: false,
     accept: acceptedFileTypes,
     progress: { strokeWidth: 5 },
-    beforeUpload(file: FileUpload, fileList: FileUpload[]) {
+    beforeUpload(_file: FileUpload, fileList: FileUpload[]) {
       setFilesToUpload(fileList);
 
       /*
@@ -337,11 +356,13 @@ export function SampleFiles() {
     },
   };
 
-  return loading ? (
-    <Spin />
-  ) : (
-    <Row gutter={[16, 16]}>
-      {modifiable ? (
+  /*
+  Function to determine if user can upload files to the sample and have concatenate functionality
+   */
+  const sampleFilesTabActions = () => {
+    if (!modifiable) return null;
+    else {
+      return (
         <Col span={24}>
           <div>
             <DragUpload
@@ -351,28 +372,81 @@ export function SampleFiles() {
               props={{ className: "t-upload-sample-files" }}
             />
           </div>
-          {(files.singles !== undefined && files?.singles?.length >= 2) ||
-          (files.paired !== undefined && files?.paired?.length >= 2) ? (
-            <div>
-              <SampleFileConcatenate>
-                <Button
-                  className="t-concatenate-btn"
-                  disabled={concatenateSelected?.length < 2}
-                >
-                  {i18n("SampleFiles.concatenate")}
-                </Button>
-              </SampleFileConcatenate>
-            </div>
-          ) : null}
+          {concatenateFunctionality()}
         </Col>
-      ) : null}
+      );
+    }
+  };
+
+  /*
+  Function to determine if the concatenate functionality should be visible to the user or not
+   */
+  const concatenateFunctionality = () => {
+    if (
+      (files.singles !== undefined && files?.singles?.length >= 2) ||
+      (files.paired !== undefined && files?.paired?.length >= 2)
+    ) {
+      return (
+        <div>
+          <SampleFileConcatenate>
+            <Button
+              className="t-concatenate-btn"
+              disabled={concatenateSelected?.length < 2}
+            >
+              {i18n("SampleFiles.concatenate")}
+            </Button>
+          </SampleFileConcatenate>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  };
+
+  /*
+  Display the file upload progress for the files currently being uploaded
+   */
+  const displayFileUploadProgressForFileType = (
+    fileUploadList: FileUpload[],
+    fileType: string,
+    progress: number
+  ) => {
+    if (!fileUploadList.length) return null;
+    else {
+      return (
+        <FileUploadProgress
+          files={fileUploadList}
+          uploadProgress={progress}
+          type={fileType}
+        />
+      );
+    }
+  };
+
+  const displaySampleFileList = () => {
+    if (Object.keys(files).length !== 0) {
+      return <SampleFileList />;
+    } else {
+      return <Empty description={i18n("SampleFiles.no-files")} />;
+    }
+  };
+
+  return loading ? (
+    <Spin />
+  ) : (
+    <Row gutter={[16, 16]}>
+      {sampleFilesTabActions()}
       {uploadCancelled && (
         <InfoAlert
           message={i18n("SampleFiles.uploadCancelled")}
           style={{ marginLeft: SPACE_XS }}
         />
       )}
-      {sequenceFiles.length || assemblyFiles.length || fast5Files.length ? (
+      {!!(
+        sequenceFiles.length ||
+        assemblyFiles.length ||
+        fast5Files.length
+      ) && (
         <Col span={24}>
           <WarningAlert
             message={i18n("SampleFiles.doNotCloseWindowWarning")}
@@ -381,37 +455,27 @@ export function SampleFiles() {
           <Button onClick={() => cancelUpload()}>
             {i18n("SampleFiles.cancelUpload")}
           </Button>
-          {sequenceFiles.length ? (
-            <FileUploadProgress
-              files={sequenceFiles}
-              uploadProgress={seqFileProgress}
-              type="Sequence"
-            />
-          ) : null}
-          {assemblyFiles.length ? (
-            <FileUploadProgress
-              files={assemblyFiles}
-              uploadProgress={assemblyProgress}
-              type="Assembly"
-            />
-          ) : null}
-          {fast5Files.length ? (
-            <FileUploadProgress
-              files={fast5Files}
-              uploadProgress={fast5Progress}
-              type="Fast5"
-            />
-          ) : null}
-        </Col>
-      ) : null}
+          {displayFileUploadProgressForFileType(
+            sequenceFiles,
+            "Sequence",
+            seqFileProgress
+          )}
 
-      <Col span={24}>
-        {Object.keys(files).length !== 0 ? (
-          <SampleFileList />
-        ) : (
-          <Empty description={i18n("SampleFiles.no-files")} />
-        )}
-      </Col>
+          {displayFileUploadProgressForFileType(
+            assemblyFiles,
+            "Assembly",
+            assemblyProgress
+          )}
+
+          {displayFileUploadProgressForFileType(
+            fast5Files,
+            "Fast5",
+            fast5Progress
+          )}
+        </Col>
+      )}
+
+      <Col span={24}>{displaySampleFileList()}</Col>
     </Row>
   );
 }
