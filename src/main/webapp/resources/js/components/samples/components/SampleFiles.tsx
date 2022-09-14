@@ -452,7 +452,10 @@ export function SampleFiles() {
             message={i18n("SampleFiles.doNotCloseWindowWarning")}
             style={{ marginBottom: SPACE_MD }}
           />
-          <Button onClick={() => cancelUpload()}>
+          <Button
+            style={{ marginBottom: SPACE_MD }}
+            onClick={() => cancelUpload()}
+          >
             {i18n("SampleFiles.cancelUpload")}
           </Button>
           {displayFileUploadProgressForFileType(
