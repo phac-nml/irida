@@ -439,7 +439,7 @@ export function SampleFiles() {
       {uploadCancelled && (
         <InfoAlert
           message={i18n("SampleFiles.uploadCancelled")}
-          style={{ marginLeft: SPACE_XS }}
+          style={{ margin: SPACE_XS, width: "100%" }}
         />
       )}
       {!!(
