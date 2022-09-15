@@ -2,6 +2,7 @@ import {
   createAction,
   createAsyncThunk,
   createReducer,
+  current,
 } from "@reduxjs/toolkit";
 import { validateSampleName } from "../../../../apis/metadata/sample-utils";
 import { validateSamples } from "../../../../apis/projects/samples";
@@ -12,11 +13,15 @@ const initialState = {
   metadata: [],
 };
 
+/*
+Redux sync thunk for setting the sample name column and enriching the metadata.
+For more information on redux async thunks see: https://redux-toolkit.js.org/api/createAsyncThunk
+*/
 export const setSampleNameColumn = createAsyncThunk(
   `importReducer/setSampleNameColumn`,
   async ({ projectId, column }, { getState }) => {
     const state = getState();
-    const metadata = state.reducer.metadata;
+    const metadata = state.importReducer.metadata;
     const response = await validateSamples({
       projectId: projectId,
       body: {
@@ -76,8 +81,9 @@ export const importReducer = createReducer(initialState, (builder) => {
     state.metadata = action.payload.metadata;
   });
   builder.addCase(setSampleNameColumn.fulfilled, (state, action) => {
-    console.log(action);
+    console.log("before", current(state));
     state.sampleNameColumn = action.payload.sampleNameColumn;
     state.metadata = action.payload.metadata;
+    console.log("after", current(state));
   });
 });

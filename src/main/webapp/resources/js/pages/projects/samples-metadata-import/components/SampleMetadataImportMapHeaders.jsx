@@ -22,7 +22,9 @@ export function SampleMetadataImportMapHeaders() {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const [column, setColumn] = React.useState();
-  const { headers, sampleNameColumn } = useSelector((state) => state.reducer);
+  const { headers, sampleNameColumn } = useSelector(
+    (state) => state.importReducer
+  );
   const dispatch = useDispatch();
 
   React.useEffect(() => {
@@ -31,8 +33,8 @@ export function SampleMetadataImportMapHeaders() {
     }
   }, [sampleNameColumn, headers]);
 
-  const onSubmit = () => {
-    dispatch(setSampleNameColumn({ projectId, column }));
+  const onSubmit = async () => {
+    await dispatch(setSampleNameColumn({ projectId, column }));
     navigate(`/${projectId}/sample-metadata/upload/review`);
   };
 

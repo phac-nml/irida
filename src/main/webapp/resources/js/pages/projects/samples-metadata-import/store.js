@@ -8,7 +8,7 @@ For more information on redux stores see: https://redux.js.org/tutorials/fundame
  */
 export default configureStore({
   reducer: {
-    reducer: importReducer,
+    importReducer,
     [metadataImportApi.reducerPath]: metadataImportApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>

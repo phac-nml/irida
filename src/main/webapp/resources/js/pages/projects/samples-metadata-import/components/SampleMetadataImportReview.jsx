@@ -48,9 +48,13 @@ export function SampleMetadataImportReview() {
   const [selected, setSelected] = React.useState([]);
   const [valid, setValid] = React.useState(true);
   const { headers, sampleNameColumn, metadata } = useSelector(
-    (state) => state.reducer
+    (state) => state.importReducer
   );
   const [saveMetadata] = useSaveProjectSampleMetadataMutation();
+
+  console.log("headers", headers);
+  console.log("sampleNameColumn", sampleNameColumn);
+  console.log("metadata", metadata);
 
   const tagColumn = {
     title: "",
@@ -95,10 +99,6 @@ export function SampleMetadataImportReview() {
   };
 
   React.useEffect(() => {
-    console.log(headers);
-    console.log(sampleNameColumn);
-    console.log(metadata);
-
     setValid(!metadata.some((row) => row.isSampleNameValid === false));
 
     const sampleColumn = {
