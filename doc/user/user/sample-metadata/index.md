@@ -145,6 +145,12 @@ Metadata Fields have:
 * **Type**: Indicates the type of data that the field can be.  Usually this will be just "text".
 * **Restrictions**: Indicates the metadata role required to view that field and any fields with levels below this restriction level.
 
+#### Individual Sample Metadata
+
+You can view the metadata for a sample from the **Metadata** tab of the sample details viewer which can be launched from anywhere the sample is listed by clicking the sample name. Only a user with a project **Manager** role can add/edit sample metadata.
+
+![Sample metadata](images/sample-detail-viewer-metadata.png)
+
 #### Metadata Field Security
 
 Metadata Fields can be restricted at the project level by metadata role. There are 4 restriction levels which can be applied to a field (Level 1, Level 2, Level 3, Level 4 (with Level 4 being the highest restriction level and Level 1 the lowest)). A project **Manager** has a default metadata role of `Level 4` and can view all the project sample metadata. A **Collaborator** can have any of the metadata roles applied to them and will only be able to view fields with their metadata role and lower.
