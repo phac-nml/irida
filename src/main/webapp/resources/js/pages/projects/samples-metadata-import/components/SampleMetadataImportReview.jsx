@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Alert, Button, Table, Tag, Tooltip, Typography } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
-import { useSaveProjectSampleMetadataMutation } from "../../../../apis/metadata/metadata-import";
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -10,7 +9,8 @@ import {
 } from "../../../../components/icons/Icons";
 import { red1, red2, red5 } from "../../../../styles/colors";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { saveMetadata } from "../services/importReducer";
 
 const { Paragraph, Text } = Typography;
 
@@ -50,11 +50,7 @@ export function SampleMetadataImportReview() {
   const { headers, sampleNameColumn, metadata } = useSelector(
     (state) => state.importReducer
   );
-  const [saveMetadata] = useSaveProjectSampleMetadataMutation();
-
-  console.log("headers", headers);
-  console.log("sampleNameColumn", sampleNameColumn);
-  console.log("metadata", metadata);
+  const dispatch = useDispatch();
 
   const tagColumn = {
     title: "",
@@ -153,16 +149,18 @@ export function SampleMetadataImportReview() {
   }, []);
 
   const save = () => {
-    const sampleNames = metadata
-      .filter((row) => selected.includes(row.rowKey))
-      .map((row) => row.entry[sampleNameColumn]);
-    saveMetadata({ projectId, sampleNames })
-      .unwrap()
-      .then((payload) => {
-        navigate(`/${projectId}/sample-metadata/upload/complete`, {
-          state: { statusMessage: payload.message },
-        });
-      });
+    const selectedMetadataKeys = metadata
+      .filter((metadataItem) => selected.includes(metadataItem.rowKey))
+      .map((metadataItem) => metadataItem.rowKey);
+
+    dispatch(saveMetadata({ projectId, selectedMetadataKeys }));
+    // saveMetadata({ projectId, sampleNames })
+    //   .unwrap()
+    //   .then((payload) => {
+    //     navigate(`/${projectId}/sample-metadata/upload/complete`, {
+    //       state: { statusMessage: payload.message },
+    //     });
+    //   });
   };
 
   return (

@@ -75,6 +75,17 @@ export async function validateSamples({ projectId, body }) {
   return await axios.post(`${URL}/${projectId}/samples/validate`, body);
 }
 
+export async function createSample({ projectId, body }) {
+  return await axios.post(`${URL}/${projectId}/samples/add-sample`, body);
+}
+
+export async function updateSample({ projectId, sampleId, body }) {
+  return await axios.patch(
+    `${URL}/${projectId}/samples/add-sample/${sampleId}`,
+    body
+  );
+}
+
 /**
  * Server side validation of a new sample name.
  * @param name - sample name to validate

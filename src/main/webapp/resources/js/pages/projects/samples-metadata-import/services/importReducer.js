@@ -2,10 +2,13 @@ import {
   createAction,
   createAsyncThunk,
   createReducer,
-  current,
 } from "@reduxjs/toolkit";
 import { validateSampleName } from "../../../../apis/metadata/sample-utils";
-import { validateSamples } from "../../../../apis/projects/samples";
+import {
+  createSample,
+  updateSample,
+  validateSamples,
+} from "../../../../apis/projects/samples";
 
 const initialState = {
   sampleNameColumn: "",
@@ -14,7 +17,76 @@ const initialState = {
 };
 
 /*
-Redux sync thunk for setting the sample name column and enriching the metadata.
+Redux async thunk for saving the metadata to samples.
+For more information on redux async thunks see: https://redux-toolkit.js.org/api/createAsyncThunk
+ */
+export const saveMetadata = createAsyncThunk(
+  `importReducer/saveMetadata`,
+  async ({ projectId, selectedMetadataKeys }, { getState }) => {
+    const state = getState();
+    const sampleNameColumn = state.importReducer.sampleNameColumn;
+    const headers = state.importReducer.headers;
+    const metadata = state.importReducer.metadata;
+    const updatedMetadata = [...metadata];
+
+    for (const [index, metadataItem] of updatedMetadata.entries()) {
+      if (selectedMetadataKeys.includes(metadataItem.rowKey)) {
+        const name = metadataItem[sampleNameColumn];
+        const metadataFields = Object.entries(metadataItem)
+          .filter(
+            ([key, value]) => headers.includes(key) && key !== sampleNameColumn
+          )
+          .map(([key, value]) => ({ field: key, value }));
+        const sampleId = metadataItem.foundSampleId;
+
+        if (sampleId) {
+          await updateSample({
+            projectId,
+            sampleId,
+            body: {
+              name,
+              // TODO: Don't overwrite organism & description
+              metadata: metadataFields,
+            },
+          })
+            .then((response) => {
+              console.log("UPDATE SAMPLE RESPONSE");
+              console.log(response);
+              updatedMetadata.saved = true;
+            })
+            .catch((error) => {
+              console.log("UPDATE SAMPLE ERROR");
+              console.log(error);
+              metadata[index].saved = false;
+            });
+        } else {
+          await createSample({
+            projectId,
+            body: {
+              name,
+              metadata: metadataFields,
+            },
+          })
+            .then((response) => {
+              console.log("CREATE SAMPLE RESPONSE");
+              console.log(response);
+              updatedMetadata.saved = true;
+            })
+            .catch((error) => {
+              console.log("CREATE SAMPLE ERROR");
+              console.log(error);
+              metadata[index].saved = false;
+              metadata[index].error = error;
+            });
+        }
+      }
+    }
+    return { metadata: updatedMetadata };
+  }
+);
+
+/*
+Redux async thunk for setting the sample name column and enriching the metadata.
 For more information on redux async thunks see: https://redux-toolkit.js.org/api/createAsyncThunk
 */
 export const setSampleNameColumn = createAsyncThunk(
@@ -81,9 +153,10 @@ export const importReducer = createReducer(initialState, (builder) => {
     state.metadata = action.payload.metadata;
   });
   builder.addCase(setSampleNameColumn.fulfilled, (state, action) => {
-    console.log("before", current(state));
     state.sampleNameColumn = action.payload.sampleNameColumn;
     state.metadata = action.payload.metadata;
-    console.log("after", current(state));
+  });
+  builder.addCase(saveMetadata.fulfilled, (state, action) => {
+    state.metadata = action.payload.metadata;
   });
 });

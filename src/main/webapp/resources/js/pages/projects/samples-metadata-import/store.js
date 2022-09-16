@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { metadataImportApi } from "../../../apis/metadata/metadata-import";
 import { importReducer } from "./services/importReducer";
 
 /*
@@ -9,8 +8,6 @@ For more information on redux stores see: https://redux.js.org/tutorials/fundame
 export default configureStore({
   reducer: {
     importReducer,
-    [metadataImportApi.reducerPath]: metadataImportApi.reducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(metadataImportApi.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
