@@ -77,7 +77,7 @@ public class AbstractPage {
 	}
 
 	public WebElement waitForElementToBeClickable(WebElement element) {
-		WebDriverWait wait = new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS);
+		WebDriverWait wait = new WebDriverWait(this.driver, Duration.ofSeconds(TIME_OUT_IN_SECONDS));
 		return wait.until(ExpectedConditions.elementToBeClickable(element));
 	}
 
@@ -96,23 +96,23 @@ public class AbstractPage {
 	}
 
 	public WebElement waitForElementVisible(By locator) {
-		WebDriverWait wait = new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS);
+		WebDriverWait wait = new WebDriverWait(this.driver, Duration.ofSeconds(TIME_OUT_IN_SECONDS));
 		return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 	}
 
 	public Boolean waitForElementInVisible(By locator) {
-		WebDriverWait wait = new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS);
+		WebDriverWait wait = new WebDriverWait(this.driver, Duration.ofSeconds(TIME_OUT_IN_SECONDS));
 		return wait.until(ExpectedConditions.invisibilityOfElementLocated(locator));
 	}
 
 	public Collection<WebElement> waitForElementsVisible(By locator) {
-		new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)
+		new WebDriverWait(this.driver, Duration.ofSeconds(TIME_OUT_IN_SECONDS))
 				.until(ExpectedConditions.visibilityOfElementLocated(locator));
 		return driver.findElements(locator);
 	}
 
 	public void waitForElementInvisible(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS))
+		(new WebDriverWait(this.driver, Duration.ofSeconds(TIME_OUT_IN_SECONDS)))
 				.until(ExpectedConditions.invisibilityOfElementLocated(locator));
 	}
 
@@ -230,14 +230,15 @@ public class AbstractPage {
 	public void submitAndWait(final WebElement submitButton) {
 		WebElement oldHtml = driver.findElement(By.tagName("html"));
 		submitButton.click();
-		new WebDriverWait(driver, TIME_OUT_IN_SECONDS).until(ExpectedConditions.stalenessOf(oldHtml));
+		new WebDriverWait(driver, Duration.ofSeconds(TIME_OUT_IN_SECONDS))
+				.until(ExpectedConditions.stalenessOf(oldHtml));
 	}
 
 	/**
 	 * Wait for jQuery AJAX calls to complete on a page
 	 */
 	public void waitForJQueryAjaxResponse() {
-		new WebDriverWait(driver, TIME_OUT_IN_SECONDS)
+		new WebDriverWait(driver, Duration.ofSeconds(TIME_OUT_IN_SECONDS))
 				.until((ExpectedCondition<Boolean>) wd -> (Boolean) ((JavascriptExecutor) wd)
 						.executeScript("return jQuery.active == 0"));
 	}
