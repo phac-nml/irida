@@ -104,12 +104,12 @@
 		file_path="src/test/resources/files/sequence-files/02-2222_S1_L001_R1_001.fastq" />
 	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
 		file_path="src/test/resources/files/sequence-files/02-2222_S1_L001_R2_001.fastq" />
-	<sequence_file id="4" created_date="2013-07-18 14:20:19.0"
+	<sequence_file id="4" created_date="2013-12-31 14:20:19.0"
 		file_path="src/test/resources/files/sequence-files/03-3333_S1_L001_R1_001.fastq" />
 
 	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0" />
 	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0" />
-	<sequencing_object id="3" created_date="2013-07-18 14:20:19.0" />
+	<sequencing_object id="3" created_date="2013-12-31 14:20:19.0" />
 
 	<sequence_file_pair id="1" />
 	<sequence_file_pair_files pair_id="1"
@@ -127,7 +127,7 @@
 		created_date="2013-07-18 14:20:19.0" sample_id="1"
 		sequencingobject_id="2" />
 	<sample_sequencingobject id="3"
-		created_date="2013-07-18 14:20:19.0" sample_id="1"
+		created_date="2013-12-31 14:20:19.0" sample_id="1"
 		sequencingobject_id="3" />
 
 	<analysis_submission id="1" name="my analysis"
