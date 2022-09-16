@@ -104,6 +104,6 @@ public interface ProjectSampleJoinRepository
 	 * @param sampleIds {@link Sample} ids
 	 * @return A List of {@link Tuple}s with first entry as the sample id and second entry as the coverage
 	 */
-	@Query("SELECT ps.sample.id, ROUND(SUM(qc.totalBases)/ps.project.genomeSize) FROM ProjectSampleJoin ps join SampleSequencingObjectJoin sso on sso.sample = ps.sample join CoverageQCEntry qc on qc.sequencingObject = sso.sequencingObject where ps.project=?1 and ps.sample.id in ?2 group by ps.sample.id, ps.project.genome_size")
+	@Query("SELECT ps.sample.id, ROUND(SUM(qc.totalBases)/ps.project.genomeSize) FROM ProjectSampleJoin ps join SampleSequencingObjectJoin sso on sso.sample = ps.sample join CoverageQCEntry qc on qc.sequencingObject = sso.sequencingObject where ps.project=?1 and ps.sample.id in ?2 group by ps.sample.id, ps.project.genomeSize")
 	public List<Tuple> calculateCoverageForSamplesInProject(Project project, List<Long> sampleIds);
 }
