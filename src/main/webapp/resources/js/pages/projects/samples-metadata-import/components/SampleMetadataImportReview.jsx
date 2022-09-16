@@ -148,19 +148,13 @@ export function SampleMetadataImportReview() {
     );
   }, []);
 
-  const save = () => {
+  const save = async () => {
     const selectedMetadataKeys = metadata
       .filter((metadataItem) => selected.includes(metadataItem.rowKey))
       .map((metadataItem) => metadataItem.rowKey);
 
-    dispatch(saveMetadata({ projectId, selectedMetadataKeys }));
-    // saveMetadata({ projectId, sampleNames })
-    //   .unwrap()
-    //   .then((payload) => {
-    //     navigate(`/${projectId}/sample-metadata/upload/complete`, {
-    //       state: { statusMessage: payload.message },
-    //     });
-    //   });
+    await dispatch(saveMetadata({ projectId, selectedMetadataKeys }));
+    navigate(`/${projectId}/sample-metadata/upload/complete`);
   };
 
   return (

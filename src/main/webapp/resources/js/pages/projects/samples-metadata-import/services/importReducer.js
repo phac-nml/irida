@@ -27,7 +27,7 @@ export const saveMetadata = createAsyncThunk(
     const sampleNameColumn = state.importReducer.sampleNameColumn;
     const headers = state.importReducer.headers;
     const metadata = state.importReducer.metadata;
-    const updatedMetadata = [...metadata];
+    const updatedMetadata = JSON.parse(JSON.stringify(metadata));
 
     for (const [index, metadataItem] of updatedMetadata.entries()) {
       if (selectedMetadataKeys.includes(metadataItem.rowKey)) {
@@ -52,12 +52,12 @@ export const saveMetadata = createAsyncThunk(
             .then((response) => {
               console.log("UPDATE SAMPLE RESPONSE");
               console.log(response);
-              updatedMetadata.saved = true;
+              updatedMetadata[index].saved = true;
             })
             .catch((error) => {
               console.log("UPDATE SAMPLE ERROR");
               console.log(error);
-              metadata[index].saved = false;
+              updatedMetadata[index].saved = false;
             });
         } else {
           await createSample({
@@ -70,13 +70,13 @@ export const saveMetadata = createAsyncThunk(
             .then((response) => {
               console.log("CREATE SAMPLE RESPONSE");
               console.log(response);
-              updatedMetadata.saved = true;
+              updatedMetadata[index].saved = true;
             })
             .catch((error) => {
               console.log("CREATE SAMPLE ERROR");
               console.log(error);
-              metadata[index].saved = false;
-              metadata[index].error = error;
+              updatedMetadata[index].saved = false;
+              updatedMetadata[index].error = error;
             });
         }
       }
