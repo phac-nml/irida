@@ -6,9 +6,11 @@ import { useEffect, useRef, useState } from "react";
  * @param callback
  * @param delay
  */
-export function useInterval(callback, delay) {
-  const savedCallback = useRef();
-  const [intervalId, setIntervalId] = useState(-1);
+export function useInterval(callback: () => void, delay: number | null) {
+  const savedCallback = useRef(callback);
+  const [intervalId, setIntervalId] = useState<
+    ReturnType<typeof setInterval> | undefined
+  >();
 
   // Remember the latest callback.
   useEffect(() => {
@@ -21,8 +23,9 @@ export function useInterval(callback, delay) {
       savedCallback.current();
     }
 
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
+    if (delay === null) return;
+    else {
+      const id = setInterval(tick, delay);
       setIntervalId(id);
       return () => clearInterval(id);
     }

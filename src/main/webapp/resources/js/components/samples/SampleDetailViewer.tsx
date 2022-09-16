@@ -33,6 +33,7 @@ export interface DisplaySampleDetailsProps {
  * @param projectId - identifier for a project
  * @param displayActions - Whether to display add to/remove from cart buttons. Displayed by default
  * @param children
+ * @param refetch - Function to refetch the cart items
  * @returns {JSX.Element}
  * @constructor
  */

@@ -19,14 +19,14 @@ declare namespace IRIDA {
     analysisDescription: string | null;
     analysisState: string;
     automated: boolean;
-    createdDate: Date;
+    createdDate: number;
     emailPipelineResultCompleted: boolean;
     emailPipelineResultError: boolean;
     identifier: number;
     inputParameters: Record<string, string>;
     label: string;
     links: [];
-    modifiedDate: Date;
+    modifiedDate: number;
     name: string;
     priority: PRIORITY;
     remoteInputDataId: string;

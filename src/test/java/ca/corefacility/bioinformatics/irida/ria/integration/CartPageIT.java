@@ -153,10 +153,9 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 				"Correct file labels should be displayed for uploaded files");
 		assertEquals(7, sampleDetailsViewer.processingStatusesCount(),
 				"Seven files should have processing statuses displayed");
-		assertEquals(0, sampleDetailsViewer.removeFileButtonsVisible(), "Shouldn't have any file remove buttons");
 		assertEquals(0, sampleDetailsViewer.concatenationCheckboxesVisible(),
 				"Shouldn't have any concatenation checkboxes");
-		assertEquals(9, sampleDetailsViewer.downloadFileButtonsVisible(), "Should have 7 download file buttons");
+		assertEquals(9, sampleDetailsViewer.actionButtonsVisible(), "Should have 9 file action buttons");
 
 		// Launch fastqc modal
 		sampleDetailsViewer.clickSampleName();
@@ -264,9 +263,8 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(9, sampleDetailsViewer.numberOfFilesDisplayed(), "Nine files should be displayed for sample");
 		assertEquals(7, sampleDetailsViewer.processingStatusesCount(),
 				"Seven files should have processing statuses displayed");
-		assertEquals(7, sampleDetailsViewer.removeFileButtonsVisible(), "Should have 7 file remove buttons");
 		assertEquals(5, sampleDetailsViewer.concatenationCheckboxesVisible(), "Should have 5 concatenation checkboxes");
-		assertEquals(9, sampleDetailsViewer.downloadFileButtonsVisible(), "Should have 9 download file buttons");
+		assertEquals(9, sampleDetailsViewer.actionButtonsVisible(), "Should have 9 file action buttons");
 
 		// Launch fastqc modal
 		sampleDetailsViewer.clickSampleName();
@@ -302,9 +300,9 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 				"Correct file labels should be displayed including the concatenated file");
 		assertEquals(8, sampleDetailsViewer.processingStatusesCount(),
 				"Eight files should have processing statuses displayed");
-		assertEquals(8, sampleDetailsViewer.removeFileButtonsVisible(), "Should have 8 file remove buttons");
+
 		assertEquals(6, sampleDetailsViewer.concatenationCheckboxesVisible(), "Should have 6 concatenation checkboxes");
-		assertEquals(10, sampleDetailsViewer.downloadFileButtonsVisible(), "Should have 10 download file buttons");
+		assertEquals(10, sampleDetailsViewer.actionButtonsVisible(), "Should have 10 download file buttons");
 
 		assertTrue(sampleDetailsViewer.setSetDefaultSeqObjButtonsVisible());
 
@@ -339,10 +337,9 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 				"Correct file label should be displayed for the concatenated file");
 		assertEquals(5, sampleDetailsViewer.processingStatusesCount(),
 				"Five files should have processing statuses displayed");
-		assertEquals(5, sampleDetailsViewer.removeFileButtonsVisible(), "Should have 5 file remove buttons");
 		assertEquals(2, sampleDetailsViewer.concatenationCheckboxesVisible(),
 				"Should not have any concatenation checkboxes");
-		assertEquals(7, sampleDetailsViewer.downloadFileButtonsVisible(), "Should have 7 download file buttons");
+		assertEquals(7, sampleDetailsViewer.actionButtonsVisible(), "Should have 7 file action buttons");
 
 		assertEquals(1, sampleDetailsViewer.numberOfSequencingObjectsSetAsDefault(), "One sequencing object should have a default tag");
 		assertEquals(2, sampleDetailsViewer.numberOfSetAsDefaultSeqObjsButtons(), "There should be two set as default buttons for sequencing objects");
@@ -353,9 +350,9 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(1, sampleDetailsViewer.numberOfGenomeAssembliesSetAsDefault(), "One sequencing object should have a default tag");
 		assertEquals(1, sampleDetailsViewer.numberOfGenomeAssembliesSetAsDefaultButtons(), "There should be one set as default button for sequencing objects");
 
-		sampleDetailsViewer.removeFile(4);
+		sampleDetailsViewer.removeFile(6);
+		sampleDetailsViewer.removeFile(5);
 		sampleDetailsViewer.removeFile(3);
-		sampleDetailsViewer.removeFile(2);
 		sampleDetailsViewer.removeFile(1);
 		sampleDetailsViewer.removeFile(0);
 

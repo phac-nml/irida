@@ -17,6 +17,7 @@ import {
   SampleSequencingObject,
 } from "../../apis/samples/samples";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const qcEntryTranslations: { [key: string]: string } = {
   COVERAGE: i18n("SequenceObjectListItem.qcEntry.COVERAGE"),
@@ -120,6 +121,7 @@ export function SequenceObjectListItem({
         color={tagColor}
         key={`automated-assembly-${sequenceObject.automatedAssembly.identifier}`}
         className="t-automated-assembly-status"
+        icon={<LoadingOutlined />}
       >
         {
           analysisStateTranslations[

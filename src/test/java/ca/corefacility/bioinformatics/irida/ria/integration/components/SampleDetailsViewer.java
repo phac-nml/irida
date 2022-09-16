@@ -106,6 +106,9 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-remove-sample-from-cart")
 	private WebElement removeSampleFromCartBtn;
 
+	@FindBy(className = "t-actions-menu")
+	private List<WebElement> actionBtns;
+
 
 	public SampleDetailsViewer(WebDriver driver) {
 		super(driver);
@@ -175,13 +178,6 @@ public class SampleDetailsViewer extends AbstractPage {
 		return addNewMetadataBtn.size() == 1;
 	}
 
-	public int removeFileButtonsVisible() {
-		if(removeFileBtns != null) {
-			return removeFileBtns.size();
-		}
-		return 0;
-	}
-
 	public int concatenationCheckboxesVisible() {
 
 		if(concatenationCheckboxes != null) {
@@ -232,9 +228,9 @@ public class SampleDetailsViewer extends AbstractPage {
 		waitForTime(500);
 	}
 
-	public int downloadFileButtonsVisible() {
-		if(downloadFileBtns != null) {
-			return downloadFileBtns.size();
+	public int actionButtonsVisible() {
+		if(actionBtns != null) {
+			return actionBtns.size();
 		}
 		return 0;
 	}
@@ -287,7 +283,9 @@ public class SampleDetailsViewer extends AbstractPage {
 	}
 
 	public void removeFile(int index) {
-		removeFileBtns.get(index).click();
+		actionBtns.get(index).click();
+		waitForTime(500);
+		removeFileBtns.get(0).click();
 		waitForTime(500);
 		confirmBtns.get(0).click();
 		WebDriverWait wait = new WebDriverWait(driver, 30);
