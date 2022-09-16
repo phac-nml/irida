@@ -11,11 +11,10 @@ import {
   addToSequenceFiles,
   addToAssemblyFiles,
   addToFast5Files,
-  setSampleFiles,
+  fetchFilesForSample,
 } from "../sampleFilesSlice";
 
 import {
-  fetchSampleFiles,
   FileUpload,
   uploadSequenceFiles,
   uploadAssemblyFiles,
@@ -23,6 +22,7 @@ import {
 } from "../../../apis/samples/samples";
 import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
 
+let abortController: AbortController;
 /**
  * React component to display sample files and upload files to sample
  *
@@ -50,9 +50,6 @@ export function SampleFiles() {
 
   const [uploadCancelled, setUploadCancelled] = React.useState<boolean>(false);
 
-  const [abortController, setAbortController] =
-    React.useState<AbortController>();
-
   const acceptedFileTypes =
     ".fasta, .fastq, .fast5, .fastq.gz, .fast5.tar.gz, .fna";
 
@@ -61,10 +58,12 @@ export function SampleFiles() {
    and to refetch if the sample identifier or project change
    */
   React.useEffect(() => {
-    if (Object.keys(files).length !== 0) {
-      dispatch(setSampleFiles({}));
-    }
-    getSampleFiles();
+    dispatch(
+      fetchFilesForSample({
+        sampleId: sample.identifier,
+        projectId,
+      })
+    );
   }, [sample.identifier, projectId]);
 
   /*
@@ -79,29 +78,14 @@ export function SampleFiles() {
   }, [filesToUpload]);
 
   /*
-  Function to get sample files from the server and dispatch to the store
- */
-  const getSampleFiles = () => {
-    fetchSampleFiles({
-      sampleId: sample.identifier,
-      projectId,
-    })
-      .then((data) => {
-        dispatch(setSampleFiles(data));
-      })
-      .catch((e) => notification.error({ message: e }));
-  };
-
-  /*
   Custom function to upload sequence, assembly, and fast5 files uploaded
   using the ant design upload (DragUpload) component
    */
   const uploadFiles = () => {
-    const controller = new AbortController();
-    const { signal } = controller;
+    abortController = new AbortController();
+    const { signal } = abortController;
 
     setUploadCancelled(false);
-    setAbortController(controller);
 
     uploadSampleSequenceFiles(signal);
     uploadSampleAssemblyFiles(signal);
@@ -387,16 +371,14 @@ export function SampleFiles() {
       (files.paired !== undefined && files?.paired?.length >= 2)
     ) {
       return (
-        <div>
-          <SampleFileConcatenate>
-            <Button
-              className="t-concatenate-btn"
-              disabled={concatenateSelected?.length < 2}
-            >
-              {i18n("SampleFiles.concatenate")}
-            </Button>
-          </SampleFileConcatenate>
-        </div>
+        <SampleFileConcatenate>
+          <Button
+            className="t-concatenate-btn"
+            disabled={concatenateSelected?.length < 2}
+          >
+            {i18n("SampleFiles.concatenate")}
+          </Button>
+        </SampleFileConcatenate>
       );
     } else {
       return null;
