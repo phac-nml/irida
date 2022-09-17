@@ -2,7 +2,6 @@ import React from "react";
 import {
   Button,
   Checkbox,
-  Dropdown,
   Menu,
   notification,
   Popconfirm,
@@ -14,7 +13,6 @@ import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseOutlined,
-  MoreOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
@@ -40,6 +38,7 @@ import {
   useUpdateDefaultSampleSequencingObjectMutation,
 } from "../../../apis/samples/samples";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import { EllipsisMenu } from "../../menu/EllipsisMenu";
 
 const fileProcessTranslations: { [key: string]: string } = {
   UNPROCESSED: i18n("SampleFilesList.fileProcessingState.UNPROCESSED"),
@@ -337,6 +336,7 @@ export function SequencingObjectList({
                   key={`remove-seqobj-${obj.identifier}`}
                   className="t-remove-file-btn"
                   style={{ padding: 0, width: DEFAULT_ACTION_WIDTH }}
+                  onClick={(e) => e?.stopPropagation()}
                 >
                   {i18n("SampleFilesList.remove")}
                 </Button>
@@ -347,11 +347,7 @@ export function SequencingObjectList({
       </Menu>
     );
 
-    actions.push(
-      <Dropdown overlay={menu} className="t-actions-menu">
-        <MoreOutlined />
-      </Dropdown>
-    );
+    actions.push(<EllipsisMenu menu={menu} />);
 
     return actions;
   };
@@ -399,11 +395,7 @@ export function SequencingObjectList({
       </Menu>
     );
 
-    actions.push(
-      <Dropdown overlay={menu} className="t-actions-menu">
-        <MoreOutlined />
-      </Dropdown>
-    );
+    actions.push(<EllipsisMenu menu={menu} />);
 
     return actions;
   };

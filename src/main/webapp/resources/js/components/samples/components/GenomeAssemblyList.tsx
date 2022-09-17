@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Button,
-  Dropdown,
-  Menu,
-  notification,
-  Popconfirm,
-  Tag,
-  Tooltip,
-} from "antd";
+import { Button, Menu, notification, Popconfirm, Tag, Tooltip } from "antd";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
 import {
@@ -18,7 +10,7 @@ import {
 import { GenomeAssemblyListItem } from "../../sequence-files/GenomeAssemblyListItem";
 import { DEFAULT_ACTION_WIDTH } from "../sampleFilesSlice";
 import { setDefaultGenomeAssembly } from "../sampleSlice";
-import { MoreOutlined } from "@ant-design/icons";
+import { EllipsisMenu } from "../../menu/EllipsisMenu";
 
 export interface GenomeAssemblyListProps {
   removeSampleFiles: ({
@@ -207,6 +199,7 @@ export function GenomeAssemblyList({
                 className="t-remove-file-btn"
                 style={{ padding: 0, width: DEFAULT_ACTION_WIDTH }}
                 key={`${genomeAssemblyObj.identifier}-remove-btn`}
+                onClick={(e) => e?.stopPropagation()}
               >
                 {i18n("SampleFilesList.remove")}
               </Button>
@@ -216,11 +209,7 @@ export function GenomeAssemblyList({
       </Menu>
     );
 
-    actions.push(
-      <Dropdown overlay={menu} className="t-actions-menu">
-        <MoreOutlined />
-      </Dropdown>
-    );
+    actions.push(<EllipsisMenu menu={menu} />);
 
     return actions;
   };
