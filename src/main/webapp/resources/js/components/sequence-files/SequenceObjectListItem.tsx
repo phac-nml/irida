@@ -2,7 +2,11 @@ import React from "react";
 import { Avatar, Button, List, Tag, Typography } from "antd";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import {
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  CloseCircleOutlined,
   FileOutlined,
+  LoadingOutlined,
   SwapOutlined,
   SwapRightOutlined,
 } from "@ant-design/icons";
@@ -17,7 +21,6 @@ import {
   SampleSequencingObject,
 } from "../../apis/samples/samples";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { LoadingOutlined } from "@ant-design/icons";
 
 const qcEntryTranslations: { [key: string]: string } = {
   COVERAGE: i18n("SequenceObjectListItem.qcEntry.COVERAGE"),
@@ -109,19 +112,23 @@ export function SequenceObjectListItem({
   */
   const getAutomatedAssemblyStatus = () => {
     let tagColor = "default";
+    let icon = <ClockCircleOutlined />;
     if (sequenceObject.automatedAssembly.analysisState === "COMPLETED") {
       tagColor = "success";
+      icon = <CheckCircleOutlined />;
     } else if (sequenceObject.automatedAssembly.analysisState === "ERROR") {
       tagColor = "error";
+      icon = <CloseCircleOutlined />;
     } else if (sequenceObject.automatedAssembly.analysisState === "RUNNING") {
       tagColor = "processing";
+      icon = <LoadingOutlined />;
     }
     return (
       <Tag
         color={tagColor}
         key={`automated-assembly-${sequenceObject.automatedAssembly.identifier}`}
         className="t-automated-assembly-status"
-        icon={<LoadingOutlined />}
+        icon={icon}
       >
         {
           analysisStateTranslations[
