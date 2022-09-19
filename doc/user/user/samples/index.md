@@ -76,7 +76,7 @@ You can download all sequence files in a sample by following the instructions in
 
 #### Deleting a sequence file
 
-If you need to delete a sequence file from IRIDA, you can do so by clicking on the **Remove** button, on the right-hand side of the row for the sequencing object/genome assembly.
+If you need to delete a sequence file from IRIDA, you can do so by clicking on the <img src="images/ellipsis-menu.png" class="inline" alt="Ellipsis menu icon."> button on the right-hand side of the row for the sequencing object/genome assembly and then clicking **Remove**.
 
 You can only delete a sequence file from a sample if you have the project <img src="images/manager-icon.png" class="inline" alt="Manager role icon."> **Manager** role on the project.
 
@@ -124,7 +124,7 @@ See the [project documentation](../project#automated-pipelines) for information 
 
 #### Deleting genome assemblies
 
-Assembled genomes may be deleted from a sample by selecting the **Remove** button on the right-hand side of the row for the assembly.
+Assembled genomes may be deleted from a sample by clicking the <img src="images/ellipsis-menu.png" class="inline" alt="Ellipsis menu icon."> button on the right-hand side of the row for the assembly and then selecting **Remove**.
 
 Adding a new sample
 -------------------
