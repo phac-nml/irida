@@ -172,6 +172,7 @@ function DisplaySampleDetails({
           onCancel={() => setVisible(false)}
           footer={null}
           width={900}
+          maskClosable={false}
         >
           <div style={{ margin: 24 }}>
             {isLoading ? (
