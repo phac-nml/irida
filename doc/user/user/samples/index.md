@@ -21,11 +21,12 @@ Viewing samples in a project
 The samples listing shows high-level sample details, such as:
 
 * The name of the sample,
+* The estimated coverage of the Sample (if the project has set the genome size),
 * The user-defined organism of the sample (if provided),
 * The name of the person who collected the sample (if provided),
 * The project that the sample belongs to (if from a related project),
 * The date that the sample was created in IRIDA.
-* Whether the sample failed IRIDA's quality control checks.  If a sample has failed QC, the cell will have a red background and warning icon <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>.  Note if you are displaying [associated project samples](#viewing-associated-samples) QC information will come from the sample's parent project.
+* Whether the sample failed IRIDA's quality control checks.  If a sample has failed QC, the cell will have a red background and warning icon <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>.  If a sample does not have any Sequencing Objects associated with it, the cell will have a grey background with the text N.A.  Note if you are displaying [associated project samples](#viewing-associated-samples) QC information will come from the sample's parent project.
 * Whether the sample can be modified in this project.  If the project does not have modification access, a lock icon will be displayed <i class="fa fa-lock" aria-hidden="true"></i>.
 
 ### Viewing individual sample details
@@ -129,7 +130,7 @@ Adding a new sample
 Filtering samples
 ------------------------
 
-Each column in the projects' samples table, (except the quality control column) can be filtered by typing in the filter
+Each column in the projects' samples table, (except the quality control column and coverage column) can be filtered by typing in the filter
 box. The filter box is located in the right corner of the column header.
 
 ![Location of the column filters.](images/sample-table-header-filters.png)

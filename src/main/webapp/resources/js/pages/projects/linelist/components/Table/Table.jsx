@@ -203,7 +203,7 @@ export class TableComponent extends React.Component {
    * @returns {string}
    */
   generateFileName = (ext) => {
-    // YYYY-MM-dd-project-X-<metadata template name>.csv
+    // yyyy-MM-dd-project-X-<metadata template name>.csv
     const fullDate = new Date();
     const date = `${fullDate.getFullYear()}-${
       fullDate.getMonth() + 1

@@ -9,7 +9,11 @@
 </head>
 
 <body ng-app="irida.ncbi.export">
+
   <main layout:fragment="main">
+    <div id="root">
+      <!--  React entry: src/main/webapp/resources/js/pages/projects/ncbi/create/index.ts  -->
+    </div>
     <div class="container">
       <div class="row">
         <h1 th:text="#{project.export.title}">_NCBI Export_</h1>
@@ -42,7 +46,7 @@
             </div>
             <div class="form-group col-md-6">
               <label for="release_date" th:text="#{project.export.release_date.title}">_Release Date_</label>
-              <input type="date" id="release_date" class="form-control" th:value="${#calendars.format(#dates.createToday(),'YYYY-MM-dd')}">
+              <input type="date" id="release_date" class="form-control" th:value="${#calendars.format(#dates.createToday(),'yyyy-MM-dd')}">
               <p class="help-block" th:text="#{project.export.release_date.description}">_When data will be released_</p>
             </div>
           </div>

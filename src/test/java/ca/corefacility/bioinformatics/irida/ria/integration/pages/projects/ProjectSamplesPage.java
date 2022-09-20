@@ -248,7 +248,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "ant-pagination-next")
 	private WebElement nextTablePage;
 
-
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
 	}
@@ -257,7 +256,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		return PageFactory.initElements(driver, ProjectSamplesPage.class);
 	}
 
-	public static ProjectSamplesPage gotToPage(WebDriver driver, int projectId) {
+	public static ProjectSamplesPage goToPage(WebDriver driver, int projectId) {
 		get(driver, RELATIVE_URL + projectId);
 		// Wait for full page to get loaded
 		waitForTime(800);
@@ -458,6 +457,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		checkbox.click();
 	}
 
+	public Long getCoverageForSampleByName(String sampleName) {
+		WebElement coverageCell = samplesTable.findElement(
+				By.xpath("//td/a[text()='" + sampleName + "']/../../td[contains(@class, 't-td-coverage')]"));
+		String coverageString = coverageCell.getText();
+
+		return coverageString == null || coverageString.isEmpty() ? null : Long.parseLong(coverageString);
+	}
+
 	public void addSelectedSamplesToCart() {
 		addToCartBtn.click();
 		// Make sure the item were added to the cart.
@@ -587,6 +594,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		int total = getTableSummary().getTotal();
 		filterSubmitBtn.click();
 		waitForTableToUpdate(total);
+	}
+
+	public void shareExportSamplesToNcbi() {
+		WebDriverWait wait = new WebDriverWait(driver, 2);
+		openExportDropdown();
+		ncbiExportBtn.click();
+		wait.until(ExpectedConditions.urlContains("/ncbi"));
 	}
 
 	public void goToNextTablePage() {

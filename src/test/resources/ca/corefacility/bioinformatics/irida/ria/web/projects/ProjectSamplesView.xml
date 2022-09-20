@@ -15,7 +15,7 @@
         <remote_status id="3" sync_status="SYNCHRONIZED" url="http://localhost:8080/api/samples/24" api_id="1" remote_hash_code="1" read_by="1" last_update="2013-07-18 14:20:19.0" />
 
         <project id="7" createdDate="2013-07-18 14:20:19.0" name="test_remote" organism="test" remote_status="1" sync_frequency="DAILY" />
-        <project id="1" createdDate="2013-07-12 14:20:19.0" name="project" modifiedDate="2013-07-18 14:20:19.0" organism="E. coli" projectDescription="This is an interesting project description." remoteURL="http://google.ca" />
+        <project id="1" createdDate="2013-07-12 14:20:19.0" name="project" modifiedDate="2013-07-18 14:20:19.0" organism="E. coli" projectDescription="This is an interesting project description." remoteURL="http://google.ca" genome_size="1000000" minimum_coverage="20" maximum_coverage="100" />
         <project id="2" createdDate="2013-07-18 14:20:19.0" name="project2" modifiedDate="2013-07-18 14:19:19.0" />
         <project id="3" createdDate="2013-07-18 14:20:19.0" name="project3" modifiedDate="2013-07-18 14:18:19.0" />
         <project id="4" createdDate="2013-07-18 14:21:19.0" name="project4" modifiedDate="2013-07-18 14:17:19.0" />
@@ -100,15 +100,24 @@
         <sequence_file id="1" created_date="2013-07-18 14:20:19.0" file_path="src/test/resources/files/test_file.fastq" />
         <sequence_file id="2" created_date="2013-07-18 14:20:19.0" file_path="/sequenceFile2" />
         <sequence_file id="3" created_date="2013-07-18 14:20:19.0" file_path="/sequenceFile3" />
+        <sequence_file id="4" created_date="2013-07-18 14:20:19.0" file_path="/sequenceFile4" />
 
         <sequencing_object id="1" created_date="2013-07-18 14:20:19.0" />
         <sequencing_object id="2" created_date="2013-07-18 14:20:19.0" />
         <sequencing_object id="3" created_date="2013-07-18 14:20:19.0" />
+        <sequencing_object id="4" created_date="2013-07-18 14:20:19.0" />
         <sequence_file_single_end id="1" file_id="1" />
         <sequence_file_single_end id="2" file_id="2" />
         <sequence_file_single_end id="3" file_id="3" />
+        <sequence_file_single_end id="4" file_id="4" />
 
         <sample_sequencingobject id="1" created_date="2013-07-18 14:20:19.0" sample_id="1" sequencingobject_id="1" />
         <sample_sequencingobject id="2" created_date="2013-07-18 14:20:19.0" sample_id="1" sequencingobject_id="2" />
         <sample_sequencingobject id="3" created_date="2013-07-18 14:20:19.0" sample_id="1" sequencingobject_id="3" />
+        <sample_sequencingobject id="4" created_date="2013-07-18 14:20:19.0" sample_id="27" sequencingobject_id="4" />
+
+        <qc_entry id="1" created_date="2013-07-18 14:20:19.0" sequencingObject_id="1" DTYPE="CoverageQCEntry" total_bases="12500000" />
+        <qc_entry id="2" created_date="2013-07-18 14:20:19.0" sequencingObject_id="2" DTYPE="CoverageQCEntry" total_bases="7500000" />
+        <qc_entry id="3" created_date="2013-07-18 14:20:19.0" sequencingObject_id="3" DTYPE="CoverageQCEntry" total_bases="30000000" />
+        <qc_entry id="4" created_date="2013-07-18 14:20:19.0" sequencingObject_id="4" DTYPE="CoverageQCEntry" total_bases="50000000" />
 </dataset>

@@ -112,6 +112,8 @@ public class CartPage extends AbstractPage {
 		goToPipelinePage("t-Assembly_and_Annotation_Pipeline_btn");
 	}
 
+	public void selectBiohanselPipeline() { goToPipelinePage("t-bio_hansel_Pipeline_btn"); }
+
 	private void goToPipelinePage(String pipeline) {
 		get(driver, "cart/pipelines");
 		WebElement btn = waitForElementVisible(By.className(pipeline));

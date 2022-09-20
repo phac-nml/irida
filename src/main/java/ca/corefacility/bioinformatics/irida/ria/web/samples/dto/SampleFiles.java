@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.PairedEndSequenceFileModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.SingleEndSequenceFileModel;
 
 /**
  * Collection of different files that can be on a sample
@@ -20,6 +22,7 @@ public class SampleFiles extends AjaxResponse {
 		this.fast5 = fast5;
 		this.assemblies = assemblies;
 	}
+
 
 	public List<SampleSequencingObjectFileModel> getSingles() {
 		return singles;
