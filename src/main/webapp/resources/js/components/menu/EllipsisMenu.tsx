@@ -1,22 +1,6 @@
 import React from "react";
-import { Dropdown, Menu } from "antd";
+import { Dropdown, DropDownProps } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
-
-export interface EllipsisMenuProps {
-  menu: React.ReactElement;
-  className?: string;
-  placement?:
-    | "bottomRight"
-    | "topLeft"
-    | "topCenter"
-    | "topRight"
-    | "bottomLeft"
-    | "bottomCenter"
-    | "top"
-    | "bottom"
-    | undefined;
-  trigger?: ("click" | "hover" | "contextMenu")[];
-}
 
 /**
  * React component to display an ellipsis menu
@@ -24,21 +8,24 @@ export interface EllipsisMenuProps {
  * @param className The class name
  * @param placement Where to position dropdown
  * @param trigger How the dropdown is activated
+ * @param props Any other props provided for the dropdown
  * @returns {JSX.Element}
  * @constructor
  */
 export function EllipsisMenu({
-  menu,
+  overlay,
   className = "t-actions-menu",
   placement = "bottomRight",
   trigger = ["click"],
-}: EllipsisMenuProps): JSX.Element {
+  ...props
+}: DropDownProps): JSX.Element {
   return (
     <Dropdown
-      overlay={menu}
+      overlay={overlay}
       className={className}
       trigger={trigger}
       placement={placement}
+      {...props}
     >
       <MoreOutlined />
     </Dropdown>
