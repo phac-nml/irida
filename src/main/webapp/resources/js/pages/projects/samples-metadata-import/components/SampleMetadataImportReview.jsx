@@ -153,8 +153,15 @@ export function SampleMetadataImportReview() {
       .filter((metadataItem) => selected.includes(metadataItem.rowKey))
       .map((metadataItem) => metadataItem.rowKey);
 
-    await dispatch(saveMetadata({ projectId, selectedMetadataKeys }));
-    navigate(`/${projectId}/sample-metadata/upload/complete`);
+    const response = await dispatch(
+      saveMetadata({ projectId, selectedMetadataKeys })
+    );
+
+    if (
+      response.payload.metadata.every((metadataItem) => !metadataItem.error)
+    ) {
+      navigate(`/${projectId}/sample-metadata/upload/complete`);
+    }
   };
 
   return (

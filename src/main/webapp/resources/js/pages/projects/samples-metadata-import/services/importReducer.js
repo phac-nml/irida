@@ -58,6 +58,7 @@ export const saveMetadata = createAsyncThunk(
               console.log("UPDATE SAMPLE ERROR");
               console.log(error);
               updatedMetadata[index].saved = false;
+              updatedMetadata[index].error = error.response.data.error;
             });
         } else {
           await createSample({
@@ -76,11 +77,12 @@ export const saveMetadata = createAsyncThunk(
               console.log("CREATE SAMPLE ERROR");
               console.log(error);
               updatedMetadata[index].saved = false;
-              updatedMetadata[index].error = error;
+              updatedMetadata[index].error = error.response.data.error;
             });
         }
       }
     }
+
     return { metadata: updatedMetadata };
   }
 );
