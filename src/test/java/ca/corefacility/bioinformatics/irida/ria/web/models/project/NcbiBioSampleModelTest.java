@@ -10,19 +10,19 @@ import ca.corefacility.bioinformatics.irida.model.export.*;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiBioSampleFilesModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiBioSampleModel;
 
 import com.google.common.collect.ImmutableSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class NcbiBioSampleFilesModelTest {
+class NcbiBioSampleModelTest {
 	@Test
-	public void testNcbiBioSamplesFilesModel() {
+	void testNcbiBioSamplesFilesModel() {
 		String id = "1";
 		String namespace = "BIOSAMPLE_NAME";
 		String bioSample = "BIOSAMPLE";
-		NcbiInstrumentModel instrumentModel = NcbiInstrumentModel.ABSOLID;
+		NcbiInstrumentModel instrumentModel = NcbiInstrumentModel.AB_SOLID_SYSTEM;
 		NcbiLibrarySelection librarySelection = NcbiLibrarySelection.CFH;
 		String libraryName = "LIBRARY_NAME";
 		NcbiLibrarySource librarySource = NcbiLibrarySource.GENOMIC;
@@ -40,11 +40,11 @@ class NcbiBioSampleFilesModelTest {
 		bioSampleFiles.setId(id);
 		bioSampleFiles.setAccession(accession);
 
-		NcbiBioSampleFilesModel model = new NcbiBioSampleFilesModel(bioSampleFiles);
+		NcbiBioSampleModel model = new NcbiBioSampleModel(bioSampleFiles);
 
 		assertEquals(id, model.getId(), "Id should not be changed");
 		assertEquals(bioSample, model.getBioSample(), "Biosample should not be changed");
-		assertEquals(instrumentModel.getValue(), model.getInstrumentModel(), "Instrument model should not be changed");
+		assertEquals(instrumentModel.getModel(), model.getInstrumentModel(), "Instrument model should not be changed");
 		assertEquals(libraryName, model.getLibraryName(), "Library name should not be changed");
 		assertEquals(librarySelection.getValue(), model.getLibrarySelection(),
 				"Library selection should not be changed");
@@ -53,7 +53,9 @@ class NcbiBioSampleFilesModelTest {
 		assertEquals(libraryConstructionProtocol, model.getLibraryConstructionProtocol(),
 				"Library construction protocol should not be changed");
 		assertEquals(ExportUploadState.NEW.toString(), model.getStatus(), "Status should be set properly");
-		assertEquals(pairs.size(), model.getPairs().size(), "Pairs should not be changed");
-		assertEquals(singles.size(), model.getSingles().size(), "Singles should not be changed");
+		assertEquals(pairs.size(), model.getPairs()
+				.size(), "Pairs should not be changed");
+		assertEquals(singles.size(), model.getSingles()
+				.size(), "Singles should not be changed");
 	}
 }

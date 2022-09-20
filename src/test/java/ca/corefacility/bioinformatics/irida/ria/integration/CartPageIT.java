@@ -104,7 +104,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsUser(driver());
 		driver().manage().window().maximize();
 		// Add some samples to the cart and test to see if they get displayed/
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
 		samplesPage.selectSampleByName("sample5fg44");
 		samplesPage.selectSampleByName("sample5fdgr");
 		samplesPage.selectSampleByName("sample554sg5");
@@ -153,10 +153,9 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 				"Correct file labels should be displayed for uploaded files");
 		assertEquals(7, sampleDetailsViewer.processingStatusesCount(),
 				"Seven files should have processing statuses displayed");
-		assertEquals(0, sampleDetailsViewer.removeFileButtonsVisible(), "Shouldn't have any file remove buttons");
 		assertEquals(0, sampleDetailsViewer.concatenationCheckboxesVisible(),
 				"Shouldn't have any concatenation checkboxes");
-		assertEquals(9, sampleDetailsViewer.downloadFileButtonsVisible(), "Should have 7 download file buttons");
+		assertEquals(9, sampleDetailsViewer.actionButtonsVisible(), "Should have 9 file action buttons");
 
 		// Launch fastqc modal
 		sampleDetailsViewer.clickSampleName();
@@ -190,22 +189,11 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		sampleDetailsViewer.clickRemoveSampleFromCartButton();
 
-		assertTrue(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
-				"The add cart to sample button should be displayed");
-		assertFalse(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(),
-				"The remove sample from cart button should not be displayed");
-
-		sampleDetailsViewer.clickAddSampleToCartButton();
-		assertFalse(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
-				"The add cart to sample button should not be displayed");
-		assertTrue(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(),
-				"The remove sample from cart button should be displayed");
-
-		sampleDetailsViewer.closeDetails();
+		assertFalse(sampleDetailsViewer.sampleDetailsViewerVisible(), "The sample details viewer should not be displayed as the sample was removed from the cart");
 
 		// Test removing a sample from the project
 		page.removeSampleFromCart(0);
-		assertEquals(2, page.getNumberOfSamplesInCart(), "Should be 2 samples in the cart");
+		assertEquals(1, page.getNumberOfSamplesInCart(), "Should be 1 sample in the cart");
 
 		// Test removing the entire project
 		page.removeProjectFromCart();
@@ -216,7 +204,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsAdmin(driver());
 		driver().manage().window().maximize();
 		// Add some samples to the cart and test to see if they get displayed/
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
 		samplesPage.selectSampleByName("sample5fg44");
 		samplesPage.selectSampleByName("sample5fdgr");
 		samplesPage.selectSampleByName("sample554sg5");
@@ -244,6 +232,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 				"The remove sample from cart button should be displayed");
 
 		assertEquals(sampleName, sampleDetailsViewer.getSampleName(), "Should be viewing the proper sample");
+
 		assertEquals(projectName, sampleDetailsViewer.getProjectName(),
 				"Should have proper project name displayed for sample");
 		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Should display the correct created date");
@@ -275,9 +264,8 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(9, sampleDetailsViewer.numberOfFilesDisplayed(), "Nine files should be displayed for sample");
 		assertEquals(7, sampleDetailsViewer.processingStatusesCount(),
 				"Seven files should have processing statuses displayed");
-		assertEquals(7, sampleDetailsViewer.removeFileButtonsVisible(), "Should have 7 file remove buttons");
 		assertEquals(5, sampleDetailsViewer.concatenationCheckboxesVisible(), "Should have 5 concatenation checkboxes");
-		assertEquals(9, sampleDetailsViewer.downloadFileButtonsVisible(), "Should have 9 download file buttons");
+		assertEquals(9, sampleDetailsViewer.actionButtonsVisible(), "Should have 9 file action buttons");
 
 		// Launch fastqc modal
 		sampleDetailsViewer.clickSampleName();
@@ -313,16 +301,17 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 				"Correct file labels should be displayed including the concatenated file");
 		assertEquals(8, sampleDetailsViewer.processingStatusesCount(),
 				"Eight files should have processing statuses displayed");
-		assertEquals(8, sampleDetailsViewer.removeFileButtonsVisible(), "Should have 8 file remove buttons");
+
 		assertEquals(6, sampleDetailsViewer.concatenationCheckboxesVisible(), "Should have 6 concatenation checkboxes");
-		assertEquals(10, sampleDetailsViewer.downloadFileButtonsVisible(), "Should have 10 download file buttons");
+		assertEquals(10, sampleDetailsViewer.actionButtonsVisible(), "Should have 10 download file buttons");
 
 		assertTrue(sampleDetailsViewer.setSetDefaultSeqObjButtonsVisible());
-		assertEquals(1, sampleDetailsViewer.defaultSeqObjTagCount(),
-				"Only one sequencing object (file pair) should be designated as the default sequencing object for the sample");
 
 		JavascriptExecutor js = (JavascriptExecutor) driver();
-		js.executeScript("document.getElementsByClassName('t-filelist-scroll')[0].scrollTop= 450");
+		js.executeScript("document.getElementsByClassName('t-filelist-scroll')[0].scrollTop= 200");
+
+		assertEquals(1, sampleDetailsViewer.defaultSeqObjTagCount(),
+				"Only one sequencing object should be designated as the default sequencing object for the sample");
 
 		sampleDetailsViewer.updateDefaultSequencingObjectForSample();
 
@@ -349,48 +338,38 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 				"Correct file label should be displayed for the concatenated file");
 		assertEquals(5, sampleDetailsViewer.processingStatusesCount(),
 				"Five files should have processing statuses displayed");
-		assertEquals(5, sampleDetailsViewer.removeFileButtonsVisible(), "Should have 5 file remove buttons");
 		assertEquals(2, sampleDetailsViewer.concatenationCheckboxesVisible(),
 				"Should not have any concatenation checkboxes");
-		assertEquals(7, sampleDetailsViewer.downloadFileButtonsVisible(), "Should have 7 download file buttons");
+		assertEquals(7, sampleDetailsViewer.actionButtonsVisible(), "Should have 7 file action buttons");
 
-		assertEquals(1, sampleDetailsViewer.numberOfSequencingObjectsSetAsDefault(), "One sequencing object (pair) should have a default tag");
-		assertEquals(1, sampleDetailsViewer.numberOfSetAsDefaultSeqObjsButtons(), "There should be one set as default button for sequencing objects");
+		assertEquals(1, sampleDetailsViewer.numberOfSequencingObjectsSetAsDefault(), "One sequencing object should have a default tag");
+		assertEquals(2, sampleDetailsViewer.numberOfSetAsDefaultSeqObjsButtons(), "There should be two set as default buttons for sequencing objects");
 
 		// Remove the 5 remaining files (1 single end sequencing object and 2 paired end sequencing objects containing 2 files each, and 2 assemblies)
 		js.executeScript("document.getElementsByClassName('t-filelist-scroll')[0].scrollTop= 600");
 
-		assertEquals(1, sampleDetailsViewer.numberOfGenomeAssembliesSetAsDefault(), "One sequencing object (pair) should have a default tag");
+		assertEquals(1, sampleDetailsViewer.numberOfGenomeAssembliesSetAsDefault(), "One sequencing object should have a default tag");
 		assertEquals(1, sampleDetailsViewer.numberOfGenomeAssembliesSetAsDefaultButtons(), "There should be one set as default button for sequencing objects");
 
-		sampleDetailsViewer.removeFile(4);
+		sampleDetailsViewer.removeFile(6);
+		sampleDetailsViewer.removeFile(5);
 		sampleDetailsViewer.removeFile(3);
-		sampleDetailsViewer.removeFile(2);
 		sampleDetailsViewer.removeFile(1);
 		sampleDetailsViewer.removeFile(0);
 
 		assertEquals(0, sampleDetailsViewer.numberOfFilesDisplayed(),
 				"No files should be left for sample after file removal");
 
-		sampleDetailsViewer.clickRemoveSampleFromCartButton();
-
-		assertTrue(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
-				"The add cart to sample button should be displayed");
-		assertFalse(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(),
-				"The remove sample from cart button should not be displayed");
-
-		sampleDetailsViewer.clickAddSampleToCartButton();
-
-		assertFalse(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
-				"The add cart to sample button should not be displayed");
 		assertTrue(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(),
 				"The remove sample from cart button should be displayed");
 
-		sampleDetailsViewer.closeDetails();
+		sampleDetailsViewer.clickRemoveSampleFromCartButton();
+
+		assertFalse(sampleDetailsViewer.sampleDetailsViewerVisible(), "The sample details viewer should not be displayed as the sample was removed from the cart");
 
 		// Test removing a sample from the project
 		page.removeSampleFromCart(0);
-		assertEquals(2, page.getNumberOfSamplesInCart(), "Should be 2 samples in the cart");
+		assertEquals(1, page.getNumberOfSamplesInCart(), "Should be 1 samples in the cart");
 
 		// Test removing the entire project
 		page.removeProjectFromCart();

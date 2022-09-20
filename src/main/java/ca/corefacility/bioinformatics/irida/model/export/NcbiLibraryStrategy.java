@@ -55,4 +55,12 @@ public enum NcbiLibraryStrategy {
 		return value;
 	}
 
+	public static NcbiLibraryStrategy fromString(String value) {
+		for (NcbiLibraryStrategy strategy : NcbiLibraryStrategy.values()) {
+			if (strategy.getValue().equals(value)) {
+				return strategy;
+			}
+		}
+		return null;
+	}
 }

@@ -1,14 +1,13 @@
 import * as React from "react";
-import ExportUploadStateTag from "../ExportUploadStateTag";
-import { setBaseUrl } from "../../../utilities/url-utilities";
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import {
-  NcbiBioSampleFiles,
+  NcbiBioSample,
   NcbiSubmission,
   PairedEndSequenceFile,
   SingleEndSequenceFile,
 } from "../../../types/irida";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { BasicListItem } from "../../lists/BasicList";
+import ExportUploadStateTag from "../ExportUploadStateTag";
 
 /**
  * Format all details in a NcbiSubmission (without the files) to a form that
@@ -16,7 +15,7 @@ import { BasicListItem } from "../../lists/BasicList";
  * @param submission
  */
 export const formatNcbiSubmissionDetails = (
-  submission: Omit<NcbiSubmission, "bioSampleFiles">
+  submission: Omit<NcbiSubmission, "bioSamples">
 ): BasicListItem[] => {
   const releaseDate = submission.releaseDate
     ? formatInternationalizedDateTime(submission.releaseDate)
@@ -24,19 +23,19 @@ export const formatNcbiSubmissionDetails = (
 
   return [
     {
-      title: i18n("iridaThing.id"),
+      title: i18n("NcbiSubmission.id"),
       desc: <span className="t-details-id">{submission.id}</span>,
     },
     {
-      title: i18n("project.export.status"),
+      title: i18n("NcbiSubmission.state"),
       desc: <ExportUploadStateTag state={submission.state} />,
     },
     {
-      title: i18n("project.export.submitter"),
+      title: i18n("NcbiSubmission.submitter"),
       desc: <span className="t-submitter">{submission.submitter.name}</span>,
     },
     {
-      title: i18n("iridaThing.timestamp"),
+      title: i18n("NcbiSubmission.createdDate"),
       desc: (
         <span className="t-created">
           {formatInternationalizedDateTime(submission.createdDate)}
@@ -44,25 +43,25 @@ export const formatNcbiSubmissionDetails = (
       ),
     },
     {
-      title: i18n("project.export.bioproject.title"),
+      title: i18n("NcbiSubmission.bioProject"),
       desc: <span className="t-bioproject">{submission.bioProject}</span>,
     },
     {
-      title: i18n("project.export.organization.title"),
+      title: i18n("NcbiSubmission.organization"),
       desc: <span className="t-organization">{submission.organization}</span>,
     },
     {
-      title: i18n("project.export.namespace.title"),
+      title: i18n("NcbiSubmission.ncbiNamespace"),
       desc: <span className="t-namespace">{submission.ncbiNamespace}</span>,
     },
     {
-      title: i18n("project.export.release_date.title"),
+      title: i18n("NcbiSubmission.releaseDate"),
       desc: <span className="t-release-date">{releaseDate}</span>,
     },
   ];
 };
 
-export interface BioSampleFileDetails {
+export interface BioSampleDetails {
   key: string;
   details: BasicListItem[];
   files: {
@@ -72,53 +71,52 @@ export interface BioSampleFileDetails {
 }
 
 /**
- * Format the files from a NcbiSubmission.  The files detail will be formatted into a manner that
+ * Format the files from a NcbiSubmission.
+ * The file detail will be formatted into a manner that
  * can be consumed by a BasicList component.
- * @param bioSampleFiles
+ * @param bioSamples
  */
 export const formatNcbiBioSampleFiles = (
-  bioSampleFiles: NcbiBioSampleFiles[]
-): BioSampleFileDetails[] =>
-  bioSampleFiles.map((bioSampleFile) => {
-    return {
-      key: bioSampleFile.bioSample,
-      details: [
-        {
-          title: i18n("project.export.biosample.title"),
-          desc: bioSampleFile.bioSample,
-        },
-        {
-          title: i18n("project.export.status"),
-          desc: <ExportUploadStateTag state={bioSampleFile.status} />,
-        },
-        {
-          title: i18n("project.export.accession"),
-          desc: bioSampleFile.accession,
-        },
-        {
-          title: i18n("project.export.library_name.title"),
-          desc: bioSampleFile.libraryName,
-        },
-        {
-          title: i18n("project.export.instrument_model.title"),
-          desc: bioSampleFile.instrumentModel,
-        },
-        {
-          title: i18n("project.export.library_strategy.title"),
-          desc: bioSampleFile.libraryStrategy,
-        },
-        {
-          title: i18n("project.export.library_source.title"),
-          desc: bioSampleFile.librarySource,
-        },
-        {
-          title: i18n("project.export.library_construction_protocol.title"),
-          desc: bioSampleFile.libraryConstructionProtocol,
-        },
-      ],
-      files: {
-        singles: bioSampleFile.singles,
-        pairs: bioSampleFile.pairs,
+  bioSamples: NcbiBioSample[]
+): BioSampleDetails[] =>
+  bioSamples.map((bioSample) => ({
+    key: bioSample.id,
+    details: [
+      {
+        title: i18n("NcbiBioSample.bioSample"),
+        desc: bioSample.bioSample,
       },
-    };
-  });
+      {
+        title: i18n("NcbiBioSample.status"),
+        desc: <ExportUploadStateTag state={bioSample.status} />,
+      },
+      {
+        title: i18n("NcbiBioSample.accession"),
+        desc: bioSample.accession,
+      },
+      {
+        title: i18n("NcbiBioSample.libraryName"),
+        desc: bioSample.libraryName,
+      },
+      {
+        title: i18n("NcbiBioSample.instrumentModel"),
+        desc: bioSample.instrumentModel,
+      },
+      {
+        title: i18n("NcbiBioSample.libraryStrategy"),
+        desc: bioSample.libraryStrategy,
+      },
+      {
+        title: i18n("NcbiBioSample.librarySource"),
+        desc: bioSample.librarySource,
+      },
+      {
+        title: i18n("NcbiBioSample.libraryConstructionProtocol"),
+        desc: bioSample.libraryConstructionProtocol,
+      },
+    ],
+    files: {
+      singles: bioSample.singles,
+      pairs: bioSample.pairs,
+    },
+  }));

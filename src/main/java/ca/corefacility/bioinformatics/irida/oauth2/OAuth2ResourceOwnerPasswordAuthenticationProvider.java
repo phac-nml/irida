@@ -30,8 +30,10 @@ import org.springframework.util.CollectionUtils;
  * An {@link AuthenticationProvider} impementation for the OAuth 2.0 Resource Owner Password Credentials Grant.
  *
  * @see OAuth2ResourceOwnerPasswordAuthenticationToken
- * @see <a target="_blank" href="https://datatracker.ietf.org/doc/html/rfc6749#section-4.3">Section 4.3 Resource Owner Password Credentials Grant</a>
- * @see <a target="_blank" href="https://datatracker.ietf.org/doc/html/rfc6749#section-4.3.2">Section 4.3.2 Access Token Request</a>
+ * @see <a target="_blank" href="https://datatracker.ietf.org/doc/html/rfc6749#section-4.3">Section 4.3 Resource Owner
+ *      Password Credentials Grant</a>
+ * @see <a target="_blank" href="https://datatracker.ietf.org/doc/html/rfc6749#section-4.3.2">Section 4.3.2 Access Token
+ *      Request</a>
  */
 public class OAuth2ResourceOwnerPasswordAuthenticationProvider implements AuthenticationProvider {
 
@@ -165,9 +167,14 @@ public class OAuth2ResourceOwnerPasswordAuthenticationProvider implements Authen
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                 username, password);
 
-        Authentication usernamePasswordAuthentication = authenticationManager
-                .authenticate(usernamePasswordAuthenticationToken);
-        return usernamePasswordAuthentication;
+        try {
+            Authentication usernamePasswordAuthentication = authenticationManager
+                    .authenticate(usernamePasswordAuthenticationToken);
+            return usernamePasswordAuthentication;
+        } catch (AuthenticationException e) {
+            throw new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodes.INVALID_REQUEST,
+                    "The credentials you provided were invalid. Please provide valid credentials and try again.", ""));
+        }
     }
 
     private OAuth2ClientAuthenticationToken getAuthenticatedClientElseThrowInvalidClient(
