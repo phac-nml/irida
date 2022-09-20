@@ -36,7 +36,7 @@
     "@luma.gl/shadertools": "^8.4.0",
     "@luma.gl/webgl": ">=8.4.0 <9.0.0",
     "@phylocanvas/phylocanvas.gl": "^1.43.0",
-    "@reduxjs/toolkit": "1.8.1",
+    "@reduxjs/toolkit": "1.8.5",
     "@remix-run/router": "^0.1.0",
     "ag-grid-community": "^27.1.0",
     "ag-grid-react": "^27.1.0",

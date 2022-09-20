@@ -34,7 +34,7 @@ specifiers:
   '@luma.gl/shadertools': ^8.4.0
   '@luma.gl/webgl': '>=8.4.0 <9.0.0'
   '@phylocanvas/phylocanvas.gl': ^1.43.0
-  '@reduxjs/toolkit': 1.8.1
+  '@reduxjs/toolkit': 1.8.5
   '@remix-run/router': ^0.1.0
   '@types/lodash': ^4.14.182
   '@types/lodash.uniqby': ^4.7.7
@@ -150,7 +150,7 @@ dependencies:
   '@luma.gl/shadertools': 8.5.14
   '@luma.gl/webgl': 8.5.14
   '@phylocanvas/phylocanvas.gl': 1.43.0_deck.gl@8.7.12
-  '@reduxjs/toolkit': 1.8.1_bjryulbxll5jujtwpu5a2wm2cy
+  '@reduxjs/toolkit': 1.8.5_bjryulbxll5jujtwpu5a2wm2cy
   '@remix-run/router': 0.1.0
   ag-grid-community: 27.1.0
   ag-grid-react: 27.1.0_w6hrqnyrd37qujkkojqwgzxsou
@@ -2671,11 +2671,11 @@ packages:
     resolution: {integrity: sha512-afmTuJrylUU/0OtqzaRkbyYFFNgCF73Bvel/sw90pvGrWIZ+vyoIJqA6eMSoA6+nb443kTmulmBtC9NerXboNg==}
     dev: false
 
-  /@reduxjs/toolkit/1.8.1_bjryulbxll5jujtwpu5a2wm2cy:
-    resolution: {integrity: sha512-Q6mzbTpO9nOYRnkwpDlFOAbQnd3g7zj7CtHAZWz5SzE5lcV97Tf8f3SzOO8BoPOMYBFgfZaqTUZqgGu+a0+Fng==}
+  /@reduxjs/toolkit/1.8.5_bjryulbxll5jujtwpu5a2wm2cy:
+    resolution: {integrity: sha512-f4D5EXO7A7Xq35T0zRbWq5kJQyXzzscnHKmjnu2+37B3rwHU6mX9PYlbfXdnxcY6P/7zfmjhgan0Z+yuOfeBmA==}
     peerDependencies:
       react: ^16.9.0 || ^17.0.0 || ^18
-      react-redux: ^7.2.1 || ^8.0.0-beta
+      react-redux: ^7.2.1 || ^8.0.2
     peerDependenciesMeta:
       react:
         optional: true

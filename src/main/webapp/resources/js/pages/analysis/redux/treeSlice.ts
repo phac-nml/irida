@@ -62,38 +62,39 @@ export const fetchTreeAndMetadata = createAsyncThunk(
   }
 );
 
-type FetchMetadataTemplateFieldsResponse = { fields: string[]; index: number };
-export const fetchMetadataTemplateFields =
-  createAsyncThunk<FetchMetadataTemplateFieldsResponse>(
-    `tree/fetchMetadataTemplateFields`,
-    async (index: number, { getState }) => {
-      const { tree } = getState();
-      const { analysisId, terms, templates } = tree;
+export const fetchMetadataTemplateFields = createAsyncThunk<
+  {
+    fields: string[];
+    index: number;
+  },
+  number
+>(`tree/fetchMetadataTemplateFields`, async (index, { getState }) => {
+  const { tree } = getState();
+  const { analysisId, terms, templates } = tree;
 
-      if (index === -1) {
-        return { fields: terms };
-      } else if (index > templates.length) {
-        return { fields: [] };
-      } else {
-        if ("fields" in templates[index]) {
-          return { fields: templates[index].fields };
-        } else {
-          const data = await getMetadataTemplateFields(
-            analysisId,
-            templates[index].id
-          );
-          let fields = [];
-          if (data.fields) {
-            fields = data.fields.filter((field) => terms.includes(field));
-          }
-          return {
-            fields: fields,
-            index: index,
-          };
-        }
+  if (index === -1) {
+    return { fields: terms };
+  } else if (index > templates.length) {
+    return { fields: [] };
+  } else {
+    if ("fields" in templates[index]) {
+      return { fields: templates[index].fields };
+    } else {
+      const data = await getMetadataTemplateFields(
+        analysisId,
+        templates[index].id
+      );
+      let fields = [];
+      if (data.fields) {
+        fields = data.fields.filter((field) => terms.includes(field));
       }
+      return {
+        fields,
+        index,
+      };
     }
-  );
+  }
+});
 
 export enum LoadingState {
   "fetching",
