@@ -36,24 +36,32 @@ const HierarchicalSVG = () => (
   </svg>
 );
 
-export function PhyloRectangleIcon(props: Partial<CustomIconComponentProps>) {
+export function PhyloRectangleIcon(
+  props: Partial<CustomIconComponentProps>
+): JSX.Element {
   return <Icon component={RectangleSVG} {...props} />;
 }
 
-export function PhyloRadialIcon(props: Partial<CustomIconComponentProps>) {
+export function PhyloRadialIcon(
+  props: Partial<CustomIconComponentProps>
+): JSX.Element {
   return <Icon component={RadialSVG} {...props} />;
 }
 
-export function PhyloDiagonalIcon(props: Partial<CustomIconComponentProps>) {
+export function PhyloDiagonalIcon(
+  props: Partial<CustomIconComponentProps>
+): JSX.Element {
   return <Icon component={DiagonalSVG} {...props} />;
 }
 
-export function PhyloCircularIcon(props: Partial<CustomIconComponentProps>) {
+export function PhyloCircularIcon(
+  props: Partial<CustomIconComponentProps>
+): JSX.Element {
   return <Icon component={CircularSVG} {...props} />;
 }
 
 export function PhyloHierarchicalIcon(
   props: Partial<CustomIconComponentProps>
-) {
+): JSX.Element {
   return <Icon component={HierarchicalSVG} {...props} />;
 }

@@ -7,16 +7,18 @@ import {
   getNewickTree,
 } from "../../../apis/analysis/analysis";
 import { formatMetadata, generateColourMap } from "../tree-utilities";
+import { TreeProperties } from "../../../types/phylocanvas";
+import { RootState } from "../store";
 
-const zoomStepSize = 0.1;
+const ZOOM_STEP_SIZE = 0.1;
 
 export const fetchTreeAndMetadata = createAsyncThunk(
   `tree/fetchTreeAndMetadata`,
-  async (id, { rejectWithValue }) => {
+  async (id: number, { rejectWithValue }) => {
     const promises = [
-      getNewickTree(id),
-      getMetadata(id),
-      getMetadataTemplates(id),
+      await getNewickTree(id),
+      await getMetadata(id),
+      await getMetadataTemplates(id),
     ];
 
     const [newickData, metadataData, metadataTemplateData] = await Promise.all(
@@ -60,36 +62,38 @@ export const fetchTreeAndMetadata = createAsyncThunk(
   }
 );
 
-export const fetchMetadataTemplateFields = createAsyncThunk(
-  `tree/fetchMetadataTemplateFields`,
-  async (index, { getState }) => {
-    const { tree } = getState();
-    const { analysisId, terms, templates } = tree;
+type FetchMetadataTemplateFieldsResponse = { fields: string[]; index: number };
+export const fetchMetadataTemplateFields =
+  createAsyncThunk<FetchMetadataTemplateFieldsResponse>(
+    `tree/fetchMetadataTemplateFields`,
+    async (index: number, { getState }) => {
+      const { tree } = getState();
+      const { analysisId, terms, templates } = tree;
 
-    if (index === -1) {
-      return { fields: terms };
-    } else if (index > templates.length) {
-      return { fields: [] };
-    } else {
-      if ("fields" in templates[index]) {
-        return { fields: templates[index].fields };
+      if (index === -1) {
+        return { fields: terms };
+      } else if (index > templates.length) {
+        return { fields: [] };
       } else {
-        const data = await getMetadataTemplateFields(
-          analysisId,
-          templates[index].id
-        );
-        let fields = [];
-        if (data.fields) {
-          fields = data.fields.filter((field) => terms.includes(field));
+        if ("fields" in templates[index]) {
+          return { fields: templates[index].fields };
+        } else {
+          const data = await getMetadataTemplateFields(
+            analysisId,
+            templates[index].id
+          );
+          let fields = [];
+          if (data.fields) {
+            fields = data.fields.filter((field) => terms.includes(field));
+          }
+          return {
+            fields: fields,
+            index: index,
+          };
         }
-        return {
-          fields: fields,
-          index: index,
-        };
       }
     }
-  }
-);
+  );
 
 export enum LoadingState {
   "fetching",
@@ -98,7 +102,17 @@ export enum LoadingState {
   "empty",
 }
 
-const initialState = {
+type TreeState = {
+  state: {
+    loadingState: LoadingState;
+  };
+  treeProps: TreeProperties;
+  terms: string[];
+  metadataColourMap: {};
+  zoomMode: number;
+};
+
+const initialState: TreeState = {
   state: {
     loadingState: LoadingState.fetching,
   },
@@ -120,7 +134,6 @@ const initialState = {
   },
   terms: [],
   metadataColourMap: {},
-  zoomMode: 0, // normal zoom
 };
 
 export const treeSlice = createSlice({
@@ -166,25 +179,25 @@ export const treeSlice = createSlice({
     zoomIn: (state) => {
       if (state.zoomMode === 0) {
         // normal zoom
-        state.treeProps.zoom += zoomStepSize;
+        state.treeProps.zoom += ZOOM_STEP_SIZE;
       } else if (state.zoomMode === 1) {
         // horizontal zoom aka branch zoom
-        state.treeProps.branchZoom += zoomStepSize;
+        state.treeProps.branchZoom += ZOOM_STEP_SIZE;
       } else if (state.zoomMode === 2) {
         // vertical zoom aka step zoom
-        state.treeProps.stepZoom += zoomStepSize;
+        state.treeProps.stepZoom += ZOOM_STEP_SIZE;
       }
     },
     zoomOut: (state) => {
       if (state.zoomMode === 0) {
         // normal zoom
-        state.treeProps.zoom -= zoomStepSize;
+        state.treeProps.zoom -= ZOOM_STEP_SIZE;
       } else if (state.zoomMode === 1) {
         // horizontal zoom aka branch zoom
-        state.treeProps.branchZoom -= zoomStepSize;
+        state.treeProps.branchZoom -= ZOOM_STEP_SIZE;
       } else if (state.zoomMode === 2) {
         // vertical zoom aka step zoom
-        state.treeProps.stepZoom -= zoomStepSize;
+        state.treeProps.stepZoom -= ZOOM_STEP_SIZE;
       }
     },
   },
