@@ -1,5 +1,6 @@
-import { createAction, createSlice } from "@reduxjs/toolkit";
+import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
+  fetchSampleFiles,
   SampleGenomeAssembly,
   SampleSequencingObject,
   SequencingObject,
@@ -7,16 +8,6 @@ import {
 
 // The default width for action buttons
 export const DEFAULT_ACTION_WIDTH = 75;
-
-/**
- * Action to set the target sample files
- */
-export const setSampleFiles = createAction(
-  `sampleFiles/setSampleFiles`,
-  (data) => ({
-    payload: { data },
-  })
-);
 
 /**
  * Action to remove files from sample
@@ -98,6 +89,17 @@ export const resetConcatenateSelected = createAction(
   })
 );
 
+/**
+ * Get the files for the sample
+ * @type {AsyncThunk<unknown, void, {}>}
+ */
+export const fetchFilesForSample = createAsyncThunk(
+  `sample/fetchFilesForSample`,
+  async ({ sampleId, projectId }: { sampleId: number; projectId: number }) => {
+    return await fetchSampleFiles({ sampleId, projectId });
+  }
+);
+
 export const fetchUpdatedSeqObjectsDelay = 30000; // 30 seconds
 
 /**
@@ -125,9 +127,9 @@ const sampleFilesSlice = createSlice({
   name: "sampleFiles",
   initialState,
   extraReducers: (builder) => {
-    builder.addCase(setSampleFiles, (state, action) => {
-      if (typeof action.payload.data !== "undefined") {
-        const fileData = action.payload.data;
+    builder.addCase(fetchFilesForSample.fulfilled, (state, action) => {
+      if (typeof action.payload !== "undefined") {
+        const fileData = action.payload;
         Object.keys(fileData).forEach(
           (key) => !fileData[key].length && delete fileData[key]
         );
@@ -194,6 +196,7 @@ const sampleFilesSlice = createSlice({
                       firstFileSize: updatedPairedObj.firstFileSize,
                       secondFileSize: updatedPairedObj.secondFileSize,
                       qcEntries: updatedPairedObj.qcEntries,
+                      automatedAssembly: updatedPairedObj.automatedAssembly,
                     }
                   : currentPairedObj
             );
