@@ -209,7 +209,7 @@ export function GenomeAssemblyList({
       </Menu>
     );
 
-    actions.push(<EllipsisMenu menu={menu} />);
+    actions.push(<EllipsisMenu overlay={menu} />);
 
     return actions;
   };

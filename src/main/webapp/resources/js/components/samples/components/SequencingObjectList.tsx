@@ -347,7 +347,7 @@ export function SequencingObjectList({
       </Menu>
     );
 
-    actions.push(<EllipsisMenu menu={menu} />);
+    actions.push(<EllipsisMenu overlay={menu} />);
 
     return actions;
   };
@@ -395,7 +395,7 @@ export function SequencingObjectList({
       </Menu>
     );
 
-    actions.push(<EllipsisMenu menu={menu} />);
+    actions.push(<EllipsisMenu overlay={menu} />);
 
     return actions;
   };
