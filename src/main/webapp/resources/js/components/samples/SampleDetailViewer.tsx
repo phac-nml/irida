@@ -24,6 +24,7 @@ export interface DisplaySampleDetailsProps {
   projectId: number;
   displayActions?: boolean;
   children: React.ReactElement;
+  refetch?: () => void;
 }
 
 /**
@@ -32,6 +33,7 @@ export interface DisplaySampleDetailsProps {
  * @param projectId - identifier for a project
  * @param displayActions - Whether to display add to/remove from cart buttons. Displayed by default
  * @param children
+ * @param refetch - Function to refetch the cart items
  * @returns {JSX.Element}
  * @constructor
  */
@@ -40,6 +42,7 @@ function DisplaySampleDetails({
   projectId,
   displayActions,
   children,
+  refetch,
 }: DisplaySampleDetailsProps): JSX.Element {
   const [visible, setVisible] = React.useState(false);
   const { data: details = {}, isLoading } = useGetSampleDetailsQuery(
@@ -96,6 +99,7 @@ function DisplaySampleDetails({
    */
   const removeSampleFromCart = () => {
     removeSample(projectId, sampleId).then(() => {
+      if (refetch !== undefined) refetch();
       dispatch(removeCartSampleId({ sampleId }));
     });
   };
@@ -187,6 +191,7 @@ export interface SampleDetailViewerProps {
   projectId: number;
   displayActions?: boolean;
   children: React.ReactElement;
+  refetch?: () => void;
 }
 
 /**
@@ -203,6 +208,7 @@ export function SampleDetailViewer({
   projectId,
   displayActions = true,
   children,
+  refetch,
 }: SampleDetailViewerProps): JSX.Element {
   return (
     <Provider store={store}>
@@ -210,6 +216,7 @@ export function SampleDetailViewer({
         sampleId={sampleId}
         projectId={projectId}
         displayActions={displayActions}
+        refetch={refetch}
       >
         {children}
       </DisplaySampleDetails>

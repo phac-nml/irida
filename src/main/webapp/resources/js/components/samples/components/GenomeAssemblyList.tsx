@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, notification, Popconfirm, Tag, Tooltip } from "antd";
+import { Button, Menu, notification, Popconfirm, Tag, Tooltip } from "antd";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { SequenceFileTypeRenderer } from "./SequenceFileTypeRenderer";
 import {
@@ -10,6 +10,7 @@ import {
 import { GenomeAssemblyListItem } from "../../sequence-files/GenomeAssemblyListItem";
 import { DEFAULT_ACTION_WIDTH } from "../sampleFilesSlice";
 import { setDefaultGenomeAssembly } from "../sampleSlice";
+import { EllipsisMenu } from "../../menu/EllipsisMenu";
 
 export interface GenomeAssemblyListProps {
   removeSampleFiles: ({
@@ -139,56 +140,76 @@ export function GenomeAssemblyList({
         className="t-file-size"
       >
         {genomeAssembly.firstFileSize}
-      </span>,
-      <Button
-        type="link"
-        key={`${genomeAssemblyObj.identifier}-download-btn`}
-        style={{
-          padding: 0,
-          width: DEFAULT_ACTION_WIDTH,
-          marginRight: ACTION_MARGIN_RIGHT,
-        }}
-        className="t-download-file-btn"
-        onClick={() => {
-          downloadAssemblyFile({
-            sampleId: sample.identifier,
-            genomeAssemblyId: genomeAssemblyObj.identifier,
-          });
-        }}
-      >
-        {i18n("SampleFilesList.download")}
-      </Button>
+      </span>
     );
 
-    if (isModifiable) {
-      actions.push(
-        <Popconfirm
-          placement="left"
-          title={i18n("SampleFilesList.removeGenomeAssembly")}
-          okText={i18n("SampleFiles.okText")}
-          cancelText={i18n("SampleFiles.cancelText")}
-          okButtonProps={{ className: "t-remove-file-confirm-btn" }}
-          cancelButtonProps={{
-            className: "t-remove-file-confirm-cancel-btn",
-          }}
-          onConfirm={() => {
-            removeSampleFiles({
-              fileObjectId: genomeAssemblyObj.identifier,
-              type: "assembly",
+    const menu = (
+      <Menu>
+        <Menu.Item
+          key={`menu-item-download-genome-assembly-${genomeAssemblyObj.identifier}`}
+          onClick={() => {
+            downloadAssemblyFile({
+              sampleId: sample.identifier,
+              genomeAssemblyId: genomeAssemblyObj.identifier,
             });
           }}
         >
           <Button
             type="link"
-            className="t-remove-file-btn"
-            style={{ padding: 0, width: DEFAULT_ACTION_WIDTH }}
-            key={`${genomeAssemblyObj.identifier}-remove-btn`}
+            key={`${genomeAssemblyObj.identifier}-download-btn`}
+            style={{
+              padding: 0,
+              width: DEFAULT_ACTION_WIDTH,
+              marginRight: ACTION_MARGIN_RIGHT,
+            }}
+            className="t-download-file-btn"
+            onClick={() => {
+              downloadAssemblyFile({
+                sampleId: sample.identifier,
+                genomeAssemblyId: genomeAssemblyObj.identifier,
+              });
+            }}
           >
-            {i18n("SampleFilesList.remove")}
+            {i18n("SampleFilesList.download")}
           </Button>
-        </Popconfirm>
-      );
-    }
+        </Menu.Item>
+
+        {isModifiable && (
+          <Menu.Item
+            key={`menu-item-remove-genome-assembly-${genomeAssemblyObj.identifier}`}
+          >
+            <Popconfirm
+              placement="left"
+              title={i18n("SampleFilesList.removeGenomeAssembly")}
+              okText={i18n("SampleFiles.okText")}
+              cancelText={i18n("SampleFiles.cancelText")}
+              okButtonProps={{ className: "t-remove-file-confirm-btn" }}
+              cancelButtonProps={{
+                className: "t-remove-file-confirm-cancel-btn",
+              }}
+              onConfirm={() => {
+                removeSampleFiles({
+                  fileObjectId: genomeAssemblyObj.identifier,
+                  type: "assembly",
+                });
+              }}
+            >
+              <Button
+                type="link"
+                className="t-remove-file-btn"
+                style={{ padding: 0, width: DEFAULT_ACTION_WIDTH }}
+                key={`${genomeAssemblyObj.identifier}-remove-btn`}
+                onClick={(e) => e?.stopPropagation()}
+              >
+                {i18n("SampleFilesList.remove")}
+              </Button>
+            </Popconfirm>
+          </Menu.Item>
+        )}
+      </Menu>
+    );
+
+    actions.push(<EllipsisMenu overlay={menu} />);
 
     return actions;
   };

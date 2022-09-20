@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.components;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -105,6 +106,9 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-remove-sample-from-cart")
 	private WebElement removeSampleFromCartBtn;
 
+	@FindBy(className = "t-actions-menu")
+	private List<WebElement> actionBtns;
+
 
 	public SampleDetailsViewer(WebDriver driver) {
 		super(driver);
@@ -125,11 +129,6 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	public String getCreatedDateForSample() {
 		return createdDate.getText();
-	}
-
-	public void closeDetails() {
-		modal.findElement(By.className("ant-modal-close"))
-				.click();
 	}
 
 	public int getNumberOfMetadataEntries() {
@@ -177,13 +176,6 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	public boolean addNewMetadataButtonVisible() {
 		return addNewMetadataBtn.size() == 1;
-	}
-
-	public int removeFileButtonsVisible() {
-		if(removeFileBtns != null) {
-			return removeFileBtns.size();
-		}
-		return 0;
 	}
 
 	public int concatenationCheckboxesVisible() {
@@ -236,9 +228,9 @@ public class SampleDetailsViewer extends AbstractPage {
 		waitForTime(500);
 	}
 
-	public int downloadFileButtonsVisible() {
-		if(downloadFileBtns != null) {
-			return downloadFileBtns.size();
+	public int actionButtonsVisible() {
+		if(actionBtns != null) {
+			return actionBtns.size();
 		}
 		return 0;
 	}
@@ -291,7 +283,9 @@ public class SampleDetailsViewer extends AbstractPage {
 	}
 
 	public void removeFile(int index) {
-		removeFileBtns.get(index).click();
+		actionBtns.get(index).click();
+		waitForTime(500);
+		removeFileBtns.get(0).click();
 		waitForTime(500);
 		confirmBtns.get(0).click();
 		WebDriverWait wait = new WebDriverWait(driver, 30);
@@ -383,6 +377,14 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	public int numberOfGenomeAssembliesSetAsDefaultButtons() {
 		return setDefaultGenomeAssemblyBtns.size();
+	}
+
+	public boolean sampleDetailsViewerVisible() {
+		try {
+			return modal.isDisplayed();
+		} catch(Exception e) {
+			return false;
+		}
 	}
 
 }

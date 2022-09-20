@@ -194,6 +194,7 @@ const sampleFilesSlice = createSlice({
                       firstFileSize: updatedPairedObj.firstFileSize,
                       secondFileSize: updatedPairedObj.secondFileSize,
                       qcEntries: updatedPairedObj.qcEntries,
+                      automatedAssembly: updatedPairedObj.automatedAssembly,
                     }
                   : currentPairedObj
             );

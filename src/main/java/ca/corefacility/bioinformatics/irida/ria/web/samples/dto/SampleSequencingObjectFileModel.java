@@ -4,6 +4,7 @@ import java.util.Set;
 
 import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 
 /**
  * Used to send sequencing object information with file sizes to the UI
@@ -14,13 +15,25 @@ public class SampleSequencingObjectFileModel {
 	private String secondFileSize;
 	private String fileType;
 	private Set<QCEntry> qcEntries;
+	private AnalysisSubmission automatedAssembly;
 
-	public SampleSequencingObjectFileModel(SequencingObject fileInfo, String firstFileSize, String secondFileSize, Set<QCEntry> qcEntries) {
+	public SampleSequencingObjectFileModel(SequencingObject fileInfo, String firstFileSize, String secondFileSize,
+			Set<QCEntry> qcEntries) {
 		this.fileInfo = fileInfo;
 		this.firstFileSize = firstFileSize;
 		this.secondFileSize = secondFileSize;
 		this.fileType = "sequencingObject";
 		this.qcEntries = qcEntries;
+	}
+
+	public SampleSequencingObjectFileModel(SequencingObject fileInfo, String firstFileSize, String secondFileSize,
+			Set<QCEntry> qcEntries, AnalysisSubmission automatedAssembly) {
+		this.fileInfo = fileInfo;
+		this.firstFileSize = firstFileSize;
+		this.secondFileSize = secondFileSize;
+		this.fileType = "sequencingObject";
+		this.qcEntries = qcEntries;
+		this.automatedAssembly = automatedAssembly;
 	}
 
 	public SequencingObject getFileInfo() {
@@ -57,5 +70,13 @@ public class SampleSequencingObjectFileModel {
 
 	public void setQcEntries(Set<QCEntry> qcEntries) {
 		this.qcEntries = qcEntries;
+	}
+
+	public AnalysisSubmission getAutomatedAssembly() {
+		return automatedAssembly;
+	}
+
+	public void setSubmission(AnalysisSubmission automatedAssembly) {
+		this.automatedAssembly = automatedAssembly;
 	}
 }
