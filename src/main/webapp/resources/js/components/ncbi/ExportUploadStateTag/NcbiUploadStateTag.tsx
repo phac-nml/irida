@@ -1,7 +1,7 @@
 import { Tag } from "antd";
 import React from "react";
 import { TagColor } from "../../../types/ant-design";
-import { ExportUploadState } from "../../../types/irida/ExportUpoadState";
+import { ExportUploadState } from "../../../types/irida";
 import tagStates from "./ExportTagStates";
 
 export type ExportTagStates = {
@@ -13,7 +13,8 @@ export type ExportTagStates = {
 
 /**
  * React component to render an NCBI Upload State in a tag with an appropriate
- * colour.  Also provides internationalization for the state.
+ * colour.
+ * Also provides internationalization for the state.
  * @param state
  */
 const ExportUploadStateTag = ({
@@ -26,7 +27,7 @@ const ExportUploadStateTag = ({
       {tagStates[state].text}
     </Tag>
   ) : (
-    <Tag className="t-upload-status" color={TagColor.ORANGE}>
+    <Tag className="t-upload-status" color={"orange"}>
       {i18n("ExportUploadState.unknown")}
     </Tag>
   );

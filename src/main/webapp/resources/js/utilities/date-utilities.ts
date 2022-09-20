@@ -44,7 +44,7 @@ export function fromNow({ date }: { date: string | number }) {
 /**
  * Format unix timestamp as human readable string.
  * @param  {(string | number)} date unix timestamp
- * @param {String} format defaults to "lll" which is mmm dd, YYYY h:mm AM
+ * @param {String} format defaults to "lll" which is mmm dd, yyyy h:mm AM
  * @return {string} formatted date
  */
 export function formatDate({ date, format }: { date: Date; format: any }) {

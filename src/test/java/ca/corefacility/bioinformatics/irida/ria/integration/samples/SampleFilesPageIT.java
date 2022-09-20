@@ -18,8 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * <p> Integration test to ensure that the Sample Details Page. </p>
- *
+ * <p>
+ * Integration test to ensure that the Sample Details Page.
+ * </p>
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/samples/SamplePagesIT.xml")
 public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
@@ -32,12 +33,8 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 	private SampleFilesPage page;
 
 	private final List<Map<String, String>> BREADCRUMBS = ImmutableList.of(
-			ImmutableMap.of(
-					"href", "/samples",
-					"text", "Samples"
-			),
-			ImmutableMap.of("href", "/samples/" + SAMPLE_ID, "text", "sample1")
-	);
+			ImmutableMap.of("href", "/samples", "text", "Samples"),
+			ImmutableMap.of("href", "/samples/" + SAMPLE_ID, "text", "sample1"));
 
 	@BeforeEach
 	public void setUpTest() {
@@ -54,14 +51,14 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(4, page.getSequenceFileCount(), "Displays the correct number of sequence files");
 		assertEquals(2, page.getAssemblyFileCount(), "Displays the correct number of assemblies");
 		assertEquals(1, page.getQcEntryCount(), "should be 1 qc entry");
-		
+
 		page.checkBreadCrumbs(BREADCRUMBS);
 	}
-	
+
 	@Test
 	public void testDeleteFile() {
 		page.gotoPage(SAMPLE_ID);
-		
+
 		page.deleteFirstSequenceFile();
 		assertTrue(page.isDeleteConfirmationMessageDisplayed(),
 				"Should display a confirmation message that the file was deleted");
@@ -69,23 +66,25 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testDeletePair(){
+	public void testDeletePair() {
 		page.gotoPage(SAMPLE_ID);
-		
+
 		page.deleteFirstSequenceFilePair();
-		assertTrue(page.isDeleteConfirmationMessageDisplayed(), "Should display a confirmation message that the file was deleted");
+		assertTrue(page.isDeleteConfirmationMessageDisplayed(),
+				"Should display a confirmation message that the file was deleted");
 		assertEquals(2, page.getSequenceFileCount(), "Displays the correct number of sequence files");
 	}
-	
+
 	@Test
 	public void testDeleteAssembly() {
 		page.gotoPage(SAMPLE_ID);
-		
+
 		page.deleteFirstAssemblyFile();
 		assertTrue(page.isDeleteConfirmationMessageDisplayed(),
 				"Should display a confirmation message that the file was deleted");
 		assertEquals(1, page.getAssemblyFileCount(), "Displays the correct number of assemblies");
-		assertEquals(4, page.getSequenceFileCount(), "Should not have deleted sequence files (displays correct number of sequence files)");
+		assertEquals(4, page.getSequenceFileCount(),
+				"Should not have deleted sequence files (displays correct number of sequence files)");
 	}
 
 	@Test
@@ -98,7 +97,8 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page.gotoPage(SAMPLE_ID);
 		// Test wrong file format
 		page.uploadSequenceFile(FASTA_FILE);
-		assertTrue(page.isFileTypeWarningDisplayed(), "Should display a warning if the wrong file type is being uploaded.");
+		assertTrue(page.isFileTypeWarningDisplayed(),
+				"Should display a warning if the wrong file type is being uploaded.");
 	}
 
 	@Test
@@ -110,9 +110,10 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(3, page.getAssemblyFileCount(), "Displays the correct number of assemblies displayed");
 		// Test wrong file format
 		page.uploadAssemblyFile(FASTQ_FILE);
-		assertTrue(page.isFileTypeWarningDisplayed(), "Should display a warning if the wrong file type is being uploaded.");
+		assertTrue(page.isFileTypeWarningDisplayed(),
+				"Should display a warning if the wrong file type is being uploaded.");
 	}
-	
+
 	@Test
 	public void testAccessMultiProjectSamplePage() {
 		LoginPage.logout(driver());
@@ -120,5 +121,12 @@ public class SampleFilesPageIT extends AbstractIridaUIITChromeDriver {
 		page = new SampleFilesPage(driver());
 		page.gotoPage(5L);
 		assertTrue(page.getPageTitle().contains("sample5"), "Page Title contains the sample label");
+	}
+
+	@Test
+	public void testCorrectYear() {
+		page.gotoPage(SAMPLE_ID);
+		assertEquals("31 Dec 2013", page.getSequenceFileCreatedDate("03-3333_S1_L001_R1_001.fastq"),
+				"Year should be 2013");
 	}
 }

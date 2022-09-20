@@ -81,6 +81,9 @@ public class LaunchPipelinePage extends AbstractPage {
 	@FindBy(className = "t-ref-error")
 	private List<WebElement> referencesNotFoundError;
 
+	@FindBy(className = "t-req-param-error")
+	private List<WebElement> requiredParamMissingError;
+
 	@FindBy(css = ".t-upload-reference input")
 	private WebElement uploadReferenceButton;
 
@@ -130,6 +133,10 @@ public class LaunchPipelinePage extends AbstractPage {
 
 	public boolean isReferenceFilesRequiredErrorDisplayed() {
 		return referencesNotFoundError.size() > 0;
+	}
+
+	public boolean isRequiredParameterErrorDisplayed() {
+		return requiredParamMissingError.size() > 0;
 	}
 
 	public void updateName(String name) {

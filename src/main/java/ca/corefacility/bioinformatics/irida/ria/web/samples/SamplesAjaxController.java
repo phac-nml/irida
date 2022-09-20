@@ -31,8 +31,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessRes
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnalysesService;
 
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleNameCheckRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleNameCheckResponse;
 
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 
@@ -275,6 +273,7 @@ public class SamplesAjaxController {
 	}
 
 	/**
+
 	 * Get updated sample sequencing objects for given sequencing object ids
 	 *
 	 * @param id                  Identifier for a sample
@@ -322,18 +321,6 @@ public class SamplesAjaxController {
 	public void downloadAssembly(@PathVariable Long sampleId, @RequestParam Long genomeAssemblyId,
 			HttpServletResponse response) throws IOException {
 		uiSampleService.downloadAssembly(sampleId, genomeAssemblyId, response);
-	}
-
-	/**
-	 * Get a list of all {@link Sample} identifiers within a specific project
-	 * Check if a list of sample names exist within a project
-	 *
-	 * @param request {@link SampleNameCheckRequest} containing the project id and sample names
-	 * @return {@link SampleNameCheckResponse} containing list of valid and invalid sample names
-	 */
-	@PostMapping("/validate")
-	public SampleNameCheckResponse checkSampleNames(@RequestBody SampleNameCheckRequest request) {
-		return uiSampleService.checkSampleNames(request);
 	}
 
 	/**

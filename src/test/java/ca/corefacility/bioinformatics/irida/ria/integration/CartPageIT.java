@@ -104,7 +104,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsUser(driver());
 		driver().manage().window().maximize();
 		// Add some samples to the cart and test to see if they get displayed/
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
 		samplesPage.selectSampleByName("sample5fg44");
 		samplesPage.selectSampleByName("sample5fdgr");
 		samplesPage.selectSampleByName("sample554sg5");
@@ -204,7 +204,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsAdmin(driver());
 		driver().manage().window().maximize();
 		// Add some samples to the cart and test to see if they get displayed/
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
 		samplesPage.selectSampleByName("sample5fg44");
 		samplesPage.selectSampleByName("sample5fdgr");
 		samplesPage.selectSampleByName("sample554sg5");
@@ -232,6 +232,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 				"The remove sample from cart button should be displayed");
 
 		assertEquals(sampleName, sampleDetailsViewer.getSampleName(), "Should be viewing the proper sample");
+
 		assertEquals(projectName, sampleDetailsViewer.getProjectName(),
 				"Should have proper project name displayed for sample");
 		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Should display the correct created date");

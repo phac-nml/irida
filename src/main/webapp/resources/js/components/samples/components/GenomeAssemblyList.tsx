@@ -163,12 +163,6 @@ export function GenomeAssemblyList({
               marginRight: ACTION_MARGIN_RIGHT,
             }}
             className="t-download-file-btn"
-            onClick={() => {
-              downloadAssemblyFile({
-                sampleId: sample.identifier,
-                genomeAssemblyId: genomeAssemblyObj.identifier,
-              });
-            }}
           >
             {i18n("SampleFilesList.download")}
           </Button>
