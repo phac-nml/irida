@@ -64,7 +64,7 @@ export function SampleFiles() {
         projectId,
       })
     );
-  }, [sample.identifier, projectId]);
+  }, [sample.identifier, projectId, dispatch]);
 
   /*
   Call function to upload files to server once files are
