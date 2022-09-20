@@ -2,9 +2,7 @@ import { Button, Space, Tag, Tooltip } from "antd";
 
 import React from "react";
 import { IconLocked, IconRemove } from "../../../components/icons/Icons";
-import {
-  SampleDetailViewer
-} from "../../../components/samples/SampleDetailViewer";
+import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import { grey1, grey4 } from "../../../styles/colors";
 import { SPACE_SM, SPACE_XS } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -20,6 +18,7 @@ export class SampleRenderer extends React.Component {
 
   render() {
     const sample = this.props.data;
+
     return (
       <div
         style={{
@@ -42,6 +41,7 @@ export class SampleRenderer extends React.Component {
             <SampleDetailViewer
               sampleId={sample.id}
               projectId={this.props.data.project.id}
+              refetch={this.props.refetch}
             >
               <Button
                 className="t-sample-details-btn"

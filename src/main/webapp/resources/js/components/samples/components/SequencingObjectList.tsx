@@ -2,6 +2,7 @@ import React from "react";
 import {
   Button,
   Checkbox,
+  Menu,
   notification,
   Popconfirm,
   Space,
@@ -37,6 +38,7 @@ import {
   useUpdateDefaultSampleSequencingObjectMutation,
 } from "../../../apis/samples/samples";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import { EllipsisMenu } from "../../menu/EllipsisMenu";
 
 const fileProcessTranslations: { [key: string]: string } = {
   UNPROCESSED: i18n("SampleFilesList.fileProcessingState.UNPROCESSED"),
@@ -102,8 +104,11 @@ export function SequencingObjectList({
     const seqObjIdsPaired = files.paired
       ?.filter((pair: SampleSequencingObject) => {
         return (
-          pair.fileInfo.processingState !== "FINISHED" &&
-          pair.fileInfo.processingState !== "ERROR"
+          (pair.fileInfo.processingState !== "FINISHED" &&
+            pair.fileInfo.processingState !== "ERROR") ||
+          (pair.automatedAssembly !== null &&
+            pair.automatedAssembly.analysisState !== "COMPLETED" &&
+            pair.automatedAssembly.analysisState !== "ERROR")
         );
       })
       .map((pair: SampleSequencingObject) => pair.fileInfo.identifier);
@@ -221,13 +226,6 @@ export function SequencingObjectList({
 
     const { fileInfo: obj }: SampleSequencingObject = seqObj;
 
-    actions.push(
-      getProcessingStateTag(obj),
-      <span key={`file1-size-${obj.identifier}`} className="t-file-size">
-        {seqObj.firstFileSize}
-      </span>
-    );
-
     if (isModifiable) {
       if (
         (sample.defaultSequencingObject !== null &&
@@ -271,6 +269,13 @@ export function SequencingObjectList({
       }
     }
 
+    actions.push(
+      getProcessingStateTag(obj),
+      <span key={`file1-size-${obj.identifier}`} className="t-file-size">
+        {seqObj.firstFileSize}
+      </span>
+    );
+
     let seqFileId = -1;
 
     if (obj.files?.length) {
@@ -281,63 +286,68 @@ export function SequencingObjectList({
       seqFileId = parseInt(obj.file.identifier);
     }
 
-    actions.push(
-      <Button
-        type="link"
-        key={`download-file1-${obj.identifier}`}
-        style={{
-          padding: 0,
-          width: DEFAULT_ACTION_WIDTH,
-          marginRight: ACTION_MARGIN_RIGHT,
-        }}
-        className="t-download-file-btn"
-        onClick={() => {
-          downloadSequenceFile({
-            sequencingObjectId: obj.identifier,
-            sequenceFileId: seqFileId,
-          });
-        }}
-      >
-        {i18n("SampleFilesList.download")}
-      </Button>
+    const menu = (
+      <Menu>
+        <Menu.Item
+          key={`menu-item-download-file1-${obj.identifier}`}
+          onClick={() =>
+            downloadSequenceFile({
+              sequencingObjectId: obj.identifier,
+              sequenceFileId: seqFileId,
+            })
+          }
+        >
+          <Button
+            type="link"
+            key={`download-file1-${obj.identifier}`}
+            className="t-download-file-btn"
+            style={{ padding: 0, width: DEFAULT_ACTION_WIDTH }}
+          >
+            {i18n("SampleFilesList.download")}
+          </Button>
+        </Menu.Item>
+
+        {isModifiable && (
+          <Menu.Item key={`menu-item-remove-seqobj-${obj.identifier}`}>
+            <Popconfirm
+              placement="left"
+              key={`remove-seqobj-confirm-${obj.identifier}`}
+              title={i18n("SampleFilesList.removeSequencingObject")}
+              okText={i18n("SampleFiles.okText")}
+              cancelText={i18n("SampleFiles.cancelText")}
+              okButtonProps={{ className: "t-remove-file-confirm-btn" }}
+              cancelButtonProps={{
+                className: "t-remove-file-confirm-cancel-btn",
+              }}
+              onConfirm={() => {
+                removeSampleFiles({
+                  fileObjectId: obj.identifier,
+                  type: "sequencingObject",
+                });
+              }}
+            >
+              <Tooltip
+                title={i18n("SampleFilesList.tooltip.remove")}
+                placement="top"
+                key={`remove-seqobj-tooltip-${obj.identifier}`}
+              >
+                <Button
+                  type="link"
+                  key={`remove-seqobj-${obj.identifier}`}
+                  className="t-remove-file-btn"
+                  style={{ padding: 0, width: DEFAULT_ACTION_WIDTH }}
+                  onClick={(e) => e?.stopPropagation()}
+                >
+                  {i18n("SampleFilesList.remove")}
+                </Button>
+              </Tooltip>
+            </Popconfirm>
+          </Menu.Item>
+        )}
+      </Menu>
     );
 
-    if (isModifiable) {
-      actions.push(
-        <Popconfirm
-          placement="left"
-          key={`remove-seqobj-confirm-${obj.identifier}`}
-          title={i18n("SampleFilesList.removeSequencingObject")}
-          okText={i18n("SampleFiles.okText")}
-          cancelText={i18n("SampleFiles.cancelText")}
-          okButtonProps={{ className: "t-remove-file-confirm-btn" }}
-          cancelButtonProps={{
-            className: "t-remove-file-confirm-cancel-btn",
-          }}
-          onConfirm={() => {
-            removeSampleFiles({
-              fileObjectId: obj.identifier,
-              type: "sequencingObject",
-            });
-          }}
-        >
-          <Tooltip
-            title={i18n("SampleFilesList.tooltip.remove")}
-            placement="top"
-            key={`remove-seqobj-tooltip-${obj.identifier}`}
-          >
-            <Button
-              type="link"
-              key={`remove-seqobj-${obj.identifier}`}
-              className="t-remove-file-btn"
-              style={{ padding: 0, width: DEFAULT_ACTION_WIDTH }}
-            >
-              {i18n("SampleFilesList.remove")}
-            </Button>
-          </Tooltip>
-        </Popconfirm>
-      );
-    }
+    actions.push(<EllipsisMenu overlay={menu} />);
 
     return actions;
   };
@@ -355,26 +365,38 @@ export function SequencingObjectList({
       getProcessingStateTag(obj, "paired"),
       <span className="t-file-size" key={`file2-size-${obj.identifier}`}>
         {seqObj.secondFileSize}
-      </span>,
-      <Button
-        type="link"
-        key={`download-file2-${obj.identifier}`}
-        style={{
-          padding: 0,
-          width: DEFAULT_ACTION_WIDTH,
-          marginRight: 5,
-        }}
-        className="t-download-file-btn"
-        onClick={() => {
-          downloadSequenceFile({
-            sequencingObjectId: obj.identifier,
-            sequenceFileId: parseInt(obj.files[1].identifier),
-          });
-        }}
-      >
-        {i18n("SampleFilesList.download")}
-      </Button>
+      </span>
     );
+
+    const menu = (
+      <Menu>
+        <Menu.Item
+          key={`menu-item-download-file2-${obj.identifier}`}
+          onClick={() => {
+            downloadSequenceFile({
+              sequencingObjectId: obj.identifier,
+              sequenceFileId: parseInt(obj.files[1].identifier),
+            });
+          }}
+        >
+          <Button
+            type="link"
+            key={`download-file2-${obj.identifier}`}
+            style={{
+              padding: 0,
+              width: DEFAULT_ACTION_WIDTH,
+              marginRight: 5,
+            }}
+            className="t-download-file-btn"
+          >
+            {i18n("SampleFilesList.download")}
+          </Button>
+        </Menu.Item>
+      </Menu>
+    );
+
+    actions.push(<EllipsisMenu overlay={menu} />);
+
     return actions;
   };
 

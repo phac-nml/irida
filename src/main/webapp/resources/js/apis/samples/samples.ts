@@ -2,6 +2,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import { get, post } from "../requests";
+import { AnalysisSubmission } from "../../types/irida";
 
 const URL = setBaseUrl(`ajax/samples`);
 
@@ -97,6 +98,7 @@ export interface SampleMetadataFieldEntry {
 }
 
 export interface SampleSequencingObject {
+  automatedAssembly: AnalysisSubmission;
   fileInfo: SequencingObject;
   secondFileSize: string;
   firstFileSize: string;
