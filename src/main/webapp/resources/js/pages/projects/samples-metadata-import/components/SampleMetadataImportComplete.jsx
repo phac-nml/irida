@@ -13,15 +13,12 @@ import { useSelector } from "react-redux";
  */
 export function SampleMetadataImportComplete() {
   const { metadata } = useSelector((state) => state.importReducer);
-
   const samplesUpdatedCount = metadata.filter(
-    (metadataItem) =>
-      metadataItem.saved === true && metadataItem.foundSampleId !== null
+    (metadataItem) => metadataItem.saved === true && metadataItem.foundSampleId
   ).length;
 
   const samplesCreatedCount = metadata.filter(
-    (metadataItem) =>
-      metadataItem.saved === true && metadataItem.foundSampleId === null
+    (metadataItem) => metadataItem.saved === true && !metadataItem.foundSampleId
   ).length;
 
   let stats =
