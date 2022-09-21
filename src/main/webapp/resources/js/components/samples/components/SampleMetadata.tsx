@@ -9,6 +9,7 @@ import {
   Row,
   Space,
   Spin,
+  Typography,
 } from "antd";
 import { AddNewMetadata } from "./AddNewMetadata";
 import { useRemoveSampleMetadataMutation } from "../../../apis/samples/samples";
@@ -25,6 +26,7 @@ import {
 } from "../sampleSlice";
 
 const DEFAULT_HEIGHT = 600;
+const { Text } = Typography;
 
 /**
  * React component to display metadata associated with a sample
@@ -89,9 +91,12 @@ export function SampleMetadata() {
             </span>
           }
           description={
-            <span className="t-sample-details-metadata__entry">
+            <Text
+              ellipsis={{ tooltip: item.metadataEntry }}
+              className="t-sample-details-metadata__entry"
+            >
               {item.metadataEntry}
-            </span>
+            </Text>
           }
         />
         {isModifiable && (
