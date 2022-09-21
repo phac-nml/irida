@@ -257,33 +257,66 @@ export async function getDataViaLines({ submissionId, fileId, start, end }) {
   }
 }
 
+export type NewickTreeResponse = {
+  message?: string;
+  newick?: string;
+  error?: string;
+};
+
 /**
  * Get the newick string for the submission.
- * @param {number} submissionID Submission ID
+ * @param submissionId Submission ID
  * @return {Promise<*>} `data` contains the OK response; `error` contains error information if an error occurred.
  */
-export async function getNewickTree(submissionId) {
+export async function getNewickTree(
+  submissionId: number
+): Promise<NewickTreeResponse> {
   try {
     const res = await axios.get(`${ANALYSIS_URL}/${submissionId}/tree`);
     return res.data;
   } catch (error) {
-    return { error };
+    if (typeof error === "string") {
+      return { error };
+    }
+    throw new Error("Unknown error thrown, expected a string");
   }
 }
 
+export type MetadataItem = {
+  [key: string]: {
+    value: string;
+    type: "text";
+  };
+};
+export type Metadata = {
+  [key: string]: MetadataItem;
+};
+export type MetadataResponse = {
+  metadata?: Metadata;
+  terms?: string[];
+  error?: string;
+};
 /**
  * Get the metadata for the submission.
- * @param {number} submissionId
- * @returns {Promise<*>} `data` contains the OK response; `error` contains error information if an error occured.
+ * @param submissionId
  */
-export async function getMetadata(submissionId) {
+export async function getMetadata(
+  submissionId: number
+): Promise<MetadataResponse> {
   try {
-    const res = await axios.get(`${ANALYSIS_URL}/${submissionId}/metadata`);
+    const res = await axios.get<MetadataResponse>(
+      `${ANALYSIS_URL}/${submissionId}/metadata`
+    );
     return res.data;
   } catch (error) {
-    return { error };
+    if (typeof error === "string") {
+      return { error };
+    }
+    throw new Error("Unknown error thrown, expected a string");
   }
 }
+
+export type MetadataTemplatesResponse = {};
 
 /**
  * Get the metadata templates for the submission.
@@ -292,7 +325,9 @@ export async function getMetadata(submissionId) {
  */
 export async function getMetadataTemplates(submissionId) {
   try {
-    const res = await axios.get(`${ANALYSIS_URL}/${submissionId}/metadata-templates`);
+    const res = await axios.get(
+      `${ANALYSIS_URL}/${submissionId}/metadata-templates`
+    );
     return res.data;
   } catch (error) {
     return { error };
@@ -307,7 +342,9 @@ export async function getMetadataTemplates(submissionId) {
  */
 export async function getMetadataTemplateFields(submissionId, templateId) {
   try {
-    const res = await axios.get(`${ANALYSIS_URL}/${submissionId}/metadata-template-fields?templateId=${templateId}`);
+    const res = await axios.get(
+      `${ANALYSIS_URL}/${submissionId}/metadata-template-fields?templateId=${templateId}`
+    );
     return res.data;
   } catch (error) {
     return { error };

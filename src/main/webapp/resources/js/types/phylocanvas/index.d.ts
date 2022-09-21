@@ -11,8 +11,12 @@ declare namespace PHYLOCANVAS {
     fontFamily: string;
     fontSize: number;
     interactive: boolean;
+    metadata: {
+      [key: string]: { label: string; value: string };
+    };
     nodeShape: Shapes.Dot; // TODO: Do we want more options on right click or something?
     padding: number;
+    showBlockHeaders: boolean;
     showLabels: boolean;
     showLeafLabels: boolean;
     stepZoom: number;
@@ -24,4 +28,6 @@ declare namespace PHYLOCANVAS {
       | TreeTypes.Hierarchical;
     zoom: number;
   };
+
+  type MetadataColourMap = { [key: string]: { [key: string]: string } };
 }

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Shapes, TreeTypes } from "@phylocanvas/phylocanvas.gl";
 import { getMetadataTemplateFields } from "../../../apis/analysis/analysis";
 import { formatMetadata } from "../tree-utilities";
-import { TreeProperties } from "../../../types/phylocanvas";
+import { MetadataColourMap, TreeProperties } from "../../../types/phylocanvas";
 import { fetchTreeAndMetadata } from "./tree-utilities";
 
 const ZOOM_STEP_SIZE = 0.1;
@@ -58,10 +58,10 @@ export type TreeState = {
     loadingState: LoadingState;
   };
   treeProps: TreeProperties & {
-    source: string;
+    source?: string;
   };
   terms: string[];
-  metadataColourMap: {};
+  metadataColourMap: MetadataColourMap;
   zoomMode: number;
 };
 
@@ -79,6 +79,7 @@ const initialState: TreeState = {
     interactive: true,
     nodeShape: Shapes.Dot,
     padding: 20,
+    showBlockHeaders: true,
     showLabels: true,
     showLeafLabels: true,
     stepZoom: 0,
