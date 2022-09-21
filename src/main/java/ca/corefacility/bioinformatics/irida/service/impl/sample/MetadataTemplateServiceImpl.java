@@ -158,12 +158,6 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return fieldRepository.save(field);
 	}
 
-	@PreAuthorize("permitAll()")
-	@Override
-	public void deleteMetadataField(MetadataTemplateField field) {
-		fieldRepository.delete(field);
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -284,13 +278,13 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 				.getRestrictionForProject(project);
 
 		//collect the fields into a map
-		Map<MetadataTemplateField, MetadataRestriction> restrictionMap = restrictionForProject.stream()
-				.collect(Collectors.toMap(MetadataRestriction::getField, field -> field));
+		Map<Long, MetadataRestriction> restrictionMap = restrictionForProject.stream()
+				.collect(Collectors.toMap(metadataRestriction -> metadataRestriction.getField().getId(), field -> field));
 
 		//for each field to check
 		List<MetadataTemplateField> filteredFields = metadataFieldsForProject.stream().filter(field -> {
 			//if the restriction map contains the field
-			if (restrictionMap.containsKey(field)) {
+			if (restrictionMap.containsValue(field.getId())) {
 				MetadataRestriction metadataRestriction = restrictionMap.get(field);
 				ProjectMetadataRole restrictionRole = metadataRestriction.getLevel();
 

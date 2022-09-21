@@ -99,13 +99,6 @@ public interface MetadataTemplateService extends CRUDService<Long, MetadataTempl
 	public MetadataTemplateField updateMetadataField(MetadataTemplateField field);
 
 	/**
-	 * Delete a metadata field
-	 *
-	 * @param field the {@link MetadataTemplateField} to delete.
-	 */
-	public void deleteMetadataField(MetadataTemplateField field);
-
-	/**
 	 * Get a list of all {@link MetadataTemplateField}s that contain the query
 	 *
 	 * @param query the {@link String} to search labels for.

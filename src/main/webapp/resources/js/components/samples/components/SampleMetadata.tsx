@@ -53,16 +53,16 @@ export function SampleMetadata() {
     );
   }, []);
 
-  const removeMetadata = (field: string, entryId: number) => {
+  const removeMetadata = (fieldId: number, entryId: number) => {
     removeSampleMetadata({
       projectId,
-      field,
+      fieldId,
       entryId,
     })
       .unwrap()
       .then(({ message }: { message: string }) => {
         notification.success({ message });
-        dispatch(removeSampleMetadataField({ field, entryId }));
+        dispatch(removeSampleMetadataField({ entryId }));
       })
       .catch((error) => {
         notification.error({ message: error });
@@ -120,9 +120,7 @@ export function SampleMetadata() {
                 "SampleMetadata.remove.confirm",
                 item.metadataTemplateField
               )}
-              onConfirm={() =>
-                removeMetadata(item.metadataTemplateField, item.entryId)
-              }
+              onConfirm={() => removeMetadata(item.fieldId, item.entryId)}
               okText="Confirm"
             >
               <Button type="link" style={{ padding: 0 }}>

@@ -336,10 +336,10 @@ public class LineListController {
 		 */
 		List<StaticMetadataTemplateField> staticMetadataFields = metadataTemplateService.getStaticMetadataFields();
 
-		//converting to set and removing fields that are in the staticMetadataFields above
-		Set<MetadataTemplateField> fieldSet = permittedFieldsForCurrentUser.stream()
+		//Removing fields that are in the staticMetadataFields above
+		List<MetadataTemplateField> fieldSet = permittedFieldsForCurrentUser.stream()
 				.filter(f -> !staticMetadataFields.contains(f))
-				.collect(Collectors.toSet());
+				.collect(Collectors.toList());
 
 		List<AgGridColumn> fields = fieldSet.stream()
 				.map(f -> new UIMetadataField(f, false, true))

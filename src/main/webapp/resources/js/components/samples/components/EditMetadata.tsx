@@ -100,28 +100,7 @@ export function EditMetadata() {
           <Form layout="vertical" form={form}>
             <Form.Item
               name="metadata_field_name"
-              label={
-                <span>
-                  {i18n("SampleMetadata.modal.fieldName")}
-                  <Popover
-                    content={
-                      <WarningAlert
-                        message={i18n(
-                          "SampleMetadata.edit.modal.warning.message"
-                        )}
-                      />
-                    }
-                  >
-                    <IconWarningOutlined
-                      style={{
-                        margin: "0 4px",
-                        cursor: "help",
-                        color: grey6,
-                      }}
-                    />
-                  </Popover>
-                </span>
-              }
+              label={<span>{i18n("SampleMetadata.modal.fieldName")}</span>}
               initialValue={field}
               rules={[
                 {
