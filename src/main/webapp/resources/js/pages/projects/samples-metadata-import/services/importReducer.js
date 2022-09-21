@@ -99,20 +99,22 @@ export const setSampleNameColumn = createAsyncThunk(
     const response = await validateSamples({
       projectId: projectId,
       body: {
-        samples: metadata.map((row) => ({
-          name: row[column],
-        })),
+        samples: metadata
+          .filter((row) => row[column])
+          .map((row) => ({
+            name: row[column],
+          })),
       },
     });
-
     const updatedMetadata = metadata.map((metadataItem, index) => {
+      const foundSample = response.data.samples.find(
+        (sample) => metadataItem[column] === sample.name
+      );
       return {
         ...metadataItem,
         rowKey: `metadata-uploader-row-${index}`,
         isSampleNameValid: validateSampleName(metadataItem[column]),
-        foundSampleId: response.data.samples
-          .find((sample) => metadataItem[column] === sample.name)
-          .ids?.first(),
+        foundSampleId: foundSample?.ids?.at(0),
         saved: null,
       };
     });

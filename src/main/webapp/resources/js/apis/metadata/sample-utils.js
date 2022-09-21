@@ -10,5 +10,9 @@ export const sampleNameRegex = new RegExp("^[A-Za-z0-9-_]{3,}$");
  * @returns {boolean}
  */
 export function validateSampleName(sampleName) {
-   return sampleNameRegex.test(sampleName);
- }
+  if (sampleName) {
+    return sampleNameRegex.test(sampleName);
+  } else {
+    return false;
+  }
+}
