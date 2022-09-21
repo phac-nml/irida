@@ -113,8 +113,8 @@ public class ReadProjectMetadataResponsePermission implements BasePermission<Pro
 		boolean allFieldsValid = fields.stream()
 				.filter(field -> {
 					//if we have a restriction on a field, compare it against the user's role on the project
-					if (restrictionMap.containsValue(field.getId())) {
-						MetadataRestriction metadataRestriction = restrictionMap.get(field);
+					if (restrictionMap.containsKey(field.getId())) {
+						MetadataRestriction metadataRestriction = restrictionMap.get(field.getId());
 						ProjectMetadataRole restrictionRole = metadataRestriction.getLevel();
 
 						/*

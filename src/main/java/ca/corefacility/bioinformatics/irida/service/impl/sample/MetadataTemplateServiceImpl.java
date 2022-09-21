@@ -284,8 +284,8 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		//for each field to check
 		List<MetadataTemplateField> filteredFields = metadataFieldsForProject.stream().filter(field -> {
 			//if the restriction map contains the field
-			if (restrictionMap.containsValue(field.getId())) {
-				MetadataRestriction metadataRestriction = restrictionMap.get(field);
+			if (restrictionMap.containsKey(field.getId())) {
+				MetadataRestriction metadataRestriction = restrictionMap.get(field.getId());
 				ProjectMetadataRole restrictionRole = metadataRestriction.getLevel();
 
 				//compare the restriction level to the given role.  If it's greater or equal, we're good
