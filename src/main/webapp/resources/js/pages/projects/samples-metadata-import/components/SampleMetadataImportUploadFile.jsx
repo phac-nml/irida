@@ -36,9 +36,9 @@ export function SampleMetadataImportUploadFile() {
               raw: true,
             });
             const firstSheet = workbook.SheetNames[0];
-            const rows = XLSX.utils.sheet_to_row_object_array(
-              workbook.Sheets[firstSheet]
-            );
+            const rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet], {
+              rawNumbers: false,
+            });
             dispatch(setHeaders(Object.keys(rows[0])));
             dispatch(setMetadata(rows));
           };

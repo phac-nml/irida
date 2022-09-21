@@ -112,7 +112,7 @@ export const setSampleNameColumn = createAsyncThunk(
         isSampleNameValid: validateSampleName(metadataItem[column]),
         foundSampleId: response.data.samples
           .find((sample) => metadataItem[column] === sample.name)
-          .ids?.at(0),
+          .ids?.first(),
         saved: null,
       };
     });
