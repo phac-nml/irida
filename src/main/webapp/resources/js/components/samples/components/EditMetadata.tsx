@@ -100,7 +100,7 @@ export function EditMetadata() {
           <Form layout="vertical" form={form}>
             <Form.Item
               name="metadata_field_name"
-              label={<span>{i18n("SampleMetadata.modal.fieldName")}</span>}
+              label={i18n("SampleMetadata.modal.fieldName")}
               initialValue={field}
               rules={[
                 {
