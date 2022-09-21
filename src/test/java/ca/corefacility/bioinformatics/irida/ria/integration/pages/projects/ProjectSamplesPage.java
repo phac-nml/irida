@@ -459,7 +459,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public Long getCoverageForSampleByName(String sampleName) {
 		WebElement coverageCell = samplesTable.findElement(
-				By.xpath("//td/a[text()='" + sampleName + "']/../../td[contains(@class, 't-td-coverage')]"));
+				By.xpath("//td/button[span[text()='" + sampleName + "']]/../../td[contains(@class, 't-td-coverage')]"));
 		String coverageString = coverageCell.getText();
 
 		return coverageString == null || coverageString.isEmpty() ? null : Long.parseLong(coverageString);
