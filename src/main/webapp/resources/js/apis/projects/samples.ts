@@ -12,6 +12,13 @@ export interface SequencingFiles {
   pairs: PairedEndSequenceFile[];
 }
 
+export interface SampleRequest {
+  name: string;
+  organism: string;
+  description: string;
+  metadata: [{ field: string; value: string }];
+}
+
 const PROJECT_ID = getProjectIdFromUrl();
 const URL = setBaseUrl(`/ajax/projects`);
 
@@ -71,15 +78,35 @@ export const {
   useShareSamplesWithProjectMutation,
 } = samplesApi;
 
-export async function validateSamples({ projectId, body }) {
+export async function validateSamples({
+  projectId,
+  body,
+}: {
+  projectId: number;
+  body: SampleRequest;
+}) {
   return await axios.post(`${URL}/${projectId}/samples/validate`, body);
 }
 
-export async function createSample({ projectId, body }) {
+export async function createSample({
+  projectId,
+  body,
+}: {
+  projectId: number;
+  body: SampleRequest;
+}) {
   return await axios.post(`${URL}/${projectId}/samples/add-sample`, body);
 }
 
-export async function updateSample({ projectId, sampleId, body }) {
+export async function updateSample({
+  projectId,
+  sampleId,
+  body,
+}: {
+  projectId: number;
+  sampleId: number;
+  body: SampleRequest;
+}) {
   return await axios.patch(
     `${URL}/${projectId}/samples/add-sample/${sampleId}`,
     body
