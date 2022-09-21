@@ -1,65 +1,15 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Shapes, TreeTypes } from "@phylocanvas/phylocanvas.gl";
-import {
-  getMetadata,
-  getMetadataTemplateFields,
-  getMetadataTemplates,
-  getNewickTree,
-} from "../../../apis/analysis/analysis";
-import { formatMetadata, generateColourMap } from "../tree-utilities";
+import { getMetadataTemplateFields } from "../../../apis/analysis/analysis";
+import { formatMetadata } from "../tree-utilities";
 import { TreeProperties } from "../../../types/phylocanvas";
-import { RootState } from "../store";
+import { fetchTreeAndMetadata } from "./tree-utilities";
 
 const ZOOM_STEP_SIZE = 0.1;
 
-export const fetchTreeAndMetadata = createAsyncThunk(
+export const fetchTreeAndMetadataThunk = createAsyncThunk(
   `tree/fetchTreeAndMetadata`,
-  async (id: number, { rejectWithValue }) => {
-    const promises = [
-      await getNewickTree(id),
-      await getMetadata(id),
-      await getMetadataTemplates(id),
-    ];
-
-    const [newickData, metadataData, metadataTemplateData] = await Promise.all(
-      promises
-    );
-
-    // Check for errors
-    if (!newickData.newick) {
-      return rejectWithValue(
-        newickData.message ? newickData.message : newickData.error.message
-      );
-    }
-
-    const metadataColourMap = generateColourMap(
-      metadataData.metadata,
-      metadataData.terms
-    );
-    const formattedMetadata = formatMetadata(
-      metadataData.metadata,
-      metadataData.terms,
-      metadataColourMap
-    );
-
-    return {
-      loadingState:
-        newickData.newick.length === 0
-          ? LoadingState.empty
-          : LoadingState.complete,
-      analysisId: id,
-      treeProps: {
-        source: newickData.newick,
-        showBlockHeaders: true,
-        metadata: formattedMetadata,
-        blocks: metadataData.terms,
-      },
-      terms: metadataData.terms,
-      metadata: metadataData.metadata,
-      metadataColourMap: metadataColourMap,
-      templates: metadataTemplateData.templates,
-    };
-  }
+  fetchTreeAndMetadata
 );
 
 export const fetchMetadataTemplateFields = createAsyncThunk<
@@ -103,11 +53,13 @@ export enum LoadingState {
   "empty",
 }
 
-type TreeState = {
+export type TreeState = {
   state: {
     loadingState: LoadingState;
   };
-  treeProps: TreeProperties;
+  treeProps: TreeProperties & {
+    source: string;
+  };
   terms: string[];
   metadataColourMap: {};
   zoomMode: number;
@@ -203,7 +155,7 @@ export const treeSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchTreeAndMetadata.fulfilled, (state, action) => {
+    builder.addCase(fetchTreeAndMetadataThunk.fulfilled, (state, action) => {
       state.state.loadingState = action.payload.loadingState;
       state.analysisId = action.payload.analysisId;
       state.treeProps = { ...state.treeProps, ...action.payload.treeProps };
@@ -212,7 +164,7 @@ export const treeSlice = createSlice({
       state.terms = action.payload.terms;
       state.templates = action.payload.templates;
     });
-    builder.addCase(fetchTreeAndMetadata.rejected, (state, action) => {
+    builder.addCase(fetchTreeAndMetadataThunk.rejected, (state, action) => {
       state.state.error = action.payload;
       state.state.loadingState = LoadingState["error-loading"];
     });

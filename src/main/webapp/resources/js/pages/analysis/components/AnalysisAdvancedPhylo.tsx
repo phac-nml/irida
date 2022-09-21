@@ -13,7 +13,7 @@ import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import {
-  fetchTreeAndMetadata,
+  fetchTreeAndMetadataThunk,
   LoadingState,
   updateTreeType,
 } from "../redux/treeSlice";
@@ -42,7 +42,7 @@ export default function AnalysisAdvancedPhylo(): JSX.Element {
 
   // On load gets the newick string for the analysis
   useEffect(() => {
-    dispatch(fetchTreeAndMetadata(analysisIdentifier));
+    dispatch(fetchTreeAndMetadataThunk(analysisIdentifier));
   }, [analysisIdentifier, dispatch]);
 
   let content = null;
