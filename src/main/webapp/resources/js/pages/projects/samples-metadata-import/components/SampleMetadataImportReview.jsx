@@ -11,6 +11,7 @@ import { red1, red2, red5 } from "../../../../styles/colors";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { saveMetadata } from "../services/importReducer";
+import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
 
 const { Paragraph, Text } = Typography;
 
@@ -192,7 +193,7 @@ export function SampleMetadataImportReview() {
         columns={columns}
         dataSource={metadata}
         scroll={{ x: "max-content", y: 600 }}
-        pagination={false}
+        pagination={getPaginationOptions(metadata.length)}
       />
 
       <div style={{ display: "flex" }}>
