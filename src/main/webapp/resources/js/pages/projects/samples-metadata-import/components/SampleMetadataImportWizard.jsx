@@ -8,6 +8,7 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
  * React component that displays the Sample Metadata Uploader Wizard wrapper.
  * @prop {number} currentStep - the current step, starting with zero
  * @prop {string} currentStatus - the status of the current step
+ * @prop {string} currentPercent - the progress percentage of the current step
  * @prop {any} children - the status of the current step
  * @returns {*}
  * @constructor
@@ -15,6 +16,7 @@ import { setBaseUrl } from "../../../../utilities/url-utilities";
 export function SampleMetadataImportWizard({
   currentStep,
   currentStatus,
+  currentPercent,
   children,
 }) {
   const { projectId } = useParams();
@@ -31,6 +33,7 @@ export function SampleMetadataImportWizard({
       <SampleMetadataImportSteps
         currentStep={currentStep}
         currentStatus={currentStatus}
+        currentPercent={currentPercent}
       />
       {children}
     </Space>

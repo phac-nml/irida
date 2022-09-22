@@ -48,9 +48,11 @@ export function SampleMetadataImportReview() {
   const [columns, setColumns] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
   const [valid, setValid] = React.useState(true);
-  const { headers, sampleNameColumn, metadata } = useSelector(
+  const [progress, setProgress] = React.useState(0);
+  const { headers, sampleNameColumn, metadata, savedCount } = useSelector(
     (state) => state.importReducer
   );
+
   const dispatch = useDispatch();
 
   const tagColumn = {
@@ -94,6 +96,10 @@ export function SampleMetadataImportReview() {
       ),
     }),
   };
+
+  React.useEffect(() => {
+    setProgress((savedCount / selected.length) * 100);
+  }, [savedCount]);
 
   React.useEffect(() => {
     setValid(!metadata.some((row) => row.isSampleNameValid === false));
@@ -166,7 +172,7 @@ export function SampleMetadataImportReview() {
   };
 
   return (
-    <SampleMetadataImportWizard currentStep={2}>
+    <SampleMetadataImportWizard currentStep={2} currentPercent={progress}>
       <Text>{i18n("SampleMetadataImportReview.description")}</Text>
       {!valid && (
         <Alert
@@ -192,7 +198,6 @@ export function SampleMetadataImportReview() {
         rowSelection={rowSelection}
         columns={columns}
         dataSource={metadata}
-        scroll={{ x: "max-content", y: 600 }}
         pagination={getPaginationOptions(metadata.length)}
       />
 

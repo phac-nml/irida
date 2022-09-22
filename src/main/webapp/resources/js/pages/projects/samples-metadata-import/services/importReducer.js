@@ -14,6 +14,7 @@ const initialState = {
   sampleNameColumn: "",
   headers: [],
   metadata: [],
+  savedCount: 0,
 };
 
 /*
@@ -22,7 +23,7 @@ For more information on redux async thunks see: https://redux-toolkit.js.org/api
  */
 export const saveMetadata = createAsyncThunk(
   `importReducer/saveMetadata`,
-  async ({ projectId, selectedMetadataKeys }, { getState }) => {
+  async ({ projectId, selectedMetadataKeys }, { dispatch, getState }) => {
     const state = getState();
     const sampleNameColumn = state.importReducer.sampleNameColumn;
     const headers = state.importReducer.headers;
@@ -80,6 +81,13 @@ export const saveMetadata = createAsyncThunk(
               updatedMetadata[index].error = error.response.data.error;
             });
         }
+        dispatch(
+          setSavedCount(
+            updatedMetadata.filter(
+              (updatedMetadataItem) => updatedMetadataItem.saved
+            ).length
+          )
+        );
       }
     }
 
@@ -146,6 +154,17 @@ export const setMetadata = createAction(
 );
 
 /*
+Redux action for setting the project metadata.
+For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
+ */
+export const setSavedCount = createAction(
+  `importReducer/setSavedCount`,
+  (savedCount) => ({
+    payload: { savedCount },
+  })
+);
+
+/*
 Redux reducer for project metadata.
 For more information on redux reducers see: https://redux-toolkit.js.org/api/createReducer
  */
@@ -155,6 +174,9 @@ export const importReducer = createReducer(initialState, (builder) => {
   });
   builder.addCase(setMetadata, (state, action) => {
     state.metadata = action.payload.metadata;
+  });
+  builder.addCase(setSavedCount, (state, action) => {
+    state.savedCount = action.payload.savedCount;
   });
   builder.addCase(setSampleNameColumn.fulfilled, (state, action) => {
     state.sampleNameColumn = action.payload.sampleNameColumn;
