@@ -13,10 +13,8 @@ import { useUpdateSampleMetadataMutation } from "../../../apis/samples/samples";
 import { useResetFormOnCloseModal } from "../../../hooks";
 import { useMetadataRoles } from "../../../contexts/metadata-roles-context";
 import { editSampleMetadata, setEditSampleMetadata } from "../sampleSlice";
-import { IconWarningOutlined } from "../../icons/Icons";
-import { grey6 } from "../../../styles/colors";
-import { WarningAlert } from "../../alerts";
 
+const { TextArea } = Input;
 const { Title } = Typography;
 
 export interface MetadataRoles {
@@ -130,7 +128,7 @@ export function EditMetadata() {
                 },
               ]}
             >
-              <Input />
+              <TextArea autoSize={true} />
             </Form.Item>
             <Form.Item
               name="metadata_field_permission"

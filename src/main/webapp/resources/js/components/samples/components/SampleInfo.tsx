@@ -23,8 +23,6 @@ import { updateDetails } from "../sampleSlice";
 import { EditableParagraph } from "../../ant.design";
 import { Sample } from "../../../types/irida";
 
-const DEFAULT_HEIGHT = 600;
-
 /**
  * React component to display basic sample information
  *
@@ -284,13 +282,13 @@ export function SampleInfo() {
       <Col
         span={24}
         style={{
-          height: "70vh",
+          height: `calc(80vh - 110px)`,
         }}
       >
         {detailsData.length ? (
           <>
             <AutoSizer>
-              {({ height = "70vh", width = "100%" }) => (
+              {({ height = `calc(80vh - 110px)`, width = "100%" }) => (
                 <VList
                   itemCount={detailsData.length}
                   itemSize={70}

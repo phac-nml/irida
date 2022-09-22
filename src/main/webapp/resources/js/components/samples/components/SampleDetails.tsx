@@ -44,9 +44,6 @@ export function SampleDetails({ details }: SampleDetailsProps): JSX.Element {
 
   return (
     <>
-      <Paragraph ellipsis={{ rows: 3, expandable: true }}>
-        {details.sample.description}
-      </Paragraph>
       <Tabs defaultActiveKey="details">
         <Tabs.TabPane tab={i18n("SampleDetails.details")} key="details">
           <SampleInfo />

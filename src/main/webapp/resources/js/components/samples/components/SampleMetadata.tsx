@@ -25,7 +25,6 @@ import {
   setEditSampleMetadata,
 } from "../sampleSlice";
 
-const DEFAULT_HEIGHT = 600;
 const { Text } = Typography;
 
 /**
@@ -157,14 +156,14 @@ export function SampleMetadata() {
       <Col
         span={24}
         style={{
-          height: "70vh",
+          height: `calc(80vh - 150px)`,
         }}
       >
         {!loading ? (
           metadata.length ? (
             <>
               <AutoSizer>
-                {({ height = "70vh", width = "100%" }) => (
+                {({ height = `calc(80vh - 150px)`, width = "100%" }) => (
                   <VList
                     itemCount={metadata.length}
                     itemSize={70}
