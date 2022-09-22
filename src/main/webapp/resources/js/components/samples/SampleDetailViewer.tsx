@@ -114,7 +114,7 @@ function DisplaySampleDetails({
           className="t-sample-details-modal"
           bodyStyle={{
             padding: 0,
-            height: window.innerHeight - 400,
+            height: "80vh",
             overflowY: "auto",
           }}
           title={

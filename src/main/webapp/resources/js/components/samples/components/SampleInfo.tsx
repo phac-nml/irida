@@ -284,13 +284,13 @@ export function SampleInfo() {
       <Col
         span={24}
         style={{
-          height: DEFAULT_HEIGHT,
+          height: "70vh",
         }}
       >
         {detailsData.length ? (
           <>
             <AutoSizer>
-              {({ height = DEFAULT_HEIGHT, width = "100%" }) => (
+              {({ height = "70vh", width = "100%" }) => (
                 <VList
                   itemCount={detailsData.length}
                   itemSize={70}

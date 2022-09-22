@@ -157,14 +157,14 @@ export function SampleMetadata() {
       <Col
         span={24}
         style={{
-          height: DEFAULT_HEIGHT,
+          height: "70vh",
         }}
       >
         {!loading ? (
           metadata.length ? (
             <>
               <AutoSizer>
-                {({ height = DEFAULT_HEIGHT, width = "100%" }) => (
+                {({ height = "70vh", width = "100%" }) => (
                   <VList
                     itemCount={metadata.length}
                     itemSize={75}
