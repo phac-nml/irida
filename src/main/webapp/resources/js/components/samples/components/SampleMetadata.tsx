@@ -139,7 +139,7 @@ export function SampleMetadata() {
   };
 
   return (
-    <Row gutter={[16, 16]}>
+    <Row gutter={16}>
       {isModifiable && (
         <Col>
           <MetadataRolesProvider>
@@ -167,7 +167,7 @@ export function SampleMetadata() {
                 {({ height = "70vh", width = "100%" }) => (
                   <VList
                     itemCount={metadata.length}
-                    itemSize={75}
+                    itemSize={70}
                     height={height}
                     width={width}
                   >
