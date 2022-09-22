@@ -92,8 +92,8 @@ public class ReadProjectMetadataResponsePermission implements BasePermission<Pro
 		//get the metadata restrictions on the project
 		List<MetadataRestriction> restrictionForProject = metadataRestrictionRepository.getRestrictionForProject(
 				project);
-		Map<Long, MetadataRestriction> restrictionMap = restrictionForProject.stream()
-				.collect(Collectors.toMap(metadataRestriction -> metadataRestriction.getField().getId(), field -> field));
+		Map<MetadataTemplateField, MetadataRestriction> restrictionMap = restrictionForProject.stream()
+				.collect(Collectors.toMap(MetadataRestriction::getField, field -> field));
 
 		//go through the metadata being returned and get a distinct collection of the fields
 		Map<Long, Set<MetadataEntry>> metadata = metadataResponse.getMetadata();
@@ -113,8 +113,8 @@ public class ReadProjectMetadataResponsePermission implements BasePermission<Pro
 		boolean allFieldsValid = fields.stream()
 				.filter(field -> {
 					//if we have a restriction on a field, compare it against the user's role on the project
-					if (restrictionMap.containsKey(field.getId())) {
-						MetadataRestriction metadataRestriction = restrictionMap.get(field.getId());
+					if (restrictionMap.containsKey(field)) {
+						MetadataRestriction metadataRestriction = restrictionMap.get(field);
 						ProjectMetadataRole restrictionRole = metadataRestriction.getLevel();
 
 						/*

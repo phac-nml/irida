@@ -53,10 +53,6 @@ public class MetadataTemplateField {
 		return type;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public void setLabel(String label) {
 		this.label = label;
 	}

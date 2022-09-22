@@ -323,8 +323,17 @@ public class UISampleService {
 				addSampleMetadataRequest.getMetadataRestriction());
 		Project project = projectService.read(addSampleMetadataRequest.getProjectId());
 
-		MetadataTemplateField templateField = metadataTemplateService.saveMetadataField(
-				new MetadataTemplateField(addSampleMetadataRequest.getMetadataField(), "text"));
+		MetadataTemplateField existingTemplateField = metadataTemplateService.readMetadataFieldByLabel(
+				addSampleMetadataRequest.getMetadataField());
+
+		MetadataTemplateField templateField;
+
+		if (existingTemplateField != null) {
+			templateField = existingTemplateField;
+		} else {
+			templateField = metadataTemplateService.saveMetadataField(
+					new MetadataTemplateField(addSampleMetadataRequest.getMetadataField(), "text"));
+		}
 
 		MetadataRestriction metadataRestriction = null;
 
@@ -338,7 +347,7 @@ public class UISampleService {
 		if (!Strings.isNullOrEmpty(addSampleMetadataRequest.getMetadataEntry())) {
 			entry = new MetadataEntry(addSampleMetadataRequest.getMetadataEntry(), "text", templateField);
 			metadataEntrySet.add(entry);
-			sampleService.updateSampleMetadata(sample, metadataEntrySet);
+			sampleService.mergeSampleMetadata(sample, metadataEntrySet);
 
 			MetadataTemplateField finalTemplateField = templateField;
 			Optional<MetadataEntry> savedEntry = sampleService.getMetadataForSample(sample)
@@ -374,7 +383,7 @@ public class UISampleService {
 	 * Remove metadata from the sample
 	 *
 	 * @param projectId       The project id
-	 * @param metadataFieldId   The metadata field id
+	 * @param metadataFieldId The metadata field id
 	 * @param metadataEntryId The metadata entry id
 	 * @param locale          {@link Locale} for the currently logged in user
 	 * @return message indicating deletion status
@@ -400,8 +409,8 @@ public class UISampleService {
 			metadataRestrictionRepository.delete(restrictionToDelete);
 		}
 
-		return messageSource.getMessage("server.sample.metadata.remove.success", new Object[] { metadataTemplateField.getLabel() },
-				locale);
+		return messageSource.getMessage("server.sample.metadata.remove.success",
+				new Object[] { metadataTemplateField.getLabel() }, locale);
 	}
 
 	/**
@@ -418,24 +427,27 @@ public class UISampleService {
 		Project project = projectService.read(updateSampleMetadataRequest.getProjectId());
 		boolean sampleUpdated = false;
 		MetadataTemplateField metadataTemplateField = null;
-		MetadataTemplateField existingField = metadataTemplateService.readMetadataField(
+		// Existing field with the updated field label
+		MetadataTemplateField existingField = metadataTemplateService.readMetadataFieldByLabel(
+				updateSampleMetadataRequest.getMetadataField());
+
+		// Get the existing entry if it exists
+		MetadataTemplateField existingFieldById = metadataTemplateService.readMetadataField(
 				updateSampleMetadataRequest.getMetadataFieldId());
+		MetadataEntry existingEntry = metadataEntryRepository.getMetadataEntryBySampleAndField(existingFieldById,
+				sample);
+
 		Set<MetadataEntry> metadataEntrySet = new HashSet<>();
 
 		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(
 				updateSampleMetadataRequest.getMetadataRestriction());
 
-		// Update the metadata field and project metadata role
-		if (existingField == null) {
-				metadataTemplateField = new MetadataTemplateField(updateSampleMetadataRequest.getMetadataField(),
-						"text");
-			metadataTemplateService.saveMetadataField(metadataTemplateField);
-		} else {
-			if(!updateSampleMetadataRequest.getMetadataField().equals(existingField.getLabel())) {
-				existingField.setLabel(updateSampleMetadataRequest.getMetadataField());
-				metadataTemplateService.updateMetadataField(existingField);
-			}
+		if (existingField != null) {
 			metadataTemplateField = existingField;
+		} else {
+			// Update the metadata field and project metadata role
+			metadataTemplateField = new MetadataTemplateField(updateSampleMetadataRequest.getMetadataField(), "text");
+			metadataTemplateService.saveMetadataField(metadataTemplateField);
 		}
 
 		ProjectMetadataRole roleFromUpdateRequest = projectMetadataRole;
@@ -454,12 +466,20 @@ public class UISampleService {
 			projectMetadataRole = roleFromUpdateRequest;
 		}
 
-		// Update the metadata entry
-		MetadataEntry prevEntry = metadataEntryRepository.getMetadataEntryBySampleAndField(metadataTemplateField,
-				sample);
+		/*
+		 If there is no existing entry for the update metadata field label, then we
+		 get the existing entry of the previous metadata field label (for the sample)
+		 */
+		MetadataEntry prevEntry;
+		if (existingEntry == null) {
+			prevEntry = metadataEntryRepository.getMetadataEntryBySampleAndField(metadataTemplateField, sample);
+		} else {
+			prevEntry = existingEntry;
+		}
+
 		boolean fieldOrValUpdated = false;
 		if (prevEntry != null) {
-			if (!prevEntry.getField().equals(metadataTemplateField)) {
+			if (!prevEntry.getField().getLabel().equals(updateSampleMetadataRequest.getMetadataField())) {
 				prevEntry.setField(metadataTemplateField);
 				fieldOrValUpdated = true;
 			}

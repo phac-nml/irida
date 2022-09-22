@@ -81,7 +81,6 @@ public class ReadProjectMetadataResponsePermissionTest {
 		Authentication authentication = new PreAuthenticatedAuthenticationToken(user, user.getSystemRole());
 
 		MetadataTemplateField field = new MetadataTemplateField("name", "text");
-		field.setId(1L);
 		MetadataEntry entry = new MetadataEntry("test", "text");
 		entry.setField(field);
 
@@ -100,7 +99,6 @@ public class ReadProjectMetadataResponsePermissionTest {
 		Authentication authentication = new PreAuthenticatedAuthenticationToken(user, user.getSystemRole());
 
 		MetadataTemplateField field = new MetadataTemplateField("name", "text");
-		field.setId(1L);
 		MetadataEntry entry = new MetadataEntry("test", "text");
 		entry.setField(field);
 
@@ -120,7 +118,6 @@ public class ReadProjectMetadataResponsePermissionTest {
 		Authentication authentication = new PreAuthenticatedAuthenticationToken(user, user.getSystemRole());
 
 		MetadataTemplateField field = new MetadataTemplateField("name", "text");
-		field.setId(1L);
 		MetadataEntry entry = new MetadataEntry("test", "text");
 		entry.setField(field);
 
@@ -140,12 +137,10 @@ public class ReadProjectMetadataResponsePermissionTest {
 		Authentication authentication = new PreAuthenticatedAuthenticationToken(user, user.getSystemRole());
 
 		MetadataTemplateField field = new MetadataTemplateField("name", "text");
-		field.setId(1L);
 		MetadataEntry entry = new MetadataEntry("test", "text");
 		entry.setField(field);
 
 		MetadataTemplateField field2 = new MetadataTemplateField("name2", "text");
-		field2.setId(2L);
 		MetadataEntry entry2 = new MetadataEntry("test2", "text");
 		entry2.setField(field2);
 
@@ -168,7 +163,6 @@ public class ReadProjectMetadataResponsePermissionTest {
 		Authentication authentication = new PreAuthenticatedAuthenticationToken(admin, admin.getSystemRole());
 
 		MetadataTemplateField field = new MetadataTemplateField("name", "text");
-		field.setId(1L);
 		MetadataEntry entry = new MetadataEntry("test", "text");
 		entry.setField(field);
 
@@ -191,12 +185,10 @@ public class ReadProjectMetadataResponsePermissionTest {
 				new ProjectUserJoin(project, admin, ProjectRole.PROJECT_USER, ProjectMetadataRole.LEVEL_1));
 
 		MetadataTemplateField field = new MetadataTemplateField("name", "text");
-		field.setId(1L);
 		MetadataEntry entry = new MetadataEntry("test", "text");
 		entry.setField(field);
 
 		MetadataTemplateField field2 = new MetadataTemplateField("name2", "text");
-		field.setId(2L);
 		MetadataEntry entry2 = new MetadataEntry("test2", "text");
 		entry2.setField(field2);
 

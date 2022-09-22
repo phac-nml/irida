@@ -152,12 +152,6 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return fieldRepository.save(field);
 	}
 
-	@PreAuthorize("permitAll()")
-	@Override
-	public MetadataTemplateField updateMetadataField(MetadataTemplateField field) {
-		return fieldRepository.save(field);
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -278,14 +272,14 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 				.getRestrictionForProject(project);
 
 		//collect the fields into a map
-		Map<Long, MetadataRestriction> restrictionMap = restrictionForProject.stream()
-				.collect(Collectors.toMap(metadataRestriction -> metadataRestriction.getField().getId(), field -> field));
+		Map<MetadataTemplateField, MetadataRestriction> restrictionMap = restrictionForProject.stream()
+				.collect(Collectors.toMap(MetadataRestriction::getField, field -> field));
 
 		//for each field to check
 		List<MetadataTemplateField> filteredFields = metadataFieldsForProject.stream().filter(field -> {
 			//if the restriction map contains the field
-			if (restrictionMap.containsKey(field.getId())) {
-				MetadataRestriction metadataRestriction = restrictionMap.get(field.getId());
+			if (restrictionMap.containsKey(field)) {
+				MetadataRestriction metadataRestriction = restrictionMap.get(field);
 				ProjectMetadataRole restrictionRole = metadataRestriction.getLevel();
 
 				//compare the restriction level to the given role.  If it's greater or equal, we're good
