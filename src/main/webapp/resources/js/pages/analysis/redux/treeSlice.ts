@@ -9,7 +9,14 @@ const ZOOM_STEP_SIZE = 0.1;
 
 export const fetchTreeAndMetadataThunk = createAsyncThunk(
   `tree/fetchTreeAndMetadata`,
-  fetchTreeAndMetadata
+  async (analysisId: number, { rejectWithValue }) => {
+    try {
+      return await fetchTreeAndMetadata(analysisId);
+    } catch (e) {
+      rejectWithValue(e);
+      return {};
+    }
+  }
 );
 
 export const fetchMetadataTemplateFields = createAsyncThunk<
@@ -66,6 +73,7 @@ export type TreeState = {
 };
 
 const initialState: TreeState = {
+  analysisId: undefined,
   state: {
     loadingState: LoadingState.fetching,
   },
@@ -77,6 +85,7 @@ const initialState: TreeState = {
     fontFamily: "sans-serif",
     fontSize: 16,
     interactive: true,
+    metadata: {},
     nodeShape: Shapes.Dot,
     padding: 20,
     showBlockHeaders: true,

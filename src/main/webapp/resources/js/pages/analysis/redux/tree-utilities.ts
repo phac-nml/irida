@@ -56,7 +56,9 @@ export function formatMetadata(
   metadata: Metadata,
   terms: string[],
   colourMap: MetadataColourMap
-): Pick<TreeProperties, "metadata"> {
+): {
+  [key: string]: { label: string; value: string };
+} {
   const sampleMetadataTemplate = () => {
     return terms.reduce((prev, curr) => {
       return Object.assign(prev, {
@@ -89,8 +91,7 @@ export function formatMetadata(
 export type FetchTreeAndMetadataReturn = Promise<Partial<TreeState> | string>;
 
 export async function fetchTreeAndMetadata(
-  analysisId: number,
-  { rejectWithValue }: { rejectWithValue: (error: string) => string }
+  analysisId: number
 ): FetchTreeAndMetadataReturn {
   const promises: [NewickTreeResponse, MetadataResponse, any] = [
     await getNewickTree(analysisId),
@@ -105,7 +106,7 @@ export async function fetchTreeAndMetadata(
 
   // Check for errors
   if (!newickData.newick) {
-    return rejectWithValue(
+    throw new Error(
       newickData.message ? newickData.message : newickData.error.message
     );
   }
@@ -124,10 +125,10 @@ export async function fetchTreeAndMetadata(
       source: newickData.newick,
       showBlockHeaders: true,
       metadata: formattedMetadata,
-      blocks: metadataData.terms,
+      blocks: terms,
     },
-    terms: metadataData.terms,
-    metadata: metadataData.metadata,
+    terms: terms,
+    metadata: metadata,
     metadataColourMap: metadataColourMap,
     templates: metadataTemplateData.templates,
   };
