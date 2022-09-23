@@ -3,7 +3,7 @@ export as namespace PHYLOCANVAS;
 import { Shapes, TreeTypes } from "@phylocanvas/phylocanvas.gl";
 
 declare namespace PHYLOCANVAS {
-  type TreeProperties = {
+  interface TreeProperties {
     alignLabels: boolean;
     blocks: string[];
     blockLength: number;
@@ -11,15 +11,14 @@ declare namespace PHYLOCANVAS {
     fontFamily: string;
     fontSize: number;
     interactive: boolean;
-    metadata: {
-      [key: string]: { label: string; value: string };
-    };
+    metadata: Metadata;
     nodeShape: Shapes.Dot; // TODO: Do we want more options on right click or something?
     padding: number;
     showBlockHeaders: boolean;
     showLabels: boolean;
     showLeafLabels: boolean;
     stepZoom: number;
+    source: string;
     type:
       | TreeTypes.Rectangle
       | TreeTypes.Radial
@@ -27,7 +26,15 @@ declare namespace PHYLOCANVAS {
       | TreeTypes.Diagonal
       | TreeTypes.Hierarchical;
     zoom: number;
+  }
+
+  type Metadata = {
+    [key: string]: { label: string; value: string };
   };
 
-  type MetadataColourMap = { [key: string]: { [key: string]: string } };
+  interface MetadataColourMap {
+    [key: string]: { [key: string]: string };
+  }
+
+  type Template = { id: number; label: string; fields?: string[] };
 }

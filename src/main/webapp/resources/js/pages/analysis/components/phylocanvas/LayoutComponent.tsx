@@ -1,7 +1,5 @@
-import React, { useRef } from "react";
-import { Layout, Model, IJsonModel, ILayoutProps } from "flexlayout-react";
-import { useDispatch } from "react-redux";
-import { resize } from "../../redux/treeSlice";
+import React from "react";
+import { IJsonModel, Layout, Model } from "flexlayout-react";
 import { Legend } from "./Legend";
 import { PhylocanvasTree } from "./PhylocanvasTree";
 import "flexlayout-react/style/light.css";
@@ -52,19 +50,17 @@ const layoutJson: IJsonModel = {
 };
 
 export default function LayoutComponent(): JSX.Element {
-  const dispatch = useDispatch();
-
   const factory = (node): JSX.Element => {
     const component = node.getComponent();
 
     if (component === "phylocanvas") {
-      console.log("PHYLOCANVAS");
       const { width, height } = node._rect;
 
       return <PhylocanvasTree height={height} width={width} />;
     } else if (component === "legend") {
       return <Legend />;
     }
+    throw new Error(`Unknown component: ${component}`);
   };
 
   return <Layout model={Model.fromJson(layoutJson)} factory={factory} />;

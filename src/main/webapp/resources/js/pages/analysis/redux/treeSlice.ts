@@ -1,13 +1,26 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Shapes, TreeTypes } from "@phylocanvas/phylocanvas.gl";
-import { getMetadataTemplateFields } from "../../../apis/analysis/analysis";
 import { formatMetadata } from "../tree-utilities";
-import { MetadataColourMap, TreeProperties } from "../../../types/phylocanvas";
-import { fetchTreeAndMetadata } from "./tree-utilities";
+import {
+  MetadataColourMap,
+  Template,
+  TreeProperties,
+} from "../../../types/phylocanvas";
+import {
+  fetchMetadataTemplateFields,
+  FetchMetadataTemplateFieldsResponse,
+  fetchTreeAndMetadata,
+  FetchTreeAndMetadataReturn,
+} from "./tree-utilities";
+import { RootState } from "../store";
 
 const ZOOM_STEP_SIZE = 0.1;
 
-export const fetchTreeAndMetadataThunk = createAsyncThunk(
+export const fetchTreeAndMetadataThunk = createAsyncThunk<
+  FetchTreeAndMetadataReturn,
+  number,
+  { rejectValue: string }
+>(
   `tree/fetchTreeAndMetadata`,
   async (analysisId: number, { rejectWithValue }) => {
     try {
@@ -19,39 +32,30 @@ export const fetchTreeAndMetadataThunk = createAsyncThunk(
   }
 );
 
-export const fetchMetadataTemplateFields = createAsyncThunk<
-  {
-    fields: string[];
-    index: number;
-  },
-  number
->(`tree/fetchMetadataTemplateFields`, async (index, { getState }) => {
-  const { tree } = getState();
-  const { analysisId, terms, templates } = tree;
+export const fetchMetadataTemplateFieldsThunk = createAsyncThunk<
+  FetchMetadataTemplateFieldsResponse,
+  number,
+  { state: RootState; rejectValue: string }
+>(
+  `tree/fetchMetadataTemplateFields`,
+  async (index, { getState, rejectWithValue }) => {
+    const {
+      tree: { analysisId, terms, templates },
+    } = getState();
 
-  if (index === -1) {
-    return { fields: terms };
-  } else if (index > templates.length) {
-    return { fields: [] };
-  } else {
-    if ("fields" in templates[index]) {
-      return { fields: templates[index].fields };
-    } else {
-      const data = await getMetadataTemplateFields(
-        analysisId,
-        templates[index].id
-      );
-      let fields = [];
-      if (data.fields) {
-        fields = data.fields.filter((field) => terms.includes(field));
-      }
-      return {
-        fields,
+    try {
+      return await fetchMetadataTemplateFields({
         index,
-      };
+        analysisId,
+        terms,
+        templates,
+      });
+    } catch (e) {
+      rejectWithValue(e);
+      return {};
     }
   }
-});
+);
 
 export enum LoadingState {
   "fetching",
@@ -61,19 +65,22 @@ export enum LoadingState {
 }
 
 export type TreeState = {
+  analysisId: number;
+  metadata: string[];
   state: {
     loadingState: LoadingState;
   };
-  treeProps: TreeProperties & {
-    source?: string;
-  };
+  treeProps: TreeProperties;
+  templates: Template[];
   terms: string[];
   metadataColourMap: MetadataColourMap;
   zoomMode: number;
 };
 
-const initialState: TreeState = {
-  analysisId: undefined,
+const initialState = {
+  analysisId: -1,
+  metadata: [],
+  metadataColourMap: {},
   state: {
     loadingState: LoadingState.fetching,
   },
@@ -92,12 +99,14 @@ const initialState: TreeState = {
     showLabels: true,
     showLeafLabels: true,
     stepZoom: 0,
+    source: "",
     type: TreeTypes.Rectangular,
     zoom: -0.1,
   },
+  templates: [],
   terms: [],
-  metadataColourMap: {},
-};
+  zoomMode: 0,
+} as TreeState;
 
 export const treeSlice = createSlice({
   name: "treeSlice",
@@ -178,12 +187,15 @@ export const treeSlice = createSlice({
       state.state.error = action.payload;
       state.state.loadingState = LoadingState["error-loading"];
     });
-    builder.addCase(fetchMetadataTemplateFields.fulfilled, (state, action) => {
-      state.treeProps.blocks = action.payload.fields;
-      if (action.payload.index) {
-        state.templates[action.payload.index].fields = action.payload.fields;
+    builder.addCase(
+      fetchMetadataTemplateFieldsThunk.fulfilled,
+      (state, action) => {
+        state.treeProps.blocks = action.payload.fields;
+        if (action.payload.index) {
+          state.templates[action.payload.index].fields = action.payload.fields;
+        }
       }
-    });
+    );
   },
 });
 

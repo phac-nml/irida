@@ -316,7 +316,7 @@ export async function getMetadata(
   }
 }
 
-export type MetadataTemplatesResponse = {};
+export type MetadataTemplatesResponse = {}; // TODO: Flush this out
 
 /**
  * Get the metadata templates for the submission.

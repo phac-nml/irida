@@ -4,7 +4,7 @@ import { Button, Dropdown, Menu, Select } from "antd";
 import { FilterOutlined } from "@ant-design/icons";
 const { Option } = Select;
 import {
-  fetchMetadataTemplateFields,
+  fetchMetadataTemplateFieldsThunk,
   selectAllTerms,
   setFieldVisibility,
 } from "../../redux/treeSlice";
@@ -37,7 +37,7 @@ export function MetadataMenu() {
           defaultValue={-1}
           style={{ width: width }}
           onChange={(templateIdx) =>
-            dispatch(fetchMetadataTemplateFields(templateIdx))
+            dispatch(fetchMetadataTemplateFieldsThunk(templateIdx))
           }
           onClick={(e) => e.stopPropagation()}
         >

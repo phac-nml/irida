@@ -1,5 +1,6 @@
 import {
   getMetadata,
+  getMetadataTemplateFields,
   getMetadataTemplates,
   getNewickTree,
   Metadata,
@@ -7,7 +8,11 @@ import {
   MetadataResponse,
   NewickTreeResponse,
 } from "../../../apis/analysis/analysis";
-import { LoadingState, TreeState } from "./treeSlice";
+import {
+  fetchMetadataTemplateFieldsThunk,
+  LoadingState,
+  TreeState,
+} from "./treeSlice";
 import uniqolor from "uniqolor";
 import { MetadataColourMap, TreeProperties } from "../../../types/phylocanvas";
 
@@ -88,7 +93,15 @@ export function formatMetadata(
   }, {});
 }
 
-export type FetchTreeAndMetadataReturn = Promise<Partial<TreeState> | string>;
+export type FetchTreeAndMetadataReturn = Promise<{
+  loadingState: LoadingState;
+  analysisId: number;
+  treeProps: Partial<TreeProperties>;
+  terms: string[];
+  metadata: Metadata; // TODO: is this
+  metadataColourMap: MetadataColourMap;
+  templates: { id: number; label: string; fields?: string[] }[];
+}>;
 
 export async function fetchTreeAndMetadata(
   analysisId: number
@@ -132,4 +145,46 @@ export async function fetchTreeAndMetadata(
     metadataColourMap: metadataColourMap,
     templates: metadataTemplateData.templates,
   };
+}
+
+type FetchMetadataTemplateFieldsParams = {
+  index: number;
+  analysisId: number;
+  terms: string[];
+  templates: { id: number; label: string }[];
+};
+
+export type FetchMetadataTemplateFieldsResponse = Promise<{
+  fields: string[];
+  index?: number;
+}>;
+
+export async function fetchMetadataTemplateFields({
+  index,
+  analysisId,
+  terms,
+  templates,
+}: FetchMetadataTemplateFieldsParams): FetchMetadataTemplateFieldsResponse {
+  if (index === -1) {
+    return { fields: terms };
+  } else if (index > templates.length) {
+    return { fields: [] };
+  } else {
+    if ("fields" in templates[index]) {
+      return { fields: templates[index].fields };
+    } else {
+      const data = await getMetadataTemplateFields(
+        analysisId,
+        templates[index].id
+      );
+      let fields = [];
+      if (data.fields) {
+        fields = data.fields.filter((field) => terms.includes(field));
+      }
+      return {
+        fields,
+        index,
+      };
+    }
+  }
 }
