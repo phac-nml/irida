@@ -138,7 +138,7 @@ export function SampleMetadata() {
   };
 
   return (
-    <Row gutter={16}>
+    <Row gutter={[16, 16]}>
       {isModifiable && (
         <Col>
           <MetadataRolesProvider>
