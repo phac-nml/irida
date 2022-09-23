@@ -30,57 +30,68 @@ export const saveMetadata = createAsyncThunk(
     const metadata = state.importReducer.metadata;
     const updatedMetadata = JSON.parse(JSON.stringify(metadata));
 
-    for (const [index, metadataItem] of updatedMetadata.entries()) {
-      if (selectedMetadataKeys.includes(metadataItem.rowKey)) {
-        const name = metadataItem[sampleNameColumn];
-        const metadataFields = Object.entries(metadataItem)
-          .filter(
-            ([key, value]) => headers.includes(key) && key !== sampleNameColumn
-          )
-          .map(([key, value]) => ({ field: key, value }));
-        const sampleId = metadataItem.foundSampleId;
-
-        if (sampleId) {
-          await updateSample({
-            projectId,
-            sampleId,
-            body: {
-              name,
-              // TODO: Don't overwrite organism & description
-              metadata: metadataFields,
-            },
-          })
-            .then((response) => {
-              console.log("UPDATE SAMPLE RESPONSE");
-              console.log(response);
-              updatedMetadata[index].saved = true;
-            })
-            .catch((error) => {
-              console.log("UPDATE SAMPLE ERROR");
-              console.log(error);
-              updatedMetadata[index].saved = false;
-              updatedMetadata[index].error = error.response.data.error;
-            });
-        } else {
-          await createSample({
-            projectId,
-            body: {
-              name,
-              metadata: metadataFields,
-            },
-          })
-            .then((response) => {
-              console.log("CREATE SAMPLE RESPONSE");
-              console.log(response);
-              updatedMetadata[index].saved = true;
-            })
-            .catch((error) => {
-              console.log("CREATE SAMPLE ERROR");
-              console.log(error);
-              updatedMetadata[index].saved = false;
-              updatedMetadata[index].error = error.response.data.error;
-            });
+    const chunkSize = 100;
+    for (let i = 0; i < metadata.length; i = i + chunkSize) {
+      const promises = [];
+      for (let j = i; j < i + chunkSize && j < metadata.length; j++) {
+        const metadataItem = metadata[j];
+        if (selectedMetadataKeys.includes(metadataItem.rowKey)) {
+          const name = metadataItem[sampleNameColumn];
+          const metadataFields = Object.entries(metadataItem)
+            .filter(
+              ([key, value]) =>
+                headers.includes(key) && key !== sampleNameColumn
+            )
+            .map(([key, value]) => ({ field: key, value }));
+          const sampleId = metadataItem.foundSampleId;
+          if (sampleId) {
+            promises.push(
+              updateSample({
+                projectId,
+                sampleId,
+                body: {
+                  name,
+                  // TODO: Don't overwrite organism & description
+                  metadata: metadataFields,
+                },
+              })
+                .then((response) => {
+                  console.log("UPDATE SAMPLE RESPONSE");
+                  console.log(response);
+                  updatedMetadata[j].saved = true;
+                })
+                .catch((error) => {
+                  console.log("UPDATE SAMPLE ERROR");
+                  console.log(error);
+                  updatedMetadata[j].saved = false;
+                  updatedMetadata[j].error = error.response.data.error;
+                })
+            );
+          } else {
+            promises.push(
+              createSample({
+                projectId,
+                body: {
+                  name,
+                  metadata: metadataFields,
+                },
+              })
+                .then((response) => {
+                  console.log("CREATE SAMPLE RESPONSE");
+                  console.log(response);
+                  updatedMetadata[j].saved = true;
+                })
+                .catch((error) => {
+                  console.log("CREATE SAMPLE ERROR");
+                  console.log(error);
+                  updatedMetadata[j].saved = false;
+                  updatedMetadata[j].error = error.response.data.error;
+                })
+            );
+          }
         }
+      }
+      await Promise.all(promises).then(() => {
         dispatch(
           setSavedCount(
             updatedMetadata.filter(
@@ -88,7 +99,7 @@ export const saveMetadata = createAsyncThunk(
             ).length
           )
         );
-      }
+      });
     }
 
     return { metadata: updatedMetadata };
