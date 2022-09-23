@@ -71,10 +71,10 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		page.uploadMetadataFile(GOOD_FILE_PATH);
 		//		assertEquals("NLEP #", page.getValueForSelectedSampleNameColumn(),
 		//				"Has incorrect pre-populated sample name header");
-		page.goToReviewPage();
+		//		page.goToReviewPage();
+		page.selectSampleNameColumn();
 		page.goToCompletePage();
 		assertTrue(page.isSuccessDisplayed(), "Success message did not display");
-
 	}
 
 	@Test
