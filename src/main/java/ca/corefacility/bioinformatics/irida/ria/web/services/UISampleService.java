@@ -160,15 +160,17 @@ public class UISampleService {
 	 */
 	public SampleDetails getSampleDetails(Long id, Long projectId) {
 		Sample sample = sampleService.read(id);
+		boolean isSampleInCart = false;
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		boolean isModifiable = updateSamplePermission.isAllowed(authentication, sample);
 		Project project = null;
 		if (cartService.isSampleInCart(id) != null) {
+			isSampleInCart = true;
 			project = projectService.read(cartService.isSampleInCart(id));
 		} else {
 			project = projectService.read(projectId);
 		}
-		return new SampleDetails(sample, isModifiable, project);
+		return new SampleDetails(sample, isModifiable, project, isSampleInCart);
 	}
 
 	/**

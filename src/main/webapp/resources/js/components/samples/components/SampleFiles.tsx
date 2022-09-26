@@ -29,7 +29,7 @@ let abortController: AbortController;
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleFiles() {
+export default function SampleFiles() {
   const { sample, projectId, modifiable } = useAppSelector(
     (state) => state.sampleReducer
   );
@@ -460,7 +460,9 @@ export function SampleFiles() {
         </Col>
       )}
 
-      <Col span={24}>{displaySampleFileList()}</Col>
+      <Col span={24} style={{ marginRight: 16 }}>
+        {displaySampleFileList()}
+      </Col>
     </Row>
   );
 }

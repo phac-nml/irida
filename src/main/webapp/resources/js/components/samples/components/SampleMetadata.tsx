@@ -24,6 +24,7 @@ import {
   removeSampleMetadataField,
   setEditSampleMetadata,
 } from "../sampleSlice";
+import { HEADER_HEIGHT } from "./ViewerHeader";
 
 const { Text } = Typography;
 
@@ -33,7 +34,7 @@ const { Text } = Typography;
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleMetadata() {
+export default function SampleMetadata() {
   const {
     sample,
     modifiable: isModifiable,
@@ -81,7 +82,7 @@ export function SampleMetadata() {
     return (
       <List.Item
         className="t-sample-details-metadata-item"
-        style={{ ...style, paddingRight: 15 }}
+        style={{ ...style, paddingRight: 20 }}
       >
         <List.Item.Meta
           title={
@@ -156,14 +157,14 @@ export function SampleMetadata() {
       <Col
         span={24}
         style={{
-          height: `calc(80vh - 150px)`,
+          height: `calc(80vh - ${HEADER_HEIGHT}px - 48px)`,
         }}
       >
         {!loading ? (
           metadata.length ? (
             <>
               <AutoSizer>
-                {({ height = `calc(80vh - 150px)`, width = "100%" }) => (
+                {({ height, width = "100%" }) => (
                   <VList
                     itemCount={metadata.length}
                     itemSize={70}

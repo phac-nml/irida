@@ -22,6 +22,7 @@ import { FixedSizeList as VList } from "react-window";
 import { updateDetails } from "../sampleSlice";
 import { EditableParagraph } from "../../ant.design";
 import { Sample } from "../../../types/irida";
+import { HEADER_HEIGHT } from "./ViewerHeader";
 
 /**
  * React component to display basic sample information
@@ -29,7 +30,7 @@ import { Sample } from "../../../types/irida";
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleInfo() {
+export default function SampleInfo() {
   const { sample, modifiable: isModifiable } = useAppSelector(
     (state) => state.sampleReducer
   );
@@ -271,42 +272,31 @@ export function SampleInfo() {
     const item = detailsData[index];
 
     return (
-      <List.Item style={{ ...style, padding: 15 }}>
+      <List.Item style={{ ...style }}>
         <List.Item.Meta title={item.title} description={item.value} />
       </List.Item>
     );
   };
 
-  return (
-    <Row gutter={16}>
-      <Col
-        span={24}
-        style={{
-          height: `calc(80vh - 110px)`,
-        }}
-      >
-        {detailsData.length ? (
-          <>
-            <AutoSizer>
-              {({ height = `calc(80vh - 110px)`, width = "100%" }) => (
-                <VList
-                  itemCount={detailsData.length}
-                  itemSize={70}
-                  height={height}
-                  width={width}
-                >
-                  {renderDetailsListItem}
-                </VList>
-              )}
-            </AutoSizer>
-            <MetadataRolesProvider>
-              <EditMetadata />
-            </MetadataRolesProvider>
-          </>
-        ) : (
-          <Empty description={i18n("SampleInfo.noDetailsAvailable")} />
+  return detailsData.length ? (
+    <>
+      <AutoSizer>
+        {({ height, width = "100%" }) => (
+          <VList
+            itemCount={detailsData.length}
+            itemSize={70}
+            height={height}
+            width={width}
+          >
+            {renderDetailsListItem}
+          </VList>
         )}
-      </Col>
-    </Row>
+      </AutoSizer>
+      <MetadataRolesProvider>
+        <EditMetadata />
+      </MetadataRolesProvider>
+    </>
+  ) : (
+    <Empty description={i18n("SampleInfo.noDetailsAvailable")} />
   );
 }
