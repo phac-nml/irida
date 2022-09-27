@@ -11,12 +11,14 @@ public class SampleDetails {
     private boolean modifiable;
     private Long projectId;
     private String projectName;
+    private boolean inCart;
 
-    public SampleDetails(Sample sample, boolean modifiable, Project project) {
+    public SampleDetails(Sample sample, boolean modifiable, Project project, boolean inCart) {
         this.sample = sample;
         this.modifiable = modifiable;
         this.projectId = project.getId();
         this.projectName = project.getName();
+        this.inCart = inCart;
     }
 
     public Sample getSample() {
@@ -30,4 +32,8 @@ public class SampleDetails {
     public Long getProjectId() { return projectId; }
 
     public String getProjectName() { return projectName; }
+
+    public boolean isInCart() {
+        return inCart;
+    }
 }

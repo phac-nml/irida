@@ -1,22 +1,14 @@
-import React from "react";
-import { SampleMetadata } from "./SampleMetadata";
-import { Tabs, Typography } from "antd";
-import { SampleFiles } from "./SampleFiles";
-import { SampleInfo } from "./SampleInfo";
-import { SampleAnalyses } from "./SampleAnalyses";
-import { useAppDispatch } from "../../../hooks/useState";
-import { setProjectDetails, setSample } from "../sampleSlice";
-import { Sample } from "../../../types/irida";
+import React, { Suspense } from "react";
+import { ViewerTab } from "./SampleDetailsModal";
+import { ContentLoading } from "../../loader";
 
-const { Paragraph } = Typography;
+const SampleInfo = React.lazy(() => import("./SampleInfo"));
+const SampleMetadata = React.lazy(() => import("./SampleMetadata"));
+const SampleFiles = React.lazy(() => import("./SampleFiles"));
+const SampleAnalyses = React.lazy(() => import("./SampleAnalyses"));
 
 export interface SampleDetailsProps {
-  details: {
-    modifiable: boolean;
-    projectId: number;
-    projectName: string;
-    sample: Sample;
-  };
+  component: ViewerTab;
 }
 
 /**
@@ -27,37 +19,49 @@ export interface SampleDetailsProps {
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleDetails({ details }: SampleDetailsProps): JSX.Element {
-  const dispatch = useAppDispatch();
-
-  React.useEffect(() => {
-    dispatch(
-      setSample({ sample: details.sample, modifiable: details.modifiable })
-    );
-    dispatch(
-      setProjectDetails({
-        projectId: details.projectId,
-        projectName: details.projectName,
-      })
-    );
-  }, [dispatch]);
-
-  return (
-    <>
-      <Tabs defaultActiveKey="details">
-        <Tabs.TabPane tab={i18n("SampleDetails.details")} key="details">
-          <SampleInfo />
-        </Tabs.TabPane>
-        <Tabs.TabPane tab={i18n("SampleDetails.metadata")} key="metadata">
+export default function SampleDetails({
+  component,
+}: SampleDetailsProps): JSX.Element {
+  switch (component) {
+    case "metadata":
+      return (
+        <Suspense
+          fallback={
+            <ContentLoading message={i18n("SampleDetails.metadata.loading")} />
+          }
+        >
           <SampleMetadata />
-        </Tabs.TabPane>
-        <Tabs.TabPane tab={i18n("SampleDetails.files")} key="files">
+        </Suspense>
+      );
+    case "files":
+      return (
+        <Suspense
+          fallback={
+            <ContentLoading message={i18n("SampleDetails.files.loading")} />
+          }
+        >
           <SampleFiles />
-        </Tabs.TabPane>
-        <Tabs.TabPane tab={i18n("SampleDetails.analyses")} key="analyses">
+        </Suspense>
+      );
+    case "analyses":
+      return (
+        <Suspense
+          fallback={
+            <ContentLoading message={i18n("SampleDetails.analyses.loading")} />
+          }
+        >
           <SampleAnalyses />
-        </Tabs.TabPane>
-      </Tabs>
-    </>
-  );
+        </Suspense>
+      );
+    default:
+      return (
+        <Suspense
+          fallback={
+            <ContentLoading message={i18n("SampleDetails.details.loading")} />
+          }
+        >
+          <SampleInfo />
+        </Suspense>
+      );
+  }
 }

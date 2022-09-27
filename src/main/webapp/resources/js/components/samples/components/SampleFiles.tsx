@@ -29,7 +29,7 @@ let abortController: AbortController;
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleFiles() {
+export default function SampleFiles() {
   const { sample, projectId, modifiable } = useAppSelector(
     (state) => state.sampleReducer
   );
@@ -356,32 +356,16 @@ export function SampleFiles() {
               props={{ className: "t-upload-sample-files" }}
             />
           </div>
-          {concatenateFunctionality()}
+          <SampleFileConcatenate>
+            <Button
+              className="t-concatenate-btn"
+              disabled={concatenateSelected?.length < 2}
+            >
+              {i18n("SampleFiles.concatenate")}
+            </Button>
+          </SampleFileConcatenate>
         </Col>
       );
-    }
-  };
-
-  /*
-  Function to determine if the concatenate functionality should be visible to the user or not
-   */
-  const concatenateFunctionality = () => {
-    if (
-      (files.singles !== undefined && files?.singles?.length >= 2) ||
-      (files.paired !== undefined && files?.paired?.length >= 2)
-    ) {
-      return (
-        <SampleFileConcatenate>
-          <Button
-            className="t-concatenate-btn"
-            disabled={concatenateSelected?.length < 2}
-          >
-            {i18n("SampleFiles.concatenate")}
-          </Button>
-        </SampleFileConcatenate>
-      );
-    } else {
-      return null;
     }
   };
 
@@ -460,7 +444,9 @@ export function SampleFiles() {
         </Col>
       )}
 
-      <Col span={24}>{displaySampleFileList()}</Col>
+      <Col span={24} style={{ marginRight: 16 }}>
+        {displaySampleFileList()}
+      </Col>
     </Row>
   );
 }
