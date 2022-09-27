@@ -10,7 +10,7 @@ import {
 import { GenomeAssemblyList } from "./GenomeAssemblyList";
 import { SequencingObjectList } from "./SequencingObjectList";
 import { SPACE_XS } from "../../../styles/spacing";
-import { HEADER_HEIGHT } from "./ViewerHeader";
+import { HEADER_HEIGHT_WITH_PADDING } from "./ViewerHeader";
 
 /**
  * React component to display, remove, download files
@@ -69,7 +69,7 @@ export function SampleFileList() {
       size="large"
       direction="vertical"
       style={{
-        height: `calc(80vh - ${HEADER_HEIGHT}px - 165px)`,
+        height: `calc(80vh - ${HEADER_HEIGHT_WITH_PADDING}px - 156px)`,
         overflowY: "auto",
         width: `100%`,
         marginTop: SPACE_XS,

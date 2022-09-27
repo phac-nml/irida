@@ -10,6 +10,7 @@ import {
 } from "../sampleSlice";
 
 export const HEADER_HEIGHT = 90;
+export const HEADER_HEIGHT_WITH_PADDING = 97;
 
 export default function ViewerHeader({
   displayActions,

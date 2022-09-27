@@ -11,7 +11,7 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList as VList } from "react-window";
-import { HEADER_HEIGHT } from "./ViewerHeader";
+import { HEADER_HEIGHT_WITH_PADDING } from "./ViewerHeader";
 
 const { Search } = Input;
 
@@ -80,7 +80,7 @@ export default function SampleAnalyses() {
       <Col
         span={24}
         style={{
-          height: `calc(80vh - ${HEADER_HEIGHT}px - 48px)`,
+          height: `calc(80vh - ${HEADER_HEIGHT_WITH_PADDING}px - 72px)`,
         }}
       >
         <AutoSizer>

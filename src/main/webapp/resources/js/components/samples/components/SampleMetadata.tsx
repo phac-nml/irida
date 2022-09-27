@@ -24,7 +24,7 @@ import {
   removeSampleMetadataField,
   setEditSampleMetadata,
 } from "../sampleSlice";
-import { HEADER_HEIGHT } from "./ViewerHeader";
+import { HEADER_HEIGHT, HEADER_HEIGHT_WITH_PADDING } from "./ViewerHeader";
 
 const { Text } = Typography;
 
@@ -157,7 +157,7 @@ export default function SampleMetadata() {
       <Col
         span={24}
         style={{
-          height: `calc(80vh - ${HEADER_HEIGHT}px - 80px)`,
+          height: `calc(80vh - ${HEADER_HEIGHT_WITH_PADDING}px - 72px)`,
         }}
       >
         {!loading ? (
