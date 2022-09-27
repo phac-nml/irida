@@ -97,7 +97,7 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className= "t-sample-analyses-search-input")
 	private WebElement sampleAnalysesSearchInput;
 
-	@FindBy(className = "ant-table-row")
+	@FindBy(className = "ant-list-item")
 	private List<WebElement> sampleAnalysesList;
 
 	@FindBy(className = "t-add-sample-to-cart")
@@ -315,7 +315,7 @@ public class SampleDetailsViewer extends AbstractPage {
 	}
 
 	public int numberOfSampleAnalysesVisible() {
-		return sampleAnalysesList.size();
+		return sampleAnalysesTable.findElements(By.className("ant-list-item")).size();
 	}
 
 	public int filterSampleAnalyses(String searchString) {
