@@ -33,14 +33,14 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-sample-details-metadata-item")
 	private List<WebElement> metadataFields;
 
-	@FindBy(id="rc-tabs-0-tab-metadata")
+	@FindBy(xpath="//ul[contains(@class, 't-sample-viewer-nav')]/li[2]")
 	private WebElement metadataTabLink;
 
-	@FindBy(id="rc-tabs-0-tab-files")
+	@FindBy(xpath = "//ul[contains(@class, 't-sample-viewer-nav')]/li[3]")
 	private WebElement filesTabLink;
 
 
-	@FindBy(id="rc-tabs-0-tab-analyses")
+	@FindBy(xpath = "//ul[contains(@class, 't-sample-viewer-nav')]/li[4]")
 	private WebElement sampleAnalysesTabLink;
 
 	@FindBy(className = "t-upload-sample-files")

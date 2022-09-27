@@ -56,14 +56,23 @@ export default function ViewerHeader({
         }}
       >
         <Space>
-          <Typography.Title level={3} style={{ marginBottom: 0 }}>
+          <Typography.Title
+            level={3}
+            style={{ marginBottom: 0 }}
+            className="t-sample-details-name"
+          >
             {sample.label}
           </Typography.Title>
           <Tag
             color={projectColour.background}
             style={{ border: `1px solid ${projectColour.text}` }}
           >
-            <span style={{ color: projectColour.text }}>{projectName}</span>
+            <span
+              style={{ color: projectColour.text }}
+              className="t-sample-details-project-name"
+            >
+              {projectName}
+            </span>
           </Tag>
         </Space>
         {displayActions && inCart && (
@@ -91,6 +100,7 @@ export default function ViewerHeader({
         defaultSelectedKeys={[tab]}
         onSelect={({ key }) => onMenuChange(key)}
         style={{ borderBottom: 0 }}
+        className="t-sample-viewer-nav"
       >
         <Menu.Item key="details">{i18n("SampleDetails.details")}</Menu.Item>
         <Menu.Item key="metadata">{i18n("SampleDetails.metadata")}</Menu.Item>
