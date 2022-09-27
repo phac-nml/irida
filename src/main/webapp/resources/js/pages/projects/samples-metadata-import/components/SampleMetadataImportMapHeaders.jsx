@@ -22,6 +22,7 @@ export function SampleMetadataImportMapHeaders() {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const [column, setColumn] = React.useState();
+  const [loading, setLoading] = React.useState(false);
   const { headers, sampleNameColumn } = useSelector(
     (state) => state.importReducer
   );
@@ -34,6 +35,7 @@ export function SampleMetadataImportMapHeaders() {
   }, [sampleNameColumn, headers]);
 
   const onSubmit = async () => {
+    setLoading(true);
     await dispatch(setSampleNameColumn({ projectId, column }));
     navigate(`/${projectId}/sample-metadata/upload/review`);
   };
@@ -69,6 +71,7 @@ export function SampleMetadataImportMapHeaders() {
           className="t-metadata-uploader-preview-button"
           onClick={onSubmit}
           style={{ marginLeft: "auto" }}
+          loading={loading}
         >
           {i18n("SampleMetadataImportMapHeaders.button.next")}
           <IconArrowRight />

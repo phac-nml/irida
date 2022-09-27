@@ -49,6 +49,7 @@ export function SampleMetadataImportReview() {
   const [selected, setSelected] = React.useState([]);
   const [valid, setValid] = React.useState(true);
   const [progress, setProgress] = React.useState(0);
+  const [loading, setLoading] = React.useState(false);
   const { headers, sampleNameColumn, metadata, savedCount } = useSelector(
     (state) => state.importReducer
   );
@@ -156,6 +157,7 @@ export function SampleMetadataImportReview() {
   }, []);
 
   const save = async () => {
+    setLoading(true);
     const selectedMetadataKeys = metadata
       .filter((metadataItem) => selected.includes(metadataItem.rowKey))
       .map((metadataItem) => metadataItem.rowKey);
@@ -168,6 +170,8 @@ export function SampleMetadataImportReview() {
       response.payload.metadata.every((metadataItem) => !metadataItem.error)
     ) {
       navigate(`/${projectId}/sample-metadata/upload/complete`);
+    } else {
+      setLoading(false);
     }
   };
 
@@ -213,6 +217,7 @@ export function SampleMetadataImportReview() {
           className="t-metadata-uploader-upload-button"
           style={{ marginLeft: "auto" }}
           onClick={save}
+          loading={loading}
         >
           {i18n("SampleMetadataImportReview.button.next")}
           <IconArrowRight />

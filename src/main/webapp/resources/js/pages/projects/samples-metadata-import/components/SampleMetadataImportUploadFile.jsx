@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { setHeaders, setMetadata } from "../services/importReducer";
-import { notification, Typography } from "antd";
+import { notification, Spin, Typography } from "antd";
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import * as XLSX from "xlsx";
@@ -20,6 +20,7 @@ export function SampleMetadataImportUploadFile() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [status, setStatus] = React.useState("process");
+  const [loading, setLoading] = React.useState(false);
 
   const options = {
     multiple: false,
@@ -28,6 +29,7 @@ export function SampleMetadataImportUploadFile() {
     onChange(info) {
       const { status } = info.file;
       if (status !== "uploading") {
+        setLoading(true);
         let reader = new FileReader();
         if (reader.readAsBinaryString) {
           reader.onload = (e) => {
@@ -54,6 +56,7 @@ export function SampleMetadataImportUploadFile() {
         });
         navigate(`/${projectId}/sample-metadata/upload/headers`);
       } else if (status === "error") {
+        setLoading(false);
         setStatus("error");
         notification.error({
           message: i18n("SampleMetadataImportUploadFile.error", info.file.name),
@@ -64,14 +67,16 @@ export function SampleMetadataImportUploadFile() {
 
   return (
     <SampleMetadataImportWizard currentStep={0} currentStatus={status}>
-      <DragUpload
-        className="t-metadata-uploader-dropzone"
-        uploadText={i18n("SampleMetadataImportUploadFile.dropzone")}
-        uploadHint={
-          <Text strong>{i18n("SampleMetadataImportUploadFile.warning")}</Text>
-        }
-        options={options}
-      />
+      <Spin spinning={loading}>
+        <DragUpload
+          className="t-metadata-uploader-dropzone"
+          uploadText={i18n("SampleMetadataImportUploadFile.dropzone")}
+          uploadHint={
+            <Text strong>{i18n("SampleMetadataImportUploadFile.warning")}</Text>
+          }
+          options={options}
+        />
+      </Spin>
     </SampleMetadataImportWizard>
   );
 }
