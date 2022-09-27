@@ -13,10 +13,8 @@ import { useUpdateSampleMetadataMutation } from "../../../apis/samples/samples";
 import { useResetFormOnCloseModal } from "../../../hooks";
 import { useMetadataRoles } from "../../../contexts/metadata-roles-context";
 import { editSampleMetadata, setEditSampleMetadata } from "../sampleSlice";
-import { IconWarningOutlined } from "../../icons/Icons";
-import { grey6 } from "../../../styles/colors";
-import { WarningAlert } from "../../alerts";
 
+const { TextArea } = Input;
 const { Title } = Typography;
 
 export interface MetadataRoles {
@@ -100,28 +98,7 @@ export function EditMetadata() {
           <Form layout="vertical" form={form}>
             <Form.Item
               name="metadata_field_name"
-              label={
-                <span>
-                  {i18n("SampleMetadata.modal.fieldName")}
-                  <Popover
-                    content={
-                      <WarningAlert
-                        message={i18n(
-                          "SampleMetadata.edit.modal.warning.message"
-                        )}
-                      />
-                    }
-                  >
-                    <IconWarningOutlined
-                      style={{
-                        margin: "0 4px",
-                        cursor: "help",
-                        color: grey6,
-                      }}
-                    />
-                  </Popover>
-                </span>
-              }
+              label={i18n("SampleMetadata.modal.fieldName")}
               initialValue={field}
               rules={[
                 {
@@ -151,7 +128,7 @@ export function EditMetadata() {
                 },
               ]}
             >
-              <Input />
+              <TextArea autoSize={true} />
             </Form.Item>
             <Form.Item
               name="metadata_field_permission"

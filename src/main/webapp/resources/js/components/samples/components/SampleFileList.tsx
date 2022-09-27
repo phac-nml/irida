@@ -9,6 +9,8 @@ import {
 } from "../sampleSlice";
 import { GenomeAssemblyList } from "./GenomeAssemblyList";
 import { SequencingObjectList } from "./SequencingObjectList";
+import { SPACE_XS } from "../../../styles/spacing";
+import { HEADER_HEIGHT_WITH_PADDING } from "./ViewerHeader";
 
 /**
  * React component to display, remove, download files
@@ -66,7 +68,12 @@ export function SampleFileList() {
     <Space
       size="large"
       direction="vertical"
-      style={{ maxHeight: "500px", overflowY: "auto", width: `100%` }}
+      style={{
+        height: `calc(80vh - ${HEADER_HEIGHT_WITH_PADDING}px - 156px)`,
+        overflowY: "auto",
+        width: `100%`,
+        marginTop: SPACE_XS,
+      }}
       className="t-filelist-scroll"
     >
       {(files.singles || files.paired || files.fast5) && (
