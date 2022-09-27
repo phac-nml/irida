@@ -22,7 +22,6 @@ import { FixedSizeList as VList } from "react-window";
 import { updateDetails } from "../sampleSlice";
 import { EditableParagraph } from "../../ant.design";
 import { Sample } from "../../../types/irida";
-import { HEADER_HEIGHT } from "./ViewerHeader";
 
 /**
  * React component to display basic sample information

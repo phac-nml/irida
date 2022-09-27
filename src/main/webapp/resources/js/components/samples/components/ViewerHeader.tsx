@@ -2,7 +2,8 @@ import { Button, Menu, Space, Tag, Typography } from "antd";
 import React, { Dispatch, SetStateAction, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { generateColourForItem } from "../../../utilities/colour-utilities";
-import { ViewerTab } from "../SampleDetailViewer";
+import { ViewerTab } from "./SampleDetailsModal";
+
 import {
   addSampleToCartThunk,
   removeSampleFromCartThunk,
@@ -13,7 +14,6 @@ export const HEADER_HEIGHT = 90;
 export default function ViewerHeader({
   displayActions,
   projectId,
-  sampleId,
   refetch,
   tab,
   onMenuChange,
@@ -21,6 +21,7 @@ export default function ViewerHeader({
   displayActions: boolean;
   projectId: number;
   sampleId: number;
+  refetch: undefined | (() => void);
   tab: ViewerTab;
   onMenuChange: Dispatch<SetStateAction<ViewerTab>>;
 }): JSX.Element {
@@ -71,7 +72,10 @@ export default function ViewerHeader({
             size="small"
             className="t-remove-sample-from-cart"
             danger
-            onClick={() => dispatch(removeSampleFromCartThunk())}
+            onClick={() => {
+              dispatch(removeSampleFromCartThunk());
+              if (typeof refetch !== "undefined") refetch();
+            }}
           >
             {i18n("SampleDetailsViewer.removeFromCart")}
           </Button>
@@ -80,7 +84,10 @@ export default function ViewerHeader({
           <Button
             size="small"
             className="t-add-sample-to-cart"
-            onClick={() => dispatch(addSampleToCartThunk())}
+            onClick={() => {
+              dispatch(addSampleToCartThunk());
+              if (typeof refetch !== "undefined") refetch();
+            }}
           >
             {i18n("SampleDetailsViewer.addToCart")}
           </Button>

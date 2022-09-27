@@ -3,11 +3,7 @@ import React, { Dispatch, SetStateAction } from "react";
 import ViewerHeader, { HEADER_HEIGHT } from "./ViewerHeader";
 import { useGetSampleDetailsQuery } from "../../../apis/samples/samples";
 import SampleDetails from "./SampleDetails";
-import {
-  getSampleDetailsThunk,
-  setProjectDetails,
-  setSample,
-} from "../sampleSlice";
+import { setProjectDetails, setSample } from "../sampleSlice";
 import { useAppDispatch } from "../../../hooks/useState";
 
 export interface DisplaySampleDetailsProps {

@@ -157,7 +157,7 @@ export default function SampleMetadata() {
       <Col
         span={24}
         style={{
-          height: `calc(80vh - ${HEADER_HEIGHT}px - 48px)`,
+          height: `calc(80vh - ${HEADER_HEIGHT}px - 80px)`,
         }}
       >
         {!loading ? (
