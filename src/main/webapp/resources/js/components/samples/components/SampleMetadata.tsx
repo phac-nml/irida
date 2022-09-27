@@ -9,6 +9,7 @@ import {
   Row,
   Space,
   Spin,
+  Typography,
 } from "antd";
 import { AddNewMetadata } from "./AddNewMetadata";
 import { useRemoveSampleMetadataMutation } from "../../../apis/samples/samples";
@@ -24,7 +25,7 @@ import {
   setEditSampleMetadata,
 } from "../sampleSlice";
 
-const DEFAULT_HEIGHT = 600;
+const { Text } = Typography;
 
 /**
  * React component to display metadata associated with a sample
@@ -53,16 +54,16 @@ export function SampleMetadata() {
     );
   }, []);
 
-  const removeMetadata = (field: string, entryId: number) => {
+  const removeMetadata = (fieldId: number, entryId: number) => {
     removeSampleMetadata({
       projectId,
-      field,
+      fieldId,
       entryId,
     })
       .unwrap()
       .then(({ message }: { message: string }) => {
         notification.success({ message });
-        dispatch(removeSampleMetadataField({ field, entryId }));
+        dispatch(removeSampleMetadataField({ entryId }));
       })
       .catch((error) => {
         notification.error({ message: error });
@@ -89,9 +90,12 @@ export function SampleMetadata() {
             </span>
           }
           description={
-            <span className="t-sample-details-metadata__entry">
+            <Text
+              ellipsis={{ tooltip: item.metadataEntry }}
+              className="t-sample-details-metadata__entry"
+            >
               {item.metadataEntry}
-            </span>
+            </Text>
           }
         />
         {isModifiable && (
@@ -120,9 +124,7 @@ export function SampleMetadata() {
                 "SampleMetadata.remove.confirm",
                 item.metadataTemplateField
               )}
-              onConfirm={() =>
-                removeMetadata(item.metadataTemplateField, item.entryId)
-              }
+              onConfirm={() => removeMetadata(item.fieldId, item.entryId)}
               okText="Confirm"
             >
               <Button type="link" style={{ padding: 0 }}>
@@ -154,17 +156,17 @@ export function SampleMetadata() {
       <Col
         span={24}
         style={{
-          height: DEFAULT_HEIGHT,
+          height: `calc(80vh - 150px)`,
         }}
       >
         {!loading ? (
           metadata.length ? (
             <>
               <AutoSizer>
-                {({ height = DEFAULT_HEIGHT, width = "100%" }) => (
+                {({ height = `calc(80vh - 150px)`, width = "100%" }) => (
                   <VList
                     itemCount={metadata.length}
-                    itemSize={75}
+                    itemSize={70}
                     height={height}
                     width={width}
                   >

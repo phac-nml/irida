@@ -416,7 +416,7 @@ export function SampleFiles() {
   return loading ? (
     <Spin />
   ) : (
-    <Row gutter={[16, 16]}>
+    <Row gutter={16}>
       {sampleFilesTabActions()}
       {uploadCancelled && (
         <InfoAlert

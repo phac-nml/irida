@@ -383,18 +383,19 @@ public class UISampleService {
 	 * Remove metadata from the sample
 	 *
 	 * @param projectId       The project id
-	 * @param metadataField   The metadata field
+	 * @param metadataFieldId The metadata field id
 	 * @param metadataEntryId The metadata entry id
 	 * @param locale          {@link Locale} for the currently logged in user
 	 * @return message indicating deletion status
 	 */
-	public String removeSampleMetadata(Long projectId, String metadataField, Long metadataEntryId, Locale locale) {
+	public String removeSampleMetadata(Long projectId, Long metadataFieldId, Long metadataEntryId, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<Sample> sampleList = sampleService.getSamplesForProject(project)
 				.stream()
 				.map((s) -> s.getObject())
 				.collect(Collectors.toList());
-		MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataFieldByLabel(metadataField);
+		MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataField(metadataFieldId);
+
 		Long fieldUsageCount = metadataEntryRepository.getMetadataEntriesCountBySamplesAndField(metadataTemplateField,
 				sampleList);
 		metadataEntryRepository.deleteById(metadataEntryId);
@@ -408,8 +409,8 @@ public class UISampleService {
 			metadataRestrictionRepository.delete(restrictionToDelete);
 		}
 
-		return messageSource.getMessage("server.sample.metadata.remove.success", new Object[] { metadataField },
-				locale);
+		return messageSource.getMessage("server.sample.metadata.remove.success",
+				new Object[] { metadataTemplateField.getLabel() }, locale);
 	}
 
 	/**
@@ -425,49 +426,60 @@ public class UISampleService {
 		Sample sample = sampleService.read(sampleId);
 		Project project = projectService.read(updateSampleMetadataRequest.getProjectId());
 		boolean sampleUpdated = false;
-		MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataFieldByLabel(
+		MetadataTemplateField metadataTemplateField = null;
+		// Existing field with the updated field label
+		MetadataTemplateField existingField = metadataTemplateService.readMetadataFieldByLabel(
 				updateSampleMetadataRequest.getMetadataField());
-		MetadataTemplateField existingFieldWithLabel = metadataTemplateService.readMetadataField(
+
+		// Get the existing entry if it exists
+		MetadataTemplateField existingFieldById = metadataTemplateService.readMetadataField(
 				updateSampleMetadataRequest.getMetadataFieldId());
+		MetadataEntry existingEntry = metadataEntryRepository.getMetadataEntryBySampleAndField(existingFieldById,
+				sample);
+
 		Set<MetadataEntry> metadataEntrySet = new HashSet<>();
 
 		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(
 				updateSampleMetadataRequest.getMetadataRestriction());
 
-		// Update the metadata field and project metadata role
-		if (metadataTemplateField == null) {
-			if (existingFieldWithLabel == null) {
-				metadataTemplateField = new MetadataTemplateField(updateSampleMetadataRequest.getMetadataField(),
-						"text");
-			} else {
-				metadataTemplateField = existingFieldWithLabel;
-				metadataTemplateField.setLabel(updateSampleMetadataRequest.getMetadataField());
-			}
-			metadataTemplateService.updateMetadataField(metadataTemplateField);
+		if (existingField != null) {
+			metadataTemplateField = existingField;
 		} else {
-			ProjectMetadataRole roleFromUpdateRequest = projectMetadataRole;
-			ProjectMetadataRole currRestriction = getMetadataFieldRestriction(project.getId(),
-					metadataTemplateField.getId());
-			projectMetadataRole = currRestriction != null ? currRestriction : ProjectMetadataRole.fromString("LEVEL_1");
-
-			/*
-			 We want to only set the role from the update request if it
-			 is different than the current metadata role for the field
-			 or if a previous metadata role was not set for the field
-			 */
-
-			if ((projectMetadataRole != null && !projectMetadataRole.equals(roleFromUpdateRequest))
-					|| projectMetadataRole == null) {
-				projectMetadataRole = roleFromUpdateRequest;
-			}
+			// Update the metadata field and project metadata role
+			metadataTemplateField = new MetadataTemplateField(updateSampleMetadataRequest.getMetadataField(), "text");
+			metadataTemplateService.saveMetadataField(metadataTemplateField);
 		}
 
-		// Update the metadata entry
-		MetadataEntry prevEntry = metadataEntryRepository.getMetadataEntryBySampleAndField(metadataTemplateField,
-				sample);
+		ProjectMetadataRole roleFromUpdateRequest = projectMetadataRole;
+		ProjectMetadataRole currRestriction = getMetadataFieldRestriction(project.getId(),
+				metadataTemplateField.getId());
+		projectMetadataRole = currRestriction != null ? currRestriction : ProjectMetadataRole.fromString("LEVEL_1");
+
+		/*
+		 We want to only set the role from the update request if it
+		 is different than the current metadata role for the field
+		 or if a previous metadata role was not set for the field
+		 */
+
+		if ((projectMetadataRole != null && !roleFromUpdateRequest.equals(projectMetadataRole))
+				|| projectMetadataRole == null) {
+			projectMetadataRole = roleFromUpdateRequest;
+		}
+
+		/*
+		 If there is no existing entry for the update metadata field label, then we
+		 get the existing entry of the previous metadata field label (for the sample)
+		 */
+		MetadataEntry prevEntry;
+		if (existingEntry == null) {
+			prevEntry = metadataEntryRepository.getMetadataEntryBySampleAndField(metadataTemplateField, sample);
+		} else {
+			prevEntry = existingEntry;
+		}
+
 		boolean fieldOrValUpdated = false;
 		if (prevEntry != null) {
-			if (!prevEntry.getField().equals(metadataTemplateField)) {
+			if (!prevEntry.getField().getLabel().equals(updateSampleMetadataRequest.getMetadataField())) {
 				prevEntry.setField(metadataTemplateField);
 				fieldOrValUpdated = true;
 			}
@@ -507,19 +519,6 @@ public class UISampleService {
 				sampleUpdated = true;
 				metadataRestrictionRepository.save(currentRestriction);
 			}
-		}
-
-		// Delete existing field/entry/restriction if user updates field to an existing field label
-		MetadataTemplateField fieldToDelete = metadataTemplateService.readMetadataField(
-				updateSampleMetadataRequest.getMetadataFieldId());
-		if (fieldToDelete != null && !fieldToDelete.getLabel().equals(metadataTemplateField.getLabel())) {
-			MetadataEntry metadataEntryToDelete = metadataEntryRepository.getMetadataEntryById(
-					updateSampleMetadataRequest.getMetadataEntryId());
-			MetadataRestriction restrictionToDelete = metadataTemplateService.getMetadataRestrictionForFieldAndProject(
-					project, fieldToDelete);
-			metadataRestrictionRepository.delete(restrictionToDelete);
-			metadataEntryRepository.delete(metadataEntryToDelete);
-			metadataTemplateService.deleteMetadataField(fieldToDelete);
 		}
 
 		// If sample metadata was updated then update the sample modified date

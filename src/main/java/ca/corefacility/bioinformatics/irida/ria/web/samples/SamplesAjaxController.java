@@ -227,16 +227,16 @@ public class SamplesAjaxController {
 	 * Remove metadata field and entry from {@link Sample}
 	 *
 	 * @param projectId       The project identifier
-	 * @param metadataField   The metadata field
+	 * @param metadataFieldId   The metadata field id
 	 * @param metadataEntryId The metadata entry identifier
 	 * @param locale          {@link Locale} for the currently logged in user
 	 * @return {@link ResponseEntity} explaining to the user the results of the deletion.
 	 */
 	@DeleteMapping(value = "/metadata")
 	public ResponseEntity<AjaxResponse> removeSampleMetadata(@RequestParam Long projectId,
-			@RequestParam String metadataField, @RequestParam Long metadataEntryId, Locale locale) {
+			@RequestParam Long metadataFieldId, @RequestParam Long metadataEntryId, Locale locale) {
 		return ResponseEntity.ok(new AjaxSuccessResponse(
-				uiSampleService.removeSampleMetadata(projectId, metadataField, metadataEntryId, locale)));
+				uiSampleService.removeSampleMetadata(projectId, metadataFieldId, metadataEntryId, locale)));
 	}
 
 	/**

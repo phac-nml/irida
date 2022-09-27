@@ -7,6 +7,7 @@ import { addSampleMetadataField } from "../sampleSlice";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 
 const { Title } = Typography;
+const { TextArea } = Input;
 
 export interface AddNewMetadataProps {
   children: React.ReactElement;
@@ -132,7 +133,7 @@ export function AddNewMetadata({ children }: AddNewMetadataProps): JSX.Element {
                 },
               ]}
             >
-              <Input />
+              <TextArea autoSize={true} />
             </Form.Item>
             <Form.Item
               name="metadata_field_permission"
