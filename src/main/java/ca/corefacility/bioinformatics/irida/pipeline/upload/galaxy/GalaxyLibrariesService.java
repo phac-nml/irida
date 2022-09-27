@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -214,6 +215,7 @@ public class GalaxyLibrariesService {
 			throws UploadException {
 		checkNotNull(paths, "paths is null");
 		final int pollingTimeMillis = libraryPollingTime*1000;
+		final CountDownLatch transferRunningLatch = new CountDownLatch(1);
 
 		Map<Path, String> datasetLibraryIdsMap = new HashMap<>();
 
@@ -229,6 +231,9 @@ public class GalaxyLibrariesService {
 			Future<Void> waitForLibraries = executor.submit(new Callable<Void>(){
 				@Override
 				public Void call() throws Exception {
+					// this status checking task is now running
+					transferRunningLatch.countDown();
+
 					// wait for uploads to finish
 					for (Path path : paths) {
 						String datasetLibraryId = datasetLibraryIdsMap.get(path);
@@ -257,6 +262,9 @@ public class GalaxyLibrariesService {
 				}
 			});
 			
+			// wait until library job status checking is running
+			transferRunningLatch.await();
+
 			waitForLibraries.get(libraryUploadTimeout, TimeUnit.SECONDS);
 		} catch (RuntimeException | IOException e) {
 			throw new UploadException(e);

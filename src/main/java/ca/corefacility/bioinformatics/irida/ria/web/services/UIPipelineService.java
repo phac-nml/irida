@@ -198,7 +198,7 @@ public class UIPipelineService {
 							options.add(new SelectOption(valuesIterator.next(), labelsIterator.next()));
 						}
 
-						dynamicSources.add(new InputWithOptions(parameter.getName(), label, options.get(0).getValue(), options));
+						dynamicSources.add(new InputWithOptions(parameter.getName(), label, options.get(0).getValue(), options, parameter.isRequired()));
 					} catch (Exception e) {
 						logger.debug("Tool Data Table not found: ", e);
 					}
@@ -337,7 +337,7 @@ public class UIPipelineService {
 							.map(option -> new SelectOption(option.getValue(),
 									localizedParamOptionLabel(locale, name, parameter.getName(), option.getName())))
 							.collect(Collectors.toUnmodifiableList());
-					return new InputWithOptions(parameter.getName(), label, defaultValue, options);
+					return new InputWithOptions(parameter.getName(), label, defaultValue, options, parameter.isRequired());
 				})
 				.collect(Collectors.toUnmodifiableList());
 	}

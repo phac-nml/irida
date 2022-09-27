@@ -1,10 +1,8 @@
-import { ExportUploadState } from "./ExportUpoadState";
-
 export = IRIDA;
 export as namespace IRIDA;
 
 declare namespace IRIDA {
-  interface IridaBase {
+  interface BaseModel {
     id: number;
     key: string;
     name: string;
@@ -12,7 +10,7 @@ declare namespace IRIDA {
     modifiedDate: Date;
   }
 
-  interface Announcement extends IridaBase {
+  interface Announcement extends BaseModel {
     title: string;
     message: string;
     priority: boolean;
@@ -20,20 +18,51 @@ declare namespace IRIDA {
     users: User[];
   }
 
-  interface NcbiBioSampleFiles {
-    id: number;
+  export type ExportUploadState =
+    | "NEW"
+    | "UPLOADING"
+    | "UPLOADED"
+    | "UPLOAD_ERROR"
+    | "created"
+    | "failed"
+    | "queued"
+    | "processing"
+    | "processed-ok"
+    | "processed-error"
+    | "waiting"
+    | "submitted"
+    | "deleted"
+    | "retired"
+    | "unknown";
+
+  interface NcbiBioSample {
+    id: string;
+    accession: string;
     bioSample: string;
+    libraryName: string;
+    libraryStrategy: NcbiStrategy;
+    librarySource: NcbiSource;
+    libraryConstructionProtocol: string;
+    instrumentModel: NcbiInstrument;
+    librarySelection: NcbiSelection;
+    status: ExportUploadState;
     singles: SingleEndSequenceFile[];
     pairs: PairedEndSequenceFile[];
-    instrumentModel: string;
-    libraryName: string;
-    librarySelection: string;
-    librarySource: string;
-    libraryStrategy: string;
-    libraryConstructionProtocol: string;
-    status: ExportUploadState;
-    accession: string;
   }
+
+  type NcbiInstrument = string;
+
+  type NcbiPlatform =
+    | "ABI_SOLID"
+    | "BGISEQ"
+    | "CAPILLARY"
+    | "ILLUMINA"
+    | "ION_TORRENT"
+    | "LS454"
+    | "OXFORD_NANOPORE"
+    | "PACBIO_SMRT";
+
+  type NcbiSelection = string;
 
   interface NcbiSubmission {
     id: number;
@@ -45,10 +74,18 @@ declare namespace IRIDA {
     bioProject: string;
     ncbiNamespace: string;
     releaseDate: Date | null;
-    bioSampleFiles: NcbiBioSampleFiles[];
+    bioSamples: NcbiBioSample[];
   }
 
-  interface Project extends IridaBase {
+  type NcbiStrategy = string;
+
+  type NcbiSource = string;
+
+  interface PairedEndSequenceFile extends SequencingObject {
+    files: SequencingObject[];
+  }
+
+  interface Project extends BaseModel {
     description: string;
     organism: string;
     genomeSize: number;
@@ -63,7 +100,7 @@ declare namespace IRIDA {
 
   type ProjectMinimal = Pick<Project, "id" | "name">;
 
-  interface Sample extends IridaBase {
+  interface Sample extends BaseModel {
     description: string;
     organism: string;
     isolate: string;
@@ -75,23 +112,25 @@ declare namespace IRIDA {
     latitude: string;
     longitude: string;
     projects: Project[];
-    sequenceFiles: SequenceFile[];
+    sequenceFiles: SequencingObject[];
   }
 
-  interface SequenceFile extends IridaBase {
+  interface SequencingObject extends BaseModel {
     fileSize: string;
   }
 
-  interface PairedEndSequenceFile extends IridaBase {
-    files: SequenceFile[];
+  interface SingleEndSequenceFile extends SequencingObject {
+    file: SequencingObject;
   }
 
-  interface SingleEndSequenceFile extends IridaBase {
-    file: SequenceFile;
+  interface StoredSample {
+    id: number;
+    name: string;
+    owner: boolean;
+    projectId: number;
   }
 
   enum SystemRole {
-    ROLE_ANONYMOUS = "ROLE_ANONYMOUS",
     ROLE_ADMIN = "ROLE_ADMIN",
     ROLE_USER = "ROLE_USER",
     ROLE_MANAGER = "ROLE_MANAGER",
@@ -99,7 +138,7 @@ declare namespace IRIDA {
     ROLE_TECHNICIAN = "ROLE_TECHNICIAN",
   }
 
-  interface User extends IridaBase {
+  interface User extends BaseModel {
     username: string;
     email: string;
     firstName: string;

@@ -229,7 +229,7 @@
 					<td>
 						<div class="td_info pull-right">
 							<div class="td_info--value"
-								 th:text="${#dates.format(file.createdDate, dateFormat)}"></div>
+								 th:text="${#dates.format(file.getCreatedDate(), dateFormat)}"></div>
 							<div class="small text-muted pull-right td_info--desc"
 								 th:text="#{samples.files.createdDate}">Created Date</div>
 						</div>

@@ -1,15 +1,20 @@
-package ca.corefacility.bioinformatics.irida.ria.web.ajax;
+package ca.corefacility.bioinformatics.irida.ria.web;
 
+import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import ca.corefacility.bioinformatics.irida.model.export.NcbiLibrarySelection;
+import ca.corefacility.bioinformatics.irida.model.export.NcbiLibrarySource;
+import ca.corefacility.bioinformatics.irida.model.export.NcbiLibraryStrategy;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NcbiExportSubmissionTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiExportSubmissionAdminTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiSubmissionModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.export.*;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UINcbiService;
@@ -63,4 +68,61 @@ public class NCBIAjaxController {
 			@RequestBody TableRequest request) {
 		return ResponseEntity.ok(service.getNCBIExportsForAdmin(request));
 	}
+
+	/**
+	 * Get all the available NCBI Sequencing platforms.
+	 *
+	 * @return {@link EnumMap} with the key being the brand and the value a {@link List} of their platforms.
+	 */
+	@GetMapping("/platforms")
+	public EnumMap<NcbiPlatform, List<String>> getNcbiPlatforms() {
+		return (new NcbiPlatformInstrumentModel()).getPlatforms();
+	}
+
+	/**
+	 * Get a list of NCBI Library Sources
+	 *
+	 * @return {@link List} of NCBI Library Sources
+	 */
+	@GetMapping("/sources")
+	public List<String> getNcbiSources() {
+		return Arrays.stream(NcbiLibrarySource.values())
+				.map(NcbiLibrarySource::getValue)
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Get a list of NCBI allowed Library strategies
+	 *
+	 * @return {@link List} of NCBI Library Strategies
+	 */
+	@GetMapping("/strategies")
+	public List<String> getNcbiStrategies() {
+		return Arrays.stream(NcbiLibraryStrategy.values())
+				.map(NcbiLibraryStrategy::getValue)
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Get a list of NCBI allowed Library selection techniques
+	 *
+	 * @return {@link List} of NCBI Library Selections
+	 */
+	@GetMapping("/selections")
+	public List<String> getNcbiSelection() {
+		return Arrays.stream(NcbiLibrarySelection.values())
+				.map(NcbiLibrarySelection::getValue)
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Submit a NCBI SRA Submission
+	 *
+	 * @param submission details about the submission
+	 */
+	@PostMapping("/submit")
+	public void submitNcbiExport(@RequestBody NcbiSubmissionRequest submission) {
+		service.submitNcbiExport(submission);
+	}
 }
+
