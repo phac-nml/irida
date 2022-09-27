@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button, Result } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
  */
 export function SampleMetadataImportComplete() {
   const { metadata } = useSelector((state) => state.importReducer);
+
   const samplesUpdatedCount = metadata.filter(
     (metadataItem) => metadataItem.saved === true && metadataItem.foundSampleId
   ).length;
@@ -43,6 +44,13 @@ export function SampleMetadataImportComplete() {
         );
 
   const { projectId } = useParams();
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      navigate(`/${projectId}/sample-metadata/upload/file`);
+    }, 5000);
+  }, []);
 
   return (
     <SampleMetadataImportWizard currentStep={3}>
