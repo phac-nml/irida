@@ -41,7 +41,11 @@ export default function SampleDetailsModal({
   React.useEffect(() => {
     if (!isLoading) {
       dispatch(
-        setSample({ sample: details.sample, modifiable: details.modifiable })
+        setSample({
+          sample: details.sample,
+          modifiable: details.modifiable,
+          inCart: details.inCart,
+        })
       );
       dispatch(
         setProjectDetails({

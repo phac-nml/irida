@@ -11,8 +11,8 @@ import { putSampleInCart, removeSample } from "../../apis/cart/cart";
  */
 export const setSample = createAction(
   `sample/setSample`,
-  ({ sample, modifiable }) => ({
-    payload: { sample, modifiable },
+  ({ sample, modifiable, inCart }) => ({
+    payload: { sample, modifiable, inCart },
   })
 );
 
