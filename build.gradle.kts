@@ -175,9 +175,6 @@ dependencies {
         exclude(group = "jakarta.xml.bind", module = "jakarta.xml.bind-api")
         exclude(group = "jakarta.validation", module = "jakarta.validation-api")
     }
-    implementation("com.monitorjbl:xlsx-streamer:2.1.0") {
-        exclude(group = "xml-apis", module = "xml-apis")
-    }
 
     // Microsoft Azure
     implementation("com.azure:azure-storage-blob:12.18.0") {
