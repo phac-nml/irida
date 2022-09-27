@@ -4,6 +4,20 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+22.05 to 22.09
+--------------
+* This upgrade switches the OAuth2 implementation from using spring-security-oauth to spring-security-oauth2-authorization-server and spring-security-oauth2-resource-server. Every administrator will need to update their deployments to configure a java keystore used for encrypting OAuth2 access tokens. This java keystore will need to be present on all servers which allow api access. Otherwise a token generated on one server will not work on the other server.
+  * The following is an example command that can be run to generate an appropriate java keystore:
+  ```bash
+  keytool -genkeypair -alias JWK -keyalg RSA -noprompt -dname CN=irida.bioinformatics.corefacility.ca, OU=ID, O=IRIDA, L=IRIDA, S=IRIDA, C=CA -keystore /etc/irida/jwk-key-store.jks -validity 3650 -storepass SECRET -keypass SECRET -storetype PKCS12
+  ```
+  * After generating the java keystore as above you will need to update `/etc/irida/irida.conf` to specify the keystore and its password:
+  ```text
+  oauth2.jwk.key-store=file:/etc/irida/jwk-key-store.jks
+  oauth2.jwk.key-store-password=SECRET
+  ```
+  * More information about this can be found at https://phac-nml.github.io/irida-documentation/administrator/web/#core-configuration
+
 22.03 to 22.05
 --------------
 * This upgrade deprecates two pipelines, SISTR_TYPING and MLST_MENTALIST, and disables them from being executed. Any previously-run analysis results will still function as normal. If you wish to re-enable these pipelines you can set `irida.workflow.types.disabled=` (i.e., set the value to empty) in the `/etc/irida/irida.conf` file and restart IRIDA. If you wish to keep these pipelines disabled but include your own additional disabled pipelines you can set `irida.workflow.types.disabled=SISTR_TYPING,MLST_MENTALIST` and add your own pipelines to disable after this list.
