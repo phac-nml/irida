@@ -93,6 +93,7 @@ export default function SampleAnalyses() {
               style={{
                 border: `1px solid var(--grey-4)`,
               }}
+              className="t-sample-analyses"
             >
               {({ index, style }) => {
                 const item = filteredAnalyses[index];
