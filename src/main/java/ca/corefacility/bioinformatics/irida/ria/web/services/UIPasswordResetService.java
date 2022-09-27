@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaAccountDisabledException;
 import ca.corefacility.bioinformatics.irida.exceptions.PasswordReusedException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -60,8 +61,10 @@ public class UIPasswordResetService {
 	 * @param usernameOrEmail The email address or username to create a password reset for
 	 * @param locale          The logged in user's locale
 	 * @return message indicating if the password reset was successfully created or not
+	 * @throws IridaAccountDisabledException if the user account is disabled
 	 */
-	public String createAndSendNewPasswordResetEmail(String usernameOrEmail, Locale locale) {
+	public String createAndSendNewPasswordResetEmail(String usernameOrEmail, Locale locale)
+			throws IridaAccountDisabledException {
 		setAuthentication();
 
 		try {
@@ -86,8 +89,7 @@ public class UIPasswordResetService {
 				SecurityContextHolder.clearContext();
 				throw new UIEmailSendException(
 						messageSource.getMessage("server.ForgotPassword.errorSendingInstructions", null, locale));
-			}
-			catch (EntityNotFoundException ex) {
+			} catch (EntityNotFoundException ex) {
 				SecurityContextHolder.clearContext();
 				throw new EntityNotFoundException(
 						messageSource.getMessage("server.ForgotPassword.emailOrUsernameNotExist", null, locale));
@@ -96,6 +98,9 @@ public class UIPasswordResetService {
 			SecurityContextHolder.clearContext();
 			throw new EntityNotFoundException(
 					messageSource.getMessage("server.ForgotPassword.emailOrUsernameNotExist", null, locale));
+		} catch (IridaAccountDisabledException e) {
+			throw new IridaAccountDisabledException(
+					messageSource.getMessage("server.ForgotPassword.accountDisabled", null, locale));
 		}
 	}
 
@@ -172,13 +177,19 @@ public class UIPasswordResetService {
 	 * Create a new password reset for a given {@link User} and send a reset password link via email
 	 *
 	 * @param user The user to create the reset for
+	 * @throws IridaAccountDisabledException if the account is disabled
 	 */
-	private void createNewPasswordReset(User user) {
-		PasswordReset passwordReset = new PasswordReset(user);
-		passwordResetService.create(passwordReset);
+	private void createNewPasswordReset(User user) throws IridaAccountDisabledException {
+		// Only create a password reset for a user that is enabled
+		if (user.isEnabled()) {
+			PasswordReset passwordReset = new PasswordReset(user);
+			passwordResetService.create(passwordReset);
 
-		// send a reset password link to user via email
-		emailController.sendPasswordResetLinkEmail(user, passwordReset);
+			// send a reset password link to user via email
+			emailController.sendPasswordResetLinkEmail(user, passwordReset);
+		} else {
+			throw new IridaAccountDisabledException("User account is disabled");
+		}
 	}
 
 	/**

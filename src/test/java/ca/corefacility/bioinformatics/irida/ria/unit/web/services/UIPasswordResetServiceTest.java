@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 
+import ca.corefacility.bioinformatics.irida.exceptions.IridaAccountDisabledException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
@@ -21,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class UIPasswordResetServiceTest {
@@ -48,7 +50,7 @@ public class UIPasswordResetServiceTest {
 	}
 
 	@Test
-	void testCreateAndSendNewPasswordResetEmail() {
+	void testCreateAndSendNewPasswordResetEmail() throws IridaAccountDisabledException {
 		String successMessage = "Check your email for password reset instructions";
 		when(userService.loadUserByEmail(user.getEmail())).thenReturn(user);
 		when(messageSource.getMessage("server.ForgotPassword.checkEmail", null, Locale.ENGLISH)).thenReturn(successMessage);
@@ -81,5 +83,15 @@ public class UIPasswordResetServiceTest {
 		verify(userService, times(1)).loadUserByEmail(user2.getEmail());
 
 		assertEquals("success", result, "Result should be success");
+	}
+
+	@Test
+	void testCreateAndSendNewPasswordResetEmailAccountDisabled() {
+		when(userService.loadUserByEmail(user.getEmail())).thenReturn(user);
+		user.setEnabled(false);
+
+		assertThrows(IridaAccountDisabledException.class, () -> {
+			service.createAndSendNewPasswordResetEmail(user.getEmail(), Locale.ENGLISH);
+		});
 	}
 }
