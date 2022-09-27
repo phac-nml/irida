@@ -80,7 +80,7 @@ export default function SampleAnalyses() {
       <Col
         span={24}
         style={{
-          height: `calc(80vh - ${HEADER_HEIGHT_WITH_PADDING}px - 72px)`,
+          height: `calc(80vh - ${HEADER_HEIGHT_WITH_PADDING}px - 73px)`,
         }}
       >
         <AutoSizer>
