@@ -38,7 +38,10 @@ export const saveMetadata = createAsyncThunk(
       for (let j = i; j < i + chunkSize && j < metadata.length; j++) {
         const metadataItem = metadata[j];
         const index = metadataItem.rowKey;
-        if (selectedMetadataKeys.includes(metadataItem.rowKey)) {
+        if (
+          selectedMetadataKeys.includes(index) &&
+          metadataSaveDetails[index]?.saved !== true
+        ) {
           const name = metadataItem[sampleNameColumn];
           const metadataFields = Object.entries(metadataItem)
             .filter(
@@ -46,8 +49,7 @@ export const saveMetadata = createAsyncThunk(
                 headers.includes(key) && key !== sampleNameColumn
             )
             .map(([key, value]) => ({ field: key, value }));
-          const sampleId =
-            metadataValidateDetails[metadataItem.rowKey].foundSampleId;
+          const sampleId = metadataValidateDetails[index].foundSampleId;
           if (sampleId) {
             promises.push(
               updateSample({
