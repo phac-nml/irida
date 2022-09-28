@@ -98,7 +98,7 @@ export type FetchTreeAndMetadataResponse = {
   analysisId: number;
   treeProps: Partial<TreeProperties>;
   terms: string[];
-  metadata: Metadata; // TODO: is this
+  metadata: Metadata;
   metadataColourMap: MetadataColourMap;
   templates: { id: number; label: string; fields?: string[] }[];
 };

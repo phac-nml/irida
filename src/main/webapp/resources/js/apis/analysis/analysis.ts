@@ -292,8 +292,8 @@ export type Metadata = {
   [key: string]: MetadataItem;
 };
 export type MetadataResponse = {
-  metadata?: Metadata;
-  terms?: string[];
+  metadata: Metadata;
+  terms: string[];
   error?: string;
 };
 /**
@@ -310,7 +310,7 @@ export async function getMetadata(
     return res.data;
   } catch (error) {
     if (typeof error === "string") {
-      return { error };
+      return { metadata: {}, terms: [], error };
     }
     throw new Error("Unknown error thrown, expected a string");
   }

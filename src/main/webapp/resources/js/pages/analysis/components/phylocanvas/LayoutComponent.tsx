@@ -1,15 +1,11 @@
 import React from "react";
-import { IJsonModel, Layout, Model } from "flexlayout-react";
+import { IJsonModel, Layout, Model, TabNode } from "flexlayout-react";
 import { Legend } from "./Legend";
 import { PhylocanvasTree } from "./PhylocanvasTree";
 import "flexlayout-react/style/light.css";
 
 const layoutJson: IJsonModel = {
   global: {
-    // tabEnableFloat: true,
-    // tabSetMinWidth: 100,
-    // tabSetMinHeight: 100,
-    // borderMinSize: 100,
     tabEnableClose: false,
   },
   borders: [
@@ -50,11 +46,11 @@ const layoutJson: IJsonModel = {
 };
 
 export default function LayoutComponent(): JSX.Element {
-  const factory = (node): JSX.Element => {
+  const factory = (node: TabNode): JSX.Element => {
     const component = node.getComponent();
 
     if (component === "phylocanvas") {
-      const { width, height } = node._rect;
+      const { width, height } = node.getRect();
 
       return <PhylocanvasTree height={height} width={width} />;
     } else if (component === "legend") {

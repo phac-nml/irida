@@ -1,18 +1,22 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { Shapes, TreeTypes } from "@phylocanvas/phylocanvas.gl";
-import { formatMetadata } from "../tree-utilities";
-import {
-  MetadataColourMap,
-  Template,
-  TreeProperties,
-} from "../../../types/phylocanvas";
 import {
   fetchMetadataTemplateFields,
   FetchMetadataTemplateFieldsResponse,
   fetchTreeAndMetadata,
   FetchTreeAndMetadataResponse,
+  formatMetadata,
 } from "./tree-utilities";
+import {
+  MetadataColourMap,
+  Template,
+  TreeProperties,
+  TreeType,
+} from "../../../types/phylocanvas";
 import { RootState } from "../store";
+import { Metadata } from "../../../apis/analysis/analysis";
 
 const ZOOM_STEP_SIZE = 0.1;
 
@@ -64,8 +68,9 @@ export enum LoadingState {
 
 export type TreeState = {
   analysisId: number;
-  metadata: string[];
+  metadata: Metadata;
   state: {
+    error: undefined | string;
     loadingState: LoadingState;
   };
   treeProps: TreeProperties;
@@ -77,9 +82,10 @@ export type TreeState = {
 
 const initialState = {
   analysisId: -1,
-  metadata: [],
+  metadata: {},
   metadataColourMap: {},
   state: {
+    error: undefined,
     loadingState: LoadingState.fetching,
   },
   treeProps: {
@@ -182,7 +188,7 @@ export const treeSlice = createSlice({
       state.templates = action.payload.templates;
     });
     builder.addCase(fetchTreeAndMetadataThunk.rejected, (state, action) => {
-      state.state.error = action.payload;
+      state.state.error = action.error;
       state.state.loadingState = LoadingState["error-loading"];
     });
     builder.addCase(
@@ -208,3 +214,6 @@ export const {
 } = treeSlice.actions;
 
 export default treeSlice.reducer;
+
+export const getCurrentTreeType = (state: RootState): TreeType =>
+  state.tree.treeProps.type;

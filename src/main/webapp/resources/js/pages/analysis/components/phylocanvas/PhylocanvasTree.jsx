@@ -1,20 +1,16 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { resize } from "../../redux/treeSlice";
+import React from "react";
+import { useSelector } from "react-redux";
 import * as phylocanvas from "@phylocanvas/phylocanvas.gl";
 import { Space } from "antd";
 import { MetadataMenu } from "./MetadataMenu";
 import { DownloadMenu } from "./DownloadMenu";
 import { ZoomButtons } from "./ZoomButtons";
-import { CollapsibleSidebar } from "./CollapsibleSidebar";
-import { Legend } from "./Legend";
 import PhylocanvasShapeDropDown from "./PhylocanvasShapeDropDown";
 
 export function PhylocanvasTree({ height, width }) {
   const canvasRef = React.useRef();
   const treeRef = React.useRef();
   const { treeProps } = useSelector((state) => state.tree);
-  const dispatch = useDispatch();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const renderTree = (treeProps) => {

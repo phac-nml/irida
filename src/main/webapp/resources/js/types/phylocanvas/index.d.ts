@@ -1,5 +1,9 @@
+import { Metadata } from "../../apis/analysis/analysis";
+
 export = PHYLOCANVAS;
 export as namespace PHYLOCANVAS;
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { Shapes, TreeTypes } from "@phylocanvas/phylocanvas.gl";
 
 declare namespace PHYLOCANVAS {
@@ -19,22 +23,20 @@ declare namespace PHYLOCANVAS {
     showLeafLabels: boolean;
     stepZoom: number;
     source: string;
-    type:
-      | TreeTypes.Rectangle
-      | TreeTypes.Radial
-      | TreeTypes.Cirular
-      | TreeTypes.Diagonal
-      | TreeTypes.Hierarchical;
+    type: TreeType;
     zoom: number;
   }
-
-  type Metadata = {
-    [key: string]: { label: string; value: string };
-  };
 
   interface MetadataColourMap {
     [key: string]: { [key: string]: string };
   }
 
   type Template = { id: number; label: string; fields?: string[] };
+
+  type TreeType =
+    | TreeTypes.Rectangle
+    | TreeTypes.Radial
+    | TreeTypes.Cirular
+    | TreeTypes.Diagonal
+    | TreeTypes.Hierarchical;
 }
