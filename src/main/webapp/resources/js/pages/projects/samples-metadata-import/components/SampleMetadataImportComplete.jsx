@@ -12,14 +12,19 @@ import { useSelector } from "react-redux";
  * @constructor
  */
 export function SampleMetadataImportComplete() {
-  const { metadata } = useSelector((state) => state.importReducer);
+  const { metadata, metadataValidateDetails, metadataSaveDetails } =
+    useSelector((state) => state.importReducer);
 
   const samplesUpdatedCount = metadata.filter(
-    (metadataItem) => metadataItem.saved === true && metadataItem.foundSampleId
+    (metadataItem) =>
+      metadataSaveDetails[metadataItem.rowKey]?.saved === true &&
+      metadataValidateDetails[metadataItem.rowKey].foundSampleId
   ).length;
 
   const samplesCreatedCount = metadata.filter(
-    (metadataItem) => metadataItem.saved === true && !metadataItem.foundSampleId
+    (metadataItem) =>
+      metadataSaveDetails[metadataItem.rowKey]?.saved === true &&
+      !metadataValidateDetails[metadataItem.rowKey].foundSampleId
   ).length;
 
   let stats =
@@ -49,7 +54,7 @@ export function SampleMetadataImportComplete() {
   React.useEffect(() => {
     setTimeout(() => {
       navigate(`/${projectId}/sample-metadata/upload/file`);
-    }, 5000);
+    }, 10000);
   }, []);
 
   return (

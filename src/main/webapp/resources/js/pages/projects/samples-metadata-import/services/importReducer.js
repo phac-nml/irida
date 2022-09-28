@@ -14,7 +14,8 @@ const initialState = {
   sampleNameColumn: "",
   headers: [],
   metadata: [],
-  savedCount: 0,
+  metadataValidateDetails: {},
+  metadataSaveDetails: {},
 };
 
 /*
@@ -28,13 +29,15 @@ export const saveMetadata = createAsyncThunk(
     const sampleNameColumn = state.importReducer.sampleNameColumn;
     const headers = state.importReducer.headers;
     const metadata = state.importReducer.metadata;
-    const updatedMetadata = JSON.parse(JSON.stringify(metadata));
+    const metadataValidateDetails = state.importReducer.metadataValidateDetails;
+    const metadataSaveDetails = {};
 
     const chunkSize = 100;
     for (let i = 0; i < metadata.length; i = i + chunkSize) {
       const promises = [];
       for (let j = i; j < i + chunkSize && j < metadata.length; j++) {
         const metadataItem = metadata[j];
+        const index = metadataItem.rowKey;
         if (selectedMetadataKeys.includes(metadataItem.rowKey)) {
           const name = metadataItem[sampleNameColumn];
           const metadataFields = Object.entries(metadataItem)
@@ -43,7 +46,8 @@ export const saveMetadata = createAsyncThunk(
                 headers.includes(key) && key !== sampleNameColumn
             )
             .map(([key, value]) => ({ field: key, value }));
-          const sampleId = metadataItem.foundSampleId;
+          const sampleId =
+            metadataValidateDetails[metadataItem.rowKey].foundSampleId;
           if (sampleId) {
             promises.push(
               updateSample({
@@ -56,15 +60,13 @@ export const saveMetadata = createAsyncThunk(
                 },
               })
                 .then((response) => {
-                  console.log("UPDATE SAMPLE RESPONSE");
-                  console.log(response);
-                  updatedMetadata[j].saved = true;
+                  metadataSaveDetails[index] = { saved: true };
                 })
                 .catch((error) => {
-                  console.log("UPDATE SAMPLE ERROR");
-                  console.log(error);
-                  updatedMetadata[j].saved = false;
-                  updatedMetadata[j].error = error.response.data.error;
+                  metadataSaveDetails[index] = {
+                    saved: false,
+                    error: error.response.data.error,
+                  };
                 })
             );
           } else {
@@ -77,15 +79,13 @@ export const saveMetadata = createAsyncThunk(
                 },
               })
                 .then((response) => {
-                  console.log("CREATE SAMPLE RESPONSE");
-                  console.log(response);
-                  updatedMetadata[j].saved = true;
+                  metadataSaveDetails[index] = { saved: true };
                 })
                 .catch((error) => {
-                  console.log("CREATE SAMPLE ERROR");
-                  console.log(error);
-                  updatedMetadata[j].saved = false;
-                  updatedMetadata[j].error = error.response.data.error;
+                  metadataSaveDetails[index] = {
+                    saved: false,
+                    error: error.response.data.error,
+                  };
                 })
             );
           }
@@ -93,16 +93,12 @@ export const saveMetadata = createAsyncThunk(
       }
       await Promise.all(promises).then(() => {
         dispatch(
-          setSavedCount(
-            updatedMetadata.filter(
-              (updatedMetadataItem) => updatedMetadataItem.saved
-            ).length
-          )
+          setMetadataSaveDetails(Object.assign({}, metadataSaveDetails))
         );
       });
     }
 
-    return { metadata: updatedMetadata };
+    return { metadataSaveDetails };
   }
 );
 
@@ -115,6 +111,7 @@ export const setSampleNameColumn = createAsyncThunk(
   async ({ projectId, column }, { getState }) => {
     const state = getState();
     const metadata = state.importReducer.metadata;
+    const metadataValidateDetails = {};
     const response = await validateSamples({
       projectId: projectId,
       body: {
@@ -125,20 +122,22 @@ export const setSampleNameColumn = createAsyncThunk(
           })),
       },
     });
-    const updatedMetadata = metadata.map((metadataItem, index) => {
+    for (let i = 0; i < metadata.length; i++) {
+      const metadataItem = metadata[i];
+      const index = metadataItem.rowKey;
       const foundSample = response.data.samples.find(
         (sample) => metadataItem[column] === sample.name
       );
-      return {
-        ...metadataItem,
-        rowKey: `metadata-uploader-row-${index}`,
+      metadataValidateDetails[index] = {
         isSampleNameValid: validateSampleName(metadataItem[column]),
         foundSampleId: foundSample?.ids?.at(0),
-        saved: null,
       };
-    });
+    }
 
-    return { sampleNameColumn: column, metadata: updatedMetadata };
+    return {
+      sampleNameColumn: column,
+      metadataValidateDetails,
+    };
   }
 );
 
@@ -160,18 +159,25 @@ For more information on redux actions see: https://redux-toolkit.js.org/api/crea
 export const setMetadata = createAction(
   `importReducer/setMetadata`,
   (metadata) => ({
-    payload: { metadata },
+    payload: {
+      metadata: metadata.map((metadataItem, index) => {
+        return {
+          ...metadataItem,
+          rowKey: `metadata-uploader-row-${index}`,
+        };
+      }),
+    },
   })
 );
 
 /*
-Redux action for setting the project metadata.
+Redux action for setting the project metadata save details.
 For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
  */
-export const setSavedCount = createAction(
-  `importReducer/setSavedCount`,
-  (savedCount) => ({
-    payload: { savedCount },
+export const setMetadataSaveDetails = createAction(
+  `importReducer/setMetadataSaveDetails`,
+  (metadataSaveDetails) => ({
+    payload: { metadataSaveDetails },
   })
 );
 
@@ -186,14 +192,14 @@ export const importReducer = createReducer(initialState, (builder) => {
   builder.addCase(setMetadata, (state, action) => {
     state.metadata = action.payload.metadata;
   });
-  builder.addCase(setSavedCount, (state, action) => {
-    state.savedCount = action.payload.savedCount;
+  builder.addCase(setMetadataSaveDetails, (state, action) => {
+    state.metadataSaveDetails = action.payload.metadataSaveDetails;
   });
   builder.addCase(setSampleNameColumn.fulfilled, (state, action) => {
     state.sampleNameColumn = action.payload.sampleNameColumn;
-    state.metadata = action.payload.metadata;
+    state.metadataValidateDetails = action.payload.metadataValidateDetails;
   });
   builder.addCase(saveMetadata.fulfilled, (state, action) => {
-    state.metadata = action.payload.metadata;
+    state.metadataSaveDetails = action.payload.metadataSaveDetails;
   });
 });

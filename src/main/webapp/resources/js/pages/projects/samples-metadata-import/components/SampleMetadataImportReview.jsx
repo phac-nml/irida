@@ -50,10 +50,13 @@ export function SampleMetadataImportReview() {
   const [valid, setValid] = React.useState(true);
   const [progress, setProgress] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
-  const { headers, sampleNameColumn, metadata, savedCount } = useSelector(
-    (state) => state.importReducer
-  );
-
+  const {
+    headers,
+    sampleNameColumn,
+    metadata,
+    metadataValidateDetails,
+    metadataSaveDetails,
+  } = useSelector((state) => state.importReducer);
   const dispatch = useDispatch();
 
   const tagColumn = {
@@ -63,7 +66,7 @@ export function SampleMetadataImportReview() {
     fixed: "left",
     width: 70,
     render: (text, item) => {
-      if (!item.foundSampleId)
+      if (!metadataValidateDetails[item.rowKey].foundSampleId)
         return (
           <Tag color="green">
             {i18n("SampleMetadataImportReview.table.filter.new")}
@@ -81,7 +84,9 @@ export function SampleMetadataImportReview() {
       },
     ],
     onFilter: (value, record) =>
-      value === "new" ? !record.foundSampleId : record.foundSampleId,
+      value === "new"
+        ? !metadataValidateDetails[record.rowKey].foundSampleId
+        : metadataValidateDetails[record.rowKey].foundSampleId,
   };
 
   const rowSelection = {
@@ -92,18 +97,25 @@ export function SampleMetadataImportReview() {
     },
     getCheckboxProps: (record) => ({
       disabled: !(
-        record.isSampleNameValid &&
-        (record.saved === null || record.saved === true)
+        metadataValidateDetails[record.rowKey].isSampleNameValid ||
+        metadataSaveDetails[record.rowKey]?.saved === true
       ),
     }),
   };
 
   React.useEffect(() => {
+    const savedCount = Object.entries(metadataSaveDetails).filter(
+      ([key, metadataSaveDetailsItem]) => metadataSaveDetailsItem.saved
+    ).length;
     setProgress((savedCount / selected.length) * 100);
-  }, [savedCount]);
+  }, [metadataSaveDetails]);
 
   React.useEffect(() => {
-    setValid(!metadata.some((row) => row.isSampleNameValid === false));
+    setValid(
+      !metadata.some(
+        (row) => metadataValidateDetails[row.rowKey].isSampleNameValid === false
+      )
+    );
 
     const sampleColumn = {
       title: sampleNameColumn,
@@ -113,7 +125,10 @@ export function SampleMetadataImportReview() {
       onCell: (item) => {
         return {
           style: {
-            background: item.isSampleNameValid === true ? null : red1,
+            background:
+              metadataValidateDetails[item.rowKey].isSampleNameValid === true
+                ? null
+                : red1,
           },
         };
       },
@@ -124,9 +139,12 @@ export function SampleMetadataImportReview() {
       fixed: "left",
       width: 10,
       render: (text, item) => {
-        if (item.saved === false)
+        if (metadataSaveDetails[item.rowKey]?.saved === false)
           return (
-            <Tooltip title={item.error} color={red5}>
+            <Tooltip
+              title={metadataSaveDetails[item.rowKey]?.error}
+              color={red5}
+            >
               <IconExclamationCircle style={{ color: red5 }} />
             </Tooltip>
           );
@@ -150,11 +168,14 @@ export function SampleMetadataImportReview() {
     setColumns(updatedColumns);
     setSelected(
       metadata.map((row) => {
-        if (row.isSampleNameValid && (row.saved === null || row.saved === true))
+        if (
+          metadataValidateDetails[row.rowKey].isSampleNameValid ||
+          metadataSaveDetails[row.rowKey]?.saved === true
+        )
           return row.rowKey;
       })
     );
-  }, []);
+  }, [metadataSaveDetails]);
 
   const save = async () => {
     setLoading(true);
@@ -167,7 +188,9 @@ export function SampleMetadataImportReview() {
     );
 
     if (
-      response.payload.metadata.every((metadataItem) => !metadataItem.error)
+      Object.entries(response.payload.metadataSaveDetails).filter(
+        ([, metadataSaveDetailsItem]) => metadataSaveDetailsItem.error
+      ).length === 0
     ) {
       navigate(`/${projectId}/sample-metadata/upload/complete`);
     } else {
@@ -198,7 +221,11 @@ export function SampleMetadataImportReview() {
       <MetadataTable
         className="t-metadata-uploader-review-table"
         rowKey={(row) => row.rowKey}
-        rowClassName={(record) => (record.saved === false ? "row-error" : null)}
+        rowClassName={(record) =>
+          metadataSaveDetails[record.rowKey]?.saved === false
+            ? "row-error"
+            : null
+        }
         rowSelection={rowSelection}
         columns={columns}
         dataSource={metadata}
