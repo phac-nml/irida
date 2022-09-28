@@ -633,7 +633,7 @@ public class UISampleService {
 			return messageSource.getMessage("server.SampleFiles.removeSequencingObjectSuccess", new Object[] {},
 					locale);
 		} catch (Exception e) {
-			return messageSource.getMessage("samples.files.remove.error", new Object[] { sequencingObject.getLabel() },
+			return messageSource.getMessage("server.SampleFiles.removeError", new Object[] { sequencingObject.getLabel() },
 					locale);
 		}
 	}
@@ -659,7 +659,7 @@ public class UISampleService {
 			genomeAssemblyService.removeGenomeAssemblyFromSample(sample, genomeAssemblyId);
 			return messageSource.getMessage("server.SampleFiles.removeGenomeAssemblySuccess", new Object[] {}, locale);
 		} catch (Exception e) {
-			return messageSource.getMessage("samples.files.remove.error", new Object[] { genomeAssembly.getLabel() },
+			return messageSource.getMessage("server.SampleFiles.removeError", new Object[] { genomeAssembly.getLabel() },
 					locale);
 		}
 	}
