@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.components;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -223,7 +224,7 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	public void clickConcatenateConfirmBtn() {
 		concatenateConfirmBtn.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 20);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20L));
 		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.className("ant-notification"))));
 		waitForTime(500);
 	}
@@ -288,7 +289,7 @@ public class SampleDetailsViewer extends AbstractPage {
 		removeFileBtns.get(0).click();
 		waitForTime(500);
 		confirmBtns.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 30);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30L));
 		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.className("ant-notification"))));
 	}
 
@@ -302,7 +303,7 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	public void updateDefaultSequencingObjectForSample() {
 		setDefaultSeqObjBtns.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 20);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20L));
 		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.className("ant-notification"))));
 	}
 

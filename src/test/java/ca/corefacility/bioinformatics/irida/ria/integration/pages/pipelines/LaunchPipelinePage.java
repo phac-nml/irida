@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,8 +15,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 /**
- * This page holds all the form controls that are available on any pipeline
- * launch page.
+ * This page holds all the form controls that are available on any pipeline launch page.
  */
 public class LaunchPipelinePage extends AbstractPage {
 	@FindBy(className = "ant-page-header-heading-title")
@@ -140,7 +140,7 @@ public class LaunchPipelinePage extends AbstractPage {
 	}
 
 	public void updateName(String name) {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2L));
 		clearName();
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.className("t-name-required")));
 		nameInput.sendKeys(name);
@@ -168,13 +168,15 @@ public class LaunchPipelinePage extends AbstractPage {
 
 	public String getSavedParameterValue(String name) {
 		Optional<WebElement> input = savedParametersInput.stream()
-				.filter(elm -> elm.getAttribute("id").equals("details_" + name)).findFirst();
+				.filter(elm -> elm.getAttribute("id").equals("details_" + name))
+				.findFirst();
 		return input.map(webElement -> webElement.getAttribute("value")).orElse(null);
 	}
 
 	public void updateSavedParameterValue(String name, String value) {
 		Optional<WebElement> input = savedParametersInput.stream()
-				.filter(elm -> elm.getAttribute("id").equals("details_" + name)).findFirst();
+				.filter(elm -> elm.getAttribute("id").equals("details_" + name))
+				.findFirst();
 		if (input.isPresent()) {
 			WebElement elm = input.get();
 			elm.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
@@ -190,7 +192,8 @@ public class LaunchPipelinePage extends AbstractPage {
 	public void saveModifiedTemplateAs(String name) {
 		driver.manage().window().maximize();
 		driver.findElement(By.tagName("body")).sendKeys(Keys.HOME);// Fixes issue where save button scrolled off page.
-		WebDriverWait wait = new WebDriverWait(driver, 20);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20L));
+
 		wait.until(ExpectedConditions.elementToBeClickable(modifiedSaveAsButton));
 		modifiedSaveAsButton.click();
 		driver.findElement(By.tagName("body")).sendKeys(Keys.END);
@@ -205,7 +208,7 @@ public class LaunchPipelinePage extends AbstractPage {
 	}
 
 	public void uploadReferenceFile() {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		Path path = Paths.get("src/test/resources/files/test_file.fasta");
 		uploadReferenceButton.sendKeys(path.toAbsolutePath().toString());
 		wait.until(ExpectedConditions.stalenessOf(referencesNotFountAlert.get(0)));
