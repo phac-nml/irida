@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.groups;
 
+import java.time.Duration;
+
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -57,7 +59,7 @@ public class UserGroupsDetailsPage extends AbstractPage {
 	}
 
 	public void updateUserGroupName(String name) {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.elementToBeClickable(editNameBtn));
 		editNameBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(editNameInput));
@@ -76,7 +78,7 @@ public class UserGroupsDetailsPage extends AbstractPage {
 	}
 
 	public void deleteGroup() {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.elementToBeClickable(deleteTab));
 		deleteTab.click();
 		wait.until(ExpectedConditions.elementToBeClickable(deleteBtn));

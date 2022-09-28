@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.time.Duration;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -37,7 +39,7 @@ public class ProjectSyncPage extends AbstractPage {
 	}
 
 	public void selectApi(int index) {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.elementToBeClickable(apiSelection));
 		apiSelection.findElement(By.className("ant-select-selection-item")).click();
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("ant-select-item")));
@@ -49,7 +51,7 @@ public class ProjectSyncPage extends AbstractPage {
 	}
 
 	public void selectProjectInListing(String name) {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.elementToBeClickable(projectSelection));
 		projectSelection.findElement(By.className("ant-select-selection-search")).click();
 		driver.switchTo().activeElement().sendKeys(name);
@@ -70,7 +72,7 @@ public class ProjectSyncPage extends AbstractPage {
 	}
 
 	public void submitProject() {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.elementToBeClickable(submitBtn));
 		submitBtn.click();
 		waitForTime(500);

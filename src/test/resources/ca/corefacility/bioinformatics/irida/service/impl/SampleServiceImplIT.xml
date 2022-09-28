@@ -194,18 +194,18 @@
 		created_date="2013-07-18 14:20:19.0" sample_id="9"
 		sequencingobject_id="3" />
 
-	<analysis_submission id="2" name="my analysis"
+	<analysis_submission id="2" name="my analysis" email_pipeline_result_error="0"
 		remote_analysis_id="1" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0"
 		workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3" submitter="1" remote_workflow_id="1"
 		remote_input_data_id="1" analysis_cleaned_state="NOT_CLEANED" analysis_id="5" priority="MEDIUM" 
 		update_samples="1" DTYPE="AnalysisSubmission" automated="0" />
 
-	<analysis_submission id="1" name="my analysis"
+	<analysis_submission id="1" name="my analysis" email_pipeline_result_error="0"
 		remote_analysis_id="1" analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19.0"
 		workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
 		analysis_cleaned_state="NOT_CLEANED" update_samples="0" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
 		
-	<analysis_submission id="3" name="my analysis"
+	<analysis_submission id="3" name="my analysis" email_pipeline_result_error="0"
 		remote_analysis_id="1" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0"
 		workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3" submitter="1" remote_workflow_id="1"
 		remote_input_data_id="1" analysis_cleaned_state="NOT_CLEANED" analysis_id="6" priority="MEDIUM" 

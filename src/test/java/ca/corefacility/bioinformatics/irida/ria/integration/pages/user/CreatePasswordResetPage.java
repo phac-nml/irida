@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.user;
 
+import java.time.Duration;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -32,7 +34,7 @@ public class CreatePasswordResetPage extends AbstractPage {
 
 	public boolean checkSuccess() {
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, 10L);
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10L));
 			wait.until(ExpectedConditions.presenceOfElementLocated(By.className("t-forgot-password-alert")));
 			WebElement element = driver.findElement(By.className("t-forgot-password-alert"));
 			wait.until(ExpectedConditions.textToBePresentInElement(element,

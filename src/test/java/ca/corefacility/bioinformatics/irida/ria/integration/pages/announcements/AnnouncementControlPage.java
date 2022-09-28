@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.announcements
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,10 +30,11 @@ public class AnnouncementControlPage extends AbstractPage {
 
     public void goTo() {
         get(driver, "admin/announcements");
-	}
+    }
 
     /**
      * Get the size of the announcement table currently visible on the control page
+     * 
      * @return size of the table
      */
     public int announcementTableSize() {
@@ -41,6 +43,7 @@ public class AnnouncementControlPage extends AbstractPage {
 
     /**
      * Get a list of {@link WebElement}s describing currently visible announcements on the page
+     * 
      * @return list of web elements
      */
     public List<Date> getCreatedDates() {
@@ -67,7 +70,7 @@ public class AnnouncementControlPage extends AbstractPage {
     public void clickDateCreatedHeader() {
         WebElement header = driver.findElement(By.cssSelector("th.t-created-date"));
         header.click();
-        WebDriverWait wait = new WebDriverWait(driver, 2);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
         wait.until(ExpectedConditions.urlContains("/admin/announcements"));
     }
 
@@ -101,7 +104,8 @@ public class AnnouncementControlPage extends AbstractPage {
         List<WebElement> delete_button = driver.findElements(By.cssSelector("button.t-delete-announcement"));
         delete_button.get(index).click();
         waitForElementVisible(By.className("ant-popover-message"));
-        WebElement confirm_delete_button = driver.findElement(By.cssSelector("div.ant-popover-buttons > button.ant-btn-primary"));
+        WebElement confirm_delete_button = driver
+                .findElement(By.cssSelector("div.ant-popover-buttons > button.ant-btn-primary"));
         confirm_delete_button.click();
         waitForElementInvisible(By.className("ant-popover-message"));
     }

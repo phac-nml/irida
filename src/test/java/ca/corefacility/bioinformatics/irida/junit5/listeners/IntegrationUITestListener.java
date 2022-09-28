@@ -1,10 +1,8 @@
 package ca.corefacility.bioinformatics.irida.junit5.listeners;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestPlan;
@@ -15,8 +13,10 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 public class IntegrationUITestListener implements TestExecutionListener {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(IntegrationUITestListener.class);
 	public static final int DRIVER_TIMEOUT_IN_SECONDS = 3;
 
@@ -89,7 +89,7 @@ public class IntegrationUITestListener implements TestExecutionListener {
 			driver = new ChromeDriver(options);
 		}
 
-		driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(DRIVER_TIMEOUT_IN_SECONDS));
 	}
 
 	public static void stopWebDriver() {
