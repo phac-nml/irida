@@ -122,7 +122,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.security:spring-security-oauth2-authorization-server:0.3.1")
-    implementation("org.springframework.security:spring-security-oauth2-resource-server:5.7.2")
+    implementation("org.springframework.security:spring-security-oauth2-resource-server:5.7.3")
     implementation("org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.0") {
         exclude(group = "org.slf4j")
     }
@@ -136,11 +136,11 @@ dependencies {
         exclude(group = "commons-logging", module = "commons-logging")
     }
     implementation("commons-net:commons-net:3.8.0")
-    implementation("org.apache.jena:jena-tdb:4.3.2") {
+    implementation("org.apache.jena:jena-tdb:4.6.1") {
         exclude(group = "xml-apis")
         exclude(group = "org.slf4j")
     }
-    implementation("org.apache.jena:jena-text:4.3.2") {
+    implementation("org.apache.jena:jena-text:4.6.1") {
         exclude(group = "xml-apis")
         exclude(group = "org.slf4j")
         exclude(group = "log4j")
@@ -163,15 +163,15 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-api")
     implementation("org.apache.logging.log4j:log4j-to-slf4j")
     implementation("com.google.guava:guava:31.0.1-jre")
-    implementation("commons-cli:commons-cli:1.2")
+    implementation("commons-cli:commons-cli:1.5.0")
     implementation("org.aspectj:aspectjweaver")
-    implementation("org.apache.commons:commons-csv:1.8")
+    implementation("org.apache.commons:commons-csv:1.9.0")
     implementation("com.sksamuel.diff:diff:1.1.11")
     implementation("org.pf4j:pf4j:2.4.0")
     implementation("org.biojava:biojava3-core:3.0")
     implementation("com.google.code.gson:gson")
     implementation("com.github.pjfanning:excel-streaming-reader:3.6.1")
-    implementation("org.springdoc:springdoc-openapi-webmvc-core:1.5.6") {
+    implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.11") {
         exclude(group = "jakarta.xml.bind", module = "jakarta.xml.bind-api")
         exclude(group = "jakarta.validation", module = "jakarta.validation-api")
     }
@@ -206,12 +206,12 @@ dependencies {
     testImplementation("io.rest-assured:rest-assured")
     testImplementation("io.rest-assured:json-path")
     testImplementation("com.github.springtestdbunit:spring-test-dbunit:1.3.0")
-    testImplementation("org.dbunit:dbunit:2.7.2") {
+    testImplementation("org.dbunit:dbunit:2.7.3") {
         exclude(group = "org.slf4j")
     }
-    testImplementation("org.seleniumhq.selenium:selenium-support:3.141.59")
-    testImplementation("org.seleniumhq.selenium:selenium-chrome-driver:3.141.59")
-    testImplementation("org.mockftpserver:MockFtpServer:2.6")
+    testImplementation("org.seleniumhq.selenium:selenium-support:4.4.0")
+    testImplementation("org.seleniumhq.selenium:selenium-chrome-driver:4.4.0")
+    testImplementation("org.mockftpserver:MockFtpServer:3.0.0")
 }
 
 tasks.register<Zip>("packageDistribution") {

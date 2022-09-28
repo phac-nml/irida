@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.samples;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -17,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  * <p>
  * Page Object to represent the sample sequence files page.
  * </p>
- *
  */
 public class SampleFilesPage extends AbstractPage {
 	public static final String RELATIVE_URL = "samples/{id}/sequenceFiles";
@@ -38,43 +38,50 @@ public class SampleFilesPage extends AbstractPage {
 		return driver.findElements(By.className("file-name")).get(0).getText();
 	}
 
+	public String getSequenceFileCreatedDate(String sequenceFileName) {
+		WebElement createdDateDiv = driver
+				.findElement(By.xpath("//tr[contains(@class, 'sequence-file-row')]/td/a[text()='" + sequenceFileName
+						+ "']/../../td/div/div[contains(@class, 'created-date')]"));
+		return createdDateDiv.getText();
+	}
+
 	public int getSequenceFileCount() {
 		return driver.findElements(By.className("sequence-file-row")).size();
 	}
-	
+
 	public int getAssemblyFileCount() {
 		return driver.findElements(By.className("assembly_row")).size();
 	}
-	
-	public String getSampleName(){
+
+	public String getSampleName() {
 		return driver.findElement(By.id("sample-name")).getText();
 	}
-	
+
 	public int getQcEntryCount() {
 		return driver.findElements(By.className("qc-item")).size();
 	}
-	
-	public void deleteFirstSequenceFile(){
+
+	public void deleteFirstSequenceFile() {
 		WebElement removeButton = driver.findElements(By.className("remove-file")).iterator().next();
 		removeButton.click();
-		WebElement confirmRemoveButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.id("remove-file-confirm")));
+		WebElement confirmRemoveButton = (new WebDriverWait(driver, Duration.ofSeconds(10)))
+				.until(ExpectedConditions.elementToBeClickable(By.id("remove-file-confirm")));
 		confirmRemoveButton.click();
 	}
-	
-	public void deleteFirstSequenceFilePair(){
+
+	public void deleteFirstSequenceFilePair() {
 		WebElement removeButton = driver.findElements(By.className("remove-pair")).iterator().next();
 		removeButton.click();
-		WebElement confirmRemoveButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.id("remove-file-confirm")));
+		WebElement confirmRemoveButton = (new WebDriverWait(driver, Duration.ofSeconds(10)))
+				.until(ExpectedConditions.elementToBeClickable(By.id("remove-file-confirm")));
 		confirmRemoveButton.click();
 	}
-	
-	public void deleteFirstAssemblyFile(){
+
+	public void deleteFirstAssemblyFile() {
 		WebElement removeButton = driver.findElements(By.className("remove-assembly")).iterator().next();
 		removeButton.click();
-		WebElement confirmRemoveButton = (new WebDriverWait(driver, 10)).until(ExpectedConditions.elementToBeClickable(By
-				.id("remove-file-confirm")));
+		WebElement confirmRemoveButton = (new WebDriverWait(driver, Duration.ofSeconds(10)))
+				.until(ExpectedConditions.elementToBeClickable(By.id("remove-file-confirm")));
 		confirmRemoveButton.click();
 	}
 
@@ -99,7 +106,7 @@ public class SampleFilesPage extends AbstractPage {
 	}
 
 	private void uploadFile(String filePath, int input) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		WebElement dropdown = driver.findElement(By.className("t-download-dropdown"));
 		Actions action = new Actions(driver);
 		action.moveToElement(dropdown).perform();
