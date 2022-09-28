@@ -1,7 +1,8 @@
 import { Button, Dropdown, Menu } from "antd";
 import React, { useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { updateTreeType } from "../../redux/treeSlice";
+import { getCurrentTreeType, updateTreeType } from "../../redux/treeSlice";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { TreeTypes } from "@phylocanvas/phylocanvas.gl";
 import {
   PhyloCircularIcon,
@@ -10,15 +11,24 @@ import {
   PhyloRadialIcon,
   PhyloRectangleIcon,
 } from "../../../../components/icons/phylocanvas";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { TreeType } from "../../../../types/phylocanvas";
 
+/**
+ * React component to render a drop-down menu for selecting the type of phylogenetic tree to display
+ * @constructor
+ */
 export default function PhylocanvasShapeDropDown() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [options, setOptions] = React.useState<JSX.Element[]>([]);
-  const {
-    treeProps: { type },
-  } = useSelector((state) => state.tree);
+  const currentTreeType: TreeType = useAppSelector(getCurrentTreeType);
 
-  const types = useMemo(
+  const types: {
+    [key: string]: {
+      icon: JSX.Element;
+      title: string;
+    };
+  } = useMemo(
     () => ({
       [TreeTypes.Rectangular]: {
         icon: <PhyloRectangleIcon />,
@@ -48,7 +58,7 @@ export default function PhylocanvasShapeDropDown() {
     const current = Object.keys(types).map((key) => (
       <Menu.Item
         key={key}
-        disabled={key === type}
+        disabled={key === currentTreeType}
         style={{ backgroundColor: "transparent" }}
         icon={types[key].icon}
       >
@@ -56,7 +66,7 @@ export default function PhylocanvasShapeDropDown() {
       </Menu.Item>
     ));
     setOptions(current);
-  }, [dispatch, type, types]);
+  }, [dispatch, currentTreeType, types]);
 
   const overlay = (
     <Menu onClick={(item) => dispatch(updateTreeType({ treeType: item.key }))}>
@@ -65,13 +75,13 @@ export default function PhylocanvasShapeDropDown() {
   );
 
   return (
-    <Dropdown overlay={overlay} trigger="click">
+    <Dropdown overlay={overlay} trigger={["click"]}>
       <Button
-        title={types[type].title}
+        title={types[currentTreeType].title}
         style={{ backgroundColor: `var(--grey-1)` }}
         key="changer"
         shape="circle"
-        icon={types[type].icon}
+        icon={types[currentTreeType].icon}
       />
     </Dropdown>
   );
