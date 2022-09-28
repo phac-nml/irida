@@ -25,9 +25,8 @@ export const fetchTreeAndMetadataThunk = createAsyncThunk<
   async (analysisId: number, { rejectWithValue }) => {
     try {
       return await fetchTreeAndMetadata(analysisId);
-    } catch (e) {
-      rejectWithValue(e);
-      return {};
+    } catch (e: unknown) {
+      return rejectWithValue("Cannot fetch tree and metadata");
     }
   }
 );

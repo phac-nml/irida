@@ -93,7 +93,7 @@ export function formatMetadata(
   }, {});
 }
 
-export type FetchTreeAndMetadataReturn = Promise<{
+export type FetchTreeAndMetadataReturn = {
   loadingState: LoadingState;
   analysisId: number;
   treeProps: Partial<TreeProperties>;
@@ -101,11 +101,11 @@ export type FetchTreeAndMetadataReturn = Promise<{
   metadata: Metadata; // TODO: is this
   metadataColourMap: MetadataColourMap;
   templates: { id: number; label: string; fields?: string[] }[];
-}>;
+};
 
 export async function fetchTreeAndMetadata(
   analysisId: number
-): FetchTreeAndMetadataReturn {
+): Promise<FetchTreeAndMetadataReturn> {
   const promises: [NewickTreeResponse, MetadataResponse, any] = [
     await getNewickTree(analysisId),
     await getMetadata(analysisId),
