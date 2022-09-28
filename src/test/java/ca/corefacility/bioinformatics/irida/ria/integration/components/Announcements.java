@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.components;
 
+import java.time.Duration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,8 +15,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
- * Used to test the state of the React AnnouncementsModal component.
- * This component can be found at login.
+ * Used to test the state of the React AnnouncementsModal component. This component can be found at login.
  */
 public class Announcements {
 	private static final String RATIO_REGULAR_EXPRESSION = "Read: (\\d+) / (\\d+)";
@@ -48,7 +48,7 @@ public class Announcements {
 	private static Actions actions;
 
 	public static Announcements goTo(WebDriver driver) {
-		wait = new WebDriverWait(driver, 5);
+		wait = new WebDriverWait(driver, Duration.ofSeconds(5L));
 		actions = new Actions(driver);
 		return PageFactory.initElements(driver, Announcements.class);
 	}

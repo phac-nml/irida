@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
 import java.io.IOException;
+import java.time.Duration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,7 +71,7 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 
 		// Test submitting
 		page.submit();
-		WebDriverWait wait = new WebDriverWait(driver(), 5);
+		WebDriverWait wait = new WebDriverWait(driver(), Duration.ofSeconds(5));
 		wait.until(ExpectedConditions.urlMatches("/analysis"));
 	}
 }

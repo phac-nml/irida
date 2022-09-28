@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -50,7 +51,7 @@ public class ProjectLineListCreateTemplatePage extends ProjectPageBase {
 	}
 
 	public void addExistingTemplate(String templateName) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		existingTemplatesSelect.click();
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("ui-select-choices-row")));
 		existingTemplatesSelect.sendKeys(templateName, Keys.ENTER);

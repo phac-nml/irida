@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi;
 
+import java.time.Duration;
 import java.util.Set;
 
 import org.openqa.selenium.By;
@@ -66,7 +67,7 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 
 	public void clickDeleteButton() {
 		deleteTab.click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.visibilityOf(deleteButton));
 		deleteButton.click();
 		wait.until(ExpectedConditions.visibilityOf(deleteConfirmButton));
@@ -75,7 +76,7 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 
 	public void confirmDelete() {
 		logger.debug("clicking confirm-delete button");
-		WebElement confirmButton = (new WebDriverWait(driver, 10))
+		WebElement confirmButton = (new WebDriverWait(driver, Duration.ofSeconds(10)))
 				.until(ExpectedConditions.elementToBeClickable(By.className("t-confirm-delete")));
 		confirmButton.click();
 	}
@@ -89,7 +90,7 @@ public class RemoteAPIDetailsPage extends AbstractPage {
 	}
 
 	public void clickConnect() {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.elementToBeClickable(remoteStatusConnect));
 		remoteStatusConnect.click();
 

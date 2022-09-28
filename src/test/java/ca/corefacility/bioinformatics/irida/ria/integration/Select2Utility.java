@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
+import java.time.Duration;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -19,14 +21,15 @@ public class Select2Utility {
 	}
 
 	public void searchByText(String text) {
-		WebDriverWait wait = new WebDriverWait(driver, 10L);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10L));
 		WebElement input = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("a.select2-choice")));
 		input.sendKeys(text);
 	}
 
 	public void selectDefaultMatch() {
-		WebDriverWait wait = new WebDriverWait(driver, 10L);
-		WebElement match = wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.className("select2-match"))));
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10L));
+		WebElement match = wait
+				.until(ExpectedConditions.visibilityOf(driver.findElement(By.className("select2-match"))));
 		match.click();
 	}
 }

@@ -119,7 +119,7 @@
                          analysis_state="COMPLETED"
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60"
-                         submitter="2"
+                         submitter="2" email_pipeline_result_error="0"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
                          automated="0"/>
     <project_analysis_submission id="1"
@@ -154,7 +154,7 @@
                          analysis_state="COMPLETED"
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60"
-                         submitter="1"
+                         submitter="1" email_pipeline_result_error="0"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
                          automated="1"/>
     <!--END: analysis_submission 2-->
@@ -185,7 +185,7 @@
                          analysis_state="COMPLETED"
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
-                         submitter="1"
+                         submitter="1" email_pipeline_result_error="0"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
                          automated="1"/>
     <!--END: analysis_submission 3-->
@@ -216,7 +216,7 @@
                          analysis_state="COMPLETED"
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
-                         submitter="3"
+                         submitter="3" email_pipeline_result_error="0"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
                          automated="0"/>
     <!--END: analysis_submission 4-->
@@ -247,7 +247,7 @@
                          analysis_state="COMPLETED"
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
-                         submitter="3"
+                         submitter="3" email_pipeline_result_error="0"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
                          automated="0"/>
     <project_analysis_submission id="2"
@@ -283,7 +283,7 @@
                          analysis_state="COMPLETED"
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60"
-                         submitter="1"
+                         submitter="1" email_pipeline_result_error="0"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
                          automated="1"/>
     <!--END: analysis_submission 6-->
@@ -314,7 +314,7 @@
                          analysis_state="COMPLETED"
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
-                         submitter="1"
+                         submitter="1" email_pipeline_result_error="0"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
                          automated="1"/>
     <!--END: analysis_submission 7-->
@@ -346,7 +346,7 @@
                          analysis_state="COMPLETED"
                          created_date="2018-07-04 10:00:2.0"
                          workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d"
-                         submitter="3"
+                         submitter="3" email_pipeline_result_error="0"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"
                          automated="0"/>
     <!--END: analysis_submission 8-->
