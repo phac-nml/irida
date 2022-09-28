@@ -7,12 +7,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import liquibase.util.csv.CSVWriter;
 
 /**
  * Used to export datatables to either excel or csv formatted files.
@@ -22,19 +22,12 @@ public class DataTablesExportToFile {
 	/**
 	 * Write data within datatable to an excel formatted file.
 	 * 
-	 * @param type
-	 *            {@link DataTablesExportTypes} type of file to create (either
-	 *            excel or csv)
-	 * @param response
-	 *            {@link HttpServletResponse}
-	 * @param filename
-	 *            {@link String} name of the file to download.
-	 * @param models
-	 *            Data to download in the table
-	 * @param headers
-	 *            for the table
-	 * @throws IOException
-	 *             thrown if file cannot be written
+	 * @param type     {@link DataTablesExportTypes} type of file to create (either excel or csv)
+	 * @param response {@link HttpServletResponse}
+	 * @param filename {@link String} name of the file to download.
+	 * @param models   Data to download in the table
+	 * @param headers  for the table
+	 * @throws IOException thrown if file cannot be written
 	 */
 	public static void writeFile(DataTablesExportTypes type, HttpServletResponse response, String filename,
 			List<? extends DataTablesExportable> models, List<String> headers) throws IOException {
@@ -50,16 +43,11 @@ public class DataTablesExportToFile {
 	/**
 	 * Write data within datatable to an excel formatted file.
 	 * 
-	 * @param response
-	 *            {@link HttpServletResponse}
-	 * @param filename
-	 *            {@link String} name of the file to download.
-	 * @param models
-	 *            Data to download in the table
-	 * @param headers
-	 *            for the table
-	 * @throws IOException
-	 *             thrown if file cannot be written
+	 * @param response {@link HttpServletResponse}
+	 * @param filename {@link String} name of the file to download.
+	 * @param models   Data to download in the table
+	 * @param headers  for the table
+	 * @throws IOException thrown if file cannot be written
 	 */
 	private static void writeToExcel(HttpServletResponse response, String filename,
 			List<? extends DataTablesExportable> models, List<String> headers) throws IOException {
@@ -95,16 +83,11 @@ public class DataTablesExportToFile {
 	/**
 	 * Write data within datatable to a csv formatted file.
 	 * 
-	 * @param response
-	 *            {@link HttpServletResponse}
-	 * @param filename
-	 *            {@link String} name of the file to download.
-	 * @param models
-	 *            Data to download in the table
-	 * @param headers
-	 *            for the table
-	 * @throws IOException
-	 *             thrown if file cannot be written
+	 * @param response {@link HttpServletResponse}
+	 * @param filename {@link String} name of the file to download.
+	 * @param models   Data to download in the table
+	 * @param headers  for the table
+	 * @throws IOException thrown if file cannot be written
 	 */
 	private static void writeToCSV(HttpServletResponse response, String filename,
 			List<? extends DataTablesExportable> models, List<String> headers) throws IOException {
@@ -117,9 +100,9 @@ public class DataTablesExportToFile {
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + ".csv\"");
 		response.setContentType("text/csv");
 		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(response.getOutputStream());
-		CSVWriter csvWriter = new CSVWriter(outputStreamWriter, ',');
-		csvWriter.writeAll(results);
-		csvWriter.flush();
-		csvWriter.close();
+		CSVPrinter printer = CSVFormat.DEFAULT.print(outputStreamWriter);
+		printer.printRecords(results);
+		printer.flush();
+		outputStreamWriter.close();
 	}
 }

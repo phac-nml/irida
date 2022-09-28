@@ -36,10 +36,10 @@ public class ExceptionUtilities {
 		if (exception.getRootCause() instanceof ConstraintViolationException) {
 			constraintViolationException = (ConstraintViolationException) exception.getRootCause();
 			Set<ConstraintViolation<?>> constraintViolationSet = constraintViolationException.getConstraintViolations();
-			for (ConstraintViolation constraintViolation : constraintViolationSet) {
+			for (ConstraintViolation<?> constraintViolation : constraintViolationSet) {
 				// The constraintViolation.getMessage() returns the i18n key in this case
-				constraintViolationMessage +=
-						messageSource.getMessage(constraintViolation.getMessage(), new Object[] {}, locale) + "\n";
+				constraintViolationMessage += messageSource.getMessage(constraintViolation.getMessage(),
+						new Object[] {}, locale) + "\n";
 			}
 		}
 		throw new UIConstraintViolationException(constraintViolationMessage);
