@@ -1,27 +1,24 @@
 import React from "react";
 import { Steps } from "antd";
+import { StepsProps } from "antd/lib/steps";
 
 const { Step } = Steps;
 
 /**
  * React component that displays the steps for the Sample Metadata Uploader.
- * @prop {number} currentStep - the current step, starting with zero
- * @prop {string} currentStatus - the status of the current step
- * @prop {string} currentPercent - the progress percentage of the current step
+ * @prop current - the current step, starting with zero
+ * @prop status - the status of the current step
+ * @prop percent - the progress percentage of the current step
  * @returns {*}
  * @constructor
  */
 export function SampleMetadataImportSteps({
-  currentStep,
-  currentStatus,
-  currentPercent,
-}) {
+  current,
+  status,
+  percent,
+}: StepsProps): JSX.Element {
   return (
-    <Steps
-      current={currentStep}
-      status={currentStatus}
-      percent={currentPercent}
-    >
+    <Steps current={current} status={status} percent={percent}>
       <Step title={i18n("SampleMetadataImportSteps.step1")} />
       <Step title={i18n("SampleMetadataImportSteps.step2")} />
       <Step title={i18n("SampleMetadataImportSteps.step3")} />

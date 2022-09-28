@@ -31,9 +31,9 @@ export function SampleMetadataImportWizard({
         }
       />
       <SampleMetadataImportSteps
-        currentStep={currentStep}
-        currentStatus={currentStatus}
-        currentPercent={currentPercent}
+        current={currentStep}
+        status={currentStatus}
+        percent={currentPercent}
       />
       {children}
     </Space>
