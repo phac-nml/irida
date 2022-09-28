@@ -2,8 +2,13 @@ import { MenuOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Menu } from "antd";
 import React from "react";
 import { downloadObjectURL } from "../../../../utilities/file-utilities";
+import { PhyloCanvas } from "../../../../types/phylocanvas";
 
-export function DownloadMenu({ treeRef }) {
+interface DownloadMenuProps {
+  treeRef: React.MutableRefObject<PhyloCanvas>;
+}
+
+export function DownloadMenu({ treeRef }: DownloadMenuProps) {
   const downloadNewick = () => {
     const blob = new Blob([treeRef.current.exportNewick()], {
       type: "text/plain",
@@ -38,7 +43,7 @@ export function DownloadMenu({ treeRef }) {
   );
 
   return (
-    <Dropdown overlay={menu} placement="bottomRight" trigger="click">
+    <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
       <Button shape="circle" icon={<MenuOutlined />} />
     </Dropdown>
   );

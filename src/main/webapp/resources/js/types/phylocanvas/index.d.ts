@@ -4,9 +4,20 @@ export = PHYLOCANVAS;
 export as namespace PHYLOCANVAS;
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { Shapes, TreeTypes } from "@phylocanvas/phylocanvas.gl";
+import { Shapes } from "@phylocanvas/phylocanvas.gl";
 
 declare namespace PHYLOCANVAS {
+  interface PhyloCanvas {
+    setProps: (props: Partial<TreeProperties>) => void;
+    size: {
+      height: number;
+      width: number;
+    };
+    exportNewick: () => BlobPart;
+    exportSVG: () => Blob;
+    exportPNG: () => string;
+  }
+
   interface TreeProperties {
     alignLabels: boolean;
     blocks: string[];
@@ -22,6 +33,7 @@ declare namespace PHYLOCANVAS {
     showLabels: boolean;
     showLeafLabels: boolean;
     stepZoom: number;
+    size: Size;
     source: string;
     type: TreeType;
     zoom: number;
@@ -31,12 +43,9 @@ declare namespace PHYLOCANVAS {
     [key: string]: { [key: string]: string };
   }
 
+  type Size = { height: number; width: number };
+
   type Template = { id: number; label: string; fields?: string[] };
 
-  type TreeType =
-    | TreeTypes.Rectangle
-    | TreeTypes.Radial
-    | TreeTypes.Cirular
-    | TreeTypes.Diagonal
-    | TreeTypes.Hierarchical;
+  type TreeType = "rc" | "rd" | "cr" | "dg" | "hr";
 }

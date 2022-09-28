@@ -6,14 +6,22 @@ import { MetadataMenu } from "./MetadataMenu";
 import { DownloadMenu } from "./DownloadMenu";
 import { ZoomButtons } from "./ZoomButtons";
 import PhylocanvasShapeDropDown from "./PhylocanvasShapeDropDown";
+import { PhyloCanvas, TreeProperties } from "../../../../types/phylocanvas";
+import { useAppSelector } from "../../store";
+import { getTreeProps } from "../../redux/treeSlice";
 
-export function PhylocanvasTree({ height, width }) {
+interface PhyloCanvasTreeProps {
+  height: number;
+  width: number;
+}
+
+export function PhyloCanvasTree({ height, width }: PhyloCanvasTreeProps) {
   const canvasRef = React.useRef();
-  const treeRef = React.useRef();
-  const { treeProps } = useSelector((state) => state.tree);
+  const treeRef = React.useRef<PhyloCanvas>();
+  const treeProps = useAppSelector(getTreeProps);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const renderTree = (treeProps) => {
+  const renderTree = (treeProps: TreeProperties) => {
     treeRef.current = new phylocanvas.PhylocanvasGL(
       canvasRef.current,
       {
@@ -36,7 +44,7 @@ export function PhylocanvasTree({ height, width }) {
     } else {
       renderTree(treeProps);
     }
-  }, [renderTree, treeProps]);
+  }, [height, renderTree, treeProps, width]);
 
   React.useEffect(() => {
     return () => {

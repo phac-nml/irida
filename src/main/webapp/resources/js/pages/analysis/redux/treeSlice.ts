@@ -13,7 +13,6 @@ import {
   MetadataColourMap,
   Template,
   TreeProperties,
-  TreeType,
 } from "../../../types/phylocanvas";
 import { RootState } from "../store";
 import { Metadata } from "../../../apis/analysis/analysis";
@@ -215,5 +214,5 @@ export const {
 
 export default treeSlice.reducer;
 
-export const getCurrentTreeType = (state: RootState): TreeType =>
-  state.tree.treeProps.type;
+export const getTreeProps = (state: RootState): TreeProperties =>
+  state.tree.treeProps;
