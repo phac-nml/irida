@@ -10,14 +10,14 @@ import {
   fetchMetadataTemplateFields,
   FetchMetadataTemplateFieldsResponse,
   fetchTreeAndMetadata,
-  FetchTreeAndMetadataReturn,
+  FetchTreeAndMetadataResponse,
 } from "./tree-utilities";
 import { RootState } from "../store";
 
 const ZOOM_STEP_SIZE = 0.1;
 
 export const fetchTreeAndMetadataThunk = createAsyncThunk<
-  FetchTreeAndMetadataReturn,
+  FetchTreeAndMetadataResponse,
   number,
   { rejectValue: string }
 >(
@@ -49,9 +49,8 @@ export const fetchMetadataTemplateFieldsThunk = createAsyncThunk<
         terms,
         templates,
       });
-    } catch (e) {
-      rejectWithValue(e);
-      return {};
+    } catch (e: unknown) {
+      return rejectWithValue("Cannot fetch metadata template fields");
     }
   }
 );
