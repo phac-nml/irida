@@ -10,7 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 
-import ca.corefacility.bioinformatics.irida.exceptions.IridaAccountDisabledException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIConstraintViolationException;
@@ -50,7 +50,7 @@ public class UIPasswordResetServiceTest {
 	}
 
 	@Test
-	void testCreateAndSendNewPasswordResetEmail() throws IridaAccountDisabledException {
+	void testCreateAndSendNewPasswordResetEmail() {
 		String successMessage = "Check your email for password reset instructions";
 		when(userService.loadUserByEmail(user.getEmail())).thenReturn(user);
 		when(messageSource.getMessage("server.ForgotPassword.checkEmail", null, Locale.ENGLISH)).thenReturn(successMessage);
@@ -90,7 +90,7 @@ public class UIPasswordResetServiceTest {
 		when(userService.loadUserByEmail(user.getEmail())).thenReturn(user);
 		user.setEnabled(false);
 
-		assertThrows(IridaAccountDisabledException.class, () -> {
+		assertThrows(EntityNotFoundException.class, () -> {
 			service.createAndSendNewPasswordResetEmail(user.getEmail(), Locale.ENGLISH);
 		});
 	}

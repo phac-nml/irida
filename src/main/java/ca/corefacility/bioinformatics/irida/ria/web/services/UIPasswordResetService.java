@@ -61,10 +61,8 @@ public class UIPasswordResetService {
 	 * @param usernameOrEmail The email address or username to create a password reset for
 	 * @param locale          The logged in user's locale
 	 * @return message indicating if the password reset was successfully created or not
-	 * @throws IridaAccountDisabledException if the user account is disabled
 	 */
-	public String createAndSendNewPasswordResetEmail(String usernameOrEmail, Locale locale)
-			throws IridaAccountDisabledException {
+	public String createAndSendNewPasswordResetEmail(String usernameOrEmail, Locale locale) {
 		setAuthentication();
 
 		try {
@@ -92,15 +90,12 @@ public class UIPasswordResetService {
 			} catch (EntityNotFoundException ex) {
 				SecurityContextHolder.clearContext();
 				throw new EntityNotFoundException(
-						messageSource.getMessage("server.ForgotPassword.emailOrUsernameNotExist", null, locale));
+						messageSource.getMessage("server.ForgotPassword.accountNotFoundOrDisabled", null, locale));
 			}
-		} catch (EntityNotFoundException | UsernameNotFoundException ex) {
+		} catch (EntityNotFoundException | UsernameNotFoundException | IridaAccountDisabledException ex) {
 			SecurityContextHolder.clearContext();
 			throw new EntityNotFoundException(
-					messageSource.getMessage("server.ForgotPassword.emailOrUsernameNotExist", null, locale));
-		} catch (IridaAccountDisabledException e) {
-			throw new IridaAccountDisabledException(
-					messageSource.getMessage("server.ForgotPassword.accountDisabled", null, locale));
+					messageSource.getMessage("server.ForgotPassword.accountNotFoundOrDisabled", null, locale));
 		}
 	}
 
