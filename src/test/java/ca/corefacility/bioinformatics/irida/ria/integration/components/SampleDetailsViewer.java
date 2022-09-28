@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.components;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -33,14 +34,14 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-sample-details-metadata-item")
 	private List<WebElement> metadataFields;
 
-	@FindBy(id="rc-tabs-0-tab-metadata")
+	@FindBy(xpath="//ul[contains(@class, 't-sample-viewer-nav')]/li[2]")
 	private WebElement metadataTabLink;
 
-	@FindBy(id="rc-tabs-0-tab-files")
+	@FindBy(xpath = "//ul[contains(@class, 't-sample-viewer-nav')]/li[3]")
 	private WebElement filesTabLink;
 
 
-	@FindBy(id="rc-tabs-0-tab-analyses")
+	@FindBy(xpath = "//ul[contains(@class, 't-sample-viewer-nav')]/li[4]")
 	private WebElement sampleAnalysesTabLink;
 
 	@FindBy(className = "t-upload-sample-files")
@@ -97,7 +98,7 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className= "t-sample-analyses-search-input")
 	private WebElement sampleAnalysesSearchInput;
 
-	@FindBy(className = "ant-table-row")
+	@FindBy(className = "ant-list-item")
 	private List<WebElement> sampleAnalysesList;
 
 	@FindBy(className = "t-add-sample-to-cart")
@@ -223,7 +224,7 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	public void clickConcatenateConfirmBtn() {
 		concatenateConfirmBtn.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 20);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20L));
 		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.className("ant-notification"))));
 		waitForTime(500);
 	}
@@ -288,7 +289,7 @@ public class SampleDetailsViewer extends AbstractPage {
 		removeFileBtns.get(0).click();
 		waitForTime(500);
 		confirmBtns.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 30);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30L));
 		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.className("ant-notification"))));
 	}
 
@@ -302,7 +303,7 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	public void updateDefaultSequencingObjectForSample() {
 		setDefaultSeqObjBtns.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 20);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20L));
 		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.className("ant-notification"))));
 	}
 
@@ -315,7 +316,7 @@ public class SampleDetailsViewer extends AbstractPage {
 	}
 
 	public int numberOfSampleAnalysesVisible() {
-		return sampleAnalysesList.size();
+		return sampleAnalysesTable.findElements(By.className("ant-list-item")).size();
 	}
 
 	public int filterSampleAnalyses(String searchString) {

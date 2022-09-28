@@ -16,7 +16,7 @@ import { SPACE_SM } from "../../styles/spacing";
 
 export interface ContentLoadingProps {
   message: string;
-  props: Record<string, unknown>;
+  props?: Record<string, unknown>;
 }
 
 export function ContentLoading({

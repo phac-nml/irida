@@ -16,7 +16,7 @@
       <analysis_output_file id="1" created_date="2014-08-06 10:01:02" execution_manager_file_id="Assembly test" file_path="/tmp/analysis-files/contigs.fasta" tool_execution_id="1" label_prefix="sample" />
       <analysis_output_file_map analysis_id="1" analysisOutputFilesMap_id="1" analysis_output_file_key="contigs-with-repeats" />
 
-      <analysis_submission id="2" name="assembly" workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0" submitter="1" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" analysis_id="1" />
+      <analysis_submission id="2" name="assembly" workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0" submitter="1" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" analysis_id="1" email_pipeline_result_error="0" />
 
       <client_details id="1" clientId="testClient" clientSecret="testClientSecret" token_validity="43200" createdDate="2013-07-18 14:20:19.0" />
       <client_details_scope client_details_id="1" scope="read" />

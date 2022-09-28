@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -65,7 +66,7 @@ public class ProjectMetadataPage extends AbstractPage {
 	}
 
 	public void selectMetadataField(String name) {
-		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 		for (WebElement row : metadataFieldRow) {
 			String text = row.findElement(By.className("t-m-field-label")).getText();
 			if (text.equalsIgnoreCase(name)) {
@@ -81,7 +82,7 @@ public class ProjectMetadataPage extends AbstractPage {
 	}
 
 	public void createNewTemplate(String name, String description) {
-		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 		createTemplateButton.click();
 		wait.until(ExpectedConditions.visibilityOf(createTemplateModal));
 		createTemplateModal.findElement(By.className("t-c-t-name")).sendKeys(name);
@@ -91,7 +92,7 @@ public class ProjectMetadataPage extends AbstractPage {
 	}
 
 	public void gotoTemplate(String name) {
-		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 		for (WebElement row : metadataTemplateRow) {
 			WebElement element = row.findElement(By.className("t-t-name"));
 			if (element.getText().equalsIgnoreCase(name)) {
@@ -107,7 +108,7 @@ public class ProjectMetadataPage extends AbstractPage {
 	}
 
 	public void deleteTemplate(String name) {
-		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 		WebElement templateRow = null;
 		for (WebElement row : metadataTemplateRow) {
 			String text = row.findElement(By.className("t-t-name")).getText();
@@ -137,7 +138,7 @@ public class ProjectMetadataPage extends AbstractPage {
 	}
 
 	public void editTemplateName(String name) {
-		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 		WebElement editIcon = templateEditName.findElement(By.className("ant-typography-edit"));
 		editIcon.click();
 		wait.until(ExpectedConditions.invisibilityOfAllElements(editIcon));
@@ -181,14 +182,14 @@ public class ProjectMetadataPage extends AbstractPage {
 	}
 
 	public boolean defaultTemplateTagVisible() {
-		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 		WebElement defaultTag = wait
 				.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-t-default-tag")));
 		return defaultTag.isDisplayed();
 	}
 
 	public boolean setDefaultTemplateButtonVisible() {
-		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 		WebElement setDefaultTemplateBtn = wait
 				.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-t-set-default-button")));
 		return setDefaultTemplateBtn.isDisplayed();
@@ -203,9 +204,10 @@ public class ProjectMetadataPage extends AbstractPage {
 	}
 
 	public void updateFieldRestrictionToLevel(int row, int optionNumber) {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		fieldRestrictionSelects.get(row).click();
-		WebElement dropdown = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("ant-select-dropdown")));
+		WebElement dropdown = wait
+				.until(ExpectedConditions.visibilityOfElementLocated(By.className("ant-select-dropdown")));
 		List<WebElement> options = dropdown.findElements(By.className("ant-select-item-option"));
 		options.get(optionNumber).click();
 		wait.until(ExpectedConditions.invisibilityOf(dropdown));
@@ -213,12 +215,12 @@ public class ProjectMetadataPage extends AbstractPage {
 	}
 
 	private void waitForFields() {
-		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 		wait.until(ExpectedConditions.visibilityOfAllElements(metadataFieldRow));
 	}
 
 	private void waitForTemplates() {
-		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 		wait.until(ExpectedConditions.visibilityOfAllElements(metadataTemplateRow));
 	}
 }

@@ -152,18 +152,6 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 		return fieldRepository.save(field);
 	}
 
-	@PreAuthorize("permitAll()")
-	@Override
-	public MetadataTemplateField updateMetadataField(MetadataTemplateField field) {
-		return fieldRepository.save(field);
-	}
-
-	@PreAuthorize("permitAll()")
-	@Override
-	public void deleteMetadataField(MetadataTemplateField field) {
-		fieldRepository.delete(field);
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */

@@ -142,6 +142,7 @@ declare namespace IRIDA {
     defaultSequencingObject: SequencingObject;
     defaultGenomeAssembly: GenomeAssembly;
     sampleName: string;
+    label: string;
   }
 
   interface SequencingObject extends BaseModel {

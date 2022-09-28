@@ -1,17 +1,18 @@
-import { createAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   fetchMetadataForSample,
   SampleMetadataFieldEntry,
 } from "../../apis/samples/samples";
 import { Sample } from "../../types/irida";
+import { putSampleInCart, removeSample } from "../../apis/cart/cart";
 
 /**
  * Action to set the target sample
  */
 export const setSample = createAction(
   `sample/setSample`,
-  ({ sample, modifiable }) => ({
-    payload: { sample, modifiable },
+  ({ sample, modifiable, inCart }) => ({
+    payload: { sample, modifiable, inCart },
   })
 );
 
@@ -118,6 +119,27 @@ export const updateDetails = createAction(
   })
 );
 
+export const addSampleToCartThunk = createAsyncThunk(
+  "sample/addSampleToCartThunk",
+  async (_, { getState }) => {
+    const { sampleReducer } = getState();
+    await putSampleInCart(sampleReducer.projectId, [sampleReducer.sample]);
+    return {};
+  }
+);
+
+export const removeSampleFromCartThunk = createAsyncThunk(
+  "sample/removeSampleFromCartThunk",
+  async (_, { getState }) => {
+    const { sampleReducer } = getState();
+    await removeSample(
+      sampleReducer.projectId,
+      sampleReducer.sample.identifier
+    );
+    return {};
+  }
+);
+
 /**
  * Set up the initial state.
  */
@@ -134,6 +156,7 @@ const initialState: {
   projectId: number;
   fieldId: number;
   entryId: number;
+  inCart: boolean;
 } = (() => {
   return {
     sample: {} as Sample,
@@ -148,6 +171,7 @@ const initialState: {
     restriction: "LEVEL_1",
     metadata: [] as SampleMetadataFieldEntry[],
     loading: true,
+    inCart: false,
   };
 })();
 
@@ -164,6 +188,7 @@ const sampleSlice = createSlice({
     builder.addCase(setSample, (state, action) => {
       state.sample = action.payload.sample;
       state.modifiable = action.payload.modifiable;
+      state.inCart = action.payload.inCart;
     });
 
     builder.addCase(setDefaultSequencingObject, (state, action) => {
@@ -234,6 +259,14 @@ const sampleSlice = createSlice({
         ...state.sample,
         [action.payload.field]: action.payload.value,
       };
+    });
+
+    builder.addCase(addSampleToCartThunk.fulfilled, (state) => {
+      state.inCart = true;
+    });
+
+    builder.addCase(removeSampleFromCartThunk.fulfilled, (state) => {
+      state.inCart = false;
     });
   },
 });

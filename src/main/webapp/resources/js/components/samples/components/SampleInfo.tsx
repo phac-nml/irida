@@ -23,15 +23,13 @@ import { updateDetails } from "../sampleSlice";
 import { EditableParagraph } from "../../ant.design";
 import { Sample } from "../../../types/irida";
 
-const DEFAULT_HEIGHT = 600;
-
 /**
  * React component to display basic sample information
  *
  * @returns {JSX.Element}
  * @constructor
  */
-export function SampleInfo() {
+export default function SampleInfo() {
   const { sample, modifiable: isModifiable } = useAppSelector(
     (state) => state.sampleReducer
   );
@@ -273,42 +271,31 @@ export function SampleInfo() {
     const item = detailsData[index];
 
     return (
-      <List.Item style={{ ...style, padding: 15 }}>
+      <List.Item style={{ ...style }}>
         <List.Item.Meta title={item.title} description={item.value} />
       </List.Item>
     );
   };
 
-  return (
-    <Row gutter={16}>
-      <Col
-        span={24}
-        style={{
-          height: DEFAULT_HEIGHT,
-        }}
-      >
-        {detailsData.length ? (
-          <>
-            <AutoSizer>
-              {({ height = DEFAULT_HEIGHT, width = "100%" }) => (
-                <VList
-                  itemCount={detailsData.length}
-                  itemSize={70}
-                  height={height}
-                  width={width}
-                >
-                  {renderDetailsListItem}
-                </VList>
-              )}
-            </AutoSizer>
-            <MetadataRolesProvider>
-              <EditMetadata />
-            </MetadataRolesProvider>
-          </>
-        ) : (
-          <Empty description={i18n("SampleInfo.noDetailsAvailable")} />
+  return detailsData.length ? (
+    <>
+      <AutoSizer>
+        {({ height, width = "100%" }) => (
+          <VList
+            itemCount={detailsData.length}
+            itemSize={69}
+            height={height}
+            width={width}
+          >
+            {renderDetailsListItem}
+          </VList>
         )}
-      </Col>
-    </Row>
+      </AutoSizer>
+      <MetadataRolesProvider>
+        <EditMetadata />
+      </MetadataRolesProvider>
+    </>
+  ) : (
+    <Empty description={i18n("SampleInfo.noDetailsAvailable")} />
   );
 }

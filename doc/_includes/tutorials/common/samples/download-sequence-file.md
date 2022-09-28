@@ -1,1 +1,1 @@
-You can download a sequence file by clicking on the <span class="fa fa-fw fa-download"></span> icon, on the right-hand side of the row for the sequence file.
+You can download a sequence file by clicking on the **Download** button, on the right-hand side of the row for the sequence file.
