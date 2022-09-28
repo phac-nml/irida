@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.sequencingRuns;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -48,7 +49,7 @@ public class SequencingRunListPage extends AbstractPage {
 			if (row.findElement(By.className("t-run-details-link")).getText().equals(runId)) {
 				row.findElement(By.className("t-run-remove-link")).click();
 
-				WebDriverWait wait = new WebDriverWait(driver, 2);
+				WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 				wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.className("ant-popover-content"))));
 				WebElement confirmButton = waitForElementToBeClickable(
 						driver.findElement(By.cssSelector(".ant-popover-content .ant-btn-primary")));

@@ -25,6 +25,7 @@
 * [Developer]: Added description and metadata to create & update project sample endpoints. See [PR 1359](https://github.com/phac-nml/irida/pull/1359)
 * [UI]: Fix issue where year is displayed incorrectly when the last day of the week for the date is in another year. See [PR 1364](https://github.com/phac-nml/irida/pull/1364)
 * [Developer]: Fix issue where large downloads silent failed due to async request timeout. See [PR 1368](https://github.com/phac-nml/irida/pull/1368)
+* [Developer]: Update to Spring Boot 2.7.3 and update various other dependencies. See [PR 1369](https://github.com/phac-nml/irida/pull/1369)
 * [Developer]: Fixed issue with disabled user accounts requesting a password reset. See [PR 1373](https://github.com/phac-nml/irida/pull/1373)
 
 ## [22.05.5] - 2022/06/28

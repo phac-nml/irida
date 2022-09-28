@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +18,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * <p>
  * Page Object to represent the projects-new page used to create a new project.
  * </p>
- *
  */
 public class CreateProjectComponent extends AbstractPage {
 	@FindBy(className = "t-create-new-project-btn")
@@ -84,7 +84,7 @@ public class CreateProjectComponent extends AbstractPage {
 	}
 
 	public void displayForm() {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		createNewProjectButton.click();
 		wait.until(ExpectedConditions.visibilityOf(nameInput));
 	}
@@ -112,7 +112,7 @@ public class CreateProjectComponent extends AbstractPage {
 	}
 
 	public void submitProject() {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		finishButton.click();
 		wait.until(ExpectedConditions.urlMatches("/projects/[0-9]+"));
 	}
@@ -148,15 +148,13 @@ public class CreateProjectComponent extends AbstractPage {
 		List<String> targetRestrictions = new ArrayList<>();
 
 		for (String label : fieldLabels) {
-			currentRestrictions.add(driver.findElement(By.className("t-current-restriction-" + label))
-					.getText());
+			currentRestrictions.add(driver.findElement(By.className("t-current-restriction-" + label)).getText());
 		}
 
 		List<WebElement> targetRestrictionsText = driver.findElements(By.className("ant-select-selection-item"));
 
 		for (WebElement element : targetRestrictionsText) {
-			if (!element.getText()
-					.isEmpty())
+			if (!element.getText().isEmpty())
 				targetRestrictions.add(element.getText());
 		}
 
@@ -172,15 +170,13 @@ public class CreateProjectComponent extends AbstractPage {
 		int textIndex = 0;
 		List<WebElement> restrictions = driver.findElements(By.className("ant-select-selection-item"));
 
-		for(WebElement element : projectMetadataFieldRows) {
+		for (WebElement element : projectMetadataFieldRows) {
 			String labelText = element.findElement(By.className("t-m-field-label")).getText();
-			if(!labelText.equals("Label")) {
-				String typeText = element.findElement(By.className("t-m-field-type"))
-						.getText();
-				String restrictionText = restrictions.get(mainIndex)
-						.getText();
-				if (!labelText.equals(expectedLabels.get(textIndex)) || !typeText.equals("text") || !restrictionText.equals(
-						expectedCurrentRestrictions.get(textIndex))) {
+			if (!labelText.equals("Label")) {
+				String typeText = element.findElement(By.className("t-m-field-type")).getText();
+				String restrictionText = restrictions.get(mainIndex).getText();
+				if (!labelText.equals(expectedLabels.get(textIndex)) || !typeText.equals("text")
+						|| !restrictionText.equals(expectedCurrentRestrictions.get(textIndex))) {
 					return false;
 				}
 				textIndex++;

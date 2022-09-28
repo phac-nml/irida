@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.utilities;
 
+import java.time.Duration;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -23,8 +25,8 @@ public class PageUtilities {
 	 * @param locator {@link org.openqa.selenium.By}
 	 */
 	public void waitForElementPresent(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(
-				ExpectedConditions.presenceOfElementLocated(locator));
+		(new WebDriverWait(this.driver, Duration.ofSeconds(TIME_OUT_IN_SECONDS)))
+				.until(ExpectedConditions.presenceOfElementLocated(locator));
 	}
 
 	/**
@@ -33,8 +35,8 @@ public class PageUtilities {
 	 * @param locator {@link org.openqa.selenium.By}
 	 */
 	public void waitForElementVisible(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(
-				ExpectedConditions.visibilityOfElementLocated(locator));
+		(new WebDriverWait(this.driver, Duration.ofSeconds(TIME_OUT_IN_SECONDS)))
+				.until(ExpectedConditions.visibilityOfElementLocated(locator));
 	}
 
 	/**
@@ -43,8 +45,8 @@ public class PageUtilities {
 	 * @param locator {@link org.openqa.selenium.By}
 	 */
 	public void waitForElementInvisible(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(
-				ExpectedConditions.invisibilityOfElementLocated(locator));
+		(new WebDriverWait(this.driver, Duration.ofSeconds(TIME_OUT_IN_SECONDS)))
+				.until(ExpectedConditions.invisibilityOfElementLocated(locator));
 	}
 
 	/**
@@ -53,12 +55,13 @@ public class PageUtilities {
 	 * @param locator {@link org.openqa.selenium.By}
 	 */
 	public void waitForElementToBeAbsent(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(
-				ExpectedConditions.invisibilityOfElementLocated(locator));
+		(new WebDriverWait(this.driver, Duration.ofSeconds(TIME_OUT_IN_SECONDS)))
+				.until(ExpectedConditions.invisibilityOfElementLocated(locator));
 	}
 
 	public void waitForElementToBeClickable(By locator) {
-		(new WebDriverWait(this.driver, TIME_OUT_IN_SECONDS)).until(ExpectedConditions.elementToBeClickable(locator));
+		(new WebDriverWait(this.driver, Duration.ofSeconds(TIME_OUT_IN_SECONDS)))
+				.until(ExpectedConditions.elementToBeClickable(locator));
 	}
 
 	public boolean checkSuccessNotification() {
@@ -68,7 +71,8 @@ public class PageUtilities {
 	private boolean checkNotyNotification(String type) {
 		boolean present = false;
 		try {
-			(new WebDriverWait(driver, 10)).until(ExpectedConditions.presenceOfElementLocated(By.className(type)));
+			(new WebDriverWait(driver, Duration.ofSeconds(10)))
+					.until(ExpectedConditions.presenceOfElementLocated(By.className(type)));
 			present = true;
 		} catch (NoSuchElementException e) {
 			present = false;

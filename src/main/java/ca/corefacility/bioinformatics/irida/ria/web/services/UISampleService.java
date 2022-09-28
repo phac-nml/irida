@@ -13,6 +13,8 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -72,7 +74,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import liquibase.util.csv.CSVWriter;
 
 /**
  * UI Service for samples
@@ -714,9 +715,9 @@ public class UISampleService {
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + ".csv\"");
 		response.setContentType("text/csv");
 		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(response.getOutputStream());
-		CSVWriter csvWriter = new CSVWriter(outputStreamWriter, ',');
-		csvWriter.writeAll(results);
-		csvWriter.flush();
-		csvWriter.close();
+		CSVPrinter printer = CSVFormat.DEFAULT.print(outputStreamWriter);
+		printer.printRecords(results);
+		printer.flush();
+		outputStreamWriter.close();
 	}
 }
