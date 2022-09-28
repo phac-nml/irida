@@ -44,4 +44,19 @@ public class CreatePasswordResetPage extends AbstractPage {
 			return false;
 		}
 	}
+
+	public boolean checkAccountDisabledMessage() {
+		try {
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10L));
+			wait.until(ExpectedConditions.presenceOfElementLocated(By.className("t-forgot-password-alert")));
+			WebElement element = driver.findElement(By.className("t-forgot-password-alert"));
+			wait.until(ExpectedConditions.textToBePresentInElement(element,
+					"If a user with the provided email address or username exists, and is enabled, you will receive an email with password reset instructions."));
+			return element.getText()
+					.contains(
+							"If a user with the provided email address or username exists, and is enabled, you will receive an email with password reset instructions.");
+		} catch (Exception e) {
+			return false;
+		}
+	}
 }
