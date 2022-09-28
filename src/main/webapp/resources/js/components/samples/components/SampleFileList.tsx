@@ -69,7 +69,7 @@ export function SampleFileList() {
       size="large"
       direction="vertical"
       style={{
-        height: `calc(80vh - ${HEADER_HEIGHT_WITH_PADDING}px - 156px)`,
+        height: `calc(80vh - ${HEADER_HEIGHT_WITH_PADDING}px - 157px)`,
         overflowY: "auto",
         width: `100%`,
         marginTop: SPACE_XS,
