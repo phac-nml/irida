@@ -36,6 +36,7 @@ export const stateMap = {
 const initialContext = {
   analysis: null,
   analysisName: null,
+  analysisIdentifier: null,
   analysisState: null,
   analysisType: null,
   analysisViewer: null,

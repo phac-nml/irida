@@ -77,12 +77,12 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 12L, "");
-		assertTrue(page.comparePageTitle("Bio Hansel Information"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Bio Hansel Information", "Page title should equal");
 
 		assertTrue(page.expectedNumberOfListItemsEqualsActual(5), "Has 5 list items for Bio Hansel Information");
 
 		page = AnalysisDetailsPage.initPage(driver(), 12L, "output");
-		assertTrue(page.comparePageTitle("Output File Preview"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Output File Preview", "Page title should equal");
 		assertEquals(1, page.getNumberOfFilesDisplayed(), "There should be one output file");
 		assertTrue(page.downloadAllFilesButtonVisible(), "There should be exactly one download all files button");
 		assertTrue(page.downloadOutputFileButtonVisible(1),
@@ -156,7 +156,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		// Submissions with trees and not sistr or biohansel
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "");
-		assertTrue(page.comparePageTitle("Tree Preview"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Tree Preview", "Page title should equal");
 		assertTrue(page.hasHorizontalTabLinks(), "Has horizontal tab links");
 
 		// Completed submission should not display steps component
@@ -165,7 +165,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Submissions without trees and not sistr or biohansel
 		page = AnalysisDetailsPage.initPage(driver(), 6L, "");
-		assertTrue(page.comparePageTitle("Output File Preview"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Output File Preview", "Page title should equal");
 		assertTrue(page.hasHorizontalTabLinks(), "Has horizontal tab links");
 
 		// Any other submission state should display steps component
@@ -262,25 +262,25 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 11L, "");
-		assertTrue(page.comparePageTitle("SISTR Information"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "SISTR Information", "Page title should equal");
 		assertTrue(page.hasSideBarTabLinks(), "Has vertical tabs for SISTR results and output files");
 
 		assertTrue(page.expectedNumberOfListItemsEqualsActual(9), "Has 9 list items for SISTR Information");
 
 		page = AnalysisDetailsPage.initPage(driver(), 11L, "sistr/cgmlst");
-		assertTrue(page.comparePageTitle("cgMLST330"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "cgMLST330", "Page title should equal");
 		assertTrue(page.expectedNumberOfListItemsEqualsActual(7), "Has 7 list items for cgMLST330");
 
 		page = AnalysisDetailsPage.initPage(driver(), 11L, "sistr/mash");
-		assertTrue(page.comparePageTitle("Mash"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Mash", "Page title should equal");
 		assertTrue(page.expectedNumberOfListItemsEqualsActual(4), "Has 4 list items for Mash");
 
 		page = AnalysisDetailsPage.initPage(driver(), 11L, "sistr/citation");
-		assertTrue(page.comparePageTitle("Citation"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Citation", "Page title should equal");
 		assertTrue(page.citationVisible(), "Page has a citation");
 
 		page = AnalysisDetailsPage.initPage(driver(), 11L, "output");
-		assertTrue(page.comparePageTitle("Output File Preview"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Output File Preview", "Page title should equal");
 		assertEquals(1, page.getNumberOfFilesDisplayed(), "There should be one output file");
 		assertTrue(page.downloadAllFilesButtonVisible(), "There should be exactly one download all files button");
 		assertTrue(page.downloadOutputFileButtonVisible(1),
@@ -293,13 +293,13 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "");
-		assertTrue(page.comparePageTitle("Tree Preview"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Tree Viewer", "Page title should equal");
 
 		page = AnalysisDetailsPage.initPage(driver(), 4L, "output");
-		assertTrue(page.comparePageTitle("Output File Preview"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Output File Preview", "Page title should equal");
 
 		page = AnalysisDetailsPage.initPage(driver(), 4L, "provenance");
-		assertTrue(page.comparePageTitle("Provenance"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Provenance", "Page title should equal");
 
 		page = AnalysisDetailsPage.initPage(driver(), 4L, "settings");
 		assertTrue(page.compareTabTitle("Details"), "Page title should equal");
@@ -356,7 +356,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Has tree file
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "");
-		assertTrue(page.comparePageTitle("Tree Preview"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Tree Preview", "Page title should equal");
 
 		assertTrue(page.treeToolsVisible(), "Tree shape tools are visible");
 		assertTrue(page.advancedPhylogeneticTreeButtonVisible(), "Advanced Phylogenetic Tree button is visible");

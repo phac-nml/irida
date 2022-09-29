@@ -15,8 +15,8 @@ export function ContentLoading({
   message = "Loading",
   ...props
 }: {
-  message: string;
-  props: SpinProps;
+  message?: string;
+  props?: SpinProps;
 }): JSX.Element {
   return (
     <span>

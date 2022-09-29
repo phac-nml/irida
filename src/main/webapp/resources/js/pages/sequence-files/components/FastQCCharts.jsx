@@ -9,7 +9,7 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { getFastQCImages } from "../../../apis/files/sequence-files";
 import { ContentLoading } from "../../../components/loader";
-import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
+import { TabPanelContent } from "../../../components/tabs/TabPanelContent";
 import { grey1, grey4 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 
@@ -55,7 +55,7 @@ export default function FastQCCharts() {
         <ContentLoading message={i18n("FastQC.fetchingCharts")} />
       ) : (
         <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
-          <TabPaneContent title={i18n("FastQC.charts")} xxl={16}>
+          <TabPanelContent title={i18n("FastQC.charts")} xxl={16}>
             <Typography.Paragraph>
               {i18n(
                 "FastQC.overrepresentedSequencesDescription",
@@ -85,7 +85,7 @@ export default function FastQCCharts() {
                 />
               </Col>
             </Row>
-          </TabPaneContent>
+          </TabPanelContent>
         </Layout>
       )}
     </div>

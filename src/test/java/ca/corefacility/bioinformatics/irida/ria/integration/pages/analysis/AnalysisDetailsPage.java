@@ -20,6 +20,9 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	public static final String RELATIVE_URL = "analysis/";
 
+	@FindBy(className = "ant-page-header-heading-title")
+	private List<WebElement> pageTitles;
+
 	@FindBy(className = "t-file-header")
 	private List<WebElement> files;
 
@@ -211,11 +214,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 *
 	 * @return {@link Boolean}
 	 */
-	public boolean comparePageTitle(String pageTitle) {
-		int titleFound = rootDiv.findElements(By.xpath("//span[contains(text(),'" + pageTitle + "')]"))
-				.size();
-
-		return titleFound > 0;
+	public String getTabContentTitle() {
+		return pageTitles.get(1).getText();
 	}
 
 	/**

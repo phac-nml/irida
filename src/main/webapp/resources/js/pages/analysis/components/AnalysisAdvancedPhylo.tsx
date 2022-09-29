@@ -3,16 +3,16 @@
  * advanced phylogenomics viewer for the analysis.
  */
 
-import { PageHeader } from "antd";
 import React, { useContext, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { WarningAlert } from "../../../components/alerts";
 import { ContentLoading } from "../../../components/loader";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { SPACE_XS } from "../../../styles/spacing";
 import { fetchTreeAndMetadataThunk, LoadingState } from "../redux/treeSlice";
+import { useAppDispatch, useAppSelector } from "../store";
 import LayoutComponent from "./phylocanvas/LayoutComponent";
 import styled from "styled-components";
+import { PageHeader } from "antd";
 
 const Header = styled(PageHeader)`
   height: 100%;
@@ -30,15 +30,17 @@ const Header = styled(PageHeader)`
 
 export default function AnalysisAdvancedPhylo(): JSX.Element {
   const { analysisIdentifier } = useContext(AnalysisContext);
-  const { error, loadingState } = useSelector((state) => state.tree.state);
-  const dispatch = useDispatch();
+  const { error, loadingState } = useAppSelector((state) => state.tree.state);
+  const dispatch = useAppDispatch();
 
   // On load gets the newick string for the analysis
   useEffect(() => {
-    dispatch(fetchTreeAndMetadataThunk(analysisIdentifier));
+    if (analysisIdentifier) {
+      dispatch(fetchTreeAndMetadataThunk(analysisIdentifier));
+    }
   }, [analysisIdentifier, dispatch]);
 
-  let content = null;
+  let content;
   switch (loadingState) {
     case LoadingState["error-loading"]:
       content = (

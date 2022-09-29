@@ -7,7 +7,7 @@ import React from "react";
 import { Layout, Table, Typography } from "antd";
 import { SPACE_MD } from "../../../styles/spacing";
 import { grey1 } from "../../../styles/colors";
-import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
+import { TabPanelContent } from "../../../components/tabs/TabPanelContent";
 import { Monospace } from "../../../components/typography";
 import { useFastQCDispatch, useFastQCState } from "../fastqc-context";
 
@@ -55,7 +55,7 @@ export default function OverRepresentedSequences() {
 
   return analysisFastQC ? (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
-      <TabPaneContent title={i18n("FastQC.overrepresentedSequences")}>
+      <TabPanelContent title={i18n("FastQC.overrepresentedSequences")}>
         <Typography.Paragraph className="text-info">
           {analysisFastQC.description}
         </Typography.Paragraph>
@@ -68,7 +68,7 @@ export default function OverRepresentedSequences() {
           dataSource={analysisFastQC.overrepresentedSequences}
           className="t-overrepresented-sequences-table"
         />
-      </TabPaneContent>
+      </TabPanelContent>
     </Layout>
   ) : null;
 }

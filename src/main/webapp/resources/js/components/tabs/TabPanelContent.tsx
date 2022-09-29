@@ -4,16 +4,27 @@
  */
 
 import React from "react";
-import { Col, PageHeader } from "antd";
+import { Col, PageHeader, PageHeaderProps } from "antd";
 
 import { SPACE_MD } from "../../styles/spacing";
 import styled from "styled-components";
+
+type TabPanelContentProps = {
+  title: string;
+  actionButton?: JSX.Element;
+  xs: number;
+  xl?: number;
+  xxl?: number;
+  children: JSX.Element;
+  props?: Partial<PageHeaderProps>;
+};
 
 const Column = styled(Col)`
   h2 {
     font-size: 16px;
   }
 `;
+
 /**
  * Stateless UI component for creating vertical tabs
  * @param {string} title - title for tab
@@ -27,7 +38,7 @@ const Column = styled(Col)`
  * @returns {Element} - Returns a component which displays the tab title and content
  */
 
-export function TabPaneContent({
+export function TabPanelContent({
   title,
   actionButton,
   xs = 24,
@@ -35,16 +46,26 @@ export function TabPaneContent({
   xxl = 12,
   children,
   ...props
-}) {
+}: TabPanelContentProps) {
   return (
-    <Column xs={xs} xl={xl} xxl={xxl}>
+    <Col
+      xs={xs}
+      xl={xl}
+      xxl={xxl}
+      style={{
+        height: `100%`,
+      }}
+    >
       <PageHeader
-        style={{ padding: 0, paddingBottom: SPACE_MD }}
+        style={{
+          padding: 0,
+          paddingBottom: SPACE_MD,
+        }}
         title={title}
         extra={actionButton}
         {...props}
       />
       {children}
-    </Column>
+    </Col>
   );
 }

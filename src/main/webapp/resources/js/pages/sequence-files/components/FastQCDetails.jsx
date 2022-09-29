@@ -7,7 +7,7 @@ import React from "react";
 import { Divider, Layout, Typography } from "antd";
 import { SPACE_MD } from "../../../styles/spacing";
 import { grey1 } from "../../../styles/colors";
-import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
+import { TabPanelContent } from "../../../components/tabs/TabPanelContent";
 import { BasicList } from "../../../components/lists";
 import { formatDate } from "../../../utilities/date-utilities";
 import { ContentLoading } from "../../../components/loader";
@@ -82,7 +82,7 @@ export default function FastQCDetails() {
 
   return (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
-      <TabPaneContent>
+      <TabPanelContent>
         {loading ? (
           <div>
             <ContentLoading message={i18n("FastQC.fetchingDetails")} />
@@ -100,7 +100,7 @@ export default function FastQCDetails() {
             <BasicList dataSource={sequenceDetails} />
           </div>
         )}
-      </TabPaneContent>
+      </TabPanelContent>
     </Layout>
   );
 }

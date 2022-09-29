@@ -13,7 +13,7 @@ import { showNotification } from "../../../../modules/notifications";
 
 import { deleteAnalysis } from "../../../../apis/analysis/analysis";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
-import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+import { TabPanelContent } from "../../../../components/tabs/TabPanelContent";
 import { SPACE_LG } from "../../../../styles/spacing";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 
@@ -42,7 +42,7 @@ export default function AnalysisDelete() {
 
   // The following renders the Delete Analysis component view
   return (
-    <TabPaneContent title={i18n("AnalysisDelete.deleteAnalysis")}>
+    <TabPanelContent title={i18n("AnalysisDelete.deleteAnalysis")}>
       <WarningAlert message={i18n("AnalysisDelete.permanentActionWarning")} />
 
       <section>
@@ -65,6 +65,6 @@ export default function AnalysisDelete() {
           </Button>
         </Popconfirm>
       </section>
-    </TabPaneContent>
+    </TabPanelContent>
   );
 }
