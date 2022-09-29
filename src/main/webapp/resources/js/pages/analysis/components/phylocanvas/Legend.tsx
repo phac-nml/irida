@@ -4,16 +4,22 @@ import { downloadObjectURL } from "../../../../utilities/file-utilities";
 import { setMetadataColourForTermWithValue } from "../../redux/treeSlice";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { exportLegendSVG } from "../../tree-utilities";
-import { LegendDownloadMenu } from "./LegendDownloadMenu";
+import {
+  HandleLegendSectionDownload,
+  LegendDownloadMenu,
+} from "./LegendDownloadMenu";
 import { LegendSection } from "./LegendSection";
 
+/**
+ * React component to render a legend for the phylocanvas viewer
+ */
 export function Legend(): JSX.Element {
   const { metadataColourMap, terms, treeProps } = useAppSelector(
     (state) => state.tree
   );
   const dispatch = useAppDispatch();
 
-  const onItemClick = (term: string) => {
+  const onItemClick: HandleLegendSectionDownload = (term: string) => {
     const blob = exportLegendSVG(term, metadataColourMap, treeProps);
     const url = window.URL.createObjectURL(blob);
     downloadObjectURL(url, `${term}-legend.svg`);

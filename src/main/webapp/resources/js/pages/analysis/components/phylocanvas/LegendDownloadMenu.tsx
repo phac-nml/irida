@@ -1,4 +1,4 @@
-import { MenuOutlined } from "@ant-design/icons";
+import { DownloadOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Menu } from "antd";
 import React from "react";
 import styled from "styled-components";
@@ -12,7 +12,21 @@ const DownloadMenuItem = styled(Menu.Item)`
   }
 `;
 
-export function LegendDownloadMenu({ terms, onItemClick }) {
+export type HandleLegendSectionDownload = (term: string) => void;
+
+type LegendDownloadMenuProps = {
+  onItemClick: HandleLegendSectionDownload;
+  terms: string[];
+};
+
+/**
+ * React component to render a menu for download individual sections of the phylocanvas
+ * colour menu.
+ */
+export function LegendDownloadMenu({
+  terms,
+  onItemClick,
+}: LegendDownloadMenuProps) {
   const menu = (
     <Menu style={{ width: 250 }}>
       <Menu.ItemGroup title="Download as SVG"></Menu.ItemGroup>
@@ -25,7 +39,7 @@ export function LegendDownloadMenu({ terms, onItemClick }) {
           <DownloadMenuItem
             key={term}
             title={title}
-            onClick={() => onItemClick(term, )}
+            onClick={() => onItemClick(term)}
           >
             {title}
           </DownloadMenuItem>
@@ -36,7 +50,7 @@ export function LegendDownloadMenu({ terms, onItemClick }) {
 
   return (
     <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
-      <Button shape="circle" icon={<MenuOutlined />} />
+      <Button shape="circle" icon={<DownloadOutlined />} />
     </Dropdown>
   );
 }
