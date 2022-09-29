@@ -42,20 +42,24 @@ export function DownloadMenu({ treeRef }: DownloadMenuProps) {
 
   const menu = (
     <Menu>
-      <Menu.Item key="1" onClick={downloadNewick}>
+      <Menu.Item key="newick" onClick={downloadNewick}>
         {i18n("visualization.phylogenomics.button.download.newick")}
       </Menu.Item>
-      <Menu.Item key="2" onClick={downloadSVG}>
-        {i18n("visualization.phylogenomics.button.download.svg")}
-      </Menu.Item>
-      <Menu.Item key="3" onClick={downloadPNG}>
+      <Menu.Item key="png" onClick={downloadPNG}>
         {i18n("visualization.phylogenomics.button.download.png")}
+      </Menu.Item>
+      <Menu.Item key="svg" onClick={downloadSVG}>
+        {i18n("visualization.phylogenomics.button.download.svg")}
       </Menu.Item>
     </Menu>
   );
 
   return (
-    <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
+    <Dropdown
+      overlay={menu}
+      placement="bottomRight"
+      trigger={["click", "hover"]}
+    >
       <Button shape="circle" icon={<DownloadOutlined />} />
     </Dropdown>
   );

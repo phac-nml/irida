@@ -29,25 +29,25 @@ export default function PhylocanvasShapeDropDown() {
     };
   } = useMemo(
     () => ({
-      [TreeTypes.Rectangular]: {
-        icon: <PhyloRectangleIcon />,
-        title: i18n("PhylocanvasShapeDropDown.rectangular"),
-      },
-      [TreeTypes.Radial]: {
-        icon: <PhyloRadialIcon />,
-        title: i18n("PhylocanvasShapeDropDown.radial"),
+      [TreeTypes.Circular]: {
+        icon: <PhyloCircularIcon />,
+        title: i18n("PhylocanvasShapeDropDown.circular"),
       },
       [TreeTypes.Diagonal]: {
         icon: <PhyloDiagonalIcon />,
         title: i18n("PhylocanvasShapeDropDown.diagonal"),
       },
-      [TreeTypes.Circular]: {
-        icon: <PhyloCircularIcon />,
-        title: i18n("PhylocanvasShapeDropDown.circular"),
-      },
       [TreeTypes.Hierarchical]: {
         icon: <PhyloHierarchicalIcon />,
         title: i18n("PhylocanvasShapeDropDown.hierarchical"),
+      },
+      [TreeTypes.Radial]: {
+        icon: <PhyloRadialIcon />,
+        title: i18n("PhylocanvasShapeDropDown.radial"),
+      },
+      [TreeTypes.Rectangular]: {
+        icon: <PhyloRectangleIcon />,
+        title: i18n("PhylocanvasShapeDropDown.rectangular"),
       },
     }),
     []
@@ -74,7 +74,11 @@ export default function PhylocanvasShapeDropDown() {
   );
 
   return (
-    <Dropdown overlay={overlay} trigger={["click"]}>
+    <Dropdown
+      overlay={overlay}
+      trigger={["click", "hover"]}
+      placement="bottomRight"
+    >
       <Button
         title={types[type].title}
         style={{ backgroundColor: `var(--grey-1)` }}
