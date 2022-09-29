@@ -1,10 +1,16 @@
-import { ColumnHeightOutlined, ColumnWidthOutlined, DragOutlined, ZoomInOutlined, ZoomOutOutlined } from "@ant-design/icons";
+import {
+  ColumnHeightOutlined,
+  ColumnWidthOutlined,
+  DragOutlined,
+  ZoomInOutlined,
+  ZoomOutOutlined,
+} from "@ant-design/icons";
 import { Button, Divider, Tooltip } from "antd";
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { grey1 } from "../../../../styles/colors";
 import { setZoomMode, zoomIn, zoomOut } from "../../redux/treeSlice";
+import { useAppSelector } from "../../store";
 
 const VerticalButtonBar = styled.div`
   display: flex;
@@ -14,26 +20,30 @@ const VerticalButtonBar = styled.div`
   right: 4px;
   bottom: 4px;
   user-select: none;
-  background-color: ${grey1};
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  background-color: var(--grey-1);
+  box-shadow: rgba(0, 0, 0, 0.16) 0 1px 4px;
   .ant-divider-horizontal {
     margin: 0;
   }
 `;
 
-const zoomModeIcons = {
+const zoomModeIcons: Record<number, JSX.Element> = {
   0: <DragOutlined />,
   1: <ColumnWidthOutlined />,
-  2: <ColumnHeightOutlined />
+  2: <ColumnHeightOutlined />,
 };
 
-export function ZoomButtons() {
-  const {zoomMode} = useSelector((state) => state.tree);
+/**
+ * React component to render zoom button capability for the phylogenetic tree.
+ * @constructor
+ */
+export function ZoomButtons(): JSX.Element {
+  const { zoomMode } = useAppSelector((state) => state.tree);
   const dispatch = useDispatch();
 
   const onZoomModeClick = () => {
     dispatch(setZoomMode((zoomMode + 1) % 3));
-  }
+  };
 
   const onZoomInClick = () => {
     dispatch(zoomIn());
@@ -45,15 +55,17 @@ export function ZoomButtons() {
 
   return (
     <VerticalButtonBar>
-      <Tooltip placement="left" title={i18n("visualization.phylogenomics.zoom.zoom-in")}>
-        <Button
-          icon={<ZoomInOutlined />}
-          onClick={onZoomInClick}
-          type="text"
-        />
+      <Tooltip
+        placement="left"
+        title={i18n("visualization.phylogenomics.zoom.zoom-in")}
+      >
+        <Button icon={<ZoomInOutlined />} onClick={onZoomInClick} type="text" />
       </Tooltip>
       <Divider />
-      <Tooltip placement="left" title={i18n("visualization.phylogenomics.zoom.zoom-toggle")}>
+      <Tooltip
+        placement="left"
+        title={i18n("visualization.phylogenomics.zoom.zoom-toggle")}
+      >
         <Button
           icon={zoomModeIcons[zoomMode]}
           onClick={onZoomModeClick}
@@ -61,7 +73,10 @@ export function ZoomButtons() {
         />
       </Tooltip>
       <Divider />
-      <Tooltip placement="left" title={i18n("visualization.phylogenomics.zoom.zoom-out")}>
+      <Tooltip
+        placement="left"
+        title={i18n("visualization.phylogenomics.zoom.zoom-out")}
+      >
         <Button
           icon={<ZoomOutOutlined />}
           onClick={onZoomOutClick}
