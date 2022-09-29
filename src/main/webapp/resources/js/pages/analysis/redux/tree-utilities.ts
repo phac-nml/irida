@@ -158,6 +158,15 @@ export type FetchMetadataTemplateFieldsResponse = {
   index?: number;
 };
 
+/**
+ * Fetch template metadata fields for a specific template
+ *   1. If the template is "All Fields" --> return all fields
+ *   2. If the template does not exist --> return no fields
+ *   3. If the template fields have already been downloaded --> return them
+ *   4. If not downloaded --> fetch them from server --> return them
+ * @param param0
+ * @returns
+ */
 export async function fetchMetadataTemplateFields({
   index,
   analysisId,
@@ -169,19 +178,18 @@ export async function fetchMetadataTemplateFields({
   } else if (index > templates.length) {
     return { fields: [] };
   } else {
-    if ("fields" in templates[index]) {
+    if (templates[index]?.fields !== undefined) {
+      const { fields } = templates[index];
       return {
-        fields: templates[index].fields,
+        fields: fields === undefined ? [] : fields,
       };
     } else {
       const data = await getMetadataTemplateFields(
         analysisId,
         templates[index].id
       );
-      let fields = [];
-      if (data.fields) {
-        fields = data.fields.filter((field) => terms.includes(field));
-      }
+      const fields =
+        data.fields?.filter((field) => terms.includes(field)) || [];
       return {
         fields,
         index,

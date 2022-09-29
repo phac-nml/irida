@@ -4,7 +4,6 @@ import {
   PayloadAction,
   SerializedError,
 } from "@reduxjs/toolkit";
-import { fetchTreeAndMetadataThunk } from "./treeSlice";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { TreeTypes } from "@phylocanvas/phylocanvas.gl";

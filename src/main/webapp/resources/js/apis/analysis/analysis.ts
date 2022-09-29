@@ -4,6 +4,7 @@
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { Template } from "../../types/phylocanvas";
+import { get } from "../requests";
 
 const ANALYSES_URL = setBaseUrl(`/ajax/analyses`);
 
@@ -351,15 +352,10 @@ export async function getMetadataTemplates(
 export async function getMetadataTemplateFields(
   submissionId: number,
   templateId: number
-) {
-  try {
-    const res = await axios.get(
-      `${ANALYSIS_URL}/${submissionId}/metadata-template-fields?templateId=${templateId}`
-    );
-    return res.data;
-  } catch (error) {
-    return { error };
-  }
+): Promise<{ fields: string[] }> {
+  return get(
+    `${ANALYSIS_URL}/${submissionId}/metadata-template-fields?templateId=${templateId}`
+  );
 }
 
 /**
