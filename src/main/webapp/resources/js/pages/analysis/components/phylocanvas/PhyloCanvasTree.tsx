@@ -1,5 +1,6 @@
 import React from "react";
-import { useSelector } from "react-redux";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import * as phylocanvas from "@phylocanvas/phylocanvas.gl";
 import { Space } from "antd";
 import { MetadataMenu } from "./MetadataMenu";
@@ -16,8 +17,8 @@ interface PhyloCanvasTreeProps {
 }
 
 export function PhyloCanvasTree({ height, width }: PhyloCanvasTreeProps) {
-  const canvasRef = React.useRef();
-  const treeRef = React.useRef<PhyloCanvas>();
+  const canvasRef = React.useRef<null | HTMLDivElement>(null);
+  const treeRef = React.useRef<null | PhyloCanvas>(null);
   const treeProps = useAppSelector(getTreeProps);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -58,7 +59,7 @@ export function PhyloCanvasTree({ height, width }: PhyloCanvasTreeProps) {
   return (
     <div ref={canvasRef}>
       <Space
-        align="top"
+        align="start"
         style={{
           position: "absolute",
           zIndex: 4,

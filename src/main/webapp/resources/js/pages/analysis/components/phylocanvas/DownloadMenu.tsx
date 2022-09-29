@@ -1,31 +1,43 @@
-import { MenuOutlined } from "@ant-design/icons";
+import { DownloadOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Menu } from "antd";
 import React from "react";
-import { downloadObjectURL } from "../../../../utilities/file-utilities";
 import { PhyloCanvas } from "../../../../types/phylocanvas";
+import { downloadObjectURL } from "../../../../utilities/file-utilities";
 
 interface DownloadMenuProps {
-  treeRef: React.MutableRefObject<PhyloCanvas>;
+  treeRef: React.MutableRefObject<null | PhyloCanvas>;
 }
 
+/**
+ * React component to render a drop-down menu allowing the user to download
+ * an SVG version of the phylogenetic tree.
+ * @param treeRef - react ref to the PhyloCanvas instance.
+ * @constructor
+ */
 export function DownloadMenu({ treeRef }: DownloadMenuProps) {
   const downloadNewick = () => {
-    const blob = new Blob([treeRef.current.exportNewick()], {
-      type: "text/plain",
-    });
-    const url = window.URL.createObjectURL(blob);
-    downloadObjectURL(url, `tree.newick`);
+    if (treeRef.current) {
+      const blob = new Blob([treeRef.current.exportNewick()], {
+        type: "text/plain",
+      });
+      const url = window.URL.createObjectURL(blob);
+      downloadObjectURL(url, `tree.newick`);
+    }
   };
 
   const downloadSVG = () => {
-    const blob = treeRef.current.exportSVG();
-    const url = window.URL.createObjectURL(blob);
-    downloadObjectURL(url, `tree.svg`);
+    if (treeRef.current) {
+      const blob = treeRef.current.exportSVG();
+      const url = window.URL.createObjectURL(blob);
+      downloadObjectURL(url, `tree.svg`);
+    }
   };
 
   const downloadPNG = () => {
-    const url = treeRef.current.exportPNG();
-    downloadObjectURL(url, `tree.png`);
+    if (treeRef.current) {
+      const url = treeRef.current.exportPNG();
+      downloadObjectURL(url, `tree.png`);
+    }
   };
 
   const menu = (
@@ -44,7 +56,7 @@ export function DownloadMenu({ treeRef }: DownloadMenuProps) {
 
   return (
     <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
-      <Button shape="circle" icon={<MenuOutlined />} />
+      <Button shape="circle" icon={<DownloadOutlined />} />
     </Dropdown>
   );
 }

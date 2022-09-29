@@ -8,14 +8,15 @@ import { Shapes } from "@phylocanvas/phylocanvas.gl";
 
 declare namespace PHYLOCANVAS {
   interface PhyloCanvas {
+    exportNewick: () => BlobPart;
+    exportSVG: () => Blob;
+    exportPNG: () => string;
+    destroy: () => void;
     setProps: (props: Partial<TreeProperties>) => void;
     size: {
       height: number;
       width: number;
     };
-    exportNewick: () => BlobPart;
-    exportSVG: () => Blob;
-    exportPNG: () => string;
   }
 
   interface TreeProperties {
