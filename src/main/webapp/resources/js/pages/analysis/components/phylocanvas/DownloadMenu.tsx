@@ -55,11 +55,7 @@ export function DownloadMenu({ treeRef }: DownloadMenuProps) {
   );
 
   return (
-    <Dropdown
-      overlay={menu}
-      placement="bottomRight"
-      trigger={["click", "hover"]}
-    >
+    <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
       <Button shape="circle" icon={<DownloadOutlined />} />
     </Dropdown>
   );

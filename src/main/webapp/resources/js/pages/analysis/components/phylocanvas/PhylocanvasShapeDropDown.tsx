@@ -74,11 +74,7 @@ export default function PhylocanvasShapeDropDown() {
   );
 
   return (
-    <Dropdown
-      overlay={overlay}
-      trigger={["click", "hover"]}
-      placement="bottomRight"
-    >
+    <Dropdown overlay={overlay} trigger={["click"]} placement="bottomRight">
       <Button
         title={types[type].title}
         style={{ backgroundColor: `var(--grey-1)` }}
