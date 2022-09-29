@@ -39,7 +39,7 @@ declare namespace PHYLOCANVAS {
   }
 
   interface MetadataColourMap {
-    [key: string]: { [key: string]: string };
+    [key: string]: Record<string, string>;
   }
 
   type Size = { height: number; width: number };
