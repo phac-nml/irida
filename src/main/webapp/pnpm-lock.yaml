@@ -88,9 +88,6 @@ specifiers:
   lodash: ^4.17.21
   mini-css-extract-plugin: ^2.6.0
   moment: ^2.29.2
-  phylocanvas: ^2.8.1
-  phylocanvas-plugin-export-svg: ^1.0.0
-  phylocanvas-plugin-metadata: ^2.2.0
   postcss: ^8.4.12
   postcss-import: ^14.1.0
   postcss-loader: ^6.2.1
@@ -178,9 +175,6 @@ dependencies:
   jquery-validation: 1.19.3_jquery@3.5.1
   lodash: 4.17.21
   moment: 2.29.2
-  phylocanvas: 2.8.1
-  phylocanvas-plugin-export-svg: 1.0.0
-  phylocanvas-plugin-metadata: 2.2.0
   postcss-nested: 5.0.6_postcss@8.4.12
   process: 0.11.10
   qs: 6.10.3
@@ -7014,18 +7008,6 @@ packages:
     dependencies:
       ieee754: 1.2.1
       resolve-protobuf-schema: 2.1.0
-    dev: false
-
-  /phylocanvas-plugin-export-svg/1.0.0:
-    resolution: {integrity: sha512-BggTkZHIUV/5vYGQu41FDzHBOdkQKkCLbypn+3s66iDRnlECT/uWsa8N6tEgSqY34g6B61G4YmfjkVpfxsCV+Q==}
-    dev: false
-
-  /phylocanvas-plugin-metadata/2.2.0:
-    resolution: {integrity: sha512-Ssic6yXdIhT8EHiYVBNpZA4m980QXD4jsgqFlZy1naZtQvNuvSSaxik0mLuqwR1xyKCtuussV4uLdmXGr4hodg==}
-    dev: false
-
-  /phylocanvas/2.8.1:
-    resolution: {integrity: sha512-FNJRWmlqGTwn/7ZssLJZ1/n2pQZFgXOh7QE+wwNiEhUYIsnp0faWYaXblTTnwAwZrL1uPHcHoLz1yrum5bV5+g==}
     dev: false
 
   /picocolors/1.0.0:
