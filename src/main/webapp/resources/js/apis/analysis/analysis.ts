@@ -3,6 +3,7 @@
  */
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { Template } from "../../types/phylocanvas";
 
 const ANALYSES_URL = setBaseUrl(`/ajax/analyses`);
 
@@ -316,21 +317,28 @@ export async function getMetadata(
   }
 }
 
-export type MetadataTemplatesResponse = {}; // TODO: Flush this out
+export type MetadataTemplatesResponse = {
+  templates: Template[];
+  error?: string;
+};
 
 /**
  * Get the metadata templates for the submission.
- * @param {number} submissionId
- * @returns {Promise<*>} `data` contains the OK response; `error` contains error information if an error occured.
+ * @param submissionId
  */
-export async function getMetadataTemplates(submissionId) {
+export async function getMetadataTemplates(
+  submissionId: number
+): Promise<MetadataTemplatesResponse> {
   try {
     const res = await axios.get(
       `${ANALYSIS_URL}/${submissionId}/metadata-templates`
     );
     return res.data;
   } catch (error) {
-    return { error };
+    if (typeof error === "string") {
+      return { error, templates: [] };
+    }
+    throw new Error("Unknown error thrown, expected a string");
   }
 }
 

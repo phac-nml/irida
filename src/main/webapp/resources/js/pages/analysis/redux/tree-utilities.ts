@@ -7,9 +7,14 @@ import {
   Metadata,
   MetadataItem,
   MetadataResponse,
+  MetadataTemplatesResponse,
   NewickTreeResponse,
 } from "../../../apis/analysis/analysis";
-import { MetadataColourMap, TreeProperties } from "../../../types/phylocanvas";
+import {
+  MetadataColourMap,
+  Template,
+  TreeProperties,
+} from "../../../types/phylocanvas";
 import { LoadingState } from "./treeSlice";
 
 const EMPTY_COLOUR = "#ffffff";
@@ -100,7 +105,11 @@ export type FetchTreeAndMetadataResponse = {
 export async function fetchTreeAndMetadata(
   analysisId: number
 ): Promise<FetchTreeAndMetadataResponse> {
-  const promises: [NewickTreeResponse, MetadataResponse, any] = [
+  const promises: [
+    NewickTreeResponse,
+    MetadataResponse,
+    MetadataTemplatesResponse
+  ] = [
     await getNewickTree(analysisId),
     await getMetadata(analysisId),
     await getMetadataTemplates(analysisId),
@@ -111,9 +120,7 @@ export async function fetchTreeAndMetadata(
 
   // Check for errors
   if (!newickData.newick) {
-    throw new Error(
-      newickData.message ? newickData.message : newickData.error.message
-    );
+    throw new Error(newickData.message ? newickData.message : newickData.error);
   }
 
   const metadataColourMap = generateColourMap({ metadata, terms });
@@ -143,7 +150,7 @@ type FetchMetadataTemplateFieldsParams = {
   index: number;
   analysisId: number;
   terms: string[];
-  templates: { id: number; label: string }[];
+  templates: Template[];
 };
 
 export type FetchMetadataTemplateFieldsResponse = {
@@ -163,7 +170,9 @@ export async function fetchMetadataTemplateFields({
     return { fields: [] };
   } else {
     if ("fields" in templates[index]) {
-      return { fields: templates[index].fields };
+      return {
+        fields: templates[index].fields,
+      };
     } else {
       const data = await getMetadataTemplateFields(
         analysisId,
