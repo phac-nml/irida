@@ -1,7 +1,22 @@
 import { Switch, Typography } from "antd";
 import React from "react";
 
-export function MetadataSelectAll({ checked, onChange }) {
+type MetadataSelectAllProps = {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+};
+
+/**
+ * React component to display / select whether all metadata fields
+ * should be displayed along with the tree.
+ * @param checked - true if all fields should be displayed else false
+ * @param onChange - function to call when checked is changed
+ * @constructor
+ */
+export function MetadataSelectAll({
+  checked,
+  onChange,
+}: MetadataSelectAllProps) {
   return (
     <div
       style={{
