@@ -29,7 +29,7 @@ export function LegendDownloadMenu({
 }: LegendDownloadMenuProps) {
   const menu = (
     <Menu style={{ width: 250 }}>
-      <Menu.ItemGroup title="Download as SVG"></Menu.ItemGroup>
+      <Menu.ItemGroup title={i18n("LegendDownloadMenu.title")}></Menu.ItemGroup>
       {terms.map((term) => {
         const title = i18n(
           "visualization.phylogenomics.sidebar.legend.colour-by",

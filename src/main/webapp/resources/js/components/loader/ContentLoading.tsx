@@ -3,7 +3,7 @@
  * when data for a page is loading.
  */
 
-import React, { ComponentProps, Props } from "react";
+import React from "react";
 import { Spin, SpinProps } from "antd";
 import { SPACE_SM } from "../../styles/spacing";
 
