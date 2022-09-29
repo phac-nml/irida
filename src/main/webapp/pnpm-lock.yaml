@@ -48,7 +48,6 @@ specifiers:
   ag-grid-community: ^27.1.0
   ag-grid-react: ^27.1.0
   angular: 1.8.3
-  angular-aside: ^1.4.0
   angular-ui-bootstrap: ^2.5.6
   antd: 4.19.5
   autoprefixer: ^10.4.4
@@ -152,7 +151,6 @@ dependencies:
   ag-grid-community: 27.1.0
   ag-grid-react: 27.1.0_w6hrqnyrd37qujkkojqwgzxsou
   angular: 1.8.3
-  angular-aside: 1.4.0_angular-ui-bootstrap@2.5.6
   angular-ui-bootstrap: 2.5.6
   antd: 4.19.5_sfoxds7t5ydpegc3knd667wn6m
   axios: 0.26.1
@@ -3318,15 +3316,6 @@ packages:
       require-from-string: 2.0.2
       uri-js: 4.4.1
     dev: true
-
-  /angular-aside/1.4.0_angular-ui-bootstrap@2.5.6:
-    resolution: {integrity: sha512-oQgBMwbuurauswIoqLvnmypUJlm73Yg2H3/szDhCAPR7GqNs5yHBoOzs57dh6TiIYxNt6hQBwkHY6sius6/aPw==}
-    engines: {node: '>=0.10.0'}
-    peerDependencies:
-      angular-ui-bootstrap: '>=0.14.0'
-    dependencies:
-      angular-ui-bootstrap: 2.5.6
-    dev: false
 
   /angular-ui-bootstrap/2.5.6:
     resolution: {integrity: sha512-yzcHpPMLQl0232nDzm5P4iAFTFQ9dMw0QgFLuKYbDj9M0xJ62z0oudYD/Lvh1pWfRsukiytP4Xj6BHOSrSXP8A==}
