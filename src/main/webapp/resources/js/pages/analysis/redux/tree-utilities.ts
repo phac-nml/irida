@@ -1,3 +1,4 @@
+import uniqolor from "uniqolor";
 import {
   getMetadata,
   getMetadataTemplateFields,
@@ -8,9 +9,8 @@ import {
   MetadataResponse,
   NewickTreeResponse,
 } from "../../../apis/analysis/analysis";
-import { LoadingState } from "./treeSlice";
-import uniqolor from "uniqolor";
 import { MetadataColourMap, TreeProperties } from "../../../types/phylocanvas";
+import { LoadingState } from "./treeSlice";
 
 const EMPTY_COLOUR = "#ffffff";
 
@@ -57,9 +57,7 @@ export function formatMetadata(
   metadata: Metadata,
   terms: string[],
   colourMap: MetadataColourMap
-): {
-  [key: string]: { label: string; value: string };
-} {
+): Metadata {
   const sampleMetadataTemplate = () => {
     return terms.reduce((prev, curr) => {
       return Object.assign(prev, {

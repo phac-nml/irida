@@ -3,8 +3,6 @@ import { Metadata } from "../../apis/analysis/analysis";
 export = PHYLOCANVAS;
 export as namespace PHYLOCANVAS;
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { Shapes } from "@phylocanvas/phylocanvas.gl";
 
 declare namespace PHYLOCANVAS {
   interface PhyloCanvas {
@@ -28,7 +26,7 @@ declare namespace PHYLOCANVAS {
     fontSize: number;
     interactive: boolean;
     metadata: Metadata;
-    nodeShape: Shapes.Dot; // TODO: Do we want more options on right click or something?
+    nodeShape: "dot";
     padding: number;
     showBlockHeaders: boolean;
     showLabels: boolean;

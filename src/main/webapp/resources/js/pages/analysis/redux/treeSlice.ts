@@ -1,7 +1,21 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  PayloadAction,
+  SerializedError,
+} from "@reduxjs/toolkit";
+import { fetchTreeAndMetadataThunk } from "./treeSlice";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { Shapes, TreeTypes } from "@phylocanvas/phylocanvas.gl";
+import { TreeTypes } from "@phylocanvas/phylocanvas.gl";
+import { Metadata } from "../../../apis/analysis/analysis";
+import {
+  MetadataColourMap,
+  Template,
+  TreeProperties,
+  TreeType,
+} from "../../../types/phylocanvas";
+import { RootState } from "../store";
 import {
   fetchMetadataTemplateFields,
   FetchMetadataTemplateFieldsResponse,
@@ -9,13 +23,6 @@ import {
   FetchTreeAndMetadataResponse,
   formatMetadata,
 } from "./tree-utilities";
-import {
-  MetadataColourMap,
-  Template,
-  TreeProperties,
-} from "../../../types/phylocanvas";
-import { RootState } from "../store";
-import { Metadata } from "../../../apis/analysis/analysis";
 
 const ZOOM_STEP_SIZE = 0.1;
 
@@ -68,14 +75,14 @@ export enum LoadingState {
 export type TreeState = {
   analysisId: number;
   metadata: Metadata;
+  metadataColourMap: MetadataColourMap;
   state: {
-    error: undefined | string;
+    error: undefined | SerializedError;
     loadingState: LoadingState;
   };
   treeProps: TreeProperties;
   templates: Template[];
   terms: string[];
-  metadataColourMap: MetadataColourMap;
   zoomMode: number;
 };
 
@@ -96,12 +103,13 @@ const initialState = {
     fontSize: 16,
     interactive: true,
     metadata: {},
-    nodeShape: Shapes.Dot,
+    nodeShape: "dot",
     padding: 20,
     showBlockHeaders: true,
     showLabels: true,
     showLeafLabels: true,
     stepZoom: 0,
+    size: { height: 0, width: 0 },
     source: "",
     type: TreeTypes.Rectangular,
     zoom: -0.1,
@@ -111,21 +119,59 @@ const initialState = {
   zoomMode: 0,
 } as TreeState;
 
+type UpdateTreeTypePayload = {
+  treeType: TreeType;
+};
+
+type SelectAllTermsPayload = {
+  checked: boolean;
+};
+
+type SetFieldVisibilityPayload = {
+  field: string;
+  visible: boolean;
+  only: boolean;
+};
+
+type SetMetadataColourForTermWithValuePayload = {
+  item: string;
+  key: string;
+  colour: string;
+};
+
+type FetchTreeAndMetadataThunkPayload = {
+  loadingState: LoadingState;
+  analysisId: number;
+  treeProps: Partial<TreeProperties>;
+  metadata: Metadata;
+  metadataColourMap: MetadataColourMap;
+  terms: string[];
+  templates: Template[];
+};
+
+type FetchMetadataTemplateFieldsThunkPayload = {
+  fields: string[];
+  index?: number | undefined;
+};
+
 export const treeSlice = createSlice({
   name: "treeSlice",
   initialState,
   reducers: {
-    updateTreeType: (state, action) => {
+    updateTreeType: (state, action: PayloadAction<UpdateTreeTypePayload>) => {
       state.treeProps.type = action.payload.treeType;
     },
-    selectAllTerms: (state, action) => {
+    selectAllTerms: (state, action: PayloadAction<SelectAllTermsPayload>) => {
       if (action.payload.checked) {
         state.treeProps.blocks = state.terms;
       } else {
         state.treeProps.blocks = [];
       }
     },
-    setFieldVisibility: (state, action) => {
+    setFieldVisibility: (
+      state,
+      action: PayloadAction<SetFieldVisibilityPayload>
+    ) => {
       const { field, visible, only } = action.payload;
       if (only && visible) {
         state.treeProps.blocks = [field];
@@ -137,7 +183,10 @@ export const treeSlice = createSlice({
         );
       }
     },
-    setMetadataColourForTermWithValue: (state, action) => {
+    setMetadataColourForTermWithValue: (
+      state,
+      action: PayloadAction<SetMetadataColourForTermWithValuePayload>
+    ) => {
       const { item, key, colour } = action.payload;
       if (colour !== state.metadataColourMap[item][key]) {
         state.metadataColourMap[item][key] = colour;
@@ -148,7 +197,7 @@ export const treeSlice = createSlice({
         );
       }
     },
-    setZoomMode: (state, action) => {
+    setZoomMode: (state, action: PayloadAction<number>) => {
       state.zoomMode = action.payload;
     },
     zoomIn: (state) => {
@@ -177,22 +226,28 @@ export const treeSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchTreeAndMetadataThunk.fulfilled, (state, action) => {
-      state.state.loadingState = action.payload.loadingState;
-      state.analysisId = action.payload.analysisId;
-      state.treeProps = { ...state.treeProps, ...action.payload.treeProps };
-      state.metadata = action.payload.metadata;
-      state.metadataColourMap = action.payload.metadataColourMap;
-      state.terms = action.payload.terms;
-      state.templates = action.payload.templates;
-    });
+    builder.addCase(
+      fetchTreeAndMetadataThunk.fulfilled,
+      (state, action: PayloadAction<FetchTreeAndMetadataThunkPayload>) => {
+        state.state.loadingState = action.payload.loadingState;
+        state.analysisId = action.payload.analysisId;
+        state.treeProps = { ...state.treeProps, ...action.payload.treeProps };
+        state.metadata = action.payload.metadata;
+        state.metadataColourMap = action.payload.metadataColourMap;
+        state.terms = action.payload.terms;
+        state.templates = action.payload.templates;
+      }
+    );
     builder.addCase(fetchTreeAndMetadataThunk.rejected, (state, action) => {
       state.state.error = action.error;
       state.state.loadingState = LoadingState["error-loading"];
     });
     builder.addCase(
       fetchMetadataTemplateFieldsThunk.fulfilled,
-      (state, action) => {
+      (
+        state,
+        action: PayloadAction<FetchMetadataTemplateFieldsThunkPayload>
+      ) => {
         state.treeProps.blocks = action.payload.fields;
         if (action.payload.index) {
           state.templates[action.payload.index].fields = action.payload.fields;
