@@ -199,7 +199,7 @@ export function SampleMetadataImportReview() {
   };
 
   return (
-    <SampleMetadataImportWizard currentStep={2} currentPercent={progress}>
+    <SampleMetadataImportWizard current={2} percent={progress}>
       <Text>{i18n("SampleMetadataImportReview.description")}</Text>
       {!valid && (
         <Alert

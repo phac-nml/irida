@@ -41,7 +41,7 @@ export function SampleMetadataImportMapHeaders() {
   };
 
   return (
-    <SampleMetadataImportWizard currentStep={1}>
+    <SampleMetadataImportWizard current={1}>
       <Text>{i18n("SampleMetadataImportMapHeaders.description")}</Text>
       <Radio.Group
         style={{ width: `100%` }}

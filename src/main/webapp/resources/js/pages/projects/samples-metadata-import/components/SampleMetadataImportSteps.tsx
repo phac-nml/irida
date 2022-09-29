@@ -1,6 +1,5 @@
 import React from "react";
-import { Steps } from "antd";
-import { StepsProps } from "antd/lib/steps";
+import { Steps, StepsProps } from "antd";
 
 const { Step } = Steps;
 

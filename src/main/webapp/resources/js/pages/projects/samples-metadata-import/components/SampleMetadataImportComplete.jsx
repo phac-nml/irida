@@ -58,7 +58,7 @@ export function SampleMetadataImportComplete() {
   }, []);
 
   return (
-    <SampleMetadataImportWizard currentStep={3}>
+    <SampleMetadataImportWizard current={3}>
       <Result
         status="success"
         title={i18n("SampleMetadataImportComplete.result.title")}

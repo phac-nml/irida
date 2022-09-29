@@ -1,24 +1,31 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { PageHeader, Space } from "antd";
+import { PageHeader, Space, StepsProps } from "antd";
 import { SampleMetadataImportSteps } from "./SampleMetadataImportSteps";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 
+interface SampleMetadataImportWizardProps {
+  current: StepsProps["current"];
+  status?: StepsProps["status"];
+  percent?: StepsProps["percent"];
+  children?: React.ReactNode;
+}
+
 /**
  * React component that displays the Sample Metadata Uploader Wizard wrapper.
- * @prop {number} currentStep - the current step, starting with zero
- * @prop {string} currentStatus - the status of the current step
- * @prop {string} currentPercent - the progress percentage of the current step
- * @prop {any} children - the status of the current step
+ * @prop current - the current step, starting with zero
+ * @prop status - the status of the current step
+ * @prop percent - the progress percentage of the current step
+ * @prop children - the status of the current step
  * @returns {*}
  * @constructor
  */
 export function SampleMetadataImportWizard({
-  currentStep,
-  currentStatus,
-  currentPercent,
+  current,
+  status,
+  percent,
   children,
-}) {
+}: SampleMetadataImportWizardProps): JSX.Element {
   const { projectId } = useParams();
 
   return (
@@ -31,9 +38,9 @@ export function SampleMetadataImportWizard({
         }
       />
       <SampleMetadataImportSteps
-        current={currentStep}
-        status={currentStatus}
-        percent={currentPercent}
+        current={current}
+        status={status}
+        percent={percent}
       />
       {children}
     </Space>
