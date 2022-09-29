@@ -283,7 +283,7 @@ export default function SampleInfo() {
         {({ height, width = "100%" }) => (
           <VList
             itemCount={detailsData.length}
-            itemSize={70}
+            itemSize={69}
             height={height}
             width={width}
           >
