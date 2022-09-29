@@ -161,7 +161,7 @@ export type FetchMetadataTemplateFieldsResponse = {
 /**
  * Fetch template metadata fields for a specific template
  *   1. If the template is "All Fields" --> return all fields
- *   2. If the template does not exist --> return no fields
+ *   2. If the template doesn't exist --> return no fields
  *   3. If the template fields have already been downloaded --> return them
  *   4. If not downloaded --> fetch them from server --> return them
  * @param param0

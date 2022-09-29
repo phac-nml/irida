@@ -273,15 +273,7 @@ export type NewickTreeResponse = {
 export async function getNewickTree(
   submissionId: number
 ): Promise<NewickTreeResponse> {
-  try {
-    const res = await axios.get(`${ANALYSIS_URL}/${submissionId}/tree`);
-    return res.data;
-  } catch (error) {
-    if (typeof error === "string") {
-      return { error };
-    }
-    throw new Error("Unknown error thrown, expected a string");
-  }
+  return get<NewickTreeResponse>(`${ANALYSIS_URL}/${submissionId}/tree`);
 }
 
 export type MetadataItem = {
@@ -296,7 +288,6 @@ export type Metadata = {
 export type MetadataResponse = {
   metadata: Metadata;
   terms: string[];
-  error?: string;
 };
 /**
  * Get the metadata for the submission.
@@ -305,22 +296,11 @@ export type MetadataResponse = {
 export async function getMetadata(
   submissionId: number
 ): Promise<MetadataResponse> {
-  try {
-    const res = await axios.get<MetadataResponse>(
-      `${ANALYSIS_URL}/${submissionId}/metadata`
-    );
-    return res.data;
-  } catch (error) {
-    if (typeof error === "string") {
-      return { metadata: {}, terms: [], error };
-    }
-    throw new Error("Unknown error thrown, expected a string");
-  }
+  return get<MetadataResponse>(`${ANALYSIS_URL}/${submissionId}/metadata`);
 }
 
 export type MetadataTemplatesResponse = {
   templates: Template[];
-  error?: string;
 };
 
 /**
@@ -330,17 +310,9 @@ export type MetadataTemplatesResponse = {
 export async function getMetadataTemplates(
   submissionId: number
 ): Promise<MetadataTemplatesResponse> {
-  try {
-    const res = await axios.get(
-      `${ANALYSIS_URL}/${submissionId}/metadata-templates`
-    );
-    return res.data;
-  } catch (error) {
-    if (typeof error === "string") {
-      return { error, templates: [] };
-    }
-    throw new Error("Unknown error thrown, expected a string");
-  }
+  return get<MetadataTemplatesResponse>(
+    `${ANALYSIS_URL}/${submissionId}/metadata-templates`
+  );
 }
 
 /**
