@@ -16,9 +16,6 @@ const AnalysisBioHansel = React.lazy(() =>
 const AnalysisOutputFiles = React.lazy(() =>
   import("./components/AnalysisOutputFiles")
 );
-const AnalysisPhylogeneticTree = React.lazy(() =>
-  import("./components/AnalysisPhylogeneticTree")
-);
 const AnalysisAdvancedPhylo = React.lazy(() =>
   import("./components/AnalysisAdvancedPhylo")
 );
@@ -93,7 +90,11 @@ export default function AnalysisCompletePage() {
     component = <AnalysisBioHansel />;
     componentPath = ANALYSIS.BIOHANSEL;
   } else if (type === "tree") {
-    component = <AnalysisPhylogeneticTree />;
+    component = (
+      <Provider store={store}>
+        <AnalysisAdvancedPhylo />
+      </Provider>
+    );
     componentPath = ANALYSIS.TREE;
   }
 
@@ -105,7 +106,7 @@ export default function AnalysisCompletePage() {
         alignItems: "stretch",
         width: "100%",
         padding: SPACE_LG,
-        gap: SPACE_LG
+        gap: SPACE_LG,
       }}
     >
       <div>
@@ -117,7 +118,10 @@ export default function AnalysisCompletePage() {
             {type === "output" ? (
               <>
                 <Route index element={<AnalysisOutputFiles />} />
-                <Route path={ANALYSIS.OUTPUT} element={<AnalysisOutputFiles />} />
+                <Route
+                  path={ANALYSIS.OUTPUT}
+                  element={<AnalysisOutputFiles />}
+                />
                 <Route
                   path={ANALYSIS.PROVENANCE}
                   element={<AnalysisProvenance />}
@@ -131,12 +135,12 @@ export default function AnalysisCompletePage() {
                   path={ANALYSIS.PROVENANCE}
                   element={<AnalysisProvenance />}
                 />
-                <Route path={ANALYSIS.OUTPUT} element={<AnalysisOutputFiles />} />
+                <Route
+                  path={ANALYSIS.OUTPUT}
+                  element={<AnalysisOutputFiles />}
+                />
               </>
             )}
-            {type === "tree" ? (
-              <Route path={ANALYSIS.ADVANCED_PHYLO} element={<Provider store={store}><AnalysisAdvancedPhylo /></Provider>} />
-            ) : (<></>)}
             <Route
               path={ANALYSIS.SETTINGS}
               element={<AnalysisSettingsContainer />}

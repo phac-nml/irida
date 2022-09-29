@@ -8,11 +8,7 @@ import {
   MetadataResponse,
   NewickTreeResponse,
 } from "../../../apis/analysis/analysis";
-import {
-  fetchMetadataTemplateFieldsThunk,
-  LoadingState,
-  TreeState,
-} from "./treeSlice";
+import { LoadingState } from "./treeSlice";
 import uniqolor from "uniqolor";
 import { MetadataColourMap, TreeProperties } from "../../../types/phylocanvas";
 
@@ -114,8 +110,6 @@ export async function fetchTreeAndMetadata(
 
   const [newickData, { metadata = {}, terms = [] }, metadataTemplateData] =
     await Promise.all(promises);
-
-  console.log({ metadata, terms });
 
   // Check for errors
   if (!newickData.newick) {
