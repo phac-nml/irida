@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis;
 
-import java.util.List;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.analysis.AnalysisDetailsPageIT;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,8 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.analysis.AnalysisDetailsPageIT;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.util.List;
 
 public class AnalysisDetailsPage extends AbstractPage {
     private static final Logger logger = LoggerFactory.getLogger(AnalysisDetailsPageIT.class);
@@ -115,6 +114,9 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     @FindBy(className = "ant-menu-title-content")
     private List<WebElement> menuItems;
+
+    @FindBy(xpath = "//div[contains(text(), 'Legend')]")
+    private WebElement layoutLegendButton;
 
     public AnalysisDetailsPage(WebDriver driver) {
         super(driver);
@@ -567,5 +569,11 @@ public class AnalysisDetailsPage extends AbstractPage {
             return true;
         }
         return false;
+    }
+
+    public void openLegend() {
+        layoutLegendButton.click();
+        WebDriverWait wait = new WebDriverWait(driver, 2);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-legend")));
     }
 }

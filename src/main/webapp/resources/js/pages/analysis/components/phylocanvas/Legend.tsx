@@ -27,6 +27,7 @@ export function Legend(): JSX.Element {
 
   return (
     <div
+      className="t-legend"
       style={{
         paddingLeft: 14,
         paddingRight: 14,
