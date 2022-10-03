@@ -426,7 +426,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testUpdateEmailPipelineResultVisibilty() throws URISyntaxException, IOException {
+	public void testUpdateEmailPipelineResultVisibility() throws URISyntaxException, IOException {
 		LoginPage.loginAsManager(driver());
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings");
 		assertTrue(page.compareTabTitle("Details"), "Page title should equal");
