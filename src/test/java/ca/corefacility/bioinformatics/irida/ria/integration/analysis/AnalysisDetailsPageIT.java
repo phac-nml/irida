@@ -156,7 +156,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		// Submissions with trees and not sistr or biohansel
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "");
-		assertEquals(page.getTabContentTitle(), "Tree Preview", "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Tree Viewer", "Page title should equal");
 		assertTrue(page.hasHorizontalTabLinks(), "Has horizontal tab links");
 
 		// Completed submission should not display steps component
@@ -351,25 +351,23 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testTreeOutput() {
+	void testTreeOutput() {
 		LoginPage.loginAsManager(driver());
 
 		// Has tree file
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "");
-		assertEquals(page.getTabContentTitle(), "Tree Preview", "Page title should equal");
+		assertEquals("Tree Viewer", page.getTabContentTitle(), "Page title should equal");
 
-		assertTrue(page.treeToolsVisible(), "Tree shape tools are visible");
-		assertTrue(page.advancedPhylogeneticTreeButtonVisible(), "Advanced Phylogenetic Tree button is visible");
-		assertTrue(page.phylocanvasWrapperVisible(), "Tree wrapper is visible");
-		assertTrue(page.treeVisible(), "Tree is visible");
+		// Make sure all buttons are working
+		page.openTreeShapeDropdown();
+		assertTrue(page.areAllTreeShapeOptionsDisplayed(), "Should display all possible tree types");
+		assertEquals("Rectangular", page.getCurrentTreeShape());
 
-		// Has no tree file
-		page = AnalysisDetailsPage.initPage(driver(), 10L, "");
-		assertTrue(page.treeToolsNotFound(), "Tree shape tools are not visible");
-		assertTrue(page.advancedPhylogeneticTreeButtonNotFound(), "Advanced Phylogenetic Tree button is not visible");
-		assertTrue(page.phylocanvasWrapperNotFound(), "Tree wrapper is not visible");
-		assertTrue(page.treeNotFound(), "Tree is not visible");
-		assertEquals(page.getWarningAlertText(), "No outputs available to display");
+		page.openMetadataDropdown();
+		assertEquals(4, page.getNumberOfMetadataFields());
+		page.openMetadataTemplateSelect();
+
+		page.openDownloadDropdown();
 	}
 
 	@Test

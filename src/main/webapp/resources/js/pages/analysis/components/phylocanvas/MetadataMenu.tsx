@@ -44,9 +44,10 @@ export function MetadataMenu(): JSX.Element {
   );
 
   const menu = (
-    <Menu>
+    <Menu className="t-metadata-dd">
       <Menu.Item key="templates">
         <Select
+          className="t-metadata-select"
           defaultValue={-1}
           style={{ width }}
           onChange={(templateIdx) =>
@@ -84,7 +85,11 @@ export function MetadataMenu(): JSX.Element {
 
   return (
     <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
-      <Button shape="circle" icon={<FilterOutlined />} />
+      <Button
+        title={i18n("PhylocanvasShapeDropDown.metadata.tooltip")}
+        shape="circle"
+        icon={<FilterOutlined />}
+      />
     </Dropdown>
   );
 }

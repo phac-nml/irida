@@ -119,7 +119,7 @@ const initialState = {
 } as TreeState;
 
 type UpdateTreeTypePayload = {
-  treeType: TreeType;
+  treeType: string;
 };
 
 type SelectAllTermsPayload = {
@@ -158,7 +158,7 @@ export const treeSlice = createSlice({
   initialState,
   reducers: {
     updateTreeType: (state, action: PayloadAction<UpdateTreeTypePayload>) => {
-      state.treeProps.type = action.payload.treeType;
+      state.treeProps.type = action.payload.treeType as TreeTypes;
     },
     selectAllTerms: (state, action: PayloadAction<SelectAllTermsPayload>) => {
       if (action.payload.checked) {

@@ -41,7 +41,7 @@ export function DownloadMenu({ treeRef }: DownloadMenuProps) {
   };
 
   const menu = (
-    <Menu>
+    <Menu className="t-download-dd">
       <Menu.Item key="newick" onClick={downloadNewick}>
         {i18n("visualization.phylogenomics.button.download.newick")}
       </Menu.Item>
@@ -56,7 +56,11 @@ export function DownloadMenu({ treeRef }: DownloadMenuProps) {
 
   return (
     <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
-      <Button shape="circle" icon={<DownloadOutlined />} />
+      <Button
+        title={i18n("PhylocanvasShapeDropDown.download.tooltip")}
+        shape="circle"
+        icon={<DownloadOutlined />}
+      />
     </Dropdown>
   );
 }

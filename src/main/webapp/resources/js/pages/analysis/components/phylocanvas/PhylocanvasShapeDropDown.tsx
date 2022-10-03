@@ -68,7 +68,10 @@ export default function PhylocanvasShapeDropDown() {
   }, [dispatch, type, types]);
 
   const overlay = (
-    <Menu onClick={(item) => dispatch(updateTreeType({ treeType: item.key }))}>
+    <Menu
+      className="t-shape-dd"
+      onClick={(item) => dispatch(updateTreeType({ treeType: item.key }))}
+    >
       {options}
     </Menu>
   );
@@ -76,7 +79,7 @@ export default function PhylocanvasShapeDropDown() {
   return (
     <Dropdown overlay={overlay} trigger={["click"]} placement="bottomRight">
       <Button
-        title={types[type].title}
+        title={i18n("PhylocanvasShapeDropDown.shape.tooltip")}
         style={{ backgroundColor: `var(--grey-1)` }}
         key="changer"
         shape="circle"

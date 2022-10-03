@@ -39,6 +39,7 @@ export function MetadataFieldSelect({
 
   return (
     <div
+      className="t-metadata-field"
       style={{
         height: 24,
         width,
