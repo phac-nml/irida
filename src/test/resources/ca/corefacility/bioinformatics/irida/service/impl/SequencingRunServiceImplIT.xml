@@ -103,7 +103,7 @@
     <project_user id="1" project_id="1" user_id="1"
                   projectRole="PROJECT_USER" metadataRole="LEVEL_1" createdDate="2013-07-18 14:20:19.0"/>
 
-    <analysis_submission id="1" name="my analysis" remote_analysis_id="1"
+    <analysis_submission id="1" name="my analysis" remote_analysis_id="1" email_pipeline_result_error="0"
                          analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19.0"
                          workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
                          analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission"

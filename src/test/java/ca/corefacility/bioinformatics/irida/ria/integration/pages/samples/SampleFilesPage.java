@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.samples;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -63,7 +64,7 @@ public class SampleFilesPage extends AbstractPage {
 	public void deleteFirstSequenceFile() {
 		WebElement removeButton = driver.findElements(By.className("remove-file")).iterator().next();
 		removeButton.click();
-		WebElement confirmRemoveButton = (new WebDriverWait(driver, 10))
+		WebElement confirmRemoveButton = (new WebDriverWait(driver, Duration.ofSeconds(10)))
 				.until(ExpectedConditions.elementToBeClickable(By.id("remove-file-confirm")));
 		confirmRemoveButton.click();
 	}
@@ -71,7 +72,7 @@ public class SampleFilesPage extends AbstractPage {
 	public void deleteFirstSequenceFilePair() {
 		WebElement removeButton = driver.findElements(By.className("remove-pair")).iterator().next();
 		removeButton.click();
-		WebElement confirmRemoveButton = (new WebDriverWait(driver, 10))
+		WebElement confirmRemoveButton = (new WebDriverWait(driver, Duration.ofSeconds(10)))
 				.until(ExpectedConditions.elementToBeClickable(By.id("remove-file-confirm")));
 		confirmRemoveButton.click();
 	}
@@ -79,7 +80,7 @@ public class SampleFilesPage extends AbstractPage {
 	public void deleteFirstAssemblyFile() {
 		WebElement removeButton = driver.findElements(By.className("remove-assembly")).iterator().next();
 		removeButton.click();
-		WebElement confirmRemoveButton = (new WebDriverWait(driver, 10))
+		WebElement confirmRemoveButton = (new WebDriverWait(driver, Duration.ofSeconds(10)))
 				.until(ExpectedConditions.elementToBeClickable(By.id("remove-file-confirm")));
 		confirmRemoveButton.click();
 	}
@@ -105,7 +106,7 @@ public class SampleFilesPage extends AbstractPage {
 	}
 
 	private void uploadFile(String filePath, int input) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		WebElement dropdown = driver.findElement(By.className("t-download-dropdown"));
 		Actions action = new Actions(driver);
 		action.moveToElement(dropdown).perform();

@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -52,8 +53,7 @@ public class NcbiExportPage extends AbstractPage {
 
 	public void openSamplePanelBySampleName(String sampleName) {
 		for (WebElement panel : samplePanels) {
-			String text = panel.findElement(By.className("t-sample-name"))
-					.getText();
+			String text = panel.findElement(By.className("t-sample-name")).getText();
 			if (text.equals(sampleName)) {
 				panel.click();
 				return;
@@ -79,12 +79,11 @@ public class NcbiExportPage extends AbstractPage {
 
 	public void setDefaultStrategySelect(String strategy) {
 		defaultStrategySelect.click();
-		WebDriverWait wait = new WebDriverWait(driver, 1);
-		List<WebElement> selectOptions = wait.until(
-				ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-select-item")));
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+		List<WebElement> selectOptions = wait
+				.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-select-item")));
 		for (WebElement option : selectOptions) {
-			if (option.getAttribute("title")
-					.equals(strategy)) {
+			if (option.getAttribute("title").equals(strategy)) {
 				option.click();
 				return;
 			}
@@ -103,8 +102,7 @@ public class NcbiExportPage extends AbstractPage {
 		// NOTE: expect the panel to be open at this point.
 		WebElement panel = driver.findElement(By.cssSelector(".t-samples .ant-collapse-content"));
 		WebElement input = panel.findElement(By.className("t-sample-" + field));
-		return input.findElement(By.className("ant-select-selection-item"))
-				.getAttribute("title");
+		return input.findElement(By.className("ant-select-selection-item")).getAttribute("title");
 	}
 
 	public String getInputValueForSampleField(String field) {
@@ -121,12 +119,11 @@ public class NcbiExportPage extends AbstractPage {
 	public void setSelectForSampleFieldValue(String field, String value) {
 		WebElement select = driver.findElement(By.className("t-sample-" + field));
 		select.click();
-		WebDriverWait wait = new WebDriverWait(driver, 1);
-		List<WebElement> selectOptions = wait.until(
-				ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-select-item")));
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+		List<WebElement> selectOptions = wait
+				.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-select-item")));
 		for (WebElement option : selectOptions) {
-			if (option.getAttribute("title")
-					.equals(value)) {
+			if (option.getAttribute("title").equals(value)) {
 				option.click();
 				return;
 			}
@@ -136,22 +133,19 @@ public class NcbiExportPage extends AbstractPage {
 	public void setCascaderForSampleField(String field, String firstValue, String secondValue) {
 		WebElement cascader = driver.findElement(By.className("t-sample-" + field));
 		cascader.click();
-		WebDriverWait wait = new WebDriverWait(driver, 1);
-		List<WebElement> cascaderMenus = wait.until(
-				ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-cascader-menu")));
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+		List<WebElement> cascaderMenus = wait
+				.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-cascader-menu")));
 		for (WebElement option : cascaderMenus.get(0).findElements(By.className("ant-cascader-menu-item"))) {
-			if (option.getText()
-					.equals(firstValue)) {
+			if (option.getText().equals(firstValue)) {
 				option.click();
 				break;
 			}
 		}
 		// menus updated after selections, wait for more.
-		cascaderMenus = wait.until(
-				ExpectedConditions.numberOfElementsToBe(By.className("ant-cascader-menu"), 2));
+		cascaderMenus = wait.until(ExpectedConditions.numberOfElementsToBe(By.className("ant-cascader-menu"), 2));
 		for (WebElement option : cascaderMenus.get(1).findElements(By.className("ant-cascader-menu-item"))) {
-			if (option.getText()
-					.equals(secondValue)) {
+			if (option.getText().equals(secondValue)) {
 				option.click();
 				break;
 			}
@@ -160,9 +154,7 @@ public class NcbiExportPage extends AbstractPage {
 
 	public void removeSample(String sampleName) {
 		for (WebElement panel : samplePanels) {
-			if (panel.findElement(By.className("t-sample-name"))
-					.getText()
-					.equals(sampleName)) {
+			if (panel.findElement(By.className("t-sample-name")).getText().equals(sampleName)) {
 				panel.findElement(By.className("t-remove-btn")).click();
 			}
 		}
@@ -170,9 +162,7 @@ public class NcbiExportPage extends AbstractPage {
 
 	public boolean isSampleValid(String sampleName) throws Exception {
 		for (WebElement panel : samplePanels) {
-			if (panel.findElement(By.className("t-sample-name"))
-					.getText()
-					.equals(sampleName)) {
+			if (panel.findElement(By.className("t-sample-name")).getText().equals(sampleName)) {
 				return panel.findElement(By.xpath("//span[contains(@class, 'ant-tag')]/span[2]"))
 						.getText()
 						.equals("VALID");
@@ -184,8 +174,7 @@ public class NcbiExportPage extends AbstractPage {
 	public void selectSingleEndSequenceFile(String filename) {
 		List<WebElement> labels = driver.findElements(By.className("t-single-name"));
 		for (WebElement label : labels) {
-			if (label.getText()
-					.equals(filename)) {
+			if (label.getText().equals(filename)) {
 				label.click();
 				return;
 			}
