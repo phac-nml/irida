@@ -125,7 +125,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Initialize the page so that the default {@link WebElement} have been
-      found.
+     * found.
      *
      * @param driver     {@link WebDriver}
      * @param analysisId Id the the analysis page to view.
@@ -144,14 +144,14 @@ public class AnalysisDetailsPage extends AbstractPage {
         checkBoxes.get(0).click();
     }
 
-	/**
-	 * Determines if the actual and expected analysis details are identical
-	 *
-	 * @return {@link Boolean}
-	 */
-	public boolean analysisDetailsEqual(String[] expectedDetails) {
-		boolean expectedEqualsActual = true;
-		String[] actualDetails = new String[7];
+    /**
+     * Determines if the actual and expected analysis details are identical
+     *
+     * @return {@link Boolean}
+     */
+    public boolean analysisDetailsEqual(String[] expectedDetails) {
+        boolean expectedEqualsActual = true;
+        String[] actualDetails = new String[7];
 
         int index = 0;
         for (WebElement item : listDescriptionValues) {
@@ -180,7 +180,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines if citation is
-      displayed on citation page
+     * displayed on citation page
      *
      * @return {@link Boolean}
      */
@@ -222,7 +222,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Clicks the delete button, waits, then clicks the confirm
-      button within the popover div
+     * button within the popover div
      */
     public void deleteAnalysis() {
         deleteButton.click();
@@ -250,7 +250,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines if download all files button is
-      visible on output file preview page
+     * visible on output file preview page
      *
      * @return {@link Boolean}
      */
@@ -270,8 +270,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines if download file button is
-      visible on output file preview page for
-      individual files
+     * visible on output file preview page for
+     * individual files
      *
      * @return {@link Boolean}
      */
@@ -291,7 +291,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines if the number of list items (titles)
-      equals to the expected number of list items
+     * equals to the expected number of list items
      *
      * @return {@link Integer}
      */
@@ -301,7 +301,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Filters samples based on search string and waits
-      before returning
+     * before returning
      */
     public void filterSamples(String searchStr) {
         searchInput.sendKeys(searchStr);
@@ -454,7 +454,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines reference file download button is
-      displayed on samples page
+     * displayed on samples page
      *
      * @return {@link Boolean}
      */
@@ -472,7 +472,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines if phylogenetic tree wrapper is
-      not displayed on tree preview page
+     * not displayed on tree preview page
      *
      * @return {@link Boolean}
      */
@@ -482,7 +482,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines if phylogenetic tree wrapper is
-      displayed on tree preview page
+     * displayed on tree preview page
      *
      * @return {@link Boolean}
      */
@@ -510,7 +510,7 @@ public class AnalysisDetailsPage extends AbstractPage {
         return driver.findElements(By.cssSelector(".t-shape-dd li")).size() == 5;
     }
 
-    public String getCurrentTreeShape() {
+    public String getCurrentTreeShapeTitleAttr() {
         WebElement menu = driver.findElement(By.className("t-shape-dd"));
         WebElement menuItem = menu.findElement(By.cssSelector(".ant-dropdown-menu-item-disabled .ant-dropdown-menu-title-content"));
         return menuItem.getText();
@@ -518,20 +518,18 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     public String getCurrentlyDisplayedTreeShapeIcon() {
         WebElement button = treeShapeTrigger.findElement(By.tagName("span"));
-        String type = button.getAttribute("data-shape");
-        switch (type) {
-            case "rc":
-                return "rectangle";
-            case "cr":
-                return "circulate";
-            case "rd":
-                return "radial";
-            case "hr":
-                return "hierarchical";
-            case "dg":
-                return "diagonal";
-            default:
-                throw new Error("Cannot determine type of tree is visible");
+        return button.getAttribute("data-shape");
+    }
+
+    public void updateTreeShape(String shape) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+        List<WebElement> buttons = driver.findElement(By.className("t-shape-dd")).findElements(By.tagName("li"));
+        for (WebElement button : buttons) {
+            if (button.findElement(By.cssSelector("[role='img']")).getAttribute("data-shape").equals(shape)) {
+                button.click();
+                wait.until(ExpectedConditions.attributeContains(treeShapeTrigger.findElement(By.tagName("span")), "data-shape", shape));
+                return;
+            }
         }
     }
 
@@ -559,7 +557,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines if galaxy history id is
-      displayed on error page
+     * displayed on error page
      *
      * @return {@link Boolean}
      */

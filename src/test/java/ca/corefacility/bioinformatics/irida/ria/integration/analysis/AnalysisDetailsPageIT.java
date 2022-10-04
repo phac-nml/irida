@@ -357,10 +357,15 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals("Tree Viewer", page.getTabContentTitle(), "Page title should equal");
 
 		// Make sure all buttons are working
-		assertEquals("rectangle", page.getCurrentlyDisplayedTreeShapeIcon(), "Rectangle should be the default shape of the tree");
+		assertEquals("rc", page.getCurrentlyDisplayedTreeShapeIcon(), "Rectangle should be the default shape of the tree");
 		page.openTreeShapeDropdown();
 		assertTrue(page.areAllTreeShapeOptionsDisplayed(), "Should display all possible tree types");
-		assertEquals("Rectangular", page.getCurrentTreeShape());
+		assertEquals("Rectangular", page.getCurrentTreeShapeTitleAttr());
+		page.updateTreeShape("dg");
+		assertEquals("dg", page.getCurrentlyDisplayedTreeShapeIcon(), "Diagonal should be the default shape of the tree");
+		page.openTreeShapeDropdown();
+		assertEquals("Diagonal", page.getCurrentTreeShapeTitleAttr());
+
 
 		page.openMetadataDropdown();
 		assertEquals(4, page.getNumberOfMetadataFields());
