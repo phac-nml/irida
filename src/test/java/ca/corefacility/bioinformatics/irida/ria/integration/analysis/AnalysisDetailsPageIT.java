@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
+import ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -41,6 +43,10 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Autowired
 	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
+
+	private final File DOWNLOADED_TREE_FILE = new File(IntegrationUITestListener.DOWNLOAD_DIRECTORY, "tree.svg");
+	private final Path DOWNLOADED_TREE_PATH = Paths.get(DOWNLOADED_TREE_FILE.getPath());
+	private final Path TEST_TREE_PATH = Paths.get("src/test/resources/files/tree.svg");
 
 	@BeforeEach
 	// Tree file used by multiple tests
@@ -349,12 +355,19 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	void testTreeOutput() {
+	void testTreeOutput() throws IOException {
 		LoginPage.loginAsManager(driver());
 
 		// Has tree file
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "");
 		assertEquals("Tree Viewer", page.getTabContentTitle(), "Page title should equal");
+
+		page.openDownloadDropdown();
+		page.downloadTreeSVG();
+
+		// Compare with existing tree
+		assertTrue(fileUtilities.compareByMemoryMappedFiles(DOWNLOADED_TREE_PATH, TEST_TREE_PATH));
+
 
 		// Make sure all buttons are working
 		assertEquals("rc", page.getCurrentlyDisplayedTreeShapeIcon(), "Rectangle should be the default shape of the tree");
@@ -370,8 +383,6 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		page.openMetadataDropdown();
 		assertEquals(4, page.getNumberOfMetadataFields());
 		page.openMetadataTemplateSelect();
-
-		page.openDownloadDropdown();
 
 		page.openLegend();
 		assertTrue(page.legendContainsCorrectAmountOfMetadataFields());

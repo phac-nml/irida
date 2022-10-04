@@ -555,6 +555,12 @@ public class AnalysisDetailsPage extends AbstractPage {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-download-dd")));
     }
 
+    public void downloadTreeSVG() {
+        WebElement menu = driver.findElement(By.className("t-download-dd"));
+        WebElement svgLink = menu.findElement(By.xpath("//span[contains(text(), 'Download as SVG')]"));
+        svgLink.click();
+    }
+
     /**
      * Determines if galaxy history id is
      * displayed on error page
