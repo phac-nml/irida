@@ -383,7 +383,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.openMetadataDropdown();
 		assertEquals(4, page.getNumberOfMetadataFields());
-		page.openMetadataTemplateSelect();
+		page.selectedMetadataTemplate();
 
 		page.openLegend();
 		assertTrue(page.legendContainsCorrectAmountOfMetadataFields());

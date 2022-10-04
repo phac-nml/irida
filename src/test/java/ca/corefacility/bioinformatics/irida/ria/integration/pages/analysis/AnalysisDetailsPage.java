@@ -539,8 +539,10 @@ public class AnalysisDetailsPage extends AbstractPage {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-shape-dd")));
     }
 
-    public void openMetadataTemplateSelect() {
+    public void selectedMetadataTemplate() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
         metadataTemplateSelect.click();
+        List<WebElement> templates = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("t-template-field")));
     }
 
     public int getNumberOfMetadataFields() {

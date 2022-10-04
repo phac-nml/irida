@@ -22,7 +22,11 @@ export function MetadataMenu(): JSX.Element {
 
   const metadataTemplateOptions: JSX.Element[] = useMemo(() => {
     const options = templates.map((template, index) => (
-      <Option key={`template-${template.id}`} value={index}>
+      <Option
+        className="t-template-field"
+        key={`template-${template.id}`}
+        value={index}
+      >
         {template.label}
       </Option>
     ));

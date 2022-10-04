@@ -243,7 +243,6 @@
                        name="Testing Template 1" project_id="1" project_default="0"/>
 
     <metadata_template_metadata_field metadata_template_id="1" fields_id="1"/>
-    <metadata_template_metadata_field metadata_template_id="1" fields_id="2"/>
     <metadata_template_metadata_field metadata_template_id="1" fields_id="4"/>
 
 
