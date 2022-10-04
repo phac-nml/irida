@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis;
 
-import java.time.Duration;
 import ca.corefacility.bioinformatics.irida.ria.integration.analysis.AnalysisDetailsPageIT;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
@@ -13,6 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.List;
 
 public class AnalysisDetailsPage extends AbstractPage {
@@ -145,24 +145,6 @@ public class AnalysisDetailsPage extends AbstractPage {
     }
 
 	/**
-	 * Determines if advanced phylogentic tree button is displayed on tree preview page
-	 *
-	 * @return {@link Boolean}
-	 */
-	public boolean advancedPhylogeneticTreeButtonVisible() {
-		return advPhyloBtn.isDisplayed();
-	}
-
-	/**
-	 * Determines if advanced phylogentic tree button is not displayed on tree preview page
-	 *
-	 * @return {@link Boolean}
-	 */
-	public boolean advancedPhylogeneticTreeButtonNotFound() {
-		return driver.findElements(By.className("t-tree-shape-tools")).size() == 0;
-	}
-
-	/**
 	 * Determines if the actual and expected analysis details are identical
 	 *
 	 * @return {@link Boolean}
@@ -220,7 +202,7 @@ public class AnalysisDetailsPage extends AbstractPage {
      * @return {@link Boolean}
      */
     public String getTabContentTitle() {
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
         wait.until(ExpectedConditions.numberOfElementsToBe(By.className("ant-page-header-heading-title"), 2));
         return pageTitles.get(1).getText();
     }
@@ -509,28 +491,8 @@ public class AnalysisDetailsPage extends AbstractPage {
     }
 
     /**
-     * Determines if phylogenetic tree is
-      not displayed on tree preview page
-     *
-     * @return {@link Boolean}
-     */
-    public boolean treeNotFound() {
-        return driver.findElements(By.id("__canvas")).size() == 0;
-    }
-
-    /**
-     * Determines if phylogenetic tree is
-      displayed on tree preview page
-     *
-     * @return {@link Boolean}
-     */
-    public boolean treeVisible() {
-        return phyloTree.isDisplayed();
-    }
-
-    /**
-     * Determines if tree shape tools are not
-      displayed on tree preview page
+     * Determines if tree shape tools aren't
+     * displayed on tree preview page
      *
      * @return {@link Boolean}
      */
@@ -540,7 +502,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     public void openTreeShapeDropdown() {
         treeShapeTrigger.click();
-        WebDriverWait wait = new WebDriverWait(driver, 2);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-shape-dd")));
     }
 
@@ -554,9 +516,28 @@ public class AnalysisDetailsPage extends AbstractPage {
         return menuItem.getText();
     }
 
+    public String getCurrentlyDisplayedTreeShapeIcon() {
+        WebElement button = treeShapeTrigger.findElement(By.tagName("span"));
+        String type = button.getAttribute("data-shape");
+        switch (type) {
+            case "rc":
+                return "rectangle";
+            case "cr":
+                return "circulate";
+            case "rd":
+                return "radial";
+            case "hr":
+                return "hierarchical";
+            case "dg":
+                return "diagonal";
+            default:
+                throw new Error("Cannot determine type of tree is visible");
+        }
+    }
+
     public void openMetadataDropdown() {
         metadataTrigger.click();
-        WebDriverWait wait = new WebDriverWait(driver, 2);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-shape-dd")));
     }
 
@@ -572,7 +553,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     public void openDownloadDropdown() {
         downloadTrigger.click();
-        WebDriverWait wait = new WebDriverWait(driver, 2);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-download-dd")));
     }
 
@@ -583,15 +564,12 @@ public class AnalysisDetailsPage extends AbstractPage {
      * @return {@link Boolean}
      */
     public boolean galaxyHistoryIdVisible() {
-        if (driver.findElements(By.id("t-galaxy-history-id")).size() == 1) {
-            return true;
-        }
-        return false;
+        return driver.findElements(By.id("t-galaxy-history-id")).size() == 1;
     }
 
     public void openLegend() {
         layoutLegendButton.click();
-        WebDriverWait wait = new WebDriverWait(driver, 2);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-legend")));
     }
 
