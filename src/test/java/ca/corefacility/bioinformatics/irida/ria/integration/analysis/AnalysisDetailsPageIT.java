@@ -15,6 +15,7 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoader
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.Sets;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -366,7 +367,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		page.downloadTreeSVG();
 
 		// Compare with existing tree
-		assertTrue(fileUtilities.compareByMemoryMappedFiles(DOWNLOADED_TREE_PATH, TEST_TREE_PATH));
+		assertTrue(FileUtils.contentEquals(DOWNLOADED_TREE_PATH.toFile(), TEST_TREE_PATH.toFile()));
 
 
 		// Make sure all buttons are working

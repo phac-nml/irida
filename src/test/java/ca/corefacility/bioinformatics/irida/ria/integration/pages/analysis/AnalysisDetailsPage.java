@@ -502,7 +502,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     public void openTreeShapeDropdown() {
         treeShapeTrigger.click();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-shape-dd")));
     }
 
