@@ -19,6 +19,11 @@ const RadioItem = styled.button`
   }
 `;
 
+interface BlockRadioInputProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children?: React.ReactNode;
+}
+
 /**
  * React component to Render a Ant Design Radio button in block.
  *
@@ -27,6 +32,9 @@ const RadioItem = styled.button`
  * @returns {JSX.Element}
  * @constructor
  */
-export function BlockRadioInput({ children, ...props }) {
+export function BlockRadioInput({
+  children,
+  ...props
+}: BlockRadioInputProps): JSX.Element {
   return <RadioItem {...props}>{children}</RadioItem>;
 }

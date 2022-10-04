@@ -26,7 +26,7 @@ export function SampleMetadataImportWizard({
   percent,
   children,
 }: SampleMetadataImportWizardProps): JSX.Element {
-  const { projectId } = useParams();
+  const { projectId } = useParams<{ projectId: string }>();
 
   return (
     <Space direction="vertical" size="large" style={{ width: `100%` }}>

@@ -6,11 +6,42 @@ import {
 import { validateSampleName } from "../../../../apis/metadata/sample-utils";
 import {
   createSample,
+  FieldUpdate,
+  MetadataItem,
   updateSample,
+  ValidateSampleNameModel,
   validateSamples,
+  ValidateSamplesResponse,
 } from "../../../../apis/projects/samples";
+import { ImportDispatch, ImportState } from "../store";
 
-const initialState = {
+interface MetadataValidateDetailsItem {
+  isSampleNameValid: boolean;
+  foundSampleId?: number;
+}
+
+interface MetadataSaveDetailsItem {
+  saved: boolean;
+  error?: string;
+}
+interface SaveMetadataResponse {
+  metadataSaveDetails: Record<string, MetadataSaveDetailsItem>;
+}
+
+interface SetSampleNameColumnResponse {
+  sampleNameColumn: string;
+  metadataValidateDetails: Record<string, MetadataValidateDetailsItem>;
+}
+
+export interface InitialState {
+  sampleNameColumn: string;
+  headers: string[];
+  metadata: MetadataItem[];
+  metadataValidateDetails: Record<string, MetadataValidateDetailsItem>;
+  metadataSaveDetails: Record<string, MetadataSaveDetailsItem>;
+}
+
+const initialState: InitialState = {
   sampleNameColumn: "",
   headers: [],
   metadata: [],
@@ -22,28 +53,33 @@ const initialState = {
 Redux async thunk for saving the metadata to samples.
 For more information on redux async thunks see: https://redux-toolkit.js.org/api/createAsyncThunk
  */
-export const saveMetadata = createAsyncThunk(
+export const saveMetadata = createAsyncThunk<
+  SaveMetadataResponse,
+  { projectId: number; selectedMetadataKeys: string[] },
+  { dispatch: ImportDispatch; state: ImportState }
+>(
   `importReducer/saveMetadata`,
   async ({ projectId, selectedMetadataKeys }, { dispatch, getState }) => {
-    const state = getState();
-    const sampleNameColumn = state.importReducer.sampleNameColumn;
-    const headers = state.importReducer.headers;
-    const metadata = state.importReducer.metadata;
-    const metadataValidateDetails = state.importReducer.metadataValidateDetails;
-    const metadataSaveDetails = {};
+    const state: ImportState = getState();
+    const sampleNameColumn: string = state.importReducer.sampleNameColumn;
+    const headers: string[] = state.importReducer.headers;
+    const metadata: MetadataItem[] = state.importReducer.metadata;
+    const metadataValidateDetails: Record<string, MetadataValidateDetailsItem> =
+      state.importReducer.metadataValidateDetails;
+    const metadataSaveDetails: Record<string, MetadataSaveDetailsItem> = {};
 
-    const chunkSize = 100;
+    const chunkSize: number = 100;
     for (let i = 0; i < metadata.length; i = i + chunkSize) {
-      const promises = [];
+      const promises: Promise<any>[] = [];
       for (let j = i; j < i + chunkSize && j < metadata.length; j++) {
-        const metadataItem = metadata[j];
-        const index = metadataItem.rowKey;
+        const metadataItem: MetadataItem = metadata[j];
+        const index: string = metadataItem.rowKey;
         if (
           selectedMetadataKeys.includes(index) &&
           metadataSaveDetails[index]?.saved !== true
         ) {
-          const name = metadataItem[sampleNameColumn];
-          const metadataFields = Object.entries(metadataItem)
+          const name: string = metadataItem[sampleNameColumn];
+          const metadataFields: FieldUpdate[] = Object.entries(metadataItem)
             .filter(
               ([key, value]) =>
                 headers.includes(key) && key !== sampleNameColumn
@@ -108,30 +144,38 @@ export const saveMetadata = createAsyncThunk(
 Redux async thunk for setting the sample name column and enriching the metadata.
 For more information on redux async thunks see: https://redux-toolkit.js.org/api/createAsyncThunk
 */
-export const setSampleNameColumn = createAsyncThunk(
+export const setSampleNameColumn = createAsyncThunk<
+  SetSampleNameColumnResponse,
+  { projectId: string; column: string },
+  { state: ImportState }
+>(
   `importReducer/setSampleNameColumn`,
   async ({ projectId, column }, { getState }) => {
-    const state = getState();
+    const state: ImportState = getState();
     const metadata = state.importReducer.metadata;
-    const metadataValidateDetails = {};
-    const response = await validateSamples({
+    const metadataValidateDetails: Record<string, MetadataValidateDetailsItem> =
+      {};
+    const samples: ValidateSampleNameModel[] = metadata
+      .filter((row) => row[column])
+      .map((row) => ({
+        name: row[column],
+      }));
+    const response: ValidateSamplesResponse = await validateSamples({
       projectId: projectId,
       body: {
-        samples: metadata
-          .filter((row) => row[column])
-          .map((row) => ({
-            name: row[column],
-          })),
+        samples: samples,
       },
     });
     for (let i = 0; i < metadata.length; i++) {
-      const metadataItem = metadata[i];
-      const index = metadataItem.rowKey;
-      const foundSample = response.data.samples.find(
-        (sample) => metadataItem[column] === sample.name
-      );
+      const metadataItem: MetadataItem = metadata[i];
+      const index: string = metadataItem.rowKey;
+      const sampleName: string = metadataItem[column];
+      const foundSample: ValidateSampleNameModel | undefined =
+        response.samples.find(
+          (sample: ValidateSampleNameModel) => sampleName === sample.name
+        );
       metadataValidateDetails[index] = {
-        isSampleNameValid: validateSampleName(metadataItem[column]),
+        isSampleNameValid: validateSampleName(sampleName),
         foundSampleId: foundSample?.ids?.at(0),
       };
     }
@@ -149,7 +193,7 @@ For more information on redux actions see: https://redux-toolkit.js.org/api/crea
  */
 export const setHeaders = createAction(
   `importReducer/setHeaders`,
-  (headers) => ({
+  (headers: string[]) => ({
     payload: { headers },
   })
 );
@@ -160,7 +204,7 @@ For more information on redux actions see: https://redux-toolkit.js.org/api/crea
  */
 export const setMetadata = createAction(
   `importReducer/setMetadata`,
-  (metadata) => ({
+  (metadata: MetadataItem[]) => ({
     payload: {
       metadata: metadata.map((metadataItem, index) => {
         return {
@@ -178,7 +222,7 @@ For more information on redux actions see: https://redux-toolkit.js.org/api/crea
  */
 export const setMetadataSaveDetails = createAction(
   `importReducer/setMetadataSaveDetails`,
-  (metadataSaveDetails) => ({
+  (metadataSaveDetails: Record<string, MetadataSaveDetailsItem>) => ({
     payload: { metadataSaveDetails },
   })
 );

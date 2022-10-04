@@ -5,9 +5,14 @@ import { importReducer } from "./services/importReducer";
 Redux Store for sample metadata importer.
 For more information on redux stores see: https://redux.js.org/tutorials/fundamentals/part-4-store
  */
-export default configureStore({
+const store = configureStore({
   reducer: {
     importReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
+
+export type ImportState = ReturnType<typeof store.getState>;
+export type ImportDispatch = typeof store.dispatch;
+
+export default store;

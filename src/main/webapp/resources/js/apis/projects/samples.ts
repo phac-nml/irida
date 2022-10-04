@@ -12,11 +12,35 @@ export interface SequencingFiles {
   pairs: PairedEndSequenceFile[];
 }
 
+export interface ValidateSampleNameModel {
+  ids?: number[];
+  name: string;
+}
+
+export interface ValidateSamplesResponse {
+  samples: ValidateSampleNameModel[];
+}
+
+export interface MetadataItem {
+  [field: string]: string;
+  rowKey: string;
+}
+
+export interface FieldUpdate {
+  field: string;
+  value: string;
+}
+
 export interface SampleRequest {
   name: string;
-  organism: string;
-  description: string;
-  metadata: [{ field: string; value: string }];
+  organism?: string;
+  description?: string;
+  metadata: FieldUpdate[];
+}
+
+export interface ValidateSampleNamesRequest {
+  samples: ValidateSampleNameModel[];
+  associatedProjectIds?: number[];
 }
 
 const PROJECT_ID = getProjectIdFromUrl();
@@ -82,10 +106,14 @@ export async function validateSamples({
   projectId,
   body,
 }: {
-  projectId: number;
-  body: SampleRequest;
-}) {
-  return await axios.post(`${URL}/${projectId}/samples/validate`, body);
+  projectId: string;
+  body: ValidateSampleNamesRequest;
+}): Promise<ValidateSamplesResponse> {
+  const response = await axios.post(
+    `${URL}/${projectId}/samples/validate`,
+    body
+  );
+  return response.data;
 }
 
 export async function createSample({
