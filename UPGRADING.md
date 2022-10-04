@@ -4,6 +4,20 @@ Upgrading
 This document summarizes the environmental changes that need to be made when
 upgrading IRIDA that cannot be automated.
 
+22.05 to 22.09
+--------------
+* This upgrade switches the OAuth2 implementation from using spring-security-oauth to spring-security-oauth2-authorization-server and spring-security-oauth2-resource-server. Due to the dependency updates we have changed the format of the OAuth2 access tokens, they are now JWT Tokens (https://jwt.io/introduction) and are encrypted/decrypted using a certificate within a java keystore. No default java keystore is provided, so administrators will need to update their deployments to configure an appropriate java keystore. The same java keystore will need to be present on all servers which allow api access, otherwise access tokens generated on one server will not work on any other server.
+  * The required java keystore needs to be generated using `keytool`(included with standard java installation), an example is below:
+  ```bash
+  keytool -genkeypair -alias JWK -keyalg RSA -keystore /etc/irida/jwk-key-store.jks -validity 3650 -storepass SECRET -keypass SECRET -storetype PKCS12
+  ```
+  * After generating the java keystore as above you will need to update `/etc/irida/irida.conf` to specify the keystore location and the keystore password:
+  ```text
+  oauth2.jwk.key-store=/etc/irida/jwk-key-store.jks
+  oauth2.jwk.key-store-password=SECRET
+  ```
+  * More information about this can be found at https://phac-nml.github.io/irida-documentation/administrator/web/#core-configuration
+
 22.03 to 22.05
 --------------
 * This upgrade deprecates two pipelines, SISTR_TYPING and MLST_MENTALIST, and disables them from being executed. Any previously-run analysis results will still function as normal. If you wish to re-enable these pipelines you can set `irida.workflow.types.disabled=` (i.e., set the value to empty) in the `/etc/irida/irida.conf` file and restart IRIDA. If you wish to keep these pipelines disabled but include your own additional disabled pipelines you can set `irida.workflow.types.disabled=SISTR_TYPING,MLST_MENTALIST` and add your own pipelines to disable after this list.
