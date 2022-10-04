@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis;
 
+import java.time.Duration;
 import ca.corefacility.bioinformatics.irida.ria.integration.analysis.AnalysisDetailsPageIT;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
@@ -124,7 +125,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Initialize the page so that the default {@link WebElement} have been
-     * found.
+      found.
      *
      * @param driver     {@link WebDriver}
      * @param analysisId Id the the analysis page to view.
@@ -143,15 +144,32 @@ public class AnalysisDetailsPage extends AbstractPage {
         checkBoxes.get(0).click();
     }
 
-    /**
-     * Determines if the actual and expected analysis details
-     * are identical
-     *
-     * @return {@link Boolean}
-     */
-    public boolean analysisDetailsEqual(String[] expectedDetails) {
-        boolean expectedEqualsActual = true;
-        String[] actualDetails = new String[7];
+	/**
+	 * Determines if advanced phylogentic tree button is displayed on tree preview page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean advancedPhylogeneticTreeButtonVisible() {
+		return advPhyloBtn.isDisplayed();
+	}
+
+	/**
+	 * Determines if advanced phylogentic tree button is not displayed on tree preview page
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean advancedPhylogeneticTreeButtonNotFound() {
+		return driver.findElements(By.className("t-tree-shape-tools")).size() == 0;
+	}
+
+	/**
+	 * Determines if the actual and expected analysis details are identical
+	 *
+	 * @return {@link Boolean}
+	 */
+	public boolean analysisDetailsEqual(String[] expectedDetails) {
+		boolean expectedEqualsActual = true;
+		String[] actualDetails = new String[7];
 
         int index = 0;
         for (WebElement item : listDescriptionValues) {
@@ -180,7 +198,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines if citation is
-     * displayed on citation page
+      displayed on citation page
      *
      * @return {@link Boolean}
      */
@@ -222,7 +240,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Clicks the delete button, waits, then clicks the confirm
-     * button within the popover div
+      button within the popover div
      */
     public void deleteAnalysis() {
         deleteButton.click();
@@ -250,7 +268,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines if download all files button is
-     * visible on output file preview page
+      visible on output file preview page
      *
      * @return {@link Boolean}
      */
@@ -270,8 +288,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines if download file button is
-     * visible on output file preview page for
-     * individual files
+      visible on output file preview page for
+      individual files
      *
      * @return {@link Boolean}
      */
@@ -291,7 +309,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines if the number of list items (titles)
-     * equals to the expected number of list items
+      equals to the expected number of list items
      *
      * @return {@link Integer}
      */
@@ -301,7 +319,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Filters samples based on search string and waits
-     * before returning
+      before returning
      */
     public void filterSamples(String searchStr) {
         searchInput.sendKeys(searchStr);
@@ -312,7 +330,7 @@ public class AnalysisDetailsPage extends AbstractPage {
      * Gets provenance for file selected
      */
     public void getFileProvenance(int fileNum) {
-        WebDriverWait wait = new WebDriverWait(driver, 2);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
         WebElement firstTool = null;
 
         if (toolList.size() > 0) {
@@ -454,7 +472,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines reference file download button is
-     * displayed on samples page
+      displayed on samples page
      *
      * @return {@link Boolean}
      */
@@ -472,7 +490,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines if phylogenetic tree wrapper is
-     * not displayed on tree preview page
+      not displayed on tree preview page
      *
      * @return {@link Boolean}
      */
@@ -482,7 +500,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines if phylogenetic tree wrapper is
-     * displayed on tree preview page
+      displayed on tree preview page
      *
      * @return {@link Boolean}
      */
@@ -492,7 +510,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines if phylogenetic tree is
-     * not displayed on tree preview page
+      not displayed on tree preview page
      *
      * @return {@link Boolean}
      */
@@ -502,7 +520,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines if phylogenetic tree is
-     * displayed on tree preview page
+      displayed on tree preview page
      *
      * @return {@link Boolean}
      */
@@ -512,7 +530,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines if tree shape tools are not
-     * displayed on tree preview page
+      displayed on tree preview page
      *
      * @return {@link Boolean}
      */
@@ -560,7 +578,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     /**
      * Determines if galaxy history id is
-     * displayed on error page
+      displayed on error page
      *
      * @return {@link Boolean}
      */

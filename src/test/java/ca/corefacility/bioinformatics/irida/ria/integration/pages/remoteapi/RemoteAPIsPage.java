@@ -1,6 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.remoteapi;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.time.Duration;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -9,9 +13,7 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class RemoteAPIsPage extends AbstractPage {
 	private static final String RELATIVE_URL = "remote_api";
@@ -65,8 +67,7 @@ public class RemoteAPIsPage extends AbstractPage {
 	public boolean checkRemoteApiExistsInTable(String clientName) {
 		List<WebElement> findElements = table.findElements(By.className("t-api-name"));
 		for (WebElement ele : findElements) {
-			if (ele.getText()
-					.equals(clientName)) {
+			if (ele.getText().equals(clientName)) {
 				return true;
 			}
 		}
@@ -80,7 +81,7 @@ public class RemoteAPIsPage extends AbstractPage {
 
 	public void openAddRemoteModal() {
 		addRemoteButton.click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.visibilityOf(addRemoteModal));
 	}
 
@@ -93,20 +94,19 @@ public class RemoteAPIsPage extends AbstractPage {
 
 	public void submitCreateFormWithErrors() {
 		submitCreateRemoteBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".ant-form-item-explain.ant-form-item-explain-error")));
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
+		wait.until(ExpectedConditions
+				.visibilityOfElementLocated(By.cssSelector(".ant-form-item-explain.ant-form-item-explain-error")));
 	}
 
 	public void submitCreateForm() {
 		submitCreateRemoteBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.invisibilityOf(addRemoteModal));
 	}
 
 	public List<String> getCreateErrors() {
-		return errorAlerts.stream()
-				.map(WebElement::getText)
-				.collect(Collectors.toUnmodifiableList());
+		return errorAlerts.stream().map(WebElement::getText).collect(Collectors.toUnmodifiableList());
 	}
 
 	public void createRemoteApi(String name, String clientId, String clientSecret, String serviceURI) {
@@ -143,8 +143,7 @@ public class RemoteAPIsPage extends AbstractPage {
 		WebElement authorizeButton = driver.findElement(By.id("authorize-btn"));
 		authorizeButton.click();
 
-
-		driver.switchTo().window(parentWindowHandler);  // switch back to parent window
+		driver.switchTo().window(parentWindowHandler); // switch back to parent window
 
 		waitForTime(8000);
 	}

@@ -1,17 +1,21 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pipelines;
 
 import java.io.IOException;
+import java.time.Duration;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines.LaunchPipelinePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -91,7 +95,7 @@ public class BioHanselPipelinePageIT extends AbstractIridaUIITChromeDriver {
 		page.submit();
 		assertFalse(page.isRequiredParameterErrorDisplayed(),
 				"Subtyping scheme should be selected and not display an error");
-		WebDriverWait wait = new WebDriverWait(driver(), 5);
+		WebDriverWait wait = new WebDriverWait(driver(), Duration.ofSeconds(5));
 		wait.until(ExpectedConditions.urlMatches("/analysis"));
 	}
 }
