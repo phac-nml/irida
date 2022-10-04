@@ -576,4 +576,10 @@ public class AnalysisDetailsPage extends AbstractPage {
         WebDriverWait wait = new WebDriverWait(driver, 2);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-legend")));
     }
+
+    public boolean legendContainsCorrectAmountOfMetadataFields() {
+        WebElement legend = driver.findElement(By.className("t-legend"));
+        List<WebElement> metadataRegions = legend.findElements(By.className("ant-list-item-meta-title"));
+        return metadataRegions.size() == 4;
+    }
 }
