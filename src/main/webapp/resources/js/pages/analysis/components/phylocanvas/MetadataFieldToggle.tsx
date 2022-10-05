@@ -3,6 +3,10 @@ import React from "react";
 import styled from "styled-components";
 import { grey8 } from "../../../../styles/colors";
 
+/*
+ This button is displayed on hover to the user to select this metadat
+ fields as the ONLY metadata field to display.
+ */
 const OnlyButton = styled(Button)`
   color: ${grey8};
   border-color: ${grey8};
