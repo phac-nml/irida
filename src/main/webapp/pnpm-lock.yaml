@@ -49,8 +49,6 @@ specifiers:
   '@typescript-eslint/parser': ^5.27.0
   ag-grid-community: ^27.1.0
   ag-grid-react: ^27.1.0
-  angular: 1.8.3
-  angular-ui-bootstrap: ^2.5.6
   antd: 4.19.5
   autoprefixer: ^10.4.4
   axios: ^0.26.1
@@ -151,8 +149,6 @@ dependencies:
   '@remix-run/router': 0.1.0
   ag-grid-community: 27.1.0
   ag-grid-react: 27.1.0_w6hrqnyrd37qujkkojqwgzxsou
-  angular: 1.8.3
-  angular-ui-bootstrap: 2.5.6
   antd: 4.19.5_sfoxds7t5ydpegc3knd667wn6m
   axios: 0.26.1
   bootstrap: 3.4.1
@@ -3330,15 +3326,6 @@ packages:
       require-from-string: 2.0.2
       uri-js: 4.4.1
     dev: true
-
-  /angular-ui-bootstrap/2.5.6:
-    resolution: {integrity: sha512-yzcHpPMLQl0232nDzm5P4iAFTFQ9dMw0QgFLuKYbDj9M0xJ62z0oudYD/Lvh1pWfRsukiytP4Xj6BHOSrSXP8A==}
-    dev: false
-
-  /angular/1.8.3:
-    resolution: {integrity: sha512-5qjkWIQQVsHj4Sb5TcEs4WZWpFeVFHXwxEBHUhrny41D8UrBAd6T/6nPPAsLngJCReIOqi95W3mxdveveutpZw==}
-    deprecated: For the actively supported Angular, see https://www.npmjs.com/package/@angular/core. AngularJS support has officially ended. For extended AngularJS support options, see https://goo.gle/angularjs-path-forward.
-    dev: false
 
   /ansi-escapes/4.3.2:
     resolution: {integrity: sha512-gKXj5ALrKWQLsYG9jlTRmR/xKluxHV+Z9QEwNIgCfM1/uwPMCuzVVnh5mwTd+OuBZcwSIMbqssNWRm1lE51QaQ==}
