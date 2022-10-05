@@ -3,7 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button, Result } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { useSelector } from "react-redux";
+import { MetadataItem } from "../../../../apis/projects/samples";
+import { ImportState, useImportSelector } from "../store";
+import { NavigateFunction } from "react-router/dist/lib/hooks";
 
 /**
  * React component that displays Step #4 of the Sample Metadata Uploader.
@@ -11,18 +13,18 @@ import { useSelector } from "react-redux";
  * @returns {*}
  * @constructor
  */
-export function SampleMetadataImportComplete() {
+export function SampleMetadataImportComplete(): JSX.Element {
   const { metadata, metadataValidateDetails, metadataSaveDetails } =
-    useSelector((state) => state.importReducer);
+    useImportSelector((state: ImportState) => state.importReducer);
 
   const samplesUpdatedCount = metadata.filter(
-    (metadataItem) =>
+    (metadataItem: MetadataItem) =>
       metadataSaveDetails[metadataItem.rowKey]?.saved === true &&
       metadataValidateDetails[metadataItem.rowKey].foundSampleId
   ).length;
 
   const samplesCreatedCount = metadata.filter(
-    (metadataItem) =>
+    (metadataItem: MetadataItem) =>
       metadataSaveDetails[metadataItem.rowKey]?.saved === true &&
       !metadataValidateDetails[metadataItem.rowKey].foundSampleId
   ).length;
@@ -48,8 +50,8 @@ export function SampleMetadataImportComplete() {
           samplesCreatedCount
         );
 
-  const { projectId } = useParams();
-  const navigate = useNavigate();
+  const { projectId } = useParams<{ projectId: string }>();
+  const navigate: NavigateFunction = useNavigate();
 
   React.useEffect(() => {
     setTimeout(() => {
