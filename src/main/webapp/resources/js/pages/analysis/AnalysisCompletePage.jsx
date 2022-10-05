@@ -81,7 +81,7 @@ export default function AnalysisCompletePage() {
 
   const DEFAULT_URL = setBaseUrl(`/analysis/:id`);
 
-  let component;
+  let component = <AnalysisOutputFiles />;
   let componentPath;
   if (type === "sistr") {
     component = <AnalysisSistr />;
