@@ -1,6 +1,6 @@
 import React, { Suspense, useContext } from "react";
 import { Provider } from "react-redux";
-import { Outlet, Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { ContentLoading } from "../../components/loader";
 import { AnalysisContext } from "../../contexts/AnalysisContext";
 import { AnalysisOutputsProvider } from "../../contexts/AnalysisOutputsContext";
@@ -81,7 +81,7 @@ export default function AnalysisCompletePage() {
 
   const DEFAULT_URL = setBaseUrl(`/analysis/:id`);
 
-  let component = <AnalysisOutputFiles />;
+  let component;
   let componentPath;
   if (type === "sistr") {
     component = <AnalysisSistr />;
@@ -151,7 +151,17 @@ export default function AnalysisCompletePage() {
               <Route path="delete" element={<AnalysisDelete />} />
               <Route path="*" element={<AnalysisDetails />} />
             </Route>
-            <Route path="*" element={component} />
+            <Route
+              path="*"
+              element={
+                <Navigate
+                  replace
+                  to={setBaseUrl(
+                    `analysis/${analysisContext.analysis.identifier}/`
+                  )}
+                />
+              }
+            />
           </Route>
         </Routes>
       </div>
