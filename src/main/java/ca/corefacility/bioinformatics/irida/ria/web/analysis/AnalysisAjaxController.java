@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -1212,11 +1213,23 @@ public class AnalysisAjaxController {
 
 		boolean treeDefault = getTreeViewDefault(submission, locale);
 
-		return ResponseEntity.ok(new AnalysisInfo(submission, submission.getName(), submission.getAnalysisState(),
-				analysisType.getType(), viewer, currentUser.getSystemRole()
-				.equals(Role.ROLE_ADMIN), emailController.isMailConfigured(), prevState, duration,
-				submission.getAnalysisState() == AnalysisState.COMPLETED,
-				submission.getAnalysisState() == AnalysisState.ERROR, treeDefault));
+		// Get sample ids and there respective project ids for samples used in the analysis
+		List<Project> submissionProjects = projectService.getProjectsUsedInAnalysisSubmission(submission);
+		List<AnalysisSampleProject> analysisSampleProjects = new ArrayList<>();
+		Set<SequencingObject> s = sequencingObjectService.getSequencingObjectsForAnalysisSubmission(submission);
+		for(SequencingObject sequencingObject : s) {
+			SampleSequencingObjectJoin sampleSequencingObjectJoin = sampleService.getSampleForSequencingObject(sequencingObject);
+			List<Join<Project, Sample>> joinList = projectService.getProjectsForSample(sampleSequencingObjectJoin.getSubject());
+			for(Join<Project, Sample> e : joinList) {
+				if(submissionProjects.contains(e.getSubject())){
+					analysisSampleProjects.add(new AnalysisSampleProject(sampleSequencingObjectJoin.getSubject().getId(), e.getSubject().getId()));
+				}
+			}
+		}
+
+		return ResponseEntity.ok(new AnalysisInfo(submission, submission.getName(), submission.getAnalysisState(), analysisType.getType(), viewer, currentUser.getSystemRole()
+				.equals(Role.ROLE_ADMIN), emailController.isMailConfigured(), prevState, duration, submission.getAnalysisState() == AnalysisState.COMPLETED,
+				submission.getAnalysisState() == AnalysisState.ERROR, treeDefault, analysisSampleProjects));
 	}
 
 	/*

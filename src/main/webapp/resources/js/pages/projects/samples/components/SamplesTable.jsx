@@ -22,6 +22,7 @@ import { IconSearch } from "../../../../components/icons/Icons";
 import { blue6 } from "../../../../styles/colors";
 import { generateColourForItem } from "../../../../utilities/colour-utilities";
 import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
+import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
 
 const { RangePicker } = DatePicker;
 
@@ -212,7 +213,6 @@ export function SamplesTable() {
     ),
   });
 
-  const sampleUrl = setBaseUrl(`/projects/${projectId}/samples`);
   const columns = [
     {
       title: () => {
@@ -246,7 +246,11 @@ export function SamplesTable() {
       dataIndex: ["sample", "sampleName"],
       sorter: true,
       render: (name, row) => (
-        <a href={`${sampleUrl}/${row.sample.id}`}>{name}</a>
+        <SampleDetailViewer sampleId={row.sample.id} projectId={row.project.id}>
+          <Button type="link" className="t-sample-name" style={{ padding: 0 }}>
+            {name}
+          </Button>
+        </SampleDetailViewer>
       ),
       ...getColumnSearchProps(
         ["sample", "sampleName"],

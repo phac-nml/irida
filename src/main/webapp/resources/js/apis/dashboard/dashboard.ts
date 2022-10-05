@@ -13,7 +13,9 @@ export interface UserStatistics {
  * Get user statistics
  * @param userId - identifier for a user
  */
-export async function fetchUserStatistics(userId: number): Promise<UserStatistics> {
+export async function fetchUserStatistics(
+  userId: number
+): Promise<UserStatistics> {
   try {
     const { data } = await axios.get(`${URL}?userId=${userId}`);
     return data;
@@ -25,7 +27,7 @@ export async function fetchUserStatistics(userId: number): Promise<UserStatistic
         return Promise.reject(error.message);
       }
     } else {
-      return Promise.reject('An unexpected error occured');
+      return Promise.reject("An unexpected error occurred");
     }
   }
 }

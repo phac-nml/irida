@@ -96,9 +96,7 @@ public class UICartService {
 		}
 
 		if (duplicateNames.size() > 0) {
-			String duplicates = duplicateNames.stream()
-					.map(Sample::getLabel)
-					.collect(Collectors.joining(", "));
+			String duplicates = duplicateNames.stream().map(Sample::getLabel).collect(Collectors.joining(", "));
 			Notification notification = new ErrorNotification(
 					messageSource.getMessage("server.cart.excluded", new Object[] { duplicates }, locale));
 			response.addNotification(notification);
@@ -189,7 +187,8 @@ public class UICartService {
 	/**
 	 * Get a list of sample in the cart belonging to a list of projects
 	 *
-	 * @return {@link List} of {@link CartProjectModel}s containing project and sample information for items in the cart.
+	 * @return {@link List} of {@link CartProjectModel}s containing project and sample information for items in the
+	 * cart.
 	 */
 	public List<CartProjectModel> getSamplesForProjects() {
 		List<Project> projects = (List<Project>) projectService.readMultiple(getProjectIdsInCart());
@@ -199,8 +198,7 @@ public class UICartService {
 			CartProjectModel cartProjectModel = new CartProjectModel(project.getId(), project.getLabel());
 			List<Long> sampleIds = cart.entrySet()
 					.stream()
-					.filter(entry -> project.getId()
-							.equals(entry.getValue()))
+					.filter(entry -> project.getId().equals(entry.getValue()))
 					.map(Map.Entry::getKey)
 					.collect(Collectors.toList());
 
@@ -216,6 +214,29 @@ public class UICartService {
 	}
 
 	/**
+	 * Get a list of sample ids in the cart
+	 *
+	 * @return {@link List} of {@link Long}s containing sample ids of samples in cart
+	 */
+	public List<Long> getCartSampleIds() {
+		List<Project> projects = (List<Project>) projectService.readMultiple(getProjectIdsInCart());
+		List<Long> sampleIdsList = new ArrayList<>();
+
+		for (Project project : projects) {
+			List<Long> projectSampleIds = cart.entrySet()
+					.stream()
+					.filter(entry -> project.getId().equals(entry.getValue()))
+					.map(Map.Entry::getKey)
+					.collect(Collectors.toList());
+
+			for (Long id : projectSampleIds) {
+				sampleIdsList.add(id);
+			}
+		}
+		return sampleIdsList;
+	}
+
+	/**
 	 * Get the entire cart flushed out into {@link Project}s with their {@link Sample}s
 	 *
 	 * @return All projects and samples in the part
@@ -224,19 +245,16 @@ public class UICartService {
 		Map<Project, List<Sample>> response = new HashMap<>();
 
 		// Get unique project ids;
-		cart.values()
-				.stream()
-				.distinct()
-				.forEach(projectId -> {
-					Project project = projectService.read(projectId);
-					List<Long> sampleIds = new ArrayList<>();
-					cart.forEach((key, value) -> {
-						if (value.equals(projectId)) {
-							sampleIds.add(key);
-						}
-					});
-					response.put(project, (List<Sample>) sampleService.readMultiple(sampleIds));
-				});
+		cart.values().stream().distinct().forEach(projectId -> {
+			Project project = projectService.read(projectId);
+			List<Long> sampleIds = new ArrayList<>();
+			cart.forEach((key, value) -> {
+				if (value.equals(projectId)) {
+					sampleIds.add(key);
+				}
+			});
+			response.put(project, (List<Sample>) sampleService.readMultiple(sampleIds));
+		});
 
 		return response;
 	}
@@ -261,15 +279,13 @@ public class UICartService {
 	}
 
 	/**
-	 * Get a list of samples that are currently loaded into the cart that can be added to a new project
-	 * This requires a special method because the user can only add samples to the new project
-	 * that they already can modify.
+	 * Get a list of samples that are currently loaded into the cart that can be added to a new project This requires a
+	 * special method because the user can only add samples to the new project that they already can modify.
 	 *
 	 * @return {@link CartSamplesByUserPermissions}
 	 */
 	public CartSamplesByUserPermissions getCartSamplesForNewProject() {
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		Map<Project, List<Sample>> cart = getFullCart();
 

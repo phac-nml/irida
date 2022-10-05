@@ -89,7 +89,12 @@
                     project_id="1"
                     sample_id="3"
                     createdDate="2018-07-04 10:00:0.0"
-                    owner="true"/>
+                    owner="true" />
+    <project_sample id="4"
+                    project_id="1"
+                    sample_id="4"
+                    createdDate="2018-07-04 10:00:0.0"
+                    owner="true" />
 
     <!--START: analysis_submission 1-->
     <tool_execution id="1" command_line="a" tool_name="b" tool_version="c"

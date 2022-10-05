@@ -6,4 +6,6 @@
   <include file="oauth2-authorization-tables.xml" relativeToChangelogFile="true" />
   <include file="update-remote-api-token-token-types.xml" relativeToChangelogFile="true" />
   <include file="refactor-client-details.xml" relativeToChangelogFile="true" />
+  <include file="add-default-sequencing-object-to-sample.xml" relativeToChangelogFile="true" />
+  <include file="add-default-genome-assembly-to-sample.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>

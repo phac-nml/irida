@@ -40,7 +40,10 @@ export default function ShareAssociated() {
                     </Button>
                   }
                 >
-                  <SampleDetailViewer sampleId={sample.id}>
+                  <SampleDetailViewer
+                    sampleId={sample.id}
+                    projectId={sample.projectId}
+                  >
                     <Button size="small">{sample.name}</Button>
                   </SampleDetailViewer>
                 </List.Item>
