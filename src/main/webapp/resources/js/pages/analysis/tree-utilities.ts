@@ -1,3 +1,5 @@
+import { MetadataColourMap, TreeProperties } from "../../types/phylocanvas";
+
 /**
  * Export a SVG blob of the provided legend section identified by term
  * @param {string} term the legend section to download
@@ -5,7 +7,11 @@
  * @param {object} treeProps Map of treeProps for phylocanvas
  * @returns
  */
-export function exportLegendSVG(term, colourMap, treeProps) {
+export function exportLegendSVG(
+  term: string,
+  colourMap: MetadataColourMap,
+  treeProps: TreeProperties
+) {
   const svg = [];
   const padding = 16;
   const blockLabelPadding = 8;
@@ -84,3 +90,15 @@ export function exportLegendSVG(term, colourMap, treeProps) {
 
   return new Blob(svg, { type: "image/svg+xml" });
 }
+
+/**
+ * Used to sort sections of the phylocanvas legend alphabetically
+ * @param a
+ * @param b
+ * @return {number|number}
+ */
+export const sortLegendSection = (a: string, b: string) => {
+  if (a === "") return 1;
+  if (b === "") return -1;
+  return a.toLocaleLowerCase() < b.toLocaleLowerCase() ? -1 : 1;
+};

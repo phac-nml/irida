@@ -1,17 +1,12 @@
 import { List, Space } from "antd";
 import React, { useMemo } from "react";
 import { LegendSectionItem } from "./LegendSectionItem";
+import { sortLegendSection } from "../../tree-utilities";
 
 type LegendSectionProps = {
   title: string;
   sectionColourMap: Record<string, string>;
   onSectionItemColourChange: (key: string, colour: string) => void;
-};
-
-const sortSection = (a: string, b: string) => {
-  if (a === "") return 1;
-  if (b === "") return -1;
-  return a.toLocaleLowerCase() < b.toLocaleLowerCase() ? -1 : 1;
 };
 
 const BLANK_LABEL = i18n("visualization.phylogenomics.metadata.fields.blank");
@@ -27,7 +22,7 @@ export function LegendSection({
   const sectionItems = useMemo(
     () =>
       Object.keys(sectionColourMap)
-        .sort(sortSection)
+        .sort(sortLegendSection)
         .map((field) => (
           <LegendSectionItem
             key={field}
