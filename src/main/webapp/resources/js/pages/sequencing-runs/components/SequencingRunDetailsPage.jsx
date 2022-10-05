@@ -4,6 +4,7 @@ import {
   useGetSequencingRunDetailsQuery,
   useGetSequencingRunFilesQuery,
 } from "../../../apis/sequencing-runs/sequencing-runs";
+import { downloadSequencingObjectFile } from "../../../apis/samples/samples";
 import { Button, Col, Layout, Row, Table, Typography } from "antd";
 import { formatDate } from "../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -133,12 +134,10 @@ export default function SequencingRunDetailsPage() {
           <Button
             shape="circle"
             onClick={() =>
-              window.open(
-                setBaseUrl(
-                  `/sequenceFiles/download/${item.sequencingObjectId}/file/${item.id}`
-                ),
-                "_blank"
-              )
+              downloadSequencingObjectFile({
+                sequencingObjectId: item.sequencingObjectId,
+                sequenceFileId: item.id,
+              })
             }
             icon={<IconDownloadFile />}
           />

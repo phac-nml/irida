@@ -403,14 +403,17 @@ public class UISampleService {
 		Long fieldUsageCount = metadataEntryRepository.getMetadataEntriesCountBySamplesAndField(metadataTemplateField,
 				sampleList);
 		metadataEntryRepository.deleteById(metadataEntryId);
-		MetadataRestriction restrictionToDelete = metadataTemplateService.getMetadataRestrictionForFieldAndProject(
-				project, metadataTemplateField);
+
 		/*
 		 Only delete the restriction on the field if there is only one place
 		 where the field is in use within the project
 		 */
 		if (fieldUsageCount == 1) {
-			metadataRestrictionRepository.delete(restrictionToDelete);
+			MetadataRestriction restrictionToDelete = metadataTemplateService.getMetadataRestrictionForFieldAndProject(
+					project, metadataTemplateField);
+			if(restrictionToDelete != null) {
+				metadataRestrictionRepository.delete(restrictionToDelete);
+			}
 		}
 
 		return messageSource.getMessage("server.sample.metadata.remove.success",
