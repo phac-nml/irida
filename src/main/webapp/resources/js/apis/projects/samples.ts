@@ -120,7 +120,7 @@ export async function createSample({
   projectId,
   body,
 }: {
-  projectId: number;
+  projectId: string;
   body: SampleRequest;
 }) {
   return await axios.post(`${URL}/${projectId}/samples/add-sample`, body);
@@ -131,7 +131,7 @@ export async function updateSample({
   sampleId,
   body,
 }: {
-  projectId: number;
+  projectId: string;
   sampleId: number;
   body: SampleRequest;
 }) {

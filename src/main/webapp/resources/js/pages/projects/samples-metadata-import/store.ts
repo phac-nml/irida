@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { importReducer } from "./services/importReducer";
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 /*
 Redux Store for sample metadata importer.
@@ -14,5 +15,7 @@ const store = configureStore({
 
 export type ImportState = ReturnType<typeof store.getState>;
 export type ImportDispatch = typeof store.dispatch;
+export const useImportDispatch: () => ImportDispatch = useDispatch;
+export const useImportSelector: TypedUseSelectorHook<ImportState> = useSelector;
 
 export default store;

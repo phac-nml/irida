@@ -1,5 +1,4 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Radio, RadioChangeEvent, Typography } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
@@ -10,7 +9,12 @@ import {
 } from "../../../../components/icons/Icons";
 import { setSampleNameColumn } from "../services/importReducer";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
-import { ImportDispatch, ImportState } from "../store";
+import {
+  ImportDispatch,
+  ImportState,
+  useImportDispatch,
+  useImportSelector,
+} from "../store";
 
 const { Text } = Typography;
 
@@ -25,10 +29,10 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
   const navigate: NavigateFunction = useNavigate();
   const [column, setColumn] = React.useState<string>();
   const [loading, setLoading] = React.useState<boolean>(false);
-  const { headers, sampleNameColumn } = useSelector(
+  const { headers, sampleNameColumn } = useImportSelector(
     (state: ImportState) => state.importReducer
   );
-  const dispatch: ImportDispatch = useDispatch();
+  const dispatch: ImportDispatch = useImportDispatch();
 
   React.useEffect(() => {
     if (!column) {

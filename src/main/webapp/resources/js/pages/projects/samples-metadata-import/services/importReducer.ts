@@ -55,7 +55,7 @@ For more information on redux async thunks see: https://redux-toolkit.js.org/api
  */
 export const saveMetadata = createAsyncThunk<
   SaveMetadataResponse,
-  { projectId: number; selectedMetadataKeys: string[] },
+  { projectId: string; selectedMetadataKeys: string[] },
   { dispatch: ImportDispatch; state: ImportState }
 >(
   `importReducer/saveMetadata`,

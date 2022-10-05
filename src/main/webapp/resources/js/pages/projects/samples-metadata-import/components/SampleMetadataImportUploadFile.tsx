@@ -1,5 +1,4 @@
 import React from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { setHeaders, setMetadata } from "../services/importReducer";
 import { notification, Spin, StepsProps, Typography, UploadProps } from "antd";
@@ -7,7 +6,7 @@ import { DragUpload } from "../../../../components/files/DragUpload";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import * as XLSX from "xlsx";
 import { WorkBook } from "xlsx";
-import { ImportDispatch } from "../store";
+import { ImportDispatch, useImportDispatch } from "../store";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
 
 const { Text } = Typography;
@@ -21,7 +20,7 @@ const { Text } = Typography;
 export function SampleMetadataImportUploadFile(): JSX.Element {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate: NavigateFunction = useNavigate();
-  const dispatch: ImportDispatch = useDispatch();
+  const dispatch: ImportDispatch = useImportDispatch();
   const [status, setStatus] = React.useState<StepsProps["status"]>("process");
   const [loading, setLoading] = React.useState<boolean>(false);
 
