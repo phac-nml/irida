@@ -14,7 +14,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.utilities.FileUtilit
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +29,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -384,8 +385,12 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.openMetadataDropdown();
 		assertEquals(4, page.getNumberOfMetadataFields());
-		page.selectedMetadataTemplate("Test Template");
-		assertTrue(page.areCorrectMetadataFieldsSelected(ImmutableList.of("firstName", "symptom")));
+		page.selectedMetadataTemplate("Testing Template 1");
+		List<String> fieldsInTemplate = List.of("firstName", "symptom");
+
+		List<String> selectedFields = page.getSelectedMetadataFields();
+		Collections.sort(selectedFields);
+		assertEquals(fieldsInTemplate, selectedFields);
 
 		page.openLegend();
 		assertTrue(page.legendContainsCorrectAmountOfMetadataFields());

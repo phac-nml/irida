@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AnalysisDetailsPage extends AbstractPage {
@@ -92,7 +93,7 @@ public class AnalysisDetailsPage extends AbstractPage {
     @FindBy(className = "ant-checkbox-checked")
     private List<WebElement> checkedCheckBoxes;
 
-    @FindBy(css = "[title='Select tree shape']")
+    @FindBy(css = "button[title='Select tree shape']")
     private WebElement treeShapeTrigger;
 
     @FindBy(css = "[title='Select metadata fields to display']")
@@ -501,8 +502,9 @@ public class AnalysisDetailsPage extends AbstractPage {
     }
 
     public void openTreeShapeDropdown() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+        wait.until(ExpectedConditions.elementToBeClickable(treeShapeTrigger));
         treeShapeTrigger.click();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-shape-dd")));
     }
 
@@ -551,15 +553,16 @@ public class AnalysisDetailsPage extends AbstractPage {
         }
     }
 
-    public boolean areCorrectMetadataFieldsSelected(List<String> names) {
-        List<WebElement> items = driver.findElements(By.cssSelector(".t-metadata-field .ant-checkbox-checked"));
+    public List<String> getSelectedMetadataFields() {
+        List<WebElement> items = driver.findElements(By.cssSelector(".t-metadata-field"));
+        List<String> selectedFields = new ArrayList<>();
         for (WebElement item : items) {
-            String label = item.findElement(By.className("t-field-title")).getText();
-            if (names.contains(label)) {
-                names.remove(label);
+            if (!item.findElements(By.className("ant-checkbox-checked")).isEmpty()) {
+                String label = item.findElement(By.className("t-field-title")).getText();
+                selectedFields.add(label);
             }
         }
-        return names.isEmpty();
+        return selectedFields;
     }
 
     public int getNumberOfMetadataFields() {
