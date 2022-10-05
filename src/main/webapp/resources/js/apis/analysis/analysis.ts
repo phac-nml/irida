@@ -10,6 +10,32 @@ const ANALYSES_URL = setBaseUrl(`/ajax/analyses`);
 
 const ANALYSIS_URL = setBaseUrl(`/ajax/analysis`);
 
+export type NewickTreeResponse = {
+  message?: string;
+  newick?: string;
+  error?: string;
+};
+
+export type MetadataItem = {
+  [key: string]: {
+    value: string;
+    type: "text";
+  };
+};
+
+export type Metadata = {
+  [key: string]: MetadataItem;
+};
+
+export type MetadataResponse = {
+  metadata: Metadata;
+  terms: string[];
+};
+
+export type MetadataTemplatesResponse = {
+  templates: Template[];
+};
+
 /*
  * Get all the data required for the analysis on load
  * @param {number} submissionId Submission ID
@@ -259,12 +285,6 @@ export async function getDataViaLines({ submissionId, fileId, start, end }) {
   }
 }
 
-export type NewickTreeResponse = {
-  message?: string;
-  newick?: string;
-  error?: string;
-};
-
 /**
  * Get the newick string for the submission.
  * @param submissionId Submission ID
@@ -275,20 +295,6 @@ export async function getNewickTree(
 ): Promise<NewickTreeResponse> {
   return get<NewickTreeResponse>(`${ANALYSIS_URL}/${submissionId}/tree`);
 }
-
-export type MetadataItem = {
-  [key: string]: {
-    value: string;
-    type: "text";
-  };
-};
-export type Metadata = {
-  [key: string]: MetadataItem;
-};
-export type MetadataResponse = {
-  metadata: Metadata;
-  terms: string[];
-};
 /**
  * Get the metadata for the submission.
  * @param submissionId
@@ -298,10 +304,6 @@ export async function getMetadata(
 ): Promise<MetadataResponse> {
   return get<MetadataResponse>(`${ANALYSIS_URL}/${submissionId}/metadata`);
 }
-
-export type MetadataTemplatesResponse = {
-  templates: Template[];
-};
 
 /**
  * Get the metadata templates for the submission.
