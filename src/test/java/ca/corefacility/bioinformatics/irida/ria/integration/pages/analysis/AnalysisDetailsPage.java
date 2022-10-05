@@ -539,10 +539,27 @@ public class AnalysisDetailsPage extends AbstractPage {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-shape-dd")));
     }
 
-    public void selectedMetadataTemplate() {
+    public void selectedMetadataTemplate(String templateName) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
         metadataTemplateSelect.click();
         List<WebElement> templates = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("t-template-field")));
+        for (WebElement template : templates) {
+            if (template.getAttribute("title").equals(templateName)) {
+                template.click();
+                wait.until(ExpectedConditions.attributeContains(template, "aria-selected", "true"));
+            }
+        }
+    }
+
+    public boolean areCorrectMetadataFieldsSelected(List<String> names) {
+        List<WebElement> items = driver.findElements(By.cssSelector(".t-metadata-field .ant-checkbox-checked"));
+        for (WebElement item : items) {
+            String label = item.findElement(By.className("t-field-title")).getText();
+            if (names.contains(label)) {
+                names.remove(label);
+            }
+        }
+        return names.isEmpty();
     }
 
     public int getNumberOfMetadataFields() {

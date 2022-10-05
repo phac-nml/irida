@@ -58,7 +58,9 @@ export function MetadataFieldSelect({
         value={field}
         onChange={(event) => onChange(event.target.checked, false)}
       >
-        <span title={field}>{field}</span>
+        <span className="t-field-title" title={field}>
+          {field}
+        </span>
       </FieldCheckbox>
       <OnlyButton
         size="small"
