@@ -120,6 +120,9 @@ public class AnalysisDetailsPage extends AbstractPage {
     @FindBy(xpath = "//div[contains(text(), 'Legend')]")
     private WebElement layoutLegendButton;
 
+    @FindBy(className = "t-fields-all")
+    private WebElement toggleAllMetadataFields;
+
     public AnalysisDetailsPage(WebDriver driver) {
         super(driver);
     }
@@ -563,6 +566,14 @@ public class AnalysisDetailsPage extends AbstractPage {
             }
         }
         return selectedFields;
+    }
+
+    public void toggleAllMetadataFields() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
+        WebElement switchElement = toggleAllMetadataFields.findElement(By.className("ant-switch"));
+        String toggleValue = switchElement.getAttribute("aria-checked");
+        toggleAllMetadataFields.click();
+        wait.until(ExpectedConditions.attributeContains(switchElement, "aria-checked", toggleValue.equals("true") ? "false" : "true"));
     }
 
     public int getNumberOfMetadataFields() {

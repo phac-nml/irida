@@ -63,7 +63,7 @@ export function MetadataMenu(): JSX.Element {
         </Select>
       </Menu.Item>
       {terms.length > 0 ? (
-        <Menu.Item key="select-all-fields">
+        <Menu.Item key="select-all-fields" className="t-fields-all">
           <MetadataSelectAll
             checked={allFieldsSelected}
             onChange={(checked: boolean) =>

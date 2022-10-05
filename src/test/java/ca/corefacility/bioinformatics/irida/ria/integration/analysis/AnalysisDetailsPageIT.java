@@ -392,6 +392,15 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		Collections.sort(selectedFields);
 		assertEquals(fieldsInTemplate, selectedFields);
 
+		page.toggleAllMetadataFields();
+		List<String> allFields = List.of("firstName", "healthAuthority", "lastName", "symptom");
+		List<String> allSelectedFields = page.getSelectedMetadataFields();
+		Collections.sort(allSelectedFields);
+		assertEquals(allFields, allSelectedFields);
+		page.toggleAllMetadataFields();
+		assertTrue(page.getSelectedMetadataFields().isEmpty());
+
+
 		page.openLegend();
 		assertTrue(page.legendContainsCorrectAmountOfMetadataFields());
 	}
