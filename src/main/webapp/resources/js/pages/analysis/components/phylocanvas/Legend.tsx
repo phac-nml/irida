@@ -57,7 +57,7 @@ export function Legend(): JSX.Element {
             {i18n("visualization.phylogenomics.sidebar.legend.title")}
           </Typography.Text>
         }
-        dataSource={terms}
+        dataSource={treeProps.blocks}
         renderItem={(item) => (
           <List.Item style={{ width: "100%" }}>
             <LegendSection

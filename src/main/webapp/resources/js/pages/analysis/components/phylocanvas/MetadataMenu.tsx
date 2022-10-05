@@ -95,5 +95,7 @@ export function MetadataMenu(): JSX.Element {
         icon={<FilterOutlined />}
       />
     </Dropdown>
-  ) : null;
+  ) : (
+    <div />
+  );
 }
