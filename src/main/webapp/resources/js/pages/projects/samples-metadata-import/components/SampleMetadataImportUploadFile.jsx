@@ -62,12 +62,12 @@ export function SampleMetadataImportUploadFile() {
   return (
     <SampleMetadataImportWizard currentStep={0} currentStatus={status}>
       <DragUpload
-        className="t-metadata-uploader-dropzone"
         uploadText={i18n("SampleMetadataImportUploadFile.dropzone")}
         uploadHint={
           <Text strong>{i18n("SampleMetadataImportUploadFile.warning")}</Text>
         }
         options={options}
+        props={{ className: "t-metadata-uploader-dropzone" }}
       />
     </SampleMetadataImportWizard>
   );

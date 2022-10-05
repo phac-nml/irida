@@ -4,6 +4,7 @@ import java.util.List;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleSequencingObjectFileModel;
 
 /**
  * Represents a sample within the cart on the pipeline launch page.
@@ -12,16 +13,19 @@ public class LaunchSample {
 	private final Long id;
 	private final String label;
 	private final Project project;
+	private final SequencingObject defaultSequencingObject;
 
 	/*
 	 * This is for the type of files that are allowed in the pipeline.
 	 */
-	private List<SequencingObject> files;
+	private List<SampleSequencingObjectFileModel> files;
 
-	public LaunchSample(Sample sample, ca.corefacility.bioinformatics.irida.model.project.Project project) {
+	public LaunchSample(Sample sample, ca.corefacility.bioinformatics.irida.model.project.Project project,
+			SequencingObject defaultSequencingObject) {
 		this.id = sample.getId();
 		this.label = sample.getLabel();
 		this.project = new Project(project);
+		this.defaultSequencingObject = defaultSequencingObject;
 	}
 
 	public Long getId() {
@@ -36,12 +40,16 @@ public class LaunchSample {
 		return project;
 	}
 
-	public List<SequencingObject> getFiles() {
+	public List<SampleSequencingObjectFileModel> getFiles() {
 		return files;
 	}
 
-	public void setFiles(List<SequencingObject> files) {
+	public void setFiles(List<SampleSequencingObjectFileModel> files) {
 		this.files = files;
+	}
+
+	public SequencingObject getDefaultSequencingObject() {
+		return defaultSequencingObject;
 	}
 
 	/**

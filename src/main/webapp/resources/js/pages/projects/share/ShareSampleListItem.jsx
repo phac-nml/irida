@@ -6,6 +6,7 @@ import { SampleDetailViewer } from "../../../components/samples/SampleDetailView
 import { green6 } from "../../../styles/colors";
 import { removeSample } from "./shareSlice";
 
+
 /**
  * Render a list item for the samples to be shared with another project.
  * @param {array} sample - sample to display
@@ -63,7 +64,11 @@ export default function ShareSamplesListItem({
           )
         }
         title={
-          <SampleDetailViewer sampleId={sample.id}>
+          <SampleDetailViewer
+            sampleId={sample.id}
+            projectId={sample.projectId}
+            displayActions={false}
+          >
             <Button>{sample.name}</Button>
           </SampleDetailViewer>
         }

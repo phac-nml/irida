@@ -40,11 +40,4 @@ public class SequenceFileAjaxControllerTest {
 		ResponseEntity<FastQCImagesResponse> response = sequenceFileAjaxController.getFastQCCharts(OBJECT_ID, FILE_ID);
 		assertEquals(response.getStatusCode(), HttpStatus.OK, "Receive an 200 OK response");
 	}
-
-	@Test
-	public void testOverRepresentedSequences() {
-		ResponseEntity<AnalysisFastQC> response = sequenceFileAjaxController.getOverRepresentedSequences(OBJECT_ID, FILE_ID);
-		assertEquals(response.getStatusCode(), HttpStatus.OK, "Receive an 200 OK response");
-	}
-
 }
