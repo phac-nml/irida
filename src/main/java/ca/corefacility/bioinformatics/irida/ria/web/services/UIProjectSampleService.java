@@ -140,7 +140,7 @@ public class UIProjectSampleService {
 			if (!Strings.isNullOrEmpty(request.getDescription())) {
 				sample.setDescription(request.getDescription());
 			}
-			Join<Project, Sample> join = projectService.addSampleToProject(project, sample, true);
+			Join<Project, Sample> join = projectService.addSampleToProjectWithoutEvent(project, sample, true);
 			if (request.getMetadata() != null) {
 				Set<MetadataEntry> metadataEntrySet = request.getMetadata().stream().map(entry -> {
 					MetadataTemplateField field = metadataTemplateService.saveMetadataField(

@@ -23,7 +23,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -411,8 +410,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		// Check to ensure a sample with this sample name doesn't exist in this
 		// project already
 		if (sampleRepository.getSampleBySampleName(project, sample.getSampleName()) != null) {
-			throw new ExistingSampleNameException("Sample with the name '" + sample.getSampleName()
-					+ "' already exists in project " + project.getId(), sample);
+			throw new ExistingSampleNameException(
+					"Sample with the name '" + sample.getSampleName() + "' already exists in project "
+							+ project.getId(), sample);
 		}
 
 		// the sample hasn't been persisted before, persist it before calling
@@ -443,8 +443,19 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 */
 	@Override
 	@Transactional
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or (hasPermission(#project, 'isProjectOwner'))")
+	public ProjectSampleJoin addSampleToProjectWithoutEvent(Project project, Sample sample, boolean owner) {
+		return addSampleToProject(project, sample, owner);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
 	@LaunchesProjectEvent(SampleAddedProjectEvent.class)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or ( hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner'))")
+	@PreAuthorize(
+			"hasRole('ROLE_ADMIN') or ( hasPermission(#source, 'isProjectOwner') and hasPermission(#destination, 'isProjectOwner'))")
 	public ProjectSampleJoin moveSampleBetweenProjects(Project source, Project destination, Sample sample) {
 		//read the existing ProjectSampleJoin to see if we're the owner
 		ProjectSampleJoin projectSampleJoin = psjRepository.readSampleForProject(source, sample);
@@ -608,15 +619,16 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#subject,'isProjectOwner') and hasPermission(#relatedProject,'canReadProject')")
+	@PreAuthorize(
+			"hasRole('ROLE_ADMIN') or hasPermission(#subject,'isProjectOwner') and hasPermission(#relatedProject,'canReadProject')")
 	public RelatedProjectJoin addRelatedProject(Project subject, Project relatedProject) {
 		if (subject.equals(relatedProject)) {
 			throw new IllegalArgumentException("Project cannot be related to itself");
 		}
 
 		try {
-			RelatedProjectJoin relation = relatedProjectRepository
-					.save(new RelatedProjectJoin(subject, relatedProject));
+			RelatedProjectJoin relation = relatedProjectRepository.save(
+					new RelatedProjectJoin(subject, relatedProject));
 			return relation;
 		} catch (DataIntegrityViolationException e) {
 			throw new EntityExistsException(
@@ -692,8 +704,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasPermission(#project, 'isProjectOwner')")
 	public void removeReferenceFileFromProject(Project project, ReferenceFile file) {
-		List<Join<Project, ReferenceFile>> referenceFilesForProject = prfjRepository
-				.findReferenceFilesForProject(project);
+		List<Join<Project, ReferenceFile>> referenceFilesForProject = prfjRepository.findReferenceFilesForProject(
+				project);
 		Join<Project, ReferenceFile> specificJoin = null;
 		for (Join<Project, ReferenceFile> join : referenceFilesForProject) {
 			if (join.getObject().equals(file)) {
@@ -704,8 +716,9 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		if (specificJoin != null) {
 			prfjRepository.delete((ProjectReferenceFileJoin) specificJoin);
 		} else {
-			throw new EntityNotFoundException("Cannot find a join for project [" + project.getName()
-					+ "] and reference file [" + file.getLabel() + "].");
+			throw new EntityNotFoundException(
+					"Cannot find a join for project [" + project.getName() + "] and reference file [" + file.getLabel()
+							+ "].");
 		}
 	}
 
@@ -849,8 +862,8 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	@PostFilter("hasPermission(filterObject, 'canReadProject')")
 	@Override
 	public List<Project> getProjectsUsedInAnalysisSubmission(AnalysisSubmission submission) {
-		Set<SequencingObject> findSequencingObjectsForAnalysisSubmission = sequencingObjectRepository
-				.findSequencingObjectsForAnalysisSubmission(submission);
+		Set<SequencingObject> findSequencingObjectsForAnalysisSubmission = sequencingObjectRepository.findSequencingObjectsForAnalysisSubmission(
+				submission);
 
 		// get available projects
 		Set<Project> projectsInAnalysis = getProjectsForSequencingObjects(findSequencingObjectsForAnalysisSubmission);
@@ -891,7 +904,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 	 * @param projectRole The {@link ProjectRole} to search for.
 	 * @param user        The user to search
 	 * @return a {@link Specification} to search for {@link Project} where the specified {@link User} has a certain
-	 *         {@link ProjectRole}.
+	 * {@link ProjectRole}.
 	 */
 	private static final Specification<ProjectUserJoin> getProjectJoinsWithRole(User user, ProjectRole projectRole) {
 		return new Specification<ProjectUserJoin>() {
