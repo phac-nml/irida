@@ -13,7 +13,24 @@ const ColourInput = styled.input.attrs({ type: "color" })`
   -webkit-appearance: none;
 `;
 
-export function LegendSectionItem({ label, colour: initialColour, onChange }) {
+type LegendSectionItemProps = {
+  label: string;
+  colour: string;
+  onChange: (colour: string) => void;
+};
+
+/**
+ * React component to render a metadata field for colour selection
+ * @param label - Metadata field name
+ * @param initialColour - starting colour of the field
+ * @param onChange - Function to do the change
+ * @constructor
+ */
+export function LegendSectionItem({
+  label,
+  colour: initialColour,
+  onChange,
+}: LegendSectionItemProps): JSX.Element {
   const [colour, setColour] = React.useState(initialColour);
 
   const debouncedColour = useDebounce(colour, 500);
