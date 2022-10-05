@@ -87,7 +87,7 @@ export function MetadataMenu(): JSX.Element {
     </Menu>
   );
 
-  return (
+  return terms.length > 0 ? (
     <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
       <Button
         title={i18n("PhylocanvasShapeDropDown.metadata.tooltip")}
@@ -95,5 +95,5 @@ export function MetadataMenu(): JSX.Element {
         icon={<FilterOutlined />}
       />
     </Dropdown>
-  );
+  ) : null;
 }
