@@ -11,42 +11,84 @@ IRIDA Analysis Visualizations
 
 IRIDA has a set of integrated visualization tools that allow for a more thorough analyses of pipeline results.
 
-### Phylogenetic Tree Visualization
+## Phylogenetic Tree Visualization
 
-Phylogenetic trees created by the SNVPhyl Analysis Pipeline are combined with metadata from the samples in the analysis to display the metadata beside the tree leaves.
+Phylogenetic trees produced by analysis pipelines, for example SNVPhyl, are displayed on the analysis page in the "Phylogentic Tree" Tab. Sample metadata can be displayed concurrently with the tree and can be toggled on or off (either on a field or metadata template basis).
 
-![Tree](images/plain_tree.png)
+![Tree](images/tree-viewer.png)
 
-Sample metadata can be added to the sample using the sample metadata uploader (see [Sample Metadata](../sample-metadata) for how to import).
+If you want to display additional metadata, first upload it using the sample metadata uploader (see [Sample Metadata](../sample-metadata) for how to import) or by clicking the sample name in the "Settings" -> "Samples" tab and going to the "Metadata" tab.
 
-To get to the advanced visualization page, on the analysis page, click the `View Advanced Visualization` button on the `Phylogenetic Tree` tab:
+### Tree Menu Option (at top right of tree area)
+#### Toggling Tree Types
 
-![Link to advanced analysis on analysis results page](images/viz_link.png)
+The phylogenetic tree viewer can display five types of trees:
 
-#### Using Sample Metadata Field Templates
+1. Circular
+1. Diagonal
+1. Hierarchical
+1. Radial
+1. Rectangular (default)
 
-[Sample Metadata Templates](../sample-metadata-templates/) can be used to update which metadata fields are displayed in the visualization.  When the page is loaded the default template is presented, all metadata fields are shown.  A different template can be selected from the template selection as demonstrated below.  This will update the view with the desired metadata fields in the proper order.
+![Tree Shape Selection](images/tree-shape-selection.gif)
 
-![Demonstration of applying Sample Metadata Templates to the visualization](images/template_selection.png)
+You can change the tree shape by clicking on the tree shape menu icon at the top right corner of the tree area.  A drop down menu will appear allowing you to select the desired tree shape.
 
-#### Toggling Sample Metadata Fields
+#### Toggling Metadata Fields
 
-Individual Metadata Fields can be displayed or hidden by clicking `Toggle Metadata` button, which will open a side panel displaying a list of metadata fields with checkboxes to make them visible or hidden.  
+To toggle metadata fields click the filter menu icon at the top right corner of the tree area. A drop down menu will be appear displaying:
+1. Metadata Template selection
+1. Select all switch
+1. List of checkboxes for all metadata fields associated with samples in the analysis
 
-![Open metadata selection btn](images/toggle_metadata_button.png)
+##### Toggling Individual Fields
 
-Individual metadata field by clicking on the field label in the side panel.
+![Metadata Field Selection](images/metadata-field-selection.gif)
 
-![Toggle metadata field](images/toggle_metadatafield.png)
+You can toggle the visibility of all metadata fields by clicking on the switch to the right of the "Select all". 
 
-After unchecking the checkbox next to 'Province' the metadata column is removed from the image.
+Individual fields can have their visibiltiy toggled based on their checkbox. A single field can be made visible by clicking the "Only" button, which is only visible when hovering over a single metadata field in the dropdown.
 
-![Result of removing 'PFGE-BlnI-pattern'](images/toggle_metadatafield_after.png)
+##### Using Metadata Templates
 
-#### Export to SVG
+In addition to being able to toggle individual metadata fields, a [Sample Metadata Templates](../sample-metadata-templates/) can be selected in the dropdown, which will make only the fields present in that template visible. By default, all fields are displayed.
 
-To export a copy of the visualization into SVG format, simply click on the `Export SVG` button in the upper right.
+#### Export to newick, PNG or SVG format
 
-![Export SVG](images/export_svg.png)
+![Export Menu](images/tree-export-menu.gif)
 
-This svg file can be opened in most external imaging software (except Adobe Illustrator for Mac).
+To export a copy of the tree in newick, PNG or SVG format, click on the download menu icon at the top right corner of the tree area.  The resulting dropdown will allow you to select the type of export you want.
+
+### Tree Zoom Menu (at bottom right of tree ares)
+
+#### Default Zoom
+
+![Default Zoom](images/default-zoom.gif)
+
+Default zoom allows you to increase or decrease the magnification of the whole tree (similar to zooming on Google Maps).
+
+#### Branch Zoom
+
+![Branch Zoom](images/branch-zoom.gif)
+
+Branch zoom compresses or expands the length of the branches.
+
+#### Step Zoom
+
+![Step Zoom](images/step-zoom.gif)
+
+Step zoom increases or decreases the distance between branches.
+
+### Legend
+
+![Legend Opening](images/expand-legend.gif)
+
+The legend can be displayed by clicking on the Legen button to the right of the tree.  This displays the **visible** metadata fields and the colour of each values for that field (more on this below), for example in the above gif the "Lysteria Monocytogenes" is the only value for the "Organism" field and has the same colour in both locations on the tree.  The legend can expanded by dragging from the edge where the legend meets the tree, and click and draged.
+
+![Legend Colour](images/legend-metadata-value-color-change.gif)
+
+Colours for each metadata field value can be modified by clicking on the colour box next to the field value.  This opens a colour selector where fine grain control of the colour can be selected.
+
+![Legend Metadata Section Download](images/legend-metadata-section-download.gif)
+
+An SVG version of each Legend Metadata section can be downloaded by clicking on the download menu icon within the Legend area. Within the dropdown you can select which Legend section to download.
