@@ -181,7 +181,7 @@ To view the advanced visualization, click the **Phylogenetic Tree** tab and clic
 [add-to-cart]: images/add-to-cart.png
 [Advanced Visualizations]: ../../../user/user/analysis-visualizations
 [analysis-in-progress]: images/analysis-in-progress.png
-[cart-button]: images/cart-button.png
+[cart-button]: ../../../images/tutorials/common/pipelines/cart-button.png
 [launch-button]: ../../../images/tutorials/common/pipelines/ready-to-launch-button.png
 [monitor-analyses]: images/monitor-analyses.png
 [pipeline-launched]: images/pipeline-launched.png
