@@ -255,6 +255,22 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
+	public void testSaveResultBackToSamplesProjectManager() {
+		LoginPage.loginAsManager(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 11L, "settings/share");
+		assertTrue(page.compareTabTitle("Manage Results"), "Page title should equal");
+		assertTrue(page.saveToSamplesVisible(), "Save results back to sample should be visible to a project manager");
+	}
+
+	@Test
+	public void testSaveResultBackToSamplesProjectUser() {
+		LoginPage.loginAsUser(driver());
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 11L, "settings/share");
+		assertTrue(page.compareTabTitle("Manage Results"), "Page title should equal");
+		assertFalse(page.saveToSamplesVisible(), "Save results back to sample should not be visible to a project user");
+	}
+
+	@Test
 	public void testSistrOutput() throws IOException {
 		fileUtilities.copyFileToDirectory(outputFileBaseDirectory,
 				"src/test/resources/files/sistr-predictions-pass.json");

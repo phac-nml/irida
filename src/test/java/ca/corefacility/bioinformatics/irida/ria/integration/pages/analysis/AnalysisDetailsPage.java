@@ -108,6 +108,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(className = "ant-menu-title-content")
 	private List<WebElement> menuItems;
 
+
 	public AnalysisDetailsPage(WebDriver driver) {
 		super(driver);
 	}
@@ -526,5 +527,13 @@ public class AnalysisDetailsPage extends AbstractPage {
 			return true;
 		}
 		return false;
+	}
+
+	public boolean saveToSamplesVisible() {
+		try {
+			return driver.findElement(By.className("t-save-results-to-samples")).isDisplayed();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }

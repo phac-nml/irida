@@ -54,6 +54,11 @@
           credentialsNonExpired="true" locale="en" />
 
 
+    <project_user id="1" project_id="1" user_id="1"
+                  projectRole="PROJECT_OWNER" metadataRole="LEVEL_4" createdDate="2013-07-18 14:20:19.0"/>
+    <project_user id="2" project_id="1" user_id="2"
+                  projectRole="PROJECT_USER" metadataRole="LEVEL_4" createdDate="2013-07-18 14:20:19.0"/>
+
 	<sequencing_object id="1" created_date="2014-07-30 08:24:34"
 		sequencing_run_id="1" />
     <sequencing_object id="2" created_date="2014-08-01 08:24:34"
@@ -199,5 +204,6 @@
     <analysis_submission_sequencing_object analysis_submission_id="14" sequencing_object_id="1" />
 
     <project_analysis_submission id="1" project_id="1" analysis_submission_id="4" created_date="2013-07-18 14:20:19.0"/>
+    <project_analysis_submission id="2" project_id="1" analysis_submission_id="11" created_date="2013-07-18 14:20:19.0"/>
 
 </dataset>
