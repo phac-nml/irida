@@ -11,9 +11,9 @@ IRIDA Analysis Visualizations
 
 IRIDA has a set of integrated visualization tools that allow for a more thorough analyses of pipeline results.
 
-### Advanced SNVPhyl Line List Visualization
+### Phylogenetic Tree Visualization
 
-Phylogenetic trees created by the SNVPhyl Analysis Pipeline can be combined with metadata from the samples to display the metadata beside the tree leaves.
+Phylogenetic trees created by the SNVPhyl Analysis Pipeline are combined with metadata from the samples in the analysis to display the metadata beside the tree leaves.
 
 ![Tree](images/plain_tree.png)
 
