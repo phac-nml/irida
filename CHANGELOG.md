@@ -1,7 +1,7 @@
 
 # Changelog
 
-## [Unreleased]
+## [22.09] - 2022/10/07
 * [Developer/UI]: Refreshed the create new user account page. See [PR 1285](https://github.com/phac-nml/irida/pull/1285)
 * [Developer/UI]: Added in typescript support to webpack build, moving forward all new frontend development will use typescript. See [PR 1294](https://github.com/phac-nml/irida/pull/1294) for more.
 * [Developer/UI]: Removed `styled-components` from page header and replaced with CSS variables. See [PR 1284](https://github.com/phac-nml/irida/pull/1284)
@@ -130,8 +130,7 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
-[Unreleased]: https://github.com/phac-nml/irida/compare/22.05.5...HEAD
-
+[22.09]: https://github.com/phac-nml/irida/compare/22.05.5...22.09
 [22.05.5]: https://github.com/phac-nml/irida/compare/22.05.4...22.05.5
 [22.05.4]: https://github.com/phac-nml/irida/compare/22.05.3...22.05.4
 [22.05.3]: https://github.com/phac-nml/irida/compare/22.05.2...22.05.3
