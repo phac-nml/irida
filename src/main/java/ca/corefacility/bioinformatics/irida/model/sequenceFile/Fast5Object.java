@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.io.FilenameUtils;
 import org.hibernate.envers.Audited;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,6 @@ import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
-import liquibase.util.file.FilenameUtils;
 
 /**
  * {@link SequencingObject} implementation for storing .fast5 files.
@@ -56,8 +56,7 @@ public class Fast5Object extends SequencingObject {
 	}
 
 	/**
-	 * Throws {@link UnsupportedOperationException} because you should not be
-	 * able to update a file.
+	 * Throws {@link UnsupportedOperationException} because you should not be able to update a file.
 	 */
 	@JsonIgnore
 	@Override
@@ -67,14 +66,12 @@ public class Fast5Object extends SequencingObject {
 
 	@Override
 	public String getLabel() {
-		return file.getFileName()
-				.toString();
+		return file.getFileName().toString();
 	}
 
 	public SequenceFile getFile() {
 		return file;
 	}
-
 
 	public Fast5Type getFast5Type() {
 		return fast5Type;

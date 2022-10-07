@@ -30,11 +30,11 @@
 		created_date="2013-07-18 14:20:19.0" file_revision_number="1" />
 
 	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0"
-		sequencing_run_id="1" />
+		sequencing_run_id="1" processing_state="FINISHED"/>
 	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0"
-		sequencing_run_id="1" />
+		sequencing_run_id="1" processing_state="FINISHED"/>
 	<sequencing_object id="3" created_date="2013-07-18 14:20:19.0"
-		sequencing_run_id="1" />
+		sequencing_run_id="1" processing_state="FINISHED"/>
 
 	<sequence_file_single_end id="1" file_id="1" />
 	<sequence_file_single_end id="2" file_id="2" />

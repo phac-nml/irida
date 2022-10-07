@@ -1,7 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,12 +41,10 @@ public class UISequenceFileService {
 	/**
 	 * Gets the details for the sequence file
 	 *
-	 * @param sequencingObjectId
-	 *            ID for the {@link SequencingObject}
-	 * @param sequenceFileId
-	 *            Id for the {@link SequenceFile}
-	 * @return {@link FastQCDetailsResponse} dto which contains the sequencing
-	 *         object, sequence file, and the fastqc result.
+	 * @param sequencingObjectId ID for the {@link SequencingObject}
+	 * @param sequenceFileId     Id for the {@link SequenceFile}
+	 * @return {@link FastQCDetailsResponse} dto which contains the sequencing object, sequence file, and the fastqc
+	 * result.
 	 */
 	public FastQCDetailsResponse getFastQCDetails(Long sequencingObjectId, Long sequenceFileId) {
 		SequencingObject seqObject = sequencingObjectService.read(sequencingObjectId);
@@ -54,14 +57,10 @@ public class UISequenceFileService {
 	/**
 	 * Gets the fastqc charts for the file.
 	 *
-	 * @param sequencingObjectId
-	 *            ID for the {@link SequencingObject}
-	 * @param sequenceFileId
-	 *            Id for the {@link SequenceFile}
-	 * @return {@link FastQCImagesResponse} dto which has the byte arrays for
-	 *         the images as well as the fastqc version
-	 * @throws IOException
-	 *             if entity is not found
+	 * @param sequencingObjectId ID for the {@link SequencingObject}
+	 * @param sequenceFileId     Id for the {@link SequenceFile}
+	 * @return {@link FastQCImagesResponse} dto which has the byte arrays for the images as well as the fastqc version
+	 * @throws IOException if entity is not found
 	 */
 	public FastQCImagesResponse getFastQCCharts(Long sequencingObjectId, Long sequenceFileId) throws IOException {
 		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
@@ -88,19 +87,25 @@ public class UISequenceFileService {
 	}
 
 	/**
-	 * Gets the overrepresented sequences for the file
+	 * Download the sequence file
 	 *
-	 * @param sequencingObjectId
-	 *            ID for the {@link SequencingObject}
-	 * @param sequenceFileId
-	 *            Id for the {@link SequenceFile}
-	 * @return {@link AnalysisFastQC} model
+	 * @param sequencingObjectId ID for the {@link SequencingObject}
+	 * @param sequenceFileId     Id for the {@link SequenceFile}
+	 * @param response           HTTP response object
+	 * @throws IOException if file is not found
 	 */
-	public AnalysisFastQC getOverRepresentedSequences(Long sequencingObjectId, Long sequenceFileId) {
+	public void downloadSequenceFile(Long sequencingObjectId, Long sequenceFileId, HttpServletResponse response)
+			throws IOException {
 		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
-		SequenceFile file = sequencingObject.getFileWithId(sequenceFileId);
-		AnalysisFastQC fastQC = analysisService.getFastQCAnalysisForSequenceFile(sequencingObject, file.getId());
+		SequenceFile sequenceFile = sequencingObject.getFileWithId(sequenceFileId);
 
-		return fastQC;
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + sequenceFile.getLabel() + "\"");
+
+		try (InputStream is = sequenceFile.getFileInputStream(); OutputStream os = response.getOutputStream();) {
+			IOUtils.copy(is, os);
+			os.flush();
+		} catch (IOException e) {
+			throw new IOException("Unable to read inputstream ", e);
+		}
 	}
 }

@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -275,7 +276,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void openToolsDropDown() {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		toolsDropdownBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(toolsDropdown));
 	}
@@ -305,7 +306,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void openExportDropdown() {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		exportSamplesDropdownBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(exportDropdown));
 	}
@@ -324,7 +325,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	private void closeDropdown(WebElement dropdown) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10L));
 		dropdown.sendKeys(Keys.ESCAPE);
 		wait.until(ExpectedConditions.invisibilityOf(dropdown));
 	}
@@ -451,13 +452,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void selectSampleByName(String sampleName) {
-		WebElement checkbox = samplesTable.findElement(By.xpath("//td/a[text()='" + sampleName + "']/../..//input"));
+		WebElement checkbox = samplesTable.findElement(By.xpath("//td/button[span[text()='" + sampleName + "']]/../..//input"));
 		checkbox.click();
 	}
 
 	public Long getCoverageForSampleByName(String sampleName) {
 		WebElement coverageCell = samplesTable.findElement(
-				By.xpath("//td/a[text()='" + sampleName + "']/../../td[contains(@class, 't-td-coverage')]"));
+				By.xpath("//td/button[span[text()='" + sampleName + "']]/../../td[contains(@class, 't-td-coverage')]"));
 		String coverageString = coverageCell.getText();
 
 		return coverageString == null || coverageString.isEmpty() ? null : Long.parseLong(coverageString);
@@ -484,7 +485,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebElement fileTypeCheckbox = linkerModal.findElement(By.xpath("//input[@value='assembly']"));
 		boolean isChecked = fileTypeCheckbox.isSelected();
 		fileTypeCheckbox.click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.elementSelectionStateToBe(fileTypeCheckbox, !isChecked));
 		String command = linkerCmd.getText();
 		closeLinkerModal();
@@ -495,7 +496,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	private void openLinkerModal() {
 		openExportDropdown();
 		linkerBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.visibilityOf(linkerModal));
 	}
 
@@ -506,14 +507,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void toggleSelectAll() {
 		boolean checked = selectAllCheckbox.isSelected();
 		selectAllCheckbox.click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.elementSelectionStateToBe(selectAllCheckbox, !checked));
 	}
 
 	public void mergeSamplesWithOriginalName(String sampleName) {
 		toolsDropdownBtn.click();
 		mergeBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
 		WebElement existing = null;
 		try {
@@ -527,12 +528,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public String getMostRecentlyModifiedSampleName() {
-		WebElement nameAnchor = driver.findElement(By.xpath("//tbody/tr[1]/td[2]/a"));
+		WebElement nameAnchor = driver.findElement(By.xpath("//tbody/tr[1]/td[2]/button"));
 		return nameAnchor.getText();
 	}
 
 	public void removeSamples() {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		openToolsDropDown();
 		removeBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(removeModal));
@@ -548,7 +549,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	private WebDriverWait openToolsDropdownAndWait() {
 		toolsDropdownBtn.click();
-		return new WebDriverWait(driver, 10);
+		return new WebDriverWait(driver, Duration.ofSeconds(10));
 	}
 
 	public void enterSampleName(String sampleName) {
@@ -562,20 +563,19 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	private void waitForTableToUpdate(int prevTotal) {
-		WebDriverWait wait = new WebDriverWait(driver, 5);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 		wait.until(ExpectedConditions.presenceOfElementLocated(
 				By.xpath("//td[contains(@class, 't-summary') and not(text()='Selected: 0 of " + prevTotal + "')]")));
 	}
 
 	public void filterByFile(String file1) {
 		filterByFileBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.visibilityOf(filterByFileInput));
 		Path path = Paths.get(file1);
 		filterByFileInput.sendKeys(path.toAbsolutePath().toString());
 		waitForTime(200);
 	}
-
 	public List<String> getInvalidSampleNames() {
 		List<String> invalidSampleNames = new ArrayList<>();
 		List<WebElement> invalidSampleNamesElements = driver.findElements(By.cssSelector(".t-invalid-sample"));
@@ -596,7 +596,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void shareExportSamplesToNcbi() {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		openExportDropdown();
 		ncbiExportBtn.click();
 		wait.until(ExpectedConditions.urlContains("/ncbi"));

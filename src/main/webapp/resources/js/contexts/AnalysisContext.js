@@ -47,6 +47,7 @@ const initialContext = {
   isError: false,
   treeDefault: false,
   loading: true,
+  sampleProjects: [],
 };
 
 const UPDATE_ANALYSIS_DELAY = 60000;
@@ -67,6 +68,7 @@ function AnalysisProvider(props) {
             completed: isCompleted,
             error: isError,
             admin: isAdmin,
+            analysisSampleProjects: sampleProjects,
             ...resData
           } = res;
           return {
@@ -76,6 +78,7 @@ function AnalysisProvider(props) {
             isError,
             isAdmin,
             loading: false,
+            sampleProjects,
           };
         });
       })

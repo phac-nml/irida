@@ -14,11 +14,14 @@ public class SequenceFileDetails implements Comparable<SequenceFileDetails> {
 	private String fileName;
 	private String fileSize;
 
-	public SequenceFileDetails(SequenceFile file, Long sequencingObjectId) {
+	private String processingState;
+
+	public SequenceFileDetails(SequenceFile file, Long sequencingObjectId, String processingState) {
 		this.id = file.getId();
 		this.sequencingObjectId = sequencingObjectId;
 		this.fileName = file.getFileName();
 		this.fileSize = file.getFileSize();
+		this.processingState = processingState;
 	}
 
 	public Long getId() {
@@ -40,6 +43,8 @@ public class SequenceFileDetails implements Comparable<SequenceFileDetails> {
 	public void setFileSize(String fileSize) {
 		this.fileSize = fileSize;
 	}
+	public String getProcessingState() { return processingState; }
+
 
 	@Override
 	public int compareTo(SequenceFileDetails sequenceFileDetails) {

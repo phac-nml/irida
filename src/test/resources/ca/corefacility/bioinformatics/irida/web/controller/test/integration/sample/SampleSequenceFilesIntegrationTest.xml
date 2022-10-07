@@ -11,9 +11,9 @@
       <project_sample id="1" project_id="5" sample_id="1" createdDate="2013-07-18 14:20:19.0" owner="true" />
       <project_user id="1" project_id="5" user_id="3" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
 
-      <analysis_submission id="1" name="sistr" workflow_id="e8f9cc61-3264-48c6-81d9-02d9e84bccc7" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0" submitter="1" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
+      <analysis_submission id="1" name="sistr" workflow_id="e8f9cc61-3264-48c6-81d9-02d9e84bccc7" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0" submitter="1" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" email_pipeline_result_error="0" />
 
-      <analysis_submission id="2" name="assembly" workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0" submitter="1" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
+      <analysis_submission id="2" name="assembly" workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0" submitter="1" analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" email_pipeline_result_error="0" />
 
       <client_details id="1" clientId="testClient" clientSecret="testClientSecret" token_validity="43200" createdDate="2013-07-18 14:20:19.0" />
       <client_details_scope client_details_id="1" scope="read" />

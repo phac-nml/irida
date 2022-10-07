@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -120,7 +121,7 @@ public class ProjectLineListPage extends ProjectPageBase {
 	public void selectModalTemplate(String template) {
 		waitForElementToBeClickable(modalTemplateSelectToggle);
 		modalTemplateSelectToggle.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.elementToBeClickable(By.className("ant-select-item-option-content")));
 		for (WebElement option : templateOptions) {
 			if (option.getText().equals(template)) {
@@ -131,9 +132,9 @@ public class ProjectLineListPage extends ProjectPageBase {
 
 	public void saveMetadataTemplate(String name) {
 		templateSaveBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
-		WebElement input = wait.until(ExpectedConditions.elementToBeClickable(
-				By.xpath("//div[contains(@class, 't-save-modal')]//input[@type='search']")));
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
+		WebElement input = wait.until(ExpectedConditions
+				.elementToBeClickable(By.xpath("//div[contains(@class, 't-save-modal')]//input[@type='search']")));
 		input.sendKeys(name);
 		input.sendKeys(Keys.TAB);
 		modalSaveTemplateBtn.click();

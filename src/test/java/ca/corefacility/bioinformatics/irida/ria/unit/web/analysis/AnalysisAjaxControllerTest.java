@@ -32,6 +32,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisAjaxControl
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -70,6 +71,8 @@ public class AnalysisAjaxControllerTest {
 	private EmailController emailControllerMock;
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
+	private UpdateSamplePermission updateSamplePermission;
+
 	/**
 	 * Analysis Output File key names from
 	 * {@link TestDataFactory#constructAnalysis()}
@@ -95,11 +98,13 @@ public class AnalysisAjaxControllerTest {
 		emailControllerMock = mock(EmailController.class);
 		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+		updateSamplePermission = mock(UpdateSamplePermission.class);
+
 
 		analysisAjaxController = new AnalysisAjaxController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
 				sequencingObjectService, analysisSubmissionSampleProcessor, messageSourceMock, configFileMock,
-				analysisAuditMock, analysisTypesServiceMock, emailControllerMock, iridaFileStorageUtility);
+				analysisAuditMock, analysisTypesServiceMock, emailControllerMock, iridaFileStorageUtility, updateSamplePermission);
 
 
 	}

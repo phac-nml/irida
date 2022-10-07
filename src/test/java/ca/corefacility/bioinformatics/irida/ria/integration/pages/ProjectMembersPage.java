@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -88,7 +89,7 @@ public class ProjectMembersPage extends AbstractPage {
 
 	private void removeMember(int row) {
 		removeMemberButtons.get(row).click();
-		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 		wait.until(ExpectedConditions.visibilityOf(removePopover));
 		wait.until(ExpectedConditions.elementToBeClickable(By.className("t-remove-confirm")));
 		driver.findElement(By.className("t-remove-confirm")).click();
@@ -96,7 +97,7 @@ public class ProjectMembersPage extends AbstractPage {
 	}
 
 	public boolean isNotificationDisplayed() {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.visibilityOf(antNotification));
 		antNotificationClose.click();
 		wait.until(ExpectedConditions.invisibilityOf(antNotification));
@@ -108,22 +109,19 @@ public class ProjectMembersPage extends AbstractPage {
 	}
 
 	public boolean isAddMemberBtnVisible() {
-		return driver.findElements(By.className("t-add-member-btn"))
-				.size() > 0;
+		return driver.findElements(By.className("t-add-member-btn")).size() > 0;
 	}
 
 	public void updateUserRole(int row, String role) {
 		WebElement roleSelect = projectRoleSelect.get(row);
 		roleSelect.click();
-		driver.findElement(By.className("t-" + role))
-				.click();
+		driver.findElement(By.className("t-" + role)).click();
 	}
 
 	public void updateMetadataRole(int row, String role) {
 		WebElement roleSelect = metadataRoleSelect.get(row);
 		roleSelect.click();
-		driver.findElement(By.className("t-" + role))
-				.click();
+		driver.findElement(By.className("t-" + role)).click();
 	}
 
 	public boolean userMetadataRoleSelectEnabled(int row) {
@@ -133,7 +131,7 @@ public class ProjectMembersPage extends AbstractPage {
 
 	public boolean lastManagerRemoveButtonEnabled(int row) {
 		WebElement removeButtonForLastManager = removeMemberButtons.get(row);
-		WebDriverWait wait = new WebDriverWait(driver, 5);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 		wait.until(ExpectedConditions.visibilityOf(removeButtonForLastManager));
 		return removeButtonForLastManager.findElement(By.className("ant-btn")).isEnabled();
 	}

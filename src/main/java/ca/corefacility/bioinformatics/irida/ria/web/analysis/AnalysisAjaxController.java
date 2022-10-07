@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import ca.corefacility.bioinformatics.irida.config.analysis.ExecutionManagerConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.*;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
+import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
@@ -52,6 +53,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelData;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ResponseDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -95,6 +97,8 @@ public class AnalysisAjaxController {
 	private EmailController emailController;
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
+	private UpdateSamplePermission updateSamplePermission;
+
 	@Autowired
 	public AnalysisAjaxController(AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, UserService userService, SampleService sampleService,
@@ -102,8 +106,8 @@ public class AnalysisAjaxController {
 			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, MessageSource messageSource,
 			ExecutionManagerConfig configFile, AnalysisAudit analysisAudit, AnalysisTypesService analysisTypesService,
-			EmailController emailController,
-			IridaFileStorageUtility iridaFileStorageUtility) {
+			EmailController emailController, IridaFileStorageUtility iridaFileStorageUtility,
+			UpdateSamplePermission updateSamplePermission) {
 
 
 		this.analysisSubmissionService = analysisSubmissionService;
@@ -121,6 +125,8 @@ public class AnalysisAjaxController {
 		this.analysisTypesService = analysisTypesService;
 		this.emailController = emailController;
 		this.iridaFileStorageUtility = iridaFileStorageUtility;
+		this.updateSamplePermission = updateSamplePermission;
+
 	}
 
 	/**
@@ -217,11 +223,15 @@ public class AnalysisAjaxController {
 
 		response.setStatus(HttpServletResponse.SC_OK);
 
+		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
+
+		boolean canModifySample = updateSamplePermission.isAllowed(authentication, samples);
+
 		// details is a DTO (Data Transfer Object)
 		return new AnalysisDetails(analysisDescription, workflowName, version, priority, duration,
 				submission.getCreatedDate(), priorities, emailPipelineResultCompleted, emailPipelineResultError,
 				canShareToSamples, updateAnalysisPermission.isAllowed(authentication, submission),
-				submission.getUpdateSamples());
+				submission.getUpdateSamples(), canModifySample);
 	}
 
 	/**
@@ -1188,11 +1198,23 @@ public class AnalysisAjaxController {
 
 		boolean treeDefault = getTreeViewDefault(submission, locale);
 
-		return ResponseEntity.ok(new AnalysisInfo(submission, submission.getName(), submission.getAnalysisState(),
-				analysisType.getType(), viewer, currentUser.getSystemRole()
-				.equals(Role.ROLE_ADMIN), emailController.isMailConfigured(), prevState, duration,
-				submission.getAnalysisState() == AnalysisState.COMPLETED,
-				submission.getAnalysisState() == AnalysisState.ERROR, treeDefault));
+		// Get sample ids and there respective project ids for samples used in the analysis
+		List<Project> submissionProjects = projectService.getProjectsUsedInAnalysisSubmission(submission);
+		List<AnalysisSampleProject> analysisSampleProjects = new ArrayList<>();
+		Set<SequencingObject> s = sequencingObjectService.getSequencingObjectsForAnalysisSubmission(submission);
+		for(SequencingObject sequencingObject : s) {
+			SampleSequencingObjectJoin sampleSequencingObjectJoin = sampleService.getSampleForSequencingObject(sequencingObject);
+			List<Join<Project, Sample>> joinList = projectService.getProjectsForSample(sampleSequencingObjectJoin.getSubject());
+			for(Join<Project, Sample> e : joinList) {
+				if(submissionProjects.contains(e.getSubject())){
+					analysisSampleProjects.add(new AnalysisSampleProject(sampleSequencingObjectJoin.getSubject().getId(), e.getSubject().getId()));
+				}
+			}
+		}
+
+		return ResponseEntity.ok(new AnalysisInfo(submission, submission.getName(), submission.getAnalysisState(), analysisType.getType(), viewer, currentUser.getSystemRole()
+				.equals(Role.ROLE_ADMIN), emailController.isMailConfigured(), prevState, duration, submission.getAnalysisState() == AnalysisState.COMPLETED,
+				submission.getAnalysisState() == AnalysisState.ERROR, treeDefault, analysisSampleProjects));
 	}
 
 	/*
