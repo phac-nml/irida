@@ -13,7 +13,7 @@ import { AnalysisDetailsContext } from "../../../../contexts/AnalysisDetailsCont
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 import { SPACE_MD } from "../../../../styles/spacing";
 import { BasicList } from "../../../../components/lists/BasicList";
-import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+import { TabPanelContent } from "../../../../components/tabs/TabPanelContent";
 
 import {
   formatDate,
@@ -168,7 +168,7 @@ export default function AnalysisDetails() {
 
   // The following renders the Analysis Details component view
   return (
-    <TabPaneContent
+    <TabPanelContent
       title={i18n("AnalysisDetails.details")}
       className="t-settings-tab-header"
     >
@@ -189,6 +189,6 @@ export default function AnalysisDetails() {
           </section>
         </div>
       ) : null}
-    </TabPaneContent>
+    </TabPanelContent>
   );
 }

@@ -1,15 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.utilities;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.analysis.AnalysisDetailsPageIT;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ca.corefacility.bioinformatics.irida.ria.integration.analysis.AnalysisDetailsPageIT;
 
 /**
  * Testing helper methods for file operations.

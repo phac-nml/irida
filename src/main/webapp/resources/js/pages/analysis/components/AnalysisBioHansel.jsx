@@ -10,7 +10,7 @@ import { getDataViaChunks } from "../../../apis/analysis/analysis";
 import { grey1 } from "../../../styles/colors";
 import { AnalysisOutputsContext } from "../../../contexts/AnalysisOutputsContext";
 
-import { TabPaneContent } from "../../../components/tabs";
+import { TabPanelContent } from "../../../components/tabs";
 import { Error, Success } from "../../../components/icons";
 import { Warning } from "../../../components/icons/Warning";
 import { BasicList } from "../../../components/lists";
@@ -35,7 +35,7 @@ export default function AnalysisBioHansel() {
 
   function getBioHanselResults() {
     if (analysisOutputsContext.outputs !== null) {
-      const outputInfo = analysisOutputsContext.outputs.find(output => {
+      const outputInfo = analysisOutputsContext.outputs.find((output) => {
         return output.filename === "bio_hansel-results.json";
       });
 
@@ -44,7 +44,7 @@ export default function AnalysisBioHansel() {
           submissionId: analysisIdentifier,
           fileId: outputInfo.id,
           seek: 0,
-          chunk: outputInfo.fileSizeBytes
+          chunk: outputInfo.fileSizeBytes,
         }).then(({ text }) => {
           const parsedResults = JSON.parse(text);
           setBioHanselResults(parsedResults[0]);
@@ -58,7 +58,7 @@ export default function AnalysisBioHansel() {
   const biohanselResults = [
     {
       title: i18n("AnalysisBioHansel.sampleName"),
-      desc: bioHanselResults ? bioHanselResults.sample : ""
+      desc: bioHanselResults ? bioHanselResults.sample : "",
     },
     {
       title: `${i18n("AnalysisBioHansel.schemeName")} (v${i18n(
@@ -66,18 +66,18 @@ export default function AnalysisBioHansel() {
       )})`,
       desc: bioHanselResults
         ? `${bioHanselResults.scheme} (${bioHanselResults.scheme_version})`
-        : ""
+        : "",
     },
     {
       title: i18n("AnalysisBioHansel.subtype"),
-      desc: bioHanselResults ? bioHanselResults.subtype : ""
+      desc: bioHanselResults ? bioHanselResults.subtype : "",
     },
     {
       title: i18n("AnalysisBioHansel.averageTileFrequency"),
       desc:
         bioHanselResults && bioHanselResults.avg_tile_coverage
           ? bioHanselResults.avg_tile_coverage.toString()
-          : ""
+          : "",
     },
     {
       title: i18n("AnalysisBioHansel.qualityControlStatus"),
@@ -101,8 +101,8 @@ export default function AnalysisBioHansel() {
         )
       ) : (
         ""
-      )
-    }
+      ),
+    },
   ];
 
   /*
@@ -121,7 +121,7 @@ export default function AnalysisBioHansel() {
         <br />
         {msgs.length > 0 ? (
           <ul>
-            {msgs.map(msg => {
+            {msgs.map((msg) => {
               return <li key={msg}>{msg}</li>;
             })}
           </ul>
@@ -132,9 +132,9 @@ export default function AnalysisBioHansel() {
 
   return (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
-      <TabPaneContent title={i18n("AnalysisBioHansel.bioHanselInformation")}>
+      <TabPanelContent title={i18n("AnalysisBioHansel.bioHanselInformation")}>
         <BasicList dataSource={biohanselResults}></BasicList>
-      </TabPaneContent>
+      </TabPanelContent>
     </Layout>
   );
 }

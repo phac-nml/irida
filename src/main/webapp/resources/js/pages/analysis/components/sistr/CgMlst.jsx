@@ -4,49 +4,51 @@
 
 import React from "react";
 import { BasicList } from "../../../../components/lists/BasicList";
-import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+import { TabPanelContent } from "../../../../components/tabs/TabPanelContent";
 
 const max_cgMLST_count = 330; /* the maximum number of possible cgMLST alleles in SISTR */
 
 export default function CgMlst({ sistrResults }) {
-
-
-
   function cgMLST330() {
     return [
       {
         title: i18n("AnalysisSistr.subspecies"),
-        desc: sistrResults.cgmlst_subspecies
+        desc: sistrResults.cgmlst_subspecies,
       },
       {
         title: i18n("AnalysisSistr.matchingGenomeName"),
-        desc: sistrResults.cgmlst_genome_match
+        desc: sistrResults.cgmlst_genome_match,
       },
       {
         title: i18n("AnalysisSistr.allelesMatchingGenome"),
-        desc: `${sistrResults.cgmlst_matching_alleles}/${max_cgMLST_count}`
+        desc: `${sistrResults.cgmlst_matching_alleles}/${max_cgMLST_count}`,
       },
       {
         title: i18n("AnalysisSistr.percentMatching"),
         desc:
-            sistrResults.cgmlst_distance !== null
-                ? `${getPercentageFromDistance(sistrResults.cgmlst_distance) + ""}%`
-                : "-"
+          sistrResults.cgmlst_distance !== null
+            ? `${getPercentageFromDistance(sistrResults.cgmlst_distance) + ""}%`
+            : "-",
       },
       {
         title: i18n("AnalysisSistr.allelesFoundGenome"),
-        desc: sistrResults.cgmlst_found_loci !== null
-          ? `${sistrResults.cgmlst_found_loci}/${max_cgMLST_count}` + "" : "-"
+        desc:
+          sistrResults.cgmlst_found_loci !== null
+            ? `${sistrResults.cgmlst_found_loci}/${max_cgMLST_count}` + ""
+            : "-",
       },
       {
         title: i18n("AnalysisSistr.allelesFoundGenomePercent"),
-        desc: sistrResults.cgmlst_found_loci !== null
-            ? `${getPercentage(sistrResults.cgmlst_found_loci)+""}%` + "" : "-"
+        desc:
+          sistrResults.cgmlst_found_loci !== null
+            ? `${getPercentage(sistrResults.cgmlst_found_loci) + ""}%` + ""
+            : "-",
       },
       {
         title: i18n("AnalysisSistr.cgmlstSequenceType"),
-        desc: sistrResults.cgmlst_ST !== null ? sistrResults.cgmlst_ST + "" : "-"
-      }
+        desc:
+          sistrResults.cgmlst_ST !== null ? sistrResults.cgmlst_ST + "" : "-",
+      },
     ];
   }
 
@@ -65,8 +67,8 @@ export default function CgMlst({ sistrResults }) {
    * for the cgMLST data
    */
   return (
-    <TabPaneContent title={i18n("AnalysisSistr.cgmlst330")}>
+    <TabPanelContent title={i18n("AnalysisSistr.cgmlst330")}>
       <BasicList dataSource={cgMLST330()} />
-    </TabPaneContent>
+    </TabPanelContent>
   );
 }
