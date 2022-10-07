@@ -2,13 +2,19 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.util.List;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import static ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage.waitForTime;
+
 public class ShareSamplesPage {
-	@FindBy(css = ".t-share-project .ant-select-selection-search-input")
+	@FindBy(css = ".t-project-select .ant-select-selection-search-input")
+	private WebElement shareProjectSelectSearch;
+
+	@FindBy(css = ".t-project-select .ant-select-selection-item")
 	private WebElement shareProjectSelect;
 
 	@FindBy(className = "ant-select-dropdown")
@@ -56,8 +62,11 @@ public class ShareSamplesPage {
 	@FindBy(className = "t-share-single")
 	private WebElement shareSingleSuccess;
 
-	@FindBy(className = "t-same-samples-warning")
-	private WebElement someSamplesWarning;
+	@FindBy(className = "t-same-sample-ids-warning")
+	private WebElement someSamplesSameIdsWarning;
+
+	@FindBy(className = "t-same-sample-names-warning")
+	private WebElement someSamplesSameNamesWarning;
 
 	@FindBy(className = "t-success-title")
 	private WebElement successTitle;
@@ -70,8 +79,12 @@ public class ShareSamplesPage {
 	}
 
 	public void searchForProject(String name) {
-		shareProjectSelect.sendKeys(name);
+		shareProjectSelectSearch.sendKeys(name);
 		projectDropdown.click();
+	}
+
+	public String getProjectSelectText() {
+		return shareProjectSelect.getText();
 	}
 
 	public int getNumberOfSamplesDisplayed() {
@@ -138,8 +151,20 @@ public class ShareSamplesPage {
 		return shareSingleSuccess.isDisplayed();
 	}
 
-	public boolean isSomeSamplesWarningDisplayed() {
-		return someSamplesWarning.isDisplayed();
+	public boolean isSomeSamplesSameIdsWarningDisplayed() {
+		try {
+			return someSamplesSameIdsWarning.isDisplayed();
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public boolean isSomeSamplesSameNamesWarningDisplayed() {
+		try {
+			return someSamplesSameNamesWarning.isDisplayed();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public String getSuccessTitle() {
@@ -148,5 +173,27 @@ public class ShareSamplesPage {
 
 	public int getNumberOfSharedMetadataEntries() {
 		return metadataFieldLabels.size();
+	}
+
+	public void expandSameSampleIdsWarning() {
+		WebElement element = someSamplesSameIdsWarning.findElement(By.className("ant-collapse-arrow"));
+		element.click();
+		waitForTime(500);
+	}
+
+	public void expandSameSampleNamesWarning() {
+		WebElement element = someSamplesSameNamesWarning.findElement(By.className("ant-collapse-arrow"));
+		element.click();
+		waitForTime(500);
+	}
+
+	public int numberOfSamplesWithSameIds() {
+		List<WebElement> elements = someSamplesSameIdsWarning.findElements(By.className("t-share-sample"));
+		return elements.size();
+	}
+
+	public int numberOfSamplesWithSameNames() {
+		List<WebElement> elements = someSamplesSameNamesWarning.findElements(By.className("t-share-sample"));
+		return elements.size();
 	}
 }

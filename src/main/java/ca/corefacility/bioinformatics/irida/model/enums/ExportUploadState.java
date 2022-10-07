@@ -1,11 +1,11 @@
 package ca.corefacility.bioinformatics.irida.model.enums;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Status of an {@link NcbiExportSubmission}. Many states taken from <a href=
@@ -77,7 +77,7 @@ public enum ExportUploadState {
 	/**
 	 * Submission deleted
 	 */
-	DELETED("Submission deleted"),
+	DELETED("deleted"),
 
 	/**
 	 * Retried processing of failed action(s

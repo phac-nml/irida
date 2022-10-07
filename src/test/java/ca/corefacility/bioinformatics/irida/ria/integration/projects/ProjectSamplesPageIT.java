@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -8,6 +10,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.TableSummary;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.ImmutableList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,20 +24,23 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	String FIRST_SAMPLE_NAME = "sample55422r";
 	String SECOND_SAMPLE_NAME = "sample-5-fg-22";
 	String THIRD_SAMPLE_NAME = "sample64565";
+	int PROJECT_SAMPLES_COUNT = 23;
+	int ASSOCIATED_SAMPLES_COUNT = 2;
+	int COMBINED_SAMPLES_COUNT = PROJECT_SAMPLES_COUNT + ASSOCIATED_SAMPLES_COUNT;
 
 	@Test
 	public void testGoingToInvalidPage() {
 		LoginPage.loginAsManager(driver());
 
 		assertThrows(AssertionError.class, () -> {
-			ProjectSamplesPage.gotToPage(driver(), 100);
+			ProjectSamplesPage.goToPage(driver(), 100);
 		});
 	}
 
 	@Test
 	public void testPageSetUp() {
 		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
 
 		assertEquals("Samples", page.getActivePage(), "Should have the project name as the page main header.");
 		assertEquals(10, page.getNumberProjectsDisplayed(), "Should display 10 projects initially.");
@@ -43,14 +49,14 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testToolbarButtonsAsCollaborator() {
 		LoginPage.loginAsUser(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
 		assertFalse(page.isSampleToolsAvailable(), "Sample Tools should be hidden from a collaborator");
 	}
 
 	@Test
 	public void testToolbarButtonsAsManager() {
 		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
 
 		// Test set up with no sample selected
 		assertTrue(page.isSampleToolsAvailable(), "Sample Tools should be visible for a manager");
@@ -90,13 +96,19 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testSampleSelection() {
 		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
 		TableSummary summary = page.getTableSummary();
 		assertEquals(0, summary.getSelected(), "Should be 0 selected samples");
-		assertEquals(23, summary.getTotal(), "Should be 0 selected samples");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(), "Should be 0 selected samples");
 
 		page.selectSampleByName("sample-5-fg-22");
 		summary = page.getTableSummary();
+		assertEquals(1, summary.getSelected(), "Should be 1 selected samples");
+
+		// Ensure selection maintains between pages
+		page.goToNextTablePage();
+		assertEquals(1, summary.getSelected(), "Should be 1 selected samples");
+		page.gotToPreviousTablePage();
 		assertEquals(1, summary.getSelected(), "Should be 1 selected samples");
 
 		page.toggleSelectAll();
@@ -105,13 +117,13 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.toggleSelectAll();
 		summary = page.getTableSummary();
-		assertEquals(23, summary.getSelected(), "Should be 0 selected samples");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getSelected(), "Should be 0 selected samples");
 	}
 
 	@Test
 	public void testMergeSamples() {
 		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
 
 		TableSummary originalSummary = page.getTableSummary();
 		String NEW_NAME = "I-AM-NEW-HERE";
@@ -139,7 +151,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	public void testRemoteProjectSamplesManagerSetup() {
 		LoginPage.loginAsManager(driver());
 
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 7);
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 7);
 
 		page.selectSampleByName("sample23p7");
 		page.selectSampleByName("sample24p7");
@@ -151,7 +163,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testRemoveSamplesFromProject() {
 		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
 		TableSummary summary = page.getTableSummary();
 
 		page.selectSampleByName(FIRST_SAMPLE_NAME);
@@ -169,12 +181,13 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		String NAME_FILTER_2 = "sample6";
 		String ORGANISM_FILTER_1 = "Listeria";
 		String ORGANISM_FILTER_2 = "E. coli";
-		String ASSOCIATED_PROJECT_FILTER = "project5";
+		String ASSOCIATED_PROJECT_FILTER = "project6";
 
 		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
 		TableSummary summary = page.getTableSummary();
-		assertEquals(23, summary.getTotal(), "Without the filter there should be 23 elements in the table");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(),
+				"Without the filter there should be 23 elements in the table");
 
 		/*
 		SAMPLE NAME FILTERING
@@ -197,7 +210,8 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(13, summary.getTotal(), "Removing a sample name filter");
 		page.clearIndividualSampleNameFilter(NAME_FILTER_1);
 		summary = page.getTableSummary();
-		assertEquals(23, summary.getTotal(), "Removing all name filters should return to initial number of samples");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(),
+				"Removing all name filters should return to initial number of samples");
 
 		/*
 		ORGANISM FILTER
@@ -212,10 +226,11 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		 */
 		page.toggleAssociatedProject(ASSOCIATED_PROJECT_FILTER);
 		summary = page.getTableSummary();
-		assertEquals(24, summary.getTotal(), "Should have more samples visible with another project selected");
+		assertEquals(COMBINED_SAMPLES_COUNT, summary.getTotal(),
+				"Should have more samples visible with another project selected");
 		page.removeAssociatedProject(ASSOCIATED_PROJECT_FILTER);
 		summary = page.getTableSummary();
-		assertEquals(23, summary.getTotal(), "Should only display samples for the main project");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(), "Should only display samples for the main project");
 
 		/*
 		TEST MULTIPLE FILTERS
@@ -233,7 +248,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(3, summary.getTotal(), "Filtering by organism");
 		page.clearIndividualSampleNameFilter("sample3");
 		summary = page.getTableSummary();
-		assertEquals(23, summary.getTotal(), "Filtering by organism");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(), "Filtering by organism");
 
 		// TEST CREATED DATE
 		page.filterByCreatedDate("2013-07-12", "2013-07-13");
@@ -241,7 +256,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(2, summary.getTotal(), "Filtering by created date");
 		page.clearFilterByCreatedDate();
 		summary = page.getTableSummary();
-		assertEquals(23, summary.getTotal(), "Clearing created by filter");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(), "Clearing created by filter");
 
 		// TEST CREATED DATE
 		page.filterByModifiedDate("2015-07-17", "2015-07-20");
@@ -249,13 +264,13 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(4, summary.getTotal(), "Filtering by modified date");
 		page.clearFilterByModifiedDate();
 		summary = page.getTableSummary();
-		assertEquals(23, summary.getTotal(), "Clearing modified by filter");
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(), "Clearing modified by filter");
 	}
 
 	@Test
 	public void testCartFunctionality() {
 		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
 
 		// Select some samples
 		page.selectSampleByName(FIRST_SAMPLE_NAME);
@@ -271,7 +286,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testLinkerFunctionality() {
 		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
 
 		assertEquals("ngsArchiveLinker.pl -p 1 -t fastq", page.getLinkerCommand(),
 				"Should be the correct linker command");
@@ -294,7 +309,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testAddNewSamples() {
 		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
 		page.openCreateNewSampleModal();
 		page.enterSampleName("BAD");
 		assertTrue(page.isSampleNameErrorDisplayed(), "Should show a warning message");
@@ -305,4 +320,96 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.enterSampleName("GOOD_NAME");
 		assertFalse(page.isSampleNameErrorDisplayed(), "Sample name error should not be displayed");
 	}
+
+	@Test
+	public void testFilterByFile() {
+		String invalidName = "name_not_in_list";
+		int numberValidSampleNames = 5;
+
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
+
+		TableSummary summary = page.getTableSummary();
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(),
+				"Without the filter there should be 23 elements in the table");
+
+		page.filterByFile("src/test/resources/files/filter-by-file/sample-names.txt");
+		List<String> invalidSamples = page.getInvalidSampleNames();
+		assertEquals(1, invalidSamples.size(), "Should have one invalid sample");
+		assertEquals(invalidName, invalidSamples.get(0), "Should have the correct invalid sample");
+
+		page.submitFilterByFile();
+
+		summary = page.getTableSummary();
+		assertEquals(numberValidSampleNames, summary.getTotal(), "Should have the correct number of samples");
+	}
+
+	@Test
+	public void testFilterByFileWithAssociatedProjects() {
+		String ASSOCIATED_PROJECT_FILTER = "project6";
+		String ASSOCIATED_SAMPLE_NAME = "sample5fg45";
+
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
+
+		TableSummary summary = page.getTableSummary();
+		assertEquals(PROJECT_SAMPLES_COUNT, summary.getTotal(),
+				"Without the filter there should be 23 elements in the table");
+
+		page.filterByFile("src/test/resources/files/filter-by-file/sample-names-with-associated.txt");
+		List<String> invalidSamples = page.getInvalidSampleNames();
+		assertEquals(ASSOCIATED_SAMPLE_NAME, invalidSamples.get(0), "Should have the correct invalid sample");
+		page.cancelFilterByFile();
+
+		page.toggleAssociatedProject(ASSOCIATED_PROJECT_FILTER);
+		summary = page.getTableSummary();
+		assertEquals(COMBINED_SAMPLES_COUNT, summary.getTotal(),
+				"Should have " + COMBINED_SAMPLES_COUNT + " elements in the table with the associated project");
+
+		page.filterByFile("src/test/resources/files/filter-by-file/sample-names-with-associated.txt");
+		page.submitFilterByFile();
+
+		summary = page.getTableSummary();
+		assertEquals(6, summary.getTotal(), "Should have 6 samples in the table with the associated project");
+	}
+
+	@Test
+	public void testFilterByFileWindowsEncoding() {
+		List<String> actualInvalidNames = ImmutableList.of("11-0001", "10-1928", "10-8727");
+
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
+		page.filterByFile("src/test/resources/files/filter-by-file/sample-filter-windows.txt");
+		List<String> invalidSamples = page.getInvalidSampleNames();
+		invalidSamples.forEach(
+				name -> assertTrue(actualInvalidNames.contains(name), name + " should be in the actual name list"));
+	}
+
+	@Test
+	public void testCoverageColumnWithProjectCoverageSettings() {
+		String SAMPLE_WITH_COVERAGE_QC_ENTRY = "sample1";
+
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
+
+		page.filterBySampleName(SAMPLE_WITH_COVERAGE_QC_ENTRY);
+		TableSummary summary = page.getTableSummary();
+
+		assertEquals(1L, summary.getTotal(), "Should have 1 sample in the table after filtering.");
+
+		assertEquals(50L, page.getCoverageForSampleByName(SAMPLE_WITH_COVERAGE_QC_ENTRY),
+				SAMPLE_WITH_COVERAGE_QC_ENTRY + " should have a value");
+	}
+
+	@Test
+	public void testCoverageColumnWithoutProjectCoverageSettings() {
+		String SAMPLE_WITH_COVERAGE_QC_ENTRY = "sample5fg44";
+
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 6);
+
+		assertNull(page.getCoverageForSampleByName(SAMPLE_WITH_COVERAGE_QC_ENTRY),
+				SAMPLE_WITH_COVERAGE_QC_ENTRY + " should have a value");
+	}
 }
+

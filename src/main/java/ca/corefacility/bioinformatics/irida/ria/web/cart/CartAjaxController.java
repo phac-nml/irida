@@ -102,6 +102,16 @@ public class CartAjaxController {
 	}
 
 	/**
+	 * Get the sample ids of samples that are in the cart
+	 *
+	 * @return Sample ids of samples that are currently in the cart
+	 */
+	@GetMapping("/sample-ids")
+	public ResponseEntity<List<Long>> getCartSampleIds() {
+		return ResponseEntity.ok(service.getCartSampleIds());
+	}
+
+	/**
 	 * Get a list of all samples in the cart, these will be separated out into samples that the user
 	 * can and cannot modify.
 	 *

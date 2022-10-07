@@ -19,6 +19,7 @@ import { BORDERED_LIGHT } from "../../../styles/borders";
 export function SampleFilesListItem({
   sample,
   style,
+  projectId,
   removeSample,
   updateSelectedFiles,
 }) {
@@ -43,10 +44,7 @@ export function SampleFilesListItem({
     >
       <List.Item.Meta
         title={
-          <SampleDetailViewer
-            sampleId={sample.id}
-            removeSample={() => removeSample(sample)}
-          >
+          <SampleDetailViewer sampleId={sample.id} projectId={projectId}>
             <Button size="small" style={{ marginLeft: SPACE_XS }}>
               {sample.label}
             </Button>
@@ -57,14 +55,14 @@ export function SampleFilesListItem({
             <Radio.Group style={{ width: `100%` }} value={sample.selected}>
               {sample.files.map((file) => (
                 <BlockRadioInput
-                  key={`pf-${file.identifier}`}
-                  onClick={(e) => updateSelected(e, file.identifier)}
+                  key={`pf-${file.fileInfo.identifier}`}
+                  onClick={(e) => updateSelected(e, file.fileInfo.identifier)}
                 >
                   <Radio
-                    key={`file-${file.identifier}`}
-                    value={file.identifier}
+                    key={`file-${file.fileInfo.identifier}`}
+                    value={file.fileInfo.identifier}
                   >
-                    {file.label}
+                    {file.fileInfo.label}
                   </Radio>
                 </BlockRadioInput>
               ))}

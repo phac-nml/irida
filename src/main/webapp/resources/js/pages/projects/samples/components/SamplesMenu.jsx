@@ -33,6 +33,7 @@ import {
   MergeCellsOutlined,
 } from "@ant-design/icons";
 import { useGetProjectDetailsQuery } from "../../../../apis/projects/project";
+import { storeSamples } from "../../../../utilities/session-utilities";
 
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));
@@ -116,24 +117,16 @@ export default function SamplesMenu() {
   };
 
   const onNCBI = () => {
-    window.location.href = setBaseUrl(
-      `/projects/${projectId}/export/ncbi?ids=${Object.values(selected)
-        .map((s) => s.id)
-        .join(",")}`
-    );
+    if (selected.size === 0) return;
+    formatAndStoreSamples();
+    window.location.href = setBaseUrl(`/projects/${projectId}/ncbi`);
   };
 
   const onExport = (type) => {
     dispatch(exportSamplesToFile(type));
   };
 
-  /**
-   * Format samples to share with other projects,
-   * store minimal information in localStorage
-   */
-  const shareSamples = () => {
-    if (selected.size === 0) return;
-
+  const formatAndStoreSamples = () => {
     const samples = Object.values(selected).map(
       ({ id, sampleName: name, owner, projectId }) => ({
         id,
@@ -142,17 +135,16 @@ export default function SamplesMenu() {
         projectId,
       })
     );
+    storeSamples({ samples, projectId });
+  };
 
-    // Store them to window storage for later use.
-    window.sessionStorage.setItem(
-      "share",
-      JSON.stringify({
-        samples,
-        projectId,
-        timestamp: Date.now(),
-      })
-    );
-
+  /**
+   * Format samples to share with other projects,
+   * store minimal information in localStorage
+   */
+  const shareSamples = () => {
+    if (selected.size === 0) return;
+    formatAndStoreSamples();
     // Redirect user to share page
     window.location.href = setBaseUrl(`/projects/${projectId}/share`);
   };
@@ -327,6 +319,7 @@ export default function SamplesMenu() {
           <Button
             onClick={() => setFilterByFileVisible(true)}
             icon={<FileTextOutlined />}
+            className="t-filter-by-file-btn"
           >
             {i18n("SampleMenu.fileFilter")}
           </Button>

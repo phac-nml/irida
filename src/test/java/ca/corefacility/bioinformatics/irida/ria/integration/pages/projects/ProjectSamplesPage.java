@@ -1,5 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -7,7 +11,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -227,6 +230,24 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "name")
 	private WebElement sampleNameInput;
 
+	@FindBy(className = "t-filter-by-file-btn")
+	private WebElement filterByFileBtn;
+
+	@FindBy(className = "t-filter-by-file-input")
+	private WebElement filterByFileInput;
+
+	@FindBy(className = "t-filter-submit")
+	private WebElement filterSubmitBtn;
+
+	@FindBy(className = "t-filter-cancel")
+	private WebElement filterCancelBtn;
+
+	@FindBy(className = "ant-pagination-prev")
+	private WebElement prevTablePage;
+
+	@FindBy(className = "ant-pagination-next")
+	private WebElement nextTablePage;
+
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
 	}
@@ -235,7 +256,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		return PageFactory.initElements(driver, ProjectSamplesPage.class);
 	}
 
-	public static ProjectSamplesPage gotToPage(WebDriver driver, int projectId) {
+	public static ProjectSamplesPage goToPage(WebDriver driver, int projectId) {
 		get(driver, RELATIVE_URL + projectId);
 		// Wait for full page to get loaded
 		waitForTime(800);
@@ -255,7 +276,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void openToolsDropDown() {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		toolsDropdownBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(toolsDropdown));
 	}
@@ -285,7 +306,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void openExportDropdown() {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		exportSamplesDropdownBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(exportDropdown));
 	}
@@ -304,9 +325,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	private void closeDropdown(WebElement dropdown) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
-		Actions act = new Actions(driver);
-		act.moveByOffset(300, 300).click().perform();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10L));
+		dropdown.sendKeys(Keys.ESCAPE);
 		wait.until(ExpectedConditions.invisibilityOf(dropdown));
 	}
 
@@ -336,44 +356,49 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void filterBySampleName(String name) {
+		int prevTotal = getTableSummary().getTotal();
 		sampleNameFilterToggle.click();
 		nameFilterInput.sendKeys(name);
 		nameFilterInput.sendKeys(Keys.ENTER);
 		nameFilterInput.sendKeys(Keys.TAB);
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void clearIndividualSampleNameFilter(String name) {
+		int prevTotal = getTableSummary().getTotal();
 		sampleNameFilterToggle.click();
 		WebElement filter = nameFilterSelectedOptions.findElement(By.cssSelector("[title=\"" + name + "\"]"));
 		filter.findElement(By.className("ant-select-selection-item-remove")).click();
 		sampleNameFilterToggle.sendKeys(Keys.TAB);
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void filterByOrganism(String organism) {
+		int prevTotal = getTableSummary().getTotal();
 		organismFilterToggle.click();
 		organismSelectInput.sendKeys(organism);
 		organismSelectInput.sendKeys(Keys.ENTER);
 		organismFilterToggle.sendKeys(Keys.TAB);
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void clearIndividualOrganismFilter(String organism) {
+		int prevTotal = getTableSummary().getTotal();
 		organismFilterToggle.click();
 		WebElement filter = organismFilterSelectedOptions.findElement(By.cssSelector("[title=\"" + organism + "\"]"));
 		filter.findElement(By.className("ant-select-selection-item-remove")).click();
 		organismFilterToggle.sendKeys(Keys.TAB);
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void toggleAssociatedProject(String projectName) {
+		int prevTotal = getTableSummary().getTotal();
 		projectsFilterToggle.click();
-		WebElement selection = driver.findElement(
-				By.xpath("//li[@class='ant-dropdown-menu-item' and span='" + projectName + "']"));
+		WebElement selection = driver
+				.findElement(By.xpath("//li[@class='ant-dropdown-menu-item' and span='" + projectName + "']"));
 		selection.click();
 		driver.findElement(By.xpath("//button[@type='button' and span='OK']")).click();
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void removeAssociatedProject(String projectName) {
@@ -385,46 +410,58 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void filterByCreatedDate(String start, String end) {
+		int prevTotal = getTableSummary().getTotal();
 		createdDateFilterToggle.click();
 		driver.findElement(By.xpath("//div[@class='t-created-filter']//input[@placeholder='Start date']"))
 				.sendKeys(start);
-		WebElement endInput = driver.findElement(
-				By.xpath("//div[@class='t-created-filter']//input[@placeholder='End date']"));
+		WebElement endInput = driver
+				.findElement(By.xpath("//div[@class='t-created-filter']//input[@placeholder='End date']"));
 		endInput.sendKeys(end);
 		endInput.sendKeys(Keys.ENTER);
 		createdDateFilter.findElement(By.className("t-search-btn")).click();
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void clearFilterByCreatedDate() {
+		int prevTotal = getTableSummary().getTotal();
 		createdDateFilterToggle.click();
 		createdDateFilter.findElement(By.className("t-clear-btn")).click();
 		createdDateFilterToggle.click();
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void filterByModifiedDate(String start, String end) {
+		int prevTotal = getTableSummary().getTotal();
 		modifiedDateFilterToggle.click();
 		driver.findElement(By.xpath("//div[@class='t-modified-filter']//input[@placeholder='Start date']"))
 				.sendKeys(start);
-		WebElement endInput = driver.findElement(
-				By.xpath("//div[@class='t-modified-filter']//input[@placeholder='End date']"));
+		WebElement endInput = driver
+				.findElement(By.xpath("//div[@class='t-modified-filter']//input[@placeholder='End date']"));
 		endInput.sendKeys(end);
 		endInput.sendKeys(Keys.ENTER);
 		modifiedDateFilter.findElement(By.className("t-search-btn")).click();
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void clearFilterByModifiedDate() {
+		int prevTotal = getTableSummary().getTotal();
 		modifiedDateFilterToggle.click();
 		modifiedDateFilter.findElement(By.className("t-clear-btn")).click();
 		modifiedDateFilterToggle.click();
-		waitForTableToUpdate();
+		waitForTableToUpdate(prevTotal);
 	}
 
 	public void selectSampleByName(String sampleName) {
-		WebElement checkbox = samplesTable.findElement(By.xpath("//td/a[text()='" + sampleName + "']/../..//input"));
+		WebElement checkbox = samplesTable.findElement(By.xpath("//td/button[span[text()='" + sampleName + "']]/../..//input"));
 		checkbox.click();
+	}
+
+	public Long getCoverageForSampleByName(String sampleName) {
+		WebElement coverageCell = samplesTable.findElement(
+				By.xpath("//td/button[span[text()='" + sampleName + "']]/../../td[contains(@class, 't-td-coverage')]"));
+		String coverageString = coverageCell.getText();
+
+		return coverageString == null || coverageString.isEmpty() ? null : Long.parseLong(coverageString);
 	}
 
 	public void addSelectedSamplesToCart() {
@@ -448,7 +485,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebElement fileTypeCheckbox = linkerModal.findElement(By.xpath("//input[@value='assembly']"));
 		boolean isChecked = fileTypeCheckbox.isSelected();
 		fileTypeCheckbox.click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.elementSelectionStateToBe(fileTypeCheckbox, !isChecked));
 		String command = linkerCmd.getText();
 		closeLinkerModal();
@@ -459,7 +496,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	private void openLinkerModal() {
 		openExportDropdown();
 		linkerBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.visibilityOf(linkerModal));
 	}
 
@@ -470,14 +507,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void toggleSelectAll() {
 		boolean checked = selectAllCheckbox.isSelected();
 		selectAllCheckbox.click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.elementSelectionStateToBe(selectAllCheckbox, !checked));
 	}
 
 	public void mergeSamplesWithOriginalName(String sampleName) {
 		toolsDropdownBtn.click();
 		mergeBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.visibilityOf(mergeModal));
 		WebElement existing = null;
 		try {
@@ -491,12 +528,12 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public String getMostRecentlyModifiedSampleName() {
-		WebElement nameAnchor = driver.findElement(By.xpath("//tbody/tr[1]/td[2]/a"));
+		WebElement nameAnchor = driver.findElement(By.xpath("//tbody/tr[1]/td[2]/button"));
 		return nameAnchor.getText();
 	}
 
 	public void removeSamples() {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		openToolsDropDown();
 		removeBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(removeModal));
@@ -512,7 +549,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	private WebDriverWait openToolsDropdownAndWait() {
 		toolsDropdownBtn.click();
-		return new WebDriverWait(driver, 10);
+		return new WebDriverWait(driver, Duration.ofSeconds(10));
 	}
 
 	public void enterSampleName(String sampleName) {
@@ -525,8 +562,53 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		return driver.findElements(By.cssSelector(".t-sample-name-wrapper .ant-form-item-explain-error")).size() > 0;
 	}
 
-	private void waitForTableToUpdate() {
-		WebDriverWait wait = new WebDriverWait(driver, 5);
-		wait.until(ExpectedConditions.textMatches(By.className("t-summary"), Pattern.compile("Selected: 0 of (\\d+)")));
+	private void waitForTableToUpdate(int prevTotal) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+		wait.until(ExpectedConditions.presenceOfElementLocated(
+				By.xpath("//td[contains(@class, 't-summary') and not(text()='Selected: 0 of " + prevTotal + "')]")));
+	}
+
+	public void filterByFile(String file1) {
+		filterByFileBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
+		wait.until(ExpectedConditions.visibilityOf(filterByFileInput));
+		Path path = Paths.get(file1);
+		filterByFileInput.sendKeys(path.toAbsolutePath().toString());
+		waitForTime(200);
+	}
+	public List<String> getInvalidSampleNames() {
+		List<String> invalidSampleNames = new ArrayList<>();
+		List<WebElement> invalidSampleNamesElements = driver.findElements(By.cssSelector(".t-invalid-sample"));
+		for (WebElement invalidSampleNameElement : invalidSampleNamesElements) {
+			invalidSampleNames.add(invalidSampleNameElement.getText());
+		}
+		return invalidSampleNames;
+	}
+
+	public void cancelFilterByFile() {
+		filterCancelBtn.click();
+	}
+
+	public void submitFilterByFile() {
+		int total = getTableSummary().getTotal();
+		filterSubmitBtn.click();
+		waitForTableToUpdate(total);
+	}
+
+	public void shareExportSamplesToNcbi() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
+		openExportDropdown();
+		ncbiExportBtn.click();
+		wait.until(ExpectedConditions.urlContains("/ncbi"));
+	}
+
+	public void goToNextTablePage() {
+		nextTablePage.click();
+		waitForTime(200);
+	}
+
+	public void gotToPreviousTablePage() {
+		prevTablePage.click();
+		waitForTime(200);
 	}
 }

@@ -30,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisAjaxControl
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.auditing.AnalysisAudit;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -66,6 +67,8 @@ public class AnalysisAjaxControllerTest {
 	private AnalysisTypesService analysisTypesServiceMock;
 	private EmailController emailControllerMock;
 
+	private UpdateSamplePermission updateSamplePermission;
+
 	/**
 	 * Analysis Output File key names from
 	 * {@link TestDataFactory#constructAnalysis()}
@@ -89,11 +92,12 @@ public class AnalysisAjaxControllerTest {
 		httpServletResponseMock = mock(HttpServletResponse.class);
 		analysisTypesServiceMock = mock(AnalysisTypesService.class);
 		emailControllerMock = mock(EmailController.class);
+		updateSamplePermission = mock(UpdateSamplePermission.class);
 
 		analysisAjaxController = new AnalysisAjaxController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
 				userServiceMock, sampleService, projectServiceMock, updatePermission, metadataTemplateService,
 				sequencingObjectService, analysisSubmissionSampleProcessor, messageSourceMock, configFileMock,
-				analysisAuditMock, analysisTypesServiceMock, emailControllerMock);
+				analysisAuditMock, analysisTypesServiceMock, emailControllerMock, updateSamplePermission);
 
 	}
 

@@ -131,7 +131,7 @@ test_ui() {
         mkdir -p $TMP_DIRECTORY/irida
         # reuse selenium docker image if it exists
         docker start $SELENIUM_DOCKER_NAME || docker run -d -p 4444:4444 --name $SELENIUM_DOCKER_NAME -v $PWD:$PWD -v $TMP_DIRECTORY/irida:$TMP_DIRECTORY/irida -v /dev/shm:/dev/shm selenium/standalone-chrome:$SELENIUM_DOCKER_TAG
-        SELENIUM_OPTS="-Dwebdriver.selenium_url=$SELENIUM_URL -Dserver.port=33333 -Dserver.base.url=http://$HOSTNAME:33333 -Djava.io.tmpdir=$TMP_DIRECTORY/irida"
+        SELENIUM_OPTS="-Dwebdriver.selenium_url=$SELENIUM_URL -Dserver.port=33333 -Dserver.base.url=http://$HOSTNAME:33333/irida -Djava.io.tmpdir=$TMP_DIRECTORY/irida"
     fi
     ./gradlew clean check uiITest $SELENIUM_OPTS -Dirida.it.nosandbox=true -Dirida.it.headless=$HEADLESS -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?

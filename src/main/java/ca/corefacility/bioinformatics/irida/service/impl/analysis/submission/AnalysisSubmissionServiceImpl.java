@@ -21,7 +21,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
@@ -354,7 +353,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or authentication.name == #user.username")
 	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(User user) {
-		return analysisSubmissionRepository.getAllUserAnalysisOutputInfo(user.getId());
+		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionRepository.getAllUserAnalysisOutputInfo(user.getId());
+		logger.trace("Found " + infos.size() + " output files for user id=" + user.getId());
+		return infos;
 	}
 
 	/**
@@ -392,8 +393,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public AnalysisSubmission create(AnalysisSubmission analysisSubmission)
 			throws ConstraintViolationException, EntityExistsException {
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		User user = userRepository.loadUserByUsername(userDetails.getUsername());
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		User user = userRepository.loadUserByUsername(username);
 		analysisSubmission.setSubmitter(user);
 
 		return super.create(analysisSubmission);
@@ -417,8 +418,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public Set<AnalysisSubmission> getAnalysisSubmissionsForCurrentUser() {
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		User user = userRepository.loadUserByUsername(userDetails.getUsername());
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		User user = userRepository.loadUserByUsername(username);
 		return getAnalysisSubmissionsForUser(user);
 	}
 
@@ -480,8 +481,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 
 		template.setStatusMessage(statusMessage);
 
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		User user = userRepository.loadUserByUsername(userDetails.getUsername());
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		User user = userRepository.loadUserByUsername(username);
 		template.setSubmitter(user);
 
 		template = analysisTemplateRepository.save(template);

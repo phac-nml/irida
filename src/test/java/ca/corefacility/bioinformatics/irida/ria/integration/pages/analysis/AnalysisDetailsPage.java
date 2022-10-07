@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -44,76 +45,76 @@ public class AnalysisDetailsPage extends AbstractPage {
 	@FindBy(className = "t-delete-analysis-btn")
 	private WebElement deleteButton;
 
-	@FindBy(css=".t-sample-search-input input")
+	@FindBy(css = ".t-sample-search-input input")
 	private WebElement searchInput;
 
-	@FindBy(className="t-download-all-files-btn")
+	@FindBy(className = "t-download-all-files-btn")
 	private List<WebElement> downloadAllFilesButton;
 
-	@FindBy(css=".t-download-all-files-btn button.ant-dropdown-trigger")
+	@FindBy(css = ".t-download-all-files-btn button.ant-dropdown-trigger")
 	private List<WebElement> downloadIndividualFilesMenuButton;
 
-	@FindBy(className="t-download-individual-files-menu")
+	@FindBy(className = "t-download-individual-files-menu")
 	private List<WebElement> downloadIndividualFilesMenu;
 
-	@FindBy(className="ant-steps")
+	@FindBy(className = "ant-steps")
 	private List<WebElement> analysisSteps;
 
 	@FindBy(className = "ant-alert-message")
 	private List<WebElement> warningAlerts;
 
-	@FindBy(className="t-reference-file-download-btn")
+	@FindBy(className = "t-reference-file-download-btn")
 	private List<WebElement> referenceFileDownloadButton;
 
-	@FindBy(className="t-download-output-file-btn")
+	@FindBy(className = "t-download-output-file-btn")
 	private List<WebElement> downloadOutputFileButtons;
 
-	@FindBy(className="ant-descriptions-view")
+	@FindBy(className = "ant-descriptions-view")
 	private List<WebElement> descriptionViewDivs;
 
-	@FindBy(className="t-analysis-menu")
+	@FindBy(className = "t-analysis-menu")
 	private List<WebElement> horizontalTabMenus;
 
-	@FindBy(className="ant-layout-has-sider")
+	@FindBy(className = "ant-layout-has-sider")
 	private List<WebElement> verticalTabMenus;
 
-	@FindBy(className="ant-list-item-meta-description")
+	@FindBy(className = "ant-list-item-meta-description")
 	private List<WebElement> listDescriptionValues;
 
-	@FindBy(className="ant-list-item-meta-title")
+	@FindBy(className = "ant-list-item-meta-title")
 	private List<WebElement> listTitleValues;
 
-	@FindBy(className="ant-checkbox")
+	@FindBy(className = "ant-checkbox")
 	private List<WebElement> checkBoxes;
 
-	@FindBy(className="ant-checkbox-checked")
+	@FindBy(className = "ant-checkbox-checked")
 	private List<WebElement> checkedCheckBoxes;
 
-	@FindBy(className="t-tree-shape-tools")
+	@FindBy(className = "t-tree-shape-tools")
 	private WebElement treeTools;
 
-	@FindBy(className="t-advanced-phylo-btn")
+	@FindBy(className = "t-advanced-phylo-btn")
 	private WebElement advPhyloBtn;
 
-	@FindBy(className="t-phylocanvas-wrapper")
+	@FindBy(className = "t-phylocanvas-wrapper")
 	private WebElement phylocanvasWrapper;
 
-	@FindBy(id="phyloCanvasDiv__canvas")
+	@FindBy(id = "phyloCanvasDiv__canvas")
 	private WebElement phyloTree;
 
-	@FindBy(className="t-citation")
+	@FindBy(className = "t-citation")
 	private WebElement citation;
 
 	@FindBy(className = "ant-menu-title-content")
 	private List<WebElement> menuItems;
+
 
 	public AnalysisDetailsPage(WebDriver driver) {
 		super(driver);
 	}
 
 	/**
-	 * Initialize the page so that the default {@link WebElement} have been
-	 * found.
+	 * Initialize the page so that the default {@link WebElement} have been found.
 	 *
 	 * @param driver     {@link WebDriver}
 	 * @param analysisId Id the the analysis page to view.
@@ -133,8 +134,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if advanced phylogentic tree button is
-	 *  displayed on tree preview page
+	 * Determines if advanced phylogentic tree button is displayed on tree preview page
 	 *
 	 * @return {@link Boolean}
 	 */
@@ -143,18 +143,16 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if advanced phylogentic tree button is
-	 *  not displayed on tree preview page
+	 * Determines if advanced phylogentic tree button is not displayed on tree preview page
 	 *
 	 * @return {@link Boolean}
 	 */
 	public boolean advancedPhylogeneticTreeButtonNotFound() {
-		return driver.findElements( By.className("t-tree-shape-tools") ).size() == 0;
+		return driver.findElements(By.className("t-tree-shape-tools")).size() == 0;
 	}
 
 	/**
-	 * Determines if the actual and expected analysis details
-	 * are identical
+	 * Determines if the actual and expected analysis details are identical
 	 *
 	 * @return {@link Boolean}
 	 */
@@ -162,8 +160,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 		boolean expectedEqualsActual = true;
 		String[] actualDetails = new String[7];
 
-		int index=0;
-		for(WebElement item : listDescriptionValues) {
+		int index = 0;
+		for (WebElement item : listDescriptionValues) {
 			actualDetails[index] = item.getText();
 			index++;
 		}
@@ -179,7 +177,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if analysis steps are displayed
+	 * Determines if analysis steps are displayed
 	 *
 	 * @return {@link Boolean}
 	 */
@@ -188,8 +186,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if citation is
-	 *  displayed on citation page
+	 * Determines if citation is displayed on citation page
 	 *
 	 * @return {@link Boolean}
 	 */
@@ -198,8 +195,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Clicks on the pagination button specified
-	 *
+	 * Clicks on the pagination button specified
 	 */
 	public void clickPagination(int pageNum) {
 		rootDiv.findElements(By.className("ant-pagination-item-" + pageNum)).get(0).click();
@@ -212,8 +208,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 * @return {@link Boolean}
 	 */
 	public boolean comparePageTitle(String pageTitle) {
-		int titleFound = rootDiv.findElements(By.xpath("//span[contains(text(),'" + pageTitle + "')]"))
-				.size();
+		int titleFound = rootDiv.findElements(By.xpath("//span[contains(text(),'" + pageTitle + "')]")).size();
 
 		return titleFound > 0;
 	}
@@ -225,15 +220,14 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 */
 	public boolean compareTabTitle(String pageTitle) {
 
-		waitForElementsVisible(By.cssSelector("span[title='"+ pageTitle+"']"));
-		boolean titleFound = rootDiv.findElement(By.cssSelector("span[title='"+ pageTitle+"']")).isDisplayed();
+		waitForElementsVisible(By.cssSelector("span[title='" + pageTitle + "']"));
+		boolean titleFound = rootDiv.findElement(By.cssSelector("span[title='" + pageTitle + "']")).isDisplayed();
 
 		return titleFound;
 	}
 
 	/**
-	 * Clicks the delete button, waits, then clicks the confirm
-	 * button within the popover div
+	 * Clicks the delete button, waits, then clicks the confirm button within the popover div
 	 */
 	public void deleteAnalysis() {
 		deleteButton.click();
@@ -252,7 +246,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Clicks on the tool to display its execution params
+	 * Clicks on the tool to display its execution params
 	 */
 	public void displayToolExecutionParameters() {
 		toolList.get(0).click();
@@ -260,8 +254,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if download all files button is
-	 *  visible on output file preview page
+	 * Determines if download all files button is visible on output file preview page
 	 *
 	 * @return {@link Boolean}
 	 */
@@ -280,9 +273,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if download file button is
-	 *  visible on output file preview page for
-	 *  individual files
+	 * Determines if download file button is visible on output file preview page for individual files
 	 *
 	 * @return {@link Boolean}
 	 */
@@ -296,24 +287,20 @@ public class AnalysisDetailsPage extends AbstractPage {
 	 * @return {@link Boolean}
 	 */
 	public boolean emailPipelineResultStatusSelectVisible() {
-		return !driver.findElements(By.className("t-email-pipeline-result-select"))
-				.isEmpty();
+		return !driver.findElements(By.className("t-email-pipeline-result-select")).isEmpty();
 	}
 
 	/**
-	 * Determines if the number of list items (titles)
-	 * equals to the expected number of list items
+	 * Determines if the number of list items (titles) equals to the expected number of list items
 	 *
 	 * @return {@link Integer}
 	 */
-	public boolean expectedNumberOfListItemsEqualsActual(int expectedNumber)
-	{
+	public boolean expectedNumberOfListItemsEqualsActual(int expectedNumber) {
 		return listTitleValues.size() == expectedNumber;
 	}
 
 	/**
-	 *  Filters samples based on search string and waits
-	 *  before returning
+	 * Filters samples based on search string and waits before returning
 	 */
 	public void filterSamples(String searchStr) {
 		searchInput.sendKeys(searchStr);
@@ -321,10 +308,10 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Gets provenance for file selected
+	 * Gets provenance for file selected
 	 */
 	public void getFileProvenance(int fileNum) {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		WebElement firstTool = null;
 
 		if (toolList.size() > 0) {
@@ -339,7 +326,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines number of galaxy parameters for a tool
+	 * Determines number of galaxy parameters for a tool
 	 *
 	 * @return {@link Integer}
 	 */
@@ -366,14 +353,13 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines the number of list items (descriptions)
+	 * Determines the number of list items (descriptions)
 	 *
 	 * @return {@link Boolean}
 	 */
 	public int getNumberOfListItemValues() {
 		return listDescriptionValues.size();
 	}
-
 
 	/**
 	 * Determine the number of samples used by analysis.
@@ -384,9 +370,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 		return pairedEndElements.size();
 	}
 
-
 	/**
-	 *  Determines number of output files for provenance
+	 * Determines number of output files for provenance
 	 *
 	 * @return {@link Integer}
 	 */
@@ -395,7 +380,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines number of tools used by analysis
+	 * Determines number of tools used by analysis
 	 *
 	 * @return {@link Integer}
 	 */
@@ -404,7 +389,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Gets the warning alert text and returns
+	 * Gets the warning alert text and returns
 	 *
 	 * @return {@link String}
 	 */
@@ -413,7 +398,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if there is a horizontal tab menu
+	 * Determines if there is a horizontal tab menu
 	 *
 	 * @return {@link Boolean}
 	 */
@@ -431,7 +416,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if there is a sider for tabs
+	 * Determines if there is a sider for tabs
 	 *
 	 * @return {@link Boolean}
 	 */
@@ -440,24 +425,22 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if there is a job error warning alert
+	 * Determines if there is a job error warning alert
 	 *
 	 * @return {@link Boolean}
 	 */
 	public boolean jobErrorAlertVisible() {
 
-		return !driver.findElements(By.className("ant-alert-warning"))
-				.isEmpty();
+		return !driver.findElements(By.className("ant-alert-warning")).isEmpty();
 	}
 
 	public boolean priorityEditVisible() {
-		return !driver.findElements(By.className("t-priority-edit"))
-				.isEmpty();
+		return !driver.findElements(By.className("t-priority-edit")).isEmpty();
 	}
 
 	public boolean menuIncludesItem(String menuItem) {
-		for(WebElement element : menuItems) {
-			if(element.getText().equals(menuItem)) {
+		for (WebElement element : menuItems) {
+			if (element.getText().equals(menuItem)) {
 				return true;
 			}
 		}
@@ -465,15 +448,13 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines reference file download button is
-	 *  displayed on samples page
+	 * Determines reference file download button is displayed on samples page
 	 *
 	 * @return {@link Boolean}
 	 */
 	public boolean referenceFileDownloadButtonVisible() {
 		return referenceFileDownloadButton.size() == 1;
 	}
-
 
 	/**
 	 * Removes shared projects
@@ -483,18 +464,16 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if phylogenetic tree wrapper is
-	 *  not displayed on tree preview page
+	 * Determines if phylogenetic tree wrapper is not displayed on tree preview page
 	 *
 	 * @return {@link Boolean}
 	 */
 	public boolean phylocanvasWrapperNotFound() {
-		return driver.findElements( By.className("t-phylocanvas-wrapper") ).size() == 0;
+		return driver.findElements(By.className("t-phylocanvas-wrapper")).size() == 0;
 	}
 
 	/**
-	 *  Determines if phylogenetic tree wrapper is
-	 *  displayed on tree preview page
+	 * Determines if phylogenetic tree wrapper is displayed on tree preview page
 	 *
 	 * @return {@link Boolean}
 	 */
@@ -503,18 +482,16 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if phylogenetic tree is
-	 *  not displayed on tree preview page
+	 * Determines if phylogenetic tree is not displayed on tree preview page
 	 *
 	 * @return {@link Boolean}
 	 */
 	public boolean treeNotFound() {
-		return driver.findElements( By.id("__canvas") ).size() == 0;
+		return driver.findElements(By.id("__canvas")).size() == 0;
 	}
 
 	/**
-	 *  Determines if phylogenetic tree is
-	 *  displayed on tree preview page
+	 * Determines if phylogenetic tree is displayed on tree preview page
 	 *
 	 * @return {@link Boolean}
 	 */
@@ -523,18 +500,16 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if tree shape tools are not
-	 *  displayed on tree preview page
+	 * Determines if tree shape tools are not displayed on tree preview page
 	 *
 	 * @return {@link Boolean}
 	 */
 	public boolean treeToolsNotFound() {
-		return driver.findElements( By.className("t-tree-shape-tools") ).size() == 0;
+		return driver.findElements(By.className("t-tree-shape-tools")).size() == 0;
 	}
 
 	/**
-	 *  Determines if tree shape tools are
-	 *  displayed on tree preview page
+	 * Determines if tree shape tools are displayed on tree preview page
 	 *
 	 * @return {@link Boolean}
 	 */
@@ -543,15 +518,22 @@ public class AnalysisDetailsPage extends AbstractPage {
 	}
 
 	/**
-	 *  Determines if galaxy history id is
-	 *  displayed on error page
+	 * Determines if galaxy history id is displayed on error page
 	 *
 	 * @return {@link Boolean}
 	 */
 	public boolean galaxyHistoryIdVisible() {
-		if(driver.findElements( By.id("t-galaxy-history-id") ).size() == 1) {
+		if (driver.findElements(By.id("t-galaxy-history-id")).size() == 1) {
 			return true;
 		}
 		return false;
+	}
+
+	public boolean saveToSamplesVisible() {
+		try {
+			return driver.findElement(By.className("t-save-results-to-samples")).isDisplayed();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }

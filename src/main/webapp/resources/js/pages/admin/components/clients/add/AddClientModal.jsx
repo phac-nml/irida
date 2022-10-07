@@ -49,17 +49,9 @@ export function AddClientModal({ children, onComplete, existing = null }) {
   const radioStyle = { display: "block", lineHeight: `35px` };
 
   if (existing !== null) {
-    let read = existing.scope.includes("read")
-      ? "read"
-      : existing.autoApprovableScopes.includes("read")
-      ? "auto"
-      : "no";
+    let read = existing.scope.includes("read") ? "read" : "no";
 
-    let write = existing.scope.includes("write")
-      ? "write"
-      : existing.autoApprovableScopes.includes("write")
-      ? "auto"
-      : "no";
+    let write = existing.scope.includes("write") ? "write" : "no";
 
     const refreshToken = existing.authorizedGrantTypes.includes("refresh_token")
       ? existing.refreshTokenValiditySeconds
@@ -292,11 +284,6 @@ export function AddClientModal({ children, onComplete, existing = null }) {
                   {i18n("AddClientForm.scopeAllowed")}
                 </span>
               </Radio.Button>
-              <Radio.Button value="auto">
-                <span className="t-read-auto">
-                  {i18n("AddClientForm.scopeAllowedAutoApprove")}
-                </span>
-              </Radio.Button>
             </Radio.Group>
           </Item>
           <Item label={i18n("AddClientForm.writeScope")} name="write">
@@ -309,11 +296,6 @@ export function AddClientModal({ children, onComplete, existing = null }) {
               <Radio.Button value="write">
                 <span className="t-write-allowed">
                   {i18n("AddClientForm.scopeAllowed")}
-                </span>
-              </Radio.Button>
-              <Radio.Button value="auto">
-                <span className="t-write-auto">
-                  {i18n("AddClientForm.scopeAllowedAutoApprove")}
                 </span>
               </Radio.Button>
             </Radio.Group>

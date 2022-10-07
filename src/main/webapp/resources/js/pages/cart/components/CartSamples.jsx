@@ -110,6 +110,7 @@ export default function CartSamples({ displaySample }) {
         displaySample={displaySample}
         removeSample={() => removeOneSample(sample.id)}
         removeProject={removeOneProject}
+        refetch={refetch}
       />
     );
   };

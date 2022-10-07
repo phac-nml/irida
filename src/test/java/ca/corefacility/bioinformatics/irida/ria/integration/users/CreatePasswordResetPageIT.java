@@ -41,4 +41,14 @@ public class CreatePasswordResetPageIT extends AbstractIridaUIITChromeDriver {
 		passwordResetPage.enterEmail(usernameOrEmail);
 		assertFalse(passwordResetPage.checkSuccess());
 	}
+
+	@Test
+	public void testCreateResetDisabledAccount() {
+		passwordResetPage.goTo();
+		passwordResetPage.clickForgotPasswordLink();
+		String usernameOrEmail = "differentUserAcctDisabled@nowhere.com";
+		passwordResetPage.enterEmail(usernameOrEmail);
+		assertFalse(passwordResetPage.checkSuccess(), "Password reset for a disabled account should not be successful");
+		assertTrue(passwordResetPage.checkAccountDisabledMessage());
+	}
 }

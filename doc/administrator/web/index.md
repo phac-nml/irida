@@ -98,6 +98,17 @@ The main configuration parameters you will need to change are:
   * `ncbi.upload.namespace` - Prefix for file upload identifiers to NCBI. The namespace is used to guarantee upload IDs are unique.  This configuration option is used as a placeholder and may still be set by the user.
 5. **Security configuration**
  * `security.password.expiry` - The number of days a password is valid for in IRIDA.  After a password expires the user will be required to create a new one.  Passwords cannot be reused.
+6. **OAuth2 JWK security configuration** - IRIDA uses JWT (Json Web Tokens) for OAuth2 and as such requires a Java Key Store with an entry stored in PKCS12 format. The key pair entry can be in either RSA or EC (curves allowed are P-256, P-384, and P-121) format. The password for the keystore must be the same as the password for the key entry (This is default for PKCS12 format). (Note: these keys have nothing to do with SSL).
+ * `oauth2.jwk.key-store=/etc/irida/jwk-key-store.jks` - The location of the Java Key Store 
+ * `oauth2.jwk.key-store-password=SECRET` - The Java Key Store password
+
+### OAuth2 JWK Java Key Store generation
+The Java Key Store required to encrypt and decrypt the JWT's can be generated with the following commands:
+```bash
+keytool -genkeypair -alias JWK -keyalg RSA -noprompt -dname "CN=irida.bioinformatics.corefacility.ca, OU=ID, O=IRIDA, L=IRIDA, S=IRIDA, C=CA" -keystore /etc/irida/jwk-key-store.jks -validity 3650 -storepass SECRET -keypass SECRET -storetype PKCS12
+```
+
+This will generate a Java Key Store with an entry aliased `JWK` with an expiry of 10 years and a password of `SECRET`.
 
 Web Configuration
 -----------------
