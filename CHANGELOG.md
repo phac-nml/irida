@@ -31,6 +31,7 @@
 * [UI]: Updated analysis results manage results page to not allow a project collaborator to view the save results back to a sample section. See [PR 1377](https://github.com/phac-nml/irida/pull/1377)
 * [UI]: Updated phylogenetic tree visualization on the analysis details using Ant Design and the new phylocanvas.gl. See [PR 1280](https://github.com/phac-nml/irida/pull/1280)
 * [Developer]: Added security scanning of GitHub pull-requests with [CodeQL](https://codeql.github.com/) (scans for code vulnerabilities) and [Grype](https://github.com/anchore/grype) (scans for Java package dependency vulnerabilities). See [PR 1282](https://github.com/phac-nml/irida/pull/1282).
+* [UI]: Updated layout of the analysis view to allow for scrollable sections. See[PR 1378](https://github.com/phac-nml/irida/pull/1378)
 
 ## [22.05.5] - 2022/06/28
 * [UI]: Fixed bug preventing export of project samples table due to invalid url. [PR 1331](https://github.com/phac-nml/irida/pull/1331)

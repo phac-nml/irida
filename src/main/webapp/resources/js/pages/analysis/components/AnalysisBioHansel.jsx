@@ -3,17 +3,15 @@
  */
 
 import React, { useContext, useEffect, useState } from "react";
-import { Layout } from "antd";
-import { SPACE_MD } from "../../../styles/spacing";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { getDataViaChunks } from "../../../apis/analysis/analysis";
-import { grey1 } from "../../../styles/colors";
 import { AnalysisOutputsContext } from "../../../contexts/AnalysisOutputsContext";
 
 import { TabPanelContent } from "../../../components/tabs";
 import { Error, Success } from "../../../components/icons";
 import { Warning } from "../../../components/icons/Warning";
 import { BasicList } from "../../../components/lists";
+import ScrollableSection from "./ScrollableSection";
 
 export default function AnalysisBioHansel() {
   const { analysisIdentifier } = useContext(AnalysisContext);
@@ -131,10 +129,10 @@ export default function AnalysisBioHansel() {
   }
 
   return (
-    <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
+    <ScrollableSection>
       <TabPanelContent title={i18n("AnalysisBioHansel.bioHanselInformation")}>
         <BasicList dataSource={biohanselResults}></BasicList>
       </TabPanelContent>
-    </Layout>
+    </ScrollableSection>
   );
 }
