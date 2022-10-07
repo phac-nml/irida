@@ -1,11 +1,6 @@
 package ca.corefacility.bioinformatics.irida.junit5.listeners;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
-
+import org.apache.commons.io.FileUtils;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestPlan;
 import org.openqa.selenium.WebDriver;
@@ -15,10 +10,24 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
 public class IntegrationUITestListener implements TestExecutionListener {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(IntegrationUITestListener.class);
 	public static final int DRIVER_TIMEOUT_IN_SECONDS = 3;
+
+
+	private static final File TEMP_DIRECTORY = new File(System.getProperty("java.io.tmpdir"));
+	public static final File DOWNLOAD_DIRECTORY = new File(TEMP_DIRECTORY, "irida-test");
 
 	private static WebDriver driver;
 
@@ -68,13 +77,22 @@ public class IntegrationUITestListener implements TestExecutionListener {
 		// Run chrome in headless mode
 		String headless = System.getProperty("irida.it.headless");
 		if (headless != null && headless.equals("true")) {
-			logger.info("Running Chome in headless mode");
+			logger.info("Running Chrome in headless mode");
 			options.addArguments("headless");
 		} else {
-			logger.info("Running Chome in no headless (normal) mode");
+			logger.info("Running Chrome in no headless (normal) mode");
 		}
 
 		options.addArguments("--window-size=1920,1080");
+
+		// Set up default download directory
+		if (!DOWNLOAD_DIRECTORY.exists()) {
+			DOWNLOAD_DIRECTORY.mkdir();
+		}
+		Map<String, Object> chromePrefs = new HashMap<>();
+		chromePrefs.put("profile.default_content_settings.popups", 0);
+		chromePrefs.put("download.default_directory", DOWNLOAD_DIRECTORY.getAbsolutePath());
+		options.setExperimentalOption("prefs", chromePrefs);
 
 		// Run selenium tests through external selenium server
 		String seleniumUrl = System.getProperty("webdriver.selenium_url");
@@ -89,10 +107,18 @@ public class IntegrationUITestListener implements TestExecutionListener {
 			driver = new ChromeDriver(options);
 		}
 
-		driver.manage().timeouts().implicitlyWait(DRIVER_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(DRIVER_TIMEOUT_IN_SECONDS));
 	}
 
+
 	public static void stopWebDriver() {
+		// Clean up the download directory
+		try {
+			FileUtils.deleteDirectory(DOWNLOAD_DIRECTORY);
+		} catch (IOException e) {
+			logger.debug("Could not delete directory: ", DOWNLOAD_DIRECTORY.getAbsolutePath());
+		}
+
 		driver.quit();
 	}
 }

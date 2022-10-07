@@ -17,14 +17,10 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 
 /**
- * Configuration to be loaded in IntegrationTest via {@Link Import} annotation.
- * This waits for the servlet container initialized event and uses
- * {@Link LocalHostUriTemplateHandler} to retrieve the current URL to the servlet
- * container and set it up within the specific testing utilities.
- * 
- * Also provides a {@Link LocalHostUriTemplateHandler} {@Link Bean} which can be used
- * in tests to access the servlet containers root uri.
- * 
+ * Configuration to be loaded in IntegrationTest via {@Link Import} annotation. This waits for the servlet container
+ * initialized event and uses {@Link LocalHostUriTemplateHandler} to retrieve the current URL to the servlet container
+ * and set it up within the specific testing utilities. Also provides a {@Link LocalHostUriTemplateHandler} {@Link Bean}
+ * which can be used in tests to access the servlet containers root uri.
  */
 @TestConfiguration
 @Profile("it")
@@ -38,17 +34,16 @@ public class IridaIntegrationTestUriConfig {
     @EventListener
     public void onServletContainerInitialized(WebServerInitializedEvent event) {
         uriTemplateHandler = new LocalHostUriTemplateHandler(event.getApplicationContext().getEnvironment());
-        String baseUrl = uriTemplateHandler.getRootUri() + "/";
+        String baseUrl = uriTemplateHandler.getRootUri().replace("localhost", "127.0.0.1") + "/";
         AbstractPage.setBaseUrl(baseUrl);
         RemoteApiUtilities.setBaseUrl(baseUrl);
         oltuAuthorizationController.setServerBase(baseUrl);
 
         // Setup RestAssured
-        RestAssured.requestSpecification = new RequestSpecBuilder()
-				.setContentType(ContentType.JSON)
-				.setAccept(ContentType.JSON)
+        RestAssured.requestSpecification = new RequestSpecBuilder().setContentType(ContentType.JSON)
+                .setAccept(ContentType.JSON)
                 .setBaseUri(uriTemplateHandler.getRootUri())
-				.build();
+                .build();
     }
 
     @Lazy
@@ -56,5 +51,5 @@ public class IridaIntegrationTestUriConfig {
     public LocalHostUriTemplateHandler uriTemplateHandler() {
         return uriTemplateHandler;
     }
-    
+
 }

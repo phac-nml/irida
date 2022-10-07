@@ -39,7 +39,8 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 
 		// Test invalid entries
 		createComponent.enterProjectName("SMA");
-		assertEquals("The project name must be at least 5 characters long", createComponent.getNameWarning(), "Should have a name length error");
+		assertEquals("The project name must be at least 5 characters long", createComponent.getNameWarning(),
+				"Should have a name length error");
 		createComponent.enterProjectName("");
 		assertEquals("A name is required for every project", createComponent.getNameWarning(),
 				"Should display a required error");
@@ -53,7 +54,8 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 		createComponent.goToNextStep();
 		assertTrue(createComponent.isNoSamplesMessageDisplayed(), "Should be a message explaining no samples");
 		createComponent.goToNextStep();
-		assertTrue(createComponent.isNoSamplesSelectedMessageDisplayed(), "Should be a message explaining no samples were selected so there is no metadata available");
+		assertTrue(createComponent.isNoSamplesSelectedMessageDisplayed(),
+				"Should be a message explaining no samples were selected so there is no metadata available");
 		createComponent.submitProject();
 		assertTrue(driver().getTitle().contains(name));
 
@@ -90,7 +92,7 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 		String name = "TESTING PROJECT NAME";
 
 		// Add some samples
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
 		samplesPage.selectSampleByName("sample");
 		samplesPage.addSelectedSamplesToCart();
 
@@ -101,7 +103,8 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 		createComponent.goToNextStep();
 		createComponent.selectAllSamples();
 		createComponent.goToNextStep();
-		assertTrue(createComponent.correctMetadataFieldDataDisplayed(), "The correct metadata field labels, current restrictions, and target restrictions should be displayed");
+		assertTrue(createComponent.correctMetadataFieldDataDisplayed(),
+				"The correct metadata field labels, current restrictions, and target restrictions should be displayed");
 		createComponent.submitProject();
 		assertTrue(driver().getTitle().contains(name));
 		TableSummary summary = samplesPage.getTableSummary();
@@ -109,6 +112,7 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 		// Go to the settings -> metadata page to make sure metadata fields and restrictions were set correctly.
 		driver().get(driver().getCurrentUrl() + "/settings/metadata/fields");
 
-		assertTrue(createComponent.correctMetadataFieldDataDisplayedForNewProject(), "The metadata fields should be copied over to the new project");
+		assertTrue(createComponent.correctMetadataFieldDataDisplayedForNewProject(),
+				"The metadata fields should be copied over to the new project");
 	}
 }

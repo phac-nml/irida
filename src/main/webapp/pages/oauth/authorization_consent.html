@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title th:text="#{auth.title}">IRIDA OAuth2 Approval Page</title>
+    <webpacker:css entry="access_confirmation" />
+    <style>
+      body {
+        padding: 14px;
+      }
+
+      form {
+        display: inline-block;
+      }
+    </style>
+    <script>
+      function cancelConsent() {
+        const scopeInputs = document.querySelectorAll("input.scope-input");
+        scopeInputs.forEach((scopeInput) => {
+          scopeInput.parentNode.removeChild(scopeInput);
+        });
+        document.consent_form.reset();
+        document.consent_form.submit();
+      }
+    </script>
+  </head>
+
+  <body>
+    <section class="modal-body" style="margin-top: 0">
+      <h3 style="margin-top: 0" th:text="#{auth.title}">
+        _IRIDA OAuth2 Approval Page_
+      </h3>
+
+      <h4 th:text="#{auth.subtitle(${clientId})}">
+        _Confirm access for clientID_
+      </h4>
+      <p th:text="#{auth.usermessage(${principalName})}">
+        _You are logged in as userName._
+      </p>
+      <p th:text="#{auth.approvalmessage(${clientId},${requestedScopes})}">
+        _The client clientId is requesting access to your data on this IRIDA
+        site. Approving this request will allow clientId allowedScopes access to
+        the following resources on this site:_
+      </p>
+      <ul>
+        <li th:text="#{auth.projects}">_Projects_</li>
+        <li th:text="#{auth.samples}">_Samples_</li>
+        <li th:text="#{auth.sequenceFiles}">_Sequence files_</li>
+      </ul>
+      <p th:text="#{auth.adminmessage(${clientId})}">
+        _Note: clientId has been authorized as part of the IRIDA network by the
+        site's administrators._
+      </p>
+    </section>
+
+    <div>
+      <form
+        id="consent_form"
+        class="button-form"
+        name="consent_form"
+        th:action="@{/api/oauth/authorize}"
+        method="post"
+      >
+        <input type="hidden" name="client_id" th:value="${clientId}" />
+        <input type="hidden" name="state" th:value="${state}" />
+
+        <input
+          th:each="scope : ${scopes}"
+          class="scope-input"
+          type="hidden"
+          name="scope"
+          th:value="${scope}"
+        />
+
+        <button
+          class="ant-btn ant-btn-primary"
+          type="submit"
+          id="authorize-btn"
+        >
+          <span th:text="#{auth.authorize}">_Authorize_</span>
+        </button>
+        <button
+          class="ant-btn"
+          type="button"
+          id="cancel-consent"
+          onclick="cancelConsent();"
+        >
+          <span th:text="#{auth.deny}">_Deny_</span>
+        </button>
+      </form>
+    </div>
+  </body>
+</html>

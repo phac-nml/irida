@@ -12,10 +12,10 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  */
 public class ProjectDeletePage extends AbstractPage {
 
-	@FindBy(id = "confirm-deletion")
+	@FindBy(className = "t-confirm-delete-project")
 	private WebElement confirmCheckbox;
 
-	@FindBy(id = "submit-delete")
+	@FindBy(className = "t-delete-project-button")
 	private WebElement submitDelete;
 
 	public ProjectDeletePage(WebDriver driver) {
@@ -28,11 +28,11 @@ public class ProjectDeletePage extends AbstractPage {
 		return PageFactory.initElements(driver, ProjectDeletePage.class);
 	}
 
-	public boolean canClickDelete(){
+	public boolean canClickDelete() {
 		return submitDelete.isEnabled();
 	}
 
-	public void clickConfirm(){
+	public void clickConfirm() {
 		confirmCheckbox.click();
 	}
 

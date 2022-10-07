@@ -1,42 +1,75 @@
 package ca.corefacility.bioinformatics.irida.config.security;
 
-import ca.corefacility.bioinformatics.irida.web.controller.api.exception.CustomOAuth2ExceptionTranslator;
-import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousAuthenticationFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
-import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configuration.*;
-import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService;
-import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
-import org.springframework.security.oauth2.provider.code.InMemoryAuthorizationCodeServices;
-import org.springframework.security.oauth2.provider.error.AbstractOAuth2SecurityExceptionHandler;
-import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
-import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
-import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import org.springframework.security.jackson2.SecurityJackson2Modules;
+import org.springframework.security.oauth2.core.*;
+import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.server.authorization.*;
+import org.springframework.security.oauth2.server.authorization.authentication.ClientSecretAuthenticationProvider;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
+import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module;
+import org.springframework.security.oauth2.server.authorization.token.*;
+import org.springframework.security.oauth2.server.authorization.web.authentication.DelegatingAuthenticationConverter;
+import org.springframework.security.oauth2.server.authorization.web.authentication.OAuth2AuthorizationCodeAuthenticationConverter;
+import org.springframework.security.oauth2.server.authorization.web.authentication.OAuth2ClientCredentialsAuthenticationConverter;
+import org.springframework.security.oauth2.server.authorization.web.authentication.OAuth2RefreshTokenAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.util.ReflectionUtils;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.util.ResourceUtils;
 
-import java.lang.reflect.Field;
+import ca.corefacility.bioinformatics.irida.jackson2.mixin.RoleMixin;
+import ca.corefacility.bioinformatics.irida.jackson2.mixin.TimestampMixin;
+import ca.corefacility.bioinformatics.irida.jackson2.mixin.UserMixin;
+import ca.corefacility.bioinformatics.irida.model.user.Role;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.oauth2.IridaOAuth2AuthorizationService;
+import ca.corefacility.bioinformatics.irida.oauth2.OAuth2ResourceOwnerPasswordAuthenticationConverter;
+import ca.corefacility.bioinformatics.irida.oauth2.OAuth2ResourceOwnerPasswordAuthenticationProvider;
+import ca.corefacility.bioinformatics.irida.web.filter.UnauthenticatedAnonymousAuthenticationFilter;
+
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.PasswordLookup;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
 
 /**
  * Configuration for REST API security using OAuth2
@@ -45,121 +78,162 @@ import java.lang.reflect.Field;
 public class IridaOauthSecurityConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaOauthSecurityConfig.class);
 
-	@Bean
-	@Primary
-	public ResourceServerTokenServices tokenServices(@Qualifier("clientDetails") ClientDetailsService clientDetails,
-			@Qualifier("iridaTokenStore") TokenStore tokenStore) {
-		DefaultTokenServices services = new DefaultTokenServices();
-		services.setTokenStore(tokenStore);
-		services.setSupportRefreshToken(true);
-		services.setClientDetailsService(clientDetails);
-		return services;
-	}
-
-	@Bean
-	public ClientDetailsUserDetailsService clientDetailsUserDetailsService(
-			@Qualifier("clientDetails") ClientDetailsService clientDetails) {
-		ClientDetailsUserDetailsService clientDetailsUserDetailsService = new ClientDetailsUserDetailsService(
-				clientDetails);
-
-		return clientDetailsUserDetailsService;
-	}
-
-	@Bean
-	public WebResponseExceptionTranslator<OAuth2Exception> exceptionTranslator() {
-		return new CustomOAuth2ExceptionTranslator();
-	}
+	private static final String AUTHORITIES_CLAIM = "authorities";
 
 	/**
 	 * Class for configuring the OAuth resource server security
 	 */
 	@Configuration
-	@EnableResourceServer
-	@ComponentScan(basePackages = "ca.corefacility.bioinformatics.irida.repositories.remote")
-	@Order(Ordered.HIGHEST_PRECEDENCE + 2)
-	protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+	protected static class ResourceServerConfig {
+
+		@Value("${server.base.url}")
+		private String serverBase;
 
 		@Autowired
-		private ResourceServerTokenServices tokenServices;
+		OAuth2AuthorizationService authorizationService;
 
 		@Autowired
-		private WebResponseExceptionTranslator<OAuth2Exception> exceptionTranslator;
+		JwtDecoder jwtDecoder;
 
-		@Override
-		public void configure(final ResourceServerSecurityConfigurer resources) {
-			resources.resourceId("NmlIrida").tokenServices(tokenServices);
-			forceExceptionTranslator(resources, exceptionTranslator);
-		}
-
-		@Override
-		public void configure(final HttpSecurity httpSecurity) throws Exception {
-			httpSecurity.antMatcher("/api/**").authorizeRequests().regexMatchers(HttpMethod.GET, "/api.*")
-					.access("#oauth2.hasScope('read')").regexMatchers("/api.*")
-					.access("#oauth2.hasScope('read') and #oauth2.hasScope('write')");
-			httpSecurity.antMatcher("/api/**").headers().frameOptions().disable();
-			httpSecurity.antMatcher("/api/**").csrf()
-					.requireCsrfProtectionMatcher(new AntPathRequestMatcher("/api/oauth/authorize")).disable();
-			httpSecurity.antMatcher("/api/**").csrf().disable();
-
+		@Bean
+		@Order(Ordered.HIGHEST_PRECEDENCE + 2) // lower precedence by 2 (i.e. apply this SecurityFilterChain last)
+		public SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http) throws Exception {
+			http.antMatcher("/api/**")
+					.authorizeRequests()
+					.regexMatchers(HttpMethod.GET, "/api.*")
+					.hasAuthority("SCOPE_read")
+					.regexMatchers("/api.*")
+					.hasAuthority("SCOPE_write");
+			http.antMatcher("/api/**").headers().frameOptions().disable();
+			http.antMatcher("/api/**")
+					.csrf()
+					.requireCsrfProtectionMatcher(new AntPathRequestMatcher("/api/oauth/authorize"))
+					.disable();
+			http.antMatcher("/api/**").csrf().disable();
+			http.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());
 			// SecurityContextPersistenceFilter appears pretty high up (well
 			// before any OAuth related filters), so we'll put our anonymous
 			// user filter into the filter chain after that.
-			httpSecurity.antMatcher("/api/**").addFilterAfter(
-					new UnauthenticatedAnonymousAuthenticationFilter("anonymousTokenAuthProvider"),
-					SecurityContextPersistenceFilter.class);
+			http.antMatcher("/api/**")
+					.addFilterAfter(new UnauthenticatedAnonymousAuthenticationFilter("anonymousTokenAuthProvider"),
+							SecurityContextHolderFilter.class);
+
+			return http.build();
+		}
+
+		@Bean
+		public Converter<Jwt, AbstractAuthenticationToken> jwtAuthenticationConverter() {
+			final JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+			final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+			jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName(AUTHORITIES_CLAIM);
+			jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
+			jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+			return jwtAuthenticationConverter;
 		}
 	}
 
 	/**
 	 * Class for configuring the OAuth authorization server
 	 */
-	@Configuration
-	@EnableAuthorizationServer
-	protected static class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
-		@Autowired
-		@Qualifier("clientDetails")
-		private ClientDetailsService clientDetailsService;
+	@Configuration(proxyBeanMethods = false)
+	protected static class AuthorizationServerConfig {
+
+		private static final String CUSTOM_CONSENT_PAGE_URI = "/api/oauth/consent";
+
+		@Value("${server.base.url}")
+		private String serverBase;
 
 		@Autowired
-		@Qualifier("iridaTokenStore")
-		private TokenStore tokenStore;
+		private OAuth2AuthorizationService authorizationService;
 
 		@Autowired
-		@Qualifier("userAuthenticationManager")
+		private ClientSecretAuthenticationProvider clientSecretAuthenticationProvider;
+
+		@Autowired
 		private AuthenticationManager authenticationManager;
 
 		@Autowired
-		private WebResponseExceptionTranslator<OAuth2Exception> exceptionTranslator;
+		private OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator;
 
-		@Override
-		public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-			clients.withClientDetails(clientDetailsService);
+		// @formatter:off
+		@Bean
+		@Order(Ordered.HIGHEST_PRECEDENCE) // apply this SecurityFilterChain first
+		public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
+			OAuth2AuthorizationServerConfigurer<HttpSecurity> authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer<>();
+
+			RequestMatcher endpointsMatcher = authorizationServerConfigurer.getEndpointsMatcher();
+
+			authorizationServerConfigurer.clientAuthentication(clientAuthentication -> clientAuthentication.authenticationProvider(clientSecretAuthenticationProvider));
+
+			authorizationServerConfigurer.tokenEndpoint((tokenEndpoint) -> tokenEndpoint.accessTokenRequestConverter(
+				new DelegatingAuthenticationConverter(Arrays.asList(
+					new OAuth2AuthorizationCodeAuthenticationConverter(),
+					new OAuth2RefreshTokenAuthenticationConverter(),
+					new OAuth2ClientCredentialsAuthenticationConverter(),
+					new OAuth2ResourceOwnerPasswordAuthenticationConverter()))
+			));
+
+			authorizationServerConfigurer.authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint.consentPage(CUSTOM_CONSENT_PAGE_URI));
+
+			http
+				.requestMatcher(endpointsMatcher)
+				.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated())
+				.csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher))
+				.apply(authorizationServerConfigurer)
+				.and()
+				.exceptionHandling(exceptions -> exceptions
+					.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")));
+
+			addCustomOAuth2ResourceOwnerPasswordAuthenticationProvider(http);
+
+			return http.build();
+		}
+		// @formatter:on
+
+		private void addCustomOAuth2ResourceOwnerPasswordAuthenticationProvider(HttpSecurity http) {
+			OAuth2ResourceOwnerPasswordAuthenticationProvider resourceOwnerPasswordAuthenticationProvider = new OAuth2ResourceOwnerPasswordAuthenticationProvider(
+					authenticationManager, authorizationService, tokenGenerator);
+
+			// This will add new authentication provider in the list of existing authentication providers.
+			http.authenticationProvider(resourceOwnerPasswordAuthenticationProvider);
 		}
 
-		@Autowired
-		private ResourceServerTokenServices tokenServices;
+		@Bean
+		public OAuth2AuthorizationService authorizationService(JdbcTemplate jdbcTemplate,
+				RegisteredClientRepository registeredClientRepository) {
+			IridaOAuth2AuthorizationService service = new IridaOAuth2AuthorizationService(jdbcTemplate,
+					registeredClientRepository);
+			JdbcOAuth2AuthorizationService.OAuth2AuthorizationRowMapper rowMapper = new JdbcOAuth2AuthorizationService.OAuth2AuthorizationRowMapper(
+					registeredClientRepository);
+			ObjectMapper objectMapper = new ObjectMapper();
+			ClassLoader classLoader = JdbcOAuth2AuthorizationService.class.getClassLoader();
+			List<Module> securityModules = SecurityJackson2Modules.getModules(classLoader);
 
-		@Override
-		public void configure(final AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-			endpoints.tokenStore(tokenStore);
-			endpoints.authenticationManager(authenticationManager);
-			endpoints.authorizationCodeServices(authorizationCodeServices());
-			endpoints.pathMapping("/oauth/token", "/api/oauth/token").allowedTokenEndpointRequestMethods(HttpMethod.GET,
-					HttpMethod.POST);
-			endpoints.pathMapping("/oauth/check_token", "/api/oauth/check_token");
-			endpoints.pathMapping("/oauth/confirm_access", "/api/oauth/confirm_access");
-			endpoints.pathMapping("/oauth/error", "/api/oauth/error");
-			endpoints.pathMapping("/oauth/authorize", "/api/oauth/authorize");
-			endpoints.tokenServices((DefaultTokenServices) tokenServices);
-			endpoints.exceptionTranslator(exceptionTranslator);
+			objectMapper.registerModules(securityModules);
+			objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
+			objectMapper.addMixIn(User.class, UserMixin.class);
+			objectMapper.addMixIn(Role.class, RoleMixin.class);
+			objectMapper.addMixIn(Timestamp.class, TimestampMixin.class);
+			rowMapper.setObjectMapper(objectMapper);
+			service.setAuthorizationRowMapper(rowMapper);
+
+			return service;
 		}
 
-		@Override
-		public void configure(final AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
-			oauthServer.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()")
-					.allowFormAuthenticationForClients();
-			oauthServer.passwordEncoder(new PasswordEncoder() {
+		@Bean
+		public OAuth2AuthorizationConsentService authorizationConsentService(JdbcTemplate jdbcTemplate,
+				RegisteredClientRepository registeredClientRepository) {
+			return new JdbcOAuth2AuthorizationConsentService(jdbcTemplate, registeredClientRepository);
+		}
 
+		@Bean
+		public ClientSecretAuthenticationProvider oauthClientAuthProvider(
+				RegisteredClientRepository registeredClientRepository,
+				OAuth2AuthorizationService oAuth2AuthorizationService) {
+			ClientSecretAuthenticationProvider clientAuthenticationProvider = new ClientSecretAuthenticationProvider(
+					registeredClientRepository, oAuth2AuthorizationService);
+
+			clientAuthenticationProvider.setPasswordEncoder(new PasswordEncoder() {
 				@Override
 				public boolean matches(CharSequence rawPassword, String encodedPassword) {
 					return rawPassword.equals(encodedPassword);
@@ -170,65 +244,108 @@ public class IridaOauthSecurityConfig {
 					return rawPassword.toString();
 				}
 			});
+
+			return clientAuthenticationProvider;
 		}
 
 		@Bean
-		public AuthorizationCodeServices authorizationCodeServices() {
-			return new InMemoryAuthorizationCodeServices();
+		public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer() {
+			return context -> {
+				Set<AuthorizationGrantType> grantTypes = Set.of(AuthorizationGrantType.AUTHORIZATION_CODE,
+						AuthorizationGrantType.PASSWORD);
+				if (grantTypes.contains(context.getAuthorizationGrantType())
+						&& OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
+					Authentication principal = context.getPrincipal();
+					Set<String> authorities = new HashSet<>();
+					for (GrantedAuthority authority : principal.getAuthorities()) {
+						authorities.add(authority.getAuthority());
+					}
+					for (String authorizedScope : context.getAuthorizedScopes()) {
+						authorities.add("SCOPE_" + authorizedScope);
+					}
+					context.getClaims().claim(AUTHORITIES_CLAIM, authorities);
+				}
+			};
+		}
+
+		@Bean
+		@SuppressWarnings("unused")
+		public OAuth2TokenGenerator<OAuth2Token> oAuth2TokenGenerator(JwtEncoder jwtEncoder,
+				OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer) {
+			JwtGenerator jwtGenerator = new JwtGenerator(jwtEncoder);
+			jwtGenerator.setJwtCustomizer(jwtCustomizer);
+			OAuth2AccessTokenGenerator accessTokenGenerator = new OAuth2AccessTokenGenerator();
+			OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
+			return new DelegatingOAuth2TokenGenerator(jwtGenerator, accessTokenGenerator, refreshTokenGenerator);
+		}
+
+		@Bean
+		public ProviderSettings providerSettings() {
+			return ProviderSettings.builder()
+					.issuer(serverBase)
+					.authorizationEndpoint("/api/oauth/authorize")
+					.tokenEndpoint("/api/oauth/token")
+					.jwkSetEndpoint("/api/oauth/jwks")
+					.tokenRevocationEndpoint("/api/oauth/revoke")
+					.tokenIntrospectionEndpoint("/api/oauth/introspect")
+					.build();
 		}
 	}
 
 	/**
-	 * This adds our own custom filter before the OAuth2 filters are run to put
-	 * an anonymous authentication object into the security context *before*
-	 * {@link ClientDetailsService#loadClientByClientId(String)} is called.
+	 * Class for configuring the JSON Web Key for JSON Web Tokens used in OAuth2
 	 */
 	@Configuration
-	@Order(Ordered.HIGHEST_PRECEDENCE)
-	protected static class AuthorizationServerConfigurer extends AuthorizationServerSecurityConfiguration {
+	protected static class JWKConfig {
+
 		@Autowired
-		@Qualifier("clientDetails")
-		private ClientDetailsService clientDetailsService;
+		private OAuth2AuthorizationService authorizationService;
 
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
-			super.configure(http);
-			// SecurityContextPersistenceFilter appears pretty high up (well
-			// before any OAuth related filters), so we'll put our anonymous
-			// user filter into the filter chain after that.
-			http.addFilterAfter(new UnauthenticatedAnonymousAuthenticationFilter("anonymousTokenAuthProvider"),
-					SecurityContextPersistenceFilter.class);
+		@Bean
+		public JWKSource<SecurityContext> jwkSource(@Value("${oauth2.jwk.key-store}") String keyStoreLocation,
+				@Value("${oauth2.jwk.key-store-password}") String keyStorePassword) throws KeyStoreException,
+				NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException {
+			KeyStore keyStore = KeyStore.getInstance("JKS");
+
+			keyStore.load(new FileInputStream(ResourceUtils.getFile(keyStoreLocation)), keyStorePassword.toCharArray());
+
+			JWKSet jwkSet = JWKSet.load(keyStore, new PasswordLookup() {
+				@Override
+				public char[] lookupPassword(String name) {
+					return keyStorePassword.toCharArray();
+				}
+			});
+			return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
 		}
-	}
 
-	/**
-	 * Forcibly set the exception translator on the `authenticationEntryPoint`
-	 * so that we can supply our own errors on authentication failure. The
-	 * `authenticationEntryPoint` field on
-	 * {@link AbstractOAuth2SecurityExceptionHandler} is marked `private`, and
-	 * is not accessible for customizing.
-	 *
-	 * @param configurer
-	 *            the instance of the configurer that we're customizing
-	 * @param exceptionTranslator
-	 *            the {@link WebResponseExceptionTranslator} that we want to
-	 *            set.
-	 * @param <T>
-	 *            The type of security configurer
-	 */
-	private static <T> void forceExceptionTranslator(final T configurer,
-			final WebResponseExceptionTranslator<OAuth2Exception> exceptionTranslator) {
-		try {
-			final Field authenticationEntryPointField = ReflectionUtils.findField(configurer.getClass(),
-					"authenticationEntryPoint");
-			ReflectionUtils.makeAccessible(authenticationEntryPointField);
-			final OAuth2AuthenticationEntryPoint authenticationEntryPoint = (OAuth2AuthenticationEntryPoint) authenticationEntryPointField
-					.get(configurer);
+		@Bean
+		@SuppressWarnings("unused")
+		public JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
+			return new NimbusJwtEncoder(jwkSource);
+		}
 
-			logger.debug("Customizing the authentication entry point by brute force.");
-			authenticationEntryPoint.setExceptionTranslator(exceptionTranslator);
-		} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			logger.error("Failed to configure the authenticationEntryPoint on ResourceServerSecurityConfigurer.", e);
+		@Bean
+		public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
+			OAuth2TokenValidator<Jwt> defaultValidator = JwtValidators.createDefault();
+
+			OAuth2TokenValidator<Jwt> revocationValidator = jwt -> {
+				OAuth2Authorization authorization = this.authorizationService.findByToken(jwt.getTokenValue(),
+						OAuth2TokenType.ACCESS_TOKEN);
+
+				if (authorization != null && authorization.getAccessToken().isActive()) {
+					return OAuth2TokenValidatorResult.success();
+				} else {
+					OAuth2Error error = new OAuth2Error(OAuth2ErrorCodes.INVALID_TOKEN, "The token is revoked",
+							"https://tools.ietf.org/html/rfc6750#section-3.1");
+					return OAuth2TokenValidatorResult.failure(error);
+				}
+			};
+
+			OAuth2TokenValidator<Jwt> validator = new DelegatingOAuth2TokenValidator<>(defaultValidator,
+					revocationValidator);
+			NimbusJwtDecoder decoder = (NimbusJwtDecoder) OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
+			decoder.setJwtValidator(validator);
+			return decoder;
 		}
 	}
 }

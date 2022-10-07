@@ -69,7 +69,7 @@ export const launchPipeline = (id, parameters) =>
     .post(`${AJAX_URL}/${id}`, parameters)
     .then(({ data }) => data)
     .catch((error) => {
-      throw Promise.reject(error.response.data);
+      throw new Error(error.response.data.error);
     });
 
 /**

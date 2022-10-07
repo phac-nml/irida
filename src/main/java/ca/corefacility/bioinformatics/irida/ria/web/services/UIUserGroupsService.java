@@ -59,11 +59,9 @@ public class UIUserGroupsService {
 		Page<UserGroup> pagedGroups = userGroupService.search(
 				UserGroupSpecification.searchUserGroup(request.getSearch()),
 				PageRequest.of(request.getCurrent(), request.getPageSize(), request.getSort()));
-		User user = (User) SecurityContextHolder.getContext()
-				.getAuthentication()
-				.getPrincipal();
-		boolean isAdmin = user.getSystemRole()
-				.equals(Role.ROLE_ADMIN);
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		User user = userService.getUserByUsername(username);
+		boolean isAdmin = user.getSystemRole().equals(Role.ROLE_ADMIN);
 		List<UserGroupTableModel> groups = pagedGroups.getContent()
 				.stream()
 				.map(group -> new UserGroupTableModel(group, isAdmin || isGroupOwner(user, group)))
@@ -93,18 +91,14 @@ public class UIUserGroupsService {
 	public UserGroupDetails getUserGroupDetails(Long groupId) {
 		UserGroup group = userGroupService.read(groupId);
 		Collection<UserGroupJoin> groupUsers = userGroupService.getUsersForGroup(group);
-		List<UserGroupMember> members = groupUsers.stream()
-				.map(UserGroupMember::new)
-				.collect(Collectors.toList());
+		List<UserGroupMember> members = groupUsers.stream().map(UserGroupMember::new).collect(Collectors.toList());
 
 		/*
 		Determine if the current user can manage this group
 		 */
-		User user = (User) SecurityContextHolder.getContext()
-				.getAuthentication()
-				.getPrincipal();
-		boolean isAdmin = user.getSystemRole()
-				.equals(Role.ROLE_ADMIN);
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		User user = userService.getUserByUsername(username);
+		boolean isAdmin = user.getSystemRole().equals(Role.ROLE_ADMIN);
 
 		return new UserGroupDetails(group, members, isAdmin || isGroupOwner(user, group));
 	}
@@ -138,7 +132,8 @@ public class UIUserGroupsService {
 	public List<UserGroupRole> getUserGroupRoles(Locale locale) {
 		final String OWNER = UserGroupJoin.UserGroupRole.GROUP_OWNER.toString();
 		final String MEMBER = UserGroupJoin.UserGroupRole.GROUP_MEMBER.toString();
-		return ImmutableList.of(new UserGroupRole(OWNER,
+		return ImmutableList.of(
+				new UserGroupRole(OWNER,
 						messageSource.getMessage("server.usergroups.GROUP_OWNER", new Object[] {}, locale)),
 				new UserGroupRole(MEMBER,
 						messageSource.getMessage("server.usergroups.GROUP_MEMBER", new Object[] {}, locale)));
@@ -160,8 +155,8 @@ public class UIUserGroupsService {
 	 * Add a new member to the user group
 	 *
 	 * @param groupId identifier for the {@link UserGroup}
-	 * @param userId identifier for the {@link User}
-	 * @param role   role to assign to the user
+	 * @param userId  identifier for the {@link User}
+	 * @param role    role to assign to the user
 	 * @param locale  current users {@link Locale}
 	 * @return message to the user about the status of this request
 	 */
@@ -182,7 +177,8 @@ public class UIUserGroupsService {
 	 * @param role    role to update the user to
 	 * @param locale  Current users {@link Locale}
 	 * @return Message to user about the result of the update
-	 * @throws UserGroupWithoutOwnerException thrown if changing the users role would result in the user group not having an owner
+	 * @throws UserGroupWithoutOwnerException thrown if changing the users role would result in the user group not
+	 *                                        having an owner
 	 */
 	public String updateUserRoleOnUserGroup(Long groupId, Long userId, String role, Locale locale)
 			throws UserGroupWithoutOwnerException {
@@ -193,8 +189,8 @@ public class UIUserGroupsService {
 
 		try {
 			userGroupService.changeUserGroupRole(user, group, userGroupRole);
-			return messageSource.getMessage("server.usergroups.role-success", new Object[] { user.getLabel(), roleTranslated },
-					locale);
+			return messageSource.getMessage("server.usergroups.role-success",
+					new Object[] { user.getLabel(), roleTranslated }, locale);
 		} catch (UserGroupWithoutOwnerException e) {
 			throw new UserGroupWithoutOwnerException(
 					messageSource.getMessage("server.usergroups.role-error", new Object[] { user.getLabel() }, locale));
@@ -208,7 +204,8 @@ public class UIUserGroupsService {
 	 * @param userId  identifier for a {@link User}
 	 * @param locale  current users {@link Locale}
 	 * @return Message to user about the result of removing the user
-	 * @throws UserGroupWithoutOwnerException thrown if removing the user would result in the user group not having an owner
+	 * @throws UserGroupWithoutOwnerException thrown if removing the user would result in the user group not having an
+	 *                                        owner
 	 */
 	public String removeMemberFromUserGroup(Long groupId, Long userId, Locale locale)
 			throws UserGroupWithoutOwnerException {
@@ -219,9 +216,8 @@ public class UIUserGroupsService {
 			return messageSource.getMessage("server.usergroups.remove-member.success", new Object[] { user.getLabel() },
 					locale);
 		} catch (UserGroupWithoutOwnerException e) {
-			throw new UserGroupWithoutOwnerException(
-					messageSource.getMessage("server.usergroups.remove-member.error", new Object[] { user.getLabel() },
-							locale));
+			throw new UserGroupWithoutOwnerException(messageSource.getMessage("server.usergroups.remove-member.error",
+					new Object[] { user.getLabel() }, locale));
 		}
 	}
 
@@ -235,13 +231,11 @@ public class UIUserGroupsService {
 	public List<UserGroupProjectTableModel> getProjectsForUserGroup(Long groupId, Locale locale) {
 		UserGroup group = userGroupService.read(groupId);
 		Collection<UserGroupProjectJoin> joins = userGroupService.getProjectsWithUserGroup(group);
-		return joins.stream()
-				.map(join -> {
-					ProjectRole role = join.getProjectRole();
-					return new UserGroupProjectTableModel(join,
-							messageSource.getMessage("projectRole." + role.toString(), new Object[] {}, locale));
-				})
-				.collect(Collectors.toList());
+		return joins.stream().map(join -> {
+			ProjectRole role = join.getProjectRole();
+			return new UserGroupProjectTableModel(join,
+					messageSource.getMessage("projectRole." + role.toString(), new Object[] {}, locale));
+		}).collect(Collectors.toList());
 	}
 
 	/**
@@ -257,9 +251,8 @@ public class UIUserGroupsService {
 			UserGroup group = userGroupService.create(userGroup);
 			return group.getId();
 		} catch (Exception e) {
-			throw new UIConstraintViolationException(ImmutableMap.of("name",
-					messageSource.getMessage("server.usergroups.create.constraint.name",
-							new Object[] { userGroup.getLabel() }, locale)));
+			throw new UIConstraintViolationException(ImmutableMap.of("name", messageSource.getMessage(
+					"server.usergroups.create.constraint.name", new Object[] { userGroup.getLabel() }, locale)));
 		}
 	}
 
@@ -273,13 +266,11 @@ public class UIUserGroupsService {
 	private boolean isGroupOwner(User user, UserGroup group) {
 		Collection<UserGroupJoin> groupUsers = userGroupService.getUsersForGroup(group);
 		UserGroupJoin currentUserJoin = groupUsers.stream()
-				.filter(x -> x.getSubject()
-						.equals(user))
+				.filter(x -> x.getSubject().equals(user))
 				.findAny()
 				.orElse(null);
 		if (currentUserJoin != null) {
-			return currentUserJoin.getRole()
-					.equals(UserGroupJoin.UserGroupRole.GROUP_OWNER);
+			return currentUserJoin.getRole().equals(UserGroupJoin.UserGroupRole.GROUP_OWNER);
 		}
 		return false;
 	}

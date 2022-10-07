@@ -1,63 +1,86 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.List;
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ExportDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.NcbiExportPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.Lists;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/NcbiExportPageIT.xml")
-public class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
-
-	private NcbiExportPage page;
-
-	@BeforeEach
-	public void setUp() {
-		LoginPage.loginAsAdmin(driver());
-	}
+class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
+	private final NcbiExportPage page = NcbiExportPage.init(driver());
 
 	@Test
-	public void testCountSamples() {
-		page = NcbiExportPage.goTo(driver(), 1L, Lists.newArrayList(1L, 2L, 4L));
+	void testCreateNcbiSubmission() throws Exception {
+		String SAMPLE_1 = "sample1";
+		String SAMPLE_2 = "sample2";
+		String SAMPLE_3 = "sample3";
+		String BIOPROJECT = "BIOPROJECT-1";
+		String NAMESPACE = "NAMESPACE-FOOBAR";
+		String ORGANIZATION = "ORGANIZATION-FOOBAR";
+		String PROTOCOL = "AMAZING_PROTOCOL";
+		String DEFAULT_PROTOCOL = "DEFAULT_PROTOCOL";
 
-		List<String> sampleNames = page.getSampleNames();
-		assertEquals(2, sampleNames.size(), "should be 2 samples to submit");
-		assertEquals(1, page.countDisabledSamples(), "should be 1 disabled sample");
-	}
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
+		samplesPage.selectSampleByName(SAMPLE_1);
+		samplesPage.selectSampleByName(SAMPLE_2);
+		samplesPage.selectSampleByName(SAMPLE_3);
+		samplesPage.shareExportSamplesToNcbi();
 
-	@Test
-	public void testSubmission() {
-		page = NcbiExportPage.goTo(driver(), 1L, Lists.newArrayList(1L, 2L));
+		assertEquals(3, page.getNumberOfSamples(), "Should display three sample panels");
 
-		page.fillTopLevelProperties("project", "NML", "NML");
-		page.fillSamplesWithInfo("sample1", "protocol");
+		// Enter BioSample information
+		page.enterBioProject(BIOPROJECT);
+		page.enterNamespace(NAMESPACE);
+		page.enterOrganization(ORGANIZATION);
 
-		page.submit();
+		// Test default sample settings.
+		page.toggleDefaultsPanel();
+		page.setDefaultStrategySelect("WGS");
+		// Check to see that the defaults set in the samples
+		page.openSamplePanelBySampleName(SAMPLE_1);
+		assertEquals("WGS", page.getSelectValueForSampleField("strategy"),
+				"Sample should have the strategy set automatically");
+		page.openSamplePanelBySampleName(SAMPLE_2);
+		assertEquals("WGS", page.getSelectValueForSampleField("strategy"),
+				"Sample should have the strategy set automatically");
+		page.openSamplePanelBySampleName(SAMPLE_3);
+		assertEquals("WGS", page.getSelectValueForSampleField("strategy"),
+				"Sample should have the strategy set automatically");
+		// Update a sample field and make sure the default on doesn't overwrite it.
+		page.openSamplePanelBySampleName(SAMPLE_1);
+		page.setTextInputForSampleFieldValue("protocol", PROTOCOL);
+		assertNotEquals(PROTOCOL, page.getInputValueForDefaultField("protocol"));
+		page.setDefaultInputFieldValue("protocol", DEFAULT_PROTOCOL);
+		assertNotEquals(DEFAULT_PROTOCOL, page.getInputValueForSampleField("protocol"));
 
-		ExportDetailsPage exportPage = ExportDetailsPage.initPage(driver());
+		// Test removing samples
+		page.removeSample(SAMPLE_2);
+		page.removeSample(SAMPLE_3);
+		assertEquals(1, page.getNumberOfSamples(), "Should now be only 1 sample on the page");
 
-		assertEquals(ExportUploadState.NEW.toString(), exportPage.getUploadStatus(),
-				"submission should be created with new status");
-	}
+		// Check to see if the sample is ready to submit
+		assertFalse(page.isSampleValid(SAMPLE_1), "Sample has empty fields and should not be valid to submit");
+		page.submitExportForm();
+		assertTrue(page.areFormErrorsPresent(), "Form should not have submitted and errors should be displayed");
 
-	@Test
-	public void testRemoveSubmission() {
-		page = NcbiExportPage.goTo(driver(), 1L, Lists.newArrayList(1L, 2L));
+		// Fill in the rest of the form
+		page.setTextInputForSampleFieldValue("biosample", "BIOSAMPLE-001");
+		page.setSelectForSampleFieldValue("source", "SYNTHETIC");
+		page.setSelectForSampleFieldValue("selection", "CAGE");
+		page.setCascaderForSampleField("model", "ILLUMINA", "Illumina Genome Analyzer II");
+		page.selectSingleEndSequenceFile("test_file.fastq");
+		assertTrue(page.isSampleValid(SAMPLE_1));
+		assertFalse(page.areFormErrorsPresent(), "All errors should now be cleared now that the form is valid");
 
-		assertEquals(2, page.getSampleNames().size(), "should be 2 samples");
+		page.submitExportForm();
+		assertTrue(page.isSuccessAlertDisplayed(), "Success notification should be displayed");
 
-		page.removeFirstSample();
-
-		assertEquals(1, page.getSampleNames().size(), "should be 1 sample after removal");
 	}
 }

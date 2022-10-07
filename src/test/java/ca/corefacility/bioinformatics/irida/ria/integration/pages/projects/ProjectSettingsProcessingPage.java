@@ -1,7 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.time.Duration;
 import java.util.List;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -38,8 +40,10 @@ public class ProjectSettingsProcessingPage extends AbstractPage {
 	}
 
 	public static ProjectSettingsProcessingPage goToPage(WebDriver driver, Long projectId) {
-		waitForTime(800);
 		get(driver, "projects/" + projectId + "/settings/processing");
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10L));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(
+				By.xpath("//h2[contains(@class, 'ant-typography') and text()='Automated Processing']")));
 		return initPage(driver);
 	}
 
@@ -53,14 +57,14 @@ public class ProjectSettingsProcessingPage extends AbstractPage {
 
 	public void clickCreateAnalysis() {
 		this.createAnalysisButton.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.visibilityOf(templateModal));
 	}
 
 	public void removeFirstAnalysis() {
 		removeAnalysisButtons.get(0).click();
 
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.elementToBeClickable(confirmRemoveButton));
 		confirmRemoveButton.click();
 	}

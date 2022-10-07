@@ -17,7 +17,8 @@
 		  credentialsNonExpired="true" enabled="true" />
 
 	<project id="1" createdDate="2013-07-18 14:20:19.0" name="project"
-		projectDescription="description" remoteURL="somewhere"  />
+		projectDescription="description" remoteURL="somewhere" genome_size="1000000" minimum_coverage="20"
+		maximum_coverage="100"  />
 	<project id="2" createdDate="2013-07-18 14:20:19.0" name="project2"
 		projectDescription="description2" remoteURL="somewhere"  />
 	<project id="3" createdDate="2013-07-18 14:20:19.0" name="project3"
@@ -193,18 +194,18 @@
 		created_date="2013-07-18 14:20:19.0" sample_id="9"
 		sequencingobject_id="3" />
 
-	<analysis_submission id="2" name="my analysis"
+	<analysis_submission id="2" name="my analysis" email_pipeline_result_error="0"
 		remote_analysis_id="1" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0"
 		workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3" submitter="1" remote_workflow_id="1"
 		remote_input_data_id="1" analysis_cleaned_state="NOT_CLEANED" analysis_id="5" priority="MEDIUM" 
 		update_samples="1" DTYPE="AnalysisSubmission" automated="0" />
 
-	<analysis_submission id="1" name="my analysis"
+	<analysis_submission id="1" name="my analysis" email_pipeline_result_error="0"
 		remote_analysis_id="1" analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19.0"
 		workflow_id="e47c1a8b-4ccd-4e56-971b-24c384933f44" submitter="1"
 		analysis_cleaned_state="NOT_CLEANED" update_samples="0" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0" />
 		
-	<analysis_submission id="3" name="my analysis"
+	<analysis_submission id="3" name="my analysis" email_pipeline_result_error="0"
 		remote_analysis_id="1" analysis_state="COMPLETED" created_date="2013-07-18 14:20:19.0"
 		workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3" submitter="1" remote_workflow_id="1"
 		remote_input_data_id="1" analysis_cleaned_state="NOT_CLEANED" analysis_id="6" priority="MEDIUM" 
@@ -233,6 +234,10 @@
 
 	<qc_entry id="1" created_date="2013-07-18 14:20:19.0"
 		sequencingObject_id="4" DTYPE="FileProcessorErrorQCEntry" />
+	<qc_entry id="2" created_date="2013-07-18 14:20:19.0"
+		sequencingObject_id="5" DTYPE="CoverageQCEntry" total_bases="50000000" />
+	<qc_entry id="3" created_date="2013-07-18 14:20:19.0"
+		sequencingObject_id="1" DTYPE="CoverageQCEntry" total_bases="50000000" />
 
 
 	<metadata_field id="1" label="field1" type="text" DTYPE="MetadataTemplateField"/>

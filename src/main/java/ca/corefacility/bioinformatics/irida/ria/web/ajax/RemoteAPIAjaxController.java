@@ -21,6 +21,8 @@ import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITabl
 import ca.corefacility.bioinformatics.irida.ria.web.rempoteapi.dto.RemoteAPITableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIRemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
+
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -50,6 +52,7 @@ public class RemoteAPIAjaxController extends BaseController {
     private final RemoteAPIService remoteAPIService;
     private final UIRemoteAPIService service;
     private final MessageSource messageSource;
+    private final UserService userService;
 
     // Map storing the message names for the
     // getErrorsFromDataIntegrityViolationException method
@@ -57,13 +60,13 @@ public class RemoteAPIAjaxController extends BaseController {
             RemoteAPI.SERVICE_URI_CONSTRAINT_NAME,
             new ExceptionPropertyAndMessage("serviceURI", "remoteapi.create.serviceURIConflict"));
 
-
     @Autowired
     public RemoteAPIAjaxController(RemoteAPIService remoteAPIService, UIRemoteAPIService service,
-            MessageSource messageSource) {
+            MessageSource messageSource, UserService userService) {
         this.remoteAPIService = remoteAPIService;
         this.service = service;
         this.messageSource = messageSource;
+        this.userService = userService;
     }
 
     /**
@@ -78,9 +81,8 @@ public class RemoteAPIAjaxController extends BaseController {
                 RemoteAPISpecification.searchRemoteAPI(tableRequest.getSearch()), tableRequest.getCurrent(),
                 tableRequest.getPageSize(), tableRequest.getSortDirection(), tableRequest.getSortColumn());
 
-        Authentication authentication = SecurityContextHolder.getContext()
-                .getAuthentication();
-        User user = (User) authentication.getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.getUserByUsername(authentication.getName());
         boolean isAdmin = user.getSystemRole().equals(Role.ROLE_ADMIN);
 
         List<RemoteAPITableModel> apiData = search.getContent()
@@ -91,8 +93,7 @@ public class RemoteAPIAjaxController extends BaseController {
     }
 
     /**
-     * Check the currently logged in user's OAuth2 connection status to a given
-     * API
+     * Check the currently logged in user's OAuth2 connection status to a given API
      *
      * @param apiId The ID of the api
      * @return "valid" or "invalid_token" message
@@ -102,9 +103,8 @@ public class RemoteAPIAjaxController extends BaseController {
         try {
             return ResponseEntity.ok(service.checkAPIStatus(apiId));
         } catch (IridaOAuthException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(null);
-        }catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
@@ -152,11 +152,9 @@ public class RemoteAPIAjaxController extends BaseController {
         try {
             return ResponseEntity.ok(service.createSynchronizedProject(request));
         } catch (IridaOAuthException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new AjaxErrorResponse(e.getMessage()));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new AjaxErrorResponse(e.getMessage()));
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new AjaxErrorResponse(e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AjaxErrorResponse(e.getMessage()));
         }
     }
 
@@ -179,7 +177,6 @@ public class RemoteAPIAjaxController extends BaseController {
         } catch (DataIntegrityViolationException e) {
             errors = getErrorsFromDataIntegrityViolationException(e, errorMessages, messageSource, locale);
         }
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-                .body(new AjaxFormErrorResponse(errors));
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(new AjaxFormErrorResponse(errors));
     }
 }

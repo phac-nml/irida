@@ -1,16 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
-import java.util.Collection;
+import java.time.Duration;
 import java.util.List;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.springframework.web.util.UriUtils;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
@@ -19,73 +18,184 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  */
 public class NcbiExportPage extends AbstractPage {
 
-	@FindBy(className = "sample-container")
-	List<WebElement> samples;
+	@FindBy(className = "t-sample-panel")
+	private List<WebElement> samplePanels;
 
-	@FindBy(className = "sample-no-files")
-	List<WebElement> disabledSamples;
+	@FindBy(xpath = "//*[@id=\"bioProject\"]")
+	private WebElement bioProjectInput;
 
-	@FindBy(className = "bioSample")
-	List<WebElement> bioSampleInputs;
+	@FindBy(xpath = "//*[@id=\"organization\"]")
+	private WebElement organizationInput;
 
-	@FindBy(className = "library_construction_protocol")
-	List<WebElement> protocolInputs;
+	@FindBy(xpath = "//*[@id=\"namespace\"]")
+	private WebElement namespaceInput;
 
-	@FindBy(id = "submit")
-	WebElement submitButton;
+	@FindBy(className = "t-defaults-panel")
+	private WebElement defaultsPanel;
 
-	@FindBy(id = "bioProject")
-	WebElement bioProject;
+	@FindBy(className = "t-default-strategy")
+	private WebElement defaultStrategySelect;
 
-	@FindBy(id = "organization")
-	WebElement organization;
-
-	@FindBy(id = "namespace")
-	WebElement namespace;
-
-	@FindBy(className = "remove-button")
-	List<WebElement> removeButtons;
+	@FindBy(className = "t-submit-button")
+	private WebElement submitButton;
 
 	public NcbiExportPage(WebDriver driver) {
 		super(driver);
 	}
 
-	public static NcbiExportPage goTo(WebDriver driver, Long projectId, Collection<Long> sampleIds) {
-
-		StringJoiner stringJoiner = new StringJoiner("&");
-		sampleIds.forEach(s -> stringJoiner.add(UriUtils.encodeQuery("ids=" + s.toString(), "UTF-8")));
-
-		String url = "projects/" + projectId + "/export/ncbi?" + stringJoiner.toString();
-		get(driver, url);
+	public static NcbiExportPage init(WebDriver driver) {
 		return PageFactory.initElements(driver, NcbiExportPage.class);
 	}
 
-	public List<String> getSampleNames() {
-		return samples.stream().map(s -> s.findElement(By.className("sample-name")).getText())
-				.collect(Collectors.toList());
+	public int getNumberOfSamples() {
+		return samplePanels.size();
 	}
 
-	public int countDisabledSamples() {
-		return disabledSamples.size();
+	public void openSamplePanelBySampleName(String sampleName) {
+		for (WebElement panel : samplePanels) {
+			String text = panel.findElement(By.className("t-sample-name")).getText();
+			if (text.equals(sampleName)) {
+				panel.click();
+				return;
+			}
+		}
 	}
 
-	public void fillTopLevelProperties(String bioProject, String organization, String namespace) {
-		this.bioProject.sendKeys(bioProject);
-		this.organization.sendKeys(organization);
-		this.namespace.sendKeys(namespace);
+	public void enterBioProject(String value) {
+		bioProjectInput.sendKeys(value);
 	}
 
-	public void fillSamplesWithInfo(String bioSample, String protocol) {
-		bioSampleInputs.forEach(b -> b.sendKeys(bioSample));
-		protocolInputs.forEach(c -> c.sendKeys(protocol));
+	public void enterOrganization(String value) {
+		organizationInput.sendKeys(value);
 	}
 
-	public void submit() {
+	public void enterNamespace(String value) {
+		namespaceInput.sendKeys(value);
+	}
+
+	public void toggleDefaultsPanel() {
+		defaultsPanel.click();
+	}
+
+	public void setDefaultStrategySelect(String strategy) {
+		defaultStrategySelect.click();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+		List<WebElement> selectOptions = wait
+				.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-select-item")));
+		for (WebElement option : selectOptions) {
+			if (option.getAttribute("title").equals(strategy)) {
+				option.click();
+				return;
+			}
+		}
+	}
+
+	public void setDefaultInputFieldValue(String field, String value) {
+		driver.findElement(By.className("t-default-" + field)).sendKeys(value);
+	}
+
+	public String getInputValueForDefaultField(String field) {
+		return driver.findElement(By.className("t-default-" + field)).getText();
+	}
+
+	public String getSelectValueForSampleField(String field) {
+		// NOTE: expect the panel to be open at this point.
+		WebElement panel = driver.findElement(By.cssSelector(".t-samples .ant-collapse-content"));
+		WebElement input = panel.findElement(By.className("t-sample-" + field));
+		return input.findElement(By.className("ant-select-selection-item")).getAttribute("title");
+	}
+
+	public String getInputValueForSampleField(String field) {
+		return driver.findElement(By.className("t-sample-" + field)).getText();
+	}
+
+	public void setTextInputForSampleFieldValue(String field, String value) {
+		// NOTE: expect the panel to be open at this point.
+		WebElement panel = driver.findElement(By.cssSelector(".t-samples .ant-collapse-content"));
+		WebElement input = panel.findElement(By.className("t-sample-" + field));
+		input.sendKeys(value);
+	}
+
+	public void setSelectForSampleFieldValue(String field, String value) {
+		WebElement select = driver.findElement(By.className("t-sample-" + field));
+		select.click();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+		List<WebElement> selectOptions = wait
+				.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-select-item")));
+		for (WebElement option : selectOptions) {
+			if (option.getAttribute("title").equals(value)) {
+				option.click();
+				return;
+			}
+		}
+	}
+
+	public void setCascaderForSampleField(String field, String firstValue, String secondValue) {
+		WebElement cascader = driver.findElement(By.className("t-sample-" + field));
+		cascader.click();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
+		List<WebElement> cascaderMenus = wait
+				.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-cascader-menu")));
+		for (WebElement option : cascaderMenus.get(0).findElements(By.className("ant-cascader-menu-item"))) {
+			if (option.getText().equals(firstValue)) {
+				option.click();
+				break;
+			}
+		}
+		// menus updated after selections, wait for more.
+		cascaderMenus = wait.until(ExpectedConditions.numberOfElementsToBe(By.className("ant-cascader-menu"), 2));
+		for (WebElement option : cascaderMenus.get(1).findElements(By.className("ant-cascader-menu-item"))) {
+			if (option.getText().equals(secondValue)) {
+				option.click();
+				break;
+			}
+		}
+	}
+
+	public void removeSample(String sampleName) {
+		for (WebElement panel : samplePanels) {
+			if (panel.findElement(By.className("t-sample-name")).getText().equals(sampleName)) {
+				panel.findElement(By.className("t-remove-btn")).click();
+			}
+		}
+	}
+
+	public boolean isSampleValid(String sampleName) throws Exception {
+		for (WebElement panel : samplePanels) {
+			if (panel.findElement(By.className("t-sample-name")).getText().equals(sampleName)) {
+				return panel.findElement(By.xpath("//span[contains(@class, 'ant-tag')]/span[2]"))
+						.getText()
+						.equals("VALID");
+			}
+		}
+		throw new Exception("Cannot find sample: " + sampleName);
+	}
+
+	public void selectSingleEndSequenceFile(String filename) {
+		List<WebElement> labels = driver.findElements(By.className("t-single-name"));
+		for (WebElement label : labels) {
+			if (label.getText().equals(filename)) {
+				label.click();
+				return;
+			}
+		}
+	}
+
+	public boolean areFormErrorsPresent() {
+		waitForTime(250);
+		try {
+			List<WebElement> errors = driver.findElements(By.className("ant-form-item-explain-error"));
+			return errors != null && errors.size() > 0;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public void submitExportForm() {
 		submitButton.click();
 	}
 
-	public void removeFirstSample() {
-		removeButtons.iterator().next().click();
+	public boolean isSuccessAlertDisplayed() {
+		return driver.findElements(By.cssSelector(".ant-alert.ant-alert-success")).size() == 0;
 	}
-
 }

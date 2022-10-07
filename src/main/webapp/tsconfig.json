@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "sourceMap": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "lib": ["ES2021", "DOM"],
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "target": "ES6",
+    "allowJs": true, //remove when all js jsx files changed to ts tsx
+    "jsx": "react",
+    "esModuleInterop": true
+  },
+  "include": ["./resources/js/**/*.ts", "./resources/js/**/*.tsx"]
+}

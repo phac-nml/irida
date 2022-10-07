@@ -13,6 +13,7 @@ import { useSetPasswordMutation } from "../../apis/password-reset";
 import store from "../store";
 import { Provider } from "react-redux";
 import { validatePassword } from "../../utilities/validation-utilities";
+import { PasswordPolicyAlert } from "../../components/alerts/PasswordPolicyAlert";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -26,6 +27,14 @@ const { Item } = Form;
 const passwordExpired =
   new URLSearchParams(window.location.search).get("expired") || false;
 const passwordResetObj = window.PAGE.passwordReset;
+
+/*
+WEBPACK PUBLIC PATH:
+Webpack does not know what the servlet context path is.  To fix this, webpack exposed
+the variable `__webpack_public_path__`
+See: https://webpack.js.org/guides/public-path/#on-the-fly
+ */
+__webpack_public_path__ = setBaseUrl(`/dist/`);
 
 /**
  * React component to render the Password Reset form.
@@ -51,16 +60,6 @@ function PasswordResetForm() {
     passwordRef.current.focus();
     passwordRef.current.select();
   }, []);
-
-  const passwordRules = [
-    i18n("PasswordReset.alert.rule2"),
-    i18n("PasswordReset.alert.rule3"),
-    i18n("PasswordReset.alert.rule4"),
-    i18n("PasswordReset.alert.rule5"),
-    i18n("PasswordReset.alert.rule6"),
-    i18n("PasswordReset.alert.recommendation1"),
-    i18n("PasswordReset.alert.recommendation2"),
-  ];
 
   const submitPasswordResetForm = () => {
     setLoading(true);
@@ -151,22 +150,7 @@ function PasswordResetForm() {
 
         {!updateSuccess && (
           <>
-            <Alert
-              style={{ marginBottom: SPACE_SM }}
-              message={i18n("PasswordReset.alert.title")}
-              className="t-password-policy-alert"
-              description={
-                <Typography.Paragraph>
-                  <List
-                    header={i18n("PasswordReset.alert.description")}
-                    dataSource={passwordRules}
-                    renderItem={(item) => <List.Item>- {item}</List.Item>}
-                  />
-                </Typography.Paragraph>
-              }
-              type="info"
-              showIcon
-            />
+            <PasswordPolicyAlert />
             <Form
               form={passwordResetForm}
               name="resetPasswordForm"

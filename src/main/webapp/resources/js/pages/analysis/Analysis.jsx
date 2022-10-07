@@ -19,18 +19,17 @@ const AnalysisCompletePage = React.lazy(() => import("./AnalysisCompletePage"));
 const AnalysisRunningPage = React.lazy(() => import("./AnalysisRunningPage"));
 const AnalysisErrorPage = React.lazy(() => import("./AnalysisErrorPage"));
 
-
 export default function Analysis() {
   const { analysisContext } = useContext(AnalysisContext);
   const { analysisName, loading, isError, isCompleted } = analysisContext;
 
   let content;
   if (isError) {
-    content = <AnalysisErrorPage/>;
+    content = <AnalysisErrorPage />;
   } else if (isCompleted) {
-    content = <AnalysisCompletePage/>;
+    content = <AnalysisCompletePage />;
   } else {
-    content = <AnalysisRunningPage/>;
+    content = <AnalysisRunningPage />;
   }
 
   /*
@@ -38,15 +37,15 @@ export default function Analysis() {
   avatar
    */
   const avatarOptions = isError
-    ? { style: { backgroundColor: red6 }, icon: <IconWarning/> }
+    ? { style: { backgroundColor: red6 }, icon: <IconWarning /> }
     : isCompleted
-      ? { style: { backgroundColor: green6 }, icon: <IconCheck/> }
-      : { style: { backgroundColor: blue6 }, icon: <IconLoading/> };
+    ? { style: { backgroundColor: green6 }, icon: <IconCheck /> }
+    : { style: { backgroundColor: blue6 }, icon: <IconLoading /> };
 
   return (
     <Layout style={{ height: `100%`, width: `100%` }}>
       <Skeleton loading={loading} active>
-        <PageHeader title={analysisName} avatar={avatarOptions}/>
+        <PageHeader title={analysisName} avatar={avatarOptions} />
         <Layout.Content
           style={{
             margin: 24,
@@ -55,7 +54,7 @@ export default function Analysis() {
             display: "flex",
           }}
         >
-          <Suspense fallback={<ContentLoading/>}>{content}</Suspense>
+          <Suspense fallback={<ContentLoading />}>{content}</Suspense>
         </Layout.Content>
       </Skeleton>
     </Layout>

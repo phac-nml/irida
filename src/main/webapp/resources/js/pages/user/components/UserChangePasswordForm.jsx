@@ -1,16 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Alert,
-  Button,
-  Form,
-  Input,
-  List,
-  notification,
-  Typography,
-} from "antd";
+import { Button, Form, Input, notification, Typography } from "antd";
 import { useChangeUserPasswordMutation } from "../../../apis/users/users";
-import { SPACE_SM } from "../../../styles/spacing";
+import { validatePassword } from "../../../utilities/validation-utilities";
+import { PasswordPolicyAlert } from "../../../components/alerts/PasswordPolicyAlert";
 
 /**
  * React component to display the user change password form.
@@ -24,14 +17,6 @@ export function UserChangePasswordForm({ userId, requireOldPassword }) {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  const passwordRules = [
-    i18n("UserChangePasswordForm.alert.rule2"),
-    i18n("UserChangePasswordForm.alert.rule3"),
-    i18n("UserChangePasswordForm.alert.rule4"),
-    i18n("UserChangePasswordForm.alert.rule5"),
-    i18n("UserChangePasswordForm.alert.rule6"),
-  ];
-
   const onFormFinish = (values) => {
     changeUserPassword({ userId: userId, ...values })
       .unwrap()
@@ -43,10 +28,15 @@ export function UserChangePasswordForm({ userId, requireOldPassword }) {
         navigate(`/${userId}/details`);
       })
       .catch((error) => {
-        const fields = Object.entries(error.data).map(([field, error]) => ({
-          name: field,
-          errors: [error],
-        }));
+        notification.error({
+          message: i18n("UserChangePasswordForm.notification.error"),
+        });
+        const fields = Object.entries(error.data.errors).map(
+          ([field, error]) => ({
+            name: field,
+            errors: [error],
+          })
+        );
         form.setFields(fields);
       });
   };
@@ -56,21 +46,7 @@ export function UserChangePasswordForm({ userId, requireOldPassword }) {
       <Typography.Title level={5}>
         {i18n("UserChangePasswordForm.title")}
       </Typography.Title>
-      <Alert
-        style={{ marginBottom: SPACE_SM }}
-        message={i18n("UserChangePasswordForm.alert.title")}
-        description={
-          <Typography.Paragraph>
-            <List
-              header={i18n("UserChangePasswordForm.alert.description")}
-              dataSource={passwordRules}
-              renderItem={(item) => <List.Item>{item}</List.Item>}
-            />
-          </Typography.Paragraph>
-        }
-        type="info"
-        showIcon
-      />
+      <PasswordPolicyAlert />
       <Form
         form={form}
         layout="vertical"
@@ -84,7 +60,7 @@ export function UserChangePasswordForm({ userId, requireOldPassword }) {
             rules={[
               {
                 required: true,
-                message: i18n("UserChangePasswordForm.alert.rule1"),
+                message: i18n("validation-utilities.password.required"),
               },
             ]}
           >
@@ -95,27 +71,11 @@ export function UserChangePasswordForm({ userId, requireOldPassword }) {
           label={i18n("UserChangePasswordForm.form.label.newPassword")}
           name="newPassword"
           rules={[
-            {
-              required: true,
-              message: i18n("UserChangePasswordForm.alert.rule1"),
-            },
-            { min: 8, message: i18n("UserChangePasswordForm.alert.rule2") },
-            {
-              pattern: new RegExp("^.*[A-Z].*$"),
-              message: i18n("UserChangePasswordForm.alert.rule3"),
-            },
-            {
-              pattern: new RegExp("^.*[a-z].*$"),
-              message: i18n("UserChangePasswordForm.alert.rule4"),
-            },
-            {
-              pattern: new RegExp("^.*[0-9].*$"),
-              message: i18n("UserChangePasswordForm.alert.rule5"),
-            },
-            {
-              pattern: new RegExp("^.*[^A-Za-z0-9].*$"),
-              message: i18n("UserChangePasswordForm.alert.rule6"),
-            },
+            () => ({
+              validator(_, value) {
+                return validatePassword(value);
+              },
+            }),
           ]}
         >
           <Input.Password />

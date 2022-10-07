@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,28 +55,26 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	}
 
 	public void uploadMetadataFile(String filePath) {
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		Path path = Paths.get(filePath);
-		dropzone.sendKeys(path.toAbsolutePath()
-				.toString());
+		dropzone.sendKeys(path.toAbsolutePath().toString());
 		wait.until(ExpectedConditions.visibilityOf(fileBtn));
 	}
 
 	public void goToReviewPage() {
 		previewBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.visibilityOf(reviewTable));
 	}
 
 	public void goToCompletePage() {
 		uploadBtn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.visibilityOf(successMessage));
 	}
 
 	public void selectSampleNameColumn() {
-		headerRadios.get(3)
-				.click();
+		headerRadios.get(3).click();
 		goToReviewPage();
 	}
 
@@ -99,15 +98,11 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 
 	public List<String> getValuesForColumnByName(String column) {
 		// Get the text from the headers
-		List<String> headerText = headers.stream()
-				.map(WebElement::getText)
-				.collect(Collectors.toList());
+		List<String> headerText = headers.stream().map(WebElement::getText).collect(Collectors.toList());
 		// Find which columns is the numbers
 		int index = headerText.indexOf(column);
 		return rows.stream()
-				.map(row -> row.findElements(By.tagName("td"))
-						.get(index)
-						.getText())
+				.map(row -> row.findElements(By.tagName("td")).get(index).getText())
 				.collect(Collectors.toList());
 	}
 

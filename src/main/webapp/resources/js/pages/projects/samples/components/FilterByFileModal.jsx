@@ -5,7 +5,7 @@ import { CheckCircleTwoTone, WarningTwoTone } from "@ant-design/icons";
 import { green6, red6 } from "../../../../styles/colors";
 import VirtualList from "rc-virtual-list";
 import { SPACE_SM } from "../../../../styles/spacing";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { useValidateSamplesMutation } from "../../../../apis/projects/samples";
 
 const ROW_HEIGHT = 43;
 
@@ -25,45 +25,44 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
   const [filename, setFilename] = React.useState("");
   const [valid, setValid] = React.useState([]);
   const [invalid, setInvalid] = React.useState([]);
+  const [validateSamples] = useValidateSamplesMutation();
 
-  const onFileAdded = (e) => {
+  const onFileAdded = async (e) => {
     const [file] = e.target.files;
     setFilename(file.name);
 
-    const reader = new FileReader();
-    reader.addEventListener("load", (e) => {
-      if (e.target.readyState === FileReader.DONE) {
-        // DONE == 2
-        setContents(e.target.result);
-      }
-    });
-
-    const blob = file.slice(0, file.size - 1);
-    reader.readAsText(blob);
+    const fileContent = await file.text();
+    setContents(fileContent);
   };
 
   React.useEffect(() => {
     if (contents.length) {
       const associated = options.filters.associated || [];
-      let parsed = contents.split(/[\s,]+/);
-      const projectIds = [projectId, ...associated];
-
-      fetch(setBaseUrl(`/ajax/samples/validate`), {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+      // Split the contents of the file on either new line or coma, and filter empty entries.
+      let parsed = contents.split(/[\s,]+/).filter(Boolean);
+      validateSamples({
+        projectId: projectId,
+        body: {
+          samples: parsed.map((sample) => ({
+            name: sample,
+          })),
+          associatedProjectIds: associated,
         },
-        method: "POST",
-        body: JSON.stringify({
-          projectIds,
-          names: parsed,
-        }),
-      })
-        .then((response) => response.json())
-        .then(({ valid, invalid }) => {
-          setValid(valid);
-          setInvalid(invalid);
-        });
+      }).then((response) => {
+        let valid = response.data.samples.filter((sample) => sample.ids);
+        let invalid = response.data.samples.filter((sample) => !sample.ids);
+
+        setValid(
+          valid.map((sample) => {
+            return { sampleName: sample.name };
+          })
+        );
+        setInvalid(
+          invalid.map((sample) => {
+            return sample.name;
+          })
+        );
+      });
     } else {
       setValid([]);
       setInvalid([]);
@@ -79,14 +78,22 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
       visible={visible}
       onCancel={onCancel}
       onOk={onOk}
-      okButtonProps={{ disabled: valid.length === 0 }}
+      cancelButtonProps={{ className: "t-filter-cancel" }}
+      okButtonProps={{
+        disabled: valid.length === 0,
+        className: "t-filter-submit",
+      }}
       okText={i18n("FilterByFile.filter")}
       width={600}
     >
       <>
         <Form layout="vertical">
           <Form.Item label={i18n("FilterByFile.file-label")}>
-            <Input type="file" onChange={onFileAdded} />
+            <Input
+              type="file"
+              onChange={onFileAdded}
+              className="t-filter-by-file-input"
+            />
           </Form.Item>
         </Form>
         <Row gutter={[16, 16]}>
@@ -129,7 +136,11 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
                     >
                       {(item) => (
                         <List.Item key={item}>
-                          <List.Item.Meta title={<span>{item}</span>} />
+                          <List.Item.Meta
+                            title={
+                              <span className="t-invalid-sample">{item}</span>
+                            }
+                          />
                         </List.Item>
                       )}
                     </VirtualList>
