@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.web.analysis;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.Enumeration;
@@ -98,7 +101,7 @@ public class AnalysisController {
 	/**
 	 * Get the user {@link Analysis} list page
 	 *
-	 * @param model Model for view variables
+	 * @param model     Model for view variables
 	 * @param principal Principal {@link User}
 	 * @return Name of the analysis page view
 	 */
@@ -111,7 +114,6 @@ public class AnalysisController {
 		model.addAttribute("isAdmin", isAdmin);
 		return PAGE_ANALYSIS_LIST;
 	}
-
 
 	/**
 	 * Get the user {@link Analysis} list page
@@ -138,27 +140,9 @@ public class AnalysisController {
 
 		IridaWorkflow iridaWorkflow = workflowsService.getIridaWorkflowOrUnknown(submission);
 
-		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription()
-				.getAnalysisType();
+		AnalysisType analysisType = iridaWorkflow.getWorkflowDescription().getAnalysisType();
 		model.addAttribute("analysisType", analysisType);
 		return "analysis";
-	}
-
-	/**
-	 * Get the page for viewing advanced phylogenetic visualization
-	 *
-	 * @param submissionId {@link Long} identifier for an {@link AnalysisSubmission}
-	 * @param model        {@link Model}
-	 * @return {@link String} path to the page template.
-	 */
-	@RequestMapping("/{submissionId}/advanced-phylo")
-	public String getAdvancedPhylogeneticVisualizationPage(@PathVariable Long submissionId, Model model) {
-
-		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-
-		model.addAttribute("submissionId", submissionId);
-		model.addAttribute("submission", submission);
-		return BASE + "visualizations/phylocanvas-metadata";
 	}
 
 	/**
@@ -174,18 +158,14 @@ public class AnalysisController {
 	public void getHtmlOutputForSubmission(@PathVariable Long submissionId, @RequestParam String filename,
 			Locale locale, HttpServletResponse response) throws IOException {
 		AnalysisSubmission submission = analysisSubmissionService.read(submissionId);
-		Set<AnalysisOutputFile> files = submission.getAnalysis()
-				.getAnalysisOutputFiles();
+		Set<AnalysisOutputFile> files = submission.getAnalysis().getAnalysisOutputFiles();
 		AnalysisOutputFile outputFile = null;
 		String htmlExt = "html";
 		String htmlZipExt = "html-zip";
 		Boolean zipped = false;
 
 		for (AnalysisOutputFile file : files) {
-			if (file.getFile()
-					.toFile()
-					.getName()
-					.contains(filename)) {
+			if (file.getFile().toFile().getName().contains(filename)) {
 				String fileExt = FileUtilities.getFileExt(file.getFile());
 				if (fileExt.equals(htmlExt)) {
 					outputFile = file;
@@ -205,7 +185,7 @@ public class AnalysisController {
 			iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(outputFile.getFile());
 			String htmlFile = iridaTemporaryFile.getFile().toFile().toString();
 			if (htmlFile.endsWith(".html.zip")) {
-				htmlFile = htmlFile.substring(0, htmlFile.length()-4);
+				htmlFile = htmlFile.substring(0, htmlFile.length() - 4);
 			}
 			try (ZipFile zipFile = new ZipFile(outputFile.getFile().toFile());
 					OutputStream outputStream = response.getOutputStream()) {
@@ -219,7 +199,7 @@ public class AnalysisController {
 				// If none match, then find the first html file in the zip
 				if (zipEntry == null) {
 					Enumeration<? extends ZipEntry> entries = zipFile.entries();
-					while(entries.hasMoreElements()) {
+					while (entries.hasMoreElements()) {
 						ZipEntry entry = entries.nextElement();
 						if (entry.getName().endsWith(".html")) {
 							zipEntry = entry;
@@ -248,7 +228,6 @@ public class AnalysisController {
 				}
 			}
 		} else {
-
 			try (InputStream inputStream = outputFile.getFileInputStream();
 					OutputStream outputStream = response.getOutputStream()) {
 				// Copy the file contents to the response outputstream
