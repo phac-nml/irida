@@ -17,10 +17,10 @@ import {
   blue8,
   blue9,
   grey1,
-  grey3
+  grey3,
 } from "../../../styles/colors";
 import { getAnalysisProvenanceByFile } from "../../../apis/analysis/analysis";
-import { TabPaneContent } from "../../../components/tabs/TabPaneContent";
+import { TabPanelContent } from "../../../components/tabs/TabPanelContent";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisOutputsContext } from "../../../contexts/AnalysisOutputsContext";
 import { WarningAlert } from "../../../components/alerts";
@@ -56,8 +56,8 @@ export default function AnalysisProvenance() {
       5: blue5,
       6: blue4,
       7: blue3,
-      8: blue2
-    }
+      8: blue2,
+    },
   ];
 
   // Gets the analysis outputs on load if they have not
@@ -79,7 +79,7 @@ export default function AnalysisProvenance() {
         getAnalysisProvenanceByFile(
           analysisIdentifier,
           filename.toString()
-        ).then(data => {
+        ).then((data) => {
           setProvenance(data);
           setPreviousExecutionToolsInfo([]);
         });
@@ -113,7 +113,7 @@ export default function AnalysisProvenance() {
           border: "none",
           borderLeft: `8px ${getLevelColor(margin)} solid`,
           borderRadius: 0,
-          backgroundColor: grey1
+          backgroundColor: grey1,
         }}
         key={`collapse-${tool.toolName}-${Math.random()}`}
       >
@@ -124,7 +124,7 @@ export default function AnalysisProvenance() {
             backgroundColor: grey1,
             marginLeft: `${3 * margin}px`,
             borderBottom: 0,
-            borderRadius: 0
+            borderRadius: 0,
           }}
           className="t-tool-name"
         >
@@ -200,7 +200,7 @@ export default function AnalysisProvenance() {
                     provenance.data.createdByTool,
                     0
                   ),
-                  previousExecutionToolsInfo
+                  previousExecutionToolsInfo,
                 ]
               : null}
           </Panel>
@@ -212,16 +212,19 @@ export default function AnalysisProvenance() {
 
   return (
     <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
-      <TabPaneContent title={i18n("Analysis.provenance")}>
-        {analysisOutputsContext.outputs !== null ?
-        analysisOutputsContext.outputs.length > 0 ? (
-          <Collapse accordion onChange={e => getProvenance(e)}>
-            {getCreatedByToolPanels()}
-          </Collapse>
+      <TabPanelContent title={i18n("Analysis.provenance")}>
+        {analysisOutputsContext.outputs !== null ? (
+          analysisOutputsContext.outputs.length > 0 ? (
+            <Collapse accordion onChange={(e) => getProvenance(e)}>
+              {getCreatedByToolPanels()}
+            </Collapse>
+          ) : (
+            <WarningAlert message={i18n("AnalysisProvenance.noFilesFound")} />
+          )
         ) : (
-          <WarningAlert message={i18n("AnalysisProvenance.noFilesFound")} />
-        ) : <ContentLoading />}
-      </TabPaneContent>
+          <ContentLoading />
+        )}
+      </TabPanelContent>
     </Layout>
   );
 }

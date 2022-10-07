@@ -1,19 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.analysis;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ActiveProfiles;
-
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowException;
+import ca.corefacility.bioinformatics.irida.junit5.listeners.IntegrationUITestListener;
 import ca.corefacility.bioinformatics.irida.model.workflow.IridaWorkflow;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.TestAnalysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.config.IridaWorkflowIdSet;
@@ -25,9 +13,24 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis.Analy
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowLoaderService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
-
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.Sets;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,6 +46,10 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Autowired
 	private IridaWorkflowLoaderService iridaWorkflowLoaderService;
+
+	private final File DOWNLOADED_TREE_FILE = new File(IntegrationUITestListener.DOWNLOAD_DIRECTORY, "tree.svg");
+	private final Path DOWNLOADED_TREE_PATH = Paths.get(DOWNLOADED_TREE_FILE.getPath());
+	private final Path TEST_TREE_PATH = Paths.get("src/test/resources/files/tree.svg");
 
 	@BeforeEach
 	// Tree file used by multiple tests
@@ -77,12 +84,12 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 12L, "");
-		assertTrue(page.comparePageTitle("Bio Hansel Information"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Bio Hansel Information", "Page title should equal");
 
 		assertTrue(page.expectedNumberOfListItemsEqualsActual(5), "Has 5 list items for Bio Hansel Information");
 
 		page = AnalysisDetailsPage.initPage(driver(), 12L, "output");
-		assertTrue(page.comparePageTitle("Output File Preview"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Output File Preview", "Page title should equal");
 		assertEquals(1, page.getNumberOfFilesDisplayed(), "There should be one output file");
 		assertTrue(page.downloadAllFilesButtonVisible(), "There should be exactly one download all files button");
 		assertTrue(page.downloadOutputFileButtonVisible(1),
@@ -156,7 +163,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		// Submissions with trees and not sistr or biohansel
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "");
-		assertTrue(page.comparePageTitle("Tree Preview"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Tree Viewer", "Page title should equal");
 		assertTrue(page.hasHorizontalTabLinks(), "Has horizontal tab links");
 
 		// Completed submission should not display steps component
@@ -165,7 +172,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Submissions without trees and not sistr or biohansel
 		page = AnalysisDetailsPage.initPage(driver(), 6L, "");
-		assertTrue(page.comparePageTitle("Output File Preview"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Output File Preview", "Page title should equal");
 		assertTrue(page.hasHorizontalTabLinks(), "Has horizontal tab links");
 
 		// Any other submission state should display steps component
@@ -278,25 +285,25 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 11L, "");
-		assertTrue(page.comparePageTitle("SISTR Information"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "SISTR Information", "Page title should equal");
 		assertTrue(page.hasSideBarTabLinks(), "Has vertical tabs for SISTR results and output files");
 
 		assertTrue(page.expectedNumberOfListItemsEqualsActual(9), "Has 9 list items for SISTR Information");
 
 		page = AnalysisDetailsPage.initPage(driver(), 11L, "sistr/cgmlst");
-		assertTrue(page.comparePageTitle("cgMLST330"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "cgMLST330", "Page title should equal");
 		assertTrue(page.expectedNumberOfListItemsEqualsActual(7), "Has 7 list items for cgMLST330");
 
 		page = AnalysisDetailsPage.initPage(driver(), 11L, "sistr/mash");
-		assertTrue(page.comparePageTitle("Mash"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Mash", "Page title should equal");
 		assertTrue(page.expectedNumberOfListItemsEqualsActual(4), "Has 4 list items for Mash");
 
 		page = AnalysisDetailsPage.initPage(driver(), 11L, "sistr/citation");
-		assertTrue(page.comparePageTitle("Citation"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Citation", "Page title should equal");
 		assertTrue(page.citationVisible(), "Page has a citation");
 
 		page = AnalysisDetailsPage.initPage(driver(), 11L, "output");
-		assertTrue(page.comparePageTitle("Output File Preview"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Output File Preview", "Page title should equal");
 		assertEquals(1, page.getNumberOfFilesDisplayed(), "There should be one output file");
 		assertTrue(page.downloadAllFilesButtonVisible(), "There should be exactly one download all files button");
 		assertTrue(page.downloadOutputFileButtonVisible(1),
@@ -309,13 +316,13 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "");
-		assertTrue(page.comparePageTitle("Tree Preview"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Tree Viewer", "Page title should equal");
 
 		page = AnalysisDetailsPage.initPage(driver(), 4L, "output");
-		assertTrue(page.comparePageTitle("Output File Preview"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Output File Preview", "Page title should equal");
 
 		page = AnalysisDetailsPage.initPage(driver(), 4L, "provenance");
-		assertTrue(page.comparePageTitle("Provenance"), "Page title should equal");
+		assertEquals(page.getTabContentTitle(), "Provenance", "Page title should equal");
 
 		page = AnalysisDetailsPage.initPage(driver(), 4L, "settings");
 		assertTrue(page.compareTabTitle("Details"), "Page title should equal");
@@ -367,25 +374,55 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testTreeOutput() {
+	void testTreeOutput() throws IOException {
 		LoginPage.loginAsManager(driver());
 
 		// Has tree file
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "");
-		assertTrue(page.comparePageTitle("Tree Preview"), "Page title should equal");
+		assertEquals("Tree Viewer", page.getTabContentTitle(), "Page title should equal");
 
-		assertTrue(page.treeToolsVisible(), "Tree shape tools are visible");
-		assertTrue(page.advancedPhylogeneticTreeButtonVisible(), "Advanced Phylogenetic Tree button is visible");
-		assertTrue(page.phylocanvasWrapperVisible(), "Tree wrapper is visible");
-		assertTrue(page.treeVisible(), "Tree is visible");
+		page.openDownloadDropdown();
+		page.downloadTreeSVG();
 
-		// Has no tree file
-		page = AnalysisDetailsPage.initPage(driver(), 10L, "");
-		assertTrue(page.treeToolsNotFound(), "Tree shape tools are not visible");
-		assertTrue(page.advancedPhylogeneticTreeButtonNotFound(), "Advanced Phylogenetic Tree button is not visible");
-		assertTrue(page.phylocanvasWrapperNotFound(), "Tree wrapper is not visible");
-		assertTrue(page.treeNotFound(), "Tree is not visible");
-		assertEquals(page.getWarningAlertText(), "No outputs available to display");
+		// Compare with existing tree
+		assertTrue(FileUtils.contentEquals(DOWNLOADED_TREE_PATH.toFile(), TEST_TREE_PATH.toFile()));
+
+
+		// Make sure all buttons are working
+		assertEquals("rc", page.getCurrentlyDisplayedTreeShapeIcon(), "Rectangle should be the default shape of the tree");
+		page.openTreeShapeDropdown();
+		assertTrue(page.areAllTreeShapeOptionsDisplayed(), "Should display all possible tree types");
+		assertEquals("Rectangular", page.getCurrentTreeShapeTitleAttr());
+		page.updateTreeShape("dg");
+		assertEquals("dg", page.getCurrentlyDisplayedTreeShapeIcon(), "Diagonal should be the default shape of the tree");
+		page.openTreeShapeDropdown();
+		assertEquals("Diagonal", page.getCurrentTreeShapeTitleAttr());
+
+
+		page.openMetadataDropdown();
+		assertEquals(4, page.getNumberOfMetadataFields());
+		page.selectedMetadataTemplate("Testing Template 1");
+		List<String> fieldsInTemplate = List.of("firstName", "symptom");
+
+		List<String> selectedFields = page.getSelectedMetadataFields();
+		Collections.sort(selectedFields);
+		assertEquals(fieldsInTemplate, selectedFields);
+
+		page.toggleAllMetadataFields();
+		List<String> allFields = List.of("firstName", "healthAuthority", "lastName", "symptom");
+		List<String> allSelectedFields = page.getSelectedMetadataFields();
+		Collections.sort(allSelectedFields);
+		assertEquals(allFields, allSelectedFields);
+		page.toggleAllMetadataFields();
+		assertTrue(page.getSelectedMetadataFields().isEmpty());
+		page.toggleAllMetadataFields();
+		allSelectedFields = page.getSelectedMetadataFields();
+		Collections.sort(allSelectedFields);
+		assertEquals(allFields, allSelectedFields);
+
+
+		page.openLegend();
+		assertTrue(page.legendContainsCorrectAmountOfMetadataFields());
 	}
 
 	@Test
@@ -444,7 +481,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testUpdateEmailPipelineResultVisibilty() throws URISyntaxException, IOException {
+	public void testUpdateEmailPipelineResultVisibility() throws URISyntaxException, IOException {
 		LoginPage.loginAsManager(driver());
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings");
 		assertTrue(page.compareTabTitle("Details"), "Page title should equal");

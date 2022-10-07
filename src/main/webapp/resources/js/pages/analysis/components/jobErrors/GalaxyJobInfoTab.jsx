@@ -9,16 +9,16 @@ import React from "react";
 import { PassTabs } from "./PassTabs";
 import { GalaxyJobInfo } from "./GalaxyJobInfo";
 
-import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+import { TabPanelContent } from "../../../../components/tabs/TabPanelContent";
 
 export default function GalaxyJobInfoTab({
   currActiveKey,
   updateActiveKey,
   galaxyJobErrors,
-  galaxyUrl
+  galaxyUrl,
 }) {
   return (
-    <TabPaneContent title={i18n("AnalysisError.galaxyJobInfo")}>
+    <TabPanelContent title={i18n("AnalysisError.galaxyJobInfo")}>
       {galaxyJobErrors.length > 1 ? (
         <PassTabs
           tabName="job-error-info"
@@ -33,6 +33,6 @@ export default function GalaxyJobInfoTab({
           galaxyUrl={galaxyUrl}
         />
       )}
-    </TabPaneContent>
+    </TabPanelContent>
   );
 }

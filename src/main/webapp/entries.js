@@ -25,8 +25,6 @@ module.exports = {
   "project-share": "./resources/js/pages/projects/share",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
-  "visualizations-phylogenetics":
-    "./resources/js/pages/visualizations/phylogenetics/index.js",
   "project-analyses": "./resources/js/pages/projects/project-analyses/",
   analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
   "users-list": "./resources/js/pages/user/components/UserListPage.jsx",
