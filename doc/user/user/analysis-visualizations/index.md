@@ -32,11 +32,11 @@ The phylogenetic tree viewer can display five types of trees:
 
 ![Tree Shape Selection](images/tree-shape-selection.gif)
 
-You can change the tree shape by clicking on the tree shape menu icon at the top right corner of the tree area.  A drop down menu will appear allowing you to select the desired tree shape.
+You can change the tree shape by clicking on the tree shape menu icon (<img src="images/tree-shape-icon.png" style="margin: 0; padding: 0" >) at the top right corner of the tree area.  A drop down menu will appear allowing you to select the desired tree shape.
 
 #### Toggling Metadata Fields
 
-To toggle metadata fields click the filter menu icon at the top right corner of the tree area. A drop down menu will be appear displaying:
+To toggle metadata fields click the filter menu icon (<img src="images/metadata-menu-icon.png" style="margin: 0; padding: 0" >) at the top right corner of the tree area. A drop down menu will be appear displaying:
 1. Metadata Template selection
 1. Select all switch
 1. List of checkboxes for all metadata fields associated with samples in the analysis
@@ -47,7 +47,7 @@ To toggle metadata fields click the filter menu icon at the top right corner of 
 
 You can toggle the visibility of all metadata fields by clicking on the switch to the right of the "Select all". 
 
-Individual fields can have their visibiltiy toggled based on their checkbox. A single field can be made visible by clicking the "Only" button, which is only visible when hovering over a single metadata field in the dropdown.
+Individual fields can have their visibility toggled based on their checkbox. A single field can be made visible by clicking the "Only" button, which is only visible when hovering over a single metadata field in the dropdown.
 
 ##### Using Metadata Templates
 
@@ -57,7 +57,7 @@ In addition to being able to toggle individual metadata fields, a [Sample Metada
 
 ![Export Menu](images/tree-export-menu.gif)
 
-To export a copy of the tree in newick, PNG or SVG format, click on the download menu icon at the top right corner of the tree area.  The resulting dropdown will allow you to select the type of export you want.
+To export a copy of the tree in newick, PNG or SVG format, click on the download menu icon (<img src="images/download-icon.png" style="margin: 0; padding: 0" >) at the top right corner of the tree area.  The resulting dropdown will allow you to select the type of export you want.
 
 ### Tree Zoom Menu (at bottom right of tree ares)
 
