@@ -430,7 +430,7 @@ public class AnalysisAjaxController {
 			} else {
 				info.setFilePointer(0L);
 			}
-		} catch (IOException e) {
+		} catch (StorageException | IOException e) {
 			logger.error("Could not get file input stream '" + aofFile + "' " + e);
 		}
 	}
@@ -728,7 +728,7 @@ public class AnalysisAjaxController {
 					}
 				} catch (JsonParseException | JsonMappingException e) {
 					logger.error("Error attempting to parse file [" + path + "] as JSON", e);
-				} catch (IOException e) {
+				} catch (StorageException | IOException e) {
 					logger.error("Error reading file input stream [" + path + "]", e);
 				}
 			} else {

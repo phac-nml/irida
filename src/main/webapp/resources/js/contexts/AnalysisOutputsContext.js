@@ -12,7 +12,12 @@ import { getOutputInfo } from "../apis/analysis/analysis";
 const initialContext = {
   outputs: null,
   fileTypes: [
-    { hasJsonFile: false, hasTabularFile: false, hasTextFile: false, hasHtmlFile: false },
+    {
+      hasJsonFile: false,
+      hasTabularFile: false,
+      hasTextFile: false,
+      hasHtmlFile: false,
+    },
   ],
 };
 
@@ -25,9 +30,8 @@ const imageFileExtSet = new Set(["png", "jpeg", "jpg"]);
 const htmlFileExtSet = new Set(["html", "html-zip"]);
 
 function AnalysisOutputsProvider(props) {
-  const [analysisOutputsContext, setAnalysisOutputsContext] = useState(
-    initialContext
-  );
+  const [analysisOutputsContext, setAnalysisOutputsContext] =
+    useState(initialContext);
   const { analysisIdentifier } = useContext(AnalysisContext);
 
   function getPreviewForFileType(fileExt, type) {
@@ -62,6 +66,7 @@ function AnalysisOutputsProvider(props) {
     let hasHtmlFile = false;
 
     getOutputInfo(analysisIdentifier).then((data) => {
+      console.log(data);
       // Check if json, tab, and/or text files exist
       // Used by output file preview to only display
       // tabs that are required
@@ -105,7 +110,7 @@ function AnalysisOutputsProvider(props) {
               hasTextFile,
               hasExcelFile,
               hasImageFile,
-              hasHtmlFile
+              hasHtmlFile,
             },
           ],
         };

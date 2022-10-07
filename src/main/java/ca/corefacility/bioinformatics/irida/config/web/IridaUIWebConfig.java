@@ -272,7 +272,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	 */
 	private Set<IDialect> additionalDialects() {
 		Set<IDialect> dialects = new HashSet<>();
-		dialects.add(new WebpackerDialect(!env.acceptsProfiles(Profiles.of(SPRING_PROFILE_PRODUCTION))));
+		dialects.add(new WebpackerDialect(env.acceptsProfiles(Profiles.of(SPRING_PROFILE_PRODUCTION))));
 		dialects.add(new SpringSecurityDialect());
 		dialects.add(new LayoutDialect());
 		dialects.add(new DataAttributeDialect());

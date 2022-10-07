@@ -30,14 +30,15 @@ export default function AnalysisSistr({ baseUrl }) {
   const { analysisIdentifier } = useContext(AnalysisContext);
   const [sistrResults, setSistrResults] = useState(null);
 
-  const DEFAULT_URL =
-    setBaseUrl(`/analysis/${analysisIdentifier}/` + ANALYSIS.SISTR);
+  const DEFAULT_URL = setBaseUrl(
+    `/analysis/${analysisIdentifier}/` + ANALYSIS.SISTR
+  );
   const pathRegx = new RegExp(/([a-zA-Z_]+)$/);
   const keyname = location.pathname.match(pathRegx);
 
   // On load gets the SISTR results by causing the SistResult Object generation and conversion to Ajax Ojbect
   useEffect(() => {
-    getSistrResults(analysisIdentifier).then(data => {
+    getSistrResults(analysisIdentifier).then((data) => {
       setSistrResults(data);
     });
   }, []);
