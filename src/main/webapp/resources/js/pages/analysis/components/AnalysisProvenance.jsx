@@ -25,6 +25,7 @@ import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisOutputsContext } from "../../../contexts/AnalysisOutputsContext";
 import { WarningAlert } from "../../../components/alerts";
 import { ContentLoading } from "../../../components/loader";
+import ScrollableSection from "./phylocanvas/ScrollableSection";
 
 const { Panel } = Collapse;
 
@@ -211,7 +212,7 @@ export default function AnalysisProvenance() {
   }
 
   return (
-    <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
+    <ScrollableSection>
       <TabPanelContent title={i18n("Analysis.provenance")}>
         {analysisOutputsContext.outputs !== null ? (
           analysisOutputsContext.outputs.length > 0 ? (
@@ -225,6 +226,6 @@ export default function AnalysisProvenance() {
           <ContentLoading />
         )}
       </TabPanelContent>
-    </Layout>
+    </ScrollableSection>
   );
 }
