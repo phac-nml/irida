@@ -51,6 +51,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelData;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ResponseDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.utilities.DateUtilities;
 import ca.corefacility.bioinformatics.irida.security.permissions.analysis.UpdateAnalysisSubmissionPermission;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -93,6 +94,8 @@ public class AnalysisAjaxController {
 	private AnalysisTypesService analysisTypesService;
 	private EmailController emailController;
 
+	private UpdateSamplePermission updateSamplePermission;
+
 	@Autowired
 	public AnalysisAjaxController(AnalysisSubmissionService analysisSubmissionService,
 			IridaWorkflowsService iridaWorkflowsService, UserService userService, SampleService sampleService,
@@ -100,7 +103,7 @@ public class AnalysisAjaxController {
 			MetadataTemplateService metadataTemplateService, SequencingObjectService sequencingObjectService,
 			AnalysisSubmissionSampleProcessor analysisSubmissionSampleProcessor, MessageSource messageSource,
 			ExecutionManagerConfig configFile, AnalysisAudit analysisAudit, AnalysisTypesService analysisTypesService,
-			EmailController emailController) {
+			EmailController emailController, UpdateSamplePermission updateSamplePermission) {
 
 		this.analysisSubmissionService = analysisSubmissionService;
 		this.workflowsService = iridaWorkflowsService;
@@ -116,6 +119,7 @@ public class AnalysisAjaxController {
 		this.analysisAudit = analysisAudit;
 		this.analysisTypesService = analysisTypesService;
 		this.emailController = emailController;
+		this.updateSamplePermission = updateSamplePermission;
 	}
 
 	/**
@@ -212,11 +216,15 @@ public class AnalysisAjaxController {
 
 		response.setStatus(HttpServletResponse.SC_OK);
 
+		Collection<Sample> samples = sampleService.getSamplesForAnalysisSubmission(submission);
+
+		boolean canModifySample = updateSamplePermission.isAllowed(authentication, samples);
+
 		// details is a DTO (Data Transfer Object)
 		return new AnalysisDetails(analysisDescription, workflowName, version, priority, duration,
 				submission.getCreatedDate(), priorities, emailPipelineResultCompleted, emailPipelineResultError,
 				canShareToSamples, updateAnalysisPermission.isAllowed(authentication, submission),
-				submission.getUpdateSamples());
+				submission.getUpdateSamples(), canModifySample);
 	}
 
 	/**
