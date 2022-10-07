@@ -158,8 +158,12 @@ export default function AnalysisShare() {
       ) : null}
 
       {analysisDetailsContext.canShareToSamples &&
+      analysisDetailsContext.allowedToModifySample &&
       analysisContext.isCompleted ? (
-        <section style={{ marginTop: SPACE_MD }}>
+        <section
+          style={{ marginTop: SPACE_MD }}
+          className="t-save-results-to-samples"
+        >
           <Title level={4}>{i18n("AnalysisShare.saveResults")}</Title>
           {renderSaveToRelatedSamples()}
         </section>

@@ -615,4 +615,12 @@ public class AnalysisDetailsPage extends AbstractPage {
         List<WebElement> metadataRegions = legend.findElements(By.className("ant-list-item-meta-title"));
         return metadataRegions.size() == 4;
     }
+
+	public boolean saveToSamplesVisible() {
+		try {
+			return driver.findElement(By.className("t-save-results-to-samples")).isDisplayed();
+		} catch (Exception e) {
+			return false;
+		}
+	}
 }
