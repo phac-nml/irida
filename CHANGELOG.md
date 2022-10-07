@@ -29,7 +29,7 @@
 * [Developer]: Fixed issue with disabled user accounts requesting a password reset. See [PR 1373](https://github.com/phac-nml/irida/pull/1373)
 * [Developer/UI]: Updated sample details view to use Ant Design and moved into a modal which can be launched from anywhere the sample name is listed. See [PR 1370](https://github.com/phac-nml/irida/pull/1370)
 * [UI]: Updated analysis results manage results page to not allow a project collaborator to view the save results back to a sample section. See [PR 1377](https://github.com/phac-nml/irida/pull/1377)
-* [Developer]: Added CodeQL GitHub analysis. See [PR 1282](https://github.com/phac-nml/irida/pull/1282).
+* [Developer]: Added security scanning of GitHub pull-requests with [CodeQL](https://codeql.github.com/) (scans for code vulnerabilities) and [Grype](https://github.com/anchore/grype) (scans for Java package dependency vulnerabilities). See [PR 1282](https://github.com/phac-nml/irida/pull/1282).
 
 ## [22.05.5] - 2022/06/28
 * [UI]: Fixed bug preventing export of project samples table due to invalid url. [PR 1331](https://github.com/phac-nml/irida/pull/1331)
