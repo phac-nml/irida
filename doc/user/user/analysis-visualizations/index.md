@@ -83,7 +83,7 @@ Step zoom increases or decreases the distance between branches.
 
 ![Legend Opening](images/expand-legend.gif)
 
-The legend can be displayed by clicking on the Legen button to the right of the tree.  This displays the **visible** metadata fields and the colour of each values for that field (more on this below), for example in the above gif the "Lysteria Monocytogenes" is the only value for the "Organism" field and has the same colour in both locations on the tree.  The legend can expanded by dragging from the edge where the legend meets the tree, and click and draged.
+The legend can be displayed by clicking on the Legend button to the right of the tree.  This displays the **visible** metadata fields and the colour of each value for that field (more on this below), for example in the preceding gif the "Lysteria Monocytogenes" is the only value for the "Organism" field and has the same colour in both locations on the tree.  The legend can be expanded by dragging from the edge where the legend meets the tree, and click and draged.
 
 ![Legend Colour](images/legend-metadata-value-color-change.gif)
 
