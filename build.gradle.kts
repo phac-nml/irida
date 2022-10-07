@@ -116,7 +116,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter:2.7.1") {
+    implementation("org.springframework.boot:spring-boot-starter") {
         exclude(group = "org.apache.logging.log4j", module = "log4j-to-slf4j")
     }
     implementation("org.springframework.boot:spring-boot-starter-validation")
