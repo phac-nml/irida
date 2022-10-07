@@ -61,16 +61,13 @@ export const saveMetadata = createAsyncThunk<
   `importReducer/saveMetadata`,
   async ({ projectId, selectedMetadataKeys }, { dispatch, getState }) => {
     const state: ImportState = getState();
-    const sampleNameColumn: string = state.importReducer.sampleNameColumn;
-    const headers: string[] = state.importReducer.headers;
-    const metadata: MetadataItem[] = state.importReducer.metadata;
-    const metadataValidateDetails: Record<string, MetadataValidateDetailsItem> =
-      state.importReducer.metadataValidateDetails;
+    const { sampleNameColumn, headers, metadata, metadataValidateDetails } =
+      state.importReducer;
     const metadataSaveDetails: Record<string, MetadataSaveDetailsItem> = {};
 
-    const chunkSize: number = 100;
+    const chunkSize = 100;
     for (let i = 0; i < metadata.length; i = i + chunkSize) {
-      const promises: Promise<any>[] = [];
+      const promises: Promise<void>[] = [];
       for (let j = i; j < i + chunkSize && j < metadata.length; j++) {
         const metadataItem: MetadataItem = metadata[j];
         const index: string = metadataItem.rowKey;
@@ -81,8 +78,7 @@ export const saveMetadata = createAsyncThunk<
           const name: string = metadataItem[sampleNameColumn];
           const metadataFields: FieldUpdate[] = Object.entries(metadataItem)
             .filter(
-              ([key, value]) =>
-                headers.includes(key) && key !== sampleNameColumn
+              ([key]) => headers.includes(key) && key !== sampleNameColumn
             )
             .map(([key, value]) => ({ field: key, value }));
           const sampleId = metadataValidateDetails[index].foundSampleId;
@@ -97,7 +93,7 @@ export const saveMetadata = createAsyncThunk<
                   metadata: metadataFields,
                 },
               })
-                .then((response) => {
+                .then(() => {
                   metadataSaveDetails[index] = { saved: true };
                 })
                 .catch((error) => {
@@ -116,7 +112,7 @@ export const saveMetadata = createAsyncThunk<
                   metadata: metadataFields,
                 },
               })
-                .then((response) => {
+                .then(() => {
                   metadataSaveDetails[index] = { saved: true };
                 })
                 .catch((error) => {
@@ -152,7 +148,7 @@ export const setSampleNameColumn = createAsyncThunk<
   `importReducer/setSampleNameColumn`,
   async ({ projectId, column }, { getState }) => {
     const state: ImportState = getState();
-    const metadata = state.importReducer.metadata;
+    const { metadata } = state.importReducer;
     const metadataValidateDetails: Record<string, MetadataValidateDetailsItem> =
       {};
     const samples: ValidateSampleNameModel[] = metadata

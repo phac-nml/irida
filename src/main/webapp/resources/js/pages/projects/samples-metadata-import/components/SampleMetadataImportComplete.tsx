@@ -57,7 +57,7 @@ export function SampleMetadataImportComplete(): JSX.Element {
     setTimeout(() => {
       navigate(`/${projectId}/sample-metadata/upload/file`);
     }, 10000);
-  }, []);
+  }, [navigate, projectId]);
 
   return (
     <SampleMetadataImportWizard current={3}>

@@ -76,37 +76,6 @@ export function SampleMetadataImportReview(): JSX.Element {
   } = useImportSelector((state: ImportState) => state.importReducer);
   const dispatch: ImportDispatch = useImportDispatch();
 
-  const tagColumn: ColumnType<MetadataItem> = {
-    title: "",
-    dataIndex: "tags",
-    className: "t-metadata-uploader-new-column",
-    fixed: "left",
-    width: 70,
-    render: (text, item) => {
-      if (!metadataValidateDetails[item.rowKey].foundSampleId)
-        return (
-          <Tag color="green">
-            {i18n("SampleMetadataImportReview.table.filter.new")}
-          </Tag>
-        );
-      return text;
-    },
-    filters: [
-      {
-        text: i18n("SampleMetadataImportReview.table.filter.new"),
-        value: "new",
-      },
-      {
-        text: i18n("SampleMetadataImportReview.table.filter.existing"),
-        value: "existing",
-      },
-    ],
-    onFilter: (value, record) =>
-      value === "new"
-        ? metadataValidateDetails[record.rowKey].foundSampleId !== undefined
-        : metadataValidateDetails[record.rowKey].foundSampleId === undefined,
-  };
-
   const rowSelection: TableRowSelection<MetadataItem> = {
     fixed: true,
     selectedRowKeys: selected,
@@ -126,7 +95,7 @@ export function SampleMetadataImportReview(): JSX.Element {
       ([, metadataSaveDetailsItem]) => metadataSaveDetailsItem.saved
     ).length;
     setProgress((savedCount / selected.length) * 100);
-  }, [metadataSaveDetails]);
+  }, [metadataSaveDetails, selected.length]);
 
   React.useEffect(() => {
     setValid(
@@ -169,6 +138,37 @@ export function SampleMetadataImportReview(): JSX.Element {
       },
     };
 
+    const tagColumn: ColumnType<MetadataItem> = {
+      title: "",
+      dataIndex: "tags",
+      className: "t-metadata-uploader-new-column",
+      fixed: "left",
+      width: 70,
+      render: (text, item) => {
+        if (!metadataValidateDetails[item.rowKey].foundSampleId)
+          return (
+            <Tag color="green">
+              {i18n("SampleMetadataImportReview.table.filter.new")}
+            </Tag>
+          );
+        return text;
+      },
+      filters: [
+        {
+          text: i18n("SampleMetadataImportReview.table.filter.new"),
+          value: "new",
+        },
+        {
+          text: i18n("SampleMetadataImportReview.table.filter.existing"),
+          value: "existing",
+        },
+      ],
+      onFilter: (value, record) =>
+        value === "new"
+          ? metadataValidateDetails[record.rowKey].foundSampleId !== undefined
+          : metadataValidateDetails[record.rowKey].foundSampleId === undefined,
+    };
+
     const otherColumns: ColumnsType<MetadataItem> = headers
       .filter((header) => header !== sampleNameColumn)
       .map((header) => ({
@@ -193,7 +193,13 @@ export function SampleMetadataImportReview(): JSX.Element {
         )
         .map((row): string => row.rowKey)
     );
-  }, [metadataSaveDetails]);
+  }, [
+    headers,
+    metadata,
+    metadataSaveDetails,
+    metadataValidateDetails,
+    sampleNameColumn,
+  ]);
 
   const save = async () => {
     setLoading(true);

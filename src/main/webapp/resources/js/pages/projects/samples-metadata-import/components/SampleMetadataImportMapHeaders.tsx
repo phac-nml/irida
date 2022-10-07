@@ -38,7 +38,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
     if (!column) {
       setColumn(sampleNameColumn ? sampleNameColumn : headers[0]);
     }
-  }, [sampleNameColumn, headers]);
+  }, [sampleNameColumn, headers, column]);
 
   const onSubmit = async () => {
     if (projectId && column) {
@@ -56,7 +56,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
         value={column}
         onChange={(e: RadioChangeEvent) => setColumn(e.target.value)}
       >
-        {headers.map((header: String, index: number) => (
+        {headers.map((header: string, index: number) => (
           <BlockRadioInput key={`metadata-uploader-radio-header-${index}`}>
             <Radio
               key={`metadata-uploader-radio-header-${index}`}

@@ -8,6 +8,8 @@ import * as XLSX from "xlsx";
 import { WorkBook } from "xlsx";
 import { ImportDispatch, useImportDispatch } from "../store";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
+import { MetadataItem } from "../../../../apis/projects/samples";
+import { RcFile, UploadFileStatus } from "antd/lib/upload/interface";
 
 const { Text } = Typography;
 
@@ -29,20 +31,25 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
     showUploadList: false,
     accept: ".xls,.xlsx,.csv",
     onChange(info: {
-      file: { originFileObj?: any; name?: any; status?: any };
+      file: {
+        originFileObj?: RcFile;
+        name?: string;
+        status?: UploadFileStatus;
+      };
     }) {
       const { status } = info.file;
       if (status !== "uploading") {
         setLoading(true);
-        let reader = new FileReader();
+        const reader = new FileReader();
         if (reader.readAsBinaryString) {
-          reader.onload = (e) => {
+          reader.onload = () => {
             const workbook: WorkBook = XLSX.read(reader.result, {
               type: "binary",
               raw: true,
             });
-            const firstSheet: string = workbook.SheetNames[0];
-            const rows: any[] = XLSX.utils.sheet_to_json(
+            const { SheetNames } = workbook;
+            const [firstSheet] = SheetNames;
+            const rows: MetadataItem[] = XLSX.utils.sheet_to_json(
               workbook.Sheets[firstSheet],
               {
                 rawNumbers: false,
@@ -51,7 +58,9 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
             dispatch(setHeaders(Object.keys(rows[0])));
             dispatch(setMetadata(rows));
           };
-          reader.readAsBinaryString(info.file.originFileObj);
+          if (info.file.originFileObj) {
+            reader.readAsBinaryString(info.file.originFileObj);
+          }
         }
       }
       if (status === "done") {
