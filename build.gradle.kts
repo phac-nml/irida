@@ -239,6 +239,8 @@ tasks.register<Zip>("packageDistribution") {
     }
 }
 
+extra["snakeyaml.version"] = "1.31"
+
 tasks.build {
     dependsOn("packageDistribution")
 }
