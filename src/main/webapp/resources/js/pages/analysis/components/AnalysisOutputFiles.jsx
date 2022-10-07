@@ -9,7 +9,7 @@ import { grey1 } from "../../../styles/colors";
 import { ANALYSIS, OUTPUT } from "../routes";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
-import ScrollableSection from "./phylocanvas/ScrollableSection";
+import ScrollableSection from "./ScrollableSection";
 
 const OutputFilePreview = React.lazy(() =>
   import("./outputs/OutputFilePreview")

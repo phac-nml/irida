@@ -1,5 +1,5 @@
 import React from "react";
-import { SPACE_MD } from "../../../../styles/spacing";
+import { SPACE_MD } from "../../../styles/spacing";
 
 /**
  * React component to allow children to scroll on th y axis.

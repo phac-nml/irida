@@ -11,7 +11,7 @@ import { TabPanelContent } from "../../../components/tabs";
 import { Error, Success } from "../../../components/icons";
 import { Warning } from "../../../components/icons/Warning";
 import { BasicList } from "../../../components/lists";
-import ScrollableSection from "./phylocanvas/ScrollableSection";
+import ScrollableSection from "./ScrollableSection";
 
 export default function AnalysisBioHansel() {
   const { analysisIdentifier } = useContext(AnalysisContext);

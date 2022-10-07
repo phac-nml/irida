@@ -25,7 +25,7 @@ import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { AnalysisOutputsContext } from "../../../contexts/AnalysisOutputsContext";
 import { WarningAlert } from "../../../components/alerts";
 import { ContentLoading } from "../../../components/loader";
-import ScrollableSection from "./phylocanvas/ScrollableSection";
+import ScrollableSection from "./ScrollableSection";
 
 const { Panel } = Collapse;
 

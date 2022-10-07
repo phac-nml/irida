@@ -17,7 +17,7 @@ import { SPACE_MD } from "../../../styles/spacing";
 
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ANALYSIS, SISTR } from "../routes";
-import ScrollableSection from "./phylocanvas/ScrollableSection";
+import ScrollableSection from "./ScrollableSection";
 
 const SistrInfo = React.lazy(() => import("./sistr/SistrInfo"));
 const CgMlst = React.lazy(() => import("./sistr/CgMlst"));

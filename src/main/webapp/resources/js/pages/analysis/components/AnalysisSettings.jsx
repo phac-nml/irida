@@ -21,7 +21,7 @@ import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { grey1 } from "../../../styles/colors";
 import { ANALYSIS, SETTINGS } from "../routes";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import ScrollableSection from "./phylocanvas/ScrollableSection";
+import ScrollableSection from "./ScrollableSection";
 
 const { Content, Sider } = Layout;
 
