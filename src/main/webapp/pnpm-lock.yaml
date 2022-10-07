@@ -10,8 +10,6 @@ overrides:
   yargs: ^17.4.1
   yargs-parser: ^21.0.1
 
-patchedDependencies: {}
-
 specifiers:
   '@ag-grid-community/csv-export': ^27.1.0
   '@ant-design/icons': ^4.7.0
@@ -36,6 +34,7 @@ specifiers:
   '@types/react': ^17.0.39
   '@types/react-dom': ^17.0.11
   '@types/react-redux': ^7.1.24
+  '@types/react-window': ^1.8.5
   '@types/styled-components': ^5.1.25
   '@typescript-eslint/eslint-plugin': ^5.27.0
   '@typescript-eslint/parser': ^5.27.0
@@ -202,6 +201,7 @@ devDependencies:
   '@types/react': 17.0.45
   '@types/react-dom': 17.0.17
   '@types/react-redux': 7.1.24
+  '@types/react-window': 1.8.5
   '@types/styled-components': 5.1.25
   '@typescript-eslint/eslint-plugin': 5.27.0_ljfpvv7dypng7yyhsvie2ogdeu
   '@typescript-eslint/parser': 5.27.0_6hvhxfirl4y3p6nuemvvvbadcu
@@ -2383,6 +2383,12 @@ packages:
       '@types/react': 17.0.45
       hoist-non-react-statics: 3.3.2
       redux: 4.1.2
+
+  /@types/react-window/1.8.5:
+    resolution: {integrity: sha512-V9q3CvhC9Jk9bWBOysPGaWy/Z0lxYcTXLtLipkt2cnRj1JOSFNF7wqGpkScSXMgBwC+fnVRg/7shwgddBG5ICw==}
+    dependencies:
+      '@types/react': 17.0.45
+    dev: true
 
   /@types/react/17.0.45:
     resolution: {integrity: sha512-YfhQ22Lah2e3CHPsb93tRwIGNiSwkuz1/blk4e6QrWS0jQzCSNbGLtOEYhPg02W0yGTTmpajp7dCTbBAMN3qsg==}

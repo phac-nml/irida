@@ -29,6 +29,7 @@ import {
 import { MetadataItem } from "../../../../apis/projects/samples";
 import { ColumnsType, ColumnType } from "antd/es/table";
 import { TableRowSelection } from "antd/lib/table/interface";
+import { VirtualTable } from "../../../../components/Tables/VirtualTable";
 
 const { Paragraph, Text } = Typography;
 
@@ -218,6 +219,19 @@ export function SampleMetadataImportReview(): JSX.Element {
     }
   };
 
+  const virtualTableColumns = [
+    { title: "A", dataIndex: "key", width: 150 },
+    { title: "B", dataIndex: "key" },
+    { title: "C", dataIndex: "key" },
+    { title: "D", dataIndex: "key" },
+    { title: "E", dataIndex: "key", width: 200 },
+    { title: "F", dataIndex: "key", width: 100 },
+  ];
+
+  const virtualTableData = Array.from({ length: 100000 }, (_, key) => ({
+    key,
+  }));
+
   return (
     <SampleMetadataImportWizard current={2} percent={progress}>
       <Text>{i18n("SampleMetadataImportReview.description")}</Text>
@@ -248,6 +262,12 @@ export function SampleMetadataImportReview(): JSX.Element {
         columns={columns}
         dataSource={metadata}
         pagination={getPaginationOptions(metadata.length)}
+      />
+
+      <VirtualTable
+        columns={virtualTableColumns}
+        dataSource={virtualTableData}
+        scroll={{ y: 300, x: "100vw" }}
       />
 
       <div style={{ display: "flex" }}>
