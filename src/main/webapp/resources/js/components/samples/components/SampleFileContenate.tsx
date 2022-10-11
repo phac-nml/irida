@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { useResetFormOnCloseModal } from "../../../hooks";
 import {
   SampleConcatenationObject,
+  SampleSequencingObject,
   SequencingFile,
   SequencingObject,
   useConcatenateSequencingObjectsMutation,
@@ -77,7 +78,7 @@ export function SampleFileConcatenate({
         removeOriginals: values.remove_original_files,
       })
         .unwrap()
-        .then((data: SampleConcatenationObject[]) => {
+        .then(({ sampleSequencingObjectFileModels }) => {
           let message = i18n("SampleFilesConcatenate.concatenationSuccess");
 
           if (values.remove_original_files) {
@@ -110,7 +111,7 @@ export function SampleFileConcatenate({
           dispatch(resetConcatenateSelected());
           dispatch(
             addToSequenceFiles({
-              sequenceFiles: data.sampleSequencingObjectFileModels,
+              sequenceFiles: sampleSequencingObjectFileModels,
             })
           );
           notification.success({ message });
