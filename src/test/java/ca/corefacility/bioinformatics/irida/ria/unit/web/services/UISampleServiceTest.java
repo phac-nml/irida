@@ -353,17 +353,17 @@ public class UISampleServiceTest {
 				new SampleSequencingObjectJoin(SAMPLE_1, expectedConcatenatedFile.getObject()));
 		when(sampleSequencingObjectJoin.getObject()).thenReturn(expectedConcatenatedFile.getObject());
 
-		List<SampleSequencingObjectFileModel> sampleSequencingObjectFileModels = service.concatenateSequenceFiles(
-				SAMPLE_1.getId(), sequencingObjectsIdList, "test_file_AB", false);
+		SampleConcatenationModel sampleConcatenationModel = service.concatenateSequenceFiles(
+				SAMPLE_1.getId(), sequencingObjectsIdList, "test_file_AB", false, Locale.ENGLISH);
 
-		assertEquals(1, sampleSequencingObjectFileModels.size(), "Should have concatenated 2 single end files into 1");
+		assertEquals(1, sampleConcatenationModel.getSampleSequencingObjectFileModels().size(), "Should have concatenated 2 single end files into 1");
 
 		assertEquals(expectedConcatenatedFile.getObject()
 						.getFiles()
 						.stream()
 						.findFirst()
 						.get()
-						.getLabel(), sampleSequencingObjectFileModels.get(0)
+						.getLabel(), sampleConcatenationModel.getSampleSequencingObjectFileModels().get(0)
 						.getFileInfo()
 						.getLabel(),
 				"The concatenated file name should be the same as the SampleSequencingObject -> SequencingObject -> File name");

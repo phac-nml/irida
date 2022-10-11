@@ -13,7 +13,7 @@ import React from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { useResetFormOnCloseModal } from "../../../hooks";
 import {
-  SampleSequencingObject,
+  SampleConcatenationObject,
   SequencingFile,
   SequencingObject,
   useConcatenateSequencingObjectsMutation,
@@ -25,6 +25,8 @@ import {
 } from "../sampleFilesSlice";
 import { setDefaultSequencingObject } from "../sampleSlice";
 import { IconArrowLeft, IconArrowRight, IconFile } from "../../icons/Icons";
+import { LoadingOutlined } from "@ant-design/icons";
+import { ErrorAlert } from "../../../components/alerts/ErrorAlert";
 
 const { Title } = Typography;
 
@@ -49,6 +51,11 @@ export function SampleFileConcatenate({
     (state) => state.sampleFilesReducer
   );
   const [concatenateSeqObjectFiles] = useConcatenateSequencingObjectsMutation();
+  const [concatenateButtonDisabled, setConcatenateButtonDisabled] =
+    React.useState<boolean>(true);
+  const [concatenating, setConcatenating] = React.useState<boolean>(false);
+  const [concatenationError, setConcatenationError] =
+    React.useState<string>("");
 
   useResetFormOnCloseModal({
     form,
@@ -56,11 +63,13 @@ export function SampleFileConcatenate({
   });
 
   const concatenateFiles = () => {
+    setConcatenationError("");
     const sequencingObjectIds = concatenateSelected.map(
       (seqObject: SequencingObject) => seqObject.identifier
     );
 
     form.validateFields().then((values) => {
+      setConcatenating(true);
       concatenateSeqObjectFiles({
         sampleId: sample.identifier,
         sequencingObjectIds: sequencingObjectIds,
@@ -68,7 +77,7 @@ export function SampleFileConcatenate({
         removeOriginals: values.remove_original_files,
       })
         .unwrap()
-        .then((data: SampleSequencingObject[]) => {
+        .then((data: SampleConcatenationObject[]) => {
           let message = i18n("SampleFilesConcatenate.concatenationSuccess");
 
           if (values.remove_original_files) {
@@ -99,15 +108,18 @@ export function SampleFileConcatenate({
           }
 
           dispatch(resetConcatenateSelected());
-          dispatch(addToSequenceFiles({ sequenceFiles: data }));
+          dispatch(
+            addToSequenceFiles({
+              sequenceFiles: data.sampleSequencingObjectFileModels,
+            })
+          );
           notification.success({ message });
           form.resetFields();
           setVisible(false);
         })
         .catch((error) => {
-          notification.error({
-            message: error,
-          });
+          setConcatenating(false);
+          setConcatenationError(error.data.concatenationError);
         });
     });
   };
@@ -161,18 +173,27 @@ export function SampleFileConcatenate({
           className="t-concatenate-confirm-modal"
           onCancel={() => {
             dispatch(resetConcatenateSelected());
+            setConcatenationError("");
+            setConcatenateButtonDisabled(true);
             setVisible(false);
           }}
           visible={visible}
           onOk={concatenateFiles}
           okText={i18n("SampleFilesConcatenate.okText")}
           cancelText={i18n("SampleFilesConcatenate.cancelText")}
-          okButtonProps={{ className: "t-concatenate-confirm" }}
+          okButtonProps={{
+            className: "t-concatenate-confirm",
+            disabled: concatenateButtonDisabled,
+            icon: concatenating && <LoadingOutlined />,
+          }}
           cancelButtonProps={{ className: "t-concatenate-cancel" }}
         >
           <Space size="large" direction="vertical" style={{ width: `100%` }}>
             <Title level={4}>{i18n("SampleFilesConcatenate.title")}</Title>
 
+            {concatenationError !== "" && (
+              <ErrorAlert message={concatenationError} />
+            )}
             <List
               bordered
               {...layoutProps}
@@ -224,7 +245,19 @@ export function SampleFileConcatenate({
               }}
             />
 
-            <Form layout="vertical" form={form}>
+            <Form
+              layout="vertical"
+              form={form}
+              onFieldsChange={() => {
+                const nameValue = form.getFieldValue("new_file_name");
+                console.log(nameValue);
+                if (nameValue.length >= 3) {
+                  setConcatenateButtonDisabled(false);
+                } else {
+                  setConcatenateButtonDisabled(true);
+                }
+              }}
+            >
               <Form.Item
                 key="new-file-name"
                 name="new_file_name"
@@ -235,6 +268,16 @@ export function SampleFileConcatenate({
                     message: (
                       <div className="t-new-file-name-required">
                         {i18n("SampleFilesConcatenate.nameValidationError")}
+                      </div>
+                    ),
+                  },
+                  {
+                    min: 3,
+                    message: (
+                      <div className="t-name-min-length">
+                        {i18n(
+                          "SampleFilesConcatenate.nameLengthValidationError"
+                        )}
                       </div>
                     ),
                   },

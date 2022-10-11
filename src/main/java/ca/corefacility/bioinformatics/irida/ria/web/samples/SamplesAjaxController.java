@@ -11,6 +11,7 @@ import javax.validation.ConstraintViolationException;
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 
@@ -333,16 +334,17 @@ public class SamplesAjaxController {
 	 * @return {@link ResponseEntity} with the new concatenated sequencing object
 	 */
 	@PostMapping(value = "/{sampleId}/files/concatenate")
-	public ResponseEntity<List<SampleSequencingObjectFileModel>> concatenateSequenceFiles(@PathVariable Long sampleId,
+	public ResponseEntity<SampleConcatenationModel> concatenateSequenceFiles(@PathVariable Long sampleId,
 			@RequestParam(name = "sequencingObjectIds") Set<Long> sequenceObjectIds,
 			@RequestParam(name = "newFileName") String newFileName,
-			@RequestParam(name = "removeOriginals", defaultValue = "false", required = false) boolean removeOriginals) {
+			@RequestParam(name = "removeOriginals", defaultValue = "false", required = false) boolean removeOriginals,
+			Locale locale) {
 		try {
 			return ResponseEntity.ok(uiSampleService.concatenateSequenceFiles(sampleId, sequenceObjectIds, newFileName,
-					removeOriginals));
-		} catch (ConcatenateException e) {
+					removeOriginals,locale));
+		} catch (ConcatenateException | StorageException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(null);
+					.body(new SampleConcatenationModel(e.getMessage()));
 		}
 	}
 

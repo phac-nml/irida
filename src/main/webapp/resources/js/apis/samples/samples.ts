@@ -97,6 +97,11 @@ export interface SampleMetadataFieldEntry {
   metadataRestriction: ProjectMetadataRole;
 }
 
+export interface SampleConcatenationObject {
+  sampleSequencingObjectFileModels: SampleSequencingObject[];
+  concatenationError: string;
+}
+
 export interface SampleSequencingObject {
   automatedAssembly: AnalysisSubmission;
   fileInfo: SequencingObject;
