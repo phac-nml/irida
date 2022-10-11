@@ -117,6 +117,7 @@ export function SampleFileConcatenate({
           notification.success({ message });
           form.resetFields();
           setVisible(false);
+          setConcatenating(false);
         })
         .catch((error) => {
           setConcatenating(false);

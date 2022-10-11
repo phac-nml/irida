@@ -130,8 +130,7 @@ export default function SampleFiles() {
           total: number;
         }) => {
           if (progressEvent.loaded === progressEvent.total) {
-            setSequenceFiles([]);
-            setSeqFileProgress(0);
+            setSeqFileProgress(99);
           } else {
             setSeqFileProgress(
               Math.round((progressEvent.loaded / progressEvent.total) * 100.0)
@@ -158,6 +157,7 @@ export default function SampleFiles() {
             message: i18n("SampleFiles.successfullyUploaded", "sequence"),
           });
           dispatch(addToSequenceFiles({ sequenceFiles: response }));
+          setSequenceFiles([]);
         })
         .catch((error) => {
           if (error !== "canceled") {
@@ -184,8 +184,7 @@ export default function SampleFiles() {
           total: number;
         }) => {
           if (progressEvent.loaded === progressEvent.total) {
-            setAssemblyFiles([]);
-            setAssemblyProgress(0);
+            setAssemblyProgress(99);
           } else {
             setAssemblyProgress(
               Math.round((progressEvent.loaded / progressEvent.total) * 100.0)
@@ -212,6 +211,7 @@ export default function SampleFiles() {
             message: i18n("SampleFiles.successfullyUploaded", "assembly"),
           });
           dispatch(addToAssemblyFiles({ assemblies: response }));
+          setAssemblyFiles([]);
         })
         .catch((error) => {
           if (error !== "canceled") {
@@ -238,8 +238,7 @@ export default function SampleFiles() {
           total: number;
         }) => {
           if (progressEvent.loaded === progressEvent.total) {
-            setFast5Files([]);
-            setFast5Progress(0);
+            setFast5Progress(99);
           } else {
             setFast5Progress(
               Math.round((progressEvent.loaded / progressEvent.total) * 100.0)
@@ -266,6 +265,7 @@ export default function SampleFiles() {
             message: i18n("SampleFiles.successfullyUploaded", "fast5"),
           });
           dispatch(addToFast5Files({ fast5: response }));
+          setFast5Files([]);
         })
         .catch((error) => {
           if (error !== "canceled") {
