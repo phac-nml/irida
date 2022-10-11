@@ -250,7 +250,6 @@ export function SampleFileConcatenate({
               form={form}
               onFieldsChange={() => {
                 const nameValue = form.getFieldValue("new_file_name");
-                console.log(nameValue);
                 if (nameValue.length >= 3) {
                   setConcatenateButtonDisabled(false);
                 } else {
