@@ -17,6 +17,7 @@ import { SPACE_MD } from "../../../styles/spacing";
 
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ANALYSIS, SISTR } from "../routes";
+import ScrollableSection from "./ScrollableSection";
 
 const SistrInfo = React.lazy(() => import("./sistr/SistrInfo"));
 const CgMlst = React.lazy(() => import("./sistr/CgMlst"));
@@ -48,7 +49,7 @@ export default function AnalysisSistr({ baseUrl }) {
    */
   return sistrResults !== null ? (
     !sistrResults.parse_results_error ? (
-      <Layout>
+      <Layout style={{ height: `100%` }}>
         <Sider width={200} style={{ backgroundColor: grey1 }}>
           <Menu
             mode="vertical"
@@ -79,31 +80,33 @@ export default function AnalysisSistr({ baseUrl }) {
 
         <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
           <Content>
-            <Suspense fallback={<ContentLoading />}>
-              <Routes>
-                <Route
-                  index
-                  element={
-                    <SistrInfo
-                      sistrResults={sistrResults.result}
-                      sampleName={sistrResults.sampleName}
-                    />
-                  }
-                />
-                <Route
-                  path={SISTR.CGMLST}
-                  element={<CgMlst sistrResults={sistrResults.result} />}
-                />
-                <Route
-                  path={SISTR.MASH}
-                  element={<Mash sistrResults={sistrResults.result} />}
-                />
-                <Route
-                  path={SISTR.CITATION}
-                  element={<Citation sistrResults={sistrResults.result} />}
-                />
-              </Routes>
-            </Suspense>
+            <ScrollableSection>
+              <Suspense fallback={<ContentLoading />}>
+                <Routes>
+                  <Route
+                    index
+                    element={
+                      <SistrInfo
+                        sistrResults={sistrResults.result}
+                        sampleName={sistrResults.sampleName}
+                      />
+                    }
+                  />
+                  <Route
+                    path={SISTR.CGMLST}
+                    element={<CgMlst sistrResults={sistrResults.result} />}
+                  />
+                  <Route
+                    path={SISTR.MASH}
+                    element={<Mash sistrResults={sistrResults.result} />}
+                  />
+                  <Route
+                    path={SISTR.CITATION}
+                    element={<Citation sistrResults={sistrResults.result} />}
+                  />
+                </Routes>
+              </Suspense>
+            </ScrollableSection>
           </Content>
         </Layout>
       </Layout>

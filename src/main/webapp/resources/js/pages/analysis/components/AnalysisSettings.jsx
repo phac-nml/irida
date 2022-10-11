@@ -21,6 +21,7 @@ import { ContentLoading } from "../../../components/loader/ContentLoading";
 import { grey1 } from "../../../styles/colors";
 import { ANALYSIS, SETTINGS } from "../routes";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import ScrollableSection from "./ScrollableSection";
 
 const { Content, Sider } = Layout;
 
@@ -58,7 +59,7 @@ export default function AnalysisSettings() {
    * tab is clicked
    */
   return (
-    <Layout>
+    <Layout style={{ height: `100%` }}>
       <Sider width={200} style={{ backgroundColor: grey1 }}>
         <Menu mode="vertical" selectedKeys={[current]}>
           <Menu.Item key="details">
@@ -88,9 +89,11 @@ export default function AnalysisSettings() {
 
       <Layout style={{ paddingLeft: SPACE_MD, backgroundColor: grey1 }}>
         <Content>
-          <Suspense fallback={<ContentLoading />}>
-            <Outlet />
-          </Suspense>
+          <ScrollableSection>
+            <Suspense fallback={<ContentLoading />}>
+              <Outlet />
+            </Suspense>
+          </ScrollableSection>
         </Content>
       </Layout>
     </Layout>
