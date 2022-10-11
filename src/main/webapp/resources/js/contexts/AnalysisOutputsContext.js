@@ -66,7 +66,6 @@ function AnalysisOutputsProvider(props) {
     let hasHtmlFile = false;
 
     getOutputInfo(analysisIdentifier).then((data) => {
-      console.log(data);
       // Check if json, tab, and/or text files exist
       // Used by output file preview to only display
       // tabs that are required

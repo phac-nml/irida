@@ -12,6 +12,8 @@ import { Error, Success } from "../../../components/icons";
 import { Warning } from "../../../components/icons/Warning";
 import { BasicList } from "../../../components/lists";
 import ScrollableSection from "./ScrollableSection";
+import { WarningAlert } from "../../../components/alerts";
+import { ContentLoading } from "../../../components/loader";
 
 export default function AnalysisBioHansel() {
   const { analysisIdentifier } = useContext(AnalysisContext);
@@ -19,6 +21,7 @@ export default function AnalysisBioHansel() {
     AnalysisOutputsContext
   );
   const [bioHanselResults, setBioHanselResults] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // On load gets the bio hansel results. If the file is not found then set to undefined
   useEffect(() => {
@@ -29,6 +32,7 @@ export default function AnalysisBioHansel() {
 
   useEffect(() => {
     getBioHanselResults();
+    setLoading(false);
   }, [analysisOutputsContext.outputs]);
 
   function getBioHanselResults() {
@@ -130,9 +134,21 @@ export default function AnalysisBioHansel() {
 
   return (
     <ScrollableSection>
-      <TabPanelContent title={i18n("AnalysisBioHansel.bioHanselInformation")}>
-        <BasicList dataSource={biohanselResults}></BasicList>
-      </TabPanelContent>
+      {!loading ? (
+        bioHanselResults !== null && bioHanselResults !== undefined ? (
+          <TabPanelContent
+            title={i18n("AnalysisBioHansel.bioHanselInformation")}
+          >
+            <BasicList dataSource={biohanselResults}></BasicList>
+          </TabPanelContent>
+        ) : (
+          <WarningAlert
+            message={i18n("AnalysisBioHansel.resultsUnavailable")}
+          />
+        )
+      ) : (
+        <ContentLoading message={i18n("AnalysisBioHansel.loadingResults")} />
+      )}
     </ScrollableSection>
   );
 }

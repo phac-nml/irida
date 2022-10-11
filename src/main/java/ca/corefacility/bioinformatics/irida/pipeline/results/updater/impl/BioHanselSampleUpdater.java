@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -113,6 +114,8 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 			} else {
 				throw new PostProcessingException(filePath + " not correctly formatted. Expected valid JSON.");
 			}
+		} catch (StorageException e) {
+			throw new PostProcessingException("Unable to read file input stream ", e);
 		} catch (IOException e) {
 			throw new PostProcessingException("Error parsing JSON from " + filePath, e);
 		}
