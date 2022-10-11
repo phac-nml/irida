@@ -89,7 +89,6 @@ export const saveMetadata = createAsyncThunk<
                 sampleId,
                 body: {
                   name,
-                  // TODO: Don't overwrite organism & description
                   metadata: metadataFields,
                 },
               })
