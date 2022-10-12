@@ -170,10 +170,10 @@ export function SampleMetadataImportReview(): JSX.Element {
     };
 
     const otherColumns: ColumnsType<MetadataItem> = headers
-      .filter((header) => header !== sampleNameColumn)
+      .filter((header) => header.name !== sampleNameColumn)
       .map((header) => ({
-        title: header,
-        dataIndex: header,
+        title: header.name,
+        dataIndex: header.name,
       }));
 
     const updatedColumns: ColumnsType<MetadataItem> = [

@@ -1,13 +1,15 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Radio, RadioChangeEvent, Typography } from "antd";
+import { Button, Select, Table, Typography } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
-import { BlockRadioInput } from "../../../../components/ant.design/forms/BlockRadioInput";
 import {
   IconArrowLeft,
   IconArrowRight,
 } from "../../../../components/icons/Icons";
-import { setSampleNameColumn } from "../services/importReducer";
+import {
+  MetadataHeaderItem,
+  setSampleNameColumn,
+} from "../services/importReducer";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
 import {
   ImportDispatch,
@@ -36,7 +38,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
 
   React.useEffect(() => {
     if (!column) {
-      setColumn(sampleNameColumn ? sampleNameColumn : headers[0]);
+      setColumn(sampleNameColumn ? sampleNameColumn : headers[0]?.name);
     }
   }, [sampleNameColumn, headers, column]);
 
@@ -48,25 +50,50 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
     }
   };
 
+  const columns = [
+    {
+      title: "Headers",
+      dataIndex: "name",
+    },
+    {
+      title: "Restriction",
+      dataIndex: "level",
+      render(id: number, item: MetadataHeaderItem) {
+        return (
+          <Select defaultValue={item.level}>
+            <Select.Option value={1}>Level 1</Select.Option>
+            <Select.Option value={2}>Level 2</Select.Option>
+            <Select.Option value={3}>Level 3</Select.Option>
+            <Select.Option value={4}>Level 4</Select.Option>
+          </Select>
+        );
+      },
+    },
+  ];
+
+  const rowSelection = {
+    onChange: (
+      selectedRowKeys: React.Key[],
+      selectedRows: MetadataHeaderItem[]
+    ) => {
+      setColumn(selectedRows[0].name);
+    },
+  };
+
   return (
     <SampleMetadataImportWizard current={1}>
       <Text>{i18n("SampleMetadataImportMapHeaders.description")}</Text>
-      <Radio.Group
-        style={{ width: `100%` }}
-        value={column}
-        onChange={(e: RadioChangeEvent) => setColumn(e.target.value)}
-      >
-        {headers.map((header: string, index: number) => (
-          <BlockRadioInput key={`metadata-uploader-radio-header-${index}`}>
-            <Radio
-              key={`metadata-uploader-radio-header-${index}`}
-              value={header}
-            >
-              {header}
-            </Radio>
-          </BlockRadioInput>
-        ))}
-      </Radio.Group>
+      <Table
+        className="t-metadata-uploader-header-table"
+        rowKey={(row) => row.rowKey}
+        rowSelection={{
+          type: "radio",
+          ...rowSelection,
+        }}
+        columns={columns}
+        dataSource={headers}
+        pagination={false}
+      />
       <div style={{ display: "flex" }}>
         <Button
           className="t-metadata-uploader-file-button"

@@ -15,6 +15,12 @@ import {
 } from "../../../../apis/projects/samples";
 import { ImportDispatch, ImportState } from "../store";
 
+export interface MetadataHeaderItem {
+  name: string;
+  level: number;
+  rowKey: string;
+}
+
 interface MetadataValidateDetailsItem {
   isSampleNameValid: boolean;
   foundSampleId?: number;
@@ -35,7 +41,7 @@ interface SetSampleNameColumnResponse {
 
 export interface InitialState {
   sampleNameColumn: string;
-  headers: string[];
+  headers: MetadataHeaderItem[];
   metadata: MetadataItem[];
   metadataValidateDetails: Record<string, MetadataValidateDetailsItem>;
   metadataSaveDetails: Record<string, MetadataSaveDetailsItem>;
@@ -78,7 +84,9 @@ export const saveMetadata = createAsyncThunk<
           const name: string = metadataItem[sampleNameColumn];
           const metadataFields: FieldUpdate[] = Object.entries(metadataItem)
             .filter(
-              ([key]) => headers.includes(key) && key !== sampleNameColumn
+              ([key]) =>
+                headers.map((header) => header.name).includes(key) &&
+                key !== sampleNameColumn
             )
             .map(([key, value]) => ({ field: key, value }));
           const sampleId = metadataValidateDetails[index].foundSampleId;
@@ -190,7 +198,15 @@ For more information on redux actions see: https://redux-toolkit.js.org/api/crea
 export const setHeaders = createAction(
   `importReducer/setHeaders`,
   (headers: string[]) => ({
-    payload: { headers },
+    payload: {
+      headers: headers.map((header, index) => {
+        return {
+          name: header,
+          level: 1,
+          rowKey: `metadata-uploader-header-row-${index}`,
+        };
+      }),
+    },
   })
 );
 
