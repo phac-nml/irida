@@ -31,6 +31,10 @@ const Dashboard = (): JSX.Element => {
   );
 };
 
-const root = createRoot(document.querySelector("#root"));
-
-root.render(<Dashboard />);
+const element = document.querySelector("#root");
+if (element) {
+  const root = createRoot(element);
+  root.render(<Dashboard />);
+} else {
+  throw new Error("#root cannot be found in the html file");
+}
