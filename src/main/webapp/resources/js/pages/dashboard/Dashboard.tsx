@@ -9,8 +9,6 @@ const { Content } = Layout;
 
 /**
  * Component to display dashboard
- * @returns {JSX.Element}
- * @constructor
  */
 const Dashboard = (): JSX.Element => {
   return (
