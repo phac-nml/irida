@@ -1,17 +1,13 @@
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { Session } from "../session/Session";
 import { Notifications } from "../notifications/Notifications";
 import GalaxyAlert from "./GalaxyAlert";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { MainNavigation } from "./MainNavigation";
-import {
-  AnnouncementProvider
-} from "./MainNavigation/components/announcements-context";
-import {
-  AnnouncementsModal
-} from "./MainNavigation/components/AnnouncementsModal";
+import { AnnouncementProvider } from "./MainNavigation/components/announcements-context";
+import { AnnouncementsModal } from "./MainNavigation/components/AnnouncementsModal";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -42,4 +38,6 @@ export function PageHeader() {
   );
 }
 
-render(<PageHeader />, document.querySelector(".js-page-header"));
+const root = createRoot(document.querySelector(".js-page-header"));
+
+root.render(<PageHeader />);
