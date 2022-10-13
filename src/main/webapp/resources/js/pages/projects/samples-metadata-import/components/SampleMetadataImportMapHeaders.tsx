@@ -29,18 +29,28 @@ const { Text } = Typography;
 export function SampleMetadataImportMapHeaders(): JSX.Element {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate: NavigateFunction = useNavigate();
-  const [column, setColumn] = React.useState<string>();
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [selectedRowKeys, setSelectedRowKeys] = React.useState<string[]>([]);
+  const [column, setColumn] = React.useState<string>();
   const { headers, sampleNameColumn } = useImportSelector(
     (state: ImportState) => state.importReducer
   );
   const dispatch: ImportDispatch = useImportDispatch();
 
   React.useEffect(() => {
-    if (!column) {
-      setColumn(sampleNameColumn ? sampleNameColumn : headers[0]?.name);
+    if (!column && headers.length > 0) {
+      if (sampleNameColumn) {
+        const column = headers.filter(
+          (header) => header.name === sampleNameColumn
+        );
+        setSelectedRowKeys([column[0].rowKey]);
+        setColumn(column[0].name);
+      } else {
+        setSelectedRowKeys([headers[0]?.rowKey]);
+        setColumn(headers[0].name);
+      }
     }
-  }, [sampleNameColumn, headers, column]);
+  }, [column, headers, sampleNameColumn, selectedRowKeys]);
 
   const onSubmit = async () => {
     if (projectId && column) {
@@ -60,7 +70,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
       dataIndex: "level",
       render(id: number, item: MetadataHeaderItem) {
         return (
-          <Select defaultValue={item.level}>
+          <Select defaultValue={item.level} disabled={item.name === column}>
             <Select.Option value={1}>Level 1</Select.Option>
             <Select.Option value={2}>Level 2</Select.Option>
             <Select.Option value={3}>Level 3</Select.Option>
@@ -72,11 +82,13 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
   ];
 
   const rowSelection = {
+    selectedRowKeys,
     onChange: (
       selectedRowKeys: React.Key[],
       selectedRows: MetadataHeaderItem[]
     ) => {
       setColumn(selectedRows[0].name);
+      setSelectedRowKeys([selectedRows[0].rowKey]);
     },
   };
 
