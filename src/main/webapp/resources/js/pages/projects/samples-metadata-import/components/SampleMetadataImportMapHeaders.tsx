@@ -9,6 +9,7 @@ import {
 import {
   MetadataHeaderItem,
   setSampleNameColumn,
+  updateHeaders,
 } from "../services/importReducer";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
 import {
@@ -35,6 +36,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
   const { headers, sampleNameColumn } = useImportSelector(
     (state: ImportState) => state.importReducer
   );
+  const updatedHeaders: MetadataHeaderItem[] = [...headers];
   const dispatch: ImportDispatch = useImportDispatch();
 
   React.useEffect(() => {
@@ -56,7 +58,19 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
     if (projectId && column) {
       setLoading(true);
       await dispatch(setSampleNameColumn({ projectId, column }));
+      await dispatch(updateHeaders(updatedHeaders));
       navigate(`/${projectId}/sample-metadata/upload/review`);
+    }
+  };
+
+  const onChange = (item: MetadataHeaderItem, value: number) => {
+    const index = updatedHeaders.findIndex(
+      (header) => header.rowKey === item.rowKey
+    );
+    if (index !== -1) {
+      const updatedHeadersItem = { ...updatedHeaders[index] };
+      updatedHeadersItem.level = value;
+      updatedHeaders[index] = updatedHeadersItem;
     }
   };
 
@@ -70,7 +84,11 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
       dataIndex: "level",
       render(id: number, item: MetadataHeaderItem) {
         return (
-          <Select defaultValue={item.level} disabled={item.name === column}>
+          <Select
+            defaultValue={item.level}
+            disabled={item.name === column}
+            onChange={(value) => onChange({ ...item }, value)}
+          >
             <Select.Option value={1}>Level 1</Select.Option>
             <Select.Option value={2}>Level 2</Select.Option>
             <Select.Option value={3}>Level 3</Select.Option>

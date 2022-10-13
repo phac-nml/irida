@@ -192,6 +192,17 @@ export const setSampleNameColumn = createAsyncThunk<
 );
 
 /*
+Redux action for updating the metadata headers.
+For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
+ */
+export const updateHeaders = createAction(
+  `importReducer/updateHeaders`,
+  (headers: MetadataHeaderItem[]) => ({
+    payload: { headers },
+  })
+);
+
+/*
 Redux action for setting the metadata headers.
 For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
  */
@@ -244,6 +255,9 @@ Redux reducer for project metadata.
 For more information on redux reducers see: https://redux-toolkit.js.org/api/createReducer
  */
 export const importReducer = createReducer(initialState, (builder) => {
+  builder.addCase(updateHeaders, (state, action) => {
+    state.headers = action.payload.headers;
+  });
   builder.addCase(setHeaders, (state, action) => {
     state.headers = action.payload.headers;
   });
