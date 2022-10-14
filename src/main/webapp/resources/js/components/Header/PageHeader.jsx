@@ -24,8 +24,6 @@ export function PageHeader() {
     setInGalaxy(typeof window.GALAXY !== "undefined");
   }, []);
 
-  console.log("RENDERING PAGEHEADER");
-
   return (
     <header>
       <AnnouncementProvider>

@@ -1,7 +1,6 @@
 import React from "react";
 import type { MenuProps } from "antd";
 import { Button, Layout, Menu, Space } from "antd";
-import { SPACE_LG } from "../../../styles/spacing";
 import { theme } from "../../../utilities/theme-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { AnnouncementsSubMenu } from "./components/AnnouncementsSubMenu";
@@ -9,29 +8,10 @@ import { CartLink } from "./components/CartLink";
 import { GlobalSearch } from "./components/GlobalSearch";
 import "./MainNavigation.css";
 import { UserOutlined } from "@ant-design/icons";
-import styled from "styled-components";
 
 const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 const isManager = isAdmin || window.TL._USER.systemRole === "ROLE_MANAGER";
 const isTechnician = window.TL._USER.systemRole === "ROLE_TECHNICIAN";
-
-const MainMenu = styled(Menu)`
-  .ant-menu-item-only-child,
-  .ant-menu-submenu a {
-    color: hsl(0deg 0% 100% / 65%);
-    .anticon svg {
-      color: hsl(0deg 0% 100% / 65%);
-    }
-
-    &:hover {
-      color: var(--grey-1);
-
-      .anticon svg {
-        color: var(--grey-1);
-      }
-    }
-  }
-`;
 
 const menuItems: MenuProps["items"] = [
   {
@@ -106,7 +86,7 @@ const menuItems: MenuProps["items"] = [
       },
     ],
   },
-  ...(isAdmin || isManager
+  ...(!isAdmin && isManager
     ? [
         {
           key: "users",
@@ -142,7 +122,7 @@ const menuItems: MenuProps["items"] = [
         },
       ]
     : []),
-  ...(isAdmin
+  ...(!isAdmin
     ? [
         {
           key: "remote-api",
@@ -157,18 +137,6 @@ const menuItems: MenuProps["items"] = [
 ];
 
 const toolsItems: MenuProps["items"] = [
-  ...(isAdmin
-    ? [
-        {
-          key: "admin:link",
-          label: (
-            <a className="t-admin-panel-btn" href={setBaseUrl("/admin")}>
-              {i18n("MainNavigation.admin").toUpperCase()}
-            </a>
-          ),
-        },
-      ]
-    : []),
   {
     key: "cart",
     label: <CartLink />,
@@ -252,50 +220,50 @@ const toolsItems: MenuProps["items"] = [
   },
 ];
 
-export function MainNavigation() {
-  const [isLargeScreen, setIsLargeScreen] = React.useState(
-    window.innerWidth > 1050
-  );
-
-  // React.useEffect(() => {
-  //   const handleResize = () => {
-  //     setIsLargeScreen(window.innerWidth > 1050);
-  //   };
-  //   window.addEventListener("resize", handleResize);
-  //   return () => window.removeEventListener("resize", handleResize);
-  // }, []);
-
-  console.log("RENDERING NAB");
-
+export function MainNavigation(): JSX.Element {
   return (
     <Layout>
-      <Layout.Header
-        style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
-      >
-        <a href={setBaseUrl("/")}>
-          <img
-            style={{ height: 28, width: 129, marginRight: SPACE_LG }}
-            src={setBaseUrl(`/resources/img/irida_logo_${theme}.svg`)}
-            alt={i18n("global.title")}
+      <Layout.Header className="main-navigation">
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            minWidth: 0,
+            flex: "auto",
+          }}
+        >
+          <a href={setBaseUrl("/")}>
+            <img
+              style={{ height: 28, width: 129 }}
+              src={setBaseUrl(`/resources/img/irida_logo_${theme}.svg`)}
+              alt={i18n("global.title")}
+            />
+          </a>
+          <Menu
+            items={menuItems}
+            mode="horizontal"
+            theme={theme}
+            style={{ width: `100%` }}
           />
-        </a>
-        {/*{isLargeScreen ? (*/}
-        <MainMenu
-          mode="horizontal"
-          theme={theme}
-          items={menuItems}
-          style={{ width: 500 }}
-        />
-        <div style={{ flexGrow: 1 }} />
-        <Space>
+        </div>
+        <Space align="center">
           <GlobalSearch />
+          {isAdmin && (
+            <Button
+              type="ghost"
+              className="t-admin-panel-btn"
+              href={setBaseUrl("/admin")}
+            >
+              {i18n("MainNavigation.admin")}
+            </Button>
+          )}
+          <Menu
+            disabledOverflow={true}
+            items={toolsItems}
+            mode="horizontal"
+            theme={theme}
+          />
         </Space>
-        <MainMenu
-          mode="horizontal"
-          theme={theme}
-          style={{ width: 360 }}
-          items={toolsItems}
-        />
       </Layout.Header>
     </Layout>
   );
