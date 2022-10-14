@@ -24,8 +24,10 @@ export function PageHeader() {
     setInGalaxy(typeof window.GALAXY !== "undefined");
   }, []);
 
+  console.log("RENDERING PAGEHEADER");
+
   return (
-    <>
+    <header>
       <AnnouncementProvider>
         <MainNavigation />
         <AnnouncementsModal />
@@ -34,7 +36,7 @@ export function PageHeader() {
       <Session />
       <Notifications />
       {inGalaxy ? <GalaxyAlert /> : null}
-    </>
+    </header>
   );
 }
 

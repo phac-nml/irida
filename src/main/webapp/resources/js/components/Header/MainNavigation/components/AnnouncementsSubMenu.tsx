@@ -4,11 +4,11 @@
 import React from "react";
 import { Avatar, Badge, Button, List, Popover } from "antd";
 import { blue6, grey6 } from "../../../../styles/colors";
-import { SPACE_MD } from "../../../../styles/spacing";
 import { fromNow } from "../../../../utilities/date-utilities";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { IconBell, IconFlag } from "../../../icons/Icons";
+import { IconFlag } from "../../../icons/Icons";
 import { TYPES, useAnnouncements } from "./announcements-context";
+import { BellOutlined } from "@ant-design/icons";
 
 /**
  * React component to display the bell icon and new announcement count badge
@@ -16,7 +16,7 @@ import { TYPES, useAnnouncements } from "./announcements-context";
  * @returns {JSX.Element}
  * @constructor
  */
-export function AnnouncementsSubMenu() {
+export function AnnouncementsSubMenu(): JSX.Element {
   const [{ announcements }, dispatch] = useAnnouncements();
 
   function showAnnouncementModal(index) {
@@ -83,24 +83,13 @@ export function AnnouncementsSubMenu() {
       }
       trigger="click"
     >
-      <div style={{ padding: `0  ${SPACE_MD}` }}>
-        <Button
-          type="link"
-          href="#"
-          className="t-announcements-button"
-          icon={
-            <Badge
-              className="t-announcements-badge"
-              count={
-                announcements && announcements.filter((a) => !a.read).length
-              }
-              offset={[10, -5]}
-            >
-              <IconBell />
-            </Badge>
-          }
-        />
-      </div>
+      <Badge
+        className="t-announcements-badge"
+        count={announcements && announcements.filter((a) => !a.read).length}
+        offset={[10, -5]}
+      >
+        <BellOutlined className="t-announcements-button" />
+      </Badge>
     </Popover>
   );
 }

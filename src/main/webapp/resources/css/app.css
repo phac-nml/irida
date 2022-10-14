@@ -164,57 +164,6 @@ label.ant-checkbox-wrapper {
 /****************************************************************************************
 * MAIN NAVIGATION
 *****************************************************************************************/
-.top-navigation {
-  margin-bottom: 0;
-  padding-right: 15px !important;
-}
-
-.body-content {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  width: 100%;
-}
-
-.navbar-collapse {
-  background-color: #222222;
-}
-
-.navbar-brand {
-  padding: 10px 15px 10px 15px !important;
-}
-
-.navbar-logo {
-  height: 30px;
-}
-
-.navbar-collapse-icon {
-  color: white;
-  font-size: 20px;
-}
-
-/*// Icon links*/
-.nav-icon-wrapper {
-  padding-top: 14px !important;
-  padding-bottom: 14px !important;
-}
-
-.nav-icon {
-  font-size: 21px;
-}
-
-/*// Notifications*/
-.navbar-notification .angular-notifications-icon {
-  top: 3px;
-  right: -3px;
-  width: 20px !important;
-  height: 20px;
-  padding: 0 !important;
-  font-size: 1.3rem;
-  line-height: 2rem;
-  background-color: #3092d0;
-  border-radius: 10px;
-}
 
 /*// Allow for proper styling in collapsed navigation.*/
 @media (max-width: 768px) {

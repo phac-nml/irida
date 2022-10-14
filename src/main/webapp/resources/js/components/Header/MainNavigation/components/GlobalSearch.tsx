@@ -1,15 +1,13 @@
 import { Input } from "antd";
 import React from "react";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
-import { IconSearch } from "../../../icons/Icons";
 import "./GlobalSearch.css";
+import { SearchOutlined } from "@ant-design/icons";
 
 /**
  * React component to render a global search input to the main navigation.
- * @returns {JSX.Element}
- * @constructor
  */
-export function GlobalSearch() {
+export function GlobalSearch(): JSX.Element {
   return (
     <form className="global-search" method="get" action={setBaseUrl("/search")}>
       <Input
@@ -17,7 +15,7 @@ export function GlobalSearch() {
         allowClear
         autoComplete="off"
         className="t-global-search"
-        prefix={<IconSearch />}
+        prefix={<SearchOutlined />}
         placeholder={i18n("nav.main.search")}
       />
     </form>
