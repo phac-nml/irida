@@ -17,7 +17,7 @@ import { ImportDispatch, ImportState } from "../store";
 
 export interface MetadataHeaderItem {
   name: string;
-  level: number;
+  level: string;
   rowKey: string;
 }
 
@@ -71,9 +71,6 @@ export const saveMetadata = createAsyncThunk<
       state.importReducer;
     const metadataSaveDetails: Record<string, MetadataSaveDetailsItem> = {};
 
-    console.log("headers");
-    console.log(headers);
-
     const chunkSize = 100;
     for (let i = 0; i < metadata.length; i = i + chunkSize) {
       const promises: Promise<void>[] = [];
@@ -91,7 +88,12 @@ export const saveMetadata = createAsyncThunk<
                 headers.map((header) => header.name).includes(key) &&
                 key !== sampleNameColumn
             )
-            .map(([key, value]) => ({ field: key, value }));
+            .map(([key, value]) => ({
+              field: key,
+              value,
+              restriction: headers.filter((header) => header.name === key)[0]
+                .level,
+            }));
           const sampleId = metadataValidateDetails[index].foundSampleId;
           if (sampleId) {
             promises.push(
@@ -216,7 +218,7 @@ export const setHeaders = createAction(
       headers: headers.map((header, index) => {
         return {
           name: header,
-          level: 1,
+          level: "LEVEL_1",
           rowKey: `metadata-uploader-header-row-${index}`,
         };
       }),

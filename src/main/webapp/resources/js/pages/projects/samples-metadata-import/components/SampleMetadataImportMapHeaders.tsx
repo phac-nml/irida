@@ -66,7 +66,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
     }
   };
 
-  const onChange = (item: MetadataHeaderItem, value: number) => {
+  const onChange = (item: MetadataHeaderItem, value: string) => {
     const index = updatedHeaders.findIndex(
       (header) => header.rowKey === item.rowKey
     );
@@ -92,10 +92,10 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
             disabled={item.name === updatedSampleNameColumn}
             onChange={(value) => onChange({ ...item }, value)}
           >
-            <Select.Option value={1}>Level 1</Select.Option>
-            <Select.Option value={2}>Level 2</Select.Option>
-            <Select.Option value={3}>Level 3</Select.Option>
-            <Select.Option value={4}>Level 4</Select.Option>
+            <Select.Option value={"LEVEL_1"}>Level 1</Select.Option>
+            <Select.Option value={"LEVEL_2"}>Level 2</Select.Option>
+            <Select.Option value={"LEVEL_3"}>Level 3</Select.Option>
+            <Select.Option value={"LEVEL_4"}>Level 4</Select.Option>
           </Select>
         );
       },
