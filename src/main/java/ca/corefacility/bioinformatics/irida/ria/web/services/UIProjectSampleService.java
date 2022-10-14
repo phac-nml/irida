@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -145,6 +146,8 @@ public class UIProjectSampleService {
 				Set<MetadataEntry> metadataEntrySet = request.getMetadata().stream().map(entry -> {
 					MetadataTemplateField field = metadataTemplateService.saveMetadataField(
 							new MetadataTemplateField(entry.getField(), "text"));
+					ProjectMetadataRole role = ProjectMetadataRole.fromString("level1");
+					metadataTemplateService.setMetadataRestriction(project, field, role);
 					return new MetadataEntry(entry.getValue(), "text", field);
 				}).collect(Collectors.toSet());
 				sampleService.mergeSampleMetadata(sample, metadataEntrySet);
@@ -159,13 +162,16 @@ public class UIProjectSampleService {
 	/**
 	 * Update a sample in a project
 	 *
-	 * @param request  {@link UpdateSampleRequest} details about the sample to update
-	 * @param sampleId Identifier for the sample
-	 * @param locale   Users current locale
+	 * @param request   {@link UpdateSampleRequest} details about the sample to update
+	 * @param projectId Identifier for the current project
+	 * @param sampleId  Identifier for the sample
+	 * @param locale    Users current locale
 	 * @return result of creating the sample
 	 */
 	@Transactional
-	public ResponseEntity<AjaxResponse> updateSample(UpdateSampleRequest request, Long sampleId, Locale locale) {
+	public ResponseEntity<AjaxResponse> updateSample(UpdateSampleRequest request, Long projectId, Long sampleId,
+			Locale locale) {
+		Project project = projectService.read(projectId);
 		try {
 			Sample sample = sampleService.read(sampleId);
 			sample.setSampleName(request.getName());
@@ -175,6 +181,8 @@ public class UIProjectSampleService {
 				Set<MetadataEntry> metadataEntrySet = request.getMetadata().stream().map(entry -> {
 					MetadataTemplateField field = metadataTemplateService.saveMetadataField(
 							new MetadataTemplateField(entry.getField(), "text"));
+					ProjectMetadataRole role = ProjectMetadataRole.fromString("level1");
+					metadataTemplateService.setMetadataRestriction(project, field, role);
 					return new MetadataEntry(entry.getValue(), "text", field);
 				}).collect(Collectors.toSet());
 				sampleService.updateSampleMetadata(sample, metadataEntrySet);

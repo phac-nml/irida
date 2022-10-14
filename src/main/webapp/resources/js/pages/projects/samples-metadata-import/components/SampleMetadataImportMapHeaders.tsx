@@ -31,33 +31,36 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate: NavigateFunction = useNavigate();
   const [loading, setLoading] = React.useState<boolean>(false);
-  const [selectedRowKeys, setSelectedRowKeys] = React.useState<string[]>([]);
-  const [column, setColumn] = React.useState<string>();
+  const [selectedRowKeys, setSelectedRowKeys] = React.useState<React.Key[]>([]);
   const { headers, sampleNameColumn } = useImportSelector(
     (state: ImportState) => state.importReducer
   );
+  const [updatedSampleNameColumn, setUpdatedSampleNameColumn] =
+    React.useState<string>();
   const updatedHeaders: MetadataHeaderItem[] = [...headers];
   const dispatch: ImportDispatch = useImportDispatch();
 
   React.useEffect(() => {
-    if (!column && headers.length > 0) {
+    if (!updatedSampleNameColumn && headers.length > 0) {
       if (sampleNameColumn) {
         const column = headers.filter(
           (header) => header.name === sampleNameColumn
         );
         setSelectedRowKeys([column[0].rowKey]);
-        setColumn(column[0].name);
+        setUpdatedSampleNameColumn(column[0].name);
       } else {
         setSelectedRowKeys([headers[0]?.rowKey]);
-        setColumn(headers[0].name);
+        setUpdatedSampleNameColumn(headers[0].name);
       }
     }
-  }, [column, headers, sampleNameColumn, selectedRowKeys]);
+  }, [updatedSampleNameColumn, headers, sampleNameColumn, selectedRowKeys]);
 
   const onSubmit = async () => {
-    if (projectId && column) {
+    if (projectId && updatedSampleNameColumn) {
       setLoading(true);
-      await dispatch(setSampleNameColumn({ projectId, column }));
+      await dispatch(
+        setSampleNameColumn({ projectId, updatedSampleNameColumn })
+      );
       await dispatch(updateHeaders(updatedHeaders));
       navigate(`/${projectId}/sample-metadata/upload/review`);
     }
@@ -86,7 +89,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
         return (
           <Select
             defaultValue={item.level}
-            disabled={item.name === column}
+            disabled={item.name === updatedSampleNameColumn}
             onChange={(value) => onChange({ ...item }, value)}
           >
             <Select.Option value={1}>Level 1</Select.Option>
@@ -105,7 +108,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
       selectedRowKeys: React.Key[],
       selectedRows: MetadataHeaderItem[]
     ) => {
-      setColumn(selectedRows[0].name);
+      setUpdatedSampleNameColumn(selectedRows[0].name);
       setSelectedRowKeys([selectedRows[0].rowKey]);
     },
   };

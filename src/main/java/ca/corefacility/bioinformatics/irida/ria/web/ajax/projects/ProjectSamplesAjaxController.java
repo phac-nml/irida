@@ -80,15 +80,16 @@ public class ProjectSamplesAjaxController {
 	/**
 	 * Update a sample within a project
 	 *
-	 * @param request  Details about the sample
-	 * @param sampleId sample identifier
-	 * @param locale   current users locale
+	 * @param request   Details about the sample
+	 * @param projectId Identifier for the current project
+	 * @param sampleId  sample identifier
+	 * @param locale    current users locale
 	 * @return result of creating the project
 	 */
 	@PatchMapping("/add-sample/{sampleId}")
 	public ResponseEntity<AjaxResponse> updateSampleInProject(@RequestBody UpdateSampleRequest request,
-			@PathVariable long sampleId, Locale locale) {
-		return uiProjectSampleService.updateSample(request, sampleId, locale);
+			@PathVariable Long projectId, @PathVariable long sampleId, Locale locale) {
+		return uiProjectSampleService.updateSample(request, projectId, sampleId, locale);
 	}
 
 	/**

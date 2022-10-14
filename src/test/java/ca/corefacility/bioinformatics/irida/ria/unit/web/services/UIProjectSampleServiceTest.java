@@ -11,15 +11,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.FieldUpdate;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.MetadataFieldModel;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -89,9 +90,9 @@ public class UIProjectSampleServiceTest {
 
 	@Test
 	public void testCreateSampleWithMetadata() {
-		List<FieldUpdate> metadata = new ArrayList<>();
-		metadata.add(new FieldUpdate("field1", "value1"));
-		metadata.add(new FieldUpdate("field2", "value2"));
+		List<MetadataFieldModel> metadata = new ArrayList<>();
+		metadata.add(new MetadataFieldModel("field1", "value1", ProjectMetadataRole.LEVEL_1.toString()));
+		metadata.add(new MetadataFieldModel("field2", "value2", ProjectMetadataRole.LEVEL_1.toString()));
 		CreateSampleRequest request = new CreateSampleRequest(GOOD_NAME, null, null, metadata);
 		ResponseEntity<AjaxResponse> response = service.createSample(request, PROJECT_1_ID, Locale.ENGLISH);
 		assertEquals(HttpStatus.OK, response.getStatusCode(), "Sample should be created");
@@ -99,11 +100,12 @@ public class UIProjectSampleServiceTest {
 
 	@Test
 	public void testUpdateSampleWithMetadata() {
-		List<FieldUpdate> metadata = new ArrayList<>();
-		metadata.add(new FieldUpdate("field1", "value1"));
-		metadata.add(new FieldUpdate("field2", "value2"));
+		List<MetadataFieldModel> metadata = new ArrayList<>();
+		metadata.add(new MetadataFieldModel("field1", "value1", ProjectMetadataRole.LEVEL_1.toString()));
+		metadata.add(new MetadataFieldModel("field2", "value2", ProjectMetadataRole.LEVEL_1.toString()));
 		UpdateSampleRequest request = new UpdateSampleRequest(GOOD_NAME, null, null, metadata);
-		ResponseEntity<AjaxResponse> response = service.updateSample(request, SAMPLE_1_ID, Locale.ENGLISH);
+		ResponseEntity<AjaxResponse> response = service.updateSample(request, PROJECT_1_ID, SAMPLE_1_ID,
+				Locale.ENGLISH);
 		assertEquals(HttpStatus.OK, response.getStatusCode(), "Sample should be updated");
 	}
 }

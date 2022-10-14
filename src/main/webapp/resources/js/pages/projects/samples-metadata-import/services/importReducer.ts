@@ -71,6 +71,9 @@ export const saveMetadata = createAsyncThunk<
       state.importReducer;
     const metadataSaveDetails: Record<string, MetadataSaveDetailsItem> = {};
 
+    console.log("headers");
+    console.log(headers);
+
     const chunkSize = 100;
     for (let i = 0; i < metadata.length; i = i + chunkSize) {
       const promises: Promise<void>[] = [];
@@ -150,19 +153,19 @@ For more information on redux async thunks see: https://redux-toolkit.js.org/api
 */
 export const setSampleNameColumn = createAsyncThunk<
   SetSampleNameColumnResponse,
-  { projectId: string; column: string },
+  { projectId: string; updatedSampleNameColumn: string },
   { state: ImportState }
 >(
   `importReducer/setSampleNameColumn`,
-  async ({ projectId, column }, { getState }) => {
+  async ({ projectId, updatedSampleNameColumn }, { getState }) => {
     const state: ImportState = getState();
     const { metadata } = state.importReducer;
     const metadataValidateDetails: Record<string, MetadataValidateDetailsItem> =
       {};
     const samples: ValidateSampleNameModel[] = metadata
-      .filter((row) => row[column])
+      .filter((row) => row[updatedSampleNameColumn])
       .map((row) => ({
-        name: row[column],
+        name: row[updatedSampleNameColumn],
       }));
     const response: ValidateSamplesResponse = await validateSamples({
       projectId: projectId,
@@ -173,7 +176,7 @@ export const setSampleNameColumn = createAsyncThunk<
     for (let i = 0; i < metadata.length; i++) {
       const metadataItem: MetadataItem = metadata[i];
       const index: string = metadataItem.rowKey;
-      const sampleName: string = metadataItem[column];
+      const sampleName: string = metadataItem[updatedSampleNameColumn];
       const foundSample: ValidateSampleNameModel | undefined =
         response.samples.find(
           (sample: ValidateSampleNameModel) => sampleName === sample.name
@@ -185,7 +188,7 @@ export const setSampleNameColumn = createAsyncThunk<
     }
 
     return {
-      sampleNameColumn: column,
+      sampleNameColumn: updatedSampleNameColumn,
       metadataValidateDetails,
     };
   }
