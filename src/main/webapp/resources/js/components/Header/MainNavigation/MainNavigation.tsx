@@ -12,6 +12,7 @@ import { UserOutlined } from "@ant-design/icons";
 const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 const isManager = isAdmin || window.TL._USER.systemRole === "ROLE_MANAGER";
 const isTechnician = window.TL._USER.systemRole === "ROLE_TECHNICIAN";
+const inGalaxy = typeof window.GALAXY !== "undefined";
 
 const menuItems: MenuProps["items"] = [
   {
@@ -221,6 +222,16 @@ const toolsItems: MenuProps["items"] = [
 ];
 
 export function MainNavigation(): JSX.Element {
+  const onClick: MenuProps["onClick"] = ({ key }) => {
+    switch (key) {
+      case "cart":
+        window.location.href = setBaseUrl(
+          `/cart/${inGalaxy ? "galaxy" : "pipelines"}`
+        );
+      case "announcements":
+    }
+  };
+
   return (
     <Layout>
       <Layout.Header className="main-navigation">
@@ -258,6 +269,7 @@ export function MainNavigation(): JSX.Element {
             </Button>
           )}
           <Menu
+            onClick={onClick}
             disabledOverflow={true}
             items={toolsItems}
             mode="horizontal"

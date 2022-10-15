@@ -86,7 +86,7 @@ export function AnnouncementsSubMenu(): JSX.Element {
       <Badge
         className="t-announcements-badge"
         count={announcements && announcements.filter((a) => !a.read).length}
-        offset={[10, -5]}
+        offset={[5, -3]}
       >
         <BellOutlined className="t-announcements-button" />
       </Badge>

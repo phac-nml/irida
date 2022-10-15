@@ -35,15 +35,8 @@ export function CartLink(): JSX.Element {
   }, []);
 
   return (
-    <Button
-      type="link"
-      className="t-cart-count"
-      href={setBaseUrl(`/cart/${inGalaxy ? "galaxy" : "pipelines"}`)}
-      icon={
-        <Badge count={count} offset={[10, -5]}>
-          <ShoppingCartOutlined data-count={count} />
-        </Badge>
-      }
-    />
+    <Badge count={count} offset={[5, -5]}>
+      <ShoppingCartOutlined data-count={count} />
+    </Badge>
   );
 }

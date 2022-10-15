@@ -85,7 +85,8 @@
   margin-bottom: -2px;
 }
 
-.main-navigation .ant-menu-title-content:hover svg {
+.main-navigation .ant-menu-item.ant-menu-item-only-child:hover svg,
+.main-navigation .ant-menu-submenu.ant-menu-submenu-horizontal:hover svg {
   color: var(--grey-1);
 }
 
