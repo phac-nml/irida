@@ -1,6 +1,6 @@
 import React from "react";
 
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import UserSingleSampleAnalysisOutputs from "./components/UserSingleSampleAnalysisOutputs";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import store from "./store";
@@ -14,9 +14,9 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
-render(
+const root = createRoot(document.getElementById("root"));
+root.render(
   <Provider store={store}>
     <UserSingleSampleAnalysisOutputs />
-  </Provider>,
-  document.getElementById("root")
+  </Provider>
 );
