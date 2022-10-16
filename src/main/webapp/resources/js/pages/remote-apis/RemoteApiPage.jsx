@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { PageWrapper } from "../../components/page/PageWrapper";
 import { RemoteApiTable } from "../admin/components/remote-connections/RemoteApiTable";
 import { AddNewButton } from "../../components/Buttons/AddNewButton";
@@ -32,4 +32,5 @@ export function RemoteApiPage({}) {
   );
 }
 
-render(<RemoteApiPage />, document.querySelector("#remote-api-list"));
+const root = createRoot(document.querySelector("#remote-api-list"));
+root.render(<RemoteApiPage />);
