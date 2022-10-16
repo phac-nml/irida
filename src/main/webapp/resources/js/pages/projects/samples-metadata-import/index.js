@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { SampleMetadataImportComplete } from "./components/SampleMetadataImportComplete";
 import { SampleMetadataImportMapHeaders } from "./components/SampleMetadataImportMapHeaders";
 import { SampleMetadataImportReview } from "./components/SampleMetadataImportReview";
@@ -14,7 +14,10 @@ Router for sample metadata importer.
 For more information on the browser router see: https://reactrouter.com/web/api/BrowserRouter
  */
 
-render(
+const root = createRoot(
+  document.querySelector("#samples-metadata-import-root")
+);
+root.render(
   <Provider store={store}>
     <BrowserRouter basename={setBaseUrl("/projects")}>
       <Routes>
@@ -36,6 +39,5 @@ render(
         />
       </Routes>
     </BrowserRouter>
-  </Provider>,
-  document.querySelector("#samples-metadata-import-root")
+  </Provider>
 );
