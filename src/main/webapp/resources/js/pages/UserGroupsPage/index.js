@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { getUserGroupRoles } from "../../apis/users/groups";
 import { ContentLoading } from "../../components/loader";
@@ -62,9 +62,9 @@ export function UserGroups() {
   );
 }
 
-render(
+const root = createRoot(document.querySelector("#groups-root"));
+root.render(
   <BrowserRouter>
     <UserGroups />
-  </BrowserRouter>,
-  document.querySelector("#groups-root")
+  </BrowserRouter>
 );
