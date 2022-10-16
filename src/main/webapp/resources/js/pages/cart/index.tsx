@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { cartApi } from "../../apis/cart/cart";
 import { projectsApi } from "../../apis/projects/projects";
@@ -29,9 +29,14 @@ const store = configureStore({
     getDefaultMiddleware().concat(cartApi.middleware, projectsApi.middleware),
 });
 
-render(
-  <Provider store={store}>
-    <Cart />
-  </Provider>,
-  document.querySelector("#root")
-);
+const rootElement = document.querySelector("#root");
+if (rootElement) {
+  const root = createRoot(rootElement);
+  root.render(
+    <Provider store={store}>
+      <Cart />
+    </Provider>
+  );
+} else {
+  throw new Error("Cannot find dom element: #root");
+}
