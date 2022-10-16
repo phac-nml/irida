@@ -1,6 +1,6 @@
 import { Col, Layout, Row, Spin } from "antd";
 import React, { Suspense, useState } from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import {
   BrowserRouter,
@@ -146,11 +146,11 @@ const ProjectSettings = () => {
   );
 };
 
-render(
+const root = createRoot(document.querySelector("#root"));
+root.render(
   <BrowserRouter>
     <Provider store={store}>
       <SettingsLayout />
     </Provider>
-  </BrowserRouter>,
-  document.querySelector("#root")
+  </BrowserRouter>
 );
