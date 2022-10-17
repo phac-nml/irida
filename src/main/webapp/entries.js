@@ -14,7 +14,7 @@ module.exports = {
   app: "./resources/js/app.js",
   dashboard: "./resources/js/pages/dashboard/Dashboard.tsx",
   launch: "./resources/js/pages/launch",
-  project: "./resources/js/components/project/ProjectNav.jsx",
+  project: "./resources/js/components/project/ProjectNav.tsx",
   "project-activity": "./resources/js/pages/projects/ProjectActivity.jsx",
   projects: "./resources/js/pages/projects/list/index.js",
   "samples-metadata-import":
