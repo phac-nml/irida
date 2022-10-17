@@ -157,7 +157,7 @@ export function AnalysesTable({ canManage }) {
         "[COUNT]",
         selected.length
       )}
-      onVisibleChange={(visible) => setDeleting(visible)}
+      onOpenChange={(visible) => setDeleting(visible)}
       onConfirm={() => deleteAnalyses(selected).then(() => setSelected([]))}
     >
       <Button
