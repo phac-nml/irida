@@ -110,7 +110,7 @@ export default function CreateNewUser() {
           setVisibility(false);
           form.resetFields();
         }}
-        visible={visible}
+        open={visible}
         maxHeight={window.innerHeight - 250}
         width={640}
         maskClosable={false}
