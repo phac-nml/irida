@@ -12,9 +12,6 @@ import { useParams } from "react-router-dom";
 
 /**
  * Component for showing metadata fields associated with a project.
- *
- * @param {number} projectId - Identifier for the current project
- * @returns {JSX.Element|string}
  */
 export default function MetadataFieldsListManager() {
   const { projectId } = useParams();
@@ -24,9 +21,8 @@ export default function MetadataFieldsListManager() {
     isLoading,
     refetch: refetchFields,
   } = useGetMetadataFieldsForProjectQuery(projectId);
-  const [
-    updateProjectMetadataFieldRestriction,
-  ] = useUpdateProjectMetadataFieldRestrictionMutation();
+  const [updateProjectMetadataFieldRestriction] =
+    useUpdateProjectMetadataFieldRestrictionMutation();
 
   const [{ selected, selectedItems }, { setSelected }] = useTableSelect(fields);
 

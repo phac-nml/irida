@@ -50,6 +50,16 @@ export default function SettingsNav({
       {
         key: "ps:metadata",
         label: i18n("project.settings.page.metadata"),
+        children: [
+          {
+            key: "ps:metadata/fields",
+            label: i18n("MetadataFields.title"),
+          },
+          {
+            key: "ps:metadata/templates",
+            label: i18n("ProjectMetadataTemplates.title"),
+          },
+        ],
       },
       {
         key: "ps:associated",
@@ -84,5 +94,12 @@ export default function SettingsNav({
     navigate(key.substring(key.indexOf(":") + 1));
   };
 
-  return <Menu selectedKeys={[key]} onClick={onClick} items={menuItems} />;
+  return (
+    <Menu
+      selectedKeys={[key]}
+      onClick={onClick}
+      items={menuItems}
+      mode="inline"
+    />
+  );
 }

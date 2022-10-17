@@ -17,6 +17,8 @@ export default function MetadataFields() {
     skip: !projectId,
   });
 
+  console.log(project);
+
   return project.canManage ? (
     <MetadataFieldsListManager />
   ) : (
