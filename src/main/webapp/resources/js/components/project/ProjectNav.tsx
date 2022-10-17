@@ -42,7 +42,7 @@ const menuItems: MenuProps["items"] = [
  */
 export function ProjectNav(): JSX.Element {
   const [current] = React.useState(() => {
-    const keyRegex = /\/projects\/\d+\/(?<path>[_-]+)/;
+    const keyRegex = /\/projects\/\d+\/(?<path>[\w+_-]+)/;
     const found = location.pathname.match(keyRegex);
     if (found && found.groups) {
       return `project:${found.groups.path}`;

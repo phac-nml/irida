@@ -54,7 +54,7 @@ function ProjectAnalyses() {
   return (
     <Layout>
       <Layout>
-        <Sider width={310} style={{ backgroundColor: grey1 }}>
+        <Sider width={310} theme="light">
           <AnalysesNav path={props["*"]} />
         </Sider>
 
