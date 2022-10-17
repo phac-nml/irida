@@ -25,7 +25,7 @@ function ShareSamplesButtonComponent({ selected }) {
       projectName: sample["irida-static-project-name"],
     }));
     window.sessionStorage.setItem(
-      "share",
+      "samples",
       JSON.stringify({
         samples,
         projectId,
