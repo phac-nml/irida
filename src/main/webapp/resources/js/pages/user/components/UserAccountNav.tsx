@@ -1,7 +1,7 @@
 import React from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu } from "antd";
+import { useLocation, useNavigate } from "react-router-dom";
 import type { MenuProps } from "antd";
+import { Menu } from "antd";
 
 const menuItems: MenuProps["items"] = [
   {
@@ -24,7 +24,7 @@ const menuItems: MenuProps["items"] = [
  * @returns {*}
  * @constructor
  */
-export default function UserAccountNav() {
+export default function UserAccountNav(): JSX.Element {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedKeys, setSelectedKey] = React.useState<string[]>(() => {
