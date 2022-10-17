@@ -24,7 +24,7 @@ const menuItems: MenuProps["items"] = [
     label: i18n("project.nav.analysis"),
   },
   {
-    key: "project:export",
+    key: "project:exports",
     label: i18n("project.nav.exports"),
   },
   {
@@ -64,7 +64,7 @@ export function ProjectNav(): JSX.Element {
         window.location.href = `${BASE_URL}/analyses/project-analyses`;
         break;
       case "project:exports":
-        window.location.href = `${BASE_URL}/exports`;
+        window.location.href = `${BASE_URL}/ncbi`;
         break;
       case "project:activity":
         window.location.href = `${BASE_URL}/activity`;
