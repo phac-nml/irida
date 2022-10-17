@@ -18,6 +18,7 @@ import {
   useImportDispatch,
   useImportSelector,
 } from "../store";
+import { getMetadataRestrictions } from "../../../../apis/metadata/field";
 
 const { Text } = Typography;
 
@@ -31,6 +32,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate: NavigateFunction = useNavigate();
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [restrictions, setRestrictions] = React.useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = React.useState<React.Key[]>([]);
   const { headers, sampleNameColumn } = useImportSelector(
     (state: ImportState) => state.importReducer
@@ -39,6 +41,12 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
     React.useState<string>();
   const updatedHeaders: MetadataHeaderItem[] = [...headers];
   const dispatch: ImportDispatch = useImportDispatch();
+
+  React.useEffect(() => {
+    getMetadataRestrictions().then((data) => {
+      setRestrictions(data);
+    });
+  }, []);
 
   React.useEffect(() => {
     if (!updatedSampleNameColumn && headers.length > 0) {
@@ -72,30 +80,31 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
     );
     if (index !== -1) {
       const updatedHeadersItem = { ...updatedHeaders[index] };
-      updatedHeadersItem.level = value;
+      updatedHeadersItem.restriction = value;
       updatedHeaders[index] = updatedHeadersItem;
     }
   };
 
   const columns = [
     {
-      title: "Headers",
+      title: i18n("SampleMetadataImportMapHeaders.table.header"),
       dataIndex: "name",
     },
     {
-      title: "Restriction",
-      dataIndex: "level",
+      title: i18n("SampleMetadataImportMapHeaders.table.restriction"),
+      dataIndex: "restriction",
       render(id: number, item: MetadataHeaderItem) {
         return (
           <Select
-            defaultValue={item.level}
+            defaultValue={item.restriction}
             disabled={item.name === updatedSampleNameColumn}
             onChange={(value) => onChange({ ...item }, value)}
           >
-            <Select.Option value={"LEVEL_1"}>Level 1</Select.Option>
-            <Select.Option value={"LEVEL_2"}>Level 2</Select.Option>
-            <Select.Option value={"LEVEL_3"}>Level 3</Select.Option>
-            <Select.Option value={"LEVEL_4"}>Level 4</Select.Option>
+            {restrictions.map(({ label, value }) => (
+              <Select.Option key={value} value={value}>
+                {label}
+              </Select.Option>
+            ))}
           </Select>
         );
       },

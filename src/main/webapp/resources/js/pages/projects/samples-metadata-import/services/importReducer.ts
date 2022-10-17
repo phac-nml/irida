@@ -17,7 +17,7 @@ import { ImportDispatch, ImportState } from "../store";
 
 export interface MetadataHeaderItem {
   name: string;
-  level: string;
+  restriction: string;
   rowKey: string;
 }
 
@@ -92,7 +92,7 @@ export const saveMetadata = createAsyncThunk<
               field: key,
               value,
               restriction: headers.filter((header) => header.name === key)[0]
-                .level,
+                .restriction,
             }));
           const sampleId = metadataValidateDetails[index].foundSampleId;
           if (sampleId) {
@@ -218,7 +218,7 @@ export const setHeaders = createAction(
       headers: headers.map((header, index) => {
         return {
           name: header,
-          level: "LEVEL_1",
+          restriction: "LEVEL_1",
           rowKey: `metadata-uploader-header-row-${index}`,
         };
       }),
