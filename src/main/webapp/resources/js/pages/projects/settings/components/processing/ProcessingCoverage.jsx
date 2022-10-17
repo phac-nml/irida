@@ -30,7 +30,6 @@ export function ProcessingCoverage({ projectId, canManage = false }) {
     skip: !projectId,
   });
   const [updateProjectCoverage] = useUpdateProjectCoverageMutation();
-  console.log(details);
 
   const NOT_SET = i18n("ProcessingCoverage.not-set");
   const [visible, setVisible] = React.useState(false);
