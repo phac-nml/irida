@@ -26,12 +26,11 @@ import {
  * @constructor
  */
 export function ProcessingCoverage({ projectId, canManage = false }) {
-  const {
-    data: details,
-    isLoading,
-  } = useGetProjectDetailsQuery(projectId, {skip: !projectId});
+  const { data: details, isLoading } = useGetProjectDetailsQuery(projectId, {
+    skip: !projectId,
+  });
   const [updateProjectCoverage] = useUpdateProjectCoverageMutation();
-  console.log(details)
+  console.log(details);
 
   const NOT_SET = i18n("ProcessingCoverage.not-set");
   const [visible, setVisible] = React.useState(false);
@@ -77,17 +76,25 @@ export function ProcessingCoverage({ projectId, canManage = false }) {
             </Button>
             <Modal
               title={i18n("ProcessingCoverage.modal.title")}
-              visible={visible}
+              open={visible}
               onCancel={() => setVisible(false)}
               onOk={update}
             >
               <Form
                 layout="vertical"
                 initialValues={{
-                  minimum: details?.coverage.minimum > -1 ? details.coverage.minimum : null,
-                  maximum: details?.coverage.maximum > -1 ? details.coverage.maximum : null,
+                  minimum:
+                    details?.coverage.minimum > -1
+                      ? details.coverage.minimum
+                      : null,
+                  maximum:
+                    details?.coverage.maximum > -1
+                      ? details.coverage.maximum
+                      : null,
                   genomeSize:
-                    details?.coverage.genomeSize > -1 ? details.coverage.genomeSize : null,
+                    details?.coverage.genomeSize > -1
+                      ? details.coverage.genomeSize
+                      : null,
                 }}
                 form={form}
               >
@@ -124,7 +131,11 @@ export function ProcessingCoverage({ projectId, canManage = false }) {
             <Statistic
               loading={isLoading}
               title={i18n("ProcessingCoverage.minimum")}
-              value={details?.coverage.minimum > -1 ? details.coverage.minimum : NOT_SET}
+              value={
+                details?.coverage.minimum > -1
+                  ? details.coverage.minimum
+                  : NOT_SET
+              }
               suffix={details?.coverage.minimum > -1 ? "X" : ""}
             />
           </Card>
@@ -134,7 +145,11 @@ export function ProcessingCoverage({ projectId, canManage = false }) {
             <Statistic
               loading={isLoading}
               title={i18n("ProcessingCoverage.maximum")}
-              value={details?.coverage.maximum > -1 ? details.coverage.maximum : NOT_SET}
+              value={
+                details?.coverage.maximum > -1
+                  ? details.coverage.maximum
+                  : NOT_SET
+              }
               suffix={details?.coverage.maximum > -1 ? "X" : ""}
             />
           </Card>
@@ -144,7 +159,11 @@ export function ProcessingCoverage({ projectId, canManage = false }) {
             <Statistic
               loading={isLoading}
               title={i18n("ProcessingCoverage.genomeSize")}
-              value={details?.coverage.genomeSize > -1 ? details.coverage.genomeSize : NOT_SET}
+              value={
+                details?.coverage.genomeSize > -1
+                  ? details.coverage.genomeSize
+                  : NOT_SET
+              }
               suffix={details?.coverage.genomeSize > -1 ? "BP" : ""}
             />
           </Card>

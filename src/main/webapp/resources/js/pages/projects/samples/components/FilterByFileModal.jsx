@@ -75,7 +75,7 @@ export default function FilterByFileModal({ visible, onComplete, onCancel }) {
 
   return (
     <Modal
-      visible={visible}
+      open={visible}
       onCancel={onCancel}
       onOk={onOk}
       cancelButtonProps={{ className: "t-filter-cancel" }}

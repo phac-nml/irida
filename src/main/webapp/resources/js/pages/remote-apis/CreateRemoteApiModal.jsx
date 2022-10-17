@@ -56,7 +56,7 @@ export function CreateRemoteApiModal({ children }) {
       <Modal
         className="t-create-api"
         title={i18n("CreateRemoteApiModal.title")}
-        visible={visible}
+        open={visible}
         onCancel={() => setVisible(false)}
         onOk={submitForm}
         okButtonProps={{

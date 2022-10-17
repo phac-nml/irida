@@ -78,7 +78,7 @@ export function CreateNewUserGroupButton({ baseUrl }) {
       <Modal
         className="t-new-group-modal"
         title={i18n("CreateNewUserGroupButton.title")}
-        visible={visible}
+        open={visible}
         onCancel={onCancel}
         onOk={onOk}
         okButtonProps={{ className: "t-confirm-new-group" }}

@@ -96,7 +96,7 @@ export function AddNewMetadata({ children }: AddNewMetadataProps): JSX.Element {
         <Modal
           className="t-add-metadata-field"
           onCancel={() => setVisible(false)}
-          visible={visible}
+          open={visible}
           onOk={addMetadata}
           okText={i18n("SampleMetadata.modal.btn.add")}
           cancelText={i18n("SampleMetadata.modal.btn.cancel")}

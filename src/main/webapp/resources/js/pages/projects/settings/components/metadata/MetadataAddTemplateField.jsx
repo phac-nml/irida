@@ -40,7 +40,7 @@ export function MetadataAddTemplateField({ fields = [], onAddFields }) {
       </Button>
       <Modal
         title={i18n("MetadataAddTemplateField.title")}
-        visible={visible}
+        open={visible}
         onCancel={() => setVisible(false)}
         onOk={addFieldsToTemplate}
         okText={i18n("MetadataAddTemplateField.ok-text")}

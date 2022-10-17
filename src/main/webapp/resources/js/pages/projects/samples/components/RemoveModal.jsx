@@ -37,7 +37,7 @@ export default function RemoveModal({
     <Modal
       title={i18n("RemoveModal.title")}
       className="t-remove-modal"
-      visible={visible}
+      open={visible}
       onCancel={onCancel}
       onOk={onOk}
       okText={i18n("RemoveModal.okText")}

@@ -94,7 +94,7 @@ export function CreateProjectLayout({ children }) {
         onClick: () => setVisible(true),
       })}
       <Modal
-        visible={visible}
+        open={visible}
         footer={
           <div
             style={{

@@ -80,7 +80,7 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
       <Modal
         className="t-create-modal"
         title={i18n("CreateMetadataTemplate.title")}
-        visible={visible}
+        open={visible}
         onCancel={() => setVisible(false)}
         okText={i18n("CreateMetadataTemplate.ok-text")}
         onOk={onOk}

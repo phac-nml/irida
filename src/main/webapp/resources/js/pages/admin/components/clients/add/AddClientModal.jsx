@@ -112,7 +112,7 @@ export function AddClientModal({ children, onComplete, existing = null }) {
       })}
       <Modal
         className="t-client-modal"
-        visible={visible}
+        open={visible}
         title={
           existing
             ? i18n("AddClientModal.title-edit")

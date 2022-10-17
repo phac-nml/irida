@@ -129,7 +129,7 @@ export function AddMemberButton({
       </Button>
       <Modal
         className="t-add-member-modal"
-        visible={visible}
+        open={visible}
         okButtonProps={{ disabled: typeof userId === "undefined" }}
         onCancel={onCancel}
         title={modalTitle}

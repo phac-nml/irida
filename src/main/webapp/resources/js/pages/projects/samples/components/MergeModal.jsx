@@ -12,9 +12,7 @@ import {
 } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
-import {
-  serverValidateSampleName
-} from "../../../../utilities/validation-utilities";
+import { serverValidateSampleName } from "../../../../utilities/validation-utilities";
 import { useMergeMutation } from "../../../../apis/projects/samples";
 import LockedSamplesList from "./LockedSamplesList";
 
@@ -93,7 +91,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
     <Modal
       title={i18n("MergeModal.title")}
       className="t-merge-modal"
-      visible={visible}
+      open={visible}
       onOk={onSubmit}
       okText={i18n("MergeModal.okText")}
       okButtonProps={{

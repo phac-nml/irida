@@ -81,7 +81,7 @@ export default function CreateNewSample({ visible, onCreate, onCancel }) {
 
   return (
     <Modal
-      visible={visible}
+      open={visible}
       onOk={createSample}
       onCancel={handleCancel}
       title={i18n("AddSample.title")}

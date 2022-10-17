@@ -36,7 +36,7 @@ export function AutomatedPipelineHeader({ projectId, canMange }) {
               {i18n("AddPipelineModal.button")}
             </Button>
             <Modal
-              visible={visible}
+              open={visible}
               title={i18n("AutomatedPipelineHeader.modal.title")}
               onCancel={() => setVisible(false)}
               className="t-template-modal"
