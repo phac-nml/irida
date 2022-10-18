@@ -7,8 +7,8 @@ import { SPACE_SM } from "../../styles/spacing";
 const { Dragger } = Upload;
 
 interface DragUploadProps extends React.HTMLAttributes<HTMLDivElement> {
-  uploadText?: string;
-  uploadHint?: React.ReactElement;
+  uploadText: string | React.ReactElement;
+  uploadHint: string | React.ReactElement;
   options?: UploadProps;
 }
 
