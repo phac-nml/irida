@@ -1,7 +1,7 @@
 import React from "react";
 import { notification } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { DragUpload } from "../../../components/files/DragUpload.tsx";
+import { DragUpload } from "../../../components/files/DragUpload";
 import { useLaunch } from "../launch-context";
 import { referenceFileUploadComplete } from "../launch-dispatch";
 
