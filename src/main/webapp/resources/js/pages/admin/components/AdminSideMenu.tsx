@@ -85,7 +85,7 @@ export default function AdminHeader() {
   return (
     <Sider width={220}>
       <section>
-        <Link
+        <a
           style={{
             display: "flex",
             height: 64,
@@ -93,7 +93,7 @@ export default function AdminHeader() {
             justifyContent: "center",
             borderBottom: `1px solid hsl(216deg 20% 95%)`,
           }}
-          to={setBaseUrl("/")}
+          href={setBaseUrl("/")}
           title={i18n("AdminPanel.logo-tooltip")}
         >
           <img
@@ -102,7 +102,7 @@ export default function AdminHeader() {
             src={setBaseUrl("/resources/img/irida_logo_dark.svg")}
             alt={i18n("AdminPanel.logo-alt")}
           />
-        </Link>
+        </a>
         <Menu
           className={"t-admin-side-menu"}
           items={menuItems}
