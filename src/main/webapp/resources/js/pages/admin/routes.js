@@ -7,16 +7,16 @@ export const ADMIN = {
   USERS: "users",
   USERGROUPS: "groups",
   CLIENTS: "clients",
-  REMOTEAPI: "remote_api",
+  REMOTEAPI: "remote-api",
   SEQUENCINGRUNS: "sequencing-runs",
-  NCBIEXPORTS: "ncbi_exports",
+  NCBIEXPORTS: "ncbi-exports",
   ANNOUNCEMENTS: "announcements",
-  STATISTICS: "statistics"
+  STATISTICS: "statistics",
 };
 
 export const ADMINSTATS = {
   ANALYSES: "analyses",
   PROJECTS: "projects",
   SAMPLES: "samples",
-  USERS: "users"
+  USERS: "users",
 };

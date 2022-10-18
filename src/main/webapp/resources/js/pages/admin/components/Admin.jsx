@@ -94,7 +94,7 @@ export default function Admin() {
                     <Route path="security" element={<UserSecurityPage />} />
                   </Route>
                   <Route
-                    path={`${ADMIN.USERGROUPS}/list`}
+                    path={`${ADMIN.USERGROUPS}`}
                     element={
                       <UserGroupsPage
                         baseUrl={`${DEFAULT_URL}/${ADMIN.USERGROUPS}`}

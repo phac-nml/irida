@@ -12,9 +12,14 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
-const root = createRoot(document.getElementById("root"));
-root.render(
-  <BrowserRouter>
-    <Admin />
-  </BrowserRouter>
-);
+const element = document.getElementById("root");
+if (element) {
+  const root = createRoot(element);
+  root.render(
+    <BrowserRouter>
+      <Admin />
+    </BrowserRouter>
+  );
+} else {
+  throw new Error(`Cannot find DOM Element: #root`);
+}
