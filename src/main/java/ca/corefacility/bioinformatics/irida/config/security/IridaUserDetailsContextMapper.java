@@ -212,7 +212,7 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
         map.put(iridaUserFieldEmail, getAttribute(dirContextOperations, userInfoEmail, true, ""));
         map.put(iridaUserFieldFirstName, getAttribute(dirContextOperations, userInfoFirstName, true, ""));
         map.put(iridaUserFieldLastName, getAttribute(dirContextOperations, userInfoLastName, true, ""));
-        map.put(iridaUserFieldPhoneNumber, getAttribute(dirContextOperations, userInfoPhoneNumber, false, "0000"));
+        map.put(iridaUserFieldPhoneNumber, getAttribute(dirContextOperations, userInfoPhoneNumber, false, null));
         return map;
     }
 
