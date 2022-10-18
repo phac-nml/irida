@@ -34,6 +34,7 @@ interface SetSampleNameColumnResponse {
 }
 
 export interface InitialState {
+  projectId: string;
   sampleNameColumn: string;
   headers: string[];
   metadata: MetadataItem[];
@@ -42,6 +43,7 @@ export interface InitialState {
 }
 
 const initialState: InitialState = {
+  projectId: "",
   sampleNameColumn: "",
   headers: [],
   metadata: [],
@@ -183,6 +185,17 @@ export const setSampleNameColumn = createAsyncThunk<
 );
 
 /*
+Redux action for setting the projectId.
+For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
+ */
+export const setProjectId = createAction(
+  `importReducer/setProjectID`,
+  (projectId: string) => ({
+    payload: { projectId },
+  })
+);
+
+/*
 Redux action for setting the metadata headers.
 For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
  */
@@ -227,6 +240,9 @@ Redux reducer for project metadata.
 For more information on redux reducers see: https://redux-toolkit.js.org/api/createReducer
  */
 export const importReducer = createReducer(initialState, (builder) => {
+  builder.addCase(setProjectId, (state, action) => {
+    state.projectId = action.payload.projectId;
+  });
   builder.addCase(setHeaders, (state, action) => {
     state.headers = action.payload.headers;
   });

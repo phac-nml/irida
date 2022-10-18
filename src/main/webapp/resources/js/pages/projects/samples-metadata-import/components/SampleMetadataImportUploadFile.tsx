@@ -1,6 +1,10 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { setHeaders, setMetadata } from "../services/importReducer";
+import {
+  setHeaders,
+  setMetadata,
+  setProjectId,
+} from "../services/importReducer";
 import { notification, Spin, StepsProps, Typography, UploadProps } from "antd";
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
@@ -25,6 +29,12 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
   const dispatch: ImportDispatch = useImportDispatch();
   const [status, setStatus] = React.useState<StepsProps["status"]>("process");
   const [loading, setLoading] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (projectId != null) {
+      dispatch(setProjectId(projectId));
+    }
+  }, [dispatch, projectId]);
 
   const options: UploadProps = {
     multiple: false,
