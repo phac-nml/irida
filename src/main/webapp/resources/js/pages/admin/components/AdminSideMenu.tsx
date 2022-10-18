@@ -75,7 +75,6 @@ export default function AdminHeader() {
 
   useEffect(() => {
     let path = location.pathname.split("/").pop();
-    console.log(path);
     if (path) {
       path = path === "admin" ? "statistics" : path;
       setSelectedKeys([`admin:${path}`]);
@@ -94,12 +93,14 @@ export default function AdminHeader() {
             justifyContent: "center",
             borderBottom: `1px solid hsl(216deg 20% 95%)`,
           }}
-          to={DEFAULT_URL}
+          to={setBaseUrl("/")}
+          title={i18n("AdminPanel.logo-tooltip")}
         >
           <img
             height="28"
             width="129"
             src={setBaseUrl("/resources/img/irida_logo_dark.svg")}
+            alt={i18n("AdminPanel.logo-alt")}
           />
         </Link>
         <Menu
