@@ -7,10 +7,10 @@ import { Layout, Menu } from "antd";
  * The following import statements makes available
  * all the elements required by the component
  */
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { ADMIN } from "../routes";
+import * as path from "path";
 
 const { SubMenu } = Menu;
 const { Sider } = Layout;
@@ -68,22 +68,37 @@ export default function AdminHeader() {
 
   const onClick: MenuProps["onClick"] = ({ key }) => {
     const [, path] = key.split(":");
-    console.log(path);
-    navigate(path === "statistics" ? DEFAULT_URL : `${DEFAULT_URL}/${path}`);
-    setSelectedKeys([key]);
+    navigate(
+      key === "admin:statistics" ? DEFAULT_URL : `${DEFAULT_URL}/${path}`
+    );
   };
+
+  useEffect(() => {
+    let path = location.pathname.split("/").pop();
+    console.log(path);
+    if (path) {
+      path = path === "admin" ? "statistics" : path;
+      setSelectedKeys([`admin:${path}`]);
+    }
+  }, [location.pathname]);
 
   // The following renders the AdminPanelSideMenu component
   return (
     <Sider width={220}>
       <section>
         <Link
-          style={{ paddingLeft: 10, paddingRight: 10 }}
-          to={`${DEFAULT_URL}/${ADMIN.USERS}`}
+          style={{
+            display: "flex",
+            height: 64,
+            alignItems: "center",
+            justifyContent: "center",
+            borderBottom: `1px solid hsl(216deg 20% 95%)`,
+          }}
+          to={DEFAULT_URL}
         >
           <img
-            height="64"
-            width="200"
+            height="28"
+            width="129"
             src={setBaseUrl("/resources/img/irida_logo_dark.svg")}
           />
         </Link>
