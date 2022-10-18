@@ -8,7 +8,7 @@ interface SampleMetadataImportWizardProps {
   current: StepsProps["current"];
   status?: StepsProps["status"];
   percent?: StepsProps["percent"];
-  children?: React.ReactNode;
+  children: React.ReactNode;
 }
 
 /**
