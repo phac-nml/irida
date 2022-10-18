@@ -163,8 +163,7 @@ export const setSampleNameColumn = createAsyncThunk<
         samples: samples,
       },
     });
-    for (let i = 0; i < metadata.length; i++) {
-      const metadataItem: MetadataItem = metadata[i];
+    for (const metadataItem of metadata) {
       const index: string = metadataItem.rowKey;
       const sampleName: string = metadataItem[column];
       const foundSample: ValidateSampleNameModel | undefined =
