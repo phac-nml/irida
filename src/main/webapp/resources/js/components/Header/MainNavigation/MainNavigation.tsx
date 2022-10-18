@@ -3,7 +3,7 @@ import type { MenuProps } from "antd";
 import { Button, Layout, Menu, Space } from "antd";
 import { theme } from "../../../utilities/theme-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { AnnouncementsSubMenu } from "./components/AnnouncementsSubMenu";
+import { AnnouncementLink } from "./components/AnnouncementLink";
 import { CartLink } from "./components/CartLink";
 import { GlobalSearch } from "./components/GlobalSearch";
 import "./MainNavigation.css";
@@ -145,7 +145,7 @@ const toolsItems: MenuProps["items"] = [
   },
   {
     key: "announcements",
-    label: <AnnouncementsSubMenu />,
+    label: <AnnouncementLink />,
   },
   accountMenu,
 ];
@@ -157,7 +157,10 @@ export function MainNavigation(): JSX.Element {
         window.location.href = setBaseUrl(
           `/cart/${inGalaxy ? "galaxy" : "pipelines"}`
         );
+        return;
       case "announcements":
+        window.location.href = setBaseUrl(`/announcements/user/list`);
+        return;
     }
   };
 
