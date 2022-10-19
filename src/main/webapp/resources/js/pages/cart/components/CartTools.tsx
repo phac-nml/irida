@@ -1,4 +1,5 @@
-import { Button, Menu, Row, Space } from "antd";
+import {Button, Menu,  Row, Space} from "antd";
+import type {MenuProps} from "antd";
 import React, { lazy, Suspense } from "react";
 import {
   BrowserRouter,
@@ -32,7 +33,7 @@ const ToolsWrapper = styled(Row)`
   height: 100%;
   width: 100%;
   border-right: ${BORDERED_LIGHT};
-  background-color: ${grey1};
+  background-color: var(--grey-1);
   position: relative;
 `;
 
@@ -89,27 +90,34 @@ function CartToolsContent({ count, toggleSidebar, collapsed }) {
 
   const BASE_URL = setBaseUrl("/cart");
 
+  const menuItems : MenuProps["items"] = [
+  ...(fromGalaxy ?    [{
+      key: "cart:galaxy",
+      label: i18n("CartTools.menu.galaxy")
+    }]:[]
+) , {
+      key: "cart:pipelines",
+          label: i18n("CartTools.menu.pipelines")
+      } ];
+
+  const onClick:MenuProps["onClick"] = ({key}) => {
+      if(key === "cart:galaxy") {
+          navigate(setBaseUrl(`cart/galaxy`))
+      } else if(key === "cart:pipelines") {
+          navigate(setBaseUrl(`cart/pipelines`))
+      } else {
+          throw new Error(`Cannot find path for key: ${key}`)
+      }
+  }
+
   return (
     <ToolsWrapper>
       <MenuWrapper>
         <Menu
           mode="horizontal"
           selectedKeys={[location.pathname]}
-          style={{ borderBottom: BORDERED_LIGHT }}
-        >
-          {fromGalaxy && (
-            <Menu.Item key="/cart/galaxy">
-              <Link to={setBaseUrl(`cart/galaxy`)}>
-                {i18n("CartTools.menu.galaxy")}
-              </Link>
-            </Menu.Item>
-          )}
-          <Menu.Item key="/cart/pipelines">
-            <Link to={setBaseUrl(`cart/pipelines`)}>
-              {i18n("CartTools.menu.pipelines")}
-            </Link>
-          </Menu.Item>
-        </Menu>
+          style={{ borderBottom: BORDERED_LIGHT,minWidth: 0, flex: "auto" }}
+          items={menuItems} />
         <Space align="center" style={{ padding: `0 ${SPACE_MD}` }}>
           <AnalysesQueue />
           <Button
