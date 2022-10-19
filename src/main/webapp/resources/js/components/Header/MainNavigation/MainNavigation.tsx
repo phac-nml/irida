@@ -7,9 +7,9 @@ import { AnnouncementLink } from "./components/AnnouncementLink";
 import { CartLink } from "./components/CartLink";
 import { GlobalSearch } from "./components/GlobalSearch";
 import "./MainNavigation.css";
-import { UserOutlined } from "@ant-design/icons";
 import { accountMenu } from "../../menu/AccountMenu";
 
+// TODO: (josh | 2022-10-19) Replace this with a user context
 const isAdmin = window.TL._USER.systemRole === "ROLE_ADMIN";
 const isManager = isAdmin || window.TL._USER.systemRole === "ROLE_MANAGER";
 const isTechnician = window.TL._USER.systemRole === "ROLE_TECHNICIAN";

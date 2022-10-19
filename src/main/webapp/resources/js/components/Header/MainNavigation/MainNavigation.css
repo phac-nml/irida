@@ -62,7 +62,7 @@
 }
 
 .main-navigation .ant-menu {
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   font-weight: bold;
   min-width: 0;
   flex: auto;
@@ -73,15 +73,24 @@
 }
 
 .main-navigation .ant-menu-submenu-title svg {
-  font-size: 2rem;
+  font-size: 1.3rem;
   font-weight: bold;
 }
 
 .main-navigation .ant-menu-title-content svg {
-  font-size: 2rem;
+  font-size: 1.3rem;
   font-weight: bold;
   color: var(--grey-6);
   margin-bottom: -2px;
+}
+
+.main-navigation li.ant-menu-item.ant-menu-item-only-child:hover {
+  background-color: transparent;
+}
+
+
+.main-navigation li.ant-menu-item.ant-menu-item-only-child:hover:after {
+  border-bottom: 5px solid var(--primary-blue);
 }
 
 .main-navigation .ant-menu-item.ant-menu-item-only-child:hover svg,
