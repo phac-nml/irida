@@ -27,7 +27,7 @@ If the person you would like to share data with within IRIDA does not have a use
 
 You may create a new user account in IRIDA if you have the **Manager** or [Administrator](../../administrator/#creating-a-new-user-account) system role.
 
-After logging in to IRIDA, click the gear icon on the top right-hand side of the navbar and click **Create User**:
+After logging in to IRIDA, go to the Users listing page and click the "Add User" button at the top right of the screen.
 
 ![Create user menu.]({{ site.baseurl }}/images/tutorials/common/users/create-user-menu.png)
 
