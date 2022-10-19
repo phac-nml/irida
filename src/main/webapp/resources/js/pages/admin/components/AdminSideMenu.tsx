@@ -91,7 +91,6 @@ export default function AdminHeader() {
             height: 64,
             alignItems: "center",
             justifyContent: "center",
-            borderBottom: `1px solid hsl(216deg 20% 95%)`,
           }}
           href={setBaseUrl("/")}
           title={i18n("AdminPanel.logo-tooltip")}
