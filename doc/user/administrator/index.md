@@ -28,7 +28,7 @@ Administrative Panel Overview
 
 The administrative panel contains a side menu with a menu option for each administrative feature.
 
-The panel has a top navbar with a "Return" button to return to the main application plus a "Profile" dropdown menu for viewing the current user's account and logging out.
+The panel has a top navbar with the IRIDA logo on the left, click this to return to the main application, and an account dropdown menu for viewing the current user's account and logging out.
 
 ![Admin panel.](images/admin-panel.png)
 
@@ -215,8 +215,8 @@ To generate the new secret, click on the "Update Client" button. The new client 
 Removing a System Client
 ------------------------
 
-To remove a client, click on the "Remove" button at the end of the row, you will need to select "Ok" on a confirmation
-pop up to ensure this is what you intented to do:
+To remove a client, click the "Remove" button at the end of the row, you will need to select "Ok" on a confirmation
+pop up to ensure this is what you intended to do:
 
 ![Client details panel delete button.](images/client-details-delete-button.png)
 
