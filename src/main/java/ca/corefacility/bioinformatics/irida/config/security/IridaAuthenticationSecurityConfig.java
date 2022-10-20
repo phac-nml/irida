@@ -10,22 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.ldap.core.DirContextAdapter;
-import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 import org.springframework.security.ldap.authentication.ad.ActiveDirectoryLdapAuthenticationProvider;
-import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
-
-import java.util.Collection;
 
 /**
  * Configuration for IRIDA's spring security Authentication Provider and Context Mapper when authenticating with LDAP or ADLDAP
@@ -36,6 +28,9 @@ public class IridaAuthenticationSecurityConfig {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired(required = false)
+    private IridaUserDetailsContextMapper iridaUserDetailsContextMapper;
 
     @Value("${irida.administrative.authentication.mode}")
     private String authenticationMode;
@@ -137,32 +132,6 @@ public class IridaAuthenticationSecurityConfig {
     }
 
     /**
-     * Simple mapper for LDAP username to {@link UserRepository} user
-     * @return {@link UserDetailsContextMapper}
-     */
-    @Bean
-    public UserDetailsContextMapper userDetailsContextMapper() {
-        return new UserDetailsContextMapper() {
-            @Override
-            public UserDetails mapUserFromContext(DirContextOperations dirContextOperations, String username, Collection<? extends GrantedAuthority> collection) {
-                // Here we could use dirContextOperations to fetch other user attributes from ldap, not needed for our use case
-                try {
-                    return userRepository.loadUserByUsername(username);
-                }
-                catch(UsernameNotFoundException e) {
-                    String msg = "Username found in LDAP/ADLDAP server, but not in local database.";
-                    logger.error(msg);
-                    throw new UsernameNotFoundException(msg);
-                }
-            }
-            @Override
-            public void mapUserToContext(UserDetails userDetails, DirContextAdapter dirContextAdapter) {
-                throw new UnsupportedOperationException();
-            }
-        };
-    }
-
-    /**
      * Configures and connects to a LDAP server based on configuration options set in authentication.properties
      * @return {@link LdapAuthenticationProvider}
      */
@@ -173,7 +142,7 @@ public class IridaAuthenticationSecurityConfig {
         ldapAuthenticator.afterPropertiesSet();
 
         LdapAuthenticationProvider authenticationProvider = new LdapAuthenticationProvider(ldapAuthenticator);
-        authenticationProvider.setUserDetailsContextMapper(userDetailsContextMapper());
+        authenticationProvider.setUserDetailsContextMapper(iridaUserDetailsContextMapper);
 
         return authenticationProvider;
     }
@@ -194,8 +163,8 @@ public class IridaAuthenticationSecurityConfig {
         try {
             ldapContextSource.getReadOnlyContext();
         } catch (Exception e) {
+            // Irida should start even if the service is not working.
             logger.error("Failed to connect to LDAP - " + e.getMessage());
-            throw new IllegalStateException("Failed to connect to LDAP - " + e.getMessage(), e);
         }
         return ldapContextSource;
     }
@@ -207,7 +176,7 @@ public class IridaAuthenticationSecurityConfig {
     private AuthenticationProvider activeDirectoryLdapAuthenticationProvider() {
         ActiveDirectoryLdapAuthenticationProvider authenticationProvider =
                 new ActiveDirectoryLdapAuthenticationProvider(adLdapDomain, adLdapUrl, adLdapRootDn);
-        authenticationProvider.setUserDetailsContextMapper(userDetailsContextMapper());
+        authenticationProvider.setUserDetailsContextMapper(iridaUserDetailsContextMapper);
         authenticationProvider.setConvertSubErrorCodesToExceptions(true);
         authenticationProvider.setUseAuthenticationRequestCredentials(true);
         // Default search filter can be overridden as an optional config argument
