@@ -77,7 +77,11 @@ export const updateMetadataRestriction = createAction(
  * @type {{currentProject, samples}}
  */
 const initialState = (() => {
-  const [, id] = window.location.href.match(/projects\/(\d+)/);
+  const match = window.location.href.match(/projects\/(\d+)/);
+  if (!match) {
+    return {};
+  }
+  const [, id] = match;
   const stringData = window.sessionStorage.getItem(`share-${id}`);
 
   if (stringData === null) {
