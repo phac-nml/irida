@@ -10,7 +10,10 @@ import {
   useParams,
 } from "react-router-dom";
 import { useGetProjectDetailsQuery } from "../../../apis/projects/project";
-import { MetadataRolesProvider } from "../../../contexts/metadata-roles-context";
+import {
+  MetadataRolesProvider,
+  useMetadataRoles,
+} from "../../../contexts/metadata-roles-context";
 import { ProjectRolesProvider } from "../../../contexts/project-roles-context";
 import { grey1 } from "../../../styles/colors";
 import { SPACE_SM } from "../../../styles/spacing";
@@ -18,7 +21,6 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import SettingsNav from "./components/SettingsNav";
 import store from "./store";
 import { getProjectRoles } from "../../../apis/projects/projects";
-import { useMetadataRoles } from "../../../contexts/metadata-roles-context";
 
 const ProjectDetails = React.lazy(() => import("./components/ProjectDetails"));
 const ProjectProcessing = React.lazy(() =>
@@ -27,10 +29,6 @@ const ProjectProcessing = React.lazy(() =>
 const ProjectMembers = React.lazy(() => import("./components/ProjectMembers"));
 const ProjectGroups = React.lazy(() =>
   import("./components/ProjectUserGroups")
-);
-
-const MetadataLayout = React.lazy(() =>
-  import("./components/metadata/MetadataLayout")
 );
 
 const MetadataFields = React.lazy(() =>
@@ -87,11 +85,9 @@ const SettingsLayout = () => (
       <Route path="processing" element={<ProjectProcessing />} />
       <Route path="members" element={<ProjectMembers />} />
       <Route path="groups" element={<ProjectGroups />} />
-      <Route path="metadata" element={<MetadataLayout />}>
-        <Route path="fields" element={<MetadataFields />} />
-        <Route path="templates" element={<MetadataTemplates />} />
-        <Route path="templates/:id" element={<MetadataTemplate />} />
-      </Route>
+      <Route path="metadata-fields" element={<MetadataFields />} />
+      <Route path="metadata-templates" element={<MetadataTemplates />} />
+      <Route path="metadata-templates/:id" element={<MetadataTemplate />} />
       <Route path="associated" element={<AssociatedProjects />} />
       <Route path="references" element={<ReferenceFiles />} />
       <Route path="remote" element={<ProjectSynchronizationSettings />} />

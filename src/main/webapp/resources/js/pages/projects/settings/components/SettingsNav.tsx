@@ -47,19 +47,14 @@ export default function SettingsNav({
         key: "ps:groups",
         label: i18n("project.settings.page.groups"),
       },
+
       {
-        key: "ps:metadata",
-        label: i18n("project.settings.page.metadata"),
-        children: [
-          {
-            key: "ps:metadata/fields",
-            label: i18n("MetadataFields.title"),
-          },
-          {
-            key: "ps:metadata/templates",
-            label: i18n("ProjectMetadataTemplates.title"),
-          },
-        ],
+        key: "ps:metadata-fields",
+        label: i18n("MetadataFields.title"),
+      },
+      {
+        key: "ps:metadata-templates",
+        label: i18n("ProjectMetadataTemplates.title"),
       },
       {
         key: "ps:associated",
