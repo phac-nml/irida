@@ -51,7 +51,7 @@ const HoverItem = styled(List.Item)`
 export default function MetadataTemplates() {
   const { projectId } = useParams();
   const baseUrl = setBaseUrl(
-    `/projects/${projectId}/settings/metadata/templates`
+    `/projects/${projectId}/settings/metadata-templates`
   );
   const { data: fields } = useGetMetadataFieldsForProjectQuery(projectId);
   const [templates, setTemplates] = React.useState([]);

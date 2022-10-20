@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useGetProjectDetailsQuery } from "../../../../../apis/projects/project";
 import MetadataTemplateManager from "./MetadataTemplateManager";
 import MetadataTemplateMember from "./MetadataTemplateMember";
+import { Typography } from "antd";
 
 /**
  * React component to determine if the user can manage the project,
@@ -16,9 +17,16 @@ export default function MetadataTemplate() {
     skip: !projectId,
   });
 
-  return project.canManage ? (
-    <MetadataTemplateManager />
-  ) : (
-    <MetadataTemplateMember />
+  return (
+    <>
+      <Typography.Title level={2}>
+        {i18n("ProjectMetadataTemplates.title")}
+      </Typography.Title>
+      {project.canManage ? (
+        <MetadataTemplateManager />
+      ) : (
+        <MetadataTemplateMember />
+      )}
+    </>
   );
 }

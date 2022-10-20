@@ -346,7 +346,7 @@ The documentation for using the IRIDA Uploader is included in the package, but c
 
 Displaying IRIDA Platform Updates/Announcements
 ===============================================
-Announcements and updates can be displayed to users after they log in.
+Announcements and updates can be displayed to users after they log in, by clicking on the announcements icon in the main navigation bar.
 
 ![Announcements home page display](images/announcements-home-page.png)
 

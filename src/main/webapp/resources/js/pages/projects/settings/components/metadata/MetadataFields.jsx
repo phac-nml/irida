@@ -4,6 +4,7 @@ import { useGetProjectDetailsQuery } from "../../../../../apis/projects/project"
 
 import MetadataFieldsListManager from "./MetadataFieldsListManager";
 import MetadataFieldsListMember from "./MetadataFieldsListMember";
+import { Typography } from "antd";
 
 /**
  * React component to determine if the user can manage the project,
@@ -17,9 +18,16 @@ export default function MetadataFields() {
     skip: !projectId,
   });
 
-  return project.canManage ? (
-    <MetadataFieldsListManager />
-  ) : (
-    <MetadataFieldsListMember />
+  return (
+    <>
+      <Typography.Title level={2}>
+        {i18n("MetadataFields.title")}
+      </Typography.Title>
+      {project.canManage ? (
+        <MetadataFieldsListManager />
+      ) : (
+        <MetadataFieldsListMember />
+      )}
+    </>
   );
 }
