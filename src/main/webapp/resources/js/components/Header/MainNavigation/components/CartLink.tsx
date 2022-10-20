@@ -35,7 +35,7 @@ export function CartLink(): JSX.Element {
   }, []);
 
   return (
-    <Badge count={count} offset={[5, -5]}>
+    <Badge className="t-cart-count" count={count} offset={[5, -5]}>
       <ShoppingCartOutlined data-count={count} />
     </Badge>
   );
