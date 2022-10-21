@@ -2,7 +2,7 @@
 # Changelog
 
 ## [22.09.1]
-* [UI]: Fixed bug preventing sharing samples via the linelist page. See [PR 1382](https://github.com/phac-nml/irida/pull/1382)
+* [UI]: Fixed when sharing or exporting sample on the project sample page, and other minor bugs. See [PR 1382](https://github.com/phac-nml/irida/pull/1382)
 
 ## [22.09] - 2022/10/07
 * [Developer/UI]: Refreshed the create new user account page. See [PR 1285](https://github.com/phac-nml/irida/pull/1285)
