@@ -129,7 +129,12 @@ export function SamplesTable() {
       confirm,
       clearFilters,
     }) => (
-      <div style={{ padding: 8 }}>
+      <div
+        style={{ padding: 8 }}
+        onKeyDown={(e) => {
+          e.stopPropagation();
+        }}
+      >
         <Select
           className={filterName}
           mode="tags"
@@ -175,7 +180,13 @@ export function SamplesTable() {
       confirm,
       clearFilters,
     }) => (
-      <div style={{ padding: 8 }} className={filterName}>
+      <div
+        style={{ padding: 8 }}
+        className={filterName}
+        onKeyDown={(e) => {
+          e.stopPropagation();
+        }}
+      >
         <div style={{ marginBottom: 8, display: "block" }}>
           <RangePicker
             onChange={(dates) =>
