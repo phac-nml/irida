@@ -151,7 +151,7 @@ function CartToolsContent({ count, toggleSidebar, collapsed }) {
 export default function CartTools({ ...props }) {
   return (
     <BrowserRouter>
-      <CartToolsContent {...props} />}
+      <CartToolsContent {...props} />
     </BrowserRouter>
   );
 }
