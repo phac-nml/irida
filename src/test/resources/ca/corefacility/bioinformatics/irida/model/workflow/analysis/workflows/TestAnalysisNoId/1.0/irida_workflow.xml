@@ -27,7 +27,7 @@
 		<repository>
 			<name>sam_to_bam</name>
 			<owner>devteam</owner>
-			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<url>https://toolshed.g2.bx.psu.edu/</url>
 			<revision>8176b2575aa1</revision>
 		</repository>
 	</toolRepositories>

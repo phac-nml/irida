@@ -14,6 +14,14 @@ public class FieldUpdate {
 	 */
 	private String value;
 
+	public FieldUpdate() {
+	}
+
+	public FieldUpdate(String field, String value) {
+		this.field = field;
+		this.value = value;
+	}
+
 	public String getField() {
 		return field;
 	}

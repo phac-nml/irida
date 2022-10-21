@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.components;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -28,7 +29,7 @@ public class AddMemberButton {
 	private static WebDriverWait wait;
 
 	public static AddMemberButton getAddMemberButton(WebDriver driver) {
-		wait = new WebDriverWait(driver, 3);
+		wait = new WebDriverWait(driver, Duration.ofSeconds(3L));
 		return PageFactory.initElements(driver, AddMemberButton.class);
 	}
 

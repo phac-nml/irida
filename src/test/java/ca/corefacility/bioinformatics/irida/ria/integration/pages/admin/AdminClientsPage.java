@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.admin;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -75,7 +76,7 @@ public class AdminClientsPage extends AbstractPage {
 
 	public void createClientWithDetails(String clientId, String grantType, String redirectUrl, String readScope,
 			String writeScope) {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		addClientButton.click();
 		wait.until(ExpectedConditions.visibilityOf(createModal));
 
@@ -111,11 +112,8 @@ public class AdminClientsPage extends AbstractPage {
 
 	public String getClientSecret(String clientId) {
 		for (WebElement row : clientRows) {
-			if (row.findElement(By.className("t-client-id"))
-					.getText()
-					.equals(clientId)) {
-				return row.findElement(By.className("t-client-secret"))
-						.getText();
+			if (row.findElement(By.className("t-client-id")).getText().equals(clientId)) {
+				return row.findElement(By.className("t-client-secret")).getText();
 			}
 		}
 		return null;

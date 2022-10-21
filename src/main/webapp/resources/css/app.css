@@ -20,6 +20,7 @@
   --grey-11: #1f1f1f;
   --grey-12: #141414;
   --grey-13: #000000;
+  --primary-grey: var(--grey-6);
 
   --blue-1: #e6f7ff;
   --blue-2: #bae7ff;
@@ -31,6 +32,18 @@
   --blue-8: #0050b3;
   --blue-9: #003a8c;
   --blue-10: #002766;
+  --primary-blue: var(--blue-6);
+
+  --green-1: #f6ffed;
+  --green-2: #d9f7be;
+  --green-3: #b7eb8f;
+  --green-4: #95de64;
+  --green-5: #73d13d;
+  --green-6: #52c41a;
+  --green-7: #389e0d;
+  --green-8: #237804;
+  --green-9: #135200;
+  --green-10: #092b00;
 
   --gold-1: #fffbe6;
   --gold-2: #fff1b8;
@@ -42,6 +55,20 @@
   --gold-8: #ad6800;
   --gold-9: #874d00;
   --gold-10: #613400;
+
+  --red-1: #fff1f0;
+  --red-2: #ffccc7;
+  --red-3: #ffa39e;
+  --red-4: #ff7875;
+  --red-5: #ff4d4f;
+  --red-6: #f5222d;
+  --red-7: #cf1322;
+  --red-8: #a8071a;
+  --red-9: #820014;
+  --red-10: #5c0011;
+
+  --primary-red: var(--red-6);
+  --primary-green: var(--green-6);
 }
 
 html,
@@ -72,16 +99,19 @@ body > .ant-layout {
 .nav-tabs {
   margin-bottom: 1.3rem;
   border-bottom: 1px solid #e6e8eb !important;
+
   li {
     a {
       border: none !important;
     }
-    &.active a {
+
+    & .active a {
       font-weight: 600;
       background-color: transparent !important;
       border-bottom: 1px solid #1c2833 !important;
     }
-    &:not(.active) a {
+
+    & :not(.active) a {
       color: #717f8c !important;
       background-color: transparent !important;
     }
@@ -207,6 +237,7 @@ label.ant-checkbox-wrapper {
 .clickable {
   display: block;
   cursor: pointer;
+
   span {
     display: inline-block;
   }
@@ -229,9 +260,11 @@ h2.h2-muted {
 /*// TODO: Clean these up.*/
 #table-filter {
   padding: 0;
+
   & > div {
     padding: 20px;
   }
+
   .filter-btns > button {
     margin-top: 33px;
   }
@@ -294,10 +327,12 @@ h2.h2-muted {
 ol.start {
   counter-reset: mycounter;
 }
+
 ol.start li,
 ol.continue li {
   list-style: none;
 }
+
 ol.start li:before,
 ol.continue li:before {
   content: counter(mycounter) ". ";

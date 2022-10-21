@@ -6,6 +6,7 @@
 module.exports = {
   vendor: ["expose-loader?exposes=$,jQuery!jquery", "./resources/js/vendors"],
   login: "./resources/js/pages/LoginPage.tsx",
+  "project-spa": "./resources/js/pages/projects/ProjectSPA.tsx",
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.tsx",
   announcements: "./resources/js/pages/announcement",
@@ -24,25 +25,16 @@ module.exports = {
   "project-share": "./resources/js/pages/projects/share",
   "project-sync": "./resources/js/pages/projects/project-sync.js",
   "remote-apis": "./resources/js/pages/remote-apis/RemoteApiPage.jsx",
-  "visualizations-phylogenetics":
-    "./resources/js/pages/visualizations/phylogenetics/index.js",
-  sample: "./resources/js/pages/SamplePage.jsx",
-  "sample-files": "./resources/js/pages/samples/sample-files.js",
   "project-analyses": "./resources/js/pages/projects/project-analyses/",
   analyses: "./resources/js/pages/analyses/AnalysesPage.jsx",
   "users-list": "./resources/js/pages/user/components/UserListPage.jsx",
-  "sample-edit": "./resources/js/pages/samples/sample-edit.js",
-  "sample-files-concatenate":
-    "./resources/js/pages/samples/sample-files-concatenate.js",
   "sequencing-runs": "./resources/js/pages/sequencing-runs/index.js",
   groups: "./resources/js/pages/UserGroupsPage",
   "project-ncbi-exports": "./resources/js/pages/projects/ncbi",
-  "project-ncbi-export":
-    "./resources/js/pages/projects/ncbi-export/ncbi-export.js",
+  "project-ncbi-export": "./resources/js/pages/projects/ncbi/create",
   search: "./resources/js/pages/search/search.js",
   user: "./resources/js/pages/user",
   admin: "./resources/js/pages/admin/index.tsx",
-  "sequence-files": "./resources/js/pages/sequence-files/",
   "analyses-outputs": "./resources/js/pages/analyses/analyses-outputs/",
   password: "./resources/js/pages/password/PasswordReset.jsx",
 };

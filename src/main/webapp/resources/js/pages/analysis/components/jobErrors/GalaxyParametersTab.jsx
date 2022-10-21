@@ -9,15 +9,15 @@ import React from "react";
 import { PassTabs } from "./PassTabs";
 import { GalaxyParameters } from "./GalaxyParameters";
 
-import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+import { TabPanelContent } from "../../../../components/tabs/TabPanelContent";
 
 export default function GalaxyParametersTab({
   currActiveKey,
   updateActiveKey,
-  galaxyJobErrors
+  galaxyJobErrors,
 }) {
   return (
-    <TabPaneContent title={i18n("AnalysisError.galaxyParameters")}>
+    <TabPanelContent title={i18n("AnalysisError.galaxyParameters")}>
       {galaxyJobErrors.length > 1 ? (
         <PassTabs
           tabName="galaxy-parameters"
@@ -28,6 +28,6 @@ export default function GalaxyParametersTab({
       ) : (
         <GalaxyParameters galaxyJobErrors={galaxyJobErrors} />
       )}
-    </TabPaneContent>
+    </TabPanelContent>
   );
 }

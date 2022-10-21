@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="add-default-genome-assembly-to-sample" author="deep">
+        <addColumn tableName="sample">
+            <column name="default_genome_assembly" type="bigint(20)">
+                <constraints foreignKeyName="FK_SAMPLE_GENOME_ASSEMBLY"
+                             referencedColumnNames="id" referencedTableName="genome_assembly" />
+            </column>
+        </addColumn>
+
+        <addColumn tableName="sample_AUD">
+            <column name="default_genome_assembly" type="bigint(20)" />
+        </addColumn>
+
+    </changeSet>
+</databaseChangeLog>

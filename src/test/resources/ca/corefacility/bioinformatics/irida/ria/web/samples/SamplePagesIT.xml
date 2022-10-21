@@ -104,12 +104,12 @@
 		file_path="src/test/resources/files/sequence-files/02-2222_S1_L001_R1_001.fastq" />
 	<sequence_file id="3" created_date="2013-07-18 14:20:19.0"
 		file_path="src/test/resources/files/sequence-files/02-2222_S1_L001_R2_001.fastq" />
-	<sequence_file id="4" created_date="2013-07-18 14:20:19.0"
+	<sequence_file id="4" created_date="2013-12-31 14:20:19.0"
 		file_path="src/test/resources/files/sequence-files/03-3333_S1_L001_R1_001.fastq" />
 
 	<sequencing_object id="1" created_date="2013-07-18 14:20:19.0" />
 	<sequencing_object id="2" created_date="2013-07-18 14:20:19.0" />
-	<sequencing_object id="3" created_date="2013-07-18 14:20:19.0" />
+	<sequencing_object id="3" created_date="2013-12-31 14:20:19.0" />
 
 	<sequence_file_pair id="1" />
 	<sequence_file_pair_files pair_id="1"
@@ -127,18 +127,18 @@
 		created_date="2013-07-18 14:20:19.0" sample_id="1"
 		sequencingobject_id="2" />
 	<sample_sequencingobject id="3"
-		created_date="2013-07-18 14:20:19.0" sample_id="1"
+		created_date="2013-12-31 14:20:19.0" sample_id="1"
 		sequencingobject_id="3" />
 
 	<analysis_submission id="1" name="my analysis"
 		analysis_id="1" remote_analysis_id="1" analysis_state="COMPLETED"
 		created_date="2013-07-18 14:20:19.0" workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3"
-		submitter="1" remote_workflow_id="1" remote_input_data_id="1"
+		submitter="1" remote_workflow_id="1" remote_input_data_id="1" email_pipeline_result_error="0"
 		analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="1" DTYPE="AnalysisSubmission" automated="0" />
 	<analysis_submission id="2" name="my analysis"
 		analysis_id="2" remote_analysis_id="1" analysis_state="COMPLETED"
 		created_date="2013-07-18 14:20:19.0" workflow_id="87186c71-5c8a-4027-a9d9-b29850cebdb3"
-		submitter="1" remote_workflow_id="1" remote_input_data_id="1"
+		submitter="1" remote_workflow_id="1" remote_input_data_id="1" email_pipeline_result_error="0"
 		analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" update_samples="1" DTYPE="AnalysisSubmission" automated="0" />
 
 	<analysis_submission_sequencing_object

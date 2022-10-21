@@ -5,27 +5,27 @@
 import React from "react";
 import { BasicList } from "../../../../components/lists/BasicList";
 
-import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+import { TabPanelContent } from "../../../../components/tabs/TabPanelContent";
 
 export default function Mash({ sistrResults }) {
   function mash() {
     return [
       {
         title: i18n("AnalysisSistr.subspecies"),
-        desc: sistrResults.mash_subspecies
+        desc: sistrResults.mash_subspecies,
       },
       {
         title: i18n("AnalysisSistr.serovar"),
-        desc: sistrResults.mash_serovar
+        desc: sistrResults.mash_serovar,
       },
       {
         title: i18n("AnalysisSistr.matchingGenomeName"),
-        desc: sistrResults.mash_genome
+        desc: sistrResults.mash_genome,
       },
       {
         title: i18n("AnalysisSistr.mashDistance"),
-        desc: sistrResults.mash_distance.toString()
-      }
+        desc: sistrResults.mash_distance.toString(),
+      },
     ];
   }
 
@@ -34,8 +34,8 @@ export default function Mash({ sistrResults }) {
    * for the sistr mash data
    */
   return (
-    <TabPaneContent title={i18n("AnalysisSistr.mash")}>
+    <TabPanelContent title={i18n("AnalysisSistr.mash")}>
       <BasicList dataSource={mash()} />
-    </TabPaneContent>
+    </TabPanelContent>
   );
 }

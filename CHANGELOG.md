@@ -2,6 +2,7 @@
 # Changelog
 
 ## [Unreleased]
+## [22.09] - 2022/10/07
 * [Developer/UI]: Refreshed the create new user account page. See [PR 1285](https://github.com/phac-nml/irida/pull/1285)
 * [Developer/UI]: Added in typescript support to webpack build, moving forward all new frontend development will use typescript. See [PR 1294](https://github.com/phac-nml/irida/pull/1294) for more.
 * [Developer/UI]: Removed `styled-components` from page header and replaced with CSS variables. See [PR 1284](https://github.com/phac-nml/irida/pull/1284)
@@ -18,6 +19,20 @@
 * [Developer]: Fixed deleting a project with project subscriptions. See [PR 1348](https://github.com/phac-nml/irida/pull/1348)
 * [Developer]: Updated OAuth2 implementation to use Spring Security 5 OAuth2 libraries. See [PR 1339](https://github.com/phac-nml/irida/pull/1339)
 * [Developer]: Add identifier to project drop-downs. See [PR 1352](https://github.com/phac-nml/irida/pull/1352)
+* [UI]: Fixed issue with Biohansel pipeline being launched without selecting an option for a required parameter. See [PR 1356](https://github.com/phac-nml/irida/pull/1356)
+* [Developer]: Unified validate sample names into one endpoint. See [PR 1353](https://github.com/phac-nml/irida/pull/1353)
+* [Developer/UI]: Increased speed of Project Samples table export and added estimated coverage to Project Samples table and exports. See [PR 1360](https://github.com/phac-nml/irida/pull/1360)
+* [Workflow]: Start the Galaxy Data Library timeout when an upload begins rather than when it is first queued up. See [PR 1337](https://github.com/phac-nml/irida/pull/1337)
+* [Developer]: Added description and metadata to create & update project sample endpoints. See [PR 1359](https://github.com/phac-nml/irida/pull/1359)
+* [UI]: Fix issue where year is displayed incorrectly when the last day of the week for the date is in another year. See [PR 1364](https://github.com/phac-nml/irida/pull/1364)
+* [Developer]: Fix issue where large downloads silent failed due to async request timeout. See [PR 1368](https://github.com/phac-nml/irida/pull/1368)
+* [Developer]: Update to Spring Boot 2.7.3 and update various other dependencies. See [PR 1369](https://github.com/phac-nml/irida/pull/1369)
+* [Developer]: Fixed issue with disabled user accounts requesting a password reset. See [PR 1373](https://github.com/phac-nml/irida/pull/1373)
+* [Developer/UI]: Updated sample details view to use Ant Design and moved into a modal which can be launched from anywhere the sample name is listed. See [PR 1370](https://github.com/phac-nml/irida/pull/1370)
+* [UI]: Updated analysis results manage results page to not allow a project collaborator to view the save results back to a sample section. See [PR 1377](https://github.com/phac-nml/irida/pull/1377)
+* [UI]: Updated phylogenetic tree visualization on the analysis details using Ant Design and the new phylocanvas.gl. See [PR 1280](https://github.com/phac-nml/irida/pull/1280)
+* [Developer]: Added security scanning of GitHub pull-requests with [CodeQL](https://codeql.github.com/) (scans for code vulnerabilities) and [Grype](https://github.com/anchore/grype) (scans for Java package dependency vulnerabilities). See [PR 1282](https://github.com/phac-nml/irida/pull/1282).
+* [UI]: Updated layout of the analysis view to allow for scrollable sections. See[PR 1378](https://github.com/phac-nml/irida/pull/1378)
 * [ALL]: Added LDAP/ADLDAP support.
 
 ## [22.05.5] - 2022/06/28
@@ -117,8 +132,9 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
-[Unreleased]: https://github.com/phac-nml/irida/compare/22.05.5...HEAD
+[Unreleased]: https://github.com/phac-nml/irida/compare/22.09...HEAD
 
+[22.09]: https://github.com/phac-nml/irida/compare/22.05.5...22.09
 [22.05.5]: https://github.com/phac-nml/irida/compare/22.05.4...22.05.5
 [22.05.4]: https://github.com/phac-nml/irida/compare/22.05.3...22.05.4
 [22.05.3]: https://github.com/phac-nml/irida/compare/22.05.2...22.05.3

@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.admin;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -249,7 +250,7 @@ public class AdminPage extends AbstractPage {
 	 */
 	public void clickAdminButton() {
 		adminPanelBtn.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.urlContains("/admin"));
 	}
 
@@ -258,7 +259,7 @@ public class AdminPage extends AbstractPage {
 	 */
 	public void clickUsersSubMenu() {
 		adminUsersSubMenu.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.urlContains("/admin"));
 	}
 
@@ -267,7 +268,7 @@ public class AdminPage extends AbstractPage {
 	 */
 	public void clickUsersLink() {
 		adminUsersLink.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.urlContains("/admin/users"));
 	}
 
@@ -276,7 +277,7 @@ public class AdminPage extends AbstractPage {
 	 */
 	public void clickGroupsLink() {
 		adminGroupsLink.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.urlContains("/admin/groups"));
 	}
 
@@ -285,7 +286,7 @@ public class AdminPage extends AbstractPage {
 	 */
 	public void clickClientsLink() {
 		adminClientsLink.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.urlContains("/admin/clients"));
 	}
 
@@ -294,7 +295,7 @@ public class AdminPage extends AbstractPage {
 	 */
 	public void clickRemoteApiLink() {
 		adminRemoteApiLink.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.urlContains("/admin/remote_api"));
 	}
 
@@ -303,7 +304,7 @@ public class AdminPage extends AbstractPage {
 	 */
 	public void clickSequencingRunsLink() {
 		adminSequencingRunsLink.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.urlContains("/admin/sequencing-runs"));
 	}
 
@@ -312,7 +313,7 @@ public class AdminPage extends AbstractPage {
 	 */
 	public void clickNcbiExportsLink() {
 		adminNcbiExportsLink.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.urlContains("/admin/ncbi_exports"));
 	}
 
@@ -321,7 +322,7 @@ public class AdminPage extends AbstractPage {
 	 */
 	public void clickAnnouncementsLink() {
 		adminAnnouncementsLink.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		wait.until(ExpectedConditions.urlContains("/admin/announcements"));
 	}
 }
