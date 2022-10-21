@@ -17,7 +17,7 @@ public interface IridaFileStorageTestUtility {
 
 	public void testCleanupDownloadedLocalTemporaryFiles();
 
-	public void testWriteFile();
+	public void testWriteFile() throws IOException;
 
 	public void testGetFileName();
 
@@ -29,11 +29,10 @@ public interface IridaFileStorageTestUtility {
 	public void testIsGzipped() throws IOException;
 
 
-//	public void testAppendToFile();
-//
-//
-//	public void testGetFileExtension();
-//
+	public void testAppendToFile() throws IOException;
+
+	public void testGetFileExtension() throws IOException;
+
 
 	public void testReadAllBytes() throws IOException;
 

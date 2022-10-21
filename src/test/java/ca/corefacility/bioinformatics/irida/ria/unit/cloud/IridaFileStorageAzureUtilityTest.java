@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -13,10 +15,16 @@ import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageAzureUtilityImpl;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaTemporaryFile;
+import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
@@ -39,12 +47,20 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 	private String AZURE_PATH_TO_IMAGE_FILE = "opt/irida/data/perBaseQualityScoreChart.png";
 	private String DIRECTORY_PREFIX = "text-prefix-";
 
+	private Path PATH_TO_APPENDED_FASTQ_FILE = Paths.get("/opt/irida/data/iridatestfileappend.fastq");
+
 	private String LOCAL_RESOURCES_FASTA_FILE_PATH = "src/test/resources/files/" + FILENAME;
 	private String LOCAL_RESOURCES_IMAGE_FILE_PATH = "src/test/resources/files/perBaseQualityScoreChart.png";
 
 	// AZURE DEFAULT ACCOUNT NAME AND KEY FOR DEVELOPMENT
 	private String ACCOUNT_NAME = "devstoreaccount1";
 	private String ACCOUNT_KEY = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==";
+
+	private String AZURE_PATH_FASTQ_1 = "opt/irida/data/test_file_1.fastq";
+	private String AZURE_PATH_FASTQ_2 = "opt/irida/data/test_file_2.fastq";
+
+	private String LOCAL_RESOURCES_FASTQ_1_PATH = "src/test/resources/files/test_file_1.fastq";
+	private String LOCAL_RESOURCES_FASTQ_2_PATH = "src/test/resources/files/test_file_2.fastq";
 
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
@@ -66,13 +82,21 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 		this.iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(containerUrl, storageSharedKeyCredential,
 				containerName);
 
-		// Upload a text file
+		// Upload a fasta file
 		BlobClient blobClient = containerClient.getBlobClient(AZURE_PATH_TO_FASTA_FILE);
 		blobClient.uploadFromFile(LOCAL_RESOURCES_FASTA_FILE_PATH);
 
 		// Upload an image file
 		blobClient = containerClient.getBlobClient(AZURE_PATH_TO_IMAGE_FILE);
 		blobClient.uploadFromFile(LOCAL_RESOURCES_IMAGE_FILE_PATH);
+
+		// Upload fastq files
+		blobClient = containerClient.getBlobClient(AZURE_PATH_FASTQ_1);
+		blobClient.uploadFromFile(LOCAL_RESOURCES_FASTQ_1_PATH);
+		blobClient = containerClient.getBlobClient(AZURE_PATH_FASTQ_2);
+		blobClient.uploadFromFile(LOCAL_RESOURCES_FASTQ_2_PATH);
+
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 	}
 
 	@AfterEach
@@ -82,13 +106,21 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 
 		blobClient = containerClient.getBlobClient(AZURE_PATH_TO_IMAGE_FILE);
 		blobClient.deleteIfExists();
+
+		blobClient = containerClient.getBlobClient(AZURE_PATH_FASTQ_1);
+		blobClient.deleteIfExists();
+
+		blobClient = containerClient.getBlobClient(AZURE_PATH_FASTQ_2);
+		blobClient.deleteIfExists();
+
+		blobClient = containerClient.getBlobClient(PATH_TO_APPENDED_FASTQ_FILE.toString());
+		blobClient.deleteIfExists();
 	}
 
 	@Test
 	@Override
 	public void testGetTemporaryFile() {
-		IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(
-				PATH_TO_FASTA_FILE);
+		IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(PATH_TO_FASTA_FILE);
 		iridaTemporaryFile.getFile();
 		iridaTemporaryFile.getDirectoryPath();
 		assertNotNull(iridaTemporaryFile, "Should have got back the file from azure");
@@ -101,8 +133,8 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 	@Test
 	@Override
 	public void testGetTemporaryFileWithPrefix() {
-		IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(
-				PATH_TO_FASTA_FILE, DIRECTORY_PREFIX);
+		IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(PATH_TO_FASTA_FILE,
+				DIRECTORY_PREFIX);
 		iridaTemporaryFile.getFile();
 		iridaTemporaryFile.getDirectoryPath();
 		assertNotNull(iridaTemporaryFile, "Should have got back the file from azure");
@@ -115,8 +147,8 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 	@Test
 	@Override
 	public void testCleanupDownloadedLocalTemporaryFiles() {
-		IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(
-				PATH_TO_FASTA_FILE, DIRECTORY_PREFIX);
+		IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(PATH_TO_FASTA_FILE,
+				DIRECTORY_PREFIX);
 		iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
 		File file = new File(iridaTemporaryFile.getFile().toString());
 		assertFalse(file.isFile(), "The file should no longer exist since it was cleaned up");
@@ -124,9 +156,9 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 
 	@Test
 	@Override
-	public void testWriteFile() {
+	public void testWriteFile() throws IOException {
 		Path source = Paths.get(LOCAL_RESOURCES_FASTA_FILE_PATH);
-		Path temp;
+		Path temp = null;
 
 		/*
 		 We do this so the file in src/test/resources/files doesn't get deleted
@@ -137,15 +169,17 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 			// Create an temporary file
 			temp = Files.createTempFile("iridatestfile", ".fasta");
 			FileUtils.copyFile(source.toFile(), temp.toFile());
-		} catch (IOException e) {
-			throw new StorageException("Cannot file file");
-		}
 
-		if (temp != null) {
 			Path target = Paths.get(AZURE_PATH_TO_FASTA_FILE);
 			iridaFileStorageUtility.writeFile(temp, target, null, null);
 			BlobClient blobClient = containerClient.getBlobClient(AZURE_PATH_TO_FASTA_FILE);
 			assertTrue(blobClient.exists(), "Blob should exist in azure storage");
+		} catch (IOException e) {
+			throw new StorageException("Cannot file file");
+		} finally {
+			if (temp != null) {
+				Files.deleteIfExists(temp);
+			}
 		}
 	}
 
@@ -177,26 +211,52 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 		assertFalse(isFileGzipped, "File is a fasta file and should not be gzipped");
 	}
 
-	//
-	//	@Test
-	//	@Override
-	//	public void testAppendToFile () {
-	//
-	//	}
-	//
-	//	@Test
-	//	@Override
-	//	public void testGetFileExtension () {
-	//
-	//	}
-	//
+	@Test
+	@Override
+	public void testAppendToFile() throws IOException {
+		SequenceFile sequenceFile = new SequenceFile();
+		sequenceFile.setFile(Paths.get("/opt/irida/data/test_file_1.fastq"));
+		SequenceFile sequenceFile2 = new SequenceFile();
+		sequenceFile2.setFile(Paths.get("/opt/irida/data/test_file_2.fastq"));
+
+		Path temp = null;
+
+		try {
+			temp = Files.createTempFile("iridatestfileappend", ".fastq");
+			iridaFileStorageUtility.appendToFile(temp, sequenceFile);
+			iridaFileStorageUtility.appendToFile(temp, sequenceFile2);
+			iridaFileStorageUtility.writeFile(temp, PATH_TO_APPENDED_FASTQ_FILE, null, null);
+			Long fileSizeAppendedFile = iridaFileStorageUtility.getFileSizeBytes(PATH_TO_APPENDED_FASTQ_FILE);
+			assertEquals(4204L, fileSizeAppendedFile, "File sizes should be equal");
+		} catch (IOException e) {
+			throw new StorageException("Cannot file file");
+		} finally {
+			if (temp != null) {
+				Files.deleteIfExists(temp);
+			}
+		}
+	}
+
+	@Test
+	@Override
+	public void testGetFileExtension() throws IOException {
+		Sample sample = new Sample("Sample1");
+		List<String> fileNames = List.of("test_file_1.fastq", "test_file_2.fastq");
+		List<SampleSequencingObjectJoin> sequencingObject = TestDataFactory.generateSingleFileSequencingObjectsForSample(
+				sample, fileNames);
+		List<SequencingObject> sequencingObjects = sequencingObject.stream()
+				.map(SampleSequencingObjectJoin::getObject)
+				.collect(Collectors.toList());
+		String fileExtension = iridaFileStorageUtility.getFileExtension(sequencingObjects);
+		assertEquals(fileExtension, "fastq", "Both sequencing objects should have the same file extension");
+	}
+
 	@Test
 	@Override
 	public void testReadAllBytes() throws IOException {
 		byte[] localImageFile = Files.readAllBytes(Paths.get(LOCAL_RESOURCES_IMAGE_FILE_PATH));
 		String base64EncodedLocalImage = Base64.getEncoder().encodeToString(localImageFile);
-		byte[] azureImageFile = iridaFileStorageUtility.readAllBytes(
-				PATH_TO_IMAGE_FILE);
+		byte[] azureImageFile = iridaFileStorageUtility.readAllBytes(PATH_TO_IMAGE_FILE);
 		String base64EncodedAzureImage = Base64.getEncoder().encodeToString(azureImageFile);
 		assertEquals(base64EncodedAzureImage, base64EncodedLocalImage, "Bytes should be equal");
 	}
@@ -217,12 +277,11 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 		Long chunk1 = 20L;
 		Long chunk2 = 2L;
 
-		FileChunkResponse fileChunkResponse = iridaFileStorageUtility.readChunk(
-				PATH_TO_FASTA_FILE, seek, chunk1);
+		FileChunkResponse fileChunkResponse = iridaFileStorageUtility.readChunk(PATH_TO_FASTA_FILE, seek, chunk1);
 		assertEquals(fileChunkResponse.getText(), expectedText, "Should have read the correct chunk from the file");
 
-		fileChunkResponse = iridaFileStorageUtility.readChunk(PATH_TO_FASTA_FILE,
-				fileChunkResponse.getFilePointer(), chunk2);
+		fileChunkResponse = iridaFileStorageUtility.readChunk(PATH_TO_FASTA_FILE, fileChunkResponse.getFilePointer(),
+				chunk2);
 		assertEquals(fileChunkResponse.getText(), "CA", "Should have read the correct chunk from the file");
 	}
 
