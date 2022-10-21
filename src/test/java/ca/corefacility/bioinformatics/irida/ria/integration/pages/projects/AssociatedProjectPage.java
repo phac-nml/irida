@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.WebDriver;
@@ -30,17 +31,14 @@ public class AssociatedProjectPage extends AbstractPage {
 	}
 
 	public int getNumberOfAssociatedProject() {
-		return (int) selectionSwitches.stream()
-				.filter(elm -> elm.getAttribute("aria-checked")
-						.equals("true"))
-				.count();
+		return (int) selectionSwitches.stream().filter(elm -> elm.getAttribute("aria-checked").equals("true")).count();
 	}
 
 	public void toggleProjectAssociation(int row) {
 		WebElement btn = selectionSwitches.get(row);
 		String state = btn.getAttribute("aria-checked");
 		btn.click();
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.attributeToBe(btn, "aria-checked", state.equals("true") ? "false" : "true"));
 	}
 }

@@ -20,10 +20,9 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 	public void testShareSamplesAsManager() {
 
 		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage projectSamplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
 
 		// SHARING SINGLE SAMPLE
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
 		samplesPage.selectSampleByName("sample5fg44");
 		samplesPage.shareSamples();
 
@@ -44,7 +43,7 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(shareSamplesPage.isShareSingleSuccessDisplayed(), "Success message should be displayed");
 
 		// MOVING MULTIPLE SAMPLES
-		samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
 		samplesPage.selectSampleByName("sample5fg44");
 		samplesPage.selectSampleByName("sample554sg5");
 		samplesPage.selectSampleByName("sample5ddfg4");
@@ -72,7 +71,7 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(shareSamplesPage.getSuccessTitle(), "Successfully Moved Samples");
 
 		// MOVE SINGLE SAMPLE
-		samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
 		samplesPage.selectSampleByName("sample5fg44");
 		samplesPage.shareSamples();
 
@@ -88,7 +87,7 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(shareSamplesPage.getSuccessTitle(), "Successfully Moved 1 Sample");
 
 		// SHARING MULTIPLE SAMPLES
-		samplesPage = ProjectSamplesPage.gotToPage(driver(), 1);
+		samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
 		samplesPage.selectSampleByName("sample_5_fg_22");
 		samplesPage.selectSampleByName("sample-5-fg-22");
 		samplesPage.selectSampleByName("sample5dt5");
@@ -104,7 +103,7 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(shareSamplesPage.isSuccessResultDisplayed(), "Success result should be displayed");
 		assertEquals(shareSamplesPage.getSuccessTitle(), "Successfully Shared Samples");
 
-		samplesPage = ProjectSamplesPage.gotToPage(driver(), 2);
+		samplesPage = ProjectSamplesPage.goToPage(driver(), 2);
 		samplesPage.selectSampleByName("sample5fg44");
 		samplesPage.shareSamples();
 		assertFalse(shareSamplesPage.isNextButtonEnabled(),

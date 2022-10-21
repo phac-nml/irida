@@ -1,12 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.ria.web.models.IridaBase;
+import ca.corefacility.bioinformatics.irida.ria.web.models.BaseModel;
 
 /**
  * UI Model for a {@link SequenceFile}
  */
-public class SequenceFileModel extends IridaBase {
+public class SequenceFileModel extends BaseModel {
 	public String getFileSize() {
 		return fileSize;
 	}

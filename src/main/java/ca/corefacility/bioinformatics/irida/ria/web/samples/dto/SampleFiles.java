@@ -2,40 +2,41 @@ package ca.corefacility.bioinformatics.irida.ria.web.samples.dto;
 
 import java.util.List;
 
-import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.PairedEndSequenceFileModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.SingleEndSequenceFileModel;
 
 /**
  * Collection of different files that can be on a sample
  */
 public class SampleFiles extends AjaxResponse {
-	private final List<SequencingObject> singles;
-	private final List<SequencingObject> paired;
-	private final List<SequencingObject> fast5;
-	private final List<GenomeAssembly> assemblies;
+	private final List<SampleSequencingObjectFileModel> singles;
+	private final List<SampleSequencingObjectFileModel> paired;
+	private final List<SampleSequencingObjectFileModel> fast5;
+	private final List<SampleGenomeAssemblyFileModel> assemblies;
 
-	public SampleFiles(List<SequencingObject> singles, List<SequencingObject> paired, List<SequencingObject> fast5,
-			List<GenomeAssembly> assemblies) {
+	public SampleFiles(List<SampleSequencingObjectFileModel> singles, List<SampleSequencingObjectFileModel> paired, List<SampleSequencingObjectFileModel> fast5,
+			List<SampleGenomeAssemblyFileModel> assemblies) {
 		this.singles = singles;
 		this.paired = paired;
 		this.fast5 = fast5;
 		this.assemblies = assemblies;
 	}
 
-	public List<SequencingObject> getSingles() {
+
+	public List<SampleSequencingObjectFileModel> getSingles() {
 		return singles;
 	}
 
-	public List<SequencingObject> getPaired() {
+	public List<SampleSequencingObjectFileModel> getPaired() {
 		return paired;
 	}
 
-	public List<SequencingObject> getFast5() {
+	public List<SampleSequencingObjectFileModel> getFast5() {
 		return fast5;
 	}
 
-	public List<GenomeAssembly> getAssemblies() {
+	public List<SampleGenomeAssemblyFileModel> getAssemblies() {
 		return assemblies;
 	}
 

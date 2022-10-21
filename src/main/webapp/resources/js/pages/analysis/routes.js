@@ -10,30 +10,30 @@ export const ANALYSIS = {
   PROVENANCE: "provenance",
   OUTPUT: "output",
   TREE: "tree",
-  ERROR: "error"
+  ERROR: "error",
 };
 
 export const ERROR = {
   JOB_ERROR_INFO: "job-error-info",
   GALAXY_PARAMETERS: "galaxy-parameters",
   STANDARD_ERROR: "standard-error",
-  STANDARD_OUT: "standard-out"
+  STANDARD_OUT: "standard-out",
 };
 
 export const OUTPUT = {
-  FILE_PREVIEW: "file_preview"
+  FILE_PREVIEW: "file_preview",
 };
 
 export const SETTINGS = {
   SAMPLES: "samples",
   DETAILS: "details",
   DELETE: "delete",
-  SHARE: "share"
+  SHARE: "share",
 };
 
 export const SISTR = {
   INFO: "info",
   CGMLST: "cgmlst",
   MASH: "mash",
-  CITATION: "citation"
+  CITATION: "citation",
 };

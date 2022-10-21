@@ -1,12 +1,20 @@
 package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.security.Principal;
 import java.util.*;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
+import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,20 +22,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnalysesService;
+
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleNameCheckRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleNameCheckResponse;
+
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
-import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
  * Controller for asynchronous requests for a {@link Sample}
@@ -35,20 +40,13 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 @RestController
 @RequestMapping("/ajax/samples")
 public class SamplesAjaxController {
-	private final SampleService sampleService;
-	private final SequencingObjectService sequencingObjectService;
-	private final GenomeAssemblyService genomeAssemblyService;
 	private final UISampleService uiSampleService;
-	private final MessageSource messageSource;
+	private final UIAnalysesService uiAnalysesService;
 
 	@Autowired
-	public SamplesAjaxController(SampleService sampleService, SequencingObjectService sequencingObjectService,
-			GenomeAssemblyService genomeAssemblyService, UISampleService uiSampleService, MessageSource messageSource) {
-		this.sampleService = sampleService;
-		this.sequencingObjectService = sequencingObjectService;
-		this.genomeAssemblyService = genomeAssemblyService;
+	public SamplesAjaxController(UISampleService uiSampleService, UIAnalysesService uiAnalysesService) {
 		this.uiSampleService = uiSampleService;
-		this.messageSource = messageSource;
+		this.uiAnalysesService = uiAnalysesService;
 	}
 
 	/**
@@ -56,38 +54,16 @@ public class SamplesAjaxController {
 	 *
 	 * @param sampleId The {@link Sample} id to upload to
 	 * @param request  The current request which contains {@link MultipartFile}
-	 * @param locale   The locale for the currently logged-in user
 	 * @return {@link ResponseEntity} containing the message for the user on the status of the action
 	 */
 	@RequestMapping(value = { "/{sampleId}/sequenceFiles/upload" }, method = RequestMethod.POST)
-	public ResponseEntity<String> uploadSequenceFiles(@PathVariable Long sampleId, MultipartHttpServletRequest request,
-			Locale locale) {
-		Sample sample = sampleService.read(sampleId);
-
-		Iterator<String> fileNames = request.getFileNames();
-		List<MultipartFile> files = new ArrayList<>();
-		while (fileNames.hasNext()) {
-			files.add(request.getFile(fileNames.next()));
-		}
-
-		SamplePairer samplePairer = new SamplePairer(files);
-		final Map<String, List<MultipartFile>> pairedFiles = samplePairer.getPairedFiles(files);
-		final List<MultipartFile> singleFiles = samplePairer.getSingleFiles(files);
-
+	public ResponseEntity<List<SampleSequencingObjectFileModel>> uploadSequenceFiles(@PathVariable Long sampleId,
+			MultipartHttpServletRequest request) {
 		try {
-			for (String key : pairedFiles.keySet()) {
-				List<MultipartFile> list = pairedFiles.get(key);
-				createSequenceFilePairsInSample(list, sample);
-			}
-
-			for (MultipartFile file : singleFiles) {
-				createSequenceFileInSample(file, sample);
-			}
-
-			return ResponseEntity.ok(messageSource.getMessage("server.SampleFileUploader.success",
-					new Object[] { sample.getSampleName() }, locale));
+			return ResponseEntity.ok(uiSampleService.uploadSequenceFiles(sampleId, request));
 		} catch (IOException e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(null);
 		}
 	}
 
@@ -96,27 +72,16 @@ public class SamplesAjaxController {
 	 *
 	 * @param sampleId the ID of the sample to upload to
 	 * @param request  The current request which contains {@link MultipartFile}
-	 * @param locale   The locale for the currently logged-in user
 	 * @return {@link ResponseEntity} containing the message for the user on the status of the action
 	 */
 	@RequestMapping(value = "/{sampleId}/fast5/upload", method = RequestMethod.POST)
-	public ResponseEntity<String> uploadFast5Files(@PathVariable Long sampleId, MultipartHttpServletRequest request,
-												   Locale locale) {
-		Sample sample = sampleService.read(sampleId);
-		Iterator<String> fileNames = request.getFileNames();
-		List<MultipartFile> files = new ArrayList<>();
-		while (fileNames.hasNext()) {
-			files.add(request.getFile(fileNames.next()));
-		}
-
+	public ResponseEntity<List<SampleSequencingObjectFileModel>> uploadFast5Files(@PathVariable Long sampleId,
+			MultipartHttpServletRequest request) {
 		try {
-			for (MultipartFile file : files) {
-				createFast5FileInSample(file, sample);
-			}
-			return ResponseEntity.ok(messageSource.getMessage("server.SampleFileUploader.success",
-					new Object[]{sample.getSampleName()}, locale));
+			return ResponseEntity.ok(uiSampleService.uploadFast5Files(sampleId, request));
 		} catch (IOException e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(null);
 		}
 	}
 
@@ -125,47 +90,173 @@ public class SamplesAjaxController {
 	 *
 	 * @param sampleId the ID of the sample to upload to
 	 * @param request  The current request which contains {@link MultipartFile}
-	 * @param locale   The locale for the currently logged-in user
 	 * @return {@link ResponseEntity} containing the message for the user on the status of the action
 	 */
 	@RequestMapping(value = { "/{sampleId}/assemblies/upload" }, method = RequestMethod.POST)
-	public ResponseEntity<String> uploadAssemblies(@PathVariable Long sampleId, MultipartHttpServletRequest request,
-			Locale locale) {
-		Sample sample = sampleService.read(sampleId);
-		Iterator<String> fileNames = request.getFileNames();
-		List<MultipartFile> files = new ArrayList<>();
-		while (fileNames.hasNext()) {
-			files.add(request.getFile(fileNames.next()));
-		}
-
+	public ResponseEntity<List<SampleGenomeAssemblyFileModel>> uploadAssemblies(@PathVariable Long sampleId,
+			MultipartHttpServletRequest request) {
 		try {
-			for (MultipartFile file : files) {
-				Path temp = Files.createTempDirectory(null);
-				Path target = temp.resolve(file.getOriginalFilename());
-				file.transferTo(target.toFile());
-				UploadedAssembly uploadedAssembly = new UploadedAssembly(target);
-
-				genomeAssemblyService.createAssemblyInSample(sample, uploadedAssembly);
-			}
-			return ResponseEntity.ok()
-					.body(messageSource.getMessage("server.SampleFileUploader.success",
-							new Object[] { sample.getSampleName() }, locale));
+			return ResponseEntity.ok(uiSampleService.uploadAssemblies(sampleId, request));
 		} catch (IOException e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(messageSource.getMessage("server.SampleFileUploader.error",
-							new Object[] { sample.getSampleName() }, locale));
+					.body(null);
 		}
 	}
 
 	/**
 	 * Get {@link Sample} details for a specific sample.
 	 *
-	 * @param id {@link Long} identifier for a sample.
+	 * @param id        {@link Long} identifier for a sample.
+	 * @param projectId {@link Long} identifier for project
 	 * @return {@link SampleDetails} for the {@link Sample}
 	 */
 	@GetMapping(value = "/{id}/details", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<SampleDetails> getSampleDetails(@PathVariable Long id) {
-		return ResponseEntity.ok(uiSampleService.getSampleDetails(id));
+	public ResponseEntity<SampleDetails> getSampleDetails(@PathVariable Long id, @RequestParam Long projectId) {
+		return ResponseEntity.ok(uiSampleService.getSampleDetails(id, projectId));
+	}
+
+	/**
+	 * Get {@link Sample} metadata for a specific sample.
+	 *
+	 * @param id        {@link Long} identifier for a sample.
+	 * @param projectId {@link Long} identifier for a project
+	 * @return {@link SampleMetadata} for the {@link Sample}
+	 */
+	@GetMapping(value = "/{id}/metadata")
+	public ResponseEntity<SampleMetadata> getSampleMetadata(@PathVariable Long id, @RequestParam Long projectId) {
+		return ResponseEntity.ok(uiSampleService.getSampleMetadata(id, projectId));
+	}
+
+	/**
+	 * Update a field within the sample details.
+	 *
+	 * @param id      {@link Long} identifier for the sample
+	 * @param request {@link UpdateSampleAttributeRequest} details about which field to update
+	 * @param locale  {@link Locale} for the currently logged in user
+	 * @return {@link ResponseEntity} explaining to the user the results of the update.
+	 */
+	@PutMapping(value = "/{id}/details")
+	public ResponseEntity<AjaxResponse> updateSampleDetails(@PathVariable Long id,
+			@RequestBody UpdateSampleAttributeRequest request, Locale locale) {
+		try {
+			return ResponseEntity.ok(new AjaxSuccessResponse(uiSampleService.updateSampleDetails(id, request, locale)));
+		} catch (ConstraintViolationException e) {
+			String constraintViolations = "";
+			for (ConstraintViolation a : e.getConstraintViolations()) {
+				constraintViolations += a.getMessage() + "\n";
+			}
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(constraintViolations));
+		}
+	}
+
+	/**
+	 * Update the default sequencing object for the sample
+	 *
+	 * @param id                 {@link Long} identifier for the sample
+	 * @param sequencingObjectId The sequencing object identifier
+	 * @param locale             {@link Locale} for the currently logged in user
+	 * @return {@link ResponseEntity} explaining to the user the results of the update.
+	 */
+	@PutMapping(value = "/{id}/default-sequencing-object")
+	public ResponseEntity<AjaxResponse> updateDefaultSequencingObjectForSample(@PathVariable Long id,
+			@RequestParam Long sequencingObjectId, Locale locale) {
+		try {
+			return ResponseEntity.ok(new AjaxSuccessResponse(
+					uiSampleService.updateDefaultSequencingObjectForSample(id, sequencingObjectId, locale)));
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(e.getMessage()));
+		}
+	}
+
+	/**
+	 * Update the default genome assembly for the sample
+	 *
+	 * @param id                 {@link Long} identifier for the sample
+	 * @param genomeAssemblyId The genome assembly identifier
+	 * @param locale             {@link Locale} for the currently logged in user
+	 * @return {@link ResponseEntity} explaining to the user the results of the update.
+	 */
+	@PutMapping(value = "/{id}/default-genome-assembly")
+	public ResponseEntity<AjaxResponse> updateDefaultGenomeAssemblyForSample(@PathVariable Long id,
+			@RequestParam Long genomeAssemblyId, Locale locale) {
+		try {
+			return ResponseEntity.ok(new AjaxSuccessResponse(
+					uiSampleService.updateDefaultGenomeAssemblyForSample(id, genomeAssemblyId, locale)));
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(e.getMessage()));
+		}
+	}
+
+	/**
+	 * Get analyses for sample
+	 *
+	 * @param sampleId  Identifier for a sample
+	 * @param principal The currently logged on user
+	 * @param locale    User's locale
+	 * @return {@link ResponseEntity} containing a list of analyses for the sample
+	 */
+	@GetMapping("/{sampleId}/analyses")
+	public ResponseEntity<List<SampleAnalyses>> getSampleAnalyses(@PathVariable Long sampleId, Principal principal,
+			Locale locale) {
+		try {
+			return ResponseEntity.ok(uiAnalysesService.getSampleAnalyses(sampleId, principal, locale));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(null);
+		}
+	}
+
+	/**
+	 * Add a metadata field and entry to {@link Sample}
+	 *
+	 * @param id                       {@link Long} identifier for the sample
+	 * @param addSampleMetadataRequest DTO containing sample metadata to add params
+	 * @param locale                   {@link Locale} for the currently logged in user
+	 * @return {@link ResponseEntity} explaining to the user the results of the addition.
+	 */
+	@PostMapping(value = "/{id}/metadata")
+	public ResponseEntity<AddSampleMetadataResponse> addSampleMetadata(@PathVariable Long id,
+			@RequestBody AddSampleMetadataRequest addSampleMetadataRequest, Locale locale) {
+		return ResponseEntity.ok(uiSampleService.addSampleMetadata(id, addSampleMetadataRequest, locale));
+	}
+
+	/**
+	 * Remove metadata field and entry from {@link Sample}
+	 *
+	 * @param projectId       The project identifier
+	 * @param metadataFieldId   The metadata field id
+	 * @param metadataEntryId The metadata entry identifier
+	 * @param locale          {@link Locale} for the currently logged in user
+	 * @return {@link ResponseEntity} explaining to the user the results of the deletion.
+	 */
+	@DeleteMapping(value = "/metadata")
+	public ResponseEntity<AjaxResponse> removeSampleMetadata(@RequestParam Long projectId,
+			@RequestParam Long metadataFieldId, @RequestParam Long metadataEntryId, Locale locale) {
+		return ResponseEntity.ok(new AjaxSuccessResponse(
+				uiSampleService.removeSampleMetadata(projectId, metadataFieldId, metadataEntryId, locale)));
+	}
+
+	/**
+	 * Update a metadata field entry for {@link Sample}
+	 *
+	 * @param id                          The sample identifier
+	 * @param updateSampleMetadataRequest DTO containing sample metadata update params
+	 * @param locale                      {@link Locale} for the currently logged in user
+	 * @return {@link ResponseEntity} explaining to the user the results of the update.
+	 */
+	@PutMapping(value = "/{id}/metadata")
+	public ResponseEntity<AjaxResponse> updateSampleMetadata(@PathVariable Long id,
+			@RequestBody UpdateSampleMetadataRequest updateSampleMetadataRequest, Locale locale) {
+		try {
+			return ResponseEntity.ok(new AjaxSuccessResponse(
+					uiSampleService.updateSampleMetadata(id, updateSampleMetadataRequest, locale)));
+		} catch (EntityExistsException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new AjaxErrorResponse(e.getMessage()));
+		}
 	}
 
 	/**
@@ -182,65 +273,77 @@ public class SamplesAjaxController {
 	}
 
 	/**
-	 * Check if a list of sample names exist within a project
+
+	 * Get updated sample sequencing objects for given sequencing object ids
 	 *
-	 * @param request {@link SampleNameCheckRequest} containing the project id and sample names
-	 * @return {@link SampleNameCheckResponse} containing list of valid and invalid sample names
+	 * @param id                  Identifier for a sample
+	 * @param sequencingObjectIds Identifiers for updated sequencing objects to get
+	 * @param projectId           Identifier for the project the sample belongs to
+	 * @return {@link ResponseEntity} list of {@link SampleFiles} objects
 	 */
-	@PostMapping("/validate")
-	public SampleNameCheckResponse checkSampleNames(@RequestBody SampleNameCheckRequest request) {
-		return uiSampleService.checkSampleNames(request);
+	@GetMapping("/{id}/updated-sequencing-objects")
+	public ResponseEntity<SampleFiles> getUpdatedSequencingObjects(@PathVariable Long id,
+			@RequestParam(value = "sequencingObjectIds") List<Long> sequencingObjectIds,
+			@RequestParam(required = false) Long projectId) {
+		return ResponseEntity.ok(uiSampleService.getUpdatedSequencingObjects(id, sequencingObjectIds, projectId));
 	}
 
 	/**
-	 * Create {@link SequenceFile}'s then add them as {@link SequenceFilePair} to a {@link Sample}
+	 * Remove a sequencing object or genome assembly linked to a {@link Sample}
 	 *
-	 * @param pair   {@link List} of {@link MultipartFile}
-	 * @param sample {@link Sample} to add the pair to.
-	 * @throws IOException Exception thrown if there is an error handling the file.
+	 * @param id           Identifier for a sample
+	 * @param fileObjectId Identifier for the genome assembly or sequencing object
+	 * @param fileType     The type of file (sequencing object or genome assembly)
+	 * @param locale       {@link Locale} for the currently logged in user
+	 * @return {@link ResponseEntity} explaining to the user the results of the delete.
 	 */
-	private void createSequenceFilePairsInSample(List<MultipartFile> pair, Sample sample) throws IOException {
-		SequenceFile firstFile = createSequenceFile(pair.get(0));
-		SequenceFile secondFile = createSequenceFile(pair.get(1));
-		sequencingObjectService.createSequencingObjectInSample(new SequenceFilePair(firstFile, secondFile), sample);
+	@DeleteMapping("/{id}/files")
+	public ResponseEntity<AjaxResponse> deleteFilesFromSample(@PathVariable Long id, @RequestParam Long fileObjectId,
+			@RequestParam String fileType, Locale locale) {
+		if (fileType.equals("sequencingObject")) {
+			return ResponseEntity.ok(new AjaxSuccessResponse(
+					uiSampleService.deleteSequencingObjectFromSample(id, fileObjectId, locale)));
+		} else {
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(uiSampleService.deleteGenomeAssemblyFromSample(id, fileObjectId, locale)));
+		}
 	}
 
 	/**
-	 * Create a {@link SequenceFile} and add it to a {@link Sample}
+	 * Download a GenomeAssembly file
 	 *
-	 * @param file   {@link MultipartFile}
-	 * @param sample {@link Sample} to add the file to.
-	 * @throws IOException Exception thrown if there is an error handling the file.
+	 * @param sampleId         Identifier for a sample
+	 * @param genomeAssemblyId Identifier for the genome assembly
+	 * @param response         {@link HttpServletResponse}
+	 * @throws IOException if the file cannot be read
 	 */
-	private void createSequenceFileInSample(MultipartFile file, Sample sample) throws IOException {
-		SequenceFile sequenceFile = createSequenceFile(file);
-		sequencingObjectService.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample);
+	@GetMapping("/{sampleId}/assembly/download")
+	public void downloadAssembly(@PathVariable Long sampleId, @RequestParam Long genomeAssemblyId,
+			HttpServletResponse response) throws IOException {
+		uiSampleService.downloadAssembly(sampleId, genomeAssemblyId, response);
 	}
 
 	/**
-	 * Create a {@link Fast5Object} and add it to a {@link Sample}
+	 * Concatenate a collection of {@link SequencingObject}s
 	 *
-	 * @param file   {@link MultipartFile}
-	 * @param sample {@link Sample} to add the file to.
-	 * @throws IOException Exception thrown if there is an error handling the file.
+	 * @param sampleId          the id of the {@link Sample} to concatenate in
+	 * @param sequenceObjectIds the {@link SequencingObject} ids
+	 * @param newFileName       base of the new filename to create
+	 * @param removeOriginals   boolean whether to remove the original files
+	 * @return {@link ResponseEntity} with the new concatenated sequencing object
 	 */
-	private void createFast5FileInSample(MultipartFile file, Sample sample) throws IOException {
-		SequenceFile sequenceFile = createSequenceFile(file);
-		sequencingObjectService.createSequencingObjectInSample(new Fast5Object(sequenceFile), sample);
+	@PostMapping(value = "/{sampleId}/files/concatenate")
+	public ResponseEntity<List<SampleSequencingObjectFileModel>> concatenateSequenceFiles(@PathVariable Long sampleId,
+			@RequestParam(name = "sequencingObjectIds") Set<Long> sequenceObjectIds,
+			@RequestParam(name = "newFileName") String newFileName,
+			@RequestParam(name = "removeOriginals", defaultValue = "false", required = false) boolean removeOriginals) {
+		try {
+			return ResponseEntity.ok(uiSampleService.concatenateSequenceFiles(sampleId, sequenceObjectIds, newFileName,
+					removeOriginals));
+		} catch (ConcatenateException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(null);
+		}
 	}
 
-	/**
-	 * Private method to move the sequence file into the correct directory and
-	 * create the {@link SequenceFile} object.
-	 *
-	 * @param file {@link MultipartFile} sequence file uploaded.
-	 * @return {@link SequenceFile}
-	 * @throws IOException Exception thrown if there is an error handling the file.
-	 */
-	private SequenceFile createSequenceFile(MultipartFile file) throws IOException {
-		Path temp = Files.createTempDirectory(null);
-		Path target = temp.resolve(file.getOriginalFilename());
-		file.transferTo(target.toFile());
-		return new SequenceFile(target);
-	}
 }

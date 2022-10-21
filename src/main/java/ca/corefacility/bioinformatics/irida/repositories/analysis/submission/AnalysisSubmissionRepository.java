@@ -93,7 +93,18 @@ public interface AnalysisSubmissionRepository extends IridaJpaRepository<Analysi
 	 * @return Set of {@link AnalysisSubmission}
 	 */
 	@Query("FROM AnalysisSubmission s WHERE ?1 IN elements(s.inputFiles)")
-	public Set<AnalysisSubmission> findAnalysisSubmissionsForSequecingObject(SequencingObject object);
+	public Set<AnalysisSubmission> findAnalysisSubmissionsForSequencingObject(SequencingObject object);
+
+	/**
+	 * Get the Set of {@link AnalysisSubmission}s which use a given
+	 * {@link SequencingObject} for a given {@link User}
+	 *
+	 * @param object The {@link SequencingObject} to get submissions for
+	 * @param user The user to get submissions for
+	 * @return Set of {@link AnalysisSubmission}
+	 */
+	@Query("FROM AnalysisSubmission s WHERE ?1 IN elements(s.inputFiles) AND s.submitter = ?2")
+	public Set<AnalysisSubmission> findAnalysisSubmissionsForSequencingObjectBySubmitter(SequencingObject object, User user);
 
 	/**
 	 * Get the Set of {@link AnalysisSubmission}s making use of the given {@link ReferenceFile}.

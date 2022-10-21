@@ -70,7 +70,12 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
         clientRepo = applicationContext.getBean(IridaClientDetailsRepository.class);
         try { // Only gets the context mapper if we are in ldap mode
             iridaUserDetailsContextMapper = applicationContext.getBean(IridaUserDetailsContextMapper.class);
-        } catch (NoSuchBeanDefinitionException ignored){}
+        } catch (NoSuchBeanDefinitionException exception){
+            if (isLdapMode()){
+                // Bean does not exist but ldap mode is enabled, It is likely the ldap/adldap settings are not correct
+                throw exception;
+            } // else ignore
+        }
     }
     
 	/**

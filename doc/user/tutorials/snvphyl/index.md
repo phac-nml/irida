@@ -101,7 +101,8 @@ It will take a while the SNVPhyl analysis pipeline to complete.
 Viewing the Results
 ===================
 
-Once the pipeline is complete, you will see the generated phylogenetic tree within your browser.
+
+Once the pipeline is complete, you will see the generated phylogenetic tree within your browser. To take full advantage of the phylogenetic tree viewer see [Advanced Visualizations].
 
 ![snvphyl-results][]
 
@@ -167,21 +168,10 @@ To delete an analysis, please select the **Delete Analysis** tab.
 ![snvphyl-settings-delete]
 
 
-
-Advanced SNVPhyl Visualizations
-===============================
-
-SNVPhyl Analyses can be combined with metadata from the sample the were run to get a more complete picture.  For more information see  [Advanced Visualizations].
-
-To view the advanced visualization, click the **Phylogenetic Tree** tab and click the **View Advanced Visualization** button on the **Tree Preview** tab.
-
-![snvphyl-results-adv-tree]
-
-
 [add-to-cart]: images/add-to-cart.png
 [Advanced Visualizations]: ../../../user/user/analysis-visualizations
 [analysis-in-progress]: images/analysis-in-progress.png
-[cart-button]: images/cart-button.png
+[cart-button]: ../../../images/tutorials/common/pipelines/cart-button.png
 [launch-button]: ../../../images/tutorials/common/pipelines/ready-to-launch-button.png
 [monitor-analyses]: images/monitor-analyses.png
 [pipeline-launched]: images/pipeline-launched.png
@@ -197,7 +187,6 @@ To view the advanced visualization, click the **Phylogenetic Tree** tab and clic
 [snvphyl-provenance]: images/snvphyl-provenance.png
 [snvphyl-provenance-tools]: images/snvphyl-provenance-tools.png
 [snvphyl-results]: images/snvphyl-results.png
-[snvphyl-results-adv-tree]: images/snvphyl-results-adv-tree.png
 [snvphyl-samples]: images/snvphyl-samples.png
 [snvphyl-settings]: images/snvphyl-settings.png
 [snvphyl-settings-delete]: images/snvphyl-settings-delete.png

@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -39,8 +40,7 @@ public class ProjectUserGroupsPage extends AbstractPage {
 	}
 
 	public boolean isAddUserGroupButtonVisible() {
-		return driver.findElements(By.className("t-add-user-group-btn"))
-				.size() == 1;
+		return driver.findElements(By.className("t-add-user-group-btn")).size() == 1;
 	}
 
 	public int getNumberOfUserGroups() {
@@ -48,7 +48,7 @@ public class ProjectUserGroupsPage extends AbstractPage {
 	}
 
 	public void removeUserGroups(int row) {
-		WebDriverWait wait = new WebDriverWait(driver, 4);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 		removeButtons.get(row).click();
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-remove-confirm")));
 		WebElement removeConfirm = driver.findElement(By.className("t-remove-confirm"));
@@ -57,7 +57,7 @@ public class ProjectUserGroupsPage extends AbstractPage {
 	}
 
 	public void addUserGroup(String name) {
-		WebDriverWait wait = new WebDriverWait(driver, 2);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		addUserGroupBtn.click();
 		wait.until(ExpectedConditions.visibilityOf(addUserGroupModal));
 		WebElement input = driver.switchTo().activeElement();
@@ -70,4 +70,3 @@ public class ProjectUserGroupsPage extends AbstractPage {
 		wait.until(ExpectedConditions.invisibilityOf(addUserGroupModal));
 	}
 }
-

@@ -164,4 +164,169 @@
     <metadata_entry id="18" value="bloody stool" type="text" sample_id="19" field_id="3"/>
     <metadata_entry id="19" value="AB-1003" type="text" sample_id="19" field_id="4"/>
 
+    <analysis id="1" createdDate="2014-02-06 12:01:02"
+              executionManagerAnalysisId="Whole Genome Phylogenomics Pipeline"
+              analysis_type="PHYLOGENOMICS" />
+    <analysis id="2" createdDate="2014-02-06 12:01:02"
+              executionManagerAnalysisId="SISTR Typing Pipeline"
+              analysis_type="SISTR_TYPING" />
+    <analysis id="3" createdDate="2014-02-06 12:01:02"
+              executionManagerAnalysisId="Assembly and Annotation Pipeline"
+              analysis_type="ASSEMBLY_ANNOTATIONSISTR_TYPING" />
+    <analysis id="4" createdDate="2014-02-06 12:01:02"
+              executionManagerAnalysisId="BIO_HANSEL"
+              analysis_type="BIO_HANSEL" />
+    <analysis id="5" createdDate="2014-02-06 12:01:02"
+              executionManagerAnalysisId="REFSEQ_MASHER"
+              analysis_type="REFSEQ_MASHER" />
+
+    <analysis_fastqc id="1"
+                     encoding="Sanger / Illumina 1.9"
+                     fileType="Conventional base calls"
+                     filteredSequences="0"
+                     gcContent="30"
+                     maxLength="251"
+                     minLength="184"
+                     totalBases="937"
+                     totalSequences="4" fastqcVersion="1.0.0"/>
+
+
+    <sequence_file id="1" created_date="2013-07-18 14:20:19.0"
+                   file_path="src/test/resources/files/test_file.fastq" fastqc_analysis_id="1" />
+    <sequence_file id="2" created_date="2013-07-18 14:20:19.0"
+                   file_path="src/test/resources/files/test_file_1.fastq" />
+    <sequence_file id="3" created_date="2013-07-18 14:20:19.0"
+                   file_path="src/test/resources/files/test_file_2.fastq" />
+    <sequence_file id="4" created_date="2013-07-18 14:20:19.0"
+                   modified_date="2013-07-18 14:20:19.0"
+                   file_path="src/test/resources/files/sequence-files/01-1111_S1_L001_R1_001.fastq"
+                    />
+    <sequence_file id="5" created_date="2014-07-30 08:24:34"
+                   modified_date="2014-08-06 10:01:03"
+                   file_path="src/test/resources/files/sequence-files/02-2222_S1_L001_R2_001.fastq" />
+    <sequence_file id="6" created_date="2013-07-18 14:20:19.0"
+                   modified_date="2013-07-18 14:20:19.0"
+                   file_path="src/test/resources/files/sequence-files/04-4444_S1_L001_R1_001.fastq"
+                    />
+    <sequence_file id="7" created_date="2014-07-30 08:24:34"
+                   modified_date="2014-08-06 10:01:03"
+                   file_path="src/test/resources/files/sequence-files/04-4444_S1_L001_R2_001.fastq" />
+
+    <genome_assembly id="1" created_date="2014-07-30 08:24:34" />
+    <genome_assembly id="2" created_date="2014-07-30 08:24:34" />
+
+    <uploaded_assembly id="1" file_path="src/test/resources/files/test_file.fasta" />
+    <uploaded_assembly id="2" file_path="src/test/resources/files/test_file_2.fasta" />
+
+    <sequencing_object id="1" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+    <sequencing_object id="2" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+    <sequencing_object id="3" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+    <sequencing_object id="4" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+    <sequencing_object id="5" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+
+    <sequencing_object id="6" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+    <sequencing_object id="7" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+    <sequencing_object id="8" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+    <sequencing_object id="9" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+    <sequencing_object id="10" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+    <sequencing_object id="11" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+    <sequencing_object id="12" created_date="2013-07-18 14:20:19.0" processing_state="FINISHED" />
+
+    <sequence_file_single_end id="1" file_id="1" />
+    <sequence_file_single_end id="2" file_id="2" />
+    <sequence_file_single_end id="3" file_id="3" />
+
+    <sequence_file_pair id="4" />
+    <sequence_file_pair_files pair_id="4" files_id="4" />
+    <sequence_file_pair_files pair_id="4" files_id="5" />
+
+    <sequence_file_pair id="5" />
+    <sequence_file_pair_files pair_id="5" files_id="6" />
+    <sequence_file_pair_files pair_id="5" files_id="7" />
+
+    <reference_file id="1" createdDate="2013-07-18 14:20:19.0"
+                    modifiedDate="2013-07-18 14:20:19.0" filePath="/tmp/file.fasta"
+                    fileRevisionNumber="1"/>
+
+    <sample_sequencingobject id="1" created_date="2013-07-18 14:20:19.0"
+                             sample_id="19" sequencingobject_id="1" />
+    <sample_sequencingobject id="2" created_date="2013-07-18 14:20:19.0"
+                             sample_id="19" sequencingobject_id="2" />
+    <sample_sequencingobject id="3" created_date="2013-07-18 14:20:19.0"
+                             sample_id="19" sequencingobject_id="3" />
+    <sample_sequencingobject id="4" created_date="2013-07-18 14:20:19.0"
+                             sample_id="19" sequencingobject_id="4" />
+    <sample_sequencingobject id="5" created_date="2013-07-18 14:20:19.0"
+                             sample_id="19" sequencingobject_id="5" />
+
+    <sample_genome_assembly id="1" sample_id="19" genome_assembly_id="1" createdDate="2014-07-30 08:24:34" />
+    <sample_genome_assembly id="2" sample_id="19" genome_assembly_id="2" createdDate="2014-07-30 08:24:34" />
+
+    <analysis_submission id="1" name="another analysis" remote_analysis_id="1" analysis_id="1" reference_file_id="1"
+                         analysis_state="SUBMITTING" created_date="2013-07-18 14:20:19"
+                         workflow_id="b7c8b437-3c41-485e-92e5-72b67e37959f" submitter="2"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"
+                         email_pipeline_result_error="0"/>
+    <analysis_submission id="2" analysis_state="PREPARING" created_date="2013-09-06 10:01:02"
+                         name="My Pretend Submission" reference_file_id="1"
+                         analysis_id="2" workflow_id="92ecf046-ee09-4271-b849-7a82625d6b60" submitter="4"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"
+                         email_pipeline_result_error="0"/>
+    <analysis_submission id="3" analysis_state="SUBMITTING" created_date="2013-10-06 10:01:02" reference_file_id="1"
+                         name="My Submitted Submission" analysis_id="3"
+                         workflow_id="f73cbfd2-5478-4c19-95f9-690f3712f84d" submitter="4"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"
+                         email_pipeline_result_error="0"/>
+    <analysis_submission id="4" analysis_state="COMPLETED" created_date="2013-10-06 10:01:02"
+                         name="My Completed Submission"
+                         analysis_id="4" workflow_id="0e8738e6-2aeb-4627-9d6e-15ae32f21c44" submitter="4"
+                         analysis_cleaned_state="NOT_CLEANED" reference_file_id="1" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"
+                         email_pipeline_result_error="0"/>
+    <analysis_submission id="5" analysis_state="FINISHED_RUNNING" created_date="2013-12-06 10:01:02"
+                         reference_file_id="1"
+                         name="My Finished Running Submission" analysis_id="5"
+                         workflow_id="1317f2dc-191f-48d0-a54c-2fccd3f9ab53" submitter="4"
+                         analysis_cleaned_state="NOT_CLEANED" priority="MEDIUM" DTYPE="AnalysisSubmission" automated="0"
+                         email_pipeline_result_error="0"/>
+
+    <analysis_submission_sequencing_object analysis_submission_id="1" sequencing_object_id="1" />
+    <analysis_submission_sequencing_object analysis_submission_id="2" sequencing_object_id="2" />
+    <analysis_submission_sequencing_object analysis_submission_id="3" sequencing_object_id="3" />
+    <analysis_submission_sequencing_object analysis_submission_id="4" sequencing_object_id="4" />
+    <analysis_submission_sequencing_object analysis_submission_id="5" sequencing_object_id="5" />
+
+    <overrepresented_sequence id="1" createdDate='2014-07-30 08:24:36' overrepresentedSequenceCount='1'
+                              percentage="25.00" possibleSource="No Hit"
+                              sequence='CTTCTAAATCACGCTGATGCAAAGAACTGATAAAACAATTGTGATTTTCT'/>
+    <overrepresented_sequence id="2" createdDate='2014-07-30 08:24:36' overrepresentedSequenceCount='1'
+                              percentage="25.00" possibleSource="No Hit"
+                              sequence='CTTCTAAATCACGCTGATGCAAAGAACTGATAAAACAATTGTGATTTTCT'/>
+    <overrepresented_sequence id="3" createdDate='2014-07-30 08:24:36' overrepresentedSequenceCount='1'
+                              percentage="25.00" possibleSource="No Hit"
+                              sequence='CTTCTAAATCACGCTGATGCAAAGAACTGATAAAACAATTGTGATTTTCT'/>
+    <overrepresented_sequence id="4" createdDate='2014-07-30 08:24:36' overrepresentedSequenceCount='1'
+                              percentage="25.00" possibleSource="No Hit"
+                              sequence='CTTCTAAATCACGCTGATGCAAAGAACTGATAAAACAATTGTGATTTTCT'/>
+
+
+    <analysis_output_file id="1" created_date="2014-03-06 10:01:02"
+                          execution_manager_file_id="perBaseQualityScoreChart.png"
+                          file_path="src/test/resources/files/perBaseQualityScoreChart.png"/>
+    <analysis_output_file id="2" created_date="2014-03-06 10:01:02"
+                          execution_manager_file_id="perSequenceQualityScoreChart.png"
+                          file_path="src/test/resources/files/perSequenceQualityScoreChart.png"/>
+    <analysis_output_file id="3" created_date="2014-03-06 10:01:02"
+                          execution_manager_file_id="duplicationLevelChart.png"
+                          file_path="src/test/resources/files/duplicationLevelChart.png"/>
+    <analysis_output_file_map analysis_id="1" analysisOutputFilesMap_id="1"
+                              analysis_output_file_key="perBaseQualityScoreChart"/>
+    <analysis_output_file_map analysis_id="1" analysisOutputFilesMap_id="2"
+                              analysis_output_file_key="perSequenceQualityScoreChart"/>
+    <analysis_output_file_map analysis_id="1" analysisOutputFilesMap_id="3"
+                              analysis_output_file_key="duplicationLevelChart"/>
+
+    <analysis_fastqc_overrepresented_sequence analysis_fastqc_id="1" overrepresentedSequences_id="1"/>
+    <analysis_fastqc_overrepresented_sequence analysis_fastqc_id="1" overrepresentedSequences_id="2"/>
+    <analysis_fastqc_overrepresented_sequence analysis_fastqc_id="1" overrepresentedSequences_id="3"/>
+    <analysis_fastqc_overrepresented_sequence analysis_fastqc_id="1" overrepresentedSequences_id="4"/>
 </dataset>

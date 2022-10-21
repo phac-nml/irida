@@ -210,9 +210,9 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
     private Map<String, String> getLdapFields(DirContextOperations dirContextOperations) {
         Map<String, String> map = new HashMap<>();
         map.put(iridaUserFieldEmail, getAttribute(dirContextOperations, userInfoEmail, true, ""));
-        map.put(iridaUserFieldFirstName, getAttribute(dirContextOperations, userInfoFirstName, false, "FirstName"));
-        map.put(iridaUserFieldLastName, getAttribute(dirContextOperations, userInfoLastName, false, "LastName"));
-        map.put(iridaUserFieldPhoneNumber, getAttribute(dirContextOperations, userInfoPhoneNumber, false, "0000"));
+        map.put(iridaUserFieldFirstName, getAttribute(dirContextOperations, userInfoFirstName, true, ""));
+        map.put(iridaUserFieldLastName, getAttribute(dirContextOperations, userInfoLastName, true, ""));
+        map.put(iridaUserFieldPhoneNumber, getAttribute(dirContextOperations, userInfoPhoneNumber, false, null));
         return map;
     }
 
