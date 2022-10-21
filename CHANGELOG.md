@@ -1,7 +1,7 @@
 
 # Changelog
 
-## [22.09.1]
+## [22.09.1] - 2022/10/21
 * [UI]: Fixed when sharing or exporting sample on the project sample page, and other minor bugs. See [PR 1382](https://github.com/phac-nml/irida/pull/1382)
 
 ## [22.09] - 2022/10/07
@@ -133,6 +133,7 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
+[22.09.1]: https://github.com/phac-nml/irida/compare/22.09...22.09.1
 [22.09]: https://github.com/phac-nml/irida/compare/22.05.5...22.09
 [22.05.5]: https://github.com/phac-nml/irida/compare/22.05.4...22.05.5
 [22.05.4]: https://github.com/phac-nml/irida/compare/22.05.3...22.05.4
