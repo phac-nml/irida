@@ -150,6 +150,10 @@ const toolsItems: MenuProps["items"] = [
   accountMenu,
 ];
 
+/**
+ * React component for displaying the main navigation on IRIDA
+ * @constructor
+ */
 export function MainNavigation(): JSX.Element {
   const onClick: MenuProps["onClick"] = ({ key }) => {
     switch (key) {
