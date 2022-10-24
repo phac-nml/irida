@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
-import java.time.Duration;
-import java.util.List;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -12,7 +10,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.time.Duration;
+import java.util.List;
 
 public class ProjectMetadataPage extends AbstractPage {
 	@FindBy(className = "t-m-field-link")
@@ -47,7 +46,7 @@ public class ProjectMetadataPage extends AbstractPage {
 	}
 
 	public static ProjectMetadataPage goTo(WebDriver driver) {
-		get(driver, "projects/1/settings/metadata/fields");
+		get(driver, "projects/1/settings/metadata-fields");
 		return PageFactory.initElements(driver, ProjectMetadataPage.class);
 	}
 
