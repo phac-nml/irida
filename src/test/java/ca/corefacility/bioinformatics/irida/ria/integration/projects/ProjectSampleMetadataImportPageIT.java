@@ -48,9 +48,7 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		 */
 		List<Double> values = ImmutableList.of(2.222222, 2.3666, 1.5689, 63.89756, 59.6666)
 				.stream()
-				.map(num -> BigDecimal.valueOf(num)
-						.setScale(2, RoundingMode.HALF_UP)
-						.doubleValue())
+				.map(num -> BigDecimal.valueOf(num).setScale(2, RoundingMode.HALF_UP).doubleValue())
 				.collect(Collectors.toList());
 		List<String> formattedNumbers = page.getValuesForColumnByName("Numbers");
 		formattedNumbers.forEach(num -> assertTrue(values.contains(Double.valueOf(num)),
@@ -71,19 +69,20 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 	public void testSuccessfulUpload() {
 		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
 		page.uploadMetadataFile(GOOD_FILE_PATH);
-		assertEquals("NLEP #", page.getValueForSelectedSampleNameColumn(),
-				"Has incorrect pre-populated sample name header");
-		page.goToReviewPage();
+		//		assertEquals("NLEP #", page.getValueForSelectedSampleNameColumn(),
+		//				"Has incorrect pre-populated sample name header");
+		//		page.goToReviewPage();
+		page.selectSampleNameColumn();
 		page.goToCompletePage();
 		assertTrue(page.isSuccessDisplayed(), "Success message did not display");
-
 	}
 
 	@Test
 	public void testFailedUpload() {
 		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
 		page.uploadMetadataFile(INVALID_FILE_PATH);
-		page.goToReviewPage();
+		page.selectSampleNameColumn();
+		//		page.goToReviewPage();
 		assertTrue(page.isAlertDisplayed(), "Validation message did not display");
 	}
 }

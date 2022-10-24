@@ -140,7 +140,7 @@ public class UIProjectSampleService {
 			if (!Strings.isNullOrEmpty(request.getDescription())) {
 				sample.setDescription(request.getDescription());
 			}
-			Join<Project, Sample> join = projectService.addSampleToProject(project, sample, true);
+			Join<Project, Sample> join = projectService.addSampleToProjectWithoutEvent(project, sample, true);
 			if (request.getMetadata() != null) {
 				Set<MetadataEntry> metadataEntrySet = request.getMetadata().stream().map(entry -> {
 					MetadataTemplateField field = metadataTemplateService.saveMetadataField(
@@ -169,8 +169,12 @@ public class UIProjectSampleService {
 		try {
 			Sample sample = sampleService.read(sampleId);
 			sample.setSampleName(request.getName());
-			sample.setOrganism(request.getOrganism());
-			sample.setDescription(request.getDescription());
+			if (!Strings.isNullOrEmpty(request.getOrganism())) {
+				sample.setOrganism(request.getOrganism());
+			}
+			if (request.getDescription() != null) {
+				sample.setDescription(request.getDescription());
+			}
 			if (request.getMetadata() != null) {
 				Set<MetadataEntry> metadataEntrySet = request.getMetadata().stream().map(entry -> {
 					MetadataTemplateField field = metadataTemplateService.saveMetadataField(

@@ -5,10 +5,42 @@ import {
 } from "../../types/irida";
 import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
 import { get, post } from "../requests";
+import axios from "axios";
 
 export interface SequencingFiles {
   singles: SingleEndSequenceFile[];
   pairs: PairedEndSequenceFile[];
+}
+
+export interface ValidateSampleNameModel {
+  ids?: number[];
+  name: string;
+}
+
+export interface ValidateSamplesResponse {
+  samples: ValidateSampleNameModel[];
+}
+
+export interface MetadataItem {
+  [field: string]: string;
+  rowKey: string;
+}
+
+export interface FieldUpdate {
+  field: string;
+  value: string;
+}
+
+export interface SampleRequest {
+  name: string;
+  organism?: string;
+  description?: string;
+  metadata: FieldUpdate[];
+}
+
+export interface ValidateSampleNamesRequest {
+  samples: ValidateSampleNameModel[];
+  associatedProjectIds?: number[];
 }
 
 const PROJECT_ID = getProjectIdFromUrl();
@@ -69,6 +101,45 @@ export const {
   useValidateSamplesMutation,
   useShareSamplesWithProjectMutation,
 } = samplesApi;
+
+export async function validateSamples({
+  projectId,
+  body,
+}: {
+  projectId: string;
+  body: ValidateSampleNamesRequest;
+}): Promise<ValidateSamplesResponse> {
+  const response = await axios.post(
+    `${URL}/${projectId}/samples/validate`,
+    body
+  );
+  return response.data;
+}
+
+export async function createSample({
+  projectId,
+  body,
+}: {
+  projectId: string;
+  body: SampleRequest;
+}) {
+  return await axios.post(`${URL}/${projectId}/samples/add-sample`, body);
+}
+
+export async function updateSample({
+  projectId,
+  sampleId,
+  body,
+}: {
+  projectId: string;
+  sampleId: number;
+  body: SampleRequest;
+}) {
+  return await axios.patch(
+    `${URL}/${projectId}/samples/add-sample/${sampleId}`,
+    body
+  );
+}
 
 /**
  * Server side validation of a new sample name.

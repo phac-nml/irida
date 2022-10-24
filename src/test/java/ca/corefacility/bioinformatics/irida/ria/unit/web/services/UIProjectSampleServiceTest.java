@@ -60,6 +60,8 @@ public class UIProjectSampleServiceTest {
 		Join<Project, Sample> join = new ProjectSampleJoin(PROJECT_1, sample, true);
 		when(projectService.addSampleToProject(any(Project.class), any(Sample.class), any(Boolean.class))).thenReturn(
 				join);
+		when(projectService.addSampleToProjectWithoutEvent(any(Project.class), any(Sample.class),
+				any(Boolean.class))).thenReturn(join);
 	}
 
 	@Test

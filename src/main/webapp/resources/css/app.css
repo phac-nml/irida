@@ -44,6 +44,7 @@
     --green-8: #237804;
     --green-9: #135200;
     --green-10: #092b00;
+    --primary-green: var(--green-6);
 
     --gold-1: #fffbe6;
     --gold-2: #fff1b8;
@@ -56,9 +57,18 @@
     --gold-9: #874d00;
     --gold-10: #613400;
 
+    --red-1: #fff1f0;
+    --red-2: #ffccc7;
+    --red-3: #ffa39e;
+    --red-4: #ff7875;
+    --red-5: #ff4d4f;
     --red-6: #f5222d;
+    --red-7: #cf1322;
+    --red-8: #a8071a;
+    --red-9: #820014;
+    --red-10: #5c0011;
     --primary-red: var(--red-6);
-    --primary-green: var(--green-6);
+
 }
 
 html,
