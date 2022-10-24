@@ -12,7 +12,7 @@ import { AnalysisSamplesContext } from "../../../../contexts/AnalysisSamplesCont
 
 import { AnalysisReferenceFileRenderer } from "./AnalysisReferenceFileRenderer";
 import { AnalysisSampleRenderer } from "./AnalysisSampleRenderer";
-import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+import { TabPanelContent } from "../../../../components/tabs/TabPanelContent";
 
 export default function AnalysisSamples() {
   /*
@@ -29,12 +29,12 @@ export default function AnalysisSamples() {
    * rendered
    */
   return (
-    <TabPaneContent title={i18n("AnalysisSamples.samples")}>
+    <TabPanelContent title={i18n("AnalysisSamples.samples")}>
       {analysisSamplesContext.referenceFile ? (
         <AnalysisReferenceFileRenderer />
       ) : null}
 
       <AnalysisSampleRenderer />
-    </TabPaneContent>
+    </TabPanelContent>
   );
 }

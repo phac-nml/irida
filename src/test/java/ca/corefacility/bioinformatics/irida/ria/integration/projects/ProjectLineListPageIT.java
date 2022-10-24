@@ -1,13 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import org.junit.jupiter.api.Test;
-import org.openqa.selenium.Dimension;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectLineListPage;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ShareSamplesPage;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.Dimension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -140,6 +139,9 @@ public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(page.isShareButtonEnabled(), "Share button should now be enabled");
 		page.shareSelectedSamples();
 		assertTrue(driver().getCurrentUrl().contains("share"), "Should be on the share samples page");
-
+		ShareSamplesPage shareSamplesPage = ShareSamplesPage.initPage(driver());
+		shareSamplesPage.searchForProject("project2");
+		shareSamplesPage.gotToNextStep();
+		assertEquals(3, shareSamplesPage.getNumberOfSamplesDisplayed());
 	}
 }

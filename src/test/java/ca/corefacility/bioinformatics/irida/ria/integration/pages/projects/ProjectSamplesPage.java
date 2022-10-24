@@ -325,7 +325,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	private void closeDropdown(WebElement dropdown) {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10L));
 		dropdown.sendKeys(Keys.ESCAPE);
 		wait.until(ExpectedConditions.invisibilityOf(dropdown));
 	}
@@ -452,13 +452,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void selectSampleByName(String sampleName) {
-		WebElement checkbox = samplesTable.findElement(By.xpath("//td/a[text()='" + sampleName + "']/../..//input"));
+		WebElement checkbox = samplesTable.findElement(By.xpath("//td/button[span[text()='" + sampleName + "']]/../..//input"));
 		checkbox.click();
 	}
 
 	public Long getCoverageForSampleByName(String sampleName) {
 		WebElement coverageCell = samplesTable.findElement(
-				By.xpath("//td/a[text()='" + sampleName + "']/../../td[contains(@class, 't-td-coverage')]"));
+				By.xpath("//td/button[span[text()='" + sampleName + "']]/../../td[contains(@class, 't-td-coverage')]"));
 		String coverageString = coverageCell.getText();
 
 		return coverageString == null || coverageString.isEmpty() ? null : Long.parseLong(coverageString);
@@ -528,7 +528,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public String getMostRecentlyModifiedSampleName() {
-		WebElement nameAnchor = driver.findElement(By.xpath("//tbody/tr[1]/td[2]/a"));
+		WebElement nameAnchor = driver.findElement(By.xpath("//tbody/tr[1]/td[2]/button"));
 		return nameAnchor.getText();
 	}
 
@@ -576,7 +576,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		filterByFileInput.sendKeys(path.toAbsolutePath().toString());
 		waitForTime(200);
 	}
-
 	public List<String> getInvalidSampleNames() {
 		List<String> invalidSampleNames = new ArrayList<>();
 		List<WebElement> invalidSampleNamesElements = driver.findElements(By.cssSelector(".t-invalid-sample"));

@@ -67,9 +67,10 @@ const initialContext = {
   createdDate: null,
   priority: null,
   priorities: [],
-  canShareToSamples: false,
-  updatePermission: false,
-  updateSamples: false,
+  canShareToSamples: false, // submission has ability to save results back to samples
+  updatePermission: false, // user can update the submission details/parameters
+  updateSamples: false, // Update samples from results on completion
+  allowedToModifySample: false, // User can modify sample
 };
 
 const AnalysisDetailsContext = React.createContext(initialContext);

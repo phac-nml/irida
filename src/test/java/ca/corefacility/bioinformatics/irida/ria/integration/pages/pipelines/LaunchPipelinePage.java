@@ -6,10 +6,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -143,7 +140,7 @@ public class LaunchPipelinePage extends AbstractPage {
 	}
 
 	public void updateName(String name) {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2L));
 		clearName();
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.className("t-name-required")));
 		nameInput.sendKeys(name);
@@ -193,10 +190,13 @@ public class LaunchPipelinePage extends AbstractPage {
 	}
 
 	public void saveModifiedTemplateAs(String name) {
-		driver.manage().window().maximize(); // Fixes issue where save button scrolled off page.
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		driver.manage().window().maximize();
+		driver.findElement(By.tagName("body")).sendKeys(Keys.HOME);// Fixes issue where save button scrolled off page.
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20L));
+
 		wait.until(ExpectedConditions.elementToBeClickable(modifiedSaveAsButton));
 		modifiedSaveAsButton.click();
+		driver.findElement(By.tagName("body")).sendKeys(Keys.END);
 		wait.until(ExpectedConditions.elementToBeClickable(modifiedSubmit));
 		modifiedNameInput.sendKeys(name);
 		modifiedSubmit.click();

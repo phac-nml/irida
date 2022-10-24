@@ -5,7 +5,7 @@ import {
   setMetadata,
   setProjectId,
 } from "../services/importReducer";
-import { notification, Spin, StepsProps, Typography, UploadProps } from "antd";
+import { notification, Spin, StepsProps, Typography } from "antd";
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import * as XLSX from "xlsx";
@@ -36,7 +36,7 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
     }
   }, [dispatch, projectId]);
 
-  const options: UploadProps = {
+  const options = {
     multiple: false,
     showUploadList: false,
     accept: ".xls,.xlsx,.csv",
@@ -95,12 +95,12 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
     <SampleMetadataImportWizard current={0} status={status}>
       <Spin spinning={loading}>
         <DragUpload
-          className="t-metadata-uploader-dropzone"
           uploadText={i18n("SampleMetadataImportUploadFile.dropzone")}
           uploadHint={
             <Text strong>{i18n("SampleMetadataImportUploadFile.warning")}</Text>
           }
           options={options}
+          props={{ className: "t-metadata-uploader-dropzone" }}
         />
       </Spin>
     </SampleMetadataImportWizard>

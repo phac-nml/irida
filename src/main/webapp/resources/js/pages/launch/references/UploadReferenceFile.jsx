@@ -40,10 +40,10 @@ export function UploadReferenceFile({ form }) {
 
   return (
     <DragUpload
-      className="t-upload-reference"
       uploadText={i18n("UploadReferenceFile.upload-text")}
       uploadHint={i18n("UploadReferenceFile.hint")}
       options={options}
+      props={{ className: "t-upload-reference" }}
     />
   );
 }

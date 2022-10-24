@@ -9,15 +9,15 @@ import React from "react";
 import { PassTabs } from "./PassTabs";
 import { StandardErrorOutput } from "./StandardErrorOutput";
 
-import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+import { TabPanelContent } from "../../../../components/tabs/TabPanelContent";
 
 export default function StandardOutputTab({
   currActiveKey,
   updateActiveKey,
-  galaxyJobErrors
+  galaxyJobErrors,
 }) {
   return (
-    <TabPaneContent title={i18n("AnalysisError.standardOutput")}>
+    <TabPanelContent title={i18n("AnalysisError.standardOutput")}>
       {galaxyJobErrors.length > 1 ? (
         <PassTabs
           tabName="standard-out"
@@ -28,6 +28,6 @@ export default function StandardOutputTab({
       ) : (
         <StandardErrorOutput galaxyError={galaxyJobErrors[0].standardOutput} />
       )}
-    </TabPaneContent>
+    </TabPanelContent>
   );
 }
