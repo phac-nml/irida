@@ -2,6 +2,7 @@
 # Changelog
 
 ## [Unreleased]
+* [Developer/UI]: Updated to React 18 and Ant Design 4.23.6. See [PR 1380](https://github.com/phac-nml/irida/pull/1381)
 
 ## [22.09.1] - 2022/10/21
 * [UI]: Fixed when sharing or exporting sample on the project sample page, and other minor bugs. See [PR 1382](https://github.com/phac-nml/irida/pull/1382)
