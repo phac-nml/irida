@@ -1,12 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -15,6 +8,13 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * <p>
@@ -361,15 +361,39 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		nameFilterInput.sendKeys(name);
 		nameFilterInput.sendKeys(Keys.ENTER);
 		nameFilterInput.sendKeys(Keys.TAB);
+		WebElement active = driver.switchTo().activeElement();
+		active.sendKeys(Keys.TAB);
+		active = driver.switchTo().activeElement();
+		active.sendKeys(Keys.ENTER);
 		waitForTableToUpdate(prevTotal);
 	}
 
 	public void clearIndividualSampleNameFilter(String name) {
+		sampleNameFilterToggle.click();
+		clearIndividualFilter(nameFilterSelectedOptions, name);
+	}
+
+	private void clearIndividualFilter(WebElement options, String name) {
 		int prevTotal = getTableSummary().getTotal();
 		sampleNameFilterToggle.click();
-		WebElement filter = nameFilterSelectedOptions.findElement(By.cssSelector("[title=\"" + name + "\"]"));
-		filter.findElement(By.className("ant-select-selection-item-remove")).click();
-		sampleNameFilterToggle.sendKeys(Keys.TAB);
+		// -1 due to extra suffix element, -1 for the current option
+		int numFiltered = options.findElements(By.className("ant-select-selection-overflow-item")).size() - 2;
+		WebElement filter = options.findElement(By.cssSelector("[title=\"" + name + "\"]"));
+		filter.findElement(By.className("anticon-close")).click();
+		WebElement active = driver.switchTo().activeElement();
+		if (numFiltered > 0) {
+			active = driver.switchTo().activeElement();
+			active.sendKeys(Keys.ESCAPE);
+			for (int i = 1; i < numFiltered; i++) {
+				nameFilterInput.sendKeys(Keys.TAB);
+			}
+			active = driver.switchTo().activeElement();
+		} else {
+			active.sendKeys(Keys.ESCAPE);
+			active.sendKeys(Keys.TAB);
+		}
+		active = driver.switchTo().activeElement();
+		active.sendKeys(Keys.ENTER);
 		waitForTableToUpdate(prevTotal);
 	}
 
@@ -386,7 +410,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		int prevTotal = getTableSummary().getTotal();
 		organismFilterToggle.click();
 		WebElement filter = organismFilterSelectedOptions.findElement(By.cssSelector("[title=\"" + organism + "\"]"));
-		filter.findElement(By.className("ant-select-selection-item-remove")).click();
+		filter.findElement(By.className("anticon-close")).click();
 		organismFilterToggle.sendKeys(Keys.TAB);
 		waitForTableToUpdate(prevTotal);
 	}
