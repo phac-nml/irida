@@ -8,7 +8,7 @@ interface SampleMetadataImportWizardProps {
   current: StepsProps["current"];
   status?: StepsProps["status"];
   percent?: StepsProps["percent"];
-  children?: React.ReactNode;
+  children: React.ReactNode;
 }
 
 /**
@@ -29,20 +29,21 @@ export function SampleMetadataImportWizard({
   const { projectId } = useParams<{ projectId: string }>();
 
   return (
-    <Space direction="vertical" size="large" style={{ width: `100%` }}>
-      <PageHeader
-        title={i18n("SampleMetadataImportWizard.title")}
-        subTitle={i18n("SampleMetadataImportWizard.intro")}
-        onBack={() =>
-          (window.location.href = setBaseUrl(`projects/${projectId}/linelist`))
-        }
-      />
-      <SampleMetadataImportSteps
-        current={current}
-        status={status}
-        percent={percent}
-      />
-      {children}
-    </Space>
+    <PageHeader
+      title={i18n("SampleMetadataImportWizard.title")}
+      subTitle={i18n("SampleMetadataImportWizard.intro")}
+      onBack={() =>
+        (window.location.href = setBaseUrl(`projects/${projectId}/linelist`))
+      }
+    >
+      <Space direction="vertical" size="large" style={{ width: `100%` }}>
+        <SampleMetadataImportSteps
+          current={current}
+          status={status}
+          percent={percent}
+        />
+        {children}
+      </Space>
+    </PageHeader>
   );
 }

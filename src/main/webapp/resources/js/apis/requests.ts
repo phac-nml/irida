@@ -35,6 +35,8 @@ export async function post<T>(
       } else {
         return Promise.reject(error.message);
       }
+    } else if (axios.isCancel(error)) {
+      return Promise.reject(error.message);
     } else {
       return Promise.reject("An unexpected error occurred");
     }

@@ -20,6 +20,7 @@ export function ShareSamples({
   targetProjectSampleNamesDuplicate = [],
 }) {
   const dispatch = useDispatch();
+
   const {
     associated,
     samples: originalSamples,

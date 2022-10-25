@@ -15,7 +15,6 @@ import {
   IconArrowRight,
   IconExclamationCircle,
 } from "../../../../components/icons/Icons";
-import { red1, red2, red5 } from "../../../../styles/colors";
 import styled from "styled-components";
 import { saveMetadata } from "../services/importReducer";
 import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
@@ -34,22 +33,22 @@ const { Paragraph, Text } = Typography;
 
 const MetadataTable = styled(Table)`
   tr.row-error > td {
-    background-color: ${red1};
+    background-color: var(--red-1);
   }
   tr.row-error:hover > td {
-    background-color: ${red2};
+    background-color: var(--red-2);
   }
   tr.row-error > td.ant-table-cell-fix-left {
-    background-color: ${red1};
+    background-color: var(--red-1);
   }
   tr.row-error:hover > td.ant-table-cell-fix-left {
-    background-color: ${red2};
+    background-color: var(--red-2);
   }
   tr.row-error > td.ant-table-cell-fix-right {
-    background-color: ${red1};
+    background-color: var(--red-1);
   }
   tr.row-error:hover > td.ant-table-cell-fix-right {
-    background-color: ${red2};
+    background-color: var(--red-2);
   }
 `;
 
@@ -114,7 +113,7 @@ export function SampleMetadataImportReview(): JSX.Element {
           style: {
             background: metadataValidateDetails[item.rowKey].isSampleNameValid
               ? undefined
-              : red1,
+              : `var(--red-1)`,
           },
         };
       },
@@ -129,9 +128,9 @@ export function SampleMetadataImportReview(): JSX.Element {
           return (
             <Tooltip
               title={metadataSaveDetails[item.rowKey]?.error}
-              color={red5}
+              color={`var(--red-5)`}
             >
-              <IconExclamationCircle style={{ color: red5 }} />
+              <IconExclamationCircle style={{ color: `var(--red-5)` }} />
             </Tooltip>
           );
         return text;

@@ -21,7 +21,7 @@ import {
   getSharedProjects,
   updateSharedProject,
 } from "../../../../apis/analysis/analysis";
-import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+import { TabPanelContent } from "../../../../components/tabs/TabPanelContent";
 
 const { Title } = Typography;
 
@@ -141,7 +141,7 @@ export default function AnalysisShare() {
    * and a save results to related samples if applicable
    */
   return (
-    <TabPaneContent title={i18n("AnalysisShare.manageResults")}>
+    <TabPanelContent title={i18n("AnalysisShare.manageResults")}>
       {sharedProjects !== null ? (
         sharedProjects.length > 0 ? (
           <section style={{ marginTop: SPACE_MD }}>
@@ -158,12 +158,16 @@ export default function AnalysisShare() {
       ) : null}
 
       {analysisDetailsContext.canShareToSamples &&
+      analysisDetailsContext.allowedToModifySample &&
       analysisContext.isCompleted ? (
-        <section style={{ marginTop: SPACE_MD }}>
+        <section
+          style={{ marginTop: SPACE_MD }}
+          className="t-save-results-to-samples"
+        >
           <Title level={4}>{i18n("AnalysisShare.saveResults")}</Title>
           {renderSaveToRelatedSamples()}
         </section>
       ) : null}
-    </TabPaneContent>
+    </TabPanelContent>
   );
 }

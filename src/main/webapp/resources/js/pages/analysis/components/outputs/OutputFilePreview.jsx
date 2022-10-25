@@ -7,7 +7,7 @@ import { Dropdown, Menu, Tabs } from "antd";
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 import { AnalysisOutputsContext } from "../../../../contexts/AnalysisOutputsContext";
 
-import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+import { TabPanelContent } from "../../../../components/tabs/TabPanelContent";
 import { ContentLoading } from "../../../../components/loader/ContentLoading";
 import { AnalysisTabularPreview } from "../AnalysisTabularPreview";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
@@ -28,11 +28,8 @@ const AnalysisHtmlPreview = React.lazy(() => import("../AnalysisHtmlPreview"));
 const { TabPane } = Tabs;
 
 export default function OutputFilePreview() {
-  const {
-    analysisOutputsContext,
-    getAnalysisOutputs,
-    getPreviewForFileType,
-  } = useContext(AnalysisOutputsContext);
+  const { analysisOutputsContext, getAnalysisOutputs, getPreviewForFileType } =
+    useContext(AnalysisOutputsContext);
 
   const { analysisIdentifier } = useContext(AnalysisContext);
 
@@ -214,7 +211,7 @@ export default function OutputFilePreview() {
   }
 
   return analysisOutputsContext.outputs !== null ? (
-    <TabPaneContent
+    <TabPanelContent
       actionButton={
         analysisOutputsContext.outputs.length > 0
           ? createDownloadAllButton()
@@ -295,7 +292,7 @@ export default function OutputFilePreview() {
       ) : (
         <WarningAlert message={i18n("AnalysisOutputs.noOutputsAvailable")} />
       )}
-    </TabPaneContent>
+    </TabPanelContent>
   ) : (
     <ContentLoading />
   );

@@ -1,7 +1,7 @@
 import React from "react";
 import { notification } from "antd";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import { DragUpload } from "../../../components/files/DragUpload.tsx";
+import { DragUpload } from "../../../components/files/DragUpload";
 import { useLaunch } from "../launch-context";
 import { referenceFileUploadComplete } from "../launch-dispatch";
 
@@ -40,10 +40,10 @@ export function UploadReferenceFile({ form }) {
 
   return (
     <DragUpload
-      className="t-upload-reference"
       uploadText={i18n("UploadReferenceFile.upload-text")}
       uploadHint={i18n("UploadReferenceFile.hint")}
       options={options}
+      props={{ className: "t-upload-reference" }}
     />
   );
 }

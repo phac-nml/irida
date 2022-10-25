@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "ca.corefacility.bioinformatics"
-version = "22.07-SNAPSHOT"
+version = "23.01-SNAPSHOT"
 description = "irida"
 
 java {
@@ -170,7 +170,7 @@ dependencies {
     implementation("org.pf4j:pf4j:2.4.0")
     implementation("org.biojava:biojava3-core:3.0")
     implementation("com.google.code.gson:gson")
-    implementation("com.github.pjfanning:excel-streaming-reader:3.6.1")
+    implementation("com.github.pjfanning:excel-streaming-reader:4.0.1")
     implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.11") {
         exclude(group = "jakarta.xml.bind", module = "jakarta.xml.bind-api")
         exclude(group = "jakarta.validation", module = "jakarta.validation-api")
@@ -238,6 +238,8 @@ tasks.register<Zip>("packageDistribution") {
         into("${project.name}-${project.version}")
     }
 }
+
+extra["snakeyaml.version"] = "1.31"
 
 tasks.build {
     dependsOn("packageDistribution")

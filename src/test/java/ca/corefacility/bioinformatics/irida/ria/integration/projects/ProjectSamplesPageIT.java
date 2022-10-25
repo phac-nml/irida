@@ -412,3 +412,4 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 				SAMPLE_WITH_COVERAGE_QC_ENTRY + " should have a value");
 	}
 }
+

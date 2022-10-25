@@ -40,6 +40,7 @@ interface SetSampleNameColumnResponse {
 }
 
 export interface InitialState {
+  projectId: string;
   sampleNameColumn: string;
   headers: MetadataHeaderItem[];
   metadata: MetadataItem[];
@@ -48,6 +49,7 @@ export interface InitialState {
 }
 
 const initialState: InitialState = {
+  projectId: "",
   sampleNameColumn: "",
   headers: [],
   metadata: [],
@@ -102,7 +104,6 @@ export const saveMetadata = createAsyncThunk<
                 sampleId,
                 body: {
                   name,
-                  // TODO: Don't overwrite organism & description
                   metadata: metadataFields,
                 },
               })
@@ -175,8 +176,7 @@ export const setSampleNameColumn = createAsyncThunk<
         samples: samples,
       },
     });
-    for (let i = 0; i < metadata.length; i++) {
-      const metadataItem: MetadataItem = metadata[i];
+    for (const metadataItem of metadata) {
       const index: string = metadataItem.rowKey;
       const sampleName: string = metadataItem[updatedSampleNameColumn];
       const foundSample: ValidateSampleNameModel | undefined =
@@ -204,6 +204,17 @@ export const updateHeaders = createAction(
   `importReducer/updateHeaders`,
   (headers: MetadataHeaderItem[]) => ({
     payload: { headers },
+  })
+);
+
+/*
+Redux action for setting the projectId.
+For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
+ */
+export const setProjectId = createAction(
+  `importReducer/setProjectID`,
+  (projectId: string) => ({
+    payload: { projectId },
   })
 );
 
@@ -262,6 +273,9 @@ For more information on redux reducers see: https://redux-toolkit.js.org/api/cre
 export const importReducer = createReducer(initialState, (builder) => {
   builder.addCase(updateHeaders, (state, action) => {
     state.headers = action.payload.headers;
+  });
+  builder.addCase(setProjectId, (state, action) => {
+    state.projectId = action.payload.projectId;
   });
   builder.addCase(setHeaders, (state, action) => {
     state.headers = action.payload.headers;

@@ -107,19 +107,19 @@
 		<repository>
 			<name>spades</name>
 			<owner>lionelguy</owner>
-			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<url>https://toolshed.g2.bx.psu.edu/</url>
 			<revision>21734680d921</revision>
 		</repository>
 		<repository>
 			<name>prokka</name>
 			<owner>crs4</owner>
-			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<url>https://toolshed.g2.bx.psu.edu/</url>
 			<revision>3ad7ef0ba385</revision>
 		</repository>
 		<repository>
 			<name>regex_find_replace</name>
 			<owner>jjohnson</owner>
-			<url>http://toolshed.g2.bx.psu.edu/</url>
+			<url>https://toolshed.g2.bx.psu.edu/</url>
 			<revision>9ea374bb0350</revision>
 		</repository>
 	</toolRepositories>

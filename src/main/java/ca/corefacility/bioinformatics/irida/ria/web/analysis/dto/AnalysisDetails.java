@@ -22,12 +22,14 @@ public class AnalysisDetails {
 	private boolean updatePermission;
 	private boolean updateSamples;
 
+	private boolean allowedToModifySample;
+
 	public AnalysisDetails() {
 	}
 
 	public AnalysisDetails(String analysisDescription, String workflowName, String version, String priority, Long duration,
 			Date createdDate, AnalysisSubmission.Priority[] priorities, boolean emailPipelineResultCompleted, boolean emailPipelineResultError,
-			boolean canShareToSamples, boolean updatePermission, boolean updateSamples) {
+			boolean canShareToSamples, boolean updatePermission, boolean updateSamples, boolean allowedToModifySample) {
 		this.analysisDescription=analysisDescription;
 		this.workflowName = workflowName;
 		this.version = version;
@@ -40,6 +42,7 @@ public class AnalysisDetails {
 		this.canShareToSamples = canShareToSamples;
 		this.updatePermission = updatePermission;
 		this.updateSamples = updateSamples;
+		this.allowedToModifySample = allowedToModifySample;
 	}
 
 	public String getAnalysisDescription() {
@@ -136,5 +139,13 @@ public class AnalysisDetails {
 
 	public void setUpdateSamples(boolean updateSamples) {
 		this.updateSamples = updateSamples;
+	}
+
+	public boolean isAllowedToModifySample() {
+		return allowedToModifySample;
+	}
+
+	public void setAllowedToModifySample(boolean allowedToModifySample) {
+		this.allowedToModifySample = allowedToModifySample;
 	}
 }

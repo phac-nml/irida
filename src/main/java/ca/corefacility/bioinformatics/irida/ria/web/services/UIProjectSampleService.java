@@ -170,8 +170,12 @@ public class UIProjectSampleService {
 		try {
 			Sample sample = sampleService.read(sampleId);
 			sample.setSampleName(request.getName());
-			sample.setOrganism(request.getOrganism());
-			sample.setDescription(request.getDescription());
+			if (!Strings.isNullOrEmpty(request.getOrganism())) {
+				sample.setOrganism(request.getOrganism());
+			}
+			if (request.getDescription() != null) {
+				sample.setDescription(request.getDescription());
+			}
 			if (request.getMetadata() != null) {
 				Set<MetadataEntry> metadataEntrySet = createMetadata(request.getMetadata(), project);
 				sampleService.updateSampleMetadata(sample, metadataEntrySet);

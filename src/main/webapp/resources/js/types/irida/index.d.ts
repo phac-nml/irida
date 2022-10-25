@@ -1,3 +1,5 @@
+import { GenomeAssembly, SequencingObject } from "../../apis/samples/samples";
+
 export = IRIDA;
 export as namespace IRIDA;
 
@@ -8,6 +10,28 @@ declare namespace IRIDA {
     name: string;
     createdDate: Date;
     modifiedDate: Date;
+    identifier: number;
+  }
+
+  interface AnalysisSubmission {
+    analysisCleanedState: string;
+    analysisDescription: string | null;
+    analysisState: string;
+    automated: boolean;
+    createdDate: number;
+    emailPipelineResultCompleted: boolean;
+    emailPipelineResultError: boolean;
+    identifier: number;
+    inputParameters: Record<string, string>;
+    label: string;
+    links: [];
+    modifiedDate: number;
+    name: string;
+    priority: PRIORITY;
+    remoteInputDataId: string;
+    remoteWorkflowId: string;
+    updateSamples: boolean;
+    workflowId: string;
   }
 
   interface Announcement extends BaseModel {
@@ -17,6 +41,8 @@ declare namespace IRIDA {
     createdBy: User;
     users: User[];
   }
+
+  export type PRIORITY = "LOW" | "MEDIUM" | "HIGH";
 
   export type ExportUploadState =
     | "NEW"
@@ -112,7 +138,11 @@ declare namespace IRIDA {
     latitude: string;
     longitude: string;
     projects: Project[];
-    sequenceFiles: SequencingObject[];
+    sequenceFiles: any[]; // TODO (Josh - 6/7/22): FLush this out
+    defaultSequencingObject: SequencingObject;
+    defaultGenomeAssembly: GenomeAssembly;
+    sampleName: string;
+    label: string;
   }
 
   interface SequencingObject extends BaseModel {
@@ -152,6 +182,46 @@ declare namespace IRIDA {
     tokens: string[]; // TODO (Josh - 6/7/22): Look into this one
     announcements: Announcement[];
     subscriptions: string[]; // TODO (Josh - 6/7/22): Look into this one as well
+  }
+
+  interface NcbiBioSampleFiles {
+    id: number;
+    bioSample: string;
+    singles: SingleEndSequenceFile[];
+    pairs: PairedEndSequenceFile[];
+    instrumentModel: string;
+    libraryName: string;
+    librarySelection: string;
+    librarySource: string;
+    libraryStrategy: string;
+    libraryConstructionProtocol: string;
+    status: ExportUploadState;
+    accession: string;
+  }
+
+  interface NcbiSubmission {
+    id: number;
+    project: ProjectMinimal;
+    state: ExportUploadState;
+    submitter: UserMinimal;
+    createdDate: Date;
+    organization: string;
+    bioProject: string;
+    ncbiNamespace: string;
+    releaseDate: Date | null;
+    bioSampleFiles: NcbiBioSampleFiles[];
+  }
+
+  interface SequenceFile extends BaseModel {
+    fileSize: string;
+  }
+
+  interface PairedEndSequenceFile extends BaseModel {
+    files: SequenceFile[];
+  }
+
+  interface SingleEndSequenceFile extends BaseModel {
+    file: SequenceFile;
   }
 
   type UserMinimal = Pick<User, "name" | "id">;
