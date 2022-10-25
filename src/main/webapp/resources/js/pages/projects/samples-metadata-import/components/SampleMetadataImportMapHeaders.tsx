@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Select, Table, Typography } from "antd";
+import { Button, Radio, Table, Typography } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import {
   IconArrowLeft,
@@ -45,6 +45,8 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
   React.useEffect(() => {
     getMetadataRestrictions().then((data) => {
       setRestrictions(data);
+      console.log("restrictions");
+      console.log(data);
     });
   }, []);
 
@@ -95,17 +97,13 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
       dataIndex: "restriction",
       render(id: number, item: MetadataHeaderItem) {
         return (
-          <Select
+          <Radio.Group
+            options={restrictions}
             defaultValue={item.restriction}
             disabled={item.name === updatedSampleNameColumn}
-            onChange={(value) => onChange({ ...item }, value)}
-          >
-            {restrictions.map(({ label, value }) => (
-              <Select.Option key={value} value={value}>
-                {label}
-              </Select.Option>
-            ))}
-          </Select>
+            onChange={({ target: { value } }) => onChange({ ...item }, value)}
+            optionType="button"
+          />
         );
       },
     },

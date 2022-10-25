@@ -52,7 +52,7 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
         setLoading(true);
         const reader = new FileReader();
         if (reader.readAsBinaryString) {
-          reader.onload = () => {
+          reader.onload = async () => {
             const workbook: WorkBook = XLSX.read(reader.result, {
               type: "binary",
               raw: true,
@@ -65,8 +65,8 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
                 rawNumbers: false,
               }
             );
-            dispatch(setHeaders(Object.keys(rows[0])));
-            dispatch(setMetadata(rows));
+            await dispatch(setHeaders(Object.keys(rows[0])));
+            await dispatch(setMetadata(rows));
           };
           if (info.file.originFileObj) {
             reader.readAsBinaryString(info.file.originFileObj);
