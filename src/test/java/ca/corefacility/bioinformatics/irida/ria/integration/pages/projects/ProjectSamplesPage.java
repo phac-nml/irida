@@ -379,7 +379,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		// -1 due to extra suffix element, -1 for the current option
 		int numFiltered = options.findElements(By.className("ant-select-selection-overflow-item")).size() - 2;
 		WebElement filter = options.findElement(By.cssSelector("[title=\"" + name + "\"]"));
-		filter.findElement(By.className("anticon-close")).click();
+		filter.findElement(By.className("ant-select-selection-item-remove")).click();
 		WebElement active = driver.switchTo().activeElement();
 		if (numFiltered > 0) {
 			active = driver.switchTo().activeElement();
@@ -407,12 +407,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void clearIndividualOrganismFilter(String organism) {
-		int prevTotal = getTableSummary().getTotal();
 		organismFilterToggle.click();
-		WebElement filter = organismFilterSelectedOptions.findElement(By.cssSelector("[title=\"" + organism + "\"]"));
-		filter.findElement(By.className("anticon-close")).click();
-		organismFilterToggle.sendKeys(Keys.TAB);
-		waitForTableToUpdate(prevTotal);
+		clearIndividualFilter(organismFilterSelectedOptions, organism);
 	}
 
 	public void toggleAssociatedProject(String projectName) {
