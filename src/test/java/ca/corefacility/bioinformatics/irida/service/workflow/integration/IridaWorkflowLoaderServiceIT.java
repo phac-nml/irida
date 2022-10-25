@@ -172,7 +172,7 @@ public class IridaWorkflowLoaderServiceIT {
 
 		List<IridaWorkflowToolRepository> tools = new LinkedList<>();
 		IridaWorkflowToolRepository workflowTool = new IridaWorkflowToolRepository("sam_to_bam", "devteam",
-				new URL("http://toolshed.g2.bx.psu.edu/"), "8176b2575aa1");
+				new URL("https://toolshed.g2.bx.psu.edu/"), "8176b2575aa1");
 		tools.add(workflowTool);
 
 		List<IridaWorkflowParameter> parameters = new LinkedList<>();

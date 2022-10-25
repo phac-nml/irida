@@ -1,4 +1,4 @@
-import { Avatar, List, Typography } from "antd";
+import { Avatar, Button, List, Typography } from "antd";
 import isNumeric from "antd/es/_util/isNumeric";
 import React from "react";
 import { blue6, blue8, grey6, red6 } from "../../styles/colors";
@@ -6,6 +6,7 @@ import { SPACE_XS } from "../../styles/spacing";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import styled from "styled-components";
+import { SampleDetailViewer } from "../samples/SampleDetailViewer";
 
 import {
   IconCalendarTwoTone,
@@ -28,6 +29,9 @@ const CustomListItem = styled(List.Item)`
   }
 `;
 
+const PROJECT_SAMPLE_ADDED = "project_sample_added";
+const PROJECT_SAMPLE_DATA_ADDED = "project_sample_data_added";
+
 export interface ActivityListItemProps {
   activity: Activity;
 }
@@ -37,7 +41,9 @@ export interface ActivityListItemProps {
  * @param activity - the activity to render
  * @constructor
  */
-export function ActivityListItem({ activity } : ActivityListItemProps): JSX.Element {
+export function ActivityListItem({
+  activity,
+}: ActivityListItemProps): JSX.Element {
   const [title] = React.useState(() => {
     /*
     The description (title) is sent from the server with placeholders, e.g.
@@ -58,7 +64,31 @@ export function ActivityListItem({ activity } : ActivityListItemProps): JSX.Elem
         // get the item and decide how to add it.
         const item = activity.items[parseInt(fragments[i])];
 
-        if (item.href) {
+        if (
+          parseInt(fragments[i]) === 0 &&
+          (activity.type === PROJECT_SAMPLE_DATA_ADDED ||
+            activity.type === PROJECT_SAMPLE_ADDED)
+        ) {
+          const projectId = activity.items[0].href.match(/\d+/g)?.[0];
+          const sampleId = activity.items[0].href.match(/\d+/g)?.[1];
+          if (sampleId !== undefined && projectId !== undefined) {
+            content.push(
+              <SampleDetailViewer
+                sampleId={parseInt(sampleId)}
+                projectId={parseInt(projectId)}
+                key={key}
+              >
+                <Button type="link" style={{ padding: 0 }}>
+                  {item.label}
+                </Button>
+              </SampleDetailViewer>
+            );
+          } else {
+            content.push(
+              <Typography.Text key={key}>{item.label}</Typography.Text>
+            );
+          }
+        } else if (item.href) {
           // If there is a href create a link to the item
           content.push(
             <Typography.Link key={key} href={setBaseUrl(item.href)}>
@@ -83,14 +113,14 @@ export function ActivityListItem({ activity } : ActivityListItemProps): JSX.Elem
 
   type ttypeAvatar = {
     [key: string]: JSX.Element;
-  }
+  };
 
   /**
    * Different icons for each type of activity
    * @constant
    * @type {{project_user_group_added: JSX.Element, project_user_group_removed: JSX.Element, project_sample_data_added: JSX.Element, project_sample_added: JSX.Element, project_user_role_updated: JSX.Element, project_user_removed: JSX.Element}}
    */
-  const typeAvatar : ttypeAvatar = {
+  const typeAvatar: ttypeAvatar = {
     project_user_role_updated: (
       <Avatar
         data-activity={"project_user_role_updated"}

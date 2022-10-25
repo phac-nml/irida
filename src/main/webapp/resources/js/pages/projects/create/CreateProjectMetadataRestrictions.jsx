@@ -5,9 +5,11 @@ import { getColourForRestriction } from "../../../utilities/restriction-utilitie
 import { TargetMetadataRestriction } from "../../../components/metadata/TargetMetadataRestriction";
 
 import { useDispatch, useSelector } from "react-redux";
-import { getAllMetadataFieldsForProjects } from "../../../apis/metadata/field";
+import {
+  getAllMetadataFieldsForProjects,
+  getMetadataRestrictions,
+} from "../../../apis/metadata/field";
 import { setNewProjectMetadataRestrictions } from "./newProjectSlice";
-import { getMetadataRestrictions } from "../../../apis/metadata/field";
 
 /**
  * Component to render metadata restrictions for samples that are in the cart (if any).

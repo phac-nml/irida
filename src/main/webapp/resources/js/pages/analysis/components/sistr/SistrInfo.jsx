@@ -9,14 +9,14 @@ import { Success } from "../../../../components/icons/Success";
 import { Warning } from "../../../../components/icons/Warning";
 import { BasicList } from "../../../../components/lists/BasicList";
 
-import { TabPaneContent } from "../../../../components/tabs/TabPaneContent";
+import { TabPanelContent } from "../../../../components/tabs/TabPanelContent";
 
 export default function SistrInfo({ sistrResults, sampleName }) {
   const { qc_status, qc_messages } = sistrResults;
   const sistrInfo = [
     {
       title: i18n("AnalysisSistr.sampleName"),
-      desc: sampleName
+      desc: sampleName,
     },
     {
       title: i18n("AnalysisSistr.qualityControlStatus"),
@@ -33,36 +33,36 @@ export default function SistrInfo({ sistrResults, sampleName }) {
           <span>
             <Warning message={formatQcMessage(qc_status, qc_messages)} />
           </span>
-        )
+        ),
     },
     {
       title: i18n("AnalysisSistr.overallSerovar"),
-      desc: sistrResults.serovar
+      desc: sistrResults.serovar,
     },
     {
       title: i18n("AnalysisSistr.antigenSerovar"),
-      desc: sistrResults.serovar_antigen
+      desc: sistrResults.serovar_antigen,
     },
     {
       title: i18n("AnalysisSistr.cgmlstSerovar"),
-      desc: sistrResults.serovar_cgmlst
+      desc: sistrResults.serovar_cgmlst,
     },
     {
       title: i18n("AnalysisSistr.serogroup"),
-      desc: sistrResults.serogroup
+      desc: sistrResults.serogroup,
     },
     {
       title: i18n("AnalysisSistr.h1"),
-      desc: sistrResults.h1
+      desc: sistrResults.h1,
     },
     {
       title: i18n("AnalysisSistr.h2"),
-      desc: sistrResults.h2
+      desc: sistrResults.h2,
     },
     {
       title: i18n("AnalysisSistr.oAntigen"),
-      desc: sistrResults.o_antigen
-    }
+      desc: sistrResults.o_antigen,
+    },
   ];
 
   /*
@@ -81,7 +81,7 @@ export default function SistrInfo({ sistrResults, sampleName }) {
         <br />
         {msgs.length > 0 ? (
           <ul>
-            {msgs.map(msg => {
+            {msgs.map((msg) => {
               return <li key={msg}>{msg}</li>;
             })}
           </ul>
@@ -95,8 +95,8 @@ export default function SistrInfo({ sistrResults, sampleName }) {
    * for the sistr information
    */
   return (
-    <TabPaneContent title={i18n("AnalysisSistr.sistrInformation")}>
+    <TabPanelContent title={i18n("AnalysisSistr.sistrInformation")}>
       <BasicList dataSource={sistrInfo} />
-    </TabPaneContent>
+    </TabPanelContent>
   );
 }

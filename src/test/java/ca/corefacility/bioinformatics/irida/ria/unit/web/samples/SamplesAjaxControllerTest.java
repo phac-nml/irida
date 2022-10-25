@@ -2,41 +2,40 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.samples;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleAnalyses;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleSequencingObjectFileModel;
 
 import org.apache.commons.io.IOUtils;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplesAjaxController;
+import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnalysesService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
-import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
 
 import com.google.common.collect.ImmutableList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class SamplesAjaxControllerTest {
 	private SamplesAjaxController controller;
-	private SequencingObjectService sequencingObjectService;
-	private GenomeAssemblyService genomeAssemblyService;
 	private UISampleService uiSampleService;
+	private UIAnalysesService uiAnalysesService;
 
 	/*
 	TEST DATA
@@ -53,19 +52,19 @@ public class SamplesAjaxControllerTest {
 	MockMultipartFile MOCK_FILE_02;
 	MockMultipartFile MOCK_PAIR_FILE_01;
 	MockMultipartFile MOCK_PAIR_FILE_02;
+	private final Set<Long> sequencingObjectIds = Set.<Long>of(1L, 2L, 3L);
+	Principal principal;
 
 	@BeforeEach
 	public void setUp() {
-		SampleService sampleService = mock(SampleService.class);
-		sequencingObjectService = mock(SequencingObjectService.class);
-		genomeAssemblyService = mock(GenomeAssemblyService.class);
 		uiSampleService = mock(UISampleService.class);
-		MessageSource messageSource = mock(MessageSource.class);
-		controller = new SamplesAjaxController(sampleService, sequencingObjectService, genomeAssemblyService,
-				uiSampleService, messageSource);
+		uiAnalysesService = mock(UIAnalysesService.class);
+		principal = mock(Principal.class);
+
+		controller = new SamplesAjaxController(uiSampleService, uiAnalysesService);
 
 		// Set up mocks
-		when(sampleService.read(SAMPLE.getId())).thenReturn(SAMPLE);
+		//when(sampleService.read(SAMPLE.getId())).thenReturn(SAMPLE);
 		MOCK_FILE_01 = createMultiPartFile(FILE_01, "src/test/resources/files/test_file_A.fastq");
 		MOCK_FILE_02 = createMultiPartFile(FILE_02, "src/test/resources/files/test_file_B.fastq");
 		MOCK_PAIR_FILE_01 = createMultiPartFile(PAIR_01, "src/test/resources/files/pairs/pair_test_R1_001.fastq");
@@ -89,16 +88,10 @@ public class SamplesAjaxControllerTest {
 		when(request.getFile(FILE_01)).thenReturn(MOCK_FILE_01);
 		when(request.getFile(FILE_02)).thenReturn(MOCK_FILE_02);
 		when(request.getFileNames()).thenReturn(SINGLE_FILE_NAMES.iterator());
-		ArgumentCaptor<SingleEndSequenceFile> sequenceFileArgumentCaptor = ArgumentCaptor
-				.forClass(SingleEndSequenceFile.class);
 
-		ResponseEntity<String> responseEntity = controller.uploadSequenceFiles(SAMPLE.getId(), request, Locale.CANADA);
+		ResponseEntity<List<SampleSequencingObjectFileModel>> responseEntity = controller.uploadSequenceFiles(SAMPLE.getId(), request);
 
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
-		verify(sequencingObjectService, times(2)).createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(),
-				eq(SAMPLE));
-		assertEquals(FILE_02, sequenceFileArgumentCaptor.getValue().getLabel(),
-				"Should have the correct file name");
 	}
 	@Test
 	public void testUploadSequenceFilePairs(){
@@ -106,17 +99,9 @@ public class SamplesAjaxControllerTest {
 		when(request.getFile(PAIR_01)).thenReturn(MOCK_PAIR_FILE_01);
 		when(request.getFile(PAIR_02)).thenReturn(MOCK_PAIR_FILE_02);
 		when(request.getFileNames()).thenReturn(PAIRED_FILE_NAMES.iterator());
-		ArgumentCaptor<SequenceFilePair> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequenceFilePair.class);
-		ResponseEntity<String> responseEntity = controller.uploadSequenceFiles(SAMPLE.getId(), request, Locale.CANADA);
+
+		ResponseEntity<List<SampleSequencingObjectFileModel>> responseEntity = controller.uploadSequenceFiles(SAMPLE.getId(), request);
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
-
-		verify(sequencingObjectService)
-				.createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(), eq(SAMPLE));
-
-		assertEquals(PAIR_01, sequenceFileArgumentCaptor.getValue().getForwardSequenceFile().getLabel(),
-				"Should have the correct file name");
-		assertEquals(PAIR_02, sequenceFileArgumentCaptor.getValue().getReverseSequenceFile().getLabel(),
-				"Should have the correct file name");
 	}
 
 
@@ -127,18 +112,28 @@ public class SamplesAjaxControllerTest {
 		when(request.getFile(PAIR_01)).thenReturn(MOCK_PAIR_FILE_01);
 		when(request.getFile(PAIR_02)).thenReturn(MOCK_PAIR_FILE_02);
 		when(request.getFileNames()).thenReturn(MIXED_FILE_NAMES.iterator());
-		ArgumentCaptor<SequencingObject> sequenceFileArgumentCaptor = ArgumentCaptor.forClass(SequencingObject.class);
-		ResponseEntity<String> responseEntity = controller.uploadSequenceFiles(SAMPLE.getId(), request, Locale.CANADA);
 
+		ResponseEntity<List<SampleSequencingObjectFileModel>> responseEntity = controller.uploadSequenceFiles(SAMPLE.getId(), request);
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
-		verify(sequencingObjectService, times(2)).createSequencingObjectInSample(sequenceFileArgumentCaptor.capture(),
-				eq(SAMPLE));
 
-		List<SequencingObject> allValues = sequenceFileArgumentCaptor.getAllValues();
+	}
 
-		assertEquals(1, allValues.stream().filter(o -> o instanceof SingleEndSequenceFile).count(),
-				"Should have created 1 single end sequence files");
-		assertEquals(1, allValues.stream().filter(o -> o instanceof SequenceFilePair).count(),
-				"Should have created 1 file pair");
+	@Test
+	public void testConcatenateFiles() {
+		ResponseEntity<List<SampleSequencingObjectFileModel>> responseEntity = controller.concatenateSequenceFiles(SAMPLE.getId(), sequencingObjectIds, "newFile", false );
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
+	}
+
+	@Test
+	public void testUpdateDefaultSequencingObjectForSample() {
+		ResponseEntity<AjaxResponse> responseEntity = controller.updateDefaultSequencingObjectForSample(SAMPLE.getId(), sequencingObjectIds.stream().findFirst().get(),
+				Locale.ENGLISH);
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
+	}
+
+	@Test
+	public void testGetSampleAnalyses(){
+		ResponseEntity<List<SampleAnalyses>> responseEntity = controller.getSampleAnalyses(SAMPLE.getId(), principal, Locale.ENGLISH);
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode(), "Response is ok");
 	}
 }

@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -66,13 +67,24 @@ public class CartPage extends AbstractPage {
 
 	public void removeSampleFromCart(int index) {
 		WebElement sample = cartSamples.get(index);
-		sample.findElement(By.className("t-remove-sample")).click();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20L));
+		wait.until(ExpectedConditions.elementToBeClickable(By.className("t-remove-sample")));
+		sample.findElement(By.className("t-remove-sample"))
+				.click();
 		waitForTime(500);
 	}
 
 	public void removeProjectFromCart() {
 		WebElement sample = cartSamples.get(0);
-		sample.findElement(By.className("t-remove-project")).click();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20L));
+		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.className("ant-notification"))));
+		wait = new WebDriverWait(driver, Duration.ofSeconds(20L));
+		wait.until(ExpectedConditions.elementToBeClickable(By.className("t-remove-project")));
+
+		// Used to bypass tooltip which is intercepting the click during tests.
+		WebElement removeProjectButton = sample.findElement(By.className("t-remove-project"));
+		JavascriptExecutor js = (JavascriptExecutor)driver;  //initialize JavascriptExecutor
+		js.executeScript("arguments[0].click();", removeProjectButton);   //click the button
 		waitForTime(500);
 	}
 
@@ -81,7 +93,7 @@ public class CartPage extends AbstractPage {
 			final WebElement button = cartSample.findElement(By.className("t-sample-details-btn"));
 			if (button.getText().equals(sampleName)) {
 				button.click();
-				WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+				WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10L));
 				wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-sample-details-modal")));
 				break;
 			}

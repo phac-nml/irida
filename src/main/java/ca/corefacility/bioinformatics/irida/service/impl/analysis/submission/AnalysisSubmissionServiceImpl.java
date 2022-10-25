@@ -353,7 +353,9 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or authentication.name == #user.username")
 	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(User user) {
-		return analysisSubmissionRepository.getAllUserAnalysisOutputInfo(user.getId());
+		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionRepository.getAllUserAnalysisOutputInfo(user.getId());
+		logger.trace("Found " + infos.size() + " output files for user id=" + user.getId());
+		return infos;
 	}
 
 	/**

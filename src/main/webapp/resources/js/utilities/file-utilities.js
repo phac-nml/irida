@@ -12,6 +12,21 @@ export function download(url) {
 }
 
 /**
+ * Download a local ObjectURL
+ * @param {string} objectUrl the object url for the Blob | MediaSource to download
+ * @param {*} filename the filename to use for the download
+ */
+export function downloadObjectURL(objectURL, filename) {
+  const link = document.createElement("a");
+  link.style.display = "none";
+  link.href = objectURL;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  window.URL.revokeObjectURL(objectURL);
+}
+
+/**
  * Download a file using a post request.
  * This is good for when large amounts of data are required ot create the download
  * @param {string} url - Url to send the info to.
@@ -22,11 +37,11 @@ export async function downloadPost(url, body) {
     method: "POST",
     body: JSON.stringify(body),
     headers: {
-      "Content-Type": "application/json"
-    }
+      "Content-Type": "application/json",
+    },
   })
-    .then(response => response.blob())
-    .then(blob => {
+    .then((response) => response.blob())
+    .then((blob) => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.style.display = "none";

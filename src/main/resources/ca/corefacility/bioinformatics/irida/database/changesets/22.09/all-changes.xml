@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+  <include file="user-account-drop-phone-constraint.xml" relativeToChangelogFile="true" />
+  <include file="oauth2-authorization-tables.xml" relativeToChangelogFile="true" />
+  <include file="update-remote-api-token-token-types.xml" relativeToChangelogFile="true" />
+  <include file="refactor-client-details.xml" relativeToChangelogFile="true" />
+  <include file="add-default-sequencing-object-to-sample.xml" relativeToChangelogFile="true" />
+  <include file="add-default-genome-assembly-to-sample.xml" relativeToChangelogFile="true" />
+</databaseChangeLog>

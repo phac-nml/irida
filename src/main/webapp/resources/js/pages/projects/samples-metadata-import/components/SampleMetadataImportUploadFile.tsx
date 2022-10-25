@@ -1,13 +1,19 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { setHeaders, setMetadata } from "../services/importReducer";
-import { notification, Spin, StepsProps, Typography, UploadProps } from "antd";
+import {
+  setHeaders,
+  setMetadata,
+  setProjectId,
+} from "../services/importReducer";
+import { notification, Spin, StepsProps, Typography } from "antd";
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import * as XLSX from "xlsx";
 import { WorkBook } from "xlsx";
 import { ImportDispatch, useImportDispatch } from "../store";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
+import { MetadataItem } from "../../../../apis/projects/samples";
+import { RcFile, UploadFileStatus } from "antd/lib/upload/interface";
 
 const { Text } = Typography;
 
@@ -24,25 +30,36 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
   const [status, setStatus] = React.useState<StepsProps["status"]>("process");
   const [loading, setLoading] = React.useState<boolean>(false);
 
-  const options: UploadProps = {
+  React.useEffect(() => {
+    if (projectId != null) {
+      dispatch(setProjectId(projectId));
+    }
+  }, [dispatch, projectId]);
+
+  const options = {
     multiple: false,
     showUploadList: false,
     accept: ".xls,.xlsx,.csv",
     onChange(info: {
-      file: { originFileObj?: any; name?: any; status?: any };
+      file: {
+        originFileObj?: RcFile;
+        name?: string;
+        status?: UploadFileStatus;
+      };
     }) {
       const { status } = info.file;
       if (status !== "uploading") {
         setLoading(true);
-        let reader = new FileReader();
+        const reader = new FileReader();
         if (reader.readAsBinaryString) {
-          reader.onload = (e) => {
+          reader.onload = () => {
             const workbook: WorkBook = XLSX.read(reader.result, {
               type: "binary",
               raw: true,
             });
-            const firstSheet: string = workbook.SheetNames[0];
-            const rows: any[] = XLSX.utils.sheet_to_json(
+            const { SheetNames } = workbook;
+            const [firstSheet] = SheetNames;
+            const rows: MetadataItem[] = XLSX.utils.sheet_to_json(
               workbook.Sheets[firstSheet],
               {
                 rawNumbers: false,
@@ -51,7 +68,9 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
             dispatch(setHeaders(Object.keys(rows[0])));
             dispatch(setMetadata(rows));
           };
-          reader.readAsBinaryString(info.file.originFileObj);
+          if (info.file.originFileObj) {
+            reader.readAsBinaryString(info.file.originFileObj);
+          }
         }
       }
       if (status === "done") {
@@ -76,12 +95,12 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
     <SampleMetadataImportWizard current={0} status={status}>
       <Spin spinning={loading}>
         <DragUpload
-          className="t-metadata-uploader-dropzone"
           uploadText={i18n("SampleMetadataImportUploadFile.dropzone")}
           uploadHint={
             <Text strong>{i18n("SampleMetadataImportUploadFile.warning")}</Text>
           }
           options={options}
+          props={{ className: "t-metadata-uploader-dropzone" }}
         />
       </Spin>
     </SampleMetadataImportWizard>
