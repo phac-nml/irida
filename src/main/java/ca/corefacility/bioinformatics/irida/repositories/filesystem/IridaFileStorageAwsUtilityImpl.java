@@ -51,6 +51,13 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		this.bucketName = bucketName;
 	}
 
+	/*
+	This instantiation method is for TESTING ONLY. DO NOT USE IN PRODUCTION. USE THE METHOD ABOVE FOR PRODUCTION.
+	 */	public IridaFileStorageAwsUtilityImpl(AmazonS3 s3Client, String bucketName) {
+		this.s3 = s3Client;
+		this.bucketName = bucketName;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -344,11 +351,12 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		 */
 		GetObjectRequest rangeObjectRequest = new GetObjectRequest(bucketName, getAwsFileAbsolutePath(file)).withRange(
 				seek, chunk);
+
 		try (S3Object s3Object = s3.getObject(rangeObjectRequest);
 				S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
 			// Read the bytes of the retrieved s3ObjectInputStream chunk
 			byte[] bytes = s3ObjectInputStream.readAllBytes();
-			return new FileChunkResponse(new String(bytes), seek + (bytes.length - 1));
+			return new FileChunkResponse(new String(bytes), seek + (bytes.length));
 		} catch (IOException e) {
 			logger.error("Couldn't get chunk from s3 bucket", e);
 		}
@@ -360,7 +368,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	 */
 	@Override
 	public boolean checkWriteAccess(Path baseDirectory) {
-		// get list of bucket permission
+		// get list of bucket permissions
 		List<String> bucketPermissions = s3.getBucketAcl(bucketName)
 				.getGrantsAsList()
 				.stream()
