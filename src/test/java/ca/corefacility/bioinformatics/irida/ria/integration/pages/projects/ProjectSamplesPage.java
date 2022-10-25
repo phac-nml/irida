@@ -375,7 +375,6 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	private void clearIndividualFilter(WebElement options, String name) {
 		int prevTotal = getTableSummary().getTotal();
-		sampleNameFilterToggle.click();
 		// -1 due to extra suffix element, -1 for the current option
 		int numFiltered = options.findElements(By.className("ant-select-selection-overflow-item")).size() - 2;
 		WebElement filter = options.findElement(By.cssSelector("[title=\"" + name + "\"]"));
@@ -402,7 +401,11 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		organismFilterToggle.click();
 		organismSelectInput.sendKeys(organism);
 		organismSelectInput.sendKeys(Keys.ENTER);
-		organismFilterToggle.sendKeys(Keys.TAB);
+		organismFilterToggle.sendKeys(Keys.ESCAPE);
+		WebElement active = driver.switchTo().activeElement();
+		active.sendKeys(Keys.TAB);
+		active = driver.switchTo().activeElement();
+		active.sendKeys(Keys.ENTER);
 		waitForTableToUpdate(prevTotal);
 	}
 
