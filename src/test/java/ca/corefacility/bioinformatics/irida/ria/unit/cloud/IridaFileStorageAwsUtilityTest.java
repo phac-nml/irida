@@ -10,6 +10,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtility {
 
 	private AmazonS3 s3Client;
@@ -64,33 +64,30 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 	private String AWS_PATH_TO_FASTA_FILE = "opt/irida/data/" + FILENAME;
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
-
 	@BeforeEach
 	public void setUp() {
-		s3Client = AmazonS3ClientBuilder.standard().withClientConfiguration(new ClientConfiguration().withProtocol(Protocol.HTTP))
-				.withCredentials(new AWSStaticCredentialsProvider(new AnonymousAWSCredentials())) // use any credentials here for mocking
-				.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://127.0.0.1:9090/",
-						"us-east-1"))
+		s3Client = AmazonS3ClientBuilder.standard()
+				.withClientConfiguration(new ClientConfiguration().withProtocol(Protocol.HTTP))
+				.withCredentials(new AWSStaticCredentialsProvider(
+						new AnonymousAWSCredentials())) // use any credentials here for mocking
+				.withEndpointConfiguration(
+						new AwsClientBuilder.EndpointConfiguration("http://127.0.0.1:9090/", "us-east-1"))
 				.build();
 
 		iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(s3Client, bucketName);
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 
-		if(!s3Client.doesBucketExistV2(bucketName)) {
+		if (!s3Client.doesBucketExistV2(bucketName)) {
 			s3Client.createBucket(bucketName);
 		}
 
-		s3Client.putObject(bucketName, AWS_PATH_TO_FASTA_FILE,
-				Paths.get(LOCAL_RESOURCES_FASTA_FILE_PATH).toFile());
+		s3Client.putObject(bucketName, AWS_PATH_TO_FASTA_FILE, Paths.get(LOCAL_RESOURCES_FASTA_FILE_PATH).toFile());
 
-		s3Client.putObject(bucketName, AWS_PATH_TO_IMAGE_FILE,
-				Paths.get(LOCAL_RESOURCES_IMAGE_FILE_PATH).toFile());
+		s3Client.putObject(bucketName, AWS_PATH_TO_IMAGE_FILE, Paths.get(LOCAL_RESOURCES_IMAGE_FILE_PATH).toFile());
 
-		s3Client.putObject(bucketName, AWS_PATH_FASTQ_1,
-				Paths.get(LOCAL_RESOURCES_FASTQ_1_PATH).toFile());
+		s3Client.putObject(bucketName, AWS_PATH_FASTQ_1, Paths.get(LOCAL_RESOURCES_FASTQ_1_PATH).toFile());
 
-		s3Client.putObject(bucketName, AWS_PATH_FASTQ_2,
-				Paths.get(LOCAL_RESOURCES_FASTQ_2_PATH).toFile());
+		s3Client.putObject(bucketName, AWS_PATH_FASTQ_2, Paths.get(LOCAL_RESOURCES_FASTQ_2_PATH).toFile());
 	}
 
 	@AfterEach
@@ -107,11 +104,10 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 	@Test
 	@Override
 	public void testGetTemporaryFile() {
-		IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(
-				PATH_TO_FASTA_FILE);
+		IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(PATH_TO_FASTA_FILE);
 		iridaTemporaryFile.getFile();
 		iridaTemporaryFile.getDirectoryPath();
-		assertNotNull(iridaTemporaryFile, "Should have got back the file from aws s3");
+		assertNotNull(iridaTemporaryFile, "Should have got back the file from aws s3 bucket");
 		assertTrue(iridaTemporaryFile.getFile().toString().contains(FILENAME));
 		assertFalse(iridaTemporaryFile.getDirectoryPath().toString().contains(FILENAME));
 		assertFalse(iridaTemporaryFile.getDirectoryPath().toString().contains(DIRECTORY_PREFIX));
@@ -125,7 +121,7 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 				DIRECTORY_PREFIX);
 		iridaTemporaryFile.getFile();
 		iridaTemporaryFile.getDirectoryPath();
-		assertNotNull(iridaTemporaryFile, "Should have got back the file from aws s3");
+		assertNotNull(iridaTemporaryFile, "Should have got back the file from aws s3 bucket");
 		assertTrue(iridaTemporaryFile.getFile().toString().contains(FILENAME));
 		assertFalse(iridaTemporaryFile.getDirectoryPath().toString().contains(FILENAME));
 		assertTrue(iridaTemporaryFile.getDirectoryPath().toString().contains(DIRECTORY_PREFIX));
@@ -145,7 +141,30 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 	@Test
 	@Override
 	public void testWriteFile() throws IOException {
+		Path source = Paths.get(LOCAL_RESOURCES_FASTA_FILE_PATH);
+		Path temp = null;
 
+		/*
+		 We do this so the file in src/test/resources/files doesn't get deleted
+		 as the method to write the file to an aws s3 bucket cleans up the source file from
+		 the local drive
+ 		*/
+		try {
+			// Create an temporary file
+			temp = Files.createTempFile("iridatestfile", ".fasta");
+			FileUtils.copyFile(source.toFile(), temp.toFile());
+
+			Path target = PATH_TO_FASTA_FILE;
+			iridaFileStorageUtility.writeFile(temp, target, null, null);
+			assertTrue(s3Client.doesObjectExist(bucketName, AWS_PATH_TO_FASTA_FILE),
+					"File should exist in aws s3 bucket");
+		} catch (IOException e) {
+			throw new StorageException("Cannot file file");
+		} finally {
+			if (temp != null) {
+				Files.deleteIfExists(temp);
+			}
+		}
 	}
 
 	@Test
@@ -158,7 +177,7 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 	@Test
 	public void testFileExists() {
 		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
-		assertTrue(fileExistsInBlobStorage, "File should exist in aws s3 storage");
+		assertTrue(fileExistsInBlobStorage, "File should exist in aws s3 bucket");
 	}
 
 	@Test
@@ -166,7 +185,7 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 	public void testGetFileInputStream() throws IOException {
 		InputStream inputStream = iridaFileStorageUtility.getFileInputStream(PATH_TO_FASTA_FILE);
 		byte[] fileBytes = inputStream.readNBytes(20);
-		assertTrue(fileBytes.length == 20, "Should have read 20 bytes from file in aws s3 storage bucket");
+		assertTrue(fileBytes.length == 20, "Should have read 20 bytes from file in aws s3 bucket");
 	}
 
 	@Test
@@ -238,25 +257,25 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 	@Override
 	public void testReadChunk() {
 		// TODO: Figure out how to test this. We are able to get the object via just the bucket and key but not by adding a range object
-//		String expectedText = "CCCGCTCGCCACGCTTTGGC";
-//		Long seek = 47L;
-//		Long chunk1 = 20L;
-//		Long chunk2 = 2L;
-//
-//		FileChunkResponse fileChunkResponse = iridaFileStorageUtility.readChunk(PATH_TO_FASTA_FILE, seek, chunk1);
-//		assertEquals(fileChunkResponse.getText(), expectedText, "Should have read the correct chunk from the file");
-//
-//		fileChunkResponse = iridaFileStorageUtility.readChunk(PATH_TO_FASTA_FILE, fileChunkResponse.getFilePointer(),
-//				chunk2);
-//		assertEquals(fileChunkResponse.getText(), "CA", "Should have read the correct chunk from the file");
+		//		String expectedText = "CCCGCTCGCCACGCTTTGGC";
+		//		Long seek = 47L;
+		//		Long chunk1 = 20L;
+		//		Long chunk2 = 2L;
+		//
+		//		FileChunkResponse fileChunkResponse = iridaFileStorageUtility.readChunk(PATH_TO_FASTA_FILE, seek, chunk1);
+		//		assertEquals(fileChunkResponse.getText(), expectedText, "Should have read the correct chunk from the file");
+		//
+		//		fileChunkResponse = iridaFileStorageUtility.readChunk(PATH_TO_FASTA_FILE, fileChunkResponse.getFilePointer(),
+		//				chunk2);
+		//		assertEquals(fileChunkResponse.getText(), "CA", "Should have read the correct chunk from the file");
 	}
 
 	@Test
 	@Override
 	public void testCheckWriteAccess() {
 		// TODO: Figure out how to test this since the s3mock doesn't have the s3 api -> getBucketAcl method implemented
-//		boolean hasWriteAccess = iridaFileStorageUtility.checkWriteAccess(PATH_TO_FASTA_FILE);
-//		assertTrue(hasWriteAccess, "Should have write access to aws s3 bucket");
+		//		boolean hasWriteAccess = iridaFileStorageUtility.checkWriteAccess(PATH_TO_FASTA_FILE);
+		//		assertTrue(hasWriteAccess, "Should have write access to aws s3 bucket");
 	}
 
 	@Test
