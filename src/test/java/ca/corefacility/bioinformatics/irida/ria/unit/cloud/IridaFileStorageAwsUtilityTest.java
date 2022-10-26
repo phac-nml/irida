@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
@@ -35,7 +33,6 @@ import com.amazonaws.auth.AnonymousAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,29 +40,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtility {
 
-	private AmazonS3 s3Client;
+	private static AmazonS3 s3Client;
 
-	private String bucketName = "irida-aws-test";
+	private static String bucketName = "irida-aws-test";
 
-	private String FILENAME = "test_file.fasta";
+	private static String FILENAME = "test_file.fasta";
 	private String DIRECTORY_PREFIX = "aws-test-prefix-";
 	private Path PATH_TO_FASTA_FILE = Paths.get("/opt/irida/data/" + FILENAME);
 	private Path PATH_TO_APPENDED_FASTQ_FILE = Paths.get("/opt/irida/data/iridatestfileappend.fastq");
-	private Path AWS_PATH_TO_APPENDED_FASTQ_FILE = Paths.get("opt/irida/data/iridatestfileappend.fastq");
-	private String LOCAL_RESOURCES_IMAGE_FILE_PATH = "src/test/resources/files/perBaseQualityScoreChart.png";
-	private String LOCAL_RESOURCES_FASTA_FILE_PATH = "src/test/resources/files/" + FILENAME;
-	private String LOCAL_RESOURCES_FASTQ_1_PATH = "src/test/resources/files/test_file_1.fastq";
-	private String LOCAL_RESOURCES_FASTQ_2_PATH = "src/test/resources/files/test_file_2.fastq";
+	private static Path AWS_PATH_TO_APPENDED_FASTQ_FILE = Paths.get("opt/irida/data/iridatestfileappend.fastq");
+	private static String LOCAL_RESOURCES_IMAGE_FILE_PATH = "src/test/resources/files/perBaseQualityScoreChart.png";
+	private static String LOCAL_RESOURCES_FASTA_FILE_PATH = "src/test/resources/files/" + FILENAME;
+	private static String LOCAL_RESOURCES_FASTQ_1_PATH = "src/test/resources/files/test_file_1.fastq";
+	private static String LOCAL_RESOURCES_FASTQ_2_PATH = "src/test/resources/files/test_file_2.fastq";
 	private Path PATH_TO_IMAGE_FILE = Paths.get("/opt/irida/data/perBaseQualityScoreChart.png");
 
-	private String AWS_PATH_FASTQ_1 = "opt/irida/data/test_file_1.fastq";
-	private String AWS_PATH_FASTQ_2 = "opt/irida/data/test_file_2.fastq";
-	private String AWS_PATH_TO_IMAGE_FILE = "opt/irida/data/perBaseQualityScoreChart.png";
-	private String AWS_PATH_TO_FASTA_FILE = "opt/irida/data/" + FILENAME;
-	private IridaFileStorageUtility iridaFileStorageUtility;
+	private static String AWS_PATH_FASTQ_1 = "opt/irida/data/test_file_1.fastq";
+	private static String AWS_PATH_FASTQ_2 = "opt/irida/data/test_file_2.fastq";
+	private static String AWS_PATH_TO_IMAGE_FILE = "opt/irida/data/perBaseQualityScoreChart.png";
+	private static String AWS_PATH_TO_FASTA_FILE = "opt/irida/data/" + FILENAME;
+	private static IridaFileStorageUtility iridaFileStorageUtility;
 
-	@BeforeEach
-	public void setUp() {
+	@BeforeAll
+	public static void setUp() {
 		s3Client = AmazonS3ClientBuilder.standard()
 				.withClientConfiguration(new ClientConfiguration().withProtocol(Protocol.HTTP))
 				.withCredentials(new AWSStaticCredentialsProvider(
@@ -90,14 +87,13 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 		s3Client.putObject(bucketName, AWS_PATH_FASTQ_2, Paths.get(LOCAL_RESOURCES_FASTQ_2_PATH).toFile());
 	}
 
-	@AfterEach
-	public void tearDown() {
+	@AfterAll
+	public static void tearDown() {
 		s3Client.deleteObject(bucketName, AWS_PATH_TO_FASTA_FILE);
 		s3Client.deleteObject(bucketName, AWS_PATH_TO_IMAGE_FILE);
 		s3Client.deleteObject(bucketName, AWS_PATH_FASTQ_1);
 		s3Client.deleteObject(bucketName, AWS_PATH_FASTQ_2);
 		s3Client.deleteObject(bucketName, AWS_PATH_TO_APPENDED_FASTQ_FILE.toString());
-		ObjectListing s = s3Client.listObjects(bucketName);
 		s3Client.deleteBucket(bucketName);
 	}
 
