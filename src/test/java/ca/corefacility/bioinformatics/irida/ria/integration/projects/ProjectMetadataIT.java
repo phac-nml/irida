@@ -1,13 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.Test;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectMetadataPage;
-
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectMetadataView.xml")
 public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
@@ -48,7 +47,7 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		page.selectMetadataField("Symptoms");
 		page.selectMetadataField("Exposures");
 		page.createNewTemplate("Special Template", "Long description");
-		assertTrue(driver().getCurrentUrl().matches("(.*)/metadata/templates/\\d+"), "Should be on a template specific page");
+		assertTrue(driver().getCurrentUrl().matches("(.*)/metadata-templates/\\d+"), "Should be on a template specific page");
 		final String newTemplateName = "An awesome name";
 		page.editTemplateName(newTemplateName);
 		assertEquals(newTemplateName, page.getTemplateName(), "New template name should be set as the template name");

@@ -65,7 +65,7 @@ export function MetadataTemplateCreate({ children, projectId, fields = [] }) {
         refetchTemplates();
         navigate(
           setBaseUrl(
-            `/projects/${projectId}/settings/metadata/templates/${template.identifier}`
+            `/projects/${projectId}/settings/metadata-templates/${template.identifier}`
           )
         );
       })

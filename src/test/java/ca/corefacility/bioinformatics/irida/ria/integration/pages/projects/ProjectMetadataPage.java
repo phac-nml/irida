@@ -14,10 +14,10 @@ import java.time.Duration;
 import java.util.List;
 
 public class ProjectMetadataPage extends AbstractPage {
-	@FindBy(className = "t-m-field-link")
+	@FindBy(css = "[data-menu-id*='metadata-fields']")
 	WebElement metadataFieldTab;
 
-	@FindBy(className = "t-m-template-link")
+	@FindBy(css = "[data-menu-id*='metadata-templates']")
 	WebElement metadataTemplateLink;
 
 	@FindBy(className = "t-m-field")
@@ -87,7 +87,7 @@ public class ProjectMetadataPage extends AbstractPage {
 		createTemplateModal.findElement(By.className("t-c-t-name")).sendKeys(name);
 		createTemplateModal.findElement(By.className("t-c-t-desc")).sendKeys(description);
 		createTemplateModal.findElement(By.className("t-create-modal-ok")).click();
-		wait.until(ExpectedConditions.urlContains("/metadata/templates"));
+		wait.until(ExpectedConditions.urlContains("/metadata-templates"));
 	}
 
 	public void gotoTemplate(String name) {
@@ -96,7 +96,7 @@ public class ProjectMetadataPage extends AbstractPage {
 			WebElement element = row.findElement(By.className("t-t-name"));
 			if (element.getText().equalsIgnoreCase(name)) {
 				element.click();
-				wait.until(ExpectedConditions.urlContains("/metadata/templates/"));
+				wait.until(ExpectedConditions.urlContains("/metadata-templates/"));
 				break;
 			}
 		}
