@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
@@ -35,51 +33,51 @@ import com.azure.storage.common.StorageSharedKeyCredential;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUtility {
-	private BlobServiceClient blobServiceClient;
-	private BlobContainerClient containerClient;
-	private String containerName = "irida-azure-test";
-	private String containerUrl = "http://127.0.0.1:10000/devstoreaccount1/" + containerName;
-	private String FILENAME = "test_file.fasta";
+	private static BlobServiceClient blobServiceClient;
+	private static BlobContainerClient containerClient;
+	private static String containerName = "irida-azure-test";
+	private static String containerUrl = "http://127.0.0.1:10000/devstoreaccount1/" + containerName;
+	private static String FILENAME = "test_file.fasta";
 
 	private Path PATH_TO_FASTA_FILE = Paths.get("/opt/irida/data/" + FILENAME);
-	private String AZURE_PATH_TO_FASTA_FILE = "opt/irida/data/" + FILENAME;
+	private static String AZURE_PATH_TO_FASTA_FILE = "opt/irida/data/" + FILENAME;
 	private Path PATH_TO_IMAGE_FILE = Paths.get("/opt/irida/data/perBaseQualityScoreChart.png");
-	private String AZURE_PATH_TO_IMAGE_FILE = "opt/irida/data/perBaseQualityScoreChart.png";
+	private static String AZURE_PATH_TO_IMAGE_FILE = "opt/irida/data/perBaseQualityScoreChart.png";
 	private String DIRECTORY_PREFIX = "text-prefix-";
 
-	private Path PATH_TO_APPENDED_FASTQ_FILE = Paths.get("/opt/irida/data/iridatestfileappend.fastq");
+	private static Path PATH_TO_APPENDED_FASTQ_FILE = Paths.get("/opt/irida/data/iridatestfileappend.fastq");
 
-	private String LOCAL_RESOURCES_FASTA_FILE_PATH = "src/test/resources/files/" + FILENAME;
-	private String LOCAL_RESOURCES_IMAGE_FILE_PATH = "src/test/resources/files/perBaseQualityScoreChart.png";
+	private static String LOCAL_RESOURCES_FASTA_FILE_PATH = "src/test/resources/files/" + FILENAME;
+	private static String LOCAL_RESOURCES_IMAGE_FILE_PATH = "src/test/resources/files/perBaseQualityScoreChart.png";
 
 	// AZURE DEFAULT ACCOUNT NAME AND KEY FOR DEVELOPMENT
-	private String ACCOUNT_NAME = "devstoreaccount1";
-	private String ACCOUNT_KEY = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==";
+	private static String ACCOUNT_NAME = "devstoreaccount1";
+	private static String ACCOUNT_KEY = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==";
 
-	private String AZURE_PATH_FASTQ_1 = "opt/irida/data/test_file_1.fastq";
-	private String AZURE_PATH_FASTQ_2 = "opt/irida/data/test_file_2.fastq";
+	private static String AZURE_PATH_FASTQ_1 = "opt/irida/data/test_file_1.fastq";
+	private static String AZURE_PATH_FASTQ_2 = "opt/irida/data/test_file_2.fastq";
 
-	private String LOCAL_RESOURCES_FASTQ_1_PATH = "src/test/resources/files/test_file_1.fastq";
-	private String LOCAL_RESOURCES_FASTQ_2_PATH = "src/test/resources/files/test_file_2.fastq";
+	private static String LOCAL_RESOURCES_FASTQ_1_PATH = "src/test/resources/files/test_file_1.fastq";
+	private static String LOCAL_RESOURCES_FASTQ_2_PATH = "src/test/resources/files/test_file_2.fastq";
 
-	private IridaFileStorageUtility iridaFileStorageUtility;
+	private static IridaFileStorageUtility iridaFileStorageUtility;
 
-	@BeforeEach
-	public void setUp() {
+	@BeforeAll
+	public static void setUp() {
 		StorageSharedKeyCredential storageSharedKeyCredential = new StorageSharedKeyCredential(ACCOUNT_NAME,
 				ACCOUNT_KEY);
 
-		this.blobServiceClient = new BlobServiceClientBuilder().endpoint(containerUrl)
+		blobServiceClient = new BlobServiceClientBuilder().endpoint(containerUrl)
 				.credential(storageSharedKeyCredential)
 				.buildClient();
 
 		if (!blobServiceClient.getBlobContainerClient(containerName).exists()) {
-			this.containerClient = blobServiceClient.createBlobContainer(containerName);
+			containerClient = blobServiceClient.createBlobContainer(containerName);
 		} else {
-			this.containerClient = blobServiceClient.getBlobContainerClient(containerName);
+			containerClient = blobServiceClient.getBlobContainerClient(containerName);
 		}
 
-		this.iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(containerUrl, storageSharedKeyCredential,
+		iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(containerUrl, storageSharedKeyCredential,
 				containerName);
 
 		// Upload a fasta file
@@ -99,8 +97,8 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 	}
 
-	@AfterEach
-	public void tearDown() {
+	@AfterAll
+	public static void tearDown() {
 		BlobClient blobClient = containerClient.getBlobClient(AZURE_PATH_TO_FASTA_FILE);
 		blobClient.deleteIfExists();
 
