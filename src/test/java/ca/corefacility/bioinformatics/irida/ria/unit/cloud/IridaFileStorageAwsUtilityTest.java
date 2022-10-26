@@ -256,26 +256,25 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 	@Test
 	@Override
 	public void testReadChunk() {
-		// TODO: Figure out how to get this to work using the range object. We are able to get the object via just the bucket and key but not by adding a range object
-		String expectedText = "CCCGCTCGCCACGCTTTGGC";
+		String expectedText1 = "CCCGCTCGCCACGCTTTGGC";
+		String expectedText2 = "CA";
 		Long seek = 47L;
 		Long chunk1 = 20L;
 		Long chunk2 = 2L;
 
 		FileChunkResponse fileChunkResponse = iridaFileStorageUtility.readChunk(PATH_TO_FASTA_FILE, seek, chunk1);
-		assertEquals(fileChunkResponse.getText(), expectedText, "Should have read the correct chunk from the file");
+		assertEquals(fileChunkResponse.getText(), expectedText1, "Should have read the correct chunk from the file");
 
 		fileChunkResponse = iridaFileStorageUtility.readChunk(PATH_TO_FASTA_FILE, fileChunkResponse.getFilePointer(),
 				chunk2);
-		assertEquals(fileChunkResponse.getText(), "CA", "Should have read the correct chunk from the file");
+		assertEquals(fileChunkResponse.getText(), expectedText2, "Should have read the correct chunk from the file");
 	}
 
 	@Test
 	@Override
 	public void testCheckWriteAccess() {
-		// TODO: Figure out how to test this since the s3mock doesn't have the s3 api -> getBucketAcl method implemented
-		//		boolean hasWriteAccess = iridaFileStorageUtility.checkWriteAccess(PATH_TO_FASTA_FILE);
-		//		assertTrue(hasWriteAccess, "Should have write access to aws s3 bucket");
+		boolean hasWriteAccess = iridaFileStorageUtility.checkWriteAccess(PATH_TO_FASTA_FILE);
+		assertTrue(hasWriteAccess, "Should have write access to aws s3 bucket");
 	}
 
 	@Test

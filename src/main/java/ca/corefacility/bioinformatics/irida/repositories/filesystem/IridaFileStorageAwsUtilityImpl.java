@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -367,18 +368,37 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 				.map(t -> t.getPermission().toString())
 				.collect(Collectors.toList());
 
+		// If bucket permissions are available
 		if (bucketPermissions.size() > 0) {
 			// check read/write or full control permission
 			if (!((bucketPermissions.contains("READ") && bucketPermissions.contains("WRITE"))
 					|| (bucketPermissions.contains("FULL_CONTROL")))) {
-				throw new StorageException("Unable to read and/or write to bucket " + bucketName
+				throw new StorageException("Unable to read and/or write to aws s3 bucket " + bucketName
 						+ ". Please check bucket has both read and write permissions.");
 			}
 			return true;
 		} else {
-			throw new StorageException(
-					"Unable to locate bucket " + bucketName + ". Please check your credentials and that the bucket "
-							+ bucketName + " exists.");
+			// If bucket permissions are not available we try to read/write from/to bucket
+			try {
+				Path tempDirectory = Files.createTempDirectory(null);
+				Path tempFile = tempDirectory.resolve("testAwsContainerReadWrite.txt");
+				// write a line
+				Files.write(tempFile, "AWS check read/write permissions.\n".getBytes(StandardCharsets.UTF_8));
+				try {
+					s3.putObject(bucketName, getAwsFileAbsolutePath(baseDirectory) + "/" + tempFile.getFileName(), tempFile.toFile());
+					s3.deleteObject(bucketName, getAwsFileAbsolutePath(baseDirectory) + "/" + tempFile.getFileName());
+					return true;
+				} catch (AmazonServiceException e) {
+					throw new StorageException("Unable to read and/or write to aws s3 bucket " + bucketName
+							+ ". Please check bucket has both read and write permissions.", e);
+				} finally {
+					// Cleanup the temporary file on the server
+					Files.delete(tempFile);
+					org.apache.commons.io.FileUtils.deleteDirectory(tempDirectory.toFile());
+				}
+			} catch (IOException e) {
+				throw new StorageException("Unable to clean up temporary file", e);
+			}
 		}
 	}
 
