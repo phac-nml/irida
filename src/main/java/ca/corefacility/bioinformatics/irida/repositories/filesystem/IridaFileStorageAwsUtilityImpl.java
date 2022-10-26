@@ -5,6 +5,7 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,7 +26,6 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 
@@ -53,7 +53,8 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 
 	/*
 	This instantiation method is for TESTING ONLY. DO NOT USE IN PRODUCTION. USE THE METHOD ABOVE FOR PRODUCTION.
-	 */	public IridaFileStorageAwsUtilityImpl(AmazonS3 s3Client, String bucketName) {
+	 */
+	public IridaFileStorageAwsUtilityImpl(AmazonS3 s3Client, String bucketName) {
 		this.s3 = s3Client;
 		this.bucketName = bucketName;
 	}
@@ -66,8 +67,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		try {
 			logger.trace("Getting file from aws s3 [" + file.toString() + "]");
 			Path tempDirectory = Files.createTempDirectory("aws-tmp-");
-			Path tempFile = tempDirectory.resolve(file.getFileName()
-					.toString());
+			Path tempFile = tempDirectory.resolve(file.getFileName().toString());
 
 			try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
 					S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
@@ -95,8 +95,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		try {
 			logger.trace("Getting file from aws s3 [" + file.toString() + "]");
 			Path tempDirectory = Files.createTempDirectory(prefix + "-aws-tmp-");
-			Path tempFile = tempDirectory.resolve(file.getFileName()
-					.toString());
+			Path tempFile = tempDirectory.resolve(file.getFileName().toString());
 
 			try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
 					S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
@@ -123,8 +122,9 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile) {
 		try {
 			if (iridaTemporaryFile.getFile() != null && Files.isRegularFile(iridaTemporaryFile.getFile())) {
-				logger.trace("Cleaning up temporary file downloaded from aws s3 [" + iridaTemporaryFile.getFile()
-						.toString() + "]");
+				logger.trace(
+						"Cleaning up temporary file downloaded from aws s3 [" + iridaTemporaryFile.getFile().toString()
+								+ "]");
 				Files.delete(iridaTemporaryFile.getFile());
 			}
 		} catch (IOException e) {
@@ -136,10 +136,8 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 			if (iridaTemporaryFile.getDirectoryPath() != null && Files.isDirectory(
 					iridaTemporaryFile.getDirectoryPath())) {
 				logger.trace("Cleaning up temporary directory created for aws s3 temporary file ["
-						+ iridaTemporaryFile.getDirectoryPath()
-						.toString() + "]");
-				org.apache.commons.io.FileUtils.deleteDirectory(iridaTemporaryFile.getDirectoryPath()
-						.toFile());
+						+ iridaTemporaryFile.getDirectoryPath().toString() + "]");
+				org.apache.commons.io.FileUtils.deleteDirectory(iridaTemporaryFile.getDirectoryPath().toFile());
 			}
 		} catch (IOException e) {
 			logger.error("Unable to delete local directory", e);
@@ -155,8 +153,8 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		try {
 			logger.trace("Uploading file to s3 bucket: [" + target.getFileName() + "]");
 			s3.putObject(bucketName, getAwsFileAbsolutePath(target), source.toFile());
-			logger.trace("File uploaded to s3 bucket: [" + s3.getUrl(bucketName, target.toAbsolutePath()
-					.toString()) + "]");
+			logger.trace(
+					"File uploaded to s3 bucket: [" + s3.getUrl(bucketName, target.toAbsolutePath().toString()) + "]");
 		} catch (AmazonServiceException e) {
 			logger.error("Unable to upload file to s3 bucket: " + e);
 			throw new StorageException("Unable to upload file s3 bucket", e);
@@ -179,8 +177,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file))) {
 			// Since the file system is virtual the full file path is the file name.
 			// We split it on "/" and get the last token which is the actual file name.
-			String[] nameTokens = s3Object.getKey()
-					.split("/");
+			String[] nameTokens = s3Object.getKey().split("/");
 			fileName = nameTokens[nameTokens.length - 1];
 		} catch (AmazonServiceException e) {
 			logger.error("Couldn't find file [" + e + "]");
@@ -230,19 +227,15 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	}
 
 	/**
-	 * Removes the leading "/" from the absolute path
-	 * returns the rest of the path.
+	 * Removes the leading "/" from the absolute path returns the rest of the path.
 	 *
 	 * @param file
 	 * @return
 	 */
 	private String getAwsFileAbsolutePath(Path file) {
-		String absolutePath = file.toAbsolutePath()
-				.toString();
+		String absolutePath = file.toAbsolutePath().toString();
 		if (absolutePath.charAt(0) == '/') {
-			absolutePath = file.toAbsolutePath()
-					.toString()
-					.substring(1);
+			absolutePath = file.toAbsolutePath().toString().substring(1);
 		}
 		return absolutePath;
 	}
@@ -255,8 +248,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		IridaTemporaryFile iridaTemporaryFile = getTemporaryFile(file.getFile());
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
-			try (FileChannel in = new FileInputStream(iridaTemporaryFile.getFile()
-					.toFile()).getChannel()) {
+			try (FileChannel in = new FileInputStream(iridaTemporaryFile.getFile().toFile()).getChannel()) {
 				for (long p = 0, l = in.size(); p < l; ) {
 					p += in.transferTo(p, l - p, out);
 				}
@@ -329,7 +321,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	public Long getFileSizeBytes(Path file) {
 		Long fileSize = 0L;
 
-		try(S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file))) {
+		try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file))) {
 			fileSize = s3Object.getObjectMetadata().getContentLength();
 		} catch (AmazonServiceException e) {
 			logger.error("Unable to get file size from s3 bucket: " + e);
@@ -349,14 +341,13 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		 The range of bytes to read. Start at seek and get `chunk` amount of bytes from seek point.
 		 However a smaller amount of bytes may be read, so we set the file pointer accordingly
 		 */
-		GetObjectRequest rangeObjectRequest = new GetObjectRequest(bucketName, getAwsFileAbsolutePath(file)).withRange(
-				seek, chunk);
-
-		try (S3Object s3Object = s3.getObject(rangeObjectRequest);
+		try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
 				S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
 			// Read the bytes of the retrieved s3ObjectInputStream chunk
-			byte[] bytes = s3ObjectInputStream.readAllBytes();
-			return new FileChunkResponse(new String(bytes), seek + (bytes.length));
+			byte[] bytes = new byte[seek.intValue() + chunk.intValue()];
+			s3ObjectInputStream.readNBytes(bytes, 0, seek.intValue() + chunk.intValue());
+			byte[] bytesForRange = Arrays.copyOfRange(bytes, seek.intValue(), seek.intValue() + chunk.intValue());
+			return new FileChunkResponse(new String(bytesForRange), seek + (bytesForRange.length));
 		} catch (IOException e) {
 			logger.error("Couldn't get chunk from s3 bucket", e);
 		}
@@ -373,8 +364,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 				.getGrantsAsList()
 				.stream()
 				.distinct()
-				.map(t -> t.getPermission()
-						.toString())
+				.map(t -> t.getPermission().toString())
 				.collect(Collectors.toList());
 
 		if (bucketPermissions.size() > 0) {
