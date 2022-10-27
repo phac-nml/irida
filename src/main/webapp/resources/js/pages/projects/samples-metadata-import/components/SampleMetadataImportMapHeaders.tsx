@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Radio, Table, Typography } from "antd";
+import { Button, Radio, Select, Table, Typography } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import {
   IconArrowLeft,
@@ -33,7 +33,6 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
   const navigate: NavigateFunction = useNavigate();
   const [loading, setLoading] = React.useState<boolean>(false);
   const [restrictions, setRestrictions] = React.useState([]);
-  const [selectedRowKeys, setSelectedRowKeys] = React.useState<React.Key[]>([]);
   const { headers, sampleNameColumn } = useImportSelector(
     (state: ImportState) => state.importReducer
   );
@@ -45,8 +44,6 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
   React.useEffect(() => {
     getMetadataRestrictions().then((data) => {
       setRestrictions(data);
-      console.log("restrictions");
-      console.log(data);
     });
   }, []);
 
@@ -56,14 +53,12 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
         const column = headers.filter(
           (header) => header.name === sampleNameColumn
         );
-        setSelectedRowKeys([column[0].rowKey]);
         setUpdatedSampleNameColumn(column[0].name);
       } else {
-        setSelectedRowKeys([headers[0]?.rowKey]);
         setUpdatedSampleNameColumn(headers[0].name);
       }
     }
-  }, [updatedSampleNameColumn, headers, sampleNameColumn, selectedRowKeys]);
+  }, [updatedSampleNameColumn, headers, sampleNameColumn]);
 
   const onSubmit = async () => {
     if (projectId && updatedSampleNameColumn) {
@@ -76,7 +71,11 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
     }
   };
 
-  const onChange = (item: MetadataHeaderItem, value: string) => {
+  const onSampleNameColumnChange = (value: string) => {
+    setUpdatedSampleNameColumn(value);
+  };
+
+  const onRestrictionChange = (item: MetadataHeaderItem, value: string) => {
     const index = updatedHeaders.findIndex(
       (header) => header.rowKey === item.rowKey
     );
@@ -101,7 +100,9 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
             options={restrictions}
             defaultValue={item.restriction}
             disabled={item.name === updatedSampleNameColumn}
-            onChange={({ target: { value } }) => onChange({ ...item }, value)}
+            onChange={({ target: { value } }) =>
+              onRestrictionChange({ ...item }, value)
+            }
             optionType="button"
           />
         );
@@ -109,29 +110,27 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
     },
   ];
 
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: (
-      selectedRowKeys: React.Key[],
-      selectedRows: MetadataHeaderItem[]
-    ) => {
-      setUpdatedSampleNameColumn(selectedRows[0].name);
-      setSelectedRowKeys([selectedRows[0].rowKey]);
-    },
-  };
-
   return (
     <SampleMetadataImportWizard current={1}>
       <Text>{i18n("SampleMetadataImportMapHeaders.description")}</Text>
+      <Select
+        style={{ width: 300 }}
+        value={updatedSampleNameColumn}
+        onChange={onSampleNameColumnChange}
+      >
+        {headers.map((header) => (
+          <Select.Option key={header.name} value={header.name}>
+            {header.name}
+          </Select.Option>
+        ))}
+      </Select>
       <Table
         className="t-metadata-uploader-header-table"
         rowKey={(row) => row.rowKey}
-        rowSelection={{
-          type: "radio",
-          ...rowSelection,
-        }}
         columns={columns}
-        dataSource={headers}
+        dataSource={headers.filter(
+          (header) => header.name !== updatedSampleNameColumn
+        )}
         pagination={false}
       />
       <div style={{ display: "flex" }}>
