@@ -33,11 +33,11 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
   const navigate: NavigateFunction = useNavigate();
   const [loading, setLoading] = React.useState<boolean>(false);
   const [restrictions, setRestrictions] = React.useState([]);
-  const { headers } = useImportSelector(
+  const { headers, sampleNameColumn } = useImportSelector(
     (state: ImportState) => state.importReducer
   );
   const [updatedSampleNameColumn, setUpdatedSampleNameColumn] =
-    React.useState<string>();
+    React.useState<string>(sampleNameColumn);
   const updatedHeaders = React.useRef<MetadataHeaderItem[]>(headers);
   const dispatch: ImportDispatch = useImportDispatch();
 
@@ -120,6 +120,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
             (header) => header.name !== updatedSampleNameColumn
           )}
           pagination={false}
+          scroll={{ y: 600 }}
         />
       )}
       <div style={{ display: "flex" }}>
