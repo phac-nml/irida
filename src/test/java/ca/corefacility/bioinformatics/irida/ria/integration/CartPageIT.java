@@ -1,10 +1,13 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.components.FastQCModal;
+import ca.corefacility.bioinformatics.irida.ria.integration.components.SampleDetailsViewer;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.FileUtilities;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.JavascriptExecutor;
@@ -13,19 +16,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.components.FastQCModal;
-import ca.corefacility.bioinformatics.irida.ria.integration.components.SampleDetailsViewer;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.FileUtilities;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.ImmutableList;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/CartView.xml")
 public class CartPageIT extends AbstractIridaUIITChromeDriver {
