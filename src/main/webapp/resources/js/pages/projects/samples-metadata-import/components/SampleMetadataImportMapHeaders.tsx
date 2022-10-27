@@ -47,19 +47,6 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
     });
   }, []);
 
-  React.useEffect(() => {
-    if (!updatedSampleNameColumn && headers.length > 0) {
-      if (sampleNameColumn) {
-        const column = headers.filter(
-          (header) => header.name === sampleNameColumn
-        );
-        setUpdatedSampleNameColumn(column[0].name);
-      } else {
-        setUpdatedSampleNameColumn(headers[0].name);
-      }
-    }
-  }, [updatedSampleNameColumn, headers, sampleNameColumn]);
-
   const onSubmit = async () => {
     if (projectId && updatedSampleNameColumn) {
       setLoading(true);
@@ -128,9 +115,13 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
         className="t-metadata-uploader-header-table"
         rowKey={(row) => row.rowKey}
         columns={columns}
-        dataSource={headers.filter(
-          (header) => header.name !== updatedSampleNameColumn
-        )}
+        dataSource={
+          updatedSampleNameColumn
+            ? headers.filter(
+                (header) => header.name !== updatedSampleNameColumn
+              )
+            : undefined
+        }
         pagination={false}
       />
       <div style={{ display: "flex" }}>
