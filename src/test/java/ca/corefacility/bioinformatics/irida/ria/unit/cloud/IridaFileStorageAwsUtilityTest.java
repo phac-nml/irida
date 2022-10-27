@@ -61,6 +61,9 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 	private static String AWS_PATH_TO_FASTA_FILE = "opt/irida/data/" + FILENAME;
 	private static IridaFileStorageUtility iridaFileStorageUtility;
 
+	private static String ENDPOINT_URL = "http://127.0.0.1:9090/";
+	private static String BUCKET_REGION = "us-east-1";
+
 	@BeforeAll
 	public static void setUp() {
 		s3Client = AmazonS3ClientBuilder.standard()
@@ -68,7 +71,7 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 				.withCredentials(new AWSStaticCredentialsProvider(
 						new AnonymousAWSCredentials())) // use any credentials here for mocking
 				.withEndpointConfiguration(
-						new AwsClientBuilder.EndpointConfiguration("http://127.0.0.1:9090/", "us-east-1"))
+						new AwsClientBuilder.EndpointConfiguration(ENDPOINT_URL, BUCKET_REGION))
 				.build();
 
 		iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(s3Client, bucketName);
