@@ -32,7 +32,7 @@ module.exports = {
   groups: "./resources/js/pages/UserGroupsPage",
   "project-ncbi-exports": "./resources/js/pages/projects/ncbi",
   "project-ncbi-export": "./resources/js/pages/projects/ncbi/create",
-  search: "./resources/js/pages/search/search.js",
+  search: "./resources/js/pages/search",
   user: "./resources/js/pages/user",
   admin: "./resources/js/pages/admin/index.tsx",
   "analyses-outputs": "./resources/js/pages/analyses/analyses-outputs/",
