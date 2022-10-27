@@ -270,17 +270,18 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 	@Test
 	@Override
 	public void testReadChunk() {
-		String expectedText = "CCCGCTCGCCACGCTTTGGC";
+		String expectedText1 = "CCCGCTCGCCACGCTTTGGC";
+		String expectedText2 = "CA";
 		Long seek = 47L;
 		Long chunk1 = 20L;
 		Long chunk2 = 2L;
 
 		FileChunkResponse fileChunkResponse = iridaFileStorageUtility.readChunk(PATH_TO_FASTA_FILE, seek, chunk1);
-		assertEquals(fileChunkResponse.getText(), expectedText, "Should have read the correct chunk from the file");
+		assertEquals(expectedText1, fileChunkResponse.getText(), "Should have read the correct chunk from the file");
 
 		fileChunkResponse = iridaFileStorageUtility.readChunk(PATH_TO_FASTA_FILE, fileChunkResponse.getFilePointer(),
 				chunk2);
-		assertEquals("CA", fileChunkResponse.getText(), "Should have read the correct chunk from the file");
+		assertEquals(expectedText2, fileChunkResponse.getText(), "Should have read the correct chunk from the file");
 	}
 
 	@Test
