@@ -38,7 +38,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
   );
   const [updatedSampleNameColumn, setUpdatedSampleNameColumn] =
     React.useState<string>();
-  const updatedHeaders: MetadataHeaderItem[] = [...headers];
+  const updatedHeaders = React.useRef<MetadataHeaderItem[]>(headers);
   const dispatch: ImportDispatch = useImportDispatch();
 
   React.useEffect(() => {
@@ -66,7 +66,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
       await dispatch(
         setSampleNameColumn({ projectId, updatedSampleNameColumn })
       );
-      await dispatch(updateHeaders(updatedHeaders));
+      await dispatch(updateHeaders(updatedHeaders.current));
       navigate(`/${projectId}/sample-metadata/upload/review`);
     }
   };
@@ -76,13 +76,13 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
   };
 
   const onRestrictionChange = (item: MetadataHeaderItem, value: string) => {
-    const index = updatedHeaders.findIndex(
+    const index = updatedHeaders.current.findIndex(
       (header) => header.rowKey === item.rowKey
     );
     if (index !== -1) {
-      const updatedHeadersItem = { ...updatedHeaders[index] };
+      const updatedHeadersItem = { ...updatedHeaders.current[index] };
       updatedHeadersItem.restriction = value;
-      updatedHeaders[index] = updatedHeadersItem;
+      updatedHeaders.current[index] = updatedHeadersItem;
     }
   };
 
