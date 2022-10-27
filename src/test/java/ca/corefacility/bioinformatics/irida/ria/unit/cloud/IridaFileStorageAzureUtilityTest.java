@@ -185,7 +185,7 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 	@Override
 	public void testGetFileName() {
 		String fileName = iridaFileStorageUtility.getFileName(PATH_TO_FASTA_FILE);
-		assertEquals(fileName, FILENAME, "The file names should be equal");
+		assertEquals(FILENAME, fileName, "The file names should be equal");
 	}
 
 	@Test
@@ -216,7 +216,7 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 		sequenceFile.setFile(Paths.get("/opt/irida/data/test_file_1.fastq"));
 		SequenceFile sequenceFile2 = new SequenceFile();
 		sequenceFile2.setFile(Paths.get("/opt/irida/data/test_file_2.fastq"));
-
+		Long expectedFileSize = 4204L;
 		Path temp = null;
 
 		try {
@@ -225,7 +225,7 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 			iridaFileStorageUtility.appendToFile(temp, sequenceFile2);
 			iridaFileStorageUtility.writeFile(temp, PATH_TO_APPENDED_FASTQ_FILE, null, null);
 			Long fileSizeAppendedFile = iridaFileStorageUtility.getFileSizeBytes(PATH_TO_APPENDED_FASTQ_FILE);
-			assertEquals(4204L, fileSizeAppendedFile, "File sizes should be equal");
+			assertEquals(expectedFileSize, fileSizeAppendedFile, "File sizes should be equal");
 		} catch (IOException e) {
 			throw new StorageException("Cannot file file");
 		} finally {
@@ -246,7 +246,7 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 				.map(SampleSequencingObjectJoin::getObject)
 				.collect(Collectors.toList());
 		String fileExtension = iridaFileStorageUtility.getFileExtension(sequencingObjects);
-		assertEquals(fileExtension, "fastq", "Both sequencing objects should have the same file extension");
+		assertEquals("fastq", fileExtension, "Both sequencing objects should have the same file extension");
 	}
 
 	@Test
@@ -256,7 +256,7 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 		String base64EncodedLocalImage = Base64.getEncoder().encodeToString(localImageFile);
 		byte[] azureImageFile = iridaFileStorageUtility.readAllBytes(PATH_TO_IMAGE_FILE);
 		String base64EncodedAzureImage = Base64.getEncoder().encodeToString(azureImageFile);
-		assertEquals(base64EncodedAzureImage, base64EncodedLocalImage, "Bytes should be equal");
+		assertEquals(base64EncodedLocalImage, base64EncodedAzureImage, "Bytes should be equal");
 	}
 
 	@Test
@@ -264,7 +264,7 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 	public void testGetFileSizeBytes() {
 		Long expectedFileSize = 405049L;
 		Long fileSize = iridaFileStorageUtility.getFileSizeBytes(PATH_TO_FASTA_FILE);
-		assertEquals(fileSize, expectedFileSize, "File size should be equal");
+		assertEquals(expectedFileSize, fileSize, "File size should be equal");
 	}
 
 	@Test
@@ -280,7 +280,7 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 
 		fileChunkResponse = iridaFileStorageUtility.readChunk(PATH_TO_FASTA_FILE, fileChunkResponse.getFilePointer(),
 				chunk2);
-		assertEquals(fileChunkResponse.getText(), "CA", "Should have read the correct chunk from the file");
+		assertEquals("CA", fileChunkResponse.getText(), "Should have read the correct chunk from the file");
 	}
 
 	@Test
@@ -294,7 +294,7 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 	@Override
 	public void testGetStorageType() {
 		String storageType = iridaFileStorageUtility.getStorageType();
-		assertEquals(StorageType.fromString(storageType), StorageType.AZURE, "Storage type should be azure");
+		assertEquals(StorageType.AZURE, StorageType.fromString(storageType), "Storage type should be azure");
 	}
 }
 
