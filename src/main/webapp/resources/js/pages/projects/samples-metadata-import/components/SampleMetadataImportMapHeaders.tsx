@@ -33,7 +33,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
   const navigate: NavigateFunction = useNavigate();
   const [loading, setLoading] = React.useState<boolean>(false);
   const [restrictions, setRestrictions] = React.useState([]);
-  const { headers, sampleNameColumn } = useImportSelector(
+  const { headers } = useImportSelector(
     (state: ImportState) => state.importReducer
   );
   const [updatedSampleNameColumn, setUpdatedSampleNameColumn] =
@@ -111,19 +111,17 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
           </Select.Option>
         ))}
       </Select>
-      <Table
-        className="t-metadata-uploader-header-table"
-        rowKey={(row) => row.rowKey}
-        columns={columns}
-        dataSource={
-          updatedSampleNameColumn
-            ? headers.filter(
-                (header) => header.name !== updatedSampleNameColumn
-              )
-            : undefined
-        }
-        pagination={false}
-      />
+      {updatedSampleNameColumn && (
+        <Table
+          className="t-metadata-uploader-header-table"
+          rowKey={(row) => row.rowKey}
+          columns={columns}
+          dataSource={headers.filter(
+            (header) => header.name !== updatedSampleNameColumn
+          )}
+          pagination={false}
+        />
+      )}
       <div style={{ display: "flex" }}>
         <Button
           className="t-metadata-uploader-file-button"
