@@ -46,6 +46,7 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 	private String DIRECTORY_PREFIX = "text-prefix-";
 
 	private static Path PATH_TO_APPENDED_FASTQ_FILE = Paths.get("/opt/irida/data/iridatestfileappend.fastq");
+	private static Path AZURE_PATH_TO_APPENDED_FASTQ_FILE = Paths.get("opt/irida/data/iridatestfileappend.fastq");
 
 	private static String LOCAL_RESOURCES_FASTA_FILE_PATH = "src/test/resources/files/" + FILENAME;
 	private static String LOCAL_RESOURCES_IMAGE_FILE_PATH = "src/test/resources/files/perBaseQualityScoreChart.png";
@@ -111,8 +112,10 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 		blobClient = containerClient.getBlobClient(AZURE_PATH_FASTQ_2);
 		blobClient.deleteIfExists();
 
-		blobClient = containerClient.getBlobClient(PATH_TO_APPENDED_FASTQ_FILE.toString());
+		blobClient = containerClient.getBlobClient(AZURE_PATH_TO_APPENDED_FASTQ_FILE.toString());
 		blobClient.deleteIfExists();
+
+		containerClient.deleteIfExists();
 	}
 
 	@Test
@@ -239,7 +242,7 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 	@Override
 	public void testGetFileExtension() throws IOException {
 		Sample sample = new Sample("Sample1");
-		List<String> fileNames = List.of("test_file_1.fastq", "test_file_2.fastq");
+		List<String> fileNames = List.of("/opt/irida/data/test_file_1.fastq", "/opt/irida/data/test_file_2.fastq");
 		List<SampleSequencingObjectJoin> sequencingObject = TestDataFactory.generateSingleFileSequencingObjectsForSample(
 				sample, fileNames);
 		List<SequencingObject> sequencingObjects = sequencingObject.stream()
