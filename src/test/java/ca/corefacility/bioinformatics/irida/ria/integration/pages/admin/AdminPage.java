@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.admin;
 
-import java.time.Duration;
-import java.util.List;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -11,7 +9,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.time.Duration;
+import java.util.List;
 
 public class AdminPage extends AbstractPage {
 	public static final String RELATIVE_URL = "/";
@@ -23,31 +22,28 @@ public class AdminPage extends AbstractPage {
 	@FindBy(className = "t-admin-side-menu")
 	private List<WebElement> adminSideMenu;
 
-	@FindBy(className = "t-admin-statistics-link")
+	@FindBy(css = "[data-menu-id*='statistics']")
 	private List<WebElement> adminStatisticsLink;
 
-	@FindBy(className = "t-admin-users-submenu")
-	private List<WebElement> adminUsersSubMenu;
-
-	@FindBy(className = "t-admin-users-link")
+	@FindBy(css = "[data-menu-id*='users']")
 	private List<WebElement> adminUsersLink;
 
-	@FindBy(className = "t-admin-groups-link")
+	@FindBy(css = "[data-menu-id*='groups']")
 	private List<WebElement> adminGroupsLink;
 
-	@FindBy(className = "t-admin-clients-link")
+	@FindBy(css = "[data-menu-id*='clients']")
 	private List<WebElement> adminClientsLink;
 
-	@FindBy(className = "t-admin-remote-api-link")
+	@FindBy(css = "[data-menu-id*='remote-api']")
 	private List<WebElement> adminRemoteApiLink;
 
-	@FindBy(className = "t-admin-sequencing-runs-link")
+	@FindBy(css = "[data-menu-id*='sequencing-runs']")
 	private List<WebElement> adminSequencingRunsLink;
 
-	@FindBy(className = "t-admin-ncbi-exports-link")
+	@FindBy(css = "[data-menu-id*='ncbi-exports']")
 	private List<WebElement> adminNcbiExportsLink;
 
-	@FindBy(className = "t-admin-announcements-link")
+	@FindBy(css = "[data-menu-id*='announcements']")
 	private List<WebElement> adminAnnouncementsLink;
 
 	@FindBy(className = "t-add-user-btn")
@@ -255,15 +251,6 @@ public class AdminPage extends AbstractPage {
 	}
 
 	/**
-	 * Clicks on the users submenu to open it up and give access to its options.
-	 */
-	public void clickUsersSubMenu() {
-		adminUsersSubMenu.get(0).click();
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
-		wait.until(ExpectedConditions.urlContains("/admin"));
-	}
-
-	/**
 	 * Clicks on the admin users menu button to navigate to the admin users page.
 	 */
 	public void clickUsersLink() {
@@ -296,7 +283,7 @@ public class AdminPage extends AbstractPage {
 	public void clickRemoteApiLink() {
 		adminRemoteApiLink.get(0).click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
-		wait.until(ExpectedConditions.urlContains("/admin/remote_api"));
+		wait.until(ExpectedConditions.urlContains("/admin/remote-api"));
 	}
 
 	/**
@@ -314,7 +301,7 @@ public class AdminPage extends AbstractPage {
 	public void clickNcbiExportsLink() {
 		adminNcbiExportsLink.get(0).click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
-		wait.until(ExpectedConditions.urlContains("/admin/ncbi_exports"));
+		wait.until(ExpectedConditions.urlContains("/admin/ncbi-exports"));
 	}
 
 	/**
