@@ -44,19 +44,19 @@ export default function ViewerHeader({
     () => [
       {
         key: "details",
-        title: i18n("SampleDetails.details"),
+        label: i18n("SampleDetails.details"),
       },
       {
         key: "metadata",
-        title: i18n("SampleDetails.metadata"),
+        label: i18n("SampleDetails.metadata"),
       },
       {
         key: "files",
-        title: i18n("SampleDetails.file"),
+        label: i18n("SampleDetails.files"),
       },
       {
         key: "analyses",
-        title: i18n("SampleDetails.analyses"),
+        label: i18n("SampleDetails.analyses"),
       },
     ],
     []

@@ -196,7 +196,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testCartPageAsAdmin() {
+	public void testCartPageAsAdmin() throws InterruptedException {
 		LoginPage.loginAsAdmin(driver());
 		driver().manage().window().maximize();
 		// Add some samples to the cart and test to see if they get displayed/
@@ -233,7 +233,9 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 				"Should have proper project name displayed for sample");
 		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Should display the correct created date");
 
+		Thread.sleep(2000);
 		sampleDetailsViewer.clickMetadataTabLink();
+		Thread.sleep(10000);
 		assertTrue(sampleDetailsViewer.addNewMetadataButtonVisible());
 		assertEquals(4, sampleDetailsViewer.getNumberOfMetadataEntries(),
 				"Should have the proper number of metadata entries");
