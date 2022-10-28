@@ -61,7 +61,7 @@ export default function ViewerHeader({
     ],
     []
   );
-  console.log(menuItems);
+
   return (
     <div
       style={{
