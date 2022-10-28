@@ -1,4 +1,4 @@
-import { Button, Menu, Space, Tag, Typography } from "antd";
+import { Button, Menu, MenuProps, Space, Tag, Typography } from "antd";
 import React, { Dispatch, SetStateAction, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { generateColourForItem } from "../../../utilities/colour-utilities";
@@ -40,6 +40,28 @@ export default function ViewerHeader({
     [projectId, projectName]
   );
 
+  const menuItems: MenuProps["items"] = useMemo(
+    () => [
+      {
+        key: "details",
+        title: i18n("SampleDetails.details"),
+      },
+      {
+        key: "metadata",
+        title: i18n("SampleDetails.metadata"),
+      },
+      {
+        key: "files",
+        title: i18n("SampleDetails.file"),
+      },
+      {
+        key: "analyses",
+        title: i18n("SampleDetails.analyses"),
+      },
+    ],
+    []
+  );
+  console.log(menuItems);
   return (
     <div
       style={{
@@ -109,12 +131,8 @@ export default function ViewerHeader({
         onSelect={({ key }) => onMenuChange(key)}
         style={{ borderBottom: 0 }}
         className="t-sample-viewer-nav"
-      >
-        <Menu.Item key="details">{i18n("SampleDetails.details")}</Menu.Item>
-        <Menu.Item key="metadata">{i18n("SampleDetails.metadata")}</Menu.Item>
-        <Menu.Item key="files">{i18n("SampleDetails.files")}</Menu.Item>
-        <Menu.Item key="analyses">{i18n("SampleDetails.analyses")}</Menu.Item>
-      </Menu>
+        items={menuItems}
+      />
     </div>
   );
 }
