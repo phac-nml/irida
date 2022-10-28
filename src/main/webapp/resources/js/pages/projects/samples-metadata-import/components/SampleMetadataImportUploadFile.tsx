@@ -65,7 +65,7 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
                 rawNumbers: false,
               }
             );
-            await dispatch(setHeaders(Object.keys(rows[0])));
+            await dispatch(setHeaders({ headers: Object.keys(rows[0]) }));
             await dispatch(setMetadata(rows));
           };
           if (info.file.originFileObj) {

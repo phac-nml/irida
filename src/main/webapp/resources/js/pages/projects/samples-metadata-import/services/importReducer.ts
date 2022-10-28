@@ -14,6 +14,10 @@ import {
   ValidateSamplesResponse,
 } from "../../../../apis/projects/samples";
 import { ImportDispatch, ImportState } from "../store";
+import {
+  getMetadataFieldsForProject,
+  MetadataField,
+} from "../../../../apis/metadata/field";
 
 export interface MetadataHeaderItem {
   name: string;
@@ -197,6 +201,35 @@ export const setSampleNameColumn = createAsyncThunk<
 );
 
 /*
+Redux async thunk for setting the metadata headers.
+For more information on redux async thunks see: https://redux-toolkit.js.org/api/createAsyncThunk
+*/
+export const setHeaders = createAsyncThunk<
+  { headers: MetadataHeaderItem[] },
+  { headers: string[] },
+  { state: ImportState }
+>(`importReducer/setHeaders`, async ({ headers }, { getState }) => {
+  const state: ImportState = getState();
+  const { projectId } = state.importReducer;
+  const response: MetadataField[] = await getMetadataFieldsForProject(
+    projectId
+  );
+  const updatedHeaders = headers.map((header, index) => {
+    const metadataField = response.find(
+      (metadataField) => metadataField.label === header
+    );
+    return {
+      name: header,
+      restriction: metadataField?.restriction
+        ? metadataField.restriction
+        : "LEVEL_1",
+      rowKey: `metadata-uploader-header-row-${index}`,
+    };
+  });
+  return { headers: updatedHeaders };
+});
+
+/*
 Redux action for updating the metadata headers.
 For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
  */
@@ -215,25 +248,6 @@ export const setProjectId = createAction(
   `importReducer/setProjectID`,
   (projectId: string) => ({
     payload: { projectId },
-  })
-);
-
-/*
-Redux action for setting the metadata headers.
-For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
- */
-export const setHeaders = createAction(
-  `importReducer/setHeaders`,
-  (headers: string[]) => ({
-    payload: {
-      headers: headers.map((header, index) => {
-        return {
-          name: header,
-          restriction: "LEVEL_1",
-          rowKey: `metadata-uploader-header-row-${index}`,
-        };
-      }),
-    },
   })
 );
 
@@ -277,14 +291,14 @@ export const importReducer = createReducer(initialState, (builder) => {
   builder.addCase(setProjectId, (state, action) => {
     state.projectId = action.payload.projectId;
   });
-  builder.addCase(setHeaders, (state, action) => {
-    state.headers = action.payload.headers;
-  });
   builder.addCase(setMetadata, (state, action) => {
     state.metadata = action.payload.metadata;
   });
   builder.addCase(setMetadataSaveDetails, (state, action) => {
     state.metadataSaveDetails = action.payload.metadataSaveDetails;
+  });
+  builder.addCase(setHeaders.fulfilled, (state, action) => {
+    state.headers = action.payload.headers;
   });
   builder.addCase(setSampleNameColumn.fulfilled, (state, action) => {
     state.sampleNameColumn = action.payload.sampleNameColumn;

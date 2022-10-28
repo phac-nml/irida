@@ -39,7 +39,7 @@ export function CreateProjectMetadataRestrictions({ form }) {
   React.useEffect(() => {
     if (samples?.length) {
       let projectIds = samples.map((s) => s.projectId);
-      getAllMetadataFieldsForProjects({ projectIds }).then((data) => {
+      getAllMetadataFieldsForProjects(projectIds).then((data) => {
         setSourceFields(data);
         dispatch(
           setNewProjectMetadataRestrictions(
