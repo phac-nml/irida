@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
-import java.time.Duration;
-import java.util.List;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -12,13 +10,14 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.time.Duration;
+import java.util.List;
 
 public class ProjectMetadataPage extends AbstractPage {
-	@FindBy(className = "t-m-field-link")
+	@FindBy(css = "[data-menu-id*='metadata-fields']")
 	WebElement metadataFieldTab;
 
-	@FindBy(className = "t-m-template-link")
+	@FindBy(css = "[data-menu-id*='metadata-templates']")
 	WebElement metadataTemplateLink;
 
 	@FindBy(className = "t-m-field")
@@ -47,7 +46,7 @@ public class ProjectMetadataPage extends AbstractPage {
 	}
 
 	public static ProjectMetadataPage goTo(WebDriver driver) {
-		get(driver, "projects/1/settings/metadata/fields");
+		get(driver, "projects/1/settings/metadata-fields");
 		return PageFactory.initElements(driver, ProjectMetadataPage.class);
 	}
 
@@ -88,7 +87,7 @@ public class ProjectMetadataPage extends AbstractPage {
 		createTemplateModal.findElement(By.className("t-c-t-name")).sendKeys(name);
 		createTemplateModal.findElement(By.className("t-c-t-desc")).sendKeys(description);
 		createTemplateModal.findElement(By.className("t-create-modal-ok")).click();
-		wait.until(ExpectedConditions.urlContains("/metadata/templates"));
+		wait.until(ExpectedConditions.urlContains("/metadata-templates"));
 	}
 
 	public void gotoTemplate(String name) {
@@ -97,7 +96,7 @@ public class ProjectMetadataPage extends AbstractPage {
 			WebElement element = row.findElement(By.className("t-t-name"));
 			if (element.getText().equalsIgnoreCase(name)) {
 				element.click();
-				wait.until(ExpectedConditions.urlContains("/metadata/templates/"));
+				wait.until(ExpectedConditions.urlContains("/metadata-templates/"));
 				break;
 			}
 		}

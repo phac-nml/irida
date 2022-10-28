@@ -2,6 +2,11 @@
 # Changelog
 
 ## [Unreleased]
+* [Developer/UI]: Updated to React 18 and Ant Design 4.23.6. See [PR 1380](https://github.com/phac-nml/irida/pull/1381)
+
+## [22.09.1] - 2022/10/21
+* [UI]: Fixed when sharing or exporting sample on the project sample page, and other minor bugs. See [PR 1382](https://github.com/phac-nml/irida/pull/1382)
+
 ## [22.09] - 2022/10/07
 * [Developer/UI]: Refreshed the create new user account page. See [PR 1285](https://github.com/phac-nml/irida/pull/1285)
 * [Developer/UI]: Added in typescript support to webpack build, moving forward all new frontend development will use typescript. See [PR 1294](https://github.com/phac-nml/irida/pull/1294) for more.
@@ -131,8 +136,9 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
-[Unreleased]: https://github.com/phac-nml/irida/compare/22.09...HEAD
+[Unreleased]: https://github.com/phac-nml/irida/compare/22.09.1...HEAD
 
+[22.09.1]: https://github.com/phac-nml/irida/compare/22.09...22.09.1
 [22.09]: https://github.com/phac-nml/irida/compare/22.05.5...22.09
 [22.05.5]: https://github.com/phac-nml/irida/compare/22.05.4...22.05.5
 [22.05.4]: https://github.com/phac-nml/irida/compare/22.05.3...22.05.4

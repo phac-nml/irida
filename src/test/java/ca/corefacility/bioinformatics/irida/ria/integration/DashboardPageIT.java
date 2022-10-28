@@ -1,13 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
-import org.junit.jupiter.api.Test;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.components.Announcements;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.DashboardPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,10 +31,6 @@ public class DashboardPageIT extends AbstractIridaUIITChromeDriver {
 				"The total read priority announcements count does not match");
 
 		assertEquals(5, announcements.getBadgeCount(), "The announcements badge count does not match");
-
-		announcements.getSubmenuAnnouncement();
-		assertEquals("No cake", announcements.getSubmenuAnnouncementTitle(2),
-				"The announcements title in the submenu does not match");
 	}
 
 	@Test

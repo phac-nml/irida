@@ -40,7 +40,7 @@
     "@remix-run/router": "^0.1.0",
     "ag-grid-community": "^27.1.0",
     "ag-grid-react": "^27.1.0",
-    "antd": "4.23.4",
+    "antd": "4.23.6",
     "axios": "^0.26.1",
     "bootstrap": "3.4.1",
     "bootstrap-daterangepicker": "^3.0.3",

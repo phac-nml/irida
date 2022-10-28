@@ -1,16 +1,14 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.admin;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ActiveProfiles;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.admin.AdminPage;
-
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ActiveProfiles("it")
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/admin/AdminPageView.xml")
@@ -25,12 +23,10 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		page.clickAdminButton();
 		assertTrue(page.comparePageTitle("Statistics"), "Admin can navigate to admin panel, admin page title should be present");
 		// Navigate to users page
-		page.clickUsersSubMenu();
 		page.clickUsersLink();
 		assertTrue(page.comparePageTitle("Users"), "Admin can navigate to admin panel, admin page title should be present");
 		assertTrue(page.adminAddUserVisible(), "Create New User button should be present");
 		// Navigate to user groups page
-		page.clickUsersSubMenu();
 		page.clickGroupsLink();
 		assertTrue(page.comparePageTitle("Groups"), "Admin can navigate to groups page, groups page title should be present");
 		assertTrue(page.adminCreateGroupVisible(), "Create New User Group button should be present");
@@ -53,7 +49,6 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(page.comparePageTitle("Announcements"), "Admin can navigate to announcements page, announcements page title should be present");
 		assertTrue(page.adminAddAnnouncementVisible(), "Add Announcement button should be present");
 		// Navigate back to users page
-		page.clickUsersSubMenu();
 		page.clickUsersLink();
 		assertTrue(page.comparePageTitle("Users"), "Admin can navigate to users page, user page title should be present");
 		assertTrue(page.adminAddUserVisible(), "Add User button should be present");
@@ -85,7 +80,6 @@ public class AdminPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(page.adminNcbiExportsLinkVisible(), "Admin ncbi exports link should be visible");
 		assertTrue(page.adminAnnouncementsLinkVisible(), "Admin announcements link should be visible");
 		// Open sub menu to view other links
-		page.clickUsersSubMenu();
 		assertTrue(page.adminUsersLinkVisible(), "Admin users link should be visible");
 		assertTrue(page.adminGroupsLinkVisible(), "Admin groups link should be visible");
 		// Check if content has a page title (check if the class name exists only not the actual title)

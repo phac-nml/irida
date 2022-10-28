@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.components;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.List;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -13,7 +10,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.time.Duration;
+import java.util.List;
 
 public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-sample-details-modal")
@@ -34,14 +32,14 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-sample-details-metadata-item")
 	private List<WebElement> metadataFields;
 
-	@FindBy(xpath="//ul[contains(@class, 't-sample-viewer-nav')]/li[2]")
+	@FindBy(css = ".t-sample-details-modal li[data-menu-id*='metadata']")
 	private WebElement metadataTabLink;
 
-	@FindBy(xpath = "//ul[contains(@class, 't-sample-viewer-nav')]/li[3]")
+	@FindBy(css = ".t-sample-details-modal li[data-menu-id*='files']")
 	private WebElement filesTabLink;
 
 
-	@FindBy(xpath = "//ul[contains(@class, 't-sample-viewer-nav')]/li[4]")
+	@FindBy(css = ".t-sample-details-modal li[data-menu-id*='analyses']")
 	private WebElement sampleAnalysesTabLink;
 
 	@FindBy(className = "t-upload-sample-files")
