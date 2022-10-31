@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.unit.cloud;
+package ca.corefacility.bioinformatics.irida.ria.integration.cloud;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.*;
 
+import ca.corefacility.bioinformatics.irida.annotation.FileSystemIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@FileSystemIntegrationTest
 public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtility {
 
 	private static AmazonS3 s3Client;

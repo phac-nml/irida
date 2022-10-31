@@ -38,6 +38,7 @@ jobs:
             "galaxy_testing",
             "galaxy_pipeline_testing",
             "open_api_testing",
+            "file_system_testing",
           ]
 
     steps:
@@ -78,6 +79,7 @@ jobs:
           done
       - name: Pull and Start s3Mock Docker Container
         run: docker run -d -p 9090:9090 -p 9191:9191 -t adobe/s3mock
+        if: matrix.suite == 'file_system_testing' && always()
       - name: Run tests with Gradle # Run the test suite
         run: ./run-tests.sh --db-host ${{ env.MYSQL_HOST }} --db-port ${{ env.MYSQL_PORT }} --database ${{ env.MYSQL_DATABASE}} ${{ matrix.suite }}
       - name: Publish Test Report
