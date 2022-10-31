@@ -175,7 +175,7 @@ test_open_api() {
 }
 
 test_all() {
-	for test_profile in test_rest test_service test_ui test_galaxy test_galaxy_pipelines test_open_api;
+	for test_profile in test_rest test_service test_ui test_galaxy test_galaxy_pipelines test_open_api test_file_system;
 	do
 		tmp_dir_cleanup
 		eval $test_profile

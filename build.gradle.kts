@@ -411,7 +411,7 @@ val integrationTestsMap = mapOf(
         "excludeListeners" to "ca.corefacility.bioinformatics.irida.junit5.listeners.*"
     ),
     "fileSystem" to mapOf(
-        "tags" to "IntegrationTest & File System",
+        "tags" to "IntegrationTest & FileSystem",
         "excludeListeners" to "ca.corefacility.bioinformatics.irida.junit5.listeners.*"
     ),
 )
