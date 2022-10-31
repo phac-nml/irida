@@ -90,13 +90,43 @@ In order to run local integration tests, the database `irida_integration_test` i
 
 ### Configure Filesystem Locations
 
-IRIDA stores much of its metadata in the relational database, but all sequencing and analysis files are stored on the filesystem. Directory configuration is:
+IRIDA stores much of its metadata in the relational database. As of IRIDA 23.01, you can use cloud based storage (BETA) as well as a local filesystem to store the sequencing, reference, and analysis files. Currently, Azure Blob Storage and AWS S3 Bucket Storage are supported.
+
+Directory configuration is:
 
 * **Sequencing Data**: `sequence.file.base.directory`
 * **Reference Files**: `reference.file.base.directory`
 * **Analysis Output**: `output.file.base.directory`
 
-If the directories that are configured do not exist (they don't likely exist if you don't configure them), IRIDA will default to automatically creating a temporary directory using Java's [`Files.createTempDirectory`](http://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#createTempDirectory-java.lang.String-java.nio.file.attribute.FileAttribute...-).
+If using a local filesystem and these directories that are configured do not exist (they don't likely exist if you don't configure them), IRIDA will default to automatically creating a temporary directory using Java's [`Files.createTempDirectory`](http://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#createTempDirectory-java.lang.String-java.nio.file.attribute.FileAttribute...-).
+However, if you are using cloud based storage you will still need to set these directories in the configuration as these will make up the virtual path to the file.
+
+To setup IRIDA to use cloud based file storage, then follow the instructions below for the storage type.
+
+Setup using Azure Storage Blob:
+
+In the configuration file (such as irida.conf) you will need to add these configuration values:
+
+* `irida.storage.type=azure`
+* `azure.container.name=CONTAINER_NAME` where the CONTAINER_NAME is a container previously setup on Azure
+* `azure.container.url=CONTAINER_ENDPOINT_URL`
+* `azure.sas.token=SAS_TOKEN` where the SAS_TOKEN has both read/write permissions
+
+See [Azure Storage Setup](https://learn.microsoft.com/en-us/azure/storage/blobs/) for instructions on how to setup Blob storage.
+
+Setup using Amazon AWS S3 Bucket Storage:
+
+In the configuration file (such as irida.conf) you will need to add these configuration values:
+
+* `aws.bucket.name=BUCKET_NAME` where the BUCKET_NAME is the S3 Bucket previously setup and has read/write permissions.
+* `aws.bucket.region=BUCKET_REGION`
+* `aws.access.key=ACCESS_KEY`
+* `aws.secret.key=SECRET_KEY`
+
+See [AWS S3 Bucket Storage Setup](https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html) for instructions on how to setup an S3 storage.
+
+There is no other configuration necessary in IRIDA to use cloud based storage. After adding these values to the configuration file you should be able to start up IRIDA, and it will use the cloud based storage that is defined.
+
 
 ### Testing IRIDA
 
