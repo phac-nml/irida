@@ -1,23 +1,22 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.components;
 
-import java.util.List;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.util.List;
 
 public class FastQCModal extends AbstractPage {
 	@FindBy(className = "t-fastqc-modal-charts-tab")
 	private WebElement fastQCModalChartsTab;
 
-	@FindBy(className = "t-fastqc-modal-overrepresented-tab")
+	@FindBy(css = ".t-fastqc-modal [aria-controls*='overrepresented']")
 	private WebElement fastQCModalOverrepresentedSequencesTab;
 
-	@FindBy(className = "t-fastqc-modal-details-tab")
+	@FindBy(css = ".t-fastqc-modal [aria-controls*='details']")
 	private WebElement fastQCModalDetailsTab;
 
 	@FindBy(className = "t-fastqc-modal")

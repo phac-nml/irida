@@ -126,10 +126,13 @@ export default function ViewerHeader({
         )}
       </div>
       <Menu
-        mode="horizontal"
         defaultSelectedKeys={[tab]}
         onSelect={({ key }) => onMenuChange(key)}
-        style={{ borderBottom: 0 }}
+        style={{
+          borderBottom: 0,
+          display: "flex",
+          justifyContent: "flex-start",
+        }}
         className="t-sample-viewer-nav"
         items={menuItems}
       />

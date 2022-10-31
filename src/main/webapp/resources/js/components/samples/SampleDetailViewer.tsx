@@ -31,7 +31,7 @@ export function SampleDetailViewer({
   const [visible, setVisible] = useState(false);
 
   return (
-    <>
+    <React.StrictMode>
       {React.cloneElement(children, {
         onClick: () => setVisible(true),
       })}
@@ -47,6 +47,6 @@ export function SampleDetailViewer({
           />
         </Suspense>
       ) : null}
-    </>
+    </React.StrictMode>
   );
 }

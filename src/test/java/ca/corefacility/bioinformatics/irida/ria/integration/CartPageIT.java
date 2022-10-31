@@ -96,7 +96,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testCartPageAsUser() {
+	public void testBasicCartPageFunctionalityAsUser() throws InterruptedException {
 		LoginPage.loginAsUser(driver());
 		driver().manage().window().maximize();
 		// Add some samples to the cart and test to see if they get displayed/
@@ -114,12 +114,37 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(3, page.getNumberOfSamplesInCart(), "Should be 3 samples in the cart");
 		assertTrue(page.onPipelinesView(), "Should be directed to pipelines view");
 
+		// Test removing a sample from the project
+		page.removeSampleFromCart(0);
+		assertEquals(2, page.getNumberOfSamplesInCart(), "Should be 2 sample in the cart");
+
+		// Test removing the entire project
+		page.removeProjectFromCart();
+	}
+
+	@Test
+	public void testSampleDetailsViewerFromCartAsUser() throws InterruptedException {
+		final String SAMPLE_1_NAME = "sample554sg5";
+		final String SAMPLE_2_NAME = "sample5fdgr";
+
+
+		LoginPage.loginAsUser(driver());
+		driver().manage().window().maximize();
+		// Add some samples to the cart and test to see if they get displayed/
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
+		samplesPage.selectSampleByName(SAMPLE_1_NAME);
+		samplesPage.selectSampleByName(SAMPLE_2_NAME);
+		samplesPage.addSelectedSamplesToCart();
+
+		// Make sure 2 samples are in the cart
+		CartPage page = CartPage.goToCart(driver());
+		checkTranslations(page, ImmutableList.of("cart"), null);
+
 		/*
 		Test the sample details within the cart
 		 */
-		final String sampleName = "sample554sg5";
 		final String projectName = "project";
-		page.viewSampleDetailsFor(sampleName);
+		page.viewSampleDetailsFor(SAMPLE_1_NAME);
 		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
 
 		assertFalse(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
@@ -127,7 +152,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(),
 				"The remove sample from cart button should be displayed");
 
-		assertEquals(sampleName, sampleDetailsViewer.getSampleName(), "Should be viewing the proper sample");
+		assertEquals(SAMPLE_1_NAME, sampleDetailsViewer.getSampleName(), "Should be viewing the proper sample");
 		assertEquals(projectName, sampleDetailsViewer.getProjectName(),
 				"Should have proper project name displayed for sample");
 		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Should display the correct created date");
@@ -186,13 +211,6 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		sampleDetailsViewer.clickRemoveSampleFromCartButton();
 
 		assertFalse(sampleDetailsViewer.sampleDetailsViewerVisible(), "The sample details viewer should not be displayed as the sample was removed from the cart");
-
-		// Test removing a sample from the project
-		page.removeSampleFromCart(0);
-		assertEquals(1, page.getNumberOfSamplesInCart(), "Should be 1 sample in the cart");
-
-		// Test removing the entire project
-		page.removeProjectFromCart();
 	}
 
 	@Test

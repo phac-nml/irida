@@ -58,15 +58,17 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testAnalysisDetails() {
+	public void testAnalysisDetails() throws InterruptedException {
 		LoginPage.loginAsManager(driver());
 		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 4L, "settings");
+		page.goToProvenanceTab();
+		Thread.sleep(100000);
 		assertTrue(page.compareTabTitle("Details"), "Page title should equal");
 		assertEquals(7, page.getNumberOfListItems(), "There should be 7 labels for analysis details");
 		// Analysis Description doesn't have a value
 		assertEquals(6, page.getNumberOfListItemValues(), "There should be only 6 values for these labels");
 
-		String[] expectedAnalysisDetails = new String[] {
+		String[] expectedAnalysisDetails = new String[]{
 				"My Completed Submission",
 				"4",
 				"SNVPhyl Phylogenomics Pipeline (1.0.1)",

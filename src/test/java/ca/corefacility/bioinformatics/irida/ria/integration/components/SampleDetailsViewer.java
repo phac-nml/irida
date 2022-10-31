@@ -17,6 +17,9 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-sample-details-modal")
 	private WebElement modal;
 
+	@FindBy(css = ".t-sample-details-modal [aria-label='close']")
+	private WebElement closeModalButton;
+
 	@FindBy(className = "t-concatenate-confirm-modal")
 	private WebElement concatenateModal;
 
@@ -32,7 +35,7 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-sample-details-metadata-item")
 	private List<WebElement> metadataFields;
 
-	@FindBy(css = ".t-sample-details-modal li[data-menu-id*='metadata']")
+	@FindBy(xpath = "//div[contains(@class, \"t-sample-details-modal\")]//ul[contains(@class, \"ant-menu-root\")]//li/span[text()=\"Metadata\"]")
 	private WebElement metadataTabLink;
 
 	@FindBy(css = ".t-sample-details-modal li[data-menu-id*='files']")
@@ -147,7 +150,9 @@ public class SampleDetailsViewer extends AbstractPage {
 	}
 
 	public void clickMetadataTabLink() {
-		metadataTabLink.click();
+		List<WebElement> tabs = driver.findElements(By.xpath("//div[contains(@class, \"t-sample-details-modal\")]//ul[contains(@class, \"ant-menu-root\")]//li/span"));
+		WebElement tab = driver.findElement(By.xpath("//div[contains(@class, \"t-sample-details-modal\")]//ul[contains(@class, \"ant-menu-root\")]//li/span[text()=\"Metadata\"]"));
+		tab.click();
 		waitForTime(300);
 	}
 
@@ -381,9 +386,14 @@ public class SampleDetailsViewer extends AbstractPage {
 	public boolean sampleDetailsViewerVisible() {
 		try {
 			return modal.isDisplayed();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			return false;
 		}
 	}
 
+	public void closeSampleViewer() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
+		closeModalButton.click();
+		wait.until(ExpectedConditions.invisibilityOfAllElements(modal));
+	}
 }

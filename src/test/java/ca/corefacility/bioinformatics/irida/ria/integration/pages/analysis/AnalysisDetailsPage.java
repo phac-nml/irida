@@ -21,6 +21,9 @@ public class AnalysisDetailsPage extends AbstractPage {
 
     public static final String RELATIVE_URL = "analysis/";
 
+    @FindBy(css = "[data-menu-id*='provenance']")
+    WebElement provenanceTab;
+
     @FindBy(className = "ant-page-header-heading-title")
     private List<WebElement> pageTitles;
 
@@ -146,6 +149,10 @@ public class AnalysisDetailsPage extends AbstractPage {
      */
     public void addSharedProjects() {
         checkBoxes.get(0).click();
+    }
+
+    public void goToProvenanceTab() {
+        provenanceTab.click();
     }
 
     /**

@@ -248,6 +248,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(className = "ant-pagination-next")
 	private WebElement nextTablePage;
 
+	@FindBy(css = "button.t-sample-name")
+	private List<WebElement> sampleButtons;
+
 	public ProjectSamplesPage(WebDriver driver) {
 		super(driver);
 	}
@@ -633,5 +636,16 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void gotToPreviousTablePage() {
 		prevTablePage.click();
 		waitForTime(200);
+	}
+
+	public void viewSampleDetailsFor(String sampleName) {
+		for (WebElement button : sampleButtons) {
+			if (button.findElement(By.tagName("span")).getText().equals(sampleName)) {
+				button.click();
+				WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10L));
+				wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-sample-details-modal")));
+				break;
+			}
+		}
 	}
 }
