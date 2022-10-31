@@ -410,6 +410,10 @@ val integrationTestsMap = mapOf(
         "tags" to "IntegrationTest & Galaxy & Pipeline",
         "excludeListeners" to "ca.corefacility.bioinformatics.irida.junit5.listeners.*"
     ),
+    "fileSystem" to mapOf(
+        "tags" to "IntegrationTest & File System",
+        "excludeListeners" to "ca.corefacility.bioinformatics.irida.junit5.listeners.*"
+    ),
 )
 
 integrationTestsMap.forEach {

@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.unit.cloud;
+package ca.corefacility.bioinformatics.irida.ria.integration.cloud;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.*;
 
+import ca.corefacility.bioinformatics.irida.annotation.FileSystemIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -32,6 +33,7 @@ import com.azure.storage.common.StorageSharedKeyCredential;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@FileSystemIntegrationTest
 public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUtility {
 	private static BlobServiceClient blobServiceClient;
 	private static BlobContainerClient containerClient;
