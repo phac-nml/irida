@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
-import java.time.Duration;
-import java.util.List;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -11,7 +9,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.time.Duration;
+import java.util.List;
 
 /**
  * Page to test the NCBI export feature
@@ -48,7 +47,7 @@ public class NcbiExportPage extends AbstractPage {
 	}
 
 	public int getNumberOfSamples() {
-		return samplePanels.size();
+		return driver.findElements(By.className("t-sample-panel")).size();
 	}
 
 	public void openSamplePanelBySampleName(String sampleName) {
