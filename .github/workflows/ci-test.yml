@@ -41,8 +41,8 @@ jobs:
             "file_system_testing"
           ]
     services:
-      if: matrix.suite == 'file_system_testing' && always()
       azurite:
+        if: matrix.suite == 'file_system_testing' && always()
         image: mcr.microsoft.com/azure-storage/azurite
         ports:
           - 10000:10000
