@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.corefacility.bioinformatics.irida.annotation.FileSystemIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
@@ -23,6 +25,7 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaTemporaryFile;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisAjaxController;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.azure.storage.blob.BlobClient;
@@ -35,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @FileSystemIntegrationTest
 public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUtility {
+	private static final Logger logger = LoggerFactory.getLogger(IridaFileStorageAzureUtilityTest.class);
 	private static BlobServiceClient blobServiceClient;
 	private static BlobContainerClient containerClient;
 	private static String containerName = "irida-azure-test";
@@ -67,6 +71,7 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 
 	@BeforeAll
 	public static void setUp() {
+		logger.info("Starting azure storage blob testing");
 		StorageSharedKeyCredential storageSharedKeyCredential = new StorageSharedKeyCredential(ACCOUNT_NAME,
 				ACCOUNT_KEY);
 
@@ -118,6 +123,7 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 		blobClient.deleteIfExists();
 
 		containerClient.deleteIfExists();
+		logger.info("Finished azure storage blob testing");
 	}
 
 	@Test
