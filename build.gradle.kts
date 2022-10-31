@@ -391,23 +391,23 @@ fun createIntegrationTestTask(name: String, tags: String?, excludeListeners: Str
 
 val integrationTestsMap = mapOf(
     "ui" to mapOf(
-        "tags" to "IntegrationTest & UI & !FileSystem",
+        "tags" to "IntegrationTest & UI",
         "excludeListeners" to "ca.corefacility.bioinformatics.irida.junit5.listeners.UnitTestListener"
     ),
     "service" to mapOf(
-        "tags" to "IntegrationTest & Service & !FileSystem",
+        "tags" to "IntegrationTest & Service",
         "excludeListeners" to "ca.corefacility.bioinformatics.irida.junit5.listeners.*"
     ),
     "rest" to mapOf(
-        "tags" to "IntegrationTest & Rest & !FileSystem",
+        "tags" to "IntegrationTest & Rest",
         "excludeListeners" to "ca.corefacility.bioinformatics.irida.junit5.listeners.*"
     ),
     "galaxy" to mapOf(
-        "tags" to "IntegrationTest & Galaxy & !Pipeline & !FileSystem",
+        "tags" to "IntegrationTest & Galaxy & !Pipeline",
         "excludeListeners" to "ca.corefacility.bioinformatics.irida.junit5.listeners.*"
     ),
     "galaxyPipeline" to mapOf(
-        "tags" to "IntegrationTest & Galaxy & Pipeline & !FileSystem",
+        "tags" to "IntegrationTest & Galaxy & Pipeline",
         "excludeListeners" to "ca.corefacility.bioinformatics.irida.junit5.listeners.*"
     ),
     "fileSystem" to mapOf(
