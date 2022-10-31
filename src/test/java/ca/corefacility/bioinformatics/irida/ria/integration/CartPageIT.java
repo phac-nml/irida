@@ -396,13 +396,23 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
 	void addAndRemoveAssociatedProjectSamplesToCart() {
-		LoginPage.loginAsUser(driver());
+		LoginPage.loginAsAdmin(driver());
 		driver().manage().window().maximize();
 
 		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
-		samplesPage.toggleAssociatedProject("project6");
+		samplesPage.toggleAssociatedProject("project5");
 		TableSummary summary = samplesPage.getTableSummary();
-		assertEquals(25, summary.getTotal(),
+		assertEquals(22, summary.getTotal(),
 				"Should have more samples visible with another project selected");
+		String SAMPLE_NAME = "sample5fg44";
+		samplesPage.selectSampleByName(SAMPLE_NAME);
+		samplesPage.addSelectedSamplesToCart();
+
+		CartPage cartPage = CartPage.goToCart(driver());
+		assertEquals(1, cartPage.getNumberOfSamplesInCart(), "Should only be 1 sample in the cart");
+		cartPage.viewSampleDetailsFor(SAMPLE_NAME);
+		SampleDetailsViewer viewer = SampleDetailsViewer.getSampleDetails(driver());
+		assertEquals("project5", viewer.getProjectName(), "Should have the correct project name");
+		String foo = "bar";
 	}
 }
