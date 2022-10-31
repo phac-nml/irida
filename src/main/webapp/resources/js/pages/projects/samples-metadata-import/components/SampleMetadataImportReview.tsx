@@ -16,7 +16,7 @@ import {
   IconExclamationCircle,
 } from "../../../../components/icons/Icons";
 import styled from "styled-components";
-import { saveMetadata } from "../services/importReducer";
+import { saveMetadata } from "../redux/importReducer";
 import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
 import {
@@ -24,7 +24,7 @@ import {
   ImportState,
   useImportDispatch,
   useImportSelector,
-} from "../store";
+} from "../redux/store";
 import { MetadataItem } from "../../../../apis/projects/samples";
 import { ColumnsType, ColumnType } from "antd/es/table";
 import { TableRowSelection } from "antd/lib/table/interface";

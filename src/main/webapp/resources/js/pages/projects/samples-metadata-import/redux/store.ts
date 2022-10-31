@@ -4,9 +4,9 @@ import {
   Dispatch,
   MiddlewareAPI,
 } from "@reduxjs/toolkit";
-import { importReducer } from "./services/importReducer";
+import { importReducer } from "./importReducer";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import { getProjectIdFromUrl } from "../../../utilities/url-utilities";
+import { getProjectIdFromUrl } from "../../../../utilities/url-utilities";
 
 const storageKey = "metadataImport";
 

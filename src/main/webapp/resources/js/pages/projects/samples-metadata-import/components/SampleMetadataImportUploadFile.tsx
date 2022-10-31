@@ -1,16 +1,12 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  setHeaders,
-  setMetadata,
-  setProjectId,
-} from "../services/importReducer";
+import { setHeaders, setMetadata, setProjectId } from "../redux/importReducer";
 import { notification, Spin, StepsProps, Typography } from "antd";
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import * as XLSX from "xlsx";
 import { WorkBook } from "xlsx";
-import { ImportDispatch, useImportDispatch } from "../store";
+import { ImportDispatch, useImportDispatch } from "../redux/store";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
 import { MetadataItem } from "../../../../apis/projects/samples";
 import { RcFile, UploadFileStatus } from "antd/lib/upload/interface";

@@ -10,14 +10,14 @@ import {
   MetadataHeaderItem,
   setSampleNameColumn,
   updateHeaders,
-} from "../services/importReducer";
+} from "../redux/importReducer";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
 import {
   ImportDispatch,
   ImportState,
   useImportDispatch,
   useImportSelector,
-} from "../store";
+} from "../redux/store";
 import { getMetadataRestrictions } from "../../../../apis/metadata/field";
 
 const { Text } = Typography;
@@ -38,7 +38,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
   );
   const [updatedSampleNameColumn, setUpdatedSampleNameColumn] =
     React.useState<string>(sampleNameColumn);
-  const updatedHeaders = React.useRef<MetadataHeaderItem[]>(headers);
+  const updatedHeaders: MetadataHeaderItem[] = [...headers];
   const dispatch: ImportDispatch = useImportDispatch();
 
   React.useEffect(() => {
@@ -53,7 +53,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
       await dispatch(
         setSampleNameColumn({ projectId, updatedSampleNameColumn })
       );
-      await dispatch(updateHeaders(updatedHeaders.current));
+      await dispatch(updateHeaders(updatedHeaders));
       navigate(`/${projectId}/sample-metadata/upload/review`);
     }
   };
@@ -63,13 +63,13 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
   };
 
   const onRestrictionChange = (item: MetadataHeaderItem, value: string) => {
-    const index = updatedHeaders.current.findIndex(
+    const index = updatedHeaders.findIndex(
       (header) => header.rowKey === item.rowKey
     );
     if (index !== -1) {
-      const updatedHeadersItem = { ...updatedHeaders.current[index] };
+      const updatedHeadersItem = { ...updatedHeaders[index] };
       updatedHeadersItem.restriction = value;
-      updatedHeaders.current[index] = updatedHeadersItem;
+      updatedHeaders[index] = updatedHeadersItem;
     }
   };
 
@@ -116,8 +116,8 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
           className="t-metadata-uploader-header-table"
           rowKey={(row) => row.rowKey}
           columns={columns}
-          dataSource={headers.filter(
-            (header) => header.name !== updatedSampleNameColumn
+          dataSource={updatedHeaders.filter(
+            (updatedHeader) => updatedHeader.name !== updatedSampleNameColumn
           )}
           pagination={false}
           scroll={{ y: 600 }}

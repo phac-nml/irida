@@ -7,7 +7,7 @@ import { SampleMetadataImportMapHeaders } from "./components/SampleMetadataImpor
 import { SampleMetadataImportReview } from "./components/SampleMetadataImportReview";
 import { SampleMetadataImportUploadFile } from "./components/SampleMetadataImportUploadFile";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import store from "./store";
+import store from "./redux/store";
 
 /*
 Router for sample metadata importer.
