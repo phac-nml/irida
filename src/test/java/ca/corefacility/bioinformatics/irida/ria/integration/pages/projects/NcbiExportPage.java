@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -16,27 +15,13 @@ import java.util.List;
  * Page to test the NCBI export feature
  */
 public class NcbiExportPage extends AbstractPage {
-
-	@FindBy(className = "t-sample-panel")
-	private List<WebElement> samplePanels;
-
-	@FindBy(xpath = "//*[@id=\"bioProject\"]")
-	private WebElement bioProjectInput;
-
-	@FindBy(xpath = "//*[@id=\"organization\"]")
-	private WebElement organizationInput;
-
-	@FindBy(xpath = "//*[@id=\"namespace\"]")
-	private WebElement namespaceInput;
-
-	@FindBy(className = "t-defaults-panel")
-	private WebElement defaultsPanel;
-
-	@FindBy(className = "t-default-strategy")
-	private WebElement defaultStrategySelect;
-
-	@FindBy(className = "t-submit-button")
-	private WebElement submitButton;
+	private final String SAMPLE_PANELS_CLASS = "t-sample-panel";
+	private final String BIOPROJECT_ID = "bioProject";
+	private final String ORGANIZATION_ID = "organization";
+	private final String NAMESPACE_ID = "namespace";
+	private final String DEFAULTS_PANEL_CLASS = "t-defaults-panel";
+	private final String DEFAULT_STRATEGY_CLASS = "t-default-strategy";
+	private final String SUBMIT_BUTTON_CLASS = "t-submit-button";
 
 	public NcbiExportPage(WebDriver driver) {
 		super(driver);
@@ -51,6 +36,7 @@ public class NcbiExportPage extends AbstractPage {
 	}
 
 	public void openSamplePanelBySampleName(String sampleName) {
+		List<WebElement> samplePanels = driver.findElements(By.className(SAMPLE_PANELS_CLASS));
 		for (WebElement panel : samplePanels) {
 			String text = panel.findElement(By.className("t-sample-name")).getText();
 			if (text.equals(sampleName)) {
@@ -61,23 +47,23 @@ public class NcbiExportPage extends AbstractPage {
 	}
 
 	public void enterBioProject(String value) {
-		bioProjectInput.sendKeys(value);
+		driver.findElement(By.id(BIOPROJECT_ID)).sendKeys(value);
 	}
 
 	public void enterOrganization(String value) {
-		organizationInput.sendKeys(value);
+		driver.findElement(By.id(ORGANIZATION_ID)).sendKeys(value);
 	}
 
 	public void enterNamespace(String value) {
-		namespaceInput.sendKeys(value);
+		driver.findElement(By.id(NAMESPACE_ID)).sendKeys(value);
 	}
 
 	public void toggleDefaultsPanel() {
-		defaultsPanel.click();
+		driver.findElement(By.className(DEFAULTS_PANEL_CLASS)).click();
 	}
 
 	public void setDefaultStrategySelect(String strategy) {
-		defaultStrategySelect.click();
+		driver.findElement(By.className(DEFAULT_STRATEGY_CLASS)).click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
 		List<WebElement> selectOptions = wait
 				.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-select-item")));
@@ -152,6 +138,7 @@ public class NcbiExportPage extends AbstractPage {
 	}
 
 	public void removeSample(String sampleName) {
+		List<WebElement> samplePanels = driver.findElements(By.className(SAMPLE_PANELS_CLASS));
 		for (WebElement panel : samplePanels) {
 			if (panel.findElement(By.className("t-sample-name")).getText().equals(sampleName)) {
 				panel.findElement(By.className("t-remove-btn")).click();
@@ -160,6 +147,7 @@ public class NcbiExportPage extends AbstractPage {
 	}
 
 	public boolean isSampleValid(String sampleName) throws Exception {
+		List<WebElement> samplePanels = driver.findElements(By.className(SAMPLE_PANELS_CLASS));
 		for (WebElement panel : samplePanels) {
 			if (panel.findElement(By.className("t-sample-name")).getText().equals(sampleName)) {
 				return panel.findElement(By.xpath("//span[contains(@class, 'ant-tag')]/span[2]"))
@@ -191,7 +179,7 @@ public class NcbiExportPage extends AbstractPage {
 	}
 
 	public void submitExportForm() {
-		submitButton.click();
+		driver.findElement(By.className(SUBMIT_BUTTON_CLASS)).click();
 	}
 
 	public boolean isSuccessAlertDisplayed() {
