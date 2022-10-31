@@ -312,7 +312,7 @@ case "$1" in
 	file_system_testing)
 		shift
 		pretest_cleanup
-		test_open_api $@
+		test_file_system $@
 		exit_code=$?
 		posttest_cleanup
 	;;
