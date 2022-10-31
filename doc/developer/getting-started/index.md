@@ -199,9 +199,10 @@ Gradle will download all required dependencies and run the full suite of unit te
 ##### Integration tests
 {:.no_toc}
 
-IRIDA has 5 integration test tasks which splits the integration test suite into functional groups.  This allows GitHub Actions to run the tests in parallel, and local test executions to only run the required portion of the test suite.  The 5 tasks are the following:
+IRIDA has 6 integration test tasks which splits the integration test suite into functional groups.  This allows GitHub Actions to run the tests in parallel, and local test executions to only run the required portion of the test suite.  The 6 tasks are the following:
 
 * `serviceITest` - Runs the service layer and repository testing.
+* `fileSystemITest` - Runs the file system testing
 * `uiITest` - Integration tests for IRIDA's web interface.
 * `restITest` - Tests IRIDA's REST API.
 * `galaxyITest` - Runs tests for IRIDA communicating with Galaxy.  This profile will automatically start a test galaxy instance to test with.
@@ -217,6 +218,7 @@ As the integration tests simulate a running IRIDA installation, in order to run 
 
 Where <TEST PROFILE> is one of the following:
 * `service_testing` - Runs the `serviceITest` task
+* `file_system_testing` - Runs the `fileSystemITest` task
 * `ui_testing` - Runs the `uiITest` task
 * `rest_testing` - Runs the `restITest` task
 * `galaxy_testing` - Runs the `galaxyITest` task

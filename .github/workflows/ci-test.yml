@@ -86,7 +86,7 @@ jobs:
           done
       - name: Pull and Start Azurite Docker Container
         run: docker run -d -p 10000:10000 -p 10001:10001 -p 10002:10002 mcr.microsoft.com/azure-storage/azurite
-        if: matrix.suite == 'file_system_testing'
+        if: matrix.suite == 'file_system_testing' && always()
       - name: Run tests with Gradle # Run the test suite
         run: ./run-tests.sh --db-host ${{ env.MYSQL_HOST }} --db-port ${{ env.MYSQL_PORT }} --database ${{ env.MYSQL_DATABASE}} ${{ matrix.suite }}
       - name: Publish Test Report

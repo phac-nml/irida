@@ -104,6 +104,12 @@ test_service() {
 	return $exit_code
 }
 
+test_file_system() {
+    ./gradlew clean check fileSystemITest -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
+	exit_code=$?
+	return $exit_code
+}
+
 test_rest() {
     ./gradlew clean check restITest -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
@@ -198,9 +204,11 @@ then
 	echo -e "\t--no-kill-docker: Do not kill Galaxy Docker after Galaxy tests have run."
 	echo -e "\t--no-headless: Do not run chrome in headless mode (for viewing results of UI tests)."
 	echo -e "\t--selenium-docker: Use selenium/standalone-chrome docker container for executing UI tests."
-	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, galaxy_pipeline_testing, open_api_testing, all}."
+	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, galaxy_pipeline_testing, open_api_testing, file_system_testing, all}."
 	echo -e "\t[gradle options]: Additional options to pass to 'gradle'.  In particular, can pass '--test ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
 	echo -e "Examples:\n"
+	echo -e "$0 file_system_testing\n"
+	echo -e "\tThis will test the File System of IRIDA, cleaning up the test database/docker containers first.\n"
 	echo -e "$0 service_testing\n"
 	echo -e "\tThis will test the Service layer of IRIDA, cleaning up the test database/docker containers first.\n"
 	echo -e "$0 -d irida_integration_test2 galaxy_testing\n"
@@ -295,6 +303,13 @@ case "$1" in
 		posttest_cleanup
 	;;
 	open_api_testing)
+		shift
+		pretest_cleanup
+		test_open_api $@
+		exit_code=$?
+		posttest_cleanup
+	;;
+	file_system_testing)
 		shift
 		pretest_cleanup
 		test_open_api $@
