@@ -5,16 +5,12 @@ import java.lang.annotation.*;
 import org.junit.jupiter.api.Tag;
 
 /**
- * Annotation that is to be specified on Object Store integration tests.
+ * Annotation that is to be specified on file system integration tests.
  * Simplifies the configuration of tests by automatically adding a number of
  * necessary annotations.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Documented
-@Inherited
 
 @Tag("IntegrationTest")
-@Tag("ObjectStore")
+@Tag("FileSystem")
 public @interface FileSystemIntegrationTest {
 }
