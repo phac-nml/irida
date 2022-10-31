@@ -118,6 +118,7 @@ Setup using Amazon AWS S3 Bucket Storage:
 
 In the configuration file (such as irida.conf) you will need to add these configuration values:
 
+* `irida.storage.type=aws`
 * `aws.bucket.name=BUCKET_NAME` where the BUCKET_NAME is the S3 Bucket previously setup and has read/write permissions.
 * `aws.bucket.region=BUCKET_REGION`
 * `aws.access.key=ACCESS_KEY`
