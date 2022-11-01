@@ -1,22 +1,19 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import org.junit.jupiter.api.Test;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.NcbiExportPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/NcbiExportPageIT.xml")
 class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
-	private final NcbiExportPage page = NcbiExportPage.init(driver());
-
 	@Test
 	void testCreateNcbiSubmission() throws Exception {
+		NcbiExportPage page = new NcbiExportPage(driver());
 		String SAMPLE_1 = "sample1";
 		String SAMPLE_2 = "sample2";
 		String SAMPLE_3 = "sample3";

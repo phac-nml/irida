@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -25,10 +24,6 @@ public class NcbiExportPage extends AbstractPage {
 
 	public NcbiExportPage(WebDriver driver) {
 		super(driver);
-	}
-
-	public static NcbiExportPage init(WebDriver driver) {
-		return PageFactory.initElements(driver, NcbiExportPage.class);
 	}
 
 	public int getNumberOfSamples() {
