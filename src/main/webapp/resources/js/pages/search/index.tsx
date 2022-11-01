@@ -25,10 +25,10 @@ function SearchLayout() {
   const query = useRef<string>(searchParams.get("query"));
 
   return (
-    <PageHeader title={"SEARCH"} subTitle={`Query='${query.current}'`}>
+    <PageHeader title={"SEARCH"}>
       <Layout.Content style={{ backgroundColor: `var(--grey-1)`, padding: 12 }}>
         <Space direction="vertical" style={{ width: `100%` }} size="large">
-          <Input size={"large"} value={query.current} />
+          <Input.Search size={"large"} value={query.current} />
           <div>JELLO</div>
         </Space>
       </Layout.Content>

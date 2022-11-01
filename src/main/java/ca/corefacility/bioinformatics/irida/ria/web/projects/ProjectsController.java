@@ -36,7 +36,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
+import ca.corefacility.bioinformatics.irida.ria.web.search.dto.ProjectSearchResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -301,7 +301,7 @@ public class ProjectsController {
 					.collect(Collectors.toList());
 		}
 
-		List<DTProject> dtProjects = projects.stream()
+		List<ProjectSearchResponse> projectSearchResponses = projects.stream()
 				.map(this::createDataTablesProject)
 				.collect(Collectors.toList());
 		List<String> headers = ImmutableList.of("ProjectsTable_th_id", "ProjectsTable_th_name",
@@ -318,9 +318,9 @@ public class ProjectsController {
 
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "." + type + "\"");
 		if (type.equals("xlsx")) {
-			writeProjectsToExcelFile(headers, dtProjects, locale, response);
+			writeProjectsToExcelFile(headers, projectSearchResponses, locale, response);
 		} else {
-			writeProjectsToCsvFile(headers, dtProjects, locale, response);
+			writeProjectsToCsvFile(headers, projectSearchResponses, locale, response);
 		}
 	}
 
@@ -343,12 +343,12 @@ public class ProjectsController {
 	 * Write the projects as a CSV file
 	 *
 	 * @param headers  {@link List} for {@link String} headers for the information.
-	 * @param projects {@link List} of {@link DTProject} to export
+	 * @param projects {@link List} of {@link ProjectSearchResponse} to export
 	 * @param locale   {@link Locale}
 	 * @param response {@link HttpServletResponse}
 	 * @throws IOException Thrown if cannot get the {@link PrintWriter} for the response
 	 */
-	private void writeProjectsToCsvFile(List<String> headers, List<DTProject> projects, Locale locale,
+	private void writeProjectsToCsvFile(List<String> headers, List<ProjectSearchResponse> projects, Locale locale,
 			HttpServletResponse response) throws IOException {
 		PrintWriter writer = response.getWriter();
 		try (CSVPrinter printer = new CSVPrinter(writer,
@@ -356,7 +356,7 @@ public class ProjectsController {
 			printer.printRecord(headers);
 
 			DateFormat dateFormat = new SimpleDateFormat(messageSource.getMessage("locale.date.long", null, locale));
-			for (DTProject p : projects) {
+			for (ProjectSearchResponse p : projects) {
 				List<String> record = new ArrayList<>();
 				record.add(String.valueOf(p.getId()));
 				record.add(p.getName());
@@ -374,13 +374,13 @@ public class ProjectsController {
 	 * Write the projects as a Excel file
 	 *
 	 * @param headers  {@link List} for {@link String} headers for the information.
-	 * @param projects {@link List} of {@link DTProject} to export
+	 * @param projects {@link List} of {@link ProjectSearchResponse} to export
 	 * @param locale   {@link Locale}
 	 * @param response {@link HttpServletResponse}
 	 * @throws IOException Thrown if cannot get the {@link OutputStream} for the
 	 *                     response
 	 */
-	private void writeProjectsToExcelFile(List<String> headers, List<DTProject> projects, Locale locale,
+	private void writeProjectsToExcelFile(List<String> headers, List<ProjectSearchResponse> projects, Locale locale,
 			HttpServletResponse response) throws IOException {
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		XSSFSheet sheet = workbook.createSheet();
@@ -395,7 +395,7 @@ public class ProjectsController {
 
 		// Create the rest of the sheet
 		DateFormat dateFormat = new SimpleDateFormat(messageSource.getMessage("locale.date.long", null, locale));
-		for (DTProject p : projects) {
+		for (ProjectSearchResponse p : projects) {
 			Row row = sheet.createRow(rowCount++);
 			int cellCount = 0;
 			row.createCell(cellCount++)
@@ -469,13 +469,13 @@ public class ProjectsController {
 	}
 
 	/**
-	 * Extract the details of the a {@link Project} into a {@link DTProject}
+	 * Extract the details of the a {@link Project} into a {@link ProjectSearchResponse}
 	 * which is consumable by the UI
 	 *
 	 * @param project {@link Project}
-	 * @return {@link DTProject}
+	 * @return {@link ProjectSearchResponse}
 	 */
-	private DTProject createDataTablesProject(Project project) {
-		return new DTProject(project, sampleService.getNumberOfSamplesForProject(project));
+	private ProjectSearchResponse createDataTablesProject(Project project) {
+		return new ProjectSearchResponse(project, sampleService.getNumberOfSamplesForProject(project));
 	}
 }

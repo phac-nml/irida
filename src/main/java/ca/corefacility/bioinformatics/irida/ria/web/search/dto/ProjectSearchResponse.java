@@ -1,4 +1,4 @@
-package ca.corefacility.bioinformatics.irida.ria.web.models.datatables;
+package ca.corefacility.bioinformatics.irida.ria.web.search.dto;
 
 import java.util.Date;
 
@@ -6,18 +6,18 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 
 /**
- * User interface model for DataTables for {@link Project}
+ * Response object for global search for {@link Project}
  */
-public class DTProject implements DataTablesResponseModel {
-	private Long id;
-	private String name;
-	private String organism;
-	private Long samples;
-	private Date createdDate;
-	private Date modifiedDate;
-	private boolean isRemote;
+public class ProjectSearchResponse extends SearchItem {
+	private final Long id;
+	private final String name;
+	private final String organism;
+	private final Long samples;
+	private final Date createdDate;
+	private final Date modifiedDate;
+	private final boolean isRemote;
 
-	public DTProject(Project project, Long sampleCount) {
+	public ProjectSearchResponse(Project project, Long sampleCount) {
 		this.id = project.getId();
 		this.name = project.getName();
 		this.organism = project.getOrganism();
@@ -27,7 +27,6 @@ public class DTProject implements DataTablesResponseModel {
 		this.isRemote = project.isRemote();
 	}
 
-	@Override
 	public Long getId() {
 		return id;
 	}

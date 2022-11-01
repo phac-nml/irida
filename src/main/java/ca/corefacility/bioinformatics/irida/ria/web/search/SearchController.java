@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,8 +19,11 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTa
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
+import ca.corefacility.bioinformatics.irida.ria.web.search.dto.ProjectSearchResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
+import ca.corefacility.bioinformatics.irida.ria.web.search.dto.SearchItem;
+import ca.corefacility.bioinformatics.irida.ria.web.search.dto.SearchRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.search.dto.SearchResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -41,39 +44,42 @@ public class SearchController {
 	}
 
 	/**
-	 * Search all projects a user is a member of based on a query string
-	 * 
-	 * @param query
-	 *            the query string
-	 * @param global
-	 *            Whether to perform an admin global search
-	 * @param params
-	 *            parameters for a datatables response
-	 * @return a {@link DataTablesResponse} to display the search results
+	 * Get the search view
 	 */
-	@RequestMapping("/search/ajax/projects")
-	@ResponseBody
-	public DataTablesResponse searchProjects(@RequestParam String query,
-			@RequestParam(required = false, defaultValue = "false") boolean global,
-			@DataTablesRequest DataTablesParams params) {
+	@RequestMapping("/search")
+	public String search() {
+		return "search/search";
+	}
+
+	/**
+	 * Ajax Search request for projects
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/ajax/search/projects")
+	private SearchResponse ajaxSearchRequest(@RequestBody SearchRequest request) {
+
 		Page<Project> page;
-		if (global) {
-			page = projectService.findAllProjects(query, params.getCurrentPage(), params.getLength(), params.getSort());
+		if (request.isGlobal()) {
+			page = projectService.findAllProjects(request.getQuery(), request.getPage(), request.getPageSize(), request.getSort());
 		} else {
-			page = projectService.findProjectsForUser(query, params.getCurrentPage(), params.getLength(),
-					params.getSort());
+			page = projectService.findProjectsForUser(request.getQuery(), request.getPage(), request.getPageSize(),
+					request.getSort());
 		}
-		List<DataTablesResponseModel> projects = page.getContent().stream().map(this::createDataTablesProject)
-				.collect(Collectors.toList());
-		return new DataTablesResponse(params, page, projects);
+
+		List<SearchItem> items = page.getContent().stream().map(project -> {
+			Long sampleCount = sampleService.getNumberOfSamplesForProject(project);
+			return new ProjectSearchResponse(project, sampleCount);
+		}).collect(Collectors.toList());
+
+		return new SearchResponse(page.getTotalPages(), items);
 	}
 
 	/**
 	 * Search all {@link Sample}s in projects for a user based on a query string
 	 *
 	 * @param query  the query string
-	 * @param global Whether to perform an admin
-	 *               global search
+	 * @param global Whether to perform an admin global search
 	 * @param params parameters for a datatables response
 	 * @return a {@link DataTablesResponse} to display search results
 	 */
@@ -98,48 +104,27 @@ public class SearchController {
 					newSort);
 		}
 
-		List<DataTablesResponseModel> samples = samplePage.getContent().stream().map(this::createDataTablesSample)
+		List<DataTablesResponseModel> samples = samplePage.getContent()
+				.stream()
+				.map(this::createDataTablesSample)
 				.collect(Collectors.toList());
 		return new DataTablesResponse(params, samplePage, samples);
 	}
 
 	/**
-	 * Get the search view with a given query
+	 * Extract the details of the a {@link Project} into a {@link ProjectSearchResponse} which is consumable by the UI
 	 *
-	 * @param query  the query string
-	 * @param global Whether to perform an admin
-	 *               global search
-	 * @param model  model for the view
-	 * @return name of the search view
+	 * @param project {@link Project}
+	 * @return {@link ProjectSearchResponse}
 	 */
-	@RequestMapping("/search")
-	public String search(@RequestParam String query,
-			@RequestParam(required = false, defaultValue = "false") boolean global, Model model) {
-		model.addAttribute("searchQuery", query);
-		model.addAttribute("searchGlobal", global);
-
-		return "search/search";
+	private ProjectSearchResponse createDataTablesProject(Project project) {
+		return new ProjectSearchResponse(project, sampleService.getNumberOfSamplesForProject(project));
 	}
 
 	/**
-	 * Extract the details of the a {@link Project} into a {@link DTProject}
-	 * which is consumable by the UI
+	 * Extract the details of a {@link ProjectSampleJoin} into a {@link DTProjectSamples}
 	 *
-	 * @param project
-	 *            {@link Project}
-	 *
-	 * @return {@link DTProject}
-	 */
-	private DTProject createDataTablesProject(Project project) {
-		return new DTProject(project, sampleService.getNumberOfSamplesForProject(project));
-	}
-
-	/**
-	 * Extract the details of a {@link ProjectSampleJoin} into a
-	 * {@link DTProjectSamples}
-	 * 
-	 * @param join
-	 *            the {@link ProjectSampleJoin}
+	 * @param join the {@link ProjectSampleJoin}
 	 * @return the created {@link DTProjectSamples}
 	 */
 	private DTProjectSamples createDataTablesSample(ProjectSampleJoin join) {
