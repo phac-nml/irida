@@ -10,7 +10,7 @@ export interface DisplaySampleDetailsProps {
   sampleId: number;
   projectId: number;
   displayActions?: boolean;
-  refetch?: () => void;
+  refetchCart?: () => void;
   visible: boolean;
   setVisible: Dispatch<SetStateAction<boolean>>;
 }
@@ -21,7 +21,7 @@ export default function SampleDetailsModal({
   sampleId,
   projectId,
   displayActions,
-  refetch,
+  refetchCart,
   visible,
   setVisible,
 }: DisplaySampleDetailsProps) {
@@ -29,7 +29,11 @@ export default function SampleDetailsModal({
   const [component, setComponent] = React.useState<ViewerTab>("details");
 
   // Get the sample ready to display
-  const { data: details = {}, isLoading } = useGetSampleDetailsQuery({
+  const {
+    data: details = {},
+    isLoading,
+    refetch: refetchSample,
+  } = useGetSampleDetailsQuery({
     sampleId,
     projectId,
   });
@@ -85,7 +89,8 @@ export default function SampleDetailsModal({
             tab={component}
             onMenuChange={setComponent}
             displayActions={!!displayActions}
-            refetch={refetch}
+            refetchCart={refetchCart}
+            refetchSample={refetchSample}
           />
           <div
             style={{

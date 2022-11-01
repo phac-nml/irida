@@ -15,14 +15,16 @@ export const HEADER_HEIGHT_WITH_PADDING = 97;
 export default function ViewerHeader({
   displayActions,
   projectId,
-  refetch,
+  refetchCart,
+  refetchSample,
   tab,
   onMenuChange,
 }: {
   displayActions: boolean;
   projectId: number;
   sampleId: number;
-  refetch: undefined | (() => void);
+  refetchCart: undefined | (() => void);
+  refetchSample: () => void;
   tab: ViewerTab;
   onMenuChange: Dispatch<SetStateAction<ViewerTab>>;
 }): JSX.Element {
@@ -84,7 +86,8 @@ export default function ViewerHeader({
             danger
             onClick={() => {
               dispatch(removeSampleFromCartThunk());
-              if (typeof refetch !== "undefined") refetch();
+              if (typeof refetchCart !== "undefined") refetchCart();
+              refetchSample();
             }}
           >
             {i18n("SampleDetailsViewer.removeFromCart")}
@@ -96,7 +99,8 @@ export default function ViewerHeader({
             className="t-add-sample-to-cart"
             onClick={() => {
               dispatch(addSampleToCartThunk());
-              if (typeof refetch !== "undefined") refetch();
+              if (typeof refetchCart !== "undefined") refetchCart();
+              refetchSample();
             }}
           >
             {i18n("SampleDetailsViewer.addToCart")}
