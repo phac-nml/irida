@@ -1189,7 +1189,6 @@ public class UISampleService {
 	 *
 	 * @param projectId identifier for the project
 	 * @param sampleIds list of sampleIds to remove
-	 * @return result of the removal of samples
 	 */
 	public void removeSamplesFromProject(Long projectId, List<Long> sampleIds) {
 		Project project = projectService.read(projectId);
