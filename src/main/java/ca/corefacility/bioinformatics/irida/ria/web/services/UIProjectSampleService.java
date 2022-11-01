@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
@@ -145,7 +144,7 @@ public class UIProjectSampleService {
 			Join<Project, Sample> join = projectService.addSampleToProjectWithoutEvent(project, sample, true);
 			if (request.getMetadata() != null) {
 				Set<MetadataEntry> metadataEntrySet = createMetadata(request.getMetadata(), project);
-				sampleService.mergeSampleMetadata(sample, metadataEntrySet);
+				sampleService.updateSampleMetadata(sample, metadataEntrySet);
 			}
 			return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(join.getObject().getId()));
 		} catch (EntityNotFoundException e) {
@@ -178,7 +177,7 @@ public class UIProjectSampleService {
 			}
 			if (request.getMetadata() != null) {
 				Set<MetadataEntry> metadataEntrySet = createMetadata(request.getMetadata(), project);
-				sampleService.updateSampleMetadata(sample, metadataEntrySet);
+				sampleService.mergeSampleMetadata(sample, metadataEntrySet);
 			}
 			sampleService.update(sample);
 			return ResponseEntity.ok(new AjaxUpdateItemSuccessResponse(
@@ -197,10 +196,17 @@ public class UIProjectSampleService {
 	 */
 	private Set<MetadataEntry> createMetadata(List<MetadataFieldModel> metadataFields, Project project) {
 		Set<MetadataEntry> metadataEntrySet = metadataFields.stream().map(entry -> {
-			MetadataTemplateField field = metadataTemplateService.saveMetadataField(
-					new MetadataTemplateField(entry.getField(), "text"));
-			ProjectMetadataRole role = ProjectMetadataRole.fromString(entry.getRestriction());
-			metadataTemplateService.setMetadataRestriction(project, field, role);
+			String label = entry.getField();
+			MetadataTemplateField field = metadataTemplateService.readMetadataFieldByLabel(label);
+			//			MetadataTemplateField field;
+			//			MetadataTemplateField existingField = metadataTemplateService.readMetadataFieldByLabel(label);
+			//			if (existingField != null) {
+			//				field = existingField;
+			//			} else {
+			//			field = metadataTemplateService.saveMetadataField(new MetadataTemplateField(label, "text"));
+			//			}
+			//			ProjectMetadataRole role = ProjectMetadataRole.fromString(entry.getRestriction());
+			//			metadataTemplateService.setMetadataRestriction(project, field, role);
 			return new MetadataEntry(entry.getValue(), "text", field);
 		}).collect(Collectors.toSet());
 		return metadataEntrySet;

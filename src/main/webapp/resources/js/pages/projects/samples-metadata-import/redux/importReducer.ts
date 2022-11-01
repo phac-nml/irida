@@ -315,7 +315,7 @@ export const importReducer = createReducer(initialState, (builder) => {
   builder.addCase(saveMetadata.fulfilled, (state, action) => {
     state.metadataSaveDetails = action.payload.metadataSaveDetails;
   });
-  builder.addCase(resetImport, (state, action) => {
+  builder.addCase(resetImport, (state) => {
     state.projectId = "";
     state.sampleNameColumn = "";
     state.headers = [];
