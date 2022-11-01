@@ -29,7 +29,6 @@ export function validateSamplesForMerge(samples) {
 export function validateSamplesForRemove(samples, projectId) {
   const values = Object.values(samples),
     valid = [],
-    locked = [],
     associated = [];
   values?.forEach((sample) => {
     if (!isSampleFromCurrentProject(sample.projectId, projectId)) {
