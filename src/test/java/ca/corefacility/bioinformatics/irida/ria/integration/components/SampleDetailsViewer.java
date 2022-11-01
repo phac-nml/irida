@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.components;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.List;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -13,7 +10,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.time.Duration;
+import java.util.List;
 
 public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-sample-details-modal")
@@ -361,7 +359,8 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	public void clickRemoveSampleFromCartButton() {
 		removeSampleFromCartBtn.click();
-		waitForTime(500);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+		wait.until(ExpectedConditions.invisibilityOf(modal));
 	}
 
 	public int numberOfSequencingObjectsSetAsDefault() {
