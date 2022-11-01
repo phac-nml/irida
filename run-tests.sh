@@ -11,7 +11,7 @@ JDBC_URL=jdbc:mysql://$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME
 TMP_DIRECTORY=`mktemp -d /tmp/irida-test-XXXXXXXX`
 chmod 777 $TMP_DIRECTORY # Needs to be world-accessible so that Docker/Galaxy can access
 
-S3MOCK_DOCKER_NAME=irida-selenium-s3
+S3MOCK_DOCKER_NAME=irida-docker-s3Mock
 GALAXY_DOCKER=phacnml/galaxy-irida-20.09:21.05.2-it
 GALAXY_DOCKER_NAME=irida-galaxy-test
 GALAXY_PORT=48889
