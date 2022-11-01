@@ -1,6 +1,9 @@
 
 # Changelog
 
+## [22.09.2]
+* [UI] Fixed bug causing associated project samples to be added to the cart with the wrong project identifier. See [PR 1395](https://github.com/phac-nml/irida/pull/1395)
+
 ## [22.09.1] - 2022/10/21
 * [UI]: Fixed when sharing or exporting sample on the project sample page, and other minor bugs. See [PR 1382](https://github.com/phac-nml/irida/pull/1382)
 
