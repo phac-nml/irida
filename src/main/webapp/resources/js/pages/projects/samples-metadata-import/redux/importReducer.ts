@@ -15,6 +15,7 @@ import {
 } from "../../../../apis/projects/samples";
 import { ImportDispatch, ImportState } from "./store";
 import {
+  createMetadataFieldsForProject,
   getMetadataFieldsForProject,
   MetadataField,
 } from "../../../../apis/metadata/field";
@@ -76,6 +77,18 @@ export const saveMetadata = createAsyncThunk<
     const { sampleNameColumn, headers, metadata, metadataValidateDetails } =
       state.importReducer;
     const metadataSaveDetails: Record<string, MetadataSaveDetailsItem> = {};
+
+    const body = headers.map((header) => ({
+      label: header.name,
+      restriction: header.restriction,
+    }));
+    console.log("body");
+    console.log(body);
+
+    await createMetadataFieldsForProject({
+      projectId,
+      body,
+    });
 
     const chunkSize = 100;
     for (let i = 0; i < metadata.length; i = i + chunkSize) {

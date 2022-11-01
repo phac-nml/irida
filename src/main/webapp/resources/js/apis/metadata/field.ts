@@ -9,10 +9,10 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 const BASE_URL = setBaseUrl(`/ajax/metadata/fields`);
 
 export interface MetadataField {
-  id: number;
-  fieldKey: string;
+  id?: number;
+  fieldKey?: string;
   label: string;
-  type: string;
+  type?: string;
   restriction: string;
 }
 
@@ -125,4 +125,18 @@ export async function getAllMetadataFieldsForProjects(
       return Promise.reject("An unexpected error occurred");
     }
   }
+}
+
+/*
+ * Create metadata fields for a specific project
+ * @returns {Promise<any>}
+ */
+export async function createMetadataFieldsForProject({
+  projectId,
+  body,
+}: {
+  projectId: string;
+  body: MetadataField[];
+}) {
+  return await axios.post(`${BASE_URL}?projectId=${projectId}`, body);
 }
