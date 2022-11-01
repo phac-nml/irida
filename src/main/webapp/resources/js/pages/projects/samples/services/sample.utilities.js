@@ -34,10 +34,8 @@ export function validateSamplesForRemove(samples, projectId) {
   values?.forEach((sample) => {
     if (!isSampleFromCurrentProject(sample.projectId, projectId)) {
       associated.push(sample);
-    } else if (sample.owner) {
-      valid.push(sample);
     } else {
-      locked.push(sample);
+      valid.push(sample);
     }
   });
   return { valid, locked, associated };
