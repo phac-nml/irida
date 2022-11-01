@@ -1,5 +1,5 @@
-import {Button, Menu,  Row, Space} from "antd";
-import type {MenuProps} from "antd";
+import { Button, Menu, Row, Space } from "antd";
+import type { MenuProps } from "antd";
 import React, { lazy, Suspense } from "react";
 import {
   BrowserRouter,
@@ -17,6 +17,7 @@ import { BORDERED_LIGHT } from "../../../styles/borders";
 import { grey1, grey6 } from "../../../styles/colors";
 import { SPACE_MD } from "../../../styles/spacing";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import HorizontalMenu from "../../../components/ant.design/HorizontalMenu";
 
 /*
 Lazy loaded since we do not need it unless we came from galaxy.
@@ -90,34 +91,35 @@ function CartToolsContent({ count, toggleSidebar, collapsed }) {
 
   const BASE_URL = setBaseUrl("/cart");
 
-  const menuItems : MenuProps["items"] = [
-  ...(fromGalaxy ?    [{
-      key: "cart:galaxy",
-      label: i18n("CartTools.menu.galaxy")
-    }]:[]
-) , {
+  const menuItems: MenuProps["items"] = [
+    ...(fromGalaxy
+      ? [
+          {
+            key: "cart:galaxy",
+            label: i18n("CartTools.menu.galaxy"),
+          },
+        ]
+      : []),
+    {
       key: "cart:pipelines",
-          label: i18n("CartTools.menu.pipelines")
-      } ];
+      label: i18n("CartTools.menu.pipelines"),
+    },
+  ];
 
-  const onClick:MenuProps["onClick"] = ({key}) => {
-      if(key === "cart:galaxy") {
-          navigate(setBaseUrl(`cart/galaxy`))
-      } else if(key === "cart:pipelines") {
-          navigate(setBaseUrl(`cart/pipelines`))
-      } else {
-          throw new Error(`Cannot find path for key: ${key}`)
-      }
-  }
+  const onClick: MenuProps["onClick"] = ({ key }) => {
+    if (key === "cart:galaxy") {
+      navigate(setBaseUrl(`cart/galaxy`));
+    } else if (key === "cart:pipelines") {
+      navigate(setBaseUrl(`cart/pipelines`));
+    } else {
+      throw new Error(`Cannot find path for key: ${key}`);
+    }
+  };
 
   return (
     <ToolsWrapper>
       <MenuWrapper>
-        <Menu
-          mode="horizontal"
-          selectedKeys={[location.pathname]}
-          style={{ borderBottom: BORDERED_LIGHT,minWidth: 0, flex: "auto" }}
-          items={menuItems} />
+        <HorizontalMenu selectedKeys={[location.pathname]} items={menuItems} />
         <Space align="center" style={{ padding: `0 ${SPACE_MD}` }}>
           <AnalysesQueue />
           <Button

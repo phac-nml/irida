@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
 import { IconFolder } from "../icons/Icons";
 import { RemoteProjectStatus } from "./RemoteProjectStatus";
+import HorizontalMenu from "../ant.design/HorizontalMenu";
 
 declare let window: IridaWindow;
 
@@ -82,9 +83,8 @@ export function ProjectNav(): JSX.Element {
       tags={[<RemoteProjectStatus key="remote" />].filter((f) => f !== null)}
     >
       <Content>
-        <Menu
+        <HorizontalMenu
           items={menuItems}
-          mode="horizontal"
           onClick={onClick}
           selectedKeys={[current]}
         />

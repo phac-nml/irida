@@ -1,4 +1,4 @@
-import { Button, Menu, MenuProps, Space, Tag, Typography } from "antd";
+import { Button, MenuProps, Space, Tag, Typography } from "antd";
 import React, { Dispatch, SetStateAction, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { generateColourForItem } from "../../../utilities/colour-utilities";
@@ -8,6 +8,7 @@ import {
   addSampleToCartThunk,
   removeSampleFromCartThunk,
 } from "../sampleSlice";
+import HorizontalMenu from "../../ant.design/HorizontalMenu";
 
 export const HEADER_HEIGHT = 90;
 export const HEADER_HEIGHT_WITH_PADDING = 97;
@@ -125,14 +126,9 @@ export default function ViewerHeader({
           </Button>
         )}
       </div>
-      <Menu
+      <HorizontalMenu
         defaultSelectedKeys={[tab]}
         onSelect={({ key }) => onMenuChange(key)}
-        style={{
-          borderBottom: 0,
-          display: "flex",
-          justifyContent: "flex-start",
-        }}
         className="t-sample-viewer-nav"
         items={menuItems}
       />
