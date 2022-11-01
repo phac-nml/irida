@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaLdapAuthenticationException;
+import ca.corefacility.bioinformatics.irida.model.user.DomainUser;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
@@ -190,12 +191,20 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
      */
     private User ldapCreateUser(DirContextOperations dirContextOperations, String username) {
         // This works for both ldap and adLdap
-        String randomPassword = generateCommonLangPassword();
+        //String randomPassword = generateCommonLangPassword();
+        //Map<String, String> map = getLdapFields(dirContextOperations);
+        //return new User(
+        //        username,
+        //        map.get(iridaUserFieldEmail),
+        //        randomPassword,
+        //        map.get(iridaUserFieldFirstName),
+        //        map.get(iridaUserFieldLastName),
+        //        map.get(iridaUserFieldPhoneNumber)
+        //);
         Map<String, String> map = getLdapFields(dirContextOperations);
-        return new User(
+        return new DomainUser(
                 username,
                 map.get(iridaUserFieldEmail),
-                randomPassword,
                 map.get(iridaUserFieldFirstName),
                 map.get(iridaUserFieldLastName),
                 map.get(iridaUserFieldPhoneNumber)
