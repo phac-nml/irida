@@ -58,7 +58,7 @@ export default function ViewerHeader({
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          margin: `10px 50px 0 20px`,
+          margin: `10px 56px 0 20px`,
         }}
       >
         <Space>
