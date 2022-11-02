@@ -38,6 +38,7 @@ jobs:
             "galaxy_testing",
             "galaxy_pipeline_testing",
             "open_api_testing",
+            "file_system_testing"
           ]
 
     steps:
