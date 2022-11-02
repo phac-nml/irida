@@ -62,16 +62,11 @@ export default function RemoveModal({
             )}
           />
         </Col>
-        {(samples.locked.length > 0 || samples.associated.length > 0) && (
+        {samples.associated.length > 0 && (
           <Col span={24}>
             <Divider orientation="left" plain>
               {i18n("RemoveModal.divider")}
             </Divider>
-          </Col>
-        )}
-        {samples.locked.length > 0 && (
-          <Col span={24}>
-            <LockedSamplesList locked={samples.locked} />
           </Col>
         )}
         {samples.associated.length > 0 && (
