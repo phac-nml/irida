@@ -29,11 +29,7 @@ export default function SampleDetailsModal({
   const [component, setComponent] = React.useState<ViewerTab>("details");
 
   // Get the sample ready to display
-  const {
-    data: details = {},
-    isLoading,
-    refetch: refetchSample,
-  } = useGetSampleDetailsQuery({
+  const { data: details = {}, isLoading } = useGetSampleDetailsQuery({
     sampleId,
     projectId,
   });
@@ -59,6 +55,7 @@ export default function SampleDetailsModal({
     details.projectId,
     details.projectName,
     details.sample,
+    details.inCart,
     dispatch,
     isLoading,
   ]);
@@ -90,7 +87,6 @@ export default function SampleDetailsModal({
             onMenuChange={setComponent}
             displayActions={!!displayActions}
             refetchCart={refetchCart}
-            refetchSample={refetchSample}
           />
           <div
             style={{
