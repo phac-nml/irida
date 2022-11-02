@@ -1,4 +1,4 @@
-import { Layout, MenuProps, Space } from "antd";
+import { Layout, Space } from "antd";
 import React, { useContext } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { AnalysisContext } from "../../contexts/AnalysisContext";
@@ -34,7 +34,7 @@ export default function AnalysisRunningPage() {
   const { analysisIdentifier } = useContext(AnalysisContext);
   const DEFAULT_URL = setBaseUrl(`/analysis/${analysisIdentifier}`);
 
-  const updateMenu: MenuProps["click"] = ({ key }) => {
+  const updateMenu = ({ key }) => {
     if (key === "analysis:setting") {
       navigate(`${DEFAULT_URL}`);
     }
