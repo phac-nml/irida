@@ -188,7 +188,7 @@ public class UIProjectSampleService {
 	}
 
 	/**
-	 * Creates a metadata entry set for a sample
+	 * Creates a metadata entry set for a sample, assuming the metadata field and restriction exist
 	 *
 	 * @param metadataFields list of {@link MetadataFieldModel}s
 	 * @param project        the project the sample belongs to
@@ -198,15 +198,6 @@ public class UIProjectSampleService {
 		Set<MetadataEntry> metadataEntrySet = metadataFields.stream().map(entry -> {
 			String label = entry.getField();
 			MetadataTemplateField field = metadataTemplateService.readMetadataFieldByLabel(label);
-			//			MetadataTemplateField field;
-			//			MetadataTemplateField existingField = metadataTemplateService.readMetadataFieldByLabel(label);
-			//			if (existingField != null) {
-			//				field = existingField;
-			//			} else {
-			//			field = metadataTemplateService.saveMetadataField(new MetadataTemplateField(label, "text"));
-			//			}
-			//			ProjectMetadataRole role = ProjectMetadataRole.fromString(entry.getRestriction());
-			//			metadataTemplateService.setMetadataRestriction(project, field, role);
 			return new MetadataEntry(entry.getValue(), "text", field);
 		}).collect(Collectors.toSet());
 		return metadataEntrySet;
