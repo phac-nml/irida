@@ -109,12 +109,14 @@ public class MetadataAjaxController {
 	 *
 	 * @param projectId Identifier for a project
 	 * @param fields    List of project metadata fields
+	 * @param locale    Current users {@link Locale}
 	 * @return list of {@link MetadataTemplateField}s
 	 */
 	@PostMapping("/fields")
 	public ResponseEntity<AjaxResponse> createMetadataFieldsForProject(@RequestParam Long projectId,
-			@RequestBody List<ProjectMetadataField> fields) {
-		return ResponseEntity.ok(new AjaxSuccessResponse(service.createMetadataFieldsForProject(projectId, fields)));
+			@RequestBody List<ProjectMetadataField> fields, Locale locale) {
+		return ResponseEntity.ok(
+				new AjaxSuccessResponse(service.createMetadataFieldsForProject(projectId, fields, locale)));
 	}
 
 	/**

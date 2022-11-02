@@ -78,16 +78,14 @@ export const saveMetadata = createAsyncThunk<
       state.importReducer;
     const metadataSaveDetails: Record<string, MetadataSaveDetailsItem> = {};
 
-    const body = headers.map((header) => ({
-      label: header.name,
-      restriction: header.restriction,
-    }));
-    console.log("body");
-    console.log(body);
-
     await createMetadataFieldsForProject({
       projectId,
-      body,
+      body: headers
+        .filter((header) => header.name !== sampleNameColumn)
+        .map((header) => ({
+          label: header.name,
+          restriction: header.restriction,
+        })),
     });
 
     const chunkSize = 100;

@@ -142,10 +142,11 @@ public class UIMetadataService {
 	 *
 	 * @param projectId Identifier for a {@link Project}
 	 * @param fields    List of project metadata fields
+	 * @param locale    Current users {@link Locale}
 	 * @return result message
 	 */
 	@Transactional
-	public String createMetadataFieldsForProject(Long projectId, List<ProjectMetadataField> fields) {
+	public String createMetadataFieldsForProject(Long projectId, List<ProjectMetadataField> fields, Locale locale) {
 		Project project = projectService.read(projectId);
 		for (ProjectMetadataField field : fields) {
 			String label = field.getLabel();
@@ -159,7 +160,7 @@ public class UIMetadataService {
 			ProjectMetadataRole role = ProjectMetadataRole.fromString(field.getRestriction());
 			templateService.setMetadataRestriction(project, templateField, role);
 		}
-		return "SUCCESS";
+		return messageSource.getMessage("server.MetadataFieldsListManager.success", new Object[] {}, locale);
 	}
 
 	/**
