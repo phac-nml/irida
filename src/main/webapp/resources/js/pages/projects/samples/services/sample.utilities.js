@@ -37,7 +37,7 @@ export function validateSamplesForRemove(samples, projectId) {
       valid.push(sample);
     }
   });
-  return { valid, locked, associated };
+  return { valid, associated };
 }
 
 /**
