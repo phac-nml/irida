@@ -1,12 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -15,6 +8,13 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * <p>
@@ -541,7 +541,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 		openToolsDropDown();
 		removeBtn.click();
-		wait.until(ExpectedConditions.visibilityOf(removeModal));
+		wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("t-remove-modal")));
 		removeModal.findElement(By.xpath("//button[@type='button' and span='Remove Samples']")).click();
 		wait.until(ExpectedConditions.textMatches(By.className("t-summary"), Pattern.compile("^Selected: 0")));
 	}

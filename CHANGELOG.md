@@ -3,6 +3,7 @@
 
 ## [22.09.2]
 * [UI]: Fixed bug causing associated project samples to be added to the cart with the wrong project identifier. See [PR 1395](https://github.com/phac-nml/irida/pull/1395)
+* [UI]: Fixed bug preventing the removal of locked samples within a project. See [PR 1396](https://github.com/phac-nml/irida/pull/1396)
 * [UI]: Fixed bug where a sample added to the cart from the sample detail viewer still had a `Add to Cart` button if the viewer was closed and relaunched. See [PR 1397](https://github.com/phac-nml/irida/pull/1397)
 
 ## [22.09.1] - 2022/10/21

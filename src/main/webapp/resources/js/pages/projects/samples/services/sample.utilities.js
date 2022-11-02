@@ -29,18 +29,15 @@ export function validateSamplesForMerge(samples) {
 export function validateSamplesForRemove(samples, projectId) {
   const values = Object.values(samples),
     valid = [],
-    locked = [],
     associated = [];
   values?.forEach((sample) => {
     if (!isSampleFromCurrentProject(sample.projectId, projectId)) {
       associated.push(sample);
-    } else if (sample.owner) {
-      valid.push(sample);
     } else {
-      locked.push(sample);
+      valid.push(sample);
     }
   });
-  return { valid, locked, associated };
+  return { valid, associated };
 }
 
 /**
