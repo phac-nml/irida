@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { AnalysisContext } from "../../../contexts/AnalysisContext";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ANALYSIS } from "../routes";
+import HorizontalMenu from "../../../components/ant.design/HorizontalMenu";
 
 /**
  * React component to render the menu for the analysis
@@ -92,10 +93,9 @@ export default function AnalysisMenu({ type }: { type: string }) {
   };
 
   return (
-    <Menu
+    <HorizontalMenu
       className="t-analysis-menu"
       items={menuItems}
-      mode="horizontal"
       onClick={onClick}
       selectedKeys={[current]}
     />

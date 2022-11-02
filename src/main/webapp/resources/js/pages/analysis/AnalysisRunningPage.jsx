@@ -58,7 +58,6 @@ export default function AnalysisRunningPage() {
             items={[
               { key: "analysis:setting", label: i18n("Analysis.settings") },
             ]}
-            mode="horizontal"
             selectedKeys={["settings"]}
             onClick={updateMenu}
           />

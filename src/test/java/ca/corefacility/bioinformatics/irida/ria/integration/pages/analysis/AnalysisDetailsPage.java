@@ -155,6 +155,10 @@ public class AnalysisDetailsPage extends AbstractPage {
         provenanceTab.click();
     }
 
+    public void goToDetailsTab() {
+        driver.findElement(By.cssSelector("[data-menu-id*='details']")).click();
+    }
+
     /**
      * Determines if the actual and expected analysis details are identical
      *
@@ -224,11 +228,9 @@ public class AnalysisDetailsPage extends AbstractPage {
      * @return {@link Boolean}
      */
     public boolean compareTabTitle(String pageTitle) {
-
-        waitForElementsVisible(By.cssSelector("span[title='" + pageTitle + "']"));
-        boolean titleFound = rootDiv.findElement(By.cssSelector("span[title='" + pageTitle + "']")).isDisplayed();
-
-        return titleFound;
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebElement titleElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("span[title='" + pageTitle + "']")));
+        return titleElement.isDisplayed();
     }
 
     /**
