@@ -1,16 +1,18 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ShareSamplesPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.TableSummary;
-
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -410,6 +412,33 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertNull(page.getCoverageForSampleByName(SAMPLE_WITH_COVERAGE_QC_ENTRY),
 				SAMPLE_WITH_COVERAGE_QC_ENTRY + " should have a value");
+	}
+
+	@Test
+	void testRemoveLockedSample() {
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
+		page.selectSampleByName(FIRST_SAMPLE_NAME);
+		page.openToolsDropDown();
+		page.shareSamples();
+		WebDriverWait wait = new WebDriverWait(driver(), Duration.ofSeconds(2));
+		wait.until(ExpectedConditions.urlContains("/share"));
+
+		ShareSamplesPage shareSamplesPage = ShareSamplesPage.initPage(driver());
+		shareSamplesPage.searchForProject("project2");
+		shareSamplesPage.gotToNextStep();
+		shareSamplesPage.selectLockCheckbox();
+		shareSamplesPage.gotToNextStep();
+		shareSamplesPage.submitShareRequest();
+
+		page = ProjectSamplesPage.goToPage(driver(), 2);
+		TableSummary summary = page.getTableSummary();
+		assertEquals(1, summary.getTotal(), "Should have 1 sample");
+		page.selectSampleByName(FIRST_SAMPLE_NAME);
+		page.openToolsDropDown();
+		page.removeSamples();
+		summary = page.getTableSummary();
+		assertEquals(0, summary.getTotal(), "There should be no samples left in this project");
 	}
 }
 
