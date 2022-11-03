@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Dropdown, Menu, message, Row, Space } from "antd";
+import { Button, Dropdown, Menu, message, Modal, Row, Space, Spin } from "antd";
 import {
   addToCart,
   clearFilterByFile,
@@ -34,7 +34,9 @@ import {
 } from "@ant-design/icons";
 import { useGetProjectDetailsQuery } from "../../../../apis/projects/project";
 import { storeSamples } from "../../../../utilities/session-utilities";
+import { samples } from "../../../../../../entries";
 
+const LockedSamplesList = lazy(() => import("./LockedSamplesList"));
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));
 const CreateModal = lazy(() => import("./CreateNewSample"));
@@ -118,7 +120,7 @@ export default function SamplesMenu() {
 
   const onNCBI = () => {
     if (selected.size === 0) return;
-    formatAndStoreSamples(`ncbi`);
+    formatAndStoreSamples(`ncbi`, Object.values(selected));
     window.location.href = setBaseUrl(`/projects/${projectId}/ncbi`);
   };
 
@@ -126,16 +128,17 @@ export default function SamplesMenu() {
     dispatch(exportSamplesToFile(type));
   };
 
-  const formatAndStoreSamples = (path) => {
-    const samples = Object.values(selected).map(
-      ({ id, sampleName: name, owner, projectId }) => ({
+  const formatAndStoreSamples = (path, samples) => {
+    storeSamples({
+      samples: samples.map(({ id, sampleName: name, owner, projectId }) => ({
         id,
         name,
         owner,
         projectId,
-      })
-    );
-    storeSamples({ samples, projectId, path });
+      })),
+      projectId,
+      path,
+    });
   };
 
   /**
@@ -146,11 +149,30 @@ export default function SamplesMenu() {
     if (selected.size === 0) return;
     const { valid, locked } = validateSamplesForMergeOrShare(selected);
     if (locked.length) {
-      alert("YOU have locked samples and cannot share them");
+      if (valid.length === 0) {
+        message.error(i18n("SampleMenu.share-all-locked"));
+      } else {
+        console.log(valid);
+        Modal.confirm({
+          width: 600,
+          title: i18n("SampleMenu.share-some-locked", locked.length),
+          content: (
+            <Suspense fallback={<Spin />}>
+              <LockedSamplesList locked={locked} />
+            </Suspense>
+          ),
+          onOk: () => {
+            formatAndStoreSamples(`share`, valid);
+            // Redirect user to share page
+            window.location.href = setBaseUrl(`/projects/${projectId}/share`);
+          },
+        });
+      }
+    } else {
+      formatAndStoreSamples(`share`, valid);
+      // Redirect user to share page
+      window.location.href = setBaseUrl(`/projects/${projectId}/share`);
     }
-    formatAndStoreSamples(`share`);
-    // Redirect user to share page
-    window.location.href = setBaseUrl(`/projects/${projectId}/share`);
   };
 
   /**
