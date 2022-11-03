@@ -102,6 +102,35 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		driver().manage().window().maximize();
 		// Add some samples to the cart and test to see if they get displayed/
 		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
+
+		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
+
+		// Test that the add/remove buttons for the sample detail viewer are displayed correctly depending on if the sample is in the cart or not
+		samplesPage.clickSampleName("sample5fg44");
+		assertTrue(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
+				"The add cart to sample button should be displayed");
+		assertFalse(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(),
+				"The remove sample from cart button should not be displayed");
+
+		sampleDetailsViewer.clickAddSampleToCartButton();
+
+		assertFalse(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
+				"The add cart to sample button should not be displayed");
+		assertTrue(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(),
+				"The remove sample from cart button should be displayed");
+
+		sampleDetailsViewer.clickSampleDetailsViewerCloseButton();
+
+		samplesPage.clickSampleName("sample5fg44");
+
+		assertFalse(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
+				"The add cart to sample button should not be displayed");
+		assertTrue(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(),
+				"The remove sample from cart button should be displayed");
+
+		sampleDetailsViewer.clickRemoveSampleFromCartButton();
+		sampleDetailsViewer.clickSampleDetailsViewerCloseButton();
+
 		samplesPage.selectSampleByName("sample5fg44");
 		samplesPage.selectSampleByName("sample5fdgr");
 		samplesPage.selectSampleByName("sample554sg5");
@@ -121,7 +150,6 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		final String sampleName = "sample554sg5";
 		final String projectName = "project";
 		page.viewSampleDetailsFor(sampleName);
-		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
 
 		assertFalse(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
 				"The add cart to sample button should not be displayed");
@@ -184,7 +212,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(1, sampleDetailsViewer.numberOfSampleAnalysesVisible(),
 				"AUser should only see listing of 1 analysis ran with this sample");
 
-		sampleDetailsViewer.clickRemoveSampleFromCartButton();
+		sampleDetailsViewer.clickRemoveSampleFromCartButtonCartPage();
 
 		assertFalse(sampleDetailsViewer.sampleDetailsViewerVisible(), "The sample details viewer should not be displayed as the sample was removed from the cart");
 
@@ -202,6 +230,35 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		driver().manage().window().maximize();
 		// Add some samples to the cart and test to see if they get displayed/
 		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
+		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
+
+		// Test that the add/remove buttons for the sample detail viewer are displayed correctly depending on if the sample is in the cart or not
+		samplesPage.clickSampleName("sample5fg44");
+		assertTrue(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
+				"The add cart to sample button should be displayed");
+		assertFalse(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(),
+				"The remove sample from cart button should not be displayed");
+
+		sampleDetailsViewer.clickAddSampleToCartButton();
+
+		assertFalse(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
+				"The add cart to sample button should not be displayed");
+		assertTrue(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(),
+				"The remove sample from cart button should be displayed");
+
+		sampleDetailsViewer.clickSampleDetailsViewerCloseButton();
+
+		samplesPage.clickSampleName("sample5fg44");
+
+		assertFalse(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
+				"The add cart to sample button should not be displayed");
+		assertTrue(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(),
+				"The remove sample from cart button should be displayed");
+
+		sampleDetailsViewer.clickRemoveSampleFromCartButton();
+		sampleDetailsViewer.clickSampleDetailsViewerCloseButton();
+
+
 		samplesPage.selectSampleByName("sample5fg44");
 		samplesPage.selectSampleByName("sample5fdgr");
 		samplesPage.selectSampleByName("sample554sg5");
@@ -221,7 +278,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		final String sampleName = "sample554sg5";
 		final String projectName = "project";
 		page.viewSampleDetailsFor(sampleName);
-		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
+
 
 		assertFalse(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
 				"The add cart to sample button should not be displayed");
@@ -360,7 +417,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(),
 				"The remove sample from cart button should be displayed");
 
-		sampleDetailsViewer.clickRemoveSampleFromCartButton();
+		sampleDetailsViewer.clickRemoveSampleFromCartButtonCartPage();
 
 		assertFalse(sampleDetailsViewer.sampleDetailsViewerVisible(), "The sample details viewer should not be displayed as the sample was removed from the cart");
 
@@ -419,7 +476,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		SampleDetailsViewer viewer = SampleDetailsViewer.getSampleDetails(driver());
 		assertEquals(ASSOCIATED_PROJECT_NAME, viewer.getProjectName(), "Should have the correct project name");
 
-		viewer.clickRemoveSampleFromCartButton();
+		viewer.clickRemoveSampleFromCartButtonCartPage();
 
 		assertFalse(viewer.sampleDetailsViewerVisible(), "The sample details viewer should not be displayed as the sample was removed from the cart");
 
