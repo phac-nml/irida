@@ -1,5 +1,7 @@
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { ProjectsTable } from "./ProjectsTable";
 
-render(<ProjectsTable />, document.querySelector("#root"));
+const ROOT_ELEMENT = document.querySelector("#root");
+const root = createRoot(ROOT_ELEMENT);
+root.render(<ProjectsTable />);

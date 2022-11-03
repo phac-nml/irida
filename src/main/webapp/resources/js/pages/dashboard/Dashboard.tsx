@@ -1,9 +1,10 @@
 import React from "react";
 import { Col, Layout, Row } from "antd";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { UserProjectStatistics } from "./components/UserProjectStatistics";
 import { RecentActivity } from "./components/RecentActivity";
 import { SPACE_MD } from "../../styles/spacing";
+import { root } from "postcss";
 
 const { Content } = Layout;
 
@@ -33,4 +34,8 @@ const Dashboard = (): JSX.Element => {
   );
 };
 
-render(<Dashboard />, document.querySelector("#root"));
+const ROOT_ELEMENT = document.querySelector("#root");
+if (ROOT_ELEMENT) {
+  const root = createRoot(ROOT_ELEMENT);
+  root.render(<Dashboard />);
+}

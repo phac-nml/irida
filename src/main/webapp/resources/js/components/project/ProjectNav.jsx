@@ -1,6 +1,6 @@
 import { Layout, Menu, PageHeader } from "antd";
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
 import { IconFolder } from "../icons/Icons";
 import { RemoteProjectStatus } from "./RemoteProjectStatus";
@@ -59,4 +59,6 @@ export function ProjectNav({ ...props }) {
   );
 }
 
-render(<ProjectNav />, document.querySelector("#project-root"));
+const ROOT_ELEMENT = document.querySelector("#project-root");
+const root = createRoot(ROOT_ELEMENT);
+root.render(<ProjectNav />);

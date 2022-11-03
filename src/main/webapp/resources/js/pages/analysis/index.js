@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { AnalysisProvider } from "../../contexts/AnalysisContext";
 import { setBaseUrl } from "../../utilities/url-utilities";
@@ -13,11 +13,12 @@ See: https://webpack.js.org/guides/public-path/#on-the-fly
  */
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
-render(
+const ROOT_ELEMENT = createRoot(document.getElementById("root"));
+const root = createRoot(ROOT_ELEMENT);
+root.render(
   <BrowserRouter>
     <AnalysisProvider>
       <Analysis />
     </AnalysisProvider>
-  </BrowserRouter>,
-  document.getElementById("root")
+  </BrowserRouter>
 );

@@ -1,6 +1,6 @@
 import { Button, Col, List, notification, Row, Space, Typography } from "antd";
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { getProjectActivities } from "../../apis/activities/activities";
 import { ActivityListItem } from "../../components/activities/ActivityListItem";
 import { BORDERED_LIGHT } from "../../styles/borders";
@@ -86,4 +86,6 @@ function ProjectActivity() {
   );
 }
 
-render(<ProjectActivity />, document.querySelector("#root"));
+const ROOT_ELEMENT = document.querySelector("#root");
+const root = createRoot(ROOT_ELEMENT);
+root.render(<ProjectActivity />);

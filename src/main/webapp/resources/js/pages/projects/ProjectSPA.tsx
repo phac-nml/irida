@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { DataBrowserRouter, Outlet, Route } from "react-router-dom";
 import { loader as exportsLoader } from "../../components/ncbi/export-table";
 import { setBaseUrl } from "../../utilities/url-utilities";
@@ -78,4 +78,8 @@ export default function ProjectSPA(): JSX.Element {
   );
 }
 
-render(<ProjectSPA />, document.querySelector("#root"));
+const ROOT_ELEMENT = document.querySelector("#root");
+if (ROOT_ELEMENT) {
+  const root = createRoot(ROOT_ELEMENT);
+  root.render(<ProjectSPA />);
+}

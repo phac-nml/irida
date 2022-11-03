@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { Alert, Button, Col, Form, Input, InputRef, Row } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { setBaseUrl } from "../utilities/url-utilities";
@@ -26,7 +26,7 @@ declare let window: IridaWindow;
 interface LoginFormProps {
   updateDisplayLoginPage: (value: boolean) => void;
   updatePageType: (value: string) => void;
-};
+}
 
 /**
  * React component to render the login form
@@ -34,7 +34,10 @@ interface LoginFormProps {
  * @param updatePageType Function to update the page type
  * @constructor
  */
-function LoginForm({ updateDisplayLoginPage, updatePageType }: LoginFormProps): JSX.Element {
+function LoginForm({
+  updateDisplayLoginPage,
+  updatePageType,
+}: LoginFormProps): JSX.Element {
   const [form] = Form.useForm();
   const usernameRef = React.useRef<InputRef>(null);
 
@@ -53,7 +56,8 @@ function LoginForm({ updateDisplayLoginPage, updatePageType }: LoginFormProps): 
    * Handler for submitting the login form once all fields are correctly filled out
    * @returns {*}
    */
-  const onFinish = () => (document.getElementById("loginForm") as HTMLFormElement).submit();
+  const onFinish = () =>
+    (document.getElementById("loginForm") as HTMLFormElement).submit();
 
   return (
     <Form
@@ -185,26 +189,26 @@ function LoginPage(): JSX.Element {
               </span>
             }
             description={
-              urlParams.has("sequencer-login") ?
+              urlParams.has("sequencer-login") ? (
+                <>{i18n("LoginPage.error.sequencer_login_description")} </>
+              ) : (
                 <>
-                  {i18n("LoginPage.error.sequencer_login_description")}{" "}
+                  {i18n("LoginPage.error.description")}{" "}
+                  <Button
+                    onClick={() => {
+                      setDisplayLoginPage(false);
+                      updatePageType("forgot-password");
+                      history.pushState(
+                        "forgot",
+                        "Forgot Password",
+                        setBaseUrl("/forgot_password")
+                      );
+                    }}
+                  >
+                    {i18n("LoginPage.recover")}
+                  </Button>
                 </>
-              : <>
-                {i18n("LoginPage.error.description")}{" "}
-                <Button
-                  onClick={() => {
-                    setDisplayLoginPage(false);
-                    updatePageType("forgot-password");
-                    history.pushState(
-                      "forgot",
-                      "Forgot Password",
-                      setBaseUrl("/forgot_password")
-                    );
-                  }}
-                >
-                  {i18n("LoginPage.recover")}
-                </Button>
-              </>
+              )
             }
             showIcon
           />
@@ -226,4 +230,6 @@ function LoginPage(): JSX.Element {
   );
 }
 
-render(<LoginPage />, document.querySelector("#login-root"));
+const ROOT_ELEMENT = document.querySelector("#login-root");
+const root = createRoot(ROOT_ELEMENT);
+root.render(<LoginPage />);

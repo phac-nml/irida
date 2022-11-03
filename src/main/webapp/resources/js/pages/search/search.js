@@ -10,7 +10,7 @@ import {
 } from "./../../utilities/datatables-utilities";
 import { formatDate } from "./../../utilities/date-utilities";
 import { SampleDetailViewer } from "../../components/samples/SampleDetailViewer";
-import * as ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 
 /*
 Get the table headers and create a look up table for them.
@@ -72,7 +72,8 @@ const sampleConfig = Object.assign({}, tableConfig, {
     {
       targets: [SAMPLE_COLUMNS.SAMPLE_NAME],
       createdCell: (td, cellData, rowData) => {
-        ReactDOM.render(
+        const root = createRoot(td);
+        root.render(
           <SampleDetailViewer
             sampleId={rowData.id}
             projectId={rowData.projectId}
@@ -80,8 +81,7 @@ const sampleConfig = Object.assign({}, tableConfig, {
             <Button type="link" style={{ padding: 0 }}>
               {cellData}
             </Button>
-          </SampleDetailViewer>,
-          td
+          </SampleDetailViewer>
         );
       },
     },

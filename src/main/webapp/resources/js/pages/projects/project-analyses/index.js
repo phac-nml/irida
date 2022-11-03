@@ -1,6 +1,6 @@
 import { Col, Layout, Row, Skeleton } from "antd";
 import React, { Suspense } from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import {
   BrowserRouter,
@@ -72,7 +72,9 @@ function ProjectAnalyses() {
   );
 }
 
-render(
+const ROOT_ELEMENT = document.querySelector("#root");
+const root = createRoot(ROOT_ELEMENT);
+root.render(
   <BrowserRouter>
     <Provider store={store}>
       <Routes>
@@ -94,6 +96,5 @@ render(
         </Route>
       </Routes>
     </Provider>
-  </BrowserRouter>,
-  document.querySelector("#root")
+  </BrowserRouter>
 );

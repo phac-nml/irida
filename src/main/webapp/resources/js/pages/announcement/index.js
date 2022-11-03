@@ -1,5 +1,7 @@
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import React from "react";
 import { AnnouncementsPage } from "./components/AnnouncementsPage";
 
-render(<AnnouncementsPage />, document.querySelector("#announcements-root"));
+const ROOT_ELEMENT = document.querySelector("#announcements-root");
+const root = createRoot(ROOT_ELEMENT);
+root.render(<AnnouncementsPage />);
