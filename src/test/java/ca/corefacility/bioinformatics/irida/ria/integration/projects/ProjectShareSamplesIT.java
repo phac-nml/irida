@@ -12,7 +12,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesView.xml")
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectShareSamples.xml")
 public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 	private ShareSamplesPage shareSamplesPage = ShareSamplesPage.initPage(driver());
 
