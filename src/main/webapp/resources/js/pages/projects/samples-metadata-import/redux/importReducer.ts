@@ -292,14 +292,6 @@ export const setMetadataSaveDetails = createAction(
 );
 
 /*
-Redux action for resetting the state.
-For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
- */
-export const resetImport = createAction(`importReducer/resetImport`, () => ({
-  payload: {},
-}));
-
-/*
 Redux reducer for project metadata.
 For more information on redux reducers see: https://redux-toolkit.js.org/api/createReducer
  */
@@ -309,6 +301,11 @@ export const importReducer = createReducer(initialState, (builder) => {
   });
   builder.addCase(setProjectId, (state, action) => {
     state.projectId = action.payload.projectId;
+    state.sampleNameColumn = "";
+    state.headers = [];
+    state.metadata = [];
+    state.metadataValidateDetails = {};
+    state.metadataSaveDetails = {};
   });
   builder.addCase(setMetadata, (state, action) => {
     state.metadata = action.payload.metadata;
@@ -325,13 +322,5 @@ export const importReducer = createReducer(initialState, (builder) => {
   });
   builder.addCase(saveMetadata.fulfilled, (state, action) => {
     state.metadataSaveDetails = action.payload.metadataSaveDetails;
-  });
-  builder.addCase(resetImport, (state) => {
-    state.projectId = "";
-    state.sampleNameColumn = "";
-    state.headers = [];
-    state.metadata = [];
-    state.metadataValidateDetails = {};
-    state.metadataSaveDetails = {};
   });
 });

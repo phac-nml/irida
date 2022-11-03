@@ -8,24 +8,29 @@ import { importReducer } from "./importReducer";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { getProjectIdFromUrl } from "../../../../utilities/url-utilities";
 
-const storageKey = "metadataImport";
+const projectId = getProjectIdFromUrl();
+const storageKey = "metadataImport-" + projectId;
 
 const storeState = (store: MiddlewareAPI) => {
   return (next: Dispatch) => (action: Action) => {
     const result = next(action);
-    sessionStorage.setItem(storageKey, JSON.stringify(store.getState()));
+    const expirationDate = new Date(new Date().getTime() + 6 * 60 * 60 * 1000);
+    const storage = {
+      state: store.getState(),
+      expiry: expirationDate.toISOString(),
+    };
+    sessionStorage.setItem(storageKey, JSON.stringify(storage));
     return result;
   };
 };
 
 const retrieveState = () => {
   const stringData = sessionStorage.getItem(storageKey);
-  if (stringData != null) {
-    const projectIdFromUrl = getProjectIdFromUrl();
+  if (stringData !== null) {
     const result = JSON.parse(stringData);
-    const projectIdFromStorage = result.importReducer.projectId;
-    if (projectIdFromUrl === projectIdFromStorage) {
-      return result;
+    const expiry = new Date(result.expiry);
+    if (expiry > new Date()) {
+      return result.state;
     }
   }
 };
