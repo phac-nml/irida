@@ -61,8 +61,11 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
                 rawNumbers: false,
               }
             );
-            await dispatch(setHeaders({ headers: Object.keys(rows[0]) }));
-            await dispatch(setMetadata(rows));
+            const cleanRows = JSON.parse(
+              JSON.stringify(rows).replace(/"\s+|\s+"/g, '"')
+            );
+            await dispatch(setHeaders({ headers: Object.keys(cleanRows[0]) }));
+            await dispatch(setMetadata(cleanRows));
           };
           if (info.file.originFileObj) {
             reader.readAsBinaryString(info.file.originFileObj);
