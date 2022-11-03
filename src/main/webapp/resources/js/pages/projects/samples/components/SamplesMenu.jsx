@@ -12,7 +12,7 @@ import {
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import {
   validateSamplesForLinker,
-  validateSamplesForMerge,
+  validateSamplesForMergeOrShare,
   validateSamplesForRemove,
 } from "../services/sample.utilities";
 import {
@@ -144,6 +144,10 @@ export default function SamplesMenu() {
    */
   const shareSamples = () => {
     if (selected.size === 0) return;
+    const { valid, locked } = validateSamplesForMergeOrShare(selected);
+    if (locked.length) {
+      alert("YOU have locked samples and cannot share them");
+    }
     formatAndStoreSamples(`share`);
     // Redirect user to share page
     window.location.href = setBaseUrl(`/projects/${projectId}/share`);
@@ -156,7 +160,7 @@ export default function SamplesMenu() {
    */
   const validateAndOpenModalFor = (name) => {
     if (name === "merge") {
-      const validated = validateSamplesForMerge(selected);
+      const validated = validateSamplesForMergeOrShare(selected);
       if (validated.valid.length >= 2) {
         setSorted(validated);
         setMergeVisible(true);
