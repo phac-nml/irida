@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Integration test to ensure that the Project Details Page.
  * </p>
  */
-@DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesView.xml")
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesPage.xml")
 public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	String FIRST_SAMPLE_NAME = "sample55422r";
 	String SECOND_SAMPLE_NAME = "sample-5-fg-22";
