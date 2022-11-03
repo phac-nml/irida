@@ -3,14 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button, Result } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import { MetadataItem } from "../../../../apis/projects/samples";
-import {
-  ImportDispatch,
-  ImportState,
-  useImportDispatch,
-  useImportSelector,
-} from "../redux/store";
+import { ImportState, useImportSelector } from "../redux/store";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
-import { resetImport } from "../redux/importReducer";
 
 /**
  * React component that displays Step #4 of the Sample Metadata Uploader.
@@ -21,7 +15,6 @@ import { resetImport } from "../redux/importReducer";
 export function SampleMetadataImportComplete(): JSX.Element {
   const { metadata, metadataValidateDetails, metadataSaveDetails } =
     useImportSelector((state: ImportState) => state.importReducer);
-  const dispatch: ImportDispatch = useImportDispatch();
 
   const samplesUpdatedCount = metadata.filter(
     (metadataItem: MetadataItem) =>
@@ -58,14 +51,6 @@ export function SampleMetadataImportComplete(): JSX.Element {
 
   const { projectId } = useParams<{ projectId: string }>();
   const navigate: NavigateFunction = useNavigate();
-  const onClick = React.useCallback(async () => {
-    await dispatch(resetImport());
-    navigate(`/${projectId}/sample-metadata/upload/file`);
-  }, [dispatch, projectId, navigate]);
-
-  React.useEffect(() => {
-    setTimeout(onClick, 10000);
-  }, [onClick]);
 
   return (
     <SampleMetadataImportWizard current={3}>
@@ -74,7 +59,12 @@ export function SampleMetadataImportComplete(): JSX.Element {
         title={i18n("SampleMetadataImportComplete.result.title")}
         subTitle={stats}
         extra={
-          <Button type="primary" onClick={onClick}>
+          <Button
+            type="primary"
+            onClick={() =>
+              navigate(`/${projectId}/sample-metadata/upload/file`)
+            }
+          >
             {i18n("SampleMetadataImportComplete.button.upload")}
           </Button>
         }
