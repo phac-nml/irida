@@ -104,6 +104,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
         style={{ width: 300 }}
         value={updatedSampleNameColumn}
         onChange={onSampleNameColumnChange}
+        className="t-metadata-uploader-sample-name-column-select"
       >
         {headers.map((header) => (
           <Select.Option key={header.name} value={header.name}>
@@ -113,7 +114,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
       </Select>
       {updatedSampleNameColumn && (
         <Table
-          className="t-metadata-uploader-header-table"
+          className="t-metadata-uploader-headers-table"
           rowKey={(row) => row.rowKey}
           columns={columns}
           dataSource={updatedHeaders.filter(

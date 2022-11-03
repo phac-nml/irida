@@ -23,6 +23,7 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 	private static final String GOOD_FILE_PATH = "src/test/resources/files/metadata-upload/good.xlsx";
 	private static final String MIXED_FILE_PATH = "src/test/resources/files/metadata-upload/mixed.xlsx";
 	private static final String INVALID_FILE_PATH = "src/test/resources/files/metadata-upload/invalid.xlsx";
+	private static final String SAMPLE_NAME_COLUMN = "NLEP #";
 
 	@BeforeEach
 	public void init() {
@@ -33,7 +34,8 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 	public void testGoodFileAndHeaders() {
 		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
 		page.uploadMetadataFile(GOOD_FILE_PATH);
-		page.selectSampleNameColumn();
+		page.selectSampleNameColumn(SAMPLE_NAME_COLUMN);
+		page.goToReviewPage();
 		assertEquals(5, page.getUpdateCount(), "Has incorrect amount of update sample rows");
 		assertEquals(0, page.getNewCount(), "Has incorrect amount of new sample rows");
 
@@ -60,7 +62,8 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 	public void testMixedFileAndHeaders() {
 		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
 		page.uploadMetadataFile(MIXED_FILE_PATH);
-		page.selectSampleNameColumn();
+		page.selectSampleNameColumn(SAMPLE_NAME_COLUMN);
+		page.goToReviewPage();
 		assertEquals(5, page.getUpdateCount(), "Has incorrect amount of update sample rows");
 		assertEquals(2, page.getNewCount(), "Has incorrect amount of new sample rows");
 	}
@@ -72,7 +75,8 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		//		assertEquals("NLEP #", page.getValueForSelectedSampleNameColumn(),
 		//				"Has incorrect pre-populated sample name header");
 		//		page.goToReviewPage();
-		page.selectSampleNameColumn();
+		page.selectSampleNameColumn(SAMPLE_NAME_COLUMN);
+		page.goToReviewPage();
 		page.goToCompletePage();
 		assertTrue(page.isSuccessDisplayed(), "Success message did not display");
 	}
@@ -81,8 +85,8 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 	public void testFailedUpload() {
 		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
 		page.uploadMetadataFile(INVALID_FILE_PATH);
-		page.selectSampleNameColumn();
-		//		page.goToReviewPage();
+		page.selectSampleNameColumn(SAMPLE_NAME_COLUMN);
+		page.goToReviewPage();
 		assertTrue(page.isAlertDisplayed(), "Validation message did not display");
 	}
 }
