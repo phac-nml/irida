@@ -357,10 +357,23 @@ public class SampleDetailsViewer extends AbstractPage {
 		waitForTime(500);
 	}
 
-	public void clickRemoveSampleFromCartButton() {
+	// If removing the sample from the cart on the cart page it will close the sample detail viewer
+	public void clickRemoveSampleFromCartButtonCartPage() {
 		removeSampleFromCartBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 		wait.until(ExpectedConditions.invisibilityOf(modal));
+	}
+
+	public void clickRemoveSampleFromCartButton() {
+		removeSampleFromCartBtn.click();
+		waitForTime(500);
+	}
+
+	public void clickSampleDetailsViewerCloseButton() {
+		WebElement element = driver.findElement(By.className("ant-modal-close"));
+		element.click();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10L));
+		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.className("t-sample-details-modal"))));
 	}
 
 	public int numberOfSequencingObjectsSetAsDefault() {

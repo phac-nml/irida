@@ -5,6 +5,8 @@
 * [UI]: Fixed bug causing associated project samples to be added to the cart with the wrong project identifier. See [PR 1395](https://github.com/phac-nml/irida/pull/1395)
 * [UI]: Fixed bug preventing the removal of locked samples within a project. See [PR 1396](https://github.com/phac-nml/irida/pull/1396)
 * [Developer/UI]: Fixed bug preventing managers from sharing project samples. See [PR 1398](https://github.com/phac-nml/irida/pull/1398)
+* [UI]: Fixed bug where a sample added to the cart from the sample detail viewer still had a `Add to Cart` button if the viewer was closed and relaunched. See [PR 1397](https://github.com/phac-nml/irida/pull/1397)
+* [Galaxy]: Fixed missing "deferred" state found in the Galaxy API but not in the IRIDA API for getting status of Galaxy histories. See [PR 1402](https://github.com/phac-nml/irida/pull/1402).
 * [UI]: Fixed a bug that allowed the sharing and moving of locked samples. See [PR 1403](https://github.com/phac-nml/irida/pull/1403)
 
 ## [22.09.1] - 2022/10/21

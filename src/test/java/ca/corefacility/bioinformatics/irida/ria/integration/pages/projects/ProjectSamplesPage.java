@@ -457,10 +457,15 @@ public class ProjectSamplesPage extends ProjectPageBase {
         checkbox.click();
     }
 
-    public Long getCoverageForSampleByName(String sampleName) {
-        WebElement coverageCell = samplesTable.findElement(
-                By.xpath("//td/button[span[text()='" + sampleName + "']]/../../td[contains(@class, 't-td-coverage')]"));
-        String coverageString = coverageCell.getText();
+	public void clickSampleName(String sampleName) {
+		WebElement sampleNameLink = samplesTable.findElement(By.xpath("//td/button[span[text()='" + sampleName + "']]"));
+		sampleNameLink.click();
+	}
+
+	public Long getCoverageForSampleByName(String sampleName) {
+		WebElement coverageCell = samplesTable.findElement(
+				By.xpath("//td/button[span[text()='" + sampleName + "']]/../../td[contains(@class, 't-td-coverage')]"));
+		String coverageString = coverageCell.getText();
 
         return coverageString == null || coverageString.isEmpty() ? null : Long.parseLong(coverageString);
     }
