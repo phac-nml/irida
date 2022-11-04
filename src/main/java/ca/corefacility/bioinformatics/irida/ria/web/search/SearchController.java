@@ -1,17 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.search;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -23,8 +11,17 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-
 import com.google.common.collect.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Controller to manage global searching
@@ -41,8 +38,18 @@ public class SearchController {
 	}
 
 	/**
+	 * Get the search view
+	 *
+	 * @return name of the search view
+	 */
+	@RequestMapping("/search")
+	public String search() {
+		return "search/search";
+	}
+
+	/**
 	 * Search all projects a user is a member of based on a query string
-	 * 
+	 *
 	 * @param query
 	 *            the query string
 	 * @param global
@@ -101,24 +108,6 @@ public class SearchController {
 		List<DataTablesResponseModel> samples = samplePage.getContent().stream().map(this::createDataTablesSample)
 				.collect(Collectors.toList());
 		return new DataTablesResponse(params, samplePage, samples);
-	}
-
-	/**
-	 * Get the search view with a given query
-	 *
-	 * @param query  the query string
-	 * @param global Whether to perform an admin
-	 *               global search
-	 * @param model  model for the view
-	 * @return name of the search view
-	 */
-	@RequestMapping("/search")
-	public String search(@RequestParam String query,
-			@RequestParam(required = false, defaultValue = "false") boolean global, Model model) {
-		model.addAttribute("searchQuery", query);
-		model.addAttribute("searchGlobal", global);
-
-		return "search/search";
 	}
 
 	/**
