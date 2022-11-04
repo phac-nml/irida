@@ -19,10 +19,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdateSampleRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.*;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNameModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesResponse;
@@ -122,15 +119,40 @@ public class UIProjectSampleService {
 	}
 
 	/**
+	 * Create new samples in a project
+	 *
+	 * @param requests  Each {@link CreateSampleRequest} contains details about the sample to create
+	 * @param projectId Identifier for the current project
+	 * @param locale    Users current locale
+	 * @return result of creating the sample
+	 */
+	public ResponseEntity<AjaxResponse> createSamples(CreateSampleRequest[] requests, Long projectId, Locale locale) {
+		Map<String, String> errors = new HashMap<>();
+		for (CreateSampleRequest request : requests) {
+			try {
+				createSample(projectId, locale, request);
+			} catch (Exception e) {
+				errors.put(request.getName(), e.getMessage());
+			}
+		}
+		if (errors.isEmpty()) {
+			return ResponseEntity.ok(new AjaxUpdateItemSuccessResponse(
+					messageSource.getMessage("server.AddSample.success", null, locale)));
+		} else {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxFormErrorResponse(errors));
+		}
+	}
+
+	/**
 	 * Create a new sample in a project
 	 *
-	 * @param request   {@link CreateSampleRequest} details about the sample to create
+	 * @param request   {@link CreateSampleRequest} contains details about the sample to create
 	 * @param projectId Identifier for the current project
 	 * @param locale    Users current locale
 	 * @return result of creating the sample
 	 */
 	@Transactional
-	public ResponseEntity<AjaxResponse> createSample(CreateSampleRequest request, Long projectId, Locale locale) {
+	public ResponseEntity<AjaxResponse> createSample(Long projectId, Locale locale, CreateSampleRequest request) {
 		Project project = projectService.read(projectId);
 		try {
 			Sample sample = new Sample(request.getName());
@@ -157,16 +179,40 @@ public class UIProjectSampleService {
 	}
 
 	/**
+	 * Update samples in a project
+	 *
+	 * @param requests Each {@link UpdateSampleRequest} contains details about the sample to update
+	 * @param locale   Users current locale
+	 * @return result of creating the samples
+	 */
+	public ResponseEntity<AjaxResponse> updateSamples(UpdateSampleRequest[] requests, Locale locale) {
+		Map<String, String> errors = new HashMap<>();
+		for (UpdateSampleRequest request : requests) {
+			try {
+				updateSample(request, locale);
+			} catch (Exception e) {
+				errors.put(request.getName(), e.getMessage());
+			}
+		}
+		if (errors.isEmpty()) {
+			return ResponseEntity.ok(new AjaxUpdateItemSuccessResponse(
+					messageSource.getMessage("server.AddSample.success", null, locale)));
+		} else {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxFormErrorResponse(errors));
+		}
+	}
+
+	/**
 	 * Update a sample in a project
 	 *
-	 * @param request  {@link UpdateSampleRequest} details about the sample to update
-	 * @param sampleId Identifier for the sample
-	 * @param locale   Users current locale
+	 * @param request {@link UpdateSampleRequest} contains details about the sample to update
+	 * @param locale  Users current locale
 	 * @return result of creating the sample
 	 */
 	@Transactional
-	public ResponseEntity<AjaxResponse> updateSample(UpdateSampleRequest request, Long sampleId, Locale locale) {
+	public ResponseEntity<AjaxResponse> updateSample(UpdateSampleRequest request, Locale locale) {
 		try {
+			Long sampleId = request.getSampleId();
 			Sample sample = sampleService.read(sampleId);
 			sample.setSampleName(request.getName());
 			if (!Strings.isNullOrEmpty(request.getOrganism())) {

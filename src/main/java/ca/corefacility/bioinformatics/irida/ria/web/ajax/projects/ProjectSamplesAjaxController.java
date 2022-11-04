@@ -64,31 +64,30 @@ public class ProjectSamplesAjaxController {
 	}
 
 	/**
-	 * Create a new sample within a project
+	 * Create new samples within a project
 	 *
-	 * @param request   Details about the sample
+	 * @param requests  Details about the samples
 	 * @param projectId current project identifier
 	 * @param locale    current users locale
-	 * @return result of creating the project
+	 * @return result of creating the samples
 	 */
 	@PostMapping("/add-sample")
-	public ResponseEntity<AjaxResponse> createSampleInProject(@RequestBody CreateSampleRequest request,
+	public ResponseEntity<AjaxResponse> createSamplesInProject(@RequestBody CreateSampleRequest[] requests,
 			@PathVariable long projectId, Locale locale) {
-		return uiProjectSampleService.createSample(request, projectId, locale);
+		return uiProjectSampleService.createSamples(requests, projectId, locale);
 	}
 
 	/**
-	 * Update a sample within a project
+	 * Update samples within a project
 	 *
-	 * @param request  Details about the sample
-	 * @param sampleId sample identifier
+	 * @param requests Details about the samples
 	 * @param locale   current users locale
-	 * @return result of creating the project
+	 * @return result of updating the samples
 	 */
-	@PatchMapping("/add-sample/{sampleId}")
-	public ResponseEntity<AjaxResponse> updateSampleInProject(@RequestBody UpdateSampleRequest request,
-			@PathVariable long sampleId, Locale locale) {
-		return uiProjectSampleService.updateSample(request, sampleId, locale);
+	@PatchMapping("/add-sample")
+	public ResponseEntity<AjaxResponse> updateSamplesInProject(@RequestBody UpdateSampleRequest[] requests,
+			Locale locale) {
+		return uiProjectSampleService.updateSamples(requests, locale);
 	}
 
 	/**

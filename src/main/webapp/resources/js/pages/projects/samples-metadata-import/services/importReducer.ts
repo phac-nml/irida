@@ -5,10 +5,10 @@ import {
 } from "@reduxjs/toolkit";
 import { validateSampleName } from "../../../../apis/metadata/sample-utils";
 import {
-  createSample,
+  createSamples,
   FieldUpdate,
   MetadataItem,
-  updateSample,
+  updateSamples,
   ValidateSampleNameModel,
   validateSamples,
   ValidateSamplesResponse,
@@ -86,13 +86,15 @@ export const saveMetadata = createAsyncThunk<
           const sampleId = metadataValidateDetails[index].foundSampleId;
           if (sampleId) {
             promises.push(
-              updateSample({
+              updateSamples({
                 projectId,
-                sampleId,
-                body: {
-                  name,
-                  metadata: metadataFields,
-                },
+                // sampleId,
+                body: [
+                  {
+                    name,
+                    metadata: metadataFields,
+                  },
+                ],
               })
                 .then(() => {
                   metadataSaveDetails[index] = { saved: true };
@@ -106,12 +108,14 @@ export const saveMetadata = createAsyncThunk<
             );
           } else {
             promises.push(
-              createSample({
+              createSamples({
                 projectId,
-                body: {
-                  name,
-                  metadata: metadataFields,
-                },
+                body: [
+                  {
+                    name,
+                    metadata: metadataFields,
+                  },
+                ],
               })
                 .then(() => {
                   metadataSaveDetails[index] = { saved: true };

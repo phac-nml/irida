@@ -116,29 +116,24 @@ export async function validateSamples({
   return response.data;
 }
 
-export async function createSample({
+export async function createSamples({
   projectId,
   body,
 }: {
   projectId: string;
-  body: SampleRequest;
+  body: SampleRequest[];
 }) {
   return await axios.post(`${URL}/${projectId}/samples/add-sample`, body);
 }
 
-export async function updateSample({
+export async function updateSamples({
   projectId,
-  sampleId,
   body,
 }: {
   projectId: string;
-  sampleId: number;
-  body: SampleRequest;
+  body: SampleRequest[];
 }) {
-  return await axios.patch(
-    `${URL}/${projectId}/samples/add-sample/${sampleId}`,
-    body
-  );
+  return await axios.patch(`${URL}/${projectId}/samples/add-sample`, body);
 }
 
 /**

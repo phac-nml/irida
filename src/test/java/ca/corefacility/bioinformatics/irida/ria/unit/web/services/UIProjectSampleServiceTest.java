@@ -82,8 +82,8 @@ public class UIProjectSampleServiceTest {
 
 	@Test
 	public void testCreateSample() {
-		CreateSampleRequest request = new CreateSampleRequest(GOOD_NAME, null);
-		ResponseEntity<AjaxResponse> response = service.createSample(request, PROJECT_1_ID, Locale.ENGLISH);
+		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null) };
+		ResponseEntity<AjaxResponse> response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
 		assertEquals(HttpStatus.OK, response.getStatusCode(), "Sample should be created");
 	}
 
@@ -92,8 +92,8 @@ public class UIProjectSampleServiceTest {
 		List<FieldUpdate> metadata = new ArrayList<>();
 		metadata.add(new FieldUpdate("field1", "value1"));
 		metadata.add(new FieldUpdate("field2", "value2"));
-		CreateSampleRequest request = new CreateSampleRequest(GOOD_NAME, null, null, metadata);
-		ResponseEntity<AjaxResponse> response = service.createSample(request, PROJECT_1_ID, Locale.ENGLISH);
+		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null, null, metadata) };
+		ResponseEntity<AjaxResponse> response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
 		assertEquals(HttpStatus.OK, response.getStatusCode(), "Sample should be created");
 	}
 
@@ -102,8 +102,8 @@ public class UIProjectSampleServiceTest {
 		List<FieldUpdate> metadata = new ArrayList<>();
 		metadata.add(new FieldUpdate("field1", "value1"));
 		metadata.add(new FieldUpdate("field2", "value2"));
-		UpdateSampleRequest request = new UpdateSampleRequest(GOOD_NAME, null, null, metadata);
-		ResponseEntity<AjaxResponse> response = service.updateSample(request, SAMPLE_1_ID, Locale.ENGLISH);
+		UpdateSampleRequest[] requests = { new UpdateSampleRequest(SAMPLE_1_ID, GOOD_NAME, null, null, metadata) };
+		ResponseEntity<AjaxResponse> response = service.updateSamples(requests, Locale.ENGLISH);
 		assertEquals(HttpStatus.OK, response.getStatusCode(), "Sample should be updated");
 	}
 }
