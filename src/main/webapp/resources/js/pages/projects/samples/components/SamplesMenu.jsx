@@ -152,7 +152,6 @@ export default function SamplesMenu() {
       if (valid.length === 0) {
         message.error(i18n("SampleMenu.share-all-locked"));
       } else {
-        console.log(valid);
         Modal.confirm({
           width: 600,
           title: i18n("SampleMenu.share-some-locked", locked.length),
