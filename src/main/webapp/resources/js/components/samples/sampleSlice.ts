@@ -4,7 +4,6 @@ import {
   SampleMetadataFieldEntry,
 } from "../../apis/samples/samples";
 import { Sample } from "../../types/irida";
-import { putSampleInCart, removeSample } from "../../apis/cart/cart";
 
 /**
  * Action to set the target sample
@@ -119,25 +118,11 @@ export const updateDetails = createAction(
   })
 );
 
-export const addSampleToCartThunk = createAsyncThunk(
-  "sample/addSampleToCartThunk",
-  async (_, { getState }) => {
-    const { sampleReducer } = getState();
-    await putSampleInCart(sampleReducer.projectId, [sampleReducer.sample]);
-    return {};
-  }
-);
-
-export const removeSampleFromCartThunk = createAsyncThunk(
-  "sample/removeSampleFromCartThunk",
-  async (_, { getState }) => {
-    const { sampleReducer } = getState();
-    await removeSample(
-      sampleReducer.projectId,
-      sampleReducer.sample.identifier
-    );
-    return {};
-  }
+export const updateSampleInCart = createAction(
+  `sample/updateSampleInCart`,
+  ({ inCart }) => ({
+    payload: { inCart },
+  })
 );
 
 /**
@@ -261,12 +246,8 @@ const sampleSlice = createSlice({
       };
     });
 
-    builder.addCase(addSampleToCartThunk.fulfilled, (state) => {
-      state.inCart = true;
-    });
-
-    builder.addCase(removeSampleFromCartThunk.fulfilled, (state) => {
-      state.inCart = false;
+    builder.addCase(updateSampleInCart, (state, action) => {
+      state.inCart = action.payload.inCart;
     });
   },
 });

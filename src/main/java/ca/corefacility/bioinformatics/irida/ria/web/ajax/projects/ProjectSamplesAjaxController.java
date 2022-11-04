@@ -1,17 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleFilesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
@@ -32,6 +20,16 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.error.SampleMergeEx
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * AJAX Controller for handling asynchronous requests for project samples.
@@ -149,8 +147,8 @@ public class ProjectSamplesAjaxController {
 	@DeleteMapping("/remove")
 	public ResponseEntity<AjaxResponse> removeSamplesFromProject(@PathVariable long projectId,
 			@RequestBody RemoveSamplesRequest request) {
-		String result = uiSampleService.removeSamplesFromProject(projectId, request.getSampleIds());
-		return ResponseEntity.ok(new AjaxSuccessResponse(result));
+		uiSampleService.removeSamplesFromProject(projectId, request.getSampleIds());
+		return ResponseEntity.ok(new AjaxSuccessResponse(""));
 	}
 
 	/**

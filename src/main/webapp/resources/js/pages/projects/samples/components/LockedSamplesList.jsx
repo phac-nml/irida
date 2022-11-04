@@ -1,6 +1,8 @@
 import React from "react";
-import { LockOutlined } from "@ant-design/icons";
-import { List, Space, Typography } from "antd";
+import { LockTwoTone } from "@ant-design/icons";
+import { Avatar, Button, List } from "antd";
+import { red6 } from "../../../../styles/colors";
+import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
 
 /**
  * React Element to render a list of locked samples.  Use this when they
@@ -12,18 +14,30 @@ import { List, Space, Typography } from "antd";
 export default function LockedSamplesList({ locked }) {
   return (
     <List
+      style={{ maxHeight: 400, overflowY: "auto" }}
       size="small"
       bordered
-      header={
-        <Space>
-          <LockOutlined />
-          <Typography.Text>{i18n("LockedSamplesList.header")}</Typography.Text>
-        </Space>
-      }
       dataSource={locked}
       renderItem={(sample) => (
         <List.Item>
-          <List.Item.Meta title={sample.sampleName} />
+          <List.Item.Meta
+            avatar={
+              <Avatar
+                icon={<LockTwoTone twoToneColor={red6} />}
+                style={{ backgroundColor: "transparent" }}
+              />
+            }
+            title={
+              <SampleDetailViewer
+                sampleId={sample.id}
+                projectId={sample.projectId}
+              >
+                <Button className="t-locked-name">
+                  {sample.sampleName || sample.name}
+                </Button>
+              </SampleDetailViewer>
+            }
+          />
         </List.Item>
       )}
     />
