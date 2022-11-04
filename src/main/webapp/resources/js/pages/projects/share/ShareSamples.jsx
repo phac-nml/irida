@@ -116,7 +116,7 @@ export function ShareSamples({
       {lockedSamples.length > 0 && (
         <Space direction="vertical" style={{ width: `100%` }}>
           <Typography.Text strong>
-            {"The follow samples are locked and cannot be shared"}
+            {i18n("ShareSamples.locked")}
           </Typography.Text>
           <LockedSamplesList locked={lockedSamples} />
         </Space>
