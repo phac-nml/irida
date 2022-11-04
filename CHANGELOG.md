@@ -1,7 +1,7 @@
 
 # Changelog
 
-## [22.09.2]
+## [22.09.2] - 2022/11/04
 * [UI]: Fixed bug causing associated project samples to be added to the cart with the wrong project identifier. See [PR 1395](https://github.com/phac-nml/irida/pull/1395)
 * [UI]: Fixed bug preventing the removal of locked samples within a project. See [PR 1396](https://github.com/phac-nml/irida/pull/1396)
 * [Developer/UI]: Fixed bug preventing managers from sharing project samples. See [PR 1398](https://github.com/phac-nml/irida/pull/1398)
@@ -141,6 +141,7 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
+[22.09.2]: https://github.com/phac-nml/irida/compare/22.09.1...22.09.2
 [22.09.1]: https://github.com/phac-nml/irida/compare/22.09...22.09.1
 [22.09]: https://github.com/phac-nml/irida/compare/22.05.5...22.09
 [22.05.5]: https://github.com/phac-nml/irida/compare/22.05.4...22.05.5
