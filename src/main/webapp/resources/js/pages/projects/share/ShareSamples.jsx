@@ -6,6 +6,7 @@ import { SharedSamplesList } from "./SharedSamplesList";
 import { updatedLocked, updateMoveSamples } from "./shareSlice";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { SPACE_XS } from "../../../styles/spacing";
+import LockedSamplesList from "../samples/components/LockedSamplesList";
 
 const { Panel } = Collapse;
 /**
@@ -24,15 +25,14 @@ export function ShareSamples({
   const {
     associated,
     samples: originalSamples,
+    lockedSamples,
     locked,
     remove,
   } = useSelector((state) => state.shareReducer);
 
   return (
     <Space direction="vertical" style={{ width: `100%` }}>
-      <Typography.Title level={5}>
-        {i18n("ShareSamplesList.title")}
-      </Typography.Title>
+      <Typography.Text strong>{i18n("ShareSamplesList.title")}</Typography.Text>
       {associated.length > 0 && <ShareAssociated />}
       {samples.length > 0 && (
         <>
@@ -113,6 +113,14 @@ export function ShareSamples({
             </Panel>
           </Collapse>
         )}
+      {lockedSamples.length > 0 && (
+        <Space direction="vertical" style={{ width: `100%` }}>
+          <Typography.Text strong>
+            {i18n("ShareSamples.locked")}
+          </Typography.Text>
+          <LockedSamplesList locked={lockedSamples} />
+        </Space>
+      )}
     </Space>
   );
 }
