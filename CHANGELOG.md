@@ -2,6 +2,7 @@
 # Changelog
 
 ## [Unreleased]
+* [UI/Developer]: Updated `react-router` to the version 6.4.3. See[PR 1405](https://github.com/phac-nml/irida/pull/1405)
 
 ## [22.09.1] - 2022/10/21
 * [UI]: Fixed when sharing or exporting sample on the project sample page, and other minor bugs. See [PR 1382](https://github.com/phac-nml/irida/pull/1382)
