@@ -24,7 +24,7 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		samplesPage.selectSampleByName("sample5fg44");
 		samplesPage.shareSamples();
 
-		assertFalse(shareSamplesPage.isNextButtonEnabled(), "");
+		assertFalse(shareSamplesPage.isNextButtonEnabled(), "The next button should not be enabled when going to the page");
 		shareSamplesPage.searchForProject("3");
 		assertThat(shareSamplesPage.getProjectSelectText()).contains("ID: 3");
 		assertTrue(shareSamplesPage.isNextButtonEnabled(), "Next button should be enabled");
@@ -130,7 +130,7 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		samplesPage.selectSampleByName(LOCKED_SAMPLE_NAME);
 		samplesPage.shareSamples();
 
-		assertFalse(shareSamplesPage.isNextButtonEnabled(), "");
+		assertFalse(shareSamplesPage.isNextButtonEnabled(), "The next button should not be enabled when going to the page");
 		shareSamplesPage.searchForProject("3");
 		assertThat(shareSamplesPage.getProjectSelectText()).contains("ID: 3");
 		assertTrue(shareSamplesPage.isNextButtonEnabled(), "Next button should be enabled");
