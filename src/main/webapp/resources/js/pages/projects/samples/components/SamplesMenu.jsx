@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Dropdown, Menu, message, Modal, Row, Space, Spin } from "antd";
+import { Button, Dropdown, Menu, notification, Row, Space } from "antd";
 import {
   addToCart,
   clearFilterByFile,
@@ -34,9 +34,7 @@ import {
 } from "@ant-design/icons";
 import { useGetProjectDetailsQuery } from "../../../../apis/projects/project";
 import { storeSamples } from "../../../../utilities/session-utilities";
-import { samples } from "../../../../../../entries";
 
-const LockedSamplesList = lazy(() => import("./LockedSamplesList"));
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));
 const CreateModal = lazy(() => import("./CreateNewSample"));
@@ -148,27 +146,10 @@ export default function SamplesMenu() {
   const shareSamples = () => {
     if (selected.size === 0) return;
     const { valid, locked } = validateSamplesForMergeOrShare(selected);
-    if (locked.length) {
-      if (valid.length === 0) {
-        message.error(i18n("SampleMenu.share-all-locked"));
-      } else {
-        Modal.confirm({
-          width: 600,
-          title: i18n("SampleMenu.share-some-locked", locked.length),
-          content: (
-            <Suspense fallback={<Spin />}>
-              <LockedSamplesList locked={locked} />
-            </Suspense>
-          ),
-          onOk: () => {
-            formatAndStoreSamples(`share`, valid);
-            // Redirect user to share page
-            window.location.href = setBaseUrl(`/projects/${projectId}/share`);
-          },
-        });
-      }
+    if (locked.length && valid.length === 0) {
+      notification.error({ message: i18n("SampleMenu.share-all-locked") });
     } else {
-      formatAndStoreSamples(`share`, valid);
+      formatAndStoreSamples(`share`, Object.values(selected));
       // Redirect user to share page
       window.location.href = setBaseUrl(`/projects/${projectId}/share`);
     }
@@ -186,18 +167,18 @@ export default function SamplesMenu() {
         setSorted(validated);
         setMergeVisible(true);
       } else {
-        message.error(i18n("SamplesMenu.merge.error"));
+        notification.error({ message: i18n("SamplesMenu.merge.error") });
       }
     } else if (name === "remove") {
       const validated = validateSamplesForRemove(selected, projectId);
       if (validated.valid.length > 0) {
         setSorted(validated);
         setRemovedVisible(true);
-      } else message.error(i18n("SamplesMenu.remove.error"));
+      } else notification.error({ message: i18n("SamplesMenu.remove.error") });
     } else if (name === "linker") {
       const validated = validateSamplesForLinker(selected, projectId);
       if (validated.associated.length > 0) {
-        message.error(i18n("SampleMenu.linker.error"));
+        notification.error({ message: i18n("SampleMenu.linker.error") });
       } else {
         setSorted(validated.valid);
         setLinkerVisible(true);
