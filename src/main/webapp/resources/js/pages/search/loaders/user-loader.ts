@@ -1,4 +1,4 @@
 import { fetchCurrentUserDetails } from "../../../apis/users/user";
-export async function loader() {
+export default async function loader() {
   return fetchCurrentUserDetails();
 }

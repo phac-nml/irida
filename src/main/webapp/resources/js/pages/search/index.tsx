@@ -1,26 +1,26 @@
 import { Checkbox, Input, Layout, PageHeader, Space } from "antd";
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { render } from "react-dom";
 import {
-  DataBrowserRouter,
-  Outlet,
+  createBrowserRouter,
+  createRoutesFromElements,
   Route,
-  Routes,
+  RouterProvider,
   useLoaderData,
   useSearchParams,
 } from "react-router-dom";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import userLoader from "./loaders/user-loader";
 
-function SearchPage() {
-  return (
-    <Layout style={{ minHeight: `100%` }}>
-      <Routes>
-        <Route path={setBaseUrl("/search")} element={<SearchLayout />} />
-      </Routes>
-    </Layout>
-  );
-}
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route
+      path={setBaseUrl("/search")}
+      element={<SearchLayout />}
+      loader={userLoader}
+    />
+  )
+);
 
 function SearchLayout() {
   const user = useLoaderData();
@@ -33,11 +33,11 @@ function SearchLayout() {
     <PageHeader title={"SEARCH"}>
       <Layout.Content style={{ backgroundColor: `var(--grey-1)`, padding: 12 }}>
         <Space direction="vertical" style={{ width: `100%` }} size="small">
-          <Input.Search size={"large"} value={query.current} />
+          <Input.Search size={"large"} ref={query} />
           <div>
             <Checkbox>Project</Checkbox>
             <Checkbox>Samples</Checkbox>
-            <Checkbox>Search Global</Checkbox>
+            {user.admin && <Checkbox>Search Global</Checkbox>}
           </div>
         </Space>
       </Layout.Content>
@@ -48,13 +48,7 @@ function SearchLayout() {
 const element = document.querySelector("#root");
 render(
   <Layout style={{ minHeight: `100%` }}>
-    <DataBrowserRouter>
-      <Route
-        path={setBaseUrl("/search")}
-        element={<SearchLayout />}
-        loader={userLoader}
-      />
-    </DataBrowserRouter>
+    <RouterProvider router={router} />
   </Layout>,
   element
 );
