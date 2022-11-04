@@ -1,7 +1,8 @@
 import React from "react";
 import { LockTwoTone } from "@ant-design/icons";
-import { Avatar, List } from "antd";
+import { Avatar, Button, List } from "antd";
 import { red6 } from "../../../../styles/colors";
+import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
 
 /**
  * React Element to render a list of locked samples.  Use this when they
@@ -23,11 +24,17 @@ export default function LockedSamplesList({ locked }) {
             avatar={
               <Avatar
                 icon={<LockTwoTone twoToneColor={red6} />}
-                size="small"
                 style={{ backgroundColor: "transparent" }}
               />
             }
-            title={sample.sampleName}
+            title={
+              <SampleDetailViewer
+                sampleId={sample.id}
+                projectId={sample.projectId}
+              >
+                <Button>{sample.sampleName || sample.name}</Button>
+              </SampleDetailViewer>
+            }
           />
         </List.Item>
       )}
