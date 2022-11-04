@@ -3,7 +3,7 @@
  * Valid => samples that the user has ownership of
  * Invalid => no ownership
  */
-export function validateSamplesForMerge(samples) {
+export function validateSamplesForMergeOrShare(samples) {
   const values = Object.values(samples),
     valid = [],
     locked = [];
@@ -24,7 +24,7 @@ export function validateSamplesForMerge(samples) {
  *  associated => samples that do not belong to the current project.
  * @param {array} samples
  * @param {number | string} projectId
- * @returns {{valid: *[], associated: *[], locked: *[]}}
+ * @returns {{valid: *[], associated: *[]}}
  */
 export function validateSamplesForRemove(samples, projectId) {
   const values = Object.values(samples),

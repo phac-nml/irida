@@ -1,13 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import org.junit.jupiter.api.Test;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ShareSamplesPage;
-
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +24,7 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		samplesPage.selectSampleByName("sample5fg44");
 		samplesPage.shareSamples();
 
-		assertFalse(shareSamplesPage.isNextButtonEnabled(), "");
+		assertFalse(shareSamplesPage.isNextButtonEnabled(), "The next button should not be enabled when going to the page");
 		shareSamplesPage.searchForProject("3");
 		assertThat(shareSamplesPage.getProjectSelectText()).contains("ID: 3");
 		assertTrue(shareSamplesPage.isNextButtonEnabled(), "Next button should be enabled");
@@ -118,5 +116,36 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		shareSamplesPage.expandSameSampleNamesWarning();
 		assertEquals(1, shareSamplesPage.numberOfSamplesWithSameNames(),
 				"There should be one sample listed which exists in the target project with the same name and different identifier");
+	}
+
+	@Test
+	void testSharingWithALockedSample() {
+		final String LOCKED_SAMPLE_NAME = "sample5fdgr";
+
+		LoginPage.loginAsManager(driver());
+
+		// SHARING SINGLE SAMPLE
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
+		samplesPage.selectSampleByName("sample5fg44");
+		samplesPage.selectSampleByName(LOCKED_SAMPLE_NAME);
+		samplesPage.shareSamples();
+
+		assertFalse(shareSamplesPage.isNextButtonEnabled(), "The next button should not be enabled when going to the page");
+		shareSamplesPage.searchForProject("3");
+		assertThat(shareSamplesPage.getProjectSelectText()).contains("ID: 3");
+		assertTrue(shareSamplesPage.isNextButtonEnabled(), "Next button should be enabled");
+		shareSamplesPage.searchForProject("project2");
+		assertTrue(shareSamplesPage.isNextButtonEnabled(), "Next button should be enabled");
+		shareSamplesPage.gotToNextStep();
+
+		assertEquals(1, shareSamplesPage.getNumberOfSamplesDisplayed(), "Should display the one sample");
+		assertEquals(1, shareSamplesPage.getNumberOfLockedSamplesDisplayed(), "Should have 1 locked sample");
+		assertTrue(shareSamplesPage.isPreviousButtonEnabled(),
+				"Since on the second step, the previous button should be enabled");
+		shareSamplesPage.gotToNextStep();
+		assertEquals(0, shareSamplesPage.getNumberOfSharedMetadataEntries(), "Should have no fields to share");
+		shareSamplesPage.submitShareRequest();
+		assertTrue(shareSamplesPage.isShareSingleSuccessDisplayed(), "Success message should be displayed");
+
 	}
 }

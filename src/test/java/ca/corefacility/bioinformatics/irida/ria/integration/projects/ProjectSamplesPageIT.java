@@ -23,12 +23,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesPage.xml")
 public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
-	String FIRST_SAMPLE_NAME = "sample55422r";
-	String SECOND_SAMPLE_NAME = "sample-5-fg-22";
-	String THIRD_SAMPLE_NAME = "sample64565";
-	int PROJECT_SAMPLES_COUNT = 23;
-	int ASSOCIATED_SAMPLES_COUNT = 2;
-	int COMBINED_SAMPLES_COUNT = PROJECT_SAMPLES_COUNT + ASSOCIATED_SAMPLES_COUNT;
+	final String FIRST_SAMPLE_NAME = "sample55422r";
+	final String SECOND_SAMPLE_NAME = "sample-5-fg-22";
+	final String THIRD_SAMPLE_NAME = "sample64565";
+	final String LOCKED_SAMPLE_NAME = "sample5fdgr";
+	final int PROJECT_SAMPLES_COUNT = 23;
+	final int ASSOCIATED_SAMPLES_COUNT = 2;
+	final int COMBINED_SAMPLES_COUNT = PROJECT_SAMPLES_COUNT + ASSOCIATED_SAMPLES_COUNT;
 
 	@Test
 	public void testGoingToInvalidPage() {
@@ -439,6 +440,16 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.removeSamples();
 		summary = page.getTableSummary();
 		assertEquals(0, summary.getTotal(), "There should be no samples left in this project");
+	}
+
+	@Test
+	void testSharingWithLockedSamplesAsManager() {
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
+		page.selectSampleByName(LOCKED_SAMPLE_NAME);
+		page.openToolsDropDown();
+		page.shareSamples();
+		assertTrue(page.isMessageDisplayed("All samples are locked and cannot be shared."));
 	}
 }
 
