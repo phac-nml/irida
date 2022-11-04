@@ -621,27 +621,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
     public boolean isMessageDisplayed(String message) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
-        WebElement notification = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".ant-message-custom-content.ant-message-error span:nth-child(2)")));
+        WebElement notification = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("ant-notification-notice-message")));
         return wait.until(ExpectedConditions.textToBePresentInElement(notification, message));
-    }
-
-    public boolean isShareWithLockedSamplesWarningDisplayed(int numSamples) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
-        WebElement notification = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".ant-modal.ant-modal-confirm .ant-modal-confirm-title")));
-        return wait.until(ExpectedConditions.textToBePresentInElement(notification, numSamples + " samples are locked and cannot be shared:"));
-    }
-
-    public void closeShareWithLockedSamplesWarning() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
-        WebElement notification = driver.findElement(By.cssSelector(".ant-modal.ant-modal-confirm"));
-        notification.findElement(By.className("ant-btn-default")).click();
-        wait.until(ExpectedConditions.invisibilityOf(notification));
-    }
-
-    public void shareSamplesFromLockedWarning() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
-        WebElement notification = driver.findElement(By.cssSelector(".ant-modal.ant-modal-confirm"));
-        notification.findElement(By.className("ant-btn-primary")).click();
-        wait.until(ExpectedConditions.urlContains("/share"));
     }
 }

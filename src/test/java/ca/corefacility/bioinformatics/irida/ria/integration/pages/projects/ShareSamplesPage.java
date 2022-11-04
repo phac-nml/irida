@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -8,9 +9,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import java.util.List;
 
-import static ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage.waitForTime;
-
-public class ShareSamplesPage {
+public class ShareSamplesPage extends AbstractPage {
 	@FindBy(css = ".t-project-select .ant-select-selection-search-input")
 	private WebElement shareProjectSelectSearch;
 
@@ -74,6 +73,10 @@ public class ShareSamplesPage {
 	@FindBy(className = "t-field-label")
 	private List<WebElement> metadataFieldLabels;
 
+	public ShareSamplesPage(WebDriver driver) {
+		super(driver);
+	}
+
 	public static ShareSamplesPage initPage(WebDriver driver) {
 		return PageFactory.initElements(driver, ShareSamplesPage.class);
 	}
@@ -89,6 +92,10 @@ public class ShareSamplesPage {
 
 	public int getNumberOfSamplesDisplayed() {
 		return shareSampleListItem.size();
+	}
+
+	public int getNumberOfLockedSamplesDisplayed() {
+		return driver.findElements(By.className("t-locked-name")).size();
 	}
 
 	public int getNumberOfUnlockedSamples() {

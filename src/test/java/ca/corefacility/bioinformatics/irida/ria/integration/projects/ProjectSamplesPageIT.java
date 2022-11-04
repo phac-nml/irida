@@ -450,17 +450,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.openToolsDropDown();
 		page.shareSamples();
 		assertTrue(page.isMessageDisplayed("All samples are locked and cannot be shared."));
-
-		page.selectSampleByName(FIRST_SAMPLE_NAME);
-		page.openToolsDropDown();
-		page.shareSamples();
-		assertTrue(page.isShareWithLockedSamplesWarningDisplayed(1));
-
-		page.closeShareWithLockedSamplesWarning();
-		page.openToolsDropDown();
-		page.shareSamples();
-		page.shareSamplesFromLockedWarning();
-		assertTrue(driver().getCurrentUrl().contains("/share"));
 	}
 }
 

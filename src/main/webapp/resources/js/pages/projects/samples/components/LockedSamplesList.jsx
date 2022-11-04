@@ -32,7 +32,9 @@ export default function LockedSamplesList({ locked }) {
                 sampleId={sample.id}
                 projectId={sample.projectId}
               >
-                <Button>{sample.sampleName || sample.name}</Button>
+                <Button className="t-locked-name">
+                  {sample.sampleName || sample.name}
+                </Button>
               </SampleDetailViewer>
             }
           />
