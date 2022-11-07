@@ -4,11 +4,13 @@ import {
   Input,
   Layout,
   PageHeader,
+  Radio,
   Row,
   Space,
   Table,
 } from "antd";
-import React, { useState } from "react";
+import type { RadioChangeEvent } from "antd";
+import React, { useEffect, useState } from "react";
 import { render } from "react-dom";
 import {
   createBrowserRouter,
@@ -27,15 +29,23 @@ const router = createBrowserRouter(
       path={setBaseUrl("/search")}
       element={<SearchLayout />}
       loader={userLoader}
+      action={async ({ params, request }) => {}}
     />
   )
 );
+
+type SearchType = "projects" | "samples";
 
 function SearchLayout() {
   const user = useLoaderData();
   console.log(user);
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState<string>(searchParams.get("query") || "");
+  const [type, setType] = useState<SearchType>("projects");
+
+  useEffect(async () => {
+    await fetch(`/ajax/search/projects`);
+  }, []);
 
   return (
     <PageHeader
@@ -62,9 +72,19 @@ function SearchLayout() {
               onChange={(e) => setQuery(e.target.value)}
             />
             <section>
-              <Checkbox>Project</Checkbox>
-              <Checkbox>Samples</Checkbox>
-              {user.admin && <Checkbox>Search Global</Checkbox>}
+              <Space>
+                <Radio.Group
+                  buttonStyle="solid"
+                  defaultValue={type}
+                  onChange={(e: RadioChangeEvent) => {
+                    setType(e.target.value);
+                  }}
+                >
+                  <Radio.Button value="projects">Projects</Radio.Button>
+                  <Radio.Button value="samples">Samples</Radio.Button>
+                </Radio.Group>
+                {user.admin && <Checkbox>Search Global</Checkbox>}
+              </Space>
             </section>
           </Space>
           <Table
