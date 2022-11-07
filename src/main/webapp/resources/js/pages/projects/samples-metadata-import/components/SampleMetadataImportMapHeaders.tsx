@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Radio, Select, Table, Typography } from "antd";
+import { Button, Empty, Radio, Select, Table, Typography } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import {
   IconArrowLeft,
@@ -112,18 +112,29 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
           </Select.Option>
         ))}
       </Select>
-      {updatedSampleNameColumn && (
-        <Table
-          className="t-metadata-uploader-headers-table"
-          rowKey={(row) => row.rowKey}
-          columns={columns}
-          dataSource={updatedHeaders.filter(
-            (updatedHeader) => updatedHeader.name !== updatedSampleNameColumn
-          )}
-          pagination={false}
-          scroll={{ y: 600 }}
-        />
-      )}
+      <Table
+        className="t-metadata-uploader-headers-table"
+        rowKey={(row) => row.rowKey}
+        columns={columns}
+        dataSource={
+          updatedSampleNameColumn
+            ? updatedHeaders.filter(
+                (updatedHeader) =>
+                  updatedHeader.name !== updatedSampleNameColumn
+              )
+            : undefined
+        }
+        pagination={false}
+        scroll={{ y: 600 }}
+        locale={{
+          emptyText: (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description={i18n("SampleMetadataImportMapHeaders.table.empty")}
+            />
+          ),
+        }}
+      />
       <div style={{ display: "flex" }}>
         <Button
           className="t-metadata-uploader-file-button"
