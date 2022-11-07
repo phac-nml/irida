@@ -113,6 +113,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
         ))}
       </Select>
       <Table
+        title={() => i18n("SampleMetadataImportMapHeaders.table.title")}
         className="t-metadata-uploader-headers-table"
         rowKey={(row) => row.rowKey}
         columns={columns}
