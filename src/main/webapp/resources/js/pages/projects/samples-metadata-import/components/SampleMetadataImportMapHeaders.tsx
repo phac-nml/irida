@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Empty, Radio, Select, Table, Typography } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
@@ -73,6 +73,16 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
     }
   };
 
+  const dataSource = useMemo(
+    () =>
+      updatedSampleNameColumn
+        ? updatedHeaders.filter(
+            (updatedHeader) => updatedHeader.name !== updatedSampleNameColumn
+          )
+        : undefined,
+    [updatedSampleNameColumn, updatedHeaders]
+  );
+
   const columns = [
     {
       title: i18n("SampleMetadataImportMapHeaders.table.header"),
@@ -117,14 +127,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
         className="t-metadata-uploader-headers-table"
         rowKey={(row) => row.rowKey}
         columns={columns}
-        dataSource={
-          updatedSampleNameColumn
-            ? updatedHeaders.filter(
-                (updatedHeader) =>
-                  updatedHeader.name !== updatedSampleNameColumn
-              )
-            : undefined
-        }
+        dataSource={dataSource}
         pagination={false}
         scroll={{ y: 600 }}
         locale={{
