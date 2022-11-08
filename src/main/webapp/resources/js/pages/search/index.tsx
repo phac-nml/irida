@@ -1,16 +1,7 @@
-import {
-  Checkbox,
-  Col,
-  Input,
-  Layout,
-  PageHeader,
-  Radio,
-  Row,
-  Space,
-  Table,
-} from "antd";
-import type { RadioChangeEvent } from "antd";
-import React, { useEffect, useState } from "react";
+import type { RadioChangeEvent, TablePaginationConfig } from "antd";
+import type { FilterValue, SorterResult } from "antd/es/table/interface";
+import { Checkbox, Input, Layout, PageHeader, Radio, Space, Table } from "antd";
+import React, { useEffect, useMemo, useState } from "react";
 import { render } from "react-dom";
 import {
   createBrowserRouter,
@@ -22,6 +13,7 @@ import {
 } from "react-router-dom";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import userLoader from "./loaders/user-loader";
+import { Sample } from "../../types/irida";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -35,6 +27,18 @@ const router = createBrowserRouter(
 );
 
 type SearchType = "projects" | "samples";
+type SampleTableType = Pick<
+  Sample,
+  "name" | "organism" | "projects" | "createdDate" | "modifiedDate"
+> & {
+  key: "string";
+};
+interface TableParams {
+  pagination?: TablePaginationConfig;
+  sortField?: string;
+  sortOrder?: string;
+  filters?: Record<string, FilterValue>;
+}
 
 function SearchLayout() {
   const user = useLoaderData();
@@ -43,9 +47,76 @@ function SearchLayout() {
   const [query, setQuery] = useState<string>(searchParams.get("query") || "");
   const [type, setType] = useState<SearchType>("projects");
 
-  useEffect(async () => {
-    await fetch(`/ajax/search/projects`);
-  }, []);
+  const [tableParams, setTableParams] = useState<TableParams>({
+    pagination: {
+      current: 1,
+      pageSize: 10,
+    },
+  });
+
+  const fetchProjects = async () => {
+    const response = await fetch(setBaseUrl(`/ajax/search/projects`), {
+      method: "POST",
+      body: JSON.stringify({
+        global: true,
+        pagination: tableParams.pagination,
+        order: [{ property: "label", direction: `asc` }],
+        search: [{ property: `label`, value: query, operation: "MATCH_IN" }],
+      }),
+    })
+      .then((response) => response.json())
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+    console.log(response);
+  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, [JSON.stringify(tableParams)]);
+
+  const handleTableChange = (
+    pagination: TablePaginationConfig,
+    filters: Record<string, FilterValue>,
+    sorter: SorterResult<SampleTableType>
+  ) => {
+    setTableParams({
+      pagination,
+      filters,
+      ...sorter,
+    });
+  };
+
+  const columns = useMemo<ColumnType<SampleTableType>>(
+    () => [
+      {
+        key: `name`,
+        dataIndex: "sampleName",
+        title: "NAME",
+      },
+      {
+        key: `organism`,
+        dataIndex: `organism`,
+        title: "ORGANISM",
+      },
+      {
+        key: `projects`,
+        dataIndex: `projects`,
+        title: `PROJECTS`,
+      },
+      {
+        key: `createdDate`,
+        dataIndex: `createdDate`,
+        title: `CREATED DATE`,
+      },
+      {
+        key: `modifiedDate`,
+        dataIndex: `modifiedDate`,
+        title: `MODIFIED DATE`,
+      },
+    ],
+    []
+  );
 
   return (
     <PageHeader
@@ -70,6 +141,7 @@ function SearchLayout() {
               size={"large"}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              allowClear
             />
             <section>
               <Space>
@@ -90,29 +162,15 @@ function SearchLayout() {
           <Table
             dataSource={[
               {
-                key: "1",
+                key: 1,
                 name: "Mike",
                 age: 32,
                 address: "10 Downing Street",
               },
             ]}
-            columns={[
-              {
-                title: "Name",
-                dataIndex: "name",
-                key: "name",
-              },
-              {
-                title: "Age",
-                dataIndex: "age",
-                key: "age",
-              },
-              {
-                title: "Address",
-                dataIndex: "address",
-                key: "address",
-              },
-            ]}
+            columns={columns}
+            pagination={tableParams.pagination}
+            onChange={handleTableChange}
           />
         </Space>
       </Layout.Content>

@@ -9,16 +9,19 @@ import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config
 import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.models.DataTablesResponseModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
 import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.search.dto.SearchItem;
+import ca.corefacility.bioinformatics.irida.ria.web.search.dto.SearchProject;
+import ca.corefacility.bioinformatics.irida.ria.web.search.dto.SearchRequest;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,21 +61,19 @@ public class SearchController {
 	 *            parameters for a datatables response
 	 * @return a {@link DataTablesResponse} to display the search results
 	 */
-	@RequestMapping("/search/ajax/projects")
-	@ResponseBody
-	public DataTablesResponse searchProjects(@RequestParam String query,
-			@RequestParam(required = false, defaultValue = "false") boolean global,
-			@DataTablesRequest DataTablesParams params) {
+	@PostMapping("/ajax/search/projects")
+	public ResponseEntity<AntTableResponse<SearchItem>> handleSearch(@RequestBody SearchRequest request) {
 		Page<Project> page;
-		if (global) {
-			page = projectService.findAllProjects(query, params.getCurrentPage(), params.getLength(), params.getSort());
+		if (request.isGlobal()) {
+			page = projectService.findAllProjects((String) request.getSearch().get(0).getValue(), request.getPage(), request.getPageSize(), request.getSort());
 		} else {
-			page = projectService.findProjectsForUser(query, params.getCurrentPage(), params.getLength(),
-					params.getSort());
+			page = projectService.findProjectsForUser((String) request.getSearch().get(0).getValue(), request.getPage(), request.getPageSize(), request.getSort());
 		}
-		List<DataTablesResponseModel> projects = page.getContent().stream().map(this::createDataTablesProject)
-				.collect(Collectors.toList());
-		return new DataTablesResponse(params, page, projects);
+		AntTableResponse<SearchItem> response = new AntTableResponse<>(page.getContent().stream().map(project -> {
+			Long samples = sampleService.getNumberOfSamplesForProject(project);
+			return new SearchProject(project, samples);
+		}).collect(Collectors.toList()), page.getTotalElements());
+		return ResponseEntity.ok(response);
 	}
 
 	/**
@@ -84,7 +85,7 @@ public class SearchController {
 	 * @param params parameters for a datatables response
 	 * @return a {@link DataTablesResponse} to display search results
 	 */
-	@RequestMapping("/search/ajax/samples")
+	@RequestMapping("/ajax/search/samples")
 	@ResponseBody
 	public DataTablesResponse searchSamples(@RequestParam String query,
 			@RequestParam(required = false, defaultValue = "false") boolean global,
