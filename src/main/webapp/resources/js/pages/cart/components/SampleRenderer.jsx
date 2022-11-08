@@ -41,7 +41,7 @@ export class SampleRenderer extends React.Component {
             <SampleDetailViewer
               sampleId={sample.id}
               projectId={this.props.data.project.id}
-              refetch={this.props.refetch}
+              refetchCart={this.props.refetch}
             >
               <Button
                 className="t-sample-details-btn"

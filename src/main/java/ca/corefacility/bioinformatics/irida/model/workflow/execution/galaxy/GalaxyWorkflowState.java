@@ -8,8 +8,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Defines the state of a workflow.
  * Based off of states defined within Galaxy.
- * @see <a href="https://bitbucket.org/galaxy/galaxy-dist/src/097bbb3b7d3246faaa5188a1fc2a79b01630025c/lib/galaxy/model/__init__.py#cl-1316">Galaxy Dataset Model</a>
- * @see <a href="https://bitbucket.org/galaxy/galaxy-dist/src/097bbb3b7d3246faaa5188a1fc2a79b01630025c/lib/galaxy/web/base/controller.py#cl-429">Galaxy API</a>
+ * @see <a href="https://github.com/galaxyproject/galaxy/blob/21375c6b821b85863a6c95f4ed1ebd6a217495f1/lib/galaxy/model/__init__.py#L3410-L3427">Galaxy Dataset Model</a>
+ * @see <a href="https://github.com/galaxyproject/galaxy/blob/21375c6b821b85863a6c95f4ed1ebd6a217495f1/lib/galaxy/webapps/galaxy/api/histories.py#L181-L192">Galaxy API show_history</a>
  * @see <a href="https://github.com/jmchilton/blend4j/blob/c5e3f157d402950a843d4e395e1daf889945d587/src/main/java/com/github/jmchilton/blend4j/galaxy/beans/HistoryDetails.java">HistoryDetails in blend4j</a>
  *
  */
@@ -30,6 +30,7 @@ public enum GalaxyWorkflowState {
 	PAUSED("paused"),
 	SETTING_METADATA("setting_metadata"),
 	FAILED_METADATA("failed_metadata"),
+	DEFERRED("deferred"),
 	RESUBMITTED("resubmitted");
 	
 	private static Map<String, GalaxyWorkflowState> stateMap = new HashMap<>();

@@ -4,7 +4,7 @@ pluginManagement {
         gradlePluginPortal()
     }
     plugins {
-        id("com.github.node-gradle.node") version "3.4.0"
+        id("com.github.node-gradle.node") version "3.5.0"
         id("io.spring.dependency-management") version "1.0.11.RELEASE"
         id("org.gradle.test-retry") version "1.4.0"
         id("org.springframework.boot") version "2.7.4"
