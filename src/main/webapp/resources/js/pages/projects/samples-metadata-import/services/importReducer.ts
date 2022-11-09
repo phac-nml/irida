@@ -6,7 +6,6 @@ import {
 import { validateSampleName } from "../../../../apis/metadata/sample-utils";
 import {
   createSamples,
-  FieldUpdate,
   MetadataItem,
   updateSamples,
   ValidateSampleNameModel,
@@ -14,6 +13,7 @@ import {
   ValidateSamplesResponse,
 } from "../../../../apis/projects/samples";
 import { ImportDispatch, ImportState } from "../store";
+import { chunkArray } from "../../../../utilities/array-utilities";
 
 interface MetadataValidateDetailsItem {
   isSampleNameValid: boolean;
@@ -67,75 +67,84 @@ export const saveMetadata = createAsyncThunk<
       state.importReducer;
     const metadataSaveDetails: Record<string, MetadataSaveDetailsItem> = {};
 
+    const selectedSampleList = metadata.filter((metadataItem) => {
+      const index: string = metadataItem.rowKey;
+      return (
+        selectedMetadataKeys.includes(index) &&
+        metadataSaveDetails[index]?.saved !== true
+      );
+    });
     const chunkSize = 100;
-    for (let i = 0; i < metadata.length; i = i + chunkSize) {
-      const promises: Promise<void>[] = [];
-      for (let j = i; j < i + chunkSize && j < metadata.length; j++) {
-        const metadataItem: MetadataItem = metadata[j];
-        const index: string = metadataItem.rowKey;
-        if (
-          selectedMetadataKeys.includes(index) &&
-          metadataSaveDetails[index]?.saved !== true
-        ) {
-          const name: string = metadataItem[sampleNameColumn];
-          const metadataFields: FieldUpdate[] = Object.entries(metadataItem)
-            .filter(
-              ([key]) => headers.includes(key) && key !== sampleNameColumn
-            )
-            .map(([key, value]) => ({ field: key, value }));
-          const sampleId = metadataValidateDetails[index].foundSampleId;
-          if (sampleId) {
-            promises.push(
-              updateSamples({
-                projectId,
-                // sampleId,
-                body: [
-                  {
-                    name,
-                    metadata: metadataFields,
-                  },
-                ],
-              })
-                .then(() => {
-                  metadataSaveDetails[index] = { saved: true };
-                })
-                .catch((error) => {
-                  metadataSaveDetails[index] = {
-                    saved: false,
-                    error: error.response.data.error,
-                  };
-                })
-            );
-          } else {
-            promises.push(
-              createSamples({
-                projectId,
-                body: [
-                  {
-                    name,
-                    metadata: metadataFields,
-                  },
-                ],
-              })
-                .then(() => {
-                  metadataSaveDetails[index] = { saved: true };
-                })
-                .catch((error) => {
-                  metadataSaveDetails[index] = {
-                    saved: false,
-                    error: error.response.data.error,
-                  };
-                })
-            );
-          }
-        }
-      }
-      await Promise.all(promises).then(() => {
-        dispatch(
-          setMetadataSaveDetails(Object.assign({}, metadataSaveDetails))
-        );
+
+    const updateSampleList = selectedSampleList
+      .filter((metadataItem) => {
+        const index = metadataItem.rowKey;
+        const sampleId = metadataValidateDetails[index].foundSampleId;
+        return sampleId;
+      })
+      .map((metadataItem) => {
+        const index = metadataItem.rowKey;
+        const name = metadataItem[sampleNameColumn];
+        const sampleId = metadataValidateDetails[index].foundSampleId;
+        const metadataFields = Object.entries(metadataItem)
+          .filter(([key]) => headers.includes(key) && key !== sampleNameColumn)
+          .map(([key, value]) => ({ field: key, value }));
+        return { name, sampleId, metadata: metadataFields };
       });
+
+    if (updateSampleList.length > 0) {
+      const chunkedUpdateSampleList = chunkArray(updateSampleList, chunkSize);
+      for (const chunk of chunkedUpdateSampleList) {
+        await updateSamples({
+          projectId,
+          body: chunk,
+        })
+          .then((response) => {
+            // metadataSaveDetails[index] = { saved: true };
+          })
+          .catch((error) => {
+            //               metadataSaveDetails[index] = {
+            //                 saved: false,
+            //                 error: error.response.data.error,
+            //               };
+          });
+      }
     }
+
+    const createSampleList = selectedSampleList
+      .filter((metadataItem) => {
+        const index = metadataItem.rowKey;
+        const sampleId = metadataValidateDetails[index].foundSampleId;
+        return !sampleId;
+      })
+      .map((metadataItem) => {
+        const name = metadataItem[sampleNameColumn];
+        const metadataFields = Object.entries(metadataItem)
+          .filter(([key]) => headers.includes(key) && key !== sampleNameColumn)
+          .map(([key, value]) => ({ field: key, value }));
+        return { name, metadata: metadataFields };
+      });
+
+    if (createSampleList.length > 0) {
+      const chunkedCreateSampleList = chunkArray(createSampleList, chunkSize);
+      for (const chunk of chunkedCreateSampleList) {
+        await createSamples({
+          projectId,
+          body: chunk,
+        })
+          .then((response) => {
+            // metadataSaveDetails[index] = { saved: true };
+          })
+          .catch((error) => {
+            //               metadataSaveDetails[index] = {
+            //                 saved: false,
+            //                 error: error.response.data.error,
+            //               };
+          });
+      }
+    }
+
+    dispatch(setMetadataSaveDetails(Object.assign({}, metadataSaveDetails)));
 
     return { metadataSaveDetails };
   }
