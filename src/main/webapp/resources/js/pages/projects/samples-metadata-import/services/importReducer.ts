@@ -68,24 +68,23 @@ export const saveMetadata = createAsyncThunk<
     const metadataSaveDetails: Record<string, MetadataSaveDetailsItem> = {};
 
     const selectedSampleList = metadata.filter((metadataItem) => {
-      const index: string = metadataItem.rowKey;
+      const name: string = metadataItem[sampleNameColumn];
       return (
-        selectedMetadataKeys.includes(index) &&
-        metadataSaveDetails[index]?.saved !== true
+        selectedMetadataKeys.includes(metadataItem.rowKey) &&
+        metadataSaveDetails[name]?.saved !== true
       );
     });
     const chunkSize = 100;
 
     const updateSampleList = selectedSampleList
       .filter((metadataItem) => {
-        const index = metadataItem.rowKey;
-        const sampleId = metadataValidateDetails[index].foundSampleId;
+        const name = metadataItem[sampleNameColumn];
+        const sampleId = metadataValidateDetails[name].foundSampleId;
         return sampleId;
       })
       .map((metadataItem) => {
-        const index = metadataItem.rowKey;
         const name = metadataItem[sampleNameColumn];
-        const sampleId = metadataValidateDetails[index].foundSampleId;
+        const sampleId = metadataValidateDetails[name].foundSampleId;
         const metadataFields = Object.entries(metadataItem)
           .filter(([key]) => headers.includes(key) && key !== sampleNameColumn)
           .map(([key, value]) => ({ field: key, value }));
@@ -99,22 +98,30 @@ export const saveMetadata = createAsyncThunk<
           projectId,
           body: chunk,
         })
-          .then((response) => {
-            // metadataSaveDetails[index] = { saved: true };
+          .then(() => {
+            chunk
+              .map((item) => item.name)
+              .forEach((name) => (metadataSaveDetails[name] = { saved: true }));
           })
           .catch((error) => {
-            //               metadataSaveDetails[index] = {
-            //                 saved: false,
-            //                 error: error.response.data.error,
-            //               };
+            const { errors } = error.response.data;
+            Object.keys(errors).map((key) => {
+              metadataSaveDetails[key] = {
+                saved: false,
+                error: errors[key],
+              };
+            });
           });
+        dispatch(
+          setMetadataSaveDetails(Object.assign({}, metadataSaveDetails))
+        );
       }
     }
 
     const createSampleList = selectedSampleList
       .filter((metadataItem) => {
-        const index = metadataItem.rowKey;
-        const sampleId = metadataValidateDetails[index].foundSampleId;
+        const name = metadataItem[sampleNameColumn];
+        const sampleId = metadataValidateDetails[name].foundSampleId;
         return !sampleId;
       })
       .map((metadataItem) => {
@@ -132,19 +139,25 @@ export const saveMetadata = createAsyncThunk<
           projectId,
           body: chunk,
         })
-          .then((response) => {
-            // metadataSaveDetails[index] = { saved: true };
+          .then(() => {
+            chunk
+              .map((item) => item.name)
+              .forEach((name) => (metadataSaveDetails[name] = { saved: true }));
           })
           .catch((error) => {
-            //               metadataSaveDetails[index] = {
-            //                 saved: false,
-            //                 error: error.response.data.error,
-            //               };
+            const { errors } = error.response.data;
+            Object.keys(errors).map((key) => {
+              metadataSaveDetails[key] = {
+                saved: false,
+                error: errors[key],
+              };
+            });
           });
+        dispatch(
+          setMetadataSaveDetails(Object.assign({}, metadataSaveDetails))
+        );
       }
     }
-
-    dispatch(setMetadataSaveDetails(Object.assign({}, metadataSaveDetails)));
 
     return { metadataSaveDetails };
   }
@@ -177,14 +190,13 @@ export const setSampleNameColumn = createAsyncThunk<
       },
     });
     for (const metadataItem of metadata) {
-      const index: string = metadataItem.rowKey;
-      const sampleName: string = metadataItem[column];
+      const name: string = metadataItem[column];
       const foundSample: ValidateSampleNameModel | undefined =
         response.samples.find(
-          (sample: ValidateSampleNameModel) => sampleName === sample.name
+          (sample: ValidateSampleNameModel) => name === sample.name
         );
-      metadataValidateDetails[index] = {
-        isSampleNameValid: validateSampleName(sampleName),
+      metadataValidateDetails[name] = {
+        isSampleNameValid: validateSampleName(name),
         foundSampleId: foundSample?.ids?.at(0),
       };
     }

@@ -83,8 +83,8 @@ export function SampleMetadataImportReview(): JSX.Element {
     },
     getCheckboxProps: (record: MetadataItem) => ({
       disabled: !(
-        metadataValidateDetails[record.rowKey].isSampleNameValid ||
-        metadataSaveDetails[record.rowKey]?.saved === true
+        metadataValidateDetails[record[sampleNameColumn]].isSampleNameValid ||
+        metadataSaveDetails[record[sampleNameColumn]]?.saved === true
       ),
     }),
   };
@@ -99,7 +99,8 @@ export function SampleMetadataImportReview(): JSX.Element {
   React.useEffect(() => {
     setValid(
       !metadata.some(
-        (row) => !metadataValidateDetails[row.rowKey].isSampleNameValid
+        (row) =>
+          !metadataValidateDetails[row[sampleNameColumn]].isSampleNameValid
       )
     );
 
@@ -111,7 +112,8 @@ export function SampleMetadataImportReview(): JSX.Element {
       onCell: (item) => {
         return {
           style: {
-            background: metadataValidateDetails[item.rowKey].isSampleNameValid
+            background: metadataValidateDetails[item[sampleNameColumn]]
+              .isSampleNameValid
               ? undefined
               : `var(--red-1)`,
           },
@@ -124,10 +126,10 @@ export function SampleMetadataImportReview(): JSX.Element {
       fixed: "left",
       width: 10,
       render: (text, item) => {
-        if (metadataSaveDetails[item.rowKey]?.saved === false)
+        if (metadataSaveDetails[item[sampleNameColumn]]?.saved === false)
           return (
             <Tooltip
-              title={metadataSaveDetails[item.rowKey]?.error}
+              title={metadataSaveDetails[item[sampleNameColumn]]?.error}
               color={`var(--red-5)`}
             >
               <IconExclamationCircle style={{ color: `var(--red-5)` }} />
@@ -144,7 +146,7 @@ export function SampleMetadataImportReview(): JSX.Element {
       fixed: "left",
       width: 70,
       render: (text, item) => {
-        if (!metadataValidateDetails[item.rowKey].foundSampleId)
+        if (!metadataValidateDetails[item[sampleNameColumn]].foundSampleId)
           return (
             <Tag color="green">
               {i18n("SampleMetadataImportReview.table.filter.new")}
@@ -164,8 +166,10 @@ export function SampleMetadataImportReview(): JSX.Element {
       ],
       onFilter: (value, record) =>
         value === "new"
-          ? metadataValidateDetails[record.rowKey].foundSampleId !== undefined
-          : metadataValidateDetails[record.rowKey].foundSampleId === undefined,
+          ? metadataValidateDetails[record[sampleNameColumn]].foundSampleId !==
+            undefined
+          : metadataValidateDetails[record[sampleNameColumn]].foundSampleId ===
+            undefined,
     };
 
     const otherColumns: ColumnsType<MetadataItem> = headers
@@ -187,8 +191,8 @@ export function SampleMetadataImportReview(): JSX.Element {
       metadata
         .filter(
           (row) =>
-            metadataValidateDetails[row.rowKey].isSampleNameValid ||
-            metadataSaveDetails[row.rowKey]?.saved === true
+            metadataValidateDetails[row[sampleNameColumn]].isSampleNameValid ||
+            metadataSaveDetails[row[sampleNameColumn]]?.saved === true
         )
         .map((row): string => row.rowKey)
     );
@@ -247,7 +251,9 @@ export function SampleMetadataImportReview(): JSX.Element {
         className="t-metadata-uploader-review-table"
         rowKey={(row) => row.rowKey}
         rowClassName={(record) =>
-          metadataSaveDetails[record.rowKey]?.saved === false ? "row-error" : ""
+          metadataSaveDetails[record[sampleNameColumn]]?.saved === false
+            ? "row-error"
+            : ""
         }
         rowSelection={rowSelection}
         columns={columns}

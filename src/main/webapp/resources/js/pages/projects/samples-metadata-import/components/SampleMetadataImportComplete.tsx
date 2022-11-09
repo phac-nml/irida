@@ -14,19 +14,23 @@ import { NavigateFunction } from "react-router/dist/lib/hooks";
  * @constructor
  */
 export function SampleMetadataImportComplete(): JSX.Element {
-  const { metadata, metadataValidateDetails, metadataSaveDetails } =
-    useImportSelector((state: ImportState) => state.importReducer);
+  const {
+    sampleNameColumn,
+    metadata,
+    metadataValidateDetails,
+    metadataSaveDetails,
+  } = useImportSelector((state: ImportState) => state.importReducer);
 
   const samplesUpdatedCount = metadata.filter(
     (metadataItem: MetadataItem) =>
-      metadataSaveDetails[metadataItem.rowKey]?.saved === true &&
-      metadataValidateDetails[metadataItem.rowKey].foundSampleId
+      metadataSaveDetails[metadataItem[sampleNameColumn]]?.saved === true &&
+      metadataValidateDetails[metadataItem[sampleNameColumn]].foundSampleId
   ).length;
 
   const samplesCreatedCount = metadata.filter(
     (metadataItem: MetadataItem) =>
-      metadataSaveDetails[metadataItem.rowKey]?.saved === true &&
-      !metadataValidateDetails[metadataItem.rowKey].foundSampleId
+      metadataSaveDetails[metadataItem[sampleNameColumn]]?.saved === true &&
+      !metadataValidateDetails[metadataItem[sampleNameColumn]].foundSampleId
   ).length;
 
   let stats =

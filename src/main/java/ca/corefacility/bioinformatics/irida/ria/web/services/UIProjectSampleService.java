@@ -3,6 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -19,7 +21,9 @@ import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdateSampleRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.*;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxFormErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNameModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesResponse;
@@ -130,7 +134,7 @@ public class UIProjectSampleService {
 		Map<String, String> errors = new HashMap<>();
 		for (CreateSampleRequest request : requests) {
 			try {
-				createSample(projectId, locale, request);
+				createSample(projectId, request);
 			} catch (Exception e) {
 				errors.put(request.getName(), e.getMessage());
 			}
@@ -148,34 +152,29 @@ public class UIProjectSampleService {
 	 *
 	 * @param request   {@link CreateSampleRequest} contains details about the sample to create
 	 * @param projectId Identifier for the current project
-	 * @param locale    Users current locale
 	 * @return result of creating the sample
+	 * @throws EntityNotFoundException if the identifier does not exist in the database
 	 */
 	@Transactional
-	public ResponseEntity<AjaxResponse> createSample(Long projectId, Locale locale, CreateSampleRequest request) {
+	public Long createSample(Long projectId, CreateSampleRequest request) throws EntityNotFoundException {
 		Project project = projectService.read(projectId);
-		try {
-			Sample sample = new Sample(request.getName());
-			if (!Strings.isNullOrEmpty(request.getOrganism())) {
-				sample.setOrganism(request.getOrganism());
-			}
-			if (!Strings.isNullOrEmpty(request.getDescription())) {
-				sample.setDescription(request.getDescription());
-			}
-			Join<Project, Sample> join = projectService.addSampleToProjectWithoutEvent(project, sample, true);
-			if (request.getMetadata() != null) {
-				Set<MetadataEntry> metadataEntrySet = request.getMetadata().stream().map(entry -> {
-					MetadataTemplateField field = metadataTemplateService.saveMetadataField(
-							new MetadataTemplateField(entry.getField(), "text"));
-					return new MetadataEntry(entry.getValue(), "text", field);
-				}).collect(Collectors.toSet());
-				sampleService.mergeSampleMetadata(sample, metadataEntrySet);
-			}
-			return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(join.getObject().getId()));
-		} catch (EntityNotFoundException e) {
-			return ResponseEntity.ok(new AjaxErrorResponse(
-					messageSource.getMessage("server.AddSample.error.exists", new Object[] {}, locale)));
+		Sample sample = new Sample(request.getName());
+		if (!Strings.isNullOrEmpty(request.getOrganism())) {
+			sample.setOrganism(request.getOrganism());
 		}
+		if (!Strings.isNullOrEmpty(request.getDescription())) {
+			sample.setDescription(request.getDescription());
+		}
+		Join<Project, Sample> join = projectService.addSampleToProjectWithoutEvent(project, sample, true);
+		if (request.getMetadata() != null) {
+			Set<MetadataEntry> metadataEntrySet = request.getMetadata().stream().map(entry -> {
+				MetadataTemplateField field = metadataTemplateService.saveMetadataField(
+						new MetadataTemplateField(entry.getField(), "text"));
+				return new MetadataEntry(entry.getValue(), "text", field);
+			}).collect(Collectors.toSet());
+			sampleService.mergeSampleMetadata(sample, metadataEntrySet);
+		}
+		return join.getObject().getId();
 	}
 
 	/**
@@ -189,7 +188,7 @@ public class UIProjectSampleService {
 		Map<String, String> errors = new HashMap<>();
 		for (UpdateSampleRequest request : requests) {
 			try {
-				updateSample(request, locale);
+				updateSample(request);
 			} catch (Exception e) {
 				errors.put(request.getName(), e.getMessage());
 			}
@@ -206,34 +205,31 @@ public class UIProjectSampleService {
 	 * Update a sample in a project
 	 *
 	 * @param request {@link UpdateSampleRequest} contains details about the sample to update
-	 * @param locale  Users current locale
 	 * @return result of creating the sample
+	 * @throws EntityNotFoundException      if the identifier does not exist in the database
+	 * @throws ConstraintViolationException if the entity being updated contains constraint violations
 	 */
 	@Transactional
-	public ResponseEntity<AjaxResponse> updateSample(UpdateSampleRequest request, Locale locale) {
-		try {
-			Long sampleId = request.getSampleId();
-			Sample sample = sampleService.read(sampleId);
-			sample.setSampleName(request.getName());
-			if (!Strings.isNullOrEmpty(request.getOrganism())) {
-				sample.setOrganism(request.getOrganism());
-			}
-			if (request.getDescription() != null) {
-				sample.setDescription(request.getDescription());
-			}
-			if (request.getMetadata() != null) {
-				Set<MetadataEntry> metadataEntrySet = request.getMetadata().stream().map(entry -> {
-					MetadataTemplateField field = metadataTemplateService.saveMetadataField(
-							new MetadataTemplateField(entry.getField(), "text"));
-					return new MetadataEntry(entry.getValue(), "text", field);
-				}).collect(Collectors.toSet());
-				sampleService.updateSampleMetadata(sample, metadataEntrySet);
-			}
-			sampleService.update(sample);
-			return ResponseEntity.ok(new AjaxUpdateItemSuccessResponse(
-					messageSource.getMessage("server.AddSample.success", null, locale)));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage()));
+	public Sample updateSample(UpdateSampleRequest request)
+			throws EntityNotFoundException, ConstraintViolationException {
+		Long sampleId = request.getSampleId();
+		Sample sample = sampleService.read(sampleId);
+		sample.setSampleName(request.getName());
+		if (!Strings.isNullOrEmpty(request.getOrganism())) {
+			sample.setOrganism(request.getOrganism());
 		}
+		if (request.getDescription() != null) {
+			sample.setDescription(request.getDescription());
+		}
+		if (request.getMetadata() != null) {
+			Set<MetadataEntry> metadataEntrySet = request.getMetadata().stream().map(entry -> {
+				MetadataTemplateField field = metadataTemplateService.saveMetadataField(
+						new MetadataTemplateField(entry.getField(), "text"));
+				return new MetadataEntry(entry.getValue(), "text", field);
+			}).collect(Collectors.toSet());
+			sampleService.updateSampleMetadata(sample, metadataEntrySet);
+		}
+		return sampleService.update(sample);
+
 	}
 }
