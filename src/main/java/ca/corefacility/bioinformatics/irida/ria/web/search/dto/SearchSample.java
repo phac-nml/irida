@@ -1,11 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.web.search.dto;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.ria.web.models.BaseModel;
 
 import java.util.List;
 
-public class SearchSample extends BaseModel {
+public class SearchSample extends SearchItem {
     final String organism;
     final List<SearchProject> projects;
 

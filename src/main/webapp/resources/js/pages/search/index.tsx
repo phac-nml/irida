@@ -14,6 +14,11 @@ import {
 import { setBaseUrl } from "../../utilities/url-utilities";
 import userLoader from "./loaders/user-loader";
 import { Sample } from "../../types/irida";
+import axios from "axios";
+import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
+import { getPaginationOptions } from "../../utilities/antdesign-table-utilities";
+import { ColumnType } from "antd/es/list";
+import SearchProjectsTable from "./SearchProjectsTable";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,7 +38,7 @@ type SampleTableType = Pick<
 > & {
   key: "string";
 };
-interface TableParams {
+export interface TableParams {
   pagination?: TablePaginationConfig;
   sortField?: string;
   sortOrder?: string;
@@ -41,11 +46,14 @@ interface TableParams {
 }
 
 function SearchLayout() {
+  k;
   const user = useLoaderData();
-  console.log(user);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [query, setQuery] = useState<string>(searchParams.get("query") || "");
   const [type, setType] = useState<SearchType>("projects");
+  const [global, setGlobal] = useState<boolean>(false);
+
+  const [projects, setProjects] = useState();
+  const [projectsTotal, setProjectsTotal] = useState();
 
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
@@ -53,27 +61,6 @@ function SearchLayout() {
       pageSize: 10,
     },
   });
-
-  const fetchProjects = async () => {
-    const response = await fetch(setBaseUrl(`/ajax/search/projects`), {
-      method: "POST",
-      body: JSON.stringify({
-        global: true,
-        pagination: tableParams.pagination,
-        order: [{ property: "label", direction: `asc` }],
-        search: [{ property: `label`, value: query, operation: "MATCH_IN" }],
-      }),
-    })
-      .then((response) => response.json())
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-    console.log(response);
-  };
-
-  useEffect(() => {
-    fetchProjects();
-  }, [JSON.stringify(tableParams)]);
 
   const handleTableChange = (
     pagination: TablePaginationConfig,
@@ -86,43 +73,36 @@ function SearchLayout() {
       ...sorter,
     });
   };
+  const fetchProjects = async () => {
+    return axios.post(setBaseUrl(`/ajax/search/projects`), {
+      global,
+      pagination: tableParams.pagination,
+      order: [{ property: "name", direction: `asc` }],
+      search: [
+        {
+          property: `name`,
+          value: searchParams.get("query"),
+          operation: "MATCH_IN",
+        },
+      ],
+    });
+  };
 
-  const columns = useMemo<ColumnType<SampleTableType>>(
-    () => [
-      {
-        key: `name`,
-        dataIndex: "sampleName",
-        title: "NAME",
-      },
-      {
-        key: `organism`,
-        dataIndex: `organism`,
-        title: "ORGANISM",
-      },
-      {
-        key: `projects`,
-        dataIndex: `projects`,
-        title: `PROJECTS`,
-      },
-      {
-        key: `createdDate`,
-        dataIndex: `createdDate`,
-        title: `CREATED DATE`,
-      },
-      {
-        key: `modifiedDate`,
-        dataIndex: `modifiedDate`,
-        title: `MODIFIED DATE`,
-      },
-    ],
-    []
-  );
+  useEffect(() => {
+    fetchProjects()
+      .then(({ data }) => {
+        setProjects(data.content);
+        setProjectsTotal(data.total);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, [fetchProjects, global, searchParams]);
 
   return (
     <PageHeader
       title={"SEARCH"}
       style={{
-        border: `5px solid green`,
         flexGrow: 1,
         display: `flex`,
         flexDirection: "column",
@@ -139,8 +119,8 @@ function SearchLayout() {
           <Space direction="vertical" size="small" style={{ width: `100%` }}>
             <Input.Search
               size={"large"}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              defaultValue={searchParams.get("query") || ""}
+              onChange={(e) => setSearchParams({ query: e.target.value })}
               allowClear
             />
             <section>
@@ -155,22 +135,18 @@ function SearchLayout() {
                   <Radio.Button value="projects">Projects</Radio.Button>
                   <Radio.Button value="samples">Samples</Radio.Button>
                 </Radio.Group>
-                {user.admin && <Checkbox>Search Global</Checkbox>}
+                {user.admin && (
+                  <Checkbox onChange={(e) => setGlobal(e.target.checked)}>
+                    Search Global
+                  </Checkbox>
+                )}
               </Space>
             </section>
           </Space>
-          <Table
-            dataSource={[
-              {
-                key: 1,
-                name: "Mike",
-                age: 32,
-                address: "10 Downing Street",
-              },
-            ]}
-            columns={columns}
-            pagination={tableParams.pagination}
-            onChange={handleTableChange}
+          <SearchProjectsTable
+            projects={projects}
+            total={projectsTotal}
+            handleTableChange={handleTableChange}
           />
         </Space>
       </Layout.Content>
@@ -183,7 +159,6 @@ render(
   <Layout
     style={{
       minHeight: `100%`,
-      border: `2px solid blue`,
       display: `flex`,
       flexDirection: "column",
     }}
