@@ -11,6 +11,11 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import userLoader from "./loaders/user-loader";
 import SearchLayout from "./SearchLayout";
 
+/**
+ * @fileoverview
+ * Sets up the base layout and router for the global search page
+ */
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route
