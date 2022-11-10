@@ -4,6 +4,9 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 
 import java.util.List;
 
+/**
+ * Data transfer object for {@link Sample}s found in the global search
+ */
 public class SearchSample extends SearchItem {
     final String organism;
     final List<SearchProject> projects;
