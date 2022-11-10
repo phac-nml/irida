@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.search.dto;
 
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 
+/**
+ * Data transfer object for {@link Project}s found in the global search
+ */
 public class SearchProject extends SearchItem {
     final String organism;
     final Long samples;
