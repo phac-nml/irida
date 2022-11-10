@@ -1,15 +1,6 @@
 import React, { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  Button,
-  Empty,
-  Form,
-  Radio,
-  Select,
-  Space,
-  Table,
-  Typography,
-} from "antd";
+import { Button, Empty, Radio, Select, Space, Table, Typography } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import {
   IconArrowLeft,
@@ -28,8 +19,6 @@ import {
   useImportSelector,
 } from "../redux/store";
 import { getMetadataRestrictions } from "../../../../apis/metadata/field";
-
-const { Text } = Typography;
 
 /**
  * React component that displays Step #2 of the Sample Metadata Uploader.
@@ -92,12 +81,6 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
     [updatedSampleNameColumn, updatedHeaders]
   );
 
-  const restrictionOptions = restrictions.map(({ label, value }) => (
-    <Radio.Button key={`restriction-${value}`} value={value}>
-      {label}
-    </Radio.Button>
-  ));
-
   const columns = [
     {
       title: i18n("SampleMetadataImportMapColumns.table.header"),
@@ -113,15 +96,14 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
       render(id: number, item: MetadataHeaderItem) {
         return (
           <Radio.Group
+            options={restrictions}
             defaultValue={item.restriction}
             disabled={item.name === updatedSampleNameColumn}
             onChange={({ target: { value } }) =>
               onRestrictionChange({ ...item }, value)
             }
-          >
-            {/* TODO: Change space to compact mode after antd update */}
-            <Space direction="horizontal">{restrictionOptions}</Space>
-          </Radio.Group>
+            optionType="button"
+          />
         );
       },
     },
@@ -129,10 +111,11 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
 
   return (
     <SampleMetadataImportWizard current={1}>
-      <Form layout="vertical">
-        <Form.Item
-          label={i18n("SampleMetadataImportMapColumns.form.sampleNameColumn")}
-        >
+      <Space size="large" direction="vertical" style={{ width: "100%" }}>
+        <Space size="small" direction="vertical" style={{ width: "100%" }}>
+          <Typography.Text strong>
+            {i18n("SampleMetadataImportMapColumns.form.sampleNameColumn")}
+          </Typography.Text>
           <Select
             style={{ width: 300 }}
             value={updatedSampleNameColumn}
@@ -145,10 +128,11 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
               </Select.Option>
             ))}
           </Select>
-        </Form.Item>
-        <Form.Item
-          label={i18n("SampleMetadataImportMapColumns.form.metadataColumns")}
-        >
+        </Space>
+        <Space size="small" direction="vertical" style={{ width: "100%" }}>
+          <Typography.Text strong>
+            {i18n("SampleMetadataImportMapColumns.form.metadataColumns")}
+          </Typography.Text>
           <Table
             className="t-metadata-uploader-columns-table"
             rowKey={(row) => row.rowKey}
@@ -167,8 +151,8 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
               ),
             }}
           />
-        </Form.Item>
-      </Form>
+        </Space>
+      </Space>
       <div style={{ display: "flex" }}>
         <Button
           className="t-metadata-uploader-file-button"
