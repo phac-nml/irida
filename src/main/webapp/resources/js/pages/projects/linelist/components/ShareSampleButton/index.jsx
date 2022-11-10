@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { IconShare } from "../../../../../components/icons/Icons";
 import { actions as cartActions } from "../../../../../redux/reducers/cart";
 import { setBaseUrl } from "../../../../../utilities/url-utilities";
+import { storeSamples } from "../../../../../utilities/session-utilities";
 
 /**
  * React component for the share sample button.  Formats the selected
@@ -24,14 +25,11 @@ function ShareSamplesButtonComponent({ selected }) {
       projectId: sample["irida-static-project-id"],
       projectName: sample["irida-static-project-name"],
     }));
-    window.sessionStorage.setItem(
-      "share",
-      JSON.stringify({
-        samples,
-        projectId,
-        timestamp: Date.now(),
-      })
-    );
+    storeSamples({
+      samples,
+      projectId,
+      path: `share`,
+    });
 
     // Redirect user to share page
     window.location.href = setBaseUrl(`/projects/${projectId}/share`);

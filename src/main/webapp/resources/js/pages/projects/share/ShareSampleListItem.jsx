@@ -5,7 +5,7 @@ import { IconLocked, IconUnlocked } from "../../../components/icons/Icons";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import { green6 } from "../../../styles/colors";
 import { removeSample } from "./shareSlice";
-
+import { UnlockTwoTone } from "@ant-design/icons";
 
 /**
  * Render a list item for the samples to be shared with another project.
@@ -40,28 +40,11 @@ export default function ShareSamplesListItem({
     >
       <List.Item.Meta
         avatar={
-          sample.owner ? (
-            <Tooltip
-              title={i18n("ShareSamples.avatar.unlocked")}
-              placement="right"
-              color={green6}
-            >
-              <Avatar
-                style={{ backgroundColor: green6 }}
-                className="t-unlocked-sample"
-                size="small"
-                icon={<IconUnlocked />}
-              />
-            </Tooltip>
-          ) : (
-            <Tooltip title={i18n("ShareSamples.avatar.locked")}>
-              <Avatar
-                className="t-locked-sample"
-                size="small"
-                icon={<IconLocked />}
-              />
-            </Tooltip>
-          )
+          <Avatar
+            style={{ backgroundColor: `transparent` }}
+            className="t-unlocked-sample"
+            icon={<UnlockTwoTone twoToneColor={green6} />}
+          />
         }
         title={
           <SampleDetailViewer
