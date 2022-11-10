@@ -25,7 +25,6 @@ specifiers:
   '@babel/preset-react': ^7.18.6
   '@babel/preset-typescript': ^7.18.6
   '@babel/runtime': ^7.20.1
-  '@fortawesome/fontawesome-free': ^6.1.1
   '@loaders.gl/core': '>=3.2.0 <4.0.0'
   '@loaders.gl/gltf': ^3.0.0
   '@loaders.gl/images': '>=3.0.0 <4.0.0'
@@ -59,12 +58,6 @@ specifiers:
   clipboard: ^1.7.1
   css-loader: ^6.7.1
   css-minimizer-webpack-plugin: ^3.4.1
-  datatables.net: ^1.11.5
-  datatables.net-bs: ^1.11.5
-  datatables.net-buttons: ^2.2.2
-  datatables.net-buttons-bs: ^2.2.2
-  datatables.net-fixedcolumns: ^4.0.2
-  datatables.net-fixedcolumns-bs: ^4.0.2
   dayjs: ^1.11.1
   deck.gl: ^8.7.12
   eslint: ^8.13.0
@@ -135,7 +128,6 @@ dependencies:
   '@antv/path-util': 2.0.15
   '@antv/scale': 0.3.17
   '@antv/util': 2.0.17
-  '@fortawesome/fontawesome-free': 6.1.1
   '@loaders.gl/core': 3.2.4
   '@loaders.gl/gltf': 3.2.4
   '@loaders.gl/images': 3.2.4
@@ -152,12 +144,6 @@ dependencies:
   bootstrap: 3.4.1
   bootstrap-daterangepicker: 3.1.0
   clipboard: 1.7.1
-  datatables.net: 1.11.5
-  datatables.net-bs: 1.11.5
-  datatables.net-buttons: 2.2.2
-  datatables.net-buttons-bs: 2.2.2
-  datatables.net-fixedcolumns: 4.0.2
-  datatables.net-fixedcolumns-bs: 4.0.2
   dayjs: 1.11.1
   deck.gl: 8.7.12_qdym3cmqy3izoldsblxf2ftyey
   flexlayout-react: 0.7.4_sfoxds7t5ydpegc3knd667wn6m
@@ -2089,12 +2075,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
-
-  /@fortawesome/fontawesome-free/6.1.1:
-    resolution: {integrity: sha512-J/3yg2AIXc9wznaVqpHVX3Wa5jwKovVF0AMYSnbmcXTiL3PpRPfF58pzWucCwEiCJBp+hCNRLWClTomD8SseKg==}
-    engines: {node: '>=6'}
-    requiresBuild: true
-    dev: false
 
   /@humanwhocodes/config-array/0.9.3:
     resolution: {integrity: sha512-3xSMlXHh03hCcCmFc0rbKp3Ivt2PFEJnQUJDDMTJQ2wkECZWdq4GePs2ctc5H8zV+cHPaq8k2vU8mrQjA6iHdQ==}
@@ -4510,49 +4490,6 @@ packages:
       whatwg-mimetype: 2.3.0
       whatwg-url: 8.7.0
     dev: true
-
-  /datatables.net-bs/1.11.5:
-    resolution: {integrity: sha512-thj90yxWnJpAkKdiPtdFMHlDTHCg1VRrzAE7juABYaw3hNQdvf1Veh7a/1hvuqOfn2g7ORzQUFXP8oxJ4SJWfg==}
-    dependencies:
-      datatables.net: 1.11.5
-      jquery: 3.5.1
-    dev: false
-
-  /datatables.net-buttons-bs/2.2.2:
-    resolution: {integrity: sha512-F4ffoweXJrtznq+KfYYW7aa1xHlzQUtSEJXne7rUvp76neMmuFtNhD+2ffaQHizNJmiyGAEKgq54pD8qkGo63A==}
-    dependencies:
-      datatables.net-bs: 1.11.5
-      datatables.net-buttons: 2.2.2
-      jquery: 3.5.1
-    dev: false
-
-  /datatables.net-buttons/2.2.2:
-    resolution: {integrity: sha512-YrTgBDejFSzm2CJOx0aOACXDIELBsdMFe6IR3rJqC0elJoMd6uXVQ4pRBQEge4cfWpYa5T1Majm7r6FQi0j6Jw==}
-    dependencies:
-      datatables.net: 1.11.5
-      jquery: 3.5.1
-    dev: false
-
-  /datatables.net-fixedcolumns-bs/4.0.2:
-    resolution: {integrity: sha512-DdOZy1WN9V3hF7C9jzPspjC9VEnKdeP225jDs5O8/ZYHrEM2MHOuUVKIpNjikICi4ABQFJPd6pMKDXqvQLvKHQ==}
-    dependencies:
-      datatables.net-bs: 1.11.5
-      datatables.net-fixedcolumns: 4.0.2
-      jquery: 3.5.1
-    dev: false
-
-  /datatables.net-fixedcolumns/4.0.2:
-    resolution: {integrity: sha512-BOLffsEyCy/uKTubVf1GAV/S/PEuqTE8up+E55zROcsciwFy6C2VMx+yGaaJAhAZTgFf0zneb55tHIaoFXNnfQ==}
-    dependencies:
-      datatables.net: 1.11.5
-      jquery: 3.5.1
-    dev: false
-
-  /datatables.net/1.11.5:
-    resolution: {integrity: sha512-nlFst2xfwSWaQgaOg5sXVG3cxYC0tH8E8d65289w9ROgF2TmLULOOpcdMpyxxUim/qEwVSEem42RjkTWEpr3eA==}
-    dependencies:
-      jquery: 3.5.1
-    dev: false
 
   /date-fns/2.28.0:
     resolution: {integrity: sha512-8d35hViGYx/QH0icHYCeLmsLmMUheMmTyV9Fcm6gvNwdw31yXXH+O85sOBJ+OLnLQMKZowvpKb6FgMIQjcpvQw==}
