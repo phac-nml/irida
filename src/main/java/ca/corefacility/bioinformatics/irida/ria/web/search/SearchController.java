@@ -4,9 +4,6 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.DataTablesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProject;
-import ca.corefacility.bioinformatics.irida.ria.web.models.datatables.DTProjectSamples;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.search.dto.SearchItem;
 import ca.corefacility.bioinformatics.irida.ria.web.search.dto.SearchProject;
@@ -55,10 +52,8 @@ public class SearchController {
     /**
      * Search all projects a user is a member of based on a query string
      *
-     * @param query  the query string
-     * @param global Whether to perform an admin global search
-     * @param params parameters for a datatables response
-     * @return a {@link DataTablesResponse} to display the search results
+     * @param request Details about the search request
+     * @return Paged list of projects and the total count found for the search
      */
     @PostMapping("/ajax/search/projects")
     public ResponseEntity<AntTableResponse<SearchItem>> handleSearch(@RequestBody SearchRequest request) {
@@ -78,11 +73,8 @@ public class SearchController {
     /**
      * Search all {@link Sample}s in projects for a user based on a query string
      *
-     * @param query  the query string
-     * @param global Whether to perform an admin
-     *               global search
-     * @param params parameters for a datatables response
-     * @return a {@link DataTablesResponse} to display search results
+     * @param request Details about the search request
+     * @return Paged list of samples and the total count found in the search
      */
     @RequestMapping("/ajax/search/samples")
     @ResponseBody
@@ -111,27 +103,5 @@ public class SearchController {
         }).collect(Collectors.toList());
         AntTableResponse<SearchItem> response = new AntTableResponse<>(samples, samplePage.getTotalElements());
         return ResponseEntity.ok(response);
-    }
-
-    /**
-     * Extract the details of the a {@link Project} into a {@link DTProject}
-     * which is consumable by the UI
-     *
-     * @param project {@link Project}
-     * @return {@link DTProject}
-     */
-    private DTProject createDataTablesProject(Project project) {
-        return new DTProject(project, sampleService.getNumberOfSamplesForProject(project));
-    }
-
-    /**
-     * Extract the details of a {@link ProjectSampleJoin} into a
-     * {@link DTProjectSamples}
-     *
-     * @param join the {@link ProjectSampleJoin}
-     * @return the created {@link DTProjectSamples}
-     */
-    private DTProjectSamples createDataTablesSample(ProjectSampleJoin join) {
-        return new DTProjectSamples(join, Lists.newArrayList(), null);
     }
 }
