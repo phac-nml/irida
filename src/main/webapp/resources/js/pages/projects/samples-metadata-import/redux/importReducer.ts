@@ -20,9 +20,12 @@ import {
   MetadataField,
 } from "../../../../apis/metadata/field";
 
+export type Restriction = "LEVEL_1" | "LEVEL_2" | "LEVEL_3" | "LEVEL_4";
+
 export interface MetadataHeaderItem {
   name: string;
-  restriction: string;
+  existingRestriction: Restriction | undefined;
+  targetRestriction: Restriction;
   rowKey: string;
 }
 
@@ -84,7 +87,7 @@ export const saveMetadata = createAsyncThunk<
         .filter((header) => header.name !== sampleNameColumn)
         .map((header) => ({
           label: header.name,
-          restriction: header.restriction,
+          restriction: header.targetRestriction,
         })),
     });
 
@@ -109,7 +112,7 @@ export const saveMetadata = createAsyncThunk<
               field: key,
               value,
               restriction: headers.filter((header) => header.name === key)[0]
-                .restriction,
+                .targetRestriction,
             }));
           const sampleId = metadataValidateDetails[index].foundSampleId;
           if (sampleId) {
@@ -231,7 +234,8 @@ export const setHeaders = createAsyncThunk<
     );
     return {
       name: header,
-      restriction: metadataField?.restriction
+      existingRestriction: metadataField?.restriction,
+      targetRestriction: metadataField?.restriction
         ? metadataField.restriction
         : "LEVEL_1",
       rowKey: `metadata-uploader-header-row-${index}`,

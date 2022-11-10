@@ -1,6 +1,15 @@
 import React, { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Empty, Radio, Select, Space, Table, Typography } from "antd";
+import {
+  Button,
+  Empty,
+  Radio,
+  Select,
+  Space,
+  Table,
+  Tag,
+  Typography,
+} from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import {
   IconArrowLeft,
@@ -8,6 +17,7 @@ import {
 } from "../../../../components/icons/Icons";
 import {
   MetadataHeaderItem,
+  Restriction,
   setSampleNameColumn,
   updateHeaders,
 } from "../redux/importReducer";
@@ -19,6 +29,7 @@ import {
   useImportSelector,
 } from "../redux/store";
 import { getMetadataRestrictions } from "../../../../apis/metadata/field";
+import { getColourForRestriction } from "../../../../utilities/restriction-utilities";
 
 /**
  * React component that displays Step #2 of the Sample Metadata Uploader.
@@ -60,13 +71,16 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
     setUpdatedSampleNameColumn(value);
   };
 
-  const onRestrictionChange = (item: MetadataHeaderItem, value: string) => {
+  const onRestrictionChange = (
+    item: MetadataHeaderItem,
+    value: Restriction
+  ) => {
     const index = updatedHeaders.findIndex(
       (header) => header.rowKey === item.rowKey
     );
     if (index !== -1) {
       const updatedHeadersItem = { ...updatedHeaders[index] };
-      updatedHeadersItem.restriction = value;
+      updatedHeadersItem.targetRestriction = value;
       updatedHeaders[index] = updatedHeadersItem;
     }
   };
@@ -89,6 +103,17 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
     {
       title: i18n("SampleMetadataImportMapColumns.table.existingRestriction"),
       dataIndex: "existingRestriction",
+      render(id: number, item: MetadataHeaderItem) {
+        if (item.existingRestriction) {
+          return (
+            <Tag color={getColourForRestriction(item.existingRestriction)}>
+              {item.existingRestriction}
+            </Tag>
+          );
+        } else {
+          return undefined;
+        }
+      },
     },
     {
       title: i18n("SampleMetadataImportMapColumns.table.targetRestriction"),
@@ -97,7 +122,7 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
         return (
           <Radio.Group
             options={restrictions}
-            defaultValue={item.restriction}
+            defaultValue={item.targetRestriction}
             disabled={item.name === updatedSampleNameColumn}
             onChange={({ target: { value } }) =>
               onRestrictionChange({ ...item }, value)

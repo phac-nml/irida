@@ -5,6 +5,7 @@ import axios from "axios";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { addKeysToList } from "../../utilities/http-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { Restriction } from "../../pages/projects/samples-metadata-import/redux/importReducer";
 
 const BASE_URL = setBaseUrl(`/ajax/metadata/fields`);
 
@@ -13,7 +14,7 @@ export interface MetadataField {
   fieldKey?: string;
   label: string;
   type?: string;
-  restriction: string;
+  restriction: Restriction;
 }
 
 /**
