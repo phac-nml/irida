@@ -3,7 +3,6 @@ import { useLoaderData, useSearchParams } from "react-router-dom";
 import SearchProjectsTable from "./SearchProjectsTable";
 import SearchSamplesTable from "./SearchSamplesTable";
 import {
-  Badge,
   Input,
   Layout,
   Menu,
@@ -11,9 +10,10 @@ import {
   Select,
   Space,
   TablePaginationConfig,
+  TableProps,
   Typography,
 } from "antd";
-import { FilterValue, SorterResult } from "antd/es/table/interface";
+import { FilterValue } from "antd/es/table/interface";
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { Sample } from "../../types/irida";
@@ -25,7 +25,7 @@ type SearchType = "projects" | "samples";
 type SearchItem = {
   id: number;
   name: string;
-  createdDate: number;
+  createdDate: string;
   modifiedDate: number;
   organism: string;
 };
@@ -50,6 +50,8 @@ export interface TableParams {
   sortField?: string;
   sortOrder?: string;
   filters?: Record<string, FilterValue>;
+  columnKey?: string;
+  order: "ascend" | "descend";
 }
 
 const initial_table_params = JSON.stringify({
@@ -90,11 +92,11 @@ export default function SearchLayout() {
     setSamplesTableParams(params);
   }, 300);
 
-  const handleProjectsTableChange = (
-    pagination: TablePaginationConfig,
-    filters: Record<string, FilterValue>,
-    sorter: SorterResult<SampleTableType>
-  ) => {
+  const handleProjectsTableChange: TableProps<SearchProject>["onChange"] = (
+    pagination,
+    filters,
+    sorter
+  ): void => {
     debouncedSetProjectTableParams({
       pagination,
       filters,
@@ -102,11 +104,11 @@ export default function SearchLayout() {
     });
   };
 
-  const handleSamplesTableChange = (
-    pagination: TablePaginationConfig,
-    filters: Record<string, FilterValue>,
-    sorter: SorterResult<SampleTableType>
-  ) => {
+  const handleSamplesTableChange: TableProps<SearchSample>["onChange"] = (
+    pagination,
+    filters,
+    sorter
+  ): void => {
     debouncedSetSamplesTableParams({
       pagination,
       filters,

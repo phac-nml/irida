@@ -1,10 +1,8 @@
 import React, { useMemo } from "react";
-import type { ColumnType } from "antd/es/list";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { getPaginationOptions } from "../../utilities/antdesign-table-utilities";
-import { Table, TablePaginationConfig } from "antd";
-import { FilterValue, SorterResult } from "antd/es/table/interface";
-import { SampleTableType, SearchProject, TableParams } from "./SearchLayout";
+import { Table, TableProps } from "antd";
+import { SearchProject } from "./SearchLayout";
 import ProjectTag from "./ProjectTag";
 import { ColumnsType } from "antd/lib/table";
 
@@ -15,17 +13,20 @@ type SearchProjectsTableParams = {
         total: number;
       }
     | undefined;
-  handleTableChange: (
-    pagination: TablePaginationConfig,
-    filters: Record<string, FilterValue>,
-    sorter: SorterResult<SampleTableType>
-  ) => TableParams;
+  handleTableChange: TableProps<SearchProject>["onChange"];
 };
+
+/**
+ * React component to render a table of projects fround in the glbal search.
+ * @param projects
+ * @param handleTableChange
+ * @constructor
+ */
 export default function SearchProjectsTable({
   projects,
   handleTableChange,
 }: SearchProjectsTableParams) {
-  const columns = useMemo<ColumnsType>(
+  const columns = useMemo<ColumnsType<SearchProject>>(
     () => [
       {
         key: `name`,
