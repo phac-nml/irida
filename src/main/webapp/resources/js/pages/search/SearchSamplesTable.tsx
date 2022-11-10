@@ -28,14 +28,16 @@ export default function SearchSamplesTable({
   const columns = useMemo<ColumnType[]>(
     () => [
       {
-        key: `name`,
+        key: `sampleName`,
         dataIndex: "name",
         title: "NAME",
+        sorter: true,
       },
       {
         key: `organism`,
         dataIndex: `organism`,
         title: "ORGANISM",
+        sorter: true,
       },
       {
         key: `projects`,
@@ -50,12 +52,15 @@ export default function SearchSamplesTable({
         dataIndex: `createdDate`,
         title: `CREATED DATE`,
         render: (text: string) => formatInternationalizedDateTime(text),
+        sorter: true,
       },
       {
         key: `modifiedDate`,
         dataIndex: `modifiedDate`,
         title: `MODIFIED DATE`,
         render: (text: string) => formatInternationalizedDateTime(text),
+        sorter: true,
+        defaultSortOrder: "descend",
       },
     ],
     []

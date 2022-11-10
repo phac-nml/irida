@@ -6,6 +6,7 @@ import { Table, TablePaginationConfig } from "antd";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
 import { SampleTableType, SearchProject, TableParams } from "./SearchLayout";
 import ProjectTag from "./ProjectTag";
+import { ColumnsType } from "antd/lib/table";
 
 type SearchProjectsTableParams = {
   projects:
@@ -24,18 +25,20 @@ export default function SearchProjectsTable({
   projects,
   handleTableChange,
 }: SearchProjectsTableParams) {
-  const columns = useMemo<ColumnType[]>(
+  const columns = useMemo<ColumnsType>(
     () => [
       {
         key: `name`,
         dataIndex: "name",
         title: "NAME",
         render: (_, project) => <ProjectTag project={project} />,
+        sorter: true,
       },
       {
         key: `organism`,
         dataIndex: `organism`,
         title: "ORGANISM",
+        sorter: true,
       },
       {
         key: `samples`,
@@ -47,12 +50,15 @@ export default function SearchProjectsTable({
         dataIndex: `createdDate`,
         title: `CREATED DATE`,
         render: (text: string) => formatInternationalizedDateTime(text),
+        sorter: true,
       },
       {
         key: `modifiedDate`,
         dataIndex: `modifiedDate`,
         title: `MODIFIED DATE`,
         render: (text: string) => formatInternationalizedDateTime(text),
+        sorter: true,
+        defaultSortOrder: "descend",
       },
     ],
     []

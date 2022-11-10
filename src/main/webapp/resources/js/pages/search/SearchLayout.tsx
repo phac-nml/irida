@@ -18,6 +18,7 @@ import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { Sample } from "../../types/irida";
 import { CurrentUser } from "../../apis/users/user";
+import { debounce } from "lodash";
 
 type SearchType = "projects" | "samples";
 type SearchItem = {
@@ -58,6 +59,9 @@ const initial_table_params = JSON.stringify({
 export default function SearchLayout() {
   const user = useLoaderData() as CurrentUser;
   const [searchParams, setSearchParams] = useSearchParams();
+  const debouncedSetSearchParams = debounce(async (value) => {
+    setSearchParams(value);
+  }, 500);
   const [type, setType] = useState<SearchType>("projects");
   const [global, setGlobal] = useState<boolean>(user.admin);
 
@@ -68,6 +72,9 @@ export default function SearchLayout() {
   const [projectsTableParams, setProjectsTableParams] = useState<TableParams>(
     JSON.parse(initial_table_params)
   );
+  const debouncedSetProjectTableParams = debounce(async (params) => {
+    setProjectsTableParams(params);
+  }, 300);
 
   const [samples, setSamples] = useState<{
     content: SearchSample[];
@@ -76,13 +83,16 @@ export default function SearchLayout() {
   const [samplesTableParams, setSamplesTableParams] = useState<TableParams>(
     JSON.parse(initial_table_params)
   );
+  const debouncedSetSamplesTableParams = debounce(async (params) => {
+    setSamplesTableParams(params);
+  }, 300);
 
   const handleProjectsTableChange = (
     pagination: TablePaginationConfig,
     filters: Record<string, FilterValue>,
     sorter: SorterResult<SampleTableType>
   ) => {
-    setProjectsTableParams({
+    debouncedSetProjectTableParams({
       pagination,
       filters,
       ...sorter,
@@ -94,7 +104,7 @@ export default function SearchLayout() {
     filters: Record<string, FilterValue>,
     sorter: SorterResult<SampleTableType>
   ) => {
-    setSamplesTableParams({
+    debouncedSetSamplesTableParams({
       pagination,
       filters,
       ...sorter,
@@ -106,7 +116,12 @@ export default function SearchLayout() {
       axios.post(setBaseUrl(`/ajax/search/samples`), {
         global,
         pagination: samplesTableParams.pagination,
-        order: [{ property: "sampleName", direction: `asc` }],
+        order: [
+          {
+            property: samplesTableParams.columnKey || `sampleName`,
+            direction: samplesTableParams.order === "ascend" ? `asc` : `desc`,
+          },
+        ],
         search: [
           {
             property: `name`,
@@ -120,7 +135,12 @@ export default function SearchLayout() {
       axios.post(setBaseUrl(`/ajax/search/projects`), {
         global,
         pagination: projectsTableParams.pagination,
-        order: [{ property: "name", direction: `asc` }],
+        order: [
+          {
+            property: projectsTableParams.columnKey || `name`,
+            direction: projectsTableParams.order === "ascend" ? `asc` : `desc`,
+          },
+        ],
         search: [
           {
             property: `name`,
@@ -141,7 +161,11 @@ export default function SearchLayout() {
     );
   }, [
     global,
+    projectsTableParams.columnKey,
+    projectsTableParams.order,
     projectsTableParams.pagination,
+    samplesTableParams.columnKey,
+    samplesTableParams.order,
     samplesTableParams.pagination,
     searchParams,
   ]);
@@ -232,7 +256,9 @@ export default function SearchLayout() {
               addonBefore={user.admin && searchPrefix}
               size={"large"}
               defaultValue={searchParams.get("query") || ""}
-              onChange={(e) => setSearchParams({ query: e.target.value })}
+              onChange={(e) =>
+                debouncedSetSearchParams({ query: e.target.value })
+              }
               allowClear
             />
           </Space>
