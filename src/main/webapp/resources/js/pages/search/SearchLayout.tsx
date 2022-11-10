@@ -61,6 +61,10 @@ const initial_table_params = JSON.stringify({
   },
 });
 
+/**
+ * React component to layout and handle events for the global search
+ * @constructor
+ */
 export default function SearchLayout() {
   const user = useLoaderData() as CurrentUser;
   const [searchParams, setSearchParams] = useSearchParams();
