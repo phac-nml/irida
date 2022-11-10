@@ -17,7 +17,6 @@ import {
 } from "../../../../components/icons/Icons";
 import {
   MetadataHeaderItem,
-  Restriction,
   setSampleNameColumn,
   updateHeaders,
 } from "../redux/importReducer";
@@ -29,7 +28,11 @@ import {
   useImportSelector,
 } from "../redux/store";
 import { getMetadataRestrictions } from "../../../../apis/metadata/field";
-import { getColourForRestriction } from "../../../../utilities/restriction-utilities";
+import {
+  getColourForRestriction,
+  getRestrictionLabel,
+  Restriction,
+} from "../../../../utilities/restriction-utilities";
 
 /**
  * React component that displays Step #2 of the Sample Metadata Uploader.
@@ -107,7 +110,7 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
         if (item.existingRestriction) {
           return (
             <Tag color={getColourForRestriction(item.existingRestriction)}>
-              {item.existingRestriction}
+              {getRestrictionLabel(restrictions, item.existingRestriction)}
             </Tag>
           );
         } else {

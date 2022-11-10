@@ -3,35 +3,53 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { IconInfoCircle, IconWarningOutlined } from "../icons/Icons";
 import { blue6, red6 } from "../../styles/colors";
-import { getColourForRestriction } from "../../utilities/restriction-utilities";
+import {
+  getColourForRestriction,
+  getRestrictionLabel,
+  Restriction,
+  RestrictionListItem,
+} from "../../utilities/restriction-utilities";
 import { updateNewProjectMetadataRestriction } from "../../pages/projects/create/newProjectSlice";
 import { updateMetadataRestriction } from "../../pages/projects/share/shareSlice";
+import { FormItemProps } from "antd/lib/form/FormItem";
+
+export interface Field {
+  difference: number;
+  target: string;
+  restriction: Restriction;
+}
+
+interface TargetMetadataRestrictionProps {
+  field: Field;
+  restrictions: RestrictionListItem[];
+  newProject: boolean;
+}
 
 /**
  * React component to allow the user to select the level of restiction for a
  * metadata field in the destination project.
  *
- * @param {object} field - field to get the value on
+ * @param  field - field to get the value on
  *  project, if it is not in the target project it get the current restriction.
- * @param {array} restrictions - list of available restrictions
- * @param {function} onChange - change handler
- * @param {boolean} newProject - if a new project is being created or not
+ * @param restrictions - list of available restrictions
+ * @param onChange - change handler
+ * @param newProject - if a new project is being created or not
  * @returns {JSX.Element}
  * @constructor
  */
 export function TargetMetadataRestriction({
-  field = {},
+  field,
   restrictions = [],
   newProject = false,
-}) {
+}: TargetMetadataRestrictionProps): JSX.Element {
   const dispatch = useDispatch();
 
-  const [feedback, setFeedback] = React.useState({
+  const [feedback, setFeedback] = React.useState<FormItemProps>({
     hasFeedback: false,
     validateStatus: "",
   });
 
-  const [tooltipVisible, setTooltipVisible] = React.useState(false);
+  const [tooltipVisible, setTooltipVisible] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     /*
@@ -47,14 +65,7 @@ export function TargetMetadataRestriction({
     }
   }, [field.difference]);
 
-  function getRestrictionLabel(value) {
-    const restriction = restrictions?.find(
-      (restriction) => restriction.value === value
-    );
-    return restriction?.label;
-  }
-
-  const onChange = (field, value) => {
+  const onChange = (field: Field, value: string) => {
     if (newProject) {
       dispatch(updateNewProjectMetadataRestriction({ field, value }));
     } else {
@@ -67,7 +78,7 @@ export function TargetMetadataRestriction({
       return (
         <Space>
           <Tag color={getColourForRestriction(field.restriction)}>
-            {getRestrictionLabel(field.restriction)}
+            {getRestrictionLabel(restrictions, field.restriction)}
           </Tag>
           <Popover
             title={i18n("TargetMetadataRestriction.title")}
@@ -82,7 +93,7 @@ export function TargetMetadataRestriction({
     return (
       <Space>
         <Tag color={getColourForRestriction(field.restriction)}>
-          {getRestrictionLabel(field.restriction)}
+          {getRestrictionLabel(restrictions, field.restriction)}
         </Tag>
         <Popover
           title={

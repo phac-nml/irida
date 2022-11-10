@@ -19,8 +19,7 @@ import {
   getMetadataFieldsForProject,
   MetadataField,
 } from "../../../../apis/metadata/field";
-
-export type Restriction = "LEVEL_1" | "LEVEL_2" | "LEVEL_3" | "LEVEL_4";
+import { Restriction } from "../../../../utilities/restriction-utilities";
 
 export interface MetadataHeaderItem {
   name: string;
