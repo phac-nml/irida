@@ -79,7 +79,7 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
             info.file.name
           ),
         });
-        navigate(`/${projectId}/sample-metadata/upload/headers`);
+        navigate(`/${projectId}/sample-metadata/upload/columns`);
       } else if (status === "error") {
         setLoading(false);
         setStatus("error");

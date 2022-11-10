@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
 import { render } from "react-dom";
 import { SampleMetadataImportComplete } from "./components/SampleMetadataImportComplete";
-import { SampleMetadataImportMapHeaders } from "./components/SampleMetadataImportMapHeaders";
+import { SampleMetadataImportMapColumns } from "./components/SampleMetadataImportMapColumns";
 import { SampleMetadataImportReview } from "./components/SampleMetadataImportReview";
 import { SampleMetadataImportUploadFile } from "./components/SampleMetadataImportUploadFile";
 import { setBaseUrl } from "../../../utilities/url-utilities";
@@ -23,8 +23,8 @@ render(
           element={<SampleMetadataImportUploadFile />}
         />
         <Route
-          path="/:projectId/sample-metadata/upload/headers"
-          element={<SampleMetadataImportMapHeaders />}
+          path="/:projectId/sample-metadata/upload/columns"
+          element={<SampleMetadataImportMapColumns />}
         />
         <Route
           path="/:projectId/sample-metadata/upload/review"

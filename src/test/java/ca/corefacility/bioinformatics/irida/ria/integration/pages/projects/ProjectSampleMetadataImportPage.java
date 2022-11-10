@@ -26,7 +26,7 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	WebElement fileBtn;
 	@FindBy(className = "t-metadata-uploader-sample-name-column-select")
 	WebElement sampleNameColumnSelect;
-	@FindBy(className = "t-metadata-uploader-headers-table")
+	@FindBy(className = "t-metadata-uploader-columns-table")
 	WebElement headersTable;
 	@FindBy(className = "t-metadata-uploader-preview-button")
 	WebElement previewBtn;

@@ -1,6 +1,15 @@
 import React, { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Empty, Radio, Select, Table, Typography } from "antd";
+import {
+  Button,
+  Empty,
+  Form,
+  Radio,
+  Select,
+  Space,
+  Table,
+  Typography,
+} from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import {
   IconArrowLeft,
@@ -28,7 +37,7 @@ const { Text } = Typography;
  * @returns {*}
  * @constructor
  */
-export function SampleMetadataImportMapHeaders(): JSX.Element {
+export function SampleMetadataImportMapColumns(): JSX.Element {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate: NavigateFunction = useNavigate();
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -83,25 +92,36 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
     [updatedSampleNameColumn, updatedHeaders]
   );
 
+  const restrictionOptions = restrictions.map(({ label, value }) => (
+    <Radio.Button key={`restriction-${value}`} value={value}>
+      {label}
+    </Radio.Button>
+  ));
+
   const columns = [
     {
-      title: i18n("SampleMetadataImportMapHeaders.table.header"),
+      title: i18n("SampleMetadataImportMapColumns.table.header"),
       dataIndex: "name",
     },
     {
-      title: i18n("SampleMetadataImportMapHeaders.table.restriction"),
+      title: i18n("SampleMetadataImportMapColumns.table.existingRestriction"),
+      dataIndex: "existingRestriction",
+    },
+    {
+      title: i18n("SampleMetadataImportMapColumns.table.targetRestriction"),
       dataIndex: "restriction",
       render(id: number, item: MetadataHeaderItem) {
         return (
           <Radio.Group
-            options={restrictions}
             defaultValue={item.restriction}
             disabled={item.name === updatedSampleNameColumn}
             onChange={({ target: { value } }) =>
               onRestrictionChange({ ...item }, value)
             }
-            optionType="button"
-          />
+          >
+            {/* TODO: Change space to compact mode after antd update */}
+            <Space direction="horizontal">{restrictionOptions}</Space>
+          </Radio.Group>
         );
       },
     },
@@ -109,43 +129,53 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
 
   return (
     <SampleMetadataImportWizard current={1}>
-      <Text>{i18n("SampleMetadataImportMapHeaders.description")}</Text>
-      <Select
-        style={{ width: 300 }}
-        value={updatedSampleNameColumn}
-        onChange={onSampleNameColumnChange}
-        className="t-metadata-uploader-sample-name-column-select"
-      >
-        {headers.map((header) => (
-          <Select.Option key={header.name} value={header.name}>
-            {header.name}
-          </Select.Option>
-        ))}
-      </Select>
-      <Table
-        title={() => i18n("SampleMetadataImportMapHeaders.table.title")}
-        className="t-metadata-uploader-headers-table"
-        rowKey={(row) => row.rowKey}
-        columns={columns}
-        dataSource={dataSource}
-        pagination={false}
-        scroll={{ y: 600 }}
-        locale={{
-          emptyText: (
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={i18n("SampleMetadataImportMapHeaders.table.empty")}
-            />
-          ),
-        }}
-      />
+      <Form layout="vertical">
+        <Form.Item
+          label={i18n("SampleMetadataImportMapColumns.form.sampleNameColumn")}
+        >
+          <Select
+            style={{ width: 300 }}
+            value={updatedSampleNameColumn}
+            onChange={onSampleNameColumnChange}
+            className="t-metadata-uploader-sample-name-column-select"
+          >
+            {headers.map((header) => (
+              <Select.Option key={header.name} value={header.name}>
+                {header.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+        <Form.Item
+          label={i18n("SampleMetadataImportMapColumns.form.metadataColumns")}
+        >
+          <Table
+            className="t-metadata-uploader-columns-table"
+            rowKey={(row) => row.rowKey}
+            columns={columns}
+            dataSource={dataSource}
+            pagination={false}
+            scroll={{ y: 600 }}
+            locale={{
+              emptyText: (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description={i18n(
+                    "SampleMetadataImportMapColumns.table.empty"
+                  )}
+                />
+              ),
+            }}
+          />
+        </Form.Item>
+      </Form>
       <div style={{ display: "flex" }}>
         <Button
           className="t-metadata-uploader-file-button"
           icon={<IconArrowLeft />}
           onClick={() => navigate(-1)}
         >
-          {i18n("SampleMetadataImportMapHeaders.button.back")}
+          {i18n("SampleMetadataImportMapColumns.button.back")}
         </Button>
         <Button
           className="t-metadata-uploader-preview-button"
@@ -153,7 +183,7 @@ export function SampleMetadataImportMapHeaders(): JSX.Element {
           style={{ marginLeft: "auto" }}
           loading={loading}
         >
-          {i18n("SampleMetadataImportMapHeaders.button.next")}
+          {i18n("SampleMetadataImportMapColumns.button.next")}
           <IconArrowRight />
         </Button>
       </div>
