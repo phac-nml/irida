@@ -53,6 +53,7 @@ export default function SearchSamplesTable({
         title: `CREATED DATE`,
         render: (text: string) => formatInternationalizedDateTime(text),
         sorter: true,
+        width: 200,
       },
       {
         key: `modifiedDate`,
@@ -61,6 +62,7 @@ export default function SearchSamplesTable({
         render: (text: string) => formatInternationalizedDateTime(text),
         sorter: true,
         defaultSortOrder: "descend",
+        width: 200,
       },
     ],
     []

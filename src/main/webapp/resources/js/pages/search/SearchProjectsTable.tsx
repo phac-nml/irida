@@ -44,6 +44,7 @@ export default function SearchProjectsTable({
         key: `samples`,
         dataIndex: `samples`,
         title: `SAMPLES`,
+        width: 150,
       },
       {
         key: `createdDate`,
@@ -51,6 +52,7 @@ export default function SearchProjectsTable({
         title: `CREATED DATE`,
         render: (text: string) => formatInternationalizedDateTime(text),
         sorter: true,
+        width: 200,
       },
       {
         key: `modifiedDate`,
@@ -59,6 +61,7 @@ export default function SearchProjectsTable({
         render: (text: string) => formatInternationalizedDateTime(text),
         sorter: true,
         defaultSortOrder: "descend",
+        width: 200,
       },
     ],
     []
