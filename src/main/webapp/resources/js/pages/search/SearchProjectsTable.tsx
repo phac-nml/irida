@@ -57,7 +57,7 @@ export default function SearchProjectsTable({
       {
         key: `modifiedDate`,
         dataIndex: `modifiedDate`,
-        title: `MODIFIED DATE`,
+        title: `LAST UPDATED`,
         render: (text: string) => formatInternationalizedDateTime(text),
         sorter: true,
         defaultSortOrder: "descend",

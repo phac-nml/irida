@@ -19,6 +19,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { Sample } from "../../types/irida";
 import { CurrentUser } from "../../apis/users/user";
 import { debounce } from "lodash";
+import SearchCount from "./SearchCount";
 
 type SearchType = "projects" | "samples";
 type SearchItem = {
@@ -36,12 +37,14 @@ export type SearchProject = SearchItem & {
 export type SearchSample = SearchItem & {
   projects: SearchProject[];
 };
+
 export type SampleTableType = Pick<
   Sample,
   "name" | "organism" | "projects" | "createdDate" | "modifiedDate"
 > & {
   key: "string";
 };
+
 export interface TableParams {
   pagination?: TablePaginationConfig;
   sortField?: string;
@@ -187,11 +190,7 @@ export default function SearchLayout() {
             }}
           >
             <span>PROJECTS</span>
-            <Badge
-              showZero
-              style={{ backgroundColor: `var(--grey-7)` }}
-              count={projects?.total}
-            />
+            <SearchCount count={projects?.total || 0} />
           </div>
         ),
         key: "projects",
@@ -207,11 +206,7 @@ export default function SearchLayout() {
             }}
           >
             <span>SAMPLES</span>
-            <Badge
-              showZero
-              style={{ backgroundColor: `var(--grey-7)` }}
-              count={samples?.total}
-            />
+            <SearchCount count={samples?.total || 0} />
           </div>
         ),
         key: "samples",
