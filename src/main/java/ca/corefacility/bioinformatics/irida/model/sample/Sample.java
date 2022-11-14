@@ -33,18 +33,17 @@ import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmission;
 import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmissionOneOf;
 import ca.corefacility.bioinformatics.irida.web.controller.api.json.DateJson;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * A biological sample. Each sample may correspond to many files.
- * A {@link Sample} comprises of many attributes. The attributes assigned to a
- * {@link Sample} correspond to the NCBI Pathogen BioSample attributes. See
- * <a href=
- * "https://submit.ncbi.nlm.nih.gov/biosample/template/?package=Pathogen.cl.1.0&action=definition"
- * >BioSample Attributes: Package Pathogen</a> for more information.
+ * A biological sample. Each sample may correspond to many files. A {@link Sample} comprises of many attributes. The
+ * attributes assigned to a {@link Sample} correspond to the NCBI Pathogen BioSample attributes. See
+ * <a href= "https://submit.ncbi.nlm.nih.gov/biosample/template/?package=Pathogen.cl.1.0&action=definition" >BioSample
+ * Attributes: Package Pathogen</a> for more information.
  */
 @Entity
 @NamedEntityGraph(name = "sampleOnly")
@@ -78,16 +77,14 @@ public class Sample extends IridaRepresentationModel
 	private String description;
 
 	/**
-	 * The most descriptive organism name for this sample (to the species, if
-	 * relevant).
+	 * The most descriptive organism name for this sample (to the species, if relevant).
 	 */
 	@NotNull(message = "{sample.organism.notnull}", groups = NCBISubmission.class)
 	@Size(min = 3, message = "{sample.organism.too.short}")
 	private String organism;
 
 	/**
-	 * identification or description of the specific individual from which this
-	 * sample was obtained
+	 * identification or description of the specific individual from which this sample was obtained
 	 */
 	@NotNull(message = "{sample.isolate.notnull}", groups = { NCBISubmission.class, NCBISubmissionOneOf.class })
 	@Size(min = 3, message = "{sample.isolate.too.short}")
@@ -127,16 +124,16 @@ public class Sample extends IridaRepresentationModel
 	private String geographicLocationName;
 
 	/**
-	 * Describes the physical, environmental and/or local geographical source of
-	 * the biological sample from which the sample was derived.
+	 * Describes the physical, environmental and/or local geographical source of the biological sample from which the
+	 * sample was derived.
 	 */
 	@Lob
 	@NotNull(message = "{sample.isolation.source.notnull}", groups = NCBISubmission.class)
 	private String isolationSource;
 
 	/**
-	 * lat_lon is marked as a *mandatory* attribute in NCBI BioSample, but in
-	 * practice many of the fields are shown as "missing".
+	 * lat_lon is marked as a *mandatory* attribute in NCBI BioSample, but in practice many of the fields are shown as
+	 * "missing".
 	 */
 	@NotNull(message = "{sample.latitude.notnull}", groups = NCBISubmission.class)
 	@Latitude
@@ -146,10 +143,12 @@ public class Sample extends IridaRepresentationModel
 	@Longitude
 	private String longitude;
 
+	@JsonIgnore
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "default_sequencing_object")
 	private SequencingObject defaultSequencingObject;
 
+	@JsonIgnore
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "default_genome_assembly")
 	private GenomeAssembly defaultGenomeAssembly;
@@ -191,14 +190,15 @@ public class Sample extends IridaRepresentationModel
 	public boolean equals(Object other) {
 		if (other instanceof Sample) {
 			Sample sample = (Sample) other;
-			return Objects.equals(id, sample.id) && Objects.equals(createdDate, sample.createdDate) && Objects.equals(
-					modifiedDate, sample.modifiedDate) && Objects.equals(sampleName, sample.sampleName)
-					&& Objects.equals(description, sample.description) && Objects.equals(organism, sample.organism)
-					&& Objects.equals(isolate, sample.isolate) && Objects.equals(strain, sample.strain)
-					&& Objects.equals(collectedBy, sample.collectedBy) && Objects.equals(collectionDate,
-					sample.collectionDate) && Objects.equals(geographicLocationName, sample.geographicLocationName)
-					&& Objects.equals(isolationSource, sample.isolationSource) && Objects.equals(latitude,
-					sample.latitude) && Objects.equals(longitude, sample.longitude);
+			return Objects.equals(id, sample.id) && Objects.equals(createdDate, sample.createdDate)
+					&& Objects.equals(modifiedDate, sample.modifiedDate)
+					&& Objects.equals(sampleName, sample.sampleName) && Objects.equals(description, sample.description)
+					&& Objects.equals(organism, sample.organism) && Objects.equals(isolate, sample.isolate)
+					&& Objects.equals(strain, sample.strain) && Objects.equals(collectedBy, sample.collectedBy)
+					&& Objects.equals(collectionDate, sample.collectionDate)
+					&& Objects.equals(geographicLocationName, sample.geographicLocationName)
+					&& Objects.equals(isolationSource, sample.isolationSource)
+					&& Objects.equals(latitude, sample.latitude) && Objects.equals(longitude, sample.longitude);
 		}
 
 		return false;
@@ -365,7 +365,9 @@ public class Sample extends IridaRepresentationModel
 		this.defaultSequencingObject = sequencingObject;
 	}
 
-	public GenomeAssembly getDefaultGenomeAssembly() { return defaultGenomeAssembly; }
+	public GenomeAssembly getDefaultGenomeAssembly() {
+		return defaultGenomeAssembly;
+	}
 
 	public void setDefaultGenomeAssembly(GenomeAssembly genomeAssembly) {
 		this.defaultGenomeAssembly = genomeAssembly;
