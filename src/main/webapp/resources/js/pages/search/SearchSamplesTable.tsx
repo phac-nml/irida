@@ -1,10 +1,11 @@
 import React, { useMemo } from "react";
 import { formatInternationalizedDateTime } from "../../utilities/date-utilities";
 import { getPaginationOptions } from "../../utilities/antdesign-table-utilities";
-import { Table, TableProps } from "antd";
+import { Button, Table, TableProps } from "antd";
 import { SearchProject, SearchSample } from "./SearchLayout";
 import ProjectTag from "./ProjectTag";
 import { ColumnsType } from "antd/lib/table";
+import { SampleDetailViewer } from "../../components/samples/SampleDetailViewer";
 
 type SearchSamplesTableParams = {
   samples:
@@ -33,6 +34,16 @@ export default function SearchSamplesTable({
         dataIndex: "name",
         title: "NAME",
         sorter: true,
+        render: (name, sample) => {
+          return (
+            <SampleDetailViewer
+              sampleId={sample.id}
+              projectId={sample.projects[0].id}
+            >
+              <Button>{name}</Button>
+            </SampleDetailViewer>
+          );
+        },
       },
       {
         key: `organism`,
