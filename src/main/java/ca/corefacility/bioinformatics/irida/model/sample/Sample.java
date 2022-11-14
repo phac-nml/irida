@@ -33,7 +33,6 @@ import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmission;
 import ca.corefacility.bioinformatics.irida.validators.groups.NCBISubmissionOneOf;
 import ca.corefacility.bioinformatics.irida.web.controller.api.json.DateJson;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -143,12 +142,10 @@ public class Sample extends IridaRepresentationModel
 	@Longitude
 	private String longitude;
 
-	@JsonIgnore
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "default_sequencing_object")
 	private SequencingObject defaultSequencingObject;
 
-	@JsonIgnore
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "default_genome_assembly")
 	private GenomeAssembly defaultGenomeAssembly;
