@@ -1,6 +1,9 @@
 
 # Changelog
 
+## [22.09.4] - 2022/11/14
+* [REST]: Fixed issue with project/samples api response missing samples when a sample has a default sequencing object. See [PR 1413](https://github.com/phac-nml/irida/pull/1413)
+
 ## [22.09.3] - 2022/11/10
 * [REST]: Fixed remote project syncing issues, caused by invalid refresh tokens, invalid status updates, and bad error handling of unauthorized tokens. Also fixed issue with project owners not being to able see remote settings menu or delete menu. See [PR 1410](https://github.com/phac-nml/irida/pull/1410)
 
@@ -144,6 +147,7 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
+[22.09.4]: https://github.com/phac-nml/irida/compare/22.09.3...22.09.4
 [22.09.3]: https://github.com/phac-nml/irida/compare/22.09.2...22.09.3
 [22.09.2]: https://github.com/phac-nml/irida/compare/22.09.1...22.09.2
 [22.09.1]: https://github.com/phac-nml/irida/compare/22.09...22.09.1
