@@ -9,20 +9,9 @@
         <project id="4" createdDate="2013-07-18 14:22:19.0" name="project22" />
         <project id="5" createdDate="2013-07-18 14:22:19.0" name="project22" />
 
-        <sequence_file id="1" created_date="2013-07-18 14:20:19.0" file_path="/sequenceFile2_01_L001_R1_001.fastq.gz" />
-        <sequence_file id="2" created_date="2013-07-18 14:20:19.0" file_path="/sequenceFile2_01_L001_R2_001.fastq.gz" />
-
-        <sequencing_object id="1" created_date="2013-07-18 14:20:19.0" />
-
-        <sequence_file_pair id="1" />
-        <sequence_file_pair_files pair_id="1" files_id="1" />
-        <sequence_file_pair_files pair_id="1" files_id="2" />
-
-        <sample id="1" sampleName="sample1" createdDate="2013-07-18 14:20:19.0" collectionDate="2019-01-24" default_sequencing_object="1" />
+        <sample id="1" sampleName="sample1" createdDate="2013-07-18 14:20:19.0" collectionDate="2019-01-24" />
         <sample id="2" sampleName="sample2" createdDate="2013-07-18 14:20:19.0" />
         <sample id="3" sampleName="sample2" createdDate="2013-07-18 14:20:19.0" collectionDate="1999-12-05" />
-
-        <sample_sequencingobject id="1" created_date="2013-07-18 14:20:19.0" sample_id="1" sequencingobject_id="1" />
 
         <project_sample id="1" project_id="1" sample_id="1" createdDate="2013-07-18 14:20:19.0" owner="true" />
         <project_sample id="2" project_id="4" sample_id="2" createdDate="2013-07-18 14:20:19.0" owner="true" />

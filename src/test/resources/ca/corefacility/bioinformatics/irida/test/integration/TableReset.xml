@@ -10,13 +10,6 @@
 	<sequence_file />
 	<sequence_file_properties />
 
-	<sequencing_object />
-
-	<sequence_file_single_end />
-	<sequence_file_pair />
-	<sequence_file_pair_files />
-	<sequence_file_fast5 />
-
 	<!--Keeping an admin user in the db for scheduling purposes -->
 	<user id="1" createdDate="2013-07-18 14:20:19.0" modifiedDate="2013-07-18 14:20:19.0" email="admin@irida.com" firstName="admin" lastName="admin" password="$2a$10$jFFix3ZyyoNy7HwavYjXauV0vByoPVbS1WnRpxPBCTKFXwEJeyXiK" phoneNumber="867-5309" username="admin" system_role="ROLE_ADMIN" credentialsNonExpired="true" enabled="true" />
 
@@ -76,6 +69,12 @@
 	<user_group />
 	<user_group_project />
 	<user_group_member />
+
+	<sequencing_object />
+	<sequence_file_single_end />
+	<sequence_file_pair />
+	<sequence_file_pair_files />
+	<sequence_file_fast5 />
 
 	<sample_sequencingobject />
 
