@@ -304,15 +304,19 @@ tasks.register<PnpmTask>("cleanWebapp") {
 }
 
 tasks.register<PnpmTask>("buildWebapp") {
-    dependsOn(":cleanWebapp")
-    pnpmCommand.set(listOf("build"))
-    inputs.dir("${project.projectDir}/src/main/webapp/resources")
+    inputs.files(fileTree("${project.projectDir}/src/main/webapp/resources"))
+    inputs.file("${project.projectDir}/src/main/webapp/package.json")
+    inputs.file("${project.projectDir}/src/main/webapp/pnpm-lock.yaml")
+
     outputs.dir("${project.projectDir}/src/main/webapp/dist")
+
+    dependsOn(":pnpmInstall")
+    pnpmCommand.set(listOf("clean", "build"))
 }
 
 tasks.register<PnpmTask>("startWebapp") {
-    dependsOn(":cleanWebapp")
-    pnpmCommand.set(listOf("start"))
+    dependsOn(":pnpmInstall")
+    pnpmCommand.set(listOf("clean", "start"))
     inputs.dir("${project.projectDir}/src/main/webapp/resources")
     outputs.dir("${project.projectDir}/src/main/webapp/dist")
 }
