@@ -226,6 +226,7 @@ export default function SearchLayout() {
       style={{ width: 120 }}
       defaultValue="global"
       onChange={(value) => setGlobal(value === "global")}
+      className="t-admin-search-type"
     >
       <Select.Option value="personal">PERSONAL</Select.Option>
       <Select.Option value="global">GLOBAL</Select.Option>
@@ -256,6 +257,7 @@ export default function SearchLayout() {
             <Input.Search
               addonBefore={user.admin && searchPrefix}
               size={"large"}
+              className="t-search-input"
               defaultValue={searchParams.get("query") || ""}
               onChange={(e) =>
                 debouncedSetSearchParams({ query: e.target.value })
@@ -274,6 +276,7 @@ export default function SearchLayout() {
                 }}
                 selectedKeys={[type]}
                 onClick={(e) => setType(e.key as SearchType)}
+                className="t-search-nav"
               >
                 {menuItems.map((item) => (
                   <Menu.Item key={item.key}>{item.label}</Menu.Item>

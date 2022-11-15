@@ -13,6 +13,7 @@ export default function SearchCount({ count }: { count: number }) {
       overflowCount={1000}
       style={{ backgroundColor: `var(--grey-7)` }}
       count={count}
+      className="t-count-badge"
     />
   );
 }

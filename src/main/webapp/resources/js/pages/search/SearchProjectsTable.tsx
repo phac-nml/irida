@@ -76,6 +76,7 @@ export default function SearchProjectsTable({
         projects?.total ? getPaginationOptions(projects.total) : undefined
       }
       onChange={handleTableChange}
+      className="t-search-projects"
     />
   );
 }

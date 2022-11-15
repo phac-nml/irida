@@ -5,7 +5,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.SearchResultPa
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for global search
@@ -17,52 +17,39 @@ public class SearchResultPageIT extends AbstractIridaUIITChromeDriver {
 	public void testGlobalSearchAsAdmin() {
 		LoginPage.loginAsAdmin(driver());
 		SearchResultPage searchResultPage = new SearchResultPage(driver());
-		final String query = "samp";
+		final String query = "2";
 		searchResultPage.enterSearchQueryInNavBar(query);
 		assertTrue(driver().getCurrentUrl().contains("search?query=" + query));
+		assertEquals(query, searchResultPage.getSearchInputQuery());
+		int numRows = searchResultPage.getTotalNumberOfProjectsInTable();
+		assertEquals(2, numRows, "Expected number of projects");
+		assertEquals(numRows, searchResultPage.getTotalNumberOfProjectsByBadge());
+		assertEquals(1, searchResultPage.getTotalNumberOfSamplesByBadge(), "Expected total number of samples");
+
+		assertTrue(searchResultPage.isAdminSearchTypeDisplayed(), "Admins should have the ability to switch between global and personal projects");
+		searchResultPage.selectAdminPersonalProject();
+		assertEquals(0, searchResultPage.getTotalNumberOfProjectsByBadge(), "Admin has no projects containing the search term " + query);
+		assertEquals(0, searchResultPage.getTotalNumberOfSamplesByBadge(), "Admin has no samples containing the search term " + query);
+
+		String newQuery = "1";
+		searchResultPage.enterNewSearchQuery(newQuery);
+		assertEquals(1, searchResultPage.getTotalNumberOfProjectsByBadge(), "Admin has 1 projects containing the search term " + newQuery);
+		assertEquals(1, searchResultPage.getTotalNumberOfSamplesByBadge(), "Admin has 1 samples containing the search term " + newQuery);
 	}
 
-//	@Test
-//	public void testSampleSearch() {
-//		LoginPage.loginAsUser(driver());
-//		page = SearchResultPage.initPage(driver());
-//
-//		page.globalSearch("samp", false);
-//		page = SearchResultPage.initPage(driver());
-//		checkTranslations(page, ImmutableList.of("search"), null);
-//
-//		page.waitForSearchResults();
-//		int sampleCount = page.getSampleCount();
-//		int projectCount = page.getProjectCount();
-//
-//		assertEquals(2, sampleCount, "should be 2 samples");
-//		assertEquals(0, projectCount, "should be no projects");
-//
-//	}
-//
-//	@Test
-//	public void testProjectSearch() {
-//		LoginPage.loginAsUser(driver());
-//		page = SearchResultPage.initPage(driver());
-//
-//		page.globalSearch("project2", false);
-//		page = SearchResultPage.initPage(driver());
-//
-//		page.waitForSearchResults();
-//		int sampleCount = page.getSampleCount();
-//		int projectCount = page.getProjectCount();
-//
-//		assertEquals(0, sampleCount, "should be no samples");
-//		assertEquals(1, projectCount, "should be 1 project");
-//
-//		page.globalSearch("ABCD", false);
-//		page = SearchResultPage.initPage(driver());
-//
-//		page.waitForSearchResults();
-//		sampleCount = page.getSampleCount();
-//		projectCount = page.getProjectCount();
-//
-//		assertEquals(0, sampleCount, "should be no samples");
-//		assertEquals(0, projectCount, "should be no projects");
-//	}
+	@Test
+	public void testGlobalSearchAsUser() {
+		LoginPage.loginAsUser(driver());
+		SearchResultPage searchResultPage = new SearchResultPage(driver());
+		final String query = "2";
+		searchResultPage.enterSearchQueryInNavBar(query);
+		assertTrue(driver().getCurrentUrl().contains("search?query=" + query));
+		assertEquals(query, searchResultPage.getSearchInputQuery());
+		int numRows = searchResultPage.getTotalNumberOfProjectsInTable();
+		assertEquals(2, numRows, "Expected number of projects");
+		assertEquals(numRows, searchResultPage.getTotalNumberOfProjectsByBadge());
+		assertEquals(1, searchResultPage.getTotalNumberOfSamplesByBadge(), "Expected total number of samples");
+		assertFalse(searchResultPage.isAdminSearchTypeDisplayed(), "Users should not have the ability to switch between global and personal projects");
+
+	}
 }
