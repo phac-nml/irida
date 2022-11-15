@@ -2,6 +2,7 @@
 # Changelog
 
 ## [Unreleased]
+* [Developer] Updated developer setup documentation, ignore java_pid*.hprof files, and added quality of life file `gradle.properties`
 
 ## [22.09.4] - 2022/11/14
 * [REST]: Fixed issue with project/samples api response missing samples when a sample has a default sequencing object. See [PR 1413](https://github.com/phac-nml/irida/pull/1413)
