@@ -1,4 +1,4 @@
-import { Form, Popover, Select, Space, Tag, Tooltip, Typography } from "antd";
+import { Form, Popover, Radio, Space, Tag, Tooltip, Typography } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { IconInfoCircle, IconWarningOutlined } from "../icons/Icons";
@@ -117,17 +117,22 @@ export function TargetMetadataRestriction({
       visible={tooltipVisible}
     >
       <Form.Item {...feedback} style={{ marginBottom: 0 }}>
-        <Select
-          style={{ width: `100%` }}
+        <Radio.Group
+          style={{ display: "flex", width: "100%" }}
           value={field.restriction}
-          onChange={(value) => onChange({ ...field }, value)}
+          onChange={({ target: { value } }) => onChange({ ...field }, value)}
         >
+          {/* Styles can be replaced with compact space in the future */}
           {restrictions.map(({ label, value }) => (
-            <Select.Option key={value} value={value}>
+            <Radio.Button
+              style={{ whiteSpace: "nowrap" }}
+              key={value}
+              value={value}
+            >
               {label}
-            </Select.Option>
+            </Radio.Button>
           ))}
-        </Select>
+        </Radio.Group>
       </Form.Item>
     </Tooltip>
   );

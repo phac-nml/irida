@@ -110,6 +110,7 @@ export function CreateProjectMetadataRestrictions({ form }) {
         dataSource={metadataRestrictions}
         scroll={{ y: 300 }}
         pagination={false}
+        tableLayout="auto"
       />
     ) : (
       <Alert
