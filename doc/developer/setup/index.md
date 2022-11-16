@@ -183,6 +183,14 @@ You can increase the heap size by editing the `gradle.properties` file in the pr
 
 `org.gradle.jvmargs=-Xmx4096m`
 
+Another method is to set the environment variable
+
+`env GRADLE_OPTS='-Xmx4096m'`
+
+And then running the following to kill active daemons to apply the change
+
+`./gradlew --stop`
+
 Setting up Galaxy
 -----------------
 
