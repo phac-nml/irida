@@ -1,4 +1,4 @@
-import { Button, Empty, notification, Select, Space, Table } from "antd";
+import { Button, Empty, notification, Radio, Space, Table } from "antd";
 import React from "react";
 import {
   getMetadataRestrictions,
@@ -24,9 +24,8 @@ export default function MetadataFieldsListManager() {
     isLoading,
     refetch: refetchFields,
   } = useGetMetadataFieldsForProjectQuery(projectId);
-  const [
-    updateProjectMetadataFieldRestriction,
-  ] = useUpdateProjectMetadataFieldRestrictionMutation();
+  const [updateProjectMetadataFieldRestriction] =
+    useUpdateProjectMetadataFieldRestrictionMutation();
 
   const [{ selected, selectedItems }, { setSelected }] = useTableSelect(fields);
 
@@ -75,13 +74,25 @@ export default function MetadataFieldsListManager() {
       key: "restriction",
       render(restriction, field) {
         return (
-          <Select
+          <Radio.Group
             className="t-field-restriction"
-            onChange={(value) => changeFieldRestriction(field, value)}
-            style={{ width: `100%` }}
-            options={restrictions}
+            style={{ display: "flex", width: "100%" }}
             value={restriction}
-          />
+            onChange={({ target: { value } }) =>
+              changeFieldRestriction(field, value)
+            }
+          >
+            {/* Styles can be replaced with compact space in the future */}
+            {restrictions.map(({ label, value }) => (
+              <Radio.Button
+                style={{ whiteSpace: "nowrap" }}
+                key={value}
+                value={value}
+              >
+                {label}
+              </Radio.Button>
+            ))}
+          </Radio.Group>
         );
       },
     },
