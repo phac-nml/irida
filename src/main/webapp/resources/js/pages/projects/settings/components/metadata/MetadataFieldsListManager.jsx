@@ -126,6 +126,7 @@ export default function MetadataFieldsListManager() {
         scroll={{ y: 800 }}
         dataSource={fields}
         columns={columns}
+        tableLayout="auto"
       />
     </Space>
   );
