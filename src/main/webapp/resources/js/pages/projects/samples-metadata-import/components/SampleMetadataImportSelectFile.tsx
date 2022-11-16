@@ -37,7 +37,7 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
     showUploadList: false,
     accept: ".xls,.xlsx,.csv",
     beforeUpload: (file: RcFile) => {
-      if (file) {
+      try {
         setLoading(true);
         const reader = new FileReader();
         if (reader.readAsBinaryString) {
@@ -66,7 +66,7 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
           });
           navigate(`/${projectId}/sample-metadata/upload/columns`);
         }
-      } else {
+      } catch (error) {
         setLoading(false);
         setStatus("error");
         notification.error({
