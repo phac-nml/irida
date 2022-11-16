@@ -151,7 +151,7 @@ public class CreateProjectComponent extends AbstractPage {
 			currentRestrictions.add(driver.findElement(By.className("t-current-restriction-" + label)).getText());
 		}
 
-		List<WebElement> targetRestrictionsText = driver.findElements(By.className("ant-select-selection-item"));
+		List<WebElement> targetRestrictionsText = driver.findElements(By.className("ant-radio-button-wrapper-checked"));
 
 		for (WebElement element : targetRestrictionsText) {
 			if (!element.getText().isEmpty())
