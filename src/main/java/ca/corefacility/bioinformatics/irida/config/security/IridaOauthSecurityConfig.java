@@ -252,7 +252,7 @@ public class IridaOauthSecurityConfig {
 		public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer() {
 			return context -> {
 				Set<AuthorizationGrantType> grantTypes = Set.of(AuthorizationGrantType.AUTHORIZATION_CODE,
-						AuthorizationGrantType.PASSWORD);
+						AuthorizationGrantType.REFRESH_TOKEN, AuthorizationGrantType.PASSWORD);
 				if (grantTypes.contains(context.getAuthorizationGrantType())
 						&& OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
 					Authentication principal = context.getPrincipal();
