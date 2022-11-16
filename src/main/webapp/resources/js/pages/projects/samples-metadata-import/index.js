@@ -5,7 +5,7 @@ import { render } from "react-dom";
 import { SampleMetadataImportComplete } from "./components/SampleMetadataImportComplete";
 import { SampleMetadataImportMapColumns } from "./components/SampleMetadataImportMapColumns";
 import { SampleMetadataImportReview } from "./components/SampleMetadataImportReview";
-import { SampleMetadataImportUploadFile } from "./components/SampleMetadataImportUploadFile";
+import { SampleMetadataImportSelectFile } from "./components/SampleMetadataImportSelectFile";
 import { setBaseUrl } from "../../../utilities/url-utilities";
 import store from "./redux/store";
 
@@ -20,7 +20,7 @@ render(
       <Routes>
         <Route
           path="/:projectId/sample-metadata/upload/file"
-          element={<SampleMetadataImportUploadFile />}
+          element={<SampleMetadataImportSelectFile />}
         />
         <Route
           path="/:projectId/sample-metadata/upload/columns"

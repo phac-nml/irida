@@ -19,7 +19,7 @@ const { Text } = Typography;
  * @returns {*}
  * @constructor
  */
-export function SampleMetadataImportUploadFile(): JSX.Element {
+export function SampleMetadataImportSelectFile(): JSX.Element {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate: NavigateFunction = useNavigate();
   const dispatch: ImportDispatch = useImportDispatch();
@@ -75,7 +75,7 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
       if (status === "done") {
         notification.success({
           message: i18n(
-            "SampleMetadataImportUploadFile.success",
+            "SampleMetadataImportSelectFile.success",
             info.file.name
           ),
         });
@@ -84,7 +84,7 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
         setLoading(false);
         setStatus("error");
         notification.error({
-          message: i18n("SampleMetadataImportUploadFile.error", info.file.name),
+          message: i18n("SampleMetadataImportSelectFile.error", info.file.name),
         });
       }
     },
@@ -94,9 +94,9 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
     <SampleMetadataImportWizard current={0} status={status}>
       <Spin spinning={loading}>
         <DragUpload
-          uploadText={i18n("SampleMetadataImportUploadFile.dropzone")}
+          uploadText={i18n("SampleMetadataImportSelectFile.dropzone")}
           uploadHint={
-            <Text strong>{i18n("SampleMetadataImportUploadFile.warning")}</Text>
+            <Text strong>{i18n("SampleMetadataImportSelectFile.warning")}</Text>
           }
           options={options}
           props={{ className: "t-metadata-uploader-dropzone" }}
