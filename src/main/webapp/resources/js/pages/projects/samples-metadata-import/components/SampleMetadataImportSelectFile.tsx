@@ -9,7 +9,7 @@ import { WorkBook } from "xlsx";
 import { ImportDispatch, useImportDispatch } from "../redux/store";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
 import { MetadataItem } from "../../../../apis/projects/samples";
-import { RcFile, UploadFileStatus } from "antd/lib/upload/interface";
+import { RcFile } from "antd/lib/upload/interface";
 
 const { Text } = Typography;
 
@@ -36,15 +36,8 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
     multiple: false,
     showUploadList: false,
     accept: ".xls,.xlsx,.csv",
-    onChange(info: {
-      file: {
-        originFileObj?: RcFile;
-        name?: string;
-        status?: UploadFileStatus;
-      };
-    }) {
-      const { status } = info.file;
-      if (status !== "uploading") {
+    beforeUpload: (file: RcFile) => {
+      if (file) {
         setLoading(true);
         const reader = new FileReader();
         if (reader.readAsBinaryString) {
@@ -67,26 +60,20 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
             await dispatch(setHeaders({ headers: Object.keys(cleanRows[0]) }));
             await dispatch(setMetadata(cleanRows));
           };
-          if (info.file.originFileObj) {
-            reader.readAsBinaryString(info.file.originFileObj);
-          }
+          reader.readAsBinaryString(file);
+          notification.success({
+            message: i18n("SampleMetadataImportSelectFile.success", file.name),
+          });
+          navigate(`/${projectId}/sample-metadata/upload/columns`);
         }
-      }
-      if (status === "done") {
-        notification.success({
-          message: i18n(
-            "SampleMetadataImportSelectFile.success",
-            info.file.name
-          ),
-        });
-        navigate(`/${projectId}/sample-metadata/upload/columns`);
-      } else if (status === "error") {
+      } else {
         setLoading(false);
         setStatus("error");
         notification.error({
-          message: i18n("SampleMetadataImportSelectFile.error", info.file.name),
+          message: i18n("SampleMetadataImportSelectFile.error", file.name),
         });
       }
+      return false;
     },
   };
 
