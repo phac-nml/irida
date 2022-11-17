@@ -168,7 +168,7 @@ public class CreateProjectComponent extends AbstractPage {
 	public boolean correctMetadataFieldDataDisplayedForNewProject() {
 		int mainIndex = 0;
 		int textIndex = 0;
-		List<WebElement> restrictions = driver.findElements(By.className("ant-select-selection-item"));
+		List<WebElement> restrictions = driver.findElements(By.className("ant-radio-button-wrapper-checked"));
 
 		for (WebElement element : projectMetadataFieldRows) {
 			String labelText = element.findElement(By.className("t-m-field-label")).getText();
