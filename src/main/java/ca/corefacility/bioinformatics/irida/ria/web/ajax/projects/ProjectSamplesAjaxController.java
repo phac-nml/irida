@@ -1,5 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleFilesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
@@ -20,16 +32,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.error.SampleMergeEx
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * AJAX Controller for handling asynchronous requests for project samples.
@@ -78,16 +80,15 @@ public class ProjectSamplesAjaxController {
 	/**
 	 * Update a sample within a project
 	 *
-	 * @param request   Details about the sample
-	 * @param projectId Identifier for the current project
-	 * @param sampleId  sample identifier
-	 * @param locale    current users locale
+	 * @param request  Details about the sample
+	 * @param sampleId sample identifier
+	 * @param locale   current users locale
 	 * @return result of creating the project
 	 */
 	@PatchMapping("/add-sample/{sampleId}")
 	public ResponseEntity<AjaxResponse> updateSampleInProject(@RequestBody UpdateSampleRequest request,
 			@PathVariable Long projectId, @PathVariable long sampleId, Locale locale) {
-		return uiProjectSampleService.updateSample(request, projectId, sampleId, locale);
+		return uiProjectSampleService.updateSample(request, sampleId, locale);
 	}
 
 	/**

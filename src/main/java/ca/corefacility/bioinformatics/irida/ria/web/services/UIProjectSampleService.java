@@ -143,7 +143,7 @@ public class UIProjectSampleService {
 			}
 			Join<Project, Sample> join = projectService.addSampleToProjectWithoutEvent(project, sample, true);
 			if (request.getMetadata() != null) {
-				Set<MetadataEntry> metadataEntrySet = createMetadata(request.getMetadata(), project);
+				Set<MetadataEntry> metadataEntrySet = createMetadata(request.getMetadata());
 				sampleService.updateSampleMetadata(sample, metadataEntrySet);
 			}
 			return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(join.getObject().getId()));
@@ -156,16 +156,13 @@ public class UIProjectSampleService {
 	/**
 	 * Update a sample in a project
 	 *
-	 * @param request   {@link UpdateSampleRequest} details about the sample to update
-	 * @param projectId Identifier for the current project
-	 * @param sampleId  Identifier for the sample
-	 * @param locale    Users current locale
+	 * @param request  {@link UpdateSampleRequest} details about the sample to update
+	 * @param sampleId Identifier for the sample
+	 * @param locale   Users current locale
 	 * @return result of creating the sample
 	 */
 	@Transactional
-	public ResponseEntity<AjaxResponse> updateSample(UpdateSampleRequest request, Long projectId, Long sampleId,
-			Locale locale) {
-		Project project = projectService.read(projectId);
+	public ResponseEntity<AjaxResponse> updateSample(UpdateSampleRequest request, Long sampleId, Locale locale) {
 		try {
 			Sample sample = sampleService.read(sampleId);
 			sample.setSampleName(request.getName());
@@ -176,7 +173,7 @@ public class UIProjectSampleService {
 				sample.setDescription(request.getDescription());
 			}
 			if (request.getMetadata() != null) {
-				Set<MetadataEntry> metadataEntrySet = createMetadata(request.getMetadata(), project);
+				Set<MetadataEntry> metadataEntrySet = createMetadata(request.getMetadata());
 				sampleService.mergeSampleMetadata(sample, metadataEntrySet);
 			}
 			sampleService.update(sample);
@@ -191,10 +188,9 @@ public class UIProjectSampleService {
 	 * Creates a metadata entry set for a sample, assuming the metadata field and restriction exist
 	 *
 	 * @param metadataFields list of {@link MetadataFieldModel}s
-	 * @param project        the project the sample belongs to
 	 * @return metadata entry set
 	 */
-	private Set<MetadataEntry> createMetadata(List<MetadataFieldModel> metadataFields, Project project) {
+	private Set<MetadataEntry> createMetadata(List<MetadataFieldModel> metadataFields) {
 		Set<MetadataEntry> metadataEntrySet = metadataFields.stream().map(entry -> {
 			String label = entry.getField();
 			MetadataTemplateField field = metadataTemplateService.readMetadataFieldByLabel(label);

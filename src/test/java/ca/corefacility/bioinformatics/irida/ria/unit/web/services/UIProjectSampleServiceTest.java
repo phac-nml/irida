@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -91,8 +90,8 @@ public class UIProjectSampleServiceTest {
 	@Test
 	public void testCreateSampleWithMetadata() {
 		List<MetadataFieldModel> metadata = new ArrayList<>();
-		metadata.add(new MetadataFieldModel("field1", "value1", ProjectMetadataRole.LEVEL_1.toString()));
-		metadata.add(new MetadataFieldModel("field2", "value2", ProjectMetadataRole.LEVEL_1.toString()));
+		metadata.add(new MetadataFieldModel("field1", "value1"));
+		metadata.add(new MetadataFieldModel("field2", "value2"));
 		CreateSampleRequest request = new CreateSampleRequest(GOOD_NAME, null, null, metadata);
 		ResponseEntity<AjaxResponse> response = service.createSample(request, PROJECT_1_ID, Locale.ENGLISH);
 		assertEquals(HttpStatus.OK, response.getStatusCode(), "Sample should be created");
@@ -101,11 +100,10 @@ public class UIProjectSampleServiceTest {
 	@Test
 	public void testUpdateSampleWithMetadata() {
 		List<MetadataFieldModel> metadata = new ArrayList<>();
-		metadata.add(new MetadataFieldModel("field1", "value1", ProjectMetadataRole.LEVEL_1.toString()));
-		metadata.add(new MetadataFieldModel("field2", "value2", ProjectMetadataRole.LEVEL_1.toString()));
+		metadata.add(new MetadataFieldModel("field1", "value1"));
+		metadata.add(new MetadataFieldModel("field2", "value2"));
 		UpdateSampleRequest request = new UpdateSampleRequest(GOOD_NAME, null, null, metadata);
-		ResponseEntity<AjaxResponse> response = service.updateSample(request, PROJECT_1_ID, SAMPLE_1_ID,
-				Locale.ENGLISH);
+		ResponseEntity<AjaxResponse> response = service.updateSample(request, SAMPLE_1_ID, Locale.ENGLISH);
 		assertEquals(HttpStatus.OK, response.getStatusCode(), "Sample should be updated");
 	}
 }

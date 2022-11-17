@@ -9,12 +9,9 @@ public class MetadataFieldModel {
 
 	private String value;
 
-	private String restriction;
-
-	public MetadataFieldModel(String field, String value, String restriction) {
+	public MetadataFieldModel(String field, String value) {
 		this.field = field;
 		this.value = value;
-		this.restriction = restriction;
 	}
 
 	public String getField() {
@@ -33,11 +30,4 @@ public class MetadataFieldModel {
 		this.value = value;
 	}
 
-	public String getRestriction() {
-		return restriction;
-	}
-
-	public void setRestriction(String restriction) {
-		this.restriction = restriction;
-	}
 }
