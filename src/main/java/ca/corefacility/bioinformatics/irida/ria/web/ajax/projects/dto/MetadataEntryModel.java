@@ -1,15 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto;
 
 /**
- * Model for UI to represent a metadata field.
+ * Model for UI to represent a metadata entry.
  */
-public class MetadataFieldModel {
+public class MetadataEntryModel {
 
 	private String field;
 
 	private String value;
 
-	public MetadataFieldModel(String field, String value) {
+	public MetadataEntryModel(String field, String value) {
 		this.field = field;
 		this.value = value;
 	}

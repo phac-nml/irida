@@ -23,7 +23,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItem
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.MetadataFieldModel;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.MetadataEntryModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNameModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesResponse;
@@ -187,10 +187,10 @@ public class UIProjectSampleService {
 	/**
 	 * Creates a metadata entry set for a sample, assuming the metadata field and restriction exist
 	 *
-	 * @param metadataFields list of {@link MetadataFieldModel}s
+	 * @param metadataFields list of {@link MetadataEntryModel}s
 	 * @return metadata entry set
 	 */
-	private Set<MetadataEntry> createMetadata(List<MetadataFieldModel> metadataFields) {
+	private Set<MetadataEntry> createMetadata(List<MetadataEntryModel> metadataFields) {
 		Set<MetadataEntry> metadataEntrySet = metadataFields.stream().map(entry -> {
 			String label = entry.getField();
 			MetadataTemplateField field = metadataTemplateService.readMetadataFieldByLabel(label);
