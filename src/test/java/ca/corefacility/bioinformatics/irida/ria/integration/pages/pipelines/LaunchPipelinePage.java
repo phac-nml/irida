@@ -1,18 +1,20 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.pipelines;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Duration;
-import java.util.List;
-import java.util.Optional;
-
-import org.openqa.selenium.*;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Duration;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This page holds all the form controls that are available on any pipeline launch page.
@@ -65,9 +67,6 @@ public class LaunchPipelinePage extends AbstractPage {
 
 	@FindBy(className = "t-modified-saveas")
 	private WebElement modifiedSaveAsButton;
-
-	@FindBy(className = "t-saveas-submit")
-	private WebElement modifiedSubmit;
 
 	@FindBy(className = "t-modified-name")
 	private WebElement modifiedNameInput;
@@ -197,6 +196,7 @@ public class LaunchPipelinePage extends AbstractPage {
 		wait.until(ExpectedConditions.elementToBeClickable(modifiedSaveAsButton));
 		modifiedSaveAsButton.click();
 		driver.findElement(By.tagName("body")).sendKeys(Keys.END);
+		WebElement modifiedSubmit = wait.until(ExpectedConditions.presenceOfElementLocated(By.className("t-saveas-submit")));
 		wait.until(ExpectedConditions.elementToBeClickable(modifiedSubmit));
 		modifiedNameInput.sendKeys(name);
 		modifiedSubmit.click();

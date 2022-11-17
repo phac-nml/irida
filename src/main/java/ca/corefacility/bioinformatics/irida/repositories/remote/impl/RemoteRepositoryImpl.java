@@ -20,6 +20,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.resource.ResourceWrappe
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.repositories.remote.RemoteRepository;
 import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAuthTokenRestTemplate;
+import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthenticationToken;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
@@ -113,7 +114,8 @@ public abstract class RemoteRepositoryImpl<Type extends IridaRepresentationModel
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		RemoteStatus remoteStatus = new RemoteStatus(selfHref, api);
 
-		if (authentication instanceof UsernamePasswordAuthenticationToken) {
+		if (authentication instanceof UsernamePasswordAuthenticationToken
+				|| authentication instanceof ProjectSynchronizationAuthenticationToken) {
 			remoteStatus.setReadBy((User) authentication.getPrincipal());
 		} else if (authentication instanceof JwtAuthenticationToken) {
 			User user = userService.getUserByUsername(authentication.getName());
