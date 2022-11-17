@@ -46,7 +46,7 @@ public class SearchResultPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(driver().getCurrentUrl().contains("search?query=" + query));
 		assertEquals(query, searchResultPage.getSearchInputQuery());
 		int numRows = searchResultPage.getTotalNumberOfProjectsInTable();
-		assertEquals(2, numRows, "Expected number of projects");
+		assertEquals(1, numRows, "Expected number of projects");
 		assertEquals(numRows, searchResultPage.getTotalNumberOfProjectsByBadge());
 		assertEquals(1, searchResultPage.getTotalNumberOfSamplesByBadge(), "Expected total number of samples");
 		assertFalse(searchResultPage.isAdminSearchTypeDisplayed(), "Users should not have the ability to switch between global and personal projects");

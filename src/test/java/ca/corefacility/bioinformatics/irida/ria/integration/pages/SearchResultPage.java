@@ -20,13 +20,13 @@ public class SearchResultPage extends AbstractPage {
 
     public String getSearchInputQuery() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        WebElement searchInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(@class, 't-search-input')]//input")));
+        WebElement searchInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(@class, 't-search-input')]//input[contains(@class, 'ant-input-lg')]")));
         return searchInput.getAttribute("value");
     }
 
     public void enterNewSearchQuery(String query) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        WebElement searchInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(@class, 't-search-input')]//input")));
+        WebElement searchInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(@class, 't-search-input')]//input[contains(@class, 'ant-input-lg')]")));
         searchInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
         searchInput.sendKeys(query);
         wait.until(ExpectedConditions.urlContains(query));
