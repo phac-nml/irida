@@ -78,7 +78,7 @@ public class SearchResultPage extends AbstractPage {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         WebElement dropdown = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-admin-search-type")));
         dropdown.click();
-        WebElement personalButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".rc-virtual-list [title='PERSONAL']")));
+        WebElement personalButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".rc-virtual-list [title='Personal']")));
         personalButton.click();
     }
 }
