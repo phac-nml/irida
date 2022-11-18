@@ -195,7 +195,7 @@ export default function SearchLayout() {
               alignItems: "center",
             }}
           >
-            <span>PROJECTS</span>
+            <span>{i18n("SearchLayout.projects").toUpperCase()}</span>
             <SearchCount count={projects?.total || 0} />
           </div>
         ),
@@ -211,7 +211,7 @@ export default function SearchLayout() {
               alignItems: "center",
             }}
           >
-            <span>SAMPLES</span>
+            <span>{i18n("SearchLayout.samples").toUpperCase()}</span>
             <SearchCount count={samples?.total || 0} />
           </div>
         ),
@@ -228,14 +228,18 @@ export default function SearchLayout() {
       onChange={(value) => setGlobal(value === "global")}
       className="t-admin-search-type"
     >
-      <Select.Option value="personal">PERSONAL</Select.Option>
-      <Select.Option value="global">GLOBAL</Select.Option>
+      <Select.Option value="global">
+        {i18n("SearchLayout.admin.global")}
+      </Select.Option>
+      <Select.Option value="personal">
+        {i18n("SearchLayout.admin.personal")}
+      </Select.Option>
     </Select>
   );
 
   return (
     <PageHeader
-      title={"SEARCH"}
+      title={i18n("search.title")}
       style={{
         flexGrow: 1,
         display: `flex`,
@@ -252,7 +256,7 @@ export default function SearchLayout() {
         <Space size="large" direction="vertical" style={{ width: `100%` }}>
           <Space direction="vertical" size="small" style={{ width: `100%` }}>
             <Typography.Text strong>
-              What are you searching for?
+              {i18n("SearchLayout.tooltip")}
             </Typography.Text>
             <Input.Search
               addonBefore={user.admin && searchPrefix}

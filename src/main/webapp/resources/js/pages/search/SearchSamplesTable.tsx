@@ -32,7 +32,7 @@ export default function SearchSamplesTable({
       {
         key: `sampleName`,
         dataIndex: "name",
-        title: "NAME",
+        title: i18n("SearchTable.name"),
         sorter: true,
         render: (name, sample) => {
           return (
@@ -48,13 +48,13 @@ export default function SearchSamplesTable({
       {
         key: `organism`,
         dataIndex: `organism`,
-        title: "ORGANISM",
+        title: i18n("SearchTable.organism"),
         sorter: true,
       },
       {
         key: `projects`,
         dataIndex: `projects`,
-        title: `PROJECTS`,
+        title: i18n("SearchSamplesTable.project"),
         render: (projects: SearchProject[]) => {
           return projects.map((project) => (
             <ProjectTag key={`pTag-${project.id}`} project={project} />
@@ -64,7 +64,7 @@ export default function SearchSamplesTable({
       {
         key: `createdDate`,
         dataIndex: `createdDate`,
-        title: `CREATED DATE`,
+        title: i18n("SearchTable.created"),
         render: (text: string) => formatInternationalizedDateTime(text),
         sorter: true,
         width: 200,
@@ -72,7 +72,7 @@ export default function SearchSamplesTable({
       {
         key: `modifiedDate`,
         dataIndex: `modifiedDate`,
-        title: `MODIFIED DATE`,
+        title: i18n("SearchTable.updated"),
         render: (text: string) => formatInternationalizedDateTime(text),
         sorter: true,
         defaultSortOrder: "descend",
