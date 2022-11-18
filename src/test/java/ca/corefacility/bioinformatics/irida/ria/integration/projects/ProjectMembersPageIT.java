@@ -94,7 +94,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		assertFalse(url.isEmpty(), "URL should not be empty");
 		page.submitProject();
 
-		String pathTokens[] = driver().getCurrentUrl().split("/");
+		String[] pathTokens = driver().getCurrentUrl().split("/");
 		Long projectId = Long.valueOf(pathTokens[pathTokens.length - 1]);
 
 		ProjectMembersPage remoteProjectMembersPage = ProjectMembersPage.goToRemoteProject(driver(), projectId);
