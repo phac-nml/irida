@@ -1,11 +1,16 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
-import java.io.IOException;
-import java.nio.file.*;
-import java.util.*;
-
-import javax.servlet.http.HttpServletRequest;
-
+import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
+import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
+import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.WebpackerDialect;
+import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
+import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
+import com.google.common.base.Joiner;
+import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -19,7 +24,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -36,19 +40,10 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
-import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
-import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
-import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.WebpackerDialect;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
-import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
-
-import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
-import com.google.common.base.Joiner;
-import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.*;
 
 /**
  */
@@ -255,14 +250,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		registry.addInterceptor(analyticsHandlerInterceptor());
 		registry.addInterceptor(breadCrumbInterceptor());
 		registry.addInterceptor(userSecurityInterceptor());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-		argumentResolvers.add(new DataTablesRequestResolver());
 	}
 
 	/**

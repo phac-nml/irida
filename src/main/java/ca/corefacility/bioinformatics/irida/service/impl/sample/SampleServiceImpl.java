@@ -345,7 +345,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#project, 'canReadProject')")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_SEQUENCER') or hasPermission(#projectIds, 'canReadProject')")
 	public Map<String, List<Long>> getSampleIdsBySampleNameForProjects(List<Long> projectIds,
 			List<String> sampleNames) {
 		return sampleRepository.getSampleIdsBySampleNameInProjects(projectIds, sampleNames)
@@ -673,8 +673,9 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Map<Long, List<QCEntry>> getQCEntriesForSamples(List<Sample> samples) {
 		return qcEntryRepository.getQCEntriesForSamples(samples)
 				.stream()
-				.collect(Collectors.groupingBy(sampleQCEntryTuple -> (Long) sampleQCEntryTuple.get(0), Collectors
-						.mapping(sampleQCEntryTuple -> (QCEntry) sampleQCEntryTuple.get(1), Collectors.toList())));
+				.collect(Collectors.groupingBy(sampleQCEntryTuple -> (Long) sampleQCEntryTuple.get(0),
+						Collectors.mapping(sampleQCEntryTuple -> (QCEntry) sampleQCEntryTuple.get(1),
+								Collectors.toList())));
 	}
 
 	/**
@@ -835,9 +836,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 	public Map<Long, Long> getCoverageForSamplesInProject(Project project, List<Long> sampleIds) {
 		return psjRepository.calculateCoverageForSamplesInProject(project, sampleIds)
 				.stream()
-				.collect(HashMap::new,
-						(sampleCoverageMap, sampleCoverageTuple) -> sampleCoverageMap
-								.put((Long) sampleCoverageTuple.get(0), (Long) sampleCoverageTuple.get(1)),
-						Map::putAll);
+				.collect(HashMap::new, (sampleCoverageMap, sampleCoverageTuple) -> sampleCoverageMap.put(
+						(Long) sampleCoverageTuple.get(0), (Long) sampleCoverageTuple.get(1)), Map::putAll);
 	}
 }

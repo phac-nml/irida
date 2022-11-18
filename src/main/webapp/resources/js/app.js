@@ -1,7 +1,5 @@
 // Import css
 import "../css/app.css";
-// Font Awesome
-import "@fortawesome/fontawesome-free/js/all";
 /*
 This will load notifications into the global namespace.  Remove this once all
 files have been converted over to wekbpack builds.

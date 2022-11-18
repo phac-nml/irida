@@ -1,77 +1,19 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      data-layout-decorate="~{template/page}">
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  data-layout-decorate="~{template/page}"
+>
+  <head>
+    <title th:text="#{search.title}">_Search_</title>
+    <webpacker:css entry="search" />
+  </head>
 
-<head>
-    <title th:text="#{search.title(${searchQuery})}">_Search_</title>
-    <webpacker:css entry="search"/>
-    <script th:inline="javascript">
-        var PAGE = {
-            urls: {
-                projects: /*[[@{/search/ajax/projects(query=${searchQuery},global=${searchGlobal})}]]*/ "",
-                samples: /*[[@{/search/ajax/samples(query=${searchQuery},global=${searchGlobal})}]]*/ "",
-                project: /*[[@{/projects/}]]*/ ""
-            }
-        };
-    </script>
-</head>
-
-<body>
-    <div layout:fragment="page">
-
-        <main class="col-md-12" property="mainContentOfPage">
-            <h1 th:text="#{search.title(${searchQuery})}"></h1>
-
-            <div class="alert alert-info" sec:authorize="hasAnyRole('ROLE_ADMIN')" th:if="${!searchGlobal}">
-                <a href="#" th:href="@{/search(query=${searchQuery}, global='true')}" th:text="#{search.admin.hint}">_You are currently searching your personal projects/samples. Click here to search all projects/samples._</a>
-            </div>
-
-            <ul class="nav nav-tabs spaced-bottom">
-                <li class="active"><a data-toggle="tab" href="#sample-tab">
-                        <span th:text="#{search.samples.tab}">_Samples_</span>
-                        <span id="sample-count" class="badge"><i class="fa fa-spinner fa-spin search-spinner" aria-hidden="true"></i></span>
-                    </a></li>
-                <li><a data-toggle="tab" href="#project-tab">
-                    <span th:text="#{search.projects.tab}">_Projects_</span>
-                    <span id="project-count" class="badge"><i class="fa fa-spinner fa-spin search-spinner" aria-hidden="true"></i></span>
-                </a></li>
-            </ul>
-            <div class="tab-content">
-                <div id="sample-tab" class="tab-pane active">
-                    <table id="samples" class="table table-striped" cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th data-data="sampleName" th:text="#{search.samples.name}"></th>
-                                <th data-data="organism" th:text="#{search.samples.organism}"></th>
-                                <th data-data="projectName" data-orderable="false" th:text="#{search.samples.project}"></th>
-                                <th class="dt-date" data-data="createdDate" th:text="#{search.samples.created}"></th>
-                                <th class="dt-date" data-data="modifiedDate" th:text="#{search.samples.modified}"></th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-                <div id="project-tab" class="tab-pane">
-                    <table id="projects" class="table table-striped" cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th data-data="id" width="20" th:text="#{search.projects.id}"></th>
-                                <th data-data="name" th:text="#{search.projects.name}"></th>
-                                <th data-data="organism" th:text="#{search.projects.organism}"></th>
-                                <th data-data="samples" data-orderable="false" th:text="#{search.projects.samples}"></th>
-                                <th class="dt-date" data-data="createdDate" th:text="#{search.projects.created}"></th>
-                                <th class="dt-date" data-data="modifiedDate" th:text="#{search.projects.modified}"></th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-            </div>
-        </main>
-
-    </div>
+  <body>
+    <div id="root" layout:fragment="page" style="height: 100%"></div>
 
     <th:block layout:fragment="scripts">
-        <webpacker:js entry="search"/>
+      <webpacker:js entry="search" />
     </th:block>
-</body>
-
+  </body>
 </html>

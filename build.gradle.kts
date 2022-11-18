@@ -170,7 +170,7 @@ dependencies {
     implementation("org.pf4j:pf4j:2.4.0")
     implementation("org.biojava:biojava3-core:3.0")
     implementation("com.google.code.gson:gson")
-    implementation("com.github.pjfanning:excel-streaming-reader:4.0.1")
+    implementation("com.github.pjfanning:excel-streaming-reader:4.0.4")
     implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.11") {
         exclude(group = "jakarta.xml.bind", module = "jakarta.xml.bind-api")
         exclude(group = "jakarta.validation", module = "jakarta.validation-api")
@@ -304,15 +304,19 @@ tasks.register<PnpmTask>("cleanWebapp") {
 }
 
 tasks.register<PnpmTask>("buildWebapp") {
-    dependsOn(":cleanWebapp")
-    pnpmCommand.set(listOf("build"))
-    inputs.dir("${project.projectDir}/src/main/webapp/resources")
+    inputs.files(fileTree("${project.projectDir}/src/main/webapp/resources"))
+    inputs.file("${project.projectDir}/src/main/webapp/package.json")
+    inputs.file("${project.projectDir}/src/main/webapp/pnpm-lock.yaml")
+
     outputs.dir("${project.projectDir}/src/main/webapp/dist")
+
+    dependsOn(":pnpmInstall")
+    pnpmCommand.set(listOf("clean", "build"))
 }
 
 tasks.register<PnpmTask>("startWebapp") {
-    dependsOn(":cleanWebapp")
-    pnpmCommand.set(listOf("start"))
+    dependsOn(":pnpmInstall")
+    pnpmCommand.set(listOf("clean", "start"))
     inputs.dir("${project.projectDir}/src/main/webapp/resources")
     outputs.dir("${project.projectDir}/src/main/webapp/dist")
 }

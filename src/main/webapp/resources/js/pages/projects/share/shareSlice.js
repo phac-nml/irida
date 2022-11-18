@@ -90,11 +90,16 @@ const initialState = (() => {
 
   const { samples: allSamples, projectId: currentProject } =
     JSON.parse(stringData);
-  const samples = [];
-  const associated = [];
+  const samples = [],
+    lockedSamples = [],
+    associated = [];
   allSamples.forEach((sample) => {
     if (Number(sample.projectId) === Number(currentProject)) {
-      samples.push(sample);
+      if (sample.owner) {
+        samples.push(sample);
+      } else {
+        lockedSamples.push(sample);
+      }
     } else {
       associated.push(sample);
     }
@@ -102,6 +107,7 @@ const initialState = (() => {
 
   return {
     samples,
+    lockedSamples,
     associated,
     currentProject,
     locked: false,

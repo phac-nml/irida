@@ -123,8 +123,8 @@ const ProjectSettings = () => {
       <Sider width={200} style={{ backgroundColor: grey1 }}>
         <SettingsNav
           basePath={basePath}
-          canManage={project.canManage}
-          showRemote={project.canManage && project.remote}
+          canManage={project.canManage || project.canManageRemote}
+          showRemote={project.canManageRemote && project.remote}
         />
       </Sider>
       <Layout>

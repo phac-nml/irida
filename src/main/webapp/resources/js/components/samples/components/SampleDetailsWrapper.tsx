@@ -7,7 +7,7 @@ interface SampleDetailsWrapperProps {
   sampleId: number;
   projectId: number;
   displayActions: boolean;
-  refetchSample?: () => void;
+  refetchCart?: () => void;
   visible: boolean;
   setVisible: Dispatch<SetStateAction<boolean>>;
 }
@@ -16,7 +16,7 @@ export default function SampleDetailsWrapper({
   sampleId,
   projectId,
   displayActions,
-  refetchSample,
+  refetchCart,
   visible,
   setVisible,
 }: SampleDetailsWrapperProps) {
@@ -26,7 +26,7 @@ export default function SampleDetailsWrapper({
         sampleId={sampleId}
         projectId={projectId}
         displayActions={displayActions}
-        refetch={refetchSample}
+        refetchCart={refetchCart}
         visible={visible}
         setVisible={setVisible}
       />

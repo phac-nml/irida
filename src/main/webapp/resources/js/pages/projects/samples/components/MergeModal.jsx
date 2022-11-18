@@ -9,12 +9,11 @@ import {
   Radio,
   Row,
   Space,
+  Typography,
 } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
-import {
-  serverValidateSampleName
-} from "../../../../utilities/validation-utilities";
+import { serverValidateSampleName } from "../../../../utilities/validation-utilities";
 import { useMergeMutation } from "../../../../apis/projects/samples";
 import LockedSamplesList from "./LockedSamplesList";
 
@@ -178,6 +177,9 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
         )}
         {samples.locked.length ? (
           <Col span={24}>
+            <Typography.Text strong>
+              {i18n("LockedSamplesList.header")}
+            </Typography.Text>
             <LockedSamplesList locked={samples.locked} />
           </Col>
         ) : null}

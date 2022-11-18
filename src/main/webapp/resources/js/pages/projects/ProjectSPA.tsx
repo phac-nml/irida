@@ -1,6 +1,12 @@
 import React, { Suspense } from "react";
 import { createRoot } from "react-dom/client";
-import { DataBrowserRouter, Outlet, Route } from "react-router-dom";
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Outlet,
+  Route,
+  RouterProvider,
+} from "react-router-dom";
 import { loader as exportsLoader } from "../../components/ncbi/export-table";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { loader as detailsLoader } from "../../components/ncbi/details";
@@ -20,6 +26,37 @@ const DefaultErrorBoundary = React.lazy(
 );
 
 __webpack_public_path__ = setBaseUrl(`/dist/`);
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path={setBaseUrl(`/projects/:projectId`)} element={<ProjectBase />}>
+      <Route
+        path="ncbi"
+        element={<NcbiCreateExport />}
+        loader={ncbiLoader}
+        errorElement={<DefaultErrorBoundary />}
+      />
+      <Route
+        path="export"
+        element={<ProjectNCBILayout />}
+        errorElement={<DefaultErrorBoundary />}
+      >
+        <Route
+          index
+          element={<NcbiExportTable />}
+          loader={exportsLoader}
+          errorElement={<DefaultErrorBoundary />}
+        />
+        <Route
+          path=":id"
+          element={<NCBIExportDetails />}
+          loader={detailsLoader}
+          errorElement={<DefaultErrorBoundary />}
+        />
+      </Route>
+    </Route>
+  )
+);
 
 /**
  * Default layout for the Project Single Page Application
@@ -43,39 +80,7 @@ function ProjectBase(): JSX.Element {
  * @constructor
  */
 export default function ProjectSPA(): JSX.Element {
-  return (
-    <DataBrowserRouter>
-      <Route
-        path={setBaseUrl(`/projects/:projectId`)}
-        element={<ProjectBase />}
-      >
-        <Route
-          path="ncbi"
-          element={<NcbiCreateExport />}
-          loader={ncbiLoader}
-          errorElement={<DefaultErrorBoundary />}
-        />
-        <Route
-          path="export"
-          element={<ProjectNCBILayout />}
-          errorElement={<DefaultErrorBoundary />}
-        >
-          <Route
-            index
-            element={<NcbiExportTable />}
-            loader={exportsLoader}
-            errorElement={<DefaultErrorBoundary />}
-          />
-          <Route
-            path=":id"
-            element={<NCBIExportDetails />}
-            loader={detailsLoader}
-            errorElement={<DefaultErrorBoundary />}
-          />
-        </Route>
-      </Route>
-    </DataBrowserRouter>
-  );
+  return <RouterProvider router={router} />;
 }
 
 const ROOT_ELEMENT = document.querySelector("#root");
