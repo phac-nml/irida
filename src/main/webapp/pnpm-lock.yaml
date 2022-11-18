@@ -53,7 +53,6 @@ specifiers:
   babel-loader: ^8.2.4
   babel-plugin-import: ^1.13.5
   bootstrap: 3.4.1
-  bootstrap-daterangepicker: ^3.1.0
   browserslist: ^4.20.2
   clipboard: ^1.7.1
   css-loader: ^6.7.1
@@ -142,7 +141,6 @@ dependencies:
   antd: 4.19.5_sfoxds7t5ydpegc3knd667wn6m
   axios: 0.26.1
   bootstrap: 3.4.1
-  bootstrap-daterangepicker: 3.1.0
   clipboard: 1.7.1
   dayjs: 1.11.1
   deck.gl: 8.7.12_qdym3cmqy3izoldsblxf2ftyey
@@ -3829,13 +3827,6 @@ packages:
   /boolbase/1.0.0:
     resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
     dev: true
-
-  /bootstrap-daterangepicker/3.1.0:
-    resolution: {integrity: sha512-oaQZx6ZBDo/dZNyXGVi2rx5GmFXThyQLAxdtIqjtLlYVaQUfQALl5JZMJJZzyDIX7blfy4ppZPAJ10g8Ma4d/g==}
-    dependencies:
-      jquery: 3.5.1
-      moment: 2.29.2
-    dev: false
 
   /bootstrap/3.4.1:
     resolution: {integrity: sha512-yN5oZVmRCwe5aKwzRj6736nSmKDX7pLYwsXiCj/EYmo16hODaBiT4En5btW/jhBF/seV+XMx3aYwukYC3A49DA==}
