@@ -1,6 +1,6 @@
 import { Layout } from "antd";
 import React from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -27,15 +27,19 @@ const router = createBrowserRouter(
 );
 
 const element = document.querySelector("#root");
-render(
-  <Layout
-    style={{
-      minHeight: `100%`,
-      display: `flex`,
-      flexDirection: "column",
-    }}
-  >
-    <RouterProvider router={router} />
-  </Layout>,
-  element
-);
+if (element) {
+  const root = createRoot(element);
+  root.render(
+    <Layout
+      style={{
+        minHeight: `100%`,
+        display: `flex`,
+        flexDirection: "column",
+      }}
+    >
+      <RouterProvider router={router} />
+    </Layout>
+  );
+} else {
+  throw new Error(`Cannot find root element "#root"`);
+}
