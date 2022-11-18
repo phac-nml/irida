@@ -17,6 +17,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.LockedSamplesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
@@ -109,7 +110,6 @@ public class UIProjectSampleService {
 
 		// Check to see if the sample name already exists.
 		try {
-
 			Project project = projectService.read(projectId);
 			sampleService.getSampleBySampleName(project, name);
 			return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -132,8 +132,8 @@ public class UIProjectSampleService {
 	 */
 	@Transactional
 	public ResponseEntity<AjaxResponse> createSample(CreateSampleRequest request, Long projectId, Locale locale) {
-		Project project = projectService.read(projectId);
 		try {
+			Project project = projectService.read(projectId);
 			Sample sample = new Sample(request.getName());
 			if (!Strings.isNullOrEmpty(request.getOrganism())) {
 				sample.setOrganism(request.getOrganism());
@@ -185,6 +185,18 @@ public class UIProjectSampleService {
 	}
 
 	/**
+	 * Get a list of {@link Sample} ids that are locked in the given project
+	 *
+	 * @param projectId project identifier
+	 * @return result of creating the sample
+	 */
+	public LockedSamplesResponse getLockedSamplesInProject(Long projectId) {
+		Project project = projectService.read(projectId);
+		List<Long> lockedSampleIds = sampleService.getLockedSamplesInProject(project);
+		return new LockedSamplesResponse(lockedSampleIds);
+	}
+
+	/**
 	 * Creates a metadata entry set for a sample, assuming the metadata field and restriction exist
 	 *
 	 * @param metadataFields list of {@link MetadataEntryModel}s
@@ -198,4 +210,5 @@ public class UIProjectSampleService {
 		}).collect(Collectors.toSet());
 		return metadataEntrySet;
 	}
+
 }

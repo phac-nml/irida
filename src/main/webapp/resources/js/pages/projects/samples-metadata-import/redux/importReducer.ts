@@ -7,6 +7,8 @@ import { validateSampleName } from "../../../../apis/metadata/sample-utils";
 import {
   createSample,
   FieldUpdate,
+  getLockedSamples,
+  LockedSamplesResponse,
   MetadataItem,
   updateSample,
   ValidateSampleNameModel,
@@ -31,6 +33,7 @@ export interface MetadataHeaderItem {
 interface MetadataValidateDetailsItem {
   isSampleNameValid: boolean;
   foundSampleId?: number;
+  locked: boolean;
 }
 
 interface MetadataSaveDetailsItem {
@@ -187,22 +190,29 @@ export const setSampleNameColumn = createAsyncThunk<
       .map((row) => ({
         name: row[updatedSampleNameColumn],
       }));
-    const response: ValidateSamplesResponse = await validateSamples({
+    const validatedSamples: ValidateSamplesResponse = await validateSamples({
       projectId: projectId,
       body: {
         samples: samples,
       },
     });
+    const lockedSamples: LockedSamplesResponse = await getLockedSamples({
+      projectId,
+    });
     for (const metadataItem of metadata) {
       const index: string = metadataItem.rowKey;
       const sampleName: string = metadataItem[updatedSampleNameColumn];
-      const foundSample: ValidateSampleNameModel | undefined =
-        response.samples.find(
-          (sample: ValidateSampleNameModel) => sampleName === sample.name
-        );
+      const foundValidatedSamples = validatedSamples.samples.find(
+        (sample) => sampleName === sample.name
+      );
+      const foundSampleId = foundValidatedSamples?.ids?.at(0);
+      const foundLockedSamples = lockedSamples.sampleIds.find(
+        (sampleId) => sampleId === foundSampleId
+      );
       metadataValidateDetails[index] = {
         isSampleNameValid: validateSampleName(sampleName),
-        foundSampleId: foundSample?.ids?.at(0),
+        foundSampleId: foundSampleId,
+        locked: !!foundLockedSamples,
       };
     }
 

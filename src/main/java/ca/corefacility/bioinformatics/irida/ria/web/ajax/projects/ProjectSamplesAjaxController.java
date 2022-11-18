@@ -12,10 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleFilesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdateSampleRequest;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
@@ -224,6 +222,17 @@ public class ProjectSamplesAjaxController {
 	public ResponseEntity<AjaxResponse> validateSampleNames(@PathVariable Long projectId,
 			@RequestBody ValidateSampleNamesRequest request) {
 		return ResponseEntity.ok(uiProjectSampleService.validateSampleNames(projectId, request));
+	}
+
+	/**
+	 * Get a list of {@link Sample} ids that are locked in the given project
+	 *
+	 * @param projectId project identifier
+	 * @return a boolean
+	 */
+	@GetMapping("/locked")
+	public ResponseEntity<LockedSamplesResponse> getLockedSamplesInProject(@PathVariable Long projectId) {
+		return ResponseEntity.ok(uiProjectSampleService.getLockedSamplesInProject(projectId));
 	}
 
 }
