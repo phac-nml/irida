@@ -33,6 +33,7 @@ export default function SearchSamplesTable({
         key: `identifier`,
         dataIndex: "id",
         title: i18n("SearchTable.identifier"),
+        width: 100,
       },
       {
         key: `sampleName`,
@@ -45,7 +46,7 @@ export default function SearchSamplesTable({
               sampleId={sample.id}
               projectId={sample.projects[0].id}
             >
-              <Button>{name}</Button>
+              <Button size="small">{name}</Button>
             </SampleDetailViewer>
           );
         },
