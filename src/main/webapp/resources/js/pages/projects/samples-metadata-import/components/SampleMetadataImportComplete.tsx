@@ -19,12 +19,14 @@ export function SampleMetadataImportComplete(): JSX.Element {
   const samplesUpdatedCount = metadata.filter(
     (metadataItem: MetadataItem) =>
       metadataSaveDetails[metadataItem.rowKey]?.saved === true &&
+      !metadataValidateDetails[metadataItem.rowKey].locked &&
       metadataValidateDetails[metadataItem.rowKey].foundSampleId
   ).length;
 
   const samplesCreatedCount = metadata.filter(
     (metadataItem: MetadataItem) =>
       metadataSaveDetails[metadataItem.rowKey]?.saved === true &&
+      !metadataValidateDetails[metadataItem.rowKey].locked &&
       !metadataValidateDetails[metadataItem.rowKey].foundSampleId
   ).length;
 
