@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   Alert,
   Button,
+  List,
+  Popover,
   Table,
   TableProps,
   Tag,
@@ -28,7 +30,7 @@ import {
 import { MetadataItem } from "../../../../apis/projects/samples";
 import { ColumnsType, ColumnType } from "antd/es/table";
 import { TableRowSelection } from "antd/lib/table/interface";
-import SampleIcons from "../../samples/components/SampleIcons";
+import { ErrorAlert } from "../../../../../js/components/alerts/ErrorAlert";
 
 const { Paragraph, Text } = Typography;
 
@@ -64,7 +66,6 @@ export function SampleMetadataImportReview(): JSX.Element {
   const navigate: NavigateFunction = useNavigate();
   const [columns, setColumns] = React.useState<ColumnsType<MetadataItem>>([]);
   const [selected, setSelected] = React.useState<React.Key[]>([]);
-  const [valid, setValid] = React.useState<boolean>(true);
   const [progress, setProgress] = React.useState<number>(0);
   const [loading, setLoading] = React.useState<boolean>(false);
   const {
@@ -84,8 +85,7 @@ export function SampleMetadataImportReview(): JSX.Element {
     },
     getCheckboxProps: (record: MetadataItem) => ({
       disabled: !(
-        (metadataValidateDetails[record.rowKey].isSampleNameValid &&
-          !metadataValidateDetails[record.rowKey].locked) ||
+        metadataValidateDetails[record.rowKey].isSampleNameValid ||
         metadataSaveDetails[record.rowKey]?.saved
       ),
     }),
@@ -99,23 +99,6 @@ export function SampleMetadataImportReview(): JSX.Element {
   }, [metadataSaveDetails, selected.length]);
 
   React.useEffect(() => {
-    setValid(
-      !metadata.some(
-        (row) => !metadataValidateDetails[row.rowKey].isSampleNameValid
-      )
-    );
-
-    const lockedColumn: ColumnType<MetadataItem> = {
-      title: "",
-      dataIndex: "locked",
-      fixed: "left",
-      width: 100,
-      render: (text, item) => {
-        const sample = { owner: !metadataValidateDetails[item.rowKey].locked };
-        return <SampleIcons sample={sample} />;
-      },
-    };
-
     const sampleColumn: ColumnType<MetadataItem> = {
       title: sampleNameColumn,
       dataIndex: sampleNameColumn,
@@ -190,7 +173,6 @@ export function SampleMetadataImportReview(): JSX.Element {
 
     const updatedColumns: ColumnsType<MetadataItem> = [
       savedColumn,
-      lockedColumn,
       sampleColumn,
       tagColumn,
       ...otherColumns,
@@ -201,8 +183,7 @@ export function SampleMetadataImportReview(): JSX.Element {
       metadata
         .filter(
           (row) =>
-            (metadataValidateDetails[row.rowKey].isSampleNameValid &&
-              !metadataValidateDetails[row.rowKey]?.locked) ||
+            metadataValidateDetails[row.rowKey].isSampleNameValid ||
             metadataSaveDetails[row.rowKey]?.saved
         )
         .map((row): string => row.rowKey)
@@ -238,23 +219,62 @@ export function SampleMetadataImportReview(): JSX.Element {
     }
   };
 
+  const isValid = !metadata.some(
+    (row) => !metadataValidateDetails[row.rowKey].isSampleNameValid
+  );
+
+  const lockedSampleMetadata = metadata.filter(
+    (metadataItem) => metadataValidateDetails[metadataItem.rowKey].locked
+  );
+
   return (
     <SampleMetadataImportWizard current={2} percent={progress}>
       <Text>{i18n("SampleMetadataImportReview.description")}</Text>
-      {!valid && (
-        <Alert
-          message={i18n("SampleMetadataImportReview.alert.title")}
+      {!isValid && (
+        <ErrorAlert
+          message={i18n("SampleMetadataImportReview.alert.valid.title")}
           description={
             <Paragraph>
-              {i18n("SampleMetadataImportReview.alert.description")}
+              {i18n("SampleMetadataImportReview.alert.valid.description")}
               <ul>
-                <li>{i18n("SampleMetadataImportReview.alert.rule1")}</li>
-                <li>{i18n("SampleMetadataImportReview.alert.rule2")}</li>
-                <li>{i18n("SampleMetadataImportReview.alert.rule3")}</li>
+                <li>{i18n("SampleMetadataImportReview.alert.valid.rule1")}</li>
+                <li>{i18n("SampleMetadataImportReview.alert.valid.rule2")}</li>
+                <li>{i18n("SampleMetadataImportReview.alert.valid.rule3")}</li>
               </ul>
             </Paragraph>
           }
-          type="error"
+        />
+      )}
+      {lockedSampleMetadata.length > 0 && (
+        <Alert
+          closable={true}
+          message={
+            <>
+              <Popover
+                placement="bottom"
+                content={
+                  <div style={{ overflowY: "auto", maxHeight: "200px" }}>
+                    <List
+                      size="small"
+                      dataSource={lockedSampleMetadata}
+                      renderItem={(metadataItem) => (
+                        <List.Item>{metadataItem[sampleNameColumn]}</List.Item>
+                      )}
+                    />
+                  </div>
+                }
+              >
+                <Text underline>
+                  {i18n(
+                    "SampleMetadataImportReview.alert.locked.description.popover.content",
+                    lockedSampleMetadata.length
+                  )}
+                </Text>
+              </Popover>
+              {i18n("SampleMetadataImportReview.alert.locked.description")}
+            </>
+          }
+          type="warning"
           showIcon
         />
       )}
@@ -266,10 +286,11 @@ export function SampleMetadataImportReview(): JSX.Element {
         }
         rowSelection={rowSelection}
         columns={columns}
-        dataSource={metadata}
+        dataSource={metadata.filter(
+          (metadataItem) => !metadataValidateDetails[metadataItem.rowKey].locked
+        )}
         pagination={getPaginationOptions(metadata.length)}
       />
-
       <div style={{ display: "flex" }}>
         <Button
           className="t-metadata-uploader-column-button"
