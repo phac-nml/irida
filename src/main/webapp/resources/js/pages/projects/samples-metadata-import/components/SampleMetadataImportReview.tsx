@@ -28,6 +28,7 @@ import {
 import { MetadataItem } from "../../../../apis/projects/samples";
 import { ColumnsType, ColumnType } from "antd/es/table";
 import { TableRowSelection } from "antd/lib/table/interface";
+import SampleIcons from "../../samples/components/SampleIcons";
 
 const { Paragraph, Text } = Typography;
 
@@ -83,8 +84,9 @@ export function SampleMetadataImportReview(): JSX.Element {
     },
     getCheckboxProps: (record: MetadataItem) => ({
       disabled: !(
-        metadataValidateDetails[record.rowKey].isSampleNameValid ||
-        metadataSaveDetails[record.rowKey]?.saved === true
+        (metadataValidateDetails[record.rowKey].isSampleNameValid &&
+          !metadataValidateDetails[record.rowKey].locked) ||
+        metadataSaveDetails[record.rowKey]?.saved
       ),
     }),
   };
@@ -102,6 +104,17 @@ export function SampleMetadataImportReview(): JSX.Element {
         (row) => !metadataValidateDetails[row.rowKey].isSampleNameValid
       )
     );
+
+    const lockedColumn: ColumnType<MetadataItem> = {
+      title: "",
+      dataIndex: "locked",
+      fixed: "left",
+      width: 100,
+      render: (text, item) => {
+        const sample = { owner: !metadataValidateDetails[item.rowKey].locked };
+        return <SampleIcons sample={sample} />;
+      },
+    };
 
     const sampleColumn: ColumnType<MetadataItem> = {
       title: sampleNameColumn,
@@ -177,6 +190,7 @@ export function SampleMetadataImportReview(): JSX.Element {
 
     const updatedColumns: ColumnsType<MetadataItem> = [
       savedColumn,
+      lockedColumn,
       sampleColumn,
       tagColumn,
       ...otherColumns,
@@ -187,8 +201,9 @@ export function SampleMetadataImportReview(): JSX.Element {
       metadata
         .filter(
           (row) =>
-            metadataValidateDetails[row.rowKey].isSampleNameValid ||
-            metadataSaveDetails[row.rowKey]?.saved === true
+            (metadataValidateDetails[row.rowKey].isSampleNameValid &&
+              !metadataValidateDetails[row.rowKey]?.locked) ||
+            metadataSaveDetails[row.rowKey]?.saved
         )
         .map((row): string => row.rowKey)
     );
