@@ -30,6 +30,11 @@ export default function SearchSamplesTable({
   const columns = useMemo<ColumnsType<SearchSample>>(
     () => [
       {
+        key: `identifier`,
+        dataIndex: "id",
+        title: i18n("SearchTable.identifier"),
+      },
+      {
         key: `sampleName`,
         dataIndex: "name",
         title: i18n("SearchTable.name"),
