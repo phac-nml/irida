@@ -95,7 +95,7 @@ export function SampleMetadataImportReview(): JSX.Element {
     const savedCount = Object.entries(metadataSaveDetails).filter(
       ([, metadataSaveDetailsItem]) => metadataSaveDetailsItem.saved
     ).length;
-    setProgress((savedCount / selected.length) * 100);
+    setProgress(Math.round((savedCount / selected.length) * 100));
   }, [metadataSaveDetails, selected.length]);
 
   React.useEffect(() => {
@@ -290,12 +290,14 @@ export function SampleMetadataImportReview(): JSX.Element {
           (metadataItem) => !metadataValidateDetails[metadataItem.rowKey].locked
         )}
         pagination={getPaginationOptions(metadata.length)}
+        loading={loading}
       />
       <div style={{ display: "flex" }}>
         <Button
           className="t-metadata-uploader-column-button"
           icon={<IconArrowLeft />}
           onClick={() => navigate(-1)}
+          disabled={loading}
         >
           {i18n("SampleMetadataImportReview.button.back")}
         </Button>
@@ -303,7 +305,7 @@ export function SampleMetadataImportReview(): JSX.Element {
           className="t-metadata-uploader-upload-button"
           style={{ marginLeft: "auto" }}
           onClick={save}
-          loading={loading}
+          disabled={loading}
         >
           {i18n("SampleMetadataImportReview.button.next")}
           <IconArrowRight />
