@@ -1,4 +1,4 @@
-import { GenomeAssembly, SequencingObject } from "../../apis/samples/samples";
+import { GenomeAssembly } from "../../apis/samples/samples";
 
 export = IRIDA;
 export as namespace IRIDA;
@@ -41,6 +41,14 @@ declare namespace IRIDA {
     createdBy: User;
     users: User[];
   }
+
+  export type CurrentUser = {
+    admin: boolean;
+    firstName: string;
+    identifier: number;
+    lastName: string;
+    username: string;
+  };
 
   export type PRIORITY = "LOW" | "MEDIUM" | "HIGH";
 

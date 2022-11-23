@@ -16,8 +16,7 @@ import {
 import { FilterValue } from "antd/es/table/interface";
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { Sample } from "../../types/irida";
-import { CurrentUser } from "../../apis/users/user";
+import type { CurrentUser, Sample } from "../../types/irida";
 import { debounce } from "lodash";
 import SearchCount from "./SearchCount";
 
