@@ -10,7 +10,12 @@
   </head>
 
   <body>
-    <div id="root" layout:fragment="page" style="height: 100%"></div>
+    <div id="root" layout:fragment="page" style="height: 100%">
+      <!--
+          This is a DOM element for React to render the search results into.
+          See  src/main/webapp/resources/js/pages/search/index.tsx
+      -->
+    </div>
 
     <th:block layout:fragment="scripts">
       <webpacker:js entry="search" />
