@@ -9,7 +9,7 @@ IRIDA Global Search Overview
 ============================
 {:.no_toc}
 
-The IRIDA global search is design to quickly find projects and samples that you have access to anywhere in IRIDA.
+The IRIDA global search is designed to quickly find projects and samples that you have access to anywhere in IRIDA.
 
 Starting a Search
 ===
