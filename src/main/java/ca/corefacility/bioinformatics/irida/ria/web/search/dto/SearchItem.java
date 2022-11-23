@@ -4,6 +4,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableItem;
 
 import java.util.Date;
 
+/**
+ * Generic response item for the global search table
+ */
 public class SearchItem extends AntTableItem {
     private final Long id;
     private final String name;
