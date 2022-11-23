@@ -4,6 +4,13 @@ import { Tag } from "antd";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
 const colourMap = new Map<number, { text: string; background: string }>();
+
+/**
+ * React component to render a Ant Design tag around a project label, with a specific
+ * colour for that project.
+ * @param project
+ * @constructor
+ */
 export default function ProjectTag({
   project,
 }: {

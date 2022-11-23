@@ -29,6 +29,12 @@ export default function SearchProjectsTable({
   const columns = useMemo<ColumnsType<SearchProject>>(
     () => [
       {
+        key: `identifier`,
+        dataIndex: "id",
+        title: i18n("SearchTable.identifier"),
+        width: 100,
+      },
+      {
         key: `name`,
         dataIndex: "name",
         title: i18n("SearchTable.name"),
@@ -70,6 +76,7 @@ export default function SearchProjectsTable({
 
   return (
     <Table
+      tableLayout="auto"
       dataSource={projects?.content}
       columns={columns}
       pagination={

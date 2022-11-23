@@ -17,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -55,7 +54,7 @@ public class SearchController {
      * @param request Details about the search request
      * @return Paged list of projects and the total count found for the search
      */
-    @PostMapping("/ajax/search/projects")
+    @RequestMapping("/ajax/search/projects")
     public ResponseEntity<AntTableResponse<SearchItem>> handleSearch(@RequestBody SearchRequest request) {
         Page<Project> page;
         if (request.isGlobal()) {

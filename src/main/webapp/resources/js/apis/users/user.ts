@@ -1,17 +1,9 @@
 import axios from "axios";
 import { setBaseUrl } from "../../utilities/url-utilities";
-
+import type { CurrentUser } from "../../types/irida";
 /**
  * @file API methods for the currently logged in user
  */
-
-export type CurrentUser = {
-  admin: boolean;
-  firstName: string;
-  identifier: number;
-  lastName: string;
-  username: string;
-};
 
 /**
  * Get details about the currently logged in user

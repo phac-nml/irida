@@ -30,6 +30,12 @@ export default function SearchSamplesTable({
   const columns = useMemo<ColumnsType<SearchSample>>(
     () => [
       {
+        key: `identifier`,
+        dataIndex: "id",
+        title: i18n("SearchTable.identifier"),
+        width: 100,
+      },
+      {
         key: `sampleName`,
         dataIndex: "name",
         title: i18n("SearchTable.name"),
@@ -40,7 +46,7 @@ export default function SearchSamplesTable({
               sampleId={sample.id}
               projectId={sample.projects[0].id}
             >
-              <Button>{name}</Button>
+              <Button size="small">{name}</Button>
             </SampleDetailViewer>
           );
         },
