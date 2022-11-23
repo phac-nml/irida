@@ -47,13 +47,13 @@ public class MetadataAjaxController {
 	/**
 	 * Create a new metadata template within a project
 	 *
-	 * @param template   details about the template to create
+	 * @param template  details about the template to create
 	 * @param projectId identifier for a project
 	 * @return the newly created {@link MetadataTemplate}
 	 */
 	@PostMapping("/templates")
-	public ResponseEntity<ProjectMetadataTemplate> createNewMetadataTemplate(
-			@RequestBody MetadataTemplate template, @RequestParam Long projectId) {
+	public ResponseEntity<ProjectMetadataTemplate> createNewMetadataTemplate(@RequestBody MetadataTemplate template,
+			@RequestParam Long projectId) {
 		return ResponseEntity.ok(service.createMetadataTemplate(template, projectId));
 	}
 
@@ -61,7 +61,7 @@ public class MetadataAjaxController {
 	 * Updated the fields in a {@link MetadataTemplate}
 	 *
 	 * @param template the updated template to save
-	 * @param locale     Current users {@link Locale}
+	 * @param locale   Current users {@link Locale}
 	 * @return Message for UI to display about the result of the update.
 	 */
 	@PutMapping("/templates/{templateId}")
@@ -89,8 +89,7 @@ public class MetadataAjaxController {
 			return ResponseEntity.ok(
 					new AjaxSuccessResponse(service.deleteMetadataTemplate(templateId, projectId, locale)));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new AjaxErrorResponse(e.getMessage()));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
@@ -103,6 +102,21 @@ public class MetadataAjaxController {
 	@GetMapping("/fields")
 	public List<ProjectMetadataField> getMetadataFieldsForProject(@RequestParam Long projectId) {
 		return service.getMetadataFieldsForProject(projectId);
+	}
+
+	/**
+	 * Create project metadata fields with restrictions (no metadata entries)
+	 *
+	 * @param projectId Identifier for a project
+	 * @param fields    List of project metadata fields
+	 * @param locale    Current users {@link Locale}
+	 * @return list of {@link MetadataTemplateField}s
+	 */
+	@PostMapping("/fields")
+	public ResponseEntity<AjaxResponse> createMetadataFieldsForProject(@RequestParam Long projectId,
+			@RequestBody List<ProjectMetadataField> fields, Locale locale) {
+		return ResponseEntity.ok(
+				new AjaxSuccessResponse(service.createMetadataFieldsForProject(projectId, fields, locale)));
 	}
 
 	/**
@@ -132,8 +146,7 @@ public class MetadataAjaxController {
 			return ResponseEntity.ok(
 					new AjaxSuccessResponse(service.setDefaultMetadataTemplate(templateId, projectId, locale)));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new AjaxErrorResponse(e.getMessage()));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 

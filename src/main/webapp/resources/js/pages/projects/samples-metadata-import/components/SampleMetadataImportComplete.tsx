@@ -2,9 +2,8 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Result } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { MetadataItem } from "../../../../apis/projects/samples";
-import { ImportState, useImportSelector } from "../store";
+import { ImportState, useImportSelector } from "../redux/store";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
 
 /**
@@ -20,12 +19,14 @@ export function SampleMetadataImportComplete(): JSX.Element {
   const samplesUpdatedCount = metadata.filter(
     (metadataItem: MetadataItem) =>
       metadataSaveDetails[metadataItem.rowKey]?.saved === true &&
+      !metadataValidateDetails[metadataItem.rowKey].locked &&
       metadataValidateDetails[metadataItem.rowKey].foundSampleId
   ).length;
 
   const samplesCreatedCount = metadata.filter(
     (metadataItem: MetadataItem) =>
       metadataSaveDetails[metadataItem.rowKey]?.saved === true &&
+      !metadataValidateDetails[metadataItem.rowKey].locked &&
       !metadataValidateDetails[metadataItem.rowKey].foundSampleId
   ).length;
 
@@ -53,12 +54,6 @@ export function SampleMetadataImportComplete(): JSX.Element {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate: NavigateFunction = useNavigate();
 
-  React.useEffect(() => {
-    setTimeout(() => {
-      navigate(`/${projectId}/sample-metadata/upload/file`);
-    }, 10000);
-  }, [navigate, projectId]);
-
   return (
     <SampleMetadataImportWizard current={3}>
       <Result
@@ -68,9 +63,9 @@ export function SampleMetadataImportComplete(): JSX.Element {
         extra={
           <Button
             type="primary"
-            href={setBaseUrl(
-              `projects/${projectId}/sample-metadata/upload/file`
-            )}
+            onClick={() =>
+              navigate(`/${projectId}/sample-metadata/upload/file`)
+            }
           >
             {i18n("SampleMetadataImportComplete.button.upload")}
           </Button>

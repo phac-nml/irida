@@ -1,7 +1,11 @@
 /**
  * @fileoverview utilities to help with metadata restrictions
  */
-
+export type Restriction = "LEVEL_1" | "LEVEL_2" | "LEVEL_3" | "LEVEL_4";
+export interface RestrictionListItem {
+  label: string;
+  value: string;
+}
 /**
  * Default colours for restriction level
  */
@@ -19,7 +23,8 @@ const LEVELS = ["LEVEL_1", "LEVEL_2", "LEVEL_3", "LEVEL_4"];
  * @param restriction
  * @returns {*}
  */
-export const getColourForRestriction = (restriction) => COLOURS[restriction];
+export const getColourForRestriction = (restriction: Restriction) =>
+  COLOURS[restriction];
 
 /**
  * Compare two metadata restrictions.
@@ -32,6 +37,26 @@ export const getColourForRestriction = (restriction) => COLOURS[restriction];
  * @param level2 - target restriction
  * @returns {number}
  */
-export function compareRestrictionLevels(level1, level2) {
+export function compareRestrictionLevels(
+  level1: Restriction,
+  level2: Restriction
+) {
   return LEVELS.indexOf(level2) - LEVELS.indexOf(level1);
+}
+
+/**
+ * Get the label if the value matches.
+ * @param restrictions
+ * @param value
+ *
+ * @returns {string}
+ */
+export function getRestrictionLabel(
+  restrictions: RestrictionListItem[],
+  value: string
+) {
+  const restriction = restrictions?.find(
+    (restriction) => restriction.value === value
+  );
+  return restriction?.label;
 }

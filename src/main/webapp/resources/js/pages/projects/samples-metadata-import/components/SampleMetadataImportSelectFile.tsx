@@ -1,19 +1,15 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  setHeaders,
-  setMetadata,
-  setProjectId,
-} from "../services/importReducer";
+import { setHeaders, setMetadata, setProjectId } from "../redux/importReducer";
 import { notification, Spin, StepsProps, Typography } from "antd";
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import * as XLSX from "xlsx";
 import { WorkBook } from "xlsx";
-import { ImportDispatch, useImportDispatch } from "../store";
+import { ImportDispatch, useImportDispatch } from "../redux/store";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
 import { MetadataItem } from "../../../../apis/projects/samples";
-import { RcFile, UploadFileStatus } from "antd/lib/upload/interface";
+import { RcFile } from "antd/lib/upload/interface";
 
 const { Text } = Typography;
 
@@ -23,7 +19,7 @@ const { Text } = Typography;
  * @returns {*}
  * @constructor
  */
-export function SampleMetadataImportUploadFile(): JSX.Element {
+export function SampleMetadataImportSelectFile(): JSX.Element {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate: NavigateFunction = useNavigate();
   const dispatch: ImportDispatch = useImportDispatch();
@@ -40,19 +36,12 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
     multiple: false,
     showUploadList: false,
     accept: ".xls,.xlsx,.csv",
-    onChange(info: {
-      file: {
-        originFileObj?: RcFile;
-        name?: string;
-        status?: UploadFileStatus;
-      };
-    }) {
-      const { status } = info.file;
-      if (status !== "uploading") {
+    beforeUpload: (file: RcFile) => {
+      try {
         setLoading(true);
         const reader = new FileReader();
         if (reader.readAsBinaryString) {
-          reader.onload = () => {
+          reader.onload = async () => {
             const workbook: WorkBook = XLSX.read(reader.result, {
               type: "binary",
               raw: true,
@@ -65,29 +54,26 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
                 rawNumbers: false,
               }
             );
-            dispatch(setHeaders(Object.keys(rows[0])));
-            dispatch(setMetadata(rows));
+            const cleanRows = JSON.parse(
+              JSON.stringify(rows).replace(/"\s+|\s+"/g, '"')
+            );
+            await dispatch(setHeaders({ headers: Object.keys(cleanRows[0]) }));
+            await dispatch(setMetadata(cleanRows));
           };
-          if (info.file.originFileObj) {
-            reader.readAsBinaryString(info.file.originFileObj);
-          }
+          reader.readAsBinaryString(file);
+          notification.success({
+            message: i18n("SampleMetadataImportSelectFile.success", file.name),
+          });
+          navigate(`/${projectId}/sample-metadata/upload/columns`);
         }
-      }
-      if (status === "done") {
-        notification.success({
-          message: i18n(
-            "SampleMetadataImportUploadFile.success",
-            info.file.name
-          ),
-        });
-        navigate(`/${projectId}/sample-metadata/upload/headers`);
-      } else if (status === "error") {
+      } catch (error) {
         setLoading(false);
         setStatus("error");
         notification.error({
-          message: i18n("SampleMetadataImportUploadFile.error", info.file.name),
+          message: i18n("SampleMetadataImportSelectFile.error", file.name),
         });
       }
+      return false;
     },
   };
 
@@ -95,9 +81,9 @@ export function SampleMetadataImportUploadFile(): JSX.Element {
     <SampleMetadataImportWizard current={0} status={status}>
       <Spin spinning={loading}>
         <DragUpload
-          uploadText={i18n("SampleMetadataImportUploadFile.dropzone")}
+          uploadText={i18n("SampleMetadataImportSelectFile.dropzone")}
           uploadHint={
-            <Text strong>{i18n("SampleMetadataImportUploadFile.warning")}</Text>
+            <Text strong>{i18n("SampleMetadataImportSelectFile.warning")}</Text>
           }
           options={options}
           props={{ className: "t-metadata-uploader-dropzone" }}

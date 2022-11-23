@@ -18,10 +18,6 @@ export interface DragUploadProps {
 }
 /**
  * React component for rendering the drag and drop upload functionality.
- *  @param uploadText - text for drag and drop
- *  @param uploadHint - hint for drag and drop
- *  @param options - upload options
- *  @param props - remainder of props passed
  * @returns {*}
  * @constructor
  */
