@@ -3,9 +3,8 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.metadata.dto;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 
 /**
- * A representation of a {@link MetadataTemplateField} specifically for a project.
- * This class was required since metadata fields for a project need to include the restriction
- * level specific for that project.
+ * A representation of a {@link MetadataTemplateField} specifically for a project. This class was required since
+ * metadata fields for a project need to include the restriction level specific for that project.
  */
 public class ProjectMetadataField {
 	private Long id;
@@ -13,6 +12,9 @@ public class ProjectMetadataField {
 	private String label;
 	private String type;
 	private String restriction;
+
+	public ProjectMetadataField() {
+	}
 
 	public ProjectMetadataField(MetadataTemplateField field, String restriction) {
 		this.id = field.getId();

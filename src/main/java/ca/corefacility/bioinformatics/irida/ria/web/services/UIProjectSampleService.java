@@ -19,11 +19,13 @@ import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.LockedSamplesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxFormErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.MetadataEntryModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNameModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesResponse;
@@ -109,7 +111,6 @@ public class UIProjectSampleService {
 
 		// Check to see if the sample name already exists.
 		try {
-
 			Project project = projectService.read(projectId);
 			sampleService.getSampleBySampleName(project, name);
 			return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -167,11 +168,7 @@ public class UIProjectSampleService {
 		}
 		Join<Project, Sample> join = projectService.addSampleToProjectWithoutEvent(project, sample, true);
 		if (request.getMetadata() != null) {
-			Set<MetadataEntry> metadataEntrySet = request.getMetadata().stream().map(entry -> {
-				MetadataTemplateField field = metadataTemplateService.saveMetadataField(
-						new MetadataTemplateField(entry.getField(), "text"));
-				return new MetadataEntry(entry.getValue(), "text", field);
-			}).collect(Collectors.toSet());
+			Set<MetadataEntry> metadataEntrySet = createMetadata(request.getMetadata());
 			sampleService.mergeSampleMetadata(sample, metadataEntrySet);
 		}
 		return join.getObject().getId();
@@ -222,14 +219,38 @@ public class UIProjectSampleService {
 			sample.setDescription(request.getDescription());
 		}
 		if (request.getMetadata() != null) {
-			Set<MetadataEntry> metadataEntrySet = request.getMetadata().stream().map(entry -> {
-				MetadataTemplateField field = metadataTemplateService.saveMetadataField(
-						new MetadataTemplateField(entry.getField(), "text"));
-				return new MetadataEntry(entry.getValue(), "text", field);
-			}).collect(Collectors.toSet());
+			Set<MetadataEntry> metadataEntrySet = createMetadata(request.getMetadata());
 			sampleService.updateSampleMetadata(sample, metadataEntrySet);
 		}
 		return sampleService.update(sample);
 
 	}
+
+	/**
+	 * Get a list of {@link Sample} ids that are locked in the given project
+	 *
+	 * @param projectId project identifier
+	 * @return result of creating the sample
+	 */
+	public LockedSamplesResponse getLockedSamplesInProject(Long projectId) {
+		Project project = projectService.read(projectId);
+		List<Long> lockedSampleIds = sampleService.getLockedSamplesInProject(project);
+		return new LockedSamplesResponse(lockedSampleIds);
+	}
+
+	/**
+	 * Creates a metadata entry set for a sample, assuming the metadata field and restriction exist
+	 *
+	 * @param metadataFields list of {@link MetadataEntryModel}s
+	 * @return metadata entry set
+	 */
+	private Set<MetadataEntry> createMetadata(List<MetadataEntryModel> metadataFields) {
+		Set<MetadataEntry> metadataEntrySet = metadataFields.stream().map(entry -> {
+			String label = entry.getField();
+			MetadataTemplateField field = metadataTemplateService.readMetadataFieldByLabel(label);
+			return new MetadataEntry(entry.getValue(), "text", field);
+		}).collect(Collectors.toSet());
+		return metadataEntrySet;
+	}
+
 }
