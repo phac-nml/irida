@@ -102,8 +102,9 @@ export const saveMetadata = createAsyncThunk<
       );
     });
 
-    const chunkSize = 100;
+    const chunkSize = 10;
 
+    const updateSamplesPromises: Promise<void>[] = [];
     const updateSampleList = selectedSampleList
       .filter((metadataItem) => {
         const name = metadataItem[sampleNameColumn];
@@ -127,34 +128,46 @@ export const saveMetadata = createAsyncThunk<
           }));
         return { name, sampleId, metadata: metadataFields };
       });
-
     if (updateSampleList.length > 0) {
       const chunkedUpdateSampleList = chunkArray(updateSampleList, chunkSize);
       for (const chunk of chunkedUpdateSampleList) {
-        await updateSamples({
-          projectId,
-          body: chunk,
-        })
-          .then(() => {
-            chunk
-              .map((item) => item.name)
-              .forEach((name) => (metadataSaveDetails[name] = { saved: true }));
+        updateSamplesPromises.push(
+          updateSamples({
+            projectId,
+            body: chunk,
           })
-          .catch((error) => {
-            const { errors } = error.response.data;
-            Object.keys(errors).map((key) => {
-              metadataSaveDetails[key] = {
-                saved: false,
-                error: errors[key],
-              };
-            });
-          });
-        dispatch(
-          setMetadataSaveDetails(Object.assign({}, metadataSaveDetails))
+            .then(() => {
+              chunk
+                .map((item) => item.name)
+                .forEach(
+                  (name) => (metadataSaveDetails[name] = { saved: true })
+                );
+            })
+            .catch((error) => {
+              const { errors } = error.response.data;
+              Object.keys(errors).map((key) => {
+                metadataSaveDetails[key] = {
+                  saved: false,
+                  error: errors[key],
+                };
+              });
+            })
         );
+      }
+      const chunkedUpdateSamplesPromises = chunkArray(
+        updateSamplesPromises,
+        chunkSize
+      );
+      for (const chunk of chunkedUpdateSamplesPromises) {
+        await Promise.all(chunk).then(() => {
+          dispatch(
+            setMetadataSaveDetails(Object.assign({}, metadataSaveDetails))
+          );
+        });
       }
     }
 
+    const createSamplesPromises: Promise<void>[] = [];
     const createSampleList = selectedSampleList
       .filter((metadataItem) => {
         const name = metadataItem[sampleNameColumn];
@@ -181,28 +194,39 @@ export const saveMetadata = createAsyncThunk<
     if (createSampleList.length > 0) {
       const chunkedCreateSampleList = chunkArray(createSampleList, chunkSize);
       for (const chunk of chunkedCreateSampleList) {
-        await createSamples({
-          projectId,
-          body: chunk,
-        })
-          .then(() => {
-            chunk
-              .map((item) => item.name)
-              .forEach((name) => (metadataSaveDetails[name] = { saved: true }));
+        createSamplesPromises.push(
+          createSamples({
+            projectId,
+            body: chunk,
           })
-          .catch((error) => {
-            const { errors } = error.response.data;
-            Object.keys(errors).map((key) => {
-              metadataSaveDetails[key] = {
-                saved: false,
-                error: errors[key],
-              };
-            });
-          });
-
-        dispatch(
-          setMetadataSaveDetails(Object.assign({}, metadataSaveDetails))
+            .then(() => {
+              chunk
+                .map((item) => item.name)
+                .forEach(
+                  (name) => (metadataSaveDetails[name] = { saved: true })
+                );
+            })
+            .catch((error) => {
+              const { errors } = error.response.data;
+              Object.keys(errors).map((key) => {
+                metadataSaveDetails[key] = {
+                  saved: false,
+                  error: errors[key],
+                };
+              });
+            })
         );
+      }
+      const chunkedCreateSamplesPromises = chunkArray(
+        createSamplesPromises,
+        chunkSize
+      );
+      for (const chunk of chunkedCreateSamplesPromises) {
+        await Promise.all(chunk).then(() => {
+          dispatch(
+            setMetadataSaveDetails(Object.assign({}, metadataSaveDetails))
+          );
+        });
       }
     }
 
