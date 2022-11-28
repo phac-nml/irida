@@ -7,6 +7,7 @@
 * [Documentation]: Updated broken links in developer documentation. See [PR 1418](https://github.com/phac-nml/irida/pull/1418).
 * [Developer] Updated developer setup documentation, ignore java_pid*.hprof files, and added quality of life file `gradle.properties`
 * [UI]: Refreshed global search page to use Ant Design. See [PR 1409](https://github.com/phac-nml/irida/pull/1409)
+* [Developer]: Updated React to v18.2.0.  See [PR 1399](https://github.com/phac-nml/irida/pull/1399)
 
 ## [22.09.4] - 2022/11/14
 * [REST]: Fixed issue with project/samples api response missing samples when a sample has a default sequencing object. See [PR 1413](https://github.com/phac-nml/irida/pull/1413)
