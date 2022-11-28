@@ -6,7 +6,11 @@ import { Badge } from "antd";
  * @param count
  * @constructor
  */
-export default function SearchCount({ count }: { count: number }) {
+export default function SearchCount({
+  count = 0,
+}: {
+  count: number | undefined;
+}) {
   return (
     <Badge
       showZero

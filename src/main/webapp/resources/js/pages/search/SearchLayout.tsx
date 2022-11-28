@@ -22,6 +22,14 @@ import {
   fetchSearchSamples,
   SearchParams,
 } from "../../apis/search/search";
+import styled from "styled-components";
+
+const Label = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 
 type SearchType = "projects" | "samples";
 type SearchItem = {
@@ -187,33 +195,19 @@ export default function SearchLayout() {
     () => [
       {
         label: (
-          <div
-            style={{
-              width: `100%`,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <span>{i18n("SearchLayout.projects").toUpperCase()}</span>
-            <SearchCount count={projects?.total || 0} />
-          </div>
+          <Label>
+            {i18n("SearchLayout.projects").toUpperCase()}
+            <SearchCount count={projects?.total} />
+          </Label>
         ),
         key: "projects",
       },
       {
         label: (
-          <div
-            style={{
-              width: `100%`,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <span>{i18n("SearchLayout.samples").toUpperCase()}</span>
-            <SearchCount count={samples?.total || 0} />
-          </div>
+          <Label>
+            {i18n("SearchLayout.samples").toUpperCase()}
+            <SearchCount count={samples?.total} />
+          </Label>
         ),
         key: "samples",
       },
