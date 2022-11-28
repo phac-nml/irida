@@ -46,7 +46,9 @@ export default function SearchSamplesTable({
               sampleId={sample.id}
               projectId={sample.projects[0].id}
             >
-              <Button size="small">{name}</Button>
+              <Button type="link" style={{ padding: 0 }} size="small">
+                {name}
+              </Button>
             </SampleDetailViewer>
           );
         },

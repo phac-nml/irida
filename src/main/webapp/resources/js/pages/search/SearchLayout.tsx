@@ -14,11 +14,22 @@ import {
   Typography,
 } from "antd";
 import { FilterValue } from "antd/es/table/interface";
-import axios from "axios";
-import { setBaseUrl } from "../../utilities/url-utilities";
 import type { CurrentUser, Sample } from "../../types/irida";
 import { debounce } from "lodash";
 import SearchCount from "./SearchCount";
+import {
+  fetchSearchProjects,
+  fetchSearchSamples,
+  SearchParams,
+} from "../../apis/search/search";
+import styled from "styled-components";
+
+const Label = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 
 type SearchType = "projects" | "samples";
 type SearchItem = {
@@ -120,47 +131,45 @@ export default function SearchLayout() {
   };
 
   const fetchData = useCallback(() => {
-    const fetchSamples = async () =>
-      axios.post(setBaseUrl(`/ajax/search/samples`), {
-        global,
-        pagination: samplesTableParams.pagination,
-        order: [
-          {
-            property: samplesTableParams.columnKey || `sampleName`,
-            direction: samplesTableParams.order === "ascend" ? `asc` : `desc`,
-          },
-        ],
-        search: [
-          {
-            property: `name`,
-            value: searchParams.get("query"),
-            operation: "MATCH_IN",
-          },
-        ],
-      });
+    const sampleParams: SearchParams = {
+      global,
+      pagination: samplesTableParams.pagination,
+      order: [
+        {
+          property: samplesTableParams.columnKey || `sampleName`,
+          direction: samplesTableParams.order === "ascend" ? `asc` : `desc`,
+        },
+      ],
+      search: [
+        {
+          property: `name`,
+          value: searchParams.get("query") || "",
+          operation: "MATCH_IN",
+        },
+      ],
+    };
 
-    const fetchProjects = async () =>
-      axios.post(setBaseUrl(`/ajax/search/projects`), {
-        global,
-        pagination: projectsTableParams.pagination,
-        order: [
-          {
-            property: projectsTableParams.columnKey || `name`,
-            direction: projectsTableParams.order === "ascend" ? `asc` : `desc`,
-          },
-        ],
-        search: [
-          {
-            property: `name`,
-            value: searchParams.get("query"),
-            operation: "MATCH_IN",
-          },
-        ],
-      });
+    const projectParams: SearchParams = {
+      global,
+      pagination: projectsTableParams.pagination,
+      order: [
+        {
+          property: projectsTableParams.columnKey || `name`,
+          direction: projectsTableParams.order === "ascend" ? `asc` : `desc`,
+        },
+      ],
+      search: [
+        {
+          property: `name`,
+          value: searchParams.get("query") || "",
+          operation: "MATCH_IN",
+        },
+      ],
+    };
 
     const promises = [];
-    promises.push(fetchProjects());
-    promises.push(fetchSamples());
+    promises.push(fetchSearchProjects(projectParams));
+    promises.push(fetchSearchSamples(sampleParams));
     Promise.all(promises).then(
       ([{ data: projectsData }, { data: samplesData }]) => {
         setProjects(projectsData);
@@ -186,33 +195,19 @@ export default function SearchLayout() {
     () => [
       {
         label: (
-          <div
-            style={{
-              width: `100%`,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <span>{i18n("SearchLayout.projects").toUpperCase()}</span>
-            <SearchCount count={projects?.total || 0} />
-          </div>
+          <Label>
+            {i18n("SearchLayout.projects").toUpperCase()}
+            <SearchCount count={projects?.total} />
+          </Label>
         ),
         key: "projects",
       },
       {
         label: (
-          <div
-            style={{
-              width: `100%`,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <span>{i18n("SearchLayout.samples").toUpperCase()}</span>
-            <SearchCount count={samples?.total || 0} />
-          </div>
+          <Label>
+            {i18n("SearchLayout.samples").toUpperCase()}
+            <SearchCount count={samples?.total} />
+          </Label>
         ),
         key: "samples",
       },
