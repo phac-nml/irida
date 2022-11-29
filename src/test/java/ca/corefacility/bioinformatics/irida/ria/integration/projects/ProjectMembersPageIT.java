@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import org.junit.jupiter.api.Test;
-
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -11,8 +9,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.admin.AdminCli
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSyncPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
-
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,22 +27,22 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsManager(driver());
 		ProjectMembersPage page = ProjectMembersPage.goTo(driver());
 		assertEquals("Members", page.getPageHeaderTitle(), "Check for proper translation in title");
-		assertEquals(2, page.getNumberOfMembers(), "Should be 2 members in the project");
+		assertEquals(3, page.getNumberOfMembers(), "Should be 3 members in the project");
 		assertTrue(page.isAddMemberBtnVisible(), "Add Members button should be visible");
 
 		// Test remove user from project
 		page.removeUser(1);
 		assertTrue(page.isNotificationDisplayed());
-		assertEquals(1, page.getNumberOfMembers(), "Should be 1 member in the project");
+		assertEquals(2, page.getNumberOfMembers(), "Should be 2 members in the project");
 
 		// Should not be able to remove the manager so the remove button should be disabled
 		assertFalse(page.lastManagerRemoveButtonEnabled(0));
-		assertEquals(1, page.getNumberOfMembers(), "Should be 1 member in the project");
+		assertEquals(2, page.getNumberOfMembers(), "Should be 2 member in the project");
 
 		// Test Add user to project
 		page.addUserToProject("test");
 		page.isNotificationDisplayed();
-		assertEquals(2, page.getNumberOfMembers(), "Should be 2 members in the project");
+		assertEquals(3, page.getNumberOfMembers(), "Should be 3 members in the project");
 
 		// Try updating the users role to owner
 		page.updateUserRole(0, ProjectRole.PROJECT_OWNER.toString());
@@ -96,7 +94,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		assertFalse(url.isEmpty(), "URL should not be empty");
 		page.submitProject();
 
-		String pathTokens[] = driver().getCurrentUrl().split("/");
+		String[] pathTokens = driver().getCurrentUrl().split("/");
 		Long projectId = Long.valueOf(pathTokens[pathTokens.length - 1]);
 
 		ProjectMembersPage remoteProjectMembersPage = ProjectMembersPage.goToRemoteProject(driver(), projectId);
