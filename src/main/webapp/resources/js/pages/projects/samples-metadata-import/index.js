@@ -3,11 +3,11 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
 import { render } from "react-dom";
 import { SampleMetadataImportComplete } from "./components/SampleMetadataImportComplete";
-import { SampleMetadataImportMapHeaders } from "./components/SampleMetadataImportMapHeaders";
+import { SampleMetadataImportMapColumns } from "./components/SampleMetadataImportMapColumns";
 import { SampleMetadataImportReview } from "./components/SampleMetadataImportReview";
-import { SampleMetadataImportUploadFile } from "./components/SampleMetadataImportUploadFile";
+import { SampleMetadataImportSelectFile } from "./components/SampleMetadataImportSelectFile";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import store from "./store";
+import store from "./redux/store";
 
 /*
 Router for sample metadata importer.
@@ -20,11 +20,11 @@ render(
       <Routes>
         <Route
           path="/:projectId/sample-metadata/upload/file"
-          element={<SampleMetadataImportUploadFile />}
+          element={<SampleMetadataImportSelectFile />}
         />
         <Route
-          path="/:projectId/sample-metadata/upload/headers"
-          element={<SampleMetadataImportMapHeaders />}
+          path="/:projectId/sample-metadata/upload/columns"
+          element={<SampleMetadataImportMapColumns />}
         />
         <Route
           path="/:projectId/sample-metadata/upload/review"

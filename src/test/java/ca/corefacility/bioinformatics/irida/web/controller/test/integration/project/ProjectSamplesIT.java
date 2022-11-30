@@ -34,7 +34,6 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.google.common.collect.Lists;
 import com.google.common.net.HttpHeaders;
-
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
@@ -47,7 +46,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * Integration tests for project samples.
  */
 @RestIntegrationTest
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
+@TestExecutionListeners({
+		DependencyInjectionTestExecutionListener.class,
+		DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/project/ProjectSamplesIntegrationTest.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
@@ -74,9 +75,14 @@ public class ProjectSamplesIT {
 
 		assertTrue(samplesUri.endsWith("/api/projects/" + projectId + "/samples"),
 				"The samples URI should end with /api/projects/4/samples");
-		final Response r = asUser().contentType(ContentType.JSON).body(samples)
-				.header("Content-Type", "application/idcollection+json").expect().response()
-				.statusCode(HttpStatus.CREATED.value()).when().post(samplesUri);
+		final Response r = asUser().contentType(ContentType.JSON)
+				.body(samples)
+				.header("Content-Type", "application/idcollection+json")
+				.expect()
+				.response()
+				.statusCode(HttpStatus.CREATED.value())
+				.when()
+				.post(samplesUri);
 		final String location = r.getHeader(HttpHeaders.LOCATION);
 		assertNotNull(location, "Location should not be null.");
 		assertEquals(uriTemplateHandler.getRootUri() + "/api/projects/4/samples/1", location,
@@ -105,9 +111,14 @@ public class ProjectSamplesIT {
 		// adding ownership flag
 		samplesUri = samplesUri + "?ownership=true";
 
-		final Response r = asUser().contentType(ContentType.JSON).body(samples)
-				.header("Content-Type", "application/idcollection+json").expect().response()
-				.statusCode(HttpStatus.CREATED.value()).when().post(samplesUri);
+		final Response r = asUser().contentType(ContentType.JSON)
+				.body(samples)
+				.header("Content-Type", "application/idcollection+json")
+				.expect()
+				.response()
+				.statusCode(HttpStatus.CREATED.value())
+				.when()
+				.post(samplesUri);
 		final String location = r.getHeader(HttpHeaders.LOCATION);
 		assertNotNull(location, "Location should not be null.");
 		assertEquals(uriTemplateHandler.getRootUri() + "/api/projects/4/samples/1", location,
@@ -130,8 +141,14 @@ public class ProjectSamplesIT {
 		// this used to return CONFLICT, but ended up in errors where samples
 		// were partially added. Now it accepts the POST but doesn't change
 		// anything since the sample is already there
-		asUser().contentType(ContentType.JSON).body(samples).header("Content-Type", "application/idcollection+json")
-				.expect().response().statusCode(HttpStatus.CREATED.value()).when().post(samplesUri);
+		asUser().contentType(ContentType.JSON)
+				.body(samples)
+				.header("Content-Type", "application/idcollection+json")
+				.expect()
+				.response()
+				.statusCode(HttpStatus.CREATED.value())
+				.when()
+				.post(samplesUri);
 	}
 
 	@Test
@@ -199,7 +216,11 @@ public class ProjectSamplesIT {
 		String samplesUri = from(projectJson).get("resource.links.find{it.rel == 'project/samples'}.href");
 
 		// post that uri
-		Response r = asUser().body(sample).expect().response().statusCode(HttpStatus.CREATED.value()).when()
+		Response r = asUser().body(sample)
+				.expect()
+				.response()
+				.statusCode(HttpStatus.CREATED.value())
+				.when()
 				.post(samplesUri);
 
 		// check that the locations are set appropriately.
@@ -236,7 +257,9 @@ public class ProjectSamplesIT {
 		assertEquals(projectUri + "/samples", samplesUri);
 
 		// now confirm that the sample is not there anymore
-		asUser().expect().body("resource.resources.sampleName", not(hasItem(sampleLabel))).when()
+		asUser().expect()
+				.body("resource.resources.sampleName", not(hasItem(sampleLabel)))
+				.when()
 				.get(projectSamplesUri);
 	}
 
@@ -247,8 +270,12 @@ public class ProjectSamplesIT {
 		String updatedName = "Totally-different-sample-name";
 		updatedFields.put("sampleName", updatedName);
 
-		asUser().and().body(updatedFields).expect().body("resource.links.rel", hasItems("self", "sample/sequenceFiles"))
-				.when().patch(projectSampleUri);
+		asUser().and()
+				.body(updatedFields)
+				.expect()
+				.body("resource.links.rel", hasItems("self", "sample/sequenceFiles"))
+				.when()
+				.patch(projectSampleUri);
 
 		// now confirm that the sample name was updated
 		asUser().expect().body("resource.sampleName", is(updatedName)).when().get(projectSampleUri);
@@ -262,12 +289,22 @@ public class ProjectSamplesIT {
 		updatedFields.put("collectionDate", badDate);
 
 		// ensure updating date fails with bad date format
-		asUser().and().body(updatedFields).expect().response().statusCode(HttpStatus.BAD_REQUEST.value()).when()
+		asUser().and()
+				.body(updatedFields)
+				.expect()
+				.response()
+				.statusCode(HttpStatus.BAD_REQUEST.value())
+				.when()
 				.patch(projectSampleUri);
 
 		String goodDate = "2021-10-12";
 		updatedFields.put("collectionDate", goodDate);
-		asUser().and().body(updatedFields).expect().response().statusCode(HttpStatus.OK.value()).when()
+		asUser().and()
+				.body(updatedFields)
+				.expect()
+				.response()
+				.statusCode(HttpStatus.OK.value())
+				.when()
 				.patch(projectSampleUri);
 
 		// now confirm that the collectionDate was updated
@@ -279,8 +316,21 @@ public class ProjectSamplesIT {
 		String projectUri = uriTemplateHandler.getRootUri() + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 
-		asAdmin().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles")).when()
+		asAdmin().expect()
+				.body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
+				.when()
 				.get(projectSampleUri);
+	}
+
+	@Test
+	public void testReadSamplesAsAdmin() {
+		String projectUri = uriTemplateHandler.getRootUri() + "/api/projects/5";
+		String projectSamplesUri = projectUri + "/samples";
+
+		asAdmin().expect()
+				.body("resource.resources.sampleName", hasItems("sample1", "sample2"))
+				.when()
+				.get(projectSamplesUri);
 	}
 
 	@Test
@@ -305,8 +355,11 @@ public class ProjectSamplesIT {
 		String projectSampleUri = projectUri + "/samples/1";
 
 		final Response r = asAdmin().expect()
-				.body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles")).given()
-				.urlEncodingEnabled(false).when().get(projectSampleUri);
+				.body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
+				.given()
+				.urlEncodingEnabled(false)
+				.when()
+				.get(projectSampleUri);
 		final String responseBody = r.getBody().asString();
 		final String samplesUri = from(responseBody).get("resource.links.find{it.rel == 'sample/project'}.href");
 		// now verify that we can actually get this (so doubled slash should not
@@ -319,7 +372,20 @@ public class ProjectSamplesIT {
 		String projectUri = uriTemplateHandler.getRootUri() + "/api/projects/5";
 		String projectSampleUri = projectUri + "/samples/1";
 
-		asSequencer().expect().body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
-				.when().get(projectSampleUri);
+		asSequencer().expect()
+				.body("resource.links.rel", hasItems("self", "sample/project", "sample/sequenceFiles"))
+				.when()
+				.get(projectSampleUri);
+	}
+
+	@Test
+	public void testReadSamplesAsSequencer() {
+		String projectUri = uriTemplateHandler.getRootUri() + "/api/projects/5";
+		String projectSamplesUri = projectUri + "/samples";
+
+		asSequencer().expect()
+				.body("resource.resources.sampleName", hasItems("sample1", "sample2"))
+				.when()
+				.get(projectSamplesUri);
 	}
 }

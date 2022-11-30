@@ -21,6 +21,10 @@ export interface ValidateSamplesResponse {
   samples: ValidateSampleNameModel[];
 }
 
+export interface LockedSamplesResponse {
+  sampleIds: number[];
+}
+
 export interface MetadataItem {
   [field: string]: string;
   rowKey: string;
@@ -113,6 +117,15 @@ export async function validateSamples({
     `${URL}/${projectId}/samples/validate`,
     body
   );
+  return response.data;
+}
+
+export async function getLockedSamples({
+  projectId,
+}: {
+  projectId: string;
+}): Promise<LockedSamplesResponse> {
+  const response = await axios.get(`${URL}/${projectId}/samples/locked`);
   return response.data;
 }
 

@@ -24,8 +24,10 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	WebElement dropzone;
 	@FindBy(className = "t-metadata-uploader-file-button")
 	WebElement fileBtn;
-	@FindBy(css = "input[type=radio]")
-	List<WebElement> headerRadios;
+	@FindBy(className = "t-metadata-uploader-sample-name-column-select")
+	WebElement sampleNameColumnSelect;
+	@FindBy(className = "t-metadata-uploader-columns-table")
+	WebElement headersTable;
 	@FindBy(className = "t-metadata-uploader-preview-button")
 	WebElement previewBtn;
 	@FindBy(className = "t-metadata-uploader-upload-button")
@@ -73,19 +75,18 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 		wait.until(ExpectedConditions.visibilityOf(successMessage));
 	}
 
-	public void selectSampleNameColumn() {
-		headerRadios.get(3).click();
-		goToReviewPage();
-	}
-
-	public String getValueForSelectedSampleNameColumn() {
-		for (WebElement headerRadio : headerRadios) {
-			boolean isSelected = headerRadio.isSelected();
-			if (isSelected) {
-				return headerRadio.getAttribute("value");
+	public void selectSampleNameColumn(String sampleNameColumn) {
+		sampleNameColumnSelect.click();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		List<WebElement> selectOptions = wait.until(
+				ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-select-item")));
+		for (WebElement option : selectOptions) {
+			if (option.getAttribute("title").equals(sampleNameColumn)) {
+				option.click();
+				return;
 			}
 		}
-		return null;
+		wait.until(ExpectedConditions.visibilityOf(headersTable));
 	}
 
 	public int getUpdateCount() {

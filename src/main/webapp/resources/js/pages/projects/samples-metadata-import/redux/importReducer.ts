@@ -7,17 +7,33 @@ import { validateSampleName } from "../../../../apis/metadata/sample-utils";
 import {
   createSample,
   FieldUpdate,
+  getLockedSamples,
+  LockedSamplesResponse,
   MetadataItem,
   updateSample,
   ValidateSampleNameModel,
   validateSamples,
   ValidateSamplesResponse,
 } from "../../../../apis/projects/samples";
-import { ImportDispatch, ImportState } from "../store";
+import { ImportDispatch, ImportState } from "./store";
+import {
+  createMetadataFieldsForProject,
+  getMetadataFieldsForProject,
+  MetadataField,
+} from "../../../../apis/metadata/field";
+import { Restriction } from "../../../../utilities/restriction-utilities";
+
+export interface MetadataHeaderItem {
+  name: string;
+  existingRestriction: Restriction | undefined;
+  targetRestriction: Restriction;
+  rowKey: string;
+}
 
 interface MetadataValidateDetailsItem {
   isSampleNameValid: boolean;
   foundSampleId?: number;
+  locked: boolean;
 }
 
 interface MetadataSaveDetailsItem {
@@ -36,7 +52,7 @@ interface SetSampleNameColumnResponse {
 export interface InitialState {
   projectId: string;
   sampleNameColumn: string;
-  headers: string[];
+  headers: MetadataHeaderItem[];
   metadata: MetadataItem[];
   metadataValidateDetails: Record<string, MetadataValidateDetailsItem>;
   metadataSaveDetails: Record<string, MetadataSaveDetailsItem>;
@@ -67,6 +83,16 @@ export const saveMetadata = createAsyncThunk<
       state.importReducer;
     const metadataSaveDetails: Record<string, MetadataSaveDetailsItem> = {};
 
+    await createMetadataFieldsForProject({
+      projectId,
+      body: headers
+        .filter((header) => header.name !== sampleNameColumn)
+        .map((header) => ({
+          label: header.name,
+          restriction: header.targetRestriction,
+        })),
+    });
+
     const chunkSize = 100;
     for (let i = 0; i < metadata.length; i = i + chunkSize) {
       const promises: Promise<void>[] = [];
@@ -80,9 +106,16 @@ export const saveMetadata = createAsyncThunk<
           const name: string = metadataItem[sampleNameColumn];
           const metadataFields: FieldUpdate[] = Object.entries(metadataItem)
             .filter(
-              ([key]) => headers.includes(key) && key !== sampleNameColumn
+              ([key]) =>
+                headers.map((header) => header.name).includes(key) &&
+                key !== sampleNameColumn
             )
-            .map(([key, value]) => ({ field: key, value }));
+            .map(([key, value]) => ({
+              field: key,
+              value,
+              restriction: headers.filter((header) => header.name === key)[0]
+                .targetRestriction,
+            }));
           const sampleId = metadataValidateDetails[index].foundSampleId;
           if (sampleId) {
             promises.push(
@@ -143,44 +176,92 @@ For more information on redux async thunks see: https://redux-toolkit.js.org/api
 */
 export const setSampleNameColumn = createAsyncThunk<
   SetSampleNameColumnResponse,
-  { projectId: string; column: string },
+  { projectId: string; updatedSampleNameColumn: string },
   { state: ImportState }
 >(
   `importReducer/setSampleNameColumn`,
-  async ({ projectId, column }, { getState }) => {
+  async ({ projectId, updatedSampleNameColumn }, { getState }) => {
     const state: ImportState = getState();
     const { metadata } = state.importReducer;
     const metadataValidateDetails: Record<string, MetadataValidateDetailsItem> =
       {};
     const samples: ValidateSampleNameModel[] = metadata
-      .filter((row) => row[column])
+      .filter((row) => row[updatedSampleNameColumn])
       .map((row) => ({
-        name: row[column],
+        name: row[updatedSampleNameColumn],
       }));
-    const response: ValidateSamplesResponse = await validateSamples({
+    const validatedSamples: ValidateSamplesResponse = await validateSamples({
       projectId: projectId,
       body: {
         samples: samples,
       },
     });
+    const lockedSamples: LockedSamplesResponse = await getLockedSamples({
+      projectId,
+    });
     for (const metadataItem of metadata) {
       const index: string = metadataItem.rowKey;
-      const sampleName: string = metadataItem[column];
-      const foundSample: ValidateSampleNameModel | undefined =
-        response.samples.find(
-          (sample: ValidateSampleNameModel) => sampleName === sample.name
-        );
+      const sampleName: string = metadataItem[updatedSampleNameColumn];
+      const foundValidatedSamples = validatedSamples.samples.find(
+        (sample) => sampleName === sample.name
+      );
+      const foundSampleId = foundValidatedSamples?.ids?.at(0);
+      const foundLockedSamples = lockedSamples.sampleIds.find(
+        (sampleId) => sampleId === foundSampleId
+      );
       metadataValidateDetails[index] = {
         isSampleNameValid: validateSampleName(sampleName),
-        foundSampleId: foundSample?.ids?.at(0),
+        foundSampleId: foundSampleId,
+        locked: !!foundLockedSamples,
       };
     }
 
     return {
-      sampleNameColumn: column,
+      sampleNameColumn: updatedSampleNameColumn,
       metadataValidateDetails,
     };
   }
+);
+
+/*
+Redux async thunk for setting the metadata headers.
+For more information on redux async thunks see: https://redux-toolkit.js.org/api/createAsyncThunk
+*/
+export const setHeaders = createAsyncThunk<
+  { headers: MetadataHeaderItem[] },
+  { headers: string[] },
+  { state: ImportState }
+>(`importReducer/setHeaders`, async ({ headers }, { getState }) => {
+  const state: ImportState = getState();
+  const { projectId } = state.importReducer;
+  const response: MetadataField[] = await getMetadataFieldsForProject(
+    projectId
+  );
+  const updatedHeaders = headers.map((header, index) => {
+    const metadataField = response.find(
+      (metadataField) => metadataField.label === header
+    );
+    return {
+      name: header,
+      existingRestriction: metadataField?.restriction,
+      targetRestriction: metadataField?.restriction
+        ? metadataField.restriction
+        : "LEVEL_1",
+      rowKey: `metadata-uploader-header-row-${index}`,
+    };
+  });
+  return { headers: updatedHeaders };
+});
+
+/*
+Redux action for updating the metadata headers.
+For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
+ */
+export const updateHeaders = createAction(
+  `importReducer/updateHeaders`,
+  (headers: MetadataHeaderItem[]) => ({
+    payload: { headers },
+  })
 );
 
 /*
@@ -191,17 +272,6 @@ export const setProjectId = createAction(
   `importReducer/setProjectID`,
   (projectId: string) => ({
     payload: { projectId },
-  })
-);
-
-/*
-Redux action for setting the metadata headers.
-For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
- */
-export const setHeaders = createAction(
-  `importReducer/setHeaders`,
-  (headers: string[]) => ({
-    payload: { headers },
   })
 );
 
@@ -239,17 +309,25 @@ Redux reducer for project metadata.
 For more information on redux reducers see: https://redux-toolkit.js.org/api/createReducer
  */
 export const importReducer = createReducer(initialState, (builder) => {
+  builder.addCase(updateHeaders, (state, action) => {
+    state.headers = action.payload.headers;
+  });
   builder.addCase(setProjectId, (state, action) => {
     state.projectId = action.payload.projectId;
-  });
-  builder.addCase(setHeaders, (state, action) => {
-    state.headers = action.payload.headers;
+    state.sampleNameColumn = "";
+    state.headers = [];
+    state.metadata = [];
+    state.metadataValidateDetails = {};
+    state.metadataSaveDetails = {};
   });
   builder.addCase(setMetadata, (state, action) => {
     state.metadata = action.payload.metadata;
   });
   builder.addCase(setMetadataSaveDetails, (state, action) => {
     state.metadataSaveDetails = action.payload.metadataSaveDetails;
+  });
+  builder.addCase(setHeaders.fulfilled, (state, action) => {
+    state.headers = action.payload.headers;
   });
   builder.addCase(setSampleNameColumn.fulfilled, (state, action) => {
     state.sampleNameColumn = action.payload.sampleNameColumn;

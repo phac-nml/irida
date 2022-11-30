@@ -5,8 +5,17 @@ import axios from "axios";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { addKeysToList } from "../../utilities/http-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
+import { Restriction } from "../../pages/projects/samples-metadata-import/redux/importReducer";
 
 const BASE_URL = setBaseUrl(`/ajax/metadata/fields`);
+
+export interface MetadataField {
+  id?: number;
+  fieldKey?: string;
+  label: string;
+  type?: string;
+  restriction: Restriction;
+}
 
 /**
  * Redux API for metadata fields.
@@ -25,11 +34,14 @@ export const fieldsApi = createApi({
         url: "",
         params: { projectId },
       }),
-      provides: (result) => [
-        ...result.map(({ id }) => ({ type: "MetadataFields", id })),
+      providesTags: (result) => [
+        ...result.map(({ id }: { id: number }) => ({
+          type: "MetadataFields",
+          id,
+        })),
         { type: "MetadataFields", id: "LIST" },
       ],
-      transformResponse(response) {
+      transformResponse(response: MetadataField[]) {
         return addKeysToList(response, "field", "id");
       },
     }),
@@ -50,6 +62,27 @@ export const {
 } = fieldsApi;
 
 /**
+ * Get a list of fields for the project
+ * @returns {Promise<any>}
+ */
+export async function getMetadataFieldsForProject(projectId: string) {
+  try {
+    const { data } = await axios.get(`${BASE_URL}?projectId=${projectId}`);
+    return data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        return Promise.reject(error.response.data.message);
+      } else {
+        return Promise.reject(error.message);
+      }
+    } else {
+      return Promise.reject("An unexpected error occurred");
+    }
+  }
+}
+
+/**
  * Get a list of field restrictions
  * @returns {Promise<any>}
  */
@@ -57,8 +90,16 @@ export async function getMetadataRestrictions() {
   try {
     const { data } = await axios.get(`${BASE_URL}/restrictions`);
     return data;
-  } catch (e) {
-    return Promise.reject(e.response.data.message);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        return Promise.reject(error.response.data.message);
+      } else {
+        return Promise.reject(error.message);
+      }
+    } else {
+      return Promise.reject("An unexpected error occurred");
+    }
   }
 }
 
@@ -66,13 +107,37 @@ export async function getMetadataRestrictions() {
  * Get a list of metadata fields for the list of projects
  * @returns {Promise<any>}
  */
-export async function getAllMetadataFieldsForProjects({ projectIds }) {
+export async function getAllMetadataFieldsForProjects(
+  projectIds: string[]
+): Promise<MetadataField[]> {
   try {
     const { data } = await axios.get(
       `${BASE_URL}/projects?projectIds=${projectIds}`
     );
     return addKeysToList(data, "field", "id");
-  } catch (e) {
-    return Promise.reject(e.response.data.message);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        return Promise.reject(error.response.data.message);
+      } else {
+        return Promise.reject(error.message);
+      }
+    } else {
+      return Promise.reject("An unexpected error occurred");
+    }
   }
+}
+
+/*
+ * Create metadata fields for a specific project
+ * @returns {Promise<any>}
+ */
+export async function createMetadataFieldsForProject({
+  projectId,
+  body,
+}: {
+  projectId: string;
+  body: MetadataField[];
+}) {
+  return await axios.post(`${BASE_URL}?projectId=${projectId}`, body);
 }

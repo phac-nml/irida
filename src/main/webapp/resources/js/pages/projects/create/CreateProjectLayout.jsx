@@ -138,7 +138,7 @@ export function CreateProjectLayout({ children }) {
           </div>
         }
         onCancel={onCancel}
-        width={720}
+        width={900}
         title={i18n("CreateProject.title")}
       >
         <Row>

@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.admin;
 
-import java.time.Duration;
-import java.util.List;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -11,7 +9,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.time.Duration;
+import java.util.List;
 
 public class AdminClientsPage extends AbstractPage {
 	public static final String PASSWORD = "password";
@@ -22,9 +21,6 @@ public class AdminClientsPage extends AbstractPage {
 	public static final String WRITE_NO = "no";
 	public static final String WRITE_YES = "write";
 	public static final String WRITE_AUTO = "auto";
-
-	@FindBy(css = ".t-admin-clients-table tbody .ant-table-row")
-	private List<WebElement> clientRows;
 
 	@FindBy(className = "t-client-modal")
 	private WebElement createModal;
@@ -111,6 +107,8 @@ public class AdminClientsPage extends AbstractPage {
 	}
 
 	public String getClientSecret(String clientId) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+		List<WebElement> clientRows = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".t-admin-clients-table tbody .ant-table-row")));
 		for (WebElement row : clientRows) {
 			if (row.findElement(By.className("t-client-id")).getText().equals(clientId)) {
 				return row.findElement(By.className("t-client-secret")).getText();
