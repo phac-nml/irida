@@ -7,8 +7,9 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
+import MainNavigation from "../../components/MainNavigation";
 import { loader as exportsLoader } from "../../components/ncbi/export-table";
-import { setBaseUrl } from "../../utilities/url-utilities";
+import { getContextPath } from "../../utilities/url-utilities";
 import { loader as detailsLoader } from "../../components/ncbi/details";
 import { LoadingOutlined } from "@ant-design/icons";
 import { loader as ncbiLoader } from "./ncbi/create";
@@ -26,9 +27,9 @@ const DefaultErrorBoundary = React.lazy(
   () => import("../../components/DefaultErrorBoundary")
 );
 
-__webpack_public_path__ = setBaseUrl(`/dist/`);
+const CONTEXT_PATH = getContextPath();
 
-const CONTEXT_PATH = document.querySelector("#root").dataset.context;
+__webpack_public_path__ = `${CONTEXT_PATH}/dist/`;
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -72,7 +73,9 @@ const router = createBrowserRouter(
 function ProjectBase(): JSX.Element {
   return (
     <Layout style={{ height: `100vh` }}>
-      <Layout.Header>NAV HERE</Layout.Header>
+      <Layout.Header>
+        <MainNavigation />
+      </Layout.Header>
       <Layout.Content>
         <Suspense fallback={<LoadingOutlined />}>
           <Outlet />
