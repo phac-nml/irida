@@ -12,6 +12,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { loader as detailsLoader } from "../../components/ncbi/details";
 import { LoadingOutlined } from "@ant-design/icons";
 import { loader as ncbiLoader } from "./ncbi/create";
+import { Layout } from "antd";
 
 const ProjectNCBILayout = React.lazy(() => import("./ncbi"));
 const NCBIExportDetails = React.lazy(
@@ -27,9 +28,15 @@ const DefaultErrorBoundary = React.lazy(
 
 __webpack_public_path__ = setBaseUrl(`/dist/`);
 
+const CONTEXT_PATH = document.querySelector("#root").dataset.context;
+
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path={setBaseUrl(`/projects/:projectId`)} element={<ProjectBase />}>
+    <Route
+      path={`${CONTEXT_PATH}/projects/:projectId`}
+      element={<ProjectBase />}
+    >
+      <Route index element={<div>SAMPLES</div>} />
       <Route
         path="ncbi"
         element={<NcbiCreateExport />}
@@ -64,12 +71,14 @@ const router = createBrowserRouter(
  */
 function ProjectBase(): JSX.Element {
   return (
-    <div>
-      {/* TODO: NAV AND OTHER TOP LEVEL ITEMS HERE */}
-      <Suspense fallback={<LoadingOutlined />}>
-        <Outlet />
-      </Suspense>
-    </div>
+    <Layout style={{ height: `100vh` }}>
+      <Layout.Header>NAV HERE</Layout.Header>
+      <Layout.Content>
+        <Suspense fallback={<LoadingOutlined />}>
+          <Outlet />
+        </Suspense>
+      </Layout.Content>
+    </Layout>
   );
 }
 
