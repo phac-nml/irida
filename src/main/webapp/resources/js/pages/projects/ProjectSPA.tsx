@@ -7,13 +7,15 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
-import MainNavigation from "../../components/MainNavigation";
+import MainNavigation from "../../components/main-navigation";
 import { loader as exportsLoader } from "../../components/ncbi/export-table";
 import { getContextPath } from "../../utilities/url-utilities";
 import { loader as detailsLoader } from "../../components/ncbi/details";
 import { LoadingOutlined } from "@ant-design/icons";
 import { loader as ncbiLoader } from "./ncbi/create";
 import { Layout } from "antd";
+import { Provider } from "react-redux";
+import { store } from "../../redux/store";
 
 const ProjectNCBILayout = React.lazy(() => import("./ncbi"));
 const NCBIExportDetails = React.lazy(
@@ -92,7 +94,11 @@ function ProjectBase(): JSX.Element {
  * @constructor
  */
 export default function ProjectSPA(): JSX.Element {
-  return <RouterProvider router={router} />;
+  return (
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
+  );
 }
 
 render(<ProjectSPA />, document.querySelector("#root"));

@@ -1,0 +1,25 @@
+.nav-logo {
+  float: left;
+  width: 128px;
+  height: 28px;
+  margin: 16px 24px 16px 0;
+}
+
+.main-nav {
+  flex: 1;
+}
+
+.main-nav .ant-menu-title-content > a {
+  color: var(--grey-2);
+}
+
+.global-search {
+  width: 300px;
+  background-color: transparent;
+}
+
+.global-search [data-icon="search"],
+.global-search .anticon-close-circle svg {
+  color: var(--grey-4);
+  font-size: 14px;
+}
