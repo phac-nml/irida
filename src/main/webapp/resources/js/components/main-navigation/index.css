@@ -45,11 +45,14 @@
   width: 300px;
 }
 
-.global-search [data-icon="search"],
-.global-search .anticon-close-circle svg {
+.global-search [data-icon="search"] {
   color: #f0f0f0;
   font-size: 22px;
   cursor: pointer;
+}
+
+.global-search:focus-within [data-icon="search"] {
+  color: #bfbfbf;
 }
 
 .nav-icon svg {
