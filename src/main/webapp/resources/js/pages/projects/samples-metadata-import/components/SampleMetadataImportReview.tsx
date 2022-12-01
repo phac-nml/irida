@@ -5,6 +5,7 @@ import {
   Button,
   List,
   Popover,
+  Progress,
   Table,
   TableProps,
   Tag,
@@ -228,8 +229,12 @@ export function SampleMetadataImportReview(): JSX.Element {
   );
 
   return (
-    <SampleMetadataImportWizard current={2} percent={progress}>
-      <Text>{i18n("SampleMetadataImportReview.description")}</Text>
+    <SampleMetadataImportWizard current={2}>
+      <Text>
+        {loading
+          ? i18n("SampleMetadataImportReview.loading")
+          : i18n("SampleMetadataImportReview.description")}
+      </Text>
       {!isValid && (
         <ErrorAlert
           message={i18n("SampleMetadataImportReview.alert.valid.title")}
@@ -290,7 +295,10 @@ export function SampleMetadataImportReview(): JSX.Element {
           (metadataItem) => !metadataValidateDetails[metadataItem.rowKey].locked
         )}
         pagination={getPaginationOptions(metadata.length)}
-        loading={loading}
+        loading={{
+          indicator: <Progress type="circle" percent={progress} />,
+          spinning: loading,
+        }}
       />
       <div style={{ display: "flex" }}>
         <Button
