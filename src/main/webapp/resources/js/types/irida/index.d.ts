@@ -47,6 +47,8 @@ declare namespace IRIDA {
     firstName: string;
     identifier: number;
     lastName: string;
+    manager: boolean;
+    technician: boolean;
     username: string;
   };
 

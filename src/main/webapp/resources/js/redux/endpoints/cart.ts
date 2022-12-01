@@ -3,7 +3,7 @@ import { TAG_COUNT } from "./tags";
 
 export const cartApi = api.injectEndpoints({
   endpoints: (build) => ({
-    getCartCount: build.query({
+    getCartCount: build.query<number, void>({
       query: () => "cart/count",
       providesTags: [TAG_COUNT],
     }),
