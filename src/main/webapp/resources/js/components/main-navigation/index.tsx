@@ -26,13 +26,17 @@ import { renderMenuItem } from "../ant.design/menu-utilities";
 import { useGetCurrentUserQuery } from "../../redux/endpoints/user";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import AnnouncementLink from "./components/AnnouncementLink";
+import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
 
 /**
  * React component to render the main navigation component at the top of the page.
  * @constructor
  */
 export default function MainNavigation(): JSX.Element {
+  const screens = useBreakpoint();
   const { data: user = {}, isSuccess } = useGetCurrentUserQuery(undefined, {});
+
+  console.log(screens);
 
   const leftMenuItems: MenuItem[] = useMemo(
     () => [

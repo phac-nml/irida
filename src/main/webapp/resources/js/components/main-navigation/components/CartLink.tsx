@@ -8,7 +8,7 @@ export default function CartLink() {
   const { data: count } = useGetCartCountQuery(undefined, {});
 
   return (
-    <Badge count={count} showZero offset={[-5, 0]}>
+    <Badge count={count} offset={[-5, 0]}>
       <a className={"nav-icon"} href={ROUTE_CART}>
         <ShoppingCartOutlined />
       </a>

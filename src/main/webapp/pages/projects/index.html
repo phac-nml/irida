@@ -5,12 +5,8 @@
     <title>TODO: UPDATE THIS TITLE</title>
     <webpacker:css entry="project-spa" />
   </head>
-  <body>
-    <div
-      id="root"
-      th:attr="data-context=${#request.contextPath}"
-      style="height: 100vh"
-    ></div>
+  <body th:attr="data-context=${#request.contextPath}">
+    <div id="root" style="height: 100vh"></div>
 
     <webpacker:js entry="project-spa" />
   </body>

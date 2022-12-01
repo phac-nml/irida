@@ -11,7 +11,6 @@ export default function GlobalSearch(): JSX.Element {
     <form className="global-search" method="get" action={ROUTE_SEARCH}>
       <Input
         name="query"
-        allowClear
         autoComplete="off"
         className="t-global-search"
         prefix={<SearchOutlined />}
