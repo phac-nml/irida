@@ -2,7 +2,7 @@ import type { ConfigureStoreOptions } from "@reduxjs/toolkit";
 import { configureStore } from "@reduxjs/toolkit";
 import type { TypedUseSelectorHook } from "react-redux";
 import { useDispatch, useSelector } from "react-redux";
-import { api } from "./services/api";
+import { api } from "./endpoints/api";
 
 export const createStore = (
   options?: ConfigureStoreOptions["preloadedState"] | undefined
@@ -11,6 +11,8 @@ export const createStore = (
     reducer: {
       [api.reducerPath]: api.reducer,
     },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(api.middleware),
     ...options,
   });
 

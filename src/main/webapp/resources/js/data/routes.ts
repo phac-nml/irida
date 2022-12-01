@@ -8,6 +8,7 @@ export const ROUTE_ANALYSES_ALL = `${CONTEXT_PATH}/analysis/all`;
 export const ROUTE_ANALYSES_OUTPUT = `${CONTEXT_PATH}/analysis/user/analysis-outputs`;
 export const ROUTE_CART = `${CONTEXT_PATH}/cart`;
 export const ROUTE_HOME = CONTEXT_PATH;
+export const ROUTE_LOGOUT = `${CONTEXT_PATH}/logout`;
 export const ROUTE_PROJECTS_ALL = `${CONTEXT_PATH}/projects/all`;
 export const ROUTE_PROJECTS_PERSONAL = `${CONTEXT_PATH}/projects`;
 export const ROUTE_PROJECTS_SYNC = `${CONTEXT_PATH}/projects/synchronize`;

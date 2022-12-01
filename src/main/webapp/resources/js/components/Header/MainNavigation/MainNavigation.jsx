@@ -46,11 +46,7 @@ export function MainNavigation() {
       <AnnouncementsSubMenu />
       <Menu theme={theme} mode="horizontal" defaultSelectedKeys={[""]}>
         <Menu.SubMenu key="account-dropdown-link" icon={<IconUser />}>
-          <Menu.Item key="account">
-            <a href={setBaseUrl(`/users/current`)}>
-              {i18n("nav.main.account")}
-            </a>
-          </Menu.Item>
+          <Menu.Item key="account"></Menu.Item>
           <Menu.SubMenu key="help" title={i18n("nav.main.help")}>
             <Menu.Item key="userguide">
               <a

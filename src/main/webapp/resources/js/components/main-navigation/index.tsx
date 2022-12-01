@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Menu, Space } from "antd";
 import GlobalSearch from "./components/GlobalSearch";
 import {
@@ -8,6 +8,7 @@ import {
   ROUTE_ANALYSES_ALL,
   ROUTE_ANALYSES_OUTPUT,
   ROUTE_HOME,
+  ROUTE_LOGOUT,
   ROUTE_PROJECTS_ALL,
   ROUTE_PROJECTS_PERSONAL,
   ROUTE_PROJECTS_SYNC,
@@ -19,130 +20,219 @@ import {
 import { theme } from "../../utilities/theme-utilities";
 import "./index.css";
 import CartLink from "./components/CartLink";
-
-type MenuItem = {
-  key: string;
-  label?: string | JSX.Element;
-  type?: "divider";
-  children?: MenuItem[];
-};
-
-const menuItems: MenuItem[] = [
-  {
-    key: `nav-projects`,
-    label: <a href={ROUTE_PROJECTS_PERSONAL}>{i18n("nav.main.projects")}</a>,
-    children: [
-      {
-        key: `nav-projects-personal`,
-        label: (
-          <a href={ROUTE_PROJECTS_PERSONAL}>{i18n("nav.main.project-list")}</a>
-        ),
-      },
-      ...[
-        // ADMIN ONLY
-        {
-          key: `nav-projects-all`,
-          label: (
-            <a href={ROUTE_PROJECTS_ALL}>{i18n("nav.main.project-list-all")}</a>
-          ),
-        },
-      ],
-      { type: `divider`, key: `nav-div-1` },
-      {
-        key: `nav-projects-sync`,
-        label: (
-          <a href={ROUTE_PROJECTS_SYNC}>{i18n("nav.main.project-sync")}</a>
-        ),
-      },
-    ],
-  },
-  {
-    key: `nav-analyses`,
-    label: <a href={ROUTE_ANALYSES}>{i18n("nav.main.analysis")}</a>,
-    children: [
-      {
-        key: `nav-analyses-personal`,
-        label: (
-          <a href={ROUTE_ANALYSES}>{i18n("nav.main.analysis-admin-user")}</a>
-        ),
-      },
-      ...[
-        // ADMIN ONLY
-        {
-          key: `nav-analyses-all`,
-          label: (
-            <a href={ROUTE_ANALYSES_ALL}>
-              {i18n("nav.main.analysis-admin-all")}
-            </a>
-          ),
-        },
-      ],
-      { type: `divider`, key: `nav-div-2` },
-      {
-        key: `nav-analyses-output`,
-        label: (
-          <a href={ROUTE_ANALYSES_OUTPUT}>{i18n("Analysis.outputFiles")}</a>
-        ),
-      },
-    ],
-  },
-  // not admin but is manager
-  ...[
-    {
-      key: `nav-users`,
-      label: <a href={ROUTE_USERS}>{i18n("nav.main.users")}</a>,
-      children: [
-        {
-          key: `nav-users-list`,
-          label: <a href={ROUTE_USERS}>{i18n("nav.main.users-list")}</a>,
-        },
-        {
-          key: `nav-user-groups`,
-          label: <a href={ROUTE_USER_GROUPS}>{i18n("nav.main.groups-list")}</a>,
-        },
-      ],
-    },
-  ],
-  // TECHNICIANS only
-  ...[
-    {
-      key: `nav-sequencing`,
-      label: (
-        <a href={ROUTE_SEQUENCING_RUNS}>{i18n("nav.main.sequencing-runs")}</a>
-      ),
-    },
-  ],
-  // NOT ADMINS
-  ...[
-    {
-      key: `nav-remote-api`,
-      label: <a href={ROUTE_REMOTE_API}>{i18n("nav.main.remoteapis")}</a>,
-    },
-  ],
-  // ADMIN ONLY
-  ...[
-    {
-      key: `nav-admin`,
-      label: <a href={ROUTE_ADMIN}>{i18n("MainNavigation.admin")}</a>,
-    },
-  ],
-];
-
-function renderMenuItem(item: MenuItem): JSX.Element {
-  if (item.type === `divider`) {
-    return <Menu.Divider key={item.key} />;
-  } else if (!item.children) {
-    return <Menu.Item key={item.key}>{item.label}</Menu.Item>;
-  } else {
-    return (
-      <Menu.SubMenu key={item.key} title={item.label}>
-        {item.children.map(renderMenuItem)}
-      </Menu.SubMenu>
-    );
-  }
-}
+import CurrentUser from "./components/CurrentUser";
+import type { MenuItem } from "../../types/ant-design";
+import { renderMenuItem } from "../ant.design/menu-utilities";
+import { useGetCurrentUserQuery } from "../../redux/endpoints/user";
+import { setBaseUrl } from "../../utilities/url-utilities";
 
 export default function MainNavigation(): JSX.Element {
+  const { data: user = {}, isSuccess } = useGetCurrentUserQuery(undefined, {});
+  console.log(user);
+
+  const leftMenuItems: MenuItem[] = useMemo(
+    () => [
+      {
+        key: `nav-projects`,
+        label: (
+          <a href={ROUTE_PROJECTS_PERSONAL}>{i18n("nav.main.projects")}</a>
+        ),
+        children: [
+          {
+            key: `nav-projects-personal`,
+            label: (
+              <a href={ROUTE_PROJECTS_PERSONAL}>
+                {i18n("nav.main.project-list")}
+              </a>
+            ),
+          },
+          ...(isSuccess && user.admin
+            ? [
+                {
+                  key: `nav-projects-all`,
+                  label: (
+                    <a href={ROUTE_PROJECTS_ALL}>
+                      {i18n("nav.main.project-list-all")}
+                    </a>
+                  ),
+                },
+              ]
+            : []),
+          { type: `divider`, key: `nav-div-1` },
+          {
+            key: `nav-projects-sync`,
+            label: (
+              <a href={ROUTE_PROJECTS_SYNC}>{i18n("nav.main.project-sync")}</a>
+            ),
+          },
+        ],
+      },
+      {
+        key: `nav-analyses`,
+        label: <a href={ROUTE_ANALYSES}>{i18n("nav.main.analysis")}</a>,
+        children: [
+          {
+            key: `nav-analyses-personal`,
+            label: (
+              <a href={ROUTE_ANALYSES}>
+                {i18n("nav.main.analysis-admin-user")}
+              </a>
+            ),
+          },
+          ...(isSuccess && user.admin
+            ? [
+                {
+                  key: `nav-analyses-all`,
+                  label: (
+                    <a href={ROUTE_ANALYSES_ALL}>
+                      {i18n("nav.main.analysis-admin-all")}
+                    </a>
+                  ),
+                },
+              ]
+            : []),
+          { type: `divider`, key: `nav-div-2` },
+          {
+            key: `nav-analyses-output`,
+            label: (
+              <a href={ROUTE_ANALYSES_OUTPUT}>{i18n("Analysis.outputFiles")}</a>
+            ),
+          },
+        ],
+      },
+      ...(isSuccess && !user.admin && user.manager
+        ? [
+            {
+              key: `nav-users`,
+              label: <a href={ROUTE_USERS}>{i18n("nav.main.users")}</a>,
+              children: [
+                {
+                  key: `nav-users-list`,
+                  label: (
+                    <a href={ROUTE_USERS}>{i18n("nav.main.users-list")}</a>
+                  ),
+                },
+                {
+                  key: `nav-user-groups`,
+                  label: (
+                    <a href={ROUTE_USER_GROUPS}>
+                      {i18n("nav.main.groups-list")}
+                    </a>
+                  ),
+                },
+              ],
+            },
+          ]
+        : []),
+      ...(isSuccess && user.technician
+        ? [
+            {
+              key: `nav-sequencing`,
+              label: (
+                <a href={ROUTE_SEQUENCING_RUNS}>
+                  {i18n("nav.main.sequencing-runs")}
+                </a>
+              ),
+            },
+          ]
+        : []),
+      ...(isSuccess && !user.admin
+        ? [
+            {
+              key: `nav-remote-api`,
+              label: (
+                <a href={ROUTE_REMOTE_API}>{i18n("nav.main.remoteapis")}</a>
+              ),
+            },
+          ]
+        : []),
+      ...(isSuccess && user.admin
+        ? [
+            {
+              key: `nav-admin`,
+              label: <a href={ROUTE_ADMIN}>{i18n("MainNavigation.admin")}</a>,
+            },
+          ]
+        : []),
+    ],
+    [isSuccess, user.admin]
+  );
+
+  const rightMenuItems: MenuItem[] = useMemo(
+    () => [
+      {
+        key: `nav-cart`,
+        label: <CartLink />,
+      },
+      {
+        key: `nav-user`,
+        label: <CurrentUser />,
+        children: [
+          {
+            key: `nav-user-account`,
+            label: (
+              <a href={setBaseUrl(`/users/current`)}>
+                {i18n("nav.main.account")}
+              </a>
+            ),
+          },
+          {
+            key: `nav-guides`,
+            label: `Guides`,
+            children: [
+              {
+                key: `nav-user-guide`,
+                label: (
+                  <a
+                    href="https://phac-nml.github.io/irida-documentation/user/user/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {i18n("nav.main.userguide")}
+                  </a>
+                ),
+              },
+              ...(isSuccess && user.admin
+                ? [
+                    {
+                      key: `nav-admin-guide`,
+                      label: (
+                        <a
+                          href="https://phac-nml.github.io/irida-documentation/user/administrator/"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {i18n("nav.main.adminguide")}
+                        </a>
+                      ),
+                    },
+                  ]
+                : []),
+            ],
+          },
+          {
+            type: "divider",
+            key: "nav-account-divider",
+          },
+          {
+            key: `nav-logout`,
+            label: <a href={ROUTE_LOGOUT}>{i18n("nav.main.logout")}</a>,
+          },
+          {
+            type: "divider",
+            key: "nav-logout-divider",
+          },
+          {
+            key: `nav-version`,
+            disabled: true,
+            label: i18n("irida.version"),
+          },
+        ],
+      },
+    ],
+    [isSuccess, user?.admin]
+  );
+
   return (
     <>
       <a href={ROUTE_HOME}>
@@ -160,11 +250,13 @@ export default function MainNavigation(): JSX.Element {
         }}
       >
         <Menu className={"main-nav"} theme={theme} mode={"horizontal"}>
-          {menuItems.map(renderMenuItem)}
+          {leftMenuItems.map(renderMenuItem)}
         </Menu>
         <Space direction={"horizontal"}>
           <GlobalSearch />
-          <CartLink />
+          <Menu className={"utils-nav"} theme={theme} mode={"horizontal"}>
+            {rightMenuItems.map(renderMenuItem)}
+          </Menu>
         </Space>
       </div>
     </>

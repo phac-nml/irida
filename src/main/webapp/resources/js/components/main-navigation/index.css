@@ -9,17 +9,36 @@
   flex: 1;
 }
 
-.main-nav .ant-menu-title-content > a {
-  color: var(--grey-2);
+.main-nav.ant-menu-root li.ant-menu-submenu,
+.main-nav.ant-menu-root .ant-menu-item,
+.utils-nav.ant-menu-root li.ant-menu-submenu,
+.utils-nav.ant-menu-root .ant-menu-item {
+  display: flex;
+  height: 64px;
+  overflow-y: hidden;
+}
+
+.main-nav.ant-menu-root li.ant-menu-submenu a,
+.main-nav.ant-menu-root .ant-menu-item a {
+  color: var(--grey-4);
+  font-size: 18px;
 }
 
 .global-search {
   width: 300px;
   background-color: transparent;
+  margin: 0 20px;
 }
 
 .global-search [data-icon="search"],
 .global-search .anticon-close-circle svg {
-  color: var(--grey-4);
+  color: #bfbfbf;
   font-size: 14px;
+}
+
+.nav-icon svg {
+  position: relative;
+  top: 6px;
+  color: #f0f0f0;
+  font-size: 26px;
 }
