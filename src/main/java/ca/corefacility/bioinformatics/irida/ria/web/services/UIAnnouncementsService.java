@@ -1,18 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.security.Principal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.transaction.Transactional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Component;
-
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
 import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.model.user.User;
@@ -26,6 +13,19 @@ import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.AnnouncementService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+
+import javax.transaction.Transactional;
+import java.security.Principal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * A utility class for formatting responses for the announcements page UI.
@@ -192,4 +192,9 @@ public class UIAnnouncementsService {
 		return currentAnnouncement.orElse(null);
 	}
 
+	public int getUnreadAnnouncementsCount() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User user = userService.getUserByUsername(authentication.getName());
+		return announcementService.getUnreadAnnouncementsForUser(user).size();
+	}
 }

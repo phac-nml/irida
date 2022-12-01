@@ -6,6 +6,7 @@ export const ROUTE_ADMIN = `${CONTEXT_PATH}/admin`;
 export const ROUTE_ANALYSES = `${CONTEXT_PATH}/analysis`;
 export const ROUTE_ANALYSES_ALL = `${CONTEXT_PATH}/analysis/all`;
 export const ROUTE_ANALYSES_OUTPUT = `${CONTEXT_PATH}/analysis/user/analysis-outputs`;
+export const ROUTE_ANNOUNCEMENTS = `${CONTEXT_PATH}/announcements/user/list`;
 export const ROUTE_CART = `${CONTEXT_PATH}/cart`;
 export const ROUTE_HOME = CONTEXT_PATH;
 export const ROUTE_LOGOUT = `${CONTEXT_PATH}/logout`;

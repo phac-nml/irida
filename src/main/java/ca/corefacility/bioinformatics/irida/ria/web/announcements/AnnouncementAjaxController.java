@@ -1,21 +1,20 @@
 package ca.corefacility.bioinformatics.irida.ria.web.announcements;
 
-import java.security.Principal;
-import java.util.List;
-
-import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
-import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserReadDetails;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import ca.corefacility.bioinformatics.irida.model.announcements.Announcement;
+import ca.corefacility.bioinformatics.irida.model.announcements.AnnouncementUserJoin;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementTableModel;
+import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserReadDetails;
 import ca.corefacility.bioinformatics.irida.ria.web.announcements.dto.AnnouncementUserTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnnouncementsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.List;
 
 /**
  * Controller for all ajax requests from the UI for announcements.
@@ -39,6 +38,16 @@ public class AnnouncementAjaxController {
 	@RequestMapping(value = "/control/list")
 	public TableResponse<AnnouncementTableModel> getAnnouncementsAdmin(@RequestBody TableRequest tableRequest) {
 		return service.getAnnouncementsAdmin(tableRequest);
+	}
+
+	/**
+	 * Get the total number of unread announcement for a user.
+	 *
+	 * @return number of unread announcements
+	 */
+	@GetMapping("/count")
+	public int getUnreadAnnouncementCount() {
+		return service.getUnreadAnnouncementsCount();
 	}
 
 	/**

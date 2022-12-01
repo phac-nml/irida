@@ -9,7 +9,7 @@ export default function CartLink() {
 
   return (
     <Badge count={count} showZero offset={[-5, 0]}>
-      <a className={"nav-icon"} type={"link"} href={ROUTE_CART}>
+      <a className={"nav-icon"} href={ROUTE_CART}>
         <ShoppingCartOutlined />
       </a>
     </Badge>
