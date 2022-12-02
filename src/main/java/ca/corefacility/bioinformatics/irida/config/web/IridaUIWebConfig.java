@@ -2,14 +2,12 @@ package ca.corefacility.bioinformatics.irida.config.web;
 
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
-import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.WebpackerDialect;
 import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
-import com.google.common.base.Joiner;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +26,6 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.dialect.IDialect;
@@ -41,9 +38,10 @@ import org.thymeleaf.templateresolver.FileTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.nio.file.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  */
@@ -57,7 +55,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	private static final String HTML_TEMPLATE_SUFFIX = ".html";
 	private static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
-	private final static String ANALYTICS_DIR = "/etc/irida/analytics/";
 
 	@Value("${locales.default}")
 	private String defaultLocaleValue;
@@ -84,26 +81,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	@Bean
 	public BreadCrumbInterceptor breadCrumbInterceptor() {
 		return new BreadCrumbInterceptor();
-	}
-
-	@Bean
-	public AnalyticsHandlerInterceptor analyticsHandlerInterceptor() {
-		Path analyticsPath = Paths.get(ANALYTICS_DIR);
-		StringBuilder analytics = new StringBuilder();
-		if (Files.exists(analyticsPath)) {
-			try (DirectoryStream<Path> stream = Files.newDirectoryStream(analyticsPath)) {
-				for (Path entry : stream) {
-					List<String> lines = Files.readAllLines(entry);
-					analytics.append(Joiner.on("\n").join(lines));
-					analytics.append("\n");
-				}
-			} catch (DirectoryIteratorException ex) {
-				logger.error("Error reading analytics directory: ", ex);
-			} catch (IOException e) {
-				logger.error("Error reading analytics file: ", e);
-			}
-		}
-		return new AnalyticsHandlerInterceptor(analytics.toString());
 	}
 
 	@Bean
@@ -137,16 +114,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		registry.addResourceHandler("/dist/**").addResourceLocations("/dist/");
 		// serve static resources for customizing pages from /etc/irida/static
 		registry.addResourceHandler("/static/**").addResourceLocations("file:/etc/irida/static/");
-	}
-
-	@Override
-	public void addViewControllers(ViewControllerRegistry registry) {
-		registry.addViewController("/projects/templates/merge").setViewName("projects/templates/merge");
-		registry.addViewController("/projects/templates/copy").setViewName("projects/templates/copy");
-		registry.addViewController("/projects/templates/move").setViewName("projects/templates/move");
-		registry.addViewController("/projects/templates/remove").setViewName("projects/templates/remove-modal.tmpl");
-		registry.addViewController("/projects/templates/referenceFiles/delete")
-				.setViewName("projects/templates/referenceFiles/delete");
 	}
 
 	/**
@@ -247,7 +214,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	public void addInterceptors(InterceptorRegistry registry) {
 		logger.debug("Adding Interceptors to the Registry");
 		registry.addInterceptor(galaxySessionInterceptor());
-		registry.addInterceptor(analyticsHandlerInterceptor());
 		registry.addInterceptor(breadCrumbInterceptor());
 		registry.addInterceptor(userSecurityInterceptor());
 	}
