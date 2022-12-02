@@ -4,6 +4,10 @@ import type { TypedUseSelectorHook } from "react-redux";
 import { useDispatch, useSelector } from "react-redux";
 import { api } from "./endpoints/api";
 
+/**
+ * @fileoverview This should be the only redux store in the IRIDA SPA.
+ */
+
 export const createStore = (
   options?: ConfigureStoreOptions["preloadedState"] | undefined
 ) =>
