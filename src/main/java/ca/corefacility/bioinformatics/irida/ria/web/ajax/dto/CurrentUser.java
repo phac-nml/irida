@@ -41,15 +41,15 @@ public class CurrentUser {
 		return lastName;
 	}
 
-	public boolean isAdmin() {
+	public boolean getIsAdmin() {
 		return isAdmin;
 	}
 
-	public boolean isManager() {
+	public boolean getIsManager() {
 		return isManager;
 	}
 
-	public boolean isTechnician() {
+	public boolean getIsTechnician() {
 		return isTechnician;
 	}
 }

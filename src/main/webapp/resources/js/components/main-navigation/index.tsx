@@ -50,7 +50,7 @@ export default function MainNavigation(): JSX.Element {
               </a>
             ),
           },
-          ...(isSuccess && user.admin
+          ...(isSuccess && user.isAdmin
             ? [
                 {
                   key: `nav-projects-all`,
@@ -83,7 +83,7 @@ export default function MainNavigation(): JSX.Element {
               </a>
             ),
           },
-          ...(isSuccess && user.admin
+          ...(isSuccess && user.isAdmin
             ? [
                 {
                   key: `nav-analyses-all`,
@@ -104,7 +104,7 @@ export default function MainNavigation(): JSX.Element {
           },
         ],
       },
-      ...(isSuccess && !user.admin && user.manager
+      ...(isSuccess && !user.isAdmin && user.isManager
         ? [
             {
               key: `nav-users`,
@@ -128,7 +128,7 @@ export default function MainNavigation(): JSX.Element {
             },
           ]
         : []),
-      ...(isSuccess && user.technician
+      ...(isSuccess && user.isTechnician
         ? [
             {
               key: `nav-sequencing`,
@@ -140,7 +140,7 @@ export default function MainNavigation(): JSX.Element {
             },
           ]
         : []),
-      ...(isSuccess && !user.admin
+      ...(isSuccess && !user.isAdmin
         ? [
             {
               key: `nav-remote-api`,
@@ -150,7 +150,7 @@ export default function MainNavigation(): JSX.Element {
             },
           ]
         : []),
-      ...(isSuccess && user.admin
+      ...(isSuccess && user.isAdmin
         ? [
             {
               key: `nav-admin`,
@@ -159,7 +159,7 @@ export default function MainNavigation(): JSX.Element {
           ]
         : []),
     ],
-    [isSuccess, user?.admin, user?.manager, user?.technician]
+    [isSuccess, user?.isAdmin, user?.isManager, user?.isTechnician]
   );
 
   const rightMenuItems: MenuItem[] = useMemo(
@@ -200,7 +200,7 @@ export default function MainNavigation(): JSX.Element {
                   </a>
                 ),
               },
-              ...(isSuccess && user.admin
+              ...(isSuccess && user.isAdmin
                 ? [
                     {
                       key: `nav-admin-guide`,
@@ -238,7 +238,7 @@ export default function MainNavigation(): JSX.Element {
         ],
       },
     ],
-    [isSuccess, user?.admin]
+    [isSuccess, user?.isAdmin]
   );
 
   return (
