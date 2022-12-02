@@ -16,7 +16,6 @@ public class SPAController {
      */
     @GetMapping("/projects/**")
     public String getSPAEntry() {
-        // TODO: (Josh - 12/2/22) This url will need to get updated as we move higher up the chain of pages.
         return "index";
     }
 
