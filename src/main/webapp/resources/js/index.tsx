@@ -14,6 +14,11 @@ import { Layout } from "antd";
 import MainNavigation from "./components/main-navigation";
 import { LoadingOutlined } from "@ant-design/icons";
 
+/**
+ * @fileoverview This is the highest level React component in IRIDA.  It is responsible
+ * for the global layout, and routing.
+ */
+
 const CONTEXT_PATH = getContextPath();
 
 __webpack_public_path__ = `${CONTEXT_PATH}/dist/`;
