@@ -4,6 +4,11 @@ import { Menu } from "antd";
 
 const { Item, Divider, SubMenu, ItemGroup } = Menu;
 
+/**
+ * Generate Ant Design menu items.
+ * TODO: (Josh - 12/2/22) This can be removed once updated to >4.20.0
+ * @param item
+ */
 export function renderMenuItem(item: MenuItem): JSX.Element {
   if (item.type === `divider`) {
     return <Divider key={item.key} />;
