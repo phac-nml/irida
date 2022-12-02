@@ -11,7 +11,10 @@
     <title>TODO: UPDATE THIS TITLE</title>
     <webpacker:css entry="project-spa" />
   </head>
-  <body th:attr="data-context=${#request.contextPath}">
+  <body
+    th:class="${session.siteTheme + '-theme'}"
+    th:attr="data-context=${#request.contextPath}"
+  >
     <div id="root" style="height: 100vh"></div>
 
     <webpacker:js entry="project-spa" />
