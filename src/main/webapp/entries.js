@@ -5,7 +5,7 @@
  */
 module.exports = {
   login: "./resources/js/pages/LoginPage.tsx",
-  "project-spa": "./resources/js/pages/projects/ProjectSPA.tsx",
+  main: "./resources/js/index.tsx",
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
   cart: "./resources/js/pages/cart/index.tsx",
   announcements: "./resources/js/pages/announcement",

@@ -13,6 +13,8 @@ import { useGetAnnouncementCountQuery } from "../../../redux/endpoints/announcem
 export default function AnnouncementLink() {
   const { data: count } = useGetAnnouncementCountQuery(undefined, {});
 
+  // TODO: (Josh - 12/2/22) Re-implement modal for high priority messages only
+
   return (
     <Badge count={count} offset={[-5, 0]}>
       <a className={"nav-icon"} href={ROUTE_ANNOUNCEMENTS}>

@@ -65,7 +65,7 @@
     "react-markdown": "^8.0.2",
     "react-mde": "^11.5.0",
     "react-redux": "^7.2.8",
-    "react-router-dom": "^6.4.3",
+    "react-router-dom": "^6.4.4",
     "react-virtualized-auto-sizer": "^1.0.6",
     "react-window": "^1.8.6",
     "reactour": "^1.18.7",
