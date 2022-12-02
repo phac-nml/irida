@@ -192,6 +192,11 @@ public class UIAnnouncementsService {
 		return currentAnnouncement.orElse(null);
 	}
 
+	/**
+	 * Get the number of unread announcements for a user.
+	 *
+	 * @return the number of unread announcements
+	 */
 	public int getUnreadAnnouncementsCount() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User user = userService.getUserByUsername(authentication.getName());
