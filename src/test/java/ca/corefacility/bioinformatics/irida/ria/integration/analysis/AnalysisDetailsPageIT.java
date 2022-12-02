@@ -104,7 +104,7 @@ public class AnalysisDetailsPageIT extends AbstractIridaUIITChromeDriver {
 		analysesPage.clickPagination(2);
 		assertEquals(6, analysesPage.getNumberOfAnalysesDisplayed(), "Should have 6 analyses displayed originally");
 
-		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 9L, "settings/delete");
+		AnalysisDetailsPage page = AnalysisDetailsPage.initPage(driver(), 9L, "delete");
 		assertTrue(page.compareTabTitle("Delete Analysis"), "Page title should equal");
 		assertTrue(page.deleteButtonExists());
 		page.deleteAnalysis();
