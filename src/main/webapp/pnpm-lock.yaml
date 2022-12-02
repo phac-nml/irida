@@ -52,7 +52,6 @@ specifiers:
   axios: ^0.26.1
   babel-loader: ^8.2.4
   babel-plugin-import: ^1.13.5
-  bootstrap: 3.4.1
   browserslist: ^4.20.2
   clipboard: ^1.7.1
   css-loader: ^6.7.1
@@ -71,8 +70,6 @@ specifiers:
   i: ^0.3.7
   immutability-helper: ^3.1.1
   jest: ^27.5.1
-  jquery: 3.5.1
-  jquery-validation: ^1.19.3
   less: ^4.1.2
   less-loader: ^10.2.0
   lodash: ^4.17.21
@@ -140,7 +137,6 @@ dependencies:
   ag-grid-react: 27.1.0_w6hrqnyrd37qujkkojqwgzxsou
   antd: 4.19.5_sfoxds7t5ydpegc3knd667wn6m
   axios: 0.26.1
-  bootstrap: 3.4.1
   clipboard: 1.7.1
   dayjs: 1.11.1
   deck.gl: 8.7.12_qdym3cmqy3izoldsblxf2ftyey
@@ -148,8 +144,6 @@ dependencies:
   gl-matrix: 3.4.3
   i: 0.3.7
   immutability-helper: 3.1.1
-  jquery: 3.5.1
-  jquery-validation: 1.19.3_jquery@3.5.1
   lodash: 4.17.21
   moment: 2.29.2
   postcss-nested: 5.0.6_postcss@8.4.12
@@ -3828,11 +3822,6 @@ packages:
     resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
     dev: true
 
-  /bootstrap/3.4.1:
-    resolution: {integrity: sha512-yN5oZVmRCwe5aKwzRj6736nSmKDX7pLYwsXiCj/EYmo16hODaBiT4En5btW/jhBF/seV+XMx3aYwukYC3A49DA==}
-    engines: {node: '>=6'}
-    dev: false
-
   /brace-expansion/1.1.11:
     resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}
     dependencies:
@@ -6219,18 +6208,6 @@ packages:
       - ts-node
       - utf-8-validate
     dev: true
-
-  /jquery-validation/1.19.3_jquery@3.5.1:
-    resolution: {integrity: sha512-iXxCS5W7STthSTMFX/NDZfWHBLbJ1behVK3eAgHXAV8/0vRa9M4tiqHvJMr39VGWHMGdlkhrtrkBuaL2UlE8yw==}
-    peerDependencies:
-      jquery: ^1.7 || ^2.0 || ^3.1
-    dependencies:
-      jquery: 3.5.1
-    dev: false
-
-  /jquery/3.5.1:
-    resolution: {integrity: sha512-XwIBPqcMn57FxfT+Go5pzySnm4KWkT1Tv7gjrpT1srtf8Weynl6R273VJ5GjkRb51IzMp5nbaPjJXMWeju2MKg==}
-    dev: false
 
   /js-tokens/4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
