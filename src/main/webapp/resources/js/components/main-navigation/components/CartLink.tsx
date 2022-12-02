@@ -4,6 +4,11 @@ import { ShoppingCartOutlined } from "@ant-design/icons";
 import { Badge } from "antd";
 import { ROUTE_CART } from "../../../data/routes";
 
+/**
+ * React component to render the cart icon in the main navigation and display
+ * the number of samples in the cart.
+ * @constructor
+ */
 export default function CartLink() {
   const { data: count } = useGetCartCountQuery(undefined, {});
 
