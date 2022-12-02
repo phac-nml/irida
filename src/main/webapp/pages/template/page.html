@@ -2,79 +2,87 @@
 <html
   xmlns:th="http://www.thymeleaf.org"
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  data-layout-decorate="~{template/base}"
+  th:lang="${#locale}"
 >
   <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title
+      data-layout-title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE"
+      th:text="#{global.title}"
+    >
+      IRIDA Platform
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="icon"
+      href="/resources/img/favicon.ico"
+      th:href="@{/resources/img/favicon.ico}"
+    />
     <webpacker:css entry="app" />
     <script th:inline="javascript">
       window.breadcrumbs = /*[[${breadcrumbs}]]*/ [];
     </script>
   </head>
-  <body
-    th:class="${session.siteTheme + '-theme'}"
-    th:attr="data-context=${#request.contextPath}"
-  >
-    <th:block layout:fragment="content">
-      <div class="ant-layout">
-        <header class="js-page-header"></header>
-        <div class="ant-layout-content" layout:fragment="page"></div>
-      </div>
+  <body th:class="${session.siteTheme + '-theme'}">
+    <div class="ant-layout">
+      <header class="js-page-header"></header>
+      <div class="ant-layout-content" layout:fragment="page"></div>
+    </div>
 
-      <script th:inline="javascript">
-        window.IRIDA = window.IRIDA || {};
-        window.IRIDA.site = {
-          theme: /*[[${session.siteTheme}]]*/ "light",
-          colours: {
-            primary: /*[[${session.siteColourPrimary}]]*/ "#006d75",
-            links: /*[[${session.siteColourLinks}]]*/ "#1890ff",
+    <script th:inline="javascript">
+      window.IRIDA = window.IRIDA || {};
+      window.IRIDA.site = {
+        theme: /*[[${session.siteTheme}]]*/ "light",
+        colours: {
+          primary: /*[[${session.siteColourPrimary}]]*/ "#006d75",
+          links: /*[[${session.siteColourLinks}]]*/ "#1890ff",
+        },
+      };
+
+      window.TL = {
+        _USER: /*[[${session.CURRENT_USER_DETAILS}]]*/ {},
+        _BASE_URL: /*[[@{/}]]*/ "/",
+        LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
+        URLS: {
+          cart: {
+            add: /*[[@{/cart/add/samples}]]*/ "/cart/add/samples",
           },
-        };
-
-        window.TL = {
-          _USER: /*[[${session.CURRENT_USER_DETAILS}]]*/ {},
-          _BASE_URL: /*[[@{/}]]*/ "/",
-          LANGUAGE_TAG: /*[[${#locale.toLanguageTag()}]]*/ "en",
-          URLS: {
-            cart: {
-              add: /*[[@{/cart/add/samples}]]*/ "/cart/add/samples",
-            },
+        },
+        SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800,
+        lang: {
+          page: {
+            first: /*[[#{table.first}]]*/ "First",
+            prev: /*[[#{table.previous}]]*/ "Previous",
+            next: /*[[#{table.next}]]*/ "Next",
+            last: /*[[#{table.last}]]*/ "Last",
           },
-          SESSION_LENGTH: /*[[${#httpSession.getAttribute('SESSION_TIMEOUT')}]]*/ 1800,
-          lang: {
-            page: {
-              first: /*[[#{table.first}]]*/ "First",
-              prev: /*[[#{table.previous}]]*/ "Previous",
-              next: /*[[#{table.next}]]*/ "Next",
-              last: /*[[#{table.last}]]*/ "Last",
-            },
-          },
-        };
-      </script>
+        },
+      };
+    </script>
 
-      <script
-        th:if="${!#strings.isEmpty(session.galaxyCallbackUrl)}"
-        th:inline="javascript"
-      >
-        window.GALAXY = {
-          URL: /*[[${session.galaxyCallbackUrl}]]*/ "",
-          CLIENT_ID: /*[[${session.galaxyClientID}]]*/ "",
-          TITLE: /*[[#{galaxy.session.title}]]*/ "Galaxy Export Session:",
-          MESSAGE:
-            /*[[#{galaxy.session.message}]]*/ "IRIDA is set to export samples to Galaxy at",
-          CANCEL: /*[[#{galaxy.session.cancel}]]*/ "Cancel Galaxy Export",
-          DOCUMENTATION:
-            /*[[#{galaxy.session.docs}]]*/ "Read the Official Documentation",
-        };
-      </script>
-      <webpacker:js entry="vendor" />
-      <webpacker:js entry="app" />
-      <th:block layout:fragment="base-scripts">
-        <!--/* optional script tags */-->
-      </th:block>
+    <script
+      th:if="${!#strings.isEmpty(session.galaxyCallbackUrl)}"
+      th:inline="javascript"
+    >
+      window.GALAXY = {
+        URL: /*[[${session.galaxyCallbackUrl}]]*/ "",
+        CLIENT_ID: /*[[${session.galaxyClientID}]]*/ "",
+        TITLE: /*[[#{galaxy.session.title}]]*/ "Galaxy Export Session:",
+        MESSAGE:
+          /*[[#{galaxy.session.message}]]*/ "IRIDA is set to export samples to Galaxy at",
+        CANCEL: /*[[#{galaxy.session.cancel}]]*/ "Cancel Galaxy Export",
+        DOCUMENTATION:
+          /*[[#{galaxy.session.docs}]]*/ "Read the Official Documentation",
+      };
+    </script>
+    <webpacker:js entry="app" />
+    <th:block layout:fragment="base-scripts">
+      <!--/* optional script tags */-->
+    </th:block>
 
-      <th:block layout:fragment="scripts">
-        <!--/* optional script tags */-->
-      </th:block>
+    <th:block layout:fragment="scripts">
+      <!--/* optional script tags */-->
     </th:block>
   </body>
 </html>
