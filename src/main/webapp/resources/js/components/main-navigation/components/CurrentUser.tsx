@@ -3,6 +3,11 @@ import { useGetCurrentUserQuery } from "../../../redux/endpoints/user";
 import { Avatar } from "antd";
 import { generateColourForItem } from "../../../utilities/colour-utilities";
 
+/**
+ * React component to render an avatar with the users initials.
+ * The colour of the avatar is generated from the user id and username
+ * @constructor
+ */
 export default function CurrentUser(): JSX.Element {
   const { data: user, isSuccess } = useGetCurrentUserQuery(undefined, {});
 
