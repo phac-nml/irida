@@ -19,6 +19,11 @@ export default function CurrentUser(): JSX.Element {
     [isSuccess, user?.identifier, user?.username]
   );
 
+  const initials = useMemo(
+    () => `${user?.firstName.charAt(0)}${user?.lastName.charAt(0)}`,
+    [user?.firstName, user?.lastName]
+  );
+
   return (
     <Avatar
       style={{
@@ -27,7 +32,7 @@ export default function CurrentUser(): JSX.Element {
         verticalAlign: "middle",
       }}
     >
-      {`${user?.firstName.charAt(0)}${user?.lastName.charAt(0)}`}
+      {initials}
     </Avatar>
   );
 }
