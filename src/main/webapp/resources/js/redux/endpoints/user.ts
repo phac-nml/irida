@@ -3,7 +3,7 @@ import { TAG_USER } from "./tags";
 import { CurrentUser } from "../../types/irida";
 
 /**
- * @fileoverview Announcement API for redux-toolkit.
+ * @fileoverview Current User API for redux-toolkit.
  */
 
 export const userApi = api.injectEndpoints({
