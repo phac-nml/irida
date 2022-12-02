@@ -4,7 +4,6 @@ import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChr
 import com.google.common.base.Strings;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -230,15 +229,6 @@ public class AbstractPage {
 		submitButton.click();
 		new WebDriverWait(driver, Duration.ofSeconds(TIME_OUT_IN_SECONDS))
 				.until(ExpectedConditions.stalenessOf(oldHtml));
-	}
-
-	/**
-	 * Wait for jQuery AJAX calls to complete on a page
-	 */
-	public void waitForJQueryAjaxResponse() {
-		new WebDriverWait(driver, Duration.ofSeconds(TIME_OUT_IN_SECONDS))
-				.until((ExpectedCondition<Boolean>) wd -> (Boolean) ((JavascriptExecutor) wd)
-						.executeScript("return jQuery.active == 0"));
 	}
 
 	/**
