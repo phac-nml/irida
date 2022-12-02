@@ -186,7 +186,7 @@ export default function MainNavigation(): JSX.Element {
           },
           {
             key: `nav-guides`,
-            label: `Guides`,
+            label: i18n("nav.main.guides"),
             children: [
               {
                 key: `nav-user-guide`,
