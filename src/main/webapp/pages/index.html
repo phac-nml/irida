@@ -15,7 +15,9 @@
     th:class="${session.siteTheme + '-theme'}"
     th:attr="data-context=${#request.contextPath}"
   >
-    <div id="root" style="height: 100vh"></div>
+    <div id="root" style="height: 100vh">
+      <!-- Root for IRIDA SPA.  Main file found in `webapp/resources/js/index.tsx` -->
+    </div>
 
     <webpacker:js entry="main" />
   </body>
