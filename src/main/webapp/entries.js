@@ -4,7 +4,6 @@
  *  Webpack will then create the bundle in `resource/js/build/`
  */
 module.exports = {
-  vendor: ["expose-loader?exposes=$,jQuery!jquery", "./resources/js/vendors"],
   login: "./resources/js/pages/LoginPage.tsx",
   "project-spa": "./resources/js/pages/projects/ProjectSPA.tsx",
   access_confirmation: "./resources/js/pages/oauth/access_confirmation.js",
