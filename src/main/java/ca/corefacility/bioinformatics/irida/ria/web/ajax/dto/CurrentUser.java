@@ -12,6 +12,8 @@ public class CurrentUser {
 	private String firstName;
 	private String lastName;
 	private boolean isAdmin;
+	private boolean isManager;
+	private boolean isTechnician;
 
 	public CurrentUser(User user) {
 		this.identifier = user.getId();
@@ -19,7 +21,8 @@ public class CurrentUser {
 		this.firstName = user.getFirstName();
 		this.lastName = user.getLastName();
 		this.isAdmin = user.getSystemRole().equals(Role.ROLE_ADMIN);
-		;
+		this.isManager = user.getSystemRole().equals(Role.ROLE_MANAGER);
+		this.isTechnician = user.getSystemRole().equals(Role.ROLE_TECHNICIAN);
 	}
 
 	public Long getIdentifier() {
@@ -38,7 +41,15 @@ public class CurrentUser {
 		return lastName;
 	}
 
-	public boolean isAdmin() {
+	public boolean getIsAdmin() {
 		return isAdmin;
+	}
+
+	public boolean getIsManager() {
+		return isManager;
+	}
+
+	public boolean getIsTechnician() {
+		return isTechnician;
 	}
 }

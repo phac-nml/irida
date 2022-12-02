@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        data-layout-decorate="~{template/page}"
+>
+<head>
+    <title th:text="#{dashboard.title}"></title>
+    <webpacker:css entry="dashboard"/>
+</head>
+<body>
+<div id="root" layout:fragment="page">
+    <!--
+             This is a DOM element for React to render the dashboard into.
+             See  src/main/webapp/resources/js/pages/dashboard/Dashboard.jsx
+          -->
+</div>
+
+<th:block layout:fragment="scripts">
+    <webpacker:js entry="dashboard"/>
+</th:block>
+</body>
+</html>
+

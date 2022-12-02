@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html
-        xmlns:th="http://www.thymeleaf.org"
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        data-layout-decorate="~{template/page}"
->
-<head>
-    <title th:text="#{dashboard.title}"></title>
-    <webpacker:css entry="dashboard"/>
-</head>
-<body>
-<div id="root" layout:fragment="page">
-    <!--
-             This is a DOM element for React to render the dashboard into.
-             See  src/main/webapp/resources/js/pages/dashboard/Dashboard.jsx
-          -->
-</div>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="icon"
+      href="/resources/img/favicon.ico"
+      type="image/x-icon"
+      th:href="@{/resources/img/favicon.ico}"
+    />
+    <title>TODO: UPDATE THIS TITLE</title>
+    <webpacker:css entry="main" />
+  </head>
+  <body
+    th:class="${session.siteTheme + '-theme'}"
+    th:attr="data-context=${#request.contextPath}"
+  >
+    <div id="root" style="height: 100vh">
+      <!-- Root for IRIDA SPA.  Main file found in `webapp/resources/js/index.tsx` -->
+    </div>
 
-<th:block layout:fragment="scripts">
-    <webpacker:js entry="dashboard"/>
-</th:block>
-</body>
+    <webpacker:js entry="main" />
+  </body>
 </html>
-

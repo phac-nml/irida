@@ -5,13 +5,12 @@ import { Notifications } from "../notifications/Notifications";
 import GalaxyAlert from "./GalaxyAlert";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { MainNavigation } from "./MainNavigation";
-import {
-  AnnouncementProvider
-} from "./MainNavigation/components/announcements-context";
-import {
-  AnnouncementsModal
-} from "./MainNavigation/components/AnnouncementsModal";
+import { AnnouncementProvider } from "./MainNavigation/components/announcements-context";
+import { AnnouncementsModal } from "./MainNavigation/components/AnnouncementsModal";
+import { Provider } from "react-redux";
+import { store } from "../../redux/store";
+import MainNavigation from "../main-navigation";
+import { Layout } from "antd";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -29,16 +28,20 @@ export function PageHeader() {
   }, []);
 
   return (
-    <>
-      <AnnouncementProvider>
-        <MainNavigation />
-        <AnnouncementsModal />
-      </AnnouncementProvider>
-      <Breadcrumbs crumbs={window.breadcrumbs} />
-      <Session />
-      <Notifications />
-      {inGalaxy ? <GalaxyAlert /> : null}
-    </>
+    <Layout>
+      <Provider store={store}>
+        <Layout.Header>
+          <AnnouncementProvider>
+            <MainNavigation />
+            <AnnouncementsModal />
+          </AnnouncementProvider>
+        </Layout.Header>
+        <Breadcrumbs crumbs={window.breadcrumbs} />
+        <Session />
+        <Notifications />
+        {inGalaxy ? <GalaxyAlert /> : null}
+      </Provider>
+    </Layout>
   );
 }
 

@@ -17,6 +17,7 @@
     <link
       rel="icon"
       href="/resources/img/favicon.ico"
+      type="image/x-icon"
       th:href="@{/resources/img/favicon.ico}"
     />
     <webpacker:css entry="app" />
@@ -24,7 +25,10 @@
       window.breadcrumbs = /*[[${breadcrumbs}]]*/ [];
     </script>
   </head>
-  <body th:class="${session.siteTheme + '-theme'}">
+  <body
+    th:class="${session.siteTheme + '-theme'}"
+    th:attr="data-context=${#request.contextPath}"
+  >
     <div class="ant-layout">
       <header class="js-page-header"></header>
       <div class="ant-layout-content" layout:fragment="page"></div>

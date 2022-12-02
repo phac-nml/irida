@@ -46,3 +46,17 @@ export function getProjectIdFromUrl(url = window.location.href) {
     }
   }
 }
+
+/**
+ * Get the context path for IRIDA.  This expects the body element to have a data attribute
+ * of context (`data-context`) with the context path.
+ */
+export function getContextPath(): string {
+  const element = document.querySelector("body");
+  if (element && element.dataset && element.dataset.context) {
+    return element.dataset.context;
+  } else {
+    console.error("The body element is missing the attribute `data-context`");
+    return "/";
+  }
+}

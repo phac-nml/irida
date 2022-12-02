@@ -12,6 +12,14 @@ export interface GridProps {
   xxl?: number;
 }
 
+export type MenuItem = {
+  children?: MenuItem[];
+  disabled?: boolean;
+  key: string;
+  label?: string | JSX.Element;
+  type?: "divider" | "group";
+};
+
 export type TagColor =
   | "magenta"
   | "red"

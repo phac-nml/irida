@@ -43,10 +43,13 @@ declare namespace IRIDA {
   }
 
   export type CurrentUser = {
-    admin: boolean;
     firstName: string;
     identifier: number;
+    isAdmin: boolean;
+    isManager: boolean;
+    isTechnician: string;
     lastName: string;
+    technician: boolean;
     username: string;
   };
 

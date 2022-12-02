@@ -1,0 +1,63 @@
+.nav-logo {
+  float: left;
+  width: 128px;
+  height: 28px;
+  margin: 16px 24px 16px 0;
+}
+
+.main-nav {
+  flex: 1;
+}
+
+.main-nav.ant-menu-root li.ant-menu-submenu,
+.main-nav.ant-menu-root .ant-menu-item,
+.utils-nav.ant-menu-root li.ant-menu-submenu,
+.utils-nav.ant-menu-root .ant-menu-item {
+  display: flex;
+  height: 64px;
+  overflow-y: hidden;
+}
+
+.main-nav.ant-menu-root li.ant-menu-submenu a,
+.main-nav.ant-menu-root .ant-menu-item a {
+  color: var(--grey-4);
+  font-size: 16px;
+}
+
+.global-search .ant-input-affix-wrapper {
+  background-color: #001529;
+  border: none;
+}
+
+.global-search:focus-within .ant-input-affix-wrapper {
+  background-color: white;
+}
+
+.global-search {
+  background-color: transparent;
+}
+
+.global-search input {
+  width: 0;
+}
+
+.global-search input:focus {
+  width: 300px;
+}
+
+.global-search [data-icon="search"] {
+  color: #f0f0f0;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.global-search:focus-within [data-icon="search"] {
+  color: #bfbfbf;
+}
+
+.nav-icon svg {
+  position: relative;
+  top: 5px;
+  color: #f0f0f0;
+  font-size: 22px;
+}
