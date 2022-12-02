@@ -230,11 +230,7 @@ export function SampleMetadataImportReview(): JSX.Element {
 
   return (
     <SampleMetadataImportWizard current={2}>
-      <Text>
-        {loading
-          ? i18n("SampleMetadataImportReview.loading")
-          : i18n("SampleMetadataImportReview.description")}
-      </Text>
+      <Text>{i18n("SampleMetadataImportReview.description")}</Text>
       {!isValid && (
         <ErrorAlert
           message={i18n("SampleMetadataImportReview.alert.valid.title")}
@@ -298,6 +294,17 @@ export function SampleMetadataImportReview(): JSX.Element {
         loading={{
           indicator: <Progress type="circle" percent={progress} />,
           spinning: loading,
+          tip: (
+            <Text
+              style={{
+                display: "inline-block",
+                height: 100,
+                transform: "translateY(100%)",
+              }}
+            >
+              {i18n("SampleMetadataImportReview.loading")}
+            </Text>
+          ),
         }}
       />
       <div style={{ display: "flex" }}>
