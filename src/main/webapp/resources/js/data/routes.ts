@@ -1,5 +1,10 @@
 import { getContextPath } from "../utilities/url-utilities";
 
+/**
+ * @fileoverview This file contains all the high-level route, along with the properly set context path,
+ * used in IRIDA.
+ */
+
 export const CONTEXT_PATH = getContextPath();
 
 export const ROUTE_ADMIN = `${CONTEXT_PATH}/admin`;
