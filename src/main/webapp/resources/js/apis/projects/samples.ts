@@ -164,25 +164,6 @@ export async function validateSampleName(name: string) {
 }
 
 /**
- * Create a new sample within a project
- * @param name - name of the new sample
- * @param organism - name of the organism (optional)
- * @returns {Promise<Response>}
- */
-export async function createNewSample({
-  name,
-  organism,
-}: {
-  name: string;
-  organism: string;
-}) {
-  return post(`${URL}/${PROJECT_ID}/samples/add-sample`, {
-    name: name.trim(),
-    organism,
-  });
-}
-
-/**
  * Share or move samples with another project.
  * @param currentId - current projectId
  * @param sampleIds - list of ids for the samples to share
