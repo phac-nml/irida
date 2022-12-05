@@ -1,16 +1,11 @@
 package ca.corefacility.bioinformatics.irida.config.web;
 
-import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
-import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
-import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
-import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.WebpackerDialect;
-import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
-import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
-import com.google.common.base.Joiner;
-import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.*;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -39,10 +34,18 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.nio.file.*;
-import java.util.*;
+import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
+import ca.corefacility.bioinformatics.irida.config.services.WebEmailConfig;
+import ca.corefacility.bioinformatics.irida.ria.config.AnalyticsHandlerInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
+import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.WebpackerDialect;
+import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
+
+import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
+import com.google.common.base.Joiner;
+import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 
 /**
  *
@@ -215,7 +218,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 
             @Override
             public ModelAndView resolveErrorView(HttpServletRequest request, HttpStatus status,
-                                                 Map<String, Object> model) {
+                    Map<String, Object> model) {
 
                 ModelAndView modelAndView;
                 if (status == HttpStatus.NOT_FOUND) {
