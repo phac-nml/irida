@@ -4,6 +4,10 @@ import { Link, useMatches } from "react-router-dom";
 import { Menu } from "antd";
 import { renderMenuItem } from "../ant.design/menu-utilities";
 
+/**
+ * React component to render the project navigation
+ * @constructor
+ */
 export default function ProjectNavigation() {
   const matches = useMatches();
 
