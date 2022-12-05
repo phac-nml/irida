@@ -1,19 +1,16 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { render } from "react-dom";
 import {
   createBrowserRouter,
   createRoutesFromElements,
-  Outlet,
   Route,
   RouterProvider,
 } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
 import { getContextPath } from "./utilities/url-utilities";
-import { Layout } from "antd";
-import MainNavigation from "./components/main-navigation";
-import { LoadingOutlined } from "@ant-design/icons";
 import AppLayout from "./layouts/app-layout";
+import ProjectLayout from "./layouts/project-layout";
 
 /**
  * @fileoverview This is the highest level React component in IRIDA.  it's responsible
@@ -28,8 +25,33 @@ __webpack_public_path__ = `${CONTEXT_PATH}/dist/`;
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path={CONTEXT_PATH} element={<AppLayout />}>
-      <Route path={`projects/:projectId`} element={<div>SAMPLES</div>}>
-        <Route index element={<div>SAMPLES</div>} />
+      <Route path={`projects/:projectId`} element={<ProjectLayout />}>
+        <Route index element={<div>SAMPLES</div>} id={`project-samples`} />
+        <Route
+          path={`linelist`}
+          element={<div>LINELIST</div>}
+          id={`project-linelist`}
+        />
+        <Route
+          path={`analyses`}
+          element={<div>ANALYSES</div>}
+          id={`project-analyses`}
+        />
+        <Route
+          path={`exports`}
+          element={<div>EXPORTS</div>}
+          id={`project-exports`}
+        />
+        <Route
+          path={`activity`}
+          element={<div>ACTIVITY</div>}
+          id={`project-activity`}
+        />
+        <Route
+          path={`settings`}
+          element={<div>SETTINGS</div>}
+          id={`project-settings`}
+        />
         {/*<Route*/}
         {/*  path="ncbi"*/}
         {/*  element={<NcbiCreateExport />}*/}
