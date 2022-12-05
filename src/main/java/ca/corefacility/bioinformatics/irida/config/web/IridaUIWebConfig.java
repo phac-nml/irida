@@ -109,7 +109,7 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		}
 		return new AnalyticsHandlerInterceptor(analytics.toString());
 	}
-	
+
 	@Bean
 	public UserSecurityInterceptor userSecurityInterceptor() {
 		return new UserSecurityInterceptor();
