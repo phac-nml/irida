@@ -13,28 +13,16 @@ import { getContextPath } from "./utilities/url-utilities";
 import { Layout } from "antd";
 import MainNavigation from "./components/main-navigation";
 import { LoadingOutlined } from "@ant-design/icons";
+import AppLayout from "./layouts/app-layout";
 
 /**
- * @fileoverview This is the highest level React component in IRIDA.  It is responsible
+ * @fileoverview This is the highest level React component in IRIDA.  it's responsible
  * for the global layout, and routing.
  */
 
 const CONTEXT_PATH = getContextPath();
 
 __webpack_public_path__ = `${CONTEXT_PATH}/dist/`;
-
-const AppLayout = (): JSX.Element => (
-  <Layout style={{ height: `100vh` }}>
-    <Layout.Header>
-      <MainNavigation />
-    </Layout.Header>
-    <Layout.Content>
-      <Suspense fallback={<LoadingOutlined />}>
-        <Outlet />
-      </Suspense>
-    </Layout.Content>
-  </Layout>
-);
 
 // TODO: (Josh - 12/2/22) Build up from the root here so we can easy add
 const router = createBrowserRouter(
