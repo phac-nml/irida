@@ -122,7 +122,7 @@ export const {
   useRemoveSampleMutation,
 } = cartApi;
 
-const updateCart = (data: CartUpdated) => {
+export const updateCart = (data: CartUpdated) => {
   data.notifications.forEach((n) => notification[n.type](n));
   cartUpdated(data.count);
   return data.count;

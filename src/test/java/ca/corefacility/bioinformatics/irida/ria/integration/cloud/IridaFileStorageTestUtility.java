@@ -1,6 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.cloud;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**

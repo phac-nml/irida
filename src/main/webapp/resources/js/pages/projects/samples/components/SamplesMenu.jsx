@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Dropdown, Menu, message, Row, Space } from "antd";
+import { Button, Dropdown, Menu, notification, Row, Space } from "antd";
 import {
   addToCart,
   clearFilterByFile,
@@ -12,7 +12,7 @@ import {
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import {
   validateSamplesForLinker,
-  validateSamplesForMerge,
+  validateSamplesForMergeOrShare,
   validateSamplesForRemove,
 } from "../services/sample.utilities";
 import {
@@ -118,7 +118,7 @@ export default function SamplesMenu() {
 
   const onNCBI = () => {
     if (selected.size === 0) return;
-    formatAndStoreSamples();
+    formatAndStoreSamples(`ncbi`, Object.values(selected));
     window.location.href = setBaseUrl(`/projects/${projectId}/ncbi`);
   };
 
@@ -126,16 +126,17 @@ export default function SamplesMenu() {
     dispatch(exportSamplesToFile(type));
   };
 
-  const formatAndStoreSamples = () => {
-    const samples = Object.values(selected).map(
-      ({ id, sampleName: name, owner, projectId }) => ({
+  const formatAndStoreSamples = (path, samples) => {
+    storeSamples({
+      samples: samples.map(({ id, sampleName: name, owner, projectId }) => ({
         id,
         name,
         owner,
         projectId,
-      })
-    );
-    storeSamples({ samples, projectId });
+      })),
+      projectId,
+      path,
+    });
   };
 
   /**
@@ -144,9 +145,14 @@ export default function SamplesMenu() {
    */
   const shareSamples = () => {
     if (selected.size === 0) return;
-    formatAndStoreSamples();
-    // Redirect user to share page
-    window.location.href = setBaseUrl(`/projects/${projectId}/share`);
+    const { valid, locked } = validateSamplesForMergeOrShare(selected);
+    if (locked.length && valid.length === 0) {
+      notification.error({ message: i18n("SampleMenu.share-all-locked") });
+    } else {
+      formatAndStoreSamples(`share`, Object.values(selected));
+      // Redirect user to share page
+      window.location.href = setBaseUrl(`/projects/${projectId}/share`);
+    }
   };
 
   /**
@@ -156,23 +162,23 @@ export default function SamplesMenu() {
    */
   const validateAndOpenModalFor = (name) => {
     if (name === "merge") {
-      const validated = validateSamplesForMerge(selected);
+      const validated = validateSamplesForMergeOrShare(selected);
       if (validated.valid.length >= 2) {
         setSorted(validated);
         setMergeVisible(true);
       } else {
-        message.error(i18n("SamplesMenu.merge.error"));
+        notification.error({ message: i18n("SamplesMenu.merge.error") });
       }
     } else if (name === "remove") {
       const validated = validateSamplesForRemove(selected, projectId);
       if (validated.valid.length > 0) {
         setSorted(validated);
         setRemovedVisible(true);
-      } else message.error(i18n("SamplesMenu.remove.error"));
+      } else notification.error({ message: i18n("SamplesMenu.remove.error") });
     } else if (name === "linker") {
       const validated = validateSamplesForLinker(selected, projectId);
       if (validated.associated.length > 0) {
-        message.error(i18n("SampleMenu.linker.error"));
+        notification.error({ message: i18n("SampleMenu.linker.error") });
       } else {
         setSorted(validated.valid);
         setLinkerVisible(true);

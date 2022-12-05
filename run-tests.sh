@@ -12,6 +12,7 @@ TMP_DIRECTORY=`mktemp -d /tmp/irida-test-XXXXXXXX`
 chmod 777 $TMP_DIRECTORY # Needs to be world-accessible so that Docker/Galaxy can access
 
 S3MOCK_DOCKER_NAME=irida-docker-s3Mock
+AZURITE_DOCKER_NAME=irida-docker-azurite
 GALAXY_DOCKER=phacnml/galaxy-irida-20.09:21.05.2-it
 GALAXY_DOCKER_NAME=irida-galaxy-test
 GALAXY_PORT=48889
@@ -109,7 +110,13 @@ test_file_system() {
   docker run -d -p 9090:9090 -p 9191:9191 --name $S3MOCK_DOCKER_NAME -t adobe/s3mock
     ./gradlew clean check fileSystemITest -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
-	docker rm -f -v $S3MOCK_DOCKER_NAME
+
+  docker run -d -p 10000:10000 -p 10001:10001 -p 10002:10002 --name $AZURITE_DOCKER_NAME mcr.microsoft.com/azure-storage/azurite
+    ./gradlew clean check fileSystemITest -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
+	exit_code=$?
+
+  docker rm -f -v $S3MOCK_DOCKER_NAME
+	docker rm -f -v $AZURITE_DOCKER_NAME;
 	return $exit_code
 }
 

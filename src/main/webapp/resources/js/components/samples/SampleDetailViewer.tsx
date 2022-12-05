@@ -9,7 +9,7 @@ export interface SampleDetailViewerProps {
   projectId: number;
   displayActions?: boolean;
   children: React.ReactElement;
-  refetch?: () => void;
+  refetchCart?: () => void;
 }
 
 /**
@@ -26,7 +26,7 @@ export function SampleDetailViewer({
   projectId,
   displayActions = true,
   children,
-  refetch,
+  refetchCart,
 }: SampleDetailViewerProps): JSX.Element {
   const [visible, setVisible] = useState(false);
 
@@ -41,7 +41,7 @@ export function SampleDetailViewer({
             sampleId={sampleId}
             projectId={projectId}
             displayActions={displayActions}
-            refetchSample={refetch}
+            refetchCart={refetchCart}
             setVisible={setVisible}
             visible={visible}
           />

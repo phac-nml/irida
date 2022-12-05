@@ -15,7 +15,6 @@ import { AnalysisContext, stateMap } from "../../../contexts/AnalysisContext";
 import { Running, Success } from "../../../components/icons";
 
 import { getHumanizedDuration } from "../../../utilities/date-utilities";
-import { Collapse } from "bootstrap";
 
 const Step = Steps.Step;
 
