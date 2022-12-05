@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdateSampleRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.MetadataEntryModel;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIMetadataImportException;
@@ -100,12 +99,12 @@ public class UIProjectSampleServiceTest {
 	}
 
 	@Test
-	public void testUpdateSampleWithMetadata() {
+	public void testUpdateSampleWithMetadata() throws UIMetadataImportException {
 		List<MetadataEntryModel> metadata = new ArrayList<>();
 		metadata.add(new MetadataEntryModel("field1", "value1"));
 		metadata.add(new MetadataEntryModel("field2", "value2"));
 		UpdateSampleRequest[] requests = { new UpdateSampleRequest(SAMPLE_1_ID, GOOD_NAME, null, null, metadata) };
-		ResponseEntity<AjaxResponse> response = service.updateSamples(requests, Locale.ENGLISH);
-		assertEquals(HttpStatus.OK, response.getStatusCode(), "Sample should be updated");
+		AjaxUpdateItemSuccessResponse response = service.updateSamples(requests, Locale.ENGLISH);
+		assertEquals("success", response.getResponseMessage(), "Sample should be updated");
 	}
 }
