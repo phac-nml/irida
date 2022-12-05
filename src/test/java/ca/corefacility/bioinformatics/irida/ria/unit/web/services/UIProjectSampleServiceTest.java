@@ -42,6 +42,8 @@ public class UIProjectSampleServiceTest {
 	private final String BAD_NAME = "bad name with spaces";
 	private final String SHORT_NAME = "sho";
 	private final String GOOD_NAME = "good_name";
+	private final String ORGANISM = "organism";
+	private final String DESCRIPTION = "this is a description";
 
 	@BeforeEach
 	public void setUp() {
@@ -85,6 +87,27 @@ public class UIProjectSampleServiceTest {
 	@Test
 	public void testCreateSample() throws UIMetadataImportException {
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null) };
+		String response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
+		assertEquals("success", response, "Sample should be created");
+	}
+
+	@Test
+	public void testCreateSampleWithOrganism() throws UIMetadataImportException {
+		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, ORGANISM) };
+		String response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
+		assertEquals("success", response, "Sample should be created");
+	}
+
+	@Test
+	public void testCreateSampleWithDescription() throws UIMetadataImportException {
+		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null, DESCRIPTION, null) };
+		String response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
+		assertEquals("success", response, "Sample should be created");
+	}
+
+	@Test
+	public void testCreateSampleWithOrganismAndDescription() throws UIMetadataImportException {
+		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, ORGANISM, DESCRIPTION, null) };
 		String response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
 		assertEquals("success", response, "Sample should be created");
 	}
