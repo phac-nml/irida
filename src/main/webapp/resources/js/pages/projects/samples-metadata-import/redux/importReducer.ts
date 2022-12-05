@@ -104,6 +104,7 @@ export const saveMetadata = createAsyncThunk<
 
     const chunkSize = 10;
 
+    //update existing project samples
     const updateSamplesPromises: Promise<void>[] = [];
     const updateSampleList = selectedSampleList
       .filter((metadataItem) => {
@@ -128,6 +129,7 @@ export const saveMetadata = createAsyncThunk<
           }));
         return { name, sampleId, metadata: metadataFields };
       });
+    //create a request with a list of project samples to be updated
     if (updateSampleList.length > 0) {
       const chunkedUpdateSampleList = chunkArray(updateSampleList, chunkSize);
       for (const chunk of chunkedUpdateSampleList) {
@@ -154,6 +156,7 @@ export const saveMetadata = createAsyncThunk<
             })
         );
       }
+      //send multiple update project sample requests in parallel
       const chunkedUpdateSamplesPromises = chunkArray(
         updateSamplesPromises,
         chunkSize
@@ -167,6 +170,7 @@ export const saveMetadata = createAsyncThunk<
       }
     }
 
+    //create new project samples
     const createSamplesPromises: Promise<void>[] = [];
     const createSampleList = selectedSampleList
       .filter((metadataItem) => {
@@ -190,7 +194,7 @@ export const saveMetadata = createAsyncThunk<
           }));
         return { name, metadata: metadataFields };
       });
-
+    //create a request with a list of project samples to be created
     if (createSampleList.length > 0) {
       const chunkedCreateSampleList = chunkArray(createSampleList, chunkSize);
       for (const chunk of chunkedCreateSampleList) {
@@ -217,6 +221,7 @@ export const saveMetadata = createAsyncThunk<
             })
         );
       }
+      //send multiple create project sample requests in parallel
       const chunkedCreateSamplesPromises = chunkArray(
         createSamplesPromises,
         chunkSize
