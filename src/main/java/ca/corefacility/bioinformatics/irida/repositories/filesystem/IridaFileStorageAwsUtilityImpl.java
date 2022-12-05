@@ -27,6 +27,7 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 
@@ -338,19 +339,32 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	 */
 	@Override
 	public FileChunkResponse readChunk(Path file, Long seek, Long chunk) {
-		/*
-		 The range of bytes to read. Start at seek and get `chunk` amount of bytes from seek point.
-		 However a smaller amount of bytes may be read, so we set the file pointer accordingly
-		 */
-		try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
-				S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
-			// Read the bytes of the retrieved s3ObjectInputStream chunk
-			byte[] bytes = new byte[seek.intValue() + chunk.intValue()];
-			s3ObjectInputStream.readNBytes(bytes, 0, seek.intValue() + chunk.intValue());
-			byte[] bytesForRange = Arrays.copyOfRange(bytes, seek.intValue(), seek.intValue() + chunk.intValue());
-			return new FileChunkResponse(new String(bytesForRange), seek + (bytesForRange.length));
-		} catch (IOException e) {
-			logger.error("Couldn't get chunk from s3 bucket", e);
+		List<String> bucketPermissions = getBucketPermissions();
+
+		if(bucketPermissions.size() > 0) {
+			/*
+			 The range of bytes to read. Start at seek and get `chunk` amount of bytes from seek point.
+			 However a smaller amount of bytes may be read, so we set the file pointer accordingly. The code
+			 below uses getBucketAcl. So if bucket permissions aren't set then the else code is used.
+			 */
+			GetObjectRequest rangeObjectRequest = new GetObjectRequest(bucketName, getAwsFileAbsolutePath(file)).withRange(seek, chunk);
+			try (S3Object s3Object = s3.getObject(rangeObjectRequest);
+					S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
+				byte[] bytes = s3ObjectInputStream.readAllBytes();
+				return new FileChunkResponse(new String(bytes), seek + (bytes.length - 1));
+			} catch (IOException e) {
+				logger.error("Couldn't get chunk from s3 bucket", e);
+			}
+		} else {
+			try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
+					S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
+							byte[] bytes = new byte[seek.intValue() + chunk.intValue()];
+							s3ObjectInputStream.readNBytes(bytes, 0, seek.intValue() + chunk.intValue());
+							byte[] bytesForRange = Arrays.copyOfRange(bytes, seek.intValue(), seek.intValue() + chunk.intValue());
+							return new FileChunkResponse(new String(bytesForRange), seek + (bytesForRange.length));
+			} catch (IOException e) {
+				logger.error("Couldn't get chunk from s3 bucket", e);
+			}
 		}
 		return null;
 	}
@@ -361,12 +375,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	@Override
 	public boolean checkWriteAccess(Path baseDirectory) {
 		// get list of bucket permissions
-		List<String> bucketPermissions = s3.getBucketAcl(bucketName)
-				.getGrantsAsList()
-				.stream()
-				.distinct()
-				.map(t -> t.getPermission().toString())
-				.collect(Collectors.toList());
+		List<String> bucketPermissions = getBucketPermissions();
 
 		// If bucket permissions are available
 		if (bucketPermissions.size() > 0) {
@@ -416,5 +425,18 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	@Override
 	public String getStorageType() {
 		return storageType.toString();
+	}
+
+	/**
+	 * Gets the bucket permissions
+	 * @return the permissions on the bucket
+	 */
+	private List<String> getBucketPermissions() {
+		return s3.getBucketAcl(bucketName)
+				.getGrantsAsList()
+				.stream()
+				.distinct()
+				.map(t -> t.getPermission().toString())
+				.collect(Collectors.toList());
 	}
 }
