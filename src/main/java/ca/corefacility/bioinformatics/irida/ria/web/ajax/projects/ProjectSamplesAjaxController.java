@@ -15,9 +15,11 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxFormErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIMetadataImportException;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIShareSamplesException;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.DownloadRequest;
@@ -72,7 +74,11 @@ public class ProjectSamplesAjaxController {
 	@PostMapping("/add-sample")
 	public ResponseEntity<AjaxResponse> createSamplesInProject(@RequestBody CreateSampleRequest[] requests,
 			@PathVariable long projectId, Locale locale) {
-		return uiProjectSampleService.createSamples(requests, projectId, locale);
+		try {
+			return ResponseEntity.ok(uiProjectSampleService.createSamples(requests, projectId, locale));
+		} catch (UIMetadataImportException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxFormErrorResponse(e.getErrors()));
+		}
 	}
 
 	/**
@@ -85,7 +91,11 @@ public class ProjectSamplesAjaxController {
 	@PatchMapping("/add-sample")
 	public ResponseEntity<AjaxResponse> updateSamplesInProject(@RequestBody UpdateSampleRequest[] requests,
 			Locale locale) {
-		return uiProjectSampleService.updateSamples(requests, locale);
+		try {
+			return ResponseEntity.ok(uiProjectSampleService.updateSamples(requests, locale));
+		} catch (UIMetadataImportException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxFormErrorResponse(e.getErrors()));
+		}
 	}
 
 	/**

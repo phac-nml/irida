@@ -22,13 +22,12 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.LockedSamplesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdateSampleRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxFormErrorResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.MetadataEntryModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNameModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIMetadataImportException;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -130,8 +129,10 @@ public class UIProjectSampleService {
 	 * @param projectId Identifier for the current project
 	 * @param locale    Users current locale
 	 * @return result of creating the sample
+	 * @throws UIMetadataImportException if there are errors creating the project samples
 	 */
-	public ResponseEntity<AjaxResponse> createSamples(CreateSampleRequest[] requests, Long projectId, Locale locale) {
+	public AjaxUpdateItemSuccessResponse createSamples(CreateSampleRequest[] requests, Long projectId, Locale locale)
+			throws UIMetadataImportException {
 		Map<String, String> errors = new HashMap<>();
 		for (CreateSampleRequest request : requests) {
 			try {
@@ -141,10 +142,10 @@ public class UIProjectSampleService {
 			}
 		}
 		if (errors.isEmpty()) {
-			return ResponseEntity.ok(new AjaxUpdateItemSuccessResponse(
-					messageSource.getMessage("server.AddSample.success", null, locale)));
+			return new AjaxUpdateItemSuccessResponse(
+					messageSource.getMessage("server.AddSample.success", null, locale));
 		} else {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxFormErrorResponse(errors));
+			throw new UIMetadataImportException(errors);
 		}
 	}
 
@@ -180,8 +181,10 @@ public class UIProjectSampleService {
 	 * @param requests Each {@link UpdateSampleRequest} contains details about the sample to update
 	 * @param locale   Users current locale
 	 * @return result of creating the samples
+	 * @throws UIMetadataImportException if there are errors creating the project samples
 	 */
-	public ResponseEntity<AjaxResponse> updateSamples(UpdateSampleRequest[] requests, Locale locale) {
+	public AjaxUpdateItemSuccessResponse updateSamples(UpdateSampleRequest[] requests, Locale locale)
+			throws UIMetadataImportException {
 		Map<String, String> errors = new HashMap<>();
 		for (UpdateSampleRequest request : requests) {
 			try {
@@ -191,10 +194,10 @@ public class UIProjectSampleService {
 			}
 		}
 		if (errors.isEmpty()) {
-			return ResponseEntity.ok(new AjaxUpdateItemSuccessResponse(
-					messageSource.getMessage("server.AddSample.success", null, locale)));
+			return new AjaxUpdateItemSuccessResponse(
+					messageSource.getMessage("server.AddSample.success", null, locale));
 		} else {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxFormErrorResponse(errors));
+			throw new UIMetadataImportException(errors);
 		}
 	}
 

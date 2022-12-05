@@ -19,7 +19,9 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.MetadataEntryModel;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIMetadataImportException;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -81,20 +83,20 @@ public class UIProjectSampleServiceTest {
 	}
 
 	@Test
-	public void testCreateSample() {
+	public void testCreateSample() throws UIMetadataImportException {
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null) };
-		ResponseEntity<AjaxResponse> response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
-		assertEquals(HttpStatus.OK, response.getStatusCode(), "Sample should be created");
+		AjaxUpdateItemSuccessResponse response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
+		assertEquals("success", response.getResponseMessage(), "Sample should be created");
 	}
 
 	@Test
-	public void testCreateSampleWithMetadata() {
+	public void testCreateSampleWithMetadata() throws UIMetadataImportException {
 		List<MetadataEntryModel> metadata = new ArrayList<>();
 		metadata.add(new MetadataEntryModel("field1", "value1"));
 		metadata.add(new MetadataEntryModel("field2", "value2"));
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null, null, metadata) };
-		ResponseEntity<AjaxResponse> response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
-		assertEquals(HttpStatus.OK, response.getStatusCode(), "Sample should be created");
+		AjaxUpdateItemSuccessResponse response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
+		assertEquals("success", response.getResponseMessage(), "Sample should be created");
 	}
 
 	@Test
