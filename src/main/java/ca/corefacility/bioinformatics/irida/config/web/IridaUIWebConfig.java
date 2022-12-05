@@ -91,11 +91,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	}
 
 	@Bean
-	public UserSecurityInterceptor userSecurityInterceptor() {
-		return new UserSecurityInterceptor();
-	}
-
-	@Bean
 	public AnalyticsHandlerInterceptor analyticsHandlerInterceptor() {
 		Path analyticsPath = Paths.get(ANALYTICS_DIR);
 		StringBuilder analytics = new StringBuilder();
@@ -113,6 +108,11 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 			}
 		}
 		return new AnalyticsHandlerInterceptor(analytics.toString());
+	}
+	
+	@Bean
+	public UserSecurityInterceptor userSecurityInterceptor() {
+		return new UserSecurityInterceptor();
 	}
 
 	@Bean(name = "localeResolver")
@@ -241,9 +241,9 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 	public void addInterceptors(InterceptorRegistry registry) {
 		logger.debug("Adding Interceptors to the Registry");
 		registry.addInterceptor(galaxySessionInterceptor());
+		registry.addInterceptor(analyticsHandlerInterceptor());
 		registry.addInterceptor(breadCrumbInterceptor());
 		registry.addInterceptor(userSecurityInterceptor());
-		registry.addInterceptor(analyticsHandlerInterceptor());
 	}
 
 	/**
