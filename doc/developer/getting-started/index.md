@@ -66,7 +66,7 @@ Liquibase is used to manage IRIDA's relational database change management.  Any 
 
 Documentation: [https://docs.galaxyproject.org/en/master/index.html](https://docs.galaxyproject.org/en/master/index.html)
 
-Galaxy is used as IRIDA's analysis workflow engine.  Analysis pipelines must be developed as Galaxy pipelines to integrate with IRIDA's workflow system.  See the [Galaxy Setup](/administrator/galaxy/) documentation for Galaxy installation and the [Tool Development](/developer/tools/) documentation for building tools for IRDIA.
+Galaxy is used as IRIDA's analysis workflow engine.  Analysis pipelines must be developed as Galaxy pipelines to integrate with IRIDA's workflow system.  See the [Galaxy Setup](../../administrator/galaxy/) documentation for Galaxy installation and the [Tool Development](../../developer/tools/) documentation for building tools for IRDIA.
 
 #### Other important libraries
 {:.no_toc}
@@ -266,7 +266,7 @@ IRIDA documentation can be found in the <https://github.com/phac-nml/irida-docs>
 ##### Testing IRIDA documentation locally
 To view the documentation locally or make changes, you can checkout the above GitHub project and make changes.  To run the server locally you can run Jekyll to generate the pages.
 
-First `cd` into the `docs/` directory and run the following command:
+First `cd` into the `doc/` directory and run the following command:
 
 ```bash
 bundle exec jekyll serve
