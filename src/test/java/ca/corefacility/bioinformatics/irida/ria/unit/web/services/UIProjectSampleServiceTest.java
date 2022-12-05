@@ -18,7 +18,6 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdateSampleRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxUpdateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.MetadataEntryModel;
 import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIMetadataImportException;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleService;
@@ -28,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -63,6 +63,7 @@ public class UIProjectSampleServiceTest {
 				join);
 		when(projectService.addSampleToProjectWithoutEvent(any(Project.class), any(Sample.class),
 				any(Boolean.class))).thenReturn(join);
+		when(messageSource.getMessage(eq("server.AddSample.success"), any(), any(Locale.class))).thenReturn("success");
 	}
 
 	@Test
@@ -84,8 +85,8 @@ public class UIProjectSampleServiceTest {
 	@Test
 	public void testCreateSample() throws UIMetadataImportException {
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null) };
-		AjaxUpdateItemSuccessResponse response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
-		assertEquals("success", response.getResponseMessage(), "Sample should be created");
+		String response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
+		assertEquals("success", response, "Sample should be created");
 	}
 
 	@Test
@@ -94,8 +95,8 @@ public class UIProjectSampleServiceTest {
 		metadata.add(new MetadataEntryModel("field1", "value1"));
 		metadata.add(new MetadataEntryModel("field2", "value2"));
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null, null, metadata) };
-		AjaxUpdateItemSuccessResponse response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
-		assertEquals("success", response.getResponseMessage(), "Sample should be created");
+		String response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
+		assertEquals("success", response, "Sample should be created");
 	}
 
 	@Test
@@ -104,7 +105,7 @@ public class UIProjectSampleServiceTest {
 		metadata.add(new MetadataEntryModel("field1", "value1"));
 		metadata.add(new MetadataEntryModel("field2", "value2"));
 		UpdateSampleRequest[] requests = { new UpdateSampleRequest(SAMPLE_1_ID, GOOD_NAME, null, null, metadata) };
-		AjaxUpdateItemSuccessResponse response = service.updateSamples(requests, Locale.ENGLISH);
-		assertEquals("success", response.getResponseMessage(), "Sample should be updated");
+		String response = service.updateSamples(requests, Locale.ENGLISH);
+		assertEquals("success", response, "Sample should be updated");
 	}
 }
