@@ -1,6 +1,10 @@
 import { api } from "./api";
 import { TAG_PROJECT } from "./tags";
 
+/**
+ * @fileoverview Project API for redux-toolkit.
+ */
+
 export const projectApi = api.injectEndpoints({
   endpoints: (build) => ({
     getProjectDetails: build.query({
