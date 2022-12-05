@@ -21,6 +21,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
+import ca.corefacility.bioinformatics.irida.jackson2.mixin.SampleMixin;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.web.controller.api.json.PathJson;
 import ca.corefacility.bioinformatics.irida.web.controller.api.json.TimestampJson;
 import ca.corefacility.bioinformatics.irida.web.spring.view.*;
@@ -81,6 +83,9 @@ public class IridaRestApiWebConfig implements WebMvcConfigurer {
 		SimpleModule module = new SimpleModule();
 		module.addSerializer(Path.class, new PathJson.PathSerializer());
 		jsonView.getObjectMapper().registerModule(module);
+
+		// Add sample mixin to ignore default sequencing object and default genome assembly
+		jsonView.getObjectMapper().addMixIn(Sample.class, SampleMixin.class);
 
 		// java.util.date fields (i.e. createdDate, modifiedDate, etc) are
 		// stored in the database with

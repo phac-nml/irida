@@ -1,16 +1,18 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ShareSamplesPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.TableSummary;
-
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,14 +21,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * Integration test to ensure that the Project Details Page.
  * </p>
  */
-@DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesView.xml")
+@DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesPage.xml")
 public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
-	String FIRST_SAMPLE_NAME = "sample55422r";
-	String SECOND_SAMPLE_NAME = "sample-5-fg-22";
-	String THIRD_SAMPLE_NAME = "sample64565";
-	int PROJECT_SAMPLES_COUNT = 23;
-	int ASSOCIATED_SAMPLES_COUNT = 2;
-	int COMBINED_SAMPLES_COUNT = PROJECT_SAMPLES_COUNT + ASSOCIATED_SAMPLES_COUNT;
+	final String FIRST_SAMPLE_NAME = "sample55422r";
+	final String SECOND_SAMPLE_NAME = "sample-5-fg-22";
+	final String THIRD_SAMPLE_NAME = "sample64565";
+	final String LOCKED_SAMPLE_NAME = "sample5fdgr";
+	final int PROJECT_SAMPLES_COUNT = 23;
+	final int ASSOCIATED_SAMPLES_COUNT = 2;
+	final int COMBINED_SAMPLES_COUNT = PROJECT_SAMPLES_COUNT + ASSOCIATED_SAMPLES_COUNT;
 
 	@Test
 	public void testGoingToInvalidPage() {
@@ -410,6 +413,43 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertNull(page.getCoverageForSampleByName(SAMPLE_WITH_COVERAGE_QC_ENTRY),
 				SAMPLE_WITH_COVERAGE_QC_ENTRY + " should have a value");
+	}
+
+	@Test
+	void testRemoveLockedSample() {
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
+		page.selectSampleByName(FIRST_SAMPLE_NAME);
+		page.openToolsDropDown();
+		page.shareSamples();
+		WebDriverWait wait = new WebDriverWait(driver(), Duration.ofSeconds(2));
+		wait.until(ExpectedConditions.urlContains("/share"));
+
+		ShareSamplesPage shareSamplesPage = ShareSamplesPage.initPage(driver());
+		shareSamplesPage.searchForProject("project2");
+		shareSamplesPage.gotToNextStep();
+		shareSamplesPage.selectLockCheckbox();
+		shareSamplesPage.gotToNextStep();
+		shareSamplesPage.submitShareRequest();
+
+		page = ProjectSamplesPage.goToPage(driver(), 2);
+		TableSummary summary = page.getTableSummary();
+		assertEquals(1, summary.getTotal(), "Should have 1 sample");
+		page.selectSampleByName(FIRST_SAMPLE_NAME);
+		page.openToolsDropDown();
+		page.removeSamples();
+		summary = page.getTableSummary();
+		assertEquals(0, summary.getTotal(), "There should be no samples left in this project");
+	}
+
+	@Test
+	void testSharingWithLockedSamplesAsManager() {
+		LoginPage.loginAsManager(driver());
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1);
+		page.selectSampleByName(LOCKED_SAMPLE_NAME);
+		page.openToolsDropDown();
+		page.shareSamples();
+		assertTrue(page.isMessageDisplayed("All samples are locked and cannot be shared."));
 	}
 }
 

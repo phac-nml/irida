@@ -29,7 +29,7 @@ Default values for all samples can be set by clicking on the "Default Sample Set
 
 Once all fields and files are selected for a sample, the label will change from "MISSING DATA" to "VALID" indicating that the sample is ready for submission. All samples must be valid before submitting.
 
-![Default Sample Settings]({{ site.baseurl}}/images/tutorials/common/ncbi-export/ncbi-export-sample-validation.png)
+![Sample Validation]({{ site.baseurl}}/images/tutorials/common/ncbi-export/ncbi-export-sample-validation.png)
 
 After entering this metadata you can select which files should be uploaded from each sample.  Only files selected with checkboxes will be uploaded to NCBI.
 
