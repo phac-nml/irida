@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -10,6 +11,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Disabled
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class AssociatedProjectsPageIT extends AbstractIridaUIITChromeDriver {
 	Long PROJECT_ID = 1L;
@@ -34,7 +36,6 @@ public class AssociatedProjectsPageIT extends AbstractIridaUIITChromeDriver {
 		// Make sure it is associated even after page refresh
 		driver().navigate().refresh();
 		assertEquals(2, page.getNumberOfAssociatedProject(), "There should still be 2 projects selected");
-
 
 	}
 }

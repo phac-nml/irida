@@ -1,12 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.Dimension;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectLineListPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ShareSamplesPage;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.jupiter.api.Test;
-import org.openqa.selenium.Dimension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Integration test to ensure that the Project Line List Page is working.
  * </p>
  */
+@Disabled
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectLineListView.xml")
 public class ProjectLineListPageIT extends AbstractIridaUIITChromeDriver {
 	private final String TEMPLATE_1 = "Testing Template 1";

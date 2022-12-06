@@ -1,5 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.admin.AdminClientsPage;
@@ -7,8 +10,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSyncPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * is displayed with the correct elements.
  * </p>
  */
-
+@Disabled
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class ProjectRemoteSettingsIT extends AbstractIridaUIITChromeDriver {
 	ProjectSyncPage page;

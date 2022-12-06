@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -9,9 +9,13 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectActivit
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 /**
  * <p> Integration test to ensure that the Project Details Page. </p>
  */
+@Disabled
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class ProjectActivityPageIT extends AbstractIridaUIITChromeDriver {
 
