@@ -3,7 +3,7 @@ import { types as appTypes } from "../../../../redux/reducers/app";
 import { actions, types } from "../reducers/templates";
 import {
   fetchTemplates,
-  saveTemplate,
+  saveTemplate
 } from "../../../../apis/metadata/templates";
 import { FIELDS } from "../constants";
 
@@ -17,7 +17,7 @@ export function* templatesLoadingSaga() {
     yield put(actions.load());
     const { data: templates } = yield call(fetchTemplates, payload.id);
     yield put(actions.success(templates));
-    yield put({ type: "METADATA_TEMPLATES_LOADED", payload: payload });
+    yield put({ type: 'METADATA_TEMPLATES_LOADED', payload: payload });
   } catch (error) {
     yield put(actions.error(error));
   }
@@ -32,7 +32,7 @@ export function* saveTemplateSaga() {
       Remove hidden fields and the sample label or any icons
       */
       data.fields = data.fields.filter(
-        (f) =>
+        f =>
           !f.hide && f.field !== FIELDS.sampleName && f.field !== FIELDS.icons
       );
 
@@ -40,7 +40,7 @@ export function* saveTemplateSaga() {
       Post to new template to the server
        */
       const { data: response } = yield call(saveTemplate, data);
-      yield put(actions.savedTemplate(response));
+      yield put(actions.savedTemplate(response.UIMetadataTemplate));
       // Delay allows for displaying the saved message
       yield delay(2500);
       yield put(actions.savedComplete());
