@@ -3,16 +3,27 @@ import {
   createAsyncThunk,
   createReducer,
 } from "@reduxjs/toolkit";
-import type { Action } from "@reduxjs/toolkit";
-import { INITIAL_TABLE_STATE } from "../samples/services/constants";
 import { getMinimalSampleDetailsForFilteredProject } from "../../../apis/projects/samples";
 import { putSampleInCart } from "../../../apis/cart/cart";
 import { downloadPost } from "../../../utilities/file-utilities";
 import { formatFilterBySampleNames } from "../../../utilities/table-utilities";
 import isEqual from "lodash/isEqual";
-import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
-import { TableFilter } from "../../types/ant-design";
+import { setBaseUrl } from "../../utilities/url-utilities";
+import { TableFilters, TableOptions } from "../../types/ant-design";
 import { Sample } from "../../types/irida";
+
+/**
+ * Initial state of the sample table
+ */
+export const INITIAL_TABLE_STATE = JSON.stringify({
+  filters: { associated: null },
+  pagination: {
+    current: 1,
+    pageSize: 10,
+  },
+  order: [{ property: "sample.modifiedDate", direction: "desc" }],
+  search: [],
+});
 
 const reloadTable = createAction("samples/table/reload");
 const addSelectedSample = createAction("samples/table/selected/add");
@@ -21,7 +32,7 @@ const clearSelectedSamples = createAction("samples/table/selected/clear");
 const clearFilterByFile = createAction("samples/table/clearFilterByFile");
 
 type UpdateTableProps = {
-  filters: TableFilter;
+  filters: TableFilters;
 };
 
 type SelectedSample = Pick<Sample, "id" | "name">;
@@ -38,7 +49,7 @@ const updateTable = createAsyncThunk<
     state: {
       samples: {
         selected: SelectedSample[];
-        options: { filters: TableFilter };
+        options: { filters: TableFilters };
         selectedCount: number;
       };
     };
@@ -160,7 +171,8 @@ const filterByFile = createAction(
  * to it's default state, just re-parse by calling this.
  * @returns {object} - default table state
  */
-const getInitialTableOptions = () => JSON.parse(INITIAL_TABLE_STATE);
+const getInitialTableOptions = (): TableOptions =>
+  JSON.parse(INITIAL_TABLE_STATE);
 
 /**
  * Called to format a sample when a sample is selected.
@@ -178,7 +190,6 @@ const formatSelectedSample = (projectSample) => ({
 });
 
 const initialState = {
-  projectId: getProjectIdFromUrl(),
   options: getInitialTableOptions(),
   selected: {},
   selectedCount: 0,

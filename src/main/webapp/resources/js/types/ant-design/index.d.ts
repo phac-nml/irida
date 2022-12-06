@@ -20,7 +20,24 @@ export type MenuItem = {
   type?: "divider" | "group";
 };
 
-export type TableFilter = {};
+export type TableFilters = {
+  [name: string]: string; // TODO: (Josh - 12/6/22) UPDATE THIS
+};
+
+export type TableOptions = {
+  filters: TableFilters;
+  pagination: TablePagination;
+  order: {
+    property: string;
+    direction: "asc" | "desc";
+  };
+  search: string[];
+};
+
+export type TablePagination = {
+  current: number;
+  pageSize: number;
+};
 
 export type TagColor =
   | "magenta"
