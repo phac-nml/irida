@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -21,6 +19,7 @@ import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -356,88 +355,85 @@ public class ProjectsController {
 //		}
 //
 //		// Create the rest of the sheet
-//		DateFormat dateFormat = new SimpleDateFormat(messageSource.getMessage("locale.date.long", null, locale));
-//		for (DTProject p : projects) {
-//			Row row = sheet.createRow(rowCount++);
-//			int cellCount = 0;
-//			row.createCell(cellCount++)
-//					.setCellValue(String.valueOf(p.getId()));
-//			row.createCell(cellCount++)
-//					.setCellValue(p.getName());
-//			row.createCell(cellCount++)
-//					.setCellValue(p.getOrganism());
-//			row.createCell(cellCount++)
-//					.setCellValue(String.valueOf(p.getSamples()));
-//			row.createCell(cellCount++)
-//					.setCellValue(dateFormat.format(p.getCreatedDate()));
-//			row.createCell(cellCount)
-//					.setCellValue(dateFormat.format(p.getModifiedDate()));
-//		}
-//
-//		// Write the file
-//		try (OutputStream stream = response.getOutputStream()) {
-//			workbook.write(stream);
-//			stream.flush();
-//		}
-//
-//		workbook.close();
-//	}
-//
-//	/**
-//	 * Handle a {@link ProjectWithoutOwnerException} error. Returns a forbidden
-//	 * error
-//	 *
-//	 * @param ex the exception to handle.
-//	 * @return response entity with FORBIDDEN error
-//	 */
-//	@ExceptionHandler(ProjectWithoutOwnerException.class)
-//	@ResponseBody
-//	public ResponseEntity<String> roleChangeErrorHandler(Exception ex) {
-//		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
-//	}
-//
-//	/**
-//	 * }
-//	 * <p>
-//	 * /** Recursively transform a {@link TreeNode} into a json parsable map
-//	 * object
-//	 *
-//	 * @param node The node to transform
-//	 * @return A Map<String,Object> which may contain more children
-//	 */
-//	private Map<String, Object> transformTreeNode(TreeNode<String> node) {
-//		Map<String, Object> current = new HashMap<>();
-//
-//		// add the node properties to the map
-//		for (Entry<String, Object> property : node.getProperties()
-//				.entrySet()) {
-//			current.put(property.getKey(), property.getValue());
-//		}
-//
-//		current.put("id", node.getValue());
-//		current.put("text", node.getValue());
-//
-//		List<Object> children = new ArrayList<>();
-//		for (TreeNode<String> child : node.getChildren()) {
-//			Map<String, Object> transformTreeNode = transformTreeNode(child);
-//			children.add(transformTreeNode);
-//		}
-//
-//		if (!children.isEmpty()) {
-//			current.put("children", children);
-//		}
-//
-//		return current;
-//	}
-//
-//	/**
-//	 * Extract the details of the a {@link Project} into a {@link DTProject}
-//	 * which is consumable by the UI
-//	 *
-//	 * @param project {@link Project}
-//	 * @return {@link DTProject}
-//	 */
-//	private DTProject createDataTablesProject(Project project) {
-//		return new DTProject(project, sampleService.getNumberOfSamplesForProject(project));
-//	}
+	//		DateFormat dateFormat = new SimpleDateFormat(messageSource.getMessage("locale.date.long", null, locale));
+	//		for (DTProject p : projects) {
+	//			Row row = sheet.createRow(rowCount++);
+	//			int cellCount = 0;
+	//			row.createCell(cellCount++)
+	//					.setCellValue(String.valueOf(p.getId()));
+	//			row.createCell(cellCount++)
+	//					.setCellValue(p.getName());
+	//			row.createCell(cellCount++)
+	//					.setCellValue(p.getOrganism());
+	//			row.createCell(cellCount++)
+	//					.setCellValue(String.valueOf(p.getSamples()));
+	//			row.createCell(cellCount++)
+	//					.setCellValue(dateFormat.format(p.getCreatedDate()));
+	//			row.createCell(cellCount)
+	//					.setCellValue(dateFormat.format(p.getModifiedDate()));
+	//		}
+	//
+	//		// Write the file
+	//		try (OutputStream stream = response.getOutputStream()) {
+	//			workbook.write(stream);
+	//			stream.flush();
+	//		}
+	//
+	//		workbook.close();
+	//	}
+	//
+	//	/**
+	//	 * Handle a {@link ProjectWithoutOwnerException} error. Returns a forbidden
+	//	 * error
+	//	 *
+	//	 * @param ex the exception to handle.
+	//	 * @return response entity with FORBIDDEN error
+	//	 */
+	//	@ExceptionHandler(ProjectWithoutOwnerException.class)
+	//	@ResponseBody
+	//	public ResponseEntity<String> roleChangeErrorHandler(Exception ex) {
+	//		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+	//	}
+	//
+
+	/**
+	 * /** Recursively transform a {@link TreeNode} into a json parsable map object
+	 *
+	 * @param node The node to transform
+	 * @return A Map<String,Object> which may contain more children
+	 */
+	private Map<String, Object> transformTreeNode(TreeNode<String> node) {
+		Map<String, Object> current = new HashMap<>();
+
+		// add the node properties to the map
+		for (Map.Entry<String, Object> property : node.getProperties().entrySet()) {
+			current.put(property.getKey(), property.getValue());
+		}
+
+		current.put("id", node.getValue());
+		current.put("text", node.getValue());
+
+		List<Object> children = new ArrayList<>();
+		for (TreeNode<String> child : node.getChildren()) {
+			Map<String, Object> transformTreeNode = transformTreeNode(child);
+			children.add(transformTreeNode);
+		}
+
+		if (!children.isEmpty()) {
+			current.put("children", children);
+		}
+
+		return current;
+	}
+	//
+	//	/**
+	//	 * Extract the details of the a {@link Project} into a {@link DTProject}
+	//	 * which is consumable by the UI
+	//	 *
+	//	 * @param project {@link Project}
+	//	 * @return {@link DTProject}
+	//	 */
+	//	private DTProject createDataTablesProject(Project project) {
+	//		return new DTProject(project, sampleService.getNumberOfSamplesForProject(project));
+	//	}
 }
