@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { Outlet, useParams } from "react-router-dom";
 import { PageHeader } from "antd";
 import { useGetProjectDetailsQuery } from "../redux/endpoints/project";
@@ -22,7 +22,9 @@ export default function ProjectLayout(): JSX.Element {
       <div style={{ backgroundColor: `#ffffff` }}>
         <ProjectNavigation />
         <div style={{ padding: 20 }}>
-          <Outlet />
+          <Suspense fallback={<div>LOADING...</div>}>
+            <Outlet />
+          </Suspense>
         </div>
       </div>
     </PageHeader>

@@ -20,6 +20,8 @@ export type MenuItem = {
   type?: "divider" | "group";
 };
 
+export type TableFilter = {};
+
 export type TagColor =
   | "magenta"
   | "red"

@@ -12,6 +12,10 @@ import { getContextPath } from "./utilities/url-utilities";
 import AppLayout from "./layouts/app-layout";
 import ProjectLayout from "./layouts/project-layout";
 
+const ProjectSamples = React.lazy(
+  () => import("./components/project/project-samples")
+);
+
 /**
  * @fileoverview This is the highest level React component in IRIDA.  it's responsible
  * for the global layout, and routing.
@@ -26,7 +30,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path={CONTEXT_PATH} element={<AppLayout />}>
       <Route path={`projects/:projectId`} element={<ProjectLayout />}>
-        <Route index element={<div>SAMPLES</div>} id={`project-samples`} />
+        <Route index element={<ProjectSamples />} id={`project-samples`} />
         <Route
           path={`linelist`}
           element={<div>LINELIST</div>}

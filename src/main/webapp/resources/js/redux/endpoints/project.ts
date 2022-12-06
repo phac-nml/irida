@@ -13,6 +13,19 @@ export const projectApi = api.injectEndpoints({
         { type: TAG_PROJECT, projectId },
       ],
     }),
+    listSamples: build.query({
+      query: ({
+        projectId,
+        body,
+      }: {
+        projectId: number | string;
+        body: {};
+      }) => ({
+        url: `projects/${projectId}/samples`,
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
