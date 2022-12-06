@@ -1,15 +1,14 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { setHeaders, setMetadata, setProjectId } from "../redux/importReducer";
 import { notification, Spin, StepsProps, Typography } from "antd";
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
-import * as XLSX from "xlsx";
-import { WorkBook } from "xlsx";
 import { ImportDispatch, useImportDispatch } from "../redux/store";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
-import { MetadataItem } from "../../../../apis/projects/samples";
 import { RcFile } from "antd/lib/upload/interface";
+import { setHeaders, setMetadata, setProjectId } from "../redux/importReducer";
+import * as XLSX from "xlsx";
+import { MetadataItem } from "../../../../apis/projects/samples";
 
 const { Text } = Typography;
 
@@ -32,48 +31,83 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
     }
   }, [dispatch, projectId]);
 
+  const readFileContents = (file: Blob) => {
+    const reader = new FileReader();
+
+    return new Promise((resolve, reject) => {
+      reader.onerror = () => {
+        reader.abort();
+        reject("Problem reading the file.");
+      };
+
+      reader.onload = () => {
+        resolve(reader.result);
+      };
+
+      reader.readAsBinaryString(file);
+    });
+  };
+
   const options = {
     multiple: false,
     showUploadList: false,
     accept: ".xls,.xlsx,.csv",
-    beforeUpload: (file: RcFile) => {
+    // customRequest: () => {
+    //   navigate(`/${projectId}/sample-metadata/upload/columns`);
+    // },
+    beforeUpload: async (file: RcFile) => {
       try {
-        setLoading(true);
-        const reader = new FileReader();
-        if (reader.readAsBinaryString) {
-          reader.onload = async () => {
-            const workbook: WorkBook = XLSX.read(reader.result, {
-              type: "binary",
-              raw: true,
-            });
-            const { SheetNames } = workbook;
-            const [firstSheet] = SheetNames;
-            const rows: MetadataItem[] = XLSX.utils.sheet_to_json(
-              workbook.Sheets[firstSheet],
-              {
-                rawNumbers: false,
-              }
-            );
-            const cleanRows = JSON.parse(
-              JSON.stringify(rows).replace(/"\s+|\s+"/g, '"')
-            );
-            await dispatch(setHeaders({ headers: Object.keys(cleanRows[0]) }));
-            await dispatch(setMetadata(cleanRows));
-          };
-          reader.readAsBinaryString(file);
-          notification.success({
-            message: i18n("SampleMetadataImportSelectFile.success", file.name),
+        const data = await readFileContents(file);
+        const workbook: XLSX.WorkBook = XLSX.read(data, {
+          type: "binary",
+          raw: true,
+        });
+        const { SheetNames } = workbook;
+        const [firstSheet] = SheetNames;
+        const headers: string[] = XLSX.utils.sheet_to_json(
+          workbook.Sheets[firstSheet],
+          {
+            header: 1,
+          }
+        )[0];
+        if (headers.length > 0) {
+          setLoading(false);
+          setStatus("error");
+          notification.error({
+            message: i18n(
+              "SampleMetadataImportSelectFile.duplicate.error",
+              file.name
+            ),
           });
-          navigate(`/${projectId}/sample-metadata/upload/columns`);
+          return false;
         }
+        const rows: MetadataItem[] = XLSX.utils.sheet_to_json(
+          workbook.Sheets[firstSheet],
+          {
+            rawNumbers: false,
+          }
+        );
+        const cleanRows = JSON.parse(
+          JSON.stringify(rows).replace(/"\s+|\s+"/g, '"')
+        );
+        await dispatch(setHeaders({ headers: Object.keys(cleanRows[0]) }));
+        await dispatch(setMetadata(cleanRows));
+        notification.success({
+          message: i18n("SampleMetadataImportSelectFile.success", file.name),
+        });
+        navigate(`/${projectId}/sample-metadata/upload/columns`);
       } catch (error) {
         setLoading(false);
         setStatus("error");
         notification.error({
-          message: i18n("SampleMetadataImportSelectFile.error", file.name),
+          message: i18n(
+            "SampleMetadataImportSelectFile.general.error",
+            file.name
+          ),
         });
+        return false;
       }
-      return false;
+      return true;
     },
   };
 
