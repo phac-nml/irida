@@ -52,9 +52,9 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
     multiple: false,
     showUploadList: false,
     accept: ".xls,.xlsx,.csv",
-    // customRequest: () => {
-    //   navigate(`/${projectId}/sample-metadata/upload/columns`);
-    // },
+    customRequest: () => {
+      navigate(`/${projectId}/sample-metadata/upload/columns`);
+    },
     beforeUpload: async (file: RcFile) => {
       try {
         const data = await readFileContents(file);
@@ -64,6 +64,7 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
         });
         const { SheetNames } = workbook;
         const [firstSheet] = SheetNames;
+        //Not loving how I'm reading the file twice to get the raw headers
         const headers: string[] = XLSX.utils.sheet_to_json(
           workbook.Sheets[firstSheet],
           {
@@ -95,7 +96,6 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
         notification.success({
           message: i18n("SampleMetadataImportSelectFile.success", file.name),
         });
-        navigate(`/${projectId}/sample-metadata/upload/columns`);
       } catch (error) {
         setLoading(false);
         setStatus("error");
