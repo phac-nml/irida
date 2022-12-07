@@ -177,7 +177,7 @@ dependencies {
     }
 
     // Microsoft Azure
-    implementation("com.azure:azure-storage-blob:12.18.0") {
+    implementation("com.azure:azure-storage-blob:12.20.1") {
         exclude(group = "jakarta.xml.bind", module = "jakarta.xml.bind-api")
         exclude(group = "jakarta.activation", module = "jakarta.activation-api")
     }
