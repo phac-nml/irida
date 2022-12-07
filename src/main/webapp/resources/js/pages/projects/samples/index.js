@@ -12,6 +12,7 @@ import { associatedProjectsApi } from "../../../apis/projects/associated-project
 import samplesReducer from "../redux/samplesSlice";
 import { projectApi } from "../../../apis/projects/project";
 import { setBaseUrl } from "../../../utilities/url-utilities";
+import { cartApi } from "../../../apis/cart/cart";
 
 /*
 WEBPACK PUBLIC PATH:
@@ -30,12 +31,14 @@ export const store = configureStore({
     [projectApi.reducerPath]: projectApi.reducer,
     [samplesApi.reducerPath]: samplesApi.reducer,
     [associatedProjectsApi.reducerPath]: associatedProjectsApi.reducer,
+    [cartApi.reducerPath]: cartApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       samplesApi.middleware,
       projectApi.middleware,
-      associatedProjectsApi.middleware
+      associatedProjectsApi.middleware,
+      cartApi.middleware
     ),
   devTools: process.env.NODE_ENV !== "production",
 });

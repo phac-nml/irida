@@ -53,30 +53,6 @@ const selectAllSamples = createAsyncThunk<
 });
 
 /**
- * Called when adding samples to the cart
- */
-const addToCart = createAsyncThunk(
-  "/samples/table/selected/cart",
-  async (_, { getState }) => {
-    const { samples } = getState();
-    // Sort by project id
-    const samplesList = Object.values(samples.selected);
-    const projects = samplesList.reduce((prev, current) => {
-      if (!prev[current.projectId]) prev[current.projectId] = [];
-      prev[current.projectId].push(current);
-      return prev;
-    }, {});
-
-    const promises = [];
-    for (const projectId in projects) {
-      promises.push(putSampleInCart(projectId, projects[projectId]));
-    }
-
-    return Promise.all(promises).then((responses) => responses.pop());
-  }
-);
-
-/**
  * Called when downloading samples (sequence files) from the server.
  */
 const downloadSamples = createAsyncThunk(
@@ -204,10 +180,6 @@ export default createReducer(initialState, (builder) => {
       state.selectedCount = action.payload.selectedCount;
       state.loadingLong = false;
     })
-    .addCase(addToCart.fulfilled, (state) => {
-      state.selected = {};
-      state.selectedCount = 0;
-    })
     .addCase(downloadSamples.fulfilled, (state) => {
       state.selected = {};
       state.selectedCount = 0;
@@ -241,7 +213,6 @@ export {
   filterByFile,
   clearFilterByFile,
   selectAllSamples,
-  addToCart,
   downloadSamples,
   exportSamplesToFile,
 };
