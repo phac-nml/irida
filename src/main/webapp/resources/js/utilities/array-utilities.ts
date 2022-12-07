@@ -16,3 +16,17 @@ export function chunkArray(items: any[], size: number) {
 
   return chunks;
 }
+
+/**
+ * Calculate the best request chunk size
+ *
+ * @param arraySize the size of the array
+ *
+ * @returns the chunk size
+ */
+export function calculateChunkSize(arraySize: number) {
+  const MIN = 10;
+  const MAX = 100;
+  const estimated = Math.ceil(arraySize / 10);
+  return estimated < MIN ? MIN : estimated > MAX ? MAX : estimated;
+}

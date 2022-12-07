@@ -15,7 +15,10 @@ import {
   ValidateSamplesResponse,
 } from "../../../../apis/projects/samples";
 import { ImportDispatch, ImportState } from "./store";
-import { chunkArray } from "../../../../utilities/array-utilities";
+import {
+  calculateChunkSize,
+  chunkArray,
+} from "../../../../utilities/array-utilities";
 import {
   createMetadataFieldsForProject,
   getMetadataFieldsForProject,
@@ -102,8 +105,6 @@ export const saveMetadata = createAsyncThunk<
       );
     });
 
-    const chunkSize = 10;
-
     //update existing project samples
     const updateSamplesPromises: Promise<void>[] = [];
     const updateSampleList = selectedSampleList
@@ -131,7 +132,13 @@ export const saveMetadata = createAsyncThunk<
       });
     //create a request with a list of project samples to be updated
     if (updateSampleList.length > 0) {
-      const chunkedUpdateSampleList = chunkArray(updateSampleList, chunkSize);
+      const updateSampleListChunkSize = calculateChunkSize(
+        updateSampleList.length
+      );
+      const chunkedUpdateSampleList = chunkArray(
+        updateSampleList,
+        updateSampleListChunkSize
+      );
       for (const chunk of chunkedUpdateSampleList) {
         updateSamplesPromises.push(
           updateSamples({
@@ -156,9 +163,12 @@ export const saveMetadata = createAsyncThunk<
         );
       }
       //send multiple update project sample requests in parallel
+      const updateSamplesPromiseChunkSize = calculateChunkSize(
+        updateSamplesPromises.length
+      );
       const chunkedUpdateSamplesPromises = chunkArray(
         updateSamplesPromises,
-        chunkSize
+        updateSamplesPromiseChunkSize
       );
       for (const chunk of chunkedUpdateSamplesPromises) {
         await Promise.all(chunk).then(() => {
@@ -195,7 +205,13 @@ export const saveMetadata = createAsyncThunk<
       });
     //create a request with a list of project samples to be created
     if (createSampleList.length > 0) {
-      const chunkedCreateSampleList = chunkArray(createSampleList, chunkSize);
+      const createSampleListChunkSize = calculateChunkSize(
+        updateSampleList.length
+      );
+      const chunkedCreateSampleList = chunkArray(
+        createSampleList,
+        createSampleListChunkSize
+      );
       for (const chunk of chunkedCreateSampleList) {
         createSamplesPromises.push(
           createSamples({
@@ -220,9 +236,12 @@ export const saveMetadata = createAsyncThunk<
         );
       }
       //send multiple create project sample requests in parallel
+      const createSamplesPromiseChunkSize = calculateChunkSize(
+        updateSamplesPromises.length
+      );
       const chunkedCreateSamplesPromises = chunkArray(
         createSamplesPromises,
-        chunkSize
+        createSamplesPromiseChunkSize
       );
       for (const chunk of chunkedCreateSamplesPromises) {
         await Promise.all(chunk).then(() => {
