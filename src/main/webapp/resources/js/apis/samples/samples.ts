@@ -2,11 +2,14 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import { get, post } from "../requests";
-import { AnalysisSubmission } from "../../types/irida";
+import { AnalysisSubmission, Sample } from "../../types/irida";
+import { CartUpdated, updateCart } from "../cart/cart";
 
 const URL = setBaseUrl(`ajax/samples`);
 
 const SEQUENCE_FILES_AJAX_URL = setBaseUrl("ajax/sequenceFiles");
+
+const CART_URL = setBaseUrl("ajax/cart");
 
 export type AnalysisState =
   | "NEW"
@@ -142,9 +145,7 @@ export interface SequencingObject {
  */
 export const sampleApi = createApi({
   reducerPath: `sampleApi`,
-  baseQuery: fetchBaseQuery({
-    baseUrl: setBaseUrl(URL),
-  }),
+  baseQuery: fetchBaseQuery({}),
   tagTypes: ["SampleDetails", "SampleMetadata"],
   endpoints: (build) => ({
     /*
@@ -152,7 +153,7 @@ export const sampleApi = createApi({
      */
     getSampleDetails: build.query({
       query: ({ sampleId, projectId }) => ({
-        url: `/${sampleId}/details?projectId=${projectId}`,
+        url: `${URL}/${sampleId}/details?projectId=${projectId}`,
       }),
       providesTags: ["SampleDetails"],
     }),
@@ -161,7 +162,7 @@ export const sampleApi = createApi({
      */
     updateSampleDetails: build.mutation({
       query: ({ sampleId, field, value }) => ({
-        url: `/${sampleId}/details`,
+        url: `${URL}/${sampleId}/details`,
         body: { field, value },
         method: "PUT",
       }),
@@ -175,7 +176,7 @@ export const sampleApi = createApi({
         metadataEntry,
         metadataRestriction,
       }) => ({
-        url: `/${sampleId}/metadata`,
+        url: `${URL}/${sampleId}/metadata`,
         body: { projectId, metadataField, metadataEntry, metadataRestriction },
         method: "POST",
       }),
@@ -183,7 +184,7 @@ export const sampleApi = createApi({
     }),
     removeSampleMetadata: build.mutation({
       query: ({ fieldId, entryId, projectId }) => ({
-        url: `/metadata?projectId=${projectId}&metadataFieldId=${fieldId}&metadataEntryId=${entryId}`,
+        url: `${URL}/metadata?projectId=${projectId}&metadataFieldId=${fieldId}&metadataEntryId=${entryId}`,
         method: "DELETE",
       }),
       invalidatesTags: ["SampleMetadata"],
@@ -198,7 +199,7 @@ export const sampleApi = createApi({
         metadataEntry,
         metadataRestriction,
       }) => ({
-        url: `/${sampleId}/metadata`,
+        url: `${URL}/${sampleId}/metadata`,
         body: {
           projectId,
           metadataFieldId,
@@ -213,7 +214,7 @@ export const sampleApi = createApi({
     }),
     removeSampleFiles: build.mutation({
       query: ({ sampleId, fileObjectId, type }) => ({
-        url: `/${sampleId}/files?fileObjectId=${fileObjectId}&fileType=${type}`,
+        url: `${URL}/${sampleId}/files?fileObjectId=${fileObjectId}&fileType=${type}`,
         method: "DELETE",
       }),
     }),
@@ -224,22 +225,42 @@ export const sampleApi = createApi({
         newFileName,
         removeOriginals,
       }) => ({
-        url: `/${sampleId}/files/concatenate?sequencingObjectIds=${sequencingObjectIds}&newFileName=${newFileName}&removeOriginals=${removeOriginals}`,
+        url: `${URL}/${sampleId}/files/concatenate?sequencingObjectIds=${sequencingObjectIds}&newFileName=${newFileName}&removeOriginals=${removeOriginals}`,
         method: "POST",
       }),
     }),
     updateDefaultSampleSequencingObject: build.mutation({
       query: ({ sampleId, sequencingObjectId }) => ({
-        url: `/${sampleId}/default-sequencing-object?sequencingObjectId=${sequencingObjectId}`,
+        url: `${URL}/${sampleId}/default-sequencing-object?sequencingObjectId=${sequencingObjectId}`,
         method: "PUT",
       }),
       invalidatesTags: ["SampleDetails"],
     }),
     updateDefaultSampleGenomeAssembly: build.mutation({
       query: ({ sampleId, genomeAssemblyId }) => ({
-        url: `/${sampleId}/default-genome-assembly?genomeAssemblyId=${genomeAssemblyId}`,
+        url: `${URL}/${sampleId}/default-genome-assembly?genomeAssemblyId=${genomeAssemblyId}`,
         method: "PUT",
       }),
+      invalidatesTags: ["SampleDetails"],
+    }),
+    putSampleInCart: build.mutation({
+      query: ({ projectId, samples }) => ({
+        url: CART_URL,
+        body: {
+          projectId,
+          sampleIds: samples.map((s: Sample) => s.id || s.identifier),
+        },
+        method: "POST",
+      }),
+      transformResponse: (res: CartUpdated) => updateCart(res),
+      invalidatesTags: ["SampleDetails"],
+    }),
+    removeSampleFromCart: build.mutation({
+      query: ({ sampleId }) => ({
+        url: `${CART_URL}/sample?sampleId=${sampleId}`,
+        method: "DELETE",
+      }),
+      transformResponse: (res: CartUpdated) => updateCart(res),
       invalidatesTags: ["SampleDetails"],
     }),
   }),
@@ -255,6 +276,8 @@ export const {
   useConcatenateSequencingObjectsMutation,
   useUpdateDefaultSampleGenomeAssemblyMutation,
   useUpdateDefaultSampleSequencingObjectMutation,
+  usePutSampleInCartMutation,
+  useRemoveSampleFromCartMutation,
 } = sampleApi;
 
 /**

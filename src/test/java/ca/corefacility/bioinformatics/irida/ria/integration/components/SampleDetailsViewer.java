@@ -1,9 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.components;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.List;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -13,7 +10,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.time.Duration;
+import java.util.List;
 
 public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-sample-details-modal")
@@ -363,9 +361,23 @@ public class SampleDetailsViewer extends AbstractPage {
 		waitForTime(500);
 	}
 
+	// If removing the sample from the cart on the cart page it will close the sample detail viewer
+	public void clickRemoveSampleFromCartButtonCartPage() {
+		removeSampleFromCartBtn.click();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+		wait.until(ExpectedConditions.invisibilityOf(modal));
+	}
+
 	public void clickRemoveSampleFromCartButton() {
 		removeSampleFromCartBtn.click();
 		waitForTime(500);
+	}
+
+	public void clickSampleDetailsViewerCloseButton() {
+		WebElement element = driver.findElement(By.className("ant-modal-close"));
+		element.click();
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10L));
+		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.className("t-sample-details-modal"))));
 	}
 
 	public int numberOfSequencingObjectsSetAsDefault() {
