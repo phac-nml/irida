@@ -14,34 +14,12 @@ import { downloadPost } from "../../../utilities/file-utilities";
 import { formatFilterBySampleNames } from "../../../utilities/table-utilities";
 import isEqual from "lodash/isEqual";
 
+const updateTable = createAction("samples/table/update");
 const reloadTable = createAction("samples/table/reload");
 const addSelectedSample = createAction("samples/table/selected/add");
 const removeSelectedSample = createAction("samples/table/selected/remove");
 const clearSelectedSamples = createAction("samples/table/selected/clear");
 const clearFilterByFile = createAction("samples/table/clearFilterByFile");
-
-/**
- * Updates the state of the table filters and search, which triggers
- * the re-render of the samples table.
- * @type {AsyncThunk<unknown, void, {}>}
- */
-const updateTable = createAsyncThunk(
-  "samples/table/update",
-  async (values, { getState }) => {
-    const {
-      samples: { options, selected, selectedCount },
-    } = getState();
-    if (
-      isEqual(values?.search, options.search) &&
-      isEqual(values?.filters, options.filters)
-    ) {
-      // Just a page change, don't update selected
-      return { options: values, selected, selectedCount };
-    }
-    // Filters applied therefore need to clear any selections
-    return { options: values, selected: {}, selectedCount: 0 };
-  }
-);
 
 /**
  * Called when selecting all samples from the Samples Table.
@@ -174,10 +152,20 @@ const initialState = {
 
 export default createReducer(initialState, (builder) => {
   builder
-    .addCase(updateTable.fulfilled, (state, action) => {
-      state.options = action.payload.options;
-      state.selected = action.payload.selected;
-      state.selectedCount = action.payload.selectedCount;
+    .addCase(updateTable, (state, { payload }) => {
+      const { options, selected, selectedCount } = state;
+
+      if (
+        isEqual(payload.search, options.search) &&
+        isEqual(payload.filters && options.filters)
+      ) {
+        // Just a page change, don't update selected
+        state.options = payload;
+      } else {
+        state.options = payload;
+        state.selected = {};
+        state.selectedCount = 0;
+      }
     })
     .addCase(reloadTable, (state) => {
       const newOptions = getInitialTableOptions();
