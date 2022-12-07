@@ -1,7 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-import com.google.common.base.Strings;
+import java.time.Duration;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -9,10 +12,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+
+import com.google.common.base.Strings;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -274,6 +276,7 @@ public class AbstractPage {
 
 	public void enterSearchQueryInNavBar(String query) {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+		driver.findElement(By.cssSelector("[aria-label=search]")).click();
 		WebElement searchInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".t-global-search input")));
 		searchInput.sendKeys(query);
 		searchInput.sendKeys(Keys.ENTER);
