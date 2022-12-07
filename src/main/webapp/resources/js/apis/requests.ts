@@ -22,7 +22,7 @@ export async function get<T>(
 
 export async function post<T>(
   url: string,
-  params?: T,
+  params?: Record<string, unknown> | undefined,
   config?: AxiosRequestConfig
 ): Promise<T> {
   try {

@@ -3,31 +3,32 @@ import {
   createAsyncThunk,
   createReducer,
 } from "@reduxjs/toolkit";
+import isEqual from "lodash/isEqual";
+import { putSampleInCart } from "../../../apis/cart/cart";
+import { getMinimalSampleDetailsForFilteredProject } from "../../../apis/projects/samples";
+import { TableOptions } from "../../../types/ant-design";
+import { SelectedSample } from "../../../types/irida";
+import { downloadPost } from "../../../utilities/file-utilities";
+import { formatFilterBySampleNames } from "../../../utilities/table-utilities";
 import {
   getProjectIdFromUrl,
   setBaseUrl,
 } from "../../../utilities/url-utilities";
 import { INITIAL_TABLE_STATE } from "../samples/services/constants";
-import { getMinimalSampleDetailsForFilteredProject } from "../../../apis/projects/samples";
-import { putSampleInCart } from "../../../apis/cart/cart";
-import { downloadPost } from "../../../utilities/file-utilities";
-import { formatFilterBySampleNames } from "../../../utilities/table-utilities";
-import isEqual from "lodash/isEqual";
-import { TableOptions } from "../../../types/ant-design";
 
 export type SamplesTableState = {
   projectId: string | number; // TODO: (Josh - 12/7/22) This will be removed in subsequent PR
   options: TableOptions;
   selectedCount: number;
-  selected: { [id: number]: string };
+  selected: { [key: string]: SelectedSample };
 };
 
-const updateTable = createAction<TableOptions>("samples/table/update");
-const reloadTable = createAction("samples/table/reload");
 const addSelectedSample = createAction("samples/table/selected/add");
-const removeSelectedSample = createAction("samples/table/selected/remove");
-const clearSelectedSamples = createAction("samples/table/selected/clear");
 const clearFilterByFile = createAction("samples/table/clearFilterByFile");
+const clearSelectedSamples = createAction("samples/table/selected/clear");
+const reloadTable = createAction("samples/table/reload");
+const removeSelectedSample = createAction("samples/table/selected/remove");
+const updateTable = createAction<TableOptions>("samples/table/update");
 
 /**
  * Called when selecting all samples from the Samples Table.
@@ -35,21 +36,21 @@ const clearFilterByFile = createAction("samples/table/clearFilterByFile");
  * This will trigger a "long load" since there might be a little of samples in
  * the table that data needs to be gathered for from the server.
  */
-const selectAllSamples = createAsyncThunk(
-  "/samples/table/selected/all",
-  async (_, { getState }) => {
-    const { samples } = getState();
-    return await getMinimalSampleDetailsForFilteredProject(
-      samples.options
-    ).then((data) => {
-      const selected = data.reduce(
-        (accumulator, value) => ({ ...accumulator, [value.key]: value }),
-        {}
-      );
-      return { selected, selectedCount: data.length };
-    });
-  }
-);
+const selectAllSamples = createAsyncThunk<
+  Pick<SamplesTableState, "selected" | "selectedCount">,
+  void,
+  { state: { samples: SamplesTableState } }
+>("/samples/table/selected/all", async (_, { getState }) => {
+  const { options } = getState().samples;
+
+  const data = await getMinimalSampleDetailsForFilteredProject(options);
+
+  const selected = data.reduce(
+    (accumulator, value) => ({ ...accumulator, [value.key]: value }),
+    {}
+  );
+  return { selected, selectedCount: data.length };
+});
 
 /**
  * Called when adding samples to the cart
