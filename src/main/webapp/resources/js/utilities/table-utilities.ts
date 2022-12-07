@@ -1,4 +1,6 @@
 import moment from "moment";
+import { TableSearch } from "../types/ant-design";
+import { SelectedSample } from "../types/irida";
 
 /**
  * Format Sort Order from the Ant Design sorter object
@@ -64,14 +66,20 @@ export function formatSearch(filters) {
   return formattedSearch;
 }
 
-export const formatFilterBySampleNames = (samples) => {
+/**
+ * Format the filter by samples names value to send to the server
+ * @param samples
+ */
+export function formatFilterBySampleNames(
+  samples: SelectedSample[]
+): TableSearch {
   return {
     property: "sample.sampleName",
     value: samples.map((sample) => sample.sampleName),
     operation: "IN",
     _file: true,
   };
-};
+}
 
 export const stringSorter = (property) => (a, b) =>
   a[property].localeCompare(b[property], window.TL.LANGUAGE_TAG, {

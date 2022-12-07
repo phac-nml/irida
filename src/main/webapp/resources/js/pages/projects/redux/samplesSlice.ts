@@ -4,10 +4,9 @@ import {
   createReducer,
 } from "@reduxjs/toolkit";
 import isEqual from "lodash/isEqual";
-import { putSampleInCart } from "../../../apis/cart/cart";
 import { getMinimalSampleDetailsForFilteredProject } from "../../../apis/projects/samples";
-import { TableOptions } from "../../../types/ant-design";
-import { SelectedSample } from "../../../types/irida";
+import { TableOptions, TableSearch } from "../../../types/ant-design";
+import { ProjectMinimal, Sample, SelectedSample } from "../../../types/irida";
 import { downloadPost } from "../../../utilities/file-utilities";
 import { formatFilterBySampleNames } from "../../../utilities/table-utilities";
 import {
@@ -17,24 +16,44 @@ import {
 import { INITIAL_TABLE_STATE } from "../samples/services/constants";
 
 export type SamplesTableState = {
-  projectId: string | number; // TODO: (Josh - 12/7/22) This will be removed in subsequent PR
+  projectId: string | number | undefined; // TODO: (Josh - 12/7/22) This will be removed in subsequent PR
   options: TableOptions;
   selectedCount: number;
   selected: { [key: string]: SelectedSample };
+  loadingLong?: boolean;
+  filterByFile?: FilterByFile | null;
 };
 
-const addSelectedSample = createAction("samples/table/selected/add");
+export type TableSample = {
+  sample: Sample;
+  project: ProjectMinimal;
+  coverage: number;
+  key: string;
+  owner: boolean;
+  qcStatus: string;
+};
+
+export type FilterByFile = {
+  filename: string;
+  fileFilter: TableSearch;
+};
+
+const addSelectedSample = createAction<TableSample>(
+  "samples/table/selected/add"
+);
 const clearFilterByFile = createAction("samples/table/clearFilterByFile");
 const clearSelectedSamples = createAction("samples/table/selected/clear");
 const reloadTable = createAction("samples/table/reload");
-const removeSelectedSample = createAction("samples/table/selected/remove");
+const removeSelectedSample = createAction<string>(
+  "samples/table/selected/remove"
+);
 const updateTable = createAction<TableOptions>("samples/table/update");
 
 /**
  * Called when selecting all samples from the Samples Table.
  *
  * This will trigger a "long load" since there might be a little of samples in
- * the table that data needs to be gathered for from the server.
+ * the table that data need to be gathered for from the server.
  */
 const selectAllSamples = createAsyncThunk<
   Pick<SamplesTableState, "selected" | "selectedCount">,
@@ -55,46 +74,58 @@ const selectAllSamples = createAsyncThunk<
 /**
  * Called when downloading samples (sequence files) from the server.
  */
-const downloadSamples = createAsyncThunk(
-  "/samples/table/export/download",
-  async (_, { getState }) => {
-    const { samples } = getState();
-    const sampleIds = Object.values(samples.selected).map((s) => s.id);
-    return await downloadPost(
-      setBaseUrl(`/ajax/projects/${samples.projectId}/samples/download`),
-      { sampleIds }
-    );
-  }
-);
+const downloadSamples = createAsyncThunk<
+  void,
+  void,
+  { state: { samples: SamplesTableState } }
+>("/samples/table/export/download", async (_, { getState }) => {
+  // TODO: (Josh - 12/7/22) This should not be in here, move out in samples page refactor.
+  const { selected, projectId } = getState().samples;
+  const sampleIds = Object.values(selected).map((s) => s.id);
+  await downloadPost(
+    setBaseUrl(`/ajax/projects/${projectId}/samples/download`),
+    { sampleIds }
+  );
+});
 
 /**
  * Called when exporting the current state of the samples' table to either
  * a CSV of Excel file.
  */
-const exportSamplesToFile = createAsyncThunk(
-  "/samples/table/export",
-  async (type, { getState }) => {
-    const { samples } = getState();
-    const options = { ...samples.options };
-    if (samples.selectedCount > 0) {
-      const sampleNamesFilter = formatFilterBySampleNames(
-        Object.values(samples.selected)
-      );
-      options.search = [...options.search, sampleNamesFilter];
-    }
-
-    return await downloadPost(
-      setBaseUrl(
-        `/ajax/projects/${samples.projectId}/samples/export?type=${type}`
-      ),
-      options
+const exportSamplesToFile = createAsyncThunk<
+  void,
+  string,
+  { state: { samples: SamplesTableState } }
+>("/samples/table/export", async (type, { getState }) => {
+  // TODO: (Josh - 12/7/22) This should not be in here, move out in samples page refactor.
+  const { samples } = getState();
+  const options = { ...samples.options };
+  if (samples.selectedCount > 0) {
+    const sampleNamesFilter = formatFilterBySampleNames(
+      Object.values(samples.selected)
     );
+    options.search = [...options.search, sampleNamesFilter];
   }
-);
+
+  await downloadPost(
+    setBaseUrl(
+      `/ajax/projects/${samples.projectId}/samples/export?type=${type}`
+    ),
+    options
+  );
+});
 
 const filterByFile = createAction(
   `samples/table/filterByFile`,
-  ({ samples, filename }) => {
+  ({
+    samples,
+    filename,
+  }: {
+    samples: SelectedSample[];
+    filename: string;
+  }): {
+    payload: FilterByFile;
+  } => {
     return {
       payload: {
         filename,
@@ -105,9 +136,9 @@ const filterByFile = createAction(
 );
 
 /**
- * Since the initial table props may need to be reset at some point, we store
- * them in a string so they cannot be mutated.  When the table needs to be reset
- * to it's default state, just re-parse by calling this.
+ * Since the initial table props may need to be reset at some point, store
+ * them in a string, so they can't mutate. When the table needs to be reset
+ * to it's default state, just reparse by calling this.
  * @returns {object} - default table state
  */
 const getInitialTableOptions = () => JSON.parse(INITIAL_TABLE_STATE);
@@ -117,9 +148,8 @@ const getInitialTableOptions = () => JSON.parse(INITIAL_TABLE_STATE);
  * Needs to be converted to this format so that it can be used by the share
  * samples page and the cart.
  * @param projectSample - Sample details object returned as part of the table data
- * @returns {{sampleName: (Document.mergeForm.sampleName|Document.sampleName|string), owner: *, id: string, projectId: *, key: *}}
  */
-const formatSelectedSample = (projectSample) => ({
+const formatSelectedSample = (projectSample: TableSample): SelectedSample => ({
   key: projectSample.key,
   id: projectSample.sample.id,
   projectId: projectSample.project.id,
@@ -128,7 +158,7 @@ const formatSelectedSample = (projectSample) => ({
 });
 
 const initialState: SamplesTableState = {
-  projectId: getProjectIdFromUrl(),
+  projectId: getProjectIdFromUrl(), // TODO: (Josh - 12/7/22) This will get cleaned up in future PR
   options: getInitialTableOptions(),
   selected: {},
   selectedCount: 0,

@@ -21,7 +21,15 @@ export type TableOptions = {
     pageSize: number;
   };
   order: { property: string; direction: "asc" | "desc" }[];
-  search: string[];
+  search: TableSearch[];
+  reload?: number;
+};
+
+export type TableSearch = {
+  property: string;
+  value: string | string[];
+  operation: "IN";
+  _file?: boolean;
 };
 
 export type TagColor =
