@@ -64,7 +64,8 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
         });
         const { SheetNames } = workbook;
         const [firstSheet] = SheetNames;
-        //Not loving how I'm reading the file twice to get the raw headers
+        // Not loving how I'm parsing the file twice to get the raw headers
+        // See https://docs.sheetjs.com/docs/api/utilities
         const headers: string[] = XLSX.utils.sheet_to_json(
           workbook.Sheets[firstSheet],
           {
