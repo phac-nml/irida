@@ -26,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.MetadataEn
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNameModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIMetadataImportException;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
@@ -126,12 +125,9 @@ public class UIProjectSampleService {
 	 *
 	 * @param requests  Each {@link CreateSampleRequest} contains details about the sample to create
 	 * @param projectId Identifier for the current project
-	 * @param locale    Users current locale
 	 * @return result of creating the sample
-	 * @throws UIMetadataImportException if there are errors creating the project samples
 	 */
-	public String createSamples(CreateSampleRequest[] requests, Long projectId, Locale locale)
-			throws UIMetadataImportException {
+	public Map<String, String> createSamples(CreateSampleRequest[] requests, Long projectId) {
 		Map<String, String> errors = new HashMap<>();
 		for (CreateSampleRequest request : requests) {
 			try {
@@ -140,11 +136,7 @@ public class UIProjectSampleService {
 				errors.put(request.getName(), e.getMessage());
 			}
 		}
-		if (errors.isEmpty()) {
-			return messageSource.getMessage("server.AddSample.success", null, locale);
-		} else {
-			throw new UIMetadataImportException(errors);
-		}
+		return errors;
 	}
 
 	/**
@@ -177,11 +169,9 @@ public class UIProjectSampleService {
 	 * Update samples in a project
 	 *
 	 * @param requests Each {@link UpdateSampleRequest} contains details about the sample to update
-	 * @param locale   Users current locale
 	 * @return result of creating the samples
-	 * @throws UIMetadataImportException if there are errors creating the project samples
 	 */
-	public String updateSamples(UpdateSampleRequest[] requests, Locale locale) throws UIMetadataImportException {
+	public Map<String, String> updateSamples(UpdateSampleRequest[] requests) {
 		Map<String, String> errors = new HashMap<>();
 		for (UpdateSampleRequest request : requests) {
 			try {
@@ -190,11 +180,7 @@ public class UIProjectSampleService {
 				errors.put(request.getName(), e.getMessage());
 			}
 		}
-		if (errors.isEmpty()) {
-			return messageSource.getMessage("server.AddSample.success", null, locale);
-		} else {
-			throw new UIMetadataImportException(errors);
-		}
+		return errors;
 	}
 
 	/**

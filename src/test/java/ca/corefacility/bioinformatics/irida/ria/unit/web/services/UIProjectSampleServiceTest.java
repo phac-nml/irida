@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -87,29 +89,29 @@ public class UIProjectSampleServiceTest {
 	@Test
 	public void testCreateSample() throws UIMetadataImportException {
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null) };
-		String response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
-		assertEquals("success", response, "Sample should be created");
+		Map<String, String> response = service.createSamples(requests, PROJECT_1_ID);
+		assertTrue(response.isEmpty(), "Sample should be created");
 	}
 
 	@Test
 	public void testCreateSampleWithOrganism() throws UIMetadataImportException {
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, ORGANISM) };
-		String response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
-		assertEquals("success", response, "Sample should be created");
+		Map<String, String> response = service.createSamples(requests, PROJECT_1_ID);
+		assertTrue(response.isEmpty(), "Sample should be created");
 	}
 
 	@Test
 	public void testCreateSampleWithDescription() throws UIMetadataImportException {
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null, DESCRIPTION, null) };
-		String response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
-		assertEquals("success", response, "Sample should be created");
+		Map<String, String> response = service.createSamples(requests, PROJECT_1_ID);
+		assertTrue(response.isEmpty(), "Sample should be created");
 	}
 
 	@Test
 	public void testCreateSampleWithOrganismAndDescription() throws UIMetadataImportException {
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, ORGANISM, DESCRIPTION, null) };
-		String response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
-		assertEquals("success", response, "Sample should be created");
+		Map<String, String> response = service.createSamples(requests, PROJECT_1_ID);
+		assertTrue(response.isEmpty(), "Sample should be created");
 	}
 
 	@Test
@@ -118,8 +120,8 @@ public class UIProjectSampleServiceTest {
 		metadata.add(new MetadataEntryModel("field1", "value1"));
 		metadata.add(new MetadataEntryModel("field2", "value2"));
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null, null, metadata) };
-		String response = service.createSamples(requests, PROJECT_1_ID, Locale.ENGLISH);
-		assertEquals("success", response, "Sample should be created");
+		Map<String, String> response = service.createSamples(requests, PROJECT_1_ID);
+		assertTrue(response.isEmpty(), "Sample should be created");
 	}
 
 	@Test
@@ -128,7 +130,7 @@ public class UIProjectSampleServiceTest {
 		metadata.add(new MetadataEntryModel("field1", "value1"));
 		metadata.add(new MetadataEntryModel("field2", "value2"));
 		UpdateSampleRequest[] requests = { new UpdateSampleRequest(SAMPLE_1_ID, GOOD_NAME, null, null, metadata) };
-		String response = service.updateSamples(requests, Locale.ENGLISH);
-		assertEquals("success", response, "Sample should be updated");
+		Map<String, String> response = service.updateSamples(requests);
+		assertTrue(response.isEmpty(), "Sample should be updated");
 	}
 }

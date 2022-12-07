@@ -137,23 +137,22 @@ export const saveMetadata = createAsyncThunk<
           updateSamples({
             projectId,
             body: chunk,
-          })
-            .then(() => {
-              chunk
-                .map((item) => item.name)
-                .forEach(
-                  (name) => (metadataSaveDetails[name] = { saved: true })
-                );
-            })
-            .catch((error) => {
-              const { errors } = error.response.data;
-              Object.keys(errors).map((key) => {
-                metadataSaveDetails[key] = {
-                  saved: false,
-                  error: errors[key],
-                };
+          }).then((response) => {
+            const { errors } = response.data;
+            chunk
+              .map((item) => item.name)
+              .forEach((name) => {
+                const error = errors[name];
+                if (error) {
+                  metadataSaveDetails[name] = {
+                    saved: false,
+                    error: error,
+                  };
+                } else {
+                  metadataSaveDetails[name] = { saved: true };
+                }
               });
-            })
+          })
         );
       }
       //send multiple update project sample requests in parallel
@@ -202,23 +201,22 @@ export const saveMetadata = createAsyncThunk<
           createSamples({
             projectId,
             body: chunk,
-          })
-            .then(() => {
-              chunk
-                .map((item) => item.name)
-                .forEach(
-                  (name) => (metadataSaveDetails[name] = { saved: true })
-                );
-            })
-            .catch((error) => {
-              const { errors } = error.response.data;
-              Object.keys(errors).map((key) => {
-                metadataSaveDetails[key] = {
-                  saved: false,
-                  error: errors[key],
-                };
+          }).then((response) => {
+            const { errors } = response.data;
+            chunk
+              .map((item) => item.name)
+              .forEach((name) => {
+                const error = errors[name];
+                if (error) {
+                  metadataSaveDetails[name] = {
+                    saved: false,
+                    error: error,
+                  };
+                } else {
+                  metadataSaveDetails[name] = { saved: true };
+                }
               });
-            })
+          })
         );
       }
       //send multiple create project sample requests in parallel
