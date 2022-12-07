@@ -1,11 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.cloud;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
  * Implementation of file utilities for storage testing. All
- * file utility testing files (azure, aws, local, etc) must
+ * file utility testing files (azure, aws, etc) must
  * implement this interface
  */
 

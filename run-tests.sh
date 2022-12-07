@@ -11,6 +11,7 @@ JDBC_URL=jdbc:mysql://$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME
 TMP_DIRECTORY=`mktemp -d /tmp/irida-test-XXXXXXXX`
 chmod 777 $TMP_DIRECTORY # Needs to be world-accessible so that Docker/Galaxy can access
 
+S3MOCK_DOCKER_NAME=irida-docker-s3Mock
 AZURITE_DOCKER_NAME=irida-docker-azurite
 GALAXY_DOCKER=phacnml/galaxy-irida-20.09:21.05.2-it
 GALAXY_DOCKER_NAME=irida-galaxy-test
@@ -106,9 +107,13 @@ test_service() {
 }
 
 test_file_system() {
+  docker run -d -p 9090:9090 -p 9191:9191 --name $S3MOCK_DOCKER_NAME -t adobe/s3mock
+
   docker run -d -p 10000:10000 -p 10001:10001 -p 10002:10002 --name $AZURITE_DOCKER_NAME mcr.microsoft.com/azure-storage/azurite
     ./gradlew clean check fileSystemITest -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@
 	exit_code=$?
+
+  docker rm -f -v $S3MOCK_DOCKER_NAME
 	docker rm -f -v $AZURITE_DOCKER_NAME;
 	return $exit_code
 }
@@ -210,8 +215,8 @@ then
 	echo -e "\ttest_type:     One of the IRIDA test types {service_testing, ui_testing, rest_testing, galaxy_testing, galaxy_pipeline_testing, open_api_testing, file_system_testing, all}."
 	echo -e "\t[gradle options]: Additional options to pass to 'gradle'.  In particular, can pass '--test ca.corefacility.bioinformatics.irida.fully.qualified.name' to run tests from a particular class.\n"
 	echo -e "Examples:\n"
-	echo -e "$0 file_system_testing\n"
-	echo -e "\tThis will test the File System of IRIDA, cleaning up the test database/docker containers first.\n"
+  echo -e "$0 file_system_testing\n"
+  echo -e "\tThis will test the File System of IRIDA, cleaning up the test database/docker containers first.\n"
 	echo -e "$0 service_testing\n"
 	echo -e "\tThis will test the Service layer of IRIDA, cleaning up the test database/docker containers first.\n"
 	echo -e "$0 -d irida_integration_test2 galaxy_testing\n"
