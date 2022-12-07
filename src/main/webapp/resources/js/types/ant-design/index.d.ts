@@ -12,6 +12,18 @@ export interface GridProps {
   xxl?: number;
 }
 
+export type TableOptions = {
+  filters: {
+    [column: string]: string;
+  };
+  pagination: {
+    current: number;
+    pageSize: number;
+  };
+  order: { property: string; direction: "asc" | "desc" }[];
+  search: string[];
+};
+
 export type TagColor =
   | "magenta"
   | "red"

@@ -13,8 +13,16 @@ import { putSampleInCart } from "../../../apis/cart/cart";
 import { downloadPost } from "../../../utilities/file-utilities";
 import { formatFilterBySampleNames } from "../../../utilities/table-utilities";
 import isEqual from "lodash/isEqual";
+import { TableOptions } from "../../../types/ant-design";
 
-const updateTable = createAction("samples/table/update");
+export type SamplesTableState = {
+  projectId: string | number; // TODO: (Josh - 12/7/22) This will be removed in subsequent PR
+  options: TableOptions;
+  selectedCount: number;
+  selected: { [id: number]: string };
+};
+
+const updateTable = createAction<TableOptions>("samples/table/update");
 const reloadTable = createAction("samples/table/reload");
 const addSelectedSample = createAction("samples/table/selected/add");
 const removeSelectedSample = createAction("samples/table/selected/remove");
@@ -142,7 +150,7 @@ const formatSelectedSample = (projectSample) => ({
   owner: projectSample.owner,
 });
 
-const initialState = {
+const initialState: SamplesTableState = {
   projectId: getProjectIdFromUrl(),
   options: getInitialTableOptions(),
   selected: {},
@@ -153,11 +161,11 @@ const initialState = {
 export default createReducer(initialState, (builder) => {
   builder
     .addCase(updateTable, (state, { payload }) => {
-      const { options, selected, selectedCount } = state;
+      const { options } = state;
 
       if (
         isEqual(payload.search, options.search) &&
-        isEqual(payload.filters && options.filters)
+        isEqual(payload.filters, options.filters)
       ) {
         // Just a page change, don't update selected
         state.options = payload;
