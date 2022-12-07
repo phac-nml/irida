@@ -154,7 +154,11 @@ export default function MainNavigation(): JSX.Element {
         ? [
             {
               key: `nav-admin`,
-              label: <a href={ROUTE_ADMIN}>{i18n("MainNavigation.admin")}</a>,
+              label: (
+                <a className={"t-admin-panel-btn"} href={ROUTE_ADMIN}>
+                  {i18n("MainNavigation.admin")}
+                </a>
+              ),
             },
           ]
         : []),
