@@ -136,7 +136,7 @@ export async function createSamples({
   projectId: string;
   body: SampleRequest[];
 }) {
-  return await axios.post(`${URL}/${projectId}/samples/add-sample`, body);
+  return await axios.post(`${URL}/${projectId}/samples/create`, body);
 }
 
 export async function updateSamples({
@@ -146,7 +146,7 @@ export async function updateSamples({
   projectId: string;
   body: SampleRequest[];
 }) {
-  return await axios.patch(`${URL}/${projectId}/samples/add-sample`, body);
+  return await axios.patch(`${URL}/${projectId}/samples/update`, body);
 }
 
 /**

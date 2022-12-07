@@ -68,7 +68,7 @@ public class ProjectSamplesAjaxController {
 	 * @param locale    current users locale
 	 * @return result of creating the samples
 	 */
-	@PostMapping("/add-sample")
+	@PostMapping("/create")
 	public ResponseEntity<AjaxResponse> createSamplesInProject(@RequestBody CreateSampleRequest[] requests,
 			@PathVariable long projectId, Locale locale) {
 		try {
@@ -86,7 +86,7 @@ public class ProjectSamplesAjaxController {
 	 * @param locale   current users locale
 	 * @return result of updating the samples
 	 */
-	@PatchMapping("/add-sample")
+	@PatchMapping("/update")
 	public ResponseEntity<AjaxResponse> updateSamplesInProject(@RequestBody UpdateSampleRequest[] requests,
 			Locale locale) {
 		try {
