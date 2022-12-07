@@ -32,6 +32,7 @@ export type TableOptions = {
     direction: "asc" | "desc";
   };
   search: string[];
+  reload?: number;
 };
 
 export type TablePagination = {

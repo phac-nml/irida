@@ -25,7 +25,7 @@ export const INITIAL_TABLE_STATE = JSON.stringify({
   search: [],
 });
 
-const reloadTable = createAction("samples/table/reload");
+const reloadTable = createAction<null>("samples/table/reload");
 const addSelectedSample = createAction("samples/table/selected/add");
 const removeSelectedSample = createAction("samples/table/selected/remove");
 const clearSelectedSamples = createAction("samples/table/selected/clear");
@@ -43,8 +43,8 @@ type SelectedSample = Pick<Sample, "id" | "name">;
  * @type {AsyncThunk<unknown, void, {}>}
  */
 const updateTable = createAsyncThunk<
-  UpdateTableProps,
   string,
+  UpdateTableProps,
   {
     state: {
       samples: {
