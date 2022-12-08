@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Space, Tag, Typography } from "antd";
 import { formatDate } from "../../../utilities/date-utilities";
 import {
-  useGetUnreadAnnouncementsQuery,
+  useGetUnreadHighPriorityAnnouncementsQuery,
   useMarkAnnouncementAsReadMutation,
 } from "../../../redux/endpoints/announcements";
 import ReactMarkdown from "react-markdown";
@@ -11,11 +11,13 @@ import { ScrollableModal } from "../../ant.design/ScrollableModal";
 
 const { Text } = Typography;
 
+/**
+ * React component to render a modal if high priority announcements are available
+ * @constructor
+ */
 export default function AnnouncementsModal(): JSX.Element | null {
-  const { data: announcements, isSuccess } = useGetUnreadAnnouncementsQuery(
-    undefined,
-    {}
-  );
+  const { data: announcements, isSuccess } =
+    useGetUnreadHighPriorityAnnouncementsQuery(undefined, {});
   const [markAnnouncementAsRead] = useMarkAnnouncementAsReadMutation();
 
   const [visible, setVisible] = useState<boolean>(false);

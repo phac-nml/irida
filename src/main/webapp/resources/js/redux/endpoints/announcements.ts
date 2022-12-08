@@ -1,7 +1,6 @@
 import { api } from "./api";
 import { TAG_ANNOUNCEMENT_COUNT, TAG_ANNOUNCEMENTS_UNREAD } from "./tags";
 import { Announcement } from "../../types/irida";
-import { method } from "lodash";
 
 /**
  * @fileoverview Announcement API for redux-toolkit.
@@ -13,7 +12,7 @@ export const announcementsApi = api.injectEndpoints({
       query: () => "announcements/count",
       providesTags: [TAG_ANNOUNCEMENT_COUNT],
     }),
-    getUnreadAnnouncements: build.query<Announcement[], void>({
+    getUnreadHighPriorityAnnouncements: build.query<Announcement[], void>({
       query: () => "announcements/user/unread",
       transformResponse: (data: Announcement[]) =>
         data.filter((announcement) => announcement.priority),
@@ -37,6 +36,6 @@ export const announcementsApi = api.injectEndpoints({
 
 export const {
   useGetAnnouncementCountQuery,
-  useGetUnreadAnnouncementsQuery,
+  useGetUnreadHighPriorityAnnouncementsQuery,
   useMarkAnnouncementAsReadMutation,
 } = announcementsApi;
