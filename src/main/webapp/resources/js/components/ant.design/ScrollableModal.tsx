@@ -3,10 +3,11 @@
  */
 
 import React from "react";
-import styled from "styled-components";
+import type { ModalProps } from "antd";
 import { Modal } from "antd";
+import styled from "styled-components";
 
-const ScrollBodyModal = styled(Modal)`
+const ScrollBodyModal = styled(Modal)<{ maxHeight: number }>`
   .ant-modal-body {
     padding: 15px 25px;
     overflow-y: auto;
@@ -14,15 +15,23 @@ const ScrollBodyModal = styled(Modal)`
   }
 `;
 
+type ScrollableModalProps = ModalProps & {
+  maxHeight?: number;
+  children: JSX.Element;
+};
+
 /**
  * React component to be used when you want a scrollable content in your ant design modal.
  *
- * @param {string} maxHeight - maximum height of the scrollable body
- * @param {element} children - the modal content
- * @returns {*}
- * @constructor
+ * @param maxHeight - maximum height of the scrollable body
+ * @param children - the modal content
+ * @param props - modal props
  */
-export function ScrollableModal({ maxHeight = 600, children, ...props }) {
+export function ScrollableModal({
+  maxHeight = 600,
+  children,
+  ...props
+}: ScrollableModalProps): JSX.Element {
   return (
     <ScrollBodyModal maxHeight={maxHeight} {...props}>
       {children}

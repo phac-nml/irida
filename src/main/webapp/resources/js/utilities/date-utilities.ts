@@ -47,7 +47,7 @@ export function fromNow({ date }: { date: string | number }) {
  * @param {String} format defaults to "lll" which is mmm dd, yyyy h:mm AM
  * @return {string} formatted date
  */
-export function formatDate({ date, format }: { date: Date; format: any }) {
+export function formatDate({ date, format }: { date: string; format?: any }) {
   return formatInternationalizedDateTime(date, format);
 }
 

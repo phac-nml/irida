@@ -266,7 +266,12 @@ export default function MainNavigation(): JSX.Element {
         </Menu>
         <Space direction={"horizontal"}>
           <GlobalSearch />
-          <Menu className={"utils-nav"} theme={theme} mode={"horizontal"}>
+          <Menu
+            className={"utils-nav"}
+            theme={theme}
+            mode={"horizontal"}
+            selectedKeys={[]}
+          >
             {rightMenuItems.map(renderMenuItem)}
           </Menu>
         </Space>
