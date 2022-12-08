@@ -1,6 +1,9 @@
 
 # Changelog
 
+## [22.09.5] - Unreleased
+* [Developer/UI]: Fixed bug preventing a manager of a usergroup from adding new members.
+
 ## [22.09.4] - 2022/11/14
 * [REST]: Fixed issue with project/samples api response missing samples when a sample has a default sequencing object. See [PR 1413](https://github.com/phac-nml/irida/pull/1413)
 
