@@ -16,9 +16,7 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdateSampleRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.MetadataEntryModel;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -26,7 +24,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateServi
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -86,29 +83,45 @@ public class UIProjectSampleServiceTest {
 	@Test
 	public void testCreateSample() {
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null) };
-		Map<String, Object> response = service.createSamples(requests, PROJECT_1_ID);
-		assertTrue(response.isEmpty(), "Sample should be created");
+		Map<String, Object> responses = service.createSamples(requests, PROJECT_1_ID);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((CreateSampleResponse) response.getValue()).isError())
+				.count();
+		assertEquals(0, errorCount, "Sample should be created");
 	}
 
 	@Test
 	public void testCreateSampleWithOrganism() {
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, ORGANISM) };
-		Map<String, Object> response = service.createSamples(requests, PROJECT_1_ID);
-		assertTrue(response.isEmpty(), "Sample should be created");
+		Map<String, Object> responses = service.createSamples(requests, PROJECT_1_ID);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((CreateSampleResponse) response.getValue()).isError())
+				.count();
+		assertEquals(0, errorCount, "Sample should be created");
 	}
 
 	@Test
 	public void testCreateSampleWithDescription() {
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null, DESCRIPTION, null) };
-		Map<String, Object> response = service.createSamples(requests, PROJECT_1_ID);
-		assertTrue(response.isEmpty(), "Sample should be created");
+		Map<String, Object> responses = service.createSamples(requests, PROJECT_1_ID);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((CreateSampleResponse) response.getValue()).isError())
+				.count();
+		assertEquals(0, errorCount, "Sample should be created");
 	}
 
 	@Test
 	public void testCreateSampleWithOrganismAndDescription() {
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, ORGANISM, DESCRIPTION, null) };
-		Map<String, Object> response = service.createSamples(requests, PROJECT_1_ID);
-		assertTrue(response.isEmpty(), "Sample should be created");
+		Map<String, Object> responses = service.createSamples(requests, PROJECT_1_ID);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((CreateSampleResponse) response.getValue()).isError())
+				.count();
+		assertEquals(0, errorCount, "Sample should be created");
 	}
 
 	@Test
@@ -117,8 +130,12 @@ public class UIProjectSampleServiceTest {
 		metadata.add(new MetadataEntryModel("field1", "value1"));
 		metadata.add(new MetadataEntryModel("field2", "value2"));
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null, null, metadata) };
-		Map<String, Object> response = service.createSamples(requests, PROJECT_1_ID);
-		assertTrue(response.isEmpty(), "Sample should be created");
+		Map<String, Object> responses = service.createSamples(requests, PROJECT_1_ID);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((CreateSampleResponse) response.getValue()).isError())
+				.count();
+		assertEquals(0, errorCount, "Sample should be created");
 	}
 
 	@Test
@@ -127,7 +144,11 @@ public class UIProjectSampleServiceTest {
 		metadata.add(new MetadataEntryModel("field1", "value1"));
 		metadata.add(new MetadataEntryModel("field2", "value2"));
 		UpdateSampleRequest[] requests = { new UpdateSampleRequest(SAMPLE_1_ID, GOOD_NAME, null, null, metadata) };
-		Map<String, Object> response = service.updateSamples(requests);
-		assertTrue(response.isEmpty(), "Sample should be updated");
+		Map<String, Object> responses = service.updateSamples(requests);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((UpdateSampleResponse) response.getValue()).isError())
+				.count();
+		assertEquals(0, errorCount, "Sample should be updated");
 	}
 }
