@@ -1,9 +1,11 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
+import org.junit.jupiter.api.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.SearchResultPage;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 

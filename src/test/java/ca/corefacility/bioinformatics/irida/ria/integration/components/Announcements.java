@@ -35,7 +35,7 @@ public class Announcements {
 	@FindBy(css = ".t-announcements-modal button.t-close-announcement-button")
 	private WebElement closeButton;
 
-	@FindBy(css = ".t-announcements-badge")
+	@FindBy(css = "[data-menu-id*=nav-announcements]")
 	private WebElement badge;
 
 	@FindBy(className = "t-announcements-submenu")
@@ -110,18 +110,6 @@ public class Announcements {
 	public int getBadgeCount() {
 		closeModal();
 		return Integer.parseInt(badge.findElement(By.className("ant-scroll-number-only-unit")).getText());
-	}
-
-	public String getSubmenuAnnouncementTitle(int position) {
-		return submenu.findElements(By.className("ant-list-item"))
-				.get(position)
-				.findElement(By.cssSelector(".ant-list-item-meta-title a"))
-				.getText();
-	}
-
-	public void getSubmenuAnnouncement() {
-		badge.click();
-		waitForSubmenu();
 	}
 
 	public void getNextAnnouncement() {
