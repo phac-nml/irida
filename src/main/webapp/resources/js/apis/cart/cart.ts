@@ -1,9 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { notification } from "antd";
 import axios from "axios";
+import { Sample, SelectedSample } from "../../types/irida";
 import { cartUpdated } from "../../utilities/events-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
-import { Sample } from "../../types/irida";
 
 const AJAX_URL = setBaseUrl(`/ajax/cart`);
 
@@ -110,6 +110,27 @@ export const cartApi = createApi({
         { type: "Samples", id: sampleId },
       ],
     }),
+    addSamplesToCart: build.mutation({
+      query: ({
+        samples,
+        projectId,
+      }: {
+        samples: SelectedSample[];
+        projectId: number;
+      }) => ({
+        url: "",
+        body: {
+          sampleIds: samples.map((s) => s.id || s.identifier),
+          projectId,
+        },
+        method: "POST",
+      }),
+      invalidatesTags: ["CartCount"],
+      transformResponse: (response) => {
+        updateCart(response);
+        return response;
+      },
+    }),
   }),
 });
 
@@ -120,6 +141,7 @@ export const {
   useEmptyMutation,
   useRemoveProjectMutation,
   useRemoveSampleMutation,
+  useAddSamplesToCartMutation,
 } = cartApi;
 
 export const updateCart = (data: CartUpdated) => {

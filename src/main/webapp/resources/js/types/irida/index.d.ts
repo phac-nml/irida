@@ -222,6 +222,11 @@ declare namespace IRIDA {
     bioSampleFiles: NcbiBioSampleFiles[];
   }
 
+  export type SelectedSample = Pick<Sample, "id" | "key" | "sampleName"> & {
+    owner: boolean;
+    projectId: number;
+  };
+
   interface SequenceFile extends BaseModel {
     fileSize: string;
   }

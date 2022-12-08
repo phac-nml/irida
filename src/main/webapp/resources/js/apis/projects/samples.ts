@@ -1,6 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { TableOptions } from "../../types/ant-design";
 import {
   PairedEndSequenceFile,
+  SelectedSample,
   SingleEndSequenceFile,
 } from "../../types/irida";
 import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
@@ -138,10 +140,10 @@ export async function shareSamplesWithProject({
  * @param {object} options - current table filters
  * @returns {Promise<*>}
  */
-export async function getMinimalSampleDetailsForFilteredProject(options: {
-  [key: string]: string | string[];
-}) {
-  return post(`${URL}/${PROJECT_ID}/samples/ids`, options);
+export async function getMinimalSampleDetailsForFilteredProject(
+  options: TableOptions
+): Promise<SelectedSample[]> {
+  return post<SelectedSample[]>(`${URL}/${PROJECT_ID}/samples/ids`, options);
 }
 
 /**

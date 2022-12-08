@@ -34,6 +34,10 @@ import {
 } from "@ant-design/icons";
 import { useGetProjectDetailsQuery } from "../../../../apis/projects/project";
 import { storeSamples } from "../../../../utilities/session-utilities";
+import {
+  updateCart,
+  useAddSamplesToCartMutation,
+} from "../../../../apis/cart/cart";
 
 const MergeModal = lazy(() => import("./MergeModal"));
 const RemoveModal = lazy(() => import("./RemoveModal"));
@@ -49,6 +53,7 @@ const FilterByFileModal = lazy(() => import("./FilterByFileModal"));
  */
 export default function SamplesMenu() {
   const dispatch = useDispatch();
+  const [addSamplesToCart] = useAddSamplesToCartMutation();
 
   const {
     projectId,
@@ -109,7 +114,15 @@ export default function SamplesMenu() {
   };
 
   const onAddToCart = () => {
-    dispatch(addToCart());
+    const samplesList = Object.values(selected);
+    const projects = samplesList.reduce((prev, current) => {
+      if (!prev[current.projectId]) prev[current.projectId] = [];
+      prev[current.projectId].push(current);
+      return prev;
+    }, {});
+    for (const projectId in projects) {
+      addSamplesToCart({ projectId, samples: projects[projectId] });
+    }
   };
 
   const onDownload = () => {

@@ -40,6 +40,13 @@ export type TablePagination = {
   pageSize: number;
 };
 
+export type TableSearch = {
+  property: string;
+  value: string | string[];
+  operation: "IN";
+  _file?: boolean;
+};
+
 export type TagColor =
   | "magenta"
   | "red"
