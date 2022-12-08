@@ -18,10 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.LockedSamplesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdateSampleRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.MetadataEntryModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNameModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
@@ -127,16 +124,19 @@ public class UIProjectSampleService {
 	 * @param projectId Identifier for the current project
 	 * @return result of creating the sample
 	 */
-	public Map<String, String> createSamples(CreateSampleRequest[] requests, Long projectId) {
-		Map<String, String> errors = new HashMap<>();
+	public Map<String, Object> createSamples(CreateSampleRequest[] requests, Long projectId) {
+		Map<String, Object> responses = new HashMap<>();
 		for (CreateSampleRequest request : requests) {
 			try {
-				createSample(projectId, request);
+				Long sampleId = createSample(projectId, request);
+				CreateSampleResponse response = new CreateSampleResponse(sampleId);
+				responses.put(request.getName(), response);
 			} catch (Exception e) {
-				errors.put(request.getName(), e.getMessage());
+				CreateSampleResponse response = new CreateSampleResponse(e.getMessage());
+				responses.put(request.getName(), response);
 			}
 		}
-		return errors;
+		return responses;
 	}
 
 	/**
@@ -171,16 +171,19 @@ public class UIProjectSampleService {
 	 * @param requests Each {@link UpdateSampleRequest} contains details about the sample to update
 	 * @return result of creating the samples
 	 */
-	public Map<String, String> updateSamples(UpdateSampleRequest[] requests) {
-		Map<String, String> errors = new HashMap<>();
+	public Map<String, Object> updateSamples(UpdateSampleRequest[] requests) {
+		Map<String, Object> responses = new HashMap<>();
 		for (UpdateSampleRequest request : requests) {
 			try {
 				updateSample(request);
+				UpdateSampleResponse response = new UpdateSampleResponse(false);
+				responses.put(request.getName(), response);
 			} catch (Exception e) {
-				errors.put(request.getName(), e.getMessage());
+				UpdateSampleResponse response = new UpdateSampleResponse(true, e.getMessage());
+				responses.put(request.getName(), response);
 			}
 		}
-		return errors;
+		return responses;
 	}
 
 	/**

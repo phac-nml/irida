@@ -20,7 +20,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdateSampleRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.MetadataEntryModel;
-import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIMetadataImportException;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -29,7 +28,6 @@ import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -67,7 +65,6 @@ public class UIProjectSampleServiceTest {
 				join);
 		when(projectService.addSampleToProjectWithoutEvent(any(Project.class), any(Sample.class),
 				any(Boolean.class))).thenReturn(join);
-		when(messageSource.getMessage(eq("server.AddSample.success"), any(), any(Locale.class))).thenReturn("success");
 	}
 
 	@Test
@@ -87,50 +84,50 @@ public class UIProjectSampleServiceTest {
 	}
 
 	@Test
-	public void testCreateSample() throws UIMetadataImportException {
+	public void testCreateSample() {
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null) };
-		Map<String, String> response = service.createSamples(requests, PROJECT_1_ID);
+		Map<String, Object> response = service.createSamples(requests, PROJECT_1_ID);
 		assertTrue(response.isEmpty(), "Sample should be created");
 	}
 
 	@Test
-	public void testCreateSampleWithOrganism() throws UIMetadataImportException {
+	public void testCreateSampleWithOrganism() {
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, ORGANISM) };
-		Map<String, String> response = service.createSamples(requests, PROJECT_1_ID);
+		Map<String, Object> response = service.createSamples(requests, PROJECT_1_ID);
 		assertTrue(response.isEmpty(), "Sample should be created");
 	}
 
 	@Test
-	public void testCreateSampleWithDescription() throws UIMetadataImportException {
+	public void testCreateSampleWithDescription() {
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null, DESCRIPTION, null) };
-		Map<String, String> response = service.createSamples(requests, PROJECT_1_ID);
+		Map<String, Object> response = service.createSamples(requests, PROJECT_1_ID);
 		assertTrue(response.isEmpty(), "Sample should be created");
 	}
 
 	@Test
-	public void testCreateSampleWithOrganismAndDescription() throws UIMetadataImportException {
+	public void testCreateSampleWithOrganismAndDescription() {
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, ORGANISM, DESCRIPTION, null) };
-		Map<String, String> response = service.createSamples(requests, PROJECT_1_ID);
+		Map<String, Object> response = service.createSamples(requests, PROJECT_1_ID);
 		assertTrue(response.isEmpty(), "Sample should be created");
 	}
 
 	@Test
-	public void testCreateSampleWithMetadata() throws UIMetadataImportException {
+	public void testCreateSampleWithMetadata() {
 		List<MetadataEntryModel> metadata = new ArrayList<>();
 		metadata.add(new MetadataEntryModel("field1", "value1"));
 		metadata.add(new MetadataEntryModel("field2", "value2"));
 		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null, null, metadata) };
-		Map<String, String> response = service.createSamples(requests, PROJECT_1_ID);
+		Map<String, Object> response = service.createSamples(requests, PROJECT_1_ID);
 		assertTrue(response.isEmpty(), "Sample should be created");
 	}
 
 	@Test
-	public void testUpdateSampleWithMetadata() throws UIMetadataImportException {
+	public void testUpdateSampleWithMetadata() {
 		List<MetadataEntryModel> metadata = new ArrayList<>();
 		metadata.add(new MetadataEntryModel("field1", "value1"));
 		metadata.add(new MetadataEntryModel("field2", "value2"));
 		UpdateSampleRequest[] requests = { new UpdateSampleRequest(SAMPLE_1_ID, GOOD_NAME, null, null, metadata) };
-		Map<String, String> response = service.updateSamples(requests);
+		Map<String, Object> response = service.updateSamples(requests);
 		assertTrue(response.isEmpty(), "Sample should be updated");
 	}
 }

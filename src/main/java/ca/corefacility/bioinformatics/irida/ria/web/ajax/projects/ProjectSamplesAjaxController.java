@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxFormErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxMultipleResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
@@ -73,9 +73,21 @@ public class ProjectSamplesAjaxController {
 	@PostMapping("/create")
 	public ResponseEntity<AjaxResponse> createSamplesInProject(@RequestBody CreateSampleRequest[] requests,
 			@PathVariable long projectId) {
-		Map<String, String> errors = uiProjectSampleService.createSamples(requests, projectId);
-		return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(new AjaxFormErrorResponse(errors));
-
+		Map<String, Object> responses = uiProjectSampleService.createSamples(requests, projectId);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((CreateSampleResponse) response.getValue()).isError())
+				.count();
+		long successCount = responses.entrySet()
+				.stream()
+				.filter(response -> !((CreateSampleResponse) response.getValue()).isError())
+				.count();
+		if (responses.size() == successCount) {
+			return ResponseEntity.status(HttpStatus.OK).body(new AjaxMultipleResponse(responses));
+		} else if (responses.size() == errorCount) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxMultipleResponse(responses));
+		}
+		return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(new AjaxMultipleResponse(responses));
 	}
 
 	/**
@@ -86,8 +98,21 @@ public class ProjectSamplesAjaxController {
 	 */
 	@PatchMapping("/update")
 	public ResponseEntity<AjaxResponse> updateSamplesInProject(@RequestBody UpdateSampleRequest[] requests) {
-		Map<String, String> errors = uiProjectSampleService.updateSamples(requests);
-		return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(new AjaxFormErrorResponse(errors));
+		Map<String, Object> responses = uiProjectSampleService.updateSamples(requests);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((UpdateSampleResponse) response.getValue()).isError())
+				.count();
+		long successCount = responses.entrySet()
+				.stream()
+				.filter(response -> !((UpdateSampleResponse) response.getValue()).isError())
+				.count();
+		if (responses.size() == successCount) {
+			return ResponseEntity.status(HttpStatus.OK).body(new AjaxMultipleResponse(responses));
+		} else if (responses.size() == errorCount) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxMultipleResponse(responses));
+		}
+		return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(new AjaxMultipleResponse(responses));
 	}
 
 	/**
