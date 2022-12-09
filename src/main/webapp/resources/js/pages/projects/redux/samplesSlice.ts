@@ -13,7 +13,19 @@ import {
   getProjectIdFromUrl,
   setBaseUrl,
 } from "../../../utilities/url-utilities";
-import { INITIAL_TABLE_STATE } from "../samples/services/constants";
+
+/**
+ * Initial state of the sample table
+ */
+export const INITIAL_TABLE_STATE = JSON.stringify({
+  filters: { associated: null },
+  pagination: {
+    current: 1,
+    pageSize: 10,
+  },
+  order: [{ property: "sample.modifiedDate", direction: "desc" }],
+  search: [],
+});
 
 export type SamplesTableState = {
   projectId: string | number | undefined; // TODO: (Josh - 12/7/22) This will be removed in subsequent PR

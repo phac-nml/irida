@@ -1,3 +1,10 @@
+import {
+  FilterConfirmProps,
+  FilterValue,
+  SortOrder,
+  TablePaginationConfig,
+} from "antd/es/table/interface";
+
 /**
  * Properties that are available on the Ant Design Grid Component
  */
@@ -20,24 +27,21 @@ export type MenuItem = {
   type?: "divider" | "group";
 };
 
-export type TableFilters = {
-  [name: string]: string; // TODO: (Josh - 12/6/22) UPDATE THIS
-};
+export type TableFilters = Record<string, FilterValue | null>;
+
+export type TableFilterConfirmFn = (param?: FilterConfirmProps) => void;
+
+export type TableSortOrder = {
+  property: string;
+  direction: SortOrder;
+}[];
 
 export type TableOptions = {
   filters: TableFilters;
-  pagination: TablePagination;
-  order: {
-    property: string;
-    direction: "asc" | "desc";
-  };
+  pagination: TablePaginationConfig;
+  order: TableSortOrder | undefined;
   search: string[];
   reload?: number;
-};
-
-export type TablePagination = {
-  current: number;
-  pageSize: number;
 };
 
 export type TableSearch = {

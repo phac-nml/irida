@@ -12,9 +12,7 @@ import { getContextPath } from "./utilities/url-utilities";
 import AppLayout from "./layouts/app-layout";
 import ProjectLayout from "./layouts/project-layout";
 
-const ProjectSamples = React.lazy(
-  () => import("./components/project/project-samples")
-);
+const ProjectSamples = React.lazy(() => import("./layouts/project-samples"));
 
 /**
  * @fileoverview This is the highest level React component in IRIDA.  it's responsible

@@ -239,5 +239,10 @@ declare namespace IRIDA {
     file: SequenceFile;
   }
 
+  type TableResponse<T> = {
+    content: T[];
+    total: number;
+  };
+
   type UserMinimal = Pick<User, "name" | "id">;
 }

@@ -1,13 +1,17 @@
 import moment from "moment";
-import { TableSearch } from "../types/ant-design";
+import { TableFilters, TableSearch, TableSortOrder } from "../types/ant-design";
 import { SelectedSample } from "../types/irida";
+import { SorterResult } from "antd/es/table/interface";
+import { ProjectSample } from "../redux/endpoints/project-samples";
 
 /**
  * Format Sort Order from the Ant Design sorter object
  * @param {array | object} sorter Ant Design sorter object
  * @returns array of Sort Order objects
  */
-export function formatSort(sorter) {
+export function formatSort(
+  sorter: SorterResult<ProjectSample> | SorterResult<ProjectSample>[]
+): TableSortOrder | undefined {
   const order = { ascend: "asc", descend: "desc" };
   const formatProperty = (property) => property.join(".");
   const fromSorter = (item) => ({
@@ -28,7 +32,7 @@ export function formatSort(sorter) {
  * @param {array | object} filters Ant Design filters object
  * @returns array of Search objects
  */
-export function formatSearch(filters) {
+export function formatSearch(filters: TableFilters): string[] {
   const defaultOperation = "MATCH";
   const formattedSearch = [];
 
