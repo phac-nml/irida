@@ -45,8 +45,7 @@ public interface RemoteAPITokenService {
 	 * @param remoteAPI     the remote api to get a token for
 	 * @param tokenRedirect a redirect url to get the token from
 	 * @return the newly created token
-	 * @throws OAuthSystemException  If ther's a problem building the token request
-	 * @throws OAuthProblemException If there's a problem with the token request
+	 * @throws ParseException If there's a problem with the token request
 	 */
 	public RemoteAPIToken createTokenFromAuthCode(AuthorizationCode authcode, RemoteAPI remoteAPI, URI tokenRedirect)
 			throws ParseException;
