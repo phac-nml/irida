@@ -1,15 +1,7 @@
 package ca.corefacility.bioinformatics.irida.service.impl.unit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.util.Date;
 
-import org.apache.oltu.oauth2.client.OAuthClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.TestingAuthenticationToken;
@@ -24,9 +16,12 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.impl.RemoteAPITokenServiceImpl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
+
 /**
  * Unit tests class for {@link RemoteAPITokenServiceImpl}
- *
  */
 public class RemoteAPITokenServiceImplTest {
 	private RemoteAPITokenService service;
@@ -35,45 +30,42 @@ public class RemoteAPITokenServiceImplTest {
 	private RemoteAPIToken remoteAPIToken;
 	private RemoteAPI remoteAPI;
 	private User user;
-	private OAuthClient oauthClient;
-	
-	
+
 	@BeforeEach
-	public void setUp(){
+	public void setUp() {
 		tokenRepository = mock(RemoteApiTokenRepository.class);
 		userRepo = mock(UserRepository.class);
-		oauthClient = mock(OAuthClient.class);
-		service = new RemoteAPITokenServiceImpl(tokenRepository, userRepo, oauthClient);
-		
+		service = new RemoteAPITokenServiceImpl(tokenRepository, userRepo);
+
 		user = new User("tom", "an@email.com", "password1", "tom", "matthews", "123456789");
 		remoteAPI = new RemoteAPI("apiname", "http://nowhere", "a test api", "clientId", "clientSecret");
 		SecurityContextHolder.getContext().setAuthentication(new TestingAuthenticationToken(user, null));
-		remoteAPIToken = new RemoteAPIToken("token",remoteAPI,new Date());
+		remoteAPIToken = new RemoteAPIToken("token", remoteAPI, new Date());
 	}
-	
+
 	@Test
 	public void testAddToken() {
 		when(userRepo.loadUserByUsername(user.getUsername())).thenReturn(user);
-		
+
 		service.create(remoteAPIToken);
-		
+
 		verify(tokenRepository).save(remoteAPIToken);
-		verify(userRepo,times(2)).loadUserByUsername(user.getUsername());
-		verify(tokenRepository,times(0)).delete(remoteAPIToken);
+		verify(userRepo, times(2)).loadUserByUsername(user.getUsername());
+		verify(tokenRepository, times(0)).delete(remoteAPIToken);
 	}
-	
+
 	@Test
 	public void testAddTokenExisting() {
 		when(userRepo.loadUserByUsername(user.getUsername())).thenReturn(user);
 		when(tokenRepository.readTokenForApiAndUser(remoteAPI, user)).thenReturn(remoteAPIToken);
-		
+
 		service.create(remoteAPIToken);
-		
+
 		verify(tokenRepository).save(remoteAPIToken);
-		verify(userRepo,times(2)).loadUserByUsername(user.getUsername());
+		verify(userRepo, times(2)).loadUserByUsername(user.getUsername());
 		verify(tokenRepository).readTokenForApiAndUser(remoteAPI, user);
 	}
-	
+
 	@Test
 	public void testAddTokenNotLoggedIn() {
 		SecurityContextHolder.clearContext();
@@ -87,24 +79,23 @@ public class RemoteAPITokenServiceImplTest {
 	public void testGetToken() {
 		when(userRepo.loadUserByUsername(user.getUsername())).thenReturn(user);
 		when(tokenRepository.readTokenForApiAndUser(remoteAPI, user)).thenReturn(remoteAPIToken);
-		
+
 		RemoteAPIToken token = service.getToken(remoteAPI);
-		
+
 		assertEquals(remoteAPIToken, token);
-		
+
 		verify(userRepo).loadUserByUsername(user.getUsername());
 		verify(tokenRepository).readTokenForApiAndUser(remoteAPI, user);
 	}
-	
+
 	@Test
 	public void testGetNotExisting() {
 		when(userRepo.loadUserByUsername(user.getUsername())).thenReturn(user);
 		when(tokenRepository.readTokenForApiAndUser(remoteAPI, user)).thenReturn(null);
-		
+
 		assertThrows(EntityNotFoundException.class, () -> {
 			service.getToken(remoteAPI);
 		});
 	}
-
 
 }

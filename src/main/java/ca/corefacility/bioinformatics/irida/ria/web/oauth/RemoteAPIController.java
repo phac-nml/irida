@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,10 +86,9 @@ public class RemoteAPIController extends BaseController {
      * @param request The incoming request method
      * @param ex      The thrown exception
      * @return A redirect to the {@link OltuAuthorizationController}'s authentication
-     * @throws OAuthSystemException if the request cannot be authenticated.
      */
     @ExceptionHandler(IridaOAuthException.class)
-    public String handleOAuthException(HttpServletRequest request, IridaOAuthException ex) throws OAuthSystemException {
+    public String handleOAuthException(HttpServletRequest request, IridaOAuthException ex) {
         logger.debug("Caught IridaOAuthException.  Beginning OAuth2 authentication token flow.");
         String requestURI = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
         HttpSession session = request.getSession();
