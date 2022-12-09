@@ -9,6 +9,7 @@ import { RcFile } from "antd/lib/upload/interface";
 import { setHeaders, setMetadata, setProjectId } from "../redux/importReducer";
 import * as XLSX from "xlsx";
 import { MetadataItem } from "../../../../apis/projects/samples";
+import { ErrorAlert } from "../../../../components/alerts/ErrorAlert";
 
 const { Text } = Typography;
 
@@ -24,6 +25,7 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
   const dispatch: ImportDispatch = useImportDispatch();
   const [status, setStatus] = React.useState<StepsProps["status"]>("process");
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [valid, setValid] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     if (projectId != null) {
@@ -72,39 +74,35 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
             header: 1,
           }
         )[0];
-        if (headers.length > 0) {
+        const duplicateHeaders = headers.filter(
+          (e, i, a) => a.indexOf(e) !== i
+        );
+        if (duplicateHeaders.length > 0) {
           setLoading(false);
-          setStatus("error");
-          notification.error({
-            message: i18n(
-              "SampleMetadataImportSelectFile.duplicate.error",
-              file.name
-            ),
-          });
+          setValid(false);
           return false;
+        } else {
+          setValid(true);
+          const rows: MetadataItem[] = XLSX.utils.sheet_to_json(
+            workbook.Sheets[firstSheet],
+            {
+              rawNumbers: false,
+            }
+          );
+          const cleanRows = JSON.parse(
+            JSON.stringify(rows).replace(/"\s+|\s+"/g, '"')
+          );
+          await dispatch(setHeaders({ headers: Object.keys(cleanRows[0]) }));
+          await dispatch(setMetadata(cleanRows));
+          notification.success({
+            message: i18n("SampleMetadataImportSelectFile.success", file.name),
+          });
         }
-        const rows: MetadataItem[] = XLSX.utils.sheet_to_json(
-          workbook.Sheets[firstSheet],
-          {
-            rawNumbers: false,
-          }
-        );
-        const cleanRows = JSON.parse(
-          JSON.stringify(rows).replace(/"\s+|\s+"/g, '"')
-        );
-        await dispatch(setHeaders({ headers: Object.keys(cleanRows[0]) }));
-        await dispatch(setMetadata(cleanRows));
-        notification.success({
-          message: i18n("SampleMetadataImportSelectFile.success", file.name),
-        });
       } catch (error) {
         setLoading(false);
         setStatus("error");
         notification.error({
-          message: i18n(
-            "SampleMetadataImportSelectFile.general.error",
-            file.name
-          ),
+          message: i18n("SampleMetadataImportSelectFile.error", file.name),
         });
         return false;
       }
@@ -115,6 +113,14 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
   return (
     <SampleMetadataImportWizard current={0} status={status}>
       <Spin spinning={loading}>
+        {!valid && (
+          <ErrorAlert
+            message={i18n("SampleMetadataImportSelectFile.alert.valid.title")}
+            description={i18n(
+              "SampleMetadataImportSelectFile.alert.valid.description"
+            )}
+          />
+        )}
         <DragUpload
           uploadText={i18n("SampleMetadataImportSelectFile.dropzone")}
           uploadHint={
