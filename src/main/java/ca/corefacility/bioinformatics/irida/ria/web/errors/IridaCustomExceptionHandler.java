@@ -78,7 +78,7 @@ public class IridaCustomExceptionHandler extends ResponseEntityExceptionHandler 
 	/**
 	 * Catch an {@link IridaOAuthProblemException} and return an http 500 error
 	 * 
-	 * @param ex the caught {@link OAuthProblemException}
+	 * @param ex the caught {@link IridaOAuthProblemException}
 	 * @return A {@link ModelAndView} containing the name of the oauth error view
 	 */
 	@ExceptionHandler(IridaOAuthProblemException.class)

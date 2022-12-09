@@ -1,8 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.web.oauth;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -28,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 
 import com.nimbusds.oauth2.sdk.*;
 import com.nimbusds.oauth2.sdk.id.ClientID;
-import com.nimbusds.oauth2.sdk.id.State;
 import com.nimbusds.openid.connect.sdk.AuthenticationErrorResponse;
 import com.nimbusds.openid.connect.sdk.AuthenticationResponse;
 import com.nimbusds.openid.connect.sdk.AuthenticationResponseParser;
@@ -102,8 +99,7 @@ public class OltuAuthorizationController {
 	 * @param response The response to redirect
 	 * @param state    The state param which contains a map including apiId and redirect
 	 * @return A ModelAndView redirecting back to the resource that was requested
-	 * @throws URISyntaxException
-	 * @throws IOException
+	 * @throws ParseException
 	 */
 	@RequestMapping(TOKEN_ENDPOINT)
 	public String getTokenFromAuthCode(HttpServletRequest request, HttpServletResponse response,

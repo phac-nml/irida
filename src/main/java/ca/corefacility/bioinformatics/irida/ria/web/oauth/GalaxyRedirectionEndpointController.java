@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.openid.connect.sdk.AuthenticationErrorResponse;
 import com.nimbusds.openid.connect.sdk.AuthenticationResponse;
 import com.nimbusds.openid.connect.sdk.AuthenticationResponseParser;
@@ -33,7 +32,6 @@ public class GalaxyRedirectionEndpointController {
 	 * @param request the incoming request
 	 * @param session the user's session
 	 * @return a template that will pass on the authorization code
-	 * @throws OAuthProblemException if a valid OAuth authorization response cannot be created
 	 * @throws IllegalStateException if the callback URL is removed from an invalid session
 	 * @throws ParseException
 	 */

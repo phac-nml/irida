@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.ws.rs.core.UriBuilder;
 
+import org.apache.oltu.oauth2.common.error.OAuthError.TokenResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,7 +155,7 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 	 * @param remoteAPI     the remote api to get a token for
 	 * @param tokenRedirect a redirect url to get the token from
 	 * @return a new token
-	 * @throws IOException
+	 * @throws ParseException
 	 */
 	@Transactional
 	public RemoteAPIToken createTokenFromAuthCode(AuthorizationCode authcode, RemoteAPI remoteAPI, URI tokenRedirect)
