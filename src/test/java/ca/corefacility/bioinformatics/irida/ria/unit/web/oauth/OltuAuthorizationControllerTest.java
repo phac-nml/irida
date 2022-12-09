@@ -25,8 +25,7 @@ import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import com.nimbusds.oauth2.sdk.AuthorizationCode;
 import com.nimbusds.oauth2.sdk.ParseException;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -163,17 +162,11 @@ public class OltuAuthorizationControllerTest {
 		StringBuffer url = new StringBuffer(serverBase + OltuAuthorizationController.TOKEN_ENDPOINT);
 
 		when(request.getRequestURL()).thenReturn(url);
-		when(request.getQueryString()).thenReturn(null);
+		when(request.getQueryString()).thenReturn("");
 		when(request.getSession()).thenReturn(session);
 
-		controller.getTokenFromAuthCode(request, response, stateUuid);
-
-		verify(apiService).read(apiId);
-
-		ArgumentCaptor<URI> redirectArg = ArgumentCaptor.forClass(URI.class);
-		verify(tokenService).createTokenFromAuthCode(eq(code), eq(remoteAPI), redirectArg.capture());
-
-		String capturedRedirect = redirectArg.getValue().toString();
-		assertTrue(capturedRedirect.contains(serverBase));
+		assertThrows(ParseException.class, () -> {
+			controller.getTokenFromAuthCode(request, response, stateUuid);
+		});
 	}
 }
