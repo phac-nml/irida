@@ -7,16 +7,17 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.TimeoutException;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectDeletePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSampleMetadataImportPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSampleMetadataView.xml")
 public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDriver {
@@ -28,6 +29,7 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 	@BeforeEach
 	public void init() {
 		LoginPage.loginAsManager(driver());
+		LoginPage.loginAsAdmin(driver2());
 	}
 
 	@Test
@@ -55,7 +57,6 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		List<String> formattedNumbers = page.getValuesForColumnByName("Numbers");
 		formattedNumbers.forEach(num -> assertTrue(values.contains(Double.valueOf(num)),
 				"Found " + num + " that was not formatted properly"));
-
 	}
 
 	@Test
@@ -88,5 +89,24 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		page.selectSampleNameColumn(SAMPLE_NAME_COLUMN);
 		page.goToReviewPage();
 		assertTrue(page.isAlertDisplayed(), "Validation message did not display");
+	}
+
+	@Test
+	public void testFailedUploadByDeletingProject() {
+		//manager starts a metadata import
+		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
+		page.uploadMetadataFile(GOOD_FILE_PATH);
+		page.selectSampleNameColumn(SAMPLE_NAME_COLUMN);
+		page.goToReviewPage();
+
+		//admin deletes project
+		ProjectDeletePage deleteProjectPage = ProjectDeletePage.goTo(driver2(), 1L);
+		deleteProjectPage.clickConfirm();
+		deleteProjectPage.deleteProject();
+
+		//manager tries to complete metadata import
+		assertThrows(TimeoutException.class, () -> {
+			page.goToCompletePage();
+		});
 	}
 }
