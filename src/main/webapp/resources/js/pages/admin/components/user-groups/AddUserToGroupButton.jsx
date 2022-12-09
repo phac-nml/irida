@@ -94,7 +94,7 @@ export function AddUserToGroupButton({
   }, [visible]);
 
   const addMember = () => {
-    addMemberFn({ id: userId, projectRole })
+    addMemberFn({ id: userId, role: projectRole })
       .then((message) => {
         addMemberSuccessFn();
         notification.success({ message });
