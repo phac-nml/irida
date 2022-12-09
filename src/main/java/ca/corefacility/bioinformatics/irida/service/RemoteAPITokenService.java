@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.service;
 import java.net.URI;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthProblemException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 
@@ -45,10 +46,11 @@ public interface RemoteAPITokenService {
 	 * @param remoteAPI     the remote api to get a token for
 	 * @param tokenRedirect a redirect url to get the token from
 	 * @return the newly created token
-	 * @throws ParseException If there's a problem with the token request
+	 * @throws IridaOAuthProblemExcpetion If we could not successfully get a token
+	 * @throws ParseException             If there's a problem with the token request
 	 */
 	public RemoteAPIToken createTokenFromAuthCode(AuthorizationCode authcode, RemoteAPI remoteAPI, URI tokenRedirect)
-			throws ParseException;
+			throws IridaOAuthProblemException, ParseException;
 
 	/**
 	 * Update a given {@link RemoteAPI}'s OAuth token by refresh token if available

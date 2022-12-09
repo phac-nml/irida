@@ -100,26 +100,30 @@ public class OltuAuthorizationController {
 	 * @param response The response to redirect
 	 * @param state    The state param which contains a map including apiId and redirect
 	 * @return A ModelAndView redirecting back to the resource that was requested
+	 * @throws IridaOAuthProblemException
 	 * @throws ParseException
 	 */
 	@RequestMapping(TOKEN_ENDPOINT)
 	public String getTokenFromAuthCode(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam("state") String state) throws ParseException {
+			@RequestParam("state") String state) throws IridaOAuthProblemException, ParseException {
 		HttpSession session = request.getSession();
 
 		// Get the OAuth2 auth code
 		AuthenticationResponse authResponse = AuthenticationResponseParser
 				.parse(new ServletServerHttpRequest(request).getURI());
 
-		// Check the state
-		if (session.getAttribute(authResponse.getState().toString()) == null) {
-			logger.trace("State not present in session");
-			throw new IridaOAuthProblemException("hello");
-			// raise exception?
-		}
-
 		if (authResponse instanceof AuthenticationErrorResponse) {
 			logger.trace("Unexpected authentication response");
+			throw new IridaOAuthProblemException(authResponse.toErrorResponse().getErrorObject().toString());
+		}
+
+		// Verify existence of state
+		if (authResponse.getState() == null) {
+			logger.trace("Authentication response did not contain a state");
+			throw new IridaOAuthProblemException("State missing from authentication response");
+		} else if (session.getAttribute(authResponse.getState().toString()) == null) {
+			logger.trace("State not present in session");
+			throw new IridaOAuthProblemException("State not present in session");
 		}
 
 		AuthorizationCode code = authResponse.toSuccessResponse().getAuthorizationCode();

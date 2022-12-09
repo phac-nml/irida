@@ -148,17 +148,11 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 	}
 
 	/**
-	 * Get a new token from the given auth code
-	 * 
-	 * @param authcode      the auth code to create a token for
-	 * @param remoteAPI     the remote api to get a token for
-	 * @param tokenRedirect a redirect url to get the token from
-	 * @return a new token
-	 * @throws ParseException
+	 * {@inheritDoc}
 	 */
 	@Transactional
 	public RemoteAPIToken createTokenFromAuthCode(AuthorizationCode authcode, RemoteAPI remoteAPI, URI tokenRedirect)
-			throws ParseException {
+			throws IridaOAuthProblemException, ParseException {
 		String serviceURI = remoteAPI.getServiceURI();
 
 		// Build the token location for this service
@@ -177,14 +171,13 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 		try {
 			tokenResponse = TokenResponse.parse(tokenRequest.toHTTPRequest().send());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new IridaOAuthProblemException("message");
+			throw new IridaOAuthProblemException(e.getMessage());
 		}
 
 		if (!tokenResponse.indicatesSuccess()) {
 			// We got an error response...
 			TokenErrorResponse errorResponse = tokenResponse.toErrorResponse();
+			throw new IridaOAuthProblemException(errorResponse.getErrorObject().toString());
 		}
 
 		AccessTokenResponse accessTokenResponse = tokenResponse.toSuccessResponse();
