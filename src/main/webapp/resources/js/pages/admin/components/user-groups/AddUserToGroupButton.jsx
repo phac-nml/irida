@@ -43,7 +43,7 @@ export function AddUserToGroupButton({
   /*
   The value of the currently selected role from the role input
    */
-  const [projectRole, setProjectRole] = useState("GROUP_MEMBER");
+  const [groupRole, setGroupRole] = useState("GROUP_MEMBER");
 
   /*
   Value to send to the server to query for a list of potential users.
@@ -94,7 +94,7 @@ export function AddUserToGroupButton({
   }, [visible]);
 
   const addMember = () => {
-    addMemberFn({ id: userId, role: projectRole })
+    addMemberFn({ id: userId, role: groupRole })
       .then((message) => {
         addMemberSuccessFn();
         notification.success({ message });
@@ -133,11 +133,7 @@ export function AddUserToGroupButton({
         onOk={addMember}
         okText={i18n("AddMemberButton.modal.okText")}
       >
-        <Form
-          layout="vertical"
-          form={form}
-          initialValues={{ role: projectRole }}
-        >
+        <Form layout="vertical" form={form} initialValues={{ role: groupRole }}>
           <Form.Item
             label={i18n("AddMemberButton.modal.user-label")}
             help={i18n("AddMemberButton.modal.user-help")}
@@ -158,15 +154,19 @@ export function AddUserToGroupButton({
           </Form.Item>
           <Form.Item
             label={i18n("UserGroupMembersTable.role")}
-            name="projectRole"
-            initialValue={projectRole}
+            name="groupRole"
+            initialValue={groupRole}
           >
             <Radio.Group
               style={{ display: "flex" }}
-              onChange={(e) => setProjectRole(e.target.value)}
+              onChange={(e) => setGroupRole(e.target.value)}
             >
               {userGroupRoles.map((role) => (
-                <Radio.Button key={role.value} value={role.value}>
+                <Radio.Button
+                  key={role.value}
+                  value={role.value}
+                  className={`t-group-role-${role.label.toLowerCase()}`}
+                >
                   {role.label}
                 </Radio.Button>
               ))}
