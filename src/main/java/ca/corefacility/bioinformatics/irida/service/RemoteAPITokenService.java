@@ -46,7 +46,7 @@ public interface RemoteAPITokenService {
 	 * @param remoteAPI     the remote api to get a token for
 	 * @param tokenRedirect a redirect url to get the token from
 	 * @return the newly created token
-	 * @throws IridaOAuthProblemExcpetion If we could not successfully get a token
+	 * @throws IridaOAuthProblemException If we could not successfully get a token
 	 * @throws ParseException             If there's a problem with the token request
 	 */
 	public RemoteAPIToken createTokenFromAuthCode(AuthorizationCode authcode, RemoteAPI remoteAPI, URI tokenRedirect)
