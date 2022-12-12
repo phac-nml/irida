@@ -105,7 +105,6 @@ export default function SamplesTable(): JSX.Element {
 
   return (
     <Table
-      bordered
       dataSource={samples}
       columns={columns}
       pagination={pagination}
