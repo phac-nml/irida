@@ -13,6 +13,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChr
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectDeletePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSampleMetadataImportPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
@@ -25,6 +26,7 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 	private static final String MIXED_FILE_PATH = "src/test/resources/files/metadata-upload/mixed.xlsx";
 	private static final String INVALID_FILE_PATH = "src/test/resources/files/metadata-upload/invalid.xlsx";
 	private static final String SAMPLE_NAME_COLUMN = "NLEP #";
+	private static final Long PROJECT_ID = 1L;
 
 	@BeforeEach
 	public void init() {
@@ -100,9 +102,28 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		page.goToReviewPage();
 
 		//admin deletes project
-		ProjectDeletePage deleteProjectPage = ProjectDeletePage.goTo(driver2(), 1L);
+		ProjectDeletePage deleteProjectPage = ProjectDeletePage.goTo(driver2(), PROJECT_ID);
 		deleteProjectPage.clickConfirm();
 		deleteProjectPage.deleteProject();
+
+		//manager tries to complete metadata import
+		assertThrows(TimeoutException.class, () -> {
+			page.goToCompletePage();
+		});
+	}
+
+	@Test
+	public void testFailedUploadByDeletingSamples() {
+		//manager starts a metadata import
+		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
+		page.uploadMetadataFile(GOOD_FILE_PATH);
+		page.selectSampleNameColumn(SAMPLE_NAME_COLUMN);
+		page.goToReviewPage();
+
+		//admin deletes samples
+		ProjectSamplesPage projectSamplesPage = ProjectSamplesPage.goToPage(driver2(), PROJECT_ID);
+		projectSamplesPage.toggleSelectAll();
+		projectSamplesPage.removeSamples();
 
 		//manager tries to complete metadata import
 		assertThrows(TimeoutException.class, () -> {

@@ -27,7 +27,7 @@ class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
 		String DEFAULT_PROTOCOL = "DEFAULT_PROTOCOL";
 
 		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1L);
 		samplesPage.selectSampleByName(SAMPLE_1);
 		samplesPage.selectSampleByName(SAMPLE_2);
 		samplesPage.selectSampleByName(SAMPLE_3);
