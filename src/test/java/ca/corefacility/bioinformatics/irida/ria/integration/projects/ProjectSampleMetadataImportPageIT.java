@@ -11,6 +11,7 @@ import org.openqa.selenium.TimeoutException;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectDeletePage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSampleMetadataImportPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
@@ -144,6 +145,24 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		projectSamplesPage.openCreateNewSampleModal();
 		projectSamplesPage.enterSampleName("sample5");
 		projectSamplesPage.clickOk();
+
+		//manager tries to complete metadata import
+		assertThrows(TimeoutException.class, () -> {
+			page.goToCompletePage();
+		});
+	}
+
+	@Test
+	public void testFailedUploadByRemovingPrivileges() {
+		//manager starts a metadata import
+		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
+		page.uploadMetadataFile(GOOD_FILE_PATH);
+		page.selectSampleNameColumn(SAMPLE_NAME_COLUMN);
+		page.goToReviewPage();
+
+		//admin removes manager from project
+		ProjectMembersPage projectMembersPage = ProjectMembersPage.goTo(driver2());
+		projectMembersPage.removeManager(0);
 
 		//manager tries to complete metadata import
 		assertThrows(TimeoutException.class, () -> {
