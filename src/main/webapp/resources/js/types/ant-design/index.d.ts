@@ -37,7 +37,7 @@ export type MenuItem = {
   type?: "divider" | "group";
 };
 
-export type TableFilters = Record<string, FilterValue | null>;
+export type TableFilters = Record<string, FilterValue | null> | undefined;
 
 export type TableFilterConfirmFn = (param?: FilterConfirmProps) => void;
 

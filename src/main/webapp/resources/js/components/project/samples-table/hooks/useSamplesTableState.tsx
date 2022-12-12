@@ -34,6 +34,7 @@ export type FilterByFile = {
 };
 
 export type SamplesTableState = {
+  filters?: { associated: number[] };
   options: TableOptions;
   selectedCount: number;
   selected: { [key: string]: SelectedSample };
@@ -99,7 +100,10 @@ export default function useSamplesTableState(): UseSamplesTableState {
     const { associated, ...otherSearch } = tableFilters;
     const search = formatSearch(otherSearch as TableFilters);
     const order = formatSort(sorter);
-    const filters = associated === undefined ? {} : { associated };
+    const filters =
+      associated === undefined
+        ? undefined
+        : { associated: associated as FilterValue };
     if (filterByFile) search.push(filterByFile.fileFilter);
 
     if (
@@ -112,7 +116,7 @@ export default function useSamplesTableState(): UseSamplesTableState {
     }
 
     setTableOptions({
-      filters, // TODO: (Josh - 12/9/22) Why is this wrong?
+      filters,
       pagination,
       order,
       search,
