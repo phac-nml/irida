@@ -3,6 +3,17 @@ import {
   FilterValue,
   TablePaginationConfig,
 } from "antd/es/table/interface";
+import { FilterDropdownProps } from "antd/lib/table/interface";
+
+export type ColumnSearchReturn = {
+  filterDropdown: ({
+    setSelectedKeys,
+    selectedKeys,
+    confirm,
+    clearFilters,
+  }: FilterDropdownProps) => JSX.Element;
+  filterIcon: (filtered: boolean) => JSX.Element;
+};
 
 /**
  * Properties that are available on the Ant Design Grid Component

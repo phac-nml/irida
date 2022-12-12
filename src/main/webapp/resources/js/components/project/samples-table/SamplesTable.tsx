@@ -3,13 +3,12 @@ import { Button, Select, Space, Table } from "antd";
 import type { TableColumnProps } from "antd/es";
 import { SampleDetailViewer } from "../../samples/SampleDetailViewer";
 import { SearchOutlined } from "@ant-design/icons";
-import useSamplesTableState from "./useSamplesTableState";
+import useSamplesTableState from "./hooks/useSamplesTableState";
 import { TableFilterConfirmFn } from "../../../types/ant-design";
 import { ProjectSample } from "../../../redux/endpoints/project-samples";
 import SampleQuality from "./components/SampleQuality";
-import ProjectTag from "../../../pages/search/ProjectTag";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import getDateColumnSearchProps from "./components/date-column-search";
+import getColumnSearchProps from "./components/column-search";
 
 /**
  * React component to render the project samples table
@@ -17,61 +16,6 @@ import getDateColumnSearchProps from "./components/date-column-search";
  */
 export default function SamplesTable(): JSX.Element {
   const [samples, pagination, api] = useSamplesTableState();
-
-  const getColumnSearchProps = (
-    dataIndex: string | string[],
-    filterName = "",
-    placeholder = ""
-  ) => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-    }: {
-      setSelectedKeys: (selectedKeys: string[]) => void;
-      selectedKeys: string[];
-      confirm: TableFilterConfirmFn;
-      clearFilters: () => void;
-    }) => (
-      <div style={{ padding: 8 }}>
-        <Select
-          className={filterName}
-          mode="tags"
-          placeholder={placeholder}
-          value={selectedKeys[0]}
-          onChange={(e) => {
-            const values = Array.isArray(e) && e.length > 0 ? [e] : e;
-            setSelectedKeys(values);
-            confirm({ closeDropdown: false });
-          }}
-          style={{ marginBottom: 8, display: "block" }}
-        />
-        <Space>
-          <Button
-            disabled={selectedKeys.length === 0 || selectedKeys[0].length === 0}
-            onClick={() => api.handleClearSearch(clearFilters, confirm)}
-            size="small"
-            style={{ width: 89 }}
-          >
-            {i18n("Filter.clear")}
-          </Button>
-          <Button
-            type="primary"
-            onClick={() => api.handleSearch(selectedKeys, confirm)}
-            icon={<SearchOutlined />}
-            size="small"
-            style={{ width: 90 }}
-          >
-            {i18n("Filter.search")}
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: (filtered: boolean) => (
-      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
-    ),
-  });
 
   const columns: TableColumnProps<ProjectSample>[] = [
     {
@@ -86,7 +30,7 @@ export default function SamplesTable(): JSX.Element {
           </Button>
         </SampleDetailViewer>
       ),
-      ...getColumnSearchProps(
+      ...api.getColumnSearchProps(
         ["sample", "sampleName"],
         "t-name-select",
         i18n("Filter.sampleName.placeholder")

@@ -1,9 +1,18 @@
 import { api } from "./api";
 import { TAG_PROJECT } from "./tags";
+import { BaseQueryArg } from "@reduxjs/toolkit/dist/query/baseQueryTypes";
 
 /**
  * @fileoverview Project API for redux-toolkit.
  */
+
+export interface AssociatedProject {
+  label: string;
+  id: number;
+  organism: string;
+  createdDate: string;
+  associated: boolean;
+}
 
 export const projectApi = api.injectEndpoints({
   endpoints: (build) => ({
@@ -26,7 +35,14 @@ export const projectApi = api.injectEndpoints({
         body,
       }),
     }),
+    getAssociatedProjects: build.query({
+      query: (projectId: number): BaseQueryArg<BaseQuery> => ({
+        url: `projects/associated/list`,
+        params: { projectId },
+      }),
+    }),
   }),
 });
 
-export const { useGetProjectDetailsQuery } = projectApi;
+export const { useGetProjectDetailsQuery, useGetAssociatedProjectsQuery } =
+  projectApi;

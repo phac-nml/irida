@@ -1,33 +1,36 @@
 import {
   ProjectSample,
   useFetchPagedSamplesQuery,
-} from "../../../redux/endpoints/project-samples";
+} from "../../../../redux/endpoints/project-samples";
 import { useParams } from "react-router-dom";
 import {
+  ColumnSearchReturn,
   TableFilterConfirmFn,
   TableFilters,
   TableOptions,
   TableSearch,
-} from "../../../types/ant-design";
+} from "../../../../types/ant-design";
 import { TableProps } from "antd/es";
-import { SelectedSample } from "../../../types/irida";
-import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
-import React, { useState } from "react";
-import { formatSearch, formatSort } from "../../../utilities/table-utilities";
+import { SelectedSample } from "../../../../types/irida";
+import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
+import { useState } from "react";
+import {
+  formatSearch,
+  formatSort,
+} from "../../../../utilities/table-utilities";
 import isEqual from "lodash/isEqual";
 import {
   FilterValue,
-  Key,
   SorterResult,
   TableCurrentDataSource,
   TablePaginationConfig,
 } from "antd/es/table/interface";
-import { Button, Select, Space } from "antd";
-import { IconSearch } from "../../icons/Icons";
-import { blue6 } from "../../../styles/colors";
-import { SearchOutlined } from "@ant-design/icons";
-import { FilterDropdownProps } from "antd/lib/table/interface";
-import getDateColumnSearchProps from "./components/date-column-search";
+import getDateColumnSearchProps, {
+  DateColumnSearchFn,
+} from "../components/date-column-search";
+import getColumnSearchProps, {
+  ColumnSearchFn,
+} from "../components/column-search";
 
 export type FilterByFile = {
   filename: string;
@@ -52,18 +55,17 @@ export const INITIAL_TABLE_OPTIONS: TableOptions = {
   search: [],
 };
 
+export type HandleSearchFn = (confirm: TableFilterConfirmFn) => void;
+
+export type HandleClearSearchFn = (
+  confirm: TableFilterConfirmFn,
+  clearFilters?: () => void
+) => void | undefined;
+
 export type UseSamplesTableState = [
   samples: ProjectSample[] | undefined,
   pagination: TablePaginationConfig | undefined,
   api: {
-    handleClearSearch: (
-      clearFilters: () => void,
-      confirm: TableFilterConfirmFn
-    ) => void;
-    handleSearch: (
-      selectedKeys: string[],
-      confirm: TableFilterConfirmFn
-    ) => void;
     handleChange: (
       pagination: TablePaginationConfig,
       tableFilters: Record<string, FilterValue | null>,
@@ -71,18 +73,11 @@ export type UseSamplesTableState = [
       extra: TableCurrentDataSource<ProjectSample>
     ) => void | undefined;
     getColumnSearchProps: (
-      dataIndex: string,
-      filterName?: string,
-      placeholder?: string
-    ) => {
-      filterDropdown: ({
-        setSelectedKeys,
-        selectedKeys,
-        confirm,
-        clearFilters,
-      }: FilterDropdownProps) => Element;
-      filterIcon: (filtered: boolean) => Element;
-    };
+      dataIndex: string | string[],
+      filterName: string,
+      placeholder: string
+    ) => ColumnSearchFn;
+    getDateColumnSearchProps: (filterName: string) => DateColumnSearchFn;
   }
 ];
 
@@ -98,56 +93,6 @@ export default function useSamplesTableState(): UseSamplesTableState {
   const { data, isSuccess } = useFetchPagedSamplesQuery({
     projectId: Number(projectId),
     body: tableOptions,
-  });
-
-  const getColumnSearchProps = (
-    dataIndex: string,
-    filterName = "",
-    placeholder = ""
-  ) => ({
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-    }: FilterDropdownProps) => (
-      <div style={{ padding: 8 }}>
-        <Select
-          className={filterName}
-          mode="tags"
-          placeholder={placeholder}
-          value={selectedKeys[0]}
-          onChange={(e) => {
-            const values = Array.isArray(e) && e.length > 0 ? [e] : e;
-            setSelectedKeys(values as Key[]);
-            confirm({ closeDropdown: false });
-          }}
-          style={{ marginBottom: 8, display: "block" }}
-        />
-        <Space>
-          <Button
-            disabled={selectedKeys.length === 0 || selectedKeys[0].length === 0}
-            onClick={() => handleClearSearch(clearFilters, confirm)}
-            size="small"
-            style={{ width: 89 }}
-          >
-            {i18n("Filter.clear")}
-          </Button>
-          <Button
-            type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm)}
-            icon={<IconSearch />}
-            size="small"
-            style={{ width: 90 }}
-          >
-            {i18n("Filter.search")}
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: (filtered: boolean) => (
-      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
-    ),
   });
 
   const handleChange: TableProps<ProjectSample>["onChange"] = (
@@ -178,10 +123,7 @@ export default function useSamplesTableState(): UseSamplesTableState {
     });
   };
 
-  const handleSearch = (
-    selectedKeys: Key[],
-    confirm: TableFilterConfirmFn
-  ): void => {
+  const handleSearch = (confirm: TableFilterConfirmFn): void => {
     confirm();
   };
 
@@ -191,8 +133,8 @@ export default function useSamplesTableState(): UseSamplesTableState {
    * @param confirm
    */
   const handleClearSearch = (
-    clearFilters: (() => void) | undefined,
-    confirm: TableFilterConfirmFn
+    confirm: TableFilterConfirmFn,
+    clearFilters: (() => void) | undefined
   ): void | undefined => {
     if (typeof clearFilters === "function") {
       clearFilters();
@@ -200,15 +142,35 @@ export default function useSamplesTableState(): UseSamplesTableState {
     confirm({ closeDropdown: false });
   };
 
+  function getColumnSearchProperties(
+    dataIndex: string | string[],
+    filterName: string,
+    placeholder: string
+  ): ColumnSearchFn {
+    return () =>
+      getColumnSearchProps(
+        dataIndex,
+        handleSearch,
+        handleClearSearch,
+        filterName,
+        placeholder
+      );
+  }
+
+  function getDateColumnSearchProperties(
+    filterName: string
+  ): DateColumnSearchFn {
+    return () =>
+      getDateColumnSearchProps(filterName, handleSearch, handleClearSearch);
+  }
+
   return [
     data?.content,
     isSuccess ? getPaginationOptions(data.total) : undefined,
     {
-      handleClearSearch,
-      handleSearch,
       handleChange,
-      getColumnSearchProps,
-      getDateColumnSearchProps,
+      getColumnSearchProps: getColumnSearchProperties,
+      getDateColumnSearchProps: getDateColumnSearchProperties,
     },
   ];
 }
