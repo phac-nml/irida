@@ -40,8 +40,8 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		page.uploadMetadataFile(GOOD_FILE_PATH);
 		page.selectSampleNameColumn(SAMPLE_NAME_COLUMN);
 		page.goToReviewPage();
-		assertEquals(5, page.getUpdateCount(), "Has incorrect amount of update sample rows");
-		assertEquals(0, page.getNewCount(), "Has incorrect amount of new sample rows");
+		assertEquals(4, page.getUpdateCount(), "Has incorrect amount of update sample rows");
+		assertEquals(1, page.getNewCount(), "Has incorrect amount of new sample rows");
 
 		/*
 		Check formatting.  A special check for number column formatting has been added in July 2020.
@@ -67,8 +67,8 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		page.uploadMetadataFile(MIXED_FILE_PATH);
 		page.selectSampleNameColumn(SAMPLE_NAME_COLUMN);
 		page.goToReviewPage();
-		assertEquals(5, page.getUpdateCount(), "Has incorrect amount of update sample rows");
-		assertEquals(2, page.getNewCount(), "Has incorrect amount of new sample rows");
+		assertEquals(4, page.getUpdateCount(), "Has incorrect amount of update sample rows");
+		assertEquals(3, page.getNewCount(), "Has incorrect amount of new sample rows");
 	}
 
 	@Test
@@ -124,6 +124,26 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		ProjectSamplesPage projectSamplesPage = ProjectSamplesPage.goToPage(driver2(), PROJECT_ID);
 		projectSamplesPage.toggleSelectAll();
 		projectSamplesPage.removeSamples();
+
+		//manager tries to complete metadata import
+		assertThrows(TimeoutException.class, () -> {
+			page.goToCompletePage();
+		});
+	}
+
+	@Test
+	public void testFailedUploadByCreatingNewSample() {
+		//manager starts a metadata import
+		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
+		page.uploadMetadataFile(GOOD_FILE_PATH);
+		page.selectSampleNameColumn(SAMPLE_NAME_COLUMN);
+		page.goToReviewPage();
+
+		//admin creates new sample
+		ProjectSamplesPage projectSamplesPage = ProjectSamplesPage.goToPage(driver2(), PROJECT_ID);
+		projectSamplesPage.openCreateNewSampleModal();
+		projectSamplesPage.enterSampleName("sample5");
+		projectSamplesPage.clickOk();
 
 		//manager tries to complete metadata import
 		assertThrows(TimeoutException.class, () -> {

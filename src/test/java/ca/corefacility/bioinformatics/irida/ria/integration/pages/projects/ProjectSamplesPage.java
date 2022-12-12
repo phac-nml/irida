@@ -230,6 +230,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "name")
 	private WebElement sampleNameInput;
 
+	@FindBy(css = "button.ant-btn.ant-btn-primary")
+	private WebElement okButton;
+
 	@FindBy(className = "t-filter-by-file-btn")
 	private WebElement filterByFileBtn;
 
@@ -565,6 +568,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		sampleNameInput.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
 		sampleNameInput.sendKeys(sampleName);
 		waitForTime(1000);
+	}
+
+	public void clickOk() {
+		okButton.click();
 	}
 
 	public boolean isSampleNameErrorDisplayed() {
