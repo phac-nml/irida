@@ -132,7 +132,7 @@ export default function useSamplesTableState(): UseSamplesTableState {
     confirm: TableFilterConfirmFn,
     clearFilters: (() => void) | undefined
   ): void | undefined => {
-    if (typeof clearFilters === "function") {
+    if (clearFilters) {
       clearFilters();
     }
     confirm({ closeDropdown: false });
