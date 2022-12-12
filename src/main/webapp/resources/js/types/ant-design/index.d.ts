@@ -1,7 +1,6 @@
 import {
   FilterConfirmProps,
   FilterValue,
-  SortOrder,
   TablePaginationConfig,
 } from "antd/es/table/interface";
 
@@ -33,21 +32,28 @@ export type TableFilterConfirmFn = (param?: FilterConfirmProps) => void;
 
 export type TableSortOrder = {
   property: string;
-  direction: SortOrder;
-}[];
+  direction: "asc" | "desc";
+};
 
 export type TableOptions = {
   filters: TableFilters;
   pagination: TablePaginationConfig;
-  order: TableSortOrder | undefined;
-  search: string[];
+  order: TableSortOrder[] | undefined;
+  search: TableSearch[];
   reload?: number;
 };
+
+export type TableOperation =
+  | "IN"
+  | "MATCH"
+  | "MATCH_IN"
+  | "GREATER_THAN_EQUAL"
+  | "LESS_THAN_EQUAL";
 
 export type TableSearch = {
   property: string;
   value: string | string[];
-  operation: "IN";
+  operation: TableOperation;
   _file?: boolean;
 };
 

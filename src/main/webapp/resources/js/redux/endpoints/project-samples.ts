@@ -7,7 +7,7 @@ import { TableOptions } from "../../types/ant-design";
 import { Project, Sample, TableResponse } from "../../types/irida";
 
 export type ProjectSample = {
-  key: number; // This should probably be a string
+  key: string;
   owner: boolean;
   coverage: any; // TODO: (Josh - 12/9/22) Figure this one out
   project: Project;

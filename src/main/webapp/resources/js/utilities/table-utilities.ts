@@ -1,8 +1,14 @@
 import moment from "moment";
-import { TableFilters, TableSearch, TableSortOrder } from "../types/ant-design";
+import {
+  TableFilters,
+  TableOperation,
+  TableSearch,
+  TableSortOrder,
+} from "../types/ant-design";
 import { SelectedSample } from "../types/irida";
 import { SorterResult } from "antd/es/table/interface";
 import { ProjectSample } from "../redux/endpoints/project-samples";
+import { direction } from "@antv/matrix-util/lib/ext";
 
 /**
  * Format Sort Order from the Ant Design sorter object
@@ -11,12 +17,14 @@ import { ProjectSample } from "../redux/endpoints/project-samples";
  */
 export function formatSort(
   sorter: SorterResult<ProjectSample> | SorterResult<ProjectSample>[]
-): TableSortOrder | undefined {
-  const order = { ascend: "asc", descend: "desc" };
-  const formatProperty = (property) => property.join(".");
-  const fromSorter = (item) => ({
-    property: formatProperty(item.field),
-    direction: order[item.order],
+): TableSortOrder[] | undefined {
+  const formatProperty = (property: string[]): string => property.join(".");
+
+  const fromSorter = (item: SorterResult<ProjectSample>): TableSortOrder => ({
+    property: Array.isArray(item.field)
+      ? formatProperty(item.field)
+      : (item.field as string),
+    direction: item.order === "descend" ? "desc" : "asc",
   });
 
   if (Array.isArray(sorter)) {
@@ -32,13 +40,14 @@ export function formatSort(
  * @param {array | object} filters Ant Design filters object
  * @returns array of Search objects
  */
-export function formatSearch(filters: TableFilters): string[] {
-  const defaultOperation = "MATCH";
+export function formatSearch(filters: TableFilters): TableSearch[] {
+  const defaultOperation: TableOperation = "MATCH";
   const formattedSearch = [];
 
   for (const filter in filters) {
     for (const index in filters[filter]) {
       const value = filters[filter][index];
+
       // if we have two values, and they are both moment objects then add searches for date range.
       if (
         Array.isArray(value) &&
@@ -66,6 +75,8 @@ export function formatSearch(filters: TableFilters): string[] {
       }
     }
   }
+
+  console.log(formattedSearch);
 
   return formattedSearch;
 }
