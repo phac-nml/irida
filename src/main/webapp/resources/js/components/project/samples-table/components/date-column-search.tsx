@@ -7,7 +7,6 @@ import type {
   HandleSearchFn,
 } from "../hooks/useSamplesTableState";
 import { ColumnSearchReturn } from "../../../../types/ant-design";
-import * as moment from "moment";
 
 const { RangePicker } = DatePicker;
 
@@ -32,7 +31,7 @@ export default function getDateColumnSearchProps(
       <div style={{ padding: 8 }} className={filterName}>
         <div style={{ marginBottom: 8, display: "block" }}>
           <RangePicker
-            value={selectedKeys[0] as unknown as moment.Moment}
+            value={selectedKeys[0]}
             onChange={(dates) => {
               if (dates !== null) {
                 setSelectedKeys([

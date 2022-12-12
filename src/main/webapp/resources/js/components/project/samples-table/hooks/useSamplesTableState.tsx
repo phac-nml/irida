@@ -25,12 +25,8 @@ import {
   TableCurrentDataSource,
   TablePaginationConfig,
 } from "antd/es/table/interface";
-import getDateColumnSearchProps, {
-  DateColumnSearchFn,
-} from "../components/date-column-search";
-import getColumnSearchProps, {
-  ColumnSearchFn,
-} from "../components/column-search";
+import getDateColumnSearchProps from "../components/date-column-search";
+import getColumnSearchProps from "../components/column-search";
 
 export type FilterByFile = {
   filename: string;
@@ -76,8 +72,8 @@ export type UseSamplesTableState = [
       dataIndex: string | string[],
       filterName: string,
       placeholder: string
-    ) => ColumnSearchFn;
-    getDateColumnSearchProps: (filterName: string) => DateColumnSearchFn;
+    ) => ColumnSearchReturn;
+    getDateColumnSearchProps: (filterName: string) => ColumnSearchReturn;
   }
 ];
 
@@ -146,22 +142,24 @@ export default function useSamplesTableState(): UseSamplesTableState {
     dataIndex: string | string[],
     filterName: string,
     placeholder: string
-  ): ColumnSearchFn {
-    return () =>
-      getColumnSearchProps(
-        dataIndex,
-        handleSearch,
-        handleClearSearch,
-        filterName,
-        placeholder
-      );
+  ): ColumnSearchReturn {
+    return getColumnSearchProps(
+      dataIndex,
+      handleSearch,
+      handleClearSearch,
+      filterName,
+      placeholder
+    );
   }
 
   function getDateColumnSearchProperties(
     filterName: string
-  ): DateColumnSearchFn {
-    return () =>
-      getDateColumnSearchProps(filterName, handleSearch, handleClearSearch);
+  ): ColumnSearchReturn {
+    return getDateColumnSearchProps(
+      filterName,
+      handleSearch,
+      handleClearSearch
+    );
   }
 
   return [

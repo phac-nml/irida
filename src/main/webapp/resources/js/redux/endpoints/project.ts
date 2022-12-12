@@ -1,6 +1,7 @@
 import { api } from "./api";
 import { TAG_PROJECT } from "./tags";
 import { BaseQueryArg } from "@reduxjs/toolkit/dist/query/baseQueryTypes";
+import { AssociatedProjectsResponse } from "../../apis/projects/associated-projects";
 
 /**
  * @fileoverview Project API for redux-toolkit.
@@ -40,6 +41,12 @@ export const projectApi = api.injectEndpoints({
         url: `projects/associated/list`,
         params: { projectId },
       }),
+      transformResponse: (response: AssociatedProjectsResponse) => {
+        return response.map((item) => ({
+          text: item.label,
+          value: item.id,
+        }));
+      },
     }),
   }),
 });

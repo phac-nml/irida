@@ -58,7 +58,7 @@ export default function getColumnSearchProps(
           </Button>
           <Button
             type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm)}
+            onClick={() => handleSearch(confirm)}
             icon={<IconSearch />}
             size="small"
             style={{ width: 90 }}
