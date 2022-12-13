@@ -12,7 +12,8 @@ import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
  * A repository for {@link UserGroup}.
  *
  */
-public interface UserGroupRepository extends IridaJpaRepository<UserGroup, Long> {
+public interface
+UserGroupRepository extends IridaJpaRepository<UserGroup, Long> {
 
 	/**
 	 * Find a collection of {@link UserGroup} not already attached to the
