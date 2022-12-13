@@ -125,6 +125,7 @@ export function CreateRemoteProjectSyncForm() {
                   <span>
                     {i18n("NewProjectSync.remoteUrl")}
                     <Checkbox
+                      className="t-remote-project-url-checkbox"
                       onChange={(e) => {
                         setManual(e.target.checked);
                         setNewRemoteProjectUrlError(null);
