@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Checkbox, Space, Table } from "antd";
-import type { TableColumnProps } from "antd/es";
+import type { TableColumnProps, TableProps } from "antd/es";
 import { SampleDetailViewer } from "../../samples/SampleDetailViewer";
 import useSamplesTableState from "./hooks/useSamplesTableState";
 import {
@@ -14,6 +14,8 @@ import { useGetAssociatedProjectsQuery } from "../../../redux/endpoints/project"
 import { useParams } from "react-router-dom";
 import SampleIcons from "./components/SampleIcons";
 import { useAppDispatch, useTypedSelector } from "../../../redux/store";
+import { FilterValue } from "antd/es/table/interface";
+import { tableUpdated } from "../../../layouts/project-samples/projectSamplesSlice";
 
 /**
  * React component to render the project samples table
@@ -35,6 +37,17 @@ export default function SamplesTable(): JSX.Element {
   const { data: associatedProjects } = useGetAssociatedProjectsQuery(
     Number(projectId)
   );
+
+  const handleTableChange: TableProps<ProjectSample>["onChange"] = (
+    ...options
+  ): void => {
+    dispatch(tableUpdated(options));
+    // const { associated, ...otherSearch } = tableFilters;
+    // const filters =
+    //   associated === undefined
+    //     ? undefined
+    //     : { associated: associated as FilterValue };
+  };
 
   const columns: TableColumnProps<ProjectSample>[] = [
     {
@@ -151,7 +164,7 @@ export default function SamplesTable(): JSX.Element {
       dataSource={data?.content}
       columns={columns}
       pagination={pagination}
-      onChange={api.handleChange}
+      onChange={handleTableChange}
     />
   );
 }

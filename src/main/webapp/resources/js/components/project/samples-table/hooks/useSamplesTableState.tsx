@@ -153,7 +153,6 @@ export default function useSamplesTableState(): UseSamplesTableState {
     },
     isSuccess ? getPaginationOptions(data.total) : undefined,
     {
-      handleChange,
       getColumnSearchProps: (
         dataIndex: string | string[],
         filterName: string,

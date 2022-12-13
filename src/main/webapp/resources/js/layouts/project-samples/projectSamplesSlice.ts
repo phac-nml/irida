@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAction, createSlice } from "@reduxjs/toolkit";
 import type { TableOptions, TableSearch } from "../../types/ant-design";
 import { SelectedSample } from "../../types/irida";
 
@@ -16,7 +16,7 @@ export type SamplesTableState = {
   filterByFile?: FilterByFile | null;
 };
 
-export const INITIAL_TABLE_OPTIONS: TableOptions = {
+const INITIAL_TABLE_OPTIONS: TableOptions = {
   filters: {},
   pagination: {
     current: 1,
@@ -29,7 +29,13 @@ export const INITIAL_TABLE_OPTIONS: TableOptions = {
 const slice = createSlice({
   name: `project-samples`,
   initialState: { options: INITIAL_TABLE_OPTIONS },
-  reducers: {},
+  reducers: {
+    tableUpdated: (state, action) => {
+      console.log(action);
+    },
+  },
 });
 
 export default slice.reducer;
+
+export const { tableUpdated } = slice.actions;
