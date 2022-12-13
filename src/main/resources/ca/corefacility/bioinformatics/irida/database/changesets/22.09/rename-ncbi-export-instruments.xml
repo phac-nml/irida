@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="rename-ncbi-export-instruments" author="josh">
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="ILLUMINA_MI_SEQ"/>
+            <where>instrument_model='ILLUMINAMISEQ'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="NEXT_SEQ_500"/>
+            <where>instrument_model='ILLUMINANEXTSEQ500'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="AB_SOLID_SYSTEM_2_0"/>
+            <where>instrument_model='ABSOLID2'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="AB_SOLID_SYSTEM_3_0"/>
+            <where>instrument_model='ABSOLID3'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="ILLUMINA_GENOME_ANALYZER_II"/>
+            <where>instrument_model='ILLUMINAGAII'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="ILLUMINA_GENOME_ANALYZER_IIX"/>
+            <where>instrument_model='ILLUMINAGAIIX'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="ILLUMINA_GENOME_ANALYZER"/>
+            <where>instrument_model='ILLUMINAGA'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="ILLUMINA_HI_SEQ_1000"/>
+            <where>instrument_model='ILLUMINAHISEQ1000'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="ILLUMINA_HI_SEQ_1500"/>
+            <where>instrument_model='ILLUMINAHISEQ1500'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="ILLUMINA_HI_SEQ_2000"/>
+            <where>instrument_model='ILLUMINAHISEQ2000'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="ILLUMINA_HI_SEQ_2500"/>
+            <where>instrument_model='ILLUMINAHISEQ2500'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="ILLUMINA_HI_SEQ_3000"/>
+            <where>instrument_model='ILLUMINAHISEQ3000'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="ILLUMINA_HI_SEQ_4000"/>
+            <where>instrument_model='ILLUMINAHISEQ4000'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="ION_TORRENT_PGM"/>
+            <where>instrument_model='IONTORRENTPGM'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="ION_TORRENT_PROTON"/>
+            <where>instrument_model='IONTORRENTPROTON'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="LS_454_GS_20"/>
+            <where>instrument_model='ROCHE454GS20'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="LS_454_GS_FLX_TITANIUM"/>
+            <where>instrument_model='ROCHE454GSFLXTI'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="LS_454_GS"/>
+            <where>instrument_model='ROCHE454GS'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="PAC_BIO_RS"/>
+            <where>instrument_model='PACBIORS'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="PAC_BIO_RS_II"/>
+            <where>instrument_model='PACBIORSII'</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>
