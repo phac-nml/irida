@@ -1,27 +1,70 @@
 import React from "react";
-import { Button, Table } from "antd";
+import { Button, Checkbox, Space, Table } from "antd";
 import type { TableColumnProps } from "antd/es";
 import { SampleDetailViewer } from "../../samples/SampleDetailViewer";
 import useSamplesTableState from "./hooks/useSamplesTableState";
-import { ProjectSample } from "../../../redux/endpoints/project-samples";
+import {
+  ProjectSample,
+  useFetchPagedSamplesQuery,
+} from "../../../redux/endpoints/project-samples";
 import SampleQuality from "./components/SampleQuality";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import ProjectTag from "../../../pages/search/ProjectTag";
 import { useGetAssociatedProjectsQuery } from "../../../redux/endpoints/project";
 import { useParams } from "react-router-dom";
+import SampleIcons from "./components/SampleIcons";
+import { useAppDispatch, useTypedSelector } from "../../../redux/store";
 
 /**
  * React component to render the project samples table
  * @constructor
  */
 export default function SamplesTable(): JSX.Element {
+  const dispatch = useAppDispatch();
+
   const { projectId } = useParams();
-  const [samples, pagination, api] = useSamplesTableState();
+
+  const state = useTypedSelector((state) => state.projectSamples);
+
+  const { data, isSuccess } = useFetchPagedSamplesQuery({
+    projectId: Number(projectId),
+    body: state.options,
+  });
+
+  const [samples, selection, pagination, api] = useSamplesTableState();
   const { data: associatedProjects } = useGetAssociatedProjectsQuery(
     Number(projectId)
   );
 
   const columns: TableColumnProps<ProjectSample>[] = [
+    {
+      title: () => {
+        const indeterminate =
+          selection.selectedCount < selection.total &&
+          selection.selectedCount > 0;
+        return (
+          <Checkbox
+            className="t-select-all"
+            onChange={selection.updateSelectAll}
+            checked={selection.selectedCount > 0}
+            indeterminate={indeterminate}
+          />
+        );
+      },
+      dataIndex: "key",
+      width: 40,
+      render: (text, item) => {
+        return (
+          <Space>
+            <Checkbox
+              onChange={(e) => selection.onRowSelectionChange(e, item)}
+              checked={selection.selected[Number(item.key)] !== undefined}
+            />
+            <SampleIcons sample={item} />
+          </Space>
+        );
+      },
+    },
     {
       title: i18n("SamplesTable.Column.sampleName"),
       className: "t-td-name",
@@ -105,7 +148,7 @@ export default function SamplesTable(): JSX.Element {
 
   return (
     <Table
-      dataSource={samples}
+      dataSource={data?.content}
       columns={columns}
       pagination={pagination}
       onChange={api.handleChange}

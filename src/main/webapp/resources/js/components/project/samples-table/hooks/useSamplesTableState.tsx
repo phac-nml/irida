@@ -27,30 +27,8 @@ import {
 } from "antd/es/table/interface";
 import getDateColumnSearchProps from "../components/date-column-search";
 import getColumnSearchProps from "../components/column-search";
-
-export type FilterByFile = {
-  filename: string;
-  fileFilter: TableSearch;
-};
-
-export type SamplesTableState = {
-  filters?: { associated: number[] };
-  options: TableOptions;
-  selectedCount: number;
-  selected: { [key: string]: SelectedSample };
-  loadingLong?: boolean;
-  filterByFile?: FilterByFile | null;
-};
-
-export const INITIAL_TABLE_OPTIONS: TableOptions = {
-  filters: {},
-  pagination: {
-    current: 1,
-    pageSize: 10,
-  },
-  order: [{ property: "sample.modifiedDate", direction: "desc" }],
-  search: [],
-};
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import { INITIAL_TABLE_OPTIONS } from "../../../../layouts/project-samples/projectSamplesSlice";
 
 export type HandleSearchFn = (confirm: TableFilterConfirmFn) => void;
 
@@ -61,6 +39,15 @@ export type HandleClearSearchFn = (
 
 export type UseSamplesTableState = [
   samples: ProjectSample[] | undefined,
+  selection: {
+    updateSelectAll: (even: CheckboxChangeEvent) => void;
+    selectedCount: number;
+    selected: Record<number, ProjectSample>;
+    onRowSelectionChange: (
+      event: CheckboxChangeEvent,
+      sample: ProjectSample
+    ) => void;
+  },
   pagination: TablePaginationConfig | undefined,
   api: {
     handleChange: (
@@ -92,6 +79,14 @@ export default function useSamplesTableState(): UseSamplesTableState {
     body: tableOptions,
   });
 
+  /**
+   * Handle table change events, for example, pagination and table size.
+   * This is called from the Ant Design Table component directly.
+   *
+   * @param pagination
+   * @param tableFilters
+   * @param sorter
+   */
   const handleChange: TableProps<ProjectSample>["onChange"] = (
     pagination,
     tableFilters,
@@ -142,37 +137,37 @@ export default function useSamplesTableState(): UseSamplesTableState {
     confirm({ closeDropdown: false });
   };
 
-  function getColumnSearchProperties(
-    dataIndex: string | string[],
-    filterName: string,
-    placeholder: string
-  ): ColumnSearchReturn {
-    return getColumnSearchProps(
-      dataIndex,
-      handleSearch,
-      handleClearSearch,
-      filterName,
-      placeholder
-    );
-  }
-
-  function getDateColumnSearchProperties(
-    filterName: string
-  ): ColumnSearchReturn {
-    return getDateColumnSearchProps(
-      filterName,
-      handleSearch,
-      handleClearSearch
-    );
+  function updateSelectAll(event: CheckboxChangeEvent): void {
+    console.log(e.target.checked);
   }
 
   return [
     data?.content,
+    {
+      updateSelectAll,
+      selectedCount: Object.keys(selected).length,
+      selected,
+      onRowSelectionChange: (event, sample) => {
+        console.log(event, sample);
+      },
+    },
     isSuccess ? getPaginationOptions(data.total) : undefined,
     {
       handleChange,
-      getColumnSearchProps: getColumnSearchProperties,
-      getDateColumnSearchProps: getDateColumnSearchProperties,
+      getColumnSearchProps: (
+        dataIndex: string | string[],
+        filterName: string,
+        placeholder: string
+      ): ColumnSearchReturn =>
+        getColumnSearchProps(
+          dataIndex,
+          handleSearch,
+          handleClearSearch,
+          filterName,
+          placeholder
+        ),
+      getDateColumnSearchProps: (filterName: string): ColumnSearchReturn =>
+        getDateColumnSearchProps(filterName, handleSearch, handleClearSearch),
     },
   ];
 }
