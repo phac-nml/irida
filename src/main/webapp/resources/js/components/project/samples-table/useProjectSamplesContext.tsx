@@ -8,6 +8,8 @@ import {
 import { ProjectSample } from "../../../redux/endpoints/project-samples";
 import { formatSearch, formatSort } from "../../../utilities/table-utilities";
 import isEqual from "lodash/isEqual";
+import { SelectedSample } from "../../../types/irida";
+import { TableSample } from "../../../pages/projects/redux/samplesSlice";
 
 const INITIAL_TABLE_OPTIONS: TableOptions = {
   filters: {},
@@ -19,21 +21,29 @@ const INITIAL_TABLE_OPTIONS: TableOptions = {
   search: [],
 };
 
-type UpdateTablePayload = {
+type TableUpdatePayload = {
   pagination: TablePaginationConfig;
   filters: Record<string, FilterValue | null>;
   sorter: SorterResult<ProjectSample> | SorterResult<ProjectSample>[];
 };
 
-type Action = {
-  type: `tableUpdate`;
-  payload: UpdateTablePayload;
+type RowSelectionChangePayload = {
+  selected: boolean;
+  item: ProjectSample;
 };
+
+type Action =
+  | {
+      type: `tableUpdate`;
+      payload: TableUpdatePayload;
+    }
+  | { type: `rowSelectionChange`; payload: RowSelectionChangePayload };
+
 type Dispatch = (action: Action) => void;
 type State = {
   options: TableOptions;
   selection: {
-    selected: Record<string, ProjectSample>;
+    selected: Record<string, SelectedSample>;
     count: number;
   };
 };
@@ -47,9 +57,23 @@ const ProjectSamplesContext = createContext<
   | undefined
 >(undefined);
 
+/**
+ * Called to format a sample when a sample is selected.
+ * Needs to be converted to this format so that it can be used by the share
+ * samples page and the cart.
+ * @param projectSample - Sample details object returned as part of the table data
+ */
+const formatSelectedSample = (projectSample: TableSample): SelectedSample => ({
+  key: projectSample.key,
+  id: projectSample.sample.id,
+  projectId: projectSample.project.id,
+  sampleName: projectSample.sample.sampleName,
+  owner: projectSample.owner,
+});
+
 function formatTableOptions(
-  { filters: tableFilters, pagination, sorter }: UpdateTablePayload,
-  state: State
+  state: State,
+  { filters: tableFilters, pagination, sorter }: TableUpdatePayload
 ): State {
   const { associated, ...searchOptions } = tableFilters;
   const filters =
@@ -79,10 +103,27 @@ function formatTableOptions(
   return { ...state, options, selection: { selected: {}, count: 0 } };
 }
 
+function rowSelectionChange(
+  state: State,
+  { selected, item }: RowSelectionChangePayload
+): State {
+  const selection = { ...state.selection };
+  if (selected) {
+    selection.selected[item.key] = formatSelectedSample(item);
+    selection.count++;
+  } else {
+    delete selection.selected[item.key];
+    selection.count--;
+  }
+  return { ...state, selection };
+}
+
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "tableUpdate":
-      return formatTableOptions(action.payload, state);
+      return formatTableOptions(state, action.payload);
+    case "rowSelectionChange":
+      return rowSelectionChange(state, action.payload);
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
     }

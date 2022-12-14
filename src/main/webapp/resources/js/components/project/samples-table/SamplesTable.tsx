@@ -15,6 +15,7 @@ import SampleIcons from "./components/SampleIcons";
 import { useProjectSamples } from "./useProjectSamplesContext";
 import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 import getColumnSearchProps from "./components/column-search";
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
 
 /**
  * React component to render the project samples table
@@ -45,6 +46,15 @@ export default function SamplesTable(): JSX.Element {
     sorter
   ): void =>
     dispatch({ type: "tableUpdate", payload: { pagination, filters, sorter } });
+
+  const onRowSelectionChange = (e: CheckboxChangeEvent, item: ProjectSample) =>
+    dispatch({
+      type: "rowSelectionChange",
+      payload: {
+        selected: e.target.checked,
+        item,
+      },
+    });
 
   const updateSelectAll = () => console.log("FOOBAR");
 
