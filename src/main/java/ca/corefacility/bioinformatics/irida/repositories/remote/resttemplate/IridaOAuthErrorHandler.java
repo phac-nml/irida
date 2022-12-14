@@ -31,7 +31,7 @@ public class IridaOAuthErrorHandler extends DefaultResponseErrorHandler {
 		switch (statusCode) {
 		case UNAUTHORIZED:
 			logger.trace("Throwing new IridaOAuthException (Unauthorized) for this error");
-			throw new IridaOAuthException("User is unauthorized for this resource", statusCode, remoteAPI);
+			throw new IridaOAuthException("User is unauthorized for this service", statusCode, remoteAPI);
 		case FORBIDDEN:
 			logger.trace("Throwing new IridaOAuthException (Forbidden) for this error");
 			throw new IridaOAuthException("User is forbidden from accessing this resource", statusCode, remoteAPI);
