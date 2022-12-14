@@ -13,20 +13,12 @@ import React from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { useResetFormOnCloseModal } from "../../../hooks";
 import {
-  SampleConcatenationObject,
-  SampleSequencingObject,
   SequencingFile,
   SequencingObject,
   useConcatenateSequencingObjectsMutation,
 } from "../../../apis/samples/samples";
-import {
-  addToSequenceFiles,
-  removeFileObjectFromSample,
-  resetConcatenateSelected,
-} from "../sampleFilesSlice";
-import { setDefaultSequencingObject } from "../sampleSlice";
+import { resetConcatenateSelected } from "../sampleFilesSlice";
 import { IconArrowLeft, IconArrowRight, IconFile } from "../../icons/Icons";
-import { LoadingOutlined } from "@ant-design/icons";
 import { ErrorAlert } from "../../../components/alerts/ErrorAlert";
 
 const { Title } = Typography;
@@ -78,50 +70,17 @@ export function SampleFileConcatenate({
         removeOriginals: values.remove_original_files,
       })
         .unwrap()
-        .then(({ sampleSequencingObjectFileModels }) => {
-          let message = i18n("SampleFilesConcatenate.concatenationSuccess");
-
-          if (values.remove_original_files) {
-            message = i18n("SampleFilesConcatenate.concatenationRemoveSuccess");
-
-            /*
-            Remove from the state the sequencing objects that were used to concatenate the files
-             */
-            sequencingObjectIds.forEach((seqObjId: number) => {
-              dispatch(
-                removeFileObjectFromSample({
-                  fileObjectId: seqObjId,
-                  type: "sequencingObject",
-                })
-              );
-
-              /*
-              If the sample default sequencing object was removed then update defaultSequencingObject
-              in the state
-               */
-              if (
-                sample.defaultSequencingObject !== null &&
-                seqObjId === sample.defaultSequencingObject.identifier
-              ) {
-                dispatch(setDefaultSequencingObject(null));
-              }
-            });
-          }
-
-          dispatch(resetConcatenateSelected());
-          dispatch(
-            addToSequenceFiles({
-              sequenceFiles: sampleSequencingObjectFileModels,
-            })
-          );
-          notification.success({ message });
+        .then(({ concatenationSuccess }) => {
+          notification.success({ message: concatenationSuccess });
           form.resetFields();
-          setVisible(false);
-          setConcatenating(false);
         })
         .catch((error) => {
-          setConcatenating(false);
           setConcatenationError(error.data.concatenationError);
+        })
+        .finally(() => {
+          setVisible(false);
+          setConcatenating(false);
+          dispatch(resetConcatenateSelected());
         });
     });
   };
@@ -145,8 +104,8 @@ export function SampleFileConcatenate({
       }
     );
 
-    if (pairedCount === numFilesSelected) return true;
-    if (singleEndCount === numFilesSelected) return true;
+    if (pairedCount === numFilesSelected || singleEndCount === numFilesSelected)
+      return true;
     return false;
   };
 
@@ -186,7 +145,7 @@ export function SampleFileConcatenate({
           okButtonProps={{
             className: "t-concatenate-confirm",
             disabled: concatenateButtonDisabled,
-            icon: concatenating && <LoadingOutlined />,
+            loading: concatenating,
           }}
           cancelButtonProps={{ className: "t-concatenate-cancel" }}
         >
@@ -252,11 +211,7 @@ export function SampleFileConcatenate({
               form={form}
               onFieldsChange={() => {
                 const nameValue = form.getFieldValue("new_file_name");
-                if (nameValue.length >= 3) {
-                  setConcatenateButtonDisabled(false);
-                } else {
-                  setConcatenateButtonDisabled(true);
-                }
+                setConcatenateButtonDisabled(nameValue.length < 3);
               }}
             >
               <Form.Item

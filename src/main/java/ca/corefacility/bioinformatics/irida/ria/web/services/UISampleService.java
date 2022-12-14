@@ -1113,7 +1113,8 @@ public class UISampleService {
 			sampleSequencingObjectFileModels.add(
 					new SampleSequencingObjectFileModel(sequencingObject, firstFileSize, secondFileSize,
 							sequencingObject.getQcEntries()));
-			return new SampleConcatenationModel(sampleSequencingObjectFileModels);
+			return new SampleConcatenationModel(sampleSequencingObjectFileModels, messageSource.getMessage("SampleFilesConcatenate.concatenationSuccess",
+					new Object[] { }, locale));
 		} catch (ConcatenateException ex) {
 			throw new ConcatenateException(ex.getMessage());
 		} catch (StorageException e) {

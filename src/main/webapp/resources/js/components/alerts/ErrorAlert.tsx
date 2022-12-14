@@ -3,17 +3,12 @@
  */
 
 import React from "react";
-import { Alert } from "antd";
-import { SampleFileConcatenateProps } from "../samples/components/SampleFileContenate";
-
-export interface Dictionary<T> {
-  [Key: string]: T;
-}
+import { Alert, AlertProps } from "antd";
 
 export interface ErrorAlertProps {
   message: string;
   description?: string;
-  props?: Dictionary<string>;
+  props?: AlertProps;
 }
 
 /**

@@ -146,7 +146,7 @@ export interface SequencingObject {
 export const sampleApi = createApi({
   reducerPath: `sampleApi`,
   baseQuery: fetchBaseQuery({}),
-  tagTypes: ["SampleDetails", "SampleMetadata"],
+  tagTypes: ["SampleDetails", "SampleFiles", "SampleMetadata"],
   endpoints: (build) => ({
     /*
     Get the default information about a sample
@@ -156,6 +156,14 @@ export const sampleApi = createApi({
         url: `${URL}/${sampleId}/details?projectId=${projectId}`,
       }),
       providesTags: ["SampleDetails"],
+    }),
+    getSampleFilesQry: build.query({
+      query: ({ sampleId, projectId }) => ({
+        url: `${URL}/${sampleId}/files${
+          projectId && `?projectId=${projectId}`
+        }`,
+      }),
+      providesTags: ["SampleFiles"],
     }),
     /*
     Update sample details
@@ -217,6 +225,7 @@ export const sampleApi = createApi({
         url: `${URL}/${sampleId}/files?fileObjectId=${fileObjectId}&fileType=${type}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["SampleDetails", "SampleFiles"],
     }),
     concatenateSequencingObjects: build.mutation({
       query: ({
@@ -228,6 +237,7 @@ export const sampleApi = createApi({
         url: `${URL}/${sampleId}/files/concatenate?sequencingObjectIds=${sequencingObjectIds}&newFileName=${newFileName}&removeOriginals=${removeOriginals}`,
         method: "POST",
       }),
+      invalidatesTags: ["SampleDetails", "SampleFiles"],
     }),
     updateDefaultSampleSequencingObject: build.mutation({
       query: ({ sampleId, sequencingObjectId }) => ({
@@ -278,6 +288,7 @@ export const {
   useUpdateDefaultSampleSequencingObjectMutation,
   usePutSampleInCartMutation,
   useRemoveSampleFromCartMutation,
+  useGetSampleFilesQryQuery,
 } = sampleApi;
 
 /**
@@ -294,24 +305,6 @@ export const fetchMetadataForSample = async ({
   projectId: number;
 }): Promise<SampleMetadata> => {
   return get(setBaseUrl(`${URL}/${sampleId}/metadata?projectId=${projectId}`));
-};
-
-/**
- * Get file details for a sample
- * @param {number} sampleId - identifier for a sample
- * @param {number} projectId - identifier for a project (if the sample is in the cart), not required.
- * @returns {Promise<SampleFiles>}
- */
-export const fetchSampleFiles = async ({
-  sampleId,
-  projectId,
-}: {
-  sampleId: number;
-  projectId: number;
-}): Promise<SampleFiles> => {
-  return get(
-    `${URL}/${sampleId}/files${projectId && `?projectId=${projectId}`}`
-  );
 };
 
 /**
