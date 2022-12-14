@@ -77,7 +77,12 @@ export const updateMetadataRestriction = createAction(
  * @type {{currentProject, samples}}
  */
 const initialState = (() => {
-  const stringData = window.sessionStorage.getItem("samples");
+  const match = window.location.href.match(/projects\/(\d+)/);
+  if (!match) {
+    return {};
+  }
+  const [, id] = match;
+  const stringData = window.sessionStorage.getItem(`share-${id}`);
 
   if (stringData === null) {
     return {};
@@ -85,11 +90,16 @@ const initialState = (() => {
 
   const { samples: allSamples, projectId: currentProject } =
     JSON.parse(stringData);
-  const samples = [];
-  const associated = [];
+  const samples = [],
+    lockedSamples = [],
+    associated = [];
   allSamples.forEach((sample) => {
     if (Number(sample.projectId) === Number(currentProject)) {
-      samples.push(sample);
+      if (sample.owner) {
+        samples.push(sample);
+      } else {
+        lockedSamples.push(sample);
+      }
     } else {
       associated.push(sample);
     }
@@ -97,6 +107,7 @@ const initialState = (() => {
 
   return {
     samples,
+    lockedSamples,
     associated,
     currentProject,
     locked: false,

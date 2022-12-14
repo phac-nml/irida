@@ -78,15 +78,47 @@ IRIDA is configured to use the following credentials by default:
 
 You'll need to permit those user credentials to create the tables in the database. A quick one-liner for that is:
 
-    echo "grant all privileges on irida_test.* to 'test'@'localhost' identified by 'test';" | mysql -u root -p
+```
+# Create the 'test' user:
+echo "CREATE USER 'test'@'localhost' IDENTIFIED BY 'test';" | mysql -u root -p
 
-Also create the database if it doesn't exist:
+# Create the database if it doesn't exist:
+echo "create database irida_test;" | mysql -u root -p
 
-    echo "create database irida_test;" | mysql -u root -p
+# Grand 'test' user permissions to database:
+echo "grant all privileges on irida_test.* to 'test'@'localhost';" | mysql -u root -p
+```
 
-In order to run local integration tests, the database `irida_integration_test` is used instead.  This database requires permissions from user `'test'@'localhost'`.  To grant such permissions a quick one-liner is:
+In order to run local integration tests, the same steps need to be performed for the database name `irida_integration_test`
+```
+# Create the database if it doesn't exist:
+echo "create database irida_integration_test;" | mysql -u root -p
 
-    echo "grant all privileges on irida_integration_test.* to 'test'@'localhost';" | mysql -u root -p
+# Grand 'test' user permissions to database:
+echo "grant all privileges on irida_integration_test.* to 'test'@'localhost';" | mysql -u root -p
+```
+
+### Configure Docker
+
+IRIDA uses Docker to create galaxy instances when running integration tests.
+
+https://docs.docker.com/engine/install/ubuntu/
+
+You will also need to ensure your user has permissions to run docker commands. Please note that doing this effectively gives your user root access, so this should only be done in development environments.
+
+```
+# Create the docker group if it does not exist
+sudo groupadd docker
+# Add your user to the docker group.
+sudo usermod -aG docker $USER
+# login to docker group so you don't have to sign in/out
+newgrp docker
+# restart docker
+sudo systemctl restart docker
+# test that you can create docker instances
+docker run hello-world
+```
+
 
 ### Configure Filesystem Locations
 
@@ -173,6 +205,22 @@ To run the full integration test suite for IRIDA please run the following:
     ./run-tests.sh all
 
 This will run all the integration test profiles using Gradle, and print out reports for each profile.
+
+#### Memory requirements
+
+Your environment may throw java heap size errors when running tests. 
+
+You can increase the heap size by editing the `gradle.properties` file in the project directory and adding the following line:
+
+`org.gradle.jvmargs=-Xmx4096m`
+
+Another method is to set the environment variable
+
+`env GRADLE_OPTS='-Xmx4096m'`
+
+And then running the following to kill active daemons to apply the change
+
+`./gradlew --stop`
 
 Setting up Galaxy
 -----------------

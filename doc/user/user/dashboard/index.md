@@ -67,21 +67,6 @@ After you've launched a pipeline, you can monitor its progress and view results 
 
 For more information about viewing pipeline results and working with analysis, please see the [viewing pipeline results](../pipelines/#viewing-pipeline-results) section.
 
-Search
-------
-
-IRIDA's global search panel can be found in the middle of the navigation bar at the top of the application.  This search can be used from anywhere in the application to search for your projects and samples in the system.  To search, simply type a few character of the project or sample name you're looking for and press `Enter`.
-
-![IRIDA search bar](images/search-bar.png)
-
-After completing your search, you'll be taken to the *search results* page which will display all *projects* and *samples* which match your search query.  The initial results displayed will be *samples*.
-
-![IRIDA search bar](images/search-sample-result.png)
-
-To view *projects* matching your search result, click the `Projects` tab.
-
-![IRIDA search bar](images/search-project-result.png)
-
 Cart
 ----
 

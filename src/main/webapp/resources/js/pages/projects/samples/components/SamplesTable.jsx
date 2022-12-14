@@ -23,6 +23,7 @@ import { blue6 } from "../../../../styles/colors";
 import { generateColourForItem } from "../../../../utilities/colour-utilities";
 import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
 import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
+import ProjectTag from "../../../search/ProjectTag";
 
 const { RangePicker } = DatePicker;
 
@@ -116,8 +117,6 @@ export function SamplesTable() {
     confirm({ closeDropdown: false });
   };
 
-  const projectColours = {};
-
   const getColumnSearchProps = (
     dataIndex,
     filterName = "",
@@ -178,11 +177,17 @@ export function SamplesTable() {
       <div style={{ padding: 8 }} className={filterName}>
         <div style={{ marginBottom: 8, display: "block" }}>
           <RangePicker
-            onChange={(dates) =>
-              setSelectedKeys([
-                [dates[0].startOf("day"), dates[1].endOf("day")],
-              ])
-            }
+            value={selectedKeys[0]}
+            onChange={(dates) => {
+              if (dates !== null) {
+                setSelectedKeys([
+                  [dates[0].startOf("day"), dates[1].endOf("day")],
+                ]);
+                confirm({ closeDropdown: false });
+              } else {
+                handleClearSearch(clearFilters, confirm);
+              }
+            }}
           />
         </div>
         <Space>
@@ -286,26 +291,7 @@ export function SamplesTable() {
       sorter: true,
       key: "associated",
       render: (name, row) => {
-        if (!(row.project.id in projectColours)) {
-          projectColours[row.project.id] = generateColourForItem({
-            id: row.project.id,
-            label: name,
-          });
-        }
-        const colour = projectColours[row.project.id];
-        return (
-          <Tag
-            color={colour.background}
-            style={{ border: `1px solid ${colour.text}` }}
-          >
-            <a
-              style={{ color: colour.text }}
-              href={setBaseUrl(`/projects/${row.project.id}`)}
-            >
-              {name}
-            </a>
-          </Tag>
-        );
+        return <ProjectTag project={row.project} />;
       },
       filters: associatedProjects,
     },

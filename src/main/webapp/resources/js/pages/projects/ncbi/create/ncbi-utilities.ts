@@ -32,7 +32,7 @@ export async function getNCBIPlatformsAsCascaderOptions(): Promise<
  */
 export async function hydrateStoredSamples(): Promise<SampleRecord[]> {
   try {
-    const { samples, projectId } = await getStoredSamples();
+    const { samples, projectId } = await getStoredSamples(`ncbi`);
     return getFilesForSamples({
       ids: samples.map((sample) => sample.id),
       projectId,

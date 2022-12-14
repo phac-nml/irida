@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.processing.concatenate.impl;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
@@ -70,6 +71,8 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 			try {
 				iridaFileStorageUtility.appendToFile(forwardFile, forwardSequenceFile);
 				iridaFileStorageUtility.appendToFile(reverseFile, reverseSequenceFile);
+			} catch( StorageException e) {
+				throw new StorageException(e.getMessage());
 			} catch (IOException e) {
 				throw new ConcatenateException("Could not append files", e);
 			}
