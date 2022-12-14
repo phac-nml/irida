@@ -112,6 +112,11 @@
         </update>
         <update
                 tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="LS_454_GS_JUNIOR"/>
+            <where>instrument_model='ROCHE454GSJR'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
             <column name="instrument_model" value="PAC_BIO_RS"/>
             <where>instrument_model='PACBIORS'</where>
         </update>
