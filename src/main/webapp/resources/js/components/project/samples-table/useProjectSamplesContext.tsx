@@ -37,7 +37,8 @@ type Action =
       type: `tableUpdate`;
       payload: TableUpdatePayload;
     }
-  | { type: `rowSelectionChange`; payload: RowSelectionChangePayload };
+  | { type: `rowSelectionChange`; payload: RowSelectionChangePayload }
+  | { type: `selectAllChange`; payload: { selected: boolean } };
 
 type Dispatch = (action: Action) => void;
 type State = {
@@ -93,7 +94,6 @@ function formatTableOptions(
     isEqual(search, state.options.search) &&
     isEqual(tableFilters, state.options.filters)
   ) {
-    console.info("NOT JUST PAGINATION");
     // Just a pagination change
     return {
       ...state,
@@ -124,12 +124,25 @@ function rowSelectionChange(
   return { ...state, selection };
 }
 
+function selectAllChange(state: State, selected: boolean): State {
+  const selection = { ...state.selection };
+  if (selected) {
+    console.log("FIX THIS");
+  } else {
+    selection.selected = {};
+    selection.count = 0;
+  }
+  return { ...state, selection };
+}
+
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "tableUpdate":
       return formatTableOptions(state, action.payload);
     case "rowSelectionChange":
       return rowSelectionChange(state, action.payload);
+    case "selectAllChange":
+      return selectAllChange(state, action.payload.selected);
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
     }

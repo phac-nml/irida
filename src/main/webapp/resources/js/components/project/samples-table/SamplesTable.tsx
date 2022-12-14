@@ -56,7 +56,11 @@ export default function SamplesTable(): JSX.Element {
       },
     });
 
-  const updateSelectAll = () => console.log("FOOBAR");
+  const updateSelectAll = (e: CheckboxChangeEvent) =>
+    dispatch({
+      type: "selectAllChange",
+      payload: { selected: e.target.checked },
+    });
 
   const columns: TableColumnProps<ProjectSample>[] = [
     {
