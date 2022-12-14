@@ -7,6 +7,11 @@
     <changeSet id="rename-ncbi-export-instruments" author="josh">
         <update
                 tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="HELICOS_HELISCOPE"/>
+            <where>instrument_model='HELICOSHELISCOPE'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
             <column name="instrument_model" value="ILLUMINA_MI_SEQ"/>
             <where>instrument_model='ILLUMINAMISEQ'</where>
         </update>
@@ -19,21 +24,6 @@
                 tableName="ncbi_export_biosample">
             <column name="instrument_model" value="NEXT_SEQ_550"/>
             <where>instrument_model='ILLUMINANEXTSEQ550'</where>
-        </update>
-        <update
-                tableName="ncbi_export_biosample">
-            <column name="instrument_model" value="AB_SOLID_SYSTEM"/>
-            <where>instrument_model='ABSOLID'</where>
-        </update>
-        <update
-                tableName="ncbi_export_biosample">
-            <column name="instrument_model" value="AB_SOLID_SYSTEM_2_0"/>
-            <where>instrument_model='ABSOLID2'</where>
-        </update>
-        <update
-                tableName="ncbi_export_biosample">
-            <column name="instrument_model" value="AB_SOLID_SYSTEM_3_0"/>
-            <where>instrument_model='ABSOLID3'</where>
         </update>
         <update
                 tableName="ncbi_export_biosample">
