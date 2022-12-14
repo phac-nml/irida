@@ -46,11 +46,14 @@ export default function SamplesTable(): JSX.Element {
   ): void =>
     dispatch({ type: "tableUpdate", payload: { pagination, filters, sorter } });
 
+  const updateSelectAll = () => console.log("FOOBAR");
+
   const columns: TableColumnProps<ProjectSample>[] = [
     {
       title: () => {
-        const indeterminate = data ?
-          state.selection.count < data?.total && state.selection.count > 0;
+        const indeterminate = data
+          ? state.selection.count < data?.total && state.selection.count > 0
+          : false;
         return (
           <Checkbox
             className="t-select-all"
@@ -67,9 +70,7 @@ export default function SamplesTable(): JSX.Element {
           <Space>
             <Checkbox
               onChange={(e) => onRowSelectionChange(e, item)}
-              checked={
-                state.selections.selected[Number(item.key)] !== undefined
-              }
+              checked={state.selection.selected[Number(item.key)] !== undefined}
             />
             <SampleIcons sample={item} />
           </Space>
