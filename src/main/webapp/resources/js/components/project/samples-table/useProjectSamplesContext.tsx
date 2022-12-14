@@ -1,9 +1,5 @@
 import React, { createContext, ReactNode, useContext, useReducer } from "react";
-import {
-  TableFilters,
-  TableOptions,
-  TableSortOrder,
-} from "../../../types/ant-design";
+import { TableOptions } from "../../../types/ant-design";
 import {
   FilterValue,
   SorterResult,
@@ -52,38 +48,38 @@ const ProjectSamplesContext = createContext<
 >(undefined);
 
 function formatTableOptions(
-  { filters, pagination, sorter }: UpdateTablePayload,
+  { filters: tableFilters, pagination, sorter }: UpdateTablePayload,
   state: State
 ): State {
-  console.log(filters);
-  const { associated, ...searchOptions } = filters;
-  const tableFilters =
+  const { associated, ...searchOptions } = tableFilters;
+  const filters =
     associated === undefined
       ? undefined
       : { associated: associated as FilterValue };
   const search = formatSearch(searchOptions);
 
-  if (
-    !(
-      isEqual(search, state.options.search) &&
-      isEqual(tableFilters, state.options.filters)
-    )
-  ) {
-    // Not just a pagination change
-    return { ...state, selection: { selected: {}, count: 0 } };
-  }
-  return {
-    ...state,
-    options: {
-      pagination,
-      filters: tableFilters,
-      search,
-      order: formatSort(sorter),
-    },
+  const options: TableOptions = {
+    filters,
+    pagination,
+    order: formatSort(sorter),
+    search,
   };
+
+  if (
+    isEqual(search, state.options.search) &&
+    isEqual(tableFilters, state.options.filters)
+  ) {
+    console.info("NOT JUST PAGINATION");
+    // Just a pagination change
+    return {
+      ...state,
+      options,
+    };
+  }
+  return { ...state, options, selection: { selected: {}, count: 0 } };
 }
 
-function reducer(state: State, action: Action) {
+function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "tableUpdate":
       return formatTableOptions(action.payload, state);
@@ -91,7 +87,6 @@ function reducer(state: State, action: Action) {
       throw new Error(`Unhandled action type: ${action.type}`);
     }
   }
-  return state;
 }
 
 function ProjectSamplesProvider({
@@ -99,6 +94,10 @@ function ProjectSamplesProvider({
 }: ProjectSamplesContextProps): JSX.Element {
   const [state, dispatch] = useReducer(reducer, {
     options: INITIAL_TABLE_OPTIONS,
+    selection: {
+      count: 0,
+      selected: {},
+    },
   });
 
   return (

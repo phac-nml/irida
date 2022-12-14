@@ -2,7 +2,6 @@ import React from "react";
 import { Button, Checkbox, Space, Table } from "antd";
 import type { TableColumnProps, TableProps } from "antd/es";
 import { SampleDetailViewer } from "../../samples/SampleDetailViewer";
-import useSamplesTableState from "./hooks/useSamplesTableState";
 import {
   ProjectSample,
   useFetchPagedSamplesQuery,
@@ -13,11 +12,7 @@ import ProjectTag from "../../../pages/search/ProjectTag";
 import { useGetAssociatedProjectsQuery } from "../../../redux/endpoints/project";
 import { useParams } from "react-router-dom";
 import SampleIcons from "./components/SampleIcons";
-import { useAppDispatch, useTypedSelector } from "../../../redux/store";
-import { FilterValue } from "antd/es/table/interface";
-import { tableUpdated } from "../../../layouts/project-samples/projectSamplesSlice";
 import { useProjectSamples } from "./useProjectSamplesContext";
-import { api } from "../../../redux/endpoints/api";
 import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 import getColumnSearchProps from "./components/column-search";
 
@@ -40,8 +35,6 @@ export default function SamplesTable(): JSX.Element {
     }
   );
 
-  console.log(data);
-
   const { data: associatedProjects } = useGetAssociatedProjectsQuery(
     Number(projectId)
   );
@@ -50,45 +43,39 @@ export default function SamplesTable(): JSX.Element {
     pagination,
     filters,
     sorter
-  ): void => {
+  ): void =>
     dispatch({ type: "tableUpdate", payload: { pagination, filters, sorter } });
-    // dispatch(tableUpdated(options));
-    // const { associated, ...otherSearch } = tableFilters;
-    // const filters =
-    //   associated === undefined
-    //     ? undefined
-    //     : { associated: associated as FilterValue };
-  };
 
   const columns: TableColumnProps<ProjectSample>[] = [
-    // {
-    //   title: () => {
-    //     const indeterminate =
-    //       selection.selectedCount < selection.total &&
-    //       selection.selectedCount > 0;
-    //     return (
-    //       <Checkbox
-    //         className="t-select-all"
-    //         onChange={selection.updateSelectAll}
-    //         checked={selection.selectedCount > 0}
-    //         indeterminate={indeterminate}
-    //       />
-    //     );
-    //   },
-    //   dataIndex: "key",
-    //   width: 40,
-    //   render: (text, item) => {
-    //     return (
-    //       <Space>
-    //         <Checkbox
-    //           onChange={(e) => selection.onRowSelectionChange(e, item)}
-    //           checked={selection.selected[Number(item.key)] !== undefined}
-    //         />
-    //         <SampleIcons sample={item} />
-    //       </Space>
-    //     );
-    //   },
-    // },
+    {
+      title: () => {
+        const indeterminate = data ?
+          state.selection.count < data?.total && state.selection.count > 0;
+        return (
+          <Checkbox
+            className="t-select-all"
+            onChange={updateSelectAll}
+            checked={state.selection.count > 0}
+            indeterminate={indeterminate}
+          />
+        );
+      },
+      dataIndex: "key",
+      width: 40,
+      render: (text, item) => {
+        return (
+          <Space>
+            <Checkbox
+              onChange={(e) => onRowSelectionChange(e, item)}
+              checked={
+                state.selections.selected[Number(item.key)] !== undefined
+              }
+            />
+            <SampleIcons sample={item} />
+          </Space>
+        );
+      },
+    },
     {
       title: i18n("SamplesTable.Column.sampleName"),
       className: "t-td-name",
