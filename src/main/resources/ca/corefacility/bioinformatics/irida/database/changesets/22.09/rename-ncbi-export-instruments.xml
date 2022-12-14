@@ -17,6 +17,11 @@
         </update>
         <update
                 tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="NEXT_SEQ_550"/>
+            <where>instrument_model='ILLUMINANEXTSEQ550'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
             <column name="instrument_model" value="AB_SOLID_SYSTEM_2_0"/>
             <where>instrument_model='ABSOLID2'</where>
         </update>
