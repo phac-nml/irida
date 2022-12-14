@@ -103,6 +103,12 @@ function formatTableOptions(
   return { ...state, options, selection: { selected: {}, count: 0 } };
 }
 
+/**
+ * Update the selection status for a given project sample
+ * @param state - current state of the page
+ * @param selected - whether the item is selected
+ * @param item - the project sample
+ */
 function rowSelectionChange(
   state: State,
   { selected, item }: RowSelectionChangePayload
