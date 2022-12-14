@@ -22,6 +22,11 @@
         </update>
         <update
                 tableName="ncbi_export_biosample">
+            <column name="instrument_model" value="AB_SOLID_SYSTEM"/>
+            <where>instrument_model='ABSOLID'</where>
+        </update>
+        <update
+                tableName="ncbi_export_biosample">
             <column name="instrument_model" value="AB_SOLID_SYSTEM_2_0"/>
             <where>instrument_model='ABSOLID2'</where>
         </update>
