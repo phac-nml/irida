@@ -4,12 +4,6 @@ package ca.corefacility.bioinformatics.irida.model.export;
 ￼ * Instrument model for NCBI Upload.
 ￼ */
 public enum NcbiInstrumentModel {
-	AB_5500_GENETIC_ANALYZER("AB 5500 Genetic Analyzer"),
-	AB_5500_XL_GENETIC_ANALYZER("AB 5500xl Genetic Analyzer"),
-	AB_5500_XL_W_GENETIC_ANALYSIS_SYSTEM("AB 5500xl-W Genetic Analysis System"),
-	AB_SOLID_SYSTEM("AB SOLiD System"),
-	AB_SOLID_SYSTEM_2_0("AB SOLiD System 2.0"),
-	AB_SOLID_SYSTEM_3_0("AB SOLiD System 3.0"),
 	BGISEQ_500("BGISEQ-500"),
 	DNBSEQ_G_400("DNBSEQ-G400"),
 	DNBSEQ_G_50("DNBSEQ-G50"),
@@ -20,6 +14,8 @@ public enum NcbiInstrumentModel {
 	AB_3130_X_L_GENETIC_ANALYZER("AB 3130xL Genetic Analyzer"),
 	AB_3730_GENETIC_ANALYZER("AB 3730 Genetic Analyzer"),
 	AB_3730_X_L_GENETIC_ANALYZER("AB 3730xL Genetic Analyzer "),
+	// HELICOS
+	HELICOS_HELISCOPE("Helicos HeliScope"),
 	//	ILLUMINA
 	HI_SEQ_X_FIVE("HiSeq X Five"),
 	HI_SEQ_LIQUIBASE_PRO_PACKAGED_X_TEN("HiSeq liquibase.pro.packaged.X Ten"),
