@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.MessageSource;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
@@ -31,6 +32,8 @@ public class UIRemoteAPIServiceTest {
 	private ProjectService projectService;
 	private UIRemoteAPIService service;
 
+	private MessageSource messageSource;
+
 	private final long REMOTE_ID_WITH_TOKEN = 1L;
 	private final String REMOTE_CLIENT_ID_WITH_TOKEN = "with_token";
 	private final long REMOTE_ID_WITH_EXPIRED_TOKEN = 2L;
@@ -46,7 +49,8 @@ public class UIRemoteAPIServiceTest {
 		this.tokenService = mock(RemoteAPITokenService.class);
 		this.projectRemoteService = mock(ProjectRemoteService.class);
 		this.projectService = mock(ProjectService.class);
-		this.service = new UIRemoteAPIService(remoteAPIService, tokenService, projectRemoteService, projectService);
+		this.messageSource = mock(MessageSource.class);
+		this.service = new UIRemoteAPIService(remoteAPIService, tokenService, projectRemoteService, projectService, messageSource);
 
 		// Valid token
 		RemoteAPI validAPI = createFakeRemoteAPI(REMOTE_CLIENT_ID_WITH_TOKEN);

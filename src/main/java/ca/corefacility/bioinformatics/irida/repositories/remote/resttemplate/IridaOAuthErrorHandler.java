@@ -30,11 +30,14 @@ public class IridaOAuthErrorHandler extends DefaultResponseErrorHandler {
 		logger.trace("Checking error type " + statusCode.toString());
 		switch (statusCode) {
 		case UNAUTHORIZED:
-			logger.trace("Throwing new IridaOAuthException for this error");
-			throw new IridaOAuthException("User is unauthorized for this service", remoteAPI);
+			logger.trace("Throwing new IridaOAuthException (Unauthorized) for this error");
+			throw new IridaOAuthException("User is unauthorized for this service", statusCode, remoteAPI);
 		case FORBIDDEN:
+			logger.trace("Throwing new IridaOAuthException (Forbidden) for this error");
+			throw new IridaOAuthException("User is forbidden from accessing this resource", statusCode, remoteAPI);
+		case NOT_FOUND:
 			logger.trace("Throwing new IridaOAuthException for this error");
-			throw new IridaOAuthException("User is unauthorized for this service", remoteAPI);
+			throw new IridaOAuthException("Resource not found", statusCode, remoteAPI);
 		default:
 			logger.trace("Passing error to superclass");
 			super.handleError(response);
