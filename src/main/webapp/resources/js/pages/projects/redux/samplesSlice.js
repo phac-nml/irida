@@ -72,10 +72,20 @@ const addToCart = createAsyncThunk(
   "/samples/table/selected/cart",
   async (_, { getState }) => {
     const { samples } = getState();
-    return await putSampleInCart(
-      samples.projectId,
-      Object.values(samples.selected)
-    );
+    // Sort by project id
+    const samplesList = Object.values(samples.selected);
+    const projects = samplesList.reduce((prev, current) => {
+      if (!prev[current.projectId]) prev[current.projectId] = [];
+      prev[current.projectId].push(current);
+      return prev;
+    }, {});
+
+    const promises = [];
+    for (const projectId in projects) {
+      promises.push(putSampleInCart(projectId, projects[projectId]));
+    }
+
+    return Promise.all(promises).then((responses) => responses.pop());
   }
 );
 

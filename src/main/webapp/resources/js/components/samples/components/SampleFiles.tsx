@@ -19,6 +19,7 @@ import {
   uploadSequenceFiles,
   uploadAssemblyFiles,
   uploadFast5Files,
+  useGetSampleFilesQryQuery,
 } from "../../../apis/samples/samples";
 import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
 
@@ -33,7 +34,13 @@ export default function SampleFiles() {
   const { sample, projectId, modifiable } = useAppSelector(
     (state) => state.sampleReducer
   );
-  const { files, loading, concatenateSelected } = useAppSelector(
+
+  const { data: files = {}, isLoading: loading } = useGetSampleFilesQryQuery({
+    sampleId: sample.identifier,
+    projectId,
+  });
+
+  const { concatenateSelected } = useAppSelector(
     (state) => state.sampleFilesReducer
   );
   const dispatch = useAppDispatch();
@@ -55,16 +62,17 @@ export default function SampleFiles() {
 
   /*
    Get the sample files and set them in the redux store on component load
-   and to refetch if the sample identifier or project change
+   and to refetch if any of the dependencies in the dependency array change
    */
   React.useEffect(() => {
-    dispatch(
-      fetchFilesForSample({
-        sampleId: sample.identifier,
-        projectId,
-      })
-    );
-  }, [sample.identifier, projectId, dispatch]);
+    if (Object.keys(files).length > 0) {
+      dispatch(
+        fetchFilesForSample({
+          sampleFiles: files,
+        })
+      );
+    }
+  }, [sample.identifier, projectId, dispatch, loading, files]);
 
   /*
   Call function to upload files to server once files are
@@ -130,8 +138,7 @@ export default function SampleFiles() {
           total: number;
         }) => {
           if (progressEvent.loaded === progressEvent.total) {
-            setSequenceFiles([]);
-            setSeqFileProgress(0);
+            setSeqFileProgress(99);
           } else {
             setSeqFileProgress(
               Math.round((progressEvent.loaded / progressEvent.total) * 100.0)
@@ -158,6 +165,7 @@ export default function SampleFiles() {
             message: i18n("SampleFiles.successfullyUploaded", "sequence"),
           });
           dispatch(addToSequenceFiles({ sequenceFiles: response }));
+          setSequenceFiles([]);
         })
         .catch((error) => {
           if (error !== "canceled") {
@@ -184,8 +192,7 @@ export default function SampleFiles() {
           total: number;
         }) => {
           if (progressEvent.loaded === progressEvent.total) {
-            setAssemblyFiles([]);
-            setAssemblyProgress(0);
+            setAssemblyProgress(99);
           } else {
             setAssemblyProgress(
               Math.round((progressEvent.loaded / progressEvent.total) * 100.0)
@@ -212,6 +219,7 @@ export default function SampleFiles() {
             message: i18n("SampleFiles.successfullyUploaded", "assembly"),
           });
           dispatch(addToAssemblyFiles({ assemblies: response }));
+          setAssemblyFiles([]);
         })
         .catch((error) => {
           if (error !== "canceled") {
@@ -238,8 +246,7 @@ export default function SampleFiles() {
           total: number;
         }) => {
           if (progressEvent.loaded === progressEvent.total) {
-            setFast5Files([]);
-            setFast5Progress(0);
+            setFast5Progress(99);
           } else {
             setFast5Progress(
               Math.round((progressEvent.loaded / progressEvent.total) * 100.0)
@@ -266,6 +273,7 @@ export default function SampleFiles() {
             message: i18n("SampleFiles.successfullyUploaded", "fast5"),
           });
           dispatch(addToFast5Files({ fast5: response }));
+          setFast5Files([]);
         })
         .catch((error) => {
           if (error !== "canceled") {

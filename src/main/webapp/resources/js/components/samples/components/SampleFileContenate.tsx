@@ -13,18 +13,13 @@ import React from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { useResetFormOnCloseModal } from "../../../hooks";
 import {
-  SampleSequencingObject,
   SequencingFile,
   SequencingObject,
   useConcatenateSequencingObjectsMutation,
 } from "../../../apis/samples/samples";
-import {
-  addToSequenceFiles,
-  removeFileObjectFromSample,
-  resetConcatenateSelected,
-} from "../sampleFilesSlice";
-import { setDefaultSequencingObject } from "../sampleSlice";
+import { resetConcatenateSelected } from "../sampleFilesSlice";
 import { IconArrowLeft, IconArrowRight, IconFile } from "../../icons/Icons";
+import { ErrorAlert } from "../../../components/alerts/ErrorAlert";
 
 const { Title } = Typography;
 
@@ -49,6 +44,11 @@ export function SampleFileConcatenate({
     (state) => state.sampleFilesReducer
   );
   const [concatenateSeqObjectFiles] = useConcatenateSequencingObjectsMutation();
+  const [concatenateButtonDisabled, setConcatenateButtonDisabled] =
+    React.useState<boolean>(true);
+  const [concatenating, setConcatenating] = React.useState<boolean>(false);
+  const [concatenationError, setConcatenationError] =
+    React.useState<string>("");
 
   useResetFormOnCloseModal({
     form,
@@ -56,11 +56,13 @@ export function SampleFileConcatenate({
   });
 
   const concatenateFiles = () => {
+    setConcatenationError("");
     const sequencingObjectIds = concatenateSelected.map(
       (seqObject: SequencingObject) => seqObject.identifier
     );
 
     form.validateFields().then((values) => {
+      setConcatenating(true);
       concatenateSeqObjectFiles({
         sampleId: sample.identifier,
         sequencingObjectIds: sequencingObjectIds,
@@ -68,46 +70,17 @@ export function SampleFileConcatenate({
         removeOriginals: values.remove_original_files,
       })
         .unwrap()
-        .then((data: SampleSequencingObject[]) => {
-          let message = i18n("SampleFilesConcatenate.concatenationSuccess");
-
-          if (values.remove_original_files) {
-            message = i18n("SampleFilesConcatenate.concatenationRemoveSuccess");
-
-            /*
-            Remove from the state the sequencing objects that were used to concatenate the files
-             */
-            sequencingObjectIds.forEach((seqObjId: number) => {
-              dispatch(
-                removeFileObjectFromSample({
-                  fileObjectId: seqObjId,
-                  type: "sequencingObject",
-                })
-              );
-
-              /*
-              If the sample default sequencing object was removed then update defaultSequencingObject
-              in the state
-               */
-              if (
-                sample.defaultSequencingObject !== null &&
-                seqObjId === sample.defaultSequencingObject.identifier
-              ) {
-                dispatch(setDefaultSequencingObject(null));
-              }
-            });
-          }
-
-          dispatch(resetConcatenateSelected());
-          dispatch(addToSequenceFiles({ sequenceFiles: data }));
-          notification.success({ message });
+        .then(({ concatenationSuccess }) => {
+          notification.success({ message: concatenationSuccess });
           form.resetFields();
-          setVisible(false);
         })
         .catch((error) => {
-          notification.error({
-            message: error,
-          });
+          setConcatenationError(error.data.concatenationError);
+        })
+        .finally(() => {
+          setVisible(false);
+          setConcatenating(false);
+          dispatch(resetConcatenateSelected());
         });
     });
   };
@@ -131,8 +104,8 @@ export function SampleFileConcatenate({
       }
     );
 
-    if (pairedCount === numFilesSelected) return true;
-    if (singleEndCount === numFilesSelected) return true;
+    if (pairedCount === numFilesSelected || singleEndCount === numFilesSelected)
+      return true;
     return false;
   };
 
@@ -161,18 +134,27 @@ export function SampleFileConcatenate({
           className="t-concatenate-confirm-modal"
           onCancel={() => {
             dispatch(resetConcatenateSelected());
+            setConcatenationError("");
+            setConcatenateButtonDisabled(true);
             setVisible(false);
           }}
           visible={visible}
           onOk={concatenateFiles}
           okText={i18n("SampleFilesConcatenate.okText")}
           cancelText={i18n("SampleFilesConcatenate.cancelText")}
-          okButtonProps={{ className: "t-concatenate-confirm" }}
+          okButtonProps={{
+            className: "t-concatenate-confirm",
+            disabled: concatenateButtonDisabled,
+            loading: concatenating,
+          }}
           cancelButtonProps={{ className: "t-concatenate-cancel" }}
         >
           <Space size="large" direction="vertical" style={{ width: `100%` }}>
             <Title level={4}>{i18n("SampleFilesConcatenate.title")}</Title>
 
+            {concatenationError !== "" && (
+              <ErrorAlert message={concatenationError} />
+            )}
             <List
               bordered
               {...layoutProps}
@@ -224,7 +206,14 @@ export function SampleFileConcatenate({
               }}
             />
 
-            <Form layout="vertical" form={form}>
+            <Form
+              layout="vertical"
+              form={form}
+              onFieldsChange={() => {
+                const nameValue = form.getFieldValue("new_file_name");
+                setConcatenateButtonDisabled(nameValue.length < 3);
+              }}
+            >
               <Form.Item
                 key="new-file-name"
                 name="new_file_name"
@@ -235,6 +224,16 @@ export function SampleFileConcatenate({
                     message: (
                       <div className="t-new-file-name-required">
                         {i18n("SampleFilesConcatenate.nameValidationError")}
+                      </div>
+                    ),
+                  },
+                  {
+                    min: 3,
+                    message: (
+                      <div className="t-name-min-length">
+                        {i18n(
+                          "SampleFilesConcatenate.nameLengthValidationError"
+                        )}
                       </div>
                     ),
                   },

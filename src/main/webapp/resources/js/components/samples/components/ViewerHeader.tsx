@@ -4,10 +4,11 @@ import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { generateColourForItem } from "../../../utilities/colour-utilities";
 import { ViewerTab } from "./SampleDetailsModal";
 
+import { updateSampleInCart } from "../sampleSlice";
 import {
-  addSampleToCartThunk,
-  removeSampleFromCartThunk,
-} from "../sampleSlice";
+  usePutSampleInCartMutation,
+  useRemoveSampleFromCartMutation,
+} from "../../../apis/samples/samples";
 
 export const HEADER_HEIGHT = 90;
 export const HEADER_HEIGHT_WITH_PADDING = 97;
@@ -15,14 +16,14 @@ export const HEADER_HEIGHT_WITH_PADDING = 97;
 export default function ViewerHeader({
   displayActions,
   projectId,
-  refetch,
+  refetchCart,
   tab,
   onMenuChange,
 }: {
   displayActions: boolean;
   projectId: number;
   sampleId: number;
-  refetch: undefined | (() => void);
+  refetchCart: undefined | (() => void);
   tab: ViewerTab;
   onMenuChange: Dispatch<SetStateAction<ViewerTab>>;
 }): JSX.Element {
@@ -30,6 +31,9 @@ export default function ViewerHeader({
   const { inCart, sample, projectName } = useAppSelector(
     (state) => state.sampleReducer
   );
+
+  const [removeSampleFromCart] = useRemoveSampleFromCartMutation();
+  const [addSampleToCart] = usePutSampleInCartMutation();
 
   const projectColour = useMemo(
     () =>
@@ -54,7 +58,7 @@ export default function ViewerHeader({
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          margin: `10px 50px 0 20px`,
+          margin: `10px 56px 0 20px`,
         }}
       >
         <Space>
@@ -83,8 +87,10 @@ export default function ViewerHeader({
             className="t-remove-sample-from-cart"
             danger
             onClick={() => {
-              dispatch(removeSampleFromCartThunk());
-              if (typeof refetch !== "undefined") refetch();
+              removeSampleFromCart({ sampleId: sample.identifier }).then(() => {
+                dispatch(updateSampleInCart({ inCart: false }));
+                if (typeof refetchCart !== "undefined") refetchCart();
+              });
             }}
           >
             {i18n("SampleDetailsViewer.removeFromCart")}
@@ -95,8 +101,10 @@ export default function ViewerHeader({
             size="small"
             className="t-add-sample-to-cart"
             onClick={() => {
-              dispatch(addSampleToCartThunk());
-              if (typeof refetch !== "undefined") refetch();
+              addSampleToCart({ projectId, samples: [sample] }).then(() => {
+                dispatch(updateSampleInCart({ inCart: true }));
+                if (typeof refetchCart !== "undefined") refetchCart();
+              });
             }}
           >
             {i18n("SampleDetailsViewer.addToCart")}
