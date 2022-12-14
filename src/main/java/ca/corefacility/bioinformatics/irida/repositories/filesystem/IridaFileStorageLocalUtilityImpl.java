@@ -155,7 +155,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 					p += in.transferTo(p, l - p, out);
 				}
 			} catch (IOException e) {
-				throw new IOException("Could not open input file for reading", e);
+				throw new StorageException("Could not open input file for reading", e);
 			}
 
 		} catch (IOException e) {

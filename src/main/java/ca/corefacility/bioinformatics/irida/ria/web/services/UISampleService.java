@@ -22,6 +22,7 @@ import javax.validation.ConstraintViolationException;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
@@ -1077,8 +1078,8 @@ public class UISampleService {
 	 * @return The concatenated sequencing object in a {@link SampleSequencingObjectFileModel}
 	 * @throws ConcatenateException if there was an error concatenating the files
 	 */
-	public List<SampleSequencingObjectFileModel> concatenateSequenceFiles(Long sampleId, Set<Long> objectIds,
-			String filename, boolean removeOriginals) throws ConcatenateException {
+	public SampleConcatenationModel concatenateSequenceFiles(Long sampleId, Set<Long> objectIds,
+			String filename, boolean removeOriginals, Locale locale) throws ConcatenateException {
 		Sample sample = sampleService.read(sampleId);
 		List<SampleSequencingObjectFileModel> sampleSequencingObjectFileModels = new ArrayList<>();
 		Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(objectIds);
@@ -1112,9 +1113,13 @@ public class UISampleService {
 			sampleSequencingObjectFileModels.add(
 					new SampleSequencingObjectFileModel(sequencingObject, firstFileSize, secondFileSize,
 							sequencingObject.getQcEntries()));
-			return sampleSequencingObjectFileModels;
+			return new SampleConcatenationModel(sampleSequencingObjectFileModels, messageSource.getMessage("SampleFilesConcatenate.concatenationSuccess",
+					new Object[] { }, locale));
 		} catch (ConcatenateException ex) {
 			throw new ConcatenateException(ex.getMessage());
+		} catch (StorageException e) {
+			throw new StorageException(messageSource.getMessage("server.SampleFilesConcatenate.error.reading.file",
+					new Object[] { }, locale));
 		}
 	}
 

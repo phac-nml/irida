@@ -32,7 +32,6 @@ export default function AnalysisBioHansel() {
 
   useEffect(() => {
     getBioHanselResults();
-    setLoading(false);
   }, [analysisOutputsContext.outputs]);
 
   function getBioHanselResults() {
@@ -50,9 +49,11 @@ export default function AnalysisBioHansel() {
         }).then(({ text }) => {
           const parsedResults = JSON.parse(text);
           setBioHanselResults(parsedResults[0]);
+          setLoading(false);
         });
       } else {
         setBioHanselResults(undefined);
+        setLoading(false);
       }
     }
   }

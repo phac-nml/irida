@@ -3,7 +3,13 @@
  */
 
 import React from "react";
-import { Alert } from "antd";
+import { Alert, AlertProps } from "antd";
+
+export interface ErrorAlertProps {
+  message: string;
+  description?: string;
+  props?: AlertProps;
+}
 
 /**
  * Stateless UI component for displaying an [antd error Alert]{@link https://ant.design/components/alert/}
@@ -13,7 +19,11 @@ import { Alert } from "antd";
  * @param {object} props - any other props that are passed
  * @returns {Element} - Returns an antd error 'Alert' component
  */
-export function ErrorAlert({ message, description, ...props }) {
+export function ErrorAlert({
+  message,
+  description,
+  ...props
+}: ErrorAlertProps): JSX.Element {
   return (
     <Alert
       type="error"
