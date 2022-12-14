@@ -8,6 +8,7 @@ import type {
   HandleSearchFn,
 } from "../hooks/useSamplesTableState";
 import type { ColumnSearchReturn } from "../../../../types/ant-design";
+import { useProjectSamples } from "../useProjectSamplesContext";
 
 export type ColumnSearchFn = (
   dataIndex: string | string[],
@@ -19,11 +20,14 @@ export type ColumnSearchFn = (
 
 export default function getColumnSearchProps(
   dataIndex: string | string[],
-  handleSearch: HandleSearchFn,
-  handleClearSearch: HandleClearSearchFn,
   filterName = "",
   placeholder = ""
 ): ColumnSearchReturn {
+  const { dispatch } = useProjectSamples();
+
+  const handleSearch = (confirm) => console.log("Searching");
+  const handleClearSearch = (confirm, clear) => console.log("Clearing Search");
+
   return {
     filterDropdown: ({
       setSelectedKeys,

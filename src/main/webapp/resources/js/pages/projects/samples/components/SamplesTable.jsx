@@ -100,7 +100,7 @@ export function SamplesTable() {
 
     dispatch(
       updateTable({
-        filters: { associated: associated === undefined ? null : associated }, // Null conversion for comparision with default values in slice
+        filters: { associated: associated === undefined ? null : associated }, // Null conversion for comparison with default values in slice
         pagination,
         order: formatSort(sorter),
         search,

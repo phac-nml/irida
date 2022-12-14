@@ -16,32 +16,43 @@ import SampleIcons from "./components/SampleIcons";
 import { useAppDispatch, useTypedSelector } from "../../../redux/store";
 import { FilterValue } from "antd/es/table/interface";
 import { tableUpdated } from "../../../layouts/project-samples/projectSamplesSlice";
+import { useProjectSamples } from "./useProjectSamplesContext";
+import { api } from "../../../redux/endpoints/api";
+import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
+import getColumnSearchProps from "./components/column-search";
 
 /**
  * React component to render the project samples table
  * @constructor
  */
 export default function SamplesTable(): JSX.Element {
-  const dispatch = useAppDispatch();
+  const { state, dispatch } = useProjectSamples();
 
   const { projectId } = useParams();
 
-  const state = useTypedSelector((state) => state.projectSamples);
+  const { data, isSuccess } = useFetchPagedSamplesQuery(
+    {
+      projectId: Number(projectId),
+      body: state.options,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
 
-  const { data, isSuccess } = useFetchPagedSamplesQuery({
-    projectId: Number(projectId),
-    body: state.options,
-  });
+  console.log(data);
 
-  const [samples, selection, pagination, api] = useSamplesTableState();
   const { data: associatedProjects } = useGetAssociatedProjectsQuery(
     Number(projectId)
   );
 
   const handleTableChange: TableProps<ProjectSample>["onChange"] = (
-    ...options
+    pagination,
+    filters,
+    sorter
   ): void => {
-    dispatch(tableUpdated(options));
+    dispatch({ type: "tableUpdate", payload: { pagination, filters, sorter } });
+    // dispatch(tableUpdated(options));
     // const { associated, ...otherSearch } = tableFilters;
     // const filters =
     //   associated === undefined
@@ -50,34 +61,34 @@ export default function SamplesTable(): JSX.Element {
   };
 
   const columns: TableColumnProps<ProjectSample>[] = [
-    {
-      title: () => {
-        const indeterminate =
-          selection.selectedCount < selection.total &&
-          selection.selectedCount > 0;
-        return (
-          <Checkbox
-            className="t-select-all"
-            onChange={selection.updateSelectAll}
-            checked={selection.selectedCount > 0}
-            indeterminate={indeterminate}
-          />
-        );
-      },
-      dataIndex: "key",
-      width: 40,
-      render: (text, item) => {
-        return (
-          <Space>
-            <Checkbox
-              onChange={(e) => selection.onRowSelectionChange(e, item)}
-              checked={selection.selected[Number(item.key)] !== undefined}
-            />
-            <SampleIcons sample={item} />
-          </Space>
-        );
-      },
-    },
+    // {
+    //   title: () => {
+    //     const indeterminate =
+    //       selection.selectedCount < selection.total &&
+    //       selection.selectedCount > 0;
+    //     return (
+    //       <Checkbox
+    //         className="t-select-all"
+    //         onChange={selection.updateSelectAll}
+    //         checked={selection.selectedCount > 0}
+    //         indeterminate={indeterminate}
+    //       />
+    //     );
+    //   },
+    //   dataIndex: "key",
+    //   width: 40,
+    //   render: (text, item) => {
+    //     return (
+    //       <Space>
+    //         <Checkbox
+    //           onChange={(e) => selection.onRowSelectionChange(e, item)}
+    //           checked={selection.selected[Number(item.key)] !== undefined}
+    //         />
+    //         <SampleIcons sample={item} />
+    //       </Space>
+    //     );
+    //   },
+    // },
     {
       title: i18n("SamplesTable.Column.sampleName"),
       className: "t-td-name",
@@ -90,7 +101,7 @@ export default function SamplesTable(): JSX.Element {
           </Button>
         </SampleDetailViewer>
       ),
-      ...api.getColumnSearchProps(
+      ...getColumnSearchProps(
         ["sample", "sampleName"],
         "t-name-select",
         i18n("Filter.sampleName.placeholder")
@@ -115,7 +126,7 @@ export default function SamplesTable(): JSX.Element {
       className: "t-td-organism",
       dataIndex: ["sample", "organism"],
       sorter: true,
-      ...api.getColumnSearchProps(["sample", "organism"], "t-organism-select"),
+      ...getColumnSearchProps(["sample", "organism"], "t-organism-select"),
     },
     {
       title: i18n("SamplesTable.Column.project"),
@@ -132,7 +143,7 @@ export default function SamplesTable(): JSX.Element {
       title: i18n("SamplesTable.Column.collectedBy"),
       dataIndex: ["sample", "collectedBy"],
       sorter: true,
-      ...api.getColumnSearchProps(["sample", "collectedBy"]),
+      ...getColumnSearchProps(["sample", "collectedBy"]),
     },
     {
       title: i18n("SamplesTable.Column.created"),
@@ -143,7 +154,7 @@ export default function SamplesTable(): JSX.Element {
       render: (createdDate) => {
         return formatInternationalizedDateTime(createdDate);
       },
-      ...api.getDateColumnSearchProps("t-created-filter"),
+      // ...api.getDateColumnSearchProps("t-created-filter"),
     },
     {
       title: i18n("SamplesTable.Column.modified"),
@@ -155,7 +166,7 @@ export default function SamplesTable(): JSX.Element {
       render: (modifiedDate) => {
         return formatInternationalizedDateTime(modifiedDate);
       },
-      ...api.getDateColumnSearchProps("t-modified-filter"),
+      // ...api.getDateColumnSearchProps("t-modified-filter"),
     },
   ];
 
@@ -163,7 +174,7 @@ export default function SamplesTable(): JSX.Element {
     <Table
       dataSource={data?.content}
       columns={columns}
-      pagination={pagination}
+      pagination={data?.total ? getPaginationOptions(data.total) : undefined}
       onChange={handleTableChange}
     />
   );
