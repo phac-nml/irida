@@ -1,7 +1,7 @@
 
 # Changelog
 
-## [22.09.5] - Unreleased
+## [22.09.5] - 2022/12/14
 * [Developer/UI]: Fixed bug preventing a manager of a user group from adding new members when this manager is a collaborator on one of these users projects. Also, fixed issue with a user group member added with an owner role for a group was set with a member role. See [PR 1431](https://github.com/phac-nml/irida/pull/1431)
 * [Developer/UI]: Updated synchronize new remote project page to display http errors when setting the url manually and an error is encountered. See [PR 1433](https://github.com/phac-nml/irida/pull/1433)
 * [Developer]: Added liquibase migration for renamed NCBI Instrument Models.  See [PR 1436](https://github.com/phac-nml/irida/pull/1436)
@@ -153,6 +153,7 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
+[22.09.5]: https://github.com/phac-nml/irida/compare/22.09.4...22.09.5
 [22.09.4]: https://github.com/phac-nml/irida/compare/22.09.3...22.09.4
 [22.09.3]: https://github.com/phac-nml/irida/compare/22.09.2...22.09.3
 [22.09.2]: https://github.com/phac-nml/irida/compare/22.09.1...22.09.2
