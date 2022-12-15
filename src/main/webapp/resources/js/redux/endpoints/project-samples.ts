@@ -4,7 +4,12 @@
 
 import { api } from "./api";
 import { TableOptions } from "../../types/ant-design";
-import { Project, Sample, TableResponse } from "../../types/irida";
+import {
+  Project,
+  Sample,
+  SelectedSample,
+  TableResponse,
+} from "../../types/irida";
 
 export type ProjectSample = {
   key: string;
@@ -33,7 +38,20 @@ export const projectSamplesApi = api.injectEndpoints({
         body,
       }),
     }),
+    fetchMinimalSamplesForFilteredProject: build.query<
+      Array<SelectedSample>,
+      FetchPagedSamplesParams
+    >({
+      query: ({ projectId, body }) => ({
+        url: `/projects/${projectId}/samples/id`,
+        method: `POST`,
+        body,
+      }),
+    }),
   }),
 });
 
-export const { useFetchPagedSamplesQuery } = projectSamplesApi;
+export const {
+  useFetchPagedSamplesQuery,
+  useFetchMinimalSamplesForFilteredProjectQuery,
+} = projectSamplesApi;

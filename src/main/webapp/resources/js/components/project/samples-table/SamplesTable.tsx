@@ -4,6 +4,7 @@ import type { TableColumnProps, TableProps } from "antd/es";
 import { SampleDetailViewer } from "../../samples/SampleDetailViewer";
 import {
   ProjectSample,
+  useFetchMinimalSamplesForFilteredProjectQuery,
   useFetchPagedSamplesQuery,
 } from "../../../redux/endpoints/project-samples";
 import SampleQuality from "./components/SampleQuality";
@@ -16,6 +17,7 @@ import { useProjectSamples } from "./useProjectSamplesContext";
 import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 import getColumnSearchProps from "./components/column-search";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import { getMinimalSampleDetailsForFilteredProject } from "../../../apis/projects/samples";
 
 /**
  * React component to render the project samples table
@@ -23,6 +25,8 @@ import { CheckboxChangeEvent } from "antd/lib/checkbox";
  */
 export default function SamplesTable(): JSX.Element {
   const { state, dispatch } = useProjectSamples();
+  const [fetchMinimalSamplesForFilteredProject] =
+    useFetchMinimalSamplesForFilteredProjectQuery();
 
   const { projectId } = useParams();
 
@@ -56,11 +60,23 @@ export default function SamplesTable(): JSX.Element {
       },
     });
 
-  const updateSelectAll = (e: CheckboxChangeEvent) =>
+  const updateSelectAll = (e: CheckboxChangeEvent) => {
+    if (e.target.checked) {
+      // Need to get all the associated projects
+      getMinimalSampleDetailsForFilteredProject(state.options)
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    }
+
     dispatch({
       type: "selectAllChange",
       payload: { selected: e.target.checked },
     });
+  };
 
   const columns: TableColumnProps<ProjectSample>[] = [
     {

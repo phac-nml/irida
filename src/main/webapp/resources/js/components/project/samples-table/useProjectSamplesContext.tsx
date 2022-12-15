@@ -10,7 +10,6 @@ import { formatSearch, formatSort } from "../../../utilities/table-utilities";
 import isEqual from "lodash/isEqual";
 import { SelectedSample } from "../../../types/irida";
 import { TableSample } from "../../../pages/projects/redux/samplesSlice";
-import { getMinimalSampleDetailsForFilteredProject } from "../../../apis/projects/samples";
 
 const INITIAL_TABLE_OPTIONS: TableOptions = {
   filters: {},
@@ -129,19 +128,6 @@ function selectAllChange(state: State, selected: boolean): State {
   const selection = { ...state.selection };
   if (selected) {
     // TODO: (Josh - 12/15/22) Figure this out
-    getMinimalSampleDetailsForFilteredProject(state.options)
-      .then((data) => {
-        return {
-          ...state,
-          selection: {
-            selected: data,
-            count: data.length,
-          },
-        };
-      })
-      .catch(() => {
-        return state;
-      });
   } else {
     selection.selected = {};
     selection.count = 0;
