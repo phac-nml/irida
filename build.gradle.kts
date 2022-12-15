@@ -25,8 +25,8 @@ java {
 }
 
 tasks.wrapper {
-    gradleVersion = "7.4.2"
-    distributionSha256Sum = "29e49b10984e585d8118b7d0bc452f944e386458df27371b49b4ac1dec4b7fda"
+    gradleVersion = "7.6"
+    distributionSha256Sum = "7ba68c54029790ab444b39d7e293d3236b2632631fb5f2e012bb28b4ff669e4b"
 }
 
 publishing {
