@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import ca.corefacility.bioinformatics.irida.model.user.UserType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,6 +153,7 @@ public class UIUsersService {
 
 			PasswordReset passwordReset = null;
 			try {
+				user.setUserType(UserType.TYPE_LOCAL);
 				user = userService.create(user);
 
 				// Generate a password reset

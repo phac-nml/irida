@@ -86,6 +86,11 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	@Column(name = "system_role")
 	private Role systemRole;
 
+	@NotNull(message = "{user.userType.nonnull}")
+	@Enumerated(EnumType.STRING)
+	@Column(name = "user_type")
+	private UserType userType;
+
 	@CreatedDate
 	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
@@ -137,7 +142,8 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	 * @param lastName    the last name of this {@link User}.
 	 * @param phoneNumber the phone number of this {@link User}.
 	 */
-	public User(String username, String email, String password, String firstName, String lastName, String phoneNumber) {
+	public User(String username, String email, String password, String firstName, String lastName, String phoneNumber,
+				UserType userType) {
 		this();
 		this.username = username;
 		this.email = email;
@@ -145,6 +151,7 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.phoneNumber = phoneNumber;
+		this.userType = userType;
 	}
 
 	/**
@@ -159,8 +166,8 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	 * @param phoneNumber the phone number of this {@link User}.
 	 */
 	public User(Long id, String username, String email, String password, String firstName, String lastName,
-			String phoneNumber) {
-		this(username, email, password, firstName, lastName, phoneNumber);
+			String phoneNumber, UserType userType) {
+		this(username, email, password, firstName, lastName, phoneNumber, userType);
 		this.id = id;
 	}
 
@@ -330,6 +337,8 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 		return systemRole;
 	}
 
+	public UserType getUserType() { return userType; }
+
 	public void setCredentialsNonExpired(boolean credentialsNonExpired) {
 		this.credentialsNonExpired = credentialsNonExpired;
 	}
@@ -348,6 +357,10 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 
 	public void setSystemRole(Role systemRole) {
 		this.systemRole = systemRole;
+	}
+
+	public void setUserType(UserType userType) {
+		this.userType = userType;
 	}
 
 	@JsonIgnore

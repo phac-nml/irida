@@ -4,6 +4,7 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 
 import ca.corefacility.bioinformatics.irida.security.IridaPostAuthenicationChecker;
 import ca.corefacility.bioinformatics.irida.security.PasswordExpiryChecker;
+import ca.corefacility.bioinformatics.irida.service.impl.user.UserDetailsServiceLocalAuthImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class IridaAuthenticationSecurityConfig {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserDetailsServiceLocalAuthImpl userDetailsServiceLocalAuth;
 
     @Autowired(required = false)
     private IridaUserDetailsContextMapper iridaUserDetailsContextMapper;
@@ -73,7 +77,8 @@ public class IridaAuthenticationSecurityConfig {
     @Bean("defaultAuthenticationProvider")
     public AuthenticationProvider DaoAuthenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userRepository);
+        // setup with new service provider
+        authenticationProvider.setUserDetailsService(userDetailsServiceLocalAuth);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
 
 		/*

@@ -4,10 +4,10 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaLdapAuthenticationException;
-//import ca.corefacility.bioinformatics.irida.model.user.DomainUser;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
-import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.model.user.UserType;
+import ca.corefacility.bioinformatics.irida.service.impl.user.UserDetailsServiceDomainAuthImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -36,7 +36,7 @@ import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 
 /**
- * UserDetailsContextMapper that manages relation between {@link UserRepository} and Ldap/adLdap services
+ * UserDetailsContextMapper that manages relation between {@link UserDetailsServiceDomainAuthImpl} and Ldap/adLdap services
  * Handles mapping for login, as well as first time login account creation
  */
 @Configuration
@@ -49,10 +49,7 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
      */
     private UserService userService;
 
-    /**
-     * Reference to {@link UserRepository}
-     */
-    private UserRepository userRepository;
+    private UserDetailsServiceDomainAuthImpl userDetailsServiceDomainAuth;
 
     /**
      * Reference to {@link MessageSource}
@@ -81,10 +78,10 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
     private boolean ldapUserRevision = false;
 
     @Autowired
-    public IridaUserDetailsContextMapper(UserService userService, UserRepository userRepository,
+    public IridaUserDetailsContextMapper(UserService userService, UserDetailsServiceDomainAuthImpl userDetailsServiceDomainAuth,
             MessageSource messageSource) {
         this.userService = userService;
-        this.userRepository = userRepository;
+        this.userDetailsServiceDomainAuth = userDetailsServiceDomainAuth;
         this.messageSource = messageSource;
     }
 
@@ -94,7 +91,7 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
     public UserDetails mapUserFromContext(DirContextOperations dirContextOperations, String username, Collection<? extends GrantedAuthority> collection) {
         try {
             // return the user if it exists
-            User u = userRepository.loadUserByUsername(username);
+            User u = (User) userDetailsServiceDomainAuth.loadUserByUsername(username);
             // update any fields that don't match current ldap fields
             return updateUserFromLdap(dirContextOperations, u);
         }
@@ -173,7 +170,7 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
 
         try {
             // return the newly created user
-            return userRepository.loadUserByUsername(username);
+            return (User) userDetailsServiceDomainAuth.loadUserByUsername(username);
         }
         catch(UsernameNotFoundException e) {
             String ldap_error3 = messageSource.getMessage(
@@ -199,16 +196,9 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
                 randomPassword,
                 map.get(iridaUserFieldFirstName),
                 map.get(iridaUserFieldLastName),
-                map.get(iridaUserFieldPhoneNumber)
+                map.get(iridaUserFieldPhoneNumber),
+                UserType.TYPE_DOMAIN
         );
-//        Map<String, String> map = getLdapFields(dirContextOperations);
-//        return new DomainUser(
-//                username,
-//                map.get(iridaUserFieldEmail),
-//                map.get(iridaUserFieldFirstName),
-//                map.get(iridaUserFieldLastName),
-//                map.get(iridaUserFieldPhoneNumber)
-//        );
     }
 
     /**
