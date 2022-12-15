@@ -5,7 +5,11 @@ import {
   SelectedSample,
   SingleEndSequenceFile,
 } from "../../types/irida";
-import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
+import {
+  getContextPath,
+  getProjectIdFromUrl,
+  setBaseUrl,
+} from "../../utilities/url-utilities";
 import { get, post } from "../requests";
 
 export interface SequencingFiles {
@@ -14,7 +18,7 @@ export interface SequencingFiles {
 }
 
 const PROJECT_ID = getProjectIdFromUrl();
-const URL = setBaseUrl(`/ajax/projects`);
+const URL = `${getContextPath()}/ajax/projects`;
 
 /**
  * Redux API for handling project samples queries.
@@ -140,7 +144,7 @@ export async function shareSamplesWithProject({
  * @param {object} options - current table filters
  * @returns {Promise<*>}
  */
-export async function getMinimalSampleDetailsForFilteredProject(
+export async function getMinimalSampleDetailsForFilteredProject<T>(
   options: TableOptions
 ): Promise<SelectedSample[]> {
   return post<SelectedSample[]>(`${URL}/${PROJECT_ID}/samples/ids`, options);
