@@ -38,6 +38,7 @@ import {
   hydrateStoredSamples,
   validateSample,
 } from "./ncbi-utilities";
+import { rest } from "lodash";
 
 export interface SampleRecord {
   key: string;
@@ -216,20 +217,19 @@ function CreateNcbiExport(): JSX.Element {
         releaseDate: moment.Moment;
         samples: {
           string: {
-            files: {
-              pairs?: number[];
-              singles?: number[];
-            };
+            pairs?: number[];
+            singles?: number[];
             bioSample: string;
-            libraryName: string;
-            libraryStrategy: string;
-            librarySource: string;
-            libraryConstructionProtocol: string;
-            instrumentModel: [string, string];
-            librarySelection: string;
+            libraryName: { value: string };
+            libraryStrategy: { vale: string };
+            librarySource: { value: string };
+            libraryConstructionProtocol: { value: string };
+            instrumentModel: { value: [string, string] };
+            librarySelection: { value: string };
           };
         };
       }) => {
+        console.log({ _samples });
         setCreateStatus(CreateStatus.PENDING);
         const request: NcbiSubmissionRequest = {
           projectId: Number(projectId),
@@ -239,19 +239,33 @@ function CreateNcbiExport(): JSX.Element {
           releaseDate: releaseDate.unix(),
           samples: Object.values(_samples).map(
             ({
-              files = { pairs: [], singles: [] },
+              pairs = [],
+              singles = [],
+              bioSample,
+              libraryName,
+              libraryStrategy,
+              librarySource,
+              libraryConstructionProtocol,
               instrumentModel,
-              ...rest
+              librarySelection,
             }): NcbiSubmissionBioSample => {
+              console.log({ pairs, singles, instrumentModel });
               return {
-                ...rest,
-                instrumentModel: instrumentModel[1],
-                singles: files.singles ? files.singles : [],
-                pairs: files.pairs ? files.pairs : [],
+                singles,
+                pairs,
+                bioSample,
+                libraryName: libraryName.value,
+                libraryStrategy: libraryStrategy.vale,
+                librarySource: librarySource.value,
+                libraryConstructionProtocol: libraryConstructionProtocol.value,
+                instrumentModel: instrumentModel.value[1],
+                librarySelection: librarySelection.value,
               };
             }
           ),
         };
+
+        console.log({ request });
 
         submitNcbiSubmissionRequest(request)
           .then(() => {
