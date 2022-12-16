@@ -18,7 +18,7 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 public class RemoteAPIsPage extends AbstractPage {
 	private static final String RELATIVE_URL = "remote_api";
 
-	@FindBy(css = ".t-remoteapi-table table")
+	@FindBy(className = "t-remoteapi-table")
 	private WebElement table;
 
 	@FindBy(className = "t-add-remote-api-btn")
@@ -120,7 +120,10 @@ public class RemoteAPIsPage extends AbstractPage {
 		for (WebElement row : rows) {
 			WebElement nameCell = row.findElement(By.className("t-api-name"));
 			if (nameCell != null && nameCell.getText().equals(clientName)) {
-				row.findElement(By.className("t-remote-status-connect")).click();
+				WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
+				WebElement connectBtn = row.findElement(By.className("t-remote-status-connect"));
+				wait.until(ExpectedConditions.elementToBeClickable(connectBtn));
+				connectBtn.click();
 				waitForTime(400);
 				clickAuthorize();
 			}

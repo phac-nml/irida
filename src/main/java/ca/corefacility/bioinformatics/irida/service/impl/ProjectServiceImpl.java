@@ -278,7 +278,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		Collection<UserGroupJoin> userGroupJoins = userGroupJoinRepository.findUsersInGroup(userGroup);
 		for (UserGroupJoin userGroupJoin : userGroupJoins) {
 			User user = userGroupJoin.getSubject();
-			projectSubscriptionService.removeProjectSubscriptionForProjectAndUser(project, user);
+			projectSubscriptionService.removeProjectSubscriptionsForUserInUserGroup(project, user, userGroup);
 		}
 		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
 		if (!allowRoleChange(project, j.getProjectRole())) {
@@ -773,7 +773,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		Collection<UserGroupJoin> userGroupJoins = userGroupJoinRepository.findUsersInGroup(userGroup);
 		for (UserGroupJoin userGroupJoin : userGroupJoins) {
 			User user = userGroupJoin.getSubject();
-			projectSubscriptionService.addProjectSubscriptionForProjectAndUser(project, user);
+			projectSubscriptionService.addProjectSubscriptionsForUserInUserGroup(project, user, userGroup);
 		}
 		return ugpjRepository.save(new UserGroupProjectJoin(project, userGroup, role, metadataRole));
 
