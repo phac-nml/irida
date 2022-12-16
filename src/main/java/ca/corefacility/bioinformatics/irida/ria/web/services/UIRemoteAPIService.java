@@ -3,9 +3,11 @@ package ca.corefacility.bioinformatics.irida.ria.web.services;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthException;
@@ -14,10 +16,10 @@ import ca.corefacility.bioinformatics.irida.model.RemoteAPIToken;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectSyncFrequency;
 import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxCreateItemSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.remote.CreateRemoteProjectRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.remote.RemoteAPIModel;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.remote.RemoteProjectModel;
+
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPIService;
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
@@ -33,13 +35,16 @@ public class UIRemoteAPIService {
     private final ProjectRemoteService projectRemoteService;
     private final ProjectService projectService;
 
+    private MessageSource messageSource;
+
     @Autowired
     public UIRemoteAPIService(RemoteAPIService remoteAPIService, RemoteAPITokenService tokenService,
-            ProjectRemoteService projectRemoteService, ProjectService projectService) {
+            ProjectRemoteService projectRemoteService, ProjectService projectService, MessageSource messageSource) {
         this.remoteAPIService = remoteAPIService;
         this.tokenService = tokenService;
         this.projectRemoteService = projectRemoteService;
         this.projectService = projectService;
+        this.messageSource = messageSource;
     }
 
     /**
@@ -114,19 +119,34 @@ public class UIRemoteAPIService {
      * @param request Details about the remote project to synchronize
      * @return the result of adding the new remote project
      */
-    public AjaxCreateItemSuccessResponse createSynchronizedProject(CreateRemoteProjectRequest request) {
-        Project project = projectRemoteService.read(request.getUrl());
-        project.setId(null);
-        if (request.getFrequency()
-                .equals(ProjectSyncFrequency.NEVER)) {
-            project.getRemoteStatus()
-                    .setSyncStatus(RemoteStatus.SyncStatus.UNSYNCHRONIZED);
-        } else {
-            project.getRemoteStatus()
-                    .setSyncStatus(RemoteStatus.SyncStatus.MARKED);
+    public Long createSynchronizedProject(CreateRemoteProjectRequest request, Locale locale) {
+        try {
+            Project project = projectRemoteService.read(request.getUrl());
+            project.setId(null);
+            if (request.getFrequency().equals(ProjectSyncFrequency.NEVER)) {
+                project.getRemoteStatus().setSyncStatus(RemoteStatus.SyncStatus.UNSYNCHRONIZED);
+            } else {
+                project.getRemoteStatus().setSyncStatus(RemoteStatus.SyncStatus.MARKED);
+            }
+            project.setSyncFrequency(request.getFrequency());
+            project = projectService.create(project);
+            return project.getId();
+        } catch(IridaOAuthException e) {
+            String errorMessage;
+            switch (e.getHttpStatusCode()) {
+                case UNAUTHORIZED:
+                    errorMessage = messageSource.getMessage("IridaOAuthErrorHandler.unauthorized", new Object[] {}, locale);
+                    throw new IridaOAuthException(errorMessage, e.getHttpStatusCode(), remoteAPIService.getRemoteAPIForUrl(request.getUrl()));
+                case FORBIDDEN:
+                    errorMessage = messageSource.getMessage("IridaOAuthErrorHandler.forbidden", new Object[] {}, locale);
+                    throw new IridaOAuthException(errorMessage, e.getHttpStatusCode(), remoteAPIService.getRemoteAPIForUrl(request.getUrl()));
+                case NOT_FOUND:
+                    errorMessage = messageSource.getMessage("IridaOAuthErrorHandler.notFound", new Object[] {}, locale);
+                    throw new IridaOAuthException(errorMessage, e.getHttpStatusCode(), remoteAPIService.getRemoteAPIForUrl(request.getUrl()));
+                default:
+                    errorMessage = e.getMessage();
+                    throw new IridaOAuthException(errorMessage, e.getHttpStatusCode(), remoteAPIService.getRemoteAPIForUrl(request.getUrl()));
+            }
         }
-        project.setSyncFrequency(request.getFrequency());
-        project = projectService.create(project);
-        return new AjaxCreateItemSuccessResponse(project.getId());
     }
 }
