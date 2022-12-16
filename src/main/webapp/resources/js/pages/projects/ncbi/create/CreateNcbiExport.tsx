@@ -38,7 +38,6 @@ import {
   hydrateStoredSamples,
   validateSample,
 } from "./ncbi-utilities";
-import { rest } from "lodash";
 
 export interface SampleRecord {
   key: string;
@@ -86,12 +85,12 @@ export interface UpdateDefaultValues {
   (field: DefaultModifiableField, value: string | string[]): void;
 }
 
-enum CreateStatus {
-  REJECTED,
-  RESOLVED,
-  PENDING,
-  IDLE,
-}
+const CreateStatus = {
+  REJECTED: 0,
+  RESOLVED: 1,
+  PENDING: 2,
+  IDLE: 3,
+} as const;
 
 /**
  * React router loader
@@ -134,7 +133,7 @@ function CreateNcbiExport(): JSX.Element {
   );
   const [formSamples, setFormSamples] = React.useState<FormSamples>({});
   const [invalid, setInvalid] = React.useState<SampleRecord[]>([]);
-  const [createStatus, setCreateStatus] = React.useState<CreateStatus>(
+  const [createStatus, setCreateStatus] = React.useState<number>(
     CreateStatus.IDLE
   );
 
@@ -229,7 +228,6 @@ function CreateNcbiExport(): JSX.Element {
           };
         };
       }) => {
-        console.log({ _samples });
         setCreateStatus(CreateStatus.PENDING);
         const request: NcbiSubmissionRequest = {
           projectId: Number(projectId),
@@ -249,7 +247,6 @@ function CreateNcbiExport(): JSX.Element {
               instrumentModel,
               librarySelection,
             }): NcbiSubmissionBioSample => {
-              console.log({ pairs, singles, instrumentModel });
               return {
                 singles,
                 pairs,
@@ -264,8 +261,6 @@ function CreateNcbiExport(): JSX.Element {
             }
           ),
         };
-
-        console.log({ request });
 
         submitNcbiSubmissionRequest(request)
           .then(() => {

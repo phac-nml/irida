@@ -133,6 +133,11 @@ export default function CreateNcbiSampleDetails({
     value: file.id,
   }));
 
+  const onChangeFiles = async (type: string) => {
+    form.validateFields([["samples", sample.name, type]]);
+    onChange();
+  };
+
   return (
     <Row gutter={[16, 16]}>
       <Col md={12} xs={24}>
@@ -249,11 +254,27 @@ export default function CreateNcbiSampleDetails({
             label={i18n("CreateNcbiExport.singles")}
             valuePropName="checked"
             className="t-samples-singles"
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (
+                    getFieldValue(["samples", sample.name, "pairs"]).length >
+                      0 ||
+                    value.length > 0
+                  ) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Must select at least one file of any type.")
+                  );
+                },
+              }),
+            ]}
           >
             <Checkbox.Group
               style={{ width: `100%` }}
               options={singles}
-              onChange={onChange}
+              onChange={() => onChangeFiles("pairs")}
             />
           </Form.Item>
         </Col>
@@ -264,11 +285,27 @@ export default function CreateNcbiSampleDetails({
             name={["samples", sample.name, "pairs"]}
             label={i18n("CreateNcbiExport.pairs")}
             valuePropName="checked"
+            rules={[
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (
+                    getFieldValue(["samples", sample.name, "singles"]).length >
+                      0 ||
+                    value.length > 0
+                  ) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Must select at least one file of any type.")
+                  );
+                },
+              }),
+            ]}
           >
             <Checkbox.Group
               style={{ width: `100%` }}
               options={pairs}
-              onChange={onChange}
+              onChange={() => onChangeFiles("singles")}
             />
           </Form.Item>
         </Col>
