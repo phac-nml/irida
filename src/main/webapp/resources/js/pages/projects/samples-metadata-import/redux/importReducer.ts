@@ -95,6 +95,8 @@ export const saveMetadata = createAsyncThunk<
           label: header.name,
           restriction: header.targetRestriction,
         })),
+    }).catch((error) => {
+      throw new Error(error.response.data.error);
     });
 
     const selectedSampleList = metadata.filter((metadataItem) => {

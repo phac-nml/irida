@@ -4,6 +4,7 @@ import {
   Alert,
   Button,
   List,
+  notification,
   Popover,
   Progress,
   Table,
@@ -207,19 +208,26 @@ export function SampleMetadataImportReview(): JSX.Element {
       .map((metadataItem) => metadataItem.rowKey);
 
     if (projectId) {
-      const response = await dispatch(
-        saveMetadata({ projectId, selectedMetadataKeys })
-      ).unwrap();
-
-      if (
-        Object.entries(response.metadataSaveDetails).filter(
-          ([, metadataSaveDetailsItem]) => metadataSaveDetailsItem.error
-        ).length === 0
-      ) {
-        navigate(`/${projectId}/sample-metadata/upload/complete`);
-      } else {
-        setLoading(false);
-      }
+      await dispatch(saveMetadata({ projectId, selectedMetadataKeys }))
+        .unwrap()
+        .then(({ metadataSaveDetails }) => {
+          if (
+            Object.entries(metadataSaveDetails).filter(
+              ([, metadataSaveDetailsItem]) => metadataSaveDetailsItem.error
+            ).length === 0
+          ) {
+            navigate(`/${projectId}/sample-metadata/upload/complete`);
+          } else {
+            setLoading(false);
+          }
+        })
+        .catch((payload) => {
+          setLoading(false);
+          notification.error({
+            message: payload.message,
+            className: "t-metadata-uploader-review-error",
+          });
+        });
     }
   };
 

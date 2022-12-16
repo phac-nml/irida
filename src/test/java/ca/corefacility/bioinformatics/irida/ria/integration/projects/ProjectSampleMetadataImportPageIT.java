@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.TimeoutException;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
@@ -19,7 +18,8 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSampleMetadataView.xml")
 public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDriver {
@@ -108,9 +108,8 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		deleteProjectPage.deleteProject();
 
 		//manager tries to complete metadata import
-		assertThrows(TimeoutException.class, () -> {
-			page.goToCompletePage();
-		});
+		page.clickUploadButton();
+		assertTrue(page.isErrorNotificationDisplayed(), "Error notification did not display");
 	}
 
 	@Test
@@ -127,9 +126,8 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		projectSamplesPage.removeSamples();
 
 		//manager tries to complete metadata import
-		assertThrows(TimeoutException.class, () -> {
-			page.goToCompletePage();
-		});
+		page.clickUploadButton();
+		assertTrue(page.hasTableErrors(), "Table errors did not display");
 	}
 
 	@Test
@@ -147,9 +145,8 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		projectSamplesPage.clickOk();
 
 		//manager tries to complete metadata import
-		assertThrows(TimeoutException.class, () -> {
-			page.goToCompletePage();
-		});
+		page.clickUploadButton();
+		assertTrue(page.hasTableErrors(), "Table errors did not display");
 	}
 
 	@Test
@@ -165,8 +162,7 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		projectMembersPage.removeManager(0);
 
 		//manager tries to complete metadata import
-		assertThrows(TimeoutException.class, () -> {
-			page.goToCompletePage();
-		});
+		page.clickUploadButton();
+		assertTrue(page.isErrorNotificationDisplayed(), "Error notification did not display");
 	}
 }
