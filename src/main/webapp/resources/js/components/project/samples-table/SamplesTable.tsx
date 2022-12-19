@@ -6,6 +6,7 @@ import {
   ProjectSample,
   useFetchMinimalSamplesForFilteredProjectQuery,
   useFetchPagedSamplesQuery,
+  useLazyFetchMinimalSamplesForFilteredProjectQuery,
 } from "../../../redux/endpoints/project-samples";
 import SampleQuality from "./components/SampleQuality";
 import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
@@ -25,8 +26,6 @@ import { getMinimalSampleDetailsForFilteredProject } from "../../../apis/project
  */
 export default function SamplesTable(): JSX.Element {
   const { state, dispatch } = useProjectSamples();
-  const [fetchMinimalSamplesForFilteredProject] =
-    useFetchMinimalSamplesForFilteredProjectQuery();
 
   const { projectId } = useParams();
 
@@ -39,6 +38,8 @@ export default function SamplesTable(): JSX.Element {
       refetchOnMountOrArgChange: true,
     }
   );
+
+  const [trigger] = useLazyFetchMinimalSamplesForFilteredProjectQuery();
 
   const { data: associatedProjects } = useGetAssociatedProjectsQuery(
     Number(projectId)
@@ -60,22 +61,19 @@ export default function SamplesTable(): JSX.Element {
       },
     });
 
-  const updateSelectAll = (e: CheckboxChangeEvent) => {
+  const updateSelectAll = async (e: CheckboxChangeEvent) => {
     if (e.target.checked) {
       // Need to get all the associated projects
-      getMinimalSampleDetailsForFilteredProject(state.options)
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((e) => {
-          console.error(e);
-        });
+      const { data } = await trigger({
+        projectId: Number(projectId),
+        body: state.options,
+      });
+      if (data) {
+        dispatch({ type: "selectAllSamples", payload: { samples: data } });
+      }
+    } else {
+      dispatch({ type: "deselectAllSamples" });
     }
-
-    dispatch({
-      type: "selectAllChange",
-      payload: { selected: e.target.checked },
-    });
   };
 
   const columns: TableColumnProps<ProjectSample>[] = [

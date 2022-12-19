@@ -32,13 +32,18 @@ type RowSelectionChangePayload = {
   item: ProjectSample;
 };
 
+type SelectAllSamplesPayload = {
+  samples: Array<SelectedSample>;
+};
+
 type Action =
   | {
       type: `tableUpdate`;
       payload: TableUpdatePayload;
     }
   | { type: `rowSelectionChange`; payload: RowSelectionChangePayload }
-  | { type: `selectAllChange`; payload: { selected: boolean } };
+  | { type: `selectAllSamples`; payload: SelectAllSamplesPayload }
+  | { type: `deselectAllSamples` };
 
 type Dispatch = (action: Action) => void;
 type State = {
@@ -92,7 +97,12 @@ function formatTableOptions(
 
   if (
     isEqual(search, state.options.search) &&
-    isEqual(tableFilters, state.options.filters)
+    isEqual(
+      Object.fromEntries(
+        Object.entries(tableFilters).filter(([, v]) => v != null)
+      ),
+      state.options.filters
+    )
   ) {
     // Just a pagination change
     return {
@@ -124,15 +134,34 @@ function rowSelectionChange(
   return { ...state, selection };
 }
 
-function selectAllChange(state: State, selected: boolean): State {
-  const selection = { ...state.selection };
-  if (selected) {
-    // TODO: (Josh - 12/15/22) Figure this out
-  } else {
-    selection.selected = {};
-    selection.count = 0;
-  }
-  return { ...state, selection };
+/**
+ * Select all samples in a project, including visible associated projects.
+ * @param state - current state of the page
+ * @param samples - minimal representation of samples
+ */
+function selectAllSamples(
+  state: State,
+  { samples }: SelectAllSamplesPayload
+): State {
+  const selected: Record<string, SelectedSample> = samples.reduce(
+    (previousValue: Record<string, SelectedSample>, currentValue) => {
+      previousValue[currentValue.key] = currentValue;
+      return previousValue;
+    },
+    {}
+  );
+
+  return {
+    ...state,
+    selection: {
+      selected,
+      count: Object.keys(selected).length,
+    },
+  };
+}
+
+function deselectAllSamples(state: State): State {
+  return { ...state, selection: { count: 0, selected: {} } };
 }
 
 function reducer(state: State, action: Action): State {
@@ -141,8 +170,10 @@ function reducer(state: State, action: Action): State {
       return formatTableOptions(state, action.payload);
     case "rowSelectionChange":
       return rowSelectionChange(state, action.payload);
-    case "selectAllChange":
-      return selectAllChange(state, action.payload.selected);
+    case "selectAllSamples":
+      return selectAllSamples(state, action.payload);
+    case "deselectAllSamples":
+      return deselectAllSamples(state);
     default: {
       return state;
     }

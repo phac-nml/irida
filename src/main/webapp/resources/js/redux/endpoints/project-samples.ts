@@ -43,7 +43,7 @@ export const projectSamplesApi = api.injectEndpoints({
       FetchPagedSamplesParams
     >({
       query: ({ projectId, body }) => ({
-        url: `/projects/${projectId}/samples/id`,
+        url: `/projects/${projectId}/samples/ids`,
         method: `POST`,
         body,
       }),
@@ -53,5 +53,5 @@ export const projectSamplesApi = api.injectEndpoints({
 
 export const {
   useFetchPagedSamplesQuery,
-  useFetchMinimalSamplesForFilteredProjectQuery,
+  useLazyFetchMinimalSamplesForFilteredProjectQuery,
 } = projectSamplesApi;
