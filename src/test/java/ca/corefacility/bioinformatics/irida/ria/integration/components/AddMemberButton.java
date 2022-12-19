@@ -43,7 +43,19 @@ public class AddMemberButton {
 		wait.until(ExpectedConditions.visibilityOf(newMemberList.get(0)));
 		newMemberList.get(0).click();
 		if (role.equals("PROJECT_OWNER")) {
-			WebElement element = driver.findElements(By.cssSelector("#projectRole > label")).get(1);
+			WebElement element = driver.findElements(By.className("t-project-role-owner")).get(0);
+			wait.until(ExpectedConditions.elementToBeClickable(element));
+			element.click();
+		} else if (role.equals("PROJECT_USER")) {
+			WebElement element = driver.findElements(By.className("t-project-role-collaborator")).get(0);
+			wait.until(ExpectedConditions.elementToBeClickable(element));
+			element.click();
+		} else if (role.equals("GROUP_OWNER")) {
+			WebElement element = driver.findElements(By.className("t-group-role-owner")).get(0);
+			wait.until(ExpectedConditions.elementToBeClickable(element));
+			element.click();
+		} else if (role.equals("GROUP_MEMBER")) {
+			WebElement element = driver.findElements(By.className("t-group-role-member")).get(0);
 			wait.until(ExpectedConditions.elementToBeClickable(element));
 			element.click();
 		}
