@@ -198,4 +198,9 @@ public class NcbiExportPage extends AbstractPage {
 	public boolean isSuccessAlertDisplayed() {
 		return driver.findElements(By.cssSelector(".ant-alert.ant-alert-success")).size() == 1;
 	}
+
+	public boolean isUserRedirectedToProjectSamplesPage(int projectId) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+		return wait.until(ExpectedConditions.urlMatches("/projects/" + projectId));
+	}
 }
