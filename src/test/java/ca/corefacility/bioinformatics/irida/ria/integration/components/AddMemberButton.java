@@ -33,21 +33,6 @@ public class AddMemberButton {
 		return PageFactory.initElements(driver, AddMemberButton.class);
 	}
 
-	public void addMember(WebDriver driver, String name) {
-		wait.until(ExpectedConditions.elementToBeClickable(addMemberBtn));
-		addMemberBtn.click();
-		wait.until(ExpectedConditions.visibilityOf(addMemberModal));
-		AbstractPage.waitForTime(100);
-		WebElement input = driver.switchTo().activeElement();
-		input.sendKeys(name);
-		wait.until(ExpectedConditions.visibilityOf(newMemberList.get(0)));
-		newMemberList.get(0).click();
-		WebElement modalOkBtn = addMemberModal.findElement(By.cssSelector(".ant-btn.ant-btn-primary"));
-		wait.until(ExpectedConditions.elementToBeClickable(modalOkBtn));
-		modalOkBtn.click();
-		wait.until(ExpectedConditions.invisibilityOf(addMemberModal));
-	}
-
 	public void addMember(WebDriver driver, String name, String role) {
 		wait.until(ExpectedConditions.elementToBeClickable(addMemberBtn));
 		addMemberBtn.click();
@@ -57,12 +42,8 @@ public class AddMemberButton {
 		input.sendKeys(name);
 		wait.until(ExpectedConditions.visibilityOf(newMemberList.get(0)));
 		newMemberList.get(0).click();
-		if(role.equals("GROUP_OWNER")) {
-			WebElement element = driver.findElements(By.className("t-group-role-owner")).get(0);
-			wait.until(ExpectedConditions.elementToBeClickable(element));
-			element.click();
-		} else {
-			WebElement element = driver.findElements(By.className("t-group-role-member")).get(0);
+		if (role.equals("PROJECT_OWNER")) {
+			WebElement element = driver.findElements(By.cssSelector("#projectRole > label")).get(1);
 			wait.until(ExpectedConditions.elementToBeClickable(element));
 			element.click();
 		}

@@ -9,17 +9,11 @@ import {
 import { RemoveTableItemButton } from "../../../components/Buttons";
 import { GroupRole } from "../../../components/roles/GroupRole";
 import { SPACE_XS } from "../../../styles/spacing";
-import {
-  formatInternationalizedDateTime
-} from "../../../utilities/date-utilities";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
 import { stringSorter } from "../../../utilities/table-utilities";
 import { setBaseUrl } from "../../../utilities/url-utilities";
-import {
-  AddUserToGroupButton
-} from "../../admin/components/user-groups/AddUserToGroupButton";
-import {
-  getPaginationOptions
-} from "../../../utilities/antdesign-table-utilities";
+import { AddUserToGroupButton } from "../../admin/components/user-groups/AddUserToGroupButton";
+import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
 
 /**
  * Custom sorter for the name column since this is NOT paged server side.
@@ -56,6 +50,7 @@ export default function UserGroupMembersTable({
           </Button>
         );
       },
+      defaultSortOrder: "ascend",
     },
     {
       title: i18n("UserGroupMembersTable.role"),
