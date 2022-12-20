@@ -77,6 +77,9 @@ export default function SamplesTable(): JSX.Element {
     }
   };
 
+  const clearFilter = (filter: string) => () =>
+    dispatch({ type: `clearFilter`, payload: { filter } });
+
   const columns: TableColumnProps<ProjectSample>[] = [
     {
       title: () => {

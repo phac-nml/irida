@@ -8,6 +8,7 @@ import type {
   HandleClearSearchFn,
   HandleSearchFn,
 } from "../hooks/useSamplesTableState";
+import moment from "moment";
 
 const { RangePicker } = DatePicker;
 
@@ -18,9 +19,7 @@ export type DateColumnSearchFn = (
 ) => ColumnSearchReturn;
 
 export default function getDateColumnSearchProps(
-  filterName: string,
-  handleSearch: HandleSearchFn,
-  handleClearSearch: HandleClearSearchFn
+  filterName: string
 ): ColumnSearchReturn {
   return {
     filterDropdown: ({
@@ -30,13 +29,15 @@ export default function getDateColumnSearchProps(
       clearFilters,
     }: FilterDropdownProps) => {
       const onChange: RangePickerProps["onChange"] = (dates) => {
-        if (dates !== null) {
-          setSelectedKeys([[dates[0].startOf("day"), dates[1].endOf("day")]]);
-          confirm({ closeDropdown: false });
-        } else {
-          handleClearSearch(confirm, clearFilters);
-        }
+        console.log([dates[0].startOf("day"), dates[1].endOf("day")]);
+        setSelectedKeys([[dates[0].startOf("day"), dates[1].endOf("day")]]);
+        confirm({ closeDropdown: false });
       };
+
+      function onClear() {
+        if (typeof clearFilters === `function`) clearFilters();
+        confirm({ closeDropdown: true });
+      }
 
       return (
         <div style={{ padding: 8 }} className={filterName}>
@@ -46,7 +47,7 @@ export default function getDateColumnSearchProps(
           <Space>
             <Button
               disabled={selectedKeys.length === 0}
-              onClick={() => handleClearSearch(confirm, clearFilters)}
+              onClick={onClear}
               size="small"
               style={{ width: 89 }}
               className="t-clear-btn"
@@ -55,7 +56,7 @@ export default function getDateColumnSearchProps(
             </Button>
             <Button
               type="primary"
-              onClick={() => handleSearch(confirm, clearFilters)}
+              onClick={confirm}
               icon={<SearchOutlined />}
               size="small"
               style={{ width: 90 }}
