@@ -1,25 +1,23 @@
-import React from "react";
 import { Button, Checkbox, Space, Table } from "antd";
 import type { TableColumnProps, TableProps } from "antd/es";
-import { SampleDetailViewer } from "../../samples/SampleDetailViewer";
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import React from "react";
+import { useParams } from "react-router-dom";
+import ProjectTag from "../../../pages/search/ProjectTag";
+import { useGetAssociatedProjectsQuery } from "../../../redux/endpoints/project";
 import {
   ProjectSample,
-  useFetchMinimalSamplesForFilteredProjectQuery,
   useFetchPagedSamplesQuery,
   useLazyFetchMinimalSamplesForFilteredProjectQuery,
 } from "../../../redux/endpoints/project-samples";
-import SampleQuality from "./components/SampleQuality";
-import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
-import ProjectTag from "../../../pages/search/ProjectTag";
-import { useGetAssociatedProjectsQuery } from "../../../redux/endpoints/project";
-import { useParams } from "react-router-dom";
-import SampleIcons from "./components/SampleIcons";
-import { useProjectSamples } from "./useProjectSamplesContext";
 import { getPaginationOptions } from "../../../utilities/antdesign-table-utilities";
+import { formatInternationalizedDateTime } from "../../../utilities/date-utilities";
+import { SampleDetailViewer } from "../../samples/SampleDetailViewer";
+import SampleIcons from "./components/SampleIcons";
+import SampleQuality from "./components/SampleQuality";
 import getColumnSearchProps from "./components/column-search";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
-import { getMinimalSampleDetailsForFilteredProject } from "../../../apis/projects/samples";
-import { result } from "lodash";
+import getDateColumnSearchProps from "./components/date-column-search";
+import { useProjectSamples } from "./useProjectSamplesContext";
 
 /**
  * React component to render the project samples table
@@ -53,14 +51,16 @@ export default function SamplesTable(): JSX.Element {
   ): void =>
     dispatch({ type: "tableUpdate", payload: { pagination, filters, sorter } });
 
-  const onRowSelectionChange = (e: CheckboxChangeEvent, item: ProjectSample) =>
-    dispatch({
-      type: "rowSelectionChange",
-      payload: {
-        selected: e.target.checked,
-        item,
-      },
-    });
+  function onRowSelectionChange(item: ProjectSample) {
+    return (e: CheckboxChangeEvent) =>
+      dispatch({
+        type: "rowSelectionChange",
+        payload: {
+          selected: e.target.checked,
+          item,
+        },
+      });
+  }
 
   const updateSelectAll = async (e: CheckboxChangeEvent) => {
     if (e.target.checked) {
@@ -98,7 +98,7 @@ export default function SamplesTable(): JSX.Element {
         return (
           <Space>
             <Checkbox
-              onChange={(e) => onRowSelectionChange(e, item)}
+              onChange={onRowSelectionChange(item)}
               checked={state.selection.selected[Number(item.key)] !== undefined}
             />
             <SampleIcons sample={item} />
@@ -171,7 +171,7 @@ export default function SamplesTable(): JSX.Element {
       render: (createdDate) => {
         return formatInternationalizedDateTime(createdDate);
       },
-      // ...api.getDateColumnSearchProps("t-created-filter"),
+      ...getDateColumnSearchProps("t-created-filter"),
     },
     {
       title: i18n("SamplesTable.Column.modified"),
@@ -183,7 +183,7 @@ export default function SamplesTable(): JSX.Element {
       render: (modifiedDate) => {
         return formatInternationalizedDateTime(modifiedDate);
       },
-      // ...api.getDateColumnSearchProps("t-modified-filter"),
+      ...getDateColumnSearchProps("t-modified-filter"),
     },
   ];
 

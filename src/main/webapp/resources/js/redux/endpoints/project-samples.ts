@@ -2,7 +2,6 @@
  * @fileoverview Project > Samples AP for redux-toolkit
  */
 
-import { api } from "./api";
 import { TableOptions } from "../../types/ant-design";
 import {
   Project,
@@ -10,6 +9,7 @@ import {
   SelectedSample,
   TableResponse,
 } from "../../types/irida";
+import { api } from "./api";
 
 export type ProjectSample = {
   key: string;

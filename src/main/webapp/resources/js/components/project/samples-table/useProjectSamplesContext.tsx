@@ -1,15 +1,21 @@
-import React, { createContext, ReactNode, useContext, useReducer } from "react";
-import { TableOptions } from "../../../types/ant-design";
 import {
   FilterValue,
   SorterResult,
   TablePaginationConfig,
 } from "antd/es/table/interface";
-import { ProjectSample } from "../../../redux/endpoints/project-samples";
-import { formatSearch, formatSort } from "../../../utilities/table-utilities";
 import isEqual from "lodash/isEqual";
-import { SelectedSample } from "../../../types/irida";
+import React, {
+  ReactNode,
+  createContext,
+  useContext,
+  useMemo,
+  useReducer,
+} from "react";
 import { TableSample } from "../../../pages/projects/redux/samplesSlice";
+import { ProjectSample } from "../../../redux/endpoints/project-samples";
+import { TableOptions } from "../../../types/ant-design";
+import { SelectedSample } from "../../../types/irida";
+import { formatSearch, formatSort } from "../../../utilities/table-utilities";
 
 const INITIAL_TABLE_OPTIONS: TableOptions = {
   filters: undefined,
@@ -36,6 +42,10 @@ type SelectAllSamplesPayload = {
   samples: Array<SelectedSample>;
 };
 
+type ClearFilterPayload = {
+  filter: string;
+};
+
 type Action =
   | {
       type: `tableUpdate`;
@@ -43,7 +53,8 @@ type Action =
     }
   | { type: `rowSelectionChange`; payload: RowSelectionChangePayload }
   | { type: `selectAllSamples`; payload: SelectAllSamplesPayload }
-  | { type: `deselectAllSamples` };
+  | { type: `deselectAllSamples` }
+  | { type: `clearFilter`; payload: ClearFilterPayload };
 
 type Dispatch = (action: Action) => void;
 type State = {
@@ -113,6 +124,7 @@ function formatTableOptions(
  * @param state - current state of the page
  * @param selected - whether the item is selected
  * @param item - the project sample
+ * @returns new state of the application
  */
 function rowSelectionChange(
   state: State,
@@ -133,6 +145,7 @@ function rowSelectionChange(
  * Select all samples in a project, including visible associated projects.
  * @param state - current state of the page
  * @param samples - minimal representation of samples
+ * @returns new state of the application
  */
 function selectAllSamples(
   state: State,
@@ -155,8 +168,20 @@ function selectAllSamples(
   };
 }
 
+/**
+ * Deselect selected samples
+ * @param state - current state of the page
+ * @returns new state of the application
+ */
 function deselectAllSamples(state: State): State {
   return { ...state, selection: { count: 0, selected: {} } };
+}
+
+function clearFilter(state: State, { filter }: ClearFilterPayload) {
+  if (state.options.filters) {
+    delete state.options.filters[filter];
+  }
+  return state;
 }
 
 function reducer(state: State, action: Action): State {
@@ -169,6 +194,8 @@ function reducer(state: State, action: Action): State {
       return selectAllSamples(state, action.payload);
     case "deselectAllSamples":
       return deselectAllSamples(state);
+    case "clearFilter":
+      return clearFilter(state, action.payload);
     default: {
       return state;
     }
@@ -186,8 +213,10 @@ function ProjectSamplesProvider({
     },
   });
 
+  const value = useMemo(() => ({ state, dispatch }), [state]);
+
   return (
-    <ProjectSamplesContext.Provider value={{ state, dispatch }}>
+    <ProjectSamplesContext.Provider value={value}>
       {children}
     </ProjectSamplesContext.Provider>
   );
