@@ -1,22 +1,14 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, DatePicker, Space } from "antd";
-import { RangePickerProps } from "antd/es/date-picker";
 import type { FilterDropdownProps } from "antd/lib/table/interface";
+import { Moment } from "moment";
 import React from "react";
 import { ColumnSearchReturn } from "../../../../types/ant-design";
-import type {
-  HandleClearSearchFn,
-  HandleSearchFn,
-} from "../hooks/useSamplesTableState";
-import moment from "moment";
+import { RangePickerDateProps } from "antd/es/date-picker/generatePicker";
 
 const { RangePicker } = DatePicker;
 
-export type DateColumnSearchFn = (
-  filterName: string,
-  handleSearch: HandleSearchFn,
-  handleClearSearch: HandleClearSearchFn
-) => ColumnSearchReturn;
+export type DateColumnSearchFn = (filterName: string) => ColumnSearchReturn;
 
 export default function getDateColumnSearchProps(
   filterName: string
@@ -28,14 +20,17 @@ export default function getDateColumnSearchProps(
       confirm,
       clearFilters,
     }: FilterDropdownProps) => {
-      const onChange: RangePickerProps["onChange"] = (dates) => {
-        console.log([dates[0].startOf("day"), dates[1].endOf("day")]);
+      function onChange(dates: RangePickerDateProps<Moment>) {
         setSelectedKeys([[dates[0].startOf("day"), dates[1].endOf("day")]]);
         confirm({ closeDropdown: false });
-      };
+      }
 
       function onClear() {
         if (typeof clearFilters === `function`) clearFilters();
+        confirm({ closeDropdown: true });
+      }
+
+      function onFilter() {
         confirm({ closeDropdown: true });
       }
 
@@ -56,7 +51,7 @@ export default function getDateColumnSearchProps(
             </Button>
             <Button
               type="primary"
-              onClick={confirm}
+              onClick={onFilter}
               icon={<SearchOutlined />}
               size="small"
               style={{ width: 90 }}
