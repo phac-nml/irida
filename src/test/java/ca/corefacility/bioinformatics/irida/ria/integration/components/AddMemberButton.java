@@ -43,7 +43,7 @@ public class AddMemberButton {
 		wait.until(ExpectedConditions.visibilityOf(newMemberList.get(0)));
 		newMemberList.get(0).click();
 		if (role.equals("PROJECT_OWNER")) {
-			WebElement element = driver.findElements(By.className("t-project-role-owner")).get(0);
+			WebElement element = driver.findElements(By.className("t-project-role-manager")).get(0);
 			wait.until(ExpectedConditions.elementToBeClickable(element));
 			element.click();
 		} else if (role.equals("PROJECT_USER")) {
