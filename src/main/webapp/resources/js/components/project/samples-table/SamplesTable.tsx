@@ -19,6 +19,7 @@ import { getPaginationOptions } from "../../../utilities/antdesign-table-utiliti
 import getColumnSearchProps from "./components/column-search";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { getMinimalSampleDetailsForFilteredProject } from "../../../apis/projects/samples";
+import { result } from "lodash";
 
 /**
  * React component to render the project samples table
@@ -29,7 +30,7 @@ export default function SamplesTable(): JSX.Element {
 
   const { projectId } = useParams();
 
-  const { data, isSuccess } = useFetchPagedSamplesQuery(
+  const { data, isFetching: isFetchingSamples } = useFetchPagedSamplesQuery(
     {
       projectId: Number(projectId),
       body: state.options,
@@ -39,11 +40,11 @@ export default function SamplesTable(): JSX.Element {
     }
   );
 
-  const [trigger] = useLazyFetchMinimalSamplesForFilteredProjectQuery();
+  const [trigger, { isFetching: isFetchingIds }] =
+    useLazyFetchMinimalSamplesForFilteredProjectQuery();
 
-  const { data: associatedProjects } = useGetAssociatedProjectsQuery(
-    Number(projectId)
-  );
+  const { data: associatedProjects, isFetching: isFetchingAssociated } =
+    useGetAssociatedProjectsQuery(Number(projectId));
 
   const handleTableChange: TableProps<ProjectSample>["onChange"] = (
     pagination,
@@ -188,6 +189,7 @@ export default function SamplesTable(): JSX.Element {
 
   return (
     <Table
+      loading={isFetchingSamples || isFetchingAssociated || isFetchingIds}
       dataSource={data?.content}
       columns={columns}
       pagination={data?.total ? getPaginationOptions(data.total) : undefined}

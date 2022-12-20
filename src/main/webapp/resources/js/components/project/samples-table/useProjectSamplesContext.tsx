@@ -12,7 +12,7 @@ import { SelectedSample } from "../../../types/irida";
 import { TableSample } from "../../../pages/projects/redux/samplesSlice";
 
 const INITIAL_TABLE_OPTIONS: TableOptions = {
-  filters: {},
+  filters: undefined,
   pagination: {
     current: 1,
     pageSize: 10,
@@ -97,12 +97,7 @@ function formatTableOptions(
 
   if (
     isEqual(search, state.options.search) &&
-    isEqual(
-      Object.fromEntries(
-        Object.entries(tableFilters).filter(([, v]) => v != null)
-      ),
-      state.options.filters
-    )
+    isEqual(filters, state.options.filters)
   ) {
     // Just a pagination change
     return {

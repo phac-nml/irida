@@ -76,8 +76,6 @@ export function formatSearch(filters: TableFilters): TableSearch[] {
     }
   }
 
-  console.log(formattedSearch);
-
   return formattedSearch;
 }
 

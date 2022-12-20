@@ -8,10 +8,8 @@ import {
   TableFilterConfirmFn,
   TableFilters,
   TableOptions,
-  TableSearch,
 } from "../../../../types/ant-design";
 import { TableProps } from "antd/es";
-import { SelectedSample } from "../../../../types/irida";
 import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
 import { useState } from "react";
 import {
