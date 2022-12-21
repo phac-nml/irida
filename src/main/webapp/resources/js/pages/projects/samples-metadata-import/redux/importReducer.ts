@@ -127,8 +127,6 @@ export const saveMetadata = createAsyncThunk<
           .map(([key, value]) => ({
             field: key,
             value,
-            restriction: headers.filter((header) => header.name === key)[0]
-              .targetRestriction,
           }));
         return { name, sampleId, metadata: metadataFields };
       });
@@ -205,8 +203,6 @@ export const saveMetadata = createAsyncThunk<
           .map(([key, value]) => ({
             field: key,
             value,
-            restriction: headers.filter((header) => header.name === key)[0]
-              .targetRestriction,
           }));
         return { name, metadata: metadataFields };
       });
