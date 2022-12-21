@@ -62,7 +62,7 @@ export default function SamplesTable(): JSX.Element {
       });
   }
 
-  const updateSelectAll = async (e: CheckboxChangeEvent) => {
+  async function updateSelectAll(e: CheckboxChangeEvent) {
     if (e.target.checked) {
       // Need to get all the associated projects
       const { data } = await trigger({
@@ -75,26 +75,22 @@ export default function SamplesTable(): JSX.Element {
     } else {
       dispatch({ type: "deselectAllSamples" });
     }
-  };
-
-  const clearFilter = (filter: string) => () =>
-    dispatch({ type: `clearFilter`, payload: { filter } });
+  }
 
   const columns: TableColumnProps<ProjectSample>[] = [
     {
-      title: () => {
-        const indeterminate = data
-          ? state.selection.count < data?.total && state.selection.count > 0
-          : false;
-        return (
-          <Checkbox
-            className="t-select-all"
-            onChange={updateSelectAll}
-            checked={state.selection.count > 0}
-            indeterminate={indeterminate}
-          />
-        );
-      },
+      title: (
+        <Checkbox
+          className="t-select-all"
+          onChange={updateSelectAll}
+          checked={state.selection.count > 0}
+          indeterminate={
+            data &&
+            state.selection.count < data?.total &&
+            state.selection.count > 0
+          }
+        />
+      ),
       dataIndex: "key",
       width: 40,
       render: (text, item) => {

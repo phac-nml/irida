@@ -42,10 +42,6 @@ type SelectAllSamplesPayload = {
   samples: Array<SelectedSample>;
 };
 
-type ClearFilterPayload = {
-  filter: string;
-};
-
 type Action =
   | {
       type: `tableUpdate`;
@@ -53,8 +49,7 @@ type Action =
     }
   | { type: `rowSelectionChange`; payload: RowSelectionChangePayload }
   | { type: `selectAllSamples`; payload: SelectAllSamplesPayload }
-  | { type: `deselectAllSamples` }
-  | { type: `clearFilter`; payload: ClearFilterPayload };
+  | { type: `deselectAllSamples` };
 
 type Dispatch = (action: Action) => void;
 type State = {
@@ -177,13 +172,6 @@ function deselectAllSamples(state: State): State {
   return { ...state, selection: { count: 0, selected: {} } };
 }
 
-function clearFilter(state: State, { filter }: ClearFilterPayload) {
-  if (state.options.filters) {
-    delete state.options.filters[filter];
-  }
-  return state;
-}
-
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "tableUpdate":
@@ -194,8 +182,6 @@ function reducer(state: State, action: Action): State {
       return selectAllSamples(state, action.payload);
     case "deselectAllSamples":
       return deselectAllSamples(state);
-    case "clearFilter":
-      return clearFilter(state, action.payload);
     default: {
       return state;
     }

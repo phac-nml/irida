@@ -5,6 +5,7 @@ import { Moment } from "moment";
 import React from "react";
 import { ColumnSearchReturn } from "../../../../types/ant-design";
 import { RangePickerDateProps } from "antd/es/date-picker/generatePicker";
+import TableSearchFilter from "./TableSearchFilter";
 
 const { RangePicker } = DatePicker;
 
@@ -63,8 +64,6 @@ export default function getDateColumnSearchProps(
         </div>
       );
     },
-    filterIcon: (filtered) => (
-      <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
-    ),
+    filterIcon: (filtered) => <TableSearchFilter filtered={filtered} />,
   };
 }
