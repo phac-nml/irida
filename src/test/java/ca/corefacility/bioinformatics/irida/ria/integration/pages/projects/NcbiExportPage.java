@@ -80,8 +80,8 @@ public class NcbiExportPage extends AbstractPage {
 	public void setDefaultStrategySelect(String strategy) {
 		defaultStrategySelect.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
-		List<WebElement> selectOptions = wait
-				.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-select-item")));
+		List<WebElement> selectOptions = wait.until(
+				ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-select-item")));
 		for (WebElement option : selectOptions) {
 			if (option.getAttribute("title").equals(strategy)) {
 				option.click();
@@ -120,8 +120,8 @@ public class NcbiExportPage extends AbstractPage {
 		WebElement select = driver.findElement(By.className("t-sample-" + field));
 		select.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
-		List<WebElement> selectOptions = wait
-				.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-select-item")));
+		List<WebElement> selectOptions = wait.until(
+				ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-select-item")));
 		for (WebElement option : selectOptions) {
 			if (option.getAttribute("title").equals(value)) {
 				option.click();
@@ -134,8 +134,8 @@ public class NcbiExportPage extends AbstractPage {
 		WebElement cascader = driver.findElement(By.className("t-sample-" + field));
 		cascader.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(1));
-		List<WebElement> cascaderMenus = wait
-				.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-cascader-menu")));
+		List<WebElement> cascaderMenus = wait.until(
+				ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-cascader-menu")));
 		for (WebElement option : cascaderMenus.get(0).findElements(By.className("ant-cascader-menu-item"))) {
 			if (option.getText().equals(firstValue)) {
 				option.click();
@@ -182,10 +182,12 @@ public class NcbiExportPage extends AbstractPage {
 	}
 
 	public boolean areFormErrorsPresent() {
-		waitForTime(250);
+		waitForTime(500);
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 		try {
-			List<WebElement> errors = driver.findElements(By.className("ant-form-item-explain-error"));
-			return errors != null && errors.size() > 0;
+			List<WebElement> errors = wait.until(
+					ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("ant-form-item-explain-error")));
+			return errors.size() > 0;
 		} catch (Exception e) {
 			return false;
 		}
@@ -196,6 +198,11 @@ public class NcbiExportPage extends AbstractPage {
 	}
 
 	public boolean isSuccessAlertDisplayed() {
-		return driver.findElements(By.cssSelector(".ant-alert.ant-alert-success")).size() == 0;
+		return driver.findElements(By.cssSelector(".ant-alert.ant-alert-success")).size() == 1;
+	}
+
+	public boolean isUserRedirectedToProjectSamplesPage(int projectId) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+		return wait.until(ExpectedConditions.urlMatches("/projects/" + projectId));
 	}
 }
