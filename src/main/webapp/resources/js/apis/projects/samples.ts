@@ -25,6 +25,19 @@ export interface LockedSamplesResponse {
   sampleIds: number[];
 }
 
+export interface CreateSamplesResponse {
+  responses: Record<string, SampleItemResponse>;
+}
+
+export interface UpdateSamplesResponse {
+  responses: Record<string, SampleItemResponse>;
+}
+
+export interface SampleItemResponse {
+  error: boolean;
+  errorMessage: string;
+}
+
 export interface MetadataItem {
   [field: string]: string;
   rowKey: string;
@@ -135,8 +148,16 @@ export async function createSamples({
 }: {
   projectId: string;
   body: SampleRequest[];
-}) {
-  return await axios.post(`${URL}/${projectId}/samples/create`, body);
+}): Promise<CreateSamplesResponse> {
+  try {
+    const { data } = await axios.post(
+      `${URL}/${projectId}/samples/create`,
+      body
+    );
+    return Promise.resolve(data);
+  } catch (error: any) {
+    return Promise.reject(error.response.data);
+  }
 }
 
 export async function updateSamples({
@@ -145,8 +166,16 @@ export async function updateSamples({
 }: {
   projectId: string;
   body: SampleRequest[];
-}) {
-  return await axios.patch(`${URL}/${projectId}/samples/update`, body);
+}): Promise<UpdateSamplesResponse> {
+  try {
+    const { data } = await axios.patch(
+      `${URL}/${projectId}/samples/update`,
+      body
+    );
+    return Promise.resolve(data);
+  } catch (error: any) {
+    return Promise.reject(error.response.data);
+  }
 }
 
 /**

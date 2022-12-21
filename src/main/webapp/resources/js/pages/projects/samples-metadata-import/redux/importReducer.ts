@@ -25,6 +25,10 @@ import {
   MetadataField,
 } from "../../../../apis/metadata/field";
 import { Restriction } from "../../../../utilities/restriction-utilities";
+import {
+  createMetadataFields,
+  updateMetadataSaveDetails,
+} from "./import-utilities";
 
 export interface MetadataHeaderItem {
   name: string;
@@ -33,18 +37,18 @@ export interface MetadataHeaderItem {
   rowKey: string;
 }
 
-interface MetadataValidateDetailsItem {
+export interface MetadataValidateDetailsItem {
   isSampleNameValid: boolean;
   foundSampleId?: number;
   locked: boolean;
 }
 
-interface MetadataSaveDetailsItem {
+export interface MetadataSaveDetailsItem {
   saved: boolean;
   error?: string;
 }
 
-interface SetSampleNameColumnResponse {
+export interface SetSampleNameColumnResponse {
   sampleNameColumn: string;
   metadataValidateDetails: Record<string, MetadataValidateDetailsItem>;
 }
@@ -87,7 +91,7 @@ export const saveMetadata = createAsyncThunk<
       metadataSaveDetails,
     } = state.importReducer;
 
-    const newMetadataSaveDetails = { ...metadataSaveDetails };
+    let newMetadataSaveDetails = { ...metadataSaveDetails };
 
     //save header details (metadata field & restriction)
     //if failure display error notification on page
@@ -124,16 +128,11 @@ export const saveMetadata = createAsyncThunk<
       .map((metadataItem) => {
         const name = metadataItem[sampleNameColumn];
         const sampleId = metadataValidateDetails[name].foundSampleId;
-        const metadataFields = Object.entries(metadataItem)
-          .filter(
-            ([key]) =>
-              headers.map((header) => header.name).includes(key) &&
-              key !== sampleNameColumn
-          )
-          .map(([key, value]) => ({
-            field: key,
-            value,
-          }));
+        const metadataFields = createMetadataFields(
+          sampleNameColumn,
+          headers,
+          metadataItem
+        );
         return { name, sampleId, metadata: metadataFields };
       });
     //create a request with a list of project samples to be updated
@@ -152,24 +151,15 @@ export const saveMetadata = createAsyncThunk<
             body: chunk,
           })
             .then((response) => {
-              const { responses } = response.data;
-              Object.keys(responses).map((key) => {
-                const { error, errorMessage } = responses[key];
-                newMetadataSaveDetails[key] = {
-                  saved: !error,
-                  error: errorMessage,
-                };
-              });
+              const { responses } = response;
+              newMetadataSaveDetails = updateMetadataSaveDetails(
+                responses,
+                newMetadataSaveDetails
+              );
             })
             .catch((error) => {
               const { responses } = error.response.data;
-              Object.keys(responses).map((key) => {
-                const { error, errorMessage } = responses[key];
-                newMetadataSaveDetails[key] = {
-                  saved: !error,
-                  error: errorMessage,
-                };
-              });
+              updateMetadataSaveDetails(responses, newMetadataSaveDetails);
             })
         );
       }
@@ -200,16 +190,11 @@ export const saveMetadata = createAsyncThunk<
       })
       .map((metadataItem) => {
         const name = metadataItem[sampleNameColumn];
-        const metadataFields = Object.entries(metadataItem)
-          .filter(
-            ([key]) =>
-              headers.map((header) => header.name).includes(key) &&
-              key !== sampleNameColumn
-          )
-          .map(([key, value]) => ({
-            field: key,
-            value,
-          }));
+        const metadataFields = createMetadataFields(
+          sampleNameColumn,
+          headers,
+          metadataItem
+        );
         return { name, metadata: metadataFields };
       });
     //create a request with a list of project samples to be created
@@ -228,24 +213,18 @@ export const saveMetadata = createAsyncThunk<
             body: chunk,
           })
             .then((response) => {
-              const { responses } = response.data;
-              Object.keys(responses).map((key) => {
-                const { error, errorMessage } = responses[key];
-                newMetadataSaveDetails[key] = {
-                  saved: !error,
-                  error: errorMessage,
-                };
-              });
+              const { responses } = response;
+              newMetadataSaveDetails = updateMetadataSaveDetails(
+                responses,
+                newMetadataSaveDetails
+              );
             })
             .catch((error) => {
               const { responses } = error.response.data;
-              Object.keys(responses).map((key) => {
-                const { error, errorMessage } = responses[key];
-                newMetadataSaveDetails[key] = {
-                  saved: !error,
-                  error: errorMessage,
-                };
-              });
+              newMetadataSaveDetails = updateMetadataSaveDetails(
+                responses,
+                newMetadataSaveDetails
+              );
             })
         );
       }
