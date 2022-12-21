@@ -133,10 +133,22 @@ export default function CreateNcbiSampleDetails({
     value: file.id,
   }));
 
-  const onChangeFiles = async (type: string) => {
+  const onChangeFiles = async (fieldToValidate: Array<string>) => {
     form.validateFields([["samples", sample.name, type]]);
     onChange();
   };
+
+  async function filesValidator(
+    singlesFiles = [],
+    pairsFiles = []
+  ): Promise<string> {
+    if (singlesFiles.length > 0 || pairsFiles.length > 0) {
+      return Promise.resolve("");
+    }
+    return Promise.reject(
+      new Error("Must select at least one file of any type.")
+    );
+  }
 
   return (
     <Row gutter={[16, 16]}>
@@ -257,16 +269,12 @@ export default function CreateNcbiSampleDetails({
             rules={[
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (
-                    getFieldValue(["samples", sample.name, "pairs"]).length >
-                      0 ||
-                    value.length > 0
-                  ) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error("Must select at least one file of any type.")
-                  );
+                  const pairs = getFieldValue([
+                    "samples",
+                    sample.name,
+                    "pairs",
+                  ]);
+                  return filesValidator(value, pairs);
                 },
               }),
             ]}
@@ -274,7 +282,11 @@ export default function CreateNcbiSampleDetails({
             <Checkbox.Group
               style={{ width: `100%` }}
               options={singles}
-              onChange={() => onChangeFiles("pairs")}
+              onChange={function () {
+                form
+                  .validateFields([["samples", sample.name, "pairs"]])
+                  .then(onChange);
+              }}
             />
           </Form.Item>
         </Col>
@@ -288,16 +300,12 @@ export default function CreateNcbiSampleDetails({
             rules={[
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (
-                    getFieldValue(["samples", sample.name, "singles"]).length >
-                      0 ||
-                    value.length > 0
-                  ) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error("Must select at least one file of any type.")
-                  );
+                  const singles = getFieldValue([
+                    "samples",
+                    sample.name,
+                    "singles",
+                  ]);
+                  return filesValidator(singles, value);
                 },
               }),
             ]}
@@ -305,7 +313,11 @@ export default function CreateNcbiSampleDetails({
             <Checkbox.Group
               style={{ width: `100%` }}
               options={pairs}
-              onChange={() => onChangeFiles("singles")}
+              onChange={function () {
+                form
+                  .validateFields([["samples", sample.name, "singles"]])
+                  .then(onChange);
+              }}
             />
           </Form.Item>
         </Col>

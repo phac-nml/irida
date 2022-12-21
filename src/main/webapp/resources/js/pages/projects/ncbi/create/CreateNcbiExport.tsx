@@ -7,10 +7,10 @@ import {
   Form,
   Input,
   Layout,
-  notification,
   PageHeader,
   Row,
   Space,
+  notification,
 } from "antd";
 import type { RangePickerProps } from "antd/es/date-picker";
 import { LabeledValue } from "antd/lib/select";
@@ -18,11 +18,11 @@ import moment from "moment";
 import React from "react";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import {
+  NcbiSubmissionBioSample,
+  NcbiSubmissionRequest,
   getNCBISelections,
   getNCBISources,
   getNCBIStrategies,
-  NcbiSubmissionBioSample,
-  NcbiSubmissionRequest,
   submitNcbiSubmissionRequest,
 } from "../../../../apis/export/ncbi";
 import { SequencingFiles } from "../../../../apis/projects/samples";
@@ -220,7 +220,7 @@ function CreateNcbiExport(): JSX.Element {
             singles?: number[];
             bioSample: string;
             libraryName: { value: string };
-            libraryStrategy: { vale: string };
+            libraryStrategy: { value: string };
             librarySource: { value: string };
             libraryConstructionProtocol: { value: string };
             instrumentModel: { value: [string, string] };
@@ -252,7 +252,7 @@ function CreateNcbiExport(): JSX.Element {
                 pairs,
                 bioSample,
                 libraryName: libraryName.value,
-                libraryStrategy: libraryStrategy.vale,
+                libraryStrategy: libraryStrategy.value,
                 librarySource: librarySource.value,
                 libraryConstructionProtocol: libraryConstructionProtocol.value,
                 instrumentModel: instrumentModel.value[1],
