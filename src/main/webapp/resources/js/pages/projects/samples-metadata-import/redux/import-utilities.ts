@@ -14,7 +14,7 @@ export function updateMetadataSaveDetails(
   metadataSaveDetails: Record<string, MetadataSaveDetailsItem>,
   dispatch: ImportDispatch
 ) {
-  Object.keys(responses).map((key) => {
+  Object.keys(responses).forEach((key) => {
     const { error, errorMessage } = responses[key];
     metadataSaveDetails[key] = {
       saved: !error,
