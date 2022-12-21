@@ -1,6 +1,9 @@
 
 # Changelog
 
+## Unreleased
+* [UI]: Fixed bug on NCBI Export page preventing the export from occuring. See [PR 1439](https://github.com/phac-nml/irida/pull/1439)
+
 ## [22.09.5] - 2022/12/14
 * [Developer/UI]: Fixed bug preventing a manager of a user group from adding new members when this manager is a collaborator on one of these users projects. Also, fixed issue with a user group member added with an owner role for a group was set with a member role. See [PR 1431](https://github.com/phac-nml/irida/pull/1431)
 * [Developer/UI]: Updated synchronize new remote project page to display http errors when setting the url manually and an error is encountered. See [PR 1433](https://github.com/phac-nml/irida/pull/1433)
