@@ -83,9 +83,15 @@ export const saveMetadata = createAsyncThunk<
   `importReducer/saveMetadata`,
   async ({ projectId, selectedMetadataKeys }, { dispatch, getState }) => {
     const state: ImportState = getState();
-    const { sampleNameColumn, headers, metadata, metadataValidateDetails } =
-      state.importReducer;
-    const metadataSaveDetails: Record<string, MetadataSaveDetailsItem> = {};
+    const {
+      sampleNameColumn,
+      headers,
+      metadata,
+      metadataValidateDetails,
+      metadataSaveDetails,
+    } = state.importReducer;
+
+    const newMetadataSaveDetails = { ...metadataSaveDetails };
 
     //save header details (metadata field & restriction)
     //if failure display error notification on page
@@ -98,6 +104,8 @@ export const saveMetadata = createAsyncThunk<
           restriction: header.targetRestriction,
         })),
     }).catch((error) => {
+      console.log("HERE1");
+      console.log(error);
       throw new Error(error.response.data.error);
     });
 
@@ -107,7 +115,7 @@ export const saveMetadata = createAsyncThunk<
       const name: string = metadataItem[sampleNameColumn];
       return (
         selectedMetadataKeys.includes(metadataItem.rowKey) &&
-        metadataSaveDetails[name]?.saved !== true
+        newMetadataSaveDetails[name]?.saved !== true
       );
     });
 
@@ -153,17 +161,19 @@ export const saveMetadata = createAsyncThunk<
               const { responses } = response.data;
               Object.keys(responses).map((key) => {
                 const { error, errorMessage } = responses[key];
-                metadataSaveDetails[key] = {
+                newMetadataSaveDetails[key] = {
                   saved: !error,
                   error: errorMessage,
                 };
               });
             })
             .catch((error) => {
+              console.log("HERE2");
+              console.log(error);
               const { responses } = error.response.data;
               Object.keys(responses).map((key) => {
                 const { error, errorMessage } = responses[key];
-                metadataSaveDetails[key] = {
+                newMetadataSaveDetails[key] = {
                   saved: !error,
                   error: errorMessage,
                 };
@@ -182,7 +192,7 @@ export const saveMetadata = createAsyncThunk<
       for (const chunk of chunkedUpdateSamplesPromises) {
         await Promise.all(chunk).then(() => {
           dispatch(
-            setMetadataSaveDetails(Object.assign({}, metadataSaveDetails))
+            setMetadataSaveDetails(Object.assign({}, newMetadataSaveDetails))
           );
         });
       }
@@ -229,17 +239,19 @@ export const saveMetadata = createAsyncThunk<
               const { responses } = response.data;
               Object.keys(responses).map((key) => {
                 const { error, errorMessage } = responses[key];
-                metadataSaveDetails[key] = {
+                newMetadataSaveDetails[key] = {
                   saved: !error,
                   error: errorMessage,
                 };
               });
             })
             .catch((error) => {
+              console.log("HERE3");
+              console.log(error);
               const { responses } = error.response.data;
               Object.keys(responses).map((key) => {
                 const { error, errorMessage } = responses[key];
-                metadataSaveDetails[key] = {
+                newMetadataSaveDetails[key] = {
                   saved: !error,
                   error: errorMessage,
                 };
@@ -258,13 +270,13 @@ export const saveMetadata = createAsyncThunk<
       for (const chunk of chunkedCreateSamplesPromises) {
         await Promise.all(chunk).then(() => {
           dispatch(
-            setMetadataSaveDetails(Object.assign({}, metadataSaveDetails))
+            setMetadataSaveDetails(Object.assign({}, newMetadataSaveDetails))
           );
         });
       }
     }
 
-    return { metadataSaveDetails };
+    return { metadataSaveDetails: newMetadataSaveDetails };
   }
 );
 
