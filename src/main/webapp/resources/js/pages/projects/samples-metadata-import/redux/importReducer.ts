@@ -154,30 +154,22 @@ export const saveMetadata = createAsyncThunk<
               const { responses } = response;
               newMetadataSaveDetails = updateMetadataSaveDetails(
                 responses,
-                newMetadataSaveDetails
+                newMetadataSaveDetails,
+                dispatch
               );
             })
             .catch((error) => {
-              const { responses } = error.response.data;
-              updateMetadataSaveDetails(responses, newMetadataSaveDetails);
+              const { responses } = error;
+              newMetadataSaveDetails = updateMetadataSaveDetails(
+                responses,
+                newMetadataSaveDetails,
+                dispatch
+              );
             })
         );
       }
       //send multiple update project sample requests in parallel
-      const updateSamplesPromiseChunkSize = calculateChunkSize(
-        updateSamplesPromises.length
-      );
-      const chunkedUpdateSamplesPromises = chunkArray(
-        updateSamplesPromises,
-        updateSamplesPromiseChunkSize
-      );
-      for (const chunk of chunkedUpdateSamplesPromises) {
-        await Promise.all(chunk).then(() => {
-          dispatch(
-            setMetadataSaveDetails(Object.assign({}, newMetadataSaveDetails))
-          );
-        });
-      }
+      await Promise.all(updateSamplesPromises);
     }
 
     //create new project samples
@@ -216,33 +208,22 @@ export const saveMetadata = createAsyncThunk<
               const { responses } = response;
               newMetadataSaveDetails = updateMetadataSaveDetails(
                 responses,
-                newMetadataSaveDetails
+                newMetadataSaveDetails,
+                dispatch
               );
             })
             .catch((error) => {
-              const { responses } = error.response.data;
+              const { responses } = error;
               newMetadataSaveDetails = updateMetadataSaveDetails(
                 responses,
-                newMetadataSaveDetails
+                newMetadataSaveDetails,
+                dispatch
               );
             })
         );
       }
       //send multiple create project sample requests in parallel
-      const createSamplesPromiseChunkSize = calculateChunkSize(
-        updateSamplesPromises.length
-      );
-      const chunkedCreateSamplesPromises = chunkArray(
-        createSamplesPromises,
-        createSamplesPromiseChunkSize
-      );
-      for (const chunk of chunkedCreateSamplesPromises) {
-        await Promise.all(chunk).then(() => {
-          dispatch(
-            setMetadataSaveDetails(Object.assign({}, newMetadataSaveDetails))
-          );
-        });
-      }
+      await Promise.all(createSamplesPromises);
     }
 
     return "success";

@@ -2,11 +2,17 @@ import {
   MetadataItem,
   SampleItemResponse,
 } from "../../../../apis/projects/samples";
-import { MetadataHeaderItem, MetadataSaveDetailsItem } from "./importReducer";
+import {
+  MetadataHeaderItem,
+  MetadataSaveDetailsItem,
+  setMetadataSaveDetails,
+} from "./importReducer";
+import { ImportDispatch } from "./store";
 
 export function updateMetadataSaveDetails(
   responses: Record<string, SampleItemResponse>,
-  metadataSaveDetails: Record<string, MetadataSaveDetailsItem>
+  metadataSaveDetails: Record<string, MetadataSaveDetailsItem>,
+  dispatch: ImportDispatch
 ) {
   Object.keys(responses).map((key) => {
     const { error, errorMessage } = responses[key];
@@ -15,6 +21,7 @@ export function updateMetadataSaveDetails(
       error: errorMessage,
     };
   });
+  dispatch(setMetadataSaveDetails(Object.assign({}, metadataSaveDetails)));
   return metadataSaveDetails;
 }
 
