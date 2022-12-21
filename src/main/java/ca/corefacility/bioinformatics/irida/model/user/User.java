@@ -86,7 +86,7 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	@Column(name = "system_role")
 	private Role systemRole;
 
-	@NotNull(message = "{user.userType.nonnull}")
+	@NotNull(message = "{user.userType.notnull}")
 	@Enumerated(EnumType.STRING)
 	@Column(name = "user_type")
 	private UserType userType;
@@ -130,6 +130,7 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 		locale = "en";
 		credentialsNonExpired = true;
 		this.systemRole = Role.ROLE_USER;
+		this.userType = UserType.TYPE_LOCAL;
 	}
 
 	/**
@@ -142,8 +143,7 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	 * @param lastName    the last name of this {@link User}.
 	 * @param phoneNumber the phone number of this {@link User}.
 	 */
-	public User(String username, String email, String password, String firstName, String lastName, String phoneNumber,
-				UserType userType) {
+	public User(String username, String email, String password, String firstName, String lastName, String phoneNumber) {
 		this();
 		this.username = username;
 		this.email = email;
@@ -151,7 +151,6 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.phoneNumber = phoneNumber;
-		this.userType = userType;
 	}
 
 	/**
@@ -166,8 +165,8 @@ public class User extends IridaRepresentationModel implements MutableIridaThing,
 	 * @param phoneNumber the phone number of this {@link User}.
 	 */
 	public User(Long id, String username, String email, String password, String firstName, String lastName,
-			String phoneNumber, UserType userType) {
-		this(username, email, password, firstName, lastName, phoneNumber, userType);
+			String phoneNumber) {
+		this(username, email, password, firstName, lastName, phoneNumber);
 		this.id = id;
 	}
 

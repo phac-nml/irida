@@ -190,15 +190,16 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
         // This works for both ldap and adLdap
         String randomPassword = generateCommonLangPassword();
         Map<String, String> map = getLdapFields(dirContextOperations);
-        return new User(
+        User u = new User(
                 username,
                 map.get(iridaUserFieldEmail),
                 randomPassword,
                 map.get(iridaUserFieldFirstName),
                 map.get(iridaUserFieldLastName),
-                map.get(iridaUserFieldPhoneNumber),
-                UserType.TYPE_DOMAIN
+                map.get(iridaUserFieldPhoneNumber)
         );
+        u.setUserType(UserType.TYPE_DOMAIN);
+        return u;
     }
 
     /**
