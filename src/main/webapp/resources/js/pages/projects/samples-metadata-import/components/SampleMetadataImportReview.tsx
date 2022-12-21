@@ -210,7 +210,7 @@ export function SampleMetadataImportReview(): JSX.Element {
     if (projectId) {
       await dispatch(saveMetadata({ projectId, selectedMetadataKeys }))
         .unwrap()
-        .then(({ metadataSaveDetails }) => {
+        .then(() => {
           const errorCount = Object.entries(metadataSaveDetails).filter(
             ([, metadataSaveDetailsItem]) => metadataSaveDetailsItem.error
           ).length;

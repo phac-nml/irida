@@ -44,10 +44,6 @@ interface MetadataSaveDetailsItem {
   error?: string;
 }
 
-interface SaveMetadataResponse {
-  metadataSaveDetails: Record<string, MetadataSaveDetailsItem>;
-}
-
 interface SetSampleNameColumnResponse {
   sampleNameColumn: string;
   metadataValidateDetails: Record<string, MetadataValidateDetailsItem>;
@@ -76,7 +72,7 @@ Redux async thunk for saving the metadata to samples.
 For more information on redux async thunks see: https://redux-toolkit.js.org/api/createAsyncThunk
  */
 export const saveMetadata = createAsyncThunk<
-  SaveMetadataResponse,
+  string,
   { projectId: string; selectedMetadataKeys: string[] },
   { dispatch: ImportDispatch; state: ImportState }
 >(
@@ -270,7 +266,7 @@ export const saveMetadata = createAsyncThunk<
       }
     }
 
-    return { metadataSaveDetails: newMetadataSaveDetails };
+    return "success";
   }
 );
 
@@ -435,8 +431,5 @@ export const importReducer = createReducer(initialState, (builder) => {
   builder.addCase(setSampleNameColumn.fulfilled, (state, action) => {
     state.sampleNameColumn = action.payload.sampleNameColumn;
     state.metadataValidateDetails = action.payload.metadataValidateDetails;
-  });
-  builder.addCase(saveMetadata.fulfilled, (state, action) => {
-    state.metadataSaveDetails = action.payload.metadataSaveDetails;
   });
 });
