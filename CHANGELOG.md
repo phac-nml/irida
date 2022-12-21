@@ -1,7 +1,7 @@
 
 # Changelog
 
-## Unreleased
+## [22.09.6] - 2022/12/21
 * [UI]: Fixed bug on NCBI Export page preventing the export from occuring. See [PR 1439](https://github.com/phac-nml/irida/pull/1439)
 
 ## [22.09.5] - 2022/12/14
@@ -156,6 +156,7 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
+[22.09.5]: https://github.com/phac-nml/irida/compare/22.09.5...22.09.6
 [22.09.5]: https://github.com/phac-nml/irida/compare/22.09.4...22.09.5
 [22.09.4]: https://github.com/phac-nml/irida/compare/22.09.3...22.09.4
 [22.09.3]: https://github.com/phac-nml/irida/compare/22.09.2...22.09.3
