@@ -123,7 +123,7 @@ export const saveMetadata = createAsyncThunk<
       .filter((metadataItem) => {
         const name = metadataItem[sampleNameColumn];
         const sampleId = metadataValidateDetails[name].foundSampleId;
-        return sampleId;
+        return typeof sampleId === "number";
       })
       .map((metadataItem) => {
         const name = metadataItem[sampleNameColumn];
@@ -178,7 +178,7 @@ export const saveMetadata = createAsyncThunk<
       .filter((metadataItem) => {
         const name = metadataItem[sampleNameColumn];
         const sampleId = metadataValidateDetails[name].foundSampleId;
-        return !sampleId;
+        return !(typeof sampleId === "number");
       })
       .map((metadataItem) => {
         const name = metadataItem[sampleNameColumn];
