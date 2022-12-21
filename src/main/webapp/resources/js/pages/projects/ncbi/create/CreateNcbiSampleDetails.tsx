@@ -133,11 +133,6 @@ export default function CreateNcbiSampleDetails({
     value: file.id,
   }));
 
-  const onChangeFiles = async (fieldToValidate: Array<string>) => {
-    form.validateFields([["samples", sample.name, type]]);
-    onChange();
-  };
-
   async function filesValidator(
     singlesFiles = [],
     pairsFiles = []
@@ -148,6 +143,24 @@ export default function CreateNcbiSampleDetails({
     return Promise.reject(
       new Error("Must select at least one file of any type.")
     );
+  }
+
+  function validateFiles({ getFieldValue, associatedField }) {
+    return {
+      validator(_, value) {
+        const otherFiles = getFieldValue([
+          "samples",
+          sample.name,
+          associatedField,
+        ]);
+        if (otherFiles.length > 0 || value.length > 0) {
+          return Promise.resolve("");
+        }
+        return Promise.reject(
+          new Error("Must select at least one file of any type.")
+        );
+      },
+    };
   }
 
   return (
@@ -267,16 +280,8 @@ export default function CreateNcbiSampleDetails({
             valuePropName="checked"
             className="t-samples-singles"
             rules={[
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  const pairs = getFieldValue([
-                    "samples",
-                    sample.name,
-                    "pairs",
-                  ]);
-                  return filesValidator(value, pairs);
-                },
-              }),
+              ({ getFieldValue }) =>
+                validateFiles({ getFieldValue, associatedField: "pairs" }),
             ]}
           >
             <Checkbox.Group
@@ -298,16 +303,8 @@ export default function CreateNcbiSampleDetails({
             label={i18n("CreateNcbiExport.pairs")}
             valuePropName="checked"
             rules={[
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  const singles = getFieldValue([
-                    "samples",
-                    sample.name,
-                    "singles",
-                  ]);
-                  return filesValidator(singles, value);
-                },
-              }),
+              ({ getFieldValue }) =>
+                validateFiles({ getFieldValue, associatedField: "singles" }),
             ]}
           >
             <Checkbox.Group
