@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 import java.time.Duration;
 import java.util.List;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -24,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * Integration test to ensure that the Project Details Page.
  * </p>
  */
-@Disabled
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesPage.xml")
 public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	final String FIRST_SAMPLE_NAME = "sample55422r";

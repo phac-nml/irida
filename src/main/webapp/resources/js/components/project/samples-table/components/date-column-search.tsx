@@ -11,6 +11,10 @@ const { RangePicker } = DatePicker;
 
 export type DateColumnSearchFn = (filterName: string) => ColumnSearchReturn;
 
+/**
+ * Ant Design Table filter for date columns
+ * @param filterName - class name for testing purposes.
+ */
 export default function getDateColumnSearchProps(
   filterName: string
 ): ColumnSearchReturn {

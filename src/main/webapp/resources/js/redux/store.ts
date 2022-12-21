@@ -3,7 +3,6 @@ import { configureStore } from "@reduxjs/toolkit";
 import type { TypedUseSelectorHook } from "react-redux";
 import { useDispatch, useSelector } from "react-redux";
 import { api } from "./endpoints/api";
-import projectSamplesReducer from "../layouts/project-samples/projectSamplesSlice";
 
 /**
  * @fileoverview This should be the only redux store in the IRIDA SPA.
@@ -15,7 +14,6 @@ export const createStore = (
   configureStore({
     reducer: {
       [api.reducerPath]: api.reducer,
-      projectSamples: projectSamplesReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(api.middleware),

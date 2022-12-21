@@ -1,6 +1,11 @@
 import { Button, Checkbox, Space, Table } from "antd";
-import type { TableColumnProps, TableProps } from "antd/es";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import type { TableColumnProps } from "antd/es";
+import type {
+  FilterValue,
+  SorterResult,
+  TablePaginationConfig,
+} from "antd/es/table/interface";
+import type { CheckboxChangeEvent } from "antd/lib/checkbox";
 import React from "react";
 import { useParams } from "react-router-dom";
 import ProjectTag from "../../../pages/search/ProjectTag";
@@ -44,13 +49,27 @@ export default function SamplesTable(): JSX.Element {
   const { data: associatedProjects, isFetching: isFetchingAssociated } =
     useGetAssociatedProjectsQuery(Number(projectId));
 
-  const handleTableChange: TableProps<ProjectSample>["onChange"] = (
-    pagination,
-    filters,
-    sorter
-  ): void =>
+  /**
+   * Called Whenever there is a change to the Ant Design table component
+   *
+   * @param pagination
+   * @param filters
+   * @param sorter
+   */
+  function handleTableChange(
+    pagination: TablePaginationConfig,
+    filters: Record<string, FilterValue | null>,
+    sorter: SorterResult<ProjectSample> | SorterResult<ProjectSample>[]
+  ): void {
     dispatch({ type: "tableUpdate", payload: { pagination, filters, sorter } });
+  }
 
+  /**
+   * Handle user interaction with the row selection checkbox.
+   *
+   * @param item The sample within the row
+   * @returns Inner function to handle the actual change in the row checkbox
+   */
   function onRowSelectionChange(item: ProjectSample) {
     return (e: CheckboxChangeEvent) =>
       dispatch({
@@ -62,6 +81,13 @@ export default function SamplesTable(): JSX.Element {
       });
   }
 
+  /**
+   * Updated the state of the entire table when the select all checkbox
+   * when clicked.
+   * This can be to select all or none.
+   *
+   * @param e Event fired when the checkbox is clicked
+   */
   async function updateSelectAll(e: CheckboxChangeEvent) {
     if (e.target.checked) {
       // Need to get all the associated projects
@@ -193,6 +219,7 @@ export default function SamplesTable(): JSX.Element {
       columns={columns}
       pagination={data?.total ? getPaginationOptions(data.total) : undefined}
       onChange={handleTableChange}
+      style={{ width: `100%` }}
     />
   );
 }
