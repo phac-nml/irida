@@ -104,8 +104,6 @@ export const saveMetadata = createAsyncThunk<
           restriction: header.targetRestriction,
         })),
     }).catch((error) => {
-      console.log("HERE1");
-      console.log(error);
       throw new Error(error.response.data.error);
     });
 
@@ -168,8 +166,6 @@ export const saveMetadata = createAsyncThunk<
               });
             })
             .catch((error) => {
-              console.log("HERE2");
-              console.log(error);
               const { responses } = error.response.data;
               Object.keys(responses).map((key) => {
                 const { error, errorMessage } = responses[key];
@@ -246,8 +242,6 @@ export const saveMetadata = createAsyncThunk<
               });
             })
             .catch((error) => {
-              console.log("HERE3");
-              console.log(error);
               const { responses } = error.response.data;
               Object.keys(responses).map((key) => {
                 const { error, errorMessage } = responses[key];
