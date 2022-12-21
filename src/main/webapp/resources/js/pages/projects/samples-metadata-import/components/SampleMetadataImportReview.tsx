@@ -211,14 +211,19 @@ export function SampleMetadataImportReview(): JSX.Element {
       await dispatch(saveMetadata({ projectId, selectedMetadataKeys }))
         .unwrap()
         .then(({ metadataSaveDetails }) => {
-          if (
-            Object.entries(metadataSaveDetails).filter(
-              ([, metadataSaveDetailsItem]) => metadataSaveDetailsItem.error
-            ).length === 0
-          ) {
+          const errorCount = Object.entries(metadataSaveDetails).filter(
+            ([, metadataSaveDetailsItem]) => metadataSaveDetailsItem.error
+          ).length;
+          if (errorCount === 0) {
             navigate(`/${projectId}/sample-metadata/upload/complete`);
           } else {
             setLoading(false);
+            notification.error({
+              message: i18n(
+                "SampleMetadataImportReview.notification.partialError",
+                errorCount
+              ),
+            });
           }
         })
         .catch((payload) => {
