@@ -87,6 +87,8 @@ export const saveMetadata = createAsyncThunk<
       state.importReducer;
     const metadataSaveDetails: Record<string, MetadataSaveDetailsItem> = {};
 
+    //save header details (metadata field & restriction)
+    //if failure display error notification on page
     await createMetadataFieldsForProject({
       projectId,
       body: headers
@@ -99,6 +101,8 @@ export const saveMetadata = createAsyncThunk<
       throw new Error(error.response.data.error);
     });
 
+    //save selected metadata entry rows
+    //during a partial failure only save data that has not already been saved
     const selectedSampleList = metadata.filter((metadataItem) => {
       const name: string = metadataItem[sampleNameColumn];
       return (
