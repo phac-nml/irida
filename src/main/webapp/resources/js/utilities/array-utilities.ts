@@ -1,12 +1,12 @@
 /**
- * Splits an array into multiple, smaller arrays of the given size
+ * Splits an array into multiple, smaller arrays
  *
  * @param items the array to be chunked
- * @param size the size of the chunk
  *
  * @returns a chunked array
  */
-export function chunkArray(items: any[], size: number) {
+export function chunkArray(items: any[]) {
+  const size = calculateChunkSize(items.length);
   const chunks = [];
   items = [].concat(...items);
 
@@ -24,7 +24,7 @@ export function chunkArray(items: any[], size: number) {
  *
  * @returns the chunk size
  */
-export function calculateChunkSize(arraySize: number) {
+function calculateChunkSize(arraySize: number) {
   const MIN = 10;
   const MAX = 100;
   const estimated = Math.ceil(arraySize / 10);

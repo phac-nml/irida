@@ -25,11 +25,7 @@ export interface LockedSamplesResponse {
   sampleIds: number[];
 }
 
-export interface CreateSamplesResponse {
-  responses: Record<string, SampleItemResponse>;
-}
-
-export interface UpdateSamplesResponse {
+export interface SamplesResponse {
   responses: Record<string, SampleItemResponse>;
 }
 
@@ -48,11 +44,25 @@ export interface FieldUpdate {
   value: string;
 }
 
-export interface SampleRequest {
+export interface UpdateSampleItem extends CreateSampleItem {
+  sampleId: number;
+}
+
+export interface CreateSampleItem {
   name: string;
   organism?: string;
   description?: string;
   metadata: FieldUpdate[];
+}
+
+export interface UpdateSamplesRequest {
+  projectId: string;
+  body: UpdateSampleItem[];
+}
+
+export interface CreateSamplesRequest {
+  projectId: string;
+  body: CreateSampleItem[];
 }
 
 export interface ValidateSampleNamesRequest {
@@ -147,8 +157,8 @@ export async function createSamples({
   body,
 }: {
   projectId: string;
-  body: SampleRequest[];
-}): Promise<CreateSamplesResponse> {
+  body: CreateSampleItem[];
+}): Promise<SamplesResponse> {
   try {
     const { data } = await axios.post(
       `${URL}/${projectId}/samples/create`,
@@ -165,8 +175,8 @@ export async function updateSamples({
   body,
 }: {
   projectId: string;
-  body: SampleRequest[];
-}): Promise<UpdateSamplesResponse> {
+  body: UpdateSampleItem[];
+}): Promise<SamplesResponse> {
   try {
     const { data } = await axios.patch(
       `${URL}/${projectId}/samples/update`,

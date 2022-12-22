@@ -76,6 +76,7 @@ export function SampleMetadataImportReview(): JSX.Element {
     metadata,
     metadataValidateDetails,
     metadataSaveDetails,
+    percentComplete,
   } = useImportSelector((state: ImportState) => state.importReducer);
   const dispatch: ImportDispatch = useImportDispatch();
 
@@ -94,11 +95,8 @@ export function SampleMetadataImportReview(): JSX.Element {
   };
 
   React.useEffect(() => {
-    const savedCount = Object.entries(metadataSaveDetails).filter(
-      ([, metadataSaveDetailsItem]) => metadataSaveDetailsItem.saved
-    ).length;
-    setProgress(Math.round((savedCount / selected.length) * 100));
-  }, [metadataSaveDetails, selected.length]);
+    setProgress(percentComplete);
+  }, [percentComplete]);
 
   React.useEffect(() => {
     const sampleColumn: ColumnType<MetadataItem> = {

@@ -5,30 +5,27 @@ import {
 } from "@reduxjs/toolkit";
 import { validateSampleName } from "../../../../apis/metadata/sample-utils";
 import {
+  CreateSampleItem,
   createSamples,
   getLockedSamples,
   LockedSamplesResponse,
   MetadataItem,
+  SampleItemResponse,
+  UpdateSampleItem,
   updateSamples,
   ValidateSampleNameModel,
   validateSamples,
   ValidateSamplesResponse,
 } from "../../../../apis/projects/samples";
 import { ImportDispatch, ImportState } from "./store";
-import {
-  calculateChunkSize,
-  chunkArray,
-} from "../../../../utilities/array-utilities";
+import { chunkArray } from "../../../../utilities/array-utilities";
 import {
   createMetadataFieldsForProject,
   getMetadataFieldsForProject,
   MetadataField,
 } from "../../../../apis/metadata/field";
 import { Restriction } from "../../../../utilities/restriction-utilities";
-import {
-  createMetadataFields,
-  updateMetadataSaveDetails,
-} from "./import-utilities";
+import { createMetadataFields } from "./import-utilities";
 
 export interface MetadataHeaderItem {
   name: string;
@@ -48,6 +45,10 @@ export interface MetadataSaveDetailsItem {
   error?: string;
 }
 
+export interface SaveMetadataResponse {
+  metadataSaveDetails: Record<string, MetadataSaveDetailsItem>;
+}
+
 export interface SetSampleNameColumnResponse {
   sampleNameColumn: string;
   metadataValidateDetails: Record<string, MetadataValidateDetailsItem>;
@@ -60,6 +61,7 @@ export interface InitialState {
   metadata: MetadataItem[];
   metadataValidateDetails: Record<string, MetadataValidateDetailsItem>;
   metadataSaveDetails: Record<string, MetadataSaveDetailsItem>;
+  percentComplete: number;
 }
 
 const initialState: InitialState = {
@@ -69,6 +71,7 @@ const initialState: InitialState = {
   metadata: [],
   metadataValidateDetails: {},
   metadataSaveDetails: {},
+  percentComplete: 0,
 };
 
 /*
@@ -76,7 +79,7 @@ Redux async thunk for saving the metadata to samples.
 For more information on redux async thunks see: https://redux-toolkit.js.org/api/createAsyncThunk
  */
 export const saveMetadata = createAsyncThunk<
-  string,
+  SaveMetadataResponse,
   { projectId: string; selectedMetadataKeys: string[] },
   { dispatch: ImportDispatch; state: ImportState }
 >(
@@ -91,7 +94,7 @@ export const saveMetadata = createAsyncThunk<
       metadataSaveDetails,
     } = state.importReducer;
 
-    let newMetadataSaveDetails = { ...metadataSaveDetails };
+    const newMetadataSaveDetails = { ...metadataSaveDetails };
 
     //save header details (metadata field & restriction)
     //if failure display error notification on page
@@ -117,116 +120,70 @@ export const saveMetadata = createAsyncThunk<
       );
     });
 
-    //update existing project samples
-    const updateSamplesPromises: Promise<void>[] = [];
-    const updateSampleList = selectedSampleList
-      .filter((metadataItem) => {
-        const name = metadataItem[sampleNameColumn];
-        const sampleId = metadataValidateDetails[name].foundSampleId;
-        return typeof sampleId === "number";
-      })
-      .map((metadataItem) => {
-        const name = metadataItem[sampleNameColumn];
-        const sampleId = metadataValidateDetails[name].foundSampleId;
-        const metadataFields = createMetadataFields(
-          sampleNameColumn,
-          headers,
-          metadataItem
-        );
-        return { name, sampleId, metadata: metadataFields };
-      });
-    //create a request with a list of project samples to be updated
-    if (updateSampleList.length > 0) {
-      const updateSampleListChunkSize = calculateChunkSize(
-        updateSampleList.length
+    const createSampleList: CreateSampleItem[] = [];
+    const updateSampleList: UpdateSampleItem[] = [];
+
+    selectedSampleList.forEach((metadataItem) => {
+      const name = metadataItem[sampleNameColumn];
+      const sampleId = metadataValidateDetails[name].foundSampleId;
+      const metadata = createMetadataFields(
+        sampleNameColumn,
+        headers,
+        metadataItem
       );
-      const chunkedUpdateSampleList = chunkArray(
-        updateSampleList,
-        updateSampleListChunkSize
-      );
-      for (const chunk of chunkedUpdateSampleList) {
-        updateSamplesPromises.push(
-          updateSamples({
-            projectId,
-            body: chunk,
-          })
-            .then((response) => {
-              const { responses } = response;
-              newMetadataSaveDetails = updateMetadataSaveDetails(
-                responses,
-                newMetadataSaveDetails,
-                dispatch
-              );
-            })
-            .catch((error) => {
-              const { responses } = error;
-              newMetadataSaveDetails = updateMetadataSaveDetails(
-                responses,
-                newMetadataSaveDetails,
-                dispatch
-              );
-            })
-        );
+
+      if (typeof sampleId === "number") {
+        updateSampleList.push({ name, sampleId, metadata });
+      } else {
+        createSampleList.push({ name, metadata });
       }
-      //send multiple update project sample requests in parallel
-      await Promise.all(updateSamplesPromises);
+    });
+
+    const promiseList: Promise<void>[] = [];
+    const chunkedCreateSampleList = chunkArray(createSampleList);
+    const chunkedUpdateSampleList = chunkArray(updateSampleList);
+
+    chunkedUpdateSampleList.forEach((chunk) => {
+      promiseList.push(
+        updateSamples({ projectId, body: chunk })
+          .then(handleResponse)
+          .catch(handleResponse)
+      );
+    });
+
+    chunkedCreateSampleList.forEach((chunk) => {
+      promiseList.push(
+        createSamples({ projectId, body: chunk })
+          .then(handleResponse)
+          .catch(handleResponse)
+      );
+    });
+
+    await Promise.all(promiseList);
+
+    function handleResponse({
+      responses,
+    }: {
+      responses: Record<string, SampleItemResponse>;
+    }) {
+      dispatch(
+        updatePercentComplete(
+          Math.round(
+            (Object.keys(responses).length / selectedSampleList.length) * 100
+          )
+        )
+      );
+      Object.keys(responses).forEach((key) => {
+        const { error, errorMessage } = responses[key];
+        newMetadataSaveDetails[key] = {
+          saved: !error,
+          error: errorMessage,
+        };
+      });
+      return;
     }
 
-    //create new project samples
-    const createSamplesPromises: Promise<void>[] = [];
-    const createSampleList = selectedSampleList
-      .filter((metadataItem) => {
-        const name = metadataItem[sampleNameColumn];
-        const sampleId = metadataValidateDetails[name].foundSampleId;
-        return !(typeof sampleId === "number");
-      })
-      .map((metadataItem) => {
-        const name = metadataItem[sampleNameColumn];
-        const metadataFields = createMetadataFields(
-          sampleNameColumn,
-          headers,
-          metadataItem
-        );
-        return { name, metadata: metadataFields };
-      });
-    //create a request with a list of project samples to be created
-    if (createSampleList.length > 0) {
-      const createSampleListChunkSize = calculateChunkSize(
-        updateSampleList.length
-      );
-      const chunkedCreateSampleList = chunkArray(
-        createSampleList,
-        createSampleListChunkSize
-      );
-      for (const chunk of chunkedCreateSampleList) {
-        createSamplesPromises.push(
-          createSamples({
-            projectId,
-            body: chunk,
-          })
-            .then((response) => {
-              const { responses } = response;
-              newMetadataSaveDetails = updateMetadataSaveDetails(
-                responses,
-                newMetadataSaveDetails,
-                dispatch
-              );
-            })
-            .catch((error) => {
-              const { responses } = error;
-              newMetadataSaveDetails = updateMetadataSaveDetails(
-                responses,
-                newMetadataSaveDetails,
-                dispatch
-              );
-            })
-        );
-      }
-      //send multiple create project sample requests in parallel
-      await Promise.all(createSamplesPromises);
-    }
-
-    return "success";
+    return { metadataSaveDetails: newMetadataSaveDetails };
   }
 );
 
@@ -364,6 +321,17 @@ export const setMetadataSaveDetails = createAction(
 );
 
 /*
+Redux action for update the progress bar.
+For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
+ */
+const updatePercentComplete = createAction(
+  `importReducer/updatePercentComplete`,
+  (amount: number) => ({
+    payload: { amount },
+  })
+);
+
+/*
 Redux reducer for project metadata.
 For more information on redux reducers see: https://redux-toolkit.js.org/api/createReducer
  */
@@ -378,6 +346,7 @@ export const importReducer = createReducer(initialState, (builder) => {
     state.metadata = [];
     state.metadataValidateDetails = {};
     state.metadataSaveDetails = {};
+    state.percentComplete = 0;
   });
   builder.addCase(setMetadata, (state, action) => {
     state.metadata = action.payload.metadata;
@@ -391,5 +360,11 @@ export const importReducer = createReducer(initialState, (builder) => {
   builder.addCase(setSampleNameColumn.fulfilled, (state, action) => {
     state.sampleNameColumn = action.payload.sampleNameColumn;
     state.metadataValidateDetails = action.payload.metadataValidateDetails;
+  });
+  builder.addCase(saveMetadata.fulfilled, (state, action) => {
+    state.metadataSaveDetails = action.payload.metadataSaveDetails;
+  });
+  builder.addCase(updatePercentComplete, (state, action) => {
+    state.percentComplete = state.percentComplete + action.payload.amount;
   });
 });
