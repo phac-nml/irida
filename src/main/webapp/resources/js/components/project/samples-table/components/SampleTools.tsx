@@ -11,8 +11,15 @@ import {
   ShareAltOutlined,
 } from "@ant-design/icons";
 import { IconDropDown } from "../../../icons/Icons";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
+import { CONTEXT_PATH } from "../../../../data/routes";
+import MergeTrigger from "./merge/MergeTrigger";
 
+/**
+ * React component to render a dropdown list of actions that can be performed
+ * on samples.
+ *
+ * @constructor
+ */
 export default function SampleTools() {
   const { projectId } = useParams();
   const { data: details = {} } = useGetProjectDetailsQuery(projectId);
@@ -22,14 +29,15 @@ export default function SampleTools() {
     () => (
       <Menu className={"t-tools-dropdown"}>
         {!details.remote ? (
-          <Menu.Item
-            disabled={state.selection.count < 2}
-            key={"merge-menu"}
-            icon={<MergeCellsOutlined />}
-            className={"t-merge"}
-          >
-            {i18n("SamplesMenu.merge")}
-          </Menu.Item>
+          <MergeTrigger>
+            <Menu.Item
+              key={"merge-menu"}
+              icon={<MergeCellsOutlined />}
+              className={"t-merge"}
+            >
+              {i18n("SamplesMenu.merge")}
+            </Menu.Item>
+          </MergeTrigger>
         ) : null}
         <Menu.Item
           disabled={state.selection.count === 0}
@@ -50,9 +58,7 @@ export default function SampleTools() {
         <Menu.Divider />
         <Menu.Item key="import-menu" icon={<CloudUploadOutlined />}>
           <a
-            href={setBaseUrl(
-              `projects/${projectId}/sample-metadata/upload/file`
-            )}
+            href={`${CONTEXT_PATH}/projects/${projectId}/sample-metadata/upload/file`}
           >
             {i18n("SamplesMenu.import")}
           </a>
