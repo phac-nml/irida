@@ -9,6 +9,12 @@ import {
 } from "./importReducer";
 import { ImportDispatch } from "./store";
 
+/**
+ * Save the responses from creating and updating samples in a hash.
+ * @param responses - from creating and updating samples
+ * @param metadataSaveDetails - the hash storing the responses
+ * @param dispatch - a function of the Redux store to dispatch an action to trigger a state change
+ */
 export function updateMetadataSaveDetails(
   responses: Record<string, SampleItemResponse>,
   metadataSaveDetails: Record<string, MetadataSaveDetailsItem>,
@@ -25,6 +31,12 @@ export function updateMetadataSaveDetails(
   return metadataSaveDetails;
 }
 
+/**
+ * Create a list of metadata fields and their values for each sample.
+ * @param sampleNameColumn - the name of the header that represents the sample name column
+ * @param headers - a list of the table headers
+ * @param metadataItem - the data of a row in the table representing the metadata of a sample
+ */
 export function createMetadataFields(
   sampleNameColumn: string,
   headers: MetadataHeaderItem[],
