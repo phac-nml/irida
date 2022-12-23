@@ -227,7 +227,7 @@ export function SampleMetadataImportReview(): JSX.Element {
         .catch((payload) => {
           setLoading(false);
           notification.error({
-            message: payload.message,
+            message: payload,
             className: "t-metadata-uploader-review-error",
           });
         });

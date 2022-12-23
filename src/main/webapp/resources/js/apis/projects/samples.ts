@@ -166,7 +166,7 @@ export async function createSamples({
     );
     return Promise.resolve(data);
   } catch (error: any) {
-    return Promise.reject(error.response.data);
+    return Promise.resolve(error.response.data);
   }
 }
 
@@ -184,7 +184,7 @@ export async function updateSamples({
     );
     return Promise.resolve(data);
   } catch (error: any) {
-    return Promise.reject(error.response.data);
+    return Promise.resolve(error.response.data);
   }
 }
 

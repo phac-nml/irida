@@ -10,7 +10,6 @@ import {
   getLockedSamples,
   LockedSamplesResponse,
   MetadataItem,
-  SampleItemResponse,
   UpdateSampleItem,
   updateSamples,
   ValidateSampleNameModel,
@@ -18,14 +17,13 @@ import {
   ValidateSamplesResponse,
 } from "../../../../apis/projects/samples";
 import { ImportDispatch, ImportState } from "./store";
-import { chunkArray } from "../../../../utilities/array-utilities";
 import {
   createMetadataFieldsForProject,
   getMetadataFieldsForProject,
   MetadataField,
 } from "../../../../apis/metadata/field";
 import { Restriction } from "../../../../utilities/restriction-utilities";
-import { createMetadataFields } from "./import-utilities";
+import { createMetadataFields, createPromiseList } from "./import-utilities";
 
 export interface MetadataHeaderItem {
   name: string;
@@ -81,12 +79,15 @@ For more information on redux async thunks see: https://redux-toolkit.js.org/api
 export const saveMetadata = createAsyncThunk<
   SaveMetadataResponse,
   { projectId: string; selectedMetadataKeys: string[] },
-  { dispatch: ImportDispatch; state: ImportState }
+  { dispatch: ImportDispatch; state: ImportState; rejectValue: string }
 >(
   `importReducer/saveMetadata`,
-  async ({ projectId, selectedMetadataKeys }, { dispatch, getState }) => {
+  async (
+    { projectId, selectedMetadataKeys },
+    { dispatch, getState, rejectWithValue }
+  ) => {
     const state: ImportState = getState();
-    const {
+    let {
       sampleNameColumn,
       headers,
       metadata,
@@ -94,96 +95,74 @@ export const saveMetadata = createAsyncThunk<
       metadataSaveDetails,
     } = state.importReducer;
 
-    const newMetadataSaveDetails = { ...metadataSaveDetails };
-
-    //save header details (metadata field & restriction)
-    //if failure display error notification on page
-    await createMetadataFieldsForProject({
-      projectId,
-      body: headers
-        .filter((header) => header.name !== sampleNameColumn)
-        .map((header) => ({
-          label: header.name,
-          restriction: header.targetRestriction,
-        })),
-    }).catch((error) => {
-      throw new Error(error.response.data.error);
-    });
-
-    //save selected metadata entry rows
-    //during a partial failure only save data that has not already been saved
-    const selectedSampleList = metadata.filter((metadataItem) => {
-      const name: string = metadataItem[sampleNameColumn];
-      return (
-        selectedMetadataKeys.includes(metadataItem.rowKey) &&
-        newMetadataSaveDetails[name]?.saved !== true
-      );
-    });
-
-    const createSampleList: CreateSampleItem[] = [];
-    const updateSampleList: UpdateSampleItem[] = [];
-
-    selectedSampleList.forEach((metadataItem) => {
-      const name = metadataItem[sampleNameColumn];
-      const sampleId = metadataValidateDetails[name].foundSampleId;
-      const metadata = createMetadataFields(
-        sampleNameColumn,
-        headers,
-        metadataItem
-      );
-
-      if (typeof sampleId === "number") {
-        updateSampleList.push({ name, sampleId, metadata });
-      } else {
-        createSampleList.push({ name, metadata });
-      }
-    });
-
-    const promiseList: Promise<void>[] = [];
-    const chunkedCreateSampleList = chunkArray(createSampleList);
-    const chunkedUpdateSampleList = chunkArray(updateSampleList);
-
-    chunkedUpdateSampleList.forEach((chunk) => {
-      promiseList.push(
-        updateSamples({ projectId, body: chunk })
-          .then(handleResponse)
-          .catch(handleResponse)
-      );
-    });
-
-    chunkedCreateSampleList.forEach((chunk) => {
-      promiseList.push(
-        createSamples({ projectId, body: chunk })
-          .then(handleResponse)
-          .catch(handleResponse)
-      );
-    });
-
-    await Promise.all(promiseList);
-
-    function handleResponse({
-      responses,
-    }: {
-      responses: Record<string, SampleItemResponse>;
-    }) {
-      dispatch(
-        updatePercentComplete(
-          Math.round(
-            (Object.keys(responses).length / selectedSampleList.length) * 100
-          )
-        )
-      );
-      Object.keys(responses).forEach((key) => {
-        const { error, errorMessage } = responses[key];
-        newMetadataSaveDetails[key] = {
-          saved: !error,
-          error: errorMessage,
-        };
+    try {
+      //save header details (metadata field & restriction)
+      //if failure display error notification on page
+      await createMetadataFieldsForProject({
+        projectId,
+        body: headers
+          .filter((header) => header.name !== sampleNameColumn)
+          .map((header) => ({
+            label: header.name,
+            restriction: header.targetRestriction,
+          })),
+      }).catch((error) => {
+        throw new Error(error.response.data.error);
       });
-      return;
-    }
 
-    return { metadataSaveDetails: newMetadataSaveDetails };
+      //save selected metadata entry rows
+      //during a partial failure only save data that has not already been saved
+      const selectedSampleList = metadata.filter((metadataItem) => {
+        const name: string = metadataItem[sampleNameColumn];
+        return (
+          selectedMetadataKeys.includes(metadataItem.rowKey) &&
+          metadataSaveDetails[name]?.saved !== true
+        );
+      });
+
+      const createSampleList: CreateSampleItem[] = [];
+      const updateSampleList: UpdateSampleItem[] = [];
+
+      selectedSampleList.forEach((metadataItem) => {
+        const name = metadataItem[sampleNameColumn];
+        const sampleId = metadataValidateDetails[name].foundSampleId;
+        const metadata = createMetadataFields(
+          sampleNameColumn,
+          headers,
+          metadataItem
+        );
+
+        if (typeof sampleId === "number") {
+          updateSampleList.push({ name, sampleId, metadata });
+        } else {
+          createSampleList.push({ name, metadata });
+        }
+      });
+
+      let { promiseList, newMetadataSaveDetails } = createPromiseList(
+        createSampleList,
+        createSamples,
+        projectId,
+        selectedSampleList.length,
+        metadataSaveDetails,
+        dispatch
+      );
+      await Promise.all(promiseList);
+
+      metadataSaveDetails = newMetadataSaveDetails;
+      ({ promiseList, newMetadataSaveDetails } = createPromiseList(
+        updateSampleList,
+        updateSamples,
+        projectId,
+        selectedSampleList.length,
+        metadataSaveDetails,
+        dispatch
+      ));
+      await Promise.all(promiseList);
+      return { metadataSaveDetails: newMetadataSaveDetails };
+    } catch (error) {
+      return rejectWithValue("Something went wrong.");
+    }
   }
 );
 
@@ -321,10 +300,10 @@ export const setMetadataSaveDetails = createAction(
 );
 
 /*
-Redux action for update the progress bar.
+Redux action for updating the progress bar.
 For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
  */
-const updatePercentComplete = createAction(
+export const updatePercentComplete = createAction(
   `importReducer/updatePercentComplete`,
   (amount: number) => ({
     payload: { amount },

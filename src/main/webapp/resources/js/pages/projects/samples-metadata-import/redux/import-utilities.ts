@@ -1,5 +1,53 @@
-import { MetadataItem } from "../../../../apis/projects/samples";
-import { MetadataHeaderItem } from "./importReducer";
+import {
+  CreateSampleItem,
+  MetadataItem,
+  SamplesResponse,
+  UpdateSampleItem,
+} from "../../../../apis/projects/samples";
+import {
+  MetadataHeaderItem,
+  MetadataSaveDetailsItem,
+  updatePercentComplete,
+} from "./importReducer";
+import { ImportDispatch } from "./store";
+import { chunkArray } from "../../../../utilities/array-utilities";
+
+export function createPromiseList(
+  sampleList: CreateSampleItem[] | UpdateSampleItem[],
+  sampleFunction: (p: {
+    body: any[];
+    projectId: string;
+  }) => Promise<SamplesResponse>,
+  projectId: string,
+  totalCount: number,
+  metadataSaveDetails: Record<string, MetadataSaveDetailsItem>,
+  dispatch: ImportDispatch
+) {
+  const newMetadataSaveDetails = { ...metadataSaveDetails };
+  const promiseList: Promise<void>[] = [];
+  const chunkedSampleList = chunkArray(sampleList);
+
+  chunkedSampleList.forEach((chunk) => {
+    promiseList.push(
+      sampleFunction({ projectId, body: chunk }).then(({ responses }) => {
+        dispatch(
+          updatePercentComplete(
+            Math.round((Object.keys(responses).length / totalCount) * 100)
+          )
+        );
+        Object.keys(responses).forEach((key) => {
+          const { error, errorMessage } = responses[key];
+          newMetadataSaveDetails[key] = {
+            saved: !error,
+            error: errorMessage,
+          };
+        });
+      })
+    );
+  });
+
+  return { promiseList, newMetadataSaveDetails };
+}
 
 /**
  * Create a list of metadata fields and their values for each sample.
