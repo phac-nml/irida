@@ -23,7 +23,7 @@ import {
   MetadataField,
 } from "../../../../apis/metadata/field";
 import { Restriction } from "../../../../utilities/restriction-utilities";
-import { createMetadataFields, createPromiseList } from "./import-utilities";
+import { createMetadataFields, generatePromiseList } from "./import-utilities";
 
 export interface MetadataHeaderItem {
   name: string;
@@ -87,7 +87,7 @@ export const saveMetadata = createAsyncThunk<
     { dispatch, getState, rejectWithValue }
   ) => {
     const state: ImportState = getState();
-    let {
+    const {
       sampleNameColumn,
       headers,
       metadata,
@@ -139,7 +139,10 @@ export const saveMetadata = createAsyncThunk<
         }
       });
 
-      let { promiseList, newMetadataSaveDetails } = createPromiseList(
+      const {
+        promiseList: createPromiseList,
+        newMetadataSaveDetails: createMetadataSaveDetails,
+      } = generatePromiseList(
         createSampleList,
         createSamples,
         projectId,
@@ -147,21 +150,24 @@ export const saveMetadata = createAsyncThunk<
         metadataSaveDetails,
         dispatch
       );
-      await Promise.all(promiseList);
+      await Promise.all(createPromiseList);
 
-      metadataSaveDetails = newMetadataSaveDetails;
-      ({ promiseList, newMetadataSaveDetails } = createPromiseList(
+      const {
+        promiseList: updatePromiseList,
+        newMetadataSaveDetails: updateMetadataSaveDetails,
+      } = generatePromiseList(
         updateSampleList,
         updateSamples,
         projectId,
         selectedSampleList.length,
-        metadataSaveDetails,
+        createMetadataSaveDetails,
         dispatch
-      ));
-      await Promise.all(promiseList);
-      return { metadataSaveDetails: newMetadataSaveDetails };
-    } catch (error) {
-      return rejectWithValue("Something went wrong.");
+      );
+      await Promise.all(updatePromiseList);
+      return { metadataSaveDetails: updateMetadataSaveDetails };
+    } catch (error: any) {
+      const { message } = error;
+      return rejectWithValue(message);
     }
   }
 );

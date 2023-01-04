@@ -12,7 +12,7 @@ import {
 import { ImportDispatch } from "./store";
 import { chunkArray } from "../../../../utilities/array-utilities";
 
-export function createPromiseList(
+export function generatePromiseList(
   sampleList: CreateSampleItem[] | UpdateSampleItem[],
   sampleFunction: (p: {
     body: any[];
