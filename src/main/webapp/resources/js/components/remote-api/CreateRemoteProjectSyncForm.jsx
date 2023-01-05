@@ -18,6 +18,8 @@ import { SyncFrequencySelect } from "./SyncFrequencySelect";
 export function CreateRemoteProjectSyncForm() {
   const [apis, setApis] = useState([]);
   const [selectedApi, setSelectedApi] = useState();
+  const [newRemoteProjectUrlError, setNewRemoteProjectUrlError] =
+    useState(null);
   const [projects, setProjects] = useState([]);
   const [connected, setConnected] = useState();
   const [manual, setManual] = useState(false);
@@ -53,12 +55,15 @@ export function CreateRemoteProjectSyncForm() {
 
   const createRemote = () => {
     form.validateFields().then(({ frequency, url }) => {
+      setNewRemoteProjectUrlError(null);
       createSynchronizedProject({
         url,
         frequency,
-      }).then(
-        ({ id }) => (window.location.href = setBaseUrl(`/projects/${id}`))
-      );
+      })
+        .then(
+          ({ id }) => (window.location.href = setBaseUrl(`/projects/${id}`))
+        )
+        .catch((error) => setNewRemoteProjectUrlError(error));
     });
   };
 
@@ -106,6 +111,10 @@ export function CreateRemoteProjectSyncForm() {
                 />
               </Form.Item>
               <Form.Item
+                validateStatus={newRemoteProjectUrlError !== null && "error"}
+                help={
+                  newRemoteProjectUrlError !== null && newRemoteProjectUrlError
+                }
                 rules={[
                   {
                     required: true,
@@ -115,7 +124,13 @@ export function CreateRemoteProjectSyncForm() {
                 label={
                   <span>
                     {i18n("NewProjectSync.remoteUrl")}
-                    <Checkbox onChange={(e) => setManual(e.target.checked)}>
+                    <Checkbox
+                      className="t-remote-project-url-checkbox"
+                      onChange={(e) => {
+                        setManual(e.target.checked);
+                        setNewRemoteProjectUrlError(null);
+                      }}
+                    >
                       {i18n("NewProjectSync.remoteUrl.manual")}
                       <HelpPopover
                         content={<div>{i18n("NewProjectSync.url.help")}</div>}
@@ -125,7 +140,11 @@ export function CreateRemoteProjectSyncForm() {
                 }
                 name="url"
               >
-                <Input className="t-project-url" disabled={!manual} />
+                <Input
+                  className="t-project-url"
+                  disabled={!manual}
+                  onChange={() => setNewRemoteProjectUrlError(null)}
+                />
               </Form.Item>
               <SyncFrequencySelect />
             </>

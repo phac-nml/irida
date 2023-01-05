@@ -28,7 +28,7 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 		ProjectsPage page = ProjectsPage.goToProjectsPage(driver(), true);
 		checkTranslations(page, ImmutableList.of("projects"), "Projects\nCreate New Project");
 
-		assertEquals(8, page.getNumberOfProjects(), "Should be 8 projects");
+		assertEquals(9, page.getNumberOfProjects(), "Should be 9 projects");
 		List<String> projectNames = page.getProjectsSortListByColumnName();
 		assertFalse(Ordering.natural().isOrdered(projectNames),
 				"Projects name should not be sorted originally");
@@ -56,7 +56,7 @@ public class ProjectsPageIT extends AbstractIridaUIITChromeDriver {
 
 		page = ProjectsPage.goToProjectsPage(driver(), false);
 		checkTranslations(page, ImmutableList.of("projects"), "Projects\nCreate New Project");
-		assertEquals(2, page.getNumberOfProjects(), "Should be 2 projects on the page");
+		assertEquals(3, page.getNumberOfProjects(), "Should be 3 projects on the page");
 
 		assertTrue(page.createNewButtonVisible(), "There should be a Create New Project button visible");
 	}

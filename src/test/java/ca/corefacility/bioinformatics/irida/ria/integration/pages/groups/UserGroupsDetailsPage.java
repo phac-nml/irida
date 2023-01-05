@@ -1,7 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.groups;
 
 import java.time.Duration;
+import java.util.List;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -74,7 +76,7 @@ public class UserGroupsDetailsPage extends AbstractPage {
 	}
 
 	public void addGroupMember(String searchTerm, String role) {
-		addMemberButton.addMember(driver, searchTerm);
+		addMemberButton.addMember(driver, searchTerm, role);
 	}
 
 	public void deleteGroup() {
@@ -85,5 +87,10 @@ public class UserGroupsDetailsPage extends AbstractPage {
 		deleteBtn.click();
 		wait.until(ExpectedConditions.elementToBeClickable(deleteConfirmBtn));
 		deleteConfirmBtn.click();
+	}
+
+	public String getUserGroupMemberRole(int row) {
+		List<WebElement> memberSelectedRoles = driver.findElements(By.className("ant-select-selection-item"));
+		return memberSelectedRoles.get(row).getText();
 	}
 }
