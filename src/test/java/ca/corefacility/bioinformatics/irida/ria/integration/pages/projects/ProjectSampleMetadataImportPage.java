@@ -57,10 +57,8 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	}
 
 	public void uploadMetadataFile(String filePath) {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		Path path = Paths.get(filePath);
 		dropzone.sendKeys(path.toAbsolutePath().toString());
-		wait.until(ExpectedConditions.visibilityOf(fileBtn));
 	}
 
 	public void goToReviewPage() {
@@ -76,8 +74,9 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	}
 
 	public void selectSampleNameColumn(String sampleNameColumn) {
-		sampleNameColumnSelect.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.visibilityOf(sampleNameColumnSelect));
+		sampleNameColumnSelect.click();
 		List<WebElement> selectOptions = wait.until(
 				ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-select-item")));
 		for (WebElement option : selectOptions) {
@@ -108,6 +107,8 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	}
 
 	public boolean isAlertDisplayed() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.visibilityOf(validationAlert));
 		return validationAlert.isDisplayed();
 	}
 
