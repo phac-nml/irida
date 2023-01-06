@@ -14,9 +14,12 @@ import { chunkArray } from "../../../../utilities/array-utilities";
 
 export function generatePromiseList(
   sampleList: CreateSampleItem[] | UpdateSampleItem[],
-  sampleFunction: (p: {
-    body: any[];
+  sampleFunction: ({
+    projectId,
+    body,
+  }: {
     projectId: string;
+    body: CreateSampleItem[] | UpdateSampleItem[];
   }) => Promise<SamplesResponse>,
   projectId: string,
   totalCount: number,

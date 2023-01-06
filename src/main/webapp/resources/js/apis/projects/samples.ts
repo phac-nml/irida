@@ -165,8 +165,16 @@ export async function createSamples({
       body
     );
     return Promise.resolve(data);
-  } catch (error: any) {
-    return Promise.resolve(error.response.data);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        return Promise.resolve(error.response.data.error);
+      } else {
+        return Promise.reject(error.message);
+      }
+    } else {
+      return Promise.reject("An unexpected error occurred");
+    }
   }
 }
 
@@ -183,8 +191,16 @@ export async function updateSamples({
       body
     );
     return Promise.resolve(data);
-  } catch (error: any) {
-    return Promise.resolve(error.response.data);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        return Promise.resolve(error.response.data.error);
+      } else {
+        return Promise.reject(error.message);
+      }
+    } else {
+      return Promise.reject("An unexpected error occurred");
+    }
   }
 }
 

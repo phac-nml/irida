@@ -165,8 +165,13 @@ export const saveMetadata = createAsyncThunk<
       );
       await Promise.all(updatePromiseList);
       return { metadataSaveDetails: updateMetadataSaveDetails };
-    } catch (error: any) {
-      const { message } = error;
+    } catch (error) {
+      let message;
+      if (error instanceof Error) {
+        ({ message } = error);
+      } else {
+        message = String(error);
+      }
       return rejectWithValue(message);
     }
   }
