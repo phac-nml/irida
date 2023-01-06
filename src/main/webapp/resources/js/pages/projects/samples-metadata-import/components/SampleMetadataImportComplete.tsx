@@ -20,26 +20,27 @@ export function SampleMetadataImportComplete(): JSX.Element {
     metadataSaveDetails,
   } = useImportSelector((state: ImportState) => state.importReducer);
 
-  const filteredSamples = (
-    metadataItem: MetadataItem,
-    isSampleFound: boolean
-  ) => {
-    return (
-      metadataSaveDetails[metadataItem[sampleNameColumn]]?.saved === true &&
-      !metadataValidateDetails[metadataItem[sampleNameColumn]].locked &&
-      (isSampleFound
-        ? metadataValidateDetails[metadataItem[sampleNameColumn]].foundSampleId
-        : !metadataValidateDetails[metadataItem[sampleNameColumn]]
-            .foundSampleId)
-    );
-  };
+  const filteredSamples = React.useCallback(
+    (metadataItem: MetadataItem, isSampleFound: boolean) => {
+      return (
+        metadataSaveDetails[metadataItem[sampleNameColumn]]?.saved === true &&
+        !metadataValidateDetails[metadataItem[sampleNameColumn]].locked &&
+        (isSampleFound
+          ? metadataValidateDetails[metadataItem[sampleNameColumn]]
+              .foundSampleId
+          : !metadataValidateDetails[metadataItem[sampleNameColumn]]
+              .foundSampleId)
+      );
+    },
+    [metadataSaveDetails, metadataValidateDetails, sampleNameColumn]
+  );
 
   const samplesUpdatedCount = useMemo(
     () =>
       metadata.filter((metadataItem: MetadataItem) =>
         filteredSamples(metadataItem, true)
       ).length,
-    [metadata]
+    [filteredSamples, metadata]
   );
 
   const samplesCreatedCount = useMemo(
@@ -47,7 +48,7 @@ export function SampleMetadataImportComplete(): JSX.Element {
       metadata.filter((metadataItem: MetadataItem) =>
         filteredSamples(metadataItem, false)
       ).length,
-    [metadata]
+    [filteredSamples, metadata]
   );
 
   let stats =
