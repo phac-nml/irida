@@ -70,6 +70,11 @@ export interface ValidateSampleNamesRequest {
   associatedProjectIds?: number[];
 }
 
+export type SamplesFunction = (params: {
+  projectId: string;
+  body: Array<UpdateSampleItem> | Array<CreateSampleItem>;
+}) => Promise<SamplesResponse>;
+
 const PROJECT_ID = getProjectIdFromUrl();
 const URL = setBaseUrl(`/ajax/projects`);
 
@@ -152,13 +157,7 @@ export async function getLockedSamples({
   return response.data;
 }
 
-export async function createSamples({
-  projectId,
-  body,
-}: {
-  projectId: string;
-  body: UpdateSampleItem[] | CreateSampleItem[];
-}): Promise<SamplesResponse> {
+export const createSamples: SamplesFunction = async ({ projectId, body }) => {
   try {
     const { data } = await axios.post(
       `${URL}/${projectId}/samples/create`,
@@ -176,15 +175,9 @@ export async function createSamples({
       return Promise.reject("An unexpected error occurred");
     }
   }
-}
+};
 
-export async function updateSamples({
-  projectId,
-  body,
-}: {
-  projectId: string;
-  body: UpdateSampleItem[] | CreateSampleItem[];
-}): Promise<SamplesResponse> {
+export const updateSamples: SamplesFunction = async ({ projectId, body }) => {
   try {
     const { data } = await axios.patch(
       `${URL}/${projectId}/samples/update`,
@@ -202,7 +195,7 @@ export async function updateSamples({
       return Promise.reject("An unexpected error occurred");
     }
   }
-}
+};
 
 /**
  * Server side validation of a new sample name.
