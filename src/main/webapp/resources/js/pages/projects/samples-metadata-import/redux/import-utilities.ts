@@ -1,7 +1,7 @@
 import {
   CreateSampleItem,
+  CreateUpdateSamples,
   MetadataItem,
-  SamplesFunction,
   UpdateSampleItem,
 } from "../../../../apis/projects/samples";
 import {
@@ -14,7 +14,7 @@ import { chunkArray } from "../../../../utilities/array-utilities";
 
 export function generatePromiseList(
   sampleList: CreateSampleItem[] | UpdateSampleItem[],
-  sampleFunction: SamplesFunction,
+  sampleFunction: CreateUpdateSamples,
   projectId: string,
   totalCount: number,
   metadataSaveDetails: Record<string, MetadataSaveDetailsItem>,

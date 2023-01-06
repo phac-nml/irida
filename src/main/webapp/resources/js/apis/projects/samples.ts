@@ -70,7 +70,7 @@ export interface ValidateSampleNamesRequest {
   associatedProjectIds?: number[];
 }
 
-export type SamplesFunction = (params: {
+export type CreateUpdateSamples = (params: {
   projectId: string;
   body: Array<UpdateSampleItem> | Array<CreateSampleItem>;
 }) => Promise<SamplesResponse>;
@@ -157,7 +157,10 @@ export async function getLockedSamples({
   return response.data;
 }
 
-export const createSamples: SamplesFunction = async ({ projectId, body }) => {
+export const createSamples: CreateUpdateSamples = async ({
+  projectId,
+  body,
+}) => {
   try {
     const { data } = await axios.post(
       `${URL}/${projectId}/samples/create`,
@@ -177,7 +180,10 @@ export const createSamples: SamplesFunction = async ({ projectId, body }) => {
   }
 };
 
-export const updateSamples: SamplesFunction = async ({ projectId, body }) => {
+export const updateSamples: CreateUpdateSamples = async ({
+  projectId,
+  body,
+}) => {
   try {
     const { data } = await axios.patch(
       `${URL}/${projectId}/samples/update`,
