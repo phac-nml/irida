@@ -157,7 +157,7 @@ export async function createSamples({
   body,
 }: {
   projectId: string;
-  body: CreateSampleItem[];
+  body: UpdateSampleItem[] | CreateSampleItem[];
 }): Promise<SamplesResponse> {
   try {
     const { data } = await axios.post(
@@ -183,7 +183,7 @@ export async function updateSamples({
   body,
 }: {
   projectId: string;
-  body: UpdateSampleItem[];
+  body: UpdateSampleItem[] | CreateSampleItem[];
 }): Promise<SamplesResponse> {
   try {
     const { data } = await axios.patch(
