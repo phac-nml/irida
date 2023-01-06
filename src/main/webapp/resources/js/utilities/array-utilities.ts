@@ -7,10 +7,11 @@
  */
 export function chunkArray<T>(items: T[]) {
   const size = calculateChunkSize(items.length);
+  const clone = [...items];
   const chunks = [];
 
-  while (items.length) {
-    chunks.push(items.splice(0, size));
+  while (clone.length) {
+    chunks.push(clone.splice(0, size));
   }
 
   return chunks;
