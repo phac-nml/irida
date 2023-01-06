@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Result } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
@@ -20,19 +20,35 @@ export function SampleMetadataImportComplete(): JSX.Element {
     metadataSaveDetails,
   } = useImportSelector((state: ImportState) => state.importReducer);
 
-  const samplesUpdatedCount = metadata.filter(
-    (metadataItem: MetadataItem) =>
+  const filteredSamples = (
+    metadataItem: MetadataItem,
+    isSampleFound: boolean
+  ) => {
+    return (
       metadataSaveDetails[metadataItem[sampleNameColumn]]?.saved === true &&
       !metadataValidateDetails[metadataItem[sampleNameColumn]].locked &&
-      metadataValidateDetails[metadataItem[sampleNameColumn]].foundSampleId
-  ).length;
+      (isSampleFound
+        ? metadataValidateDetails[metadataItem[sampleNameColumn]].foundSampleId
+        : !metadataValidateDetails[metadataItem[sampleNameColumn]]
+            .foundSampleId)
+    );
+  };
 
-  const samplesCreatedCount = metadata.filter(
-    (metadataItem: MetadataItem) =>
-      metadataSaveDetails[metadataItem[sampleNameColumn]]?.saved === true &&
-      !metadataValidateDetails[metadataItem[sampleNameColumn]].locked &&
-      !metadataValidateDetails[metadataItem[sampleNameColumn]].foundSampleId
-  ).length;
+  const samplesUpdatedCount = useMemo(
+    () =>
+      metadata.filter((metadataItem: MetadataItem) =>
+        filteredSamples(metadataItem, true)
+      ).length,
+    [metadata]
+  );
+
+  const samplesCreatedCount = useMemo(
+    () =>
+      metadata.filter((metadataItem: MetadataItem) =>
+        filteredSamples(metadataItem, false)
+      ).length,
+    [metadata]
+  );
 
   let stats =
     samplesUpdatedCount == 1
