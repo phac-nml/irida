@@ -5,7 +5,7 @@
  *
  * @returns a chunked array
  */
-export function chunkArray(items: unknown[]) {
+export function chunkArray<T>(items: T[]) {
   const size = calculateChunkSize(items.length);
   const chunks = [];
 
