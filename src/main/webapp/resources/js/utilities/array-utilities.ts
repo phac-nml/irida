@@ -5,10 +5,9 @@
  *
  * @returns a chunked array
  */
-export function chunkArray(items: any[]) {
+export function chunkArray(items: unknown[]) {
   const size = calculateChunkSize(items.length);
   const chunks = [];
-  items = [].concat(...items);
 
   while (items.length) {
     chunks.push(items.splice(0, size));
