@@ -7,10 +7,10 @@ import {
   Form,
   Input,
   Layout,
-  notification,
   PageHeader,
   Row,
   Space,
+  notification,
 } from "antd";
 import type { RangePickerProps } from "antd/es/date-picker";
 import { LabeledValue } from "antd/lib/select";
@@ -18,11 +18,11 @@ import moment from "moment";
 import React from "react";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import {
+  NcbiSubmissionBioSample,
+  NcbiSubmissionRequest,
   getNCBISelections,
   getNCBISources,
   getNCBIStrategies,
-  NcbiSubmissionBioSample,
-  NcbiSubmissionRequest,
   submitNcbiSubmissionRequest,
 } from "../../../../apis/export/ncbi";
 import { SequencingFiles } from "../../../../apis/projects/samples";
@@ -85,12 +85,12 @@ export interface UpdateDefaultValues {
   (field: DefaultModifiableField, value: string | string[]): void;
 }
 
-enum CreateStatus {
-  REJECTED,
-  RESOLVED,
-  PENDING,
-  IDLE,
-}
+const CreateStatus = {
+  REJECTED: 0,
+  RESOLVED: 1,
+  PENDING: 2,
+  IDLE: 3,
+} as const;
 
 /**
  * React router loader
@@ -133,7 +133,7 @@ function CreateNcbiExport(): JSX.Element {
   );
   const [formSamples, setFormSamples] = React.useState<FormSamples>({});
   const [invalid, setInvalid] = React.useState<SampleRecord[]>([]);
-  const [createStatus, setCreateStatus] = React.useState<CreateStatus>(
+  const [createStatus, setCreateStatus] = React.useState<number>(
     CreateStatus.IDLE
   );
 
@@ -216,17 +216,15 @@ function CreateNcbiExport(): JSX.Element {
         releaseDate: moment.Moment;
         samples: {
           string: {
-            files: {
-              pairs?: number[];
-              singles?: number[];
-            };
+            pairs?: number[];
+            singles?: number[];
             bioSample: string;
-            libraryName: string;
-            libraryStrategy: string;
-            librarySource: string;
-            libraryConstructionProtocol: string;
-            instrumentModel: [string, string];
-            librarySelection: string;
+            libraryName: { value: string };
+            libraryStrategy: { value: string };
+            librarySource: { value: string };
+            libraryConstructionProtocol: { value: string };
+            instrumentModel: { value: [string, string] };
+            librarySelection: { value: string };
           };
         };
       }) => {
@@ -239,15 +237,26 @@ function CreateNcbiExport(): JSX.Element {
           releaseDate: releaseDate.unix(),
           samples: Object.values(_samples).map(
             ({
-              files = { pairs: [], singles: [] },
+              pairs = [],
+              singles = [],
+              bioSample,
+              libraryName,
+              libraryStrategy,
+              librarySource,
+              libraryConstructionProtocol,
               instrumentModel,
-              ...rest
+              librarySelection,
             }): NcbiSubmissionBioSample => {
               return {
-                ...rest,
-                instrumentModel: instrumentModel[1],
-                singles: files.singles ? files.singles : [],
-                pairs: files.pairs ? files.pairs : [],
+                singles,
+                pairs,
+                bioSample,
+                libraryName: libraryName.value,
+                libraryStrategy: libraryStrategy.value,
+                librarySource: librarySource.value,
+                libraryConstructionProtocol: libraryConstructionProtocol.value,
+                instrumentModel: instrumentModel.value[1],
+                librarySelection: librarySelection.value,
               };
             }
           ),
