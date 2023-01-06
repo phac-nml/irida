@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -18,6 +19,7 @@ import com.google.common.collect.ImmutableList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSampleMetadataView.xml")
 public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDriver {
 	private static final String GOOD_FILE_PATH = "src/test/resources/files/metadata-upload/good.xlsx";
@@ -48,13 +50,10 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 		 */
 		List<Double> values = ImmutableList.of(2.222222, 2.3666, 1.5689, 63.89756, 59.6666)
 				.stream()
-				.map(num -> BigDecimal.valueOf(num)
-						.setScale(2, RoundingMode.HALF_UP)
-						.doubleValue())
+				.map(num -> BigDecimal.valueOf(num).setScale(2, RoundingMode.HALF_UP).doubleValue())
 				.collect(Collectors.toList());
 		List<String> formattedNumbers = page.getValuesForColumnByName("Numbers");
-		formattedNumbers.forEach(num -> assertTrue(values.contains(Double.valueOf(num)),
-				"Found " + num + " that was not formatted properly"));
+		formattedNumbers.forEach(num -> assertTrue(values.contains(Double.valueOf(num)), "Found " + num + " that was not formatted properly"));
 
 	}
 

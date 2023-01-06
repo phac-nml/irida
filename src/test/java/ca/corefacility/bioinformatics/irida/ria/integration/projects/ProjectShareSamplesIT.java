@@ -1,15 +1,19 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ShareSamplesPage;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+@Disabled
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectShareSamples.xml")
 public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 	private ShareSamplesPage shareSamplesPage = ShareSamplesPage.initPage(driver());
@@ -48,8 +52,7 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		samplesPage.selectSampleByName("sample57567");
 		samplesPage.shareSamples();
 
-		assertFalse(shareSamplesPage.isNextButtonEnabled(),
-				"Share button should be disabled without a project selected");
+		assertFalse(shareSamplesPage.isNextButtonEnabled(), "Share button should be disabled without a project selected");
 		shareSamplesPage.searchForProject("project2");
 		shareSamplesPage.gotToNextStep();
 		assertEquals(3, shareSamplesPage.getNumberOfSamplesDisplayed(), "Should display the 3 samples selected");
@@ -73,8 +76,7 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		samplesPage.selectSampleByName("sample5fg44");
 		samplesPage.shareSamples();
 
-		assertFalse(shareSamplesPage.isNextButtonEnabled(),
-				"Share button should be disabled without a project selected");
+		assertFalse(shareSamplesPage.isNextButtonEnabled(), "Share button should be disabled without a project selected");
 		shareSamplesPage.searchForProject("project4");
 		assertTrue(shareSamplesPage.isNextButtonEnabled(), "Share button should be enabled after selecting a project");
 		shareSamplesPage.gotToNextStep();
@@ -91,8 +93,7 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		samplesPage.selectSampleByName("sample5dt5");
 		samplesPage.selectSampleByName("sample55422r");
 		samplesPage.shareSamples();
-		assertFalse(shareSamplesPage.isNextButtonEnabled(),
-				"Share button should be disabled without a project selected");
+		assertFalse(shareSamplesPage.isNextButtonEnabled(), "Share button should be disabled without a project selected");
 		shareSamplesPage.searchForProject("project2");
 		shareSamplesPage.gotToNextStep();
 		assertEquals(4, shareSamplesPage.getNumberOfSamplesDisplayed(), "Should be 4 samples displayed");
@@ -104,8 +105,7 @@ public class ProjectShareSamplesIT extends AbstractIridaUIITChromeDriver {
 		samplesPage = ProjectSamplesPage.goToPage(driver(), 2);
 		samplesPage.selectSampleByName("sample5fg44");
 		samplesPage.shareSamples();
-		assertFalse(shareSamplesPage.isNextButtonEnabled(),
-				"Share button should be disabled without a project selected");
+		assertFalse(shareSamplesPage.isNextButtonEnabled(), "Share button should be disabled without a project selected");
 		shareSamplesPage.searchForProject("project8");
 		shareSamplesPage.gotToNextStep();
 

@@ -82,7 +82,7 @@ export default function SearchLayout() {
     setSearchParams(value);
   }, 500);
   const [type, setType] = useState<SearchType>("projects");
-  const [global, setGlobal] = useState<boolean>(user.admin);
+  const [global, setGlobal] = useState<boolean>(user.isAdmin);
 
   const [projects, setProjects] = useState<{
     content: SearchProject[];
@@ -253,7 +253,7 @@ export default function SearchLayout() {
               {i18n("SearchLayout.tooltip")}
             </Typography.Text>
             <Input.Search
-              addonBefore={user.admin && searchPrefix}
+              addonBefore={user.isAdmin && searchPrefix}
               size={"large"}
               className="t-search-input"
               defaultValue={searchParams.get("query") || ""}

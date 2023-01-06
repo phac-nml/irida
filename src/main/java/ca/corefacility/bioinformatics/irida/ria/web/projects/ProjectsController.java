@@ -1,12 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
-import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
@@ -16,10 +11,18 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import ca.corefacility.bioinformatics.irida.ria.utilities.converters.FileSizeConverter;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.util.TreeNode;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Controller for project related views
@@ -183,58 +186,56 @@ public class ProjectsController {
 //	 * @param model     Spring UI model
 //	 * @return path to the html settings page
 //	 */
-//	@GetMapping("/projects/{projectId}/settings/**")
-//	public String getProjectSettingsPage(@PathVariable Long projectId, Principal principal, Model model) {
-//		Project project = projectService.read(projectId);
-//		model.addAttribute("project", project);
-//		model.addAttribute("page", "details");
-//		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
-//		return "projects/project_settings";
-//	}
-//
-//	/**
-//	 * Search for taxonomy terms. This method will return a map of found
-//	 * taxonomy terms and their child nodes.
-//	 * <p>
-//	 * Note: If the search term was not included in the results, it will be
-//	 * added as an option
-//	 *
-//	 * @param searchTerm The term to find taxa for
-//	 * @return A {@code List<Map<String,Object>>} which will contain a taxonomic
-//	 * tree of matching terms
-//	 */
-//	@RequestMapping("/projects/ajax/taxonomy/search")
-//	@ResponseBody
-//	public List<Map<String, Object>> searchTaxonomy(@RequestParam String searchTerm) {
-//		Collection<TreeNode<String>> search = taxonomyService.search(searchTerm);
-//
-//		TreeNode<String> searchTermNode = new TreeNode<>(searchTerm);
-//		// add a property to this node to indicate that it's the search term
-//		searchTermNode.addProperty("searchTerm", true);
-//
-//		List<Map<String, Object>> elements = new ArrayList<>();
-//
-//		// get the search term in first if it's not there yet
-//		if (!search.contains(searchTermNode)) {
-//			elements.add(transformTreeNode(searchTermNode));
-//		}
-//
-//		for (TreeNode<String> node : search) {
-//			Map<String, Object> transformTreeNode = transformTreeNode(node);
-//			elements.add(transformTreeNode);
-//		}
-//		return elements;
-//	}
-//
-//	/**
-//	 * Export Projects table as either an excel file or CSV
-//	 *
-//	 * @param type      of file to export (csv or excel)
-//	 * @param isAdmin   if the currently logged in user is an administrator
-//	 * @param response  {@link HttpServletResponse}
-//	 * @param principal {@link Principal}
-//	 * @param locale    {@link Locale}
-//	 * @throws IOException thrown if cannot open the {@link HttpServletResponse}
+	//	@GetMapping("/projects/{projectId}/settings/**")
+	//	public String getProjectSettingsPage(@PathVariable Long projectId, Principal principal, Model model) {
+	//		Project project = projectService.read(projectId);
+	//		model.addAttribute("project", project);
+	//		model.addAttribute("page", "details");
+	//		projectControllerUtils.getProjectTemplateDetails(model, principal, project);
+	//		return "projects/project_settings";
+	//	}
+	//
+
+	/**
+	 * Search for taxonomy terms. This method will return a map of found taxonomy terms and their child nodes.
+	 * <p>
+	 * Note: If the search term was not included in the results, it will be added as an option
+	 *
+	 * @param searchTerm The term to find taxa for
+	 * @return A {@code List<Map<String,Object>>} which will contain a taxonomic tree of matching terms
+	 */
+	@RequestMapping("/projects/ajax/taxonomy/search")
+	@ResponseBody
+	public List<Map<String, Object>> searchTaxonomy(@RequestParam String searchTerm) {
+		Collection<TreeNode<String>> search = taxonomyService.search(searchTerm);
+
+		TreeNode<String> searchTermNode = new TreeNode<>(searchTerm);
+		// add a property to this node to indicate that it's the search term
+		searchTermNode.addProperty("searchTerm", true);
+
+		List<Map<String, Object>> elements = new ArrayList<>();
+
+		// get the search term in first if it's not there yet
+		if (!search.contains(searchTermNode)) {
+			elements.add(transformTreeNode(searchTermNode));
+		}
+
+		for (TreeNode<String> node : search) {
+			Map<String, Object> transformTreeNode = transformTreeNode(node);
+			elements.add(transformTreeNode);
+		}
+		return elements;
+	}
+	//
+	//	/**
+	//	 * Export Projects table as either an excel file or CSV
+	//	 *
+	//	 * @param type      of file to export (csv or excel)
+	//	 * @param isAdmin   if the currently logged in user is an administrator
+	//	 * @param response  {@link HttpServletResponse}
+	//	 * @param principal {@link Principal}
+	//	 * @param locale    {@link Locale}
+	//	 * @throws IOException thrown if cannot open the {@link HttpServletResponse}
 //	 *                     {@link OutputStream}
 //	 */
 //	@RequestMapping("/projects/ajax/export")
@@ -354,88 +355,85 @@ public class ProjectsController {
 //		}
 //
 //		// Create the rest of the sheet
-//		DateFormat dateFormat = new SimpleDateFormat(messageSource.getMessage("locale.date.long", null, locale));
-//		for (DTProject p : projects) {
-//			Row row = sheet.createRow(rowCount++);
-//			int cellCount = 0;
-//			row.createCell(cellCount++)
-//					.setCellValue(String.valueOf(p.getId()));
-//			row.createCell(cellCount++)
-//					.setCellValue(p.getName());
-//			row.createCell(cellCount++)
-//					.setCellValue(p.getOrganism());
-//			row.createCell(cellCount++)
-//					.setCellValue(String.valueOf(p.getSamples()));
-//			row.createCell(cellCount++)
-//					.setCellValue(dateFormat.format(p.getCreatedDate()));
-//			row.createCell(cellCount)
-//					.setCellValue(dateFormat.format(p.getModifiedDate()));
-//		}
-//
-//		// Write the file
-//		try (OutputStream stream = response.getOutputStream()) {
-//			workbook.write(stream);
-//			stream.flush();
-//		}
-//
-//		workbook.close();
-//	}
-//
-//	/**
-//	 * Handle a {@link ProjectWithoutOwnerException} error. Returns a forbidden
-//	 * error
-//	 *
-//	 * @param ex the exception to handle.
-//	 * @return response entity with FORBIDDEN error
-//	 */
-//	@ExceptionHandler(ProjectWithoutOwnerException.class)
-//	@ResponseBody
-//	public ResponseEntity<String> roleChangeErrorHandler(Exception ex) {
-//		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
-//	}
-//
-//	/**
-//	 * }
-//	 * <p>
-//	 * /** Recursively transform a {@link TreeNode} into a json parsable map
-//	 * object
-//	 *
-//	 * @param node The node to transform
-//	 * @return A Map<String,Object> which may contain more children
-//	 */
-//	private Map<String, Object> transformTreeNode(TreeNode<String> node) {
-//		Map<String, Object> current = new HashMap<>();
-//
-//		// add the node properties to the map
-//		for (Entry<String, Object> property : node.getProperties()
-//				.entrySet()) {
-//			current.put(property.getKey(), property.getValue());
-//		}
-//
-//		current.put("id", node.getValue());
-//		current.put("text", node.getValue());
-//
-//		List<Object> children = new ArrayList<>();
-//		for (TreeNode<String> child : node.getChildren()) {
-//			Map<String, Object> transformTreeNode = transformTreeNode(child);
-//			children.add(transformTreeNode);
-//		}
-//
-//		if (!children.isEmpty()) {
-//			current.put("children", children);
-//		}
-//
-//		return current;
-//	}
-//
-//	/**
-//	 * Extract the details of the a {@link Project} into a {@link DTProject}
-//	 * which is consumable by the UI
-//	 *
-//	 * @param project {@link Project}
-//	 * @return {@link DTProject}
-//	 */
-//	private DTProject createDataTablesProject(Project project) {
-//		return new DTProject(project, sampleService.getNumberOfSamplesForProject(project));
-//	}
+	//		DateFormat dateFormat = new SimpleDateFormat(messageSource.getMessage("locale.date.long", null, locale));
+	//		for (DTProject p : projects) {
+	//			Row row = sheet.createRow(rowCount++);
+	//			int cellCount = 0;
+	//			row.createCell(cellCount++)
+	//					.setCellValue(String.valueOf(p.getId()));
+	//			row.createCell(cellCount++)
+	//					.setCellValue(p.getName());
+	//			row.createCell(cellCount++)
+	//					.setCellValue(p.getOrganism());
+	//			row.createCell(cellCount++)
+	//					.setCellValue(String.valueOf(p.getSamples()));
+	//			row.createCell(cellCount++)
+	//					.setCellValue(dateFormat.format(p.getCreatedDate()));
+	//			row.createCell(cellCount)
+	//					.setCellValue(dateFormat.format(p.getModifiedDate()));
+	//		}
+	//
+	//		// Write the file
+	//		try (OutputStream stream = response.getOutputStream()) {
+	//			workbook.write(stream);
+	//			stream.flush();
+	//		}
+	//
+	//		workbook.close();
+	//	}
+	//
+	//	/**
+	//	 * Handle a {@link ProjectWithoutOwnerException} error. Returns a forbidden
+	//	 * error
+	//	 *
+	//	 * @param ex the exception to handle.
+	//	 * @return response entity with FORBIDDEN error
+	//	 */
+	//	@ExceptionHandler(ProjectWithoutOwnerException.class)
+	//	@ResponseBody
+	//	public ResponseEntity<String> roleChangeErrorHandler(Exception ex) {
+	//		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+	//	}
+	//
+
+	/**
+	 * /** Recursively transform a {@link TreeNode} into a json parsable map object
+	 *
+	 * @param node The node to transform
+	 * @return A Map<String,Object> which may contain more children
+	 */
+	private Map<String, Object> transformTreeNode(TreeNode<String> node) {
+		Map<String, Object> current = new HashMap<>();
+
+		// add the node properties to the map
+		for (Map.Entry<String, Object> property : node.getProperties().entrySet()) {
+			current.put(property.getKey(), property.getValue());
+		}
+
+		current.put("id", node.getValue());
+		current.put("text", node.getValue());
+
+		List<Object> children = new ArrayList<>();
+		for (TreeNode<String> child : node.getChildren()) {
+			Map<String, Object> transformTreeNode = transformTreeNode(child);
+			children.add(transformTreeNode);
+		}
+
+		if (!children.isEmpty()) {
+			current.put("children", children);
+		}
+
+		return current;
+	}
+	//
+	//	/**
+	//	 * Extract the details of the a {@link Project} into a {@link DTProject}
+	//	 * which is consumable by the UI
+	//	 *
+	//	 * @param project {@link Project}
+	//	 * @return {@link DTProject}
+	//	 */
+	//	private DTProject createDataTablesProject(Project project) {
+	//		return new DTProject(project, sampleService.getNumberOfSamplesForProject(project));
+	//	}
 }

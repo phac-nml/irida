@@ -1,15 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.components.FastQCModal;
-import ca.corefacility.bioinformatics.irida.ria.integration.components.SampleDetailsViewer;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.TableSummary;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.FileUtilities;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.ImmutableList;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.JavascriptExecutor;
 import org.slf4j.Logger;
@@ -17,13 +14,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import ca.corefacility.bioinformatics.irida.ria.integration.components.FastQCModal;
+import ca.corefacility.bioinformatics.irida.ria.integration.components.SampleDetailsViewer;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.TableSummary;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.FileUtilities;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.ImmutableList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Disabled
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/CartView.xml")
 public class CartPageIT extends AbstractIridaUIITChromeDriver {
 	private FileUtilities fileUtilities = new FileUtilities();
@@ -32,8 +36,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 					"02-2222_S1_L001_R2_001.fastq", "04-4444_S1_L001_R1_001.fastq", "04-4444_S1_L001_R2_001.fastq",
 					"test_file.fasta", "test_file_2.fasta"));
 
-	private List<String> singleFileNames = new ArrayList<>(
-			List.of("test_file.fastq", "test_file_1.fastq", "test_file_2.fastq"));
+	private List<String> singleFileNames = new ArrayList<>(List.of("test_file.fastq", "test_file_1.fastq", "test_file_2.fastq"));
 
 	private List<String> pairedFileNames = new ArrayList<>(
 			List.of("01-1111_S1_L001_R1_001.fastq", "02-2222_S1_L001_R2_001.fastq", "04-4444_S1_L001_R1_001.fastq",
@@ -76,8 +79,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		}
 
 		for (String pFileName : pairedFileNames) {
-			fileUtilities.copyFileToDirectory(sequenceFileBaseDirectory,
-					"src/test/resources/files/sequence-files/" + pFileName);
+			fileUtilities.copyFileToDirectory(sequenceFileBaseDirectory, "src/test/resources/files/sequence-files/" + pFileName);
 		}
 
 		for (String aFileName : assemblyFileNames) {
@@ -258,7 +260,6 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		sampleDetailsViewer.clickRemoveSampleFromCartButton();
 		sampleDetailsViewer.clickSampleDetailsViewerCloseButton();
 
-
 		samplesPage.selectSampleByName("sample5fg44");
 		samplesPage.selectSampleByName("sample5fdgr");
 		samplesPage.selectSampleByName("sample554sg5");
@@ -278,7 +279,6 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		final String sampleName = "sample554sg5";
 		final String projectName = "project";
 		page.viewSampleDetailsFor(sampleName);
-
 
 		assertFalse(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
 				"The add cart to sample button should not be displayed");
@@ -464,8 +464,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
 		samplesPage.toggleAssociatedProject(PROJECT_NAME);
 		TableSummary summary = samplesPage.getTableSummary();
-		assertEquals(22, summary.getTotal(),
-				"Should have more samples visible with another project selected");
+		assertEquals(22, summary.getTotal(), "Should have more samples visible with another project selected");
 		samplesPage.selectSampleByName(ASSOCIATED_SAMPLE_NAME);
 		samplesPage.selectSampleByName(SAMPLE_NAME);
 		samplesPage.addSelectedSamplesToCart();

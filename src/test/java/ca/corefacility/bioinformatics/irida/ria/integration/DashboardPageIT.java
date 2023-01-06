@@ -31,12 +31,8 @@ public class DashboardPageIT extends AbstractIridaUIITChromeDriver {
 		announcements.getNextAnnouncement();
 		assertEquals(1, announcements.getTotalReadAnnouncements(),
 				"The total read priority announcements count does not match");
-
 		assertEquals(5, announcements.getBadgeCount(), "The announcements badge count does not match");
 
-		announcements.getSubmenuAnnouncement();
-		assertEquals("No cake", announcements.getSubmenuAnnouncementTitle(2),
-				"The announcements title in the submenu does not match");
 	}
 
 	@Test

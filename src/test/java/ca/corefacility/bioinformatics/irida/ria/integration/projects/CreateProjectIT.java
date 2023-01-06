@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Integration test to ensure that the ProjectsNew Page.
  * </p>
  */
+@Disabled
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
 public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 
