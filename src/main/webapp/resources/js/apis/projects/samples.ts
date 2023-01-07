@@ -170,7 +170,7 @@ export const createSamples: CreateUpdateSamples = async ({
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response) {
-        return Promise.resolve(error.response.data.error);
+        return Promise.resolve(error.response.data);
       } else {
         return Promise.reject(error.message);
       }
@@ -193,7 +193,7 @@ export const updateSamples: CreateUpdateSamples = async ({
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response) {
-        return Promise.resolve(error.response.data.error);
+        return Promise.resolve(error.response.data);
       } else {
         return Promise.reject(error.message);
       }
