@@ -28,5 +28,6 @@ function calculateChunkSize(arraySize: number) {
   const MIN = 10;
   const MAX = 100;
   const estimated = Math.ceil(arraySize / 10);
-  return estimated < MIN ? MIN : estimated > MAX ? MAX : estimated;
+  const isAboveMax = estimated > MAX ? MAX : estimated;
+  return estimated < MIN ? MIN : isAboveMax;
 }
