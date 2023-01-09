@@ -26,10 +26,10 @@ export interface LockedSamplesResponse {
 }
 
 export interface SamplesResponse {
-  responses: Record<string, SampleItemResponse>;
+  responses: Record<string, SampleItemErrorResponse>;
 }
 
-export interface SampleItemResponse {
+export interface SampleItemErrorResponse {
   error: boolean;
   errorMessage: string;
 }
