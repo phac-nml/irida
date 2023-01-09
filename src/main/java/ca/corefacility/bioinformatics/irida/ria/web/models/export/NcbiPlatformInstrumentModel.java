@@ -15,11 +15,6 @@ public class NcbiPlatformInstrumentModel {
 			NcbiPlatform.class);
 
 	public NcbiPlatformInstrumentModel() {
-		List<String> ABI_SOLID = ImmutableList.of(NcbiInstrumentModel.AB_5500_GENETIC_ANALYZER.getModel(),
-				NcbiInstrumentModel.AB_5500_XL_GENETIC_ANALYZER.getModel(),
-				NcbiInstrumentModel.AB_5500_XL_W_GENETIC_ANALYSIS_SYSTEM.getModel(),
-				NcbiInstrumentModel.AB_SOLID_SYSTEM.getModel(), NcbiInstrumentModel.AB_SOLID_SYSTEM_2_0.getModel(),
-				NcbiInstrumentModel.AB_SOLID_SYSTEM_3_0.getModel());
 
 		List<String> BGISEQ = ImmutableList.of(NcbiInstrumentModel.BGISEQ_500.getModel(),
 				NcbiInstrumentModel.DNBSEQ_G_50.getModel(), NcbiInstrumentModel.DNBSEQ_G_400.getModel(),
@@ -30,6 +25,8 @@ public class NcbiPlatformInstrumentModel {
 				NcbiInstrumentModel.AB_3130_X_L_GENETIC_ANALYZER.getModel(),
 				NcbiInstrumentModel.AB_3730_GENETIC_ANALYZER.getModel(),
 				NcbiInstrumentModel.AB_3730_X_L_GENETIC_ANALYZER.getModel());
+
+		List<String> HELICOS = ImmutableList.of(NcbiInstrumentModel.HELICOS_HELISCOPE.getModel());
 
 		List<String> ILLUMINA = ImmutableList.of(NcbiInstrumentModel.HI_SEQ_LIQUIBASE_PRO_PACKAGED_X_TEN.getModel(),
 				NcbiInstrumentModel.HI_SEQ_X_FIVE.getModel(), NcbiInstrumentModel.ILLUMINA_GENOME_ANALYZER.getModel(),
@@ -64,10 +61,10 @@ public class NcbiPlatformInstrumentModel {
 				NcbiInstrumentModel.PAC_BIO_RS_II.getModel(), NcbiInstrumentModel.SEQUEL.getModel(),
 				NcbiInstrumentModel.SEQUEL_II.getModel());
 
-		platforms.put(NcbiPlatform.ABI_SOLID, ABI_SOLID);
 		platforms.put(NcbiPlatform.BGISEQ, BGISEQ);
 		platforms.put(NcbiPlatform.CAPILLARY, CAPILLARY);
 		platforms.put(NcbiPlatform.ILLUMINA, ILLUMINA);
+		platforms.put(NcbiPlatform.HELICOS, HELICOS);
 		platforms.put(NcbiPlatform.ION_TORRENT, ION_TORRENT);
 		platforms.put(NcbiPlatform.LS454, LS454);
 		platforms.put(NcbiPlatform.OXFORD_NANOPORE, OXFORD_NANOPORE);

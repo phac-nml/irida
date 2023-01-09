@@ -29,7 +29,8 @@ class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
 		String DEFAULT_PROTOCOL = "DEFAULT_PROTOCOL";
 
 		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
+		int PROJECT_ID = 1;
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), PROJECT_ID);
 		samplesPage.selectSampleByName(SAMPLE_1);
 		samplesPage.selectSampleByName(SAMPLE_2);
 		samplesPage.selectSampleByName(SAMPLE_3);
@@ -83,6 +84,7 @@ class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
 
 		page.submitExportForm();
 		assertTrue(page.isSuccessAlertDisplayed(), "Success notification should be displayed");
-
+		assertTrue(page.isUserRedirectedToProjectSamplesPage(PROJECT_ID),
+				"User should be redirected within 5 seconds of submission");
 	}
 }
