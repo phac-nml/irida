@@ -8,8 +8,8 @@ declare namespace IRIDA {
     id: number;
     key: string;
     name: string;
-    createdDate: Date;
-    modifiedDate: Date;
+    createdDate: string;
+    modifiedDate: string;
     identifier: number;
   }
 
@@ -38,8 +38,7 @@ declare namespace IRIDA {
     title: string;
     message: string;
     priority: boolean;
-    createdBy: User;
-    users: User[];
+    user: User;
   }
 
   export type CurrentUser = {

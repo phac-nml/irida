@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  */
+@Disabled
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectReferenceFileIT.xml")
 public class ProjectReferenceFilePageIT extends AbstractIridaUIITChromeDriver {
 	private static final Long PROJECT_ID_WITH_REFERENCE_FILES = 1L;

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.Duration;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -21,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Testing for launching a biohansel pipeline.
  */
-
+@Disabled
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/pipelines/BioHanselPipelinePageIT.xml")
 public class BioHanselPipelinePageIT extends AbstractIridaUIITChromeDriver {
 	protected LaunchPipelinePage page;

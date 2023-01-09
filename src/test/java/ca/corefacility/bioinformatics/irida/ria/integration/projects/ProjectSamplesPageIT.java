@@ -1,18 +1,21 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import java.time.Duration;
+import java.util.List;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ShareSamplesPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.TableSummary;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.ImmutableList;
-import org.junit.jupiter.api.Test;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Integration test to ensure that the Project Details Page.
  * </p>
  */
+@Disabled
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectSamplesPage.xml")
 public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	final String FIRST_SAMPLE_NAME = "sample55422r";

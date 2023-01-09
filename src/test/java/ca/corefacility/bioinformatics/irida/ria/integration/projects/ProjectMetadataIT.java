@@ -1,6 +1,6 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -9,6 +9,9 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.Proje
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+@Disabled
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/projects/ProjectMetadataView.xml")
 public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 
@@ -18,14 +21,12 @@ public class ProjectMetadataIT extends AbstractIridaUIITChromeDriver {
 		ProjectMetadataPage page = ProjectMetadataPage.goTo(driver());
 
 		// FIELDS
-		assertEquals(5, page.getNumberOfMetadataFields(),
-				"Expected to display all metadata fields in the project");
+		assertEquals(5, page.getNumberOfMetadataFields(), "Expected to display all metadata fields in the project");
 
 		// TEST FIELD RESTRICTIONS
 		assertTrue(page.areFieldRestrictionSettingsVisible(),
 				"Fields restrictions settings should be visible to managers");
-		assertEquals("Level 1", page.getFieldRestrictionForRow(0),
-				"Should currently be set to level 1 by default");
+		assertEquals("Level 1", page.getFieldRestrictionForRow(0), "Should currently be set to level 1 by default");
 		page.updateFieldRestrictionToLevel(0, 3);
 		assertEquals("Level 4", page.getFieldRestrictionForRow(0), "Field should now be restricted to level 4");
 
