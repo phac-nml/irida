@@ -35,7 +35,7 @@ class NcbiSubmissionModelTest {
 		NcbiBioSampleFiles ncbiBioSampleFiles = mock(NcbiBioSampleFiles.class);
 		when(ncbiBioSampleFiles.getId()).thenReturn("12345");
 		when(ncbiBioSampleFiles.getBioSample()).thenReturn("BioSample");
-		when(ncbiBioSampleFiles.getInstrumentModel()).thenReturn(NcbiInstrumentModel.AB_SOLID_SYSTEM);
+		when(ncbiBioSampleFiles.getInstrumentModel()).thenReturn(NcbiInstrumentModel.BGISEQ_500);
 		when(ncbiBioSampleFiles.getLibraryName()).thenReturn("Library Name");
 		when(ncbiBioSampleFiles.getLibrarySelection()).thenReturn(NcbiLibrarySelection.CDNA);
 		when(ncbiBioSampleFiles.getLibrarySource()).thenReturn(NcbiLibrarySource.GENOMIC);

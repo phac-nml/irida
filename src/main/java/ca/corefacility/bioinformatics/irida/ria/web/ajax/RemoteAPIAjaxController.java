@@ -148,13 +148,11 @@ public class RemoteAPIAjaxController extends BaseController {
      * @return status of created the new remote project
      */
     @PostMapping("/project")
-    public ResponseEntity<AjaxResponse> createSynchronizedProject(@RequestBody CreateRemoteProjectRequest request) {
+    public ResponseEntity<AjaxResponse> createSynchronizedProject(@RequestBody CreateRemoteProjectRequest request, Locale locale) {
         try {
-            return ResponseEntity.ok(service.createSynchronizedProject(request));
+            return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(service.createSynchronizedProject(request, locale)));
         } catch (IridaOAuthException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new AjaxErrorResponse(e.getMessage()));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AjaxErrorResponse(e.getMessage()));
+            return ResponseEntity.status(e.getHttpStatusCode()).body(new AjaxErrorResponse(e.getMessage()));
         }
     }
 

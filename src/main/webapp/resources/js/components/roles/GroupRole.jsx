@@ -35,6 +35,7 @@ export function GroupRole({ item, canManage, updateRoleFn }) {
       style={{ width: "100%" }}
       loading={loading}
       disabled={loading}
+      className="member-group-role"
     >
       {roles.map((role) => (
         <Select.Option value={role.value} key={role.value}>
