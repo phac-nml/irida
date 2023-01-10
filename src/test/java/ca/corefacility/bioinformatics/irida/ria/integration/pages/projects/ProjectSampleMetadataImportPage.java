@@ -42,10 +42,14 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	List<WebElement> headers;
 	@FindBy(css = "tbody tr.ant-table-row")
 	List<WebElement> rows;
+	@FindBy(className = "anticon-exclamation-circle")
+	List<WebElement> tableErrors;
 	@FindBy(css = "div.ant-alert-error")
 	WebElement validationAlert;
 	@FindBy(css = "div.ant-result-success")
 	WebElement successMessage;
+	@FindBy(className = "t-metadata-uploader-review-error")
+	WebElement errorNotification;
 
 	public ProjectSampleMetadataImportPage(WebDriver driver) {
 		super(driver);
@@ -57,22 +61,22 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	}
 
 	public void uploadMetadataFile(String filePath) {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		Path path = Paths.get(filePath);
 		dropzone.sendKeys(path.toAbsolutePath().toString());
-		wait.until(ExpectedConditions.visibilityOf(fileBtn));
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.urlContains("/columns"));
 	}
 
 	public void goToReviewPage() {
 		previewBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-		wait.until(ExpectedConditions.visibilityOf(reviewTable));
+		wait.until(ExpectedConditions.urlContains("/review"));
 	}
 
 	public void goToCompletePage() {
 		uploadBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-		wait.until(ExpectedConditions.visibilityOf(successMessage));
+		wait.until(ExpectedConditions.urlContains("/complete"));
 	}
 
 	public void selectSampleNameColumn(String sampleNameColumn) {
@@ -107,6 +111,14 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 				.collect(Collectors.toList());
 	}
 
+	public void clickUploadButton() {
+		uploadBtn.click();
+	}
+
+	public boolean hasTableErrors() {
+		return !tableErrors.isEmpty();
+	}
+
 	public boolean isAlertDisplayed() {
 		return validationAlert.isDisplayed();
 	}
@@ -114,4 +126,11 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	public boolean isSuccessDisplayed() {
 		return successMessage.isDisplayed();
 	}
+
+	public boolean isErrorNotificationDisplayed() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.visibilityOf(errorNotification));
+		return true;
+	}
+
 }

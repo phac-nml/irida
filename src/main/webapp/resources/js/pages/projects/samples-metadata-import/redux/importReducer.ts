@@ -5,12 +5,13 @@ import {
 } from "@reduxjs/toolkit";
 import { validateSampleName } from "../../../../apis/metadata/sample-utils";
 import {
-  createSample,
-  FieldUpdate,
+  CreateSampleItem,
+  createSamples,
   getLockedSamples,
   LockedSamplesResponse,
   MetadataItem,
-  updateSample,
+  UpdateSampleItem,
+  updateSamples,
   ValidateSampleNameModel,
   validateSamples,
   ValidateSamplesResponse,
@@ -22,6 +23,7 @@ import {
   MetadataField,
 } from "../../../../apis/metadata/field";
 import { Restriction } from "../../../../utilities/restriction-utilities";
+import { createMetadataFields, generatePromiseList } from "./import-utilities";
 
 export interface MetadataHeaderItem {
   name: string;
@@ -30,21 +32,22 @@ export interface MetadataHeaderItem {
   rowKey: string;
 }
 
-interface MetadataValidateDetailsItem {
+export interface MetadataValidateDetailsItem {
   isSampleNameValid: boolean;
   foundSampleId?: number;
   locked: boolean;
 }
 
-interface MetadataSaveDetailsItem {
+export interface MetadataSaveDetailsItem {
   saved: boolean;
   error?: string;
 }
-interface SaveMetadataResponse {
+
+export interface SaveMetadataResponse {
   metadataSaveDetails: Record<string, MetadataSaveDetailsItem>;
 }
 
-interface SetSampleNameColumnResponse {
+export interface SetSampleNameColumnResponse {
   sampleNameColumn: string;
   metadataValidateDetails: Record<string, MetadataValidateDetailsItem>;
 }
@@ -56,6 +59,7 @@ export interface InitialState {
   metadata: MetadataItem[];
   metadataValidateDetails: Record<string, MetadataValidateDetailsItem>;
   metadataSaveDetails: Record<string, MetadataSaveDetailsItem>;
+  percentComplete: number;
 }
 
 const initialState: InitialState = {
@@ -65,6 +69,7 @@ const initialState: InitialState = {
   metadata: [],
   metadataValidateDetails: {},
   metadataSaveDetails: {},
+  percentComplete: 0,
 };
 
 /*
@@ -74,99 +79,101 @@ For more information on redux async thunks see: https://redux-toolkit.js.org/api
 export const saveMetadata = createAsyncThunk<
   SaveMetadataResponse,
   { projectId: string; selectedMetadataKeys: string[] },
-  { dispatch: ImportDispatch; state: ImportState }
+  { dispatch: ImportDispatch; state: ImportState; rejectValue: string }
 >(
   `importReducer/saveMetadata`,
-  async ({ projectId, selectedMetadataKeys }, { dispatch, getState }) => {
+  async (
+    { projectId, selectedMetadataKeys },
+    { dispatch, getState, rejectWithValue }
+  ) => {
     const state: ImportState = getState();
-    const { sampleNameColumn, headers, metadata, metadataValidateDetails } =
-      state.importReducer;
-    const metadataSaveDetails: Record<string, MetadataSaveDetailsItem> = {};
+    const {
+      sampleNameColumn,
+      headers,
+      metadata,
+      metadataValidateDetails,
+      metadataSaveDetails,
+    } = state.importReducer;
 
-    await createMetadataFieldsForProject({
-      projectId,
-      body: headers
-        .filter((header) => header.name !== sampleNameColumn)
-        .map((header) => ({
-          label: header.name,
-          restriction: header.targetRestriction,
-        })),
-    });
+    try {
+      //save header details (metadata field & restriction)
+      //if failure display error notification on page
+      await createMetadataFieldsForProject({
+        projectId,
+        body: headers
+          .filter((header) => header.name !== sampleNameColumn)
+          .map((header) => ({
+            label: header.name,
+            restriction: header.targetRestriction,
+          })),
+      }).catch((error) => {
+        throw new Error(error.response.data.error);
+      });
 
-    const chunkSize = 100;
-    for (let i = 0; i < metadata.length; i = i + chunkSize) {
-      const promises: Promise<void>[] = [];
-      for (let j = i; j < i + chunkSize && j < metadata.length; j++) {
-        const metadataItem: MetadataItem = metadata[j];
-        const index: string = metadataItem.rowKey;
-        if (
-          selectedMetadataKeys.includes(index) &&
-          metadataSaveDetails[index]?.saved !== true
-        ) {
-          const name: string = metadataItem[sampleNameColumn];
-          const metadataFields: FieldUpdate[] = Object.entries(metadataItem)
-            .filter(
-              ([key]) =>
-                headers.map((header) => header.name).includes(key) &&
-                key !== sampleNameColumn
-            )
-            .map(([key, value]) => ({
-              field: key,
-              value,
-              restriction: headers.filter((header) => header.name === key)[0]
-                .targetRestriction,
-            }));
-          const sampleId = metadataValidateDetails[index].foundSampleId;
-          if (sampleId) {
-            promises.push(
-              updateSample({
-                projectId,
-                sampleId,
-                body: {
-                  name,
-                  metadata: metadataFields,
-                },
-              })
-                .then(() => {
-                  metadataSaveDetails[index] = { saved: true };
-                })
-                .catch((error) => {
-                  metadataSaveDetails[index] = {
-                    saved: false,
-                    error: error.response.data.error,
-                  };
-                })
-            );
-          } else {
-            promises.push(
-              createSample({
-                projectId,
-                body: {
-                  name,
-                  metadata: metadataFields,
-                },
-              })
-                .then(() => {
-                  metadataSaveDetails[index] = { saved: true };
-                })
-                .catch((error) => {
-                  metadataSaveDetails[index] = {
-                    saved: false,
-                    error: error.response.data.error,
-                  };
-                })
-            );
-          }
-        }
-      }
-      await Promise.all(promises).then(() => {
-        dispatch(
-          setMetadataSaveDetails(Object.assign({}, metadataSaveDetails))
+      //save selected metadata entry rows
+      //during a partial failure only save data that has not already been saved
+      const selectedSampleList = metadata.filter((metadataItem) => {
+        const name: string = metadataItem[sampleNameColumn];
+        return (
+          selectedMetadataKeys.includes(metadataItem.rowKey) &&
+          metadataSaveDetails[name]?.saved !== true
         );
       });
-    }
 
-    return { metadataSaveDetails };
+      const createSampleList: CreateSampleItem[] = [];
+      const updateSampleList: UpdateSampleItem[] = [];
+
+      selectedSampleList.forEach((metadataItem) => {
+        const name = metadataItem[sampleNameColumn];
+        const sampleId = metadataValidateDetails[name].foundSampleId;
+        const metadata = createMetadataFields(
+          sampleNameColumn,
+          headers,
+          metadataItem
+        );
+
+        if (typeof sampleId === "number") {
+          updateSampleList.push({ name, sampleId, metadata });
+        } else {
+          createSampleList.push({ name, metadata });
+        }
+      });
+
+      const {
+        promiseList: createPromiseList,
+        newMetadataSaveDetails: createMetadataSaveDetails,
+      } = generatePromiseList(
+        createSampleList,
+        createSamples,
+        projectId,
+        selectedSampleList.length,
+        metadataSaveDetails,
+        dispatch
+      );
+      await Promise.all(createPromiseList);
+
+      const {
+        promiseList: updatePromiseList,
+        newMetadataSaveDetails: updateMetadataSaveDetails,
+      } = generatePromiseList(
+        updateSampleList,
+        updateSamples,
+        projectId,
+        selectedSampleList.length,
+        createMetadataSaveDetails,
+        dispatch
+      );
+      await Promise.all(updatePromiseList);
+      return { metadataSaveDetails: updateMetadataSaveDetails };
+    } catch (error) {
+      let message;
+      if (error instanceof Error) {
+        ({ message } = error);
+      } else {
+        message = String(error);
+      }
+      return rejectWithValue(message);
+    }
   }
 );
 
@@ -200,7 +207,6 @@ export const setSampleNameColumn = createAsyncThunk<
       projectId,
     });
     for (const metadataItem of metadata) {
-      const index: string = metadataItem.rowKey;
       const sampleName: string = metadataItem[updatedSampleNameColumn];
       const foundValidatedSamples = validatedSamples.samples.find(
         (sample) => sampleName === sample.name
@@ -209,7 +215,7 @@ export const setSampleNameColumn = createAsyncThunk<
       const foundLockedSamples = lockedSamples.sampleIds.find(
         (sampleId) => sampleId === foundSampleId
       );
-      metadataValidateDetails[index] = {
+      metadataValidateDetails[sampleName] = {
         isSampleNameValid: validateSampleName(sampleName),
         foundSampleId: foundSampleId,
         locked: !!foundLockedSamples,
@@ -305,6 +311,17 @@ export const setMetadataSaveDetails = createAction(
 );
 
 /*
+Redux action for updating the progress bar.
+For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
+ */
+export const updatePercentComplete = createAction(
+  `importReducer/updatePercentComplete`,
+  (amount: number) => ({
+    payload: { amount },
+  })
+);
+
+/*
 Redux reducer for project metadata.
 For more information on redux reducers see: https://redux-toolkit.js.org/api/createReducer
  */
@@ -319,6 +336,7 @@ export const importReducer = createReducer(initialState, (builder) => {
     state.metadata = [];
     state.metadataValidateDetails = {};
     state.metadataSaveDetails = {};
+    state.percentComplete = 0;
   });
   builder.addCase(setMetadata, (state, action) => {
     state.metadata = action.payload.metadata;
@@ -335,5 +353,8 @@ export const importReducer = createReducer(initialState, (builder) => {
   });
   builder.addCase(saveMetadata.fulfilled, (state, action) => {
     state.metadataSaveDetails = action.payload.metadataSaveDetails;
+  });
+  builder.addCase(updatePercentComplete, (state, action) => {
+    state.percentComplete = state.percentComplete + action.payload.amount;
   });
 });

@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxMultipleResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
@@ -62,31 +64,55 @@ public class ProjectSamplesAjaxController {
 	}
 
 	/**
-	 * Create a new sample within a project
+	 * Create new samples within a project
 	 *
-	 * @param request   Details about the sample
+	 * @param requests  Details about the samples
 	 * @param projectId current project identifier
-	 * @param locale    current users locale
-	 * @return result of creating the project
+	 * @return result of creating the samples
 	 */
-	@PostMapping("/add-sample")
-	public ResponseEntity<AjaxResponse> createSampleInProject(@RequestBody CreateSampleRequest request,
-			@PathVariable long projectId, Locale locale) {
-		return uiProjectSampleService.createSample(request, projectId, locale);
+	@PostMapping("/create")
+	public ResponseEntity<AjaxResponse> createSamplesInProject(@RequestBody CreateSampleRequest[] requests,
+			@PathVariable long projectId) {
+		Map<String, Object> responses = uiProjectSampleService.createSamples(requests, projectId);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((CreateSampleResponse) response.getValue()).isError())
+				.count();
+		long successCount = responses.entrySet()
+				.stream()
+				.filter(response -> !((CreateSampleResponse) response.getValue()).isError())
+				.count();
+		if (responses.size() == successCount) {
+			return ResponseEntity.status(HttpStatus.OK).body(new AjaxMultipleResponse(responses));
+		} else if (responses.size() == errorCount) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxMultipleResponse(responses));
+		}
+		return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(new AjaxMultipleResponse(responses));
 	}
 
 	/**
-	 * Update a sample within a project
+	 * Update samples within a project
 	 *
-	 * @param request  Details about the sample
-	 * @param sampleId sample identifier
-	 * @param locale   current users locale
-	 * @return result of creating the project
+	 * @param requests Details about the samples
+	 * @return result of updating the samples
 	 */
-	@PatchMapping("/add-sample/{sampleId}")
-	public ResponseEntity<AjaxResponse> updateSampleInProject(@RequestBody UpdateSampleRequest request,
-			@PathVariable Long projectId, @PathVariable long sampleId, Locale locale) {
-		return uiProjectSampleService.updateSample(request, sampleId, locale);
+	@PatchMapping("/update")
+	public ResponseEntity<AjaxResponse> updateSamplesInProject(@RequestBody UpdateSampleRequest[] requests) {
+		Map<String, Object> responses = uiProjectSampleService.updateSamples(requests);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((UpdateSampleResponse) response.getValue()).isError())
+				.count();
+		long successCount = responses.entrySet()
+				.stream()
+				.filter(response -> !((UpdateSampleResponse) response.getValue()).isError())
+				.count();
+		if (responses.size() == successCount) {
+			return ResponseEntity.status(HttpStatus.OK).body(new AjaxMultipleResponse(responses));
+		} else if (responses.size() == errorCount) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxMultipleResponse(responses));
+		}
+		return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(new AjaxMultipleResponse(responses));
 	}
 
 	/**

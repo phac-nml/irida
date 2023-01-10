@@ -36,6 +36,9 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
     multiple: false,
     showUploadList: false,
     accept: ".xls,.xlsx,.csv",
+    customRequest: () => {
+      navigate(`/${projectId}/sample-metadata/upload/columns`);
+    },
     beforeUpload: (file: RcFile) => {
       try {
         setLoading(true);
@@ -64,7 +67,7 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
           notification.success({
             message: i18n("SampleMetadataImportSelectFile.success", file.name),
           });
-          navigate(`/${projectId}/sample-metadata/upload/columns`);
+          return true;
         }
       } catch (error) {
         setLoading(false);

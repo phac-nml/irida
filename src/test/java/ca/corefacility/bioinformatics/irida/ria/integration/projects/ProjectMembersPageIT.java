@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.projects;
 
+import org.junit.jupiter.api.Test;
+
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
@@ -9,8 +11,9 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.admin.AdminCli
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSyncPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.utilities.RemoteApiUtilities;
+
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.jupiter.api.Test;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * </p>
  */
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/ria/web/ProjectsPageIT.xml")
+@DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
 public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 
 	@Test
@@ -40,7 +44,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(2, page.getNumberOfMembers(), "Should be 2 member in the project");
 
 		// Test Add user to project
-		page.addUserToProject("test");
+		page.addUserToProject("test", ProjectRole.PROJECT_USER.toString());
 		page.isNotificationDisplayed();
 		assertEquals(3, page.getNumberOfMembers(), "Should be 3 members in the project");
 
@@ -99,9 +103,8 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 
 		ProjectMembersPage remoteProjectMembersPage = ProjectMembersPage.goToRemoteProject(driver(), projectId);
 		assertEquals(1, remoteProjectMembersPage.getNumberOfMembers(), "Should be 1 members in the project");
-		remoteProjectMembersPage.addUserToProject("Mr. Manager");
+		remoteProjectMembersPage.addUserToProject("Mr. Manager", ProjectRole.PROJECT_OWNER.toString());
 		assertTrue(remoteProjectMembersPage.isNotificationDisplayed());
-		remoteProjectMembersPage.updateUserRole(0, ProjectRole.PROJECT_OWNER.toString());
 		assertEquals(2, remoteProjectMembersPage.getNumberOfMembers(), "Should be 2 members in the project");
 
 		LoginPage.loginAsManager(driver());
@@ -113,7 +116,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		ProjectMembersPage managerRemoteProjectMembersPage = ProjectMembersPage.goToRemoteProject(driver(), projectId);
 		assertTrue(managerRemoteProjectMembersPage.isAddMemberBtnVisible(), "Add member button should be visible");
 
-		managerRemoteProjectMembersPage.addUserToProject("testUser");
+		managerRemoteProjectMembersPage.addUserToProject("testUser", ProjectRole.PROJECT_USER.toString());
 		assertTrue(remoteProjectMembersPage.isNotificationDisplayed());
 		assertEquals(3, remoteProjectMembersPage.getNumberOfMembers(), "Should be 3 members in the project");
 		managerRemoteProjectMembersPage.removeUser(0);

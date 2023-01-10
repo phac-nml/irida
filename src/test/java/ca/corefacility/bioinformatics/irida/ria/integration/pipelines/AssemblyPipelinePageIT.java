@@ -33,7 +33,7 @@ public class AssemblyPipelinePageIT extends AbstractIridaUIITChromeDriver {
 
 	private void addSamplesToCart() {
 		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1L);
 		samplesPage.selectSampleByName("sample1");
 		samplesPage.selectSampleByName("sample2");
 		samplesPage.addSelectedSamplesToCart();

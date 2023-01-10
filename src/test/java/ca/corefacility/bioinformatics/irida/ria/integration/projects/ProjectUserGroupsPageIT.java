@@ -68,12 +68,11 @@ public class ProjectUserGroupsPageIT extends AbstractIridaUIITChromeDriver {
 		page.submitProject();
 
 		String pathTokens[] = driver().getCurrentUrl().split("/");
-		Long projectId = Long.valueOf(pathTokens[pathTokens.length-1]);
+		Long projectId = Long.valueOf(pathTokens[pathTokens.length - 1]);
 
 		ProjectMembersPage remoteProjectMembersPage = ProjectMembersPage.goToRemoteProject(driver(), projectId);
 		assertEquals(1, remoteProjectMembersPage.getNumberOfMembers(), "Should be 1 members in the project");
-		remoteProjectMembersPage.addUserToProject("Mr. Manager");
-		remoteProjectMembersPage.updateUserRole(0, ProjectRole.PROJECT_OWNER.toString());
+		remoteProjectMembersPage.addUserToProject("Mr. Manager", ProjectRole.PROJECT_OWNER.toString());
 		assertEquals(2, remoteProjectMembersPage.getNumberOfMembers(), "Should be 2 members in the project");
 
 		LoginPage.loginAsManager(driver());

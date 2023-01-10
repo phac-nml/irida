@@ -37,23 +37,31 @@ Links to the upload page can be found:
 
 Any CSV or Excel spreadsheet containing metadata for samples in a project can be uploaded through the IRIDA web interface.  One of the column in the table __must__ correspond to the sample name within the project.  In this example spreadsheet, the `NLEP #` column is the sample name.
 
-The first step is to select the CSV or Excel file containing the data.  Either click on the square label `Click or drop Excel/CSV file containing metadata for samples in this project.` or drag and drop the file from your file browser.
+The first step is to select the CSV or Excel file containing the data.  Either click or drag the file into the drop zone from your file browser.
 
 ![Select spreadsheet](images/upload-selection.png)
 
-After uploading a spreadsheet, the column corresponding to the sample name must be selected.  After selecting the column header, press the `Preview the data` button.
+After uploading a spreadsheet, you will be brought to the `Map Columns` step.  The column corresponding to the sample name must be selected. 
 
-![Select name column.](images/upload-column.png)
+![Select name column.](images/upload-column-before.png)
 
-Rows that do not match an existing sample name are identified with the `New` tag.  If selected, these samples will automatically be created.  Rows that do match an existing sample name will be updated.  Only select the rows that are to be uploaded and press the `Upload the data` button.
+Once the sample name column is selected, a table will be displayed listing all the metadata fields.  You can review the existing and target metadata field restrictions here.  Press the `Review the data` button to continue.
+
+![Select name column.](images/upload-column-after.png)
+
+You may select the rows that are to be uploaded on the `Review Data` step. Rows that do not match an existing sample name are identified with the `New` tag.  If selected, these samples will automatically be created.  Rows that match an existing sample name will be updated.
 
 ![Preview Upload](images/upload-preview.png)
 
-Rows that have an invalid sample name will be highlighted in red.  These errors should be fixed within the spreadsheet and re-imported.
+Rows that have an invalid sample name will be highlighted in red.  These errors should be fixed within the spreadsheet and re-imported.  Press the `Upload the data` button to continue.
 
 ![Upload Preview Errors](images/upload-preview-errors.png)
 
-The complete page will be displayed on a successful upload.  Clicking on the `Upload another file` button will redirect to the beginning of a new upload.
+Progress will be displayed while uploading.  Please be patient while uploading large data sets.  Do not close the window or leave the page.
+
+![Upload Preview Errors](images/loading.png)
+
+On a successful upload, you will be brought to the `Complete` step.  Clicking on the `Upload another file` button will redirect to the beginning of a new upload.
 
 ![Upload Preview Success](images/upload-preview-success.png)
 
