@@ -10,6 +10,7 @@ import { setHeaders, setMetadata, setProjectId } from "../redux/importReducer";
 import * as XLSX from "xlsx";
 import { MetadataItem } from "../../../../apis/projects/samples";
 import { ErrorAlert } from "../../../../components/alerts/ErrorAlert";
+import { SPACE_XS } from "../../../../styles/spacing";
 
 const { Text } = Typography;
 
@@ -115,6 +116,7 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
       <Spin spinning={loading}>
         {!valid && (
           <ErrorAlert
+            style={{ marginBottom: SPACE_XS }}
             message={i18n("SampleMetadataImportSelectFile.alert.valid.title")}
             description={i18n(
               "SampleMetadataImportSelectFile.alert.valid.description"
