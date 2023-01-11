@@ -6,7 +6,7 @@ import type {
   TablePaginationConfig,
 } from "antd/es/table/interface";
 import type { CheckboxChangeEvent } from "antd/lib/checkbox";
-import React from "react";
+import React, { useCallback } from "react";
 import { useParams } from "react-router-dom";
 import ProjectTag from "../../../pages/search/ProjectTag";
 import { useGetAssociatedProjectsQuery } from "../../../redux/endpoints/project";
@@ -88,20 +88,23 @@ export default function SamplesTable(): JSX.Element {
    *
    * @param e Event fired when the checkbox is clicked
    */
-  async function updateSelectAll(e: CheckboxChangeEvent) {
-    if (e.target.checked) {
-      // Need to get all the associated projects
-      const { data } = await trigger({
-        projectId: Number(projectId),
-        body: state.options,
-      });
-      if (data) {
-        dispatch({ type: "selectAllSamples", payload: { samples: data } });
+  const updateSelectAll = useCallback(
+    async function updateSelectAll(e: CheckboxChangeEvent) {
+      if (e.target.checked) {
+        // Need to get all the associated projects
+        const { data } = await trigger({
+          projectId: Number(projectId),
+          body: state.options,
+        });
+        if (data) {
+          dispatch({ type: "selectAllSamples", payload: { samples: data } });
+        }
+      } else {
+        dispatch({ type: "deselectAllSamples" });
       }
-    } else {
-      dispatch({ type: "deselectAllSamples" });
-    }
-  }
+    },
+    [dispatch, projectId, state.options, trigger]
+  );
 
   const columns: TableColumnProps<ProjectSample>[] = [
     {

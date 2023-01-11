@@ -7,6 +7,7 @@ export const TAG_ANNOUNCEMENT_COUNT = "tag-announcement-count";
 export const TAG_ANNOUNCEMENTS_UNREAD = "tag-announcements-unread";
 export const TAG_CART_COUNT = "tag-cart-count";
 export const TAG_PROJECT = "tag-project";
+export const TAG_PROJECT_SAMPLES = "tag-project-sample";
 export const TAG_USER = "tag-user";
 
 export const PROVIDED_TAGS = [
@@ -14,5 +15,6 @@ export const PROVIDED_TAGS = [
   TAG_ANNOUNCEMENTS_UNREAD,
   TAG_CART_COUNT,
   TAG_PROJECT,
+  TAG_PROJECT_SAMPLES,
   TAG_USER,
 ];

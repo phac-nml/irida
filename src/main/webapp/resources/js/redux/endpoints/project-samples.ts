@@ -1,3 +1,5 @@
+import { TAG_PROJECT_SAMPLES } from "./tags";
+
 1;
 /**
  * @fileoverview Project > Samples AP for redux-toolkit
@@ -39,6 +41,16 @@ export const projectSamplesApi = api.injectEndpoints({
         method: `POST`,
         body,
       }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.content.map(({ key }) => ({
+                type: TAG_PROJECT_SAMPLES,
+                id: key,
+              })),
+              { type: TAG_PROJECT_SAMPLES, id: "LIST" },
+            ]
+          : [{ type: TAG_PROJECT_SAMPLES, id: "LIST" }],
     }),
     fetchMinimalSamplesForFilteredProject: build.query<
       Array<SelectedSample>,
@@ -56,6 +68,7 @@ export const projectSamplesApi = api.injectEndpoints({
         method: `POST`,
         body,
       }),
+      invalidatesTags: [{ type: TAG_PROJECT_SAMPLES, id: "LIST" }],
     }),
   }),
 });

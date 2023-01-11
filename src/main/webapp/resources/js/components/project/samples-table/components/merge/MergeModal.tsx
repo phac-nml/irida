@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import {
   Alert,
@@ -7,6 +7,7 @@ import {
   Form,
   Input,
   Modal,
+  notification,
   Radio,
   Row,
   Space,
@@ -15,9 +16,9 @@ import {
 import type { Samples } from "./MergeTrigger";
 import { useParams } from "react-router-dom";
 import { useMergeSamplesMutation } from "../../../../../redux/endpoints/project-samples";
-import { SelectedSample } from "../../../../../types/irida";
 import LockedSamplesList from "../LockedSamplesList";
 import { serverValidateSampleName } from "../../../../../utilities/validation-utilities";
+import { useProjectSamples } from "../../useProjectSamplesContext";
 
 /**
  * React element to display a modal to merge multiple samples into a single one.
@@ -32,7 +33,7 @@ export default function MergeModal({
   samples: NonNullable<Samples>;
   hideModal: () => void;
 }): JSX.Element {
-  console.log(samples);
+  const { dispatch } = useProjectSamples();
   const [unlocked, locked] = samples;
   const { projectId } = useParams();
 
@@ -46,14 +47,14 @@ export default function MergeModal({
     primary: unlocked[0]?.id,
     newName: "",
   };
-  //
-  // React.useEffect(() => {
-  //   if (!renameSample) {
-  //     form.setFieldsValue({
-  //       newName: "",
-  //     });
-  //   }
-  // }, [form, renameSample]);
+
+  useEffect(() => {
+    if (!renameSample) {
+      form.setFieldsValue({
+        newName: "",
+      });
+    }
+  }, [form, renameSample]);
 
   // Server validate new name
   const validateName = async (name: string): Promise<string | void> => {
@@ -63,40 +64,40 @@ export default function MergeModal({
       return Promise.resolve();
     }
   };
-  //
-  // const onSubmit = async () => {
-  //   let values;
-  //
-  //   try {
-  //     values = await form.validateFields();
-  //   } catch {
-  //     /*
-  //     If the form is in an invalid state it will hit here.  This will prevent the
-  //     invalid date from being submitted and display the errors (if not already displayed)
-  //      to the user.
-  //      */
-  //     return;
-  //   }
-  //   const ids = unlocked
-  //     .map((sample) => sample.id)
-  //     .filter((id) => id !== values.primary);
-  //
-  //   const { message } = await merge({
-  //     projectId,
-  //     request: {
-  //       ...values,
-  //       ids,
-  //     },
-  //   }).unwrap();
-  //
-  //   notification.success({
-  //     message: i18n("MergeModal.success"),
-  //     description: message,
-  //   });
-  //   onComplete();
-  // };
 
-  const onSubmit = useCallback(() => hideModal(), [hideModal]);
+  const onSubmit = useCallback(async () => {
+    let values;
+
+    try {
+      values = await form.validateFields();
+    } catch {
+      /*
+      If the form is in an invalid state it will hit here.  This will prevent the
+      invalid date from being submitted and display the errors (if not already displayed)
+       to the user.
+       */
+      return;
+    }
+    const ids = unlocked
+      .map((sample) => sample.id)
+      .filter((id) => id !== values.primary);
+
+    const { message } = await merge({
+      projectId,
+      body: {
+        ...values,
+        ids,
+      },
+    }).unwrap();
+
+    notification.success({
+      message: i18n("MergeModal.success"),
+      description: message,
+    });
+    dispatch({ type: `deselectAllSamples` });
+    hideModal();
+  }, [dispatch, form, hideModal, merge, projectId, unlocked]);
+
   const clearError = useCallback(() => setError(undefined), []);
   const toggleRenameSample = useCallback(
     (e) => setRenameSample(e.target.checked),
@@ -113,6 +114,7 @@ export default function MergeModal({
       okButtonProps={{
         loading: isLoading,
       }}
+      onOk={onSubmit}
       cancelText={i18n("MergeModal.cancelText")}
       width={600}
     >
