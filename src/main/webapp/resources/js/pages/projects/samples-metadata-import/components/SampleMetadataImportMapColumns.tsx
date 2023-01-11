@@ -145,6 +145,7 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
             {i18n("SampleMetadataImportMapColumns.form.sampleNameColumn")}
           </Typography.Text>
           <Select
+            autoFocus
             style={{ width: 300 }}
             value={updatedSampleNameColumn}
             onChange={onSampleNameColumnChange}
