@@ -8,9 +8,9 @@ import { NavigateFunction } from "react-router/dist/lib/hooks";
 import { RcFile } from "antd/lib/upload/interface";
 import { setHeaders, setMetadata, setProjectId } from "../redux/importReducer";
 import * as XLSX from "xlsx";
-import { MetadataItem } from "../../../../apis/projects/samples";
 import { ErrorAlert } from "../../../../components/alerts/ErrorAlert";
 import { SPACE_XS } from "../../../../styles/spacing";
+import { MetadataItem } from "../../../../apis/projects/samples";
 
 const { Text } = Typography;
 
@@ -67,34 +67,47 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
         });
         const { SheetNames } = workbook;
         const [firstSheet] = SheetNames;
-        // Not loving how I'm parsing the file twice to get the raw headers
-        // See https://docs.sheetjs.com/docs/api/utilities
-        const headers: string[] = XLSX.utils.sheet_to_json(
-          workbook.Sheets[firstSheet],
-          {
-            header: 1,
-          }
-        )[0];
-        const duplicateHeaders = headers.filter(
-          (e, i, a) => a.indexOf(e) !== i
+        const rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet], {
+          rawNumbers: false,
+          header: 1,
+        });
+        const cleanRows: string[][] = JSON.parse(
+          JSON.stringify(rows).replace(/"\s+|\s+"/g, '"')
         );
-        if (duplicateHeaders.length > 0) {
+        const headers = cleanRows.shift();
+        const duplicateHeaders = headers?.filter(
+          (header, index, headers) => headers.indexOf(header) !== index
+        );
+        const emptyHeaders = headers?.filter((header) => header === null);
+
+        if (
+          headers === undefined ||
+          headers.length === 0 ||
+          (emptyHeaders && emptyHeaders.length > 0)
+        ) {
+          setLoading(false);
+          setStatus("error");
+          notification.error({
+            message: i18n("SampleMetadataImportSelectFile.empty", file.name),
+          });
+          return false;
+        } else if (duplicateHeaders && duplicateHeaders.length > 0) {
           setLoading(false);
           setValid(false);
           return false;
         } else {
           setValid(true);
-          const rows: MetadataItem[] = XLSX.utils.sheet_to_json(
-            workbook.Sheets[firstSheet],
-            {
-              rawNumbers: false,
-            }
-          );
-          const cleanRows = JSON.parse(
-            JSON.stringify(rows).replace(/"\s+|\s+"/g, '"')
-          );
-          await dispatch(setHeaders({ headers: Object.keys(cleanRows[0]) }));
-          await dispatch(setMetadata(cleanRows));
+          const output: MetadataItem[] = cleanRows.map((row, rowIndex) => {
+            const metadataItem: MetadataItem = {
+              rowKey: `metadata-uploader-row-${rowIndex}`,
+            };
+            row.forEach((item, itemIndex) => {
+              metadataItem[headers ? headers[itemIndex] : itemIndex] = item;
+            });
+            return metadataItem;
+          });
+          await dispatch(setHeaders({ headers: headers }));
+          await dispatch(setMetadata(output));
           notification.success({
             message: i18n("SampleMetadataImportSelectFile.success", file.name),
           });

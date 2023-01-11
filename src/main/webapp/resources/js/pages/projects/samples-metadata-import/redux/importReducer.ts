@@ -282,14 +282,7 @@ For more information on redux actions see: https://redux-toolkit.js.org/api/crea
 export const setMetadata = createAction(
   `importReducer/setMetadata`,
   (metadata: MetadataItem[]) => ({
-    payload: {
-      metadata: metadata.map((metadataItem, index) => {
-        return {
-          ...metadataItem,
-          rowKey: `metadata-uploader-row-${index}`,
-        };
-      }),
-    },
+    payload: { metadata },
   })
 );
 
