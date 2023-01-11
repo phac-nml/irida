@@ -7,7 +7,7 @@ pluginManagement {
         id("com.github.node-gradle.node") version "3.5.0"
         id("io.spring.dependency-management") version "1.0.11.RELEASE"
         id("org.gradle.test-retry") version "1.4.0"
-        id("org.springframework.boot") version "2.7.4"
+        id("org.springframework.boot") version "2.7.6"
         id("org.springdoc.openapi-gradle-plugin") version "1.3.4"
     }
 }

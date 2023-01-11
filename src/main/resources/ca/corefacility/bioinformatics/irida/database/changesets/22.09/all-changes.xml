@@ -10,4 +10,5 @@
   <include file="refactor-client-details.xml" relativeToChangelogFile="true" />
   <include file="add-default-sequencing-object-to-sample.xml" relativeToChangelogFile="true" />
   <include file="add-default-genome-assembly-to-sample.xml" relativeToChangelogFile="true" />
+  <include file="rename-ncbi-export-instruments.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>

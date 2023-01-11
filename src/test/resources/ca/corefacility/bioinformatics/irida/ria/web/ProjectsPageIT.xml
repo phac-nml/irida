@@ -16,6 +16,7 @@
       <project id="6" organism="E. coli" createdDate="2013-07-18 14:21:19.0" name="project ABCD" modifiedDate="2013-07-18 14:17:19.0" />
       <project id="7" organism="E. coli O157:H7" createdDate="2013-07-18 14:21:19.0" name="project EFGH" modifiedDate="2013-07-18 14:17:19.0" />
       <project id="8" organism="E. coli K-12" createdDate="2013-07-18 14:21:19.0" name="project IJKL" modifiedDate="2013-07-18 14:17:19.0" />
+      <project id="9" organism="E. coli NEW" createdDate="2013-07-18 14:21:19.0" name="project MNOP" modifiedDate="2013-07-18 14:17:19.0" />
 
       <project_user id="1" project_id="1" user_id="1" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
       <project_user id="2" project_id="2" user_id="1" projectRole="PROJECT_USER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_1" />
@@ -27,6 +28,7 @@
       <project_user id="9" project_id="7" user_id="1" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
       <project_user id="10" project_id="8" user_id="1" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
       <project_user id="11" project_id="1" user_id="4" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
+      <project_user id="12" project_id="9" user_id="2" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
 
       <project_subscription id="1" project_id="1" user_id="1" created_date="2013-07-18 14:20:19.0" email_subscription="false" />
       <project_subscription id="2" project_id="2" user_id="1" created_date="2013-07-18 14:20:19.0" email_subscription="true" />
