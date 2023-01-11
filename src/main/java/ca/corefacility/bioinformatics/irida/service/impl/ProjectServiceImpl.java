@@ -23,7 +23,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -279,7 +278,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		Collection<UserGroupJoin> userGroupJoins = userGroupJoinRepository.findUsersInGroup(userGroup);
 		for (UserGroupJoin userGroupJoin : userGroupJoins) {
 			User user = userGroupJoin.getSubject();
-			projectSubscriptionService.removeProjectSubscriptionForProjectAndUser(project, user);
+			projectSubscriptionService.removeProjectSubscriptionsForUserInUserGroup(project, user, userGroup);
 		}
 		final UserGroupProjectJoin j = ugpjRepository.findByProjectAndUserGroup(project, userGroup);
 		if (!allowRoleChange(project, j.getProjectRole())) {
@@ -760,7 +759,7 @@ public class ProjectServiceImpl extends CRUDServiceImpl<Long, Project> implement
 		Collection<UserGroupJoin> userGroupJoins = userGroupJoinRepository.findUsersInGroup(userGroup);
 		for (UserGroupJoin userGroupJoin : userGroupJoins) {
 			User user = userGroupJoin.getSubject();
-			projectSubscriptionService.addProjectSubscriptionForProjectAndUser(project, user);
+			projectSubscriptionService.addProjectSubscriptionsForUserInUserGroup(project, user, userGroup);
 		}
 		return ugpjRepository.save(new UserGroupProjectJoin(project, userGroup, role, metadataRole));
 

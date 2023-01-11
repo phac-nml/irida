@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.subscription.ProjectSubscription;
 import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.model.user.group.UserGroup;
 
 /**
  * A specialized service layer for project subscriptions.
@@ -57,4 +58,23 @@ public interface ProjectSubscriptionService extends CRUDService<Long, ProjectSub
 	 */
 	public void removeProjectSubscriptionForProjectAndUser(Project project, User user);
 
+	/**
+	 * Create a new project subscription associated with a {@link Project} and {@link User} in a {@link UserGroup}.
+	 *
+	 * @param project   the {@link Project} to add the subscription for
+	 * @param user      the {@link User} to add the subscription for
+	 * @param userGroup the {@link UserGroup} to which the user belongs
+	 * @return The newly created project subscription
+	 */
+	public ProjectSubscription addProjectSubscriptionsForUserInUserGroup(Project project, User user,
+			UserGroup userGroup);
+
+	/**
+	 * Remove the project subscription associated with a {@link Project} and {@link User} in a {@link UserGroup}.
+	 *
+	 * @param project   the {@link Project} to add the subscription for
+	 * @param user      the {@link User} to add the subscription for
+	 * @param userGroup the {@link UserGroup} to which the user belongs
+	 */
+	public void removeProjectSubscriptionsForUserInUserGroup(Project project, User user, UserGroup userGroup);
 }
