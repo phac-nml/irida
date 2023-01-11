@@ -102,7 +102,7 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
               rowKey: `metadata-uploader-row-${rowIndex}`,
             };
             row.forEach((item, itemIndex) => {
-              metadataItem[headers ? headers[itemIndex] : itemIndex] = item;
+              if (item) metadataItem[headers[itemIndex]] = item;
             });
             return metadataItem;
           });

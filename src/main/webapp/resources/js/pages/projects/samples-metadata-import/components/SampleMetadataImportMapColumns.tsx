@@ -50,8 +50,9 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
   );
   const [updatedSampleNameColumn, setUpdatedSampleNameColumn] =
     React.useState<string>(sampleNameColumn);
-  const updatedHeaders: MetadataHeaderItem[] = [...headers];
   const dispatch: ImportDispatch = useImportDispatch();
+
+  const updatedHeaders = useMemo(() => [...headers], [headers]);
 
   React.useEffect(() => {
     getMetadataRestrictions().then((data) => {
