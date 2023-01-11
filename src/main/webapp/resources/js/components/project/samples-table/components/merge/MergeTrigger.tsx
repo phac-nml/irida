@@ -1,7 +1,8 @@
-import React, { Suspense, useState } from "react";
-import { useProjectSamples } from "../../useProjectSamplesContext";
-import { seperateLockedAndUnlockedSamples } from "../../../../../utilities/sample-utilities";
+import React, { Suspense, useCallback, useState } from "react";
+
 import { SelectedSample } from "../../../../../types/irida";
+import { separateLockedAndUnlockedSamples } from "../../../../../utilities/sample-utilities";
+import { useProjectSamples } from "../../useProjectSamplesContext";
 
 const MergeModal = React.lazy(() => import("./MergeModal"));
 
@@ -9,27 +10,31 @@ type MergeTriggerProps = {
   children: JSX.Element;
 };
 
+export type Samples =
+  | [Array<SelectedSample>, Array<SelectedSample>]
+  | undefined;
+
 export default function MergeTrigger({
   children,
 }: MergeTriggerProps): JSX.Element {
   const { state } = useProjectSamples();
-  const [samples, setSamples] =
-    useState<[Array<SelectedSample, Array<SelectedSample>> | undefined]>(
-      undefined
-    );
+  const [samples, setSamples] = useState<Samples>(undefined);
   const [visible, setVisible] = useState<boolean>(false);
 
   function onClick() {
-    const [locked, unlocked] = seperateLockedAndUnlockedSamples(
+    const [unlocked, locked] = separateLockedAndUnlockedSamples(
       Object.values(state.selection.selected)
     );
 
-    if (unlocked.length > 2) {
-      setSamples([locked, unlocked]);
+    if (unlocked.length >= 2) {
+      setSamples([unlocked, locked]);
+      setVisible(true);
     } else {
-      alert("NOT ENOUGHT SMAPLES");
+      alert("NOT ENOUGH SAMPLES");
     }
   }
+
+  const hideModal = useCallback(() => setVisible(false), []);
 
   return (
     <>
@@ -39,7 +44,11 @@ export default function MergeTrigger({
       })}
       {visible ? (
         <Suspense fallback={<span />}>
-          <MergeModal visible={visible} locked={locked} unlocked={unlocked} />
+          <MergeModal
+            visible={visible}
+            samples={samples}
+            hideModal={hideModal}
+          />
         </Suspense>
       ) : null}
     </>

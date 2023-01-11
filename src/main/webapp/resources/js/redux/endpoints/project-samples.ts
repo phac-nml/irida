@@ -1,14 +1,16 @@
+1;
 /**
  * @fileoverview Project > Samples AP for redux-toolkit
  */
 
-import { TableOptions } from "../../types/ant-design";
 import {
   Project,
   Sample,
   SelectedSample,
   TableResponse,
 } from "../../types/irida";
+
+import { TableOptions } from "../../types/ant-design";
 import { api } from "./api";
 
 export type ProjectSample = {
@@ -48,10 +50,18 @@ export const projectSamplesApi = api.injectEndpoints({
         body,
       }),
     }),
+    mergeSamples: build.mutation({
+      query: ({ projectId, body }) => ({
+        url: `/projects/${projectId}/samples/merge`,
+        method: `POST`,
+        body,
+      }),
+    }),
   }),
 });
 
 export const {
   useFetchPagedSamplesQuery,
   useLazyFetchMinimalSamplesForFilteredProjectQuery,
+  useMergeSamplesMutation,
 } = projectSamplesApi;

@@ -3,7 +3,7 @@ import { SelectedSample } from "../types/irida";
 /**
  * Determine which samples are locked and which are unlocked based on the
  */
-export function seperateLockedAndUnlockedSamples(
+export function separateLockedAndUnlockedSamples(
   samples: Array<SelectedSample>
 ) {
   const unlocked: Array<SelectedSample> = [];

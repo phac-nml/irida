@@ -1,3 +1,5 @@
+import React, { useCallback, useState } from "react";
+
 import {
   Alert,
   Checkbox,
@@ -5,23 +7,17 @@ import {
   Form,
   Input,
   Modal,
-  notification,
   Radio,
   Row,
   Space,
   Typography,
 } from "antd";
-import React from "react";
-import { serverValidateSampleName } from "../../../../../utilities/validation-utilities";
-import { useMergeMutation } from "../../../../../apis/projects/samples";
-import LockedSamplesList from "../LockedSamplesList";
+import type { Samples } from "./MergeTrigger";
 import { useParams } from "react-router-dom";
-import { useGetProjectDetailsQuery } from "../../../../../redux/endpoints/project";
-import { useProjectSamples } from "../../useProjectSamplesContext";
-import { seperateLockedAndUnlockedSamples } from "../../../../../utilities/sample-utilities";
-import ReactMarkdown from "react-markdown";
-import children = ReactMarkdown.propTypes.children;
+import { useMergeSamplesMutation } from "../../../../../redux/endpoints/project-samples";
 import { SelectedSample } from "../../../../../types/irida";
+import LockedSamplesList from "../LockedSamplesList";
+import { serverValidateSampleName } from "../../../../../utilities/validation-utilities";
 
 /**
  * React element to display a modal to merge multiple samples into a single one.
@@ -29,25 +25,27 @@ import { SelectedSample } from "../../../../../types/irida";
  */
 export default function MergeModal({
   visible,
-  locked,
-  unlocked,
+  samples,
+  hideModal,
 }: {
   visible: boolean;
-  locked: Array<SelectedSample>;
-  unlocked: Array<SelectedSample>;
+  samples: NonNullable<Samples>;
+  hideModal: () => void;
 }): JSX.Element {
+  console.log(samples);
+  const [unlocked, locked] = samples;
   const { projectId } = useParams();
 
-  // const [merge, { isLoading }] = useMergeMutation();
-  //
-  // const [renameSample, setRenameSample] = React.useState(false);
-  // const [error, setError] = React.useState(undefined);
-  // const [form] = Form.useForm();
-  //
-  // const initialValues = {
-  //   primary: samples.valid[0]?.id,
-  //   newName: "",
-  // };
+  const [merge, { isLoading }] = useMergeSamplesMutation();
+  const [renameSample, setRenameSample] = useState(false);
+
+  const [error, setError] = useState(undefined);
+  const [form] = Form.useForm();
+
+  const initialValues = {
+    primary: unlocked[0]?.id,
+    newName: "",
+  };
   //
   // React.useEffect(() => {
   //   if (!renameSample) {
@@ -56,15 +54,15 @@ export default function MergeModal({
   //     });
   //   }
   // }, [form, renameSample]);
-  //
-  // // Server validate new name
-  // const validateName = async (name: string): Promise<boolean> => {
-  //   if (renameSample) {
-  //     return serverValidateSampleName(name);
-  //   } else {
-  //     return Promise.resolve();
-  //   }
-  // };
+
+  // Server validate new name
+  const validateName = async (name: string): Promise<string | void> => {
+    if (renameSample) {
+      return serverValidateSampleName(name);
+    } else {
+      return Promise.resolve();
+    }
+  };
   //
   // const onSubmit = async () => {
   //   let values;
@@ -79,7 +77,7 @@ export default function MergeModal({
   //      */
   //     return;
   //   }
-  //   const ids = samples.valid
+  //   const ids = unlocked
   //     .map((sample) => sample.id)
   //     .filter((id) => id !== values.primary);
   //
@@ -98,22 +96,28 @@ export default function MergeModal({
   //   onComplete();
   // };
 
+  const onSubmit = useCallback(() => hideModal(), [hideModal]);
+  const clearError = useCallback(() => setError(undefined), []);
+  const toggleRenameSample = useCallback(
+    (e) => setRenameSample(e.target.checked),
+    []
+  );
+
   return (
     <Modal
+      visible={visible}
       title={i18n("MergeModal.title")}
       className="t-merge-modal"
-      visible={visible}
-      onOk={onSubmit}
+      onCancel={hideModal}
       okText={i18n("MergeModal.okText")}
       okButtonProps={{
         loading: isLoading,
       }}
-      onCancel={onCancel}
       cancelText={i18n("MergeModal.cancelText")}
       width={600}
     >
       <Row gutter={[16, 16]}>
-        {samples.valid.length >= 2 ? (
+        {unlocked.length >= 2 ? (
           <>
             <Col span={24}>
               <Alert
@@ -129,7 +133,7 @@ export default function MergeModal({
                   type="error"
                   message={error}
                   closable
-                  onClose={() => setError(undefined)}
+                  onClose={clearError}
                 />
               </Col>
             ) : null}
@@ -142,7 +146,7 @@ export default function MergeModal({
                 >
                   <Radio.Group>
                     <Space direction="vertical">
-                      {samples.valid.map((sample) => {
+                      {unlocked.map((sample) => {
                         return (
                           <Radio value={sample.id} key={`sample-${sample.id}`}>
                             {sample.sampleName}
@@ -156,14 +160,14 @@ export default function MergeModal({
                   <Checkbox
                     className="t-custom-checkbox"
                     checked={renameSample}
-                    onChange={(e) => setRenameSample(e.target.checked)}
+                    onChange={toggleRenameSample}
                   >
                     {i18n("MergeModal.rename")}
                   </Checkbox>
                   <Form.Item
                     name="newName"
                     rules={[
-                      ({}) => ({
+                      () => ({
                         validator(_, value) {
                           return validateName(value);
                         },
@@ -185,12 +189,12 @@ export default function MergeModal({
             />
           </Col>
         )}
-        {samples.locked.length ? (
+        {locked.length ? (
           <Col span={24}>
             <Typography.Text strong>
               {i18n("LockedSamplesList.header")}
             </Typography.Text>
-            <LockedSamplesList locked={samples.locked} />
+            <LockedSamplesList locked={locked} />
           </Col>
         ) : null}
       </Row>
