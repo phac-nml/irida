@@ -1,7 +1,6 @@
 package ca.corefacility.bioinformatics.irida.web.assembler.resource.sequencefile;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,10 +18,8 @@ public class SequenceFileResource {
 
 	private SequenceFile resource;
 
-
 	public SequenceFileResource() {
 		resource = new SequenceFile();
-		resource.setStorageType(IridaFiles.getStorageType());
 	}
 
 	public SequenceFileResource(SequenceFile sequenceFile) {

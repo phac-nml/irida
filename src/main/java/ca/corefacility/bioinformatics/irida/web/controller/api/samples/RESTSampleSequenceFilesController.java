@@ -150,7 +150,7 @@ public class RESTSampleSequenceFilesController {
 	 *
 	 * @param sampleId the identifier for the {@link Sample}.
 	 * @return the {@link SequenceFile} entities associated with the
-	 * {@link Sample}.
+	 *         {@link Sample}.
 	 */
 	@Operation(operationId = "getSampleSequenceFiles", summary = "Find the sequence files for a given sample", description = "Get the sequence files for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/sequenceFiles", method = RequestMethod.GET)
@@ -158,8 +158,9 @@ public class RESTSampleSequenceFilesController {
 		logger.trace("Reading seq files for sample " + sampleId);
 		Sample sample = sampleService.read(sampleId);
 
-		Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService.getSequencingObjectsForSample(
-				sample);
+		Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService
+				.getSequencingObjectsForSample(
+						sample);
 
 		ResourceCollection<SequenceFile> resources = new ResourceCollection<>();
 		/*
@@ -176,7 +177,9 @@ public class RESTSampleSequenceFilesController {
 				sf.add(linkTo(
 						methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
 								fileLabel, r.getObject()
-										.getId(), sf.getId())).withSelfRel());
+										.getId(),
+								sf.getId()))
+						.withSelfRel());
 
 				resources.add(sf);
 
@@ -192,11 +195,11 @@ public class RESTSampleSequenceFilesController {
 
 		resources.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).listSequencingObjectsOfTypeForSample(
 				sample.getId(), RESTSampleSequenceFilesController.objectLabels.get(SequenceFilePair.class))).withRel(
-				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS));
+						RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_PAIRS));
 		resources.add(linkTo(methodOn(RESTSampleSequenceFilesController.class).listSequencingObjectsOfTypeForSample(
 				sample.getId(),
 				RESTSampleSequenceFilesController.objectLabels.get(SingleEndSequenceFile.class))).withRel(
-				RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED));
+						RESTSampleSequenceFilesController.REL_SAMPLE_SEQUENCE_FILE_UNPAIRED));
 
 		ResponseResource<ResourceCollection<SequenceFile>> responseObject = new ResponseResource<>(resources);
 		return responseObject;
@@ -208,7 +211,7 @@ public class RESTSampleSequenceFilesController {
 	 * @param sampleId   ID of the {@link Sample} to read from
 	 * @param objectType {@link SequencingObject} type
 	 * @return The {@link SequencingObject}s of the given type for the
-	 * {@link Sample}
+	 *         {@link Sample}
 	 */
 	@Operation(operationId = "listSequencingObjectsOfTypeForSample", summary = "Find all the sequencing objects for a given sample", description = "Get the sequencing objects for a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}", method = RequestMethod.GET)
@@ -220,8 +223,9 @@ public class RESTSampleSequenceFilesController {
 		Class<? extends SequencingObject> type = objectLabels.inverse()
 				.get(objectType);
 
-		Collection<SampleSequencingObjectJoin> unpairedSequenceFilesForSample = sequencingObjectService.getSequencesForSampleOfType(
-				sample, type);
+		Collection<SampleSequencingObjectJoin> unpairedSequenceFilesForSample = sequencingObjectService
+				.getSequencesForSampleOfType(
+						sample, type);
 
 		ResourceCollection<SequencingObject> resources = new ResourceCollection<>(
 				unpairedSequenceFilesForSample.size());
@@ -404,7 +408,6 @@ public class RESTSampleSequenceFilesController {
 			}
 
 			sf.setFile(target);
-			sf.setStorageType(IridaFiles.getStorageType());
 
 			SingleEndSequenceFile singleEndSequenceFile = new SingleEndSequenceFile(sf);
 			if (miseqRun != null) {
@@ -417,8 +420,9 @@ public class RESTSampleSequenceFilesController {
 			}
 
 			// save the seqobject and sample
-			SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService.createSequencingObjectInSample(
-					singleEndSequenceFile, sample);
+			SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService
+					.createSequencingObjectInSample(
+							singleEndSequenceFile, sample);
 
 			singleEndSequenceFile = (SingleEndSequenceFile) createSequencingObjectInSample.getObject();
 			logger.trace("Created seqfile in sample " + createSequencingObjectInSample.getObject()
@@ -431,7 +435,8 @@ public class RESTSampleSequenceFilesController {
 					.getId();
 			Link selfRel = linkTo(
 					methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
-							objectType, singleEndSequenceFile.getId(), sequenceFileId)).withSelfRel();
+							objectType, singleEndSequenceFile.getId(), sequenceFileId))
+					.withSelfRel();
 
 			// Changed, because sfr.setResource(sf)
 			// and sfr.setResource(sampleSequenceFileRelationship.getObject())
@@ -519,7 +524,6 @@ public class RESTSampleSequenceFilesController {
 			}
 
 			sf.setFile(target);
-			sf.setStorageType(IridaFiles.getStorageType());
 
 			Fast5Object fast5Object = new Fast5Object(sf);
 
@@ -533,8 +537,9 @@ public class RESTSampleSequenceFilesController {
 			}
 
 			// save the seqobject and sample
-			SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService.createSequencingObjectInSample(
-					fast5Object, sample);
+			SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService
+					.createSequencingObjectInSample(
+							fast5Object, sample);
 
 			fast5Object = (Fast5Object) createSequencingObjectInSample.getObject();
 			logger.trace("Created seqfile in sample " + createSequencingObjectInSample.getObject()
@@ -547,7 +552,8 @@ public class RESTSampleSequenceFilesController {
 					.getId();
 			Link selfRel = linkTo(
 					methodOn(RESTSampleSequenceFilesController.class).readSequenceFileForSequencingObject(sampleId,
-							objectType, fast5Object.getId(), sequenceFileId)).withSelfRel();
+							objectType, fast5Object.getId(), sequenceFileId))
+					.withSelfRel();
 
 			// Changed, because sfr.setResource(sf)
 			// and sfr.setResource(sampleSequenceFileRelationship.getObject())
@@ -652,8 +658,9 @@ public class RESTSampleSequenceFilesController {
 			}
 
 			// add the files and join
-			SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService.createSequencingObjectInSample(
-					sequenceFilePair, sample);
+			SampleSequencingObjectJoin createSequencingObjectInSample = sequencingObjectService
+					.createSequencingObjectInSample(
+							sequenceFilePair, sample);
 
 			SequencingObject sequencingObject = createSequencingObjectInSample.getObject();
 
@@ -746,7 +753,8 @@ public class RESTSampleSequenceFilesController {
 	 *
 	 * @param sequencingObject {@link SequencingObject} to enhance
 	 * @param sampleId         ID of the {@link Sample} for the object
-	 * @param <T>              The subclass of {@link SequencingObject} being enhanced by this method
+	 * @param <T>              The subclass of {@link SequencingObject} being
+	 *                         enhanced by this method
 	 * @return the enhanced {@link SequencingObject}
 	 */
 	@SuppressWarnings("unchecked")
