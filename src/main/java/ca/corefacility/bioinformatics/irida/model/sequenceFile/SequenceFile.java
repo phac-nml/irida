@@ -317,7 +317,6 @@ public class SequenceFile extends IridaRepresentationModel
 	 *
 	 * @return if file exists or not
 	 */
-	@JsonIgnore
 	public Long getFileSizeBytes() {
 		return IridaFiles.getFileSizeBytes(getFile());
 	}

@@ -88,7 +88,6 @@ public abstract class GenomeAssembly extends IridaRepresentationModel
 	 * @return file size
 	 * @throws IOException if the file cannot be read
 	 */
-	@JsonIgnore
 	public Long getFileSizeBytes() throws IOException {
 		return IridaFiles.getFileSizeBytes(getFile());
 	}
