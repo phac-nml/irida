@@ -20,6 +20,11 @@ import LockedSamplesList from "../LockedSamplesList";
 import { serverValidateSampleName } from "../../../../../utilities/validation-utilities";
 import { useProjectSamples } from "../../useProjectSamplesContext";
 
+type FormValues = {
+  primary: number;
+  newName: string;
+};
+
 /**
  * React element to display a modal to merge multiple samples into a single one.
  * @constructor
@@ -66,16 +71,12 @@ export default function MergeModal({
   };
 
   const onSubmit = useCallback(async () => {
-    let values;
+    let values: FormValues;
 
     try {
       values = await form.validateFields();
     } catch {
-      /*
-      If the form is in an invalid state it will hit here.  This will prevent the
-      invalid date from being submitted and display the errors (if not already displayed)
-       to the user.
-       */
+      // Invalid state, preventing the invalid data from submitting and display the errors to the user.
       return;
     }
     const ids = unlocked
