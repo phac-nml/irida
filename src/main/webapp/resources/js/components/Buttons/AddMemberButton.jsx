@@ -173,7 +173,11 @@ export function AddMemberButton({
               }}
             >
               {projectRoles.map((role) => (
-                <Radio.Button key={role.value} value={role.value}>
+                <Radio.Button
+                  key={role.value}
+                  value={role.value}
+                  className={`t-project-role-${role.label.toLowerCase()}`}
+                >
                   {role.label}
                 </Radio.Button>
               ))}

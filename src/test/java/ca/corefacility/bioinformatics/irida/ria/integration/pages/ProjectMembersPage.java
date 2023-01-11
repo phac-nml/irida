@@ -1,7 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.components.AddMemberButton;
-import ca.corefacility.bioinformatics.irida.ria.integration.components.AntTable;
+import java.time.Duration;
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -10,8 +11,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
-import java.util.List;
+import ca.corefacility.bioinformatics.irida.ria.integration.components.AddMemberButton;
+import ca.corefacility.bioinformatics.irida.ria.integration.components.AntTable;
 
 /**
  * <p>
@@ -103,8 +104,8 @@ public class ProjectMembersPage extends AbstractPage {
 		return true;
 	}
 
-	public void addUserToProject(String name) {
-		addMemberButton.addMember(driver, name);
+	public void addUserToProject(String name, String role) {
+		addMemberButton.addMember(driver, name, role);
 	}
 
 	public boolean isAddMemberBtnVisible() {

@@ -42,10 +42,14 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	List<WebElement> headers;
 	@FindBy(css = "tbody tr.ant-table-row")
 	List<WebElement> rows;
+	@FindBy(className = "anticon-exclamation-circle")
+	List<WebElement> tableErrors;
 	@FindBy(css = "div.ant-alert-error")
 	WebElement validationAlert;
 	@FindBy(css = "div.ant-result-success")
 	WebElement successMessage;
+	@FindBy(className = "t-metadata-uploader-review-error")
+	WebElement errorNotification;
 
 	public ProjectSampleMetadataImportPage(WebDriver driver) {
 		super(driver);
@@ -62,19 +66,20 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	}
 
 	public void goToReviewPage() {
-		previewBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-		wait.until(ExpectedConditions.visibilityOf(reviewTable));
+		wait.until(ExpectedConditions.visibilityOf(previewBtn));
+		previewBtn.click();
 	}
 
 	public void goToCompletePage() {
-		uploadBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-		wait.until(ExpectedConditions.visibilityOf(successMessage));
+		wait.until(ExpectedConditions.urlContains("/review"));
+		uploadBtn.click();
 	}
 
 	public void selectSampleNameColumn(String sampleNameColumn) {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.urlContains("/columns"));
 		wait.until(ExpectedConditions.visibilityOf(sampleNameColumnSelect));
 		sampleNameColumnSelect.click();
 		List<WebElement> selectOptions = wait.until(
@@ -106,6 +111,16 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 				.collect(Collectors.toList());
 	}
 
+	public void clickUploadButton() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.visibilityOf(uploadBtn));
+		uploadBtn.click();
+	}
+
+	public boolean hasTableErrors() {
+		return !tableErrors.isEmpty();
+	}
+
 	public boolean isAlertDisplayed() {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.visibilityOf(validationAlert));
@@ -113,6 +128,15 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	}
 
 	public boolean isSuccessDisplayed() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.urlContains("/complete"));
 		return successMessage.isDisplayed();
 	}
+
+	public boolean isErrorNotificationDisplayed() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.visibilityOf(errorNotification));
+		return errorNotification.isDisplayed();
+	}
+
 }

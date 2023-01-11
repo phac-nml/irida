@@ -355,6 +355,7 @@ export default function SamplesMenu() {
         <Suspense fallback={<span />}>
           <CreateModal
             visible={createSampleVisible}
+            projectId={projectId}
             onCancel={() => setCreateSampleVisible(false)}
             onCreate={onCreate}
           />

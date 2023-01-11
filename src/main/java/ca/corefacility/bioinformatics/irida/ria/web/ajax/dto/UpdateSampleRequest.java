@@ -8,7 +8,19 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.MetadataEn
  * UI Request to update an existing sample
  */
 public class UpdateSampleRequest extends CreateSampleRequest {
-	public UpdateSampleRequest(String name, String organism, String description, List<MetadataEntryModel> metadata) {
+	private Long sampleId;
+
+	public UpdateSampleRequest(Long sampleID, String name, String organism, String description,
+			List<MetadataEntryModel> metadata) {
 		super(name, organism, description, metadata);
+		this.sampleId = sampleID;
+	}
+
+	public Long getSampleId() {
+		return sampleId;
+	}
+
+	public void setSampleId(Long sampleId) {
+		this.sampleId = sampleId;
 	}
 }

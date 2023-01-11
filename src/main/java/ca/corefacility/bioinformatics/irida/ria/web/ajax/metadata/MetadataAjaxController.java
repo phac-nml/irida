@@ -115,8 +115,12 @@ public class MetadataAjaxController {
 	@PostMapping("/fields")
 	public ResponseEntity<AjaxResponse> createMetadataFieldsForProject(@RequestParam Long projectId,
 			@RequestBody List<ProjectMetadataField> fields, Locale locale) {
-		return ResponseEntity.ok(
-				new AjaxSuccessResponse(service.createMetadataFieldsForProject(projectId, fields, locale)));
+		try {
+			return ResponseEntity.ok(
+					new AjaxSuccessResponse(service.createMetadataFieldsForProject(projectId, fields, locale)));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxErrorResponse(e.getMessage()));
+		}
 	}
 
 	/**

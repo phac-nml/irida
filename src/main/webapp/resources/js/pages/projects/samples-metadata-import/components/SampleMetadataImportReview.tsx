@@ -4,6 +4,7 @@ import {
   Alert,
   Button,
   List,
+  notification,
   Popover,
   Progress,
   Table,
@@ -75,6 +76,7 @@ export function SampleMetadataImportReview(): JSX.Element {
     metadata,
     metadataValidateDetails,
     metadataSaveDetails,
+    percentComplete,
   } = useImportSelector((state: ImportState) => state.importReducer);
   const dispatch: ImportDispatch = useImportDispatch();
 
@@ -86,18 +88,15 @@ export function SampleMetadataImportReview(): JSX.Element {
     },
     getCheckboxProps: (record: MetadataItem) => ({
       disabled: !(
-        metadataValidateDetails[record.rowKey].isSampleNameValid ||
-        metadataSaveDetails[record.rowKey]?.saved
+        metadataValidateDetails[record[sampleNameColumn]].isSampleNameValid ||
+        metadataSaveDetails[record[sampleNameColumn]]?.saved === true
       ),
     }),
   };
 
   React.useEffect(() => {
-    const savedCount = Object.entries(metadataSaveDetails).filter(
-      ([, metadataSaveDetailsItem]) => metadataSaveDetailsItem.saved
-    ).length;
-    setProgress(Math.round((savedCount / selected.length) * 100));
-  }, [metadataSaveDetails, selected.length]);
+    setProgress(percentComplete);
+  }, [percentComplete]);
 
   React.useEffect(() => {
     const sampleColumn: ColumnType<MetadataItem> = {
@@ -108,7 +107,8 @@ export function SampleMetadataImportReview(): JSX.Element {
       onCell: (item) => {
         return {
           style: {
-            background: metadataValidateDetails[item.rowKey].isSampleNameValid
+            background: metadataValidateDetails[item[sampleNameColumn]]
+              .isSampleNameValid
               ? undefined
               : `var(--red-1)`,
           },
@@ -121,10 +121,10 @@ export function SampleMetadataImportReview(): JSX.Element {
       fixed: "left",
       width: 10,
       render: (text, item) => {
-        if (metadataSaveDetails[item.rowKey]?.saved === false)
+        if (metadataSaveDetails[item[sampleNameColumn]]?.saved === false)
           return (
             <Tooltip
-              title={metadataSaveDetails[item.rowKey]?.error}
+              title={metadataSaveDetails[item[sampleNameColumn]]?.error}
               color={`var(--red-5)`}
             >
               <IconExclamationCircle style={{ color: `var(--red-5)` }} />
@@ -141,7 +141,7 @@ export function SampleMetadataImportReview(): JSX.Element {
       fixed: "left",
       width: 70,
       render: (text, item) => {
-        if (!metadataValidateDetails[item.rowKey].foundSampleId)
+        if (!metadataValidateDetails[item[sampleNameColumn]].foundSampleId)
           return (
             <Tag color="green">
               {i18n("SampleMetadataImportReview.table.filter.new")}
@@ -161,8 +161,10 @@ export function SampleMetadataImportReview(): JSX.Element {
       ],
       onFilter: (value, record) =>
         value === "new"
-          ? metadataValidateDetails[record.rowKey].foundSampleId !== undefined
-          : metadataValidateDetails[record.rowKey].foundSampleId === undefined,
+          ? metadataValidateDetails[record[sampleNameColumn]].foundSampleId !==
+            undefined
+          : metadataValidateDetails[record[sampleNameColumn]].foundSampleId ===
+            undefined,
     };
 
     const otherColumns: ColumnsType<MetadataItem> = headers
@@ -184,8 +186,8 @@ export function SampleMetadataImportReview(): JSX.Element {
       metadata
         .filter(
           (row) =>
-            metadataValidateDetails[row.rowKey].isSampleNameValid ||
-            metadataSaveDetails[row.rowKey]?.saved
+            metadataValidateDetails[row[sampleNameColumn]].isSampleNameValid ||
+            metadataSaveDetails[row[sampleNameColumn]]?.saved === true
         )
         .map((row): string => row.rowKey)
     );
@@ -204,28 +206,41 @@ export function SampleMetadataImportReview(): JSX.Element {
       .map((metadataItem) => metadataItem.rowKey);
 
     if (projectId) {
-      const response = await dispatch(
-        saveMetadata({ projectId, selectedMetadataKeys })
-      ).unwrap();
-
-      if (
-        Object.entries(response.metadataSaveDetails).filter(
-          ([, metadataSaveDetailsItem]) => metadataSaveDetailsItem.error
-        ).length === 0
-      ) {
-        navigate(`/${projectId}/sample-metadata/upload/complete`);
-      } else {
-        setLoading(false);
-      }
+      await dispatch(saveMetadata({ projectId, selectedMetadataKeys }))
+        .unwrap()
+        .then(({ metadataSaveDetails }) => {
+          const errorCount = Object.entries(metadataSaveDetails).filter(
+            ([, metadataSaveDetailsItem]) => metadataSaveDetailsItem.error
+          ).length;
+          if (errorCount === 0) {
+            navigate(`/${projectId}/sample-metadata/upload/complete`);
+          } else {
+            setLoading(false);
+            notification.error({
+              message: i18n(
+                "SampleMetadataImportReview.notification.partialError",
+                errorCount
+              ),
+            });
+          }
+        })
+        .catch((payload) => {
+          setLoading(false);
+          notification.error({
+            message: payload,
+            className: "t-metadata-uploader-review-error",
+          });
+        });
     }
   };
 
   const isValid = !metadata.some(
-    (row) => !metadataValidateDetails[row.rowKey].isSampleNameValid
+    (row) => !metadataValidateDetails[row[sampleNameColumn]].isSampleNameValid
   );
 
   const lockedSampleMetadata = metadata.filter(
-    (metadataItem) => metadataValidateDetails[metadataItem.rowKey].locked
+    (metadataItem) =>
+      metadataValidateDetails[metadataItem[sampleNameColumn]].locked
   );
 
   return (
@@ -283,12 +298,15 @@ export function SampleMetadataImportReview(): JSX.Element {
         className="t-metadata-uploader-review-table"
         rowKey={(row) => row.rowKey}
         rowClassName={(record) =>
-          metadataSaveDetails[record.rowKey]?.saved === false ? "row-error" : ""
+          metadataSaveDetails[record[sampleNameColumn]]?.saved === false
+            ? "row-error"
+            : ""
         }
         rowSelection={rowSelection}
         columns={columns}
         dataSource={metadata.filter(
-          (metadataItem) => !metadataValidateDetails[metadataItem.rowKey].locked
+          (metadataItem) =>
+            !metadataValidateDetails[metadataItem[sampleNameColumn]].locked
         )}
         pagination={getPaginationOptions(metadata.length)}
         loading={{

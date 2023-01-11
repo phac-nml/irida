@@ -1,7 +1,7 @@
 import React from "react";
 import { AutoComplete, Form, Input, Modal } from "antd";
 import {
-  createNewSample,
+  createSamples,
   validateSampleName,
 } from "../../../../apis/projects/samples";
 import searchOntology from "../../../../apis/ontology/taxonomy/query";
@@ -11,7 +11,12 @@ import searchOntology from "../../../../apis/ontology/taxonomy/query";
  * @returns {JSX.Element}
  * @constructor
  */
-export default function CreateNewSample({ visible, onCreate, onCancel }) {
+export default function CreateNewSample({
+  visible,
+  projectId,
+  onCreate,
+  onCancel,
+}) {
   const [form] = Form.useForm();
   const nameRef = React.useRef();
   const [organisms, setOrganisms] = React.useState([]);
@@ -72,7 +77,10 @@ export default function CreateNewSample({ visible, onCreate, onCancel }) {
 
   const createSample = () => {
     form.validateFields().then((values) => {
-      createNewSample(values).then(() => {
+      createSamples({
+        projectId,
+        body: [values],
+      }).then(() => {
         form.resetFields();
         onCreate();
       });

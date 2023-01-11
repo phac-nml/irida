@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Result } from "antd";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
@@ -13,22 +13,43 @@ import { NavigateFunction } from "react-router/dist/lib/hooks";
  * @constructor
  */
 export function SampleMetadataImportComplete(): JSX.Element {
-  const { metadata, metadataValidateDetails, metadataSaveDetails } =
-    useImportSelector((state: ImportState) => state.importReducer);
+  const {
+    sampleNameColumn,
+    metadata,
+    metadataValidateDetails,
+    metadataSaveDetails,
+  } = useImportSelector((state: ImportState) => state.importReducer);
 
-  const samplesUpdatedCount = metadata.filter(
-    (metadataItem: MetadataItem) =>
-      metadataSaveDetails[metadataItem.rowKey]?.saved === true &&
-      !metadataValidateDetails[metadataItem.rowKey].locked &&
-      metadataValidateDetails[metadataItem.rowKey].foundSampleId
-  ).length;
+  const filteredSamples = React.useCallback(
+    (metadataItem: MetadataItem, isSampleFound: boolean) => {
+      return (
+        metadataSaveDetails[metadataItem[sampleNameColumn]]?.saved === true &&
+        !metadataValidateDetails[metadataItem[sampleNameColumn]].locked &&
+        (isSampleFound
+          ? metadataValidateDetails[metadataItem[sampleNameColumn]]
+              .foundSampleId
+          : !metadataValidateDetails[metadataItem[sampleNameColumn]]
+              .foundSampleId)
+      );
+    },
+    [metadataSaveDetails, metadataValidateDetails, sampleNameColumn]
+  );
 
-  const samplesCreatedCount = metadata.filter(
-    (metadataItem: MetadataItem) =>
-      metadataSaveDetails[metadataItem.rowKey]?.saved === true &&
-      !metadataValidateDetails[metadataItem.rowKey].locked &&
-      !metadataValidateDetails[metadataItem.rowKey].foundSampleId
-  ).length;
+  const samplesUpdatedCount = useMemo(
+    () =>
+      metadata.filter((metadataItem: MetadataItem) =>
+        filteredSamples(metadataItem, true)
+      ).length,
+    [filteredSamples, metadata]
+  );
+
+  const samplesCreatedCount = useMemo(
+    () =>
+      metadata.filter((metadataItem: MetadataItem) =>
+        filteredSamples(metadataItem, false)
+      ).length,
+    [filteredSamples, metadata]
+  );
 
   let stats =
     samplesUpdatedCount == 1

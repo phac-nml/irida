@@ -25,6 +25,15 @@ export interface LockedSamplesResponse {
   sampleIds: number[];
 }
 
+export interface SamplesResponse {
+  responses: Record<string, SampleItemErrorResponse>;
+}
+
+export interface SampleItemErrorResponse {
+  error: boolean;
+  errorMessage: string;
+}
+
 export interface MetadataItem {
   [field: string]: string;
   rowKey: string;
@@ -35,17 +44,36 @@ export interface FieldUpdate {
   value: string;
 }
 
-export interface SampleRequest {
+export interface UpdateSampleItem extends CreateSampleItem {
+  sampleId: number;
+}
+
+export interface CreateSampleItem {
   name: string;
   organism?: string;
   description?: string;
   metadata: FieldUpdate[];
 }
 
+export interface UpdateSamplesRequest {
+  projectId: string;
+  body: UpdateSampleItem[];
+}
+
+export interface CreateSamplesRequest {
+  projectId: string;
+  body: CreateSampleItem[];
+}
+
 export interface ValidateSampleNamesRequest {
   samples: ValidateSampleNameModel[];
   associatedProjectIds?: number[];
 }
+
+export type CreateUpdateSamples = (params: {
+  projectId: string;
+  body: Array<UpdateSampleItem> | Array<CreateSampleItem>;
+}) => Promise<SamplesResponse>;
 
 const PROJECT_ID = getProjectIdFromUrl();
 const URL = setBaseUrl(`/ajax/projects`);
@@ -129,30 +157,51 @@ export async function getLockedSamples({
   return response.data;
 }
 
-export async function createSample({
+export const createSamples: CreateUpdateSamples = async ({
   projectId,
   body,
-}: {
-  projectId: string;
-  body: SampleRequest;
-}) {
-  return await axios.post(`${URL}/${projectId}/samples/add-sample`, body);
-}
+}) => {
+  try {
+    const { data } = await axios.post(
+      `${URL}/${projectId}/samples/create`,
+      body
+    );
+    return Promise.resolve(data);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        return Promise.resolve(error.response.data);
+      } else {
+        return Promise.reject(error.message);
+      }
+    } else {
+      return Promise.reject("An unexpected error occurred");
+    }
+  }
+};
 
-export async function updateSample({
+export const updateSamples: CreateUpdateSamples = async ({
   projectId,
-  sampleId,
   body,
-}: {
-  projectId: string;
-  sampleId: number;
-  body: SampleRequest;
-}) {
-  return await axios.patch(
-    `${URL}/${projectId}/samples/add-sample/${sampleId}`,
-    body
-  );
-}
+}) => {
+  try {
+    const { data } = await axios.patch(
+      `${URL}/${projectId}/samples/update`,
+      body
+    );
+    return Promise.resolve(data);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        return Promise.resolve(error.response.data);
+      } else {
+        return Promise.reject(error.message);
+      }
+    } else {
+      return Promise.reject("An unexpected error occurred");
+    }
+  }
+};
 
 /**
  * Server side validation of a new sample name.
@@ -166,25 +215,6 @@ export async function validateSampleName(name: string) {
     `${URL}/${PROJECT_ID}/samples/add-sample/validate?${params}`
   );
   return response.json();
-}
-
-/**
- * Create a new sample within a project
- * @param name - name of the new sample
- * @param organism - name of the organism (optional)
- * @returns {Promise<Response>}
- */
-export async function createNewSample({
-  name,
-  organism,
-}: {
-  name: string;
-  organism: string;
-}) {
-  return post(`${URL}/${PROJECT_ID}/samples/add-sample`, {
-    name: name.trim(),
-    organism,
-  });
 }
 
 /**
