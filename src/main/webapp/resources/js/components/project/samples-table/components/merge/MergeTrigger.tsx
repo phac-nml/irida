@@ -42,7 +42,7 @@ export default function MergeTrigger({
         onClick,
         disabled: state.selection.count < 2,
       })}
-      {visible ? (
+      {visible && samples !== undefined ? (
         <Suspense fallback={<span />}>
           <MergeModal
             visible={visible}
