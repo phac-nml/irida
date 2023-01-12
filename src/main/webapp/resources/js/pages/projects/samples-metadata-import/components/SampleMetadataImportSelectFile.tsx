@@ -26,10 +26,7 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
   const dispatch: ImportDispatch = useImportDispatch();
   const [status, setStatus] = React.useState<StepsProps["status"]>("process");
   const [loading, setLoading] = React.useState<boolean>(false);
-  const [showEmptyHeaderError, setShowEmptyHeaderError] =
-    React.useState<boolean>(false);
-  const [showDuplicateHeaderError, setShowDuplicateHeaderError] =
-    React.useState<boolean>(false);
+  const [validationErrors, setValidationErrors] = React.useState<string[]>([]);
 
   React.useEffect(() => {
     if (projectId != null) {
@@ -64,9 +61,6 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
     beforeUpload: async (file: RcFile) => {
       try {
         setLoading(true);
-        setShowEmptyHeaderError(false);
-        setShowDuplicateHeaderError(false);
-
         const data = await readFileContents(file);
         const workbook: XLSX.WorkBook = XLSX.read(data, {
           type: "binary",
@@ -86,6 +80,7 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
           (header, index, headers) => headers.indexOf(header) !== index
         );
         const emptyHeaders = headers?.filter((header) => header === null);
+        const errors: string[] = [];
 
         if (
           headers === undefined ||
@@ -98,11 +93,20 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
             headers.length === 0 ||
             (emptyHeaders && emptyHeaders.length > 0)
           ) {
-            setShowEmptyHeaderError(true);
+            errors.push(
+              i18n(
+                "SampleMetadataImportSelectFile.alert.valid.description.empty"
+              )
+            );
           }
           if (duplicateHeaders && duplicateHeaders.length > 0) {
-            setShowDuplicateHeaderError(true);
+            errors.push(
+              i18n(
+                "SampleMetadataImportSelectFile.alert.valid.description.duplicate"
+              )
+            );
           }
+          setValidationErrors(errors);
           setLoading(false);
           return false;
         } else {
@@ -136,34 +140,29 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
   return (
     <SampleMetadataImportWizard current={0} status={status}>
       <Spin spinning={loading}>
-        {(showEmptyHeaderError || showDuplicateHeaderError) && (
+        {validationErrors.length > 0 && (
           <ErrorAlert
             style={{ marginBottom: SPACE_XS }}
             message={i18n("SampleMetadataImportSelectFile.alert.valid.title")}
             description={
               <>
-                {i18n(
-                  "SampleMetadataImportSelectFile.alert.valid.description.preface"
-                )}
+                <Text strong>
+                  {i18n(
+                    "SampleMetadataImportSelectFile.alert.valid.description.preface"
+                  )}
+                </Text>
                 <ul style={{ marginBottom: 0 }}>
-                  {showDuplicateHeaderError && (
-                    <li>
-                      {i18n(
-                        "SampleMetadataImportSelectFile.alert.valid.description.duplicate"
-                      )}
+                  {validationErrors.map((error, index) => (
+                    <li key={`metadata-uploader-validation-message-${index}`}>
+                      {error}
                     </li>
-                  )}
-                  {showEmptyHeaderError && (
-                    <li>
-                      {i18n(
-                        "SampleMetadataImportSelectFile.alert.valid.description.empty"
-                      )}
-                    </li>
-                  )}
+                  ))}
                 </ul>
-                {i18n(
-                  "SampleMetadataImportSelectFile.alert.valid.description.postface"
-                )}
+                <Text strong>
+                  {i18n(
+                    "SampleMetadataImportSelectFile.alert.valid.description.postface"
+                  )}
+                </Text>
               </>
             }
           />
