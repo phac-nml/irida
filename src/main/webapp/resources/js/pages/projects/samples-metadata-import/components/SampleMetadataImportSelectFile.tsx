@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { notification, Spin, StepsProps, Typography } from "antd";
+import { List, notification, Spin, StepsProps, Typography } from "antd";
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import { ImportDispatch, useImportDispatch } from "../redux/store";
@@ -146,23 +146,29 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
             message={i18n("SampleMetadataImportSelectFile.alert.valid.title")}
             description={
               <>
-                <Text strong>
-                  {i18n(
-                    "SampleMetadataImportSelectFile.alert.valid.description.preface"
+                <List
+                  size="small"
+                  header={
+                    <Text strong>
+                      {i18n(
+                        "SampleMetadataImportSelectFile.alert.valid.description.preface"
+                      )}
+                    </Text>
+                  }
+                  footer={
+                    <Text strong>
+                      {i18n(
+                        "SampleMetadataImportSelectFile.alert.valid.description.postface"
+                      )}
+                    </Text>
+                  }
+                  dataSource={validationErrors}
+                  renderItem={(item) => (
+                    <List.Item>
+                      <Text>{item}</Text>
+                    </List.Item>
                   )}
-                </Text>
-                <ul style={{ marginBottom: 0 }}>
-                  {validationErrors.map((error, index) => (
-                    <li key={`metadata-uploader-validation-message-${index}`}>
-                      {error}
-                    </li>
-                  ))}
-                </ul>
-                <Text strong>
-                  {i18n(
-                    "SampleMetadataImportSelectFile.alert.valid.description.postface"
-                  )}
-                </Text>
+                ></List>
               </>
             }
           />
