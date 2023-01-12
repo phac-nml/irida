@@ -1,14 +1,20 @@
-import React, { useCallback } from "react";
-import { LockTwoTone } from "@ant-design/icons";
 import { Avatar, Button, List } from "antd";
-import { SampleDetailViewer } from "../../../samples/SampleDetailViewer";
+import React, { useCallback } from "react";
+
+import { LockTwoTone } from "@ant-design/icons";
 import { ProjectSample } from "../../../../redux/endpoints/project-samples";
 import { SelectedSample } from "../../../../types/irida";
+import { SampleDetailViewer } from "../../../samples/SampleDetailViewer";
 
 type LockedSamplesListParams = {
-  locked: Array<ProjectSample> | Array<SelectedSample>;
+  locked: Array<ProjectSample> | Array<SelectedSample> | undefined;
 };
 
+/**
+ * Type guard to see if item is a project sample or selected sample,
+ * making this component more reusable.
+ * @param item
+ */
 function isItemProjectSample(
   item: ProjectSample | SelectedSample
 ): item is ProjectSample {
@@ -18,9 +24,7 @@ function isItemProjectSample(
 /**
  * React Element to render a list of locked samples.  Use this when they
  * cannot be used in the requested action (e.g. remove).
- * @param {array} locked - list of samples that are locked from modification
- * @returns {JSX.Element}
- * @constructor
+ * @param locked - list of samples that are locked from modification
  */
 export default function LockedSamplesList({
   locked,
