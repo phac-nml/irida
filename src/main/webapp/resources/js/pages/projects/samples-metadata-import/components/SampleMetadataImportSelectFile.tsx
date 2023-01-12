@@ -26,7 +26,10 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
   const dispatch: ImportDispatch = useImportDispatch();
   const [status, setStatus] = React.useState<StepsProps["status"]>("process");
   const [loading, setLoading] = React.useState<boolean>(false);
-  const [valid, setValid] = React.useState<boolean>(true);
+  const [showEmptyHeaderError, setShowEmptyHeaderError] =
+    React.useState<boolean>(false);
+  const [showDuplicateHeaderError, setShowDuplicateHeaderError] =
+    React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (projectId != null) {
@@ -60,6 +63,10 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
     },
     beforeUpload: async (file: RcFile) => {
       try {
+        setLoading(true);
+        setShowEmptyHeaderError(false);
+        setShowDuplicateHeaderError(false);
+
         const data = await readFileContents(file);
         const workbook: XLSX.WorkBook = XLSX.read(data, {
           type: "binary",
@@ -83,20 +90,22 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
         if (
           headers === undefined ||
           headers.length === 0 ||
-          (emptyHeaders && emptyHeaders.length > 0)
+          (emptyHeaders && emptyHeaders.length > 0) ||
+          (duplicateHeaders && duplicateHeaders.length > 0)
         ) {
+          if (
+            headers === undefined ||
+            headers.length === 0 ||
+            (emptyHeaders && emptyHeaders.length > 0)
+          ) {
+            setShowEmptyHeaderError(true);
+          }
+          if (duplicateHeaders && duplicateHeaders.length > 0) {
+            setShowDuplicateHeaderError(true);
+          }
           setLoading(false);
-          setStatus("error");
-          notification.error({
-            message: i18n("SampleMetadataImportSelectFile.empty", file.name),
-          });
-          return false;
-        } else if (duplicateHeaders && duplicateHeaders.length > 0) {
-          setLoading(false);
-          setValid(false);
           return false;
         } else {
-          setValid(true);
           const output: MetadataItem[] = cleanRows.map((row, rowIndex) => {
             const metadataItem: MetadataItem = {
               rowKey: `metadata-uploader-row-${rowIndex}`,
@@ -111,6 +120,7 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
           notification.success({
             message: i18n("SampleMetadataImportSelectFile.success", file.name),
           });
+          return true;
         }
       } catch (error) {
         setLoading(false);
@@ -120,20 +130,42 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
         });
         return false;
       }
-      return true;
     },
   };
 
   return (
     <SampleMetadataImportWizard current={0} status={status}>
       <Spin spinning={loading}>
-        {!valid && (
+        {(showEmptyHeaderError || showDuplicateHeaderError) && (
           <ErrorAlert
             style={{ marginBottom: SPACE_XS }}
             message={i18n("SampleMetadataImportSelectFile.alert.valid.title")}
-            description={i18n(
-              "SampleMetadataImportSelectFile.alert.valid.description"
-            )}
+            description={
+              <>
+                {i18n(
+                  "SampleMetadataImportSelectFile.alert.valid.description.preface"
+                )}
+                <ul style={{ marginBottom: 0 }}>
+                  {showDuplicateHeaderError && (
+                    <li>
+                      {i18n(
+                        "SampleMetadataImportSelectFile.alert.valid.description.duplicate"
+                      )}
+                    </li>
+                  )}
+                  {showEmptyHeaderError && (
+                    <li>
+                      {i18n(
+                        "SampleMetadataImportSelectFile.alert.valid.description.empty"
+                      )}
+                    </li>
+                  )}
+                </ul>
+                {i18n(
+                  "SampleMetadataImportSelectFile.alert.valid.description.postface"
+                )}
+              </>
+            }
           />
         )}
         <DragUpload
