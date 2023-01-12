@@ -1,6 +1,5 @@
 import { api } from "./api";
 import { TAG_PROJECT } from "./tags";
-import { BaseQueryArg } from "@reduxjs/toolkit/dist/query/baseQueryTypes";
 import { AssociatedProjectsResponse } from "../../apis/projects/associated-projects";
 
 /**
@@ -23,21 +22,8 @@ export const projectApi = api.injectEndpoints({
         { type: TAG_PROJECT, projectId },
       ],
     }),
-    listSamples: build.query({
-      query: ({
-        projectId,
-        body,
-      }: {
-        projectId: number | string;
-        body: {};
-      }) => ({
-        url: `projects/${projectId}/samples`,
-        method: "POST",
-        body,
-      }),
-    }),
     getAssociatedProjects: build.query({
-      query: (projectId: number): BaseQueryArg<BaseQuery> => ({
+      query: (projectId: number) => ({
         url: `projects/associated/list`,
         params: { projectId },
       }),

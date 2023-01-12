@@ -36,7 +36,7 @@ export const projectSamplesApi = api.injectEndpoints({
       TableResponse<ProjectSample>,
       FetchPagedSamplesParams
     >({
-      query: ({ projectId, body }) => ({
+      query: ({ projectId, body }: FetchPagedSamplesParams) => ({
         url: `/projects/${projectId}/samples`,
         method: `POST`,
         body,
@@ -56,7 +56,7 @@ export const projectSamplesApi = api.injectEndpoints({
       Array<SelectedSample>,
       FetchPagedSamplesParams
     >({
-      query: ({ projectId, body }) => ({
+      query: ({ projectId, body }: FetchPagedSamplesParams) => ({
         url: `/projects/${projectId}/samples/ids`,
         method: `POST`,
         body,

@@ -119,7 +119,7 @@ function formatTableOptions(
  * @param state - current state of the page
  * @param selected - whether the item is selected
  * @param item - the project sample
- * @returns new state of the application
+ * @returns new state of the app
  */
 function rowSelectionChange(
   state: State,
@@ -140,7 +140,7 @@ function rowSelectionChange(
  * Select all samples in a project, including visible associated projects.
  * @param state - current state of the page
  * @param samples - minimal representation of samples
- * @returns new state of the application
+ * @returns new state of the app
  */
 function selectAllSamples(
   state: State,
