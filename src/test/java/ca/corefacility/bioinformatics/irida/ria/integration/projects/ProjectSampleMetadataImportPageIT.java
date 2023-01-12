@@ -26,6 +26,8 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 	private static final String GOOD_FILE_PATH = "src/test/resources/files/metadata-upload/good.xlsx";
 	private static final String MIXED_FILE_PATH = "src/test/resources/files/metadata-upload/mixed.xlsx";
 	private static final String INVALID_FILE_PATH = "src/test/resources/files/metadata-upload/invalid.xlsx";
+	private static final String EMPTY_HEADERS_FILE_PATH = "src/test/resources/files/metadata-upload/empty_headers.xlsx";
+	private static final String EMPTY_AND_DUPLICATE_HEADERS_FILE_PATH = "src/test/resources/files/metadata-upload/empty_and_duplicate_headers.xlsx";
 	private static final String DUPLICATE_HEADERS_FILE_PATH = "src/test/resources/files/metadata-upload/duplicate_headers.xlsx";
 	private static final String SAMPLE_NAME_COLUMN = "NLEP #";
 	private static final Long PROJECT_ID = 1L;
@@ -96,9 +98,23 @@ public class ProjectSampleMetadataImportPageIT extends AbstractIridaUIITChromeDr
 	}
 
 	@Test
+	public void testEmptyHeaders() {
+		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
+		page.uploadMetadataFile(EMPTY_HEADERS_FILE_PATH);
+		assertTrue(page.isAlertDisplayed(), "Validation message did not display");
+	}
+
+	@Test
 	public void testDuplicateHeaders() {
 		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
 		page.uploadMetadataFile(DUPLICATE_HEADERS_FILE_PATH);
+		assertTrue(page.isAlertDisplayed(), "Validation message did not display");
+	}
+
+	@Test
+	public void testEmptyAndDuplicateHeaders() {
+		ProjectSampleMetadataImportPage page = ProjectSampleMetadataImportPage.goToPage(driver());
+		page.uploadMetadataFile(EMPTY_AND_DUPLICATE_HEADERS_FILE_PATH);
 		assertTrue(page.isAlertDisplayed(), "Validation message did not display");
 	}
 
