@@ -22,7 +22,6 @@ const URL = `${getContextPath()}/ajax/projects`;
 
 /**
  * Redux API for handling project samples queries.
- * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, {status: number, data: unknown} | {status: "FETCH_ERROR", data?: undefined, error: string} | {status: "PARSING_ERROR", originalStatus: number, data: string, error: string} | {status: "CUSTOM_ERROR", data?: unknown, error: string}, FetchBaseQueryMeta>>, {getSampleIdsForProject: *}, string, never, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, {status: number, data: unknown} | {status: "FETCH_ERROR", data?: undefined, error: string} | {status: "PARSING_ERROR", originalStatus: number, data: string, error: string} | {status: "CUSTOM_ERROR", data?: unknown, error: string}, FetchBaseQueryMeta>>, {getSampleIdsForProject: *}, string, never, any>}
  */
 export const samplesApi = createApi({
   reducerPath: "samplesApi",
@@ -144,7 +143,7 @@ export async function shareSamplesWithProject({
  * @param {object} options - current table filters
  * @returns {Promise<*>}
  */
-export async function getMinimalSampleDetailsForFilteredProject<T>(
+export async function getMinimalSampleDetailsForFilteredProject(
   options: TableOptions
 ): Promise<SelectedSample[]> {
   return post<SelectedSample[]>(`${URL}/${PROJECT_ID}/samples/ids`, options);
