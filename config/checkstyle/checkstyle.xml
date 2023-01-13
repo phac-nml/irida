@@ -12,6 +12,11 @@
             <property name="message" value="Indent must use tab characters" />
             <property name="ignoreComments" value="true" />
         </module>
+
+        <!-- Checks for Javadoc comments.                     -->
+        <!-- See https://checkstyle.org/config_javadoc.html -->
         <module name="InvalidJavadocPosition" />
+        <module name="JavadocMethod" />
+        <module name="JavadocType" />
     </module>
 </module>
