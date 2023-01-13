@@ -60,5 +60,5 @@ jobs:
         uses: dbelyaev/action-checkstyle@v0.6.1
         with:
           github_token: ${{ secrets.github_token }}
-            reporter: github-pr-review
-            level: error
+          reporter: github-pr-review
+          level: error
