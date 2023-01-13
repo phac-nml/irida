@@ -8,7 +8,6 @@ import {
 import { SelectedSample } from "../types/irida";
 import { SorterResult } from "antd/es/table/interface";
 import { ProjectSample } from "../redux/endpoints/project-samples";
-import { direction } from "@antv/matrix-util/lib/ext";
 
 /**
  * Format Sort Order from the Ant Design sorter object
