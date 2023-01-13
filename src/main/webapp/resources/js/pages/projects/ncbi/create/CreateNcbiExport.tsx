@@ -40,7 +40,7 @@ import {
 } from "./ncbi-utilities";
 
 export interface SampleRecord {
-  key: string;
+  key: any;
   id: number;
   name: string;
   files: SequencingFiles;
