@@ -50,8 +50,9 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
   );
   const [updatedSampleNameColumn, setUpdatedSampleNameColumn] =
     React.useState<string>(sampleNameColumn);
-  const updatedHeaders: MetadataHeaderItem[] = [...headers];
   const dispatch: ImportDispatch = useImportDispatch();
+
+  const updatedHeaders = useMemo(() => [...headers], [headers]);
 
   React.useEffect(() => {
     getMetadataRestrictions().then((data) => {
@@ -145,6 +146,7 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
             {i18n("SampleMetadataImportMapColumns.form.sampleNameColumn")}
           </Typography.Text>
           <Select
+            autoFocus
             style={{ width: 300 }}
             value={updatedSampleNameColumn}
             onChange={onSampleNameColumnChange}

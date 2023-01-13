@@ -63,25 +63,25 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	public void uploadMetadataFile(String filePath) {
 		Path path = Paths.get(filePath);
 		dropzone.sendKeys(path.toAbsolutePath().toString());
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-		wait.until(ExpectedConditions.urlContains("/columns"));
 	}
 
 	public void goToReviewPage() {
-		previewBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-		wait.until(ExpectedConditions.urlContains("/review"));
+		wait.until(ExpectedConditions.visibilityOf(previewBtn));
+		previewBtn.click();
 	}
 
 	public void goToCompletePage() {
-		uploadBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-		wait.until(ExpectedConditions.urlContains("/complete"));
+		wait.until(ExpectedConditions.urlContains("/review"));
+		uploadBtn.click();
 	}
 
 	public void selectSampleNameColumn(String sampleNameColumn) {
-		sampleNameColumnSelect.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.urlContains("/columns"));
+		wait.until(ExpectedConditions.visibilityOf(sampleNameColumnSelect));
+		sampleNameColumnSelect.click();
 		List<WebElement> selectOptions = wait.until(
 				ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-select-item")));
 		for (WebElement option : selectOptions) {
@@ -112,6 +112,8 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	}
 
 	public void clickUploadButton() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.visibilityOf(uploadBtn));
 		uploadBtn.click();
 	}
 
@@ -120,17 +122,21 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	}
 
 	public boolean isAlertDisplayed() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.visibilityOf(validationAlert));
 		return validationAlert.isDisplayed();
 	}
 
 	public boolean isSuccessDisplayed() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.urlContains("/complete"));
 		return successMessage.isDisplayed();
 	}
 
 	public boolean isErrorNotificationDisplayed() {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.visibilityOf(errorNotification));
-		return true;
+		return errorNotification.isDisplayed();
 	}
 
 }

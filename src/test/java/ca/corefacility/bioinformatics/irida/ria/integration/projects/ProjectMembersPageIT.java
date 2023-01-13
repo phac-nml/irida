@@ -49,18 +49,18 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(3, page.getNumberOfMembers(), "Should be 3 members in the project");
 
 		// Try updating the users role to owner
-		page.updateUserRole(0, ProjectRole.PROJECT_OWNER.toString());
+		page.updateUserRole(1, ProjectRole.PROJECT_OWNER.toString());
 		assertTrue(page.isNotificationDisplayed());
 
 		// A manager has a metadata role of Level 4 and cannot be modified
 		assertFalse(page.userMetadataRoleSelectEnabled(0));
 
 		// Change first manager back to a collaborator
-		page.updateUserRole(0, ProjectRole.PROJECT_USER.toString());
+		page.updateUserRole(1, ProjectRole.PROJECT_USER.toString());
 		assertTrue(page.isNotificationDisplayed());
 
 		// Try updating the users metadata role
-		page.updateMetadataRole(0, ProjectMetadataRole.LEVEL_2.toString());
+		page.updateMetadataRole(1, ProjectMetadataRole.LEVEL_2.toString());
 		assertTrue(page.isNotificationDisplayed());
 	}
 
@@ -119,7 +119,7 @@ public class ProjectMembersPageIT extends AbstractIridaUIITChromeDriver {
 		managerRemoteProjectMembersPage.addUserToProject("testUser", ProjectRole.PROJECT_USER.toString());
 		assertTrue(remoteProjectMembersPage.isNotificationDisplayed());
 		assertEquals(3, remoteProjectMembersPage.getNumberOfMembers(), "Should be 3 members in the project");
-		managerRemoteProjectMembersPage.removeUser(0);
+		managerRemoteProjectMembersPage.removeUser(1);
 		assertTrue(remoteProjectMembersPage.isNotificationDisplayed());
 		assertEquals(2, remoteProjectMembersPage.getNumberOfMembers(), "Should be 2 members in the project");
 	}
