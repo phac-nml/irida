@@ -1,11 +1,7 @@
 /**
  * @file API the ProjectSettingsAssociatedProjectsController
  */
-import {
-  buildCreateApi,
-  createApi,
-  fetchBaseQuery,
-} from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setBaseUrl } from "../../utilities/url-utilities";
 
 const BASE_URL = setBaseUrl(`/ajax/projects/associated`);
