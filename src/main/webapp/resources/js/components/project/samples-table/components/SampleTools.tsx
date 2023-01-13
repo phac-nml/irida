@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Button, Dropdown, Menu } from "antd";
+import { Button, Dropdown, Menu, Space } from "antd";
 import { useProjectSamples } from "../useProjectSamplesContext";
 import { useParams } from "react-router-dom";
 import { useGetProjectDetailsQuery } from "../../../../redux/endpoints/project";
@@ -81,7 +81,10 @@ export default function SampleTools() {
   return (
     <Dropdown overlay={menu}>
       <Button className="t-sample-tools">
-        {i18n("SamplesMenu.label")} <IconDropDown />
+        <Space size={"small"}>
+          {i18n("SamplesMenu.label")}
+          <IconDropDown />
+        </Space>
       </Button>
     </Dropdown>
   );
