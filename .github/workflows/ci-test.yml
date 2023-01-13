@@ -163,7 +163,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: Install dependencies
-        uses: ./gradlew pnpmInstall
+        run: ./gradlew pnpmInstall
       - name: Run eslint on changed files
         uses: tj-actions/eslint-changed-files@v18
         with:
