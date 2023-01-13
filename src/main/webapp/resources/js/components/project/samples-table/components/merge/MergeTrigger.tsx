@@ -3,7 +3,7 @@ import React, { Suspense, useCallback, useState } from "react";
 import { SelectedSample } from "../../../../../types/irida";
 import { separateLockedAndUnlockedSamples } from "../../../../../utilities/sample-utilities";
 import { useProjectSamples } from "../../useProjectSamplesContext";
-import { Modal, notification } from "antd";
+import { Modal } from "antd";
 
 const MergeModal = React.lazy(() => import("./MergeModal"));
 

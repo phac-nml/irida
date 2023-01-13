@@ -23,7 +23,9 @@ import MergeTrigger from "./merge/MergeTrigger";
 export default function SampleTools() {
   const { projectId } = useParams();
   const { data: details = {} } = useGetProjectDetailsQuery(projectId);
-  const { state, dispatch } = useProjectSamples();
+  const {
+    state: { selection },
+  } = useProjectSamples();
 
   const menu = useMemo(
     () => (
@@ -40,7 +42,7 @@ export default function SampleTools() {
           </MergeTrigger>
         ) : null}
         <Menu.Item
-          disabled={state.selection.count === 0}
+          disabled={selection.count === 0}
           key="share-menu"
           icon={<ShareAltOutlined />}
           className="t-share"
@@ -48,7 +50,7 @@ export default function SampleTools() {
           {i18n("SamplesMenu.share")}
         </Menu.Item>
         <Menu.Item
-          disabled={state.selection.count === 0}
+          disabled={selection.count === 0}
           key="remove-menu"
           icon={<CloseSquareOutlined />}
           className="t-remove"
@@ -73,7 +75,7 @@ export default function SampleTools() {
         </Menu.Item>
       </Menu>
     ),
-    [details.remote, projectId, state.selection.count]
+    [details.remote, projectId, selection.count]
   );
 
   return (
