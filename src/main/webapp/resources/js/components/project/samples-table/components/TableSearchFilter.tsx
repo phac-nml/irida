@@ -6,6 +6,10 @@ import { SearchOutlined } from "@ant-design/icons";
  * Icon is blue when the filter is active
  * @param filtered - whether the filter is active
  */
-export default ({ filtered }: { filtered: boolean }): JSX.Element => (
-  <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
-);
+export default function TableSearchFilter({
+  filtered,
+}: {
+  filtered: boolean;
+}): JSX.Element {
+  return <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />;
+}
