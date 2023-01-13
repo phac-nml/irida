@@ -3,6 +3,7 @@ import React, { Suspense, useCallback, useState } from "react";
 import { SelectedSample } from "../../../../../types/irida";
 import { separateLockedAndUnlockedSamples } from "../../../../../utilities/sample-utilities";
 import { useProjectSamples } from "../../useProjectSamplesContext";
+import { Modal, notification } from "antd";
 
 const MergeModal = React.lazy(() => import("./MergeModal"));
 
@@ -14,6 +15,13 @@ export type Samples =
   | [Array<SelectedSample>, Array<SelectedSample>]
   | undefined;
 
+/**
+ * Wrapper for React Element which adds a click handler to it to open the merge samples modal.
+ * Also checks to ensure that the correct number of samples are modifiable by the user (user must
+ * be the owner).
+ * @param children
+ * @constructor
+ */
 export default function MergeTrigger({
   children,
 }: MergeTriggerProps): JSX.Element {
@@ -21,7 +29,7 @@ export default function MergeTrigger({
   const [samples, setSamples] = useState<Samples>(undefined);
   const [visible, setVisible] = useState<boolean>(false);
 
-  function onClick() {
+  function handleClick() {
     const [unlocked, locked] = separateLockedAndUnlockedSamples(
       Object.values(state.selection.selected)
     );
@@ -30,16 +38,22 @@ export default function MergeTrigger({
       setSamples([unlocked, locked]);
       setVisible(true);
     } else {
-      alert("NOT ENOUGH SAMPLES");
+      Modal.info({
+        title: i18n("MergeTrigger.error.locked.title"),
+        content: i18n("MergeTrigger.error.locked.content", locked.length),
+      });
     }
   }
 
-  const hideModal = useCallback(() => setVisible(false), []);
+  const handleClickCallback = useCallback(handleClick, [
+    state.selection.selected,
+  ]);
+  const hideModalCallback = useCallback(() => setVisible(false), []);
 
   return (
     <>
       {React.cloneElement(children, {
-        onClick,
+        onClick: handleClickCallback,
         disabled: state.selection.count < 2,
       })}
       {visible && samples !== undefined ? (
@@ -47,7 +61,7 @@ export default function MergeTrigger({
           <MergeModal
             visible={visible}
             samples={samples}
-            hideModal={hideModal}
+            hideModal={hideModalCallback}
           />
         </Suspense>
       ) : null}
