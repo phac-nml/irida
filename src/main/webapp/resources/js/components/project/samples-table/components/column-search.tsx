@@ -2,7 +2,6 @@ import React from "react";
 import type { FilterDropdownProps } from "antd/lib/table/interface";
 import { Button, Select, Space } from "antd";
 import { IconSearch } from "../../../icons/Icons";
-import { SearchOutlined } from "@ant-design/icons";
 import type { ColumnSearchReturn } from "../../../../types/ant-design";
 import TableSearchFilter from "./TableSearchFilter";
 
