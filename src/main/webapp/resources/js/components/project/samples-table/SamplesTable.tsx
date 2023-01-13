@@ -82,7 +82,7 @@ export default function SamplesTable(): JSX.Element {
   }
 
   /**
-   * Updated the state of the entire table when the select all checkbox
+   * Updated the state of the entire table when the select all checkboxes
    * when clicked.
    * This can be to select all or none.
    *
