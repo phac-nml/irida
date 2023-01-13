@@ -1,10 +1,4 @@
 import { TAG_PROJECT_SAMPLES } from "./tags";
-
-1;
-/**
- * @fileoverview Project > Samples AP for redux-toolkit
- */
-
 import {
   Project,
   Sample,
@@ -15,10 +9,15 @@ import {
 import { TableOptions } from "../../types/ant-design";
 import { api } from "./api";
 
+1;
+/**
+ * @fileoverview Project > Samples AP for redux-toolkit
+ */
+
 export type ProjectSample = {
   key: string;
   owner: boolean;
-  coverage: any; // TODO: (Josh - 12/9/22) Figure this one out
+  coverage: unknown; // TODO: (Josh - 12/9/22) Figure this one out
   project: Project;
   qcStatus: string;
   quality: string[];
