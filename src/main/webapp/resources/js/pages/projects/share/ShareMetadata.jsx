@@ -94,7 +94,7 @@ export function ShareMetadata() {
       title: i18n("ShareMetadata.field"),
       key: "label",
       dataIndex: "label",
-      render: (label, field) => <span className="t-field-label">{label}</span>,
+      render: (label) => <span className="t-field-label">{label}</span>,
     },
     {
       title: i18n("ShareMetadata.current"),

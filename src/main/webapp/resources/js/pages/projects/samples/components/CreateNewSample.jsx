@@ -104,7 +104,7 @@ export default function CreateNewSample({
           name="name"
           label={i18n("AddSample.name")}
           rules={[
-            ({}) => ({
+            () => ({
               validator(_, value) {
                 return validateName(value);
               },

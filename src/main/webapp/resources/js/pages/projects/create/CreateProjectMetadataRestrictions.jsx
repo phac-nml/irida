@@ -14,11 +14,10 @@ import { setNewProjectMetadataRestrictions } from "./newProjectSlice";
 /**
  * Component to render metadata restrictions for samples that are in the cart (if any).
  * User can update the new project restrictions as required
- * @param {Object} form - Ant Design form API
  * @returns {JSX.Element}
  * @constructor
  */
-export function CreateProjectMetadataRestrictions({ form }) {
+export function CreateProjectMetadataRestrictions() {
   const dispatch = useDispatch();
 
   /**
@@ -55,7 +54,7 @@ export function CreateProjectMetadataRestrictions({ form }) {
     getMetadataRestrictions().then((data) => {
       setRestrictions(data);
     });
-  }, [samples]);
+  }, [dispatch, samples]);
 
   const columns = [
     {
