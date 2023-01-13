@@ -12,17 +12,17 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  * Page object to represent the Read Announcements page
  */
 public class AnnouncementReadPage extends AbstractPage {
-    public AnnouncementReadPage(WebDriver driver) {
-        super(driver);
-    }
+	public AnnouncementReadPage(WebDriver driver) {
+		super(driver);
+	}
 
-    public void goTo() {
-        get(driver, "announcements/user/list");
-    }
+	public void goTo() {
+		get(driver, "announcements/user/list");
+	}
 
-    public List<WebElement> getAllReadAnnouncements() {
-        WebElement readButton = driver.findElement(By.cssSelector(".t-read-announcements"));
-        readButton.click();
-        return driver.findElements(By.cssSelector(".t-announcement-item"));
-    }
+	public List<WebElement> getAllReadAnnouncements() {
+		WebElement readButton = driver.findElement(By.cssSelector(".t-read-announcements"));
+		readButton.click();
+		return driver.findElements(By.cssSelector(".t-announcement-item"));
+	}
 }

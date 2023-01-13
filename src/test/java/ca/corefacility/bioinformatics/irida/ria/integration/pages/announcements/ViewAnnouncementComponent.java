@@ -14,37 +14,37 @@ import java.util.List;
  */
 public class ViewAnnouncementComponent extends AbstractPage {
 
-    @FindBy(css = ".ant-modal-content .ant-table-content table")
-    private WebElement table;
+	@FindBy(css = ".ant-modal-content .ant-table-content table")
+	private WebElement table;
 
-    @FindBy(css = ".ant-modal-content .ant-table-content table tr.ant-table-row")
-    private List<WebElement> rows;
+	@FindBy(css = ".ant-modal-content .ant-table-content table tr.ant-table-row")
+	private List<WebElement> rows;
 
-    @FindBy(css = "button.ant-modal-close")
-    private WebElement cancelButton;
+	@FindBy(css = "button.ant-modal-close")
+	private WebElement cancelButton;
 
-    public ViewAnnouncementComponent(WebDriver driver) {
-        super(driver);
-    }
+	public ViewAnnouncementComponent(WebDriver driver) {
+		super(driver);
+	}
 
-    public static ViewAnnouncementComponent goTo(WebDriver driver) {
-        return PageFactory.initElements(driver, ViewAnnouncementComponent.class);
-    }
+	public static ViewAnnouncementComponent goTo(WebDriver driver) {
+		return PageFactory.initElements(driver, ViewAnnouncementComponent.class);
+	}
 
-    public WebElement getTable() {
-        return table;
-    }
+	public WebElement getTable() {
+		return table;
+	}
 
-    public List<WebElement> getRows() {
-        return rows;
-    }
+	public List<WebElement> getRows() {
+		return rows;
+	}
 
-    public int getTableDataSize() {
-        return rows.size();
-    }
+	public int getTableDataSize() {
+		return rows.size();
+	}
 
-    public void clickCancelButton() {
-        cancelButton.click();
-    }
+	public void clickCancelButton() {
+		cancelButton.click();
+	}
 
 }

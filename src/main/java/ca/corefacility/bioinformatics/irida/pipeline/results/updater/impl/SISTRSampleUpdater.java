@@ -53,7 +53,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 
 	@Autowired
 	public SISTRSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService,
-							  IridaWorkflowsService iridaWorkflowsService) {
+			IridaWorkflowsService iridaWorkflowsService) {
 		this.metadataTemplateService = metadataTemplateService;
 		this.sampleService = sampleService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
@@ -84,8 +84,8 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 
 			// map the results into a Map
 			ObjectMapper mapper = new ObjectMapper();
-			List<Map<String, Object>> sistrResults = mapper
-					.readValue(jsonFile, new TypeReference<List<Map<String, Object>>>() {
+			List<Map<String, Object>> sistrResults = mapper.readValue(jsonFile,
+					new TypeReference<List<Map<String, Object>>>() {
 					});
 
 			if (sistrResults.size() > 0) {

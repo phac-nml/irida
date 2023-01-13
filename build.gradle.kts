@@ -3,6 +3,7 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
     id("base")
+    id("checkstyle")
     id("java")
     id("maven-publish")
     id("war")
@@ -16,6 +17,10 @@ plugins {
 group = "ca.corefacility.bioinformatics"
 version = "23.01-SNAPSHOT"
 description = "irida"
+
+checkstyle {
+    configFile = file("${project.projectDir}/config/checkstyle/checkstyle.xml")
+}
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11

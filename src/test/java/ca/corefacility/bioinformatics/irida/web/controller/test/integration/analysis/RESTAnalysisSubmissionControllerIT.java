@@ -32,13 +32,13 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTAnalysisSubmissionController;
 import ca.corefacility.bioinformatics.irida.web.spring.view.NewickFileView;
 
+/**
+ * Test for functions of {@link RESTAnalysisSubmissionController}
+ */
 @RestIntegrationTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/analysis/RESTAnalysisSubmissionControllerIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-/**
- * Test for functions of {@link RESTAnalysisSubmissionController}
- */
 public class RESTAnalysisSubmissionControllerIT {
 
 	public static final String ANALYSIS_BASE = "/api/analysisSubmissions";
@@ -53,7 +53,9 @@ public class RESTAnalysisSubmissionControllerIT {
 
 	@Test
 	public void testReadAllSubmissionsAdmin() {
-		asAdmin().expect().body("resource.resources.identifier", hasItems("1", "2", "3", "4")).when()
+		asAdmin().expect()
+				.body("resource.resources.identifier", hasItems("1", "2", "3", "4"))
+				.when()
 				.get(ANALYSIS_BASE);
 	}
 
@@ -64,7 +66,9 @@ public class RESTAnalysisSubmissionControllerIT {
 
 	@Test
 	public void testReadAllSubmissionsByPhylogenomicsTypeAdmin() {
-		asAdmin().expect().body("resource.resources.identifier", hasItems("1", "2")).when()
+		asAdmin().expect()
+				.body("resource.resources.identifier", hasItems("1", "2"))
+				.when()
 				.get(ANALYSIS_PHYLOGENOMICS_BASE);
 	}
 
@@ -75,7 +79,9 @@ public class RESTAnalysisSubmissionControllerIT {
 
 	@Test
 	public void testReadAllSubmissionsByPhylogenomicsTypeUser() {
-		asUser().expect().body("resource.resources.identifier", Matchers.hasSize(0)).when()
+		asUser().expect()
+				.body("resource.resources.identifier", Matchers.hasSize(0))
+				.when()
 				.get(ANALYSIS_PHYLOGENOMICS_BASE);
 	}
 
@@ -86,26 +92,34 @@ public class RESTAnalysisSubmissionControllerIT {
 
 	@Test
 	public void testReadSubmission() {
-		asAdmin().expect().body("resource.name", equalTo("another analysis")).and()
+		asAdmin().expect()
+				.body("resource.name", equalTo("another analysis"))
+				.and()
 				.body("resource.analysisState", equalTo(AnalysisState.COMPLETED.toString()))
 				.body("resource.links.rel",
 						hasItems(IanaLinkRelations.SELF.value(), RESTAnalysisSubmissionController.ANALYSIS_REL))
-				.when().get(ANALYSIS_BASE + "/1");
+				.when()
+				.get(ANALYSIS_BASE + "/1");
 	}
 
 	@Test
 	public void testReadIncompleteSubmission() {
-		asAdmin().expect().body("resource.analysisState", equalTo(AnalysisState.PREPARING.toString()))
-				.body("resource.links.rel", not(hasItems(RESTAnalysisSubmissionController.ANALYSIS_REL))).when()
+		asAdmin().expect()
+				.body("resource.analysisState", equalTo(AnalysisState.PREPARING.toString()))
+				.body("resource.links.rel", not(hasItems(RESTAnalysisSubmissionController.ANALYSIS_REL)))
+				.when()
 				.get(ANALYSIS_BASE + "/2");
 	}
 
 	@Test
 	public void testGetAnalysis() {
-		asAdmin().expect().body("resource.executionManagerAnalysisId", equalTo("XYZABC")).and()
+		asAdmin().expect()
+				.body("resource.executionManagerAnalysisId", equalTo("XYZABC"))
+				.and()
 				.body("resource.links.rel",
 						hasItems(IanaLinkRelations.SELF.value(), RESTAnalysisSubmissionController.FILE_REL + "/tree"))
-				.when().get(ANALYSIS_BASE + "/1/analysis");
+				.when()
+				.get(ANALYSIS_BASE + "/1/analysis");
 	}
 
 	@Test
@@ -123,13 +137,20 @@ public class RESTAnalysisSubmissionControllerIT {
 			logger.info("Already moved snp tree into directory.");
 		}
 
-		asAdmin().expect().body("resource.executionManagerFileId", equalTo("123-456-789")).and()
+		asAdmin().expect()
+				.body("resource.executionManagerFileId", equalTo("123-456-789"))
+				.and()
 				.body("resource.label", equalTo("snp_tree.tree"))
-				.body("resource.links.rel", hasItems(IanaLinkRelations.SELF.value())).when()
+				.body("resource.links.rel", hasItems(IanaLinkRelations.SELF.value()))
+				.when()
 				.get(ANALYSIS_BASE + "/1/analysis/file/1");
 
 		// get the tree file
-		asAdmin().given().header("Accept", NewickFileView.DEFAULT_CONTENT_TYPE).expect().body(containsString("c6706"))
-				.when().get(ANALYSIS_BASE + "/1/analysis/file/1");
+		asAdmin().given()
+				.header("Accept", NewickFileView.DEFAULT_CONTENT_TYPE)
+				.expect()
+				.body(containsString("c6706"))
+				.when()
+				.get(ANALYSIS_BASE + "/1/analysis/file/1");
 	}
 }

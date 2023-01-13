@@ -9,58 +9,58 @@ import java.util.Objects;
  *
  */
 public class IridaWorkflowDynamicSourceGalaxy {
-    @XmlAttribute
-    private String name;
+	@XmlAttribute
+	private String name;
 
-    @XmlAttribute
-    private String displayColumn;
+	@XmlAttribute
+	private String displayColumn;
 
-    @XmlAttribute
-    private String parameterColumn;
+	@XmlAttribute
+	private String parameterColumn;
 
-    public IridaWorkflowDynamicSourceGalaxy() {
-    }
+	public IridaWorkflowDynamicSourceGalaxy() {
+	}
 
-    public IridaWorkflowDynamicSourceGalaxy(String name, String displayColumn, String parameterColumn) {
-        this.name = name;
-        this.displayColumn = displayColumn;
-        this.parameterColumn = parameterColumn;
-    }
+	public IridaWorkflowDynamicSourceGalaxy(String name, String displayColumn, String parameterColumn) {
+		this.name = name;
+		this.displayColumn = displayColumn;
+		this.parameterColumn = parameterColumn;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getDisplayColumn() {
-        return displayColumn;
-    }
+	public String getDisplayColumn() {
+		return displayColumn;
+	}
 
-    public String getParameterColumn() {
-        return parameterColumn;
-    }
+	public String getParameterColumn() {
+		return parameterColumn;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, displayColumn, parameterColumn);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, displayColumn, parameterColumn);
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        else if (obj instanceof IridaWorkflowDynamicSourceGalaxy) {
-            IridaWorkflowDynamicSourceGalaxy other = (IridaWorkflowDynamicSourceGalaxy) obj;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		else if (obj instanceof IridaWorkflowDynamicSourceGalaxy) {
+			IridaWorkflowDynamicSourceGalaxy other = (IridaWorkflowDynamicSourceGalaxy) obj;
 
-            return Objects.equals(name, other.name) &&
-                    Objects.equals(displayColumn, other.displayColumn) &&
-                    Objects.equals(parameterColumn, other.parameterColumn);
-        }
-        return false;
-    }
+			return Objects.equals(name, other.name) &&
+					Objects.equals(displayColumn, other.displayColumn) &&
+					Objects.equals(parameterColumn, other.parameterColumn);
+		}
+		return false;
+	}
 
-    @Override
-    public String toString() {
-        return "IridaWorkflowDynamicSourceGalaxy [type=GalaxyToolDataTable name=" + this.name +
-                ", displayColumn=" + this.displayColumn + ", parameterColumn=" + this.parameterColumn + "]";
-    }
+	@Override
+	public String toString() {
+		return "IridaWorkflowDynamicSourceGalaxy [type=GalaxyToolDataTable name=" + this.name +
+				", displayColumn=" + this.displayColumn + ", parameterColumn=" + this.parameterColumn + "]";
+	}
 }

@@ -353,7 +353,8 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN') or authentication.name == #user.username")
 	public List<ProjectSampleAnalysisOutputInfo> getAllUserAnalysisOutputInfo(User user) {
-		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionRepository.getAllUserAnalysisOutputInfo(user.getId());
+		final List<ProjectSampleAnalysisOutputInfo> infos = analysisSubmissionRepository
+				.getAllUserAnalysisOutputInfo(user.getId());
 		logger.trace("Found " + infos.size() + " output files for user id=" + user.getId());
 		return infos;
 	}
@@ -713,7 +714,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 		case SUBMITTING:
 			return STATE_PERCENTAGE.get(analysisState);
 
-		/**
+		/*
 		 * If the analysis is in a state of {@link AnalysisState.RUNNING} then we are able to ask Galaxy for the
 		 * proportion of jobs that are complete. We can scale this value between RUNNING_PERCENT (10%) and
 		 * FINISHED_RUNNING_PERCENT (90%) so that after all jobs are complete we are only at 90%. The remaining 10%
