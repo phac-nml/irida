@@ -44,6 +44,10 @@ public class OAuth2ResourceOwnerPasswordAuthenticationProvider implements Authen
 
 	/**
 	 * Constructs an {@code OAuth2ResourceOwnerPasswordAuthenticationProvider} using the provided parameters.
+	 * 
+	 * @param authenticationManager
+	 * @param authorizationService
+	 * @param tokenGenerator
 	 */
 	public OAuth2ResourceOwnerPasswordAuthenticationProvider(AuthenticationManager authenticationManager,
 			OAuth2AuthorizationService authorizationService,
