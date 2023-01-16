@@ -26,7 +26,7 @@ public class RESTOAuthAuthorizationConsentController {
 	 * @param clientId  The clientId
 	 * @param scope     The requested scopes
 	 * @param state     The state object from the auth request
-	 * @return
+	 * @return the {@link ModelAndView} for the oauth consent page
 	 */
 	@GetMapping("/api/oauth/consent")
 	public ModelAndView consent(Principal principal, Map<String, Object> model,

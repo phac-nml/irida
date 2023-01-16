@@ -1,7 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.analysis;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.analysis.AnalysisDetailsPageIT;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,9 +14,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
+import ca.corefacility.bioinformatics.irida.ria.integration.analysis.AnalysisDetailsPageIT;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
 
 public class AnalysisDetailsPage extends AbstractPage {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisDetailsPageIT.class);
@@ -150,6 +151,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	/**
 	 * Determines if the actual and expected analysis details are identical
 	 *
+	 * @param expectedDetails a string array of the expected detail values
 	 * @return {@link Boolean}
 	 */
 	public boolean analysisDetailsEqual(String[] expectedDetails) {
@@ -192,6 +194,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	/**
 	 * Clicks on the pagination button specified
+	 * 
+	 * @param pageNum the page in the table to navigate to
 	 */
 	public void clickPagination(int pageNum) {
 		rootDiv.findElements(By.className("ant-pagination-item-" + pageNum)).get(0).click();
@@ -212,6 +216,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	/**
 	 * Compares the expected tab title to the actual
 	 *
+	 * @param pageTitle the expected tab title
 	 * @return {@link Boolean}
 	 */
 	public boolean compareTabTitle(String pageTitle) {
@@ -271,6 +276,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	/**
 	 * Determines if download file button is visible on output file preview page for individual files
 	 *
+	 * @param numBtnsExpected the number of download buttons expected to be on the page
 	 * @return {@link Boolean}
 	 */
 	public boolean downloadOutputFileButtonVisible(int numBtnsExpected) {
@@ -289,6 +295,7 @@ public class AnalysisDetailsPage extends AbstractPage {
 	/**
 	 * Determines if the number of list items (titles) equals to the expected number of list items
 	 *
+	 * @param expectedNumber number of expected list items
 	 * @return {@link Integer}
 	 */
 	public boolean expectedNumberOfListItemsEqualsActual(int expectedNumber) {
@@ -297,6 +304,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	/**
 	 * Filters samples based on search string and waits before returning
+	 * 
+	 * @param searchStr the search value
 	 */
 	public void filterSamples(String searchStr) {
 		searchInput.sendKeys(searchStr);
@@ -305,6 +314,8 @@ public class AnalysisDetailsPage extends AbstractPage {
 
 	/**
 	 * Gets provenance for file selected
+	 * 
+	 * @param fileNum the index of the file in the outputs list
 	 */
 	public void getFileProvenance(int fileNum) {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));

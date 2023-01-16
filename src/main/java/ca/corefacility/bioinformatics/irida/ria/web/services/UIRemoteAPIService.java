@@ -114,6 +114,7 @@ public class UIRemoteAPIService {
 	 * Add a new Synchronized Remote Project
 	 *
 	 * @param request Details about the remote project to synchronize
+	 * @param locale  Locale of the current user session
 	 * @return the result of adding the new remote project
 	 */
 	public Long createSynchronizedProject(CreateRemoteProjectRequest request, Locale locale) {
