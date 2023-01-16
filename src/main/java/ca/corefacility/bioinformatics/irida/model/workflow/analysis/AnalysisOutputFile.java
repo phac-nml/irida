@@ -75,9 +75,6 @@ public class AnalysisOutputFile extends IridaRepresentationModel implements Irid
 	@Column(name = "label_prefix")
 	private final String labelPrefix;
 
-	@Column(name = "storage_type")
-	private String storageType;
-
 	/**
 	 * for hibernate
 	 */
@@ -112,7 +109,6 @@ public class AnalysisOutputFile extends IridaRepresentationModel implements Irid
 		this.executionManagerFileId = executionManagerFileId;
 		this.createdByTool = createdByTool;
 		this.labelPrefix = labelPrefix;
-		this.storageType = IridaFiles.getStorageType();
 	}
 
 	@Override
@@ -238,13 +234,5 @@ public class AnalysisOutputFile extends IridaRepresentationModel implements Irid
 	 */
 	public Long getFileSizeBytes() {
 		return IridaFiles.getFileSizeBytes(getFile());
-	}
-
-	public String getStorageType(){
-		return storageType;
-	}
-
-	public void setStorageType(String storageType) {
-		this.storageType = storageType;
 	}
 }

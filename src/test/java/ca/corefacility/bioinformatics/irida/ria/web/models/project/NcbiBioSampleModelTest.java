@@ -22,7 +22,7 @@ class NcbiBioSampleModelTest {
 		String id = "1";
 		String namespace = "BIOSAMPLE_NAME";
 		String bioSample = "BIOSAMPLE";
-		NcbiInstrumentModel instrumentModel = NcbiInstrumentModel.AB_SOLID_SYSTEM;
+		NcbiInstrumentModel instrumentModel = NcbiInstrumentModel.AB_310_GENETIC_ANALYZER;
 		NcbiLibrarySelection librarySelection = NcbiLibrarySelection.CFH;
 		String libraryName = "LIBRARY_NAME";
 		NcbiLibrarySource librarySource = NcbiLibrarySource.GENOMIC;

@@ -228,7 +228,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 				userGroup);
 		for (UserGroupProjectJoin userGroupProjectJoin : userGroupProjectJoins) {
 			Project project = userGroupProjectJoin.getSubject();
-			projectSubscriptionService.addProjectSubscriptionForProjectAndUser(project, user);
+			projectSubscriptionService.addProjectSubscriptionsForUserInUserGroup(project, user, userGroup);
 		}
 
 		final UserGroupJoin join = new UserGroupJoin(user, userGroup, role);
@@ -270,7 +270,7 @@ public class UserGroupServiceImpl extends CRUDServiceImpl<Long, UserGroup> imple
 				userGroup);
 		for (UserGroupProjectJoin userGroupProjectJoin : userGroupProjectJoins) {
 			Project project = userGroupProjectJoin.getSubject();
-			projectSubscriptionService.removeProjectSubscriptionForProjectAndUser(project, user);
+			projectSubscriptionService.removeProjectSubscriptionsForUserInUserGroup(project, user, userGroup);
 		}
 
 		userGroupJoinRepository.delete(join);

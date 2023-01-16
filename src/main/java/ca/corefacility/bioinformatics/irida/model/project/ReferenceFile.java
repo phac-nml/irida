@@ -67,9 +67,6 @@ public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThi
 
 	private Long fileLength;
 
-	@Column(name = "storage_type")
-	private String storageType;
-
 	@Override
 	public int hashCode() {
 		return file.hashCode();
@@ -94,7 +91,6 @@ public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThi
 	public ReferenceFile(Path file) {
 		this();
 		this.file = file;
-		this.storageType = IridaFiles.getStorageType();
 	}
 
 	@Override
@@ -167,13 +163,5 @@ public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThi
 	@JsonIgnore
 	public InputStream getFileInputStream() {
 		return IridaFiles.getFileInputStream(file);
-	}
-
-	public String getStorageType(){
-		return storageType;
-	}
-
-	public void setStorageType(String storageType) {
-		this.storageType = storageType;
 	}
 }
