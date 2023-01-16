@@ -19,9 +19,10 @@ import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.security.permissions.RepositoryBackedPermission;
 
 /**
- * Superclass permission whether a user can modify project settings.  This superclass checks if a user has ownership of a project. This can be extended for specific settings.
+ * Superclass permission whether a user can modify project settings. This superclass checks if a user has ownership of a
+ * project. This can be extended for specific settings.
  */
-public abstract class ModifyProjectPermission extends RepositoryBackedPermission<Project,Long> {
+public abstract class ModifyProjectPermission extends RepositoryBackedPermission<Project, Long> {
 	private static final Logger logger = LoggerFactory.getLogger(ModifyProjectPermission.class);
 
 	private final UserRepository userRepository;
@@ -58,7 +59,7 @@ public abstract class ModifyProjectPermission extends RepositoryBackedPermission
 		// authenticated user is an owner for this project.
 		final ProjectUserJoin puj = pujRepository.getProjectJoinForUser(p, u);
 		if (puj != null) {
-			if(puj.getProjectRole().equals(ProjectRole.PROJECT_OWNER)) {
+			if (puj.getProjectRole().equals(ProjectRole.PROJECT_OWNER)) {
 				logger.trace("Permission GRANTED for [" + authentication + "] on project [" + p + "]");
 				// this user is an owner for the project.
 				return true;

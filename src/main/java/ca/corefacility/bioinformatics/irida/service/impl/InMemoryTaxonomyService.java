@@ -28,7 +28,7 @@ public class InMemoryTaxonomyService implements TaxonomyService {
 
 	// query to select all resources that are a subclass of the specified
 	// parent that have the given word in their label
-	private final static String LABEL_SEARCH_QUERY = StrUtils.strjoinNL(
+	private static final String LABEL_SEARCH_QUERY = StrUtils.strjoinNL(
 			"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>", "SELECT * ", "WHERE { ?s rdfs:subClassOf* ?parent;",
 			"rdfs:label ?label.", "FILTER regex(?label, ?term, 'i')", "}");
 

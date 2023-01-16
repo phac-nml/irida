@@ -549,11 +549,7 @@ public class UIUsersService {
 		} else if (principalRole.equals(Role.ROLE_ADMIN)) {
 			return true;
 		} else if (principalRole.equals(Role.ROLE_MANAGER)) {
-			if (userRole.equals(Role.ROLE_ADMIN)) {
-				return false;
-			} else {
-				return true;
-			}
+			return !userRole.equals(Role.ROLE_ADMIN);
 		}
 
 		return false;

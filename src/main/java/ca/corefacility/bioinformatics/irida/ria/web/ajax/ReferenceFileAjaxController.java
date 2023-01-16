@@ -47,11 +47,11 @@ public class ReferenceFileAjaxController {
 	 * @return Success message if file was successfully uploaded
 	 */
 	@PostMapping("")
-	public ResponseEntity<AjaxResponse> addReferenceFileToProject( @RequestParam(required = false) Long projectId,
+	public ResponseEntity<AjaxResponse> addReferenceFileToProject(@RequestParam(required = false) Long projectId,
 			@RequestParam(value = "file") List<MultipartFile> files, final Locale locale) {
-		try
-		{
-			return ResponseEntity.ok(new UploadReferenceFilesResponse(uiProjectReferenceFileService.addReferenceFileToProject(projectId, files, locale)));
+		try {
+			return ResponseEntity.ok(new UploadReferenceFilesResponse(
+					uiProjectReferenceFileService.addReferenceFileToProject(projectId, files, locale)));
 		} catch (UnsupportedReferenceFileContentError | IOException e) {
 			return ResponseEntity.status(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE)
 					.body(new AjaxErrorResponse(e.getMessage()));
@@ -70,10 +70,10 @@ public class ReferenceFileAjaxController {
 	public ResponseEntity<AjaxResponse> deleteReferenceFile(@RequestParam(value = "fileId") Long fileId,
 			@RequestParam(value = "projectId") Long projectId, Locale locale) {
 		try {
-			return ResponseEntity.ok(new AjaxUpdateItemSuccessResponse(uiProjectReferenceFileService.deleteReferenceFile(fileId, projectId, locale)));
+			return ResponseEntity.ok(new AjaxUpdateItemSuccessResponse(
+					uiProjectReferenceFileService.deleteReferenceFile(fileId, projectId, locale)));
 		} catch (EntityNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.SC_NOT_FOUND)
-					.body(new AjaxErrorResponse(e.getMessage()));
+			return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
@@ -100,7 +100,8 @@ public class ReferenceFileAjaxController {
 	 * @return information about the reference files in the project
 	 */
 	@GetMapping("/{projectId}")
-	public ResponseEntity<List<UIReferenceFile>> getReferenceFilesForProject(@PathVariable Long projectId, Locale locale) {
+	public ResponseEntity<List<UIReferenceFile>> getReferenceFilesForProject(@PathVariable Long projectId,
+			Locale locale) {
 		return ResponseEntity.ok(uiProjectReferenceFileService.getReferenceFilesForProject(projectId, locale));
 	}
 

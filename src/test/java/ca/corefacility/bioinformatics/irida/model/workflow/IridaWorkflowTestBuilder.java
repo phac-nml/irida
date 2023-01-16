@@ -18,7 +18,7 @@ import com.google.common.collect.Lists;
  * Builds test {@link IridaWorkflow}s.
  */
 public class IridaWorkflowTestBuilder {
-	public final static UUID DEFAULT_ID = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
+	public static final UUID DEFAULT_ID = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
 	public static final UUID MULTI_SAMPLES_ID = UUID.fromString("a8a573ef-b51e-409a-9a26-3fb79a6b894e");
 
 	/**

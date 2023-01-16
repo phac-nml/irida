@@ -80,7 +80,7 @@ public class AnalysisSubmissionServiceImpl extends CRUDServiceImpl<Long, Analysi
 	 * A {@link Map} defining the progress transitions points for each state in an {@link AnalysisSubmission}.
 	 */
 	// @formatter:off
-	public static final Map<AnalysisState,Float> STATE_PERCENTAGE = ImmutableMap.<AnalysisState,Float>builder().
+	public static final Map<AnalysisState, Float> STATE_PERCENTAGE = ImmutableMap.<AnalysisState, Float>builder().
 			put(AnalysisState.NEW,                  0.0f).
 			put(AnalysisState.PREPARING,            10.0f).
 			put(AnalysisState.PREPARED,             11.0f).

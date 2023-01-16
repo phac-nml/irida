@@ -26,13 +26,13 @@ import com.google.common.collect.Sets;
 @Audited
 @EntityListeners(AuditingEntityListener.class)
 public class IridaClientDetails implements MutableIridaThing {
-	public final static String CLIENT_ID_CONSTRAINT_NAME = "UK_CLIENT_DETAILS_CLIENT_ID";
+	public static final String CLIENT_ID_CONSTRAINT_NAME = "UK_CLIENT_DETAILS_CLIENT_ID";
 
 	// 12 hours
-	public final static Integer DEFAULT_TOKEN_VALIDITY = 43200;
+	public static final Integer DEFAULT_TOKEN_VALIDITY = 43200;
 
 	// 1 month
-	public final static Integer DEFAULT_REFRESH_TOKEN_VALIDITY = 2592000;
+	public static final Integer DEFAULT_REFRESH_TOKEN_VALIDITY = 2592000;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
