@@ -11,6 +11,12 @@ export type ColumnSearchFn = (
   placeholder: string
 ) => ColumnSearchReturn;
 
+/**
+ * Create text based column search properties for Ant Design Table
+ * @param dataIndex - key for the current value
+ * @param filterName - class name to identify the column filter
+ * @param placeholder - any placeholder text
+ */
 export default function getColumnSearchProps(
   dataIndex: string | string[],
   filterName = "",
