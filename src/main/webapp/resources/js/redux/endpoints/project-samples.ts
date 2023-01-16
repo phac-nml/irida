@@ -9,7 +9,6 @@ import {
 import { TableOptions } from "../../types/ant-design";
 import { api } from "./api";
 
-1;
 /**
  * @fileoverview Project > Samples AP for redux-toolkit
  */

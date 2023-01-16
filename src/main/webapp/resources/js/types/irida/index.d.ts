@@ -122,16 +122,20 @@ declare namespace IRIDA {
   }
 
   interface Project extends BaseModel {
-    description: string;
+    analysisPriority: string;
+    analysisTemplates: string[]; // TODO (Josh - 6/7/22): What should this be
     organism: string;
-    genomeSize: number;
-    minimumCoverage: number;
-    maximumCoverage: number;
+    coverage: {
+      minimum: number;
+      maximum: number;
+      genomeSize: number;
+    };
+    defaultMetadataTemplate: number;
+    description: string;
+    priority?: number;
     remoteStatus: number;
     syncFrequency: string; // TODO (Josh - 6/7/22): is this a string?
-    analysisPriority: string;
     users: User[];
-    analysisTemplates: string[]; // TODO (Josh - 6/7/22): What should this be
   }
 
   type ProjectMinimal = Pick<Project, "id" | "name">;
