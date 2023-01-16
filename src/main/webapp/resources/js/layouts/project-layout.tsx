@@ -3,6 +3,7 @@ import { Outlet, useParams } from "react-router-dom";
 import { PageHeader } from "antd";
 import { useGetProjectDetailsQuery } from "../redux/endpoints/project";
 import ProjectNavigation from "../components/project/project-navigation";
+import { ContentLoading } from "../components/loader";
 
 /**
  * React component for the layout of the project specific pages
@@ -22,7 +23,11 @@ export default function ProjectLayout(): JSX.Element {
       <div style={{ backgroundColor: `#ffffff` }}>
         <ProjectNavigation />
         <div style={{ padding: 20 }}>
-          <Suspense fallback={<div>LOADING...</div>}>
+          <Suspense
+            fallback={
+              <ContentLoading message={i18n("ProjectLayout.loading")} />
+            }
+          >
             <Outlet />
           </Suspense>
         </div>
