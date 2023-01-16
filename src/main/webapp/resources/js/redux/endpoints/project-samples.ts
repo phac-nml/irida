@@ -60,7 +60,17 @@ export const projectSamplesApi = api.injectEndpoints({
         body,
       }),
     }),
-    mergeSamples: build.mutation({
+    mergeSamples: build.mutation<
+      undefined,
+      {
+        projectId: number;
+        body: {
+          ids: Array<number>;
+          newName: string;
+          primary: number;
+        };
+      }
+    >({
       query: ({ projectId, body }) => ({
         url: `/projects/${projectId}/samples/merge`,
         method: `POST`,
