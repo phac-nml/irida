@@ -61,7 +61,7 @@ export const projectSamplesApi = api.injectEndpoints({
       }),
     }),
     mergeSamples: build.mutation<
-      undefined,
+      { message: string },
       {
         projectId: number;
         body: {

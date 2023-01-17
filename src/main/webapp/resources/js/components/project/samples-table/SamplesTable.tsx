@@ -33,7 +33,11 @@ export default function SamplesTable(): JSX.Element {
 
   const { projectId } = useParams();
 
-  const { data, isFetching: isFetchingSamples } = useFetchPagedSamplesQuery(
+  const {
+    data,
+    isFetching: isFetchingSamples,
+    error,
+  } = useFetchPagedSamplesQuery(
     {
       projectId: Number(projectId),
       body: state.options,
@@ -42,6 +46,8 @@ export default function SamplesTable(): JSX.Element {
       refetchOnMountOrArgChange: true,
     }
   );
+
+  console.log({ error });
 
   const [trigger, { isFetching: isFetchingIds }] =
     useLazyFetchMinimalSamplesForFilteredProjectQuery();

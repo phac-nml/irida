@@ -84,7 +84,7 @@ export default function MergeModal({
       .filter((id) => id !== values.primary);
 
     const { message } = await merge({
-      projectId,
+      projectId: Number(projectId),
       body: {
         ...values,
         ids,

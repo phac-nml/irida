@@ -41,7 +41,7 @@ export function formatSort(
  */
 export function formatSearch(filters: TableFilters): TableSearch[] {
   const defaultOperation: TableOperation = "MATCH";
-  const formattedSearch = [];
+  const formattedSearch: TableSearch[] = [];
 
   for (const filter in filters) {
     for (const index in filters[filter]) {
