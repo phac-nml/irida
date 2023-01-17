@@ -17,10 +17,7 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepositor
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 
 /**
- * Default implementation of {@link FileProcessingChain}. Simply iterates
- * through a collection of {@link FileProcessor}.
- * 
- * 
+ * Default implementation of {@link FileProcessingChain}. Simply iterates through a collection of {@link FileProcessor}.
  */
 public class DefaultFileProcessingChain implements FileProcessingChain {
 
@@ -83,7 +80,8 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 					fileProcessor.process(settledSequencingObject);
 				}
 			} catch (FileProcessorException e) {
-				SequencingObject sequencingObject = sequencingObjectRepository.findById(sequencingObjectId).orElse(null);
+				SequencingObject sequencingObject = sequencingObjectRepository.findById(sequencingObjectId)
+						.orElse(null);
 
 				qcRepository.save(new FileProcessorErrorQCEntry(sequencingObject));
 
@@ -140,16 +138,13 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 	}
 
 	/**
-	 * Checks the {@link SequenceFile}s for the given {@link SequencingObject}
-	 * to see if it's files are in the place they should be. Since there's lots
-	 * of saves going on during the {@link FileProcessingChain} the transaction
-	 * might not be complete in the time the file is first read.
+	 * Checks the {@link SequenceFile}s for the given {@link SequencingObject} to see if it's files are in the place
+	 * they should be. Since there's lots of saves going on during the {@link FileProcessingChain} the transaction might
+	 * not be complete in the time the file is first read.
 	 * 
-	 * @param sequencingObjectId
-	 *            the id of the {@link SequencingObject} to check
+	 * @param sequencingObjectId the id of the {@link SequencingObject} to check
 	 * @return the settled {@link SequencingObject}
-	 * @throws FileProcessorTimeoutException
-	 *             if the files don't settle in the configured timeout
+	 * @throws FileProcessorTimeoutException if the files don't settle in the configured timeout
 	 */
 	private SequencingObject getSettledSequencingObject(Long sequencingObjectId) throws FileProcessorTimeoutException {
 		boolean filesNotSettled = true;
@@ -173,7 +168,7 @@ public class DefaultFileProcessingChain implements FileProcessingChain {
 
 			sequencingObject = sequencingObjectRepository.findById(sequencingObjectId);
 
-			if(sequencingObject.isPresent()) {
+			if (sequencingObject.isPresent()) {
 				Set<SequenceFile> files = sequencingObject.get().getFiles();
 				filesNotSettled = files.stream().anyMatch(f -> {
 					return !Files.exists(f.getFile());

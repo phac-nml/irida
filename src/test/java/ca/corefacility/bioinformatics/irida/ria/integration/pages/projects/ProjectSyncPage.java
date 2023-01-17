@@ -82,7 +82,7 @@ public class ProjectSyncPage extends AbstractPage {
 	public boolean isResourceNotFoundErrorMessageDisplayed() {
 		List<WebElement> elements = driver.findElements(By.className("ant-form-item-explain-error"));
 
-		if(elements.size() == 1) {
+		if (elements.size() == 1) {
 			return elements.get(0).getText().contains("Resource not found");
 		}
 		return false;
@@ -91,7 +91,7 @@ public class ProjectSyncPage extends AbstractPage {
 	public boolean isAccessDeniedErrorMessageDisplayed() {
 		List<WebElement> elements = driver.findElements(By.className("ant-form-item-explain-error"));
 
-		if(elements.size() == 1) {
+		if (elements.size() == 1) {
 			return elements.get(0).getText().contains("Access denied");
 		}
 		return false;

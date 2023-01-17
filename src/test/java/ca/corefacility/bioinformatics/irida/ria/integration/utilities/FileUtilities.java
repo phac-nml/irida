@@ -27,7 +27,7 @@ public class FileUtilities {
 	 * @param relativeFilePath        the relative path to the file
 	 */
 	public void copyFileToDirectory(Path outputFileBaseDirectory, String relativeFilePath) throws IOException {
-		String fileName[] = relativeFilePath.split("/");
+		String[] fileName = relativeFilePath.split("/");
 		// We need to copy the file manually as it uses a relative path.
 		final Path file = Paths.get(relativeFilePath);
 		try {

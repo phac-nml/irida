@@ -1,11 +1,13 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
-import ca.corefacility.bioinformatics.irida.model.Timestamped;
-import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
-import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.NotWritablePropertyException;
 import org.springframework.beans.TypeMismatchException;
@@ -19,27 +21,27 @@ import org.springframework.data.history.Revisions;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.InvalidPropertyException;
+import ca.corefacility.bioinformatics.irida.model.Timestamped;
+import ca.corefacility.bioinformatics.irida.repositories.IridaJpaRepository;
+import ca.corefacility.bioinformatics.irida.service.CRUDService;
 
 /**
- * A universal CRUD service for all types. Specialized services should extend
- * this class to get basic CRUD methods for free.
+ * A universal CRUD service for all types. Specialized services should extend this class to get basic CRUD methods for
+ * free.
  *
  * @param <KeyType>   Key in the database for the type stored
  * @param <ValueType> Type of object stored by this service
  */
-public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Timestamped<KeyType>> implements
-		CRUDService<KeyType, ValueType> {
+public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Timestamped<KeyType>>
+		implements CRUDService<KeyType, ValueType> {
 	private static final String NO_SUCH_ID_EXCEPTION = "No such identifier exists in the database: ";
 
 	protected static final String CREATED_DATE_SORT_PROPERTY = "createdDate";
 
-	private final static String[] DEFAULT_SORT_PROPERTIES = { CREATED_DATE_SORT_PROPERTY };
+	private static final String[] DEFAULT_SORT_PROPERTIES = { CREATED_DATE_SORT_PROPERTY };
 
 	protected final IridaJpaRepository<ValueType, KeyType> repository;
 	protected final Validator validator;
@@ -74,8 +76,8 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	@Override
 	@Transactional(readOnly = true)
 	public ValueType read(KeyType id) throws EntityNotFoundException {
-		ValueType value = repository.findById(id).orElseThrow(() ->
-				new EntityNotFoundException(NO_SUCH_ID_EXCEPTION + id));
+		ValueType value = repository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException(NO_SUCH_ID_EXCEPTION + id));
 		return value;
 	}
 
@@ -126,8 +128,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	 */
 	@Transactional(readOnly = true)
 	@Override
-	public Page<ValueType> list(int page, int size, Sort sort)
-			throws IllegalArgumentException {
+	public Page<ValueType> list(int page, int size, Sort sort) throws IllegalArgumentException {
 		return repository.findAll(PageRequest.of(page, size, sort));
 	}
 
@@ -145,8 +146,8 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 	 */
 	@Override
 	@Transactional
-	public ValueType updateFields(KeyType id, Map<String, Object> updatedFields) throws ConstraintViolationException,
-			EntityExistsException, InvalidPropertyException {
+	public ValueType updateFields(KeyType id, Map<String, Object> updatedFields)
+			throws ConstraintViolationException, EntityExistsException, InvalidPropertyException {
 		// check if you can actually update the properties requested
 		ValueType instance = read(id);
 
@@ -185,7 +186,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 		// the entity:
 		return repository.save(instance);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -197,7 +198,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 		if (!exists(id)) {
 			throw new EntityNotFoundException("Entity not found.");
 		}
-		
+
 		Set<ConstraintViolation<ValueType>> constraintViolations = validator.validate(object);
 		// if any validations fail, throw a constraint violation exception.
 		if (!constraintViolations.isEmpty()) {
@@ -206,7 +207,7 @@ public class CRUDServiceImpl<KeyType extends Serializable, ValueType extends Tim
 
 		return repository.save(object);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

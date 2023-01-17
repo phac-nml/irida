@@ -246,7 +246,13 @@ public class MetadataTemplateServiceImpl extends CRUDServiceImpl<Long, MetadataT
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Get all the {@link MetadataTemplateField} for a {@link Project} that a {@link ProjectMetadataRole} is allowed to
+	 * read.
+	 * 
+	 * @param project               the {@link Project} to get permitted metadata fields for
+	 * @param role                  the {@link ProjectMetadataRole} to get permitted metadata fields for
+	 * @param includeTemplateFields whether to include fields from the project's associated {@link MetadataTemplate}s
+	 * @return a list of {@link MetadataTemplateField}
 	 */
 	private List<MetadataTemplateField> getPermittedFieldsForRole(Project project, ProjectMetadataRole role,
 			boolean includeTemplateFields) {

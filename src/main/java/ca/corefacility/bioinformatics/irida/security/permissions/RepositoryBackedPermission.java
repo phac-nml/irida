@@ -13,9 +13,9 @@ import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 
 /**
- * Superclass for permissions on objects which can be read from a {@link CrudRepository}.  This permission will either
- * evaluate the permission based on a passed object of DomainObjectType, or will read an object from the given repository
- * by the given IdentifierType.
+ * Superclass for permissions on objects which can be read from a {@link CrudRepository}. This permission will either
+ * evaluate the permission based on a passed object of DomainObjectType, or will read an object from the given
+ * repository by the given IdentifierType.
  *
  * @param <DomainObjectType> the type of domain object that this permission is evaluating.
  * @param <IdentifierType>   The identifier for the domain object in the database
@@ -28,8 +28,8 @@ public abstract class RepositoryBackedPermission<DomainObjectType, IdentifierTyp
 	private static final String ADMIN_AUTHORITY = Role.ROLE_ADMIN.getAuthority();
 
 	/**
-	 * This method is called by {@link RepositoryBackedPermission} to evaluate the custom
-	 * permissions provided by implementing classes.
+	 * This method is called by {@link RepositoryBackedPermission} to evaluate the custom permissions provided by
+	 * implementing classes.
 	 *
 	 * @param authentication     the authenticated user.
 	 * @param targetDomainObject the object that the user is attempting to access.
@@ -54,13 +54,11 @@ public abstract class RepositoryBackedPermission<DomainObjectType, IdentifierTyp
 	private CrudRepository<DomainObjectType, IdentifierType> repository;
 
 	/**
-	 * Constructor with handles on the type of repository and type of domain
-	 * object.
+	 * Constructor with handles on the type of repository and type of domain object.
 	 *
 	 * @param domainObjectType the domain object type managed by this permission.
 	 * @param identifierType   the type of identifier used by this object.
-	 * @param repository       the repository to load objects of the type for this
-	 *                         permission.
+	 * @param repository       the repository to load objects of the type for this permission.
 	 */
 	protected RepositoryBackedPermission(Class<DomainObjectType> domainObjectType, Class<IdentifierType> identifierType,
 			CrudRepository<DomainObjectType, IdentifierType> repository) {
@@ -73,8 +71,7 @@ public abstract class RepositoryBackedPermission<DomainObjectType, IdentifierTyp
 	 * Evaluates the permission of a single object.
 	 *
 	 * @param authentication     The Authentication object.
-	 * @param targetDomainObject The target domain object to evaluate permission (assumes this
-	 *                           is not a collection).
+	 * @param targetDomainObject The target domain object to evaluate permission (assumes this is not a collection).
 	 * @return True if permission is allowed on this object, false otherwise.
 	 * @throws EntityNotFoundException If the object does not exist.
 	 */
@@ -91,18 +88,15 @@ public abstract class RepositoryBackedPermission<DomainObjectType, IdentifierTyp
 			// reflection replacement for instanceof
 			domainObject = (DomainObjectType) targetDomainObject;
 		} else {
-			throw new IllegalArgumentException(
-					"Parameter to " + getClass().getName() + " must be of type Long or " + domainObjectType.getName()
-							+ ".");
+			throw new IllegalArgumentException("Parameter to " + getClass().getName() + " must be of type Long or "
+					+ domainObjectType.getName() + ".");
 		}
 
-		/**
+		/*
 		 * If it's allowed fast pass for administrators
 		 */
-		if (adminAccessAllowed(authentication, domainObject) && authentication.getAuthorities()
-				.stream()
-				.anyMatch(g -> g.getAuthority()
-						.equals(ADMIN_AUTHORITY))) {
+		if (adminAccessAllowed(authentication, domainObject)
+				&& authentication.getAuthorities().stream().anyMatch(g -> g.getAuthority().equals(ADMIN_AUTHORITY))) {
 			return true;
 		}
 
@@ -114,8 +108,7 @@ public abstract class RepositoryBackedPermission<DomainObjectType, IdentifierTyp
 	 *
 	 * @param authentication      The Authentication object.
 	 * @param targetDomainObjects The collection of domain objects to check for permission.
-	 * @return True if permission is allowed for every object in the collection,
-	 * false otherwise.
+	 * @return True if permission is allowed for every object in the collection, false otherwise.
 	 * @throws EntityNotFoundException If one of the objects in the collection does not exist.
 	 */
 	private boolean customPermissionAllowedCollection(Authentication authentication,
@@ -146,8 +139,7 @@ public abstract class RepositoryBackedPermission<DomainObjectType, IdentifierTyp
 	}
 
 	/**
-	 * Check whether admins should be quick-approved for this permission. This
-	 * may be overridden for special cases
+	 * Check whether admins should be quick-approved for this permission. This may be overridden for special cases
 	 *
 	 * @param authentication     The authentication of the logged in user
 	 * @param targetDomainObject the object that is being acted on

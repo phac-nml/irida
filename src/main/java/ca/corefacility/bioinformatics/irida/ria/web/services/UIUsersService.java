@@ -459,7 +459,6 @@ public class UIUsersService {
 	 * @param principalUser - the currently logged in principal
 	 * @param user          - the user to edit
 	 * @return boolean if the principal can change their password
-	 * @return if the user is an admin
 	 */
 	private boolean isOwnAccount(User principalUser, User user) {
 		boolean usersEqual = user.equals(principalUser);
@@ -550,11 +549,7 @@ public class UIUsersService {
 		} else if (principalRole.equals(Role.ROLE_ADMIN)) {
 			return true;
 		} else if (principalRole.equals(Role.ROLE_MANAGER)) {
-			if (userRole.equals(Role.ROLE_ADMIN)) {
-				return false;
-			} else {
-				return true;
-			}
+			return !userRole.equals(Role.ROLE_ADMIN);
 		}
 
 		return false;

@@ -36,6 +36,7 @@ public class UICartServiceTest {
 	private final Project PROJECT_1 = new Project("PROJECT_1");
 	private ProjectService projectService;
 	private SampleService sampleService;
+
 	@BeforeEach
 	public void setUp() {
 		cart = new Cart();
@@ -49,17 +50,18 @@ public class UICartServiceTest {
 		SAMPLE_2.setId(2L);
 		SAMPLE_3.setId(3L);
 		PROJECT_1.setId(PROJECT_ID);
-		Mockito.when(projectService.read(PROJECT_ID))
-				.thenReturn(PROJECT_1);
-		Mockito.when(sampleService.readMultiple(ImmutableList.of(1L, 2L))).thenReturn(ImmutableList.of(SAMPLE_1, SAMPLE_2));
-		Mockito.when(sampleService.readMultiple(ImmutableList.of(2L, 3L))).thenReturn(ImmutableList.of(SAMPLE_2, SAMPLE_3));
-		Mockito.when(sampleService.read(1L))
-				.thenReturn(SAMPLE_1);
+		Mockito.when(projectService.read(PROJECT_ID)).thenReturn(PROJECT_1);
+		Mockito.when(sampleService.readMultiple(ImmutableList.of(1L, 2L)))
+				.thenReturn(ImmutableList.of(SAMPLE_1, SAMPLE_2));
+		Mockito.when(sampleService.readMultiple(ImmutableList.of(2L, 3L)))
+				.thenReturn(ImmutableList.of(SAMPLE_2, SAMPLE_3));
+		Mockito.when(sampleService.read(1L)).thenReturn(SAMPLE_1);
 	}
 
 	@Test
 	public void addSamplesToCartTest() {
-		CartUpdateResponse response = service.addSamplesToCart(createAddRequest(PROJECT_ID, ImmutableList.of(1L, 2L)), Locale.ENGLISH);
+		CartUpdateResponse response = service.addSamplesToCart(createAddRequest(PROJECT_ID, ImmutableList.of(1L, 2L)),
+				Locale.ENGLISH);
 		assertEquals(2, response.getCount());
 		assertEquals(2, cart.size());
 
@@ -108,11 +110,12 @@ public class UICartServiceTest {
 		verify(sampleService).readMultiple(addToCartRequest.getSampleIds());
 		assertEquals(2, service.getNumberOfSamplesInCart());
 		when(service.getCartSampleIds()).thenReturn(expectedSampleIdsInCart);
-		when(projectService.readMultiple(service.getProjectIdsInCart())).thenReturn(new ArrayList<Project>(Arrays.asList(PROJECT_1)));
+		when(projectService.readMultiple(service.getProjectIdsInCart()))
+				.thenReturn(new ArrayList<Project>(Arrays.asList(PROJECT_1)));
 		List<Long> cartSampleIds = service.getCartSampleIds();
 		verify(projectService).readMultiple(service.getProjectIdsInCart());
 		assertEquals(2, cartSampleIds.size(), "There should be 2 samples in the cart and their ids should be returned");
-		assertEquals(expectedSampleIdsInCart , cartSampleIds, "The returned sample ids should match the list");
+		assertEquals(expectedSampleIdsInCart, cartSampleIds, "The returned sample ids should match the list");
 	}
 
 	private AddToCartRequest createAddRequest(Long projectId, List<Long> sampleIds) {

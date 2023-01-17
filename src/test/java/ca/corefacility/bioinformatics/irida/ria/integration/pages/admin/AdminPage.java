@@ -92,6 +92,7 @@ public class AdminPage extends AbstractPage {
 	/**
 	 * Compares the expected page title to the actual
 	 *
+	 * @param pageTitle the expected page title
 	 * @return {@link Boolean}
 	 */
 	public boolean comparePageTitle(String pageTitle) {

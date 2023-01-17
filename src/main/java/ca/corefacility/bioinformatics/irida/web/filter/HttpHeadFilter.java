@@ -33,8 +33,8 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import org.springframework.stereotype.Component;
 
 /**
- * Servlet filter that presents a HEAD request as a GET. The application doesn't
- * need to know the difference, as this filter handles all the details.
+ * Servlet filter that presents a HEAD request as a GET. The application doesn't need to know the difference, as this
+ * filter handles all the details.
  */
 @Component
 public class HttpHeadFilter implements Filter {
@@ -45,8 +45,8 @@ public class HttpHeadFilter implements Filter {
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-			ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
 		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
 		if (isHttpHead(httpServletRequest)) {
@@ -68,8 +68,7 @@ public class HttpHeadFilter implements Filter {
 	/**
 	 * Checks whether the HTTP method of this request is HEAD.
 	 * 
-	 * @param request
-	 *            The request to check.
+	 * @param request The request to check.
 	 * @return {@code true} if it is HEAD, {@code false} if it isn't.
 	 */
 	private boolean isHttpHead(HttpServletRequest request) {
@@ -83,8 +82,7 @@ public class HttpHeadFilter implements Filter {
 		/**
 		 * Initializes the wrapper with this request.
 		 * 
-		 * @param request
-		 *            The request to initialize the wrapper with.
+		 * @param request The request to initialize the wrapper with.
 		 */
 		public ForceGetRequestWrapper(HttpServletRequest request) {
 			super(request);
@@ -102,8 +100,7 @@ public class HttpHeadFilter implements Filter {
 	}
 
 	/**
-	 * Response wrapper that swallows the response body, leaving only the
-	 * headers.
+	 * Response wrapper that swallows the response body, leaving only the headers.
 	 */
 	private class NoBodyResponseWrapper extends HttpServletResponseWrapper {
 		/**
@@ -116,8 +113,7 @@ public class HttpHeadFilter implements Filter {
 		/**
 		 * Constructs a response adaptor wrapping the given response.
 		 * 
-		 * @param response
-		 *            The response to wrap.
+		 * @param response The response to wrap.
 		 */
 		public NoBodyResponseWrapper(HttpServletResponse response) {
 			super(response);
@@ -138,8 +134,7 @@ public class HttpHeadFilter implements Filter {
 		}
 
 		/**
-		 * Sets the content length, based on what has been written to the
-		 * outputstream so far.
+		 * Sets the content length, based on what has been written to the outputstream so far.
 		 */
 		void setContentLength() {
 			super.setContentLength(noBodyOutputStream.getContentLength());
@@ -147,8 +142,7 @@ public class HttpHeadFilter implements Filter {
 	}
 
 	/**
-	 * Outputstream that only counts the length of what is being written to it
-	 * while discarding the actual data.
+	 * Outputstream that only counts the length of what is being written to it while discarding the actual data.
 	 */
 	private class NoBodyOutputStream extends ServletOutputStream {
 		/**
@@ -169,7 +163,7 @@ public class HttpHeadFilter implements Filter {
 		}
 
 		@Override
-		public void write(byte buf[], int offset, int len) throws IOException {
+		public void write(byte[] buf, int offset, int len) throws IOException {
 			contentLength += len;
 		}
 
@@ -180,7 +174,7 @@ public class HttpHeadFilter implements Filter {
 
 		@Override
 		public void setWriteListener(WriteListener writeListener) {
-			
+
 		}
 	}
 }

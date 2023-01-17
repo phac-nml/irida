@@ -26,7 +26,6 @@ import ca.corefacility.bioinformatics.irida.service.impl.RemoteAPITokenServiceIm
 
 /**
  * Unit tests class for {@link RemoteAPITokenServiceImpl}
- *
  */
 public class RemoteAPITokenServiceImplTest {
 	private RemoteAPITokenService service;
@@ -36,21 +35,20 @@ public class RemoteAPITokenServiceImplTest {
 	private RemoteAPI remoteAPI;
 	private User user;
 	private OAuthClient oauthClient;
-	
-	
+
 	@BeforeEach
-	public void setUp(){
+	public void setUp() {
 		tokenRepository = mock(RemoteApiTokenRepository.class);
 		userRepo = mock(UserRepository.class);
 		oauthClient = mock(OAuthClient.class);
 		service = new RemoteAPITokenServiceImpl(tokenRepository, userRepo, oauthClient);
-		
+
 		user = new User("tom", "an@email.com", "password1", "tom", "matthews", "123456789");
 		remoteAPI = new RemoteAPI("apiname", "http://nowhere", "a test api", "clientId", "clientSecret");
 		SecurityContextHolder.getContext().setAuthentication(new TestingAuthenticationToken(user, null));
-		remoteAPIToken = new RemoteAPIToken("token",remoteAPI,new Date());
+		remoteAPIToken = new RemoteAPIToken("token", remoteAPI, new Date());
 	}
-	
+
 	@Test
 	public void testAddToken() {
 		when(userRepo.loadUserByUsername(user.getUsername())).thenReturn(user);
@@ -58,10 +56,10 @@ public class RemoteAPITokenServiceImplTest {
 		service.create(remoteAPIToken);
 		
 		verify(tokenRepository).save(remoteAPIToken);
-		verify(userRepo,times(2)).loadUserByUsername(user.getUsername());
-		verify(tokenRepository,times(0)).delete(remoteAPIToken);
+		verify(userRepo, times(2)).loadUserByUsername(user.getUsername());
+		verify(tokenRepository, times(0)).delete(remoteAPIToken);
 	}
-	
+
 	@Test
 	public void testAddTokenExisting() {
 		when(userRepo.loadUserByUsername(user.getUsername())).thenReturn(user);
@@ -70,10 +68,10 @@ public class RemoteAPITokenServiceImplTest {
 		service.create(remoteAPIToken);
 		
 		verify(tokenRepository).save(remoteAPIToken);
-		verify(userRepo,times(2)).loadUserByUsername(user.getUsername());
+		verify(userRepo, times(2)).loadUserByUsername(user.getUsername());
 		verify(tokenRepository).readTokenForApiAndUser(remoteAPI, user);
 	}
-	
+
 	@Test
 	public void testAddTokenNotLoggedIn() {
 		SecurityContextHolder.clearContext();
@@ -95,7 +93,7 @@ public class RemoteAPITokenServiceImplTest {
 		verify(userRepo).loadUserByUsername(user.getUsername());
 		verify(tokenRepository).readTokenForApiAndUser(remoteAPI, user);
 	}
-	
+
 	@Test
 	public void testGetNotExisting() {
 		when(userRepo.loadUserByUsername(user.getUsername())).thenReturn(user);
@@ -105,6 +103,5 @@ public class RemoteAPITokenServiceImplTest {
 			service.getToken(remoteAPI);
 		});
 	}
-
 
 }

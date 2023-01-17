@@ -1,15 +1,15 @@
 package ca.corefacility.bioinformatics.irida.ria.web.announcements.dto;
 
-import com.google.common.collect.ComparisonChain;
-
 import java.util.Comparator;
 import java.util.Date;
+
+import com.google.common.collect.ComparisonChain;
 
 /**
  * Data transfer object for retrieving announcement details from a sql query.
  */
 
-public class AnnouncementUserReadDetails implements Comparable<AnnouncementUserReadDetails>{
+public class AnnouncementUserReadDetails implements Comparable<AnnouncementUserReadDetails> {
 
 	private Long announcementID;
 	private String title;
@@ -17,7 +17,8 @@ public class AnnouncementUserReadDetails implements Comparable<AnnouncementUserR
 	private Date createdDate;
 	private Date readDate;
 
-	public AnnouncementUserReadDetails(Long announcementID, String title, boolean priority, Date createdDate, Date readDate) {
+	public AnnouncementUserReadDetails(Long announcementID, String title, boolean priority, Date createdDate,
+			Date readDate) {
 		this.announcementID = announcementID;
 		this.title = title;
 		this.priority = priority;
@@ -27,8 +28,11 @@ public class AnnouncementUserReadDetails implements Comparable<AnnouncementUserR
 
 	@Override
 	public int compareTo(AnnouncementUserReadDetails other) {
-		return ComparisonChain.start().compareFalseFirst(isRead(), other.isRead()).compareTrueFirst(getPriority(), other.getPriority()).compare(other.getCreatedDate(), getCreatedDate(),
-				Comparator.nullsLast(Comparator.naturalOrder())).result();
+		return ComparisonChain.start()
+				.compareFalseFirst(isRead(), other.isRead())
+				.compareTrueFirst(getPriority(), other.getPriority())
+				.compare(other.getCreatedDate(), getCreatedDate(), Comparator.nullsLast(Comparator.naturalOrder()))
+				.result();
 	}
 
 	public Long getAnnouncementID() {
