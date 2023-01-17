@@ -12,6 +12,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+
+import com.google.common.base.Strings;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
