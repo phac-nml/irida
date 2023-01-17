@@ -183,7 +183,8 @@ public class RESTSampleMetadataController {
 	/**
 	 * Build a {@link SampleMetadataResponse} object
 	 *
-	 * @param s the {@link Sample} to build the object from
+	 * @param s               the {@link Sample} to build the object from
+	 * @param metadataEntries a set of {@link MetadataEntry}s to include in the response object
 	 * @return a constructed {@link SampleMetadataResponse}
 	 */
 	private SampleMetadataResponse buildSampleMetadataResponse(final Sample s, Set<MetadataEntry> metadataEntries) {

@@ -17,13 +17,13 @@ import static ca.corefacility.bioinformatics.irida.web.controller.test.integrati
 import static io.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.equalTo;
 
+/**
+ * IT test for the {@link RESTSampleAssemblyController}
+ */
 @RestIntegrationTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/sample/RESTSampleAssemblyControllerIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-/**
- * IT test for the {@link RESTSampleAssemblyController}
- */
 public class RESTSampleAssemblyControllerIT {
 
 	@Test
@@ -36,16 +36,23 @@ public class RESTSampleAssemblyControllerIT {
 		String assembliesHref = from(sampleBody).getString(
 				"resource.links.find{it.rel == '" + RESTSampleAssemblyController.REL_SAMPLE_ASSEMBLIES + "'}.href");
 
-		Response assemblyListResponse = asUser().expect().statusCode(HttpStatus.OK.value()).and()
-				.body("resource.resources[0].file", equalTo("/tmp/analysis-files/contigs.fasta")).when()
+		Response assemblyListResponse = asUser().expect()
+				.statusCode(HttpStatus.OK.value())
+				.and()
+				.body("resource.resources[0].file", equalTo("/tmp/analysis-files/contigs.fasta"))
+				.when()
 				.get(assembliesHref);
 
 		String listBody = assemblyListResponse.getBody().asString();
 
 		String singleAssemblyHref = from(listBody).getString("resource.resources[0].links.find{it.rel == 'self'}.href");
 
-		asUser().expect().statusCode(HttpStatus.OK.value()).and()
-				.body("resource.file", equalTo("/tmp/analysis-files/contigs.fasta")).when().get(singleAssemblyHref);
+		asUser().expect()
+				.statusCode(HttpStatus.OK.value())
+				.and()
+				.body("resource.file", equalTo("/tmp/analysis-files/contigs.fasta"))
+				.when()
+				.get(singleAssemblyHref);
 
 	}
 }

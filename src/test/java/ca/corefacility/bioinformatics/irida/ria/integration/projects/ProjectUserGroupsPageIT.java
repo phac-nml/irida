@@ -69,8 +69,8 @@ public class ProjectUserGroupsPageIT extends AbstractIridaUIITChromeDriver {
 		assertFalse(url.isEmpty(), "URL should not be empty");
 		page.submitProject();
 
-		String pathTokens[] = driver().getCurrentUrl().split("/");
-		Long projectId = Long.valueOf(pathTokens[pathTokens.length-1]);
+		String[] pathTokens = driver().getCurrentUrl().split("/");
+		Long projectId = Long.valueOf(pathTokens[pathTokens.length - 1]);
 
 		ProjectMembersPage remoteProjectMembersPage = ProjectMembersPage.goToRemoteProject(driver(), projectId);
 		assertEquals(1, remoteProjectMembersPage.getNumberOfMembers(), "Should be 1 members in the project");

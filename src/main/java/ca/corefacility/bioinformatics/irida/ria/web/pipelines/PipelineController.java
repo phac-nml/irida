@@ -18,30 +18,28 @@ import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsServi
 @Controller
 @RequestMapping(PipelineController.BASE_URL)
 public class PipelineController extends BaseController {
-    // URI's
-    public static final String BASE_URL = "/pipelines";
+	// URI's
+	public static final String BASE_URL = "/pipelines";
 
-    /*
-     * SERVICES
-     */
-    private final IridaWorkflowsService workflowsService;
+	/*
+	 * SERVICES
+	 */
+	private final IridaWorkflowsService workflowsService;
 
-    @Autowired
-    public PipelineController(IridaWorkflowsService iridaWorkflowsService) {
-        this.workflowsService = iridaWorkflowsService;
-    }
+	@Autowired
+	public PipelineController(IridaWorkflowsService iridaWorkflowsService) {
+		this.workflowsService = iridaWorkflowsService;
+	}
 
-
-    /**
-     * Get {@link IridaWorkflowDescription} for a workflow/pipeline UUID.
-     *
-     * @param pipelineUUID Workflow/Pipeline UUID
-     * @return Map corresponding to a {@link IridaWorkflowDescription}.
-     */
-    @RequestMapping(value = "/ajax/{pipelineUUID}")
-    @ResponseBody
-    public IridaWorkflowDescription getPipelineInfo(@PathVariable UUID pipelineUUID) {
-        return workflowsService.getIridaWorkflowOrUnknown(pipelineUUID)
-                .getWorkflowDescription();
-    }
+	/**
+	 * Get {@link IridaWorkflowDescription} for a workflow/pipeline UUID.
+	 *
+	 * @param pipelineUUID Workflow/Pipeline UUID
+	 * @return Map corresponding to a {@link IridaWorkflowDescription}.
+	 */
+	@RequestMapping(value = "/ajax/{pipelineUUID}")
+	@ResponseBody
+	public IridaWorkflowDescription getPipelineInfo(@PathVariable UUID pipelineUUID) {
+		return workflowsService.getIridaWorkflowOrUnknown(pipelineUUID).getWorkflowDescription();
+	}
 }

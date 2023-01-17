@@ -13,16 +13,16 @@ import ca.corefacility.bioinformatics.irida.ria.integration.pages.AbstractPage;
  */
 public class AnnouncementDashboardPage extends AbstractPage {
 
-    public AnnouncementDashboardPage(WebDriver driver) {
-        super(driver);
-    }
+	public AnnouncementDashboardPage(WebDriver driver) {
+		super(driver);
+	}
 
-    public void goTo() {
-        driver.get("dashboard");
-    }
+	public void goTo() {
+		driver.get("dashboard");
+	}
 
-    public List<WebElement> getCurrentUnreadAnnouncements() {
-        return driver.findElements(By.cssSelector(".t-announcement-item"));
-    }
+	public List<WebElement> getCurrentUnreadAnnouncements() {
+		return driver.findElements(By.cssSelector(".t-announcement-item"));
+	}
 
 }

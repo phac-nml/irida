@@ -1,22 +1,83 @@
 <?xml version="1.0"?>
-<!DOCTYPE module PUBLIC
-        "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
-        "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
-
+<!DOCTYPE module PUBLIC "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN" "https://checkstyle.org/dtds/configuration_1_3.dtd">
 <module name="Checker">
+    <property name="severity" value="error" />
+
+    <property name="fileExtensions" value="java, properties, xml" />
+
     <module name="TreeWalker">
+        <module name="EmptyBlock" />
+        <module name="RegexpSinglelineJava">
+            <property name="format" value="^\t* " />
+            <property name="message" value="Indent must use tab characters" />
+            <property name="ignoreComments" value="true" />
+        </module>
+
+        <!-- Checks for Javadoc comments.                     -->
+        <!-- See https://checkstyle.org/config_javadoc.html -->
+        <module name="InvalidJavadocPosition" />
         <module name="JavadocMethod">
-            <property name="scope" value="protected"/>
-            <property name="allowMissingPropertyJavadoc" value="true"/>
-            <property name="allowedAnnotations" value="Override, Bean"/>
-            <property name="tokens" value="METHOD_DEF"/>
-            <property name="ignoreMethodNamesRegex" value="^main$"/>
+            <property name="allowedAnnotations" value="Override, Bean" />
+            <property name="tokens" value="METHOD_DEF" />
         </module>
         <module name="JavadocType">
-            <property name="scope" value="protected"/>
+            <property name="scope" value="protected" />
         </module>
+
+        <!-- Checks for Naming Conventions.                  -->
+        <!-- See https://checkstyle.org/config_naming.html -->
+        <module name="PackageName" />
+
+        <!-- Checks for imports                              -->
+        <!-- See https://checkstyle.org/config_imports.html -->
+        <module name="IllegalImport" /> <!-- defaults to sun.* packages -->
+        <module name="RedundantImport" />
         <module name="UnusedImports">
-            <property name="processJavadoc" value="true"/>
+            <property name="processJavadoc" value="true" />
+        </module>
+
+        <!-- Checks for whitespace                               -->
+        <!-- See https://checkstyle.org/config_whitespace.html -->
+        <module name="EmptyForIteratorPad" />
+        <module name="GenericWhitespace" />
+        <module name="MethodParamPad" />
+        <module name="NoWhitespaceBefore" />
+        <module name="TypecastParenPad" />
+        <module name="WhitespaceAfter" />
+
+        <!-- Modifier Checks                                    -->
+        <!-- See https://checkstyle.org/config_modifier.html -->
+        <module name="ModifierOrder" />
+
+        <!-- Checks for blocks. You know, those {}'s         -->
+        <!-- See https://checkstyle.org/config_blocks.html -->
+        <module name="AvoidNestedBlocks" />
+        <module name="EmptyBlock" />
+
+        <!-- Checks for common coding problems               -->
+        <!-- See https://checkstyle.org/config_coding.html -->
+        <module name="EmptyStatement" />
+        <module name="IllegalInstantiation" />
+        <module name="InnerAssignment" />
+        <module name="SimplifyBooleanExpression" />
+        <module name="SimplifyBooleanReturn" />
+
+        <!-- Checks for class design                         -->
+        <!-- See https://checkstyle.org/config_design.html -->
+        <module name="FinalClass" />
+        <module name="InterfaceIsType" />
+
+        <!-- Miscellaneous other checks.                   -->
+        <!-- See https://checkstyle.org/config_misc.html -->
+        <module name="ArrayTypeStyle" />
+        <module name="TodoComment" />
+        <module name="UpperEll" />
+
+        <!-- https://checkstyle.org/config_filters.html#SuppressionXpathFilter -->
+        <module name="SuppressionXpathFilter">
+            <property name="file" value="${org.checkstyle.sun.suppressionxpathfilter.config}"
+                default="checkstyle-xpath-suppressions.xml" />
+            <property name="optional" value="true" />
         </module>
     </module>
 </module>

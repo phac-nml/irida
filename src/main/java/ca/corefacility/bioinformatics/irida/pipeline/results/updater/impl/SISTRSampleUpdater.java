@@ -1,5 +1,14 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -14,17 +23,10 @@ import ca.corefacility.bioinformatics.irida.pipeline.results.updater.AnalysisSam
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.*;
 
 /**
  * {@link AnalysisSampleUpdater} that adds a number of results from a SISTR run to the metadata of a {@link Sample}
@@ -38,7 +40,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 	private SampleService sampleService;
 
 	// @formatter:off
-	private static Map<String, String> SISTR_FIELDS = ImmutableMap.<String,String>builder()
+	private static Map<String, String> SISTR_FIELDS = ImmutableMap.<String, String>builder()
 		.put("serovar", "SISTR serovar")
 		.put("cgmlst_subspecies", "SISTR cgMLST Subspecies")
 		.put("cgmlst_ST", "SISTR cgMLST Sequence Type")
@@ -53,7 +55,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 
 	@Autowired
 	public SISTRSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService,
-							  IridaWorkflowsService iridaWorkflowsService) {
+			IridaWorkflowsService iridaWorkflowsService) {
 		this.metadataTemplateService = metadataTemplateService;
 		this.sampleService = sampleService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
@@ -84,8 +86,8 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 
 			// map the results into a Map
 			ObjectMapper mapper = new ObjectMapper();
-			List<Map<String, Object>> sistrResults = mapper
-					.readValue(jsonFile, new TypeReference<List<Map<String, Object>>>() {
+			List<Map<String, Object>> sistrResults = mapper.readValue(jsonFile,
+					new TypeReference<List<Map<String, Object>>>() {
 					});
 
 			if (sistrResults.size() > 0) {

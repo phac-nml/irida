@@ -1,8 +1,9 @@
 package ca.corefacility.bioinformatics.irida.service.impl;
 
-import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
-import ca.corefacility.bioinformatics.irida.util.TreeNode;
-import com.google.common.base.Strings;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.Map.Entry;
+
 import org.apache.jena.atlas.lib.StrUtils;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
@@ -12,14 +13,14 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.vocabulary.RDFS;
 import org.apache.lucene.queryparser.classic.QueryParser;
 
-import java.nio.file.Path;
-import java.util.*;
-import java.util.Map.Entry;
+import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
+import ca.corefacility.bioinformatics.irida.util.TreeNode;
 
+import com.google.common.base.Strings;
 
 /**
- * A {@link TaxonomyService} leveraging Apache Jena's in memory storage service
- * and Apache Lucene's text searching abilities.
+ * A {@link TaxonomyService} leveraging Apache Jena's in memory storage service and Apache Lucene's text searching
+ * abilities.
  */
 public class InMemoryTaxonomyService implements TaxonomyService {
 	private Model model;
@@ -27,9 +28,9 @@ public class InMemoryTaxonomyService implements TaxonomyService {
 
 	// query to select all resources that are a subclass of the specified
 	// parent that have the given word in their label
-	private final static String LABEL_SEARCH_QUERY = StrUtils.strjoinNL(
-			"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>", "SELECT * ",
-			"WHERE { ?s rdfs:subClassOf* ?parent;", "rdfs:label ?label.", "FILTER regex(?label, ?term, 'i')", "}");
+	private static final String LABEL_SEARCH_QUERY = StrUtils.strjoinNL(
+			"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>", "SELECT * ", "WHERE { ?s rdfs:subClassOf* ?parent;",
+			"rdfs:label ?label.", "FILTER regex(?label, ?term, 'i')", "}");
 
 	private final String ROOT_IRI = "http://purl.obolibrary.org/obo/NCBITaxon_2";
 
@@ -82,16 +83,13 @@ public class InMemoryTaxonomyService implements TaxonomyService {
 	}
 
 	/**
-	 * Build a result tree from a searched resource. This search will look
-	 * upwards in the tree until there are no more parent nodes.
+	 * Build a result tree from a searched resource. This search will look upwards in the tree until there are no more
+	 * parent nodes.
 	 *
-	 * @param resource
-	 *            The resource to start from
-	 * @param searchTerm
-	 *            The search term that must be included
-	 * @param visited
-	 *            A map of previously visited nodes.
-	 * @return
+	 * @param resource   The resource to start from
+	 * @param searchTerm The search term that must be included
+	 * @param visited    A map of previously visited nodes.
+	 * @return the result tree of a searched resource
 	 */
 	private TreeNode<String> buildTrimmedResultTree(Resource resource, String searchTerm,
 			Map<String, TreeNode<String>> visited) {
@@ -119,12 +117,9 @@ public class InMemoryTaxonomyService implements TaxonomyService {
 	/**
 	 * Get a parent node with the matching search term
 	 *
-	 * @param resource
-	 *            The resource to start walking up from
-	 * @param searchTerm
-	 *            The search term required
-	 * @return A parent of the given node with the given search term in the
-	 *         label.
+	 * @param resource   The resource to start walking up from
+	 * @param searchTerm The search term required
+	 * @return A parent of the given node with the given search term in the label.
 	 */
 	private Resource getMatchingParent(Resource resource, String searchTerm) {
 		NodeIterator subClasses = model.listObjectsOfProperty(resource, RDFS.subClassOf);

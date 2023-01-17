@@ -1,18 +1,11 @@
 package ca.corefacility.bioinformatics.irida.util;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Simple generic tree node with links to parent and a list of children
  * 
- *
- * @param <ValueType>
- *            The value to be stored by this node
+ * @param <ValueType> The value to be stored by this node
  */
 public class TreeNode<ValueType> {
 	// parent node of this node
@@ -23,14 +16,13 @@ public class TreeNode<ValueType> {
 
 	// The value to be stored by this node
 	private ValueType value;
-	
-	Map<String,Object> properties;
+
+	Map<String, Object> properties;
 
 	/**
 	 * Create a new {@link TreeNode} with a given value
 	 * 
-	 * @param value
-	 *            The value to set
+	 * @param value The value to set
 	 */
 	public TreeNode(ValueType value) {
 		this.value = value;
@@ -50,8 +42,7 @@ public class TreeNode<ValueType> {
 	/**
 	 * Add a child to the children list
 	 * 
-	 * @param node
-	 *            The child to add
+	 * @param node The child to add
 	 */
 	public void addChild(TreeNode<ValueType> node) {
 		children.add(node);
@@ -92,21 +83,22 @@ public class TreeNode<ValueType> {
 	public TreeNode<ValueType> getParent() {
 		return parent;
 	}
-	
+
 	public Map<String, Object> getProperties() {
 		return properties;
 	}
-	
+
 	public void setProperties(Map<String, Object> properties) {
 		this.properties = properties;
 	}
 
 	/**
 	 * Add a property to the tree node
-	 * @param key key for the property
+	 * 
+	 * @param key   key for the property
 	 * @param value value of the property
 	 */
-	public void addProperty(String key, Object value){
+	public void addProperty(String key, Object value) {
 		properties.put(key, value);
 	}
 

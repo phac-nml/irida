@@ -7,24 +7,24 @@ import java.util.List;
  */
 public class MergeRequest {
 
-    // Sample to use as the root, maintains metadata and other details.
-    private Long primary;
+	// Sample to use as the root, maintains metadata and other details.
+	private Long primary;
 
-    // List two samples ids to merge
-    private List<Long> ids;
+	// List two samples ids to merge
+	private List<Long> ids;
 
-    // Optional: New name to rename the merged sample to
-    private String newName;
+	// Optional: New name to rename the merged sample to
+	private String newName;
 
-    public String getNewName() {
-        return newName;
-    }
+	public String getNewName() {
+		return newName;
+	}
 
-    public Long getPrimary() {
-        return primary;
-    }
+	public Long getPrimary() {
+		return primary;
+	}
 
-    public List<Long> getIds() {
-        return ids;
-    }
+	public List<Long> getIds() {
+		return ids;
+	}
 }

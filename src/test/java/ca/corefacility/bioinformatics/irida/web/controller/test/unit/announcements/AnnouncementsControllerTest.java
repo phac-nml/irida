@@ -7,25 +7,24 @@ import ca.corefacility.bioinformatics.irida.ria.web.announcements.AnnouncementsC
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 /**
  * Unit tests for {@link AnnouncementsController}
  */
 public class AnnouncementsControllerTest {
 
-    private static final String ANNOUNCEMENT_LIST = "announcements/list";
+	private static final String ANNOUNCEMENT_LIST = "announcements/list";
 
-    private AnnouncementsController announcementsController;
+	private AnnouncementsController announcementsController;
 
-    @BeforeEach
-    public void setUp() {
-        announcementsController = new AnnouncementsController();
-    }
+	@BeforeEach
+	public void setUp() {
+		announcementsController = new AnnouncementsController();
+	}
 
 	@Test
-    public void testGetAnnouncementsAsUser() {
-        String page = announcementsController.getAnnouncementsPage();
-        assertTrue(ANNOUNCEMENT_LIST.equals(page), "Unexpected page returned");
-    }
+	public void testGetAnnouncementsAsUser() {
+		String page = announcementsController.getAnnouncementsPage();
+		assertTrue(ANNOUNCEMENT_LIST.equals(page), "Unexpected page returned");
+	}
 
 }

@@ -21,42 +21,42 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
  */
 public class IridaOAuth2AuthorizationService extends JdbcOAuth2AuthorizationService {
 
-    private final String QUERY_AUTHORIZATION_BY_REGISTERED_CLIENT_ID = "SELECT * FROM oauth2_authorization WHERE access_token_value IS NOT NULL and registered_client_id = ?";
+	private final String QUERY_AUTHORIZATION_BY_REGISTERED_CLIENT_ID = "SELECT * FROM oauth2_authorization WHERE access_token_value IS NOT NULL and registered_client_id = ?";
 
-    public IridaOAuth2AuthorizationService(JdbcOperations jdbcOperations,
-            RegisteredClientRepository registeredClientRepository) {
-        super(jdbcOperations, registeredClientRepository);
-    }
+	public IridaOAuth2AuthorizationService(JdbcOperations jdbcOperations,
+			RegisteredClientRepository registeredClientRepository) {
+		super(jdbcOperations, registeredClientRepository);
+	}
 
-    @Transactional
-    public List<OAuth2Authorization> findAccessTokensByRegisteredClientId(String registeredClientId) {
-        PreparedStatementSetter pss = new ArgumentPreparedStatementSetter(new Object[] { registeredClientId });
-        List<OAuth2Authorization> authorizations = getJdbcOperations()
-                .query(QUERY_AUTHORIZATION_BY_REGISTERED_CLIENT_ID, pss, getAuthorizationRowMapper());
-        return authorizations;
-    }
+	@Transactional
+	public List<OAuth2Authorization> findAccessTokensByRegisteredClientId(String registeredClientId) {
+		PreparedStatementSetter pss = new ArgumentPreparedStatementSetter(new Object[] { registeredClientId });
+		List<OAuth2Authorization> authorizations = getJdbcOperations()
+				.query(QUERY_AUTHORIZATION_BY_REGISTERED_CLIENT_ID, pss, getAuthorizationRowMapper());
+		return authorizations;
+	}
 
-    @Override
-    @Transactional
-    public OAuth2Authorization findByToken(String token, @Nullable OAuth2TokenType tokenType) {
-        return super.findByToken(token, tokenType);
-    }
+	@Override
+	@Transactional
+	public OAuth2Authorization findByToken(String token, @Nullable OAuth2TokenType tokenType) {
+		return super.findByToken(token, tokenType);
+	}
 
-    @Override
-    @Transactional
-    public OAuth2Authorization findById(String id) {
-        return super.findById(id);
-    }
+	@Override
+	@Transactional
+	public OAuth2Authorization findById(String id) {
+		return super.findById(id);
+	}
 
-    @Override
-    @Transactional
-    public void remove(OAuth2Authorization authorization) {
-        super.remove(authorization);
-    }
+	@Override
+	@Transactional
+	public void remove(OAuth2Authorization authorization) {
+		super.remove(authorization);
+	}
 
-    @Override
-    @Transactional
-    public void save(OAuth2Authorization authorization) {
-        super.save(authorization);
-    }
+	@Override
+	@Transactional
+	public void save(OAuth2Authorization authorization) {
+		super.save(authorization);
+	}
 }
