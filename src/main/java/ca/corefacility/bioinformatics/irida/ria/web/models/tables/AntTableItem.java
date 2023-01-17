@@ -3,7 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.web.models.tables;
 /**
  * Base class to be used to represent a row in a AntD table.
  */
-abstract public class AntTableItem {
+public abstract class AntTableItem {
 	private final Long key;
 
 	public AntTableItem(Long key) {

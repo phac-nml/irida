@@ -7,11 +7,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.ria.web.files.dto.FastQCDetailsResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.files.dto.FastQCImagesResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISequenceFileService;
@@ -36,7 +38,7 @@ public class SequenceFileAjaxController {
 	 * @param sequencingObjectId ID for the {@link SequencingObject}
 	 * @param sequenceFileId     Id for the {@link SequenceFile}
 	 * @return {@link FastQCDetailsResponse} dto which contains the sequencing object, sequence file, and the fastqc
-	 * result.
+	 *         result.
 	 */
 	@GetMapping("/fastqc-details")
 	public ResponseEntity<FastQCDetailsResponse> getFastQCDetails(@RequestParam Long sequencingObjectId,

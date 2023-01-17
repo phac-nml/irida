@@ -12,16 +12,16 @@ import org.junit.jupiter.api.Test;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 
 public class FileUtilitiesTest {
-    
-    @Test
-    public void testIsZippedFile() throws IOException {
-        Path snpTreePath = Paths.get("src/test/resources/files/snp_tree.tree");
+
+	@Test
+	public void testIsZippedFile() throws IOException {
+		Path snpTreePath = Paths.get("src/test/resources/files/snp_tree.tree");
 		Path zippedSnpTreePath = Paths.get("src/test/resources/files/snp_tree.tree.zip");
 
-        boolean isZipped = FileUtilities.isZippedFile(snpTreePath);
-        assertFalse(isZipped, "snp_tree.tree is not zipped");
+		boolean isZipped = FileUtilities.isZippedFile(snpTreePath);
+		assertFalse(isZipped, "snp_tree.tree is not zipped");
 
-        isZipped = FileUtilities.isZippedFile(zippedSnpTreePath);
-        assertTrue(isZipped, "snp_tree.tree.zip is zipped");
-    }
+		isZipped = FileUtilities.isZippedFile(zippedSnpTreePath);
+		assertTrue(isZipped, "snp_tree.tree.zip is zipped");
+	}
 }

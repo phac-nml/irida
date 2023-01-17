@@ -213,7 +213,7 @@ public class AbstractPage {
 	/**
 	 * Get the BASE URL
 	 *
-	 * @return
+	 * @return the BASE URL
 	 */
 	public String getBaseUrl() {
 		return BASE_URL;
@@ -274,7 +274,8 @@ public class AbstractPage {
 
 	public void enterSearchQueryInNavBar(String query) {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-		WebElement searchInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".t-global-search input")));
+		WebElement searchInput = wait
+				.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".t-global-search input")));
 		searchInput.sendKeys(query);
 		searchInput.sendKeys(Keys.ENTER);
 		wait.until(ExpectedConditions.urlContains("search?query=" + query));

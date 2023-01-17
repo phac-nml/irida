@@ -23,106 +23,106 @@ import org.hibernate.envers.Audited;
  *
  */
 @Entity
-@Table(name="identifiable")
+@Table(name = "identifiable")
 @Audited
-public class IdentifiableTestEntity extends IridaRepresentationModel implements IridaThing, Comparable<IdentifiableTestEntity> {
+public class IdentifiableTestEntity extends IridaRepresentationModel
+		implements IridaThing, Comparable<IdentifiableTestEntity> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @NotNull
-    private String nonNull;
-    private Integer integerValue;
+	@NotNull
+	private String nonNull;
+	private Integer integerValue;
 
-    private String label;
-        
-    private Date createdDate;
-    
-    private Date modifiedDate;
-	
-	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,mappedBy = "identifiableTestEntity")
+	private String label;
+
+	private Date createdDate;
+
+	private Date modifiedDate;
+
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "identifiableTestEntity")
 	private List<EntityJoin> otherEntity;
 
-    public IdentifiableTestEntity() {
-    	createdDate = new Date();
-    	modifiedDate = createdDate;
-    }
+	public IdentifiableTestEntity() {
+		createdDate = new Date();
+		modifiedDate = createdDate;
+	}
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("created: ").append(createdDate);
-        return builder.toString();
-    }
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("created: ").append(createdDate);
+		return builder.toString();
+	}
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public String getNonNull() {
-        return nonNull;
-    }
+	public String getNonNull() {
+		return nonNull;
+	}
 
-    public void setNonNull(String nonNull) {
-        this.nonNull = nonNull;
-    }
+	public void setNonNull(String nonNull) {
+		this.nonNull = nonNull;
+	}
 
-    @Override
-    public int compareTo(IdentifiableTestEntity o) {
-        return createdDate.compareTo(o.createdDate);
-    }
+	@Override
+	public int compareTo(IdentifiableTestEntity o) {
+		return createdDate.compareTo(o.createdDate);
+	}
 
-    public Integer getIntegerValue() {
-        return integerValue;
-    }
+	public Integer getIntegerValue() {
+		return integerValue;
+	}
 
-    public void setIntegerValue(Integer integerValue) {
-        this.integerValue = integerValue;
-    }
+	public void setIntegerValue(Integer integerValue) {
+		this.integerValue = integerValue;
+	}
 
-    @Override
-    public String getLabel() {
-        return label;
-    }
-    
-    public void setLabel(String label){
-        this.label = label;
-    }
+	@Override
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
 
 	@Override
 	public Date getCreatedDate() {
 		return createdDate;
 	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(nonNull,integerValue,createdDate);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(nonNull, integerValue, createdDate);
+	}
 
-    @Override
-    public boolean equals(Object other) {
-        if (other instanceof IdentifiableTestEntity) {
-            IdentifiableTestEntity u = (IdentifiableTestEntity) other;
-            return Objects.equals(nonNull,u.nonNull)
-                    && Objects.equals(integerValue, u.integerValue)
-                    && Objects.equals(createdDate, u.createdDate);
-        }
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof IdentifiableTestEntity) {
+			IdentifiableTestEntity u = (IdentifiableTestEntity) other;
+			return Objects.equals(nonNull, u.nonNull) && Objects.equals(integerValue, u.integerValue)
+					&& Objects.equals(createdDate, u.createdDate);
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    public Date getModifiedDate() {
-        return modifiedDate;
-    }
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
 
-    public void setModifiedDate(Date modifiedDate) {
-        this.modifiedDate = modifiedDate;
-    }
-    
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
+	}
+
 }

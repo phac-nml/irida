@@ -18,29 +18,29 @@ import org.springframework.security.oauth2.server.authorization.authentication.O
  */
 public class OAuth2ResourceOwnerPasswordAuthenticationToken extends OAuth2AuthorizationGrantAuthenticationToken {
 
-    private final Set<String> scopes;
+	private final Set<String> scopes;
 
-    /**
-     * Constructs an {@code OAuth2ResourceOwnerPasswordAuthenticationToken} using the provider parameters.
-     * 
-     * @param authorizationGrantType the authorization grant type
-     * @param clientPrincipal        the authenticated client principal
-     * @param scopes                 the requested scope(s)
-     * @param additionalParameters   the additional parameters
-     */
-    public OAuth2ResourceOwnerPasswordAuthenticationToken(AuthorizationGrantType authorizationGrantType,
-            Authentication clientPrincipal, @Nullable Set<String> scopes,
-            @Nullable Map<String, Object> additionalParameters) {
-        super(AuthorizationGrantType.PASSWORD, clientPrincipal, additionalParameters);
-        this.scopes = Collections.unmodifiableSet(scopes != null ? new HashSet<>(scopes) : Collections.emptySet());
-    }
+	/**
+	 * Constructs an {@code OAuth2ResourceOwnerPasswordAuthenticationToken} using the provider parameters.
+	 * 
+	 * @param authorizationGrantType the authorization grant type
+	 * @param clientPrincipal        the authenticated client principal
+	 * @param scopes                 the requested scope(s)
+	 * @param additionalParameters   the additional parameters
+	 */
+	public OAuth2ResourceOwnerPasswordAuthenticationToken(AuthorizationGrantType authorizationGrantType,
+			Authentication clientPrincipal, @Nullable Set<String> scopes,
+			@Nullable Map<String, Object> additionalParameters) {
+		super(AuthorizationGrantType.PASSWORD, clientPrincipal, additionalParameters);
+		this.scopes = Collections.unmodifiableSet(scopes != null ? new HashSet<>(scopes) : Collections.emptySet());
+	}
 
-    /**
-     * Returns the requested scope(s).
-     *
-     * @return the requested scope(s), or an empty {@code Set} if not available
-     */
-    public Set<String> getScopes() {
-        return this.scopes;
-    }
+	/**
+	 * Returns the requested scope(s).
+	 *
+	 * @return the requested scope(s), or an empty {@code Set} if not available
+	 */
+	public Set<String> getScopes() {
+		return this.scopes;
+	}
 }

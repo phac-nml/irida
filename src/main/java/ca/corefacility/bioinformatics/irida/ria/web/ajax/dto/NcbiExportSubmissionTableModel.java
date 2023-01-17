@@ -13,8 +13,7 @@ public class NcbiExportSubmissionTableModel extends TableModel {
 	private final UserMinimalModel submitter;
 	private final String bioProjectId;
 
-
-	public NcbiExportSubmissionTableModel (NcbiExportSubmission submission) {
+	public NcbiExportSubmissionTableModel(NcbiExportSubmission submission) {
 		super(submission.getId(), null, submission.getCreatedDate(), null);
 		this.exportedSamples = submission.getBioSampleFiles().size();
 		this.state = submission.getUploadState().toString();

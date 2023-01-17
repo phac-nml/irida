@@ -623,7 +623,8 @@ public class ProjectSynchronizationService {
 
 	/**
 	 * Update the IDs of a newly read object and it's associated RemoteStatus to the IDs of a local copy
-	 * 
+	 *
+	 * @param <Type>   Type of element updateIds for (either {@link MutableIridaThing} or {@link RemoteSynchronizable})
 	 * @param original the original object
 	 * @param updated  the newly read updated object
 	 * @return the enhanced newly read object

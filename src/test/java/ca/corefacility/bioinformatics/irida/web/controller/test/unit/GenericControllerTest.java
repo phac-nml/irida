@@ -1,22 +1,11 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.unit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-
-import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,10 +15,14 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.service.CRUDService;
+import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.RootResource;
 import ca.corefacility.bioinformatics.irida.web.controller.api.RESTGenericController;
 import ca.corefacility.bioinformatics.irida.web.controller.api.exception.GenericsException;
 import ca.corefacility.bioinformatics.irida.web.controller.test.unit.support.IdentifiableTestEntity;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for the {@link RESTGenericController}.
@@ -96,8 +89,7 @@ public class GenericControllerTest {
 
 	@Test
 	public void testDeleteInvalidEntity() {
-		doThrow(new EntityNotFoundException("not found")).when(crudService)
-				.delete(2L);
+		doThrow(new EntityNotFoundException("not found")).when(crudService).delete(2L);
 
 		try {
 			controller.delete(2L);

@@ -6,10 +6,8 @@ import java.util.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -81,7 +79,8 @@ public class UIAnalysesServiceTest {
 		iridaWorkflowsService = mock(IridaWorkflowsService.class);
 		principal = mock(Principal.class);
 
-		service = new UIAnalysesService(sampleService, sequencingObjectService, userService, analysisSubmissionRepository, iridaWorkflowsService, messageSource);
+		service = new UIAnalysesService(sampleService, sequencingObjectService, userService,
+				analysisSubmissionRepository, iridaWorkflowsService, messageSource);
 
 		// DATA
 		SAMPLE_1.setId(SAMPLE_ID);
@@ -143,27 +142,27 @@ public class UIAnalysesServiceTest {
 
 		when(userService.getUserByUsername(principal.getName())).thenReturn(USER_1);
 
+		when(sequencingObjectService.getSequencingObjectsForSample(SAMPLE_1))
+				.thenReturn(sampleSequencingObjectJoinCollection);
 
-		when(sequencingObjectService.getSequencingObjectsForSample(SAMPLE_1)).thenReturn(
-				sampleSequencingObjectJoinCollection);
-
-		when(analysisSubmissionRepository.findAnalysisSubmissionsForSequencingObjectBySubmitter(
-				any(SequencingObject.class), eq(USER_1))).thenReturn(user1AnalysisSubmissionSet);
+		when(analysisSubmissionRepository
+				.findAnalysisSubmissionsForSequencingObjectBySubmitter(any(SequencingObject.class), eq(USER_1)))
+						.thenReturn(user1AnalysisSubmissionSet);
 
 		when(iridaWorkflowsService.getIridaWorkflowOrUnknown(any(AnalysisSubmission.class))).thenReturn(iridaWorkflow);
 
 		// Get sample analyses listing for user with Role.USER
 		List<SampleAnalyses> sampleAnalysesList = service.getSampleAnalyses(SAMPLE_ID, principal, Locale.ENGLISH);
-		assertEquals(1, sampleAnalysesList.size(), "A user with Role.USER should only see their own analyses ran with sample");
-
+		assertEquals(1, sampleAnalysesList.size(),
+				"A user with Role.USER should only see their own analyses ran with sample");
 
 		when(userService.getUserByUsername(principal.getName())).thenReturn(USER_2);
 
-		when(sequencingObjectService.getSequencingObjectsForSample(SAMPLE_1)).thenReturn(
-				sampleSequencingObjectJoinCollection);
+		when(sequencingObjectService.getSequencingObjectsForSample(SAMPLE_1))
+				.thenReturn(sampleSequencingObjectJoinCollection);
 
-		when(analysisSubmissionRepository.findAnalysisSubmissionsForSequencingObject(
-				any(SequencingObject.class))).thenReturn(allAnalysisSubmissionSet);
+		when(analysisSubmissionRepository.findAnalysisSubmissionsForSequencingObject(any(SequencingObject.class)))
+				.thenReturn(allAnalysisSubmissionSet);
 
 		when(iridaWorkflowsService.getIridaWorkflowOrUnknown(any(AnalysisSubmission.class))).thenReturn(iridaWorkflow);
 

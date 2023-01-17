@@ -66,12 +66,12 @@ import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionSchedu
 
 /**
  * Integration tests for SNVPhyl pipeline.
- * 
- *
  */
 @Tag("Pipeline")
 @GalaxyIntegrationTest
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class,
+@TestExecutionListeners({
+		DependencyInjectionTestExecutionListener.class,
+		DbUnitTestExecutionListener.class,
 		WithSecurityContextTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/model/enums/analysis/integration/SNVPhyl/SNVPhylAnalysisIT.xml")
 @DatabaseTearDown("/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
@@ -269,8 +269,11 @@ public class SNVPhylAnalysisIT {
 
 		do {
 			Thread.sleep(500);
-			files = Arrays.stream(filePairs).map(p -> sequencingObjectService.read(p.getId())).map(p -> p.getFiles())
-					.flatMap(l -> l.stream()).collect(Collectors.toSet());
+			files = Arrays.stream(filePairs)
+					.map(p -> sequencingObjectService.read(p.getId()))
+					.map(p -> p.getFiles())
+					.flatMap(l -> l.stream())
+					.collect(Collectors.toSet());
 		} while (!files.stream().allMatch(f -> f.getFastQCAnalysis() != null));
 	}
 
@@ -285,11 +288,14 @@ public class SNVPhylAnalysisIT {
 		gzipFileProcessor.setDisableFileProcessor(true);
 
 		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService
-				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
+				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathsA1List, sequenceFilePathsA2List)
+				.get(0);
 		SequenceFilePair sequenceFilePairB = databaseSetupGalaxyITService
-				.setupSampleSequenceFileInDatabase(2L, sequenceFilePathsB1List, sequenceFilePathsB2List).get(0);
+				.setupSampleSequenceFileInDatabase(2L, sequenceFilePathsB1List, sequenceFilePathsB2List)
+				.get(0);
 		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService
-				.setupSampleSequenceFileInDatabase(3L, sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
+				.setupSampleSequenceFileInDatabase(3L, sequenceFilePathsC1List, sequenceFilePathsC2List)
+				.get(0);
 
 		Map<String, String> parameters = ImmutableMap.of("snv-abundance-ratio", "0.75", "minimum-read-coverage", "2",
 				"filter-density-threshold", "2", "filter-density-window-size", "3", "enable-density-filter", "true");
@@ -313,7 +319,8 @@ public class SNVPhylAnalysisIT {
 
 		@SuppressWarnings("resource")
 		String matrixContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile())
-				.useDelimiter("\\Z").next();
+				.useDelimiter("\\Z")
+				.next();
 		assertTrue(
 				com.google.common.io.Files.equal(outputSnvMatrix1.toFile(),
 						analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile()),
@@ -323,7 +330,8 @@ public class SNVPhylAnalysisIT {
 
 		@SuppressWarnings("resource")
 		String snpTableContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile())
-				.useDelimiter("\\Z").next();
+				.useDelimiter("\\Z")
+				.next();
 		assertTrue(
 				com.google.common.io.Files.equal(outputSnvTable1.toFile(),
 						analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile()),
@@ -333,7 +341,8 @@ public class SNVPhylAnalysisIT {
 
 		@SuppressWarnings("resource")
 		String vcf2coreContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile())
-				.useDelimiter("\\Z").next();
+				.useDelimiter("\\Z")
+				.next();
 		assertTrue(
 				com.google.common.io.Files.equal(vcf2core1.toFile(),
 						analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile()),
@@ -358,7 +367,8 @@ public class SNVPhylAnalysisIT {
 
 		@SuppressWarnings("resource")
 		String snvAlignContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile())
-				.useDelimiter("\\Z").next();
+				.useDelimiter("\\Z")
+				.next();
 		assertTrue(
 				com.google.common.io.Files.equal(snvAlign1.toFile(),
 						analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile()),
@@ -418,8 +428,8 @@ public class SNVPhylAnalysisIT {
 	}
 
 	/**
-	 * Tests out successfully executing the SNVPhyl pipeline and passing a
-	 * higher value for fraction of reads to call a SNP.
+	 * Tests out successfully executing the SNVPhyl pipeline and passing a higher value for fraction of reads to call a
+	 * SNP.
 	 * 
 	 * @throws Exception
 	 */
@@ -427,18 +437,26 @@ public class SNVPhylAnalysisIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSNVPhylSuccessHigherSNVReadProportion() throws Exception {
 		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService
-				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
+				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathsA1List, sequenceFilePathsA2List)
+				.get(0);
 		SequenceFilePair sequenceFilePairB = databaseSetupGalaxyITService
-				.setupSampleSequenceFileInDatabase(2L, sequenceFilePathsB1List, sequenceFilePathsB2List).get(0);
+				.setupSampleSequenceFileInDatabase(2L, sequenceFilePathsB1List, sequenceFilePathsB2List)
+				.get(0);
 		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService
-				.setupSampleSequenceFileInDatabase(3L, sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
+				.setupSampleSequenceFileInDatabase(3L, sequenceFilePathsC1List, sequenceFilePathsC2List)
+				.get(0);
 
 		waitForFilesToSettle(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC);
 
-		Map<String, String> parameters = ImmutableMap.<String, String> builder().put("snv-abundance-ratio", "0.90")
-				.put("minimum-read-coverage", "2").put("minimum-percent-coverage", "75")
-				.put("minimum-mean-mapping-quality", "20").put("filter-density-threshold", "3")
-				.put("filter-density-window-size", "30").put("enable-density-filter", "false").build();
+		Map<String, String> parameters = ImmutableMap.<String, String>builder()
+				.put("snv-abundance-ratio", "0.90")
+				.put("minimum-read-coverage", "2")
+				.put("minimum-percent-coverage", "75")
+				.put("minimum-mean-mapping-quality", "20")
+				.put("filter-density-threshold", "3")
+				.put("filter-density-window-size", "30")
+				.put("enable-density-filter", "false")
+				.build();
 
 		AnalysisSubmission submission = databaseSetupGalaxyITService.setupPairSubmissionInDatabase(
 				Sets.newHashSet(sequenceFilePairA, sequenceFilePairB, sequenceFilePairC), referenceFilePath, parameters,
@@ -458,7 +476,8 @@ public class SNVPhylAnalysisIT {
 
 		@SuppressWarnings("resource")
 		String matrixContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile())
-				.useDelimiter("\\Z").next();
+				.useDelimiter("\\Z")
+				.next();
 		assertTrue(
 				com.google.common.io.Files.equal(outputSnvMatrix2.toFile(),
 						analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile()),
@@ -468,7 +487,8 @@ public class SNVPhylAnalysisIT {
 
 		@SuppressWarnings("resource")
 		String snpTableContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile())
-				.useDelimiter("\\Z").next();
+				.useDelimiter("\\Z")
+				.next();
 		assertTrue(
 				com.google.common.io.Files.equal(outputSnvTable2.toFile(),
 						analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile()),
@@ -478,7 +498,8 @@ public class SNVPhylAnalysisIT {
 
 		@SuppressWarnings("resource")
 		String vcf2coreContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile())
-				.useDelimiter("\\Z").next();
+				.useDelimiter("\\Z")
+				.next();
 		assertTrue(
 				com.google.common.io.Files.equal(vcf2core2.toFile(),
 						analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile()),
@@ -503,7 +524,8 @@ public class SNVPhylAnalysisIT {
 
 		@SuppressWarnings("resource")
 		String snvAlignContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile())
-				.useDelimiter("\\Z").next();
+				.useDelimiter("\\Z")
+				.next();
 		assertTrue(
 				com.google.common.io.Files.equal(snvAlign2.toFile(),
 						analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile()),
@@ -576,8 +598,8 @@ public class SNVPhylAnalysisIT {
 	}
 
 	/**
-	 * Tests out successfully executing the SNVPhyl pipeline and passing a lower
-	 * value for SNV density threshold to filter out SNVs.
+	 * Tests out successfully executing the SNVPhyl pipeline and passing a lower value for SNV density threshold to
+	 * filter out SNVs.
 	 * 
 	 * @throws Exception
 	 */
@@ -585,11 +607,14 @@ public class SNVPhylAnalysisIT {
 	@WithMockUser(username = "aaron", roles = "ADMIN")
 	public void testSNVPhylSuccessRemoveSNVDensity() throws Exception {
 		SequenceFilePair sequenceFilePairA = databaseSetupGalaxyITService
-				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathsA1List, sequenceFilePathsA2List).get(0);
+				.setupSampleSequenceFileInDatabase(1L, sequenceFilePathsA1List, sequenceFilePathsA2List)
+				.get(0);
 		SequenceFilePair sequenceFilePairB = databaseSetupGalaxyITService
-				.setupSampleSequenceFileInDatabase(2L, sequenceFilePathsB1List, sequenceFilePathsB2List).get(0);
+				.setupSampleSequenceFileInDatabase(2L, sequenceFilePathsB1List, sequenceFilePathsB2List)
+				.get(0);
 		SequenceFilePair sequenceFilePairC = databaseSetupGalaxyITService
-				.setupSampleSequenceFileInDatabase(3L, sequenceFilePathsC1List, sequenceFilePathsC2List).get(0);
+				.setupSampleSequenceFileInDatabase(3L, sequenceFilePathsC1List, sequenceFilePathsC2List)
+				.get(0);
 
 		Map<String, String> parameters = ImmutableMap.of("snv-abundance-ratio", "0.75", "minimum-read-coverage", "2",
 				"filter-density-threshold", "2", "filter-density-window-size", "4", "enable-density-filter", "true");
@@ -612,7 +637,8 @@ public class SNVPhylAnalysisIT {
 
 		@SuppressWarnings("resource")
 		String matrixContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile())
-				.useDelimiter("\\Z").next();
+				.useDelimiter("\\Z")
+				.next();
 		assertTrue(
 				com.google.common.io.Files.equal(outputSnvMatrix3.toFile(),
 						analysisPhylogenomics.getAnalysisOutputFile(MATRIX_KEY).getFile().toFile()),
@@ -622,7 +648,8 @@ public class SNVPhylAnalysisIT {
 
 		@SuppressWarnings("resource")
 		String snpTableContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile())
-				.useDelimiter("\\Z").next();
+				.useDelimiter("\\Z")
+				.next();
 		assertTrue(
 				com.google.common.io.Files.equal(outputSnvTable3.toFile(),
 						analysisPhylogenomics.getAnalysisOutputFile(TABLE_KEY).getFile().toFile()),
@@ -632,7 +659,8 @@ public class SNVPhylAnalysisIT {
 
 		@SuppressWarnings("resource")
 		String vcf2coreContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile())
-				.useDelimiter("\\Z").next();
+				.useDelimiter("\\Z")
+				.next();
 		assertTrue(
 				com.google.common.io.Files.equal(vcf2core3.toFile(),
 						analysisPhylogenomics.getAnalysisOutputFile(CORE_KEY).getFile().toFile()),
@@ -657,7 +685,8 @@ public class SNVPhylAnalysisIT {
 
 		@SuppressWarnings("resource")
 		String snvAlignContent = new Scanner(analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile())
-				.useDelimiter("\\Z").next();
+				.useDelimiter("\\Z")
+				.next();
 		assertTrue(
 				com.google.common.io.Files.equal(snvAlign3.toFile(),
 						analysisPhylogenomics.getAnalysisOutputFile(ALIGN_KEY).getFile().toFile()),

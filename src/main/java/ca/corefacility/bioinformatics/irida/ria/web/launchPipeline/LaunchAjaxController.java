@@ -88,8 +88,8 @@ public class LaunchAjaxController {
 			throws IridaWorkflowNotFoundException, ReferenceFileRequiredException, MissingRequiredParametersException {
 		try {
 			return ResponseEntity.ok(new AjaxCreateItemSuccessResponse(startService.start(id, request, locale)));
-		} catch (IridaWorkflowNotFoundException | ReferenceFileRequiredException |
-				 MissingRequiredParametersException e) {
+		} catch (IridaWorkflowNotFoundException | ReferenceFileRequiredException
+				| MissingRequiredParametersException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}

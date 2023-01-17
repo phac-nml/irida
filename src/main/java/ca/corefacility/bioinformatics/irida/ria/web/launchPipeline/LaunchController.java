@@ -14,25 +14,25 @@ import ca.corefacility.bioinformatics.irida.ria.web.services.UICartService;
 @Controller
 @RequestMapping("/launch")
 public class LaunchController {
-    private UICartService cartService;
+	private UICartService cartService;
 
-    @Autowired
-    public void setCartService(UICartService cartService) {
-        this.cartService = cartService;
-    }
+	@Autowired
+	public void setCartService(UICartService cartService) {
+		this.cartService = cartService;
+	}
 
-    /**
-     * Mapping for the pipeline launch page.
-     *
-     * @param projectId used to indicate if this was set for an automated pipeline
-     * @return The path to the launch page html file.
-     */
-    @GetMapping("")
-    public String getPipelineLaunchPage(@RequestParam(required = false) Long projectId) {
-        if(projectId != null || !cartService.isCartEmpty()) {
-            return "launch";
-        }
-        // User cannot launch a pipeline if the cart is empty.
-        return "redirect:/cart/pipelines";
-    }
+	/**
+	 * Mapping for the pipeline launch page.
+	 *
+	 * @param projectId used to indicate if this was set for an automated pipeline
+	 * @return The path to the launch page html file.
+	 */
+	@GetMapping("")
+	public String getPipelineLaunchPage(@RequestParam(required = false) Long projectId) {
+		if (projectId != null || !cartService.isCartEmpty()) {
+			return "launch";
+		}
+		// User cannot launch a pipeline if the cart is empty.
+		return "redirect:/cart/pipelines";
+	}
 }
