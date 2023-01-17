@@ -96,6 +96,7 @@ public class ProjectEventHandler {
 	 * {@link ProjectSampleJoin} or collection of joins.
 	 *
 	 * @param event
+	 * @return A collection of newly created {@link SampleAddedProjectEvent}s
 	 */
 	private Collection<SampleAddedProjectEvent> handleSampleAddedProjectEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
@@ -132,6 +133,7 @@ public class ProjectEventHandler {
 	 * Create a {@link UserRemovedProjectEvent}. The method arguments must contain a {@link Project} and {@link User}
 	 *
 	 * @param event The {@link MethodEvent} that this event is being launched from
+	 * @return The newly created {@link ProjectEvent}
 	 */
 	private ProjectEvent handleUserRemovedEvent(MethodEvent event) {
 		Object[] args = event.getArgs();
@@ -155,6 +157,7 @@ public class ProjectEventHandler {
 	 * Create a {@link UserRemovedProjectEvent}. The method arguments must contain a {@link Project} and {@link User}
 	 *
 	 * @param event The {@link MethodEvent} that this event is being launched from
+	 * @return The newly created {@link ProjectEvent}
 	 */
 	private ProjectEvent handleUserGroupRemovedEvent(MethodEvent event) {
 		final Optional<Object> user = Arrays.stream(event.getArgs()).filter(e -> e instanceof UserGroup).findAny();
@@ -170,6 +173,7 @@ public class ProjectEventHandler {
 	 * Create a {@link UserRoleSetProjectEvent}. The method must have returned a {@link ProjectUserJoin}
 	 *
 	 * @param event The {@link MethodEvent} that this event is being launched from
+	 * @return The newly created {@link ProjectEvent}
 	 */
 	private ProjectEvent handleUserRoleSetProjectEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
@@ -186,6 +190,7 @@ public class ProjectEventHandler {
 	 * Create a {@link UserGroupRoleSetProjectEvent}. The method must have returned a {@link UserGroupProjectJoin}
 	 *
 	 * @param event The {@link MethodEvent} that this event is being launched from
+	 * @return The newly created {@link ProjectEvent}
 	 */
 	private ProjectEvent handleUserGroupRoleSetProjectEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
@@ -203,6 +208,7 @@ public class ProjectEventHandler {
 	 * {@link SampleSequencingObjectJoin}.
 	 *
 	 * @param event
+	 * @return a collection of newly created {@link DataAddedToSampleProjectEvent}
 	 */
 	private Collection<DataAddedToSampleProjectEvent> handleSequenceFileAddedEvent(MethodEvent event) {
 		Object returnValue = event.getReturnValue();
@@ -233,6 +239,7 @@ public class ProjectEventHandler {
 	 * Create {@link DataAddedToSampleProjectEvent} for all {@link Project}s a {@link Sample} belongs to
 	 *
 	 * @param join a {@link SampleSequencingObjectJoin} to turn into a {@link DataAddedToSampleProjectEvent}
+	 * @return a new collection of newly created {@link DataAddedToSampleProjectEvent}
 	 */
 	private Collection<DataAddedToSampleProjectEvent> handleIndividualSequenceFileAddedEvent(
 			SampleSequencingObjectJoin join) {

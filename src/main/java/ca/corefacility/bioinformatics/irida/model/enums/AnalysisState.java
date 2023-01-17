@@ -12,8 +12,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 
 /**
  * Defines a set of states for an {@link AnalysisSubmission}.
- * 
- *
  */
 public enum AnalysisState {
 
@@ -24,16 +22,18 @@ public enum AnalysisState {
 
 	/**
 	 * Occurs when an analysis is downloading remote files
-	 * @deprecated This is no longer a valid state. This must still exist in IRIDA
-	 *     in cases where this state has been recored in the audit tables.
+	 * 
+	 * @deprecated This is no longer a valid state. This must still exist in IRIDA in cases where this state has been
+	 *             recored in the audit tables.
 	 */
 	@Deprecated(since = "0.17.0")
 	DOWNLOADING("DOWNLOADING"),
 
 	/**
 	 * Occurs when an analysis has completed downloading remote files
-	 * @deprecated This is no longer a valid state. This must still exist in IRIDA
-	 *     in cases where this state has been recored in the audit tables.
+	 * 
+	 * @deprecated This is no longer a valid state. This must still exist in IRIDA in cases where this state has been
+	 *             recored in the audit tables.
 	 */
 	@Deprecated(since = "0.17.0")
 	FINISHED_DOWNLOADING("FINISHED_DOWNLOADING"),
@@ -64,8 +64,7 @@ public enum AnalysisState {
 	FINISHED_RUNNING("FINISHED_RUNNING"),
 
 	/**
-	 * An analysis that is complete but data needs to be transferred back into
-	 * IRIDA.
+	 * An analysis that is complete but data needs to be transferred back into IRIDA.
 	 */
 	COMPLETING("COMPLETING"),
 
@@ -92,7 +91,7 @@ public enum AnalysisState {
 	private static Map<String, AnalysisState> stateMap = new HashMap<>();
 	private String stateString;
 
-	/**
+	/*
 	 * Sets of a Map used to convert a string to a WorkflowState
 	 */
 	static {
@@ -108,8 +107,7 @@ public enum AnalysisState {
 	/**
 	 * Given a string defining a state, converts this to a AnalysisState.
 	 * 
-	 * @param stateString
-	 *            The string defining the state.
+	 * @param stateString The string defining the state.
 	 * @return A AnalysisState for the corresponding state.
 	 */
 	public static AnalysisState fromString(String stateString) {
@@ -120,8 +118,8 @@ public enum AnalysisState {
 	}
 
 	/**
-	 * Get the {@link AnalysisState}s that denote an {@link AnalysisSubmission}
-	 * that has been picked up and is currently being processed.
+	 * Get the {@link AnalysisState}s that denote an {@link AnalysisSubmission} that has been picked up and is currently
+	 * being processed.
 	 * 
 	 * @return a List of {@link AnalysisState}
 	 */

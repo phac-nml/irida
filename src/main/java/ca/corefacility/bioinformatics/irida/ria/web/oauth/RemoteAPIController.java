@@ -30,70 +30,70 @@ import com.google.common.collect.ImmutableMap;
 @Controller
 @RequestMapping("/remote_api")
 public class RemoteAPIController extends BaseController {
-    private static final Logger logger = LoggerFactory.getLogger(RemoteAPIController.class);
+	private static final Logger logger = LoggerFactory.getLogger(RemoteAPIController.class);
 
-    public static final String CLIENTS_PAGE = "remote_apis/list";
-    public static final String PARENT_FRAME_RELOAD_PAGE = "remote_apis/parent_reload";
+	public static final String CLIENTS_PAGE = "remote_apis/list";
+	public static final String PARENT_FRAME_RELOAD_PAGE = "remote_apis/parent_reload";
 
-    private final RemoteAPIService remoteAPIService;
-    private final ProjectRemoteService projectRemoteService;
-    private final OltuAuthorizationController authController;
+	private final RemoteAPIService remoteAPIService;
+	private final ProjectRemoteService projectRemoteService;
+	private final OltuAuthorizationController authController;
 
-    // Map storing the message names for the
-    // getErrorsFromDataIntegrityViolationException method
-    private final Map<String, ExceptionPropertyAndMessage> errorMessages = ImmutableMap.of(
-            RemoteAPI.SERVICE_URI_CONSTRAINT_NAME,
-            new ExceptionPropertyAndMessage("serviceURI", "remoteapi.create.serviceURIConflict"));
+	// Map storing the message names for the
+	// getErrorsFromDataIntegrityViolationException method
+	private final Map<String, ExceptionPropertyAndMessage> errorMessages = ImmutableMap.of(
+			RemoteAPI.SERVICE_URI_CONSTRAINT_NAME,
+			new ExceptionPropertyAndMessage("serviceURI", "remoteapi.create.serviceURIConflict"));
 
-    @Autowired
-    public RemoteAPIController(RemoteAPIService remoteAPIService, ProjectRemoteService projectRemoteService,
-            OltuAuthorizationController authController) {
-        this.remoteAPIService = remoteAPIService;
-        this.projectRemoteService = projectRemoteService;
-        this.authController = authController;
-    }
+	@Autowired
+	public RemoteAPIController(RemoteAPIService remoteAPIService, ProjectRemoteService projectRemoteService,
+			OltuAuthorizationController authController) {
+		this.remoteAPIService = remoteAPIService;
+		this.projectRemoteService = projectRemoteService;
+		this.authController = authController;
+	}
 
-    /**
-     * Get the remote apis listing page
-     *
-     * @return The view name of the remote apis listing page
-     */
-    @RequestMapping
-    public String list() {
-        return CLIENTS_PAGE;
-    }
+	/**
+	 * Get the remote apis listing page
+	 *
+	 * @return The view name of the remote apis listing page
+	 */
+	@RequestMapping
+	public String list() {
+		return CLIENTS_PAGE;
+	}
 
-    /**
-     * Initiate a token request on a remote api if one does not yet exist. Works with
-     * {@link #handleOAuthException(HttpServletRequest, IridaOAuthException)} to initiate the request.
-     *
-     * @param apiId the ID of the api to connect to
-     * @param model the model to add attributes to.
-     * @return The name of the PARENT_FRAME_RELOAD_PAGE view
-     */
-    @RequestMapping("/connect/{apiId}")
-    public String connectToAPI(@PathVariable Long apiId, Model model) {
-        RemoteAPI api = remoteAPIService.read(apiId);
-        projectRemoteService.getServiceStatus(api);
-        model.addAttribute("remoteApi", api);
+	/**
+	 * Initiate a token request on a remote api if one does not yet exist. Works with
+	 * {@link #handleOAuthException(HttpServletRequest, IridaOAuthException)} to initiate the request.
+	 *
+	 * @param apiId the ID of the api to connect to
+	 * @param model the model to add attributes to.
+	 * @return The name of the PARENT_FRAME_RELOAD_PAGE view
+	 */
+	@RequestMapping("/connect/{apiId}")
+	public String connectToAPI(@PathVariable Long apiId, Model model) {
+		RemoteAPI api = remoteAPIService.read(apiId);
+		projectRemoteService.getServiceStatus(api);
+		model.addAttribute("remoteApi", api);
 
-        return PARENT_FRAME_RELOAD_PAGE;
-    }
+		return PARENT_FRAME_RELOAD_PAGE;
+	}
 
-    /**
-     * Handle an {@link IridaOAuthException} by launching an authentication flow
-     *
-     * @param request The incoming request method
-     * @param ex      The thrown exception
-     * @return A redirect to the {@link OltuAuthorizationController}'s authentication
-     */
-    @ExceptionHandler(IridaOAuthException.class)
-    public String handleOAuthException(HttpServletRequest request, IridaOAuthException ex) {
-        logger.debug("Caught IridaOAuthException.  Beginning OAuth2 authentication token flow.");
-        String requestURI = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-        HttpSession session = request.getSession();
+	/**
+	 * Handle an {@link IridaOAuthException} by launching an authentication flow
+	 *
+	 * @param request The incoming request method
+	 * @param ex      The thrown exception
+	 * @return A redirect to the {@link OltuAuthorizationController}'s authentication
+	 */
+	@ExceptionHandler(IridaOAuthException.class)
+	public String handleOAuthException(HttpServletRequest request, IridaOAuthException ex) {
+		logger.debug("Caught IridaOAuthException.  Beginning OAuth2 authentication token flow.");
+		String requestURI = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+		HttpSession session = request.getSession();
 
-        return authController.authenticate(session, ex.getRemoteAPI(), requestURI);
-    }
+		return authController.authenticate(session, ex.getRemoteAPI(), requestURI);
+	}
 
 }

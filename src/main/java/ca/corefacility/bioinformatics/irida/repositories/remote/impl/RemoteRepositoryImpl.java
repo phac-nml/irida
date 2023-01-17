@@ -37,8 +37,8 @@ public abstract class RemoteRepositoryImpl<Type extends IridaRepresentationModel
 	private UserService userService;
 
 	// type references for the resources being read by this repository
-	final protected ParameterizedTypeReference<ListResourceWrapper<Type>> listTypeReference;
-	final protected ParameterizedTypeReference<ResourceWrapper<Type>> objectTypeReference;
+	protected final ParameterizedTypeReference<ListResourceWrapper<Type>> listTypeReference;
+	protected final ParameterizedTypeReference<ResourceWrapper<Type>> objectTypeReference;
 
 	/**
 	 * Create a new repository with the given rest template and object params

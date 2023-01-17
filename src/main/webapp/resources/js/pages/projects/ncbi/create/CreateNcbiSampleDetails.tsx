@@ -133,6 +133,36 @@ export default function CreateNcbiSampleDetails({
     value: file.id,
   }));
 
+  async function filesValidator(
+    singlesFiles = [],
+    pairsFiles = []
+  ): Promise<string> {
+    if (singlesFiles.length > 0 || pairsFiles.length > 0) {
+      return Promise.resolve("");
+    }
+    return Promise.reject(
+      new Error("Must select at least one file of any type.")
+    );
+  }
+
+  function validateFiles({ getFieldValue, associatedField }) {
+    return {
+      validator(_, value) {
+        const otherFiles = getFieldValue([
+          "samples",
+          sample.name,
+          associatedField,
+        ]);
+        if (otherFiles.length > 0 || value.length > 0) {
+          return Promise.resolve("");
+        }
+        return Promise.reject(
+          new Error("Must select at least one file of any type.")
+        );
+      },
+    };
+  }
+
   return (
     <Row gutter={[16, 16]}>
       <Col md={12} xs={24}>
@@ -249,11 +279,19 @@ export default function CreateNcbiSampleDetails({
             label={i18n("CreateNcbiExport.singles")}
             valuePropName="checked"
             className="t-samples-singles"
+            rules={[
+              ({ getFieldValue }) =>
+                validateFiles({ getFieldValue, associatedField: "pairs" }),
+            ]}
           >
             <Checkbox.Group
               style={{ width: `100%` }}
               options={singles}
-              onChange={onChange}
+              onChange={function () {
+                form
+                  .validateFields([["samples", sample.name, "pairs"]])
+                  .then(onChange);
+              }}
             />
           </Form.Item>
         </Col>
@@ -264,11 +302,19 @@ export default function CreateNcbiSampleDetails({
             name={["samples", sample.name, "pairs"]}
             label={i18n("CreateNcbiExport.pairs")}
             valuePropName="checked"
+            rules={[
+              ({ getFieldValue }) =>
+                validateFiles({ getFieldValue, associatedField: "singles" }),
+            ]}
           >
             <Checkbox.Group
               style={{ width: `100%` }}
               options={pairs}
-              onChange={onChange}
+              onChange={function () {
+                form
+                  .validateFields([["samples", sample.name, "singles"]])
+                  .then(onChange);
+              }}
             />
           </Form.Item>
         </Col>

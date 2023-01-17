@@ -13,8 +13,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.RemoteAPI;
 import ca.corefacility.bioinformatics.irida.model.remote.resource.ListResourceWrapper;
@@ -26,6 +24,8 @@ import ca.corefacility.bioinformatics.irida.repositories.remote.resttemplate.OAu
 import ca.corefacility.bioinformatics.irida.service.RemoteAPITokenService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
 import ca.corefacility.bioinformatics.irida.web.controller.api.samples.RESTSampleMetadataController;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * An implementation of {@link SampleRemoteRepository}
@@ -43,7 +43,7 @@ public class SampleRemoteRepositoryImpl extends RemoteRepositoryImpl<Sample> imp
 	private static final ParameterizedTypeReference<ResourceWrapper<SampleMetadataWrapper>> metadataTypeReference = new ParameterizedTypeReference<ResourceWrapper<SampleMetadataWrapper>>() {
 	};
 
-	private final static String METADATA_REL = RESTSampleMetadataController.METADATA_REL;
+	private static final String METADATA_REL = RESTSampleMetadataController.METADATA_REL;
 
 	private RemoteAPITokenService tokenService;
 

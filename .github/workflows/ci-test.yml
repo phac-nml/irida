@@ -18,6 +18,7 @@ on:
 
 jobs:
   gradle-build: # Gradle integration tests
+    timeout-minutes: 60
     runs-on: ubuntu-20.04 #See pre-installed software at https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-Readme.md
     env:
       MYSQL_PORT: 3800

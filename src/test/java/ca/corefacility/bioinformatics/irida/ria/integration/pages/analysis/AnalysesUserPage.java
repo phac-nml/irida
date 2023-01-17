@@ -46,8 +46,6 @@ public class AnalysesUserPage extends AbstractPage {
 	@FindBy(css = ".ant-input-group .ant-input-suffix")
 	private WebElement outputsSearchInputClearBtn;
 
-
-
 	public AnalysesUserPage(WebDriver driver) {
 		super(driver);
 	}
@@ -63,7 +61,8 @@ public class AnalysesUserPage extends AbstractPage {
 	}
 
 	public int getNumberOfAnalysesDisplayed() {
-		return rows.size();}
+		return rows.size();
+	}
 
 	public int getNumberSingleSampleAnalysisOutputsDisplayed() {
 		return singleSampleAnalysisOutputsRows.size();
