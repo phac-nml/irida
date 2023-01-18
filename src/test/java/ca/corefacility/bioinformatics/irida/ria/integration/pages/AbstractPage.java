@@ -277,10 +277,20 @@ public class AbstractPage {
 	public void enterSearchQueryInNavBar(String query) {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
 		driver.findElement(By.cssSelector("[aria-label=search]")).click();
-		WebElement searchInput = wait
-				.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".t-global-search input")));
+		WebElement searchInput = wait.until(
+				ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".t-global-search input")));
 		searchInput.sendKeys(query);
 		searchInput.sendKeys(Keys.ENTER);
 		wait.until(ExpectedConditions.urlContains("search?query=" + query));
+	}
+
+	public boolean is404BoundaryDisplayed() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+		try {
+			wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("ant-result-404")));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 }

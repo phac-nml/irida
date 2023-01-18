@@ -36,10 +36,9 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	@Test
 	public void testGoingToInvalidPage() {
 		LoginPage.loginAsManager(driver());
-
-		assertThrows(AssertionError.class, () -> {
-			ProjectSamplesPage.goToPage(driver(), 100);
-		});
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 100);
+		assertTrue(page.is404BoundaryDisplayed(),
+				"Project 100 is not valid, therefore error boundary should be displayed");
 	}
 
 	@Test
