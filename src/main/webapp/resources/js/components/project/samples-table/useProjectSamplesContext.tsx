@@ -17,6 +17,10 @@ import { TableOptions } from "../../../types/ant-design";
 import { SelectedSample } from "../../../types/irida";
 import { formatSearch, formatSort } from "../../../utilities/table-utilities";
 
+/**
+ * @fileoverview Context for the project samples page.  Tracks the state of the table.
+ */
+
 const INITIAL_TABLE_OPTIONS: TableOptions = {
   filters: undefined,
   pagination: {
@@ -70,12 +74,12 @@ const ProjectSamplesContext = createContext<
 >(undefined);
 
 /**
- * Called to format a sample when a sample is selected.
- * Needs to be converted to this format so that it can be used by the share
- * samples page and the cart.
+ * Convert a sample into a selected sample to simplify storage.
  * @param projectSample - Sample details object returned as part of the table data
  */
-const formatSelectedSample = (projectSample: TableSample): SelectedSample => ({
+const formatSelectedSample = (
+  projectSample: TableSample | ProjectSample
+): SelectedSample => ({
   key: projectSample.key,
   id: projectSample.sample.id,
   projectId: projectSample.project.id,
@@ -166,7 +170,7 @@ function selectAllSamples(
 /**
  * Deselect selected samples
  * @param state - current state of the page
- * @returns new state of the application
+ * @returns new state of the app
  */
 function deselectAllSamples(state: State): State {
   return { ...state, selection: { count: 0, selected: {} } };
