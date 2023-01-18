@@ -215,13 +215,15 @@ export default function SamplesTable(): JSX.Element {
     },
   ];
 
+  const handleTableChangeCallback = useCallback(handleTableChange, [dispatch]);
+
   return (
     <Table
       loading={isFetchingSamples || isFetchingAssociated || isFetchingIds}
       dataSource={data?.content}
       columns={columns}
       pagination={data?.total ? getPaginationOptions(data.total) : undefined}
-      onChange={handleTableChange}
+      onChange={handleTableChangeCallback}
       style={{ width: `100%` }}
     />
   );
