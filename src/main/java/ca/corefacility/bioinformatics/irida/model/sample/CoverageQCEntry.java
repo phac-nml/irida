@@ -89,7 +89,7 @@ public class CoverageQCEntry extends QCEntry {
 		}
 
 		// if maximum is set, check if coverage is over it
-		if(maximumCoverage != null && coverage > maximumCoverage){
+		if (maximumCoverage != null && coverage > maximumCoverage) {
 			status = QCEntryStatus.NEGATIVE;
 		}
 

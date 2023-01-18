@@ -42,7 +42,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Generates test data for unit tests.
- *
  */
 public class TestDataFactory {
 	public static final String FAKE_FILE_PATH = "src/test/resources/files/{name}";
@@ -65,8 +64,8 @@ public class TestDataFactory {
 		s.setId(1L);
 		return s;
 	}
-	
-	public static SingleEndSequenceFile constructSingleEndSequenceFile(){
+
+	public static SingleEndSequenceFile constructSingleEndSequenceFile() {
 		Path path = Paths.get("/tmp/sequence-files/fake-file1.fast");
 		return new SingleEndSequenceFile(new SequenceFile(path));
 	}
@@ -80,12 +79,12 @@ public class TestDataFactory {
 		Path path = Paths.get("/tmp/sequence-files/fake-file" + Math.random() + ".fast");
 		return new ReferenceFile(path);
 	}
-	
+
 	public static GenomeAssembly constructGenomeAssembly() {
 		AnalysisSubmission submission = constructAnalysisSubmission();
 		return new GenomeAssemblyFromAnalysis(submission);
 	}
-	
+
 	public static AnalysisSubmission constructAnalysisSubmission() {
 		return constructAnalysisSubmission(UUID.randomUUID());
 	}
@@ -121,7 +120,8 @@ public class TestDataFactory {
 				.put("contigs-with-repeats", constructAnalysisOutputFile("test_file.fasta", null))
 				.put("refseq-masher-matches", constructAnalysisOutputFile("refseq-masher-matches.tsv", 9000L))
 				.build();
-		Analysis analysis = new Analysis(FAKE_EXECUTION_MANAGER_ID, analysisOutputFiles, BuiltInAnalysisTypes.PHYLOGENOMICS);
+		Analysis analysis = new Analysis(FAKE_EXECUTION_MANAGER_ID, analysisOutputFiles,
+				BuiltInAnalysisTypes.PHYLOGENOMICS);
 		return analysis;
 	}
 
@@ -130,20 +130,22 @@ public class TestDataFactory {
 		return user;
 	}
 
-	public static List<SampleSequencingObjectJoin> generateSingleFileSequencingObjectsForSample(Sample sample, List<String> fileNames) {
+	public static List<SampleSequencingObjectJoin> generateSingleFileSequencingObjectsForSample(Sample sample,
+			List<String> fileNames) {
 		List<SampleSequencingObjectJoin> join = new ArrayList<>();
 		for (int i = 0; i < fileNames.size(); i++) {
 			Path path = Paths.get(fileNames.get(i));
 			SequenceFile file = new SequenceFile(path);
-			file.setId((long)i+1);
+			file.setId((long) i + 1);
 			SingleEndSequenceFile obj = new SingleEndSequenceFile(file);
-			obj.setId((long)i+1);
+			obj.setId((long) i + 1);
 			join.add(new SampleSequencingObjectJoin(sample, obj));
 		}
 		return join;
 	}
 
-	public static List<SampleSequencingObjectJoin> generatePairSequencingObjectsForSample(Sample sample, List<String> filePairNames) {
+	public static List<SampleSequencingObjectJoin> generatePairSequencingObjectsForSample(Sample sample,
+			List<String> filePairNames) {
 		List<SampleSequencingObjectJoin> join = new ArrayList<>();
 
 		Path path1 = Paths.get(filePairNames.get(0));
@@ -167,8 +169,8 @@ public class TestDataFactory {
 		}
 		ToolExecution toolExecution = new ToolExecution(1L, null, "testTool", "0.0.12", "executionManagersId",
 				ImmutableMap.of());
-		final AnalysisOutputFile of = new AnalysisOutputFile(Paths.get(FAKE_FILE_PATH.replace("{name}", name)), "", FAKE_EXECUTION_MANAGER_ID,
-				toolExecution);
+		final AnalysisOutputFile of = new AnalysisOutputFile(Paths.get(FAKE_FILE_PATH.replace("{name}", name)), "",
+				FAKE_EXECUTION_MANAGER_ID, toolExecution);
 		final DirectFieldAccessor dfa = new DirectFieldAccessor(of);
 		dfa.setPropertyValue("id", id);
 		return of;
@@ -213,8 +215,8 @@ public class TestDataFactory {
 		return list;
 	}
 
-	public static ProjectAnalysisSubmissionJoin constructProjectAnalysisSubmissionJoin(
-		Project project, AnalysisSubmission submission) {
+	public static ProjectAnalysisSubmissionJoin constructProjectAnalysisSubmissionJoin(Project project,
+			AnalysisSubmission submission) {
 		return new ProjectAnalysisSubmissionJoin(project, submission);
 	}
 
@@ -239,11 +241,13 @@ public class TestDataFactory {
 
 	public static Page<ProjectSampleJoin> getPageOfProjectSampleJoin() {
 		return new Page<ProjectSampleJoin>() {
-			@Override public int getTotalPages() {
+			@Override
+			public int getTotalPages() {
 				return 1;
 			}
 
-			@Override public long getTotalElements() {
+			@Override
+			public long getTotalElements() {
 				return 1;
 			}
 
@@ -252,62 +256,73 @@ public class TestDataFactory {
 				return null;
 			}
 
-			@Override public int getNumber() {
+			@Override
+			public int getNumber() {
 				return 1;
 			}
 
-			@Override public int getSize() {
+			@Override
+			public int getSize() {
 				return 1;
 			}
 
-			@Override public int getNumberOfElements() {
+			@Override
+			public int getNumberOfElements() {
 				return 1;
 			}
 
-			@Override public List<ProjectSampleJoin> getContent() {
+			@Override
+			public List<ProjectSampleJoin> getContent() {
 				Project project = new Project("Joined Project");
 				project.setId(1L);
 				Sample sample = new Sample("Joined Sample");
 				sample.setId(23L);
 				ProjectSampleJoin join = new ProjectSampleJoin(project, sample, true);
-				return ImmutableList.of(
-					join
-				);
+				return ImmutableList.of(join);
 			}
 
-			@Override public boolean hasContent() {
+			@Override
+			public boolean hasContent() {
 				return false;
 			}
 
-			@Override public Sort getSort() {
+			@Override
+			public Sort getSort() {
 				return null;
 			}
 
-			@Override public boolean isFirst() {
+			@Override
+			public boolean isFirst() {
 				return false;
 			}
 
-			@Override public boolean isLast() {
+			@Override
+			public boolean isLast() {
 				return false;
 			}
 
-			@Override public boolean hasNext() {
+			@Override
+			public boolean hasNext() {
 				return false;
 			}
 
-			@Override public boolean hasPrevious() {
+			@Override
+			public boolean hasPrevious() {
 				return false;
 			}
 
-			@Override public Pageable nextPageable() {
+			@Override
+			public Pageable nextPageable() {
 				return null;
 			}
 
-			@Override public Pageable previousPageable() {
+			@Override
+			public Pageable previousPageable() {
 				return null;
 			}
 
-			@Override public Iterator<ProjectSampleJoin> iterator() {
+			@Override
+			public Iterator<ProjectSampleJoin> iterator() {
 				return null;
 			}
 		};

@@ -55,13 +55,13 @@ import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 @Import({ WebEmailConfig.class, IridaApiSecurityConfig.class })
 public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAware {
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
-	private final static String EXTERNAL_TEMPLATE_DIRECTORY = "/etc/irida/templates/";
+	private static final String EXTERNAL_TEMPLATE_DIRECTORY = "/etc/irida/templates/";
 	private static final String INTERNAL_TEMPLATE_PREFIX = "/pages/";
 	private static final String HTML_TEMPLATE_SUFFIX = ".html";
 	private static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
 
-	private final static String ANALYTICS_DIR = "/etc/irida/analytics/";
+	private static final String ANALYTICS_DIR = "/etc/irida/analytics/";
 
 	@Value("${locales.default}")
 	private String defaultLocaleValue;

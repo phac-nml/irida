@@ -171,7 +171,7 @@ public class LocalGalaxy {
 	 * @return  The id of the workflow constructed.
 	 * @throws IOException If there was an error reading the workflow file.
 	 */
-	private String constructTestWorkflow(Path workflowFile) throws IOException,RuntimeException {
+	private String constructTestWorkflow(Path workflowFile) throws IOException, RuntimeException {
 		checkNotNull(workflowFile, "workflowFile is null");
 				
 		String content = readFile(workflowFile);

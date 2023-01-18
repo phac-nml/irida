@@ -427,13 +427,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		waitForTableToUpdate(prevTotal);
 	}
 
-	public void clearFilterByCreatedDate() {
-		int prevTotal = getTableSummary().getTotal();
-		createdDateFilterToggle.click();
-		createdDateFilter.findElement(By.className("t-clear-btn")).click();
-		createdDateFilterToggle.click();
-		waitForTableToUpdate(prevTotal);
-	}
+    public void clearFilterByCreatedDate() {
+        int prevTotal = getTableSummary().getTotal();
+        createdDateFilterToggle.click();
+        createdDateFilter.findElement(By.className("t-clear-btn")).click();
+        createdDateFilterToggle.click();
+        waitForTableToUpdate(prevTotal);
+    }
 
 	public void filterByModifiedDate(String start, String end) {
 		int prevTotal = getTableSummary().getTotal();

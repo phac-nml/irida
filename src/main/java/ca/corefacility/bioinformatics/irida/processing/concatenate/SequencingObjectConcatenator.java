@@ -1,16 +1,17 @@
 package ca.corefacility.bioinformatics.irida.processing.concatenate;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import com.google.common.collect.Lists;
-
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Optional;
+
+import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+
+import com.google.common.collect.Lists;
 
 /**
  * Class to concatenate multiple {@link SequencingObject}s and return a single new {@link SequencingObject}. This class
@@ -45,7 +46,7 @@ public abstract class SequencingObjectConcatenator<Type extends SequencingObject
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
 			try (FileChannel in = FileChannel.open(file.getFile(), StandardOpenOption.READ)) {
-				for (long p = 0, l = in.size(); p < l; ) {
+				for (long p = 0, l = in.size(); p < l;) {
 					p += in.transferTo(p, l - p, out);
 				}
 			} catch (IOException e) {
@@ -69,9 +70,7 @@ public abstract class SequencingObjectConcatenator<Type extends SequencingObject
 		for (SequencingObject object : toConcatenate) {
 
 			for (SequenceFile file : object.getFiles()) {
-				String fileName = file.getFile()
-						.toFile()
-						.getName();
+				String fileName = file.getFile().toFile().getName();
 
 				Optional<String> currentExtensionOpt = VALID_EXTENSIONS.stream()
 						.filter(e -> fileName.endsWith(e))
@@ -86,9 +85,8 @@ public abstract class SequencingObjectConcatenator<Type extends SequencingObject
 				if (selectedExtension == null) {
 					selectedExtension = currentExtensionOpt.get();
 				} else if (selectedExtension != currentExtensionOpt.get()) {
-					throw new ConcatenateException(
-							"Extensions of files to concatenate do not match " + currentExtension + " vs "
-									+ selectedExtension);
+					throw new ConcatenateException("Extensions of files to concatenate do not match " + currentExtension
+							+ " vs " + selectedExtension);
 				}
 			}
 		}
