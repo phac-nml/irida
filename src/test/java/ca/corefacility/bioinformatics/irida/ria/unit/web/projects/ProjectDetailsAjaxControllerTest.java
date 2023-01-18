@@ -51,7 +51,7 @@ public class ProjectDetailsAjaxControllerTest {
 		ProjectDetailsResponse content = (ProjectDetailsResponse) response.getBody();
 		assert content != null;
 		assertEquals(TestDataFactory.TEST_PROJECT_DESCRIPTION, content.getDescription());
-		assertEquals(TestDataFactory.TEST_PROJECT_LABEL, content.getLabel());
+		assertEquals(TestDataFactory.TEST_PROJECT_LABEL, content.getName());
 		assertEquals(TestDataFactory.TEST_PROJECT_ORGANISM, content.getOrganism());
 	}
 

@@ -14,7 +14,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.settings.dto.C
 
 public class ProjectDetailsResponse extends AjaxResponse {
 	private Long id;
-	private String label;
+	private String name;
 	private Date createdDate;
 	private Date modifiedDate;
 	private String organism;
@@ -28,7 +28,7 @@ public class ProjectDetailsResponse extends AjaxResponse {
 
 	public ProjectDetailsResponse(Project project, boolean canManage, boolean canManageRemote, MetadataTemplate defaultMetadataTemplate) {
 		this.id = project.getId();
-		this.label = project.getName();
+		this.name = project.getName();
 		this.createdDate = project.getCreatedDate();
 		this.modifiedDate = project.getModifiedDate();
 		this.organism = project.getOrganism();
@@ -61,12 +61,12 @@ public class ProjectDetailsResponse extends AjaxResponse {
 		this.id = id;
 	}
 
-	public String getLabel() {
-		return label;
+	public String getName() {
+		return name;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Date getCreatedDate() {
