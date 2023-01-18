@@ -3,6 +3,10 @@ import { Button, Card, Result } from "antd";
 import { CONTEXT_PATH } from "../../data/routes";
 import React from "react";
 
+/**
+ * React component to catch errors at the page level for the SPA.
+ * @constructor
+ */
 export default function PageBoundary() {
   const error = useRouteError() as {
     status: 404 | 500;
@@ -15,8 +19,8 @@ export default function PageBoundary() {
         status={error.status}
         title={error.data}
         extra={
-          <Button type="primary" href={CONTEXT_PATH}>
-            Back Home
+          <Button type="primary" href={`${CONTEXT_PATH}/projects`}>
+            {i18n("PageBoundary.return")}
           </Button>
         }
       />
