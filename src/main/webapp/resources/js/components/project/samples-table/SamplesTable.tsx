@@ -215,16 +215,30 @@ export default function SamplesTable(): JSX.Element {
     },
   ];
 
+  const tableSummery = () => (
+    <Table.Summary.Row>
+      <Table.Summary.Cell colSpan={5} className="t-summary" index={0}>
+        {i18n("SamplesTable.Summary", state.selection.count, data?.total)}
+      </Table.Summary.Cell>
+    </Table.Summary.Row>
+  );
+
   const handleTableChangeCallback = useCallback(handleTableChange, [dispatch]);
+  const tableSummaryCallback = useCallback(tableSummery, [
+    data?.total,
+    state.selection.count,
+  ]);
 
   return (
     <Table
+      className={"t-samples-table"}
       loading={isFetchingSamples || isFetchingAssociated || isFetchingIds}
       dataSource={data?.content}
       columns={columns}
       pagination={data?.total ? getPaginationOptions(data.total) : undefined}
       onChange={handleTableChangeCallback}
       style={{ width: `100%` }}
+      summary={tableSummaryCallback}
     />
   );
 }
