@@ -143,7 +143,7 @@ export class TableComponent extends React.Component {
       .map((field) => {
         const index = columnState.findIndex((c) => c.colId === field.field);
         if (index > -1) {
-          const col = columnState.splice(index, 1)[0];
+          const [col] = columnState.splice(index, 1);
 
           /*
           Determine the visibility of the column based on the template field.
