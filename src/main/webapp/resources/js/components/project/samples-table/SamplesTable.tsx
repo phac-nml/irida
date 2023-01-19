@@ -217,7 +217,7 @@ export default function SamplesTable(): JSX.Element {
 
   const tableSummery = () => (
     <Table.Summary.Row>
-      <Table.Summary.Cell colSpan={5} className="t-summary" index={0}>
+      <Table.Summary.Cell colSpan={9} className="t-summary" index={0}>
         {i18n("SamplesTable.Summary", state.selection.count, data?.total)}
       </Table.Summary.Cell>
     </Table.Summary.Row>
