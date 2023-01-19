@@ -83,17 +83,18 @@ export const validateEmail = (email) =>
 
 /**
  * Server validate a sample name asynchronously
- * @param {string} name - Sample name to validate
- * @returns {Promise<void>}
+ * @param name - Sample name to validate
  */
-export const serverValidateSampleName = async (name) => {
+export async function serverValidateSampleName(
+  name: string
+): Promise<string | void> {
   const data = await validateSampleName(name);
   if (data.status === "success") {
     return Promise.resolve();
   } else {
     return Promise.reject(new Error(data.help));
   }
-};
+}
 
 /**
  * Validate a password

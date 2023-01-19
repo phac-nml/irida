@@ -6,7 +6,7 @@ import { SharedSamplesList } from "./SharedSamplesList";
 import { updatedLocked, updateMoveSamples } from "./shareSlice";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { SPACE_XS } from "../../../styles/spacing";
-import LockedSamplesList from "../samples/components/LockedSamplesList";
+import LockedSamplesList from "../../../components/project/samples-table/components/LockedSamplesList";
 
 const { Panel } = Collapse;
 /**

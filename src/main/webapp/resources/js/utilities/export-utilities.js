@@ -6,6 +6,6 @@ import * as XLSX from "xlsx";
  * @param {string} data - csv representation of the table data.
  */
 export default ({ filename, data }) => {
-  const workbook = XLSX.read(data, { type: 'binary', raw: true, dense: true });
-  XLSX.writeFile(workbook, filename, { bookType: 'xlsx', type: 'base64' });
+  const workbook = XLSX.read(data, { type: "binary", raw: true, dense: true });
+  XLSX.writeFile(workbook, filename, { bookType: "xlsx", type: "base64" });
 };

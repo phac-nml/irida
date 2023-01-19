@@ -13,7 +13,7 @@ const AppLayout = (): JSX.Element => (
     <Layout.Header>
       <MainNavigation />
     </Layout.Header>
-    <Layout.Content>
+    <Layout.Content style={{ overflowY: "auto" }}>
       <Suspense fallback={<LoadingOutlined />}>
         <Outlet />
       </Suspense>

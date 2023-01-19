@@ -122,16 +122,20 @@ declare namespace IRIDA {
   }
 
   interface Project extends BaseModel {
-    description: string;
+    analysisPriority: string;
+    analysisTemplates: string[]; // TODO (Josh - 6/7/22): What should this be
     organism: string;
-    genomeSize: number;
-    minimumCoverage: number;
-    maximumCoverage: number;
+    coverage: {
+      minimum: number;
+      maximum: number;
+      genomeSize: number;
+    };
+    defaultMetadataTemplate: number;
+    description: string;
+    priority?: number;
     remoteStatus: number;
     syncFrequency: string; // TODO (Josh - 6/7/22): is this a string?
-    analysisPriority: string;
     users: User[];
-    analysisTemplates: string[]; // TODO (Josh - 6/7/22): What should this be
   }
 
   type ProjectMinimal = Pick<Project, "id" | "name">;
@@ -148,7 +152,7 @@ declare namespace IRIDA {
     latitude: string;
     longitude: string;
     projects: Project[];
-    sequenceFiles: any[]; // TODO (Josh - 6/7/22): FLush this out
+    sequenceFiles: unknown[]; // TODO (Josh - 6/7/22): FLush this out
     defaultSequencingObject: SequencingObject;
     defaultGenomeAssembly: GenomeAssembly;
     sampleName: string;
@@ -222,6 +226,11 @@ declare namespace IRIDA {
     bioSampleFiles: NcbiBioSampleFiles[];
   }
 
+  export type SelectedSample = Pick<Sample, "id" | "key" | "sampleName"> & {
+    owner: boolean;
+    projectId: number;
+  };
+
   interface SequenceFile extends BaseModel {
     fileSize: string;
   }
@@ -233,6 +242,11 @@ declare namespace IRIDA {
   interface SingleEndSequenceFile extends BaseModel {
     file: SequenceFile;
   }
+
+  type TableResponse<T> = {
+    content: T[];
+    total: number;
+  };
 
   type UserMinimal = Pick<User, "name" | "id">;
 }

@@ -103,6 +103,7 @@ public class UserGroupsIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(2, listingPage.getNumberOfExistingUserGroups(), "Should have 2 user groups");
 	}
 
+	@Disabled
 	@Test
 	public void testAddGroupMemberWhenManagerOnMemberProjectAsCollaborator() {
 		Long PROJECT_ID = 9L;

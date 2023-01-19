@@ -1,18 +1,25 @@
 import React from "react";
 import { Avatar, List, Popover, Tag } from "antd";
+import { IconCheck, IconWarning } from "../../../icons/Icons";
+import { red6 } from "../../../../styles/colors";
 import { ExclamationOutlined } from "@ant-design/icons";
-import { red6 } from "../../styles/colors";
-import { IconCheck, IconWarning } from "../icons/Icons";
+
+export type SampleQualityParams = {
+  qcStatus: string;
+  qualities: string[];
+};
 
 /**
  * React component to render the quality data for a sample.
  *
  * @param qcStatus
  * @param qualities - list of qc issues associated with the sample
- * @returns {JSX.Element}
  * @constructor
  */
-export default function SampleQuality({ qcStatus, qualities }) {
+export default function SampleQuality({
+  qcStatus,
+  qualities,
+}: SampleQualityParams): JSX.Element {
   return qualities.length === 0 ? (
     <>
       {qcStatus === "pass" ? (

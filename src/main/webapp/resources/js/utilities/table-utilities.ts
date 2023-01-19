@@ -1,16 +1,29 @@
 import moment from "moment";
+import {
+  TableFilters,
+  TableOperation,
+  TableSearch,
+  TableSortOrder,
+} from "../types/ant-design";
+import { SelectedSample } from "../types/irida";
+import { SorterResult } from "antd/es/table/interface";
+import { ProjectSample } from "../redux/endpoints/project-samples";
 
 /**
  * Format Sort Order from the Ant Design sorter object
  * @param {array | object} sorter Ant Design sorter object
  * @returns array of Sort Order objects
  */
-export function formatSort(sorter) {
-  const order = { ascend: "asc", descend: "desc" };
-  const formatProperty = (property) => property.join(".");
-  const fromSorter = (item) => ({
-    property: formatProperty(item.field),
-    direction: order[item.order],
+export function formatSort(
+  sorter: SorterResult<ProjectSample> | SorterResult<ProjectSample>[]
+): TableSortOrder[] | undefined {
+  const formatProperty = (property: string[]): string => property.join(".");
+
+  const fromSorter = (item: SorterResult<ProjectSample>): TableSortOrder => ({
+    property: Array.isArray(item.field)
+      ? formatProperty(item.field)
+      : (item.field as string),
+    direction: item.order === "descend" ? "desc" : "asc",
   });
 
   if (Array.isArray(sorter)) {
@@ -26,13 +39,14 @@ export function formatSort(sorter) {
  * @param {array | object} filters Ant Design filters object
  * @returns array of Search objects
  */
-export function formatSearch(filters) {
-  const defaultOperation = "MATCH";
-  const formattedSearch = [];
+export function formatSearch(filters: TableFilters): TableSearch[] {
+  const defaultOperation: TableOperation = "MATCH";
+  const formattedSearch: TableSearch[] = [];
 
   for (const filter in filters) {
     for (const index in filters[filter]) {
       const value = filters[filter][index];
+
       // if we have two values, and they are both moment objects then add searches for date range.
       if (
         Array.isArray(value) &&
@@ -64,14 +78,20 @@ export function formatSearch(filters) {
   return formattedSearch;
 }
 
-export const formatFilterBySampleNames = (samples) => {
+/**
+ * Format the filter by samples names value to send to the server
+ * @param samples
+ */
+export function formatFilterBySampleNames(
+  samples: SelectedSample[]
+): TableSearch {
   return {
     property: "sample.sampleName",
     value: samples.map((sample) => sample.sampleName),
     operation: "IN",
     _file: true,
   };
-};
+}
 
 export const stringSorter = (property) => (a, b) =>
   a[property].localeCompare(b[property], window.TL.LANGUAGE_TAG, {

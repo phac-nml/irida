@@ -8,25 +8,30 @@ import {
 } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./redux/store";
-import { getContextPath } from "./utilities/url-utilities";
 import AppLayout from "./layouts/app-layout";
-import ProjectLayout from "./layouts/project-layout";
+import ProjectLayout, { projectLoader } from "./layouts/project-layout";
+import PageBoundary from "./layouts/error-boundary/PageBoundary";
+import { CONTEXT_PATH } from "./data/routes";
+
+const ProjectSamples = React.lazy(() => import("./layouts/project-samples"));
 
 /**
  * @fileoverview This is the highest level React component in IRIDA.  it's responsible
  * for the global layout, and routing.
  */
 
-const CONTEXT_PATH = getContextPath();
-
 __webpack_public_path__ = `${CONTEXT_PATH}/dist/`;
 
-// TODO: (Josh - 12/2/22) Build up from the root here so we can easy add
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path={CONTEXT_PATH} element={<AppLayout />}>
-      <Route path={`projects/:projectId`} element={<ProjectLayout />}>
-        <Route index element={<div>SAMPLES</div>} id={`project-samples`} />
+      <Route
+        path={`projects/:projectId`}
+        element={<ProjectLayout />}
+        loader={projectLoader}
+        errorElement={<PageBoundary />}
+      >
+        <Route index element={<ProjectSamples />} id={`project-samples`} />
         <Route
           path={`linelist`}
           element={<div>LINELIST</div>}

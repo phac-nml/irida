@@ -1,20 +1,22 @@
+import { SelectedSample } from "../types/irida";
+
 /**
- * Determine valid and invalid samples for merging samples.
- * Valid => samples that the user has ownership of
- * Invalid => no ownership
+ * Determine which samples are locked and which are unlocked based on the
  */
-export function validateSamplesForMergeOrShare(samples) {
-  const values = Object.values(samples),
-    valid = [],
-    locked = [];
-  values?.forEach((sample) => {
+export function separateLockedAndUnlockedSamples(
+  samples: Array<SelectedSample>
+) {
+  const unlocked: Array<SelectedSample> = [];
+  const locked: Array<SelectedSample> = [];
+
+  samples.forEach((sample) => {
     if (sample.owner) {
-      valid.push(sample);
+      unlocked.push(sample);
     } else {
       locked.push(sample);
     }
   });
-  return { valid, locked };
+  return [unlocked, locked];
 }
 
 /**
