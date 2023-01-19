@@ -134,7 +134,12 @@ export default function AnalysisShare() {
         storeSharedProjects({ sharedProjects: data });
       });
     }
-  }, []);
+  }, [
+    analysisIdentifier,
+    analysisShareContext.sharedProjects,
+    sharedProjects,
+    storeSharedProjects,
+  ]);
 
   /* Renders the projects which an analysis can be shared with
    * and a save results to related samples if applicable
