@@ -338,6 +338,7 @@ export class TableComponent extends React.Component {
         key: notKey,
         btn: (
           <Button
+            className={"t-undo-btn"}
             type={"primary"}
             size={"small"}
             onClick={() => {
