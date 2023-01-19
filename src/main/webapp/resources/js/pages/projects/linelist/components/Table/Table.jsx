@@ -308,7 +308,7 @@ export class TableComponent extends React.Component {
     // Get the previous value
     const previousValue = this.cellEditedValue;
     // Get the new value for the cell
-    const data = event.data;
+    const { data } = event;
 
     // Make sure that the data for saving is valid.
     if (typeof event.value !== "undefined" && previousValue !== event.value) {
