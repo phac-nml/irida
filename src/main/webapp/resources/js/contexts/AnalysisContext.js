@@ -59,7 +59,7 @@ function AnalysisProvider(props) {
   const [analysisIdentifier, setAnalysisIdentifier] = useState("");
 
   useEffect(() => {
-    const analysisId = window.location.pathname.match(/analysis\/(\d+)/)[1];
+    const [, analysisId] = window.location.pathname.match(/analysis\/(\d+)/);
     setAnalysisIdentifier(analysisId);
     getAnalysisInfo(analysisId)
       .then((res) => {
