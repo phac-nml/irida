@@ -51,7 +51,7 @@ export class TableComponent extends React.Component {
     DateCellRenderer,
   };
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidUpdate(prevProps) {
     if (prevProps.globalFilter !== this.props.globalFilter) {
       this.api.setQuickFilter(this.props.globalFilter);
     }
