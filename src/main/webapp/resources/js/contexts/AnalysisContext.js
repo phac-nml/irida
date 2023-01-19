@@ -13,7 +13,6 @@ import {
 } from "../apis/analysis/analysis";
 
 import { useInterval } from "../hooks";
-import { showNotification } from "../modules/notifications";
 
 /*
  * Since we are using Steps and only want to display
@@ -191,7 +190,7 @@ function AnalysisProvider(props) {
       analysisName: updatedAnalysisName,
       priority: null,
     }).then((message) => {
-      showNotification({ text: message });
+      notification.info({ message });
       setAnalysisContext((analysisContext) => {
         return { ...analysisContext, analysisName: updatedAnalysisName };
       });

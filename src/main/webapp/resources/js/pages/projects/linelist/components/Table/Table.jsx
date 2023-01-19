@@ -1,8 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
-import { notification, Spin } from "antd";
+import { Button, notification, Spin } from "antd";
 import isEqual from "lodash/isEqual";
-import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
@@ -333,19 +332,28 @@ export class TableComponent extends React.Component {
             `${headerName}`,
             `${data[FIELDS.sampleName]}`
           );
-      showUndoNotification(
-        {
-          text,
-        },
-        () => {
-          /**
-           * Callback to reverse the change.
-           */
-          data[field] = previousValue;
-          this.props.entryEdited(data, field, headerName);
-          event.node.setDataValue(field, previousValue);
-        }
-      );
+      const notKey = `open${Date.now()}`;
+      notification.success({
+        message: text,
+        key: notKey,
+        btn: (
+          <Button
+            type={"primary"}
+            size={"small"}
+            onClick={() => {
+              /**
+               * Callback to reverse the change.
+               */
+              data[field] = previousValue;
+              this.props.entryEdited(data, field, headerName);
+              event.node.setDataValue(field, previousValue);
+              notification.close(notKey);
+            }}
+          >
+            {i18n("generic.undo")}
+          </Button>
+        ),
+      });
     }
     // Remove the stored value for the cell
     delete this.cellEditedValue;

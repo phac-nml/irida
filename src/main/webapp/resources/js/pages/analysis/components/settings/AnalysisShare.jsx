@@ -7,12 +7,11 @@
  * required by the component
  */
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Checkbox, List, Typography } from "antd";
+import { Button, Checkbox, List, notification, Typography } from "antd";
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../../contexts/AnalysisDetailsContext";
 import { AnalysisShareContext } from "../../../../contexts/AnalysisShareContext";
 
-import { showNotification } from "../../../../modules/notifications";
 import { SPACE_MD } from "../../../../styles/spacing";
 import { InfoAlert } from "../../../../components/alerts/InfoAlert";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
@@ -117,8 +116,8 @@ export default function AnalysisShare() {
       submissionId: analysisIdentifier,
       projectId: e.target.value,
       shareStatus: e.target.checked,
-    }).then((res) => {
-      showNotification({ text: res.message });
+    }).then(({ message }) => {
+      notification.success({ message });
       updateSharedProjectShareStatus({
         projectId: e.target.value,
         shareStatus: e.target.checked,
