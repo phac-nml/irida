@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 
-<Submission schema_version="2.0" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<Submission schema_version="2.0" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://www.ncbi.nlm.nih.gov/viewvc/v1/trunk/submit/public-docs/common/submission.xsd?view=co">
 	<Description>
 		<Organization role="owner" type="institute">
@@ -17,7 +18,8 @@
 
 	<Action>
 		
-		<AddFiles target_db="SRA">
+		<AddFiles
+			target_db="SRA">
 			
 			
 				<File file_path="1.fastq">

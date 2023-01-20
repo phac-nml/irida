@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 
 <Submission schema_version="2.0" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://www.ncbi.nlm.nih.gov/viewvc/v1/trunk/submit/public-docs/common/submission.xsd?view=co">
 	<Description>
 		<Organization role="owner" type="institute">
@@ -17,13 +18,12 @@
 	</Description>
 
 	<Action th:each="sample : ${submission.bioSampleFiles}">
-		<!--/*-->
-		IRIDA sequence files may either be plaintext (.fastq) or gzip compressed (.fastq.gz)
-		NCBI requires that uploaded files should have the appropriate file extension.
-		Determine if the IRIDA sequence file is compressed by looking for .gz extension
-		and add the appropriate extension to the uploaded files.
-		<!--*/-->
-		<AddFiles target_db="SRA" th:each="file : ${sample.files}">
+		<!--/*--> IRIDA sequence files may either be
+		plaintext (.fastq) or gzip compressed (.fastq.gz) NCBI requires that uploaded files should
+		have the appropriate file extension. Determine if the IRIDA sequence file is compressed by
+		looking for .gz extension and add the appropriate extension to the uploaded files. <!--*/-->
+		<AddFiles
+			target_db="SRA" th:each="file : ${sample.files}">
 			<th:block th:if="${file.getFiles().toString().endsWith(&quot;.gz&quot;)}">
 				<File th:attr="file_path=${file.getId() + '.fastq.gz'}">
 					<DataType>generic-data</DataType>
@@ -38,9 +38,11 @@
 			<Attribute name="library_name" th:text="${sample.libraryName}">_name_</Attribute>
 			<Attribute name="library_strategy" th:text="${sample.libraryStrategy.value}">_Strategy_</Attribute>
 			<Attribute name="library_source" th:text="${sample.librarySource.value}">_Source_</Attribute>
-			<Attribute name="library_selection" th:text="${sample.librarySelection.value}">_Selection_</Attribute>
+			<Attribute name="library_selection" th:text="${sample.librarySelection.value}">
+		_Selection_</Attribute>
 			<Attribute name="library_layout">SINGLE</Attribute>
-			<Attribute name="library_construction_protocol" th:text="${sample.libraryConstructionProtocol}">_Protocol_</Attribute>
+			<Attribute name="library_construction_protocol"
+				th:text="${sample.libraryConstructionProtocol}">_Protocol_</Attribute>
 			<AttributeRefId name="BioProject">
 				<RefId>
 					<PrimaryId db="BioProject" th:text="${submission.bioProjectId}">_Project_</PrimaryId>
@@ -56,8 +58,10 @@
 					th:text="${sample.id}">_spuid_</SPUID>
 			</Identifier>
 		</AddFiles>
-		<AddFiles target_db="SRA" th:each="pair : ${sample.pairs}" th:with="forward=${pair.getForwardSequenceFile()}, reverse=${pair.getReverseSequenceFile()}">
-            <th:block th:if="${forward.getFile().toString().endsWith(&quot;.gz&quot;)}">
+		<AddFiles
+			target_db="SRA" th:each="pair : ${sample.pairs}"
+			th:with="forward=${pair.getForwardSequenceFile()}, reverse=${pair.getReverseSequenceFile()}">
+			<th:block th:if="${forward.getFile().toString().endsWith(&quot;.gz&quot;)}">
 				<File th:attr="file_path=${forward.getId() + '.fastq.gz'}">
 					<DataType>generic-data</DataType>
 				</File>
@@ -67,7 +71,7 @@
 					<DataType>generic-data</DataType>
 				</File>
 			</th:block>
-			<th:block th:if="${reverse.getFile().toString().endsWith(&quot;.gz&quot;)}" >
+			<th:block th:if="${reverse.getFile().toString().endsWith(&quot;.gz&quot;)}">
 				<File th:attr="file_path=${reverse.getId() + '.fastq.gz'}">
 					<DataType>generic-data</DataType>
 				</File>
@@ -81,9 +85,11 @@
 			<Attribute name="library_name" th:text="${sample.libraryName}">_name_</Attribute>
 			<Attribute name="library_strategy" th:text="${sample.libraryStrategy.value}">_Strategy_</Attribute>
 			<Attribute name="library_source" th:text="${sample.librarySource.value}">_Source_</Attribute>
-			<Attribute name="library_selection" th:text="${sample.librarySelection.value}">_Selection_</Attribute>
+			<Attribute name="library_selection" th:text="${sample.librarySelection.value}">
+		_Selection_</Attribute>
 			<Attribute name="library_layout">PAIRED</Attribute>
-			<Attribute name="library_construction_protocol" th:text="${sample.libraryConstructionProtocol}">_Protocol_</Attribute>
+			<Attribute name="library_construction_protocol"
+				th:text="${sample.libraryConstructionProtocol}">_Protocol_</Attribute>
 			<AttributeRefId name="BioProject">
 				<RefId>
 					<PrimaryId db="BioProject" th:text="${submission.bioProjectId}">_Project_</PrimaryId>
