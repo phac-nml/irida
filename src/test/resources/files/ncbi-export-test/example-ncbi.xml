@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<Submission schema_version="2.0" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.ncbi.nlm.nih.gov/viewvc/v1/trunk/submit/public-docs/common/submission.xsd?view=co">
+	<Description>
+		<Organization role="owner" type="institute">
+			<Name>organization</Name>
+			<Contact email="test@test.com">
+				<Name>
+					<First>firstName</First>
+					<Last>lastName</Last>
+				</Name>
+			</Contact>
+		</Organization>
+		<Hold release_date="Mon Jan 19 21:49:49 CST 1970"></Hold>
+	</Description>
+
+	<Action>
+		
+		<AddFiles target_db="SRA">
+			
+			
+				<File file_path="1.fastq">
+					<DataType>generic-data</DataType>
+				</File>
+			
+			<Attribute name="instrument_model">Illumina MiSeq</Attribute>
+			<Attribute name="library_name">library_name</Attribute>
+			<Attribute name="library_strategy">WGS</Attribute>
+			<Attribute name="library_source">GENOMIC</Attribute>
+			<Attribute name="library_selection">cDNA</Attribute>
+			<Attribute name="library_layout">SINGLE</Attribute>
+			<Attribute name="library_construction_protocol">library_construction_protocol</Attribute>
+			<AttributeRefId name="BioProject">
+				<RefId>
+					<PrimaryId db="BioProject">bioProjectId</PrimaryId>
+				</RefId>
+			</AttributeRefId>
+			<AttributeRefId name="BioSample">
+				<RefId>
+					<PrimaryId db="BioSample">sample</PrimaryId>
+				</RefId>
+			</AttributeRefId>
+			<Identifier>
+				<SPUID spuid_namespace="ncbiNamespace">a7f1d71e-8f86-4f0a-8f69-f79eca567f9d</SPUID>
+			</Identifier>
+		</AddFiles>
+		
+	</Action>
+</Submission>
