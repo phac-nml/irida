@@ -1,6 +1,9 @@
 
 # Changelog
 
+## [22.09.7] - Unreleased
+* [UI]: Fixed bugs on NCBI Export page preventing the NCBI `submission.xml` file from being properly written. See [PR 1451](https://github.com/phac-nml/irida/pull/1451)
+
 ## [22.09.6] - 2022/12/21
 * [UI]: Fixed bug on NCBI Export page preventing the export from occuring. See [PR 1439](https://github.com/phac-nml/irida/pull/1439)
 
