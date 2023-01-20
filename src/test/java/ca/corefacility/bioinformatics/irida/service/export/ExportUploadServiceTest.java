@@ -18,6 +18,8 @@ import org.mockito.ArgumentCaptor;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.diff.Diff;
 
 import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
@@ -64,8 +66,13 @@ public class ExportUploadServiceTest {
 
 		String xmlContent = assertDoesNotThrow(() -> exportUploadService.createXml(submission),
 				"createXml should not raise an exception with valid input.");
-		assertEquals(FileUtils.readFileToString(TEST_NCBI_XML_PATH.toFile(), "UTF-8"), xmlContent,
-				"the xml produced should match");
+		String expectedXmlContent = FileUtils.readFileToString(TEST_NCBI_XML_PATH.toFile(), "UTF-8");
+		Diff xmlDiff = DiffBuilder.compare(expectedXmlContent)
+				.withTest(xmlContent)
+				.ignoreComments()
+				.ignoreWhitespace()
+				.build();
+		assertFalse(xmlDiff.hasDifferences(), "the resulting xml is not correct");
 	}
 
 	@Test
