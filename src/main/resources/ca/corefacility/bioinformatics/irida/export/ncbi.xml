@@ -34,7 +34,7 @@
 					<DataType>generic-data</DataType>
 				</File>
 			</th:block>
-			<Attribute name="instrument_model" th:text="${sample.instrumentModel.value}">_Model_</Attribute>
+			<Attribute name="instrument_model" th:text="${sample.instrumentModel.model}">_Model_</Attribute>
 			<Attribute name="library_name" th:text="${sample.libraryName}">_name_</Attribute>
 			<Attribute name="library_strategy" th:text="${sample.libraryStrategy.value}">_Strategy_</Attribute>
 			<Attribute name="library_source" th:text="${sample.librarySource.value}">_Source_</Attribute>
@@ -77,7 +77,7 @@
 					<DataType>generic-data</DataType>
 				</File>
 			</th:block>
-			<Attribute name="instrument_model" th:text="${sample.instrumentModel.value}">_Model_</Attribute>
+			<Attribute name="instrument_model" th:text="${sample.instrumentModel.model}">_Model_</Attribute>
 			<Attribute name="library_name" th:text="${sample.libraryName}">_name_</Attribute>
 			<Attribute name="library_strategy" th:text="${sample.libraryStrategy.value}">_Strategy_</Attribute>
 			<Attribute name="library_source" th:text="${sample.librarySource.value}">_Source_</Attribute>
