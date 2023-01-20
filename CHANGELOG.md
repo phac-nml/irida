@@ -7,10 +7,10 @@
 * [Documentation]: Updated broken links in developer documentation. See [PR 1418](https://github.com/phac-nml/irida/pull/1418).
 * [Developer] Updated developer setup documentation, ignore java_pid*.hprof files, and added quality of life file `gradle.properties`
 * [UI]: Refreshed global search page to use Ant Design. See [PR 1409](https://github.com/phac-nml/irida/pull/1409)
+* [UI]: Fixed bug where the `User` column was named `User Group` on the admin User Groups page. [See PR 1450](https://github.com/phac-nml/irida/pull/1450)
 
 ## [22.09.6] - 2022/12/21
 * [UI]: Fixed bug on NCBI Export page preventing the export from occuring. See [PR 1439](https://github.com/phac-nml/irida/pull/1439)
-* [UI]: Fixed bug where the `User` column was named `User Group` on the admin User Groups page. [See PR 1450](https://github.com/phac-nml/irida/pull/1450)
 
 ## [22.09.5] - 2022/12/14
 * [Developer/UI]: Fixed bug preventing a manager of a user group from adding new members when this manager is a collaborator on one of these users projects. Also, fixed issue with a user group member added with an owner role for a group was set with a member role. See [PR 1431](https://github.com/phac-nml/irida/pull/1431)
