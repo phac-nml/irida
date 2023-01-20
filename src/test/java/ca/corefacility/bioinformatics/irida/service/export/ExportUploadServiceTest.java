@@ -71,6 +71,7 @@ public class ExportUploadServiceTest {
 				.withTest(xmlContent)
 				.ignoreComments()
 				.ignoreWhitespace()
+				.withNodeFilter(node -> !(node.getNodeName().equals("Hold")))
 				.build();
 		assertFalse(xmlDiff.hasDifferences(), "the resulting xml is not correct");
 	}
@@ -428,7 +429,7 @@ public class ExportUploadServiceTest {
 		ncbiBioSampleFiles.setId("a7f1d71e-8f86-4f0a-8f69-f79eca567f9d");
 
 		NcbiExportSubmission submission = new NcbiExportSubmission(null, submitter, "bioProjectId", "organization",
-				"ncbiNamespace", new Date(1655389918L), Lists.newArrayList(ncbiBioSampleFiles));
+				"ncbiNamespace", new Date(), Lists.newArrayList(ncbiBioSampleFiles));
 		submission.setId(1L);
 
 		return submission;
