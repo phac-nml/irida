@@ -219,7 +219,7 @@ function CreateNcbiExport(): JSX.Element {
             pairs?: number[];
             singles?: number[];
             bioSample: string;
-            libraryName: { value: string };
+            libraryName: string;
             libraryStrategy: { value: string };
             librarySource: { value: string };
             libraryConstructionProtocol: { value: string };
@@ -251,7 +251,7 @@ function CreateNcbiExport(): JSX.Element {
                 singles,
                 pairs,
                 bioSample,
-                libraryName: libraryName.value,
+                libraryName,
                 libraryStrategy: libraryStrategy.value,
                 librarySource: librarySource.value,
                 libraryConstructionProtocol: libraryConstructionProtocol.value,
