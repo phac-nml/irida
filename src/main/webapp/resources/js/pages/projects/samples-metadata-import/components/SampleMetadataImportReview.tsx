@@ -32,7 +32,8 @@ import {
 import { MetadataItem } from "../../../../apis/projects/samples";
 import { ColumnsType, ColumnType } from "antd/es/table";
 import { TableRowSelection } from "antd/lib/table/interface";
-import { ErrorAlert } from "../../../../../js/components/alerts/ErrorAlert";
+import { ErrorAlert } from "../../../../components/alerts/ErrorAlert";
+import { SampleMetadataImportReviewTableCell } from "./SampleMetadataImportReviewTableCell";
 
 const { Paragraph, Text } = Typography;
 
@@ -113,6 +114,15 @@ export function SampleMetadataImportReview(): JSX.Element {
               : `var(--red-1)`,
           },
         };
+      },
+      render: (text, item) => {
+        return (
+          <SampleMetadataImportReviewTableCell
+            text={text}
+            item={item}
+            sampleNameColumn={sampleNameColumn}
+          />
+        );
       },
     };
 
