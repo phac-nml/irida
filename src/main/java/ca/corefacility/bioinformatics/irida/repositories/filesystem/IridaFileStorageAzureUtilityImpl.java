@@ -234,7 +234,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
 			try (FileChannel in = new FileInputStream(iridaTemporaryFile.getFile().toFile()).getChannel()) {
-				for (long p = 0, l = in.size(); p < l; ) {
+				for (long p = 0, l = in.size(); p < l;) {
 					p += in.transferTo(p, l - p, out);
 				}
 			} catch (IOException e) {
@@ -304,8 +304,8 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	/**
 	 * Removes the leading "/" from the absolute path returns the rest of the path.
 	 *
-	 * @param file
-	 * @return
+	 * @param file The path to the file
+	 * @return the absolute file path with the preceding slash stripped off it path includes it
 	 */
 	private String getAzureFileAbsolutePath(Path file) {
 		String absolutePath = file.toAbsolutePath().toString();

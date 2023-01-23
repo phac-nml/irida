@@ -1075,6 +1075,7 @@ public class UISampleService {
 	 * @param objectIds       the {@link SequencingObject} ids
 	 * @param filename        base of the new filename to create
 	 * @param removeOriginals boolean whether to remove the original files
+	 * @param locale          The logged in user's locale
 	 * @return The concatenated sequencing object in a {@link SampleSequencingObjectFileModel}
 	 * @throws ConcatenateException if there was an error concatenating the files
 	 */

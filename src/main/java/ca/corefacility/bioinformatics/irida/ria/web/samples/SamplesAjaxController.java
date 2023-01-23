@@ -341,7 +341,7 @@ public class SamplesAjaxController {
 			Locale locale) {
 		try {
 			return ResponseEntity.ok(uiSampleService.concatenateSequenceFiles(sampleId, sequenceObjectIds, newFileName,
-					removeOriginals,locale));
+					removeOriginals, locale));
 		} catch (ConcatenateException | StorageException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new SampleConcatenationModel(e.getMessage()));

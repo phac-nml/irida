@@ -226,7 +226,7 @@ public class AnalysisCollectionServiceGalaxy {
 				exceptions.add(e.getMessage());
 			}
 		}
-		if(exceptions.size() > 0) {
+		if (exceptions.size() > 0) {
 			// Throw StorageException if there were any exceptions in the for loop above
 			String exceptionMsg = String.join("\n", exceptions);
 			throw new StorageException(exceptionMsg);

@@ -25,7 +25,6 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileSto
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaTemporaryFile;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisAjaxController;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.azure.storage.blob.BlobClient;
