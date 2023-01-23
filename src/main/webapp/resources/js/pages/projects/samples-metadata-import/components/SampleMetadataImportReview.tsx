@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   Alert,
   Button,
+  Input,
   List,
   notification,
   Popover,
@@ -33,7 +34,6 @@ import { MetadataItem } from "../../../../apis/projects/samples";
 import { ColumnsType, ColumnType } from "antd/es/table";
 import { TableRowSelection } from "antd/lib/table/interface";
 import { ErrorAlert } from "../../../../components/alerts/ErrorAlert";
-import { SampleMetadataImportReviewTableCell } from "./SampleMetadataImportReviewTableCell";
 
 const { Paragraph, Text } = Typography;
 
@@ -71,6 +71,9 @@ export function SampleMetadataImportReview(): JSX.Element {
   const [selected, setSelected] = React.useState<React.Key[]>([]);
   const [progress, setProgress] = React.useState<number>(0);
   const [loading, setLoading] = React.useState<boolean>(false);
+  const [editingRowKey, setEditingRowKey] = React.useState<string | undefined>(
+    undefined
+  );
   const {
     headers,
     sampleNameColumn,
@@ -105,7 +108,7 @@ export function SampleMetadataImportReview(): JSX.Element {
       dataIndex: sampleNameColumn,
       fixed: "left",
       width: 100,
-      onCell: (item) => {
+      onCell: (item, index) => {
         return {
           style: {
             background: metadataValidateDetails[item[sampleNameColumn]]
@@ -113,16 +116,27 @@ export function SampleMetadataImportReview(): JSX.Element {
               ? undefined
               : `var(--red-1)`,
           },
+          onClick: () => {
+            // console.log(item, index);
+            // console.log(item.rowKey);
+            setEditingRowKey(item.rowKey);
+          },
         };
       },
       render: (text, item) => {
-        return (
-          <SampleMetadataImportReviewTableCell
-            text={text}
-            item={item}
-            sampleNameColumn={sampleNameColumn}
-          />
-        );
+        const valid =
+          metadataValidateDetails[item[sampleNameColumn]].isSampleNameValid;
+        if (editingRowKey === item.rowKey && !valid) {
+          return (
+            <Input
+              defaultValue={item[sampleNameColumn]}
+              onPressEnter={() => setEditingRowKey(undefined)}
+              onBlur={() => setEditingRowKey(undefined)}
+            />
+          );
+        } else {
+          return <div>{text}</div>;
+        }
       },
     };
 
@@ -202,6 +216,7 @@ export function SampleMetadataImportReview(): JSX.Element {
         .map((row): string => row.rowKey)
     );
   }, [
+    editingRowKey,
     headers,
     metadata,
     metadataSaveDetails,
