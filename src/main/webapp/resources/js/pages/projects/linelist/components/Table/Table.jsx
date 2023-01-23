@@ -1,8 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
-import { notification, Spin } from "antd";
+import { Button, notification, Spin } from "antd";
 import isEqual from "lodash/isEqual";
-import { showUndoNotification } from "../../../../../modules/notifications";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
@@ -52,7 +51,7 @@ export class TableComponent extends React.Component {
     DateCellRenderer,
   };
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidUpdate(prevProps) {
     if (prevProps.globalFilter !== this.props.globalFilter) {
       this.api.setQuickFilter(this.props.globalFilter);
     }
@@ -144,7 +143,7 @@ export class TableComponent extends React.Component {
       .map((field) => {
         const index = columnState.findIndex((c) => c.colId === field.field);
         if (index > -1) {
-          const col = columnState.splice(index, 1)[0];
+          const [col] = columnState.splice(index, 1);
 
           /*
           Determine the visibility of the column based on the template field.
@@ -309,7 +308,7 @@ export class TableComponent extends React.Component {
     // Get the previous value
     const previousValue = this.cellEditedValue;
     // Get the new value for the cell
-    const data = event.data;
+    const { data } = event;
 
     // Make sure that the data for saving is valid.
     if (typeof event.value !== "undefined" && previousValue !== event.value) {
@@ -321,7 +320,7 @@ export class TableComponent extends React.Component {
       /*
       Show a notification that allows the user to reverse the change to the value.
        */
-      const text = Boolean(data[field])
+      const text = data[field]
         ? i18n(
             "linelist.editing.undo.full",
             `${data[FIELDS.sampleName]}`,
@@ -333,19 +332,29 @@ export class TableComponent extends React.Component {
             `${headerName}`,
             `${data[FIELDS.sampleName]}`
           );
-      showUndoNotification(
-        {
-          text,
-        },
-        () => {
-          /**
-           * Callback to reverse the change.
-           */
-          data[field] = previousValue;
-          this.props.entryEdited(data, field, headerName);
-          event.node.setDataValue(field, previousValue);
-        }
-      );
+      const notKey = `open${Date.now()}`;
+      notification.success({
+        message: text,
+        key: notKey,
+        btn: (
+          <Button
+            className={"t-undo-btn"}
+            type={"primary"}
+            size={"small"}
+            onClick={() => {
+              /**
+               * Callback to reverse the change.
+               */
+              data[field] = previousValue;
+              this.props.entryEdited(data, field, headerName);
+              event.node.setDataValue(field, previousValue);
+              notification.close(notKey);
+            }}
+          >
+            {i18n("generic.undo")}
+          </Button>
+        ),
+      });
     }
     // Remove the stored value for the cell
     delete this.cellEditedValue;
