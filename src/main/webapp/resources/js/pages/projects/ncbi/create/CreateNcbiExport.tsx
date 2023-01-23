@@ -234,7 +234,7 @@ function CreateNcbiExport(): JSX.Element {
           bioProject,
           namespace,
           organization,
-          releaseDate: releaseDate.valueOf(),
+          releaseDate: releaseDate.endOf("day").valueOf(),
           samples: Object.values(_samples).map(
             ({
               pairs = [],

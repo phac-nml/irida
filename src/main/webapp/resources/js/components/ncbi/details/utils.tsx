@@ -17,8 +17,14 @@ import ExportUploadStateTag from "../ExportUploadStateTag";
 export const formatNcbiSubmissionDetails = (
   submission: Omit<NcbiSubmission, "bioSamples">
 ): BasicListItem[] => {
+  const LOCALE = window.TL?.LANGUAGE_TAG || "en";
   const releaseDate = submission.releaseDate
-    ? formatInternationalizedDateTime(submission.releaseDate)
+    ? new Date(submission.releaseDate).toLocaleDateString(LOCALE, {
+        month: "short",
+        year: "numeric",
+        day: "numeric",
+        timeZone: "UTC", // ignoring timezone
+      })
     : i18n("NcbiExportDetailsView.not-released");
 
   return [
