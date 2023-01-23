@@ -37,11 +37,8 @@ import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisE
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
- * Stores common code for integration tests that require special database setup
- * code. This includes code for setup of sequence files in a database and
- * waiting for submission to complete in Galaxy.
- * 
- *
+ * Stores common code for integration tests that require special database setup code. This includes code for setup of
+ * sequence files in a database and waiting for submission to complete in Galaxy.
  */
 public class DatabaseSetupGalaxyITService {
 
@@ -55,8 +52,7 @@ public class DatabaseSetupGalaxyITService {
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 
 	/**
-	 * Builds a new AnalysisExecutionGalaxyITService with the given
-	 * services/repositories.
+	 * Builds a new AnalysisExecutionGalaxyITService with the given services/repositories.
 	 * 
 	 * @param referenceFileRepository
 	 * @param sampleService
@@ -64,10 +60,8 @@ public class DatabaseSetupGalaxyITService {
 	 * @param analysisSubmissionService
 	 * @param analysisSubmissionRepository
 	 */
-	public DatabaseSetupGalaxyITService(ReferenceFileRepository referenceFileRepository,
-			SampleService sampleService,
-			AnalysisExecutionService analysisExecutionService,
-			AnalysisSubmissionService analysisSubmissionService,
+	public DatabaseSetupGalaxyITService(ReferenceFileRepository referenceFileRepository, SampleService sampleService,
+			AnalysisExecutionService analysisExecutionService, AnalysisSubmissionService analysisSubmissionService,
 			AnalysisSubmissionRepository analysisSubmissionRepository,
 			SequencingObjectService sequencingObjectService) {
 		super();
@@ -78,35 +72,35 @@ public class DatabaseSetupGalaxyITService {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.sequencingObjectService = sequencingObjectService;
 	}
-	
-	
+
 	private void waitForFilesToSettle(SequencingObject... filePairs) {
 		// wait for the files to be moved into the right place, then get the
 		// records from the database again so that we get the right path.
 		Set<SequenceFile> files = null;
-		
+
 		do {
 			try {
 				Thread.sleep(500);
 			} catch (final InterruptedException e) {
-				
+
 			}
-			files = Arrays.stream(filePairs).map(p -> sequencingObjectService.read(p.getId()))
-					.map(p -> p.getFiles()).flatMap(l -> l.stream()).collect(Collectors.toSet());
-		} while(!files.stream().allMatch(f -> f.getFastQCAnalysis() != null));
+			files = Arrays.stream(filePairs)
+					.map(p -> sequencingObjectService.read(p.getId()))
+					.map(p -> p.getFiles())
+					.flatMap(l -> l.stream())
+					.collect(Collectors.toSet());
+		} while (!files.stream().allMatch(f -> f.getFastQCAnalysis() != null));
 	}
 
 	/**
 	 * Sets up an AnalysisSubmission and saves all dependencies in database.
 	 *
-	 * @param sampleId          The id of the sample to associate with the given sequence
-	 *                          file.
+	 * @param sampleId          The id of the sample to associate with the given sequence file.
 	 * @param sequenceFilePath  The path to an input sequence file for this test.
 	 * @param referenceFilePath The path to an input reference file for this test.
 	 * @param iridaWorkflowId   The id of an irida workflow.
 	 * @param updateSamples     whether to update samples for this analysis
-	 * @return An {@link AnalysisSubmission} which has been saved to the
-	 * database.
+	 * @return An {@link AnalysisSubmission} which has been saved to the database.
 	 */
 	public AnalysisSubmission setupSubmissionInDatabase(long sampleId, Path sequenceFilePath, Path referenceFilePath,
 			UUID iridaWorkflowId, boolean updateSamples) {
@@ -116,30 +110,31 @@ public class DatabaseSetupGalaxyITService {
 	}
 
 	/**
-	 * Sets up an AnalysisSubmission and saves all dependencies in database.
-	 * Saves with the given {@link AnalysisState}
+	 * Sets up an AnalysisSubmission and saves all dependencies in database. Saves with the given {@link AnalysisState}
 	 *
-	 * @param sampleId          The id of the sample to associate with the given sequence
-	 *                          file.
+	 * @param sampleId          The id of the sample to associate with the given sequence file.
 	 * @param sequenceFilePath  The path to an input sequence file for this test.
 	 * @param referenceFilePath The path to an input reference file for this test.
 	 * @param iridaWorkflowId   The id of an irida workflow.
 	 * @param state             {@link AnalysisState} of the workflow
 	 * @param updateSamples     whether to run the sampleUpdater for this analysis
-	 * @return An {@link AnalysisSubmission} which has been saved to the
-	 * database.
+	 * @return An {@link AnalysisSubmission} which has been saved to the database.
 	 */
 	public AnalysisSubmission setupSubmissionInDatabase(long sampleId, Path sequenceFilePath, Path referenceFilePath,
 			UUID iridaWorkflowId, AnalysisState state, boolean updateSamples) {
 
-		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) setupSequencingObjectInDatabase(sampleId, sequenceFilePath).get(0);
+		SingleEndSequenceFile sequencingObject = (SingleEndSequenceFile) setupSequencingObjectInDatabase(sampleId,
+				sequenceFilePath).get(0);
 		waitForFilesToSettle(sequencingObject);
 		sequencingObject = (SingleEndSequenceFile) sequencingObjectService.read(sequencingObject.getId());
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
-		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId).name("my analysis")
-				.inputFiles(Sets.newHashSet(sequencingObject)).referenceFile(referenceFile).updateSamples(updateSamples)
+		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
+				.name("my analysis")
+				.inputFiles(Sets.newHashSet(sequencingObject))
+				.referenceFile(referenceFile)
+				.updateSamples(updateSamples)
 				.build();
 
 		submission.setAnalysisState(state);
@@ -150,19 +145,17 @@ public class DatabaseSetupGalaxyITService {
 	}
 
 	/**
-	 * Sets up an {@link AnalysisSubmission} with a list of paired sequence
-	 * files and saves all dependencies in database.
+	 * Sets up an {@link AnalysisSubmission} with a list of paired sequence files and saves all dependencies in
+	 * database.
 	 *
 	 * @param iridaWorkflowId    The id of an irida workflow.
-	 * @param sampleId           The id of the sample to associate with the given sequence
-	 *                           file.
+	 * @param sampleId           The id of the sample to associate with the given sequence file.
 	 * @param sequenceFilePaths1 A list of paths for the first part of the pair.
-	 * @param sequenceFilePaths2 A list of paths for the second part of the pair. The path to
-	 *                           an input sequence file for this test.
+	 * @param sequenceFilePaths2 A list of paths for the second part of the pair. The path to an input sequence file for
+	 *                           this test.
 	 * @param referenceFilePath  The path to an input reference file for this test.
 	 * @param updateSamples      whether to run the sampleUpdater for this analysis
-	 * @return An {@link AnalysisSubmission} which has been saved to the
-	 * database.
+	 * @return An {@link AnalysisSubmission} which has been saved to the database.
 	 */
 	public AnalysisSubmission setupPairSubmissionInDatabase(long sampleId, List<Path> sequenceFilePaths1,
 			List<Path> sequenceFilePaths2, Path referenceFilePath, UUID iridaWorkflowId, boolean updateSamples) {
@@ -174,7 +167,7 @@ public class DatabaseSetupGalaxyITService {
 			waitForFilesToSettle(f);
 			settledFiles.add((SequenceFilePair) sequencingObjectService.read(f.getId()));
 		}
-		
+
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
 		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
@@ -187,93 +180,74 @@ public class DatabaseSetupGalaxyITService {
 
 		return analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 	}
-	
+
 	/**
-	 * Sets up an {@link AnalysisSubmission} with a list of paired sequence
-	 * files and saves all dependencies in database.
+	 * Sets up an {@link AnalysisSubmission} with a list of paired sequence files and saves all dependencies in
+	 * database.
 	 * 
-	 * @param sampleId
-	 *            The id of the sample to associate with the given sequence
-	 *            file.
-	 * @param sequenceFilePaths1
-	 *            A list of paths for the first part of the pair.
-	 * @param sequenceFilePaths2
-	 *            A list of paths for the second part of the pair. The path to
-	 *            an input sequence file for this test.
-	 * @param referenceFilePath
-	 *            The path to an input reference file for this test.
-	 * @param parameters
-	 *            The input parameters.
-	 * @param iridaWorkflowId
-	 *            The id of an irida workflow.
-	 * @return An {@link AnalysisSubmission} which has been saved to the
-	 *         database.
+	 * @param sampleId           The id of the sample to associate with the given sequence file.
+	 * @param sequenceFilePaths1 A list of paths for the first part of the pair.
+	 * @param sequenceFilePaths2 A list of paths for the second part of the pair. The path to an input sequence file for
+	 *                           this test.
+	 * @param referenceFilePath  The path to an input reference file for this test.
+	 * @param parameters         The input parameters.
+	 * @param iridaWorkflowId    The id of an irida workflow.
+	 * @return An {@link AnalysisSubmission} which has been saved to the database.
 	 */
 	public AnalysisSubmission setupPairSubmissionInDatabase(long sampleId, List<Path> sequenceFilePaths1,
-			List<Path> sequenceFilePaths2, Path referenceFilePath, Map<String, String> parameters, UUID iridaWorkflowId) {
+			List<Path> sequenceFilePaths2, Path referenceFilePath, Map<String, String> parameters,
+			UUID iridaWorkflowId) {
 
 		return setupPairSubmissionInDatabase(sampleId, sequenceFilePaths1, sequenceFilePaths2, referenceFilePath,
 				parameters, iridaWorkflowId, AnalysisState.NEW);
 	}
 
 	/**
-	 * Sets up an {@link AnalysisSubmission} with a list of paired sequence
-	 * files and saves all dependencies in database.
+	 * Sets up an {@link AnalysisSubmission} with a list of paired sequence files and saves all dependencies in
+	 * database.
 	 * 
-	 * @param sampleId
-	 *            The id of the sample to associate with the given sequence
-	 *            file.
-	 * @param sequenceFilePaths1
-	 *            A list of paths for the first part of the pair.
-	 * @param sequenceFilePaths2
-	 *            A list of paths for the second part of the pair. The path to
-	 *            an input sequence file for this test.
-	 * @param referenceFilePath
-	 *            The path to an input reference file for this test.
-	 * @param parameters
-	 *            The input parameters.
-	 * @param iridaWorkflowId
-	 *            The id of an irida workflow.
-	 * @param state
-	 *            {@link AnalysisState} of the submission
-	 * @return An {@link AnalysisSubmission} which has been saved to the
-	 *         database.
+	 * @param sampleId           The id of the sample to associate with the given sequence file.
+	 * @param sequenceFilePaths1 A list of paths for the first part of the pair.
+	 * @param sequenceFilePaths2 A list of paths for the second part of the pair. The path to an input sequence file for
+	 *                           this test.
+	 * @param referenceFilePath  The path to an input reference file for this test.
+	 * @param parameters         The input parameters.
+	 * @param iridaWorkflowId    The id of an irida workflow.
+	 * @param state              {@link AnalysisState} of the submission
+	 * @return An {@link AnalysisSubmission} which has been saved to the database.
 	 */
 	public AnalysisSubmission setupPairSubmissionInDatabase(long sampleId, List<Path> sequenceFilePaths1,
-			List<Path> sequenceFilePaths2, Path referenceFilePath, Map<String, String> parameters,
-			UUID iridaWorkflowId, AnalysisState state) {
+			List<Path> sequenceFilePaths2, Path referenceFilePath, Map<String, String> parameters, UUID iridaWorkflowId,
+			AnalysisState state) {
 
 		List<SequenceFilePair> sequenceFilePairs = setupSampleSequenceFileInDatabase(sampleId, sequenceFilePaths1,
 				sequenceFilePaths2);
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
-		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId).name("paired analysis")
-				.inputFiles(Sets.newHashSet(sequenceFilePairs)).referenceFile(referenceFile)
-				.inputParameters(parameters).build();
+		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
+				.name("paired analysis")
+				.inputFiles(Sets.newHashSet(sequenceFilePairs))
+				.referenceFile(referenceFile)
+				.inputParameters(parameters)
+				.build();
 		submission.setAnalysisState(state);
 
 		analysisSubmissionService.create(submission);
 
 		return analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 	}
-	
+
 	/**
-	 * Sets up an {@link AnalysisSubmission} with a list of paired sequence
-	 * files and saves all dependencies in database.
+	 * Sets up an {@link AnalysisSubmission} with a list of paired sequence files and saves all dependencies in
+	 * database.
 	 * 
-	 * @param sampleId
-	 *            The id of the sample to associate with the given sequence
-	 *            file.
-	 * @param sequenceFilePaths1
-	 *            A list of paths for the first part of the pair.
-	 * @param sequenceFilePaths2
-	 *            A list of paths for the second part of the pair. The path to
-	 *            an input sequence file for this test.
-	 * @param iridaWorkflowId
-	 *            The id of an irida workflow.
-	 * @return An {@link AnalysisSubmission} which has been saved to the
-	 *         database.
+	 * @param sampleId           The id of the sample to associate with the given sequence file.
+	 * @param sequenceFilePaths1 A list of paths for the first part of the pair.
+	 * @param sequenceFilePaths2 A list of paths for the second part of the pair. The path to an input sequence file for
+	 *                           this test.
+	 * @param iridaWorkflowId    The id of an irida workflow.
+	 * @return An {@link AnalysisSubmission} which has been saved to the database.
 	 */
 	public AnalysisSubmission setupPairSubmissionInDatabase(long sampleId, List<Path> sequenceFilePaths1,
 			List<Path> sequenceFilePaths2, UUID iridaWorkflowId) {
@@ -284,24 +258,20 @@ public class DatabaseSetupGalaxyITService {
 		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
 				.name("paired analysis")
 				.inputFiles(Sets.newHashSet(sequenceFilePairs))
-				.build(); 
+				.build();
 		analysisSubmissionService.create(submission);
 
 		return analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 	}
-	
+
 	/**
-	 * Sets up an {@link AnalysisSubmission} with a set of
-	 * {@link SequenceFilePair}s that have already been setup with samples.
+	 * Sets up an {@link AnalysisSubmission} with a set of {@link SequenceFilePair}s that have already been setup with
+	 * samples.
 	 * 
-	 * @param sequenceFilePairs
-	 *            The set of {@link SequenceFilePair}s to submit.
-	 * @param referenceFilePath
-	 *            The path to an input reference file for this test.
-	 * @param iridaWorkflowId
-	 *            The id of an irida workflow.
-	 * @return An {@link AnalysisSubmission} which has been saved to the
-	 *         database.
+	 * @param sequenceFilePairs The set of {@link SequenceFilePair}s to submit.
+	 * @param referenceFilePath The path to an input reference file for this test.
+	 * @param iridaWorkflowId   The id of an irida workflow.
+	 * @return An {@link AnalysisSubmission} which has been saved to the database.
 	 */
 	public AnalysisSubmission setupPairSubmissionInDatabase(Set<SequencingObject> sequenceFilePairs,
 			Path referenceFilePath, UUID iridaWorkflowId) {
@@ -312,60 +282,50 @@ public class DatabaseSetupGalaxyITService {
 				.name("paired analysis")
 				.inputFiles(sequenceFilePairs)
 				.referenceFile(referenceFile)
-				.build(); 
+				.build();
 		analysisSubmissionService.create(submission);
 
 		return analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 	}
-	
+
 	/**
-	 * Sets up an {@link AnalysisSubmission} with a set of
-	 * {@link SequenceFilePair}s that have already been setup with samples.
+	 * Sets up an {@link AnalysisSubmission} with a set of {@link SequenceFilePair}s that have already been setup with
+	 * samples.
 	 * 
-	 * @param sequenceFilePairs
-	 *            The set of {@link SequenceFilePair}s to submit.
-	 * @param referenceFilePath
-	 *            The path to an input reference file for this test.
-	 * @param iridaWorkflowId
-	 *            The id of an irida workflow.
-	 * @param parameters
-	 *            The parameters to use.
-	 * @return An {@link AnalysisSubmission} which has been saved to the
-	 *         database.
+	 * @param sequenceFilePairs The set of {@link SequenceFilePair}s to submit.
+	 * @param referenceFilePath The path to an input reference file for this test.
+	 * @param iridaWorkflowId   The id of an irida workflow.
+	 * @param parameters        The parameters to use.
+	 * @return An {@link AnalysisSubmission} which has been saved to the database.
 	 */
 	public AnalysisSubmission setupPairSubmissionInDatabase(Set<SequencingObject> sequenceFilePairs,
 			Path referenceFilePath, Map<String, String> parameters, UUID iridaWorkflowId) {
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
-		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId).name("paired analysis")
-				.inputFiles(sequenceFilePairs).referenceFile(referenceFile).inputParameters(parameters).build();
+		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
+				.name("paired analysis")
+				.inputFiles(sequenceFilePairs)
+				.referenceFile(referenceFile)
+				.inputParameters(parameters)
+				.build();
 		analysisSubmissionService.create(submission);
 
 		return analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 	}
-	
+
 	/**
-	 * Sets up an {@link AnalysisSubmission} with a list of paired sequence
-	 * files and a single sequence file under the same sample and saves all
-	 * dependencies in database.
+	 * Sets up an {@link AnalysisSubmission} with a list of paired sequence files and a single sequence file under the
+	 * same sample and saves all dependencies in database.
 	 * 
-	 * @param sampleId
-	 *            The id of the sample to associate with the given sequence
-	 *            file.
-	 * @param sequenceFilePaths1
-	 *            A list of paths for the first part of the pair.
-	 * @param sequenceFilePaths2
-	 *            A list of paths for the second part of the pair. The path to
-	 *            an input sequence file for this test.
-	 * @param singleSequenceFile
-	 *            A single sequence file to add.
-	 * @param referenceFilePath
-	 *            The path to an input reference file for this test.
-	 * @param iridaWorkflowId
-	 *            The id of an irida workflow.
-	 * @return An {@link AnalysisSubmission} which has been saved to the
-	 *         database.
+	 * @param sampleId           The id of the sample to associate with the given sequence file.
+	 * @param sequenceFilePaths1 A list of paths for the first part of the pair.
+	 * @param sequenceFilePaths2 A list of paths for the second part of the pair. The path to an input sequence file for
+	 *                           this test.
+	 * @param singleSequenceFile A single sequence file to add.
+	 * @param referenceFilePath  The path to an input reference file for this test.
+	 * @param iridaWorkflowId    The id of an irida workflow.
+	 * @return An {@link AnalysisSubmission} which has been saved to the database.
 	 */
 	public AnalysisSubmission setupSinglePairSubmissionInDatabaseSameSample(long sampleId,
 			List<Path> sequenceFilePaths1, List<Path> sequenceFilePaths2, Path singleSequenceFile,
@@ -374,41 +334,31 @@ public class DatabaseSetupGalaxyITService {
 		return setupSinglePairSubmissionInDatabaseDifferentSample(sampleId, sampleId, sequenceFilePaths1,
 				sequenceFilePaths2, singleSequenceFile, referenceFilePath, iridaWorkflowId);
 	}
-	
+
 	/**
-	 * Sets up an {@link AnalysisSubmission} with a list of paired sequence
-	 * files and a single sequence file under a different sample and saves all
-	 * dependencies in database.
+	 * Sets up an {@link AnalysisSubmission} with a list of paired sequence files and a single sequence file under a
+	 * different sample and saves all dependencies in database.
 	 * 
-	 * @param sampleIdPaired
-	 *            The id of the sample to associate with the paired sequence
-	 *            files.
-	 * @param sampleIdSingle
-	 *            The id of the sample to associate with the single sequence
-	 *            file.
-	 * @param sequenceFilePaths1
-	 *            A list of paths for the first part of the pair.
-	 * @param sequenceFilePaths2
-	 *            A list of paths for the second part of the pair. The path to
-	 *            an input sequence file for this test.
-	 * @param singleSequenceFile
-	 *            A single sequence file to add.
-	 * @param referenceFilePath
-	 *            The path to an input reference file for this test.
-	 * @param iridaWorkflowId
-	 *            The id of an irida workflow.
-	 * @return An {@link AnalysisSubmission} which has been saved to the
-	 *         database.
+	 * @param sampleIdPaired     The id of the sample to associate with the paired sequence files.
+	 * @param sampleIdSingle     The id of the sample to associate with the single sequence file.
+	 * @param sequenceFilePaths1 A list of paths for the first part of the pair.
+	 * @param sequenceFilePaths2 A list of paths for the second part of the pair. The path to an input sequence file for
+	 *                           this test.
+	 * @param singleSequenceFile A single sequence file to add.
+	 * @param referenceFilePath  The path to an input reference file for this test.
+	 * @param iridaWorkflowId    The id of an irida workflow.
+	 * @return An {@link AnalysisSubmission} which has been saved to the database.
 	 */
 	public AnalysisSubmission setupSinglePairSubmissionInDatabaseDifferentSample(long sampleIdPaired,
 			long sampleIdSingle, List<Path> sequenceFilePaths1, List<Path> sequenceFilePaths2, Path singleSequenceFile,
 			Path referenceFilePath, UUID iridaWorkflowId) {
-		
-		SingleEndSequenceFile singleEndFile = (SingleEndSequenceFile) setupSequencingObjectInDatabase(sampleIdSingle, singleSequenceFile).get(0);
-		
-		List<SequenceFilePair> sequenceFilePairs = setupSampleSequenceFileInDatabase(sampleIdPaired,
-				sequenceFilePaths1, sequenceFilePaths2);
-		
+
+		SingleEndSequenceFile singleEndFile = (SingleEndSequenceFile) setupSequencingObjectInDatabase(sampleIdSingle,
+				singleSequenceFile).get(0);
+
+		List<SequenceFilePair> sequenceFilePairs = setupSampleSequenceFileInDatabase(sampleIdPaired, sequenceFilePaths1,
+				sequenceFilePaths2);
+
 		Set<SequencingObject> inputs = Sets.newHashSet(sequenceFilePairs);
 		inputs.add(singleEndFile);
 
@@ -418,48 +368,42 @@ public class DatabaseSetupGalaxyITService {
 				.name("paired analysis")
 				.inputFiles(inputs)
 				.referenceFile(referenceFile)
-				.build(); 
+				.build();
 		analysisSubmissionService.create(submission);
 
 		return analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 	}
-	
+
 	/**
 	 * Sets up an AnalysisSubmission and saves all dependencies in database.
 	 * 
-	 * @param sampleId
-	 *            The id of the sample to associate with the given sequence
-	 *            file.
-	 * @param sequenceFileSet
-	 *            A set of sequence files to use for this submission.
-	 * @param referenceFilePath
-	 *            The path to an input reference file for this test.
-	 * @param iridaWorkflowId
-	 *            The id of an irida workflow.
-	 * @return An AnalysisSubmissionPhylogenomics which has been saved to the
-	 *         database.
+	 * @param sampleId          The id of the sample to associate with the given sequence file.
+	 * @param sequenceFileSet   A set of sequence files to use for this submission.
+	 * @param referenceFilePath The path to an input reference file for this test.
+	 * @param iridaWorkflowId   The id of an irida workflow.
+	 * @return An AnalysisSubmissionPhylogenomics which has been saved to the database.
 	 */
 	public AnalysisSubmission setupSubmissionInDatabase(long sampleId, Set<SequencingObject> sequenceFileSet,
 			Path referenceFilePath, UUID iridaWorkflowId) {
 
 		ReferenceFile referenceFile = referenceFileRepository.save(new ReferenceFile(referenceFilePath));
 
-		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId).name("my analysis")
-				.inputFiles(sequenceFileSet).referenceFile(referenceFile).build();
+		AnalysisSubmission submission = AnalysisSubmission.builder(iridaWorkflowId)
+				.name("my analysis")
+				.inputFiles(sequenceFileSet)
+				.referenceFile(referenceFile)
+				.build();
 		analysisSubmissionService.create(submission);
 
 		return analysisSubmissionRepository.findById(submission.getId()).orElse(null);
 	}
-	
+
 	/**
 	 * Attaches the given sequence file paths to a particular sample id.
 	 * 
-	 * @param sampleId
-	 *            The id of the sample to attach a sequence file to.
-	 * @param sequenceFilePaths
-	 *            A path of the sequence file to attach.
-	 * @return A List of {@link SequencingObject}s the given sequence file path
-	 *         attached and saved in the database.
+	 * @param sampleId          The id of the sample to attach a sequence file to.
+	 * @param sequenceFilePaths A path of the sequence file to attach.
+	 * @return A List of {@link SequencingObject}s the given sequence file path attached and saved in the database.
 	 */
 	public List<SingleEndSequenceFile> setupSequencingObjectInDatabase(Long sampleId, Path... sequenceFilePaths) {
 		Sample sample = sampleService.read(sampleId);
@@ -470,24 +414,21 @@ public class DatabaseSetupGalaxyITService {
 			sequencingObjectService.createSequencingObjectInSample(singleEndSequenceFile, sample);
 			waitForFilesToSettle(singleEndSequenceFile);
 
-			returnedSequenceFiles.add((SingleEndSequenceFile) sequencingObjectService.read(singleEndSequenceFile.getId()));
+			returnedSequenceFiles
+					.add((SingleEndSequenceFile) sequencingObjectService.read(singleEndSequenceFile.getId()));
 		}
 
 		return returnedSequenceFiles;
 	}
-	
+
 	/**
-	 * Attaches the given sequence file paths as pairs (using parallel lists) to
-	 * a particular sample id.
+	 * Attaches the given sequence file paths as pairs (using parallel lists) to a particular sample id.
 	 * 
-	 * @param sampleId
-	 *            The id of the sample to attach a sequence file to.
-	 * @param sequenceFiles1
-	 *            A list of the first part of each pairs to setup.
-	 * @param sequenceFiles2
-	 *            A list of the second part of each pairs to setup.
-	 * @return A {@link List} of {@link SequenceFilePair} objects with the given
-	 *         sequence file paths attached and saved in the database.
+	 * @param sampleId       The id of the sample to attach a sequence file to.
+	 * @param sequenceFiles1 A list of the first part of each pairs to setup.
+	 * @param sequenceFiles2 A list of the second part of each pairs to setup.
+	 * @return A {@link List} of {@link SequenceFilePair} objects with the given sequence file paths attached and saved
+	 *         in the database.
 	 */
 	public List<SequenceFilePair> setupSampleSequenceFileInDatabase(long sampleId, List<Path> sequenceFiles1,
 			List<Path> sequenceFiles2) {
@@ -510,8 +451,7 @@ public class DatabaseSetupGalaxyITService {
 	/**
 	 * Wait for the given analysis submission to be complete.
 	 * 
-	 * @param analysisSubmission
-	 *            The analysis submission to wait for.
+	 * @param analysisSubmission The analysis submission to wait for.
 	 * @throws Exception
 	 */
 	public void waitUntilSubmissionComplete(AnalysisSubmission analysisSubmission) throws Exception {
@@ -526,8 +466,8 @@ public class DatabaseSetupGalaxyITService {
 				do {
 					workflowStatus = analysisExecutionService.getWorkflowStatus(analysisSubmission);
 					Thread.sleep(pollingTime);
-				} while (!(GalaxyWorkflowState.OK.equals(workflowStatus.getState()) || GalaxyWorkflowState.ERROR
-						.equals(workflowStatus.getState())));
+				} while (!(GalaxyWorkflowState.OK.equals(workflowStatus.getState())
+						|| GalaxyWorkflowState.ERROR.equals(workflowStatus.getState())));
 
 				return null;
 			}
@@ -536,8 +476,8 @@ public class DatabaseSetupGalaxyITService {
 		try {
 			waitForHistory.get(totalSecondsWait, TimeUnit.SECONDS);
 		} catch (TimeoutException e) {
-			throw new Exception("Timeout > " + totalSecondsWait + " s when waiting for history for "
-					+ analysisSubmission, e);
+			throw new Exception(
+					"Timeout > " + totalSecondsWait + " s when waiting for history for " + analysisSubmission, e);
 		}
 	}
 

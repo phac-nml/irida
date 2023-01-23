@@ -10,11 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PostLoad;
-import javax.persistence.PostPersist;
-import javax.persistence.PostUpdate;
-import javax.persistence.PreUpdate;
+import javax.persistence.*;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
@@ -25,12 +21,10 @@ import org.springframework.util.ReflectionUtils;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 
-
 /**
- * Custom implementation of a repository that writes the {@link Path} part of an
- * entity to disk.
- * 
- *	@param <Type> The type of object this repository is storing
+ * Custom implementation of a repository that writes the {@link Path} part of an entity to disk.
+ *
+ * @param <Type> The type of object this repository is storing
  */
 public abstract class FilesystemSupplementedRepositoryImpl<Type extends VersionedFileFields<Long> & IridaThing>
 		implements FilesystemSupplementedRepository<Type> {
@@ -42,16 +36,16 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 
 	private IridaFileStorageUtility iridaFileStorageUtility;
 
-	public FilesystemSupplementedRepositoryImpl(final EntityManager entityManager, final Path baseDirectory, final IridaFileStorageUtility iridaFileStorageUtility) {
+	public FilesystemSupplementedRepositoryImpl(final EntityManager entityManager, final Path baseDirectory,
+			final IridaFileStorageUtility iridaFileStorageUtility) {
 		this.entityManager = entityManager;
 		this.baseDirectory = baseDirectory;
 		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
-	 * A JPA event listener to translate the relative paths stored in the
-	 * database to absolute paths so that everyone after the repository knows
-	 * where the file is actually stored.
+	 * A JPA event listener to translate the relative paths stored in the database to absolute paths so that everyone
+	 * after the repository knows where the file is actually stored.
 	 */
 	public static class RelativePathTranslatorListener {
 		private static final Logger logger = LoggerFactory.getLogger(RelativePathTranslatorListener.class);
@@ -62,9 +56,8 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 
 		/**
 		 * Get a collection of fields that have type Path.
-		 * 
-		 * @param type
-		 *            the class type to get field references for.
+		 *
+		 * @param type the class type to get field references for.
 		 * @return the set of field references for the class.
 		 */
 		private static Set<Field> findPathFields(final Class<?> type) {
@@ -73,6 +66,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 
 		/**
 		 * Add a base directory to safe files to
+		 *
 		 * @param c The class for the base directory to save files
 		 * @param p the path to save files to
 		 */
@@ -81,12 +75,10 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		}
 
 		/**
-		 * Whenever a {@link VersionedFileFields} is loaded from the database,
-		 * we need to translate it's path from a relative path to an absolute
-		 * path based on the storage directory for the type.
-		 * 
-		 * @param fileSystemEntity
-		 *            the object to make absolute paths for
+		 * Whenever a {@link VersionedFileFields} is loaded from the database, we need to translate it's path from a
+		 * relative path to an absolute path based on the storage directory for the type.
+		 *
+		 * @param fileSystemEntity the object to make absolute paths for
 		 */
 		@PostLoad
 		@PostUpdate
@@ -120,12 +112,10 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		}
 
 		/**
-		 * Before persisting a {@link VersionedFileFields} to the database, we
-		 * need to translate it to a relative path by stripping the storage
-		 * directory for the type.
-		 * 
-		 * @param fileSystemEntity
-		 *            the object to make relative paths for.
+		 * Before persisting a {@link VersionedFileFields} to the database, we need to translate it to a relative path
+		 * by stripping the storage directory for the type.
+		 *
+		 * @param fileSystemEntity the object to make relative paths for.
 		 */
 		@PreUpdate
 		public void relativePath(final VersionedFileFields<Long> fileSystemEntity) {
@@ -157,9 +147,8 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 
 	/**
 	 * Actually persist the entity to disk and to the database.
-	 * 
-	 * @param entity
-	 *            the entity to persist.
+	 *
+	 * @param entity the entity to persist.
 	 * @return the persisted entity.
 	 */
 	protected Type saveInternal(final Type entity) {
@@ -177,7 +166,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		logger.trace("Returning merged entity.");
 		return entityManager.merge(entity);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -190,27 +179,23 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	}
 
 	/**
-	 * Persist an entity to disk and database. Implementors of this method are
-	 * recommended to call
-	 * {@link FilesystemSupplementedRepositoryImpl#saveInternal} to avoid
-	 * repeated boilerplate code.
-	 * 
-	 * @param entity
-	 *            the entity to persist.
+	 * Persist an entity to disk and database. Implementors of this method are recommended to call
+	 * {@link FilesystemSupplementedRepositoryImpl#saveInternal} to avoid repeated boilerplate code.
+	 *
+	 * @param entity the entity to persist.
 	 * @return the persisted entity.
 	 */
 	public abstract Type save(final Type entity);
 
 	/**
-	 * Write any files to disk and update the {@link Path} location. This method
-	 * works using reflection to automagically find and update any internal
-	 * {@link Path} members on the {@link VersionedFileFields}. This class
-	 * **does not** update the object in the database
+	 * Write any files to disk and update the {@link Path} location. This method works using reflection to automagically
+	 * find and update any internal {@link Path} members on the {@link VersionedFileFields}. This class **does not**
+	 * update the object in the database
 	 *
 	 * @param baseDirectory
-	 * @param iridaThing
+	 * @param objectToWrite
 	 */
-	private Type writeFilesToDisk(Path baseDirectory, Type objectToWrite) {
+	private void writeFilesToDisk(Path baseDirectory, Type objectToWrite) {
 		if (objectToWrite.getId() == null) {
 			throw new IllegalArgumentException("Identifier is required.");
 		}
@@ -219,7 +204,9 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 
 		Predicate<Field> pathFilter = f -> f.getType().equals(Path.class);
 		// now find any members that are of type Path and shuffle them around:
-		Set<Field> pathFields = Arrays.stream(FieldUtils.getAllFields(objectToWrite.getClass())).filter(pathFilter)
+
+		Set<Field> pathFields = Arrays.stream(objectToWrite.getClass().getDeclaredFields())
+				.filter(pathFilter)
 				.collect(Collectors.toSet());
 
 		Set<Field> fieldsToUpdate = new HashSet<>();
@@ -235,8 +222,8 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 		// update the objects
 		if (!fieldsToUpdate.isEmpty()) {
 			objectToWrite.incrementFileRevisionNumber();
-			Path sequenceFileDirWithRevision = sequenceFileDir
-					.resolve(objectToWrite.getFileRevisionNumber().toString());
+			Path sequenceFileDirWithRevision = sequenceFileDir.resolve(
+					objectToWrite.getFileRevisionNumber().toString());
 
 			for (Field field : fieldsToUpdate) {
 				Path source = (Path) ReflectionUtils.getField(field, objectToWrite);
@@ -246,7 +233,6 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 				ReflectionUtils.setField(field, objectToWrite, target);
 			}
 		}
-		return objectToWrite;
 	}
 
 }

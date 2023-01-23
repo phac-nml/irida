@@ -10,19 +10,19 @@ import ca.corefacility.bioinformatics.irida.model.project.Project;
  */
 public interface ProjectRemoteService extends RemoteService<Project> {
 
-    /**
-     * List all of the projects for a given {@link RemoteAPI}
-     *
-     * @param api The remote API to list projects for
-     * @return A List of {@link Project}s
-     */
-    public List<Project> listProjectsForAPI(RemoteAPI api);
+	/**
+	 * List all of the projects for a given {@link RemoteAPI}
+	 *
+	 * @param api The remote API to list projects for
+	 * @return A List of {@link Project}s
+	 */
+	public List<Project> listProjectsForAPI(RemoteAPI api);
 
-    /**
-     * Read the full project hash for the given project
-     *
-     * @param project the {@link Project} to get the hash for
-     * @return A deep hashcode for all objects in the project
-     */
-    public Integer getProjectHash(Project project);
+	/**
+	 * Read the full project hash for the given project
+	 *
+	 * @param project the {@link Project} to get the hash for
+	 * @return A deep hashcode for all objects in the project
+	 */
+	public Integer getProjectHash(Project project);
 }

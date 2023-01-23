@@ -51,6 +51,7 @@ public class OltuAuthorizationController {
 	/**
 	 * Begin authentication procedure by redirecting to remote authorization location
 	 *
+	 * @param session   The current {@link HttpSession}
 	 * @param remoteAPI The API we need to authenticate with
 	 * @param redirect  The location to redirect back to after authentication is complete
 	 * @return A ModelAndView beginning the authentication procedure
@@ -133,7 +134,7 @@ public class OltuAuthorizationController {
 	/**
 	 * Build the redirect URI for the token page with the API and resource page
 	 *
-	 * @return
+	 * @return the redirect uri
 	 */
 	private String buildRedirectURI() {
 

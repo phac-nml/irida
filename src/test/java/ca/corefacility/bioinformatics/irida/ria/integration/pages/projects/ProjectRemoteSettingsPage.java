@@ -42,7 +42,7 @@ public class ProjectRemoteSettingsPage extends AbstractPage {
 		Matcher m = p.matcher(url);
 		Long remoteProjectId = null;
 
-		if(m.find()) {
+		if (m.find()) {
 			remoteProjectId = Long.parseLong(m.group(1));
 		}
 

@@ -1,5 +1,17 @@
 package ca.corefacility.bioinformatics.irida.ria.web.projects;
 
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.ui.Model;
+
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
@@ -8,18 +20,8 @@ import ca.corefacility.bioinformatics.irida.security.permissions.project.ManageL
 import ca.corefacility.bioinformatics.irida.security.permissions.project.ProjectOwnerPermission;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
-import com.google.common.collect.ImmutableMap;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.ui.Model;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Common functions for project related controllers
@@ -91,7 +93,7 @@ public class ProjectControllerUtils {
 	 *
 	 * @return {@link List} of {@link MetadataTemplate}
 	 */
-    public List<Map<String, String>> getTemplateNames(Locale locale, Project project) {
+	public List<Map<String, String>> getTemplateNames(Locale locale, Project project) {
 		List<MetadataTemplate> metadataTemplatesForProject = metadataTemplateService
 				.getMetadataTemplatesForProject(project);
 		List<Map<String, String>> templates = new ArrayList<>();

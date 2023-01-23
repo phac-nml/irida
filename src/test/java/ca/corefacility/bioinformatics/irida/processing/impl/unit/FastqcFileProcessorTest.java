@@ -131,7 +131,7 @@ public class FastqcFileProcessorTest {
 		assertEquals(Long.valueOf(SEQUENCE.length() * 2), updated.getTotalBases(),
 				"Total number of bases was not correct.");
 
-		verify(outputFileRepository,times(3)).save(any(AnalysisOutputFile.class));
+		verify(outputFileRepository, times(3)).save(any(AnalysisOutputFile.class));
 
 		assertNotNull(updated.getAnalysisOutputFileNames().contains("perBaseQualityScoreChart"), "Per-base quality score chart was not created.");
 

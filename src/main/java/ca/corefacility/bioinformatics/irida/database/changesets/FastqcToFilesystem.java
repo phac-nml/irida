@@ -1,22 +1,5 @@
 package ca.corefacility.bioinformatics.irida.database.changesets;
 
-import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
-import com.google.common.collect.Lists;
-import liquibase.change.custom.CustomSqlChange;
-import liquibase.database.Database;
-import liquibase.exception.CustomChangeException;
-import liquibase.exception.SetupException;
-import liquibase.exception.ValidationErrors;
-import liquibase.resource.ResourceAccessor;
-import liquibase.statement.SqlStatement;
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,12 +8,33 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+
+import ca.corefacility.bioinformatics.irida.config.data.IridaApiJdbcDataSourceConfig;
+
+import com.google.common.collect.Lists;
+import liquibase.change.custom.CustomSqlChange;
+import liquibase.database.Database;
+import liquibase.exception.CustomChangeException;
+import liquibase.exception.SetupException;
+import liquibase.exception.ValidationErrors;
+import liquibase.resource.ResourceAccessor;
+import liquibase.statement.SqlStatement;
+
 /**
- * Liquibase update class for moving the fastqc analysis results off the {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC}
- * class (and out of the database).  This will instead save them to the filesystem as an {@link
- * ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile}.  This should greatly decrease the
- * size of the database for large IRIDA installs and speed up loading of the {@link
- * ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC} class.
+ * Liquibase update class for moving the fastqc analysis results off the
+ * {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC} class (and out of the database).
+ * This will instead save them to the filesystem as an
+ * {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile}. This should greatly decrease
+ * the size of the database for large IRIDA installs and speed up loading of the
+ * {@link ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC} class.
  */
 public class FastqcToFilesystem implements CustomSqlChange {
 
@@ -121,10 +125,8 @@ public class FastqcToFilesystem implements CustomSqlChange {
 			}
 
 			//ensure everything got moved
-			if (tempOutputDirectory.toFile()
-					.list().length == 0) {
-				tempOutputDirectory.toFile()
-						.delete();
+			if (tempOutputDirectory.toFile().list().length == 0) {
+				tempOutputDirectory.toFile().delete();
 			} else {
 				throw new CustomChangeException("Temporary file directory " + tempOutputDirectory
 						+ " is not empty.  All files in here should have moved to output file directory "
@@ -150,6 +152,7 @@ public class FastqcToFilesystem implements CustomSqlChange {
 	 *
 	 * @param chartType    the type of chart we're writing to the file system
 	 * @param jdbcTemplate {@link JdbcTemplate} to use for SQL
+	 * @return A List of file paths created
 	 */
 	private List<Path> writeFileForChartType(String chartType, JdbcTemplate jdbcTemplate) {
 
@@ -220,7 +223,7 @@ public class FastqcToFilesystem implements CustomSqlChange {
 	}
 
 	/**
-	 * Get the previous maximum output file ID for analysis output files.  This might be used for an error statement if
+	 * Get the previous maximum output file ID for analysis output files. This might be used for an error statement if
 	 * things go badly.
 	 *
 	 * @param jdbcTemplate a {@link JdbcTemplate} for doing an sql query.
@@ -233,8 +236,7 @@ public class FastqcToFilesystem implements CustomSqlChange {
 		if (longs.isEmpty()) {
 			return 0L;
 		}
-		return longs.iterator()
-				.next();
+		return longs.iterator().next();
 	}
 
 	@Override
@@ -254,7 +256,8 @@ public class FastqcToFilesystem implements CustomSqlChange {
 		logger.info("The resource accessor is of type [" + resourceAccessor.getClass() + "]");
 		final ApplicationContext applicationContext;
 		if (resourceAccessor instanceof IridaApiJdbcDataSourceConfig.ApplicationContextAwareSpringLiquibase.ApplicationContextSpringResourceOpener) {
-			applicationContext = ((IridaApiJdbcDataSourceConfig.ApplicationContextAwareSpringLiquibase.ApplicationContextSpringResourceOpener) resourceAccessor).getApplicationContext();
+			applicationContext = ((IridaApiJdbcDataSourceConfig.ApplicationContextAwareSpringLiquibase.ApplicationContextSpringResourceOpener) resourceAccessor)
+					.getApplicationContext();
 		} else {
 			applicationContext = null;
 		}

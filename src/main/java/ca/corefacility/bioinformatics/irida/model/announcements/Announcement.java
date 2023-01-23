@@ -29,8 +29,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * An announcement object. Announcements can be created only by admin users, and announcements
- * are displayed on the dashboard page.
+ * An announcement object. Announcements can be created only by admin users, and announcements are displayed on the
+ * dashboard page.
  */
 @Entity
 @Table(name = "announcement")
@@ -38,125 +38,130 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class Announcement implements IridaThing, Comparable<Announcement> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Long id;
 
-    @CreatedDate
-    @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date", updatable = false)
-    private Date createdDate;
+	@CreatedDate
+	@NotNull
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "created_date", updatable = false)
+	private Date createdDate;
 
-    @Column(name = "title")
-    @NotNull
-    private String title;
+	@Column(name = "title")
+	@NotNull
+	private String title;
 
-    @Column(name = "message")
-    @Lob
-    private String message;
+	@Column(name = "message")
+	@Lob
+	private String message;
 
-    @Column(name = "priority")
-    @NotNull
-    private boolean priority;
+	@Column(name = "priority")
+	@NotNull
+	private boolean priority;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "created_by_id")
-    private User user;
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "created_by_id")
+	private User user;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "announcement")
-    private List<AnnouncementUserJoin> users;
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "announcement")
+	private List<AnnouncementUserJoin> users;
 
-    /**
-     * Default constructor, needed by Hibernate.
-     */
-    private Announcement() {
-        createdDate = new Date();
-        this.title = null;
-        this.message = null;
-        this.priority = false;
-        this.user = null;
-    }
+	/**
+	 * Default constructor, needed by Hibernate.
+	 */
+	private Announcement() {
+		createdDate = new Date();
+		this.title = null;
+		this.message = null;
+		this.priority = false;
+		this.user = null;
+	}
 
-    /**
-     * Create a new {@link Announcement} object, for display on the front page.
-     * @param title of the announcement
-     * @param message Content of the announcement
-     * @param priority of the announcement
-     * @param user The {@link User} that created the announcement
-     */
-    public Announcement(String title, String message, boolean priority, User user) {
-        this();
-        this.title = title;
-        this.message = message;
-        this.priority = priority;
-        this.user = user;
-    }
+	/**
+	 * Create a new {@link Announcement} object, for display on the front page.
+	 * 
+	 * @param title    of the announcement
+	 * @param message  Content of the announcement
+	 * @param priority of the announcement
+	 * @param user     The {@link User} that created the announcement
+	 */
+	public Announcement(String title, String message, boolean priority, User user) {
+		this();
+		this.title = title;
+		this.message = message;
+		this.priority = priority;
+		this.user = user;
+	}
 
-    /**
-     * Create a new {@link Announcement} object with a created date, for testing purposes.
-     * @param title of the announcement
-     * @param message Content of the announcement
-     * @param priority of the announcement
-     * @param user The {@link User} that created the announcement
-     * @param createdDate of the announcement
-     */
-    public Announcement(String title, String message, boolean priority, User user, Date createdDate) {
-        this.title = title;
-        this.message = message;
-        this.priority = priority;
-        this.user = user;
-        this.createdDate = createdDate;
-    }
+	/**
+	 * Create a new {@link Announcement} object with a created date, for testing purposes.
+	 * 
+	 * @param title       of the announcement
+	 * @param message     Content of the announcement
+	 * @param priority    of the announcement
+	 * @param user        The {@link User} that created the announcement
+	 * @param createdDate of the announcement
+	 */
+	public Announcement(String title, String message, boolean priority, User user, Date createdDate) {
+		this.title = title;
+		this.message = message;
+		this.priority = priority;
+		this.user = user;
+		this.createdDate = createdDate;
+	}
 
-    @Override
-    public int compareTo(Announcement other) {
-        return ComparisonChain.start().compareTrueFirst(priority, other.getPriority()).compare(other.getCreatedDate(), createdDate).result();
-    }
+	@Override
+	public int compareTo(Announcement other) {
+		return ComparisonChain.start()
+				.compareTrueFirst(priority, other.getPriority())
+				.compare(other.getCreatedDate(), createdDate)
+				.result();
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
+	public Date getCreatedDate() {
+		return createdDate;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public boolean getPriority() {
-        return priority;
-    }
+	public boolean getPriority() {
+		return priority;
+	}
 
-    public User getUser() {
-        return user;
-    }
+	public User getUser() {
+		return user;
+	}
 
-    public String getLabel() {
-        return getMessage();
-    }
+	public String getLabel() {
+		return getMessage();
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
-    public void setPriority(boolean priority) {
-        this.priority = priority;
-    }
+	public void setPriority(boolean priority) {
+		this.priority = priority;
+	}
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+	public void setUser(User user) {
+		this.user = user;
+	}
 
 }

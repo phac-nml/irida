@@ -51,11 +51,13 @@ public class PasswordResetAjaxControllerTest {
 	}
 
 	@Test
-	public void testCreateAndSendNewPasswordResetEmail(){
+	public void testCreateAndSendNewPasswordResetEmail() {
 		String successMessage = "Check your email for password reset instructions";
 		when(userService.getUserByUsername(user.getUsername())).thenReturn(user);
-		when(messageSource.getMessage("server.ForgotPassword.checkEmail", null, Locale.ENGLISH)).thenReturn(successMessage);
-		ResponseEntity<AjaxResponse> response = controller.createAndSendNewPasswordResetEmail(user.getUsername(), Locale.ENGLISH);
+		when(messageSource.getMessage("server.ForgotPassword.checkEmail", null, Locale.ENGLISH))
+				.thenReturn(successMessage);
+		ResponseEntity<AjaxResponse> response = controller.createAndSendNewPasswordResetEmail(user.getUsername(),
+				Locale.ENGLISH);
 		assertEquals(response.getStatusCode(), HttpStatus.OK, "Receive an 200 OK response");
 		verify(userService, times(1)).getUserByUsername(user.getUsername());
 		AjaxSuccessResponse ajaxSuccessResponse = (AjaxSuccessResponse) response.getBody();
@@ -89,7 +91,7 @@ public class PasswordResetAjaxControllerTest {
 		verify(passwordResetService, times(1)).delete(passwordReset.getId());
 		verify(userService, times(1)).loadUserByEmail(user2.getEmail());
 
-		AjaxSuccessResponse ajaxSuccessResponse = (AjaxSuccessResponse)response.getBody();
+		AjaxSuccessResponse ajaxSuccessResponse = (AjaxSuccessResponse) response.getBody();
 		assertEquals("success", ajaxSuccessResponse.getMessage(), "Result should be success");
 	}
 

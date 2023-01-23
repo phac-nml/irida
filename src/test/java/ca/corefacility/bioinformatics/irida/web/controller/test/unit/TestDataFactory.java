@@ -21,9 +21,9 @@ public final class TestDataFactory {
 	public static final String TEST_PROJECT_DESCRIPTION = "This is a fascinating project";
 
 	/**
-	 * Construct a simple {@link ca.corefacility.bioinformatics.irida.model.User}.
+	 * Construct a simple {@link User}.
 	 *
-	 * @return a {@link ca.corefacility.bioinformatics.irida.model.User} with identifier.
+	 * @return a {@link User} with identifier.
 	 */
 	public static User constructUser() {
 		User u = new User();
@@ -90,16 +90,16 @@ public final class TestDataFactory {
 		return pair;
 	}
 
-    /**
-     * Construct a simple {@link ca.corefacility.bioinformatics.irida.model.Project}.
-     *
-     * @return a project with a name and identifier.
-     */
-    public static Project constructProject() {
-        Project p = new Project(TEST_PROJECT_LABEL);
+	/**
+	 * Construct a simple {@link Project}.
+	 *
+	 * @return a project with a name and identifier.
+	 */
+	public static Project constructProject() {
+		Project p = new Project(TEST_PROJECT_LABEL);
 		p.setId(TEST_PROJECT_ID);
 		p.setOrganism(TEST_PROJECT_ORGANISM);
 		p.setProjectDescription(TEST_PROJECT_DESCRIPTION);
-        return p;
-    }
+		return p;
+	}
 }

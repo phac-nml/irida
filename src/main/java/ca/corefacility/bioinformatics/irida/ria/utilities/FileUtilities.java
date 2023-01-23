@@ -369,8 +369,8 @@ public class FileUtilities {
 						being returned in scientific notation when converting to a
 						string
 						 */
-						if(!cellType.equals(CellType.BLANK)) {
-							if(cellType.equals(CellType.STRING)) {
+						if (!cellType.equals(CellType.BLANK)) {
+							if (cellType.equals(CellType.STRING)) {
 								cellStringValue = cell.getStringCellValue().trim();
 							} else if (cellType.equals(CellType.NUMERIC)) {
 								columnType = "numeric";
@@ -384,7 +384,7 @@ public class FileUtilities {
 							hasRowData = true;
 						}
 
-						if(columnType.equals("text")) {
+						if (columnType.equals("text")) {
 							excelColumn = new ExcelCol(columnIndex, cellStringValue);
 						} else {
 							excelColumn = new ExcelCol(columnIndex, cellNumericValue);
