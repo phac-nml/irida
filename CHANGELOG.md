@@ -8,6 +8,7 @@
 * [Developer] Updated developer setup documentation, ignore java_pid*.hprof files, and added quality of life file `gradle.properties`
 * [UI]: Refreshed global search page to use Ant Design. See [PR 1409](https://github.com/phac-nml/irida/pull/1409)
 * [UI/Developer]: Removed old notification system hack and updated to use only Ant Design notifications. See [PR 1447](https://github.com/phac-nml/irida/pull/1447)
+* [UI]: Fixed bug where the `User` column was named `User Group` on the admin User Groups page. [See PR 1450](https://github.com/phac-nml/irida/pull/1450)
 
 ## [22.09.6] - 2022/12/21
 * [UI]: Fixed bug on NCBI Export page preventing the export from occuring. See [PR 1439](https://github.com/phac-nml/irida/pull/1439)
