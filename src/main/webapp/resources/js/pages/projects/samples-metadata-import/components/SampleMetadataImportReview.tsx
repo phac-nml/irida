@@ -21,7 +21,11 @@ import {
   IconExclamationCircle,
 } from "../../../../components/icons/Icons";
 import styled from "styled-components";
-import { saveMetadata } from "../redux/importReducer";
+import {
+  MetadataValidateDetailsItem,
+  saveMetadata,
+  setMetadataItem,
+} from "../redux/importReducer";
 import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
 import {
@@ -77,12 +81,16 @@ export function SampleMetadataImportReview(): JSX.Element {
   const {
     headers,
     sampleNameColumn,
-    metadata,
-    metadataValidateDetails,
+    metadata: stateMetadata,
+    metadataValidateDetails: stateMetadataValidateDetails,
     metadataSaveDetails,
     percentComplete,
   } = useImportSelector((state: ImportState) => state.importReducer);
   const dispatch: ImportDispatch = useImportDispatch();
+  const [metadata, setMetadata] = React.useState<MetadataItem[]>(stateMetadata);
+  const [metadataValidateDetails, setMetadataValidateDetails] = React.useState<
+    Record<string, MetadataValidateDetailsItem>
+  >(stateMetadataValidateDetails);
 
   const rowSelection: TableRowSelection<MetadataItem> = {
     fixed: true,
@@ -103,35 +111,52 @@ export function SampleMetadataImportReview(): JSX.Element {
   }, [percentComplete]);
 
   React.useEffect(() => {
+    setMetadata(stateMetadata);
+  }, [stateMetadata]);
+
+  React.useEffect(() => {
+    setMetadataValidateDetails(stateMetadataValidateDetails);
+  }, [stateMetadata, stateMetadataValidateDetails]);
+
+  React.useEffect(() => {
     const sampleColumn: ColumnType<MetadataItem> = {
       title: sampleNameColumn,
       dataIndex: sampleNameColumn,
       fixed: "left",
       width: 100,
-      onCell: (item, index) => {
+      onCell: (item) => {
         return {
           style: {
             background: metadataValidateDetails[item[sampleNameColumn]]
-              .isSampleNameValid
+              ?.isSampleNameValid
               ? undefined
               : `var(--red-1)`,
           },
           onClick: () => {
-            // console.log(item, index);
-            // console.log(item.rowKey);
             setEditingRowKey(item.rowKey);
           },
         };
       },
       render: (text, item) => {
         const valid =
-          metadataValidateDetails[item[sampleNameColumn]].isSampleNameValid;
+          metadataValidateDetails[item[sampleNameColumn]]?.isSampleNameValid;
         if (editingRowKey === item.rowKey && !valid) {
           return (
             <Input
               defaultValue={item[sampleNameColumn]}
-              onPressEnter={() => setEditingRowKey(undefined)}
-              onBlur={() => setEditingRowKey(undefined)}
+              onPressEnter={async (e) => {
+                console.log("onPressEnter");
+                console.log(e.target.value);
+                const updatedItem = { ...item };
+                updatedItem[sampleNameColumn] = e.target.value;
+                dispatch(setMetadataItem({ metadataItem: updatedItem }));
+                setEditingRowKey(undefined);
+              }}
+              onBlur={(e) => {
+                console.log("onBLur");
+                console.log(e.target.value);
+                setEditingRowKey(undefined);
+              }}
             />
           );
         } else {
@@ -165,7 +190,7 @@ export function SampleMetadataImportReview(): JSX.Element {
       fixed: "left",
       width: 70,
       render: (text, item) => {
-        if (!metadataValidateDetails[item[sampleNameColumn]].foundSampleId)
+        if (!metadataValidateDetails[item[sampleNameColumn]]?.foundSampleId)
           return (
             <Tag color="green">
               {i18n("SampleMetadataImportReview.table.filter.new")}
@@ -216,6 +241,7 @@ export function SampleMetadataImportReview(): JSX.Element {
         .map((row): string => row.rowKey)
     );
   }, [
+    dispatch,
     editingRowKey,
     headers,
     metadata,

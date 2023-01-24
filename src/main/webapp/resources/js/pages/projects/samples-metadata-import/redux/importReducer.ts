@@ -52,6 +52,11 @@ export interface SetSampleNameColumnResponse {
   metadataValidateDetails: Record<string, MetadataValidateDetailsItem>;
 }
 
+export interface SetMetadataItemResponse {
+  metadata: MetadataItem[];
+  metadataValidateDetails: Record<string, MetadataValidateDetailsItem>;
+}
+
 export interface InitialState {
   projectId: string;
   sampleNameColumn: string;
@@ -132,7 +137,7 @@ export const saveMetadata = createAsyncThunk<
           metadataItem
         );
 
-        if (typeof sampleId === "number") {
+        if (sampleId === "number") {
           updateSampleList.push({ name, sampleId, metadata });
         } else {
           createSampleList.push({ name, metadata });
@@ -293,6 +298,57 @@ export const setMetadata = createAction(
 );
 
 /*
+Redux action for setting a project metadata item.
+For more information on redux async thunks see: https://redux-toolkit.js.org/api/createAsyncThunk
+*/
+export const setMetadataItem = createAsyncThunk<
+  SetMetadataItemResponse,
+  { metadataItem: MetadataItem },
+  { state: ImportState }
+>(`importReducer/setMetadataItem`, async ({ metadataItem }, { getState }) => {
+  const state: ImportState = getState();
+  const { metadata, metadataValidateDetails, sampleNameColumn, projectId } =
+    state.importReducer;
+
+  const index = metadata.findIndex(
+    (item) => item.rowKey === metadataItem.rowKey
+  );
+  const oldSampleName = metadata[index][sampleNameColumn];
+
+  const updatedMetadata = [...metadata];
+  updatedMetadata[index] = metadataItem;
+
+  const validatedSamples: ValidateSamplesResponse = await validateSamples({
+    projectId: projectId,
+    body: {
+      samples: [{ name: metadataItem[sampleNameColumn] }],
+    },
+  });
+  const lockedSamples: LockedSamplesResponse = await getLockedSamples({
+    projectId,
+  });
+  const sampleName: string = metadataItem[sampleNameColumn];
+  const foundValidatedSamples = validatedSamples.samples.find(
+    (sample) => sampleName === sample.name
+  );
+  const foundSampleId = foundValidatedSamples?.ids?.at(0);
+  const foundLockedSamples = lockedSamples.sampleIds.find(
+    (sampleId) => sampleId === foundSampleId
+  );
+  const updatedMetadataValidateDetails = { ...metadataValidateDetails };
+  delete updatedMetadataValidateDetails[oldSampleName];
+  updatedMetadataValidateDetails[sampleName] = {
+    isSampleNameValid: validateSampleName(sampleName),
+    foundSampleId: foundSampleId,
+    locked: !!foundLockedSamples,
+  };
+  return {
+    metadata: updatedMetadata,
+    metadataValidateDetails: updatedMetadataValidateDetails,
+  };
+});
+
+/*
 Redux action for setting the project metadata save details.
 For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
  */
@@ -333,6 +389,10 @@ export const importReducer = createReducer(initialState, (builder) => {
   });
   builder.addCase(setMetadata, (state, action) => {
     state.metadata = action.payload.metadata;
+  });
+  builder.addCase(setMetadataItem.fulfilled, (state, action) => {
+    state.metadata = action.payload.metadata;
+    state.metadataValidateDetails = action.payload.metadataValidateDetails;
   });
   builder.addCase(setMetadataSaveDetails, (state, action) => {
     state.metadataSaveDetails = action.payload.metadataSaveDetails;
