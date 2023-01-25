@@ -2,11 +2,11 @@ export = AJAXRESPONSE;
 export as namespace AJAXRESPONSE;
 
 declare namespace AJAXRESPONSE {
-  export interface AjaxErrorResponse {
+  export type AjaxErrorResponse = {
     error: string;
-  }
+  };
 
-  export interface AjaxSuccessResponse {
+  export type AjaxSuccessResponse = {
     message: string;
-  }
+  };
 }
