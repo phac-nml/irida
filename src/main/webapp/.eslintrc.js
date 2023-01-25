@@ -9,15 +9,18 @@ module.exports = {
     i18n: true,
     __webpack_public_path__: true,
   },
-  extends: [
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended",
-  ],
+  extends: ["airbnb", "airbnb-typescript", "plugin:prettier/recommended"],
+  // [
+  //   "airbnb-typescript",
+  //   "eslint:recommended",
+  //   "plugin:react/recommended",
+  //   "plugin:react-hooks/recommended",
+  //   "plugin:@typescript-eslint/eslint-recommended",
+  //   "plugin:@typescript-eslint/recommended",
+  //   "plugin:prettier/recommended",
+  // ],
   parserOptions: {
+    project: "./tsconfig.json",
     ecmaFeatures: {
       jsx: true,
     },
@@ -31,6 +34,7 @@ module.exports = {
     },
   },
   rules: {
+    "@typescript-eslint/explicit-function-return-type": "warn",
     "react/prop-types": 0,
     "prefer-destructuring": [
       "error",

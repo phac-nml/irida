@@ -20,11 +20,10 @@ export async function get<T>(
   }
 }
 
-export async function post<T>(
-  url: string,
-  params?: T,
-  config?: AxiosRequestConfig
-): Promise<T> {
+export async function post<
+  T,
+  P = FormData | Record<string, unknown> | undefined
+>(url: string, params?: P, config?: AxiosRequestConfig): Promise<T> {
   try {
     const { data } = await axios.post(url, params, config);
     return data;
