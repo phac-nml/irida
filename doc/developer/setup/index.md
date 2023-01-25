@@ -122,7 +122,7 @@ docker run hello-world
 
 ### Configure Filesystem Locations
 
-IRIDA stores much of its metadata in the relational database. As of IRIDA 23.01, you can use cloud based storage (BETA) as well as a local filesystem to store the sequencing, reference, and analysis files. Currently, Azure Blob Storage and AWS S3 Bucket Storage are supported.
+IRIDA stores much of its metadata in the relational database. As of IRIDA 23.01, you can use cloud based storage (BETA) as well as a local filesystem to store the sequencing, reference, and analysis output files. Currently, Azure Blob and AWS S3 storage is supported.
 
 Directory configuration is:
 
@@ -146,6 +146,16 @@ In the configuration file (such as irida.conf) you will need to add these config
 
 See [Azure Storage Setup](https://learn.microsoft.com/en-us/azure/storage/blobs/) for instructions on how to setup Blob storage.
 
+Microsoft has also made available a storage emulator,`Azurite`, which can be used to develop and test Azure storage functionality on a local machine instead of requiring the use of an Azure Storage account. See [Microsoft Azurite](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite).
+
+You will need to get the SAS token for the storage account. This can be retrieved by setting up [Azure Storage Explorer](https://learn.microsoft.com/en-us/azure/vs-azure-tools-storage-manage-with-storage-explorer) and adding a new resource (Local Storage Emulator). Once that is set-up, you can right click on the storage account which matches the name you set for the local storage emulator in the previous step, and click the Get Shared Access Signature. From the popup window, you can select the expiry of the token and which permissions (read and write) to set for the storage account, and click create.
+
+Then you can update these configuration values (in irida.conf etc)
+* `irida.storage.type=azure`
+* `azure.container.name=test`
+* `azure.container.url=http://127.0.0.1:10000/devstoreaccount1/test?SAS_TOKEN_RETRIEVED_ABOVE`
+* `azure.sas.token=SAS_TOKEN_RETRIEVED_ABOVE` where the SAS_TOKEN has both read/write permissions
+
 Setup using Amazon AWS S3 Bucket Storage:
 
 In the configuration file (such as irida.conf) you will need to add these configuration values:
@@ -156,9 +166,9 @@ In the configuration file (such as irida.conf) you will need to add these config
 * `aws.access.key=ACCESS_KEY`
 * `aws.secret.key=SECRET_KEY`
 
-See [AWS S3 Bucket Storage Setup](https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html) for instructions on how to setup an S3 storage.
+See [AWS S3 Bucket Storage Setup](https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html) for instructions on how to setup S3 storage.
 
-There is no other configuration necessary in IRIDA to use cloud based storage. After adding these values to the configuration file you should be able to start up IRIDA, and it will use the cloud based storage that is defined.
+There is no other configuration necessary in IRIDA to use cloud based storage. After adding these values to the configuration file you should be able to start up IRIDA, and it will use the cloud based storage that is configured.
 
 
 ### Testing IRIDA
