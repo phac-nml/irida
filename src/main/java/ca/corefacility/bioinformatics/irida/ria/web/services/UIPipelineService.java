@@ -94,15 +94,14 @@ public class UIPipelineService {
 		IridaWorkflow workflow = workflowsService.getIridaWorkflow(id);
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
 		UIPipelineDetailsResponse detailsResponse = new UIPipelineDetailsResponse();
-        /*
-        Prefix for getting messages from IRIDA message properties file
-         */
-		String prefix = "workflow." + description.getAnalysisType()
-				.getType() + ".";
+		/*
+		Prefix for getting messages from IRIDA message properties file
+		 */
+		String prefix = "workflow." + description.getAnalysisType().getType() + ".";
 
-        /*
-        Set up basic information for the pipeline being launched.
-         */
+		/*
+		Set up basic information for the pipeline being launched.
+		 */
 		detailsResponse.setName(messageSource.getMessage(prefix + "title", new Object[] {}, locale));
 		detailsResponse.setDescription(messageSource.getMessage(prefix + "description", new Object[] {}, locale));
 		detailsResponse.setType(description.getName());
@@ -116,48 +115,47 @@ public class UIPipelineService {
 				.collect(Collectors.toList());
 		detailsResponse.setProjects(projectsToShareWith);
 
-        /*
-        Add all pipeline parameters
-         */
+		/*
+		Add all pipeline parameters
+		 */
 		detailsResponse.setParameterWithOptions(getPipelineSpecificParametersWithOptions(description, locale));
 
-        /*
-        Add saved parameter sets
-         */
+		/*
+		Add saved parameter sets
+		 */
 		detailsResponse.setSavedPipelineParameters(getSavedPipelineParameters(workflow, locale));
 
 		/*
-        Check / add reference files
-         */
-        if (description.requiresReference()) {
-            detailsResponse.setRequiresReference(true);
-            detailsResponse.setReferenceFiles(getReferenceFilesForPipeline(projects));
-        }
+		Check / add reference files
+		 */
+		if (description.requiresReference()) {
+			detailsResponse.setRequiresReference(true);
+			detailsResponse.setReferenceFiles(getReferenceFilesForPipeline(projects));
+		}
 
-        /*
-        Can the pipeline write back
-         */
-        Map<Project, List<Sample>> cart = cartService.getFullCart();
-        boolean canUpdateSamples = analysisSubmissionSampleProcessor.hasRegisteredAnalysisSampleUpdater(description.getAnalysisType());
-        if (canUpdateSamples) {
-			Authentication authentication = SecurityContextHolder.getContext()
-					.getAuthentication();
+		/*
+		Can the pipeline write back
+		 */
+		Map<Project, List<Sample>> cart = cartService.getFullCart();
+		boolean canUpdateSamples = analysisSubmissionSampleProcessor.hasRegisteredAnalysisSampleUpdater(
+				description.getAnalysisType());
+		if (canUpdateSamples) {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			// Need to make sure that all samples are allowed to be updated.
 			List<Sample> samples = cart.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
-			canUpdateSamples = samples
-					.stream()
+			canUpdateSamples = samples.stream()
 					.map(sample -> updateSamplePermission.isAllowed(authentication, sample))
 					.reduce(true, (a, b) -> a && b);
 			if (canUpdateSamples) {
 				detailsResponse.setUpdateSamples(messageSource.getMessage(
-						"workflow.label.share-analysis-samples." + description.getAnalysisType()
-								.getType(), new Object[] {}, locale));
+						"workflow.label.share-analysis-samples." + description.getAnalysisType().getType(),
+						new Object[] {}, locale));
 			}
 		}
 
-        /*
-        Set the acceptable file types
-         */
+		/*
+		Set the acceptable file types
+		 */
 		detailsResponse.setAcceptsSingleSequenceFiles(description.acceptsSingleSequenceFiles());
 		detailsResponse.setAcceptsPairedSequenceFiles(description.acceptsPairedSequenceFiles());
 
@@ -184,10 +182,12 @@ public class UIPipelineService {
 					 */
 					try {
 						String dynamicSourceName = dynamicSource.getName();
-						String label = messageSource.getMessage("dynamicsource.label." + dynamicSourceName, new Object[] {}, locale);
+						String label = messageSource.getMessage("dynamicsource.label." + dynamicSourceName,
+								new Object[] {}, locale);
 						List<SelectOption> options = new ArrayList<>();
 
-						TabularToolDataTable galaxyToolDataTable = galaxyToolDataService.getToolDataTable(dynamicSourceName);
+						TabularToolDataTable galaxyToolDataTable = galaxyToolDataService.getToolDataTable(
+								dynamicSourceName);
 						List<String> labels = galaxyToolDataTable.getFieldsForColumn(dynamicSource.getDisplayColumn());
 						Iterator<String> labelsIterator = labels.iterator();
 						List<String> values = galaxyToolDataTable.getFieldsForColumn(
@@ -198,7 +198,9 @@ public class UIPipelineService {
 							options.add(new SelectOption(valuesIterator.next(), labelsIterator.next()));
 						}
 
-						dynamicSources.add(new InputWithOptions(parameter.getName(), label, options.get(0).getValue(), options, parameter.isRequired()));
+						dynamicSources.add(
+								new InputWithOptions(parameter.getName(), label, options.get(0).getValue(), options,
+										parameter.isRequired()));
 					} catch (Exception e) {
 						logger.debug("Tool Data Table not found: ", e);
 					}
@@ -222,9 +224,7 @@ public class UIPipelineService {
 	public SavedPipelineParameters saveNewPipelineParameters(UUID id, SavePipelineParametersRequest request,
 			Locale locale) throws IridaWorkflowNotFoundException {
 		IridaWorkflow workflow = workflowsService.getIridaWorkflow(id);
-		final String pipelineName = workflow.getWorkflowDescription()
-				.getName()
-				.toLowerCase();
+		final String pipelineName = workflow.getWorkflowDescription().getName().toLowerCase();
 		IridaWorkflowNamedParameters namedParameters = new IridaWorkflowNamedParameters(request.getLabel(), id,
 				request.getParameters());
 		namedParameters = namedParametersService.create(namedParameters);
@@ -265,9 +265,7 @@ public class UIPipelineService {
 				logger.error("Cannot find IridaWorkFlow for '" + type.getType() + "'", e);
 			}
 		}
-		return pipelines.stream()
-				.sorted(Comparator.comparing(Pipeline::getName))
-				.collect(Collectors.toList());
+		return pipelines.stream().sorted(Comparator.comparing(Pipeline::getName)).collect(Collectors.toList());
 	}
 
 	/**
@@ -280,23 +278,20 @@ public class UIPipelineService {
 	public List<AnalysisTemplate> getProjectAnalysisTemplates(Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
 		List<AnalysisSubmissionTemplate> templates = analysisSubmissionService.getAnalysisTemplatesForProject(project);
-		return templates.stream()
-				.map(template -> {
-					UUID id = template.getWorkflowId();
-					String type;
-					try {
-						IridaWorkflow flow = workflowsService.getIridaWorkflow(id);
-						AnalysisType analysisType = flow.getWorkflowDescription()
-								.getAnalysisType();
-						type = messageSource.getMessage("workflow." + analysisType.getType() + ".title",
-								new Object[] {}, locale);
-					} catch (IridaWorkflowNotFoundException e) {
-						type = messageSource.getMessage("workflow.UNKNOWN.title", new Object[] {}, locale);
-					}
-					return new AnalysisTemplate(template.getId(), template.getName(), type, template.isEnabled(),
-							template.getStatusMessage());
-				})
-				.collect(Collectors.toList());
+		return templates.stream().map(template -> {
+			UUID id = template.getWorkflowId();
+			String type;
+			try {
+				IridaWorkflow flow = workflowsService.getIridaWorkflow(id);
+				AnalysisType analysisType = flow.getWorkflowDescription().getAnalysisType();
+				type = messageSource.getMessage("workflow." + analysisType.getType() + ".title", new Object[] {},
+						locale);
+			} catch (IridaWorkflowNotFoundException e) {
+				type = messageSource.getMessage("workflow.UNKNOWN.title", new Object[] {}, locale);
+			}
+			return new AnalysisTemplate(template.getId(), template.getName(), type, template.isEnabled(),
+					template.getStatusMessage());
+		}).collect(Collectors.toList());
 	}
 
 	/**
@@ -324,26 +319,21 @@ public class UIPipelineService {
 	 */
 	private List<InputWithOptions> getPipelineSpecificParametersWithOptions(IridaWorkflowDescription description,
 			Locale locale) {
-		return description.getParameters()
-				.stream()
-				.filter(IridaWorkflowParameter::hasChoices)
-				.map(parameter -> {
-					String name = description.getName()
-							.toLowerCase();
-					String label = localizedParamLabel(locale, name, parameter.getName());
-					String defaultValue = parameter.getDefaultValue();
-					List<SelectOption> options = parameter.getChoices()
-							.stream()
-							.map(option -> new SelectOption(option.getValue(),
-									localizedParamOptionLabel(locale, name, parameter.getName(), option.getName())))
-							.collect(Collectors.toUnmodifiableList());
-					return new InputWithOptions(parameter.getName(), label, defaultValue, options, parameter.isRequired());
-				})
-				.collect(Collectors.toUnmodifiableList());
+		return description.getParameters().stream().filter(IridaWorkflowParameter::hasChoices).map(parameter -> {
+			String name = description.getName().toLowerCase();
+			String label = localizedParamLabel(locale, name, parameter.getName());
+			String defaultValue = parameter.getDefaultValue();
+			List<SelectOption> options = parameter.getChoices()
+					.stream()
+					.map(option -> new SelectOption(option.getValue(),
+							localizedParamOptionLabel(locale, name, parameter.getName(), option.getName())))
+					.collect(Collectors.toUnmodifiableList());
+			return new InputWithOptions(parameter.getName(), label, defaultValue, options, parameter.isRequired());
+		}).collect(Collectors.toUnmodifiableList());
 	}
 
 	/**
-	 * Internationalize a parameter label.  If there is not translation for it, just return the default text.
+	 * Internationalize a parameter label. If there is not translation for it, just return the default text.
 	 *
 	 * @param locale       current users {@link Locale}
 	 * @param workflowName name of the current {@link IridaWorkflow}
@@ -387,20 +377,19 @@ public class UIPipelineService {
 	private List<SavedPipelineParameters> getSavedPipelineParameters(IridaWorkflow workflow, Locale locale) {
 		IridaWorkflowDescription description = workflow.getWorkflowDescription();
 		List<IridaWorkflowParameter> workflowParameters = description.getParameters();
-		String pipelineName = description.getName()
-				.toLowerCase();
+		String pipelineName = description.getName().toLowerCase();
 		List<SavedPipelineParameters> savedParameters = new ArrayList<>();
 
-        /*
-        If there are no parameters just return an empty list.
-         */
+		/*
+		If there are no parameters just return an empty list.
+		 */
 		if (workflowParameters == null) {
 			return savedParameters;
 		}
 
-        /*
-        Get the default parameter set
-         */
+		/*
+		Get the default parameter set
+		 */
 		List<Input> defaultParameters = workflowParameters.stream()
 				.filter(p -> !p.isRequired())
 				.map(p -> new Input(p.getName(),
@@ -411,28 +400,24 @@ public class UIPipelineService {
 				messageSource.getMessage("workflow.parameters.named.default", new Object[] {}, locale),
 				defaultParameters));
 
-        /*
-        Add any saved parameter sets
-         */
+		/*
+		Add any saved parameter sets
+		 */
 		List<IridaWorkflowNamedParameters> namedParameters = namedParametersService.findNamedParametersForWorkflow(
 				workflow.getWorkflowIdentifier());
-		savedParameters.addAll(namedParameters.stream()
-				.map(wp -> {
-					Map<String, String> inputParameter = wp.getInputParameters();
+		savedParameters.addAll(namedParameters.stream().map(wp -> {
+			Map<String, String> inputParameter = wp.getInputParameters();
 
-            // Go through the parameters and see which ones are getting overwritten.
-            List<Input> parameters = defaultParameters.stream()
-                    .map(parameter -> {
-                        if (inputParameter.containsKey(parameter.getName())) {
-                            return new Input(parameter.getName(), parameter.getLabel(),
-                                    inputParameter.get(parameter.getName()));
-                        }
-						return new Input(parameter.getName(), parameter.getLabel(), parameter.getValue());
-					})
-					.collect(Collectors.toList());
-					return new SavedPipelineParameters(wp.getId(), wp.getLabel(), parameters);
-				})
-				.collect(Collectors.toList()));
+			// Go through the parameters and see which ones are getting overwritten.
+			List<Input> parameters = defaultParameters.stream().map(parameter -> {
+				if (inputParameter.containsKey(parameter.getName())) {
+					return new Input(parameter.getName(), parameter.getLabel(),
+							inputParameter.get(parameter.getName()));
+				}
+				return new Input(parameter.getName(), parameter.getLabel(), parameter.getValue());
+			}).collect(Collectors.toList());
+			return new SavedPipelineParameters(wp.getId(), wp.getLabel(), parameters);
+		}).collect(Collectors.toList()));
 
 		return savedParameters;
 	}
@@ -444,42 +429,39 @@ public class UIPipelineService {
 	 * @return List of reference files for consumption by the UI.
 	 */
 	private List<UIReferenceFile> getReferenceFilesForPipeline(List<Project> projects) {
-		return projects.stream()
-				.map(project -> {
-					List<UIReferenceFile> list = new ArrayList<>();
-					for (Join<Project, ReferenceFile> projectReferenceFileJoin : referenceFileService.getReferenceFilesForProject(
-						project)) {
-						ReferenceFile file = projectReferenceFileJoin.getObject();
-						String filesize = file.getFileSize();
-						if(!filesize.equals("N/A")) {
-							UIReferenceFile uiReferenceFile = new UIReferenceFile(projectReferenceFileJoin, filesize);
-							list.add(uiReferenceFile);
-						} else {
-							logger.error("Unable to locate reference file " + file.getLabel());
-						}
-					}
-					return list;
-				})
-				.flatMap(List::stream)
-				.collect(Collectors.toList());
+		return projects.stream().map(project -> {
+			List<UIReferenceFile> list = new ArrayList<>();
+			for (Join<Project, ReferenceFile> projectReferenceFileJoin : referenceFileService.getReferenceFilesForProject(
+					project)) {
+				ReferenceFile file = projectReferenceFileJoin.getObject();
+				String filesize = file.getFileSize();
+				if (!filesize.equals("N/A")) {
+					UIReferenceFile uiReferenceFile = new UIReferenceFile(projectReferenceFileJoin, filesize);
+					list.add(uiReferenceFile);
+				} else {
+					logger.error("Unable to locate reference file " + file.getLabel());
+				}
+			}
+			return list;
+		}).flatMap(List::stream).collect(Collectors.toList());
 	}
 
-    /**
-     * Create a Pipeline for consumption by the UI
-     *
-     * @param analysisType {@link AnalysisType} type of analysis pipeline
-     * @param locale       {@link Locale}
-     * @return {@link Pipeline}
-     * @throws IridaWorkflowNotFoundException thrown if {@link IridaWorkflowDescription} is not found
-     */
-    private Pipeline createPipeline(AnalysisType analysisType, Locale locale) throws IridaWorkflowNotFoundException {
-        IridaWorkflowDescription workflowDescription = workflowsService.getDefaultWorkflowByType(analysisType)
-                .getWorkflowDescription();
-        String prefix = "workflow." + analysisType.getType();
-        String name = messageSource.getMessage(prefix + ".title", new Object[]{}, locale);
-        String description = messageSource.getMessage(prefix + ".description", new Object[]{}, locale);
-        UUID id = workflowDescription.getId();
-        String styleName = analysisType.getType();
-        return new Pipeline(name, description, id, styleName);
-    }
+	/**
+	 * Create a Pipeline for consumption by the UI
+	 *
+	 * @param analysisType {@link AnalysisType} type of analysis pipeline
+	 * @param locale       {@link Locale}
+	 * @return {@link Pipeline}
+	 * @throws IridaWorkflowNotFoundException thrown if {@link IridaWorkflowDescription} is not found
+	 */
+	private Pipeline createPipeline(AnalysisType analysisType, Locale locale) throws IridaWorkflowNotFoundException {
+		IridaWorkflowDescription workflowDescription = workflowsService.getDefaultWorkflowByType(analysisType)
+				.getWorkflowDescription();
+		String prefix = "workflow." + analysisType.getType();
+		String name = messageSource.getMessage(prefix + ".title", new Object[] {}, locale);
+		String description = messageSource.getMessage(prefix + ".description", new Object[] {}, locale);
+		UUID id = workflowDescription.getId();
+		String styleName = analysisType.getType();
+		return new Pipeline(name, description, id, styleName);
+	}
 }

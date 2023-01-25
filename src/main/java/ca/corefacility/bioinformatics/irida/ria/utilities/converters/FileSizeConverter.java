@@ -4,7 +4,6 @@ import org.springframework.core.convert.converter.Converter;
 
 /**
  * Converts a files size (originally in bytes) to Kilobytes
- *
  */
 public class FileSizeConverter implements Converter<Long, String> {
 
@@ -18,13 +17,13 @@ public class FileSizeConverter implements Converter<Long, String> {
 	 * @param size Length property for a file
 	 * @return String formatted size of file in kilobytes.
 	 */
-	@Override public String convert(Long size) {
+	@Override
+	public String convert(Long size) {
 		if (size > BYTES_PER_GB) {
 			return String.format("%.2f GB", ((float) size / BYTES_PER_GB));
+		} else if (size > BYTES_PER_MB) {
+			return String.format("%d MB", (int) Math.ceil(size / BYTES_PER_MB));
 		}
-		else if(size > BYTES_PER_MB) {
-			return String.format("%d MB", (int)Math.ceil(size / BYTES_PER_MB));
-		}
-		return String.format("%d KB", (int)Math.ceil(size / BYTES_PER_KB));
+		return String.format("%d KB", (int) Math.ceil(size / BYTES_PER_KB));
 	}
 }

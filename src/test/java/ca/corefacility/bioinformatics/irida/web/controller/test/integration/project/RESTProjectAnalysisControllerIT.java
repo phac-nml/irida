@@ -14,13 +14,13 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import static ca.corefacility.bioinformatics.irida.web.controller.test.integration.util.ITestAuthUtils.*;
 import static org.hamcrest.Matchers.hasItems;
 
+/**
+ * Test for functions of {@link RESTProjectAnalysisControllerIT}
+ */
 @RestIntegrationTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
 @DatabaseSetup("/ca/corefacility/bioinformatics/irida/web/controller/test/integration/project/RESTProjectAnalysisControllerIT.xml")
 @DatabaseTearDown("classpath:/ca/corefacility/bioinformatics/irida/test/integration/TableReset.xml")
-/**
- * Test for functions of {@link RESTProjectAnalysisControllerIT}
- */
 public class RESTProjectAnalysisControllerIT {
 
 	public static final String ANALYSIS_PROJECT_BASE = "/api/projects/1/analyses";
@@ -28,7 +28,9 @@ public class RESTProjectAnalysisControllerIT {
 
 	@Test
 	public void testGetProjectAnalysisAsAdmin() {
-		asAdmin().get(ANALYSIS_PROJECT_BASE).then().statusCode(HttpStatus.OK.value())
+		asAdmin().get(ANALYSIS_PROJECT_BASE)
+				.then()
+				.statusCode(HttpStatus.OK.value())
 				.body("resource.resources.identifier", hasItems("1", "2", "3"));
 	}
 
@@ -44,14 +46,18 @@ public class RESTProjectAnalysisControllerIT {
 
 	@Test
 	public void testGetProjectAnalysisByTypeAsAdmin() {
-		asAdmin().get(ANALYSIS_SISTR_BASE).then().statusCode(HttpStatus.OK.value())
+		asAdmin().get(ANALYSIS_SISTR_BASE)
+				.then()
+				.statusCode(HttpStatus.OK.value())
 				.body("resource.resources.identifier", hasItems("2", "3"));
 	}
 
 	@Test
 	public void testGetProjectAnalysisByTypeUser() {
-		asUser().get(ANALYSIS_SISTR_BASE).then().statusCode(HttpStatus.OK.value()).body("resource.resources.identifier",
-				hasItems("2", "3"));
+		asUser().get(ANALYSIS_SISTR_BASE)
+				.then()
+				.statusCode(HttpStatus.OK.value())
+				.body("resource.resources.identifier", hasItems("2", "3"));
 	}
 
 	@Test

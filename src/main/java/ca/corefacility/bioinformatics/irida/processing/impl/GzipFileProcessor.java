@@ -6,13 +6,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.zip.GZIPInputStream;
 
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
@@ -22,14 +22,10 @@ import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFi
 
 
 /**
- * Handle gzip-ed files (if necessary). This class partially assumes that gzip
- * compressed files have the extension ".gz" (not for determining whether or not
- * the file is compressed, but rather for naming the decompressed file). If the
- * compressed file does not end with ".gz", then it will be renamed as such so
- * that the decompressed file name will not conflict with the compressed file
- * name.
- *
- *
+ * Handle gzip-ed files (if necessary). This class partially assumes that gzip compressed files have the extension ".gz"
+ * (not for determining whether or not the file is compressed, but rather for naming the decompressed file). If the
+ * compressed file does not end with ".gz", then it will be renamed as such so that the decompressed file name will not
+ * conflict with the compressed file name.
  */
 @Component
 public class GzipFileProcessor implements FileProcessor {
@@ -54,12 +50,10 @@ public class GzipFileProcessor implements FileProcessor {
 	}
 
 	/**
-	 * Decide whether or not to delete the original compressed files that are
-	 * uploaded once they're unzipped. If <code>false</code> they will be kept
-	 * in their revision directories.
+	 * Decide whether or not to delete the original compressed files that are uploaded once they're unzipped. If
+	 * <code>false</code> they will be kept in their revision directories.
 	 *
-	 * @param removeCompressedFile
-	 *            Whether or not to delete original compressed files.
+	 * @param removeCompressedFile Whether or not to delete original compressed files.
 	 */
 	public void setRemoveCompressedFiles(boolean removeCompressedFile) {
 		this.removeCompressedFile = removeCompressedFile;
@@ -68,8 +62,7 @@ public class GzipFileProcessor implements FileProcessor {
 	/**
 	 * Disables this file processor from processing files.
 	 *
-	 * @param disableFileProcessor True if this processor should be disabled, false
-	 *                             otherwise.
+	 * @param disableFileProcessor True if this processor should be disabled, false otherwise.
 	 */
 	public void setDisableFileProcessor(boolean disableFileProcessor) {
 		this.disableFileProcessor = disableFileProcessor;
@@ -93,10 +86,8 @@ public class GzipFileProcessor implements FileProcessor {
 	/**
 	 * Process a single {@link SequenceFile}
 	 *
-	 * @param sequenceFile
-	 *            file to process
-	 * @throws FileProcessorException
-	 *             if an error occurs while processing
+	 * @param sequenceFile file to process
+	 * @throws FileProcessorException if an error occurs while processing
 	 */
 	public void processSingleFile(SequenceFile sequenceFile) throws FileProcessorException {
 		if (disableFileProcessor) {
@@ -154,8 +145,8 @@ public class GzipFileProcessor implements FileProcessor {
 	/**
 	 * Ensures that the supplied file ends with a specific extension.
 	 *
-	 * @param file
-	 *            the file to handle.
+	 * @param file      the file to handle.
+	 * @param extension the extension to ensure that the file ends with
 	 * @return the modified (or not) file.
 	 */
 	private Path addExtensionToFilename(Path file, String extension) throws IOException {

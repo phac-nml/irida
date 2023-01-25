@@ -98,7 +98,7 @@ public class IridaApiFilesystemRepositoryConfig {
 	private Path getExistingPathOrThrow(String directory) {
 		Path baseDirectory = Paths.get(directory);
 		boolean baseDirectoryWritable = iridaFileStorageUtility.checkWriteAccess(baseDirectory);
-		if(baseDirectoryWritable) {
+		if (baseDirectoryWritable) {
 			logger.info(String.format(
 					"Using specified existing directory at [%s]. The directory *will not* be removed at shutdown time.",
 					baseDirectory.toString()));

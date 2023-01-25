@@ -231,8 +231,8 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	/**
 	 * Removes the leading "/" from the absolute path returns the rest of the path.
 	 *
-	 * @param file
-	 * @return
+	 * @param file The path to the file
+	 * @return the absolute file path with the preceding slash stripped off it path includes it
 	 */
 	private String getAwsFileAbsolutePath(Path file) {
 		String absolutePath = file.toAbsolutePath().toString();
@@ -251,7 +251,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
 			try (FileChannel in = new FileInputStream(iridaTemporaryFile.getFile().toFile()).getChannel()) {
-				for (long p = 0, l = in.size(); p < l; ) {
+				for (long p = 0, l = in.size(); p < l;) {
 					p += in.transferTo(p, l - p, out);
 				}
 			} catch (IOException e) {
@@ -341,7 +341,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	public FileChunkResponse readChunk(Path file, Long seek, Long chunk) {
 		List<String> bucketPermissions = getBucketPermissions();
 
-		if(bucketPermissions.size() > 0) {
+		if (bucketPermissions.size() > 0) {
 			/*
 			 The range of bytes to read. Start at seek and get `chunk` amount of bytes from seek point.
 			 However a smaller amount of bytes may be read, so we set the file pointer accordingly. The code

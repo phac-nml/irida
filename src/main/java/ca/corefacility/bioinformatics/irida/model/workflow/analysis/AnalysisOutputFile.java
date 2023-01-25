@@ -6,26 +6,11 @@ import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.base.Strings;
 
 import ca.corefacility.bioinformatics.irida.model.IridaRepresentationModel;
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
@@ -36,12 +21,11 @@ import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSu
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Strings;
 
 /**
- * Store file references to files produced by a workflow execution that we
- * otherwise don't want to parse metadata from.
- * 
- *
+ * Store file references to files produced by a workflow execution that we otherwise don't want to parse metadata from.
  */
 @Entity
 @Table(name = "analysis_output_file")
@@ -71,7 +55,7 @@ public class AnalysisOutputFile extends IridaRepresentationModel implements Irid
 	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "tool_execution_id")
 	private final ToolExecution createdByTool;
-	
+
 	@Column(name = "label_prefix")
 	private final String labelPrefix;
 
@@ -90,16 +74,11 @@ public class AnalysisOutputFile extends IridaRepresentationModel implements Irid
 
 	/**
 	 * Create a new instance of {@link AnalysisOutputFile}.
-	 * 
-	 * @param file
-	 *            the file that this resource owns.
-	 * @param labelPrefix
-	 *            the label prefix to use for this file.
-	 * @param executionManagerFileId
-	 *            the identifier for this file in the execution manager that it
-	 *            was created by.
-	 * @param createdByTool
-	 *            the tools that were used to create the file.
+	 *
+	 * @param file                   the file that this resource owns.
+	 * @param labelPrefix            the label prefix to use for this file.
+	 * @param executionManagerFileId the identifier for this file in the execution manager that it was created by.
+	 * @param createdByTool          the tools that were used to create the file.
 	 */
 	public AnalysisOutputFile(final Path file, final String labelPrefix, final String executionManagerFileId,
 			final ToolExecution createdByTool) {
@@ -117,11 +96,10 @@ public class AnalysisOutputFile extends IridaRepresentationModel implements Irid
 	}
 
 	/**
-	 * This intentionally always returns 0. We're abusing
-	 * {@link VersionedFileFields} so that we can get support from
-	 * {@link FilesystemSupplementedRepository}, even though
-	 * {@link AnalysisOutputFile} is immutable and cannot be versioned.
-	 * 
+	 * This intentionally always returns 0. We're abusing {@link VersionedFileFields} so that we can get support from
+	 * {@link FilesystemSupplementedRepository}, even though {@link AnalysisOutputFile} is immutable and cannot be
+	 * versioned.
+	 *
 	 * @return *always* {@code 0L} for {@link AnalysisOutputFile}.
 	 */
 	@Override
@@ -130,10 +108,9 @@ public class AnalysisOutputFile extends IridaRepresentationModel implements Irid
 	}
 
 	/**
-	 * This intentionally does nothing. We're abusing
-	 * {@link VersionedFileFields} so that we can get support from
-	 * {@link FilesystemSupplementedRepository}, even though
-	 * {@link AnalysisOutputFile} is immutable and cannot be versioned.
+	 * This intentionally does nothing. We're abusing {@link VersionedFileFields} so that we can get support from
+	 * {@link FilesystemSupplementedRepository}, even though {@link AnalysisOutputFile} is immutable and cannot be
+	 * versioned.
 	 */
 	@Override
 	public void incrementFileRevisionNumber() {
@@ -199,7 +176,7 @@ public class AnalysisOutputFile extends IridaRepresentationModel implements Irid
 	@JsonIgnore
 	public byte[] getBytesForFile() {
 		byte[] bytes = new byte[0];
-		try{
+		try {
 			bytes = IridaFiles.getBytesForFile(getFile());
 		} catch (IOException e) {
 			logger.error("Unable to read file.", e);

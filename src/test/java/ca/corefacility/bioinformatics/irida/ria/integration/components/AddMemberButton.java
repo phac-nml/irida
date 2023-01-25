@@ -57,7 +57,7 @@ public class AddMemberButton {
 		input.sendKeys(name);
 		wait.until(ExpectedConditions.visibilityOf(newMemberList.get(0)));
 		newMemberList.get(0).click();
-		if(role.equals("GROUP_OWNER")) {
+		if (role.equals("GROUP_OWNER")) {
 			WebElement element = driver.findElements(By.className("t-group-role-owner")).get(0);
 			wait.until(ExpectedConditions.elementToBeClickable(element));
 			element.click();

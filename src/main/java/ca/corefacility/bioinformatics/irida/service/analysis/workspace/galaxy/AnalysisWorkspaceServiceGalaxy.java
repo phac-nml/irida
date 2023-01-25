@@ -317,7 +317,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 							WorkflowInvocationInputs.InputSourceType.HDA));
 
 		} finally {
-			if(iridaTemporaryFile != null) {
+			if (iridaTemporaryFile != null) {
 				iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
 			}
 		}

@@ -1,5 +1,14 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
@@ -21,13 +30,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.*;
 
 /**
  * {@link AnalysisSampleUpdater} that adds a number of results from a SISTR run to the metadata of a {@link Sample}
@@ -41,7 +44,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 	private SampleService sampleService;
 
 	// @formatter:off
-	private static Map<String, String> SISTR_FIELDS = ImmutableMap.<String,String>builder()
+	private static Map<String, String> SISTR_FIELDS = ImmutableMap.<String, String>builder()
 		.put("serovar", "SISTR serovar")
 		.put("cgmlst_subspecies", "SISTR cgMLST Subspecies")
 		.put("cgmlst_ST", "SISTR cgMLST Sequence Type")
@@ -56,7 +59,7 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 
 	@Autowired
 	public SISTRSampleUpdater(MetadataTemplateService metadataTemplateService, SampleService sampleService,
-							  IridaWorkflowsService iridaWorkflowsService) {
+			IridaWorkflowsService iridaWorkflowsService) {
 		this.metadataTemplateService = metadataTemplateService;
 		this.sampleService = sampleService;
 		this.iridaWorkflowsService = iridaWorkflowsService;
@@ -80,16 +83,15 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 			IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysis.getWorkflowId());
 			String workflowVersion = iridaWorkflow.getWorkflowDescription().getVersion();
 
-			try(InputStream inputStream = IridaFiles.getFileInputStream(filePath)) {
+			try (InputStream inputStream = IridaFiles.getFileInputStream(filePath)) {
 
 				//Read the JSON file from SISTR output
 				@SuppressWarnings("resource")
-				String jsonFile = new Scanner(inputStream).useDelimiter("\\Z")
-						.next();
+				String jsonFile = new Scanner(inputStream).useDelimiter("\\Z").next();
 				// map the results into a Map
 				ObjectMapper mapper = new ObjectMapper();
-				List<Map<String, Object>> sistrResults = mapper
-						.readValue(jsonFile, new TypeReference<List<Map<String, Object>>>() {
+				List<Map<String, Object>> sistrResults = mapper.readValue(jsonFile,
+						new TypeReference<List<Map<String, Object>>>() {
 						});
 
 				if (sistrResults.size() > 0) {
@@ -100,8 +102,8 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 						if (result.containsKey(e.getKey())) {
 							Object valueObject = result.get(e.getKey());
 							String value = (valueObject != null ? valueObject.toString() : "");
-							PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",
-									analysis);
+							PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value,
+									"text", analysis);
 							stringEntries.put(e.getValue() + " (v" + workflowVersion + ")", metadataEntry);
 						}
 					});

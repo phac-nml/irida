@@ -218,7 +218,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	public Long getFileSizeBytes(Path file) {
 		Long fileSize = 0L;
 		try {
-			if(file != null) {
+			if (file != null) {
 				fileSize = Files.size(file);
 			}
 		} catch (NoSuchFileException e) {

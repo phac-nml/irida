@@ -1,5 +1,17 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.unit;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
@@ -12,27 +24,17 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.BioHanselSampleUpdater;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
-import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -58,11 +60,11 @@ public class BioHanselSampleUpdaterTest {
 				"bio_hansel/heidelberg/v0.5.0/Subtype", "2.2.1.1.2",
 				"bio_hansel/heidelberg/v0.5.0/Average Tile Coverage", "27.3961038961",
 				"bio_hansel/heidelberg/v0.5.0/QC Status", "FAIL",
-				"bio_hansel/heidelberg/v0.5.0/QC Message","FAIL: Missing Tiles Error 1: 25.25% missing tiles; more than 5.00% missing tiles threshold. Okay coverage depth (27.6 >= 20.0 expected), but this may be the wrong serovar or species for scheme \"heidelberg\" | FAIL: Mixed Sample Error 2: Mixed subtypes found: \"1; 2.2.1.1.2\"."
+				"bio_hansel/heidelberg/v0.5.0/QC Message", "FAIL: Missing Tiles Error 1: 25.25% missing tiles; more than 5.00% missing tiles threshold. Okay coverage depth (27.6 >= 20.0 expected), but this may be the wrong serovar or species for scheme \"heidelberg\" | FAIL: Mixed Sample Error 2: Mixed subtypes found: \"1; 2.2.1.1.2\"."
 		);
 		// @formatter:on
-		final Path path = Paths.get(
-				"src/test/resources/files/bio_hansel/SRR1203042-bio_hansel-results-heidelberg-0.5.0.json");
+		final Path path = Paths
+				.get("src/test/resources/files/bio_hansel/SRR1203042-bio_hansel-results-heidelberg-0.5.0.json");
 		final AnalysisOutputFile analysisOutputFile = new AnalysisOutputFile(path, null, null, null);
 		final Analysis analysis = new Analysis(null, ImmutableMap.of("bio_hansel-results.json", analysisOutputFile),
 				null, null);
@@ -117,9 +119,7 @@ public class BioHanselSampleUpdaterTest {
 
 		Set<MetadataEntry> value = setCaptor.getValue();
 
-		assertEquals(metadataSet.iterator()
-				.next(), value.iterator()
-				.next());
+		assertEquals(metadataSet.iterator().next(), value.iterator().next());
 	}
 
 }

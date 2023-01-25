@@ -32,12 +32,11 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-sample-details-metadata-item")
 	private List<WebElement> metadataFields;
 
-	@FindBy(xpath="//ul[contains(@class, 't-sample-viewer-nav')]/li[2]")
+	@FindBy(xpath = "//ul[contains(@class, 't-sample-viewer-nav')]/li[2]")
 	private WebElement metadataTabLink;
 
 	@FindBy(xpath = "//ul[contains(@class, 't-sample-viewer-nav')]/li[3]")
 	private WebElement filesTabLink;
-
 
 	@FindBy(xpath = "//ul[contains(@class, 't-sample-viewer-nav')]/li[4]")
 	private WebElement sampleAnalysesTabLink;
@@ -72,7 +71,7 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-file-label")
 	private List<WebElement> fileLabels;
 
-	@FindBy(id="t-remove-originals-true")
+	@FindBy(id = "t-remove-originals-true")
 	private WebElement removeOriginalRadioButton;
 
 	@FindBy(className = "t-remove-file-confirm-btn")
@@ -90,10 +89,10 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-default-genome-assembly-tag")
 	private List<WebElement> defaultGenomeAssemblyTags;
 
-	@FindBy(className= "t-sample-analyses")
+	@FindBy(className = "t-sample-analyses")
 	private WebElement sampleAnalysesTable;
 
-	@FindBy(className= "t-sample-analyses-search-input")
+	@FindBy(className = "t-sample-analyses-search-input")
 	private WebElement sampleAnalysesSearchInput;
 
 	@FindBy(className = "ant-list-item")
@@ -108,10 +107,10 @@ public class SampleDetailsViewer extends AbstractPage {
 	@FindBy(className = "t-actions-menu")
 	private List<WebElement> actionBtns;
 
-
 	public SampleDetailsViewer(WebDriver driver) {
 		super(driver);
 	}
+
 	private String concatenatedFileName = "NewConcatenatedFile";
 
 	public static SampleDetailsViewer getSampleDetails(WebDriver driver) {
@@ -136,11 +135,8 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	public String getValueForMetadataField(String label) {
 		for (WebElement field : metadataFields) {
-			if (field.findElement(By.className("t-sample-details-metadata__field"))
-					.getText()
-					.equals(label)) {
-				return field.findElement(By.className("t-sample-details-metadata__entry"))
-						.getText();
+			if (field.findElement(By.className("t-sample-details-metadata__field")).getText().equals(label)) {
+				return field.findElement(By.className("t-sample-details-metadata__entry")).getText();
 			}
 		}
 		return null;
@@ -167,7 +163,7 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	public int numberOfFilesDisplayed() {
 		waitForTime(300);
-		if(files != null) {
+		if (files != null) {
 			return files.size();
 		}
 		return 0;
@@ -179,7 +175,7 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	public int concatenationCheckboxesVisible() {
 
-		if(concatenationCheckboxes != null) {
+		if (concatenationCheckboxes != null) {
 			return concatenationCheckboxes.size();
 		}
 		return 0;
@@ -195,9 +191,9 @@ public class SampleDetailsViewer extends AbstractPage {
 
 	public void selectFilesToConcatenate(int maxCheckboxesToSelect) {
 		List<WebElement> checkboxes = modal.findElements(By.className("t-concatenation-checkbox"));
-		if(checkboxes.size() > 0 && maxCheckboxesToSelect < checkboxes.size()) {
-			checkboxes = checkboxes.subList(0,maxCheckboxesToSelect);
-			for(WebElement element : checkboxes) {
+		if (checkboxes.size() > 0 && maxCheckboxesToSelect < checkboxes.size()) {
+			checkboxes = checkboxes.subList(0, maxCheckboxesToSelect);
+			for (WebElement element : checkboxes) {
 				element.click();
 			}
 		}
@@ -209,18 +205,18 @@ public class SampleDetailsViewer extends AbstractPage {
 	}
 
 	public int processingStatusesCount() {
-			return processingStatuses.size();
+		return processingStatuses.size();
 	}
 
 	public int singleEndFileCount() {
 		return concatenateModal.findElements(By.className("t-single-end-file")).size();
 	}
 
-	public void  enterFileName() {
+	public void enterFileName() {
 		concatenateModal.findElement(By.id("t-concat-new-file-name")).sendKeys(concatenatedFileName);
 	}
 
-	public void  enterFileName(String filename) {
+	public void enterFileName(String filename) {
 		concatenateModal.findElement(By.id("t-concat-new-file-name")).sendKeys(filename);
 	}
 
@@ -232,7 +228,7 @@ public class SampleDetailsViewer extends AbstractPage {
 	}
 
 	public int actionButtonsVisible() {
-		if(actionBtns != null) {
+		if (actionBtns != null) {
 			return actionBtns.size();
 		}
 		return 0;
@@ -243,9 +239,8 @@ public class SampleDetailsViewer extends AbstractPage {
 
 		for (WebElement fileLabel : fileLabels) {
 			String text = fileLabel.getAttribute("innerHTML");
-			if (!existingFileNames.contains(text) ) {
-				if(!text
-						.equals(concatenatedFileName + ".fastq")){
+			if (!existingFileNames.contains(text)) {
+				if (!text.equals(concatenatedFileName + ".fastq")) {
 					correctNames = false;
 				}
 			}
@@ -258,9 +253,8 @@ public class SampleDetailsViewer extends AbstractPage {
 
 		for (WebElement fileLabel : fileLabels) {
 			String text = fileLabel.getAttribute("innerHTML");
-			if (!existingFileNames.contains(text) ) {
-				if(!text
-						.equals(nameOfConcatenatedFile + ".fastq")){
+			if (!existingFileNames.contains(text)) {
+				if (!text.equals(nameOfConcatenatedFile + ".fastq")) {
 					correctNames = false;
 				}
 			}
@@ -334,7 +328,6 @@ public class SampleDetailsViewer extends AbstractPage {
 		waitForTime(500);
 	}
 
-
 	public void clickSampleName() {
 		WebElement ele = driver.findElement(By.className("t-file-label"));
 		ele.click();
@@ -377,7 +370,8 @@ public class SampleDetailsViewer extends AbstractPage {
 		WebElement element = driver.findElement(By.className("ant-modal-close"));
 		element.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10L));
-		wait.until(ExpectedConditions.invisibilityOfAllElements(driver.findElements(By.className("t-sample-details-modal"))));
+		wait.until(ExpectedConditions
+				.invisibilityOfAllElements(driver.findElements(By.className("t-sample-details-modal"))));
 	}
 
 	public int numberOfSequencingObjectsSetAsDefault() {
@@ -399,7 +393,7 @@ public class SampleDetailsViewer extends AbstractPage {
 	public boolean sampleDetailsViewerVisible() {
 		try {
 			return modal.isDisplayed();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			return false;
 		}
 	}

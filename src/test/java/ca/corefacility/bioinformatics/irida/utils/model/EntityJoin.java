@@ -23,35 +23,36 @@ import org.hibernate.envers.Audited;
  *
  */
 @Entity
-@Table(name="entityjoin")
+@Table(name = "entityjoin")
 @Audited
-public class EntityJoin implements Join<IdentifiableTestEntity, OtherEntity>{
-    
+public class EntityJoin implements Join<IdentifiableTestEntity, OtherEntity> {
+
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    
-    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.DETACH)
-    @JoinColumn(name="identifiableTestEntity_id")
-    private IdentifiableTestEntity identifiableTestEntity;
-    
-	@ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.DETACH)    
-	@JoinColumn(name="otherEntity_id")
-    private OtherEntity otherEntity;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
-	
-	public EntityJoin(){}
-	
-	public Long getId(){
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	Long id;
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "identifiableTestEntity_id")
+	private IdentifiableTestEntity identifiableTestEntity;
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "otherEntity_id")
+	private OtherEntity otherEntity;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdDate;
+
+	public EntityJoin() {
+	}
+
+	public Long getId() {
 		return id;
 	}
-	
-	public void setId(Long id){
+
+	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	@Override
 	public IdentifiableTestEntity getSubject() {
 		return identifiableTestEntity;
@@ -59,7 +60,7 @@ public class EntityJoin implements Join<IdentifiableTestEntity, OtherEntity>{
 
 	@Override
 	public OtherEntity getObject() {
-		return otherEntity;	
+		return otherEntity;
 	}
 
 	@Override

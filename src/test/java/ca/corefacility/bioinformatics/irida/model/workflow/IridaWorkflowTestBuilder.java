@@ -7,30 +7,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import com.google.common.collect.Lists;
-
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.AnalysisType;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
-import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaToolParameter;
-import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowDescription;
-import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
-import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowOutput;
-import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowParameter;
-import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowToolRepository;
+import ca.corefacility.bioinformatics.irida.model.workflow.description.*;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
+
+import com.google.common.collect.Lists;
 
 /**
  * Builds test {@link IridaWorkflow}s.
- * 
- *
  */
 public class IridaWorkflowTestBuilder {
-	public final static UUID DEFAULT_ID = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
+	public static final UUID DEFAULT_ID = UUID.fromString("739f29ea-ae82-48b9-8914-3d2931405db6");
 	public static final UUID MULTI_SAMPLES_ID = UUID.fromString("a8a573ef-b51e-409a-9a26-3fb79a6b894e");
 
 	/**
-	 * Builds a default test {@link IridaWorkflow} which accepts single input
-	 * files.
+	 * Builds a default test {@link IridaWorkflow} which accepts single input files.
 	 * 
 	 * @return A test workflow.
 	 * @throws MalformedURLException
@@ -40,8 +32,7 @@ public class IridaWorkflowTestBuilder {
 	}
 
 	/**
-	 * Builds a default test {@link IridaWorkflow} which accepts single input
-	 * files and has no reference.
+	 * Builds a default test {@link IridaWorkflow} which accepts single input files and has no reference.
 	 * 
 	 * @return A test workflow.
 	 * @throws MalformedURLException
@@ -61,8 +52,7 @@ public class IridaWorkflowTestBuilder {
 	}
 
 	/**
-	 * Builds an {@link IridaWorkflow} which accepts both single and paired
-	 * input files.
+	 * Builds an {@link IridaWorkflow} which accepts both single and paired input files.
 	 * 
 	 * @return A test workflow.
 	 * @throws MalformedURLException
@@ -74,14 +64,10 @@ public class IridaWorkflowTestBuilder {
 	/**
 	 * Builds a test {@link IridaWorkflow} with the given id.
 	 * 
-	 * @param workflowId
-	 *            The workflow id.
-	 * @param input
-	 *            The input type.
-	 * @param reference
-	 *            The reference label.
-	 * @param requiresSingleSample
-	 *            Whether or not this workflow requires a single sample.
+	 * @param workflowId           The workflow id.
+	 * @param input                The input type.
+	 * @param reference            The reference label.
+	 * @param requiresSingleSample Whether or not this workflow requires a single sample.
 	 * @return A test workflow.
 	 * @throws MalformedURLException
 	 */
@@ -89,28 +75,27 @@ public class IridaWorkflowTestBuilder {
 			boolean requiresSingleSample) {
 		IridaWorkflow workflow = null;
 		try {
-			workflow = new IridaWorkflow(buildTestDescription(workflowId, input, reference, requiresSingleSample), buildTestStructure());
+			workflow = new IridaWorkflow(buildTestDescription(workflowId, input, reference, requiresSingleSample),
+					buildTestStructure());
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return workflow;
 	}
 
 	private static IridaWorkflowDescription buildTestDescription(UUID workflowId, Input input, String reference,
 			boolean requiresSingleSample) throws MalformedURLException {
-		return buildTestDescription(workflowId, "TestWorkflow", "1.0", BuiltInAnalysisTypes.DEFAULT, input, reference, requiresSingleSample);
+		return buildTestDescription(workflowId, "TestWorkflow", "1.0", BuiltInAnalysisTypes.DEFAULT, input, reference,
+				requiresSingleSample);
 	}
 
 	/**
 	 * Builds a test {@link IridaWorkflow} with the given id.
 	 * 
-	 * @param workflowId
-	 *            The workflow id.
-	 * @param input
-	 *            The input type.
-	 * @param reference
-	 *            The reference label.
+	 * @param workflowId The workflow id.
+	 * @param input      The input type.
+	 * @param reference  The reference label.
 	 * @return A test workflow.
 	 * @throws MalformedURLException
 	 */
@@ -144,24 +129,20 @@ public class IridaWorkflowTestBuilder {
 
 	private static IridaWorkflowDescription buildTestDescription(UUID workflowId, Input input, String reference)
 			throws MalformedURLException {
-		return buildTestDescription(workflowId, "TestWorkflow", "1.0", BuiltInAnalysisTypes.DEFAULT, input, reference, true);
+		return buildTestDescription(workflowId, "TestWorkflow", "1.0", BuiltInAnalysisTypes.DEFAULT, input, reference,
+				true);
 	}
 
 	/**
 	 * Builds a {@link IridaWorkflowDescription} with the following information.
 	 * 
-	 * @param id
-	 *            The id of the workflow.
-	 * @param name
-	 *            The name of the workflow.
-	 * @param version
-	 *            The version of the workflow.
-	 * @param analysisType
-	 *            The {@link AnalysisTypeOld} of the workflow.
-	 * @param reference
-	 *            The reference label for the workflow.
-	 * @param requiresSingleSample
-	 *            Whether or not this workflow requires a single sample.
+	 * @param id                   The id of the workflow.
+	 * @param name                 The name of the workflow.
+	 * @param version              The version of the workflow.
+	 * @param analysisType         The {@link AnalysisTypeOld} of the workflow.
+	 * @param input                The input type of the workflow
+	 * @param reference            The reference label for the workflow.
+	 * @param requiresSingleSample Whether or not this workflow requires a single sample.
 	 * @return An {@link IridaWorkflowDescription} with the given information.
 	 * @throws MalformedURLException
 	 */
@@ -186,7 +167,8 @@ public class IridaWorkflowTestBuilder {
 			workflowInput = new IridaWorkflowInput(null, "sequence_reads_paired", reference, requiresSingleSample);
 			break;
 		case SINGLE_PAIRED:
-			workflowInput = new IridaWorkflowInput("sequence_reads", "sequence_reads_paired", reference, requiresSingleSample);
+			workflowInput = new IridaWorkflowInput("sequence_reads", "sequence_reads_paired", reference,
+					requiresSingleSample);
 			break;
 		}
 
@@ -206,7 +188,9 @@ public class IridaWorkflowTestBuilder {
 	}
 
 	public static enum Input {
-		SINGLE, PAIRED, SINGLE_PAIRED
+		SINGLE,
+		PAIRED,
+		SINGLE_PAIRED
 	}
 
 	public static IridaWorkflow buildTestWorkflowSinglePairedMultipleSamples() {

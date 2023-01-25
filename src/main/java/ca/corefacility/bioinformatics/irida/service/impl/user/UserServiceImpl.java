@@ -192,9 +192,8 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 		Set<ConstraintViolation<User>> violations = validatePassword(userId, password);
 		if (violations.isEmpty()) {
 			String encodedPassword = passwordEncoder.encode(password);
-			return super.updateFields(userId,
-					ImmutableMap.of(PASSWORD_PROPERTY, (Object) encodedPassword, CREDENTIALS_NON_EXPIRED_PROPERTY,
-							true));
+			return super.updateFields(userId, ImmutableMap.of(PASSWORD_PROPERTY, (Object) encodedPassword,
+					CREDENTIALS_NON_EXPIRED_PROPERTY, true));
 		}
 
 		throw new ConstraintViolationException(new HashSet<ConstraintViolation<?>>(violations));
@@ -212,7 +211,7 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 			User user = super.create(u);
 			List<Announcement> announcements = announcementUserJoinRepository.getAnnouncementsUnreadByUser(user);
 			Date now = new Date();
-			/**
+			/*
 			 * By default when a new user is created, every announcement would be displayed to the new user.
 			 * Here we mark all prior announcements older than one month as read, to prevent the new user
 			 * from being spammed with old and irrelevant announcements.
@@ -341,8 +340,8 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 	}
 
 	/**
-	 * Validate the password of a {@link User} *before* encoding the password and passing to super.  This will check
-	 * both password structure and whether a password has been reused
+	 * Validate the password of a {@link User} *before* encoding the password and passing to super. This will check both
+	 * password structure and whether a password has been reused
 	 *
 	 * @param userId   the ID of the user to check for old passwords.
 	 * @param password the password to validate.
@@ -417,7 +416,8 @@ public class UserServiceImpl extends CRUDServiceImpl<Long, User> implements User
 			org.hibernate.exception.ConstraintViolationException e) {
 		final EntityExistsException UNABLE_TO_PARSE = new EntityExistsException(
 				"Could not create user as a duplicate fields exists; however the duplicate field was not included in "
-						+ "the ConstraintViolationException, the original cause is included.", e);
+						+ "the ConstraintViolationException, the original cause is included.",
+				e);
 		String constraintName = e.getConstraintName();
 
 		if (!StringUtils.hasLength(constraintName)) {

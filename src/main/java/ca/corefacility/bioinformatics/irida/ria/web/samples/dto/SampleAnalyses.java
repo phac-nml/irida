@@ -16,7 +16,7 @@ public class SampleAnalyses {
 	private Date createdDate;
 	private String state;
 
-	public SampleAnalyses(AnalysisSubmission submission,String analysisType) {
+	public SampleAnalyses(AnalysisSubmission submission, String analysisType) {
 		this.id = submission.getId();
 		this.name = submission.getName();
 		this.analysisType = analysisType;
@@ -40,5 +40,7 @@ public class SampleAnalyses {
 		return createdDate;
 	}
 
-	public String getState() { return state; }
+	public String getState() {
+		return state;
+	}
 }
