@@ -79,12 +79,14 @@ export default function SampleFiles() {
   selected through the open file dialog or if they are
   dragged and dropped
    */
-  React.useEffect(() => {
-    if (filesToUpload.length) {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      uploadFiles();
-    }
-  }, [filesToUpload]);
+  React.useEffect(
+    () => {
+      if (filesToUpload.length) {
+        uploadFiles();
+      }
+    }, // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filesToUpload]
+  );
 
   /*
   Custom function to upload sequence, assembly, and fast5 files uploaded

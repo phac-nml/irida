@@ -24,12 +24,16 @@ export default function AnalysisBioHansel() {
   const [loading, setLoading] = useState(true);
 
   // On load gets the bio hansel results. If the file is not found then set to undefined
-  useEffect(() => {
-    if (analysisOutputsContext.outputs === null) {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      getAnalysisOutputs();
-    }
-  }, []);
+  useEffect(
+    () => {
+      if (analysisOutputsContext.outputs === null) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        getAnalysisOutputs();
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   useEffect(() => {
     if (analysisOutputsContext.outputs !== null) {
