@@ -27,11 +27,9 @@ export default function AnalysisBioHansel() {
   useEffect(
     () => {
       if (analysisOutputsContext.outputs === null) {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         getAnalysisOutputs();
       }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -56,10 +54,8 @@ export default function AnalysisBioHansel() {
         setBioHanselResults(undefined);
         setLoading(false);
       }
-    } else {
-      getAnalysisOutputs();
     }
-  }, [analysisOutputsContext.outputs]);
+  }, [analysisOutputsContext.outputs, analysisIdentifier]);
 
   const biohanselResults = [
     {
