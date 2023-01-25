@@ -34,7 +34,6 @@ module.exports = {
     },
   },
   rules: {
-    "@typescript-eslint/explicit-function-return-type": "warn",
     "react/prop-types": 0,
     "prefer-destructuring": [
       "error",
