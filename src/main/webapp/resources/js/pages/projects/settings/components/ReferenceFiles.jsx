@@ -28,9 +28,8 @@ const { Title } = Typography;
  */
 export default function ReferenceFiles() {
   const { projectId } = useParams();
-  const { data: project = {}, isLoading } = useGetProjectDetailsQuery(
-    projectId
-  );
+  const { data: project = {}, isLoading } =
+    useGetProjectDetailsQuery(projectId);
   const [projectReferenceFiles, setProjectReferenceFiles] = React.useState([]);
   const [, setProgress] = React.useState(0);
   const [total, setTotal] = React.useState(0);

@@ -392,10 +392,14 @@ export const uploadSequenceFiles = async ({
   config,
 }: {
   sampleId: number;
-  formData: any;
+  formData: FormData;
   config: Record<string, unknown>;
 }): Promise<SampleSequencingObject[]> => {
-  return post(`${URL}/${sampleId}/sequenceFiles/upload`, formData, config);
+  return post<SampleSequencingObject[], FormData>(
+    `${URL}/${sampleId}/sequenceFiles/upload`,
+    formData,
+    config
+  );
 };
 
 /**
@@ -411,10 +415,14 @@ export const uploadAssemblyFiles = ({
   config,
 }: {
   sampleId: number;
-  formData: any;
+  formData: FormData;
   config: Record<string, unknown>;
 }): Promise<SampleGenomeAssembly[]> => {
-  return post(`${URL}/${sampleId}/assemblies/upload`, formData, config);
+  return post<SampleGenomeAssembly[], FormData>(
+    `${URL}/${sampleId}/assemblies/upload`,
+    formData,
+    config
+  );
 };
 
 /**
@@ -430,8 +438,12 @@ export const uploadFast5Files = ({
   config,
 }: {
   sampleId: number;
-  formData: any;
+  formData: FormData;
   config: Record<string, unknown>;
 }): Promise<SampleSequencingObject[]> => {
-  return post(`${URL}/${sampleId}/fast5/upload`, formData, config);
+  return post<SampleSequencingObject[], FormData>(
+    `${URL}/${sampleId}/fast5/upload`,
+    formData,
+    config
+  );
 };
