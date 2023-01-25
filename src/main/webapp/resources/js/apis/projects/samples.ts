@@ -3,6 +3,10 @@ import {
   PairedEndSequenceFile,
   SingleEndSequenceFile,
 } from "../../types/irida";
+import {
+  AjaxErrorResponse,
+  AjaxSuccessResponse,
+} from "../../types/ajax-response";
 import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
 import { get, post } from "../requests";
 
@@ -123,14 +127,17 @@ export async function shareSamplesWithProject({
   targetId: number;
   locked: boolean;
   remove: boolean;
-}) {
-  return post(setBaseUrl(`ajax/samples/share`), {
-    currentId,
-    sampleIds,
-    targetId,
-    locked,
-    remove,
-  });
+}): Promise<AjaxErrorResponse | AjaxSuccessResponse> {
+  return post<AjaxErrorResponse | AjaxSuccessResponse>(
+    setBaseUrl(`ajax/samples/share`),
+    {
+      currentId,
+      sampleIds,
+      targetId,
+      locked,
+      remove,
+    }
+  );
 }
 
 /**

@@ -1,7 +1,12 @@
-interface AjaxErrorResponse {
-  error: string;
-}
+export = AJAXRESPONSE;
+export as namespace AJAXRESPONSE;
 
-interface AjaxSuccessResponse {
-  message: string;
+declare namespace AJAXRESPONSE {
+  export interface AjaxErrorResponse {
+    error: string;
+  }
+
+  export interface AjaxSuccessResponse {
+    message: string;
+  }
 }
