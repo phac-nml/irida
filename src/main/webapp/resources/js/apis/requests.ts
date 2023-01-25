@@ -37,6 +37,7 @@ export async function post<
     } else if (axios.isCancel(error)) {
       let message;
       if (error instanceof Error) {
+        // eslint-disable-next-line prefer-destructuring
         message = error.message;
       } else {
         message = String(error);

@@ -23,6 +23,14 @@ export default function AnalysisBioHansel() {
   const [bioHanselResults, setBioHanselResults] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // On load gets the bio hansel results. If the file is not found then set to undefined
+  useEffect(() => {
+    if (analysisOutputsContext.outputs === null) {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      getAnalysisOutputs();
+    }
+  }, []);
+
   useEffect(() => {
     if (analysisOutputsContext.outputs !== null) {
       const outputInfo = analysisOutputsContext.outputs.find((output) => {
@@ -45,7 +53,6 @@ export default function AnalysisBioHansel() {
         setLoading(false);
       }
     } else {
-      // Get the bio hansel results. If the file is not found then set to undefined
       getAnalysisOutputs();
     }
   }, [analysisOutputsContext.outputs]);

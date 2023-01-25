@@ -81,16 +81,25 @@ export default function SampleFiles() {
    */
   React.useEffect(() => {
     if (filesToUpload.length) {
-      abortController = new AbortController();
-      const { signal } = abortController;
-
-      setUploadCancelled(false);
-
-      uploadSampleSequenceFiles(signal);
-      uploadSampleAssemblyFiles(signal);
-      uploadSampleFast5Files(signal);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      uploadFiles();
     }
   }, [filesToUpload]);
+
+  /*
+  Custom function to upload sequence, assembly, and fast5 files uploaded
+  using the ant design upload (DragUpload) component
+   */
+  const uploadFiles = () => {
+    abortController = new AbortController();
+    const { signal } = abortController;
+
+    setUploadCancelled(false);
+
+    uploadSampleSequenceFiles(signal);
+    uploadSampleAssemblyFiles(signal);
+    uploadSampleFast5Files(signal);
+  };
 
   /*
   Function to cancel the current upload request
