@@ -36,14 +36,13 @@ jobs:
       - name: Run eslint on changed files
         uses: tj-actions/eslint-changed-files@v18
         with:
-          config_path: ".eslintrc.js"
+          config_path: "src/main/webapp/.eslintrc.js"
           extra_args: "--max-warnings=0"
-          path: "src/main/webapp/"
           file_extensions: |
-            resources/js/**/*.ts
-            resources/js/**/*.tsx
-            resources/js/**/*.js
-            resources/js/**/*.jsx
+            src/main/webapp/resources/js/**/*.ts
+            src/main/webapp/resources/js/**/*.tsx
+            src/main/webapp/resources/js/**/*.js
+            src/main/webapp/resources/js/**/*.jsx
 
   checkstyle: # Lint changed Java files
     runs-on: ubuntu-20.04
