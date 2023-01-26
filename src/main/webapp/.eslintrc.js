@@ -11,7 +11,7 @@ module.exports = {
   },
   extends: ["airbnb", "airbnb-typescript", "plugin:prettier/recommended"],
   parserOptions: {
-    project: "src/main/webapp/tsconfig.json",
+    project: "./tsconfig.json",
     ecmaFeatures: {
       jsx: true,
     },

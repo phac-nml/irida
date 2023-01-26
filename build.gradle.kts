@@ -304,7 +304,7 @@ tasks.register<PnpmTask>("cleanWebapp") {
 }
 
 tasks.register<PnpmTask>("lintWebapp") {
-    pnpmCommand.set(listOf("lint"))
+    pnpmCommand.set(listOf("lint  --parser-options project:src/main/webapp/tsconfig.json"))
 }
 
 tasks.register<PnpmTask>("buildWebapp") {
