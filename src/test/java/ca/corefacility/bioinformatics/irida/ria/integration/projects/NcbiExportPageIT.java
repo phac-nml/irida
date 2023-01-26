@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ExportDetailsPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.NcbiExportPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.NcbiExportsListingPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -22,6 +24,7 @@ class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
 		String SAMPLE_3 = "sample3";
 		String BIOPROJECT = "BIOPROJECT-1";
 		String NAMESPACE = "NAMESPACE-FOOBAR";
+		String RELEASE_DATE = "2030-06-15";
 		String ORGANIZATION = "ORGANIZATION-FOOBAR";
 		String PROTOCOL = "AMAZING_PROTOCOL";
 		String DEFAULT_PROTOCOL = "DEFAULT_PROTOCOL";
@@ -40,6 +43,7 @@ class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
 		page.enterBioProject(BIOPROJECT);
 		page.enterNamespace(NAMESPACE);
 		page.enterOrganization(ORGANIZATION);
+		page.setReleaseDateInput(RELEASE_DATE);
 
 		// Test default sample settings.
 		page.toggleDefaultsPanel();
@@ -84,5 +88,16 @@ class NcbiExportPageIT extends AbstractIridaUIITChromeDriver {
 		assertTrue(page.isSuccessAlertDisplayed(), "Success notification should be displayed");
 		assertTrue(page.isUserRedirectedToProjectSamplesPage(PROJECT_ID),
 				"User should be redirected within 5 seconds of submission");
+
+		// Make sure all fields submitted successfully
+		NcbiExportsListingPage listingPage = NcbiExportsListingPage.goTo(driver());
+		listingPage.gotoSubmissionPage(BIOPROJECT);
+
+		ExportDetailsPage detailsPage = ExportDetailsPage.initPage(driver());
+		assertEquals(BIOPROJECT, detailsPage.getBioproject());
+		assertEquals(NAMESPACE, detailsPage.getNamespace());
+
+		assertEquals(ORGANIZATION, detailsPage.getOrganization());
+		assertTrue(detailsPage.getReleaseDate().equals("Jun 15, 2030"));
 	}
 }
