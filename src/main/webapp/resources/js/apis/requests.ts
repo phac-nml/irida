@@ -35,7 +35,14 @@ export async function post<
         return Promise.reject(error.message);
       }
     } else if (axios.isCancel(error)) {
-      return Promise.reject(error.message);
+      let message;
+      if (error instanceof Error) {
+        const { message: destructuredMessage } = error;
+        message = destructuredMessage;
+      } else {
+        message = String(error);
+      }
+      return Promise.reject(message);
     } else {
       return Promise.reject("An unexpected error occurred");
     }
