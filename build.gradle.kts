@@ -304,7 +304,7 @@ tasks.register<PnpmTask>("cleanWebapp") {
 }
 
 tasks.register<PnpmTask>("lintWebapp") {
-    pnpmCommand.set(listOf("lintServer"))
+    pnpmCommand.set(listOf("lint"))
 }
 
 tasks.register<PnpmTask>("buildWebapp") {
