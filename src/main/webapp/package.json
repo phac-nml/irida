@@ -9,7 +9,6 @@
     "test": "run-z --then jest resources/js/**/*.test.js",
     "test_watch": "run-z --then jest --watch resources/js/**/*.test.js",
     "lint": "run-z --then eslint --ext .js,.jsx,.ts,.tsx resources/js/",
-    "lintServer": "run-z --then eslint --parser-options project:src/main/webapp/tsconfig.json --ext .js,.jsx,.ts,.tsx resources/js/"
   },
   "browserslist": [
     "last 2 Chrome versions",
