@@ -131,11 +131,11 @@ Directory configuration is:
 * **Analysis Output**: `output.file.base.directory`
 
 If using a local filesystem and these directories that are configured do not exist (they don't likely exist if you don't configure them), IRIDA will default to automatically creating a temporary directory using Java's [`Files.createTempDirectory`](http://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#createTempDirectory-java.lang.String-java.nio.file.attribute.FileAttribute...-).
-However, if you are using cloud based storage you will still need to set these directories in the configuration as these will make up the virtual path to the file.
+However, if you are using cloud based storage you will still need to set these directories in the configuration as these will make up the virtual path to the file, but no local directories will be created.
 
-To setup IRIDA to use cloud based file storage, then follow the instructions below for the storage type.
+To setup IRIDA to use cloud based file storage, follow the instructions below for the storage type.
 
-Setup using Azure Storage Blob:
+### Setup using Azure Storage Blob
 
 In the configuration file (such as irida.conf) you will need to add these configuration values:
 
@@ -148,15 +148,17 @@ See [Azure Storage Setup](https://learn.microsoft.com/en-us/azure/storage/blobs/
 
 Microsoft has also made available a storage emulator,`Azurite`, which can be used to develop and test Azure storage functionality on a local machine instead of requiring the use of an Azure Storage account. See [Microsoft Azurite](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite).
 
-You will need to get the SAS token for the storage account. This can be retrieved by setting up [Azure Storage Explorer](https://learn.microsoft.com/en-us/azure/vs-azure-tools-storage-manage-with-storage-explorer) and adding a new resource (Local Storage Emulator). Once that is set-up, you can right click on the storage account which matches the name you set for the local storage emulator in the previous step, and click the Get Shared Access Signature. From the popup window, you can select the expiry of the token and which permissions (read and write) to set for the storage account, and click create.
+For you to be able to use `Azurite` you will need to get the `SAS` token for the blob container. This can be retrieved by setting up [Azure Storage Explorer](https://learn.microsoft.com/en-us/azure/vs-azure-tools-storage-manage-with-storage-explorer) and adding a new resource (`Local Storage Emulator`). Once that is set-up, click on the `Blob Containers menu` item in the explorer and then right click on the container (created by default) `test`, and click Get Shared Access Signature. From the popup window, you can select the date range of validity of the token and permissions (Read, Write, Delete, List, Add, and Create) for the container, and then click create.
 
-Then you can update these configuration values (in irida.conf etc)
+Once you have Azurite setup and container created, you can update these configuration values (in irida.conf etc)
 * `irida.storage.type=azure`
 * `azure.container.name=test`
 * `azure.container.url=http://127.0.0.1:10000/devstoreaccount1/test?SAS_TOKEN_RETRIEVED_ABOVE`
 * `azure.sas.token=SAS_TOKEN_RETRIEVED_ABOVE` where the SAS_TOKEN has both read/write permissions
 
-Setup using Amazon AWS S3 Bucket Storage:
+If using `Azurite` make sure you have it running before starting up IRIDA.
+
+### Setup using Amazon AWS S3 Bucket Storage
 
 In the configuration file (such as irida.conf) you will need to add these configuration values:
 
