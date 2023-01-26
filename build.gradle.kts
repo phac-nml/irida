@@ -304,6 +304,7 @@ tasks.register<PnpmTask>("cleanWebapp") {
 }
 
 tasks.register<PnpmTask>("lintWebapp") {
+    dependsOn(":pnpmInstall")
     pnpmCommand.set(listOf("lint"))
 }
 
