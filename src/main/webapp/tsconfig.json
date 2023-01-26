@@ -10,9 +10,13 @@
     "moduleResolution": "node",
     "target": "ES6",
     "allowJs": true, //remove when all js jsx files changed to ts tsx
-    "checkJs": false,
     "jsx": "react",
     "esModuleInterop": true
   },
-  "include": ["./resources/js/**/*.ts", "./resources/js/**/*.tsx"]
+  "include": [
+    "./resources/js/**/*.ts",
+    "./resources/js/**/*.tsx",
+    "./resources/js/**/*.js",
+    "./resources/js/**/*.jsx"
+  ]
 }
