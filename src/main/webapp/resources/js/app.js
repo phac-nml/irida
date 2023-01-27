@@ -1,10 +1,5 @@
 // Import css
 import "../css/app.css";
-/*
-This will load notifications into the global namespace.  Remove this once all
-files have been converted over to wekbpack builds.
- */
-import "./modules/notifications";
 // Galaxy Alert if in galaxy session
 import "./components/Header/PageHeader";
 import { setBaseUrl } from "./utilities/url-utilities";

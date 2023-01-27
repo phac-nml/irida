@@ -13,7 +13,6 @@ import {
 } from "../apis/analysis/analysis";
 
 import { useInterval } from "../hooks";
-import { showNotification } from "../modules/notifications";
 
 /*
  * Since we are using Steps and only want to display
@@ -60,7 +59,7 @@ function AnalysisProvider(props) {
   const [analysisIdentifier, setAnalysisIdentifier] = useState("");
 
   useEffect(() => {
-    const analysisId = window.location.pathname.match(/analysis\/(\d+)/)[1];
+    const [, analysisId] = window.location.pathname.match(/analysis\/(\d+)/);
     setAnalysisIdentifier(analysisId);
     getAnalysisInfo(analysisId)
       .then((res) => {
@@ -191,7 +190,7 @@ function AnalysisProvider(props) {
       analysisName: updatedAnalysisName,
       priority: null,
     }).then((message) => {
-      showNotification({ text: message });
+      notification.info({ message });
       setAnalysisContext((analysisContext) => {
         return { ...analysisContext, analysisName: updatedAnalysisName };
       });
