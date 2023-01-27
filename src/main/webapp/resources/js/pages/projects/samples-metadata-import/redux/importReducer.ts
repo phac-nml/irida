@@ -132,7 +132,7 @@ export const saveMetadata = createAsyncThunk<
           metadataItem
         );
 
-        if (typeof sampleId === "number") {
+        if (sampleId) {
           updateSampleList.push({ name, sampleId, metadata });
         } else {
           createSampleList.push({ name, metadata });
