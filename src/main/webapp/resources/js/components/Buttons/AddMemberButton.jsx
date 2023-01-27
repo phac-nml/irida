@@ -19,9 +19,9 @@ const { Text } = Typography;
 export function AddMemberButton({
   label,
   modalTitle,
-  addMemberFn = () => undefined,
-  getAvailableMembersFn = () => undefined,
-  addMemberSuccessFn = () => undefined,
+  addMemberFn,
+  getAvailableMembersFn,
+  addMemberSuccessFn,
 }) {
   /*
   Required a reference to the user select input so that focus can be set
