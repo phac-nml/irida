@@ -129,10 +129,10 @@ public class UIProjectSampleService {
 		for (CreateSampleRequest request : requests) {
 			try {
 				Long sampleId = createSample(projectId, request);
-				CreateSampleResponse response = new CreateSampleResponse(sampleId);
+				SampleResponse response = new SampleResponse(sampleId);
 				responses.put(request.getName(), response);
 			} catch (Exception e) {
-				CreateSampleResponse response = new CreateSampleResponse(e.getMessage());
+				SampleResponse response = new SampleResponse(e.getMessage());
 				responses.put(request.getName(), response);
 			}
 		}
@@ -176,10 +176,10 @@ public class UIProjectSampleService {
 		for (UpdateSampleRequest request : requests) {
 			try {
 				updateSample(request);
-				UpdateSampleResponse response = new UpdateSampleResponse(false);
+				SampleErrorResponse response = new SampleErrorResponse(false);
 				responses.put(request.getName(), response);
 			} catch (Exception e) {
-				UpdateSampleResponse response = new UpdateSampleResponse(true, e.getMessage());
+				SampleErrorResponse response = new SampleErrorResponse(true, e.getMessage());
 				responses.put(request.getName(), response);
 			}
 		}

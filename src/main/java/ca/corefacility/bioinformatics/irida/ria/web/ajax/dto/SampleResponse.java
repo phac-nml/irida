@@ -1,16 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
 
 /**
- * UI response to create a new sample
+ * UI response to create/update a sample with error and sample id
  */
-public class CreateSampleResponse extends UpdateSampleResponse {
+public class SampleResponse extends SampleErrorResponse {
 	private Long sampleId;
 
-	public CreateSampleResponse(String errorMessage) {
+	public SampleResponse(String errorMessage) {
 		super(true, errorMessage);
 	}
 
-	public CreateSampleResponse(Long sampleId) {
+	public SampleResponse(Long sampleId) {
 		super(false);
 		this.sampleId = sampleId;
 	}

@@ -86,7 +86,7 @@ public class UIProjectSampleServiceTest {
 		Map<String, Object> responses = service.createSamples(requests, PROJECT_1_ID);
 		long errorCount = responses.entrySet()
 				.stream()
-				.filter(response -> ((CreateSampleResponse) response.getValue()).isError())
+				.filter(response -> ((SampleResponse) response.getValue()).isError())
 				.count();
 		assertEquals(0, errorCount, "Sample should be created");
 	}
@@ -97,7 +97,7 @@ public class UIProjectSampleServiceTest {
 		Map<String, Object> responses = service.createSamples(requests, PROJECT_1_ID);
 		long errorCount = responses.entrySet()
 				.stream()
-				.filter(response -> ((CreateSampleResponse) response.getValue()).isError())
+				.filter(response -> ((SampleResponse) response.getValue()).isError())
 				.count();
 		assertEquals(0, errorCount, "Sample should be created");
 	}
@@ -108,7 +108,7 @@ public class UIProjectSampleServiceTest {
 		Map<String, Object> responses = service.createSamples(requests, PROJECT_1_ID);
 		long errorCount = responses.entrySet()
 				.stream()
-				.filter(response -> ((CreateSampleResponse) response.getValue()).isError())
+				.filter(response -> ((SampleResponse) response.getValue()).isError())
 				.count();
 		assertEquals(0, errorCount, "Sample should be created");
 	}
@@ -119,7 +119,7 @@ public class UIProjectSampleServiceTest {
 		Map<String, Object> responses = service.createSamples(requests, PROJECT_1_ID);
 		long errorCount = responses.entrySet()
 				.stream()
-				.filter(response -> ((CreateSampleResponse) response.getValue()).isError())
+				.filter(response -> ((SampleResponse) response.getValue()).isError())
 				.count();
 		assertEquals(0, errorCount, "Sample should be created");
 	}
@@ -133,7 +133,7 @@ public class UIProjectSampleServiceTest {
 		Map<String, Object> responses = service.createSamples(requests, PROJECT_1_ID);
 		long errorCount = responses.entrySet()
 				.stream()
-				.filter(response -> ((CreateSampleResponse) response.getValue()).isError())
+				.filter(response -> ((SampleResponse) response.getValue()).isError())
 				.count();
 		assertEquals(0, errorCount, "Sample should be created");
 	}
@@ -147,7 +147,7 @@ public class UIProjectSampleServiceTest {
 		Map<String, Object> responses = service.updateSamples(requests);
 		long errorCount = responses.entrySet()
 				.stream()
-				.filter(response -> ((UpdateSampleResponse) response.getValue()).isError())
+				.filter(response -> ((SampleErrorResponse) response.getValue()).isError())
 				.count();
 		assertEquals(0, errorCount, "Sample should be updated");
 	}

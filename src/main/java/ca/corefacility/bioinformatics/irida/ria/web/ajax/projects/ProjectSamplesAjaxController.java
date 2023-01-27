@@ -76,11 +76,11 @@ public class ProjectSamplesAjaxController {
 		Map<String, Object> responses = uiProjectSampleService.createSamples(requests, projectId);
 		long errorCount = responses.entrySet()
 				.stream()
-				.filter(response -> ((CreateSampleResponse) response.getValue()).isError())
+				.filter(response -> ((SampleResponse) response.getValue()).isError())
 				.count();
 		long successCount = responses.entrySet()
 				.stream()
-				.filter(response -> !((CreateSampleResponse) response.getValue()).isError())
+				.filter(response -> !((SampleResponse) response.getValue()).isError())
 				.count();
 		if (responses.size() == successCount) {
 			return ResponseEntity.status(HttpStatus.OK).body(new AjaxMultipleResponse(responses));
@@ -101,11 +101,11 @@ public class ProjectSamplesAjaxController {
 		Map<String, Object> responses = uiProjectSampleService.updateSamples(requests);
 		long errorCount = responses.entrySet()
 				.stream()
-				.filter(response -> ((UpdateSampleResponse) response.getValue()).isError())
+				.filter(response -> ((SampleErrorResponse) response.getValue()).isError())
 				.count();
 		long successCount = responses.entrySet()
 				.stream()
-				.filter(response -> !((UpdateSampleResponse) response.getValue()).isError())
+				.filter(response -> !((SampleErrorResponse) response.getValue()).isError())
 				.count();
 		if (responses.size() == successCount) {
 			return ResponseEntity.status(HttpStatus.OK).body(new AjaxMultipleResponse(responses));

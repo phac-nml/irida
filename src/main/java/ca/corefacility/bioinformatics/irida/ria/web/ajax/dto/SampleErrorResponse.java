@@ -1,20 +1,20 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.dto;
 
 /**
- * UI response to update an existing sample
+ * UI response to create/update a sample with error
  */
-public class UpdateSampleResponse {
+public class SampleErrorResponse {
 	private boolean error;
 	private String errorMessage;
 
-	public UpdateSampleResponse() {
+	public SampleErrorResponse() {
 	}
 
-	public UpdateSampleResponse(boolean error) {
+	public SampleErrorResponse(boolean error) {
 		this.error = error;
 	}
 
-	public UpdateSampleResponse(boolean error, String errorMessage) {
+	public SampleErrorResponse(boolean error, String errorMessage) {
 		this.error = error;
 		this.errorMessage = errorMessage;
 	}
