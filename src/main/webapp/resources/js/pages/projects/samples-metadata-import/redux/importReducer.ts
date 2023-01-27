@@ -20,10 +20,10 @@ import { ImportDispatch, ImportState } from "./store";
 import {
   createMetadataFieldsForProject,
   getMetadataFieldsForProject,
-  MetadataField,
 } from "../../../../apis/metadata/field";
 import { Restriction } from "../../../../utilities/restriction-utilities";
 import { createMetadataFields, generatePromiseList } from "./import-utilities";
+import { MetadataField } from "../../../../types/irida";
 
 export interface MetadataHeaderItem {
   name: string;

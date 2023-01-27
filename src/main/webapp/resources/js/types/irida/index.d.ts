@@ -1,4 +1,5 @@
 import { GenomeAssembly } from "../../apis/samples/samples";
+import { Restriction } from "../../utilities/restriction-utilities";
 
 export = IRIDA;
 export as namespace IRIDA;
@@ -233,4 +234,12 @@ declare namespace IRIDA {
   }
 
   type UserMinimal = Pick<User, "name" | "id">;
+
+  export interface MetadataField {
+    id?: number;
+    fieldKey?: string;
+    label: string;
+    type?: string;
+    restriction: Restriction;
+  }
 }
