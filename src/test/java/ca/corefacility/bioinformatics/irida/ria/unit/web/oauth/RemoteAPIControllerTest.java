@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.ExtendedModelMap;
@@ -64,7 +63,7 @@ public class RemoteAPIControllerTest {
 	}
 
 	@Test
-	public void testHandleOAuthException() throws IOException, OAuthSystemException {
+	public void testHandleOAuthException() throws IOException {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		String redirect = "http://request";
 		when(request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE)).thenReturn(redirect);
