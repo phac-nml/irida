@@ -1,5 +1,13 @@
 package ca.corefacility.bioinformatics.irida.junit5.listeners;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestPlan;
@@ -10,14 +18,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class IntegrationUITestListener implements TestExecutionListener {
@@ -25,11 +25,12 @@ public class IntegrationUITestListener implements TestExecutionListener {
 	private static final Logger logger = LoggerFactory.getLogger(IntegrationUITestListener.class);
 	public static final int DRIVER_TIMEOUT_IN_SECONDS = 3;
 
-
 	private static final File TEMP_DIRECTORY = new File(System.getProperty("java.io.tmpdir"));
 	public static final File DOWNLOAD_DIRECTORY = new File(TEMP_DIRECTORY, "irida-test");
 
 	private static WebDriver driver;
+
+	private static WebDriver driver2;
 
 	/**
 	 * {@inheritDoc}
@@ -56,6 +57,15 @@ public class IntegrationUITestListener implements TestExecutionListener {
 	 */
 	public static WebDriver driver() {
 		return driver;
+	}
+
+	/**
+	 * Get a reference to the second {@link WebDriver} used in the tests.
+	 *
+	 * @return the second instance of {@link WebDriver} used in the tests.
+	 */
+	public static WebDriver driver2() {
+		return driver2;
 	}
 
 	/**
@@ -99,17 +109,19 @@ public class IntegrationUITestListener implements TestExecutionListener {
 		if (seleniumUrl != null) {
 			try {
 				driver = new RemoteWebDriver(new URL(seleniumUrl), options);
+				driver2 = new RemoteWebDriver(new URL(seleniumUrl), options);
 			} catch (MalformedURLException e) {
 				logger.error("webdriver.selenium_url is malformed", e);
 				fail("Could not connect to the remote web driver at following url: " + seleniumUrl);
 			}
 		} else {
 			driver = new ChromeDriver(options);
+			driver2 = new ChromeDriver(options);
 		}
 
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(DRIVER_TIMEOUT_IN_SECONDS));
+		driver2.manage().timeouts().implicitlyWait(Duration.ofSeconds(DRIVER_TIMEOUT_IN_SECONDS));
 	}
-
 
 	public static void stopWebDriver() {
 		// Clean up the download directory
@@ -120,5 +132,6 @@ public class IntegrationUITestListener implements TestExecutionListener {
 		}
 
 		driver.quit();
+		driver2.quit();
 	}
 }

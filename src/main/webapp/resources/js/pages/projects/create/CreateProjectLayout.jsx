@@ -40,16 +40,6 @@ export function CreateProjectLayout({ children }) {
     },
   ];
 
-  const validateMessages = {
-    required: i18n("CreateProjectDetails.required"),
-    string: {
-      min: i18n("CreateProjectDetails.length"),
-    },
-    types: {
-      url: i18n("CreateProjectDetails.url"),
-    },
-  };
-
   /**
    * Once the form is filled out, this is the submit to server call.
    * After a successful call, the user will be redirected to the new project.
@@ -138,7 +128,7 @@ export function CreateProjectLayout({ children }) {
           </div>
         }
         onCancel={onCancel}
-        width={720}
+        width={900}
         title={i18n("CreateProject.title")}
       >
         <Row>

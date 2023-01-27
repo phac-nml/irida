@@ -1,19 +1,22 @@
 package ca.corefacility.bioinformatics.irida.model.sample;
 
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import org.hibernate.envers.Audited;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Objects;
+
+import org.hibernate.envers.Audited;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 
 /**
  * Describes an individual field in a {@link MetadataTemplate}.
  */
 @Entity
-@Table(name = "metadata_field")
+@Table(name = "metadata_field",
+		uniqueConstraints = @UniqueConstraint(columnNames = { "label" }, name = "UK_METADATA_FIELD_LABEL"))
 @Audited
 @EntityListeners(AuditingEntityListener.class)
 public class MetadataTemplateField {

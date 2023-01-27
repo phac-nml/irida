@@ -12,22 +12,36 @@ import { useMetadataRoles } from "../../contexts/metadata-roles-context";
 import { useProjectRoles } from "../../contexts/project-roles-context";
 import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
 import { SPACE_XS } from "../../styles/spacing";
+import { MetadataRoles } from "../samples/components/EditMetadata";
+import { User } from "../../types/irida";
 
 const { Option } = Select;
 const { Text } = Typography;
 
+export interface AddMemberButtonProps {
+  label: string;
+  modalTitle: string;
+  addMemberFn: (p: {
+    metadataRole: string;
+    projectRole: string;
+    id: number | undefined;
+  }) => Promise<string>;
+  getAvailableMembersFn: (debouncedQuery: string) => Promise<User[]>;
+  addMemberSuccessFn: () => void;
+}
+
 export function AddMemberButton({
   label,
   modalTitle,
-  addMemberFn = () => {},
-  getAvailableMembersFn = () => {},
-  addMemberSuccessFn = () => {},
-}) {
+  addMemberFn,
+  getAvailableMembersFn,
+  addMemberSuccessFn,
+}: AddMemberButtonProps): JSX.Element {
   /*
   Required a reference to the user select input so that focus can be set
   to it when the window opens.
    */
-  const userRef = useRef();
+  const userRef = useRef<HTMLInputElement>(null);
 
   const { roles: projectRoles } = useProjectRoles();
   const { roles: metadataRoles } = useMetadataRoles();
@@ -40,7 +54,7 @@ export function AddMemberButton({
   /*
   The identifier for the currently selected user from the user input
    */
-  const [userId, setUserId] = useState();
+  const [userId, setUserId] = useState<number>();
 
   /*
   The value of the currently selected role from the role input
@@ -63,7 +77,7 @@ export function AddMemberButton({
   List of users to display to the user to select from.  Values returned from
   server from the debouncedQuery search.
    */
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<User[]>([]);
 
   /*
   Ant Design form
@@ -98,13 +112,13 @@ export function AddMemberButton({
 
   const addMember = () => {
     addMemberFn({ id: userId, projectRole, metadataRole })
-      .then((message) => {
+      .then((message: string) => {
         addMemberSuccessFn();
         notification.success({ message });
         form.resetFields();
         setVisible(false);
       })
-      .catch((message) => notification.error({ message }));
+      .catch((message: string) => notification.error({ message }));
   };
 
   /*
@@ -172,8 +186,12 @@ export function AddMemberButton({
                 }
               }}
             >
-              {projectRoles.map((role) => (
-                <Radio.Button key={role.value} value={role.value}>
+              {projectRoles.map((role: MetadataRoles) => (
+                <Radio.Button
+                  key={role.value}
+                  value={role.value}
+                  className={`t-project-role-${role.label.toLowerCase()}`}
+                >
                   {role.label}
                 </Radio.Button>
               ))}
@@ -188,7 +206,7 @@ export function AddMemberButton({
               onChange={(e) => setMetadataRole(e.target.value)}
               disabled={projectRole === "PROJECT_OWNER"}
             >
-              {metadataRoles.map((role) => (
+              {metadataRoles.map((role: MetadataRoles) => (
                 <Radio.Button key={role.value} value={role.value}>
                   {role.label}
                 </Radio.Button>
