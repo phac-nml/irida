@@ -147,7 +147,7 @@ declare namespace IRIDA {
     latitude: string;
     longitude: string;
     projects: Project[];
-    sequenceFiles: any[]; // TODO (Josh - 6/7/22): FLush this out
+    sequenceFiles: SequenceFile[];
     defaultSequencingObject: SequencingObject;
     defaultGenomeAssembly: GenomeAssembly;
     sampleName: string;
