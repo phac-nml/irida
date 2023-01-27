@@ -7,6 +7,7 @@
 * [Documentation]: Updated broken links in developer documentation. See [PR 1418](https://github.com/phac-nml/irida/pull/1418).
 * [Developer] Updated developer setup documentation, ignore java_pid*.hprof files, and added quality of life file `gradle.properties`
 * [UI]: Refreshed global search page to use Ant Design. See [PR 1409](https://github.com/phac-nml/irida/pull/1409)
+* [Developer]: Replaced Apache OLTU with Nimbusds for performing OAuth2 authentication flow during syncing and Galaxy exporting. See [PR 1432](https://github.com/phac-nml/irida/pull/1432)
 
 ## [22.09.6] - 2022/12/21
 * [UI]: Fixed bug on NCBI Export page preventing the export from occuring. See [PR 1439](https://github.com/phac-nml/irida/pull/1439)
