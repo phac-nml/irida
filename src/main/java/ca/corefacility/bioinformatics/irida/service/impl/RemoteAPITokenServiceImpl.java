@@ -99,49 +99,53 @@ public class RemoteAPITokenServiceImpl implements RemoteAPITokenService {
 
 		try {
 			token = getToken(api);
-
-			String refreshTokenValue = token.getRefreshToken();
-
-			if (refreshTokenValue != null) {
-				RefreshToken refreshToken = new RefreshToken(refreshTokenValue);
-
-				URI serviceTokenLocation = UriBuilder.fromUri(api.getServiceURI()).path("oauth").path("token").build();
-
-				ClientAuthentication clientAuth = new ClientSecretBasic(new ClientID(api.getClientId()),
-						new Secret(api.getClientSecret()));
-
-				TokenRequest tokenRequest = new TokenRequest(serviceTokenLocation, clientAuth,
-						new RefreshTokenGrant(refreshToken));
-
-				TokenResponse tokenResponse = TokenResponse.parse(tokenRequest.toHTTPRequest().send());
-
-				if (!tokenResponse.indicatesSuccess()) {
-					// We got an error response...
-					TokenErrorResponse errorResponse = tokenResponse.toErrorResponse();
-					logger.error("Updating token by refresh token failed", errorResponse.getErrorObject().toString());
-				} else {
-
-					AccessTokenResponse accessTokenResponse = tokenResponse.toSuccessResponse();
-
-					token = buildTokenFromResponse(accessTokenResponse, api);
-
-					delete(api);
-					token = create(token);
-
-					logger.trace("Token for api " + api + " updated by refresh token.");
-
-				}
-			} else {
-				logger.trace("No refresh token for api " + api + ". Cannot update access token.");
-			}
 		} catch (EntityNotFoundException ex) {
 			logger.debug("Token not found for api " + api + ".  Cannot update access token.");
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return token;
+		}
+
+		String refreshTokenValue = token.getRefreshToken();
+		if (refreshTokenValue == null) {
+			logger.trace("No refresh token for api " + api + ". Cannot update access token.");
+			return token;
+		} else {
+			RefreshToken refreshToken = new RefreshToken(refreshTokenValue);
+
+			URI serviceTokenLocation = UriBuilder.fromUri(api.getServiceURI()).path("oauth").path("token").build();
+
+			ClientAuthentication clientAuth = new ClientSecretBasic(new ClientID(api.getClientId()),
+					new Secret(api.getClientSecret()));
+
+			TokenRequest tokenRequest = new TokenRequest(serviceTokenLocation, clientAuth,
+					new RefreshTokenGrant(refreshToken));
+
+			TokenResponse tokenResponse;
+			try {
+				tokenResponse = TokenResponse.parse(tokenRequest.toHTTPRequest().send());
+			} catch (ParseException e) {
+				logger.error("Updating token by refresh token failed", e);
+				return token;
+			} catch (IOException e) {
+				logger.error("Updating token by refresh token failed", e);
+				return token;
+			}
+
+			if (!tokenResponse.indicatesSuccess()) {
+				// We got an error response...
+				TokenErrorResponse errorResponse = tokenResponse.toErrorResponse();
+				logger.error("Updating token by refresh token failed", errorResponse.getErrorObject().toString());
+			} else {
+
+				AccessTokenResponse accessTokenResponse = tokenResponse.toSuccessResponse();
+
+				token = buildTokenFromResponse(accessTokenResponse, api);
+
+				delete(api);
+				token = create(token);
+
+				logger.trace("Token for api " + api + " updated by refresh token.");
+
+			}
 		}
 
 		return token;
