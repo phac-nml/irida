@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.integration.groups;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectRole;
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
@@ -32,7 +33,8 @@ public class UserGroupsIT extends AbstractIridaUIITChromeDriver {
 		final String PRE_CREATION_URL = driver().getCurrentUrl();
 		listingPage.createNewUserGroup(GROUP_NAME);
 		listingPage.validateRouteChange(PRE_CREATION_URL);
-		assertFalse(driver().getCurrentUrl().contains("/admin/groups"), "Does not redirect to admin panel user details page");
+		assertFalse(driver().getCurrentUrl().contains("/admin/groups"),
+				"Does not redirect to admin panel user details page");
 		assertTrue(driver().getCurrentUrl().contains("/groups"), "Redirects user to main app user details page");
 
 		UserGroupsDetailsPage detailsPage = UserGroupsDetailsPage.initPage(driver());
@@ -56,7 +58,8 @@ public class UserGroupsIT extends AbstractIridaUIITChromeDriver {
 		final String PRE_DELETION_URL = driver().getCurrentUrl();
 		detailsPage.deleteGroup();
 		listingPage.validateRouteChange(PRE_DELETION_URL);
-		assertFalse(driver().getCurrentUrl().endsWith("/admin/groups"), "Does not redirect to admin panel user groups page");
+		assertFalse(driver().getCurrentUrl().endsWith("/admin/groups"),
+				"Does not redirect to admin panel user groups page");
 		assertTrue(driver().getCurrentUrl().endsWith("/groups"), "Redirects user to main app user groups page");
 		assertEquals(2, listingPage.getNumberOfExistingUserGroups(), "Should have 2 user groups");
 	}
@@ -99,7 +102,8 @@ public class UserGroupsIT extends AbstractIridaUIITChromeDriver {
 		final String PRE_DELETION_URL = driver().getCurrentUrl();
 		detailsPage.deleteGroup();
 		listingPage.validateRouteChange(PRE_DELETION_URL);
-		assertTrue(driver().getCurrentUrl().endsWith("/admin/groups"), "Redirects user to admin panel user groups page");
+		assertTrue(driver().getCurrentUrl().endsWith("/admin/groups"),
+				"Redirects user to admin panel user groups page");
 		assertEquals(2, listingPage.getNumberOfExistingUserGroups(), "Should have 2 user groups");
 	}
 
@@ -110,7 +114,7 @@ public class UserGroupsIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsUser(driver());
 		ProjectMembersPage projectMembersPage = ProjectMembersPage.goToRemoteProject(driver(), PROJECT_ID);
 		// Add manager as collaborator on project
-		projectMembersPage.addUserToProject("mrtest");
+		projectMembersPage.addUserToProject("mrtest", ProjectRole.PROJECT_USER.toString());
 		LoginPage.logout(driver());
 
 		// Login as manager and create a new group
@@ -157,7 +161,8 @@ public class UserGroupsIT extends AbstractIridaUIITChromeDriver {
 		final String PRE_CREATION_URL = driver().getCurrentUrl();
 		listingPage.createNewUserGroup(GROUP_NAME);
 		listingPage.validateRouteChange(PRE_CREATION_URL);
-		assertFalse(driver().getCurrentUrl().contains("/admin/groups"), "Does not redirect to admin panel user details page");
+		assertFalse(driver().getCurrentUrl().contains("/admin/groups"),
+				"Does not redirect to admin panel user details page");
 		assertTrue(driver().getCurrentUrl().contains("/groups"), "Redirects user to main app user details page");
 
 		UserGroupsDetailsPage detailsPage = UserGroupsDetailsPage.initPage(driver());

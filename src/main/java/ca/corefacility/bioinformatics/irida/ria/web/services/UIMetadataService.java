@@ -11,7 +11,6 @@ import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -57,15 +56,12 @@ public class UIMetadataService {
 		Project project = projectService.read(projectId);
 		List<MetadataTemplate> templates = templateService.getMetadataTemplatesForProject(project);
 
-		return templates.stream()
-				.map(template -> {
-					List<MetadataTemplateField> permittedFieldsForTemplate = templateService.getPermittedFieldsForTemplate(
-							template);
-					List<ProjectMetadataField> fields = addRestrictionsToMetadataFields(project,
-							permittedFieldsForTemplate);
-					return new ProjectMetadataTemplate(template, fields);
-				})
-				.collect(Collectors.toList());
+		return templates.stream().map(template -> {
+			List<MetadataTemplateField> permittedFieldsForTemplate = templateService.getPermittedFieldsForTemplate(
+					template);
+			List<ProjectMetadataField> fields = addRestrictionsToMetadataFields(project, permittedFieldsForTemplate);
+			return new ProjectMetadataTemplate(template, fields);
+		}).collect(Collectors.toList());
 	}
 
 	/**
@@ -142,6 +138,32 @@ public class UIMetadataService {
 	}
 
 	/**
+	 * Create project metadata fields with restrictions (no metadata entries)
+	 *
+	 * @param projectId Identifier for a {@link Project}
+	 * @param fields    List of project metadata fields
+	 * @param locale    Current users {@link Locale}
+	 * @return result message
+	 */
+	@Transactional
+	public String createMetadataFieldsForProject(Long projectId, List<ProjectMetadataField> fields, Locale locale) {
+		Project project = projectService.read(projectId);
+		for (ProjectMetadataField field : fields) {
+			String label = field.getLabel();
+			MetadataTemplateField templateField;
+			MetadataTemplateField existingTemplateField = templateService.readMetadataFieldByLabel(label);
+			if (existingTemplateField != null) {
+				templateField = existingTemplateField;
+			} else {
+				templateField = templateService.saveMetadataField(new MetadataTemplateField(label, "text"));
+			}
+			ProjectMetadataRole role = ProjectMetadataRole.fromString(field.getRestriction());
+			templateService.setMetadataRestriction(project, templateField, role);
+		}
+		return messageSource.getMessage("server.MetadataFieldsListManager.success", new Object[] {}, locale);
+	}
+
+	/**
 	 * Get all {@link MetadataTemplateField}s belonging to a list of {@link Project}s
 	 *
 	 * @param projectIds Identifiers for a {@link Project}s
@@ -154,13 +176,11 @@ public class UIMetadataService {
 			List<MetadataTemplateField> fields = templateService.getPermittedFieldsForCurrentUser(project, false);
 
 			projectMetadataFieldList = Stream.concat(projectMetadataFieldList.stream(),
-					addRestrictionsToMetadataFields(project, fields).stream())
-					.collect(Collectors.toList());
+					addRestrictionsToMetadataFields(project, fields).stream()).collect(Collectors.toList());
 		}
 
 		// Sort in descending order by restriction and use distinct to get unique metadata template fields
-		projectMetadataFieldList.sort(Comparator.comparing(ProjectMetadataField::getRestriction)
-				.reversed());
+		projectMetadataFieldList.sort(Comparator.comparing(ProjectMetadataField::getRestriction).reversed());
 		projectMetadataFieldList = projectMetadataFieldList.stream()
 				.filter(distinctByKey(ProjectMetadataField::getLabel))
 				.collect(Collectors.toList());
@@ -194,7 +214,8 @@ public class UIMetadataService {
 		Project project = projectService.read(projectId);
 		MetadataTemplateField field = templateService.readMetadataField(fieldId);
 		templateService.setMetadataRestriction(project, field, newRole);
-		return messageSource.getMessage("server.MetadataFieldsListManager.update", new Object[] { field.getLabel(),
+		return messageSource.getMessage("server.MetadataFieldsListManager.update", new Object[] {
+				field.getLabel(),
 				messageSource.getMessage("metadataRole." + newRole.toString(), new Object[] {}, locale) }, locale);
 	}
 
@@ -233,9 +254,7 @@ public class UIMetadataService {
 	 */
 	private List<ProjectMetadataField> addRestrictionsToMetadataFields(Project project,
 			List<MetadataTemplateField> fields) {
-		return fields.stream()
-				.map(field -> createProjectMetadataField(project, field))
-				.collect(Collectors.toList());
+		return fields.stream().map(field -> createProjectMetadataField(project, field)).collect(Collectors.toList());
 	}
 
 	/**
@@ -252,7 +271,8 @@ public class UIMetadataService {
 	}
 
 	/**
-	 * Utility function to update a specific {@link MetadataTemplateField} with its security restrictions for a project.
+	 * Utility function to update a specific {@link MetadataTemplateField} with its security restrictions for a
+	 * project.
 	 *
 	 * @param project The {@link Project} the fields belong to
 	 * @param field   the {@link MetadataTemplateField} to update
@@ -261,15 +281,13 @@ public class UIMetadataService {
 	private ProjectMetadataField createProjectMetadataField(Project project, MetadataTemplateField field) {
 		MetadataRestriction restriction = templateService.getMetadataRestrictionForFieldAndProject(project, field);
 		//default to LEVEL_1 if no restriction is set
-		String level = restriction == null ?
-				ProjectMetadataRole.LEVEL_1.toString() :
-				restriction.getLevel()
-						.toString();
+		String level = restriction == null ? ProjectMetadataRole.LEVEL_1.toString() : restriction.getLevel().toString();
 		return new ProjectMetadataField(field, level);
 	}
 
 	/**
-	 * Predicate that maintains state about what it's seen previously, and that returns whether the given element was seen for the first time:
+	 * Predicate that maintains state about what it's seen previously, and that returns whether the given element was
+	 * seen for the first time:
 	 *
 	 * @param keyExtractor
 	 * @param <T>

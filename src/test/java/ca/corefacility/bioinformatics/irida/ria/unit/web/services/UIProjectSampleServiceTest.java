@@ -3,6 +3,7 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,11 +16,8 @@ import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.FieldUpdate;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdateSampleRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.*;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.MetadataEntryModel;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -41,6 +39,8 @@ public class UIProjectSampleServiceTest {
 	private final String BAD_NAME = "bad name with spaces";
 	private final String SHORT_NAME = "sho";
 	private final String GOOD_NAME = "good_name";
+	private final String ORGANISM = "organism";
+	private final String DESCRIPTION = "this is a description";
 
 	@BeforeEach
 	public void setUp() {
@@ -60,6 +60,8 @@ public class UIProjectSampleServiceTest {
 		Join<Project, Sample> join = new ProjectSampleJoin(PROJECT_1, sample, true);
 		when(projectService.addSampleToProject(any(Project.class), any(Sample.class), any(Boolean.class))).thenReturn(
 				join);
+		when(projectService.addSampleToProjectWithoutEvent(any(Project.class), any(Sample.class),
+				any(Boolean.class))).thenReturn(join);
 	}
 
 	@Test
@@ -80,28 +82,73 @@ public class UIProjectSampleServiceTest {
 
 	@Test
 	public void testCreateSample() {
-		CreateSampleRequest request = new CreateSampleRequest(GOOD_NAME, null);
-		ResponseEntity<AjaxResponse> response = service.createSample(request, PROJECT_1_ID, Locale.ENGLISH);
-		assertEquals(HttpStatus.OK, response.getStatusCode(), "Sample should be created");
+		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null) };
+		Map<String, Object> responses = service.createSamples(requests, PROJECT_1_ID);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((SampleResponse) response.getValue()).isError())
+				.count();
+		assertEquals(0, errorCount, "Sample should be created");
+	}
+
+	@Test
+	public void testCreateSampleWithOrganism() {
+		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, ORGANISM) };
+		Map<String, Object> responses = service.createSamples(requests, PROJECT_1_ID);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((SampleResponse) response.getValue()).isError())
+				.count();
+		assertEquals(0, errorCount, "Sample should be created");
+	}
+
+	@Test
+	public void testCreateSampleWithDescription() {
+		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null, DESCRIPTION, null) };
+		Map<String, Object> responses = service.createSamples(requests, PROJECT_1_ID);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((SampleResponse) response.getValue()).isError())
+				.count();
+		assertEquals(0, errorCount, "Sample should be created");
+	}
+
+	@Test
+	public void testCreateSampleWithOrganismAndDescription() {
+		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, ORGANISM, DESCRIPTION, null) };
+		Map<String, Object> responses = service.createSamples(requests, PROJECT_1_ID);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((SampleResponse) response.getValue()).isError())
+				.count();
+		assertEquals(0, errorCount, "Sample should be created");
 	}
 
 	@Test
 	public void testCreateSampleWithMetadata() {
-		List<FieldUpdate> metadata = new ArrayList<>();
-		metadata.add(new FieldUpdate("field1", "value1"));
-		metadata.add(new FieldUpdate("field2", "value2"));
-		CreateSampleRequest request = new CreateSampleRequest(GOOD_NAME, null, null, metadata);
-		ResponseEntity<AjaxResponse> response = service.createSample(request, PROJECT_1_ID, Locale.ENGLISH);
-		assertEquals(HttpStatus.OK, response.getStatusCode(), "Sample should be created");
+		List<MetadataEntryModel> metadata = new ArrayList<>();
+		metadata.add(new MetadataEntryModel("field1", "value1"));
+		metadata.add(new MetadataEntryModel("field2", "value2"));
+		CreateSampleRequest[] requests = { new CreateSampleRequest(GOOD_NAME, null, null, metadata) };
+		Map<String, Object> responses = service.createSamples(requests, PROJECT_1_ID);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((SampleResponse) response.getValue()).isError())
+				.count();
+		assertEquals(0, errorCount, "Sample should be created");
 	}
 
 	@Test
 	public void testUpdateSampleWithMetadata() {
-		List<FieldUpdate> metadata = new ArrayList<>();
-		metadata.add(new FieldUpdate("field1", "value1"));
-		metadata.add(new FieldUpdate("field2", "value2"));
-		UpdateSampleRequest request = new UpdateSampleRequest(GOOD_NAME, null, null, metadata);
-		ResponseEntity<AjaxResponse> response = service.updateSample(request, SAMPLE_1_ID, Locale.ENGLISH);
-		assertEquals(HttpStatus.OK, response.getStatusCode(), "Sample should be updated");
+		List<MetadataEntryModel> metadata = new ArrayList<>();
+		metadata.add(new MetadataEntryModel("field1", "value1"));
+		metadata.add(new MetadataEntryModel("field2", "value2"));
+		UpdateSampleRequest[] requests = { new UpdateSampleRequest(SAMPLE_1_ID, GOOD_NAME, null, null, metadata) };
+		Map<String, Object> responses = service.updateSamples(requests);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((SampleErrorResponse) response.getValue()).isError())
+				.count();
+		assertEquals(0, errorCount, "Sample should be updated");
 	}
 }

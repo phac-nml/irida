@@ -32,9 +32,8 @@ export function ShareMetadata() {
    * Get the fields for the current project.  The restrictions from these fields
    * will act as a base for the restriction level when the fields are shared.
    */
-  const { data: sourceFields } = useGetMetadataFieldsForProjectQuery(
-    currentProject
-  );
+  const { data: sourceFields } =
+    useGetMetadataFieldsForProjectQuery(currentProject);
 
   /**
    * Target project metadata fields. Needed to determine, which fields will be
@@ -95,7 +94,7 @@ export function ShareMetadata() {
       title: i18n("ShareMetadata.field"),
       key: "label",
       dataIndex: "label",
-      render: (label, field) => <span className="t-field-label">{label}</span>,
+      render: (label) => <span className="t-field-label">{label}</span>,
     },
     {
       title: i18n("ShareMetadata.current"),
@@ -148,6 +147,7 @@ export function ShareMetadata() {
       className="t-meta-table"
       columns={columns}
       dataSource={metadataRestrictions}
+      tableLayout="auto"
     />
   ) : (
     <Alert

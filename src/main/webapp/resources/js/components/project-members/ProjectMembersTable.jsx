@@ -16,6 +16,7 @@ import { setBaseUrl } from "../../utilities/url-utilities";
 import { PagedTable, PagedTableContext } from "../ant.design/PagedTable";
 import { AddMemberButton, RemoveTableItemButton } from "../Buttons";
 import { RoleSelect } from "../roles/RoleSelect";
+import { stringSorter } from "../../utilities/table-utilities";
 
 /**
  * React component to display a table of project users.
@@ -29,10 +30,8 @@ export function ProjectMembersTable({ projectId }) {
   const { identifier: userId } = useSelector((state) => state.user);
 
   const { roles: projectRoles, getRoleFromKey } = useProjectRoles();
-  const {
-    roles: metadataRoles,
-    getRoleFromKey: getMetadataRoleFromKey,
-  } = useMetadataRoles();
+  const { roles: metadataRoles, getRoleFromKey: getMetadataRoleFromKey } =
+    useMetadataRoles();
 
   React.useEffect(() => {
     dispatch(getCurrentUserDetails());
@@ -48,25 +47,29 @@ export function ProjectMembersTable({ projectId }) {
     updateTable();
   }
 
-  const updateProjectRole = ({ id }) => (projectRole) => {
-    return updateUserRoleOnProject({ projectId, id, projectRole }).then(
-      (message) => {
+  const updateProjectRole =
+    ({ id }) =>
+    (projectRole) => {
+      return updateUserRoleOnProject({ projectId, id, projectRole }).then(
+        (message) => {
+          updateTable();
+          return message;
+        }
+      );
+    };
+
+  const updateMetadataRole =
+    ({ id }) =>
+    (metadataRole) => {
+      return updateUserMetadataRoleOnProject({
+        projectId,
+        id,
+        metadataRole,
+      }).then((message) => {
         updateTable();
         return message;
-      }
-    );
-  };
-
-  const updateMetadataRole = ({ id }) => (metadataRole) => {
-    return updateUserMetadataRoleOnProject({
-      projectId,
-      id,
-      metadataRole,
-    }).then((message) => {
-      updateTable();
-      return message;
-    });
-  };
+      });
+    };
 
   const columns = [
     {
@@ -75,6 +78,8 @@ export function ProjectMembersTable({ projectId }) {
       render(text, item) {
         return <a href={setBaseUrl(`/users/${item.id}`)}>{text}</a>;
       },
+      sorter: stringSorter("name"),
+      defaultSortOrder: "ascend",
     },
     {
       title: i18n("ProjectMembersTable.projectRole"),
