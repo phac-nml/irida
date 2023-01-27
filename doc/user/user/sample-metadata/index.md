@@ -45,7 +45,7 @@ After uploading a spreadsheet, you will be brought to the `Map Columns` step.  T
 
 ![Select name column.](images/upload-column-before.png)
 
-Once the sample name column is selected, a table will be displayed listing all the metadata fields.  You can review the existing and target metadata field restrictions here.  Press the `Review the data` button to continue.
+Once the sample name column is selected, a table will be displayed listing all the metadata fields.  You can review the existing and target metadata field restrictions here.  Click the `Review the data` button to continue.
 
 ![Select name column.](images/upload-column-after.png)
 
@@ -53,7 +53,7 @@ You may select the rows that are to be uploaded on the `Review Data` step. Rows 
 
 ![Preview Upload](images/upload-preview.png)
 
-Rows that have an invalid sample name will be highlighted in red.  These errors should be fixed within the spreadsheet and re-imported.  Press the `Upload the data` button to continue.
+Rows that have an invalid sample name will be highlighted in red.  These errors should be fixed within the spreadsheet and re-imported.  Click the `Upload the data` button to continue.
 
 ![Upload Preview Errors](images/upload-preview-errors.png)
 
