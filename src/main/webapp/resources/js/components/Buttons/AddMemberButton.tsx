@@ -12,9 +12,22 @@ import { useMetadataRoles } from "../../contexts/metadata-roles-context";
 import { useProjectRoles } from "../../contexts/project-roles-context";
 import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
 import { SPACE_XS } from "../../styles/spacing";
+import { MetadataRoles } from "../samples/components/EditMetadata";
 
 const { Option } = Select;
 const { Text } = Typography;
+
+export interface AddMemberButtonProps {
+  label: string;
+  modalTitle: string;
+  addMemberFn: (p: {
+    metadataRole: string;
+    projectRole: string;
+    id: any;
+  }) => void;
+  getAvailableMembersFn: (debouncedQuery: any) => void;
+  addMemberSuccessFn: () => void;
+}
 
 export function AddMemberButton({
   label,
@@ -22,12 +35,12 @@ export function AddMemberButton({
   addMemberFn,
   getAvailableMembersFn,
   addMemberSuccessFn,
-}) {
+}: AddMemberButtonProps): JSX.Element {
   /*
   Required a reference to the user select input so that focus can be set
   to it when the window opens.
    */
-  const userRef = useRef();
+  const userRef = useRef<HTMLInputElement>(null);
 
   const { roles: projectRoles } = useProjectRoles();
   const { roles: metadataRoles } = useMetadataRoles();
@@ -98,13 +111,13 @@ export function AddMemberButton({
 
   const addMember = () => {
     addMemberFn({ id: userId, projectRole, metadataRole })
-      .then((message) => {
+      .then((message: string) => {
         addMemberSuccessFn();
         notification.success({ message });
         form.resetFields();
         setVisible(false);
       })
-      .catch((message) => notification.error({ message }));
+      .catch((message: string) => notification.error({ message }));
   };
 
   /*
@@ -192,7 +205,7 @@ export function AddMemberButton({
               onChange={(e) => setMetadataRole(e.target.value)}
               disabled={projectRole === "PROJECT_OWNER"}
             >
-              {metadataRoles.map((role) => (
+              {metadataRoles.map((role: MetadataRoles) => (
                 <Radio.Button key={role.value} value={role.value}>
                   {role.label}
                 </Radio.Button>
