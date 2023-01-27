@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -29,6 +30,9 @@ public class NcbiExportPage extends AbstractPage {
 
 	@FindBy(xpath = "//*[@id=\"namespace\"]")
 	private WebElement namespaceInput;
+
+	@FindBy(xpath = "//*[@id=\"releaseDate\"]")
+	private WebElement releaseDateInput;
 
 	@FindBy(className = "t-defaults-panel")
 	private WebElement defaultsPanel;
@@ -71,6 +75,12 @@ public class NcbiExportPage extends AbstractPage {
 
 	public void enterNamespace(String value) {
 		namespaceInput.sendKeys(value);
+	}
+
+	public void setReleaseDateInput(String value) {
+		releaseDateInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+		releaseDateInput.sendKeys(value);
+		releaseDateInput.sendKeys(Keys.ENTER);
 	}
 
 	public void toggleDefaultsPanel() {

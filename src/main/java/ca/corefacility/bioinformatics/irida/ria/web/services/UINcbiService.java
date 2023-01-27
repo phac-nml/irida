@@ -14,14 +14,13 @@ import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.NcbiExportSubmissionTableModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiBioSampleModel;
 import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiExportSubmissionAdminTableModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiSubmissionRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiSubmissionModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.export.NcbiSubmissionRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.models.tables.TableResponse;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -89,22 +88,8 @@ public class UINcbiService {
 	 */
 	public NcbiSubmissionModel getExportDetails(Long exportId) {
 		NcbiExportSubmission submission = ncbiService.read(exportId);
-		Project project = projectService.read(submission.getProject()
-				.getId());
 
-		List<NcbiBioSampleModel> bioSamples = submission.getBioSampleFiles()
-				.stream()
-				.map(bioSampleFile -> {
-					List<SequencingObject> pairs = bioSampleFile.getPairs()
-							.stream()
-							.peek(pair -> uiSampleService.enhanceQcEntries(pair, project))
-							.collect(Collectors.toList());
-					List<SequencingObject> singles = bioSampleFile.getFiles()
-							.stream()
-							.peek(single -> uiSampleService.enhanceQcEntries(single, project))
-							.collect(Collectors.toList());
-					return new NcbiBioSampleModel(bioSampleFile);
-				})
+		List<NcbiBioSampleModel> bioSamples = submission.getBioSampleFiles().stream().map(NcbiBioSampleModel::new)
 				.collect(Collectors.toList());
 
 		return new NcbiSubmissionModel(submission, bioSamples);

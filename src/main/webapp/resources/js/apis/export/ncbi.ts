@@ -96,5 +96,8 @@ export async function getNCBISelections(): Promise<NcbiSelection[]> {
 export async function submitNcbiSubmissionRequest(
   request: NcbiSubmissionRequest
 ) {
-  return await post(setBaseUrl(`ajax/ncbi/submit`), request);
+  return await post<void, NcbiSubmissionRequest>(
+    setBaseUrl(`ajax/ncbi/submit`),
+    request
+  );
 }
