@@ -39,7 +39,7 @@ jobs:
           config_path: "src/main/webapp/.eslintrc.js"
           extra_args: "--max-warnings=0 --parser-options project:src/main/webapp/tsconfig.json"
           filter_mode: "nofilter"
-          reporter: "github--pr-check"
+          reporter: "github-pr-check"
           file_extensions: |
             src/main/webapp/resources/js/**/*.ts
             src/main/webapp/resources/js/**/*.tsx
