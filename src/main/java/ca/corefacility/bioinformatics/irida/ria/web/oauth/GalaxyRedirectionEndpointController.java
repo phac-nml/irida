@@ -46,7 +46,8 @@ public class GalaxyRedirectionEndpointController {
 				.parse(new ServletServerHttpRequest(request).getURI());
 
 		if (authResponse instanceof AuthenticationErrorResponse) {
-			logger.trace("Unexpected authentication response");
+			logger.trace("Unexpected authentication error response during Galaxy OAuth flow",
+					authResponse.toErrorResponse().getErrorObject().toString());
 		}
 
 		String code = authResponse.toSuccessResponse().getAuthorizationCode().getValue();
