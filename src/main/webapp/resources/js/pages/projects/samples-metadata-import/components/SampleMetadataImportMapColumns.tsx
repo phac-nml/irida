@@ -32,6 +32,7 @@ import {
   getColourForRestriction,
   getRestrictionLabel,
   Restriction,
+  RestrictionListItem,
 } from "../../../../utilities/restriction-utilities";
 
 /**
@@ -44,7 +45,9 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate: NavigateFunction = useNavigate();
   const [loading, setLoading] = React.useState<boolean>(false);
-  const [restrictions, setRestrictions] = React.useState([]);
+  const [restrictions, setRestrictions] = React.useState<RestrictionListItem[]>(
+    []
+  );
   const { headers, sampleNameColumn } = useImportSelector(
     (state: ImportState) => state.importReducer
   );

@@ -6,12 +6,12 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { addKeysToList } from "../../utilities/http-utilities";
 import { setBaseUrl } from "../../utilities/url-utilities";
 import { MetadataField } from "../../types/irida";
+import { RestrictionListItem } from "../../utilities/restriction-utilities";
 
 const BASE_URL = setBaseUrl(`/ajax/metadata/fields`);
 
 /**
  * Redux API for metadata fields.
- * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getMetadataFieldsForProject: *}, string, string, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>>, {getMetadataFieldsForProject: *}, string, string, typeof coreModuleName | typeof reactHooksModuleName>}
  */
 export const fieldsApi = createApi({
   reducerPath: `fieldsApi`,
@@ -55,11 +55,12 @@ export const {
 
 /**
  * Get a list of fields for the project
- * @returns {Promise<any>}
  */
 export async function getMetadataFieldsForProject(projectId: string) {
   try {
-    const { data } = await axios.get(`${BASE_URL}?projectId=${projectId}`);
+    const { data } = await axios.get<MetadataField[]>(
+      `${BASE_URL}?projectId=${projectId}`
+    );
     return data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -76,11 +77,12 @@ export async function getMetadataFieldsForProject(projectId: string) {
 
 /**
  * Get a list of field restrictions
- * @returns {Promise<any>}
  */
 export async function getMetadataRestrictions() {
   try {
-    const { data } = await axios.get(`${BASE_URL}/restrictions`);
+    const { data } = await axios.get<RestrictionListItem[]>(
+      `${BASE_URL}/restrictions`
+    );
     return data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -97,13 +99,10 @@ export async function getMetadataRestrictions() {
 
 /**
  * Get a list of metadata fields for the list of projects
- * @returns {Promise<any>}
  */
-export async function getAllMetadataFieldsForProjects(
-  projectIds: string[]
-): Promise<MetadataField[]> {
+export async function getAllMetadataFieldsForProjects(projectIds: string[]) {
   try {
-    const { data } = await axios.get(
+    const { data } = await axios.get<MetadataField[]>(
       `${BASE_URL}/projects?projectIds=${projectIds}`
     );
     return addKeysToList(data, "field", "id");
@@ -122,7 +121,6 @@ export async function getAllMetadataFieldsForProjects(
 
 /*
  * Create metadata fields for a specific project
- * @returns {Promise<any>}
  */
 export async function createMetadataFieldsForProject({
   projectId,
@@ -131,5 +129,5 @@ export async function createMetadataFieldsForProject({
   projectId: string;
   body: MetadataField[];
 }) {
-  return await axios.post(`${BASE_URL}?projectId=${projectId}`, body);
+  return await axios.post<string>(`${BASE_URL}?projectId=${projectId}`, body);
 }
