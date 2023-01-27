@@ -12,6 +12,9 @@ import {
 import { ImportDispatch } from "./store";
 import { chunkArray } from "../../../../utilities/array-utilities";
 
+/**
+ * @fileoverview utilities to help with metadata importer
+ */
 export function generatePromiseList(
   sampleList: CreateSampleItem[] | UpdateSampleItem[],
   sampleFunction: CreateUpdateSamples,
