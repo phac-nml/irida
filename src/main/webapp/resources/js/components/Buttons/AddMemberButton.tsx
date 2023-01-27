@@ -13,6 +13,7 @@ import { useProjectRoles } from "../../contexts/project-roles-context";
 import { useDebounce, useResetFormOnCloseModal } from "../../hooks";
 import { SPACE_XS } from "../../styles/spacing";
 import { MetadataRoles } from "../samples/components/EditMetadata";
+import { User } from "../../types/irida";
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -23,9 +24,9 @@ export interface AddMemberButtonProps {
   addMemberFn: (p: {
     metadataRole: string;
     projectRole: string;
-    id: any;
-  }) => void;
-  getAvailableMembersFn: (debouncedQuery: any) => void;
+    id: number | undefined;
+  }) => Promise<string>;
+  getAvailableMembersFn: (debouncedQuery: string) => Promise<User[]>;
   addMemberSuccessFn: () => void;
 }
 
@@ -53,7 +54,7 @@ export function AddMemberButton({
   /*
   The identifier for the currently selected user from the user input
    */
-  const [userId, setUserId] = useState();
+  const [userId, setUserId] = useState<number>();
 
   /*
   The value of the currently selected role from the role input
@@ -76,7 +77,7 @@ export function AddMemberButton({
   List of users to display to the user to select from.  Values returned from
   server from the debouncedQuery search.
    */
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<User[]>([]);
 
   /*
   Ant Design form
@@ -185,7 +186,7 @@ export function AddMemberButton({
                 }
               }}
             >
-              {projectRoles.map((role) => (
+              {projectRoles.map((role: MetadataRoles) => (
                 <Radio.Button
                   key={role.value}
                   value={role.value}
