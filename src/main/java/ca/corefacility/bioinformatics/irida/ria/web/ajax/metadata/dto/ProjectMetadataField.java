@@ -13,6 +13,7 @@ public class ProjectMetadataField {
 	private String type;
 	private String restriction;
 
+	//default constructor for serializing and deserializing the DTO
 	public ProjectMetadataField() {
 	}
 
@@ -63,4 +64,5 @@ public class ProjectMetadataField {
 	public void setRestriction(String restriction) {
 		this.restriction = restriction;
 	}
+
 }
