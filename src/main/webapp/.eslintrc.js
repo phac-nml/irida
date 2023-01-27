@@ -9,7 +9,12 @@ module.exports = {
     i18n: true,
     __webpack_public_path__: true,
   },
-  extends: ["airbnb", "airbnb-typescript", "plugin:prettier/recommended"],
+  extends: [
+    "airbnb",
+    "airbnb-typescript",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+  ],
   parserOptions: {
     project: "./tsconfig.json",
     ecmaFeatures: {

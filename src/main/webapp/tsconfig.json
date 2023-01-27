@@ -14,6 +14,8 @@
     "esModuleInterop": true
   },
   "include": [
+    "./*.js",
+    "./*.json",
     "./resources/js/**/*.ts",
     "./resources/js/**/*.tsx",
     "./resources/js/**/*.js",
