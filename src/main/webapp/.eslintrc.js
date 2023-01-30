@@ -30,22 +30,6 @@ module.exports = {
     },
   },
   rules: {
-    "react/prop-types": 0,
-    "prefer-destructuring": [
-      "error",
-      {
-        array: true,
-        object: true,
-      },
-      {
-        enforceForRenamedProperties: false,
-      },
-    ],
-    "prettier/prettier": [
-      "error",
-      {
-        endOfLine: "auto",
-      },
-    ],
+    "@typescript-eslint/consistent-type-imports": "warn",
   },
 };
