@@ -1,12 +1,4 @@
-import {
-  Form,
-  Input,
-  Modal,
-  notification,
-  Popover,
-  Select,
-  Typography,
-} from "antd";
+import { Form, Input, Modal, notification, Radio, Typography } from "antd";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
 import { useUpdateSampleMetadataMutation } from "../../../apis/samples/samples";
@@ -135,17 +127,19 @@ export function EditMetadata() {
               label={i18n("SampleMetadata.modal.restriction")}
               initialValue={restriction ? restriction : "LEVEL_1"}
             >
-              <Select style={{ width: "100%" }}>
-                {metadataRoles?.map((role: MetadataRoles) => (
-                  <Select.Option
+              <Radio.Group style={{ display: "flex", width: "100%" }}>
+                {/* Styles can be replaced with compact space in the future */}
+                {metadataRoles.map((role: MetadataRoles) => (
+                  <Radio.Button
+                    style={{ whiteSpace: "nowrap" }}
                     className={`t-${role.value}`}
                     value={role.value}
                     key={role.value}
                   >
                     {role.label}
-                  </Select.Option>
+                  </Radio.Button>
                 ))}
-              </Select>
+              </Radio.Group>
             </Form.Item>
           </Form>
         </Modal>

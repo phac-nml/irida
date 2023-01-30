@@ -1,5 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -8,13 +15,6 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * <p>
@@ -230,6 +230,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	@FindBy(id = "name")
 	private WebElement sampleNameInput;
 
+	@FindBy(css = "button.ant-btn.ant-btn-primary")
+	private WebElement okButton;
+
 	@FindBy(className = "t-filter-by-file-btn")
 	private WebElement filterByFileBtn;
 
@@ -256,7 +259,7 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		return PageFactory.initElements(driver, ProjectSamplesPage.class);
 	}
 
-	public static ProjectSamplesPage goToPage(WebDriver driver, int projectId) {
+	public static ProjectSamplesPage goToPage(WebDriver driver, Long projectId) {
 		get(driver, RELATIVE_URL + projectId);
 		// Wait for full page to get loaded
 		waitForTime(800);
@@ -368,8 +371,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
 		int prevTotal = getTableSummary().getTotal();
 		sampleNameFilterToggle.click();
-		WebElement filter = wait
-				.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[title=\"" + name + "\"]")));
+		WebElement filter = wait.until(
+				ExpectedConditions.elementToBeClickable(By.cssSelector("[title=\"" + name + "\"]")));
 		filter.findElement(By.className("ant-select-selection-item-remove")).click();
 		sampleNameFilterToggle.sendKeys(Keys.TAB);
 		waitForTableToUpdate(prevTotal);
@@ -396,8 +399,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	public void toggleAssociatedProject(String projectName) {
 		int prevTotal = getTableSummary().getTotal();
 		projectsFilterToggle.click();
-		WebElement selection = driver
-				.findElement(By.xpath("//li[@class='ant-dropdown-menu-item' and span='" + projectName + "']"));
+		WebElement selection = driver.findElement(
+				By.xpath("//li[@class='ant-dropdown-menu-item' and span='" + projectName + "']"));
 		selection.click();
 		driver.findElement(By.xpath("//button[@type='button' and span='OK']")).click();
 		waitForTableToUpdate(prevTotal);
@@ -416,8 +419,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		createdDateFilterToggle.click();
 		driver.findElement(By.xpath("//div[@class='t-created-filter']//input[@placeholder='Start date']"))
 				.sendKeys(start);
-		WebElement endInput = driver
-				.findElement(By.xpath("//div[@class='t-created-filter']//input[@placeholder='End date']"));
+		WebElement endInput = driver.findElement(
+				By.xpath("//div[@class='t-created-filter']//input[@placeholder='End date']"));
 		endInput.sendKeys(end);
 		endInput.sendKeys(Keys.ENTER);
 		createdDateFilter.findElement(By.className("t-search-btn")).click();
@@ -437,8 +440,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		modifiedDateFilterToggle.click();
 		driver.findElement(By.xpath("//div[@class='t-modified-filter']//input[@placeholder='Start date']"))
 				.sendKeys(start);
-		WebElement endInput = driver
-				.findElement(By.xpath("//div[@class='t-modified-filter']//input[@placeholder='End date']"));
+		WebElement endInput = driver.findElement(
+				By.xpath("//div[@class='t-modified-filter']//input[@placeholder='End date']"));
 		endInput.sendKeys(end);
 		endInput.sendKeys(Keys.ENTER);
 		modifiedDateFilter.findElement(By.className("t-search-btn")).click();
@@ -454,14 +457,14 @@ public class ProjectSamplesPage extends ProjectPageBase {
 	}
 
 	public void selectSampleByName(String sampleName) {
-		WebElement checkbox = samplesTable
-				.findElement(By.xpath("//td/button[span[text()='" + sampleName + "']]/../..//input"));
+		WebElement checkbox = samplesTable.findElement(
+				By.xpath("//td/button[span[text()='" + sampleName + "']]/../..//input"));
 		checkbox.click();
 	}
 
 	public void clickSampleName(String sampleName) {
-		WebElement sampleNameLink = samplesTable
-				.findElement(By.xpath("//td/button[span[text()='" + sampleName + "']]"));
+		WebElement sampleNameLink = samplesTable.findElement(
+				By.xpath("//td/button[span[text()='" + sampleName + "']]"));
 		sampleNameLink.click();
 	}
 
@@ -567,6 +570,10 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		waitForTime(1000);
 	}
 
+	public void clickOk() {
+		okButton.click();
+	}
+
 	public boolean isSampleNameErrorDisplayed() {
 		return driver.findElements(By.cssSelector(".t-sample-name-wrapper .ant-form-item-explain-error")).size() > 0;
 	}
@@ -624,8 +631,8 @@ public class ProjectSamplesPage extends ProjectPageBase {
 
 	public boolean isMessageDisplayed(String message) {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
-		WebElement notification = wait
-				.until(ExpectedConditions.visibilityOfElementLocated(By.className("ant-notification-notice-message")));
+		WebElement notification = wait.until(
+				ExpectedConditions.visibilityOfElementLocated(By.className("ant-notification-notice-message")));
 		return wait.until(ExpectedConditions.textToBePresentInElement(notification, message));
 	}
 }
