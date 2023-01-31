@@ -300,20 +300,20 @@ public class UISampleService {
 	public AddSampleMetadataResponse addSampleMetadata(Long sampleId, AddSampleMetadataRequest addSampleMetadataRequest,
 			Locale locale) {
 		Sample sample = sampleService.read(sampleId);
-		ProjectMetadataRole metadataRole = ProjectMetadataRole
-				.fromString(addSampleMetadataRequest.getMetadataRestriction());
+		ProjectMetadataRole metadataRole = ProjectMetadataRole.fromString(
+				addSampleMetadataRequest.getMetadataRestriction());
 		Project project = projectService.read(addSampleMetadataRequest.getProjectId());
 
-		MetadataTemplateField existingTemplateField = metadataTemplateService
-				.readMetadataFieldByLabel(addSampleMetadataRequest.getMetadataField());
+		MetadataTemplateField existingTemplateField = metadataTemplateService.readMetadataFieldByLabel(
+				addSampleMetadataRequest.getMetadataField());
 
 		MetadataTemplateField templateField;
 
 		if (existingTemplateField != null) {
 			templateField = existingTemplateField;
 		} else {
-			templateField = metadataTemplateService
-					.saveMetadataField(new MetadataTemplateField(addSampleMetadataRequest.getMetadataField(), "text"));
+			templateField = metadataTemplateService.saveMetadataField(
+					new MetadataTemplateField(addSampleMetadataRequest.getMetadataField(), "text"));
 		}
 
 		MetadataRestriction metadataRestriction = null;
@@ -347,15 +347,12 @@ public class UISampleService {
 						metadataRole);
 				metadataRestrictionRepository.save(metadataRestriction);
 			}
-			String metadataRestrictionString = messageSource
-					.getMessage("metadataRole." + metadataRestriction.getLevel(), new Object[] {}, locale);
+			String metadataRestrictionString = messageSource.getMessage(
+					"metadataRole." + metadataRestriction.getLevel(), new Object[] {}, locale);
 
-			message = messageSource.getMessage("server.sample.metadata.add.success",
-					new Object[] {
-							addSampleMetadataRequest.getMetadataField(),
-							addSampleMetadataRequest.getMetadataEntry(),
-							metadataRestrictionString },
-					locale);
+			message = messageSource.getMessage("server.sample.metadata.add.success", new Object[] {
+					addSampleMetadataRequest.getMetadataField(), addSampleMetadataRequest.getMetadataEntry(),
+					metadataRestrictionString }, locale);
 		}
 
 		return new AddSampleMetadataResponse(metadataTemplateField.getId(), metadataTemplateField.getLabel(),
@@ -367,12 +364,15 @@ public class UISampleService {
 	 * Remove metadata from the sample
 	 *
 	 * @param projectId       The project id
+	 * @param sampleId        The sample id
 	 * @param metadataFieldId The metadata field id
 	 * @param metadataEntryId The metadata entry id
 	 * @param locale          {@link Locale} for the currently logged in user
 	 * @return message indicating deletion status
 	 */
-	public String removeSampleMetadata(Long projectId, Long metadataFieldId, Long metadataEntryId, Locale locale) {
+	public String removeSampleMetadata(Long projectId, Long sampleId, Long metadataFieldId, Long metadataEntryId,
+			Locale locale) {
+		Sample sample = sampleService.read(sampleId);
 		Project project = projectService.read(projectId);
 		List<Sample> sampleList = sampleService.getSamplesForProject(project)
 				.stream()
@@ -389,12 +389,15 @@ public class UISampleService {
 		 where the field is in use within the project
 		 */
 		if (fieldUsageCount == 1) {
-			MetadataRestriction restrictionToDelete = metadataTemplateService
-					.getMetadataRestrictionForFieldAndProject(project, metadataTemplateField);
+			MetadataRestriction restrictionToDelete = metadataTemplateService.getMetadataRestrictionForFieldAndProject(
+					project, metadataTemplateField);
 			if (restrictionToDelete != null) {
 				metadataRestrictionRepository.delete(restrictionToDelete);
 			}
 		}
+
+		sample.setModifiedDate(new Date());
+		sampleService.update(sample);
 
 		return messageSource.getMessage("server.sample.metadata.remove.success",
 				new Object[] { metadataTemplateField.getLabel() }, locale);
@@ -415,19 +418,19 @@ public class UISampleService {
 		boolean sampleUpdated = false;
 		MetadataTemplateField metadataTemplateField = null;
 		// Existing field with the updated field label
-		MetadataTemplateField existingField = metadataTemplateService
-				.readMetadataFieldByLabel(updateSampleMetadataRequest.getMetadataField());
+		MetadataTemplateField existingField = metadataTemplateService.readMetadataFieldByLabel(
+				updateSampleMetadataRequest.getMetadataField());
 
 		// Get the existing entry if it exists
-		MetadataTemplateField existingFieldById = metadataTemplateService
-				.readMetadataField(updateSampleMetadataRequest.getMetadataFieldId());
+		MetadataTemplateField existingFieldById = metadataTemplateService.readMetadataField(
+				updateSampleMetadataRequest.getMetadataFieldId());
 		MetadataEntry existingEntry = metadataEntryRepository.getMetadataEntryBySampleAndField(existingFieldById,
 				sample);
 
 		Set<MetadataEntry> metadataEntrySet = new HashSet<>();
 
-		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole
-				.fromString(updateSampleMetadataRequest.getMetadataRestriction());
+		ProjectMetadataRole projectMetadataRole = ProjectMetadataRole.fromString(
+				updateSampleMetadataRequest.getMetadataRestriction());
 
 		if (existingField != null) {
 			metadataTemplateField = existingField;
@@ -494,8 +497,8 @@ public class UISampleService {
 		 Get the metadata restriction for the field and update if there is no previous
 		 restriction on the field or a user modifies the restriction for the field
 		 */
-		MetadataRestriction currentRestriction = metadataTemplateService
-				.getMetadataRestrictionForFieldAndProject(project, metadataTemplateField);
+		MetadataRestriction currentRestriction = metadataTemplateService.getMetadataRestrictionForFieldAndProject(
+				project, metadataTemplateField);
 
 		if (currentRestriction == null) {
 			metadataTemplateService.setMetadataRestriction(project, metadataTemplateField, projectMetadataRole);
@@ -1045,8 +1048,8 @@ public class UISampleService {
 				GenomeAssembly genomeAssembly = genomeAssemblyService.createAssemblyInSample(sample, uploadedAssembly)
 						.getObject();
 
-				sampleGenomeAssemblyFileModels
-						.add(new SampleGenomeAssemblyFileModel(genomeAssembly, uploadedAssembly.getFileSize()));
+				sampleGenomeAssemblyFileModels.add(
+						new SampleGenomeAssemblyFileModel(genomeAssembly, uploadedAssembly.getFileSize()));
 
 			}
 			return sampleGenomeAssemblyFileModels;
@@ -1072,13 +1075,14 @@ public class UISampleService {
 		Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(objectIds);
 
 		try {
-			SampleSequencingObjectJoin concatenatedSequencingObjects = sequencingObjectService
-					.concatenateSequences(Lists.newArrayList(readMultiple), filename, sample, removeOriginals);
+			SampleSequencingObjectJoin concatenatedSequencingObjects = sequencingObjectService.concatenateSequences(
+					Lists.newArrayList(readMultiple), filename, sample, removeOriginals);
 
 			if (removeOriginals) {
 				for (SequencingObject sequencingObject : readMultiple) {
-					if (sample.getDefaultSequencingObject() != null
-							&& sample.getDefaultSequencingObject().getId().equals(sequencingObject.getId())) {
+					if (sample.getDefaultSequencingObject() != null && sample.getDefaultSequencingObject()
+							.getId()
+							.equals(sequencingObject.getId())) {
 						sample.setDefaultSequencingObject(null);
 						sampleService.update(sample);
 						break;
@@ -1096,8 +1100,9 @@ public class UISampleService {
 				firstFileSize = s.getForwardSequenceFile().getFileSize();
 				secondFileSize = s.getReverseSequenceFile().getFileSize();
 			}
-			sampleSequencingObjectFileModels.add(new SampleSequencingObjectFileModel(sequencingObject, firstFileSize,
-					secondFileSize, sequencingObject.getQcEntries()));
+			sampleSequencingObjectFileModels.add(
+					new SampleSequencingObjectFileModel(sequencingObject, firstFileSize, secondFileSize,
+							sequencingObject.getQcEntries()));
 			return sampleSequencingObjectFileModels;
 		} catch (ConcatenateException ex) {
 			throw new ConcatenateException(ex.getMessage());
@@ -1113,10 +1118,10 @@ public class UISampleService {
 	 */
 	private ProjectMetadataRole getMetadataFieldRestriction(Long projectId, Long metadataTemplateFieldId) {
 		Project project = projectService.read(projectId);
-		MetadataTemplateField metadataTemplateField = metadataTemplateService
-				.readMetadataField(metadataTemplateFieldId);
-		MetadataRestriction metadataRestriction = metadataRestrictionRepository
-				.getRestrictionForFieldAndProject(project, metadataTemplateField);
+		MetadataTemplateField metadataTemplateField = metadataTemplateService.readMetadataField(
+				metadataTemplateFieldId);
+		MetadataRestriction metadataRestriction = metadataRestrictionRepository.getRestrictionForFieldAndProject(
+				project, metadataTemplateField);
 		if (metadataRestriction != null) {
 			return metadataRestriction.getLevel();
 		}
@@ -1136,9 +1141,8 @@ public class UISampleService {
 			throws IOException {
 		SequenceFile firstFile = createSequenceFile(pair.get(0));
 		SequenceFile secondFile = createSequenceFile(pair.get(1));
-		SequencingObject sequencingObject = sequencingObjectService
-				.createSequencingObjectInSample(new SequenceFilePair(firstFile, secondFile), sample)
-				.getObject();
+		SequencingObject sequencingObject = sequencingObjectService.createSequencingObjectInSample(
+				new SequenceFilePair(firstFile, secondFile), sample).getObject();
 		return new SampleSequencingObjectFileModel(sequencingObject, firstFile.getFileSize(), secondFile.getFileSize(),
 				sequencingObject.getQcEntries());
 	}
@@ -1154,9 +1158,8 @@ public class UISampleService {
 	private SampleSequencingObjectFileModel createSequenceFileInSample(MultipartFile file, Sample sample)
 			throws IOException {
 		SequenceFile sequenceFile = createSequenceFile(file);
-		SequencingObject sequencingObject = sequencingObjectService
-				.createSequencingObjectInSample(new SingleEndSequenceFile(sequenceFile), sample)
-				.getObject();
+		SequencingObject sequencingObject = sequencingObjectService.createSequencingObjectInSample(
+				new SingleEndSequenceFile(sequenceFile), sample).getObject();
 		return new SampleSequencingObjectFileModel(sequencingObject, sequenceFile.getFileSize(), null,
 				sequencingObject.getQcEntries());
 	}
@@ -1172,9 +1175,8 @@ public class UISampleService {
 	private SampleSequencingObjectFileModel createFast5FileInSample(MultipartFile file, Sample sample)
 			throws IOException {
 		SequenceFile sequenceFile = createSequenceFile(file);
-		SequencingObject sequencingObject = sequencingObjectService
-				.createSequencingObjectInSample(new Fast5Object(sequenceFile), sample)
-				.getObject();
+		SequencingObject sequencingObject = sequencingObjectService.createSequencingObjectInSample(
+				new Fast5Object(sequenceFile), sample).getObject();
 		return new SampleSequencingObjectFileModel(sequencingObject, sequenceFile.getFileSize(), null,
 				sequencingObject.getQcEntries());
 	}
@@ -1225,15 +1227,16 @@ public class UISampleService {
 
 			try {
 				for (Sample sample : samples) {
-					Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService
-							.getSequencingObjectsForSample(sample);
+					Collection<SampleSequencingObjectJoin> sequencingObjectsForSample = sequencingObjectService.getSequencingObjectsForSample(
+							sample);
 
 					for (SampleSequencingObjectJoin join : sequencingObjectsForSample) {
 						for (SequenceFile file : join.getObject().getFiles()) {
 							Path path = file.getFile();
 
-							String fileName = project.getName() + "/" + sample.getSampleName() + "/"
-									+ path.getFileName().toString();
+							String fileName =
+									project.getName() + "/" + sample.getSampleName() + "/" + path.getFileName()
+											.toString();
 							if (usedFileNames.contains(fileName)) {
 								fileName = handleDuplicate(fileName, usedFileNames);
 							}
@@ -1349,8 +1352,8 @@ public class UISampleService {
 	 * @return list of paired end sequence files
 	 */
 	public List<SequencingObject> getPairedSequenceFilesForExportSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService
-				.getSequencesForSampleOfType(sample, SequenceFilePair.class);
+		Collection<SampleSequencingObjectJoin> filePairJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, SequenceFilePair.class);
 		// add project to qc entries and filter any unavailable entries
 		List<SequencingObject> filePairs = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : filePairJoins) {
@@ -1370,8 +1373,8 @@ public class UISampleService {
 	 * @return list of single end sequence files
 	 */
 	public List<SequencingObject> getSingleEndSequenceFilesForExportSample(Sample sample, Project project) {
-		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService
-				.getSequencesForSampleOfType(sample, SingleEndSequenceFile.class);
+		Collection<SampleSequencingObjectJoin> singleFileJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, SingleEndSequenceFile.class);
 
 		List<SequencingObject> singles = new ArrayList<>();
 		for (SampleSequencingObjectJoin join : singleFileJoins) {
@@ -1390,8 +1393,8 @@ public class UISampleService {
 	 * @return list of fast5 sequence files
 	 */
 	public List<SequencingObject> getFast5FilesForExportSample(Sample sample) {
-		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService
-				.getSequencesForSampleOfType(sample, Fast5Object.class);
+		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService.getSequencesForSampleOfType(
+				sample, Fast5Object.class);
 		return fast5FileJoins.stream().map(SampleSequencingObjectJoin::getObject).collect(Collectors.toList());
 	}
 
@@ -1432,8 +1435,8 @@ public class UISampleService {
 			Project project = join.getSubject();
 
 			Long coverage = null;
-			if (projectSamplesCoverageMap.containsKey(project)
-					&& projectSamplesCoverageMap.get(project).containsKey(sample.getId())) {
+			if (projectSamplesCoverageMap.containsKey(project) && projectSamplesCoverageMap.get(project)
+					.containsKey(sample.getId())) {
 				coverage = projectSamplesCoverageMap.get(project).get(sample.getId());
 			}
 
@@ -1561,16 +1564,10 @@ public class UISampleService {
 			SampleObject sample = item.getSample();
 			ProjectObject project = item.getProject();
 			String[] row = {
-					sample.getSampleName(),
-					sample.getId().toString(),
-					StringUtils.join(item.getQuality(), "; "),
-					item.getCoverage() != null ? item.getCoverage().toString() : "",
-					sample.getOrganism(),
-					project.getName(),
-					project.getId().toString(),
-					sample.getCollectedBy(),
-					sample.getCreatedDate().toString(),
-					sample.getModifiedDate().toString() };
+					sample.getSampleName(), sample.getId().toString(), StringUtils.join(item.getQuality(), "; "),
+					item.getCoverage() != null ? item.getCoverage().toString() : "", sample.getOrganism(),
+					project.getName(), project.getId().toString(), sample.getCollectedBy(),
+					sample.getCreatedDate().toString(), sample.getModifiedDate().toString() };
 			results.add(row);
 		}
 
