@@ -1,8 +1,5 @@
-import { GenomeAssembly } from "../../apis/samples/samples";
-import { Restriction } from "../../utilities/restriction-utilities";
-
-export = IRIDA;
-export as namespace IRIDA;
+import type { GenomeAssembly } from "../../apis/samples/samples";
+import type { Restriction } from "../../utilities/restriction-utilities";
 
 declare namespace IRIDA {
   interface BaseModel {
@@ -221,6 +218,11 @@ declare namespace IRIDA {
     bioSampleFiles: NcbiBioSampleFiles[];
   }
 
+  type SelectedSample = Pick<Sample, "id" | "key" | "sampleName"> & {
+    owner: boolean;
+    projectId: number;
+  };
+
   interface SequenceFile extends BaseModel {
     fileSize: string;
   }
@@ -243,3 +245,6 @@ declare namespace IRIDA {
     restriction: Restriction;
   }
 }
+
+export = IRIDA;
+export as namespace IRIDA;

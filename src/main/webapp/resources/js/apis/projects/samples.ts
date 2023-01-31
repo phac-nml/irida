@@ -1,15 +1,18 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import {
-  PairedEndSequenceFile,
-  SingleEndSequenceFile,
-} from "../../types/irida";
-import {
+import axios from "axios";
+import type {
   AjaxErrorResponse,
   AjaxSuccessResponse,
 } from "../../types/ajax-response";
+import type { TableOptions } from "../../types/ant-design";
+import type {
+  PairedEndSequenceFile,
+  SelectedSample,
+  SingleEndSequenceFile,
+} from "../../types/irida";
+import type { PagedTableResponse } from "../../types/paged-table";
 import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
 import { get, post } from "../requests";
-import axios from "axios";
 
 export interface SequencingFiles {
   singles: SingleEndSequenceFile[];
@@ -82,9 +85,13 @@ export type CreateUpdateSamples = (params: {
 const PROJECT_ID = getProjectIdFromUrl();
 const URL = setBaseUrl(`/ajax/projects`);
 
+type FetchPagedSamplesParams = {
+  projectId: number;
+  body: TableOptions;
+};
+
 /**
  * Redux API for handling project samples queries.
- * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, {status: number, data: unknown} | {status: "FETCH_ERROR", data?: undefined, error: string} | {status: "PARSING_ERROR", originalStatus: number, data: string, error: string} | {status: "CUSTOM_ERROR", data?: unknown, error: string}, FetchBaseQueryMeta>>, {getSampleIdsForProject: *}, string, never, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, {status: number, data: unknown} | {status: "FETCH_ERROR", data?: undefined, error: string} | {status: "PARSING_ERROR", originalStatus: number, data: string, error: string} | {status: "CUSTOM_ERROR", data?: unknown, error: string}, FetchBaseQueryMeta>>, {getSampleIdsForProject: *}, string, never, any>}
  */
 export const samplesApi = createApi({
   reducerPath: "samplesApi",
@@ -92,7 +99,10 @@ export const samplesApi = createApi({
     baseUrl: URL,
   }),
   endpoints: (builder) => ({
-    listSamples: builder.query({
+    listSamples: builder.query<
+      PagedTableResponse<SelectedSample[]>,
+      FetchPagedSamplesParams
+    >({
       query: (body) => ({
         url: `/${PROJECT_ID}/samples`,
         method: "POST",
@@ -170,17 +180,15 @@ export const createSamples: CreateUpdateSamples = async ({
       `${URL}/${projectId}/samples/create`,
       body
     );
-    return Promise.resolve(data);
+    return await Promise.resolve(data);
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response) {
         return Promise.resolve(error.response.data);
-      } else {
-        return Promise.reject(error.message);
       }
-    } else {
-      return Promise.reject("An unexpected error occurred");
+      return Promise.reject(error.message);
     }
+    return Promise.reject("An unexpected error occurred");
   }
 };
 
@@ -193,17 +201,15 @@ export const updateSamples: CreateUpdateSamples = async ({
       `${URL}/${projectId}/samples/update`,
       body
     );
-    return Promise.resolve(data);
+    return await Promise.resolve(data);
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response) {
         return Promise.resolve(error.response.data);
-      } else {
-        return Promise.reject(error.message);
       }
-    } else {
-      return Promise.reject("An unexpected error occurred");
+      return Promise.reject(error.message);
     }
+    return Promise.reject("An unexpected error occurred");
   }
 };
 
