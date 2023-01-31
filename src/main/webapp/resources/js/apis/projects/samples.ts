@@ -218,7 +218,7 @@ export const createSamples: CreateUpdateSamples = async ({
       }
       return Promise.reject(error.message);
     }
-    return Promise.reject("An unexpected error occurred");
+    return Promise.reject(new Error("An unexpected error occurred"));
   }
 };
 
@@ -239,7 +239,7 @@ export const updateSamples: CreateUpdateSamples = async ({
       }
       return Promise.reject(error.message);
     }
-    return Promise.reject("An unexpected error occurred");
+    return Promise.reject(new Error("An unexpected error occurred"));
   }
 };
 
