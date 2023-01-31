@@ -1,16 +1,19 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
 import axios from "axios";
 import type {
   AjaxErrorResponse,
   AjaxSuccessResponse,
 } from "../../types/ajax-response";
-import type { TableOptions } from "../../types/ant-design";
 import type {
   PairedEndSequenceFile,
   SelectedSample,
   SingleEndSequenceFile,
 } from "../../types/irida";
-import type { PagedTableResponse } from "../../types/paged-table";
+import type {
+  PagedTableOptions,
+  PagedTableResponse,
+} from "../../types/paged-table";
 import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
 import { get, post } from "../requests";
 
@@ -87,7 +90,25 @@ const URL = setBaseUrl(`/ajax/projects`);
 
 type FetchPagedSamplesParams = {
   projectId: number;
-  body: TableOptions;
+  body: PagedTableOptions;
+};
+
+type MergeSamplesParams = {
+  projectId: number;
+  body: {
+    ids: number[];
+    newName: string;
+    primary: number;
+  };
+};
+
+type ShareSamplesParams = {
+  currentId: number;
+  locked: boolean;
+  remove: boolean;
+  restrictions: { restriction: string; identifier: number }[];
+  sampleIds: number[];
+  targetId: number;
 };
 
 /**
@@ -109,28 +130,37 @@ export const samplesApi = createApi({
         body,
       }),
     }),
-    merge: builder.mutation({
-      query: ({ request }) => ({
-        url: `/${PROJECT_ID}/samples/merge`,
+    merge: builder.mutation<
+      PagedTableResponse<{ message: string }>,
+      MergeSamplesParams
+    >({
+      query: ({ projectId, body }) => ({
+        url: `/${projectId}/samples/merge`,
         method: "POST",
-        body: request,
+        body,
       }),
     }),
-    remove: builder.mutation({
+    remove: builder.mutation<{ message: string }, number[]>({
       query: (sampleIds) => ({
         url: `/${PROJECT_ID}/samples/remove`,
         method: "DELETE",
         body: { sampleIds },
       }),
     }),
-    shareSamplesWithProject: builder.mutation({
+    shareSamplesWithProject: builder.mutation<
+      PagedTableResponse<{ message: string }>,
+      ShareSamplesParams
+    >({
       query: (body) => ({
         url: `/${PROJECT_ID}/samples/share`,
         method: `POST`,
         body,
       }),
     }),
-    validateSamples: builder.mutation({
+    validateSamples: builder.mutation<
+      PagedTableResponse<{ ids: null | number[]; name: string }[]>,
+      { projectId: number; body: { samples: { name: string }[] } }
+    >({
       query: ({ projectId, body }) => ({
         url: `/${projectId}/samples/validate`,
         method: `POST`,

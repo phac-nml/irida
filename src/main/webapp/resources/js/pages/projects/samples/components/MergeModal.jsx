@@ -51,9 +51,8 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
   const validateName = async (name) => {
     if (renameSample) {
       return serverValidateSampleName(name);
-    } else {
-      return Promise.resolve();
     }
+    return Promise.resolve();
   };
 
   const onSubmit = async () => {
@@ -75,7 +74,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
 
     const { message } = await merge({
       projectId,
-      request: {
+      body: {
         ...values,
         ids,
       },
@@ -153,7 +152,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
                   <Form.Item
                     name="newName"
                     rules={[
-                      ({}) => ({
+                      () => ({
                         validator(_, value) {
                           return validateName(value);
                         },
