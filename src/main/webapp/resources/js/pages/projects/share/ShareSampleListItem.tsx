@@ -4,7 +4,12 @@ import { useDispatch } from "react-redux";
 import { UnlockTwoTone } from "@ant-design/icons";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import { green6 } from "../../../styles/colors";
+import type { SelectedSample } from "../types";
 import { removeSample } from "./shareSlice";
+
+type ShareSamplesListItemProps = {
+  sample: SelectedSample;
+};
 
 /**
  * Render a list item for the samples to be shared with another project.
@@ -16,7 +21,7 @@ export default function ShareSamplesListItem({
   sample,
   style,
   actionsRequired,
-}) {
+}: ShareSamplesListItemProps) {
   const dispatch = useDispatch();
 
   return (
