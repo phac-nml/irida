@@ -123,6 +123,7 @@ export default function ShareSamples({
         )}
       {lockedSamples.length > 0 && (
         <Space direction="vertical" style={{ width: `100%` }}>
+          0
           <Typography.Text strong>
             {i18n("ShareSamples.locked")}
           </Typography.Text>
