@@ -1,12 +1,12 @@
 import { Alert, Checkbox, Collapse, Space, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import ShareAssociated from "./ShareAssociated";
 import { SharedSamplesList } from "./SharedSamplesList";
 import { updatedLocked, updateMoveSamples } from "./shareSlice";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { SPACE_XS } from "../../../styles/spacing";
-import LockedSamplesList from "../samples/components/LockedSamplesList";
+import LockedSamplesList from "../../../components/samples/LockedSamplesList";
 
 const { Panel } = Collapse;
 /**

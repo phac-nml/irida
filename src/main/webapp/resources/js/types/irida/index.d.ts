@@ -159,13 +159,6 @@ declare namespace IRIDA {
     file: SequencingObject;
   }
 
-  interface StoredSample {
-    id: number;
-    sampleName: string;
-    owner: boolean;
-    projectId: number;
-  }
-
   enum SystemRole {
     ROLE_ADMIN = "ROLE_ADMIN",
     ROLE_USER = "ROLE_USER",
@@ -217,11 +210,6 @@ declare namespace IRIDA {
     releaseDate: Date | null;
     bioSampleFiles: NcbiBioSampleFiles[];
   }
-
-  type SelectedSample = Pick<Sample, "id" | "key" | "sampleName"> & {
-    owner: boolean;
-    projectId: number;
-  };
 
   interface SequenceFile extends BaseModel {
     fileSize: string;

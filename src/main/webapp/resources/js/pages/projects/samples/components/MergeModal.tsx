@@ -13,15 +13,15 @@ import {
 } from "antd";
 import React from "react";
 import { useMergeMutation } from "../../../../apis/projects/samples";
-import type { StoredSample } from "../../../../types/irida";
 import { serverValidateSampleName } from "../../../../utilities/validation-utilities";
+import type { SelectedSample } from "../../types";
 import { useTypedSelector } from "../store";
-import LockedSamplesList from "./LockedSamplesList";
+import LockedSamplesList from "../../../../components/samples/LockedSamplesList";
 
 type MergeModalProps = {
   onCancel: () => void;
   onComplete: () => void;
-  samples: { locked: StoredSample[]; valid: StoredSample[] };
+  samples: { locked: SelectedSample[]; valid: SelectedSample[] };
   visible: boolean;
 };
 

@@ -1,7 +1,6 @@
 import React from "react";
 import { Alert, Col, Divider, List, Modal, Row, Typography } from "antd";
 import { useRemoveMutation } from "../../../../apis/projects/samples";
-import LockedSamplesList from "./LockedSamplesList";
 import AssociatedSamplesList from "./AssociatedSamplesList";
 
 /**

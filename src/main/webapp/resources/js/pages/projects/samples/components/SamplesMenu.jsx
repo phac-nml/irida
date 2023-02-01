@@ -2,6 +2,11 @@ import React, { lazy, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Dropdown, Menu, notification, Row, Space } from "antd";
 import {
+  CloseCircleOutlined,
+  FileTextOutlined,
+  MergeCellsOutlined,
+} from "@ant-design/icons";
+import {
   addToCart,
   clearFilterByFile,
   downloadSamples,
@@ -11,10 +16,11 @@ import {
 } from "../../redux/samplesSlice";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import {
+  formatSelectedSamples,
   validateSamplesForLinker,
   validateSamplesForMergeOrShare,
   validateSamplesForRemove,
-} from "../services/sample.utilities";
+} from "../services/sample-utilities";
 import {
   IconCloseSquare,
   IconCloudDownload,
@@ -27,11 +33,6 @@ import {
   IconShare,
   IconShoppingCart,
 } from "../../../../components/icons/Icons";
-import {
-  CloseCircleOutlined,
-  FileTextOutlined,
-  MergeCellsOutlined,
-} from "@ant-design/icons";
 import { useGetProjectDetailsQuery } from "../../../../apis/projects/project";
 import { storeSamples } from "../../../../utilities/session-utilities";
 
@@ -128,12 +129,7 @@ export default function SamplesMenu() {
 
   const formatAndStoreSamples = (path, samples) => {
     storeSamples({
-      samples: samples.map(({ id, sampleName: name, owner, projectId }) => ({
-        id,
-        name,
-        owner,
-        projectId,
-      })),
+      samples: formatSelectedSamples(samples),
       projectId,
       path,
     });

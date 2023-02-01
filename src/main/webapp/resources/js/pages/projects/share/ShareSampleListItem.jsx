@@ -1,11 +1,10 @@
-import { Avatar, Button, List, Tooltip } from "antd";
+import { Avatar, Button, List } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { IconLocked, IconUnlocked } from "../../../components/icons/Icons";
+import { UnlockTwoTone } from "@ant-design/icons";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import { green6 } from "../../../styles/colors";
 import { removeSample } from "./shareSlice";
-import { UnlockTwoTone } from "@ant-design/icons";
 
 /**
  * Render a list item for the samples to be shared with another project.
@@ -52,7 +51,7 @@ export default function ShareSamplesListItem({
             projectId={sample.projectId}
             displayActions={false}
           >
-            <Button>{sample.name}</Button>
+            <Button>{sample.sampleName}</Button>
           </SampleDetailViewer>
         }
       />

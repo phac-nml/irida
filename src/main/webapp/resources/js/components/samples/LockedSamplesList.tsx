@@ -1,17 +1,20 @@
-import React from "react";
 import { LockTwoTone } from "@ant-design/icons";
 import { Avatar, Button, List } from "antd";
-import { red6 } from "../../../../styles/colors";
-import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
+import React from "react";
+import type { SelectedSample } from "../../pages/projects/types";
+import { red6 } from "../../styles/colors";
+import { SampleDetailViewer } from "./SampleDetailViewer";
 
 /**
  * React Element to render a list of locked samples.  Use this when they
- * cannot be used in the requested action (e.g. remove).
- * @param {array} locked - list of samples that are locked from modification
- * @returns {JSX.Element}
- * @constructor
+ * cannot be used in the requested action (for example remove).
+ * @param locked - list of samples that are locked from modification
  */
-export default function LockedSamplesList({ locked }) {
+export default function LockedSamplesList({
+  locked,
+}: {
+  locked: SelectedSample[];
+}) {
   return (
     <List
       style={{ maxHeight: 400, overflowY: "auto" }}
@@ -32,9 +35,7 @@ export default function LockedSamplesList({ locked }) {
                 sampleId={sample.id}
                 projectId={sample.projectId}
               >
-                <Button className="t-locked-name">
-                  {sample.sampleName || sample.name}
-                </Button>
+                <Button className="t-locked-name">{sample.sampleName}</Button>
               </SampleDetailViewer>
             }
           />

@@ -1,8 +1,8 @@
-import { StoredSample } from "../types/irida";
+import type { SelectedSample } from "../pages/projects/types";
 
 export interface SessionSample {
   projectId: number;
-  samples: StoredSample[];
+  samples: SelectedSample[];
   timestamp: Date;
 }
 
@@ -17,7 +17,7 @@ export function storeSamples({
   projectId,
   path,
 }: {
-  samples: StoredSample[];
+  samples: SelectedSample[];
   projectId: number;
   path: string;
 }): void {
@@ -41,5 +41,5 @@ export async function getStoredSamples(path: string): Promise<SessionSample> {
   if (stored) {
     return Promise.resolve(JSON.parse(stored));
   }
-  return Promise.reject("No shared samples");
+  return Promise.reject(new Error("No samples stored"));
 }
