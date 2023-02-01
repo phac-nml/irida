@@ -130,10 +130,7 @@ export const samplesApi = createApi({
         body,
       }),
     }),
-    merge: builder.mutation<
-      PagedTableResponse<{ message: string }>,
-      MergeSamplesParams
-    >({
+    merge: builder.mutation<{ message: string }, MergeSamplesParams>({
       query: ({ projectId, body }) => ({
         url: `/${projectId}/samples/merge`,
         method: "POST",

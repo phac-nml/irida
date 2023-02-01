@@ -161,7 +161,7 @@ declare namespace IRIDA {
 
   interface StoredSample {
     id: number;
-    name: string;
+    sampleName: string;
     owner: boolean;
     projectId: number;
   }
