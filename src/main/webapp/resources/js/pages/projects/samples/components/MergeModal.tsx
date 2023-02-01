@@ -38,7 +38,6 @@ export default function MergeModal({
   onComplete,
   onCancel,
 }: MergeModalProps) {
-  console.log(samples);
   const { projectId } = useTypedSelector((state) => state.samples);
   const [merge, { isLoading }] = useMergeMutation();
 
