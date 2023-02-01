@@ -37,7 +37,7 @@ jobs:
         uses: tj-actions/eslint-changed-files@v18
         with:
           config_path: "src/main/webapp/.eslintrc.js"
-          extra_args: "--max-warnings=0"
+          extra_args: "--max-warnings=0 --parser-options project:src/main/webapp/tsconfig.json"
           file_extensions: |
             src/main/webapp/resources/js/**/*.ts
             src/main/webapp/resources/js/**/*.tsx
