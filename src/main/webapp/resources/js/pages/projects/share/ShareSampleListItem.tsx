@@ -9,12 +9,15 @@ import { removeSample } from "./shareSlice";
 
 type ShareSamplesListItemProps = {
   sample: SelectedSample;
+  style: React.CSSProperties;
+  actionsRequired: boolean;
 };
 
 /**
  * Render a list item for the samples to be shared with another project.
- * @param {array} sample - sample to display
- * @param {object} style - style to apply to the list item
+ * @param sample - sample to display
+ * @param style - style to apply to the list item
+ * @param actionsRequired
  * @returns
  */
 export default function ShareSamplesListItem({
