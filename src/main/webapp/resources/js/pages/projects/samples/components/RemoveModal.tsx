@@ -1,26 +1,32 @@
-import React from "react";
 import { Alert, Col, Divider, List, Modal, Row, Typography } from "antd";
+import React from "react";
 import { useRemoveMutation } from "../../../../apis/projects/samples";
+import type { SelectedSample } from "../../types";
 import AssociatedSamplesList from "./AssociatedSamplesList";
+
+type RemoveModalProps = {
+  samples: { associated: SelectedSample[]; valid: SelectedSample[] };
+  visible: boolean;
+  onComplete: () => void;
+  onCancel: () => void;
+};
 
 /**
  * React Element to display a modal with sample to be removed from the current
  * project.
  *  - Will display samples that are locked - cannot be removed.
  *  - Will display associated samples that cannot be removed from this project.
- * @param {array} samples - list of samples to remove from the current project
- * @param {boolean} visible - whether the modal is currently visible on the page
- * @param {function} onComplete - action to perform after the remove is complete
- * @param {function} onCancel - action to perform if the remove is cancelled.
- * @returns {JSX.Element}
- * @constructor
+ * @param samples - list of samples to remove from the current project
+ * @param  visible - whether the modal is currently visible on the page
+ * @param  onComplete - action to perform after the remove is complete
+ * @param  onCancel - action to perform if the remove is cancelled.
  */
 export default function RemoveModal({
   samples,
   visible,
   onComplete,
   onCancel,
-}) {
+}: RemoveModalProps) {
   const [removeSamples, { isLoading, error }] = useRemoveMutation();
 
   const onOk = async () => {
