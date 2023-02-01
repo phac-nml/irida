@@ -21,7 +21,7 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ShareMetadata } from "./ShareMetadata";
 import { ShareNoSamples } from "./ShareNoSamples";
 import { ShareProject } from "./ShareProject";
-import { ShareSamples } from "./ShareSamples";
+import ShareSamples from "./ShareSamples";
 import { ShareSuccess } from "./ShareSuccess";
 import ShareLarge from "./ShareLarge";
 import store from "./store";
@@ -114,7 +114,7 @@ function ShareApp() {
           })),
         },
       }).then((response) => {
-        let filtered = response.data.samples.filter((sample) => sample.ids);
+        const filtered = response.data.samples.filter((sample) => sample.ids);
         setExistingIds(
           filtered
             .map((sample) => {
@@ -138,7 +138,8 @@ function ShareApp() {
         targetProject === undefined && typeof error === "undefined"
       );
       return;
-    } else if (step === 1) {
+    }
+    if (step === 1) {
       setPrevDisabled(false);
       setNextDisabled(filtered.length === 0 || samples.length === 0);
       return;
