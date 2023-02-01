@@ -301,6 +301,11 @@ tasks.register<PnpmTask>("cleanWebapp") {
     pnpmCommand.set(listOf("clean"))
 }
 
+tasks.register<PnpmTask>("lintWebapp") {
+    dependsOn(":pnpmInstall")
+    pnpmCommand.set(listOf("lint"))
+}
+
 tasks.register<PnpmTask>("buildWebapp") {
     inputs.files(fileTree("${project.projectDir}/src/main/webapp/resources"))
     inputs.file("${project.projectDir}/src/main/webapp/package.json")

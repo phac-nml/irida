@@ -1,23 +1,30 @@
-import { Avatar, Button, List, Tooltip } from "antd";
+import { Avatar, Button, List } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { IconLocked, IconUnlocked } from "../../../components/icons/Icons";
+import { UnlockTwoTone } from "@ant-design/icons";
 import { SampleDetailViewer } from "../../../components/samples/SampleDetailViewer";
 import { green6 } from "../../../styles/colors";
+import type { SelectedSample } from "../types";
 import { removeSample } from "./shareSlice";
-import { UnlockTwoTone } from "@ant-design/icons";
+
+type ShareSamplesListItemProps = {
+  sample: SelectedSample;
+  style: React.CSSProperties;
+  actionsRequired: boolean;
+};
 
 /**
  * Render a list item for the samples to be shared with another project.
- * @param {array} sample - sample to display
- * @param {object} style - style to apply to the list item
+ * @param sample - sample to display
+ * @param style - style to apply to the list item
+ * @param actionsRequired
  * @returns
  */
 export default function ShareSamplesListItem({
   sample,
   style,
   actionsRequired,
-}) {
+}: ShareSamplesListItemProps) {
   const dispatch = useDispatch();
 
   return (
@@ -52,7 +59,7 @@ export default function ShareSamplesListItem({
             projectId={sample.projectId}
             displayActions={false}
           >
-            <Button>{sample.name}</Button>
+            <Button>{sample.sampleName}</Button>
           </SampleDetailViewer>
         }
       />

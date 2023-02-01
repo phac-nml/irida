@@ -1,8 +1,5 @@
-import { GenomeAssembly } from "../../apis/samples/samples";
-import { Restriction } from "../../utilities/restriction-utilities";
-
-export = IRIDA;
-export as namespace IRIDA;
+import type { GenomeAssembly } from "../../apis/samples/samples";
+import type { Restriction } from "../../utilities/restriction-utilities";
 
 declare namespace IRIDA {
   interface BaseModel {
@@ -162,13 +159,6 @@ declare namespace IRIDA {
     file: SequencingObject;
   }
 
-  interface StoredSample {
-    id: number;
-    name: string;
-    owner: boolean;
-    projectId: number;
-  }
-
   enum SystemRole {
     ROLE_ADMIN = "ROLE_ADMIN",
     ROLE_USER = "ROLE_USER",
@@ -243,3 +233,6 @@ declare namespace IRIDA {
     restriction: Restriction;
   }
 }
+
+export = IRIDA;
+export as namespace IRIDA;

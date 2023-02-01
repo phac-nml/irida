@@ -1,15 +1,21 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import {
-  PairedEndSequenceFile,
-  SingleEndSequenceFile,
-} from "../../types/irida";
-import {
+
+import axios from "axios";
+import type {
   AjaxErrorResponse,
   AjaxSuccessResponse,
 } from "../../types/ajax-response";
+import type {
+  PairedEndSequenceFile,
+  SelectedSample,
+  SingleEndSequenceFile,
+} from "../../types/irida";
+import type {
+  PagedTableOptions,
+  PagedTableResponse,
+} from "../../types/paged-table";
 import { getProjectIdFromUrl, setBaseUrl } from "../../utilities/url-utilities";
 import { get, post } from "../requests";
-import axios from "axios";
 
 export interface SequencingFiles {
   singles: SingleEndSequenceFile[];
@@ -82,9 +88,31 @@ export type CreateUpdateSamples = (params: {
 const PROJECT_ID = getProjectIdFromUrl();
 const URL = setBaseUrl(`/ajax/projects`);
 
+type FetchPagedSamplesParams = {
+  projectId: number;
+  body: PagedTableOptions;
+};
+
+type MergeSamplesParams = {
+  projectId: number;
+  body: {
+    ids: number[];
+    newName: string;
+    primary: number;
+  };
+};
+
+type ShareSamplesParams = {
+  currentId: number;
+  locked: boolean;
+  remove: boolean;
+  restrictions: { restriction: string; identifier: number }[];
+  sampleIds: number[];
+  targetId: number;
+};
+
 /**
  * Redux API for handling project samples queries.
- * @type {Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, {status: number, data: unknown} | {status: "FETCH_ERROR", data?: undefined, error: string} | {status: "PARSING_ERROR", originalStatus: number, data: string, error: string} | {status: "CUSTOM_ERROR", data?: unknown, error: string}, FetchBaseQueryMeta>>, {getSampleIdsForProject: *}, string, never, typeof coreModuleName> | Api<(args: (string | FetchArgs), api: BaseQueryApi, extraOptions: {}) => MaybePromise<QueryReturnValue<unknown, {status: number, data: unknown} | {status: "FETCH_ERROR", data?: undefined, error: string} | {status: "PARSING_ERROR", originalStatus: number, data: string, error: string} | {status: "CUSTOM_ERROR", data?: unknown, error: string}, FetchBaseQueryMeta>>, {getSampleIdsForProject: *}, string, never, any>}
  */
 export const samplesApi = createApi({
   reducerPath: "samplesApi",
@@ -92,35 +120,44 @@ export const samplesApi = createApi({
     baseUrl: URL,
   }),
   endpoints: (builder) => ({
-    listSamples: builder.query({
+    listSamples: builder.query<
+      PagedTableResponse<SelectedSample[]>,
+      FetchPagedSamplesParams
+    >({
       query: (body) => ({
         url: `/${PROJECT_ID}/samples`,
         method: "POST",
         body,
       }),
     }),
-    merge: builder.mutation({
-      query: ({ request }) => ({
-        url: `/${PROJECT_ID}/samples/merge`,
+    merge: builder.mutation<{ message: string }, MergeSamplesParams>({
+      query: ({ projectId, body }) => ({
+        url: `/${projectId}/samples/merge`,
         method: "POST",
-        body: request,
+        body,
       }),
     }),
-    remove: builder.mutation({
+    remove: builder.mutation<{ message: string }, number[]>({
       query: (sampleIds) => ({
         url: `/${PROJECT_ID}/samples/remove`,
         method: "DELETE",
         body: { sampleIds },
       }),
     }),
-    shareSamplesWithProject: builder.mutation({
+    shareSamplesWithProject: builder.mutation<
+      PagedTableResponse<{ message: string }>,
+      ShareSamplesParams
+    >({
       query: (body) => ({
         url: `/${PROJECT_ID}/samples/share`,
         method: `POST`,
         body,
       }),
     }),
-    validateSamples: builder.mutation({
+    validateSamples: builder.mutation<
+      PagedTableResponse<{ ids: null | number[]; name: string }[]>,
+      { projectId: number; body: { samples: { name: string }[] } }
+    >({
       query: ({ projectId, body }) => ({
         url: `/${projectId}/samples/validate`,
         method: `POST`,
@@ -170,17 +207,15 @@ export const createSamples: CreateUpdateSamples = async ({
       `${URL}/${projectId}/samples/create`,
       body
     );
-    return Promise.resolve(data);
+    return await Promise.resolve(data);
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response) {
         return Promise.resolve(error.response.data);
-      } else {
-        return Promise.reject(error.message);
       }
-    } else {
-      return Promise.reject("An unexpected error occurred");
+      return Promise.reject(error.message);
     }
+    return Promise.reject(new Error("An unexpected error occurred"));
   }
 };
 
@@ -193,17 +228,15 @@ export const updateSamples: CreateUpdateSamples = async ({
       `${URL}/${projectId}/samples/update`,
       body
     );
-    return Promise.resolve(data);
+    return await Promise.resolve(data);
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response) {
         return Promise.resolve(error.response.data);
-      } else {
-        return Promise.reject(error.message);
       }
-    } else {
-      return Promise.reject("An unexpected error occurred");
+      return Promise.reject(error.message);
     }
+    return Promise.reject(new Error("An unexpected error occurred"));
   }
 };
 

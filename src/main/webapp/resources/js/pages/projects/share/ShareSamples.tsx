@@ -1,25 +1,33 @@
 import { Alert, Checkbox, Collapse, Space, Typography } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import type { SelectedSample } from "../types";
 import ShareAssociated from "./ShareAssociated";
 import { SharedSamplesList } from "./SharedSamplesList";
 import { updatedLocked, updateMoveSamples } from "./shareSlice";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { SPACE_XS } from "../../../styles/spacing";
-import LockedSamplesList from "../samples/components/LockedSamplesList";
+import LockedSamplesList from "../../../components/samples/LockedSamplesList";
 
 const { Panel } = Collapse;
+
+type ShareSamplesProps = {
+  samples: SelectedSample[];
+  targetProjectSampleIdsDuplicate: number[];
+  targetProjectSampleNamesDuplicate: number[];
+};
+
 /**
  * React component to review the samples to be shared with another project.
  *
  * @returns {JSX.Element}
  * @constructor
  */
-export function ShareSamples({
+export default function ShareSamples({
   samples = [],
   targetProjectSampleIdsDuplicate = [],
   targetProjectSampleNamesDuplicate = [],
-}) {
+}: ShareSamplesProps): JSX.Element {
   const dispatch = useDispatch();
 
   const {
@@ -115,6 +123,7 @@ export function ShareSamples({
         )}
       {lockedSamples.length > 0 && (
         <Space direction="vertical" style={{ width: `100%` }}>
+          0
           <Typography.Text strong>
             {i18n("ShareSamples.locked")}
           </Typography.Text>

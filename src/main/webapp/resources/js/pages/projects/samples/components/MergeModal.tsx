@@ -12,22 +12,33 @@ import {
   Typography,
 } from "antd";
 import React from "react";
-import { useSelector } from "react-redux";
-import { serverValidateSampleName } from "../../../../utilities/validation-utilities";
 import { useMergeMutation } from "../../../../apis/projects/samples";
-import LockedSamplesList from "./LockedSamplesList";
+import { serverValidateSampleName } from "../../../../utilities/validation-utilities";
+import type { SelectedSample } from "../../types";
+import { useTypedSelector } from "../store";
+import LockedSamplesList from "../../../../components/samples/LockedSamplesList";
+
+type MergeModalProps = {
+  onCancel: () => void;
+  onComplete: () => void;
+  samples: { locked: SelectedSample[]; valid: SelectedSample[] };
+  visible: boolean;
+};
 
 /**
  * React element to display a modal to merge multiple samples into a single one.
- * @param {array} samples - list of samples to merge together
- * @param {boolean} visible - whether the modal is currently visible on the page
- * @param {function} onComplete - function to call when the merge is complete
- * @param {function} onCancel - function to call when the merge is cancelled.
- * @returns {JSX.Element}
- * @constructor
- */
-export default function MergeModal({ samples, visible, onComplete, onCancel }) {
-  const { projectId } = useSelector((state) => state.samples);
+ * @param samples - list of samples to merge together
+ * @param visible - whether the modal is currently visible on the page
+ * @param onComplete - function to call when the merge is complete
+ * @param onCancel - function to call when the merge is cancelled.
+s */
+export default function MergeModal({
+  samples,
+  visible,
+  onComplete,
+  onCancel,
+}: MergeModalProps) {
+  const { projectId } = useTypedSelector((state) => state.samples);
   const [merge, { isLoading }] = useMergeMutation();
 
   const [renameSample, setRenameSample] = React.useState(false);
@@ -48,44 +59,43 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
   }, [form, renameSample]);
 
   // Server validate new name
-  const validateName = async (name) => {
+  const validateName = async (name: string) => {
     if (renameSample) {
       return serverValidateSampleName(name);
-    } else {
-      return Promise.resolve();
     }
+    return Promise.resolve();
   };
 
   const onSubmit = async () => {
-    let values;
-
     try {
-      values = await form.validateFields();
+      const { newName, primary }: typeof initialValues =
+        await form.validateFields();
+
+      const ids = samples.valid
+        .map((sample) => sample.id)
+        .filter((id) => id !== primary);
+
+      const { message } = await merge({
+        projectId: Number(projectId),
+        body: {
+          newName,
+          primary,
+          ids,
+        },
+      }).unwrap();
+
+      notification.success({
+        message: i18n("MergeModal.success"),
+        description: message,
+      });
+      onComplete();
     } catch {
       /*
       If the form is in an invalid state it will hit here.  This will prevent the
       invalid date from being submitted and display the errors (if not already displayed)
        to the user.
        */
-      return;
     }
-    const ids = samples.valid
-      .map((sample) => sample.id)
-      .filter((id) => id !== values.primary);
-
-    const { message } = await merge({
-      projectId,
-      request: {
-        ...values,
-        ids,
-      },
-    }).unwrap();
-
-    notification.success({
-      message: i18n("MergeModal.success"),
-      description: message,
-    });
-    onComplete();
   };
 
   return (
@@ -153,7 +163,7 @@ export default function MergeModal({ samples, visible, onComplete, onCancel }) {
                   <Form.Item
                     name="newName"
                     rules={[
-                      ({}) => ({
+                      () => ({
                         validator(_, value) {
                           return validateName(value);
                         },

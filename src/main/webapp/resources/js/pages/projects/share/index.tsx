@@ -21,7 +21,7 @@ import { setBaseUrl } from "../../../utilities/url-utilities";
 import { ShareMetadata } from "./ShareMetadata";
 import { ShareNoSamples } from "./ShareNoSamples";
 import { ShareProject } from "./ShareProject";
-import { ShareSamples } from "./ShareSamples";
+import ShareSamples from "./ShareSamples";
 import { ShareSuccess } from "./ShareSuccess";
 import ShareLarge from "./ShareLarge";
 import store from "./store";
@@ -37,10 +37,10 @@ function ShareApp() {
   const [prevDisabled, setPrevDisabled] = React.useState(true);
   const [nextDisabled, setNextDisabled] = React.useState(true);
   const [shareLarge, setShareLarge] = React.useState(false);
-  const [error, setError] = React.useState(undefined);
+  const [error, setError] = React.useState<string | undefined>(undefined);
   const [finished, setFinished] = React.useState(false);
-  const [existingIds, setExistingIds] = React.useState([]);
-  const [existingNames, setExistingNames] = React.useState([]);
+  const [existingIds, setExistingIds] = React.useState<number[]>([]);
+  const [existingNames, setExistingNames] = React.useState<string[]>([]);
   const [validateSamples] = useValidateSamplesMutation();
 
   /*
@@ -114,16 +114,18 @@ function ShareApp() {
           })),
         },
       }).then((response) => {
-        let filtered = response.data.samples.filter((sample) => sample.ids);
+        const filteredSamples = response.data.samples.filter(
+          (sample) => sample.ids
+        );
         setExistingIds(
-          filtered
+          filteredSamples
             .map((sample) => {
               return sample.ids;
             })
             .flat()
         );
         setExistingNames(
-          filtered.map((sample) => {
+          filteredSamples.map((sample) => {
             return sample.name;
           })
         );
@@ -138,7 +140,8 @@ function ShareApp() {
         targetProject === undefined && typeof error === "undefined"
       );
       return;
-    } else if (step === 1) {
+    }
+    if (step === 1) {
       setPrevDisabled(false);
       setNextDisabled(filtered.length === 0 || samples.length === 0);
       return;
@@ -160,8 +163,9 @@ function ShareApp() {
   /**
    * Return to previous page (project samples page)
    */
-  const goToPrevious = () =>
-    (window.location.href = setBaseUrl(`/projects/${currentProject}/samples`));
+  const goToPrevious = () => {
+    window.location.href = setBaseUrl(`/projects/${currentProject}/samples`);
+  };
 
   const nextStep = () => setStep(step + 1);
   const previousStep = () => setStep(step - 1);
@@ -188,7 +192,7 @@ function ShareApp() {
         // Remove the share from session storage
         window.sessionStorage.removeItem("share");
       } catch (e) {
-        setError(e);
+        setError(e as string);
       }
     } else {
       setShareLarge(true);
@@ -223,8 +227,8 @@ function ShareApp() {
                       current={step}
                       style={{ height: 400 }}
                     >
-                      {steps.map((step) => (
-                        <Steps.Step key={step.title} title={step.title} />
+                      {steps.map((s) => (
+                        <Steps.Step key={s.title} title={s.title} />
                       ))}
                     </Steps>
                   </Col>
@@ -236,7 +240,8 @@ function ShareApp() {
                         removed={remove}
                         project={targetProject}
                       />
-                    ) : shareLarge ? (
+                    ) : null}
+                    {!finished && shareLarge ? (
                       <ShareLarge
                         samples={samples}
                         current={currentProject}
