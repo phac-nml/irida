@@ -89,6 +89,14 @@ export default function SamplesMenu() {
    */
   const [sorted, setSorted] = React.useState({});
 
+  const formatAndStoreSamples = (path, samples) => {
+    storeSamples({
+      samples,
+      projectId,
+      path,
+    });
+  };
+
   /**
    * When a merge is completed, hide the modal and ask
    * the table to reset
@@ -124,14 +132,6 @@ export default function SamplesMenu() {
 
   const onExport = (type) => {
     dispatch(exportSamplesToFile(type));
-  };
-
-  const formatAndStoreSamples = (path, samples) => {
-    storeSamples({
-      samples,
-      projectId,
-      path,
-    });
   };
 
   /**
