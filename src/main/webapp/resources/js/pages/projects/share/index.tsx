@@ -114,16 +114,18 @@ function ShareApp() {
           })),
         },
       }).then((response) => {
-        const filtered = response.data.samples.filter((sample) => sample.ids);
+        const filteredSamples = response.data.samples.filter(
+          (sample) => sample.ids
+        );
         setExistingIds(
-          filtered
+          filteredSamples
             .map((sample) => {
               return sample.ids;
             })
             .flat()
         );
         setExistingNames(
-          filtered.map((sample) => {
+          filteredSamples.map((sample) => {
             return sample.name;
           })
         );
