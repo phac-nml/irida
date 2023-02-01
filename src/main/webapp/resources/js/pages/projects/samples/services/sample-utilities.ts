@@ -72,17 +72,3 @@ export function validateSamplesForLinker(
   });
   return { valid, associated };
 }
-
-/**
- * Format selected samples for the storage
- * @param samples
- */
-export function formatSelectedSamples(samples: SelectedSample[]) {
-  return samples.map(({ id, key, owner, projectId, sampleName }) => ({
-    id,
-    key,
-    owner,
-    projectId,
-    sampleName,
-  }));
-}

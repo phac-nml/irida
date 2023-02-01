@@ -16,7 +16,6 @@ import {
 } from "../../redux/samplesSlice";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import {
-  formatSelectedSamples,
   validateSamplesForLinker,
   validateSamplesForMergeOrShare,
   validateSamplesForRemove,
@@ -129,7 +128,7 @@ export default function SamplesMenu() {
 
   const formatAndStoreSamples = (path, samples) => {
     storeSamples({
-      samples: formatSelectedSamples(samples),
+      samples,
       projectId,
       path,
     });
