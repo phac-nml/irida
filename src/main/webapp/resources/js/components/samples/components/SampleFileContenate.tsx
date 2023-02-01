@@ -103,10 +103,9 @@ export function SampleFileConcatenate({
         }
       }
     );
-
-    if (pairedCount === numFilesSelected || singleEndCount === numFilesSelected)
-      return true;
-    return false;
+    return (
+      pairedCount === numFilesSelected || singleEndCount === numFilesSelected
+    );
   };
 
   const layoutProps = {
