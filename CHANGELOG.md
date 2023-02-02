@@ -11,6 +11,7 @@
 * [UI]: Fixed bug where the `User` column was named `User Group` on the admin User Groups page. [See PR 1450](https://github.com/phac-nml/irida/pull/1450)
 * [Developer]: Replaced Apache OLTU with Nimbusds for performing OAuth2 authentication flow during syncing and Galaxy exporting. See [PR 1432](https://github.com/phac-nml/irida/pull/1432)
 * [Developer/UI]: Performance enhancements to the metadata uploader. See [PR 1445](https://github.com/phac-nml/irida/pull/1445).
+* [Developer/UI]: Fix for updating sample modified date when metadata is deleted. See [PR 1457](https://github.com/phac-nml/irida/pull/1457).
 
 ## [22.09.7] - 2022/01/24
 * [UI]: Fixed bugs on NCBI Export page preventing the NCBI `submission.xml` file from being properly written. See [PR 1451](https://github.com/phac-nml/irida/pull/1451)
