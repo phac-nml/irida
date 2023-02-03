@@ -151,7 +151,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
 			try (FileChannel in = FileChannel.open(file.getFile(), StandardOpenOption.READ)) {
-				for (long p = 0, l = in.size(); p < l; ) {
+				for (long p = 0, l = in.size();p < l;) {
 					p += in.transferTo(p, l - p, out);
 				}
 			} catch (IOException e) {

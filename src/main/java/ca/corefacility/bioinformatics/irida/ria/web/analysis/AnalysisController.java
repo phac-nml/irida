@@ -223,7 +223,7 @@ public class AnalysisController {
 				outputStream.flush();
 				outputStream.close();
 			} finally {
-				if(iridaTemporaryFile != null) {
+				if (iridaTemporaryFile != null) {
 					iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
 				}
 			}

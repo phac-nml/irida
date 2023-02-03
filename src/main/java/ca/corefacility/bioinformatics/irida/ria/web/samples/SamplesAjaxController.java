@@ -321,6 +321,7 @@ public class SamplesAjaxController {
 	 * @param sequenceObjectIds the {@link SequencingObject} ids
 	 * @param newFileName       base of the new filename to create
 	 * @param removeOriginals   boolean whether to remove the original files
+	 * @param locale            {@link Locale} for the currently logged in user
 	 * @return {@link ResponseEntity} with the new concatenated sequencing object
 	 */
 	@PostMapping(value = "/{sampleId}/files/concatenate")
