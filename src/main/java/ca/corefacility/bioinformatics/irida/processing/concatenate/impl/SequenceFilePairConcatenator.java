@@ -1,22 +1,29 @@
 package ca.corefacility.bioinformatics.irida.processing.concatenate.impl;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+
 /**
  * {@link SequencingObjectConcatenator} for {@link SequenceFilePair}s
  */
 public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<SequenceFilePair> {
-	
-	public SequenceFilePairConcatenator() {
+
+	private IridaFileStorageUtility iridaFileStorageUtility;
+
+	public SequenceFilePairConcatenator(IridaFileStorageUtility iridaFileStorageUtility) {
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -26,8 +33,13 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 	public SequenceFilePair concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
 			throws ConcatenateException {
 
-		String extension = getFileExtension(toConcatenate);
+		String extension = null;
 
+		try {
+			extension = IridaFiles.getFileExtension(toConcatenate);
+		} catch (IOException e) {
+			throw new ConcatenateException("Could not get file extension", e);
+		}
 		// create the filenames with F/R for the forward and reverse files
 		String forwardName = filename + "_R1." + extension;
 		String reverseName = filename + "_R2." + extension;
@@ -56,8 +68,14 @@ public class SequenceFilePairConcatenator extends SequencingObjectConcatenator<S
 			SequenceFile forwardSequenceFile = pair.getForwardSequenceFile();
 			SequenceFile reverseSequenceFile = pair.getReverseSequenceFile();
 
-			appendToFile(forwardFile, forwardSequenceFile);
-			appendToFile(reverseFile, reverseSequenceFile);
+			try {
+				iridaFileStorageUtility.appendToFile(forwardFile, forwardSequenceFile);
+				iridaFileStorageUtility.appendToFile(reverseFile, reverseSequenceFile);
+			} catch( StorageException e) {
+				throw new StorageException(e.getMessage());
+			} catch (IOException e) {
+				throw new ConcatenateException("Could not append files", e);
+			}
 		}
 
 		// create new SequenceFiles

@@ -1,13 +1,15 @@
 package ca.corefacility.bioinformatics.irida.web.spring.view;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.view.AbstractView;
@@ -22,6 +24,7 @@ import com.google.common.net.HttpHeaders;
  * Write out FASTQ formatted sequence files to the client.
  */
 public class FastqView extends AbstractView {
+
 	public static final String DEFAULT_CONTENT_TYPE = "application/fastq";
 	private static final Logger logger = LoggerFactory.getLogger(FastqView.class);
 
@@ -45,10 +48,13 @@ public class FastqView extends AbstractView {
 		logger.trace("Sending file to client [" + filename + "]");
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"");
 		response.setHeader(HttpHeaders.CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
-		response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(Files.size(fileContent)));
-		OutputStream os = response.getOutputStream();
-		Files.copy(fileContent, os);
-		os.flush();
-		os.close();
+		response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(sfr.getFileSizeBytes()));
+
+		try (InputStream is = sfr.getFileInputStream(); OutputStream os = response.getOutputStream();) {
+			IOUtils.copy(is, os);
+			os.flush();
+		} catch (IOException e) {
+			throw new IOException("Unable to read inputstream ", e);
+		}
 	}
 }

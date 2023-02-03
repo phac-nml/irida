@@ -23,8 +23,11 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl.BioHanselSampleUpdater;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
+
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -46,6 +49,7 @@ public class BioHanselSampleUpdaterTest {
 		metadataTemplateService = mock(MetadataTemplateService.class);
 		sampleService = mock(SampleService.class);
 		bioHanselSampleUpdater = new BioHanselSampleUpdater(metadataTemplateService, sampleService);
+		IridaFiles.setIridaFileStorageUtility(new IridaFileStorageLocalUtilityImpl());
 	}
 
 	@SuppressWarnings("unchecked")

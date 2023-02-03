@@ -8,6 +8,8 @@ import org.mockito.MockitoAnnotations;
 import ca.corefacility.bioinformatics.irida.exceptions.galaxy.CreateLibraryException;
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectName;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
 import com.github.jmchilton.blend4j.galaxy.beans.Library;
@@ -28,12 +30,15 @@ public class GalaxyLibrariesServiceTest {
 
 	private Library testLibrary;
 
+	private IridaFileStorageUtility iridaFileStorageUtility;
+
 	/**
 	 * Setup for tests.
 	 */
 	@BeforeEach
 	public void setup() {
 		MockitoAnnotations.openMocks(this);
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 		setupLibrariesTest();
 	}
 

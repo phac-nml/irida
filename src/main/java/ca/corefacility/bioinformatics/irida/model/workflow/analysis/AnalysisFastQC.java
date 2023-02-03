@@ -2,13 +2,13 @@ package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.OverrepresentedSequence;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.type.BuiltInAnalysisTypes;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableSet;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -418,12 +418,6 @@ public class AnalysisFastQC extends Analysis {
 	 */
 	private byte[] getBytesForFile(String key) {
 		AnalysisOutputFile chart = getAnalysisOutputFile(key);
-		byte[] bytes = new byte[0];
-		try {
-			bytes = Files.readAllBytes(chart.getFile());
-		} catch (IOException e) {
-			logger.error("Unable to read fastqc file.", e);
-		}
-		return bytes;
+		return chart.getBytesForFile();
 	}
 }
