@@ -24,7 +24,7 @@ import {
   removeSampleMetadataField,
   setEditSampleMetadata,
 } from "../sampleSlice";
-import { HEADER_HEIGHT, HEADER_HEIGHT_WITH_PADDING } from "./ViewerHeader";
+import { HEADER_HEIGHT_WITH_PADDING } from "./ViewerHeader";
 
 const { Text } = Typography;
 
@@ -53,11 +53,12 @@ export default function SampleMetadata() {
         projectId,
       })
     );
-  }, []);
+  }, [dispatch, projectId, sample.identifier]);
 
   const removeMetadata = (fieldId: number, entryId: number) => {
     removeSampleMetadata({
       projectId,
+      sampleId: sample.identifier,
       fieldId,
       entryId,
     })
