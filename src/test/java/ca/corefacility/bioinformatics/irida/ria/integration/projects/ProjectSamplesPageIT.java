@@ -202,7 +202,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.filterBySampleName(NAME_FILTER_1);
 		summary = page.getTableSummary();
 		assertEquals(13, summary.getTotal(),
-				"Filtering the '" + NAME_FILTER_1 + "' should leave 19 samples in the table");
+				"Filtering the '" + NAME_FILTER_1 + "' should leave 13 samples in the table");
 
 		page.filterBySampleName(NAME_FILTER_2);
 		summary = page.getTableSummary();

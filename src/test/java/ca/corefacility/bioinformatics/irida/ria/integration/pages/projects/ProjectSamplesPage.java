@@ -358,42 +358,46 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		createSampleButton.click();
 	}
 
-	public void filterBySampleName(String name) {
+	public void filterByString(WebElement filter, String className, String value) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
 		int prevTotal = getTableSummary().getTotal();
-		sampleNameFilterToggle.click();
-		nameFilterInput.sendKeys(name);
-		nameFilterInput.sendKeys(Keys.ENTER);
-		nameFilterInput.sendKeys(Keys.TAB);
+		filter.click();
+		WebElement filterInput = wait.until(ExpectedConditions.presenceOfElementLocated(
+				By.cssSelector(".ant-table-filter-dropdown ." + className + " input")));
+		filterInput.sendKeys(value);
+		filterInput.sendKeys(Keys.ENTER);
+		filterInput.sendKeys(Keys.ESCAPE);
+		filterInput.sendKeys(Keys.ESCAPE);
 		waitForTableToUpdate(prevTotal);
+	}
+
+	public void clearFilterByString(WebElement filter, String className, String value) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+		int prevTotal = getTableSummary().getTotal();
+		filter.click();
+		WebElement tag = wait.until(ExpectedConditions.visibilityOfElementLocated(
+				By.cssSelector(".ant-table-filter-dropdown [title='" + value + "']")));
+		tag.findElement(By.className("ant-select-selection-item-remove")).click();
+		wait.until(ExpectedConditions.invisibilityOf(tag));
+		filter.sendKeys(Keys.ESCAPE);
+		filter.sendKeys(Keys.ESCAPE);
+		waitForTableToUpdate(prevTotal);
+	}
+
+	public void filterBySampleName(String name) {
+		filterByString(sampleNameFilterToggle, "t-name-select", name);
 	}
 
 	public void clearIndividualSampleNameFilter(String name) {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-		int prevTotal = getTableSummary().getTotal();
-		sampleNameFilterToggle.click();
-		WebElement filter = wait.until(
-				ExpectedConditions.elementToBeClickable(By.cssSelector("[title=\"" + name + "\"]")));
-		filter.findElement(By.className("ant-select-selection-item-remove")).click();
-		sampleNameFilterToggle.sendKeys(Keys.TAB);
-		waitForTableToUpdate(prevTotal);
+		clearFilterByString(sampleNameFilterToggle, "t-name-select", name);
 	}
 
 	public void filterByOrganism(String organism) {
-		int prevTotal = getTableSummary().getTotal();
-		organismFilterToggle.click();
-		organismSelectInput.sendKeys(organism);
-		organismSelectInput.sendKeys(Keys.ENTER);
-		organismFilterToggle.sendKeys(Keys.TAB);
-		waitForTableToUpdate(prevTotal);
+		filterByString(organismFilterToggle, "t-organism-select", organism);
 	}
 
 	public void clearIndividualOrganismFilter(String organism) {
-		int prevTotal = getTableSummary().getTotal();
-		organismFilterToggle.click();
-		WebElement filter = organismFilterSelectedOptions.findElement(By.cssSelector("[title=\"" + organism + "\"]"));
-		filter.findElement(By.className("ant-select-selection-item-remove")).click();
-		organismFilterToggle.sendKeys(Keys.TAB);
-		waitForTableToUpdate(prevTotal);
+		clearFilterByString(organismFilterToggle, "t-organism-select", organism);
 	}
 
 	public void toggleAssociatedProject(String projectName) {
