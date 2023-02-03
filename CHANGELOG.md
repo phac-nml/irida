@@ -12,6 +12,7 @@
 * [Developer]: Replaced Apache OLTU with Nimbusds for performing OAuth2 authentication flow during syncing and Galaxy exporting. See [PR 1432](https://github.com/phac-nml/irida/pull/1432)
 * [Developer/UI]: Performance enhancements to the metadata uploader. See [PR 1445](https://github.com/phac-nml/irida/pull/1445).
 * [UI/Developer]: Updated Eslint config to use `airbnb`. [See PR 1454](https://github.com/phac-nml/irida/pull/1454)
+* [UI/Developer]: Updated to Ant Design 4.24.7 [See PR 1460](https://github.com/phac-nml/irida/pull/1460)
 
 ## [22.09.7] - 2022/01/24
 * [UI]: Fixed bugs on NCBI Export page preventing the NCBI `submission.xml` file from being properly written. See [PR 1451](https://github.com/phac-nml/irida/pull/1451)
