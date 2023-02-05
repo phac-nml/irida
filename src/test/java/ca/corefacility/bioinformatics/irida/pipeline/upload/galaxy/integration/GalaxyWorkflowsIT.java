@@ -131,8 +131,8 @@ public class GalaxyWorkflowsIT {
 		historiesClient = galaxyAdminInstance.getHistoriesClient();
 		librariesClient = galaxyAdminInstance.getLibrariesClient();
 
-		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient,
-				LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
+		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
+
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);
 		galaxyWorkflowService = new GalaxyWorkflowService(workflowsClient, StandardCharsets.UTF_8);
 	}

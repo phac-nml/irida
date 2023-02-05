@@ -76,7 +76,7 @@ public class ExecutionManagerConfig {
 
 	/**
 	 * Builds a new ExecutionManagerGalaxy from the given properties.
-	 * 
+	 *
 	 * @return An ExecutionManagerGalaxy.
 	 * @throws ExecutionManagerConfigurationException If no execution manager is configured.
 	 */
@@ -89,7 +89,7 @@ public class ExecutionManagerConfig {
 
 	/**
 	 * Builds a new ExecutionManagerGalaxy given the following environment properties.
-	 * 
+	 *
 	 * @param urlProperty         The property defining the URL to Galaxy.
 	 * @param apiKeyProperty      The property defining the API key to Galaxy.
 	 * @param emailProperty       The property defining the account email in Galaxy.
@@ -111,7 +111,7 @@ public class ExecutionManagerConfig {
 
 	/**
 	 * Gets and validates a GalaxyAccountEmail from the given property.
-	 * 
+	 *
 	 * @param emailProperty The property to find the email address.
 	 * @return A valid GalaxyAccountEmail.
 	 * @throws ExecutionManagerConfigurationException If the properties value was invalid.
@@ -132,7 +132,7 @@ public class ExecutionManagerConfig {
 
 	/**
 	 * Gets and validates a Galaxy API key from the given property.
-	 * 
+	 *
 	 * @param apiKeyProperty The API key property to get.
 	 * @return A API key for Galaxy.
 	 * @throws ExecutionManagerConfigurationException If the given properties value was invalid.
@@ -149,7 +149,7 @@ public class ExecutionManagerConfig {
 
 	/**
 	 * Gets and validates the given property for a Galaxy url.
-	 * 
+	 *
 	 * @param urlProperty The property with the Galaxy URL.
 	 * @return A valid Galaxy URL.
 	 * @throws ExecutionManagerConfigurationException If the properties value was invalid.
@@ -170,7 +170,7 @@ public class ExecutionManagerConfig {
 
 	/**
 	 * Gets and validates a property with the storage strategy for Galaxy.
-	 * 
+	 *
 	 * @param dataStorageProperty The property with the storage strategy for Galaxy.
 	 * @return The corresponding storage strategy object, defaults to DEFAULT_DATA_STORAGE if invalid.
 	 */

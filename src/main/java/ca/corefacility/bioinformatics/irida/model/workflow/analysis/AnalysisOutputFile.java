@@ -1,7 +1,7 @@
 package ca.corefacility.bioinformatics.irida.model.workflow.analysis;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
@@ -17,6 +17,8 @@ import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepository;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
+
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -72,7 +74,7 @@ public class AnalysisOutputFile extends IridaRepresentationModel implements Irid
 
 	/**
 	 * Create a new instance of {@link AnalysisOutputFile}.
-	 * 
+	 *
 	 * @param file                   the file that this resource owns.
 	 * @param labelPrefix            the label prefix to use for this file.
 	 * @param executionManagerFileId the identifier for this file in the execution manager that it was created by.
@@ -97,7 +99,7 @@ public class AnalysisOutputFile extends IridaRepresentationModel implements Irid
 	 * This intentionally always returns 0. We're abusing {@link VersionedFileFields} so that we can get support from
 	 * {@link FilesystemSupplementedRepository}, even though {@link AnalysisOutputFile} is immutable and cannot be
 	 * versioned.
-	 * 
+	 *
 	 * @return *always* {@code 0L} for {@link AnalysisOutputFile}.
 	 */
 	@Override
@@ -167,7 +169,7 @@ public class AnalysisOutputFile extends IridaRepresentationModel implements Irid
 	}
 
 	/**
-	 * Read the bytes for an image output file
+	 * Read the bytes for an output file
 	 *
 	 * @return the bytes for the file
 	 */
@@ -175,10 +177,39 @@ public class AnalysisOutputFile extends IridaRepresentationModel implements Irid
 	public byte[] getBytesForFile() {
 		byte[] bytes = new byte[0];
 		try {
-			bytes = Files.readAllBytes(getFile());
+			bytes = IridaFiles.getBytesForFile(getFile());
 		} catch (IOException e) {
 			logger.error("Unable to read file.", e);
 		}
 		return bytes;
+	}
+
+	/**
+	 * Gets output file input stream
+	 *
+	 * @return returns input stream.
+	 */
+	@JsonIgnore
+	public InputStream getFileInputStream() {
+		return IridaFiles.getFileInputStream(file);
+	}
+
+	/**
+	 * Checks if file exists
+	 *
+	 * @return if file exists or not
+	 */
+	@JsonIgnore
+	public boolean fileExists() {
+		return IridaFiles.fileExists(file);
+	}
+
+	/**
+	 * Get file size in bytes
+	 *
+	 * @return if file exists or not
+	 */
+	public Long getFileSizeBytes() {
+		return IridaFiles.getFileSizeBytes(getFile());
 	}
 }

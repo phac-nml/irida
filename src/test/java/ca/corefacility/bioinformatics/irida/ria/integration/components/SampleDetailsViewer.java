@@ -185,6 +185,10 @@ public class SampleDetailsViewer extends AbstractPage {
 		return concatenateBtn.size() == 1;
 	}
 
+	public boolean concatenationConfirmButtonEnabled() {
+		return concatenateConfirmBtn.get(0).isEnabled();
+	}
+
 	public void selectFilesToConcatenate(int maxCheckboxesToSelect) {
 		List<WebElement> checkboxes = modal.findElements(By.className("t-concatenation-checkbox"));
 		if (checkboxes.size() > 0 && maxCheckboxesToSelect < checkboxes.size()) {

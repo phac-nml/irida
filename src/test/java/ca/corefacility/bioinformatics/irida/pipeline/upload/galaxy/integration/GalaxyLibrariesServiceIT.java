@@ -26,6 +26,8 @@ import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyProjectNam
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 
 import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
 import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
@@ -55,6 +57,7 @@ public class GalaxyLibrariesServiceIT {
 
 	private GalaxyInstance galaxyInstanceAdmin;
 	private LibrariesClient librariesClient;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	private static final InputFileType FILE_TYPE = InputFileType.FASTQ_SANGER;
 
@@ -79,6 +82,8 @@ public class GalaxyLibrariesServiceIT {
 	public void setup() throws URISyntaxException, IOException {
 		galaxyInstanceAdmin = localGalaxy.getGalaxyInstanceAdmin();
 		librariesClient = galaxyInstanceAdmin.getLibrariesClient();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+
 
 		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
 

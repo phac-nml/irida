@@ -348,8 +348,11 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		// Concatenation modal should list the files to concatenate
 		assertEquals(3, sampleDetailsViewer.singleEndFileCount(),
 				"Should have 3 single end files listed for concatenation");
+		assertFalse(sampleDetailsViewer.concatenationConfirmButtonEnabled(), "Concatenate button should be disabled since no file name is entered");
 		// Enter concatenation file name
 		sampleDetailsViewer.enterFileName();
+
+		assertTrue(sampleDetailsViewer.concatenationConfirmButtonEnabled(), "Concatenate button should not be disabled since a file name is entered");
 		sampleDetailsViewer.clickConcatenateConfirmBtn();
 
 		// Check that correct file list items are displayed after concatenation

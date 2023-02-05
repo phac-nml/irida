@@ -96,13 +96,11 @@ public class ReferenceFileAjaxController {
 	 * Get the reference files for a project
 	 *
 	 * @param projectId the ID of the project
-	 * @param locale    locale of the logged in user
 	 * @return information about the reference files in the project
 	 */
 	@GetMapping("/{projectId}")
-	public ResponseEntity<List<UIReferenceFile>> getReferenceFilesForProject(@PathVariable Long projectId,
-			Locale locale) {
-		return ResponseEntity.ok(uiProjectReferenceFileService.getReferenceFilesForProject(projectId, locale));
+	public ResponseEntity<List<UIReferenceFile>> getReferenceFilesForProject(@PathVariable Long projectId) {
+		return ResponseEntity.ok(uiProjectReferenceFileService.getReferenceFilesForProject(projectId));
 	}
 
 }

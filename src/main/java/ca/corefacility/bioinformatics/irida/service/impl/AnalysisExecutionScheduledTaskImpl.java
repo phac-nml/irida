@@ -22,11 +22,12 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
+
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 
 import com.google.common.collect.Sets;
 
@@ -45,13 +46,13 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionScheduledTaskImpl.class);
 
-	private final AnalysisSubmissionRepository analysisSubmissionRepository;
-	private final AnalysisExecutionService analysisExecutionService;
-	private final CleanupAnalysisSubmissionCondition cleanupCondition;
-	private final GalaxyJobErrorsService galaxyJobErrorsService;
-	private final JobErrorRepository jobErrorRepository;
-	private final EmailController emailController;
-	private final AnalysisWorkspaceService analysisWorkspaceService;
+	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	private AnalysisExecutionService analysisExecutionService;
+	private CleanupAnalysisSubmissionCondition cleanupCondition;
+	private GalaxyJobErrorsService galaxyJobErrorsService;
+	private JobErrorRepository jobErrorRepository;
+	private EmailController emailController;
+	private AnalysisWorkspaceService analysisWorkspaceService;
 
 	/**
 	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service classes.
@@ -89,8 +90,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		synchronized (prepareAnalysesLock) {
 			logger.trace("Running prepareAnalyses");
 
-			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-					.findByAnalysisState(AnalysisState.NEW);
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository.findByAnalysisState(
+					AnalysisState.NEW);
 
 			// Sort submissions by priority high to low
 			analysisSubmissions.sort((a1, a2) -> {
@@ -135,8 +136,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		synchronized (executeAnalysesLock) {
 			logger.trace("Running executeAnalyses");
 
-			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-					.findByAnalysisState(AnalysisState.PREPARED);
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository.findByAnalysisState(
+					AnalysisState.PREPARED);
 
 			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
 
@@ -162,8 +163,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		synchronized (monitorRunningAnalysesLock) {
 			logger.trace("Running monitorRunningAnalyses");
 
-			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-					.findByAnalysisState(AnalysisState.RUNNING);
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository.findByAnalysisState(
+					AnalysisState.RUNNING);
 
 			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
 
@@ -171,13 +172,14 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 				logger.trace("Checking state of " + analysisSubmission);
 
 				try {
-					GalaxyWorkflowStatus workflowStatus = analysisExecutionService
-							.getWorkflowStatus(analysisSubmission);
+					GalaxyWorkflowStatus workflowStatus = analysisExecutionService.getWorkflowStatus(
+							analysisSubmission);
 					submissions.add(handleWorkflowStatus(workflowStatus, analysisSubmission));
 				} catch (ExecutionManagerException | RuntimeException | IridaWorkflowNotFoundException e) {
 					logger.error("Error checking state for " + analysisSubmission, e);
 					analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 					submissions.add(new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission)));
+
 					if (analysisSubmission.getEmailPipelineResultError()) {
 						emailController.sendPipelineStatusEmail(analysisSubmission);
 					}
@@ -212,8 +214,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		synchronized (transferAnalysesResultsLock) {
 			logger.trace("Running transferAnalysesResults");
 
-			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-					.findByAnalysisState(AnalysisState.FINISHED_RUNNING);
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository.findByAnalysisState(
+					AnalysisState.FINISHED_RUNNING);
 
 			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
 
@@ -239,8 +241,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		synchronized (postProcessingLock) {
 			logger.trace("Running postProcessResults");
 
-			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-					.findByAnalysisState(AnalysisState.TRANSFERRED);
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository.findByAnalysisState(
+					AnalysisState.TRANSFERRED);
 
 			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
 
@@ -316,8 +318,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 		synchronized (cleanupAnalysesResultsLock) {
 			logger.trace("Running cleanupAnalysisSubmissions");
 
-			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository
-					.findByAnalysisState(AnalysisState.COMPLETED, AnalysisCleanedState.NOT_CLEANED);
+			List<AnalysisSubmission> analysisSubmissions = analysisSubmissionRepository.findByAnalysisState(
+					AnalysisState.COMPLETED, AnalysisCleanedState.NOT_CLEANED);
 			analysisSubmissions.addAll(analysisSubmissionRepository.findByAnalysisState(AnalysisState.ERROR,
 					AnalysisCleanedState.NOT_CLEANED));
 
@@ -329,8 +331,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 					logger.trace("Attempting to clean up submission " + submission);
 
 					try {
-						Future<AnalysisSubmission> cleanedSubmissionFuture = analysisExecutionService
-								.cleanupSubmission(submission);
+						Future<AnalysisSubmission> cleanedSubmissionFuture = analysisExecutionService.cleanupSubmission(
+								submission);
 						cleanedSubmissions.add(cleanedSubmissionFuture);
 					} catch (ExecutionManagerException e) {
 						logger.error("Error cleaning submission " + submission, e);
