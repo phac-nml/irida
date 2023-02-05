@@ -1,5 +1,6 @@
 package ca.corefacility.bioinformatics.irida.model.project;
 
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
@@ -26,6 +27,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ca.corefacility.bioinformatics.irida.model.MutableIridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * A reference file to be associated with a {@link Project}.
@@ -143,5 +147,21 @@ public class ReferenceFile implements VersionedFileFields<Long>, MutableIridaThi
 
 	public void setFileLength(Long fileLength) {
 		this.fileLength = fileLength;
+	}
+
+	@JsonIgnore
+	public String getFileSize() {
+		return IridaFiles.getFileSize(file);
+	}
+
+
+	/**
+	 * Gets reference file input stream
+	 *
+	 * @return returns input stream.
+	 */
+	@JsonIgnore
+	public InputStream getFileInputStream() {
+		return IridaFiles.getFileInputStream(file);
 	}
 }

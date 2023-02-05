@@ -23,6 +23,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaTemporaryFile;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
@@ -70,6 +72,8 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 
 	private SequencingObjectService sequencingObjectService;
 
+	private IridaFileStorageUtility iridaFileStorageUtility;
+
 	/**
 	 * Builds a new {@link AnalysisWorkspaceServiceGalaxy} with the given
 	 * information.
@@ -83,6 +87,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 * @param analysisProvenanceServiceGalaxy The service for provenance information.
 	 * @param analysisParameterServiceGalaxy  A service for setting up parameters in Galaxy.
 	 * @param sequencingObjectService         A service for reading {@link SequencingObject}s
+	 * @param iridaFileStorageUtility         The file storage implementation
 	 */
 	public AnalysisWorkspaceServiceGalaxy(GalaxyHistoriesService galaxyHistoriesService,
 			GalaxyWorkflowService galaxyWorkflowService, GalaxyLibrariesService galaxyLibrariesService,
@@ -90,7 +95,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 			AnalysisCollectionServiceGalaxy analysisCollectionServiceGalaxy,
 			AnalysisProvenanceServiceGalaxy analysisProvenanceServiceGalaxy,
 			AnalysisParameterServiceGalaxy analysisParameterServiceGalaxy,
-			SequencingObjectService sequencingObjectService) {
+			SequencingObjectService sequencingObjectService, IridaFileStorageUtility iridaFileStorageUtility) {
 		this.galaxyHistoriesService = galaxyHistoriesService;
 		this.galaxyWorkflowService = galaxyWorkflowService;
 		this.galaxyLibrariesService = galaxyLibrariesService;
@@ -99,6 +104,7 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 		this.analysisProvenanceServiceGalaxy = analysisProvenanceServiceGalaxy;
 		this.analysisParameterServiceGalaxy = analysisParameterServiceGalaxy;
 		this.sequencingObjectService = sequencingObjectService;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -294,16 +300,27 @@ public class AnalysisWorkspaceServiceGalaxy implements AnalysisWorkspaceService 
 	 */
 	private void prepareReferenceFile(ReferenceFile referenceFile, History workflowHistory, String referenceFileLabel,
 			WorkflowDetails workflowDetails, WorkflowInvocationInputs inputs)
-			throws UploadException, GalaxyDatasetException, WorkflowException {
+			throws UploadException, GalaxyDatasetException, WorkflowException, IOException {
 
-		Dataset referenceDataset = galaxyHistoriesService.fileToHistory(referenceFile.getFile(), InputFileType.FASTA,
-				workflowHistory);
+		IridaTemporaryFile iridaTemporaryFile = null;
+		try {
+			iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(referenceFile.getFile());
 
-		String workflowReferenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
-				referenceFileLabel);
+			Dataset referenceDataset = galaxyHistoriesService.fileToHistory(iridaTemporaryFile.getFile(), InputFileType.FASTA,
+					workflowHistory);
 
-		inputs.setInput(workflowReferenceFileInputId,
-				new WorkflowInvocationInputs.WorkflowInvocationInput(referenceDataset.getId(), WorkflowInvocationInputs.InputSourceType.HDA));
+			String workflowReferenceFileInputId = galaxyWorkflowService.getWorkflowInputId(workflowDetails,
+					referenceFileLabel);
+
+			inputs.setInput(workflowReferenceFileInputId,
+					new WorkflowInvocationInputs.WorkflowInvocationInput(referenceDataset.getId(),
+							WorkflowInvocationInputs.InputSourceType.HDA));
+
+		} finally {
+			if (iridaTemporaryFile != null) {
+				iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
+			}
+		}
 	}
 
 	/**

@@ -1,8 +1,5 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,7 +27,6 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.IridaWorkflowNamedParameters;
 import ca.corefacility.bioinformatics.irida.pipeline.results.AnalysisSubmissionSampleProcessor;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
-import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavePipelineParametersRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.pipeline.SavedPipelineParameters;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
@@ -141,8 +137,8 @@ public class UIPipelineService {
 		Can the pipeline write back
 		 */
 		Map<Project, List<Sample>> cart = cartService.getFullCart();
-		boolean canUpdateSamples = analysisSubmissionSampleProcessor
-				.hasRegisteredAnalysisSampleUpdater(description.getAnalysisType());
+		boolean canUpdateSamples = analysisSubmissionSampleProcessor.hasRegisteredAnalysisSampleUpdater(
+				description.getAnalysisType());
 		if (canUpdateSamples) {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			// Need to make sure that all samples are allowed to be updated.
@@ -190,20 +186,21 @@ public class UIPipelineService {
 								new Object[] {}, locale);
 						List<SelectOption> options = new ArrayList<>();
 
-						TabularToolDataTable galaxyToolDataTable = galaxyToolDataService
-								.getToolDataTable(dynamicSourceName);
+						TabularToolDataTable galaxyToolDataTable = galaxyToolDataService.getToolDataTable(
+								dynamicSourceName);
 						List<String> labels = galaxyToolDataTable.getFieldsForColumn(dynamicSource.getDisplayColumn());
 						Iterator<String> labelsIterator = labels.iterator();
-						List<String> values = galaxyToolDataTable
-								.getFieldsForColumn(dynamicSource.getParameterColumn());
+						List<String> values = galaxyToolDataTable.getFieldsForColumn(
+								dynamicSource.getParameterColumn());
 						Iterator<String> valuesIterator = values.iterator();
 
 						while (labelsIterator.hasNext() && valuesIterator.hasNext()) {
 							options.add(new SelectOption(valuesIterator.next(), labelsIterator.next()));
 						}
 
-						dynamicSources.add(new InputWithOptions(parameter.getName(), label, options.get(0).getValue(),
-								options, parameter.isRequired()));
+						dynamicSources.add(
+								new InputWithOptions(parameter.getName(), label, options.get(0).getValue(), options,
+										parameter.isRequired()));
 					} catch (Exception e) {
 						logger.debug("Tool Data Table not found: ", e);
 					}
@@ -236,8 +233,7 @@ public class UIPipelineService {
 				.stream()
 				.map(entry -> new Input(entry.getKey(),
 						messageSource.getMessage("pipeline.parameters." + pipelineName + "." + entry.getKey(),
-								new Object[] {}, locale),
-						entry.getValue()))
+								new Object[] {}, locale), entry.getValue()))
 				.collect(Collectors.toList());
 
 		return new SavedPipelineParameters(namedParameters.getId(), namedParameters.getLabel(), params);
@@ -308,8 +304,8 @@ public class UIPipelineService {
 	 */
 	public String removeProjectAutomatedPipeline(Long templateId, Long projectId, Locale locale) {
 		Project project = projectService.read(projectId);
-		AnalysisSubmissionTemplate template = analysisSubmissionService
-				.readAnalysisSubmissionTemplateForProject(templateId, project);
+		AnalysisSubmissionTemplate template = analysisSubmissionService.readAnalysisSubmissionTemplateForProject(
+				templateId, project);
 		analysisSubmissionService.deleteAnalysisSubmissionTemplateForProject(templateId, project);
 		return messageSource.getMessage("server.AnalysisTemplates.remove", new Object[] { template.getName() }, locale);
 	}
@@ -398,8 +394,7 @@ public class UIPipelineService {
 				.filter(p -> !p.isRequired())
 				.map(p -> new Input(p.getName(),
 						messageSource.getMessage("pipeline.parameters." + pipelineName + "." + p.getName(),
-								new Object[] {}, locale),
-						p.getDefaultValue()))
+								new Object[] {}, locale), p.getDefaultValue()))
 				.collect(Collectors.toList());
 		savedParameters.add(new SavedPipelineParameters(0L,
 				messageSource.getMessage("workflow.parameters.named.default", new Object[] {}, locale),
@@ -408,8 +403,8 @@ public class UIPipelineService {
 		/*
 		Add any saved parameter sets
 		 */
-		List<IridaWorkflowNamedParameters> namedParameters = namedParametersService
-				.findNamedParametersForWorkflow(workflow.getWorkflowIdentifier());
+		List<IridaWorkflowNamedParameters> namedParameters = namedParametersService.findNamedParametersForWorkflow(
+				workflow.getWorkflowIdentifier());
 		savedParameters.addAll(namedParameters.stream().map(wp -> {
 			Map<String, String> inputParameter = wp.getInputParameters();
 
@@ -436,16 +431,15 @@ public class UIPipelineService {
 	private List<UIReferenceFile> getReferenceFilesForPipeline(List<Project> projects) {
 		return projects.stream().map(project -> {
 			List<UIReferenceFile> list = new ArrayList<>();
-			for (Join<Project, ReferenceFile> projectReferenceFileJoin : referenceFileService
-					.getReferenceFilesForProject(project)) {
-				try {
-					ReferenceFile file = projectReferenceFileJoin.getObject();
-					Path path = file.getFile();
-					String filesize = FileUtilities.humanReadableByteCount(Files.size(path), true);
+			for (Join<Project, ReferenceFile> projectReferenceFileJoin : referenceFileService.getReferenceFilesForProject(
+					project)) {
+				ReferenceFile file = projectReferenceFileJoin.getObject();
+				String filesize = file.getFileSize();
+				if (!filesize.equals("N/A")) {
 					UIReferenceFile uiReferenceFile = new UIReferenceFile(projectReferenceFileJoin, filesize);
 					list.add(uiReferenceFile);
-				} catch (IOException e) {
-					logger.error(e.getMessage());
+				} else {
+					logger.error("Unable to locate reference file " + file.getLabel());
 				}
 			}
 			return list;

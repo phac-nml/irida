@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileC
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.utilities.FileUtilities;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.references.UIReferenceFile;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
@@ -37,12 +39,15 @@ public class UIProjectReferenceFileService {
 	private final ProjectService projectService;
 	private final ReferenceFileService referenceFileService;
 	private final MessageSource messageSource;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@Autowired
-	public UIProjectReferenceFileService(ProjectService projectService, ReferenceFileService referenceFileService, MessageSource messageSource) {
+	public UIProjectReferenceFileService(ProjectService projectService, ReferenceFileService referenceFileService,
+			MessageSource messageSource, IridaFileStorageUtility iridaFileStorageUtility) {
 		this.projectService = projectService;
 		this.referenceFileService = referenceFileService;
 		this.messageSource = messageSource;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -53,9 +58,10 @@ public class UIProjectReferenceFileService {
 	 * @param locale    locale of the logged in user
 	 * @return Return success message or error if file was successfully uploaded or not
 	 * @throws UnsupportedReferenceFileContentError if content is invalid
-	 * @throws IOException if there is an I/O error
+	 * @throws IOException                          if there is an I/O error
 	 */
-	public List<UIReferenceFile> addReferenceFileToProject(Long projectId, List<MultipartFile> files, final Locale locale) throws UnsupportedReferenceFileContentError, IOException {
+	public List<UIReferenceFile> addReferenceFileToProject(Long projectId, List<MultipartFile> files,
+			final Locale locale) throws UnsupportedReferenceFileContentError, IOException {
 		List<UIReferenceFile> referenceFiles = new ArrayList<>();
 		try {
 			for (MultipartFile file : files) {
@@ -75,9 +81,10 @@ public class UIProjectReferenceFileService {
 					 */
 					referenceFile = new ReferenceFile(target);
 					Project project = projectService.read(projectId);
-					Join<Project, ReferenceFile> join = projectService.addReferenceFileToProject(project, referenceFile);
+					Join<Project, ReferenceFile> join = projectService.addReferenceFileToProject(project,
+							referenceFile);
 					ReferenceFile refFile = join.getObject();
-					long filesize = Files.size(refFile.getFile());
+					Long filesize = iridaFileStorageUtility.getFileSizeBytes(refFile.getFile());
 					referenceFiles.add(new UIReferenceFile(join, FileUtilities.humanReadableByteCount(filesize, true)));
 				} else {
 					/*
@@ -93,11 +100,14 @@ public class UIProjectReferenceFileService {
 			}
 		} catch (UnsupportedReferenceFileContentError e) {
 			logger.error("User uploaded a reference file that biojava couldn't parse as DNA.", e);
-			throw new UnsupportedReferenceFileContentError(messageSource.getMessage("server.projects.reference-file.invalid-content", new Object[] {},
-					locale), e);
+			throw new UnsupportedReferenceFileContentError(
+					messageSource.getMessage("server.projects.reference-file.invalid-content", new Object[] {}, locale),
+					e);
 		} catch (IOException e) {
 			logger.error("Error writing sequence file", e);
-			throw new UnsupportedReferenceFileContentError(messageSource.getMessage("server.projects.reference-file.unknown-error", new Object[] {}, locale), null);
+			throw new UnsupportedReferenceFileContentError(
+					messageSource.getMessage("server.projects.reference-file.unknown-error", new Object[] {}, locale),
+					null);
 		}
 
 		return referenceFiles;
@@ -120,7 +130,7 @@ public class UIProjectReferenceFileService {
 			logger.info("Removing file with id of : " + fileId);
 			projectService.removeReferenceFileFromProject(project, file);
 			return messageSource.getMessage("server.projects.reference-file.delete-success",
-							new Object[] { file.getLabel(), project.getName() }, locale);
+					new Object[] { file.getLabel(), project.getName() }, locale);
 		} catch (EntityNotFoundException e) {
 			logger.error("Failed to remove reference file, reason unknown.", e);
 			throw new EntityNotFoundException(messageSource.getMessage("server.projects.reference-file.delete-error",
@@ -137,9 +147,14 @@ public class UIProjectReferenceFileService {
 	 */
 	public void downloadReferenceFile(Long fileId, HttpServletResponse response) throws IOException {
 		ReferenceFile file = referenceFileService.read(fileId);
-		Path path = file.getFile();
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getLabel() + "\"");
-		Files.copy(path, response.getOutputStream());
+
+		try (InputStream inputStream = file.getFileInputStream()) {
+			inputStream.transferTo(response.getOutputStream());
+		} catch (IOException e) {
+			logger.error("Unable to read input stream from file", e);
+		}
+
 		response.flushBuffer();
 	}
 
@@ -147,24 +162,16 @@ public class UIProjectReferenceFileService {
 	 * Get the reference files for a project
 	 *
 	 * @param projectId the ID of the project
-	 * @param locale    locale of the logged in user
 	 * @return information about the reference files in the project
 	 */
-	public List<UIReferenceFile> getReferenceFilesForProject(Long projectId, Locale locale) {
+	public List<UIReferenceFile> getReferenceFilesForProject(Long projectId) {
 		Project project = projectService.read(projectId);
 		// Let's get the reference files
 		List<Join<Project, ReferenceFile>> joinList = referenceFileService.getReferenceFilesForProject(project);
 		List<UIReferenceFile> refFiles = new ArrayList<>();
 		for (Join<Project, ReferenceFile> join : joinList) {
-			try {
-				refFiles.add(new UIReferenceFile(join, FileUtilities.humanReadableByteCount(Files.size(join.getObject().getFile()), true)));
-			} catch (IOException e) {
-				logger.error("Cannot find the size of file " + join.getObject()
-						.getLabel());
-				UIReferenceFile uiReferenceFile = new UIReferenceFile(join,
-						messageSource.getMessage("server.projects.reference-file.not-found", new Object[] {}, locale));
-				refFiles.add(uiReferenceFile);
-			}
+			refFiles.add(new UIReferenceFile(join, join.getObject()
+					.getFileSize()));
 		}
 		return refFiles;
 	}

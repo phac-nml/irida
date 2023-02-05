@@ -1,7 +1,5 @@
 package ca.corefacility.bioinformatics.irida.pipeline.results.updater.impl;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
@@ -12,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplate;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -24,10 +23,12 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.results.updater.AnalysisSampleUpdater;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
+import java.io.InputStream;
 
 /**
  * {@link AnalysisSampleUpdater} for bio_hansel results to be written to metadata of {@link Sample}s.
@@ -78,9 +79,10 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 		Path filePath = aof.getFile();
 
 		Map<String, MetadataEntry> stringEntries = new HashMap<>();
-		try {
+
+		try(InputStream inputStream = IridaFiles.getFileInputStream(filePath)) {
 			@SuppressWarnings("resource")
-			String jsonText = new Scanner(new BufferedReader(new FileReader(filePath.toFile()))).useDelimiter("\\Z")
+			String jsonText = new Scanner(inputStream).useDelimiter("\\Z")
 					.next();
 			ObjectMapper mapper = new ObjectMapper();
 			List<Map<String, Object>> maps = mapper.readValue(jsonText, new TypeReference<List<Map<String, Object>>>() {
@@ -112,10 +114,12 @@ public class BioHanselSampleUpdater implements AnalysisSampleUpdater {
 			} else {
 				throw new PostProcessingException(filePath + " not correctly formatted. Expected valid JSON.");
 			}
-
+		} catch (StorageException e) {
+			throw new PostProcessingException("Unable to read file input stream ", e);
 		} catch (IOException e) {
 			throw new PostProcessingException("Error parsing JSON from " + filePath, e);
 		}
+
 	}
 
 	/**

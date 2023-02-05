@@ -21,9 +21,9 @@ public final class TestDataFactory {
 	public static final String TEST_PROJECT_DESCRIPTION = "This is a fascinating project";
 
 	/**
-	 * Construct a simple {@link ca.corefacility.bioinformatics.irida.model.User}.
+	 * Construct a simple {@link User}.
 	 *
-	 * @return a {@link ca.corefacility.bioinformatics.irida.model.User} with identifier.
+	 * @return a {@link User} with identifier.
 	 */
 	public static User constructUser() {
 		User u = new User();
@@ -62,8 +62,9 @@ public final class TestDataFactory {
 
 	/**
 	 * Construct a simple {@link SingleEndSequenceFile}
-	 * 
-	 * @return a {@link SingleEndSequenceFile} with a {@link SequenceFile} and id
+	 *
+	 * @return a {@link SingleEndSequenceFile} with a {@link SequenceFile} and
+	 * id
 	 * @throws IOException if the temp file couldn't be created
 	 */
 	public static SingleEndSequenceFile constructSingleEndSequenceFile() throws IOException {
@@ -75,7 +76,7 @@ public final class TestDataFactory {
 
 	/**
 	 * Construct a simple {@link SequenceFilePair} object
-	 * 
+	 *
 	 * @return a {@link SequenceFilePair}
 	 * @throws IOException if the temp files couldn't be created
 	 */
@@ -90,7 +91,7 @@ public final class TestDataFactory {
 	}
 
 	/**
-	 * Construct a simple {@link ca.corefacility.bioinformatics.irida.model.Project}.
+	 * Construct a simple {@link Project}.
 	 *
 	 * @return a project with a name and identifier.
 	 */

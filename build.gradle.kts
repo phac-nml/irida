@@ -174,6 +174,17 @@ dependencies {
         exclude(group = "jakarta.validation", module = "jakarta.validation-api")
     }
 
+    // Microsoft Azure
+    implementation("com.azure:azure-storage-blob:12.18.0") {
+        exclude(group = "jakarta.xml.bind", module = "jakarta.xml.bind-api")
+        exclude(group = "jakarta.activation", module = "jakarta.activation-api")
+    }
+
+    // Amazon AWS
+    implementation("com.amazonaws:aws-java-sdk-s3:1.12.326") {
+        exclude(group = "commons-logging", module = "commons-logging")
+    }
+
     // Customized fastqc
     implementation(files("${projectDir}/lib/jbzip2-0.9.jar"))
     implementation(files("${projectDir}/lib/sam-1.103.jar"))
@@ -404,6 +415,10 @@ val integrationTestsMap = mapOf(
     ),
     "galaxyPipeline" to mapOf(
         "tags" to "IntegrationTest & Galaxy & Pipeline",
+        "excludeListeners" to "ca.corefacility.bioinformatics.irida.junit5.listeners.*"
+    ),
+    "fileSystem" to mapOf(
+        "tags" to "IntegrationTest & FileSystem",
         "excludeListeners" to "ca.corefacility.bioinformatics.irida.junit5.listeners.*"
     ),
 )

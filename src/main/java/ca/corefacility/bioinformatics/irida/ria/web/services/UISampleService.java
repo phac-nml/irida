@@ -1,12 +1,16 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+
+import java.io.OutputStreamWriter;
+import java.nio.file.attribute.BasicFileAttributes;
+
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -38,21 +42,29 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
+
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplePairer;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+
+import org.apache.commons.io.IOUtils;
+
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchCriteria;
 import ca.corefacility.bioinformatics.irida.repositories.specification.SearchOperation;
@@ -70,13 +82,10 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.Project
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.ProjectSamplesFilter;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.SampleObject;
 import ca.corefacility.bioinformatics.irida.ria.web.projects.error.SampleMergeException;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplePairer;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 import com.google.common.base.Strings;
@@ -661,10 +670,14 @@ public class UISampleService {
 		Sample sample = sampleService.read(sampleId);
 		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, genomeAssemblyId);
 
-		Path path = genomeAssembly.getFile();
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + genomeAssembly.getLabel() + "\"");
-		Files.copy(path, response.getOutputStream());
-		response.flushBuffer();
+
+		try (InputStream is = genomeAssembly.getFileInputStream(); OutputStream os = response.getOutputStream();) {
+			IOUtils.copy(is, os);
+			os.flush();
+		} catch (IOException e) {
+			throw new IOException("Unable to read inputstream ", e);
+		}
 	}
 
 	/**
@@ -1065,11 +1078,12 @@ public class UISampleService {
 	 * @param objectIds       the {@link SequencingObject} ids
 	 * @param filename        base of the new filename to create
 	 * @param removeOriginals boolean whether to remove the original files
+	 * @param locale          The logged in user's locale
 	 * @return The concatenated sequencing object in a {@link SampleSequencingObjectFileModel}
 	 * @throws ConcatenateException if there was an error concatenating the files
 	 */
-	public List<SampleSequencingObjectFileModel> concatenateSequenceFiles(Long sampleId, Set<Long> objectIds,
-			String filename, boolean removeOriginals) throws ConcatenateException {
+	public SampleConcatenationModel concatenateSequenceFiles(Long sampleId, Set<Long> objectIds,
+			String filename, boolean removeOriginals, Locale locale) throws ConcatenateException {
 		Sample sample = sampleService.read(sampleId);
 		List<SampleSequencingObjectFileModel> sampleSequencingObjectFileModels = new ArrayList<>();
 		Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(objectIds);
@@ -1103,9 +1117,13 @@ public class UISampleService {
 			sampleSequencingObjectFileModels.add(
 					new SampleSequencingObjectFileModel(sequencingObject, firstFileSize, secondFileSize,
 							sequencingObject.getQcEntries()));
-			return sampleSequencingObjectFileModels;
+			return new SampleConcatenationModel(sampleSequencingObjectFileModels, messageSource.getMessage("SampleFilesConcatenate.concatenationSuccess",
+					new Object[] { }, locale));
 		} catch (ConcatenateException ex) {
 			throw new ConcatenateException(ex.getMessage());
+		} catch (StorageException e) {
+			throw new StorageException(messageSource.getMessage("server.SampleFilesConcatenate.error.reading.file",
+					new Object[] { }, locale));
 		}
 	}
 
