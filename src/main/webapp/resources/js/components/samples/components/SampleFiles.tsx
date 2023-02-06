@@ -7,12 +7,7 @@ import { DragUpload } from "../../files/DragUpload";
 import { FileUploadProgress } from "./upload-progress/FileUploadProgress";
 import { SampleFileList } from "./SampleFileList";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
-import {
-  addToSequenceFiles,
-  addToAssemblyFiles,
-  addToFast5Files,
-  fetchFilesForSample,
-} from "../sampleFilesSlice";
+import { fetchFilesForSample } from "../sampleFilesSlice";
 
 import {
   FileUpload,
@@ -35,7 +30,11 @@ export default function SampleFiles() {
     (state) => state.sampleReducer
   );
 
-  const { data: files = {}, isLoading: loading } = useGetSampleFilesQryQuery({
+  const {
+    data: files = {},
+    isLoading: loading,
+    refetch: refetchSampleFiles,
+  } = useGetSampleFilesQryQuery({
     sampleId: sample.identifier,
     projectId,
   });
@@ -131,11 +130,11 @@ export default function SampleFiles() {
           formData,
           config: seqFileUploadConfig,
         })
-          .then((response) => {
+          .then(() => {
             notification.success({
               message: i18n("SampleFiles.successfullyUploaded", "sequence"),
             });
-            dispatch(addToSequenceFiles({ sequenceFiles: response }));
+            refetchSampleFiles();
             setSequenceFiles([]);
           })
           .catch((error) => {
@@ -149,7 +148,7 @@ export default function SampleFiles() {
           });
       }
     },
-    [dispatch, sample.identifier, sequenceFiles]
+    [sequenceFiles, sample.identifier, refetchSampleFiles]
   );
 
   /*
@@ -188,11 +187,11 @@ export default function SampleFiles() {
           formData,
           config: assemblyUploadConfig,
         })
-          .then((response) => {
+          .then(() => {
             notification.success({
               message: i18n("SampleFiles.successfullyUploaded", "assembly"),
             });
-            dispatch(addToAssemblyFiles({ assemblies: response }));
+            refetchSampleFiles();
             setAssemblyFiles([]);
           })
           .catch((error) => {
@@ -206,7 +205,7 @@ export default function SampleFiles() {
           });
       }
     },
-    [dispatch, assemblyFiles, sample.identifier]
+    [assemblyFiles, sample.identifier, refetchSampleFiles]
   );
 
   /*
@@ -245,11 +244,11 @@ export default function SampleFiles() {
           formData,
           config: fast5UploadConfig,
         })
-          .then((response) => {
+          .then(() => {
             notification.success({
               message: i18n("SampleFiles.successfullyUploaded", "fast5"),
             });
-            dispatch(addToFast5Files({ fast5: response }));
+            refetchSampleFiles();
             setFast5Files([]);
           })
           .catch((error) => {
@@ -263,7 +262,7 @@ export default function SampleFiles() {
           });
       }
     },
-    [dispatch, fast5Files, sample.identifier]
+    [fast5Files, sample.identifier, refetchSampleFiles]
   );
 
   React.useEffect(() => {
