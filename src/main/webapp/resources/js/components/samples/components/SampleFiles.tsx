@@ -148,7 +148,7 @@ export default function SampleFiles() {
           });
       }
     },
-    [dispatch, sample.identifier, sequenceFiles]
+    [sequenceFiles, sample.identifier, refetchSampleFiles]
   );
 
   /*
@@ -205,7 +205,7 @@ export default function SampleFiles() {
           });
       }
     },
-    [dispatch, assemblyFiles, sample.identifier]
+    [assemblyFiles, sample.identifier, refetchSampleFiles]
   );
 
   /*
@@ -262,7 +262,7 @@ export default function SampleFiles() {
           });
       }
     },
-    [dispatch, fast5Files, sample.identifier]
+    [fast5Files, sample.identifier, refetchSampleFiles]
   );
 
   React.useEffect(() => {
