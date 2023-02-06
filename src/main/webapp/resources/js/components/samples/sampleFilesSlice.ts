@@ -19,36 +19,6 @@ export const updatedSequencingObjects = createAction(
 );
 
 /**
- * Action to add sequence files to sample
- */
-export const addToSequenceFiles = createAction(
-  `sampleFiles/addToSequenceFiles`,
-  ({ sequenceFiles }) => ({
-    payload: { sequenceFiles },
-  })
-);
-
-/**
- * Action to add assembly files to sample
- */
-export const addToAssemblyFiles = createAction(
-  `sampleFiles/addToAssemblyFiles`,
-  ({ assemblies }) => ({
-    payload: { assemblies },
-  })
-);
-
-/**
- * Action to add fast5 files to sample
- */
-export const addToFast5Files = createAction(
-  `sampleFiles/addToFast5Files`,
-  ({ fast5 }) => ({
-    payload: { fast5 },
-  })
-);
-
-/**
  * Action to add sequencingobject to concatenation selected list
  */
 export const addToConcatenateSelected = createAction(
@@ -122,47 +92,6 @@ const sampleFilesSlice = createSlice({
         state.files = fileTypesWithLength;
       }
       state.loading = false;
-    });
-
-    builder.addCase(addToSequenceFiles, (state, action) => {
-      const seqFiles = action.payload.sequenceFiles;
-
-      seqFiles.map((seqFile: SampleSequencingObject) => {
-        if (seqFile.secondFileSize !== null) {
-          if (!state.files["paired"]) {
-            state.files.paired = [];
-          }
-          state.files.paired = [...state.files.paired, seqFile];
-        } else {
-          if (!state.files["singles"]) {
-            state.files.singles = [];
-          }
-
-          state.files.singles = [...state.files.singles, seqFile];
-        }
-      });
-    });
-
-    builder.addCase(addToAssemblyFiles, (state, action) => {
-      const newAssemblies = action.payload.assemblies;
-
-      newAssemblies.map((newAssembly: SampleGenomeAssembly) => {
-        if (!state.files["assemblies"]) {
-          state.files.assemblies = [];
-        }
-        state.files.assemblies = [...state.files.assemblies, newAssembly];
-      });
-    });
-
-    builder.addCase(addToFast5Files, (state, action) => {
-      const newFast5s = action.payload.fast5;
-
-      newFast5s.map((newFast5: SampleSequencingObject) => {
-        if (!state.files["fast5"]) {
-          state.files.fast5 = [];
-        }
-        state.files.fast5 = [...state.files.fast5, newFast5];
-      });
     });
 
     builder.addCase(updatedSequencingObjects, (state, action) => {
