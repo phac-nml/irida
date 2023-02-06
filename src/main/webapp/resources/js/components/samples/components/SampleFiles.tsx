@@ -130,7 +130,7 @@ export default function SampleFiles() {
           formData,
           config: seqFileUploadConfig,
         })
-          .then((response) => {
+          .then(() => {
             notification.success({
               message: i18n("SampleFiles.successfullyUploaded", "sequence"),
             });
@@ -187,7 +187,7 @@ export default function SampleFiles() {
           formData,
           config: assemblyUploadConfig,
         })
-          .then((response) => {
+          .then(() => {
             notification.success({
               message: i18n("SampleFiles.successfullyUploaded", "assembly"),
             });
@@ -244,7 +244,7 @@ export default function SampleFiles() {
           formData,
           config: fast5UploadConfig,
         })
-          .then((response) => {
+          .then(() => {
             notification.success({
               message: i18n("SampleFiles.successfullyUploaded", "fast5"),
             });
