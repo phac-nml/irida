@@ -47,9 +47,10 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	private final StorageType storageType = StorageType.AWS;
 
 	@Autowired
-	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey, Optional<String> bucketUrl) {
+	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey,
+			Optional<String> bucketUrl) {
 		this.awsCreds = new BasicAWSCredentials(accessKey, secretKey);
-		if(!bucketUrl.isPresent()) {
+		if (!bucketUrl.isPresent()) {
 			this.s3 = AmazonS3ClientBuilder.standard()
 					.withRegion(bucketRegion)
 					.withCredentials(new AWSStaticCredentialsProvider(awsCreds))
@@ -256,7 +257,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
 			try (FileChannel in = new FileInputStream(iridaTemporaryFile.getFile().toFile()).getChannel()) {
-				for (long p = 0, l = in.size(); p < l;) {
+				for (long p = 0, l = in.size(); p < l; ) {
 					p += in.transferTo(p, l - p, out);
 				}
 			} catch (IOException e) {
@@ -352,7 +353,8 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 			 However a smaller amount of bytes may be read, so we set the file pointer accordingly. The code
 			 below uses getBucketAcl. So if bucket permissions aren't set then the else code is used.
 			 */
-			GetObjectRequest rangeObjectRequest = new GetObjectRequest(bucketName, getAwsFileAbsolutePath(file)).withRange(seek, chunk);
+			GetObjectRequest rangeObjectRequest = new GetObjectRequest(bucketName,
+					getAwsFileAbsolutePath(file)).withRange(seek, chunk);
 			try (S3Object s3Object = s3.getObject(rangeObjectRequest);
 					S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
 				byte[] bytes = s3ObjectInputStream.readAllBytes();
@@ -363,10 +365,10 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		} else {
 			try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
 					S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
-							byte[] bytes = new byte[seek.intValue() + chunk.intValue()];
-							s3ObjectInputStream.readNBytes(bytes, 0, seek.intValue() + chunk.intValue());
-							byte[] bytesForRange = Arrays.copyOfRange(bytes, seek.intValue(), seek.intValue() + chunk.intValue());
-							return new FileChunkResponse(new String(bytesForRange), seek + (bytesForRange.length));
+				byte[] bytes = new byte[seek.intValue() + chunk.intValue()];
+				s3ObjectInputStream.readNBytes(bytes, 0, seek.intValue() + chunk.intValue());
+				byte[] bytesForRange = Arrays.copyOfRange(bytes, seek.intValue(), seek.intValue() + chunk.intValue());
+				return new FileChunkResponse(new String(bytesForRange), seek + (bytesForRange.length));
 			} catch (IOException e) {
 				logger.error("Couldn't get chunk from s3 bucket", e);
 			}
@@ -399,7 +401,8 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 				// write a line
 				Files.write(tempFile, "AWS check read/write permissions.\n".getBytes(StandardCharsets.UTF_8));
 				try {
-					s3.putObject(bucketName, getAwsFileAbsolutePath(baseDirectory) + "/" + tempFile.getFileName(), tempFile.toFile());
+					s3.putObject(bucketName, getAwsFileAbsolutePath(baseDirectory) + "/" + tempFile.getFileName(),
+							tempFile.toFile());
 					s3.deleteObject(bucketName, getAwsFileAbsolutePath(baseDirectory) + "/" + tempFile.getFileName());
 					return true;
 				} catch (AmazonServiceException e) {
@@ -434,6 +437,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 
 	/**
 	 * Gets the bucket permissions
+	 *
 	 * @return the permissions on the bucket
 	 */
 	private List<String> getBucketPermissions() {
