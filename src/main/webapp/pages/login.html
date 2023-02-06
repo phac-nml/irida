@@ -4,8 +4,8 @@
     <title th:text="#{LoginPage.title}">THIS IS SOMETHING WRONG</title>
     <script th:inline="javascript">
       window.TL = {
-        _BASE_URL: /*[[@{/}]]*/ "/",
-        emailConfigured: /*[[${emailConfigured}]]*/ false
+        BASE_URL: /*[[@{/}]]*/ "/",
+        emailConfigured: /*[[${emailConfigured}]]*/ false,
       };
     </script>
     <webpacker:css entry="login" />

@@ -3,7 +3,9 @@
 interface IridaWindow extends Window {
   project?: any;
   translations?: Record<string, string>;
-  TL?: any;
+  TL?: {
+    BASE_URL?: string;
+  };
   PAGE?: any;
   IRIDA?: any;
   GALAXY?: any;
