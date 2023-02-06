@@ -159,6 +159,9 @@ public class IridaApiServicesConfig {
 	@Value("${azure.sas.token:#{null}}")
 	private String sasToken;
 
+	@Value("${aws.bucket.url:#{null}}")
+	private String bucketUrl;
+
 
 	@Autowired
 	private IridaPluginConfig.IridaPluginList pipelinePlugins;
@@ -328,7 +331,7 @@ public class IridaApiServicesConfig {
 		IridaFileStorageUtility iridaFileStorageUtility;
 		if (storageType.equals(StorageType.AWS)) {
 			iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(awsBucketName, awsBucketRegion, awsAccessKey,
-					awsSecretKey);
+					awsSecretKey, Optional.ofNullable(bucketUrl));
 		} else if (storageType.equals(StorageType.AZURE)) {
 			iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(containerUrl, sasToken, containerName);
 		} else {

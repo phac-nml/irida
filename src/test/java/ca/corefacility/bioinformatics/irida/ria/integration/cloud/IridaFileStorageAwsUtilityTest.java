@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -66,6 +67,10 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 	private static String ENDPOINT_URL = "http://127.0.0.1:9090/";
 	private static String BUCKET_REGION = "us-east-1";
 
+	private static String AWS_ACCESS_KEY = "ACCESSKEYAWSUSER";
+
+	private static String AWS_SECRET_KEY = "sEcrEtKey";
+
 	@BeforeAll
 	public static void setUp() {
 		s3Client = AmazonS3ClientBuilder.standard()
@@ -76,7 +81,9 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 						new AwsClientBuilder.EndpointConfiguration(ENDPOINT_URL, BUCKET_REGION))
 				.build();
 
-		iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(s3Client, bucketName);
+		iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(bucketName, BUCKET_REGION, AWS_ACCESS_KEY, AWS_SECRET_KEY,
+				Optional.ofNullable(ENDPOINT_URL));
+
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		if (!s3Client.doesBucketExistV2(bucketName)) {

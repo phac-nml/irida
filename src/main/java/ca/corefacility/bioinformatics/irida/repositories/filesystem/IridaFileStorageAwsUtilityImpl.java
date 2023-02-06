@@ -23,8 +23,11 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
@@ -44,20 +47,22 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	private final StorageType storageType = StorageType.AWS;
 
 	@Autowired
-	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey) {
+	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey, Optional<String> bucketUrl) {
 		this.awsCreds = new BasicAWSCredentials(accessKey, secretKey);
-		this.s3 = AmazonS3ClientBuilder.standard()
-				.withRegion(bucketRegion)
-				.withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-				.build();
-		this.bucketName = bucketName;
-	}
-
-	/*
-	This instantiation method is for TESTING ONLY. DO NOT USE IN PRODUCTION. USE THE METHOD ABOVE FOR PRODUCTION.
-	 */
-	public IridaFileStorageAwsUtilityImpl(AmazonS3 s3Client, String bucketName) {
-		this.s3 = s3Client;
+		if(!bucketUrl.isPresent()) {
+			this.s3 = AmazonS3ClientBuilder.standard()
+					.withRegion(bucketRegion)
+					.withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+					.build();
+		} else {
+			this.s3 = AmazonS3ClientBuilder.standard()
+					.withClientConfiguration(new ClientConfiguration().withProtocol(Protocol.HTTP))
+					.withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+					.withEndpointConfiguration(
+							new AwsClientBuilder.EndpointConfiguration(bucketUrl.get(), bucketRegion))
+					.enablePathStyleAccess()
+					.build();
+		}
 		this.bucketName = bucketName;
 	}
 

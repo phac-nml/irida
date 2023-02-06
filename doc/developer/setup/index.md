@@ -172,6 +172,42 @@ See [AWS S3 Bucket Storage Setup](https://docs.aws.amazon.com/AmazonS3/latest/us
 
 There is no other configuration necessary in IRIDA to use cloud based storage. After adding these values to the configuration file you should be able to start up IRIDA, and it will use the cloud based storage that is configured.
 
+There isn't a local storage emulator available from Amazon AWS but we can make use of localstack to develop locally. The best way to make use of localstack is to use it with a docker container.
+
+1) Install docker if you already do not have it installed, docker-compose, and either the aws cli or the awslocal-cli.
+2) Create a directory on your machine to store the files necessary for the localstack docker container
+3) In this directory create a file `docker-compose.yml` and place the following contents in it:
+
+```
+version: "3.8"
+
+services:
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+    environment:
+      - DEBUG=${DEBUG-}
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-}
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+```
+
+4) In the terminal run aws configure to set the access key, secret key, and the region for the bucket. The access key and secret key can be anything as long as they aren't left empty. For the region you can use `us-east-2`
+5) From the directory you created above, in a terminal run `docker-compose -d docker-compose.yml`
+6) Set these values in your config file (eg. irida.conf). The aws.access.key and aws.secret.key are from step 4
+```
+# DEVELOPMENT AWS CONFIG
+aws.bucket.name=demo-bucket
+aws.bucket.region=us-east-2
+aws.access.key=ACCESS_KEY_FROM_ABOVE
+aws.secret.key=SECRET_KEY_FROM_ABOVE
+aws.bucket.url=http://localhost:4566
+```
 
 ### Testing IRIDA
 
