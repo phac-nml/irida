@@ -277,7 +277,7 @@ This command will read the `_config.yml` file in the directory for configuration
 
 ##### Updating IRIDA documentation for release
 
-The IRIDA documentation is automatically published from the current state of the `master` branch of the <https://github.com/phac-nml/irida-documentation> repository.  To update the docs be sure you have a recent copy of the `irida-documentation` repository checked out and on the `development` branch.  The `build-docs.py` script has been built to assist with updating the docs repository.  Below are the steps you should perform to publish a new version of the IRIDA documentation.
+The IRIDA documentation is automatically published from the current state of the `main` branch of the <https://github.com/phac-nml/irida-documentation> repository.  To update the docs be sure you have a recent copy of the `irida-documentation` repository checked out and on the `development` branch.  The `build-docs.py` script has been built to assist with updating the docs repository.  Below are the steps you should perform to publish a new version of the IRIDA documentation.
 
 1. Run the `build-docs.py` script from the root of the `irida` repository.  You must provide it with the path to your `irida-documentation/docs` folder:
 ```bash
@@ -286,15 +286,15 @@ The IRIDA documentation is automatically published from the current state of the
   This will compile the Java documentation into the documentation directory, then update the documentation in `irida-documentation/docs`.
 2. Go to your `irida-documentation` folder.  Create a new branch and commit your changes.
 3. Create a new PR and have another IRIDA developer review the changes.  There will be many changes in the `docs/developer/apidocs` directory that were automatically generated.  These should not require manual review.
-4. Once changes are ready in the `development` branch, they must be merged into `master` for release.  Manually update the `master` branch by merging `development`.   You should also create a tag for the IRIDA release version.
+4. Once changes are ready in the `development` branch, they must be merged into `main` for release.  Manually update the `main` branch by merging `development`.   You should also create a tag for the IRIDA release version.
 ```bash
 git checkout development # checkout the development branch
 git pull # ensure the branch is up to date
-git checkout master # checkout the master branch
+git checkout main # checkout the main branch
 git pull # ensure the branch is up to date
-git merge development # merge development into the master branch
+git merge development # merge development into the main branch
 git tag <the current IRIDA version> # tag the current release for easy retrieval of previous versions
-git push origin master # push the new code to GitHub
+git push origin main # push the new code to GitHub
 git push --tags # push the newly created tag
 ```
 
