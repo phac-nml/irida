@@ -466,16 +466,16 @@ IRIDA's branch structure is loosely based on the [GitFlow](http://nvie.com/posts
 {:.no_toc}
 
 * *development* - This is the main running development branch.  It represents the latest features that have been developed by the team.  Features here should be kept in a state that they can be released at any time.
-* *master* - This is the release branch.  It should be kept at the latest stable release.
+* *main* - This is the release branch.  It should be kept at the latest stable release.
 * feature branches - These should be created by the developers as they work on new additions to the application.  They should be branched off *development* and merged back once the feature is entirely complete and ready to release.
-* hotfix branches - These branches will be created when there is an bug in the master branch which must be fixed immediately.  When these branches are complete they should be merged into both *development* and *master*.
+* hotfix branches - These branches will be created when there is an bug in the main branch which must be fixed immediately.  When these branches are complete they should be merged into both *development* and *main*.
 
 #### Release tags & versioning scheme
 {:.no_toc}
 
 IRIDA uses a [CalVer](https://calver.org/) style versioning scheme.  This means the release version number is based on the year and month that it was released.  The scheme used is `YY.0M.minor`.  First segment is last 2 digits of the year, 2nd is 2 digit month, and 3rd is the number of bugfix release (optional).  For example a major release in January 2019 would be `19.01`.  If a bugfix release was performed for that version, it would be `19.01.1`.
 
-Whenever code is merged into *master*, a release should be created.  To mark the release the person merging the code should create a git tag at the point of the merge.
+Whenever code is merged into *main*, a release should be created.  To mark the release the person merging the code should create a git tag at the point of the merge.
 
 ```bash
 git tag YY.MM.minor
@@ -497,7 +497,7 @@ Example workflow:
 #### Pull requests
 {:.no_toc}
 
-Code is not to be merged into the *development* or *master* branches by the developer who wrote the code.  Instead a merge request should be made on [GitHub][] and assigned to another developer on the project.  The reviewer should look over the code for issues, and anything that needs to be fixed should be mentioned in a comment in the merge request.  Once an issue has been fixed, the developer should push the changes to the merge request branch and mention the commit id in the comment so the reviewer can track the changes.
+Code is not to be merged into the *development* or *main* branches by the developer who wrote the code.  Instead a merge request should be made on [GitHub][] and assigned to another developer on the project.  The reviewer should look over the code for issues, and anything that needs to be fixed should be mentioned in a comment in the merge request.  Once an issue has been fixed, the developer should push the changes to the merge request branch and mention the commit id in the comment so the reviewer can track the changes.
 
 The reviewer of a merge request should ensure the following:
 

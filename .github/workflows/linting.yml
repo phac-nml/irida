@@ -3,9 +3,9 @@ name: Linting
 on:
   pull_request: # Run on all pull requests
   push:
-    branches: # Run on any push to development or master
+    branches: # Run on any push to development or main
       - development
-      - master
+      - main
 
 jobs:
   eslint: # Lint changed JS/TS files
