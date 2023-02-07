@@ -35,6 +35,7 @@ import com.amazonaws.auth.AnonymousAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.CreateBucketRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -64,8 +65,9 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 	private static String AWS_PATH_TO_FASTA_FILE = "opt/irida/data/" + FILENAME;
 	private static IridaFileStorageUtility iridaFileStorageUtility;
 
-	private static String ENDPOINT_URL = "http://127.0.0.1:9090/";
-	private static String BUCKET_REGION = "us-east-1";
+	// The URL of the localstack docker container
+	private static String ENDPOINT_URL = "http://localhost:4566";
+	private static String BUCKET_REGION = "us-east-2";
 
 	private static String AWS_ACCESS_KEY = "ACCESSKEYAWSUSER";
 
@@ -79,16 +81,17 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 						new AnonymousAWSCredentials())) // use any credentials here for mocking
 				.withEndpointConfiguration(
 						new AwsClientBuilder.EndpointConfiguration(ENDPOINT_URL, BUCKET_REGION))
+				.enablePathStyleAccess()
 				.build();
+
+		if (!s3Client.doesBucketExistV2(bucketName)) {
+			s3Client.createBucket(new CreateBucketRequest(bucketName, BUCKET_REGION));
+		}
 
 		iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(bucketName, BUCKET_REGION, AWS_ACCESS_KEY, AWS_SECRET_KEY,
 				Optional.ofNullable(ENDPOINT_URL));
 
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
-
-		if (!s3Client.doesBucketExistV2(bucketName)) {
-			s3Client.createBucket(bucketName);
-		}
 
 		s3Client.putObject(bucketName, AWS_PATH_TO_FASTA_FILE, Paths.get(LOCAL_RESOURCES_FASTA_FILE_PATH).toFile());
 
