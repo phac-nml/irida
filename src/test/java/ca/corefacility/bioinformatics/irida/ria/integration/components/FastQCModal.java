@@ -14,10 +14,10 @@ public class FastQCModal extends AbstractPage {
 	@FindBy(className = "t-fastqc-modal-charts-tab")
 	private WebElement fastQCModalChartsTab;
 
-	@FindBy(className = "t-fastqc-modal-overrepresented-tab")
+	@FindBy(css = "[data-node-key='overrepresented']")
 	private WebElement fastQCModalOverrepresentedSequencesTab;
 
-	@FindBy(className = "t-fastqc-modal-details-tab")
+	@FindBy(css = "[data-node-key='details']")
 	private WebElement fastQCModalDetailsTab;
 
 	@FindBy(className = "t-fastqc-modal")

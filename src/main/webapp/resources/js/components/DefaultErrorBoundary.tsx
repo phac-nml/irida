@@ -7,7 +7,7 @@ import { useRouteError } from "react-router-dom";
  * @constructor
  */
 function DefaultErrorBoundary(): JSX.Element {
-  const error = useRouteError();
+  const error = useRouteError() as string;
   return (
     <Row>
       <Col md={{ span: 12, offset: 6 }} sm={{ span: 24 }}>
