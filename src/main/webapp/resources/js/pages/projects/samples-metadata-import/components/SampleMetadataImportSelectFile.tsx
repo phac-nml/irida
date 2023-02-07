@@ -1,11 +1,16 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { notification, Spin, StepsProps, Typography } from "antd";
+import { notification, Spin, Typography } from "antd";
 import { DragUpload } from "../../../../components/files/DragUpload";
 import { ImportDispatch, useImportDispatch } from "../redux/store";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
 import { RcFile } from "antd/lib/upload/interface";
-import { setHeaders, setMetadata, setProjectId } from "../redux/importReducer";
+import {
+  setHeaders,
+  setMetadata,
+  setProjectId,
+  updateStep,
+} from "../redux/importReducer";
 import * as XLSX from "xlsx";
 import { ErrorAlert } from "../../../../components/alerts/ErrorAlert";
 import { SPACE_XS } from "../../../../styles/spacing";
@@ -23,7 +28,6 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate: NavigateFunction = useNavigate();
   const dispatch: ImportDispatch = useImportDispatch();
-  const [status, setStatus] = React.useState<StepsProps["status"]>("process");
   const [loading, setLoading] = React.useState<boolean>(false);
   const [validationErrors, setValidationErrors] = React.useState<string[]>([]);
 
@@ -107,6 +111,7 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
           }
           setValidationErrors(errors);
           setLoading(false);
+          dispatch(updateStep(0, "error"));
           return false;
         } else {
           const output: MetadataItem[] = cleanRows.map((row, rowIndex) => {
@@ -127,7 +132,7 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
         }
       } catch (error) {
         setLoading(false);
-        setStatus("error");
+        dispatch(updateStep(0, "error"));
         notification.error({
           message: i18n("SampleMetadataImportSelectFile.error", file.name),
         });
