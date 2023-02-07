@@ -174,27 +174,11 @@ There is no other configuration necessary in IRIDA to use cloud based storage. A
 
 There isn't a local storage emulator available from Amazon AWS but we can make use of localstack to develop locally. The best way to make use of localstack is to use it with a docker container.
 
-1) Install `docker`, `docker-compose`, and the `awslocal-cli`.
-2) Create a directory on your machine to store the files necessary for the localstack docker container
-3) In this directory create a file `docker-compose.yml` and place the following contents in it:
-
-```
-version: '3.8'
-services:
-  localstack:
-    image: localstack/localstack:latest
-    environment:
-      - DEFAULT_REGION=ap-northeast-2
-      - EDGE_PORT=4566
-      - SERVICES=s3,lambda,logs
-    ports:
-      - '4566-4583:4566-4583'
-```
-
-4) In the terminal run aws configure to set the access key, secret key, and the region for the bucket. The access key and secret key can be anything as long as they aren't left empty. For the region you can use `us-east-2`
-5) From the directory you created above, in a terminal run `docker-compose up -d`
-6) Create a bucket `awslocal s3api create-bucket --bucket BUCKET_NAME`
-7) Set these values in your config file (eg. irida.conf). The aws.access.key and aws.secret.key are from step 4
+1) Install `docker` and the `awslocal-cli`.
+2) In the terminal run `aws configure` to set the access key, secret key, and the region for the bucket. The access key and secret key can be anything as long as they aren't left empty. For the region you can use `us-east-2`
+3) In the terminal run `docker run -d -p 4566-4583:4566-4583 -e "DEFAULT_REGION=us-east-2" -e "EDGE_PORT=4566" -e "SERVICES=s3,logs" localstack/localstack:latest`.
+4) Create a bucket `awslocal s3api create-bucket --bucket BUCKET_NAME`
+5) Set these values in your config file (eg. irida.conf). The aws.access.key and aws.secret.key are from step 4
 
 ```
 irida.storage.type=aws
@@ -206,6 +190,8 @@ aws.access.key=ACCESS_KEY_FROM_ABOVE
 aws.secret.key=SECRET_KEY_FROM_ABOVE
 aws.bucket.url=http://localhost:4566
 ```
+
+**Note:** If the docker container is killed or machine is restarted you will need to run steps 3 and 4 again.
 
 ### Testing IRIDA
 
