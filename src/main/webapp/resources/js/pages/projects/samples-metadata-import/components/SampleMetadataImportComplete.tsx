@@ -1,10 +1,15 @@
 import React, { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Result } from "antd";
-import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import { MetadataItem } from "../../../../apis/projects/samples";
-import { ImportState, useImportSelector } from "../redux/store";
+import {
+  ImportDispatch,
+  ImportState,
+  useImportDispatch,
+  useImportSelector,
+} from "../redux/store";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
+import { updateStep } from "../redux/importReducer";
 
 /**
  * React component that displays Step #4 of the Sample Metadata Uploader.
@@ -19,6 +24,11 @@ export function SampleMetadataImportComplete(): JSX.Element {
     metadataValidateDetails,
     metadataSaveDetails,
   } = useImportSelector((state: ImportState) => state.importReducer);
+  const dispatch: ImportDispatch = useImportDispatch();
+
+  React.useEffect(() => {
+    dispatch(updateStep(3, "process"));
+  }, [dispatch]);
 
   const filteredSamples = React.useCallback(
     (metadataItem: MetadataItem, isSampleFound: boolean) => {
@@ -76,22 +86,18 @@ export function SampleMetadataImportComplete(): JSX.Element {
   const navigate: NavigateFunction = useNavigate();
 
   return (
-    <SampleMetadataImportWizard current={3}>
-      <Result
-        status="success"
-        title={i18n("SampleMetadataImportComplete.result.title")}
-        subTitle={stats}
-        extra={
-          <Button
-            type="primary"
-            onClick={() =>
-              navigate(`/${projectId}/sample-metadata/upload/file`)
-            }
-          >
-            {i18n("SampleMetadataImportComplete.button.upload")}
-          </Button>
-        }
-      />
-    </SampleMetadataImportWizard>
+    <Result
+      status="success"
+      title={i18n("SampleMetadataImportComplete.result.title")}
+      subTitle={stats}
+      extra={
+        <Button
+          type="primary"
+          onClick={() => navigate(`/${projectId}/sample-metadata/upload/file`)}
+        >
+          {i18n("SampleMetadataImportComplete.button.upload")}
+        </Button>
+      }
+    />
   );
 }

@@ -25,6 +25,8 @@ import { Restriction } from "../../../../utilities/restriction-utilities";
 import { createMetadataFields, generatePromiseList } from "./import-utilities";
 import { MetadataField } from "../../../../types/irida";
 
+export type StepStatus = "wait" | "process" | "finish" | "error";
+
 export interface MetadataHeaderItem {
   name: string;
   existingRestriction: Restriction | undefined;
@@ -60,6 +62,8 @@ export interface InitialState {
   metadataValidateDetails: Record<string, MetadataValidateDetailsItem>;
   metadataSaveDetails: Record<string, MetadataSaveDetailsItem>;
   percentComplete: number;
+  stepCurrent: number;
+  stepStatus: StepStatus;
 }
 
 const initialState: InitialState = {
@@ -70,6 +74,8 @@ const initialState: InitialState = {
   metadataValidateDetails: {},
   metadataSaveDetails: {},
   percentComplete: 0,
+  stepCurrent: 0,
+  stepStatus: "process",
 };
 
 /*
@@ -315,6 +321,17 @@ export const updatePercentComplete = createAction(
 );
 
 /*
+Redux action for updating the step.
+For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
+ */
+export const updateStep = createAction(
+  `importReducer/updateStep`,
+  (stepCurrent: number, stepStatus: StepStatus) => ({
+    payload: { stepCurrent, stepStatus },
+  })
+);
+
+/*
 Redux reducer for project metadata.
 For more information on redux reducers see: https://redux-toolkit.js.org/api/createReducer
  */
@@ -330,6 +347,8 @@ export const importReducer = createReducer(initialState, (builder) => {
     state.metadataValidateDetails = {};
     state.metadataSaveDetails = {};
     state.percentComplete = 0;
+    state.stepCurrent = 0;
+    state.stepStatus = "process";
   });
   builder.addCase(setMetadata, (state, action) => {
     state.metadata = action.payload.metadata;
@@ -349,5 +368,9 @@ export const importReducer = createReducer(initialState, (builder) => {
   });
   builder.addCase(updatePercentComplete, (state, action) => {
     state.percentComplete = state.percentComplete + action.payload.amount;
+  });
+  builder.addCase(updateStep, (state, action) => {
+    state.stepCurrent = action.payload.stepCurrent;
+    state.stepStatus = action.payload.stepStatus;
   });
 });

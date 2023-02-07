@@ -10,7 +10,6 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -19,6 +18,7 @@ import {
   MetadataHeaderItem,
   setSampleNameColumn,
   updateHeaders,
+  updateStep,
 } from "../redux/importReducer";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
 import {
@@ -58,10 +58,11 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
   const updatedHeaders = useMemo(() => [...headers], [headers]);
 
   React.useEffect(() => {
+    dispatch(updateStep(1, "process"));
     getMetadataRestrictions().then((data) => {
       setRestrictions(data);
     });
-  }, []);
+  }, [dispatch]);
 
   const onSubmit = async () => {
     if (projectId && updatedSampleNameColumn) {
@@ -142,49 +143,45 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
   ];
 
   return (
-    <SampleMetadataImportWizard current={1}>
-      <Space size="large" direction="vertical" style={{ width: "100%" }}>
-        <Space size="small" direction="vertical" style={{ width: "100%" }}>
-          <Typography.Text strong>
-            {i18n("SampleMetadataImportMapColumns.form.sampleNameColumn")}
-          </Typography.Text>
-          <Select
-            autoFocus
-            style={{ width: 300 }}
-            value={updatedSampleNameColumn}
-            onChange={onSampleNameColumnChange}
-            className="t-metadata-uploader-sample-name-column-select"
-          >
-            {headers.map((header) => (
-              <Select.Option key={header.name} value={header.name}>
-                {header.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </Space>
-        <Space size="small" direction="vertical" style={{ width: "100%" }}>
-          <Typography.Text strong>
-            {i18n("SampleMetadataImportMapColumns.form.metadataColumns")}
-          </Typography.Text>
-          <Table
-            className="t-metadata-uploader-columns-table"
-            rowKey={(row) => row.rowKey}
-            columns={columns}
-            dataSource={dataSource}
-            pagination={false}
-            scroll={{ y: 600 }}
-            locale={{
-              emptyText: (
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description={i18n(
-                    "SampleMetadataImportMapColumns.table.empty"
-                  )}
-                />
-              ),
-            }}
-          />
-        </Space>
+    <Space size="large" direction="vertical" style={{ width: "100%" }}>
+      <Space size="small" direction="vertical" style={{ width: "100%" }}>
+        <Typography.Text strong>
+          {i18n("SampleMetadataImportMapColumns.form.sampleNameColumn")}
+        </Typography.Text>
+        <Select
+          autoFocus
+          style={{ width: 300 }}
+          value={updatedSampleNameColumn}
+          onChange={onSampleNameColumnChange}
+          className="t-metadata-uploader-sample-name-column-select"
+        >
+          {headers.map((header) => (
+            <Select.Option key={header.name} value={header.name}>
+              {header.name}
+            </Select.Option>
+          ))}
+        </Select>
+      </Space>
+      <Space size="small" direction="vertical" style={{ width: "100%" }}>
+        <Typography.Text strong>
+          {i18n("SampleMetadataImportMapColumns.form.metadataColumns")}
+        </Typography.Text>
+        <Table
+          className="t-metadata-uploader-columns-table"
+          rowKey={(row) => row.rowKey}
+          columns={columns}
+          dataSource={dataSource}
+          pagination={false}
+          scroll={{ y: 600 }}
+          locale={{
+            emptyText: (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={i18n("SampleMetadataImportMapColumns.table.empty")}
+              />
+            ),
+          }}
+        />
       </Space>
       <div style={{ display: "flex" }}>
         <Button
@@ -204,6 +201,6 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
           <IconArrowRight />
         </Button>
       </div>
-    </SampleMetadataImportWizard>
+    </Space>
   );
 }
