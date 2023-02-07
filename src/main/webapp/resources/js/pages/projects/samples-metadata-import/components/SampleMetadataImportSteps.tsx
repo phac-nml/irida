@@ -10,11 +10,15 @@ const { Step } = Steps;
  * @constructor
  */
 export function SampleMetadataImportSteps(): JSX.Element {
-  const { stepCurrent, stepStatus, percentComplete } = useImportSelector(
+  const { step, status, percentComplete } = useImportSelector(
     (state: ImportState) => state.importReducer
   );
   return (
-    <Steps current={stepCurrent} status={stepStatus} percent={percentComplete}>
+    <Steps
+      current={step}
+      status={status}
+      percent={step === 2 ? percentComplete : undefined}
+    >
       <Step title={i18n("SampleMetadataImportSteps.step1")} />
       <Step title={i18n("SampleMetadataImportSteps.step2")} />
       <Step title={i18n("SampleMetadataImportSteps.step3")} />

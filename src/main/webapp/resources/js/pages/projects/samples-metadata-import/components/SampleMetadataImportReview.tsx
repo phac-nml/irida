@@ -20,7 +20,7 @@ import {
   IconExclamationCircle,
 } from "../../../../components/icons/Icons";
 import styled from "styled-components";
-import { saveMetadata, updateStep } from "../redux/importReducer";
+import { saveMetadata, updateStatus, updateStep } from "../redux/importReducer";
 import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
 import {
@@ -93,10 +93,6 @@ export function SampleMetadataImportReview(): JSX.Element {
       ),
     }),
   };
-
-  React.useEffect(() => {
-    dispatch(updateStep(2, "process"));
-  }, [dispatch]);
 
   React.useEffect(() => {
     setProgress(percentComplete);
@@ -218,9 +214,11 @@ export function SampleMetadataImportReview(): JSX.Element {
           ).length;
           if (errorCount === 0) {
             navigate(`/${projectId}/sample-metadata/upload/complete`);
+            dispatch(updateStep(3));
+            dispatch(updateStatus("process"));
           } else {
             setLoading(false);
-            dispatch(updateStep(2, "error"));
+            dispatch(updateStatus("error"));
             notification.error({
               message: i18n(
                 "SampleMetadataImportReview.notification.partialError",
@@ -231,7 +229,7 @@ export function SampleMetadataImportReview(): JSX.Element {
         })
         .catch((payload) => {
           setLoading(false);
-          dispatch(updateStep(2, "error"));
+          dispatch(updateStatus("error"));
           notification.error({
             message: payload,
             className: "t-metadata-uploader-review-error",
@@ -335,7 +333,11 @@ export function SampleMetadataImportReview(): JSX.Element {
         <Button
           className="t-metadata-uploader-column-button"
           icon={<IconArrowLeft />}
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            navigate(-1);
+            dispatch(updateStep(1));
+            dispatch(updateStatus("process"));
+          }}
           disabled={loading}
         >
           {i18n("SampleMetadataImportReview.button.back")}

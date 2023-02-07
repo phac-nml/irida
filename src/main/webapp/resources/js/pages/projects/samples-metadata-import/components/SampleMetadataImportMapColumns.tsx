@@ -18,6 +18,7 @@ import {
   MetadataHeaderItem,
   setSampleNameColumn,
   updateHeaders,
+  updateStatus,
   updateStep,
 } from "../redux/importReducer";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
@@ -58,11 +59,10 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
   const updatedHeaders = useMemo(() => [...headers], [headers]);
 
   React.useEffect(() => {
-    dispatch(updateStep(1, "process"));
     getMetadataRestrictions().then((data) => {
       setRestrictions(data);
     });
-  }, [dispatch]);
+  }, []);
 
   const onSubmit = async () => {
     if (projectId && updatedSampleNameColumn) {
@@ -72,6 +72,8 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
       );
       await dispatch(updateHeaders(updatedHeaders));
       navigate(`/${projectId}/sample-metadata/upload/review`);
+      dispatch(updateStep(2));
+      dispatch(updateStatus("process"));
     }
   };
 
@@ -187,7 +189,11 @@ export function SampleMetadataImportMapColumns(): JSX.Element {
         <Button
           className="t-metadata-uploader-file-button"
           icon={<IconArrowLeft />}
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            navigate(-1);
+            dispatch(updateStep(0));
+            dispatch(updateStatus("process"));
+          }}
         >
           {i18n("SampleMetadataImportMapColumns.button.back")}
         </Button>

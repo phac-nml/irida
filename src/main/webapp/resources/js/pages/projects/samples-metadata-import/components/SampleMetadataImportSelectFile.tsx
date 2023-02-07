@@ -9,6 +9,7 @@ import {
   setHeaders,
   setMetadata,
   setProjectId,
+  updateStatus,
   updateStep,
 } from "../redux/importReducer";
 import * as XLSX from "xlsx";
@@ -60,6 +61,8 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
     accept: ".xls,.xlsx,.csv",
     customRequest: () => {
       navigate(`/${projectId}/sample-metadata/upload/columns`);
+      dispatch(updateStep(1));
+      dispatch(updateStatus("process"));
     },
     beforeUpload: async (file: RcFile) => {
       try {
@@ -111,7 +114,7 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
           }
           setValidationErrors(errors);
           setLoading(false);
-          dispatch(updateStep(0, "error"));
+          dispatch(updateStatus("error"));
           return false;
         } else {
           const output: MetadataItem[] = cleanRows.map((row, rowIndex) => {
@@ -132,7 +135,7 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
         }
       } catch (error) {
         setLoading(false);
-        dispatch(updateStep(0, "error"));
+        dispatch(updateStatus("error"));
         notification.error({
           message: i18n("SampleMetadataImportSelectFile.error", file.name),
         });

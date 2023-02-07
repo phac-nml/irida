@@ -9,7 +9,7 @@ import {
   useImportSelector,
 } from "../redux/store";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
-import { updateStep } from "../redux/importReducer";
+import { updateStatus, updateStep } from "../redux/importReducer";
 
 /**
  * React component that displays Step #4 of the Sample Metadata Uploader.
@@ -25,10 +25,6 @@ export function SampleMetadataImportComplete(): JSX.Element {
     metadataSaveDetails,
   } = useImportSelector((state: ImportState) => state.importReducer);
   const dispatch: ImportDispatch = useImportDispatch();
-
-  React.useEffect(() => {
-    dispatch(updateStep(3, "process"));
-  }, [dispatch]);
 
   const filteredSamples = React.useCallback(
     (metadataItem: MetadataItem, isSampleFound: boolean) => {
@@ -93,7 +89,11 @@ export function SampleMetadataImportComplete(): JSX.Element {
       extra={
         <Button
           type="primary"
-          onClick={() => navigate(`/${projectId}/sample-metadata/upload/file`)}
+          onClick={() => {
+            navigate(`/${projectId}/sample-metadata/upload/file`);
+            dispatch(updateStep(0));
+            dispatch(updateStatus("process"));
+          }}
         >
           {i18n("SampleMetadataImportComplete.button.upload")}
         </Button>
