@@ -354,11 +354,11 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 			 below uses getBucketAcl. So if bucket permissions aren't set then the else code is used.
 			 */
 			GetObjectRequest rangeObjectRequest = new GetObjectRequest(bucketName,
-					getAwsFileAbsolutePath(file)).withRange(seek, chunk);
+					getAwsFileAbsolutePath(file)).withRange(seek, (chunk+seek) - 1);
 			try (S3Object s3Object = s3.getObject(rangeObjectRequest);
 					S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
 				byte[] bytes = s3ObjectInputStream.readAllBytes();
-				return new FileChunkResponse(new String(bytes), seek + (bytes.length - 1));
+				return new FileChunkResponse(new String(bytes), seek + (bytes.length));
 			} catch (IOException e) {
 				logger.error("Couldn't get chunk from s3 bucket", e);
 			}
