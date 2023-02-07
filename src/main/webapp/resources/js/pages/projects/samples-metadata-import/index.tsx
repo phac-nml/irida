@@ -20,7 +20,7 @@ function SampleMetadataImport(): JSX.Element {
         <Routes>
           <Route
             path="/:projectId/sample-metadata/upload"
-            element={<SampleMetadataImportWizard current={0} />}
+            element={<SampleMetadataImportWizard />}
           >
             <Route
               path="/:projectId/sample-metadata/upload/file"
