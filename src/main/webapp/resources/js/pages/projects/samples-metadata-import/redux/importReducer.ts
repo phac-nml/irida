@@ -24,8 +24,9 @@ import {
 import { Restriction } from "../../../../utilities/restriction-utilities";
 import { createMetadataFields, generatePromiseList } from "./import-utilities";
 import { MetadataField } from "../../../../types/irida";
+import { StepsProps } from "antd";
 
-export type Status = "wait" | "process" | "finish" | "error";
+export type Status = StepsProps["status"];
 
 export interface MetadataHeaderItem {
   name: string;
