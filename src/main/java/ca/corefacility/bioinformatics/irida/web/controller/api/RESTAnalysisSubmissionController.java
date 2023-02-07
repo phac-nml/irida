@@ -29,13 +29,15 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -321,16 +323,21 @@ public class RESTAnalysisSubmissionController extends RESTGenericController<Anal
 	 *
 	 * @param submissionId The {@link AnalysisSubmission} id
 	 * @param fileId       The {@link AnalysisOutputFile} id
-	 * @return a {@link FileSystemResource} containing the contents of the {@link AnalysisOutputFile}.
+	 * @return a {@link InputStreamResource} containing the {@link InputStream} of the {@link AnalysisOutputFile}.
 	 */
 	@Hidden
 	@RequestMapping(value = "/{submissionId}/analysis/file/{fileId}", produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
-	public FileSystemResource getAnalysisOutputFileContents(@PathVariable Long submissionId,
+	public InputStreamResource getAnalysisOutputFileContents(@PathVariable Long submissionId,
 			@PathVariable Long fileId) {
 		AnalysisOutputFile analysisOutputFile = getOutputFileForSubmission(submissionId, fileId);
-		return new FileSystemResource(analysisOutputFile.getFile()
-				.toFile());
+		/*
+		 The inputstream is closed in the underlying class (ResourceHttpMessageConverter) so we don't need to close it here.
+		 See below links for more details
+		 https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/converter/ResourceHttpMessageConverter.html
+		 https://github.com/spring-projects/spring-framework/blob/main/spring-web/src/main/java/org/springframework/http/converter/ResourceHttpMessageConverter.java#L139
+		 */
+		return new InputStreamResource(analysisOutputFile.getFileInputStream());
 	}
 
 	/**

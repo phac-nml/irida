@@ -5,6 +5,8 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,10 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	@Autowired
 	private ApplicationContext applicationContext;
+
+	@Autowired
+	private IridaFileStorageUtility iridaFileStorageUtility;
+
 
 	@Bean
 	public RelativePathTranslatorListener relativePathTranslatorListener(
@@ -91,11 +97,8 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	private Path getExistingPathOrThrow(String directory) {
 		Path baseDirectory = Paths.get(directory);
-		if (!Files.exists(baseDirectory)) {
-			throw new IllegalStateException(
-					String.format("Cannot continue startup; base directory [%s] does not exist!",
-							baseDirectory.toString()));
-		} else {
+		boolean baseDirectoryWritable = iridaFileStorageUtility.checkWriteAccess(baseDirectory);
+		if (baseDirectoryWritable) {
 			logger.info(String.format(
 					"Using specified existing directory at [%s]. The directory *will not* be removed at shutdown time.",
 					baseDirectory.toString()));

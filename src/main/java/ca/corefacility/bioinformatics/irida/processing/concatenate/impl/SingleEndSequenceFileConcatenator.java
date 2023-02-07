@@ -5,18 +5,24 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.concatenate.SequencingObjectConcatenator;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+
 /**
  * {@link SequenceFilePairConcatenator} for {@link SingleEndSequenceFile}s
  */
 public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatenator<SingleEndSequenceFile> {
 
-	public SingleEndSequenceFileConcatenator() {
+	private IridaFileStorageUtility iridaFileStorageUtility;
+
+	public SingleEndSequenceFileConcatenator(IridaFileStorageUtility iridaFileStorageUtility) {
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	/**
@@ -26,9 +32,13 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 	public SingleEndSequenceFile concatenateFiles(List<? extends SequencingObject> toConcatenate, String filename)
 			throws ConcatenateException {
 		Path tempFile;
+		String extension = null;
 
-		String extension = getFileExtension(toConcatenate);
-
+		try {
+			extension = IridaFiles.getFileExtension(toConcatenate);
+		} catch (IOException e) {
+			throw new ConcatenateException("Could not get file extension", e);
+		}
 		// create the filename with extension
 		filename = filename + "." + extension;
 		try {
@@ -49,7 +59,11 @@ public class SingleEndSequenceFileConcatenator extends SequencingObjectConcatena
 
 			SequenceFile forwardSequenceFile = single.getSequenceFile();
 
-			appendToFile(tempFile, forwardSequenceFile);
+			try {
+				iridaFileStorageUtility.appendToFile(tempFile, forwardSequenceFile);
+			} catch (IOException e) {
+				throw new ConcatenateException("Could not append file", e);
+			}
 		}
 
 		// create the new sequencefile and object

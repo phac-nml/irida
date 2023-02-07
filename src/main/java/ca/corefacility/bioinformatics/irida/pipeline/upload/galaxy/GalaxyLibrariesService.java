@@ -57,23 +57,26 @@ public class GalaxyLibrariesService {
 
 	/**
 	 * Builds a new GalaxyLibrariesService with the given LibrariesClient.
-	 * 
+	 *
 	 * @param librariesClient      The LibrariesClient used to interact with Galaxy libraries.
 	 * @param libraryPollingTime   The time (in seconds) for polling a Galaxy library.
 	 * @param libraryUploadTimeout The timeout (in seconds) for waiting for files to be uploaded to a library.
-	 * @param threadPoolSize       The thread pool size for parallel polling of Galaxy to check if uploads are finished.
+	 * @param threadPoolSize       The thread pool size for parallel polling of Galaxy to check if uploads are
+	 *                             finished.
 	 */
 	public GalaxyLibrariesService(LibrariesClient librariesClient, final int libraryPollingTime,
 			final int libraryUploadTimeout, final int threadPoolSize) {
 		checkNotNull(librariesClient, "librariesClient is null");
 		checkArgument(libraryPollingTime > 0, "libraryPollingTime=" + libraryPollingTime + " must be positive");
 		checkArgument(libraryUploadTimeout > 0, "libraryUploadTimeout=" + libraryUploadTimeout + " must be positive");
-		checkArgument(libraryUploadTimeout > libraryPollingTime, "libraryUploadTimeout=" + libraryUploadTimeout
-				+ " must be greater then libraryPollingTime=" + libraryPollingTime);
+		checkArgument(libraryUploadTimeout > libraryPollingTime,
+				"libraryUploadTimeout=" + libraryUploadTimeout + " must be greater then libraryPollingTime="
+						+ libraryPollingTime);
 		checkArgument(threadPoolSize > 0, "threadPoolSize=" + threadPoolSize + " must be positive");
 
-		logger.debug("Setting libraryPollingTime=" + libraryPollingTime + ", libraryUploadTimeout="
-				+ libraryUploadTimeout + ", threadPoolSize=" + threadPoolSize);
+		logger.debug(
+				"Setting libraryPollingTime=" + libraryPollingTime + ", libraryUploadTimeout=" + libraryUploadTimeout
+						+ ", threadPoolSize=" + threadPoolSize);
 
 		this.librariesClient = librariesClient;
 		this.libraryPollingTime = libraryPollingTime;
@@ -84,7 +87,7 @@ public class GalaxyLibrariesService {
 
 	/**
 	 * Builds a new empty library with the given name.
-	 * 
+	 *
 	 * @param libraryName The name of the new library.
 	 * @return A Library object for the newly created library.
 	 * @throws CreateLibraryException If no library could be created.
@@ -108,7 +111,7 @@ public class GalaxyLibrariesService {
 
 	/**
 	 * Uploads the given file to a library with the given information.
-	 * 
+	 *
 	 * @param path        The path of the file to upload.
 	 * @param fileType    The type of the file to upload.
 	 * @param library     The library to upload the file into.
@@ -128,17 +131,39 @@ public class GalaxyLibrariesService {
 
 		try {
 			LibraryContent rootContent = librariesClient.getRootFolder(library.getId());
-			FilesystemPathsLibraryUpload upload = new FilesystemPathsLibraryUpload();
-			upload.setFolderId(rootContent.getId());
+			if (dataStorage.equals(DataStorage.LOCAL)) {
+				FilesystemPathsLibraryUpload upload = new FilesystemPathsLibraryUpload();
+				upload.setFolderId(rootContent.getId());
+				upload.setContent(file.getAbsolutePath());
+				upload.setName(file.getName());
+				upload.setLinkData(true);
+				upload.setFileType(fileType.toString());
+				GalaxyObject uploadObject = librariesClient.uploadFilesystemPaths(library.getId(), upload);
+				return uploadObject.getId();
+			} else {
+				// If the dataStorage isn't local we upload the file to the library instead of linking
+				FileLibraryUpload fileLibraryUpload = new FileLibraryUpload();
+				fileLibraryUpload.setContent(file.getAbsolutePath());
+				fileLibraryUpload.setName(file.getName());
+				fileLibraryUpload.setFolderId(rootContent.getId());
+				fileLibraryUpload.setFile(path.toFile());
+				fileLibraryUpload.setFileType(fileType.toString());
 
-			upload.setContent(file.getAbsolutePath());
-			upload.setName(file.getName());
-			upload.setLinkData(DataStorage.LOCAL.equals(dataStorage));
-			upload.setFileType(fileType.toString());
+				ClientResponse clientResponse = librariesClient.uploadFile(library.getId(), fileLibraryUpload);
 
-			GalaxyObject uploadObject = librariesClient.uploadFilesystemPaths(library.getId(), upload);
-
-			return uploadObject.getId();
+				if (clientResponse == null) {
+					throw new UploadException(
+							"Could not upload " + file + " to library " + library.getId() + " ClientResponse is null");
+				} else if (ClientResponse.Status.OK.getStatusCode() != clientResponse.getStatusInfo().getStatusCode()) {
+					String message = "Could not upload " + file + " to library " + library.getId() + " ClientResponse: "
+							+ clientResponse.getStatusInfo() + " " + clientResponse.getEntity(String.class);
+					logger.error(message);
+					throw new UploadException(message);
+				} else {
+					List<Map<String, String>> entity = clientResponse.getEntity(List.class);
+					return entity.get(0).get("id");
+				}
+			}
 		} catch (RuntimeException e) {
 			throw new UploadException(e);
 		}
@@ -146,7 +171,7 @@ public class GalaxyLibrariesService {
 
 	/**
 	 * Uploads a set of files to a given library, waiting until all uploads are complete.
-	 * 
+	 *
 	 * @param paths       The set of paths to upload.
 	 * @param library     The library to initially upload the file into.
 	 * @param dataStorage The type of DataStorage strategy to use.
@@ -187,10 +212,11 @@ public class GalaxyLibrariesService {
 							libraryDataset = librariesClient.showDataset(library.getId(), datasetLibraryId);
 
 							if (LIBRARY_FAIL_STATES.contains(libraryDataset.getState())) {
-								throw new UploadErrorException("Error: upload to Galaxy library id=" + library.getId()
-										+ " name=" + library.getName() + " for dataset id=" + datasetLibraryId
-										+ " name=" + libraryDataset.getName() + " failed with state="
-										+ libraryDataset.getState());
+								throw new UploadErrorException(
+										"Error: upload to Galaxy library id=" + library.getId() + " name="
+												+ library.getName() + " for dataset id=" + datasetLibraryId + " name="
+												+ libraryDataset.getName() + " failed with state="
+												+ libraryDataset.getState());
 							}
 						}
 					}
@@ -223,7 +249,7 @@ public class GalaxyLibrariesService {
 
 	/**
 	 * Given a {@link Path}, gets the {@link InputFileType} for the data type to upload to Galaxy.
-	 * 
+	 *
 	 * @param path The path to upload.
 	 * @return The {@link InputFileType} for the data to upload to Galaxy.
 	 * @throws IOException If there was an error reading the file to determine the file type.
@@ -236,7 +262,7 @@ public class GalaxyLibrariesService {
 
 	/**
 	 * Deletes the Galaxy library with the given id.
-	 * 
+	 *
 	 * @param libraryId The id of the library to delete.
 	 * @throws DeleteGalaxyObjectFailedException If there was a failure to delete the library.
 	 */
@@ -244,8 +270,9 @@ public class GalaxyLibrariesService {
 		try {
 			ClientResponse response = librariesClient.deleteLibraryRequest(libraryId);
 			if (ClientResponse.Status.OK.getStatusCode() != response.getStatusInfo().getStatusCode()) {
-				throw new DeleteGalaxyObjectFailedException("Could not delete library with id " + libraryId
-						+ ", status=" + response.getStatusInfo() + ", content=" + response.getEntity(String.class));
+				throw new DeleteGalaxyObjectFailedException(
+						"Could not delete library with id " + libraryId + ", status=" + response.getStatusInfo()
+								+ ", content=" + response.getEntity(String.class));
 			}
 		} catch (RuntimeException e) {
 			throw new DeleteGalaxyObjectFailedException("Error while deleting library with id " + libraryId, e);

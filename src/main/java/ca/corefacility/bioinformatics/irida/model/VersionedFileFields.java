@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Version;
 
+
 /**
  * An instance of a class may have a property with {@link Version} or may have
  * an internally managed version representation. This interface exposes that
@@ -26,4 +27,5 @@ public interface VersionedFileFields<VersionType extends Serializable> {
 	 * Internally modify the file revision number to something new.
 	 */
 	public void incrementFileRevisionNumber();
+
 }

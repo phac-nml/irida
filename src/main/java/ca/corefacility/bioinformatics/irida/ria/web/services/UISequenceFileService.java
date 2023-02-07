@@ -1,11 +1,12 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -97,9 +98,14 @@ public class UISequenceFileService {
 			throws IOException {
 		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
 		SequenceFile sequenceFile = sequencingObject.getFileWithId(sequenceFileId);
-		Path path = sequenceFile.getFile();
+
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + sequenceFile.getLabel() + "\"");
-		Files.copy(path, response.getOutputStream());
-		response.flushBuffer();
+
+		try (InputStream is = sequenceFile.getFileInputStream(); OutputStream os = response.getOutputStream();) {
+			IOUtils.copy(is, os);
+			os.flush();
+		} catch (IOException e) {
+			throw new IOException("Unable to read inputstream ", e);
+		}
 	}
 }

@@ -2,6 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web.analysis;
 
 import java.security.Principal;
 
+
+import javax.ws.rs.core.MediaType;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -65,7 +68,7 @@ public class AnalysesTableAjaxControllerTest {
 
 	@Test
 	public void testGetAnalysisStates() throws Exception {
-		mockMvc.perform(get("/ajax/analyses/states").principal(mock(Principal.class)))
+		mockMvc.perform(get("/ajax/analyses/states").accept(MediaType.APPLICATION_JSON).principal(mock(Principal.class)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$[0].value", is("NEW")))
 				.andExpect(jsonPath("$[1].value", is("DOWNLOADING")))
@@ -83,7 +86,7 @@ public class AnalysesTableAjaxControllerTest {
 
 	@Test
 	public void testGetWorkflowTypes() throws Exception {
-		mockMvc.perform(get("/ajax/analyses/types").principal(mock(Principal.class)))
+		mockMvc.perform(get("/ajax/analyses/types").accept(MediaType.APPLICATION_JSON).principal(mock(Principal.class)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$[0].value", is("Pipeline 1")))
 				.andExpect(jsonPath("$[1].value", is("Pipeline 2")));

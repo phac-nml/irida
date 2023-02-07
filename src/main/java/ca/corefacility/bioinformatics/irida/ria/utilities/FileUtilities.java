@@ -1,9 +1,9 @@
 package ca.corefacility.bioinformatics.irida.ria.utilities;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
+
 import java.nio.file.Path;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,11 +16,12 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.*;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.ProjectSampleAnalysisOutputInfo;
@@ -29,6 +30,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelCol;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelData;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelHeader;
 import ca.corefacility.bioinformatics.irida.ria.web.dto.ExcelRow;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.github.pjfanning.xlsx.StreamingReader;
 import com.github.pjfanning.xlsx.impl.StreamingCell;
@@ -49,9 +51,9 @@ public class FileUtilities {
 	/**
 	 * Utility method for download a zip file containing all output files from an analysis.
 	 *
-	 * @param response {@link HttpServletResponse}
-	 * @param fileName Name fo the file to create
-	 * @param files    Set of {@link AnalysisOutputFile}
+	 * @param response                {@link HttpServletResponse}
+	 * @param fileName                Name fo the file to create
+	 * @param files                   Set of {@link AnalysisOutputFile}
 	 */
 	public static void createAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName,
 			Set<AnalysisOutputFile> files) {
@@ -73,7 +75,7 @@ public class FileUtilities {
 				ZipOutputStream outputStream = new ZipOutputStream(responseStream)) {
 
 			for (AnalysisOutputFile file : files) {
-				if (!Files.exists(file.getFile())) {
+				if (!file.fileExists()) {
 					response.setStatus(404);
 					throw new FileNotFoundException();
 				}
@@ -86,14 +88,16 @@ public class FileUtilities {
 				outputStream.putNextEntry(new ZipEntry(zipEntryName.toString()));
 
 				// 3) COPY all of thy bytes from the file to the output stream.
-				Files.copy(file.getFile(), outputStream);
-
+				try(InputStream inputStream = file.getFileInputStream()) {
+					IOUtils.copy(inputStream, outputStream);
+				} catch (IOException e) {
+					logger.error("Unable to read input stream from file", e);
+				}
 				// 4) Close the current entry in the archive in preparation for
 				// the next entry.
 				outputStream.closeEntry();
 
-				ObjectMapper objectMapper = new ObjectMapper();
-				byte[] bytes = objectMapper.writeValueAsBytes(file);
+				byte[] bytes = file.getBytesForFile();
 				outputStream.putNextEntry(new ZipEntry(zipEntryName.toString() + "-prov.json"));
 				outputStream.write(bytes);
 				outputStream.closeEntry();
@@ -113,11 +117,12 @@ public class FileUtilities {
 	}
 
 	/**
-	 * Utility method for download a zip file containing all output files from an analysis.
-	 * 
-	 * @param response {@link HttpServletResponse}
-	 * @param fileName Name fo the file to create
-	 * @param files    Set of {@link AnalysisOutputFile}
+	 * Utility method for download a zip file containing all output files from
+	 * an analysis.
+	 *
+	 * @param response                {@link HttpServletResponse}
+	 * @param fileName                Name fo the file to create
+	 * @param files                   Set of {@link AnalysisOutputFile}
 	 */
 	public static void createBatchAnalysisOutputFileZippedResponse(HttpServletResponse response, String fileName,
 			Map<ProjectSampleAnalysisOutputInfo, AnalysisOutputFile> files) {
@@ -139,10 +144,9 @@ public class FileUtilities {
 			for (Map.Entry<ProjectSampleAnalysisOutputInfo, AnalysisOutputFile> entry : files.entrySet()) {
 				final AnalysisOutputFile file = entry.getValue();
 				final ProjectSampleAnalysisOutputInfo outputInfo = entry.getKey();
-				if (!Files.exists(file.getFile())) {
+				if (!file.fileExists()) {
 					response.setStatus(404);
-					throw new FileNotFoundException(
-							"File '" + file.getFile().toFile().getAbsolutePath() + "' does not exist!");
+					throw new FileNotFoundException("File '" + file.getFile().toAbsolutePath() + "' does not exist!");
 				}
 				// 1) Build a folder/file name
 				// trying to pack as much useful info into the filename as possible!
@@ -153,7 +157,11 @@ public class FileUtilities {
 				outputStream.putNextEntry(new ZipEntry(fileName + "/" + outputFilename));
 
 				// 3) COPY all of thy bytes from the file to the output stream.
-				Files.copy(file.getFile(), outputStream);
+				try(InputStream inputStream = file.getFileInputStream()) {
+					IOUtils.copy(inputStream, outputStream);
+				} catch (IOException e) {
+					logger.error("Unable to read input stream from file", e);
+				}
 
 				// 4) Close the current entry in the archive in preparation for
 				// the next entry.
@@ -176,9 +184,9 @@ public class FileUtilities {
 	/**
 	 * Utility method for download single file from an analysis.
 	 *
-	 * @param response {@link HttpServletResponse}
-	 * @param file     Set of {@link AnalysisOutputFile}
-	 * @param fileName Filename
+	 * @param response                {@link HttpServletResponse}
+	 * @param file                    Set of {@link AnalysisOutputFile}
+	 * @param fileName                Filename
 	 */
 	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file,
 			String fileName) {
@@ -189,8 +197,8 @@ public class FileUtilities {
 		response.setHeader(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + fileName);
 		response.setContentType(CONTENT_TYPE_TEXT);
 
-		try (ServletOutputStream outputStream = response.getOutputStream()) {
-			Files.copy(file.getFile(), response.getOutputStream());
+		try (InputStream inputStream = file.getFileInputStream()) {
+			IOUtils.copy(inputStream, response.getOutputStream());
 		} catch (IOException e) {
 			// this generally means that the user has cancelled the download
 			// from their web browser; we can safely ignore this
@@ -204,8 +212,8 @@ public class FileUtilities {
 	/**
 	 * Utility method for download single file from an analysis.
 	 *
-	 * @param response {@link HttpServletResponse}
-	 * @param file     Set of {@link AnalysisOutputFile}
+	 * @param response                {@link HttpServletResponse}
+	 * @param file                    Set of {@link AnalysisOutputFile}
 	 */
 	public static void createSingleFileResponse(HttpServletResponse response, AnalysisOutputFile file) {
 		String fileName = file.getLabel();
@@ -277,25 +285,6 @@ public class FileUtilities {
 	}
 
 	/**
-	 * Read bytes of length {@code chunk} of a file starting at byte {@code seek}.
-	 *
-	 * @param raf   File reader
-	 * @param seek  FilePointer position to start reading at
-	 * @param chunk Number of bytes to read from file
-	 * @return Chunk of file as String
-	 * @throws IOException if error enountered while reading file
-	 */
-	public static String readChunk(RandomAccessFile raf, Long seek, Long chunk) throws IOException {
-		raf.seek(seek);
-		byte[] bytes = new byte[Math.toIntExact(chunk)];
-		final int bytesRead = raf.read(bytes);
-		if (bytesRead == -1) {
-			return "";
-		}
-		return new String(bytes, 0, bytesRead, Charset.defaultCharset());
-	}
-
-	/**
 	 * Read a specified number of lines from a file.
 	 *
 	 * @param reader File reader
@@ -343,9 +332,9 @@ public class FileUtilities {
 	 * @return parsed excel file data
 	 */
 	public static ExcelData parseExcelFile(AnalysisOutputFile outputFile, int sheetIndex) {
-		try {
-			InputStream is = new FileInputStream(new File(outputFile.getFile().toAbsolutePath().toString()));
-			Workbook workbook = StreamingReader.builder().open(is);
+		try(InputStream is = outputFile.getFileInputStream()) {
+			Workbook workbook = StreamingReader.builder()
+					.open(is);
 
 			Sheet sheet = workbook.getSheetAt(sheetIndex);
 			Iterator<Row> rowIterator = sheet.iterator();
@@ -410,7 +399,7 @@ public class FileUtilities {
 				}
 			}
 			return new ExcelData(headers, excelRows, excelSheetNames, false);
-		} catch (IOException e) {
+		} catch (IOException | StorageException e) {
 			logger.error("Error opening file" + outputFile.getLabel());
 		}
 		// Should only reach here if the file could not be opened
@@ -484,8 +473,10 @@ public class FileUtilities {
 	 * @throws IOException If an invalid {@link Path} is passed
 	 */
 	public static boolean isZippedFile(final Path path) throws IOException {
-		try (final InputStream in = new FileInputStream(path.toString());
-				final ZipInputStream z = new ZipInputStream(in);) {
+		try (
+			final InputStream in = IridaFiles.getFileInputStream(path);
+			final ZipInputStream z = new ZipInputStream(in);
+		) {
 			// If we can read an entry we know that it is a zip
 			return z.getNextEntry() != null;
 		} catch (ZipException ignored) {

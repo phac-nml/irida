@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.PostProcessingException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.PipelineProvidedMetadataEntry;
@@ -23,10 +24,13 @@ import ca.corefacility.bioinformatics.irida.pipeline.results.updater.AnalysisSam
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 import ca.corefacility.bioinformatics.irida.service.workflow.IridaWorkflowsService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
+
+import java.io.InputStream;
 
 /**
  * {@link AnalysisSampleUpdater} that adds a number of results from a SISTR run to the metadata of a {@link Sample}
@@ -79,45 +83,45 @@ public class SISTRSampleUpdater implements AnalysisSampleUpdater {
 			IridaWorkflow iridaWorkflow = iridaWorkflowsService.getIridaWorkflow(analysis.getWorkflowId());
 			String workflowVersion = iridaWorkflow.getWorkflowDescription().getVersion();
 
-			//Read the JSON file from SISTR output
-			@SuppressWarnings("resource")
-			String jsonFile = new Scanner(new BufferedReader(new FileReader(filePath.toFile()))).useDelimiter("\\Z")
-					.next();
+			try (InputStream inputStream = IridaFiles.getFileInputStream(filePath)) {
 
-			// map the results into a Map
-			ObjectMapper mapper = new ObjectMapper();
-			List<Map<String, Object>> sistrResults = mapper.readValue(jsonFile,
-					new TypeReference<List<Map<String, Object>>>() {
+				//Read the JSON file from SISTR output
+				@SuppressWarnings("resource")
+				String jsonFile = new Scanner(inputStream).useDelimiter("\\Z").next();
+				// map the results into a Map
+				ObjectMapper mapper = new ObjectMapper();
+				List<Map<String, Object>> sistrResults = mapper.readValue(jsonFile,
+						new TypeReference<List<Map<String, Object>>>() {
+						});
+
+				if (sistrResults.size() > 0) {
+					Map<String, Object> result = sistrResults.get(0);
+
+					//loop through each of the requested fields and save the entries
+					SISTR_FIELDS.entrySet().forEach(e -> {
+						if (result.containsKey(e.getKey())) {
+							Object valueObject = result.get(e.getKey());
+							String value = (valueObject != null ? valueObject.toString() : "");
+							PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value,
+									"text", analysis);
+							stringEntries.put(e.getValue() + " (v" + workflowVersion + ")", metadataEntry);
+						}
 					});
 
-			if (sistrResults.size() > 0) {
-				Map<String, Object> result = sistrResults.get(0);
+					// convert string map into metadata fields
+					Set<MetadataEntry> metadataSet = metadataTemplateService.convertMetadataStringsToSet(stringEntries);
 
-				//loop through each of the requested fields and save the entries
-				SISTR_FIELDS.entrySet().forEach(e -> {
-					if (result.containsKey(e.getKey())) {
-						Object valueObject = result.get(e.getKey());
-						String value = (valueObject != null ? valueObject.toString() : "");
-						PipelineProvidedMetadataEntry metadataEntry = new PipelineProvidedMetadataEntry(value, "text",
-								analysis);
-						stringEntries.put(e.getValue() + " (v" + workflowVersion + ")", metadataEntry);
-					}
-				});
+					//save metadata back to sample
+					samples.forEach(s -> {
+						sampleService.mergeSampleMetadata(s, metadataSet);
+					});
 
-				// convert string map into metadata fields
-				Set<MetadataEntry> metadataSet = metadataTemplateService.convertMetadataStringsToSet(stringEntries);
-
-				//save metadata back to sample
-				samples.forEach(s -> {
-					sampleService.mergeSampleMetadata(s, metadataSet);
-				});
-
-			} else {
-				throw new PostProcessingException("SISTR results for file are not correctly formatted");
+				} else {
+					throw new PostProcessingException("SISTR results for file are not correctly formatted");
+				}
+			} catch (StorageException | IOException e) {
+				throw new PostProcessingException("Error parsing JSON from SISTR results", e);
 			}
-
-		} catch (IOException e) {
-			throw new PostProcessingException("Error parsing JSON from SISTR results", e);
 		} catch (IridaWorkflowNotFoundException e) {
 			throw new PostProcessingException("Workflow is not found", e);
 		}

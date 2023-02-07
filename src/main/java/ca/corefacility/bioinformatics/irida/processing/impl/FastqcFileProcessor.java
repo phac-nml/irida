@@ -1,5 +1,7 @@
 package ca.corefacility.bioinformatics.irida.processing.impl;
 
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -9,6 +11,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.io.File;
 
 import javax.imageio.ImageIO;
 
@@ -30,7 +33,9 @@ import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutp
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisOutputFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaTemporaryFile;
 
 import uk.ac.babraham.FastQC.FastQCApplication;
 import uk.ac.babraham.FastQC.Graphs.LineGraph;
@@ -55,21 +60,24 @@ public class FastqcFileProcessor implements FileProcessor {
 	private final SequenceFileRepository sequenceFileRepository;
 	private final AnalysisOutputFileRepository outputFileRepository;
 	private final MessageSource messageSource;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	/**
 	 * Create a new {@link FastqcFileProcessor}
 	 *
-	 * @param messageSource          the message source for i18n (used to add an internationalized description for the
-	 *                               analysis).
-	 * @param sequenceFileRepository Repository for storing sequence files
-	 * @param outputFileRepository   Repository for storing analysis output files
+	 * @param messageSource           the message source for i18n (used to add an internationalized description for the
+	 *                                analysis).
+	 * @param sequenceFileRepository  Repository for storing sequence files
+	 * @param outputFileRepository    Repository for storing analysis output files
+	 * @param iridaFileStorageUtility The irida file storage service
 	 */
 	@Autowired
 	public FastqcFileProcessor(final MessageSource messageSource, final SequenceFileRepository sequenceFileRepository,
-			AnalysisOutputFileRepository outputFileRepository) {
+			AnalysisOutputFileRepository outputFileRepository, IridaFileStorageUtility iridaFileStorageUtility) {
 		this.messageSource = messageSource;
 		this.sequenceFileRepository = sequenceFileRepository;
 		this.outputFileRepository = outputFileRepository;
+		this.iridaFileStorageUtility = iridaFileStorageUtility;
 	}
 
 	@Override
@@ -93,44 +101,71 @@ public class FastqcFileProcessor implements FileProcessor {
 				.executionManagerAnalysisId(EXECUTION_MANAGER_ANALYSIS_ID)
 				.description(messageSource.getMessage("fastqc.file.processor.analysis.description",
 						new Object[] { FastQCApplication.VERSION }, LocaleContextHolder.getLocale()));
+
+		// Get the local copy if using local storage otherwise it temporarily downloads the file from the object store
+		IridaTemporaryFile iridaTemporaryFile = iridaFileStorageUtility.getTemporaryFile(fileToProcess);
+		File fastQCSequenceFileToProcess = iridaTemporaryFile.getFile().toFile();
+		Path outputDirectory = null;
+
 		try {
-			uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory
-					.getSequenceFile(fileToProcess.toFile());
-			BasicStats basicStats = new BasicStats();
-			PerBaseQualityScores pbqs = new PerBaseQualityScores();
-			PerSequenceQualityScores psqs = new PerSequenceQualityScores();
-			OverRepresentedSeqs overRep = new OverRepresentedSeqs();
-			QCModule[] moduleList = new QCModule[] { basicStats, pbqs, psqs, overRep };
+			// Create temporary directory to hold the analysis output files created by fastqc
+			outputDirectory = Files.createTempDirectory("analysis-output");
 
-			logger.debug("Launching FastQC analysis modules on all sequences.");
-			while (fastQCSequenceFile.hasNext()) {
-				Sequence sequence = fastQCSequenceFile.next();
-				for (QCModule module : moduleList) {
-					module.processSequence(sequence);
+			try {
+				uk.ac.babraham.FastQC.Sequence.SequenceFile fastQCSequenceFile = SequenceFactory.getSequenceFile(
+						fastQCSequenceFileToProcess);
+				BasicStats basicStats = new BasicStats();
+				PerBaseQualityScores pbqs = new PerBaseQualityScores();
+				PerSequenceQualityScores psqs = new PerSequenceQualityScores();
+				OverRepresentedSeqs overRep = new OverRepresentedSeqs();
+				QCModule[] moduleList = new QCModule[] { basicStats, pbqs, psqs, overRep };
+
+				// If there is a sequence file to process then we run the fastqc modules
+				logger.debug("Launching FastQC analysis modules on all sequences.");
+				while (fastQCSequenceFile.hasNext()) {
+					Sequence sequence = fastQCSequenceFile.next();
+					for (QCModule module : moduleList) {
+						module.processSequence(sequence);
+					}
+
 				}
+
+				logger.debug("Finished FastQC analysis modules.");
+
+				// Create the fastqc images and save to the temporary directory
+				handleBasicStats(basicStats, analysis);
+				handlePerBaseQualityScores(pbqs, analysis, outputDirectory);
+				handlePerSequenceQualityScores(psqs, analysis, outputDirectory);
+				handleDuplicationLevel(overRep.duplicationLevelModule(), analysis, outputDirectory);
+				Set<OverrepresentedSequence> overrepresentedSequences = handleOverRepresentedSequences(overRep);
+
+				logger.trace("Saving FastQC analysis.");
+				analysis.overrepresentedSequences(overrepresentedSequences);
+
+				AnalysisFastQC analysisFastQC = analysis.build();
+
+				sequenceFile.setFastQCAnalysis(analysisFastQC);
+
+				sequenceFileRepository.saveMetadata(sequenceFile);
+			} catch (Exception e) {
+				logger.error("FastQC failed to process the sequence file: " + e.getMessage());
+				throw new FileProcessorException("FastQC failed to parse the sequence file.", e);
 			}
-
-			logger.debug("Finished FastQC analysis modules.");
-
-			Path outputDirectory = Files.createTempDirectory("analysis-output");
-
-			handleBasicStats(basicStats, analysis);
-			handlePerBaseQualityScores(pbqs, analysis, outputDirectory);
-			handlePerSequenceQualityScores(psqs, analysis, outputDirectory);
-			handleDuplicationLevel(overRep.duplicationLevelModule(), analysis, outputDirectory);
-			Set<OverrepresentedSequence> overrepresentedSequences = handleOverRepresentedSequences(overRep);
-
-			logger.trace("Saving FastQC analysis.");
-			analysis.overrepresentedSequences(overrepresentedSequences);
-
-			AnalysisFastQC analysisFastQC = analysis.build();
-
-			sequenceFile.setFastQCAnalysis(analysisFastQC);
-
-			sequenceFileRepository.saveMetadata(sequenceFile);
-		} catch (Exception e) {
-			logger.error("FastQC failed to process the sequence file: " + e.getMessage());
-			throw new FileProcessorException("FastQC failed to parse the sequence file.", e);
+		} catch (IOException e) {
+			logger.error("Unable to create temporary directory ", e);
+			throw new StorageException("Unable to create temporary directory", e);
+		} finally {
+			/* If a temporary file was downloaded from an object store then the file and/or temp directory will be deleted,
+			 * otherwise no action is taken.
+			 */
+			iridaFileStorageUtility.cleanupDownloadedLocalTemporaryFiles(iridaTemporaryFile);
+			try {
+				logger.trace("Removing directory: " + outputDirectory.toString());
+				// Delete the analysis-output* temp directory
+				org.apache.commons.io.FileUtils.deleteDirectory(outputDirectory.toFile());
+			} catch (IOException e) {
+				throw new StorageException("Unable to delete analysis outputs temp directory [" + e + "]");
+			}
 		}
 	}
 
@@ -153,7 +188,8 @@ public class FastqcFileProcessor implements FileProcessor {
 	}
 
 	/**
-	 * Handle writing the {@link PerBaseQualityScores} to the database.
+	 * Handle writing the {@link PerBaseQualityScores} to the database and the generated fastqc image to the
+	 * tempDirectory
 	 *
 	 * @param scores        the {@link PerBaseQualityScores} computed by fastqc.
 	 * @param analysis      the {@link AnalysisFastQCBuilder} to update.
@@ -171,7 +207,8 @@ public class FastqcFileProcessor implements FileProcessor {
 	}
 
 	/**
-	 * Handle writing the {@link PerSequenceQualityScores} to the database.
+	 * Handle writing the {@link PerSequenceQualityScores} to the database and the generated fastqc image to the
+	 * tempDirectory
 	 *
 	 * @param scores        the {@link PerSequenceQualityScores} computed by fastqc.
 	 * @param analysis      the {@link AnalysisFastQCBuilder} to update.
@@ -189,7 +226,7 @@ public class FastqcFileProcessor implements FileProcessor {
 	}
 
 	/**
-	 * Handle writing the {@link DuplicationLevel} to the database.
+	 * Handle writing the {@link DuplicationLevel} to the database and the generated fastqc image to the tempDirectory
 	 *
 	 * @param duplicationLevel the {@link DuplicationLevel} calculated by fastqc.
 	 * @param analysis         the {@link AnalysisFastQCBuilder} to update.
@@ -238,8 +275,8 @@ public class FastqcFileProcessor implements FileProcessor {
 
 		ImageIO.write(imageBuffer, "PNG", filePath.toFile());
 
-		AnalysisOutputFile analysisOutputFile = outputFileRepository
-				.save(new AnalysisOutputFile(filePath, null, fileName, null));
+		AnalysisOutputFile analysisOutputFile = outputFileRepository.save(
+				new AnalysisOutputFile(filePath, null, fileName, null));
 
 		return analysisOutputFile;
 	}
