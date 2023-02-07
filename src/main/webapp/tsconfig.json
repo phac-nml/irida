@@ -13,5 +13,12 @@
     "jsx": "react",
     "esModuleInterop": true
   },
-  "include": ["./resources/js/**/*.ts", "./resources/js/**/*.tsx"]
+  "include": [
+    "./*.js",
+    "./*.json",
+    "./resources/js/**/*.ts",
+    "./resources/js/**/*.tsx",
+    "./resources/js/**/*.js",
+    "./resources/js/**/*.jsx"
+  ]
 }
