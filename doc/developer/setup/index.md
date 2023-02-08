@@ -174,7 +174,7 @@ There is no other configuration necessary in IRIDA to use cloud based storage. A
 
 There isn't a local storage emulator available from Amazon AWS but we can make use of localstack to develop locally. The best way to make use of localstack is to use it with a docker container.
 
-1) Install `docker` and the `awscli-local`.
+1) Install `pip`, then use `pip install MODULE_NAME` to install `docker`, `awscli`, and `awscli-local`
 2) In the terminal run `aws configure` to set the access key, secret key, and the region for the bucket. The access key and secret key can be anything as long as they aren't left empty. For the region you can use `us-east-2`
 3) In the terminal run `docker run -d -p 4566-4583:4566-4583 -e "DEFAULT_REGION=us-east-2" -e "EDGE_PORT=4566" -e "SERVICES=s3,logs" localstack/localstack:latest`.
 4) Create a bucket `awslocal s3api create-bucket --bucket BUCKET_NAME`

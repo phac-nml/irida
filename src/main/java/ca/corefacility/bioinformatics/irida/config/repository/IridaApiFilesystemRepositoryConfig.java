@@ -89,7 +89,7 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	@Bean(name = "assemblyFileBaseDirectory")
 	public Path assemblyFileBaseDirectory() throws IOException {
-		if (applicationContext.getEnvironment().acceptsProfiles(Profiles.of("dev", "it", "test"))) {
+		if (applicationContext.getEnvironment().acceptsProfiles(Profiles.of("dev", "it", "test")) && iridaFileStorageUtility.isStorageTypeLocal()) {
 			return configureDirectory(assemblyFileBaseDirectory, "assembly-file-dev");
 		}
 		return getExistingPathOrThrow(assemblyFileBaseDirectory);
@@ -108,12 +108,14 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	private Path configureDirectory(String pathName, String defaultDevPathPrefix) throws IOException {
 		Path baseDirectory = Paths.get(pathName);
-		if (!Files.exists(baseDirectory)) {
-			baseDirectory = Files.createDirectories(baseDirectory);
-			logger.info(String.format(
-					"The directory [%s] does not exist, but it looks like you're running in a dev environment, "
-							+ "so I created a temporary location at [%s]. This directory *may* be removed at shutdown time.",
-					pathName, baseDirectory.toString()));
+		if(iridaFileStorageUtility.isStorageTypeLocal()) {
+			if (!Files.exists(baseDirectory)) {
+				baseDirectory = Files.createDirectories(baseDirectory);
+				logger.info(String.format(
+						"The directory [%s] does not exist, but it looks like you're running in a dev environment, "
+								+ "so I created a temporary location at [%s]. This directory *may* be removed at shutdown time.",
+						pathName, baseDirectory.toString()));
+			}
 		}
 		return baseDirectory;
 	}
