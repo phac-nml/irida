@@ -281,10 +281,10 @@ public class RESTProjectSamplesController {
 		String sampleName = sampleNameMap.get(sampleNameProperty);
 		Project p = projectService.read(projectId);
 
-		Sample sampleBySampleId = sampleService.getSampleBySampleName(p, sampleName);
+		Sample sampleBySampleName = sampleService.getSampleBySampleName(p, sampleName);
 
 		Link withSelfRel = linkTo(
-				methodOn(RESTProjectSamplesController.class).getSample(sampleBySampleId.getId())).withSelfRel();
+				methodOn(RESTProjectSamplesController.class).getSample(sampleBySampleName.getId())).withSelfRel();
 		String href = withSelfRel.getHref();
 
 		RedirectView redirectView = new RedirectView(href);
