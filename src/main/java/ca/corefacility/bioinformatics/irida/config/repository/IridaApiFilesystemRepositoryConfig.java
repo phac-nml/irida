@@ -108,7 +108,7 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	private Path configureDirectory(String pathName, String defaultDevPathPrefix) throws IOException {
 		Path baseDirectory = Paths.get(pathName);
-		if(iridaFileStorageUtility.isStorageTypeLocal()) {
+		if (iridaFileStorageUtility.isStorageTypeLocal()) {
 			if (!Files.exists(baseDirectory)) {
 				baseDirectory = Files.createDirectories(baseDirectory);
 				logger.info(String.format(
