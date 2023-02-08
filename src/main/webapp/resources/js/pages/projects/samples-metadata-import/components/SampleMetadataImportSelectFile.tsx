@@ -1,12 +1,17 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { notification, Spin, StepsProps, Typography } from "antd";
+import { notification, Spin, Typography } from "antd";
 import { DragUpload } from "../../../../components/files/DragUpload";
-import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import { ImportDispatch, useImportDispatch } from "../redux/store";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
 import { RcFile } from "antd/lib/upload/interface";
-import { setHeaders, setMetadata, setProjectId } from "../redux/importReducer";
+import {
+  setHeaders,
+  setMetadata,
+  setProjectId,
+  updateStatus,
+  updateStep,
+} from "../redux/importReducer";
 import * as XLSX from "xlsx";
 import { ErrorAlert } from "../../../../components/alerts/ErrorAlert";
 import { SPACE_XS } from "../../../../styles/spacing";
@@ -24,7 +29,6 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate: NavigateFunction = useNavigate();
   const dispatch: ImportDispatch = useImportDispatch();
-  const [status, setStatus] = React.useState<StepsProps["status"]>("process");
   const [loading, setLoading] = React.useState<boolean>(false);
   const [validationErrors, setValidationErrors] = React.useState<string[]>([]);
 
@@ -57,6 +61,8 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
     accept: ".xls,.xlsx,.csv",
     customRequest: () => {
       navigate(`/${projectId}/sample-metadata/upload/columns`);
+      dispatch(updateStep(1));
+      dispatch(updateStatus("process"));
     },
     beforeUpload: async (file: RcFile) => {
       try {
@@ -108,6 +114,7 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
           }
           setValidationErrors(errors);
           setLoading(false);
+          dispatch(updateStatus("error"));
           return false;
         } else {
           const output: MetadataItem[] = cleanRows.map((row, rowIndex) => {
@@ -128,7 +135,7 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
         }
       } catch (error) {
         setLoading(false);
-        setStatus("error");
+        dispatch(updateStatus("error"));
         notification.error({
           message: i18n("SampleMetadataImportSelectFile.error", file.name),
         });
@@ -138,44 +145,42 @@ export function SampleMetadataImportSelectFile(): JSX.Element {
   };
 
   return (
-    <SampleMetadataImportWizard current={0} status={status}>
-      <Spin spinning={loading}>
-        {validationErrors.length > 0 && (
-          <ErrorAlert
-            style={{ marginBottom: SPACE_XS }}
-            message={i18n("SampleMetadataImportSelectFile.alert.valid.title")}
-            description={
-              <>
-                <Text strong>
-                  {i18n(
-                    "SampleMetadataImportSelectFile.alert.valid.description.preface"
-                  )}
-                </Text>
-                <ul style={{ marginBottom: 0 }}>
-                  {validationErrors.map((error, index) => (
-                    <li key={`metadata-uploader-validation-message-${index}`}>
-                      {error}
-                    </li>
-                  ))}
-                </ul>
-                <Text strong>
-                  {i18n(
-                    "SampleMetadataImportSelectFile.alert.valid.description.postface"
-                  )}
-                </Text>
-              </>
-            }
-          />
-        )}
-        <DragUpload
-          uploadText={i18n("SampleMetadataImportSelectFile.dropzone")}
-          uploadHint={
-            <Text strong>{i18n("SampleMetadataImportSelectFile.warning")}</Text>
+    <Spin spinning={loading}>
+      {validationErrors.length > 0 && (
+        <ErrorAlert
+          style={{ marginBottom: SPACE_XS }}
+          message={i18n("SampleMetadataImportSelectFile.alert.valid.title")}
+          description={
+            <>
+              <Text strong>
+                {i18n(
+                  "SampleMetadataImportSelectFile.alert.valid.description.preface"
+                )}
+              </Text>
+              <ul style={{ marginBottom: 0 }}>
+                {validationErrors.map((error, index) => (
+                  <li key={`metadata-uploader-validation-message-${index}`}>
+                    {error}
+                  </li>
+                ))}
+              </ul>
+              <Text strong>
+                {i18n(
+                  "SampleMetadataImportSelectFile.alert.valid.description.postface"
+                )}
+              </Text>
+            </>
           }
-          options={options}
-          props={{ className: "t-metadata-uploader-dropzone" }}
         />
-      </Spin>
-    </SampleMetadataImportWizard>
+      )}
+      <DragUpload
+        uploadText={i18n("SampleMetadataImportSelectFile.dropzone")}
+        uploadHint={
+          <Text strong>{i18n("SampleMetadataImportSelectFile.warning")}</Text>
+        }
+        options={options}
+        props={{ className: "t-metadata-uploader-dropzone" }}
+      />
+    </Spin>
   );
 }

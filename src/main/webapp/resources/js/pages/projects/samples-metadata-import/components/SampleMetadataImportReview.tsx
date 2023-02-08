@@ -7,20 +7,20 @@ import {
   notification,
   Popover,
   Progress,
+  Space,
   Table,
   TableProps,
   Tag,
   Tooltip,
   Typography,
 } from "antd";
-import { SampleMetadataImportWizard } from "./SampleMetadataImportWizard";
 import {
   IconArrowLeft,
   IconArrowRight,
   IconExclamationCircle,
 } from "../../../../components/icons/Icons";
 import styled from "styled-components";
-import { saveMetadata } from "../redux/importReducer";
+import { saveMetadata, updateStatus, updateStep } from "../redux/importReducer";
 import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
 import { NavigateFunction } from "react-router/dist/lib/hooks";
 import {
@@ -32,7 +32,7 @@ import {
 import { MetadataItem } from "../../../../apis/projects/samples";
 import { ColumnsType, ColumnType } from "antd/es/table";
 import { TableRowSelection } from "antd/lib/table/interface";
-import { ErrorAlert } from "../../../../../js/components/alerts/ErrorAlert";
+import { ErrorAlert } from "../../../../components/alerts/ErrorAlert";
 
 const { Paragraph, Text } = Typography;
 
@@ -214,8 +214,11 @@ export function SampleMetadataImportReview(): JSX.Element {
           ).length;
           if (errorCount === 0) {
             navigate(`/${projectId}/sample-metadata/upload/complete`);
+            dispatch(updateStep(3));
+            dispatch(updateStatus("process"));
           } else {
             setLoading(false);
+            dispatch(updateStatus("error"));
             notification.error({
               message: i18n(
                 "SampleMetadataImportReview.notification.partialError",
@@ -226,6 +229,7 @@ export function SampleMetadataImportReview(): JSX.Element {
         })
         .catch((payload) => {
           setLoading(false);
+          dispatch(updateStatus("error"));
           notification.error({
             message: payload,
             className: "t-metadata-uploader-review-error",
@@ -244,7 +248,7 @@ export function SampleMetadataImportReview(): JSX.Element {
   );
 
   return (
-    <SampleMetadataImportWizard current={2}>
+    <Space size="large" direction="vertical" style={{ width: "100%" }}>
       <Text>{i18n("SampleMetadataImportReview.description")}</Text>
       {!isValid && (
         <ErrorAlert
@@ -329,7 +333,11 @@ export function SampleMetadataImportReview(): JSX.Element {
         <Button
           className="t-metadata-uploader-column-button"
           icon={<IconArrowLeft />}
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            navigate(-1);
+            dispatch(updateStep(1));
+            dispatch(updateStatus("process"));
+          }}
           disabled={loading}
         >
           {i18n("SampleMetadataImportReview.button.back")}
@@ -344,6 +352,6 @@ export function SampleMetadataImportReview(): JSX.Element {
           <IconArrowRight />
         </Button>
       </div>
-    </SampleMetadataImportWizard>
+    </Space>
   );
 }
