@@ -270,8 +270,9 @@ public class RESTProjectSamplesController {
 			value = "/api/projects/{projectId}/samples/bySampleName",
 			method = RequestMethod.GET,
 			consumes = { MediaType.APPLICATION_JSON_VALUE })
-	public ModelAndView getProjectSampleBySampleName(@PathVariable Long projectId,
-													 @RequestBody Map<String, String> sampleNameMap) {
+	public ModelAndView getProjectSampleBySampleName(
+			@PathVariable Long projectId,
+			@RequestBody Map<String, String> sampleNameMap) {
 		String sampleNameProperty = "sampleName";
 
 		if (!sampleNameMap.containsKey(sampleNameProperty)) {
