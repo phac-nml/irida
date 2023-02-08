@@ -243,11 +243,45 @@ public class RESTProjectSamplesController {
 	 * @param seqeuncerId the string id of the sample
 	 * @return The found sample
 	 */
+	@Deprecated()
 	@RequestMapping(value = "/api/projects/{projectId}/samples/bySequencerId/{seqeuncerId}", method = RequestMethod.GET)
 	public ModelAndView getProjectSampleBySequencerId(@PathVariable Long projectId, @PathVariable String seqeuncerId) {
 		Project p = projectService.read(projectId);
 
 		Sample sampleBySampleId = sampleService.getSampleBySampleName(p, seqeuncerId);
+
+		Link withSelfRel = linkTo(
+				methodOn(RESTProjectSamplesController.class).getSample(sampleBySampleId.getId())).withSelfRel();
+		String href = withSelfRel.getHref();
+
+		RedirectView redirectView = new RedirectView(href);
+
+		return new ModelAndView(redirectView);
+	}
+
+	/**
+	 * Get samples by a given string name
+	 *
+	 * @param projectId   the Project to get samples from
+	 * @param sampleNameMap consumes 'sampleName' property
+	 * @return The found sample
+	 */
+	@RequestMapping(
+			value = "/api/projects/{projectId}/samples/bySampleName",
+			method = RequestMethod.GET,
+			consumes = { MediaType.APPLICATION_JSON_VALUE })
+	public ModelAndView getProjectSampleBySampleName(@PathVariable Long projectId,
+													 @RequestBody Map<String, String> sampleNameMap) {
+		String sampleNameProperty = "sampleName";
+
+		if (!sampleNameMap.containsKey(sampleNameProperty)) {
+			throw new IllegalArgumentException("'sampleName' must be provided.");
+		}
+
+		String sampleName = sampleNameMap.get(sampleNameProperty);
+		Project p = projectService.read(projectId);
+
+		Sample sampleBySampleId = sampleService.getSampleBySampleName(p, sampleName);
 
 		Link withSelfRel = linkTo(
 				methodOn(RESTProjectSamplesController.class).getSample(sampleBySampleId.getId())).withSelfRel();
