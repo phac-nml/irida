@@ -24,6 +24,9 @@ import {
 import { Restriction } from "../../../../utilities/restriction-utilities";
 import { createMetadataFields, generatePromiseList } from "./import-utilities";
 import { MetadataField } from "../../../../types/irida";
+import { StepsProps } from "antd";
+
+export type Status = StepsProps["status"];
 
 export interface MetadataHeaderItem {
   name: string;
@@ -60,6 +63,8 @@ export interface InitialState {
   metadataValidateDetails: Record<string, MetadataValidateDetailsItem>;
   metadataSaveDetails: Record<string, MetadataSaveDetailsItem>;
   percentComplete: number;
+  step: number;
+  status: Status;
 }
 
 const initialState: InitialState = {
@@ -70,6 +75,8 @@ const initialState: InitialState = {
   metadataValidateDetails: {},
   metadataSaveDetails: {},
   percentComplete: 0,
+  step: 0,
+  status: "process",
 };
 
 /*
@@ -315,6 +322,28 @@ export const updatePercentComplete = createAction(
 );
 
 /*
+Redux action for updating the step.
+For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
+ */
+export const updateStep = createAction(
+  `importReducer/updateStep`,
+  (step: number) => ({
+    payload: { step },
+  })
+);
+
+/*
+Redux action for updating the status.
+For more information on redux actions see: https://redux-toolkit.js.org/api/createAction
+ */
+export const updateStatus = createAction(
+  `importReducer/updateStatus`,
+  (status: Status) => ({
+    payload: { status },
+  })
+);
+
+/*
 Redux reducer for project metadata.
 For more information on redux reducers see: https://redux-toolkit.js.org/api/createReducer
  */
@@ -330,6 +359,8 @@ export const importReducer = createReducer(initialState, (builder) => {
     state.metadataValidateDetails = {};
     state.metadataSaveDetails = {};
     state.percentComplete = 0;
+    state.step = 0;
+    state.status = "process";
   });
   builder.addCase(setMetadata, (state, action) => {
     state.metadata = action.payload.metadata;
@@ -349,5 +380,11 @@ export const importReducer = createReducer(initialState, (builder) => {
   });
   builder.addCase(updatePercentComplete, (state, action) => {
     state.percentComplete = state.percentComplete + action.payload.amount;
+  });
+  builder.addCase(updateStep, (state, action) => {
+    state.step = action.payload.step;
+  });
+  builder.addCase(updateStatus, (state, action) => {
+    state.status = action.payload.status;
   });
 });
