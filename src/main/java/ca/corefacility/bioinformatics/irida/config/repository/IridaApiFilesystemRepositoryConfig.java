@@ -89,7 +89,7 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	@Bean(name = "assemblyFileBaseDirectory")
 	public Path assemblyFileBaseDirectory() throws IOException {
-		if (applicationContext.getEnvironment().acceptsProfiles(Profiles.of("dev", "it", "test")) && iridaFileStorageUtility.isStorageTypeLocal()) {
+		if (applicationContext.getEnvironment().acceptsProfiles(Profiles.of("dev", "it", "test"))) {
 			return configureDirectory(assemblyFileBaseDirectory, "assembly-file-dev");
 		}
 		return getExistingPathOrThrow(assemblyFileBaseDirectory);
@@ -99,9 +99,14 @@ public class IridaApiFilesystemRepositoryConfig {
 		Path baseDirectory = Paths.get(directory);
 		boolean baseDirectoryWritable = iridaFileStorageUtility.checkWriteAccess(baseDirectory);
 		if (baseDirectoryWritable) {
-			logger.info(String.format(
-					"Using specified existing directory at [%s]. The directory *will not* be removed at shutdown time.",
-					baseDirectory.toString()));
+			if (iridaFileStorageUtility.isStorageTypeLocal()) {
+				logger.info(String.format(
+						"Using specified existing directory at [%s]. The directory *will not* be removed at shutdown time.",
+						baseDirectory.toString()));
+			} else {
+				logger.info(String.format("Using specified directory at virtual path [%s] in [%s] cloud based storage.",
+						baseDirectory.toString(), iridaFileStorageUtility.getStorageType()));
+			}
 		}
 		return baseDirectory;
 	}
