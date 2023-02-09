@@ -172,6 +172,27 @@ See [AWS S3 Bucket Storage Setup](https://docs.aws.amazon.com/AmazonS3/latest/us
 
 There is no other configuration necessary in IRIDA to use cloud based storage. After adding these values to the configuration file you should be able to start up IRIDA, and it will use the cloud based storage that is configured.
 
+There isn't a local storage emulator available from Amazon AWS but we can make use of localstack to develop locally. The best way to make use of localstack is to use it with a docker container.
+
+1) Install docker
+2) Install `pip`, then use `pip install MODULE_NAME` to install `awscli`, and `awscli-local`
+3) In the terminal run `aws configure` to set the access key, secret key, and the region for the bucket. The access key and secret key can be anything as long as they aren't left empty. For the region you can use `us-east-2`
+4) In the terminal run `docker run -d -p 4566-4583:4566-4583 -e "DEFAULT_REGION=us-east-2" -e "EDGE_PORT=4566" -e "SERVICES=s3,logs" localstack/localstack:latest`.
+5) Create a bucket `awslocal s3api create-bucket --bucket BUCKET_NAME`
+6) Set these values in your config file (eg. irida.conf). The aws.access.key and aws.secret.key are from step 4
+
+```
+irida.storage.type=aws
+
+# DEVELOPMENT AWS CONFIG
+aws.bucket.name=BUCKET_NAME_FROM_ABOVE
+aws.bucket.region=us-east-2
+aws.access.key=ACCESS_KEY_FROM_ABOVE
+aws.secret.key=SECRET_KEY_FROM_ABOVE
+aws.bucket.url=http://localhost:4566
+```
+
+**Note:** If the docker container is killed or machine is restarted you will need to run steps 3 and 4 again.
 
 ### Testing IRIDA
 

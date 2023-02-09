@@ -99,21 +99,28 @@ public class IridaApiFilesystemRepositoryConfig {
 		Path baseDirectory = Paths.get(directory);
 		boolean baseDirectoryWritable = iridaFileStorageUtility.checkWriteAccess(baseDirectory);
 		if (baseDirectoryWritable) {
-			logger.info(String.format(
-					"Using specified existing directory at [%s]. The directory *will not* be removed at shutdown time.",
-					baseDirectory.toString()));
+			if (iridaFileStorageUtility.isStorageTypeLocal()) {
+				logger.info(String.format(
+						"Using specified existing directory at [%s]. The directory *will not* be removed at shutdown time.",
+						baseDirectory.toString()));
+			} else {
+				logger.info(String.format("Using specified directory at virtual path [%s] in [%s] cloud based storage.",
+						baseDirectory.toString(), iridaFileStorageUtility.getStorageType()));
+			}
 		}
 		return baseDirectory;
 	}
 
 	private Path configureDirectory(String pathName, String defaultDevPathPrefix) throws IOException {
 		Path baseDirectory = Paths.get(pathName);
-		if (!Files.exists(baseDirectory)) {
-			baseDirectory = Files.createDirectories(baseDirectory);
-			logger.info(String.format(
-					"The directory [%s] does not exist, but it looks like you're running in a dev environment, "
-							+ "so I created a temporary location at [%s]. This directory *may* be removed at shutdown time.",
-					pathName, baseDirectory.toString()));
+		if (iridaFileStorageUtility.isStorageTypeLocal()) {
+			if (!Files.exists(baseDirectory)) {
+				baseDirectory = Files.createDirectories(baseDirectory);
+				logger.info(String.format(
+						"The directory [%s] does not exist, but it looks like you're running in a dev environment, "
+								+ "so I created a temporary location at [%s]. This directory *may* be removed at shutdown time.",
+						pathName, baseDirectory.toString()));
+			}
 		}
 		return baseDirectory;
 	}
