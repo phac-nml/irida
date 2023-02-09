@@ -266,9 +266,7 @@ public class RESTProjectSamplesController {
 	 * @param sampleName  String containing sample name
 	 * @return The found sample
 	 */
-	@RequestMapping(
-			value = "/api/projects/{projectId}/samples/bySampleName",
-			method = RequestMethod.GET)
+	@RequestMapping(value = "/api/projects/{projectId}/samples/bySampleName", method = RequestMethod.GET)
 	public ModelAndView getProjectSampleBySampleName(@PathVariable Long projectId, @RequestParam String sampleName) {
 		Project p = projectService.read(projectId);
 
