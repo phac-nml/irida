@@ -263,7 +263,7 @@ public class RESTProjectSamplesController {
 	 * Get samples by a given string name
 	 *
 	 * @param projectId   the Project to get samples from
-	 * @param sampleNameMap consumes 'sampleName' property
+	 * @param sampleName  String containing sample name
 	 * @return The found sample
 	 */
 	@RequestMapping(
