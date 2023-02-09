@@ -202,10 +202,8 @@ public class RESTProjectSamplesControllerTest {
 		when(sampleService.getSampleBySampleName(p, s.getSampleName())).thenReturn(s);
 
 		String sampleLocation = "http://localhost/api/samples/" + s.getId();
-		Map<String, String> sampleMap = new HashMap<String, String>() {};
-		sampleMap.put("sampleName", s.getSampleName());
 
-		ModelAndView responseObject = controller.getProjectSampleBySampleName(p.getId(), sampleMap);
+		ModelAndView responseObject = controller.getProjectSampleBySampleName(p.getId(), s.getSampleName());
 
 		verify(sampleService).getSampleBySampleName(p, s.getSampleName());
 

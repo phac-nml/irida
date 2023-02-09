@@ -268,18 +268,8 @@ public class RESTProjectSamplesController {
 	 */
 	@RequestMapping(
 			value = "/api/projects/{projectId}/samples/bySampleName",
-			method = RequestMethod.GET,
-			consumes = { MediaType.APPLICATION_JSON_VALUE })
-	public ModelAndView getProjectSampleBySampleName(
-			@PathVariable Long projectId,
-			@RequestBody Map<String, String> sampleNameMap) {
-		String sampleNameProperty = "sampleName";
-
-		if (!sampleNameMap.containsKey(sampleNameProperty)) {
-			throw new IllegalArgumentException("'sampleName' must be provided.");
-		}
-
-		String sampleName = sampleNameMap.get(sampleNameProperty);
+			method = RequestMethod.GET)
+	public ModelAndView getProjectSampleBySampleName(@PathVariable Long projectId, @RequestParam String sampleName) {
 		Project p = projectService.read(projectId);
 
 		Sample sampleBySampleName = sampleService.getSampleBySampleName(p, sampleName);
