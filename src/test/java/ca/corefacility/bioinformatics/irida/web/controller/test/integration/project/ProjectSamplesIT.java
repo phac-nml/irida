@@ -3,7 +3,6 @@ package ca.corefacility.bioinformatics.irida.web.controller.test.integration.pro
 import java.util.*;
 import java.util.concurrent.*;
 
-import org.apache.commons.collections.map.SingletonMap;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
