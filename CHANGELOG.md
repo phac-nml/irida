@@ -14,6 +14,7 @@
 * [Developer/UI]: Fix for updating sample modified date when metadata is deleted. See [PR 1457](https://github.com/phac-nml/irida/pull/1457).
 * [Developer]: Added support for cloud based storage. Currently, Microsoft Azure Blob and Amazon AWS S3 are supported. [See PR 1194](https://github.com/phac-nml/irida/pull/1194)
 * [Developer]: Updated metadata uploader to use react-router-dom Outlet. [See PR 1464](https://github.com/phac-nml/irida/pull/1464)
+* [Developer]: Deprecated "/api/projects/{projectId}/samples/bySequencerId/{seqeuncerId}" in favour of "/api/projects/{projectId}/samples/bySampleName", which accepts a json property "sampleName"
 
 ## [22.09.7] - 2022/01/24
 * [UI]: Fixed bugs on NCBI Export page preventing the NCBI `submission.xml` file from being properly written. See [PR 1451](https://github.com/phac-nml/irida/pull/1451)
