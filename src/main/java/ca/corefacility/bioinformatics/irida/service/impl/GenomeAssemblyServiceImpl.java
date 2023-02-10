@@ -18,6 +18,7 @@ import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
 /**
  * Service implementation for storing and retrieving {@link GenomeAssembly}
@@ -27,11 +28,15 @@ public class GenomeAssemblyServiceImpl extends CRUDServiceImpl<Long, GenomeAssem
 	private static final Logger logger = LoggerFactory.getLogger(GenomeAssemblyServiceImpl.class);
 	private final SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 
+	private final SampleService sampleService;
+
 	@Autowired
 	public GenomeAssemblyServiceImpl(GenomeAssemblyRepository repository,
-			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, Validator validator) {
+			SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository, Validator validator,
+			SampleService sampleService) {
 		super(repository, validator, GenomeAssembly.class);
 		this.sampleGenomeAssemblyJoinRepository = sampleGenomeAssemblyJoinRepository;
+		this.sampleService = sampleService;
 	}
 
 	/**
@@ -86,6 +91,11 @@ public class GenomeAssemblyServiceImpl extends CRUDServiceImpl<Long, GenomeAssem
 		if (join != null) {
 			logger.debug("Removing genome assembly [" + genomeAssemblyId + "] from sample [" + sample.getId() + "]");
 			sampleGenomeAssemblyJoinRepository.deleteById(join.getId());
+			if (sample.getDefaultGenomeAssembly() != null
+					&& sample.getDefaultGenomeAssembly().getId().equals(genomeAssemblyId)) {
+				sample.setDefaultGenomeAssembly(null);
+				sampleService.update(sample);
+			}
 		} else {
 			logger.trace("Genome assembly [" + genomeAssemblyId + "] is not associated with sample [" + sample.getId()
 					+ "]. Ignoring.");
