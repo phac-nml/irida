@@ -1,11 +1,9 @@
 package ca.corefacility.bioinformatics.irida.web.controller.test.integration.project;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.*;
 
+import org.apache.commons.collections.map.SingletonMap;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -387,5 +385,32 @@ public class ProjectSamplesIT {
 				.body("resource.resources.sampleName", hasItems("sample1", "sample2"))
 				.when()
 				.get(projectSamplesUri);
+	}
+
+	@Test
+	public void testReadSampleByName() {
+		String rootUri = uriTemplateHandler.getRootUri() + "/api";
+		String projectUri = rootUri + "/projects/5";
+		String sampleByNameUri = projectUri + "/samples/bySampleName?sampleName=sample1";
+		String expectedSampleUri = rootUri + "/samples/1";
+
+		final Response r = asAdmin().expect()
+				.body("resource.links.rel", hasItems("self", "sample/sequenceFiles"))
+				.when()
+				.get(sampleByNameUri);
+		final String responseBody = r.getBody().asString();
+		final String selfUri = from(responseBody).get("resource.links.find{it.rel == 'self'}.href");
+		assertEquals(expectedSampleUri, selfUri);
+	}
+
+	@Test
+	public void testReadSampleByNameError() {
+		String projectUri = uriTemplateHandler.getRootUri() + "/api/projects/5";
+		String sampleByNameUri = projectUri + "/samples/bySampleName?sampleName=not_a_sample";
+
+		asAdmin().expect()
+				.statusCode(equalTo(404))
+				.when()
+				.get(sampleByNameUri);
 	}
 }
