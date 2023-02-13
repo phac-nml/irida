@@ -365,8 +365,7 @@ public class SampleServiceImpl extends CRUDServiceImpl<Long, Sample> implements 
 		ssoRepository.delete(readObjectForSample);
 		if (sample.getDefaultSequencingObject() != null
 				&& sample.getDefaultSequencingObject().getId().equals(object.getId())) {
-			sample.setDefaultSequencingObject(null);
-			super.update(sample);
+			sampleRepository.removeDefaultSequencingObject(sample);
 		}
 	}
 

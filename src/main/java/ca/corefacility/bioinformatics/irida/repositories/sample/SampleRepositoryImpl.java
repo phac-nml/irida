@@ -31,4 +31,19 @@ public class SampleRepositoryImpl implements SampleRepositoryCustom {
 		query.setParameter(2, sample.getId());
 		query.executeUpdate();
 	}
+
+	@Transactional
+	public void removeDefaultSequencingObject(Sample sample) {
+		Query query = entityManager.createNativeQuery("UPDATE sample SET default_sequencing_object = NULL where id = ?");
+		query.setParameter(1, sample.getId());
+		query.executeUpdate();
+	}
+
+
+	@Transactional
+	public void removeDefaultGenomeAssembly(Sample sample) {
+		Query query = entityManager.createNativeQuery("UPDATE sample SET default_genome_assembly = NULL where id = ?");
+		query.setParameter(1, sample.getId());
+		query.executeUpdate();
+	}
 }
