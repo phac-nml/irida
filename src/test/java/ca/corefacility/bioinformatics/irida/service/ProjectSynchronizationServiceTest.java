@@ -199,7 +199,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 
 	@Test
-	public void testSyncNewSample() {
+	public void testSyncNewSample() throws Exception {
 		Sample sample = new Sample();
 		RemoteStatus sampleStatus = new RemoteStatus("http://sample", api);
 		sample.setRemoteStatus(sampleStatus);
@@ -215,7 +215,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 
 	@Test
-	public void testExistingSample() {
+	public void testExistingSample() throws Exception {
 		Sample sample = new Sample();
 		RemoteStatus sampleStatus = new RemoteStatus("http://sample", api);
 		sample.setRemoteStatus(sampleStatus);
@@ -233,7 +233,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 
 	@Test
-	public void testSyncSampleNoAssemblies() {
+	public void testSyncSampleNoAssemblies() throws Exception {
 		Sample sample = new Sample();
 		RemoteStatus sampleStatus = new RemoteStatus("http://sample", api);
 		sample.setRemoteStatus(sampleStatus);
@@ -253,7 +253,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 
 	@Test
-	public void testSyncExistingSampleWithDeletedFiles() {
+	public void testSyncExistingSampleWithDeletedFiles() throws Exception {
 		Sample sample = new Sample();
 		RemoteStatus sampleStatus = new RemoteStatus("http://sample", api);
 		sample.setRemoteStatus(sampleStatus);
@@ -278,7 +278,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 
 	@Test
-	public void testSyncExistingSampleWithDeletedAssemblies() {
+	public void testSyncExistingSampleWithDeletedAssemblies() throws Exception {
 		Sample sample = new Sample();
 		RemoteStatus sampleStatus = new RemoteStatus("http://sample", api);
 		sample.setRemoteStatus(sampleStatus);
@@ -321,7 +321,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 
 	@Test
-	public void testSyncSampleNoFast5() {
+	public void testSyncSampleNoFast5() throws Exception {
 		Sample sample = new Sample();
 		RemoteStatus sampleStatus = new RemoteStatus("http://sample", api);
 		sample.setRemoteStatus(sampleStatus);

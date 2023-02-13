@@ -115,7 +115,7 @@ public class SampleServiceImplTest {
 	}
 
 	@Test
-	public void testRemoveSequencingObjectFromSample() {
+	public void testRemoveSequencingObjectFromSample() throws Exception {
 		Sample s = new Sample();
 		s.setId(1111L);
 		SequenceFile sf = new SequenceFile();
