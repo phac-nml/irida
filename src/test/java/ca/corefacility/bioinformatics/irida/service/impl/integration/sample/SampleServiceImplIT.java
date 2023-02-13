@@ -19,7 +19,6 @@ import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
 import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
-import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
