@@ -87,14 +87,14 @@ public class SampleServiceImplTest {
 		sampleGenomeAssemblyJoinRepository = mock(SampleGenomeAssemblyJoinRepository.class);
 		metadataEntryRepository = mock(MetadataEntryRepository.class);
 
-
 		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, analysisRepository, ssoRepository,
 				qcEntryRepository, sequencingObjectRepository, sampleGenomeAssemblyJoinRepository, userRepository,
 				metadataEntryRepository, null);
 
 		genomeAssemblyRepository = mock(GenomeAssemblyRepository.class);
 		validator = mock(Validator.class);
-		genomeAssemblyService = new GenomeAssemblyServiceImpl(genomeAssemblyRepository, sampleGenomeAssemblyJoinRepository, null, sampleService, sampleRepository);
+		genomeAssemblyService = new GenomeAssemblyServiceImpl(genomeAssemblyRepository,
+				sampleGenomeAssemblyJoinRepository, null, sampleService, sampleRepository);
 	}
 
 	@Test
