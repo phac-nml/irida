@@ -1,6 +1,5 @@
 #!/usr/bin/python
 import argparse
-import json
 import mysql.connector
 import os
 
