@@ -14,7 +14,7 @@ Install libraries.
 $ pip3 install -r requirements.txt
 
 Run the script to purge the sequence files on the filesystem.
-$ python3 purge_sequencing_files.py --help
+$ python3 purge_sequence_files.py --help
 
 Activate the environment.
 $ deactivate

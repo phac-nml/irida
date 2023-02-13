@@ -4,7 +4,7 @@ import json
 import mysql.connector
 import os
 
-def print_sequencing_files(host, user, password, database):
+def list_sequence_files(host, user, password, database):
     db = mysql.connector.connect(
         host=host,
         user=user,
@@ -29,7 +29,7 @@ def main():
     parser.add_argument('--password', default='test', help="The database password.", required=False)
 
     args = parser.parse_args()
-    rows = print_sequencing_files(args.host, args.user, args.password, args.database)
+    rows = list_sequence_files(args.host, args.user, args.password, args.database)
 
     if rows:
         for row in rows:
