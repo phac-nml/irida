@@ -12,7 +12,7 @@ def print_sequencing_files(host, user, password, database):
         database=database
     )
     cursor = db.cursor()
-    # TODO: Should we double check this file doesn't exist in the actually table in case it was manually restored?
+    # TODO: Should we double check this file doesn't exist in the actual table in case it was manually restored?
     # TODO: Should we be querying analysis_output_file, reference_file, and uploaded_assembly tables too?
     cursor.execute("SELECT DISTINCT file_path FROM sequence_file_AUD WHERE revtype=2")
     result = cursor.fetchall()
@@ -36,8 +36,9 @@ def main():
             file_path = row[0]
             if args.purge:
                 try:
-                    os.remove(row[0])
-                    # TODO: Remove empty folders
+                    os.remove(file_path)
+                    directory_name = os.path.dirname(file_path)
+                    os.removedirs(directory_name)
                 except OSError as e:
                     print("Error: %s - %s" % (e.filename, e.strerror))
             else:
