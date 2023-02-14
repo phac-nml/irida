@@ -86,7 +86,12 @@ export default function RemoveModal({
         )}
         {error && (
           <Col span={24}>
-            <Alert type="error" showIcon message={i18n("RemoveModal.error")} />
+            <Alert
+              type="error"
+              className="t-remove-error"
+              showIcon
+              message={i18n("RemoveModal.error")}
+            />
           </Col>
         )}
       </Row>

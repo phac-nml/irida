@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.ProjectMembersPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ShareSamplesPage;
 import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.TableSummary;
@@ -176,6 +177,7 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 
 		// Remove process
 		page.removeSamples();
+		assertFalse(page.isRemoveErrorDisplayed(), "Should not be an error message");
 		TableSummary updatedSummary = page.getTableSummary();
 		assertEquals(summary.getTotal() - 2, updatedSummary.getTotal(), "Should be 2 less samples after removal");
 	}
@@ -452,6 +454,25 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 		page.openToolsDropDown();
 		page.shareSamples();
 		assertTrue(page.isMessageDisplayed("All samples are locked and cannot be shared."));
+	}
+
+	@Test
+	void testFailedRemoveRemovingPrivileges() {
+		LoginPage.loginAsManager(driver());
+		LoginPage.loginAsAdmin(driver2());
+
+		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1L);
+
+		page.selectSampleByName(FIRST_SAMPLE_NAME);
+		page.selectSampleByName(SECOND_SAMPLE_NAME);
+
+		//admin removes manager from project
+		ProjectMembersPage projectMembersPage = ProjectMembersPage.goTo(driver2());
+		projectMembersPage.removeManagerByName("Mr. Manager");
+
+		// Remove process
+		page.removeSamples();
+		assertTrue(page.isRemoveErrorDisplayed(), "There should be an error message");
 	}
 }
 
