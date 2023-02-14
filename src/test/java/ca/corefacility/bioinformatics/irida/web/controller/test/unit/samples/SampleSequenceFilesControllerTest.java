@@ -130,7 +130,7 @@ public class SampleSequenceFilesControllerTest {
 	}
 
 	@Test
-	public void testRemoveSequenceFileFromSample() throws IOException {
+	public void testRemoveSequenceFileFromSample() throws Exception {
 		Sample s = TestDataFactory.constructSample();
 		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
 
