@@ -1,5 +1,14 @@
-import React from "react";
-import { Alert, Col, Divider, List, Modal, Row, Typography } from "antd";
+import React, { useEffect } from "react";
+import {
+  Alert,
+  Col,
+  Divider,
+  List,
+  Modal,
+  notification,
+  Row,
+  Typography,
+} from "antd";
 import { useRemoveMutation } from "../../../../apis/projects/samples";
 import LockedSamplesList from "./LockedSamplesList";
 import AssociatedSamplesList from "./AssociatedSamplesList";
@@ -22,16 +31,17 @@ export default function RemoveModal({
   onComplete,
   onCancel,
 }) {
-  const [removeSamples, { isLoading, error }] = useRemoveMutation();
+  const [removeSamples, { isLoading, error, isSuccess }] = useRemoveMutation();
 
   const onOk = async () => {
-    try {
-      await removeSamples(samples.valid.map((sample) => sample.id));
-      onComplete();
-    } catch (e) {
-      // Do nothing, handled by mutation
-    }
+    await removeSamples(samples.valid.map((sample) => sample.id));
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      onComplete();
+    }
+  }, [onComplete, isSuccess]);
 
   return (
     <Modal
@@ -75,7 +85,9 @@ export default function RemoveModal({
           </Col>
         )}
         {error && (
-          <Alert type="error" showIcon message={i18n("RemoveModal.error")} />
+          <Col span={24}>
+            <Alert type="error" showIcon message={i18n("RemoveModal.error")} />
+          </Col>
         )}
       </Row>
     </Modal>
