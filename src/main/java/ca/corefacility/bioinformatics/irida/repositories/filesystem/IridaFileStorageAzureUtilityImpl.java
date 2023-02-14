@@ -173,8 +173,8 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void deleteFile(Path sequenceFileDir) {
-		logger.trace("Deleting file: [" + sequenceFileDir.toString() + "]");
+	public void deleteFile(Path file) {
+		logger.trace("Deleting file: [" + file.toString() + "]");
 	}
 
 	/**

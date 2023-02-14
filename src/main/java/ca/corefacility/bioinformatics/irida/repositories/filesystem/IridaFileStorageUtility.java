@@ -57,9 +57,9 @@ public interface IridaFileStorageUtility {
 	/**
 	 * Delete file from storage (azure, aws, or local)
 	 *
-	 * @param sequenceFileDir The {@link Path} to sequence file directory
+	 * @param file The {@link Path} of the file
 	 */
-	public void deleteFile(Path sequenceFileDir);
+	public void deleteFile(Path file);
 
 	/**
 	 * Gets the file name from the storage type that the file is saved to (azure, aws, or local disk)

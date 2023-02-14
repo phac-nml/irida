@@ -104,13 +104,13 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void deleteFile(Path sequenceFileDir) {
+	public void deleteFile(Path file) {
 		try {
-			logger.trace("Deleting file: [" + sequenceFileDir.toString() + "]");
-			Files.deleteIfExists(sequenceFileDir);
+			logger.trace("Deleting file: [" + file.toString() + "]");
+			Files.deleteIfExists(file);
 		} catch (IOException e) {
-			logger.error("Unable to delete up sequence file", e);
-			throw new StorageException("Unable to delete up sequence file", e);
+			logger.error("Unable to delete file", e);
+			throw new StorageException("Unable to delete file", e);
 		}
 	}
 

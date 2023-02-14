@@ -19,6 +19,7 @@ import org.springframework.util.ReflectionUtils;
 
 import ca.corefacility.bioinformatics.irida.model.IridaThing;
 import ca.corefacility.bioinformatics.irida.model.VersionedFileFields;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 
 /**
  * Custom implementation of a repository that writes the {@link Path} part of an entity to disk.
@@ -172,8 +173,13 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	 * @param entity the entity to delete.
 	 */
 	protected void deleteInternal(final Type entity) {
-		Path sequenceFileDir = baseDirectory.resolve(entity.getId().toString());
-		iridaFileStorageUtility.deleteFile(sequenceFileDir);
+		Path filePath = null;
+
+		if (entity instanceof SequenceFile) {
+			filePath = ((SequenceFile) entity).getFile();
+		}
+
+		iridaFileStorageUtility.deleteFile(filePath);
 	}
 
 	/**
