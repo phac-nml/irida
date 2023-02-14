@@ -1,16 +1,6 @@
 import React, { useEffect } from "react";
-import {
-  Alert,
-  Col,
-  Divider,
-  List,
-  Modal,
-  notification,
-  Row,
-  Typography,
-} from "antd";
+import { Alert, Col, Divider, List, Modal, Typography } from "antd";
 import { useRemoveMutation } from "../../../../apis/projects/samples";
-import LockedSamplesList from "./LockedSamplesList";
 import AssociatedSamplesList from "./AssociatedSamplesList";
 
 /**
