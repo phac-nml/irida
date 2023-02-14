@@ -4,12 +4,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
-
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +23,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
 
-import com.azure.storage.blob.*;
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.*;
 import com.azure.storage.blob.specialized.BlobInputStream;
 import com.azure.storage.common.StorageSharedKeyCredential;
@@ -171,6 +172,14 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	public void deleteFile(Path sequenceFileDir) {
+		logger.trace("Deleting file: [" + sequenceFileDir.toString() + "]");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public String getFileName(Path file) {
 		String fileName = "";
 		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
@@ -234,7 +243,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
 			try (FileChannel in = new FileInputStream(iridaTemporaryFile.getFile().toFile()).getChannel()) {
-				for (long p = 0, l = in.size(); p < l;) {
+				for (long p = 0, l = in.size(); p < l; ) {
 					p += in.transferTo(p, l - p, out);
 				}
 			} catch (IOException e) {

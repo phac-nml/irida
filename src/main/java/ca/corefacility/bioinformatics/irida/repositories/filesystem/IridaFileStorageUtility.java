@@ -18,6 +18,7 @@ import com.google.common.collect.Lists;
 public interface IridaFileStorageUtility {
 	//Valid file extensions for sample file concatenation
 	public static final List<String> VALID_CONCATENATION_EXTENSIONS = Lists.newArrayList("fastq", "fastq.gz");
+
 	/**
 	 * Get a file from storage
 	 *
@@ -27,10 +28,9 @@ public interface IridaFileStorageUtility {
 	public IridaTemporaryFile getTemporaryFile(Path file);
 
 	/**
-	 * Overloaded method to get a file from storage and
-	 * add prefix to directory
+	 * Overloaded method to get a file from storage and add prefix to directory
 	 *
-	 * @param file The {@link Path} to the file
+	 * @param file   The {@link Path} to the file
 	 * @param prefix The {@link String} prefix to add to the directory name
 	 * @return {@link IridaTemporaryFile} which includes the file and optional temporary directory
 	 */
@@ -39,48 +39,50 @@ public interface IridaFileStorageUtility {
 	/**
 	 * Delete temporary downloaded file and/or directory.
 	 *
-	 * @param iridaTemporaryFile The {@link IridaTemporaryFile} object which includes the file path and/or directory path
+	 * @param iridaTemporaryFile The {@link IridaTemporaryFile} object which includes the file path and/or directory
+	 *                           path
 	 */
 	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile);
 
 	/**
 	 * Write file to storage (azure, aws, or local)
 	 *
-	 * @param source The {@link Path} to the file
-	 * @param target The {@link Path} to where file should be moved
-	 * @param sequenceFileDir The {@link Path} to sequence file directory
+	 * @param source                      The {@link Path} to the file
+	 * @param target                      The {@link Path} to where file should be moved
+	 * @param sequenceFileDir             The {@link Path} to sequence file directory
 	 * @param sequenceFileDirWithRevision The {@link Path} to sequence file revision directory
 	 */
 	public void writeFile(Path source, Path target, Path sequenceFileDir, Path sequenceFileDirWithRevision);
 
 	/**
-	 * Gets the file name from the storage type that the file
-	 * is saved to (azure, aws, or local disk)
+	 * Delete file from storage (azure, aws, or local)
+	 *
+	 * @param sequenceFileDir The {@link Path} to sequence file directory
+	 */
+	public void deleteFile(Path sequenceFileDir);
+
+	/**
+	 * Gets the file name from the storage type that the file is saved to (azure, aws, or local disk)
 	 *
 	 * @param file The path to the file for which to get name for
 	 * @return {@link String} The file name for the file
 	 */
 	public String getFileName(Path file);
 
-
 	/**
 	 * Checks if file exists
 	 *
 	 * @param file The path to the file
 	 * @return true if file exists otherwise false
-	 *
 	 */
 	public boolean fileExists(Path file);
 
 	/**
-	 * Gets the file inputstream.
-	 * ### Note: This method must be called in a
-	 * ### try-with-resources block so that the
-	 * ### underlying inputstream is closed.
+	 * Gets the file inputstream. ### Note: This method must be called in a ### try-with-resources block so that the ###
+	 * underlying inputstream is closed.
 	 *
 	 * @param file The path to the file
 	 * @return file inputstream
-	 *
 	 */
 	public InputStream getFileInputStream(Path file);
 
@@ -90,7 +92,6 @@ public interface IridaFileStorageUtility {
 	 * @param file The path to the file
 	 * @return true if file is gzipped otherwise false
 	 * @throws IOException if file can't be read
-	 *
 	 */
 	public boolean isGzipped(Path file) throws IOException;
 
@@ -121,7 +122,6 @@ public interface IridaFileStorageUtility {
 	public byte[] readAllBytes(Path file);
 
 	/**
-
 	 * Get file size in bytes
 	 *
 	 * @param file The {@link Path} to the file
@@ -132,8 +132,8 @@ public interface IridaFileStorageUtility {
 	/**
 	 * Get file in chunks
 	 *
-	 * @param file The {@link Path} to the file
-	 * @param seek File pointer to where to start reading from
+	 * @param file  The {@link Path} to the file
+	 * @param seek  File pointer to where to start reading from
 	 * @param chunk Size in bytes to read from seek point
 	 * @return {@link FileChunkResponse} Response dto containing the text and file pointer
 	 */

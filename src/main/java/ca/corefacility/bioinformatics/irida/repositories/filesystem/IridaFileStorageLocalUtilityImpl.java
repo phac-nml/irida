@@ -61,13 +61,13 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	@Override
 	public void cleanupDownloadedLocalTemporaryFiles(IridaTemporaryFile iridaTemporaryFile) {
 		if (iridaTemporaryFile.getFile() != null) {
-			logger.trace("File resides on local filesystem. Not cleaning up file [" + iridaTemporaryFile.getFile()
-					.toString() + "]");
+			logger.trace(
+					"File resides on local filesystem. Not cleaning up file [" + iridaTemporaryFile.getFile().toString()
+							+ "]");
 		}
 		if (iridaTemporaryFile.getDirectoryPath() != null) {
 			logger.trace("Directory resides on local filesystem. Not cleaning up directory ["
-					+ iridaTemporaryFile.getDirectoryPath()
-					.toString() + "]");
+					+ iridaTemporaryFile.getDirectoryPath().toString() + "]");
 		}
 	}
 
@@ -103,10 +103,23 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	public void deleteFile(Path sequenceFileDir) {
+		try {
+			logger.trace("Deleting file: [" + sequenceFileDir.toString() + "]");
+			Files.deleteIfExists(sequenceFileDir);
+		} catch (IOException e) {
+			logger.error("Unable to delete up sequence file", e);
+			throw new StorageException("Unable to delete up sequence file", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public String getFileName(Path file) {
 		String fileName = "";
-		fileName = file.getFileName()
-				.toString();
+		fileName = file.getFileName().toString();
 		return fileName;
 	}
 
@@ -151,7 +164,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
 			try (FileChannel in = FileChannel.open(file.getFile(), StandardOpenOption.READ)) {
-				for (long p = 0, l = in.size(); p < l;) {
+				for (long p = 0, l = in.size(); p < l; ) {
 					p += in.transferTo(p, l - p, out);
 				}
 			} catch (IOException e) {
@@ -171,9 +184,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 		for (SequencingObject object : sequencingObjects) {
 
 			for (SequenceFile file : object.getFiles()) {
-				String fileName = file.getFile()
-						.toFile()
-						.getName();
+				String fileName = file.getFile().toFile().getName();
 
 				Optional<String> currentExtensionOpt = VALID_CONCATENATION_EXTENSIONS.stream()
 						.filter(e -> fileName.endsWith(e))
@@ -245,7 +256,7 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 			}
 
 			return new FileChunkResponse(chunkResponse, randomAccessFile.getFilePointer());
-		} catch (IOException e ) {
+		} catch (IOException e) {
 			logger.error("Could not read output file ", e);
 		}
 		return null;

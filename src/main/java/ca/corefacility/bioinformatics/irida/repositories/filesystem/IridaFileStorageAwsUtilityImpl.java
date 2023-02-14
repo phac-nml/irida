@@ -1,6 +1,9 @@
 package ca.corefacility.bioinformatics.irida.repositories.filesystem;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -180,6 +183,14 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	public void deleteFile(Path sequenceFileDir) {
+		logger.trace("Deleting file: [" + sequenceFileDir.toString() + "]");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public String getFileName(Path file) {
 		String fileName = "";
 		try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file))) {
@@ -257,7 +268,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
 			try (FileChannel in = new FileInputStream(iridaTemporaryFile.getFile().toFile()).getChannel()) {
-				for (long p = 0, l = in.size(); p < l;) {
+				for (long p = 0, l = in.size(); p < l; ) {
 					p += in.transferTo(p, l - p, out);
 				}
 			} catch (IOException e) {
@@ -354,7 +365,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 			 below uses getBucketAcl. So if bucket permissions aren't set then the else code is used.
 			 */
 			GetObjectRequest rangeObjectRequest = new GetObjectRequest(bucketName,
-					getAwsFileAbsolutePath(file)).withRange(seek, (chunk+seek) - 1);
+					getAwsFileAbsolutePath(file)).withRange(seek, (chunk + seek) - 1);
 			try (S3Object s3Object = s3.getObject(rangeObjectRequest);
 					S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
 				byte[] bytes = s3ObjectInputStream.readAllBytes();
