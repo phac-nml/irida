@@ -550,6 +550,9 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		removeBtn.click();
 		wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("t-remove-modal")));
 		removeModal.findElement(By.xpath("//button[@type='button' and span='Remove Samples']")).click();
+		// Modal might or might not close depending the outcome of the remove, so we need to wait a moment to
+		// see what happens.
+		waitForTime(400);
 	}
 
 	public boolean isRemoveErrorDisplayed() {

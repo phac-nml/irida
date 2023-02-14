@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Alert, Col, Divider, List, Modal, Typography } from "antd";
+import { Alert, Col, Divider, List, Modal, Row, Typography } from "antd";
 import { useRemoveMutation } from "../../../../apis/projects/samples";
 import AssociatedSamplesList from "./AssociatedSamplesList";
 
