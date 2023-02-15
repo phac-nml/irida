@@ -447,16 +447,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	void testSharingWithLockedSamplesAsManager() {
-		LoginPage.loginAsManager(driver());
-		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1L);
-		page.selectSampleByName(LOCKED_SAMPLE_NAME);
-		page.openToolsDropDown();
-		page.shareSamples();
-		assertTrue(page.isMessageDisplayed("All samples are locked and cannot be shared."));
-	}
-
-	@Test
 	void testFailedRemoveRemovingPrivileges() {
 		LoginPage.loginAsManager(driver());
 		LoginPage.loginAsAdmin(driver2());

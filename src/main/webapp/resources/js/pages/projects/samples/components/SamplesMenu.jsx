@@ -292,14 +292,13 @@ export default function SamplesMenu() {
     <>
       <Row justify="space-between">
         <Space>
-          {details.canManage ||
-            (details.canManageRemote && (
-              <Dropdown overlay={toolsMenu}>
-                <Button className="t-sample-tools">
-                  {i18n("SamplesMenu.label")} <IconDropDown />
-                </Button>
-              </Dropdown>
-            ))}
+          {details.canManage && (
+            <Dropdown overlay={toolsMenu}>
+              <Button className="t-sample-tools">
+                {i18n("SamplesMenu.label")} <IconDropDown />
+              </Button>
+            </Dropdown>
+          )}
           <Dropdown overlay={exportMenu}>
             <Button className="t-export">
               {i18n("SampleMenu.export")} <IconDropDown />
