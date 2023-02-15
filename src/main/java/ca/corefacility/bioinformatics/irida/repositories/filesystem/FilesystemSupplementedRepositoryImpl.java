@@ -179,7 +179,7 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 			filePath = ((SequenceFile) entity).getFile();
 		}
 
-		iridaFileStorageUtility.deleteFile(filePath);
+		iridaFileStorageUtility.deleteFile(baseDirectory.resolve(filePath));
 	}
 
 	/**
