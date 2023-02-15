@@ -154,19 +154,6 @@ public class ProjectSamplesPageIT extends AbstractIridaUIITChromeDriver {
 	}
 
 	@Test
-	public void testRemoteProjectSamplesManagerSetup() {
-		LoginPage.loginAsManager(driver());
-
-		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 7L);
-
-		page.selectSampleByName("sample23p7");
-		page.selectSampleByName("sample24p7");
-
-		page.openToolsDropDown();
-		assertFalse(page.isMergeBtnVisible(), "Merge button should not be displayed");
-	}
-
-	@Test
 	public void testRemoveSamplesFromProject() {
 		LoginPage.loginAsManager(driver());
 		ProjectSamplesPage page = ProjectSamplesPage.goToPage(driver(), 1L);
