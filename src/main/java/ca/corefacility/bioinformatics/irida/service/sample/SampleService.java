@@ -181,7 +181,7 @@ public interface SampleService extends CRUDService<Long, Sample> {
 	 * @param sample {@link Sample} to remove sequences from
 	 * @param object {@link SequencingObject} to remove
 	 */
-	public void removeSequencingObjectFromSample(Sample sample, SequencingObject object);
+	public void removeSequencingObjectFromSample(Sample sample, SequencingObject object) throws Exception;
 
 	/**
 	 * Merge multiple samples into one. Merging samples copies the {@link SequenceFile} references from the set of

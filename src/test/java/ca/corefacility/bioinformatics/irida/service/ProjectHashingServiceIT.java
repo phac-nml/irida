@@ -103,7 +103,7 @@ public class ProjectHashingServiceIT {
 
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	@Test
-	public void hashChangesWithRemovedSequencingObject() {
+	public void hashChangesWithRemovedSequencingObject() throws Exception {
 		Project project = projectService.read(2L);
 
 		Integer originalHash = hashingService.getProjectHash(project);

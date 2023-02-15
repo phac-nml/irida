@@ -695,7 +695,7 @@ public class RESTSampleSequenceFilesController {
 			description = "Delete the sequencing object from a given sample.", tags = "samples")
 	@RequestMapping(value = "/api/samples/{sampleId}/{objectType}/{objectId}", method = RequestMethod.DELETE)
 	public ResponseResource<RootResource> removeSequenceFileFromSample(@PathVariable Long sampleId,
-			@PathVariable String objectType, @PathVariable Long objectId) {
+			@PathVariable String objectType, @PathVariable Long objectId) throws Exception {
 		// load the project, sample and sequence file from the database
 		Sample s = sampleService.read(sampleId);
 		SequencingObject seqObject = sequencingObjectService.readSequencingObjectForSample(s, objectId);
