@@ -12,7 +12,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.annotation.FileSystemIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
@@ -38,8 +40,6 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @FileSystemIntegrationTest
 public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtility {
@@ -79,8 +79,7 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 				.withClientConfiguration(new ClientConfiguration().withProtocol(Protocol.HTTP))
 				.withCredentials(new AWSStaticCredentialsProvider(
 						new AnonymousAWSCredentials())) // use any credentials here for mocking
-				.withEndpointConfiguration(
-						new AwsClientBuilder.EndpointConfiguration(ENDPOINT_URL, BUCKET_REGION))
+				.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(ENDPOINT_URL, BUCKET_REGION))
 				.enablePathStyleAccess()
 				.build();
 
@@ -88,8 +87,8 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 			s3Client.createBucket(new CreateBucketRequest(bucketName, BUCKET_REGION));
 		}
 
-		iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(bucketName, BUCKET_REGION, AWS_ACCESS_KEY, AWS_SECRET_KEY,
-				Optional.ofNullable(ENDPOINT_URL));
+		iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(bucketName, BUCKET_REGION, AWS_ACCESS_KEY,
+				AWS_SECRET_KEY, Optional.ofNullable(ENDPOINT_URL));
 
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 
@@ -176,6 +175,12 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 				Files.deleteIfExists(temp);
 			}
 		}
+	}
+
+	@Test
+	@Override
+	public void testDeleteFile() {
+
 	}
 
 	@Test

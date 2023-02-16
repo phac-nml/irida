@@ -175,6 +175,8 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	@Override
 	public void deleteFile(Path file) {
 		logger.trace("Deleting file: [" + file.toString() + "]");
+		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+		blobClient.deleteIfExists();
 	}
 
 	/**
@@ -243,7 +245,7 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
 			try (FileChannel in = new FileInputStream(iridaTemporaryFile.getFile().toFile()).getChannel()) {
-				for (long p = 0, l = in.size(); p < l;) {
+				for (long p = 0, l = in.size(); p < l; ) {
 					p += in.transferTo(p, l - p, out);
 				}
 			} catch (IOException e) {
