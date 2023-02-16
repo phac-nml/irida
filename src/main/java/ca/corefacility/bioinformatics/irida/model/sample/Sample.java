@@ -142,11 +142,11 @@ public class Sample extends IridaRepresentationModel
 	@Longitude
 	private String longitude;
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "default_sequencing_object")
 	private SequencingObject defaultSequencingObject;
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "default_genome_assembly")
 	private GenomeAssembly defaultGenomeAssembly;
 

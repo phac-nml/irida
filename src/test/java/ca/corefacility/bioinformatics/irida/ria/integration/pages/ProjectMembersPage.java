@@ -96,6 +96,17 @@ public class ProjectMembersPage extends AbstractPage {
 		wait.until(ExpectedConditions.visibilityOf(antNotification));
 	}
 
+	public void removeManagerByName(String name) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
+		WebElement button = wait.until(ExpectedConditions.visibilityOfElementLocated(
+				By.xpath("//table/tbody/tr/td/a[contains(text(), '" + name + "')]/../../td/button")));
+		button.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-remove-popover")));
+		wait.until(ExpectedConditions.elementToBeClickable(By.className("t-remove-confirm")));
+		driver.findElement(By.className("t-remove-confirm")).click();
+		wait.until(ExpectedConditions.visibilityOf(antNotification));
+	}
+
 	public boolean isNotificationDisplayed() {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.visibilityOf(antNotification));

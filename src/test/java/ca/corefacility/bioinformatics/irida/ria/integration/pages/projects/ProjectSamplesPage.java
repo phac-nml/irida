@@ -550,7 +550,13 @@ public class ProjectSamplesPage extends ProjectPageBase {
 		removeBtn.click();
 		wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("t-remove-modal")));
 		removeModal.findElement(By.xpath("//button[@type='button' and span='Remove Samples']")).click();
-		wait.until(ExpectedConditions.textMatches(By.className("t-summary"), Pattern.compile("^Selected: 0")));
+		// Modal might or might not close depending the outcome of the remove, so we need to wait a moment to
+		// see what happens.
+		waitForTime(400);
+	}
+
+	public boolean isRemoveErrorDisplayed() {
+		return driver.findElements(By.className("t-remove-error")).size() > 0;
 	}
 
 	public void shareSamples() {
