@@ -12,7 +12,6 @@ def list_sequence_files(host, user, password, database):
     )
     cursor = db.cursor()
     # TODO: Should we double check this file doesn't exist in the actual table in case it was manually restored?
-    # TODO: Should we be querying analysis_output_file, reference_file, and uploaded_assembly tables too?
     cursor.execute("SELECT DISTINCT file_path FROM sequence_file_AUD WHERE revtype=2")
     result = cursor.fetchall()
     cursor.close()
