@@ -17,6 +17,7 @@
 * [Developer]: Deprecated "/api/projects/{projectId}/samples/bySequencerId/{seqeuncerId}" in favour of "/api/projects/{projectId}/samples/bySampleName", which accepts a json property "sampleName"
 * [Developer]: Fixed bug in setting a `default_sequencing_object and default_genome_assembly to `NULL` for a sample when the default sequencing object or genome assembly were removed. [See PR 1466](https://github.com/phac-nml/irida/pull/1466)
 * [Developer]: Fixed bug preventing a `sample` with an analysis submission from being deleted. [See PR 1467](https://github.com/phac-nml/irida/pull/1467)
+* [Developer]: Added script to do initial cleanup of sequence files from file system. [See PR 1469](https://github.com/phac-nml/irida/pull/1469)
 
 ## [22.09.7] - 2022/01/24
 * [UI]: Fixed bugs on NCBI Export page preventing the NCBI `submission.xml` file from being properly written. See [PR 1451](https://github.com/phac-nml/irida/pull/1451)
