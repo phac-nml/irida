@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.annotation.FileSystemIntegrationTest;
@@ -91,13 +92,13 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 				AWS_SECRET_KEY, Optional.ofNullable(ENDPOINT_URL));
 
 		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+	}
 
+	@BeforeEach
+	public void uploadFiles() {
 		s3Client.putObject(bucketName, AWS_PATH_TO_FASTA_FILE, Paths.get(LOCAL_RESOURCES_FASTA_FILE_PATH).toFile());
-
 		s3Client.putObject(bucketName, AWS_PATH_TO_IMAGE_FILE, Paths.get(LOCAL_RESOURCES_IMAGE_FILE_PATH).toFile());
-
 		s3Client.putObject(bucketName, AWS_PATH_FASTQ_1, Paths.get(LOCAL_RESOURCES_FASTQ_1_PATH).toFile());
-
 		s3Client.putObject(bucketName, AWS_PATH_FASTQ_2, Paths.get(LOCAL_RESOURCES_FASTQ_2_PATH).toFile());
 	}
 
@@ -180,7 +181,9 @@ public class IridaFileStorageAwsUtilityTest implements IridaFileStorageTestUtili
 	@Test
 	@Override
 	public void testDeleteFile() {
-
+		iridaFileStorageUtility.deleteFile(PATH_TO_FASTA_FILE);
+		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
+		assertFalse(fileExistsInBlobStorage, "File should not exist in azure blob storage");
 	}
 
 	@Test

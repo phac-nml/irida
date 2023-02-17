@@ -186,6 +186,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	@Override
 	public void deleteFile(Path file) {
 		logger.trace("Deleting file: [" + file.toString() + "]");
+		s3.deleteObject(bucketName, getAwsFileAbsolutePath(file));
 	}
 
 	/**
@@ -268,7 +269,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 		try (FileChannel out = FileChannel.open(target, StandardOpenOption.CREATE, StandardOpenOption.APPEND,
 				StandardOpenOption.WRITE)) {
 			try (FileChannel in = new FileInputStream(iridaTemporaryFile.getFile().toFile()).getChannel()) {
-				for (long p = 0, l = in.size(); p < l;) {
+				for (long p = 0, l = in.size(); p < l; ) {
 					p += in.transferTo(p, l - p, out);
 				}
 			} catch (IOException e) {
