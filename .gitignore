@@ -58,3 +58,4 @@ src/main/webapp/node_modules
 /src/main/resources/application-local.properties
 java_pid*.hprof
 gradle.properties
+.virtualenv
