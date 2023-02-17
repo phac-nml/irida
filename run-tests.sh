@@ -107,7 +107,7 @@ test_service() {
 }
 
 test_file_system() {
-  docker run -d -p 9090:9090 -p 9191:9191 --name $S3MOCK_DOCKER_NAME -t adobe/s3mock
+  docker run -d -p 4566-4583:4566-4583 -e "DEFAULT_REGION=us-east-2" -e "EDGE_PORT=4566" -e "SERVICES=s3,logs" --name $S3MOCK_DOCKER_NAME -t localstack/localstack:latest
 
   docker run -d -p 10000:10000 -p 10001:10001 -p 10002:10002 --name $AZURITE_DOCKER_NAME mcr.microsoft.com/azure-storage/azurite
     ./gradlew clean check fileSystemITest -Dspring.datasource.url=$JDBC_URL -Dfile.processing.decompress=true -Dirida.it.rootdirectory=$TMP_DIRECTORY -Dspring.datasource.dbcp2.max-wait=$DB_MAX_WAIT_MILLIS $@

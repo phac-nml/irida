@@ -617,11 +617,6 @@ public class UISampleService {
 		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
 
 		try {
-			if (sample.getDefaultSequencingObject() != null
-					&& sample.getDefaultSequencingObject().getId() == sequencingObjectId) {
-				sample.setDefaultSequencingObject(null);
-				sampleService.update(sample);
-			}
 			sampleService.removeSequencingObjectFromSample(sample, sequencingObject);
 			return messageSource.getMessage("server.SampleFiles.removeSequencingObjectSuccess", new Object[] {},
 					locale);
@@ -644,11 +639,6 @@ public class UISampleService {
 		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, genomeAssemblyId);
 
 		try {
-			if (sample.getDefaultGenomeAssembly() != null
-					&& sample.getDefaultGenomeAssembly().getId() == genomeAssemblyId) {
-				sample.setDefaultGenomeAssembly(null);
-				sampleService.update(sample);
-			}
 			genomeAssemblyService.removeGenomeAssemblyFromSample(sample, genomeAssemblyId);
 			return messageSource.getMessage("server.SampleFiles.removeGenomeAssemblySuccess", new Object[] {}, locale);
 		} catch (Exception e) {

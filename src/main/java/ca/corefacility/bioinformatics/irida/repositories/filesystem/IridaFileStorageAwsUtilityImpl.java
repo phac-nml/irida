@@ -23,8 +23,11 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkResponse;
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
@@ -44,20 +47,23 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	private final StorageType storageType = StorageType.AWS;
 
 	@Autowired
-	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey) {
+	public IridaFileStorageAwsUtilityImpl(String bucketName, String bucketRegion, String accessKey, String secretKey,
+			Optional<String> bucketUrl) {
 		this.awsCreds = new BasicAWSCredentials(accessKey, secretKey);
-		this.s3 = AmazonS3ClientBuilder.standard()
-				.withRegion(bucketRegion)
-				.withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-				.build();
-		this.bucketName = bucketName;
-	}
-
-	/*
-	This instantiation method is for TESTING ONLY. DO NOT USE IN PRODUCTION. USE THE METHOD ABOVE FOR PRODUCTION.
-	 */
-	public IridaFileStorageAwsUtilityImpl(AmazonS3 s3Client, String bucketName) {
-		this.s3 = s3Client;
+		if (!bucketUrl.isPresent()) {
+			this.s3 = AmazonS3ClientBuilder.standard()
+					.withRegion(bucketRegion)
+					.withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+					.build();
+		} else {
+			this.s3 = AmazonS3ClientBuilder.standard()
+					.withClientConfiguration(new ClientConfiguration().withProtocol(Protocol.HTTP))
+					.withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+					.withEndpointConfiguration(
+							new AwsClientBuilder.EndpointConfiguration(bucketUrl.get(), bucketRegion))
+					.enablePathStyleAccess()
+					.build();
+		}
 		this.bucketName = bucketName;
 	}
 
@@ -347,21 +353,22 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 			 However a smaller amount of bytes may be read, so we set the file pointer accordingly. The code
 			 below uses getBucketAcl. So if bucket permissions aren't set then the else code is used.
 			 */
-			GetObjectRequest rangeObjectRequest = new GetObjectRequest(bucketName, getAwsFileAbsolutePath(file)).withRange(seek, chunk);
+			GetObjectRequest rangeObjectRequest = new GetObjectRequest(bucketName,
+					getAwsFileAbsolutePath(file)).withRange(seek, (chunk+seek) - 1);
 			try (S3Object s3Object = s3.getObject(rangeObjectRequest);
 					S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
 				byte[] bytes = s3ObjectInputStream.readAllBytes();
-				return new FileChunkResponse(new String(bytes), seek + (bytes.length - 1));
+				return new FileChunkResponse(new String(bytes), seek + (bytes.length));
 			} catch (IOException e) {
 				logger.error("Couldn't get chunk from s3 bucket", e);
 			}
 		} else {
 			try (S3Object s3Object = s3.getObject(bucketName, getAwsFileAbsolutePath(file));
 					S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent()) {
-							byte[] bytes = new byte[seek.intValue() + chunk.intValue()];
-							s3ObjectInputStream.readNBytes(bytes, 0, seek.intValue() + chunk.intValue());
-							byte[] bytesForRange = Arrays.copyOfRange(bytes, seek.intValue(), seek.intValue() + chunk.intValue());
-							return new FileChunkResponse(new String(bytesForRange), seek + (bytesForRange.length));
+				byte[] bytes = new byte[seek.intValue() + chunk.intValue()];
+				s3ObjectInputStream.readNBytes(bytes, 0, seek.intValue() + chunk.intValue());
+				byte[] bytesForRange = Arrays.copyOfRange(bytes, seek.intValue(), seek.intValue() + chunk.intValue());
+				return new FileChunkResponse(new String(bytesForRange), seek + (bytesForRange.length));
 			} catch (IOException e) {
 				logger.error("Couldn't get chunk from s3 bucket", e);
 			}
@@ -394,7 +401,8 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 				// write a line
 				Files.write(tempFile, "AWS check read/write permissions.\n".getBytes(StandardCharsets.UTF_8));
 				try {
-					s3.putObject(bucketName, getAwsFileAbsolutePath(baseDirectory) + "/" + tempFile.getFileName(), tempFile.toFile());
+					s3.putObject(bucketName, getAwsFileAbsolutePath(baseDirectory) + "/" + tempFile.getFileName(),
+							tempFile.toFile());
 					s3.deleteObject(bucketName, getAwsFileAbsolutePath(baseDirectory) + "/" + tempFile.getFileName());
 					return true;
 				} catch (AmazonServiceException e) {
@@ -429,6 +437,7 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 
 	/**
 	 * Gets the bucket permissions
+	 *
 	 * @return the permissions on the bucket
 	 */
 	private List<String> getBucketPermissions() {
