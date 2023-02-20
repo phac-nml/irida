@@ -12,7 +12,7 @@ def list_sequence_files(host, user, password, database):
     )
     cursor = db.cursor()
     # TODO: Should we double check this file doesn't exist in the actual table in case it was manually restored?
-    cursor.execute("SELECT DISTINCT file_path FROM sequence_file_AUD WHERE revtype=2")
+    cursor.execute("SELECT DISTINCT file_path FROM sequence_file_AUD WHERE id in (SELECT DISTINCT id FROM sequence_file_AUD WHERE revtype=2)")
     result = cursor.fetchall()
     cursor.close()
     db.close()
@@ -21,6 +21,7 @@ def list_sequence_files(host, user, password, database):
 def main():
     parser = argparse.ArgumentParser(description="This program lists the sequence files that have been previously deleted in IRIDA.")
     parser.add_argument('--purge', help="Deletes the sequence files from the filesystem.", action="store_true")
+    parser.add_argument('--baseDirectory', help="The sequence file base directory.", required=True)
     parser.add_argument('--host', default='localhost', help="The database host name.", required=False)
     parser.add_argument('--database', default='irida_test', help="The database name.", required=False)
     parser.add_argument('--user', default='test', help="The database user name.", required=False)
@@ -31,7 +32,7 @@ def main():
 
     if rows:
         for row in rows:
-            file_path = row[0]
+            file_path = args.baseDirectory + row[0]
             if args.purge:
                 try:
                     os.remove(file_path)
