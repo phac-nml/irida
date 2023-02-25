@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import argparse
 import mysql.connector
-import os
+from pathlib import Path
 
 def list_sequence_files(host, user, password, database):
     db = mysql.connector.connect(
@@ -12,7 +12,7 @@ def list_sequence_files(host, user, password, database):
     )
     cursor = db.cursor()
     # TODO: Should we double check this file doesn't exist in the actual table in case it was manually restored?
-    cursor.execute("SELECT DISTINCT file_path FROM sequence_file_AUD WHERE id in (SELECT DISTINCT id FROM sequence_file_AUD WHERE revtype=2)")
+    cursor.execute("SELECT DISTINCT file_path FROM sequence_file_AUD WHERE revtype=2")
     result = cursor.fetchall()
     cursor.close()
     db.close()
@@ -32,18 +32,18 @@ def main():
 
     if rows:
         for row in rows:
-            file_path = args.baseDirectory + row[0]
-            if args.purge:
-                try:
-                    os.remove(file_path)
-                    directory_name = os.path.dirname(file_path)
-                    os.removedirs(directory_name)
-                except OSError as e:
-                    print("Error: %s - %s" % (e.filename, e.strerror))
-            else:
-                print(file_path)
+            sequence_file_directory = Path(args.baseDirectory + row[0]).parents[1]
+            entries = Path(sequence_file_directory)
+            for entry in entries.rglob("*"):
+                if args.purge:
+                    if entry.is_file():
+                        entry.unlink()
+                        print("Deleted ", entry)
+                else:
+                    if entry.is_file():
+                        print(entry)
     else:
-        print("There are no deleted sequence files.")
+        print("There are no deleted sequence files in the database.")
 
 if __name__ == '__main__':
     main()
