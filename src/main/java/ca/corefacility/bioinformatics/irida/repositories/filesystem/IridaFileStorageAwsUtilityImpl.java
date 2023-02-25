@@ -36,6 +36,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 /**
  * Implementation of file utilities for aws storage
@@ -187,6 +188,17 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	public void deleteFile(Path file) {
 		logger.trace("Deleting file: [" + file.toString() + "]");
 		s3.deleteObject(bucketName, getAwsFileAbsolutePath(file));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deleteFolder(Path folder) {
+		logger.trace("Deleting folder: [" + folder.toString() + "]");
+		for (S3ObjectSummary file : s3.listObjects(bucketName, getAwsFileAbsolutePath(folder)).getObjectSummaries()) {
+			s3.deleteObject(bucketName, file.getKey());
+		}
 	}
 
 	/**

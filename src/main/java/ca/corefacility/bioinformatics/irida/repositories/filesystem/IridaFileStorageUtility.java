@@ -62,6 +62,13 @@ public interface IridaFileStorageUtility {
 	public void deleteFile(Path file);
 
 	/**
+	 * Delete folder from storage (azure, aws, or local)
+	 *
+	 * @param folder The {@link Path} of the folder
+	 */
+	public void deleteFolder(Path folder);
+
+	/**
 	 * Gets the file name from the storage type that the file is saved to (azure, aws, or local disk)
 	 *
 	 * @param file The path to the file for which to get name for

@@ -173,13 +173,14 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 	 * @param entity the entity to delete.
 	 */
 	protected void deleteInternal(final Type entity) {
-		Path filePath = null;
+		Path deletePath = null;
 
 		if (entity instanceof SequenceFile) {
-			filePath = ((SequenceFile) entity).getFile();
+			//remove all sequence file copies from revision folders
+			deletePath = ((SequenceFile) entity).getFile().getParent().getParent();
 		}
 
-		iridaFileStorageUtility.deleteFile(baseDirectory.resolve(filePath));
+		iridaFileStorageUtility.deleteFolder(baseDirectory.resolve(deletePath));
 	}
 
 	/**

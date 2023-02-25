@@ -16,6 +16,7 @@ import java.util.zip.GZIPInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.FileSystemUtils;
 
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
@@ -111,6 +112,20 @@ public class IridaFileStorageLocalUtilityImpl implements IridaFileStorageUtility
 		} catch (IOException e) {
 			logger.error("Unable to delete file", e);
 			throw new StorageException("Unable to delete file", e);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deleteFolder(Path folder) {
+		try {
+			logger.trace("Deleting folder: [" + folder.toString() + "]");
+			FileSystemUtils.deleteRecursively(folder);
+		} catch (IOException e) {
+			logger.error("Unable to delete folder", e);
+			throw new StorageException("Unable to delete folder", e);
 		}
 	}
 

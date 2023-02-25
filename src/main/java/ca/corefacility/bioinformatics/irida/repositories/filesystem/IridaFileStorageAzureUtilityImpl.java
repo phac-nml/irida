@@ -182,6 +182,19 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	public void deleteFolder(Path folder) {
+		logger.trace("Deleting folder: [" + folder.toString() + "]");
+		ListBlobsOptions options = new ListBlobsOptions().setPrefix(getAzureFileAbsolutePath(folder));
+		containerClient.listBlobs(options, null).forEach(blob -> {
+			BlobClient blobClient = containerClient.getBlobClient(blob.getName());
+			blobClient.deleteIfExists();
+		});
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public String getFileName(Path file) {
 		String fileName = "";
 		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
