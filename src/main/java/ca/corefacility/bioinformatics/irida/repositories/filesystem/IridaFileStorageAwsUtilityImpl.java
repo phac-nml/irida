@@ -28,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.analysis.FileChunkR
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
@@ -186,8 +187,13 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	 */
 	@Override
 	public void deleteFile(Path file) {
-		logger.trace("Deleting file: [" + file.toString() + "]");
-		s3.deleteObject(bucketName, getAwsFileAbsolutePath(file));
+		try {
+			logger.trace("Deleting file: [" + file.toString() + "]");
+			s3.deleteObject(bucketName, getAwsFileAbsolutePath(file));
+		} catch (SdkClientException e) {
+			logger.error("Unable to delete file", e);
+			throw new StorageException("Unable to delete file", e);
+		}
 	}
 
 	/**
@@ -195,9 +201,15 @@ public class IridaFileStorageAwsUtilityImpl implements IridaFileStorageUtility {
 	 */
 	@Override
 	public void deleteFolder(Path folder) {
-		logger.trace("Deleting folder: [" + folder.toString() + "]");
-		for (S3ObjectSummary file : s3.listObjects(bucketName, getAwsFileAbsolutePath(folder)).getObjectSummaries()) {
-			s3.deleteObject(bucketName, file.getKey());
+		try {
+			logger.trace("Deleting folder: [" + folder.toString() + "]");
+			for (S3ObjectSummary file : s3.listObjects(bucketName, getAwsFileAbsolutePath(folder))
+					.getObjectSummaries()) {
+				s3.deleteObject(bucketName, file.getKey());
+			}
+		} catch (SdkClientException e) {
+			logger.error("Unable to delete folder", e);
+			throw new StorageException("Unable to delete folder", e);
 		}
 	}
 
