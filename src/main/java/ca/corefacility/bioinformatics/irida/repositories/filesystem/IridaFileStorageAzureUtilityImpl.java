@@ -174,9 +174,14 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public void deleteFile(Path file) {
-		logger.trace("Deleting file: [" + file.toString() + "]");
-		BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
-		blobClient.deleteIfExists();
+		try {
+			logger.trace("Deleting file: [" + file.toString() + "]");
+			BlobClient blobClient = containerClient.getBlobClient(getAzureFileAbsolutePath(file));
+			blobClient.deleteIfExists();
+		} catch (BlobStorageException e) {
+			logger.error("Unable to delete file", e);
+			throw new StorageException("Unable to delete file", e);
+		}
 	}
 
 	/**
@@ -184,12 +189,17 @@ public class IridaFileStorageAzureUtilityImpl implements IridaFileStorageUtility
 	 */
 	@Override
 	public void deleteFolder(Path folder) {
-		logger.trace("Deleting folder: [" + folder.toString() + "]");
-		ListBlobsOptions options = new ListBlobsOptions().setPrefix(getAzureFileAbsolutePath(folder));
-		containerClient.listBlobs(options, null).forEach(blob -> {
-			BlobClient blobClient = containerClient.getBlobClient(blob.getName());
-			blobClient.deleteIfExists();
-		});
+		try {
+			logger.trace("Deleting folder: [" + folder.toString() + "]");
+			ListBlobsOptions options = new ListBlobsOptions().setPrefix(getAzureFileAbsolutePath(folder));
+			containerClient.listBlobs(options, null).forEach(blob -> {
+				BlobClient blobClient = containerClient.getBlobClient(blob.getName());
+				blobClient.deleteIfExists();
+			});
+		} catch (BlobStorageException e) {
+			logger.error("Unable to delete folder", e);
+			throw new StorageException("Unable to delete folder", e);
+		}
 	}
 
 	/**
