@@ -180,7 +180,9 @@ public abstract class FilesystemSupplementedRepositoryImpl<Type extends Versione
 			deletePath = ((SequenceFile) entity).getFile().getParent().getParent();
 		}
 
-		iridaFileStorageUtility.deleteFolder(baseDirectory.resolve(deletePath));
+		if (deletePath != null) {
+			iridaFileStorageUtility.deleteFolder(baseDirectory.resolve(deletePath));
+		}
 	}
 
 	/**
