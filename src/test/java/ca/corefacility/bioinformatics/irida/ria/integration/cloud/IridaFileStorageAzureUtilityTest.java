@@ -217,6 +217,14 @@ public class IridaFileStorageAzureUtilityTest implements IridaFileStorageTestUti
 
 	@Test
 	@Override
+	public void testDeleteFolder() {
+		iridaFileStorageUtility.deleteFolder(PATH_TO_FASTA_FILE.getParent());
+		boolean fileExistsInBlobStorage = iridaFileStorageUtility.fileExists(PATH_TO_FASTA_FILE);
+		assertFalse(fileExistsInBlobStorage, "File should not exist in azure blob storage");
+	}
+
+	@Test
+	@Override
 	public void testGetFileName() {
 		String fileName = iridaFileStorageUtility.getFileName(PATH_TO_FASTA_FILE);
 		assertEquals(FILENAME, fileName, "The file names should be equal");

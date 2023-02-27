@@ -18,6 +18,7 @@ public interface IridaFileStorageTestUtility {
 	public void testWriteFile() throws IOException;
 
 	public void testDeleteFile();
+	public void testDeleteFolder();
 
 	public void testGetFileName();
 
