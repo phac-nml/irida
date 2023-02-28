@@ -1,7 +1,7 @@
 
 # Changelog
 
-## [Unreleased]
+## [23.01] - 2023/02/28
 * [UI/Developer]: Updated `react-router` to the version 6.4.3. See[PR 1405](https://github.com/phac-nml/irida/pull/1405)
 * [Developer] Updated developer setup documentation, ignore java_pid\*.hprof files, and added quality of life file `gradle.properties`. See [PR 1415](https://github.com/phac-nml/irida/pull/1415).
 * [Documentation]: Updated broken links in developer documentation. See [PR 1418](https://github.com/phac-nml/irida/pull/1418).
@@ -18,7 +18,7 @@
 * [Developer]: Fixed bug in setting a `default_sequencing_object and default_genome_assembly to `NULL` for a sample when the default sequencing object or genome assembly were removed. [See PR 1466](https://github.com/phac-nml/irida/pull/1466)
 * [Developer]: Fixed bug preventing a `sample` with an analysis submission from being deleted. [See PR 1467](https://github.com/phac-nml/irida/pull/1467)
 
-## [22.09.7] - 2022/01/24
+## [22.09.7] - 2023/01/24
 * [UI]: Fixed bugs on NCBI Export page preventing the NCBI `submission.xml` file from being properly written. See [PR 1451](https://github.com/phac-nml/irida/pull/1451)
 
 ## [22.09.6] - 2022/12/21
@@ -176,8 +176,9 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
-[Unreleased]: https://github.com/phac-nml/irida/compare/22.09.7...HEAD
+[Unreleased]: https://github.com/phac-nml/irida/compare/23.01...HEAD
 
+[23.01]: https://github.com/phac-nml/irida/compare/22.09.7...23.01
 [22.09.7]: https://github.com/phac-nml/irida/compare/22.09.6...22.09.7
 [22.09.6]: https://github.com/phac-nml/irida/compare/22.09.5...22.09.6
 [22.09.5]: https://github.com/phac-nml/irida/compare/22.09.4...22.09.5
