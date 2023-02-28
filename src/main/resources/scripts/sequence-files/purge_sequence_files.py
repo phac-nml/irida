@@ -3,6 +3,20 @@ import argparse
 import mysql.connector
 import os
 
+def remove(path, purge):
+    if purge:
+        try:
+            if os.path.isdir(path):
+                os.rmdir(path)
+            elif os.path.isfile(path):
+                os.remove(path)
+            else:
+                print("Unable to delete ", path)
+        except OSError as e:
+            print(e)
+    else:
+        print(path)
+
 def list_sequence_files(host, user, password, database):
     db = mysql.connector.connect(
         host=host,
@@ -36,18 +50,11 @@ def main():
             for root, dirs, files in os.walk(sequence_file_directory, topdown=False):
                 for name in files:
                     file = os.path.join(root, name)
-                    if args.purge:
-                        os.remove(file)
-                    print(file)
+                    remove(file, args.purge)
                 for name in dirs:
                     directory = os.path.join(root, name)
-                    if args.purge:
-                        os.rmdir(directory)
-                    print(directory)
-            if args.purge:
-                os.rmdir(sequence_file_directory)
-            print(sequence_file_directory)
-
+                    remove(directory, args.purge)
+            remove(sequence_file_directory, args.purge)
     print("All done.")
 
 if __name__ == '__main__':
