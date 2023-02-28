@@ -17,7 +17,6 @@ import {
   updateTable,
 } from "../../redux/samplesSlice";
 import SampleQuality from "../../../../components/sample-quality";
-import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconSearch } from "../../../../components/icons/Icons";
 import { blue6 } from "../../../../styles/colors";
 import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
