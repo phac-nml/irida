@@ -16,7 +16,7 @@ import { Running, Success } from "../../../components/icons";
 
 import { getHumanizedDuration } from "../../../utilities/date-utilities";
 
-const Step = Steps.Step;
+const { Step } = Steps;
 
 export function AnalysisSteps() {
   const { analysisContext } = useContext(AnalysisContext);

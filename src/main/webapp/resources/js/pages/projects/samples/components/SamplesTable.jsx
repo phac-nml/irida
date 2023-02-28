@@ -20,7 +20,6 @@ import SampleQuality from "../../../../components/sample-quality";
 import { setBaseUrl } from "../../../../utilities/url-utilities";
 import { IconSearch } from "../../../../components/icons/Icons";
 import { blue6 } from "../../../../styles/colors";
-import { generateColourForItem } from "../../../../utilities/colour-utilities";
 import { getPaginationOptions } from "../../../../utilities/antdesign-table-utilities";
 import { SampleDetailViewer } from "../../../../components/samples/SampleDetailViewer";
 import ProjectTag from "../../../search/ProjectTag";
