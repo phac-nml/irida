@@ -99,6 +99,8 @@
 
 	<project_subscription />
 
+	<oauth2_authorization />
+	<oauth2_authorization_consent />
 
 	<!-- All auditing table references *only* refer to the Revisions table,
 		so they can all be listed in an arbitrary order *after* the Revisions table. -->

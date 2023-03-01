@@ -7,14 +7,14 @@ name: Grype WAR security scan
 on:
   pull_request: # Run on all pull requests
   push:
-    branches: # Run on any push to development or master
+    branches: # Run on any push to development or main
       - development
-      - master
-  schedule: # Run daily on development and weekly on master
+      - main
+  schedule: # Run daily on development and weekly on main
     - cron: 0 1 * * *
       branches: development
     - cron: 0 2 * * 0
-      branches: master
+      branches: main
 
 jobs:
   war-build: # Gradle integration tests

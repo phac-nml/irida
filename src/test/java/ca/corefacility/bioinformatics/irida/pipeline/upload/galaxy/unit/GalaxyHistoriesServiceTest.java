@@ -98,7 +98,7 @@ public class GalaxyHistoriesServiceTest {
 				ClientResponse.Status.OK);
 		when(invalidResponse.getStatusInfo()).thenReturn(
 				ClientResponse.Status.FORBIDDEN);
-		
+
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient,
 				galaxyLibrariesService);
 		
@@ -316,7 +316,7 @@ public class GalaxyHistoriesServiceTest {
 		when(historiesClient.createDatasetCollection(eq(HISTORY_ID), any(CollectionDescription.class))).
 			thenReturn(collectionResponse);
 		
-		assertEquals(collectionResponse,galaxyHistory.constructCollection(
+		assertEquals(collectionResponse, galaxyHistory.constructCollection(
 				description, history));
 	}
 	

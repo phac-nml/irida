@@ -5,8 +5,6 @@ import java.util.List;
 import ca.corefacility.bioinformatics.irida.security.permissions.BasePermission;
 import ca.corefacility.bioinformatics.irida.security.permissions.IridaPermissionEvaluator;
 import com.google.common.base.Joiner;
-import org.apache.oltu.oauth2.client.OAuthClient;
-import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -110,11 +108,6 @@ public class IridaApiSecurityConfig extends GlobalMethodSecurityConfiguration {
 	@Bean(name = "userAuthenticationManager")
 	public AuthenticationManager authenticationManager() throws Exception {
 		return super.authenticationManager();
-	}
-
-	@Bean
-	public OAuthClient oAuthClient() {
-		return new OAuthClient(new URLConnectionClient());
 	}
 
 	/**

@@ -1,10 +1,22 @@
 package ca.corefacility.bioinformatics.irida.ria.web.ajax.projects;
 
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.CreateSampleRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleFilesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleNameValidationResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.UpdateSampleRequest;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.*;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxMultipleResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.projects.dto.ValidateSampleNamesRequest;
@@ -20,16 +32,6 @@ import ca.corefacility.bioinformatics.irida.ria.web.projects.error.SampleMergeEx
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.ShareSamplesRequest;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectSampleService;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * AJAX Controller for handling asynchronous requests for project samples.
@@ -62,31 +64,55 @@ public class ProjectSamplesAjaxController {
 	}
 
 	/**
-	 * Create a new sample within a project
+	 * Create new samples within a project
 	 *
-	 * @param request   Details about the sample
+	 * @param requests  Details about the samples
 	 * @param projectId current project identifier
-	 * @param locale    current users locale
-	 * @return result of creating the project
+	 * @return result of creating the samples
 	 */
-	@PostMapping("/add-sample")
-	public ResponseEntity<AjaxResponse> createSampleInProject(@RequestBody CreateSampleRequest request,
-			@PathVariable long projectId, Locale locale) {
-		return uiProjectSampleService.createSample(request, projectId, locale);
+	@PostMapping("/create")
+	public ResponseEntity<AjaxResponse> createSamplesInProject(@RequestBody CreateSampleRequest[] requests,
+			@PathVariable long projectId) {
+		Map<String, Object> responses = uiProjectSampleService.createSamples(requests, projectId);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((SampleResponse) response.getValue()).isError())
+				.count();
+		long successCount = responses.entrySet()
+				.stream()
+				.filter(response -> !((SampleResponse) response.getValue()).isError())
+				.count();
+		if (responses.size() == successCount) {
+			return ResponseEntity.status(HttpStatus.OK).body(new AjaxMultipleResponse(responses));
+		} else if (responses.size() == errorCount) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxMultipleResponse(responses));
+		}
+		return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(new AjaxMultipleResponse(responses));
 	}
 
 	/**
-	 * Update a sample within a project
+	 * Update samples within a project
 	 *
-	 * @param request  Details about the sample
-	 * @param sampleId sample identifier
-	 * @param locale   current users locale
-	 * @return result of creating the project
+	 * @param requests Details about the samples
+	 * @return result of updating the samples
 	 */
-	@PatchMapping("/add-sample/{sampleId}")
-	public ResponseEntity<AjaxResponse> updateSampleInProject(@RequestBody UpdateSampleRequest request,
-			@PathVariable long sampleId, Locale locale) {
-		return uiProjectSampleService.updateSample(request, sampleId, locale);
+	@PatchMapping("/update")
+	public ResponseEntity<AjaxResponse> updateSamplesInProject(@RequestBody UpdateSampleRequest[] requests) {
+		Map<String, Object> responses = uiProjectSampleService.updateSamples(requests);
+		long errorCount = responses.entrySet()
+				.stream()
+				.filter(response -> ((SampleErrorResponse) response.getValue()).isError())
+				.count();
+		long successCount = responses.entrySet()
+				.stream()
+				.filter(response -> !((SampleErrorResponse) response.getValue()).isError())
+				.count();
+		if (responses.size() == successCount) {
+			return ResponseEntity.status(HttpStatus.OK).body(new AjaxMultipleResponse(responses));
+		} else if (responses.size() == errorCount) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new AjaxMultipleResponse(responses));
+		}
+		return ResponseEntity.status(HttpStatus.MULTI_STATUS).body(new AjaxMultipleResponse(responses));
 	}
 
 	/**
@@ -222,6 +248,17 @@ public class ProjectSamplesAjaxController {
 	public ResponseEntity<AjaxResponse> validateSampleNames(@PathVariable Long projectId,
 			@RequestBody ValidateSampleNamesRequest request) {
 		return ResponseEntity.ok(uiProjectSampleService.validateSampleNames(projectId, request));
+	}
+
+	/**
+	 * Get a list of {@link Sample} ids that are locked in the given project
+	 *
+	 * @param projectId project identifier
+	 * @return a boolean
+	 */
+	@GetMapping("/locked")
+	public ResponseEntity<LockedSamplesResponse> getLockedSamplesInProject(@PathVariable Long projectId) {
+		return ResponseEntity.ok(uiProjectSampleService.getLockedSamplesInProject(projectId));
 	}
 
 }

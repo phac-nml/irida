@@ -18,28 +18,28 @@ import org.springframework.core.env.PropertiesPropertySource;
  */
 public class IridaEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
-    /**
-     * The default order for the processor.
-     */
-    public static final int ORDER = Ordered.HIGHEST_PRECEDENCE + 11; // after ConfigDataEnvironmentPostProcessor
+	/**
+	 * The default order for the processor.
+	 */
+	public static final int ORDER = Ordered.HIGHEST_PRECEDENCE + 11; // after ConfigDataEnvironmentPostProcessor
 
-    private final Log logger;
+	private final Log logger;
 
-    public IridaEnvironmentPostProcessor(Log logger) {
-        this.logger = logger;
-    }
-    
-    @Override
-    public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        translateDeprecatedProperties(environment);
-    }
+	public IridaEnvironmentPostProcessor(Log logger) {
+		this.logger = logger;
+	}
+	
+	@Override
+	public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+		translateDeprecatedProperties(environment);
+	}
 
-    @Override
-    public int getOrder() {
-        return ORDER;
-    }
+	@Override
+	public int getOrder() {
+		return ORDER;
+	}
 
-    private void translateDeprecatedProperties(ConfigurableEnvironment env) {
+	private void translateDeprecatedProperties(ConfigurableEnvironment env) {
 		ImmutableMap<String, String> deprecatedPropertiesMap = ImmutableMap.<String, String>builder()
 			.put("jdbc.url", "spring.datasource.url")
 			.put("jdbc.username", "spring.datasource.username")
@@ -72,9 +72,9 @@ public class IridaEnvironmentPostProcessor implements EnvironmentPostProcessor, 
 			}
 		}
 
-        if ( properties.size() > 0 ) {
-            this.logger.warn("Adding translated deprecated properties as highest priority property source.");
-		    propertySources.addFirst(new PropertiesPropertySource("deprecatedProperties", properties));
-        }
+		if ( properties.size() > 0 ) {
+			this.logger.warn("Adding translated deprecated properties as highest priority property source.");
+			propertySources.addFirst(new PropertiesPropertySource("deprecatedProperties", properties));
+		}
 	}
 }

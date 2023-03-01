@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.service;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
@@ -26,7 +25,9 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteStatus.SyncStatus
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.Fast5Object;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.service.remote.*;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -38,7 +39,7 @@ import com.google.common.collect.Maps;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 public class ProjectSynchronizationServiceTest {
@@ -198,7 +199,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 
 	@Test
-	public void testSyncNewSample() {
+	public void testSyncNewSample() throws Exception {
 		Sample sample = new Sample();
 		RemoteStatus sampleStatus = new RemoteStatus("http://sample", api);
 		sample.setRemoteStatus(sampleStatus);
@@ -214,7 +215,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 
 	@Test
-	public void testExistingSample() {
+	public void testExistingSample() throws Exception {
 		Sample sample = new Sample();
 		RemoteStatus sampleStatus = new RemoteStatus("http://sample", api);
 		sample.setRemoteStatus(sampleStatus);
@@ -232,7 +233,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 
 	@Test
-	public void testSyncSampleNoAssemblies() {
+	public void testSyncSampleNoAssemblies() throws Exception {
 		Sample sample = new Sample();
 		RemoteStatus sampleStatus = new RemoteStatus("http://sample", api);
 		sample.setRemoteStatus(sampleStatus);
@@ -252,7 +253,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 
 	@Test
-	public void testSyncExistingSampleWithDeletedFiles() {
+	public void testSyncExistingSampleWithDeletedFiles() throws Exception {
 		Sample sample = new Sample();
 		RemoteStatus sampleStatus = new RemoteStatus("http://sample", api);
 		sample.setRemoteStatus(sampleStatus);
@@ -277,7 +278,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 
 	@Test
-	public void testSyncExistingSampleWithDeletedAssemblies() {
+	public void testSyncExistingSampleWithDeletedAssemblies() throws Exception {
 		Sample sample = new Sample();
 		RemoteStatus sampleStatus = new RemoteStatus("http://sample", api);
 		sample.setRemoteStatus(sampleStatus);
@@ -320,7 +321,7 @@ public class ProjectSynchronizationServiceTest {
 	}
 
 	@Test
-	public void testSyncSampleNoFast5() {
+	public void testSyncSampleNoFast5() throws Exception {
 		Sample sample = new Sample();
 		RemoteStatus sampleStatus = new RemoteStatus("http://sample", api);
 		sample.setRemoteStatus(sampleStatus);

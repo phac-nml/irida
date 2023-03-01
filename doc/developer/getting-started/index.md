@@ -66,7 +66,7 @@ Liquibase is used to manage IRIDA's relational database change management.  Any 
 
 Documentation: [https://docs.galaxyproject.org/en/master/index.html](https://docs.galaxyproject.org/en/master/index.html)
 
-Galaxy is used as IRIDA's analysis workflow engine.  Analysis pipelines must be developed as Galaxy pipelines to integrate with IRIDA's workflow system.  See the [Galaxy Setup](/administrator/galaxy/) documentation for Galaxy installation and the [Tool Development](/developer/tools/) documentation for building tools for IRDIA.
+Galaxy is used as IRIDA's analysis workflow engine.  Analysis pipelines must be developed as Galaxy pipelines to integrate with IRIDA's workflow system.  See the [Galaxy Setup](../../administrator/galaxy/) documentation for Galaxy installation and the [Tool Development](../../developer/tools/) documentation for building tools for IRDIA.
 
 #### Other important libraries
 {:.no_toc}
@@ -199,9 +199,10 @@ Gradle will download all required dependencies and run the full suite of unit te
 ##### Integration tests
 {:.no_toc}
 
-IRIDA has 5 integration test tasks which splits the integration test suite into functional groups.  This allows GitHub Actions to run the tests in parallel, and local test executions to only run the required portion of the test suite.  The 5 tasks are the following:
+IRIDA has 6 integration test tasks which splits the integration test suite into functional groups.  This allows GitHub Actions to run the tests in parallel, and local test executions to only run the required portion of the test suite.  The 6 tasks are the following:
 
 * `serviceITest` - Runs the service layer and repository testing.
+* `fileSystemITest` - Runs the file system testing
 * `uiITest` - Integration tests for IRIDA's web interface.
 * `restITest` - Tests IRIDA's REST API.
 * `galaxyITest` - Runs tests for IRIDA communicating with Galaxy.  This profile will automatically start a test galaxy instance to test with.
@@ -217,6 +218,7 @@ As the integration tests simulate a running IRIDA installation, in order to run 
 
 Where <TEST PROFILE> is one of the following:
 * `service_testing` - Runs the `serviceITest` task
+* `file_system_testing` - Runs the `fileSystemITest` task
 * `ui_testing` - Runs the `uiITest` task
 * `rest_testing` - Runs the `restITest` task
 * `galaxy_testing` - Runs the `galaxyITest` task
@@ -266,7 +268,7 @@ IRIDA documentation can be found in the <https://github.com/phac-nml/irida-docs>
 ##### Testing IRIDA documentation locally
 To view the documentation locally or make changes, you can checkout the above GitHub project and make changes.  To run the server locally you can run Jekyll to generate the pages.
 
-First `cd` into the `docs/` directory and run the following command:
+First `cd` into the `doc/` directory and run the following command:
 
 ```bash
 bundle exec jekyll serve
@@ -277,7 +279,7 @@ This command will read the `_config.yml` file in the directory for configuration
 
 ##### Updating IRIDA documentation for release
 
-The IRIDA documentation is automatically published from the current state of the `master` branch of the <https://github.com/phac-nml/irida-documentation> repository.  To update the docs be sure you have a recent copy of the `irida-documentation` repository checked out and on the `development` branch.  The `build-docs.py` script has been built to assist with updating the docs repository.  Below are the steps you should perform to publish a new version of the IRIDA documentation.
+The IRIDA documentation is automatically published from the current state of the `main` branch of the <https://github.com/phac-nml/irida-documentation> repository.  To update the docs be sure you have a recent copy of the `irida-documentation` repository checked out and on the `development` branch.  The `build-docs.py` script has been built to assist with updating the docs repository.  Below are the steps you should perform to publish a new version of the IRIDA documentation.
 
 1. Run the `build-docs.py` script from the root of the `irida` repository.  You must provide it with the path to your `irida-documentation/docs` folder:
 ```bash
@@ -286,15 +288,15 @@ The IRIDA documentation is automatically published from the current state of the
   This will compile the Java documentation into the documentation directory, then update the documentation in `irida-documentation/docs`.
 2. Go to your `irida-documentation` folder.  Create a new branch and commit your changes.
 3. Create a new PR and have another IRIDA developer review the changes.  There will be many changes in the `docs/developer/apidocs` directory that were automatically generated.  These should not require manual review.
-4. Once changes are ready in the `development` branch, they must be merged into `master` for release.  Manually update the `master` branch by merging `development`.   You should also create a tag for the IRIDA release version.
+4. Once changes are ready in the `development` branch, they must be merged into `main` for release.  Manually update the `main` branch by merging `development`.   You should also create a tag for the IRIDA release version.
 ```bash
 git checkout development # checkout the development branch
 git pull # ensure the branch is up to date
-git checkout master # checkout the master branch
+git checkout main # checkout the main branch
 git pull # ensure the branch is up to date
-git merge development # merge development into the master branch
+git merge development # merge development into the main branch
 git tag <the current IRIDA version> # tag the current release for easy retrieval of previous versions
-git push origin master # push the new code to GitHub
+git push origin main # push the new code to GitHub
 git push --tags # push the newly created tag
 ```
 
@@ -466,16 +468,16 @@ IRIDA's branch structure is loosely based on the [GitFlow](http://nvie.com/posts
 {:.no_toc}
 
 * *development* - This is the main running development branch.  It represents the latest features that have been developed by the team.  Features here should be kept in a state that they can be released at any time.
-* *master* - This is the release branch.  It should be kept at the latest stable release.
+* *main* - This is the release branch.  It should be kept at the latest stable release.
 * feature branches - These should be created by the developers as they work on new additions to the application.  They should be branched off *development* and merged back once the feature is entirely complete and ready to release.
-* hotfix branches - These branches will be created when there is an bug in the master branch which must be fixed immediately.  When these branches are complete they should be merged into both *development* and *master*.
+* hotfix branches - These branches will be created when there is an bug in the main branch which must be fixed immediately.  When these branches are complete they should be merged into both *development* and *main*.
 
 #### Release tags & versioning scheme
 {:.no_toc}
 
 IRIDA uses a [CalVer](https://calver.org/) style versioning scheme.  This means the release version number is based on the year and month that it was released.  The scheme used is `YY.0M.minor`.  First segment is last 2 digits of the year, 2nd is 2 digit month, and 3rd is the number of bugfix release (optional).  For example a major release in January 2019 would be `19.01`.  If a bugfix release was performed for that version, it would be `19.01.1`.
 
-Whenever code is merged into *master*, a release should be created.  To mark the release the person merging the code should create a git tag at the point of the merge.
+Whenever code is merged into *main*, a release should be created.  To mark the release the person merging the code should create a git tag at the point of the merge.
 
 ```bash
 git tag YY.MM.minor
@@ -497,7 +499,7 @@ Example workflow:
 #### Pull requests
 {:.no_toc}
 
-Code is not to be merged into the *development* or *master* branches by the developer who wrote the code.  Instead a merge request should be made on [GitHub][] and assigned to another developer on the project.  The reviewer should look over the code for issues, and anything that needs to be fixed should be mentioned in a comment in the merge request.  Once an issue has been fixed, the developer should push the changes to the merge request branch and mention the commit id in the comment so the reviewer can track the changes.
+Code is not to be merged into the *development* or *main* branches by the developer who wrote the code.  Instead a merge request should be made on [GitHub][] and assigned to another developer on the project.  The reviewer should look over the code for issues, and anything that needs to be fixed should be mentioned in a comment in the merge request.  Once an issue has been fixed, the developer should push the changes to the merge request branch and mention the commit id in the comment so the reviewer can track the changes.
 
 The reviewer of a merge request should ensure the following:
 

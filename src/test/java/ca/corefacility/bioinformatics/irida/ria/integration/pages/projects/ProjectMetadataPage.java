@@ -40,7 +40,7 @@ public class ProjectMetadataPage extends AbstractPage {
 	WebElement templateEditName;
 
 	@FindBy(className = "t-field-restriction")
-	List<WebElement> fieldRestrictionSelects;
+	List<WebElement> fieldRestrictions;
 
 	public ProjectMetadataPage(WebDriver driver) {
 		super(driver);
@@ -118,8 +118,8 @@ public class ProjectMetadataPage extends AbstractPage {
 			}
 		}
 		templateRow.findElement(By.className("t-t-remove-button")).click();
-		WebElement confirm = wait
-				.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-t-confirm-remove")));
+		WebElement confirm = wait.until(
+				ExpectedConditions.visibilityOfElementLocated(By.className("t-t-confirm-remove")));
 		confirm.click();
 		wait.until(ExpectedConditions.stalenessOf(confirm));
 	}
@@ -183,35 +183,33 @@ public class ProjectMetadataPage extends AbstractPage {
 
 	public boolean defaultTemplateTagVisible() {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
-		WebElement defaultTag = wait
-				.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-t-default-tag")));
+		WebElement defaultTag = wait.until(
+				ExpectedConditions.visibilityOfElementLocated(By.className("t-t-default-tag")));
 		return defaultTag.isDisplayed();
 	}
 
 	public boolean setDefaultTemplateButtonVisible() {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
-		WebElement setDefaultTemplateBtn = wait
-				.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-t-set-default-button")));
+		WebElement setDefaultTemplateBtn = wait.until(
+				ExpectedConditions.visibilityOfElementLocated(By.className("t-t-set-default-button")));
 		return setDefaultTemplateBtn.isDisplayed();
 	}
 
 	public boolean areFieldRestrictionSettingsVisible() {
-		return fieldRestrictionSelects.size() > 0;
+		return fieldRestrictions.size() > 0;
 	}
 
 	public String getFieldRestrictionForRow(int row) {
-		return fieldRestrictionSelects.get(row).findElement(By.className("ant-select-selection-item")).getText();
+		return fieldRestrictions.get(row).findElement(By.className("ant-radio-button-wrapper-checked")).getText();
 	}
 
 	public void updateFieldRestrictionToLevel(int row, int optionNumber) {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
-		fieldRestrictionSelects.get(row).click();
-		WebElement dropdown = wait
-				.until(ExpectedConditions.visibilityOfElementLocated(By.className("ant-select-dropdown")));
-		List<WebElement> options = dropdown.findElements(By.className("ant-select-item-option"));
-		options.get(optionNumber).click();
-		wait.until(ExpectedConditions.invisibilityOf(dropdown));
-
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
+		WebElement radioButton = fieldRestrictions.get(row)
+				.findElements(By.className("ant-radio-button-wrapper"))
+				.get(optionNumber);
+		radioButton.click();
+		wait.until(ExpectedConditions.attributeContains(radioButton, "class", "ant-radio-button-wrapper-checked"));
 	}
 
 	private void waitForFields() {

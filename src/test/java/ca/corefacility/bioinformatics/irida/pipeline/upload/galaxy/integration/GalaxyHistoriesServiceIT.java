@@ -95,6 +95,7 @@ public class GalaxyHistoriesServiceIT {
 	 */
 	private static final int LIBRARY_POLLING_TIME = 5;
 
+
 	/**
 	 * Sets up files for history tests.
 	 * 
@@ -112,6 +113,7 @@ public class GalaxyHistoriesServiceIT {
 		historiesClient = galaxyInstanceAdmin.getHistoriesClient();
 		ToolsClient toolsClient = galaxyInstanceAdmin.getToolsClient();
 		LibrariesClient librariesClient = galaxyInstanceAdmin.getLibrariesClient();
+
 		galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
 
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);

@@ -8,7 +8,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-
 /**
  * Page object to represent the Dashboard page
  */
@@ -29,7 +28,6 @@ public class DashboardPage extends AbstractPage {
 	@FindBy(className = "t-load-more-button")
 	private WebElement loadMoreBtn;
 
-
 	public DashboardPage(WebDriver driver) {
 		super(driver);
 	}
@@ -44,14 +42,14 @@ public class DashboardPage extends AbstractPage {
 	}
 
 	public boolean adminAllProjectsRecentActivityTitleDisplayed() {
-		if(recentActivityTitle.getText().equals("All Projects Recent Activity")) {
+		if (recentActivityTitle.getText().equals("All Projects Recent Activity")) {
 			return true;
 		}
 		return false;
 	}
 
 	public boolean userProjectsRecentActivityTitleDisplayed() {
-		if(recentActivityTitle.getText().equals("Your Projects Recent Activity")) {
+		if (recentActivityTitle.getText().equals("Your Projects Recent Activity")) {
 			return true;
 		}
 		return false;

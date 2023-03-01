@@ -40,7 +40,11 @@ public class SequenceFileDetails implements Comparable<SequenceFileDetails> {
 		return fileSize;
 	}
 
+	public void setFileSize(String fileSize) {
+		this.fileSize = fileSize;
+	}
 	public String getProcessingState() { return processingState; }
+
 
 	@Override
 	public int compareTo(SequenceFileDetails sequenceFileDetails) {
@@ -61,5 +65,6 @@ public class SequenceFileDetails implements Comparable<SequenceFileDetails> {
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, sequencingObjectId, fileName, fileSize);
+
 	}
 }

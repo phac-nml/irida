@@ -1,14 +1,10 @@
 package ca.corefacility.bioinformatics.irida.ria.integration;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.components.FastQCModal;
-import ca.corefacility.bioinformatics.irida.ria.integration.components.SampleDetailsViewer;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
-import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.TableSummary;
-import ca.corefacility.bioinformatics.irida.ria.integration.utilities.FileUtilities;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.ImmutableList;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.JavascriptExecutor;
@@ -17,10 +13,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import ca.corefacility.bioinformatics.irida.ria.integration.components.FastQCModal;
+import ca.corefacility.bioinformatics.irida.ria.integration.components.SampleDetailsViewer;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.LoginPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.cart.CartPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.ProjectSamplesPage;
+import ca.corefacility.bioinformatics.irida.ria.integration.pages.projects.TableSummary;
+import ca.corefacility.bioinformatics.irida.ria.integration.utilities.FileUtilities;
+
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.ImmutableList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -101,7 +103,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsUser(driver());
 		driver().manage().window().maximize();
 		// Add some samples to the cart and test to see if they get displayed/
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1L);
 
 		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
 
@@ -159,7 +161,8 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		assertEquals(sampleName, sampleDetailsViewer.getSampleName(), "Should be viewing the proper sample");
 		assertEquals(projectName, sampleDetailsViewer.getProjectName(),
 				"Should have proper project name displayed for sample");
-		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Should display the correct created date");
+		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(),
+				"Should display the correct created date");
 
 		sampleDetailsViewer.clickMetadataTabLink();
 		assertFalse(sampleDetailsViewer.addNewMetadataButtonVisible());
@@ -214,7 +217,8 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		sampleDetailsViewer.clickRemoveSampleFromCartButtonCartPage();
 
-		assertFalse(sampleDetailsViewer.sampleDetailsViewerVisible(), "The sample details viewer should not be displayed as the sample was removed from the cart");
+		assertFalse(sampleDetailsViewer.sampleDetailsViewerVisible(),
+				"The sample details viewer should not be displayed as the sample was removed from the cart");
 
 		// Test removing a sample from the project
 		page.removeSampleFromCart(0);
@@ -229,7 +233,7 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsAdmin(driver());
 		driver().manage().window().maximize();
 		// Add some samples to the cart and test to see if they get displayed/
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1L);
 		SampleDetailsViewer sampleDetailsViewer = SampleDetailsViewer.getSampleDetails(driver());
 
 		// Test that the add/remove buttons for the sample detail viewer are displayed correctly depending on if the sample is in the cart or not
@@ -258,7 +262,6 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		sampleDetailsViewer.clickRemoveSampleFromCartButton();
 		sampleDetailsViewer.clickSampleDetailsViewerCloseButton();
 
-
 		samplesPage.selectSampleByName("sample5fg44");
 		samplesPage.selectSampleByName("sample5fdgr");
 		samplesPage.selectSampleByName("sample554sg5");
@@ -279,7 +282,6 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		final String projectName = "project";
 		page.viewSampleDetailsFor(sampleName);
 
-
 		assertFalse(sampleDetailsViewer.isAddSampleToCartButtonVisible(),
 				"The add cart to sample button should not be displayed");
 		assertTrue(sampleDetailsViewer.isRemoveSampleFromCartButtonVisible(),
@@ -289,7 +291,8 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		assertEquals(projectName, sampleDetailsViewer.getProjectName(),
 				"Should have proper project name displayed for sample");
-		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(), "Should display the correct created date");
+		assertEquals("Jul 19, 2013, 2:18 PM", sampleDetailsViewer.getCreatedDateForSample(),
+				"Should display the correct created date");
 
 		sampleDetailsViewer.clickMetadataTabLink();
 		assertTrue(sampleDetailsViewer.addNewMetadataButtonVisible());
@@ -345,8 +348,11 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		// Concatenation modal should list the files to concatenate
 		assertEquals(3, sampleDetailsViewer.singleEndFileCount(),
 				"Should have 3 single end files listed for concatenation");
+		assertFalse(sampleDetailsViewer.concatenationConfirmButtonEnabled(), "Concatenate button should be disabled since no file name is entered");
 		// Enter concatenation file name
 		sampleDetailsViewer.enterFileName();
+
+		assertTrue(sampleDetailsViewer.concatenationConfirmButtonEnabled(), "Concatenate button should not be disabled since a file name is entered");
 		sampleDetailsViewer.clickConcatenateConfirmBtn();
 
 		// Check that correct file list items are displayed after concatenation
@@ -396,14 +402,18 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 				"Should not have any concatenation checkboxes");
 		assertEquals(7, sampleDetailsViewer.actionButtonsVisible(), "Should have 7 file action buttons");
 
-		assertEquals(1, sampleDetailsViewer.numberOfSequencingObjectsSetAsDefault(), "One sequencing object should have a default tag");
-		assertEquals(2, sampleDetailsViewer.numberOfSetAsDefaultSeqObjsButtons(), "There should be two set as default buttons for sequencing objects");
+		assertEquals(1, sampleDetailsViewer.numberOfSequencingObjectsSetAsDefault(),
+				"One sequencing object should have a default tag");
+		assertEquals(2, sampleDetailsViewer.numberOfSetAsDefaultSeqObjsButtons(),
+				"There should be two set as default buttons for sequencing objects");
 
 		// Remove the 5 remaining files (1 single end sequencing object and 2 paired end sequencing objects containing 2 files each, and 2 assemblies)
 		js.executeScript("document.getElementsByClassName('t-filelist-scroll')[0].scrollTop= 600");
 
-		assertEquals(1, sampleDetailsViewer.numberOfGenomeAssembliesSetAsDefault(), "One sequencing object should have a default tag");
-		assertEquals(1, sampleDetailsViewer.numberOfGenomeAssembliesSetAsDefaultButtons(), "There should be one set as default button for sequencing objects");
+		assertEquals(1, sampleDetailsViewer.numberOfGenomeAssembliesSetAsDefault(),
+				"One sequencing object should have a default tag");
+		assertEquals(1, sampleDetailsViewer.numberOfGenomeAssembliesSetAsDefaultButtons(),
+				"There should be one set as default button for sequencing objects");
 
 		sampleDetailsViewer.removeFile(6);
 		sampleDetailsViewer.removeFile(5);
@@ -419,7 +429,8 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		sampleDetailsViewer.clickRemoveSampleFromCartButtonCartPage();
 
-		assertFalse(sampleDetailsViewer.sampleDetailsViewerVisible(), "The sample details viewer should not be displayed as the sample was removed from the cart");
+		assertFalse(sampleDetailsViewer.sampleDetailsViewerVisible(),
+				"The sample details viewer should not be displayed as the sample was removed from the cart");
 
 		// Test removing a sample from the project
 		page.removeSampleFromCart(0);
@@ -461,11 +472,10 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 		LoginPage.loginAsAdmin(driver());
 		driver().manage().window().maximize();
 
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1L);
 		samplesPage.toggleAssociatedProject(PROJECT_NAME);
 		TableSummary summary = samplesPage.getTableSummary();
-		assertEquals(22, summary.getTotal(),
-				"Should have more samples visible with another project selected");
+		assertEquals(22, summary.getTotal(), "Should have more samples visible with another project selected");
 		samplesPage.selectSampleByName(ASSOCIATED_SAMPLE_NAME);
 		samplesPage.selectSampleByName(SAMPLE_NAME);
 		samplesPage.addSelectedSamplesToCart();
@@ -478,7 +488,8 @@ public class CartPageIT extends AbstractIridaUIITChromeDriver {
 
 		viewer.clickRemoveSampleFromCartButtonCartPage();
 
-		assertFalse(viewer.sampleDetailsViewerVisible(), "The sample details viewer should not be displayed as the sample was removed from the cart");
+		assertFalse(viewer.sampleDetailsViewerVisible(),
+				"The sample details viewer should not be displayed as the sample was removed from the cart");
 
 		assertEquals(1, cartPage.getNumberOfSamplesInCart(), "Should only be 1 sample in the cart");
 	}

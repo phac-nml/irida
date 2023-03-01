@@ -69,8 +69,7 @@ public class CartPage extends AbstractPage {
 		WebElement sample = cartSamples.get(index);
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20L));
 		wait.until(ExpectedConditions.elementToBeClickable(By.className("t-remove-sample")));
-		sample.findElement(By.className("t-remove-sample"))
-				.click();
+		sample.findElement(By.className("t-remove-sample")).click();
 		waitForTime(500);
 	}
 
@@ -83,8 +82,8 @@ public class CartPage extends AbstractPage {
 
 		// Used to bypass tooltip which is intercepting the click during tests.
 		WebElement removeProjectButton = sample.findElement(By.className("t-remove-project"));
-		JavascriptExecutor js = (JavascriptExecutor)driver;  //initialize JavascriptExecutor
-		js.executeScript("arguments[0].click();", removeProjectButton);   //click the button
+		JavascriptExecutor js = (JavascriptExecutor) driver; //initialize JavascriptExecutor
+		js.executeScript("arguments[0].click();", removeProjectButton); //click the button
 		waitForTime(500);
 	}
 

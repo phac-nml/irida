@@ -20,7 +20,6 @@ import com.google.common.collect.Iterables;
 
 /**
  * Specification for searching {@link AnalysisSubmission} properties
- *
  */
 public class AnalysisSubmissionSpecification {
 
@@ -29,15 +28,15 @@ public class AnalysisSubmissionSpecification {
 	 *
 	 * @param search      Basic search string
 	 * @param name        Analysis name
-	 * @param states       {@link Set} of {@link AnalysisState} to filter by.
+	 * @param states      {@link Set} of {@link AnalysisState} to filter by.
 	 * @param workflowIds Set of UUIDs to search
 	 * @param user        The {@link User} owning the analysis
 	 * @param project     A project the analysis is shared with
 	 * @param automated   Whether this analysis submission was submitted as part of an automated process.
 	 * @return {@link Specification} for this search
 	 */
-	public static Specification<AnalysisSubmission> filterAnalyses(String search, String name, Set<AnalysisState> states,
-			User user, Set<UUID> workflowIds, Project project, Boolean automated) {
+	public static Specification<AnalysisSubmission> filterAnalyses(String search, String name,
+			Set<AnalysisState> states, User user, Set<UUID> workflowIds, Project project, Boolean automated) {
 		return new Specification<AnalysisSubmission>() {
 			@Override
 			public Predicate toPredicate(Root<AnalysisSubmission> analysisSubmissionRoot,
@@ -59,7 +58,7 @@ public class AnalysisSubmissionSpecification {
 				if (user != null) {
 					predicateList.add(criteriaBuilder.equal(analysisSubmissionRoot.get("submitter"), user));
 				}
-				if(automated != null){
+				if (automated != null) {
 					predicateList.add(criteriaBuilder.equal(analysisSubmissionRoot.get("automated"), automated));
 				}
 

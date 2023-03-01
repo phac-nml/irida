@@ -34,6 +34,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -188,6 +190,25 @@ public class RESTProjectSamplesControllerTest {
 		assertNotNull(projectLink);
 		assertEquals(projectLocation, projectLink.getHref());
 
+	}
+
+	@Test
+	public void testGetProjectSampleByName() throws IOException {
+		Project p = TestDataFactory.constructProject();
+		Sample s = TestDataFactory.constructSample();
+
+		// mock out the service calls
+		when(projectService.read(p.getId())).thenReturn(p);
+		when(sampleService.getSampleBySampleName(p, s.getSampleName())).thenReturn(s);
+
+		String sampleLocation = "http://localhost/api/samples/" + s.getId();
+
+		ModelAndView responseObject = controller.getProjectSampleBySampleName(p.getId(), s.getSampleName());
+
+		verify(sampleService).getSampleBySampleName(p, s.getSampleName());
+
+		RedirectView rv = (RedirectView) responseObject.getView();
+		assertEquals(sampleLocation, rv.getUrl());
 	}
 
 	@Test

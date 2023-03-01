@@ -69,6 +69,11 @@
 
   --primary-red: var(--red-6);
   --primary-green: var(--green-6);
+
+  --padding-xs: 8px;
+  --padding-sm: 12px;
+  --padding-md: 16px;
+  --padding-lg: 24px;
 }
 
 html,
@@ -84,42 +89,6 @@ body {
 body > .ant-layout {
   height: 100vh;
   background-color: #ffffff;
-}
-
-/****************************************************************************************
-* BOOTSTRAP OVERRIDES
-*****************************************************************************************/
-.nav,
-.pagination,
-.carousel,
-.panel-title a {
-  cursor: pointer;
-}
-
-.nav-tabs {
-  margin-bottom: 1.3rem;
-  border-bottom: 1px solid #e6e8eb !important;
-
-  li {
-    a {
-      border: none !important;
-    }
-
-    & .active a {
-      font-weight: 600;
-      background-color: transparent !important;
-      border-bottom: 1px solid #1c2833 !important;
-    }
-
-    & :not(.active) a {
-      color: #717f8c !important;
-      background-color: transparent !important;
-    }
-  }
-}
-
-label.ant-checkbox-wrapper {
-  font-weight: normal;
 }
 
 /****************************************************************************************

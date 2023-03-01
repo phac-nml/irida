@@ -1,20 +1,12 @@
 package ca.corefacility.bioinformatics.irida.service.export;
 
-import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
-import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
-import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
-import ca.corefacility.bioinformatics.irida.model.export.NcbiBioSampleFiles;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
-import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
-import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 import org.mockftpserver.fake.FakeFtpServer;
 import org.mockftpserver.fake.UserAccount;
@@ -23,22 +15,66 @@ import org.mockftpserver.fake.filesystem.FileEntry;
 import org.mockftpserver.fake.filesystem.FileSystem;
 import org.mockftpserver.fake.filesystem.UnixFakeFileSystem;
 import org.mockito.ArgumentCaptor;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.diff.Diff;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import ca.corefacility.bioinformatics.irida.exceptions.UploadException;
+import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
+import ca.corefacility.bioinformatics.irida.model.enums.ExportUploadState;
+import ca.corefacility.bioinformatics.irida.model.export.*;
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.model.user.User;
+import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class ExportUploadServiceTest {
+	private final Path TEST_NCBI_XML_PATH = Paths.get("src/test/resources/files/ncbi-export-test/example-ncbi.xml");
+
+	@Test
+	public void testCreateXml() throws IOException {
+		NcbiExportSubmission submission = createFakeSubmission(".fastq");
+
+		SpringTemplateEngine exportUploadTemplateEngine = new SpringTemplateEngine();
+
+		ClassLoaderTemplateResolver classLoaderTemplateResolver = new ClassLoaderTemplateResolver();
+		classLoaderTemplateResolver.setPrefix("/ca/corefacility/bioinformatics/irida/export/");
+		classLoaderTemplateResolver.setSuffix(".xml");
+
+		classLoaderTemplateResolver.setTemplateMode(TemplateMode.XML);
+		classLoaderTemplateResolver.setCharacterEncoding("UTF-8");
+
+		exportUploadTemplateEngine.addTemplateResolver(classLoaderTemplateResolver);
+
+		ExportUploadService exportUploadService = new ExportUploadService(null, null, null, exportUploadTemplateEngine,
+				new TestEmailController());
+
+		String xmlContent = assertDoesNotThrow(() -> exportUploadService.createXml(submission),
+				"createXml should not raise an exception with valid input.");
+		String expectedXmlContent = FileUtils.readFileToString(TEST_NCBI_XML_PATH.toFile(), "UTF-8");
+		Diff xmlDiff = DiffBuilder.compare(expectedXmlContent)
+				.withTest(xmlContent)
+				.ignoreComments()
+				.ignoreWhitespace()
+				.withNodeFilter(node -> !(node.getNodeName().equals("Hold")))
+				.build();
+		assertFalse(xmlDiff.hasDifferences(), "the resulting xml is not correct");
+	}
 
 	@Test
 	public void testUploadSubmission() throws UploadException, IOException {
@@ -80,7 +116,12 @@ public class ExportUploadServiceTest {
 
 		assertTrue(fileSystem.exists(createdDirectory + "/submission.xml"), "submission.xml created");
 		assertTrue(fileSystem.exists(createdDirectory + "/submit.ready"), "submit.ready created");
-		SequenceFile createdFile = submission.getBioSampleFiles().iterator().next().getFiles().iterator().next()
+		SequenceFile createdFile = submission.getBioSampleFiles()
+				.iterator()
+				.next()
+				.getFiles()
+				.iterator()
+				.next()
 				.getSequenceFile();
 		assertTrue(fileSystem.exists(createdDirectory + "/" + createdFile.getId() + ".fastq"), "seqfile created");
 	}
@@ -125,7 +166,12 @@ public class ExportUploadServiceTest {
 
 		assertTrue(fileSystem.exists(createdDirectory + "/submission.xml"), "submission.xml created");
 		assertTrue(fileSystem.exists(createdDirectory + "/submit.ready"), "submit.ready created");
-		SequenceFile createdFile = submission.getBioSampleFiles().iterator().next().getFiles().iterator().next()
+		SequenceFile createdFile = submission.getBioSampleFiles()
+				.iterator()
+				.next()
+				.getFiles()
+				.iterator()
+				.next()
 				.getSequenceFile();
 		assertTrue(fileSystem.exists(createdDirectory + "/" + createdFile.getId() + ".fastq.gz"), "seqfile created");
 	}
@@ -356,8 +402,7 @@ public class ExportUploadServiceTest {
 
 		Set<MetadataEntry> savedMetadata = captor.getValue();
 		Optional<MetadataEntry> metadataEntryOptional = savedMetadata.stream()
-				.filter(e -> e.getField()
-						.equals(field))
+				.filter(e -> e.getField().equals(field))
 				.findAny();
 		assertTrue(metadataEntryOptional.isPresent(), "saved sample should contain accession");
 	}
@@ -370,18 +415,22 @@ public class ExportUploadServiceTest {
 	 * @throws IOException if the test file couldn't be created
 	 */
 	private NcbiExportSubmission createFakeSubmission(String sequenceFileExtension) throws IOException {
-		NcbiExportSubmission submission = new NcbiExportSubmission();
-		submission.setId(1L);
+		User submitter = new User("username", "test@test.com", "password", "firstName", "lastName", "0000");
 
-		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles();
 		Path tempFile = Files.createTempFile("sequencefile", sequenceFileExtension);
 		SequenceFile sequenceFile = new SequenceFile(tempFile);
 		sequenceFile.setId(1L);
 		SingleEndSequenceFile singleFile = new SingleEndSequenceFile(sequenceFile);
 		singleFile.setId(1L);
-		ncbiBioSampleFiles.setFiles(Sets.newHashSet(singleFile));
 
-		submission.setBioSampleFiles(Lists.newArrayList(ncbiBioSampleFiles));
+		NcbiBioSampleFiles ncbiBioSampleFiles = new NcbiBioSampleFiles("sample", Sets.newHashSet(singleFile),
+				Sets.newHashSet(), NcbiInstrumentModel.ILLUMINA_MI_SEQ, "library_name", NcbiLibrarySelection.CDNA,
+				NcbiLibrarySource.GENOMIC, NcbiLibraryStrategy.WGS, "library_construction_protocol", "namespace");
+		ncbiBioSampleFiles.setId("a7f1d71e-8f86-4f0a-8f69-f79eca567f9d");
+
+		NcbiExportSubmission submission = new NcbiExportSubmission(null, submitter, "bioProjectId", "organization",
+				"ncbiNamespace", new Date(), Lists.newArrayList(ncbiBioSampleFiles));
+		submission.setId(1L);
 
 		return submission;
 

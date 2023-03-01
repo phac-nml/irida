@@ -36,58 +36,58 @@ import java.util.Date;
 @EntityListeners(AuditingEntityListener.class)
 public class AnnouncementUserJoin implements Join<Announcement, User>, Comparable<AnnouncementUserJoin> {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	private Long id;
 
-    @CreatedDate
-    @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_date", updatable = false)
-    private Date createdDate;
+	@CreatedDate
+	@NotNull
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "created_date", updatable = false)
+	private Date createdDate;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-    @JoinColumn(name = "announcement_id")
-    private Announcement announcement;
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "announcement_id")
+	private Announcement announcement;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-    @JoinColumn(name = "user_id")
-    private User user;
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "user_id")
+	private User user;
 
-    public AnnouncementUserJoin() {
-        createdDate = new Date();
-    }
+	public AnnouncementUserJoin() {
+		createdDate = new Date();
+	}
 
-    public AnnouncementUserJoin(Announcement announcement, User user) {
-        this();
-        this.announcement = announcement;
-        this.user = user;
-    }
+	public AnnouncementUserJoin(Announcement announcement, User user) {
+		this();
+		this.announcement = announcement;
+		this.user = user;
+	}
 
-    @Override
-    public int compareTo(AnnouncementUserJoin other) {
-        return announcement.compareTo(other.getSubject());
-    }
+	@Override
+	public int compareTo(AnnouncementUserJoin other) {
+		return announcement.compareTo(other.getSubject());
+	}
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
+	public Date getCreatedDate() {
+		return createdDate;
+	}
 
-    public Date getTimestamp() {
-        return getCreatedDate();
-    }
+	public Date getTimestamp() {
+		return getCreatedDate();
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public Announcement getSubject() {
-        return announcement;
-    }
+	public Announcement getSubject() {
+		return announcement;
+	}
 
-    public User getObject() {
-        return user;
-    }
+	public User getObject() {
+		return user;
+	}
 
 }

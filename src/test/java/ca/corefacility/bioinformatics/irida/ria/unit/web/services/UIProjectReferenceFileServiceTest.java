@@ -20,10 +20,14 @@ import ca.corefacility.bioinformatics.irida.exceptions.UnsupportedReferenceFileC
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ProjectReferenceFileJoin;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
+
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIProjectReferenceFileService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.ReferenceFileService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.github.jsonldjava.shaded.com.google.common.collect.ImmutableList;
 
@@ -38,6 +42,7 @@ public class UIProjectReferenceFileServiceTest {
 	private ProjectService projectService;
 	private ReferenceFileService referenceFileService;
 	private MessageSource messageSource;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	public static final Long FILE_ID = 1L;
 	public static final String FILE_NAME = "test_file.fasta";
@@ -52,13 +57,17 @@ public class UIProjectReferenceFileServiceTest {
 		projectService = mock(ProjectService.class);
 		referenceFileService = mock(ReferenceFileService.class);
 		messageSource = mock(MessageSource.class);
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 
 		// Set up the reference file
 		Path path = Paths.get(FILE_PATH);
 		ReferenceFile file = new ReferenceFile(path);
 		when(referenceFileService.read(FILE_ID)).thenReturn(file);
 
-		uiProjectReferenceFileService = new UIProjectReferenceFileService(projectService, referenceFileService, messageSource);
+		uiProjectReferenceFileService = new UIProjectReferenceFileService(projectService, referenceFileService,
+				messageSource, iridaFileStorageUtility);
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 	}
 
 	@Test
@@ -121,7 +130,7 @@ public class UIProjectReferenceFileServiceTest {
 		when(projectService.read(project.getId())).thenReturn(project);
 		when(referenceFileService.read(file.getId())).thenReturn(file);
 
-		uiProjectReferenceFileService.getReferenceFilesForProject(project.getId(), Locale.ENGLISH);
+		uiProjectReferenceFileService.getReferenceFilesForProject(project.getId());
 
 		verify(projectService, times(1)).read(project.getId());
 		verify(referenceFileService, times(1)).getReferenceFilesForProject(project);

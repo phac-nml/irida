@@ -25,51 +25,51 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ProjectRemoteRepositoryImpl extends RemoteRepositoryImpl<Project> implements ProjectRemoteRepository {
 
-    // the type references for this repo
-    private static final ParameterizedTypeReference<ListResourceWrapper<Project>> listTypeReference = new ParameterizedTypeReference<ListResourceWrapper<Project>>() {
-    };
-    private static final ParameterizedTypeReference<ResourceWrapper<Project>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<Project>>() {
-    };
+	// the type references for this repo
+	private static final ParameterizedTypeReference<ListResourceWrapper<Project>> listTypeReference = new ParameterizedTypeReference<ListResourceWrapper<Project>>() {
+	};
+	private static final ParameterizedTypeReference<ResourceWrapper<Project>> objectTypeReference = new ParameterizedTypeReference<ResourceWrapper<Project>>() {
+	};
 
-    private static final ParameterizedTypeReference<ResourceWrapper<ProjectHashResource>> projectHashReference = new ParameterizedTypeReference<ResourceWrapper<ProjectHashResource>>() {
-    };
+	private static final ParameterizedTypeReference<ResourceWrapper<ProjectHashResource>> projectHashReference = new ParameterizedTypeReference<ResourceWrapper<ProjectHashResource>>() {
+	};
 
-    private RemoteAPITokenService tokenService;
+	private RemoteAPITokenService tokenService;
 
-    private static final String HASH_REL = RESTProjectsController.PROJECT_HASH_REL;
+	private static final String HASH_REL = RESTProjectsController.PROJECT_HASH_REL;
 
-    /**
-     * Create a new {@link ProjectRemoteRepositoryImpl} with the given {@link RemoteAPITokenService}
-     *
-     * @param tokenService the {@link RemoteAPITokenService}
-     * @param userService  The {@link UserService} for reading users
-     */
-    @Autowired
-    public ProjectRemoteRepositoryImpl(RemoteAPITokenService tokenService, UserService userService) {
-        super(tokenService, userService, listTypeReference, objectTypeReference);
-        this.tokenService = tokenService;
-    }
+	/**
+	 * Create a new {@link ProjectRemoteRepositoryImpl} with the given {@link RemoteAPITokenService}
+	 *
+	 * @param tokenService the {@link RemoteAPITokenService}
+	 * @param userService  The {@link UserService} for reading users
+	 */
+	@Autowired
+	public ProjectRemoteRepositoryImpl(RemoteAPITokenService tokenService, UserService userService) {
+		super(tokenService, userService, listTypeReference, objectTypeReference);
+		this.tokenService = tokenService;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Integer readProjectHash(Project project) {
-        if (!project.hasLink(HASH_REL)) {
-            throw new LinkNotFoundException("No link for rel: " + HASH_REL);
-        }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer readProjectHash(Project project) {
+		if (!project.hasLink(HASH_REL)) {
+			throw new LinkNotFoundException("No link for rel: " + HASH_REL);
+		}
 
-        RemoteAPI remoteAPI = project.getRemoteStatus().getApi();
+		RemoteAPI remoteAPI = project.getRemoteStatus().getApi();
 
-        OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
-        Link link = project.getLink(HASH_REL).map(i -> i).orElse(null);
+		OAuthTokenRestTemplate restTemplate = new OAuthTokenRestTemplate(tokenService, remoteAPI);
+		Link link = project.getLink(HASH_REL).map(i -> i).orElse(null);
 
-        ResponseEntity<ResourceWrapper<ProjectHashResource>> exchange = restTemplate.exchange(link.getHref(),
-                HttpMethod.GET, HttpEntity.EMPTY, projectHashReference);
+		ResponseEntity<ResourceWrapper<ProjectHashResource>> exchange = restTemplate.exchange(link.getHref(),
+				HttpMethod.GET, HttpEntity.EMPTY, projectHashReference);
 
-        Integer projectHash = exchange.getBody().getResource().getProjectHash();
+		Integer projectHash = exchange.getBody().getResource().getProjectHash();
 
-        return projectHash;
-    }
+		return projectHash;
+	}
 
 }

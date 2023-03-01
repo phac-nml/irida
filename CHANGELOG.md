@@ -3,7 +3,33 @@
 
 ## [Unreleased]
 * [UI/Developer]: Updated `react-router` to the version 6.4.3. See[PR 1405](https://github.com/phac-nml/irida/pull/1405)
+* [Developer] Updated developer setup documentation, ignore java_pid\*.hprof files, and added quality of life file `gradle.properties`. See [PR 1415](https://github.com/phac-nml/irida/pull/1415).
+* [Documentation]: Updated broken links in developer documentation. See [PR 1418](https://github.com/phac-nml/irida/pull/1418).
 * [Developer] Updated developer setup documentation, ignore java_pid*.hprof files, and added quality of life file `gradle.properties`
+* [UI]: Refreshed global search page to use Ant Design. See [PR 1409](https://github.com/phac-nml/irida/pull/1409)
+* [UI/Developer]: Removed old notification system hack and updated to use only Ant Design notifications. See [PR 1447](https://github.com/phac-nml/irida/pull/1447)
+* [UI]: Fixed bug where the `User` column was named `User Group` on the admin User Groups page. [See PR 1450](https://github.com/phac-nml/irida/pull/1450)
+* [Developer]: Replaced Apache OLTU with Nimbusds for performing OAuth2 authentication flow during syncing and Galaxy exporting. See [PR 1432](https://github.com/phac-nml/irida/pull/1432)
+* [Developer/UI]: Performance enhancements to the metadata uploader. See [PR 1445](https://github.com/phac-nml/irida/pull/1445).
+* [Developer/UI]: Fix for updating sample modified date when metadata is deleted. See [PR 1457](https://github.com/phac-nml/irida/pull/1457).
+* [Developer]: Added support for cloud based storage. Currently, Microsoft Azure Blob and Amazon AWS S3 are supported. [See PR 1194](https://github.com/phac-nml/irida/pull/1194)
+* [Developer]: Updated metadata uploader to use react-router-dom Outlet. [See PR 1464](https://github.com/phac-nml/irida/pull/1464)
+* [Developer]: Deprecated "/api/projects/{projectId}/samples/bySequencerId/{seqeuncerId}" in favour of "/api/projects/{projectId}/samples/bySampleName", which accepts a json property "sampleName"
+* [Developer]: Fixed bug in setting a `default_sequencing_object and default_genome_assembly to `NULL` for a sample when the default sequencing object or genome assembly were removed. [See PR 1466](https://github.com/phac-nml/irida/pull/1466)
+* [Developer]: Fixed bug preventing a `sample` with an analysis submission from being deleted. [See PR 1467](https://github.com/phac-nml/irida/pull/1467)
+* [ALL]: Added LDAP/ADLDAP support.
+
+## [22.09.7] - 2022/01/24
+* [UI]: Fixed bugs on NCBI Export page preventing the NCBI `submission.xml` file from being properly written. See [PR 1451](https://github.com/phac-nml/irida/pull/1451)
+
+## [22.09.6] - 2022/12/21
+* [UI]: Fixed bug on NCBI Export page preventing the export from occuring. See [PR 1439](https://github.com/phac-nml/irida/pull/1439)
+
+## [22.09.5] - 2022/12/14
+* [Developer/UI]: Fixed bug preventing a manager of a user group from adding new members when this manager is a collaborator on one of these users projects. Also, fixed issue with a user group member added with an owner role for a group was set with a member role. See [PR 1431](https://github.com/phac-nml/irida/pull/1431)
+* [Developer/UI]: Updated synchronize new remote project page to display http errors when setting the url manually and an error is encountered. See [PR 1433](https://github.com/phac-nml/irida/pull/1433)
+* [Developer]: Added liquibase migration for renamed NCBI Instrument Models.  See [PR 1436](https://github.com/phac-nml/irida/pull/1436)
+* [Developer]: Removed ABI SOLID platforms from NCBI Instrument Models.  See [PR 1436](https://github.com/phac-nml/irida/pull/1436)
 
 ## [22.09.4] - 2022/11/14
 * [REST]: Fixed issue with project/samples api response missing samples when a sample has a default sequencing object. See [PR 1413](https://github.com/phac-nml/irida/pull/1413)
@@ -53,7 +79,6 @@
 * [UI]: Updated phylogenetic tree visualization on the analysis details using Ant Design and the new phylocanvas.gl. See [PR 1280](https://github.com/phac-nml/irida/pull/1280)
 * [Developer]: Added security scanning of GitHub pull-requests with [CodeQL](https://codeql.github.com/) (scans for code vulnerabilities) and [Grype](https://github.com/anchore/grype) (scans for Java package dependency vulnerabilities). See [PR 1282](https://github.com/phac-nml/irida/pull/1282).
 * [UI]: Updated layout of the analysis view to allow for scrollable sections. See[PR 1378](https://github.com/phac-nml/irida/pull/1378)
-* [ALL]: Added LDAP/ADLDAP support.
 
 ## [22.05.5] - 2022/06/28
 * [UI]: Fixed bug preventing export of project samples table due to invalid url. [PR 1331](https://github.com/phac-nml/irida/pull/1331)
@@ -152,8 +177,11 @@
 
 ## [...previous](https://github.com/phac-nml/irida/blob/21.09.2/CHANGELOG.md)
 
-[Unreleased]: https://github.com/phac-nml/irida/compare/22.09.4...HEAD
+[Unreleased]: https://github.com/phac-nml/irida/compare/22.09.7...HEAD
 
+[22.09.7]: https://github.com/phac-nml/irida/compare/22.09.6...22.09.7
+[22.09.6]: https://github.com/phac-nml/irida/compare/22.09.5...22.09.6
+[22.09.5]: https://github.com/phac-nml/irida/compare/22.09.4...22.09.5
 [22.09.4]: https://github.com/phac-nml/irida/compare/22.09.3...22.09.4
 [22.09.3]: https://github.com/phac-nml/irida/compare/22.09.2...22.09.3
 [22.09.2]: https://github.com/phac-nml/irida/compare/22.09.1...22.09.2

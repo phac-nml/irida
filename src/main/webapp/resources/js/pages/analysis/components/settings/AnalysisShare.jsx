@@ -7,12 +7,11 @@
  * required by the component
  */
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Checkbox, List, Typography } from "antd";
+import { Button, Checkbox, List, notification, Typography } from "antd";
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";
 import { AnalysisDetailsContext } from "../../../../contexts/AnalysisDetailsContext";
 import { AnalysisShareContext } from "../../../../contexts/AnalysisShareContext";
 
-import { showNotification } from "../../../../modules/notifications";
 import { SPACE_MD } from "../../../../styles/spacing";
 import { InfoAlert } from "../../../../components/alerts/InfoAlert";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
@@ -21,7 +20,8 @@ import {
   getSharedProjects,
   updateSharedProject,
 } from "../../../../apis/analysis/analysis";
-import { TabPanelContent } from "../../../../components/tabs/TabPanelContent";
+
+import { TabPanelContent } from "../../../../components/tabs";
 
 const { Title } = Typography;
 
@@ -35,6 +35,7 @@ export default function AnalysisShare() {
     AnalysisDetailsContext
   );
   const { analysisContext, analysisIdentifier } = useContext(AnalysisContext);
+
   const {
     analysisShareContext,
     storeSharedProjects,
@@ -117,8 +118,8 @@ export default function AnalysisShare() {
       submissionId: analysisIdentifier,
       projectId: e.target.value,
       shareStatus: e.target.checked,
-    }).then((res) => {
-      showNotification({ text: res.message });
+    }).then(({ message }) => {
+      notification.success({ message });
       updateSharedProjectShareStatus({
         projectId: e.target.value,
         shareStatus: e.target.checked,
@@ -135,7 +136,12 @@ export default function AnalysisShare() {
         storeSharedProjects({ sharedProjects: data });
       });
     }
-  }, []);
+  }, [
+    analysisIdentifier,
+    analysisShareContext.sharedProjects,
+    sharedProjects,
+    storeSharedProjects,
+  ]);
 
   /* Renders the projects which an analysis can be shared with
    * and a save results to related samples if applicable
@@ -158,16 +164,16 @@ export default function AnalysisShare() {
       ) : null}
 
       {analysisDetailsContext.canShareToSamples &&
-      analysisDetailsContext.allowedToModifySample &&
-      analysisContext.isCompleted ? (
-        <section
-          style={{ marginTop: SPACE_MD }}
-          className="t-save-results-to-samples"
-        >
-          <Title level={4}>{i18n("AnalysisShare.saveResults")}</Title>
-          {renderSaveToRelatedSamples()}
-        </section>
-      ) : null}
+        analysisDetailsContext.allowedToModifySample &&
+        analysisContext.isCompleted && (
+          <section
+            style={{ marginTop: SPACE_MD }}
+            className="t-save-results-to-samples"
+          >
+            <Title level={4}>{i18n("AnalysisShare.saveResults")}</Title>
+            {renderSaveToRelatedSamples()}
+          </section>
+        )}
     </TabPanelContent>
   );
 }

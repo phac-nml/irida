@@ -25,21 +25,20 @@ specifiers:
   '@babel/preset-react': ^7.18.6
   '@babel/preset-typescript': ^7.18.6
   '@babel/runtime': ^7.20.1
-  '@fortawesome/fontawesome-free': ^6.1.1
-  '@loaders.gl/core': '>=3.2.0 <4.0.0'
-  '@loaders.gl/gltf': ^3.0.0
-  '@loaders.gl/images': '>=3.0.0 <4.0.0'
-  '@luma.gl/engine': '>=8.4.0 <9.0.0'
-  '@luma.gl/gltools': '>=8.4.0 <9.0.0'
-  '@luma.gl/shadertools': ^8.4.0
-  '@luma.gl/webgl': '>=8.4.0 <9.0.0'
+  '@loaders.gl/core': ^3.2.4
+  '@loaders.gl/gltf': ^3.2.4
+  '@loaders.gl/images': ^3.2.4
+  '@luma.gl/engine': ^8.5.14
+  '@luma.gl/gltools': ^8.5.14
+  '@luma.gl/shadertools': ^8.5.14
+  '@luma.gl/webgl': ^8.5.14
   '@phylocanvas/phylocanvas.gl': ^1.43.0
   '@reduxjs/toolkit': 1.8.5
   '@types/lodash': ^4.14.182
   '@types/lodash.uniqby': ^4.7.7
   '@types/node': ^17.0.39
-  '@types/react': ^17.0.39
-  '@types/react-dom': ^17.0.11
+  '@types/react': ^17.0.45
+  '@types/react-dom': ^17.0.17
   '@types/react-redux': ^7.1.24
   '@types/react-virtualized-auto-sizer': ^1.0.1
   '@types/react-window': ^1.8.5
@@ -53,18 +52,10 @@ specifiers:
   axios: ^0.26.1
   babel-loader: ^8.2.4
   babel-plugin-import: ^1.13.5
-  bootstrap: 3.4.1
-  bootstrap-daterangepicker: ^3.0.3
   browserslist: ^4.20.2
   clipboard: ^1.7.1
   css-loader: ^6.7.1
   css-minimizer-webpack-plugin: ^3.4.1
-  datatables.net: ^1.11.5
-  datatables.net-bs: ^1.11.5
-  datatables.net-buttons: ^2.2.2
-  datatables.net-buttons-bs: ^2.2.2
-  datatables.net-fixedcolumns: ^4.0.2
-  datatables.net-fixedcolumns-bs: ^4.0.2
   dayjs: ^1.11.1
   deck.gl: ^8.7.12
   eslint: ^8.13.0
@@ -75,12 +66,10 @@ specifiers:
   eslint-plugin-react-hooks: ^4.4.0
   expose-loader: ^3.1.0
   flexlayout-react: ^0.7.4
-  gl-matrix: ^3.0.0
+  gl-matrix: ^3.4.3
   i: ^0.3.7
   immutability-helper: ^3.1.1
   jest: ^27.5.1
-  jquery: 3.5.1
-  jquery-validation: ^1.19.3
   less: ^4.1.2
   less-loader: ^10.2.0
   lodash: ^4.17.21
@@ -91,7 +80,7 @@ specifiers:
   postcss-loader: ^6.2.1
   postcss-nested: ^5.0.6
   postcss-preset-env: ^7.4.3
-  prettier: ^2.7.0
+  prettier: ^2.7.1
   process: ^0.11.10
   properties-reader: ^2.2.0
   qs: ^6.10.3
@@ -135,7 +124,6 @@ dependencies:
   '@antv/path-util': 2.0.15
   '@antv/scale': 0.3.17
   '@antv/util': 2.0.17
-  '@fortawesome/fontawesome-free': 6.1.1
   '@loaders.gl/core': 3.2.4
   '@loaders.gl/gltf': 3.2.4
   '@loaders.gl/images': 3.2.4
@@ -149,23 +137,13 @@ dependencies:
   ag-grid-react: 27.1.0_w6hrqnyrd37qujkkojqwgzxsou
   antd: 4.19.5_sfoxds7t5ydpegc3knd667wn6m
   axios: 0.26.1
-  bootstrap: 3.4.1
-  bootstrap-daterangepicker: 3.1.0
   clipboard: 1.7.1
-  datatables.net: 1.11.5
-  datatables.net-bs: 1.11.5
-  datatables.net-buttons: 2.2.2
-  datatables.net-buttons-bs: 2.2.2
-  datatables.net-fixedcolumns: 4.0.2
-  datatables.net-fixedcolumns-bs: 4.0.2
   dayjs: 1.11.1
   deck.gl: 8.7.12_qdym3cmqy3izoldsblxf2ftyey
   flexlayout-react: 0.7.4_sfoxds7t5ydpegc3knd667wn6m
   gl-matrix: 3.4.3
   i: 0.3.7
   immutability-helper: 3.1.1
-  jquery: 3.5.1
-  jquery-validation: 1.19.3_jquery@3.5.1
   lodash: 4.17.21
   moment: 2.29.2
   postcss-nested: 5.0.6_postcss@8.4.12
@@ -2090,12 +2068,6 @@ packages:
       - supports-color
     dev: true
 
-  /@fortawesome/fontawesome-free/6.1.1:
-    resolution: {integrity: sha512-J/3yg2AIXc9wznaVqpHVX3Wa5jwKovVF0AMYSnbmcXTiL3PpRPfF58pzWucCwEiCJBp+hCNRLWClTomD8SseKg==}
-    engines: {node: '>=6'}
-    requiresBuild: true
-    dev: false
-
   /@humanwhocodes/config-array/0.9.3:
     resolution: {integrity: sha512-3xSMlXHh03hCcCmFc0rbKp3Ivt2PFEJnQUJDDMTJQ2wkECZWdq4GePs2ctc5H8zV+cHPaq8k2vU8mrQjA6iHdQ==}
     engines: {node: '>=10.10.0'}
@@ -3662,7 +3634,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.20.2
-      caniuse-lite: 1.0.30001332
+      caniuse-lite: 1.0.30001431
       fraction.js: 4.2.0
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -3850,18 +3822,6 @@ packages:
     resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
     dev: true
 
-  /bootstrap-daterangepicker/3.1.0:
-    resolution: {integrity: sha512-oaQZx6ZBDo/dZNyXGVi2rx5GmFXThyQLAxdtIqjtLlYVaQUfQALl5JZMJJZzyDIX7blfy4ppZPAJ10g8Ma4d/g==}
-    dependencies:
-      jquery: 3.5.1
-      moment: 2.29.2
-    dev: false
-
-  /bootstrap/3.4.1:
-    resolution: {integrity: sha512-yN5oZVmRCwe5aKwzRj6736nSmKDX7pLYwsXiCj/EYmo16hODaBiT4En5btW/jhBF/seV+XMx3aYwukYC3A49DA==}
-    engines: {node: '>=6'}
-    dev: false
-
   /brace-expansion/1.1.11:
     resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}
     dependencies:
@@ -3885,7 +3845,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001332
+      caniuse-lite: 1.0.30001431
       electron-to-chromium: 1.4.107
       escalade: 3.1.1
       node-releases: 2.0.3
@@ -3897,7 +3857,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001430
+      caniuse-lite: 1.0.30001431
       electron-to-chromium: 1.4.284
       node-releases: 2.0.6
       update-browserslist-db: 1.0.10_browserslist@4.21.4
@@ -3942,17 +3902,13 @@ packages:
     resolution: {integrity: sha512-bsTwuIg/BZZK/vreVTYYbSWoe2F+71P7K5QGEX+pT250DZbfU1MQ5prOKpPR+LL6uWKK3KMwMCAS74QB3Um1uw==}
     dependencies:
       browserslist: 4.21.4
-      caniuse-lite: 1.0.30001430
+      caniuse-lite: 1.0.30001431
       lodash.memoize: 4.1.2
       lodash.uniq: 4.5.0
     dev: true
 
-  /caniuse-lite/1.0.30001332:
-    resolution: {integrity: sha512-10T30NYOEQtN6C11YGg411yebhvpnC6Z102+B95eAsN0oB6KUs01ivE8u+G6FMIRtIrVlYXhL+LUwQ3/hXwDWw==}
-    dev: true
-
-  /caniuse-lite/1.0.30001430:
-    resolution: {integrity: sha512-IB1BXTZKPDVPM7cnV4iaKaHxckvdr/3xtctB3f7Hmenx3qYBhGtTZ//7EllK66aKXW98Lx0+7Yr0kxBtIt3tzg==}
+  /caniuse-lite/1.0.30001431:
+    resolution: {integrity: sha512-zBUoFU0ZcxpvSt9IU66dXVT/3ctO1cy4y9cscs1szkPlcWb6pasYM144GqrUygUbT+k7cmUCW61cvskjcv0enQ==}
     dev: true
 
   /cartocolor/4.0.2:
@@ -4510,49 +4466,6 @@ packages:
       whatwg-mimetype: 2.3.0
       whatwg-url: 8.7.0
     dev: true
-
-  /datatables.net-bs/1.11.5:
-    resolution: {integrity: sha512-thj90yxWnJpAkKdiPtdFMHlDTHCg1VRrzAE7juABYaw3hNQdvf1Veh7a/1hvuqOfn2g7ORzQUFXP8oxJ4SJWfg==}
-    dependencies:
-      datatables.net: 1.11.5
-      jquery: 3.5.1
-    dev: false
-
-  /datatables.net-buttons-bs/2.2.2:
-    resolution: {integrity: sha512-F4ffoweXJrtznq+KfYYW7aa1xHlzQUtSEJXne7rUvp76neMmuFtNhD+2ffaQHizNJmiyGAEKgq54pD8qkGo63A==}
-    dependencies:
-      datatables.net-bs: 1.11.5
-      datatables.net-buttons: 2.2.2
-      jquery: 3.5.1
-    dev: false
-
-  /datatables.net-buttons/2.2.2:
-    resolution: {integrity: sha512-YrTgBDejFSzm2CJOx0aOACXDIELBsdMFe6IR3rJqC0elJoMd6uXVQ4pRBQEge4cfWpYa5T1Majm7r6FQi0j6Jw==}
-    dependencies:
-      datatables.net: 1.11.5
-      jquery: 3.5.1
-    dev: false
-
-  /datatables.net-fixedcolumns-bs/4.0.2:
-    resolution: {integrity: sha512-DdOZy1WN9V3hF7C9jzPspjC9VEnKdeP225jDs5O8/ZYHrEM2MHOuUVKIpNjikICi4ABQFJPd6pMKDXqvQLvKHQ==}
-    dependencies:
-      datatables.net-bs: 1.11.5
-      datatables.net-fixedcolumns: 4.0.2
-      jquery: 3.5.1
-    dev: false
-
-  /datatables.net-fixedcolumns/4.0.2:
-    resolution: {integrity: sha512-BOLffsEyCy/uKTubVf1GAV/S/PEuqTE8up+E55zROcsciwFy6C2VMx+yGaaJAhAZTgFf0zneb55tHIaoFXNnfQ==}
-    dependencies:
-      datatables.net: 1.11.5
-      jquery: 3.5.1
-    dev: false
-
-  /datatables.net/1.11.5:
-    resolution: {integrity: sha512-nlFst2xfwSWaQgaOg5sXVG3cxYC0tH8E8d65289w9ROgF2TmLULOOpcdMpyxxUim/qEwVSEem42RjkTWEpr3eA==}
-    dependencies:
-      jquery: 3.5.1
-    dev: false
 
   /date-fns/2.28.0:
     resolution: {integrity: sha512-8d35hViGYx/QH0icHYCeLmsLmMUheMmTyV9Fcm6gvNwdw31yXXH+O85sOBJ+OLnLQMKZowvpKb6FgMIQjcpvQw==}
@@ -5430,6 +5343,11 @@ packages:
       delegate: 3.2.0
     dev: false
 
+  /graceful-fs/4.2.10:
+    resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
+    dev: true
+    optional: true
+
   /graceful-fs/4.2.9:
     resolution: {integrity: sha512-NtNxqUcXgpW2iMrfqSfR73Glt39K+BLwWsPs94yR63v45T0Wbej7eRmL5cWfwEgqXnmjQp3zaJTshdRW/qC2ZQ==}
     dev: true
@@ -6291,18 +6209,6 @@ packages:
       - utf-8-validate
     dev: true
 
-  /jquery-validation/1.19.3_jquery@3.5.1:
-    resolution: {integrity: sha512-iXxCS5W7STthSTMFX/NDZfWHBLbJ1behVK3eAgHXAV8/0vRa9M4tiqHvJMr39VGWHMGdlkhrtrkBuaL2UlE8yw==}
-    peerDependencies:
-      jquery: ^1.7 || ^2.0 || ^3.1
-    dependencies:
-      jquery: 3.5.1
-    dev: false
-
-  /jquery/3.5.1:
-    resolution: {integrity: sha512-XwIBPqcMn57FxfT+Go5pzySnm4KWkT1Tv7gjrpT1srtf8Weynl6R273VJ5GjkRb51IzMp5nbaPjJXMWeju2MKg==}
-    dev: false
-
   /js-tokens/4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -6479,11 +6385,11 @@ packages:
       tslib: 2.3.1
     optionalDependencies:
       errno: 0.1.8
-      graceful-fs: 4.2.9
+      graceful-fs: 4.2.10
       image-size: 0.5.5
       make-dir: 2.1.0
       mime: 1.6.0
-      needle: 2.6.0
+      needle: 2.9.1
       source-map: 0.6.1
     transitivePeerDependencies:
       - supports-color
@@ -6977,8 +6883,8 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
-  /needle/2.6.0:
-    resolution: {integrity: sha512-KKYdza4heMsEfSWD7VPUIz3zX2XDwOyX2d+geb4vrERZMT5RMU6ujjaD+I5Yr54uZxQ2w6XRTAhHBbSCyovZBg==}
+  /needle/2.9.1:
+    resolution: {integrity: sha512-6R9fqJ5Zcmf+uYaFgdIHmLwNldn5HbK8L5ybn7Uz+ylX/rnOsSp1AHcvQSrCaFN+qNM1wpymHqD7mVasEOlHGQ==}
     engines: {node: '>= 4.4.x'}
     hasBin: true
     requiresBuild: true

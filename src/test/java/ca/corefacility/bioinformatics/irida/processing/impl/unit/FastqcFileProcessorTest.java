@@ -28,7 +28,10 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.FastqcFileProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 /**
  * Tests for {@link FastqcFileProcessor}.
@@ -46,13 +49,16 @@ public class FastqcFileProcessorTest {
 	private static final String FASTQ_FILE_CONTENTS = "@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
 			+ SEQUENCE + "\n+\n?????????";
 	private static final String FASTA_FILE_CONTENTS = ">test read\n" + SEQUENCE;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@BeforeEach
 	public void setUp() {
 		messageSource = mock(MessageSource.class);
 		sequenceFileRepository = mock(SequenceFileRepository.class);
 		outputFileRepository = mock(AnalysisOutputFileRepository.class);
-		fileProcessor = new FastqcFileProcessor(messageSource, sequenceFileRepository, outputFileRepository);
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+		fileProcessor = new FastqcFileProcessor(messageSource, sequenceFileRepository, outputFileRepository, iridaFileStorageUtility);
 	}
 
 	@Test
@@ -62,6 +68,7 @@ public class FastqcFileProcessorTest {
 		Path fasta = Files.createTempFile(null, null);
 		Files.write(fasta, FASTA_FILE_CONTENTS.getBytes());
 		SequenceFile sf = new SequenceFile(fasta);
+
 		sf.setId(1L);
 		Runtime.getRuntime().addShutdownHook(new DeleteFileOnExit(fasta));
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
@@ -74,7 +81,9 @@ public class FastqcFileProcessorTest {
 	@Test
 	public void testHandleFast5File() throws IOException {
 		//ensure we don't process zipped fast5 files
-		Fast5Object obj = new Fast5Object(new SequenceFile(null));
+		SequenceFile sf = new SequenceFile(null);
+
+		Fast5Object obj = new Fast5Object(sf);
 
 		obj.setFast5Type(Fast5Object.Fast5Type.SINGLE);
 		assertTrue(fileProcessor.shouldProcessFile(obj), "should want to process single fast5 file)");
@@ -97,6 +106,7 @@ public class FastqcFileProcessorTest {
 
 		SequenceFile sf = new SequenceFile(fastq);
 		sf.setId(1L);
+
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 		try {
 			fileProcessor.process(so);
@@ -107,6 +117,7 @@ public class FastqcFileProcessorTest {
 
 		verify(sequenceFileRepository).saveMetadata(argument.capture());
 		SequenceFile updatedFile = argument.getValue();
+
 		final Field fastqcAnalysis = ReflectionUtils.findField(SequenceFile.class, "fastqcAnalysis");
 		ReflectionUtils.makeAccessible(fastqcAnalysis);
 		AnalysisFastQC updated = (AnalysisFastQC) fastqcAnalysis.get(updatedFile);
@@ -120,7 +131,7 @@ public class FastqcFileProcessorTest {
 		assertEquals(Long.valueOf(SEQUENCE.length() * 2), updated.getTotalBases(),
 				"Total number of bases was not correct.");
 
-		verify(outputFileRepository,times(3)).save(any(AnalysisOutputFile.class));
+		verify(outputFileRepository, times(3)).save(any(AnalysisOutputFile.class));
 
 		assertNotNull(updated.getAnalysisOutputFileNames().contains("perBaseQualityScoreChart"), "Per-base quality score chart was not created.");
 

@@ -14,11 +14,10 @@ import { setNewProjectMetadataRestrictions } from "./newProjectSlice";
 /**
  * Component to render metadata restrictions for samples that are in the cart (if any).
  * User can update the new project restrictions as required
- * @param {Object} form - Ant Design form API
  * @returns {JSX.Element}
  * @constructor
  */
-export function CreateProjectMetadataRestrictions({ form }) {
+export function CreateProjectMetadataRestrictions() {
   const dispatch = useDispatch();
 
   /**
@@ -39,7 +38,7 @@ export function CreateProjectMetadataRestrictions({ form }) {
   React.useEffect(() => {
     if (samples?.length) {
       let projectIds = samples.map((s) => s.projectId);
-      getAllMetadataFieldsForProjects({ projectIds }).then((data) => {
+      getAllMetadataFieldsForProjects(projectIds).then((data) => {
         setSourceFields(data);
         dispatch(
           setNewProjectMetadataRestrictions(
@@ -55,7 +54,7 @@ export function CreateProjectMetadataRestrictions({ form }) {
     getMetadataRestrictions().then((data) => {
       setRestrictions(data);
     });
-  }, [samples]);
+  }, [dispatch, samples]);
 
   const columns = [
     {
@@ -110,6 +109,7 @@ export function CreateProjectMetadataRestrictions({ form }) {
         dataSource={metadataRestrictions}
         scroll={{ y: 300 }}
         pagination={false}
+        tableLayout="auto"
       />
     ) : (
       <Alert

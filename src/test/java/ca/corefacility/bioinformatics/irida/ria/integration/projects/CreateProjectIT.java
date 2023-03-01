@@ -92,7 +92,7 @@ public class CreateProjectIT extends AbstractIridaUIITChromeDriver {
 		String name = "TESTING PROJECT NAME";
 
 		// Add some samples
-		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1);
+		ProjectSamplesPage samplesPage = ProjectSamplesPage.goToPage(driver(), 1L);
 		samplesPage.selectSampleByName("sample");
 		samplesPage.addSelectedSamplesToCart();
 

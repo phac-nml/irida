@@ -7,9 +7,8 @@
  * all the elements required by the component
  */
 import React, { useContext } from "react";
-import { Button, Popconfirm } from "antd";
+import { Button, notification, Popconfirm } from "antd";
 import { AnalysisContext } from "../../../../contexts/AnalysisContext";
-import { showNotification } from "../../../../modules/notifications";
 
 import { deleteAnalysis } from "../../../../apis/analysis/analysis";
 import { WarningAlert } from "../../../../components/alerts/WarningAlert";
@@ -32,7 +31,7 @@ export default function AnalysisDelete() {
    */
   function handleDeleteConfirm() {
     deleteAnalysis(analysisIdentifier).then((res) =>
-      showNotification({ text: res.result })
+      notification.success({ message: res.result })
     );
 
     window.setTimeout(function () {

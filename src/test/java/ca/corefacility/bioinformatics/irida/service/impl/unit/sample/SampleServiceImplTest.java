@@ -2,6 +2,7 @@ package ca.corefacility.bioinformatics.irida.service.impl.unit.sample;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -10,8 +11,10 @@ import org.mockito.ArgumentCaptor;
 
 import ca.corefacility.bioinformatics.irida.exceptions.AnalysisAlreadySetException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
+import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.Join;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
@@ -25,6 +28,7 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequence
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.AnalysisRepository;
+import ca.corefacility.bioinformatics.irida.repositories.assembly.GenomeAssemblyRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.project.ProjectSampleJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleSequencingObjectJoinRepository;
@@ -33,6 +37,8 @@ import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepositor
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
+import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
+import ca.corefacility.bioinformatics.irida.service.impl.GenomeAssemblyServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.impl.sample.SampleServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
 
@@ -41,6 +47,8 @@ import com.google.common.collect.Sets;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
+import javax.validation.Validator;
 
 /**
  * Unit tests for {@link SampleServiceImpl}.
@@ -57,6 +65,11 @@ public class SampleServiceImplTest {
 	private SampleGenomeAssemblyJoinRepository sampleGenomeAssemblyJoinRepository;
 	private UserRepository userRepository;
 	private MetadataEntryRepository metadataEntryRepository;
+
+	private GenomeAssemblyRepository genomeAssemblyRepository;
+	private GenomeAssemblyService genomeAssemblyService;
+
+	private Validator validator;
 
 	/**
 	 * Variation in a floating point number to be considered equal.
@@ -77,6 +90,11 @@ public class SampleServiceImplTest {
 		sampleService = new SampleServiceImpl(sampleRepository, psjRepository, analysisRepository, ssoRepository,
 				qcEntryRepository, sequencingObjectRepository, sampleGenomeAssemblyJoinRepository, userRepository,
 				metadataEntryRepository, null);
+
+		genomeAssemblyRepository = mock(GenomeAssemblyRepository.class);
+		validator = mock(Validator.class);
+		genomeAssemblyService = new GenomeAssemblyServiceImpl(genomeAssemblyRepository,
+				sampleGenomeAssemblyJoinRepository, null, sampleService, sampleRepository);
 	}
 
 	@Test
@@ -97,20 +115,46 @@ public class SampleServiceImplTest {
 	}
 
 	@Test
-	public void testRemoveSequenceFileFromSample() {
+	public void testRemoveSequencingObjectFromSample() throws Exception {
 		Sample s = new Sample();
 		s.setId(1111L);
 		SequenceFile sf = new SequenceFile();
 		sf.setId(2222L);
 		SingleEndSequenceFile obj = new SingleEndSequenceFile(sf);
 		obj.setId(2L);
+		s.setDefaultSequencingObject(obj);
 		SampleSequencingObjectJoin join = new SampleSequencingObjectJoin(s, obj);
 
 		when(ssoRepository.readObjectForSample(s, obj.getId())).thenReturn(join);
+		assertNotNull(s.getDefaultSequencingObject());
+		assertEquals(s.getDefaultSequencingObject().getId(), 2L,
+				"The default sequencing object id should match the sequencing object id");
 
 		sampleService.removeSequencingObjectFromSample(s, obj);
 
 		verify(ssoRepository).delete(join);
+		verify(sampleRepository).removeDefaultSequencingObject(s);
+	}
+
+	@Test
+	public void testRemoveGenomeAssemblyFromSample() {
+		Sample s = new Sample();
+		s.setId(1111L);
+		UploadedAssembly uploadedAssembly = new UploadedAssembly(Paths.get("/path/to/file"));
+		uploadedAssembly.setId(2L);
+		s.setDefaultGenomeAssembly(uploadedAssembly);
+		SampleGenomeAssemblyJoin join = new SampleGenomeAssemblyJoin(s, uploadedAssembly);
+
+		when(sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(s.getId(),
+				uploadedAssembly.getId())).thenReturn(join);
+		assertNotNull(s.getDefaultGenomeAssembly());
+		assertEquals(s.getDefaultGenomeAssembly().getId(), 2L,
+				"The default genome assembly should match the genome assembly id");
+
+		genomeAssemblyService.removeGenomeAssemblyFromSample(s, uploadedAssembly.getId());
+
+		verify(sampleGenomeAssemblyJoinRepository).delete(join);
+		verify(sampleRepository).removeDefaultGenomeAssembly(s);
 	}
 
 	@Test

@@ -67,7 +67,7 @@ public class ReferenceFileAjaxControllerTest {
 
 	@Test
 	public void testGetReferenceFiles() {
-		ResponseEntity<List<UIReferenceFile>> response = controller.getReferenceFilesForProject(PROJECT_ID, Locale.ENGLISH);
+		ResponseEntity<List<UIReferenceFile>> response = controller.getReferenceFilesForProject(PROJECT_ID);
 		assertEquals(response.getStatusCode(), HttpStatus.OK, "Receive an 200 OK response");
 	}
 }

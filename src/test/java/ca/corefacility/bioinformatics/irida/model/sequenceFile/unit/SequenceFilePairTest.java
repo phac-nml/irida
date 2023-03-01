@@ -13,6 +13,9 @@ import org.junit.jupiter.api.Test;
 
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 /**
  * Tests for SequenceFilePair
@@ -35,6 +38,8 @@ public class SequenceFilePairTest {
 	private SequenceFilePair sequenceFilePairGood;
 	private SequenceFilePair sequenceFilePairBad;
 
+	private IridaFileStorageUtility iridaFileStorageUtility;
+
 	/**
 	 * Sets up files for tests.
 	 * 
@@ -42,6 +47,9 @@ public class SequenceFilePairTest {
 	 */
 	@BeforeEach
 	public void setup() throws IOException {
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+
 		Path tempDir = Paths.get("/tmp");
 
 		forwardPathGood = tempDir.resolve("Test_R1_001.fastq");

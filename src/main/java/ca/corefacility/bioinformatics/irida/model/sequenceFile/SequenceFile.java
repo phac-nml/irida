@@ -1,31 +1,14 @@
 package ca.corefacility.bioinformatics.irida.model.sequenceFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.envers.Audited;
@@ -46,6 +29,7 @@ import ca.corefacility.bioinformatics.irida.model.remote.RemoteSynchronizable;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisFastQC;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 import com.fasterxml.jackson.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -108,10 +92,21 @@ public class SequenceFile extends IridaRepresentationModel
 	@JoinColumn(name = "remote_status")
 	private RemoteStatus remoteStatus;
 
+
 	public SequenceFile() {
 		createdDate = new Date();
 		fileRevisionNumber = 0L;
 		optionalProperties = new HashMap<>();
+	}
+
+	/**
+	 * Get the implementation-specific file label.
+	 *
+	 * @return the file label.
+	 */
+	@Override
+	public String getLabel() {
+		return file.getFileName().toString();
 	}
 
 	/**
@@ -154,12 +149,6 @@ public class SequenceFile extends IridaRepresentationModel
 
 	public void setFile(Path file) {
 		this.file = file;
-	}
-
-	@Override
-	public String getLabel() {
-		return file.getFileName()
-				.toString();
 	}
 
 	@Override
@@ -217,23 +206,6 @@ public class SequenceFile extends IridaRepresentationModel
 		return optionalProperties.get(key);
 	}
 
-	/**
-	 * Get the size of the file.
-	 *
-	 * @return The String representation of the file size
-	 */
-	@JsonIgnore
-	public String getFileSize() {
-		String size = "N/A";
-		try {
-			size = IridaSequenceFile.humanReadableByteCount(Files.size(file), true);
-		} catch (NoSuchFileException e) {
-			logger.error("Could not find file " + file);
-		} catch (IOException e) {
-			logger.error("Could not calculate file size: ", e);
-		}
-		return size;
-	}
 
 	/**
 	 * Set the Map of optional properties
@@ -302,5 +274,45 @@ public class SequenceFile extends IridaRepresentationModel
 
 	public void setUploadSha256(String uploadSha256) {
 		this.uploadSha256 = uploadSha256;
+	}
+
+	/**
+	 * Gets the sequence file size.
+	 *
+	 * @return The sequence file size.
+	 */
+	@JsonIgnore
+	public String getFileSize() {
+		return IridaFiles.getFileSize(file);
+	}
+
+	/**
+	 * Checks if a file is gzipped.
+	 *
+	 * @return boolean if file is gzipped or not.
+	 * @throws IOException if file cannot be read
+	 */
+	@JsonIgnore
+	public boolean isGzipped() throws IOException {
+		return IridaFiles.isGzipped(file);
+	}
+
+	/**
+	 * Gets sequence file input stream
+	 *
+	 * @return returns input stream.
+	 */
+	@JsonIgnore
+	public InputStream getFileInputStream() {
+		return IridaFiles.getFileInputStream(file);
+	}
+
+	/**
+	 * Get file size in bytes
+	 *
+	 * @return if file exists or not
+	 */
+	public Long getFileSizeBytes() {
+		return IridaFiles.getFileSizeBytes(getFile());
 	}
 }

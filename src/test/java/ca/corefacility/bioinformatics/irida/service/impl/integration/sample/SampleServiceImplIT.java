@@ -18,6 +18,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import ca.corefacility.bioinformatics.irida.annotation.ServiceIntegrationTest;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
 import ca.corefacility.bioinformatics.irida.exceptions.SequenceFileAnalysisException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
 import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
 import ca.corefacility.bioinformatics.irida.model.project.Project;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
@@ -26,9 +27,11 @@ import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
 import ca.corefacility.bioinformatics.irida.model.sample.metadata.ProjectMetadataResponse;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
 import ca.corefacility.bioinformatics.irida.repositories.joins.sample.SampleGenomeAssemblyJoinRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
+import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
 import ca.corefacility.bioinformatics.irida.service.ProjectService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
@@ -63,6 +66,9 @@ public class SampleServiceImplIT {
 	@Autowired
 	private MetadataTemplateService metadataTemplateService;
 
+	@Autowired
+	private GenomeAssemblyService genomeAssemblyService;
+
 	/**
 	 * Variation in a floating point number to be considered equal.
 	 */
@@ -78,6 +84,37 @@ public class SampleServiceImplIT {
 		s.setSampleName(sampleName);
 		Sample saved = sampleService.create(s);
 		assertEquals(sampleName, saved.getSampleName(), "Wrong name was saved.");
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void removeSampleDefaultSequencingObject() throws Exception {
+		Sample sample = sampleService.read(9L);
+		SequencingObject sequencingObject = objectService.read(2L);
+		sample.setDefaultSequencingObject(sequencingObject);
+		sampleService.update(sample);
+
+		assertNotNull(sample.getDefaultSequencingObject());
+		sampleService.removeSequencingObjectFromSample(sample, sequencingObject);
+
+		Sample sampleAfterDelete = sampleService.read(9L);
+		assertNull(sampleAfterDelete.getDefaultSequencingObject());
+	}
+
+	@Test
+	@WithMockUser(username = "fbristow", roles = "ADMIN")
+	public void removeSampleDefaultGenomeAssembly() {
+		Sample sample = sampleService.read(2L);
+		GenomeAssembly genomeAssembly = sampleGenomeAssemblyJoinRepository.findBySampleAndAssemblyId(sample.getId(), 2L)
+				.getObject();
+		sample.setDefaultGenomeAssembly(genomeAssembly);
+		sampleService.update(sample);
+
+		assertNotNull(sample.getDefaultGenomeAssembly());
+		genomeAssemblyService.removeGenomeAssemblyFromSample(sample, genomeAssembly.getId());
+
+		Sample sampleAfterDelete = sampleService.read(2L);
+		assertNull(sampleAfterDelete.getDefaultGenomeAssembly());
 	}
 
 	/**

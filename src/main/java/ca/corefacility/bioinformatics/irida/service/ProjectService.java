@@ -138,6 +138,17 @@ public interface ProjectService extends CRUDService<Long, Project> {
 	public Join<Project, Sample> addSampleToProject(Project project, Sample sample, boolean owner);
 
 	/**
+	 * Add the specified {@link Sample} to the {@link Project} without creating an event.
+	 *
+	 * @param project the {@link Project} to add the {@link Sample} to.
+	 * @param sample  the {@link Sample} to add to the {@link Project}. If the {@link Sample} has not previously been
+	 *                persisted, the service will persist the {@link Sample}.
+	 * @param owner   Whether the project will have modification access for this sample
+	 * @return a reference to the relationship resource created between the two entities.
+	 */
+	public Join<Project, Sample> addSampleToProjectWithoutEvent(Project project, Sample sample, boolean owner);
+
+	/**
 	 * Move a {@link Sample} from one {@link Project} to another
 	 *
 	 * @param source      the source {@link Project}

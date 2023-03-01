@@ -24,13 +24,13 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
+import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
-import ca.corefacility.bioinformatics.irida.service.EmailController;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -77,6 +77,7 @@ public class GalaxyJobErrorsServiceIT {
 	@Autowired
 	private AnalysisWorkspaceService analysisWorkspaceService;
 
+
 	@BeforeEach
 	public void setup() throws URISyntaxException, IOException {
 		assumeFalse(WindowsPlatformCondition.isWindows());
@@ -96,6 +97,7 @@ public class GalaxyJobErrorsServiceIT {
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,
 				jobErrorRepository, emailController, analysisWorkspaceService);
+
 	}
 
 	/**
