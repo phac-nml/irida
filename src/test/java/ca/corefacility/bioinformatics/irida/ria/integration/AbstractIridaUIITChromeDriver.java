@@ -89,13 +89,34 @@ public class AbstractIridaUIITChromeDriver {
 			final String chromeDriverProp = System.getProperty(CHROMEDRIVER_PROP_KEY);
 			System.setProperty(CHROMEDRIVER_PROP_KEY,
 					Strings.isNullOrEmpty(chromeDriverProp) ? CHROMEDRIVER_LOCATION : chromeDriverProp);
-			logger.debug("Starting ChromeDriver for a single test class. Using `chromedriver` at '"
-					+ System.getProperty(CHROMEDRIVER_PROP_KEY) + "'");
+			logger.debug(
+					"Starting ChromeDriver for a single test class. Using `chromedriver` at '" + System.getProperty(
+							CHROMEDRIVER_PROP_KEY) + "'");
 			isSingleTest = true;
 			IntegrationUITestListener.startWebDriver();
 		}
 
 		return IntegrationUITestListener.driver();
+
+	}
+
+	/**
+	 * Get a reference to the {@link WebDriver} used in the tests.
+	 *
+	 * @return the instance of {@link WebDriver} used in the tests.
+	 */
+	public static WebDriver driver2() {
+		if (IntegrationUITestListener.driver2() == null) {
+			final String chromeDriverProp = System.getProperty(CHROMEDRIVER_PROP_KEY);
+			System.setProperty(CHROMEDRIVER_PROP_KEY,
+					Strings.isNullOrEmpty(chromeDriverProp) ? CHROMEDRIVER_LOCATION : chromeDriverProp);
+			logger.debug("Starting a second ChromeDriver for a single test class. Using `chromedriver` at '"
+					+ System.getProperty(CHROMEDRIVER_PROP_KEY) + "'");
+			isSingleTest = true;
+			IntegrationUITestListener.startWebDriver();
+		}
+
+		return IntegrationUITestListener.driver2();
 
 	}
 
@@ -135,8 +156,9 @@ public class AbstractIridaUIITChromeDriver {
 			final Path screenshot = Paths.get(takesScreenshot.getScreenshotAs(OutputType.FILE).toURI());
 
 			try {
-				final Path destination = Files.createTempFile("irida-" + context.getRequiredTestClass().getSimpleName()
-						+ "#" + context.getRequiredTestMethod().getName(), ".png");
+				final Path destination = Files.createTempFile(
+						"irida-" + context.getRequiredTestClass().getSimpleName() + "#"
+								+ context.getRequiredTestMethod().getName(), ".png");
 				Files.move(screenshot, destination, StandardCopyOption.REPLACE_EXISTING);
 				logger.info("Screenshot deposited at: [" + destination.toString() + "]");
 			} catch (final IOException e) {

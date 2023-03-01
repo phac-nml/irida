@@ -22,18 +22,18 @@ import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSu
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
+import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
+
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
-import ca.corefacility.bioinformatics.irida.service.analysis.workspace.AnalysisWorkspaceService;
 
 import com.google.common.collect.Sets;
 
 /**
- * Implementation of analysis execution tasks. This will scan for
- * {@link AnalysisSubmission}s and execute the {@link Analysis} defined by the
- * submissions.
+ * Implementation of analysis execution tasks. This will scan for {@link AnalysisSubmission}s and execute the
+ * {@link Analysis} defined by the submissions.
  */
 public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionScheduledTask {
 
@@ -46,34 +46,33 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisExecutionScheduledTaskImpl.class);
 
-	private final AnalysisSubmissionRepository analysisSubmissionRepository;
-	private final AnalysisExecutionService analysisExecutionService;
-	private final CleanupAnalysisSubmissionCondition cleanupCondition;
-	private final GalaxyJobErrorsService galaxyJobErrorsService;
-	private final JobErrorRepository jobErrorRepository;
-	private final EmailController emailController;
-	private final AnalysisWorkspaceService analysisWorkspaceService;
-
+	private AnalysisSubmissionRepository analysisSubmissionRepository;
+	private AnalysisExecutionService analysisExecutionService;
+	private CleanupAnalysisSubmissionCondition cleanupCondition;
+	private GalaxyJobErrorsService galaxyJobErrorsService;
+	private JobErrorRepository jobErrorRepository;
+	private EmailController emailController;
+	private AnalysisWorkspaceService analysisWorkspaceService;
 
 	/**
-	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service
-	 * classes.
+	 * Builds a new AnalysisExecutionScheduledTaskImpl with the given service classes.
 	 *
 	 * @param analysisSubmissionRepository   A repository for {@link AnalysisSubmission}s.
 	 * @param analysisExecutionServiceGalaxy A service for executing {@link AnalysisSubmission}s.
-	 * @param cleanupCondition               The condition defining when an {@link AnalysisSubmission}
-	 *                                       should be cleaned up.
+	 * @param cleanupCondition               The condition defining when an {@link AnalysisSubmission} should be cleaned
+	 *                                       up.
 	 * @param galaxyJobErrorsService         {@link GalaxyJobErrorsService} for getting {@link JobError} objects
 	 * @param jobErrorRepository             {@link JobErrorRepository} for {@link JobError} objects
-	 * @param emailController                {@link EmailController} for sending completion/error emails for {@link AnalysisSubmission}s
-	 * @param analysisWorkspaceService 	     {@link AnalysisWorkspaceService}
+	 * @param emailController                {@link EmailController} for sending completion/error emails for
+	 *                                       {@link AnalysisSubmission}s
+	 * @param analysisWorkspaceService       {@link AnalysisWorkspaceService}
 	 */
 	@Autowired
 	public AnalysisExecutionScheduledTaskImpl(AnalysisSubmissionRepository analysisSubmissionRepository,
 			AnalysisExecutionService analysisExecutionServiceGalaxy,
 			CleanupAnalysisSubmissionCondition cleanupCondition, GalaxyJobErrorsService galaxyJobErrorsService,
 			JobErrorRepository jobErrorRepository, EmailController emailController,
-		    AnalysisWorkspaceService analysisWorkspaceService) {
+			AnalysisWorkspaceService analysisWorkspaceService) {
 		this.analysisSubmissionRepository = analysisSubmissionRepository;
 		this.analysisExecutionService = analysisExecutionServiceGalaxy;
 		this.cleanupCondition = cleanupCondition;
@@ -96,8 +95,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 
 			// Sort submissions by priority high to low
 			analysisSubmissions.sort((a1, a2) -> {
-				return a2.getPriority()
-						.compareTo(a1.getPriority());
+				return a2.getPriority().compareTo(a1.getPriority());
 			});
 
 			Set<Future<AnalysisSubmission>> submissions = Sets.newHashSet();
@@ -181,6 +179,7 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 					logger.error("Error checking state for " + analysisSubmission, e);
 					analysisSubmission.setAnalysisState(AnalysisState.ERROR);
 					submissions.add(new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission)));
+
 					if (analysisSubmission.getEmailPipelineResultError()) {
 						emailController.sendPipelineStatusEmail(analysisSubmission);
 					}
@@ -192,8 +191,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	}
 
 	/**
-	 * Handle async saving of {@link JobError} objects for a {@link AnalysisSubmission}
-	 * to database through {@link JobErrorRepository} if there are any
+	 * Handle async saving of {@link JobError} objects for a {@link AnalysisSubmission} to database through
+	 * {@link JobErrorRepository} if there are any
 	 *
 	 * @param analysisSubmission {@link AnalysisSubmission} object to get and save {@link JobError}s for
 	 */
@@ -261,12 +260,10 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 	 *
 	 * @param workflowStatus     The status of the workflow.
 	 * @param analysisSubmission The {@link AnalysisSubmission}.
-	 * @return A {@link Future} with an {@link AnalysisSubmission} for this
-	 * submission.
+	 * @return A {@link Future} with an {@link AnalysisSubmission} for this submission.
 	 */
 	private Future<AnalysisSubmission> handleWorkflowStatus(GalaxyWorkflowStatus workflowStatus,
-			AnalysisSubmission analysisSubmission)
-			throws IridaWorkflowNotFoundException, ExecutionManagerException {
+			AnalysisSubmission analysisSubmission) throws IridaWorkflowNotFoundException, ExecutionManagerException {
 		Future<AnalysisSubmission> returnedSubmission;
 
 		boolean workflowCompleted = false;
@@ -279,9 +276,8 @@ public class AnalysisExecutionScheduledTaskImpl implements AnalysisExecutionSche
 			returnedSubmission = new AsyncResult<>(analysisSubmissionRepository.save(analysisSubmission));
 			handleJobErrors(analysisSubmission);
 			workflowError = true;
-		} else if (
-				workflowStatus.isRunning() ||
-				(workflowStatus.completedSuccessfully() && !analysisWorkspaceService.outputFilesExist(analysisSubmission))) {
+		} else if (workflowStatus.isRunning() || (workflowStatus.completedSuccessfully()
+				&& !analysisWorkspaceService.outputFilesExist(analysisSubmission))) {
 			logger.trace("Workflow for analysis " + analysisSubmission + " is running: proportion complete "
 					+ workflowStatus.getProportionComplete());
 			returnedSubmission = new AsyncResult<>(analysisSubmission);

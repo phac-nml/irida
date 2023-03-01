@@ -24,8 +24,10 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	WebElement dropzone;
 	@FindBy(className = "t-metadata-uploader-file-button")
 	WebElement fileBtn;
-	@FindBy(css = "input[type=radio]")
-	List<WebElement> headerRadios;
+	@FindBy(className = "t-metadata-uploader-sample-name-column-select")
+	WebElement sampleNameColumnSelect;
+	@FindBy(className = "t-metadata-uploader-columns-table")
+	WebElement headersTable;
 	@FindBy(className = "t-metadata-uploader-preview-button")
 	WebElement previewBtn;
 	@FindBy(className = "t-metadata-uploader-upload-button")
@@ -40,10 +42,14 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	List<WebElement> headers;
 	@FindBy(css = "tbody tr.ant-table-row")
 	List<WebElement> rows;
+	@FindBy(className = "anticon-exclamation-circle")
+	List<WebElement> tableErrors;
 	@FindBy(css = "div.ant-alert-error")
 	WebElement validationAlert;
 	@FindBy(css = "div.ant-result-success")
 	WebElement successMessage;
+	@FindBy(className = "t-metadata-uploader-review-error")
+	WebElement errorNotification;
 
 	public ProjectSampleMetadataImportPage(WebDriver driver) {
 		super(driver);
@@ -55,37 +61,36 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 	}
 
 	public void uploadMetadataFile(String filePath) {
-		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		Path path = Paths.get(filePath);
 		dropzone.sendKeys(path.toAbsolutePath().toString());
-		wait.until(ExpectedConditions.visibilityOf(fileBtn));
 	}
 
 	public void goToReviewPage() {
-		previewBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-		wait.until(ExpectedConditions.visibilityOf(reviewTable));
+		wait.until(ExpectedConditions.visibilityOf(previewBtn));
+		previewBtn.click();
 	}
 
 	public void goToCompletePage() {
-		uploadBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-		wait.until(ExpectedConditions.visibilityOf(successMessage));
+		wait.until(ExpectedConditions.urlContains("/review"));
+		uploadBtn.click();
 	}
 
-	public void selectSampleNameColumn() {
-		headerRadios.get(3).click();
-		goToReviewPage();
-	}
-
-	public String getValueForSelectedSampleNameColumn() {
-		for (WebElement headerRadio : headerRadios) {
-			boolean isSelected = headerRadio.isSelected();
-			if (isSelected) {
-				return headerRadio.getAttribute("value");
+	public void selectSampleNameColumn(String sampleNameColumn) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.urlContains("/columns"));
+		wait.until(ExpectedConditions.visibilityOf(sampleNameColumnSelect));
+		sampleNameColumnSelect.click();
+		List<WebElement> selectOptions = wait.until(
+				ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("ant-select-item")));
+		for (WebElement option : selectOptions) {
+			if (option.getAttribute("title").equals(sampleNameColumn)) {
+				option.click();
+				return;
 			}
 		}
-		return null;
+		wait.until(ExpectedConditions.visibilityOf(headersTable));
 	}
 
 	public int getUpdateCount() {
@@ -106,11 +111,32 @@ public class ProjectSampleMetadataImportPage extends AbstractPage {
 				.collect(Collectors.toList());
 	}
 
+	public void clickUploadButton() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.visibilityOf(uploadBtn));
+		uploadBtn.click();
+	}
+
+	public boolean hasTableErrors() {
+		return !tableErrors.isEmpty();
+	}
+
 	public boolean isAlertDisplayed() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.visibilityOf(validationAlert));
 		return validationAlert.isDisplayed();
 	}
 
 	public boolean isSuccessDisplayed() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.urlContains("/complete"));
 		return successMessage.isDisplayed();
 	}
+
+	public boolean isErrorNotificationDisplayed() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		wait.until(ExpectedConditions.visibilityOf(errorNotification));
+		return errorNotification.isDisplayed();
+	}
+
 }

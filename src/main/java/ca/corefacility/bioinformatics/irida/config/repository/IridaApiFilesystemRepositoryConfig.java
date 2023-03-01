@@ -5,6 +5,8 @@ import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.workflow.analysis.AnalysisOutputFile;
 import ca.corefacility.bioinformatics.irida.repositories.filesystem.FilesystemSupplementedRepositoryImpl.RelativePathTranslatorListener;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,10 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	@Autowired
 	private ApplicationContext applicationContext;
+
+	@Autowired
+	private IridaFileStorageUtility iridaFileStorageUtility;
+
 
 	@Bean
 	public RelativePathTranslatorListener relativePathTranslatorListener(
@@ -91,26 +97,30 @@ public class IridaApiFilesystemRepositoryConfig {
 
 	private Path getExistingPathOrThrow(String directory) {
 		Path baseDirectory = Paths.get(directory);
-		if (!Files.exists(baseDirectory)) {
-			throw new IllegalStateException(
-					String.format("Cannot continue startup; base directory [%s] does not exist!",
-							baseDirectory.toString()));
-		} else {
-			logger.info(String.format(
-					"Using specified existing directory at [%s]. The directory *will not* be removed at shutdown time.",
-					baseDirectory.toString()));
+		boolean baseDirectoryWritable = iridaFileStorageUtility.checkWriteAccess(baseDirectory);
+		if (baseDirectoryWritable) {
+			if (iridaFileStorageUtility.isStorageTypeLocal()) {
+				logger.info(String.format(
+						"Using specified existing directory at [%s]. The directory *will not* be removed at shutdown time.",
+						baseDirectory.toString()));
+			} else {
+				logger.info(String.format("Using specified directory at virtual path [%s] in [%s] cloud based storage.",
+						baseDirectory.toString(), iridaFileStorageUtility.getStorageType()));
+			}
 		}
 		return baseDirectory;
 	}
 
 	private Path configureDirectory(String pathName, String defaultDevPathPrefix) throws IOException {
 		Path baseDirectory = Paths.get(pathName);
-		if (!Files.exists(baseDirectory)) {
-			baseDirectory = Files.createDirectories(baseDirectory);
-			logger.info(String.format(
-					"The directory [%s] does not exist, but it looks like you're running in a dev environment, "
-							+ "so I created a temporary location at [%s]. This directory *may* be removed at shutdown time.",
-					pathName, baseDirectory.toString()));
+		if (iridaFileStorageUtility.isStorageTypeLocal()) {
+			if (!Files.exists(baseDirectory)) {
+				baseDirectory = Files.createDirectories(baseDirectory);
+				logger.info(String.format(
+						"The directory [%s] does not exist, but it looks like you're running in a dev environment, "
+								+ "so I created a temporary location at [%s]. This directory *may* be removed at shutdown time.",
+						pathName, baseDirectory.toString()));
+			}
 		}
 		return baseDirectory;
 	}

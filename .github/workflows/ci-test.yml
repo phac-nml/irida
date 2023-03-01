@@ -7,17 +7,18 @@ name: Integration Tests
 on:
   pull_request: # Run on all pull requests
   push:
-    branches: # Run on any push to development or master
+    branches: # Run on any push to development or main
       - development
-      - master
-  schedule: # Run daily on development and weekly on master
+      - main
+  schedule: # Run daily on development and weekly on main
     - cron: 0 1 * * *
       branches: development
     - cron: 0 2 * * 0
-      branches: master
+      branches: main
 
 jobs:
   gradle-build: # Gradle integration tests
+    timeout-minutes: 60
     runs-on: ubuntu-20.04 #See pre-installed software at https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-Readme.md
     env:
       MYSQL_PORT: 3800
@@ -38,6 +39,7 @@ jobs:
             "galaxy_testing",
             "galaxy_pipeline_testing",
             "open_api_testing",
+            "file_system_testing",
           ]
 
     steps:

@@ -57,10 +57,10 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
         }
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        UserRevListener.applicationContext = applicationContext;
-    }
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		UserRevListener.applicationContext = applicationContext;
+	}
 
     /**
      * Initialize the listener by getting dependencies

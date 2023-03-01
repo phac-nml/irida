@@ -1,4 +1,5 @@
-import { GenomeAssembly, SequencingObject } from "../../apis/samples/samples";
+import { GenomeAssembly } from "../../apis/samples/samples";
+import { Restriction } from "../../utilities/restriction-utilities";
 
 export = IRIDA;
 export as namespace IRIDA;
@@ -41,6 +42,14 @@ declare namespace IRIDA {
     createdBy: User;
     users: User[];
   }
+
+  export type CurrentUser = {
+    admin: boolean;
+    firstName: string;
+    identifier: number;
+    lastName: string;
+    username: string;
+  };
 
   export type PRIORITY = "LOW" | "MEDIUM" | "HIGH";
 
@@ -138,7 +147,7 @@ declare namespace IRIDA {
     latitude: string;
     longitude: string;
     projects: Project[];
-    sequenceFiles: any[]; // TODO (Josh - 6/7/22): FLush this out
+    sequenceFiles: SequenceFile[];
     defaultSequencingObject: SequencingObject;
     defaultGenomeAssembly: GenomeAssembly;
     sampleName: string;
@@ -225,4 +234,12 @@ declare namespace IRIDA {
   }
 
   type UserMinimal = Pick<User, "name" | "id">;
+
+  export interface MetadataField {
+    id?: number;
+    fieldKey?: string;
+    label: string;
+    type?: string;
+    restriction: Restriction;
+  }
 }

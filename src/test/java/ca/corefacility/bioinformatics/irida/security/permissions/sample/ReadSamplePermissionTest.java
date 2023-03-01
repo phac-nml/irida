@@ -34,8 +34,6 @@ import ca.corefacility.bioinformatics.irida.security.permissions.project.ReadPro
 
 /**
  * Tests for {@link ReadSamplePermission}.
- * 
- * 
  */
 public class ReadSamplePermissionTest {
 	private ReadSamplePermission readSamplePermission;
@@ -59,7 +57,7 @@ public class ReadSamplePermissionTest {
 		Project p = new Project();
 		Sample s = new Sample();
 		List<Join<Project, User>> projectUsers = new ArrayList<>();
-		projectUsers.add(new ProjectUserJoin(p, u,ProjectRole.PROJECT_USER));
+		projectUsers.add(new ProjectUserJoin(p, u, ProjectRole.PROJECT_USER));
 		List<Join<Project, Sample>> projectSampleList = new ArrayList<>();
 		projectSampleList.add(new ProjectSampleJoin(p, s, true));
 
@@ -84,7 +82,7 @@ public class ReadSamplePermissionTest {
 		Project p = new Project();
 		Sample s = new Sample();
 		List<Join<Project, User>> projectUsers = new ArrayList<>();
-		projectUsers.add(new ProjectUserJoin(p, u,ProjectRole.PROJECT_USER));
+		projectUsers.add(new ProjectUserJoin(p, u, ProjectRole.PROJECT_USER));
 		List<Join<Project, Sample>> projectSampleList = new ArrayList<>();
 		projectSampleList.add(new ProjectSampleJoin(p, s, true));
 
@@ -111,7 +109,7 @@ public class ReadSamplePermissionTest {
 		List<Join<Project, Sample>> projectSampleList = new ArrayList<>();
 		projectSampleList.add(new ProjectSampleJoin(p, s, true));
 		List<Join<Project, User>> projectUsers = new ArrayList<>();
-		projectUsers.add(new ProjectUserJoin(p, new User(),ProjectRole.PROJECT_USER));
+		projectUsers.add(new ProjectUserJoin(p, new User(), ProjectRole.PROJECT_USER));
 
 		when(psjRepository.getProjectForSample(s)).thenReturn(projectSampleList);
 		when(sampleRepository.findById(1L)).thenReturn(Optional.of(s));

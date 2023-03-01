@@ -12,6 +12,8 @@ import { Error, Success } from "../../../components/icons";
 import { Warning } from "../../../components/icons/Warning";
 import { BasicList } from "../../../components/lists";
 import ScrollableSection from "./ScrollableSection";
+import { WarningAlert } from "../../../components/alerts";
+import { ContentLoading } from "../../../components/loader";
 
 export default function AnalysisBioHansel() {
   const { analysisIdentifier } = useContext(AnalysisContext);
@@ -19,19 +21,19 @@ export default function AnalysisBioHansel() {
     AnalysisOutputsContext
   );
   const [bioHanselResults, setBioHanselResults] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // On load gets the bio hansel results. If the file is not found then set to undefined
-  useEffect(() => {
-    if (analysisOutputsContext.outputs === null) {
-      getAnalysisOutputs();
-    }
-  }, []);
+  useEffect(
+    () => {
+      if (analysisOutputsContext.outputs === null) {
+        getAnalysisOutputs();
+      }
+    }, // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   useEffect(() => {
-    getBioHanselResults();
-  }, [analysisOutputsContext.outputs]);
-
-  function getBioHanselResults() {
     if (analysisOutputsContext.outputs !== null) {
       const outputInfo = analysisOutputsContext.outputs.find((output) => {
         return output.filename === "bio_hansel-results.json";
@@ -46,12 +48,14 @@ export default function AnalysisBioHansel() {
         }).then(({ text }) => {
           const parsedResults = JSON.parse(text);
           setBioHanselResults(parsedResults[0]);
+          setLoading(false);
         });
       } else {
         setBioHanselResults(undefined);
+        setLoading(false);
       }
     }
-  }
+  }, [analysisOutputsContext.outputs, analysisIdentifier]);
 
   const biohanselResults = [
     {
@@ -130,9 +134,21 @@ export default function AnalysisBioHansel() {
 
   return (
     <ScrollableSection>
-      <TabPanelContent title={i18n("AnalysisBioHansel.bioHanselInformation")}>
-        <BasicList dataSource={biohanselResults}></BasicList>
-      </TabPanelContent>
+      {!loading ? (
+        bioHanselResults !== null && bioHanselResults !== undefined ? (
+          <TabPanelContent
+            title={i18n("AnalysisBioHansel.bioHanselInformation")}
+          >
+            <BasicList dataSource={biohanselResults}></BasicList>
+          </TabPanelContent>
+        ) : (
+          <WarningAlert
+            message={i18n("AnalysisBioHansel.resultsUnavailable")}
+          />
+        )
+      ) : (
+        <ContentLoading message={i18n("AnalysisBioHansel.loadingResults")} />
+      )}
     </ScrollableSection>
   );
 }

@@ -1,50 +1,24 @@
 package ca.corefacility.bioinformatics.irida.ria.web.services;
 
-import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
-import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
-import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
-import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
-import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
-import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
-import ca.corefacility.bioinformatics.irida.model.project.Project;
-import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
-import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
-import ca.corefacility.bioinformatics.irida.model.sample.Sample;
-import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
-import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
-import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
-import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
-import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
-import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
-import ca.corefacility.bioinformatics.irida.repositories.specification.SearchCriteria;
-import ca.corefacility.bioinformatics.irida.repositories.specification.SearchOperation;
-import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleFilesResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIShareSamplesException;
-import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.PairedEndSequenceFileModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.SingleEndSequenceFileModel;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntSearch;
-import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSample;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleTableItem;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSamplesTableRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.MergeRequest;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.ProjectObject;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.ProjectSamplesFilter;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.SampleObject;
-import ca.corefacility.bioinformatics.irida.ria.web.projects.error.SampleMergeException;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplePairer;
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
-import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
-import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
-import ca.corefacility.bioinformatics.irida.service.ProjectService;
-import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
-import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
-import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+
+import java.io.OutputStreamWriter;
+import java.nio.file.attribute.BasicFileAttributes;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolationException;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.StringUtils;
@@ -66,19 +40,57 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolationException;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
+import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
+import ca.corefacility.bioinformatics.irida.model.assembly.GenomeAssembly;
+import ca.corefacility.bioinformatics.irida.model.assembly.UploadedAssembly;
+import ca.corefacility.bioinformatics.irida.model.enums.ProjectMetadataRole;
+
+import ca.corefacility.bioinformatics.irida.model.sample.MetadataTemplateField;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataRestriction;
+import ca.corefacility.bioinformatics.irida.model.sequenceFile.*;
+import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataEntryRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sample.MetadataRestrictionRepository;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.SamplePairer;
+import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
+import ca.corefacility.bioinformatics.irida.service.sample.MetadataTemplateService;
+
+import org.apache.commons.io.IOUtils;
+
+import ca.corefacility.bioinformatics.irida.model.joins.impl.ProjectSampleJoin;
+import ca.corefacility.bioinformatics.irida.model.joins.impl.SampleGenomeAssemblyJoin;
+import ca.corefacility.bioinformatics.irida.model.project.Project;
+import ca.corefacility.bioinformatics.irida.model.sample.QCEntry;
+import ca.corefacility.bioinformatics.irida.model.sample.Sample;
+import ca.corefacility.bioinformatics.irida.model.sample.SampleSequencingObjectJoin;
+import ca.corefacility.bioinformatics.irida.model.sample.metadata.MetadataEntry;
+import ca.corefacility.bioinformatics.irida.repositories.specification.ProjectSampleJoinSpecification;
+import ca.corefacility.bioinformatics.irida.repositories.specification.SearchCriteria;
+import ca.corefacility.bioinformatics.irida.repositories.specification.SearchOperation;
+import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.SampleFilesResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.exceptions.UIShareSamplesException;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.PairedEndSequenceFileModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.sequenceFile.SingleEndSequenceFileModel;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntSearch;
+import ca.corefacility.bioinformatics.irida.ria.web.models.tables.AntTableResponse;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectCartSample;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSampleTableItem;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.ProjectSamplesTableRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.MergeRequest;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.ProjectObject;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.ProjectSamplesFilter;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.dto.samples.SampleObject;
+import ca.corefacility.bioinformatics.irida.ria.web.projects.error.SampleMergeException;
+import ca.corefacility.bioinformatics.irida.security.permissions.sample.UpdateSamplePermission;
+import ca.corefacility.bioinformatics.irida.service.GenomeAssemblyService;
+import ca.corefacility.bioinformatics.irida.service.ProjectService;
+import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
+import ca.corefacility.bioinformatics.irida.service.sample.SampleService;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 /**
  * UI Service for samples
@@ -361,12 +373,15 @@ public class UISampleService {
 	 * Remove metadata from the sample
 	 *
 	 * @param projectId       The project id
+	 * @param sampleId        The sample id
 	 * @param metadataFieldId The metadata field id
 	 * @param metadataEntryId The metadata entry id
 	 * @param locale          {@link Locale} for the currently logged in user
 	 * @return message indicating deletion status
 	 */
-	public String removeSampleMetadata(Long projectId, Long metadataFieldId, Long metadataEntryId, Locale locale) {
+	public String removeSampleMetadata(Long projectId, Long sampleId, Long metadataFieldId, Long metadataEntryId,
+			Locale locale) {
+		Sample sample = sampleService.read(sampleId);
 		Project project = projectService.read(projectId);
 		List<Sample> sampleList = sampleService.getSamplesForProject(project)
 				.stream()
@@ -385,10 +400,13 @@ public class UISampleService {
 		if (fieldUsageCount == 1) {
 			MetadataRestriction restrictionToDelete = metadataTemplateService.getMetadataRestrictionForFieldAndProject(
 					project, metadataTemplateField);
-			if(restrictionToDelete != null) {
+			if (restrictionToDelete != null) {
 				metadataRestrictionRepository.delete(restrictionToDelete);
 			}
 		}
+
+		sample.setModifiedDate(new Date());
+		sampleService.update(sample);
 
 		return messageSource.getMessage("server.sample.metadata.remove.success",
 				new Object[] { metadataTemplateField.getLabel() }, locale);
@@ -542,7 +560,6 @@ public class UISampleService {
 			project = projectService.read(projectId);
 		}
 
-
 		List<PairedEndSequenceFileModel> filePairs = getPairedSequenceFilesForExportSample(sample, project).stream()
 				.map(pair -> new PairedEndSequenceFileModel((SequenceFilePair) pair))
 				.collect(Collectors.toList());
@@ -551,7 +568,6 @@ public class UISampleService {
 				.collect(Collectors.toList());
 		List<SequencingObject> fast5 = getFast5FilesForExportSample(sample);
 		List<GenomeAssembly> genomeAssemblies = getGenomeAssembliesForExportSample(sample);
-
 
 		return new SampleExportFiles(singles, filePairs, fast5, genomeAssemblies);
 	}
@@ -601,17 +617,12 @@ public class UISampleService {
 		SequencingObject sequencingObject = sequencingObjectService.read(sequencingObjectId);
 
 		try {
-			if (sample.getDefaultSequencingObject() != null
-					&& sample.getDefaultSequencingObject().getId() == sequencingObjectId) {
-				sample.setDefaultSequencingObject(null);
-				sampleService.update(sample);
-			}
 			sampleService.removeSequencingObjectFromSample(sample, sequencingObject);
 			return messageSource.getMessage("server.SampleFiles.removeSequencingObjectSuccess", new Object[] {},
 					locale);
 		} catch (Exception e) {
-			return messageSource.getMessage("server.SampleFiles.removeError", new Object[] { sequencingObject.getLabel() },
-					locale);
+			return messageSource.getMessage("server.SampleFiles.removeError",
+					new Object[] { sequencingObject.getLabel() }, locale);
 		}
 	}
 
@@ -628,16 +639,11 @@ public class UISampleService {
 		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, genomeAssemblyId);
 
 		try {
-			if (sample.getDefaultGenomeAssembly() != null
-					&& sample.getDefaultGenomeAssembly().getId() == genomeAssemblyId) {
-				sample.setDefaultGenomeAssembly(null);
-				sampleService.update(sample);
-			}
 			genomeAssemblyService.removeGenomeAssemblyFromSample(sample, genomeAssemblyId);
 			return messageSource.getMessage("server.SampleFiles.removeGenomeAssemblySuccess", new Object[] {}, locale);
 		} catch (Exception e) {
-			return messageSource.getMessage("server.SampleFiles.removeError", new Object[] { genomeAssembly.getLabel() },
-					locale);
+			return messageSource.getMessage("server.SampleFiles.removeError",
+					new Object[] { genomeAssembly.getLabel() }, locale);
 		}
 	}
 
@@ -654,10 +660,14 @@ public class UISampleService {
 		Sample sample = sampleService.read(sampleId);
 		GenomeAssembly genomeAssembly = genomeAssemblyService.getGenomeAssemblyForSample(sample, genomeAssemblyId);
 
-		Path path = genomeAssembly.getFile();
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + genomeAssembly.getLabel() + "\"");
-		Files.copy(path, response.getOutputStream());
-		response.flushBuffer();
+
+		try (InputStream is = genomeAssembly.getFileInputStream(); OutputStream os = response.getOutputStream();) {
+			IOUtils.copy(is, os);
+			os.flush();
+		} catch (IOException e) {
+			throw new IOException("Unable to read inputstream ", e);
+		}
 	}
 
 	/**
@@ -699,7 +709,8 @@ public class UISampleService {
 			String firstFileSize = sfp.getForwardSequenceFile().getFileSize();
 			String secondFileSize = sfp.getReverseSequenceFile().getFileSize();
 
-			filePairs.add(new SampleSequencingObjectFileModel(obj, firstFileSize, secondFileSize, obj.getQcEntries(), obj.getAutomatedAssembly()));
+			filePairs.add(new SampleSequencingObjectFileModel(obj, firstFileSize, secondFileSize, obj.getQcEntries(),
+					obj.getAutomatedAssembly()));
 		}
 
 		return filePairs;
@@ -1057,11 +1068,12 @@ public class UISampleService {
 	 * @param objectIds       the {@link SequencingObject} ids
 	 * @param filename        base of the new filename to create
 	 * @param removeOriginals boolean whether to remove the original files
+	 * @param locale          The logged in user's locale
 	 * @return The concatenated sequencing object in a {@link SampleSequencingObjectFileModel}
 	 * @throws ConcatenateException if there was an error concatenating the files
 	 */
-	public List<SampleSequencingObjectFileModel> concatenateSequenceFiles(Long sampleId, Set<Long> objectIds,
-			String filename, boolean removeOriginals) throws ConcatenateException {
+	public SampleConcatenationModel concatenateSequenceFiles(Long sampleId, Set<Long> objectIds,
+			String filename, boolean removeOriginals, Locale locale) throws ConcatenateException {
 		Sample sample = sampleService.read(sampleId);
 		List<SampleSequencingObjectFileModel> sampleSequencingObjectFileModels = new ArrayList<>();
 		Iterable<SequencingObject> readMultiple = sequencingObjectService.readMultiple(objectIds);
@@ -1095,9 +1107,13 @@ public class UISampleService {
 			sampleSequencingObjectFileModels.add(
 					new SampleSequencingObjectFileModel(sequencingObject, firstFileSize, secondFileSize,
 							sequencingObject.getQcEntries()));
-			return sampleSequencingObjectFileModels;
+			return new SampleConcatenationModel(sampleSequencingObjectFileModels, messageSource.getMessage("SampleFilesConcatenate.concatenationSuccess",
+					new Object[] { }, locale));
 		} catch (ConcatenateException ex) {
 			throw new ConcatenateException(ex.getMessage());
+		} catch (StorageException e) {
+			throw new StorageException(messageSource.getMessage("server.SampleFilesConcatenate.error.reading.file",
+					new Object[] { }, locale));
 		}
 	}
 
@@ -1126,6 +1142,7 @@ public class UISampleService {
 	 *
 	 * @param pair   {@link List} of {@link MultipartFile}
 	 * @param sample {@link Sample} to add the pair to.
+	 * @return A new {@link SampleSequencingObjectFileModel}
 	 * @throws IOException Exception thrown if there is an error handling the file.
 	 */
 	private SampleSequencingObjectFileModel createSequenceFilePairsInSample(List<MultipartFile> pair, Sample sample)
@@ -1143,6 +1160,7 @@ public class UISampleService {
 	 *
 	 * @param file   {@link MultipartFile}
 	 * @param sample {@link Sample} to add the file to.
+	 * @return A new {@link SampleSequencingObjectFileModel}
 	 * @throws IOException Exception thrown if there is an error handling the file.
 	 */
 	private SampleSequencingObjectFileModel createSequenceFileInSample(MultipartFile file, Sample sample)
@@ -1159,6 +1177,7 @@ public class UISampleService {
 	 *
 	 * @param file   {@link MultipartFile}
 	 * @param sample {@link Sample} to add the file to.
+	 * @return A new {@link SampleSequencingObjectFileModel}
 	 * @throws IOException Exception thrown if there is an error handling the file.
 	 */
 	private SampleSequencingObjectFileModel createFast5FileInSample(MultipartFile file, Sample sample)
@@ -1384,9 +1403,7 @@ public class UISampleService {
 	public List<SequencingObject> getFast5FilesForExportSample(Sample sample) {
 		Collection<SampleSequencingObjectJoin> fast5FileJoins = sequencingObjectService.getSequencesForSampleOfType(
 				sample, Fast5Object.class);
-		return fast5FileJoins.stream()
-				.map(SampleSequencingObjectJoin::getObject)
-				.collect(Collectors.toList());
+		return fast5FileJoins.stream().map(SampleSequencingObjectJoin::getObject).collect(Collectors.toList());
 	}
 
 	/**
@@ -1398,15 +1415,14 @@ public class UISampleService {
 	public List<GenomeAssembly> getGenomeAssembliesForExportSample(Sample sample) {
 		Collection<SampleGenomeAssemblyJoin> genomeAssemblyJoins = genomeAssemblyService.getAssembliesForSample(sample);
 
-		return genomeAssemblyJoins.stream()
-				.map(SampleGenomeAssemblyJoin::getObject)
-				.collect(Collectors.toList());
+		return genomeAssemblyJoins.stream().map(SampleGenomeAssemblyJoin::getObject).collect(Collectors.toList());
 	}
 
 	/**
 	 * Format a Page of ProjectSampleJoin's into a format to be consumed by the Ant Design Table.
 	 *
-	 * @param page Page of {@link ProjectSampleJoin}
+	 * @param page   Page of {@link ProjectSampleJoin}
+	 * @param locale Current users locale
 	 * @return List of {@link ProjectSampleTableItem}
 	 */
 	private List<ProjectSampleTableItem> formatSamplesForTable(Page<ProjectSampleJoin> page, Locale locale) {
@@ -1427,8 +1443,8 @@ public class UISampleService {
 			Project project = join.getSubject();
 
 			Long coverage = null;
-			if (projectSamplesCoverageMap.containsKey(project)
-					&& projectSamplesCoverageMap.get(project).containsKey(sample.getId())) {
+			if (projectSamplesCoverageMap.containsKey(project) && projectSamplesCoverageMap.get(project)
+					.containsKey(sample.getId())) {
 				coverage = projectSamplesCoverageMap.get(project).get(sample.getId());
 			}
 
@@ -1464,6 +1480,7 @@ public class UISampleService {
 	 * @param filename {@link String} name of the file to download.
 	 * @param items    Data to download in the table
 	 * @param headers  for the table
+	 * @param locale   Current users locale
 	 * @throws IOException thrown if file cannot be written
 	 */
 	private void writeToExcel(HttpServletResponse response, String filename, List<ProjectSampleTableItem> items,
@@ -1542,6 +1559,7 @@ public class UISampleService {
 	 * @param filename {@link String} name of the file to download.
 	 * @param items    {@link ProjectSampleTableItem} details about each row of the table Data to download in the table
 	 * @param headers  for the table
+	 * @param locale   Current users locale
 	 * @throws IOException thrown if file cannot be written
 	 */
 	private void writeToCSV(HttpServletResponse response, String filename, List<ProjectSampleTableItem> items,
@@ -1554,16 +1572,10 @@ public class UISampleService {
 			SampleObject sample = item.getSample();
 			ProjectObject project = item.getProject();
 			String[] row = {
-					sample.getSampleName(),
-					sample.getId().toString(),
-					StringUtils.join(item.getQuality(), "; "),
-					item.getCoverage() != null ? item.getCoverage().toString() : "",
-					sample.getOrganism(),
-					project.getName(),
-					project.getId().toString(),
-					sample.getCollectedBy(),
-					sample.getCreatedDate().toString(),
-					sample.getModifiedDate().toString() };
+					sample.getSampleName(), sample.getId().toString(), StringUtils.join(item.getQuality(), "; "),
+					item.getCoverage() != null ? item.getCoverage().toString() : "", sample.getOrganism(),
+					project.getName(), project.getId().toString(), sample.getCollectedBy(),
+					sample.getCreatedDate().toString(), sample.getModifiedDate().toString() };
 			results.add(row);
 		}
 

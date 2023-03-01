@@ -26,30 +26,30 @@ import io.restassured.http.ContentType;
 @Profile("it")
 public class IridaIntegrationTestUriConfig {
 
-    private LocalHostUriTemplateHandler uriTemplateHandler;
+	private LocalHostUriTemplateHandler uriTemplateHandler;
 
-    @Autowired
-    private OltuAuthorizationController oltuAuthorizationController;
+	@Autowired
+	private OltuAuthorizationController oltuAuthorizationController;
 
-    @EventListener
-    public void onServletContainerInitialized(WebServerInitializedEvent event) {
-        uriTemplateHandler = new LocalHostUriTemplateHandler(event.getApplicationContext().getEnvironment());
-        String baseUrl = uriTemplateHandler.getRootUri().replace("localhost", "127.0.0.1") + "/";
-        AbstractPage.setBaseUrl(baseUrl);
-        RemoteApiUtilities.setBaseUrl(baseUrl);
-        oltuAuthorizationController.setServerBase(baseUrl);
+	@EventListener
+	public void onServletContainerInitialized(WebServerInitializedEvent event) {
+		uriTemplateHandler = new LocalHostUriTemplateHandler(event.getApplicationContext().getEnvironment());
+		String baseUrl = uriTemplateHandler.getRootUri().replace("localhost", "127.0.0.1") + "/";
+		AbstractPage.setBaseUrl(baseUrl);
+		RemoteApiUtilities.setBaseUrl(baseUrl);
+		oltuAuthorizationController.setServerBase(baseUrl);
 
-        // Setup RestAssured
-        RestAssured.requestSpecification = new RequestSpecBuilder().setContentType(ContentType.JSON)
-                .setAccept(ContentType.JSON)
-                .setBaseUri(uriTemplateHandler.getRootUri())
-                .build();
-    }
+		// Setup RestAssured
+		RestAssured.requestSpecification = new RequestSpecBuilder().setContentType(ContentType.JSON)
+				.setAccept(ContentType.JSON)
+				.setBaseUri(uriTemplateHandler.getRootUri())
+				.build();
+	}
 
-    @Lazy
-    @Bean
-    public LocalHostUriTemplateHandler uriTemplateHandler() {
-        return uriTemplateHandler;
-    }
+	@Lazy
+	@Bean
+	public LocalHostUriTemplateHandler uriTemplateHandler() {
+		return uriTemplateHandler;
+	}
 
 }

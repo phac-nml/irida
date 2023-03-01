@@ -66,3 +66,25 @@ Once this script is installed, it can be scheduled to run periodically by adding
 This will clean up any **deleted** files every day at 2:00 am.  Log files will be stored in `galaxy/galaxy_cleanup.log` and `galaxy/cleanup_datasets/*.log`.
 
 For more information please see the [Purging Histories and Datasets](https://galaxyproject.org/admin/config/performance/purge-histories-and-datasets/) document.  ***Note: the metadata about each analysis will still be stored and available in Galaxy, but the data file contents will be permanently removed.***
+
+# Cleaning up temporary files
+
+When using Galaxy with an IRIDA instance which is using cloud based storage (Azure, AWS, etc) for example, files are uploaded from IRIDA instead of linking to them since the files are stored in the cloud and not on a shared filesystem. Since these files are uploaded to Galaxy it is a good idea to clean these files up. An example script that can be used to clean these files up is provided below:
+
+```bash
+#!/bin/bash
+
+GALAXY_ROOT_DIR=/path/to/galaxy-dist
+CLEANUP_LOG=$GALAXY_ROOT_DIR/irida_galaxy_tmp_files_cleanup.log
+TMP_FILES_DIR=$GALAXY_ROOT_DIR/databases/tmp/
+NUMBER_OF_DAYS_OLD=30
+
+source $CONDA_ROOT/bin/activate galaxy
+
+echo -e "\nBegin temporary file cleanup at `date`" >> $CLEANUP_LOG
+find $TMP_FILES_DIR -mindepth 1 -mtime +$NUMBER_OF_DAYS_OLD -delete
+
+echo -e "\nEnd temporary file cleanup at `date`" >> $CLEANUP_LOG
+```
+
+This can be added as a cleanup script which can be scheduled to run using cron.

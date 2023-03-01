@@ -5,6 +5,7 @@ import ca.corefacility.bioinformatics.irida.config.conditions.WindowsPlatformCon
 import ca.corefacility.bioinformatics.irida.exceptions.DuplicateSampleException;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.exceptions.IridaWorkflowLoadException;
+import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFilePair;
@@ -14,7 +15,10 @@ import ca.corefacility.bioinformatics.irida.model.workflow.execution.InputFileTy
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.DatasetCollectionType;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.LocalGalaxy;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.referencefile.ReferenceFileRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sample.SampleRepository;
+import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
+import ca.corefacility.bioinformatics.irida.repositories.user.UserRepository;
 import ca.corefacility.bioinformatics.irida.service.DatabaseSetupGalaxyITService;
 import ca.corefacility.bioinformatics.irida.service.SequencingObjectService;
 import ca.corefacility.bioinformatics.irida.service.analysis.workspace.galaxy.AnalysisCollectionServiceGalaxy;
@@ -49,10 +53,9 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
+
 
 /**
  * Tests out preparing a workspace for execution of workflows in Galaxy.
@@ -85,6 +88,15 @@ public class AnalysisCollectionServiceGalaxyIT {
 	private GzipFileProcessor gzipFileProcessor;
 
 	@Autowired
+	private SequencingObjectRepository objectRepository;
+
+	@Autowired
+	private ReferenceFileRepository referenceFileRepository;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
 	@Qualifier("rootTempDirectory")
 	private Path rootTempDirectory;
 
@@ -114,6 +126,12 @@ public class AnalysisCollectionServiceGalaxyIT {
 	private static final String HISTORY_DATASET_NAME = "hda";
 	private static final String FORWARD_NAME = "forward";
 	private static final String REVERSE_NAME = "reverse";
+
+	private SingleEndSequenceFile singleEndFile;
+	private SequenceFile sequenceFile;
+	private UUID workflowId = UUID.randomUUID();
+	private ReferenceFile referenceFile;
+
 
 	/**
 	 * Sets up variables for testing.
@@ -176,6 +194,12 @@ public class AnalysisCollectionServiceGalaxyIT {
 		pairSequenceFilesCompressedB.add(sequenceFilePathCompressedB);
 
 		gzipFileProcessor.setDisableFileProcessor(false);
+
+		referenceFile = referenceFileRepository.findById(1L).orElse(null);
+		singleEndFile = (SingleEndSequenceFile) objectRepository.findById(2L).orElse(null);
+		sequenceFile = singleEndFile.getFileWithId(1L);
+		assertNotNull(sequenceFile);
+		Set<SequencingObject> singleFiles = Sets.newHashSet(singleEndFile);
 	}
 
 	/**

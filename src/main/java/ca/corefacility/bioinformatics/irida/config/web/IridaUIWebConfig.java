@@ -19,12 +19,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.dialect.IDialect;
@@ -43,7 +41,6 @@ import ca.corefacility.bioinformatics.irida.ria.config.BreadCrumbInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.GalaxySessionInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.UserSecurityInterceptor;
 import ca.corefacility.bioinformatics.irida.ria.config.thymeleaf.webpacker.WebpackerDialect;
-import ca.corefacility.bioinformatics.irida.ria.web.components.datatables.config.DataTablesRequestResolver;
 import ca.corefacility.bioinformatics.irida.ria.web.sessionAttrs.Cart;
 
 import com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect;
@@ -51,18 +48,20 @@ import com.google.common.base.Joiner;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 
 /**
+ *
  */
 @Configuration
 @ComponentScan(basePackages = { "ca.corefacility.bioinformatics.irida.ria" })
 @Import({ WebEmailConfig.class, IridaApiSecurityConfig.class })
 public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAware {
 	private static final String SPRING_PROFILE_PRODUCTION = "prod";
-	private final static String EXTERNAL_TEMPLATE_DIRECTORY = "/etc/irida/templates/";
+	private static final String EXTERNAL_TEMPLATE_DIRECTORY = "/etc/irida/templates/";
 	private static final String INTERNAL_TEMPLATE_PREFIX = "/pages/";
 	private static final String HTML_TEMPLATE_SUFFIX = ".html";
 	private static final long TEMPLATE_CACHE_TTL_MS = 3600000L;
 	private static final Logger logger = LoggerFactory.getLogger(IridaUIWebConfig.class);
-	private final static String ANALYTICS_DIR = "/etc/irida/analytics/";
+
+	private static final String ANALYTICS_DIR = "/etc/irida/analytics/";
 
 	@Value("${locales.default}")
 	private String defaultLocaleValue;
@@ -142,16 +141,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		registry.addResourceHandler("/dist/**").addResourceLocations("/dist/");
 		// serve static resources for customizing pages from /etc/irida/static
 		registry.addResourceHandler("/static/**").addResourceLocations("file:/etc/irida/static/");
-	}
-
-	@Override
-	public void addViewControllers(ViewControllerRegistry registry) {
-		registry.addViewController("/projects/templates/merge").setViewName("projects/templates/merge");
-		registry.addViewController("/projects/templates/copy").setViewName("projects/templates/copy");
-		registry.addViewController("/projects/templates/move").setViewName("projects/templates/move");
-		registry.addViewController("/projects/templates/remove").setViewName("projects/templates/remove-modal.tmpl");
-		registry.addViewController("/projects/templates/referenceFiles/delete")
-				.setViewName("projects/templates/referenceFiles/delete");
 	}
 
 	/**
@@ -255,14 +244,6 @@ public class IridaUIWebConfig implements WebMvcConfigurer, ApplicationContextAwa
 		registry.addInterceptor(analyticsHandlerInterceptor());
 		registry.addInterceptor(breadCrumbInterceptor());
 		registry.addInterceptor(userSecurityInterceptor());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-		argumentResolvers.add(new DataTablesRequestResolver());
 	}
 
 	/**

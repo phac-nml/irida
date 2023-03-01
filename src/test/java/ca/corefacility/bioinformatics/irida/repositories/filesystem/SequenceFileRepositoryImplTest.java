@@ -33,12 +33,14 @@ public class SequenceFileRepositoryImplTest {
 	private FilesystemSupplementedRepositoryImpl<SequenceFile> repository;
 	private Path baseDirectory;
 	private EntityManager entityManager;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@BeforeEach
 	public void setUp() throws IOException {
 		baseDirectory = Files.createTempDirectory(TEMP_FILE_PREFIX);
 		entityManager = mock(EntityManager.class);
-		repository = new SequenceFileRepositoryImpl(entityManager, baseDirectory);
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		repository = new SequenceFileRepositoryImpl(entityManager, baseDirectory, iridaFileStorageUtility);
 	}
 
 	@AfterEach

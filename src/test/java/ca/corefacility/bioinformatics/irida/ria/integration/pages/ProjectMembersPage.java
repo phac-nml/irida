@@ -1,7 +1,8 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.components.AddMemberButton;
-import ca.corefacility.bioinformatics.irida.ria.integration.components.AntTable;
+import java.time.Duration;
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -10,8 +11,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
-import java.util.List;
+import ca.corefacility.bioinformatics.irida.ria.integration.components.AddMemberButton;
+import ca.corefacility.bioinformatics.irida.ria.integration.components.AntTable;
 
 /**
  * <p>
@@ -95,6 +96,17 @@ public class ProjectMembersPage extends AbstractPage {
 		wait.until(ExpectedConditions.visibilityOf(antNotification));
 	}
 
+	public void removeManagerByName(String name) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
+		WebElement button = wait.until(ExpectedConditions.visibilityOfElementLocated(
+				By.xpath("//table/tbody/tr/td/a[contains(text(), '" + name + "')]/../../td/button")));
+		button.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("t-remove-popover")));
+		wait.until(ExpectedConditions.elementToBeClickable(By.className("t-remove-confirm")));
+		driver.findElement(By.className("t-remove-confirm")).click();
+		wait.until(ExpectedConditions.visibilityOf(antNotification));
+	}
+
 	public boolean isNotificationDisplayed() {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.visibilityOf(antNotification));
@@ -103,8 +115,8 @@ public class ProjectMembersPage extends AbstractPage {
 		return true;
 	}
 
-	public void addUserToProject(String name) {
-		addMemberButton.addMember(driver, name);
+	public void addUserToProject(String name, String role) {
+		addMemberButton.addMember(driver, name, role);
 	}
 
 	public boolean isAddMemberBtnVisible() {

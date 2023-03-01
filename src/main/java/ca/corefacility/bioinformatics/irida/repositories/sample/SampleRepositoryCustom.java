@@ -16,4 +16,18 @@ public interface SampleRepositoryCustom {
 	 * @param modifiedDate The new {@link Date}
 	 */
 	void updateSampleModifiedDate(Sample sample, Date modifiedDate);
+
+	/**
+	 * Update the default sequencing object in a {@link Sample} to NULL.
+	 *
+	 * @param sample The {@link Sample} to update
+	 */
+	void removeDefaultSequencingObject(Sample sample);
+
+	/**
+	 * Update the default genome assembly in a {@link Sample} to NULL.
+	 *
+	 * @param sample The {@link Sample} to update
+	 */
+	void removeDefaultGenomeAssembly(Sample sample);
 }

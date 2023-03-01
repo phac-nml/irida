@@ -126,9 +126,7 @@ dependencies {
     implementation("org.springframework.ldap:spring-ldap-core")
     implementation("org.springframework.security:spring-security-ldap")
     implementation("org.springframework.security:spring-security-oauth2-resource-server:5.7.3")
-    implementation("org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.0") {
-        exclude(group = "org.slf4j")
-    }
+    implementation("com.nimbusds:oauth2-oidc-sdk:10.1")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.data:spring-data-envers") {
         exclude(group = "org.slf4j")
@@ -177,6 +175,17 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.11") {
         exclude(group = "jakarta.xml.bind", module = "jakarta.xml.bind-api")
         exclude(group = "jakarta.validation", module = "jakarta.validation-api")
+    }
+
+    // Microsoft Azure
+    implementation("com.azure:azure-storage-blob:12.18.0") {
+        exclude(group = "jakarta.xml.bind", module = "jakarta.xml.bind-api")
+        exclude(group = "jakarta.activation", module = "jakarta.activation-api")
+    }
+
+    // Amazon AWS
+    implementation("com.amazonaws:aws-java-sdk-s3:1.12.326") {
+        exclude(group = "commons-logging", module = "commons-logging")
     }
 
     // Customized fastqc
@@ -406,6 +415,10 @@ val integrationTestsMap = mapOf(
     ),
     "galaxyPipeline" to mapOf(
         "tags" to "IntegrationTest & Galaxy & Pipeline",
+        "excludeListeners" to "ca.corefacility.bioinformatics.irida.junit5.listeners.*"
+    ),
+    "fileSystem" to mapOf(
+        "tags" to "IntegrationTest & FileSystem",
         "excludeListeners" to "ca.corefacility.bioinformatics.irida.junit5.listeners.*"
     ),
 )

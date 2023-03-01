@@ -1,6 +1,7 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages.projects;
 
 import java.time.Duration;
+import java.util.List;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -75,6 +76,39 @@ public class ProjectSyncPage extends AbstractPage {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		wait.until(ExpectedConditions.elementToBeClickable(submitBtn));
 		submitBtn.click();
+		waitForTime(500);
+	}
+
+	public boolean isResourceNotFoundErrorMessageDisplayed() {
+		List<WebElement> elements = driver.findElements(By.className("ant-form-item-explain-error"));
+
+		if (elements.size() == 1) {
+			return elements.get(0).getText().contains("Resource not found");
+		}
+		return false;
+	}
+
+	public boolean isAccessDeniedErrorMessageDisplayed() {
+		List<WebElement> elements = driver.findElements(By.className("ant-form-item-explain-error"));
+
+		if (elements.size() == 1) {
+			return elements.get(0).getText().contains("Access denied");
+		}
+		return false;
+	}
+
+	public void clickSetUrlManuallyCheckbox() {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		WebElement element = driver.findElement(By.className("t-remote-project-url-checkbox"));
+		wait.until(ExpectedConditions.elementToBeClickable(element));
+		element.click();
+		waitForTime(500);
+	}
+
+	public void setRemoteProjectUrl(String projectUrl) {
+		WebElement element = driver.findElement(By.className("t-project-url"));
+		element.sendKeys(Keys.CONTROL + "a", Keys.DELETE);
+		element.sendKeys(projectUrl);
 		waitForTime(500);
 	}
 

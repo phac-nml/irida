@@ -2,7 +2,6 @@ package ca.corefacility.bioinformatics.irida.ria.web.models.export;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import ca.corefacility.bioinformatics.irida.model.NcbiExportSubmission;
 import ca.corefacility.bioinformatics.irida.ria.web.models.project.ProjectMinimalModel;

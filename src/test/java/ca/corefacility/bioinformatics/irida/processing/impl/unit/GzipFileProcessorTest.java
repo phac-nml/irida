@@ -23,23 +23,30 @@ import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessorException;
 import ca.corefacility.bioinformatics.irida.processing.impl.GzipFileProcessor;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequenceFileRepository;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 
 /**
  * Tests for {@link GzipFileProcessor}.
  * 
  * 
  */
+
 public class GzipFileProcessorTest {
 
 	private GzipFileProcessor fileProcessor;
 	private SequenceFileRepository sequenceFileRepository;
 	private static final String FILE_CONTENTS = ">test read\nACGTACTCATG";
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@BeforeEach
 	public void setUp() {
 		sequenceFileRepository = mock(SequenceFileRepository.class);
-		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.FALSE);
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.FALSE, iridaFileStorageUtility);
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
 	}
 
 	@Test
@@ -63,7 +70,7 @@ public class GzipFileProcessorTest {
 
 	@Test
 	public void testDeleteOriginalFile() throws IOException {
-		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.TRUE);
+		fileProcessor = new GzipFileProcessor(sequenceFileRepository, Boolean.TRUE, iridaFileStorageUtility);
 		final SequenceFile sf = constructSequenceFile();
 
 		// compress the file, update the sequence file reference
@@ -143,6 +150,7 @@ public class GzipFileProcessorTest {
 		SequenceFile sf = constructSequenceFile();
 		SequenceFile sfUpdated = new SequenceFile();
 		sfUpdated.setFile(sf.getFile());
+
 		final Long id = 1L;
 		sf.setId(id);
 
@@ -154,7 +162,7 @@ public class GzipFileProcessorTest {
 		out.close();
 
 		sf.setFile(compressed);
-		
+
 		SingleEndSequenceFile so = new SingleEndSequenceFile(sf);
 
 		fileProcessor.process(so);

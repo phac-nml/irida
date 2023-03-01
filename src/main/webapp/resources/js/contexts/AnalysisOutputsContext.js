@@ -12,7 +12,12 @@ import { getOutputInfo } from "../apis/analysis/analysis";
 const initialContext = {
   outputs: null,
   fileTypes: [
-    { hasJsonFile: false, hasTabularFile: false, hasTextFile: false, hasHtmlFile: false },
+    {
+      hasJsonFile: false,
+      hasTabularFile: false,
+      hasTextFile: false,
+      hasHtmlFile: false,
+    },
   ],
 };
 
@@ -25,9 +30,8 @@ const imageFileExtSet = new Set(["png", "jpeg", "jpg"]);
 const htmlFileExtSet = new Set(["html", "html-zip"]);
 
 function AnalysisOutputsProvider(props) {
-  const [analysisOutputsContext, setAnalysisOutputsContext] = useState(
-    initialContext
-  );
+  const [analysisOutputsContext, setAnalysisOutputsContext] =
+    useState(initialContext);
   const { analysisIdentifier } = useContext(AnalysisContext);
 
   function getPreviewForFileType(fileExt, type) {
@@ -105,7 +109,7 @@ function AnalysisOutputsProvider(props) {
               hasTextFile,
               hasExcelFile,
               hasImageFile,
-              hasHtmlFile
+              hasHtmlFile,
             },
           ],
         };

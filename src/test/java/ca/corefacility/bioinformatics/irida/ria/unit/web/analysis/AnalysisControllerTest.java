@@ -17,6 +17,8 @@ import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWork
 import ca.corefacility.bioinformatics.irida.model.workflow.description.IridaWorkflowInput;
 import ca.corefacility.bioinformatics.irida.model.workflow.structure.IridaWorkflowStructure;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.ria.unit.TestDataFactory;
 import ca.corefacility.bioinformatics.irida.ria.web.analysis.AnalysisController;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
@@ -48,6 +50,7 @@ public class AnalysisControllerTest {
 	private UserService userServiceMock;
 	private AnalysisTypesService analysisTypesService;
 	private MessageSource messageSource;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@BeforeEach
 	public void init() {
@@ -56,9 +59,10 @@ public class AnalysisControllerTest {
 		userServiceMock = mock(UserService.class);
 		analysisTypesService = mock(AnalysisTypesService.class);
 		messageSource = mock(MessageSource.class);
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 
 		analysisController = new AnalysisController(analysisSubmissionServiceMock, iridaWorkflowsServiceMock,
-				userServiceMock, messageSource);
+				userServiceMock, messageSource, iridaFileStorageUtility);
 
 	}
 

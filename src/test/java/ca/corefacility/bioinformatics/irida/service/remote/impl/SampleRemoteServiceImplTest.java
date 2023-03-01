@@ -30,8 +30,7 @@ public class SampleRemoteServiceImplTest {
 	public void setUp() {
 		sampleRemoteRepository = mock(SampleRemoteRepository.class);
 		apiRepo = mock(RemoteAPIRepository.class);
-		sampleRemoteService = new SampleRemoteServiceImpl(sampleRemoteRepository, 
-				 apiRepo);
+		sampleRemoteService = new SampleRemoteServiceImpl(sampleRemoteRepository, apiRepo);
 	}
 
 	@Test

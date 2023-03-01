@@ -14,13 +14,8 @@ import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 
 /**
- * Custom permission evaluator to determine whether or not an authenticated user
- * has authorization to view or modify a resource.
- * 
- * Inspired by
- * http://blog.solidcraft.eu/2011/03/spring-security-by-example-securing.html
- * 
- * 
+ * Custom permission evaluator to determine whether or not an authenticated user has authorization to view or modify a
+ * resource. Inspired by http://blog.solidcraft.eu/2011/03/spring-security-by-example-securing.html
  */
 public class IridaPermissionEvaluator implements PermissionEvaluator {
 
@@ -29,7 +24,7 @@ public class IridaPermissionEvaluator implements PermissionEvaluator {
 	private Collection<BasePermission<?>> permissions;
 	private Map<String, BasePermission<?>> namedPermissionMap;
 
-	public IridaPermissionEvaluator(RepositoryBackedPermission<?,?>... permissions) {
+	public IridaPermissionEvaluator(RepositoryBackedPermission<?, ?>... permissions) {
 		this(Arrays.asList(permissions));
 	}
 

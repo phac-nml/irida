@@ -41,7 +41,7 @@ public class ActivateAccountPage extends AbstractPage {
 
 	public boolean passwordResetPageDisplayed(String key) {
 		String url = driver.getCurrentUrl();
-		if(url.contains(RESET_PASSWORD_URL+key)) {
+		if (url.contains(RESET_PASSWORD_URL + key)) {
 			return true;
 		}
 		return false;
