@@ -56,7 +56,7 @@ public class IridaAuthenticationSecurityConfig {
 	@Value("${irida.administrative.authentication.adldap.url}")
 	private String adLdapUrl;
 
-   @Value("${irida.administrative.authentication.adldap.domain}")
+	@Value("${irida.administrative.authentication.adldap.domain}")
 	private String adLdapDomain;
 
 	@Value("${irida.administrative.authentication.adldap.rootdn}")
