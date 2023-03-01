@@ -80,7 +80,7 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
 
 	/**
 	 * fetches user id via SecurityContextHolder
-	 * Returns null if no user authentication can be found.
+	 * @return null if no user authentication can be found.
 	 */
 	private Long getUserId() {
 		try {
@@ -96,7 +96,7 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
 
 	/**
 	 * Fetches the client ID from SecurityContextHolder for users connected via oAuth
-	 * Returns null if no user authentication can be found.
+	 * @return null if no user authentication can be found.
 	 */
 	private Long getClientId() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -119,7 +119,7 @@ public class UserRevListener implements RevisionListener, ApplicationContextAwar
 	}
 
 	/**
-	 * checks if IRIDA was started in LDAP/ADLDAP mode
+	 * @return True if IRIDA was started in LDAP/ADLDAP mode, False otherwise
 	 */
 	private boolean isLdapMode() {
 		return authenticationMode.equals("ldap") || authenticationMode.equals("adldap");
