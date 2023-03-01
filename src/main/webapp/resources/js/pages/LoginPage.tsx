@@ -164,22 +164,22 @@ function LoginPage(): JSX.Element {
     setType(pageType);
   };
 
-  function getLdapError(){
-    switch(urlParams.get("ldap-error")) {
+  function getLdapError() {
+    switch (urlParams.get("ldap-error")) {
       case "1":
-        return <> {i18n("LoginPage.ldap_error.description_1")}{" "} </>
+        return <> {i18n("LoginPage.ldap_error.description_1")} </>;
       case "2":
-        return <> {i18n("LoginPage.ldap_error.description_2")}{" "} </>
+        return <> {i18n("LoginPage.ldap_error.description_2")} </>;
       case "3":
-        return <> {i18n("LoginPage.ldap_error.description_3")}{" "} </>
+        return <> {i18n("LoginPage.ldap_error.description_3")} </>;
       case "4":
-        return <> {i18n("LoginPage.ldap_error.description_4")}{" "} </>
+        return <> {i18n("LoginPage.ldap_error.description_4")} </>;
       case "5":
-        return <> {i18n("LoginPage.ldap_error.description_5")}{" "} </>
+        return <> {i18n("LoginPage.ldap_error.description_5")} </>;
       case "6":
-        return <> {i18n("LoginPage.ldap_error.description_6")}{" "} </>
+        return <> {i18n("LoginPage.ldap_error.description_6")} </>;
       default:
-        return <> {i18n("LoginPage.ldap_error.description_default")}{" "} </>
+        return <> {i18n("LoginPage.ldap_error.description_default")} </>;
     }
   }
 
@@ -238,7 +238,7 @@ function LoginPage(): JSX.Element {
                 {i18n("LoginPage.ldap_error.message")}
               </span>
             }
-            description={ getLdapError() }
+            description={getLdapError()}
             showIcon
           />
         ) : null}
