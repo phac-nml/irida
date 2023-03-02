@@ -1,6 +1,8 @@
 
 # Changelog
 
+## [Unreleased]
+
 ## [23.01] - 2023/02/28
 * [UI/Developer]: Updated `react-router` to the version 6.4.3. See[PR 1405](https://github.com/phac-nml/irida/pull/1405)
 * [Developer] Updated developer setup documentation, ignore java_pid\*.hprof files, and added quality of life file `gradle.properties`. See [PR 1415](https://github.com/phac-nml/irida/pull/1415).
