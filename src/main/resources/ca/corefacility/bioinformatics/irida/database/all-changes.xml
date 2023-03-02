@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
   <!-- include everything in the changesets directory -->
   <include file="changesets/1.0/initialschema-v1.0.xml" relativeToChangelogFile="true" />
@@ -72,5 +73,5 @@
   <include file="changesets/22.03/all-changes.xml" relativeToChangelogFile="true" />
   <include file="changesets/22.05/all-changes.xml" relativeToChangelogFile="true" />
   <include file="changesets/22.09/all-changes.xml" relativeToChangelogFile="true" />
-  <include file="changesets/unreleased/all-changes.xml" relativeToChangelogFile="true" />
+  <include file="changesets/23.01/all-changes.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>
