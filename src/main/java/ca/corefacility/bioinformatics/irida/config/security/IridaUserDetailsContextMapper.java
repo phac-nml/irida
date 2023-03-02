@@ -188,6 +188,8 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
      */
     private User ldapCreateUser(DirContextOperations dirContextOperations, String username) {
         // This works for both ldap and adLdap
+        // We generate a random password that adheres to our database requirements.
+        // This password is not used in authentication because of the UserType field
         String randomPassword = generateCommonLangPassword();
         Map<String, String> map = getLdapFields(dirContextOperations);
         User u = new User(
@@ -304,11 +306,11 @@ public class IridaUserDetailsContextMapper implements UserDetailsContextMapper {
      */
     public String generateCommonLangPassword() {
         // https://www.baeldung.com/java-generate-secure-password
-        String upperCaseLetters = RandomStringUtils.random(2, 65, 90, true, true);
-        String lowerCaseLetters = RandomStringUtils.random(2, 97, 122, true, true);
-        String numbers = RandomStringUtils.randomNumeric(2);
-        String specialChar = RandomStringUtils.random(2, 33, 47, false, false);
-        String totalChars = RandomStringUtils.randomAlphanumeric(2);
+        String upperCaseLetters = RandomStringUtils.random(3, 65, 90, true, true);
+        String lowerCaseLetters = RandomStringUtils.random(3, 97, 122, true, true);
+        String numbers = RandomStringUtils.randomNumeric(3);
+        String specialChar = RandomStringUtils.random(3, 33, 47, false, false);
+        String totalChars = RandomStringUtils.randomAlphanumeric(3);
         String combinedChars = upperCaseLetters.concat(lowerCaseLetters)
                 .concat(numbers)
                 .concat(specialChar)
