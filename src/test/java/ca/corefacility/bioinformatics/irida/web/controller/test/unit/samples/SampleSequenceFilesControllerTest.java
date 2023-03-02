@@ -20,6 +20,9 @@ import java.util.List;
 import ca.corefacility.bioinformatics.irida.model.enums.SequencingRunUploadStatus;
 import ca.corefacility.bioinformatics.irida.model.run.SequencingRun;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 import ca.corefacility.bioinformatics.irida.web.assembler.resource.ResponseResource;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -65,6 +68,8 @@ public class SampleSequenceFilesControllerTest {
 	private AnalysisService analysisService;
 	private SequencingRun sequencingRun;
 
+	private IridaFileStorageUtility iridaFileStorageUtility;
+
 	@BeforeEach
 	public void setUp() {
 		sampleService = mock(SampleService.class);
@@ -73,8 +78,12 @@ public class SampleSequenceFilesControllerTest {
 		analysisService = mock(AnalysisService.class);
 		sequencingRun = mock(SequencingRun.class);
 
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+
 		controller = new RESTSampleSequenceFilesController(sampleService, miseqRunService, sequencingObjectService,
 				analysisService);
+
 	}
 
 	@Test
@@ -121,7 +130,7 @@ public class SampleSequenceFilesControllerTest {
 	}
 
 	@Test
-	public void testRemoveSequenceFileFromSample() throws IOException {
+	public void testRemoveSequenceFileFromSample() throws Exception {
 		Sample s = TestDataFactory.constructSample();
 		SingleEndSequenceFile so = TestDataFactory.constructSingleEndSequenceFile();
 

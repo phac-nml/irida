@@ -12,13 +12,13 @@ import ca.corefacility.bioinformatics.irida.ria.web.BaseController;
 @RequestMapping(value = "/announcements")
 public class AnnouncementsController extends BaseController {
 
-    /**
-     * Request for the page to display a list of read and unread announcements for user.
-     *
-     * @return The name of the page.
-     */
-    @RequestMapping(value = "/user/list", method = RequestMethod.GET)
-    public String getAnnouncementsPage() {
-        return "announcements/list";
-    }
+	/**
+	 * Request for the page to display a list of read and unread announcements for user.
+	 *
+	 * @return The name of the page.
+	 */
+	@RequestMapping(value = "/user/list", method = RequestMethod.GET)
+	public String getAnnouncementsPage() {
+		return "announcements/list";
+	}
 }

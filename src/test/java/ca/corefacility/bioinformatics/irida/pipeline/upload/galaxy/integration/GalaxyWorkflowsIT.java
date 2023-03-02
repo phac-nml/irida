@@ -1,14 +1,5 @@
 package ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -44,13 +35,9 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistori
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
 
-import com.github.jmchilton.blend4j.galaxy.beans.*;
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
-import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
-import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
-import com.github.jmchilton.blend4j.galaxy.ToolsClient;
-import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
+import com.github.jmchilton.blend4j.galaxy.*;
 import com.github.jmchilton.blend4j.galaxy.ToolsClient.FileUploadRequest;
+import com.github.jmchilton.blend4j.galaxy.beans.*;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionDescription;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.CollectionElement;
 import com.github.jmchilton.blend4j.galaxy.beans.collection.request.HistoryDatasetElement;
@@ -58,9 +45,13 @@ import com.github.jmchilton.blend4j.galaxy.beans.collection.response.CollectionR
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.google.common.collect.ImmutableMap;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+
 /**
  * Integration tests for managing workflows in Galaxy.
- *
  */
 @GalaxyIntegrationTest
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DbUnitTestExecutionListener.class })
@@ -97,8 +88,7 @@ public class GalaxyWorkflowsIT {
 	private static final int LIBRARY_TIMEOUT = 5 * 60;
 
 	/**
-	 * Polling time in seconds to poll a Galaxy library to check if datasets
-	 * have been properly uploaded.
+	 * Polling time in seconds to poll a Galaxy library to check if datasets have been properly uploaded.
 	 */
 	private static final int LIBRARY_POLLING_TIME = 5;
 
@@ -141,28 +131,22 @@ public class GalaxyWorkflowsIT {
 		historiesClient = galaxyAdminInstance.getHistoriesClient();
 		librariesClient = galaxyAdminInstance.getLibrariesClient();
 
-		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient,
-				LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
+		GalaxyLibrariesService galaxyLibrariesService = new GalaxyLibrariesService(librariesClient, LIBRARY_POLLING_TIME, LIBRARY_TIMEOUT, 1);
+
 		galaxyHistory = new GalaxyHistoriesService(historiesClient, toolsClient, galaxyLibrariesService);
 		galaxyWorkflowService = new GalaxyWorkflowService(workflowsClient, StandardCharsets.UTF_8);
 	}
 
 	/**
-	 * Starts the execution of a workflow with a list of fastq files and the
-	 * given workflow id.
+	 * Starts the execution of a workflow with a list of fastq files and the given workflow id.
 	 * 
-	 * @param inputFilesForward
-	 *            A list of forward read fastq files start the workflow.
-	 * @param inputFilesReverse
-	 *            A list of reverse read fastq files start the workflow.
-	 * @param inputFileType
-	 *            The file type of the input files.
-	 * @param workflowId
-	 *            The id of the workflow to start.
-	 * @param workflowInputLabel
-	 *            The label of a workflow input in Galaxy.
-	 * @throws ExecutionManagerException
-	 *             If there was an error executing the workflow.
+	 * @param inputFilesForward  A list of forward read fastq files start the workflow.
+	 * @param inputFilesReverse  A list of reverse read fastq files start the workflow.
+	 * @param inputFileType      The file type of the input files.
+	 * @param workflowId         The id of the workflow to start.
+	 * @param workflowInputLabel The label of a workflow input in Galaxy.
+	 * @return the {@link WorkflowInvocationOutputs} model describing the outputs
+	 * @throws ExecutionManagerException If there was an error executing the workflow.
 	 */
 	private WorkflowInvocationOutputs runSingleCollectionWorkflow(List<Path> inputFilesForward,
 			List<Path> inputFilesReverse, InputFileType inputFileType, String workflowId, String workflowInputLabel)
@@ -215,18 +199,13 @@ public class GalaxyWorkflowsIT {
 	}
 
 	/**
-	 * Constructs a collection containing a list of files from the given
-	 * datasets.
+	 * Constructs a collection containing a list of files from the given datasets.
 	 * 
-	 * @param inputDatasetsForward
-	 *            The forward datasets to construct a collection from.
-	 * @param inputDatasetsReverse
-	 *            The reverse datasets to construct a collection from.
-	 * @param history
-	 *            The history to construct the collection within.
+	 * @param inputDatasetsForward The forward datasets to construct a collection from.
+	 * @param inputDatasetsReverse The reverse datasets to construct a collection from.
+	 * @param history              The history to construct the collection within.
 	 * @return A CollectionResponse describing the dataset collection.
-	 * @throws ExecutionManagerException
-	 *             If an exception occured constructing the collection.
+	 * @throws ExecutionManagerException If an exception occured constructing the collection.
 	 */
 	public CollectionResponse constructPairedFileCollection(List<Dataset> inputDatasetsForward,
 			List<Dataset> inputDatasetsReverse, History history) throws ExecutionManagerException {
@@ -274,18 +253,13 @@ public class GalaxyWorkflowsIT {
 	/**
 	 * Uploads a list of files into the given history.
 	 * 
-	 * @param dataFiles
-	 *            The list of files to upload.
-	 * @param inputFileType
-	 *            The type of files to upload.
-	 * @param history
-	 *            The history to upload the files into.String
+	 * @param dataFiles     The list of files to upload.
+	 * @param inputFileType The type of files to upload.
+	 * @param history       The history to upload the files into.String
 	 * @return A list of Datasets describing each uploaded file.
-	 * @throws UploadException
-	 *             If an error occured uploading the file.
-	 * @throws GalaxyDatasetException
-	 *             If there was an issue finding the corresponding dataset for
-	 *             the file in the history
+	 * @throws UploadException        If an error occured uploading the file.
+	 * @throws GalaxyDatasetException If there was an issue finding the corresponding dataset for the file in the
+	 *                                history
 	 */
 	private List<Dataset> uploadFilesListToHistory(List<Path> dataFiles, InputFileType inputFileType, History history)
 			throws UploadException, GalaxyDatasetException {
@@ -362,19 +336,14 @@ public class GalaxyWorkflowsIT {
 	}
 
 	/**
-	 * Starts the execution of a workflow with a single fastq file and the given
-	 * workflow id.
+	 * Starts the execution of a workflow with a single fastq file and the given workflow id.
 	 * 
-	 * @param inputFile
-	 *            An input file to start the workflow.
-	 * @param inputFileType
-	 *            The file type of the input file.
-	 * @param workflowId
-	 *            The id of the workflow to start.
-	 * @param workflowInputLabel
-	 *            The label of a workflow input in Galaxy.
-	 * @throws ExecutionManagerException
-	 *             If there was an error executing the workflow.
+	 * @param inputFile          An input file to start the workflow.
+	 * @param inputFileType      The file type of the input file.
+	 * @param workflowId         The id of the workflow to start.
+	 * @param workflowInputLabel The label of a workflow input in Galaxy.
+	 * @return the {@link WorkflowInvocationOutputs} model describing the outputs
+	 * @throws ExecutionManagerException If there was an error executing the workflow.
 	 */
 	private WorkflowInvocationOutputs runSingleFileWorkflow(Path inputFile, InputFileType inputFileType,
 			String workflowId, String workflowInputLabel) throws ExecutionManagerException {
@@ -382,21 +351,15 @@ public class GalaxyWorkflowsIT {
 	}
 
 	/**
-	 * Starts the execution of a workflow with a single fastq file and the given
-	 * workflow id.
+	 * Starts the execution of a workflow with a single fastq file and the given workflow id.
 	 * 
-	 * @param inputFile
-	 *            An input file to start the workflow.
-	 * @param inputFileType
-	 *            The file type of the input file.
-	 * @param workflowId
-	 *            The id of the workflow to start.
-	 * @param workflowInputLabel
-	 *            The label of a workflow input in Galaxy.
-	 * @param toolParameters
-	 *            A map of tool parameters to set.
-	 * @throws ExecutionManagerException
-	 *             If there was an error executing the workflow.
+	 * @param inputFile          An input file to start the workflow.
+	 * @param inputFileType      The file type of the input file.
+	 * @param workflowId         The id of the workflow to start.
+	 * @param workflowInputLabel The label of a workflow input in Galaxy.
+	 * @param toolParameters     A map of tool parameters to set.
+	 * @return the {@link WorkflowInvocationOutputs} model describing the outputs
+	 * @throws ExecutionManagerException If there was an error executing the workflow.
 	 */
 	private WorkflowInvocationOutputs runSingleFileWorkflow(Path inputFile, InputFileType inputFileType,
 			String workflowId, String workflowInputLabel, Map<String, ToolParameter> toolParameters)
@@ -440,12 +403,9 @@ public class GalaxyWorkflowsIT {
 	/**
 	 * Runs a test filter workflow with the given input.
 	 * 
-	 * @param history
-	 *            The history to run the workflow in.
-	 * @param inputFile
-	 *            The file to run the workflow on.
-	 * @param filterParameters
-	 *            The condition to run the workflow with.
+	 * @param history          The history to run the workflow in.
+	 * @param inputFile        The file to run the workflow on.
+	 * @param filterParameters The condition to run the workflow with.
 	 * @return A {@link WorkflowOutputs} for this workflow.
 	 * @throws ExecutionManagerException
 	 */
@@ -462,12 +422,9 @@ public class GalaxyWorkflowsIT {
 	/**
 	 * Runs a test sleep workflow with the given input.
 	 * 
-	 * @param history
-	 *            The history to run the workflow in.
-	 * @param inputFile
-	 *            The file to run the workflow on.
-	 * @param sleepTime
-	 *            The sleep time.
+	 * @param history   The history to run the workflow in.
+	 * @param inputFile The file to run the workflow on.
+	 * @param sleepTime The sleep time.
 	 * @return A {@link WorkflowOutputs} for this workflow.
 	 * @throws ExecutionManagerException
 	 */
@@ -483,18 +440,12 @@ public class GalaxyWorkflowsIT {
 	/**
 	 * Runs a test workflow with the given parameters and input file.
 	 * 
-	 * @param workflowId
-	 *            The id of the workflow to run.
-	 * @param workflowInputLabel
-	 *            The lable of the input for the workflow.
-	 * @param history
-	 *            The history to run the workflow in.
-	 * @param inputFile
-	 *            The file to run the workflow on.
-	 * @param toolName
-	 *            The toolName of a parameter to override.
-	 * @param toolParameter
-	 *            The overridden tool parameter.
+	 * @param workflowId         The id of the workflow to run.
+	 * @param workflowInputLabel The lable of the input for the workflow.
+	 * @param history            The history to run the workflow in.
+	 * @param inputFile          The file to run the workflow on.
+	 * @param toolName           The toolName of a parameter to override.
+	 * @param toolParameter      The overridden tool parameter.
 	 * @return A {@link WorkflowOutputs} for this workflow.
 	 * @throws ExecutionManagerException
 	 */
@@ -555,8 +506,7 @@ public class GalaxyWorkflowsIT {
 	}
 
 	/**
-	 * Tests executing a single workflow in Galaxy and getting the status after
-	 * completion.
+	 * Tests executing a single workflow in Galaxy and getting the status after completion.
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws InterruptedException
@@ -579,8 +529,7 @@ public class GalaxyWorkflowsIT {
 	}
 
 	/**
-	 * Tests executing a single workflow in Galaxy and getting an error status
-	 * after completion.
+	 * Tests executing a single workflow in Galaxy and getting an error status after completion.
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws InterruptedException
@@ -603,8 +552,8 @@ public class GalaxyWorkflowsIT {
 	}
 
 	/**
-	 * Tests executing a single workflow in Galaxy and getting an error status
-	 * if one of the tools is in error even while running.
+	 * Tests executing a single workflow in Galaxy and getting an error status if one of the tools is in error even
+	 * while running.
 	 * 
 	 * @throws ExecutionManagerException
 	 * @throws InterruptedException
@@ -652,8 +601,7 @@ public class GalaxyWorkflowsIT {
 	}
 
 	/**
-	 * Tests executing a single workflow in Galaxy and changing a single tool
-	 * parameter.
+	 * Tests executing a single workflow in Galaxy and changing a single tool parameter.
 	 * 
 	 * @throws ExecutionManagerException
 	 */

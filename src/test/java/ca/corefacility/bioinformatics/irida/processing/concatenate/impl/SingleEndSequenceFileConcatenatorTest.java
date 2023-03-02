@@ -3,6 +3,10 @@ package ca.corefacility.bioinformatics.irida.processing.concatenate.impl;
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SingleEndSequenceFile;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
+
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,11 +24,14 @@ public class SingleEndSequenceFileConcatenatorTest {
 	private static final byte[] FASTQ_FILE_CONTENTS = ("@testread\n" + SEQUENCE + "\n+\n?????????\n@testread2\n"
 			+ SEQUENCE + "\n+\n?????????").getBytes();
 
-	SingleEndSequenceFileConcatenator concat;
+	private SingleEndSequenceFileConcatenator concat;
+	private IridaFileStorageUtility iridaFileStorageUtility;
 
 	@BeforeEach
 	public void setUp() {
-		concat = new SingleEndSequenceFileConcatenator();
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+		concat = new SingleEndSequenceFileConcatenator(iridaFileStorageUtility);
 	}
 
 	@Test

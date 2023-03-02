@@ -1,21 +1,18 @@
 package ca.corefacility.bioinformatics.irida.ria.integration.pages;
 
-import java.time.Duration;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
+import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
+import com.google.common.base.Strings;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ca.corefacility.bioinformatics.irida.ria.integration.AbstractIridaUIITChromeDriver;
-
-import com.google.common.base.Strings;
+import java.time.Duration;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -216,7 +213,7 @@ public class AbstractPage {
 	/**
 	 * Get the BASE URL
 	 *
-	 * @return
+	 * @return the BASE URL
 	 */
 	public String getBaseUrl() {
 		return BASE_URL;
@@ -232,15 +229,6 @@ public class AbstractPage {
 		submitButton.click();
 		new WebDriverWait(driver, Duration.ofSeconds(TIME_OUT_IN_SECONDS))
 				.until(ExpectedConditions.stalenessOf(oldHtml));
-	}
-
-	/**
-	 * Wait for jQuery AJAX calls to complete on a page
-	 */
-	public void waitForJQueryAjaxResponse() {
-		new WebDriverWait(driver, Duration.ofSeconds(TIME_OUT_IN_SECONDS))
-				.until((ExpectedCondition<Boolean>) wd -> (Boolean) ((JavascriptExecutor) wd)
-						.executeScript("return jQuery.active == 0"));
 	}
 
 	/**
@@ -282,5 +270,14 @@ public class AbstractPage {
 
 	public boolean ensurePageHeadingIsTranslated(String expected) {
 		return driver.findElement(By.className("t-main-heading")).getText().equals(expected);
+	}
+
+	public void enterSearchQueryInNavBar(String query) {
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+		WebElement searchInput = wait
+				.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".t-global-search input")));
+		searchInput.sendKeys(query);
+		searchInput.sendKeys(Keys.ENTER);
+		wait.until(ExpectedConditions.urlContains("search?query=" + query));
 	}
 }

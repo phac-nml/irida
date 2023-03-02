@@ -7,6 +7,7 @@ import ca.corefacility.bioinformatics.irida.config.repository.IridaApiRepositori
 import ca.corefacility.bioinformatics.irida.config.security.IridaApiSecurityConfig;
 import ca.corefacility.bioinformatics.irida.config.services.scheduled.IridaScheduledTasksConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsConfig;
+import ca.corefacility.bioinformatics.irida.model.enums.StorageType;
 import ca.corefacility.bioinformatics.irida.model.user.Role;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.plugins.IridaPlugin;
@@ -15,6 +16,7 @@ import ca.corefacility.bioinformatics.irida.processing.FileProcessingChain;
 import ca.corefacility.bioinformatics.irida.processing.FileProcessor;
 import ca.corefacility.bioinformatics.irida.processing.impl.*;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.*;
 import ca.corefacility.bioinformatics.irida.repositories.sample.QCEntryRepository;
 import ca.corefacility.bioinformatics.irida.repositories.sequencefile.SequencingObjectRepository;
 import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionCleanupService;
@@ -22,7 +24,9 @@ import ca.corefacility.bioinformatics.irida.service.TaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.InMemoryTaxonomyService;
 import ca.corefacility.bioinformatics.irida.service.impl.analysis.submission.AnalysisSubmissionCleanupServiceImpl;
 import ca.corefacility.bioinformatics.irida.service.user.UserService;
+import ca.corefacility.bioinformatics.irida.util.IridaFiles;
 import ca.corefacility.bioinformatics.irida.util.IridaPluginMessageSource;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
@@ -130,6 +134,35 @@ public class IridaApiServicesConfig {
 	private int analysisTaskThreads;
 	@Value("${locales.enabled}")
 	private String availableLocales;
+
+	@Value("${irida.storage.type}")
+	private String storageType;
+
+	@Value("${aws.bucket.name:#{null}}")
+	private String awsBucketName;
+
+	@Value("${aws.bucket.region:#{null}}")
+	private String awsBucketRegion;
+
+	@Value("${aws.access.key:#{null}}")
+	private String awsAccessKey;
+
+	@Value("${aws.secret.key:#{null}}")
+	private String awsSecretKey;
+
+	@Value("${azure.container.name:#{null}}")
+	private String containerName;
+
+	@Value("${azure.container.url:#{null}}")
+	private String containerUrl;
+
+	@Value("${azure.sas.token:#{null}}")
+	private String sasToken;
+
+	@Value("${aws.bucket.url:#{null}}")
+	private String bucketUrl;
+
+
 	@Autowired
 	private IridaPluginConfig.IridaPluginList pipelinePlugins;
 
@@ -285,9 +318,38 @@ public class IridaApiServicesConfig {
 		return null;
 	}
 
+	/**
+	 * Used to configure both the IridaFileStorageUtility implementation
+	 * as well as set the implementation in the IridaFiles static class
+	 * which uses this implementation.
+	 *
+	 * @param storageType The {@link StorageType}
+	 * @return A new {@link IridaFileStorageUtility} implementation.
+	 */
+	@Bean(name = "iridaFileStorageUtility")
+	public IridaFileStorageUtility iridaFileStorageService(StorageType storageType) {
+		IridaFileStorageUtility iridaFileStorageUtility;
+		if (storageType.equals(StorageType.AWS)) {
+			iridaFileStorageUtility = new IridaFileStorageAwsUtilityImpl(awsBucketName, awsBucketRegion, awsAccessKey,
+					awsSecretKey, Optional.ofNullable(bucketUrl));
+		} else if (storageType.equals(StorageType.AZURE)) {
+			iridaFileStorageUtility = new IridaFileStorageAzureUtilityImpl(containerUrl, sasToken, containerName);
+		} else {
+			iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
+		}
+
+		IridaFiles.setIridaFileStorageUtility(iridaFileStorageUtility);
+		return iridaFileStorageUtility;
+	}
+
+	@Bean(name = "storageType")
+	public StorageType storageType() {
+		return StorageType.fromString(storageType);
+	}
+
 	@Bean(name = "uploadFileProcessingChain")
 	public FileProcessingChain fileProcessorChain(SequencingObjectRepository sequencingObjectRepository,
-			QCEntryRepository qcRepository, GzipFileProcessor gzipFileProcessor,
+			QCEntryRepository qcRepository, IridaFileStorageUtility iridaFileStorageUtility, GzipFileProcessor gzipFileProcessor,
 			FastqcFileProcessor fastQcFileProcessor, ChecksumFileProcessor checksumProcessor,
 			CoverageFileProcessor coverageProcessor, AutomatedAnalysisFileProcessor automatedAnalysisFileProcessor) {
 
@@ -301,7 +363,7 @@ public class IridaApiServicesConfig {
 			fileProcessors.remove(gzipFileProcessor);
 		}
 
-		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, fileProcessors);
+		return new DefaultFileProcessingChain(sequencingObjectRepository, qcRepository, iridaFileStorageUtility, fileProcessors);
 	}
 
 	@Bean(name = "fileProcessingChainExecutor")

@@ -20,11 +20,10 @@ export async function get<T>(
   }
 }
 
-export async function post<T>(
-  url: string,
-  params?: T,
-  config?: AxiosRequestConfig
-): Promise<T> {
+export async function post<
+  T,
+  P = FormData | Record<string, unknown> | undefined
+>(url: string, params?: P, config?: AxiosRequestConfig): Promise<T> {
   try {
     const { data } = await axios.post(url, params, config);
     return data;
@@ -36,7 +35,14 @@ export async function post<T>(
         return Promise.reject(error.message);
       }
     } else if (axios.isCancel(error)) {
-      return Promise.reject(error.message);
+      let message;
+      if (error instanceof Error) {
+        const { message: destructuredMessage } = error;
+        message = destructuredMessage;
+      } else {
+        message = String(error);
+      }
+      return Promise.reject(message);
     } else {
       return Promise.reject("An unexpected error occurred");
     }

@@ -2,7 +2,9 @@ package ca.corefacility.bioinformatics.irida.ria.web.samples;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
@@ -11,6 +13,7 @@ import javax.validation.ConstraintViolationException;
 import ca.corefacility.bioinformatics.irida.exceptions.ConcatenateException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityExistsException;
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
 import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.*;
 
@@ -24,14 +27,10 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import ca.corefacility.bioinformatics.irida.model.sample.Sample;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequenceFile;
-
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxErrorResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.ajax.dto.ajax.AjaxSuccessResponse;
 import ca.corefacility.bioinformatics.irida.ria.web.services.UIAnalysesService;
-
-import ca.corefacility.bioinformatics.irida.ria.web.samples.dto.SampleDetails;
-
 import ca.corefacility.bioinformatics.irida.ria.web.services.UISampleService;
 
 /**
@@ -62,8 +61,7 @@ public class SamplesAjaxController {
 		try {
 			return ResponseEntity.ok(uiSampleService.uploadSequenceFiles(sampleId, request));
 		} catch (IOException e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(null);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
 
@@ -80,8 +78,7 @@ public class SamplesAjaxController {
 		try {
 			return ResponseEntity.ok(uiSampleService.uploadFast5Files(sampleId, request));
 		} catch (IOException e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(null);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
 
@@ -98,8 +95,7 @@ public class SamplesAjaxController {
 		try {
 			return ResponseEntity.ok(uiSampleService.uploadAssemblies(sampleId, request));
 		} catch (IOException e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(null);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
 
@@ -145,8 +141,7 @@ public class SamplesAjaxController {
 			for (ConstraintViolation a : e.getConstraintViolations()) {
 				constraintViolations += a.getMessage() + "\n";
 			}
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new AjaxErrorResponse(constraintViolations));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(constraintViolations));
 		}
 	}
 
@@ -165,17 +160,16 @@ public class SamplesAjaxController {
 			return ResponseEntity.ok(new AjaxSuccessResponse(
 					uiSampleService.updateDefaultSequencingObjectForSample(id, sequencingObjectId, locale)));
 		} catch (EntityNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new AjaxErrorResponse(e.getMessage()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
 	/**
 	 * Update the default genome assembly for the sample
 	 *
-	 * @param id                 {@link Long} identifier for the sample
+	 * @param id               {@link Long} identifier for the sample
 	 * @param genomeAssemblyId The genome assembly identifier
-	 * @param locale             {@link Locale} for the currently logged in user
+	 * @param locale           {@link Locale} for the currently logged in user
 	 * @return {@link ResponseEntity} explaining to the user the results of the update.
 	 */
 	@PutMapping(value = "/{id}/default-genome-assembly")
@@ -185,8 +179,7 @@ public class SamplesAjaxController {
 			return ResponseEntity.ok(new AjaxSuccessResponse(
 					uiSampleService.updateDefaultGenomeAssemblyForSample(id, genomeAssemblyId, locale)));
 		} catch (EntityNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new AjaxErrorResponse(e.getMessage()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
@@ -204,8 +197,7 @@ public class SamplesAjaxController {
 		try {
 			return ResponseEntity.ok(uiAnalysesService.getSampleAnalyses(sampleId, principal, locale));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(null);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
 	}
 
@@ -227,16 +219,17 @@ public class SamplesAjaxController {
 	 * Remove metadata field and entry from {@link Sample}
 	 *
 	 * @param projectId       The project identifier
-	 * @param metadataFieldId   The metadata field id
+	 * @param sampleId        The sample identifier
+	 * @param metadataFieldId The metadata field id
 	 * @param metadataEntryId The metadata entry identifier
 	 * @param locale          {@link Locale} for the currently logged in user
 	 * @return {@link ResponseEntity} explaining to the user the results of the deletion.
 	 */
 	@DeleteMapping(value = "/metadata")
-	public ResponseEntity<AjaxResponse> removeSampleMetadata(@RequestParam Long projectId,
+	public ResponseEntity<AjaxResponse> removeSampleMetadata(@RequestParam Long projectId, @RequestParam Long sampleId,
 			@RequestParam Long metadataFieldId, @RequestParam Long metadataEntryId, Locale locale) {
 		return ResponseEntity.ok(new AjaxSuccessResponse(
-				uiSampleService.removeSampleMetadata(projectId, metadataFieldId, metadataEntryId, locale)));
+				uiSampleService.removeSampleMetadata(projectId, sampleId, metadataFieldId, metadataEntryId, locale)));
 	}
 
 	/**
@@ -254,8 +247,7 @@ public class SamplesAjaxController {
 			return ResponseEntity.ok(new AjaxSuccessResponse(
 					uiSampleService.updateSampleMetadata(id, updateSampleMetadataRequest, locale)));
 		} catch (EntityExistsException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new AjaxErrorResponse(e.getMessage()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AjaxErrorResponse(e.getMessage()));
 		}
 	}
 
@@ -273,7 +265,6 @@ public class SamplesAjaxController {
 	}
 
 	/**
-
 	 * Get updated sample sequencing objects for given sequencing object ids
 	 *
 	 * @param id                  Identifier for a sample
@@ -330,19 +321,21 @@ public class SamplesAjaxController {
 	 * @param sequenceObjectIds the {@link SequencingObject} ids
 	 * @param newFileName       base of the new filename to create
 	 * @param removeOriginals   boolean whether to remove the original files
+	 * @param locale            {@link Locale} for the currently logged in user
 	 * @return {@link ResponseEntity} with the new concatenated sequencing object
 	 */
 	@PostMapping(value = "/{sampleId}/files/concatenate")
-	public ResponseEntity<List<SampleSequencingObjectFileModel>> concatenateSequenceFiles(@PathVariable Long sampleId,
+	public ResponseEntity<SampleConcatenationModel> concatenateSequenceFiles(@PathVariable Long sampleId,
 			@RequestParam(name = "sequencingObjectIds") Set<Long> sequenceObjectIds,
 			@RequestParam(name = "newFileName") String newFileName,
-			@RequestParam(name = "removeOriginals", defaultValue = "false", required = false) boolean removeOriginals) {
+			@RequestParam(name = "removeOriginals", defaultValue = "false", required = false) boolean removeOriginals,
+			Locale locale) {
 		try {
 			return ResponseEntity.ok(uiSampleService.concatenateSequenceFiles(sampleId, sequenceObjectIds, newFileName,
-					removeOriginals));
-		} catch (ConcatenateException e) {
+					removeOriginals, locale));
+		} catch (ConcatenateException | StorageException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(null);
+					.body(new SampleConcatenationModel(e.getMessage()));
 		}
 	}
 

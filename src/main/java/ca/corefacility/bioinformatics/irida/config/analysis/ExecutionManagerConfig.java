@@ -10,7 +10,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyToolDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,32 +24,19 @@ import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerConfigura
 import ca.corefacility.bioinformatics.irida.model.upload.galaxy.GalaxyAccountEmail;
 import ca.corefacility.bioinformatics.irida.model.workflow.manager.galaxy.ExecutionManagerGalaxy;
 import ca.corefacility.bioinformatics.irida.pipeline.upload.DataStorage;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyHistoriesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErrorsService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyLibrariesService;
-import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyWorkflowService;
+import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.*;
 
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstance;
-import com.github.jmchilton.blend4j.galaxy.GalaxyInstanceFactory;
-import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
-import com.github.jmchilton.blend4j.galaxy.JobsClient;
-import com.github.jmchilton.blend4j.galaxy.LibrariesClient;
-import com.github.jmchilton.blend4j.galaxy.RolesClient;
-import com.github.jmchilton.blend4j.galaxy.ToolsClient;
-import com.github.jmchilton.blend4j.galaxy.WorkflowsClient;
-import com.github.jmchilton.blend4j.galaxy.ToolDataClient;
+import com.github.jmchilton.blend4j.galaxy.*;
 import com.google.common.collect.ImmutableMap;
 
 /**
  * Configuration for connections to an ExecutionManager in IRIDA.
- *
  */
 @Configuration
-@Profile({ "dev", "prod", "it", "analysis", "ncbi", "processing", "sync", "email", "web"})
+@Profile({ "dev", "prod", "it", "analysis", "ncbi", "processing", "sync", "email", "web" })
 public class ExecutionManagerConfig {
-	private static final Logger logger = LoggerFactory
-			.getLogger(ExecutionManagerConfig.class);
-	
+	private static final Logger logger = LoggerFactory.getLogger(ExecutionManagerConfig.class);
+
 	/**
 	 * Property names for a Galaxy instance to execution jobs on.
 	 */
@@ -59,25 +45,23 @@ public class ExecutionManagerConfig {
 	private static final String EMAIL_EXECUTION_PROPERTY = "galaxy.execution.email";
 	private static final String DATA_STORAGE_EXECUTION_PROPERTY = "galaxy.execution.dataStorage";
 
-	private static final Map<String, DataStorage> VALID_STORAGE = ImmutableMap.of(
-					"remote", DataStorage.REMOTE,
-					"local", DataStorage.LOCAL);
-	
+	private static final Map<String, DataStorage> VALID_STORAGE = ImmutableMap.of("remote", DataStorage.REMOTE, "local",
+			DataStorage.LOCAL);
+
 	private static final DataStorage DEFAULT_DATA_STORAGE = DataStorage.REMOTE;
-	
+
 	/**
 	 * Timeout in seconds to stop polling a Galaxy library.
 	 */
 	@Value("${galaxy.library.upload.timeout}")
 	private int libraryTimeout;
-	
+
 	/**
-	 * Polling time in seconds to poll a Galaxy library to check if
-	 * datasets have been properly uploaded.
+	 * Polling time in seconds to poll a Galaxy library to check if datasets have been properly uploaded.
 	 */
 	@Value("${galaxy.library.upload.polling.time}")
 	private int pollingTime;
-	
+
 	/**
 	 * Number of independent threads to use for uploading files to a Galaxy library.
 	 */
@@ -89,30 +73,30 @@ public class ExecutionManagerConfig {
 
 	@Autowired
 	private Validator validator;
-	
+
 	/**
 	 * Builds a new ExecutionManagerGalaxy from the given properties.
-	 * 
+	 *
 	 * @return An ExecutionManagerGalaxy.
-	 * @throws ExecutionManagerConfigurationException
-	 *             If no execution manager is configured.
+	 * @throws ExecutionManagerConfigurationException If no execution manager is configured.
 	 */
 	@Lazy
 	@Bean
-	public ExecutionManagerGalaxy executionManager() throws ExecutionManagerConfigurationException {		
-		return buildExecutionManager(URL_EXECUTION_PROPERTY, API_KEY_EXECUTION_PROPERTY,
-				EMAIL_EXECUTION_PROPERTY, DATA_STORAGE_EXECUTION_PROPERTY);
+	public ExecutionManagerGalaxy executionManager() throws ExecutionManagerConfigurationException {
+		return buildExecutionManager(URL_EXECUTION_PROPERTY, API_KEY_EXECUTION_PROPERTY, EMAIL_EXECUTION_PROPERTY,
+				DATA_STORAGE_EXECUTION_PROPERTY);
 	}
-	
+
 	/**
 	 * Builds a new ExecutionManagerGalaxy given the following environment properties.
-	 * @param urlProperty The property defining the URL to Galaxy.
-	 * @param apiKeyProperty  The property defining the API key to Galaxy.
-	 * @param emailProperty  The property defining the account email in Galaxy.
-	 * @param dataStorageProperty  The property defning the data storage method.
-	 * @return  An ExecutionManagerGalaxy.
-	 * @throws ExecutionManagerConfigurationException If there was an issue building an ExecutionManagerGalaxy
-	 * 	from the given properties.
+	 *
+	 * @param urlProperty         The property defining the URL to Galaxy.
+	 * @param apiKeyProperty      The property defining the API key to Galaxy.
+	 * @param emailProperty       The property defining the account email in Galaxy.
+	 * @param dataStorageProperty The property defning the data storage method.
+	 * @return An ExecutionManagerGalaxy.
+	 * @throws ExecutionManagerConfigurationException If there was an issue building an ExecutionManagerGalaxy from the
+	 *                                                given properties.
 	 */
 	private ExecutionManagerGalaxy buildExecutionManager(String urlProperty, String apiKeyProperty,
 			String emailProperty, String dataStorageProperty) throws ExecutionManagerConfigurationException {
@@ -124,49 +108,51 @@ public class ExecutionManagerConfig {
 
 		return new ExecutionManagerGalaxy(galaxyURL, apiKey, galaxyEmail, dataStorage);
 	}
-	
+
 	/**
 	 * Gets and validates a GalaxyAccountEmail from the given property.
-	 * @param emailProperty  The property to find the email address.
-	 * @return  A valid GalaxyAccountEmail.
-	 * @throws ExecutionManagerConfigurationException  If the properties value was invalid.
+	 *
+	 * @param emailProperty The property to find the email address.
+	 * @return A valid GalaxyAccountEmail.
+	 * @throws ExecutionManagerConfigurationException If the properties value was invalid.
 	 */
 	private GalaxyAccountEmail getGalaxyEmail(String emailProperty) throws ExecutionManagerConfigurationException {
 		String galaxyEmailString = environment.getProperty(emailProperty);
 		GalaxyAccountEmail galaxyEmail = new GalaxyAccountEmail(galaxyEmailString);
-		
-		Set<ConstraintViolation<GalaxyAccountEmail>> violations = validator
-				.validate(galaxyEmail);
+
+		Set<ConstraintViolation<GalaxyAccountEmail>> violations = validator.validate(galaxyEmail);
 
 		if (!violations.isEmpty()) {
-			throw new ExecutionManagerConfigurationException("Invalid email address", emailProperty, 
+			throw new ExecutionManagerConfigurationException("Invalid email address", emailProperty,
 					new ConstraintViolationException(violations));
 		}
-		
+
 		return galaxyEmail;
 	}
-	
+
 	/**
 	 * Gets and validates a Galaxy API key from the given property.
-	 * @param apiKeyProperty  The API key property to get.
-	 * @return  A API key for Galaxy.
-	 * @throws ExecutionManagerConfigurationException  If the given properties value was invalid.
+	 *
+	 * @param apiKeyProperty The API key property to get.
+	 * @return A API key for Galaxy.
+	 * @throws ExecutionManagerConfigurationException If the given properties value was invalid.
 	 */
 	private String getAPIKey(String apiKeyProperty) throws ExecutionManagerConfigurationException {
 		String apiKey = environment.getProperty(apiKeyProperty);
-		
+
 		if (apiKey == null) {
-			throw new ExecutionManagerConfigurationException("Missing apiKey",apiKeyProperty);
+			throw new ExecutionManagerConfigurationException("Missing apiKey", apiKeyProperty);
 		} else {
 			return apiKey;
 		}
 	}
-	
+
 	/**
 	 * Gets and validates the given property for a Galaxy url.
-	 * @param urlProperty  The property with the Galaxy URL.
-	 * @return  A valid Galaxy URL.
-	 * @throws ExecutionManagerConfigurationException  If the properties value was invalid.
+	 *
+	 * @param urlProperty The property with the Galaxy URL.
+	 * @return A valid Galaxy URL.
+	 * @throws ExecutionManagerConfigurationException If the properties value was invalid.
 	 */
 	private URL getGalaxyURL(String urlProperty) throws ExecutionManagerConfigurationException {
 		String galaxyURLString = environment.getProperty(urlProperty);
@@ -181,30 +167,25 @@ public class ExecutionManagerConfig {
 			throw new ExecutionManagerConfigurationException("Invalid Galaxy URL", urlProperty, e);
 		}
 	}
-	
+
 	/**
 	 * Gets and validates a property with the storage strategy for Galaxy.
-	 * @param dataStorageProperty  The property with the storage strategy for Galaxy.
-	 * @return  The corresponding storage strategy object, defaults to DEFAULT_DATA_STORAGE if invalid.
+	 *
+	 * @param dataStorageProperty The property with the storage strategy for Galaxy.
+	 * @return The corresponding storage strategy object, defaults to DEFAULT_DATA_STORAGE if invalid.
 	 */
 	private DataStorage getDataStorage(String dataStorageProperty) {
-		String dataStorageString = environment.getProperty(dataStorageProperty,"");
+		String dataStorageString = environment.getProperty(dataStorageProperty, "");
 		DataStorage dataStorage = VALID_STORAGE.get(dataStorageString.toLowerCase());
-		
+
 		if (dataStorage == null) {
 			dataStorage = DEFAULT_DATA_STORAGE;
-			
-			logger.warn("Invalid configuration property \""
-					+ dataStorageProperty
-					+ "\"=\""
-					+ dataStorageString
-					+ "\" must be one of "
-					+ VALID_STORAGE.keySet()
-					+ ": using default ("
-					+ DEFAULT_DATA_STORAGE.toString()
-							.toLowerCase() + ")");
+
+			logger.warn("Invalid configuration property \"" + dataStorageProperty + "\"=\"" + dataStorageString
+					+ "\" must be one of " + VALID_STORAGE.keySet() + ": using default ("
+					+ DEFAULT_DATA_STORAGE.toString().toLowerCase() + ")");
 		}
-		
+
 		return dataStorage;
 	}
 
@@ -297,7 +278,7 @@ public class ExecutionManagerConfig {
 	public ToolsClient toolsClient() throws ExecutionManagerConfigurationException {
 		return galaxyInstance().getToolsClient();
 	}
-	
+
 	/**
 	 * @return A JobsClient for interacting with Galaxy jobs.
 	 * @throws ExecutionManagerConfigurationException If there is an issue building the execution manager.

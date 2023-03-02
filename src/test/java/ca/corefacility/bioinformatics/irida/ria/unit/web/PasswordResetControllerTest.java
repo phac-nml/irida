@@ -3,21 +3,16 @@ package ca.corefacility.bioinformatics.irida.ria.unit.web;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.MessageSource;
-
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ExtendedModelMap;
 
 import ca.corefacility.bioinformatics.irida.model.user.PasswordReset;
 import ca.corefacility.bioinformatics.irida.model.user.User;
 import ca.corefacility.bioinformatics.irida.ria.web.login.PasswordResetController;
-import ca.corefacility.bioinformatics.irida.service.EmailController;
 import ca.corefacility.bioinformatics.irida.service.user.PasswordResetService;
-import ca.corefacility.bioinformatics.irida.service.user.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -32,7 +27,6 @@ public class PasswordResetControllerTest {
 	@BeforeEach
 	public void setUp() {
 		passwordResetService = mock(PasswordResetService.class);
-
 
 		controller = new PasswordResetController(passwordResetService);
 	}
@@ -60,5 +54,3 @@ public class PasswordResetControllerTest {
 		verify(passwordResetService).read(resetId);
 	}
 }
-
-

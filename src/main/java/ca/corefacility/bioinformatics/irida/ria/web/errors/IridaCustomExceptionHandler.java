@@ -7,7 +7,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import ca.corefacility.bioinformatics.irida.exceptions.EntityNotFoundException;
+import ca.corefacility.bioinformatics.irida.exceptions.IridaOAuthProblemException;
 import ca.corefacility.bioinformatics.irida.exceptions.StorageException;
 import ca.corefacility.bioinformatics.irida.service.EmailController;
 
@@ -76,14 +76,14 @@ public class IridaCustomExceptionHandler extends ResponseEntityExceptionHandler 
 	}
 
 	/**
-	 * Catch an {@link OAuthProblemException} and return an http 500 error
+	 * Catch an {@link IridaOAuthProblemException} and return an http 500 error
 	 * 
-	 * @param ex the caught {@link OAuthProblemException}
+	 * @param ex the caught {@link IridaOAuthProblemException}
 	 * @return A {@link ModelAndView} containing the name of the oauth error view
 	 */
-	@ExceptionHandler(OAuthProblemException.class)
+	@ExceptionHandler(IridaOAuthProblemException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	public ModelAndView handleOAuthProblemException(OAuthProblemException ex) {
+	public ModelAndView handleOAuthProblemException(IridaOAuthProblemException ex) {
 		logger.error("OAuth exception: " + ex.getMessage(), ex);
 
 		ModelAndView modelAndView = new ModelAndView(OAUTH_ERROR_PAGE);

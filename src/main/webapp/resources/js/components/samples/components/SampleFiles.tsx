@@ -7,18 +7,14 @@ import { DragUpload } from "../../files/DragUpload";
 import { FileUploadProgress } from "./upload-progress/FileUploadProgress";
 import { SampleFileList } from "./SampleFileList";
 import { useAppDispatch, useAppSelector } from "../../../hooks/useState";
-import {
-  addToSequenceFiles,
-  addToAssemblyFiles,
-  addToFast5Files,
-  fetchFilesForSample,
-} from "../sampleFilesSlice";
+import { fetchFilesForSample } from "../sampleFilesSlice";
 
 import {
   FileUpload,
   uploadSequenceFiles,
   uploadAssemblyFiles,
   uploadFast5Files,
+  useGetSampleFilesQryQuery,
 } from "../../../apis/samples/samples";
 import { SPACE_MD, SPACE_XS } from "../../../styles/spacing";
 
@@ -33,7 +29,17 @@ export default function SampleFiles() {
   const { sample, projectId, modifiable } = useAppSelector(
     (state) => state.sampleReducer
   );
-  const { files, loading, concatenateSelected } = useAppSelector(
+
+  const {
+    data: files = {},
+    isLoading: loading,
+    refetch: refetchSampleFiles,
+  } = useGetSampleFilesQryQuery({
+    sampleId: sample.identifier,
+    projectId,
+  });
+
+  const { concatenateSelected } = useAppSelector(
     (state) => state.sampleFilesReducer
   );
   const dispatch = useAppDispatch();
@@ -46,8 +52,6 @@ export default function SampleFiles() {
   const [assemblyFiles, setAssemblyFiles] = React.useState<FileUpload[]>([]);
   const [fast5Files, setFast5Files] = React.useState<FileUpload[]>([]);
 
-  const [filesToUpload, setFilesToUpload] = React.useState<FileUpload[]>([]);
-
   const [uploadCancelled, setUploadCancelled] = React.useState<boolean>(false);
 
   const acceptedFileTypes =
@@ -55,50 +59,23 @@ export default function SampleFiles() {
 
   /*
    Get the sample files and set them in the redux store on component load
-   and to refetch if the sample identifier or project change
+   and to refetch if any of the dependencies in the dependency array change
    */
   React.useEffect(() => {
-    dispatch(
-      fetchFilesForSample({
-        sampleId: sample.identifier,
-        projectId,
-      })
-    );
-  }, [sample.identifier, projectId, dispatch]);
-
-  /*
-  Call function to upload files to server once files are
-  selected through the open file dialog or if they are
-  dragged and dropped
-   */
-  React.useEffect(() => {
-    if (filesToUpload.length) {
-      uploadFiles();
+    if (Object.keys(files).length > 0) {
+      dispatch(
+        fetchFilesForSample({
+          sampleFiles: files,
+        })
+      );
     }
-  }, [filesToUpload]);
-
-  /*
-  Custom function to upload sequence, assembly, and fast5 files uploaded
-  using the ant design upload (DragUpload) component
-   */
-  const uploadFiles = () => {
-    abortController = new AbortController();
-    const { signal } = abortController;
-
-    setUploadCancelled(false);
-
-    uploadSampleSequenceFiles(signal);
-    uploadSampleAssemblyFiles(signal);
-    uploadSampleFast5Files(signal);
-  };
+  }, [sample.identifier, projectId, dispatch, loading, files]);
 
   /*
   Function to cancel the current upload request
  */
   const cancelUpload = () => {
     if (abortController !== undefined) {
-      if (filesToUpload.length) setFilesToUpload([]);
-
       if (sequenceFiles.length) {
         setSequenceFiles([]);
         setSeqFileProgress(0);
@@ -120,164 +97,194 @@ export default function SampleFiles() {
   /*
   Function to upload sequence files
    */
-  const uploadSampleSequenceFiles = (signal: AbortSignal) => {
-    if (sequenceFiles.length) {
-      const seqFileUploadConfig = {
-        headers: { "content-type": "multipart/form-data" },
-        signal,
-        onUploadProgress: (progressEvent: {
-          loaded: number;
-          total: number;
-        }) => {
-          if (progressEvent.loaded === progressEvent.total) {
-            setSequenceFiles([]);
-            setSeqFileProgress(0);
-          } else {
-            setSeqFileProgress(
-              Math.round((progressEvent.loaded / progressEvent.total) * 100.0)
-            );
-          }
-        },
-      };
+  const uploadSampleSequenceFiles = React.useCallback(
+    (signal: AbortSignal) => {
+      if (sequenceFiles.length) {
+        const seqFileUploadConfig = {
+          headers: { "content-type": "multipart/form-data" },
+          signal,
+          onUploadProgress: (progressEvent: {
+            loaded: number;
+            total: number;
+          }) => {
+            if (progressEvent.loaded === progressEvent.total) {
+              setSeqFileProgress(99);
+            } else {
+              setSeqFileProgress(
+                Math.round((progressEvent.loaded / progressEvent.total) * 100.0)
+              );
+            }
+          },
+        };
 
-      const formData = new FormData();
-      sequenceFiles.forEach((_f, index) => {
-        formData.append(
-          `file[${index}]`,
-          sequenceFiles[index] as unknown as File as Blob
-        );
-      });
-
-      uploadSequenceFiles({
-        sampleId: sample.identifier,
-        formData,
-        config: seqFileUploadConfig,
-      })
-        .then((response) => {
-          notification.success({
-            message: i18n("SampleFiles.successfullyUploaded", "sequence"),
-          });
-          dispatch(addToSequenceFiles({ sequenceFiles: response }));
-        })
-        .catch((error) => {
-          if (error !== "canceled") {
-            notification.error({
-              message: i18n("SampleFiles.uploadError", "sequence"),
-            });
-          } else {
-            setUploadCancelled(true);
-          }
+        const formData = new FormData();
+        sequenceFiles.forEach((_f, index) => {
+          formData.append(
+            `file[${index}]`,
+            sequenceFiles[index] as unknown as File as Blob
+          );
         });
-    }
-  };
+
+        uploadSequenceFiles({
+          sampleId: sample.identifier,
+          formData,
+          config: seqFileUploadConfig,
+        })
+          .then(() => {
+            notification.success({
+              message: i18n("SampleFiles.successfullyUploaded", "sequence"),
+            });
+            refetchSampleFiles();
+            setSequenceFiles([]);
+          })
+          .catch((error) => {
+            if (error !== "canceled") {
+              notification.error({
+                message: i18n("SampleFiles.uploadError", "sequence"),
+              });
+            } else {
+              setUploadCancelled(true);
+            }
+          });
+      }
+    },
+    [sequenceFiles, sample.identifier, refetchSampleFiles]
+  );
 
   /*
   Function to upload assembly files
  */
-  const uploadSampleAssemblyFiles = (signal: AbortSignal) => {
-    if (assemblyFiles.length) {
-      const assemblyUploadConfig = {
-        headers: { "content-type": "multipart/form-data" },
-        signal,
-        onUploadProgress: (progressEvent: {
-          loaded: number;
-          total: number;
-        }) => {
-          if (progressEvent.loaded === progressEvent.total) {
-            setAssemblyFiles([]);
-            setAssemblyProgress(0);
-          } else {
-            setAssemblyProgress(
-              Math.round((progressEvent.loaded / progressEvent.total) * 100.0)
-            );
-          }
-        },
-      };
+  const uploadSampleAssemblyFiles = React.useCallback(
+    (signal: AbortSignal) => {
+      if (assemblyFiles.length) {
+        const assemblyUploadConfig = {
+          headers: { "content-type": "multipart/form-data" },
+          signal,
+          onUploadProgress: (progressEvent: {
+            loaded: number;
+            total: number;
+          }) => {
+            if (progressEvent.loaded === progressEvent.total) {
+              setAssemblyProgress(99);
+            } else {
+              setAssemblyProgress(
+                Math.round((progressEvent.loaded / progressEvent.total) * 100.0)
+              );
+            }
+          },
+        };
 
-      const formData = new FormData();
-      assemblyFiles.forEach((_f, index) => {
-        formData.append(
-          `file[${index}]`,
-          assemblyFiles[index] as unknown as File as Blob
-        );
-      });
-
-      uploadAssemblyFiles({
-        sampleId: sample.identifier,
-        formData,
-        config: assemblyUploadConfig,
-      })
-        .then((response) => {
-          notification.success({
-            message: i18n("SampleFiles.successfullyUploaded", "assembly"),
-          });
-          dispatch(addToAssemblyFiles({ assemblies: response }));
-        })
-        .catch((error) => {
-          if (error !== "canceled") {
-            notification.error({
-              message: i18n("SampleFiles.uploadError", "assembly"),
-            });
-          } else {
-            setUploadCancelled(true);
-          }
+        const formData = new FormData();
+        assemblyFiles.forEach((_f, index) => {
+          formData.append(
+            `file[${index}]`,
+            assemblyFiles[index] as unknown as File as Blob
+          );
         });
-    }
-  };
+
+        uploadAssemblyFiles({
+          sampleId: sample.identifier,
+          formData,
+          config: assemblyUploadConfig,
+        })
+          .then(() => {
+            notification.success({
+              message: i18n("SampleFiles.successfullyUploaded", "assembly"),
+            });
+            refetchSampleFiles();
+            setAssemblyFiles([]);
+          })
+          .catch((error) => {
+            if (error !== "canceled") {
+              notification.error({
+                message: i18n("SampleFiles.uploadError", "assembly"),
+              });
+            } else {
+              setUploadCancelled(true);
+            }
+          });
+      }
+    },
+    [assemblyFiles, sample.identifier, refetchSampleFiles]
+  );
 
   /*
   Function to upload fast5 files
  */
-  const uploadSampleFast5Files = (signal: AbortSignal) => {
-    if (fast5Files.length) {
-      const fast5UploadConfig = {
-        headers: { "content-type": "multipart/form-data" },
-        signal,
-        onUploadProgress: (progressEvent: {
-          loaded: number;
-          total: number;
-        }) => {
-          if (progressEvent.loaded === progressEvent.total) {
-            setFast5Files([]);
-            setFast5Progress(0);
-          } else {
-            setFast5Progress(
-              Math.round((progressEvent.loaded / progressEvent.total) * 100.0)
-            );
-          }
-        },
-      };
+  const uploadSampleFast5Files = React.useCallback(
+    (signal: AbortSignal) => {
+      if (fast5Files.length) {
+        const fast5UploadConfig = {
+          headers: { "content-type": "multipart/form-data" },
+          signal,
+          onUploadProgress: (progressEvent: {
+            loaded: number;
+            total: number;
+          }) => {
+            if (progressEvent.loaded === progressEvent.total) {
+              setFast5Progress(99);
+            } else {
+              setFast5Progress(
+                Math.round((progressEvent.loaded / progressEvent.total) * 100.0)
+              );
+            }
+          },
+        };
 
-      const formData = new FormData();
-      fast5Files.forEach((_f, index) => {
-        formData.append(
-          `file[${index}]`,
-          fast5Files[index] as unknown as File as Blob
-        );
-      });
-
-      uploadFast5Files({
-        sampleId: sample.identifier,
-        formData,
-        config: fast5UploadConfig,
-      })
-        .then((response) => {
-          notification.success({
-            message: i18n("SampleFiles.successfullyUploaded", "fast5"),
-          });
-          dispatch(addToFast5Files({ fast5: response }));
-        })
-        .catch((error) => {
-          if (error !== "canceled") {
-            notification.error({
-              message: i18n("SampleFiles.uploadError", "fast5"),
-            });
-          } else {
-            setUploadCancelled(true);
-          }
+        const formData = new FormData();
+        fast5Files.forEach((_f, index) => {
+          formData.append(
+            `file[${index}]`,
+            fast5Files[index] as unknown as File as Blob
+          );
         });
-    }
-  };
+
+        uploadFast5Files({
+          sampleId: sample.identifier,
+          formData,
+          config: fast5UploadConfig,
+        })
+          .then(() => {
+            notification.success({
+              message: i18n("SampleFiles.successfullyUploaded", "fast5"),
+            });
+            refetchSampleFiles();
+            setFast5Files([]);
+          })
+          .catch((error) => {
+            if (error !== "canceled") {
+              notification.error({
+                message: i18n("SampleFiles.uploadError", "fast5"),
+              });
+            } else {
+              setUploadCancelled(true);
+            }
+          });
+      }
+    },
+    [fast5Files, sample.identifier, refetchSampleFiles]
+  );
+
+  React.useEffect(() => {
+    abortController = new AbortController();
+    const { signal } = abortController;
+    setUploadCancelled(false);
+    if (sequenceFiles.length) uploadSampleSequenceFiles(signal);
+  }, [sequenceFiles.length, uploadSampleSequenceFiles]);
+
+  React.useEffect(() => {
+    abortController = new AbortController();
+    const { signal } = abortController;
+    setUploadCancelled(false);
+    if (assemblyFiles.length) uploadSampleAssemblyFiles(signal);
+  }, [assemblyFiles.length, uploadSampleAssemblyFiles]);
+
+  React.useEffect(() => {
+    abortController = new AbortController();
+    const { signal } = abortController;
+    setUploadCancelled(false);
+    if (fast5Files.length) uploadSampleFast5Files(signal);
+  }, [fast5Files.length, uploadSampleFast5Files]);
 
   // Options for DragUpload component
   const sampleFileUploadOptions = {
@@ -286,8 +293,6 @@ export default function SampleFiles() {
     accept: acceptedFileTypes,
     progress: { strokeWidth: 5 },
     beforeUpload(_file: FileUpload, fileList: FileUpload[]) {
-      setFilesToUpload(fileList);
-
       /*
       Get the fastq, assembly, and fast5 files from the fileList (files selected to upload)
        */

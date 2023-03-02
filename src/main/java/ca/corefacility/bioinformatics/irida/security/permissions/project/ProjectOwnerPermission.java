@@ -16,8 +16,6 @@ import ca.corefacility.bioinformatics.irida.security.ProjectSynchronizationAuthe
 
 /**
  * Confirms that a given user is the owner of a project
- * 
- *
  */
 @Component
 public class ProjectOwnerPermission extends ModifyProjectPermission {
@@ -45,11 +43,11 @@ public class ProjectOwnerPermission extends ModifyProjectPermission {
 	public boolean customPermissionAllowed(Authentication authentication, Project p) {
 		logger.trace("Testing permission for [" + authentication + "] has manager permissions on project [" + p + "]");
 
-		/**
+		/*
 		 * Check to ensure if project is remote that it's being updated in the
 		 * right context
 		 */
-		if (! canUpdateRemoteObject(p, authentication)) {
+		if (!canUpdateRemoteObject(p, authentication)) {
 			return false;
 		}
 
@@ -79,16 +77,12 @@ public class ProjectOwnerPermission extends ModifyProjectPermission {
 	}
 
 	/**
-	 * Check if the given object is a remote object, and if so if the
-	 * authentication is a {@link ProjectSynchronizationAuthenticationToken}
-	 * object
+	 * Check if the given object is a remote object, and if so if the authentication is a
+	 * {@link ProjectSynchronizationAuthenticationToken} object
 	 *
-	 * @param object
-	 *            the object to test
-	 * @param authentication
-	 *            the authentication to test
-	 * @return true if either the object is not remote, or if it is remote and
-	 *         the authentication is a
+	 * @param object         the object to test
+	 * @param authentication the authentication to test
+	 * @return true if either the object is not remote, or if it is remote and the authentication is a
 	 *         {@link ProjectSynchronizationAuthenticationToken}
 	 */
 	public boolean canUpdateRemoteObject(Object object, Authentication authentication) {

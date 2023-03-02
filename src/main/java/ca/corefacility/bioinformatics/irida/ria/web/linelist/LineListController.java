@@ -192,7 +192,8 @@ public class LineListController {
 	 * interface knows how to handle (e.g. a "Created Date" that is saved to a template will have an ID, but the table
 	 * will be looking for the field "irida-created" instead of "irida-##").
 	 *
-	 * @param field {@link MetadataTemplateField}
+	 * @param field   {@link MetadataTemplateField}
+	 * @param canEdit boolean indicating whether the user can edit the template field
 	 * @return {@link AgGridColumn} of either {@link UIMetadataField} or {@link UIMetadataFieldDefault}
 	 */
 	private AgGridColumn mapFieldToColumn(MetadataTemplateField field, boolean canEdit) {
@@ -209,6 +210,7 @@ public class LineListController {
 	 * @param template               {@link MetadataTemplate}
 	 * @param allFieldsAgGridColumns {@link List} of {@link AgGridColumn} - this is the "All Fields" template for the
 	 *                               {@link Project}
+	 * @param canEdit                boolean indicating whether the user can edit the template
 	 * @return {@link List} of {@link AgGridColumn} that has all the fields in the project, but ones for this template
 	 *         are first and are the only ones that are not hidden in the UI
 	 */

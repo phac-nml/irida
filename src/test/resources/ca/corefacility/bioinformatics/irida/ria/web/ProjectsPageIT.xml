@@ -27,7 +27,8 @@
       <project_user id="8" project_id="6" user_id="1" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
       <project_user id="9" project_id="7" user_id="1" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
       <project_user id="10" project_id="8" user_id="1" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
-      <project_user id="11" project_id="9" user_id="2" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
+      <project_user id="11" project_id="1" user_id="4" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
+      <project_user id="12" project_id="9" user_id="2" projectRole="PROJECT_OWNER" createdDate="2013-07-18 14:20:19.0" metadataRole="LEVEL_4" />
 
       <project_subscription id="1" project_id="1" user_id="1" created_date="2013-07-18 14:20:19.0" email_subscription="false" />
       <project_subscription id="2" project_id="2" user_id="1" created_date="2013-07-18 14:20:19.0" email_subscription="true" />
@@ -61,8 +62,10 @@
       <sequence_file_pair_files pair_id="1" files_id="2" />
 
       <sample id="1" createdDate="2013-07-18 14:20:19.0" sampleName="sample" />
+      <sample id="2" createdDate="2013-07-18 14:20:19.0" sampleName="sample2" />
       <project_sample id="1" sample_id="1" project_id="1" createdDate="2013-07-18 14:20:19.0" owner="true" />
       <project_sample id="2" sample_id="1" project_id="2" createdDate="2013-07-18 14:20:19.0" owner="true" />
+      <project_sample id="3" sample_id="2" project_id="2" createdDate="2013-07-18 14:20:19.0" owner="true" />
 
       <sample_sequencingobject id="1" sample_id="1" sequencingobject_id="1" created_date="2013-07-18 14:20:19.0" />
 

@@ -13,7 +13,7 @@ This document describes the necessary steps for installing and integrating [Gala
 The following must be set up before proceeding with the installation.
 
 1. A machine that has been set up to install Galaxy.  This could be the same machine as the IRIDA web interface, or (recommended) a separate machine.
-2. A shared filesystem has been set up between IRIDA and Galaxy.  If Galaxy will be submitting to a compute cluster this filesystem must also be shared with the cluster.
+2. A shared filesystem has been set up between IRIDA and Galaxy if using a local filesystem and not cloud based storage. If Galaxy will be submitting to a compute cluster this filesystem must also be shared with the cluster.
 
 * this comment becomes the table of contents.
 {:toc}

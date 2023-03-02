@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.github.jmchilton.blend4j.galaxy.HistoriesClient;
 import com.google.common.collect.Sets;
 
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
@@ -30,7 +29,6 @@ import ca.corefacility.bioinformatics.irida.model.enums.AnalysisCleanedState;
 import ca.corefacility.bioinformatics.irida.model.enums.AnalysisState;
 import ca.corefacility.bioinformatics.irida.model.project.ReferenceFile;
 import ca.corefacility.bioinformatics.irida.model.sequenceFile.SequencingObject;
-import ca.corefacility.bioinformatics.irida.model.workflow.analysis.Analysis;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowState;
 import ca.corefacility.bioinformatics.irida.model.workflow.execution.galaxy.GalaxyWorkflowStatus;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -38,8 +36,9 @@ import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.GalaxyJobErro
 import ca.corefacility.bioinformatics.irida.pipeline.upload.galaxy.integration.Util;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.AnalysisSubmissionRepository;
 import ca.corefacility.bioinformatics.irida.repositories.analysis.submission.JobErrorRepository;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageLocalUtilityImpl;
+import ca.corefacility.bioinformatics.irida.repositories.filesystem.IridaFileStorageUtility;
 import ca.corefacility.bioinformatics.irida.service.AnalysisExecutionScheduledTask;
-import ca.corefacility.bioinformatics.irida.service.AnalysisSubmissionService;
 import ca.corefacility.bioinformatics.irida.service.CleanupAnalysisSubmissionCondition;
 import ca.corefacility.bioinformatics.irida.service.analysis.execution.AnalysisExecutionService;
 import ca.corefacility.bioinformatics.irida.service.impl.AnalysisExecutionScheduledTaskImpl;
@@ -52,8 +51,6 @@ import ca.corefacility.bioinformatics.irida.service.impl.TestEmailController;
 public class AnalysisExecutionScheduledTaskImplTest {
 
 	@Mock
-	private AnalysisSubmissionService analysisSubmissionService;
-	@Mock
 	private AnalysisSubmissionRepository analysisSubmissionRepository;
 	@Mock
 	private AnalysisExecutionService analysisExecutionService;
@@ -65,9 +62,6 @@ public class AnalysisExecutionScheduledTaskImplTest {
 	private ReferenceFile referenceFile;
 
 	@Mock
-	private Analysis analysis;
-
-	@Mock
 	private AnalysisSubmission analysisSubmissionMock;
 
 	@Mock
@@ -75,9 +69,6 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	@Mock
 	private GalaxyJobErrorsService galaxyJobErrorsService;
-
-	@Mock
-	private HistoriesClient historiesClient;
 
 	@Mock
 	private JobErrorRepository jobErrorRepository;
@@ -96,12 +87,16 @@ public class AnalysisExecutionScheduledTaskImplTest {
 
 	private UUID workflowId = UUID.randomUUID();
 
+	private IridaFileStorageUtility iridaFileStorageUtility;
+
+
 	/**
 	 * Sets up variables for tests.
 	 */
 	@BeforeEach
 	public void setup() {
 		MockitoAnnotations.openMocks(this);
+		iridaFileStorageUtility = new IridaFileStorageLocalUtilityImpl();
 
 		analysisExecutionScheduledTask = new AnalysisExecutionScheduledTaskImpl(analysisSubmissionRepository,
 				analysisExecutionService, CleanupAnalysisSubmissionCondition.ALWAYS_CLEANUP, galaxyJobErrorsService,

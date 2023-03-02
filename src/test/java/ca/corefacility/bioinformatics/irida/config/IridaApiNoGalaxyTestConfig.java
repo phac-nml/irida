@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.AsyncResult;
 
+import ca.corefacility.bioinformatics.irida.config.services.IridaApiServicesConfig;
 import ca.corefacility.bioinformatics.irida.config.workflow.IridaWorkflowsTestConfig;
 import ca.corefacility.bioinformatics.irida.exceptions.ExecutionManagerException;
 import ca.corefacility.bioinformatics.irida.model.workflow.submission.AnalysisSubmission;
@@ -56,7 +57,7 @@ import com.sun.jersey.api.client.ClientResponse;
  *
  */
 @TestConfiguration
-@Import({ IridaWorkflowsTestConfig.class })
+@Import({ IridaWorkflowsTestConfig.class, IridaApiServicesConfig.class  })
 public class IridaApiNoGalaxyTestConfig {
 	private static final Logger logger = LoggerFactory.getLogger(IridaApiNoGalaxyTestConfig.class);
 

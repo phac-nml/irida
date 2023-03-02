@@ -19,13 +19,10 @@ import ca.corefacility.bioinformatics.irida.repositories.ProjectEventRepository;
 import ca.corefacility.bioinformatics.irida.service.ProjectEventService;
 
 /**
- * Implementation of {@link ProjectEventService} using a
- * {@link ProjectEventRepository}
- * 
- *
+ * Implementation of {@link ProjectEventService} using a {@link ProjectEventRepository}
  */
 @Service
-public class ProjectEventServiceImpl extends CRUDServiceImpl<Long, ProjectEvent>implements ProjectEventService {
+public class ProjectEventServiceImpl extends CRUDServiceImpl<Long, ProjectEvent> implements ProjectEventService {
 
 	private ProjectEventRepository repository;
 

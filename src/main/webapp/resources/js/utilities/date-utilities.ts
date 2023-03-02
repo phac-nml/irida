@@ -2,9 +2,11 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import duration from "dayjs/plugin/duration";
 
+declare let window: IridaWindow;
+
 export function formatInternationalizedDateTime(
-  date: Date,
-  options = {
+  date: number | string | Date,
+  options: Intl.DateTimeFormatOptions = {
     hour: "numeric",
     minute: "numeric",
     year: "numeric",
@@ -43,20 +45,27 @@ export function fromNow({ date }: { date: string | number }) {
 
 /**
  * Format unix timestamp as human readable string.
- * @param  {(string | number)} date unix timestamp
- * @param {String} format defaults to "lll" which is mmm dd, yyyy h:mm AM
- * @return {string} formatted date
+ * @param  date unix timestamp
+ * @param  format defaults to "lll" which is mmm dd, yyyy h:mm AM
+ * @return formatted date
  */
-export function formatDate({ date, format }: { date: Date; format: any }) {
+export function formatDate({
+  date,
+  format,
+}: {
+  date: Date;
+  format?: Intl.DateTimeFormatOptions;
+}) {
   return formatInternationalizedDateTime(date, format);
 }
 
 /**
  * Utility function to determine if a string is a date.
- * @param {(number | string)} date
- * @returns {boolean}
+ * @param  date
+ * @returns true if Date
  */
-export const isDate = (date: Date) => !isNaN(new Date(date).valueOf());
+export const isDate = (date: number | string | Date) =>
+  !isNaN(new Date(date).valueOf());
 
 // get a readable string of the time from a given number of seconds
 export function getDurationFromSeconds(seconds: number) {

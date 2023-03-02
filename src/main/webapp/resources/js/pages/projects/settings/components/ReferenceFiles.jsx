@@ -28,9 +28,8 @@ const { Title } = Typography;
  */
 export default function ReferenceFiles() {
   const { projectId } = useParams();
-  const { data: project = {}, isLoading } = useGetProjectDetailsQuery(
-    projectId
-  );
+  const { data: project = {}, isLoading } =
+    useGetProjectDetailsQuery(projectId);
   const [projectReferenceFiles, setProjectReferenceFiles] = React.useState([]);
   const [, setProgress] = React.useState(0);
   const [total, setTotal] = React.useState(0);
@@ -88,9 +87,7 @@ export default function ReferenceFiles() {
               });
             }}
             tooltipText={i18n("ReferenceFile.downloadTooltip")}
-            disableDownloadButton={
-              file.size === i18n("server.projects.reference-file.not-found")
-            }
+            disableDownloadButton={file.size === "N/A"}
           />,
           // Only display remove button for reference files if user can manage project
           project.canManage ? (

@@ -186,7 +186,7 @@ public class ProjectSynchronizationService {
 	 * 
 	 * @param project the {@link Project} to synchronize. This should have been read from a remote api.
 	 */
-	private void syncProject(Project project) {
+	private void syncProject(Project project) throws Exception {
 		SyncStatus syncType = project.getRemoteStatus().getSyncStatus();
 
 		project.getRemoteStatus().setSyncStatus(SyncStatus.UPDATING);
@@ -305,7 +305,7 @@ public class ProjectSynchronizationService {
 	 * @return A list of {@link ProjectSynchronizationException}s, empty if no errors.
 	 */
 	public List<ProjectSynchronizationException> syncSample(Sample sample, Project project,
-			Map<String, Sample> existingSamples) {
+			Map<String, Sample> existingSamples) throws Exception {
 		Sample localSample;
 
 		if (existingSamples.containsKey(sample.getRemoteStatus().getURL())) {
@@ -623,7 +623,8 @@ public class ProjectSynchronizationService {
 
 	/**
 	 * Update the IDs of a newly read object and it's associated RemoteStatus to the IDs of a local copy
-	 * 
+	 *
+	 * @param <Type>   Type of element updateIds for (either {@link MutableIridaThing} or {@link RemoteSynchronizable})
 	 * @param original the original object
 	 * @param updated  the newly read updated object
 	 * @return the enhanced newly read object

@@ -2,7 +2,7 @@ import React from "react";
 import { Upload } from "antd";
 import { IconFileUpload } from "../icons/Icons";
 import { SPACE_SM, SPACE_XS } from "../../styles/spacing";
-import { FileUpload } from "../../apis/samples/samples";
+import { DraggerProps } from "antd/lib/upload";
 
 const { Dragger } = Upload;
 
@@ -10,26 +10,14 @@ export interface Dictionary<T> {
   [Key: string]: T;
 }
 
-export interface UploadOptions {
-  multiple: boolean;
-  showUploadList: boolean | Dictionary<boolean>;
-  accept: string;
-  progress?: Dictionary<number>;
-  beforeUpload?: (file: FileUpload, fileList: FileUpload[]) => boolean;
-  customRequest?: () => void;
-  action?: string;
-  onChange?: () => void;
-}
-
 export interface DragUploadProps {
-  uploadText: string;
-  uploadHint: string;
-  options: UploadOptions;
-  props: Dictionary<string>;
+  uploadText: string | React.ReactElement;
+  uploadHint: string | React.ReactElement;
+  options: DraggerProps;
+  props?: Dictionary<string>;
 }
 /**
  * React component for rendering the drag and drop upload functionality.
- * @param {object} - upload options as well as text/hint for drag and drop
  * @returns {*}
  * @constructor
  */

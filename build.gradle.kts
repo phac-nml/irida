@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "ca.corefacility.bioinformatics"
-version = "22.09.7"
+version = "23.01"
 description = "irida"
 
 java {
@@ -123,9 +123,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.security:spring-security-oauth2-authorization-server:0.3.1")
     implementation("org.springframework.security:spring-security-oauth2-resource-server:5.7.3")
-    implementation("org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.0") {
-        exclude(group = "org.slf4j")
-    }
+    implementation("com.nimbusds:oauth2-oidc-sdk:10.1")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.data:spring-data-envers") {
         exclude(group = "org.slf4j")
@@ -174,6 +172,17 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.11") {
         exclude(group = "jakarta.xml.bind", module = "jakarta.xml.bind-api")
         exclude(group = "jakarta.validation", module = "jakarta.validation-api")
+    }
+
+    // Microsoft Azure
+    implementation("com.azure:azure-storage-blob:12.18.0") {
+        exclude(group = "jakarta.xml.bind", module = "jakarta.xml.bind-api")
+        exclude(group = "jakarta.activation", module = "jakarta.activation-api")
+    }
+
+    // Amazon AWS
+    implementation("com.amazonaws:aws-java-sdk-s3:1.12.326") {
+        exclude(group = "commons-logging", module = "commons-logging")
     }
 
     // Customized fastqc
@@ -304,15 +313,19 @@ tasks.register<PnpmTask>("cleanWebapp") {
 }
 
 tasks.register<PnpmTask>("buildWebapp") {
-    dependsOn(":cleanWebapp")
-    pnpmCommand.set(listOf("build"))
-    inputs.dir("${project.projectDir}/src/main/webapp/resources")
+    inputs.files(fileTree("${project.projectDir}/src/main/webapp/resources"))
+    inputs.file("${project.projectDir}/src/main/webapp/package.json")
+    inputs.file("${project.projectDir}/src/main/webapp/pnpm-lock.yaml")
+
     outputs.dir("${project.projectDir}/src/main/webapp/dist")
+
+    dependsOn(":pnpmInstall")
+    pnpmCommand.set(listOf("clean", "build"))
 }
 
 tasks.register<PnpmTask>("startWebapp") {
-    dependsOn(":cleanWebapp")
-    pnpmCommand.set(listOf("start"))
+    dependsOn(":pnpmInstall")
+    pnpmCommand.set(listOf("clean", "start"))
     inputs.dir("${project.projectDir}/src/main/webapp/resources")
     outputs.dir("${project.projectDir}/src/main/webapp/dist")
 }
@@ -397,6 +410,10 @@ val integrationTestsMap = mapOf(
     ),
     "galaxyPipeline" to mapOf(
         "tags" to "IntegrationTest & Galaxy & Pipeline",
+        "excludeListeners" to "ca.corefacility.bioinformatics.irida.junit5.listeners.*"
+    ),
+    "fileSystem" to mapOf(
+        "tags" to "IntegrationTest & FileSystem",
         "excludeListeners" to "ca.corefacility.bioinformatics.irida.junit5.listeners.*"
     ),
 )
