@@ -24,7 +24,11 @@ export function AnalysisSteps() {
   const analysisDuration = getHumanizedDuration({
     date: analysisContext.duration,
   });
-  const { isError: analysisError, previousState, analysisState } = analysisContext;
+  const {
+    isError: analysisError,
+    previousState,
+    analysisState,
+  } = analysisContext;
 
   return (
     <Row>
